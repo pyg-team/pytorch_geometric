@@ -506,3 +506,21 @@ def test_basic_graph_store():
     # Get attrs:
     edge_attrs = data.get_all_edge_attrs()
     assert len(edge_attrs) == 3
+
+
+def test_data_generate_ids():
+    data = HeteroData()
+
+    data['paper'].x = torch.randn(100, 128)
+    data['author'].x = torch.randn(200, 128)
+
+    data['paper', 'author'].edge_index = get_edge_index(100, 200, 300)
+    data['author', 'paper'].edge_index = get_edge_index(200, 100, 400)
+    assert len(data) == 2
+
+    data.generate_ids()
+    assert len(data) == 4
+    assert data['paper'].n_id.tolist() == list(range(100))
+    assert data['author'].n_id.tolist() == list(range(200))
+    assert data['paper', 'author'].e_id.tolist() == list(range(300))
+    assert data['author', 'paper'].e_id.tolist() == list(range(400))

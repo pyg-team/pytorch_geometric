@@ -191,6 +191,14 @@ class BaseData(object):
         and do not contain duplicate entries."""
         return all([store.is_coalesced() for store in self.edge_stores])
 
+    def generate_ids(self):
+        r"""Generates and sets :obj:`n_id` and :obj:`e_id` attributes to assign
+        each node and edge to a continuously ascending and unique ID."""
+        for store in self.node_stores:
+            store.n_id = torch.arange(store.num_nodes)
+        for store in self.edge_stores:
+            store.e_id = torch.arange(store.num_edges)
+
     def coalesce(self):
         r"""Sorts and removes duplicated entries from edge indices
         :obj:`edge_index`."""

@@ -315,3 +315,16 @@ def test_basic_graph_store():
     # Get attrs:
     edge_attrs = data.get_all_edge_attrs()
     assert len(edge_attrs) == 3
+
+
+def test_data_generate_ids():
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
+
+    data = Data(x=x, edge_index=edge_index)
+    assert len(data) == 2
+
+    data.generate_ids()
+    assert len(data) == 4
+    assert data.n_id.tolist() == [0, 1, 2]
+    assert data.e_id.tolist() == [0, 1, 2, 3, 4]
