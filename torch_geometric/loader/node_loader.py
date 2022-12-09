@@ -56,6 +56,9 @@ class NodeLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
@@ -75,7 +78,8 @@ class NodeLoader(torch.utils.data.DataLoader):
         node_sampler: BaseSampler,
         input_nodes: InputNodes = None,
         input_time: OptTensor = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
         **kwargs,
     ):
@@ -91,6 +95,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.data = data
         self.node_sampler = node_sampler
         self.transform = transform
+        self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
 
         self.input_data = NodeSamplerInput(
@@ -130,12 +135,16 @@ class NodeLoader(torch.utils.data.DataLoader):
         returning the resulting :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object to be used downstream.
         """
+        if self.transform_sampler_output:
+            out = self.transform_sampler_output(out)
+
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.node_sampler.edge_permutation)
             data.batch = out.batch
-            data.input_id = out.metadata
-            data.batch_size = out.metadata.size(0)
+            data.input_id = out.metadata[0]
+            data.seed_time = out.metadata[1]
+            data.batch_size = out.metadata[0].size(0)
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
@@ -149,8 +158,10 @@ class NodeLoader(torch.utils.data.DataLoader):
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
 
-            data[self.input_data.input_type].input_id = out.metadata
-            data[self.input_data.input_type].batch_size = out.metadata.size(0)
+            input_type = self.input_data.input_type
+            data[input_type].input_id = out.metadata[0]
+            data[input_type].seed_time = out.metadata[1]
+            data[input_type].batch_size = out.metadata[0].size(0)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
