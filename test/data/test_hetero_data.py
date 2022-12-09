@@ -110,6 +110,9 @@ def test_hetero_data_functions():
     assert data.num_nodes == 15
     assert data.num_edges == 110
 
+    assert data.node_attrs() == ['x']
+    assert data.edge_attrs() == ['edge_attr', 'edge_index']
+
     assert data.num_node_features == {'paper': 16, 'author': 32}
     assert data.num_edge_features == {
         ('paper', 'to', 'paper'): 8,

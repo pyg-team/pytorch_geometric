@@ -2,6 +2,7 @@ import copy
 import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from itertools import chain
 from typing import (
     Any,
     Callable,
@@ -185,6 +186,14 @@ class BaseData(object):
         For undirected graphs, this will return the number of bi-directional
         edges, which is double the amount of unique edges."""
         return sum([v.num_edges for v in self.edge_stores])
+
+    def node_attrs(self) -> List[str]:
+        r"""Returns all node-level tensor attribute names."""
+        return list(set(chain(*[s.node_attrs() for s in self.node_stores])))
+
+    def edge_attrs(self) -> List[str]:
+        r"""Returns all edge-level tensor attribute names."""
+        return list(set(chain(*[s.edge_attrs() for s in self.edge_stores])))
 
     def is_coalesced(self) -> bool:
         r"""Returns :obj:`True` if edge indices :obj:`edge_index` are sorted
@@ -558,12 +567,12 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def is_node_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
-        node-level attribute."""
+        node-level tensor attribute."""
         return self._store.is_node_attr(key)
 
     def is_edge_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
-        edge-level attribute."""
+        edge-level tensor attribute."""
         return self._store.is_edge_attr(key)
 
     def subgraph(self, subset: Tensor):

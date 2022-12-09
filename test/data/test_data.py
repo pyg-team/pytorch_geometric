@@ -20,6 +20,9 @@ def test_data():
     N = data.num_nodes
     assert N == 3
 
+    assert data.node_attrs() == ['x']
+    assert data.edge_attrs() == ['edge_index']
+
     assert data.x.tolist() == x.tolist()
     assert data['x'].tolist() == x.tolist()
     assert data.get('x').tolist() == x.tolist()
