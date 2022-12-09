@@ -129,3 +129,13 @@ class Explanation(Data):
             out = out.subgraph(node_mask)
 
         return out
+
+    @property
+    def masks(self) -> dict[str, Tensor]:
+        r"""Returns a dictionary of all masks available in the explanation"""
+        mask_dict = {
+            key: self[key]
+            for key in self.keys
+            if key.endswith('_mask') and self[key] is not None
+        }
+        return dict(sorted(mask_dict.items()))
