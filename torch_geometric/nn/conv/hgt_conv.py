@@ -13,7 +13,6 @@ from torch_geometric.nn.inits import glorot, ones, reset
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.nn.parameter_dict import ParameterDict
 from torch_geometric.typing import (
-    WITH_PYG_LIB,
     EdgeType,
     Metadata,
     NodeType,
@@ -112,6 +111,9 @@ class HGTConv(MessagePassing):
             self.p_rel[edge_type] = Parameter(torch.Tensor(heads))
 
         self.reset_parameters()
+        major_vers, minor_vers = str(torch.__version__).split('.')[:2]
+        # only use grouped matmul if torch >= 1.14
+        self.use_gmm = int(major_vers) >= 2 or int(minor_vers) >= 14
 
     def reset_parameters(self):
         reset(self.k_lin)
@@ -148,94 +150,123 @@ class HGTConv(MessagePassing):
         H, D = self.heads, self.out_channels // self.heads
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
-        if WITH_PYG_LIB:
-            # parralelize over node-types
-            node_types, xs = x_dict.keys(), x_dict.values()
+        # parralelize over node-types
+        node_types, xs = x_dict.keys(), x_dict.values()
+        k_wts = [self.k_lin[node_type].weight for node_type in node_types]
+        k_biases = [self.k_lin[node_type].bias for node_type in node_types]
+        q_wts = [self.q_lin[node_type].weight for node_type in node_types]
+        q_biases = [self.q_lin[node_type].bias for node_type in node_types]
+        v_wts = [self.v_lin[node_type].weight for node_type in node_types]
+        v_biases = [self.v_lin[node_type].bias for node_type in node_types]
+        out_dict = {node_type: [] for node_type in node_types}
 
+        if not self.use_gmm:
+            x = torch.cat(xs)
+            ptr = [0]
+            count = 0
+            for x_type_i in xs:
+                count += x_type_i.size(0)
+                ptr.append(count)
+            ptr = torch.tensor(ptr).to(x.device)
+            k_wt = torch.cat(k_wts)
+            k_bias = torch.cat([b_i.reshape(-1, 1) for b_i in k_biases])
+
+                
+        # compute K, Q, V over node-types
+        if self.use_gmm:
             # compute K
-            k_wts = [self.k_lin[node_type].weight for node_type in node_types]
-            k_biases = [self.k_lin[node_type].bias for node_type in node_types]
             k_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=k_wts,
                                          biases=k_biases)
             k_dict = {
                 node_type: k_list[i].view(-1, H, D)
                 for i, node_type in enumerate(k_list)
             }
-
             # compute Q
-            q_wts = [self.q_lin[node_type].weight for node_type in node_types]
-            q_biases = [self.q_lin[node_type].bias for node_type in node_types]
             q_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=q_wts,
                                          biases=q_biases)
             q_dict = {
                 node_type: q_list[i].view(-1, H, D)
                 for i, node_type in enumerate(q_list)
             }
-
             # compute V
-            v_wts = [self.v_lin[node_type].weight for node_type in node_types]
-            v_biases = [self.v_lin[node_type].bias for node_type in node_types]
             v_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=v_wts,
                                             biases=v_biases)
             v_dict = {
                 node_type: v_list[i].view(-1, H, D)
                 for i, node_type in enumerate(v_list)
             }
+        else:
+            k = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=k_wt,
+                                         biases=k_bias)
+            k_dict = {
+                node_type: k[ptr[i]:ptr[i+1]].view(-1, H, D)
+                for i, node_type in enumerate(node_types)
+            }
+            q = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=q_wt,
+                                         biases=q_bias)
+            q_dict = {
+                node_type: q[ptr[i]:ptr[i+1]].view(-1, H, D)
+                for i, node_type in enumerate(node_types)
+            }
+            v = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=v_wt,
+                                         biases=v_bias)
+            v_dict = {
+                node_type: v[ptr[i]:ptr[i+1]].view(-1, H, D)
+                for i, node_type in enumerate(node_types)
+            }
 
-            out_dict = {node_type: [] for node_type in node_types}
-
-            # parallelize over edge-types
-            edge_types, e_idxs = edge_index_dict.items(
-            ), edge_index_dict.values()
-            src_types = [edge_type[0] for edge_type in edge_types]
-            dst_types = [edge_type[-1] for edge_type in edge_types]
-            a_rels = [self.a_rel[edge_type] for edge_type in edge_types]
-            m_rels = [self.m_rel[edge_type] for edge_type in edge_types]
-            k_ins = [
-                k_dict[src_type].transpose(0, 1) for src_type in src_types
-            ]
+        # parallelize over edge-types
+        edge_types = edge_index_dict.keys()
+        src_types = [edge_type[0] for edge_type in edge_types]
+        a_rels = [self.a_rel[edge_type] for edge_type in edge_types]
+        m_rels = [self.m_rel[edge_type] for edge_type in edge_types]
+        k_ins = [
+            k_dict[src_type].transpose(0, 1) for src_type in src_types
+        ]
+        v_ins = [
+            v_dict[src_type].transpose(0, 1) for src_type in src_types
+        ]
+        if self.use_gmm:
             k_outs = [
                 k_o_i.transpose(1, 0)
                 for k_o_i in pyg_lib.ops.grouped_matmul(k_ins, a_rels)
-            ]
-            del k_ins
-            v_ins = [
-                v_dict[src_type].transpose(0, 1) for src_type in src_types
             ]
             v_outs = [
                 v_o_i.transpose(1, 0)
                 for v_o_i in pyg_lib.ops.grouped_matmul(v_ins, m_rels)
             ]
-            del v_ins
-            for i, dst_type in enumerate(dst_types):
-                out = self.propagate(e_idxs[i], k=k_outs[i],
-                                     q=q_dict[dst_type], v=v_outs[i],
-                                     rel=self.p_rel[edge_types[i]], size=None)
-                out_dict[dst_type].append(out)
+            increment_dict = {src_type:k_outs[i].shape[0] for i, src_type in enumerate(src_types)}
+            k_out = torch.cat(k_outs)
+            v_out = torch.cat(v_outs)
         else:
-            # Iterate over node-types:
-            for node_type, x in x_dict.items():
-                k_dict[node_type] = self.k_lin[node_type](x).view(-1, H, D)
-                q_dict[node_type] = self.q_lin[node_type](x).view(-1, H, D)
-                v_dict[node_type] = self.v_lin[node_type](x).view(-1, H, D)
-                out_dict[node_type] = []
+            a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
+            trans_ptr = [0]
+            count = 0
+            for k_i in k_ins:
+                count += k_i.size(0)
+                trans_ptr.append(count)
+            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr, a_rel).transpose(1, 0)
+            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr, m_rel).transpose(1, 0)
+            increment_dict = {src_type:k_out[trans_ptr[i]:trans_ptr[i+1]].shape[0] for i, src_type in enumerate(src_types)}
 
-            # Iterate over edge-types:
-            for edge_type, edge_index in edge_index_dict.items():
-                src_type, _, dst_type = edge_type
-                edge_type = '__'.join(edge_type)
-
-                a_rel = self.a_rel[edge_type]
-                k = (k_dict[src_type].transpose(0, 1) @ a_rel).transpose(1, 0)
-
-                m_rel = self.m_rel[edge_type]
-                v = (v_dict[src_type].transpose(0, 1) @ m_rel).transpose(1, 0)
-
-                # propagate_type:
-                #     (k: Tensor, q: Tensor, v: Tensor, rel: Tensor)
-                out = self.propagate(edge_index, k=k, q=q_dict[dst_type], v=v,
-                                     rel=self.p_rel[edge_type], size=None)
-                out_dict[dst_type].append(out)
+        etypes_list = []
+        q_list = []
+        p_rels = []
+        for e_type in edge_types:
+            src_type, dst_type = e_type[0], e_type[-1]
+            if torch.numel(edge_index_dict[e_type]) != 0:
+                edge_index_dict[e_type][0, :] = edge_index_dict[e_type][0, :] + increment_dict[src_type]
+                edge_index_dict[e_type][1, :] = edge_index_dict[e_type][1, :] + increment_dict[dst_type]
+                q_list.append(q_dict[dst_type])
+                p_rels.append(self.p_rel[edge_type])
+        q = torch.cat(q_list)
+        p = torch.cat(p_rels)
+        e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
+        out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
+        for e_type in enumerate(edge_types):
+            dst_type = e_type[-1]
+            dst_n_ids = edge_index_dict[edge_type][1, :]
+            out_dict[dst_type].append(out[dst_n_ids])
 
         # Iterate over node-types:
         for node_type, outs in out_dict.items():
