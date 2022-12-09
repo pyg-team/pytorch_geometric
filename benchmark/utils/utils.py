@@ -40,11 +40,11 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
         if transform is not None:
             transform = T.Compose([T.ToUndirected(merge=True), transform])
         else:
-            transform = T.ToUndirected(merge=True)          
+            transform = T.ToUndirected(merge=True)
         dataset = OGB_MAG(root=path, preprocess='metapath2vec',
                           transform=transform)
     elif name == 'ogbn-products':
-        if transform is not None: 
+        if transform is not None:
             transform = T.Compose([T.RemoveDuplicateSelfLoops(), transform])
         dataset = PygNodePropPredDataset('ogbn-products', root=path,
                                          transform=transform)
