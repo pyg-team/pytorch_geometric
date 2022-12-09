@@ -24,10 +24,11 @@ class MotifGenerator:
 
     Args:
         structure (Data, Graph, str): generates a motif given:
-            1. custom structure in PyG (:class:`~torch_geometric.data.Data`)
-            2. custom structure in NetworkX (:class:`~networkx.Graph`)
-            3. Ready to use structures (str)
-                3.1 `house` shape
+
+            #. custom structure in PyG (:class:`~torch_geometric.data.Data`)
+            #. custom structure in NetworkX (:class:`~networkx.Graph`)
+            #. Ready to use structures (str)
+                #. `house` shape
                     generates a shape house with 5 nodes
 
             Returns :obj:`None` if a non supported structure is given.
@@ -54,10 +55,10 @@ class MotifGenerator:
         if (isinstance(self.structure, str)
                 and self.structure in self.registered_structures.keys()):
             return self.registered_structures[self.structure]
-        elif isinstance(self.structure, Graph):
-            return from_networkx(self.structure)
         elif isinstance(self.structure, Data):
             return self.structure
+        elif isinstance(self.structure, Graph):
+            return from_networkx(self.structure)
         else:
             raise ValueError(f"Not supported structure. We currently support "
                              f"`torch_geometric.data.Data`, `networkx.Graph`, "
