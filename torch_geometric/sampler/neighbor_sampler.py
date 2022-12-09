@@ -330,7 +330,7 @@ def node_sample(
         seed_time = inputs.time
 
     out = sample_fn(seed, seed_time)
-    out.metadata = inputs.input_id
+    out.metadata = (inputs.input_id, inputs.time)
 
     return out
 
