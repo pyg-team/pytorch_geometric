@@ -21,6 +21,7 @@ from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
                      to_torch_coo_tensor)
+from .matmul import matmul
 from .spmm import spmm
 from .unbatch import unbatch, unbatch_edge_index
 from .normalized_cut import normalized_cut
