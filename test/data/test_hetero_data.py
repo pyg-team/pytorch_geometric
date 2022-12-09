@@ -110,6 +110,9 @@ def test_hetero_data_functions():
     assert data.num_nodes == 15
     assert data.num_edges == 110
 
+    assert data.node_attrs() == ['x']
+    assert sorted(data.edge_attrs()) == ['edge_attr', 'edge_index']
+
     assert data.num_node_features == {'paper': 16, 'author': 32}
     assert data.num_edge_features == {
         ('paper', 'to', 'paper'): 8,
@@ -227,6 +230,22 @@ def test_hetero_data_subgraph():
     out = data.edge_type_subgraph([('paper', 'author')])
     assert out.node_types == ['paper', 'author']
     assert out.edge_types == [('paper', 'to', 'author')]
+
+    subset = {
+        ('paper', 'to', 'paper'): torch.arange(4),
+    }
+
+    out = data.edge_subgraph(subset)
+    assert out.node_types == data.node_types
+    assert out.edge_types == data.edge_types
+    assert data['paper'] == out['paper']
+    assert data['author'] == out['author']
+    assert data['paper', 'author'] == out['paper', 'author']
+    assert data['author', 'paper'] == out['author', 'paper']
+
+    assert out['paper', 'paper'].num_edges == 4
+    assert out['paper', 'paper'].edge_index.size() == (2, 4)
+    assert out['paper', 'paper'].edge_attr.size() == (4, 8)
 
 
 def test_copy_hetero_data():
@@ -506,3 +525,21 @@ def test_basic_graph_store():
     # Get attrs:
     edge_attrs = data.get_all_edge_attrs()
     assert len(edge_attrs) == 3
+
+
+def test_data_generate_ids():
+    data = HeteroData()
+
+    data['paper'].x = torch.randn(100, 128)
+    data['author'].x = torch.randn(200, 128)
+
+    data['paper', 'author'].edge_index = get_edge_index(100, 200, 300)
+    data['author', 'paper'].edge_index = get_edge_index(200, 100, 400)
+    assert len(data) == 2
+
+    data.generate_ids()
+    assert len(data) == 4
+    assert data['paper'].n_id.tolist() == list(range(100))
+    assert data['author'].n_id.tolist() == list(range(200))
+    assert data['paper', 'author'].e_id.tolist() == list(range(300))
+    assert data['author', 'paper'].e_id.tolist() == list(range(400))

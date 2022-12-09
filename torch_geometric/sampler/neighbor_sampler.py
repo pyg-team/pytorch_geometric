@@ -128,7 +128,7 @@ class NeighborSampler(BaseSampler):
                 }
 
             self.num_nodes = {
-                remote_backend_utils.size(*data, node_type)
+                node_type: remote_backend_utils.size(*data, node_type)
                 for node_type in self.node_types
             }
 
@@ -322,13 +322,15 @@ def node_sample(
     input. Returns the output of this sampling procedure."""
     if inputs.input_type is not None:  # Heterogeneous sampling:
         seed = {inputs.input_type: inputs.node}
-        seed_time = {inputs.input_type: inputs.time} if inputs.time else None
+        seed_time = None
+        if inputs.time is not None:
+            seed_time = {inputs.input_type: inputs.time}
     else:  # Homogeneous sampling:
         seed = inputs.node
         seed_time = inputs.time
 
     out = sample_fn(seed, seed_time)
-    out.metadata = inputs.input_id
+    out.metadata = (inputs.input_id, inputs.time)
 
     return out
 
@@ -353,6 +355,7 @@ def edge_sample(
     src_time = dst_time = edge_label_time
     assert edge_label_time is None or disjoint
 
+    assert isinstance(num_nodes, (dict, int))
     if not isinstance(num_nodes, dict):
         num_src_nodes = num_dst_nodes = num_nodes
     else:
