@@ -37,14 +37,15 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
     transform = T.ToSparseTensor(
         remove_edge_index=False) if use_sparse_tensor else None
     if name == 'ogbn-mag':
-        if transform is None:
-            transform = T.ToUndirected(merge=True)
-        else:
+        if transform is not None:
             transform = T.Compose([T.ToUndirected(merge=True), transform])
+        else:
+            transform = T.ToUndirected(merge=True)          
         dataset = OGB_MAG(root=path, preprocess='metapath2vec',
                           transform=transform)
     elif name == 'ogbn-products':
-        transform = T.Compose([T.RemoveDuplicateSelfLoops(), transform])
+        if transform is not None: 
+            transform = T.Compose([T.RemoveDuplicateSelfLoops(), transform])
         dataset = PygNodePropPredDataset('ogbn-products', root=path,
                                          transform=transform)
     elif name == 'Reddit':
