@@ -1,9 +1,9 @@
 import torch
 from torch import Tensor
+from torch_sparse.matmul import spmm as sparse_spmm
 
 from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import is_torch_sparse_tensor
-from torch_sparse.matmul import spmm as sparse_spmm
 
 
 @torch.jit._overload
@@ -37,7 +37,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         'sum', 'add', 'mean', 'min', 'max'
     ], f"Uknown reduction type {reduce}. Supported: ['sum','add', 'mean','max','min']"
     reduce = 'sum' if reduce == 'add' else reduce
-    
+
     if len(other.size()) > 2:
         return sparse_spmm(src, other, reduce)
 
