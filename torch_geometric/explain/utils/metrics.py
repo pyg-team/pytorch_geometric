@@ -2,7 +2,9 @@ import torch
 from torch import Tensor
 
 
-def get_characterization_score(fidelity: Tensor, weights: Tensor) -> 'Tensor':
+def get_characterization_score(fidelity: Tensor,
+                               weights: Tensor = torch.tensor([1, 1])) \
+        -> 'Tensor':
     r"""Returns the componentwise characterization score where fidelity[0]
     is the tensor containing F_{+} and fidelity[1] is the tensor
     containing F_{-}.
