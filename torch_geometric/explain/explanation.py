@@ -1,5 +1,5 @@
 import copy
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from torch import Tensor
 
@@ -14,6 +14,10 @@ class Explanation(Data):
     also hold the original graph if needed.
 
     Args:
+        index (Union[int, Tensor], optional): The index of which part of the
+        model output the explanation is explaining. Can be a single index or
+        a tensor of indices, or None (for graph level explanations).
+        (default: :obj:`None`)
         node_mask (Tensor, optional): Node-level mask with shape
             :obj:`[num_nodes]`. (default: :obj:`None`)
         edge_mask (Tensor, optional): Edge-level mask with shape
@@ -26,6 +30,7 @@ class Explanation(Data):
     """
     def __init__(
         self,
+        index: Optional[Union[int, Tensor]] = None,
         node_mask: Optional[Tensor] = None,
         edge_mask: Optional[Tensor] = None,
         node_feat_mask: Optional[Tensor] = None,
