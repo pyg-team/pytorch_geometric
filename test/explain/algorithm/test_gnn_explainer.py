@@ -160,12 +160,6 @@ def test_gnn_explainer_binary_classification(
         return_type=return_type,
     )
 
-    explainer_config = ExplainerConfig(
-        explanation_type=explanation_type,
-        node_mask_type=node_mask_type,
-        edge_mask_type=edge_mask_type,
-    )
-
     model = GCN(model_config, multi_output)
 
     target = None
@@ -180,7 +174,9 @@ def test_gnn_explainer_binary_classification(
     explainer = Explainer(
         model=model,
         algorithm=GNNExplainer(epochs=2),
-        explainer_config=explainer_config,
+        explanation_type=explanation_type,
+        node_mask_type=node_mask_type,
+        edge_mask_type=edge_mask_type,
         model_config=model_config,
     )
 
