@@ -14,6 +14,7 @@ from torch_geometric.explain.config import (
     ThresholdConfig,
     ThresholdType,
 )
+from torch_geometric.explain.utils import hard_threshold, topk_threshold
 
 
 class Explainer:
@@ -162,38 +163,19 @@ class Explainer:
         # Avoid modification of the original explanation:
         explanation = copy.copy(explanation)
 
-        mask_dict = {  # Get the available masks:
-            key: explanation[key]
-            for key in explanation.available_explanations
-        }
+        # get the evailable masks
+        mask_dict = explanation.masks
 
         if self.threshold_config.type == ThresholdType.hard:
-            mask_dict = {
-                key: (mask > self.threshold_config.value).float()
-                for key, mask in mask_dict.items()
-            }
+            mask_dict = hard_threshold(mask_dict, self.threshold_config.value)
 
-        elif self.threshold_config.type in [
-                ThresholdType.topk,
-                ThresholdType.topk_hard,
-        ]:
-            for key, mask in mask_dict.items():
-                if self.threshold_config.value >= mask.numel():
-                    if self.threshold_config.type != ThresholdType.topk:
-                        mask_dict[key] = torch.ones_like(mask)
-                    continue
+        elif self.threshold_config.type == ThresholdType.topk:
+            mask_dict = topk_threshold(mask_dict, self.threshold_config.value,
+                                       hard=False)
 
-                value, index = torch.topk(
-                    mask.flatten(),
-                    k=self.threshold_config.value,
-                )
-
-                out = torch.zeros_like(mask.flatten())
-                if self.threshold_config.type == ThresholdType.topk:
-                    out[index] = value
-                else:
-                    out[index] = 1.0
-                mask_dict[key] = out.reshape(mask.size())
+        elif self.threshold_config.type == ThresholdType.topk_hard:
+            mask_dict = topk_threshold(mask_dict, self.threshold_config.value,
+                                       hard=True)
 
         else:
             raise NotImplementedError
