@@ -151,7 +151,7 @@ class HGTConv(MessagePassing):
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
         # parralelize over node-types
-        node_types, xs = x_dict.keys(), x_dict.values()
+        node_types, xs = list(x_dict.keys()), list(x_dict.values())
         k_wts = [self.k_lin[node_type].weight for node_type in node_types]
         k_biases = [self.k_lin[node_type].bias for node_type in node_types]
         q_wts = [self.q_lin[node_type].weight for node_type in node_types]
@@ -216,7 +216,7 @@ class HGTConv(MessagePassing):
             }
 
         # parallelize over edge-types
-        edge_types = edge_index_dict.keys()
+        edge_types = list(edge_index_dict.keys())
         src_types = [edge_type[0] for edge_type in edge_types]
         a_rels = [self.a_rel[edge_type] for edge_type in edge_types]
         m_rels = [self.m_rel[edge_type] for edge_type in edge_types]
