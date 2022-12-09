@@ -303,3 +303,9 @@ DataParallel Layers
    :members:
    :undoc-members:
    :exclude-members: training
+
+
+Model Summary
+-------------
+
+.. autofunction:: torch_geometric.nn.summary.summary

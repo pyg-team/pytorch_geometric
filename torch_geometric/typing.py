@@ -4,11 +4,19 @@ import numpy as np
 from torch import Tensor
 
 try:
+    import pyg_lib  # noqa
+    WITH_PYG_LIB = True
+except ImportError:
+    pyg_lib = object
+    WITH_PYG_LIB = False
+
+try:
     from torch_sparse import SparseTensor
 except ImportError:
 
     class SparseTensor:
-        pass
+        def __init__(self, *args, **kwargs):
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
 
 # Types for accessing data ####################################################

@@ -6,6 +6,7 @@ from .to_hetero_transformer import to_hetero
 from .to_hetero_with_bases_transformer import to_hetero_with_bases
 from .to_fixed_size_transformer import to_fixed_size
 from .encoding import PositionalEncoding
+from .summary import summary
 
 from .aggr import *  # noqa
 from .conv import *  # noqa
@@ -26,4 +27,5 @@ __all__ = [
     'to_hetero_with_bases',
     'to_fixed_size',
     'PositionalEncoding',
+    'summary',
 ]

@@ -30,9 +30,14 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj, EdgeTensorType, EdgeType, OptTensor
+from torch_geometric.typing import (
+    Adj,
+    EdgeTensorType,
+    EdgeType,
+    OptTensor,
+    SparseTensor,
+)
 from torch_geometric.utils.mixin import CastMixin
 
 # The output of converting between two types in the GraphStore is a Tuple of
@@ -187,6 +192,7 @@ class GraphStore:
         r"""Converts an :obj:`edge_index` tuple in the :class:`GraphStore` to
         the desired output layout by fetching the :obj:`edge_index` and
         performing in-memory conversion."""
+        import torch_sparse  # noqa
         from_tuple = self.get_edge_index(attr)
 
         if layout == EdgeLayout.COO:
@@ -444,6 +450,8 @@ def to_csc(
     device: Optional[torch.device] = None,
     share_memory: bool = False,
 ) -> Tuple[Tensor, Tensor, OptTensor]:
+    import torch_sparse  # noqa
+
     # Convert the graph data into a suitable format for sampling (CSC format).
     # Returns the `colptr` and `row` indices of the graph, as well as an
     # `perm` vector that denotes the permutation of edges.

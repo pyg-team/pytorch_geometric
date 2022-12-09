@@ -36,9 +36,9 @@ def random_planetoid_splits(data, num_classes):
 
 
 def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-              permute_masks=None, logger=None):
+              profiling, permute_masks=None, logger=None):
     val_losses, accs, durations = [], [], []
-    for _ in range(runs):
+    for run in range(runs):
         data = dataset[0]
         if permute_masks is not None:
             data = permute_masks(data, dataset.num_classes)
@@ -57,7 +57,11 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         val_loss_history = []
 
         for epoch in range(1, epochs + 1):
-            train(model, optimizer, data)
+            if run == runs - 1 and epoch == epochs:
+                with timeit():
+                    train(model, optimizer, data)
+            else:
+                train(model, optimizer, data)
             eval_info = evaluate(model, data)
             eval_info['epoch'] = epoch
 
@@ -87,6 +91,10 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
     print(f'Val Loss: {float(loss.mean()):.4f}, '
           f'Test Accuracy: {float(acc.mean()):.3f} ± {float(acc.std()):.3f}, '
           f'Duration: {float(duration.mean()):.3f}s')
+
+    if profiling:
+        with torch_profile():
+            train(model, optimizer, data)
 
 
 @torch.no_grad()
@@ -123,7 +131,7 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         inference, profiling, bf16, permute_masks=None, logger=None):
     if not inference:
         run_train(dataset, model, runs, epochs, lr, weight_decay,
-                  early_stopping, permute_masks, logger)
+                  early_stopping, profiling, permute_masks, logger)
     else:
         run_inference(dataset, model, epochs, profiling, bf16, permute_masks,
                       logger)
