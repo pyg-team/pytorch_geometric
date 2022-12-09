@@ -8,19 +8,19 @@ from torch_geometric.nn.conv import MessagePassing
 
 
 class PointGNNConv(MessagePassing):
-    r"""The PointGNN operator from the `"Point-GNN: Graph Neural Network for 
-    3D Object Detection in a Point Cloud" <https://arxiv.org/abs/2003.01251>`_ 
+    r"""The PointGNN operator from the `"Point-GNN: Graph Neural Network for
+    3D Object Detection in a Point Cloud" <https://arxiv.org/abs/2003.01251>`_
     paper, where the graph is statically constructed using radius-based cutoff.
-    The relative position is used in the message passing step to introduce 
+    The relative position is used in the message passing step to introduce
     global translation invariance.
-    To also counter shifts in the local neighborhood of the center vertex, 
+    To also counter shifts in the local neighborhood of the center vertex,
     the authors propose an alignment offset.
 
     Args:
         state_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         MLP_h (MLP): Calculate alignment off-set  :math:`\Delta` x
-        MLP_f (MLP): Calculate edge update using relative coordinates, 
+        MLP_f (MLP): Calculate edge update using relative coordinates,
             alignment off-set and neighbor feature.
         MLP_g (MLP): Transforms aggregated messages.
         **kwargs (optional): Additional arguments of
