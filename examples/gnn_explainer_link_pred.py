@@ -6,12 +6,7 @@ from sklearn.metrics import roc_auc_score
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.explain import (
-    Explainer,
-    ExplainerConfig,
-    GNNExplainer,
-    ModelConfig,
-)
+from torch_geometric.explain import Explainer, GNNExplainer, ModelConfig
 from torch_geometric.nn import GCNConv
 
 dataset = 'Cora'
@@ -34,7 +29,8 @@ class Net(torch.nn.Module):
 
     def encode(self, x, edge_index):
         x = self.conv1(x, edge_index).relu()
-        return self.conv2(x, edge_index)
+        x = self.conv2(x, edge_index)
+        return x
 
     def decode(self, z, edge_label_index):
         src, dst = edge_label_index
@@ -68,37 +64,55 @@ def test(data):
     return roc_auc_score(data.edge_label.cpu().numpy(), out.cpu().numpy())
 
 
-for epoch in range(1, 11):
+for epoch in range(1, 201):
     loss = train()
-    val_auc = test(val_data)
-    test_auc = test(test_data)
-    print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
-          f'Test: {test_auc:.4f}')
+    if epoch % 20 == 0:
+        val_auc = test(val_data)
+        test_auc = test(test_data)
+        print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
+              f'Test: {test_auc:.4f}')
 
-# Explain model output for an edge
-model_config = ModelConfig(mode="binary_classification", task_level="edge",
-                           return_type="raw")
+model_config = ModelConfig(
+    mode='binary_classification',
+    task_level='edge',
+    return_type='raw',
+)
+
+# Explain model output for a single edge:
 edge_label_index = val_data.edge_label_index[:, 0]
-explainer = Explainer(
-    model=model, algorithm=GNNExplainer(epochs=200),
-    explainer_config=ExplainerConfig(
-        explanation_type="model",
-        node_mask_type="attributes",
-        edge_mask_type="object",
-    ), model_config=model_config)
-explanation = explainer(x=train_data.x, edge_index=train_data.edge_index,
-                        edge_label_index=edge_label_index)
-print(explanation.available_explanations)
 
-# Explain a selected target (phenomenon) for an edge
 explainer = Explainer(
-    model=model, algorithm=GNNExplainer(epochs=200),
-    explainer_config=ExplainerConfig(
-        explanation_type="phenomenon",
-        node_mask_type="attributes",
-        edge_mask_type="object",
-    ), model_config=model_config)
+    model=model,
+    explanation_type='model',
+    algorithm=GNNExplainer(epochs=200),
+    node_mask_type='attributes',
+    edge_mask_type='object',
+    model_config=model_config,
+)
+explanation = explainer(
+    x=train_data.x,
+    edge_index=train_data.edge_index,
+    edge_label_index=edge_label_index,
+)
+print(f'Generated model explanations in {explanation.available_explanations}')
+
+# Explain a selected target (phenomenon) for a single edge:
+edge_label_index = val_data.edge_label_index[:, 0]
 target = val_data.edge_label[0].unsqueeze(dim=0).long()
-explanation = explainer(x=train_data.x, edge_index=train_data.edge_index,
-                        target=target, edge_label_index=edge_label_index)
-print(explanation.available_explanations)
+
+explainer = Explainer(
+    model=model,
+    explanation_type='phenomenon',
+    algorithm=GNNExplainer(epochs=200),
+    node_mask_type='attributes',
+    edge_mask_type='object',
+    model_config=model_config,
+)
+explanation = explainer(
+    x=train_data.x,
+    edge_index=train_data.edge_index,
+    target=target,
+    edge_label_index=edge_label_index,
+)
+available_explanations = explanation.available_explanations
+print(f'Generated phenomenon explanations in {available_explanations}')
