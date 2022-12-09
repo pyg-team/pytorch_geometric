@@ -3,7 +3,7 @@ from typing import Optional
 
 import torch
 
-from torch_geometric.data import Data
+from torch_geometric.explain import Explanation
 from torch_geometric.seed import seed_everything
 
 from .motif import Motif
@@ -35,40 +35,37 @@ class GraphGenerator:
         self._node_label = None
         self._x = None
 
-    r"""To be implemented by :class:`GraphGenerator` subclasses."""
-
     @abstractmethod
-    def generate_base_graph(self) -> Data:
+    def generate_base_graph(self) -> Explanation:
+        r"""To be implemented by :class:`GraphGenerator` subclasses."""
         raise NotImplementedError
 
-    r"""Final method, to not be overridden in a subclass."""
-
     def generate_graph(self):
+        r"""Final method, to not be overridden in a subclass."""
         if self.seed:
             seed_everything(self.seed)
         self.generate_base_graph()
 
     @property
-    def data(self) -> Data:
-        return Data(x=self._x, edge_index=self._edge_index, y=self._node_label,
-                    expl_mask=self._expl_mask, edge_label=self._edge_label)
-
-    r"""To be used by :class:`GraphGenerator` subclass to generate uniform
-        features.
-    Args:
-        num_features (int): Number of features. (default: :obj:`10`)
-    """
+    def explanation(self) -> Explanation:
+        return Explanation(x=self._x, edge_index=self._edge_index,
+                           y=self._node_label, expl_mask=self._expl_mask,
+                           edge_label=self._edge_label)
 
     def generate_feature(self, num_features: int = 10):
+        r"""To be used by :class:`GraphGenerator` subclass to generate uniform
+            features.
+        Args:
+            num_features (int): Number of features. (default: :obj:`10`)
+        """
         self._x = torch.ones((self.num_nodes, num_features), dtype=torch.float)
 
-    r"""To be used by :class:`GraphGenerator` subclass to attach a motif
-        to the base graph.
-    Args:
-        num_motifs (int): Number of motifs to attach. (default: :obj:`80`)
-    """
-
     def attach_motif(self, num_motifs: int = 80):
+        r"""To be used by :class:`GraphGenerator` subclass to attach a motif
+            to the base graph.
+        Args:
+            num_motifs (int): Number of motifs to attach. (default: :obj:`80`)
+        """
         if self.motif is None:
             return
 

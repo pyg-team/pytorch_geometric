@@ -4,6 +4,7 @@ import torch
 from torch_geometric.datasets import ExplainerDataset
 from torch_geometric.datasets.generators import Motif
 from torch_geometric.datasets.generators.graph_generator import GraphGenerator
+from torch_geometric.explain import Explanation
 from torch_geometric.utils import barabasi_albert_graph
 
 
@@ -39,6 +40,7 @@ def test_basic_generator(generator):
     assert data.edge_index.size(1) >= 400
     assert generator.num_nodes == 80
     assert generator.motif is None
+    assert type(data) is Explanation
 
 
 def test_attach_motif(generator):

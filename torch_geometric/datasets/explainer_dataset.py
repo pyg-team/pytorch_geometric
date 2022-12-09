@@ -22,4 +22,4 @@ class ExplainerDataset(InMemoryDataset):
     ):
         super().__init__('.', transform)
         generator.generate_graph()
-        self.data, self.slices = self.collate([generator.data])
+        self.data, self.slices = self.collate([generator.explanation])
