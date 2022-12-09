@@ -1,4 +1,3 @@
-import copy
 import warnings
 from typing import Optional, Union
 
@@ -12,9 +11,7 @@ from torch_geometric.explain.config import (
     ModelConfig,
     ModelMode,
     ThresholdConfig,
-    ThresholdType,
 )
-from torch_geometric.explain.utils import hard_threshold, topk_threshold
 
 
 class Explainer:
@@ -160,28 +157,6 @@ class Explainer:
         if self.threshold_config is None:
             return explanation
 
-        # Avoid modification of the original explanation:
-        explanation = copy.copy(explanation)
-
-        # get the evailable masks
-        mask_dict = explanation.masks
-
-        if self.threshold_config.type == ThresholdType.hard:
-            mask_dict = hard_threshold(mask_dict, self.threshold_config.value)
-
-        elif self.threshold_config.type == ThresholdType.topk:
-            mask_dict = topk_threshold(mask_dict, self.threshold_config.value,
-                                       hard=False)
-
-        elif self.threshold_config.type == ThresholdType.topk_hard:
-            mask_dict = topk_threshold(mask_dict, self.threshold_config.value,
-                                       hard=True)
-
-        else:
-            raise NotImplementedError
-
-        # Update the explanation with the thresholded masks:
-        for key, mask in mask_dict.items():
-            explanation[key] = mask
-
-        return explanation
+        return explanation.threshold(
+            threshold_type=self.threshold_config.type,
+            threshold_value=self.threshold_config.value)

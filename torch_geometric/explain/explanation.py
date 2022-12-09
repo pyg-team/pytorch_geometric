@@ -4,6 +4,8 @@ from typing import List, Optional, Union
 from torch import Tensor
 
 from torch_geometric.data.data import Data, warn_or_raise
+from torch_geometric.explain.config import ThresholdType
+from torch_geometric.explain.utils import hard_threshold, topk_threshold
 
 
 class Explanation(Data):
@@ -144,3 +146,35 @@ class Explanation(Data):
             if key.endswith('_mask') and self[key] is not None
         }
         return dict(sorted(mask_dict.items()))
+
+    def threshold(self, threshold_value: Union[int, float],
+                  threshold_type: ThresholdType) -> 'Explanation':
+        r"""Returns a copy of explanation with applied threshold
+
+        Args:
+            threshold: the threshold, behavior depends on `threshold_type
+            threshold_type: :obj:`torch_geometric.explain.config.ThresholdType`
+                the threshold type to use
+        """
+        out = copy.copy(self)
+
+        # get the evailable masks
+        mask_dict = out.masks
+
+        if threshold_type == ThresholdType.hard:
+            mask_dict = hard_threshold(mask_dict, threshold_value)
+
+        elif threshold_type == ThresholdType.topk:
+            mask_dict = topk_threshold(mask_dict, threshold_value, hard=False)
+
+        elif threshold_type == ThresholdType.topk_hard:
+            mask_dict = topk_threshold(mask_dict, threshold_value, hard=True)
+        else:
+            raise NotImplementedError
+
+        # Update the explanation with the thresholded masks:
+        for key, mask in mask_dict.items():
+            out[key] = mask
+
+        out.thresholded = True
+        return out
