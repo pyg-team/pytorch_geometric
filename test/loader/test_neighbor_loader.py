@@ -327,7 +327,6 @@ def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
                             batch_size=1)
 
     for batch in loader:
-        print(batch)
         mask = batch['paper'].time[0] >= batch['paper'].time[1:]
         assert torch.all(mask)
 
