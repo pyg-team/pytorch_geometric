@@ -322,6 +322,9 @@ class NodeStorage(BaseStorage):
     def is_edge_attr(self, key: str) -> bool:
         return False
 
+    def node_attrs(self) -> List[str]:
+        return [key for key in self.keys() if self.is_node_attr(key)]
+
 
 class EdgeStorage(BaseStorage):
     r"""We support multiple ways to store edge connectivity in a
@@ -404,6 +407,9 @@ class EdgeStorage(BaseStorage):
         if value.ndim == 0 or value.shape[cat_dim] != self.num_edges:
             return False
         return True
+
+    def edge_attrs(self) -> List[str]:
+        return [key for key in self.keys() if self.is_edge_attr(key)]
 
     def is_coalesced(self) -> bool:
         for value in self.values('adj', 'adj_t'):

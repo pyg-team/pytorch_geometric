@@ -2,6 +2,7 @@ import copy
 import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from itertools import chain
 from typing import (
     Any,
     Callable,
@@ -41,7 +42,7 @@ from torch_geometric.typing import (
     OptTensor,
     SparseTensor,
 )
-from torch_geometric.utils import subgraph
+from torch_geometric.utils import mask_select, subgraph
 
 
 class BaseData(object):
@@ -186,10 +187,26 @@ class BaseData(object):
         edges, which is double the amount of unique edges."""
         return sum([v.num_edges for v in self.edge_stores])
 
+    def node_attrs(self) -> List[str]:
+        r"""Returns all node-level tensor attribute names."""
+        return list(set(chain(*[s.node_attrs() for s in self.node_stores])))
+
+    def edge_attrs(self) -> List[str]:
+        r"""Returns all edge-level tensor attribute names."""
+        return list(set(chain(*[s.edge_attrs() for s in self.edge_stores])))
+
     def is_coalesced(self) -> bool:
         r"""Returns :obj:`True` if edge indices :obj:`edge_index` are sorted
         and do not contain duplicate entries."""
         return all([store.is_coalesced() for store in self.edge_stores])
+
+    def generate_ids(self):
+        r"""Generates and sets :obj:`n_id` and :obj:`e_id` attributes to assign
+        each node and edge to a continuously ascending and unique ID."""
+        for store in self.node_stores:
+            store.n_id = torch.arange(store.num_nodes)
+        for store in self.edge_stores:
+            store.e_id = torch.arange(store.num_edges)
 
     def coalesce(self):
         r"""Sorts and removes duplicated entries from edge indices
@@ -550,22 +567,21 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def is_node_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
-        node-level attribute."""
+        node-level tensor attribute."""
         return self._store.is_node_attr(key)
 
     def is_edge_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
-        edge-level attribute."""
+        edge-level tensor attribute."""
         return self._store.is_edge_attr(key)
 
-    def subgraph(self, subset: Tensor):
+    def subgraph(self, subset: Tensor) -> 'Data':
         r"""Returns the induced subgraph given by the node indices
         :obj:`subset`.
 
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-
         out = subgraph(subset, self.edge_index, relabel_nodes=True,
                        num_nodes=self.num_nodes, return_edge_mask=True)
         edge_index, _, edge_mask = out
@@ -577,23 +593,51 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         data = copy.copy(self)
 
-        for key, value in data:
+        for key, value in self:
             if key == 'edge_index':
                 data.edge_index = edge_index
             elif key == 'num_nodes':
                 data.num_nodes = num_nodes
-            elif isinstance(value, Tensor):
-                if self.is_node_attr(key):
-                    data[key] = value[subset]
-                elif self.is_edge_attr(key):
-                    data[key] = value[edge_mask]
+            elif self.is_node_attr(key):
+                cat_dim = self.__cat_dim__(key, value)
+                if subset.dtype == torch.bool:
+                    data[key] = mask_select(value, cat_dim, subset)
+                else:
+                    data[key] = value.index_select(cat_dim, subset)
+            elif self.is_edge_attr(key):
+                cat_dim = self.__cat_dim__(key, value)
+                data[key] = mask_select(value, cat_dim, edge_mask)
 
         return data
 
-    def to_heterogeneous(self, node_type: Optional[Tensor] = None,
-                         edge_type: Optional[Tensor] = None,
-                         node_type_names: Optional[List[NodeType]] = None,
-                         edge_type_names: Optional[List[EdgeType]] = None):
+    def edge_subgraph(self, subset: Tensor) -> 'Data':
+        r"""Returns the induced subgraph given by the edge indices
+        :obj:`subset`.
+        Will currently preserve all the nodes in the graph, even if they are
+        isolated after subgraph computation.
+
+        Args:
+            subset (LongTensor or BoolTensor): The edges to keep.
+        """
+        data = copy.copy(self)
+
+        for key, value in self:
+            if self.is_edge_attr(key):
+                cat_dim = self.__cat_dim__(key, value)
+                if subset.dtype == torch.bool:
+                    data[key] = mask_select(value, cat_dim, subset)
+                else:
+                    data[key] = value.index_select(cat_dim, subset)
+
+        return data
+
+    def to_heterogeneous(
+        self,
+        node_type: Optional[Tensor] = None,
+        edge_type: Optional[Tensor] = None,
+        node_type_names: Optional[List[NodeType]] = None,
+        edge_type_names: Optional[List[EdgeType]] = None,
+    ):
         r"""Converts a :class:`~torch_geometric.data.Data` object to a
         heterogeneous :class:`~torch_geometric.data.HeteroData` object.
         For this, node and edge attributes are splitted according to the
@@ -707,7 +751,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     ###########################################################################
 
     @classmethod
-    def from_dict(cls, mapping: Dict[str, Any]):
+    def from_dict(cls, mapping: Dict[str, Any]) -> 'Data':
         r"""Creates a :class:`~torch_geometric.data.Data` object from a Python
         dictionary."""
         return cls(**mapping)
