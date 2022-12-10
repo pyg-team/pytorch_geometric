@@ -152,7 +152,7 @@ def test_visualize_feature_importance(data, top_k, node_mask_type):
     explanation = explainer(data.x, data.edge_index)
     if node_mask_type == 'object':
         with pytest.raises(ValueError):
-            ax = explainer.visualize_feature_importance(explanation, top_k = top_k)
+            ax = explainer.visualize_feature_importance(
+                explanation, top_k=top_k)
     else:
-        ax = explainer.visualize_feature_importance(explanation, top_k = top_k)
-    
+        ax = explainer.visualize_feature_importance(explanation, top_k=top_k)
