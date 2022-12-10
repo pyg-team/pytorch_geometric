@@ -1,11 +1,10 @@
-import pytest
 import torch
 
 from torch_geometric.datasets import ExplainerDataset
 from torch_geometric.datasets.generators import ERGraph, Motif
 
 
-def test(num_nodes, edge_prob, num_motifs):
+def test():
     # check if initializes correctly
     num_nodes, edge_prob, num_motifs = 30, 0.1, 10
 
