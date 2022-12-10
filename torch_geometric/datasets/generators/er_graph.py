@@ -1,6 +1,5 @@
 from typing import Callable, Optional
 
-from torch_geometric.data import Data
 from torch_geometric.utils import erdos_renyi_graph
 
 from .graph_generator import GraphGenerator
