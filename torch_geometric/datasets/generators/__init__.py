@@ -1,5 +1,4 @@
-from .ba_graph import BAGraph
-from .er_graph import ERGraph
 from .motif import Motif
+from .er_graph import ERGraph
 
-__all__ = ["BAGraph", "Motif", "ERGraph"]
+__all__ = ["Motif", "ERGraph"]

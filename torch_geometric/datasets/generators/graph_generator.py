@@ -1,32 +1,79 @@
-from typing import Callable
+from abc import abstractmethod
+from typing import Optional
 
 import torch
 
+from torch_geometric.explain import Explanation
+from torch_geometric.seed import seed_everything
+
+from .motif import Motif
+
 
 class GraphGenerator:
-    def __init__(self, motif: Callable, num_nodes: int = 300):
+    r"""Base class for generating benchmark datasets. It contains
+        :meth:`generate_feature` and :meth:`attach_motif` to generate
+        features and attach motifs to base graph. The motifs are
+        currently attached in random order.
+
+    Args:
+        num_nodes (int): Number of nodes in the base graph.
+            (default: :obj:`300`)
+        motif (:obj:`toch_geometric.datasets.generators.Motif`, Optional):
+            Motif object to be attached to the base graph.
+            (default: :obj:`None`)
+        seed (int, Optional): seed number for the generator.
+            (default: :obj:`None`)
+    """
+    def __init__(self, num_nodes: int = 300, motif: Optional[Motif] = None,
+                 seed: int = None):
         self.num_nodes = num_nodes
         self.motif = motif
-        self.edge_index = None
-        self.edge_label = None
-        self.expl_mask = None
-        self.node_label = None
-        self.x = None
+        self.seed = seed
+        self._edge_index = None
+        self._edge_label = None
+        self._expl_mask = None
+        self._node_label = None
+        self._x = None
 
-    # TODO: FeatureGenerator (feature distribution...)
+    @abstractmethod
+    def generate_base_graph(self) -> Explanation:
+        r"""To be implemented by :class:`GraphGenerator` subclasses."""
+        raise NotImplementedError
+
+    def generate_graph(self):
+        r"""Final method, to not be overridden in a subclass."""
+        if self.seed:
+            seed_everything(self.seed)
+        self.generate_base_graph()
+
+    @property
+    def explanation(self) -> Explanation:
+        return Explanation(x=self._x, edge_index=self._edge_index,
+                           y=self._node_label, expl_mask=self._expl_mask,
+                           edge_label=self._edge_label)
+
     def generate_feature(self, num_features: int = 10):
-        self.x = torch.ones((self.num_nodes, num_features), dtype=torch.float)
+        r"""To be used by :class:`GraphGenerator` subclass to generate uniform
+            features.
+        Args:
+            num_features (int): Number of features. (default: :obj:`10`)
+        """
+        self._x = torch.ones((self.num_nodes, num_features), dtype=torch.float)
 
-    def attach_motif(self, num_motifs=80,
-                     connection_distribution: str = 'random'):
-        if connection_distribution == 'random':
-            connecting_nodes = torch.randperm(self.num_nodes)[:num_motifs]
-        else:
-            step = self.num_nodes // num_motifs
-            connecting_nodes = torch.arange(0, self.num_nodes, step)
+    def attach_motif(self, num_motifs: int = 80):
+        r"""To be used by :class:`GraphGenerator` subclass to attach a motif
+            to the base graph.
+        Args:
+            num_motifs (int): Number of motifs to attach. (default: :obj:`80`)
+        """
+        if self.motif is None:
+            return
 
-        edge_indices = [self.edge_index]
-        edge_labels = [torch.zeros(self.edge_index.size(1), dtype=torch.int64)]
+        connecting_nodes = torch.randperm(self.num_nodes)[:num_motifs]
+        edge_indices = [self._edge_index]
+        edge_labels = [
+            torch.zeros(self._edge_index.size(1), dtype=torch.int64)
+        ]
         node_labels = [torch.zeros(self.num_nodes, dtype=torch.int64)]
 
         for i in range(num_motifs):
@@ -42,11 +89,11 @@ class GraphGenerator:
             node_labels.append(self.motif.label)
             self.num_nodes += self.motif.num_nodes
 
-        self.expl_mask = torch.zeros(self.num_nodes, dtype=torch.bool)
-        self.expl_mask[torch.arange(self.motif.num_nodes * num_motifs,
-                                    self.num_nodes,
-                                    self.motif.num_nodes)] = True
+        self._expl_mask = torch.zeros(self.num_nodes, dtype=torch.bool)
+        self._expl_mask[torch.arange(self.motif.num_nodes * num_motifs,
+                                     self.num_nodes,
+                                     self.motif.num_nodes)] = True
 
-        self.edge_index = torch.cat(edge_indices, dim=1)
-        self.edge_label = torch.cat(edge_labels, dim=0)
-        self.node_label = torch.cat(node_labels, dim=0)
+        self._edge_index = torch.cat(edge_indices, dim=1)
+        self._edge_label = torch.cat(edge_labels, dim=0)
+        self._node_label = torch.cat(node_labels, dim=0)
