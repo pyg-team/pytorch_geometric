@@ -143,7 +143,7 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
 def test_visualize_feature_importance(data, top_k, node_mask_type):
     explainer = Explainer(
-        DummyModel(out_dim=2), algorithm=DummyExplainer(),
+        DummyModel(out_dim=2), algorithm=GNNExplainer(epochs=2),
         explanation_type='model', node_mask_type=node_mask_type,
         edge_mask_type='object', model_config=dict(
             mode='regression',
