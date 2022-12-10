@@ -150,6 +150,9 @@ class NeighborLoader(NodeLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column.
             If :obj:`time_attr` is set, additionally requires that rows are
@@ -180,7 +183,8 @@ class NeighborLoader(NodeLoader):
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
         filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
@@ -210,6 +214,7 @@ class NeighborLoader(NodeLoader):
             input_nodes=input_nodes,
             input_time=input_time,
             transform=transform,
+            transform_sampler_output=transform_sampler_output,
             filter_per_worker=filter_per_worker,
             **kwargs,
         )
