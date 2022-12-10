@@ -139,7 +139,7 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
 
 
 @withPackage('matplotlib')
-@pytest.mark.parametrize('top_k', [3, None])
+@pytest.mark.parametrize('top_k', [2, None])
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
 def test_visualize_feature_importance(data, top_k, node_mask_type):
     explainer = Explainer(
@@ -150,9 +150,11 @@ def test_visualize_feature_importance(data, top_k, node_mask_type):
             task_level='graph',
         ))
     explanation = explainer(data.x, data.edge_index)
+    num_feats_plotted = top_k if top_k is not None else data.x.shape[-1]
     if node_mask_type == 'object':
-        with pytest.raises(ValueError):
-            ax = explainer.visualize_feature_importance(
-                explanation, top_k=top_k)
+        with pytest.raises(ValueError, match="node_feat_mask' not available"):
+            _ = explainer.visualize_feature_importance(explanation,
+                                                       top_k=top_k)
     else:
         ax = explainer.visualize_feature_importance(explanation, top_k=top_k)
+        assert len(ax.yaxis.get_ticklabels()) == num_feats_plotted
