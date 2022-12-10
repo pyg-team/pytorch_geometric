@@ -3,7 +3,7 @@ import glob
 import math
 import os
 from collections.abc import Sequence
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -25,20 +25,6 @@ from torch_geometric.typing import (
     OptTensor,
     SparseTensor,
 )
-
-
-class InputData:
-    def __init__(self, *args):
-        self.args = args
-
-    def __getitem__(self, index: Union[Tensor, List[int]]) -> Any:
-        if not isinstance(index, Tensor):
-            index = torch.tensor(index, dtype=torch.long)
-
-        outs = [index]
-        for arg in self.args:
-            outs.append(arg[index] if arg is not None else None)
-        return tuple(outs)
 
 
 def index_select(value: FeatureTensorType, index: Tensor,

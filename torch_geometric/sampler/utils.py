@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 
 import numpy as np
 import torch
@@ -113,12 +113,14 @@ def to_hetero_csc(
 
 ###############################################################################
 
+X, Y = TypeVar('X'), TypeVar('Y')
+
 
 def remap_keys(
-    original: Dict,
-    mapping: Dict,
-    exclude: Optional[Set[Any]] = None,
-) -> Dict:
-    exclude = exclude or set()
-    return {(k if k in exclude else mapping[k]): v
-            for k, v in original.items()}
+    inputs: Dict[X, Any],
+    mapping: Dict[X, Y],
+    exclude: Optional[List[X]] = None,
+) -> Dict[Union[X, Y], Any]:
+    exclude = exclude or []
+    return {(k if k in exclude else mapping.get(k, k)): v
+            for k, v in inputs.items()}
