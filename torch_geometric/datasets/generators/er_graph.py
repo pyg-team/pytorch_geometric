@@ -17,12 +17,12 @@ class ERGraph(GraphGenerator):
         seed: Seed to set randomness
     """
     def __init__(self, motif: Optional[Callable] = None, num_nodes: int = 300,
-                 edge_prob: float = 5, num_motifs: int = 80, seed: int = None):
+                 edge_prob: float = 0.5, num_motifs: int = 80, seed: int = None):
         self.edge_prob = edge_prob
         self.num_motifs = num_motifs
         super().__init__(num_nodes, motif, seed)
 
     def generate_base_graph(self):
         self._edge_index = erdos_renyi_graph(self.num_nodes, self.edge_prob)
-        self.attach_motif()
+        self.attach_motif(num_motifs=self.num_motifs)
         self.generate_feature()
