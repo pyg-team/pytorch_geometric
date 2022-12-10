@@ -2,9 +2,8 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.explain import DummyExplainer, Explainer, GNNExplainer
+from torch_geometric.explain import DummyExplainer, Explainer
 from torch_geometric.explain.config import ExplanationType
-from torch_geometric.testing import withPackage
 
 
 @pytest.fixture
@@ -136,25 +135,3 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
             assert (mask == 1).sum() == min(mask.numel(), threshold_value)
             assert ((mask == 0).sum() == mask.numel() -
                     min(mask.numel(), threshold_value))
-
-
-@withPackage('matplotlib')
-@pytest.mark.parametrize('top_k', [2, None])
-@pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
-def test_visualize_feature_importance(data, top_k, node_mask_type):
-    explainer = Explainer(
-        DummyModel(out_dim=2), algorithm=GNNExplainer(epochs=2),
-        explanation_type='model', node_mask_type=node_mask_type,
-        edge_mask_type='object', model_config=dict(
-            mode='regression',
-            task_level='graph',
-        ))
-    explanation = explainer(data.x, data.edge_index)
-    num_feats_plotted = top_k if top_k is not None else data.x.shape[-1]
-    if node_mask_type == 'object':
-        with pytest.raises(ValueError, match="node_feat_mask' not available"):
-            _ = explainer.visualize_feature_importance(explanation,
-                                                       top_k=top_k)
-    else:
-        ax = explainer.visualize_feature_importance(explanation, top_k=top_k)
-        assert len(ax.yaxis.get_ticklabels()) == num_feats_plotted

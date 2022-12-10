@@ -113,6 +113,58 @@ class Explanation(Data):
             edge_mask=self.edge_mask == 0 if 'edge_mask' in self else None,
         )
 
+    def visualize_feature_importance(
+        self,
+        feat_labels: Optional[List[str]] = None,
+        top_k: Optional[int] = None,
+    ):
+        r"""Creates a bar plot of the node features importance by
+        summing up :attr:`self.node_feat_mask` across all nodes.
+
+        Args:
+            feat_labels (List[str], optional): Optional labels for features.
+                (default :obj:`None`)
+            top_k (int, optional): Top k features to plot. If :obj:`None`
+                plots all features. (default: :obj:`None`)
+        :rtype: :class:`matplotlib.axes.Axes`
+        """
+        import matplotlib.pyplot as plt
+        import pandas as pd
+
+        if 'node_feat_mask' not in self.available_explanations:
+            raise ValueError("'node_feat_mask' not available in 'self'. "
+                             "This is needed for plotting feature importance")
+
+        node_feature_explanation = self.node_feat_mask.sum(dim=0)
+        node_feature_explanation = node_feature_explanation.cpu().numpy()
+
+        if feat_labels is None:
+            feat_labels = range(len(node_feature_explanation))
+
+        assert len(feat_labels) == len(node_feature_explanation)
+
+        df = pd.DataFrame({'feat_importance': node_feature_explanation},
+                          index=feat_labels)
+
+        df_filtered = df.sort_values("feat_importance", ascending=False)
+
+        if top_k:
+            df_filtered = df_filtered.head(top_k)
+
+        ax = df_filtered.plot(
+            kind='barh',
+            figsize=(10, 7),
+            title=f"Feature importance for top {len(df_filtered)} features",
+            xlabel='Feature importance',
+            ylabel='Feature label',
+            xlim=[0, max(node_feature_explanation) + 0.3],
+            legend=False,
+        )
+        plt.gca().invert_yaxis()
+        ax.bar_label(container=ax.containers[0], label_type='edge')
+
+        return ax
+
     def _apply_masks(
         self,
         node_mask: Optional[Tensor] = None,
