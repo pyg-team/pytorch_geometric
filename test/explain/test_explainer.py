@@ -137,19 +137,16 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
             assert ((mask == 0).sum() == mask.numel() -
                     min(mask.numel(), threshold_value))
 
+
 @withPackage('matplotlib')
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
 def test_visualize_feature_importance(data, node_mask_type):
     explainer = Explainer(
-        DummyModel(out_dim=2),
-        algorithm=DummyExplainer(),
-        explanation_type='model',
-        node_mask_type=node_mask_type,
-        edge_mask_type='object',
-        model_config=dict(
+        DummyModel(out_dim=2), algorithm=DummyExplainer(),
+        explanation_type='model', node_mask_type=node_mask_type,
+        edge_mask_type='object', model_config=dict(
             mode='regression',
             task_level='graph',
-        )
-    )
+        ))
     explanation = explainer(data.x, data.edge_index)
     _ = explainer.visualize_feature_importance(explanation)
