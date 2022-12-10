@@ -3,6 +3,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.explain import Explanation
+from torch_geometric.testing import withPackage
 
 
 @pytest.fixture
@@ -143,3 +144,18 @@ def test_edge_mask(data):
     assert (out.edge_mask == 0.0).sum() == 3
     assert out.edge_index.size() == (2, 3)
     assert out.edge_attr.size() == (3, 3)
+
+
+@withPackage('matplotlib')
+@pytest.mark.parametrize('top_k', [2, None])
+@pytest.mark.parametrize('node_feat_mask', [True, False])
+def test_visualize_feature_importance(data, top_k, node_feat_mask):
+    explanation = create_random_explanation(data,
+                                            node_feat_mask=node_feat_mask)
+    num_feats_plotted = top_k if top_k is not None else data.x.shape[-1]
+    if not node_feat_mask:
+        with pytest.raises(ValueError, match="node_feat_mask' not available"):
+            _ = explanation.visualize_feature_importance(top_k=top_k)
+    else:
+        ax = explanation.visualize_feature_importance(top_k=top_k)
+        assert len(ax.yaxis.get_ticklabels()) == num_feats_plotted

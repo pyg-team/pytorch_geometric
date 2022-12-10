@@ -99,6 +99,11 @@ class GNNExplainer(ExplainerAlgorithm):
                           f"supported.")
             return False
 
+        is_hetero = self._is_hetero
+        if is_hetero:
+            logging.error("Heterogeneous graphs not supported.")
+            return False
+
         return True
 
     def forward(
@@ -306,7 +311,7 @@ class GNNExplainer_:
 
         self.model = model
         self._explainer = GNNExplainer(epochs=epochs, lr=lr, **kwargs)
-        self._explainer.connect(explainer_config, model_config)
+        self._explainer.connect(explainer_config, model_config, False)
 
     @torch.no_grad()
     def get_initial_prediction(self, *args, **kwargs) -> Tensor:
