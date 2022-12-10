@@ -23,7 +23,6 @@ jobs:
         uses: tj-actions/changed-files@v34
         with:
           files: |
-            .github/**
             benchmark/**
             conda/**
             docker/**
