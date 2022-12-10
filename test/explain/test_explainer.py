@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.explain import DummyExplainer, GNNExplainer, Explainer
+from torch_geometric.explain import DummyExplainer, Explainer, GNNExplainer
 from torch_geometric.explain.config import ExplanationType
 from torch_geometric.testing import withPackage
 
