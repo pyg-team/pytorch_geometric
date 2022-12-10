@@ -1,35 +1,55 @@
 import pytest
 import torch
 
-from torch_geometric.data import Data
-from torch_geometric.explain import DummyExplainer, Explainer
+from torch_geometric.data import HeteroData
+from torch_geometric.explain import (
+    DummyExplainer,
+    Explainer,
+    HeteroExplanation,
+)
 from torch_geometric.explain.config import ExplanationType
+from torch_geometric.nn import SAGEConv, to_hetero
+
+
+def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
+    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
+    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
+    return torch.stack([row, col], dim=0)
 
 
 @pytest.fixture
 def data():
-    return Data(
-        x=torch.randn(8, 3, requires_grad=True),
-        edge_index=torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                                 [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]]),
-        edge_attr=torch.randn(14, 3),
-    )
+    data = HeteroData()
+    data['paper'].x = torch.randn(8, 16)
+    data['author'].x = torch.randn(10, 8)
+    data['paper', 'paper'].edge_index = get_edge_index(8, 8, 10)
+    data['author', 'paper'].edge_index = get_edge_index(10, 8, 10)
+    data['paper', 'author'].edge_index = get_edge_index(8, 10, 10)
+    return data
 
 
-class DummyModel(torch.nn.Module):
-    def __init__(self, out_dim: int = 1) -> None:
+class GraphSAGE(torch.nn.Module):
+    def __init__(self):
         super().__init__()
-        self.out_dim = out_dim
+        self.conv1 = SAGEConv((-1, -1), 32)
+        self.conv2 = SAGEConv((-1, -1), 1)
 
     def forward(self, x, edge_index):
-        return x.mean().repeat(self.out_dim)
+        x = self.conv1(x, edge_index).relu()
+        return self.conv2(x, edge_index)
 
 
-@pytest.mark.parametrize('model', [
-    DummyModel(out_dim=1),
-    DummyModel(out_dim=2),
-])
-def test_get_prediction(data, model):
+class HeteroSAGE(torch.nn.Module):
+    def __init__(self, metadata):
+        super().__init__()
+        self.graph_sage = to_hetero(GraphSAGE(), metadata, debug=False)
+
+    def forward(self, x_dict, edge_index_dict, *args) -> torch.Tensor:
+        return self.graph_sage(x_dict, edge_index_dict)['paper']
+
+
+def test_get_prediction(data):
+    model = HeteroSAGE(data.metadata())
     assert model.training
 
     explainer = Explainer(
@@ -42,16 +62,16 @@ def test_get_prediction(data, model):
             task_level='graph',
         ),
     )
-    pred = explainer.get_prediction(data.x, data.edge_index)
+    pred = explainer.get_prediction(data.x_dict, data.edge_index_dict)
     assert model.training
-    assert pred.size() == (model.out_dim, )
+
+    assert pred.size() == (8, 1)
 
 
 @pytest.mark.parametrize('target', [None, torch.randn(2)])
 @pytest.mark.parametrize('explanation_type', [x for x in ExplanationType])
 def test_forward(data, target, explanation_type):
-    model = DummyModel(out_dim=2)
-    assert model.training
+    model = HeteroSAGE(data.metadata())
 
     explainer = Explainer(
         model,
@@ -66,19 +86,23 @@ def test_forward(data, target, explanation_type):
 
     if target is None and explanation_type == ExplanationType.phenomenon:
         with pytest.raises(ValueError):
-            explainer(data.x, data.edge_index, target=target)
+            explainer(data.x_dict, data.edge_index_dict, target=target)
     else:
-        explanation = explainer(data.x, data.edge_index, target=target)
-        assert model.training
+        explanation = explainer(data.x_dict, data.edge_index_dict,
+                                target=target)
+        assert isinstance(explanation, HeteroExplanation)
         assert 'node_feat_mask' in explanation.available_explanations
-        assert explanation.node_feat_mask.size() == data.x.size()
+        for node_type, node_feat_mask in explanation.node_feat_mask.items():
+            assert node_feat_mask.size() == data[node_type].x.size()
 
 
 @pytest.mark.parametrize('threshold_value', [0.2, 0.5, 0.8])
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
 def test_hard_threshold(data, threshold_value, node_mask_type):
+    model = HeteroSAGE(data.metadata())
+
     explainer = Explainer(
-        DummyModel(out_dim=2),
+        model,
         algorithm=DummyExplainer(),
         explanation_type='model',
         node_mask_type=node_mask_type,
@@ -89,7 +113,9 @@ def test_hard_threshold(data, threshold_value, node_mask_type):
         ),
         threshold_config=('hard', threshold_value),
     )
-    explanation = explainer(data.x, data.edge_index)
+
+    explanation = explainer(data.x_dict, data.edge_index_dict)
+
     if node_mask_type == 'object':
         assert 'node_mask' in explanation.available_explanations
     elif node_mask_type == 'attributes':
@@ -97,16 +123,19 @@ def test_hard_threshold(data, threshold_value, node_mask_type):
     assert 'edge_mask' in explanation.available_explanations
 
     for key in explanation.available_explanations:
-        mask = explanation[key]
-        assert set(mask.unique().tolist()).issubset({0, 1})
+        masks = explanation[key]
+        for mask in masks.values():
+            assert set(mask.unique().tolist()).issubset({0, 1})
 
 
 @pytest.mark.parametrize('threshold_value', list(range(1, 10)))
 @pytest.mark.parametrize('threshold_type', ['topk', 'topk_hard'])
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
 def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
+    model = HeteroSAGE(data.metadata())
+
     explainer = Explainer(
-        DummyModel(out_dim=2),
+        model,
         algorithm=DummyExplainer(),
         explanation_type='model',
         node_mask_type=node_mask_type,
@@ -117,7 +146,7 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
         ),
         threshold_config=(threshold_type, threshold_value),
     )
-    explanation = explainer(data.x, data.edge_index)
+    explanation = explainer(data.x_dict, data.edge_index_dict)
 
     if node_mask_type == 'object':
         assert 'node_mask' in explanation.available_explanations
@@ -126,12 +155,13 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
     assert 'edge_mask' in explanation.available_explanations
 
     for key in explanation.available_explanations:
-        mask = explanation[key]
-        if threshold_type == 'topk':
-            assert (mask > 0).sum() == min(mask.numel(), threshold_value)
-            assert ((mask == 0).sum() == mask.numel() -
-                    min(mask.numel(), threshold_value))
-        else:
-            assert (mask == 1).sum() == min(mask.numel(), threshold_value)
-            assert ((mask == 0).sum() == mask.numel() -
-                    min(mask.numel(), threshold_value))
+        masks = explanation[key]
+        for mask in masks.values():
+            if threshold_type == 'topk':
+                assert (mask > 0).sum() == min(mask.numel(), threshold_value)
+                assert ((mask == 0).sum() == mask.numel() -
+                        min(mask.numel(), threshold_value))
+            else:
+                assert (mask == 1).sum() == min(mask.numel(), threshold_value)
+                assert ((mask == 0).sum() == mask.numel() -
+                        min(mask.numel(), threshold_value))
