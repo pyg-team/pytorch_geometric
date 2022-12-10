@@ -139,8 +139,9 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
 
 
 @withPackage('matplotlib')
+@pytest.mark.parametrize('top_k', [3, None])
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
-def test_visualize_feature_importance(data, node_mask_type):
+def test_visualize_feature_importance(data, top_k, node_mask_type):
     explainer = Explainer(
         DummyModel(out_dim=2), algorithm=DummyExplainer(),
         explanation_type='model', node_mask_type=node_mask_type,
@@ -149,4 +150,9 @@ def test_visualize_feature_importance(data, node_mask_type):
             task_level='graph',
         ))
     explanation = explainer(data.x, data.edge_index)
-    _ = explainer.visualize_feature_importance(explanation)
+    if node_mask_type == 'object':
+        with pytest.raises(ValueError):
+            ax = explainer.visualize_feature_importance(explanation, top_k = top_k)
+    else:
+        ax = explainer.visualize_feature_importance(explanation, top_k = top_k)
+    
