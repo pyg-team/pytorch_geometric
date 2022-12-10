@@ -2,6 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.datasets import ExplainerDataset
 from torch_geometric.datasets.generators import ERGraph, Motif
 from torch_geometric.utils import erdos_renyi_graph
 
@@ -14,12 +15,11 @@ def test(num_nodes, edge_prob, num_motifs):
     motif = Motif(structure="house")
     er_graph_gen = ERGraph(motif=motif, num_nodes=num_nodes,
                            edge_prob=edge_prob, num_motifs=num_motifs)
+    dataset = ExplainerDataset(er_graph_gen)
+    data = dataset[0]
 
     # check if it has `generate_base_graph()` method
     assert hasattr(er_graph_gen, 'generate_base_graph')
-
-    # check if graph generates base_graph
-    data = er_graph_gen.generate_base_graph()
 
     # check if data has correct edge_index
     assert torch.eq(data.edge_index, erdos_renyi_graph(num_nodes, edge_prob))
