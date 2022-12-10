@@ -5,11 +5,10 @@ import os.path as osp
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch_sparse import coalesce
 
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
-from torch_geometric.utils import remove_self_loops
+from torch_geometric.utils import coalesce, remove_self_loops
 
 names = [
     'A', 'graph_indicator', 'node_labels', 'node_attributes'
@@ -68,8 +67,10 @@ def read_tu_data(folder, prefix):
 
     num_nodes = edge_index.max().item() + 1 if x is None else x.size(0)
     edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
-    edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes,
-                                     num_nodes)
+    if edge_attr is None:
+        edge_index = coalesce(edge_index, num_nodes=num_nodes)
+    else:
+        edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes)
 
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
     data, slices = split(data, batch)

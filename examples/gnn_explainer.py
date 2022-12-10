@@ -1,5 +1,6 @@
 import os.path as osp
 
+import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 
@@ -42,13 +43,11 @@ for epoch in range(1, 201):
 explainer = Explainer(
     model=model,
     algorithm=GNNExplainer(epochs=200),
-    explainer_config=dict(
-        explanation_type='model',
-        node_mask_type='attributes',
-        edge_mask_type='object',
-    ),
+    explanation_type='model',
+    node_mask_type='attributes',
+    edge_mask_type='object',
     model_config=dict(
-        mode='classification',
+        mode='multiclass_classification',
         task_level='node',
         return_type='log_probs',
     ),
@@ -57,3 +56,7 @@ node_index = 10
 explanation = explainer(data.x, data.edge_index, index=node_index,
                         edge_weight=data.edge_weight)
 print(f'Generated explanations in {explanation.available_explanations}')
+
+ax = explainer.visualize_feature_importance(explanation)
+print('Plotting the feature importance')
+plt.savefig("feature_importance.png")

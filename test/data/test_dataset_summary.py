@@ -5,7 +5,7 @@ from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.testing import withPackage
 
 
-def test_summary():
+def test_dataset_summary():
     dataset = FakeDataset(num_graphs=10)
     num_nodes = torch.Tensor([data.num_nodes for data in dataset])
     num_edges = torch.Tensor([data.num_edges for data in dataset])
@@ -33,7 +33,7 @@ def test_summary():
 
 
 @withPackage('tabulate')
-def test_hetero_summary():
+def test_dataset_summary_hetero():
     dataset1 = FakeHeteroDataset(num_graphs=10)
     summary1 = Summary.from_dataset(dataset1)
 

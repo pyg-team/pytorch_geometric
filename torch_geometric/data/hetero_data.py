@@ -8,7 +8,6 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
@@ -24,11 +23,13 @@ from torch_geometric.typing import (
     FeatureTensorType,
     NodeType,
     QueryType,
+    SparseTensor,
 )
 from torch_geometric.utils import (
     bipartite_subgraph,
     contains_isolated_nodes,
     is_undirected,
+    mask_select,
 )
 
 NodeOrEdgeType = Union[NodeType, EdgeType]
@@ -580,7 +581,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
                 holding the nodes to keep for each node type.
         """
-        data = self.__class__(self._global_store)
+        data = self.__class__(**self._global_store)
 
         for node_type, subset in subset_dict.items():
             for key, value in self[node_type].items():
@@ -614,6 +615,33 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     data[edge_type][key] = value[edge_mask]
                 else:
                     data[edge_type][key] = value
+
+        return data
+
+    def edge_subgraph(
+        self,
+        subset_dict: Dict[EdgeType, Tensor],
+    ) -> 'HeteroData':
+        r"""Returns the induced subgraph given by the edge indices in
+        :obj:`subset_dict` for certain edge types.
+        Will currently preserve all the nodes in the graph, even if they are
+        isolated after subgraph computation.
+
+        Args:
+            subset_dict (Dict[Tuple[str, str, str], LongTensor or BoolTensor]):
+                A dictonary holding the edges to keep for each edge type.
+        """
+        data = copy.copy(self)
+
+        for edge_type, subset in subset_dict.items():
+            edge_store, new_edge_store = self[edge_type], data[edge_type]
+            for key, value in edge_store.items():
+                if edge_store.is_edge_attr(key):
+                    dim = self.__cat_dim__(key, value, edge_store)
+                    if subset.dtype == torch.bool:
+                        new_edge_store[key] = mask_select(value, dim, subset)
+                    else:
+                        new_edge_store[key] = value.index_select(dim, subset)
 
         return data
 
