@@ -136,6 +136,7 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
             assert ((mask == 0).sum() == mask.numel() -
                     min(mask.numel(), threshold_value))
 
+
 @pytest.mark.parametrize('threshold_value', list(range(2, 4)))
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
 def test_visualize_feature_importance(data, threshold_value, node_mask_type):
