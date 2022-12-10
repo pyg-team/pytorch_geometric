@@ -44,7 +44,7 @@ benchmark_requires = [
 ]
 
 test_requires = [
-    'pytest', 'pytest-cov', 'onnx', 'onnxruntime', 'pandas',
+    'pytest', 'pytest-cov', 'onnx', 'onnxruntime',
 ]
 
 dev_requires = test_requires + [
