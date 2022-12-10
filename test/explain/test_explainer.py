@@ -4,6 +4,7 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.explain import DummyExplainer, Explainer
 from torch_geometric.explain.config import ExplanationType
+from torch_geometric.testing import withPackage
 
 
 @pytest.fixture
@@ -136,10 +137,9 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
             assert ((mask == 0).sum() == mask.numel() -
                     min(mask.numel(), threshold_value))
 
-
-@pytest.mark.parametrize('threshold_value', list(range(2, 4)))
+@withPackage('matplotlib')
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
-def test_visualize_feature_importance(data, threshold_value, node_mask_type):
+def test_visualize_feature_importance(data, node_mask_type):
     explainer = Explainer(
         DummyModel(out_dim=2),
         algorithm=DummyExplainer(),
@@ -149,8 +149,7 @@ def test_visualize_feature_importance(data, threshold_value, node_mask_type):
         model_config=dict(
             mode='regression',
             task_level='graph',
-        ),
-        threshold_config=('topk_hard', threshold_value),
+        )
     )
     explanation = explainer(data.x, data.edge_index)
     _ = explainer.visualize_feature_importance(explanation)
