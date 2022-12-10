@@ -8,6 +8,7 @@ from torch_geometric.explain import Explanation
 from torch_geometric.utils import barabasi_albert_graph
 
 
+# TODO: will be removed after the BAGraph is merged
 class BAGraph(GraphGenerator):
     def __init__(
         self,
