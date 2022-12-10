@@ -3,6 +3,7 @@ from typing import Callable, Optional
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.deprecation import deprecated
 from torch_geometric.utils import barabasi_albert_graph
 
 
@@ -13,6 +14,7 @@ def house():
     return edge_index, label
 
 
+@deprecated("use 'BAGraph' with 'ExplainerDataset' instead")
 class BAShapes(InMemoryDataset):
     r"""The BA-Shapes dataset from the `"GNNExplainer: Generating Explanations
     for Graph Neural Networks" <https://arxiv.org/pdf/1903.03894.pdf>`_ paper,
