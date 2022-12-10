@@ -127,6 +127,39 @@ class Explainer:
 
         return out
 
+    def train_explainer_algorithm(self, x, edge_index, train_index=None,
+                                  target=None, **kwargs):
+        """Trains 'self.algorithm'. All `ExplainerAlgorithm`s don't
+        need a training step.
+
+        Args:
+            x(Tensor): Node features.
+            edge_index(Tensor): edge indicies.
+            train_index(Tensor, optional): The nodes to train on
+                for `ModelTaskLevel.node`. If `None` train on all
+                nodes.
+            target (torch.Tensor): The target of the model.
+                If the explanation type is :obj:`"phenomenon"`, the target has
+                to be provided.
+                If the explanation type is :obj:`"model"`, the target should be
+                set to :obj:`None` and will get automatically inferred.
+                (default: :obj:`None`)
+        """
+        # Choose the `target` depending on the explanation type:
+        if self.explanation_type == ExplanationType.phenomenon:
+            if target is None:
+                raise ValueError(
+                    f"The 'target' has to be provided for the explanation "
+                    f"type '{self.explanation_type.value}'")
+        elif self.explanation_type == ExplanationType.model:
+            if target is not None:
+                warnings.warn(
+                    f"The 'target' should not be provided for the explanation "
+                    f"type '{self.explanation_type.value}'")
+            target = self.get_prediction(x, edge_index, **kwargs)
+        self.algorithm.train_explainer(self.model, x, edge_index, target,
+                                       train_index, **kwargs)
+
     def __call__(
         self,
         x: Union[Tensor, Dict[NodeType, Tensor]],
@@ -168,6 +201,10 @@ class Explainer:
                 tensor. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
+        if self.algorithm.training_needed:
+            raise RuntimeError(
+                f"The explainer algorithm {self.algorithm}"
+                f" needs to be trained using 'self.train_explainer_algorithm'")
         # Checks new is_hetero value and updates self.is_hetero
         if self.is_hetero is None:
             self.is_hetero = isinstance(x, dict)

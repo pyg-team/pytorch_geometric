@@ -12,7 +12,16 @@ from torch_geometric.utils import k_hop_subgraph
 
 
 class ExplainerAlgorithm(torch.nn.Module):
-    r"""Abstract base class for explainer algorithms."""
+    def __init__(self, training_need=False) -> None:
+        r"""Abstract base class for explainer algorithms.
+
+        Args:
+            training_needed: If `True` the algorithm needs to
+                be trained using `self.train_explainer`.
+        """
+        super().__init__()
+        self.training_needed = training_need
+
     @abstractmethod
     def forward(
         self,
@@ -94,6 +103,13 @@ class ExplainerAlgorithm(torch.nn.Module):
             raise ValueError(
                 f"The explanation algorithm '{self.__class__.__name__}' does "
                 f"not support the given explanation settings.")
+
+    def train_explainer(self, model: torch.nn.Module, x: Tensor,
+                        edge_index: Tensor, target: Tensor = None,
+                        index: Tensor = None, **kwargs):
+        r"""Override this method for algorithms that need to
+        be trained like `~torch_goemetric.explain.PGExplainer`"""
+        self.training_need = False
 
     # Helper functions ########################################################
 
