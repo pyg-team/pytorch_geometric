@@ -304,8 +304,8 @@ class Explainer:
             explanation (Explanation): The explanation object.
             feat_labels (List[str], optional): Optional labels for features.
                 (default :obj:`None`)
-            top_k (int, optional): Top K features to plot.
-                (default: :obj:`None`)
+            top_k (int, optional): Top k features to plot. If :obj:`None`
+                plots all features. (default: :obj:`None`)
         :rtype: :class:`matplotlib.axes.Axes`
         """
         import matplotlib.pyplot as plt
