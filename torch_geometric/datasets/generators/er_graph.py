@@ -23,6 +23,6 @@ class ERGraph(GraphGenerator):
         super().__init__(num_nodes, motif, seed)
 
     def generate_base_graph(self):
-        self.edge_index = erdos_renyi_graph(self.num_nodes, self.edge_prob)
+        self._edge_index = erdos_renyi_graph(self.num_nodes, self.edge_prob)
         self.attach_motif()
         self.generate_feature()
