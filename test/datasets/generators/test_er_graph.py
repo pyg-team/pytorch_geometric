@@ -1,10 +1,8 @@
 import pytest
 import torch
 
-from torch_geometric.data import Data
 from torch_geometric.datasets import ExplainerDataset
 from torch_geometric.datasets.generators import ERGraph, Motif
-from torch_geometric.utils import erdos_renyi_graph
 
 
 @pytest.mark.parametrize('num_nodes', [10, 50, 100])
@@ -18,10 +16,7 @@ def test(num_nodes, edge_prob, num_motifs):
     dataset = ExplainerDataset(er_graph_gen)
     data = dataset[0]
 
-    # check if it has `generate_base_graph()` method
-    assert hasattr(er_graph_gen, 'generate_base_graph')
-
-    # check if data has correct edge_index
-    assert torch.eq(data.edge_index, erdos_renyi_graph(num_nodes, edge_prob))
-    # check if data is of torch_geometric.data.Data type
-    assert isinstance(data, Data)
+    assert (data.x.size() == torch.Size([num_nodes + motif.num_nodes * num_motifs, 10]))
+    assert (data.y.size() == torch.Size([num_nodes + motif.num_nodes * num_motifs]))
+    assert (data.expl_mask.sum().item() == (num_nodes // motif.num_nodes))
+    assert (data.edge_label.sum().item() == num_motifs * motif.edge_index.shape[1])    
