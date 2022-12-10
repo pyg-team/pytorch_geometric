@@ -73,8 +73,7 @@ def test_available_explanations(data, node_mask, edge_mask, node_feat_mask,
 @pytest.mark.parametrize('edge_mask', [True, False])
 @pytest.mark.parametrize('node_feat_mask', [True, False])
 @pytest.mark.parametrize('edge_feat_mask', [True, False])
-def test_masks(data, node_mask, edge_mask, node_feat_mask,
-                                edge_feat_mask):
+def test_masks(data, node_mask, edge_mask, node_feat_mask, edge_feat_mask):
     expected = []
     if node_mask:
         expected.append('node_mask')

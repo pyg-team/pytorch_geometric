@@ -54,7 +54,8 @@ class Explanation(Data):
     def masks(self) -> Dict[str, Tensor]:
         """Returns a dictionary of all masks available in the explanation."""
         mask_dict = {
-            key: self[key] for key in self.keys
+            key: self[key]
+            for key in self.keys
             if key.endswith('_mask') and self[key] is not None
         }
         return dict(sorted(mask_dict.items()))
