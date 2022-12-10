@@ -5,11 +5,10 @@ from torch_geometric.datasets import ExplainerDataset
 from torch_geometric.datasets.generators import ERGraph, Motif
 
 
-@pytest.mark.parametrize('num_nodes', [10, 50, 100])
-@pytest.mark.parametrize('edge_prob', [0.1, 0.2, 0.9])
-@pytest.mark.parametrize('num_motifs', [10, 50, 100])
 def test(num_nodes, edge_prob, num_motifs):
     # check if initializes correctly
+    num_nodes, edge_prob, num_motifs = 30, 0.1, 10
+
     motif = Motif(structure="house")
     er_graph_gen = ERGraph(motif=motif, num_nodes=num_nodes,
                            edge_prob=edge_prob, num_motifs=num_motifs)
