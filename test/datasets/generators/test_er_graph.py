@@ -16,7 +16,10 @@ def test(num_nodes, edge_prob, num_motifs):
     dataset = ExplainerDataset(er_graph_gen)
     data = dataset[0]
 
-    assert (data.x.size() == torch.Size([num_nodes + motif.num_nodes * num_motifs, 10]))
-    assert (data.y.size() == torch.Size([num_nodes + motif.num_nodes * num_motifs]))
+    assert (data.x.size() == torch.Size(
+        [num_nodes + motif.num_nodes * num_motifs, 10]))
+    assert (data.y.size() == torch.Size(
+        [num_nodes + motif.num_nodes * num_motifs]))
     assert (data.expl_mask.sum().item() == (num_nodes // motif.num_nodes))
-    assert (data.edge_label.sum().item() == num_motifs * motif.edge_index.shape[1])    
+    assert (data.edge_label.sum().item() == num_motifs *
+            motif.edge_index.shape[1])
