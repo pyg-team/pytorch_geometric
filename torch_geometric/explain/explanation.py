@@ -1,5 +1,5 @@
 import copy
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from torch import Tensor
 
@@ -47,6 +47,15 @@ class Explanation(Data):
             key for key in self.keys
             if key.endswith('_mask') and self[key] is not None
         ]
+
+    @property
+    def masks(self) -> Dict[str, Tensor]:
+        """Returns a dictionary of all masks available in the explanation."""
+        mask_dict = {
+            key: self[key] for key in self.keys
+            if key.endswith('_mask') and self[key] is not None
+        }
+        return dict(sorted(mask_dict.items()))
 
     def validate(self, raise_on_error: bool = True) -> bool:
         r"""Validates the correctness of the explanation"""
