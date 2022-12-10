@@ -581,7 +581,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
                 holding the nodes to keep for each node type.
         """
-        data = self.__class__(self._global_store)
+        data = self.__class__(**self._global_store)
 
         for node_type, subset in subset_dict.items():
             for key, value in self[node_type].items():
