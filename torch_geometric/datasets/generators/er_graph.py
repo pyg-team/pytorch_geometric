@@ -17,7 +17,8 @@ class ERGraph(GraphGenerator):
         seed: Seed to set randomness
     """
     def __init__(self, motif: Optional[Callable] = None, num_nodes: int = 300,
-                 edge_prob: float = 0.5, num_motifs: int = 80, seed: int = None):
+                 edge_prob: float = 0.5, num_motifs: int = 80,
+                 seed: int = None):
         self.edge_prob = edge_prob
         self.num_motifs = num_motifs
         super().__init__(num_nodes, motif, seed)
