@@ -9,7 +9,7 @@ from torch_geometric.explain import Explanation
 def groundtruth_metrics(
         explanation: Explanation,
         groundtruth: Explanation) -> Tuple[float, float, float, float, float]:
-    """_summary_accuracy_scores: Compute accuracy scores when
+    """accuracy_scores: Compute accuracy scores when
     groundtruth is available
 
     Args:
