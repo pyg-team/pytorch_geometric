@@ -1,7 +1,7 @@
+import sys
 from typing import Union
 
 import torch
-from networkx import Graph
 
 from torch_geometric.data import Data
 from torch_geometric.utils.convert import from_networkx
@@ -35,7 +35,7 @@ class MotifGenerator:
     """
     def __init__(
         self,
-        structure: Union[Data, str, Graph, ],
+        structure: Union[Data, str, ],
     ):
         self.structure = structure
         self.registered_structures = {
@@ -57,9 +57,18 @@ class MotifGenerator:
             return self.registered_structures[self.structure]
         elif isinstance(self.structure, Data):
             return self.structure
-        elif isinstance(self.structure, Graph):
+        elif check_for_networkx(self.structure):
             return from_networkx(self.structure)
         else:
             raise ValueError(f"Not supported structure. We currently support "
                              f"`torch_geometric.data.Data`, `networkx.Graph`, "
                              f"{', '.join(self.registered_structures.keys())}")
+
+
+def check_for_networkx(structure):
+
+    if 'networkx' in sys.modules:
+        from networkx import Graph
+        return isinstance(structure, Graph)
+    else:
+        return False
