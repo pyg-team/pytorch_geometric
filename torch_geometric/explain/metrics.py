@@ -23,8 +23,9 @@ def groundtruth_metrics(
     gt_masks = groundtruth.masks
     gt_mask_tensor = torch.cat(
         list(map(lambda x: x.view(-1), gt_masks.values())))
-    ex_mask_tensor[ex_mask_tensor > 0] = 1.0
-    gt_mask_tensor[gt_mask_tensor > 0] = 1.0
+    threshold = 0
+    ex_mask_tensor[ex_mask_tensor > threshold] = 1.0
+    gt_mask_tensor[gt_mask_tensor > threshold] = 1.0
 
     correct_preds = gt_mask_tensor == ex_mask_tensor
     incorrect_preds = gt_mask_tensor != ex_mask_tensor
