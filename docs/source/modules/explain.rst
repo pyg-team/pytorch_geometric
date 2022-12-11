@@ -68,3 +68,19 @@ Explainer Algorithms
 .. automodule:: torch_geometric.explain.algorithm
    :members:
    :exclude-members: ExplainerAlgorithm, forward, loss, supports
+
+Explanation metrics
+-------------------
+
+The quality of an explanation can be judged by a variety of different methods.
+
+.. currentmodule:: torch_geometric.explain.utils.metrics
+
+.. autosummary::
+    :nosignatures:
+    {% for cls in torch_geometric.explain.utils.classes %}
+      {{ cls }}
+    {% endfor %}
+
+.. automodule:: torch_geometric.explain.utils.metrics
+    :members:
