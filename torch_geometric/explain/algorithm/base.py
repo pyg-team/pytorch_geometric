@@ -1,16 +1,13 @@
 from abc import abstractmethod
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.config import (
-    ExplainerConfig,
-    ModelConfig,
-    ModelReturnType,
-)
+from torch_geometric.explain.config import ExplainerConfig, ModelConfig
 from torch_geometric.nn import MessagePassing
+from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -20,8 +17,8 @@ class ExplainerAlgorithm(torch.nn.Module):
     def forward(
         self,
         model: torch.nn.Module,
-        x: Tensor,
-        edge_index: Tensor,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
@@ -32,8 +29,11 @@ class ExplainerAlgorithm(torch.nn.Module):
 
         Args:
             model (torch.nn.Module): The model to explain.
-            x (torch.Tensor): The input node features.
-            edge_index (torch.Tensor): The input edge indices.
+            x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
+                node features. This is a dictionary in the heterogeneous case.
+            edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
+                input edge indices. This is a dictionary in the heterogeneous
+                case.
             target (torch.Tensor): The target of the model.
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
@@ -50,7 +50,8 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def supports(self) -> bool:
         r"""Checks if the explainer supports the user-defined settings provided
-        in :obj:`self.explainer_config` and :obj:`self.model_config`."""
+        in :obj:`self.explainer_config`, :obj:`self.model_config`, and
+        :obj:`self.is_hetero`."""
         pass
 
     ###########################################################################
@@ -81,11 +82,13 @@ class ExplainerAlgorithm(torch.nn.Module):
         self,
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
+        is_hetero: bool,
     ):
         r"""Connects an explainer and model configuration to the explainer
         algorithm."""
         self._explainer_config = ExplainerConfig.cast(explainer_config)
         self._model_config = ModelConfig.cast(model_config)
+        self._is_hetero = is_hetero
 
         if not self.supports():
             raise ValueError(
@@ -162,17 +165,3 @@ class ExplainerAlgorithm(torch.nn.Module):
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
-
-    def _to_log_prob(self, y: Tensor) -> Tensor:
-        r"""Converts the model output to log-probabilities.
-
-        Args:
-            y (Tensor): The output of the model.
-        """
-        if self.model_config.return_type == ModelReturnType.probs:
-            return y.log()
-        if self.model_config.return_type == ModelReturnType.raw:
-            return y.log_softmax(dim=-1)
-        if self.model_config.return_type == ModelReturnType.log_probs:
-            return y
-        raise NotImplementedError
