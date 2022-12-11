@@ -11,7 +11,7 @@ def get_characterization_score(fidelity: Tensor,
 
     The characterization score is calculated as
      .. math::
-      charac = \frac{w_+ + w_-}{\frac{w_+}{fid_+}+\frac{w_-}{fid_-}}
+      charac = \frac{w_+ + w_-}{\frac{w_+}{fid_+}+\frac{w_-}{1-fid_-}}
 
 
     Args:
