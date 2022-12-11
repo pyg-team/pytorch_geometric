@@ -8,11 +8,11 @@ from torch_geometric.utils.convert import from_networkx
 
 
 class MotifGenerator:
-    r"""Generate a motif based on structure.
+    r"""Generate a motif based on a given structure.
 
-    The motif structure is generated in the attribute
+    The structure is generated build in the attribute
     :class:`~torch_geometric.datasets.MotifGenerator.motif`
-    using :class:`~torch_geometric.data.Data`
+    using :class:`~torch_geometric.data.Data` as a base class.
 
     .. code-block:: python
 
@@ -27,11 +27,12 @@ class MotifGenerator:
 
             #. custom structure in PyG (:class:`~torch_geometric.data.Data`)
             #. custom structure in NetworkX (:class:`~networkx.Graph`)
-            #. Ready to use structures (str)
-                #. `house` shape
+            #. ready to use structures (str)
+                * 'house' shape
                     generates a shape house with 5 nodes
 
-            Returns :obj:`None` if a non supported structure is given.
+    Returns :class:`~torch_geometric.data.Data` to represent a
+        :class:`~torch_geometric.datasets.MotifGenerator.motif`.
     """
     def __init__(
         self,
@@ -66,9 +67,9 @@ class MotifGenerator:
 
 
 def check_for_networkx(structure):
-
-    if 'networkx' in sys.modules:
+    if "networkx" in sys.modules:
         from networkx import Graph
+
         return isinstance(structure, Graph)
     else:
         return False
