@@ -5,9 +5,9 @@ from torch import Tensor
 def get_characterization_score(fidelities: Tensor,
                                weights: Tensor = torch.tensor([1, 1])) \
         -> 'Tensor':
-    r"""Returns the componentwise characterization score from the `"GraphFram
-    Ex:Towards Systematic Evaluation of Explainability Methods for Graph Neur
-    al Networks" <https://arxiv.org/abs/2206.09677>`_ paper.
+    r"""Returns the componentwise characterization score from the
+    `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods
+    for Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper.
 
     :obj:`fidelities[0]` is the tensor containing :math:`fid_{+}` and
     :obj:`fidelities[1]` is the tensor containing :math:`fid_{-}`.
