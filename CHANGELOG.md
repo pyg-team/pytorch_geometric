@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added `BAGraph` graph generator to generate Barabasi-Albert graphs - the usage of `datasets.BAShapes` is now deprecated ([#6072](https://github.com/pyg-team/pytorch_geometric/pull/6072)
 - Added explainability benchmark dataset framework ([#6104](https://github.com/pyg-team/pytorch_geometric/pull/6104))
 - Added `seed_time` attribute to temporal `NodeLoader` outputs in case `input_time` is given ([#6196](https://github.com/pyg-team/pytorch_geometric/pull/6196))
 - Added `Data.edge_subgraph` and `HeteroData.edge_subgraph` functionalities ([#6193](https://github.com/pyg-team/pytorch_geometric/pull/6193))
