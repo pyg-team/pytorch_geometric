@@ -18,10 +18,10 @@ def data():
 
 class DummyModel(torch.nn.Module):
     def forward(self, x, edge_index):
-        return x.mean()
+        return x.mean().view(-1)
 
 
-def test_get_prediction(data, model):
+def test_get_prediction(data):
     model = DummyModel()
     assert model.training
 
@@ -61,7 +61,12 @@ def test_forward(data, target, explanation_type):
         with pytest.raises(ValueError):
             explainer(data.x, data.edge_index, target=target)
     else:
-        explanation = explainer(data.x, data.edge_index, target=target)
+        explanation = explainer(
+            data.x,
+            data.edge_index,
+            target=target
+            if explanation_type == ExplanationType.phenomenon else None,
+        )
         assert model.training
         assert isinstance(explanation, Explanation)
         assert 'node_feat_mask' in explanation.available_explanations

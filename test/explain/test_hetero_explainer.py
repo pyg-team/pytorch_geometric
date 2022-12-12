@@ -71,8 +71,12 @@ def test_forward(data, target, explanation_type):
         with pytest.raises(ValueError):
             explainer(data.x_dict, data.edge_index_dict, target=target)
     else:
-        explanation = explainer(data.x_dict, data.edge_index_dict,
-                                target=target)
+        explanation = explainer(
+            data.x_dict,
+            data.edge_index_dict,
+            target=target
+            if explanation_type == ExplanationType.phenomenon else None,
+        )
         assert model.training
         assert isinstance(explanation, HeteroExplanation)
         assert 'node_feat_mask' in explanation.available_explanations
