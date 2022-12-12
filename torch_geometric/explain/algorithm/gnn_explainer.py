@@ -150,6 +150,10 @@ class GNNExplainer(ExplainerAlgorithm):
         target_index: Optional[int] = None,
         **kwargs,
     ):
+        if isinstance(x, dict) or isinstance(edge_index, dict):
+            raise ValueError(f"Heterogeneous graphs not yet supported in "
+                             f"'{self.__class__.__name__}'")
+
         self._initialize_masks(x, edge_index)
 
         parameters = [self.node_mask]  # We always learn a node mask.
