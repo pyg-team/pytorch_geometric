@@ -20,6 +20,27 @@ class ExplainerDataset(InMemoryDataset):
     Ground-truth node-level and edge-level explainabilty masks are given based
     on whether nodes and edges are part of a certain motif or not.
 
+    For example, to generate a random Barabasi-Albert (BA) graph with 300
+    nodes, in which we want to randomly attach 80 :obj:`"house"` motifs, write:
+
+    .. code-block:: python
+
+        from torch_geometric.datasets import ExplainerDataset
+        from torch_geometric.datasets.graph_generator import BAGraph
+
+        dataset = ExplainerDataset(
+            graph_generator=BAGraph(num_nodes=300, num_edges=5),
+            motif_generator='house',
+            num_motifs=80,
+        )
+
+    .. note::
+
+        For an example of using :class:`ExplainerDataset`, see
+        `examples/gnn_explainer_ba_shapes.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        gnn_explainer_ba_shapes.py>`_.
+
     Args:
         graph_generator (GraphGenerator or str): The graph generator to be
             used, *e.g.*,
