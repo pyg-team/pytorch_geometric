@@ -149,7 +149,7 @@ class Explanation(Data):
 
     def threshold(self, threshold_value: Union[int, float],
                   threshold_type: ThresholdType) -> 'Explanation':
-        r"""Returns a copy of explanation with applied threshold
+        r"""Returns a copy of explanation with applied threshold.
 
         Args:
             threshold: the threshold, behavior depends on `threshold_type
