@@ -70,7 +70,7 @@ class DummyExplainer(ExplainerAlgorithm):
                     edge_dict[key]['edge_feat_mask'] = torch.rand_like(
                         edge_attr[key])
 
-            return HeteroExplanation(node_dict, edge_dict)
+            return HeteroExplanation({**node_dict, **edge_dict})
 
     def supports(self) -> bool:
         return True
