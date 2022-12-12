@@ -74,16 +74,6 @@ def test_available_explanations(data, node_mask, edge_mask, node_feat_mask,
 @pytest.mark.parametrize('node_feat_mask', [True, False])
 @pytest.mark.parametrize('edge_feat_mask', [True, False])
 def test_masks(data, node_mask, edge_mask, node_feat_mask, edge_feat_mask):
-    expected = []
-    if node_mask:
-        expected.append('node_mask')
-    if edge_mask:
-        expected.append('edge_mask')
-    if node_feat_mask:
-        expected.append('node_feat_mask')
-    if edge_feat_mask:
-        expected.append('edge_feat_mask')
-
     explanation = create_random_explanation(
         data,
         node_mask=node_mask,
@@ -91,8 +81,22 @@ def test_masks(data, node_mask, edge_mask, node_feat_mask, edge_feat_mask):
         node_feat_mask=node_feat_mask,
         edge_feat_mask=edge_feat_mask,
     )
-
-    assert set(explanation.masks) == set(expected)
+    expected_keys = []
+    expected_values = []
+    if node_mask:
+        expected_keys.append('node_mask')
+        expected_values.append(explanation.node_mask)
+    if edge_mask:
+        expected_keys.append('edge_mask')
+        expected_values.append(explanation.edge_mask)
+    if node_feat_mask:
+        expected_keys.append('node_feat_mask')
+        expected_values.append(explanation.node_feat_mask)
+    if edge_feat_mask:
+        expected_keys.append('edge_feat_mask')
+        expected_values.append(explanation.edge_feat_mask)
+    assert set(explanation.masks.keys()) == set(expected_keys)
+    assert set(explanation.masks.values()) == set(expected_values)
 
 
 def test_validate_explanation(data):
