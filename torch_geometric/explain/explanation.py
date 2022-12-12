@@ -1,5 +1,5 @@
 import copy
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from torch import Tensor
 
@@ -17,8 +17,8 @@ class Explanation(Data):
 
     Args:
         index (Union[int, Tensor], optional): The index of which part of the
-            model output the explanation is explaining. Can be a single index or
-            a tensor of indices, or None (for graph level explanations).
+            model output the explanation is explaining. Can be a single index
+            or a tensor of indices, or None (for graph level explanations).
             (default: :obj:`None`)
         node_mask (Tensor, optional): Node-level mask with shape
             :obj:`[num_nodes]`. (default: :obj:`None`)
@@ -138,7 +138,7 @@ class Explanation(Data):
         return out
 
     @property
-    def masks(self) -> Dict[str, Tensor]:
+    def available_explanations_masks(self) -> Dict[str, Tensor]:
         r"""Returns a dictionary of all masks available in the explanation"""
         mask_dict = {
             key: self[key]
@@ -159,7 +159,7 @@ class Explanation(Data):
         out = copy.copy(self)
 
         # get the evailable masks
-        mask_dict = out.masks
+        mask_dict = out.available_explanations_masks
 
         if threshold_type == ThresholdType.hard:
             mask_dict = hard_threshold(mask_dict, threshold_value)

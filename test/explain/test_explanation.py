@@ -97,8 +97,10 @@ def test_masks(data, node_mask, edge_mask, node_feat_mask, edge_feat_mask):
         expected_keys.append('edge_feat_mask')
         expected_values.append(explanation.edge_feat_mask)
 
-    assert set(explanation.masks.keys()) == set(expected_keys)
-    assert set(explanation.masks.values()) == set(expected_values)
+    assert set(
+        explanation.available_explanations_masks.keys()) == set(expected_keys)
+    assert set(explanation.available_explanations_masks.values()) == set(
+        expected_values)
 
 
 def test_validate_explanation(data):
