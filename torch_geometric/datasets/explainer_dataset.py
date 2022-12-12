@@ -9,7 +9,16 @@ from torch_geometric.explain import Explanation
 
 
 class ExplainerDataset(InMemoryDataset):
-    r"""Generates a custom synthetic dataset from Graph Generators. TODO
+    r"""Generates a synthetic dataset for evaluating explainabilty algorithms,
+    as described in the `"GNNExplainer: Generating Explanations for Graph
+    Neural Networks" <https://arxiv.org/abs/1903.03894>`_ paper.
+    The :class:`~torch_geometric.datasets.ExplainerDataset` creates synthetic
+    graphs coming from a
+    :class:`~torch_geometric.datasets.graph_generator.GraphGenerator`, and
+    randomly attaches :obj:`num_motifs` many motifs to it coming from a
+    :class:`~torch_geometric.datasets.graph_generator.MotifGenerator`.
+    Ground-truth node-level and edge-level explainabilty masks are then given,
+    based on whether a node and edge is part of a certain motif.
 
     Args:
         graph_generator (GraphGenerator or str): The graph generator to be
