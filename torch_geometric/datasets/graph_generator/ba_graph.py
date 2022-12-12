@@ -13,6 +13,7 @@ class BAGraph(GraphGenerator):
         num_edges (int): The number of edges from a new node to existing nodes.
     """
     def __init__(self, num_nodes: int, num_edges: int):
+        super().__init__()
         self.num_nodes = num_nodes
         self.num_edges = num_edges
 
