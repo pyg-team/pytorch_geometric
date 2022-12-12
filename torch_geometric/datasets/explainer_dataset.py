@@ -97,7 +97,7 @@ class ExplainerDataset(InMemoryDataset):
             edge_masks.append(torch.zeros(2))
 
             if 'y' in motif:
-                ys.append(motif.y + 1)
+                ys.append(motif.y + 1 if motif.y.min() == 0 else motif.y)
 
             num_nodes += motif.num_nodes
 
