@@ -195,6 +195,7 @@ def test_hetero_data_subgraph():
     }
 
     out = data.subgraph(subset)
+    out.validate(raise_on_error=True)
 
     assert out.num_node_types == data.num_node_types
     assert out.node_types == ['paper', 'author', 'conf']
