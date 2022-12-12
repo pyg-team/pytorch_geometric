@@ -95,7 +95,7 @@ def test_validate_explanation(data):
 
 
 def test_node_mask(data):
-    node_mask = torch.tensor([1.0, 0.0, 1.0, 0.0])
+    node_mask = torch.tensor([1., 0., 1., 0.])
 
     explanation = Explanation(
         node_mask=node_mask,
@@ -121,7 +121,7 @@ def test_node_mask(data):
 
 
 def test_edge_mask(data):
-    edge_mask = torch.tensor([1.0, 0.0, 1.0, 0.0, 0.0, 1.0])
+    edge_mask = torch.tensor([1., 0., 1., 0., 0., 1.])
 
     explanation = Explanation(
         edge_mask=edge_mask,

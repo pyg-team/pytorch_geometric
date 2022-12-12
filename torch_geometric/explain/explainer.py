@@ -87,7 +87,7 @@ class Explainer:
         self.edge_mask_type = explainer_config.edge_mask_type
         self.threshold_config = ThresholdConfig.cast(threshold_config)
 
-        self.algorithm.connect(self.explainer_config, self.model_config)
+        self.algorithm.connect(explainer_config, self.model_config)
 
     @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> torch.Tensor:
@@ -255,10 +255,10 @@ class Explainer:
 
         for store in explanation.node_stores:
             for key in ['node_mask', 'node_feat_mask']:
-                store[key] = self._threshold(store.get(key))
+                store[key] = self._threshold_mask(store.get(key))
 
         for store in explanation.edge_stores:
             for key in ['edge_mask', 'edge_feat_mask']:
-                store[key] = self._threshold(store.get(key))
+                store[key] = self._threshold_mask(store.get(key))
 
         return explanation

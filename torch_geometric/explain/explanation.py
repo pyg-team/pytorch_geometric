@@ -17,9 +17,9 @@ class ExplanationMixin:
             if key.endswith('_mask') and self[key] is not None
         ]
 
-    def validate(self, raise_on_error: bool = True) -> bool:
-        r"""Validates the correctness of the :class:`Explanation` object."""
-        status = super().validate()
+    def validate_masks(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the :class:`Explanation` masks."""
+        status = True
 
         for store in self.node_stores:
             mask = store.get('node_mask')
@@ -86,6 +86,12 @@ class Explanation(Data, ExplanationMixin):
             :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
+    def validate(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the :class:`Explanation` object."""
+        status = super().validate(raise_on_error)
+        status &= self.validate_masks(raise_on_error)
+        return status
+
     def get_explanation_subgraph(self) -> 'Explanation':
         r"""Returns the induced subgraph, in which all nodes and edges with
         zero attribution are masked out."""
@@ -147,9 +153,9 @@ class Explanation(Data, ExplanationMixin):
         feat_importance = self.node_feat_mask.sum(dim=0).cpu().numpy()
 
         if feat_labels is None:
-            feat_labels = range(feat_importance.numel())
+            feat_labels = range(feat_importance.shape[0])
 
-        if len(feat_labels) != feat_importance.numel():
+        if len(feat_labels) != feat_importance.shape[0]:
             raise ValueError(f"The '{self.__class__.__name__}' object holds "
                              f"{feat_importance.numel()} features, but "
                              f"only {len(feat_labels)} were passed")
@@ -181,15 +187,21 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
     and can hold node-attributions, edge-attributions and feature-attributions.
     It can also hold the original graph if needed.
     """
+    def validate(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the :class:`Explanation` object."""
+        status = super().validate(raise_on_error)
+        status &= self.validate_masks(raise_on_error)
+        return status
+
     def get_explanation_subgraph(self) -> 'HeteroExplanation':
         r"""Returns the induced subgraph, in which all nodes and edges with
         zero attribution are masked out."""
         return self._apply_masks(
-            node_mask={
+            node_mask_dict={
                 key: value > 0
                 for key, value in self.node_mask_dict.items()
             },
-            edge_mask={
+            edge_mask_dict={
                 key: value > 0
                 for key, value in self.edge_mask_dict.items()
             },
@@ -199,14 +211,14 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         r"""Returns the induced subgraph, in which all nodes and edges with any
         attribution are masked out."""
         return self._apply_masks(
-            node_mask={
+            node_mask_dict={
                 key: value == 0
                 for key, value in self.node_mask_dict.items()
-            } if 'node_mask' in self else None,
-            edge_mask={
+            },
+            edge_mask_dict={
                 key: value == 0
                 for key, value in self.edge_mask_dict.items()
-            } if 'edge_mask' in self else None,
+            },
         )
 
     def _apply_masks(
@@ -221,8 +233,6 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
                 if key == 'edge_index':
                     out[edge_type].edge_index = value[:, edge_mask]
                 elif self[edge_type].is_edge_attr(key):
-                    out[edge_type] = value[edge_mask]
+                    out[edge_type][key] = value[edge_mask]
 
-        out = out.subgraph(node_mask_dict)
-
-        return out
+        return out.subgraph(node_mask_dict)
