@@ -3,7 +3,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.metrics import groundtruth_metrics
+from torch_geometric.explain.metrics import get_groundtruth_metrics
 
 
 @pytest.fixture
@@ -69,7 +69,7 @@ def test_masks(data):
         edge_feat_mask=gt_edge_feat_mask,
     )
 
-    accuracy_metrics = groundtruth_metrics(explanation, groundtruth)
+    accuracy_metrics = get_groundtruth_metrics(explanation, groundtruth)
     assert accuracy_metrics[0] == 1.0
     assert accuracy_metrics[1] == 1.0
     assert accuracy_metrics[2] == 1.0

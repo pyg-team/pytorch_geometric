@@ -6,7 +6,7 @@ from torchmetrics import AUROC, ROC
 from torch_geometric.explain import Explanation
 
 
-def groundtruth_metrics(
+def get_groundtruth_metrics(
         explanation: Explanation,
         groundtruth: Explanation) -> Tuple[float, float, float, float, float]:
     """accuracy_scores: Compute accuracy scores when
