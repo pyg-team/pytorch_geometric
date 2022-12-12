@@ -6,8 +6,8 @@ from torch_geometric.utils import from_networkx
 
 
 class CustomMotif(MotifGenerator):
-    r"""Generates a motif based on a custom structure in the form of a
-    :class:`torch_geometric.data.Data` or :class:`networkx.Graph`.
+    r"""Generates a motif based on a custom structure coming from a
+    :class:`torch_geometric.data.Data` or :class:`networkx.Graph` object.
 
     Args:
         structure (torch_geometric.data.Data or networkx.Graph): The structure
