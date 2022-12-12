@@ -101,7 +101,7 @@ def test_hard_threshold(data, threshold_value, node_mask_type):
         assert set(mask.unique().tolist()).issubset({0, 1})
 
 
-@pytest.mark.parametrize('threshold_value', list(range(1, 10)))
+@pytest.mark.parametrize('threshold_value', [1, 5, 10])
 @pytest.mark.parametrize('threshold_type', ['topk', 'topk_hard'])
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
 def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):

@@ -150,12 +150,15 @@ def test_edge_mask(data):
 @pytest.mark.parametrize('top_k', [2, None])
 @pytest.mark.parametrize('node_feat_mask', [True, False])
 def test_visualize_feature_importance(data, top_k, node_feat_mask):
-    explanation = create_random_explanation(data,
-                                            node_feat_mask=node_feat_mask)
-    num_feats_plotted = top_k if top_k is not None else data.x.shape[-1]
+    explanation = create_random_explanation(
+        data,
+        node_feat_mask=node_feat_mask,
+    )
+
     if not node_feat_mask:
-        with pytest.raises(ValueError, match="node_feat_mask' not available"):
-            _ = explanation.visualize_feature_importance(top_k=top_k)
+        with pytest.raises(ValueError, match="node_feat_mask' is not"):
+            explanation.visualize_feature_importance(top_k=top_k)
     else:
         ax = explanation.visualize_feature_importance(top_k=top_k)
+        num_feats_plotted = top_k if top_k is not None else data.num_features
         assert len(ax.yaxis.get_ticklabels()) == num_feats_plotted
