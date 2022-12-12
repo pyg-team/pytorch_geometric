@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.explain import DummyExplainer, Explainer
+from torch_geometric.explain import DummyExplainer, Explainer, Explanation
 from torch_geometric.explain.config import ExplanationType
 
 
@@ -17,19 +17,12 @@ def data():
 
 
 class DummyModel(torch.nn.Module):
-    def __init__(self, out_dim: int = 1) -> None:
-        super().__init__()
-        self.out_dim = out_dim
-
     def forward(self, x, edge_index):
-        return x.mean().repeat(self.out_dim)
+        return x.mean().view(-1)
 
 
-@pytest.mark.parametrize('model', [
-    DummyModel(out_dim=1),
-    DummyModel(out_dim=2),
-])
-def test_get_prediction(data, model):
+def test_get_prediction(data):
+    model = DummyModel()
     assert model.training
 
     explainer = Explainer(
@@ -44,13 +37,13 @@ def test_get_prediction(data, model):
     )
     pred = explainer.get_prediction(data.x, data.edge_index)
     assert model.training
-    assert pred.size() == (model.out_dim, )
+    assert pred.size() == (1, )
 
 
 @pytest.mark.parametrize('target', [None, torch.randn(2)])
 @pytest.mark.parametrize('explanation_type', [x for x in ExplanationType])
 def test_forward(data, target, explanation_type):
-    model = DummyModel(out_dim=2)
+    model = DummyModel()
     assert model.training
 
     explainer = Explainer(
@@ -68,8 +61,14 @@ def test_forward(data, target, explanation_type):
         with pytest.raises(ValueError):
             explainer(data.x, data.edge_index, target=target)
     else:
-        explanation = explainer(data.x, data.edge_index, target=target)
+        explanation = explainer(
+            data.x,
+            data.edge_index,
+            target=target
+            if explanation_type == ExplanationType.phenomenon else None,
+        )
         assert model.training
+        assert isinstance(explanation, Explanation)
         assert 'node_feat_mask' in explanation.available_explanations
         assert explanation.node_feat_mask.size() == data.x.size()
 
@@ -78,7 +77,7 @@ def test_forward(data, target, explanation_type):
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
 def test_hard_threshold(data, threshold_value, node_mask_type):
     explainer = Explainer(
-        DummyModel(out_dim=2),
+        DummyModel(),
         algorithm=DummyExplainer(),
         explanation_type='model',
         node_mask_type=node_mask_type,
@@ -90,6 +89,7 @@ def test_hard_threshold(data, threshold_value, node_mask_type):
         threshold_config=('hard', threshold_value),
     )
     explanation = explainer(data.x, data.edge_index)
+
     if node_mask_type == 'object':
         assert 'node_mask' in explanation.available_explanations
     elif node_mask_type == 'attributes':
@@ -101,12 +101,12 @@ def test_hard_threshold(data, threshold_value, node_mask_type):
         assert set(mask.unique().tolist()).issubset({0, 1})
 
 
-@pytest.mark.parametrize('threshold_value', list(range(1, 10)))
+@pytest.mark.parametrize('threshold_value', [1, 5, 10])
 @pytest.mark.parametrize('threshold_type', ['topk', 'topk_hard'])
 @pytest.mark.parametrize('node_mask_type', ['object', 'attributes'])
 def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
     explainer = Explainer(
-        DummyModel(out_dim=2),
+        DummyModel(),
         algorithm=DummyExplainer(),
         explanation_type='model',
         node_mask_type=node_mask_type,

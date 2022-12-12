@@ -30,10 +30,9 @@ class ExplainerAlgorithm(torch.nn.Module):
         Args:
             model (torch.nn.Module): The model to explain.
             x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
-                node features. This is a dictionary in the heterogeneous case.
+                node features of a homogeneous or heterogeneous graph.
             edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
-                input edge indices. This is a dictionary in the heterogeneous
-                case.
+                input edge indices of a homogeneous or heterogeneous graph.
             target (torch.Tensor): The target of the model.
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
@@ -50,8 +49,7 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def supports(self) -> bool:
         r"""Checks if the explainer supports the user-defined settings provided
-        in :obj:`self.explainer_config`, :obj:`self.model_config`, and
-        :obj:`self.is_hetero`."""
+        in :obj:`self.explainer_config`, :obj:`self.model_config`."""
         pass
 
     ###########################################################################
@@ -82,13 +80,11 @@ class ExplainerAlgorithm(torch.nn.Module):
         self,
         explainer_config: ExplainerConfig,
         model_config: ModelConfig,
-        is_hetero: bool,
     ):
         r"""Connects an explainer and model configuration to the explainer
         algorithm."""
         self._explainer_config = ExplainerConfig.cast(explainer_config)
         self._model_config = ModelConfig.cast(model_config)
-        self._is_hetero = is_hetero
 
         if not self.supports():
             raise ValueError(
