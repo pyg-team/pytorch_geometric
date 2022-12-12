@@ -11,7 +11,7 @@ from torch_geometric.explain import Explanation
 class ExplainerDataset(InMemoryDataset):
     r"""Generates a synthetic dataset for evaluating explainabilty algorithms,
     as described in the `"GNNExplainer: Generating Explanations for Graph
-    Neural Networks" <https://arxiv.org/abs/1903.03894>`_ paper.
+    Neural Networks" <https://arxiv.org/abs/1903.03894>`__ paper.
     The :class:`~torch_geometric.datasets.ExplainerDataset` creates synthetic
     graphs coming from a
     :class:`~torch_geometric.datasets.graph_generator.GraphGenerator`, and
