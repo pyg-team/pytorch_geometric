@@ -1,10 +1,12 @@
-from typing import Optional
+from collections import defaultdict
+from typing import Dict, Optional, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.explain import Explanation
+from torch_geometric.explain import Explanation, HeteroExplanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
+from torch_geometric.typing import EdgeType, NodeType
 
 
 class DummyExplainer(ExplainerAlgorithm):
@@ -12,39 +14,63 @@ class DummyExplainer(ExplainerAlgorithm):
     def forward(
         self,
         model: torch.nn.Module,
-        x: Tensor,
-        edge_index: Tensor,
-        edge_attr: Optional[Tensor] = None,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        edge_attr: Optional[Union[Tensor, Dict[EdgeType, Tensor]]] = None,
         **kwargs,
-    ) -> Explanation:
+    ) -> Union[Explanation, HeteroExplanation]:
         r"""Returns random explanations based on the shape of the inputs.
 
         Args:
             model (torch.nn.Module): The model to explain.
-            x (torch.Tensor): The node features.
-            edge_index (torch.Tensor): The edge indices.
-            edge_attr (torch.Tensor, optional): The edge attributes.
-                (default: :obj:`None`)
+            x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
+                node features of a homogeneous or heterogeneous graph.
+            edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
+                input edge indices of a homogeneous or heterogeneous graph.
+            edge_attr (Union[torch.Tensor, Dict[EdgeType, torch.Tensor]],
+                optional): The inputs edge attributes of a homogeneous or
+                heterogeneous graph. (default: :obj:`None`)
 
         Returns:
-            Explanation: A random explanation based on the shape of the inputs.
+            Union[Explanation, HeteroExplanation]: A random explanation based
+                on the shape of the inputs.
         """
-        num_nodes, num_edges = x.size(0), edge_index.size(1)
+        assert isinstance(x, (Tensor, dict))
 
-        mask_dict = {}
-        mask_dict['node_feat_mask'] = torch.rand_like(x)
-        mask_dict['node_mask'] = torch.rand(num_nodes, device=x.device)
-        mask_dict['edge_mask'] = torch.rand(num_edges, device=x.device)
+        if isinstance(x, Tensor):
+            assert isinstance(edge_index, Tensor)
 
-        if edge_attr is not None:
-            mask_dict['edge_feat_mask'] = torch.rand_like(edge_attr)
+            return Explanation(
+                x=x,
+                edge_index=edge_index,
+                edge_attr=edge_attr,
+                node_mask=torch.rand(x.size(0), device=x.device),
+                node_feat_mask=torch.rand_like(x),
+                edge_mask=torch.rand(edge_index.size(1), device=x.device),
+                edge_feat_mask=torch.rand_like(edge_attr)
+                if edge_attr is not None else None,
+            )
+        else:
+            assert isinstance(edge_index, dict)
 
-        return Explanation(
-            edge_index=edge_index,
-            x=x,
-            edge_attr=edge_attr,
-            **mask_dict,
-        )
+            node_dict = defaultdict(dict)
+            for key, x in x.items():
+                node_dict[key]['x'] = x
+                node_dict[key]['node_mask'] = torch.rand(
+                    x.size(0), device=x.device)
+                node_dict[key]['node_feat_mask'] = torch.rand_like(x)
+
+            edge_dict = defaultdict(dict)
+            for key, edge_index in edge_index.items():
+                edge_dict[key]['edge_index'] = edge_index
+                edge_dict[key]['edge_mask'] = torch.rand(
+                    edge_index.size(1), device=edge_index.device)
+                if edge_attr is not None:
+                    edge_dict[key]['edge_attr'] = edge_attr[key]
+                    edge_dict[key]['edge_feat_mask'] = torch.rand_like(
+                        edge_attr[key])
+
+            return HeteroExplanation({**node_dict, **edge_dict})
 
     def supports(self) -> bool:
         return True
