@@ -138,7 +138,7 @@ class Explanation(Data):
         return out
 
     @property
-    def masks(self) -> dict[str, Tensor]:
+    def masks(self) -> Dict[str, Tensor]:
         r"""Returns a dictionary of all masks available in the explanation"""
         mask_dict = {
             key: self[key]
