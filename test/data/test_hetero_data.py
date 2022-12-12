@@ -179,24 +179,26 @@ def test_hetero_data_subgraph():
     data['paper'].num_nodes = x_paper.size(0)
     data['author'].x = x_author
     data['author'].num_nodes = x_author.size(0)
-    data['conference'].x = x_conference
-    data['conference'].num_nodes = x_conference.size(0)
+    data['conf'].x = x_conference
+    data['conf'].num_nodes = x_conference.size(0)
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'paper'].edge_attr = edge_attr_paper_paper
     data['paper', 'paper'].name = 'cites'
     data['author', 'paper'].edge_index = edge_index_author_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
-    data['paper', 'conference'].edge_index = edge_index_paper_conference
+    data['paper', 'conf'].edge_index = edge_index_paper_conference
 
     subset = {
         'paper': torch.randperm(x_paper.size(0))[:4],
-        'author': torch.randperm(x_author.size(0))[:2]
+        'author': torch.randperm(x_author.size(0))[:2],
+        'conf': torch.randperm(x_conference.size(0))[:2],
     }
 
     out = data.subgraph(subset)
+    out.validate(raise_on_error=True)
 
     assert out.num_node_types == data.num_node_types
-    assert out.node_types == ['paper', 'author']
+    assert out.node_types == ['paper', 'author', 'conf']
 
     assert len(out['paper']) == 3
     assert torch.allclose(out['paper'].x, data['paper'].x[subset['paper']])
@@ -205,11 +207,15 @@ def test_hetero_data_subgraph():
     assert len(out['author']) == 2
     assert torch.allclose(out['author'].x, data['author'].x[subset['author']])
     assert out['author'].num_nodes == 2
+    assert len(out['conf']) == 2
+    assert torch.allclose(out['conf'].x, data['conf'].x[subset['conf']])
+    assert out['conf'].num_nodes == 2
 
     assert out.edge_types == [
         ('paper', 'to', 'paper'),
         ('author', 'to', 'paper'),
         ('paper', 'to', 'author'),
+        ('paper', 'to', 'conf'),
     ]
 
     assert len(out['paper', 'paper']) == 3

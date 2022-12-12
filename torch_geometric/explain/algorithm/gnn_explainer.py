@@ -99,11 +99,6 @@ class GNNExplainer(ExplainerAlgorithm):
                           f"supported.")
             return False
 
-        is_hetero = self._is_hetero
-        if is_hetero:
-            logging.error("Heterogeneous graphs not supported.")
-            return False
-
         return True
 
     def forward(
@@ -155,6 +150,10 @@ class GNNExplainer(ExplainerAlgorithm):
         target_index: Optional[int] = None,
         **kwargs,
     ):
+        if isinstance(x, dict) or isinstance(edge_index, dict):
+            raise ValueError(f"Heterogeneous graphs not yet supported in "
+                             f"'{self.__class__.__name__}'")
+
         self._initialize_masks(x, edge_index)
 
         parameters = [self.node_mask]  # We always learn a node mask.
@@ -311,7 +310,7 @@ class GNNExplainer_:
 
         self.model = model
         self._explainer = GNNExplainer(epochs=epochs, lr=lr, **kwargs)
-        self._explainer.connect(explainer_config, model_config, False)
+        self._explainer.connect(explainer_config, model_config)
 
     @torch.no_grad()
     def get_initial_prediction(self, *args, **kwargs) -> Tensor:
