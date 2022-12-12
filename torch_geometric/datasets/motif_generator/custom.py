@@ -28,7 +28,7 @@ class CustomMotif(MotifGenerator):
                 pass
 
         if self.structure is None:
-            raise ValueError(f"Expected a 'structure' of type "
+            raise ValueError(f"Expected a motif structure of type "
                              f"'torch_geometric.data.Data' or 'networkx.Graph'"
                              f"(got {type(structure)})")
 

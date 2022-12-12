@@ -1,10 +1,10 @@
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.datasets.motif_generator import CustomGenerator
+from torch_geometric.datasets.motif_generator import CustomMotif
 
 
-class HouseMotif(CustomGenerator):
+class HouseMotif(CustomMotif):
     r"""Generates the house-structured motif from the `"GNNExplainer:
     Generating Explanations for Graph Neural Networks"
     <https://arxiv.org/pdf/1903.03894.pdf>`_ paper, containing 5 nodes and 6
