@@ -250,6 +250,7 @@ class HeteroLinear(torch.nn.Module):
         if torch_geometric.typing.WITH_PYG_LIB:
             assert self.weight is not None
 
+            perm: Optional[Tensor] = None
             if not self.is_sorted:
                 if (type_vec[1:] < type_vec[:-1]).any():
                     type_vec, perm = type_vec.sort()
@@ -260,6 +261,11 @@ class HeteroLinear(torch.nn.Module):
             out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:
                 out += self.bias[type_vec]
+
+            if perm is not None:  # Restore original order (if necessary).
+                out_unsorted = torch.empty_like(out)
+                out_unsorted[perm] = out
+                out = out_unsorted
         else:
             assert self.lins is not None
             out = x.new_empty(x.size(0), self.out_channels)
