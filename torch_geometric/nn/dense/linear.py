@@ -250,12 +250,11 @@ class HeteroLinear(torch.nn.Module):
         if torch_geometric.typing.WITH_PYG_LIB:
             assert self.weight is not None
 
-            needs_unsort = False
+            perm: Optional[Tensor] = None
             if not self.is_sorted:
                 if (type_vec[1:] < type_vec[:-1]).any():
                     type_vec, perm = type_vec.sort()
                     x = x[perm]
-                    needs_unsort = True
 
             type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
                 type_vec, self.num_types)
@@ -263,8 +262,7 @@ class HeteroLinear(torch.nn.Module):
             if self.bias is not None:
                 out += self.bias[type_vec]
 
-            # restore original order of vertices if necessary
-            if needs_unsort:
+            if perm is not None:  # Restore original order (if necessary).
                 out_unsorted = torch.empty_like(out)
                 out_unsorted[perm] = out
                 out = out_unsorted
