@@ -1,6 +1,9 @@
 torch_geometric.datasets
 ========================
 
+Benchmark Datasets
+------------------
+
 .. currentmodule:: torch_geometric.datasets
 
 .. autosummary::
