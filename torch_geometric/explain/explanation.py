@@ -17,9 +17,9 @@ class Explanation(Data):
 
     Args:
         index (Union[int, Tensor], optional): The index of which part of the
-        model output the explanation is explaining. Can be a single index or
-        a tensor of indices, or None (for graph level explanations).
-        (default: :obj:`None`)
+            model output the explanation is explaining. Can be a single index or
+            a tensor of indices, or None (for graph level explanations).
+            (default: :obj:`None`)
         node_mask (Tensor, optional): Node-level mask with shape
             :obj:`[num_nodes]`. (default: :obj:`None`)
         edge_mask (Tensor, optional): Edge-level mask with shape
