@@ -17,8 +17,8 @@ class ExplainerDataset(InMemoryDataset):
     :class:`~torch_geometric.datasets.graph_generator.GraphGenerator`, and
     randomly attaches :obj:`num_motifs` many motifs to it coming from a
     :class:`~torch_geometric.datasets.graph_generator.MotifGenerator`.
-    Ground-truth node-level and edge-level explainabilty masks are then given,
-    based on whether a node and edge is part of a certain motif.
+    Ground-truth node-level and edge-level explainabilty masks are given based
+    on whether nodes and edges are part of a certain motif or not.
 
     Args:
         graph_generator (GraphGenerator or str): The graph generator to be
