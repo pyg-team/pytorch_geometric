@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -7,6 +7,7 @@ from torch import Tensor
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.config import ExplainerConfig, ModelConfig
 from torch_geometric.nn import MessagePassing
+from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -16,8 +17,8 @@ class ExplainerAlgorithm(torch.nn.Module):
     def forward(
         self,
         model: torch.nn.Module,
-        x: Tensor,
-        edge_index: Tensor,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
@@ -28,8 +29,10 @@ class ExplainerAlgorithm(torch.nn.Module):
 
         Args:
             model (torch.nn.Module): The model to explain.
-            x (torch.Tensor): The input node features.
-            edge_index (torch.Tensor): The input edge indices.
+            x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
+                node features of a homogeneous or heterogeneous graph.
+            edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
+                input edge indices of a homogeneous or heterogeneous graph.
             target (torch.Tensor): The target of the model.
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
@@ -46,7 +49,7 @@ class ExplainerAlgorithm(torch.nn.Module):
     @abstractmethod
     def supports(self) -> bool:
         r"""Checks if the explainer supports the user-defined settings provided
-        in :obj:`self.explainer_config` and :obj:`self.model_config`."""
+        in :obj:`self.explainer_config`, :obj:`self.model_config`."""
         pass
 
     ###########################################################################
