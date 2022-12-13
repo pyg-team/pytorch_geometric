@@ -114,6 +114,7 @@ class HGTConv(MessagePassing):
             self.dims = torch.tensor(list(self.in_channels.values()))
             self.max_channels = self.dims.max()
             self.no_pad = (self.dims == self.max_channels).all()
+            self.infer_shapes = self.max_channels == -1
             for node_type in self.node_types:
                 self.k_lin[node_type] = Linear(self.max_channels, out_channels)
                 self.q_lin[node_type] = Linear(self.max_channels, out_channels)
@@ -186,12 +187,12 @@ class HGTConv(MessagePassing):
         out_dict = {node_type: [] for node_type in self.node_types}
 
         if not self.use_gmm:
-            if self.no_pad:
-                try:
-                    x = torch.cat(xs)
-                except:
-                    print([x.shape for x in xs])
+            if self.no_pad and not self.infer_shapes:
+                x = torch.cat(xs)
             else:
+                if self.infer_shapes:
+                    self.infer_shapes = False
+                    self.dims = torch.tensor([x.shape[-1] for x in xs])
                 x = torch.cat(pad_list(xs, self.dims))
             ptr = [0]
             count = 0
@@ -251,8 +252,8 @@ class HGTConv(MessagePassing):
 
         # parallelize over edge-types
         src_types = [edge_type[0] for edge_type in self.edge_types]
-        a_rels = [self.a_rel[edge_type] for edge_type in self.edge_types]
-        m_rels = [self.m_rel[edge_type] for edge_type in self.edge_types]
+        a_rels = [self.a_rel['__'.join(edge_type)] for edge_type in self.edge_types]
+        m_rels = [self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types]
         k_ins = [k_dict[src_type].transpose(0, 1) for src_type in src_types]
         v_ins = [v_dict[src_type].transpose(0, 1) for src_type in src_types]
         if self.use_gmm:
