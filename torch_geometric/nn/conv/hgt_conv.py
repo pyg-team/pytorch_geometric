@@ -190,10 +190,10 @@ class HGTConv(MessagePassing):
                 count += x_type_i.size(0)
                 ptr.append(count)
             ptr = torch.tensor(ptr).to(x.device)
-            k_wt = torch.cat(k_wts)
-            k_bias = torch.cat([b_i.reshape(-1, 1) for b_i in k_biases])
-            q_wt = torch.cat(q_wts)
-            q_bias = torch.cat([b_i.reshape(-1, 1) for b_i in q_biases])
+            k_wt = torch.stack(k_wts)
+            k_bias = torch.stack([b_i.reshape(-1, 1) for b_i in k_biases])
+            q_wt = torch.stack(q_wts)
+            q_bias = torch.stack([b_i.reshape(-1, 1) for b_i in q_biases])
 
         # compute K, Q, V over node-types
         if self.use_gmm:
