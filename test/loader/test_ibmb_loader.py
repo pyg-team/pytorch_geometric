@@ -66,7 +66,7 @@ def test_graph_ibmb():
                 for b in batches]) == len(train_indices)
 
     batch_loader = IBMBBatchLoader(
-        graph, batch_order='order', num_partitions=8,
+        graph, batch_order='sample', num_partitions=8,
         output_indices=train_indices, return_edge_index_type='adj',
         batch_expand_ratio=1., metis_output_weight=None, batch_size=2,
         shuffle=False)
@@ -75,7 +75,7 @@ def test_graph_ibmb():
     for b in batches:
         assert isinstance(b.edge_index, SparseTensor)
 
-    node_loader = IBMBNodeLoader(graph, batch_order='order',
+    node_loader = IBMBNodeLoader(graph, batch_order='sample',
                                  output_indices=train_indices,
                                  return_edge_index_type='adj',
                                  num_auxiliary_node_per_output=4,
