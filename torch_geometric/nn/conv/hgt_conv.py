@@ -113,7 +113,7 @@ class HGTConv(MessagePassing):
             # need to pad xs to concatenate them
             self.dims = torch.tensor(list(self.in_channels.values()))
             self.max_channels = self.dims.max()
-            self.no_pad = (dims == dims[0]).all()
+            self.no_pad = (self.dims == self.max_channels).all()
             for node_type in self.node_types:
                 self.k_lin[node_type] = Linear(self.max_channels, out_channels)
                 self.q_lin[node_type] = Linear(self.max_channels, out_channels)
