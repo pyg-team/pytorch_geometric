@@ -10,11 +10,7 @@ from ..inits import reset
 class PointGNNConv(MessagePassing):
     r"""The PointGNN operator from the `"Point-GNN: Graph Neural Network for
     3D Object Detection in a Point Cloud" <https://arxiv.org/abs/2003.01251>`_
-    paper, where the graph is statically constructed using radius-based cutoff.
-    The relative position is used in the message passing step to introduce
-    global translation invariance.
-    To also counter shifts in the local neighborhood of the center node, the
-    authors propose an alignment offset:
+    paper
 
     .. math::
 
@@ -23,8 +19,14 @@ class PointGNNConv(MessagePassing):
         \mathbf{e}_{j,i} &= f_{\mathbf{\Theta}}(\textrm{pos}_j -
         \textrm{pos}_i + \Delta \textrm{pos}_i, \mathbf{x}_j)
 
-        \mathbf{x}^{\prime}_i = g_{\mathbf{\Theta}}( \max_{j \in
+        \mathbf{x}^{\prime}_i &= g_{\mathbf{\Theta}}(\max_{j \in
         \mathcal{N}(i)} \mathbf{e}_{j,i}) + \mathbf{x}_i
+
+    The relative position is used in the message passing step to introduce
+    global translation invariance.
+    To also counter shifts in the local neighborhood of the center node, the
+    authors propose to utilize an alignment offset.
+    The graph should be statically constructed using radius-based cutoff.
 
     Args:
         mlp_h (torch.nn.Module): A neural network :math:`h_{\mathbf{\Theta}}`
@@ -68,6 +70,7 @@ class PointGNNConv(MessagePassing):
         reset(self.mlp_g)
 
     def forward(self, x: Tensor, pos: Tensor, edge_index: Adj) -> Tensor:
+        """"""
         # propagate_type: (x: Tensor, pos: Tensor)
         out = self.propagate(edge_index, x=x, pos=pos, size=None)
         out = self.mlp_g(out)
