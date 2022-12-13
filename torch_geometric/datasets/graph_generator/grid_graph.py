@@ -18,7 +18,7 @@ class GridGraph(GraphGenerator):
             returned position tensor.
     """
     def __init__(
-        self, 
+        self,
         height: int,
         width: int,
         dtype: Optional[torch.dtype] = None,
@@ -29,7 +29,8 @@ class GridGraph(GraphGenerator):
         self.dtype = dtype
 
     def __call__(self) -> Data:
-        edge_index, pos = grid(height=self.height, width=self.width, dtype=self.dtype)
+        edge_index, pos = grid(height=self.height, width=self.width,
+                               dtype=self.dtype)
         return Data(edge_index=edge_index, pos=pos)
 
     def __repr__(self) -> str:
