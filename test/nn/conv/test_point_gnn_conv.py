@@ -30,8 +30,8 @@ def test_pointgnn_conv():
     if is_full_test():
         t = '(Tensor, Tensor, Tensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x, pos, edge_index).tolist() == out.tolist()
+        assert torch.allclose(jit(x, pos, edge_index), out)
 
         t = '(Tensor, Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, pos, adj.t()), out, atol=1e-5)
+        assert torch.allclose(jit(x, pos, adj.t()), out)
