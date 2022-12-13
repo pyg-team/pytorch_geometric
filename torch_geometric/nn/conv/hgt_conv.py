@@ -170,14 +170,14 @@ class HGTConv(MessagePassing):
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
         # parralelize over node-types
-        xs = ist(x_dict.values())
-        k_wts = [self.k_lin[node_type].weight for node_type in node_types]
-        k_biases = [self.k_lin[node_type].bias for node_type in node_types]
-        q_wts = [self.q_lin[node_type].weight for node_type in node_types]
-        q_biases = [self.q_lin[node_type].bias for node_type in node_types]
-        v_wts = [self.v_lin[node_type].weight for node_type in node_types]
-        v_biases = [self.v_lin[node_type].bias for node_type in node_types]
-        out_dict = {node_type: [] for node_type in node_types}
+        xs = list(x_dict.values())
+        k_wts = [self.k_lin[node_type].weight for node_type in self.node_types]
+        k_biases = [self.k_lin[node_type].bias for node_type in self.node_types]
+        q_wts = [self.q_lin[node_type].weight for node_type in self.node_types]
+        q_biases = [self.q_lin[node_type].bias for node_type in self.node_types]
+        v_wts = [self.v_lin[node_type].weight for node_type in self.node_types]
+        v_biases = [self.v_lin[node_type].bias for node_type in self.node_types]
+        out_dict = {node_type: [] for node_type in self.node_types}
 
         if not self.use_gmm:
             if self.no_pad:
@@ -192,6 +192,8 @@ class HGTConv(MessagePassing):
             ptr = torch.tensor(ptr).to(x.device)
             k_wt = torch.cat(k_wts)
             k_bias = torch.cat([b_i.reshape(-1, 1) for b_i in k_biases])
+            q_wt = torch.cat(q_wts)
+            q_bias = torch.cat([b_i.reshape(-1, 1) for b_i in q_biases])
 
         # compute K, Q, V over node-types
         if self.use_gmm:
@@ -221,26 +223,25 @@ class HGTConv(MessagePassing):
                                            bias=k_bias)
             k_dict = {
                 node_type: k[ptr[i]:ptr[i + 1]].view(-1, H, D)
-                for i, node_type in enumerate(node_types)
+                for i, node_type in enumerate(self.node_types)
             }
             q = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=q_wt,
                                            bias=q_bias)
             q_dict = {
                 node_type: q[ptr[i]:ptr[i + 1]].view(-1, H, D)
-                for i, node_type in enumerate(node_types)
+                for i, node_type in enumerate(self.node_types)
             }
             v = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=v_wt,
                                            bias=v_bias)
             v_dict = {
                 node_type: v[ptr[i]:ptr[i + 1]].view(-1, H, D)
-                for i, node_type in enumerate(node_types)
+                for i, node_type in enumerate(self.node_types)
             }
 
         # parallelize over edge-types
-        edge_types = list(edge_index_dict.keys())
-        src_types = [edge_type[0] for edge_type in edge_types]
-        a_rels = [self.a_rel[edge_type] for edge_type in edge_types]
-        m_rels = [self.m_rel[edge_type] for edge_type in edge_types]
+        src_types = [edge_type[0] for edge_type in self.edge_types]
+        a_rels = [self.a_rel[edge_type] for edge_type in self.edge_types]
+        m_rels = [self.m_rel[edge_type] for edge_type in self.edge_types]
         k_ins = [k_dict[src_type].transpose(0, 1) for src_type in src_types]
         v_ins = [v_dict[src_type].transpose(0, 1) for src_type in src_types]
         if self.use_gmm:
@@ -274,10 +275,9 @@ class HGTConv(MessagePassing):
                 for i, src_type in enumerate(src_types)
             }
 
-        etypes_list = []
         q_list = []
         p_rels = []
-        for e_type in edge_types:
+        for e_type in self.edge_types:
             src_type, dst_type = e_type[0], e_type[-1]
             if torch.numel(edge_index_dict[e_type]) != 0:
                 edge_index_dict[e_type][0, :] = edge_index_dict[e_type][
@@ -290,7 +290,7 @@ class HGTConv(MessagePassing):
         p = torch.cat(p_rels)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
-        for e_type in enumerate(edge_types):
+        for e_type in enumerate(self.edge_types):
             dst_type = e_type[-1]
             dst_n_ids = edge_index_dict[edge_type][1, :]
             out_dict[dst_type].append(out[dst_n_ids])
