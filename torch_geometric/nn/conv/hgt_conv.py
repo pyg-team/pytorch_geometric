@@ -187,7 +187,10 @@ class HGTConv(MessagePassing):
 
         if not self.use_gmm:
             if self.no_pad:
-                x = torch.cat(xs)
+                try:
+                    x = torch.cat(xs)
+                except:
+                    print([x.shape for x in xs])
             else:
                 x = torch.cat(pad_list(xs, self.dims))
             ptr = [0]
@@ -197,9 +200,11 @@ class HGTConv(MessagePassing):
                 ptr.append(count)
             ptr = torch.tensor(ptr).to(x.device)
             k_wt = torch.stack(k_wts)
-            k_bias = torch.stack([b_i.reshape(-1, 1) for b_i in k_biases])
+            k_bias = torch.stack(k_biases)
             q_wt = torch.stack(q_wts)
-            q_bias = torch.stack([b_i.reshape(-1, 1) for b_i in q_biases])
+            q_bias = torch.stack(q_biases)
+            v_wt = torch.stack(v_wts)
+            v_bias = torch.stack(v_biases)
 
         # compute K, Q, V over node-types
         if self.use_gmm:
