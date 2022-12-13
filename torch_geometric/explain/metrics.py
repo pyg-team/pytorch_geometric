@@ -24,11 +24,15 @@ def get_groundtruth_metrics(
     gt_mask_tensor = torch.cat(
         list(map(lambda x: x.view(-1), gt_masks.values())))
     threshold = 0
-    ex_mask_tensor[ex_mask_tensor > threshold] = 1.0
     gt_mask_tensor[gt_mask_tensor > threshold] = 1.0
-
+    roc = ROC(task="binary")
+    fpr, tpr, thresholds = roc(ex_mask_tensor, gt_mask_tensor)
+    auroc = AUROC(task="binary")
+    auc = auroc(fpr, tpr)
+    ex_mask_tensor[ex_mask_tensor > threshold] = 1.0
     correct_preds = gt_mask_tensor == ex_mask_tensor
     incorrect_preds = gt_mask_tensor != ex_mask_tensor
+
     tp = torch.sum(gt_mask_tensor[correct_preds])
     tn = torch.sum(correct_preds) - tp
     fp = torch.sum(ex_mask_tensor[incorrect_preds])
@@ -38,9 +42,4 @@ def get_groundtruth_metrics(
     accuracy = (tp + tn) / (tp + fp + tn + fn)
     recall = tp / (tp + fn)
     f1_score = 2 * (precision * recall) / (precision + recall)
-    roc = ROC(task="binary")
-    fpr, tpr, thresholds = roc(ex_mask_tensor, gt_mask_tensor)
-    auroc = AUROC(task="binary")
-    auc = auroc(fpr, tpr)
-
     return accuracy, recall, precision, f1_score, auc
