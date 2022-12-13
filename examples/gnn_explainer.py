@@ -57,6 +57,7 @@ explanation = explainer(data.x, data.edge_index, index=node_index,
                         edge_weight=data.edge_weight)
 print(f'Generated explanations in {explanation.available_explanations}')
 
-ax = explainer.visualize_feature_importance(explanation)
-print('Plotting the feature importance')
-plt.savefig("feature_importance.png")
+path = 'feature_importance.png'
+ax = explanation.visualize_feature_importance()
+plt.savefig(path)
+print(f"Feature importance plot has been saved to '{path}'")
