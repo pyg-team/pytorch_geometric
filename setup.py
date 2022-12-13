@@ -32,6 +32,7 @@ full_requires = graphgym_requires + [
     'trimesh',
     'networkx',
     'tabulate',
+    'python-tsp',
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',

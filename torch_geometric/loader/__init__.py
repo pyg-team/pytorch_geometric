@@ -17,6 +17,7 @@ from .temporal_dataloader import TemporalDataLoader
 from .neighbor_sampler import NeighborSampler
 from .imbalanced_sampler import ImbalancedSampler
 from .dynamic_batch_sampler import DynamicBatchSampler
+from .ibmb_loader import IBMBBatchLoader, IBMBNodeLoader
 
 __all__ = classes = [
     'DataLoader',
@@ -39,6 +40,8 @@ __all__ = classes = [
     'NeighborSampler',
     'ImbalancedSampler',
     'DynamicBatchSampler',
+    'IBMBBatchLoader',
+    'IBMBNodeLoader'
 ]
 
 RandomNodeSampler = deprecated(
