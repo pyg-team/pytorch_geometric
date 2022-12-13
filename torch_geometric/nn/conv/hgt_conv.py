@@ -252,8 +252,12 @@ class HGTConv(MessagePassing):
 
         # parallelize over edge-types
         src_types = [edge_type[0] for edge_type in self.edge_types]
-        a_rels = [self.a_rel['__'.join(edge_type)] for edge_type in self.edge_types]
-        m_rels = [self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types]
+        a_rels = [
+            self.a_rel['__'.join(edge_type)] for edge_type in self.edge_types
+        ]
+        m_rels = [
+            self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
+        ]
         k_ins = [k_dict[src_type].transpose(0, 1) for src_type in src_types]
         v_ins = [v_dict[src_type].transpose(0, 1) for src_type in src_types]
         if self.use_gmm:
