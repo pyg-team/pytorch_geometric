@@ -489,7 +489,7 @@ class IBMBBatchLoader(IBMBBaseLoader):
         num_outnodeset_per_batch (int, optional): An :obj:`int` indicating how many batches to run in parallel. We calculate the topic-sensitive pagerank scores with power iteration. If out-of-memory issue is encountered, set it to a smaller value. (default: :obj:`50`)
         alpha (float, optional): A :obj:`float` of the teleport probability of pagerank calculation.
         approximate_ppr_iterations (int, optional): An :obj:`int` of number of iterations of power iteration. (default: :obj:`50`)
-        **kwargs (optional): Keywords of :class:`torch.utils.data.DataLoader`. Specifically, :obj:`shuffle=False` is forced.
+        **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`. Specifically, :obj:`shuffle=False` is forced.
     """
 
     def __init__(self, graph: Data,
@@ -597,7 +597,7 @@ class IBMBNodeLoader(IBMBBaseLoader):
         num_output_nodes_per_batch: Number of output nodes per batch.
         alpha (float, optional): A :obj:`float` of the teleport probability of pagerank calculation.
         eps (float, optional): A :obj:`float` of error threshold of PPR calculation. The smaller :obj`eps`:, the more accurate results of PPR calculation, but it also takes longer.
-        **kwargs (optional): Keywords of :class:`torch.utils.data.DataLoader`. Specifically, :obj:`shuffle=False` is forced.
+        **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`. Specifically, :obj:`shuffle=False` is forced.
     """
 
     def __init__(self, graph: Data,
