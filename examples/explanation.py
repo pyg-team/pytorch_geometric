@@ -8,6 +8,7 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import Explainer, GNNExplainer
 from torch_geometric.nn import GCNConv
 
+
 # print some dataset statistics
 def data_stats(dataset):
     print(f"Number of features: {dataset.num_features}")
@@ -16,6 +17,7 @@ def data_stats(dataset):
     print(f"Single sample #0: {dataset[0]}")
     print(f"Number of nodes in single sample: {dataset[0].num_nodes}")
     print(f"Number of edges in single sample: {dataset[0].num_edges}")
+
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
@@ -65,7 +67,8 @@ explainer = Explainer(
 
 # which node's neightborhood to visualize
 node_index = 71
-explanation = explainer(data.x, data.edge_index, index=node_index, edge_weight=data.edge_weight)
+explanation = explainer(data.x, data.edge_index, index=node_index,
+                        edge_weight=data.edge_weight)
 print(f'Generated explanations in {explanation.available_explanations}')
 
 explanation.visualize_subgraph(node_index, data.edge_index)
