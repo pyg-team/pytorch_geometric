@@ -1,6 +1,6 @@
 import networkx as nx
-import numpy as np
 import torch
+from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.loader import IBMBBatchLoader, IBMBNodeLoader
@@ -45,11 +45,11 @@ def test_graph_ibmb():
     batch_loader = IBMBBatchLoader(
         graph, batch_order='order', num_partitions=8,
         output_indices=train_indices, return_edge_index_type='edge_index',
-        batch_expand_ratio=1., metis_output_weight=None, batch_size=1,
+        batch_expand_ratio=1., metis_output_weight=None, batch_size=2,
         shuffle=False)
 
     batches = [b for b in batch_loader]
-    assert len(batches) == 7
+    assert len(batches) == 4
     assert sum([b.output_node_mask.sum()
                 for b in batches]) == len(train_indices)
 
@@ -57,16 +57,31 @@ def test_graph_ibmb():
                                  output_indices=train_indices,
                                  return_edge_index_type='edge_index',
                                  num_auxiliary_node_per_output=4,
-                                 num_output_nodes_per_batch=2, batch_size=1,
+                                 num_output_nodes_per_batch=2, batch_size=2,
                                  shuffle=False)
 
     batches = [b for b in node_loader]
-    assert len(batches) == 8
+    assert len(batches) == 4
     assert sum([b.output_node_mask.sum()
                 for b in batches]) == len(train_indices)
 
-    for out, aux in node_loader.node_wise_out_aux_pairs:
-        assert np.all(np.in1d(out, aux))
+    batch_loader = IBMBBatchLoader(
+        graph, batch_order='order', num_partitions=8,
+        output_indices=train_indices, return_edge_index_type='adj',
+        batch_expand_ratio=1., metis_output_weight=None, batch_size=2,
+        shuffle=False)
 
-    for out, aux in batch_loader.batch_wise_out_aux_pairs:
-        assert np.all(np.in1d(out, aux))
+    batches = [b for b in batch_loader]
+    for b in batches:
+        assert isinstance(b.edge_index, SparseTensor)
+
+    node_loader = IBMBNodeLoader(graph, batch_order='order',
+                                 output_indices=train_indices,
+                                 return_edge_index_type='adj',
+                                 num_auxiliary_node_per_output=4,
+                                 num_output_nodes_per_batch=2, batch_size=2,
+                                 shuffle=False)
+
+    batches = [b for b in node_loader]
+    for b in batches:
+        assert isinstance(b.edge_index, SparseTensor)
