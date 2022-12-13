@@ -21,8 +21,7 @@ def pad_list(xs: List[Tensor], dims: Tensor) -> List[Tensor]:
     for i, x in enumerate(xs):
         if x.shape[1] < max_size:
             xs[i] = torch.concat(
-                (x, torch.zeros(x.shape[0], max_size - x.shape[1])), dim=1
-            )
+                (x, torch.zeros(x.shape[0], max_size - x.shape[1])), dim=1)
     return xs
 
 
@@ -103,7 +102,7 @@ class HGTConv(MessagePassing):
         self.edge_types = metadata[1]
         if self.use_gmm:
             # grouped gemm allows us not to have to pad
-            for node_type, in_channels in self.in_channels.items(): 
+            for node_type, in_channels in self.in_channels.items():
                 self.k_lin[node_type] = Linear(in_channels, out_channels)
                 self.q_lin[node_type] = Linear(in_channels, out_channels)
                 self.v_lin[node_type] = Linear(in_channels, out_channels)
@@ -114,14 +113,12 @@ class HGTConv(MessagePassing):
             self.dims = torch.tensor(list(self.in_channels.values()))
             self.max_channels = self.dims.max()
             self.no_pad = (dims == dims[0]).all()
-            for node_type in self.node_types: 
+            for node_type in self.node_types:
                 self.k_lin[node_type] = Linear(self.max_channels, out_channels)
                 self.q_lin[node_type] = Linear(self.max_channels, out_channels)
                 self.v_lin[node_type] = Linear(self.max_channels, out_channels)
                 self.a_lin[node_type] = Linear(self.max_channels, out_channels)
                 self.skip[node_type] = Parameter(torch.Tensor(1))
-
-
 
         self.a_rel = ParameterDict()
         self.m_rel = ParameterDict()
