@@ -7,6 +7,8 @@ from torch_geometric.data.data import Data, warn_or_raise
 from torch_geometric.data.hetero_data import HeteroData
 from torch_geometric.typing import EdgeType, NodeType
 
+import graphviz
+
 
 class ExplanationMixin:
     @property
@@ -175,6 +177,45 @@ class Explanation(Data, ExplanationMixin):
         ax.bar_label(container=ax.containers[0], label_type='edge')
 
         return ax
+
+    def visualize_subgraph(self, node_index: int, edge_index: Tensor):
+        """Threshold the explanation mask according to the thresholding method.
+        Generate and explanation subgraph visualization for thresholded and non-thresholded explanation.
+        The output would be a visualization of the explanation subgraph where edge width depends on the importance value of each edge.
+        Args:
+            explanation (Explanation): The explanation to visualize.
+        """
+        u_nodes = []
+        v_nodes = []
+        edge_weights = []
+
+        for index, weight in enumerate(self.edge_mask):
+            # edge_index is in COO format
+            u_node = int(edge_index[0][index].detach().item())
+            v_node = int(edge_index[1][index].detach().item())
+            if(weight != 0):
+                u_nodes.append(u_node)
+                v_nodes.append(v_node)
+                edge_weights.append(weight.detach().item())
+
+        # normalize edge weights between 0 and 10 to use them as edge thickness in visualized graph
+        norm_edge_weights = []
+
+        for weight in edge_weights:
+            norm = (float(weight) - min(edge_weights)) / (max(edge_weights) - min(edge_weights))
+            norm_edge_weights.append( round(norm*10, 2) )
+
+        # Initialize a graphviz undirected graph
+        graph_filename = "visualized_subgraph"
+        g = graphviz.Graph("G", filename = graph_filename, format = "pdf", engine = 'sfdp')
+        g.attr('graph', overlap = "false")
+        g.attr('graph', label = f"Subgraph Visualization for Node {node_index}")
+
+        for index, norm_edge_weight in enumerate(norm_edge_weights):
+            g.edge(str(u_nodes[index]), str(v_nodes[index]), penwidth = str(norm_edge_weight))
+
+        # if cleanup is set to True, the file that contains the DOT syntax for graph rendering, with name 'graph_filename' will be deleted. Final graph in defined format will continute to exist.
+        g.view(cleanup = True)
 
 
 class HeteroExplanation(HeteroData, ExplanationMixin):
