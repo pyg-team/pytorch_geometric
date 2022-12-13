@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.3.0] - 2023-MM-DD
 ### Added
 - Added `PointGNNConv` message passing layer ([#6174](https://github.com/pyg-team/pytorch_geometric/pull/6174)))
+- Added `GridGraph` graph generator to generate grid graphs ([#6220](https://github.com/pyg-team/pytorch_geometric/pull/6220)
+- Added `visualize_feature_importance` to support node feature visualizations ([#6094](https://github.com/pyg-team/pytorch_geometric/pull/6094))
+- Added heterogeneous graph support to `Explanation` framework ([#6091](https://github.com/pyg-team/pytorch_geometric/pull/6091), [#6218](https://github.com/pyg-team/pytorch_geometric/pull/6218))
+- Added a `CustomMotif` motif generator ([#6179](https://github.com/pyg-team/pytorch_geometric/pull/6179))
+- Added `ERGraph` graph generator to generate Ergos-Renyi (ER) graphs ([#6073](https://github.com/pyg-team/pytorch_geometric/pull/6073)
+- Added `BAGraph` graph generator to generate Barabasi-Albert graphs - the usage of `datasets.BAShapes` is now deprecated ([#6072](https://github.com/pyg-team/pytorch_geometric/pull/6072)
+- Added explainability benchmark dataset framework ([#6104](https://github.com/pyg-team/pytorch_geometric/pull/6104))
+- Added `seed_time` attribute to temporal `NodeLoader` outputs in case `input_time` is given ([#6196](https://github.com/pyg-team/pytorch_geometric/pull/6196))
 - Added `Data.edge_subgraph` and `HeteroData.edge_subgraph` functionalities ([#6193](https://github.com/pyg-team/pytorch_geometric/pull/6193))
 - Added `input_time` option to `LightningNodeData` and `transform_sampler_output` to `NodeLoader` and `LinkLoader` ([#6187](https://github.com/pyg-team/pytorch_geometric/pull/6187))
 - Added `summary` for PyG/PyTorch models ([#5859](https://github.com/pyg-team/pytorch_geometric/pull/5859), [#6161](https://github.com/pyg-team/pytorch_geometric/pull/6161))
@@ -14,6 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added support for dropping nodes in `utils.to_dense_batch` in case `max_num_nodes` is smaller than the number of nodes  ([#6124](https://github.com/pyg-team/pytorch_geometric/pull/6124))
 - Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
 ### Changed
+- Fixed a bug in the output order in `HeteroLinear` for un-sorted type vectors ([#6198](https://github.com/pyg-team/pytorch_geometric/pull/6198))
 - Breaking Change: Move `ExplainerConfig` arguments to the `Explainer` class  ([#6176](https://github.com/pyg-team/pytorch_geometric/pull/6176))
 - Refactored `NeighborSampler` to be input-type agnostic ([#6173](https://github.com/pyg-team/pytorch_geometric/pull/6173))
 - Infer correct CUDA device ID in `profileit` decorator ([#6164](https://github.com/pyg-team/pytorch_geometric/pull/6164))
@@ -27,7 +36,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.2.0] - 2022-12-01
 ### Added
-- Extended `GNNExplainer` to support edge level explanations ([#6056](https://github.com/pyg-team/pytorch_geometric/pull/6056))
+- Extended `GNNExplainer` to support edge level explanations ([#6056](https://github.com/pyg-team/pytorch_geometric/pull/6056), [#6083](https://github.com/pyg-team/pytorch_geometric/pull/6083))
 - Added CPU affinitization for `NodeLoader` ([#6005](https://github.com/pyg-team/pytorch_geometric/pull/6005))
 - Added triplet sampling in `LinkNeighborLoader` ([#6004](https://github.com/pyg-team/pytorch_geometric/pull/6004))
 - Added `FusedAggregation` of simple scatter reductions ([#6036](https://github.com/pyg-team/pytorch_geometric/pull/6036))
