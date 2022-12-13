@@ -87,6 +87,7 @@ class HGTConv(MessagePassing):
         if not isinstance(in_channels, dict):
             in_channels = {node_type: in_channels for node_type in metadata[0]}
         # can only use grouped matmul if torch >= 1.14
+        major_vers, minor_vers = str(torch.__version__).split('.')[:2]
         self.use_gmm = int(major_vers) >= 2 or int(minor_vers) >= 14
         self.in_channels = in_channels
         self.out_channels = out_channels
