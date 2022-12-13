@@ -16,6 +16,16 @@ from torch_geometric.typing import EdgeType, Metadata, NodeType, pyg_lib
 from torch_geometric.utils import softmax
 
 
+def pad_list(xs: List[Tensor], dims: Tensor) -> List[Tensor]:
+    max_size = dims.max()
+    for i, x in enumerate(xs):
+        if x.shape[1] < max_size:
+            xs[i] = torch.concat(
+                (x, torch.zeros(x.shape[0], max_size - x.shape[1])), dim=1
+            )
+    return xs
+
+
 def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
     if len(xs) == 0:
         return None
@@ -77,7 +87,8 @@ class HGTConv(MessagePassing):
 
         if not isinstance(in_channels, dict):
             in_channels = {node_type: in_channels for node_type in metadata[0]}
-
+        # can only use grouped matmul if torch >= 1.14
+        self.use_gmm = int(major_vers) >= 2 or int(minor_vers) >= 14
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
@@ -88,12 +99,29 @@ class HGTConv(MessagePassing):
         self.v_lin = ModuleDict()
         self.a_lin = ModuleDict()
         self.skip = ParameterDict()
-        for node_type, in_channels in self.in_channels.items():
-            self.k_lin[node_type] = Linear(in_channels, out_channels)
-            self.q_lin[node_type] = Linear(in_channels, out_channels)
-            self.v_lin[node_type] = Linear(in_channels, out_channels)
-            self.a_lin[node_type] = Linear(out_channels, out_channels)
-            self.skip[node_type] = Parameter(torch.Tensor(1))
+        self.node_types = metadata[0]
+        self.edge_types = metadata[1]
+        if self.use_gmm:
+            # grouped gemm allows us not to have to pad
+            for node_type, in_channels in self.in_channels.items(): 
+                self.k_lin[node_type] = Linear(in_channels, out_channels)
+                self.q_lin[node_type] = Linear(in_channels, out_channels)
+                self.v_lin[node_type] = Linear(in_channels, out_channels)
+                self.a_lin[node_type] = Linear(out_channels, out_channels)
+                self.skip[node_type] = Parameter(torch.Tensor(1))
+        else:
+            # need to pad xs to concatenate them
+            self.dims = torch.tensor(list(self.in_channels.values()))
+            self.max_channels = self.dims.max()
+            self.no_pad = (dims == dims[0]).all()
+            for node_type in self.node_types: 
+                self.k_lin[node_type] = Linear(self.max_channels, out_channels)
+                self.q_lin[node_type] = Linear(self.max_channels, out_channels)
+                self.v_lin[node_type] = Linear(self.max_channels, out_channels)
+                self.a_lin[node_type] = Linear(self.max_channels, out_channels)
+                self.skip[node_type] = Parameter(torch.Tensor(1))
+
+
 
         self.a_rel = ParameterDict()
         self.m_rel = ParameterDict()
@@ -107,8 +135,6 @@ class HGTConv(MessagePassing):
 
         self.reset_parameters()
         major_vers, minor_vers = str(torch.__version__).split('.')[:2]
-        # only use grouped matmul if torch >= 1.14
-        self.use_gmm = int(major_vers) >= 2 or int(minor_vers) >= 14
 
     def reset_parameters(self):
         reset(self.k_lin)
@@ -146,7 +172,7 @@ class HGTConv(MessagePassing):
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
         # parralelize over node-types
-        node_types, xs = list(x_dict.keys()), list(x_dict.values())
+        xs = ist(x_dict.values())
         k_wts = [self.k_lin[node_type].weight for node_type in node_types]
         k_biases = [self.k_lin[node_type].bias for node_type in node_types]
         q_wts = [self.q_lin[node_type].weight for node_type in node_types]
@@ -156,7 +182,10 @@ class HGTConv(MessagePassing):
         out_dict = {node_type: [] for node_type in node_types}
 
         if not self.use_gmm:
-            x = torch.cat(xs)
+            if self.no_pad:
+                x = torch.cat(xs)
+            else:
+                x = torch.cat(pad_list(xs, self.dims))
             ptr = [0]
             count = 0
             for x_type_i in xs:
@@ -191,19 +220,19 @@ class HGTConv(MessagePassing):
             }
         else:
             k = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=k_wt,
-                                           biases=k_bias)
+                                           bias=k_bias)
             k_dict = {
                 node_type: k[ptr[i]:ptr[i + 1]].view(-1, H, D)
                 for i, node_type in enumerate(node_types)
             }
             q = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=q_wt,
-                                           biases=q_bias)
+                                           bias=q_bias)
             q_dict = {
                 node_type: q[ptr[i]:ptr[i + 1]].view(-1, H, D)
                 for i, node_type in enumerate(node_types)
             }
             v = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=v_wt,
-                                           biases=v_bias)
+                                           bias=v_bias)
             v_dict = {
                 node_type: v[ptr[i]:ptr[i + 1]].view(-1, H, D)
                 for i, node_type in enumerate(node_types)
