@@ -203,10 +203,10 @@ def create_batchwise_out_aux_pairs(
         primes_in_part, *_ = np.intersect1d(part, prime_indices,
                                             assume_unique=True,
                                             return_indices=True)
-        if len(primes_in_part):  # There ARE output nodes in this partition
+        if len(primes_in_part):  # no output nodes in this partition
             cur_output_nodes.append(primes_in_part)
 
-        # accumulate enough output nodes for a batch, to make good use of GPU memory
+        # accumulate enough output nodes to make good use of GPU memory
         if len(cur_output_nodes
                ) >= num_outnodeset_per_batch or n == len(partitions) - 1:
             topk_neighbors = ppr_power_method(adj, cur_output_nodes, topk,
@@ -227,8 +227,7 @@ def create_batchwise_out_aux_pairs(
 def get_pairs(ppr_mat: csr_matrix) -> np.ndarray:
     ppr_mat = ppr_mat + ppr_mat.transpose()
 
-    ppr_mat = ppr_mat.tocoo(
-    )  # find issue: https://github.com/scipy/scipy/blob/v1.7.1/scipy/sparse/extract.py#L12-L40
+    ppr_mat = ppr_mat.tocoo()
     row, col, data = ppr_mat.row, ppr_mat.col, ppr_mat.data
     mask = (row > col)  # lu
 
@@ -244,7 +243,6 @@ def get_pairs(ppr_mat: csr_matrix) -> np.ndarray:
 @numba.njit(cache=True)
 def prime_orient_merge(ppr_pairs: np.ndarray, primes_per_batch: int,
                        num_nodes: int):
-    # cannot use list for id_primes_list, updating node_id_list[id_primes_list[id2]] require id_primes_list to be array
     id_primes_list = list(np.arange(num_nodes, dtype=np.int32).reshape(-1, 1))
     node_id_list = np.arange(num_nodes, dtype=np.int32)
     placeholder = np.zeros(0, dtype=np.int32)
@@ -354,15 +352,17 @@ def topk_ppr_matrix(
         deg_inv_sqrt = 1. / deg_sqrt
 
         row, col = ppr_matrix.nonzero()
-        ppr_matrix.data = deg_sqrt[
-            output_node_indices[row]] * ppr_matrix.data * deg_inv_sqrt[col]
+        ppr_matrix.data = deg_sqrt[output_node_indices[row]] * \
+            ppr_matrix.data * \
+            deg_inv_sqrt[col]
     elif normalization == 'col':
         # Assume undirected (symmetric) adjacency matrix
         deg_inv = 1. / np.maximum(out_degree, 1e-12)
 
         row, col = ppr_matrix.nonzero()
-        ppr_matrix.data = out_degree[
-            output_node_indices[row]] * ppr_matrix.data * deg_inv[col]
+        ppr_matrix.data = out_degree[output_node_indices[row]] * \
+            ppr_matrix.data * \
+            deg_inv[col]
     elif normalization == 'row':
         pass
     else:
@@ -371,7 +371,6 @@ def topk_ppr_matrix(
     return ppr_matrix, neighbors
 
 
-# https://pytorch-geometric.readthedocs.io/en/latest/_modules/torch_geometric/transforms/gdc.html#GDC.diffusion_matrix_approx
 @numba.njit(cache=True, parallel=True)
 def calc_ppr_topk_parallel(indptr, indices, deg, alpha, epsilon, nodes) \
         -> Tuple[List[np.ndarray], List[np.ndarray]]:
@@ -449,7 +448,7 @@ class IBMBBaseLoader(DataLoader):
             f"Caching data with type {return_edge_index_type}")
 
         if return_edge_index_type == 'adj':
-            assert adj is not None, "Trying to cache adjacency matrix, got None type."
+            assert adj is not None
 
         for out, aux in pbar:
             mask = torch.from_numpy(np.in1d(aux, out))
@@ -507,25 +506,58 @@ class IBMBBaseLoader(DataLoader):
 
 class IBMBBatchLoader(IBMBBaseLoader):
     r"""
-    A batch-wise IBMB dataloader of `"Influence-Based Mini-Batching for Graph Neural Networks"<https://openreview.net/forum?id=b9g0vxzYa_>`_ paper.
+    A batch-wise IBMB dataloader of `"Influence-Based Mini-Batching for
+    Graph Neural Networks"
+    <https://openreview.net/forum?id=b9g0vxzYa_>`_ paper.
 
-    First METIS graph partitioning algorithm is used, then we find the output nodes within each partition. Afterwards we find auxiliary nodes for each set of output nodes with topic-sensitvie pagerank as a batch.
+    First METIS graph partitioning algorithm is used, then we find the
+    output nodes within each partition. Afterwards we find auxiliary nodes
+    for each set of output nodes with topic-sensitvie pagerank as a batch.
 
-    We end up with a list of :obj:`[(output: np.ndarray, auxiliary: np.ndarray), ...]` nodes pairs. If :obj:`batch_size` of the dataloader is 1, we precalculate and cache the subgraphs in memory. Otherwise, we might need to
-    merge the subgraphs, e.g. :obj:`(Union(output1, output2, ...), Union(auxiliary1, auxiliary2, ...))`. Therefore, we do not cache them and instead collate the potentially overlapping subgraphs dynamically.
+    We end up with a list of :obj:`[(output: array, auxiliary: array), ...]`
+    nodes pairs. If :obj:`batch_size` of the dataloader is 1, we
+    precalculate and cache the subgraphs in memory. Otherwise, we might
+    need to merge the subgraphs, e.g. :obj:`(Union(output1, output2, ...),
+    Union(auxiliary1, auxiliary2, ...))`. Therefore, we do not cache them
+    and instead collate the potentially overlapping subgraphs dynamically.
 
     Args:
-        graph (torch_geometric.data.Data): The given graph data object, assumes to be undirected.
-        batch_order (str): A string indicating the batch order type, should be one of :obj:`order`, :obj:`sample` and :obj:`rand`. If :obj:`order`, we calculate the pair wise KL divergence between every two batches, and organize an optimal order. If :obj:`sample`, we sample the next batch wrt the last one, a batch with higher KL divergence score is more likely to be sampled. If :obj:`rand`, we shuffle the batches randomly.
+        graph (torch_geometric.data.Data): The given graph data object, assumes
+            to be undirected.
+        batch_order (str): A string indicating the batch order type, should
+            be one of :obj:`order`, :obj:`sample` and :obj:`rand`. If
+            :obj:`order`, we calculate the pair wise KL divergence between
+            every two batches, and organize an optimal order. If :obj:`sample`,
+            we sample the next batch wrt the last one, a batch with higher KL
+            divergence score is more likely to be sampled. If :obj:`rand`, we
+            shuffle the batches randomly.
         num_partitions (int): Number of partitions.
-        output_indices (torch.Tensor): A :obj:`torch.Tensor` vector containing a set of nodes as output nodes. Normally taken from train, validation or test split.
-        return_edge_index_type (str): A string indicating the :obj:`edge_index` type. Should be either :obj:`adj` or :obj:`edge_index`. If :obj:`adj`, the edge_index of the batch will be a :obj:`SparseTensor`, otherwise :obj:`torch.Tensor`.
-        batch_expand_ratio (float, optional): A :obj:`float` containing the ratio between the returned batch size and the original partition size. For example, the partition has 100 nodes, and you would like the batch to have 200 nodes, then set it to :obj:`2.`. (default: :obj:`1.`)
-        metis_output_weight (float, optional): The weights on the output nodes for METIS graph partitioning algorithm. (default: :obj:`None`)
-        num_outnodeset_per_batch (int, optional): An :obj:`int` indicating how many batches to run in parallel. We calculate the topic-sensitive pagerank scores with power iteration. If out-of-memory issue is encountered, set it to a smaller value. (default: :obj:`50`)
-        alpha (float, optional): A :obj:`float` of the teleport probability of pagerank calculation.
-        approximate_ppr_iterations (int, optional): An :obj:`int` of number of iterations of power iteration. (default: :obj:`50`)
-        **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`. Specifically, :obj:`shuffle=False` is forced.
+        output_indices (torch.Tensor): A :obj:`torch.Tensor` vector
+            containing a set of nodes as output nodes. Normally taken from
+            train, validation or test split.
+        return_edge_index_type (str): A string indicating the
+            :obj:`edge_index` type. Should be either :obj:`adj` or
+            :obj:`edge_index`. If :obj:`adj`, the edge_index of the batch will
+            be a :obj:`SparseTensor`, otherwise :obj:`torch.Tensor`.
+        batch_expand_ratio (float, optional): A :obj:`float` containing the
+            ratio between the returned batch size and the original partition
+            size. For example, the partition has 100 nodes, and you would like
+            the batch to have 200 nodes, then set it to :obj:`2.`.
+            (default: :obj:`1.`)
+        metis_output_weight (float, optional): The weights on the output
+            nodes for METIS graph partitioning algorithm. (default:
+            :obj:`None`)
+        num_outnodeset_per_batch (int, optional): An :obj:`int` indicating
+            how many batches to run in parallel. We calculate the
+            topic-sensitive pagerank scores with power iteration. If
+            out-of-memory issue is encountered, set it to a smaller value.
+            (default: :obj:`50`)
+        alpha (float, optional): A :obj:`float` of the teleport probability
+            of pagerank calculation.
+        approximate_ppr_iterations (int, optional): An :obj:`int` of number
+            of iterations of power iteration. (default: :obj:`50`)
+        **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`.
+            Specifically, :obj:`shuffle=False` is forced.
     """
     def __init__(self, graph: Data, batch_order: str, num_partitions: int,
                  output_indices: torch.Tensor, return_edge_index_type: str,
@@ -616,22 +648,46 @@ class IBMBBatchLoader(IBMBBaseLoader):
 
 
 class IBMBNodeLoader(IBMBBaseLoader):
-    r"""A node-wise IBMB dataloader of `"Influence-Based Mini-Batching for Graph Neural Networks"<https://openreview.net/forum?id=b9g0vxzYa_>`_ paper.
+    r"""A node-wise IBMB dataloader of `"Influence-Based Mini-Batching for
+    Graph Neural Networks"
+    <https://openreview.net/forum?id=b9g0vxzYa_>`_ paper.
 
-    We first calculate the personalized pagerank (PPR) score for each output node, then take the :obj`k`: ones with the highest scores as its auxiliary nodes. We then merge them according to the pair wise PPR scores of each pair of output nodes.
+    We first calculate the personalized pagerank (PPR) score for each
+    output node, then take the :obj:`k` ones with the highest scores as
+    its auxiliary nodes. We then merge them according to the pair wise
+    PPR scores of each pair of output nodes.
 
-    Similar to :class`~torch_geometric.loader.IBMBBatchLoader`:, we store the subgraphs in cache if :obj:`batch_size` is 1, otherwise we merge batches dynamically.
+    Similar to :class:`~torch_geometric.loader.IBMBBatchLoader`, we store
+    the subgraphs in cache if :obj:`batch_size` is 1, otherwise we merge
+    batches dynamically.
 
     Args:
-        graph (torch_geometric.data.Data): The given graph data. Assumes to be undirected.
-        batch_order (str): A string indicating the batch order type, should be one of :obj:`order`, :obj:`sample` and :obj:`rand`. If :obj:`order`, we calculate the pair wise KL divergence between every two batches, and organize an optimal order. If :obj:`sample`, we sample the next batch wrt the last one, a batch with higher KL divergence score is more likely to be sampled. If :obj:`rand`, we shuffle the batches randomly.
-        output_indices (torch.Tensor): A :obj:`torch.Tensor` vector containing a set of nodes as output nodes. Normally taken from train, validation or test split.
-        return_edge_index_type (str): A string indicating the :obj:`edge_index` type. Should be either :obj:`adj` or :obj:`edge_index`. If :obj:`adj`, the edge_index of the batch will be a :obj:`SparseTensor`, otherwise :obj:`torch.Tensor`.
-        num_auxiliary_node_per_output (int): Number of auxiliary nodes per output node.
+        graph (torch_geometric.data.Data): The given graph data. Assumes to
+            be undirected.
+        batch_order (str): A string indicating the batch order type, should
+            be one of :obj:`order`, :obj:`sample` and :obj:`rand`.
+            If :obj:`order`, we calculate the pair wise KL divergence between
+            every two batches, and organize an optimal order. If :obj:`sample`,
+            we sample the next batch wrt the last one, a batch with higher KL
+            divergence score is more likely to be sampled. If :obj:`rand`,
+            we shuffle the batches randomly.
+        output_indices (torch.Tensor): A :obj:`torch.Tensor` vector
+            containing a set of nodes as output nodes. Normally taken from
+            train, validation or test split.
+        return_edge_index_type (str): A string indicating the :obj:`edge_index`
+            type. Should be either :obj:`adj` or :obj:`edge_index`.
+            If :obj:`adj`, the edge_index of the batch will be a
+            :obj:`SparseTensor`, otherwise :obj:`torch.Tensor`.
+            num_auxiliary_node_per_output (int): Number of auxiliary nodes per
+            output node.
         num_output_nodes_per_batch: Number of output nodes per batch.
-        alpha (float, optional): A :obj:`float` of the teleport probability of pagerank calculation.
-        eps (float, optional): A :obj:`float` of error threshold of PPR calculation. The smaller :obj`eps`:, the more accurate results of PPR calculation, but it also takes longer.
-        **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`. Specifically, :obj:`shuffle=False` is forced.
+        alpha (float, optional): A :obj:`float` of the teleport probability
+            of pagerank calculation.
+        eps (float, optional): A :obj:`float` of error threshold of PPR
+            calculation. The smaller :obj`eps`:, the more accurate results
+            of PPR calculation, but it also takes longer.
+        **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`.
+            Specifically, :obj:`shuffle=False` is forced.
     """
     def __init__(self, graph: Data, batch_order: str,
                  output_indices: torch.LongTensor, return_edge_index_type: str,
@@ -708,7 +764,9 @@ class IBMBNodeLoader(IBMBBaseLoader):
         if isinstance(neighbors, list):
             neighbors = np.array(neighbors, dtype=object)
 
-        _union = lambda inputs: np.unique(np.concatenate(inputs))
+        def _union(inputs):
+            return np.unique(np.concatenate(inputs))
+
         for p in output_list:
             node_wise_out_aux_pairs.append(
                 (self.output_indices[p],

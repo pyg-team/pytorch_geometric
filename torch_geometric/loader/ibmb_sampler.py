@@ -9,7 +9,7 @@ class IBMBOrderedSampler(Sampler[int]):
     r"""A sampler with given order, specially for IBMB loaders.
 
     Args:
-        data_source (Union[np.ndarray, torch.Tensor, List]): A :obj:`np.ndarray`,
+        data_source (np.ndarray, torch.Tensor, List): A :obj:`np.ndarray`,
             :obj:`torch.Tensor`, or
             :obj:`List` data object.
             Contains the order of the batches.
@@ -33,8 +33,9 @@ class IBMBWeightedSampler(Sampler[int]):
     including the first batch in the next round.
 
     Args:
-        batch_kl_div (np.ndarray, torch.Tensor): A :obj:`np.ndarray` or :obj:`torch.Tensor`
-            each element [i, j] contains the pair wise KL divergence between batch i and j.
+        batch_kl_div (np.ndarray, torch.Tensor): A :obj:`np.ndarray` or
+        :obj:`torch.Tensor`, each element [i, j] contains the pair wise
+        KL divergence between batch i and j.
     """
     def __init__(self, batch_kl_div: Union[np.ndarray, torch.Tensor]) -> None:
         data_source = np.arange(batch_kl_div.shape[0])
