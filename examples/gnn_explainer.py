@@ -20,10 +20,10 @@ class Net(torch.nn.Module):
         self.conv1 = GCNConv(dataset.num_features, 16)
         self.conv2 = GCNConv(16, dataset.num_classes)
 
-    def forward(self, x, edge_index, edge_weight):
-        x = F.relu(self.conv1(x, edge_index, edge_weight))
+    def forward(self, x, edge_index):
+        x = F.relu(self.conv1(x, edge_index))
         x = F.dropout(x, training=self.training)
-        x = self.conv2(x, edge_index, edge_weight)
+        x = self.conv2(x, edge_index)
         return F.log_softmax(x, dim=1)
 
 
@@ -35,7 +35,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 for epoch in range(1, 201):
     model.train()
     optimizer.zero_grad()
-    log_logits = model(data.x, data.edge_index, data.edge_weight)
+    log_logits = model(data.x, data.edge_index)
     loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
     loss.backward()
     optimizer.step()
@@ -53,8 +53,7 @@ explainer = Explainer(
     ),
 )
 node_index = 10
-explanation = explainer(data.x, data.edge_index, index=node_index,
-                        edge_weight=data.edge_weight)
+explanation = explainer(data.x, data.edge_index, index=node_index)
 print(f'Generated explanations in {explanation.available_explanations}')
 
 path = 'feature_importance.png'
