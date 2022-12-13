@@ -16,7 +16,7 @@ def test_graph_ibmb():
     y = torch.arange(num_nodes) % 3
 
     graph = Data(x=x, y=y, edge_index=edge_index)
-    train_indices = torch.randint(low=0, high=33, size=(10, ))
+    train_indices = torch.unique(torch.randint(high=33, size=(20, )))
     batch_loader = IBMBBatchLoader(
         graph, batch_order='order', num_partitions=4,
         output_indices=train_indices, return_edge_index_type='edge_index',
