@@ -2,8 +2,10 @@ import pytest
 
 from torch_geometric.datasets import InfectionDataset
 from torch_geometric.datasets.graph_generator import ERGraph
+from torch_geometric.testing import withPackage
 
 
+@withPackage('networkx')
 @pytest.mark.parametrize('graph_generator', [
     ERGraph(num_nodes=500, edge_prob=0.004),
 ])

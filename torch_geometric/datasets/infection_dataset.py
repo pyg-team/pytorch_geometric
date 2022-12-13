@@ -1,7 +1,6 @@
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
-from networkx import all_shortest_paths, shortest_path_length
 
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.datasets.graph_generator import GraphGenerator
@@ -100,6 +99,7 @@ class InfectionDataset(InMemoryDataset):
 
     def get_graph(self, path_length: int, num_infected: int,
                   seed: Optional[int] = None) -> Explanation:
+        import networkx as nx
         if seed is not None:
             seed_everything(seed)
         data = self.graph_generator()
@@ -127,7 +127,7 @@ class InfectionDataset(InMemoryDataset):
                 infected_indices = x[sub_nodes, 1].nonzero(as_tuple=True)[0]
                 infected_nodes = sub_nodes[infected_indices]
                 sp_length = [(idx.item(),
-                              shortest_path_length(G, idx.item(), node))
+                              nx.shortest_path_length(G, idx.item(), node))
                              for idx in infected_nodes]
                 # only retain the shortest path with distance length
                 sp_length = [(idx, length) for idx, length in sp_length
@@ -137,7 +137,7 @@ class InfectionDataset(InMemoryDataset):
                 elif len(sp_length) == 1:
                     # Add explanation for node with one unique path
                     src_node = sp_length[0][0]
-                    sp_generator = all_shortest_paths(G, src_node, node)
+                    sp_generator = nx.all_shortest_paths(G, src_node, node)
                     sp = next(sp_generator)
                     if next(sp_generator, None) is None:
                         sp_edge_index = [(sp[i], sp[i + 1])
