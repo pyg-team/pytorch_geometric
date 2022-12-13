@@ -8,7 +8,7 @@ from torch_geometric.utils import grid
 
 
 class GridGraph(GraphGenerator):
-    r"""Generates Grid Graphs.
+    r"""Generates two-dimensional grid graphs.
     See :meth:`~torch_geometric.utils.grid` for more information.
 
     Args:
