@@ -2,11 +2,12 @@ from typing import List, Optional, Union
 
 import torch
 from torch import Tensor
+
 from torch_geometric.nn import MLP
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv import MessagePassing
-
 from torch_geometric.typing import Adj
+
 
 class PointGNNConv(MessagePassing):
     r"""The PointGNN operator from the `"Point-GNN: Graph Neural Network for
@@ -59,7 +60,8 @@ class PointGNNConv(MessagePassing):
         out = self.lin_g(out)
         return x + out
 
-    def message(self, pos_j: Tensor, pos_i: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
+    def message(self, pos_j: Tensor, pos_i: Tensor, x_i: Tensor,
+                x_j: Tensor) -> Tensor:
         delta = self.lin_h(x_i)
         e = torch.cat([pos_j - pos_i + delta, x_j], dim=-1)
         e = self.lin_f(e)

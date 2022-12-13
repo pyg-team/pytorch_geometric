@@ -1,8 +1,9 @@
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import PointGNNConv, MLP
+from torch_geometric.nn import MLP, PointGNNConv
 from torch_geometric.testing import is_full_test
+
 
 def test_pointgnn_conv():
     x = torch.randn(6, 3)
@@ -13,7 +14,8 @@ def test_pointgnn_conv():
     MLP_f = MLP([6, 64, 3])
     MLP_g = MLP([3, 64, 3])
 
-    conv = PointGNNConv(state_channels=3, MLP_h=MLP_h, MLP_f=MLP_f, MLP_g=MLP_g)
+    conv = PointGNNConv(state_channels=3, MLP_h=MLP_h, MLP_f=MLP_f,
+                        MLP_g=MLP_g)
     assert conv.__repr__() == 'PointGNNConv(3, lin_h=MLP(3, 64, 3),' \
                         ' lin_f=MLP(6, 64, 3),lin_g=MLP(3, 64, 3))'
     out = conv(x, x, edge_index)
