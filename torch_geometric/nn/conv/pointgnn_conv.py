@@ -1,11 +1,12 @@
 from typing import List, Optional, Union
 
 import torch
-
+from torch import Tensor
 from torch_geometric.nn import MLP
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv import MessagePassing
 
+from torch_geometric.typing import Adj
 
 class PointGNNConv(MessagePassing):
     r"""The PointGNN operator from the `"Point-GNN: Graph Neural Network for
@@ -36,6 +37,7 @@ class PointGNNConv(MessagePassing):
     def __init__(self, state_channels: int, MLP_h: MLP, MLP_f: MLP, MLP_g: MLP,
                  aggr: Optional[Union[str, List[str],
                                       Aggregation]] = "max", **kwargs):
+        # kwargs.setdefault('aggr', 'max')
         self.state_channels = state_channels
 
         super().__init__(aggr, **kwargs)
@@ -51,13 +53,19 @@ class PointGNNConv(MessagePassing):
         self.lin_f.reset_parameters()
         self.lin_g.reset_parameters()
 
-    def forward(self, x, pos, edge_index):
+    def forward(self, x: Tensor, pos: Tensor, edge_index: Adj) -> Tensor:
+        # propagate_type: (x: Tensor, pos: Tensor)
         out = self.propagate(edge_index, x=x, pos=pos)
         out = self.lin_g(out)
         return x + out
 
-    def message(self, pos_j, pos_i, x_i, x_j):
+    def message(self, pos_j: Tensor, pos_i: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
         delta = self.lin_h(x_i)
         e = torch.cat([pos_j - pos_i + delta, x_j], dim=-1)
         e = self.lin_f(e)
         return e
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.state_channels}, '
+                f'lin_h={self.lin_h}, lin_f={self.lin_f},'
+                f'lin_g={self.lin_g})')
