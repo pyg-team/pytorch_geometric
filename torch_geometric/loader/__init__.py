@@ -20,28 +20,13 @@ from .dynamic_batch_sampler import DynamicBatchSampler
 from .ibmb_loader import IBMBBatchLoader, IBMBNodeLoader
 
 __all__ = classes = [
-    'DataLoader',
-    'NodeLoader',
-    'LinkLoader',
-    'NeighborLoader',
-    'LinkNeighborLoader',
-    'HGTLoader',
-    'ClusterData',
-    'ClusterLoader',
-    'GraphSAINTSampler',
-    'GraphSAINTNodeSampler',
-    'GraphSAINTEdgeSampler',
-    'GraphSAINTRandomWalkSampler',
-    'ShaDowKHopSampler',
-    'RandomNodeLoader',
-    'DataListLoader',
-    'DenseDataLoader',
-    'TemporalDataLoader',
-    'NeighborSampler',
-    'ImbalancedSampler',
-    'DynamicBatchSampler',
-    'IBMBBatchLoader',
-    'IBMBNodeLoader'
+    'DataLoader', 'NodeLoader', 'LinkLoader', 'NeighborLoader',
+    'LinkNeighborLoader', 'HGTLoader', 'ClusterData', 'ClusterLoader',
+    'GraphSAINTSampler', 'GraphSAINTNodeSampler', 'GraphSAINTEdgeSampler',
+    'GraphSAINTRandomWalkSampler', 'ShaDowKHopSampler', 'RandomNodeLoader',
+    'DataListLoader', 'DenseDataLoader', 'TemporalDataLoader',
+    'NeighborSampler', 'ImbalancedSampler', 'DynamicBatchSampler',
+    'IBMBBatchLoader', 'IBMBNodeLoader'
 ]
 
 RandomNodeSampler = deprecated(

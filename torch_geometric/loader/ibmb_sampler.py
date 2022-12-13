@@ -14,7 +14,8 @@ class IBMBOrderedSampler(Sampler[int]):
             :obj:`List` data object.
             Contains the order of the batches.
     """
-    def __init__(self, data_source: Union[np.ndarray, torch.Tensor, List]) -> None:
+    def __init__(self, data_source: Union[np.ndarray, torch.Tensor,
+                                          List]) -> None:
         self.data_source = data_source
         super().__init__(data_source)
 
@@ -35,7 +36,6 @@ class IBMBWeightedSampler(Sampler[int]):
         batch_kl_div (np.ndarray, torch.Tensor): A :obj:`np.ndarray` or :obj:`torch.Tensor`
             each element [i, j] contains the pair wise KL divergence between batch i and j.
     """
-
     def __init__(self, batch_kl_div: Union[np.ndarray, torch.Tensor]) -> None:
         data_source = np.arange(batch_kl_div.shape[0])
         self.data_source = data_source
@@ -53,7 +53,8 @@ class IBMBWeightedSampler(Sampler[int]):
 
         next_id = 0
         while np.any(probs):
-            next_id = np.random.choice(num_batches, size=None, replace=False, p=probs[last] / probs[last].sum())
+            next_id = np.random.choice(num_batches, size=None, replace=False,
+                                       p=probs[last] / probs[last].sum())
             last = next_id
             fetch_idx.append(next_id)
             probs[:, next_id] = 0.

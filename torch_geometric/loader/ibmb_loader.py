@@ -1,30 +1,36 @@
 import logging
-from heapq import heappush, heappop, heapify
+from heapq import heapify, heappop, heappush
 from math import ceil
-from typing import List, Union, Tuple, Optional
+from typing import List, Optional, Tuple, Union
 
 import numba
 import numpy as np
 import torch
 from python_tsp.heuristics import solve_tsp_simulated_annealing
-from scipy.sparse import csr_matrix, coo_matrix
-from torch.utils.data import RandomSampler, DataLoader
+from scipy.sparse import coo_matrix, csr_matrix
+from torch.utils.data import DataLoader, RandomSampler
 from torch_sparse import SparseTensor
 from tqdm import tqdm
 
 from torch_geometric.data import Data
-from torch_geometric.loader.ibmb_sampler import IBMBWeightedSampler, IBMBOrderedSampler
-from torch_geometric.utils import subgraph, is_undirected, coalesce
+from torch_geometric.loader.ibmb_sampler import (
+    IBMBOrderedSampler,
+    IBMBWeightedSampler,
+)
+from torch_geometric.utils import coalesce, is_undirected, subgraph
 
 
-def get_partitions(edge_index: Union[torch.LongTensor, SparseTensor],
-                   num_partitions: int,
-                   indices: torch.LongTensor,
-                   num_nodes: int,
-                   output_weight: Optional[float] = None) -> List[torch.LongTensor]:
-    assert isinstance(edge_index, (torch.LongTensor, SparseTensor)), f'Unsupported edge_index type {type(edge_index)}'
+def get_partitions(
+        edge_index: Union[torch.LongTensor, SparseTensor], num_partitions: int,
+        indices: torch.LongTensor, num_nodes: int,
+        output_weight: Optional[float] = None) -> List[torch.LongTensor]:
+    assert isinstance(
+        edge_index,
+        (torch.LongTensor,
+         SparseTensor)), f'Unsupported edge_index type {type(edge_index)}'
     if isinstance(edge_index, torch.LongTensor):
-        edge_index = SparseTensor.from_edge_index(edge_index, sparse_sizes=(num_nodes, num_nodes))
+        edge_index = SparseTensor.from_edge_index(
+            edge_index, sparse_sizes=(num_nodes, num_nodes))
 
     if output_weight is not None and output_weight != 1:
         node_weight = torch.ones(num_nodes)
@@ -33,18 +39,18 @@ def get_partitions(edge_index: Union[torch.LongTensor, SparseTensor],
         node_weight = None
 
     _, partptr, perm = edge_index.partition(num_parts=num_partitions,
-                                            recursive=False,
-                                            weighted=False,
+                                            recursive=False, weighted=False,
                                             node_weight=node_weight)
 
     partitions = []
     for i in range(len(partptr) - 1):
-        partitions.append(perm[partptr[i]: partptr[i + 1]])
+        partitions.append(perm[partptr[i]:partptr[i + 1]])
 
     return partitions
 
 
-def get_pair_wise_distance(ys: List, num_classes: int, dist_type: str = 'kl') -> np.ndarray:
+def get_pair_wise_distance(ys: List, num_classes: int,
+                           dist_type: str = 'kl') -> np.ndarray:
     num_batches = len(ys)
 
     counts = np.zeros((num_batches, num_classes), dtype=np.int32)
@@ -61,10 +67,13 @@ def get_pair_wise_distance(ys: List, num_classes: int, dist_type: str = 'kl') ->
             if dist_type == 'l1':
                 pairwise_dist[i, j] = np.sum(np.abs(counts[i] - counts[j]))
             elif dist_type == 'kl':
+
                 def kl_divergence(p: np.ndarray, q: np.ndarray):
                     return (p * np.log(p / q)).sum()
 
-                pairwise_dist[i, j] = kl_divergence(counts[i], counts[j]) + kl_divergence(counts[j], counts[i])
+                pairwise_dist[i, j] = kl_divergence(counts[i],
+                                                    counts[j]) + kl_divergence(
+                                                        counts[j], counts[i])
             else:
                 raise ValueError
 
@@ -75,7 +84,9 @@ def get_pair_wise_distance(ys: List, num_classes: int, dist_type: str = 'kl') ->
     return pairwise_dist
 
 
-def indices_complete_check(loader: List[Tuple[Union[torch.Tensor, np.ndarray], Union[torch.Tensor, np.ndarray]]],
+def indices_complete_check(loader: List[Tuple[Union[torch.Tensor, np.ndarray],
+                                              Union[torch.Tensor,
+                                                    np.ndarray]]],
                            output_indices: Union[torch.Tensor, np.ndarray]):
     if isinstance(output_indices, torch.Tensor):
         output_indices = output_indices.cpu().numpy()
@@ -87,36 +98,30 @@ def indices_complete_check(loader: List[Tuple[Union[torch.Tensor, np.ndarray], U
         if isinstance(aux, torch.Tensor):
             aux = aux.cpu().numpy()
 
-        assert np.all(np.in1d(out, aux)), "Not all output nodes are in aux nodes!"
+        assert np.all(np.in1d(out,
+                              aux)), "Not all output nodes are in aux nodes!"
         outs.append(out)
 
     outs = np.sort(np.concatenate(outs))
-    assert np.all(outs == np.sort(output_indices)), "Output nodes missing or duplicate!"
+    assert np.all(
+        outs == np.sort(output_indices)), "Output nodes missing or duplicate!"
 
 
-def get_subgraph(out_indices: torch.Tensor,
-                 graph: Data,
-                 return_edge_index_type: str,
-                 adj: SparseTensor,
-                 **kwargs):
+def get_subgraph(out_indices: torch.Tensor, graph: Data,
+                 return_edge_index_type: str, adj: SparseTensor, **kwargs):
     if return_edge_index_type == 'adj':
         assert adj is not None
 
     if return_edge_index_type == 'adj':
-        subg = Data(x=graph.x[out_indices],
-                    y=graph.y[out_indices],
+        subg = Data(x=graph.x[out_indices], y=graph.y[out_indices],
                     edge_index=adj[out_indices, :][:, out_indices])
     elif return_edge_index_type == 'edge_index':
-        edge_index, edge_attr = subgraph(out_indices,
-                                         graph.edge_index,
-                                         graph.edge_attr,
-                                         relabel_nodes=True,
+        edge_index, edge_attr = subgraph(out_indices, graph.edge_index,
+                                         graph.edge_attr, relabel_nodes=True,
                                          num_nodes=graph.num_nodes,
                                          return_edge_mask=False)
-        subg = Data(x=graph.x[out_indices],
-                    y=graph.y[out_indices],
-                    edge_index=edge_index,
-                    edge_attr=edge_attr)
+        subg = Data(x=graph.x[out_indices], y=graph.y[out_indices],
+                    edge_index=edge_index, edge_attr=edge_attr)
     else:
         raise NotImplementedError
 
@@ -126,9 +131,8 @@ def get_subgraph(out_indices: torch.Tensor,
     return subg
 
 
-def define_sampler(batch_order: str,
-                   ys: List[Union[torch.Tensor, np.ndarray, List]],
-                   num_classes: int,
+def define_sampler(batch_order: str, ys: List[Union[torch.Tensor, np.ndarray,
+                                                    List]], num_classes: int,
                    dist_type: str = 'kl'):
     if batch_order == 'rand':
         logging.info("Running with random order")
@@ -148,20 +152,20 @@ def define_sampler(batch_order: str,
     return sampler
 
 
-def create_batchwise_out_aux_pairs(adj: SparseTensor,
-                                   partitions: List[Union[torch.LongTensor, np.ndarray]],
-                                   prime_indices: Union[torch.LongTensor, np.ndarray],
-                                   topk: int,
-                                   num_outnodeset_per_batch: int = 50,
-                                   alpha: float = 0.2,
-                                   ppr_iterations: int = 50) -> List[Tuple[np.ndarray, np.ndarray]]:
+def create_batchwise_out_aux_pairs(
+        adj: SparseTensor, partitions: List[Union[torch.LongTensor,
+                                                  np.ndarray]],
+        prime_indices: Union[torch.LongTensor, np.ndarray], topk: int,
+        num_outnodeset_per_batch: int = 50, alpha: float = 0.2,
+        ppr_iterations: int = 50) -> List[Tuple[np.ndarray, np.ndarray]]:
     def ppr_power_method(adj: SparseTensor,
-                         batch: List[Union[np.ndarray, torch.LongTensor]],
-                         topk: int,
-                         num_iter: int,
-                         alpha: float) -> List[np.ndarray]:
+                         batch: List[Union[np.ndarray,
+                                           torch.LongTensor]], topk: int,
+                         num_iter: int, alpha: float) -> List[np.ndarray]:
         topk_neighbors = []
-        logits = torch.zeros(adj.size(0), len(batch), device=adj.device())  # each column contains a set of output nodes
+        logits = torch.zeros(
+            adj.size(0), len(batch),
+            device=adj.device())  # each column contains a set of output nodes
         for i, tele_set in enumerate(batch):
             logits[tele_set, i] = 1. / len(tele_set)
 
@@ -171,13 +175,16 @@ def create_batchwise_out_aux_pairs(adj: SparseTensor,
 
         inds = new_logits.argsort(0)
         nonzeros = (new_logits > 0).sum(0)
-        nonzeros = torch.minimum(nonzeros, torch.tensor([topk], dtype=torch.int64, device=adj.device()))
+        nonzeros = torch.minimum(
+            nonzeros,
+            torch.tensor([topk], dtype=torch.int64, device=adj.device()))
         for i in range(new_logits.shape[1]):
             topk_neighbors.append(inds[-nonzeros[i]:, i].cpu().numpy())
 
         return topk_neighbors
 
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    device = torch.device(
+        'cuda') if torch.cuda.is_available() else torch.device('cpu')
     if isinstance(prime_indices, torch.Tensor):
         prime_indices = prime_indices.cpu().numpy()
 
@@ -193,16 +200,21 @@ def create_batchwise_out_aux_pairs(adj: SparseTensor,
         if isinstance(part, torch.Tensor):
             part = part.cpu().numpy()
 
-        primes_in_part, *_ = np.intersect1d(part, prime_indices, assume_unique=True, return_indices=True)
+        primes_in_part, *_ = np.intersect1d(part, prime_indices,
+                                            assume_unique=True,
+                                            return_indices=True)
         if len(primes_in_part):  # There ARE output nodes in this partition
             cur_output_nodes.append(primes_in_part)
 
         # accumulate enough output nodes for a batch, to make good use of GPU memory
-        if len(cur_output_nodes) >= num_outnodeset_per_batch or n == len(partitions) - 1:
-            topk_neighbors = ppr_power_method(adj, cur_output_nodes, topk, ppr_iterations, alpha)
+        if len(cur_output_nodes
+               ) >= num_outnodeset_per_batch or n == len(partitions) - 1:
+            topk_neighbors = ppr_power_method(adj, cur_output_nodes, topk,
+                                              ppr_iterations, alpha)
             for i in range(len(cur_output_nodes)):
                 # force output nodes to be aux nodes
-                auxiliary_nodes = np.union1d(cur_output_nodes[i], topk_neighbors[i])
+                auxiliary_nodes = np.union1d(cur_output_nodes[i],
+                                             topk_neighbors[i])
                 loader.append((cur_output_nodes[i], auxiliary_nodes))
             cur_output_nodes = []
 
@@ -215,7 +227,8 @@ def create_batchwise_out_aux_pairs(adj: SparseTensor,
 def get_pairs(ppr_mat: csr_matrix) -> np.ndarray:
     ppr_mat = ppr_mat + ppr_mat.transpose()
 
-    ppr_mat = ppr_mat.tocoo()  # find issue: https://github.com/scipy/scipy/blob/v1.7.1/scipy/sparse/extract.py#L12-L40
+    ppr_mat = ppr_mat.tocoo(
+    )  # find issue: https://github.com/scipy/scipy/blob/v1.7.1/scipy/sparse/extract.py#L12-L40
     row, col, data = ppr_mat.row, ppr_mat.col, ppr_mat.data
     mask = (row > col)  # lu
 
@@ -229,7 +242,8 @@ def get_pairs(ppr_mat: csr_matrix) -> np.ndarray:
 
 
 @numba.njit(cache=True)
-def prime_orient_merge(ppr_pairs: np.ndarray, primes_per_batch: int, num_nodes: int):
+def prime_orient_merge(ppr_pairs: np.ndarray, primes_per_batch: int,
+                       num_nodes: int):
     # cannot use list for id_primes_list, updating node_id_list[id_primes_list[id2]] require id_primes_list to be array
     id_primes_list = list(np.arange(num_nodes, dtype=np.int32).reshape(-1, 1))
     node_id_list = np.arange(num_nodes, dtype=np.int32)
@@ -242,8 +256,10 @@ def prime_orient_merge(ppr_pairs: np.ndarray, primes_per_batch: int, num_nodes: 
             id1, id2 = id2, id1
 
         # if not (id1 in size_flag[id2] or id2 in size_flag[id1])
-        if id1 != id2 and len(id_primes_list[id1]) + len(id_primes_list[id2]) <= primes_per_batch:
-            id_primes_list[id1] = np.concatenate((id_primes_list[id1], id_primes_list[id2]))
+        if id1 != id2 and len(id_primes_list[id1]) + len(
+                id_primes_list[id2]) <= primes_per_batch:
+            id_primes_list[id1] = np.concatenate(
+                (id_primes_list[id1], id_primes_list[id2]))
             node_id_list[id_primes_list[id2]] = id1
             # node_id_list[j] = id1
             id_primes_list[id2] = placeholder
@@ -258,7 +274,10 @@ def prime_orient_merge(ppr_pairs: np.ndarray, primes_per_batch: int, num_nodes: 
 
 
 def prime_post_process(loader, merge_max_size):
-    h = [(len(p), p,) for p in loader]
+    h = [(
+        len(p),
+        p,
+    ) for p in loader]
     heapify(h)
 
     while len(h) > 1:
@@ -267,8 +286,14 @@ def prime_post_process(loader, merge_max_size):
         if len1 + len2 <= merge_max_size:
             heappush(h, (len1 + len2, p1 + p2))
         else:
-            heappush(h, (len1, p1,))
-            heappush(h, (len2, p2,))
+            heappush(h, (
+                len1,
+                p1,
+            ))
+            heappush(h, (
+                len2,
+                p2,
+            ))
             break
 
     new_batch = []
@@ -280,36 +305,36 @@ def prime_post_process(loader, merge_max_size):
     return new_batch
 
 
-def topk_ppr_matrix(edge_index: torch.Tensor,
-                    num_nodes: int,
-                    alpha: float,
-                    eps: float,
-                    output_node_indices: Union[np.ndarray, torch.LongTensor],
-                    topk: int,
-                    normalization='row') -> Tuple[csr_matrix, List[np.ndarray]]:
+def topk_ppr_matrix(
+        edge_index: torch.Tensor, num_nodes: int, alpha: float, eps: float,
+        output_node_indices: Union[np.ndarray, torch.LongTensor], topk: int,
+        normalization='row') -> Tuple[csr_matrix, List[np.ndarray]]:
     if isinstance(output_node_indices, torch.Tensor):
         output_node_indices = output_node_indices.numpy()
 
     edge_index = coalesce(edge_index, num_nodes=num_nodes)
     edge_index_np = edge_index.cpu().numpy()
 
-    _, indptr, out_degree = np.unique(edge_index_np[0],
-                                      return_index=True,
+    _, indptr, out_degree = np.unique(edge_index_np[0], return_index=True,
                                       return_counts=True)
     indptr = np.append(indptr, len(edge_index_np[0]))
 
-    neighbors, weights = calc_ppr_topk_parallel(indptr, edge_index_np[1], out_degree,
-                                                alpha, eps, output_node_indices)
+    neighbors, weights = calc_ppr_topk_parallel(indptr, edge_index_np[1],
+                                                out_degree, alpha, eps,
+                                                output_node_indices)
 
     def construct_sparse(neighbors, weights, shape):
-        i = np.repeat(np.arange(len(neighbors)), np.fromiter(map(len, neighbors), dtype=np.int))
+        i = np.repeat(np.arange(len(neighbors)),
+                      np.fromiter(map(len, neighbors), dtype=np.int))
         j = np.concatenate(neighbors)
         return coo_matrix((np.concatenate(weights), (i, j)), shape)
 
-    ppr_matrix = construct_sparse(neighbors, weights, (len(output_node_indices), num_nodes))
+    ppr_matrix = construct_sparse(neighbors, weights,
+                                  (len(output_node_indices), num_nodes))
     ppr_matrix = ppr_matrix.tocsr()
 
-    def sparsify(neighbors: List[np.ndarray], weights: List[np.ndarray], topk: int):
+    def sparsify(neighbors: List[np.ndarray], weights: List[np.ndarray],
+                 topk: int):
         new_neighbors = []
         for n, w in zip(neighbors, weights):
             idx_topk = np.argsort(w)[-topk:]
@@ -319,7 +344,9 @@ def topk_ppr_matrix(edge_index: torch.Tensor,
         return new_neighbors
 
     neighbors = sparsify(neighbors, weights, topk)
-    neighbors = [np.union1d(nei, pr) for nei, pr in zip(neighbors, output_node_indices)]
+    neighbors = [
+        np.union1d(nei, pr) for nei, pr in zip(neighbors, output_node_indices)
+    ]
 
     if normalization == 'sym':
         # Assume undirected (symmetric) adjacency matrix
@@ -327,13 +354,15 @@ def topk_ppr_matrix(edge_index: torch.Tensor,
         deg_inv_sqrt = 1. / deg_sqrt
 
         row, col = ppr_matrix.nonzero()
-        ppr_matrix.data = deg_sqrt[output_node_indices[row]] * ppr_matrix.data * deg_inv_sqrt[col]
+        ppr_matrix.data = deg_sqrt[
+            output_node_indices[row]] * ppr_matrix.data * deg_inv_sqrt[col]
     elif normalization == 'col':
         # Assume undirected (symmetric) adjacency matrix
         deg_inv = 1. / np.maximum(out_degree, 1e-12)
 
         row, col = ppr_matrix.nonzero()
-        ppr_matrix.data = out_degree[output_node_indices[row]] * ppr_matrix.data * deg_inv[col]
+        ppr_matrix.data = out_degree[
+            output_node_indices[row]] * ppr_matrix.data * deg_inv[col]
     elif normalization == 'row':
         pass
     else:
@@ -355,7 +384,11 @@ def calc_ppr_topk_parallel(indptr, indices, deg, alpha, epsilon, nodes) \
     return js, vals
 
 
-@numba.njit(cache=True, locals={'_val': numba.float32, 'res': numba.float32, 'res_vnode': numba.float32})
+@numba.njit(cache=True, locals={
+    '_val': numba.float32,
+    'res': numba.float32,
+    'res_vnode': numba.float32
+})
 def _calc_ppr_node(inode, indptr, indices, deg, alpha, epsilon):
     alpha_eps = alpha * epsilon
     f32_0 = numba.float32(0)
@@ -389,10 +422,9 @@ def _calc_ppr_node(inode, indptr, indices, deg, alpha, epsilon):
 
 
 class IBMBBaseLoader(DataLoader):
-    def __init__(self, data_source: Union[List[Data], List[Tuple]],
-                 graph: Data,
-                 adj: SparseTensor,
-                 return_edge_index_type: str, **kwargs):
+    def __init__(self, data_source: Union[List[Data],
+                                          List[Tuple]], graph: Data,
+                 adj: SparseTensor, return_edge_index_type: str, **kwargs):
 
         self.graph = graph
         self.adj = adj
@@ -406,13 +438,15 @@ class IBMBBaseLoader(DataLoader):
 
     @classmethod
     def prepare_cache(cls, graph: Data,
-                      batch_wise_out_aux_pairs: List[Tuple[np.ndarray, np.ndarray]],
+                      batch_wise_out_aux_pairs: List[Tuple[np.ndarray,
+                                                           np.ndarray]],
                       adj: Optional[SparseTensor],
                       return_edge_index_type: str):
         subgraphs = []
 
         pbar = tqdm(batch_wise_out_aux_pairs)
-        pbar.set_description(f"Caching data with type {return_edge_index_type}")
+        pbar.set_description(
+            f"Caching data with type {return_edge_index_type}")
 
         if return_edge_index_type == 'adj':
             assert adj is not None, "Trying to cache adjacency matrix, got None type."
@@ -421,15 +455,20 @@ class IBMBBaseLoader(DataLoader):
             mask = torch.from_numpy(np.in1d(aux, out))
             if isinstance(aux, np.ndarray):
                 aux = torch.from_numpy(aux)
-            subg = get_subgraph(aux, graph, return_edge_index_type, adj, output_node_mask=mask)
+            subg = get_subgraph(aux, graph, return_edge_index_type, adj,
+                                output_node_mask=mask)
             subgraphs.append(subg)
 
         return subgraphs
 
     @classmethod
-    def create_adj_from_edge_index(cls, edge_index: torch.Tensor, num_nodes: int, normalization: str):
-        assert normalization in ['sym', 'rw'], f"Unsupported normalization type {normalization}"
-        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(num_nodes, num_nodes))
+    def create_adj_from_edge_index(cls, edge_index: torch.Tensor,
+                                   num_nodes: int, normalization: str):
+        assert normalization in [
+            'sym', 'rw'
+        ], f"Unsupported normalization type {normalization}"
+        adj = SparseTensor.from_edge_index(edge_index,
+                                           sparse_sizes=(num_nodes, num_nodes))
         adj = adj.fill_value(1.)
         degree = adj.sum(0)
 
@@ -437,7 +476,7 @@ class IBMBBaseLoader(DataLoader):
         deg_inv = 1 / degree
 
         if normalization == 'sym':
-            deg_inv_sqrt = deg_inv ** 0.5
+            deg_inv_sqrt = deg_inv**0.5
             adj = adj * deg_inv_sqrt.reshape(1, -1)
             adj = adj * deg_inv_sqrt.reshape(-1, 1)
         elif normalization == 'rw':
@@ -461,11 +500,8 @@ class IBMBBaseLoader(DataLoader):
         mask = torch.from_numpy(np.in1d(aux, out))
         aux = torch.from_numpy(aux)
 
-        subg = get_subgraph(aux,
-                            self.graph,
-                            self.return_edge_index_type,
-                            self.adj,
-                            output_node_mask=mask)
+        subg = get_subgraph(aux, self.graph, self.return_edge_index_type,
+                            self.adj, output_node_mask=mask)
         return subg
 
 
@@ -491,26 +527,26 @@ class IBMBBatchLoader(IBMBBaseLoader):
         approximate_ppr_iterations (int, optional): An :obj:`int` of number of iterations of power iteration. (default: :obj:`50`)
         **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`. Specifically, :obj:`shuffle=False` is forced.
     """
-
-    def __init__(self, graph: Data,
-                 batch_order: str,
-                 num_partitions: int,
-                 output_indices: torch.Tensor,
-                 return_edge_index_type: str,
+    def __init__(self, graph: Data, batch_order: str, num_partitions: int,
+                 output_indices: torch.Tensor, return_edge_index_type: str,
                  batch_expand_ratio: Optional[float] = 1.,
                  metis_output_weight: Optional[float] = None,
                  num_outnodeset_per_batch: Optional[int] = 50,
                  alpha: Optional[float] = 0.2,
-                 approximate_ppr_iterations: Optional[int] = 50,
-                 **kwargs):
+                 approximate_ppr_iterations: Optional[int] = 50, **kwargs):
 
         self.subgraphs = []
         self.batch_wise_out_aux_pairs = []
 
-        assert is_undirected(graph.edge_index, num_nodes=graph.num_nodes), "Assume the graph to be undirected"
-        assert batch_order in ['rand', 'sample', 'order'], f"Unsupported batch order: {batch_order}"
+        assert is_undirected(
+            graph.edge_index,
+            num_nodes=graph.num_nodes), "Assume the graph to be undirected"
+        assert batch_order in ['rand', 'sample', 'order'
+                               ], f"Unsupported batch order: {batch_order}"
 
-        adj = self.create_adj_from_edge_index(graph.edge_index, graph.num_nodes, normalization='rw')
+        adj = self.create_adj_from_edge_index(graph.edge_index,
+                                              graph.num_nodes,
+                                              normalization='rw')
 
         self.cache_data = kwargs['batch_size'] == 1
         self.num_partitions = num_partitions
@@ -526,10 +562,11 @@ class IBMBBatchLoader(IBMBBaseLoader):
         self.create_loader(graph, adj)
 
         if len(self.batch_wise_out_aux_pairs) > 2:  # <= 2 order makes no sense
-            ys = [graph.y[out].numpy() for out, _ in self.batch_wise_out_aux_pairs]
-            sampler = define_sampler(batch_order,
-                                     ys,
-                                     graph.y.max().item() + 1)
+            ys = [
+                graph.y[out].numpy()
+                for out, _ in self.batch_wise_out_aux_pairs
+            ]
+            sampler = define_sampler(batch_order, ys, graph.y.max().item() + 1)
         else:
             sampler = kwargs['sampler']
 
@@ -543,39 +580,36 @@ class IBMBBatchLoader(IBMBBaseLoader):
             cached_graph = None
             cached_adj = None
 
-        super().__init__(self.subgraphs if self.cache_data else self.batch_wise_out_aux_pairs,
-                         cached_graph,
-                         cached_adj,
-                         return_edge_index_type,
-                         sampler=sampler,
-                         **kwargs)
+        super().__init__(
+            self.subgraphs if self.cache_data else
+            self.batch_wise_out_aux_pairs, cached_graph, cached_adj,
+            return_edge_index_type, sampler=sampler, **kwargs)
 
     def create_loader(self, graph: Data, adj: SparseTensor):
         # graph partitioning
-        partitions = get_partitions(adj,
-                                    self.num_partitions,
-                                    self.output_indices,
-                                    graph.num_nodes,
+        partitions = get_partitions(adj, self.num_partitions,
+                                    self.output_indices, graph.num_nodes,
                                     self.metis_output_weight)
 
         # get output - auxiliary node pairs
-        topk = ceil(self.batch_expand_ratio * graph.num_nodes / self.num_partitions)
-        batch_wise_out_aux_pairs = create_batchwise_out_aux_pairs(adj,
-                                                                  partitions,
-                                                                  self.output_indices,
-                                                                  topk,
-                                                                  self.num_outnodeset_per_batch,
-                                                                  self.alpha,
-                                                                  self.approximate_ppr_iterations)
+        topk = ceil(self.batch_expand_ratio * graph.num_nodes /
+                    self.num_partitions)
+        batch_wise_out_aux_pairs = create_batchwise_out_aux_pairs(
+            adj, partitions, self.output_indices, topk,
+            self.num_outnodeset_per_batch, self.alpha,
+            self.approximate_ppr_iterations)
 
         indices_complete_check(batch_wise_out_aux_pairs, self.output_indices)
         self.batch_wise_out_aux_pairs = batch_wise_out_aux_pairs
 
         if self.cache_data:
-            self.subgraphs = self.prepare_cache(graph, batch_wise_out_aux_pairs, adj, self.return_edge_index_type)
+            self.subgraphs = self.prepare_cache(graph,
+                                                batch_wise_out_aux_pairs, adj,
+                                                self.return_edge_index_type)
 
     def __getitem__(self, idx):
-        return self.subgraphs[idx] if self.cache_data else self.batch_wise_out_aux_pairs[idx]
+        return self.subgraphs[
+            idx] if self.cache_data else self.batch_wise_out_aux_pairs[idx]
 
     def __len__(self):
         return self.num_partitions
@@ -599,25 +633,25 @@ class IBMBNodeLoader(IBMBBaseLoader):
         eps (float, optional): A :obj:`float` of error threshold of PPR calculation. The smaller :obj`eps`:, the more accurate results of PPR calculation, but it also takes longer.
         **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`. Specifically, :obj:`shuffle=False` is forced.
     """
-
-    def __init__(self, graph: Data,
-                 batch_order: str,
-                 output_indices: torch.LongTensor,
-                 return_edge_index_type: str,
+    def __init__(self, graph: Data, batch_order: str,
+                 output_indices: torch.LongTensor, return_edge_index_type: str,
                  num_auxiliary_node_per_output: int,
-                 num_output_nodes_per_batch: int,
-                 alpha: float = 0.2,
-                 eps: float = 1.e-4,
-                 **kwargs):
+                 num_output_nodes_per_batch: int, alpha: float = 0.2,
+                 eps: float = 1.e-4, **kwargs):
 
         self.subgraphs = []
         self.node_wise_out_aux_pairs = []
 
-        assert is_undirected(graph.edge_index, num_nodes=graph.num_nodes), "Assume the graph to be undirected"
-        assert batch_order in ['rand', 'sample', 'order'], f"Unsupported batch order: {batch_order}"
+        assert is_undirected(
+            graph.edge_index,
+            num_nodes=graph.num_nodes), "Assume the graph to be undirected"
+        assert batch_order in ['rand', 'sample', 'order'
+                               ], f"Unsupported batch order: {batch_order}"
 
         if return_edge_index_type == 'adj':
-            adj = self.create_adj_from_edge_index(graph.edge_index, graph.num_nodes, normalization='rw')
+            adj = self.create_adj_from_edge_index(graph.edge_index,
+                                                  graph.num_nodes,
+                                                  normalization='rw')
         else:
             adj = None
 
@@ -634,10 +668,10 @@ class IBMBNodeLoader(IBMBBaseLoader):
         self.create_loader(graph, adj)
 
         if len(self.node_wise_out_aux_pairs) > 2:  # <= 2 order makes no sense
-            ys = [graph.y[out].numpy() for out, _ in self.node_wise_out_aux_pairs]
-            sampler = define_sampler(batch_order,
-                                     ys,
-                                     graph.y.max().item() + 1)
+            ys = [
+                graph.y[out].numpy() for out, _ in self.node_wise_out_aux_pairs
+            ]
+            sampler = define_sampler(batch_order, ys, graph.y.max().item() + 1)
         else:
             sampler = kwargs['sampler']
 
@@ -648,28 +682,27 @@ class IBMBNodeLoader(IBMBBaseLoader):
             cached_graph = None
             cached_adj = None
 
-        super().__init__(self.subgraphs if self.cache_data else self.node_wise_out_aux_pairs,
-                         cached_graph,
-                         cached_adj,
-                         return_edge_index_type,
-                         sampler=sampler,
-                         **kwargs)
+        super().__init__(
+            self.subgraphs
+            if self.cache_data else self.node_wise_out_aux_pairs, cached_graph,
+            cached_adj, return_edge_index_type, sampler=sampler, **kwargs)
 
     def create_loader(self, graph: Data, adj: SparseTensor):
         logging.info("Start PPR calculation")
-        ppr_matrix, neighbors = topk_ppr_matrix(graph.edge_index,
-                                                graph.num_nodes,
-                                                self.alpha,
-                                                self.eps,
-                                                self.output_indices, self.num_auxiliary_node_per_output)
+        ppr_matrix, neighbors = topk_ppr_matrix(
+            graph.edge_index, graph.num_nodes, self.alpha, self.eps,
+            self.output_indices, self.num_auxiliary_node_per_output)
 
         ppr_matrix = ppr_matrix[:, self.output_indices]
 
         logging.info("Getting PPR pairs")
         ppr_pairs = get_pairs(ppr_matrix)
 
-        output_list = prime_orient_merge(ppr_pairs, self.num_output_nodes_per_batch, len(self.output_indices))
-        output_list = prime_post_process(output_list, self.num_output_nodes_per_batch)
+        output_list = prime_orient_merge(ppr_pairs,
+                                         self.num_output_nodes_per_batch,
+                                         len(self.output_indices))
+        output_list = prime_post_process(output_list,
+                                         self.num_output_nodes_per_batch)
         node_wise_out_aux_pairs = []
 
         if isinstance(neighbors, list):
@@ -677,16 +710,21 @@ class IBMBNodeLoader(IBMBBaseLoader):
 
         _union = lambda inputs: np.unique(np.concatenate(inputs))
         for p in output_list:
-            node_wise_out_aux_pairs.append((self.output_indices[p], _union(neighbors[p]).astype(np.int64)))
+            node_wise_out_aux_pairs.append(
+                (self.output_indices[p],
+                 _union(neighbors[p]).astype(np.int64)))
 
         indices_complete_check(node_wise_out_aux_pairs, self.output_indices)
         self.node_wise_out_aux_pairs = node_wise_out_aux_pairs
 
         if self.cache_data:
-            self.subgraphs = self.prepare_cache(graph, node_wise_out_aux_pairs, adj, self.return_edge_index_type)
+            self.subgraphs = self.prepare_cache(graph, node_wise_out_aux_pairs,
+                                                adj,
+                                                self.return_edge_index_type)
 
     def __getitem__(self, idx):
-        return self.subgraphs[idx] if self.cache_data else self.node_wise_out_aux_pairs[idx]
+        return self.subgraphs[
+            idx] if self.cache_data else self.node_wise_out_aux_pairs[idx]
 
     def __len__(self):
         return len(self.node_wise_out_aux_pairs)
