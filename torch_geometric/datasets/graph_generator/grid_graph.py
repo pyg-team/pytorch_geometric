@@ -15,7 +15,7 @@ class GridGraph(GraphGenerator):
         height (int): The height of the grid.
         width (int): The width of the grid.
         dtype (:obj:`torch.dtype`, optional): The desired data type of the
-            returned position tensor.
+            returned position tensor. (default: :obj:`None`)
     """
     def __init__(
         self,
