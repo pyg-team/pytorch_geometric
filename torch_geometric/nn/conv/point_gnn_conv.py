@@ -1,12 +1,10 @@
-from typing import List, Optional, Union
-
 import torch
 from torch import Tensor
 
-from torch_geometric.nn import MLP
-from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj
+
+from ..inits import reset
 
 
 class PointGNNConv(MessagePassing):
@@ -19,8 +17,6 @@ class PointGNNConv(MessagePassing):
     the authors propose an alignment offset.
 
     Args:
-        state_channels (int): Size of each input sample, or :obj:`-1` to derive
-            the size from the first input(s) to the forward method.
         MLP_h (MLP): Calculate alignment off-set  :math:`\Delta` x
         MLP_f (MLP): Calculate edge update using relative coordinates,
             alignment off-set and neighbor feature.
@@ -31,43 +27,46 @@ class PointGNNConv(MessagePassing):
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
-          node coordinates :math:`(|\mathcal{V}|, F_{in})`,
+          positions :math:`(|\mathcal{V}|, F_{in})`,
           edge indices :math:`(2, |\mathcal{E}|)`,
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-    def __init__(self, state_channels: int, MLP_h: MLP, MLP_f: MLP, MLP_g: MLP,
-                 aggr: Optional[Union[str, List[str],
-                                      Aggregation]] = "max", **kwargs):
-        # kwargs.setdefault('aggr', 'max')
-        self.state_channels = state_channels
+    def __init__(
+        self,
+        mlp_h: torch.nn.Module,
+        mlp_f: torch.nn.Module,
+        mlp_g: torch.nn.Module,
+        **kwargs,
+    ):
+        kwargs.setdefault('aggr', 'max')
+        super().__init__(**kwargs)
 
-        super().__init__(aggr, **kwargs)
-
-        self.lin_h = MLP_h
-        self.lin_f = MLP_f
-        self.lin_g = MLP_g
+        self.mlp_h = mlp_h
+        self.mlp_f = mlp_f
+        self.mlp_g = mlp_g
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.lin_h.reset_parameters()
-        self.lin_f.reset_parameters()
-        self.lin_g.reset_parameters()
+        reset(self.mlp_h)
+        reset(self.mlp_f)
+        reset(self.mlp_g)
 
     def forward(self, x: Tensor, pos: Tensor, edge_index: Adj) -> Tensor:
         # propagate_type: (x: Tensor, pos: Tensor)
-        out = self.propagate(edge_index, x=x, pos=pos)
-        out = self.lin_g(out)
+        out = self.propagate(edge_index, x=x, pos=pos, size=None)
+        out = self.mlp_g(out)
         return x + out
 
     def message(self, pos_j: Tensor, pos_i: Tensor, x_i: Tensor,
                 x_j: Tensor) -> Tensor:
-        delta = self.lin_h(x_i)
+        delta = self.mlp_h(x_i)
         e = torch.cat([pos_j - pos_i + delta, x_j], dim=-1)
-        e = self.lin_f(e)
-        return e
+        return self.mlp_f(e)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.state_channels}, '
-                f'lin_h={self.lin_h}, lin_f={self.lin_f},'
-                f'lin_g={self.lin_g})')
+        return (f'{self.__class__.__name__}(\n'
+                f'  mlp_h={self.mlp_h},\n'
+                f'  mlp_f={self.mlp_f},\n'
+                f'  mlp_g={self.mlp_g},\n'
+                f')')

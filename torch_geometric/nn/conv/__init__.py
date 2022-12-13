@@ -52,6 +52,7 @@ from .hetero_conv import HeteroConv
 from .han_conv import HANConv
 from .lg_conv import LGConv
 from .ssg_conv import SSGConv
+from .point_gnn_conv import PointGNNConv
 
 __all__ = [
     'MessagePassing',
@@ -113,6 +114,7 @@ __all__ = [
     'HeteroConv',
     'HANConv',
     'LGConv',
+    'PointGNNConv',
 ]
 
 classes = __all__
