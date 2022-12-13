@@ -6,10 +6,12 @@ URL = 'https://github.com/pyg-team/pytorch_geometric'
 install_requires = [
     'tqdm',
     'numpy',
+    'numba',
     'scipy',
     'jinja2',
     'requests',
     'pyparsing',
+    'python-tsp',
     'scikit-learn',
     'psutil>=5.8.0',
 ]
@@ -24,7 +26,6 @@ graphgym_requires = [
 full_requires = graphgym_requires + [
     'ase',
     'h5py',
-    'numba',
     'sympy',
     'pandas',
     'captum',
@@ -32,7 +33,6 @@ full_requires = graphgym_requires + [
     'trimesh',
     'networkx',
     'tabulate',
-    'python-tsp',
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
