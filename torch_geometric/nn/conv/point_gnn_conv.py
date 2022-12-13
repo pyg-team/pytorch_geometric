@@ -13,23 +13,38 @@ class PointGNNConv(MessagePassing):
     paper, where the graph is statically constructed using radius-based cutoff.
     The relative position is used in the message passing step to introduce
     global translation invariance.
-    To also counter shifts in the local neighborhood of the center vertex,
-    the authors propose an alignment offset.
+    To also counter shifts in the local neighborhood of the center node, the
+    authors propose an alignment offset:
+
+    .. math::
+
+        \Delta \textrm{pos}_i &= h_{\mathbf{\Theta}}(\mathbf{x}_i)
+
+        \mathbf{e}_{j,i} &= f_{\mathbf{\Theta}}(\textrm{pos}_j -
+        \textrm{pos}_i + \Delta \textrm{pos}_i, \mathbf{x}_j)
+
+        \mathbf{x}^{\prime}_i = g_{\mathbf{\Theta}}( \max_{j \in
+        \mathcal{N}(i)} \mathbf{e}_{j,i}) + \mathbf{x}_i
 
     Args:
-        MLP_h (MLP): Calculate alignment off-set  :math:`\Delta` x
-        MLP_f (MLP): Calculate edge update using relative coordinates,
-            alignment off-set and neighbor feature.
-        MLP_g (MLP): Transforms aggregated messages.
+        mlp_h (torch.nn.Module): A neural network :math:`h_{\mathbf{\Theta}}`
+            that maps node features of size :math:`F_{in}` to three-dimensional
+            coordination offsets :math:`\Delta \textrm{pos}_i`.
+        mlp_f (torch.nn.Module): A neural network :math:`f_{\mathbf{\Theta}}`
+            that computes :math:`\mathbf{e}_{j,i}` from the features of
+            neighbors of size :math:`F_{in}` and the three-dimensional vector
+            :math:`\textrm{pos_j} - \textrm{pos_i} + \Delta \textrm{pos}_i`.
+        mlp_g (torch.nn.Module): A neural network :math:`g_{\mathbf{\Theta}}`
+            that maps the aggregated edge features back to :math:`F_{in}`.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,
-          positions :math:`(|\mathcal{V}|, F_{in})`,
+          positions :math:`(|\mathcal{V}|, 3)`,
           edge indices :math:`(2, |\mathcal{E}|)`,
-        - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
+        - **output:** node features :math:`(|\mathcal{V}|, F_{in})`
     """
     def __init__(
         self,
