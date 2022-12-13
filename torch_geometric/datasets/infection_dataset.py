@@ -12,6 +12,29 @@ from torch_geometric.utils import k_hop_subgraph, sort_edge_index, to_networkx
 
 class InfectionDataset(InMemoryDataset):
     r"""
+    Generates a synthetic infection dataset for evaluating explainabilty
+    algorithms, as described in the `"Explainability Techniques for Graph
+    Convolutional Networks" <https://arxiv.org/abs/1905.13686>`__ paper.
+    The :class:`~torch_geometric.datasets.InfectionDataset` creates synthetic
+    graphs coming from a
+    :class:`~torch_geometric.datasets.graph_generator.GraphGenerator` with
+    :obj:`num_infected` randomly assigned infected nodes. The dataset then
+    creates a node classification task of predicting length of the shortest
+    path from infected nodes with ground-truth node-level mask and explanation
+    paths.
+
+    For example, to generate a random Erdos-Renyi (ER) infection graph
+    with 500 nodes and 0.004 probability of edge, write:
+
+    .. code-block:: python
+
+        from torch_geometric.datasets import InfectionDataset
+        from torch_geometric.datasets.graph_generator import ERGraph
+
+        dataset = InfectionDataset(
+            graph_generator=ERGraph(num_nodes=500, edge_prob=0.004),
+        )
+
     Args:
         graph_generator (GraphGenerator or str): The graph generator to be
             used, *e.g.*,
@@ -26,7 +49,7 @@ class InfectionDataset(InMemoryDataset):
             graphs. (default: :obj:`None`)
         max_path_length (int, List[int]): The maximum shortest path length that
             a node will not be infected. (default: :obj:`5`)
-        num_infected_nodes (List[int], optional): Number of randomly selected
+        num_infected (List[int], optional): Number of randomly selected
             infected nodes in the graph. (default: :obj:`50`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -40,7 +63,7 @@ class InfectionDataset(InMemoryDataset):
         graph_generator_kwargs: Optional[Dict[str, Any]] = None,
         seeds: Optional[List[int]] = None,
         max_path_length: Union[int, List[int]] = 5,
-        num_infected_nodes: Union[int, List[int]] = 50,
+        num_infected: Union[int, List[int]] = 50,
         transform: Optional[Callable] = None,
     ):
         super().__init__(root=None, transform=transform)
@@ -53,10 +76,10 @@ class InfectionDataset(InMemoryDataset):
         assert len(max_path_length) == num_graphs
         assert all(max_path_length) >= 0
 
-        if isinstance(num_infected_nodes, int):
-            num_infected_nodes = [num_infected_nodes] * num_graphs
-        assert len(num_infected_nodes) == num_graphs
-        assert all(num_infected_nodes) >= 0
+        if isinstance(num_infected, int):
+            num_infected = [num_infected] * num_graphs
+        assert len(num_infected) == num_graphs
+        assert all(num_infected) >= 0
 
         self.graph_generator = GraphGenerator.resolve(
             graph_generator,
@@ -64,18 +87,18 @@ class InfectionDataset(InMemoryDataset):
         )
         self.seeds = seeds
         self.max_path_length = max_path_length
-        self.num_infected_nodes = num_infected_nodes
+        self.num_infected = num_infected
 
         data_list = [
             self.get_graph(
                 path_length=self.max_path_length[i],
-                num_infected_nodes=self.num_infected_nodes[i],
+                num_infected=self.num_infected[i],
                 seed=self.seeds[i] if self.seeds is not None else None)
             for i in range(num_graphs)
         ]
         self.data, self.slices = self.collate(data_list)
 
-    def get_graph(self, path_length: int, num_infected_nodes: int,
+    def get_graph(self, path_length: int, num_infected: int,
                   seed: Optional[int] = None) -> Explanation:
         if seed is not None:
             seed_everything(seed)
@@ -84,8 +107,8 @@ class InfectionDataset(InMemoryDataset):
         rand_perm = torch.randperm(num_nodes)
 
         x = torch.zeros((num_nodes, 2), dtype=torch.float32)
-        x[rand_perm[:num_infected_nodes], 1] = 1  # Infected
-        x[rand_perm[num_infected_nodes:], 0] = 1  # Healthy
+        x[rand_perm[:num_infected], 1] = 1  # Infected
+        x[rand_perm[num_infected:], 0] = 1  # Healthy
         y = torch.full((num_nodes, ), path_length, dtype=torch.long)
         node_mask = torch.zeros(num_nodes, dtype=torch.long)
         explain_path_edge_index = []
