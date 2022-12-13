@@ -5,7 +5,11 @@ from typing import Any, Dict, Optional, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.explain import ExplainerAlgorithm, Explanation
+from torch_geometric.explain import (
+    ExplainerAlgorithm,
+    Explanation,
+    HeteroExplanation,
+)
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ExplanationType,
@@ -15,6 +19,7 @@ from torch_geometric.explain.config import (
     ThresholdConfig,
     ThresholdType,
 )
+from torch_geometric.typing import EdgeType, NodeType
 
 
 class Explainer:
@@ -75,6 +80,7 @@ class Explainer:
 
         self.model = model
         self.algorithm = algorithm
+
         self.explanation_type = explainer_config.explanation_type
         self.model_config = ModelConfig.cast(model_config)
         self.node_mask_type = explainer_config.node_mask_type
@@ -89,8 +95,9 @@ class Explainer:
 
         If the model mode is :obj:`"regression"`, the prediction is returned as
         a scalar value.
-        If the model mode :obj:`"classification"`, the prediction is returned
-        as the predicted class label.
+        If the model mode is :obj:`"multiclass_classification"` or
+        :obj:`"binary_classification"`, the prediction is returned as the
+        predicted class label.
 
         Args:
             *args: Arguments passed to the model.
@@ -102,8 +109,14 @@ class Explainer:
 
         with torch.no_grad():
             out = self.model(*args, **kwargs)
-        if self.model_config.mode == ModelMode.classification:
+        if self.model_config.mode == ModelMode.multiclass_classification:
             out = out.argmax(dim=-1)
+        elif self.model_config.mode == ModelMode.binary_classification:
+            # TODO: allow customization of the thresholds used below
+            if self.model_config.return_type.value == 'raw':
+                out = (out > 0).long().view(-1)
+            elif self.model_config.return_type.value == 'probs':
+                out = (out > 0.5).long().view(-1)
 
         self.model.train(training)
 
@@ -111,14 +124,14 @@ class Explainer:
 
     def __call__(
         self,
-        x: Tensor,
-        edge_index: Tensor,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[int] = None,
         **kwargs,
-    ) -> Explanation:
+    ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
         target.
 
@@ -129,8 +142,10 @@ class Explainer:
             was computed with :meth:`torch.no_grad`.
 
         Args:
-            x (torch.Tensor): The input node features.
-            edge_index (torch.Tensor): The input edge indices.
+            x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
+                node features of a homogeneous or heterogeneous graph.
+            edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
+                input edge indices of a homogeneous or heterogeneous graph.
             target (torch.Tensor): The target of the model.
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
@@ -158,7 +173,7 @@ class Explainer:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
                     f"type '{self.explanation_type.value}'")
-            target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
+            target = self.get_prediction(x, edge_index, **kwargs)
 
         training = self.model.training
         self.model.eval()
@@ -177,21 +192,60 @@ class Explainer:
 
         return self._post_process(explanation)
 
-    def _post_process(self, explanation: Explanation) -> Explanation:
-        R"""Post-processes the explanation mask according to the thresholding
-        method and the user configuration.
+    def _post_process(
+        self,
+        explanation: Union[Explanation, HeteroExplanation],
+    ) -> Union[Explanation, HeteroExplanation]:
+        r"""Post-processes the explanation masks.
 
         Args:
-            explanation (Explanation): The explanation mask to post-process.
+            explanation (Explanation or HeteroExplanation): The explanation
+                to post-process.
         """
         explanation = self._threshold(explanation)
         return explanation
 
-    def _threshold(self, explanation: Explanation) -> Explanation:
-        """Threshold the explanation mask according to the thresholding method.
+    def _threshold_mask(self, mask: Optional[Tensor]) -> Optional[Tensor]:
+        if mask is None:
+            return None
+
+        if self.threshold_config.type == ThresholdType.hard:
+            return (mask > self.threshold_config.value).float()
+
+        if self.threshold_config.type in [
+                ThresholdType.topk,
+                ThresholdType.topk_hard,
+        ]:
+            if self.threshold_config.value >= mask.numel():
+                if self.threshold_config.type == ThresholdType.topk:
+                    return mask
+                else:
+                    return torch.ones_like(mask)
+
+            value, index = torch.topk(
+                mask.flatten(),
+                k=self.threshold_config.value,
+            )
+
+            out = torch.zeros_like(mask.flatten())
+            if self.threshold_config.type == ThresholdType.topk:
+                out[index] = value
+            else:
+                out[index] = 1.0
+            return out.view(mask.size())
+
+        raise NotImplementedError
+
+    def _threshold(
+        self,
+        explanation: Union[Explanation, HeteroExplanation],
+    ) -> Union[Explanation, HeteroExplanation]:
+        """Thresholds the explanation masks according to the thresholding
+        method.
 
         Args:
-            explanation (Explanation): The explanation to threshold.
+            explanation (Explanation or HeteroExplanation): The explanation to
+                threshold.
         """
         if self.threshold_config is None:
             return explanation
@@ -199,44 +253,12 @@ class Explainer:
         # Avoid modification of the original explanation:
         explanation = copy.copy(explanation)
 
-        mask_dict = {  # Get the available masks:
-            key: explanation[key]
-            for key in explanation.available_explanations
-        }
+        for store in explanation.node_stores:
+            for key in ['node_mask', 'node_feat_mask']:
+                store[key] = self._threshold_mask(store.get(key))
 
-        if self.threshold_config.type == ThresholdType.hard:
-            mask_dict = {
-                key: (mask > self.threshold_config.value).float()
-                for key, mask in mask_dict.items()
-            }
-
-        elif self.threshold_config.type in [
-                ThresholdType.topk,
-                ThresholdType.topk_hard,
-        ]:
-            for key, mask in mask_dict.items():
-                if self.threshold_config.value >= mask.numel():
-                    if self.threshold_config.type != ThresholdType.topk:
-                        mask_dict[key] = torch.ones_like(mask)
-                    continue
-
-                value, index = torch.topk(
-                    mask.flatten(),
-                    k=self.threshold_config.value,
-                )
-
-                out = torch.zeros_like(mask.flatten())
-                if self.threshold_config.type == ThresholdType.topk:
-                    out[index] = value
-                else:
-                    out[index] = 1.0
-                mask_dict[key] = out.reshape(mask.size())
-
-        else:
-            raise NotImplementedError
-
-        # Update the explanation with the thresholded masks:
-        for key, mask in mask_dict.items():
-            explanation[key] = mask
+        for store in explanation.edge_stores:
+            for key in ['edge_mask', 'edge_feat_mask']:
+                store[key] = self._threshold_mask(store.get(key))
 
         return explanation
