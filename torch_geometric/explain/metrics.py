@@ -1,14 +1,15 @@
 from typing import Tuple
 
 import torch
+from torch import Tensor
 from torchmetrics import AUROC, ROC
 
 from torch_geometric.explain import Explanation
 
 
 def get_groundtruth_metrics(
-        explanation: Explanation,
-        groundtruth: Explanation) -> Tuple[float, float, float, float, float]:
+        explanation: Explanation, groundtruth: Explanation
+) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """accuracy_scores: Compute accuracy scores when
     groundtruth is available
 
