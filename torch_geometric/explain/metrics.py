@@ -1,7 +1,7 @@
 from typing import Tuple
 
 import torch
-from torch import Tensor
+from torch import Tensor, tensor
 from torchmetrics import AUROC, ROC
 
 from torch_geometric.explain import Explanation
@@ -39,8 +39,20 @@ def get_groundtruth_metrics(
     fp = torch.sum(ex_mask_tensor[incorrect_preds])
     fn = torch.sum(gt_mask_tensor[incorrect_preds])
 
-    precision = tp / (tp + fp)
+    if (tp + fp) == 0:
+        precision = tensor(0.0)
+    else:
+        precision = tp / (tp + fp)
+
+    if (tp + fn) == 0:
+        recall = tensor(0.0)
+    else:
+        recall = tp / (tp + fn)
+
+    if precision == 0.0 and recall == 0.0:
+        f1_score = tensor(0.0)
+    else:
+        f1_score = 2 * (precision * recall) / (precision + recall)
+
     accuracy = (tp + tn) / (tp + fp + tn + fn)
-    recall = tp / (tp + fn)
-    f1_score = 2 * (precision * recall) / (precision + recall)
     return accuracy, recall, precision, f1_score, auc
