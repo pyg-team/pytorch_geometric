@@ -210,6 +210,10 @@ class LinkLoader(torch.utils.data.DataLoader):
                 data.dst_pos_index = out.metadata[2]
                 data.dst_neg_index = out.metadata[3]
                 data.seed_time = out.metadata[4]
+                # Sanity removals in case `edge_label_index` and
+                # `edge_label_time` are attributes of the base `data` object:
+                del data.edge_label_index  # Sanity removals.
+                del data.edge_label_time
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
@@ -236,6 +240,11 @@ class LinkLoader(torch.utils.data.DataLoader):
                 data[input_type[-1]].dst_neg_index = out.metadata[3]
                 data[input_type[0]].seed_time = out.metadata[4]
                 data[input_type[-1]].seed_time = out.metadata[4]
+                # Sanity removals in case `edge_label_index` and
+                # `edge_label_time` are attributes of the base `data` object:
+                if input_type in data.edge_types:
+                    del data[input_type].edge_label_index
+                    del data[input_type].edge_label_time
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

@@ -1,4 +1,3 @@
-import copy
 import warnings
 from typing import Any, Dict, Optional, Union
 
@@ -17,7 +16,6 @@ from torch_geometric.explain.config import (
     ModelConfig,
     ModelMode,
     ThresholdConfig,
-    ThresholdType,
 )
 from torch_geometric.typing import EdgeType, NodeType
 
@@ -90,7 +88,7 @@ class Explainer:
         self.algorithm.connect(explainer_config, self.model_config)
 
     @torch.no_grad()
-    def get_prediction(self, *args, **kwargs) -> torch.Tensor:
+    def get_prediction(self, *args, **kwargs) -> Tensor:
         r"""Returns the prediction of the model on the input graph.
 
         If the model mode is :obj:`"regression"`, the prediction is returned as
@@ -109,14 +107,6 @@ class Explainer:
 
         with torch.no_grad():
             out = self.model(*args, **kwargs)
-        if self.model_config.mode == ModelMode.multiclass_classification:
-            out = out.argmax(dim=-1)
-        elif self.model_config.mode == ModelMode.binary_classification:
-            # TODO: allow customization of the thresholds used below
-            if self.model_config.return_type.value == 'raw':
-                out = (out > 0).long().view(-1)
-            elif self.model_config.return_type.value == 'probs':
-                out = (out > 0.5).long().view(-1)
 
         self.model.train(training)
 
@@ -163,6 +153,7 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
+        prediction: Optional[Tensor] = None
         if self.explanation_type == ExplanationType.phenomenon:
             if target is None:
                 raise ValueError(
@@ -173,7 +164,8 @@ class Explainer:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
                     f"type '{self.explanation_type.value}'")
-            target = self.get_prediction(x, edge_index, **kwargs)
+            prediction = self.get_prediction(x, edge_index, **kwargs)
+            target = self._get_target(prediction)
 
         training = self.model.training
         self.model.eval()
@@ -190,75 +182,62 @@ class Explainer:
 
         self.model.train(training)
 
-        return self._post_process(explanation)
+        # Add explainer objectives to the `Explanation` object:
+        explanation._model_config = self.model_config
+        explanation.prediction = prediction
+        explanation.target = target
+        explanation.index = index
+        explanation.target_index = target_index
 
-    def _post_process(
-        self,
-        explanation: Union[Explanation, HeteroExplanation],
-    ) -> Union[Explanation, HeteroExplanation]:
-        r"""Post-processes the explanation masks.
+        # Add model inputs to the `Explanation` object:
+        if isinstance(explanation, Explanation):
+            explanation.x = x
+            explanation.edge_index = edge_index
 
-        Args:
-            explanation (Explanation or HeteroExplanation): The explanation
-                to post-process.
-        """
-        explanation = self._threshold(explanation)
-        return explanation
+            for key, arg in kwargs.items():  # Add remaining `kwargs`:
+                explanation[key] = arg
 
-    def _threshold_mask(self, mask: Optional[Tensor]) -> Optional[Tensor]:
-        if mask is None:
-            return None
+        elif isinstance(explanation, HeteroExplanation):
+            assert isinstance(x, dict)
+            for node_type, value in x.items():
+                explanation[node_type].x = value
 
-        if self.threshold_config.type == ThresholdType.hard:
-            return (mask > self.threshold_config.value).float()
+            assert isinstance(edge_index, dict)
+            for edge_type, value in edge_index.items():
+                explanation[edge_type].edge_index = value
 
-        if self.threshold_config.type in [
-                ThresholdType.topk,
-                ThresholdType.topk_hard,
-        ]:
-            if self.threshold_config.value >= mask.numel():
-                if self.threshold_config.type == ThresholdType.topk:
-                    return mask
+            for key, arg in kwargs.items():  # Add remaining `kwargs`:
+                if isinstance(arg, dict):
+                    # Keyword arguments are likely named `{attr_name}_dict`
+                    # while we only want to assign the `{attr_name}` to the
+                    # `HeteroExplanation` object:
+                    key = key[:-5] if key.endswith('_dict') else key
+                    for type_name, value in arg.items():
+                        explanation[type_name][key] = value
                 else:
-                    return torch.ones_like(mask)
+                    explanation[key] = arg
 
-            value, index = torch.topk(
-                mask.flatten(),
-                k=self.threshold_config.value,
-            )
+        return explanation.threshold(self.threshold_config)
 
-            out = torch.zeros_like(mask.flatten())
-            if self.threshold_config.type == ThresholdType.topk:
-                out[index] = value
-            else:
-                out[index] = 1.0
-            return out.view(mask.size())
+    @torch.no_grad()
+    def _get_target(self, prediction: Tensor) -> Tensor:
+        r"""Returns the target of the model from a given prediction.
 
-        raise NotImplementedError
-
-    def _threshold(
-        self,
-        explanation: Union[Explanation, HeteroExplanation],
-    ) -> Union[Explanation, HeteroExplanation]:
-        """Thresholds the explanation masks according to the thresholding
-        method.
-
-        Args:
-            explanation (Explanation or HeteroExplanation): The explanation to
-                threshold.
+        If the model mode is of type :obj:`"regression"`, the prediction is
+        returned as it is.
+        If the model mode is of type :obj:`"multiclass_classification"` or
+        :obj:`"binary_classification"`, the prediction is returned as the
+        predicted class label.
         """
-        if self.threshold_config is None:
-            return explanation
+        if self.model_config.mode == ModelMode.binary_classification:
+            # TODO: Allow customization of the thresholds used below.
+            if self.model_config.return_type.value == 'raw':
+                return (prediction > 0).long().view(-1)
+            if self.model_config.return_type.value == 'probs':
+                return (prediction > 0.5).long().view(-1)
+            assert False
 
-        # Avoid modification of the original explanation:
-        explanation = copy.copy(explanation)
+        if self.model_config.mode == ModelMode.multiclass_classification:
+            return prediction.argmax(dim=-1)
 
-        for store in explanation.node_stores:
-            for key in ['node_mask', 'node_feat_mask']:
-                store[key] = self._threshold_mask(store.get(key))
-
-        for store in explanation.edge_stores:
-            for key in ['edge_mask', 'edge_feat_mask']:
-                store[key] = self._threshold_mask(store.get(key))
-
-        return explanation
+        return prediction
