@@ -69,6 +69,9 @@ def test_forward(data, target, explanation_type):
         )
         assert model.training
         assert isinstance(explanation, Explanation)
+        assert 'x' in explanation
+        assert 'edge_index' in explanation
+        assert 'target' in explanation
         assert 'node_feat_mask' in explanation.available_explanations
         assert explanation.node_feat_mask.size() == data.x.size()
 
