@@ -2,10 +2,9 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from torch import Tensor
 
-from torch_geometric.data import HeteroData
-from torch_geometric.loader.node_loader import NodeLoader
-from torch_geometric.loader.utils import get_input_nodes
-from torch_geometric.sampler.hgt_sampler import HGTSampler
+from torch_geometric.data import FeatureStore, GraphStore, HeteroData
+from torch_geometric.loader import NodeLoader
+from torch_geometric.sampler import HGTSampler
 from torch_geometric.typing import NodeType
 
 
@@ -60,8 +59,10 @@ class HGTLoader(NodeLoader):
         >>> 128
 
     Args:
-        data (torch_geometric.data.HeteroData): The
-            :class:`~torch_geometric.data.HeteroData` graph data object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         num_samples (List[int] or Dict[str, List[int]]): The number of nodes to
             sample in each iteration and for each node type.
             If given as a list, will sample the same amount of nodes for each
@@ -77,6 +78,9 @@ class HGTLoader(NodeLoader):
         transform (Callable, optional): A function/transform that takes in
             an a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column. This avoids internal
             re-sorting of the data and can improve runtime and memory
@@ -84,7 +88,8 @@ class HGTLoader(NodeLoader):
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
-            Setting this to :obj:`True` is generally not recommended:
+            Setting this to :obj:`True` for in-memory datasets is generally not
+            recommended:
             (1) it may result in too many open file handles,
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
@@ -95,20 +100,18 @@ class HGTLoader(NodeLoader):
     """
     def __init__(
         self,
-        data: HeteroData,
+        data: Union[HeteroData, Tuple[FeatureStore, GraphStore]],
         num_samples: Union[List[int], Dict[NodeType, List[int]]],
         input_nodes: Union[NodeType, Tuple[NodeType, Optional[Tensor]]],
         is_sorted: bool = False,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
         **kwargs,
     ):
-        node_type, _ = get_input_nodes(data, input_nodes)
-
         hgt_sampler = HGTSampler(
             data,
             num_samples=num_samples,
-            input_type=node_type,
             is_sorted=is_sorted,
             share_memory=kwargs.get('num_workers', 0) > 0,
         )
@@ -118,6 +121,7 @@ class HGTLoader(NodeLoader):
             node_sampler=hgt_sampler,
             input_nodes=input_nodes,
             transform=transform,
+            transform_sampler_output=transform_sampler_output,
             filter_per_worker=filter_per_worker,
             **kwargs,
         )

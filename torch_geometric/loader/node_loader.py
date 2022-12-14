@@ -5,19 +5,16 @@ from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 import psutil
 import torch
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator, WorkerInitWrapper
 from torch_geometric.loader.utils import (
-    InputData,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
     get_input_nodes,
     get_numa_nodes_cores,
 )
-from torch_geometric.sampler.base import (
+from torch_geometric.sampler import (
     BaseSampler,
     HeteroSamplerOutput,
     NodeSamplerInput,
@@ -27,22 +24,25 @@ from torch_geometric.typing import InputNodes, OptTensor
 
 
 class NodeLoader(torch.utils.data.DataLoader):
-    r"""A data loader that performs neighbor sampling from node information,
+    r"""A data loader that performs mini-batch sampling from node information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
-    implementation that defines a :meth:`sample_from_nodes` function and is
-    supported on the provided input :obj:`data` object.
+    implementation that defines a
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_nodes` function and
+    is supported on the provided input :obj:`data` object.
 
     Args:
-        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
-            The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         node_sampler (torch_geometric.sampler.BaseSampler): The sampler
-            implementation to be used with this loader. Note that the
-            sampler implementation must be compatible with the input data
-            object.
+            implementation to be used with this loader.
+            Needs to implement
+            :meth:`~torch_geometric.sampler.BaseSampler.sample_from_nodes`.
+            The sampler implementation must be compatible with the input
+            :obj:`data` object.
         input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
-            indices of nodes for which neighbors are sampled to create
-            mini-batches.
+            indices of seed nodes to start sampling from.
             Needs to be either given as a :obj:`torch.LongTensor` or
             :obj:`torch.BoolTensor`.
             If set to :obj:`None`, all nodes will be considered.
@@ -56,10 +56,14 @@ class NodeLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
-            Setting this to :obj:`True` is generally not recommended:
+            Setting this to :obj:`True` for in-memory datasets is generally not
+            recommended:
             (1) it may result in too many open file handles,
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
@@ -74,7 +78,8 @@ class NodeLoader(torch.utils.data.DataLoader):
         node_sampler: BaseSampler,
         input_nodes: InputNodes = None,
         input_time: OptTensor = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
         **kwargs,
     ):
@@ -85,14 +90,20 @@ class NodeLoader(torch.utils.data.DataLoader):
             del kwargs['collate_fn']
 
         # Get node type (or `None` for homogeneous graphs):
-        node_type, input_nodes = get_input_nodes(data, input_nodes)
+        input_type, input_nodes = get_input_nodes(data, input_nodes)
 
         self.data = data
-        self.node_type = node_type
         self.node_sampler = node_sampler
-        self.input_data = InputData(input_nodes, input_time)
         self.transform = transform
+        self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
+
+        self.input_data = NodeSamplerInput(
+            input_id=None,
+            node=input_nodes,
+            time=input_time,
+            input_type=input_type,
+        )
 
         # TODO: Unify DL affinitization in `BaseDataLoader` class
         # CPU Affinitization for loader and compute cores
@@ -124,12 +135,16 @@ class NodeLoader(torch.utils.data.DataLoader):
         returning the resulting :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object to be used downstream.
         """
+        if self.transform_sampler_output:
+            out = self.transform_sampler_output(out)
+
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.node_sampler.edge_permutation)
             data.batch = out.batch
-            data.input_id = out.metadata
-            data.batch_size = out.metadata.size(0)
+            data.input_id = out.metadata[0]
+            data.seed_time = out.metadata[1]
+            data.batch_size = out.metadata[0].size(0)
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
@@ -142,8 +157,11 @@ class NodeLoader(torch.utils.data.DataLoader):
 
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
-            data[self.node_type].input_id = out.metadata
-            data[self.node_type].batch_size = out.metadata.size(0)
+
+            input_type = self.input_data.input_type
+            data[input_type].input_id = out.metadata[0]
+            data[input_type].seed_time = out.metadata[1]
+            data[input_type].batch_size = out.metadata[0].size(0)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "
@@ -209,12 +227,14 @@ class NodeLoader(torch.utils.data.DataLoader):
         """
         if not self.is_cuda_available:
             if not self.num_workers > 0:
-                raise ValueError('ERROR: affinity should be used with at '
-                                 'least one DL worker')
+                raise ValueError(
+                    f"'enable_cpu_affinity' should be used with at least one "
+                    f"worker (got {self.num_workers})")
             if loader_cores and len(loader_cores) != self.num_workers:
-                raise Exception('ERROR: cpu_affinity incorrect '
-                                f'number of loader_cores={loader_cores} '
-                                f'for num_workers={self.num_workers}')
+                raise ValueError(
+                    f"The number of loader cores (got {len(loader_cores)}) "
+                    f"in 'enable_cpu_affinity' should match with the number "
+                    f"of workers (got {self.num_workers})")
 
             worker_init_fn_old = self.worker_init_fn
             affinity_old = psutil.Process().cpu_affinity()
@@ -225,8 +245,8 @@ class NodeLoader(torch.utils.data.DataLoader):
                 try:
                     psutil.Process().cpu_affinity([loader_cores[worker_id]])
                 except IndexError:
-                    raise Exception('ERROR: cannot use affinity'
-                                    f'id={worker_id} cpu={loader_cores}')
+                    raise ValueError(f"Cannot use CPU affinity for worker ID "
+                                     f"{worker_id} on CPU {loader_cores}")
 
                 worker_init_fn_old(worker_id)
 
@@ -235,27 +255,28 @@ class NodeLoader(torch.utils.data.DataLoader):
                 numa_info = get_numa_nodes_cores()
 
                 if numa_info and len(numa_info[0]) > self.num_workers:
-                    # take one thread per each node 0 core
+                    # Take one thread per each node 0 core:
                     node0_cores = [cpus[0] for core_id, cpus in numa_info[0]]
                 else:
                     node0_cores = list(range(psutil.cpu_count(logical=False)))
 
                 if len(node0_cores) - 1 < self.num_workers:
-                    raise Exception(
-                        f'More workers than available cores {node0_cores[1:]}')
+                    raise ValueError(
+                        f"More workers (got {self.num_workers}) than "
+                        f"available cores (got {len(node0_cores) - 1})")
 
-                # set default loader core ids
+                # Set default loader core IDs:
                 loader_cores = node0_cores[1:self.num_workers + 1]
 
             try:
-                # set cpu affinity for dataloader
+                # Set CPU affinity for dataloader:
                 self.worker_init_fn = init_fn
                 self.cpu_affinity_enabled = True
-                logging.info(f'{self.num_workers} DataLoader workers '
+                logging.info(f'{self.num_workers} data loader workers '
                              f'are assigned to CPUs {loader_cores}')
                 yield
             finally:
-                # restore omp_num_threads and cpu affinity
+                # Restore omp_num_threads and cpu affinity:
                 psutil.Process().cpu_affinity(affinity_old)
                 torch.set_num_threads(nthreads_old)
                 self.worker_init_fn = worker_init_fn_old

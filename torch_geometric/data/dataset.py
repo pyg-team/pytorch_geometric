@@ -306,7 +306,7 @@ class Dataset(torch.utils.data.Dataset):
 
     def print_summary(self):
         r"""Prints summary statistics of the dataset to the console."""
-        return str(self.get_summary())
+        print(str(self.get_summary()))
 
 
 def to_list(value: Any) -> Sequence:

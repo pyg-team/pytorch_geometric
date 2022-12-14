@@ -1,10 +1,7 @@
 from typing import Callable, Optional, Tuple, Union
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
-from torch_geometric.loader.utils import get_edge_label_index
 from torch_geometric.sampler import NeighborSampler
 from torch_geometric.sampler.base import NegativeSamplingConfig
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
@@ -72,9 +69,10 @@ class LinkNeighborLoader(LinkLoader):
         way, *i.e.* negative edges may contain false negatives.
 
     Args:
-        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
-            The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
             In heterogeneous graphs, may also take in a dictionary denoting
@@ -153,6 +151,9 @@ class LinkNeighborLoader(LinkLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column.
             If :obj:`time_attr` is set, additionally requires that rows are
@@ -162,7 +163,8 @@ class LinkNeighborLoader(LinkLoader):
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
-            Setting this to :obj:`True` is generally not recommended:
+            Setting this to :obj:`True` for in-memory datasets is generally not
+            recommended:
             (1) it may result in too many open file handles,
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
@@ -185,15 +187,13 @@ class LinkNeighborLoader(LinkLoader):
         neg_sampling: Optional[NegativeSamplingConfig] = None,
         neg_sampling_ratio: Optional[Union[int, float]] = None,
         time_attr: Optional[str] = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
         filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
-        edge_type, _ = get_edge_label_index(data, edge_label_index)
-
         if (edge_label_time is not None) != (time_attr is not None):
             raise ValueError(
                 f"Received conflicting 'edge_label_time' and 'time_attr' "
@@ -210,7 +210,6 @@ class LinkNeighborLoader(LinkLoader):
                 directed=directed,
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
-                input_type=edge_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
@@ -225,6 +224,7 @@ class LinkNeighborLoader(LinkLoader):
             neg_sampling=neg_sampling,
             neg_sampling_ratio=neg_sampling_ratio,
             transform=transform,
+            transform_sampler_output=transform_sampler_output,
             filter_per_worker=filter_per_worker,
             **kwargs,
         )

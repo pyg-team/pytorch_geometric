@@ -100,15 +100,32 @@ def test_copy_linear(lazy):
 
 
 def test_hetero_linear():
-    x = torch.randn((3, 16))
-    node_type = torch.tensor([0, 1, 2])
+    x = torch.randn(3, 16)
+    type_vec = torch.tensor([0, 1, 2])
 
-    lin = HeteroLinear(in_channels=16, out_channels=32, num_types=3)
+    lin = HeteroLinear(16, 32, num_types=3)
     assert str(lin) == 'HeteroLinear(16, 32, num_types=3, bias=True)'
 
-    out = lin(x, node_type)
+    out = lin(x, type_vec)
     assert out.size() == (3, 32)
 
     if is_full_test():
         jit = torch.jit.script(lin)
-        assert torch.allclose(jit(x, node_type), out)
+        assert torch.allclose(jit(x, type_vec), out)
+
+
+@withPackage('pyg_lib')
+@pytest.mark.parametrize('type_vec', [
+    torch.tensor([0, 0, 1, 1, 2, 2]),
+    torch.tensor([0, 1, 2, 0, 1, 2]),
+])
+def test_hetero_linear_sort(type_vec):
+    x = torch.randn(type_vec.numel(), 16)
+
+    lin = HeteroLinear(16, 32, num_types=3)
+    out = lin(x, type_vec)
+
+    for i in range(type_vec.numel()):
+        node_type = int(type_vec[i])
+        expected = x[i] @ lin.weight[node_type] + lin.bias[node_type]
+        assert torch.allclose(out[i], expected, atol=1e-6)
