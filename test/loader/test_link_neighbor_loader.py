@@ -443,12 +443,12 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         edge_label_time = edge_label_time + 50
 
     batch_size = 20
+    index = (('paper', 'paper'), data['paper', 'paper'].edge_label_index)
     loader = LinkNeighborLoader(
         data,
         num_neighbors=[-1] * 2,
         batch_size=batch_size,
-        edge_label_index=(('paper', 'paper'), data['paper',
-                                                   'paper'].edge_label_index),
+        edge_label_index=index,
         edge_label_time=edge_label_time,
         time_attr=time_attr,
         directed=True,
