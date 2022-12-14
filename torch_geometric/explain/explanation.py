@@ -1,11 +1,12 @@
 import copy
 from typing import Dict, List, Optional, Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.data.data import Data, warn_or_raise
 from torch_geometric.data.hetero_data import HeteroData
-from torch_geometric.explain.config import ThresholdType
+from torch_geometric.explain.config import ThresholdConfig, ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
 
 
@@ -64,6 +65,71 @@ class ExplanationMixin:
                     f"edges (got {mask.size(0)} edges)", raise_on_error)
 
         return status
+
+    def _threshold_mask(
+        self,
+        mask: Optional[Tensor],
+        threshold_config: ThresholdConfig,
+    ) -> Optional[Tensor]:
+
+        if mask is None:
+            return None
+
+        if threshold_config.type == ThresholdType.hard:
+            return (mask > threshold_config.value).float()
+
+        if threshold_config.type in [
+                ThresholdType.topk,
+                ThresholdType.topk_hard,
+        ]:
+            if threshold_config.value >= mask.numel():
+                if self.threshold_config.type == ThresholdType.topk:
+                    return mask
+                else:
+                    return torch.ones_like(mask)
+
+            value, index = torch.topk(
+                mask.flatten(),
+                k=self.threshold_config.value,
+            )
+
+            out = torch.zeros_like(mask.flatten())
+            if threshold_config.type == ThresholdType.topk:
+                out[index] = value
+            else:
+                out[index] = 1.0
+            return out.view(mask.size())
+
+        assert False
+
+    def threshold(
+        self,
+        *args,
+        **kwargs,
+    ) -> Union['Explanation', 'HeteroExplanation']:
+        """Thresholds the explanation masks according to the thresholding
+        method.
+
+        Args:
+            threshold_config (ThresholdConfig): The threshold configuration.
+        """
+        threshold_config = ThresholdConfig.cast(*args, **kwargs)
+
+        if threshold_config is None:
+            return self
+
+        # Avoid modification of the original explanation:
+        out = copy.copy(self)
+
+        for store in out.node_stores:
+            for key in ['node_mask', 'node_feat_mask']:
+                store[key] = self._threshold_mask(store.get(key))
+
+        for store in out.edge_stores:
+            for key in ['edge_mask', 'edge_feat_mask']:
+                store[key] = self._threshold_mask(store.get(key))
+
+        return out
 
 
 class Explanation(Data, ExplanationMixin):
@@ -127,48 +193,6 @@ class Explanation(Data, ExplanationMixin):
         if node_mask is not None:
             out = out.subgraph(node_mask)
 
-        return out
-
-    @property
-    def available_explanations_masks(self) -> Dict[str, Tensor]:
-        r"""Returns a dictionary of all masks available in the explanation"""
-        mask_dict = {
-            key: self[key]
-            for key in self.keys
-            if key.endswith('_mask') and self[key] is not None
-        }
-        return dict(sorted(mask_dict.items()))
-
-    def threshold(self, threshold_value: Union[int, float],
-                  threshold_type: ThresholdType) -> 'Explanation':
-        r"""Returns a copy of explanation with applied threshold.
-
-        Args:
-            threshold: the threshold, behavior depends on `threshold_type
-            threshold_type: :obj:`torch_geometric.explain.config.ThresholdType`
-                the threshold type to use
-        """
-        out = copy.copy(self)
-
-        # get the evailable masks
-        mask_dict = out.available_explanations_masks
-
-        if threshold_type == ThresholdType.hard:
-            mask_dict = hard_threshold(mask_dict, threshold_value)
-
-        elif threshold_type == ThresholdType.topk:
-            mask_dict = topk_threshold(mask_dict, threshold_value, hard=False)
-
-        elif threshold_type == ThresholdType.topk_hard:
-            mask_dict = topk_threshold(mask_dict, threshold_value, hard=True)
-        else:
-            assert False
-
-        # Update the explanation with the thresholded masks:
-        for key, mask in mask_dict.items():
-            out[key] = mask
-
-        out.thresholded = True
         return out
 
     def visualize_feature_importance(

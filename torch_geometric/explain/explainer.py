@@ -1,4 +1,5 @@
 import warnings
+from dataclasses import asdict
 from typing import Any, Dict, Optional, Union
 
 import torch
@@ -216,9 +217,7 @@ class Explainer:
                 else:
                     explanation[key] = arg
 
-        return self._post_process(explanation)
-
-        return target
+        return explanation.threshold(self.threshold_config)
 
     @torch.no_grad()
     def _get_target(self, prediction: Tensor) -> Tensor:
@@ -242,78 +241,3 @@ class Explainer:
             return prediction.argmax(dim=-1)
 
         return prediction
-
-    def _post_process(
-        self,
-        explanation: Union[Explanation, HeteroExplanation],
-    ) -> Union[Explanation, HeteroExplanation]:
-        r"""Post-processes the explanation masks.
-
-        Args:
-            explanation (Explanation or HeteroExplanation): The explanation
-                to post-process.
-        """
-        explanation = self._threshold(explanation)
-        return explanation
-
-    def _threshold_mask(self, mask: Optional[Tensor]) -> Optional[Tensor]:
-        if mask is None:
-            return None
-
-        if self.threshold_config.type == ThresholdType.hard:
-            return (mask > self.threshold_config.value).float()
-
-        if self.threshold_config.type in [
-                ThresholdType.topk,
-                ThresholdType.topk_hard,
-        ]:
-            if self.threshold_config.value >= mask.numel():
-                if self.threshold_config.type == ThresholdType.topk:
-                    return mask
-                else:
-                    return torch.ones_like(mask)
-
-            value, index = torch.topk(
-                mask.flatten(),
-                k=self.threshold_config.value,
-            )
-
-            out = torch.zeros_like(mask.flatten())
-            if self.threshold_config.type == ThresholdType.topk:
-                out[index] = value
-            else:
-                out[index] = 1.0
-            return out.view(mask.size())
-
-        assert False
-
-    def _threshold(
-        self,
-        explanation: Union[Explanation, HeteroExplanation],
-    ) -> Union[Explanation, HeteroExplanation]:
-        """Thresholds the explanation masks according to the thresholding
-        method.
-
-        Args:
-            explanation (Explanation or HeteroExplanation): The explanation to
-                threshold.
-        """
-        if self.threshold_config is None:
-            return explanation
-
-        return explanation.threshold(
-            threshold_type=self.threshold_config.type,
-            threshold_value=self.threshold_config.value)
-
-        # Avoid modification of the original explanation:
-        # explanation = copy.copy(explanation)
-
-        # for store in explanation.node_stores:
-        #     for key in ['node_mask', 'node_feat_mask']:
-        #         store[key] = self._threshold_mask(store.get(key))
-
-        # for store in explanation.edge_stores:
-        #     for key in ['edge_mask', 'edge_feat_mask']:
-        #         store[key] = self._threshold_mask(store.get(key))
-
-        # return explanation
