@@ -187,6 +187,39 @@ class Explainer:
 
         self.model.train(training)
 
+        # Add explainer objectives to the `Explanation` object:
+        explanation.target = target
+        explanation.index = index
+        explanation.target_index = target_index
+
+        # Add model inputs to the `Explanation` object:
+        if isinstance(Explanation):
+            explanation.x = x
+            explanation.edge_index = edge_index
+
+            for key, arg in kwargs.items():  # Add remaining `kwargs`:
+                explanation[key] = arg
+
+        elif isinstance(HeteroExplanation):
+            assert isinstance(x, dict)
+            for node_type, value in x.items():
+                explanation[node_type].x = value
+
+            assert isinstance(edge_index, dict)
+            for edge_type, value in edge_index.items():
+                explanation[edge_type].edge_index = value
+
+            for key, arg in kwargs.items():  # Add remaining `kwargs`:
+                if isinstance(arg, dict):
+                    # Keyword arguments are likely named `{attr_name}_dict`
+                    # while we only want to assign the `{attr_name}` to the
+                    # `HeteroExplanation` object:
+                    key = key[:-5] if key.endswith('_dict') else key
+                    for type_name, value in arg.items():
+                        explanation[type_name][key] = value
+                else:
+                    explanation[key] = arg
+
         return self._post_process(explanation)
 
     def get_target(

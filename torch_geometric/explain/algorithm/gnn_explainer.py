@@ -136,9 +136,8 @@ class GNNExplainer(ExplainerAlgorithm):
         }:
             node_feat_mask, node_mask = node_mask, None
 
-        return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
-                           node_mask=node_mask, node_feat_mask=node_feat_mask,
-                           index=index)
+        return Explanation(node_mask=node_mask, node_feat_mask=node_feat_mask,
+                           edge_mask=edge_mask)
 
     def _train(
         self,

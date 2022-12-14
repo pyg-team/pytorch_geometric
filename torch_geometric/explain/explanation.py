@@ -5,6 +5,7 @@ from torch import Tensor
 
 from torch_geometric.data.data import Data, warn_or_raise
 from torch_geometric.data.hetero_data import HeteroData
+from torch_geometric.explain.config import ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
 
 
