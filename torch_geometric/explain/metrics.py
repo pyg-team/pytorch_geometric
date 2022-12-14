@@ -26,7 +26,7 @@ def get_groundtruth_metrics(
             explainer.
         groundtruth (Explanation): Groundtruth for explanation.
         threshold (float, optional): threshold value to perform hard
-            thresholding (default: :obj:`1.0`).
+            thresholding (default: :obj:`0.0`).
 
     Returns:
         :class:`Tuple`: A 5-item tuple containing the values corresponding
