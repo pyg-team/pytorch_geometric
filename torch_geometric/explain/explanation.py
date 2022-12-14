@@ -83,14 +83,14 @@ class ExplanationMixin:
                 ThresholdType.topk_hard,
         ]:
             if threshold_config.value >= mask.numel():
-                if self.threshold_config.type == ThresholdType.topk:
+                if threshold_config.type == ThresholdType.topk:
                     return mask
                 else:
                     return torch.ones_like(mask)
 
             value, index = torch.topk(
                 mask.flatten(),
-                k=self.threshold_config.value,
+                k=threshold_config.value,
             )
 
             out = torch.zeros_like(mask.flatten())
@@ -123,11 +123,13 @@ class ExplanationMixin:
 
         for store in out.node_stores:
             for key in ['node_mask', 'node_feat_mask']:
-                store[key] = self._threshold_mask(store.get(key))
+                store[key] = self._threshold_mask(store.get(key),
+                                                  threshold_config)
 
         for store in out.edge_stores:
             for key in ['edge_mask', 'edge_feat_mask']:
-                store[key] = self._threshold_mask(store.get(key))
+                store[key] = self._threshold_mask(store.get(key),
+                                                  threshold_config)
 
         return out
 
@@ -140,10 +142,6 @@ class Explanation(Data, ExplanationMixin):
     It can also hold the original graph if needed.
 
     Args:
-        index (Union[int, Tensor], optional): The index of which part of the
-            model output the explanation is explaining. Can be a single index
-            or a tensor of indices, or None (for graph level explanations).
-            (default: :obj:`None`)
         node_mask (Tensor, optional): Node-level mask with shape
             :obj:`[num_nodes]`. (default: :obj:`None`)
         edge_mask (Tensor, optional): Edge-level mask with shape

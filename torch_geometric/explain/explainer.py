@@ -184,20 +184,21 @@ class Explainer:
         self.model.train(training)
 
         # Add explainer objectives to the `Explanation` object:
+        explanation.model_config = self.model_config
         explanation.prediction = prediction
         explanation.target = target
         explanation.index = index
         explanation.target_index = target_index
 
         # Add model inputs to the `Explanation` object:
-        if isinstance(Explanation):
+        if isinstance(explanation, Explanation):
             explanation.x = x
             explanation.edge_index = edge_index
 
             for key, arg in kwargs.items():  # Add remaining `kwargs`:
                 explanation[key] = arg
 
-        elif isinstance(HeteroExplanation):
+        elif isinstance(explanation, HeteroExplanation):
             assert isinstance(x, dict)
             for node_type, value in x.items():
                 explanation[node_type].x = value
