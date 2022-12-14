@@ -17,9 +17,7 @@ from torch_geometric.explain.config import (
     ModelMode,
     ThresholdConfig,
 )
-
 from torch_geometric.typing import EdgeType, NodeType
-
 
 
 class Explainer:
