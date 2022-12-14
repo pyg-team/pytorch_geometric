@@ -2,58 +2,58 @@ from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.utils import (
-    InputData,
     filter_custom_store,
     filter_data,
     filter_hetero_data,
     get_edge_label_index,
 )
-from torch_geometric.sampler.base import (
+from torch_geometric.sampler import (
     BaseSampler,
     EdgeSamplerInput,
     HeteroSamplerOutput,
-    NegativeSamplingConfig,
     SamplerOutput,
 )
+from torch_geometric.sampler.base import NegativeSamplingConfig
 from torch_geometric.typing import InputEdges, OptTensor
 
 
 class LinkLoader(torch.utils.data.DataLoader):
-    r"""A data loader that performs neighbor sampling from link information,
+    r"""A data loader that performs mini-batch sampling from link information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
-    implementation that defines a :meth:`sample_from_edges` function and is
-    supported on the provided input :obj:`data` object.
+    implementation that defines a
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges` function and
+    is supported on the provided input :obj:`data` object.
 
     .. note::
         Negative sampling is currently implemented in an approximate
         way, *i.e.* negative edges may contain false negatives.
 
     Args:
-        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
-            The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         link_sampler (torch_geometric.sampler.BaseSampler): The sampler
-            implementation to be used with this loader. Note that the
-            sampler implementation must be compatible with the input data
-            object.
+            implementation to be used with this loader.
+            Needs to implement
+            :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
+            The sampler implementation must be compatible with the input
+            :obj:`data` object.
         edge_label_index (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
-            The edge indices for which neighbors are sampled to create
-            mini-batches.
+            The edge indices, holding source and destination nodes to start
+            sampling from.
             If set to :obj:`None`, all edges will be considered.
             In heterogeneous graphs, needs to be passed as a tuple that holds
             the edge type and corresponding edge indices.
             (default: :obj:`None`)
-        edge_label (Tensor, optional): The labels of edge indices for
-            which neighbors are sampled. Must be the same length as
-            the :obj:`edge_label_index`. If set to :obj:`None` its set to
-            `torch.zeros(...)` internally. (default: :obj:`None`)
-        edge_label_time (Tensor, optional): The timestamps for edge indices
-            for which neighbors are sampled. Must be the same length as
+        edge_label (Tensor, optional): The labels of edge indices from which to
+            start sampling from. Must be the same length as
+            the :obj:`edge_label_index`. (default: :obj:`None`)
+        edge_label_time (Tensor, optional): The timestamps of edge indices from
+            which to start sampling from. Must be the same length as
             :obj:`edge_label_index`. If set, temporal sampling will be
             used such that neighbors are guaranteed to fulfill temporal
             constraints, *i.e.*, neighbors have an earlier timestamp than
@@ -94,10 +94,14 @@ class LinkLoader(torch.utils.data.DataLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
-            Setting this to :obj:`True` is generally not recommended:
+            Setting this to :obj:`True` for in-memory datasets is generally not
+            recommended:
             (1) it may result in too many open file handles,
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
@@ -115,7 +119,8 @@ class LinkLoader(torch.utils.data.DataLoader):
         edge_label_time: OptTensor = None,
         neg_sampling: Optional[NegativeSamplingConfig] = None,
         neg_sampling_ratio: Optional[Union[int, float]] = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
         **kwargs,
     ):
@@ -130,14 +135,14 @@ class LinkLoader(torch.utils.data.DataLoader):
             neg_sampling = NegativeSamplingConfig("binary", neg_sampling_ratio)
 
         # Get edge type (or `None` for homogeneous graphs):
-        edge_type, edge_label_index = get_edge_label_index(
+        input_type, edge_label_index = get_edge_label_index(
             data, edge_label_index)
 
         self.data = data
-        self.edge_type = edge_type
         self.link_sampler = link_sampler
         self.neg_sampling = NegativeSamplingConfig.cast(neg_sampling)
         self.transform = transform
+        self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
 
         if (self.neg_sampling is not None and self.neg_sampling.is_binary()
@@ -154,11 +159,13 @@ class LinkLoader(torch.utils.data.DataLoader):
                              "instead to differentiate between positive and "
                              "negative samples.")
 
-        self.input_data = InputData(
-            edge_label_index[0].clone(),
-            edge_label_index[1].clone(),
-            edge_label,
-            edge_label_time,
+        self.input_data = EdgeSamplerInput(
+            input_id=None,
+            row=edge_label_index[0].clone(),
+            col=edge_label_index[1].clone(),
+            label=edge_label,
+            time=edge_label_time,
+            input_type=input_type,
         )
 
         iterator = range(edge_label_index.size(1))
@@ -184,6 +191,9 @@ class LinkLoader(torch.utils.data.DataLoader):
         returning the resulting :class:`~torch_geometric.data.Data` or
         :class:`~torch_geometric.data.HeteroData` object to be used downstream.
         """
+        if self.transform_sampler_output:
+            out = self.transform_sampler_output(out)
+
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.link_sampler.edge_permutation)
@@ -213,18 +223,19 @@ class LinkLoader(torch.utils.data.DataLoader):
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
 
-            data[self.edge_type].input_id = out.metadata[0]
+            input_type = self.input_data.input_type
+            data[input_type].input_id = out.metadata[0]
 
             if self.neg_sampling is None or self.neg_sampling.is_binary():
-                data[self.edge_type].edge_label_index = out.metadata[1]
-                data[self.edge_type].edge_label = out.metadata[2]
-                data[self.edge_type].edge_label_time = out.metadata[3]
+                data[input_type].edge_label_index = out.metadata[1]
+                data[input_type].edge_label = out.metadata[2]
+                data[input_type].edge_label_time = out.metadata[3]
             elif self.neg_sampling.is_triplet():
-                data[self.edge_type[0]].src_index = out.metadata[1]
-                data[self.edge_type[-1]].dst_pos_index = out.metadata[2]
-                data[self.edge_type[-1]].dst_neg_index = out.metadata[3]
-                data[self.edge_type[0]].seed_time = out.metadata[4]
-                data[self.edge_type[-1]].seed_time = out.metadata[4]
+                data[input_type[0]].src_index = out.metadata[1]
+                data[input_type[-1]].dst_pos_index = out.metadata[2]
+                data[input_type[-1]].dst_neg_index = out.metadata[3]
+                data[input_type[0]].seed_time = out.metadata[4]
+                data[input_type[-1]].seed_time = out.metadata[4]
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

@@ -1,10 +1,7 @@
 from typing import Callable, Optional, Tuple, Union
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.node_loader import NodeLoader
-from torch_geometric.loader.utils import get_input_nodes
 from torch_geometric.sampler import NeighborSampler
 from torch_geometric.typing import InputNodes, NumNeighbors, OptTensor
 
@@ -106,9 +103,10 @@ class NeighborLoader(NodeLoader):
         print(sampled_data.n_id)
 
     Args:
-        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
-            The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
             In heterogeneous graphs, may also take in a dictionary denoting
@@ -152,6 +150,9 @@ class NeighborLoader(NodeLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column.
             If :obj:`time_attr` is set, additionally requires that rows are
@@ -161,7 +162,8 @@ class NeighborLoader(NodeLoader):
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
-            Setting this to :obj:`True` is generally not recommended:
+            Setting this to :obj:`True` for in-memory datasets is generally not
+            recommended:
             (1) it may result in too many open file handles,
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
@@ -181,15 +183,13 @@ class NeighborLoader(NodeLoader):
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
         filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
-        node_type, _ = get_input_nodes(data, input_nodes)
-
         if input_time is not None and time_attr is None:
             raise ValueError("Received conflicting 'input_time' and "
                              "'time_attr' arguments: 'input_time' is set "
@@ -203,7 +203,6 @@ class NeighborLoader(NodeLoader):
                 directed=directed,
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
-                input_type=node_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
@@ -215,6 +214,7 @@ class NeighborLoader(NodeLoader):
             input_nodes=input_nodes,
             input_time=input_time,
             transform=transform,
+            transform_sampler_output=transform_sampler_output,
             filter_per_worker=filter_per_worker,
             **kwargs,
         )

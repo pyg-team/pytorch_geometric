@@ -21,7 +21,25 @@ if has_pytorch112:  # pragma: no cover
 
     def scatter(src: Tensor, index: Tensor, dim: int = 0,
                 dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
+        r"""Reduces all values from the :obj:`src` tensor at the indices
+        specified in the :obj:`index` tensor along a given dimension
+        :obj:`dim`. See the `documentation
+        <https://pytorch-scatter.readthedocs.io/en/latest/functions/
+        scatter.html>`_ of :obj:`torch-scatter` for more information.
 
+        Args:
+            src (torch.Tensor): The source tensor.
+            index (torch.Tensor): The index tensor.
+            dim (int, optional): The dimension along which to index.
+                (default: :obj:`0`)
+            dim_size (int, optional): The size of the output tensor at
+                dimension :obj:`dim`. If set to :obj:`None`, will create a
+                minimal-sized output tensor according to
+                :obj:`index.max() + 1`. (default: :obj:`None`)
+            reduce (str, optional): The reduce operation (:obj:`"sum"`,
+                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
+                (default: :obj:`"sum"`)
+        """
         if index.dim() != 1:
             raise ValueError(f"The `index` argument must be one-dimensional "
                              f"(got {index.dim()} dimensions)")
@@ -92,5 +110,24 @@ else:
 
     def scatter(src: Tensor, index: Tensor, dim: int = 0,
                 dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
+        r"""Reduces all values from the :obj:`src` tensor at the indices
+        specified in the :obj:`index` tensor along a given dimension
+        :obj:`dim`. See the `documentation
+        <https://pytorch-scatter.readthedocs.io/en/latest/functions/
+        scatter.html>`_ of :obj:`torch-scatter` for more information.
+
+        Args:
+            src (torch.Tensor): The source tensor.
+            index (torch.Tensor): The index tensor.
+            dim (int, optional): The dimension along which to index.
+                (default: :obj:`0`)
+            dim_size (int, optional): The size of the output tensor at
+                dimension :obj:`dim`. If set to :obj:`None`, will create a
+                minimal-sized output tensor according to
+                :obj:`index.max() + 1`. (default: :obj:`None`)
+            reduce (str, optional): The reduce operation (:obj:`"sum"`,
+                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
+                (default: :obj:`"sum"`)
+        """
         return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                      reduce=reduce)

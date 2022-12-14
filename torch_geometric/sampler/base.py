@@ -1,56 +1,114 @@
 import math
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
-# An input to a node-based sampler consists of two tensors:
-#  * The example indices
-#  * The node indices
-#  * The timestamps of the given node indices (optional)
-NodeSamplerInput = Tuple[Tensor, Tensor, OptTensor]
 
-# An input to an edge-based sampler consists of four tensors:
-#   * The example indices
-#   * The row of the edge index in COO format
-#   * The column of the edge index in COO format
-#   * The labels of the edges (optional)
-#   * The time attribute corresponding to the edge label (optional)
-EdgeSamplerInput = Tuple[Tensor, Tensor, Tensor, OptTensor, OptTensor]
-
-
-# A sampler output contains the following information.
-#   * node: a tensor of `n` output nodes resulting from sampling. In the
-#       heterogeneous case, this is a dictionary mapping node types to the
-#       associated output tensors, each with potentially varying length.
-#   * row: a tensor of edge indices that correspond to the COO row values of
-#       the edges in the sampled subgraph. Note that these indices must be
-#       re-indexed from 0..n-1 corresponding to the nodes in the 'node' tensor.
-#       In the heterogeneous case, this is a dictionary mapping edge types to
-#       the associated COO row tensors.
-#   * col: a tensor of edge indices that correspond to the COO column values of
-#       the edges in the sampled subgraph. Note that these indices must be
-#       re-indexed from 0..n-1 corresponding to the nodes in the 'node' tensor.
-#       In the heterogeneous case, this is a dictionary mapping edge types to
-#       the associated COO column tensors.
-#   * edge: a tensor of the indices of the sampled edges in the original graph.
-#       This tensor is used to obtain edge attributes from the original graph;
-#       if no edge attributes are present, it may be omitted.
-#   * batch: a tensor identifying the seed node for each sampled node.
-#   * metadata: any additional metadata required by a loader using the sampler
-#       output.
-# There exist both homogeneous and heterogeneous versions.
 @dataclass
-class SamplerOutput:
+class NodeSamplerInput(CastMixin):
+    r"""The sampling input of
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_nodes`.
+
+    Args:
+        input_id (torch.Tensor, optional): The indices of the data loader input
+            of the current mini-batch.
+        node (torch.Tensor): The indices of seed nodes to start sampling from.
+        time (torch.Tensor, optional): The timestamp for the seed nodes.
+            (default: :obj:`None`)
+        input_type (str, optional): The input node type (in case of sampling in
+            a heterogeneous graph). (default: :obj:`None`)
+    """
+    input_id: OptTensor
+    node: Tensor
+    time: OptTensor = None
+    input_type: Optional[NodeType] = None
+
+    def __getitem__(self, index: Union[Tensor, Any]) -> 'NodeSamplerInput':
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        return NodeSamplerInput(
+            self.input_id[index] if self.input_id is not None else index,
+            self.node[index],
+            self.time[index] if self.time is not None else None,
+            self.input_type,
+        )
+
+
+@dataclass
+class EdgeSamplerInput(CastMixin):
+    r"""The sampling input of
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
+
+    Args:
+        input_id (torch.Tensor, optional): The indices of the data loader input
+            of the current mini-batch.
+        row (torch.Tensor): The source node indices of seed links to start
+            sampling from.
+        col (torch.Tensor): The destination node indices of seed links to start
+            sampling from.
+        label (torch.Tensor, optional): The label for the seed links.
+            (default: :obj:`None`)
+        time (torch.Tensor, optional): The timestamp for the seed links.
+            (default: :obj:`None`)
+        input_type (Tuple[str, str, str], optional): The input edge type (in
+            case of sampling in a heterogeneous graph). (default: :obj:`None`)
+    """
+    input_id: OptTensor
+    row: Tensor
+    col: Tensor
+    label: OptTensor = None
+    time: OptTensor = None
+    input_type: Optional[EdgeType] = None
+
+    def __getitem__(self, index: Union[Tensor, Any]) -> 'EdgeSamplerInput':
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        return EdgeSamplerInput(
+            self.input_id[index] if self.input_id is not None else index,
+            self.row[index],
+            self.col[index],
+            self.label[index] if self.label is not None else None,
+            self.time[index] if self.time is not None else None,
+            self.input_type,
+        )
+
+
+@dataclass
+class SamplerOutput(CastMixin):
+    r"""The sampling output of a :class:`~torch_geometric.sampler.BaseSampler`
+    on homogeneous graphs.
+
+    Args:
+        node (torch.Tensor): The sampled nodes in the original graph.
+        row (torch.Tensor): The source node indices of the sampled subgraph.
+            Indices must be re-indexed to :obj:`{ 0, ..., num_nodes - 1 }`
+            corresponding to the nodes in the :obj:`node` tensor.
+        col (torch.Tensor): The destination node indices of the sampled
+            subgraph.
+            Indices must be re-indexed to :obj:`{ 0, ..., num_nodes - 1 }`
+            corresponding to the nodes in the :obj:`node` tensor.
+        edge (torch.Tensor, optional): The sampled edges in the original graph.
+            This tensor is used to obtain edge features from the original
+            graph. If no edge attributes are present, it may be omitted.
+        batch (torch.Tensor, optional): The vector to identify the seed node
+            for each sampled node. Can be present in case of disjoint subgraph
+            sampling per seed node. (default: :obj:`None`)
+        metadata: (Any, optional): Additional metadata information.
+            (default: :obj:`None`)
+    """
     node: Tensor
     row: Tensor
     col: Tensor
-    edge: Tensor
+    edge: OptTensor
     batch: OptTensor = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
@@ -58,11 +116,38 @@ class SamplerOutput:
 
 
 @dataclass
-class HeteroSamplerOutput:
+class HeteroSamplerOutput(CastMixin):
+    r"""The sampling output of a :class:`~torch_geometric.sampler.BaseSampler`
+    on heterogeneous graphs.
+
+    Args:
+        node (Dict[str, torch.Tensor]): The sampled nodes in the original graph
+            for each node type.
+        row (Dict[Tuple[str, str, str], torch.Tensor]): The source node indices
+            of the sampled subgraph for each edge type.
+            Indices must be re-indexed to :obj:`{ 0, ..., num_nodes - 1 }`
+            corresponding to the nodes in the :obj:`node` tensor of the source
+            node type.
+        col (Dict[Tuple[str, str, str], torch.Tensor]): The destination node
+            indices of the sampled subgraph for each edge type.
+            Indices must be re-indexed to :obj:`{ 0, ..., num_nodes - 1 }`
+            corresponding to the nodes in the :obj:`node` tensor of the
+            destination node type.
+        edge (Dict[Tuple[str, str, str], torch.Tensor], optional): The sampled
+            edges in the original graph for each edge type.
+            This tensor is used to obtain edge features from the original
+            graph. If no edge attributes are present, it may be omitted.
+        batch (Dict[str, torch.Tensor], optional): The vector to identify the
+            seed node for each sampled node for each node type. Can be present
+            in case of disjoint subgraph sampling per seed node.
+            (default: :obj:`None`)
+        metadata: (Any, optional): Additional metadata information.
+            (default: :obj:`None`)
+    """
     node: Dict[NodeType, Tensor]
     row: Dict[EdgeType, Tensor]
     col: Dict[EdgeType, Tensor]
-    edge: Dict[EdgeType, Tensor]
+    edge: Optional[Dict[EdgeType, Tensor]]
     batch: Optional[Dict[NodeType, Tensor]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
@@ -111,7 +196,7 @@ class NegativeSamplingConfig(CastMixin):
 
 
 class BaseSampler(ABC):
-    r"""A base class that initializes a graph sampler and provides
+    r"""An abstract base class that initializes a graph sampler and provides
     :meth:`sample_from_nodes` and :meth:`sample_from_edges` routines.
 
     .. note ::
@@ -122,7 +207,6 @@ class BaseSampler(ABC):
         As such, it is recommended to limit the amount of information stored in
         the sampler.
     """
-    @abstractmethod
     def sample_from_nodes(
         self,
         index: NodeSamplerInput,
@@ -131,12 +215,14 @@ class BaseSampler(ABC):
         r"""Performs sampling from the nodes specified in :obj:`index`,
         returning a sampled subgraph in the specified output format.
 
-        Args:
-            index (Tensor): The node indices to start sampling from.
-        """
-        pass
+        The :obj:`index` is a tuple holding the following information:
 
-    @abstractmethod
+        1. The example indices of the seed nodes
+        2. The node indices to start sampling from
+        3. The timestamps of the given seed nodes (optional)
+        """
+        raise NotImplementedError
+
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,
@@ -145,13 +231,15 @@ class BaseSampler(ABC):
         r"""Performs sampling from the edges specified in :obj:`index`,
         returning a sampled subgraph in the specified output format.
 
-        Args:
-            index (Tuple[Tensor, Tensor, Tensor, Optional[Tensor]]): The (1)
-                source node indices, the (2) destination node indices, the (3)
-                edge labels and the (4) optional timestamp of edges to start
-                sampling from.
+        The :obj:`index` is a tuple holding the following information:
+
+        1. The example indices of the seed links
+        2. The source node indices to start sampling from
+        3. The destination node indices to start sampling from
+        4. The labels of the seed links (optional)
+        5. The timestamps of the given seed nodes (optional)
         """
-        pass
+        raise NotImplementedError
 
     @property
     def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:
