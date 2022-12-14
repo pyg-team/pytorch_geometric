@@ -24,6 +24,7 @@ coverage.xml
 *.out
 *.pt
 *.onnx
+examples/feature_importance.png
 
 !torch_geometric/data/
 !test/data/

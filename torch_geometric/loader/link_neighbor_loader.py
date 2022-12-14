@@ -2,7 +2,6 @@ from typing import Callable, Optional, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
-from torch_geometric.loader.utils import get_edge_label_index
 from torch_geometric.sampler import NeighborSampler
 from torch_geometric.sampler.base import NegativeSamplingConfig
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
@@ -152,6 +151,9 @@ class LinkNeighborLoader(LinkLoader):
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column.
             If :obj:`time_attr` is set, additionally requires that rows are
@@ -185,15 +187,13 @@ class LinkNeighborLoader(LinkLoader):
         neg_sampling: Optional[NegativeSamplingConfig] = None,
         neg_sampling_ratio: Optional[Union[int, float]] = None,
         time_attr: Optional[str] = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
         filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
-        edge_type, _ = get_edge_label_index(data, edge_label_index)
-
         if (edge_label_time is not None) != (time_attr is not None):
             raise ValueError(
                 f"Received conflicting 'edge_label_time' and 'time_attr' "
@@ -210,7 +210,6 @@ class LinkNeighborLoader(LinkLoader):
                 directed=directed,
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
-                input_type=edge_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
@@ -225,6 +224,7 @@ class LinkNeighborLoader(LinkLoader):
             neg_sampling=neg_sampling,
             neg_sampling_ratio=neg_sampling_ratio,
             transform=transform,
+            transform_sampler_output=transform_sampler_output,
             filter_per_worker=filter_per_worker,
             **kwargs,
         )
