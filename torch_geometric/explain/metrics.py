@@ -60,7 +60,7 @@ def get_groundtruth_metrics(
     else:
         recall = tp / (tp + fn)
 
-    if precision == 0.0 and recall == 0.0:
+    if precision == 0.0 or recall == 0.0:
         f1_score = tensor(0.0)
     else:
         f1_score = 2 * (precision * recall) / (precision + recall)
