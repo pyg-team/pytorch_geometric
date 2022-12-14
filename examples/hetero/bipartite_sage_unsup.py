@@ -42,6 +42,8 @@ train_data, val_data, test_data = T.RandomLinkSplit(
     edge_types=[('user', '2', 'item')],
     rev_edge_types=[('item', 'rev_2', 'user')],
 )(data)
+del train_data[('user', '2', 'item')].edge_label
+del train_data[('user', '2', 'item')].edge_label_index
 
 
 def to_u2i_mat(edge_index, u_num, i_num):
@@ -76,10 +78,11 @@ train_loader = LinkNeighborLoader(
     data=train_data,
     num_neighbors=[8, 4],
     edge_label_index=['user', '2', 'item'],
-    neg_sampling_ratio=1.,
+    neg_sampling='triplet',
     batch_size=2048,
     num_workers=32,
     pin_memory=True,
+    drop_last=True,
 )
 
 val_loader = LinkNeighborLoader(
@@ -186,7 +189,7 @@ model = Model(num_users=data['user'].num_nodes,
               num_items=data['item'].num_nodes, hidden_channels=64,
               out_channels=64)
 model = model.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.002)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
 def train():
@@ -195,12 +198,19 @@ def train():
     for batch in tqdm.tqdm(train_loader):
         batch = batch.to(device)
         optimizer.zero_grad()
+        row =torch.cat((batch['user'].src_index, batch['user'].src_index),
+                       dim=0)
+        col = torch.cat((batch['item'].dst_pos_index,
+                         batch['item'].dst_neg_index),
+                        dim=0)
+        edge_label_index = torch.stack((row, col), dim=0)
         pred = model(
             batch.x_dict,
             batch.edge_index_dict,
-            batch['user', 'item'].edge_label_index,
+            edge_label_index,
         )
-        target = batch['user', 'item'].edge_label
+        target = torch.cat((torch.ones(2048, device=device),
+                            torch.zeros(2048, device=device)), dim=0)
         loss = F.binary_cross_entropy_with_logits(pred, target)
         loss.backward()
         optimizer.step()
@@ -241,20 +251,16 @@ def test(loader):
     return total_acc, total_precision, total_recall, total_f1
 
 
-for epoch in range(1, 51):
+for epoch in range(1, 21):
     loss = train()
-    train_acc, train_precision, train_recall, train_f1 = test(train_loader)
     val_acc, val_precision, val_recall, val_f1 = test(val_loader)
     test_acc, test_precision, test_recall, test_f1 = test(test_loader)
 
     print(f'Epoch: {epoch:03d} | Loss: {loss:4f}')
     print(f'Eval: Accuracy | Precision | Recall | F1 score')
     print(
-        f'Train: {train_acc:.4f}  | {train_precision:.4f}   | {train_recall:.4f} | {train_f1:.4f}'
+        f'Val:   {val_acc:.4f}  | {val_precision:.4f}    | {val_recall:.4f} | {val_f1:.4f}'
     )
     print(
-        f'Val:   {val_acc:.4f}  | {val_precision:.4f}   | {val_recall:.4f} | {val_f1:.4f}'
-    )
-    print(
-        f'Test:  {test_acc:.4f} | {test_precision:.4f}   | {test_recall:.4f} | {test_f1:.4f}'
+        f'Test:  {test_acc:.4f}  | {test_precision:.4f}   | {test_recall:.4f} | {test_f1:.4f}'
     )
