@@ -2,7 +2,7 @@ from typing import Tuple
 
 import torch
 from torch import Tensor, tensor
-from torchmetrics import AUROC, ROC
+from torchmetrics import AUROC
 
 from torch_geometric.explain import Explanation
 
@@ -46,10 +46,8 @@ def get_groundtruth_metrics(
         list(map(lambda x: x.view(-1), gt_masks.values())))
 
     gt_mask_tensor[gt_mask_tensor > threshold] = 1.0
-    roc = ROC(task="binary")
-    fpr, tpr, thresholds = roc(ex_mask_tensor, gt_mask_tensor)
     auroc = AUROC(task="binary")
-    auc = auroc(fpr, tpr)
+    auc = auroc(ex_mask_tensor, gt_mask_tensor)
     ex_mask_tensor[ex_mask_tensor > threshold] = 1.0
     correct_preds = gt_mask_tensor == ex_mask_tensor
     incorrect_preds = gt_mask_tensor != ex_mask_tensor

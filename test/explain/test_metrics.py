@@ -158,7 +158,7 @@ def test_accuracy_metrics(data1):
     assert torch.round(accuracy_metrics[1], decimals=4) == torch.tensor(0.9333)
     assert torch.round(accuracy_metrics[2], decimals=4) == torch.tensor(0.9333)
     assert torch.round(accuracy_metrics[3], decimals=4) == torch.tensor(0.9333)
-    assert torch.round(accuracy_metrics[4], decimals=4) == torch.tensor(1.0)
+    assert torch.round(accuracy_metrics[4], decimals=4) == torch.tensor(0.8381)
 
 
 def test_accuracy_metrics_when_precision_and_recall_is_zero(data2):
