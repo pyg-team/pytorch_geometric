@@ -136,8 +136,8 @@ class GNNExplainer(ExplainerAlgorithm):
         }:
             node_feat_mask, node_mask = node_mask, None
 
-        return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
-                           node_mask=node_mask, node_feat_mask=node_feat_mask)
+        return Explanation(node_mask=node_mask, node_feat_mask=node_feat_mask,
+                           edge_mask=edge_mask)
 
     def _train(
         self,
@@ -194,13 +194,13 @@ class GNNExplainer(ExplainerAlgorithm):
         elif node_mask_type == MaskType.common_attributes:
             self.node_mask = Parameter(torch.randn(1, F, device=device) * std)
         else:
-            raise NotImplementedError
+            assert False
 
         if edge_mask_type == MaskType.object:
             std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
         elif edge_mask_type is not None:
-            raise NotImplementedError
+            assert False
 
     def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
         if self.model_config.return_type.value == 'raw':
@@ -208,7 +208,7 @@ class GNNExplainer(ExplainerAlgorithm):
         elif self.model_config.return_type.value == 'probs':
             loss_fn = F.binary_cross_entropy
         else:
-            raise NotImplementedError
+            assert False
 
         return loss_fn(y_hat.view_as(y), y.float())
 
@@ -225,7 +225,7 @@ class GNNExplainer(ExplainerAlgorithm):
         elif self.model_config.return_type.value == 'log_probs':
             loss_fn = F.nll_loss
         else:
-            raise NotImplementedError
+            assert False
 
         return loss_fn(y_hat, y)
 
@@ -241,7 +241,7 @@ class GNNExplainer(ExplainerAlgorithm):
         elif self.model_config.mode == ModelMode.regression:
             loss = self._loss_regression(y_hat, y)
         else:
-            raise NotImplementedError
+            assert False
 
         if self.explainer_config.edge_mask_type is not None:
             m = self.edge_mask.sigmoid()

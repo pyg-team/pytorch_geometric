@@ -41,9 +41,6 @@ class DummyExplainer(ExplainerAlgorithm):
             assert isinstance(edge_index, Tensor)
 
             return Explanation(
-                x=x,
-                edge_index=edge_index,
-                edge_attr=edge_attr,
                 node_mask=torch.rand(x.size(0), device=x.device),
                 node_feat_mask=torch.rand_like(x),
                 edge_mask=torch.rand(edge_index.size(1), device=x.device),
@@ -55,18 +52,15 @@ class DummyExplainer(ExplainerAlgorithm):
 
             node_dict = defaultdict(dict)
             for key, x in x.items():
-                node_dict[key]['x'] = x
                 node_dict[key]['node_mask'] = torch.rand(
                     x.size(0), device=x.device)
                 node_dict[key]['node_feat_mask'] = torch.rand_like(x)
 
             edge_dict = defaultdict(dict)
             for key, edge_index in edge_index.items():
-                edge_dict[key]['edge_index'] = edge_index
                 edge_dict[key]['edge_mask'] = torch.rand(
                     edge_index.size(1), device=edge_index.device)
                 if edge_attr is not None:
-                    edge_dict[key]['edge_attr'] = edge_attr[key]
                     edge_dict[key]['edge_feat_mask'] = torch.rand_like(
                         edge_attr[key])
 
