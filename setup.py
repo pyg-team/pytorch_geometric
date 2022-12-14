@@ -12,6 +12,7 @@ install_requires = [
     'pyparsing',
     'scikit-learn',
     'psutil>=5.8.0',
+    'torchmetrics>=0.7',
 ]
 
 graphgym_requires = [
