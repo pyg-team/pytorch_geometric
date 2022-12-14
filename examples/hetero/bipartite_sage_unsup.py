@@ -198,19 +198,18 @@ def train():
     for batch in tqdm.tqdm(train_loader):
         batch = batch.to(device)
         optimizer.zero_grad()
-        row =torch.cat((batch['user'].src_index, batch['user'].src_index),
-                       dim=0)
-        col = torch.cat((batch['item'].dst_pos_index,
-                         batch['item'].dst_neg_index),
+        row = torch.cat((batch['user'].src_index, batch['user'].src_index),
                         dim=0)
+        col = torch.cat(
+            (batch['item'].dst_pos_index, batch['item'].dst_neg_index), dim=0)
         edge_label_index = torch.stack((row, col), dim=0)
         pred = model(
             batch.x_dict,
             batch.edge_index_dict,
             edge_label_index,
         )
-        target = torch.cat((torch.ones(2048, device=device),
-                            torch.zeros(2048, device=device)), dim=0)
+        target = torch.cat((torch.ones(
+            2048, device=device), torch.zeros(2048, device=device)), dim=0)
         loss = F.binary_cross_entropy_with_logits(pred, target)
         loss.backward()
         optimizer.step()
