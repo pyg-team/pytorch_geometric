@@ -88,8 +88,7 @@ class Explainer:
         self.algorithm.connect(explainer_config, self.model_config)
 
     @torch.no_grad()
-    def get_prediction(self, *args, raw: bool = False,
-                       **kwargs) -> torch.Tensor:
+    def get_prediction(self, *args, **kwargs) -> Tensor:
         r"""Returns the prediction of the model on the input graph.
 
         If the model mode is :obj:`"regression"`, the prediction is returned as
@@ -108,16 +107,6 @@ class Explainer:
 
         with torch.no_grad():
             out = self.model(*args, **kwargs)
-
-        if self.model_config.mode == ModelMode.multiclass_classification:
-            if not raw:
-                out = out.argmax(dim=-1)
-        elif self.model_config.mode == ModelMode.binary_classification:
-            # TODO: allow customization of the thresholds used below
-            if self.model_config.return_type.value == 'raw':
-                out = (out > 0).long().view(-1)
-            elif self.model_config.return_type.value == 'probs':
-                out = (out > 0.5).long().view(-1)
 
         self.model.train(training)
 
@@ -164,13 +153,19 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
-        target = self.get_target(
-            x=x,
-            edge_index=edge_index,
-            target=target,
-            raw=False,
-            **kwargs,
-        )
+        prediction: Optional[Tensor] = None
+        if self.explanation_type == ExplanationType.phenomenon:
+            if target is None:
+                raise ValueError(
+                    f"The 'target' has to be provided for the explanation "
+                    f"type '{self.explanation_type.value}'")
+        elif self.explanation_type == ExplanationType.model:
+            if target is not None:
+                warnings.warn(
+                    f"The 'target' should not be provided for the explanation "
+                    f"type '{self.explanation_type.value}'")
+            prediction = self.get_prediction(x, edge_index, **kwargs)
+            target = self._get_target(prediction)
 
         training = self.model.training
         self.model.eval()
@@ -188,6 +183,7 @@ class Explainer:
         self.model.train(training)
 
         # Add explainer objectives to the `Explanation` object:
+        explanation.prediction = prediction
         explanation.target = target
         explanation.index = index
         explanation.target_index = target_index
@@ -222,30 +218,30 @@ class Explainer:
 
         return self._post_process(explanation)
 
-    def get_target(
-        self,
-        x: Tensor,
-        edge_index: Tensor,
-        explanation_type: ExplanationType,
-        raw: bool = False,
-        target: Optional[Tensor] = None,
-        **kwargs,
-    ):
-
-        if explanation_type == ExplanationType.phenomenon:
-            if target is None:
-                raise ValueError(
-                    f"The 'target' has to be provided for the explanation "
-                    f"type '{explanation_type.value}'")
-        elif explanation_type == ExplanationType.model:
-            if target is not None:
-                warnings.warn(
-                    f"The 'target' should not be provided for the explanation "
-                    f"type '{explanation_type.value}'")
-            target = self.get_prediction(x=x, edge_index=edge_index, raw=raw,
-                                         **kwargs)
-
         return target
+
+    @torch.no_grad()
+    def _get_target(self, prediction: Tensor) -> Tensor:
+        r"""Returns the target of the model from a given prediction.
+
+        If the model mode is of type :obj:`"regression"`, the prediction is
+        returned as it is.
+        If the model mode is of type :obj:`"multiclass_classification"` or
+        :obj:`"binary_classification"`, the prediction is returned as the
+        predicted class label.
+        """
+        if self.model_config.mode == ModelMode.binary_classification:
+            # TODO: Allow customization of the thresholds used below.
+            if self.model_config.return_type.value == 'raw':
+                return (prediction > 0).long().view(-1)
+            if self.model_config.return_type.value == 'probs':
+                return (prediction > 0.5).long().view(-1)
+            assert False
+
+        if self.model_config.mode == ModelMode.multiclass_classification:
+            return prediction.argmax(dim=-1)
+
+        return prediction
 
     def _post_process(
         self,
@@ -289,7 +285,7 @@ class Explainer:
                 out[index] = 1.0
             return out.view(mask.size())
 
-        raise NotImplementedError
+        assert False
 
     def _threshold(
         self,

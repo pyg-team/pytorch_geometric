@@ -162,7 +162,7 @@ class Explanation(Data, ExplanationMixin):
         elif threshold_type == ThresholdType.topk_hard:
             mask_dict = topk_threshold(mask_dict, threshold_value, hard=True)
         else:
-            raise NotImplementedError
+            assert False
 
         # Update the explanation with the thresholded masks:
         for key, mask in mask_dict.items():
