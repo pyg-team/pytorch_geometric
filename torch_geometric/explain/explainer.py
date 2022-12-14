@@ -1,5 +1,4 @@
 import warnings
-from dataclasses import asdict
 from typing import Any, Dict, Optional, Union
 
 import torch
@@ -184,7 +183,7 @@ class Explainer:
         self.model.train(training)
 
         # Add explainer objectives to the `Explanation` object:
-        explanation.model_config = self.model_config
+        explanation._model_config = self.model_config
         explanation.prediction = prediction
         explanation.target = target
         explanation.index = index
