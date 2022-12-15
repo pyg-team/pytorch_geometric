@@ -53,8 +53,8 @@ def fidelity_curve_auc(
             :math:`\textrm{fid}_{+}`.
         neg_fidelity (torch.Tensor): The positive fidelity
             :math:`\textrm{fid}_{-}`.
-        x (Tensor): Tensor containing the points on the :math:`x`-axis. Needs
-            to be sorted in ascending order.
+        x (torch.Tensor): Tensor containing the points on the :math:`x`-axis.
+            Needs to be sorted in ascending order.
     """
     if torch.any(neg_fidelity == 1):
         raise ValueError("There exists negative fidelity values containing 1, "

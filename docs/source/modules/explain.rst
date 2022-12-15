@@ -73,7 +73,7 @@ Explanation Metrics
 -------------------
 
 The quality of an explanation can be judged by a variety of different methods.
-PyG supports the following metrics out of the box:
+PyG supports the following metrics out-of-the-box:
 
 .. currentmodule:: torch_geometric.explain.metric
 
