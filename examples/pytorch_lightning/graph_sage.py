@@ -7,7 +7,7 @@ from torch.nn import BatchNorm1d
 from torchmetrics import Accuracy
 
 from torch_geometric import seed_everything
-from torch_geometric.data import LightningNodeData
+from torch_geometric.data.lightning import LightningNodeData
 from torch_geometric.datasets import Reddit
 from torch_geometric.nn import GraphSAGE
 
@@ -61,10 +61,16 @@ def main():
     dataset = Reddit(osp.join('data', 'Reddit'))
     data = dataset[0]
 
-    datamodule = LightningNodeData(data, data.train_mask, data.val_mask,
-                                   data.test_mask, loader='neighbor',
-                                   num_neighbors=[25, 10], batch_size=1024,
-                                   num_workers=8)
+    datamodule = LightningNodeData(
+        data,
+        input_train_nodes=data.train_mask,
+        input_val_nodes=data.val_mask,
+        input_test_nodes=data.test_mask,
+        loader='neighbor',
+        num_neighbors=[25, 10],
+        batch_size=1024,
+        num_workers=8,
+    )
 
     model = Model(dataset.num_node_features, dataset.num_classes)
 

@@ -6,25 +6,19 @@ from .batch import Batch
 from .temporal import TemporalData
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
-from .lightning_datamodule import (
-    LightningDataset,
-    LightningLinkData,
-    LightningNodeData,
-)
 from .makedirs import makedirs
 from .download import download_url
 from .extract import extract_tar, extract_zip, extract_bz2, extract_gz
 
-__all__ = [
+from torch_geometric.lazy_loader import LazyLoader
+
+__all__ = classes = [
     'Data',
     'HeteroData',
     'Batch',
     'TemporalData',
     'Dataset',
     'InMemoryDataset',
-    'LightningDataset',
-    'LightningNodeData',
-    'LightningLinkData',
     'FeatureStore',
     'TensorAttr',
     'GraphStore',
@@ -37,7 +31,8 @@ __all__ = [
     'extract_gz',
 ]
 
-classes = __all__
+lightning = LazyLoader('lightning', globals(),
+                       'torch_geometric.data.lightning')
 
 from torch_geometric.deprecation import deprecated  # noqa
 from torch_geometric.loader import NeighborSampler  # noqa
