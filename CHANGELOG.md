@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added `get_messagepassing_embeddings` ([#6201](https://github.com/pyg-team/pytorch_geometric/pull/6201))
 - Added the `PointGNNConv` layer ([#6194](https://github.com/pyg-team/pytorch_geometric/pull/6194)))
 - Added `GridGraph` graph generator to generate grid graphs ([#6220](https://github.com/pyg-team/pytorch_geometric/pull/6220)
 - Added `visualize_feature_importance` to support node feature visualizations ([#6094](https://github.com/pyg-team/pytorch_geometric/pull/6094))
