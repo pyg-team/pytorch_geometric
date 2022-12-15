@@ -35,7 +35,8 @@ def get_messagepassing_embeddings(model: torch.nn.Module,
     else:
         model_state = model.training
         model.eval()
-        model(**kwargs)
+        with torch.no_grad():
+            model(**kwargs)
         model.train(model_state)
 
     # Remove hooks
