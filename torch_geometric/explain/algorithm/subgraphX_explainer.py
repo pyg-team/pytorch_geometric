@@ -592,14 +592,10 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             node_mask[masked_node_list] = 1.0
 
             # create explanation with additional args
-            explanation = Explanation(
-                x,
-                edge_index,
-                node_mask=node_mask,
-                results=results,
-                related_pred=related_pred,
-                masked_node_list=masked_node_list
-            )
+            explanation = Explanation(x, edge_index, node_mask=node_mask,
+                                      results=results,
+                                      related_pred=related_pred,
+                                      masked_node_list=masked_node_list)
         else:
             # TODO: Implement this for Graph Classification
             raise NotImplementedError
