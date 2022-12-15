@@ -19,7 +19,7 @@ def characterization_score(
     Args:
         pos_fidelity (torch.Tensor): The positive fidelity
             :math:`\textrm{fid}_{+}`.
-        neg_fidelity (torch.Tensor): The positive fidelity
+        neg_fidelity (torch.Tensor): The negative fidelity
             :math:`\textrm{fid}_{-}`.
         pos_weight (float, optional): The weight :math:`w_{+}` for
             :math:`\textrm{fid}_{+}`. (default: :obj:`0.5`)
@@ -51,7 +51,7 @@ def fidelity_curve_auc(
     Args:
         pos_fidelity (torch.Tensor): The positive fidelity
             :math:`\textrm{fid}_{+}`.
-        neg_fidelity (torch.Tensor): The positive fidelity
+        neg_fidelity (torch.Tensor): The negative fidelity
             :math:`\textrm{fid}_{-}`.
         x (torch.Tensor): Tensor containing the points on the :math:`x`-axis.
             Needs to be sorted in ascending order.
