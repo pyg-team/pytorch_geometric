@@ -289,7 +289,7 @@ class Explanation(Data, ExplanationMixin):
         # if cleanup is set to True, the file that contains the DOT syntax for graph rendering, with name 'graph_filename' will be deleted. Final graph in defined format will continute to exist.
         g.view(cleanup=True)
 
-        return graph_file+"."+file_format
+        return graph_file + "." + file_format
 
 
 class HeteroExplanation(HeteroData, ExplanationMixin):
