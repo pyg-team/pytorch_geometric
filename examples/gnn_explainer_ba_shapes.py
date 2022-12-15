@@ -4,12 +4,19 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
-from torch_geometric.datasets import BAShapes
+import torch_geometric.transforms as T
+from torch_geometric.datasets import ExplainerDataset
+from torch_geometric.datasets.graph_generator import BAGraph
 from torch_geometric.explain import Explainer, GNNExplainer
 from torch_geometric.nn import GCN
 from torch_geometric.utils import k_hop_subgraph
 
-dataset = BAShapes()
+dataset = ExplainerDataset(
+    graph_generator=BAGraph(num_nodes=300, num_edges=5),
+    motif_generator='house',
+    num_motifs=80,
+    transform=T.Constant(),
+)
 data = dataset[0]
 
 idx = torch.arange(data.num_nodes)
@@ -25,7 +32,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
 def train():
     model.train()
     optimizer.zero_grad()
-    out = model(data.x, data.edge_index, edge_weight=data.edge_weight)
+    out = model(data.x, data.edge_index)
     loss = F.cross_entropy(out[train_idx], data.y[train_idx])
     torch.nn.utils.clip_grad_norm_(model.parameters(), 2.0)
     loss.backward()
@@ -36,8 +43,7 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    pred = model(data.x, data.edge_index,
-                 edge_weight=data.edge_weight).argmax(dim=-1)
+    pred = model(data.x, data.edge_index).argmax(dim=-1)
 
     train_correct = int((pred[train_idx] == data.y[train_idx]).sum())
     train_acc = train_correct / train_idx.size(0)
@@ -74,16 +80,16 @@ for explanation_type in ['phenomenon', 'model']:
 
     # Explanation ROC AUC over all test nodes:
     targets, preds = [], []
-    node_indices = data.expl_mask.nonzero(as_tuple=False).view(-1).tolist()
+    node_indices = range(400, data.num_nodes, 5)
     for node_index in tqdm(node_indices, leave=False, desc='Train Explainer'):
         target = data.y if explanation_type == 'phenomenon' else None
         explanation = explainer(data.x, data.edge_index, index=node_index,
-                                target=target, edge_weight=data.edge_weight)
+                                target=target)
 
         _, _, _, hard_edge_mask = k_hop_subgraph(node_index, num_hops=3,
                                                  edge_index=data.edge_index)
 
-        targets.append(data.edge_label[hard_edge_mask].cpu())
+        targets.append(data.edge_mask[hard_edge_mask].cpu())
         preds.append(explanation.edge_mask[hard_edge_mask].cpu())
 
     auc = roc_auc_score(torch.cat(targets), torch.cat(preds))
