@@ -7,7 +7,7 @@ from torch import Tensor
 
 def get_messagepassing_embeddings(model: torch.nn.Module,
                                   **kwargs) -> List[Tensor]:
-    """Returns the output embeddings of all `MessagePassing` layers in
+    """Returns the output embeddings of all :class:`~torch_geometric.nn.conv.MessagePassing` layers in
     :obj:`model`.
 
     Args:
