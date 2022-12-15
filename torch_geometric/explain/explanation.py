@@ -206,11 +206,12 @@ class Explanation(Data, ExplanationMixin):
             norm_edge_weights.append(round(norm * 10, 2))
 
         # Initialize a graphviz undirected graph
-        graph_filename = "visualized_subgraph"
-        g = graphviz.Graph("G", filename=graph_filename, format="pdf",
+        graph_file = "visualized_subgraph"
+        file_format = "pdf"
+        g = graphviz.Graph("G", filename=graph_file, format=file_format,
                            engine='sfdp')
-        g.attr('graph', overlap="false")
-        g.attr('graph', label=f"Subgraph Visualization for Node {node_index}")
+        g.attr("graph", overlap="false")
+        g.attr("graph", label=f"Subgraph Visualization for Node {node_index}")
 
         for index, norm_edge_weight in enumerate(norm_edge_weights):
             g.edge(str(u_nodes[index]), str(v_nodes[index]),
@@ -218,6 +219,8 @@ class Explanation(Data, ExplanationMixin):
 
         # if cleanup is set to True, the file that contains the DOT syntax for graph rendering, with name 'graph_filename' will be deleted. Final graph in defined format will continute to exist.
         g.view(cleanup=True)
+
+        return graph_file+"."+file_format
 
 
 class HeteroExplanation(HeteroData, ExplanationMixin):
