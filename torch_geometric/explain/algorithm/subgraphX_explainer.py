@@ -405,7 +405,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         """Runs `__call__` on the `reward_method`"""
         if self.model_config.task_level == ModelTaskLevel.graph:
             node_idx = None
-        
+
         return reward_func(
             reward_method=self.reward_method,
             value_func=value_func,
@@ -419,7 +419,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
                        score_func: Callable = None):
         if self.model_config.task_level == ModelTaskLevel.graph:
             node_idx = None
-        
+
         return MCTS(
             x,
             edge_index,
@@ -594,20 +594,16 @@ class SubgraphXExplainer(ExplainerAlgorithm):
                 if n_frm in masked_node_list and n_to in masked_node_list:
                     explained_edge_list.append((n_frm, n_to))
                     edge_mask_indices.append(i)
-                
+
             edge_mask = torch.zeros(size=(edge_index.size()[1], )).float()
             edge_mask[edge_mask_indices] = 1.
 
             # create explanation with additional args
-            explanation = Explanation(
-                x, edge_index, 
-                node_mask=node_mask, 
-                edge_mask=edge_mask,
-                results=results,
-                related_pred=related_pred,
-                masked_node_list=masked_node_list,
-                explained_edge_list=explained_edge_list
-            )
+            explanation = Explanation(x, edge_index, node_mask=node_mask,
+                                      edge_mask=edge_mask, results=results,
+                                      related_pred=related_pred,
+                                      masked_node_list=masked_node_list,
+                                      explained_edge_list=explained_edge_list)
         else:
             # TODO: Implement this for Graph Classification
             raise NotImplementedError
