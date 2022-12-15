@@ -325,10 +325,10 @@ class SubgraphXExplainer(ExplainerAlgorithm):
     """
     def __init__(
         self,
-        model,
         num_classes: int,
+        max_nodes: int = 5,
+        num_hops: int = None,
         MCTS_info_path: str = None,
-        num_hops: Optional[int] = None,
         device: str = "cpu",
         explain_graph: bool = True,
         verbose: bool = True,
@@ -344,12 +344,12 @@ class SubgraphXExplainer(ExplainerAlgorithm):
     ):
         super().__init__()
         self.device = device
-        self.model = model
         self.MCTS_info_path = MCTS_info_path
+        self.num_hops = num_hops
         self.num_classes = num_classes
         self.explain_graph = explain_graph
         self.verbose = verbose
-        self.num_hops = self.update_num_hops(num_hops)
+        self.max_nodes = max_nodes
 
         # mcts hyper-parameters
         self.rollout = rollout
@@ -364,12 +364,12 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         self.reward_method = reward_method
         self.subgraph_building_method = subgraph_building_method
 
-    def update_num_hops(self, num_hops):
+    def update_num_hops(self, model, num_hops):
         if num_hops is not None:
             return num_hops
 
         k = 0
-        for module in self.model.modules():
+        for module in model.modules():
             if isinstance(module, MessagePassing):
                 k += 1
         return k
@@ -441,6 +441,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
     def explain(
         self,
+        model: torch.nn.Module,
         x: Tensor,
         edge_index: Tensor,
         label: int,
@@ -448,22 +449,21 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         node_idx: Optional[int] = None,
         saved_MCTSInfo_list: Optional[List[List]] = None,
     ):
-        probs = self.model(x, edge_index).squeeze().softmax(dim=-1)
+        probs = model(x, edge_index).squeeze().softmax(dim=-1)
         if self.explain_graph:
             # Explanation for Graph Classification Task
             if saved_MCTSInfo_list:
                 results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)
 
             if not saved_MCTSInfo_list:
-                value_func = GnnNetsGC2valueFunc(self.model,
-                                                 target_class=label)
+                value_func = GnnNetsGC2valueFunc(model, target_class=label)
                 payoff_func = self.get_reward_func(value_func)
                 self.mcts_state_map = self.get_mcts_class(
                     x, edge_index, score_func=payoff_func)
                 results = self.mcts_state_map.mcts(verbose=self.verbose)
 
             # l sharply score
-            value_func = GnnNetsGC2valueFunc(self.model, target_class=label)
+            value_func = GnnNetsGC2valueFunc(model, target_class=label)
 
         else:
             # Explanation for Node Classification Task
@@ -475,7 +475,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             self.new_node_idx = self.mcts_state_map.new_node_idx
             # mcts will extract the subgraph and relabel the nodes
             value_func = GnnNetsNC2valueFunc(
-                self.model,
+                model,
                 node_idx=self.mcts_state_map.new_node_idx,
                 target_class=label,
             )
@@ -536,6 +536,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
     def forward(
         self,
+        model: torch.nn.Module,
         x: Union[Tensor, Dict[NodeType, Tensor]],
         edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
@@ -564,32 +565,37 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
-        # get max_nodes
-        max_nodes = kwargs.get("max_nodes", 5)
+        # update num_hops if not provided
+        self.num_hops = self.update_num_hops(model, self.num_hops)
 
         # check if MCTS_info_list has been provided, load if present
-        saved_results = (None if not isfile(self.MCTS_info_path) else
-                         torch.load(self.MCTS_info_path))
+        saved_results = (
+            None 
+            if (
+                self.MCTS_info_path is None or
+                not isfile(self.MCTS_info_path)
+            ) 
+            else torch.load(self.MCTS_info_path)
+        )
 
         if self.model_config.task_level == ModelTaskLevel.node:
             # check if index has been provided
-            assert (
-                index is not None
-            ), "For Node Classification task, index (node_idx) must be provided"
+            assert index is not None, "For Node Classification task, index (node_idx) must be provided"
 
             # get prediction for that node index
-            prediction_label = self.model(x, edge_index).argmax(dim=-1)
+            prediction_label = model(x, edge_index).argmax(dim=-1)[index]
             # get explanation for that index and the prediction label
             results, related_pred, masked_node_list = self.explain(
+                model,
                 x,
                 edge_index,
                 label=prediction_label,
-                max_nodes=max_nodes,
+                max_nodes=self.max_nodes,
                 node_idx=index,
                 saved_MCTSInfo_list=saved_results,
             )
             # create node_mask from
-            node_mask = torch.zeros(size=(x.size()[0])).float()
+            node_mask = torch.zeros(size=(x.size()[0], )).float()
             node_mask[masked_node_list] = 1.0
 
             # create explanation with additional args
@@ -612,22 +618,23 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
             logging.error(f"Task level '{task_level.value}' not supported")
             return False
+    
+        # TODO: Not sure what to check here?
+        # edge_mask_type = self.explainer_config.edge_mask_type
+        # if edge_mask_type is not None:
+        #     logging.error(
+        #         f"Edge mask type not supported. Set `edge_mask_type` to `None`"
+        #     )
+        #     return False
 
-        edge_mask_type = self.explainer_config.edge_mask_type
-        if edge_mask_type is not None:
-            logging.error(
-                f"Edge mask type not supported. Set `edge_mask_type` to `None`"
-            )
-            return False
+        # node_mask_type = self.explainer_config.node_mask_type
+        # if node_mask_type is not None:
+        #     logging.error(
+        #         "Node mask not supported. Set 'node_mask_type' to 'None'")
+        #     return False
 
-        node_mask_type = self.explainer_config.node_mask_type
-        if node_mask_type is not None:
-            logging.error(
-                "Node mask not supported. Set 'node_mask_type' to 'None'")
-            return False
-
-        if self._is_hetero:
-            logging.error("Heterogeneous graphs not supported.")
-            return False
+        # if self._is_hetero:
+        #     logging.error("Heterogeneous graphs not supported.")
+        #     return False
 
         return True
