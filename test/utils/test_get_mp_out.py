@@ -37,6 +37,6 @@ def test_get_intermediate_messagepassing_embeddings():
     intermediate_outs = get_messagepassing_embeddings(model, x=x,
                                                       edge_index=edge_index)
     assert len(intermediate_outs) == 3
-    for index, intermediate_out in enumerate(intermediate_outs):
+    for expected, out in zip(expected_outs, outs):
         assert torch.allclose(intermediate_out,
                               actual_intermediate_outs[index])
