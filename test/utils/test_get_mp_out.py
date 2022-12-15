@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.nn import GCNConv
-from torch_geometric.utils import get_intermediate_messagepassing_embeddings
+from torch_geometric.utils import get_messagepassing_embeddings
 
 
 class GNNTest(torch.nn.Module):
@@ -28,14 +28,14 @@ def test_get_intermediate_messagepassing_embeddings():
     model = GNNTest(5)
     out, actual_intermediate_outs = model(x, edge_index)
 
-    with pytest.raises(ValueError,
-                       match="does not have message passing layer"):
-        _ = get_intermediate_messagepassing_embeddings(torch.nn.Linear(5,
-                                                                       5), x=x,
-                                                       edge_index=edge_index)
+    with pytest.warns(UserWarning,
+                      match="does not have message passing layer"):
+        intermediate_outs = get_messagepassing_embeddings(
+            torch.nn.Linear(5, 5), x=x)
+    assert len(intermediate_outs) == 0
 
-    intermediate_outs = get_intermediate_messagepassing_embeddings(
-        model, x=x, edge_index=edge_index)
+    intermediate_outs = get_messagepassing_embeddings(model, x=x,
+                                                      edge_index=edge_index)
     assert len(intermediate_outs) == 3
     for index, intermediate_out in enumerate(intermediate_outs):
         assert torch.allclose(intermediate_out,
