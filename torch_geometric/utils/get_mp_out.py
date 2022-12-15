@@ -8,7 +8,7 @@ from .subgraph import get_num_hops
 
 def get_intermediate_messagepassing_embeddings(model: torch.nn.Module,
                                                **kwargs) -> List[Tensor]:
-    """Get output of all `MessagePassing` layers in
+    """Returns the output embeddings of all `MessagePassing` layers in
     :obj:`model`.
 
     Args:
