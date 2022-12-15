@@ -1,7 +1,6 @@
 import copy
 from typing import Dict, List, Optional, Union
 
-import graphviz
 import torch
 from torch import Tensor
 
@@ -246,21 +245,23 @@ class Explanation(Data, ExplanationMixin):
 
         return ax
 
-    def visualize_subgraph(self, node_index: int, edge_index: Tensor):
-        """Threshold the explanation mask according to the thresholding method.
+    def visualize_subgraph(self, node_index: int) -> str:
+        r"""Threshold the explanation mask according to the thresholding method.
         Generate and explanation subgraph visualization for thresholded and non-thresholded explanation.
         The output would be a visualization of the explanation subgraph where edge width depends on the importance value of each edge.
         Args:
             explanation (Explanation): The explanation to visualize.
         """
+        import graphviz
+
         u_nodes = []
         v_nodes = []
         edge_weights = []
 
         for index, weight in enumerate(self.edge_mask):
             # edge_index is in COO format
-            u_node = int(edge_index[0][index].detach().item())
-            v_node = int(edge_index[1][index].detach().item())
+            u_node = int(self.edge_index[0][index].detach().item())
+            v_node = int(self.edge_index[1][index].detach().item())
             if (weight != 0):
                 u_nodes.append(u_node)
                 v_nodes.append(v_node)

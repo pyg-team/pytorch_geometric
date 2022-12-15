@@ -62,7 +62,7 @@ plt.savefig(path)
 print(f"Feature importance plot has been saved to '{path}'")
 
 file_visualized_subgraph = explanation.visualize_subgraph(
-    node_index, data.edge_index)
+    node_index)
 print(
     f"Subgraph visualization plot has been saved to '{file_visualized_subgraph}'"
 )
