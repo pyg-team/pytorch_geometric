@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added sparse variant of the `top-k` sparsification method for the GDC tranform ([#6245](https://github.com/pyg-team/pytorch_geometric/pull/6245))
 - Added `characterization_score` and `fidelity_curve_auc` explainer metrics ([#6188](https://github.com/pyg-team/pytorch_geometric/pull/6188))
 - Added `get_message_passing_embeddings` ([#6201](https://github.com/pyg-team/pytorch_geometric/pull/6201))
 - Added the `PointGNNConv` layer ([#6194](https://github.com/pyg-team/pytorch_geometric/pull/6194)))
