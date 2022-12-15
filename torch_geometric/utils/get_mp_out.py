@@ -24,7 +24,7 @@ def get_messagepassing_embeddings(model: torch.nn.Module,
     for module in model.modules():
         if isinstance(module, MessagePassing):
             hook_handles.append(
-                module.register_forward_hook(get_intermediate_output()))
+                module.register_forward_hook(hook)
 
     # Run forward pass
     if len(hook_handles) == 0:
