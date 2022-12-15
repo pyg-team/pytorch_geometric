@@ -28,7 +28,7 @@ def get_messagepassing_embeddings(model: torch.nn.Module,
 
     # Run forward pass
     if len(hook_handles) == 0:
-        warnings.warn("'model' does not have message passing layer.")
+        warnings.warn("'model' does not have any 'MessagePassing' layers.")
     else:
         model_state = model.training
         model.eval()
