@@ -311,7 +311,6 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         subgraphx_explainer.py>`_.
 
     Args:
-        explain_graph(:obj:`bool`): Graph Classification Task or Node Classification Task
         device: Device to generate the explanations on.
         local_radius(:obj:`int`): Local radius to be considered while evaluating
             subgraph importance for :obj:`l_shapley`, :obj:`mc_l_shapley`
@@ -330,7 +329,6 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         num_hops: int = None,
         MCTS_info_path: str = None,
         device: str = "cpu",
-        explain_graph: bool = True,
         verbose: bool = True,
         local_radius: int = 4,
         sample_num=100,
@@ -347,7 +345,6 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         self.MCTS_info_path = MCTS_info_path
         self.num_hops = num_hops
         self.num_classes = num_classes
-        self.explain_graph = explain_graph
         self.verbose = verbose
         self.max_nodes = max_nodes
 
@@ -406,10 +403,9 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
     def get_reward_func(self, value_func, node_idx=None):
         """Runs `__call__` on the `reward_method`"""
-        if self.explain_graph:
+        if self.model_config.task_level == ModelTaskLevel.graph:
             node_idx = None
-        else:
-            assert node_idx is not None
+        
         return reward_func(
             reward_method=self.reward_method,
             value_func=value_func,
@@ -421,10 +417,9 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
     def get_mcts_class(self, x, edge_index, node_idx: int = None,
                        score_func: Callable = None):
-        if self.explain_graph:
+        if self.model_config.task_level == ModelTaskLevel.graph:
             node_idx = None
-        else:
-            assert node_idx is not None
+        
         return MCTS(
             x,
             edge_index,
@@ -450,7 +445,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         saved_MCTSInfo_list: Optional[List[List]] = None,
     ):
         probs = model(x, edge_index).squeeze().softmax(dim=-1)
-        if self.explain_graph:
+        if self.model_config.task_level == ModelTaskLevel.graph:
             # Explanation for Graph Classification Task
             if saved_MCTSInfo_list:
                 results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)
@@ -501,7 +496,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             node for node in range(tree_node_x.data.x.shape[0])
             if node not in tree_node_x.coalition
         ]
-        if not self.explain_graph:
+        if not self.model_config.task_level == ModelTaskLevel.graph:
             maskout_node_list += [self.new_node_idx]
 
         masked_score = gnn_score(
@@ -587,15 +582,32 @@ class SubgraphXExplainer(ExplainerAlgorithm):
                 node_idx=index,
                 saved_MCTSInfo_list=saved_results,
             )
-            # create node_mask from
+            # create node_mask from masked_node_list
             node_mask = torch.zeros(size=(x.size()[0], )).float()
             node_mask[masked_node_list] = 1.0
 
+            # create edge_mask from masked_node_list
+            explained_edge_list = []
+            edge_mask_indices = []
+            for i in range(edge_index.size()[1]):
+                (n_frm, n_to) = edge_index[:, i].tolist()
+                if n_frm in masked_node_list and n_to in masked_node_list:
+                    explained_edge_list.append((n_frm, n_to))
+                    edge_mask_indices.append(i)
+                
+            edge_mask = torch.zeros(size=(edge_index.size()[1], )).float()
+            edge_mask[edge_mask_indices] = 1.
+
             # create explanation with additional args
-            explanation = Explanation(x, edge_index, node_mask=node_mask,
-                                      results=results,
-                                      related_pred=related_pred,
-                                      masked_node_list=masked_node_list)
+            explanation = Explanation(
+                x, edge_index, 
+                node_mask=node_mask, 
+                edge_mask=edge_mask,
+                results=results,
+                related_pred=related_pred,
+                masked_node_list=masked_node_list,
+                explained_edge_list=explained_edge_list
+            )
         else:
             # TODO: Implement this for Graph Classification
             raise NotImplementedError
@@ -608,23 +620,5 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
             logging.error(f"Task level '{task_level.value}' not supported")
             return False
-
-        # TODO: Not sure what to check here?
-        # edge_mask_type = self.explainer_config.edge_mask_type
-        # if edge_mask_type is not None:
-        #     logging.error(
-        #         f"Edge mask type not supported. Set `edge_mask_type` to `None`"
-        #     )
-        #     return False
-
-        # node_mask_type = self.explainer_config.node_mask_type
-        # if node_mask_type is not None:
-        #     logging.error(
-        #         "Node mask not supported. Set 'node_mask_type' to 'None'")
-        #     return False
-
-        # if self._is_hetero:
-        #     logging.error("Heterogeneous graphs not supported.")
-        #     return False
 
         return True
