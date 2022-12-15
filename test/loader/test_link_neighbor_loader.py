@@ -338,16 +338,17 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
     data = Data()
     data.x = torch.arange(100)
-    data.edge_index = get_edge_index(100, 100, 500)
-    data.edge_attr = torch.arange(500)
+    data.edge_index = get_edge_index(100, 100, 400)
+    data.edge_label_index = get_edge_index(100, 100, 500)
+    data.edge_attr = torch.arange(data.num_edges)
 
     time_attr = edge_label_time = None
     if temporal:
         time_attr = 'time'
         data.time = torch.arange(data.num_nodes)
 
-        edge_label_time = torch.max(data.time[data.edge_index[0]],
-                                    data.time[data.edge_index[1]])
+        edge_label_time = torch.max(data.time[data.edge_label_index[0]],
+                                    data.time[data.edge_label_index[1]])
         edge_label_time = edge_label_time + 50
 
     batch_size = 20
@@ -355,7 +356,7 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
         data,
         num_neighbors=[-1] * 2,
         batch_size=batch_size,
-        edge_label_index=data.edge_index,
+        edge_label_index=data.edge_label_index,
         edge_label_time=edge_label_time,
         time_attr=time_attr,
         directed=True,
@@ -374,9 +375,9 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
         # Check that `src_index` and `dst_pos_index` point to valid edges:
         assert torch.equal(batch.x[batch.src_index],
-                           data.edge_index[0, batch.input_id])
+                           data.edge_label_index[0, batch.input_id])
         assert torch.equal(batch.x[batch.dst_pos_index],
-                           data.edge_index[1, batch.input_id])
+                           data.edge_label_index[1, batch.input_id])
 
         # Check that `dst_neg_index` points to valid nodes in the batch:
         if amount == 1:
@@ -424,7 +425,8 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
     data['paper'].x = torch.arange(100)
     data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 400)
+    data['paper', 'paper'].edge_label_index = get_edge_index(100, 100, 500)
     data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
     data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
 
@@ -435,17 +437,18 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         data['author'].time = torch.arange(data['author'].num_nodes)
 
         edge_label_time = torch.max(
-            data['paper'].time[data['paper', 'paper'].edge_index[0]],
-            data['paper'].time[data['paper', 'paper'].edge_index[1]],
+            data['paper'].time[data['paper', 'paper'].edge_label_index[0]],
+            data['paper'].time[data['paper', 'paper'].edge_label_index[1]],
         )
         edge_label_time = edge_label_time + 50
 
     batch_size = 20
+    index = (('paper', 'paper'), data['paper', 'paper'].edge_label_index)
     loader = LinkNeighborLoader(
         data,
         num_neighbors=[-1] * 2,
         batch_size=batch_size,
-        edge_label_index=('paper', 'paper'),
+        edge_label_index=index,
         edge_label_time=edge_label_time,
         time_attr=time_attr,
         directed=True,
@@ -468,10 +471,10 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         # Check that `src_index` and `dst_pos_index` point to valid edges:
         assert torch.equal(
             node_store.x[node_store.src_index],
-            data['paper', 'paper'].edge_index[0, edge_store.input_id])
+            data['paper', 'paper'].edge_label_index[0, edge_store.input_id])
         assert torch.equal(
             node_store.x[node_store.dst_pos_index],
-            data['paper', 'paper'].edge_index[1, edge_store.input_id])
+            data['paper', 'paper'].edge_label_index[1, edge_store.input_id])
 
         # Check that `dst_neg_index` points to valid nodes in the batch:
         if amount == 1:

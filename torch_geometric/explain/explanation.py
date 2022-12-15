@@ -1,10 +1,12 @@
 import copy
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.data.data import Data, warn_or_raise
 from torch_geometric.data.hetero_data import HeteroData
+from torch_geometric.explain.config import ThresholdConfig, ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
 
 
@@ -63,6 +65,73 @@ class ExplanationMixin:
                     f"edges (got {mask.size(0)} edges)", raise_on_error)
 
         return status
+
+    def _threshold_mask(
+        self,
+        mask: Optional[Tensor],
+        threshold_config: ThresholdConfig,
+    ) -> Optional[Tensor]:
+
+        if mask is None:
+            return None
+
+        if threshold_config.type == ThresholdType.hard:
+            return (mask > threshold_config.value).float()
+
+        if threshold_config.type in [
+                ThresholdType.topk,
+                ThresholdType.topk_hard,
+        ]:
+            if threshold_config.value >= mask.numel():
+                if threshold_config.type == ThresholdType.topk:
+                    return mask
+                else:
+                    return torch.ones_like(mask)
+
+            value, index = torch.topk(
+                mask.flatten(),
+                k=threshold_config.value,
+            )
+
+            out = torch.zeros_like(mask.flatten())
+            if threshold_config.type == ThresholdType.topk:
+                out[index] = value
+            else:
+                out[index] = 1.0
+            return out.view(mask.size())
+
+        assert False
+
+    def threshold(
+        self,
+        *args,
+        **kwargs,
+    ) -> Union['Explanation', 'HeteroExplanation']:
+        """Thresholds the explanation masks according to the thresholding
+        method.
+
+        Args:
+            threshold_config (ThresholdConfig): The threshold configuration.
+        """
+        threshold_config = ThresholdConfig.cast(*args, **kwargs)
+
+        if threshold_config is None:
+            return self
+
+        # Avoid modification of the original explanation:
+        out = copy.copy(self)
+
+        for store in out.node_stores:
+            for key in ['node_mask', 'node_feat_mask']:
+                store[key] = self._threshold_mask(store.get(key),
+                                                  threshold_config)
+
+        for store in out.edge_stores:
+            for key in ['edge_mask', 'edge_feat_mask']:
+                store[key] = self._threshold_mask(store.get(key),
+                                                  threshold_config)
+
+        return out
 
 
 class Explanation(Data, ExplanationMixin):
