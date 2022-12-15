@@ -16,11 +16,8 @@ def get_messagepassing_embeddings(model: torch.nn.Module,
     from torch_geometric.nn import MessagePassing
     intermediate_out = []
 
-    def get_intermediate_output() -> Callable:
-        def hook(model, input, output):
-            intermediate_out.append(output)
-
-        return hook
+    def hook(model, input, output):
+        intermediate_out.append(output)
 
     # Register forward hooks
     hook_handles = []
