@@ -41,6 +41,8 @@ full_requires = graphgym_requires + [
 benchmark_requires = [
     'protobuf<4.21',
     'wandb',
+    'pandas',
+    'matplotlib',
 ]
 
 test_requires = [
