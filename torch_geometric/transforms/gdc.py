@@ -457,15 +457,17 @@ class GDC(BaseTransform):
         elif method == 'topk':
             assert kwargs['dim'] in [0]
             k = min(num_nodes, kwargs['k'])
-            new_edge_index = torch.empty(2, 0, dtype = edge_index.dtype)
-            new_edge_weight = torch.empty(0, dtype = edge_weight.dtype)
-            edges_per_node = torch.zeros(num_nodes, dtype = torch.int64)
-            sortperm = torch.sort(edge_weight, descending = True)[1]
+            new_edge_index = torch.empty(2, 0, dtype=edge_index.dtype)
+            new_edge_weight = torch.empty(0, dtype=edge_weight.dtype)
+            edges_per_node = torch.zeros(num_nodes, dtype=torch.int64)
+            sortperm = torch.sort(edge_weight, descending=True)[1]
             for i in sortperm:
                 node1, node2 = edge_index[:, i]
                 if edges_per_node[node1] < k or edges_per_node[node2] < k:
-                    new_edge_index = torch.cat((new_edge_index, edge_index[:, i].reshape(-1, 1)), 1)
-                    new_edge_weight = torch.cat((new_edge_weight, edge_weight[i].reshape(1)), 0)
+                    new_edge_index = torch.cat(
+                        (new_edge_index, edge_index[:, i].reshape(-1, 1)), 1)
+                    new_edge_weight = torch.cat(
+                        (new_edge_weight, edge_weight[i].reshape(1)), 0)
                 edges_per_node[node1] += 1
                 if node1 != node2:
                     edges_per_node[node2] += 1
