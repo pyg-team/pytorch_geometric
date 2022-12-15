@@ -11,7 +11,7 @@ from torch_scatter import scatter_mean
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
-from torch_geometric.utils import intermediate_mp_output
+from torch_geometric.utils import get_intermediate_messagepassing_embeddings
 
 from .base import ExplainerAlgorithm
 
@@ -79,8 +79,9 @@ class PGExplainer(ExplainerAlgorithm):
                         edge_index: Tensor, target: Tensor = None,
                         index: Tensor = None, **kwargs):
         # Initialize trainable parameters.
-        z = intermediate_mp_output(-1, model, x=x, edge_index=edge_index,
-                                   **kwargs)
+        z = get_intermediate_messagepassing_embeddings(model, x=x,
+                                                       edge_index=edge_index,
+                                                       **kwargs)
         out_channels = z.shape[-1]
         task_level = self.model_config.task_level
         self.exp_in_channels = 2 * out_channels if (
@@ -244,8 +245,9 @@ class PGExplainer(ExplainerAlgorithm):
             **kwargs (optional): Additional arguments passed to the GNN module.
         :rtype: :class:`Tensor`
         """
-        z = intermediate_mp_output(-1, model, x=x, edge_index=edge_index,
-                                   **kwargs)
+        z = get_intermediate_messagepassing_embeddings(model, x=x,
+                                                       edge_index=edge_index,
+                                                       **kwargs)[-1]
         if self.model_config.task_level == ModelTaskLevel.graph:
             explainer_in = self._create_explainer_input(edge_index, z)
             edge_mask = self._compute_edge_mask(
