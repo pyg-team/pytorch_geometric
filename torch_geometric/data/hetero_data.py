@@ -581,7 +581,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
                 holding the nodes to keep for each node type.
         """
-        data = self.__class__(**self._global_store)
+        data = copy.copy(self)
 
         for node_type, subset in subset_dict.items():
             for key, value in self[node_type].items():
@@ -597,11 +597,16 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         for edge_type in self.edge_types:
             src, _, dst = edge_type
-            if src not in subset_dict or dst not in subset_dict:
-                continue
+
+            src_subset = subset_dict.get(src)
+            if src_subset is None:
+                src_subset = torch.arange(data[src].num_nodes)
+            dst_subset = subset_dict.get(dst)
+            if dst_subset is None:
+                dst_subset = torch.arange(data[dst].num_nodes)
 
             edge_index, _, edge_mask = bipartite_subgraph(
-                (subset_dict[src], subset_dict[dst]),
+                (src_subset, dst_subset),
                 self[edge_type].edge_index,
                 relabel_nodes=True,
                 size=(self[src].num_nodes, self[dst].num_nodes),

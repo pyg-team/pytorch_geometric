@@ -16,7 +16,7 @@ from .homophily import homophily
 from .assortativity import assortativity
 from .get_laplacian import get_laplacian
 from .get_mesh_laplacian import get_mesh_laplacian
-from .get_mp_out import intermediate_mp_output
+from .get_mp_out import get_intermediate_messagepassing_embeddings
 from .mask import mask_select, index_to_mask, mask_to_index
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
@@ -104,7 +104,7 @@ __all__ = [
     'structured_negative_sampling_feasible',
     'tree_decomposition',
     'train_test_split_edges',
-    'intermediate_mp_output',
+    'get_intermediate_messagepassing_embeddings',
 ]
 
 classes = __all__
