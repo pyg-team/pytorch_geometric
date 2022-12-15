@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import partial
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import numpy as np
@@ -109,7 +110,7 @@ class PRBCDAttack(torch.nn.Module):
             if loss == 'masked':
                 self.loss = self._masked_cross_entropy
             elif loss == 'margin':
-                self.loss = self._margin_loss
+                self.loss = partial(self._margin_loss, reduce='mean')
             elif loss == 'prob_margin':
                 self.loss = self._probability_margin_loss
             elif loss == 'tanh_margin':
@@ -530,7 +531,8 @@ class PRBCDAttack(torch.nn.Module):
 
     @staticmethod
     def _margin_loss(score: Tensor, labels: Tensor,
-                     idx_mask: Optional[Tensor] = None) -> Tensor:
+                     idx_mask: Optional[Tensor] = None,
+                     reduce: Optional[str] = None) -> Tensor:
         r"""Margin loss between true score and highest non-target score:
 
         .. math::
@@ -545,6 +547,8 @@ class PRBCDAttack(torch.nn.Module):
             labels (LongTensor): The labels of shape :obj:`[n_elem]`.
             idx_mask (Tensor, optional): To select subset of `score` and
                 `labels` of shape :obj:`[n_select]`. Defaults to None.
+            reduce (str, optional): if :obj:`mean` the result is aggregated.
+                Otherwise, return element wise margin.
 
         :rtype: (Tensor)
         """
@@ -560,7 +564,9 @@ class PRBCDAttack(torch.nn.Module):
         best_non_target_score = score.amax(dim=-1)
 
         margin_ = best_non_target_score - true_score
-        return margin_
+        if reduce is None:
+            return margin_
+        return margin_.mean()
 
     @staticmethod
     def _tanh_margin_loss(prediction: Tensor, labels: Tensor,

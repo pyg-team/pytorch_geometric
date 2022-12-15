@@ -46,10 +46,13 @@ class GNN(torch.nn.Module):
 
 @pytest.mark.parametrize('model', [GCN, GNN])
 @pytest.mark.parametrize('budget', [1])
+@pytest.mark.parametrize('loss',
+                         ['masked', 'margin', 'prob_margin', 'tanh_margin'])
 @pytest.mark.parametrize('is_undirected_graph', [False, True])
 @pytest.mark.parametrize('with_early_stopping', [False, True])
-def test_prbcd_attack(model, budget, is_undirected_graph, with_early_stopping):
-    attack = PRBCDAttack(model(), epochs=4, epochs_resampling=2,
+def test_prbcd_attack(model, budget, loss, is_undirected_graph,
+                      with_early_stopping):
+    attack = PRBCDAttack(model(), epochs=4, epochs_resampling=2, loss=loss,
                          max_final_samples=2, log=False,
                          is_undirected_graph=is_undirected_graph,
                          with_early_stopping=with_early_stopping)
