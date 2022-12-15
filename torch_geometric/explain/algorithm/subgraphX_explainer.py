@@ -1,7 +1,9 @@
 import copy
+import logging
 import math
 from collections import Counter
 from functools import partial
+from os.path import isfile
 from typing import Callable, Dict, List, Optional, Union
 
 import networkx as nx
@@ -10,10 +12,14 @@ from torch import Tensor
 
 from torch_geometric.data import Batch, Data
 from torch_geometric.explain import Explanation
+from torch_geometric.explain.config import ModelTaskLevel
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import EdgeType, NodeType
-from torch_geometric.utils import remove_self_loops, to_networkx
-from torch_geometric.utils.num_nodes import maybe_num_nodes
+from torch_geometric.utils import (
+    k_hop_subgraph,
+    remove_self_loops,
+    to_networkx,
+)
 
 from .base import ExplainerAlgorithm
 from .subgraphX_utils import (
@@ -35,100 +41,6 @@ def compute_scores(score_func, children):
             score = child.P
         results.append(score)
     return results
-
-
-def k_hop_subgraph_with_default_whole_graph(
-    edge_index,
-    node_idx=None,
-    num_hops=3,
-    relabel_nodes=False,
-    num_nodes=None,
-    flow="source_to_target",
-):
-    r"""Computes the :math:`k`-hop subgraph of :obj:`edge_index` around node
-    :attr:`node_idx`.
-    It returns (1) the nodes involved in the subgraph, (2) the filtered
-    :obj:`edge_index` connectivity, (3) the mapping from node indices in
-    :obj:`node_idx` to their new location, and (4) the edge mask indicating
-    which edges were preserved.
-    Args:
-        node_idx (int, list, tuple or :obj:`torch.Tensor`): The central
-            node(s).
-        num_hops: (int): The number of hops :math:`k`.
-        edge_index (LongTensor): The edge indices.
-        relabel_nodes (bool, optional): If set to :obj:`True`, the resulting
-            :obj:`edge_index` will be relabeled to hold consecutive indices
-            starting from zero. (default: :obj:`False`)
-        num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
-        flow (string, optional): The flow direction of :math:`k`-hop
-            aggregation (:obj:`"source_to_target"` or
-            :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
-    :rtype: (:class:`LongTensor`, :class:`LongTensor`, :class:`LongTensor`,
-             :class:`BoolTensor`)
-    """
-
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
-
-    assert flow in ["source_to_target", "target_to_source"]
-    if flow == "target_to_source":
-        row, col = edge_index
-    else:
-        col, row = edge_index  # edge_index 0 to 1, col: source, row: target
-
-    node_mask = row.new_empty(num_nodes, dtype=torch.bool)
-    edge_mask = row.new_empty(row.size(0), dtype=torch.bool)
-
-    inv = None
-
-    if node_idx is None:
-        subsets = torch.tensor([0])
-        cur_subsets = subsets
-        while 1:
-            node_mask.fill_(False)
-            node_mask[subsets] = True
-            torch.index_select(node_mask, 0, row, out=edge_mask)
-            subsets = torch.cat([subsets, col[edge_mask]]).unique()
-            if not cur_subsets.equal(subsets):
-                cur_subsets = subsets
-            else:
-                subset = subsets
-                break
-    else:
-        if isinstance(node_idx, (int, list, tuple)):
-            node_idx = torch.tensor([node_idx], device=row.device,
-                                    dtype=torch.int64).flatten()
-        elif isinstance(node_idx, torch.Tensor) and len(node_idx.shape) == 0:
-            node_idx = torch.tensor([node_idx])
-        else:
-            node_idx = node_idx.to(row.device)
-
-        subsets = [node_idx]
-        for _ in range(num_hops):
-            node_mask.fill_(False)
-            node_mask[subsets[-1]] = True
-            torch.index_select(node_mask, 0, row, out=edge_mask)
-            subsets.append(col[edge_mask])
-        subset, inv = torch.cat(subsets).unique(return_inverse=True)
-        inv = inv[:node_idx.numel()]
-
-    node_mask.fill_(False)
-    node_mask[subset] = True
-    edge_mask = node_mask[row] & node_mask[col]
-
-    edge_index = edge_index[:, edge_mask]
-
-    if relabel_nodes:
-        node_idx = row.new_full((num_nodes, ), -1)
-        node_idx[subset] = torch.arange(subset.size(0), device=row.device)
-        edge_index = node_idx[edge_index]
-
-    return (
-        subset,
-        edge_index,
-        inv,
-        edge_mask,
-    )  # subset: key new node idx; value original node idx
 
 
 class MCTSNode(object):
@@ -192,15 +104,22 @@ class MCTS(object):
     Args:
         X (:obj:`torch.Tensor`): Input node features
         edge_index (:obj:`torch.Tensor`): The edge indices.
-        num_hops (:obj:`int`): The number of hops :math:`k`.
-        n_rollout (:obj:`int`): The number of sequence to build the monte carlo tree.
-        min_atoms (:obj:`int`): The number of atoms for the subgraph in the monte carlo tree leaf node.
-        c_puct (:obj:`float`): The hyper-parameter to encourage exploration while searching.
-        expand_atoms (:obj:`int`): The number of children to expand.
-        high2low (:obj:`bool`): Whether to expand children tree node from high degree nodes to low degree nodes.
-        node_idx (:obj:`int`): The target node index to extract the neighborhood.
-        score_func (:obj:`Callable`): The reward function for tree node, such as mc_shapely and mc_l_shapely.
+        num_hops (:obj:`int`): Number of hops :math:`k`.
+        n_rollout (:obj:`int`): Number of sequences to build the
+            monte carlo tree.
+        min_atoms (:obj:`int`): Number of atoms for the subgraph
+            in the monte carlo tree leaf node.
+        c_puct (:obj:`float`): Hyper-parameter to encourage
+            exploration while searching.
+        expand_atoms (:obj:`int`): Number of children to expand.
+        high2low (:obj:`bool`): Whether to expand children tree node
+            from high degree nodes to low degree nodes.
+        node_idx (:obj:`int`): The target node index to extract
+            the neighborhood.
+        score_func (:obj:`Callable`): The reward function for
+            tree node, such as mc_shapely and mc_l_shapely.
     """
+
     def __init__(
         self,
         X: torch.Tensor,
@@ -221,8 +140,7 @@ class MCTS(object):
         self.device = device
         self.num_hops = num_hops
         self.data = Data(x=self.X, edge_index=self.edge_index)
-        graph_data = Data(x=self.X,
-                          edge_index=remove_self_loops(self.edge_index)[0])
+        graph_data = Data(x=self.X, edge_index=remove_self_loops(self.edge_index)[0])
         self.graph = to_networkx(graph_data, to_undirected=True)
         self.data = Batch.from_data_list([self.data])
         self.num_nodes = self.graph.number_of_nodes()
@@ -242,14 +160,13 @@ class MCTS(object):
             self.ori_node_idx = node_idx
             self.ori_graph = copy.copy(self.graph)
             x, edge_index, subset, edge_mask, kwargs = self.__subgraph__(
-                node_idx, self.X, self.edge_index, self.num_hops)
-            self.data = Batch.from_data_list(
-                [Data(x=x, edge_index=edge_index)])
+                node_idx, self.X, self.edge_index, self.num_hops
+            )
+            self.data = Batch.from_data_list([Data(x=x, edge_index=edge_index)])
             self.graph = self.ori_graph.subgraph(subset.tolist())
             mapping = {int(v): k for k, v in enumerate(subset)}
             self.graph = nx.relabel_nodes(self.graph, mapping)
-            self.new_node_idx = torch.where(
-                subset == self.ori_node_idx)[0].item()
+            self.new_node_idx = torch.where(subset == self.ori_node_idx)[0].item()
             self.num_nodes = self.graph.number_of_nodes()
             self.subset = subset
 
@@ -270,9 +187,9 @@ class MCTS(object):
     @staticmethod
     def __subgraph__(node_idx, x, edge_index, num_hops, **kwargs):
         num_nodes, num_edges = x.size(0), edge_index.size(1)
-        subset, edge_index, _, edge_mask = k_hop_subgraph_with_default_whole_graph(
-            edge_index, node_idx, num_hops, relabel_nodes=True,
-            num_nodes=num_nodes)
+        subset, edge_index, _, edge_mask = k_hop_subgraph(
+            node_idx, num_hops, edge_index, relabel_nodes=True, num_nodes=num_nodes
+        )
 
         x = x[subset]
         for key, item in kwargs.items():
@@ -291,32 +208,30 @@ class MCTS(object):
 
         # Expand if this node has never been visited
         if len(tree_node.children) == 0:
-            node_degree_list = list(
-                self.graph.subgraph(cur_graph_coalition).degree)
-            node_degree_list = sorted(node_degree_list, key=lambda x: x[1],
-                                      reverse=self.high2low)
+            node_degree_list = list(self.graph.subgraph(cur_graph_coalition).degree)
+            node_degree_list = sorted(
+                node_degree_list, key=lambda x: x[1], reverse=self.high2low
+            )
             all_nodes = [x[0] for x in node_degree_list]
 
             if self.new_node_idx:
-                expand_nodes = [
-                    node for node in all_nodes if node != self.new_node_idx
-                ]
+                expand_nodes = [node for node in all_nodes if node != self.new_node_idx]
             else:
                 expand_nodes = all_nodes
 
             if len(all_nodes) > self.expand_atoms:
-                expand_nodes = expand_nodes[:self.expand_atoms]
+                expand_nodes = expand_nodes[: self.expand_atoms]
 
             for each_node in expand_nodes:
                 # for each node, pruning it and get the remaining sub-graph
                 # here we check the resulting sub-graphs and only keep the largest one
-                subgraph_coalition = [
-                    node for node in all_nodes if node != each_node
-                ]
+                subgraph_coalition = [node for node in all_nodes if node != each_node]
 
                 subgraphs = [
-                    self.graph.subgraph(c) for c in nx.connected_components(
-                        self.graph.subgraph(subgraph_coalition))
+                    self.graph.subgraph(c)
+                    for c in nx.connected_components(
+                        self.graph.subgraph(subgraph_coalition)
+                    )
                 ]
 
                 if self.new_node_idx:
@@ -336,7 +251,8 @@ class MCTS(object):
                 find_same = False
                 for old_graph_node in self.state_map.values():
                     if Counter(old_graph_node.coalition) == Counter(
-                            new_graph_coalition):
+                        new_graph_coalition
+                    ):
                         new_node = old_graph_node
                         find_same = True
 
@@ -346,8 +262,7 @@ class MCTS(object):
 
                 find_same_child = False
                 for cur_child in tree_node.children:
-                    if Counter(cur_child.coalition) == Counter(
-                            new_graph_coalition):
+                    if Counter(cur_child.coalition) == Counter(new_graph_coalition):
                         find_same_child = True
 
                 if not find_same_child:
@@ -358,8 +273,7 @@ class MCTS(object):
                 child.P = score
 
         sum_count = sum([c.N for c in tree_node.children])
-        selected_node = max(tree_node.children,
-                            key=lambda x: x.Q() + x.U(sum_count))
+        selected_node = max(tree_node.children, key=lambda x: x.Q() + x.U(sum_count))
         v = self.mcts_rollout(selected_node)
         selected_node.W += v
         selected_node.N += 1
@@ -372,7 +286,8 @@ class MCTS(object):
             self.mcts_rollout(self.root)
             if verbose:
                 print(
-                    f"At the {rollout_idx} rollout, {len(self.state_map)} states that have been explored."
+                    f"At the {rollout_idx} rollout, {len(self.state_map)}"
+                    "states that have been explored."
                 )
 
         explanations = [node for _, node in self.state_map.items()]
@@ -388,7 +303,13 @@ class SubgraphXExplainer(ExplainerAlgorithm):
     Official Implementation Repo: \
         https://github.com/divelab/DIG/blob/dig-stable/dig/xgraph/method/subgraphx.py
 
+    .. note::
+        For an example of using SubgraphXExplainer, see `examples/subgraphx_explainer.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        subgraphx_explainer.py>`_.
+
     Args:
+        explain_graph(:obj:`bool`): Graph Classification Task or Node Classification Task
         device: Device to generate the explanations on.
         local_radius(:obj:`int`): Local radius to be considered while evaluating
             subgraph importance for :obj:`l_shapley`, :obj:`mc_l_shapley`
@@ -400,17 +321,16 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             One of ["zero_filling", "split"]
         TODO: Fill this.
     """
+
     def __init__(
         self,
         model,
         num_classes: int,
+        MCTS_info_path: str = None,
         num_hops: Optional[int] = None,
         device: str = "cpu",
-        # check the following args
         explain_graph: bool = True,
         verbose: bool = True,
-        max_nodes: int = 5,  # TODO: Check default value
-        # check ends
         local_radius: int = 4,
         sample_num=100,
         reward_method: str = "mc_l_shapley",
@@ -422,25 +342,26 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         high2low: bool = False,
     ):
         super().__init__()
-        self.model = model
         self.device = device
-        self.max_nodes = max_nodes
-        self.local_radius = local_radius
+        self.model = model
+        self.MCTS_info_path = MCTS_info_path
         self.num_classes = num_classes
         self.explain_graph = explain_graph
         self.verbose = verbose
-        self.sample_num = sample_num
-        self.reward_method = reward_method
-        self.subgraph_building_method = subgraph_building_method
-
         self.num_hops = self.update_num_hops(num_hops)
+
+        # mcts hyper-parameters
         self.rollout = rollout
         self.min_atoms = min_atoms
         self.c_puct = c_puct
         self.expand_atoms = expand_atoms
         self.high2low = high2low
 
-        # TODO: Finish this
+        # reward function hyper-parameters
+        self.local_radius = local_radius
+        self.sample_num = sample_num
+        self.reward_method = reward_method
+        self.subgraph_building_method = subgraph_building_method
 
     def update_num_hops(self, num_hops):
         if num_hops is not None:
@@ -484,11 +405,10 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
     def get_reward_func(self, value_func, node_idx=None):
         """Runs `__call__` on the `reward_method`"""
-        # TODO: Check if this is needed
-        # if self.explain_graph:
-        #     node_idx = None
-        # else:
-        #     assert node_idx is not None
+        if self.explain_graph:
+            node_idx = None
+        else:
+            assert node_idx is not None
         return reward_func(
             reward_method=self.reward_method,
             value_func=value_func,
@@ -498,9 +418,9 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             subgraph_building_method=self.subgraph_building_method,
         )
 
-    def get_mcts_class(self, x, edge_index, node_idx: int = None,
-                       score_func: Callable = None):
-        # TODO: See if self.explain_graph is needed
+    def get_mcts_class(
+        self, x, edge_index, node_idx: int = None, score_func: Callable = None
+    ):
         if self.explain_graph:
             node_idx = None
         else:
@@ -530,28 +450,27 @@ class SubgraphXExplainer(ExplainerAlgorithm):
     ):
         probs = self.model(x, edge_index).squeeze().softmax(dim=-1)
         if self.explain_graph:
+            # Explanation for Graph Classification Task
             if saved_MCTSInfo_list:
                 results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)
 
             if not saved_MCTSInfo_list:
-                value_func = GnnNetsGC2valueFunc(self.model,
-                                                 target_class=label)
+                value_func = GnnNetsGC2valueFunc(self.model, target_class=label)
                 payoff_func = self.get_reward_func(value_func)
                 self.mcts_state_map = self.get_mcts_class(
-                    x, edge_index, score_func=payoff_func)
+                    x, edge_index, score_func=payoff_func
+                )
                 results = self.mcts_state_map.mcts(verbose=self.verbose)
 
             # l sharply score
             value_func = GnnNetsGC2valueFunc(self.model, target_class=label)
-            tree_node_x = find_closest_node_result(results,
-                                                   max_nodes=max_nodes)
 
         else:
+            # Explanation for Node Classification Task
             if saved_MCTSInfo_list:
                 results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)
 
-            self.mcts_state_map = self.get_mcts_class(x, edge_index,
-                                                      node_idx=node_idx)
+            self.mcts_state_map = self.get_mcts_class(x, edge_index, node_idx=node_idx)
             self.new_node_idx = self.mcts_state_map.new_node_idx
             # mcts will extract the subgraph and relabel the nodes
             value_func = GnnNetsNC2valueFunc(
@@ -562,23 +481,26 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
             if not saved_MCTSInfo_list:
                 payoff_func = self.get_reward_func(
-                    value_func, node_idx=self.mcts_state_map.new_node_idx)
+                    value_func, node_idx=self.mcts_state_map.new_node_idx
+                )
                 self.mcts_state_map.set_score_func(payoff_func)
                 results = self.mcts_state_map.mcts(verbose=self.verbose)
 
-            tree_node_x = find_closest_node_result(results,
-                                                   max_nodes=max_nodes)
+        # get the top result based on our node
+        tree_node_x = find_closest_node_result(results, max_nodes=max_nodes)
 
         # keep the important structure
         masked_node_list = [
-            node for node in range(tree_node_x.data.x.shape[0])
+            node
+            for node in range(tree_node_x.data.x.shape[0])
             if node in tree_node_x.coalition
         ]
 
         # remove the important structure, for node_classification,
         # remain the node_idx when remove the important structure
         maskout_node_list = [
-            node for node in range(tree_node_x.data.x.shape[0])
+            node
+            for node in range(tree_node_x.data.x.shape[0])
             if node not in tree_node_x.coalition
         ]
         if not self.explain_graph:
@@ -612,14 +534,14 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             "sparsity": sparsity_score,
         }
 
-        return results, related_pred
+        return results, related_pred, masked_node_list
 
     def forward(
         self,
         x: Union[Tensor, Dict[NodeType, Tensor]],
         edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
-        target: Tensor,
+        target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
         target_index: Optional[int] = None,
         **kwargs,
@@ -632,7 +554,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
                 node features of a homogeneous or heterogeneous graph.
             edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
                 input edge indices of a homogeneous or heterogeneous graph.
-            target (torch.Tensor): The target of the model.
+            target (Optional[torch.Tensor]): The target of the model.
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
@@ -644,39 +566,70 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
-        node_idx = index
-        max_nodes = self.max_nodes  # default max subgraph size
+        # get max_nodes
+        max_nodes = kwargs.get("max_nodes", 5)
 
-        # collect all the class index
-        labels = tuple(label for label in range(self.num_classes))
-        ex_labels = tuple(
-            torch.tensor([label]).to(self.device) for label in labels)
+        # check if MCTS_info_list has been provided, load if present
+        saved_results = (
+            None if not isfile(self.MCTS_info_path) else torch.load(self.MCTS_info_path)
+        )
 
-        related_preds = []
-        explanation_results = []
-        saved_results = None
-        # if self.save:
-        #     if os.path.isfile(os.path.join(self.save_dir, f"{self.filename}.pt")):
-        #         saved_results = torch.load(os.path.join(self.save_dir, f"{self.filename}.pt"))
+        if self.model_config.task_level == ModelTaskLevel.node:
+            # check if index has been provided
+            assert (
+                index is not None
+            ), "For Node Classification task, index (node_idx) must be provided"
 
-        for label_idx, label in enumerate(ex_labels):
-            results, related_pred = self.explain(
+            # get prediction for that node index
+            prediction_label = self.model(x, edge_index).argmax(dim=-1)
+            # get explanation for that index and the prediction label
+            results, related_pred, masked_node_list = self.explain(
                 x,
                 edge_index,
-                label=label,
+                label=prediction_label,
                 max_nodes=max_nodes,
-                node_idx=node_idx,
+                node_idx=index,
                 saved_MCTSInfo_list=saved_results,
             )
-            related_preds.append(related_pred)
-            explanation_results.append(results)
+            # create node_mask from
+            node_mask = torch.zeros(size=(x.size()[0])).float()
+            node_mask[masked_node_list] = 1.0
 
-        # if self.save:
-        #     torch.save(explanation_results,
-        #                os.path.join(self.save_dir, f"{self.filename}.pt"))
+            # create explanation with additional args
+            explanation = Explanation(
+                x,
+                edge_index,
+                node_mask=node_mask,
+                results=results,
+                related_pred=related_pred,
+            )
+        else:
+            # TODO: Implement this for Graph Classification
+            raise NotImplementedError
 
-        return None, explanation_results, related_preds
+        return explanation
 
     def supports(self) -> bool:
-        """TODO: Implement this"""
-        return NotImplementedError
+        """SubgraphXExplainer only supports Node and Graph Classification"""
+        task_level = self.model_config.task_level
+        if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
+            logging.error(f"Task level '{task_level.value}' not supported")
+            return False
+
+        edge_mask_type = self.explainer_config.edge_mask_type
+        if edge_mask_type is not None:
+            logging.error(
+                f"Edge mask type not supported. Set `edge_mask_type` to `None`"
+            )
+            return False
+
+        node_mask_type = self.explainer_config.node_mask_type
+        if node_mask_type is not None:
+            logging.error("Node mask not supported. Set 'node_mask_type' to 'None'")
+            return False
+
+        if self._is_hetero:
+            logging.error("Heterogeneous graphs not supported.")
+            return False
+
+        return True
