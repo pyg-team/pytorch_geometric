@@ -308,109 +308,63 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
+        if method != 'ppr' and method != 'heat':
+            raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
+        if normalization == 'sym':
+            # Calculate original degrees.
+            _, col = edge_index
+            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+
+        edge_index_np = edge_index.cpu().numpy()
+        # Assumes coalesced edge_index.
+        indptr = np.empty(edge_index_np[0, -1] + 2, dtype=np.int64)
+        indptr[0] = 0
+        indptr[-1] = len(edge_index_np[0])
+        prev = 0
+        j = 1
+        for i in range(len(edge_index_np[0])):
+            val = edge_index_np[0, i]
+            if val == prev:
+                continue
+            for _ in range(val - prev):
+                indptr[j] = i
+                j += 1
+            prev = val
+        out_degree = np.bincount(edge_index_np[0])
+
         if method == 'ppr':
-            if normalization == 'sym':
-                # Calculate original degrees.
-                _, col = edge_index
-                deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
-
-            edge_index_np = edge_index.cpu().numpy()
-            # Assumes coalesced edge_index.
-            indptr = np.empty(edge_index_np[0, -1] + 2, dtype=np.int64)
-            indptr[0] = 0
-            indptr[-1] = len(edge_index_np[0])
-            prev = 0
-            j = 1
-            for i in range(len(edge_index_np[0])):
-                val = edge_index_np[0, i]
-                if val == prev:
-                    continue
-                for _ in range(val - prev):
-                    indptr[j] = i
-                    j += 1
-                prev = val
-            out_degree = np.bincount(edge_index_np[0])
-
             neighbors, neighbor_weights = self.__calc_ppr__(
                 indptr, edge_index_np[1], out_degree, kwargs['alpha'],
                 kwargs['eps'])
-            ppr_normalization = 'col' if normalization == 'col' else 'row'
-            edge_index, edge_weight = self.__neighbors_to_graph__(
-                neighbors, neighbor_weights, ppr_normalization,
-                device=edge_index.device)
-            edge_index = edge_index.to(torch.long)
-
-            if normalization == 'sym':
-                # We can change the normalization from row-normalized to
-                # symmetric by multiplying the resulting matrix with D^{1/2}
-                # from the left and D^{-1/2} from the right.
-                # Since we use the original degrees for this it will be like
-                # we had used symmetric normalization from the beginning
-                # (except for errors due to approximation).
-                row, col = edge_index
-                deg_inv = deg.sqrt()
-                deg_inv_sqrt = deg.pow(-0.5)
-                deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
-                edge_weight = deg_inv[row] * edge_weight * deg_inv_sqrt[col]
-            elif normalization in ['col', 'row']:
-                pass
-            else:
-                raise ValueError(
-                    f"Transition matrix normalization '{normalization}' not "
-                    f"implemented for non-exact GDC computation")
-
         elif method == 'heat':
-            if normalization == 'sym':
-                # Calculate original degrees.
-                _, col = edge_index
-                deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
-
-            edge_index_np = edge_index.cpu().numpy()
-            # Assumes coalesced edge_index.
-            indptr = np.empty(edge_index_np[0, -1] + 2, dtype=np.int64)
-            indptr[0] = 0
-            indptr[-1] = len(edge_index_np[0])
-            prev = 0
-            j = 1
-            for i in range(len(edge_index_np[0])):
-                val = edge_index_np[0, i]
-                if val == prev:
-                    continue
-                for _ in range(val - prev):
-                    indptr[j] = i
-                    j += 1
-                prev = val
-            out_degree = np.bincount(edge_index_np[0])
-
             neighbors, neighbor_weights = self.__calc_heat__(
                 indptr, edge_index_np[1], out_degree, kwargs['t'],
                 kwargs['eps'])
-            ppr_normalization = 'col' if normalization == 'col' else 'row'
-            edge_index, edge_weight = self.__neighbors_to_graph__(
-                neighbors, neighbor_weights, ppr_normalization,
-                device=edge_index.device)
-            edge_index = edge_index.to(torch.long)
 
-            if normalization == 'sym':
-                # We can change the normalization from row-normalized to
-                # symmetric by multiplying the resulting matrix with D^{1/2}
-                # from the left and D^{-1/2} from the right.
-                # Since we use the original degrees for this it will be like
-                # we had used symmetric normalization from the beginning
-                # (except for errors due to approximation).
-                row, col = edge_index
-                deg_inv = deg.sqrt()
-                deg_inv_sqrt = deg.pow(-0.5)
-                deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
-                edge_weight = deg_inv[row] * edge_weight * deg_inv_sqrt[col]
-            elif normalization in ['col', 'row']:
-                pass
-            else:
-                raise ValueError(
-                    f"Transition matrix normalization '{normalization}' not "
-                    f"implemented for non-exact GDC computation")
+        diffusion_normalization = 'col' if normalization == 'col' else 'row'
+        edge_index, edge_weight = self.__neighbors_to_graph__(
+            neighbors, neighbor_weights, diffusion_normalization,
+            device=edge_index.device)
+        edge_index = edge_index.to(torch.long)
+
+        if normalization == 'sym':
+            # We can change the normalization from row-normalized to
+            # symmetric by multiplying the resulting matrix with D^{1/2}
+            # from the left and D^{-1/2} from the right.
+            # Since we use the original degrees for this it will be like
+            # we had used symmetric normalization from the beginning
+            # (except for errors due to approximation).
+            row, col = edge_index
+            deg_inv = deg.sqrt()
+            deg_inv_sqrt = deg.pow(-0.5)
+            deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+            edge_weight = deg_inv[row] * edge_weight * deg_inv_sqrt[col]
+        elif normalization in ['col', 'row']:
+            pass
         else:
-            raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
+            raise ValueError(
+                f"Transition matrix normalization '{normalization}' not "
+                f"implemented for non-exact GDC computation")
 
         return edge_index, edge_weight
 
