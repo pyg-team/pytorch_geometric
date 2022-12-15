@@ -7,7 +7,7 @@ from torch import Tensor
 
 def get_messagepassing_embeddings(model: torch.nn.Module,
                                   **kwargs) -> List[Tensor]:
-    """Get output of all `MessagePassing` layers in
+    """Returns the output embeddings of all `MessagePassing` layers in
     :obj:`model`.
 
     Args:
@@ -35,7 +35,7 @@ def get_messagepassing_embeddings(model: torch.nn.Module,
     else:
         model_state = model.training
         model.eval()
-        _ = model(**kwargs)
+        model(**kwargs)
         model.train(model_state)
 
     # Remove hooks
