@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added `get_characterization_score` and other ways to combine Fid+/- scores ([#6188](https://github.com/pyg-team/pytorch_geometric/pull/6188)
 - Added `seed_time` attribute to temporal `NodeLoader` outputs in case `input_time` is given ([#6196](https://github.com/pyg-team/pytorch_geometric/pull/6196))
 - Added `Data.edge_subgraph` and `HeteroData.edge_subgraph` functionalities ([#6193](https://github.com/pyg-team/pytorch_geometric/pull/6193))
 - Added `input_time` option to `LightningNodeData` and `transform_sampler_output` to `NodeLoader` and `LinkLoader` ([#6187](https://github.com/pyg-team/pytorch_geometric/pull/6187))
@@ -13,7 +14,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Add `inputs_channels` back in training benchmark ([#6154](https://github.com/pyg-team/pytorch_geometric/pull/6154))
 - Added support for dropping nodes in `utils.to_dense_batch` in case `max_num_nodes` is smaller than the number of nodes  ([#6124](https://github.com/pyg-team/pytorch_geometric/pull/6124))
 - Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
-- Added `get_characterization_score`, and other ways to combine Fid+/- scores ([#6188]https://github.com/pyg-team/pytorch_geometric/pull/6188)
 ### Changed
 - Breaking Change: Move `ExplainerConfig` arguments to the `Explainer` class  ([#6176](https://github.com/pyg-team/pytorch_geometric/pull/6176))
 - Refactored `NeighborSampler` to be input-type agnostic ([#6173](https://github.com/pyg-team/pytorch_geometric/pull/6173))
