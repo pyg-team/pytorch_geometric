@@ -39,7 +39,7 @@ def get_intermediate_messagepassing_embeddings(model: torch.nn.Module,
     # Run forward pass
     model_state = model.training
     model.eval()
-    _ = model(**kwargs)
+    model(**kwargs)
     model.train(model_state)
 
     # Remove hooks
