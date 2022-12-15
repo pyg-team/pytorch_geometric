@@ -304,7 +304,7 @@ class GDC(BaseTransform):
 
             edge_index_np = edge_index.cpu().numpy()
             # Assumes coalesced edge_index.
-            indptr = np.empty(edge_index_np[0, -1] + 2, dtype = np.int64)
+            indptr = np.empty(edge_index_np[0, -1] + 2, dtype=np.int64)
             indptr[0] = 0
             indptr[-1] = len(edge_index_np[0])
             prev = 0
