@@ -31,7 +31,7 @@ def test_get_intermediate_messagepassing_embeddings():
     with pytest.warns(UserWarning,
                       match="does not have message passing layer"):
         intermediate_outs = get_messagepassing_embeddings(
-            torch.nn.Linear(5, 5), x=x)
+            torch.nn.Linear(5, 5), x)
     assert len(intermediate_outs) == 0
 
     intermediate_outs = get_messagepassing_embeddings(model, x=x,
