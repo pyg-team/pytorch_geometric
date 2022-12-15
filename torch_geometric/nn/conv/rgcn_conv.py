@@ -253,7 +253,7 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
-        if edge_type_ptr is not None:
+        if torch_geometric.typing.WITH_PYG_LIB and edge_type_ptr is not None:
             # TODO Re-weight according to edge type degree for `aggr=mean`.
             return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
 

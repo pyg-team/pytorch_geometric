@@ -136,8 +136,8 @@ class GNNExplainer(ExplainerAlgorithm):
         }:
             node_feat_mask, node_mask = node_mask, None
 
-        return Explanation(x=x, edge_index=edge_index, edge_mask=edge_mask,
-                           node_mask=node_mask, node_feat_mask=node_feat_mask)
+        return Explanation(node_mask=node_mask, node_feat_mask=node_feat_mask,
+                           edge_mask=edge_mask)
 
     def _train(
         self,
@@ -150,6 +150,10 @@ class GNNExplainer(ExplainerAlgorithm):
         target_index: Optional[int] = None,
         **kwargs,
     ):
+        if isinstance(x, dict) or isinstance(edge_index, dict):
+            raise ValueError(f"Heterogeneous graphs not yet supported in "
+                             f"'{self.__class__.__name__}'")
+
         self._initialize_masks(x, edge_index)
 
         parameters = [self.node_mask]  # We always learn a node mask.
@@ -190,32 +194,54 @@ class GNNExplainer(ExplainerAlgorithm):
         elif node_mask_type == MaskType.common_attributes:
             self.node_mask = Parameter(torch.randn(1, F, device=device) * std)
         else:
-            raise NotImplementedError
+            assert False
 
         if edge_mask_type == MaskType.object:
             std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
         elif edge_mask_type is not None:
-            raise NotImplementedError
+            assert False
+
+    def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        if self.model_config.return_type.value == 'raw':
+            loss_fn = F.binary_cross_entropy_with_logits
+        elif self.model_config.return_type.value == 'probs':
+            loss_fn = F.binary_cross_entropy
+        else:
+            assert False
+
+        return loss_fn(y_hat.view_as(y), y.float())
+
+    def _loss_multiclass_classification(
+        self,
+        y_hat: Tensor,
+        y: Tensor,
+    ) -> Tensor:
+        if self.model_config.return_type.value == 'raw':
+            loss_fn = F.cross_entropy
+        elif self.model_config.return_type.value == 'probs':
+            loss_fn = F.nll_loss
+            y_hat = y_hat.log()
+        elif self.model_config.return_type.value == 'log_probs':
+            loss_fn = F.nll_loss
+        else:
+            assert False
+
+        return loss_fn(y_hat, y)
 
     def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        assert self.model_config.return_type.value == 'raw'
         return F.mse_loss(y_hat, y)
 
-    def _loss_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if y.dim() == 0:  # `index` was given as an integer.
-            y_hat, y = y_hat.unsqueeze(0), y.unsqueeze(0)
-
-        y_hat = self._to_log_prob(y_hat)
-
-        return (-y_hat).gather(1, y.view(-1, 1)).mean()
-
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if self.model_config.mode == ModelMode.regression:
+        if self.model_config.mode == ModelMode.binary_classification:
+            loss = self._loss_binary_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.multiclass_classification:
+            loss = self._loss_multiclass_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.regression:
             loss = self._loss_regression(y_hat, y)
-        elif self.model_config.mode == ModelMode.classification:
-            loss = self._loss_classification(y_hat, y)
         else:
-            raise NotImplementedError
+            assert False
 
         if self.explainer_config.edge_mask_type is not None:
             m = self.edge_mask.sigmoid()
@@ -277,7 +303,7 @@ class GNNExplainer_:
         )
         model_config = ModelConfig(
             mode='regression'
-            if return_type == 'regression' else 'classification',
+            if return_type == 'regression' else 'multiclass_classification',
             task_level=ModelTaskLevel.node,
             return_type=self.conversion_return_type[return_type],
         )
@@ -293,7 +319,8 @@ class GNNExplainer_:
         self.model.eval()
 
         out = self.model(*args, **kwargs)
-        if self._explainer.model_config.mode == ModelMode.classification:
+        if (self._explainer.model_config.mode ==
+                ModelMode.multiclass_classification):
             out = out.argmax(dim=-1)
 
         self.model.train(training)
