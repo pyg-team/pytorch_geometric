@@ -577,14 +577,12 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             # check if index has been provided
             assert index is not None, "For Node Classification task, index (node_idx) must be provided"
 
-            # get prediction for that node index
-            prediction_label = model(x, edge_index).argmax(dim=-1)[index]
             # get explanation for that index and the prediction label
             results, related_pred, masked_node_list = self.explain(
                 model,
                 x,
                 edge_index,
-                label=prediction_label,
+                label=target[index],
                 max_nodes=self.max_nodes,
                 node_idx=index,
                 saved_MCTSInfo_list=saved_results,
@@ -600,6 +598,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
                 node_mask=node_mask,
                 results=results,
                 related_pred=related_pred,
+                masked_node_list=masked_node_list
             )
         else:
             # TODO: Implement this for Graph Classification
