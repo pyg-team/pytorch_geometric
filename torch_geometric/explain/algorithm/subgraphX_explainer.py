@@ -569,14 +569,9 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         self.num_hops = self.update_num_hops(model, self.num_hops)
 
         # check if MCTS_info_list has been provided, load if present
-        saved_results = (
-            None 
-            if (
-                self.MCTS_info_path is None or
-                not isfile(self.MCTS_info_path)
-            ) 
-            else torch.load(self.MCTS_info_path)
-        )
+        saved_results = (None if (self.MCTS_info_path is None
+                                  or not isfile(self.MCTS_info_path)) else
+                         torch.load(self.MCTS_info_path))
 
         if self.model_config.task_level == ModelTaskLevel.node:
             # check if index has been provided
@@ -618,7 +613,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
             logging.error(f"Task level '{task_level.value}' not supported")
             return False
-    
+
         # TODO: Not sure what to check here?
         # edge_mask_type = self.explainer_config.edge_mask_type
         # if edge_mask_type is not None:
