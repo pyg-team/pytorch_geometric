@@ -438,7 +438,7 @@ def adj_type_to_edge_tensor_type(layout: EdgeLayout,
     elif layout == EdgeLayout.CSR:
         return edge_index.csr()[:-1]  # (rowptr, col)
     else:
-        return edge_index.csr()[-2::-1]  # (row, colptr)
+        return edge_index.csc()[-2::-1]  # (row, colptr)
 
 
 ###############################################################################
@@ -462,10 +462,8 @@ def to_csc(
     is_sorted = edge_attr.is_sorted
     size = edge_attr.size
 
-    if layout == EdgeLayout.CSR:
+    if isinstance(edge_index, SparseTensor):
         colptr, row, _ = adj.csc()
-    elif layout == EdgeLayout.CSC:
-        colptr, row, _ = adj.csr()
     else:
         if size is None:
             raise ValueError(
