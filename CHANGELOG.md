@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
-- Added `InfectionDataset` to generate infection benchmark for explainability ([#6222](https://github.com/pyg-team/pytorch_geometric/pull/6222))
+- Added the `InfectionDataset` to evaluate explanations ([#6222](https://github.com/pyg-team/pytorch_geometric/pull/6222))
 - Added `visualize_feature_importance` to support node feature visualizations ([#6094](https://github.com/pyg-team/pytorch_geometric/pull/6094))
 - Added heterogeneous graph support to `Explanation` framework ([#6091](https://github.com/pyg-team/pytorch_geometric/pull/6091), [#6218](https://github.com/pyg-team/pytorch_geometric/pull/6218))
 - Added a `CustomMotif` motif generator ([#6179](https://github.com/pyg-team/pytorch_geometric/pull/6179))
