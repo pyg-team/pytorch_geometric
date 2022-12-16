@@ -5,8 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added the `InfectionDataset` to evaluate explanations ([#6222](https://github.com/pyg-team/pytorch_geometric/pull/6222))
+- Added `characterization_score` and `fidelity_curve_auc` explainer metrics ([#6188](https://github.com/pyg-team/pytorch_geometric/pull/6188))
+- Added `get_message_passing_embeddings` ([#6201](https://github.com/pyg-team/pytorch_geometric/pull/6201))
 - Added the `PointGNNConv` layer ([#6194](https://github.com/pyg-team/pytorch_geometric/pull/6194)))
 - Added `GridGraph` graph generator to generate grid graphs ([#6220](https://github.com/pyg-team/pytorch_geometric/pull/6220)
+- Added explainability metrics for when ground truth is available ([#6137](https://github.com/pyg-team/pytorch_geometric/pull/6137))
 - Added `visualize_feature_importance` to support node feature visualizations ([#6094](https://github.com/pyg-team/pytorch_geometric/pull/6094))
 - Added heterogeneous graph support to `Explanation` framework ([#6091](https://github.com/pyg-team/pytorch_geometric/pull/6091), [#6218](https://github.com/pyg-team/pytorch_geometric/pull/6218))
 - Added a `CustomMotif` motif generator ([#6179](https://github.com/pyg-team/pytorch_geometric/pull/6179))
@@ -22,6 +26,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added support for dropping nodes in `utils.to_dense_batch` in case `max_num_nodes` is smaller than the number of nodes  ([#6124](https://github.com/pyg-team/pytorch_geometric/pull/6124))
 - Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
 ### Changed
+- Moved thresholding config of the `Explainer` to `Explanation` ([#6215](https://github.com/pyg-team/pytorch_geometric/pull/6215))
 - Fixed a bug in the output order in `HeteroLinear` for un-sorted type vectors ([#6198](https://github.com/pyg-team/pytorch_geometric/pull/6198))
 - Breaking Change: Move `ExplainerConfig` arguments to the `Explainer` class  ([#6176](https://github.com/pyg-team/pytorch_geometric/pull/6176))
 - Refactored `NeighborSampler` to be input-type agnostic ([#6173](https://github.com/pyg-team/pytorch_geometric/pull/6173))
