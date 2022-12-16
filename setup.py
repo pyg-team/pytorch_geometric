@@ -10,9 +10,9 @@ install_requires = [
     'jinja2',
     'requests',
     'pyparsing',
+    'torchmetric',
     'scikit-learn',
     'psutil>=5.8.0',
-    'torchmetrics>=0.7',
 ]
 
 graphgym_requires = [
@@ -36,7 +36,6 @@ full_requires = graphgym_requires + [
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
-    'torchmetrics>=0.7',
 ]
 
 benchmark_requires = [

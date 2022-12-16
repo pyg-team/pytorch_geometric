@@ -2,7 +2,6 @@ from typing import Tuple
 
 import torch
 from torch import Tensor, tensor
-from torchmetrics import AUROC
 
 from torch_geometric.explain import Explanation
 
@@ -31,6 +30,7 @@ def get_groundtruth_metrics(
     :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
         :class:`Tensor`, :class:`Tensor`)
     """
+    from torchmetrics import AUROC
 
     ex_masks = explanation.masks
     ex_mask_tensor = torch.cat(
@@ -41,7 +41,7 @@ def get_groundtruth_metrics(
 
     gt_mask_tensor[gt_mask_tensor > threshold] = 1.0
     auroc = AUROC(task="binary")
-    auc = auroc(ex_mask_tensor, gt_mask_tensor)
+    auc = auroc(ex_mask_tensor, gt_mask_tensor.bool())
     ex_mask_tensor[ex_mask_tensor > threshold] = 1.0
     correct_preds = gt_mask_tensor == ex_mask_tensor
     incorrect_preds = gt_mask_tensor != ex_mask_tensor

@@ -3,7 +3,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.metrics import get_groundtruth_metrics
+from torch_geometric.explain.metric.basic import get_groundtruth_metrics
 
 
 @pytest.fixture
