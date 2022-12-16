@@ -10,7 +10,7 @@ install_requires = [
     'jinja2',
     'requests',
     'pyparsing',
-    'torchmetric',
+    'torchmetrics',
     'scikit-learn',
     'psutil>=5.8.0',
 ]
