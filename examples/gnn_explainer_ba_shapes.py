@@ -32,7 +32,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.005)
 def train():
     model.train()
     optimizer.zero_grad()
-    out = model(data.x, data.edge_index, edge_weight=data.edge_weight)
+    out = model(data.x, data.edge_index)
     loss = F.cross_entropy(out[train_idx], data.y[train_idx])
     torch.nn.utils.clip_grad_norm_(model.parameters(), 2.0)
     loss.backward()
@@ -43,8 +43,7 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    pred = model(data.x, data.edge_index,
-                 edge_weight=data.edge_weight).argmax(dim=-1)
+    pred = model(data.x, data.edge_index).argmax(dim=-1)
 
     train_correct = int((pred[train_idx] == data.y[train_idx]).sum())
     train_acc = train_correct / train_idx.size(0)
@@ -85,7 +84,7 @@ for explanation_type in ['phenomenon', 'model']:
     for node_index in tqdm(node_indices, leave=False, desc='Train Explainer'):
         target = data.y if explanation_type == 'phenomenon' else None
         explanation = explainer(data.x, data.edge_index, index=node_index,
-                                target=target, edge_weight=data.edge_weight)
+                                target=target)
 
         _, _, _, hard_edge_mask = k_hop_subgraph(node_index, num_hops=3,
                                                  edge_index=data.edge_index)
