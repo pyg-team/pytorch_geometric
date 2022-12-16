@@ -462,7 +462,7 @@ def to_csc(
     is_sorted = edge_attr.is_sorted
     size = edge_attr.size
 
-    if isinstance(edge_index, SparseTensor):
+    if isinstance(adj, SparseTensor):
         colptr, row, _ = adj.csc()
     else:
         if size is None:
