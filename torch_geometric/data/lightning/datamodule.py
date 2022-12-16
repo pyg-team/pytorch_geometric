@@ -655,11 +655,6 @@ class LightningLinkData(LightningDataModule):
             )
 
         elif self.loader in ['neighbor', 'link_neighbor']:
-            print(kwargs)
-            print(self.neighbor_sampler)
-            print(input_edges)
-            print(input_labels)
-            print(input_time)
             loader = LinkNeighborLoader(
                 self.data,
                 neighbor_sampler=self.neighbor_sampler,
@@ -698,9 +693,6 @@ class LightningLinkData(LightningDataModule):
 
     def val_dataloader(self) -> DataLoader:
         """"""
-        print()
-        print("VAL_DATALOADER")
-        print()
         kwargs = copy.copy(self.kwargs)
         kwargs.pop('sampler', None)
         kwargs.pop('batch_sampler', None)
