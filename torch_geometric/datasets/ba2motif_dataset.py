@@ -19,16 +19,19 @@ class BA2MotifDataset(InMemoryDataset):
     The :class:`torch_geometric.datasets.BA2MotifDataset` creates
     :obj:`num_graphs`  Barabasi-Albert (BA) graphs coming from a
     :class:`torch_geometric.datasets.graph_generator.BAGraph`, and
-    attaches the house motif :class:`~torch_geometric.datasets.motif_generator.HouseMotif`
+    attaches the house motif 
+    :class:`~torch_geometric.datasets.motif_generator.HouseMotif`
     to half the :obj:`num_graphs` and the 5-node cycle motif
-    :class:`torch_geometric.datasets.motif_generator.CycleMotif` to the other half.
-    The graphs with house motif are assigned graph label `0` while the one with
-    the cycle motif are assigned graph label `1`.
-    Ground-truth node-level and edge-level explainabilty masks are given based
-    on whether nodes and edges are part of a certain motif or not.
+    :class:`torch_geometric.datasets.motif_generator.CycleMotif` to 
+    the other half. The graphs with house motif are assigned graph 
+    label `0` while the one with the cycle motif are assigned graph 
+    label `1`. Ground-truth node-level and edge-level explainabilty 
+    masks are given based on whether nodes and edges are part of a 
+    certain motif or not.
 
-    For example, to generate `100` BA graphs with num_nodes as 300 and num_edges as 5,
-    in which we want 50 to have house motifs and the other 50 to have cycle motifs,
+    For example, to generate `100` BA graphs with num_nodes as 300 
+    and num_edges as 5, in which we want 50 to have house motifs 
+    and the other 50 to have cycle motifs,
 
     .. code-block:: python
 
