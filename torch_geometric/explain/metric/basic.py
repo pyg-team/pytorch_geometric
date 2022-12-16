@@ -32,12 +32,10 @@ def get_groundtruth_metrics(
     """
     from torchmetrics import AUROC
 
-    ex_masks = explanation.masks
-    ex_mask_tensor = torch.cat(
-        list(map(lambda x: x.view(-1), ex_masks.values())))
-    gt_masks = groundtruth.masks
-    gt_mask_tensor = torch.cat(
-        list(map(lambda x: x.view(-1), gt_masks.values())))
+    ex_masks = [explanation[key] for key in explanation.available_explanations]
+    ex_mask_tensor = torch.cat(list(map(lambda x: x.view(-1), ex_masks)))
+    gt_masks = [groundtruth[key] for key in groundtruth.available_explanations]
+    gt_mask_tensor = torch.cat(list(map(lambda x: x.view(-1), gt_masks)))
 
     gt_mask_tensor[gt_mask_tensor > threshold] = 1.0
     auroc = AUROC(task="binary")

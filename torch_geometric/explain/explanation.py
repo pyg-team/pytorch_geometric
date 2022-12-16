@@ -16,16 +16,6 @@ class ExplanationMixin:
         """Returns the available explanation masks."""
         return [key for key in self.keys if key.endswith('_mask')]
 
-    @property
-    def masks(self) -> Dict[str, Tensor]:
-        """Returns a dictionary of all masks available in the explanation."""
-        mask_dict = {
-            key: self[key]
-            for key in self.keys
-            if key.endswith('_mask') and self[key] is not None
-        }
-        return dict(sorted(mask_dict.items()))
-
     def validate_masks(self, raise_on_error: bool = True) -> bool:
         r"""Validates the correctness of the :class:`Explanation` masks."""
         status = True
