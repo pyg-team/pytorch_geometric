@@ -361,7 +361,7 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
         time_attr=time_attr,
         directed=True,
         disjoint=disjoint,
-        neg_sampling=dict(strategy='triplet', amount=amount),
+        neg_sampling=dict(mode='triplet', amount=amount),
         shuffle=True,
     )
 
@@ -453,7 +453,7 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         time_attr=time_attr,
         directed=True,
         disjoint=disjoint,
-        neg_sampling=dict(strategy='triplet', amount=amount),
+        neg_sampling=dict(mode='triplet', amount=amount),
         shuffle=True,
     )
 

@@ -18,10 +18,10 @@ from torch_geometric.sampler import (
     BaseSampler,
     EdgeSamplerInput,
     HeteroSamplerOutput,
+    NegativeSampling,
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import NegativeSamplingConfig
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
 
@@ -154,19 +154,17 @@ class NeighborSampler(BaseSampler):
     def sample_from_nodes(
         self,
         inputs: NodeSamplerInput,
-        **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        return node_sample(inputs, self._sample, **kwargs)
+        return node_sample(inputs, self._sample)
 
     # Edge-based sampling #####################################################
 
     def sample_from_edges(
-        self,
-        inputs: EdgeSamplerInput,
-        **kwargs,
+        self, inputs: EdgeSamplerInput,
+        neg_sampling: Optional[NegativeSampling] = None
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         return edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
-                           node_time=self.node_time, **kwargs)
+                           self.node_time, neg_sampling)
 
     # Other Utilities #########################################################
 
@@ -315,7 +313,6 @@ class NeighborSampler(BaseSampler):
 def node_sample(
     inputs: NodeSamplerInput,
     sample_fn: Callable,
-    **kwargs,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from a :class:`NodeSamplerInput`, leveraging a
     sampling function that accepts a seed and (optionally) a seed time as
@@ -341,7 +338,7 @@ def edge_sample(
     num_nodes: Union[int, Dict[NodeType, int]],
     disjoint: bool,
     node_time: Optional[Union[Tensor, Dict[str, Tensor]]] = None,
-    neg_sampling: Optional[NegativeSamplingConfig] = None,
+    neg_sampling: Optional[NegativeSampling] = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
     function of the same signature as `node_sample`."""
