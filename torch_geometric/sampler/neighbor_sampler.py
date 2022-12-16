@@ -18,10 +18,10 @@ from torch_geometric.sampler import (
     BaseSampler,
     EdgeSamplerInput,
     HeteroSamplerOutput,
+    NegativeSampling,
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import NegativeSamplingConfig
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
 
@@ -341,7 +341,7 @@ def edge_sample(
     num_nodes: Union[int, Dict[NodeType, int]],
     disjoint: bool,
     node_time: Optional[Union[Tensor, Dict[str, Tensor]]] = None,
-    neg_sampling: Optional[NegativeSamplingConfig] = None,
+    neg_sampling: Optional[NegativeSampling] = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
     function of the same signature as `node_sample`."""

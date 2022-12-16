@@ -14,9 +14,9 @@ from torch_geometric.sampler import (
     BaseSampler,
     EdgeSamplerInput,
     HeteroSamplerOutput,
+    NegativeSampling,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import NegativeSamplingConfig
 from torch_geometric.typing import InputEdges, OptTensor
 
 
@@ -59,7 +59,7 @@ class LinkLoader(torch.utils.data.DataLoader):
             constraints, *i.e.*, neighbors have an earlier timestamp than
             the ouput edge. The :obj:`time_attr` needs to be set for this
             to work. (default: :obj:`None`)
-        neg_sampling (NegativeSamplingConfig, optional): The negative sampling
+        neg_sampling (NegativeSampling, optional): The negative sampling
             strategy. Can be either :obj:`"binary"` or :obj:`"triplet"`, and
             can be further customized by an additional :obj:`amount` argument
             to control the ratio of sampled negatives to positive edges.
@@ -117,7 +117,7 @@ class LinkLoader(torch.utils.data.DataLoader):
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
-        neg_sampling: Optional[NegativeSamplingConfig] = None,
+        neg_sampling: Optional[NegativeSampling] = None,
         neg_sampling_ratio: Optional[Union[int, float]] = None,
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
@@ -132,7 +132,7 @@ class LinkLoader(torch.utils.data.DataLoader):
 
         if neg_sampling_ratio is not None and neg_sampling_ratio != 0.0:
             # TODO: Deprecation warning.
-            neg_sampling = NegativeSamplingConfig("binary", neg_sampling_ratio)
+            neg_sampling = NegativeSampling("binary", neg_sampling_ratio)
 
         # Get edge type (or `None` for homogeneous graphs):
         input_type, edge_label_index = get_edge_label_index(
@@ -140,7 +140,7 @@ class LinkLoader(torch.utils.data.DataLoader):
 
         self.data = data
         self.link_sampler = link_sampler
-        self.neg_sampling = NegativeSamplingConfig.cast(neg_sampling)
+        self.neg_sampling = NegativeSampling.cast(neg_sampling)
         self.transform = transform
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker

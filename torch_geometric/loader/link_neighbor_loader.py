@@ -2,8 +2,7 @@ from typing import Callable, Optional, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
-from torch_geometric.sampler import NeighborSampler
-from torch_geometric.sampler.base import NegativeSamplingConfig
+from torch_geometric.sampler import NegativeSampling, NeighborSampler
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
@@ -113,7 +112,7 @@ class LinkNeighborLoader(LinkLoader):
             If set to :obj:`"last"`, will sample the last `num_neighbors` that
             fulfill temporal constraints.
             (default: :obj:`"uniform"`)
-        neg_sampling (NegativeSamplingConfig, optional): The negative sampling
+        neg_sampling (NegativeSampling, optional): The negative sampling
             strategy. Can be either :obj:`"binary"` or :obj:`"triplet"`, and
             can be further customized by an additional :obj:`amount` argument
             to control the ratio of sampled negatives to positive edges.
@@ -184,7 +183,7 @@ class LinkNeighborLoader(LinkLoader):
         directed: bool = True,
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
-        neg_sampling: Optional[NegativeSamplingConfig] = None,
+        neg_sampling: Optional[NegativeSampling] = None,
         neg_sampling_ratio: Optional[Union[int, float]] = None,
         time_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
