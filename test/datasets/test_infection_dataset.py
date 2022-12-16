@@ -32,7 +32,6 @@ def test_infection_dataset():
     assert data.x[:, 0].sum() == 8 and data.x[:, 1].sum() == 2
     assert torch.equal(data.edge_index, graph_generator().edge_index)
     assert data.y.size() == (10, )
-    assert data.y.min() == 0 and data.y.max() <= 3
 
     # With `seed=12345`, node 0 and node 7 will be infected:
     assert data.x[0].tolist() == [0, 1]  # First infected node.
