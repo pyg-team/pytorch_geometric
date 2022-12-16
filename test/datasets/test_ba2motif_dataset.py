@@ -6,22 +6,21 @@ from torch_geometric.datasets import BA2MotifDataset
 
 def test_ba2motif_dataset():
     num_nodes, num_edges, num_graphs = 50, 5, 100
-    dataset = BA2MotifDataset(
-        num_nodes=num_nodes, num_edges=num_edges, num_graphs=num_graphs
-    )
+    dataset = BA2MotifDataset(num_nodes=num_nodes, num_edges=num_edges,
+                              num_graphs=num_graphs)
     assert str(dataset) == (
         f"BA2MotifDataset({num_graphs}, "
         f"BAGraph(num_nodes={num_nodes}, num_edges={num_edges}), "
         f"num_graphs={num_graphs} num_house_graphs={int(num_graphs/2)} "
-        f"num_cycle_graphs={int(num_graphs/2)})"
-    )
+        f"num_cycle_graphs={int(num_graphs/2)})")
     # dataset level checks
     assert len(dataset) == 100
-    assert torch.equal(torch.cat([
-        torch.zeros(int(num_graphs / 2)).type(torch.long),
-        torch.ones(int(num_graphs / 2)).type(torch.long),
-    ]), dataset.data.y)
-    
+    assert torch.equal(
+        torch.cat([
+            torch.zeros(int(num_graphs / 2)).type(torch.long),
+            torch.ones(int(num_graphs / 2)).type(torch.long),
+        ]), dataset.data.y)
+
     # the ba-graph with house motif attached
     data = dataset[0]
     assert len(data) == 4
