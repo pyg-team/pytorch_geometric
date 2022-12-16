@@ -154,7 +154,7 @@ class HeteroSamplerOutput(CastMixin):
     metadata: Optional[Any] = None
 
 
-class NegativeSamplingStrategy(Enum):
+class NegativeSamplingMode(Enum):
     # 'binary': Randomly sample negative edges in the graph.
     binary = 'binary'
     # 'triplet': Randomly sample negative destination nodes for each positive
@@ -162,7 +162,7 @@ class NegativeSamplingStrategy(Enum):
     triplet = 'triplet'
 
 
-class NegativeSamplingMode(Enum):
+class NegativeSamplingStrategy(Enum):
     # 'uniform': Negative samples are drawn uniformly.
     uniform = 'uniform'
     # 'weighted': Negative samples are drawn according to node degree.
@@ -176,33 +176,33 @@ class NegativeSampling(CastMixin):
     :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
 
     Args:
-        strategy (str): The negative sampling strategy (:obj:`"binary"` or
-            :obj:`"triplet"`).
+        mode (str): The negative sampling mode
+            (:obj:`"binary"` or :obj:`"triplet"`).
             If set to :obj:`"binary"`, will randomly sample negative links
             from the graph.
             If set to :obj:`"triplet"`, will randomly sample negative
             destination nodes for each positive source node.
         amount (int or float, optional): The ratio of sampled negative edges to
             the number of positive edges. (default: :obj:`1`)
-        mode (str, optional): The mode to draw negative samples
+        strategy (str, optional): The strategy to draw negative samples
             (:obj:`"uniform"`, :obj:`"weighted"`).
             If set to :obj:`"uniform"`, will uniformly draw negative nodes.
             If set to :obj:`"weighted"`, will draw negative nodes according to
             their node degree.
     """
-    strategy: NegativeSamplingStrategy
+    mode: NegativeSamplingMode
     amount: Union[int, float] = 1
-    mode: str = 'uniform'
+    strategy: NegativeSamplingStrategy.uniform
 
     def __init__(
         self,
-        strategy: Union[NegativeSamplingStrategy, str],
+        mode: Union[NegativeSamplingMode, str],
         amount: Union[int, float] = 1,
-        mode: str = 'uniform',
+        strategy: Union[NegativeSamplingStrategy, str] = 'uniform',
     ):
-        self.strategy = NegativeSamplingStrategy(strategy)
-        self.amount = amount
         self.mode = NegativeSamplingMode(mode)
+        self.amount = amount
+        self.strategy = NegativeSamplingStrategy(strategy)
 
         if self.is_weighted():
             raise NotImplementedError("'weighted' negative sampling not "
@@ -222,16 +222,16 @@ class NegativeSampling(CastMixin):
             self.amount = math.ceil(self.amount)
 
     def is_binary(self) -> bool:
-        return self.strategy == NegativeSamplingStrategy.binary
+        return self.mode == NegativeSamplingMode.binary
 
     def is_triplet(self) -> bool:
-        return self.strategy == NegativeSamplingStrategy.triplet
+        return self.mode == NegativeSamplingMode.triplet
 
     def is_uniform(self) -> bool:
-        return self.mode == NegativeSamplingMode.uniform
+        return self.strategy == NegativeSamplingStrategy.uniform
 
     def is_weighted(self) -> bool:
-        return self.mode == NegativeSamplingMode.weighted
+        return self.strategy == NegativeSamplingStrategy.weighted
 
 
 class BaseSampler(ABC):
@@ -265,7 +265,7 @@ class BaseSampler(ABC):
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,
-        **kwargs,
+        neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
         r"""Performs sampling from the edges specified in :obj:`index`,
         returning a sampled subgraph in the specified output format.
