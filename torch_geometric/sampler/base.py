@@ -192,7 +192,7 @@ class NegativeSampling(CastMixin):
     """
     mode: NegativeSamplingMode
     amount: Union[int, float] = 1
-    strategy: NegativeSamplingStrategy.uniform
+    strategy: NegativeSamplingStrategy = NegativeSamplingStrategy.uniform
 
     def __init__(
         self,
@@ -259,6 +259,9 @@ class BaseSampler(ABC):
         1. The example indices of the seed nodes
         2. The node indices to start sampling from
         3. The timestamps of the given seed nodes (optional)
+
+        Args:
+            index (NodeSamplerInput): The node sampler input object.
         """
         raise NotImplementedError
 
@@ -277,6 +280,11 @@ class BaseSampler(ABC):
         3. The destination node indices to start sampling from
         4. The labels of the seed links (optional)
         5. The timestamps of the given seed nodes (optional)
+
+        Args:
+            index (EdgeSamplerInput): The edge sampler input object.
+            neg_sampling (NegativeSampling, optional): The negative sampling
+                configuration. (default: :obj:`None`)
         """
         raise NotImplementedError
 
