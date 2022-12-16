@@ -79,6 +79,7 @@ from .elliptic import EllipticBitcoinDataset
 from .dgraph import DGraphFin
 from .hydro_net import HydroNet
 from .explainer_dataset import ExplainerDataset
+from .infection_dataset import InfectionDataset
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -167,6 +168,7 @@ __all__ = [
     'DGraphFin',
     'HydroNet',
     'ExplainerDataset',
+    'InfectionDataset',
 ]
 
 classes = __all__
