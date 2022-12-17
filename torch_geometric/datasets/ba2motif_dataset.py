@@ -19,6 +19,34 @@ class BA2MotifDataset(InMemoryDataset):
     The graphs are assigned to one of the two classes according to the type of
     attached motifs.
 
+    This dataset is pre-computed from the official implementation. If you want
+    to create own variations of it, you can make use of the
+    :class:`~torch_geometric.datasets.ExplainerDataset`:
+
+    .. code-block:: python
+
+        import torch
+        from torch_geometric.datasets import ExplainerDataset
+        from torch_geometric.datasets.graph_generator import BAGraph
+        from torch_geometric.datasets.motif_generator import HouseMotif,
+        from torch_geometric.datasets.motif_generator import CycleMotif
+
+        dataset1 = ExplainerDataset(
+            graph_generator=BAGraph(num_nodes=25, num_edges=...),
+            motif_generator=HouseMotif(),
+            num_motifs=1,
+            num_graphs=500,
+        )
+
+        dataset2 = ExplainerDataset(
+            graph_generator=BAGraph(num_nodes=25, num_edges=...),
+            motif_generator=CycleMotif(5),
+            num_motifs=1,
+            num_graphs=500,
+        )
+
+        dataset = torch.utils.data.ChainDataset([dataset1, dataset2])
+
     Args:
         root (string): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
