@@ -28,7 +28,7 @@ class BA2MotifDataset(InMemoryDataset):
         import torch
         from torch_geometric.datasets import ExplainerDataset
         from torch_geometric.datasets.graph_generator import BAGraph
-        from torch_geometric.datasets.motif_generator import HouseMotif,
+        from torch_geometric.datasets.motif_generator import HouseMotif
         from torch_geometric.datasets.motif_generator import CycleMotif
 
         dataset1 = ExplainerDataset(
@@ -45,7 +45,7 @@ class BA2MotifDataset(InMemoryDataset):
             num_graphs=500,
         )
 
-        dataset = torch.utils.data.ChainDataset([dataset1, dataset2])
+        dataset = torch.utils.data.ConcatDataset([dataset1, dataset2])
 
     Args:
         root (string): Root directory where the dataset should be saved.
