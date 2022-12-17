@@ -80,6 +80,7 @@ from .dgraph import DGraphFin
 from .hydro_net import HydroNet
 from .explainer_dataset import ExplainerDataset
 from .infection_dataset import InfectionDataset
+from .ba2motif_dataset import BA2MotifDataset
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -169,6 +170,7 @@ __all__ = [
     'HydroNet',
     'ExplainerDataset',
     'InfectionDataset',
+    'BA2MotifDataset',
 ]
 
 classes = __all__
