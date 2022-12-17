@@ -32,14 +32,14 @@ class BA2MotifDataset(InMemoryDataset):
         from torch_geometric.datasets.motif_generator import CycleMotif
 
         dataset1 = ExplainerDataset(
-            graph_generator=BAGraph(num_nodes=25, num_edges=...),
+            graph_generator=BAGraph(num_nodes=25, num_edges=1),
             motif_generator=HouseMotif(),
             num_motifs=1,
             num_graphs=500,
         )
 
         dataset2 = ExplainerDataset(
-            graph_generator=BAGraph(num_nodes=25, num_edges=...),
+            graph_generator=BAGraph(num_nodes=25, num_edges=1),
             motif_generator=CycleMotif(5),
             num_motifs=1,
             num_graphs=500,
