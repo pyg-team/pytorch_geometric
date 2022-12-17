@@ -9,7 +9,7 @@ from torch_geometric.data import Data, InMemoryDataset, download_url
 class BA2MotifDataset(InMemoryDataset):
     r"""The synthetic BA-2motifs graph classification dataset for evaluating
     explainabilty algorithms, as described in the `"Parameterized Explainer
-    for Graph Neural Network" <https://arxiv.org/abs/2011.04573>` paper.
+    for Graph Neural Network" <https://arxiv.org/abs/2011.04573>`_ paper.
     :class:`~torch_geometric.datasets.BA2MotifDataset` contains 1000 random
     Barabasi-Albert (BA) graphs.
     Half of the graphs are attached with a
