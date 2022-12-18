@@ -3,7 +3,7 @@ import logging
 import math
 from collections import Counter
 from functools import partial
-from os.path import isfile
+from os.path import isfile, join
 from typing import Callable, Dict, List, Optional, Union
 
 import networkx as nx
@@ -319,7 +319,10 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         reward_method(:obj:`str`): Reward method to assign subgraph importance
             One of ["gnn_score", "mc_shapley", "l_shapley", "mc_l_shapley", "nc_mc_l_shapley"]
         subgraph_building_method(:obj:`str`): Specifies way to fill subgraph
-            One of ["zero_filling", "split"]
+            One of ["zero_filling", "split"]            
+        save_dir(:obj:`str`, :obj:`None`): Root directory to save the explanation
+            results (default: :obj:`None`)
+        filename(:obj:`str`): The filename of results
         TODO: Fill this.
     """
     def __init__(
@@ -339,6 +342,8 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         c_puct: float = 10.0,
         expand_atoms: int = 14,
         high2low: bool = False,
+        save_dir: str = None,
+        filename: str = 'mcts_results'
     ):
         super().__init__()
         self.device = device
@@ -360,6 +365,11 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         self.sample_num = sample_num
         self.reward_method = reward_method
         self.subgraph_building_method = subgraph_building_method
+
+        # saving and visualization
+        self.save_dir = save_dir
+        self.filename = filename
+        self.save = True if self.save_dir is not None else False    
 
     def update_num_hops(self, model, num_hops):
         if num_hops is not None:
@@ -444,12 +454,16 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         node_idx: Optional[int] = None,
         saved_MCTSInfo_list: Optional[List[List]] = None,
     ):
-        probs = model(x, edge_index).squeeze().softmax(dim=-1)
+        # get task classification probabilities
+        with torch.no_grad():
+            probs = model(x, edge_index).softmax(-1)
+
+        # load MCTSInfo_list if present
+        if saved_MCTSInfo_list:
+            results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)    
+
         if self.model_config.task_level == ModelTaskLevel.graph:
             # Explanation for Graph Classification Task
-            if saved_MCTSInfo_list:
-                results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)
-
             if not saved_MCTSInfo_list:
                 value_func = GnnNetsGC2valueFunc(model, target_class=label)
                 payoff_func = self.get_reward_func(value_func)
@@ -462,9 +476,6 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
         else:
             # Explanation for Node Classification Task
-            if saved_MCTSInfo_list:
-                results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)
-
             self.mcts_state_map = self.get_mcts_class(x, edge_index,
                                                       node_idx=node_idx)
             self.new_node_idx = self.mcts_state_map.new_node_idx
@@ -520,6 +531,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         )
 
         results = self.write_from_MCTSNode_list(results)
+        node_idx = 0 if node_idx is None else node_idx
         related_pred = {
             "masked": masked_score,
             "maskout": maskout_score,
@@ -560,53 +572,64 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
+        # set model to eval mode
+        model.eval()
+
         # update num_hops if not provided
         self.num_hops = self.update_num_hops(model, self.num_hops)
 
         # check if MCTS_info_list has been provided, load if present
-        saved_results = (None if (self.MCTS_info_path is None
-                                  or not isfile(self.MCTS_info_path)) else
-                         torch.load(self.MCTS_info_path))
+        saved_results = None
+        if self.save:
+            # generate file_path
+            file_path = join(self.save_dir, f"{self.filename}.pt")
+            # if file_path exists, load the saved_results
+            if isfile(file_path):
+                saved_results = torch.load(file_path)
 
         if self.model_config.task_level == ModelTaskLevel.node:
             # check if index has been provided
             assert index is not None, "For Node Classification task, index (node_idx) must be provided"
 
-            # get explanation for that index and the prediction label
-            results, related_pred, masked_node_list = self.explain(
-                model,
-                x,
-                edge_index,
-                label=target[index],
-                max_nodes=self.max_nodes,
-                node_idx=index,
-                saved_MCTSInfo_list=saved_results,
-            )
-            # create node_mask from masked_node_list
-            node_mask = torch.zeros(size=(x.size()[0], )).float()
-            node_mask[masked_node_list] = 1.0
+        # get explanation for that index and the prediction label
+        results, related_pred, masked_node_list = self.explain(
+            model,
+            x,
+            edge_index,
+            label=target,
+            max_nodes=self.max_nodes,
+            node_idx=index,
+            saved_MCTSInfo_list=saved_results,
+        )
+            
+        # if self.save is True, save the explanation results
+        if self.save:
+            # generate file_path
+            file_path = join(self.save_dir, f"{self.filename}.pt")                
+            torch.save(results, file_path)
 
-            # create edge_mask from masked_node_list
-            explained_edge_list = []
-            edge_mask_indices = []
-            for i in range(edge_index.size()[1]):
-                (n_frm, n_to) = edge_index[:, i].tolist()
-                if n_frm in masked_node_list and n_to in masked_node_list:
-                    explained_edge_list.append((n_frm, n_to))
-                    edge_mask_indices.append(i)
+        # create node_mask from masked_node_list
+        node_mask = torch.zeros(size=(x.size()[0], )).float()
+        node_mask[masked_node_list] = 1.0
 
-            edge_mask = torch.zeros(size=(edge_index.size()[1], )).float()
-            edge_mask[edge_mask_indices] = 1.
+        # create edge_mask from masked_node_list
+        explained_edge_list = []
+        edge_mask_indices = []
+        for i in range(edge_index.size()[1]):
+            (n_frm, n_to) = edge_index[:, i].tolist()
+            if n_frm in masked_node_list and n_to in masked_node_list:
+                explained_edge_list.append((n_frm, n_to))
+                edge_mask_indices.append(i)
 
-            # create explanation with additional args
-            explanation = Explanation(x, edge_index, node_mask=node_mask,
-                                      edge_mask=edge_mask, results=results,
-                                      related_pred=related_pred,
-                                      masked_node_list=masked_node_list,
-                                      explained_edge_list=explained_edge_list)
-        else:
-            # TODO: Implement this for Graph Classification
-            raise NotImplementedError
+        edge_mask = torch.zeros(size=(edge_index.size()[1], )).float()
+        edge_mask[edge_mask_indices] = 1.
+
+        # create explanation with additional args
+        explanation = Explanation(x, edge_index, node_mask=node_mask,
+                                    edge_mask=edge_mask, results=results,
+                                    related_pred=related_pred,
+                                    masked_node_list=masked_node_list,
+                                    explained_edge_list=explained_edge_list)
 
         return explanation
 

@@ -409,8 +409,8 @@ def GnnNetsGC2valueFunc(gnnNets, target_class):
     """Value Function for Graph Classification (GC) Task"""
     def value_func(batch):
         with torch.no_grad():
-            logits = gnnNets(data=batch)
-            probs = F.softmax(logits, dim=-1)
+            logits = gnnNets(batch.x, batch.edge_index)
+            probs = torch.softmax(logits, dim=-1)
             score = probs[:, target_class]
         return score
 
