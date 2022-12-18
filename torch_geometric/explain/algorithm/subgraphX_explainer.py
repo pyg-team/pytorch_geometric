@@ -319,32 +319,21 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         reward_method(:obj:`str`): Reward method to assign subgraph importance
             One of ["gnn_score", "mc_shapley", "l_shapley", "mc_l_shapley", "nc_mc_l_shapley"]
         subgraph_building_method(:obj:`str`): Specifies way to fill subgraph
-            One of ["zero_filling", "split"]            
+            One of ["zero_filling", "split"]
         save_dir(:obj:`str`, :obj:`None`): Root directory to save the explanation
             results (default: :obj:`None`)
         filename(:obj:`str`): The filename of results
         TODO: Fill this.
     """
-    def __init__(
-        self,
-        num_classes: int,
-        max_nodes: int = 5,
-        num_hops: int = None,
-        MCTS_info_path: str = None,
-        device: str = "cpu",
-        verbose: bool = True,
-        local_radius: int = 4,
-        sample_num=100,
-        reward_method: str = "mc_l_shapley",
-        subgraph_building_method: str = "zero_filling",
-        rollout: int = 20,
-        min_atoms: int = 5,
-        c_puct: float = 10.0,
-        expand_atoms: int = 14,
-        high2low: bool = False,
-        save_dir: str = None,
-        filename: str = 'mcts_results'
-    ):
+    def __init__(self, num_classes: int, max_nodes: int = 5,
+                 num_hops: int = None, MCTS_info_path: str = None,
+                 device: str = "cpu", verbose: bool = True,
+                 local_radius: int = 4, sample_num=100,
+                 reward_method: str = "mc_l_shapley",
+                 subgraph_building_method: str = "zero_filling",
+                 rollout: int = 20, min_atoms: int = 5, c_puct: float = 10.0,
+                 expand_atoms: int = 14, high2low: bool = False,
+                 save_dir: str = None, filename: str = 'mcts_results'):
         super().__init__()
         self.device = device
         self.MCTS_info_path = MCTS_info_path
@@ -369,7 +358,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         # saving and visualization
         self.save_dir = save_dir
         self.filename = filename
-        self.save = True if self.save_dir is not None else False    
+        self.save = True if self.save_dir is not None else False
 
     def update_num_hops(self, model, num_hops):
         if num_hops is not None:
@@ -460,7 +449,7 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
         # load MCTSInfo_list if present
         if saved_MCTSInfo_list:
-            results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)    
+            results = self.read_from_MCTSInfo_list(saved_MCTSInfo_list)
 
         if self.model_config.task_level == ModelTaskLevel.graph:
             # Explanation for Graph Classification Task
@@ -601,11 +590,11 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             node_idx=index,
             saved_MCTSInfo_list=saved_results,
         )
-            
+
         # if self.save is True, save the explanation results
         if self.save:
             # generate file_path
-            file_path = join(self.save_dir, f"{self.filename}.pt")                
+            file_path = join(self.save_dir, f"{self.filename}.pt")
             torch.save(results, file_path)
 
         # create node_mask from masked_node_list
@@ -626,10 +615,10 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
         # create explanation with additional args
         explanation = Explanation(x, edge_index, node_mask=node_mask,
-                                    edge_mask=edge_mask, results=results,
-                                    related_pred=related_pred,
-                                    masked_node_list=masked_node_list,
-                                    explained_edge_list=explained_edge_list)
+                                  edge_mask=edge_mask, results=results,
+                                  related_pred=related_pred,
+                                  masked_node_list=masked_node_list,
+                                  explained_edge_list=explained_edge_list)
 
         return explanation
 
