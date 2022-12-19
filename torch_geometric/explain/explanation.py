@@ -279,7 +279,12 @@ class Explanation(Data, ExplanationMixin):
                 visualization backend based on available system packages.
                 (default: :obj:`None`)
         """
-        visualize_graph(self.edge_index, self.edge_mask, path, backend)
+        edge_mask = self.get('edge_mask')
+        if edge_mask is None:
+            raise ValueError(f"The attribute 'edge_mask' is not available "
+                             f"in '{self.__class__.__name__}' "
+                             f"(got {self.available_explanations})")
+        visualize_graph(self.edge_index, edge_mask, path, backend)
 
 
 class HeteroExplanation(HeteroData, ExplanationMixin):
