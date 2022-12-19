@@ -1,5 +1,4 @@
 import logging
-import warnings
 from typing import Optional
 
 import torch
@@ -9,7 +8,11 @@ from torch import Tensor, nn
 from torch_scatter import scatter_mean
 
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
+from torch_geometric.explain.algorithm.utils import (
+    clear_masks,
+    drop_isolated_nodes,
+    set_masks,
+)
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 from torch_geometric.utils import get_intermediate_messagepassing_embeddings
 
@@ -81,7 +84,7 @@ class PGExplainer(ExplainerAlgorithm):
         # Initialize trainable parameters.
         z = get_intermediate_messagepassing_embeddings(model, x=x,
                                                        edge_index=edge_index,
-                                                       **kwargs)
+                                                       **kwargs)[-1]
         out_channels = z.shape[-1]
         task_level = self.model_config.task_level
         self.exp_in_channels = 2 * out_channels if (
@@ -134,7 +137,7 @@ class PGExplainer(ExplainerAlgorithm):
         else:
             index = index if index is not None else torch.arange(x.shape[0])
             assert index.unique().shape[0] == index.shape[0]
-            index = self._drop_isolated_nodes(index, edge_index)
+            index = drop_isolated_nodes(index, edge_index)
             for e in range(0, self.epochs):
                 loss = torch.tensor([0.0], device=x.device).detach()
                 t = self._get_temp(e)
@@ -221,15 +224,6 @@ class PGExplainer(ExplainerAlgorithm):
         mask_ent_loss *= self.coeffs['edge_ent']
 
         return loss + size_loss + mask_ent_loss
-
-    @staticmethod
-    def _drop_isolated_nodes(node_idxs: Tensor, edge_index: Tensor) -> Tensor:
-
-        mask = torch.isin(node_idxs, edge_index[1])
-        if mask.sum() != node_idxs.size(-1):
-            warnings.warn(f"Dropping nodes {node_idxs[~mask]} from train set. "
-                          "As they have no incoming edges")
-        return node_idxs[mask]
 
     def forward(self, model: torch.nn.Module, x: Tensor, edge_index: Tensor,
                 index: Optional[int] = None, **kwargs) -> Explanation:

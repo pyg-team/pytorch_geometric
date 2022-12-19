@@ -1,3 +1,4 @@
+import warnings
 from typing import Dict
 
 import torch
@@ -56,3 +57,12 @@ def clear_masks(model: torch.nn.Module):
             module._loop_mask = None
             module._apply_sigmoid = True
     return module
+
+
+def drop_isolated_nodes(node_idxs: Tensor, edge_index: Tensor) -> Tensor:
+    r"""Drop nodes from :obj:`node_idxs` that have no incoming edges."""
+    mask = torch.isin(node_idxs, edge_index[1])
+    if mask.sum() != node_idxs.size(-1):
+        warnings.warn(f"Dropping nodes {node_idxs[~mask]} "
+                      "As they have no incoming edges")
+    return node_idxs[mask]

@@ -189,11 +189,6 @@ class Explainer:
             raise RuntimeError(
                 f"The explainer algorithm {self.algorithm}"
                 f" needs to be trained using 'self.train_explainer_algorithm'")
-        # Checks new is_hetero value and updates self.is_hetero
-        if self.is_hetero is None:
-            self.is_hetero = isinstance(x, dict)
-            self.algorithm.connect(self.explainer_config, self.model_config,
-                                   self.is_hetero)
 
         # Choose the `target` depending on the explanation type:
         prediction: Optional[Tensor] = None
