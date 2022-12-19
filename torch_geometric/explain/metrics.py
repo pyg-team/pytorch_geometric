@@ -1,125 +1,94 @@
-from abc import ABC, abstractmethod
-from typing import Optional, Union
-
-import torch
-from torch import Tensor
+from typing import Tuple
 
 from torch_geometric.explain import Explainer, Explanation
+from torch_geometric.explain.config import ExplanationType, ModelMode
 
 
-class ExplanationMetric(ABC):
-    r"""Abstract base class for explanation metrics."""
-    def __init__(self, explainer, index) -> None:
-        self.explainer = explainer
-        self.index = index
+def fidelity(
+    explainer: Explainer,
+    explanation: Explanation,
+) -> Tuple[float, float]:
+    r"""Evaluates the fidelity of an
+    :class:`~torch_geometric.explain.Explainer` given an
+    :class:`~torch_geometric.explain.Explanation`, as described in the
+    `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods for
+    Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper.
 
-    @abstractmethod
-    def __call__(self, explainer: Explainer, **kwargs):
-        r"""Computes the explanation metric for given explainer and explanation
-            Args:
-        explainer :obj:`~torch_geometric.explain.Explainer`
-            The explainer to evaluate
-        """
+    Fidelity evaluates the contribution of the produced explanatory subgraph
+    to the initial prediction, either by giving only the subgraph to the model
+    (fidelity-) or by removing it from the entire graph (fidelity+).
+    The fidelity scores capture how good an explanable model reproduces the
+    natural phenomenon or the GNN model logic.
 
-    def get_inputs(self):
-        r"""Obtain inputs all different inputs over which to compute the
-        metrics."""
+    For **phenomenon** explanations, the fidelity scores are given by:
 
-    @abstractmethod
-    def compute_metric(self):
-        r"""Compute the metric over all inputs."""
+    .. math::
+        \textrm{fid}_{+} &= \frac{1}{N} \sum_{i = 1}^N
+        \| \mathbb{1}(\hat{y}_i = y_i) -
+        \mathbb{1}( \hat{y}_i^{G_{C\S}} = y_i) \|
 
-    @abstractmethod
-    def aggregate(self):
-        r"""Aggregate metrics over all inputs"""
+        \textrm{fid}_{-} &= \frac{1}{N} \sum_{i = 1}^N
+        \| \mathbb{1}(\hat{y}_i = y_i) -
+        \mathbb{1}( \hat{y}_i^{G_S} = y_i) \|
 
+    For **model** explanations, the fidelity scores are given by:
 
-class Fidelity(ExplanationMetric):
-    r"""Fidelity+/- Explanation Metric as
-    defined in https://arxiv.org/abs/2206.09677"""
-    def __init__(self) -> None:
-        super().__init__()
+    .. math::
+        \textrm{fid}_{+} &= 1 - \frac{1}{N} \sum_{i = 1}^N
+        \mathbb{1}( \hat{y}_i^{G_{C\S}} = \hat{y}_i)
 
-
-def fidelity(explainer: Explainer, explanation: Explanation,
-             target: Optional[Tensor] = None,
-             index: Optional[Union[int, Tensor]] = None,
-             output_type: str = 'raw', **kwargs):
-    r"""Evaluate the fidelity of Explainer and given
-    explanation produced by explainer
+        \textrm{fid}_{-} &= 1 - \frac{1}{N} \sum_{i = 1}^N
+        \mathbb{1}( \hat{y}_i^{G_S} = \hat{y}_i)
 
     Args:
-        explainer :obj:`~torch_geometric.explain.Explainer`
-            The explainer to evaluate
-        explanation :obj:`~torch_teometric.explain.Explanation`
-            The explanation to evaluate
-        target (Tensor, optional): The target prediction, if not provided it
-            is inferred from obj:`explainer`, defaults to obj:`None`
-        index (Union[int, Tensor]): The explanation target index, for node-
-            and edge- level task it signifies the nodes/edges explained
-            respectively, for graph-level tasks it is assumed to be None,
-            defaults to obj:`None`
+        explainer (Explainer): The explainer to evaluate.
+        explanation (Explanation): The explanation to evaluate.
     """
-    metric_dict = {}
+    if explainer.model_config.mode == ModelMode.regression:
+        raise ValueError("Fidelity not defined for 'regression' models")
 
-    task_level = explainer.model_config.task_level
+    node_mask, edge_mask = explanation.node_mask, explanation.edge_mask
+    kwargs = {key: explanation[key] for key in explanation._model_args}
 
-    if index != explanation.get('index'):
-        raise ValueError(f'Index ({index}) does not match '
-                         f'explanation.index ({explanation.index}).')
+    y = explanation.target
+    if explainer.explanation_type == ExplanationType.phenomenon:
+        y_hat = explainer.get_prediction(
+            explanation.x,
+            explanation.edge_index,
+            **kwargs,
+        )
+        y_hat = explainer.get_target(y_hat)
 
-    # get input graphs
-    explanation_graph = explanation.get_explanation_subgraph()  # for fid-
-    complement_graph = explanation.get_complement_subgraph()  # for fid+
+    explain_y_hat = explainer.get_masked_prediction(
+        explanation.x,
+        explanation.edge_index,
+        node_mask,
+        edge_mask,
+        **kwargs,
+    )
+    explain_y_hat = explainer.get_target(explain_y_hat)
 
-    # get target
-    target = explainer.get_target(x=explanation.x,
-                                  edge_index=explanation.edge_index,
-                                  **kwargs)  # using full explanation
+    complement_y_hat = explainer.get_masked_prediction(
+        explanation.x,
+        explanation.edge_index,
+        1. - node_mask if node_mask is not None else None,
+        1. - edge_mask if edge_mask is not None else None,
+        **kwargs,
+    )
+    complement_y_hat = explainer.get_target(complement_y_hat)
 
-    # get predictions
-    explanation_prediction = explainer.get_prediction(
-        x=explanation_graph.x, edge_index=explanation_graph.edge_index,
-        **kwargs)
-    complement_prediction = explainer.get_prediction(
-        x=complement_graph.x, edge_index=complement_graph.edge_index, **kwargs)
+    if explanation.index is not None:
+        y = y[explanation.index]
+        if explainer.explanation_type == ExplanationType.phenomenon:
+            y_hat = y_hat[explanation.index]
+        explain_y_hat = explain_y_hat[explanation.index]
+        complement_y_hat = complement_y_hat[explanation.index]
 
-    # fix logprob to prob
-    if output_type == 'prob' and explainer.model.return_type == 'log_probs':
-        target = torch.exp(target)
-        explanation_prediction = torch.exp(explanation_prediction)
-        complement_prediction = torch.exp(complement_prediction)
-
-    # based on task level
-    if task_level == 'graph':
-        if index is not None:
-            ValueError(
-                f'Index for graph level task should be None, got (f{index})')
-        # evaluate whole entry
-        pass
-    elif task_level == 'edge':
-        # get edge prediction
-        pass  # TODO (blaz)
-    elif task_level == 'node':
-        # get node prediction(s)
-        target = target[index]
-        explanation_prediction = explanation_prediction[index]
-        complement_prediction = complement_prediction[index]
+    if explainer.explanation_type == ExplanationType.model:
+        pos_fidelity = 1. - (complement_y_hat == y_hat).mean()
+        neg_fidelity = 1. - (explain_y_hat == y_hat).mean()
     else:
-        raise NotImplementedError
+        pos_fidelity = ((y_hat == y) - (complement_y_hat == y)).abs().mean()
+        neg_fidelity = ((y_hat == y) - (explain_y_hat == y)).abs().mean()
 
-    with torch.no_grad():
-        if explainer.model_config.mode == 'regression':
-            metric_dict['fidelity-'] = torch.mean(
-                torch.abs(target - explanation_prediction))
-            metric_dict['fidelity+'] = torch.mean(
-                torch.abs(target - complement_prediction))
-        elif explainer.model_config.mode == 'classification':
-            metric_dict['fidelity-'] = torch.mean(
-                target == explanation_prediction)
-            metric_dict['fidelity+'] = torch.mean(
-                target == complement_prediction)
-        else:
-            raise NotImplementedError
-
-    return metric_dict
+    return float(pos_fidelity), float(neg_fidelity)
