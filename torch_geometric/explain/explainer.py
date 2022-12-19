@@ -121,7 +121,6 @@ class Explainer:
         self,
         x: Union[Tensor, Dict[NodeType, Tensor]],
         edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
-        *args,
         node_mask: Optional[Union[Tensor, Dict[NodeType, Tensor]]] = None,
         edge_mask: Optional[Union[Tensor, Dict[EdgeType, Tensor]]] = None,
         **kwargs,
@@ -129,6 +128,8 @@ class Explainer:
         r"""Returns the prediction of the model on the input graph with node
         and edge masks applied."""
         if isinstance(x, Tensor) and node_mask is not None:
+            if node_mask.dim() == 1:
+                node_mask = node_mask.view(-1, 1)
             x = node_mask * x
         elif isinstance(x, dict) and node_mask is not None:
             x = {key: value * node_mask[key] for key, value in x.items()}
@@ -139,8 +140,8 @@ class Explainer:
             set_hetero_masks(self.model, edge_mask, edge_index,
                              apply_sigmoid=False)
 
-        out = self.get_prediction(x, edge_index, *args, **kwargs)
-        clear_masks()
+        out = self.get_prediction(x, edge_index, **kwargs)
+        clear_masks(self.model)
         return out
 
     def __call__(
@@ -231,7 +232,7 @@ class Explainer:
 
         elif isinstance(explanation, HeteroExplanation):
             assert isinstance(x, dict)
-            # TODO. Add `explanation._model_args`
+            # TODO Add `explanation._model_args`
             for node_type, value in x.items():
                 explanation[node_type].x = value
 
