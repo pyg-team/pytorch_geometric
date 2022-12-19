@@ -378,8 +378,8 @@ def edge_sample(
             else:
                 src_node_time = node_time
 
-            src_neg = neg_sample(src, neg_sampling.amount, num_src_nodes,
-                                 src_time, src_node_time)
+            src_neg = neg_sample(src, neg_sampling, num_src_nodes, src_time,
+                                 src_node_time)
             src = torch.cat([src, src_neg], dim=0)
 
             if isinstance(node_time, dict):
@@ -387,8 +387,8 @@ def edge_sample(
             else:
                 dst_node_time = node_time
 
-            dst_neg = neg_sample(dst, neg_sampling.amount, num_dst_nodes,
-                                 dst_time, dst_node_time)
+            dst_neg = neg_sample(dst, neg_sampling, num_dst_nodes, dst_time,
+                                 dst_node_time)
             dst = torch.cat([dst, dst_neg], dim=0)
 
             if edge_label is None:
@@ -408,8 +408,8 @@ def edge_sample(
             else:
                 dst_node_time = node_time
 
-            dst_neg = neg_sample(dst, neg_sampling.amount, num_dst_nodes,
-                                 dst_time, dst_node_time)
+            dst_neg = neg_sample(dst, neg_sampling, num_dst_nodes, dst_time,
+                                 dst_node_time)
             dst = torch.cat([dst, dst_neg], dim=0)
 
             assert edge_label is None
@@ -551,14 +551,14 @@ def edge_sample(
     return out
 
 
-def neg_sample(seed: Tensor, num_samples: Union[int, float], num_nodes: int,
+def neg_sample(seed: Tensor, neg_sampling: NegativeSampling, num_nodes: int,
                seed_time: Optional[Tensor],
                node_time: Optional[Tensor]) -> Tensor:
-    num_neg = math.ceil(seed.numel() * num_samples)
+    num_neg = math.ceil(seed.numel() * neg_sampling.amount)
 
     # TODO: Do not sample false negatives.
     if node_time is None:
-        return torch.randint(num_nodes, (num_neg, ))
+        return neg_sampling.sample(num_neg, num_nodes)
 
     # If we are in a temporal-sampling scenario, we need to respect the
     # timestamp of the given nodes we can use as negative examples.
@@ -569,19 +569,21 @@ def neg_sample(seed: Tensor, num_samples: Union[int, float], num_nodes: int,
     # each seed.
     # TODO See if this greedy algorithm here can be improved.
     assert seed_time is not None
-    num_samples = math.ceil(num_samples)
+    num_samples = math.ceil(neg_sampling.amount)
     seed_time = seed_time.view(1, -1).expand(num_samples, -1)
-    out = torch.randint(num_nodes, (num_samples, seed.numel()))
-    mask = node_time[out] >= seed_time
+
+    out = neg_sampling.sample(num_neg, num_nodes)
+    out = out.view(num_samples, seed.numel())
+    mask = node_time[out] >= seed_time  # holds all invalid samples.
     neg_sampling_complete = False
     for i in range(5):  # pragma: no cover
-        if not mask.any():
+        num_invalid = int(mask.sum())
+        if num_invalid == 0:
             neg_sampling_complete = True
             break
 
         # Greedily search for alternative negatives.
-        numel = int(mask.sum())
-        out[mask] = tmp = torch.randint(num_nodes, (numel, ))
+        out[mask] = tmp = neg_sampling.sample(num_invalid, num_nodes)
         mask[mask.clone()] = node_time[tmp] >= seed_time[mask]
 
     if not neg_sampling_complete:  # pragma: no cover

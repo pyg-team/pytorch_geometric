@@ -442,6 +442,8 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         )
         edge_label_time = edge_label_time + 50
 
+    weight = torch.rand(data['paper'].num_nodes) if not temporal else None
+
     batch_size = 20
     index = (('paper', 'paper'), data['paper', 'paper'].edge_label_index)
     loader = LinkNeighborLoader(
@@ -453,7 +455,7 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         time_attr=time_attr,
         directed=True,
         disjoint=disjoint,
-        neg_sampling=dict(mode='triplet', amount=amount),
+        neg_sampling=dict(mode='triplet', amount=amount, weight=weight),
         shuffle=True,
     )
 
