@@ -96,8 +96,6 @@ class PGExplainer(ExplainerAlgorithm):
         )
 
         assert x.shape[0] == z.shape[0]
-        batch = kwargs.get('batch', None)
-        assert ~(batch is None and index is None)
 
         model_state = model.training
         model.eval()
@@ -115,7 +113,11 @@ class PGExplainer(ExplainerAlgorithm):
         bias = self.coeffs['bias']
         task_level = self.model_config.task_level
         if task_level == ModelTaskLevel.graph:
-            assert (batch is not None) and x.shape[0] == batch.shape[0]
+            batch = kwargs.get('batch', None)
+            if batch is None:
+                batch = torch.zeros(x.shape[0], dtype=torch.long,
+                                    device=x.device)
+            assert x.shape[0] == batch.shape[0]
             assert batch.unique().shape[0] == target.shape[0]
             batch = batch.squeeze()
             explainer_in = self._create_explainer_input(edge_index, z).detach()
