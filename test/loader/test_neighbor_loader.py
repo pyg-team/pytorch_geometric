@@ -38,7 +38,7 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-def test_homogeneous_neighbor_loader(directed, dtype):
+def test_homo_neighbor_loader_basic(directed, dtype):
     if dtype != torch.int64 and not torch_geometric.typing.WITH_PYG_LIB:
         return
 
@@ -56,7 +56,7 @@ def test_homogeneous_neighbor_loader(directed, dtype):
     assert str(loader) == 'NeighborLoader()'
     assert len(loader) == 5
 
-    for batch in loader:
+    for i, batch in enumerate(loader):
         assert isinstance(batch, Data)
         assert len(batch) == 5
         assert batch.x.size(0) <= 100
@@ -66,6 +66,11 @@ def test_homogeneous_neighbor_loader(directed, dtype):
         assert batch.edge_index.max() < batch.num_nodes
         assert batch.edge_attr.min() >= 0
         assert batch.edge_attr.max() < 500
+
+        # Input nodes are always sampled first:
+        assert torch.equal(
+            batch.x[:batch.batch_size],
+            torch.arange(i * batch.batch_size, (i + 1) * batch.batch_size))
 
         assert is_subset(
             batch.edge_index.to(torch.int64),
@@ -77,7 +82,7 @@ def test_homogeneous_neighbor_loader(directed, dtype):
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-def test_heterogeneous_neighbor_loader(directed, dtype):
+def test_hetero_neighbor_loader_basic(directed, dtype):
     if dtype != torch.int64 and not torch_geometric.typing.WITH_PYG_LIB:
         return
 
@@ -218,7 +223,7 @@ def test_heterogeneous_neighbor_loader(directed, dtype):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
+def test_homo_neighbor_loader_on_cora(get_dataset, directed):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.n_id = torch.arange(data.num_nodes)
@@ -261,7 +266,7 @@ def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
+def test_hetero_neighbor_loader_on_cora(get_dataset, directed):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
@@ -313,7 +318,7 @@ def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
 
 
 @withPackage('pyg_lib')
-def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
+def test_temporal_hetero_neighbor_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
 
@@ -347,8 +352,6 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     x = torch.arange(100, 300)
     data['author'].x = x
     feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
-
-    # Set up edge indices:
 
     # COO:
     edge_index = get_edge_index(100, 100, 500)
@@ -480,7 +483,7 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
 
 @withPackage('pyg_lib')
-def test_pyg_lib_homogeneous_neighbor_loader():
+def test_pyg_lib_homo_neighbor_loader():
     import pyg_lib  # noqa
 
     adj = SparseTensor.from_edge_index(get_edge_index(20, 20, 100))
@@ -502,7 +505,7 @@ def test_pyg_lib_homogeneous_neighbor_loader():
 
 
 @withPackage('pyg_lib')
-def test_pyg_lib_heterogeneous_neighbor_loader():
+def test_pyg_lib_hetero_neighbor_loader():
     import pyg_lib  # noqa
 
     adj1 = SparseTensor.from_edge_index(get_edge_index(20, 10, 50))
