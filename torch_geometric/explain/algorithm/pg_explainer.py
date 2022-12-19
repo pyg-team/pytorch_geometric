@@ -190,7 +190,7 @@ class PGExplainer(ExplainerAlgorithm):
 
         if training:  # noise is added to edge_weight.
             bias += 0.0001
-            eps = (2*bias -1) * torch.rand(edge_weight.size()) + (1 - bias)
+            eps = (2 * bias - 1) * torch.rand(edge_weight.size()) + (1 - bias)
             eps = eps.to(edge_weight.device)
             return (eps.log() -
                     (1 - eps).log() + edge_weight).squeeze(dim=1) / temperature
