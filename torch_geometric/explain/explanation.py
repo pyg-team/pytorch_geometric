@@ -8,6 +8,7 @@ from torch_geometric.data.data import Data, warn_or_raise
 from torch_geometric.data.hetero_data import HeteroData
 from torch_geometric.explain.config import ThresholdConfig, ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
+from torch_geometric.visualization import visualize_graph
 
 
 class ExplanationMixin:
@@ -195,6 +196,7 @@ class Explanation(Data, ExplanationMixin):
 
     def visualize_feature_importance(
         self,
+        path: Optional[str] = None,
         feat_labels: Optional[List[str]] = None,
         top_k: Optional[int] = None,
     ):
@@ -202,11 +204,13 @@ class Explanation(Data, ExplanationMixin):
         :attr:`self.node_feat_mask` across all nodes.
 
         Args:
+            path (str, optional): The path to where the plot is saved.
+                If set to :obj:`None`, will visualize the plot on-the-fly.
+                (default: :obj:`None`)
             feat_labels (List[str], optional): Optional labels for features.
                 (default :obj:`None`)
             top_k (int, optional): Top k features to plot. If :obj:`None`
                 plots all features. (default: :obj:`None`)
-        :rtype: :class:`matplotlib.axes.Axes`
         """
         import matplotlib.pyplot as plt
         import pandas as pd
@@ -229,21 +233,48 @@ class Explanation(Data, ExplanationMixin):
         df = pd.DataFrame({'feat_importance': feat_importance},
                           index=feat_labels)
         df = df.sort_values("feat_importance", ascending=False)
-        df = df.head(top_k) if top_k is not None else df
+        df = df.round(decimals=3)
+
+        if top_k is not None:
+            df = df.head(top_k)
+            title = f"Feature importance for top {len(df)} features"
+        else:
+            title = f"Feature importance for {len(df)} features"
 
         ax = df.plot(
             kind='barh',
             figsize=(10, 7),
-            title=f"Feature importance for top {len(df)} features",
-            xlabel='Feature importance',
-            ylabel='Feature label',
+            title=title,
+            xlabel='Feature label',
             xlim=[0, float(feat_importance.max()) + 0.3],
             legend=False,
         )
         plt.gca().invert_yaxis()
         ax.bar_label(container=ax.containers[0], label_type='edge')
 
-        return ax
+        if path is not None:
+            plt.savefig(path)
+        else:
+            plt.show()
+
+        plt.close()
+
+    def visualize_graph(self, path: Optional[str] = None,
+                        backend: Optional[str] = None):
+        r"""Visualizes the explanation graph with edge opacity corresponding to
+        edge importance.
+
+        Args:
+            path (str, optional): The path to where the plot is saved.
+                If set to :obj:`None`, will visualize the plot on-the-fly.
+                (default: :obj:`None`)
+            backend (str, optional): The graph drawing backend to use for
+                visualization (:obj:`"graphviz"`, :obj:`"networkx"`).
+                If set to :obj:`None`, will use the most appropriate
+                visualization backend based on available system packages.
+                (default: :obj:`None`)
+        """
+        visualize_graph(self.edge_index, self.edge_mask, path, backend)
 
 
 class HeteroExplanation(HeteroData, ExplanationMixin):
