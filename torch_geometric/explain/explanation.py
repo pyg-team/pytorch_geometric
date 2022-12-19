@@ -22,48 +22,47 @@ class ExplanationMixin:
         status = True
 
         for store in self.node_stores:
-            mask = store.get('node_mask')
-            if mask is not None and store.num_nodes != mask.size(0):
+            if 'node_mask' not in store:
+                continue
+
+            if self.node_mask.dim() != 2:
+                status = False
+                warn_or_raise(
+                    f"Expected a 'node_mask' with two dimensions "
+                    f"(got {self.node_mask.dim()} dimensions)", raise_on_error)
+
+            if self.node_mask.size(0) not in {1, store.num_nodes}:
                 status = False
                 warn_or_raise(
                     f"Expected a 'node_mask' with {store.num_nodes} nodes "
-                    f"(got {mask.size(0)} nodes)", raise_on_error)
+                    f"(got {self.node_mask.size(0)} nodes)", raise_on_error)
 
-            mask = store.get('node_feat_mask')
-            if (mask is not None and 'x' in store
-                    and store.x.size() != mask.size()):
+            if 'x' in store:
+                num_features = store.x.size(-1)
+            else:
+                num_features = store.node_mask.size(-1)
+
+            if self.node_mask.size(1) not in {1, num_features}:
                 status = False
                 warn_or_raise(
-                    f"Expected a 'node_feat_mask' of shape "
-                    f"{list(store.x.size())} (got shape {list(mask.size())})",
-                    raise_on_error)
-            elif mask is not None and store.num_nodes != mask.size(0):
-                status = False
-                warn_or_raise(
-                    f"Expected a 'node_feat_mask' with {store.num_nodes} "
-                    f"nodes (got {mask.size(0)} nodes)", raise_on_error)
+                    f"Expected a 'node_mask' with {num_features} features "
+                    f"(got {self.node_mask.size(1)} features)", raise_on_error)
 
         for store in self.edge_stores:
-            mask = store.get('edge_mask')
-            if mask is not None and store.num_edges != mask.size(0):
+            if 'edge_mask' not in store:
+                continue
+
+            if self.edge_mask.dim() != 1:
+                status = False
+                warn_or_raise(
+                    f"Expected an 'edge_mask' with one dimension "
+                    f"(got {self.edge_mask.dim()} dimensions)", raise_on_error)
+
+            if self.edge_mask.size(0) not in {store.num_edges}:
                 status = False
                 warn_or_raise(
                     f"Expected an 'edge_mask' with {store.num_edges} edges "
-                    f"(got {mask.size(0)} edges)", raise_on_error)
-
-            mask = store.get('edge_feat_mask')
-            if (mask is not None and 'edge_attr' in store
-                    and store.edge_attr.size() != mask.size()):
-                status = False
-                warn_or_raise(
-                    f"Expected an 'edge_feat_mask' of shape "
-                    f"{list(store.edge_attr.size())} (got shape "
-                    f"{list(mask.size())})", raise_on_error)
-            elif mask is not None and store.num_edges != mask.size(0):
-                status = False
-                warn_or_raise(
-                    f"Expected an 'edge_feat_mask' with {store.num_edges} "
-                    f"edges (got {mask.size(0)} edges)", raise_on_error)
+                    f"(got {self.edges_mask.size(0)} edges)", raise_on_error)
 
         return status
 
@@ -123,14 +122,12 @@ class ExplanationMixin:
         out = copy.copy(self)
 
         for store in out.node_stores:
-            for key in ['node_mask', 'node_feat_mask']:
-                store[key] = self._threshold_mask(store.get(key),
-                                                  threshold_config)
+            store.node_mask = self._threshold_mask(store.get('node_mask'),
+                                                   threshold_config)
 
         for store in out.edge_stores:
-            for key in ['edge_mask', 'edge_feat_mask']:
-                store[key] = self._threshold_mask(store.get(key),
-                                                  threshold_config)
+            store.edge_mask = self._threshold_mask(store.get('edge_mask'),
+                                                   threshold_config)
 
         return out
 
@@ -139,18 +136,15 @@ class Explanation(Data, ExplanationMixin):
     r"""Holds all the obtained explanations of a homogenous graph.
 
     The explanation object is a :obj:`~torch_geometric.data.Data` object and
-    can hold node-attributions, edge-attributions and feature-attributions.
+    can hold node attributions and edge attributions.
     It can also hold the original graph if needed.
 
     Args:
         node_mask (Tensor, optional): Node-level mask with shape
-            :obj:`[num_nodes]`. (default: :obj:`None`)
+            :obj:`[num_nodes, 1]`, :obj:`[1, num_features]` or
+            :obj:`[num_nodes, num_features]`. (default: :obj:`None`)
         edge_mask (Tensor, optional): Edge-level mask with shape
             :obj:`[num_edges]`. (default: :obj:`None`)
-        node_feat_mask (Tensor, optional): Node-level feature mask with shape
-            :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
-        edge_feat_mask (Tensor, optional): Edge-level feature mask with shape
-            :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
     def validate(self, raise_on_error: bool = True) -> bool:
@@ -201,7 +195,7 @@ class Explanation(Data, ExplanationMixin):
         top_k: Optional[int] = None,
     ):
         r"""Creates a bar plot of the node features importance by summing up
-        :attr:`self.node_feat_mask` across all nodes.
+        :attr:`self.node_mask` across all nodes.
 
         Args:
             path (str, optional): The path to where the plot is saved.
@@ -215,12 +209,17 @@ class Explanation(Data, ExplanationMixin):
         import matplotlib.pyplot as plt
         import pandas as pd
 
-        if 'node_feat_mask' not in self.available_explanations:
-            raise ValueError(f"The attribute 'node_feat_mask' is not "
-                             f"available in '{self.__class__.__name__}' "
+        node_mask = self.get('node_mask')
+        if node_mask is None:
+            raise ValueError(f"The attribute 'node_mask' is not available "
+                             f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")
+        if node_mask.dim() != 2 or node_mask.size(1) <= 1:
+            raise ValueError(f"Cannot compute feature importance for "
+                             f"object-level 'node_mask' "
+                             f"(got shape {node_mask.size()})")
 
-        feat_importance = self.node_feat_mask.sum(dim=0).cpu().numpy()
+        feat_importance = node_mask.sum(dim=0).cpu().numpy()
 
         if feat_labels is None:
             feat_labels = range(feat_importance.shape[0])

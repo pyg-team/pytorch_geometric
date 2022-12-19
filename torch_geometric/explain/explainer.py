@@ -217,6 +217,7 @@ class Explainer:
                 else:
                     explanation[key] = arg
 
+        explanation.validate_masks()
         return explanation.threshold(self.threshold_config)
 
     @torch.no_grad()

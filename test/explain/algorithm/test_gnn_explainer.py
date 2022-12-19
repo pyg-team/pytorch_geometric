@@ -48,19 +48,17 @@ def check_explanation(
     explanation: Explanation,
 ):
     if node_mask_type == MaskType.attributes:
-        assert explanation.node_feat_mask.size() == explanation.x.size()
-        assert explanation.node_feat_mask.min() >= 0
-        assert explanation.node_feat_mask.max() <= 1
+        assert explanation.node_mask.size() == explanation.x.size()
+        assert explanation.node_mask.min() >= 0
+        assert explanation.node_mask.max() <= 1
     elif node_mask_type == MaskType.object:
-        assert explanation.node_mask.size() == (explanation.num_nodes, )
+        assert explanation.node_mask.size() == (explanation.num_nodes, 1)
         assert explanation.node_mask.min() >= 0
         assert explanation.node_mask.max() <= 1
     elif node_mask_type == MaskType.common_attributes:
-        assert explanation.node_feat_mask.size() == explanation.x.size()
-        assert explanation.node_feat_mask.min() >= 0
-        assert explanation.node_feat_mask.max() <= 1
-        assert torch.allclose(explanation.node_feat_mask[0],
-                              explanation.node_feat_mask[1])
+        assert explanation.node_mask.size() == (1, explanation.num_features)
+        assert explanation.node_mask.min() >= 0
+        assert explanation.node_mask.max() <= 1
 
     if edge_mask_type == MaskType.object:
         assert explanation.edge_mask.size() == (explanation.num_edges, )
