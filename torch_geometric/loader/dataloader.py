@@ -1,5 +1,5 @@
-from collections.abc import Mapping, Sequence
-from typing import List, Optional, Union
+from collections.abc import Mapping
+from typing import List, Optional, Sequence, Union
 
 import torch.utils.data
 from torch.utils.data.dataloader import default_collate
@@ -60,7 +60,7 @@ class DataLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        dataset: Union[Dataset, List[BaseData]],
+        dataset: Union[Dataset, Sequence[BaseData]],
         batch_size: int = 1,
         shuffle: bool = False,
         follow_batch: Optional[List[str]] = None,
