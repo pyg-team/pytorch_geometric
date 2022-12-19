@@ -1,3 +1,7 @@
+import os.path
+import random
+import sys
+
 import pytest
 import torch
 
@@ -155,10 +159,12 @@ def test_visualize_feature_importance(data, top_k, node_feat_mask):
         node_feat_mask=node_feat_mask,
     )
 
+    path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.png')
+
     if not node_feat_mask:
         with pytest.raises(ValueError, match="node_feat_mask' is not"):
-            explanation.visualize_feature_importance(top_k=top_k)
+            explanation.visualize_feature_importance(path, top_k=top_k)
     else:
-        ax = explanation.visualize_feature_importance(top_k=top_k)
-        num_feats_plotted = top_k if top_k is not None else data.num_features
-        assert len(ax.yaxis.get_ticklabels()) == num_feats_plotted
+        explanation.visualize_feature_importance(path, top_k=top_k)
+        assert os.path.exists(path)
+        os.remove(path)
