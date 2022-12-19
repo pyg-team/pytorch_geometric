@@ -18,7 +18,7 @@ def unique_edge_pairs(edge_index):
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
-def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
+def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio):
     pos_edge_index = get_edge_index(100, 50, 500)
     neg_edge_index = get_edge_index(100, 50, 500)
     neg_edge_index[1, :] += 50
@@ -81,7 +81,7 @@ def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
-def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
+def test_hetero_link_neighbor_loader_basic(directed, neg_sampling_ratio):
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -124,7 +124,7 @@ def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_heterogeneous_link_neighbor_loader_loop(directed):
+def test_hetero_link_neighbor_loader_loop(directed):
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -180,7 +180,7 @@ def test_link_neighbor_loader_edge_label():
 
 
 @withPackage('pyg_lib')
-def test_temporal_heterogeneous_link_neighbor_loader():
+def test_temporal_hetero_link_neighbor_loader():
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -227,7 +227,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
 
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
 @pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
-def test_custom_heterogeneous_link_neighbor_loader(FeatureStore, GraphStore):
+def test_custom_hetero_link_neighbor_loader(FeatureStore, GraphStore):
     data = HeteroData()
     feature_store = FeatureStore()
     graph_store = GraphStore()
@@ -295,7 +295,7 @@ def test_custom_heterogeneous_link_neighbor_loader(FeatureStore, GraphStore):
             'author', 'to', 'paper'].edge_index.size())
 
 
-def test_homogeneous_link_neighbor_loader_no_edges():
+def test_homolink_neighbor_loader_no_edges():
     loader = LinkNeighborLoader(
         Data(num_nodes=100),
         num_neighbors=[],
@@ -311,7 +311,7 @@ def test_homogeneous_link_neighbor_loader_no_edges():
         assert batch.num_nodes == batch.edge_label_index.unique().numel()
 
 
-def test_heterogeneous_link_neighbor_loader_no_edges():
+def test_hetero_link_neighbor_loader_no_edges():
     loader = LinkNeighborLoader(
         HeteroData(paper=dict(num_nodes=100)),
         num_neighbors=[],
