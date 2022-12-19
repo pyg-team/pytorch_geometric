@@ -162,13 +162,6 @@ class NegativeSamplingMode(Enum):
     triplet = 'triplet'
 
 
-class NegativeSamplingStrategy(Enum):
-    # 'uniform': Negative samples are drawn uniformly.
-    uniform = 'uniform'
-    # 'weighted': Negative samples are drawn according to node degree.
-    weighted = 'weighted'
-
-
 @dataclass
 class NegativeSampling(CastMixin):
     r"""The negative sampling configuration of a
@@ -184,29 +177,24 @@ class NegativeSampling(CastMixin):
             destination nodes for each positive source node.
         amount (int or float, optional): The ratio of sampled negative edges to
             the number of positive edges. (default: :obj:`1`)
-        strategy (str, optional): The strategy to draw negative samples
-            (:obj:`"uniform"`, :obj:`"weighted"`).
-            If set to :obj:`"uniform"`, will uniformly draw negative nodes.
-            If set to :obj:`"weighted"`, will draw negative nodes according to
-            their node degree.
+        weight (torch.Tensor, optional): A node-level vector determining the
+            sampling of nodes. Does not necessariyl need to sum up to one.
+            If not given, negative nodes will be sampled uniformly.
+            (default: :obj:`None`)
     """
     mode: NegativeSamplingMode
     amount: Union[int, float] = 1
-    strategy: NegativeSamplingStrategy = NegativeSamplingStrategy.uniform
+    weight: Optional[Tensor] = None
 
     def __init__(
         self,
         mode: Union[NegativeSamplingMode, str],
         amount: Union[int, float] = 1,
-        strategy: Union[NegativeSamplingStrategy, str] = 'uniform',
+        weight: Optional[Tensor] = None,
     ):
         self.mode = NegativeSamplingMode(mode)
         self.amount = amount
-        self.strategy = NegativeSamplingStrategy(strategy)
-
-        if self.is_weighted():
-            raise NotImplementedError("'weighted' negative sampling not "
-                                      "yet supported")
+        self.weight = weight
 
         if self.amount <= 0:
             raise ValueError(f"The attribute 'amount' needs to be positive "
@@ -227,11 +215,22 @@ class NegativeSampling(CastMixin):
     def is_triplet(self) -> bool:
         return self.mode == NegativeSamplingMode.triplet
 
-    def is_uniform(self) -> bool:
-        return self.strategy == NegativeSamplingStrategy.uniform
+    def sample(self, num_samples: int,
+               num_nodes: Optional[int] = None) -> Tensor:
+        r"""Generates :obj:`num_samples` negative samples."""
+        if self.weight is None:
+            if num_nodes is None:
+                raise ValueError(
+                    f"Cannot sample negatives in '{self.__class__.__name__}' "
+                    f"without passing the 'num_nodes' argument")
+            return torch.randint(num_nodes, (num_samples, ))
 
-    def is_weighted(self) -> bool:
-        return self.strategy == NegativeSamplingStrategy.weighted
+        if num_nodes is not None and self.weight.numel() != num_nodes:
+            raise ValueError(
+                f"The 'weight' attribute in '{self.__class__.__name__}' "
+                f"needs to match the number of nodes {num_nodes} "
+                f"(got {self.weight.numel()})")
+        return torch.multinomial(self.weight, num_samples, replacement=True)
 
 
 class BaseSampler(ABC):
