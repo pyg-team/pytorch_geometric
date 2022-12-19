@@ -128,8 +128,6 @@ class Explainer:
         r"""Returns the prediction of the model on the input graph with node
         and edge masks applied."""
         if isinstance(x, Tensor) and node_mask is not None:
-            if node_mask.dim() == 1:
-                node_mask = node_mask.view(-1, 1)
             x = node_mask * x
         elif isinstance(x, dict) and node_mask is not None:
             x = {key: value * node_mask[key] for key, value in x.items()}
@@ -251,6 +249,7 @@ class Explainer:
                 else:
                     explanation[key] = arg
 
+        explanation.validate_masks()
         return explanation.threshold(self.threshold_config)
 
     def get_target(self, prediction: Tensor) -> Tensor:
