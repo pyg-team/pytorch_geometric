@@ -12,13 +12,7 @@ from torch_geometric.data import (
     GraphStore,
     HeteroData,
 )
-from torch_geometric.loader import (
-    DataLoader,
-    LinkLoader,
-    LinkNeighborLoader,
-    NeighborLoader,
-    NodeLoader,
-)
+from torch_geometric.loader import DataLoader, LinkLoader, NodeLoader
 from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes, OptTensor
 
@@ -343,6 +337,11 @@ class LightningNodeData(LightningDataModule):
             # TODO Consider renaming to `self.node_sampler`
             self.neighbor_sampler = node_sampler
 
+        if getattr(self, 'neighbor_sampler', None) is not None:
+            cls = self.neighbor_sampler.__class__
+            for param in inspect.signature(cls).parameters:
+                self.kwargs.pop(param, None)
+
         self.input_train_nodes = input_train_nodes
         self.input_train_time = input_train_time
         self.input_val_nodes = input_val_nodes
@@ -395,16 +394,7 @@ class LightningNodeData(LightningDataModule):
                 **kwargs,
             )
 
-        if self.loader == 'neighbor':
-            loader = NeighborLoader(
-                self.data,
-                neighbor_sampler=self.neighbor_sampler,
-                input_nodes=input_nodes,
-                input_time=input_time,
-                **kwargs,
-            )
-
-        elif self.loader == 'custom':
+        else:
             loader = NodeLoader(
                 self.data,
                 node_sampler=self.neighbor_sampler,
@@ -412,14 +402,8 @@ class LightningNodeData(LightningDataModule):
                 input_time=input_time,
                 **kwargs,
             )
-
-        else:
-            raise NotImplementedError
-
-        if hasattr(loader, 'input_data'):
             loader.input_data.input_id = input_id
-
-        return loader
+            return loader
 
     def train_dataloader(self) -> DataLoader:
         """"""
@@ -601,6 +585,11 @@ class LightningLinkData(LightningDataModule):
             # TODO Consider renaming to `self.link_sampler`
             self.neighbor_sampler = link_sampler
 
+        if getattr(self, 'neighbor_sampler', None) is not None:
+            cls = self.neighbor_sampler.__class__
+            for param in inspect.signature(cls).parameters:
+                self.kwargs.pop(param, None)
+
         self.input_train_edges = input_train_edges
         self.input_train_labels = input_train_labels
         self.input_train_time = input_train_time
@@ -654,17 +643,7 @@ class LightningLinkData(LightningDataModule):
                 **kwargs,
             )
 
-        elif self.loader in ['neighbor', 'link_neighbor']:
-            loader = LinkNeighborLoader(
-                self.data,
-                neighbor_sampler=self.neighbor_sampler,
-                edge_label_index=input_edges,
-                edge_label=input_labels,
-                edge_label_time=input_time,
-                **kwargs,
-            )
-
-        elif self.loader == 'custom':
+        else:
             loader = LinkLoader(
                 self.data,
                 link_sampler=self.neighbor_sampler,
@@ -673,14 +652,8 @@ class LightningLinkData(LightningDataModule):
                 edge_label_time=input_time,
                 **kwargs,
             )
-
-        else:
-            raise NotImplementedError
-
-        if hasattr(loader, 'input_data'):
             loader.input_data.input_id = input_id
-
-        return loader
+            return loader
 
     def train_dataloader(self) -> DataLoader:
         """"""
