@@ -336,6 +336,11 @@ class GNNExplainer_:
         node_mask = explanation.get('node_mask')
         edge_mask = explanation.get('edge_mask')
 
+        if node_mask is not None:
+            node_mask_type = self._explainer.explainer_config.node_mask_type
+            if node_mask_type in {MaskType.object, MaskType.common_attributes}:
+                node_mask = node_mask.view(-1)
+
         if edge_mask is None:
             if index is not None:
                 _, edge_mask = self._explainer._get_hard_masks(
