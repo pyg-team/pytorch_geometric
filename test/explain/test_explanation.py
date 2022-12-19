@@ -81,23 +81,18 @@ def test_validate_explanation(data):
     explanation.validate(raise_on_error=True)
 
     with pytest.raises(ValueError, match="with 5 nodes"):
-        explanation = create_random_explanation(data)
+        explanation = create_random_explanation(data, node_mask_type='object')
         explanation.x = torch.randn(5, 5)
         explanation.validate(raise_on_error=True)
 
-    with pytest.raises(ValueError, match=r"of shape \[4, 4\]"):
-        explanation = create_random_explanation(data)
+    with pytest.raises(ValueError, match="with 4 features"):
+        explanation = create_random_explanation(data, 'attributes')
         explanation.x = torch.randn(4, 4)
         explanation.validate(raise_on_error=True)
 
     with pytest.raises(ValueError, match="with 7 edges"):
-        explanation = create_random_explanation(data)
+        explanation = create_random_explanation(data, edge_mask_type='object')
         explanation.edge_index = torch.randint(0, 4, (2, 7))
-        explanation.validate(raise_on_error=True)
-
-    with pytest.raises(ValueError, match=r"of shape \[6, 4\]"):
-        explanation = create_random_explanation(data)
-        explanation.edge_attr = torch.randn(6, 4)
         explanation.validate(raise_on_error=True)
 
 
@@ -113,14 +108,14 @@ def test_node_mask(data):
     explanation.validate(raise_on_error=True)
 
     out = explanation.get_explanation_subgraph()
-    assert out.node_mask.size() == (2, )
+    assert out.node_mask.size() == (2, 1)
     assert (out.node_mask > 0.0).sum() == 2
     assert out.x.size() == (2, 3)
     assert out.edge_index.size() == (2, 1)
     assert out.edge_attr.size() == (1, 3)
 
     out = explanation.get_complement_subgraph()
-    assert out.node_mask.size() == (2, )
+    assert out.node_mask.size() == (2, 1)
     assert (out.node_mask == 0.0).sum() == 2
     assert out.x.size() == (2, 3)
     assert out.edge_index.size() == (2, 1)

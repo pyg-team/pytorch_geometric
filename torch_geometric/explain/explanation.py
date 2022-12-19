@@ -62,7 +62,7 @@ class ExplanationMixin:
                 status = False
                 warn_or_raise(
                     f"Expected an 'edge_mask' with {store.num_edges} edges "
-                    f"(got {self.edges_mask.size(0)} edges)", raise_on_error)
+                    f"(got {self.edge_mask.size(0)} edges)", raise_on_error)
 
         return status
 
@@ -156,18 +156,24 @@ class Explanation(Data, ExplanationMixin):
     def get_explanation_subgraph(self) -> 'Explanation':
         r"""Returns the induced subgraph, in which all nodes and edges with
         zero attribution are masked out."""
-        return self._apply_masks(
-            node_mask=self.node_mask > 0 if 'node_mask' in self else None,
-            edge_mask=self.edge_mask > 0 if 'edge_mask' in self else None,
-        )
+        node_mask = self.get('node_mask')
+        if node_mask is not None:
+            node_mask = node_mask.sum(dim=-1) > 0
+        edge_mask = self.get('edge_mask')
+        if edge_mask is not None:
+            edge_mask = edge_mask > 0
+        return self._apply_masks(node_mask, edge_mask)
 
     def get_complement_subgraph(self) -> 'Explanation':
         r"""Returns the induced subgraph, in which all nodes and edges with any
         attribution are masked out."""
-        return self._apply_masks(
-            node_mask=self.node_mask == 0 if 'node_mask' in self else None,
-            edge_mask=self.edge_mask == 0 if 'edge_mask' in self else None,
-        )
+        node_mask = self.get('node_mask')
+        if node_mask is not None:
+            node_mask = node_mask.sum(dim=-1) == 0
+        edge_mask = self.get('edge_mask')
+        if edge_mask is not None:
+            edge_mask = edge_mask == 0
+        return self._apply_masks(node_mask, edge_mask)
 
     def _apply_masks(
         self,
