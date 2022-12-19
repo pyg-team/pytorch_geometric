@@ -115,6 +115,7 @@ class PGExplainer(ExplainerAlgorithm):
         if task_level == ModelTaskLevel.graph:
             batch = kwargs.get('batch', None)
             if batch is None:
+                # Assume all nodes belong to the same graph.
                 batch = torch.zeros(x.shape[0], dtype=torch.long,
                                     device=x.device)
             assert x.shape[0] == batch.shape[0]
