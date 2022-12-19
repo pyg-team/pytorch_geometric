@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added fidelity metrics ([#6116](https://github.com/pyg-team/pytorch_geometric/pull/6116))
 - Added subgraph visualization of GNN explanations ([#6235](https://github.com/pyg-team/pytorch_geometric/pull/6235))
 - Added weighted negative sampling option in `LinkNeighborLoader` ([#6264](https://github.com/pyg-team/pytorch_geometric/pull/6264))
 - Added the `BA2MotifDataset` explainer dataset ([#6257](https://github.com/pyg-team/pytorch_geometric/pull/6257))

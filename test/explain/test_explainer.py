@@ -9,7 +9,7 @@ from torch_geometric.explain.config import ExplanationType
 @pytest.fixture
 def data():
     return Data(
-        x=torch.randn(8, 3, requires_grad=True),
+        x=torch.randn(8, 3),
         edge_index=torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
                                  [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]]),
         edge_attr=torch.randn(14, 3),
