@@ -46,7 +46,7 @@ class PGMExplainer(ExplainerAlgorithm):
             self,
             feature_matrix: torch.Tensor,
             node_idx: int,
-            pertubation_mode="randint",
+            perturbation_mode="randint",
             is_random: bool = False,
             is_pertubation_scaled: bool = False,
             perturb_feature_list=None  # indexes of features being pertubed
@@ -58,7 +58,7 @@ class PGMExplainer(ExplainerAlgorithm):
             feature_matrix: node feature matrix of the input graph
                 of shape [num_nodes, num_features]
             node_idx: index of the node we are calculating the explanation for
-            pertubation_mode: how to pertube the features. must be one of
+            perturbation_mode: how to pertube the features. must be one of
                 [random, zero, mean, max]
             is_pertubation_scaled: whether to scale the pertubed matrix
                 with the original feature matrix
@@ -76,22 +76,22 @@ class PGMExplainer(ExplainerAlgorithm):
 
         if is_random:
             if not is_pertubation_scaled:
-                if pertubation_mode == "randint":
+                if perturbation_mode == "randint":
                     perturb_array = torch.randint(
                         high=2, size=X_perturb[node_idx].shape[0])
                 # graph explainers
-                elif pertubation_mode in ("mean", "zero", "max", "uniform"):
+                elif perturbation_mode in ("mean", "zero", "max", "uniform"):
                     for i in range(perturb_array.shape[0]):
                         if i in perturb_feature_list:
-                            if pertubation_mode == "mean":
+                            if perturbation_mode == "mean":
                                 perturb_array[i] = torch.mean(
                                     feature_matrix[:, i])
-                            elif pertubation_mode == "zero":
+                            elif perturbation_mode == "zero":
                                 perturb_array[i] = 0
-                            elif pertubation_mode == "max":
+                            elif perturbation_mode == "max":
                                 perturb_array[i] = torch.max(feature_matrix[:,
                                                                             i])
-                            elif pertubation_mode == "uniform":
+                            elif perturbation_mode == "uniform":
                                 perturb_array[
                                     i] = perturb_array[i] + torch.tensor(
                                         np.random.uniform(
@@ -187,7 +187,7 @@ class PGMExplainer(ExplainerAlgorithm):
             percentage=50,  # % time node gets pertubed
             p_threshold=0.05,
             pred_threshold=0.1,
-            pertubation_mode="mean",
+            perturbation_mode="mean",
             snorm_node=None,
             snorm_edge=None,
             **kwargs):
@@ -208,7 +208,8 @@ class PGMExplainer(ExplainerAlgorithm):
                     if seed < percentage:
                         latent = 1
                         X_perturb = self.perturb_features_on_node(
-                            X_perturb, node, pertubation_mode=pertubation_mode,
+                            X_perturb, node,
+                            perturbation_mode=perturbation_mode,
                             perturb_feature_list=self.perturb_feature_list,
                             is_random=True)
                     else:
@@ -253,7 +254,7 @@ class PGMExplainer(ExplainerAlgorithm):
         significance_threshold=0.05,
         pred_threshold=0.1,
         percentage=0.5,
-        pertubation_mode="mean",
+        perturbation_mode="mean",
         **kwargs,
     ):
         model.eval()
@@ -266,7 +267,7 @@ class PGMExplainer(ExplainerAlgorithm):
         Samples = self.batch_perturb_features_on_node(
             num_samples=int(num_samples / 2),
             index_to_perturb=range(num_nodes), X_features=x, model=model,
-            pertubation_mode=pertubation_mode, **kwargs)
+            perturbation_mode=perturbation_mode, **kwargs)
 
         data = pd.DataFrame(np.array(Samples.detach().cpu()))
         # est = PC(data)
@@ -288,7 +289,7 @@ class PGMExplainer(ExplainerAlgorithm):
         #         Round 2
         Samples = self.batch_perturb_features_on_node(
             num_samples=num_samples, index_to_perturb=candidate_nodes,
-            X_features=x, model=model, pertubation_mode=pertubation_mode,
+            X_features=x, model=model, perturbation_mode=perturbation_mode,
             **kwargs)
 
         # todo the PC estimator is in the code but it does nothing??
@@ -353,11 +354,11 @@ class PGMExplainer(ExplainerAlgorithm):
             for node in neighbors:
                 seed = np.random.choice([1, 0])
                 if seed == 1:
-                    pertubation_mode = "random"
+                    perturbation_mode = "random"
                 else:
-                    pertubation_mode = "zero"
+                    perturbation_mode = "zero"
                 X_perturb = self.perturb_features_on_node(
-                    X_perturb, node, pertubation_mode=pertubation_mode)
+                    X_perturb, node, perturbation_mode=perturbation_mode)
                 sample.append(seed)
 
             # X_perturb = X_perturb.to(model.device)

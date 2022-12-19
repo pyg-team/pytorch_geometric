@@ -94,15 +94,9 @@ class Explainer:
         r"""Returns the prediction of the model on the input graph.
         If the model mode is :obj:`"regression"`, the prediction is returned as
         a scalar value.
-<<<<<<< HEAD
-        If the model mode :obj:`"classification"`, the prediction is returned
-        as the predicted class label.
-=======
         If the model mode is :obj:`"multiclass_classification"` or
         :obj:`"binary_classification"`, the prediction is returned as the
         predicted class label.
-
->>>>>>> master
         Args:
             *args: Arguments passed to the model.
             **kwargs (optional): Additional keyword arguments passed to the
