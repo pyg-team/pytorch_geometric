@@ -78,7 +78,6 @@ class Explainer:
 
         self.model = model
         self.algorithm = algorithm
-        self.base_explanation = None
 
         self.explanation_type = explainer_config.explanation_type
         self.model_config = ModelConfig.cast(model_config)
@@ -154,7 +153,6 @@ class Explainer:
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
-
         prediction: Optional[Tensor] = None
         if self.explanation_type == ExplanationType.phenomenon:
             if target is None:

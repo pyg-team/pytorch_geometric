@@ -24,7 +24,6 @@ class ExplanationMixin:
         for store in self.node_stores:
             mask = store.get('node_mask')
             if mask is not None and store.num_nodes != mask.size(0):
-
                 status = False
                 warn_or_raise(
                     f"Expected a 'node_mask' with {store.num_nodes} nodes "
