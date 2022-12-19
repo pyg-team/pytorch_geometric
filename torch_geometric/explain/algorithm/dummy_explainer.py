@@ -61,7 +61,7 @@ class DummyExplainer(ExplainerAlgorithm):
             assert isinstance(edge_index, dict)
 
             node_dict = defaultdict(dict)
-            for key, v in x.items():
+            for k, v in x.items():
                 node_mask = None
                 if node_mask_type == MaskType.object:
                     node_mask = torch.rand(v.size(0), 1, device=v.device)
@@ -70,15 +70,15 @@ class DummyExplainer(ExplainerAlgorithm):
                 elif node_mask_type == MaskType.attributes:
                     node_mask = torch.rand_like(v)
                 if node_mask is not None:
-                    node_dict[key]['node_mask'] = node_mask
+                    node_dict[k]['node_mask'] = node_mask
 
             edge_dict = defaultdict(dict)
-            for key, v in edge_index.items():
+            for k, v in edge_index.items():
                 edge_mask = None
                 if edge_mask_type == MaskType.object:
                     edge_mask = torch.rand(v.size(1), device=v.device)
                 if edge_mask is not None:
-                    edge_dict[key]['edge_mask'] = edge_mask
+                    edge_dict[k]['edge_mask'] = edge_mask
 
             return HeteroExplanation({**node_dict, **edge_dict})
 
