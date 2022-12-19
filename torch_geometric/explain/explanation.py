@@ -25,44 +25,44 @@ class ExplanationMixin:
             if 'node_mask' not in store:
                 continue
 
-            if self.node_mask.dim() != 2:
+            if store.node_mask.dim() != 2:
                 status = False
                 warn_or_raise(
-                    f"Expected a 'node_mask' with two dimensions "
-                    f"(got {self.node_mask.dim()} dimensions)", raise_on_error)
+                    f"Expected a 'node_mask' with two dimensions (got "
+                    f"{store.node_mask.dim()} dimensions)", raise_on_error)
 
-            if self.node_mask.size(0) not in {1, store.num_nodes}:
+            if store.node_mask.size(0) not in {1, store.num_nodes}:
                 status = False
                 warn_or_raise(
                     f"Expected a 'node_mask' with {store.num_nodes} nodes "
-                    f"(got {self.node_mask.size(0)} nodes)", raise_on_error)
+                    f"(got {store.node_mask.size(0)} nodes)", raise_on_error)
 
             if 'x' in store:
                 num_features = store.x.size(-1)
             else:
                 num_features = store.node_mask.size(-1)
 
-            if self.node_mask.size(1) not in {1, num_features}:
+            if store.node_mask.size(1) not in {1, num_features}:
                 status = False
                 warn_or_raise(
-                    f"Expected a 'node_mask' with {num_features} features "
-                    f"(got {self.node_mask.size(1)} features)", raise_on_error)
+                    f"Expected a 'node_mask' with {num_features} features ("
+                    f"got {store.node_mask.size(1)} features)", raise_on_error)
 
         for store in self.edge_stores:
             if 'edge_mask' not in store:
                 continue
 
-            if self.edge_mask.dim() != 1:
+            if store.edge_mask.dim() != 1:
                 status = False
                 warn_or_raise(
-                    f"Expected an 'edge_mask' with one dimension "
-                    f"(got {self.edge_mask.dim()} dimensions)", raise_on_error)
+                    f"Expected an 'edge_mask' with one dimension (got "
+                    f"{store.edge_mask.dim()} dimensions)", raise_on_error)
 
-            if self.edge_mask.size(0) not in {store.num_edges}:
+            if store.edge_mask.size(0) not in {store.num_edges}:
                 status = False
                 warn_or_raise(
                     f"Expected an 'edge_mask' with {store.num_edges} edges "
-                    f"(got {self.edge_mask.size(0)} edges)", raise_on_error)
+                    f"(got {store.edge_mask.size(0)} edges)", raise_on_error)
 
         return status
 
@@ -300,12 +300,12 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         zero attribution are masked out."""
         return self._apply_masks(
             node_mask_dict={
-                key: value > 0
-                for key, value in self.node_mask_dict.items()
+                key: mask.sum(dim=-1) > 0
+                for key, mask in self.node_mask_dict.items()
             },
             edge_mask_dict={
-                key: value > 0
-                for key, value in self.edge_mask_dict.items()
+                key: mask > 0
+                for key, mask in self.edge_mask_dict.items()
             },
         )
 
@@ -314,12 +314,12 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         attribution are masked out."""
         return self._apply_masks(
             node_mask_dict={
-                key: value == 0
-                for key, value in self.node_mask_dict.items()
+                key: mask.sum(dim=-1) == 0
+                for key, mask in self.node_mask_dict.items()
             },
             edge_mask_dict={
-                key: value == 0
-                for key, value in self.edge_mask_dict.items()
+                key: mask == 0
+                for key, mask in self.edge_mask_dict.items()
             },
         )
 
