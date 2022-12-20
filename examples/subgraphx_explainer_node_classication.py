@@ -58,19 +58,22 @@ def main():
         num_motifs=20,
         transform=T.Constant(),
     )
-    data = dataset[0]    
+    data = dataset[0]
 
     # set number of GCN Convolutions (i.e. num_hops)
     num_layers = 3
     idx = torch.arange(data.num_nodes)
-    train_idx, test_idx = train_test_split(idx, train_size=0.75, stratify=data.y)
+    train_idx, test_idx = train_test_split(idx, train_size=0.75,
+                                           stratify=data.y)
 
     device = torch.device('cpu')
     data = data.to(device)
 
-    model = GCN(data.num_node_features, hidden_channels=30, num_layers=num_layers,
+    model = GCN(data.num_node_features, hidden_channels=30,
+                num_layers=num_layers,
                 out_channels=dataset.num_classes).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0001)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
+                                 weight_decay=0.0001)
 
     # train our model
     pbar = tqdm(range(1, 2001))
@@ -79,7 +82,7 @@ def main():
         if epoch == 1 or epoch % 200 == 0:
             train_acc, test_acc = get_acc(model, data, train_idx, test_idx)
             pbar.set_description(f'Loss: {loss:.4f}, Train: {train_acc:.4f}, '
-                            f'Test: {test_acc:.4f}')
+                                 f'Test: {test_acc:.4f}')
     pbar.close()
     model.eval()
 
@@ -94,14 +97,9 @@ def main():
     # Initialize our explainer
     explainer = Explainer(
         model=model,
-        algorithm=SubgraphXExplainer(
-            num_classes=4, 
-            device=device,
-            num_hops=num_layers,
-            max_nodes=5,
-            rollout=2,
-            reward_method='l_shapley'
-        ),
+        algorithm=SubgraphXExplainer(num_classes=4, device=device,
+                                     num_hops=num_layers, max_nodes=5,
+                                     rollout=2, reward_method='l_shapley'),
         explanation_type="model",
         node_mask_type='object',
         edge_mask_type='object',
@@ -121,7 +119,8 @@ def main():
     subgraph_y = data.y[subset].to('cpu')
     G = to_networkx(Data(x=subgraph_x, edge_index=subgraph_edge_index))
     new_node_idx = torch.where(subset == node_idx)[0].item()
-    
+
     # plot using PlotUtils
     plotutils = PlotUtils(dataset_name='ba_shapes')
-    plotutils.plot(G, nodelist=explanation.masked_node_list, figname=None, y=subgraph_y, node_idx=new_node_idx)
+    plotutils.plot(G, nodelist=explanation.masked_node_list, figname=None,
+                   y=subgraph_y, node_idx=new_node_idx)
