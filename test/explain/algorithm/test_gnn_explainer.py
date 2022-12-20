@@ -13,10 +13,9 @@ from torch_geometric.nn import GCNConv, global_add_pool
 
 
 class GCN(torch.nn.Module):
-    def __init__(self, model_config: ModelConfig, multi_output: bool = False):
+    def __init__(self, model_config: ModelConfig):
         super().__init__()
         self.model_config = model_config
-        self.multi_output = multi_output
 
         if model_config.mode == ModelMode.multiclass_classification:
             out_channels = 7
@@ -45,7 +44,7 @@ class GCN(torch.nn.Module):
             elif self.model_config.return_type == ModelReturnType.log_probs:
                 x = x.log_softmax(dim=-1)
 
-        return torch.stack([x, x], dim=0) if self.multi_output else x
+        return x
 
 
 def check_explanation(
@@ -97,7 +96,6 @@ edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
 @pytest.mark.parametrize('return_type', ['probs', 'raw'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-@pytest.mark.parametrize('multi_output', [False])
 def test_gnn_explainer_binary_classification(
     edge_mask_type,
     node_mask_type,
@@ -105,7 +103,6 @@ def test_gnn_explainer_binary_classification(
     task_level,
     return_type,
     index,
-    multi_output,
 ):
     model_config = ModelConfig(
         mode='binary_classification',
@@ -113,7 +110,7 @@ def test_gnn_explainer_binary_classification(
         return_type=return_type,
     )
 
-    model = GCN(model_config, multi_output)
+    model = GCN(model_config)
 
     target = None
     if explanation_type == 'phenomenon':
@@ -138,7 +135,6 @@ def test_gnn_explainer_binary_classification(
         edge_index,
         target=target,
         index=index,
-        target_index=0 if multi_output else None,
         batch=batch,
         edge_label_index=edge_label_index,
     )
@@ -152,7 +148,6 @@ def test_gnn_explainer_binary_classification(
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
 @pytest.mark.parametrize('return_type', ['log_probs', 'probs', 'raw'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-@pytest.mark.parametrize('multi_output', [False, True])
 def test_gnn_explainer_multiclass_classification(
     edge_mask_type,
     node_mask_type,
@@ -160,7 +155,6 @@ def test_gnn_explainer_multiclass_classification(
     task_level,
     return_type,
     index,
-    multi_output,
 ):
     model_config = ModelConfig(
         mode='multiclass_classification',
@@ -168,7 +162,7 @@ def test_gnn_explainer_multiclass_classification(
         return_type=return_type,
     )
 
-    model = GCN(model_config, multi_output)
+    model = GCN(model_config)
 
     target = None
     if explanation_type == 'phenomenon':
@@ -189,7 +183,6 @@ def test_gnn_explainer_multiclass_classification(
         edge_index,
         target=target,
         index=index,
-        target_index=0 if multi_output else None,
         batch=batch,
         edge_label_index=edge_label_index,
     )
@@ -202,21 +195,19 @@ def test_gnn_explainer_multiclass_classification(
 @pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-@pytest.mark.parametrize('multi_output', [False, True])
 def test_gnn_explainer_regression(
     edge_mask_type,
     node_mask_type,
     explanation_type,
     task_level,
     index,
-    multi_output,
 ):
     model_config = ModelConfig(
         mode='regression',
         task_level=task_level,
     )
 
-    model = GCN(model_config, multi_output)
+    model = GCN(model_config)
 
     target = None
     if explanation_type == 'phenomenon':
@@ -237,7 +228,6 @@ def test_gnn_explainer_regression(
         edge_index,
         target=target,
         index=index,
-        target_index=0 if multi_output else None,
         batch=batch,
         edge_label_index=edge_label_index,
     )

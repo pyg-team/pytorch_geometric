@@ -150,7 +150,6 @@ class Explainer:
         *,
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
@@ -176,11 +175,6 @@ class Explainer:
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
-            target_index (int, optional): The index of the model outputs to
-                reference in case the model returns a list of tensors, *e.g.*,
-                in a multi-task learning scenario. Should be kept to
-                :obj:`None` in case the model only returns a single output
-                tensor. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
@@ -207,7 +201,6 @@ class Explainer:
             edge_index,
             target=target,
             index=index,
-            target_index=target_index,
             **kwargs,
         )
 
@@ -218,7 +211,6 @@ class Explainer:
         explanation.prediction = prediction
         explanation.target = target
         explanation.index = index
-        explanation.target_index = target_index
 
         # Add model inputs to the `Explanation` object:
         if isinstance(explanation, Explanation):

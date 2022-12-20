@@ -85,7 +85,6 @@ class GNNExplainer(ExplainerAlgorithm):
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
         hard_node_mask = hard_edge_mask = None
@@ -95,8 +94,7 @@ class GNNExplainer(ExplainerAlgorithm):
             hard_node_mask, hard_edge_mask = self._get_hard_masks(
                 model, index, edge_index, num_nodes=x.size(0))
 
-        self._train(model, x, edge_index, target=target, index=index,
-                    target_index=target_index, **kwargs)
+        self._train(model, x, edge_index, target=target, index=index, **kwargs)
 
         node_mask = self._post_process_mask(self.node_mask, x.size(0),
                                             hard_node_mask, apply_sigmoid=True)
@@ -115,7 +113,6 @@ class GNNExplainer(ExplainerAlgorithm):
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ):
         if isinstance(x, dict) or isinstance(edge_index, dict):
@@ -137,8 +134,6 @@ class GNNExplainer(ExplainerAlgorithm):
             h = x * self.node_mask.sigmoid()
             y_hat, y = model(h, edge_index, **kwargs), target
 
-            if target_index is not None:
-                y_hat, y = y_hat[target_index], y[target_index]
             if index is not None:
                 y_hat, y = y_hat[index], y[index]
 
