@@ -6,13 +6,12 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.parameter import Parameter
 
-from torch_geometric.explain import Explanation
+from torch_geometric.explain import ExplainerConfig, Explanation, ModelConfig
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import (
-    ExplainerConfig,
     MaskType,
-    ModelConfig,
     ModelMode,
+    ModelReturnType,
     ModelTaskLevel,
 )
 
@@ -172,9 +171,9 @@ class GNNExplainer(ExplainerAlgorithm):
             assert False
 
     def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if self.model_config.return_type.value == 'raw':
+        if self.model_config.return_type == ModelReturnType.raw:
             loss_fn = F.binary_cross_entropy_with_logits
-        elif self.model_config.return_type.value == 'probs':
+        elif self.model_config.return_type == ModelReturnType.probs:
             loss_fn = F.binary_cross_entropy
         else:
             assert False
@@ -186,12 +185,12 @@ class GNNExplainer(ExplainerAlgorithm):
         y_hat: Tensor,
         y: Tensor,
     ) -> Tensor:
-        if self.model_config.return_type.value == 'raw':
+        if self.model_config.return_type == ModelReturnType.raw:
             loss_fn = F.cross_entropy
-        elif self.model_config.return_type.value == 'probs':
+        elif self.model_config.return_type == ModelReturnType.probs:
             loss_fn = F.nll_loss
             y_hat = y_hat.log()
-        elif self.model_config.return_type.value == 'log_probs':
+        elif self.model_config.return_type == ModelReturnType.log_probs:
             loss_fn = F.nll_loss
         else:
             assert False
@@ -199,7 +198,7 @@ class GNNExplainer(ExplainerAlgorithm):
         return loss_fn(y_hat, y)
 
     def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        assert self.model_config.return_type.value == 'raw'
+        assert self.model_config.return_type == ModelReturnType.raw
         return F.mse_loss(y_hat, y)
 
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:

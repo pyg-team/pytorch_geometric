@@ -42,6 +42,7 @@ benchmark_requires = [
     'protobuf<4.21',
     'wandb',
     'pandas',
+    'networkx',
     'matplotlib',
 ]
 

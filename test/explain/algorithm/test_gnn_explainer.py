@@ -2,7 +2,13 @@ import pytest
 import torch
 
 from torch_geometric.explain import Explainer, Explanation, GNNExplainer
-from torch_geometric.explain.config import MaskType, ModelConfig
+from torch_geometric.explain.config import (
+    MaskType,
+    ModelConfig,
+    ModelMode,
+    ModelReturnType,
+    ModelTaskLevel,
+)
 from torch_geometric.nn import GCNConv, global_add_pool
 
 
@@ -12,7 +18,7 @@ class GCN(torch.nn.Module):
         self.model_config = model_config
         self.multi_output = multi_output
 
-        if model_config.mode.value == 'multiclass_classification':
+        if model_config.mode == ModelMode.multiclass_classification:
             out_channels = 7
         else:
             out_channels = 1
@@ -24,19 +30,19 @@ class GCN(torch.nn.Module):
         x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
 
-        if self.model_config.task_level.value == 'graph':
+        if self.model_config.task_level == ModelTaskLevel.graph:
             x = global_add_pool(x, batch)
-        elif self.model_config.task_level.value == 'edge':
+        elif self.model_config.task_level == ModelTaskLevel.edge:
             assert edge_label_index is not None
             x = x[edge_label_index[0]] * x[edge_label_index[1]]
 
-        if self.model_config.mode.value == 'binary_classification':
-            if self.model_config.return_type.value == 'probs':
+        if self.model_config.mode == ModelMode.binary_classification:
+            if self.model_config.return_type == ModelReturnType.probs:
                 x = x.sigmoid()
-        elif self.model_config.mode.value == 'multiclass_classification':
-            if self.model_config.return_type.value == 'probs':
+        elif self.model_config.mode == ModelMode.multiclass_classification:
+            if self.model_config.return_type == ModelReturnType.probs:
                 x = x.softmax(dim=-1)
-            elif self.model_config.return_type.value == 'log_probs':
+            elif self.model_config.return_type == ModelReturnType.log_probs:
                 x = x.log_softmax(dim=-1)
 
         return torch.stack([x, x], dim=0) if self.multi_output else x
@@ -113,9 +119,9 @@ def test_gnn_explainer_binary_classification(
     if explanation_type == 'phenomenon':
         with torch.no_grad():
             out = model(x, edge_index, batch, edge_label_index)
-            if model_config.return_type.value == 'raw':
+            if model_config.return_type == ModelReturnType.raw:
                 target = (out > 0).long().view(-1)
-            if model_config.return_type.value == 'probs':
+            if model_config.return_type == ModelReturnType.probs:
                 target = (out > 0.5).long().view(-1)
 
     explainer = Explainer(
