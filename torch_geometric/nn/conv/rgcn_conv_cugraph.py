@@ -97,7 +97,7 @@ class RGCNConvCuGraph(nn.Module):
             glorot(self.weight[-1])
         zeros(self.bias)
 
-    def forward(self, x: OptTensor, edge_index: Adj,
+    def forward(self, x: OptTensor, edge_index: Adj, num_nodes: int,
                 edge_type: OptTensor = None,
                 from_neighbor_sampler: Optional[bool] = False,
                 num_neighbors: Optional[int] = None):
@@ -108,6 +108,7 @@ class RGCNConvCuGraph(nn.Module):
                 :obj:`None`, the model uses an identity matrix for the node
                 features.
             edge_index (LongTensor or SparseTensor): The edge indices.
+            num_nodes (int): The number of nodes in the graph.
             edge_type: The one-dimensional relation type/index for each edge in
                 :obj:`edge_index`.
                 Should be only :obj:`None` in case :obj:`edge_index` is of type
@@ -134,22 +135,23 @@ class RGCNConvCuGraph(nn.Module):
         if isinstance(edge_index, SparseTensor):
             adj = edge_index
             assert adj.storage.value() is not None
+            assert adj.size(0) == adj.size(1)
         else:
             assert edge_type is not None
             adj = SparseTensor(row=edge_index[0], col=edge_index[1],
+                               sparse_sizes=(num_nodes, num_nodes),
                                value=edge_type)
 
         offsets, indices, edge_type_perm = adj.csc()
         edge_type_perm = edge_type_perm.int()
-        num_src_nodes, num_dst_nodes = adj.sparse_sizes()
 
         # Create cugraph-ops graph.
         if from_neighbor_sampler:
             if num_neighbors is None:
                 num_neighbors = int(degree(edge_index[1]).max().item())
 
-            src_nodes = torch.arange(num_src_nodes, device=_device)
-            dst_nodes = torch.arange(num_dst_nodes, device=_device)
+            src_nodes = torch.arange(num_nodes, device=_device)
+            dst_nodes = torch.arange(num_nodes, device=_device)
 
             _graph = make_mfg_csr_hg(dst_nodes, src_nodes, offsets, indices,
                                      num_neighbors, n_node_types=0,

@@ -40,7 +40,7 @@ def test_rgcn_conv_equality(aggr, bias, num_bases, root_weight):
     conv2 = RGCNConvCuGraph(*args, **kwargs).to(device)
 
     out1 = conv1(x, edge_index, edge_type)
-    out2 = conv2(x, edge_index, edge_type)
+    out2 = conv2(x, edge_index, num_nodes, edge_type)
 
     assert torch.allclose(out1, out2, atol=1e-6)
 
