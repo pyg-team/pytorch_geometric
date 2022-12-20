@@ -32,6 +32,7 @@ full_requires = graphgym_requires + [
     'rdflib',
     'trimesh',
     'networkx',
+    'graphviz',
     'tabulate',
     'matplotlib',
     'scikit-image',
