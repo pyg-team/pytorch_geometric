@@ -148,7 +148,7 @@ def test_edge_mask(data):
     assert out.edge_attr.size() == (3, 3)
 
 
-@withPackage('matplotlib')
+@withPackage('matplotlib', 'pandas')
 @pytest.mark.parametrize('top_k', [2, None])
 @pytest.mark.parametrize('node_mask_type', [None, 'attributes'])
 def test_visualize_feature_importance(data, top_k, node_mask_type):
@@ -160,6 +160,7 @@ def test_visualize_feature_importance(data, top_k, node_mask_type):
         with pytest.raises(ValueError, match="node_mask' is not"):
             explanation.visualize_feature_importance(path, top_k=top_k)
     else:
+        assert not os.path.exists(path)
         explanation.visualize_feature_importance(path, top_k=top_k)
         assert os.path.exists(path)
         os.remove(path)
