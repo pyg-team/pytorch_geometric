@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj, Tensor
+from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import degree
 
 from ..inits import glorot, zeros
@@ -95,22 +95,53 @@ class RGCNConvCuGraph(nn.Module):
         glorot(self.comp)
         zeros(self.bias)
 
-    def forward(self, x: Tensor, edge_index: Adj, edge_type: Tensor):
+    def forward(self, x: OptTensor, edge_index: Adj,
+                edge_type: OptTensor = None,
+                from_neighbor_sampler: Optional[bool] = False):
+        r"""
+        Args:
+            x: The input node features. Can be either a :obj:`[num_nodes,
+                in_channels]` node feature matrix, or :obj:`None`. If set to
+                :obj:`None`, the model uses an identity matrix for the node
+                features.
+            edge_index (LongTensor or SparseTensor): The edge indices.
+            edge_type: The one-dimensional relation type/index for each edge in
+                :obj:`edge_index`.
+                Should be only :obj:`None` in case :obj:`edge_index` is of type
+                :class:`torch_sparse.tensor.SparseTensor`.
+                (default: :obj:`None`)
+            from_neighbor_sampler: Set to :obj:`True` when :obj:`edge_index`
+                comes from a neighbor sampler. This allows the model to opt for
+                a more performant aggregation primitive.
+                (default: :obj:`False`)
+        """
+        _device = next(self.parameters()).device
+        if _device.type != "cuda":
+            raise RuntimeError(
+                f"torch_geometric.nn.RGCNConvCuGraph requires the model to be "
+                f"on device 'cuda', but got '{_device.type}'.")
+
         # Create csc-representation and cast edge_types to int32.
-        adj = SparseTensor(row=edge_index[0], col=edge_index[1],
-                           value=edge_type)
+        if isinstance(edge_index, SparseTensor):
+            adj = edge_index
+            assert adj.storage.value() is not None
+        else:
+            assert edge_type is not None
+            adj = SparseTensor(row=edge_index[0], col=edge_index[1],
+                               value=edge_type)
+
         offsets, indices, edge_type_perm = adj.csc()
         edge_type_perm = edge_type_perm.int()
         num_src_nodes, num_dst_nodes = adj.sparse_sizes()
 
-        use_mfg = True
-        if use_mfg:
+        # Create cugraph-ops graph.
+        if from_neighbor_sampler:
             num_neighbors = self.num_neighbors
             if num_neighbors is None:
                 num_neighbors = int(degree(edge_index[1]).max().item())
 
-            src_nodes = torch.arange(num_src_nodes, device=x.device)
-            dst_nodes = torch.arange(num_dst_nodes, device=x.device)
+            src_nodes = torch.arange(num_src_nodes, device=_device)
+            dst_nodes = torch.arange(num_dst_nodes, device=_device)
 
             _graph = make_mfg_csr_hg(dst_nodes, src_nodes, offsets, indices,
                                      num_neighbors, n_node_types=0,
@@ -121,6 +152,9 @@ class RGCNConvCuGraph(nn.Module):
             _graph = make_fg_csr_hg(offsets, indices, n_node_types=0,
                                     n_edge_types=self.num_relations,
                                     node_types=None, edge_types=edge_type_perm)
+
+        if x is None:
+            x = torch.eye(self.in_channels, device=_device)
 
         out = RGCNConvAgg(x, self.comp, _graph, not self.root_weight,
                           bool(self.aggr == 'mean'))
