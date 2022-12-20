@@ -33,7 +33,6 @@ jobs:
 
       - name: Install main package
         run: |
-          sudo apt-get install graphviz
           pip install -e .[full,test]
 
       - name: Run tests
