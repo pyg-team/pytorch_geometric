@@ -464,6 +464,9 @@ class SubgraphXExplainer(ExplainerAlgorithm):
             value_func = GnnNetsGC2valueFunc(model, target_class=label)
 
         else:
+            # get label of `node_idx`
+            label = label[node_idx]
+
             # Explanation for Node Classification Task
             self.mcts_state_map = self.get_mcts_class(x, edge_index,
                                                       node_idx=node_idx)
@@ -600,6 +603,8 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         # create node_mask from masked_node_list
         node_mask = torch.zeros(size=(x.size()[0], )).float()
         node_mask[masked_node_list] = 1.0
+        # squeeze() to make it 2-dimensional
+        node_mask = node_mask.unsqueeze(1)
 
         # create edge_mask from masked_node_list
         explained_edge_list = []
