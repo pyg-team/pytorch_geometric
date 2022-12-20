@@ -24,15 +24,20 @@ class RGCNConvCuGraph(nn.Module):
     Relational Data with Graph Convolutional Networks"
     <https://arxiv.org/abs/1703.06103>`_ paper, with the sparse
     aggregations accelerated by `cugraph-ops`.
+
     See :class:`RGCNConv` for the mathematical model.
-    This module depends on :code:`pylibcugraphops` package, which can be
-    installed via :code:`conda install -c nvidia pylibcugraphops>=23.02`.
+
     .. note::
-        Compared with :class:`torch_geometric.nn.conv.RGCNConv`, this model:
-        * Only works on cuda devices.
-        * Only supports basis-decomposition regularization.
+        This module depends on :code:`pylibcugraphops` package, which can be
+        installed via :code:`conda install -c nvidia pylibcugraphops>=23.02`.
+        Compared with :class:`torch_geometric.nn.conv.RGCNConv`, this model
+        only works on cuda devices and only supports basis-decomposition
+        regularization.
+
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int): Size of each input sample. In case no input features
+            are given, this argument should correspond to the number of nodes
+            in your graph.
         out_channels (int): Size of each output sample.
         num_relations (int): Number of relations.
         num_bases (int, optional): If set, this layer will use the
@@ -46,26 +51,20 @@ class RGCNConvCuGraph(nn.Module):
             (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        num_neighbors (int, optional): The maximum number of neighbors of an
-            output node. It is recommended to pass in the value for better
-            performance. It should be the same as the `num_neighbors` used in
-            :class:`torch_geometric.loader.NeighborLoader`. If :obj:`None`,
-            the value will be computed on-the-fly. (default: :obj:`None`)
+
     """
     def __init__(self, in_channels: int, out_channels: int, num_relations: int,
                  num_bases: Optional[int] = None, aggr: str = 'mean',
-                 root_weight: bool = True, bias: bool = True,
-                 num_neighbors: Optional[int] = None):
+                 root_weight: bool = True, bias: bool = True):
         if has_pylibcugraphops is False:
             raise ModuleNotFoundError(
                 "torch_geometric.nn.RGCNConvCuGraph requires pylibcugraphops "
-                "to be installed.")
+                ">= 23.02.00.")
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.num_relations = num_relations
         self.num_bases = num_bases
-        self.num_neighbors = num_neighbors
         self.aggr = aggr
         self.root_weight = root_weight
         assert self.aggr in ['add', 'sum', 'mean']
@@ -100,7 +99,8 @@ class RGCNConvCuGraph(nn.Module):
 
     def forward(self, x: OptTensor, edge_index: Adj,
                 edge_type: OptTensor = None,
-                from_neighbor_sampler: Optional[bool] = False):
+                from_neighbor_sampler: Optional[bool] = False,
+                num_neighbors: Optional[int] = None):
         r"""
         Args:
             x: The input node features. Can be either a :obj:`[num_nodes,
@@ -115,8 +115,14 @@ class RGCNConvCuGraph(nn.Module):
                 (default: :obj:`None`)
             from_neighbor_sampler: Set to :obj:`True` when :obj:`edge_index`
                 comes from a neighbor sampler. This allows the model to opt for
-                a more performant aggregation primitive.
-                (default: :obj:`False`)
+                a more performant aggregation primitive that is designed for
+                sampled graphs. (default: :obj:`False`)
+            num_neighbors (int, optional): The maximum number of neighbors of
+                an output node. It only becomes effective when
+                :obj:`from_neighbor_sampler` is set and should be the same as
+                the :obj:`num_neighbors` used in the neighbor sampler. If
+                :obj:`None`, the value will be computed on-the-fly.
+                (default: :obj:`None`)
         """
         _device = next(self.parameters()).device
         if _device.type != "cuda":
@@ -139,7 +145,6 @@ class RGCNConvCuGraph(nn.Module):
 
         # Create cugraph-ops graph.
         if from_neighbor_sampler:
-            num_neighbors = self.num_neighbors
             if num_neighbors is None:
                 num_neighbors = int(degree(edge_index[1]).max().item())
 
