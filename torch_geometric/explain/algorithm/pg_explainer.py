@@ -3,9 +3,9 @@ from typing import Optional
 
 import torch
 import torch.nn.functional as F
-import tqdm
 from torch import Tensor, nn
 from torch_scatter import scatter_mean
+from tqdm import tqdm
 
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.algorithm.utils import (
@@ -14,7 +14,10 @@ from torch_geometric.explain.algorithm.utils import (
     set_masks,
 )
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
-from torch_geometric.utils import get_intermediate_messagepassing_embeddings
+from torch_geometric.utils import (
+    get_intermediate_messagepassing_embeddings,
+    k_hop_subgraph,
+)
 
 from .base import ExplainerAlgorithm
 
@@ -61,7 +64,7 @@ class PGExplainer(ExplainerAlgorithm):
 
         edge_mask_type = self.explainer_config.edge_mask_type
         if edge_mask_type not in [MaskType.object]:
-            logging.error(f"Edge mask type '{edge_mask_type.value}' not "
+            logging.error(f"Edge mask type '{edge_mask_type}' not "
                           f"supported")
             return False
 
@@ -71,12 +74,34 @@ class PGExplainer(ExplainerAlgorithm):
                 "Node mask not supported. Set 'node_mask_type' to 'None'")
             return False
 
-        is_hetero = self._is_hetero
-        if is_hetero:
-            logging.error("Heterogeneous graphs not supported.")
-            return False
-
         return True
+
+    def subgraph(self, node_idx: int, x: Tensor, edge_index: Tensor, model,
+                 **kwargs):
+        r"""Returns the subgraph of the given node.
+        Args:
+            node_idx (int): The node to explain.
+            x (Tensor): The node feature matrix.
+            edge_index (LongTensor): The edge indices.
+            **kwargs (optional): Additional arguments passed to the GNN module.
+        :rtype: (Tensor, Tensor, LongTensor, LongTensor, LongTensor, dict)
+        """
+        num_nodes, num_edges = x.size(0), edge_index.size(1)
+        subset, edge_index, mapping, edge_mask = k_hop_subgraph(
+            node_idx, ExplainerAlgorithm._num_hops(model), edge_index,
+            relabel_nodes=True, num_nodes=num_nodes,
+            flow=ExplainerAlgorithm._flow(model))
+
+        x = x[subset]
+        kwargs_new = {}
+        for key, value in kwargs.items():
+            if torch.is_tensor(value) and value.size(0) == num_nodes:
+                kwargs_new[key] = value[subset]
+            elif torch.is_tensor(value) and value.size(0) == num_edges:
+                kwargs_new[key] = value[edge_mask]
+            else:
+                kwargs_new[key] = value
+        return x, edge_index, mapping, edge_mask, subset, kwargs_new
 
     def train_explainer(self, model: torch.nn.Module, x: Tensor,
                         edge_index: Tensor, target: Tensor = None,
@@ -99,7 +124,7 @@ class PGExplainer(ExplainerAlgorithm):
 
         model_state = model.training
         model.eval()
-        clear_masks(self.model)
+        clear_masks(model)
         self.to(x.device)
         optimizer = torch.optim.Adam(self.explainer_model.parameters(),
                                      lr=self.lr)
@@ -107,7 +132,7 @@ class PGExplainer(ExplainerAlgorithm):
 
         if self.log:  # pragma: no cover
             pbar = tqdm(total=self.epochs)
-            pbar.set_description('Training Explainer')
+            pbar.set_description('Training PG Explainer')
 
         # train explainer_model
         bias = self.coeffs['bias']
@@ -128,11 +153,10 @@ class PGExplainer(ExplainerAlgorithm):
                 t = self._get_temp(e)
                 self.edge_mask = self._compute_edge_mask(
                     self.explainer_model(explainer_in), t, bias=bias)
-                set_masks(self.model, self.edge_mask, edge_index)
-                out = self.model(x=x, edge_index=edge_index, batch=batch,
-                                 **kwargs)
-                self.get_loss(out, target.squeeze(), node_idx=None,
-                              batch=batch, edge_index=edge_index).backward()
+                set_masks(model, self.edge_mask, edge_index)
+                out = model(x=x, edge_index=edge_index, batch=batch, **kwargs)
+                self._loss(out, target.squeeze(), index=None, batch=batch,
+                           edge_index=edge_index).backward()
                 optimizer.step()
                 if self.log:  # pragma: no cover
                     pbar.update(1)
@@ -150,7 +174,8 @@ class PGExplainer(ExplainerAlgorithm):
                     n = int(n)
                     kwargs['z'] = z
                     (x_n, edge_index_n, mapping, _, _,
-                     kwargs_n) = self.subgraph(n, x, edge_index, **kwargs)
+                     kwargs_n) = self.subgraph(n, x, edge_index, model,
+                                               **kwargs)
                     z_n = kwargs_n.pop('z')
 
                     explainer_in = self._create_explainer_input(
@@ -158,10 +183,9 @@ class PGExplainer(ExplainerAlgorithm):
                     self.edge_mask = self._compute_edge_mask(
                         self.explainer_model(explainer_in), t, bias=bias)
 
-                    set_masks(self.model, self.edge_mask, edge_index_n)
-                    out = self.model(x=x_n, edge_index=edge_index_n,
-                                     **kwargs_n)
-                    loss += self.get_loss(out, target, mapping)
+                    set_masks(model, self.edge_mask, edge_index_n)
+                    out = model(x=x_n, edge_index=edge_index_n, **kwargs_n)
+                    loss += self._loss(out, target, mapping)
                     clear_masks(self.model)
 
                 assert not torch.isnan(loss)
@@ -204,17 +228,17 @@ class PGExplainer(ExplainerAlgorithm):
         else:
             return edge_weight.squeeze(dim=1)
 
-    def _loss(self, log_logits, prediction, node_idx=None, batch=None,
+    def _loss(self, log_logits, prediction, index=None, batch=None,
               edge_index=None):
         if self.model_config.mode == ModelMode.regression:
-            if node_idx is not None:
-                loss = F.mse_loss(log_logits[node_idx], prediction[node_idx],
+            if index is not None:
+                loss = F.mse_loss(log_logits[index], prediction[index],
                                   reduction='sum')
             else:
                 loss = F.mse_loss(log_logits, prediction, reduction='sum')
         else:
-            if node_idx is not None:
-                loss = F.nll_loss(log_logits[node_idx], prediction[node_idx])
+            if index is not None:
+                loss = F.nll_loss(log_logits[index], prediction[index])
             else:
                 loss = F.nll_loss(log_logits, prediction, reduction='sum')
         mask = self.edge_mask.sigmoid().squeeze()
@@ -241,6 +265,7 @@ class PGExplainer(ExplainerAlgorithm):
             **kwargs (optional): Additional arguments passed to the GNN module.
         :rtype: :class:`Tensor`
         """
+        assert self.training_needed is False
         z = get_intermediate_messagepassing_embeddings(model, x=x,
                                                        edge_index=edge_index,
                                                        **kwargs)[-1]
@@ -254,7 +279,7 @@ class PGExplainer(ExplainerAlgorithm):
             num_edges = edge_index.shape[1]
             kwargs['z'] = z
             (x, edge_index, mapping, hop_mask, _,
-             kwargs_n) = self.subgraph(index, x, edge_index, **kwargs)
+             kwargs_n) = self.subgraph(index, x, edge_index, model, **kwargs)
             z = kwargs_n.pop('z')
             explainer_in = self._create_explainer_input(edge_index, z, mapping)
             edge_mask = self._compute_edge_mask(
