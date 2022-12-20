@@ -112,9 +112,8 @@ def main():
 
     # create train and test dl
     idx = torch.arange(len(dataset))
-    train_idx, test_idx = train_test_split(
-        idx, train_size=0.8, stratify=dataset.data.y
-    )
+    train_idx, test_idx = train_test_split(idx, train_size=0.8,
+                                           stratify=dataset.data.y)
 
     train_dataset = dataset[train_idx]
     test_dataset = dataset[test_idx]
@@ -128,9 +127,8 @@ def main():
         num_classes=dataset.num_classes,
         batch_norm=True,
     )
-    optimizer = torch.optim.Adam(
-        model.parameters(), lr=0.001, weight_decay=0.01
-    )
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001,
+                                 weight_decay=0.01)
     loss_fn = torch.nn.CrossEntropyLoss()
 
     epochs = 200
@@ -140,13 +138,10 @@ def main():
         # train the model
         loss = train(model, train_dl, optimizer, loss_fn)
         if epoch == 1 or epoch % 10 == 0:
-            train_acc, test_acc = (
-                get_acc(model, train_dl), get_acc(model, test_dl)
-            )
-            pbar.set_description(
-                f"Loss: {loss:.4f}, Train: {train_acc:.4f},"
-                f"Test: {test_acc:.4f}"
-            )
+            train_acc, test_acc = (get_acc(model,
+                                           train_dl), get_acc(model, test_dl))
+            pbar.set_description(f"Loss: {loss:.4f}, Train: {train_acc:.4f},"
+                                 f"Test: {test_acc:.4f}")
 
     pbar.close()
     # set model to eval mode
@@ -181,14 +176,12 @@ def main():
 
     # we can plot the explanation using networkx
     G = to_networkx(
-        Data(x=dataset[node_idx].x, edge_index=dataset[node_idx].edge_index)
-    )
+        Data(x=dataset[node_idx].x, edge_index=dataset[node_idx].edge_index))
     pos = nx.spring_layout(G)
     G = G.to_undirected()
     nx.draw_networkx(G, pos=pos)
-    nx.draw_networkx(
-        G.subgraph(explanation.masked_node_list), pos=pos, node_color="red"
-    )
+    nx.draw_networkx(G.subgraph(explanation.masked_node_list), pos=pos,
+                     node_color="red")
 
 
 if __name__ == "__main__":
