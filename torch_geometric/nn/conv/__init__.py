@@ -53,7 +53,7 @@ from .han_conv import HANConv
 from .lg_conv import LGConv
 from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
-from .cugraph_rgcn_conv import RGCNConvCuGraph
+from .rgcn_conv_cugraph import RGCNConvCuGraph
 
 __all__ = [
     'MessagePassing',

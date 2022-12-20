@@ -91,8 +91,11 @@ class RGCNConvCuGraph(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        glorot(self.weight)
+        end = -1 if self.root_weight else None
+        glorot(self.weight[:end])
         glorot(self.comp)
+        if self.root_weight:
+            glorot(self.weight[-1])
         zeros(self.bias)
 
     def forward(self, x: OptTensor, edge_index: Adj,
