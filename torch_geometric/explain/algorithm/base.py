@@ -105,15 +105,12 @@ class ExplainerAlgorithm(torch.nn.Module):
         if mask is None:
             return mask
 
-        if mask.size(0) == 1:  # common_attributes:
-            mask = mask.repeat(num_elems, 1)
-
-        mask = mask.detach().squeeze(-1)
+        mask = mask.detach()
 
         if apply_sigmoid:
             mask = mask.sigmoid()
 
-        if hard_mask is not None:
+        if hard_mask is not None and mask.size(0) == hard_mask.size(0):
             mask[~hard_mask] = 0.
 
         return mask

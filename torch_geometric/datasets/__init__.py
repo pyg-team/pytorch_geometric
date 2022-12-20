@@ -79,6 +79,8 @@ from .elliptic import EllipticBitcoinDataset
 from .dgraph import DGraphFin
 from .hydro_net import HydroNet
 from .explainer_dataset import ExplainerDataset
+from .infection_dataset import InfectionDataset
+from .ba2motif_dataset import BA2MotifDataset
 from .taobao import Taobao
 
 import torch_geometric.datasets.utils  # noqa
@@ -168,6 +170,8 @@ __all__ = [
     'DGraphFin',
     'HydroNet',
     'ExplainerDataset',
+    'InfectionDataset',
+    'BA2MotifDataset',
     'Taobao',
 ]
 

@@ -37,6 +37,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .tree_decomposition import tree_decomposition
+from .embedding import get_message_passing_embeddings
 from .train_test_split_edges import train_test_split_edges
 
 __all__ = [
@@ -102,6 +103,7 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'tree_decomposition',
+    'get_message_passing_embeddings',
     'train_test_split_edges',
 ]
 
