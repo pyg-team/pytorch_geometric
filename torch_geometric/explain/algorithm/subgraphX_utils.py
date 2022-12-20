@@ -18,7 +18,9 @@ from torch_geometric.utils import to_networkx
 
 
 def find_closest_node_result(results, max_nodes):
-    """return the highest reward tree_node with its subgraph is smaller than max_nodes"""
+    """Return the highest reward tree_node
+    with its subgraph is smaller than max_nodes
+    """
     results = sorted(results, key=lambda x: len(x.coalition))
 
     result_node = results[0]
@@ -65,7 +67,9 @@ def marginal_contribution(
     value_func,
     subgraph_build_func,
 ):
-    """Calculate the marginal value for each pair. Here exclude_mask and include_mask are node mask."""
+    """Calculate the marginal value for each pair.
+    Here exclude_mask and include_mask are node mask.
+    """
     marginal_subgraph_dataset = MarginalSubgraphDataset(
         data, exclude_mask, include_mask, subgraph_build_func)
     dataloader = DataLoader(marginal_subgraph_dataset, batch_size=256,
@@ -248,13 +252,17 @@ def get_graph_build_func(build_method):
 
 
 def graph_build_zero_filling(X, edge_index, node_mask: np.array):
-    """subgraph building through masking the unselected nodes with zero features"""
+    """Subgraph building through masking the
+    unselected nodes with zero features
+    """
     ret_X = X * node_mask.unsqueeze(1)
     return ret_X, edge_index
 
 
 def graph_build_split(X, edge_index, node_mask: np.array):
-    """subgraph building through spliting the selected nodes from the original graph"""
+    """subgraph building through spliting the selected nodes
+    from the original graph
+    """
     ret_X = X
     row, col = edge_index
     edge_mask = (node_mask[row] == 1) & (node_mask[col] == 1)
@@ -344,7 +352,8 @@ def NC_mc_l_shapley(
     subgraph_building_method="zero_filling",
     sample_num=1000,
 ) -> float:
-    """monte carlo approximation of l_shapley where the target node is kept in both subgraph"""
+    """monte carlo approximation of l_shapley where the
+    target node is kept in both subgraph"""
     graph = to_networkx(data)
     num_nodes = graph.number_of_nodes()
     subgraph_build_func = get_graph_build_func(subgraph_building_method)
@@ -423,7 +432,8 @@ def GnnNetsNC2valueFunc(gnnNets_NC, node_idx, target_class):
         with torch.no_grad():
             logits = gnnNets_NC(data.x, data.edge_index)
             probs = F.softmax(logits, dim=-1)
-            # select the corresponding node prob through the node idx on all the sampling graphs
+            # select the corresponding node prob through
+            # the node idx on all the sampling graphs
             batch_size = data.batch.max() + 1
             probs = probs.reshape(batch_size, -1, probs.shape[-1])
             score = probs[:, node_idx, target_class]

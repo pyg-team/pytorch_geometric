@@ -115,7 +115,9 @@ def main():
     # Get subgraph for our node_idx based on num_layers (or num_hops)
     # Convert subgraph to networkx object for visualization
     subgraph_x, subgraph_edge_index, subset, _, _ = \
-        MCTS.__subgraph__(node_idx, data.x, data.edge_index, num_hops=num_layers)
+        MCTS.__subgraph__(
+            node_idx, data.x, data.edge_index, num_hops=num_layers
+        )
     subgraph_y = data.y[subset].to('cpu')
     G = to_networkx(Data(x=subgraph_x, edge_index=subgraph_edge_index))
     new_node_idx = torch.where(subset == node_idx)[0].item()

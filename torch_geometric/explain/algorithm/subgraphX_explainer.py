@@ -227,7 +227,8 @@ class MCTS(object):
 
             for each_node in expand_nodes:
                 # for each node, pruning it and get the remaining sub-graph
-                # here we check the resulting sub-graphs and only keep the largest one
+                # here we check the resulting sub-graphs and
+                # only keep the largest one
                 subgraph_coalition = [
                     node for node in all_nodes if node != each_node
                 ]
@@ -306,22 +307,29 @@ class SubgraphXExplainer(ExplainerAlgorithm):
         https://github.com/divelab/DIG/blob/dig-stable/dig/xgraph/method/subgraphx.py
 
     .. note::
-        For an example of using SubgraphXExplainer, see `examples/subgraphx_explainer.py
+        For an example of using SubgraphXExplainer, see
+        `examples/subgraphx_explainer.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         subgraphx_explainer.py>`_.
 
     Args:
         device: Device to generate the explanations on.
-        local_radius(:obj:`int`): Local radius to be considered while evaluating
-            subgraph importance for :obj:`l_shapley`, :obj:`mc_l_shapley`
-        sample_num(:obj:`int`): Sampling time of monte carlo sampling approximation for
-            :obj:`mc_shapley`, :obj:`mc_l_shapley` (default: :obj:`mc_l_shapley`)
-        reward_method(:obj:`str`): Reward method to assign subgraph importance
-            One of ["gnn_score", "mc_shapley", "l_shapley", "mc_l_shapley", "nc_mc_l_shapley"]
-        subgraph_building_method(:obj:`str`): Specifies way to fill subgraph
-            One of ["zero_filling", "split"]
-        save_dir(:obj:`str`, :obj:`None`): Root directory to save the explanation
-            results (default: :obj:`None`)
+        local_radius(:obj:`int`): Local radius to be considered while
+            evaluating subgraph importance for :obj:`l_shapley`,
+            :obj:`mc_l_shapley`
+        sample_num(:obj:`int`): Sampling time of monte carlo sampling
+            approximation for :obj:`mc_shapley`, :obj:`mc_l_shapley`
+            (default: :obj:`mc_l_shapley`)
+        reward_method(:obj:`str`): Reward method to assign subgraph
+            importance.
+            One of [
+                "gnn_score", "mc_shapley", "l_shapley",
+                "mc_l_shapley", "nc_mc_l_shapley"
+            ]
+        subgraph_building_method(:obj:`str`): Specifies way to fill
+            subgraph. One of ["zero_filling", "split"]
+        save_dir(:obj:`str`, :obj:`None`): Root directory to save
+        the explanation results (default: :obj:`None`)
         filename(:obj:`str`): The filename of results
         TODO: Fill this.
     """
@@ -581,7 +589,8 @@ class SubgraphXExplainer(ExplainerAlgorithm):
 
         if self.model_config.task_level == ModelTaskLevel.node:
             # check if index has been provided
-            assert index is not None, "For Node Classification task, index (node_idx) must be provided"
+            assert index is not None, \
+                "For Node Classification, index (node_idx) must be provided"
 
         # get explanation for that index and the prediction label
         results, related_pred, masked_node_list = self.explain(
