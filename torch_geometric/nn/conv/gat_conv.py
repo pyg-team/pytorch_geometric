@@ -278,7 +278,6 @@ class GATConv(MessagePassing):
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        print(alpha.shape)
         return alpha
 
     def message(self, x_j: Tensor, alpha: Tensor) -> Tensor:
