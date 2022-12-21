@@ -29,7 +29,6 @@ class AttentionExplainer(ExplainerAlgorithm):
         aggregate_fn (str, optional): The method to aggregate the attention scores .
             (default: :obj:`max`)
     """
-
     def __init__(self, aggregate_fn: str = "max"):
         super().__init__()
         self.edge_mask = None
@@ -38,9 +37,9 @@ class AttentionExplainer(ExplainerAlgorithm):
     def supports(self) -> bool:
         task_level = self.model_config.task_level
         if task_level not in [
-            ModelTaskLevel.node,
-            ModelTaskLevel.edge,
-            ModelTaskLevel.graph,
+                ModelTaskLevel.node,
+                ModelTaskLevel.edge,
+                ModelTaskLevel.graph,
         ]:
             logging.error(f"Task level '{task_level.value}' not supported")
             return False
@@ -48,8 +47,7 @@ class AttentionExplainer(ExplainerAlgorithm):
         edge_mask_type = self.explainer_config.edge_mask_type
         if edge_mask_type != MaskType.object:
             logging.error(
-                f"Edge mask type '{edge_mask_type.value}' not supported"
-            )
+                f"Edge mask type '{edge_mask_type.value}' not supported")
             return False
 
         return True
@@ -65,8 +63,7 @@ class AttentionExplainer(ExplainerAlgorithm):
 
         # Get attention scores per layer.
         attention_scores = [
-            layer.get_alphas()
-            for layer in model.modules()
+            layer.get_alphas() for layer in model.modules()
             if isinstance(layer, MessagePassing)
             and layer.get_alphas() is not None
         ]
@@ -87,8 +84,7 @@ class AttentionExplainer(ExplainerAlgorithm):
             # We need to compute hard masks to properly clean up edges and
             # nodes attributions not involved during message passing:
             hard_node_mask, hard_edge_mask = self._get_hard_masks(
-                model, index, edge_index, num_nodes=x.size(0)
-            )
+                model, index, edge_index, num_nodes=x.size(0))
 
         edge_mask = self._post_process_mask(
             self.edge_mask,
