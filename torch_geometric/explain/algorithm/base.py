@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import Dict, Optional, Tuple, Union
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
@@ -12,7 +13,7 @@ from torch_geometric.utils import k_hop_subgraph
 
 
 class ExplainerAlgorithm(torch.nn.Module):
-    def __init__(self, training_need=False) -> None:
+    def __init__(self, training_needed=False) -> None:
         r"""Abstract base class for explainer algorithms.
 
         Args:
@@ -20,7 +21,7 @@ class ExplainerAlgorithm(torch.nn.Module):
                 be trained using `self.train_explainer`.
         """
         super().__init__()
-        self.training_needed = training_need
+        self.training_needed = training_needed
 
     @abstractmethod
     def forward(
@@ -177,3 +178,34 @@ class ExplainerAlgorithm(torch.nn.Module):
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
+
+    def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        if self.model_config.return_type.value == 'raw':
+            loss_fn = F.binary_cross_entropy_with_logits
+        elif self.model_config.return_type.value == 'probs':
+            loss_fn = F.binary_cross_entropy
+        else:
+            assert False
+
+        return loss_fn(y_hat.view_as(y), y.float())
+
+    def _loss_multiclass_classification(
+        self,
+        y_hat: Tensor,
+        y: Tensor,
+    ) -> Tensor:
+        if self.model_config.return_type.value == 'raw':
+            loss_fn = F.cross_entropy
+        elif self.model_config.return_type.value == 'probs':
+            loss_fn = F.nll_loss
+            y_hat = y_hat.log()
+        elif self.model_config.return_type.value == 'log_probs':
+            loss_fn = F.nll_loss
+        else:
+            assert False
+
+        return loss_fn(y_hat, y)
+
+    def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        assert self.model_config.return_type.value == 'raw'
+        return F.mse_loss(y_hat, y)

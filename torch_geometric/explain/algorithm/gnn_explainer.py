@@ -3,7 +3,6 @@ from math import sqrt
 from typing import Optional, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.parameter import Parameter
 
@@ -201,37 +200,6 @@ class GNNExplainer(ExplainerAlgorithm):
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
         elif edge_mask_type is not None:
             assert False
-
-    def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if self.model_config.return_type.value == 'raw':
-            loss_fn = F.binary_cross_entropy_with_logits
-        elif self.model_config.return_type.value == 'probs':
-            loss_fn = F.binary_cross_entropy
-        else:
-            assert False
-
-        return loss_fn(y_hat.view_as(y), y.float())
-
-    def _loss_multiclass_classification(
-        self,
-        y_hat: Tensor,
-        y: Tensor,
-    ) -> Tensor:
-        if self.model_config.return_type.value == 'raw':
-            loss_fn = F.cross_entropy
-        elif self.model_config.return_type.value == 'probs':
-            loss_fn = F.nll_loss
-            y_hat = y_hat.log()
-        elif self.model_config.return_type.value == 'log_probs':
-            loss_fn = F.nll_loss
-        else:
-            assert False
-
-        return loss_fn(y_hat, y)
-
-    def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        assert self.model_config.return_type.value == 'raw'
-        return F.mse_loss(y_hat, y)
 
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
         if self.model_config.mode == ModelMode.binary_classification:

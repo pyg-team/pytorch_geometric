@@ -2,7 +2,6 @@ import logging
 from typing import Optional
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor, nn
 from torch_scatter import scatter_mean
 from tqdm import tqdm
@@ -50,7 +49,7 @@ class PGExplainer(ExplainerAlgorithm):
 
     def __init__(self, epochs: int = 30, lr: float = 0.003, log: bool = True,
                  **kwargs):
-        super().__init__(training_need=True)
+        super().__init__(training_needed=True)
         self.epochs = epochs
         self.lr = lr
         self.log = log
@@ -155,7 +154,7 @@ class PGExplainer(ExplainerAlgorithm):
                     self.explainer_model(explainer_in), t, bias=bias)
                 set_masks(model, self.edge_mask, edge_index)
                 out = model(x=x, edge_index=edge_index, batch=batch, **kwargs)
-                self._loss(out, target.squeeze(), index=None, batch=batch,
+                self._loss(out, target.squeeze(), batch=batch,
                            edge_index=edge_index).backward()
                 optimizer.step()
                 if self.log:  # pragma: no cover
@@ -177,7 +176,6 @@ class PGExplainer(ExplainerAlgorithm):
                      kwargs_n) = self.subgraph(n, x, edge_index, model,
                                                **kwargs)
                     z_n = kwargs_n.pop('z')
-
                     explainer_in = self._create_explainer_input(
                         edge_index_n, z_n, mapping).detach()
                     self.edge_mask = self._compute_edge_mask(
@@ -185,8 +183,8 @@ class PGExplainer(ExplainerAlgorithm):
 
                     set_masks(model, self.edge_mask, edge_index_n)
                     out = model(x=x_n, edge_index=edge_index_n, **kwargs_n)
-                    loss += self._loss(out, target, mapping)
-                    clear_masks(self.model)
+                    loss += self._loss(out[mapping], target[n])
+                    clear_masks(model)
 
                 assert not torch.isnan(loss)
                 loss.backward()
@@ -197,9 +195,9 @@ class PGExplainer(ExplainerAlgorithm):
 
         if self.log:
             pbar.close()
-        clear_masks(self.model)
+        clear_masks(model)
         model.train(model_state)
-        self.training_need = False
+        self.training_needed = False
 
     def _get_temp(self, e: int) -> float:
         temp = self.coeffs['temp']
@@ -228,19 +226,14 @@ class PGExplainer(ExplainerAlgorithm):
         else:
             return edge_weight.squeeze(dim=1)
 
-    def _loss(self, log_logits, prediction, index=None, batch=None,
-              edge_index=None):
-        if self.model_config.mode == ModelMode.regression:
-            if index is not None:
-                loss = F.mse_loss(log_logits[index], prediction[index],
-                                  reduction='sum')
-            else:
-                loss = F.mse_loss(log_logits, prediction, reduction='sum')
-        else:
-            if index is not None:
-                loss = F.nll_loss(log_logits[index], prediction[index])
-            else:
-                loss = F.nll_loss(log_logits, prediction, reduction='sum')
+    def _loss(self, y, y_hat, batch=None, edge_index=None):
+        if self.model_config.mode == ModelMode.binary_classification:
+            loss = self._loss_binary_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.multiclass_classification:
+            loss = self._loss_multiclass_classification(y_hat, y)
+        elif self.model_config.mode == ModelMode.regression:
+            loss = self._loss_regression(y_hat, y)
+
         mask = self.edge_mask.sigmoid().squeeze()
 
         # Regularization losses
@@ -253,7 +246,8 @@ class PGExplainer(ExplainerAlgorithm):
         return loss + size_loss + mask_ent_loss
 
     def forward(self, model: torch.nn.Module, x: Tensor, edge_index: Tensor,
-                index: Optional[int] = None, **kwargs) -> Explanation:
+                index: Optional[int] = None, target=None,
+                **kwargs) -> Explanation:
         r"""Returns an :obj:`edge_mask` that explains :obj:`model` prediction.
 
         Args:
