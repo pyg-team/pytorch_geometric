@@ -22,7 +22,6 @@ class ExplainerAlgorithm(torch.nn.Module):
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
         r"""Computes the explanation.
@@ -37,11 +36,6 @@ class ExplainerAlgorithm(torch.nn.Module):
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
-            target_index (int, optional): The index of the model outputs to
-                reference in case the model returns a list of tensors, *e.g.*,
-                in a multi-task learning scenario. Should be kept to
-                :obj:`None` in case the model only returns a single output
-                tensor. (default: :obj:`None`)
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
