@@ -67,4 +67,5 @@ def unfaithfulness(
     elif explainer.model_config.return_type == ModelReturnType.log_probs:
         y, y_hat = y.exp(), y_hat.exp()
 
-    return 1 - float(torch.exp(-F.kl_div(y.log(), y_hat, reduction='sum')))
+    kl_div = F.kl_div(y.log(), y_hat, reduction='batchmean')
+    return 1 - float(torch.exp(-kl_div))
