@@ -258,8 +258,6 @@ for epoch in range(1, 21):
     print(f'Epoch: {epoch:03d} | Loss: {loss:4f}')
     print('Eval: Accuracy | Precision | Recall | F1 score')
     print(
-        f'Val: {val_acc:.4f}  | {val_prec:.4f} | {val_rec:.4f} | {val_f1:.4f}'
-    )
+        f'Val: {val_acc:.4f}  | {val_prec:.4f} | {val_rec:.4f} | {val_f1:.4f}')
     print(
-        f'Test: {tst_acc:.4f} | {tst_prec:.4f} | {tst_rec:.4f} | {tst_f1:.4f}'
-    )
+        f'Test: {tst_acc:.4f} | {tst_prec:.4f} | {tst_rec:.4f} | {tst_f1:.4f}')
