@@ -32,6 +32,7 @@ full_requires = graphgym_requires + [
     'rdflib',
     'trimesh',
     'networkx',
+    'graphviz',
     'tabulate',
     'matplotlib',
     'scikit-image',
@@ -42,6 +43,7 @@ benchmark_requires = [
     'protobuf<4.21',
     'wandb',
     'pandas',
+    'networkx',
     'matplotlib',
 ]
 

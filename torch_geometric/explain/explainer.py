@@ -20,6 +20,7 @@ from torch_geometric.explain.config import (
     MaskType,
     ModelConfig,
     ModelMode,
+    ModelReturnType,
     ThresholdConfig,
 )
 from torch_geometric.typing import EdgeType, NodeType
@@ -149,7 +150,6 @@ class Explainer:
         *,
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
@@ -175,11 +175,6 @@ class Explainer:
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
-            target_index (int, optional): The index of the model outputs to
-                reference in case the model returns a list of tensors, *e.g.*,
-                in a multi-task learning scenario. Should be kept to
-                :obj:`None` in case the model only returns a single output
-                tensor. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
@@ -206,7 +201,6 @@ class Explainer:
             edge_index,
             target=target,
             index=index,
-            target_index=target_index,
             **kwargs,
         )
 
@@ -217,7 +211,6 @@ class Explainer:
         explanation.prediction = prediction
         explanation.target = target
         explanation.index = index
-        explanation.target_index = target_index
 
         # Add model inputs to the `Explanation` object:
         if isinstance(explanation, Explanation):
@@ -263,9 +256,9 @@ class Explainer:
         """
         if self.model_config.mode == ModelMode.binary_classification:
             # TODO: Allow customization of the thresholds used below.
-            if self.model_config.return_type.value == 'raw':
+            if self.model_config.return_type == ModelReturnType.raw:
                 return (prediction > 0).long().view(-1)
-            if self.model_config.return_type.value == 'probs':
+            if self.model_config.return_type == ModelReturnType.probs:
                 return (prediction > 0.5).long().view(-1)
             assert False
 

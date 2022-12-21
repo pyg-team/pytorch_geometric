@@ -7,6 +7,8 @@ from typing import Callable
 import torch
 from packaging.requirements import Requirement
 
+from torch_geometric.visualization.graph import has_graphviz
+
 
 def is_full_test() -> bool:
     r"""Whether to run the full but time-consuming test suite."""
@@ -47,6 +49,25 @@ def onlyPython(*args) -> Callable:
     return decorator
 
 
+def onlyCUDA(func: Callable) -> Callable:
+    r"""A decorator to skip tests if CUDA is not found."""
+    import pytest
+    return pytest.mark.skipif(
+        not torch.cuda.is_available(),
+        reason="CUDA not available",
+    )(func)
+
+
+def onlyGraphviz(func: Callable) -> Callable:
+    r"""A decorator to specify that this function should only execute in case
+    :obj:`graphviz` is installed."""
+    import pytest
+    return pytest.mark.skipif(
+        not has_graphviz(),
+        reason="Graphviz not installed",
+    )(func)
+
+
 def withPackage(*args) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification."""
@@ -69,15 +90,6 @@ def withPackage(*args) -> Callable:
         )(func)
 
     return decorator
-
-
-def onlyCUDA(func: Callable) -> Callable:
-    r"""A decorator to skip tests if CUDA is not found."""
-    import pytest
-    return pytest.mark.skipif(
-        not torch.cuda.is_available(),
-        reason="CUDA not available",
-    )(func)
 
 
 def withCUDA(func: Callable):
