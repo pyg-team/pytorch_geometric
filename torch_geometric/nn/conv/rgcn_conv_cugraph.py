@@ -100,7 +100,7 @@ class RGCNConvCuGraph(nn.Module):
     def forward(self, x: OptTensor, edge_index: Adj, num_nodes: int,
                 edge_type: OptTensor = None,
                 from_neighbor_sampler: Optional[bool] = False,
-                num_neighbors: Optional[int] = None):
+                max_num_neighbors: Optional[int] = None):
         r"""
         Args:
             x: The input node features. Can be either a :obj:`[num_nodes,
@@ -118,12 +118,14 @@ class RGCNConvCuGraph(nn.Module):
                 comes from a neighbor sampler. This allows the model to opt for
                 a more performant aggregation primitive that is designed for
                 sampled graphs. (default: :obj:`False`)
-            num_neighbors (int, optional): The maximum number of neighbors of
-                an output node. It only becomes effective when
-                :obj:`from_neighbor_sampler` is set and should be the same as
-                the :obj:`num_neighbors` used in the neighbor sampler. If
-                :obj:`None`, the value will be computed on-the-fly.
-                (default: :obj:`None`)
+            max_num_neighbors (int, optional): The maximum number of neighbors
+                of an output node, i.e. :obj:`max(num_neighbors)`, with
+                the :obj:`num_neighbors` being the one used in the neighbor
+                sampler. It only becomes effective when
+                :obj:`from_neighbor_sampler` is :obj:`True`. If :obj:`None`,
+                the value will be computed on-the-fly using the :obj:`degree()`
+                utility, and therefore, it is recommended to pass in this value
+                directly for better performance. (default: :obj:`None`)
         """
         _device = next(self.parameters()).device
         if _device.type != "cuda":
@@ -147,14 +149,14 @@ class RGCNConvCuGraph(nn.Module):
 
         # Create cugraph-ops graph.
         if from_neighbor_sampler:
-            if num_neighbors is None:
-                num_neighbors = int(degree(edge_index[1]).max().item())
+            if max_num_neighbors is None:
+                max_num_neighbors = int(degree(edge_index[1]).max().item())
 
             src_nodes = torch.arange(num_nodes, device=_device)
             dst_nodes = torch.arange(num_nodes, device=_device)
 
             _graph = make_mfg_csr_hg(dst_nodes, src_nodes, offsets, indices,
-                                     num_neighbors, n_node_types=0,
+                                     max_num_neighbors, n_node_types=0,
                                      n_edge_types=self.num_relations,
                                      out_node_types=None, in_node_types=None,
                                      edge_types=edge_type_perm)
