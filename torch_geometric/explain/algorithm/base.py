@@ -6,7 +6,11 @@ import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.config import ExplainerConfig, ModelConfig
+from torch_geometric.explain.config import (
+    ExplainerConfig,
+    ModelConfig,
+    ModelReturnType,
+)
 from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import k_hop_subgraph
@@ -180,9 +184,9 @@ class ExplainerAlgorithm(torch.nn.Module):
         return 'source_to_target'
 
     def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if self.model_config.return_type.value == 'raw':
+        if self.model_config.return_type == ModelReturnType.raw:
             loss_fn = F.binary_cross_entropy_with_logits
-        elif self.model_config.return_type.value == 'probs':
+        elif self.model_config.return_type == ModelReturnType.probs:
             loss_fn = F.binary_cross_entropy
         else:
             assert False
@@ -194,12 +198,12 @@ class ExplainerAlgorithm(torch.nn.Module):
         y_hat: Tensor,
         y: Tensor,
     ) -> Tensor:
-        if self.model_config.return_type.value == 'raw':
+        if self.model_config.return_type == ModelReturnType.raw:
             loss_fn = F.cross_entropy
-        elif self.model_config.return_type.value == 'probs':
+        elif self.model_config.return_type == ModelReturnType.probs:
             loss_fn = F.nll_loss
             y_hat = y_hat.log()
-        elif self.model_config.return_type.value == 'log_probs':
+        elif self.model_config.return_type == ModelReturnType.log_probs:
             loss_fn = F.nll_loss
         else:
             assert False
@@ -207,5 +211,5 @@ class ExplainerAlgorithm(torch.nn.Module):
         return loss_fn(y_hat, y)
 
     def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        assert self.model_config.return_type.value == 'raw'
+        assert self.model_config.return_type == ModelReturnType.raw
         return F.mse_loss(y_hat, y)
