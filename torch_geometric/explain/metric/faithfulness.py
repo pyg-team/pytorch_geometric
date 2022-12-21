@@ -13,7 +13,9 @@ def unfaithfulness(
     top_k: Optional[int] = None,
 ) -> float:
     r"""Evaluates how faithful an :class:`~torch_geometric.explain.Explanation`
-    is to an underyling GNN predictor.
+    is to an underyling GNN predictor, as described in the
+    `"Evaluating Explainability for Graph Neural Networks"
+    <https://arxiv.org/abs/2208.09339>`_ paper.
 
     In particular, the graph explanation unfaithfulness metric is defined as
 
