@@ -153,7 +153,7 @@ class PGExplainer(ExplainerAlgorithm):
                 self.edge_mask = self._compute_edge_mask(
                     self.explainer_model(explainer_in), t, bias=bias)
                 set_masks(model, self.edge_mask, edge_index)
-                out = model(x=x, edge_index=edge_index, batch=batch, **kwargs)
+                out = model(x=x, edge_index=edge_index, **kwargs)
                 self._loss(out, target.squeeze(), batch=batch,
                            edge_index=edge_index).backward()
                 optimizer.step()
@@ -226,7 +226,7 @@ class PGExplainer(ExplainerAlgorithm):
         else:
             return edge_weight.squeeze(dim=1)
 
-    def _loss(self, y, y_hat, batch=None, edge_index=None):
+    def _loss(self, y_hat, y, batch=None, edge_index=None):
         if self.model_config.mode == ModelMode.binary_classification:
             loss = self._loss_binary_classification(y_hat, y)
         elif self.model_config.mode == ModelMode.multiclass_classification:
@@ -270,21 +270,19 @@ class PGExplainer(ExplainerAlgorithm):
             edge_mask = edge_mask.sigmoid()
 
         else:
-            assert isinstance(
-                index, int), "PGExplainer can only explain one node at a time."
-            num_edges = edge_index.shape[1]
-            kwargs['z'] = z
-            (x, edge_index, mapping, hop_mask, _,
-             kwargs_n) = self.subgraph(index, x, edge_index, model, **kwargs)
-            z = kwargs_n.pop('z')
-            explainer_in = self._create_explainer_input(edge_index, z, mapping)
+            if not isinstance(index, int):
+                raise ValueError('Only one node can be explained at a time,'
+                                 f'got(index = {index})')
+            # We need to compute hard masks to properly clean up edges and
+            # nodes attributions not involved during message passing:
+            hard_node_mask, hard_edge_mask = self._get_hard_masks(
+                model, index, edge_index, num_nodes=x.size(0))
+            explainer_in = self._create_explainer_input(edge_index, z, index)
             edge_mask = self._compute_edge_mask(
                 self.explainer_model(explainer_in), training=False)
-
-            # edges outside k-hop subgraph of node_id have edge_mask=0.
-            full_edge_mask = edge_mask.new_zeros(num_edges)
-            full_edge_mask[hop_mask] = edge_mask.sigmoid()
-            edge_mask = full_edge_mask
+            edge_mask = self._post_process_mask(edge_mask, edge_index.size(1),
+                                                hard_edge_mask,
+                                                apply_sigmoid=True)
 
         return Explanation(edge_mask=edge_mask, x=x, edge_index=edge_index)
 
