@@ -158,6 +158,8 @@ class GATConv(MessagePassing):
 
         self.reset_parameters()
 
+        self._alpha = None
+
     def reset_parameters(self):
         self.lin_src.reset_parameters()
         self.lin_dst.reset_parameters()
@@ -248,6 +250,8 @@ class GATConv(MessagePassing):
         if self.bias is not None:
             out = out + self.bias
 
+        self._alpha = alpha
+
         if isinstance(return_attention_weights, bool):
             if isinstance(edge_index, Tensor):
                 return out, (edge_index, alpha)
@@ -274,10 +278,15 @@ class GATConv(MessagePassing):
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
+        print(alpha.shape)
         return alpha
 
     def message(self, x_j: Tensor, alpha: Tensor) -> Tensor:
         return alpha.unsqueeze(-1) * x_j
+
+    @torch.no_grad()
+    def get_alphas(self) -> Tensor:
+        return self._alpha
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
