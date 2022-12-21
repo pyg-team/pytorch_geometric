@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.3.0] - 2023-MM-DD
 ### Added
 - Added `RGCNConvCuGraph` model that leverages the optimized aggregation primitives in cugraph-ops ([#6278](https://github.com/pyg-team/pytorch_geometric/pull/6278))
+- Added (un)faithfulness explainability metric ([#6090](https://github.com/pyg-team/pytorch_geometric/pull/6090))
+- Added fidelity explainability metric ([#6116](https://github.com/pyg-team/pytorch_geometric/pull/6116))
+- Added subgraph visualization of GNN explanations ([#6235](https://github.com/pyg-team/pytorch_geometric/pull/6235), [#6271](https://github.com/pyg-team/pytorch_geometric/pull/6271))
+- Added weighted negative sampling option in `LinkNeighborLoader` ([#6264](https://github.com/pyg-team/pytorch_geometric/pull/6264))
+- Added the `BA2MotifDataset` explainer dataset ([#6257](https://github.com/pyg-team/pytorch_geometric/pull/6257))
+- Added `CycleMotif` motif generator to generate `n`-node cycle shaped motifs ([#6256](https://github.com/pyg-team/pytorch_geometric/pull/6256))
 - Added the `InfectionDataset` to evaluate explanations ([#6222](https://github.com/pyg-team/pytorch_geometric/pull/6222))
 - Added `characterization_score` and `fidelity_curve_auc` explainer metrics ([#6188](https://github.com/pyg-team/pytorch_geometric/pull/6188))
 - Added `get_message_passing_embeddings` ([#6201](https://github.com/pyg-team/pytorch_geometric/pull/6201))
@@ -27,6 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added support for dropping nodes in `utils.to_dense_batch` in case `max_num_nodes` is smaller than the number of nodes  ([#6124](https://github.com/pyg-team/pytorch_geometric/pull/6124))
 - Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
 ### Changed
+- Unify `Explanation.node_mask` and `Explanation.node_feat_mask` ([#6267](https://github.com/pyg-team/pytorch_geometric/pull/6267))
 - Moved thresholding config of the `Explainer` to `Explanation` ([#6215](https://github.com/pyg-team/pytorch_geometric/pull/6215))
 - Fixed a bug in the output order in `HeteroLinear` for un-sorted type vectors ([#6198](https://github.com/pyg-team/pytorch_geometric/pull/6198))
 - Breaking Change: Move `ExplainerConfig` arguments to the `Explainer` class  ([#6176](https://github.com/pyg-team/pytorch_geometric/pull/6176))
@@ -38,6 +45,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Optimized `utils.softmax` implementation ([#6113](https://github.com/pyg-team/pytorch_geometric/pull/6113), [#6155](https://github.com/pyg-team/pytorch_geometric/pull/6155))
 - Optimized `topk` implementation for large enough graphs ([#6123](https://github.com/pyg-team/pytorch_geometric/pull/6123))
 ### Removed
+- Removed `target_index` argument in the `Explainer` interface ([#6270](https://github.com/pyg-team/pytorch_geometric/pull/6270))
 - Removed `Aggregation.set_validate_args` option ([#6175](https://github.com/pyg-team/pytorch_geometric/pull/6175))
 
 ## [2.2.0] - 2022-12-01

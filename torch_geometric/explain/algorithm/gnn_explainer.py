@@ -1,4 +1,3 @@
-import logging
 from math import sqrt
 from typing import Optional, Tuple, Union
 
@@ -7,13 +6,12 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.parameter import Parameter
 
-from torch_geometric.explain import Explanation
+from torch_geometric.explain import ExplainerConfig, Explanation, ModelConfig
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import (
-    ExplainerConfig,
     MaskType,
-    ModelConfig,
     ModelMode,
+    ModelReturnType,
     ModelTaskLevel,
 )
 
@@ -77,28 +75,6 @@ class GNNExplainer(ExplainerAlgorithm):
         self.node_mask = self.edge_mask = None
 
     def supports(self) -> bool:
-        task_level = self.model_config.task_level
-        if task_level not in [
-                ModelTaskLevel.node, ModelTaskLevel.edge, ModelTaskLevel.graph
-        ]:
-            logging.error(f"Task level '{task_level.value}' not supported")
-            return False
-
-        edge_mask_type = self.explainer_config.edge_mask_type
-        if edge_mask_type not in [MaskType.object, None]:
-            logging.error(f"Edge mask type '{edge_mask_type.value}' not "
-                          f"supported")
-            return False
-
-        node_mask_type = self.explainer_config.node_mask_type
-        if node_mask_type not in [
-                MaskType.common_attributes, MaskType.object,
-                MaskType.attributes
-        ]:
-            logging.error(f"Node mask type '{node_mask_type.value}' not "
-                          f"supported.")
-            return False
-
         return True
 
     def forward(
@@ -109,7 +85,6 @@ class GNNExplainer(ExplainerAlgorithm):
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
         hard_node_mask = hard_edge_mask = None
@@ -119,8 +94,7 @@ class GNNExplainer(ExplainerAlgorithm):
             hard_node_mask, hard_edge_mask = self._get_hard_masks(
                 model, index, edge_index, num_nodes=x.size(0))
 
-        self._train(model, x, edge_index, target=target, index=index,
-                    target_index=target_index, **kwargs)
+        self._train(model, x, edge_index, target=target, index=index, **kwargs)
 
         node_mask = self._post_process_mask(self.node_mask, x.size(0),
                                             hard_node_mask, apply_sigmoid=True)
@@ -129,15 +103,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
         self._clean_model(model)
 
-        # TODO Consider dropping differentiation between `mask` and `feat_mask`
-        node_feat_mask = None
-        if self.explainer_config.node_mask_type in {
-                MaskType.attributes, MaskType.common_attributes
-        }:
-            node_feat_mask, node_mask = node_mask, None
-
-        return Explanation(node_mask=node_mask, node_feat_mask=node_feat_mask,
-                           edge_mask=edge_mask)
+        return Explanation(node_mask=node_mask, edge_mask=edge_mask)
 
     def _train(
         self,
@@ -147,7 +113,6 @@ class GNNExplainer(ExplainerAlgorithm):
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ):
         if isinstance(x, dict) or isinstance(edge_index, dict):
@@ -169,8 +134,6 @@ class GNNExplainer(ExplainerAlgorithm):
             h = x * self.node_mask.sigmoid()
             y_hat, y = model(h, edge_index, **kwargs), target
 
-            if target_index is not None:
-                y_hat, y = y_hat[target_index], y[target_index]
             if index is not None:
                 y_hat, y = y_hat[index], y[index]
 
@@ -203,9 +166,9 @@ class GNNExplainer(ExplainerAlgorithm):
             assert False
 
     def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if self.model_config.return_type.value == 'raw':
+        if self.model_config.return_type == ModelReturnType.raw:
             loss_fn = F.binary_cross_entropy_with_logits
-        elif self.model_config.return_type.value == 'probs':
+        elif self.model_config.return_type == ModelReturnType.probs:
             loss_fn = F.binary_cross_entropy
         else:
             assert False
@@ -217,12 +180,12 @@ class GNNExplainer(ExplainerAlgorithm):
         y_hat: Tensor,
         y: Tensor,
     ) -> Tensor:
-        if self.model_config.return_type.value == 'raw':
+        if self.model_config.return_type == ModelReturnType.raw:
             loss_fn = F.cross_entropy
-        elif self.model_config.return_type.value == 'probs':
+        elif self.model_config.return_type == ModelReturnType.probs:
             loss_fn = F.nll_loss
             y_hat = y_hat.log()
-        elif self.model_config.return_type.value == 'log_probs':
+        elif self.model_config.return_type == ModelReturnType.log_probs:
             loss_fn = F.nll_loss
         else:
             assert False
@@ -230,7 +193,7 @@ class GNNExplainer(ExplainerAlgorithm):
         return loss_fn(y_hat, y)
 
     def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        assert self.model_config.return_type.value == 'raw'
+        assert self.model_config.return_type == ModelReturnType.raw
         return F.mse_loss(y_hat, y)
 
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
@@ -364,19 +327,15 @@ class GNNExplainer_:
                                     x=x)
 
     def _convert_output(self, explanation, edge_index, index=None, x=None):
-        if 'node_mask' in explanation.available_explanations:
-            node_mask = explanation.node_mask
-        else:
-            if (self._explainer.explainer_config.node_mask_type ==
-                    MaskType.common_attributes):
-                node_mask = explanation.node_feat_mask[0]
-            else:
-                node_mask = explanation.node_feat_mask
+        node_mask = explanation.get('node_mask')
+        edge_mask = explanation.get('edge_mask')
 
-        edge_mask = None
-        if 'edge_mask' in explanation.available_explanations:
-            edge_mask = explanation.edge_mask
-        else:
+        if node_mask is not None:
+            node_mask_type = self._explainer.explainer_config.node_mask_type
+            if node_mask_type in {MaskType.object, MaskType.common_attributes}:
+                node_mask = node_mask.view(-1)
+
+        if edge_mask is None:
             if index is not None:
                 _, edge_mask = self._explainer._get_hard_masks(
                     self.model, index, edge_index, num_nodes=x.size(0))
