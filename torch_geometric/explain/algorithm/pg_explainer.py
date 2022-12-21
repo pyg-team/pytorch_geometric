@@ -245,8 +245,8 @@ class PGExplainer(ExplainerAlgorithm):
 
         return loss + size_loss + mask_ent_loss
 
-    def forward(self, model: torch.nn.Module, x: Tensor, edge_index: Tensor,
-                index: Optional[int] = None, target=None,
+    def forward(self, model: torch.nn.Module, x: Tensor, edge_index: Tensor, *,
+                target=None, index: Optional[int] = None,
                 **kwargs) -> Explanation:
         r"""Returns an :obj:`edge_mask` that explains :obj:`model` prediction.
 
@@ -270,6 +270,8 @@ class PGExplainer(ExplainerAlgorithm):
             edge_mask = edge_mask.sigmoid()
 
         else:
+            assert isinstance(
+                index, int), "PGExplainer can only explain one node at a time."
             num_edges = edge_index.shape[1]
             kwargs['z'] = z
             (x, edge_index, mapping, hop_mask, _,

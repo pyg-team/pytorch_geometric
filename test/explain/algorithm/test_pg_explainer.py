@@ -82,7 +82,7 @@ edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 @pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
 @pytest.mark.parametrize('return_type', ['probs', 'raw'])
-@pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
+@pytest.mark.parametrize('index', [1, 2])
 @pytest.mark.parametrize('multi_output', [False])
 def test_pg_explainer_binary_classification(
     edge_mask_type,
@@ -125,7 +125,6 @@ def test_pg_explainer_binary_classification(
         edge_index,
         target=target,
         index=index,
-        target_index=0 if multi_output else None,
         batch=batch,
         edge_label_index=edge_label_index,
     )

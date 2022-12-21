@@ -118,17 +118,13 @@ class Explainer:
 
         return out
 
-    def train_explainer_algorithm(self, x, edge_index, train_index=None,
-                                  target=None, **kwargs):
+    def train_explainer_algorithm(self, x, edge_index, target=None, **kwargs):
         """Trains 'self.algorithm'. All `ExplainerAlgorithm`s don't
         need a training step.
 
         Args:
             x(Tensor): Node features.
             edge_index(Tensor): edge indicies.
-            train_index(Tensor, optional): The nodes to train on
-                for `ModelTaskLevel.node`. If `None` train on all
-                nodes.
             target (torch.Tensor): The target of the model.
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
@@ -149,7 +145,7 @@ class Explainer:
                     f"type '{self.explanation_type.value}'")
             target = self.get_prediction(x, edge_index, **kwargs)
         self.algorithm.train_explainer(self.model, x, edge_index, target,
-                                       train_index, **kwargs)
+                                       **kwargs)
 
     def get_masked_prediction(
         self,
