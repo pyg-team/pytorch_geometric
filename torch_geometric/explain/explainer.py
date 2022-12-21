@@ -176,7 +176,6 @@ class Explainer:
         clear_masks(self.model)
         return out
 
-
     def __call__(
         self,
         x: Union[Tensor, Dict[NodeType, Tensor]],
