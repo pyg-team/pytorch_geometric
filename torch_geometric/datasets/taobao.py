@@ -16,8 +16,8 @@ class Taobao(InMemoryDataset):
     r"""Taobao User Behavior is a dataset of user behaviors from Taobao offered
     by Alibaba. The dataset is from the platform Tianchi Alicloud.
     https://tianchi.aliyun.com/dataset/649.
-    Taobao is a heterogeous graph for recommendation. Nodes represent users with
-    User IDs and items with Item IDs and Category IDs, and edges represent
+    Taobao is a heterogeous graph for recommendation. Nodes represent users
+    with User IDs and items with Item IDs and Category IDs, and edges represent
     different types of user behaviours towards items with timestamps.
 
     Args:
@@ -32,7 +32,8 @@ class Taobao(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
 
     """
-    url = 'https://alicloud-dev.oss-cn-hangzhou.aliyuncs.com/UserBehavior.csv.zip'
+    dataset = 'UserBehavior.csv.zip'
+    url = 'https://alicloud-dev.oss-cn-hangzhou.aliyuncs.com/' + dataset
 
     def __init__(
         self,

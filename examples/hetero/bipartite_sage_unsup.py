@@ -1,5 +1,5 @@
-# An implementation of unsupervised bipartite GraphSAGE using the Alibaba Taobao
-# dataset.
+# An implementation of unsupervised bipartite GraphSAGE using the Alibaba
+# Taobao dataset.
 import os.path as osp
 
 import torch
@@ -221,7 +221,7 @@ def train():
 @torch.no_grad()
 def test(loader):
     model.eval()
-    accs, precisions, recalls, f1s = [], [], [], []
+    accs, precs, recs, f1s = [], [], [], []
 
     for batch in tqdm.tqdm(loader):
         batch = batch.to(device)
@@ -232,34 +232,34 @@ def test(loader):
         target = batch['user', 'item'].edge_label.round().cpu()
 
         acc = accuracy_score(target, out)
-        precision = precision_score(target, out)
-        recall = recall_score(target, out)
+        prec = precision_score(target, out)
+        rec = recall_score(target, out)
         f1 = f1_score(target, out)
         accs.append(acc)
-        precisions.append(precision)
-        recalls.append(recall)
+        precs.append(prec)
+        recs.append(rec)
         f1s.append(f1)
 
     import numpy as np
 
     total_acc = float(np.mean(accs))
-    total_precision = float(np.mean(precisions))
-    total_recall = float(np.mean(recalls))
+    total_prec = float(np.mean(precs))
+    total_rec = float(np.mean(recs))
     total_f1 = float(np.mean(f1s))
 
-    return total_acc, total_precision, total_recall, total_f1
+    return total_acc, total_prec, total_rec, total_f1
 
 
 for epoch in range(1, 21):
     loss = train()
-    val_acc, val_precision, val_recall, val_f1 = test(val_loader)
-    test_acc, test_precision, test_recall, test_f1 = test(test_loader)
+    val_acc, val_prec, val_rec, val_f1 = test(val_loader)
+    tst_acc, tst_prec, tst_rec, tst_f1 = test(test_loader)
 
     print(f'Epoch: {epoch:03d} | Loss: {loss:4f}')
-    print(f'Eval: Accuracy | Precision | Recall | F1 score')
+    print('Eval: Accuracy | Precision | Recall | F1 score')
     print(
-        f'Val:   {val_acc:.4f}  | {val_precision:.4f}    | {val_recall:.4f} | {val_f1:.4f}'
+        f'Val: {val_acc:.4f}  | {val_prec:.4f} | {val_rec:.4f} | {val_f1:.4f}'
     )
     print(
-        f'Test:  {test_acc:.4f}  | {test_precision:.4f}   | {test_recall:.4f} | {test_f1:.4f}'
+        f'Test: {tst_acc:.4f} | {tst_prec:.4f} | {tst_rec:.4f} | {tst_f1:.4f}'
     )
