@@ -33,8 +33,8 @@ def unfaithfulness(
         explanation (Explanation): The explanation to evaluate.
         top_k (int, optional): If set, will only keep the original values of
             the top-:math:`k` node features identified by an explanation.
-            If set to :obj:`None`, will use `explanation.node_mask` as it is
-            for masking node features. (default: :obj:`None`)
+            If set to :obj:`None`, will use :obj:`explanation.node_mask` as it
+            is for masking node features. (default: :obj:`None`)
     """
     if explainer.model_config.mode == ModelMode.regression:
         raise ValueError("Fidelity not defined for 'regression' models")
