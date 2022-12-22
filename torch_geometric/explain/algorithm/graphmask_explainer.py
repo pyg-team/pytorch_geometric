@@ -121,7 +121,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 model, index, edge_index, num_nodes=x.size(0))
         self.train_explainer(model, x, edge_index, target=target, index=index,
                              **kwargs)
-        node_mask = self._post_process_mask(self.node_feat_mask, x.size(0),
+        node_mask = self._post_process_mask(self.node_feat_mask,
                                             hard_node_mask, apply_sigmoid=True)
         edge_mask = self.explain(model, index=index)
 
