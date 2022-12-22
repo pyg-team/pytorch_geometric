@@ -15,7 +15,7 @@ class AttentionExplainer(ExplainerAlgorithm):
     attention-based GNN (*e.g.*,
     :class:`~torch_geometric.nn.conv.GATConv`,
     :class:`~torch_geometric.nn.conv.GATv2Conv`, or
-    :class:~`torch_geometric.nn.conv.TransformerConv`) as edge explanation.
+    :class:`~torch_geometric.nn.conv.TransformerConv`) as edge explanation.
     Attention scores across layers and heads will be aggregated according to
     the :obj:`reduce` argument.
 
