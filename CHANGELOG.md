@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added `AttentionExplainer` ([#6279](https://github.com/pyg-team/pytorch_geometric/pull/6279))
 - Added (un)faithfulness explainability metric ([#6090](https://github.com/pyg-team/pytorch_geometric/pull/6090))
 - Added fidelity explainability metric ([#6116](https://github.com/pyg-team/pytorch_geometric/pull/6116))
 - Added subgraph visualization of GNN explanations ([#6235](https://github.com/pyg-team/pytorch_geometric/pull/6235), [#6271](https://github.com/pyg-team/pytorch_geometric/pull/6271))

@@ -5,20 +5,18 @@ import torch
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.algorithm.utils import clear_masks
-from torch_geometric.explain.config import (
-    ExplanationType,
-    MaskType,
-    ModelTaskLevel,
-)
+from torch_geometric.explain.config import ExplanationType, ModelTaskLevel
 from torch_geometric.nn.conv.message_passing import MessagePassing
 
 from .base import ExplainerAlgorithm
 
 
 class AttentionExplainer(ExplainerAlgorithm):
-    r"""Attention Explainer provides explanations for edges by aggregating
-    attention scores over attention-based layers.
+    r"""An explainer that uses the attention coefficients produced by an
+    attention-based GNN (*e.g.*,
+    :class:`~torch_geometric.nn.conv.GATConv`,
+    :class:`~torch_geometric.nn.conv.GATv2Conv`, or
+    :class:~`torch_geometric.nn.conv.TransformerConv`) as edge explanation.
 
     Args:
         reduce (str, optional): The method to reduce the attention scores
