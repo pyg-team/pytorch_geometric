@@ -8,6 +8,6 @@ __all__ = classes = [
     'ExplainerAlgorithm',
     'DummyExplainer',
     'GNNExplainer',
-    'GraphMaskExplainer'
+    'GraphMaskExplainer',
     'AttentionExplainer',
 ]
