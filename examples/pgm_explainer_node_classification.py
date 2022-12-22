@@ -38,7 +38,7 @@ if __name__ == "__main__":
     x, edge_index, edge_weight, target = \
         data.x, data.edge_index, data.edge_weight, data.y
 
-    for epoch in range(1, 20):
+    for epoch in range(1, 500):
         model.train()
         optimizer.zero_grad()
         log_logits = model(x, edge_index, edge_weight)
@@ -51,7 +51,8 @@ if __name__ == "__main__":
         explanation_type='phenomenon', edge_mask_type="object",
         model_config=ModelConfig(mode="multiclass_classification",
                                  task_level="node", return_type="raw"))
-    node_idx = 10
+    node_idx = 100
     explanation = explainer(x=data.x, edge_index=edge_index, index=node_idx,
                             target=target, edge_weight=edge_weight)
-    print(explanation.available_explanations)
+    print("significance of relevant neighbours using pgm explainer :",
+          explanation.pgm_stats)

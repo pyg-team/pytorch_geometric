@@ -22,7 +22,7 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
 train_dataset = MNISTSuperpixels(path, True, transform=transform)
 test_dataset = MNISTSuperpixels(path, False, transform=transform)
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=512, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 d = train_dataset
 
@@ -88,18 +88,17 @@ def train(model, dataloader, epoch):
 if __name__ == "__main__":
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f'current device: {device}')
     model = Net().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
     for epoch in range(2):
-        train(model, test_loader, epoch)
+        train(model, train_loader, epoch)
 
     explainer = Explainer(
         model=model, algorithm=PGMExplainer(perturb_feature_list=[0]),
-        explainer_config=dict(explanation_type="phenomenon",
-                              node_mask_type="attributes",
-                              edge_mask_type="object"),
-        model_config=dict(mode="classification", task_level="graph",
+        explanation_type='phenomenon', edge_mask_type="object",
+        model_config=dict(mode="multiclass_classification", task_level="graph",
                           return_type="raw"))
     i = 0
     # todo bit of a hack--nicer to find a way to get the correct

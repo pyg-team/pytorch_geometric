@@ -22,10 +22,9 @@ class PGMExplainer(ExplainerAlgorithm):
 
 
     Args:
+        perturb_mode (str): which method to generate the variations in features
 
-        **kwargs (optional): Additional hyper-parameters to override default
-            settings in
-            :attr:`~torch_geometric.explain.algorithm.GNNExplainer.coeffs`.
+
     """
     def __init__(
         self,
@@ -40,14 +39,10 @@ class PGMExplainer(ExplainerAlgorithm):
         self.perturb_indicator = perturb_indicator
 
     def perturb_features_on_node(
-        self,
-        feature_matrix: torch.Tensor,
-        node_idx: int,
-        perturbation_mode: str = "randint",
-        is_random: bool = False,
-        is_perturbation_scaled: bool = False,
-        perturb_feature_list: List = None  # indexes of features being pertubed
-    ) -> torch.Tensor:
+            self, feature_matrix: torch.Tensor, node_idx: int,
+            perturbation_mode: str = "randint", is_random: bool = False,
+            is_perturbation_scaled: bool = False,
+            perturb_feature_list: List = None) -> torch.Tensor:
         r"""
         perturb node feature matrix. This calculates how much influence
         neighbouring nodes has on the output
@@ -62,7 +57,7 @@ class PGMExplainer(ExplainerAlgorithm):
                 if set to False return the original feature matrix
             is_perturbation_scaled (bool): whether to scale the perturbed
                 matrix with the original feature matrix
-
+            perturb_feature_list (List)
         Returns:
             a randomly perturbed feature matrix
         """
@@ -111,7 +106,20 @@ class PGMExplainer(ExplainerAlgorithm):
         index: Optional[int] = None,  # node index
         **kwargs,
     ) -> Explanation:
+        r"""
+        generate the explanations
+        Args:
+            model (torch.nn.Module): model used to generate predictions
+            x (torch.Tensor): the node feature matrix tensor
+            edge_index:
+            target (torch.Tensor): the prediction labels
+            target_index:
+            index (int): index of the node generating explanations for
+            **kwargs:
 
+        Returns:
+
+        """
         if isinstance(index, Tensor):
             if index.numel() > 1:
                 raise NotImplementedError(
@@ -132,16 +140,16 @@ class PGMExplainer(ExplainerAlgorithm):
 
         model.eval()
 
-        edge_weight = kwargs.pop('edge_weight')
+        edge_weight = kwargs.pop('edge_weight', None)
         num_samples = kwargs.pop('num_samples', 100)
         significance_threshold = kwargs.pop('significance_threshold', 0.05)
-        top_node = kwargs.get('top_node', None)
+        max_subgraph_size = kwargs.get('max_subgraph_size', None)
         pred_threshold = kwargs.pop('pred_threshold', 0.1)
         if self.model_config.task_level == ModelTaskLevel.node:
 
-            neighbors, pgm_stats = self._explain_node(
+            neighbors, pgm_stats = self.explain_node(
                 model, x, index, edge_index, edge_weight, target[index],
-                num_samples=num_samples, top_node=top_node,
+                num_samples=num_samples, max_subgraph_size=max_subgraph_size,
                 significance_threshold=significance_threshold,
                 pred_threshold=pred_threshold, **kwargs)
             return Explanation(
@@ -151,9 +159,9 @@ class PGMExplainer(ExplainerAlgorithm):
                 pgm_stats=pgm_stats,
             )
         elif self.model_config.task_level == ModelTaskLevel.graph:
-            pgm_nodes, p_values, candidate_nodes = self._explain_graph(
+            pgm_nodes, p_values, candidate_nodes = self.explain_graph(
                 model=model, x=x, index=index, target=target,
-                num_samples=num_samples, top_node=top_node,
+                num_samples=num_samples, max_subgraph_size=max_subgraph_size,
                 significance_threshold=significance_threshold,
                 pred_threshold=pred_threshold, **kwargs)
             return Explanation(node_mask=p_values < significance_threshold)
@@ -162,16 +170,28 @@ class PGMExplainer(ExplainerAlgorithm):
 
     def batch_perturb_features_on_node(
             self,
-            num_samples,
-            index_to_perturb,
-            X_features,
-            model,
-            percentage=50,  # % time node gets perturbed
-            p_threshold=0.05,
-            pred_threshold=0.1,
-            perturbation_mode="mean",
-            **kwargs):
-        # for perturbing a batch of graphs for graph classification tasks
+            num_samples: int,
+            index_to_perturb: int,
+            X_features: torch.Tensor,
+            model: torch.nn.Module,
+            percentage: float = 50.,  # % time node gets perturbed
+            perturbation_mode: str = "mean",
+            **kwargs) -> List:
+        r"""
+        perturb the node features of a batch of graphs
+        for graph classification tasks
+        Args:
+            num_samples:
+            index_to_perturb:
+            X_features:
+            model:
+            percentage:
+            perturbation_mode:
+            **kwargs:
+
+        Returns:
+
+        """
 
         pred_torch = model(X_features, **kwargs)
         soft_pred = torch.softmax(pred_torch, dim=1)
@@ -221,23 +241,40 @@ class PGMExplainer(ExplainerAlgorithm):
 
         return samples
 
-    def _explain_graph(
+    def explain_graph(
         self,
         model: torch.nn.Module,
         x: torch.Tensor,
         target=None,
         num_samples: int = 100,
-        top_node=None,  # num of neightbours to consider
+        max_subgraph_size: int = None,  # num of neightbours to consider
         significance_threshold: float = 0.05,
         perturbation_mode: str = "mean",
         **kwargs,
     ):
+        r"""
+        generate explanations for graph classification tasks
+        Args:
+            model: pytorch model
+            x (torch.Tensor): node features
+            target(torch.Tensor):
+            num_samples (int): number of samples to use to
+                generate perturbations
+            max_subgraph_size (int): max number of neighbours to consider
+                for the explanation
+            significance_threshold (float): threshold below which to consider
+                a node has an effect on the prediction
+            perturbation_mode (str): how to perturb the features.
+                Must be one of  [random, randint, zero, mean, max]
+            **kwargs:
+
+        Returns:
+
+        """
         model.eval()
         num_nodes = x.shape[0]
-        if not top_node:
-            top_node = int(num_nodes / 20)
-
-        #         Round 1
+        if not max_subgraph_size:
+            max_subgraph_size = int(num_nodes / 20)
 
         samples = self.batch_perturb_features_on_node(
             num_samples=int(num_samples / 2),
@@ -257,19 +294,21 @@ class PGMExplainer(ExplainerAlgorithm):
                                     significance_level=significance_threshold)
             p_values.append(p)
 
-        number_candidates = int(top_node * 4)
+        # the original code uses number_candidates_nodes = int(top_nodes * 4)
+        # if we consider 'top nodes' to equate to max number of nodes
+        # it does not seem correct to set number_candidates to 4 times that...
         candidate_nodes = np.argpartition(
-            p_values, number_candidates)[0:number_candidates]
+            p_values, max_subgraph_size)[0:max_subgraph_size]
 
-        #         Round 2
+        # Round 2
         samples = self.batch_perturb_features_on_node(
             num_samples=num_samples, index_to_perturb=candidate_nodes,
             X_features=x, model=model, perturbation_mode=perturbation_mode,
             **kwargs)
 
-        # todo the PC estimator is in the code but it does nothing??
+        # note: the PC estimator is in the original code but
+        # as it does nothing it is not included here
         data = pd.DataFrame(np.array(samples.detach().cpu()))
-        # est = PC(data)
 
         p_values = []
         dependent_nodes = []
@@ -282,24 +321,16 @@ class PGMExplainer(ExplainerAlgorithm):
             if p < significance_threshold:
                 dependent_nodes.append(node)
 
-        top_p = np.min((top_node, num_nodes - 1))
+        top_p = np.min((max_subgraph_size, num_nodes - 1))
         ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
         pgm_nodes = list(ind_top_p)
 
         return pgm_nodes, torch.tensor(p_values), candidate_nodes
 
-    def _explain_node(
-            self,
-            model: torch.nn.Module,
-            x: Tensor,  # [num_rows x num_features]
-            node_index: int,
-            edge_index: Tensor,
-            edge_weight: Tensor,
-            target: Tensor,
-            num_samples: int = 100,
-            top_node: int = None,
-            significance_threshold=0.05,
-            pred_threshold=0.1):
+    def explain_node(self, model: torch.nn.Module, x: Tensor, node_index: int,
+                     edge_index: Tensor, edge_weight: Tensor, target: Tensor,
+                     num_samples: int = 100, max_subgraph_size: int = None,
+                     significance_threshold=0.05, pred_threshold=0.1):
         logging.info(f'Explaining node: {node_index}')
 
         neighbors, edge_index_new, mapping, edge_mask_new = k_hop_subgraph(
@@ -334,7 +365,6 @@ class PGMExplainer(ExplainerAlgorithm):
                     X_perturb, node, perturbation_mode=perturbation_mode)
                 sample.append(seed)
 
-            # X_perturb = X_perturb.to(model.device)
             # prediction after pertubation
             pred_perturb = model(X_perturb, edge_index, edge_weight)
             softmax_pred_perturb = torch.softmax(pred_perturb, dim=1)
@@ -384,10 +414,10 @@ class PGMExplainer(ExplainerAlgorithm):
                 dependent_neighbors_p_values.append(p)
         pgm_stats = dict(zip(neighbors, p_values))
 
-        if top_node is None:
+        if max_subgraph_size is None:
             pgm_nodes = dependent_neighbors
         else:
-            top_p = np.min((top_node, len(neighbors) - 1))
+            top_p = np.min((max_subgraph_size, len(neighbors) - 1))
             ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
             pgm_nodes = [
                 index_subgraph_to_original[node] for node in ind_top_p
@@ -400,15 +430,9 @@ class PGMExplainer(ExplainerAlgorithm):
 
         return pgm_nodes, pgm_stats
 
-    def supports(
-        self,
-        # explainer_config: ExplainerConfig,
-        # model_config: ModelConfig,
-    ) -> bool:
-        # if model_config.task_level not in [
-        #     ModelTaskLevel.node, ModelTaskLevel.graph
-        # ]:
-        #     logging.error("Model task level not supported.")
-        #     return False
-
+    def supports(self) -> bool:
+        task_level = self.model_config.task_level
+        if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
+            logging.error(f"Task level '{task_level.value}' not supported")
+            return False
         return True
