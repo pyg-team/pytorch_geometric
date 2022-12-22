@@ -7,6 +7,7 @@ from torch import Tensor
 from torch.nn.parameter import Parameter
 
 from torch_geometric.explain import ExplainerConfig, Explanation, ModelConfig
+from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import (
     MaskType,
@@ -15,8 +16,6 @@ from torch_geometric.explain.config import (
     ModelTaskLevel,
 )
 
-from .base import ExplainerAlgorithm
-
 
 class GNNExplainer(ExplainerAlgorithm):
     r"""The GNN-Explainer model from the `"GNNExplainer: Generating
@@ -24,19 +23,6 @@ class GNNExplainer(ExplainerAlgorithm):
     <https://arxiv.org/abs/1903.03894>`_ paper for identifying compact subgraph
     structures and node features that play a crucial role in the predictions
     made by a GNN.
-
-    The following configurations are currently supported:
-
-    - :class:`torch_geometric.explain.config.ModelConfig`
-
-        - :attr:`task_level`: :obj:`"node"`, :obj:`"edge"`, or :obj:`"graph"`
-
-    - :class:`torch_geometric.explain.config.ExplainerConfig`
-
-        - :attr:`node_mask_type`: :obj:`"object"`, :obj:`"common_attributes"`
-          or :obj:`"attributes"`
-
-        - :attr:`edge_mask_type`: :obj:`"object"` or :obj:`None`
 
     .. note::
 
@@ -96,10 +82,10 @@ class GNNExplainer(ExplainerAlgorithm):
 
         self._train(model, x, edge_index, target=target, index=index, **kwargs)
 
-        node_mask = self._post_process_mask(self.node_mask, x.size(0),
-                                            hard_node_mask, apply_sigmoid=True)
-        edge_mask = self._post_process_mask(self.edge_mask, edge_index.size(1),
-                                            hard_edge_mask, apply_sigmoid=True)
+        node_mask = self._post_process_mask(self.node_mask, hard_node_mask,
+                                            apply_sigmoid=True)
+        edge_mask = self._post_process_mask(self.edge_mask, hard_edge_mask,
+                                            apply_sigmoid=True)
 
         self._clean_model(model)
 
