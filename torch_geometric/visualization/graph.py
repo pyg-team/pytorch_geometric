@@ -29,7 +29,6 @@ def visualize_graph(
 ) -> Any:
     r"""Visualizes the graph given via :obj:`edge_index` and (optional)
     :obj:`edge_weight`.
-
     Args:
         edge_index (torch.Tensor): The edge indices.
         edge_weight (torch.Tensor, optional): The edge weights.
@@ -42,13 +41,13 @@ def visualize_graph(
             visualization backend based on available system packages.
             (default: :obj:`None`)
     """
-    if edge_weight is not None:  # Normalize edge weights.
+    # Normalize edge weights and discard any edges with zero edge weight
+    if edge_weight is not None:
         edge_weight = edge_weight - edge_weight.min()
         edge_weight = edge_weight / edge_weight.max()
-
-    if edge_weight is not None:  # Discard any edges with zero edge weight:
         mask = edge_weight > 1e-7
-        edge_index = edge_index[:, mask]
+        if edge_index.size(-1) == mask.size():
+            edge_index = edge_index[:, mask]
         edge_weight = edge_weight[mask]
 
     if edge_weight is None:
@@ -77,8 +76,12 @@ def _visualize_graph_via_graphviz(
     g = graphviz.Digraph('graph', format=suffix)
     g.attr('node', shape='circle', fontsize='11pt')
 
-    for node in edge_index.view(-1).unique().tolist():
-        g.node(str(node))
+    if edge_index.size(-1) == edge_weight.size():
+        for node in edge_index.view(-1).unique().tolist():
+            g.node(str(node))
+    else:
+        for node in edge_index.contiguous().view(-1).unique().tolist():
+            g.node(str(node))
 
     for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist()):
         hex_color = hex(255 - round(255 * w))[2:]
@@ -105,8 +108,12 @@ def _visualize_graph_via_networkx(
     g = nx.DiGraph()
     node_size = 800
 
-    for node in edge_index.view(-1).unique().tolist():
-        g.add_node(node)
+    if edge_index.size(-1) == edge_weight.size():
+        for node in edge_index.view(-1).unique().tolist():
+            g.add_node(node)
+    else:
+        for node in edge_index.contiguous().view(-1).unique().tolist():
+            g.add_node(node)
 
     for (src, dst), w in zip(edge_index.t().tolist(), edge_weight.tolist()):
         g.add_edge(src, dst, alpha=w)
