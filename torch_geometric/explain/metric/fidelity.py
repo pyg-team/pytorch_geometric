@@ -50,7 +50,8 @@ def fidelity(
     if explainer.model_config.mode == ModelMode.regression:
         raise ValueError("Fidelity not defined for 'regression' models")
 
-    node_mask, edge_mask = explanation.node_mask, explanation.edge_mask
+    node_mask = explanation.get('node_mask')
+    edge_mask = explanation.get('edge_mask')
     kwargs = {key: explanation[key] for key in explanation._model_args}
 
     y = explanation.target
@@ -80,7 +81,7 @@ def fidelity(
     )
     complement_y_hat = explainer.get_target(complement_y_hat)
 
-    if explanation.index is not None:
+    if explanation.get('index') is not None:
         y = y[explanation.index]
         if explainer.explanation_type == ExplanationType.phenomenon:
             y_hat = y_hat[explanation.index]
