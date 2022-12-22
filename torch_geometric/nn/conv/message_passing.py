@@ -739,10 +739,6 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_hooks[handle.id] = hook
         return handle
 
-    def get_alphas(self) -> Tensor:
-        r"""Gets the attention scores from the module."""
-        raise None
-
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
