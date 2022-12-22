@@ -2,15 +2,19 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-
 from sklearn.metrics import roc_auc_score
 
-from torch_geometric.explain import Explainer, GraphMaskExplainer
-from torch_geometric.nn import (
-    GCNConv, GATConv, FastRGCNConv, global_add_pool, global_mean_pool)
 import torch_geometric.transforms as T
-from torch_geometric.datasets import Entities, TUDataset, Planetoid
+from torch_geometric.datasets import Entities, Planetoid, TUDataset
+from torch_geometric.explain import Explainer, GraphMaskExplainer
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import (
+    FastRGCNConv,
+    GATConv,
+    GCNConv,
+    global_add_pool,
+    global_mean_pool,
+)
 
 # GCN Node Classification=================================================
 dataset = 'Cora'
@@ -69,7 +73,6 @@ path = 'subgraph.pdf'
 explanation.visualize_graph(path, backend='graphviz')
 print(f"Subgraph visualization plot has been saved to '{path}'")
 
-
 # GAT Node Classification======================================================
 transform = T.Compose([T.GCNNorm(), T.NormalizeFeatures()])
 dataset = Planetoid(root='/tmp/Cora', name='Cora', transform=transform)
@@ -80,8 +83,7 @@ class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = GATConv(dataset.num_features, 8, heads=8)
-        self.conv2 = GATConv(64, dataset.num_classes, heads=1,
-                             concat=False)
+        self.conv2 = GATConv(64, dataset.num_classes, heads=1, concat=False)
 
     def forward(self, x, edge_index):
         x = F.relu(self.conv1(x, edge_index))
@@ -93,8 +95,7 @@ class Net(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
 data = data.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
-                             weight_decay=5e-4)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 x, edge_index, edge_weight = data.x, data.edge_index, data.edge_weight
 
 for epoch in range(1, 6):
@@ -104,8 +105,7 @@ for epoch in range(1, 6):
     loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
     loss.backward()
     optimizer.step()
-    print('Epoch {:03d}'.format(epoch),
-          'train_loss: {:.4f}'.format(loss))
+    print('Epoch {:03d}'.format(epoch), 'train_loss: {:.4f}'.format(loss))
 print("Optimization Finished!")
 
 explainer = Explainer(
@@ -132,7 +132,6 @@ path = 'subgraph.pdf'
 explanation.visualize_graph(path, backend='networkx')
 print(f"Subgraph visualization plot has been saved to '{path}'")
 
-
 # RGCN Node Classification====================================================
 dataset = Entities(root='/tmp/AIFB', name='AIFB')
 edge_index, edge_type, train_labels, test_labels, train_mask, test_mask, \
@@ -140,7 +139,7 @@ edge_index, edge_type, train_labels, test_labels, train_mask, test_mask, \
     dataset[0].train_y, dataset[0].test_y, \
     dataset[0].train_idx, dataset[0].test_idx, dataset[0].num_nodes
 x = torch.randn(8285, 4)
-edge_y = torch.randint(low=0, high=30, size=(edge_index.size(1),))
+edge_y = torch.randint(low=0, high=30, size=(edge_index.size(1), ))
 
 
 class Net(torch.nn.Module):
@@ -161,8 +160,7 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
-                             weight_decay=5e-4)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 for epoch in range(1, 5):
     model.train()
@@ -171,8 +169,7 @@ for epoch in range(1, 5):
     loss = F.nll_loss(log_logits[train_mask], train_labels)
     loss.backward()
     optimizer.step()
-    print('Epoch {:03d}'.format(epoch),
-          'train_loss: {:.4f}'.format(loss))
+    print('Epoch {:03d}'.format(epoch), 'train_loss: {:.4f}'.format(loss))
 print("Optimization Finished!")
 
 explainer = Explainer(
@@ -198,7 +195,6 @@ path = 'subgraph.pdf'
 explanation.visualize_graph(path, backend='networkx')
 print(f"Subgraph visualization plot has been saved to '{path}'")
 
-
 # GAT Link Prediction==========================================================
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
@@ -216,8 +212,7 @@ class Net(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
         self.conv1 = GATConv(in_channels, 8, heads=8)
-        self.conv2 = GATConv(64, out_channels, heads=1,
-                             concat=False)
+        self.conv2 = GATConv(64, out_channels, heads=1, concat=False)
 
     def encode(self, x, edge_index):
         x = self.conv1(x, edge_index).relu()
@@ -319,12 +314,10 @@ path = 'subgraph.pdf'
 explanation.visualize_graph(path, backend='networkx')
 print(f"Subgraph visualization plot has been saved to '{path}'")
 
-
 # GCN Graph Classification=====================================================
 dataset = TUDataset(root='ENZYMES', name='ENZYMES')
 loader = DataLoader(dataset, batch_size=100, shuffle=True)
-edge_y = torch.randint(low=0, high=30,
-                       size=(dataset[4].edge_index.size(1),))
+edge_y = torch.randint(low=0, high=30, size=(dataset[4].edge_index.size(1), ))
 
 
 class Net(torch.nn.Module):
@@ -346,16 +339,14 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
-                             weight_decay=5e-4)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 for epoch in range(1, 5):
     loss_all = 0
     for data in loader:
         model.train()
         optimizer.zero_grad()
-        output = model(data.x, data.edge_index, data.batch,
-                       data.edge_weight)
+        output = model(data.x, data.edge_index, data.batch, data.edge_weight)
         loss = F.nll_loss(output, data.y)
         loss.backward()
         torch.nn.utils.clip_grad_value_(model.parameters(), 2.0)
@@ -379,12 +370,11 @@ explainer = Explainer(
 )
 graph_index = 10
 edge_weight = torch.rand(dataset[graph_index].edge_index.size(1))
-batch = torch.zeros(dataset[graph_index].x.shape[0],
-                    dtype=int, device=dataset[graph_index].x.device)
+batch = torch.zeros(dataset[graph_index].x.shape[0], dtype=int,
+                    device=dataset[graph_index].x.device)
 explanation = explainer(dataset[graph_index].x,
-                        dataset[graph_index].edge_index,
-                        batch=batch, edge_weight=edge_weight,
-                        index=graph_index)
+                        dataset[graph_index].edge_index, batch=batch,
+                        edge_weight=edge_weight, index=graph_index)
 print(f'Generated explanations in {explanation.available_explanations}')
 
 path = 'feature_importance.png'
@@ -395,12 +385,10 @@ path = 'subgraph.pdf'
 explanation.visualize_graph(path, backend='networkx')
 print(f"Subgraph visualization plot has been saved to '{path}'")
 
-
 # GAT Graph Classification=====================================================
 dataset = TUDataset(root='ENZYMES', name='ENZYMES')
 loader = DataLoader(dataset, batch_size=100, shuffle=True)
-edge_y = torch.randint(low=0, high=30,
-                       size=(dataset[4].edge_index.size(1),))
+edge_y = torch.randint(low=0, high=30, size=(dataset[4].edge_index.size(1), ))
 
 
 class Net(torch.nn.Module):
@@ -420,8 +408,7 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
-                             weight_decay=5e-4)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 for epoch in range(1, 5):
     loss_all = 0
@@ -451,11 +438,11 @@ explainer = Explainer(
     ),
 )
 graph_index = 10
-batch = torch.zeros(dataset[graph_index].x.shape[0],
-                    dtype=int, device=dataset[graph_index].x.device)
+batch = torch.zeros(dataset[graph_index].x.shape[0], dtype=int,
+                    device=dataset[graph_index].x.device)
 explanation = explainer(dataset[graph_index].x,
-                        dataset[graph_index].edge_index,
-                        batch=batch, index=graph_index)
+                        dataset[graph_index].edge_index, batch=batch,
+                        index=graph_index)
 print(f'Generated explanations in {explanation.available_explanations}')
 
 path = 'feature_importance.png'
@@ -466,14 +453,12 @@ path = 'subgraph.pdf'
 explanation.visualize_graph(path, backend='graphviz')
 print(f"Subgraph visualization plot has been saved to '{path}'")
 
-
 # RGCN Graph Classification===================================================
 dataset = TUDataset(root='ENZYMES', name='ENZYMES')
 loader = DataLoader(dataset, batch_size=100, shuffle=True)
 edge_type = torch.randint(low=0, high=90,
-                          size=(dataset[4].edge_index.size(1),))
-edge_y = torch.randint(low=0, high=30,
-                       size=(dataset[4].edge_index.size(1),))
+                          size=(dataset[4].edge_index.size(1), ))
+edge_y = torch.randint(low=0, high=30, size=(dataset[4].edge_index.size(1), ))
 
 
 class Net(torch.nn.Module):
@@ -495,16 +480,15 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
-                             weight_decay=5e-4)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 for epoch in range(1, 5):
     loss_all = 0
     for data in loader:
         model.train()
         optimizer.zero_grad()
-        data.edge_type = torch.randint(
-            low=0, high=90, size=(data.edge_index.size(1),))
+        data.edge_type = torch.randint(low=0, high=90,
+                                       size=(data.edge_index.size(1), ))
         output = model(data.x, data.edge_index, data.batch, data.edge_type)
         loss = F.nll_loss(output, data.y)
         loss.backward()
@@ -528,13 +512,13 @@ explainer = Explainer(
     ),
 )
 graph_index = 10
-batch = torch.zeros(dataset[graph_index].x.shape[0],
-                    dtype=int, device=dataset[graph_index].x.device)
+batch = torch.zeros(dataset[graph_index].x.shape[0], dtype=int,
+                    device=dataset[graph_index].x.device)
 edge_type = torch.randint(low=0, high=90,
-                          size=(dataset[graph_index].edge_index.size(1),))
+                          size=(dataset[graph_index].edge_index.size(1), ))
 explanation = explainer(dataset[graph_index].x,
-                        dataset[graph_index].edge_index,
-                        edge_type=edge_type, batch=batch, index=graph_index)
+                        dataset[graph_index].edge_index, edge_type=edge_type,
+                        batch=batch, index=graph_index)
 print(f'Generated explanations in {explanation.available_explanations}')
 
 path = 'feature_importance.png'
