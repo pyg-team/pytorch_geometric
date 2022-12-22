@@ -1,6 +1,7 @@
-import os, json
-from typing import Callable, List, Optional
+import json
+import os
 import warnings
+from typing import Callable, List, Optional
 
 import torch
 
@@ -13,23 +14,23 @@ from torch_geometric.data import (
 
 
 class AirfRANS(InMemoryDataset):
-    r"""The AirfRANS dataset from the `"AirfRANS: High Fidelity Computational 
-    Fluid Dynamics Dataset for Approximating Reynolds-Averaged Navier-Stokes 
+    r"""The AirfRANS dataset from the `"AirfRANS: High Fidelity Computational
+    Fluid Dynamics Dataset for Approximating Reynolds-Averaged Navier-Stokes
     Solutions" <https://arxiv.org/abs/2212.07564>`_ paper, consisting of 1000
-    simulations of steady-state aerodynamics over 2D airfoils in a subsonic 
+    simulations of steady-state aerodynamics over 2D airfoils in a subsonic
     flight regime. Different tasks are proposed, they define the split between
     training and test set. See the paper for more information on their definitions.
 
     Each simulation is given as a point cloud defined as the nodes of the
     simulation mesh. Each point of a point cloud is given 5
     features: the inlet velocity (two components in meters per second),
-    the distance to the airfoil (in meter) and the normals (two 
+    the distance to the airfoil (in meter) and the normals (two
     components, set to 0 if the point is not on the airfoil); it is also
-    given its Cartesian position (in meter). As it is a regression task, 
-    each point is given a target of 4 components: the velocity (two components 
-    in meter per second), the pressure (divided by the specific mass, in meter 
-    squared per second squared), the turbulent kinematic viscosity (in meter 
-    squared per second). Finaly, a boolean is attached to each point to 
+    given its Cartesian position (in meter). As it is a regression task,
+    each point is given a target of 4 components: the velocity (two components
+    in meter per second), the pressure (divided by the specific mass, in meter
+    squared per second squared), the turbulent kinematic viscosity (in meter
+    squared per second). Finaly, a boolean is attached to each point to
     inform if this point lies on the airfoil or not.
 
     .. note::
@@ -57,7 +58,7 @@ class AirfRANS(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
-    
+
     Stats:
         .. list-table::
             :widths: 10 10 10 10
@@ -91,10 +92,12 @@ class AirfRANS(InMemoryDataset):
 
         if task == 'scarce' and not train:
             self.task = 'full'
-            warnings.warn('Task has been replaced by "full" as it is the same test set for both tasks.', UserWarning)
+            warnings.warn(
+                'Task has been replaced by "full" as it is the same test set for both tasks.',
+                UserWarning)
         else:
             self.task = task
-        self.split = train*'train' + (1 - train)*'test'
+        self.split = train * 'train' + (1 - train) * 'test'
 
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -123,7 +126,7 @@ class AirfRANS(InMemoryDataset):
         for k, s in enumerate(total):
             if bool(set([s]) & set(partial)):
                 data = Data(**raw_data[k])
-                
+
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue
                 if self.pre_transform is not None:
