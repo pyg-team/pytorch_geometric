@@ -1,53 +1,46 @@
 import logging
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.algorithm.utils import clear_masks
-from torch_geometric.explain.config import MaskType, ModelTaskLevel
+from torch_geometric.explain.config import (
+    ExplanationType,
+    MaskType,
+    ModelTaskLevel,
+)
 from torch_geometric.nn.conv.message_passing import MessagePassing
 
 from .base import ExplainerAlgorithm
 
 
 class AttentionExplainer(ExplainerAlgorithm):
-    r"""Attention Explainer provides explanations for edges by aggregating attention scores over attention-based layers.
-
-    The following configurations are currently supported:
-
-    - :class:`torch_geometric.explain.config.ModelConfig`
-
-        - :attr:`task_level`: :obj:`"node"`, :obj:`"edge"`, or :obj:`"graph"`
-
-    - :class:`torch_geometric.explain.config.ExplainerConfig`
-
-        - :attr:`edge_mask_type`: :obj:`"object"`
+    r"""Attention Explainer provides explanations for edges by aggregating
+    attention scores over attention-based layers.
 
     Args:
-        aggregate_fn (str, optional): The method to aggregate the attention scores .
-            (default: :obj:`max`)
+        reduce (str, optional): The method to reduce the attention scores
+            across layers and heads. (default: :obj:`"max"`)
     """
-    def __init__(self, aggregate_fn: str = "max"):
+    def __init__(self, reduce: str = 'max'):
         super().__init__()
-        self.edge_mask = None
-        self.aggregate_fn = aggregate_fn
+        self.reduce = reduce
 
     def supports(self) -> bool:
-        task_level = self.model_config.task_level
-        if task_level not in [
-                ModelTaskLevel.node,
-                ModelTaskLevel.edge,
-                ModelTaskLevel.graph,
-        ]:
-            logging.error(f"Task level '{task_level.value}' not supported")
+        explanation_type = self.explainer_config.explanation_type
+        if explanation_type != ExplanationType.model:
+            logging.error(f"'{self.__class__.__name__}' only supports "
+                          f"model explanations "
+                          f"got (`explanation_type={explanation_type.value}`)")
             return False
 
-        edge_mask_type = self.explainer_config.edge_mask_type
-        if edge_mask_type != MaskType.object:
-            logging.error(
-                f"Edge mask type '{edge_mask_type.value}' not supported")
+        node_mask_type = self.explainer_config.node_mask_type
+        if node_mask_type is not None:
+            logging.error(f"'{self.__class__.__name__}' does not support "
+                          f"explaining input node features "
+                          f"got (`node_mask_type={node_mask_type.value}`)")
             return False
 
         return True
@@ -57,53 +50,61 @@ class AttentionExplainer(ExplainerAlgorithm):
         model: torch.nn.Module,
         x: Tensor,
         edge_index: Tensor,
+        *,
+        target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
-
-        # Get attention scores per layer.
-        attention_scores = [
-            layer.get_alphas() for layer in model.modules()
-            if isinstance(layer, MessagePassing)
-            and layer.get_alphas() is not None
-        ]
-
-        if not attention_scores:
-            logging.error("No Attention layers used")
-
-        attention_scores = torch.cat(attention_scores, dim=-1)
-
-        if self.aggregate_fn == "mean":
-            edge_mask = torch.mean(attention_scores, dim=-1)
-        elif self.aggregate_fn == "max":
-            edge_mask = torch.max(attention_scores, dim=-1)
-        else:
-            raise NotImplementedError
-
+        hard_edge_mask = None
         if self.model_config.task_level == ModelTaskLevel.node:
-            # We need to compute hard masks to properly clean up edges and
-            # nodes attributions not involved during message passing:
-            hard_node_mask, hard_edge_mask = self._get_hard_masks(
-                model, index, edge_index, num_nodes=x.size(0))
+            # We need to compute the hard edge mask to properly clean up edge
+            # attributions not involved during message passing:
+            _, hard_edge_mask = self._get_hard_masks(model, index, edge_index,
+                                                     num_nodes=x.size(0))
 
-        edge_mask = self._post_process_mask(
-            self.edge_mask,
-            edge_index.size(1),
-            hard_edge_mask,
-            apply_sigmoid=True,
-        )
+        alphas: List[Tensor] = []
 
-        self._clean_model(model)
+        def hook(module, msg_kwargs, out):
+            if 'alpha' in msg_kwargs[0]:
+                alphas.append(msg_kwargs[0]['alpha'].detach())
+            elif getattr(module, '_alpha', None) is not None:
+                alphas.append(module._alpha.detach())
 
-        return Explanation(
-            x=x,
-            edge_index=edge_index,
-            edge_mask=edge_mask,
-            node_mask=None,
-            node_feat_mask=None,
-            edge_feat_mask=None,
-        )
+        hook_handles = []
+        for module in model.modules():  # Register message forward hooks:
+            if isinstance(module, MessagePassing):
+                hook_handles.append(module.register_message_forward_hook(hook))
 
-    def _clean_model(self, model):
-        clear_masks(model)
-        self.edge_mask = None
+        model(x, edge_index, **kwargs)
+
+        for handle in hook_handles:  # Remove hooks:
+            handle.remove()
+
+        if len(alphas) == 0:
+            raise ValueError("Could not collect any attention coefficients. "
+                             "Please ensure that your model is using "
+                             "attention-based GNN layers.")
+
+        for i, alpha in enumerate(alphas):
+            alpha = alpha[:edge_index.size(1)]  # Respect potential self-loops.
+            if alpha.dim() == 2:
+                alpha = getattr(torch, self.reduce)(alpha, dim=-1)
+                if isinstance(alpha, tuple):  # Respect `torch.max`:
+                    alpha = alpha[0]
+            elif alpha.dim() > 2:
+                raise ValueError(f"Can not reduce attention coefficients of "
+                                 f"shape {list(alpha.size())}")
+            alphas[i] = alpha
+
+        if len(alphas) > 1:
+            alpha = torch.stack(alphas, dim=-1)
+            alpha = getattr(torch, self.reduce)(alpha, dim=-1)
+            if isinstance(alpha, tuple):  # Respect `torch.max`:
+                alpha = alpha[0]
+        else:
+            alpha = alphas[0]
+
+        alpha = self._post_process_mask(alpha, hard_edge_mask,
+                                        apply_sigmoid=False)
+
+        return Explanation(edge_mask=alpha)

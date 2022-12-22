@@ -25,19 +25,6 @@ class GNNExplainer(ExplainerAlgorithm):
     structures and node features that play a crucial role in the predictions
     made by a GNN.
 
-    The following configurations are currently supported:
-
-    - :class:`torch_geometric.explain.config.ModelConfig`
-
-        - :attr:`task_level`: :obj:`"node"`, :obj:`"edge"`, or :obj:`"graph"`
-
-    - :class:`torch_geometric.explain.config.ExplainerConfig`
-
-        - :attr:`node_mask_type`: :obj:`"object"`, :obj:`"common_attributes"`
-          or :obj:`"attributes"`
-
-        - :attr:`edge_mask_type`: :obj:`"object"` or :obj:`None`
-
     .. note::
 
         For an example of using :class:`GNNExplainer`, see
@@ -96,10 +83,10 @@ class GNNExplainer(ExplainerAlgorithm):
 
         self._train(model, x, edge_index, target=target, index=index, **kwargs)
 
-        node_mask = self._post_process_mask(self.node_mask, x.size(0),
-                                            hard_node_mask, apply_sigmoid=True)
-        edge_mask = self._post_process_mask(self.edge_mask, edge_index.size(1),
-                                            hard_edge_mask, apply_sigmoid=True)
+        node_mask = self._post_process_mask(self.node_mask, hard_node_mask,
+                                            apply_sigmoid=True)
+        edge_mask = self._post_process_mask(self.edge_mask, hard_edge_mask,
+                                            apply_sigmoid=True)
 
         self._clean_model(model)
 

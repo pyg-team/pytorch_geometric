@@ -90,7 +90,6 @@ class ExplainerAlgorithm(torch.nn.Module):
     @staticmethod
     def _post_process_mask(
         mask: Optional[Tensor],
-        num_elems: int,
         hard_mask: Optional[Tensor] = None,
         apply_sigmoid: bool = True,
     ) -> Optional[Tensor]:
@@ -152,3 +151,6 @@ class ExplainerAlgorithm(torch.nn.Module):
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
