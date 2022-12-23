@@ -16,36 +16,38 @@ from torch_geometric.data import (
 class AirfRANS(InMemoryDataset):
     r"""The AirfRANS dataset from the `"AirfRANS: High Fidelity Computational
     Fluid Dynamics Dataset for Approximating Reynolds-Averaged Navier-Stokes
-    Solutions" <https://arxiv.org/abs/2212.07564>`_ paper, consisting of 1000
+    Solutions" <https://arxiv.org/abs/2212.07564>`_ paper, consisting of 1,000
     simulations of steady-state aerodynamics over 2D airfoils in a subsonic
-    flight regime. Different tasks are proposed, they define the split between
-    training and test set. See the paper for more information on their definitions.
+    flight regime.
+    The different tasks (:obj:`"full"`, :obj:`"scarce"`, :obj:`"reynolds"`,
+    :obj:`"aoa"`) define the utilized training and test splits.
 
     Each simulation is given as a point cloud defined as the nodes of the
-    simulation mesh. Each point of a point cloud is given 5
-    features: the inlet velocity (two components in meters per second),
-    the distance to the airfoil (in meter) and the normals (two
-    components, set to 0 if the point is not on the airfoil); it is also
-    given its Cartesian position (in meter). As it is a regression task,
-    each point is given a target of 4 components: the velocity (two components
-    in meter per second), the pressure (divided by the specific mass, in meter
-    squared per second squared), the turbulent kinematic viscosity (in meter
-    squared per second). Finaly, a boolean is attached to each point to
-    inform if this point lies on the airfoil or not.
+    simulation mesh. Each point of a point cloud is described via 5
+    features: the inlet velocity (two components in meter per second), the
+    distance to the airfoil (one component in meter), and the normals (two
+    components in meter, set to :obj:`0` if the point is not on the airfoil).
+    Each point is given a target of 4 components for the underyling regression
+    task: the velocity (two components in meter per second), the pressure
+    divided by the specific mass (one component in meter squared per second
+    squared), the turbulent kinematic viscosity (one component in meter squared
+    per second).
+    Finaly, a boolean is attached to each point to inform if this point lies on
+    the airfoil or not.
 
     .. note::
 
-        Data objects contain no edge indices as we would like to be agnostic
-        to the simulation mesh. You are free to build a graph via the
-        :obj:`torch_geometric.transforms.RadiusGraph` transform, with its cut-off
-        being a hyperparameter.
+        Data objects contain no edge indices to be agnostic to the simulation
+        mesh. You are free to build a graph via the
+        :obj:`torch_geometric.transforms.RadiusGraph` transform.
 
     Args:
         root (string): Root directory where the dataset should be saved.
-        task (string): Task to study. It defines the split of the training and test set.
-        train (bool, optional): Determines whether the train or test split of the associated task
-            gets loaded.
-            (default: :obj:`True`)
+        task (string): The task to study (:obj:`"full"`, :obj:`"scarce"`,
+            :obj:`"reynolds"`, :obj:`"aoa"`) that defines the utilized training
+            and test splits.
+        train (bool, optional): If :obj:`True`, loads the training dataset,
+            otherwise the test dataset. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -64,18 +66,16 @@ class AirfRANS(InMemoryDataset):
             :widths: 10 10 10 10
             :header-rows: 1
 
-            * - #simulations
+            * - #graphs
               - #nodes
               - #features
               - #targets
-            * - 1000
-              - ~180000
-              - 5 (+2)
+            * - 1,000
+              - ~180,000
+              - 5
               - 4
     """
-
     url = 'https://data.isir.upmc.fr/extrality/pytorch_geometric/AirfRANS.zip'
-
     tasks = ['full', 'scarce', 'reynolds', 'aoa']
 
     def __init__(
@@ -87,17 +87,12 @@ class AirfRANS(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
     ):
+        if task not in self.tasks:
+            raise ValueError(f"Expected 'task' to be in {self.tasks} "
+                             f"got '{task}'")
 
-        assert task in self.tasks
-
-        if task == 'scarce' and not train:
-            self.task = 'full'
-            warnings.warn(
-                'Task has been replaced by "full" as it is the same test set for both tasks.',
-                UserWarning)
-        else:
-            self.task = task
-        self.split = train * 'train' + (1 - train) * 'test'
+        self.task = 'full' if task == 'scarce' and not train else task
+        self.split = 'train' if train else 'test'
 
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -107,8 +102,12 @@ class AirfRANS(InMemoryDataset):
         return ['AirfRANS.pt', 'manifest.json']
 
     @property
-    def processed_file_names(self) -> List[str]:
-        return [self.task + '_' + self.split + '.pt']
+    def process(self) -> List[str]:
+        return ['AirfRANS.pt', 'manifest.json']
+
+    @property
+    def processed_file_names(self) -> str:
+        return f'{self.task}_{self.split}.pt'
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -119,12 +118,12 @@ class AirfRANS(InMemoryDataset):
         with open(self.raw_paths[1], 'r') as f:
             manifest = json.load(f)
         total = manifest['full_train'] + manifest['full_test']
-        partial = manifest[self.task + '_' + self.split]
+        partial = set(manifest[f'{self.task}_{self.split}'])
 
-        raw_data = torch.load(self.raw_paths[0])
         data_list = []
+        raw_data = torch.load(self.raw_paths[0])
         for k, s in enumerate(total):
-            if bool(set([s]) & set(partial)):
+            if s in partial:
                 data = Data(**raw_data[k])
 
                 if self.pre_filter is not None and not self.pre_filter(data):
@@ -138,5 +137,4 @@ class AirfRANS(InMemoryDataset):
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '
-                f'task = {self.task}, '
-                f'split = {self.split})')
+                f'task={self.task}, split={self.split})')
