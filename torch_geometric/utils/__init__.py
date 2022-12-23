@@ -105,7 +105,6 @@ __all__ = [
     'tree_decomposition',
     'get_message_passing_embeddings',
     'train_test_split_edges',
-    'get_intermediate_messagepassing_embeddings',
 ]
 
 classes = __all__
