@@ -14,7 +14,7 @@ from torch_geometric.explain.algorithm.utils import (
 )
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 from torch_geometric.utils import (
-    get_intermediate_messagepassing_embeddings,
+    get_message_passing_embeddings,
     k_hop_subgraph,
 )
 
@@ -106,9 +106,8 @@ class PGExplainer(ExplainerAlgorithm):
                         edge_index: Tensor, target: Tensor = None,
                         index: Tensor = None, **kwargs):
         # Initialize trainable parameters.
-        z = get_intermediate_messagepassing_embeddings(model, x=x,
-                                                       edge_index=edge_index,
-                                                       **kwargs)[-1]
+        z = get_message_passing_embeddings(model, x=x, edge_index=edge_index,
+                                           **kwargs)[-1]
         out_channels = z.shape[-1]
         task_level = self.model_config.task_level
         self.exp_in_channels = 2 * out_channels if (
@@ -260,9 +259,8 @@ class PGExplainer(ExplainerAlgorithm):
         :rtype: :class:`Tensor`
         """
         assert self.training_needed is False
-        z = get_intermediate_messagepassing_embeddings(model, x=x,
-                                                       edge_index=edge_index,
-                                                       **kwargs)[-1]
+        z = get_message_passing_embeddings(model, x=x, edge_index=edge_index,
+                                           **kwargs)[-1]
         if self.model_config.task_level == ModelTaskLevel.graph:
             explainer_in = self._create_explainer_input(edge_index, z)
             edge_mask = self._compute_edge_mask(
@@ -275,13 +273,12 @@ class PGExplainer(ExplainerAlgorithm):
                                  f'got(index = {index})')
             # We need to compute hard masks to properly clean up edges and
             # nodes attributions not involved during message passing:
-            hard_node_mask, hard_edge_mask = self._get_hard_masks(
-                model, index, edge_index, num_nodes=x.size(0))
+            _, hard_edge_mask = self._get_hard_masks(model, index, edge_index,
+                                                     num_nodes=x.size(0))
             explainer_in = self._create_explainer_input(edge_index, z, index)
             edge_mask = self._compute_edge_mask(
                 self.explainer_model(explainer_in), training=False)
-            edge_mask = self._post_process_mask(edge_mask, edge_index.size(1),
-                                                hard_edge_mask,
+            edge_mask = self._post_process_mask(edge_mask, hard_edge_mask,
                                                 apply_sigmoid=True)
 
         return Explanation(edge_mask=edge_mask, x=x, edge_index=edge_index)
