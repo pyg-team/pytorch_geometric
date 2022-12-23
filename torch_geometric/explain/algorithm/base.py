@@ -111,7 +111,6 @@ class ExplainerAlgorithm(torch.nn.Module):
     @staticmethod
     def _post_process_mask(
         mask: Optional[Tensor],
-        num_elems: int,
         hard_mask: Optional[Tensor] = None,
         apply_sigmoid: bool = True,
     ) -> Optional[Tensor]:
@@ -204,3 +203,6 @@ class ExplainerAlgorithm(torch.nn.Module):
     def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
         assert self.model_config.return_type == ModelReturnType.raw
         return F.mse_loss(y_hat, y)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
