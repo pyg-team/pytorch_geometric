@@ -43,7 +43,6 @@ from .pascal import PascalVOCKeypoints
 from .pascal_pf import PascalPF
 from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
-# from .particle import TrackMLParticleTrackingDataset
 from .aminer import AMiner
 from .word_net import WordNet18, WordNet18RR
 from .wikics import WikiCS
@@ -79,6 +78,9 @@ from .elliptic import EllipticBitcoinDataset
 from .dgraph import DGraphFin
 from .hydro_net import HydroNet
 from .explainer_dataset import ExplainerDataset
+from .infection_dataset import InfectionDataset
+from .ba2motif_dataset import BA2MotifDataset
+from .airfrans import AirfRANS
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -130,7 +132,6 @@ __all__ = [
     'PascalPF',
     'SNAPDataset',
     'SuiteSparseMatrixCollection',
-    # 'TrackMLParticleTrackingDataset',
     'AMiner',
     'WordNet18',
     'WordNet18RR',
@@ -167,6 +168,9 @@ __all__ = [
     'DGraphFin',
     'HydroNet',
     'ExplainerDataset',
+    'InfectionDataset',
+    'BA2MotifDataset',
+    'AirfRANS',
 ]
 
 classes = __all__

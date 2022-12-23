@@ -22,7 +22,6 @@ class ExplainerAlgorithm(torch.nn.Module):
         *,
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ) -> Explanation:
         r"""Computes the explanation.
@@ -37,11 +36,6 @@ class ExplainerAlgorithm(torch.nn.Module):
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
-            target_index (int, optional): The index of the model outputs to
-                reference in case the model returns a list of tensors, *e.g.*,
-                in a multi-task learning scenario. Should be kept to
-                :obj:`None` in case the model only returns a single output
-                tensor. (default: :obj:`None`)
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
@@ -96,7 +90,6 @@ class ExplainerAlgorithm(torch.nn.Module):
     @staticmethod
     def _post_process_mask(
         mask: Optional[Tensor],
-        num_elems: int,
         hard_mask: Optional[Tensor] = None,
         apply_sigmoid: bool = True,
     ) -> Optional[Tensor]:
@@ -105,15 +98,12 @@ class ExplainerAlgorithm(torch.nn.Module):
         if mask is None:
             return mask
 
-        if mask.size(0) == 1:  # common_attributes:
-            mask = mask.repeat(num_elems, 1)
-
-        mask = mask.detach().squeeze(-1)
+        mask = mask.detach()
 
         if apply_sigmoid:
             mask = mask.sigmoid()
 
-        if hard_mask is not None:
+        if hard_mask is not None and mask.size(0) == hard_mask.size(0):
             mask[~hard_mask] = 0.
 
         return mask
@@ -161,3 +151,6 @@ class ExplainerAlgorithm(torch.nn.Module):
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'

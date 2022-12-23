@@ -79,9 +79,9 @@ def test_forward(data, target, explanation_type):
         )
         assert model.training
         assert isinstance(explanation, HeteroExplanation)
-        assert 'node_feat_mask' in explanation.available_explanations
+        assert 'node_mask' in explanation.available_explanations
         for key in explanation.node_types:
-            assert explanation[key].node_feat_mask.size() == data[key].x.size()
+            assert explanation[key].node_mask.size() == data[key].x.size()
 
 
 @pytest.mark.parametrize('threshold_value', [0.2, 0.5, 0.8])
@@ -101,10 +101,7 @@ def test_hard_threshold(data, threshold_value, node_mask_type):
         threshold_config=('hard', threshold_value),
     )
     explanation = explainer(data.x_dict, data.edge_index_dict)
-    if node_mask_type == 'object':
-        assert 'node_mask' in explanation.available_explanations
-    elif node_mask_type == 'attributes':
-        assert 'node_feat_mask' in explanation.available_explanations
+    assert 'node_mask' in explanation.available_explanations
     assert 'edge_mask' in explanation.available_explanations
 
     for key in explanation.available_explanations:
@@ -130,10 +127,7 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
     )
     explanation = explainer(data.x_dict, data.edge_index_dict)
 
-    if node_mask_type == 'object':
-        assert 'node_mask' in explanation.available_explanations
-    elif node_mask_type == 'attributes':
-        assert 'node_feat_mask' in explanation.available_explanations
+    assert 'node_mask' in explanation.available_explanations
     assert 'edge_mask' in explanation.available_explanations
 
     for key in explanation.available_explanations:
