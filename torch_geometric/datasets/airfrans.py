@@ -67,10 +67,12 @@ class AirfRANS(InMemoryDataset):
 
             * - #graphs
               - #nodes
+              - #edges
               - #features
-              - #targets
+              - #tasks
             * - 1,000
               - ~180,000
+              - 0
               - 5
               - 4
     """
