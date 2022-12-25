@@ -1,3 +1,7 @@
+"""
+This is an example of using the PGM explainer algorithm
+on a node classification task
+"""
 import os.path as osp
 
 import torch

@@ -20,10 +20,6 @@ class GCN(torch.nn.Module):
         self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, out_channels)
 
-    def forward(self, x, edge_index, edge_weight):
-
-        return x.log_softmax(dim=1)
-
     def forward(self, x, edge_index, edge_weight, batch=None):
         x = self.conv1(x, edge_index, edge_weight).relu()
         x = self.conv2(x, edge_index, edge_weight).relu()
@@ -32,13 +28,9 @@ class GCN(torch.nn.Module):
             x = global_add_pool(x, batch)
 
         if self.model_config.mode.value == 'binary_classification':
-            if self.model_config.return_type.value == 'probs':
-                x = x.sigmoid()
+            x = x.sigmoid()
         elif self.model_config.mode.value == 'multiclass_classification':
-            if self.model_config.return_type.value == 'probs':
-                x = x.softmax(dim=-1)
-            elif self.model_config.return_type.value == 'log_probs':
-                x = x.log_softmax(dim=-1)
+            x = x.log_softmax(dim=-1)
 
         return x
 
