@@ -13,6 +13,9 @@ install_requires = [
     'torchmetrics',
     'scikit-learn',
     'psutil>=5.8.0',
+    'networkx',
+    'pandas',
+    'bidict',
 ]
 
 graphgym_requires = [
@@ -37,6 +40,7 @@ full_requires = graphgym_requires + [
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
+    'bidict',
 ]
 
 benchmark_requires = [
