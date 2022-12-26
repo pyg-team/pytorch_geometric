@@ -1,11 +1,9 @@
+import math
 from typing import Optional
 
-import math
 import torch
 import torch.nn.functional as F
-
-from torch import nn
-from torch import Tensor
+from torch import Tensor, nn
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import to_dense_batch
