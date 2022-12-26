@@ -19,26 +19,14 @@ from .equilibrium import EquilibriumAggregation
 from .sort import SortAggregation
 from .gmt import GraphMultisetTransformer
 from .attention import AttentionalAggregation
+from .adaptive import MLPAggregation, SetTransformerAggregation, GRUAggregation
 
 __all__ = classes = [
-    'Aggregation',
-    'MultiAggregation',
-    'SumAggregation',
-    'MeanAggregation',
-    'MaxAggregation',
-    'MinAggregation',
-    'MulAggregation',
-    'VarAggregation',
-    'StdAggregation',
-    'SoftmaxAggregation',
-    'PowerMeanAggregation',
-    'MedianAggregation',
-    'QuantileAggregation',
-    'LSTMAggregation',
-    'Set2Set',
-    'DegreeScalerAggregation',
-    'SortAggregation',
-    'GraphMultisetTransformer',
-    'AttentionalAggregation',
-    'EquilibriumAggregation',
+    'Aggregation', 'MultiAggregation', 'SumAggregation', 'MeanAggregation',
+    'MaxAggregation', 'MinAggregation', 'MulAggregation', 'VarAggregation',
+    'StdAggregation', 'SoftmaxAggregation', 'PowerMeanAggregation',
+    'MedianAggregation', 'QuantileAggregation', 'LSTMAggregation', 'Set2Set',
+    'DegreeScalerAggregation', 'SortAggregation', 'GraphMultisetTransformer',
+    'AttentionalAggregation', 'EquilibriumAggregation', 'MLPAggregation',
+    'SetTransformerAggregation', 'GRUAggregation'
 ]
