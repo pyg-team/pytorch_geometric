@@ -2,17 +2,21 @@ from abc import abstractmethod
 from typing import Dict, Optional, Tuple, Union
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
-from torch_geometric.explain.config import ExplainerConfig, ModelConfig
+from torch_geometric.explain.config import (
+    ExplainerConfig,
+    ModelConfig,
+    ModelReturnType,
+)
 from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import k_hop_subgraph
 
 
 class ExplainerAlgorithm(torch.nn.Module):
-    r"""Abstract base class for explainer algorithms."""
     @abstractmethod
     def forward(
         self,
@@ -151,6 +155,37 @@ class ExplainerAlgorithm(torch.nn.Module):
             if isinstance(module, MessagePassing):
                 return module.flow
         return 'source_to_target'
+
+    def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        if self.model_config.return_type == ModelReturnType.raw:
+            loss_fn = F.binary_cross_entropy_with_logits
+        elif self.model_config.return_type == ModelReturnType.probs:
+            loss_fn = F.binary_cross_entropy
+        else:
+            assert False
+
+        return loss_fn(y_hat.view_as(y), y.float())
+
+    def _loss_multiclass_classification(
+        self,
+        y_hat: Tensor,
+        y: Tensor,
+    ) -> Tensor:
+        if self.model_config.return_type == ModelReturnType.raw:
+            loss_fn = F.cross_entropy
+        elif self.model_config.return_type == ModelReturnType.probs:
+            loss_fn = F.nll_loss
+            y_hat = y_hat.log()
+        elif self.model_config.return_type == ModelReturnType.log_probs:
+            loss_fn = F.nll_loss
+        else:
+            assert False
+
+        return loss_fn(y_hat, y)
+
+    def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
+        assert self.model_config.return_type == ModelReturnType.raw
+        return F.mse_loss(y_hat, y)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

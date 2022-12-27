@@ -138,6 +138,28 @@ def test_data():
     torch_geometric.set_debug(False)
 
 
+def test_to_heterogeneous_empty_edge_index():
+    data = Data(
+        x=torch.randn(5, 10),
+        edge_index=torch.empty(2, 0, dtype=torch.long),
+    )
+    hetero_data = data.to_heterogeneous()
+    assert hetero_data.node_types == ['0']
+    assert hetero_data.edge_types == []
+    assert len(hetero_data) == 1
+    assert torch.equal(hetero_data['0'].x, data.x)
+
+    hetero_data = data.to_heterogeneous(
+        node_type_names=['0'],
+        edge_type_names=[('0', 'to', '0')],
+    )
+    assert hetero_data.node_types == ['0']
+    assert hetero_data.edge_types == [('0', 'to', '0')]
+    assert len(hetero_data) == 2
+    assert torch.equal(hetero_data['0'].x, data.x)
+    assert torch.equal(hetero_data['0', 'to', '0'].edge_index, data.edge_index)
+
+
 def test_data_subgraph():
     x = torch.arange(5)
     y = torch.tensor([0.])
