@@ -54,6 +54,10 @@ class AttentionExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
+        if isinstance(x, dict) or isinstance(edge_index, dict):
+            raise ValueError(f"Heterogeneous graphs not yet supported in "
+                             f"'{self.__class__.__name__}'")
+
         hard_edge_mask = None
         if self.model_config.task_level == ModelTaskLevel.node:
             # We need to compute the hard edge mask to properly clean up edge
