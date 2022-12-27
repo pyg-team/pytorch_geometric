@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Tuple, Union
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from torch import Tensor
 
 try:
@@ -19,6 +19,7 @@ except ImportError:
     class SparseTensor:
         def __init__(self, *args, **kwargs):
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
 
 # Types for accessing data ####################################################
 
@@ -63,5 +64,6 @@ InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
 NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
 
 # Types for HeteroDF ##########################################################
+
 HeteroDF = Dict[Union[NodeType, EdgeType], pd.DataFrame]
 HeteroColumnSet = Dict[Union["str", EdgeType], List[str]]
