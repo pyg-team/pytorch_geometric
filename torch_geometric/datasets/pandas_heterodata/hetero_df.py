@@ -125,13 +125,14 @@ def nx_to_HeteroDF(g: nx.MultiDiGraph, node_groupbycols: str = "node_type",
 
 
 def heteroDF_merge(hdf1: HeteroDF, hdf2: HeteroDF, **kwargs) -> HeteroDF:
-    """merges 2 hetero dfs into 1, same keys are merged on "id" for nodes
+    r"""merges 2 hetero dfs into 1, same keys are merged on "id" for nodes
     and ("source","target") for edges.
 
-    Args: hdf1: :class:`~torch_geometric.typing.HeteroDF`. hdf2:
-    :class:`~torch_geometric.typing.HeteroDF`. **kwargs (optional):
-    Additional kwargs for function :obj:`~pandas.DataFrame.merge`. Returns:
-    merged :class:`~torch_geometric.typing.HeteroDF`.
+    :param hdf1: :class:`~torch_geometric.typing.HeteroDF`.
+    :param hdf2: :class:`~torch_geometric.typing.HeteroDF`.
+    :param kwargs: Additional kwargs for function
+         :obj:`~pandas.DataFrame.merge`.
+    :return: merged :class:`~torch_geometric.typing.HeteroDF`
     """
 
     keys1 = set(hdf1.keys())
