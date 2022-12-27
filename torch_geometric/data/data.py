@@ -715,7 +715,7 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         for i, key in enumerate(node_type_names):
             for attr, value in self.items():
-                if attr == {'node_type', 'edge_type', 'ptr'}:
+                if attr in {'node_type', 'edge_type', 'ptr'}:
                     continue
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
                     data[key][attr] = value[node_ids[i]]
@@ -726,7 +726,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         for i, key in enumerate(edge_type_names):
             src, _, dst = key
             for attr, value in self.items():
-                if attr == {'node_type', 'edge_type', 'ptr'}:
+                if attr in {'node_type', 'edge_type', 'ptr'}:
                     continue
                 elif attr == 'edge_index':
                     edge_index = value[:, edge_ids[i]]
@@ -737,8 +737,9 @@ class Data(BaseData, FeatureStore, GraphStore):
                     data[key][attr] = value[edge_ids[i]]
 
         # Add global attributes.
-        exclude_keys = {'node_type', 'edge_type', 'edge_index', 'num_nodes'}
-        exclude_keys |= set(data.keys)
+        exclude_keys = set(data.keys) | {
+            'node_type', 'edge_type', 'edge_index', 'num_nodes', 'ptr'
+        }
         for attr, value in self.items():
             if attr in exclude_keys:
                 continue
