@@ -43,7 +43,6 @@ def test_pg_explainer_node():
         model=model,
         algorithm=PGExplainer(epochs=2),
         explanation_type='phenomenon',
-        node_mask_type=None,
         edge_mask_type='object',
         model_config=model_config,
     )
@@ -80,7 +79,6 @@ def test_pg_explainer_graph():
         model=model,
         algorithm=PGExplainer(epochs=10),
         explanation_type='phenomenon',
-        node_mask_type=None,
         edge_mask_type='object',
         model_config=model_config,
     )

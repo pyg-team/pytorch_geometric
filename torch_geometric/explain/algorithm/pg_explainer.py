@@ -27,7 +27,22 @@ class PGExplainer(ExplainerAlgorithm):
     :meth:`~PGExplainer.train` before being able to generate explanations.
 
     .. code-block:: python
-        TODO
+        explainer = Explainer(
+            model=model,
+            algorithm=PGExplainer(epochs=30, lr=0.003),
+            explanation_type='phenomenon',
+            edge_mask_type='object',
+            model_config=ModelConfig(...),
+        )
+
+        # Train against a variety of node-level or graph-level predictions:
+        for epoch in range(30):
+            for index in [...]:  # Indices to train against.
+                loss = explainer.algorithm.train(epoch, model, x, edge_index,
+                                                 target=target, index=index)
+
+        # Get the final explanations:
+        explanation = explainer(x, edge_index, target=target, index=0)
 
     Args:
         epochs (int): The number of epochs to train.
