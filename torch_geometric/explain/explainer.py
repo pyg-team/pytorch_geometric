@@ -118,35 +118,6 @@ class Explainer:
 
         return out
 
-    def train_explainer_algorithm(self, x, edge_index, target=None, **kwargs):
-        """Trains 'self.algorithm'. All `ExplainerAlgorithm`s don't
-        need a training step.
-
-        Args:
-            x(Tensor): Node features.
-            edge_index(Tensor): edge indicies.
-            target (torch.Tensor): The target of the model.
-                If the explanation type is :obj:`"phenomenon"`, the target has
-                to be provided.
-                If the explanation type is :obj:`"model"`, the target should be
-                set to :obj:`None` and will get automatically inferred.
-                (default: :obj:`None`)
-        """
-        # Choose the `target` depending on the explanation type:
-        if self.explanation_type == ExplanationType.phenomenon:
-            if target is None:
-                raise ValueError(
-                    f"The 'target' has to be provided for the explanation "
-                    f"type '{self.explanation_type.value}'")
-        elif self.explanation_type == ExplanationType.model:
-            if target is not None:
-                warnings.warn(
-                    f"The 'target' should not be provided for the explanation "
-                    f"type '{self.explanation_type.value}'")
-            target = self.get_prediction(x, edge_index, **kwargs)
-        self.algorithm.train_explainer(self.model, x, edge_index, target,
-                                       **kwargs)
-
     def get_masked_prediction(
         self,
         x: Union[Tensor, Dict[NodeType, Tensor]],
@@ -206,11 +177,6 @@ class Explainer:
                 indices. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
-        if self.algorithm.training_needed:
-            raise RuntimeError(
-                f"The explainer algorithm {self.algorithm}"
-                f" needs to be trained using 'self.train_explainer_algorithm'")
-
         # Choose the `target` depending on the explanation type:
         prediction: Optional[Tensor] = None
         if self.explanation_type == ExplanationType.phenomenon:

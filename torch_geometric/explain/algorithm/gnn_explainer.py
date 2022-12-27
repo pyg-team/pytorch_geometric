@@ -8,12 +8,7 @@ from torch.nn.parameter import Parameter
 from torch_geometric.explain import ExplainerConfig, Explanation, ModelConfig
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
-from torch_geometric.explain.config import (
-    MaskType,
-    ModelMode,
-    ModelReturnType,
-    ModelTaskLevel,
-)
+from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 
 
 class GNNExplainer(ExplainerAlgorithm):
