@@ -737,14 +737,12 @@ class Data(BaseData, FeatureStore, GraphStore):
                     data[key][attr] = value[edge_ids[i]]
 
         # Add global attributes.
-        keys = set(data.keys) | {'node_type', 'edge_type', 'num_nodes'}
+        exclude_keys = {'node_type', 'edge_type', 'edge_index', 'num_nodes'}
+        exclude_keys |= set(data.keys)
         for attr, value in self.items():
-            if attr in keys:
+            if attr in exclude_keys:
                 continue
-            if len(data.node_stores) == 1:
-                data.node_stores[0][attr] = value
-            else:
-                data[attr] = value
+            data[attr] = value
 
         return data
 
