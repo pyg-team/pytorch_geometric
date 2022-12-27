@@ -6,6 +6,7 @@ from torch import Tensor
 
 try:
     import pyg_lib  # noqa
+
     WITH_PYG_LIB = True
 except ImportError:
     pyg_lib = object
@@ -18,7 +19,6 @@ except ImportError:
     class SparseTensor:
         def __init__(self, *args, **kwargs):
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
-
 
 # Types for accessing data ####################################################
 
@@ -64,3 +64,4 @@ NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
 
 # Types for HeteroDF ##########################################################
 HeteroDF = Dict[Union[NodeType, EdgeType], pd.DataFrame]
+HeteroColumnSet = Dict[Union["str", EdgeType], List[str]]
