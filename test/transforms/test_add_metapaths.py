@@ -112,7 +112,7 @@ def test_add_weighted_metapaths():
     # Make sure manually added metapaths compute the correct number of edges
     assert metapath_data['a', 'c'].edge_weight.tolist() == [1, 2]
     assert metapath_data['a', 'd'].edge_weight.tolist() == [1, 2]
-    assert metapath_data['a', 'a'].edge_weight.tolist() == [1, 2, 2, 4]
+    assert metapath_data['a', 'a'].edge_weight.tolist() == [2, 1, 4, 2]
 
     # Compute intra-table metapaths efficiently
     metapaths = [[('a', 'b'), ('b', 'c'), ('c', 'd')]]
@@ -125,7 +125,7 @@ def test_add_weighted_metapaths():
     metapath_data = AddMetaPaths(metapaths, weighted=True)(metapath_data)
     del metapath_data['a', 'd']
     del metapath_data['d', 'a']
-    assert metapath_data['a', 'a'].edge_weight.tolist() == [1, 2, 2, 4]
+    assert metapath_data['a', 'a'].edge_weight.tolist() == [2, 1, 4, 2]
 
 
 def test_add_random_metapaths():
