@@ -24,9 +24,10 @@ class PGExplainer(ExplainerAlgorithm):
     Internally, it utilizes a neural network to identify subgraph structures
     that play a crucial role in the predictions made by a GNN.
     Importantly, the :class:`PGExplainer` needs to be trained via
-    :meth:`~PGExplainer.train` before being able to generate explanations.
+    :meth:`~PGExplainer.train` before being able to generate explanations:
 
     .. code-block:: python
+
         explainer = Explainer(
             model=model,
             algorithm=PGExplainer(epochs=30, lr=0.003),
@@ -116,13 +117,13 @@ class PGExplainer(ExplainerAlgorithm):
         Needs to be called before being able to make predictions.
 
         Args:
+            epoch (int): The current epoch of the training phase.
             model (torch.nn.Module): The model to explain.
             x (torch.Tensor): The input node features of a
                 homogeneous graph.
             edge_index (torch.Tensor): The input edge indices of a homogeneous
                 graph.
             target (torch.Tensor): The target of the model.
-            epoch (int): The current epoch of the training phase.
             index (int or torch.Tensor, optional): The index of the model
                 output to explain. Needs to be a single index.
                 (default: :obj:`None`)
