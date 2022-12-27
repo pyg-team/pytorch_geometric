@@ -715,7 +715,7 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         for i, key in enumerate(node_type_names):
             for attr, value in self.items():
-                if attr == 'node_type' or attr == 'edge_type':
+                if attr == {'node_type', 'edge_type', 'ptr'}:
                     continue
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
                     data[key][attr] = value[node_ids[i]]
@@ -726,7 +726,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         for i, key in enumerate(edge_type_names):
             src, _, dst = key
             for attr, value in self.items():
-                if attr == 'node_type' or attr == 'edge_type':
+                if attr == {'node_type', 'edge_type', 'ptr'}:
                     continue
                 elif attr == 'edge_index':
                     edge_index = value[:, edge_ids[i]]
