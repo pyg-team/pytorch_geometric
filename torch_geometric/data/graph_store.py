@@ -91,7 +91,7 @@ class EdgeAttr(CastMixin):
     # NOTE we define __init__ to force-cast layout
     def __init__(
         self,
-        edge_type: Any,
+        edge_type: EdgeType,
         layout: EdgeLayout,
         is_sorted: bool = False,
         size: Optional[Tuple[int, int]] = None,
@@ -177,21 +177,26 @@ class GraphStore:
 
     @abstractmethod
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
+        r"""To be implemented by :class:`GraphStore` subclasses."""
         pass
 
     def remove_edge_index(self, *args, **kwargs) -> bool:
-        r"""Synchronously deletes an :obj:`edge_index` tensor from the graph
-        store.
+        r"""Synchronously deletes an :obj:`edge_index` tuple from the
+        :class:`GraphStore`.
+        Returns whether deletion was successful.
 
         Args:
-            attr (EdgeAttr): The edge attributes.
+            **kwargs (EdgeAttr): Any relevant edge attributes that
+                correspond to the :obj:`edge_index` tuple. See the
+                :class:`EdgeAttr` documentation for required and optional
+                attributes.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         return self._remove_edge_index(edge_attr)
 
     @abstractmethod
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        r"""Returns all edge attributes stored in the graph store."""
+        r"""Obtains all edge attributes stored in the :class:`GraphStore`."""
         pass
 
     # Layout Conversion #######################################################
@@ -199,7 +204,7 @@ class GraphStore:
     def coo(
         self,
         edge_types: Optional[List[Any]] = None,
-        replace: bool = False,
+        store: bool = False,
     ) -> ConversionOutputType:
         r"""Obtains the edge indices in the :class:`GraphStore` in COO
         format.
@@ -216,7 +221,7 @@ class GraphStore:
     def csr(
         self,
         edge_types: Optional[List[Any]] = None,
-        replace: bool = False,
+        store: bool = False,
     ) -> ConversionOutputType:
         r"""Obtains the edge indices in the :class:`GraphStore` in CSR
         format.
@@ -233,7 +238,7 @@ class GraphStore:
     def csc(
         self,
         edge_types: Optional[List[Any]] = None,
-        replace: bool = False,
+        store: bool = False,
     ) -> ConversionOutputType:
         r"""Obtains the edge indices in the :class:`GraphStore` in CSC
         format.
