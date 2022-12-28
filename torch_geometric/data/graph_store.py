@@ -30,9 +30,14 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj, EdgeTensorType, EdgeType, OptTensor
+from torch_geometric.typing import (
+    Adj,
+    EdgeTensorType,
+    EdgeType,
+    OptTensor,
+    SparseTensor,
+)
 from torch_geometric.utils.mixin import CastMixin
 
 # The output of converting between two types in the GraphStore is a Tuple of
@@ -59,8 +64,15 @@ class EdgeLayout(Enum):
 
 @dataclass
 class EdgeAttr(CastMixin):
-    r"""Defines the attributes of an :obj:`GraphStore` edge."""
-    # TODO (matthias) Rename to `EdgeProp`.
+    r"""Defines the attributes of a :obj:`GraphStore` edge.
+    It holds all the parameters necessary to uniquely identify an edge from
+    the :class:`GraphStore`.
+
+    Note that the order of the attributes is important; this is the order in
+    which attributes must be provided for indexing calls. :class:`GraphStore`
+    implementations can define a different ordering by overriding
+    :meth:`EdgeAttr.__init__`.
+    """
 
     # The type of the edge:
     edge_type: EdgeType
@@ -100,50 +112,60 @@ class EdgeAttr(CastMixin):
 
 
 class GraphStore:
-    def __init__(self, edge_attr_cls: Any = EdgeAttr):
-        r"""Initializes the graph store. Implementor classes can customize the
-        ordering and required nature of their :class:`EdgeAttr` edge attributes
-        by subclassing :class:`EdgeAttr` and passing the subclass as
-        :obj:`edge_attr_cls`."""
-        super().__init__()
-        self.__dict__['_edge_attr_cls'] = edge_attr_cls
+    r"""An abstract base class to access edges from a remote graph store.
 
-    # Core ####################################################################
+    Args:
+        edge_attr_cls (EdgeAttr, optional): A user-defined
+            :class:`EdgeAttr` class to customize the required attributes and
+            their ordering to uniquely identify edges. (default: :obj:`None`)
+    """
+    def __init__(self, edge_attr_cls: Optional[Any] = None):
+        super().__init__()
+        self.__dict__['_edge_attr_cls'] = edge_attr_cls or EdgeAttr
+
+    # Core (CRUD) #############################################################
 
     @abstractmethod
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
+        r"""To be implemented by :class:`GraphStore` subclasses."""
         pass
 
     def put_edge_index(self, edge_index: EdgeTensorType, *args,
                        **kwargs) -> bool:
-        r"""Synchronously adds the :obj:`edge_index` tensor to the graph store.
+        r"""Synchronously adds an :obj:`edge_index` tuple to the
+        :class:`GraphStore`.
+        Returns whether insertion was successful.
 
         Args:
-            tensor (EdgeTensorType): The :obj:`edge_index` in the format
-                as specified in :obj:`attr`.
-            attr (EdgeAttr): The edge attributes.
+            tensor (Tuple[torch.Tensor, torch.Tensor]): The :obj:`edge_index`
+                tuple in a format specified in :class:`EdgeAttr`.
+            **kwargs (EdgeAttr): Any relevant edge attributes that
+                correspond to the :obj:`edge_index` tuple. See the
+                :class:`EdgeAttr` documentation for required and optional
+                attributes.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         return self._put_edge_index(edge_index, edge_attr)
 
     @abstractmethod
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        r"""To be implemented by :class:`GraphStore` subclasses."""
         pass
 
     def get_edge_index(self, *args, **kwargs) -> EdgeTensorType:
-        r"""Synchronously gets an edge_index tensor from the materialized
-        graph.
+        r"""Synchronously obtains an :obj:`edge_index` tuple from the
+        :class:`GraphStore`.
 
         Args:
-            attr (EdgeAttr): The edge attributes.
-
-        Returns:
-            EdgeTensorType: The :obj:`edge_index` tensor corresonding to the
-                provided :obj:`attr`.
+            **kwargs (EdgeAttr): Any relevant edge attributes that
+                correspond to the :obj:`edge_index` tuple. See the
+                :class:`EdgeAttr` documentation for required and optional
+                attributes.
 
         Raises:
-            KeyError: if the edge index corresponding to attr was not found.
+            KeyError: If the :obj:`edge_index` corresponding to the input
+                :class:`EdgeAttr` was not found.
         """
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
         edge_index = self._get_edge_index(edge_attr)
@@ -179,27 +201,51 @@ class GraphStore:
         edge_types: Optional[List[Any]] = None,
         replace: bool = False,
     ) -> ConversionOutputType:
-        r"""Returns the edge indices in the graph store in COO format.
-        Optionally replaces existing edge indices with the requested format."""
-        return self._edges_to_layout(EdgeLayout.COO, edge_types, replace)
+        r"""Obtains the edge indices in the :class:`GraphStore` in COO
+        format.
+
+        Args:
+            edge_types (List[Any], optional): The edge types of edge indices
+                to obtain. If set to :obj:`None`, will return the edge indices
+                of all existing edge types. (default: :obj:`None`)
+            store (bool, optional): Whether to store converted edge indices in
+                the :class:`GraphStore`. (default: :obj:`False`)
+        """
+        return self._all_edges_to_layout(EdgeLayout.COO, edge_types, store)
 
     def csr(
         self,
         edge_types: Optional[List[Any]] = None,
         replace: bool = False,
     ) -> ConversionOutputType:
-        r"""Returns the edge indices in the graph store in CSR format.
-        Optionally replaces existing edge indices with the requested format."""
-        return self._edges_to_layout(EdgeLayout.CSR, edge_types, replace)
+        r"""Obtains the edge indices in the :class:`GraphStore` in CSR
+        format.
+
+        Args:
+            edge_types (List[Any], optional): The edge types of edge indices
+                to obtain. If set to :obj:`None`, will return the edge indices
+                of all existing edge types. (default: :obj:`None`)
+            store (bool, optional): Whether to store converted edge indices in
+                the :class:`GraphStore`. (default: :obj:`False`)
+        """
+        return self._all_edges_to_layout(EdgeLayout.CSR, edge_types, store)
 
     def csc(
         self,
         edge_types: Optional[List[Any]] = None,
         replace: bool = False,
     ) -> ConversionOutputType:
-        r"""Returns the edge indices in the graph store in CSS format.
-        Optionally replaces existing edge indices with the requested format."""
-        return self._edges_to_layout(EdgeLayout.CSC, edge_types, replace)
+        r"""Obtains the edge indices in the :class:`GraphStore` in CSC
+        format.
+
+        Args:
+            edge_types (List[Any], optional): The edge types of edge indices
+                to obtain. If set to :obj:`None`, will return the edge indices
+                of all existing edge types. (default: :obj:`None`)
+            store (bool, optional): Whether to store converted edge indices in
+                the :class:`GraphStore`. (default: :obj:`False`)
+        """
+        return self._all_edges_to_layout(EdgeLayout.CSC, edge_types, store)
 
     # Python built-ins ########################################################
 

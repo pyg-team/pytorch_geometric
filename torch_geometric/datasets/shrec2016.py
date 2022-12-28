@@ -1,6 +1,7 @@
 import glob
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import torch
 
@@ -59,8 +60,16 @@ class SHREC2016(InMemoryDataset):
     ]
     partialities = ['holes', 'cuts']
 
-    def __init__(self, root, partiality, category, train=True, transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        partiality: str,
+        category: str,
+        train: bool = True,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         assert partiality.lower() in self.partialities
         self.part = partiality.lower()
         assert category.lower() in self.categories
@@ -71,18 +80,18 @@ class SHREC2016(InMemoryDataset):
         self.data, self.slices = torch.load(path)
 
     @property
-    def ref(self):
+    def ref(self) -> str:
         ref = self.__ref__
         if self.transform is not None:
             ref = self.transform(ref)
         return ref
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['training', 'test']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> List[str]:
         name = f'{self.part}_{self.cat}.pt'
         return [f'{i}_{name}' for i in ['ref', 'training', 'test']]
 
@@ -140,5 +149,5 @@ class SHREC2016(InMemoryDataset):
         torch.save(self.collate(test_list), self.processed_paths[2])
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.name__}({len(self)}, '
+        return (f'{self.__class__.__name__}({len(self)}, '
                 f'partiality={self.part}, category={self.cat})')

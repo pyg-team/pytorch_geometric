@@ -1,9 +1,11 @@
-from typing import Callable, Optional, Union
+from typing import Callable, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.nn import GraphConv
 from torch_geometric.nn.pool.topk_pool import filter_adj, topk
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import softmax
 
 
@@ -66,10 +68,16 @@ class SAGPooling(torch.nn.Module):
         **kwargs (optional): Additional parameters for initializing the graph
             neural network layer.
     """
-    def __init__(self, in_channels: int, ratio: Union[float, int] = 0.5,
-                 GNN: Callable = GraphConv, min_score: Optional[float] = None,
-                 multiplier: float = 1.0, nonlinearity: Callable = torch.tanh,
-                 **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        ratio: Union[float, int] = 0.5,
+        GNN: torch.nn.Module = GraphConv,
+        min_score: Optional[float] = None,
+        multiplier: float = 1.0,
+        nonlinearity: Callable = torch.tanh,
+        **kwargs,
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -84,7 +92,14 @@ class SAGPooling(torch.nn.Module):
     def reset_parameters(self):
         self.gnn.reset_parameters()
 
-    def forward(self, x, edge_index, edge_attr=None, batch=None, attn=None):
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        edge_attr: OptTensor = None,
+        batch: OptTensor = None,
+        attn: OptTensor = None,
+    ) -> Tuple[Tensor, Tensor, OptTensor, Tensor, Tensor, Tensor]:
         """"""
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))

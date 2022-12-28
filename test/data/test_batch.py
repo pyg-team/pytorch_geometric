@@ -196,19 +196,19 @@ def test_pickling():
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
-    path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.pt')
-    torch.save(batch, path)
+    filename = f'{random.randrange(sys.maxsize)}.pt'
+    torch.save(batch, filename)
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
-    batch = torch.load(path)
+    batch = torch.load(filename)
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
     assert batch.__class__.__name__ == 'DataBatch'
     assert batch.num_graphs == len(batch) == 4
 
-    os.remove(path)
+    os.remove(filename)
 
 
 def test_recursive_batch():

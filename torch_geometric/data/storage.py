@@ -18,11 +18,14 @@ from typing import (
 import numpy as np
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor, coalesce
 
 from torch_geometric.data.view import ItemsView, KeysView, ValuesView
-from torch_geometric.typing import EdgeType, NodeType
-from torch_geometric.utils import contains_isolated_nodes, is_undirected
+from torch_geometric.typing import EdgeType, NodeType, SparseTensor
+from torch_geometric.utils import (
+    coalesce,
+    contains_isolated_nodes,
+    is_undirected,
+)
 
 N_KEYS = {'x', 'feat', 'pos', 'batch'}
 
@@ -65,7 +68,10 @@ class BaseStorage(MutableMapping):
                 f"'{self.__class__.__name__}' object has no attribute '{key}'")
 
     def __setattr__(self, key: str, value: Any):
-        if key == '_parent':
+        propobj = getattr(self.__class__, key, None)
+        if propobj is not None and getattr(propobj, 'fset', None) is not None:
+            propobj.fset(self, value)
+        elif key == '_parent':
             self.__dict__[key] = weakref.ref(value)
         elif key[:1] == '_':
             self.__dict__[key] = value
@@ -316,6 +322,9 @@ class NodeStorage(BaseStorage):
     def is_edge_attr(self, key: str) -> bool:
         return False
 
+    def node_attrs(self) -> List[str]:
+        return [key for key in self.keys() if self.is_node_attr(key)]
+
 
 class EdgeStorage(BaseStorage):
     r"""We support multiple ways to store edge connectivity in a
@@ -399,25 +408,39 @@ class EdgeStorage(BaseStorage):
             return False
         return True
 
+    def edge_attrs(self) -> List[str]:
+        return [key for key in self.keys() if self.is_edge_attr(key)]
+
     def is_coalesced(self) -> bool:
         for value in self.values('adj', 'adj_t'):
             return value.is_coalesced()
 
-        edge_index = self.edge_index
-        new_edge_index, _ = coalesce(edge_index, None, self.size(0),
-                                     self.size(1))
-        return (edge_index.numel() == new_edge_index.numel() and bool(
-            (edge_index == new_edge_index).all()))
+        if 'edge_index' in self:
+            new_edge_index = coalesce(
+                self.edge_index,
+                num_nodes=max(self.size(0), self.size(1)),
+            )
+            return (self.edge_index.numel() == new_edge_index.numel()
+                    and torch.equal(self.edge_index, new_edge_index))
+
+        return True
 
     def coalesce(self, reduce: str = 'sum'):
         for key, value in self.items('adj', 'adj_t'):
             self[key] = value.coalesce(reduce)
 
         if 'edge_index' in self:
-            edge_index = self.edge_index
-            edge_attr = self.edge_attr if 'edge_attr' in self else None
-            self.edge_index, self.edge_attr = coalesce(edge_index, edge_attr,
-                                                       *self.size(), op=reduce)
+            if 'edge_attr' in self:
+                self.edge_index, self.edge_attr = coalesce(
+                    self.edge_index,
+                    self.edge_attr,
+                    num_nodes=max(self.size(0), self.size(1)),
+                )
+            else:
+                self.edge_index = coalesce(
+                    self.edge_index,
+                    num_nodes=max(self.size(0), self.size(1)),
+                )
 
         return self
 

@@ -20,6 +20,9 @@ def test_data():
     N = data.num_nodes
     assert N == 3
 
+    assert data.node_attrs() == ['x']
+    assert data.edge_attrs() == ['edge_index']
+
     assert data.x.tolist() == x.tolist()
     assert data['x'].tolist() == x.tolist()
     assert data.get('x').tolist() == x.tolist()
@@ -135,6 +138,28 @@ def test_data():
     torch_geometric.set_debug(False)
 
 
+def test_to_heterogeneous_empty_edge_index():
+    data = Data(
+        x=torch.randn(5, 10),
+        edge_index=torch.empty(2, 0, dtype=torch.long),
+    )
+    hetero_data = data.to_heterogeneous()
+    assert hetero_data.node_types == ['0']
+    assert hetero_data.edge_types == []
+    assert len(hetero_data) == 1
+    assert torch.equal(hetero_data['0'].x, data.x)
+
+    hetero_data = data.to_heterogeneous(
+        node_type_names=['0'],
+        edge_type_names=[('0', 'to', '0')],
+    )
+    assert hetero_data.node_types == ['0']
+    assert hetero_data.edge_types == [('0', 'to', '0')]
+    assert len(hetero_data) == 2
+    assert torch.equal(hetero_data['0'].x, data.x)
+    assert torch.equal(hetero_data['0', 'to', '0'].edge_index, data.edge_index)
+
+
 def test_data_subgraph():
     x = torch.arange(5)
     y = torch.tensor([0.])
@@ -147,19 +172,36 @@ def test_data_subgraph():
 
     out = data.subgraph(torch.tensor([1, 2, 3]))
     assert len(out) == 5
-    assert torch.allclose(out.x, torch.arange(1, 4))
-    assert torch.allclose(out.y, y)
+    assert torch.equal(out.x, torch.arange(1, 4))
+    assert torch.equal(out.y, data.y)
     assert out.edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
-    assert torch.allclose(out.edge_weight, edge_weight[torch.arange(2, 6)])
+    assert torch.equal(out.edge_weight, edge_weight[torch.arange(2, 6)])
     assert out.num_nodes == 3
 
     out = data.subgraph(torch.tensor([False, False, False, True, True]))
     assert len(out) == 5
-    assert torch.allclose(out.x, torch.arange(3, 5))
-    assert torch.allclose(out.y, y)
+    assert torch.equal(out.x, torch.arange(3, 5))
+    assert torch.equal(out.y, data.y)
     assert out.edge_index.tolist() == [[0, 1], [1, 0]]
-    assert torch.allclose(out.edge_weight, edge_weight[torch.arange(6, 8)])
+    assert torch.equal(out.edge_weight, edge_weight[torch.arange(6, 8)])
     assert out.num_nodes == 2
+
+    out = data.edge_subgraph(torch.tensor([1, 2, 3]))
+    assert len(out) == 5
+    assert out.num_nodes == data.num_nodes
+    assert torch.equal(out.x, data.x)
+    assert torch.equal(out.y, data.y)
+    assert out.edge_index.tolist() == [[1, 1, 2], [0, 2, 1]]
+    assert torch.equal(out.edge_weight, edge_weight[torch.tensor([1, 2, 3])])
+
+    out = data.edge_subgraph(
+        torch.tensor([False, True, True, True, False, False, False, False]))
+    assert len(out) == 5
+    assert out.num_nodes == data.num_nodes
+    assert torch.equal(out.x, data.x)
+    assert torch.equal(out.y, data.y)
+    assert out.edge_index.tolist() == [[1, 1, 2], [0, 2, 1]]
+    assert torch.equal(out.edge_weight, edge_weight[torch.tensor([1, 2, 3])])
 
 
 def test_copy_data():
@@ -315,3 +357,16 @@ def test_basic_graph_store():
     # Get attrs:
     edge_attrs = data.get_all_edge_attrs()
     assert len(edge_attrs) == 3
+
+
+def test_data_generate_ids():
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
+
+    data = Data(x=x, edge_index=edge_index)
+    assert len(data) == 2
+
+    data.generate_ids()
+    assert len(data) == 4
+    assert data.n_id.tolist() == [0, 1, 2]
+    assert data.e_id.tolist() == [0, 1, 2, 3, 4]

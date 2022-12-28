@@ -5,7 +5,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.graph_store import EdgeLayout
-from torch_geometric.testing.graph_store import MyGraphStore
+from torch_geometric.testing import MyGraphStore
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils.sort_edge_index import sort_edge_index
 

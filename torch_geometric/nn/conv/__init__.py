@@ -7,6 +7,7 @@ from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
+from .fused_gat_conv import FusedGATConv
 from .gatv2_conv import GATv2Conv
 from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
@@ -51,6 +52,7 @@ from .hetero_conv import HeteroConv
 from .han_conv import HANConv
 from .lg_conv import LGConv
 from .ssg_conv import SSGConv
+from .point_gnn_conv import PointGNNConv
 
 __all__ = [
     'MessagePassing',
@@ -62,6 +64,7 @@ __all__ = [
     'GatedGraphConv',
     'ResGatedGraphConv',
     'GATConv',
+    'FusedGATConv',
     'GATv2Conv',
     'TransformerConv',
     'AGNNConv',
@@ -111,6 +114,7 @@ __all__ = [
     'HeteroConv',
     'HANConv',
     'LGConv',
+    'PointGNNConv',
 ]
 
 classes = __all__

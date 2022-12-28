@@ -51,7 +51,7 @@ def to_scipy_sparse_matrix(
 
 
 def from_scipy_sparse_matrix(
-        A: scipy.sparse.base.spmatrix) -> Tuple[Tensor, Tensor]:
+        A: scipy.sparse.spmatrix) -> Tuple[Tensor, Tensor]:
     r"""Converts a scipy sparse matrix to edge indices and edge attributes.
 
     Args:
@@ -248,7 +248,7 @@ def from_networkx(
         else:
             try:
                 data[key] = torch.tensor(value)
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
 
     data['edge_index'] = edge_index.view(2, -1)

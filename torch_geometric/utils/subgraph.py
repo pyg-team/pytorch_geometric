@@ -204,6 +204,7 @@ def k_hop_subgraph(
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
     flow: str = 'source_to_target',
+    directed: bool = False,
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""Computes the induced subgraph of :obj:`edge_index` around all nodes in
     :attr:`node_idx` reachable within :math:`k` hops.
@@ -232,6 +233,8 @@ def k_hop_subgraph(
         flow (string, optional): The flow direction of :math:`k`-hop
             aggregation (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
+        directed (bool, optional): If set to :obj:`False`, will include all
+            edges between all sampled nodes. (default: :obj:`True`)
 
     :rtype: (:class:`LongTensor`, :class:`LongTensor`, :class:`LongTensor`,
              :class:`BoolTensor`)
@@ -241,7 +244,7 @@ def k_hop_subgraph(
         >>> edge_index = torch.tensor([[0, 1, 2, 3, 4, 5],
         ...                            [2, 2, 4, 4, 6, 6]])
 
-        >>> # Center node 2, 2-hops
+        >>> # Center node 6, 2-hops
         >>> subset, edge_index, mapping, edge_mask = k_hop_subgraph(
         ...     6, 2, edge_index, relabel_nodes=True)
         >>> subset
@@ -304,7 +307,9 @@ def k_hop_subgraph(
 
     node_mask.fill_(False)
     node_mask[subset] = True
-    edge_mask = node_mask[row] & node_mask[col]
+
+    if not directed:
+        edge_mask = node_mask[row] & node_mask[col]
 
     edge_index = edge_index[:, edge_mask]
 

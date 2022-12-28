@@ -1,6 +1,7 @@
 import glob
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import torch
 
@@ -59,8 +60,14 @@ class TOSCA(InMemoryDataset):
         'victoria', 'wolf'
     ]
 
-    def __init__(self, root, categories=None, transform=None,
-                 pre_transform=None, pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        categories: Optional[List[str]] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         categories = self.categories if categories is None else categories
         categories = [cat.lower() for cat in categories]
         for cat in categories:
@@ -70,11 +77,11 @@ class TOSCA(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['cat0.vert', 'cat0.tri']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         name = '_'.join([cat[:2] for cat in self.categories])
         return f'{name}.pt'
 
