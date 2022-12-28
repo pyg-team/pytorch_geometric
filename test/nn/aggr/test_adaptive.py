@@ -1,8 +1,12 @@
 import pytest
 import torch
 
-from torch_geometric.nn.aggr import (MLPAggregation, SetTransformerAggregation,
-                                     GRUAggregation, DeepSetsAggregation)
+from torch_geometric.nn.aggr import (
+    DeepSetsAggregation,
+    GRUAggregation,
+    MLPAggregation,
+    SetTransformerAggregation,
+)
 
 
 @pytest.mark.parametrize('num_hidden_layers', [0, 1, 2])
