@@ -792,6 +792,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         if node_attrs is None:
             node_attrs = _consistent_size(self.node_stores)
         for key in node_attrs:
+            if key in {'ptr'}:
+                continue
             values = [store[key] for store in self.node_stores]
             dim = self.__cat_dim__(key, values[0], self.node_stores[0])
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
