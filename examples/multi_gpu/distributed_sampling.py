@@ -87,7 +87,7 @@ def run(rank, world_size, dataset):
     torch.manual_seed(12345)
     model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
     model = DistributedDataParallel(model, device_ids=[rank])
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     for epoch in range(1, 21):
         model.train()
