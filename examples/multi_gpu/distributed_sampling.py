@@ -87,7 +87,7 @@ def run(rank, world_size, dataset):
     torch.manual_seed(12345)
     model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
     model = DistributedDataParallel(model, device_ids=[rank])
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.005)
 
     for epoch in range(1, 21):
         model.train()
@@ -101,7 +101,7 @@ def run(rank, world_size, dataset):
         dist.barrier()
 
         if rank == 0:
-            print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
+            print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
 
         if rank == 0 and epoch % 5 == 0:  # We evaluate on a single GPU for now
             model.eval()
