@@ -5,6 +5,7 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn.parallel import DistributedDataParallel
 from tqdm import tqdm
 
@@ -14,18 +15,17 @@ from torch_geometric.nn import SAGEConv
 
 
 class SAGE(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels,
-                 num_layers=2):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int, num_layers: int = 2):
         super().__init__()
-        self.num_layers = num_layers
 
         self.convs = torch.nn.ModuleList()
         self.convs.append(SAGEConv(in_channels, hidden_channels))
-        for _ in range(self.num_layers - 2):
+        for _ in range(num_layers - 2):
             self.convs.append(SAGEConv(hidden_channels, hidden_channels))
         self.convs.append(SAGEConv(hidden_channels, out_channels))
 
-    def forward(self, x, edge_index):
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         for i, conv in enumerate(self.convs):
             x = conv(x, edge_index)
             if i < len(self.convs) - 1:
@@ -34,8 +34,10 @@ class SAGE(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def inference(self, x_all, rank, subgraph_loader):
-        pbar = tqdm(total=len(subgraph_loader.dataset) * len(self.convs))
+    def inference(self, x_all: Tensor, device: torch.device,
+                  subgraph_loader: NeighborLoader) -> Tensor:
+
+        pbar = tqdm(total=len(subgraph_loader) * len(self.convs))
         pbar.set_description('Evaluating')
 
         # Compute representations of nodes layer by layer, using *all*
@@ -44,13 +46,15 @@ class SAGE(torch.nn.Module):
         for i, conv in enumerate(self.convs):
             xs = []
             for batch in subgraph_loader:
-                x = x_all[batch.n_id.to(x_all.device)].to(rank)
-                x = conv(x, batch.edge_index.to(rank))
+                x = x_all[batch.node_id.to(x_all.device)].to(device)
+                x = conv(x, batch.edge_index.to(device))
+                x = x[:batch.batch_size]
                 if i < len(self.convs) - 1:
                     x = x.relu_()
-                xs.append(x[:batch.batch_size].cpu())
-                pbar.update(batch.batch_size)
+                xs.append(x.cpu())
+                pbar.update(1)
             x_all = torch.cat(xs, dim=0)
+
         pbar.close()
         return x_all
 
@@ -61,24 +65,24 @@ def run(rank, world_size, dataset):
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
     data = dataset[0]
-    data = data.to(rank, 'x', 'y')
+    data = data.to(rank, 'x', 'y')  # Move to device for faster feature fetch.
 
+    # Split training indices into `world_size` many chunks:
     train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
     train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
-    kwargs = {'batch_size': 1024, 'num_workers': 0}
+
+    kwargs = dict(batch_size=1024, num_workers=4, persistent_workers=True)
     train_loader = NeighborLoader(data, input_nodes=data.train_mask,
                                   num_neighbors=[25, 10], shuffle=True,
                                   drop_last=True, **kwargs)
 
-    if rank == 0:
-        subgraph_loader = NeighborLoader(copy.copy(data), input_nodes=None,
-                                         num_neighbors=[-1], shuffle=False,
-                                         **kwargs)
+    if rank == 0:  # Create single-hop evaluation neighbor loader:
+        subgraph_loader = NeighborLoader(copy.copy(data), num_neighbors=[-1],
+                                         shuffle=False, **kwargs)
         # No need to maintain these features during evaluation:
         del subgraph_loader.data.x, subgraph_loader.data.y
-        # Add global node index information.
-        subgraph_loader.data.num_nodes = data.num_nodes
-        subgraph_loader.data.n_id = torch.arange(data.num_nodes)
+        # Add global node index information:
+        subgraph_loader.data.node_id = torch.arange(data.num_nodes)
 
     torch.manual_seed(12345)
     model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
@@ -103,7 +107,7 @@ def run(rank, world_size, dataset):
             model.eval()
             with torch.no_grad():
                 out = model.module.inference(data.x, rank, subgraph_loader)
-            res = out.argmax(dim=-1) == data.y
+            res = out.argmax(dim=-1) == data.y.to(out.device)
             acc1 = int(res[data.train_mask].sum()) / int(data.train_mask.sum())
             acc2 = int(res[data.val_mask].sum()) / int(data.val_mask.sum())
             acc3 = int(res[data.test_mask].sum()) / int(data.test_mask.sum())
