@@ -915,9 +915,18 @@ class Data(BaseData, FeatureStore, GraphStore):
         return False
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        if not hasattr(self, '_edge_attrs'):
-            return []
-        return list(self._edge_attrs.values())
+        edge_attrs = self.get('_edge_attrs', {})
+
+        if 'edge_index' in self and EdgeLayout.COO not in edge_attrs:
+            edge_attrs[EdgeLayout.COO] = DataEdgeAttr('coo', is_sorted=False)
+        if 'adj' in self and EdgeLayout.CSR not in edge_attrs:
+            size = self.adj.sparse_sizes()
+            edge_attrs[EdgeLayout.CSR] = DataEdgeAttr('csr', size=size)
+        if 'adj_t' in self and EdgeLayout.CSC not in edge_attrs:
+            size = self.adj_t.sparse_sizes()[::-1]
+            edge_attrs[EdgeLayout.CSC] = DataEdgeAttr('csc', size=size)
+
+        return list(edge_attrs.values())
 
 
 ###############################################################################
