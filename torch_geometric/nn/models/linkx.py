@@ -36,7 +36,7 @@ class SparseLinear(MessagePassing):
         out = self.propagate(edge_index, weight=self.weight,
                              edge_weight=edge_weight, size=None)
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
         return out
 
     def message(self, weight_j: Tensor, edge_weight: OptTensor) -> Tensor:
@@ -133,8 +133,8 @@ class LINKX(torch.nn.Module):
 
         if x is not None:
             x = self.node_mlp(x)
-            out += x
-            out += self.cat_lin2(x)
+            out = out + x
+            out = out + self.cat_lin2(x)
 
         return self.final_mlp(out.relu_())
 

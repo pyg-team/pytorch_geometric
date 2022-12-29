@@ -1,7 +1,9 @@
 import torch
 
-from torch_geometric.graphgym.register import (register_edge_encoder,
-                                               register_node_encoder)
+from torch_geometric.graphgym.register import (
+    register_edge_encoder,
+    register_node_encoder,
+)
 
 
 @register_node_encoder('Integer')

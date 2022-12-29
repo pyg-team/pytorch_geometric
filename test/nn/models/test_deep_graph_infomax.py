@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import DeepGraphInfomax
+from torch_geometric.testing import is_full_test
 
 
 def test_deep_graph_infomax():
@@ -18,6 +19,12 @@ def test_deep_graph_infomax():
     pos_z, neg_z, summary = model(x)
     assert pos_z.size() == (20, 16) and neg_z.size() == (20, 16)
     assert summary.size() == (16, )
+
+    if is_full_test():
+        jit = torch.jit.export(model)
+        pos_z, neg_z, summary = jit(x)
+        assert pos_z.size() == (20, 16) and neg_z.size() == (20, 16)
+        assert summary.size() == (16, )
 
     loss = model.loss(pos_z, neg_z, summary)
     assert 0 <= loss.item()

@@ -5,8 +5,13 @@ import torch.fx
 from torch.nn import Dropout, Linear, ReLU
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import (GCNConv, JumpingKnowledge, MessagePassing,
-                                Sequential, global_mean_pool)
+from torch_geometric.nn import (
+    GCNConv,
+    JumpingKnowledge,
+    MessagePassing,
+    Sequential,
+    global_mean_pool,
+)
 
 
 def test_sequential():

@@ -4,19 +4,35 @@ import torch
 
 import torch_geometric.graphgym.register as register
 import torch_geometric.transforms as T
-from torch_geometric.datasets import (PPI, Amazon, Coauthor, KarateClub,
-                                      MNISTSuperpixels, Planetoid, QM7b,
-                                      TUDataset)
+from torch_geometric.datasets import (
+    PPI,
+    Amazon,
+    Coauthor,
+    KarateClub,
+    MNISTSuperpixels,
+    Planetoid,
+    QM7b,
+    TUDataset,
+)
 from torch_geometric.graphgym.config import cfg
-from torch_geometric.graphgym.models.transform import (create_link_label,
-                                                       neg_sampling_transform)
-from torch_geometric.loader import (ClusterLoader, DataLoader,
-                                    GraphSAINTEdgeSampler,
-                                    GraphSAINTNodeSampler,
-                                    GraphSAINTRandomWalkSampler,
-                                    NeighborSampler, RandomNodeSampler)
-from torch_geometric.utils import (index_to_mask, negative_sampling,
-                                   to_undirected)
+from torch_geometric.graphgym.models.transform import (
+    create_link_label,
+    neg_sampling_transform,
+)
+from torch_geometric.loader import (
+    ClusterLoader,
+    DataLoader,
+    GraphSAINTEdgeSampler,
+    GraphSAINTNodeSampler,
+    GraphSAINTRandomWalkSampler,
+    NeighborSampler,
+    RandomNodeLoader,
+)
+from torch_geometric.utils import (
+    index_to_mask,
+    negative_sampling,
+    to_undirected,
+)
 
 index2mask = index_to_mask  # TODO Backward compatibility
 
@@ -240,11 +256,11 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
             batch_size=batch_size, shuffle=shuffle,
             num_workers=cfg.num_workers, pin_memory=True)
     elif sampler == "random_node":
-        loader_train = RandomNodeSampler(dataset[0],
-                                         num_parts=cfg.train.train_parts,
-                                         shuffle=shuffle,
-                                         num_workers=cfg.num_workers,
-                                         pin_memory=True)
+        loader_train = RandomNodeLoader(dataset[0],
+                                        num_parts=cfg.train.train_parts,
+                                        shuffle=shuffle,
+                                        num_workers=cfg.num_workers,
+                                        pin_memory=True)
     elif sampler == "saint_rw":
         loader_train = \
             GraphSAINTRandomWalkSampler(dataset[0],

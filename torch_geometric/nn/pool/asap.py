@@ -1,10 +1,19 @@
-from typing import Callable, Optional, Union
+import copy
+from typing import Callable, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn import Linear
 from torch_scatter import scatter
-from torch_sparse import SparseTensor
+from torch_sparse import (
+    SparseTensor,
+    fill_diag,
+    index_select,
+    matmul,
+    remove_diag,
+)
+from torch_sparse import t as transpose
 
 from torch_geometric.nn import LEConv
 from torch_geometric.nn.pool.topk_pool import topk
@@ -69,16 +78,24 @@ class ASAPooling(torch.nn.Module):
         if self.GNN is not None:
             self.gnn_intra_cluster = GNN(self.in_channels, self.in_channels,
                                          **kwargs)
+        else:
+            self.gnn_intra_cluster = None
         self.reset_parameters()
 
     def reset_parameters(self):
         self.lin.reset_parameters()
         self.att.reset_parameters()
         self.gnn_score.reset_parameters()
-        if self.GNN is not None:
+        if self.gnn_intra_cluster is not None:
             self.gnn_intra_cluster.reset_parameters()
 
-    def forward(self, x, edge_index, edge_weight=None, batch=None):
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        edge_weight: Optional[Tensor] = None,
+        batch: Optional[Tensor] = None,
+    ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor]:
         """"""
         N = x.size(0)
 
@@ -91,7 +108,7 @@ class ASAPooling(torch.nn.Module):
         x = x.unsqueeze(-1) if x.dim() == 1 else x
 
         x_pool = x
-        if self.GNN is not None:
+        if self.gnn_intra_cluster is not None:
             x_pool = self.gnn_intra_cluster(x=x, edge_index=edge_index,
                                             edge_weight=edge_weight)
 
@@ -116,23 +133,31 @@ class ASAPooling(torch.nn.Module):
         batch = batch[perm]
 
         # Graph coarsening.
-        row, col = edge_index
+        row, col = edge_index[0], edge_index[1]
         A = SparseTensor(row=row, col=col, value=edge_weight,
                          sparse_sizes=(N, N))
         S = SparseTensor(row=row, col=col, value=score, sparse_sizes=(N, N))
-        S = S[:, perm]
 
-        A = S.t() @ A @ S
+        S = index_select(S, 1, perm)
+        A = matmul(matmul(transpose(S), A), S)
 
         if self.add_self_loops:
-            A = A.fill_diag(1.)
+            A = fill_diag(A, 1.)
         else:
-            A = A.remove_diag()
+            A = remove_diag(A)
 
         row, col, edge_weight = A.coo()
         edge_index = torch.stack([row, col], dim=0)
 
         return x, edge_index, edge_weight, batch, perm
+
+    @torch.jit.unused
+    def jittable(self) -> 'ASAPooling':
+        out = copy.deepcopy(self)
+        out.gnn_score = out.gnn_score.jittable()
+        if out.gnn_intra_cluster is not None:
+            out.gnn_intra_cluster = out.gnn_intra_cluster.jittable()
+        return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

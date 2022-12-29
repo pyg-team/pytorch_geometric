@@ -25,9 +25,9 @@ class EGConv(MessagePassing):
         \mathbf{x}_i^{\prime} = {\LARGE ||}_{h=1}^H \sum_{\oplus \in
         \mathcal{A}} \sum_{b = 1}^B w_{i, h, \oplus, b} \;
         \underset{j \in \mathcal{N}(i) \cup \{i\}}{\bigoplus}
-        \mathbf{\Theta}_b \mathbf{x}_{j}
+        \mathbf{W}_b \mathbf{x}_{j}
 
-    with :math:`\mathbf{\Theta}_b` denoting a basis weight,
+    with :math:`\mathbf{W}_b` denoting a basis weight,
     :math:`\oplus` denoting an aggregator, and :math:`w` denoting per-vertex
     weighting coefficients across different heads, bases and aggregators.
 
@@ -130,7 +130,8 @@ class EGConv(MessagePassing):
                 if cache is None:
                     edge_index, symnorm_weight = gcn_norm(  # yapf: disable
                         edge_index, None, num_nodes=x.size(self.node_dim),
-                        improved=False, add_self_loops=self.add_self_loops)
+                        improved=False, add_self_loops=self.add_self_loops,
+                        flow=self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, symnorm_weight)
                 else:
@@ -141,7 +142,8 @@ class EGConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, None, num_nodes=x.size(self.node_dim),
-                        improved=False, add_self_loops=self.add_self_loops)
+                        improved=False, add_self_loops=self.add_self_loops,
+                        flow=self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
@@ -189,7 +191,7 @@ class EGConv(MessagePassing):
         out = out.view(-1, self.out_channels)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
@@ -212,7 +214,7 @@ class EGConv(MessagePassing):
                                        dim_size, reduce='mean')
                 out = mean_squares - mean * mean
                 if aggr == 'std':
-                    out = torch.sqrt(out.relu_() + 1e-5)
+                    out = out.clamp(min=1e-5).sqrt()
             else:
                 out = scatter(inputs, index, 0, None, dim_size, reduce=aggr)
 

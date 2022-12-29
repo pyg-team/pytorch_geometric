@@ -1,13 +1,18 @@
 import os
 import os.path as osp
+from typing import Callable, List, Optional
 
 import numpy as np
 import scipy.sparse as sp
 import torch
-from torch_sparse import coalesce
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
+from torch_geometric.utils import coalesce
 
 
 class Reddit(InMemoryDataset):
@@ -43,16 +48,21 @@ class Reddit(InMemoryDataset):
 
     url = 'https://data.dgl.ai/dataset/reddit.zip'
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['reddit_data.npz', 'reddit_graph.npz']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -70,7 +80,7 @@ class Reddit(InMemoryDataset):
         row = torch.from_numpy(adj.row).to(torch.long)
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
-        edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+        edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
         data = Data(x=x, edge_index=edge_index, y=y)
         data.train_mask = split == 1

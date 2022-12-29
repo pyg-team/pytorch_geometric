@@ -161,7 +161,7 @@ class DGCNN(torch.nn.Module):
                             conv1d_kws[1], 1)
         dense_dim = int((self.k - 2) / 2 + 1)
         dense_dim = (dense_dim - conv1d_kws[1] + 1) * conv1d_channels[1]
-        self.mlp = MLP([dense_dim, 128, 1], dropout=0.5, batch_norm=False)
+        self.mlp = MLP([dense_dim, 128, 1], dropout=0.5, norm=None)
 
     def forward(self, x, edge_index, batch):
         xs = [x]

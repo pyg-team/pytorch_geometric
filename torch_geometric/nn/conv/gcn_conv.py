@@ -1,40 +1,46 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add
-from torch_sparse import SparseTensor, fill_diag, matmul, mul
+from torch_sparse import SparseTensor, fill_diag, mul
 from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import Adj, OptTensor, PairTensor
-from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor
+from torch_geometric.utils import (
+    add_remaining_self_loops,
+    is_torch_sparse_tensor,
+    scatter,
+    spmm,
+    to_torch_coo_tensor,
+)
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 @torch.jit._overload
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             add_self_loops=True, dtype=None):
-    # type: (Tensor, OptTensor, Optional[int], bool, bool, Optional[int]) -> PairTensor  # noqa
+             add_self_loops=True, flow="source_to_target", dtype=None):
+    # type: (Tensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> OptPairTensor  # noqa
     pass
 
 
 @torch.jit._overload
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             add_self_loops=True, dtype=None):
-    # type: (SparseTensor, OptTensor, Optional[int], bool, bool, Optional[int]) -> SparseTensor  # noqa
+             add_self_loops=True, flow="source_to_target", dtype=None):
+    # type: (SparseTensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> SparseTensor  # noqa
     pass
 
 
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             add_self_loops=True, dtype=None):
+             add_self_loops=True, flow="source_to_target", dtype=None):
 
     fill_value = 2. if improved else 1.
 
     if isinstance(edge_index, SparseTensor):
+        assert flow == 'source_to_target'
         adj_t = edge_index
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
@@ -45,26 +51,45 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
         adj_t = mul(adj_t, deg_inv_sqrt.view(-1, 1))
         adj_t = mul(adj_t, deg_inv_sqrt.view(1, -1))
+
         return adj_t
 
+    # `edge_index` can be a `torch.LongTensor` or `torch.sparse.Tensor`:
+    is_sparse_tensor = is_torch_sparse_tensor(edge_index)
+    if is_sparse_tensor:
+        assert flow == 'source_to_target'
+        # Reverse `flow` since sparse tensors model transposed adjacencies:
+        flow = 'target_to_source'
+        adj_t = edge_index
+        num_nodes = adj_t.size(0)
+        edge_index = adj_t._indices()
+        edge_weight = adj_t._values()
     else:
+        assert flow in ["source_to_target", "target_to_source"]
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
         if edge_weight is None:
             edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                      device=edge_index.device)
 
-        if add_self_loops:
-            edge_index, tmp_edge_weight = add_remaining_self_loops(
-                edge_index, edge_weight, fill_value, num_nodes)
-            assert tmp_edge_weight is not None
-            edge_weight = tmp_edge_weight
+    if add_self_loops:
+        edge_index, tmp_edge_weight = add_remaining_self_loops(
+            edge_index, edge_weight, fill_value, num_nodes)
+        assert tmp_edge_weight is not None
+        edge_weight = tmp_edge_weight
 
-        row, col = edge_index[0], edge_index[1]
-        deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
-        deg_inv_sqrt = deg.pow_(-0.5)
-        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
-        return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+    row, col = edge_index[0], edge_index[1]
+    idx = col if flow == "source_to_target" else row
+    deg = scatter(edge_weight, idx, dim=0, dim_size=num_nodes, reduce='sum')
+    deg_inv_sqrt = deg.pow_(-0.5)
+    deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
+    edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+
+    if is_sparse_tensor:
+        adj_t = to_torch_coo_tensor(edge_index, edge_weight, size=num_nodes)
+        return adj_t, None
+    else:
+        return edge_index, edge_weight
 
 
 class GCNConv(MessagePassing):
@@ -124,7 +149,7 @@ class GCNConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
 
-    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
+    _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, in_channels: int, out_channels: int,
@@ -171,7 +196,7 @@ class GCNConv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, self.add_self_loops)
+                        self.improved, self.add_self_loops, self.flow, x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -182,7 +207,7 @@ class GCNConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim),
-                        self.improved, self.add_self_loops)
+                        self.improved, self.add_self_loops, self.flow, x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
@@ -195,7 +220,7 @@ class GCNConv(MessagePassing):
                              size=None)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
@@ -203,4 +228,4 @@ class GCNConv(MessagePassing):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)

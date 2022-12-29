@@ -7,7 +7,7 @@ from torchmetrics import Accuracy
 
 import torch_geometric.transforms as T
 from torch_geometric import seed_everything
-from torch_geometric.data import LightningDataset
+from torch_geometric.data.lightning import LightningDataset
 from torch_geometric.datasets import TUDataset
 from torch_geometric.nn import GIN, MLP, global_add_pool
 
@@ -21,7 +21,7 @@ class Model(pl.LightningModule):
                        dropout=dropout, jk='cat')
 
         self.classifier = MLP([hidden_channels, hidden_channels, out_channels],
-                              batch_norm=True, dropout=dropout)
+                              norm="batch_norm", dropout=dropout)
 
         self.train_acc = Accuracy()
         self.val_acc = Accuracy()
@@ -73,11 +73,13 @@ def main():
 
     model = Model(dataset.num_node_features, dataset.num_classes)
 
-    gpus = torch.cuda.device_count()
-    strategy = pl.plugins.DDPSpawnPlugin(find_unused_parameters=False)
-    checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1)
-    trainer = pl.Trainer(gpus=gpus, strategy=strategy, max_epochs=50,
-                         log_every_n_steps=5, callbacks=[checkpoint])
+    devices = torch.cuda.device_count()
+    strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
+    checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1,
+                                              mode='max')
+    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
+                         max_epochs=50, log_every_n_steps=5,
+                         callbacks=[checkpoint])
 
     trainer.fit(model, datamodule)
     trainer.test(ckpt_path='best', datamodule=datamodule)

@@ -1,11 +1,20 @@
+from typing import Optional
+
 import torch
+from torch import Tensor
 from torch.nn import Linear
 
 
 class DenseGraphConv(torch.nn.Module):
     r"""See :class:`torch_geometric.nn.conv.GraphConv`.
     """
-    def __init__(self, in_channels, out_channels, aggr='add', bias=True):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        aggr: str = 'add',
+        bias: bool = True,
+    ):
         assert aggr in ['add', 'mean', 'max']
         super().__init__()
 
@@ -22,7 +31,8 @@ class DenseGraphConv(torch.nn.Module):
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
-    def forward(self, x, adj, mask=None):
+    def forward(self, x: Tensor, adj: Tensor,
+                mask: Optional[Tensor] = None) -> Tensor:
         r"""
         Args:
             x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
@@ -41,19 +51,22 @@ class DenseGraphConv(torch.nn.Module):
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
         B, N, C = x.size()
 
-        if self.aggr in ['add', 'mean']:
+        if self.aggr == 'add':
             out = torch.matmul(adj, x)
-            if self.aggr == 'mean':
-                out = out / adj.sum(dim=-1, keepdim=True).clamp_(min=1)
+        elif self.aggr == 'mean':
+            out = torch.matmul(adj, x)
+            out = out / adj.sum(dim=-1, keepdim=True).clamp_(min=1)
         elif self.aggr == 'max':
             out = x.unsqueeze(-2).repeat(1, 1, N, 1)
             adj = adj.unsqueeze(-1).expand(B, N, N, C)
             out[adj == 0] = float('-inf')
             out = out.max(dim=-3)[0]
             out[out == float('-inf')] = 0.
+        else:
+            raise NotImplementedError
 
         out = self.lin_rel(out)
-        out += self.lin_root(x)
+        out = out + self.lin_root(x)
 
         if mask is not None:
             out = out * mask.view(-1, N, 1).to(x.dtype)

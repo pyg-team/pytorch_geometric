@@ -47,3 +47,12 @@ def get_unused_node_types(node_types: List[NodeType],
                           edge_types: List[EdgeType]) -> Set[NodeType]:
     dst_node_types = set(edge_type[-1] for edge_type in edge_types)
     return set(node_types) - set(dst_node_types)
+
+
+def check_add_self_loops(module: torch.nn.Module, edge_types: List[EdgeType]):
+    is_bipartite = any([key[0] != key[-1] for key in edge_types])
+    if is_bipartite and getattr(module, 'add_self_loops', False):
+        raise ValueError(
+            f"'add_self_loops' attribute set to 'True' on module '{module}' "
+            f"for use with edge type(s) '{edge_types}'. This will lead to "
+            f"incorrect message passing results.")

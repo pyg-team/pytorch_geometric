@@ -4,12 +4,14 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('linear_transformation')
 class LinearTransformation(BaseTransform):
     r"""Transforms node positions :obj:`pos` with a square transformation
-    matrix computed offline.
+    matrix computed offline (functional name: :obj:`linear_transformation`)
 
     Args:
         matrix (Tensor): Tensor with shape :obj:`[D, D]` where :obj:`D`
@@ -27,7 +29,10 @@ class LinearTransformation(BaseTransform):
         # We do this to enable post-multiplication in `__call__`.
         self.matrix = matrix.t()
 
-    def __call__(self, data: Union[Data, HeteroData]):
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
         for store in data.node_stores:
             if not hasattr(store, 'pos'):
                 continue

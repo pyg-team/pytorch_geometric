@@ -108,12 +108,12 @@ class ARMAConv(MessagePassing):
         if isinstance(edge_index, Tensor):
             edge_index, edge_weight = gcn_norm(  # yapf: disable
                 edge_index, edge_weight, x.size(self.node_dim),
-                add_self_loops=False, dtype=x.dtype)
+                add_self_loops=False, flow=self.flow, dtype=x.dtype)
 
         elif isinstance(edge_index, SparseTensor):
             edge_index = gcn_norm(  # yapf: disable
                 edge_index, edge_weight, x.size(self.node_dim),
-                add_self_loops=False, dtype=x.dtype)
+                add_self_loops=False, flow=self.flow, dtype=x.dtype)
 
         x = x.unsqueeze(-3)
         out = x
@@ -128,10 +128,11 @@ class ARMAConv(MessagePassing):
                                  size=None)
 
             root = F.dropout(x, p=self.dropout, training=self.training)
-            out += root @ self.root_weight[0 if self.shared_weights else t]
+            root = root @ self.root_weight[0 if self.shared_weights else t]
+            out = out + root
 
             if self.bias is not None:
-                out += self.bias[0 if self.shared_weights else t]
+                out = out + self.bias[0 if self.shared_weights else t]
 
             if self.act is not None:
                 out = self.act(out)

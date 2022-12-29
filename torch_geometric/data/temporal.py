@@ -1,14 +1,26 @@
 import copy
-from typing import (Any, Dict, Iterable, List, NamedTuple, Optional, Tuple,
-                    Union)
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import torch
 from torch import Tensor
 
 from torch_geometric.data.data import BaseData, size_repr
-from torch_geometric.data.storage import (BaseStorage, EdgeStorage,
-                                          GlobalStorage, NodeStorage)
+from torch_geometric.data.storage import (
+    BaseStorage,
+    EdgeStorage,
+    GlobalStorage,
+    NodeStorage,
+)
 
 
 class TemporalData(BaseData):

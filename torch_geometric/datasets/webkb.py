@@ -1,10 +1,11 @@
 import os.path as osp
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
-from torch_sparse import coalesce
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import coalesce
 
 
 class WebKB(InMemoryDataset):
@@ -32,7 +33,13 @@ class WebKB(InMemoryDataset):
 
     url = 'https://raw.githubusercontent.com/graphdml-uiuc-jlu/geom-gcn/master'
 
-    def __init__(self, root, name, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         self.name = name.lower()
         assert self.name in ['cornell', 'texas', 'wisconsin']
 
@@ -40,21 +47,21 @@ class WebKB(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, self.name, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         out = ['out1_node_feature_label.txt', 'out1_graph_edges.txt']
         out += [f'{self.name}_split_0.6_0.2_{i}.npz' for i in range(10)]
         return out
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -76,7 +83,7 @@ class WebKB(InMemoryDataset):
             data = f.read().split('\n')[1:-1]
             data = [[int(v) for v in r.split('\t')] for r in data]
             edge_index = torch.tensor(data, dtype=torch.long).t().contiguous()
-            edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+            edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
         train_masks, val_masks, test_masks = [], [], []
         for f in self.raw_paths[2:]:

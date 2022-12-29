@@ -4,7 +4,6 @@ from typing import Callable, List, Tuple, Union
 from uuid import uuid1
 
 import torch
-from jinja2 import Template
 
 from torch_geometric.nn.conv.utils.jit import class_from_module_repr
 
@@ -66,6 +65,12 @@ def Sequential(
             :obj:`OrderedDict` of modules (and function header definitions) can
             be passed.
     """
+    try:
+        from jinja2 import Template
+    except ImportError:
+        raise ModuleNotFoundError(
+            "No module named 'jinja2' found on this machine. "
+            "Run 'pip install jinja2' to install the library.")
 
     input_args = [x.strip() for x in input_args.split(',')]
 

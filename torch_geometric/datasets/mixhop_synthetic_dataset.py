@@ -1,5 +1,6 @@
 import os.path as osp
 import pickle
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
@@ -34,7 +35,13 @@ class MixHopSyntheticDataset(InMemoryDataset):
     url = ('https://raw.githubusercontent.com/samihaija/mixhop/master/data'
            '/synthetic')
 
-    def __init__(self, root, homophily, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        homophily: float,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         self.homophily = homophily
         assert homophily in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
         super().__init__(root, transform, pre_transform)
@@ -42,20 +49,20 @@ class MixHopSyntheticDataset(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, f'{self.homophily:0.1f}'[::2], 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, f'{self.homophily:0.1f}'[::2], 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         name = f'ind.n5000-h{self.homophily:0.1f}-c10'
         return [f'{name}.allx', f'{name}.ally', f'{name}.graph']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):

@@ -104,11 +104,11 @@ class SignedConv(MessagePassing):
 
             out_pos = self.propagate(pos_edge_index, x=x, size=None)
             out_pos = self.lin_pos_l(out_pos)
-            out_pos += self.lin_pos_r(x[1])
+            out_pos = out_pos + self.lin_pos_r(x[1])
 
             out_neg = self.propagate(neg_edge_index, x=x, size=None)
             out_neg = self.lin_neg_l(out_neg)
-            out_neg += self.lin_neg_r(x[1])
+            out_neg = out_neg + self.lin_neg_r(x[1])
 
             return torch.cat([out_pos, out_neg], dim=-1)
 
@@ -121,7 +121,7 @@ class SignedConv(MessagePassing):
                                       x=(x[0][..., F_in:], x[1][..., F_in:]))
             out_pos = torch.cat([out_pos1, out_pos2], dim=-1)
             out_pos = self.lin_pos_l(out_pos)
-            out_pos += self.lin_pos_r(x[1][..., :F_in])
+            out_pos = out_pos + self.lin_pos_r(x[1][..., :F_in])
 
             out_neg1 = self.propagate(pos_edge_index, size=None,
                                       x=(x[0][..., F_in:], x[1][..., F_in:]))
@@ -129,7 +129,7 @@ class SignedConv(MessagePassing):
                                       x=(x[0][..., :F_in], x[1][..., :F_in]))
             out_neg = torch.cat([out_neg1, out_neg2], dim=-1)
             out_neg = self.lin_neg_l(out_neg)
-            out_neg += self.lin_neg_r(x[1][..., F_in:])
+            out_neg = out_neg + self.lin_neg_r(x[1][..., F_in:])
 
             return torch.cat([out_pos, out_neg], dim=-1)
 

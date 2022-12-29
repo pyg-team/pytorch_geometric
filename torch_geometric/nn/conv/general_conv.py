@@ -8,8 +8,13 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot
-from torch_geometric.typing import (Adj, Optional, OptPairTensor, OptTensor,
-                                    Size)
+from torch_geometric.typing import (
+    Adj,
+    Optional,
+    OptPairTensor,
+    OptTensor,
+    Size,
+)
 from torch_geometric.utils import softmax
 
 
@@ -143,7 +148,7 @@ class GeneralConv(MessagePassing):
         # propagate_type: (x: OptPairTensor)
         out = self.propagate(edge_index, x=x, size=size, edge_attr=edge_attr)
         out = out.mean(dim=1)  # todo: other approach to aggregate heads
-        out += self.lin_self(x_self)
+        out = out + self.lin_self(x_self)
         if self.normalize_l2:
             out = F.normalize(out, p=2, dim=-1)
         return out

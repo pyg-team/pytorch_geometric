@@ -8,8 +8,9 @@ from torch.nn import Parameter as Param
 from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
 
+import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, pyg_lib
 
 from ..inits import glorot, zeros
 
@@ -79,6 +80,10 @@ class RGCNConv(MessagePassing):
         root_weight (bool, optional): If set to :obj:`False`, the layer will
             not add transformed root node features to the output.
             (default: :obj:`True`)
+        is_sorted (bool, optional): If set to :obj:`True`, assumes that
+            :obj:`edge_index` is sorted by :obj:`edge_type`. This avoids
+            internal re-sorting of the data and can improve runtime and memory
+            efficiency. (default: :obj:`False`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
@@ -93,6 +98,7 @@ class RGCNConv(MessagePassing):
         num_blocks: Optional[int] = None,
         aggr: str = 'mean',
         root_weight: bool = True,
+        is_sorted: bool = False,
         bias: bool = True,
         **kwargs,
     ):
@@ -108,6 +114,7 @@ class RGCNConv(MessagePassing):
         self.num_relations = num_relations
         self.num_bases = num_bases
         self.num_blocks = num_blocks
+        self.is_sorted = is_sorted
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
@@ -187,7 +194,7 @@ class RGCNConv(MessagePassing):
             edge_type = edge_index.storage.value()
         assert edge_type is not None
 
-        # propagate_type: (x: Tensor)
+        # propagate_type: (x: Tensor, edge_type_ptr: OptTensor)
         out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
 
         weight = self.weight
@@ -203,31 +210,53 @@ class RGCNConv(MessagePassing):
 
             for i in range(self.num_relations):
                 tmp = masked_edge_index(edge_index, edge_type == i)
-                h = self.propagate(tmp, x=x_l, size=size)
+                h = self.propagate(tmp, x=x_l, edge_type_ptr=None, size=size)
                 h = h.view(-1, weight.size(1), weight.size(2))
                 h = torch.einsum('abc,bcd->abd', h, weight[i])
-                out += h.contiguous().view(-1, self.out_channels)
+                out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            for i in range(self.num_relations):
-                tmp = masked_edge_index(edge_index, edge_type == i)
+            if (torch_geometric.typing.WITH_PYG_LIB and self.num_bases is None
+                    and x_l.is_floating_point()
+                    and isinstance(edge_index, Tensor)):
+                if not self.is_sorted:
+                    if (edge_type[1:] < edge_type[:-1]).any():
+                        edge_type, perm = edge_type.sort()
+                        edge_index = edge_index[:, perm]
+                edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
+                    edge_type, self.num_relations)
+                out = self.propagate(edge_index, x=x_l,
+                                     edge_type_ptr=edge_type_ptr, size=size)
+            else:
+                for i in range(self.num_relations):
+                    tmp = masked_edge_index(edge_index, edge_type == i)
 
-                if x_l.dtype == torch.long:
-                    out += self.propagate(tmp, x=weight[i, x_l], size=size)
-                else:
-                    h = self.propagate(tmp, x=x_l, size=size)
-                    out = out + (h @ weight[i])
+                    if x_l.dtype == torch.long:
+                        out = out + self.propagate(
+                            tmp,
+                            x=weight[i, x_l],
+                            edge_type_ptr=None,
+                            size=size,
+                        )
+                    else:
+                        h = self.propagate(tmp, x=x_l, edge_type_ptr=None,
+                                           size=size)
+                        out = out + (h @ weight[i])
 
         root = self.root
         if root is not None:
-            out += root[x_r] if x_r.dtype == torch.long else x_r @ root
+            out = out + (root[x_r] if x_r.dtype == torch.long else x_r @ root)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
-    def message(self, x_j: Tensor) -> Tensor:
+    def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
+        if torch_geometric.typing.WITH_PYG_LIB and edge_type_ptr is not None:
+            # TODO Re-weight according to edge type degree for `aggr=mean`.
+            return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
+
         return x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
@@ -267,10 +296,10 @@ class FastRGCNConv(RGCNConv):
 
         root = self.root
         if root is not None:
-            out += root[x_r] if x_r.dtype == torch.long else x_r @ root
+            out = out + (root[x_r] if x_r.dtype == torch.long else x_r @ root)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

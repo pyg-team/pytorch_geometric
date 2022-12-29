@@ -1,5 +1,5 @@
 import math
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 import torch.nn.functional as F
@@ -9,7 +9,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 
 from ..inits import kaiming_uniform, uniform
 
@@ -53,7 +53,7 @@ class Linear(torch.nn.Module):
             out = torch.matmul(src, self.weight.squeeze(0))
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
@@ -230,7 +230,7 @@ class DNAConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
 
-    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
+    _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, channels: int, heads: int = 1, groups: int = 1,
@@ -275,7 +275,7 @@ class DNAConv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -286,7 +286,7 @@ class DNAConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:

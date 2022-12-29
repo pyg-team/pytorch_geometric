@@ -6,8 +6,12 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import (HeteroData, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    HeteroData,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class HGBDataset(InMemoryDataset):
@@ -177,6 +181,11 @@ class HGBDataset(InMemoryDataset):
                 data[n_type].train_mask[n_id] = True
             for y in test_ys:
                 n_id, n_type = mapping_dict[int(y[0])], n_types[int(y[2])]
+                if data[n_type].y.dim() > 1:  # multi-label
+                    for v in y[3].split(','):
+                        data[n_type].y[n_id, int(v)] = 1
+                else:
+                    data[n_type].y[n_id] = int(y[3])
                 data[n_type].test_mask[n_id] = True
 
         else:  # Link prediction:

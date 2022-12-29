@@ -36,6 +36,8 @@ class Dataset(torch.utils.data.Dataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        log (bool, optional): Whether to print any console output while
+            downloading and processing the dataset. (default: :obj:`True`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -65,10 +67,14 @@ class Dataset(torch.utils.data.Dataset):
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
-    def __init__(self, root: Optional[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        log: bool = True,
+    ):
         super().__init__()
 
         if isinstance(root, str):
@@ -78,12 +84,13 @@ class Dataset(torch.utils.data.Dataset):
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
+        self.log = log
         self._indices: Optional[Sequence] = None
 
-        if 'download' in self.__class__.__dict__:
+        if self.download.__qualname__.split('.')[0] != 'Dataset':
             self._download()
 
-        if 'process' in self.__class__.__dict__:
+        if self.process.__qualname__.split('.')[0] != 'Dataset':
             self._process()
 
     def indices(self) -> Sequence:
@@ -101,6 +108,9 @@ class Dataset(torch.utils.data.Dataset):
     def num_node_features(self) -> int:
         r"""Returns the number of features per node in the dataset."""
         data = self[0]
+        # Do not fill cache for `InMemoryDataset`:
+        if hasattr(self, '_data_list') and self._data_list is not None:
+            self._data_list[0] = None
         data = data[0] if isinstance(data, tuple) else data
         if hasattr(data, 'num_node_features'):
             return data.num_node_features
@@ -117,25 +127,55 @@ class Dataset(torch.utils.data.Dataset):
     def num_edge_features(self) -> int:
         r"""Returns the number of features per edge in the dataset."""
         data = self[0]
+        # Do not fill cache for `InMemoryDataset`:
+        if hasattr(self, '_data_list') and self._data_list is not None:
+            self._data_list[0] = None
         data = data[0] if isinstance(data, tuple) else data
         if hasattr(data, 'num_edge_features'):
             return data.num_edge_features
         raise AttributeError(f"'{data.__class__.__name__}' object has no "
                              f"attribute 'num_edge_features'")
 
+    def _infer_num_classes(self, y: Optional[Tensor]) -> int:
+        if y is None:
+            return 0
+        elif y.numel() == y.size(0) and not torch.is_floating_point(y):
+            return int(y.max()) + 1
+        elif y.numel() == y.size(0) and torch.is_floating_point(y):
+            return torch.unique(y).numel()
+        else:
+            return y.size(-1)
+
+    @property
+    def num_classes(self) -> int:
+        r"""Returns the number of classes in the dataset."""
+        y = torch.cat([data.y for data in self], dim=0)
+        # Do not fill cache for `InMemoryDataset`:
+        if hasattr(self, '_data_list') and self._data_list is not None:
+            self._data_list = self.len() * [None]
+        return self._infer_num_classes(y)
+
     @property
     def raw_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
         downloading."""
-        files = to_list(self.raw_file_names)
-        return [osp.join(self.raw_dir, f) for f in files]
+        files = self.raw_file_names
+        # Prevent a common source of error in which `file_names` are not
+        # defined as a property.
+        if isinstance(files, Callable):
+            files = files()
+        return [osp.join(self.raw_dir, f) for f in to_list(files)]
 
     @property
     def processed_paths(self) -> List[str]:
         r"""The absolute filepaths that must be present in order to skip
         processing."""
-        files = to_list(self.processed_file_names)
-        return [osp.join(self.processed_dir, f) for f in files]
+        files = self.processed_file_names
+        # Prevent a common source of error in which `file_names` are not
+        # defined as a property.
+        if isinstance(files, Callable):
+            files = files()
+        return [osp.join(self.processed_dir, f) for f in to_list(files)]
 
     def _download(self):
         if files_exist(self.raw_paths):  # pragma: no cover
@@ -151,20 +191,21 @@ class Dataset(torch.utils.data.Dataset):
                 f"The `pre_transform` argument differs from the one used in "
                 f"the pre-processed version of this dataset. If you want to "
                 f"make use of another pre-processing technique, make sure to "
-                f"sure to delete '{self.processed_dir}' first")
+                f"delete '{self.processed_dir}' first")
 
         f = osp.join(self.processed_dir, 'pre_filter.pt')
         if osp.exists(f) and torch.load(f) != _repr(self.pre_filter):
             warnings.warn(
-                "The `pre_filter` argument differs from the one used in the "
-                "pre-processed version of this dataset. If you want to make "
-                "use of another pre-fitering technique, make sure to delete "
-                "'{self.processed_dir}' first")
+                "The `pre_filter` argument differs from the one used in "
+                "the pre-processed version of this dataset. If you want to "
+                "make use of another pre-fitering technique, make sure to "
+                "delete '{self.processed_dir}' first")
 
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
-        print('Processing...', file=sys.stderr)
+        if self.log:
+            print('Processing...', file=sys.stderr)
 
         makedirs(self.processed_dir)
         self.process()
@@ -174,7 +215,8 @@ class Dataset(torch.utils.data.Dataset):
         path = osp.join(self.processed_dir, 'pre_filter.pt')
         torch.save(_repr(self.pre_filter), path)
 
-        print('Done!', file=sys.stderr)
+        if self.log:
+            print('Done!', file=sys.stderr)
 
     def __len__(self) -> int:
         r"""The number of examples in the dataset."""
@@ -256,6 +298,15 @@ class Dataset(torch.utils.data.Dataset):
     def __repr__(self) -> str:
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
+
+    def get_summary(self):
+        r"""Collects summary statistics for the dataset."""
+        from torch_geometric.data.summary import Summary
+        return Summary.from_dataset(self)
+
+    def print_summary(self):
+        r"""Prints summary statistics of the dataset to the console."""
+        print(str(self.get_summary()))
 
 
 def to_list(value: Any) -> Sequence:

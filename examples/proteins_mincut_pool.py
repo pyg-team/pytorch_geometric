@@ -40,7 +40,7 @@ class Net(torch.nn.Module):
         self.lin2 = Linear(hidden_channels, out_channels)
 
     def forward(self, x, edge_index, batch):
-        x = F.relu(self.conv1(x, edge_index))
+        x = self.conv1(x, edge_index).relu()
 
         x, mask = to_dense_batch(x, batch)
         adj = to_dense_adj(edge_index, batch)
@@ -48,7 +48,7 @@ class Net(torch.nn.Module):
         s = self.pool1(x)
         x, adj, mc1, o1 = dense_mincut_pool(x, adj, s, mask)
 
-        x = F.relu(self.conv2(x, adj))
+        x = self.conv2(x, adj).relu()
         s = self.pool2(x)
 
         x, adj, mc2, o2 = dense_mincut_pool(x, adj, s)
@@ -56,7 +56,7 @@ class Net(torch.nn.Module):
         x = self.conv3(x, adj)
 
         x = x.mean(dim=1)
-        x = F.relu(self.lin1(x))
+        x = self.lin1(x).relu()
         x = self.lin2(x)
         return F.log_softmax(x, dim=-1), mc1 + mc2, o1 + o2
 
@@ -76,7 +76,7 @@ def train(epoch):
         out, mc_loss, o_loss = model(data.x, data.edge_index, data.batch)
         loss = F.nll_loss(out, data.y.view(-1)) + mc_loss + o_loss
         loss.backward()
-        loss_all += data.y.size(0) * loss.item()
+        loss_all += data.y.size(0) * float(loss)
         optimizer.step()
     return loss_all / len(train_dataset)
 
@@ -91,8 +91,8 @@ def test(loader):
         data = data.to(device)
         pred, mc_loss, o_loss = model(data.x, data.edge_index, data.batch)
         loss = F.nll_loss(pred, data.y.view(-1)) + mc_loss + o_loss
-        loss_all += data.y.size(0) * loss.item()
-        correct += pred.max(dim=1)[1].eq(data.y.view(-1)).sum().item()
+        loss_all += data.y.size(0) * float(loss)
+        correct += int(pred.max(dim=1)[1].eq(data.y.view(-1)).sum())
 
     return loss_all / len(loader.dataset), correct / len(loader.dataset)
 

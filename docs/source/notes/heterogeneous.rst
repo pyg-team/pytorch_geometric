@@ -379,7 +379,7 @@ These operators can be directly used to build heterogeneous GNN models as can be
             for _ in range(num_layers):
                 conv = HGTConv(hidden_channels, hidden_channels, data.metadata(),
                                num_heads, group='sum')
-            self.convs.append(conv)
+                self.convs.append(conv)
 
             self.lin = Linear(hidden_channels, out_channels)
 

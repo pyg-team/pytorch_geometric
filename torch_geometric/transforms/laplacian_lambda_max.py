@@ -1,12 +1,18 @@
+from typing import Optional
+
 from scipy.sparse.linalg import eigs, eigsh
 
+from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import get_laplacian, to_scipy_sparse_matrix
 
 
+@functional_transform('laplacian_lambda_max')
 class LaplacianLambdaMax(BaseTransform):
     r"""Computes the highest eigenvalue of the graph Laplacian given by
-    :meth:`torch_geometric.utils.get_laplacian`.
+    :meth:`torch_geometric.utils.get_laplacian`
+    (functional name: :obj:`laplacian_lambda_max`).
 
     Args:
         normalization (str, optional): The normalization scheme for the graph
@@ -25,12 +31,16 @@ class LaplacianLambdaMax(BaseTransform):
             expects undirected graphs as input, and can hence speed up the
             computation of the largest eigenvalue. (default: :obj:`False`)
     """
-    def __init__(self, normalization=None, is_undirected=False):
+    def __init__(
+        self,
+        normalization: Optional[str] = None,
+        is_undirected: bool = False,
+    ):
         assert normalization in [None, 'sym', 'rw'], 'Invalid normalization'
         self.normalization = normalization
         self.is_undirected = is_undirected
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
         edge_weight = data.edge_attr
         if edge_weight is not None and edge_weight.numel() != data.num_edges:
             edge_weight = None

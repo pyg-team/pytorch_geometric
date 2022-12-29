@@ -1,14 +1,15 @@
 from math import log
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, matmul
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor
+from torch_geometric.utils import spmm
 
 from ..inits import glorot
 
@@ -69,8 +70,7 @@ class GCN2Conv(MessagePassing):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
-
-    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
+    _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, channels: int, alpha: float, theta: float = None,
@@ -119,7 +119,7 @@ class GCN2Conv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -130,7 +130,7 @@ class GCN2Conv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:
@@ -149,16 +149,16 @@ class GCN2Conv(MessagePassing):
         else:
             out = torch.addmm(x, x, self.weight1, beta=1. - self.beta,
                               alpha=self.beta)
-            out += torch.addmm(x_0, x_0, self.weight2, beta=1. - self.beta,
-                               alpha=self.beta)
+            out = out + torch.addmm(x_0, x_0, self.weight2,
+                                    beta=1. - self.beta, alpha=self.beta)
 
         return out
 
-    def message(self, x_j: Tensor, edge_weight: Tensor) -> Tensor:
-        return edge_weight.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.channels}, '

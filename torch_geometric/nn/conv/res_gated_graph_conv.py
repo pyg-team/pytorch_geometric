@@ -110,10 +110,10 @@ class ResGatedGraphConv(MessagePassing):
         out = self.propagate(edge_index, k=k, q=q, v=v, size=None)
 
         if self.root_weight:
-            out += self.lin_skip(x[1])
+            out = out + self.lin_skip(x[1])
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

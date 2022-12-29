@@ -14,12 +14,13 @@ from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 
 class GATv2Conv(MessagePassing):
-    r"""The GATv2 operator from the `"How Attentive are Graph Attention Networks?"
-    <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the static
-    attention problem of the standard :class:`~torch_geometric.conv.GATConv`
-    layer: since the linear layers in the standard GAT are applied right after
-    each other, the ranking of attended nodes is unconditioned on the query
-    node. In contrast, in GATv2, every node can attend to any other node.
+    r"""The GATv2 operator from the `"How Attentive are Graph Attention
+    Networks?" <https://arxiv.org/abs/2105.14491>`_ paper, which fixes the
+    static attention problem of the standard
+    :class:`~torch_geometric.conv.GATConv` layer.
+    Since the linear layers in the standard GAT are applied right after each
+    other, the ranking of attended nodes is unconditioned on the query node.
+    In contrast, in :class:`GATv2`, every node can attend to any other node.
 
     .. math::
         \mathbf{x}^{\prime}_i = \alpha_{i,i}\mathbf{\Theta}\mathbf{x}_{i} +
@@ -244,7 +245,7 @@ class GATv2Conv(MessagePassing):
             out = out.mean(dim=1)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None
@@ -266,7 +267,7 @@ class GATv2Conv(MessagePassing):
             assert self.lin_edge is not None
             edge_attr = self.lin_edge(edge_attr)
             edge_attr = edge_attr.view(-1, self.heads, self.out_channels)
-            x += edge_attr
+            x = x + edge_attr
 
         x = F.leaky_relu(x, self.negative_slope)
         alpha = (x * self.att).sum(dim=-1)

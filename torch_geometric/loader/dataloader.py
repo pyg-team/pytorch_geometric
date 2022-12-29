@@ -1,5 +1,5 @@
-from collections.abc import Mapping, Sequence
-from typing import List, Optional, Union
+from collections.abc import Mapping
+from typing import List, Optional, Sequence, Union
 
 import torch.utils.data
 from torch.utils.data.dataloader import default_collate
@@ -60,7 +60,7 @@ class DataLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        dataset: Union[Dataset, List[BaseData]],
+        dataset: Union[Dataset, Sequence[BaseData]],
         batch_size: int = 1,
         shuffle: bool = False,
         follow_batch: Optional[List[str]] = None,
@@ -71,7 +71,7 @@ class DataLoader(torch.utils.data.DataLoader):
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
 
-        # Save for PyTorch Lightning:
+        # Save for PyTorch Lightning < 1.6:
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 

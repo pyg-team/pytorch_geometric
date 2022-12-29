@@ -15,4 +15,3 @@ gnn.layers_mp l_mp [2,4,6,8]
 gnn.layers_post_mp l_post [2,3]
 gnn.stage_type stage ['skipsum','skipconcat']
 gnn.agg agg ['add','mean','max']
-

@@ -1,8 +1,7 @@
 import copy
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
@@ -34,6 +33,8 @@ class InMemoryDataset(Dataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        log (bool, optional): Whether to print any console output while
+            downloading and processing the dataset. (default: :obj:`True`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -43,33 +44,24 @@ class InMemoryDataset(Dataset):
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
         raise NotImplementedError
 
-    def download(self):
-        raise NotImplementedError
-
-    def process(self):
-        raise NotImplementedError
-
-    def __init__(self, root: Optional[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform, pre_filter)
+    def __init__(
+        self,
+        root: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        log: bool = True,
+    ):
+        super().__init__(root, transform, pre_transform, pre_filter, log)
         self.data = None
         self.slices = None
         self._data_list: Optional[List[Data]] = None
 
     @property
     def num_classes(self) -> int:
-        r"""Returns the number of classes in the dataset."""
-        y = self.data.y
-        if y is None:
-            return 0
-        elif y.numel() == y.size(0) and not torch.is_floating_point(y):
-            return int(self.data.y.max()) + 1
-        elif y.numel() == y.size(0) and torch.is_floating_point(y):
-            return torch.unique(y).numel()
-        else:
-            return self.data.y.size(-1)
+        if self.transform is None:
+            return self._infer_num_classes(self.data.y)
+        return super().num_classes
 
     def len(self) -> int:
         if self.slices is None:
@@ -136,10 +128,13 @@ class InMemoryDataset(Dataset):
         return dataset
 
 
-def nested_iter(mapping: Mapping) -> Iterable:
-    for key, value in mapping.items():
-        if isinstance(value, Mapping):
+def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
+    if isinstance(node, Mapping):
+        for key, value in node.items():
             for inner_key, inner_value in nested_iter(value):
                 yield inner_key, inner_value
-        else:
-            yield key, value
+    elif isinstance(node, Sequence):
+        for i, inner_value in enumerate(node):
+            yield i, inner_value
+    else:
+        yield None, node

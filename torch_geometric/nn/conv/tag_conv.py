@@ -5,6 +5,7 @@ from torch_sparse import SparseTensor, matmul
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, OptTensor
 
 
@@ -15,7 +16,7 @@ class TAGConv(MessagePassing):
 
     .. math::
         \mathbf{X}^{\prime} = \sum_{k=0}^K \left( \mathbf{D}^{-1/2} \mathbf{A}
-        \mathbf{D}^{-1/2} \right)^k \mathbf{X} \mathbf{\Theta}_{k},
+        \mathbf{D}^{-1/2} \right)^k \mathbf{X} \mathbf{W}_{k},
 
     where :math:`\mathbf{A}` denotes the adjacency matrix and
     :math:`D_{ii} = \sum_{j=0} A_{ij}` its diagonal degree matrix.
@@ -51,14 +52,21 @@ class TAGConv(MessagePassing):
         self.K = K
         self.normalize = normalize
 
-        self.lins = torch.nn.ModuleList(
-            [Linear(in_channels, out_channels) for _ in range(K + 1)])
+        self.lins = torch.nn.ModuleList([
+            Linear(in_channels, out_channels, bias=False) for _ in range(K + 1)
+        ])
+
+        if bias:
+            self.bias = torch.nn.Parameter(torch.Tensor(out_channels))
+        else:
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         for lin in self.lins:
             lin.reset_parameters()
+        zeros(self.bias)
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
@@ -67,19 +75,24 @@ class TAGConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 edge_index, edge_weight = gcn_norm(  # yapf: disable
                     edge_index, edge_weight, x.size(self.node_dim),
-                    improved=False, add_self_loops=False, dtype=x.dtype)
+                    improved=False, add_self_loops=False, flow=self.flow,
+                    dtype=x.dtype)
 
             elif isinstance(edge_index, SparseTensor):
                 edge_index = gcn_norm(  # yapf: disable
                     edge_index, edge_weight, x.size(self.node_dim),
-                    add_self_loops=False, dtype=x.dtype)
+                    add_self_loops=False, flow=self.flow, dtype=x.dtype)
 
         out = self.lins[0](x)
         for lin in self.lins[1:]:
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
             x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                                size=None)
-            out += lin.forward(x)
+            out = out + lin.forward(x)
+
+        if self.bias is not None:
+            out = out + self.bias
+
         return out
 
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:

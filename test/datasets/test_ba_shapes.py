@@ -1,10 +1,6 @@
-from torch_geometric.datasets import BAShapes
-
-
-def test_ba_shapes():
-    dataset = BAShapes()
+def test_ba_shapes(get_dataset):
+    dataset = get_dataset(name='BAShapes')
     assert str(dataset) == 'BAShapes()'
-
     assert len(dataset) == 1
     assert dataset.num_features == 10
     assert dataset.num_classes == 4

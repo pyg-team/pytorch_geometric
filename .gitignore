@@ -1,9 +1,12 @@
 __pycache__/
+.pytest_cache/
+.DS_Store
 data/
 build/
 dist/
 alpha/
 runs/
+wandb/
 .cache/
 .eggs/
 lightning_logs/
@@ -20,6 +23,9 @@ coverage.xml
 .venv
 *.out
 *.pt
+*.onnx
+examples/*.png
+examples/*.pdf
 
 !torch_geometric/data/
 !test/data/

@@ -1,4 +1,5 @@
 import copy
+from typing import Any
 
 import torch
 
@@ -12,6 +13,11 @@ def test_base_storage():
     assert len(storage) == 2
     assert storage.x is not None
     assert storage.y is not None
+
+    assert torch.allclose(storage.get('x', None), storage.x)
+    assert torch.allclose(storage.get('y', None), storage.y)
+    assert storage.get('z', 2) == 2
+    assert storage.get('z', None) is None
 
     assert len(list(storage.keys('x', 'y', 'z'))) == 2
     assert len(list(storage.keys('x', 'y', 'z'))) == 2
@@ -44,3 +50,19 @@ def test_base_storage():
     assert storage.x.data_ptr() != deepcopied_storage.x.data_ptr()
     assert int(storage.x) == 0
     assert int(deepcopied_storage.x) == 0
+
+
+def test_setter_and_getter():
+    class MyStorage(BaseStorage):
+        @property
+        def my_property(self) -> Any:
+            return self._my_property
+
+        @my_property.setter
+        def my_property(self, value: Any):
+            self._my_property = value
+
+    storage = MyStorage()
+    storage.my_property = 'hello'
+    assert storage.my_property == 'hello'
+    assert storage._my_property == storage._my_property

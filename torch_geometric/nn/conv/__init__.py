@@ -7,6 +7,7 @@ from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
+from .fused_gat_conv import FusedGATConv
 from .gatv2_conv import GATv2Conv
 from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
@@ -38,6 +39,7 @@ from .gen_conv import GENConv
 from .gcn2_conv import GCN2Conv
 from .pan_conv import PANConv
 from .wl_conv import WLConv
+from .wl_conv_continuous import WLConvContinuous
 from .film_conv import FiLMConv
 from .supergat_conv import SuperGATConv
 from .fa_conv import FAConv
@@ -49,6 +51,8 @@ from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
 from .han_conv import HANConv
 from .lg_conv import LGConv
+from .ssg_conv import SSGConv
+from .point_gnn_conv import PointGNNConv
 
 __all__ = [
     'MessagePassing',
@@ -60,6 +64,7 @@ __all__ = [
     'GatedGraphConv',
     'ResGatedGraphConv',
     'GATConv',
+    'FusedGATConv',
     'GATv2Conv',
     'TransformerConv',
     'AGNNConv',
@@ -68,6 +73,7 @@ __all__ = [
     'GINEConv',
     'ARMAConv',
     'SGConv',
+    'SSGConv',
     'APPNP',
     'MFConv',
     'RGCNConv',
@@ -96,6 +102,7 @@ __all__ = [
     'GCN2Conv',
     'PANConv',
     'WLConv',
+    'WLConvContinuous',
     'FiLMConv',
     'SuperGATConv',
     'FAConv',
@@ -107,6 +114,7 @@ __all__ = [
     'HeteroConv',
     'HANConv',
     'LGConv',
+    'PointGNNConv',
 ]
 
 classes = __all__

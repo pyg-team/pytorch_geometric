@@ -6,8 +6,13 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import (SplineConv, global_mean_pool, graclus,
-                                max_pool, max_pool_x)
+from torch_geometric.nn import (
+    SplineConv,
+    global_mean_pool,
+    graclus,
+    max_pool,
+    max_pool_x,
+)
 from torch_geometric.utils import normalized_cut
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')

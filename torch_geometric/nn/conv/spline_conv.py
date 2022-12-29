@@ -14,7 +14,7 @@ from ..inits import uniform, zeros
 
 try:
     from torch_spline_conv import spline_basis, spline_weighting
-except ImportError:
+except (ImportError, OSError):  # Fail gracefully on GLIBC errors
     spline_basis = None
     spline_weighting = None
 
@@ -139,10 +139,10 @@ class SplineConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None and self.root_weight:
-            out += self.lin(x_r)
+            out = out + self.lin(x_r)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

@@ -1,9 +1,11 @@
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import GridSampling
 
 
+@withPackage('torch_cluster')
 def test_grid_sampling():
     assert GridSampling(5).__repr__() == 'GridSampling(size=5)'
 

@@ -2,11 +2,13 @@ import os.path as osp
 import ssl
 import sys
 import urllib
+from typing import Optional
 
 from .makedirs import makedirs
 
 
-def download_url(url: str, folder: str, log: bool = True):
+def download_url(url: str, folder: str, log: bool = True,
+                 filename: Optional[str] = None):
     r"""Downloads the content of an URL to a specific folder.
 
     Args:
@@ -16,8 +18,10 @@ def download_url(url: str, folder: str, log: bool = True):
             console. (default: :obj:`True`)
     """
 
-    filename = url.rpartition('/')[2]
-    filename = filename if filename[0] == '?' else filename.split('?')[0]
+    if filename is None:
+        filename = url.rpartition('/')[2]
+        filename = filename if filename[0] == '?' else filename.split('?')[0]
+
     path = osp.join(folder, filename)
 
     if osp.exists(path):  # pragma: no cover
@@ -34,6 +38,11 @@ def download_url(url: str, folder: str, log: bool = True):
     data = urllib.request.urlopen(url, context=context)
 
     with open(path, 'wb') as f:
-        f.write(data.read())
+        # workaround for https://bugs.python.org/issue42853
+        while True:
+            chunk = data.read(10 * 1024 * 1024)
+            if not chunk:
+                break
+            f.write(chunk)
 
     return path

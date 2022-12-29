@@ -1,9 +1,10 @@
 import torch
 
 from torch_geometric.nn import XConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 
 
+@withPackage('torch_cluster')
 def test_x_conv():
     x = torch.randn(8, 16)
     pos = torch.rand(8, 3)

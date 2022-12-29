@@ -16,7 +16,7 @@ from .local_degree_profile import LocalDegreeProfile
 from .center import Center
 from .normalize_rotation import NormalizeRotation
 from .normalize_scale import NormalizeScale
-from .random_translate import RandomTranslate
+from .random_jitter import RandomJitter
 from .random_flip import RandomFlip
 from .linear_transformation import LinearTransformation
 from .random_scale import RandomScale
@@ -45,9 +45,13 @@ from .svd_feature_reduction import SVDFeatureReduction
 from .remove_training_classes import RemoveTrainingClasses
 from .random_node_split import RandomNodeSplit
 from .random_link_split import RandomLinkSplit
-from .add_metapaths import AddMetaPaths
+from .add_metapaths import AddMetaPaths, AddRandomMetaPaths
+from .rooted_subgraph import RootedEgoNets, RootedRWSubgraph
 from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
+from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
+from .feature_propagation import FeaturePropagation
+from .mask import IndexToMask, MaskToIndex
 
 __all__ = [
     'BaseTransform',
@@ -68,7 +72,7 @@ __all__ = [
     'Center',
     'NormalizeRotation',
     'NormalizeScale',
-    'RandomTranslate',
+    'RandomJitter',
     'RandomFlip',
     'LinearTransformation',
     'RandomScale',
@@ -98,8 +102,21 @@ __all__ = [
     'RandomNodeSplit',
     'RandomLinkSplit',
     'AddMetaPaths',
+    'AddRandomMetaPaths',
+    'RootedEgoNets',
+    'RootedRWSubgraph',
     'LargestConnectedComponents',
     'VirtualNode',
+    'AddLaplacianEigenvectorPE',
+    'AddRandomWalkPE',
+    'FeaturePropagation',
+    'IndexToMask',
+    'MaskToIndex',
 ]
 
 classes = __all__
+
+from torch_geometric.deprecation import deprecated  # noqa
+
+RandomTranslate = deprecated("use 'transforms.RandomJitter' instead",
+                             'transforms.RandomTranslate')(RandomJitter)

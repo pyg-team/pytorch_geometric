@@ -3,9 +3,9 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Batch, Data
+from torch_geometric.typing import SparseTensor
 
 
 class ShaDowKHopSampler(torch.utils.data.DataLoader):
@@ -39,6 +39,12 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
     def __init__(self, data: Data, depth: int, num_neighbors: int,
                  node_idx: Optional[Tensor] = None, replace: bool = False,
                  **kwargs):
+
+        try:
+            import torch_sparse  # noqa
+        except ImportError:
+            raise ImportError(
+                f"'{self.__class__.__name__}' requires 'torch-sparse'")
 
         self.data = copy.copy(data)
         self.depth = depth
@@ -75,7 +81,7 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
         adj_t = SparseTensor(rowptr=rowptr, col=col,
                              value=value[e_id] if value is not None else None,
                              sparse_sizes=(n_id.numel(), n_id.numel()),
-                             is_sorted=True)
+                             is_sorted=True, trust_data=True)
 
         batch = Batch(batch=torch.ops.torch_sparse.ptr2ind(ptr, n_id.numel()),
                       ptr=ptr)
@@ -88,7 +94,7 @@ class ShaDowKHopSampler(torch.utils.data.DataLoader):
             batch.edge_index = torch.stack([row, col], dim=0)
 
         for k, v in self.data:
-            if k in ['edge_index', 'adj_t', 'num_nodes']:
+            if k in ['edge_index', 'adj_t', 'num_nodes', 'batch', 'ptr']:
                 continue
             if k == 'y' and v.size(0) == self.data.num_nodes:
                 batch[k] = v[n_id][root_n_id]

@@ -1,13 +1,35 @@
 from typing import List, Optional, Tuple, Union
 
+import torch
 from torch import Tensor
 
 from .num_nodes import maybe_num_nodes
 
 
+@torch.jit._overload
+def sort_edge_index(edge_index, edge_attr=None, num_nodes=None,
+                    sort_by_row=True):
+    # type: (Tensor, Optional[bool], Optional[int], bool) -> Tensor  # noqa
+    pass
+
+
+@torch.jit._overload
+def sort_edge_index(edge_index, edge_attr=None, num_nodes=None,
+                    sort_by_row=True):
+    # type: (Tensor, Tensor, Optional[int], bool) -> Tuple[Tensor, Tensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def sort_edge_index(edge_index, edge_attr=None, num_nodes=None,
+                    sort_by_row=True):
+    # type: (Tensor, List[Tensor], Optional[int], bool) -> Tuple[Tensor, List[Tensor]]  # noqa
+    pass
+
+
 def sort_edge_index(
     edge_index: Tensor,
-    edge_attr: Optional[Union[Tensor, List[Tensor]]] = None,
+    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
     num_nodes: Optional[int] = None,
     sort_by_row: bool = True,
 ) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
@@ -26,6 +48,23 @@ def sort_edge_index(
 
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
         (:class:`LongTensor`, :obj:`Tensor` or :obj:`List[Tensor]]`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[2, 1, 1, 0],
+                                [1, 2, 0, 1]])
+        >>> edge_attr = torch.tensor([[1], [2], [3], [4]])
+        >>> sort_edge_index(edge_index)
+        tensor([[0, 1, 1, 2],
+                [1, 0, 2, 1]])
+
+        >>> sort_edge_index(edge_index, edge_attr)
+        (tensor([[0, 1, 1, 2],
+                [1, 0, 2, 1]]),
+        tensor([[4],
+                [3],
+                [2],
+                [1]]))
     """
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
@@ -36,9 +75,9 @@ def sort_edge_index(
 
     edge_index = edge_index[:, perm]
 
-    if edge_attr is None:
-        return edge_index
-    elif isinstance(edge_attr, Tensor):
+    if isinstance(edge_attr, Tensor):
         return edge_index, edge_attr[perm]
-    else:
+    elif isinstance(edge_attr, (list, tuple)):
         return edge_index, [e[perm] for e in edge_attr]
+    else:
+        return edge_index

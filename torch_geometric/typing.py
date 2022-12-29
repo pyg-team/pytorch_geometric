@@ -1,7 +1,23 @@
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
+import numpy as np
 from torch import Tensor
-from torch_sparse import SparseTensor
+
+try:
+    import pyg_lib  # noqa
+    WITH_PYG_LIB = True
+except ImportError:
+    pyg_lib = object
+    WITH_PYG_LIB = False
+
+try:
+    from torch_sparse import SparseTensor
+except ImportError:
+
+    class SparseTensor:
+        def __init__(self, *args, **kwargs):
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
 
 # Types for accessing data ####################################################
 
@@ -20,6 +36,15 @@ QueryType = Union[NodeType, EdgeType, str, Tuple[str, str]]
 
 Metadata = Tuple[List[NodeType], List[EdgeType]]
 
+# A representation of a feature tensor
+FeatureTensorType = Union[Tensor, np.ndarray]
+
+# A representation of an edge index, following the possible formats:
+#   * COO: (row, col)
+#   * CSC: (row, colptr)
+#   * CSR: (rowptr, col)
+EdgeTensorType = Tuple[Tensor, Tensor]
+
 # Types for message passing ###################################################
 
 Adj = Union[Tensor, SparseTensor]
@@ -33,3 +58,5 @@ NoneType = Optional[Tensor]
 # Types for sampling ##########################################################
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
+InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
+NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]

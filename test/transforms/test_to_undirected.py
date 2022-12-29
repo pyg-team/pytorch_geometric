@@ -53,7 +53,11 @@ def test_hetero_to_undirected():
     data['v', 'w'].edge_attr = edge_attr
 
     from torch_geometric.transforms import ToUndirected
+
+    assert not data.is_undirected()
     data = ToUndirected()(data)
+    assert data.is_undirected()
+
     assert data['v', 'v'].edge_index.tolist() == [[0, 1, 2, 3], [1, 0, 3, 2]]
     assert data['v', 'v'].edge_weight.tolist() == edge_weight[perm].tolist()
     assert data['v', 'v'].edge_attr.tolist() == edge_attr[perm].tolist()

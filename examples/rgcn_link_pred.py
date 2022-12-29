@@ -114,6 +114,16 @@ def test():
 
 
 @torch.no_grad()
+def compute_rank(ranks):
+    # fair ranking prediction as the average
+    # of optimistic and pessimistic ranking
+    true = ranks[0]
+    optimistic = (ranks > true).sum() + 1
+    pessimistic = (ranks >= true).sum()
+    return (optimistic + pessimistic).float() * 0.5
+
+
+@torch.no_grad()
 def compute_mrr(z, edge_index, edge_type):
     ranks = []
     for i in tqdm(range(edge_type.numel())):
@@ -135,9 +145,8 @@ def compute_mrr(z, edge_index, edge_type):
         eval_edge_type = torch.full_like(tail, fill_value=rel)
 
         out = model.decode(z, eval_edge_index, eval_edge_type)
-        perm = out.argsort(descending=True)
-        rank = int((perm == 0).nonzero(as_tuple=False).view(-1)[0])
-        ranks.append(rank + 1)
+        rank = compute_rank(out)
+        ranks.append(rank)
 
         # Try all nodes as heads, but delete true triplets:
         head_mask = torch.ones(data.num_nodes, dtype=torch.bool)
@@ -155,9 +164,8 @@ def compute_mrr(z, edge_index, edge_type):
         eval_edge_type = torch.full_like(head, fill_value=rel)
 
         out = model.decode(z, eval_edge_index, eval_edge_type)
-        perm = out.argsort(descending=True)
-        rank = int((perm == 0).nonzero(as_tuple=False).view(-1)[0])
-        ranks.append(rank + 1)
+        rank = compute_rank(out)
+        ranks.append(rank)
 
     return (1. / torch.tensor(ranks, dtype=torch.float)).mean()
 

@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GraphUNet
-from torch_geometric.utils import dropout_adj
+from torch_geometric.utils import dropout_edge
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -21,10 +21,9 @@ class Net(torch.nn.Module):
                               depth=3, pool_ratios=pool_ratios)
 
     def forward(self):
-        edge_index, _ = dropout_adj(data.edge_index, p=0.2,
-                                    force_undirected=True,
-                                    num_nodes=data.num_nodes,
-                                    training=self.training)
+        edge_index, _ = dropout_edge(data.edge_index, p=0.2,
+                                     force_undirected=True,
+                                     training=self.training)
         x = F.dropout(data.x, p=0.92, training=self.training)
 
         x = self.unet(x, edge_index)

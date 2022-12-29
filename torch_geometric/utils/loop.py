@@ -17,13 +17,27 @@ def contains_self_loops(edge_index: Tensor) -> bool:
         edge_index (LongTensor): The edge indices.
 
     :rtype: bool
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 0],
+        ...                            [1, 0, 0]])
+        >>> contains_self_loops(edge_index)
+        True
+
+        >>> edge_index = torch.tensor([[0, 1, 1],
+        ...                            [1, 0, 2]])
+        >>> contains_self_loops(edge_index)
+        False
     """
     mask = edge_index[0] == edge_index[1]
     return mask.sum().item() > 0
 
 
-def remove_self_loops(edge_index: Tensor,
-                      edge_attr: OptTensor = None) -> Tuple[Tensor, OptTensor]:
+def remove_self_loops(
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+) -> Tuple[Tensor, OptTensor]:
     r"""Removes every self-loop in the graph given by :attr:`edge_index`, so
     that :math:`(i,i) \not\in \mathcal{E}` for every :math:`i \in \mathcal{V}`.
 
@@ -33,6 +47,18 @@ def remove_self_loops(edge_index: Tensor,
             edge features. (default: :obj:`None`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 1, 0],
+        ...                            [1, 0, 0]])
+        >>> edge_attr = [[1, 2], [3, 4], [5, 6]]
+        >>> edge_attr = torch.tensor(edge_attr)
+        >>> remove_self_loops(edge_index, edge_attr)
+        (tensor([[0, 1],
+                [1, 0]]),
+        tensor([[1, 2],
+                [3, 4]]))
     """
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
@@ -54,6 +80,17 @@ def segregate_self_loops(
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`, :class:`LongTensor`,
         :class:`Tensor`)
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 0, 1],
+        ...                            [0, 1, 0]])
+        >>> (edge_index, edge_attr,
+        ...  loop_edge_index,
+        ...  loop_edge_attr) = segregate_self_loops(edge_index)
+        >>>  loop_edge_index
+        tensor([[0],
+                [0]])
     """
 
     mask = edge_index[0] != edge_index[1]
@@ -114,6 +151,35 @@ def add_self_loops(
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 0],
+        ...                            [1, 0, 0]])
+        >>> edge_weight = torch.tensor([0.5, 0.5, 0.5])
+        >>> add_self_loops(edge_index)
+        (tensor([[0, 1, 0, 0, 1],
+                [1, 0, 0, 0, 1]]),
+        None)
+
+        >>> add_self_loops(edge_index, edge_weight)
+        (tensor([[0, 1, 0, 0, 1],
+                [1, 0, 0, 0, 1]]),
+        tensor([0.5000, 0.5000, 0.5000, 1.0000, 1.0000]))
+
+        >>> # edge features of self-loops are filled by constant `2.0`
+        >>> add_self_loops(edge_index, edge_weight,
+        ...                fill_value=2.)
+        (tensor([[0, 1, 0, 0, 1],
+                [1, 0, 0, 0, 1]]),
+        tensor([0.5000, 0.5000, 0.5000, 2.0000, 2.0000]))
+
+        >>> # Use 'add' operation to merge edge features for self-loops
+        >>> add_self_loops(edge_index, edge_weight,
+        ...                fill_value='add')
+        (tensor([[0, 1, 0, 0, 1],
+                [1, 0, 0, 0, 1]]),
+        tensor([0.5000, 0.5000, 0.5000, 1.0000, 0.5000]))
     """
     N = maybe_num_nodes(edge_index, num_nodes)
 
@@ -193,6 +259,16 @@ def add_remaining_self_loops(
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 1],
+        ...                            [1, 0]])
+        >>> edge_weight = torch.tensor([0.5, 0.5])
+        >>> add_remaining_self_loops(edge_index, edge_weight)
+        (tensor([[0, 1, 0, 1],
+                [1, 0, 0, 1]]),
+        tensor([0.5000, 0.5000, 1.0000, 1.0000]))
     """
     N = maybe_num_nodes(edge_index, num_nodes)
     mask = edge_index[0] != edge_index[1]
@@ -227,3 +303,50 @@ def add_remaining_self_loops(
 
     edge_index = torch.cat([edge_index[:, mask], loop_index], dim=1)
     return edge_index, edge_attr
+
+
+def get_self_loop_attr(edge_index: Tensor, edge_attr: OptTensor = None,
+                       num_nodes: Optional[int] = None) -> Tensor:
+    r"""Returns the edge features or weights of self-loops
+    :math:`(i, i)` of every node :math:`i \in \mathcal{V}` in the
+    graph given by :attr:`edge_index`. Edge features of missing self-loops not
+    present in :attr:`edge_index` will be filled with zeros. If
+    :attr:`edge_attr` is not given, it will be the vector of ones.
+
+    .. note::
+        This operation is analogous to getting the diagonal elements of the
+        dense adjacency matrix.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        edge_attr (Tensor, optional): Edge weights or multi-dimensional edge
+            features. (default: :obj:`None`)
+        num_nodes (int, optional): The number of nodes, *i.e.*
+            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+
+    :rtype: :class:`Tensor`
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 0],
+        ...                            [1, 0, 0]])
+        >>> edge_weight = torch.tensor([0.2, 0.3, 0.5])
+        >>> get_self_loop_attr(edge_index, edge_weight)
+        tensor([0.5000, 0.0000])
+
+        >>> get_self_loop_attr(edge_index, edge_weight, num_nodes=4)
+        tensor([0.5000, 0.0000, 0.0000, 0.0000])
+    """
+    loop_mask = edge_index[0] == edge_index[1]
+    loop_index = edge_index[0][loop_mask]
+
+    if edge_attr is not None:
+        loop_attr = edge_attr[loop_mask]
+    else:  # A vector of ones:
+        loop_attr = torch.ones_like(loop_index, dtype=torch.float)
+
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    full_loop_attr = loop_attr.new_zeros((num_nodes, ) + loop_attr.size()[1:])
+    full_loop_attr[loop_index] = loop_attr
+
+    return full_loop_attr

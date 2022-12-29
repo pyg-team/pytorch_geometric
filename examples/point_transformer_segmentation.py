@@ -2,23 +2,20 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from point_transformer_classification import (MLP, TransformerBlock,
-                                              TransitionDown)
-from torch.nn import Linear as Lin
-from torch.nn import ReLU
-from torch.nn import Sequential as Seq
+from point_transformer_classification import TransformerBlock, TransitionDown
 from torch_cluster import knn_graph
+from torch_scatter import scatter
+from torchmetrics.functional import jaccard_index
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.unpool import knn_interpolate
-from torch_geometric.utils import intersection_and_union as i_and_u
+from torch_geometric.nn import MLP, knn_interpolate
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
 transform = T.Compose([
-    T.RandomTranslate(0.01),
+    T.RandomJitter(0.01),
     T.RandomRotate(15, axis=0),
     T.RandomRotate(15, axis=1),
     T.RandomRotate(15, axis=2),
@@ -39,8 +36,8 @@ class TransitionUp(torch.nn.Module):
     '''
     def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.mlp_sub = MLP([in_channels, out_channels])
-        self.mlp = MLP([out_channels, out_channels])
+        self.mlp_sub = MLP([in_channels, out_channels], plain_last=False)
+        self.mlp = MLP([out_channels, out_channels], plain_last=False)
 
     def forward(self, x, x_sub, pos, pos_sub, batch=None, batch_sub=None):
         # transform low-res features and reduce the number of features
@@ -64,7 +61,7 @@ class Net(torch.nn.Module):
         in_channels = max(in_channels, 1)
 
         # first block
-        self.mlp_input = MLP([in_channels, dim_model[0]])
+        self.mlp_input = MLP([in_channels, dim_model[0]], plain_last=False)
 
         self.transformer_input = TransformerBlock(
             in_channels=dim_model[0],
@@ -98,7 +95,8 @@ class Net(torch.nn.Module):
                                  out_channels=dim_model[i]))
 
         # summit layers
-        self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], batch_norm=False)
+        self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], norm=None,
+                              plain_last=False)
 
         self.transformer_summit = TransformerBlock(
             in_channels=dim_model[-1],
@@ -106,8 +104,7 @@ class Net(torch.nn.Module):
         )
 
         # class score computation
-        self.mlp_output = Seq(Lin(dim_model[0], 64), ReLU(), Lin(64, 64),
-                              ReLU(), Lin(64, out_channels))
+        self.mlp_output = MLP([dim_model[0], 64, out_channels], norm=None)
 
     def forward(self, x, pos, batch=None):
 
@@ -194,24 +191,32 @@ def train():
 def test(loader):
     model.eval()
 
-    y_mask = loader.dataset.y_mask
-    ious = [[] for _ in range(len(loader.dataset.categories))]
-
+    ious, categories = [], []
+    y_map = torch.empty(loader.dataset.num_classes, device=device).long()
     for data in loader:
         data = data.to(device)
-        pred = model(data.x, data.pos, data.batch).argmax(dim=1)
+        outs = model(data.x, data.pos, data.batch)
 
-        i, u = i_and_u(pred, data.y, loader.dataset.num_classes, data.batch)
-        iou = i.cpu().to(torch.float) / u.cpu().to(torch.float)
-        iou[torch.isnan(iou)] = 1
+        sizes = (data.ptr[1:] - data.ptr[:-1]).tolist()
+        for out, y, category in zip(outs.split(sizes), data.y.split(sizes),
+                                    data.category.tolist()):
+            category = list(ShapeNet.seg_classes.keys())[category]
+            part = ShapeNet.seg_classes[category]
+            part = torch.tensor(part, device=device)
 
-        # Find and filter the relevant classes for each category.
-        for iou, category in zip(iou.unbind(), data.category.unbind()):
-            ious[category.item()].append(iou[y_mask[category]])
+            y_map[part] = torch.arange(part.size(0), device=device)
 
-    # Compute mean IoU.
-    ious = [torch.stack(iou).mean(0).mean(0) for iou in ious]
-    return torch.tensor(ious).mean().item()
+            iou = jaccard_index(out[:, part].argmax(dim=-1), y_map[y],
+                                num_classes=part.size(0), absent_score=1.0)
+            ious.append(iou)
+
+        categories.append(data.category)
+
+    iou = torch.tensor(ious, device=device)
+    category = torch.cat(categories, dim=0)
+
+    mean_iou = scatter(iou, category, reduce='mean')  # Per-category IoU.
+    return float(mean_iou.mean())  # Global IoU.
 
 
 for epoch in range(1, 100):

@@ -2,8 +2,9 @@ import os.path as osp
 from typing import Optional
 
 import torch
-from torch_sparse import SparseTensor
 from tqdm import tqdm
+
+from torch_geometric.typing import SparseTensor
 
 
 class GraphSAINTSampler(torch.utils.data.DataLoader):

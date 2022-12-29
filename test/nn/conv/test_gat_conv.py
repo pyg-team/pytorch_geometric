@@ -35,12 +35,10 @@ def test_gat_conv():
     assert result[1][0].size() == (2, 7)
     assert result[1][1].size() == (7, 2)
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
-    assert conv._alpha is None
 
     result = conv(x1, adj.t(), return_attention_weights=True)
     assert torch.allclose(result[0], out, atol=1e-6)
     assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
-    assert conv._alpha is None
 
     if is_full_test():
         t = ('(Tensor, Tensor, OptTensor, Size, bool) -> '
@@ -51,7 +49,6 @@ def test_gat_conv():
         assert result[1][0].size() == (2, 7)
         assert result[1][1].size() == (7, 2)
         assert result[1][1].min() >= 0 and result[1][1].max() <= 1
-        assert conv._alpha is None
 
         t = ('(Tensor, SparseTensor, OptTensor, Size, bool) -> '
              'Tuple[Tensor, SparseTensor]')
@@ -59,7 +56,6 @@ def test_gat_conv():
         result = jit(x1, adj.t(), return_attention_weights=True)
         assert torch.allclose(result[0], out, atol=1e-6)
         assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
-        assert conv._alpha is None
 
     adj = adj.sparse_resize((4, 2))
     conv = GATConv((8, 16), 32, heads=2)

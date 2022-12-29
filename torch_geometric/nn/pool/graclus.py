@@ -15,7 +15,7 @@ def graclus(edge_index, weight: Optional[torch.Tensor] = None,
     inderjit/public_papers/multilevel_pami.pdf>`_ paper of picking an unmarked
     vertex and matching it with one of its unmarked neighbors (that maximizes
     its edge weight).
-    The GPU algoithm is adapted from the `"A GPU Algorithm for Greedy Graph
+    The GPU algorithm is adapted from the `"A GPU Algorithm for Greedy Graph
     Matching" <http://www.staff.science.uu.nl/~bisse101/Articles/match12.pdf>`_
     paper.
 

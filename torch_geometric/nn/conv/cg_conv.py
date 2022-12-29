@@ -86,7 +86,7 @@ class CGConv(MessagePassing):
         # propagate_type: (x: PairTensor, edge_attr: OptTensor)
         out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
         out = out if self.bn is None else self.bn(out)
-        out += x[1]
+        out = out + x[1]
         return out
 
     def message(self, x_i, x_j, edge_attr: OptTensor) -> Tensor:

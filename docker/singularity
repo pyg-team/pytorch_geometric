@@ -1,53 +1,75 @@
 Bootstrap: docker
-
-From: nvidia/cuda:10.1-cudnn7-devel-ubuntu16.04
+From: nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
 
 %post
-CURDIR=`pwd`
+  CURDIR=$(pwd)
 
-apt-get update
-apt-get install -y tmux nano git wget
+  # Set timezone to Etc/UTC for tzdata. See issue #4365 for more details.
+  TZ=Etc/UTC && \
+    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
 
-apt-get install -y --no-install-recommends make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+  apt-get update -y
+  apt-get install -y tmux nano git wget
+  apt-get install -y --no-install-recommends \
+    build-essential \
+    gfortran \
+    libssl-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    wget \
+    curl \
+    llvm \
+    libncurses5-dev \
+    xz-utils \
+    tk-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libffi-dev \
+    liblzma-dev \
+    liblapack-dev \
+    libopenblas-dev \
+    libhdf5-dev
 
+  export PYENV_ROOT=/opt/pyenv
+  export PATH="/opt/pyenv/bin:$PATH"
+  curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+  pyenv install 3.7.2
+  echo 'export PATH=/opt/pyenv/versions/3.7.2/bin/:$PATH' >> $SINGULARITY_ENVIRONMENT
+  export PATH=/opt/pyenv/versions/3.7.2/bin/:$PATH
 
-export PYENV_ROOT=/opt/pyenv
-export PATH="/opt/pyenv/bin:$PATH"
-curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
-pyenv install 3.7.2
-echo 'export PATH=/opt/pyenv/versions/3.7.2/bin/:$PATH' >> $SINGULARITY_ENVIRONMENT
-export PATH=/opt/pyenv/versions/3.7.2/bin/:$PATH
+  pip install torch==1.3.0
 
-pip install torch==1.3.0
+  mkdir -p $SINGULARITY_ROOTFS/tmp/sing_build_cuda
+  cd $SINGULARITY_ROOTFS/tmp/sing_build_cuda
 
-mkdir -p $SINGULARITY_ROOTFS/tmp/sing_build_cuda
-cd $SINGULARITY_ROOTFS/tmp/sing_build_cuda
+  export TORCH_CUDA_ARCH_LIST="5.0 6.1"
 
-export TORCH_CUDA_ARCH_LIST="5.0 6.1"
-
-git clone https://github.com/rusty1s/pytorch_scatter.git && \
+  git clone https://github.com/rusty1s/pytorch_scatter.git && \
     cd ./pytorch_scatter && \
     git checkout 1.4.0 && \
     python3 -m pip install . && \
     cd ..
 
-git clone https://github.com/rusty1s/pytorch_sparse.git && \
+  git clone https://github.com/rusty1s/pytorch_sparse.git && \
     cd ./pytorch_sparse && \
     git checkout 0.4.3 && \
     python3 -m pip install . && \
     cd ..
 
-git clone https://github.com/rusty1s/pytorch_cluster.git && \
+  git clone https://github.com/rusty1s/pytorch_cluster.git && \
     cd ./pytorch_cluster && \
     git checkout 1.4.5 && \
     python3 -m pip install . && \
     cd ..
 
-git clone https://github.com/pyg-team/pytorch_geometric.git && \
+  git clone https://github.com/pyg-team/pytorch_geometric.git && \
     cd ./pytorch_geometric && \
     git checkout 1.3.2 && \
     python3 -m pip install . && \
     cd ..
 
-cd $CURDIR
-rm -rf $SINGULARITY_ROOTFS/tmp/sing_build_cuda
+  cd $CURDIR
+  rm -rf $SINGULARITY_ROOTFS/tmp/sing_build_cuda

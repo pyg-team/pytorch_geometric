@@ -1,9 +1,16 @@
+import os
+import pathlib
+import time
+from contextlib import ContextDecorator, contextmanager
 from typing import Any, List, NamedTuple, Tuple
 
 import torch
+from torch.profiler import ProfilerActivity, profile
 
-from torch_geometric.profile.utils import (byte_to_megabyte,
-                                           get_gpu_memory_from_nvidia_smi)
+from torch_geometric.profile.utils import (
+    byte_to_megabyte,
+    get_gpu_memory_from_nvidia_smi,
+)
 
 
 class Stats(NamedTuple):
@@ -55,8 +62,22 @@ def profileit():
                 raise AttributeError(
                     'First argument for profiling needs to be torch.nn.Module')
 
+            device = None
+            for arg in list(args) + list(kwargs.values()):
+                if isinstance(arg, torch.Tensor):
+                    device = arg.get_device()
+                    break
+            if device is None:
+                raise AttributeError(
+                    "Could not infer CUDA device from the args in the "
+                    "function being profiled")
+            if device == -1:
+                raise RuntimeError(
+                    "The profiling decorator does not support profiling "
+                    "on non CUDA devices")
+
             # Init `pytorch_memlab` for analyzing the model forward pass:
-            line_profiler = LineProfiler()
+            line_profiler = LineProfiler(target_gpu=device)
             line_profiler.enable()
             line_profiler.add_function(args[0].forward)
 
@@ -76,7 +97,8 @@ def profileit():
             line_profiler.disable()
 
             # Get additional information from `nvidia-smi`:
-            free_cuda, used_cuda = get_gpu_memory_from_nvidia_smi()
+            free_cuda, used_cuda = get_gpu_memory_from_nvidia_smi(
+                device=device)
 
             stats = Stats(time, max_allocated_cuda, max_reserved_cuda,
                           max_active_cuda, free_cuda, used_cuda)
@@ -88,36 +110,47 @@ def profileit():
     return decorator
 
 
-def timeit():
-    r"""A decorator to facilitate timing a function, *e.g.*, obtaining the
-    runtime of a specific model on a specific dataset.
+class timeit(ContextDecorator):
+    r"""A context decorator to facilitate timing a function, *e.g.*, obtaining
+    the runtime of a specific model on a specific dataset.
 
     .. code-block:: python
 
-        @timeit()
         @torch.no_grad()
         def test(model, x, edge_index):
             return model(x, edge_index)
 
-        z, time = test(model, x, edge_index)
+        with timeit() as t:
+            z = test(model, x, edge_index)
+        time = t.duration
     """
-    def decorator(func):
-        def wrapper(*args, **kwargs) -> Tuple[Any, float]:
-            start = torch.cuda.Event(enable_timing=True)
-            end = torch.cuda.Event(enable_timing=True)
-            start.record()
+    def __init__(self, log: bool = True, avg_time_divisor: int = 0):
+        self.log = log
+        self.avg_time_divisor = avg_time_divisor
 
-            out = func(*args, **kwargs)
-
-            end.record()
+    def __enter__(self):
+        if torch.cuda.is_available():
             torch.cuda.synchronize()
-            time = start.elapsed_time(end) / 1000
+        self.t_start = time.time()
+        return self
 
-            return out, time
+    def __exit__(self, *args):
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        self.t_end = time.time()
+        self.duration = self.t_end - self.t_start
+        if self.avg_time_divisor > 1:
+            self.duration = self.duration / self.avg_time_divisor
+        if self.log:
+            print(f'Time: {self.duration:.8f}s', flush=True)
 
-        return wrapper
-
-    return decorator
+    def reset(self):
+        r"""Prints the duration and resets current timer."""
+        if self.t_start is None:
+            raise Exception("Timer wasn't started.")
+        else:
+            self.__exit__()
+            self.__enter__()
 
 
 def get_stats_summary(stats_list: List[Stats]):
@@ -170,3 +203,32 @@ def std(values: List[float]):
 
 def mean(values: List[float]):
     return float(torch.tensor(values).mean())
+
+
+def trace_handler(p):
+    if torch.cuda.is_available():
+        profile_sort = 'self_cuda_time_total'
+    else:
+        profile_sort = 'self_cpu_time_total'
+    output = p.key_averages().table(sort_by=profile_sort)
+    print(output)
+    profile_dir = str(pathlib.Path.cwd()) + '/'
+    timeline_file = profile_dir + 'timeline' + '.json'
+    p.export_chrome_trace(timeline_file)
+
+
+def rename_profile_file(*args):
+    profile_dir = str(pathlib.Path.cwd()) + '/'
+    timeline_file = profile_dir + 'profile'
+    for arg in args:
+        timeline_file += '-' + arg
+    timeline_file += '.json'
+    os.rename('timeline.json', timeline_file)
+
+
+@contextmanager
+def torch_profile():
+    with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                 on_trace_ready=trace_handler) as p:
+        yield
+        p.step()

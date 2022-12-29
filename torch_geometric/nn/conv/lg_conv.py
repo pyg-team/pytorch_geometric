@@ -42,11 +42,12 @@ class LGConv(MessagePassing):
         """"""
         if self.normalize and isinstance(edge_index, Tensor):
             out = gcn_norm(edge_index, edge_weight, x.size(self.node_dim),
-                           add_self_loops=False, dtype=x.dtype)
+                           add_self_loops=False, flow=self.flow, dtype=x.dtype)
             edge_index, edge_weight = out
         elif self.normalize and isinstance(edge_index, SparseTensor):
             edge_index = gcn_norm(edge_index, None, x.size(self.node_dim),
-                                  add_self_loops=False, dtype=x.dtype)
+                                  add_self_loops=False, flow=self.flow,
+                                  dtype=x.dtype)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         return self.propagate(edge_index, x=x, edge_weight=edge_weight,

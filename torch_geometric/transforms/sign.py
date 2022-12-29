@@ -1,14 +1,16 @@
 import torch
-from torch_sparse import SparseTensor
 
+from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('sign')
 class SIGN(BaseTransform):
     r"""The Scalable Inception Graph Neural Network module (SIGN) from the
     `"SIGN: Scalable Inception Graph Neural Networks"
-    <https://arxiv.org/abs/2004.11198>`_ paper, which precomputes the fixed
-    representations
+    <https://arxiv.org/abs/2004.11198>`_ paper (functional name: :obj:`sign`),
+    which precomputes the fixed representations
 
     .. math::
         \mathbf{X}^{(i)} = {\left( \mathbf{D}^{-1/2} \mathbf{A}
@@ -28,10 +30,12 @@ class SIGN(BaseTransform):
     Args:
         K (int): The number of hops/layer.
     """
-    def __init__(self, K):
+    def __init__(self, K: int):
         self.K = K
 
-    def __call__(self, data):
+    def __call__(self, data: Data) -> Data:
+        from torch_sparse import SparseTensor
+
         assert data.edge_index is not None
         row, col = data.edge_index
         adj_t = SparseTensor(row=col, col=row,

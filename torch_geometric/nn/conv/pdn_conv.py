@@ -100,10 +100,12 @@ class PDNConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 edge_index, edge_attr = gcn_norm(edge_index, edge_attr,
                                                  x.size(self.node_dim), False,
-                                                 self.add_self_loops)
+                                                 self.add_self_loops,
+                                                 self.flow, x.dtype)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = gcn_norm(edge_index, None, x.size(self.node_dim),
-                                      False, self.add_self_loops)
+                                      False, self.add_self_loops, self.flow,
+                                      x.dtype)
 
         x = self.lin(x)
 
@@ -111,7 +113,7 @@ class PDNConv(MessagePassing):
         out = self.propagate(edge_index, x=x, edge_weight=edge_attr, size=None)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

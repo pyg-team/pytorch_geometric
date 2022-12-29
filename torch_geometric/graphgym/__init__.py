@@ -4,7 +4,7 @@ from .utils import *  # noqa
 from .checkpoint import load_ckpt, save_ckpt, remove_ckpt, clean_ckpt
 from .cmd_args import parse_args
 from .config import (cfg, set_cfg, load_cfg, dump_cfg, set_run_dir,
-                     set_agg_dir, get_fname)
+                     set_out_dir, get_fname)
 from .init import init_weights
 from .loader import create_loader
 from .logger import set_printing, create_logger
@@ -30,7 +30,7 @@ __all__ = classes = [
     'load_cfg',
     'dump_cfg',
     'set_run_dir',
-    'set_agg_dir',
+    'set_out_dir',
     'get_fname',
     'init_weights',
     'create_loader',

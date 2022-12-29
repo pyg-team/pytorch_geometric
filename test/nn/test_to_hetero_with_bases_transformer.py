@@ -1,12 +1,18 @@
 from typing import Tuple
 
+import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import (GINEConv, MessagePassing, RGCNConv, SAGEConv,
-                                to_hetero_with_bases)
+from torch_geometric.nn import (
+    GINEConv,
+    MessagePassing,
+    RGCNConv,
+    SAGEConv,
+    to_hetero_with_bases,
+)
 
 
 class Net1(torch.nn.Module):
@@ -135,6 +141,7 @@ def test_to_hetero_with_bases():
     assert out[1][('paper', 'cites', 'paper')].size() == (200, 16)
     assert out[1][('paper', 'written_by', 'author')].size() == (200, 16)
     assert out[1][('author', 'writes', 'paper')].size() == (200, 16)
+    assert sum(p.numel() for p in model.parameters()) == 1264
 
     model = Net2()
     in_channels = {'x': 16}
@@ -144,6 +151,7 @@ def test_to_hetero_with_bases():
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (100, 32)
     assert out['author'].size() == (100, 32)
+    assert sum(p.numel() for p in model.parameters()) == 6076
 
     model = Net3()
     in_channels = {'x': 16, 'edge_attr': 8}
@@ -274,3 +282,11 @@ def test_to_hetero_with_bases_and_rgcn_equal_output():
     out3 = model(x_dict, adj_t_dict)
     out3 = torch.cat([out3['paper'], out3['author']], dim=0)
     assert torch.allclose(out1, out3, atol=1e-6)
+
+
+def test_to_hetero_with_bases_validate():
+    model = Net1()
+    metadata = (['my test'], [('my test', 'rel', 'my test')])
+
+    with pytest.warns(UserWarning, match="letters, numbers and underscores"):
+        model = to_hetero_with_bases(model, metadata, num_bases=4, debug=False)

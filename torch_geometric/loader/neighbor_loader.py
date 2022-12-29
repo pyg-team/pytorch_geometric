@@ -1,95 +1,12 @@
-from collections.abc import Sequence
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Callable, Optional, Tuple, Union
 
-import torch
-from torch import Tensor
-
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.loader.base import BaseDataLoader
-from torch_geometric.loader.utils import (edge_type_to_str, filter_data,
-                                          filter_hetero_data, to_csc,
-                                          to_hetero_csc)
-from torch_geometric.typing import EdgeType, InputNodes
-
-NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
+from torch_geometric.loader.node_loader import NodeLoader
+from torch_geometric.sampler import NeighborSampler
+from torch_geometric.typing import InputNodes, NumNeighbors, OptTensor
 
 
-class NeighborSampler:
-    def __init__(
-        self,
-        data: Union[Data, HeteroData],
-        num_neighbors: NumNeighbors,
-        replace: bool = False,
-        directed: bool = True,
-        input_node_type: Optional[str] = None,
-    ):
-        self.data_cls = data.__class__
-        self.num_neighbors = num_neighbors
-        self.replace = replace
-        self.directed = directed
-
-        if isinstance(data, Data):
-            # Convert the graph data into a suitable format for sampling.
-            self.colptr, self.row, self.perm = to_csc(data, device='cpu')
-            assert isinstance(num_neighbors, (list, tuple))
-
-        elif isinstance(data, HeteroData):
-            # Convert the graph data into a suitable format for sampling.
-            # NOTE: Since C++ cannot take dictionaries with tuples as key as
-            # input, edge type triplets are converted into single strings.
-            out = to_hetero_csc(data, device='cpu')
-            self.colptr_dict, self.row_dict, self.perm_dict = out
-
-            self.node_types, self.edge_types = data.metadata()
-            if isinstance(num_neighbors, (list, tuple)):
-                num_neighbors = {key: num_neighbors for key in self.edge_types}
-            assert isinstance(num_neighbors, dict)
-            self.num_neighbors = {
-                edge_type_to_str(key): value
-                for key, value in num_neighbors.items()
-            }
-
-            self.num_hops = max([len(v) for v in self.num_neighbors.values()])
-
-            assert isinstance(input_node_type, str)
-            self.input_node_type = input_node_type
-
-        else:
-            raise TypeError(f'NeighborLoader found invalid type: {type(data)}')
-
-    def __call__(self, index: Union[List[int], Tensor]):
-        if not isinstance(index, torch.LongTensor):
-            index = torch.LongTensor(index)
-
-        if issubclass(self.data_cls, Data):
-            sample_fn = torch.ops.torch_sparse.neighbor_sample
-            node, row, col, edge = sample_fn(
-                self.colptr,
-                self.row,
-                index,
-                self.num_neighbors,
-                self.replace,
-                self.directed,
-            )
-            return node, row, col, edge, index.numel()
-
-        elif issubclass(self.data_cls, HeteroData):
-            sample_fn = torch.ops.torch_sparse.hetero_neighbor_sample
-            node_dict, row_dict, col_dict, edge_dict = sample_fn(
-                self.node_types,
-                self.edge_types,
-                self.colptr_dict,
-                self.row_dict,
-                {self.input_node_type: index},
-                self.num_neighbors,
-                self.num_hops,
-                self.replace,
-                self.directed,
-            )
-            return node_dict, row_dict, col_dict, edge_dict, index.numel()
-
-
-class NeighborLoader(BaseDataLoader):
+class NeighborLoader(NodeLoader):
     r"""A data loader that performs neighbor sampling as introduced in the
     `"Inductive Representation Learning on Large Graphs"
     <https://arxiv.org/abs/1706.02216>`_ paper.
@@ -138,9 +55,10 @@ class NeighborLoader(BaseDataLoader):
     **homogeneous** graphs stored via :class:`~torch_geometric.data.Data` as
     well as **heterogeneous** graphs stored via
     :class:`~torch_geometric.data.HeteroData`.
-    When operating in heterogeneous graphs, more fine-grained control over
-    the amount of sampled neighbors of individual edge types is possible, but
-    not necessary:
+    When operating in heterogeneous graphs, up to :obj:`num_neighbors`
+    neighbors will be sampled for each :obj:`edge_type`.
+    However, more fine-grained control over
+    the amount of sampled neighbors of individual edge types is possible:
 
     .. code-block:: python
 
@@ -169,10 +87,26 @@ class NeighborLoader(BaseDataLoader):
         `examples/hetero/to_hetero_mag.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`_.
 
+    The :class:`~torch_geometric.loader.NeighborLoader` will return subgraphs
+    where global node indices are mapped to local indices corresponding to this
+    specific subgraph. However, often times it is desired to map the nodes of
+    the current subgraph back to the global node indices. A simple trick to
+    achieve this is to include this mapping as part of the :obj:`data` object:
+
+    .. code-block:: python
+
+        # Assign each node its global node index:
+        data.n_id = torch.arange(data.num_nodes)
+
+        loader = NeighborLoader(data, ...)
+        sampled_data = next(iter(loader))
+        print(sampled_data.n_id)
+
     Args:
-        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
-            The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
             In heterogeneous graphs, may also take in a dictionary denoting
@@ -186,101 +120,101 @@ class NeighborLoader(BaseDataLoader):
             If set to :obj:`None`, all nodes will be considered.
             In heterogeneous graphs, needs to be passed as a tuple that holds
             the node type and node indices. (default: :obj:`None`)
+        input_time (torch.Tensor, optional): Optional values to override the
+            timestamp for the input nodes given in :obj:`input_nodes`. If not
+            set, will use the timestamps in :obj:`time_attr` as default (if
+            present). The :obj:`time_attr` needs to be set for this to work.
+            (default: :obj:`None`)
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
+        disjoint (bool, optional): If set to :obj: `True`, each seed node will
+            create its own disjoint subgraph.
+            If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
+            vector holding the mapping of nodes to their respective subgraph.
+            Will get automatically set to :obj:`True` in case of temporal
+            sampling. (default: :obj:`False`)
+        temporal_strategy (string, optional): The sampling strategy when using
+            temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
+            If set to :obj:`"uniform"`, will sample uniformly across neighbors
+            that fulfill temporal constraints.
+            If set to :obj:`"last"`, will sample the last `num_neighbors` that
+            fulfill temporal constraints.
+            (default: :obj:`"uniform"`)
+        time_attr (str, optional): The name of the attribute that denotes
+            timestamps for the nodes in the graph.
+            If set, temporal sampling will be used such that neighbors are
+            guaranteed to fulfill temporal constraints, *i.e.* neighbors have
+            an earlier timestamp than the center node. (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
+        is_sorted (bool, optional): If set to :obj:`True`, assumes that
+            :obj:`edge_index` is sorted by column.
+            If :obj:`time_attr` is set, additionally requires that rows are
+            sorted according to time within individual neighborhoods.
+            This avoids internal re-sorting of the data and can improve
+            runtime and memory efficiency. (default: :obj:`False`)
+        filter_per_worker (bool, optional): If set to :obj:`True`, will filter
+            the returning data in each worker's subprocess rather than in the
+            main process.
+            Setting this to :obj:`True` for in-memory datasets is generally not
+            recommended:
+            (1) it may result in too many open file handles,
+            (2) it may slown down data loading,
+            (3) it requires operating on CPU tensors.
+            (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
     def __init__(
         self,
-        data: Union[Data, HeteroData],
+        data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighbors,
         input_nodes: InputNodes = None,
+        input_time: OptTensor = None,
         replace: bool = False,
         directed: bool = True,
-        transform: Callable = None,
+        disjoint: bool = False,
+        temporal_strategy: str = 'uniform',
+        time_attr: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
+        is_sorted: bool = False,
+        filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
-
-        # Save for PyTorch Lightning:
-        self.data = data
-        self.num_neighbors = num_neighbors
-        self.input_nodes = input_nodes
-        self.replace = replace
-        self.directed = directed
-        self.transform = transform
-        self.neighbor_sampler = neighbor_sampler
+        if input_time is not None and time_attr is None:
+            raise ValueError("Received conflicting 'input_time' and "
+                             "'time_attr' arguments: 'input_time' is set "
+                             "while 'time_attr' is not set.")
 
         if neighbor_sampler is None:
-            input_node_type = get_input_node_type(input_nodes)
-            self.neighbor_sampler = NeighborSampler(data, num_neighbors,
-                                                    replace, directed,
-                                                    input_node_type)
+            neighbor_sampler = NeighborSampler(
+                data,
+                num_neighbors=num_neighbors,
+                replace=replace,
+                directed=directed,
+                disjoint=disjoint,
+                temporal_strategy=temporal_strategy,
+                time_attr=time_attr,
+                is_sorted=is_sorted,
+                share_memory=kwargs.get('num_workers', 0) > 0,
+            )
 
-        return super().__init__(get_input_node_indices(self.data, input_nodes),
-                                collate_fn=self.neighbor_sampler, **kwargs)
-
-    def transform_fn(self, out: Any) -> Union[Data, HeteroData]:
-        if isinstance(self.data, Data):
-            node, row, col, edge, batch_size = out
-            data = filter_data(self.data, node, row, col, edge,
-                               self.neighbor_sampler.perm)
-            data.batch_size = batch_size
-
-        elif isinstance(self.data, HeteroData):
-            node_dict, row_dict, col_dict, edge_dict, batch_size = out
-            data = filter_hetero_data(self.data, node_dict, row_dict, col_dict,
-                                      edge_dict,
-                                      self.neighbor_sampler.perm_dict)
-            data[self.neighbor_sampler.input_node_type].batch_size = batch_size
-
-        return data if self.transform is None else self.transform(data)
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
-
-
-###############################################################################
-
-
-def get_input_node_type(input_nodes: InputNodes) -> Optional[str]:
-    if isinstance(input_nodes, str):
-        return input_nodes
-    if isinstance(input_nodes, (list, tuple)):
-        assert isinstance(input_nodes[0], str)
-        return input_nodes[0]
-    return None
-
-
-def get_input_node_indices(data: Union[Data, HeteroData],
-                           input_nodes: InputNodes) -> Sequence:
-    if isinstance(data, Data) and input_nodes is None:
-        return range(data.num_nodes)
-    if isinstance(data, HeteroData):
-        if isinstance(input_nodes, str):
-            input_nodes = (input_nodes, None)
-        assert isinstance(input_nodes, (list, tuple))
-        assert len(input_nodes) == 2
-        assert isinstance(input_nodes[0], str)
-        if input_nodes[1] is None:
-            return range(data[input_nodes[0]].num_nodes)
-        input_nodes = input_nodes[1]
-
-    if isinstance(input_nodes, Tensor):
-        if input_nodes.dtype == torch.bool:
-            input_nodes = input_nodes.nonzero(as_tuple=False).view(-1)
-        input_nodes = input_nodes.tolist()
-
-    assert isinstance(input_nodes, Sequence)
-    return input_nodes
+        super().__init__(
+            data=data,
+            node_sampler=neighbor_sampler,
+            input_nodes=input_nodes,
+            input_time=input_time,
+            transform=transform,
+            transform_sampler_output=transform_sampler_output,
+            filter_per_worker=filter_per_worker,
+            **kwargs,
+        )

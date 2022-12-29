@@ -1,14 +1,13 @@
 import os.path as osp
 import sys
+import warnings
 from itertools import repeat
 
 import torch
-from torch_sparse import SparseTensor
-from torch_sparse import coalesce as coalesce_fn
 
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
-from torch_geometric.utils import remove_self_loops
+from torch_geometric.utils import coalesce, index_to_mask, remove_self_loops
 
 try:
     import cPickle as pickle
@@ -38,6 +37,8 @@ def read_planetoid_data(folder, prefix):
         tx, ty = tx_ext, ty_ext
 
     if prefix.lower() == 'nell.0.001':
+        from torch_sparse import SparseTensor
+
         tx_ext = torch.zeros(len(graph) - allx.size(0), x.size(1))
         tx_ext[sorted_test_index - allx.size(0)] = tx
 
@@ -94,6 +95,7 @@ def read_file(folder, prefix, name):
 
     with open(path, 'rb') as f:
         if sys.version_info > (3, 0):
+            warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
             out = pickle.load(f, encoding='latin1')
         else:
             out = pickle.load(f)
@@ -106,21 +108,16 @@ def read_file(folder, prefix, name):
     return out
 
 
-def edge_index_from_dict(graph_dict, num_nodes=None, coalesce=True):
+def edge_index_from_dict(graph_dict, num_nodes=None):
     row, col = [], []
     for key, value in graph_dict.items():
         row += repeat(key, len(value))
         col += value
     edge_index = torch.stack([torch.tensor(row), torch.tensor(col)], dim=0)
-    if coalesce:
-        # NOTE: There are some duplicated edges and self loops in the datasets.
-        #       Other implementations do not remove them!
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index, _ = coalesce_fn(edge_index, None, num_nodes, num_nodes)
+
+    # NOTE: There are some duplicated edges and self loops in the datasets.
+    #       Other implementations do not remove them!
+    edge_index, _ = remove_self_loops(edge_index)
+    edge_index = coalesce(edge_index, num_nodes=num_nodes)
+
     return edge_index
-
-
-def index_to_mask(index, size):
-    mask = torch.zeros((size, ), dtype=torch.bool)
-    mask[index] = 1
-    return mask

@@ -1,14 +1,19 @@
+import copy
+
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data
+from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
+@functional_transform('virtual_node')
 class VirtualNode(BaseTransform):
     r"""Appends a virtual node to the given homogeneous graph that is connected
     to all other nodes, as described in the `"Neural Message Passing for
-    Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper.
+    Quantum Chemistry" <https://arxiv.org/abs/1704.01212>`_ paper
+    (functional name: :obj:`virtual_node`).
     The virtual node serves as a global scratch space that each node both reads
     from and writes to in every step of message passing.
     This allows information to travel long distances during the propagation
@@ -32,22 +37,26 @@ class VirtualNode(BaseTransform):
         new_type = edge_type.new_full((num_nodes, ), int(edge_type.max()) + 1)
         edge_type = torch.cat([edge_type, new_type, new_type + 1], dim=0)
 
-        for key, value in data.items():
+        old_data = copy.copy(data)
+        for key, value in old_data.items():
             if key == 'edge_index' or key == 'edge_type':
                 continue
 
             if isinstance(value, Tensor):
-                dim = data.__cat_dim__(key, value)
+                dim = old_data.__cat_dim__(key, value)
                 size = list(value.size())
 
                 fill_value = None
                 if key == 'edge_weight':
                     size[dim] = 2 * num_nodes
                     fill_value = 1.
-                elif data.is_edge_attr(key):
+                elif key == 'batch':
+                    size[dim] = 1
+                    fill_value = int(value[0])
+                elif old_data.is_edge_attr(key):
                     size[dim] = 2 * num_nodes
                     fill_value = 0.
-                elif data.is_node_attr(key):
+                elif old_data.is_node_attr(key):
                     size[dim] = 1
                     fill_value = 0.
 
@@ -59,6 +68,6 @@ class VirtualNode(BaseTransform):
         data.edge_type = edge_type
 
         if 'num_nodes' in data:
-            data.num_nodes = data.num_nodes + 1
+            data.num_nodes = old_data.num_nodes + 1
 
         return data

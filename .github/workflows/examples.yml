@@ -1,0 +1,45 @@
+name: Examples
+
+on:  # yamllint disable-line rule:truthy
+  workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11:00pm PST
+
+jobs:
+
+  pytest:
+    if: github.repository == 'pyg-team/pytorch_geometric'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup packages
+        uses: ./.github/actions/setup
+
+      - name: Install main package
+        run: |
+          pip install .[benchmark]
+
+      - name: Run GCN on Cora
+        run: |
+          python examples/gcn.py --wandb
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+
+      - name: Run GAT on Cora
+        run: |
+          python examples/gat.py --wandb
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+
+      - name: Run GIN on MUTAG
+        run: |
+          python examples/mutag_gin.py --wandb
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+
+      - name: Run GNNExplainer
+        run: |
+          python examples/gnn_explainer.py

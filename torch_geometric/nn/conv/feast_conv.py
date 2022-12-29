@@ -96,7 +96,7 @@ class FeaStConv(MessagePassing):
         out = self.propagate(edge_index, x=x, size=None)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

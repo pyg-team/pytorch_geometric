@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch import tensor
 from torch.optim import Adam
 
+from torch_geometric.profile import timeit, torch_profile
 from torch_geometric.utils import index_to_mask
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -34,11 +35,10 @@ def random_planetoid_splits(data, num_classes):
     return data
 
 
-def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-        permute_masks=None, logger=None):
-
+def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
+              profiling, permute_masks=None, logger=None):
     val_losses, accs, durations = [], [], []
-    for _ in range(runs):
+    for run in range(runs):
         data = dataset[0]
         if permute_masks is not None:
             data = permute_masks(data, dataset.num_classes)
@@ -57,7 +57,11 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         val_loss_history = []
 
         for epoch in range(1, epochs + 1):
-            train(model, optimizer, data)
+            if run == runs - 1 and epoch == epochs:
+                with timeit():
+                    train(model, optimizer, data)
+            else:
+                train(model, optimizer, data)
             eval_info = evaluate(model, data)
             eval_info['epoch'] = epoch
 
@@ -82,12 +86,55 @@ def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         val_losses.append(best_val_loss)
         accs.append(test_acc)
         durations.append(t_end - t_start)
-
     loss, acc, duration = tensor(val_losses), tensor(accs), tensor(durations)
 
     print(f'Val Loss: {float(loss.mean()):.4f}, '
           f'Test Accuracy: {float(acc.mean()):.3f} ± {float(acc.std()):.3f}, '
-          f'Duration: {float(duration.mean()):.3f}')
+          f'Duration: {float(duration.mean()):.3f}s')
+
+    if profiling:
+        with torch_profile():
+            train(model, optimizer, data)
+
+
+@torch.no_grad()
+def run_inference(dataset, model, epochs, profiling, bf16, permute_masks=None,
+                  logger=None):
+    data = dataset[0]
+    if permute_masks is not None:
+        data = permute_masks(data, dataset.num_classes)
+    data = data.to(device)
+
+    model.to(device).reset_parameters()
+
+    if torch.cuda.is_available():
+        amp = torch.cuda.amp.autocast(enabled=False)
+    else:
+        amp = torch.cpu.amp.autocast(enabled=bf16)
+    if bf16:
+        data.x = data.x.to(torch.bfloat16)
+
+    with amp:
+        for epoch in range(1, epochs + 1):
+            if epoch == epochs:
+                with timeit():
+                    inference(model, data)
+            else:
+                inference(model, data)
+
+        if profiling:
+            with torch_profile():
+                inference(model, data)
+
+
+def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
+        inference, profiling, bf16, permute_masks=None, logger=None):
+    if not inference:
+        run_train(dataset, model, runs, epochs, lr, weight_decay,
+                  early_stopping, profiling, permute_masks, logger)
+    else:
+        run_inference(dataset, model, epochs, profiling, bf16, permute_masks,
+                      logger)
 
 
 def train(model, optimizer, data):
@@ -116,3 +163,9 @@ def evaluate(model, data):
         outs[f'{key}_acc'] = acc
 
     return outs
+
+
+@torch.no_grad()
+def inference(model, data):
+    model.eval()
+    model(data)

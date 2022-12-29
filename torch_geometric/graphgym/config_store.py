@@ -1,6 +1,5 @@
 import copy
 import inspect
-import re
 from dataclasses import dataclass, field, make_dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
@@ -12,6 +11,7 @@ EXCLUDE = {'self', 'args', 'kwargs'}
 
 MAPPING = {
     torch.nn.Module: Any,
+    torch.Tensor: Any,
 }
 
 
@@ -222,12 +222,6 @@ def register(
 
         get_config_store().store(name, data_cls, group)
         get_node(name)._metadata.orig_type = cls
-
-        pattern = re.compile(group or '', re.IGNORECASE)
-        if group is not None and pattern.search(name):
-            name = pattern.sub('', name)
-            get_config_store().store(name, data_cls, group)
-            get_node(name)._metadata.orig_type = cls
 
         return data_cls
 

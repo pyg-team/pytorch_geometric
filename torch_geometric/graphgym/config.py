@@ -17,7 +17,8 @@ try:  # Define global config object
 except ImportError:
     cfg = None
     warnings.warn("Could not define global config object. Please install "
-                  "'yacs' for using the GraphGym experiment manager.")
+                  "'yacs' for using the GraphGym experiment manager via "
+                  "'pip install yacs'.")
 
 
 def set_cfg(cfg):
@@ -40,8 +41,11 @@ def set_cfg(cfg):
     # Set print destination: stdout / file / both
     cfg.print = 'both'
 
-    # Select device: 'cpu', 'cuda:0', 'auto'
-    cfg.device = 'auto'
+    # Select device: 'cpu', 'cuda', 'auto'
+    cfg.accelerator = 'auto'
+
+    # number of devices: eg. for 2 GPU set cfg.devices=2
+    cfg.devices = None
 
     # Output directory
     cfg.out_dir = 'results'
@@ -222,9 +226,6 @@ def set_cfg(cfg):
     # Training options
     # ----------------------------------------------------------------------- #
     cfg.train = CN()
-
-    # Training (and validation) pipeline mode
-    cfg.train.mode = 'standard'
 
     # Total graph mini-batch size
     cfg.train.batch_size = 16
@@ -525,7 +526,25 @@ def get_fname(fname):
     return fname
 
 
-def set_run_dir(out_dir, fname):
+def set_out_dir(out_dir, fname):
+    r"""
+    Create the directory for full experiment run
+
+    Args:
+        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
+        fname (string): Filename for the yaml format configuration file
+
+    """
+    fname = get_fname(fname)
+    cfg.out_dir = os.path.join(out_dir, fname)
+    # Make output directory
+    if cfg.train.auto_resume:
+        os.makedirs(cfg.out_dir, exist_ok=True)
+    else:
+        makedirs_rm_exist(cfg.out_dir)
+
+
+def set_run_dir(out_dir):
     r"""
     Create the directory for each random seed experiment run
 
@@ -534,27 +553,12 @@ def set_run_dir(out_dir, fname):
         fname (string): Filename for the yaml format configuration file
 
     """
-    fname = get_fname(fname)
-    cfg.run_dir = os.path.join(out_dir, fname, str(cfg.seed))
+    cfg.run_dir = os.path.join(out_dir, str(cfg.seed))
     # Make output directory
     if cfg.train.auto_resume:
         os.makedirs(cfg.run_dir, exist_ok=True)
     else:
         makedirs_rm_exist(cfg.run_dir)
-
-
-def set_agg_dir(out_dir, fname):
-    r"""
-    Create the directory for aggregated results over
-    all the random seeds
-
-    Args:
-        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
-        fname (string): Filename for the yaml format configuration file
-
-    """
-    fname = get_fname(fname)
-    return os.path.join(out_dir, fname)
 
 
 set_cfg(cfg)

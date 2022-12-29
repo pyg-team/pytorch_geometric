@@ -111,12 +111,12 @@ class HEATConv(MessagePassing):
 
         if self.concat:
             if self.root_weight:
-                out += x.view(-1, 1, self.out_channels)
+                out = out + x.view(-1, 1, self.out_channels)
             out = out.view(-1, self.heads * self.out_channels)
         else:
             out = out.mean(dim=1)
             if self.root_weight:
-                out += x
+                out = out + x
 
         return out
 

@@ -1,22 +1,23 @@
-import os.path as osp
-import random
-import shutil
-import sys
+import os.path
 
-import pytest
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GraphSAGE
-from torch_geometric.profile import get_stats_summary, profileit, timeit
+from torch_geometric.profile import (
+    get_stats_summary,
+    profileit,
+    rename_profile_file,
+    timeit,
+)
+from torch_geometric.profile.profile import torch_profile
+from torch_geometric.testing import onlyCUDA, onlyFullTest
 
 
-@pytest.mark.skipif(not torch.cuda.is_available(), reason='CUDA not available')
-def test_profile():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-
-    dataset = Planetoid(root, 'PubMed')
+@onlyCUDA
+@onlyFullTest
+def test_profile(get_dataset):
+    dataset = get_dataset(name='PubMed')
     data = dataset[0].cuda()
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
                       out_channels=dataset.num_classes).cuda()
@@ -65,4 +66,26 @@ def test_profile():
     assert stats_summary.min_nvidia_smi_free_cuda > 0
     assert stats_summary.max_nvidia_smi_used_cuda > 0
 
-    shutil.rmtree(root)
+
+@onlyFullTest
+def test_torch_profile(get_dataset):
+    dataset = get_dataset(name='PubMed')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    data = dataset[0].to(device)
+    model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
+                      out_channels=dataset.num_classes).to(device)
+    model.eval()
+
+    @timeit()
+    def inference_e2e(model, data):
+        model(data.x, data.edge_index)
+
+    @torch_profile()
+    def inference_profile(model, data):
+        model(data.x, data.edge_index)
+
+    for epoch in range(3):
+        inference_e2e(model, data)
+        inference_profile(model, data)
+    rename_profile_file('test_profile')
+    assert os.path.exists('profile-test_profile.json')
