@@ -5,7 +5,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
-- Added `TransE` KGE model and example ([#3204](https://github.com/pyg-team/pytorch_geometric/pull/3204))
 - Added the Freebase `FB15k_237` dataset ([#3204](https://github.com/pyg-team/pytorch_geometric/pull/3204))
 - Added `Data.update()` and `HeteroData.update()` functionality ([#6313](https://github.com/pyg-team/pytorch_geometric/pull/6313))
 - Added `PGExplainer` ([#6204](https://github.com/pyg-team/pytorch_geometric/pull/6204))
