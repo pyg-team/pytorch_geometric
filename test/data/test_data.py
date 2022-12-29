@@ -288,6 +288,17 @@ def test_data_setter_properties():
     assert data.my_attr1 == 2
 
 
+def test_data_update():
+    data = Data(x=torch.arange(0, 5), y=torch.arange(5, 10))
+    other = Data(z=torch.arange(10, 15), x=torch.arange(15, 20))
+    data.update(other)
+
+    assert len(data) == 3
+    assert torch.equal(data.x, torch.arange(15, 20))
+    assert torch.equal(data.y, torch.arange(5, 10))
+    assert torch.equal(data.z, torch.arange(10, 15))
+
+
 # Feature Store ###############################################################
 
 

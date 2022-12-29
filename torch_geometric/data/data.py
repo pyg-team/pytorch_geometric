@@ -91,6 +91,11 @@ class BaseData(object):
         r"""Returns a :obj:`NamedTuple` of stored key/value pairs."""
         raise NotImplementedError
 
+    def update(self, data: 'BaseData') -> 'BaseData':
+        r"""Updates the data object with the elements from another data object.
+        """
+        raise NotImplementedError
+
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         r"""Returns the dimension for which the value :obj:`value` of the
         attribute :obj:`key` will get concatenated when creating mini-batches
@@ -506,6 +511,11 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def to_namedtuple(self) -> NamedTuple:
         return self._store.to_namedtuple()
+
+    def update(self, data: 'Data') -> 'Data':
+        for key, value in data.items():
+            self[key] = value
+        return self
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if isinstance(value, SparseTensor) and 'adj' in key:

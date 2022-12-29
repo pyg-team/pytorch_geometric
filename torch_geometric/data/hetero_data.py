@@ -274,6 +274,12 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         DataTuple = namedtuple('DataTuple', field_names)
         return DataTuple(*field_values)
 
+    def update(self, data: 'HeteroData') -> 'HeteroData':
+        for store in data.stores:
+            for key, value in store.items():
+                self[store._key][key] = value
+        return self
+
     def __cat_dim__(self, key: str, value: Any,
                     store: Optional[NodeOrEdgeStorage] = None, *args,
                     **kwargs) -> Any:
