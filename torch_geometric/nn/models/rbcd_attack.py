@@ -647,8 +647,8 @@ class PRBCDAttack(torch.nn.Module):
 
 
 class GRBCDAttack(PRBCDAttack):
-    r"""Greedy Randomized Block Coordinate Descent (GRBCD) adversarial attack
-    from the `Robustness of Graph Neural Networks at Scale
+    r"""The Greedy Randomized Block Coordinate Descent (GRBCD) adversarial
+    attack from the `Robustness of Graph Neural Networks at Scale
     <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale>`_ paper.
 
     GRBCD shares most of the properties and requirements with
