@@ -834,6 +834,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             if val is not None:
                 val[attr.index] = tensor
             else:
+                assert attr.index is None
                 setattr(self[attr.group_name], attr.attr_name, tensor)
         else:
             # No node storage found, just store tensor in new one:
