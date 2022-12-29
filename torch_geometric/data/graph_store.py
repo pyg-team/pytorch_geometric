@@ -16,9 +16,6 @@ properly. For example, a simple in-memory graph store implementation may
 concatenate all metadata values with an edge index and use this as a unique
 index in a KV store. More complicated implementations may choose to partition
 the graph in interesting manners based on the provided metadata.
-
-Major TODOs for future implementation:
-* `sample` behind the graph store interface
 """
 import copy
 from abc import abstractmethod
@@ -45,7 +42,6 @@ from torch_geometric.utils.mixin import CastMixin
 ConversionOutputType = Tuple[Dict[EdgeType, Tensor], Dict[EdgeType, Tensor],
                              Dict[EdgeType, OptTensor]]
 
-# TODO
 ptr2ind = torch.ops.torch_sparse.ptr2ind
 ind2ptr = torch.ops.torch_sparse.ind2ptr
 
