@@ -331,7 +331,7 @@ class GraphStore:
 
         # Convert layout from its most favorable original layout:
         row_dict, col_dict, perm_dict = {}, {}, {}
-        for edge_type, attrs in edge_type_attrs:
+        for edge_type, attrs in edge_type_attrs.items():
             layouts = [attr.layout for attr in attrs]
 
             if layout in layouts:  # No conversion needed.
