@@ -325,7 +325,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             key: store.num_edge_features
             for key, store in self._edge_store_dict.items()
         }
-        
+
     @property
     def num_node_types(self) -> int:
         return len(self.node_types)
