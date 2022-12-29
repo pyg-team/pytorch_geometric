@@ -97,7 +97,7 @@ class BaseData(object):
         raise NotImplementedError
 
     def update(self, data: 'BaseData') -> 'BaseData':
-        r"""Updates the dictionary with the elements from another data object.
+        r"""Updates the data object with the elements from another data object.
         """
         raise NotImplementedError
 
