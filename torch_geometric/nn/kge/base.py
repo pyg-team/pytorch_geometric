@@ -33,7 +33,7 @@ class KGEModel(torch.nn.Module):
 
     def loader(self, head: Tensor, rel: Tensor, tail: Tensor,
                **kwargs) -> Tensor:
-        return KGTripletLoader(self.num_nodes, head, rel, tail, **kwargs)
+        return KGTripletLoader(head, rel, tail, **kwargs)
 
     def forward(self, head: Tensor, rel: Tensor, tail: Tensor) -> Tensor:
         """"""

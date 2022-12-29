@@ -5,9 +5,7 @@ from torch import Tensor
 
 
 class KGTripletLoader(torch.utils.data.DataLoader):
-    def __init__(self, num_nodes: int, head: Tensor, rel: Tensor, tail: Tensor,
-                 **kwargs):
-        self.num_nodes = num_nodes
+    def __init__(self, head: Tensor, rel: Tensor, tail: Tensor, **kwargs):
         self.head = head
         self.rel = rel
         self.tail = tail
