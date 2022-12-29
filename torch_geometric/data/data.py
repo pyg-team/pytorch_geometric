@@ -918,7 +918,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         return False
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        edge_attrs = self.get('_edge_attrs', {})
+        edge_attrs = getattr(self, '_edge_attrs', {})
 
         if 'edge_index' in self and EdgeLayout.COO not in edge_attrs:
             edge_attrs[EdgeLayout.COO] = DataEdgeAttr('coo', is_sorted=False)

@@ -936,7 +936,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return False
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        edge_attrs = self.get('_edge_attrs', {})
+        edge_attrs = getattr(self, '_edge_attrs', {})
 
         for store in self.edge_stores:
             if ('edge_index' in store
