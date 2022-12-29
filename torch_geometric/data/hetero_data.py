@@ -824,7 +824,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     # FeatureStore interface ##################################################
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
-        r"""Stores a feature tensor in node storage."""
         if not attr.is_set('index'):
             attr.index = None
 
@@ -842,7 +841,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
-        r"""Obtains a feature tensor from node storage."""
         # Retrieve tensor and index accordingly:
         tensor = getattr(self[attr.group_name], attr.attr_name, None)
         if tensor is not None:
@@ -854,7 +852,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return None
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
-        r"""Deletes a feature tensor from node storage."""
         # Remove tensor entirely:
         if hasattr(self[attr.group_name], attr.attr_name):
             delattr(self[attr.group_name], attr.attr_name)
@@ -862,7 +859,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return False
 
     def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
-        r"""Returns the size of the tensor corresponding to `attr`."""
         return self._get_tensor(attr).size()
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
@@ -872,12 +868,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 if group.is_node_attr(attr_name):
                     out.append(TensorAttr(group_name, attr_name))
         return out
-
-    def __len__(self) -> int:
-        return BaseData.__len__(self)
-
-    def __iter__(self):
-        raise NotImplementedError
 
     # GraphStore interface ####################################################
 
