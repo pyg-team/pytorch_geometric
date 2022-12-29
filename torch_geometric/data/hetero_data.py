@@ -326,14 +326,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             for key, store in self._edge_store_dict.items()
         }
 
-    @property
-    def num_node_types(self) -> int:
-        return len(self.node_types)
-
-    @property
-    def num_edge_types(self) -> int:
-        return len(self.edge_types)
-
     def has_isolated_nodes(self) -> bool:
         r"""Returns :obj:`True` if the graph contains isolated nodes."""
         edge_index, _, _ = to_homogeneous_edge_index(self)
