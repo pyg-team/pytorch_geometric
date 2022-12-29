@@ -5,12 +5,15 @@ from torch import Tensor
 from torch.nn import Embedding
 from tqdm import tqdm
 
-from .loader import DataLoader
-
 
 class KGEModel(torch.nn.Module):
-    def __init__(self, num_nodes: int, num_relations: int,
-                 hidden_channels: int, sparse: bool = False):
+    def __init__(
+        self,
+        num_nodes: int,
+        num_relations: int,
+        hidden_channels: int,
+        sparse: bool = False,
+    ):
         super().__init__()
 
         self.num_nodes = num_nodes
@@ -26,65 +29,40 @@ class KGEModel(torch.nn.Module):
         self.node_emb.reset_parameters()
         self.rel_emb.reset_parameters()
 
-    def forward(self, edge_index: Tensor, edge_type: Tensor) -> Tensor:
+    def forward(self, head: Tensor, rel: Tensor, tail: Tensor) -> Tensor:
         """"""
         raise NotImplementedError
 
-    def loss(self, edge_index: Tensor, edge_type: Tensor,
-             pos_mask: Tensor) -> Tensor:
+    def loss(self, head: Tensor, rel: Tensor, pos_tail: Tensor,
+             neg_tail: Tensor) -> Tensor:
         raise NotImplementedError
 
-    def loader(self, edge_index: Tensor, edge_type: Tensor,
-               add_negative_samples: bool = True, **kwargs):
-        return DataLoader(self.num_nodes, edge_index, edge_type,
-                          add_negative_samples, **kwargs)
-
     @torch.no_grad()
-    def test(self, edge_index: Tensor, edge_type: Tensor, batch_size: int,
+    def test(self, head: Tensor, rel: Tensor, tail: Tensor, batch_size: int,
              filtered: bool = False, k: int = 10) -> Tuple[float, float]:
 
         if filtered:
             raise NotImplementedError("'Filtered' inference not yet supported")
 
-        device = self.node_emb.weight.device
-
         mean_ranks = []
         hits_at_k = []
 
-        for j in tqdm(range(edge_index.size(1))):
-            (src, dst), rel = edge_index[:, j], edge_type[j]
+        for i in tqdm(range(head.numel())):
+            h, r, t = head[i], rel[i], tail[i]
 
-            src_edge_index = torch.stack([
-                torch.arange(self.num_nodes, device=src.device),
-                dst.expand(self.num_nodes),
-            ], dim=0)
-            src_edge_type = rel.expand(self.num_nodes).to(device)
-
-            src_scores = []
-            for i in range(0, self.num_nodes, batch_size):
-                score = self(src_edge_index[:, i:i + batch_size].to(device),
-                             src_edge_type[i:i + batch_size].to(device))
-                src_scores.append(score)
-            src_score = torch.cat(src_scores, dim=0)
-            rank = (src_score.argsort() == src).nonzero(as_tuple=False)
-            rank = int(rank.view(-1)[0])
+            scores = []
+            heads = torch.arange(self.num_nodes, device=head.device)
+            for hs in heads.split(batch_size):
+                scores.append(self(hs, r, t))
+            rank = int((torch.cat(scores).argsort() == h).nonzero().view(-1))
             mean_ranks.append(rank)
             hits_at_k.append(rank < k)
 
-            dst_edge_index = torch.stack([
-                src.expand(self.num_nodes),
-                torch.arange(self.num_nodes, device=dst.device),
-            ], dim=0)
-            dst_edge_type = rel.expand(self.num_nodes).to(device)
-
-            dst_scores = []
-            for i in range(0, self.num_nodes, batch_size):
-                score = self(dst_edge_index[:, i:i + batch_size].to(device),
-                             dst_edge_type[i:i + batch_size].to(device))
-                dst_scores.append(score)
-            dst_score = torch.cat(dst_scores, dim=0)
-            rank = (dst_score.argsort() == dst).nonzero(as_tuple=False)
-            rank = int(rank.view(-1)[0])
+            scores = []
+            tails = torch.arange(self.num_nodes, device=tail.device)
+            for ts in tails.split(batch_size):
+                scores.append(self(h, r, ts))
+            rank = int((torch.cat(scores).argsort() == t).nonzero().view(-1))
             mean_ranks.append(rank)
             hits_at_k.append(rank < k)
 
