@@ -822,8 +822,12 @@ class Data(BaseData, FeatureStore, GraphStore):
     # FeatureStore interface ##################################################
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
-        assert attr.index is None
-        setattr(self, attr.attr_name, tensor)
+        out = self.get(attr.attr_name)
+        if out is not None and attr.index is not None:
+            out[attr.index] = tensor
+        else:
+            assert attr.index is None
+            setattr(self, attr.attr_name, tensor)
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
@@ -856,25 +860,64 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        if not hasattr(self, '_edge_indices'):
-            self._edge_indices = {}
-        self._edge_indices[edge_attr.layout.value] = (edge_index, edge_attr)
+        row, col = edge_index
+
+        if edge_attr.layout == EdgeLayout.COO:
+            self.edge_index = torch.stack([row, col], dim=0)
+        elif edge_attr.layout == EdgeLayout.CSR:
+            self.adj = SparseTensor(
+                rowptr=row,
+                col=col,
+                sparse_sizes=edge_attr.size,
+                is_sorted=True,
+                trust_data=True,
+            )
+        else:  # edge_attr.layout == EdgeLayout.CSC:
+            size = edge_attr.size[::-1] if edge_attr.size is not None else None
+            self.adj_t = SparseTensor(
+                rowptr=col,
+                col=row,
+                sparse_sizes=size,
+                is_sorted=True,
+                trust_data=True,
+            )
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
-        if not hasattr(self, '_edge_indices'):
-            return None
-        return self._edge_indices.get(edge_attr.layout.value, None)
+        if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
+            row, col = self.edge_index
+            return row, col
+        elif edge_attr.layout == EdgeLayout.CSR and 'adj' in self:
+            rowptr, col, _ = self.adj.csr()
+            return rowptr, col
+        elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in self:
+            colptr, row, _ = self.adj_t.csr()
+            return row, colptr
+        return None
 
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
-        if not hasattr(self, '_edge_indices'):
-            return False
-        return self._edge_indices.pop(edge_attr.layout.value, None) is not None
+        if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
+            del self.edge_index
+            return True
+        elif edge_attr.layout == EdgeLayout.CSR and 'adj' in self:
+            del self.adj
+            return True
+        elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in self:
+            del self.adj_t
+            return True
+        return False
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        if not hasattr(self, '_edge_indices'):
-            return []
-        return [edge_attr for _, edge_attr in self._edge_indices.values()]
+        edge_attrs: List[EdgeAttr] = []
+        if 'edge_index' in self:
+            edge_attrs.append(DataEdgeAttr('coo', is_sorted=False))
+        if 'adj' in self:
+            size = self.adj.sparse_sizes()
+            edge_attrs.append(DataEdgeAttr('csr', size=size))
+        if 'adj_t' in self:
+            size = self.adj_t.sparse_sizes()[::-1]
+            edge_attrs.append(DataEdgeAttr('csc', size=size))
+        return edge_attrs
 
 
 ###############################################################################
