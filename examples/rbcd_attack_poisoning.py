@@ -1,4 +1,3 @@
-import functools
 import os.path as osp
 import sys
 from typing import Optional, Tuple
@@ -6,6 +5,7 @@ from typing import Optional, Tuple
 import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
+from rbcd_attack import GCN, accuracy, test, train
 from torch import Tensor
 
 try:
@@ -16,8 +16,7 @@ except ImportError:
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GCNConv, PRBCDAttack
-from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn import PRBCDAttack
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
@@ -26,70 +25,20 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
-
-class GCN(torch.nn.Module):
-    """GCN that normalizes adjacency matrix once for all layers (no cache)."""
-    def __init__(self, hidden_dim: int = 16):
-        super().__init__()
-        gcn_conv = functools.partial(
-            GCNConv,
-            cached=False,  # Important to backpropagate to the adj. matrix
-            add_self_loops=False,  # We add them in `self.gcn_norm`
-            normalize=False  # It is better to normalize once
-        )
-        self.conv1 = gcn_conv(dataset.num_features, hidden_dim)
-        self.conv2 = gcn_conv(hidden_dim, dataset.num_classes)
-        self.norm = gcn_norm
-
-    def forward(self, x, edge_index, edge_weight=None, skip_norm=False):
-        # Normalizing once lowers memory footprint and caching is not possible
-        # during attack (for training it would be possible)
-        if not skip_norm:
-            edge_index, edge_weight = self.norm(edge_index, edge_weight,
-                                                num_nodes=x.size(0),
-                                                add_self_loops=True)
-        x = F.relu(self.conv1(x, edge_index, edge_weight))
-        x = F.dropout(x, training=self.training)
-        x = self.conv2(x, edge_index, edge_weight)
-        return x
-
-    def reset_parameters(self):
-        self.conv1.reset_parameters()
-        self.conv2.reset_parameters()
-
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-gcn = GCN().to(device)
+gcn = GCN(dataset.num_features, dataset.num_classes).to(device)
 data = data.to(device)
 
-x, edge_index, y = data.x, data.edge_index, data.y
-
-
-def train(model, x, edge_index, edge_weight=None, epochs=200, lr=0.01,
-          weight_decay=5e-4):
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr,
-                                 weight_decay=weight_decay)
-    for _ in range(epochs):
-        optimizer.zero_grad()
-        prediction = model(x, edge_index, edge_weight)
-        loss = F.cross_entropy(prediction[data.train_mask],
-                               data.y[data.train_mask])
-        loss.backward()
-        optimizer.step()
-
-
-def accuracy(pred, lab, mask):
-    return (pred.argmax(-1)[mask] == lab[mask]).float().mean()
-
-
-gcn.train()
-train(gcn, x, edge_index)
-gcn.eval()
+train(gcn, data)
 
 print('\n------------- GCN: Global Poisoning -------------\n')
 
-clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
+clean_accuracy = test(gcn, data)
 print(f'Clean accuracy: {clean_accuracy:.3f}')
+
+n_epochs = 50
+lr = 0.04
+weight_decay = 5e-4
 
 
 class PoisoningPRBCDAttack(PRBCDAttack):
@@ -97,11 +46,11 @@ class PoisoningPRBCDAttack(PRBCDAttack):
                  **kwargs) -> Tensor:
         """Forward model."""
         self.model.reset_parameters()
-        self.model.train()
 
         with torch.enable_grad():
-            train(self.model, x, edge_index, edge_weight=edge_weight,
-                  epochs=50, lr=0.04)
+            ped = data.clone()
+            ped.x, ped.edge_index, ped.edge_weight = x, edge_index, edge_weight
+            train(self.model, ped, n_epochs, lr, weight_decay)
 
         self.model.eval()
         prediction = self.model(x, edge_index, edge_weight)
@@ -117,8 +66,8 @@ class PoisoningPRBCDAttack(PRBCDAttack):
         self.model.reset_parameters()
         # We purposely do not call `self.model.train()` to avoid dropout
         self.model.train()
-        opt = torch.optim.Adam(self.model.parameters(), lr=0.04,
-                               weight_decay=5e-4)
+        opt = torch.optim.Adam(self.model.parameters(), lr=lr,
+                               weight_decay=weight_decay)
 
         with higher.innerloop_ctx(self.model, opt) as (fmodel, diffopt):
             edge_index, edge_weight = self._get_modified_adj(
@@ -131,7 +80,7 @@ class PoisoningPRBCDAttack(PRBCDAttack):
                                                       num_nodes=x.size(0),
                                                       add_self_loops=True)
 
-            for _ in range(50):
+            for _ in range(n_epochs):
                 prediction = fmodel.forward(x, edge_index, edge_weight,
                                             skip_norm=True)
                 loss = F.cross_entropy(prediction[data.train_mask],
@@ -159,19 +108,19 @@ def metric(*args, **kwargs):
     return -accuracy(*args, **kwargs)
 
 
-# for i in range(10):
-prbcd = PoisoningPRBCDAttack(gcn, metric=metric, lr=100)
+prbcd = PoisoningPRBCDAttack(gcn, block_size=250_000, metric=metric, lr=100)
 
 # PRBCD: attack test set
-global_budget = int(0.05 * edge_index.size(1) / 2)  # Perturb 5% of edges
-pert_edge_index, perts = prbcd.attack(x, edge_index, y, budget=global_budget,
+global_budget = int(0.05 * data.edge_index.size(1) / 2)  # Perturb 5% of edges
+pert_edge_index, perts = prbcd.attack(data.x, data.edge_index, data.y,
+                                      budget=global_budget,
                                       idx_attack=data.test_mask)
 
 gcn.reset_parameters()
-gcn.train()
-train(gcn, x, pert_edge_index)
-gcn.eval()
-pert_accuracy = accuracy(gcn(x, pert_edge_index), y, data.test_mask).item()
+pert_data = data.clone()
+pert_data.edge_index = pert_edge_index
+train(gcn, pert_data)
+pert_accuracy = test(gcn, pert_data)
 # Note that the values here a bit more noisy than in the evasion case
 print(f'PRBCD: Accuracy dropped from {clean_accuracy:.3f} to '
       f'{pert_accuracy:.3f}')

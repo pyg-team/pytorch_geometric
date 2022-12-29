@@ -48,19 +48,18 @@ class GNN(torch.nn.Module):
 @pytest.mark.parametrize('budget', [1])
 @pytest.mark.parametrize('loss',
                          ['masked', 'margin', 'prob_margin', 'tanh_margin'])
-@pytest.mark.parametrize('is_undirected_graph', [False, True])
+@pytest.mark.parametrize('is_undirected', [False, True])
 @pytest.mark.parametrize('with_early_stopping', [False, True])
-def test_prbcd_attack(model, budget, loss, is_undirected_graph,
-                      with_early_stopping):
-    attack = PRBCDAttack(model(), epochs=4, epochs_resampling=2, loss=loss,
-                         max_final_samples=2, log=False,
-                         is_undirected_graph=is_undirected_graph,
+def test_prbcd_attack(model, budget, loss, is_undirected, with_early_stopping):
+    attack = PRBCDAttack(model(), block_size=10_000, epochs=4,
+                         epochs_resampling=2, loss=loss, max_final_samples=2,
+                         log=False, is_undirected=is_undirected,
                          with_early_stopping=with_early_stopping)
     assert attack.__repr__() == f'{PRBCDAttack.__name__}()'
 
     x = torch.randn(8, 3)
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6, 7]])
-    if is_undirected_graph:
+    if is_undirected:
         edge_index = to_undirected(edge_index)
 
     if model == GNN:
@@ -79,7 +78,7 @@ def test_prbcd_attack(model, budget, loss, is_undirected_graph,
         assert perturbations.shape in [(2, 0), (2, 1)]
 
         if perturbations.size(1):
-            if is_undirected_graph:
+            if is_undirected:
                 possible_m = [m - 2, m + 2]
             else:
                 possible_m = [m - 1, m + 1]
@@ -96,7 +95,7 @@ def test_prbcd_attack(model, budget, loss, is_undirected_graph,
             assert perturbations.shape in [(2, 0), (2, 1)]
 
             if perturbations.size(1):
-                if is_undirected_graph:
+                if is_undirected:
                     possible_m = [m - 2, m + 2]
                 else:
                     possible_m = [m - 1, m + 1]
@@ -107,15 +106,15 @@ def test_prbcd_attack(model, budget, loss, is_undirected_graph,
 
 @pytest.mark.parametrize('model', [GCN, GNN])
 @pytest.mark.parametrize('budget', [1])
-@pytest.mark.parametrize('is_undirected_graph', [False, True])
-def test_grbcd_attack(model, budget, is_undirected_graph):
-    attack = GRBCDAttack(model(), epochs=4, log=False,
-                         is_undirected_graph=is_undirected_graph)
+@pytest.mark.parametrize('is_undirected', [False, True])
+def test_grbcd_attack(model, budget, is_undirected):
+    attack = GRBCDAttack(model(), block_size=10_000, epochs=4, log=False,
+                         is_undirected=is_undirected)
     assert attack.__repr__() == f'{GRBCDAttack.__name__}()'
 
     x = torch.randn(8, 3)
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6, 7]])
-    if is_undirected_graph:
+    if is_undirected:
         edge_index = to_undirected(edge_index)
 
     if model == GNN:
@@ -133,7 +132,7 @@ def test_grbcd_attack(model, budget, is_undirected_graph):
     if budget == 1:
         assert perturbations.shape == (2, 1)
 
-        if is_undirected_graph:
+        if is_undirected:
             possible_m = [m - 2, m + 2]
         else:
             possible_m = [m - 1, m + 1]
@@ -147,7 +146,7 @@ def test_grbcd_attack(model, budget, is_undirected_graph):
         if budget == 1:
             assert perturbations.shape == (2, 1)
 
-            if is_undirected_graph:
+            if is_undirected:
                 possible_m = [m - 2, m + 2]
             else:
                 possible_m = [m - 1, m + 1]

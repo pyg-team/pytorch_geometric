@@ -15,7 +15,7 @@ LOSS_TYPE = Callable[[Tensor, Tensor, Optional[Tensor]], Tensor]
 
 
 class PRBCDAttack(torch.nn.Module):
-    r"""Projected Randomized Block Coordinate Descent (PRBCD) adversarial
+    r"""The Projected Randomized Block Coordinate Descent (PRBCD) adversarial
     attack from the `Robustness of Graph Neural Networks at Scale
     <https://www.cs.cit.tum.de/daml/robustness-of-gnns-at-scale>`_ paper.
 
@@ -23,9 +23,11 @@ class PRBCDAttack(torch.nn.Module):
     attack) relaxes the discrete entries in the adjacency matrix
     :math:`\{0, 1\}` to :math:`[0, 1]` and solely perturbs the adjacency matrix
     (no feature perturbations). Thus, this attack supports all models that can
-    handle weighted graphs that are differentiable w.r.t. these edge weights.
-    For non-differentiable models you might be able to e.g. use the gumble
-    softmax trick.
+    handle weighted graphs that are differentiable w.r.t. these edge weights,
+    *e.g.*, :class:`~torch_geometric.nn.conv.GCNConv` or
+    :class:`~torch_geometric.nn.conv.GraphConv`. For non-differentiable models
+    you might need modifications, e.g., see example for
+    :class:`~torch_geometric.nn.conv.GATConv`.
 
     The memory overhead is driven by the additional edges (at most
     :attr:`block_size`). For scalability reasons, the block is drawn with
@@ -53,8 +55,8 @@ class PRBCDAttack(torch.nn.Module):
 
     Args:
         model (torch.nn.Module): The GNN module to assess.
-        block_size (int, optional): Number of randomly selected elements in the
-            adjacency matrix to consider. (default: :obj:`250_000`)
+        block_size (int): Number of randomly selected elements in the
+            adjacency matrix to consider.
         epochs (int, optional): Number of epochs (aborts early if
             :obj:`mode='greedy'` and budget is satisfied) (default: :obj:`125`)
         epochs_resampling (int, optional): Number of epochs to resample the
@@ -62,11 +64,11 @@ class PRBCDAttack(torch.nn.Module):
         loss (str or Callable, optional): A loss to quantify the "strength" of
             an attack. Note that this function must match the output format of
             :attr:`model`. By default, it is assumed that the task is
-            classification, that the model returns raw predictions (i.e. no
-            output activation) or uses :obj:`logsoftmax`, and that the number
-            of predictions matches the number labels passed to :attr:`attack`.
-            Either pass Callable or one of: :obj:`'masked'`, :obj:`'margin'`,
-            :obj:`'prob_margin'`, :obj:`'tanh_margin'`.
+            classification and that the model returns raw predictions (*i.e.*,
+            no output activation) or uses :obj:`logsoftmax`. Moreover, and the
+            number of predictions should match the number of labels passed to
+            :attr:`attack`. Either pass Callable or one of: :obj:`'masked'`,
+            :obj:`'margin'`, :obj:`'prob_margin'`, :obj:`'tanh_margin'`.
             (default: :obj:`'prob_margin'`)
         metric (Callable, optional): Second (potentially
             non-differentiable) loss for monitoring or early stopping (if
@@ -74,7 +76,7 @@ class PRBCDAttack(torch.nn.Module):
         lr (float, optional): Learning rate for updating edge weights.
             Additionally, it is heuristically corrected for :attr:`block_size`,
             budget (see :attr:`attack`) and graph size. (default: :obj:`1_000`)
-        is_undirected_graph (bool, optional): If :obj:`True` the graph is
+        is_undirected (bool, optional): If :obj:`True` the graph is
             assumed to be undirected. (default: :obj:`True`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
@@ -90,13 +92,13 @@ class PRBCDAttack(torch.nn.Module):
     def __init__(
         self,
         model: torch.nn.Module,
-        block_size: int = 250_000,
+        block_size: int,
         epochs: int = 125,
         epochs_resampling: int = 100,
         loss: Optional[Union[str, LOSS_TYPE]] = 'prob_margin',
         metric: Optional[Union[str, LOSS_TYPE]] = None,
         lr: float = 1_000,
-        is_undirected_graph: bool = True,
+        is_undirected: bool = True,
         log: bool = True,
         **kwargs,
     ):
@@ -120,22 +122,24 @@ class PRBCDAttack(torch.nn.Module):
         else:
             self.loss = loss
 
-        self.is_undirected_graph = is_undirected_graph
+        self.is_undirected = is_undirected
         self.log = log
-
-        if metric is None:
-            self.metric = self.loss
-        else:
-            self.metric = metric
+        self.metric = metric or self.loss
 
         self.epochs_resampling = epochs_resampling
         self.lr = lr
 
         self.coeffs.update(kwargs)
 
-    def attack(self, x: Tensor, edge_index: Tensor, labels: Tensor,
-               budget: int, idx_attack: Optional[Tensor] = None,
-               **kwargs) -> Tuple[Tensor, Tensor]:
+    def attack(
+        self,
+        x: Tensor,
+        edge_index: Tensor,
+        labels: Tensor,
+        budget: int,
+        idx_attack: Optional[Tensor] = None,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
         """Attack the predictions for the provided model and graph.
 
         A subset of predictions may be specified with :attr:`idx_attack`. The
@@ -144,8 +148,7 @@ class PRBCDAttack(torch.nn.Module):
         resulting perturbed :attr:`edge_index` as well as the perturbations.
 
         Args:
-            x (Tensor): The node feature matrix. We assume `x` to be located
-                on target device.
+            x (Tensor): The node feature matrix.
             edge_index (LongTensor): The edge indices.
             labels (Tensor): The labels.
             budget (int): The number of allowed perturbations (i.e.
@@ -157,10 +160,6 @@ class PRBCDAttack(torch.nn.Module):
 
         :rtype: (:class:`Tensor`, :class:`Tensor`)
         """
-        assert self.block_size > budget, (
-            f'The search space size ({self.block_size}) must be '
-            f'greater than the number of permutations ({budget})')
-
         self.model.eval()
 
         self.device = x.device
@@ -199,6 +198,11 @@ class PRBCDAttack(torch.nn.Module):
 
     def _prepare(self, budget: int) -> Iterable[int]:
         """Prepare attack."""
+        if self.block_size <= budget:
+            raise ValueError(
+                f'The search space size ({self.block_size}) must be '
+                f'greater than the number of permutations ({budget})')
+
         # For early stopping (not explicitly covered by pseudo code)
         self.best_metric = float('-Inf')
 
@@ -214,7 +218,9 @@ class PRBCDAttack(torch.nn.Module):
                 **kwargs) -> Dict[str, float]:
         """Update edge weights given gradient."""
         # Gradient update step (Algorithm 1, line 7)
-        self._update_edge_weights(budget, epoch, gradient)
+        self.block_edge_weight = self._update_edge_weights(
+            budget, self.block_edge_weight, epoch, gradient)
+
         # For monitoring
         pmass_update = torch.clamp(self.block_edge_weight, 0, 1)
         # Projection to stay within relaxed `L_0` budget
@@ -250,7 +256,7 @@ class PRBCDAttack(torch.nn.Module):
             self.best_metric = metric
             self.best_block = self.current_block.cpu().clone()
             self.best_edge_index = self.block_edge_index.cpu().clone()
-            self.best_pert_edge_weight = self.block_edge_weight.cpu().detach()
+            self.best_pert_edge_weight = self.block_edge_weight.cpu().clone()
 
         # Resampling of search space (Algorithm 1, line 9-14)
         if epoch < self.epochs_resampling - 1:
@@ -316,7 +322,7 @@ class PRBCDAttack(torch.nn.Module):
                           block_edge_index: Tensor,
                           block_edge_weight: Tensor) -> Tuple[Tensor, Tensor]:
         """Merges adjacency matrix with current block (incl. weights)"""
-        if self.is_undirected_graph:
+        if self.is_undirected:
             block_edge_index, block_edge_weight = to_undirected(
                 block_edge_index, block_edge_weight, num_nodes=self.num_nodes,
                 reduce='mean')
@@ -347,12 +353,12 @@ class PRBCDAttack(torch.nn.Module):
     def _sample_random_block(self, budget: int = 0):
         for _ in range(self.coeffs['max_trials_sampling']):
             num_possible_edges = self._num_possible_edges(
-                self.num_nodes, self.is_undirected_graph)
+                self.num_nodes, self.is_undirected)
             self.current_block = torch.randint(num_possible_edges,
                                                (self.block_size, ),
                                                device=self.device)
             self.current_block = torch.unique(self.current_block, sorted=True)
-            if self.is_undirected_graph:
+            if self.is_undirected:
                 self.block_edge_index = self._linear_to_triu_idx(
                     self.num_nodes, self.current_block)
             else:
@@ -383,7 +389,7 @@ class PRBCDAttack(torch.nn.Module):
         for _ in range(self.coeffs['max_trials_sampling']):
             n_edges_resample = self.block_size - self.current_block.size(0)
             num_possible_edges = self._num_possible_edges(
-                self.num_nodes, self.is_undirected_graph)
+                self.num_nodes, self.is_undirected)
             lin_index = torch.randint(num_possible_edges, (n_edges_resample, ),
                                       device=self.device)
 
@@ -391,7 +397,7 @@ class PRBCDAttack(torch.nn.Module):
             self.current_block, unique_idx = torch.unique(
                 current_block, sorted=True, return_inverse=True)
 
-            if self.is_undirected_graph:
+            if self.is_undirected:
                 self.block_edge_index = self._linear_to_triu_idx(
                     self.num_nodes, self.current_block)
             else:
@@ -406,7 +412,7 @@ class PRBCDAttack(torch.nn.Module):
             self.block_edge_weight[
                 unique_idx[:sorted_idx.size(0)]] = block_edge_weight_prev
 
-            if not self.is_undirected_graph:
+            if not self.is_undirected:
                 self._filter_self_loops_in_block(with_weight=True)
 
             if self.current_block.size(0) > budget:
@@ -427,8 +433,7 @@ class PRBCDAttack(torch.nn.Module):
                 sampled_edges = torch.zeros_like(block_edge_weight)
                 sampled_edges[torch.topk(block_edge_weight,
                                          budget).indices] = 1
-            else:
-                sampled_edges = torch.bernoulli(block_edge_weight).float()
+            sampled_edges = torch.bernoulli(block_edge_weight).float()
 
             if sampled_edges.sum() > budget:
                 # Allowed budget is exceeded
@@ -459,14 +464,15 @@ class PRBCDAttack(torch.nn.Module):
 
         return edge_index, flipped_edges
 
-    def _update_edge_weights(self, budget: int, epoch: int, gradient: Tensor):
+    def _update_edge_weights(self, budget: int, block_edge_weight: Tensor,
+                             epoch: int, gradient: Tensor) -> Tensor:
         # The learning rate is refined heuristically, s.t. (1) it is
         # independent of the number of perturbations (assuming an undirected
         # adjacency matrix) and (2) to decay learning rate during fine-tuning
         # (i.e. fixed search space).
         lr = (budget / self.num_nodes * self.lr /
               np.sqrt(max(0, epoch - self.epochs_resampling) + 1))
-        self.block_edge_weight.data.add_(lr * gradient)
+        return block_edge_weight + lr * gradient
 
     @staticmethod
     def _project(budget: int, values: Tensor, eps: float = 1e-7) -> Tensor:
@@ -502,9 +508,9 @@ class PRBCDAttack(torch.nn.Module):
         return miu
 
     @staticmethod
-    def _num_possible_edges(n: int, is_undirected_graph: bool) -> int:
+    def _num_possible_edges(n: int, is_undirected: bool) -> int:
         """Determine number of possible edges for graph."""
-        if is_undirected_graph:
+        if is_undirected:
             return n * (n - 1) // 2
         else:
             return int(n**2)  # We filter self-loops later
@@ -660,20 +666,20 @@ class GRBCDAttack(PRBCDAttack):
 
     Args:
         model (torch.nn.Module): The GNN module to assess.
-        block_size (int, optional): Number of randomly selected elements in the
-            adjacency matrix to consider. (default: :obj:`250_000`)
+        block_size (int): Number of randomly selected elements in the
+            adjacency matrix to consider.
         epochs (int, optional): Number of epochs (aborts early if
             :obj:`mode='greedy'` and budget is satisfied) (default: :obj:`125`)
         loss (str or Callable, optional): A loss to quantify the "strength" of
             an attack. Note that this function must match the output format of
             :attr:`model`. By default, it is assumed that the task is
-            classification, that the model returns raw predictions (i.e. no
-            output activation) or uses :obj:`logsoftmax`, and that the number
-            of predictions matches the number labels passed to :attr:`attack`.
-            Either pass Callable or one of: :obj:`'masked'`, :obj:`'margin'`,
-            :obj:`'prob_margin'`, :obj:`'tanh_margin'`.
+            classification and that the model returns raw predictions (*i.e.*,
+            no output activation) or uses :obj:`logsoftmax`. Moreover, and the
+            number of predictions should match the number of labels passed to
+            :attr:`attack`. Either pass Callable or one of: :obj:`'masked'`,
+            :obj:`'margin'`, :obj:`'prob_margin'`, :obj:`'tanh_margin'`.
             (default: :obj:`'masked'`)
-        is_undirected_graph (bool, optional): If :obj:`True` the graph is
+        is_undirected (bool, optional): If :obj:`True` the graph is
             assumed to be undirected. (default: :obj:`True`)
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
@@ -684,16 +690,15 @@ class GRBCDAttack(PRBCDAttack):
     def __init__(
         self,
         model: torch.nn.Module,
-        block_size: int = 250_000,
+        block_size: int,
         epochs: int = 125,
         loss: Optional[Union[str, LOSS_TYPE]] = 'masked',
-        is_undirected_graph: bool = True,
+        is_undirected: bool = True,
         log: bool = True,
         **kwargs,
     ):
         super().__init__(model, block_size, epochs, loss=loss,
-                         is_undirected_graph=is_undirected_graph, log=log,
-                         **kwargs)
+                         is_undirected=is_undirected, log=log, **kwargs)
 
     @torch.no_grad()
     def _prepare(self, budget: int) -> List[int]:
@@ -727,7 +732,7 @@ class GRBCDAttack(PRBCDAttack):
         self.flipped_edges = torch.cat((self.flipped_edges, flip_edge_index),
                                        axis=-1)
 
-        if self.is_undirected_graph:
+        if self.is_undirected:
             flip_edge_index, flip_edge_weight = to_undirected(
                 flip_edge_index, flip_edge_weight, num_nodes=self.num_nodes,
                 reduce='mean')

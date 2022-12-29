@@ -1,4 +1,3 @@
-import functools
 import os.path as osp
 from typing import Optional
 
@@ -7,6 +6,7 @@ import torch.nn.functional as F
 from torch import Tensor
 
 import torch_geometric.transforms as T
+from torch_geometric.data import Data
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GATConv, GCNConv, GRBCDAttack, PRBCDAttack
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
@@ -14,34 +14,35 @@ from torch_geometric.utils import softmax
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-# IMPORTANT: Edge weights are being ignored later and most adjacency
-# preprocessings should be part of the model (part of backpropagation)
-dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
-data = dataset[0]
 
 
 class GCN(torch.nn.Module):
     """GCN that normalizes adjacency matrix once for all layers (no cache)."""
-    def __init__(self, hidden_dim: int = 16):
+    def __init__(self, num_features: int, num_classes: int,
+                 hidden_dim: int = 16):
         super().__init__()
-        gcn_conv = functools.partial(
-            GCNConv,
-            cached=False,  # Important to backpropagate to the adj. matrix
-            add_self_loops=False,  # We add them in `self.gcn_norm`
-            normalize=False  # It is better to normalize once
-        )
-        self.conv1 = gcn_conv(dataset.num_features, hidden_dim)
-        self.conv2 = gcn_conv(hidden_dim, dataset.num_classes)
+        # Important to backpropagate to the (input) adj. matrix. We normalize
+        # the adj. once since it is expensive due to backpropagation.
+        self.conv1 = GCNConv(num_features, hidden_dim, cached=False,
+                             add_self_loops=False, normalize=False)
+        self.conv2 = GCNConv(hidden_dim, num_classes, cached=False,
+                             add_self_loops=False, normalize=False)
+        self.norm = gcn_norm
 
-    def forward(self, x, edge_index, edge_weight=None):
-        # Normalizing once lowers memory footprint and caching is not possible
-        # during attack (for training it would be possible)
-        edge_index, edge_weight = gcn_norm(edge_index, edge_weight, x.size(0),
-                                           add_self_loops=True)
-        x = F.relu(self.conv1(x, edge_index, edge_weight))
+    def forward(self, x, edge_index, edge_weight=None, skip_norm=False):
+        # Normalizing once lowers memory footprint
+        if not skip_norm:
+            edge_index, edge_weight = self.norm(edge_index, edge_weight,
+                                                num_nodes=x.size(0),
+                                                add_self_loops=True)
+        x = self.conv1(x, edge_index, edge_weight).relu()
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
         return x
+
+    def reset_parameters(self):
+        self.conv1.reset_parameters()
+        self.conv2.reset_parameters()
 
 
 class WeightedGATConv(GATConv):
@@ -57,7 +58,7 @@ class WeightedGATConv(GATConv):
         if edge_attr is not None:
             assert edge_attr.dim() == 1, 'Only scalar edge weights supported'
             edge_attr = edge_attr.view(-1, 1)
-            # `alpha`` unchanged if edge_attr == 1 and -Inf if edge_attr == 0;
+            # `alpha` unchanged if edge_attr == 1 and -Inf if edge_attr == 0;
             # We choose log to counteract underflow in subsequent exp/softmax
             alpha = alpha + torch.log2(edge_attr)
 
@@ -68,38 +69,30 @@ class WeightedGATConv(GATConv):
 
 class GAT(torch.nn.Module):
     """GAT that supports weights edges."""
-    def __init__(self, hidden_dim: int = 16):
+    def __init__(self, num_features: int, num_classes: int,
+                 hidden_dim: int = 16):
         super().__init__()
-        gat_conv = functools.partial(
-            WeightedGATConv,
-            add_self_loops=True,  # In case the dataset has none
-            fill_value=1.,  # Default edge weight (for self-loops)
-        )
-        self.conv1 = gat_conv(dataset.num_features, hidden_dim)
-        self.conv2 = gat_conv(hidden_dim, dataset.num_classes)
+        # We add self-loops and initialize them to 1.
+        self.conv1 = WeightedGATConv(num_features, hidden_dim,
+                                     add_self_loops=True, fill_value=1.)
+        self.conv2 = WeightedGATConv(hidden_dim, num_classes,
+                                     add_self_loops=True, fill_value=1.)
 
     def forward(self, x, edge_index, edge_weight=None, **kwargs):
-        x = F.relu(self.conv1(x, edge_index, edge_weight))
+        x = self.conv1(x, edge_index, edge_weight).relu()
         x = F.dropout(x, training=self.training)
         x = self.conv2(x, edge_index, edge_weight)
         return x
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-gcn = GCN().to(device)
-gat = GAT().to(device)
-data = data.to(device)
-
-x, edge_index, y = data.x, data.edge_index, data.y
-
-
-def train(model, x, edge_index, edge_weight=None, epochs=200, lr=0.01,
-          weight_decay=5e-4):
+def train(model: torch.nn.Module, data: Data, epochs: int = 200,
+          lr: float = 0.01, weight_decay: float = 5e-4):
     optimizer = torch.optim.Adam(model.parameters(), lr=lr,
                                  weight_decay=weight_decay)
+    model.train()
     for _ in range(epochs):
         optimizer.zero_grad()
-        prediction = model(x, edge_index, edge_weight)
+        prediction = model(data.x, data.edge_index, data.edge_weight)
         loss = F.cross_entropy(prediction[data.train_mask],
                                data.y[data.train_mask])
         loss.backward()
@@ -110,78 +103,102 @@ def accuracy(pred, lab, mask):
     return (pred.argmax(-1)[mask] == lab[mask]).float().mean()
 
 
-gcn.train()
-train(gcn, x, edge_index)
-gcn.eval()
-
-gat.train()
-train(gat, x, edge_index)
-gat.eval()
-
-local_budget = 2  # Degree of (training) node 42 is also 2
-global_budget = int(0.05 * edge_index.size(1) / 2)  # Perturb 5% of edges
-node_idx = 42
+def test(model: torch.nn.Module, data: Data) -> float:
+    model.eval()
+    predictions = model(data.x, data.edge_index, data.edge_weight)
+    return accuracy(predictions, data.y, data.test_mask).item()
 
 
-# The metric in PRBCD is assumed to be best if lower (like a loss).
-def metric(*args, **kwargs):
-    return -accuracy(*args, **kwargs)
+if __name__ == '__main__':
+    # IMPORTANT: Edge weights are being ignored later and most adjacency
+    # preprocessings should be part of the model (part of backpropagation)
+    dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
+    data = dataset[0]
 
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    gcn = GCN(dataset.num_features, dataset.num_classes).to(device)
+    gat = GAT(dataset.num_features, dataset.num_classes).to(device)
+    data = data.to(device)
 
-print('\n------------- GAT: Local Evasion -------------\n')
-# Note: GRBCD is faster than PRBCD for small budgets but is not as consistent
+    train(gcn, data)
+    gcn.eval()
 
-grbcd = GRBCDAttack(gat)
-# The learning rate is one of the most important parameters for PRBCD and a
-# good heuristic is to choose it s.t. the budget is exhausted within a few
-# steps. Moreover, a high learning rate mitigates the impact of the relaxation
-# gap ({0, 1} -> [0, 1]) of the edge weights. See poisoning example for a plot.
-prbcd = PRBCDAttack(gat, metric=metric, lr=2_000)
+    train(gat, data)
+    gat.eval()
 
-clean_accuracy = accuracy(gat(x, edge_index), y, data.test_mask).item()
-print(f'Clean accuracy: {clean_accuracy:.3f}')
+    local_budget = 2  # Degree of (training) node 42 is also 2
+    # Perturb 5% of edges
+    global_budget = int(0.05 * data.edge_index.size(1) / 2)
+    node_idx = 42
 
-# GRBCD: attack single node
-pert_edge_index, perts = grbcd.attack(x, edge_index, y, budget=local_budget,
-                                      idx_attack=[node_idx])
-clean_margin = -PRBCDAttack._probability_margin_loss(gat(x, edge_index), y,
-                                                     [node_idx])
-pert_margin = -PRBCDAttack._probability_margin_loss(gat(x, pert_edge_index), y,
-                                                    [node_idx])
-print(f'GRBCD: Confidence margin of target to best non-target dropped from '
-      f'{clean_margin:.3f} to {pert_margin:.3f}')
-print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
+    # The metric in PRBCD is assumed to be best if lower (like a loss).
+    def metric(*args, **kwargs):
+        return -accuracy(*args, **kwargs)
 
-# PRBCD: attack single node
-pert_edge_index, perts = prbcd.attack(x, edge_index, y, budget=local_budget,
-                                      idx_attack=[node_idx])
-clean_margin = -PRBCDAttack._probability_margin_loss(gat(x, edge_index), y,
-                                                     [node_idx])
-pert_margin = -PRBCDAttack._probability_margin_loss(gat(x, pert_edge_index), y,
-                                                    [node_idx])
-print(f'PRBCD: Confidence margin of target to best non-target dropped from '
-      f'{clean_margin:.3f} to {pert_margin:.3f}')
-print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
+    print('\n------------- GAT: Local Evasion -------------\n')
+    # Note: GRBCD is faster than PRBCD for small budgets but not as consistent
 
-print('\n------------- GCN: Global Evasion -------------\n')
+    grbcd = GRBCDAttack(gat, block_size=250_000)
+    # The learning rate is one of the most important parameters for PRBCD and a
+    # good heuristic is to choose it s.t. the budget is exhausted within a few
+    # steps. Moreover, a high learning rate mitigates the impact of the
+    # relaxation gap ({0, 1} -> [0, 1]) of the edge weights. See poisoning
+    #  example for a debug plot.
+    prbcd = PRBCDAttack(gat, block_size=250_000, metric=metric, lr=2_000)
 
-grbcd = GRBCDAttack(gcn)
-prbcd = PRBCDAttack(gcn, metric=metric, lr=2_000)
+    clean_accuracy = test(gat, data)
+    print(f'Clean accuracy: {clean_accuracy:.3f}')
 
-clean_accuracy = accuracy(gcn(x, edge_index), y, data.test_mask).item()
-print(f'Clean accuracy: {clean_accuracy:.3f}')
+    # GRBCD: attack single node
+    pert_edge_index, perts = grbcd.attack(data.x, data.edge_index, data.y,
+                                          budget=local_budget,
+                                          idx_attack=[node_idx])
+    clean_margin = -PRBCDAttack._probability_margin_loss(
+        gat(data.x, data.edge_index), data.y, [node_idx])
+    pert_margin = -PRBCDAttack._probability_margin_loss(
+        gat(data.x, pert_edge_index), data.y, [node_idx])
+    print(
+        f'GRBCD: Confidence margin of target to best non-target dropped from '
+        f'{clean_margin:.3f} to {pert_margin:.3f}')
+    print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 
-# GRBCD: attack test set
-pert_edge_index, perts = grbcd.attack(x, edge_index, y, budget=global_budget,
-                                      idx_attack=data.test_mask)
+    # PRBCD: attack single node
+    pert_edge_index, perts = prbcd.attack(data.x, data.edge_index, data.y,
+                                          budget=local_budget,
+                                          idx_attack=[node_idx])
+    clean_margin = -PRBCDAttack._probability_margin_loss(
+        gat(data.x, data.edge_index), data.y, [node_idx])
+    pert_margin = -PRBCDAttack._probability_margin_loss(
+        gat(data.x, pert_edge_index), data.y, [node_idx])
+    print(
+        f'PRBCD: Confidence margin of target to best non-target dropped from '
+        f'{clean_margin:.3f} to {pert_margin:.3f}')
+    print(f'Adv. edges {", ".join(str((u, v)) for u, v in perts.T.tolist())}')
 
-pert_accuracy = accuracy(gcn(x, pert_edge_index), y, data.test_mask).item()
-print(f'GRBCD: Accuracy dropped from {clean_accuracy:.3f} to '
-      f'{pert_accuracy:.3f}')
+    print('\n------------- GCN: Global Evasion -------------\n')
 
-# PRBCD: attack test set
-pert_edge_index, perts = prbcd.attack(x, edge_index, y, budget=global_budget,
-                                      idx_attack=data.test_mask)
-pert_accuracy = accuracy(gcn(x, pert_edge_index), y, data.test_mask).item()
-print(f'PRBCD: Accuracy dropped from {clean_accuracy:.3f} to '
-      f'{pert_accuracy:.3f}')
+    grbcd = GRBCDAttack(gcn, block_size=250_000)
+    prbcd = PRBCDAttack(gcn, block_size=250_000, metric=metric, lr=2_000)
+
+    clean_accuracy = test(gcn, data)
+    print(f'Clean accuracy: {clean_accuracy:.3f}')
+
+    # GRBCD: attack test set
+    pert_edge_index, perts = grbcd.attack(data.x, data.edge_index, data.y,
+                                          budget=global_budget,
+                                          idx_attack=data.test_mask)
+
+    pert_data = data.clone()
+    pert_data.edge_index = pert_edge_index
+    pert_accuracy = test(gcn, pert_data)
+    print(f'GRBCD: Accuracy dropped from {clean_accuracy:.3f} to '
+          f'{pert_accuracy:.3f}')
+
+    # PRBCD: attack test set
+    pert_edge_index, perts = prbcd.attack(data.x, data.edge_index, data.y,
+                                          budget=global_budget,
+                                          idx_attack=data.test_mask)
+    pert_data.edge_index = pert_edge_index
+    pert_accuracy = test(gcn, pert_data)
+    print(f'PRBCD: Accuracy dropped from {clean_accuracy:.3f} to '
+          f'{pert_accuracy:.3f}')
