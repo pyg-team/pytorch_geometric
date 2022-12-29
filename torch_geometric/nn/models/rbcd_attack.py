@@ -433,28 +433,27 @@ class PRBCDAttack(torch.nn.Module):
                 sampled_edges = torch.zeros_like(block_edge_weight)
                 sampled_edges[torch.topk(block_edge_weight,
                                          budget).indices] = 1
-            sampled_edges = torch.bernoulli(block_edge_weight).float()
+            else:
+                sampled_edges = torch.bernoulli(block_edge_weight).float()
 
             if sampled_edges.sum() > budget:
                 # Allowed budget is exceeded
                 continue
-            self.block_edge_weight = sampled_edges
 
             edge_index, edge_weight = self._get_modified_adj(
                 self.edge_index, self.edge_weight, self.block_edge_index,
-                self.block_edge_weight)
+                sampled_edges)
             prediction = self._forward(x, edge_index, edge_weight, **kwargs)
             metric = self.metric(prediction, labels, idx_attack)
 
             # Save best sample
             if metric > best_metric:
                 best_metric = metric
-                best_edge_weight = self.block_edge_weight.clone().cpu()
+                self.block_edge_weight = sampled_edges.clone().cpu()
 
         # Recover best sample
-        self.block_edge_weight = best_edge_weight.to(self.device)
-        flipped_edges = self.block_edge_index[:,
-                                              torch.where(best_edge_weight)[0]]
+        self.block_edge_weight = self.block_edge_weight.to(self.device)
+        flipped_edges = self.block_edge_index[:, self.block_edge_weight > 0]
 
         edge_index, edge_weight = self._get_modified_adj(
             self.edge_index, self.edge_weight, self.block_edge_index,
