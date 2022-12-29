@@ -334,7 +334,7 @@ class DataTensorAttr(TensorAttr):
     def __init__(
         self,
         attr_name=_field_status.UNSET,
-        index=_field_status.UNSET,
+        index=None,
     ):
         super().__init__(None, attr_name, index)
 
