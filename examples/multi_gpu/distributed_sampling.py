@@ -72,7 +72,7 @@ def run(rank, world_size, dataset):
     train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
 
     kwargs = dict(batch_size=1024, num_workers=4, persistent_workers=True)
-    train_loader = NeighborLoader(data, input_nodes=data.train_mask,
+    train_loader = NeighborLoader(data, input_nodes=train_idx,
                                   num_neighbors=[25, 10], shuffle=True,
                                   drop_last=True, **kwargs)
 
