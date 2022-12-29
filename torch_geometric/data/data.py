@@ -902,15 +902,18 @@ class Data(BaseData, FeatureStore, GraphStore):
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
             del self.edge_index
-            del self._edges_to_layout[edge_attr.layout]
+            if hasattr(self, '_edge_attrs'):
+                self._edges_to_layout.pop(EdgeLayout.COO, None)
             return True
         elif edge_attr.layout == EdgeLayout.CSR and 'adj' in self:
             del self.adj
-            del self._edges_to_layout[edge_attr.layout]
+            if hasattr(self, '_edge_attrs'):
+                self._edges_to_layout.pop(EdgeLayout.CSR, None)
             return True
         elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in self:
             del self.adj_t
-            del self._edges_to_layout[edge_attr.layout]
+            if hasattr(self, '_edge_attrs'):
+                self._edges_to_layout.pop(EdgeLayout.CSC, None)
             return True
         return False
 
