@@ -42,6 +42,10 @@ class FB15k_237(InMemoryDataset):
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
+
+        if split not in {'train', 'val', 'test'}:
+            raise ValueError(f"Invalid 'split' argument (got {split})")
+
         path = self.processed_paths[['train', 'val', 'test'].index(split)]
         self.data, self.slices = torch.load(path)
 
