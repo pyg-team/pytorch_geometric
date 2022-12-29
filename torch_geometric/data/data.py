@@ -860,6 +860,10 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
+        if not hasattr(self, '_edge_attrs'):
+            self._edge_attrs = {}
+        self._edge_attrs[edge_attr.layout] = edge_attr
+
         row, col = edge_index
 
         if edge_attr.layout == EdgeLayout.COO:
@@ -898,26 +902,22 @@ class Data(BaseData, FeatureStore, GraphStore):
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
             del self.edge_index
+            del self._edges_to_layout[edge_attr.layout]
             return True
         elif edge_attr.layout == EdgeLayout.CSR and 'adj' in self:
             del self.adj
+            del self._edges_to_layout[edge_attr.layout]
             return True
         elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in self:
             del self.adj_t
+            del self._edges_to_layout[edge_attr.layout]
             return True
         return False
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        edge_attrs: List[EdgeAttr] = []
-        if 'edge_index' in self:
-            edge_attrs.append(DataEdgeAttr('coo', is_sorted=False))
-        if 'adj' in self:
-            size = self.adj.sparse_sizes()
-            edge_attrs.append(DataEdgeAttr('csr', size=size))
-        if 'adj_t' in self:
-            size = self.adj_t.sparse_sizes()[::-1]
-            edge_attrs.append(DataEdgeAttr('csc', size=size))
-        return edge_attrs
+        if not hasattr(self, '_edge_attrs'):
+            return []
+        return list(self._edge_attrs.values())
 
 
 ###############################################################################
