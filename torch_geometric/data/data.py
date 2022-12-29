@@ -778,6 +778,16 @@ class Data(BaseData, FeatureStore, GraphStore):
         r"""Returns the number of features per edge in the graph."""
         return self._store.num_edge_features
 
+    @property
+    def num_node_types(self) -> int:
+        r"""Returns the number of node types in the graph."""
+        return int(self.node_type.max()) + 1 if 'node_type' in self else 1
+
+    @property
+    def num_edge_types(self) -> int:
+        r"""Returns the number of edge types in the graph."""
+        return int(self.edge_type.max()) + 1 if 'edge_type' in self else 1
+
     def __iter__(self) -> Iterable:
         r"""Iterates over all attributes in the data, yielding their attribute
         names and values."""
