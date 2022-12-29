@@ -29,39 +29,26 @@ class TransE(KGEModel):
         F.normalize(self.rel_emb.weight.data, p=self.p_norm, dim=-1,
                     out=self.rel_emb.weight.data)
 
-    def get_node_embedding(self, index: Tensor):
-        node_emb = self.node_emb(index)
-        node_emb = F.normalize(node_emb, p=self.p_norm, dim=-1)
-        return node_emb
+    def forward(self, head: Tensor, rel: Tensor, tail: Tensor) -> Tensor:
+        head_emb = self.node_emb(head)
+        rel_emb = self.rel_emb(rel)
+        tail_emb = self.node_emb(tail)
 
-    def score(self, head_emb: Tensor, rel_emb: Tensor,
-              tail_emb: Tensor) -> Tensor:
+        head_emb = F.normalize(head_emb, p=self.p_norm, dim=-1)
+        tail_emb = F.normalize(tail_emb, p=self.p_norm, dim=-1)
+
         return ((head_emb + rel_emb) - tail_emb).norm(p=self.p_norm, dim=-1)
 
-    def forward(self, head: Tensor, rel: Tensor, tail: Tensor) -> Tensor:
-        head_emb = self.get_node_embedding(head)
-        rel_emb = self.rel_emb(rel)
-        tail_emb = self.get_node_embedding(tail)
-
-        return self.score(head_emb, rel_emb, tail_emb)
-
     def loss(self, head: Tensor, rel: Tensor, tail: Tensor) -> Tensor:
-        print(head)
-        print('rel', rel)
-        print(tail)
-        print(head.max())
-        print(rel.max())
-        print(tail.max())
-        head_emb = self.get_node_embedding(head)
-        rel_emb = self.rel_emb(rel)
-        tail_emb = self.get_node_embedding(tail)
+        pos_score = self(head, rel, tail)
 
-        neg_tail = torch.randint(self.num_nodes, tail.size(),
-                                 device=tail.device)
-        print(neg_tail)
-        neg_tail_emb = self.get_node_embedding(neg_tail)
+        # Random shuffle either `head` or `tail`:
+        rnd = torch.randint(self.num_nodes, head.size(), device=head.device)
+        head = head.clone()
+        head[:head.numel() // 2] = rnd[:head.numel() // 2]
+        tail = tail.clone()
+        tail[tail.numel() // 2:] = rnd[tail.numel() // 2:]
 
-        pos_score = self.score(head_emb, rel_emb, tail_emb)
-        neg_score = self.score(head_emb, rel_emb, neg_tail_emb)
+        neg_score = self(head, rel, tail)
 
         return (self.margin + pos_score - neg_score).relu().mean()

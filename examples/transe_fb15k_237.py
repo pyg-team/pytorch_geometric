@@ -17,14 +17,11 @@ model = TransE(
     train_data.num_edge_types,
     hidden_channels=50,
 ).to(device)
-print(model)
 
-loader = torch.utils.data.DataLoader(
-    dataset=(
-        train_data.edge_index[0],  # head
-        train_data.edge_type,  # rel
-        train_data.edge_index[1],  # tail
-    ),
+loader = model.loader(
+    head=train_data.edge_index[0],
+    rel=train_data.edge_type,
+    tail=train_data.edge_index[1],
     batch_size=10000,
     shuffle=True,
 )

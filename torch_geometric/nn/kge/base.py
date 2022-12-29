@@ -5,6 +5,8 @@ from torch import Tensor
 from torch.nn import Embedding
 from tqdm import tqdm
 
+from torch_geometric.nn.kge.loader import KGTripletLoader
+
 
 class KGEModel(torch.nn.Module):
     def __init__(
@@ -29,6 +31,10 @@ class KGEModel(torch.nn.Module):
         self.node_emb.reset_parameters()
         self.rel_emb.reset_parameters()
 
+    def loader(self, head: Tensor, rel: Tensor, tail: Tensor,
+               **kwargs) -> Tensor:
+        return KGTripletLoader(self.num_nodes, head, rel, tail, **kwargs)
+
     def forward(self, head: Tensor, rel: Tensor, tail: Tensor) -> Tensor:
         """"""
         raise NotImplementedError
@@ -44,9 +50,7 @@ class KGEModel(torch.nn.Module):
         if filtered:
             raise NotImplementedError("'Filtered' inference not yet supported")
 
-        mean_ranks = []
-        hits_at_k = []
-
+        mean_ranks, hits_at_k = [], []
         for i in tqdm(range(head.numel())):
             h, r, t = head[i], rel[i], tail[i]
 
