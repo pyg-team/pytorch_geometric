@@ -278,7 +278,6 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 * **[Deep Graph Infomax](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.DeepGraphInfomax)** from Veličković *et al.*: [Deep Graph Infomax](https://arxiv.org/abs/1809.10341) (ICLR 2019) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/infomax_transductive.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/infomax_inductive.py)]
 * **Deep Multiplex Graph Infomax** from Park *et al.*: [Unsupervised Attributed Multiplex Network Embedding](https://arxiv.org/abs/1911.06750) (AAAI 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/dmgi_unsup.py)]
 * **[Masked Label Prediction](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.MaskLabel)** from Shi *et al.*: [Masked Label Prediction: Unified Message Passing Model for Semi-Supervised Classification](https://arxiv.org/abs/2009.03509) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/unimp_arxiv.py)]
-* **[TransE](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.kge.TransE)** from Bordes *et al.*: [Translating Embeddings for Modeling Multi-RelationalData](https://proceedings.neurips.cc/paper/2013/file/1cecc7a77928ca8133fa24680a88d2f9-Paper.pdf) (NIPS 2013) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/transe_fb15k_237.py)]
 
 <details>
 <summary><b>Expand to see all implemented GNN models...</b></summary>
@@ -300,6 +299,7 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 * **[LINKX](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.LINKX)** from Lim *et al.*: [Large Scale Learning on Non-Homophilous Graphs:
 New Benchmarks and Strong Simple Methods](https://arxiv.org/abs/2110.14446) (NeurIPS 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/linkx.py)]
 * **[RevGNN](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GroupAddRev)** from Li *et al.*: [Training Graph Neural with 1000 Layers](https://arxiv.org/abs/2106.07476) (ICML 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/rev_gnn.py)]
+* **[TransE](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.kge.TransE)** from Bordes *et al.*: [Translating Embeddings for Modeling Multi-RelationalData](https://proceedings.neurips.cc/paper/2013/file/1cecc7a77928ca8133fa24680a88d2f9-Paper.pdf) (NIPS 2013) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/transe_fb15k_237.py)]
 </details>
 
 **GNN operators and utilities:**
