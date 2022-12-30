@@ -9,7 +9,7 @@ from torch_geometric.nn.kge import KGEModel
 
 class TransE(KGEModel):
     r"""The TransE model from the `"Translating Embeddings for Modeling
-    Multi-Relational Dat" <https://proceedings.neurips.cc/paper/2013/file/
+    Multi-Relational Data" <https://proceedings.neurips.cc/paper/2013/file/
     1cecc7a77928ca8133fa24680a88d2f9-Paper.pdf>`_ paper.
 
     :class:`TransE` models relations as a translation from head to tail
