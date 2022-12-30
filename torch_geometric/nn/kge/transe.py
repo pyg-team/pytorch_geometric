@@ -8,17 +8,17 @@ from torch_geometric.nn.kge import KGEModel
 
 
 class TransE(KGEModel):
-    r"""The TransE KGE model from the `"Translating Embeddings for Modeling
-    Multi-Relational Dat" <https://proceedings.neurips.cc/paper/2013/file/
+    r"""The TransE model from the `"Translating Embeddings for Modeling
+    Multi-Relational Data" <https://proceedings.neurips.cc/paper/2013/file/
     1cecc7a77928ca8133fa24680a88d2f9-Paper.pdf>`_ paper.
 
     :class:`TransE` models relations as a translation from head to tail
-    entities such that:
+    entities such that
 
     .. math::
-        \mathbf{e}_h + \mathbf{e}_r \approx \mathbf{e}_t
+        \mathbf{e}_h + \mathbf{e}_r \approx \mathbf{e}_t,
 
-    As such, the scoring function is given as:
+    resulting in the scoring function:
 
     .. math::
         d(h, r, t) = - {\| \mathbf{e}_h + \mathbf{e}_r - \mathbf{e}_t \|}_p
