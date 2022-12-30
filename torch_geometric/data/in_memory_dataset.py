@@ -130,11 +130,10 @@ class InMemoryDataset(Dataset):
 
     @property
     def data(self) -> Any:
-        print('1')
         warnings.warn("It is not recommended to directly access the internal "
                       "storage format `data` of an 'InMemoryDataset'. If you "
-                      "want to access individual attributes across every "
-                      "graph, access them via `dataset.{attr_name}` instead.")
+                      "are absolutely certain what you are doing, you can "
+                      "access it via `InMemoryDataset._data`.")
         return self._data
 
     @data.setter
