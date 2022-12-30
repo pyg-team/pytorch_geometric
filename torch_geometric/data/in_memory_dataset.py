@@ -132,8 +132,8 @@ class InMemoryDataset(Dataset):
     def data(self) -> Any:
         warnings.warn("It is not recommended to directly access the internal "
                       "storage format `data` of an 'InMemoryDataset'. If you "
-                      "are absolutely certain what you are doing, you can "
-                      "access it via `InMemoryDataset._data`.")
+                      "are absolutely certain what you are doing, access the "
+                      "internal storage via `InMemoryDataset._data` instead.")
         return self._data
 
     @data.setter
