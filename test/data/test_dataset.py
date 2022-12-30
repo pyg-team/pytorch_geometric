@@ -46,6 +46,13 @@ def test_in_memory_dataset():
     with pytest.warns(UserWarning, match="internal storage format"):
         dataset.data
 
+    assert torch.equal(dataset.x, torch.cat([x1, x2], dim=0))
+    assert dataset.edge_index.tolist() == [
+        [0, 1, 1, 2, 10, 11, 11, 12],
+        [1, 0, 2, 1, 11, 10, 12, 11],
+    ]
+    assert torch.equal(dataset[1:].x, x2)
+
 
 def test_in_memory_sparse_tensor_dataset():
     x = torch.randn(11, 16)
