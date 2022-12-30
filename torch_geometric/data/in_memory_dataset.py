@@ -5,7 +5,7 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 from torch import Tensor
 
-from torch_geometric.data import Data
+from torch_geometric.data import Batch, Data
 from torch_geometric.data.collate import collate
 from torch_geometric.data.dataset import Dataset, IndexType
 from torch_geometric.data.separate import separate
@@ -133,12 +133,26 @@ class InMemoryDataset(Dataset):
         warnings.warn("It is not recommended to directly access the internal "
                       "storage format `data` of an 'InMemoryDataset'. If you "
                       "are absolutely certain what you are doing, access the "
-                      "internal storage via `InMemoryDataset._data` instead.")
+                      "internal storage via `InMemoryDataset._data` instead. "
+                      "Alternatively, you can access stacked individual "
+                      "attributes of every graph via `dataset.{attr_name}`.")
         return self._data
 
     @data.setter
     def data(self, value: Any):
         self._data = value
+
+    def __getattr__(self, key: str) -> Any:
+        data = self.__dict__.get('_data')
+        if isinstance(data, Data) and key in data:
+            if self._indices is None and data.__inc__(key, data[key]) == 0:
+                return data[key]
+            else:
+                data_list = [self.get(i) for i in self.indices()]
+                return Batch.from_data_list(data_list)[key]
+
+        raise AttributeError(f"'{self.__class__.__name__}' object has no "
+                             f"attribute '{key}'")
 
 
 def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
