@@ -134,8 +134,8 @@ class InMemoryDataset(Dataset):
                       "storage format `data` of an 'InMemoryDataset'. If you "
                       "are absolutely certain what you are doing, access the "
                       "internal storage via `InMemoryDataset._data` instead. "
-                      "Alternatively, you can access grouped individual of "
-                      "every graph via `dataset.{attr_name}`.")
+                      "Alternatively, you can access stacked individual "
+                      "attributes of every graph via `dataset.{attr_name}`.")
         return self._data
 
     @data.setter
