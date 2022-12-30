@@ -67,18 +67,9 @@ class KGEModel(torch.nn.Module):
             h, r, t = head_index[i], rel_type[i], tail_index[i]
 
             scores = []
-            head_indices = torch.arange(self.num_nodes, device=h.device)
-            for hs in head_indices.split(batch_size):
-                scores.append(self(hs, r, t))
-            rank = int((torch.cat(scores).argsort(
-                descending=True) == h).nonzero().view(-1))
-            mean_ranks.append(rank)
-            hits_at_k.append(rank < k)
-
-            scores = []
             tail_indices = torch.arange(self.num_nodes, device=t.device)
             for ts in tail_indices.split(batch_size):
-                scores.append(self(h, r, ts))
+                scores.append(self(h.expand_as(ts), r.expand_as(ts), ts))
             rank = int((torch.cat(scores).argsort(
                 descending=True) == t).nonzero().view(-1))
             mean_ranks.append(rank)

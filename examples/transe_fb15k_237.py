@@ -56,11 +56,11 @@ def test(data):
 
 for epoch in range(1, 501):
     loss = train()
-    print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}')
-    if epoch % 100 == 0:
+    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}')
+    if epoch % 25 == 0:
         rank, hits = test(val_data)
         print(f'Epoch: {epoch:03d}, Val Mean Rank: {rank:.2f}, '
               f'Val Hits@10: {hits:.4f}')
 
-rank, hits = test(test_data)
-print(f'Test Mean Rank: {rank:.2f}, Test Hits@10: {hits:.4f}')
+rank, hits_at_10 = test(test_data)
+print(f'Test Mean Rank: {rank:.2f}, Test Hits@10: {hits_at_10:.4f}')

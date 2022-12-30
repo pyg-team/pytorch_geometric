@@ -1,5 +1,5 @@
 from .base import KGEModel
-from .trans_e import TransE
+from .transe import TransE
 
 __all__ = classes = [
     'KGEModel',
