@@ -61,9 +61,14 @@ feat_mask_types = ['individual_feature', 'scalar', 'feature']
 @pytest.mark.parametrize('model', [GCN(), GAT()])
 def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask,
                                     feat_mask_type):
-    explainer = GNNExplainer(model, log=False, return_type=return_type,
-                             allow_edge_mask=allow_edge_mask,
-                             feat_mask_type=feat_mask_type)
+    with pytest.warns(UserWarning, match="is deprecated"):
+        explainer = GNNExplainer(
+            model,
+            log=False,
+            return_type=return_type,
+            allow_edge_mask=allow_edge_mask,
+            feat_mask_type=feat_mask_type,
+        )
 
     x = torch.randn(8, 3)
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
@@ -106,9 +111,14 @@ def test_gnn_explainer_explain_node(model, return_type, allow_edge_mask,
 @pytest.mark.parametrize('model', [GNN()])
 def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
                                      feat_mask_type):
-    explainer = GNNExplainer(model, log=False, return_type=return_type,
-                             allow_edge_mask=allow_edge_mask,
-                             feat_mask_type=feat_mask_type)
+    with pytest.warns(UserWarning, match="is deprecated"):
+        explainer = GNNExplainer(
+            model,
+            log=False,
+            return_type=return_type,
+            allow_edge_mask=allow_edge_mask,
+            feat_mask_type=feat_mask_type,
+        )
 
     x = torch.randn(8, 3)
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7],
@@ -147,7 +157,8 @@ def test_gnn_explainer_explain_graph(model, return_type, allow_edge_mask,
 @pytest.mark.parametrize('return_type', return_types)
 @pytest.mark.parametrize('model', [GAT()])
 def test_gnn_explainer_with_existing_self_loops(model, return_type):
-    explainer = GNNExplainer(model, log=False, return_type=return_type)
+    with pytest.warns(UserWarning, match="is deprecated"):
+        explainer = GNNExplainer(model, log=False, return_type=return_type)
 
     x = torch.randn(8, 3)
     edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],

@@ -1,6 +1,7 @@
 import copy
+import warnings
 from collections.abc import Mapping, Sequence
-from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 from torch import Tensor
 
@@ -53,14 +54,14 @@ class InMemoryDataset(Dataset):
         log: bool = True,
     ):
         super().__init__(root, transform, pre_transform, pre_filter, log)
-        self.data = None
+        self._data = None
         self.slices = None
         self._data_list: Optional[List[Data]] = None
 
     @property
     def num_classes(self) -> int:
         if self.transform is None:
-            return self._infer_num_classes(self.data.y)
+            return self._infer_num_classes(self._data.y)
         return super().num_classes
 
     def len(self) -> int:
@@ -72,7 +73,7 @@ class InMemoryDataset(Dataset):
 
     def get(self, idx: int) -> Data:
         if self.len() == 1:
-            return copy.copy(self.data)
+            return copy.copy(self._data)
 
         if not hasattr(self, '_data_list') or self._data_list is None:
             self._data_list = self.len() * [None]
@@ -80,8 +81,8 @@ class InMemoryDataset(Dataset):
             return copy.copy(self._data_list[idx])
 
         data = separate(
-            cls=self.data.__class__,
-            batch=self.data,
+            cls=self._data.__class__,
+            batch=self._data,
             idx=idx,
             slice_dict=self.slices,
             decrement=False,
@@ -126,6 +127,18 @@ class InMemoryDataset(Dataset):
         dataset._data_list = None
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
+
+    @property
+    def data(self) -> Any:
+        warnings.warn("It is not recommended to directly access the internal "
+                      "storage format `data` of an 'InMemoryDataset'. If you "
+                      "are absolutely certain what you are doing, access the "
+                      "internal storage via `InMemoryDataset._data` instead.")
+        return self._data
+
+    @data.setter
+    def data(self, value: Any):
+        self._data = value
 
 
 def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
