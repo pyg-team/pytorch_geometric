@@ -33,6 +33,8 @@ class KGEModel(torch.nn.Module):
 
     def loader(self, head_index: Tensor, rel_type: Tensor, tail_index: Tensor,
                **kwargs) -> Tensor:
+        r"""Returns a mini-batch loader to sample triplets from
+        :obj:`(head_index, rel_type, tail_index)`."""
         return KGTripletLoader(head_index, rel_type, tail_index, **kwargs)
 
     def forward(self, head_index: Tensor, rel_type: Tensor,
@@ -44,6 +46,7 @@ class KGEModel(torch.nn.Module):
              tail_index: Tensor) -> Tensor:
         raise NotImplementedError
 
+    @torch.no_grad()
     def random_sample(self, head_index: Tensor, rel_type: Tensor,
                       tail_index: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
         # Random sample either `head_index` or `tail_index` (but not both):
@@ -61,7 +64,16 @@ class KGEModel(torch.nn.Module):
     @torch.no_grad()
     def test(self, head_index: Tensor, rel_type: Tensor, tail_index: Tensor,
              batch_size: int, k: int = 10) -> Tuple[float, float]:
+        r"""Evaluates the model quality by computing mean rank and hits@`k`
+        across all possible tail entities.
 
+        Args:
+            head_index (torch.Tensor): The head indices.
+            rel_type (torch.Tensor): The relation type.
+            tail_index (torch.Tensor): The tail indices.
+            batch_size (int): The batch size to use for evaluating.
+            k (int, optional): The `k` in hits@`k`. (default: :obj:`10`)
+        """
         mean_ranks, hits_at_k = [], []
         for i in tqdm(range(head_index.numel())):
             h, r, t = head_index[i], rel_type[i], tail_index[i]

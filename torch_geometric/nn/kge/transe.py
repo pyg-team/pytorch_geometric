@@ -8,7 +8,39 @@ from torch_geometric.nn.kge import KGEModel
 
 
 class TransE(KGEModel):
-    r"""TODO"""
+    r"""The TransE KGE model from the `"Translating Embeddings for Modeling
+    Multi-Relational Dat" <https://proceedings.neurips.cc/paper/2013/file/
+    1cecc7a77928ca8133fa24680a88d2f9-Paper.pdf>`_ paper.
+
+    :class:`TransE` models relations as a translation from head to tail
+    entities such that:
+
+    .. math::
+        \mathbf{e}_h + \mathbf{e}_r \approx \mathbf{e}_t
+
+    As such, the scoring function is given as:
+
+    .. math::
+        d(h, r, t) = - {\| \mathbf{e}_h + \mathbf{e}_r - \mathbf{e}_t \|}_p
+
+    .. note::
+
+        For an example of using the :class:`TransE` model, see
+        `examples/transe_fb15k_237.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        transe_fb15k_237.py>`_.
+
+    Args:
+        num_nodes (int): The number of nodes/entities in the graph.
+        num_relations (int): The number of relations in the graph.
+        hidden_channels (int): The hidden embedding size.
+        margin (int, optional): The margin of the ranking loss.
+            (default: :obj:`1.0`)
+        p_norm (int, optional): The order embedding and distance normalization.
+            (default: :obj:`1.0`)
+        sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
+            embedding matrices will be sparse. (default: :obj:`False`)
+    """
     def __init__(
         self,
         num_nodes: int,
@@ -19,8 +51,8 @@ class TransE(KGEModel):
         sparse: bool = False,
     ):
         self.p_norm = p_norm
+        self.margin = margin
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
-        self.criterion = torch.nn.MarginRankingLoss(margin)
 
     def reset_parameters(self):
         bound = 6. / math.sqrt(self.hidden_channels)
@@ -31,6 +63,7 @@ class TransE(KGEModel):
 
     def forward(self, head_index: Tensor, rel_type: Tensor,
                 tail_index: Tensor) -> Tensor:
+        """"""
         head = self.node_emb(head_index)
         rel = self.rel_emb(rel_type)
         tail = self.node_emb(tail_index)
@@ -46,4 +79,9 @@ class TransE(KGEModel):
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
 
-        return self.criterion(pos_score, neg_score, torch.ones_like(pos_score))
+        return F.margin_ranking_loss(
+            pos_score,
+            neg_score,
+            target=torch.ones_like(pos_score),
+            margin=self.margin,
+        )
