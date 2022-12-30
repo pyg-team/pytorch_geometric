@@ -249,7 +249,7 @@ class MD17(InMemoryDataset):
         self.data, self.slices = torch.load(self.processed_paths[idx])
 
     def mean(self) -> float:
-        return float(self.data.energy.mean())
+        return float(self._data.energy.mean())
 
     @property
     def raw_dir(self) -> str:
