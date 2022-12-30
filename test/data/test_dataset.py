@@ -1,3 +1,4 @@
+import pytest
 import torch
 from torch_sparse import SparseTensor
 
@@ -42,7 +43,8 @@ def test_in_memory_dataset():
     assert dataset[1].test_int == 2
     assert dataset[1].test_str == '2'
 
-    # print(dataset.data)
+    with pytest.warns(UserWarning, match="internal storage format"):
+        dataset.data
 
 
 def test_in_memory_sparse_tensor_dataset():
