@@ -31,42 +31,56 @@ class KGEModel(torch.nn.Module):
         self.node_emb.reset_parameters()
         self.rel_emb.reset_parameters()
 
-    def loader(self, head: Tensor, rel: Tensor, tail: Tensor,
+    def loader(self, head_index: Tensor, rel_type: Tensor, tail_index: Tensor,
                **kwargs) -> Tensor:
-        return KGTripletLoader(head, rel, tail, **kwargs)
+        return KGTripletLoader(head_index, rel_type, tail_index, **kwargs)
 
-    def forward(self, head: Tensor, rel: Tensor, tail: Tensor) -> Tensor:
+    def forward(self, head_index: Tensor, rel_type: Tensor,
+                tail_index: Tensor) -> Tensor:
         """"""
         raise NotImplementedError
 
-    def loss(self, head: Tensor, rel: Tensor, pos_tail: Tensor,
-             neg_tail: Tensor) -> Tensor:
+    def loss(self, head_index: Tensor, rel_type: Tensor,
+             tail_index: Tensor) -> Tensor:
         raise NotImplementedError
 
-    @torch.no_grad()
-    def test(self, head: Tensor, rel: Tensor, tail: Tensor, batch_size: int,
-             filtered: bool = False, k: int = 10) -> Tuple[float, float]:
+    def random_sample(self, head_index: Tensor, rel_type: Tensor,
+                      tail_index: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
+        # Random sample either `head_index` or `tail_index` (but not both):
+        num_negatives = head_index.numel() // 2
+        rnd_index = torch.randint(self.num_nodes, head_index.size(),
+                                  device=head_index.device)
 
-        if filtered:
-            raise NotImplementedError("'Filtered' inference not yet supported")
+        head_index = head_index.clone()
+        head_index[:num_negatives] = rnd_index[:num_negatives]
+        tail_index = tail_index.clone()
+        tail_index[num_negatives:] = rnd_index[num_negatives:]
+
+        return head_index, rel_type, tail_index
+
+    @torch.no_grad()
+    def test(self, head_index: Tensor, rel_type: Tensor, tail_index: Tensor,
+             batch_size: int, k: int = 10) -> Tuple[float, float]:
 
         mean_ranks, hits_at_k = [], []
-        for i in tqdm(range(head.numel())):
-            h, r, t = head[i], rel[i], tail[i]
+        for i in tqdm(range(head_index.numel())):
+            h, r, t = head_index[i], rel_type[i], tail_index[i]
 
             scores = []
-            heads = torch.arange(self.num_nodes, device=head.device)
-            for hs in heads.split(batch_size):
+            head_indices = torch.arange(self.num_nodes, device=h.device)
+            for hs in head_indices.split(batch_size):
                 scores.append(self(hs, r, t))
-            rank = int((torch.cat(scores).argsort() == h).nonzero().view(-1))
+            rank = int((torch.cat(scores).argsort(
+                descending=True) == h).nonzero().view(-1))
             mean_ranks.append(rank)
             hits_at_k.append(rank < k)
 
             scores = []
-            tails = torch.arange(self.num_nodes, device=tail.device)
-            for ts in tails.split(batch_size):
+            tail_indices = torch.arange(self.num_nodes, device=t.device)
+            for ts in tail_indices.split(batch_size):
                 scores.append(self(h, r, ts))
-            rank = int((torch.cat(scores).argsort() == t).nonzero().view(-1))
+            rank = int((torch.cat(scores).argsort(
+                descending=True) == t).nonzero().view(-1))
             mean_ranks.append(rank)
             hits_at_k.append(rank < k)
 

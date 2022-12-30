@@ -13,15 +13,15 @@ val_data = FB15k_237(path, split='val')[0].to(device)
 test_data = FB15k_237(path, split='test')[0].to(device)
 
 model = TransE(
-    train_data.num_nodes,
-    train_data.num_edge_types,
+    num_nodes=train_data.num_nodes,
+    num_relations=train_data.num_edge_types,
     hidden_channels=50,
 ).to(device)
 
 loader = model.loader(
-    head=train_data.edge_index[0],
-    rel=train_data.edge_type,
-    tail=train_data.edge_index[1],
+    head_index=train_data.edge_index[0],
+    rel_type=train_data.edge_type,
+    tail_index=train_data.edge_index[1],
     batch_size=10000,
     shuffle=True,
 )
@@ -32,13 +32,13 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 def train():
     model.train()
     total_loss = total_examples = 0
-    for head, rel, tail in loader:
+    for head_index, rel_type, tail_index in loader:
         optimizer.zero_grad()
-        loss = model.loss(head, rel, tail)
+        loss = model.loss(head_index, rel_type, tail_index)
         loss.backward()
         optimizer.step()
-        total_loss += float(loss) * head.numel()
-        total_examples += head.numel()
+        total_loss += float(loss) * head_index.numel()
+        total_examples += head_index.numel()
     return total_loss / total_examples
 
 
@@ -46,9 +46,9 @@ def train():
 def test(data):
     model.eval()
     return model.test(
-        head=data.edge_index[0],
-        rel=data.edge_type,
-        tail=data.edge_index[1],
+        head_index=data.edge_index[0],
+        rel_type=data.edge_type,
+        tail_index=data.edge_index[1],
         batch_size=20000,
         k=10,
     )
