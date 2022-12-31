@@ -28,6 +28,7 @@ from .grid import grid
 from .geodesic import geodesic_distance
 from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
+from .convert import to_networkit, from_networkit
 from .convert import to_trimesh, from_trimesh
 from .convert import to_cugraph
 from .smiles import from_smiles, to_smiles
@@ -90,6 +91,8 @@ __all__ = [
     'from_scipy_sparse_matrix',
     'to_networkx',
     'from_networkx',
+    'to_networkit',
+    'from_networkit',
     'to_trimesh',
     'from_trimesh',
     'to_cugraph',
