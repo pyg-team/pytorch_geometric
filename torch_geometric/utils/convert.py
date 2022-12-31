@@ -299,7 +299,6 @@ def to_networkit(
         num_nodes (int, optional): The number of nodes in the graph.
         directed (bool, optional): If set to :obj:`False`, the graph will be
             undirected. (default: :obj:`True`)
-
     """
     import networkit as nk
 
