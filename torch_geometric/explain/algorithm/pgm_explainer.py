@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -107,6 +107,7 @@ class PGMExplainer(ExplainerAlgorithm):
             self,
             model: torch.nn.Module,
             x: torch.Tensor,
+            edge_index: torch.Tensor,
             num_samples: int,
             indices_to_perturb: List,
             percentage: float = 50.,  # % time node gets perturbed
@@ -117,6 +118,7 @@ class PGMExplainer(ExplainerAlgorithm):
         Args:
             model (torch.nn.Module): graph neural net model
             x (torch.Tensor): node feature matrix
+            edge_index (torch.Tensor): edge_index of the input graph
             num_samples: num of samples to generate for constructing the pgm
             indices_to_perturb (List): the index numbers of
                 the nodes to be pertubed
@@ -125,7 +127,7 @@ class PGMExplainer(ExplainerAlgorithm):
         Returns:
             samples (torch.Tensor): the
         """
-        pred_torch = model(x, **kwargs)
+        pred_torch = model(x, edge_index, **kwargs)
         soft_pred = torch.softmax(pred_torch, dim=1)
         pred_label = torch.argmax(soft_pred, dim=1)
         num_nodes = x.shape[0]
@@ -147,7 +149,7 @@ class PGMExplainer(ExplainerAlgorithm):
                     latent = 0
                 sample.append(latent)
 
-            pred_perturb_torch = model(X_perturb, **kwargs)
+            pred_perturb_torch = model(X_perturb, edge_index, **kwargs)
             soft_pred_perturb = torch.softmax(pred_perturb_torch,
                                               dim=1).squeeze()
 
@@ -174,17 +176,19 @@ class PGMExplainer(ExplainerAlgorithm):
         self,
         model: torch.nn.Module,
         x: torch.Tensor,
+        edge_index: torch.Tensor,
         target=None,
         num_samples: int = 100,
         max_subgraph_size: int = None,
         significance_threshold: float = 0.05,
         **kwargs,
-    ) -> Tuple[List, Dict]:
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         r"""
         generate explanations for graph classification tasks
         Args:
             model: pytorch model
             x (torch.Tensor): node features
+            edge_index (torch.Tensor): edge_index of the input graph
             target(torch.Tensor):
             num_samples (int): number of samples to use to
                 generate perturbations
@@ -196,11 +200,9 @@ class PGMExplainer(ExplainerAlgorithm):
         Returns:
             pgm_nodes (List): neighbour nodes that are significant
                  in the selected node's prediction
-            pgm_stats (Dict): node index and their p-values in the
-                model prediction (for the neightbouring nodes that are
-                selected to test for significance
+            pgm_stats (torch.Tensor): : p-values of all the nodes in the graph
+                ordered by node index
         """
-        model.eval()
         num_nodes = x.shape[0]
         if not max_subgraph_size:
             max_subgraph_size = int(num_nodes / 20)
@@ -208,7 +210,7 @@ class PGMExplainer(ExplainerAlgorithm):
         samples = self.batch_perturb_features_on_node(
             num_samples=int(num_samples / 2),
             indices_to_perturb=list(range(num_nodes)), x=x, model=model,
-            **kwargs)
+            edge_index=edge_index, **kwargs)
 
         # note: the PC estimator is in the original code, ie. est= PC(data)
         # but as it does nothing it is not included here
@@ -253,13 +255,12 @@ class PGMExplainer(ExplainerAlgorithm):
         top_p = np.min((max_subgraph_size, num_nodes - 1))
         ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
         pgm_nodes = list(ind_top_p)
-        pgm_stats = {
-            k: v
-            for k, v in dict(zip(range(num_nodes), p_values)).items()
-            if k in candidate_nodes
-        }
 
-        return pgm_nodes, pgm_stats
+        node_mask = torch.zeros(x.size(0), dtype=torch.int)
+        node_mask[pgm_nodes] = 1
+        pgm_stats = torch.tensor(p_values)
+
+        return node_mask, pgm_stats
 
     def explain_node(
         self,
@@ -273,13 +274,14 @@ class PGMExplainer(ExplainerAlgorithm):
         max_subgraph_size: int = None,
         significance_threshold=0.05,
         pred_threshold=0.1,
-    ) -> Tuple[List, Dict]:
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         r"""
         Generate explanations for node classification tasks
         Args:
             model (torch.nn.Module): model that generated the predictions
             x (torch.Tensor): node feature matrix
-            node_index:
+            node_index (torch.Tensor): the index of the node that the
+                explanations are being generated for
             edge_index (torch.Tensor): edge_index of the input graph
             edge_weight (torch.Tensor): apply weighting to edges (Optional)
             target (torch.Tensor):  the prediction labels
@@ -291,10 +293,10 @@ class PGMExplainer(ExplainerAlgorithm):
             pred_threshold:
 
         Returns:
-            pgm_nodes (List): neighbour nodes that are significant
-                 in the selected node's prediction
-            pgm_stats (Dict): node index and their p-values in the
-                model prediction
+            node_mask (torch.Tensor): 1 or 0 corresponding to whether a node
+                is significant in the selected node's prediction
+            pgm_stats (torch.Tensor): p-values of all the nodes in the
+                graph ordered by node index
         """
         logging.info(f'Explaining node: {node_index}')
 
@@ -302,7 +304,7 @@ class PGMExplainer(ExplainerAlgorithm):
             node_idx=node_index,
             num_hops=get_num_hops(model),
             edge_index=edge_index,
-            relabel_nodes=True,
+            relabel_nodes=False,
             num_nodes=x.size(0),
         )
 
@@ -378,7 +380,11 @@ class PGMExplainer(ExplainerAlgorithm):
             if p < significance_threshold:
                 dependent_neighbors.append(node)
                 dependent_neighbors_p_values.append(p)
-        pgm_stats = dict(zip(neighbors, p_values))
+
+        pgm_stats = torch.ones(x.size(0), dtype=torch.float)
+        node_mask = torch.zeros(x.size(0), dtype=torch.int)
+
+        pgm_stats[neighbors] = torch.tensor(p_values)
 
         if max_subgraph_size is None:
             pgm_nodes = dependent_neighbors
@@ -388,8 +394,8 @@ class PGMExplainer(ExplainerAlgorithm):
             pgm_nodes = [
                 index_subgraph_to_original[node] for node in ind_top_p
             ]
-
-        return pgm_nodes, pgm_stats
+        node_mask[pgm_nodes] = 1
+        return node_mask, pgm_stats
 
     def forward(
         self,
@@ -397,7 +403,6 @@ class PGMExplainer(ExplainerAlgorithm):
         x: Tensor,
         edge_index: Tensor,
         target: Tensor,
-        target_index: Optional[Union[int, Tensor]] = None,
         index: Optional[int] = None,  # node index
         **kwargs,
     ) -> Explanation:
@@ -408,7 +413,6 @@ class PGMExplainer(ExplainerAlgorithm):
             x (torch.Tensor): the node feature matrix tensor
             edge_index:
             target (torch.Tensor): the prediction labels
-            target_index:
             index (int): index of the node generating explanations for
             **kwargs:
 
@@ -422,18 +426,9 @@ class PGMExplainer(ExplainerAlgorithm):
                     f"`index` for now")
             index = index.item()
 
-        if isinstance(target_index, Tensor):
-            if target_index.numel() > 1:
-                raise NotImplementedError(
-                    f"'{self.__class__.__name__}' only supports a single "
-                    f"`target_index` for now")
-            target_index = target_index.item()
-
         assert self.model_config.task_level in [
             ModelTaskLevel.graph, ModelTaskLevel.node
         ]
-
-        model.eval()
 
         edge_weight = kwargs.pop('edge_weight', None)
         num_samples = kwargs.pop('num_samples', 100)
@@ -442,7 +437,7 @@ class PGMExplainer(ExplainerAlgorithm):
         pred_threshold = kwargs.pop('pred_threshold', 0.1)
         if self.model_config.task_level == ModelTaskLevel.node:
 
-            neighbors, pgm_stats = self.explain_node(
+            node_mask, pgm_stats = self.explain_node(
                 model=model, x=x, node_index=index, edge_index=edge_index,
                 edge_weight=edge_weight, target=target[index],
                 num_samples=num_samples, max_subgraph_size=max_subgraph_size,
@@ -451,17 +446,17 @@ class PGMExplainer(ExplainerAlgorithm):
             return Explanation(
                 x=x,
                 edge_index=edge_index,
-                node_mask=neighbors,
+                node_mask=node_mask,
                 pgm_stats=pgm_stats,
             )
         elif self.model_config.task_level == ModelTaskLevel.graph:
-            neighbors, pgm_stats = self.explain_graph(
+            node_mask, pgm_stats = self.explain_graph(
                 model=model, x=x, index=index, target=target,
                 num_samples=num_samples, max_subgraph_size=max_subgraph_size,
                 significance_threshold=significance_threshold,
                 pred_threshold=pred_threshold, **kwargs)
             return Explanation(
-                node_mask=neighbors,
+                node_mask=node_mask,
                 pgm_stats=pgm_stats,
             )
 
@@ -470,4 +465,6 @@ class PGMExplainer(ExplainerAlgorithm):
         if task_level not in [ModelTaskLevel.node, ModelTaskLevel.graph]:
             logging.error(f"Task level '{task_level.value}' not supported")
             return False
+        if self.explainer_config.edge_mask_type is not None:
+            logging.error("Edge masks not supported by PGM explainer")
         return True
