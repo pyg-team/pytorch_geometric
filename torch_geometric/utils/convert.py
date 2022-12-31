@@ -297,6 +297,7 @@ def to_networkit(
         edge_weight (torch.Tensor, optional): The edge weights of the graph.
             (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes in the graph.
+            (default: :obj:`None`)
         directed (bool, optional): If set to :obj:`False`, the graph will be
             undirected. (default: :obj:`True`)
     """
@@ -331,7 +332,7 @@ def from_networkit(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     :obj:`edge_weight` will be :obj:`None`.
 
     Args:
-        g (networkkit.graph.Graph): A networkit graph.
+        g (networkkit.graph.Graph): A :obj:`networkit` graph object.
     """
     is_directed = g.isDirected()
     is_weighted = g.isWeighted()
