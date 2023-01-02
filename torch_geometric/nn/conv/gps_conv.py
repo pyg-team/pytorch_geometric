@@ -120,7 +120,7 @@ class GPSConv(torch.nn.Module):
         batch: Optional[torch.Tensor] = None,
         **kwargs,
     ) -> Tensor:
-
+        """"""
         hs = []
         if self.conv is not None:  # Local MPNN.
             h = self.conv(x, edge_index, **kwargs)
