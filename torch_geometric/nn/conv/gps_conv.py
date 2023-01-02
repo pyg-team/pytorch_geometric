@@ -26,7 +26,7 @@ class GPSConv(torch.nn.Module):
 
     1. Inclusion of positional (PE) and structural encodings (SE) to the input
        features (done in a pre-processing step via
-       :class:`torch_geometric.transforms`)
+       :class:`torch_geometric.transforms`).
     2. A local message passing layer (MPNN) that operates on the input graph.
     3. A global attention layer that operates on the entire graph.
 
