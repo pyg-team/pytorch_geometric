@@ -66,7 +66,7 @@ class DiffGroupNorm(torch.nn.Module):
         self.lin.reset_parameters()
         self.norm.reset_parameters()
 
-    def forward(self, x: Tensor, **kwargs) -> Tensor:
+    def forward(self, x: Tensor) -> Tensor:
         """"""
         F, G = self.in_channels, self.groups
 

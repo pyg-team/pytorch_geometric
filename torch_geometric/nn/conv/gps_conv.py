@@ -1,3 +1,4 @@
+import inspect
 from typing import Any, Dict, Optional
 
 import torch
@@ -95,6 +96,11 @@ class GPSConv(torch.nn.Module):
         self.norm2 = normalization_resolver(norm, channels, **norm_kwargs)
         self.norm3 = normalization_resolver(norm, channels, **norm_kwargs)
 
+        self.norm_with_batch = False
+        if norm is not None:
+            signature = inspect.signature(self.norm1.forward)
+            self.norm_with_batch = 'batch' in signature.parameters
+
     def reset_parameters(self):
         if self.conv is not None:
             self.conv.reset_parameters()
@@ -121,7 +127,10 @@ class GPSConv(torch.nn.Module):
             h = F.dropout(h, p=self.dropout, training=self.training)
             h = h + x
             if self.norm1 is not None:
-                h = self.norm1(h, batch=batch)
+                if self.norm_with_batch:
+                    h = self.norm1(h, batch=batch)
+                else:
+                    h = self.norm1(h)
             hs.append(h)
 
         # Global attention transformer-style model.
@@ -131,14 +140,20 @@ class GPSConv(torch.nn.Module):
         h = F.dropout(h, p=self.dropout, training=self.training)
         h = h + x  # Residual connection.
         if self.norm2 is not None:
-            h = self.norm2(h, batch=batch)
+            if self.norm_with_batch:
+                h = self.norm2(h, batch=batch)
+            else:
+                h = self.norm2(h)
         hs.append(h)
 
         out = sum(hs)  # Combine local and global outputs.
 
         out = out + self.mlp(out)
         if self.norm3 is not None:
-            h = self.norm3(h, batch=batch)
+            if self.norm_with_batch:
+                h = self.norm3(h, batch=batch)
+            else:
+                h = self.norm3(h)
 
         return out
 
