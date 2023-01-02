@@ -1,11 +1,14 @@
 import logging
 from typing import List, Optional, Tuple
 
+try:
+    from pgmpy.estimators.CITests import chi_square
+except ImportError:
+    print('please install pgmpy hub to use this explainer')
+
 import numpy as np
 import pandas as pd
 import torch
-from pgmpy.estimators.CITests import chi_square
-from torch import Tensor
 
 from torch_geometric.explain.config import ModelTaskLevel
 from torch_geometric.explain.explanation import Explanation
@@ -249,11 +252,11 @@ class PGMExplainer(ExplainerAlgorithm):
     def explain_node(
         self,
         model: torch.nn.Module,
-        x: Tensor,
+        x: torch.Tensor,
         node_index: int,
-        edge_index: Tensor,
-        edge_weight: Tensor,
-        target: Tensor,
+        edge_index: torch.Tensor,
+        edge_weight: torch.Tensor,
+        target: torch.Tensor,
         num_samples: int = 100,
         max_subgraph_size: int = None,
         significance_threshold=0.05,
@@ -374,9 +377,9 @@ class PGMExplainer(ExplainerAlgorithm):
     def forward(
         self,
         model: torch.nn.Module,
-        x: Tensor,
-        edge_index: Tensor,
-        target: Tensor,
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
+        target: torch.Tensor,
         index: Optional[int] = None,  # node index
         **kwargs,
     ) -> Explanation:
@@ -393,7 +396,7 @@ class PGMExplainer(ExplainerAlgorithm):
         Returns:
             Explanation
         """
-        if isinstance(index, Tensor):
+        if isinstance(index, torch.Tensor):
             if index.numel() > 1:
                 raise NotImplementedError(
                     f"'{self.__class__.__name}' only supports a single "
