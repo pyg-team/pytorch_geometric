@@ -1,8 +1,7 @@
-# flake8: noqa # TODO remove once tests fixed
 import pytest
 import torch
 
-from torch_geometric.explain import Explainer  # , Explanation
+from torch_geometric.explain import Explainer
 from torch_geometric.explain.algorithm import PGMExplainer
 from torch_geometric.explain.config import ModelConfig
 from torch_geometric.nn import GCNConv, global_add_pool
@@ -21,7 +20,7 @@ class GCN(torch.nn.Module):
         self.conv1 = GCNConv(3, 16)
         self.conv2 = GCNConv(16, out_channels)
 
-    def forward(self, x, edge_index, edge_weight, batch=None):
+    def forward(self, x, edge_index, edge_weight=None, batch=None, **kwargs):
         x = self.conv1(x, edge_index, edge_weight).relu()
         x = self.conv2(x, edge_index, edge_weight).relu()
 
@@ -41,38 +40,46 @@ edge_index = torch.tensor([
     [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
     [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6],
 ])
-batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
+target = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 
 
-@pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-def test_pgm_explainer_node_classification(
-    edge_mask_type,
-    node_mask_type,
-    explanation_type,
-    task_level,
-    return_type,
-    index,
-    multi_output,
-):
+@pytest.mark.parametrize('node_idx', [2, 6])
+@pytest.mark.parametrize('task_level, perturbation_mode', [
+    ('node', 'randint'),
+    ('graph', 'mean'),
+    ('graph', 'max'),
+    ('graph', 'min'),
+    ('graph', 'zero'),
+])
+def test_pgm_explainer_classification(node_idx, task_level, perturbation_mode):
     model_config = ModelConfig(
-        mode='binary_classification',
+        mode='multiclass_classification',
         task_level=task_level,
-        return_type=return_type,
+        return_type='raw',
     )
 
     model = GCN(model_config)
+    logits = model(x, edge_index)
+    target = logits.argmax(dim=1)
 
-    # todo
+    explainer = Explainer(
+        model=model,
+        algorithm=PGMExplainer(perturb_feature_list=[0],
+                               perturbation_mode=perturbation_mode),
+        explanation_type='phenomenon',
+        node_mask_type='object',
+        model_config=model_config,
+    )
 
+    explanation = explainer(
+        x=x,
+        edge_index=edge_index,
+        index=node_idx,
+        target=target,
+    )
 
-def test_pgm_explainer_graph_classification(
-    edge_mask_type,
-    node_mask_type,
-    explanation_type,
-    task_level,
-    return_type,
-    index,
-    multi_output,
-):
-    pass
+    assert 'node_mask' in explanation
+    assert explanation.node_mask.size(0) == explanation.num_nodes
+    assert explanation.node_mask.min() >= 0
+    assert explanation.node_mask.max() <= 1

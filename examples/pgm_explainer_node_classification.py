@@ -50,13 +50,17 @@ if __name__ == "__main__":
         loss.backward()
         optimizer.step()
 
+    model.eval()
+    log_logits = model(x, edge_index, edge_weight)
+    predicted_target = log_logits.argmax(dim=1)
+
     explainer = Explainer(
-        model=model, algorithm=PGMExplainer(), node_mask_type="attributes",
+        model=model, algorithm=PGMExplainer(), node_mask_type='attributes',
         explanation_type='phenomenon',
-        model_config=ModelConfig(mode="multiclass_classification",
-                                 task_level="node", return_type="raw"))
+        model_config=ModelConfig(mode='multiclass_classification',
+                                 task_level='node', return_type='raw'))
     node_idx = 100
     explanation = explainer(x=data.x, edge_index=edge_index, index=node_idx,
-                            target=target, edge_weight=edge_weight)
-    print("significance of relevant neighbours using pgm explainer :",
+                            target=predicted_target, edge_weight=edge_weight)
+    print('significance of relevant neighbours using pgm explainer :',
           explanation.pgm_stats)
