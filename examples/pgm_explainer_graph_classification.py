@@ -51,13 +51,15 @@ class Net(nn.Module):
         self.fc1 = torch.nn.Linear(64, 128)
         self.fc2 = torch.nn.Linear(128, d.num_classes)
 
-    def forward(self, x, data, **kwargs):
+    def forward(self, x, edge_index, **kwargs):
+        data = kwargs.get('data')
         data = data.detach().clone()
-        x = F.elu(self.conv1(x, data.edge_index, data.edge_attr))
-        weight = normalized_cut_2d(data.edge_index, data.pos)
-        cluster = graclus(data.edge_index, weight, x.size(0))
+        x = F.elu(self.conv1(x, edge_index, data.edge_attr))
+        weight = normalized_cut_2d(edge_index, data.pos)
+        cluster = graclus(edge_index, weight, x.size(0))
         data.edge_attr = None
         data.x = x
+        data.edge_index = edge_index
         data = max_pool(cluster, data, transform=transform)
 
         data.x = F.elu(self.conv2(data.x, data.edge_index, data.edge_attr))
@@ -100,8 +102,9 @@ if __name__ == "__main__":
         train(model, train_loader, epoch)
 
     explainer = Explainer(
-        model=model, algorithm=PGMExplainer(perturb_feature_list=[0]),
-        explanation_type='phenomenon', edge_mask_type="object",
+        model=model, algorithm=PGMExplainer(perturb_feature_list=[0],
+                                            perturbation_mode="mean"),
+        explanation_type='phenomenon', node_mask_type="object",
         model_config=dict(mode="multiclass_classification", task_level="graph",
                           return_type="raw"))
     i = 0

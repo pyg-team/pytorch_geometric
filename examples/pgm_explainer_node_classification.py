@@ -52,7 +52,7 @@ if __name__ == "__main__":
 
     explainer = Explainer(
         model=model, algorithm=PGMExplainer(), node_mask_type="attributes",
-        explanation_type='phenomenon', edge_mask_type="object",
+        explanation_type='phenomenon',
         model_config=ModelConfig(mode="multiclass_classification",
                                  task_level="node", return_type="raw"))
     node_idx = 100

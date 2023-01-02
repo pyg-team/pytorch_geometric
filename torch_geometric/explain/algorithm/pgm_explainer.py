@@ -24,83 +24,71 @@ class PGMExplainer(ExplainerAlgorithm):
     Args:
         perturb_feature_list (List): indicis of the perturbed features
              for graph classification explanations
-        perturb_mode (str): which method to generate the variations in features
-            one of ['mean', 'zero', 'max', 'uniform']
+        perturb_mode (str): which method to generate the variations in
+            features one of ['randint', 'mean', 'zero', 'max', 'uniform']
         perturbations_is_positive_only (bool): whether to apply the
             abs function to restrict perturbed values to be +ve
+        is_perturbation_scaled (bool): whether to normalise the range
+            of the perturbed features
     """
     def __init__(
         self,
         perturb_feature_list: List = None,
-        perturbation_mode: str = "mean",
+        perturbation_mode: str = "randint",
         perturbations_is_positive_only: bool = False,
+        is_perturbation_scaled: bool = False,
         **kwargs,
     ):
         super().__init__()
         self.perturb_feature_list = perturb_feature_list
         self.perturbation_mode = perturbation_mode
         self.perturbations_is_positive_only = perturbations_is_positive_only
+        self.is_perturbation_scaled = is_perturbation_scaled
 
-    def perturb_features_on_node(
+    def perturb_features_on_nodes(
         self,
         feature_matrix: torch.Tensor,
-        node_idx: int,
-        perturbation_mode: str = "randint",
-        is_random: bool = False,
-        is_perturbation_scaled: bool = False,
+        node_indexes: torch.Tensor,
     ) -> torch.Tensor:
         r"""
-        perturb node feature matrix. This is used later to calculate
-        how much influence neighbouring nodes has on the output
-        Args:
-            feature_matrix (torch.Tensor) : node feature matrix of
-                the input graph of shape [num_nodes, num_features]
-            node_idx (int): index of the node we are calculating
-                the explanation for
-            perturbation_mode (str): how to perturb the features.
-                Must be one of  [random, randint, zero, mean, max]
-            is_random (bool): whether to perturb the features,
-                if set to False return the original feature matrix
-            is_perturbation_scaled (bool): whether to scale the perturbed
-                matrix with the original feature matrix
-        Returns:
-            a randomly perturbed feature matrix
-        """
-
+            perturb node feature matrix. This is used later to calculate
+            how much influence neighbouring nodes has on the output
+            Args:
+                feature_matrix (torch.Tensor) : node feature matrix of
+                    the input graph of shape [num_nodes, num_features]
+                node_indexes (torch.Tensor): indexes of the nodes
+                    that the perturbed features will be generated for
+            Returns:
+                a randomly perturbed feature matrix
+            """
         X_perturb = feature_matrix.detach().clone()
-        perturb_array = X_perturb[node_idx].clone()
+        perturb_array = X_perturb[node_indexes].detach().clone()
         epsilon = 0.05 * torch.max(feature_matrix, dim=0).values
 
-        if is_random:
-            if not is_perturbation_scaled:
-                if self.perturbation_mode == "randint":
-                    perturb_array = torch.randint(
-                        high=2, size=X_perturb[node_idx].shape[0])
-                # graph explainers
-                elif perturbation_mode in ("mean", "zero", "max", "uniform"):
-                    if perturbation_mode == "mean":
-                        perturb_array[self.perturb_feature_list] = torch.mean(
-                            feature_matrix[:, self.perturb_feature_list])
-                    elif perturbation_mode == "zero":
-                        perturb_array[self.perturb_feature_list] = 0
-                    elif perturbation_mode == "max":
-                        perturb_array[self.perturb_feature_list] = torch.max(
-                            feature_matrix[:, self.perturb_feature_list])
-                    elif perturbation_mode == "uniform":
-                        random_perturbations = torch.rand(
-                            perturb_array.shape) * 2 * epsilon - epsilon
-                        perturb_array[
-                            self.perturb_feature_list] = perturb_array[
-                                self.
-                                perturb_feature_list] + random_perturbations
-                        perturb_array.clamp(
-                            min=0, max=torch.max(feature_matrix, dim=0))
+        if self.perturbation_mode == "randint":
+            perturb_array = torch.randint(high=2, size=perturb_array.size(),
+                                          device=feature_matrix.device)
+        # graph explainers
+        elif self.perturbation_mode == "mean":
+            perturb_array[:, self.perturb_feature_list] = torch.mean(
+                feature_matrix[:, self.perturb_feature_list])
+        elif self.perturbation_mode == "zero":
+            perturb_array[:, self.perturb_feature_list] = 0
+        elif self.perturbation_mode == "max":
+            perturb_array[:, self.perturb_feature_list] = torch.max(
+                feature_matrix[:, self.perturb_feature_list])
+        elif self.perturbation_mode == "uniform":
+            random_perturbations = torch.rand(
+                perturb_array.shape) * 2 * epsilon - epsilon
+            perturb_array[:, self.perturb_feature_list] = perturb_array[
+                self.perturb_feature_list] + random_perturbations
+            perturb_array.clamp(min=0, max=torch.max(feature_matrix, dim=0))
 
-            elif is_perturbation_scaled:
-                perturb_array = torch.multiply(
-                    X_perturb[node_idx],
-                    torch.rand(size=X_perturb[node_idx].shape[0])) * 2
-        X_perturb[node_idx] = perturb_array
+        if self.is_perturbation_scaled:
+            perturb_array = torch.multiply(
+                perturb_array, torch.rand(size=perturb_array.size())) * 2
+
+        X_perturb[node_indexes] = perturb_array.type(X_perturb.dtype)
         return X_perturb
 
     def batch_perturb_features_on_node(
@@ -109,7 +97,7 @@ class PGMExplainer(ExplainerAlgorithm):
             x: torch.Tensor,
             edge_index: torch.Tensor,
             num_samples: int,
-            indices_to_perturb: List,
+            indices_to_perturb: np.array,
             percentage: float = 50.,  # % time node gets perturbed
             **kwargs) -> torch.Tensor:
         r"""
@@ -120,7 +108,7 @@ class PGMExplainer(ExplainerAlgorithm):
             x (torch.Tensor): node feature matrix
             edge_index (torch.Tensor): edge_index of the input graph
             num_samples: num of samples to generate for constructing the pgm
-            indices_to_perturb (List): the index numbers of
+            indices_to_perturb (np.array): the index numbers of
                 the nodes to be pertubed
             percentage:
 
@@ -135,19 +123,15 @@ class PGMExplainer(ExplainerAlgorithm):
         samples = []
         for iteration in range(num_samples):
             X_perturb = x.detach().clone()
-            sample = []
-            for node in range(num_nodes):
-                if node in indices_to_perturb:
-                    seed = np.random.randint(100)
-                    if seed < percentage:
-                        latent = 1
-                        X_perturb = self.perturb_features_on_node(
-                            X_perturb, node, is_random=True)
-                    else:
-                        latent = 0
-                else:
-                    latent = 0
-                sample.append(latent)
+
+            seeds = np.random.randint(0, 100, size=len(indices_to_perturb))
+            perturbed_node_indexes = indices_to_perturb[(seeds < percentage)]
+            X_perturb = self.perturb_features_on_nodes(
+                feature_matrix=X_perturb,
+                node_indexes=perturbed_node_indexes,
+            )
+            sample = np.zeros(num_nodes + 1)
+            sample[perturbed_node_indexes] = 1
 
             pred_perturb_torch = model(X_perturb, edge_index, **kwargs)
             soft_pred_perturb = torch.softmax(pred_perturb_torch,
@@ -155,10 +139,10 @@ class PGMExplainer(ExplainerAlgorithm):
 
             pred_change = torch.max(soft_pred) - soft_pred_perturb[pred_label]
 
-            sample.append(pred_change)
+            sample[num_nodes] = pred_change
             samples.append(sample)
 
-        samples = torch.tensor(samples)
+        samples = torch.tensor(np.array(samples))
         if self.perturbations_is_positive_only:
             samples = torch.abs(samples)
 
@@ -209,7 +193,7 @@ class PGMExplainer(ExplainerAlgorithm):
 
         samples = self.batch_perturb_features_on_node(
             num_samples=int(num_samples / 2),
-            indices_to_perturb=list(range(num_nodes)), x=x, model=model,
+            indices_to_perturb=np.array(range(num_nodes)), x=x, model=model,
             edge_index=edge_index, **kwargs)
 
         # note: the PC estimator is in the original code, ie. est= PC(data)
@@ -235,7 +219,7 @@ class PGMExplainer(ExplainerAlgorithm):
         # Round 2
         samples = self.batch_perturb_features_on_node(
             num_samples=num_samples, indices_to_perturb=candidate_nodes, x=x,
-            model=model, **kwargs)
+            edge_index=edge_index, model=model, **kwargs)
 
         # note: the PC estimator is in the original code, ie. est= PC(data)
         # but as it does nothing it is not included here
@@ -256,7 +240,7 @@ class PGMExplainer(ExplainerAlgorithm):
         ind_top_p = np.argpartition(p_values, top_p)[0:top_p]
         pgm_nodes = list(ind_top_p)
 
-        node_mask = torch.zeros(x.size(0), dtype=torch.int)
+        node_mask = torch.zeros(x.size(), dtype=torch.int)
         node_mask[pgm_nodes] = 1
         pgm_stats = torch.tensor(p_values)
 
@@ -320,32 +304,22 @@ class PGMExplainer(ExplainerAlgorithm):
 
         for iteration in range(num_samples):
             X_perturb = x.detach().clone()
-
-            sample = []
-            for node in neighbors:
-                seed = np.random.choice([1, 0])
-                if seed == 1:
-                    perturbation_mode = "random"
-                else:
-                    perturbation_mode = "zero"
-                X_perturb = self.perturb_features_on_node(
-                    feature_matrix=X_perturb, node_idx=node,
-                    perturbation_mode=perturbation_mode)
-                sample.append(seed)
+            # a subset of neighbours are selected randomly for perturbing
+            seeds = np.random.choice([1, 0], size=(len(neighbors), ))
+            X_perturb = self.perturb_features_on_nodes(
+                feature_matrix=X_perturb,
+                node_indexes=neighbors[seeds == 1],
+            )
 
             # prediction after pertubation
             pred_perturb = model(X_perturb, edge_index, edge_weight)
             softmax_pred_perturb = torch.softmax(pred_perturb, dim=1)
+            sample_bool = np.ones(shape=(len(neighbors), ))
+            sample_bool[(
+                (softmax_pred_perturb[neighbors, target] + pred_threshold) >=
+                softmax_pred[neighbors, target]).cpu()] = 0
 
-            sample_bool = []
-            for node in neighbors:
-                if (softmax_pred_perturb[node, target] +
-                        pred_threshold) < softmax_pred[node, target]:
-                    sample_bool.append(1)
-                else:
-                    sample_bool.append(0)
-
-            samples.append(sample)
+            samples.append(seeds)
             pred_samples.append(sample_bool)
 
         samples = np.asarray(samples)
@@ -382,9 +356,9 @@ class PGMExplainer(ExplainerAlgorithm):
                 dependent_neighbors_p_values.append(p)
 
         pgm_stats = torch.ones(x.size(0), dtype=torch.float)
-        node_mask = torch.zeros(x.size(0), dtype=torch.int)
+        node_mask = torch.zeros(x.size(), dtype=torch.int)
 
-        pgm_stats[neighbors] = torch.tensor(p_values)
+        pgm_stats[neighbors] = torch.tensor(p_values, dtype=torch.float)
 
         if max_subgraph_size is None:
             pgm_nodes = dependent_neighbors
@@ -451,7 +425,7 @@ class PGMExplainer(ExplainerAlgorithm):
             )
         elif self.model_config.task_level == ModelTaskLevel.graph:
             node_mask, pgm_stats = self.explain_graph(
-                model=model, x=x, index=index, target=target,
+                model=model, x=x, target=target, edge_index=edge_index,
                 num_samples=num_samples, max_subgraph_size=max_subgraph_size,
                 significance_threshold=significance_threshold,
                 pred_threshold=pred_threshold, **kwargs)
