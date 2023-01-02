@@ -142,10 +142,6 @@ class GPSConv(torch.nn.Module):
 
         return out
 
-    def jittable(self, typing: Optional[str] = None) -> torch.nn.Module:
-        self.conv = self.conv.jittable(typing)
-        return self
-
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.channels}, '
                 f'conv={self.conv}, heads={self.heads})')
