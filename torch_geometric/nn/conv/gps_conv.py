@@ -97,7 +97,7 @@ class GPSConv(torch.nn.Module):
         self.norm3 = normalization_resolver(norm, channels, **norm_kwargs)
 
         self.norm_with_batch = False
-        if norm is not None:
+        if self.norm1 is not None:
             signature = inspect.signature(self.norm1.forward)
             self.norm_with_batch = 'batch' in signature.parameters
 
