@@ -30,7 +30,8 @@ class MessageNorm(torch.nn.Module):
     def reset_parameters(self):
         self.scale.data.fill_(1.0)
 
-    def forward(self, x: Tensor, msg: Tensor, p: float = 2.0) -> Tensor:
+    def forward(self, x: Tensor, msg: Tensor, p: float = 2.0,
+                **kwargs) -> Tensor:
         """"""
         msg = F.normalize(msg, p=p, dim=-1)
         x_norm = x.norm(p=p, dim=-1, keepdim=True)

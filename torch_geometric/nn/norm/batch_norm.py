@@ -53,7 +53,7 @@ class BatchNorm(torch.nn.Module):
     def reset_parameters(self):
         self.module.reset_parameters()
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, x: Tensor, **kwargs) -> Tensor:
         """"""
         if self.allow_single_element and x.size(0) <= 1:
             return torch.nn.functional.batch_norm(
