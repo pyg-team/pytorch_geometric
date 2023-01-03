@@ -142,8 +142,9 @@ class NodeLoader(torch.utils.data.DataLoader):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.node_sampler.edge_permutation)
             data.batch = out.batch
-            data.input_id = out.metadata
-            data.batch_size = out.metadata.size(0)
+            data.input_id = out.metadata[0]
+            data.seed_time = out.metadata[1]
+            data.batch_size = out.metadata[0].size(0)
 
         elif isinstance(out, HeteroSamplerOutput):
             if isinstance(self.data, HeteroData):
@@ -157,8 +158,10 @@ class NodeLoader(torch.utils.data.DataLoader):
             for key, batch in (out.batch or {}).items():
                 data[key].batch = batch
 
-            data[self.input_data.input_type].input_id = out.metadata
-            data[self.input_data.input_type].batch_size = out.metadata.size(0)
+            input_type = self.input_data.input_type
+            data[input_type].input_id = out.metadata[0]
+            data[input_type].seed_time = out.metadata[1]
+            data[input_type].batch_size = out.metadata[0].size(0)
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

@@ -70,7 +70,7 @@ class HGTSampler(BaseSampler):
             col=remap_keys(col, self.to_edge_type),
             edge=remap_keys(edge, self.to_edge_type),
             batch=None,
-            metadata=inputs.input_id,
+            metadata=(inputs.input_id, inputs.time),
         )
 
     @property

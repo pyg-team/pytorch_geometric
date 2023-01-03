@@ -1,3 +1,4 @@
+import pytest
 import torch
 from torch_sparse import SparseTensor
 
@@ -41,6 +42,16 @@ def test_in_memory_dataset():
     assert dataset[1].face.tolist() == face.tolist()
     assert dataset[1].test_int == 2
     assert dataset[1].test_str == '2'
+
+    with pytest.warns(UserWarning, match="internal storage format"):
+        dataset.data
+
+    assert torch.equal(dataset.x, torch.cat([x1, x2], dim=0))
+    assert dataset.edge_index.tolist() == [
+        [0, 1, 1, 2, 10, 11, 11, 12],
+        [1, 0, 2, 1, 11, 10, 12, 11],
+    ]
+    assert torch.equal(dataset[1:].x, x2)
 
     dp = MyTestDataset.to_datapipe([data1, data2])
     assert len(dp) == 2

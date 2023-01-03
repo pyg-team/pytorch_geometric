@@ -154,7 +154,7 @@ class HeteroSamplerOutput(CastMixin):
     metadata: Optional[Any] = None
 
 
-class NegativeSamplingStrategy(Enum):
+class NegativeSamplingMode(Enum):
     # 'binary': Randomly sample negative edges in the graph.
     binary = 'binary'
     # 'triplet': Randomly sample negative destination nodes for each positive
@@ -163,17 +163,38 @@ class NegativeSamplingStrategy(Enum):
 
 
 @dataclass
-class NegativeSamplingConfig(CastMixin):
-    strategy: NegativeSamplingStrategy
+class NegativeSampling(CastMixin):
+    r"""The negative sampling configuration of a
+    :class:`~torch_geometric.sampler.BaseSampler` when calling
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
+
+    Args:
+        mode (str): The negative sampling mode
+            (:obj:`"binary"` or :obj:`"triplet"`).
+            If set to :obj:`"binary"`, will randomly sample negative links
+            from the graph.
+            If set to :obj:`"triplet"`, will randomly sample negative
+            destination nodes for each positive source node.
+        amount (int or float, optional): The ratio of sampled negative edges to
+            the number of positive edges. (default: :obj:`1`)
+        weight (torch.Tensor, optional): A node-level vector determining the
+            sampling of nodes. Does not necessariyl need to sum up to one.
+            If not given, negative nodes will be sampled uniformly.
+            (default: :obj:`None`)
+    """
+    mode: NegativeSamplingMode
     amount: Union[int, float] = 1
+    weight: Optional[Tensor] = None
 
     def __init__(
         self,
-        strategy: Union[NegativeSamplingStrategy, str],
+        mode: Union[NegativeSamplingMode, str],
         amount: Union[int, float] = 1,
+        weight: Optional[Tensor] = None,
     ):
-        self.strategy = NegativeSamplingStrategy(strategy)
+        self.mode = NegativeSamplingMode(mode)
         self.amount = amount
+        self.weight = weight
 
         if self.amount <= 0:
             raise ValueError(f"The attribute 'amount' needs to be positive "
@@ -189,10 +210,27 @@ class NegativeSamplingConfig(CastMixin):
             self.amount = math.ceil(self.amount)
 
     def is_binary(self) -> bool:
-        return self.strategy == NegativeSamplingStrategy.binary
+        return self.mode == NegativeSamplingMode.binary
 
     def is_triplet(self) -> bool:
-        return self.strategy == NegativeSamplingStrategy.triplet
+        return self.mode == NegativeSamplingMode.triplet
+
+    def sample(self, num_samples: int,
+               num_nodes: Optional[int] = None) -> Tensor:
+        r"""Generates :obj:`num_samples` negative samples."""
+        if self.weight is None:
+            if num_nodes is None:
+                raise ValueError(
+                    f"Cannot sample negatives in '{self.__class__.__name__}' "
+                    f"without passing the 'num_nodes' argument")
+            return torch.randint(num_nodes, (num_samples, ))
+
+        if num_nodes is not None and self.weight.numel() != num_nodes:
+            raise ValueError(
+                f"The 'weight' attribute in '{self.__class__.__name__}' "
+                f"needs to match the number of nodes {num_nodes} "
+                f"(got {self.weight.numel()})")
+        return torch.multinomial(self.weight, num_samples, replacement=True)
 
 
 class BaseSampler(ABC):
@@ -220,13 +258,16 @@ class BaseSampler(ABC):
         1. The example indices of the seed nodes
         2. The node indices to start sampling from
         3. The timestamps of the given seed nodes (optional)
+
+        Args:
+            index (NodeSamplerInput): The node sampler input object.
         """
         raise NotImplementedError
 
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,
-        **kwargs,
+        neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
         r"""Performs sampling from the edges specified in :obj:`index`,
         returning a sampled subgraph in the specified output format.
@@ -238,6 +279,11 @@ class BaseSampler(ABC):
         3. The destination node indices to start sampling from
         4. The labels of the seed links (optional)
         5. The timestamps of the given seed nodes (optional)
+
+        Args:
+            index (EdgeSamplerInput): The edge sampler input object.
+            neg_sampling (NegativeSampling, optional): The negative sampling
+                configuration. (default: :obj:`None`)
         """
         raise NotImplementedError
 
