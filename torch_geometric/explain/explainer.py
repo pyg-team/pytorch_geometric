@@ -29,6 +29,7 @@ from torch_geometric.typing import EdgeType, NodeType
 class Explainer:
     r"""An explainer class for instance-level explanations of Graph Neural
     Networks.
+
     Args:
         model (torch.nn.Module): The model to explain.
         algorithm (ExplainerAlgorithm): The explanation algorithm.
@@ -95,11 +96,13 @@ class Explainer:
     @torch.no_grad()
     def get_prediction(self, *args, **kwargs) -> Tensor:
         r"""Returns the prediction of the model on the input graph.
+
         If the model mode is :obj:`"regression"`, the prediction is returned as
         a scalar value.
         If the model mode is :obj:`"multiclass_classification"` or
         :obj:`"binary_classification"`, the prediction is returned as the
         predicted class label.
+
         Args:
             *args: Arguments passed to the model.
             **kwargs (optional): Additional keyword arguments passed to the
@@ -112,6 +115,7 @@ class Explainer:
             out = self.model(*args, **kwargs)
 
         self.model.train(training)
+
         return out
 
     def get_masked_prediction(
@@ -150,11 +154,13 @@ class Explainer:
     ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
         target.
+
         .. note::
 
             If you get an error message like "Trying to backward through the
             graph a second time", make sure that the target you provided
             was computed with :meth:`torch.no_grad`.
+
         Args:
             x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
                 node features of a homogeneous or heterogeneous graph.
@@ -241,6 +247,7 @@ class Explainer:
 
     def get_target(self, prediction: Tensor) -> Tensor:
         r"""Returns the target of the model from a given prediction.
+
         If the model mode is of type :obj:`"regression"`, the prediction is
         returned as it is.
         If the model mode is of type :obj:`"multiclass_classification"` or

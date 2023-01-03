@@ -13,20 +13,21 @@ from .base import ExplainerAlgorithm
 
 
 class PGMExplainer(ExplainerAlgorithm):
-    r"""The PGMExplainer model from the `"PGM-Explainer:
-     Probabilistic Graphical Model Explanations for Graph Neural Networks"
-    <https://arxiv.org/abs/2010.05788>
+    r"""The PGMExplainer model from the `"PGM-Explainer
+     Probabilistic Graphical Model Explanations for Graph Neural Networks
+        <https://arxiv.org/abs/2010.05788>`_  paper
 
 
     Args:
-        perturb_feature_list (List): indicis of the perturbed features
-             for graph classification explanations
+        perturb_feature_list (List): indices of the perturbed features
+            for graph classification explanations
         perturb_mode (str): which method to generate the variations in
             features one of ['randint', 'mean', 'zero', 'max', 'uniform']
         perturbations_is_positive_only (bool): whether to apply the
             abs function to restrict perturbed values to be +ve
         is_perturbation_scaled (bool): whether to normalise the range
             of the perturbed features
+
     """
     def __init__(
         self,
@@ -47,17 +48,20 @@ class PGMExplainer(ExplainerAlgorithm):
         feature_matrix: torch.Tensor,
         node_indexes: torch.Tensor,
     ) -> torch.Tensor:
-        r"""
-            perturb node feature matrix. This is used later to calculate
-            how much influence neighbouring nodes has on the output
-            Args:
-                feature_matrix (torch.Tensor) : node feature matrix of
-                    the input graph of shape [num_nodes, num_features]
-                node_indexes (torch.Tensor): indexes of the nodes
-                    that the perturbed features will be generated for
-            Returns:
-                a randomly perturbed feature matrix
-            """
+        r"""perturb node feature matrix. This is used later to calculate
+        how much influence neighbouring nodes has on the output
+
+        Args:
+            feature_matrix (torch.Tensor) : node feature matrix of
+                the input graph of shape [num_nodes, num_features]
+            node_indexes (torch.Tensor): indexes of the nodes
+                that the perturbed features will be generated for
+
+        Returns:
+            a randomly perturbed feature matrix
+
+        """
+
         X_perturb = feature_matrix.detach().clone()
         perturb_array = X_perturb[node_indexes].detach().clone()
         epsilon = 0.05 * torch.max(feature_matrix, dim=0).values
@@ -97,9 +101,9 @@ class PGMExplainer(ExplainerAlgorithm):
             indices_to_perturb: np.array,
             percentage: float = 50.,  # % time node gets perturbed
             **kwargs) -> torch.Tensor:
-        r"""
-        perturb the node features of a batch of graphs
+        r"""perturb the node features of a batch of graphs
         for graph classification tasks
+
         Args:
             model (torch.nn.Module): graph neural net model
             x (torch.Tensor): node feature matrix
@@ -111,7 +115,9 @@ class PGMExplainer(ExplainerAlgorithm):
 
         Returns:
             samples (torch.Tensor): the
+
         """
+
         pred_torch = model(x, edge_index, **kwargs)
         soft_pred = torch.softmax(pred_torch, dim=1)
         pred_label = torch.argmax(soft_pred, dim=1)
@@ -164,8 +170,8 @@ class PGMExplainer(ExplainerAlgorithm):
         significance_threshold: float = 0.05,
         **kwargs,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        r"""
-        generate explanations for graph classification tasks
+        r"""generate explanations for graph classification tasks
+
         Args:
             model: pytorch model
             x (torch.Tensor): node features
@@ -183,7 +189,9 @@ class PGMExplainer(ExplainerAlgorithm):
                  in the selected node's prediction
             pgm_stats (torch.Tensor): : p-values of all the nodes in the graph
                 ordered by node index
+
         """
+
         import pandas as pd
         from pgmpy.estimators.CITests import chi_square
 
@@ -256,11 +264,11 @@ class PGMExplainer(ExplainerAlgorithm):
         target: torch.Tensor,
         num_samples: int = 100,
         max_subgraph_size: int = None,
-        significance_threshold=0.05,
-        pred_threshold=0.1,
+        significance_threshold: float = 0.05,
+        pred_threshold: float = 0.1,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        r"""
-        Generate explanations for node classification tasks
+        r"""Generate explanations for node classification tasks
+
         Args:
             model (torch.nn.Module): model that generated the predictions
             x (torch.Tensor): node feature matrix
@@ -282,6 +290,7 @@ class PGMExplainer(ExplainerAlgorithm):
             pgm_stats (torch.Tensor): p-values of all the nodes in the
                 graph ordered by node index
         """
+
         import pandas as pd
         from pgmpy.estimators.CITests import chi_square
 
@@ -383,8 +392,8 @@ class PGMExplainer(ExplainerAlgorithm):
         index: Optional[int] = None,  # node index
         **kwargs,
     ) -> Explanation:
-        r"""
-        generate the explanations
+        r"""generate the explanations
+
         Args:
             model (torch.nn.Module): model used to generate predictions
             x (torch.Tensor): the node feature matrix tensor
@@ -396,6 +405,7 @@ class PGMExplainer(ExplainerAlgorithm):
         Returns:
             Explanation
         """
+
         if isinstance(index, torch.Tensor):
             if index.numel() > 1:
                 raise NotImplementedError(
