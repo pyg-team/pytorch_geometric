@@ -4,25 +4,8 @@ import torch
 from torch_geometric.nn.aggr import (
     DeepSetsAggregation,
     GRUAggregation,
-    MLPAggregation,
     SetTransformerAggregation,
 )
-
-
-def test_mlp_aggregation():
-    x = torch.randn(14, 8)
-    index = torch.tensor([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
-
-    aggr = MLPAggregation(
-        in_channels=8,
-        out_channels=32,
-        max_num_elements=8,
-        num_layers=1,
-    )
-    aggr.reset_parameters()
-
-    assert str(aggr) == 'MLPAggregation(8, 32, max_num_elements=8)'
-    assert aggr(x, index).size() == (2, 32)
 
 
 @pytest.mark.parametrize('num_PMA_outputs', [1, 4, 8])
