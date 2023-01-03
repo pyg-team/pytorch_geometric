@@ -1,5 +1,5 @@
 import copy
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Sequence
 
 import torch
 
@@ -45,7 +45,7 @@ class SMILESParser(IterDataPipe):
         self.smiles_key = smiles_key
         self.target_key = target_key
 
-    def __iter__(self):
+    def __iter__(self) -> Any:
         for d in self.dp:
             if isinstance(d, str):
                 data = from_smiles(d)
@@ -65,27 +65,23 @@ class SMILESParser(IterDataPipe):
 
 
 class DatasetAdapter(IterDataPipe):
-    def __init__(self, cls, *args, **kwargs):
+    def __init__(self, dataset: Sequence[Any]):
         super().__init__()
-        self.cls = cls
-        self.args = args
-        self.kwargs = kwargs
-        self.length = len(cls(*args, **kwargs))
-        self.range = range(self.length)
+        self.dataset = dataset
+        self.range = range(len(self))
 
-    def is_shardable(self):
+    def is_shardable(self) -> bool:
         return True
 
-    def apply_sharding(self, num_shards, shard_idx):
-        self.range = range(shard_idx, self.length, num_shards)
+    def apply_sharding(self, num_shards: int, shard_idx: int):
+        self.range = range(shard_idx, len(self), num_shards)
 
-    def __iter__(self):
-        dataset = self.cls(*self.args, **self.kwargs)
-        for idx in self.range:
-            yield dataset[idx]
+    def __iter__(self) -> Any:
+        for i in self.range:
+            yield self.dataset[i]
 
-    def __len__(self):
-        return self.length
+    def __len__(self) -> int:
+        return len(self.dataset)
 
 
 def functional_transform(name: str) -> Callable:
@@ -97,7 +93,7 @@ def functional_transform(name: str) -> Callable:
                 self.dp = dp
                 self.fn = cls(*args, **kwargs)
 
-            def __iter__(self):
+            def __iter__(self) -> Any:
                 for data in self.dp:
                     yield self.fn(copy.copy(data))
 

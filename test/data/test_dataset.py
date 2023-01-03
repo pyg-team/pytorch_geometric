@@ -53,24 +53,22 @@ def test_in_memory_dataset():
     ]
     assert torch.equal(dataset[1:].x, x2)
 
-    dp = MyTestDataset.to_datapipe([data1, data2])
-    assert len(dp) == 2
-    dataset = list(dp)
-    assert len(dataset[0]) == 6
-    assert dataset[0].num_nodes == 10
-    assert dataset[0].x.tolist() == x1.tolist()
-    assert dataset[0].edge_index.tolist() == edge_index.tolist()
-    assert dataset[0].face.tolist() == face.tolist()
-    assert dataset[0].test_int == 1
-    assert dataset[0].test_str == '1'
 
-    assert len(dataset[1]) == 6
-    assert dataset[1].num_nodes == 5
-    assert dataset[1].x.tolist() == x2.tolist()
-    assert dataset[1].edge_index.tolist() == edge_index.tolist()
-    assert dataset[1].face.tolist() == face.tolist()
-    assert dataset[1].test_int == 2
-    assert dataset[1].test_str == '2'
+def test_to_datapipe():
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    data = Data(x=x, edge_index=edge_index)
+    dataset = MyTestDataset([data, data])
+
+    dp = dataset.to_datapipe()
+
+    assert isinstance(dp, torch.utils.data.IterDataPipe)
+    assert len(dp) == 2
+
+    assert torch.equal(dataset[0].x, list(dp)[0].x)
+    assert torch.equal(dataset[0].edge_index, list(dp)[0].edge_index)
+    assert torch.equal(dataset[1].x, list(dp)[1].x)
+    assert torch.equal(dataset[1].edge_index, list(dp)[1].edge_index)
 
 
 def test_in_memory_sparse_tensor_dataset():
