@@ -1,11 +1,12 @@
 from .decorators import (
     is_full_test,
-    onlyCUDA,
     onlyFullTest,
-    onlyPython,
     onlyUnix,
-    withCUDA,
+    onlyPython,
+    onlyCUDA,
+    onlyGraphviz,
     withPackage,
+    withCUDA,
 )
 from .feature_store import MyFeatureStore
 from .graph_store import MyGraphStore
@@ -15,8 +16,9 @@ __all__ = [
     'onlyFullTest',
     'onlyUnix',
     'onlyPython',
-    'withPackage',
     'onlyCUDA',
+    'onlyGraphviz',
+    'withPackage',
     'withCUDA',
     'MyFeatureStore',
     'MyGraphStore',
