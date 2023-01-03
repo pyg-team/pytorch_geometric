@@ -1,4 +1,3 @@
-import pytest
 import torch
 
 from torch_geometric.utils import from_nested_tensor, to_nested_tensor
@@ -29,7 +28,7 @@ def test_from_nested_tensor():
     x = torch.randn(5, 4, 3)
 
     nested = to_nested_tensor(x, batch=torch.tensor([0, 0, 1, 1, 1]))
-    out, batch = from_nested_tensor(nested)
+    out, batch = from_nested_tensor(nested, return_batch=True)
 
     assert torch.equal(x, out)
     assert batch.tolist() == [0, 0, 1, 1, 1]
@@ -37,9 +36,9 @@ def test_from_nested_tensor():
 
 def test_to_and_from_nested_tensor_autograd():
     x = torch.randn(5, 4, 3, requires_grad=True)
+    grad = torch.randn_like(x)
 
     out = to_nested_tensor(x, batch=torch.tensor([0, 0, 1, 1, 1]))
-    with pytest.raises(NotImplementedError, match="requires gradients"):
-        out, _ = from_nested_tensor(out)
-        out.backward(torch.randn_like(out))
-        assert x.grad is not None
+    out = from_nested_tensor(out)
+    out.backward(grad)
+    assert torch.equal(x.grad, grad)
