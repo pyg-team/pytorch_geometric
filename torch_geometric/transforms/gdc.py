@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
@@ -549,6 +549,7 @@ def get_calc_ppr():
         out_degree: np.ndarray,
         alpha: float,
         eps: float,
+        target_nodes: Optional[np.ndarray] = None,
     ) -> Tuple[List[List[int]], List[List[float]]]:
         r"""Calculate the personalized PageRank vector for all nodes
         using a variant of the Andersen algorithm
@@ -563,15 +564,19 @@ def get_calc_ppr():
             alpha (float): Alpha of the PageRank to calculate.
             eps (float): Threshold for PPR calculation stopping criterion
                 (:obj:`edge_weight >= eps * out_degree`).
+            target_nodes (np.ndarray, optional): Target nodes of PPR
+                calculations. If not given, calculate for all the nodes
+                by default.
 
         :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
         """
-
+        nnodes = len(out_degree) if target_nodes is None else len(target_nodes)
         alpha_eps = alpha * eps
-        js = [[0]] * len(out_degree)
-        vals = [[0.]] * len(out_degree)
-        for inode_uint in numba.prange(len(out_degree)):
-            inode = numba.int64(inode_uint)
+        js = [[0]] * nnodes
+        vals = [[0.]] * nnodes
+        for inode_uint in numba.prange(nnodes):
+            inode = numba.int64(inode_uint) if target_nodes is None \
+                else target_nodes[inode_uint]
             p = {inode: 0.0}
             r = {}
             r[inode] = alpha
@@ -596,8 +601,8 @@ def get_calc_ppr():
                     if res_vnode >= alpha_eps * out_degree[vnode]:
                         if vnode not in q:
                             q.append(vnode)
-            js[inode] = list(p.keys())
-            vals[inode] = list(p.values())
+            js[inode_uint] = list(p.keys())
+            vals[inode_uint] = list(p.values())
         return js, vals
 
     return calc_ppr

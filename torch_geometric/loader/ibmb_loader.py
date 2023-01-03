@@ -17,6 +17,7 @@ from torch_geometric.loader.ibmb_sampler import (
     IBMBOrderedSampler,
     IBMBWeightedSampler,
 )
+from torch_geometric.transforms.gdc import get_calc_ppr
 from torch_geometric.utils import coalesce, is_undirected, subgraph
 
 
@@ -317,9 +318,10 @@ def topk_ppr_matrix(
                                       return_counts=True)
     indptr = np.append(indptr, len(edge_index_np[0]))
 
-    neighbors, weights = calc_ppr_topk_parallel(indptr, edge_index_np[1],
-                                                out_degree, alpha, eps,
-                                                output_node_indices)
+    neighbors, weights = get_calc_ppr()(indptr, edge_index_np[1], out_degree,
+                                        alpha, eps, output_node_indices)
+    neighbors = [np.array(n) for n in neighbors]
+    weights = [np.array(w) for w in weights]
 
     def construct_sparse(neighbors, weights, shape):
         i = np.repeat(np.arange(len(neighbors)),
@@ -369,55 +371,6 @@ def topk_ppr_matrix(
         raise ValueError(f"Unknown PPR normalization: {normalization}")
 
     return ppr_matrix, neighbors
-
-
-@numba.njit(cache=True, parallel=True)
-def calc_ppr_topk_parallel(indptr, indices, deg, alpha, epsilon, nodes) \
-        -> Tuple[List[np.ndarray], List[np.ndarray]]:
-    js = [np.zeros(0, dtype=np.int64)] * len(nodes)
-    vals = [np.zeros(0, dtype=np.float32)] * len(nodes)
-    for i in numba.prange(len(nodes)):
-        j, val = _calc_ppr_node(nodes[i], indptr, indices, deg, alpha, epsilon)
-        js[i] = np.array(j)
-        vals[i] = np.array(val)
-    return js, vals
-
-
-@numba.njit(cache=True, locals={
-    '_val': numba.float32,
-    'res': numba.float32,
-    'res_vnode': numba.float32
-})
-def _calc_ppr_node(inode, indptr, indices, deg, alpha, epsilon):
-    alpha_eps = alpha * epsilon
-    f32_0 = numba.float32(0)
-    p = {inode: f32_0}
-    r = {}
-    r[inode] = alpha
-    q = [inode]
-
-    while len(q) > 0:
-        unode = q.pop()
-
-        res = r[unode] if unode in r else f32_0
-        if unode in p:
-            p[unode] += res
-        else:
-            p[unode] = res
-        r[unode] = f32_0
-        for vnode in indices[indptr[unode]:indptr[unode + 1]]:
-            _val = (1 - alpha) * res / deg[unode]
-            if vnode in r:
-                r[vnode] += _val
-            else:
-                r[vnode] = _val
-
-            res_vnode = r[vnode] if vnode in r else f32_0
-            if res_vnode >= alpha_eps * deg[vnode]:
-                if vnode not in q:
-                    q.append(vnode)
-
-    return list(p.keys()), list(p.values())
 
 
 class IBMBBaseLoader(DataLoader):
