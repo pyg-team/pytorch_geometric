@@ -8,6 +8,8 @@ from torch import Tensor, nn
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import to_dense_batch
 
+from ..inits import reset
+
 
 class MLPAggregation(Aggregation):
     r"""Performs MLP aggregation in which the graph nodes are flattened to a
@@ -95,9 +97,7 @@ class MLPAggregation(Aggregation):
         self.reset_parameters()
 
     def reset_parameters(self):
-        for module in self.mlp_agg.children():
-            if hasattr(module, 'reset_parameters'):
-                module.reset_parameters()
+        reset(self.mlp_agg)
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
