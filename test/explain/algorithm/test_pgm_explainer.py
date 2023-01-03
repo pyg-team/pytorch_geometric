@@ -5,6 +5,7 @@ from torch_geometric.explain import Explainer
 from torch_geometric.explain.algorithm import PGMExplainer
 from torch_geometric.explain.config import ModelConfig
 from torch_geometric.nn import GCNConv, global_add_pool
+from torch_geometric.testing import withPackage
 
 
 class GCN(torch.nn.Module):
@@ -44,6 +45,8 @@ target = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 
 
+@withPackage('pgmpy')
+@withPackage('pandas')
 @pytest.mark.parametrize('node_idx', [2, 6])
 @pytest.mark.parametrize('task_level, perturbation_mode', [
     ('node', 'randint'),
