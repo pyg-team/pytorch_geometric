@@ -304,6 +304,7 @@ class GDC(BaseTransform):
 
             edge_index_np = edge_index.cpu().numpy()
 
+            # Assumes sorted and coalesced edge indices:
             indptr = torch._convert_indices_from_coo_to_csr(
                 edge_index[0], num_nodes).cpu().numpy()
             out_degree = indptr[1:] - indptr[:-1]
