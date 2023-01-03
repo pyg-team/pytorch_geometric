@@ -37,7 +37,7 @@ class GPS(torch.nn.Module):
             conv = GPSConv(channels, GINEConv(nn), heads=4, attn_dropout=0.5)
             self.convs.append(conv)
 
-        self.classifier = Linear(channels, 1)
+        self.lin = Linear(channels, 1)
 
     def forward(self, x, pe, edge_index, edge_attr, batch):
         x = self.node_emb(x.squeeze(-1)) + self.pe_lin(pe)
@@ -46,7 +46,7 @@ class GPS(torch.nn.Module):
         for conv in self.convs:
             x = conv(x, edge_index, batch, edge_attr=edge_attr)
         x = global_add_pool(x, batch)
-        return self.classifier(x)
+        return self.lin(x)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
