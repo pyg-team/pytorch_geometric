@@ -6,7 +6,6 @@ import torch.nn.functional as F
 from torch import Tensor, nn
 
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.utils import to_dense_batch
 
 # Set Transformer code as provided in
 # https://github.com/juho-lee/set_transformer
@@ -150,8 +149,9 @@ class SetTransformerAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-        x, _ = to_dense_batch(x, index, fill_value=0,
-                              max_num_nodes=self.max_num_nodes_in_dataset)
+        x, _ = self.to_dense_batch(
+            x, index, ptr, dim_size, dim,
+            max_num_elements=self.max_num_nodes_in_dataset)
         x = self.set_transformer_agg(x)
         return x.mean(dim=1)
 
@@ -161,94 +161,3 @@ class SetTransformerAggregation(Aggregation):
                 f'{self.num_PMA_outputs}, {self.num_enc_SABs}, '
                 f'{self.num_dec_SABs}, {self.dim_hidden}, '
                 f'{self.num_heads}, {self.ln})')
-
-
-class DeepSetsAggregation(Aggregation):
-    r"""Performs Deep Sets aggregation in which the graph nodes are transformed
-    by a multi-layer perceptron (MLP) :math:`\phi`, summed, and then
-    transformed by another MLP :math:`\rho`, as suggested in the `"Graph Neural
-    Networks with Adaptive Readouts" <https://arxiv.org/abs/2211.04952>`_ paper
-    . DeepSetsAggregation is a permutation-invariant operator.
-
-    Args:
-        max_num_nodes_in_dataset (int): Maximum number of nodes in a graph in
-            the dataset.
-        in_channels (int): Size of each input sample.
-        out_channels (int): Size of each output sample.
-        num_hidden_layers_phi (int): Number of hidden layers for the
-            :math:`\phi` MLP.
-        num_hidden_layers_rho (int): Number of hidden layers for the
-            :math:`\rho` MLP.
-        hidden_dim (int): Dimensions used for the hidden layers of the MLPs.
-
-    """
-    def __init__(self, max_num_nodes_in_dataset: int, in_channels: int,
-                 out_channels: int, num_hidden_layers_phi: int,
-                 num_hidden_layers_rho: int, hidden_dim: int):
-        super().__init__()
-
-        assert num_hidden_layers_phi >= 0, (
-            'Number of phi hidden layers must be non-negative.')
-        assert num_hidden_layers_rho >= 0, (
-            'Number of rho hidden layers must be non-negative.')
-
-        self.max_num_nodes_in_dataset = max_num_nodes_in_dataset
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.hidden_dim = hidden_dim
-        self.num_hidden_layers_phi = num_hidden_layers_phi
-        self.num_hidden_layers_rho = num_hidden_layers_rho
-
-        # Input layers
-        self.phi = [
-            nn.Linear(in_features=self.in_channels,
-                      out_features=self.hidden_dim),
-            nn.ReLU(),
-        ]
-        self.rho = []
-
-        for _ in range(self.num_hidden_layers_phi):
-            self.phi.append(
-                nn.Linear(in_features=self.hidden_dim,
-                          out_features=self.hidden_dim))
-            self.phi.append(nn.ReLU())
-
-        for _ in range(self.num_hidden_layers_rho):
-            self.rho.append(
-                nn.Linear(in_features=self.hidden_dim,
-                          out_features=self.hidden_dim))
-            self.rho.append(nn.ReLU())
-
-        # Output layer
-        self.rho.append(
-            nn.Linear(in_features=self.hidden_dim,
-                      out_features=self.out_channels))
-
-        self.phi = nn.Sequential(*self.phi)
-        self.rho = nn.Sequential(*self.rho)
-
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        def reset(network):
-            for module in network.children():
-                if hasattr(module, 'reset_parameters'):
-                    module.reset_parameters()
-
-        reset(self.phi)
-        reset(self.rho)
-
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
-        x = self.phi(x)
-        x, _ = to_dense_batch(x, index, fill_value=0,
-                              max_num_nodes=self.max_num_nodes_in_dataset)
-        x = torch.sum(x, dim=1)
-        return self.rho(x)
-
-    def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.max_num_nodes_in_dataset}, '
-                f'{self.in_channels}, {self.out_channels}, '
-                f'{self.num_hidden_layers_phi}, {self.num_hidden_layers_rho}, '
-                f'{self.hidden_dim})')

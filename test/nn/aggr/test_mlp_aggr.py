@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.nn.aggr import MLPAggregation
+from torch_geometric.nn import MLPAggregation
 
 
 def test_mlp_aggregation():

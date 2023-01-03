@@ -21,7 +21,8 @@ from .sort import SortAggregation
 from .gmt import GraphMultisetTransformer
 from .attention import AttentionalAggregation
 from .mlp import MLPAggregation
-from .adaptive import (SetTransformerAggregation, DeepSetsAggregation)
+from .deep_sets import DeepSetsAggregation
+from .set_transformer import SetTransformerAggregation
 
 __all__ = classes = [
     'Aggregation',
@@ -46,6 +47,6 @@ __all__ = classes = [
     'AttentionalAggregation',
     'EquilibriumAggregation',
     'MLPAggregation',
-    'SetTransformerAggregation',
     'DeepSetsAggregation',
+    'SetTransformerAggregation',
 ]
