@@ -13,6 +13,7 @@ def test_mlp_aggregation():
         max_num_elements=3,
         num_layers=1,
     )
-
     assert str(aggr) == 'MLPAggregation(16, 32, max_num_elements=3)'
-    assert aggr(x, index).size() == (3, 32)
+
+    out = aggr(x, index)
+    assert out.size() == (3, 32)

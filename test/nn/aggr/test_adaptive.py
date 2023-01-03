@@ -3,7 +3,6 @@ import torch
 
 from torch_geometric.nn.aggr import (
     DeepSetsAggregation,
-    GRUAggregation,
     SetTransformerAggregation,
 )
 
@@ -34,21 +33,6 @@ def test_set_transformer_aggregation(num_PMA_outputs, num_enc_SABs,
         f'{num_dec_SABs}, {dim_hidden}, {num_heads}, {False})')
 
     assert st_aggr(x, index).size() == (2, out_channels)
-
-
-@pytest.mark.parametrize('num_layers', [1, 2, 3])
-def test_gru_aggregation(num_layers):
-    x = torch.randn(14, 9)
-    index = torch.tensor([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
-
-    out_channels = 16
-    gru_aggr = GRUAggregation(in_channels=9, out_channels=out_channels,
-                              num_layers=num_layers)
-    gru_aggr.reset_parameters()
-
-    assert str(gru_aggr) == (f'{GRUAggregation.__name__}(9, 16, {num_layers})')
-
-    assert gru_aggr(x, index).size() == (2, out_channels)
 
 
 @pytest.mark.parametrize('num_hidden_layers_phi', [0, 1, 2])
