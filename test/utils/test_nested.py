@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.utils import from_nested_tensor, to_nested_tensor
@@ -32,6 +33,17 @@ def test_from_nested_tensor():
 
     assert torch.equal(x, out)
     assert batch.tolist() == [0, 0, 1, 1, 1]
+
+    nested = torch.nested.nested_tensor([torch.randn(4, 3), torch.randn(5, 4)])
+    with pytest.raises(ValueError, match="have the same size in dimension 1"):
+        from_nested_tensor(nested)
+
+    # Test zero-copy:
+    nested = to_nested_tensor(x, batch=torch.tensor([0, 0, 1, 1, 1]))
+    out = from_nested_tensor(nested)
+    out += 1  # Increment in-place (which should increment `nested` as well).
+    assert torch.equal(nested.to_padded_tensor(padding=0)[0, :2], out[0:2])
+    assert torch.equal(nested.to_padded_tensor(padding=0)[1, :3], out[2:5])
 
 
 def test_to_and_from_nested_tensor_autograd():

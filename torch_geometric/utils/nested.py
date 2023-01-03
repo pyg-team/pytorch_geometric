@@ -70,15 +70,14 @@ def from_nested_tensor(
 
     sizes = x._nested_tensor_size()
 
-    if x.requires_grad:
-        out = torch.cat(x.unbind(), dim=0)
-    else:  # Avoids copying the data, but does not support autograd :(
-        for dim, (a, b) in enumerate(zip(sizes.t()[1:], sizes[0, 1:])):
-            if not torch.equal(a, b.expand_as(a)):
-                raise ValueError(f"Not all nested tensors have the same size "
-                                 f"in dimension {dim + 1}")
-        out = torch.tensor(x.contiguous().storage())
-        out = out.view(-1, *sizes[0, 1:].tolist())
+    for dim, (a, b) in enumerate(zip(sizes[0, 1:], sizes.t()[1:])):
+        if not torch.equal(a.expand_as(b), b):
+            raise ValueError(f"Not all nested tensors have the same size "
+                             f"in dimension {dim + 1} "
+                             f"(expected size {a.item()} for all tensors)")
+
+    out = x.contiguous().values()
+    out = out.view(-1, *sizes[0, 1:].tolist())
 
     if not return_batch:
         return out
