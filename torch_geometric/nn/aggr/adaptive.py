@@ -8,12 +8,10 @@ from torch import Tensor, nn
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import to_dense_batch
 
-from ..inits import reset
-
 
 class MLPAggregation(Aggregation):
-    r"""Performs MLP aggregation in which the graph nodes are flattened to a
-    single tensor representation for the entire batch and are then processed by
+    r"""Performs MLP aggregation in which the elements to aggregate are
+    flattened into a single vectorial representation, and are then processed by
     a multi-layer perceptron, as described in the `"Graph Neural Networks with
     Adaptive Readouts" <https://arxiv.org/abs/2211.04952>`_ paper.
 
@@ -21,98 +19,37 @@ class MLPAggregation(Aggregation):
         :class:`MLPAggregation` is not a permutation-invariant operator.
 
     Args:
-        max_num_nodes_in_dataset (int): Maximum number of nodes in a graph in
-            the dataset.
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        num_hidden_layers (int): Number of hidden layers for the MLP.
-        hidden_dim (int): Dimensions used for the hidden layers of the MLP.
-        use_batch_norm (bool): Whether to use 1D batch normalisation after each
-            MLP layer.
-        dropout (float): Dropout value to use after the last layer of the MLP.
-        custom_mlp (torch.nn.Sequential): Custom MLP to be used instead of the
-            standard one.
-
+        max_num_elements: The maximum number of elements to group.
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.models.MLP`.
     """
-    def __init__(self, max_num_nodes_in_dataset: int,
-                 in_channels: Optional[int] = None,
-                 out_channels: Optional[int] = None,
-                 num_hidden_layers: Optional[int] = None,
-                 hidden_dim: Optional[int] = None,
-                 use_batch_norm: Optional[bool] = None,
-                 dropout: Optional[float] = None,
-                 custom_mlp: Optional[nn.Sequential] = None):
+    def __init__(self, in_channels: int, out_channels: int,
+                 max_num_elements: int, **kwargs):
         super().__init__()
-        if custom_mlp is not None:
-            assert (
-                in_channels is None and out_channels is None
-                and num_hidden_layers is None and hidden_dim is None
-                and use_batch_norm is None and dropout is None
-            ), ('Cannot specify MLP arguments if a custom MLP is provided.')
-
-        if num_hidden_layers is not None:
-            assert num_hidden_layers >= 0, (
-                'Number of hidden layers must be non-negative.')
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.hidden_dim = hidden_dim
-        self.max_num_nodes_in_dataset = max_num_nodes_in_dataset
-        self.num_hidden_layers = num_hidden_layers
-        self.use_batch_norm = use_batch_norm
-        self.dropout = dropout
-        self.custom_mlp = custom_mlp
+        self.max_num_elements = max_num_elements
 
-        if self.custom_mlp is None:
-            # Input layer
-            modules = [
-                nn.Linear(
-                    in_features=self.max_num_nodes_in_dataset *
-                    self.in_channels, out_features=self.hidden_dim),
-                nn.BatchNorm1d(self.hidden_dim),
-                nn.ReLU(),
-            ]
-
-            # Hidden layers
-            for _ in range(self.num_hidden_layers):
-                modules.append(
-                    nn.Linear(in_features=self.hidden_dim,
-                              out_features=self.hidden_dim))
-                modules.append(
-                    nn.BatchNorm1d(self.hidden_dim) if self.
-                    use_batch_norm else nn.Identity())
-                modules.append(nn.ReLU())
-
-            # Output layer
-            modules.append(
-                nn.Linear(in_features=self.hidden_dim,
-                          out_features=self.out_channels))
-            modules.append(
-                nn.Dropout(p=dropout) if self.dropout else nn.Identity())
-
-            self.mlp_agg = nn.Sequential(*modules)
-        else:
-            self.mlp_agg = self.custom_mlp
-
-        self.reset_parameters()
+        from torch_geometric.nn import MLP
+        self.mlp = MLP(in_channels=in_channels * max_num_elements,
+                       out_channels=out_channels, **kwargs)
 
     def reset_parameters(self):
-        reset(self.mlp_agg)
+        self.mlp.reset_parameters()
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-        x, _ = to_dense_batch(x, index, fill_value=0,
-                              max_num_nodes=self.max_num_nodes_in_dataset)
-        return self.mlp_agg(x.view(-1, x.shape[1] * x.shape[2]))
+        x, _ = to_dense_batch(x, index, max_num_nodes=self.max_num_elements)
+        return self.mlp(x.view(-1, x.size(1) * x.size(2)))
 
     def __repr__(self) -> str:
-        has_custom_mlp = self.custom_mlp is not None
-        return (f'{self.__class__.__name__}({self.max_num_nodes_in_dataset}, '
-                f'{self.in_channels}, {self.out_channels}, '
-                f'{self.num_hidden_layers}, {self.hidden_dim}, '
-                f'{self.use_batch_norm}, {self.dropout}, '
-                f'Uses custom MLP: {has_custom_mlp})')
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, '
+                f'max_num_elements={self.max_num_elements})')
 
 
 # Set Transformer code as provided in
