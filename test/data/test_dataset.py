@@ -54,6 +54,23 @@ def test_in_memory_dataset():
     assert torch.equal(dataset[1:].x, x2)
 
 
+def test_to_datapipe():
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    data = Data(x=x, edge_index=edge_index)
+    dataset = MyTestDataset([data, data])
+
+    dp = dataset.to_datapipe()
+
+    assert isinstance(dp, torch.utils.data.IterDataPipe)
+    assert len(dp) == 2
+
+    assert torch.equal(dataset[0].x, list(dp)[0].x)
+    assert torch.equal(dataset[0].edge_index, list(dp)[0].edge_index)
+    assert torch.equal(dataset[1].x, list(dp)[1].x)
+    assert torch.equal(dataset[1].edge_index, list(dp)[1].edge_index)
+
+
 def test_in_memory_sparse_tensor_dataset():
     x = torch.randn(11, 16)
     adj = SparseTensor(
