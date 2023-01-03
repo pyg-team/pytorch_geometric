@@ -22,11 +22,11 @@ def to_nested_tensor(
     Args:
         x (torch.Tensor): The input tensor
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times *}`.
-        batch (torch.LongTensor, optional): The batch vector
+        batch (torch.Tensor, optional): The batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
             element to a specific example. Must be ordered.
             (default: :obj:`None`)
-        ptr (torch.LongTensor, optional): Alternative representation of
+        ptr (torch.Tensor, optional): Alternative representation of
             :obj:`batch` in compressed format. (default: :obj:`None`)
         batch_size (int, optional) The batch size :math:`B`.
             (default: :obj:`None`)
