@@ -237,7 +237,7 @@ class GraphMultisetTransformer(Aggregation):
                 dim: int = -2, edge_index: Optional[Tensor] = None) -> Tensor:
 
         x = self.lin1(x)
-        batch_x, mask = self.to_dense_batch(x, index)
+        batch_x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim)
         mask = (~mask).unsqueeze(1).to(dtype=x.dtype) * -1e9
 
         for i, (name, pool) in enumerate(zip(self.pool_sequences, self.pools)):
