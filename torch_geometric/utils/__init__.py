@@ -19,6 +19,7 @@ from .get_mesh_laplacian import get_mesh_laplacian
 from .mask import mask_select, index_to_mask, mask_to_index
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
+from .nested import to_nested_tensor, from_nested_tensor
 from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
                      to_torch_coo_tensor)
 from .spmm import spmm
@@ -77,6 +78,8 @@ __all__ = [
     'mask_to_index',
     'to_dense_batch',
     'to_dense_adj',
+    'to_nested_tensor',
+    'from_nested_tensor',
     'dense_to_sparse',
     'is_torch_sparse_tensor',
     'is_sparse',
