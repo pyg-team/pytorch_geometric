@@ -6,6 +6,7 @@ from torch import Tensor
 
 from torch_geometric.explain import Explanation, HeteroExplanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
+from torch_geometric.explain.config import MaskType
 from torch_geometric.typing import EdgeType, NodeType
 
 
@@ -37,32 +38,47 @@ class DummyExplainer(ExplainerAlgorithm):
         """
         assert isinstance(x, (Tensor, dict))
 
+        node_mask_type = self.explainer_config.node_mask_type
+        edge_mask_type = self.explainer_config.edge_mask_type
+
         if isinstance(x, Tensor):
             assert isinstance(edge_index, Tensor)
 
-            return Explanation(
-                node_mask=torch.rand(x.size(0), device=x.device),
-                node_feat_mask=torch.rand_like(x),
-                edge_mask=torch.rand(edge_index.size(1), device=x.device),
-                edge_feat_mask=torch.rand_like(edge_attr)
-                if edge_attr is not None else None,
-            )
+            node_mask = None
+            if node_mask_type == MaskType.object:
+                node_mask = torch.rand(x.size(0), 1, device=x.device)
+            elif node_mask_type == MaskType.common_attributes:
+                node_mask = torch.rand(1, x.size(1), device=x.device)
+            elif node_mask_type == MaskType.attributes:
+                node_mask = torch.rand_like(x)
+
+            edge_mask = None
+            if edge_mask_type == MaskType.object:
+                edge_mask = torch.rand(edge_index.size(1), device=x.device)
+
+            return Explanation(node_mask=node_mask, edge_mask=edge_mask)
         else:
             assert isinstance(edge_index, dict)
 
             node_dict = defaultdict(dict)
-            for key, x in x.items():
-                node_dict[key]['node_mask'] = torch.rand(
-                    x.size(0), device=x.device)
-                node_dict[key]['node_feat_mask'] = torch.rand_like(x)
+            for k, v in x.items():
+                node_mask = None
+                if node_mask_type == MaskType.object:
+                    node_mask = torch.rand(v.size(0), 1, device=v.device)
+                elif node_mask_type == MaskType.common_attributes:
+                    node_mask = torch.rand(1, v.size(1), device=v.device)
+                elif node_mask_type == MaskType.attributes:
+                    node_mask = torch.rand_like(v)
+                if node_mask is not None:
+                    node_dict[k]['node_mask'] = node_mask
 
             edge_dict = defaultdict(dict)
-            for key, edge_index in edge_index.items():
-                edge_dict[key]['edge_mask'] = torch.rand(
-                    edge_index.size(1), device=edge_index.device)
-                if edge_attr is not None:
-                    edge_dict[key]['edge_feat_mask'] = torch.rand_like(
-                        edge_attr[key])
+            for k, v in edge_index.items():
+                edge_mask = None
+                if edge_mask_type == MaskType.object:
+                    edge_mask = torch.rand(v.size(1), device=v.device)
+                if edge_mask is not None:
+                    edge_dict[k]['edge_mask'] = edge_mask
 
             return HeteroExplanation({**node_dict, **edge_dict})
 

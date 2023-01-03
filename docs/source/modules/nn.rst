@@ -227,6 +227,24 @@ Models
    :undoc-members:
    :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv, Explainer
 
+KGE Models
+----------
+
+.. currentmodule:: torch_geometric.nn.kge
+
+.. autosummary::
+   :nosignatures:
+   {% for cls in torch_geometric.nn.kge.classes %}
+     {{ cls }}
+   {% endfor %}
+
+.. autoclass:: torch_geometric.nn.kge.KGEModel
+   :members:
+
+.. automodule:: torch_geometric.nn.kge
+   :members:
+   :exclude-members: KGEModel, loss
+
 Encodings
 ---------
 
