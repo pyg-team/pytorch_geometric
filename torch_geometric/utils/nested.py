@@ -60,7 +60,12 @@ def from_nested_tensor(x: Tensor) -> Tuple[Tensor, Tensor]:
             need to match except for the first dimension.
     """
     if not x.is_nested:
-        raise ValueError("Input tensor is not nested")
+        raise ValueError("Input tensor in 'from_nested_tensor' is not nested")
+
+    if x.requires_grad:
+        raise NotImplementedError("Input tensor in 'from_nested_tensor' "
+                                  "requires gradients while autograd is not "
+                                  "yet supported")
 
     sizes = x._nested_tensor_size()
     for dim, (a, b) in enumerate(zip(sizes.t()[1:], sizes[0, 1:])):
