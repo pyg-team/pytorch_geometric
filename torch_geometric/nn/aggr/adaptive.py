@@ -21,7 +21,8 @@ class MLPAggregation(Aggregation):
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        max_num_elements: The maximum number of elements to group.
+        max_num_elements (int): The maximum number of elements to aggregate per
+            group.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.models.MLP`.
     """
