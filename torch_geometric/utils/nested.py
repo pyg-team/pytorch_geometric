@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -47,36 +47,43 @@ def to_nested_tensor(
     return torch.nested.as_nested_tensor(xs)
 
 
-def from_nested_tensor(x: Tensor) -> Tuple[Tensor, Tensor]:
+def from_nested_tensor(
+    x: Tensor,
+    return_batch: bool = False,
+) -> Union[Tensor, Tuple[Tensor, Tensor]]:
     r"""Given a `nested PyTorch tensor
     <https://pytorch.org/docs/stable/nested.html>`__, creates a contiguous
     batch of tensors
-    :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times *}` and a
-    batch vector, which assigns each element to a specific example.
+    :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times *}`, and
+    optionally a batch vector which assigns each element to a specific example.
     Reverse operation of :meth:`to_nested_tensor`.
 
     Args:
         x (torch.Tensor): The nested input tensor. The size of nested tensors
             need to match except for the first dimension.
+        return_batch (bool, optional): If set to :obj:`True`, will also return
+            the batch vector :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`.
+            (default: :obj:`False`)
     """
     if not x.is_nested:
         raise ValueError("Input tensor in 'from_nested_tensor' is not nested")
 
-    if x.requires_grad:
-        raise NotImplementedError("Input tensor in 'from_nested_tensor' "
-                                  "requires gradients while autograd is not "
-                                  "yet supported")
-
     sizes = x._nested_tensor_size()
-    for dim, (a, b) in enumerate(zip(sizes.t()[1:], sizes[0, 1:])):
-        if not torch.equal(a, b.expand_as(a)):
-            raise ValueError(f"Not all nested tensors have the same size in "
-                             f"dimension {dim + 1}")
+
+    if x.requires_grad:
+        out = torch.cat(x.unbind(), dim=0)
+    else:  # Avoids copying the data, but does not support autograd :(
+        for dim, (a, b) in enumerate(zip(sizes.t()[1:], sizes[0, 1:])):
+            if not torch.equal(a, b.expand_as(a)):
+                raise ValueError(f"Not all nested tensors have the same size "
+                                 f"in dimension {dim + 1}")
+        out = torch.tensor(x.contiguous().storage())
+        out = out.view(-1, *sizes[0, 1:].tolist())
+
+    if not return_batch:
+        return out
 
     batch = torch.arange(x.size(0), device=x.device)
     batch = batch.repeat_interleave(sizes[:, 0].to(batch.device))
-
-    out = torch.tensor(x.contiguous().storage())
-    out = out.view(batch.numel(), *sizes[0, 1:].tolist())
 
     return out, batch
