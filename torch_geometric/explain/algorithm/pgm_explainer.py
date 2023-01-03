@@ -1,13 +1,7 @@
 import logging
 from typing import List, Optional, Tuple
 
-try:
-    from pgmpy.estimators.CITests import chi_square
-except ImportError:
-    print('please install pgmpy hub to use this explainer')
-
 import numpy as np
-import pandas as pd
 import torch
 
 from torch_geometric.explain.config import ModelTaskLevel
@@ -190,6 +184,9 @@ class PGMExplainer(ExplainerAlgorithm):
             pgm_stats (torch.Tensor): : p-values of all the nodes in the graph
                 ordered by node index
         """
+        import pandas as pd
+        from pgmpy.estimators.CITests import chi_square
+
         num_nodes = x.shape[0]
         if not max_subgraph_size:
             max_subgraph_size = int(num_nodes / 20)
@@ -285,6 +282,9 @@ class PGMExplainer(ExplainerAlgorithm):
             pgm_stats (torch.Tensor): p-values of all the nodes in the
                 graph ordered by node index
         """
+        import pandas as pd
+        from pgmpy.estimators.CITests import chi_square
+
         logging.info(f'Explaining node: {node_index}')
 
         neighbors, edge_index_new, mapping, edge_mask_new = k_hop_subgraph(
