@@ -55,8 +55,8 @@ def from_nested_tensor(
     <https://pytorch.org/docs/stable/nested.html>`__, creates a contiguous
     batch of tensors
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times *}`, and
-    optionally a batch vector, which assigns each element to a specific
-    example. Reverse operation of :meth:`to_nested_tensor`.
+    optionally a batch vector which assigns each element to a specific example.
+    Reverse operation of :meth:`to_nested_tensor`.
 
     Args:
         x (torch.Tensor): The nested input tensor. The size of nested tensors
