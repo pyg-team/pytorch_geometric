@@ -13,10 +13,9 @@ from .base import ExplainerAlgorithm
 
 
 class PGMExplainer(ExplainerAlgorithm):
-    r"""The PGMExplainer model from the `"PGM-Explainer
-     Probabilistic Graphical Model Explanations for Graph Neural Networks
-        <https://arxiv.org/abs/2010.05788>`_  paper
-
+    r"""The PGMExplainer model from the `"PGMExplainer: Probabilistic
+    Graphical Model Explanations  for Graph Neural Networks"
+    <https://arxiv.org/abs/1903.03894>`_ paper
 
     Args:
         perturb_feature_list (List): indices of the perturbed features

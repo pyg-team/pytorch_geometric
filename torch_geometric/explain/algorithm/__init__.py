@@ -7,9 +7,9 @@ from .attention_explainer import AttentionExplainer
 
 __all__ = classes = [
     'ExplainerAlgorithm',
-    "DummyExplainer",
+    'DummyExplainer',
     'GNNExplainer',
-    "PGMExplainer",
+    'PGMExplainer',
     'PGExplainer',
     'AttentionExplainer',
 ]
