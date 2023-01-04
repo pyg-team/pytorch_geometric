@@ -1,29 +1,21 @@
-import pytest
 import torch
 
 from torch_geometric.nn.aggr import SetTransformerAggregation
+from torch_geometric.testing import is_full_test
 
 
-@pytest.mark.parametrize('num_PMA_outputs', [1, 4, 8])
-@pytest.mark.parametrize('num_enc_SABs', [0, 1, 2])
-@pytest.mark.parametrize('num_dec_SABs', [0, 1, 2])
-@pytest.mark.parametrize('dim_hidden', [8, 64])
-@pytest.mark.parametrize('num_heads', [1, 8])
-def test_set_transformer_aggregation(num_PMA_outputs, num_enc_SABs,
-                                     num_dec_SABs, dim_hidden, num_heads):
-    x = torch.randn(14, 9)
-    index = torch.tensor([0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1])
+def test_set_transformer_aggregation():
+    x = torch.randn(6, 16)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
 
-    out_channels = 16
-    st_aggr = SetTransformerAggregation(
-        in_channels=9, out_channels=out_channels,
-        num_PMA_outputs=num_PMA_outputs, num_enc_SABs=num_enc_SABs,
-        num_dec_SABs=num_dec_SABs, dim_hidden=dim_hidden, num_heads=num_heads)
-    st_aggr.reset_parameters()
+    aggr = SetTransformerAggregation(16, num_seed_points=2, heads=2)
+    aggr.reset_parameters()
+    assert str(aggr) == ('SetTransformerAggregation(16, num_seed_points=2, '
+                         'heads=2, layer_norm=False)')
 
-    assert str(st_aggr) == (
-        f'{SetTransformerAggregation.__name__}(9, {out_channels}, '
-        f'{num_PMA_outputs}, {num_enc_SABs}, '
-        f'{num_dec_SABs}, {dim_hidden}, {num_heads}, {False})')
+    out = aggr(x, index)
+    assert out.size() == (3, 2 * 16)
 
-    assert st_aggr(x, index).size() == (2, out_channels)
+    if is_full_test():
+        jit = torch.jit.script(aggr)
+        assert torch.allclose(jit(x, index), out)

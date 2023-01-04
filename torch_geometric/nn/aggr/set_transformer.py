@@ -4,29 +4,10 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.nn.aggr.gmt import PMA, SAB
-
-
-class SetTransformer(torch.nn.Module):
-    def __init__(self, dim_input: int, num_outputs: int, dim_output: int,
-                 num_enc_SABs: int, num_dec_SABs: int, dim_hidden: int = 128,
-                 num_heads: int = 4, ln: bool = False):
-        super().__init__()
-
-        self.enc = torch.nn.Sequential(
-            SAB(dim_input, dim_hidden, num_heads, layer_norm=ln), *[
-                SAB(dim_hidden, dim_hidden, num_heads, layer_norm=ln)
-                for _ in range(num_enc_SABs)
-            ])
-
-        self.dec = torch.nn.Sequential(
-            PMA(dim_hidden, num_heads, num_outputs, layer_norm=ln), *[
-                SAB(dim_hidden, dim_hidden, num_heads, layer_norm=ln)
-                for _ in range(num_dec_SABs)
-            ], torch.nn.Linear(dim_hidden, dim_output))
-
-    def forward(self, X):
-        return self.dec(self.enc(X))
+from torch_geometric.nn.aggr.utils import (
+    PoolingByMultiheadAttention,
+    SetAttentionBlock,
+)
 
 
 class SetTransformerAggregation(Aggregation):
@@ -36,61 +17,76 @@ class SetTransformerAggregation(Aggregation):
     <https://arxiv.org/abs/2211.04952>`_ paper.
 
     Args:
-        in_channels (int): Size of each input sample.
-        out_channels (int): Size of each output sample.
-        num_PMA_outputs (int): Number of outputs for the PMA block.
-        num_enc_SABs (int): Number of SAB blocks to use in the encoder after
-            the initial one that is always present (can be zero).
-        num_dec_SABs (int): Number of SAB blocks to use in the decoder
-            (can be zero).
-        dim_hidden (int): Hidden dimension used inside the attention blocks.
-        num_heads (int): Number of heads for the multi-head attention blocks.
-        ln (bool): Whether to use layer normalisation in the attention blocks.
+        channels (int): Size of each input sample.
+        num_seed_points (int, optional): Number of seed points.
+            (default: :obj:`1`)
+        num_encoder_blocks (int, optional): Number of Set Attention Blocks
+            (SABs) in the encoder. (default: :obj:`1`).
+        num_decoder_blocks (int, optional): Number of Set Attention Blocks
+            (SABs) in the decoder. (default: :obj:`1`).
+        heads (int, optional): Number of multi-head-attentions.
+            (default: :obj:`1`)
+        concat (bool, optional): If set to :obj:`False`, the seed embeddings
+            are averaged instead of concatenated. (default: :obj:`True`)
+        norm (str, optional): If set to :obj:`True`, will apply layer
+            normalization. (default: :obj:`True`)
     """
     def __init__(
         self,
-        in_channels: int,
-        out_channels: int,
-        num_PMA_outputs: int,
-        num_enc_SABs: int,
-        num_dec_SABs: int,
-        dim_hidden: int,
-        num_heads: int,
-        ln: bool = False,
+        channels: int,
+        num_seed_points: int = 1,
+        num_encoder_blocks: int = 1,
+        num_decoder_blocks: int = 1,
+        heads: int = 1,
+        concat: bool = True,
+        layer_norm: bool = False,
     ):
         super().__init__()
 
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.num_PMA_outputs = num_PMA_outputs
-        self.num_enc_SABs = num_enc_SABs
-        self.num_dec_SABs = num_dec_SABs
-        self.dim_hidden = dim_hidden
-        self.num_heads = num_heads
-        self.ln = ln
+        self.channels = channels
+        self.num_seed_points = num_seed_points
+        self.heads = heads
+        self.concat = concat
+        self.layer_norm = layer_norm
 
-        self.set_transformer_agg = SetTransformer(in_channels, num_PMA_outputs,
-                                                  out_channels, num_enc_SABs,
-                                                  num_dec_SABs, dim_hidden,
-                                                  num_heads, ln)
+        self.encoders = torch.nn.ModuleList([
+            SetAttentionBlock(channels, heads, layer_norm)
+            for _ in range(num_encoder_blocks)
+        ])
 
-        self.reset_parameters()
+        self.pma = PoolingByMultiheadAttention(channels, num_seed_points,
+                                               heads, layer_norm)
+
+        self.decoders = torch.nn.ModuleList([
+            SetAttentionBlock(channels, heads, layer_norm)
+            for _ in range(num_decoder_blocks)
+        ])
 
     def reset_parameters(self):
-        for module in self.set_transformer_agg.children():
-            if hasattr(module, 'reset_parameters'):
-                module.reset_parameters()
+        for encoder in self.encoders:
+            encoder.reset_parameters()
+        self.pma.reset_parameters()
+        for decoder in self.decoders:
+            decoder.reset_parameters()
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-        x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim)
-        x = self.set_transformer_agg(x)
-        return x.mean(dim=1)
+
+        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim)
+
+        for encoder in self.encoders:
+            x = encoder(x, mask)
+
+        x = self.pma(x, mask)
+
+        for decoder in self.decoders:
+            x = decoder(x)
+
+        return x.flatten(1, 2) if self.concat else x.mean(dim=1)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, '
-                f'{self.num_PMA_outputs}, {self.num_enc_SABs}, '
-                f'{self.num_dec_SABs}, {self.dim_hidden}, '
-                f'{self.num_heads}, {self.ln})')
+        return (f'{self.__class__.__name__}({self.channels}, '
+                f'num_seed_points={self.num_seed_points}, '
+                f'heads={self.heads}, '
+                f'layer_norm={self.layer_norm})')

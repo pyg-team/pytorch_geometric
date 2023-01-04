@@ -22,8 +22,8 @@ class MultiheadAttentionBlock(torch.nn.Module):
         channels (int): Size of each input sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
-        norm (str, optional): If set to :obj:`False`, will not apply a final
-            layer normalization. (default: :obj:`True`)
+        norm (str, optional): If set to :obj:`False`, will not apply layer
+            normalization. (default: :obj:`True`)
     """
     def __init__(self, channels: int, heads: int = 1, layer_norm: bool = True):
         super().__init__()
@@ -90,8 +90,8 @@ class SetAttentionBlock(torch.nn.Module):
         channels (int): Size of each input sample.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
-        norm (str, optional): If set to :obj:`False`, will not apply a final
-            layer normalization. (default: :obj:`True`)
+        norm (str, optional): If set to :obj:`False`, will not apply layer
+            normalization. (default: :obj:`True`)
     """
     def __init__(self, channels: int, heads: int = 1, layer_norm: bool = True):
         super().__init__()
@@ -128,8 +128,8 @@ class InducedSetAttentionBlock(torch.nn.Module):
         num_induced_points (int): Number of induced points.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
-        norm (str, optional): If set to :obj:`False`, will not apply a final
-            layer normalization. (default: :obj:`True`)
+        norm (str, optional): If set to :obj:`False`, will not apply layer
+            normalization. (default: :obj:`True`)
     """
     def __init__(self, channels: int, num_induced_points: int, heads: int = 1,
                  layer_norm: bool = True):
@@ -172,21 +172,24 @@ class PoolingByMultiheadAttention(torch.nn.Module):
             (default: :obj:`1`)
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
-        norm (str, optional): If set to :obj:`False`, will not apply a final
-            layer normalization. (default: :obj:`True`)
+        norm (str, optional): If set to :obj:`False`, will not apply layer
+            normalization. (default: :obj:`True`)
     """
     def __init__(self, channels: int, num_seed_points: int = 1, heads: int = 1,
                  layer_norm: bool = True):
         super().__init__()
+        self.lin = Linear(channels, channels)
         self.seed = Parameter(torch.Tensor(1, num_seed_points, channels))
         self.mab = MultiheadAttentionBlock(channels, heads, layer_norm)
         self.reset_parameters()
 
     def reset_parameters(self):
+        self.lin.reset_parameters()
         torch.nn.init.xavier_uniform_(self.seed)
         self.mab.reset_parameters()
 
     def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
+        x = self.lin(x).relu()
         return self.mab(self.seed.expand(x.size(0), -1, -1), x, y_mask=mask)
 
     def __repr__(self) -> str:
