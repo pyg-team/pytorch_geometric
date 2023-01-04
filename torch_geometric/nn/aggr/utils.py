@@ -156,7 +156,7 @@ class InducedSetAttentionBlock(torch.nn.Module):
 
 
 class PoolingByMultiheadAttention(torch.nn.Module):
-    r"""The Pooling by Multihead attention (PMA) layer from the `"Set
+    r"""The Pooling by Multihead Attention (PMA) layer from the `"Set
     Transformer: A Framework for Attention-based Permutation-Invariant Neural
     Networks" <https://arxiv.org/abs/1810.00825>`_ paper
 
