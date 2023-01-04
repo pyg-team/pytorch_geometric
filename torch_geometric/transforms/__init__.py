@@ -52,6 +52,7 @@ from .virtual_node import VirtualNode
 from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
 from .feature_propagation import FeaturePropagation
 from .mask import IndexToMask, MaskToIndex
+from .pad import Pad
 
 __all__ = [
     'BaseTransform',
@@ -112,6 +113,7 @@ __all__ = [
     'FeaturePropagation',
     'IndexToMask',
     'MaskToIndex',
+    'Pad',
 ]
 
 classes = __all__
