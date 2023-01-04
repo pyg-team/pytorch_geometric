@@ -74,3 +74,35 @@ class MultiheadAttentionBlock(torch.nn.Module):
         return (f'{self.__class__.__name__}({self.channels}, '
                 f'heads={self.heads}, '
                 f'layer_norm={self.layer_norm1 is not None})')
+
+
+class SetAttentionBlock(torch.nn.Module):
+    r"""The Set Attention Block (SAB) from the `"Set Transformer: A
+    Framework for Attention-based Permutation-Invariant Neural Networks"
+    <https://arxiv.org/abs/1810.00825>`_ paper
+
+    .. math::
+
+        \mathrm{SAB}(\mathbf{X}) = \mathrm{MAB}(\mathbf{x}, \mathbf{y})
+
+    Args:
+        channels (int): Size of each input sample.
+        heads (int, optional): Number of multi-head-attentions.
+            (default: :obj:`1`)
+        norm (str, optional): If set to :obj:`False`, will not apply a final
+            layer normalization. (default: :obj:`True`)
+    """
+    def __init__(self, channels: int, heads: int = 1, layer_norm: bool = True):
+        super().__init__()
+        self.mab = MultiheadAttentionBlock(channels, heads, layer_norm)
+
+    def reset_parameters(self):
+        self.mab.reset_parameters()
+
+    def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
+        return self.mab(x, x, mask, mask)
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.mab.channels}, '
+                f'heads={self.mab.heads}, '
+                f'layer_norm={self.mab.layer_norm1 is not None})')
