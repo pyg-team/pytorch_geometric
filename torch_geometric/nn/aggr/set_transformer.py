@@ -30,15 +30,12 @@ class SetTransformer(torch.nn.Module):
 
 
 class SetTransformerAggregation(Aggregation):
-    r"""Performs Set Transformer aggregation in which the graph nodes are
-    considered to be set elements processed by multi-head attention blocks, as
-    described in the `"Graph Neural Networks with Adaptive Readouts"
-    <https://arxiv.org/abs/2211.04952>`_ paper. SetTransformerAggregation is a
-    permutation-invariant operator.
+    r"""Performs "Set Transformer" aggregation in which the elements to
+    aggregate are processed by multi-head attention blocks, as described in
+    the `"Graph Neural Networks with Adaptive Readouts"
+    <https://arxiv.org/abs/2211.04952>`_ paper.
 
     Args:
-        max_num_nodes_in_dataset (int): Maximum number of nodes in a graph in
-            the dataset.
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         num_PMA_outputs (int): Number of outputs for the PMA block.
@@ -50,13 +47,19 @@ class SetTransformerAggregation(Aggregation):
         num_heads (int): Number of heads for the multi-head attention blocks.
         ln (bool): Whether to use layer normalisation in the attention blocks.
     """
-    def __init__(self, max_num_nodes_in_dataset: int, in_channels: int,
-                 out_channels: int, num_PMA_outputs: int, num_enc_SABs: int,
-                 num_dec_SABs: int, dim_hidden: int, num_heads: int,
-                 ln: bool = False):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_PMA_outputs: int,
+        num_enc_SABs: int,
+        num_dec_SABs: int,
+        dim_hidden: int,
+        num_heads: int,
+        ln: bool = False,
+    ):
         super().__init__()
 
-        self.max_num_nodes_in_dataset = max_num_nodes_in_dataset
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.num_PMA_outputs = num_PMA_outputs
@@ -81,15 +84,13 @@ class SetTransformerAggregation(Aggregation):
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
-        x, _ = self.to_dense_batch(
-            x, index, ptr, dim_size, dim,
-            max_num_elements=self.max_num_nodes_in_dataset)
+        x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim)
         x = self.set_transformer_agg(x)
         return x.mean(dim=1)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.max_num_nodes_in_dataset}, '
-                f'{self.in_channels}, {self.out_channels}, '
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, '
                 f'{self.num_PMA_outputs}, {self.num_enc_SABs}, '
                 f'{self.num_dec_SABs}, {self.dim_hidden}, '
                 f'{self.num_heads}, {self.ln})')

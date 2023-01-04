@@ -74,7 +74,7 @@ class MAB(torch.nn.Module):
             A = torch.softmax(mask + attention_score, 1)
         else:
             A = torch.softmax(
-                Q_.bmm(K_.transpose(1, 2)) / math.sqrt(self.dim_V), 1)
+                Q_.bmm(K_.transpose(1, 2)) / math.sqrt(self.dim_V), 2)
 
         out = torch.cat((Q_ + A.bmm(V_)).split(Q.size(0), 0), 2)
 
