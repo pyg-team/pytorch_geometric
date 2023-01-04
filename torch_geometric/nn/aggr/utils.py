@@ -2,6 +2,7 @@ from typing import Optional
 
 import torch
 from torch import Tensor
+from torch.nn import LayerNorm, Linear, MultiheadAttention, Parameter
 
 
 class MultiheadAttentionBlock(torch.nn.Module):
@@ -30,14 +31,14 @@ class MultiheadAttentionBlock(torch.nn.Module):
         self.channels = channels
         self.heads = heads
 
-        self.attn = torch.nn.MultiheadAttention(
+        self.attn = MultiheadAttention(
             channels,
             heads,
             batch_first=True,
         )
-        self.lin = torch.nn.Linear(channels, channels)
-        self.layer_norm1 = torch.nn.LayerNorm(channels) if layer_norm else None
-        self.layer_norm2 = torch.nn.LayerNorm(channels) if layer_norm else None
+        self.lin = Linear(channels, channels)
+        self.layer_norm1 = LayerNorm(channels) if layer_norm else None
+        self.layer_norm2 = LayerNorm(channels) if layer_norm else None
 
     def reset_parameters(self):
         self.attn._reset_parameters()
@@ -106,3 +107,44 @@ class SetAttentionBlock(torch.nn.Module):
         return (f'{self.__class__.__name__}({self.mab.channels}, '
                 f'heads={self.mab.heads}, '
                 f'layer_norm={self.mab.layer_norm1 is not None})')
+
+
+class InducedSetAttentionBlock(torch.nn.Module):
+    r"""The Induced Set Attention Block (SAB) from the `"Set Transformer: A
+    Framework for Attention-based Permutation-Invariant Neural Networks"
+    <https://arxiv.org/abs/1810.00825>`_ paper
+
+    .. math::
+
+        \mathrm{SAB}(\mathbf{X}) = \mathrm{MAB}(\mathbf{x}, \mathbf{y})
+
+    Args:
+        channels (int): Size of each input sample.
+        num_induced_points (int): Number of induced points.
+        heads (int, optional): Number of multi-head-attentions.
+            (default: :obj:`1`)
+        norm (str, optional): If set to :obj:`False`, will not apply a final
+            layer normalization. (default: :obj:`True`)
+    """
+    def __init__(self, channels: int, num_induced_points: int, heads: int = 1,
+                 layer_norm: bool = True):
+        super().__init__()
+        self.ind = Parameter(torch.Tensor(1, num_induced_points, channels))
+        self.mab1 = MultiheadAttentionBlock(channels, heads, layer_norm)
+        self.mab2 = MultiheadAttentionBlock(channels, heads, layer_norm)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        torch.nn.init.xavier_uniform_(self.ind)
+        self.mab1.reset_parameters()
+        self.mab2.reset_parameters()
+
+    def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
+        h = self.mab1(self.ind.expand(x.size(0), -1, -1), x, y_mask=mask)
+        return self.mab2(x, h, x_mask=mask)
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.ind.size(2)}, '
+                f'num_induced_points={self.ind.size(1)}, '
+                f'heads={self.mab1.heads}, '
+                f'layer_norm={self.mab1.layer_norm1 is not None})')
