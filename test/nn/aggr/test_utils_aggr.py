@@ -3,6 +3,7 @@ import torch
 from torch_geometric.nn.aggr.utils import (
     InducedSetAttentionBlock,
     MultiheadAttentionBlock,
+    PoolingByMultiheadAttention,
     SetAttentionBlock,
 )
 
@@ -49,6 +50,21 @@ def test_induced_set_attention_block():
 
     out = block(x, mask)
     assert out.size() == (2, 4, 8)
+
+    jit = torch.jit.script(block)
+    assert torch.allclose(jit(x, mask), out)
+
+
+def test_pooling_by_multihead_attention():
+    x = torch.randn(2, 4, 8)
+    mask = torch.tensor([[1, 1, 1, 1], [1, 1, 0, 0]], dtype=torch.bool)
+
+    block = PoolingByMultiheadAttention(8, num_seed_points=2, heads=2)
+    assert str(block) == ('PoolingByMultiheadAttention(8, num_seed_points=2, '
+                          'heads=2, layer_norm=True)')
+
+    out = block(x, mask)
+    assert out.size() == (2, 2, 8)
 
     jit = torch.jit.script(block)
     assert torch.allclose(jit(x, mask), out)

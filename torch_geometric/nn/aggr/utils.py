@@ -116,7 +116,12 @@ class InducedSetAttentionBlock(torch.nn.Module):
 
     .. math::
 
-        \mathrm{SAB}(\mathbf{X}) = \mathrm{MAB}(\mathbf{x}, \mathbf{y})
+        \mathrm{ISAB}(\mathbf{X}) &= \mathrm{MAB}(\mathbf{x}, \mathbf{h})
+
+        \mathbf{h} &= \mathrm{MAB}(\mathbf{I}, \mathbf{x})
+
+    where :math:`\mathbf{I}` denotes :obj:`num_induced_points` learnable
+    vectors.
 
     Args:
         channels (int): Size of each input sample.
@@ -148,3 +153,44 @@ class InducedSetAttentionBlock(torch.nn.Module):
                 f'num_induced_points={self.ind.size(1)}, '
                 f'heads={self.mab1.heads}, '
                 f'layer_norm={self.mab1.layer_norm1 is not None})')
+
+
+class PoolingByMultiheadAttention(torch.nn.Module):
+    r"""The Pooling by Multihead attention (PMA) layer from the `"Set
+    Transformer: A Framework for Attention-based Permutation-Invariant Neural
+    Networks" <https://arxiv.org/abs/1810.00825>`_ paper
+
+    .. math::
+
+        \mathrm{PMA}(\mathbf{X}) = \mathrm{MAB}(\mathbf{S}, \mathbf{x})
+
+    where :math:`\mathbf{S}` denotes :obj:`num_seed_points` learnable vectors.
+
+    Args:
+        channels (int): Size of each input sample.
+        num_seed_points (int, optional): Number of seed points.
+            (default: :obj:`1`)
+        heads (int, optional): Number of multi-head-attentions.
+            (default: :obj:`1`)
+        norm (str, optional): If set to :obj:`False`, will not apply a final
+            layer normalization. (default: :obj:`True`)
+    """
+    def __init__(self, channels: int, num_seed_points: int = 1, heads: int = 1,
+                 layer_norm: bool = True):
+        super().__init__()
+        self.seed = Parameter(torch.Tensor(1, num_seed_points, channels))
+        self.mab = MultiheadAttentionBlock(channels, heads, layer_norm)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        torch.nn.init.xavier_uniform_(self.seed)
+        self.mab.reset_parameters()
+
+    def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
+        return self.mab(self.seed.expand(x.size(0), -1, -1), x, y_mask=mask)
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.seed.size(2)}, '
+                f'num_seed_points={self.seed.size(1)}, '
+                f'heads={self.mab.heads}, '
+                f'layer_norm={self.mab.layer_norm1 is not None})')
