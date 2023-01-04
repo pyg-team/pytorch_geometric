@@ -46,6 +46,7 @@ class SetTransformerAggregation(Aggregation):
         self.channels = channels
         self.num_seed_points = num_seed_points
         self.heads = heads
+        self.concat = concat
         self.layer_norm = layer_norm
 
         self.encoders = torch.nn.ModuleList([
@@ -77,7 +78,7 @@ class SetTransformerAggregation(Aggregation):
         for encoder in self.encoders:
             x = encoder(x, mask)
 
-        self.pma(x, mask)
+        x = self.pma(x, mask)
 
         for decoder in self.decoders:
             x = decoder(x)

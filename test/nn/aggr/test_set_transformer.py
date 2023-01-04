@@ -10,11 +10,11 @@ def test_set_transformer_aggregation():
 
     aggr = SetTransformerAggregation(16, num_seed_points=2, heads=2)
     aggr.reset_parameters()
-    assert str(aggr) == ('SetTransformerAggregation(8, num_seed_points=2, '
-                         'heads=2, layer_norm=True)')
+    assert str(aggr) == ('SetTransformerAggregation(16, num_seed_points=2, '
+                         'heads=2, layer_norm=False)')
 
     out = aggr(x, index)
-    assert out.size() == (3, 16)
+    assert out.size() == (3, 2 * 16)
 
     if is_full_test():
         jit = torch.jit.script(aggr)
