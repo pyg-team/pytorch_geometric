@@ -11,8 +11,11 @@ class MultiheadAttentionBlock(torch.nn.Module):
 
     .. math::
 
-        \mathrm{MAB}(x, y) = \mathrm{LayerNorm}(x +
-        \mathrm{Multihead}(x, y, y))
+        \mathrm{MAB}(\mathbf{x}, \mathbf{y}) &= \mathrm{LayerNorm}(\mathbf{h} +
+        \mathbf{W} \mathbf{h})
+
+        \mathbf{h} &= \mathrm{LayerNorm}(\mathbf{x} +
+        \mathrm{Multihead}(\mathbf{x}, \mathbf{y}, \mathbf{y}))
 
     Args:
         channels (int): Size of each input sample.
@@ -32,12 +35,17 @@ class MultiheadAttentionBlock(torch.nn.Module):
             heads,
             batch_first=True,
         )
-        self.layer_norm = torch.nn.LayerNorm(channels) if layer_norm else None
+        self.lin = torch.nn.Linear(channels, channels)
+        self.layer_norm1 = torch.nn.LayerNorm(channels) if layer_norm else None
+        self.layer_norm2 = torch.nn.LayerNorm(channels) if layer_norm else None
 
     def reset_parameters(self):
         self.attn._reset_parameters()
-        if self.layer_norm is not None:
-            self.layer_norm.reset_parameters()
+        self.lin.reset_parameters()
+        if self.layer_norm1 is not None:
+            self.layer_norm1.reset_parameters()
+        if self.layer_norm2 is not None:
+            self.layer_norm2.reset_parameters()
 
     def forward(self, x: Tensor, y: Tensor, x_mask: Optional[Tensor] = None,
                 y_mask: Optional[Tensor] = None) -> Tensor:
@@ -52,12 +60,17 @@ class MultiheadAttentionBlock(torch.nn.Module):
 
         out = out + x
 
-        if self.layer_norm is not None:
-            out = self.layer_norm(out)
+        if self.layer_norm1 is not None:
+            out = self.layer_norm1(out)
+
+        out = out + self.lin(out).relu()
+
+        if self.layer_norm2 is not None:
+            out = self.layer_norm2(out)
 
         return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.channels}, '
                 f'heads={self.heads}, '
-                f'layer_norm={self.layer_norm is not None})')
+                f'layer_norm={self.layer_norm1 is not None})')
