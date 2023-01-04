@@ -105,7 +105,14 @@ class MLP(torch.nn.Module):
             in_channels = channel_list
 
         if in_channels is not None:
-            assert num_layers >= 1
+            if num_layers is None:
+                raise ValueError("Argument `num_layers` must be given")
+            if num_layers > 1 and hidden_channels is None:
+                raise ValueError(f"Argument `hidden_channels` must be given "
+                                 f"for `num_layers={num_layers}`")
+            if out_channels is None:
+                raise ValueError("Argument `out_channels` must be given")
+
             channel_list = [hidden_channels] * (num_layers - 1)
             channel_list = [in_channels] + channel_list + [out_channels]
 

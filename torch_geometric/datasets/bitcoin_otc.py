@@ -52,7 +52,7 @@ class BitcoinOTC(InMemoryDataset):
 
     @property
     def num_nodes(self) -> int:
-        return self.data.edge_index.max().item() + 1
+        return self._data.edge_index.max().item() + 1
 
     def download(self):
         path = download_url(self.url, self.raw_dir)

@@ -74,7 +74,7 @@ class MAB(torch.nn.Module):
             A = torch.softmax(mask + attention_score, 1)
         else:
             A = torch.softmax(
-                Q_.bmm(K_.transpose(1, 2)) / math.sqrt(self.dim_V), 1)
+                Q_.bmm(K_.transpose(1, 2)) / math.sqrt(self.dim_V), 2)
 
         out = torch.cat((Q_ + A.bmm(V_)).split(Q.size(0), 0), 2)
 
@@ -237,7 +237,7 @@ class GraphMultisetTransformer(Aggregation):
                 dim: int = -2, edge_index: Optional[Tensor] = None) -> Tensor:
 
         x = self.lin1(x)
-        batch_x, mask = self.to_dense_batch(x, index)
+        batch_x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim)
         mask = (~mask).unsqueeze(1).to(dtype=x.dtype) * -1e9
 
         for i, (name, pool) in enumerate(zip(self.pool_sequences, self.pools)):
