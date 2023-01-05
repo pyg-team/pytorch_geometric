@@ -62,7 +62,7 @@ class PGMExplainer(ExplainerAlgorithm):
         """
 
         X_perturb = feature_matrix.detach().clone()
-        perturb_array = X_perturb[node_indexes].detach().clone()
+        perturb_array = X_perturb[node_indexes]
         epsilon = 0.05 * torch.max(feature_matrix, dim=0).values
 
         if self.perturbation_mode == "randint":
