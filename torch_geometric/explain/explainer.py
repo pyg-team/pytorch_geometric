@@ -1,6 +1,5 @@
 import warnings
 from typing import Any, Dict, Optional, Union
-from .num_nodes import maybe_num_nodes
 
 import torch
 from torch import Tensor
@@ -25,6 +24,8 @@ from torch_geometric.explain.config import (
     ThresholdConfig,
 )
 from torch_geometric.typing import EdgeType, NodeType
+
+from .num_nodes import maybe_num_nodes
 
 
 class Explainer:
@@ -67,7 +68,6 @@ class Explainer:
             See :class:`~torch_geometric.explain.config.ThresholdConfig` for
             available options. (default: :obj:`None`)
     """
-
     def __init__(
         self,
         model: torch.nn.Module,
@@ -138,7 +138,8 @@ class Explainer:
         if isinstance(edge_mask, Tensor):
             set_masks(self.model, edge_mask, edge_index, apply_sigmoid=False)
         elif isinstance(edge_mask, dict):
-            set_hetero_masks(self.model, edge_mask, edge_index, apply_sigmoid=False)
+            set_hetero_masks(self.model, edge_mask, edge_index,
+                             apply_sigmoid=False)
 
         out = self.get_prediction(x, edge_index, **kwargs)
         clear_masks(self.model)
@@ -184,14 +185,12 @@ class Explainer:
             if target is None:
                 raise ValueError(
                     f"The 'target' has to be provided for the explanation "
-                    f"type '{self.explanation_type.value}'"
-                )
+                    f"type '{self.explanation_type.value}'")
         elif self.explanation_type == ExplanationType.model:
             if target is not None:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
-                    f"type '{self.explanation_type.value}'"
-                )
+                    f"type '{self.explanation_type.value}'")
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
 
@@ -346,7 +345,7 @@ class Explainer:
             subsets.append(col[edge_mask])
 
         subset, inv = torch.cat(subsets).unique(return_inverse=True)
-        inv = inv[: node_idx.numel()]
+        inv = inv[:node_idx.numel()]
 
         node_mask.fill_(False)
         node_mask[subset] = True
@@ -357,7 +356,7 @@ class Explainer:
         edge_index = edge_index[:, edge_mask]
 
         if relabel_nodes:
-            node_idx = row.new_full((num_nodes,), -1)
+            node_idx = row.new_full((num_nodes, ), -1)
             node_idx[subset] = torch.arange(subset.size(0), device=row.device)
             edge_index = node_idx[edge_index]
 
