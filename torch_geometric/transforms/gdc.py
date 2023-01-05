@@ -303,11 +303,11 @@ class GDC(BaseTransform):
                 deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
 
             edge_index_np = edge_index.cpu().numpy()
-            # Assumes coalesced edge_index.
-            _, indptr, out_degree = np.unique(edge_index_np[0],
-                                              return_index=True,
-                                              return_counts=True)
-            indptr = np.append(indptr, len(edge_index_np[0]))
+
+            # Assumes sorted and coalesced edge indices:
+            indptr = torch._convert_indices_from_coo_to_csr(
+                edge_index[0], num_nodes).cpu().numpy()
+            out_degree = indptr[1:] - indptr[:-1]
 
             neighbors, neighbor_weights = self.__calc_ppr__(
                 indptr, edge_index_np[1], out_degree, kwargs['alpha'],

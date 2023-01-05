@@ -1,3 +1,4 @@
+import copy
 from collections import defaultdict
 from typing import Union
 
@@ -55,12 +56,12 @@ class RemoveIsolatedNodes(BaseTransform):
             col = n_map_dict[dst][store.edge_index[1]]
             store.edge_index = torch.stack([row, col], dim=0)
 
-        for store in data.node_stores:
+        old_data = copy.copy(data)
+        for out, store in zip(data.node_stores, old_data.node_stores):
             for key, value in store.items():
                 if key == 'num_nodes':
-                    store.num_nodes = n_id_dict[store._key].numel()
-
+                    out.num_nodes = n_id_dict[store._key].numel()
                 elif store.is_node_attr(key):
-                    store[key] = value[n_id_dict[store._key]]
+                    out[key] = value[n_id_dict[store._key]]
 
         return data

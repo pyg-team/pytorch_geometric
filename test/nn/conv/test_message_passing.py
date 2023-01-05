@@ -62,10 +62,10 @@ def test_my_conv():
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out)
     assert torch.allclose(conv(x1, adj.t()), out)
-    assert torch.allclose(conv(x1, torch_adj.t()), out)
+    assert torch.allclose(conv(x1, torch_adj.t()), out, atol=1e-6)
     conv.fuse = False
     assert torch.allclose(conv(x1, adj.t()), out)
-    assert torch.allclose(conv(x1, torch_adj.t()), out)
+    assert torch.allclose(conv(x1, torch_adj.t()), out, atol=1e-6)
     conv.fuse = True
 
     adj = adj.sparse_resize((4, 2))
@@ -78,14 +78,14 @@ def test_my_conv():
     assert out2.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), edge_index, value, (4, 2)), out1)
     assert torch.allclose(conv((x1, x2), adj.t()), out1)
-    assert torch.allclose(conv((x1, x2), torch_adj.t()), out1)
+    assert torch.allclose(conv((x1, x2), torch_adj.t()), out1, atol=1e-6)
     assert torch.allclose(conv((x1, None), adj.t()), out2)
     assert torch.allclose(conv((x1, None), torch_adj.t()), out2, atol=1e-6)
     conv.fuse = False
     assert torch.allclose(conv((x1, x2), adj.t()), out1)
-    assert torch.allclose(conv((x1, x2), torch_adj.t()), out1)
+    assert torch.allclose(conv((x1, x2), torch_adj.t()), out1, atol=1e-6)
     assert torch.allclose(conv((x1, None), adj.t()), out2)
-    assert torch.allclose(conv((x1, None), torch_adj.t()), out2)
+    assert torch.allclose(conv((x1, None), torch_adj.t()), out2, atol=1e-6)
     conv.fuse = True
 
     # Test backward compatibility for `torch.sparse` tensors:

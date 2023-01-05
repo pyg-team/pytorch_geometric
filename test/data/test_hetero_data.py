@@ -452,6 +452,27 @@ def test_hetero_data_invalid_names():
     assert data.edge_types == [('my test', 'a__b', 'my test')]
 
 
+def test_hetero_data_update():
+    data = HeteroData()
+    data['paper'].x = torch.arange(0, 5)
+    data['paper'].y = torch.arange(5, 10)
+    data['author'].x = torch.arange(10, 15)
+
+    other = HeteroData()
+    other['paper'].x = torch.arange(15, 20)
+    other['author'].y = torch.arange(20, 25)
+    other['paper', 'paper'].edge_index = torch.randint(5, (2, 20))
+
+    data.update(other)
+    assert len(data) == 3
+    assert torch.equal(data['paper'].x, torch.arange(15, 20))
+    assert torch.equal(data['paper'].y, torch.arange(5, 10))
+    assert torch.equal(data['author'].x, torch.arange(10, 15))
+    assert torch.equal(data['author'].y, torch.arange(20, 25))
+    assert torch.equal(data['paper', 'paper'].edge_index,
+                       other['paper', 'paper'].edge_index)
+
+
 # Feature Store ###############################################################
 
 
