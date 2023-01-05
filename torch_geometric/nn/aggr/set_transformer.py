@@ -29,7 +29,7 @@ class SetTransformerAggregation(Aggregation):
         concat (bool, optional): If set to :obj:`False`, the seed embeddings
             are averaged instead of concatenated. (default: :obj:`True`)
         norm (str, optional): If set to :obj:`True`, will apply layer
-            normalization. (default: :obj:`True`)
+            normalization. (default: :obj:`False`)
     """
     def __init__(
         self,
