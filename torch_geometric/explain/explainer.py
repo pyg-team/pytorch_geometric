@@ -1,5 +1,6 @@
 import warnings
 from typing import Any, Dict, Optional, Union
+from .num_nodes import maybe_num_nodes
 
 import torch
 from torch import Tensor
