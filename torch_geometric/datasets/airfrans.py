@@ -37,7 +37,7 @@ class AirfRANS(InMemoryDataset):
     A library for manipulang simulations of the dataset is available `here
     <https://airfrans.readthedocs.io/en/latest/index.html>`_.
 
-    The dataset is under the `ODbL v1.0 License
+    The dataset is released under the `ODbL v1.0 License
     <https://opendatacommons.org/licenses/odbl/1-0/>`_.
 
     .. note::
