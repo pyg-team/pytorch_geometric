@@ -245,7 +245,7 @@ class Explainer:
         explanation.validate_masks()
         return explanation.threshold(self.threshold_config)
 
-    def k_hop_subgraph(
+    def Explainer_threshold(
         node_idx: Union[int, List[int], Tensor],
         num_hops: int,
         edge_index: Tensor,
