@@ -90,3 +90,13 @@ def test_gdc():
     assert torch.all(
         torch.isclose(col_sum, torch.tensor(1.0))
         | torch.isclose(col_sum, torch.tensor(0.0)))
+
+    data = Data(edge_index=edge_index, num_nodes=5)
+    gdc = GDC(self_loop_weight=1, normalization_in='sym',
+              normalization_out='sym',
+              diffusion_kwargs=dict(method='heat', t=10, eps=1e-10),
+              sparsification_kwargs=dict(method='threshold',
+                                         avg_degree=2), exact=False)
+    data = gdc(data)
+    mat = to_dense_adj(data.edge_index, edge_attr=data.edge_attr).squeeze()
+    assert torch.all(mat >= -1e-8)
