@@ -66,6 +66,7 @@ class Explainer:
             See :class:`~torch_geometric.explain.config.ThresholdConfig` for
             available options. (default: :obj:`None`)
     """
+
     def __init__(
         self,
         model: torch.nn.Module,
@@ -136,8 +137,7 @@ class Explainer:
         if isinstance(edge_mask, Tensor):
             set_masks(self.model, edge_mask, edge_index, apply_sigmoid=False)
         elif isinstance(edge_mask, dict):
-            set_hetero_masks(self.model, edge_mask, edge_index,
-                             apply_sigmoid=False)
+            set_hetero_masks(self.model, edge_mask, edge_index, apply_sigmoid=False)
 
         out = self.get_prediction(x, edge_index, **kwargs)
         clear_masks(self.model)
@@ -183,12 +183,14 @@ class Explainer:
             if target is None:
                 raise ValueError(
                     f"The 'target' has to be provided for the explanation "
-                    f"type '{self.explanation_type.value}'")
+                    f"type '{self.explanation_type.value}'"
+                )
         elif self.explanation_type == ExplanationType.model:
             if target is not None:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
-                    f"type '{self.explanation_type.value}'")
+                    f"type '{self.explanation_type.value}'"
+                )
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
 
@@ -236,7 +238,7 @@ class Explainer:
                     # Keyword arguments are likely named `{attr_name}_dict`
                     # while we only want to assign the `{attr_name}` to the
                     # `HeteroExplanation` object:
-                    key = key[:-5] if key.endswith('_dict') else key
+                    key = key[:-5] if key.endswith("_dict") else key
                     for type_name, value in arg.items():
                         explanation[type_name][key] = value
                 else:
@@ -251,7 +253,7 @@ class Explainer:
         edge_index: Tensor,
         relabel_nodes: bool = False,
         num_nodes: Optional[int] = None,
-        flow: str = 'source_to_target',
+        flow: str = "source_to_target",
         directed: bool = False,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         r"""Computes the induced subgraph of :obj:`edge_index` around all nodes in
@@ -320,8 +322,8 @@ class Explainer:
 
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-        assert flow in ['source_to_target', 'target_to_source']
-        if flow == 'target_to_source':
+        assert flow in ["source_to_target", "target_to_source"]
+        if flow == "target_to_source":
             row, col = edge_index
         else:
             col, row = edge_index
@@ -343,7 +345,7 @@ class Explainer:
             subsets.append(col[edge_mask])
 
         subset, inv = torch.cat(subsets).unique(return_inverse=True)
-        inv = inv[:node_idx.numel()]
+        inv = inv[: node_idx.numel()]
 
         node_mask.fill_(False)
         node_mask[subset] = True
@@ -354,7 +356,7 @@ class Explainer:
         edge_index = edge_index[:, edge_mask]
 
         if relabel_nodes:
-            node_idx = row.new_full((num_nodes, ), -1)
+            node_idx = row.new_full((num_nodes,), -1)
             node_idx[subset] = torch.arange(subset.size(0), device=row.device)
             edge_index = node_idx[edge_index]
 
