@@ -53,6 +53,7 @@ from .han_conv import HANConv
 from .lg_conv import LGConv
 from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
+from .gps_conv import GPSConv
 
 __all__ = [
     'MessagePassing',
@@ -115,6 +116,7 @@ __all__ = [
     'HANConv',
     'LGConv',
     'PointGNNConv',
+    'GPSConv',
 ]
 
 classes = __all__

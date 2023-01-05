@@ -308,6 +308,30 @@ class Dataset(torch.utils.data.Dataset):
         r"""Prints summary statistics of the dataset to the console."""
         print(str(self.get_summary()))
 
+    def to_datapipe(self):
+        r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
+
+        The returned instance can then be used with PyG's built-in DataPipes
+        for baching graphs as follows:
+
+        .. code-block:: python
+
+            from torch_geometric.datasets import QM9
+
+            dp = QM9(root='./data/QM9/').to_datapipe()
+            dp = dp.batch_graphs(batch_size=2, drop_last=True)
+
+            for batch in dp:
+                pass
+
+        See the `PyTorch tutorial
+        <https://pytorch.org/data/main/tutorial.html>`_ for further background
+        on DataPipes.
+        """
+        from torch_geometric.data.datapipes import DatasetAdapter
+
+        return DatasetAdapter(self)
+
 
 def to_list(value: Any) -> Sequence:
     if isinstance(value, Sequence) and not isinstance(value, str):

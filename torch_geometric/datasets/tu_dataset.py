@@ -131,12 +131,12 @@ class TUDataset(InMemoryDataset):
                 "root folder and try again.")
         self.data, self.slices, self.sizes = out
 
-        if self.data.x is not None and not use_node_attr:
+        if self._data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
-            self.data.x = self.data.x[:, num_node_attributes:]
-        if self.data.edge_attr is not None and not use_edge_attr:
-            num_edge_attributes = self.num_edge_attributes
-            self.data.edge_attr = self.data.edge_attr[:, num_edge_attributes:]
+            self._data.x = self._data.x[:, num_node_attributes:]
+        if self._data.edge_attr is not None and not use_edge_attr:
+            num_edge_attrs = self.num_edge_attributes
+            self._data.edge_attr = self._data.edge_attr[:, num_edge_attrs:]
 
     @property
     def raw_dir(self) -> str:
@@ -197,7 +197,7 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        torch.save((self.data, self.slices, sizes), self.processed_paths[0])
+        torch.save((self._data, self.slices, sizes), self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'
