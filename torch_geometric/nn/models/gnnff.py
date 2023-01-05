@@ -26,7 +26,7 @@ class GaussianFilter(torch.nn.Module):
         return torch.exp(self.coeff * torch.pow(dist, 2))
 
 
-class NodeUpdate(torch.nn.Module):
+class NodeBlock(torch.nn.Module):
     def __init__(self, hidden_node_channels: int, hidden_edge_channels: int):
         super().__init__()
         self.lin_c1 = Linear(hidden_node_channels + hidden_edge_channels,
@@ -35,6 +35,11 @@ class NodeUpdate(torch.nn.Module):
         # ref: https://github.com/txie-93/cgcnn/blob/master/cgcnn/model.py
         self.bn_c1 = torch.nn.BatchNorm1d(2 * hidden_node_channels)
         self.bn = torch.nn.BatchNorm1d(hidden_node_channels)
+
+    def reset_parameters(self):
+        self.lin_c1.reset_parameters()
+        self.bn_c1.reset_parameters()
+        self.bn.reset_parameters()
 
     def forward(self, node_emb: Tensor, edge_emb: Tensor, i: Tensor) -> Tensor:
         c1 = torch.cat([node_emb[i], edge_emb], dim=1)
@@ -48,7 +53,7 @@ class NodeUpdate(torch.nn.Module):
         return torch.tanh(node_emb + c1_emb)
 
 
-class EdgeUpdate(torch.nn.Module):
+class EdgeBlock(torch.nn.Module):
     def __init__(self, hidden_node_channels: int, hidden_edge_channels: int):
         super().__init__()
         self.lin_c2 = Linear(hidden_node_channels, 2 * hidden_edge_channels)
@@ -61,6 +66,14 @@ class EdgeUpdate(torch.nn.Module):
         self.bn_c3 = torch.nn.BatchNorm1d(2 * hidden_edge_channels)
         self.bn_c2_2 = torch.nn.BatchNorm1d(hidden_edge_channels)
         self.bn_c3_2 = torch.nn.BatchNorm1d(hidden_edge_channels)
+
+    def reset_parameters(self):
+        self.lin_c2.reset_parameters()
+        self.lin_c3.reset_parameters()
+        self.bn_c2.reset_parameters()
+        self.bn_c3.reset_parameters()
+        self.bn_c2_2.reset_parameters()
+        self.bn_c3_2.reset_parameters()
 
     def forward(
         self,
@@ -102,36 +115,6 @@ class EdgeUpdate(torch.nn.Module):
         return torch.tanh(edge_emb + c2_emb + c3_emb)
 
 
-class MessagePassing(torch.nn.Module):
-    def __init__(self, hidden_node_channels: int, hidden_edge_channels: int):
-        super().__init__()
-        self.node_update = NodeUpdate(hidden_node_channels,
-                                      hidden_edge_channels)
-        self.edge_update = EdgeUpdate(hidden_node_channels,
-                                      hidden_edge_channels)
-
-    def reset_parameters(self):
-        pass
-
-    def forward(
-        self,
-        node_emb: Tensor,
-        edge_emb: Tensor,
-        i: Tensor,
-        j: Tensor,
-        idx_i: Tensor,
-        idx_j: Tensor,
-        idx_k: Tensor,
-        idx_ji: Tensor,
-        idx_kj: Tensor,
-    ) -> Tensor:
-        node_emb = self.node_update(node_emb, edge_emb, i)
-        edge_emb = self.edge_update(node_emb, edge_emb, i, j, idx_i, idx_j,
-                                    idx_k, idx_ji, idx_kj)
-
-        return node_emb, edge_emb
-
-
 class GNNFF(torch.nn.Module):
     r"""The Graph Neural Network Force Field (GNNFF) from the
     `"Accurate and scalable graph neural network force field and molecular
@@ -171,11 +154,14 @@ class GNNFF(torch.nn.Module):
             ShiftedSoftplus(),
             Linear(hidden_node_channels, hidden_node_channels),
         )
-
         self.edge_emb = GaussianFilter(0.0, 5.0, hidden_edge_channels)
 
-        self.convs = ModuleList([
-            MessagePassing(hidden_node_channels, hidden_edge_channels)
+        self.node_blocks = ModuleList([
+            NodeBlock(hidden_node_channels, hidden_edge_channels)
+            for _ in range(num_layers)
+        ])
+        self.edge_blocks = ModuleList([
+            EdgeBlock(hidden_node_channels, hidden_edge_channels)
             for _ in range(num_layers)
         ])
 
@@ -190,8 +176,10 @@ class GNNFF(torch.nn.Module):
     def reset_parameters(self):
         reset(self.node_emb)
         self.edge_emb.reset_parameters()
-        for conv in self.convs:
-            conv.reset_parameters()
+        for node_block in self.node_blocks:
+            node_block.reset_parameters()
+        for edge_block in self.edge_blocks:
+            edge_block.reset_parameters()
         reset(self.force_predictor)
 
     def forward(self, z: Tensor, pos: Tensor,
@@ -211,9 +199,11 @@ class GNNFF(torch.nn.Module):
         node_emb = self.node_emb(z)
         edge_emb = self.edge_emb(dist)
 
-        for conv in self.convs:  # Message passing blocks:
-            node_emb, edge_emb = conv(node_emb, edge_emb, i, j, idx_i, idx_j,
-                                      idx_k, idx_ji, idx_kj)
+        # Message passing blocks:
+        for node_block, edge_block in zip(self.node_blocks, self.edge_blocks):
+            node_emb = node_block(node_emb, edge_emb, i)
+            edge_emb = edge_block(node_emb, edge_emb, i, j, idx_i, idx_j,
+                                  idx_k, idx_ji, idx_kj)
 
         # Force prediction block:
         force = self.force_predictor(edge_emb) * unit_vec
