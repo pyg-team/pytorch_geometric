@@ -44,7 +44,7 @@ class ThresholdType(Enum):
     hard = 'hard'
     topk = 'topk'
     topk_hard = 'topk_hard'
-    # connected = 'connected'  # TODO
+    connected = 'connected'
 
 
 @dataclass
