@@ -1,4 +1,3 @@
-import math
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
@@ -624,6 +623,8 @@ def get_calc_ppr():
 
 
 def get_calc_heat():
+    import math
+
     import numba
     from numba.core import types
     from numba.typed import Dict
