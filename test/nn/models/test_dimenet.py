@@ -22,6 +22,7 @@ def test_dimenet_plus_plus():
         num_before_skip=2,
         num_after_skip=2,
     )
+    model.reset_parameters()
 
     with torch.no_grad():
         out = model(z, pos)

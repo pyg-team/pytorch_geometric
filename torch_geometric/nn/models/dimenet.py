@@ -462,8 +462,6 @@ class DimeNet(torch.nn.Module):
             for _ in range(num_blocks)
         ])
 
-        self.reset_parameters()
-
     def reset_parameters(self):
         self.rbf.reset_parameters()
         self.emb.reset_parameters()

@@ -13,6 +13,7 @@ def test_gnnff():
         hidden_edge_channels=5,
         num_message_passings=5,
     )
+    model.reset_parameters()
 
     out = model(z, pos)
     assert out.size() == (20, 3)

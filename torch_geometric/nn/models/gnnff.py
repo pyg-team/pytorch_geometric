@@ -208,6 +208,9 @@ class GNNFF(torch.nn.Module):
 
         self.force_predictor = ForcePredictor(hidden_edge_channels)
 
+    def reset_parameters(self):
+        pass
+
     def triplets(
         self,
         edge_index: Tensor,
