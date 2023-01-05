@@ -141,7 +141,8 @@ def main():
     datamodule = DataModule('../../data/OGB')
     model = RelationalGNN(datamodule.metadata(), hidden_channels=64,
                           out_channels=349, dropout=0.0)
-    checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1)
+    checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1,
+                                          mode='max')
     trainer = Trainer(accelerator='gpu', devices=1, max_epochs=20,
                       callbacks=[checkpoint_callback])
 

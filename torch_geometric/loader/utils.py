@@ -1,41 +1,38 @@
 import copy
+import glob
 import math
+import os
 from collections.abc import Sequence
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, HeteroData, remote_backend_utils
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import (
+    Data,
+    FeatureStore,
+    GraphStore,
+    HeteroData,
+    TensorAttr,
+    remote_backend_utils,
+)
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     FeatureTensorType,
     InputEdges,
     InputNodes,
     OptTensor,
+    SparseTensor,
 )
-
-
-class InputData:
-    def __init__(self, *args):
-        self.args = args
-
-    def __getitem__(self, index: Union[Tensor, List[int]]) -> Any:
-        if not isinstance(index, Tensor):
-            index = torch.tensor(index, dtype=torch.long)
-
-        outs = [index]
-        for arg in self.args:
-            outs.append(arg[index] if arg is not None else None)
-        return tuple(outs)
 
 
 def index_select(value: FeatureTensorType, index: Tensor,
                  dim: int = 0) -> Tensor:
+
+    # PyTorch currently only supports indexing via `torch.int64` :(
+    index = index.to(torch.int64)
+
     if isinstance(value, Tensor):
         out: Optional[Tensor] = None
         if torch.utils.data.get_worker_info() is not None:
@@ -57,7 +54,7 @@ def index_select(value: FeatureTensorType, index: Tensor,
 
 
 def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
-                       index: Tensor) -> NodeStorage:
+                       index: Tensor) -> None:
     # Filters a node storage object to only hold the nodes in `index`:
     for key, value in store.items():
         if key == 'num_nodes':
@@ -71,12 +68,10 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             dim = store._parent().__cat_dim__(key, value, store)
             out_store[key] = index_select(value, index, dim=dim)
 
-    return store
-
 
 def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                        col: Tensor, index: Tensor,
-                       perm: OptTensor = None) -> EdgeStorage:
+                       perm: OptTensor = None) -> None:
     # Filters a edge storage object to only hold the edges in `index`,
     # which represents the new graph as denoted by `(row, col)`:
     for key, value in store.items():
@@ -91,7 +86,7 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             edge_attr = value.storage.value()
             if edge_attr is not None:
                 index = index.to(edge_attr.device)
-                edge_attr = edge_attr[index]
+                edge_attr = index_select(edge_attr, index, dim=0)
             sparse_sizes = out_store.size()[::-1]
             # TODO Currently, we set `is_sorted=False`, see:
             # https://github.com/pyg-team/pytorch_geometric/issues/4346
@@ -112,9 +107,11 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                     perm = perm.to(value.device)
                 elif isinstance(value, np.ndarray):
                     perm = perm.cpu()
-                out_store[key] = index_select(value, perm[index], dim=dim)
-
-    return store
+                out_store[key] = index_select(
+                    value,
+                    perm[index.to(torch.int64)],
+                    dim=dim,
+                )
 
 
 def filter_data(data: Data, node: Tensor, row: Tensor, col: Tensor,
@@ -184,6 +181,7 @@ def filter_custom_store(
         if attr.group_name in node_dict:
             attr.index = node_dict[attr.group_name]
             required_attrs.append(attr)
+            data[attr.group_name].num_nodes = attr.index.size(0)
 
     # NOTE Here, we utilize `feature_store.multi_get` to give the feature store
     # full control over optimizing how it returns features (since the call is
@@ -194,6 +192,53 @@ def filter_custom_store(
         data[attr.group_name][attr.attr_name] = tensors[i]
 
     return data
+
+
+def get_numa_nodes_cores():
+    """ Returns numa nodes info, format:
+        {<node_id>: [(<core_id>, [<sibling_thread_id_0>, <sibling_thread_id_1>
+        ...]), ...], ...}
+        E.g.: {0: [(0, [0, 4]), (1, [1, 5])], 1: [(2, [2, 6]), (3, [3, 7])]}
+
+        If not available, returns {}
+    """
+    numa_node_paths = glob.glob('/sys/devices/system/node/node[0-9]*')
+
+    if not numa_node_paths:
+        return {}
+
+    nodes = {}
+    try:
+        for node_path in numa_node_paths:
+            numa_node_id = int(os.path.basename(node_path)[4:])
+
+            thread_siblings = {}
+            for cpu_dir in glob.glob(os.path.join(node_path, 'cpu[0-9]*')):
+                cpu_id = int(os.path.basename(cpu_dir)[3:])
+                if cpu_id > 0:
+                    with open(os.path.join(cpu_dir,
+                                           'online')) as core_online_file:
+                        core_online = int(
+                            core_online_file.read().splitlines()[0])
+                else:
+                    core_online = 1  # cpu0 is always online (special case)
+                if core_online == 1:
+                    with open(os.path.join(cpu_dir, 'topology',
+                                           'core_id')) as core_id_file:
+                        core_id = int(core_id_file.read().strip())
+                        if core_id in thread_siblings:
+                            thread_siblings[core_id].append(cpu_id)
+                        else:
+                            thread_siblings[core_id] = [cpu_id]
+
+            nodes[numa_node_id] = sorted([(k, sorted(v))
+                                          for k, v in thread_siblings.items()])
+
+    except (OSError, ValueError, IndexError, IOError):
+        Warning('Failed to read NUMA info')
+        return {}
+
+    return nodes
 
 
 # Input Utilities #############################################################

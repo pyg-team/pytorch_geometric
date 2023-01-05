@@ -10,7 +10,7 @@ def test_config_store():
 
     fill_config_store()
 
-    with hydra.initialize(config_path='.'):
+    with hydra.initialize(config_path='.', version_base='1.1'):
         cfg = hydra.compose(config_name='my_config')
 
     assert len(cfg) == 4

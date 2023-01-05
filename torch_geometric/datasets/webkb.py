@@ -3,9 +3,9 @@ from typing import Callable, List, Optional
 
 import numpy as np
 import torch
-from torch_sparse import coalesce
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import coalesce
 
 
 class WebKB(InMemoryDataset):
@@ -83,7 +83,7 @@ class WebKB(InMemoryDataset):
             data = f.read().split('\n')[1:-1]
             data = [[int(v) for v in r.split('\t')] for r in data]
             edge_index = torch.tensor(data, dtype=torch.long).t().contiguous()
-            edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+            edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
         train_masks, val_masks, test_masks = [], [], []
         for f in self.raw_paths[2:]:

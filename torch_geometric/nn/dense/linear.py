@@ -7,16 +7,9 @@ import torch.nn.functional as F
 from torch import Tensor, nn
 from torch.nn.parameter import Parameter
 
+import torch_geometric.typing
 from torch_geometric.nn import inits
-
-try:
-    from pyg_lib.ops import segment_matmul  # noqa
-    _WITH_PYG_LIB = True
-except ImportError:
-    _WITH_PYG_LIB = False
-
-    def segment_matmul(inputs: Tensor, ptr: Tensor, other: Tensor) -> Tensor:
-        raise NotImplementedError
+from torch_geometric.typing import pyg_lib
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
@@ -220,9 +213,7 @@ class HeteroLinear(torch.nn.Module):
         self.is_sorted = is_sorted
         self.kwargs = kwargs
 
-        self._WITH_PYG_LIB = _WITH_PYG_LIB
-
-        if self._WITH_PYG_LIB:
+        if torch_geometric.typing.WITH_PYG_LIB:
             self.lins = None
             self.weight = torch.nn.Parameter(
                 torch.Tensor(num_types, in_channels, out_channels))
@@ -241,7 +232,7 @@ class HeteroLinear(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        if self._WITH_PYG_LIB:
+        if torch_geometric.typing.WITH_PYG_LIB:
             reset_weight_(self.weight, self.in_channels,
                           self.kwargs.get('weight_initializer', None))
             reset_weight_(self.bias, self.in_channels,
@@ -256,9 +247,10 @@ class HeteroLinear(torch.nn.Module):
             x (Tensor): The input features.
             type_vec (LongTensor): A vector that maps each entry to a type.
         """
-        if self._WITH_PYG_LIB:
+        if torch_geometric.typing.WITH_PYG_LIB:
             assert self.weight is not None
 
+            perm: Optional[Tensor] = None
             if not self.is_sorted:
                 if (type_vec[1:] < type_vec[:-1]).any():
                     type_vec, perm = type_vec.sort()
@@ -266,9 +258,14 @@ class HeteroLinear(torch.nn.Module):
 
             type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
                 type_vec, self.num_types)
-            out = segment_matmul(x, type_vec_ptr, self.weight)
+            out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:
                 out += self.bias[type_vec]
+
+            if perm is not None:  # Restore original order (if necessary).
+                out_unsorted = torch.empty_like(out)
+                out_unsorted[perm] = out
+                out = out_unsorted
         else:
             assert self.lins is not None
             out = x.new_empty(x.size(0), self.out_channels)

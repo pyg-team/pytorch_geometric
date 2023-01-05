@@ -1,5 +1,5 @@
 import math
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 import torch.nn.functional as F
@@ -9,7 +9,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 
 from ..inits import kaiming_uniform, uniform
 
@@ -230,7 +230,7 @@ class DNAConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
 
-    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
+    _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, channels: int, heads: int = 1, groups: int = 1,
