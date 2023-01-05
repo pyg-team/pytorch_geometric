@@ -1,6 +1,6 @@
 import torch
 from torch import Tensor
-from torch.nn import Embedding, Linear, ModuleList, Sequential
+from torch.nn import BatchNorm1d, Embedding, Linear, ModuleList, Sequential
 
 from torch_geometric.nn import radius_graph
 from torch_geometric.nn.models.dimenet import triplets
@@ -23,7 +23,7 @@ class GaussianFilter(torch.nn.Module):
 
     def forward(self, dist: Tensor) -> Tensor:
         dist = dist.view(-1, 1) - self.offset.view(1, -1)
-        return torch.exp(self.coeff * torch.pow(dist, 2))
+        return torch.exp(self.coeff * dist.pow(2))
 
 
 class NodeBlock(torch.nn.Module):
@@ -31,10 +31,11 @@ class NodeBlock(torch.nn.Module):
         super().__init__()
         self.lin_c1 = Linear(hidden_node_channels + hidden_edge_channels,
                              2 * hidden_node_channels)
+
         # BN was added based on previous studies.
         # ref: https://github.com/txie-93/cgcnn/blob/master/cgcnn/model.py
-        self.bn_c1 = torch.nn.BatchNorm1d(2 * hidden_node_channels)
-        self.bn = torch.nn.BatchNorm1d(hidden_node_channels)
+        self.bn_c1 = BatchNorm1d(2 * hidden_node_channels)
+        self.bn = BatchNorm1d(hidden_node_channels)
 
     def reset_parameters(self):
         self.lin_c1.reset_parameters()
@@ -45,12 +46,13 @@ class NodeBlock(torch.nn.Module):
         c1 = torch.cat([node_emb[i], edge_emb], dim=1)
         c1 = self.bn_c1(self.lin_c1(c1))
         c1_filter, c1_core = c1.chunk(2, dim=1)
-        c1_filter = torch.sigmoid(c1_filter)
-        c1_core = torch.tanh(c1_core)
-        c1_emb = self.bn(
-            scatter(c1_filter * c1_core, i, dim=0, dim_size=node_emb.size(0)))
+        c1_filter = c1_filter.sigmoid()
+        c1_core = c1_core.tanh()
+        c1_emb = scatter(c1_filter * c1_core, i, dim=0,
+                         dim_size=node_emb.size(0), reduce='sum')
+        c1_emb = self.bn(c1_emb)
 
-        return torch.tanh(node_emb + c1_emb)
+        return (node_emb + c1_emb).tanh()
 
 
 class EdgeBlock(torch.nn.Module):
@@ -59,13 +61,15 @@ class EdgeBlock(torch.nn.Module):
         self.lin_c2 = Linear(hidden_node_channels, 2 * hidden_edge_channels)
         self.lin_c3 = Linear(
             3 * hidden_node_channels + 2 * hidden_edge_channels,
-            2 * hidden_edge_channels)
+            2 * hidden_edge_channels,
+        )
+
         # BN was added based on previous studies.
         # ref: https://github.com/txie-93/cgcnn/blob/master/cgcnn/model.py
-        self.bn_c2 = torch.nn.BatchNorm1d(2 * hidden_edge_channels)
-        self.bn_c3 = torch.nn.BatchNorm1d(2 * hidden_edge_channels)
-        self.bn_c2_2 = torch.nn.BatchNorm1d(hidden_edge_channels)
-        self.bn_c3_2 = torch.nn.BatchNorm1d(hidden_edge_channels)
+        self.bn_c2 = BatchNorm1d(2 * hidden_edge_channels)
+        self.bn_c3 = BatchNorm1d(2 * hidden_edge_channels)
+        self.bn_c2_2 = BatchNorm1d(hidden_edge_channels)
+        self.bn_c3_2 = BatchNorm1d(hidden_edge_channels)
 
     def reset_parameters(self):
         self.lin_c2.reset_parameters()
@@ -90,29 +94,26 @@ class EdgeBlock(torch.nn.Module):
         c2 = node_emb[i] * node_emb[j]
         c2 = self.bn_c2(self.lin_c2(c2))
         c2_filter, c2_core = c2.chunk(2, dim=1)
-        c2_filter = torch.sigmoid(c2_filter)
-        c2_core = torch.tanh(c2_core)
+        c2_filter = c2_filter.sigmoid()
+        c2_core = c2_core.tanh()
         c2_emb = self.bn_c2_2(c2_filter * c2_core)
 
-        c3 = torch.cat(
-            [
-                node_emb[idx_i],
-                node_emb[idx_j],
-                node_emb[idx_k],
-                edge_emb[idx_ji],
-                edge_emb[idx_kj],
-            ],
-            dim=1,
-        )
+        c3 = torch.cat([
+            node_emb[idx_i],
+            node_emb[idx_j],
+            node_emb[idx_k],
+            edge_emb[idx_ji],
+            edge_emb[idx_kj],
+        ], dim=1)
         c3 = self.bn_c3(self.lin_c3(c3))
         c3_filter, c3_core = c3.chunk(2, dim=1)
-        c3_filter = torch.sigmoid(c3_filter)
-        c3_core = torch.tanh(c3_core)
-        c3_emb = self.bn_c3_2(
-            scatter(c3_filter * c3_core, idx_ji, dim=0,
-                    dim_size=edge_emb.size(0)))
+        c3_filter = c3_filter.sigmoid()
+        c3_core = c3_core.tanh()
+        c3_emb = scatter(c3_filter * c3_core, idx_ji, dim=0,
+                         dim_size=edge_emb.size(0), reduce='sum')
+        c3_emb = self.bn_c3_2(c3_emb)
 
-        return torch.tanh(edge_emb + c2_emb + c3_emb)
+        return (edge_emb + c2_emb + c3_emb).tanh()
 
 
 class GNNFF(torch.nn.Module):
@@ -208,4 +209,4 @@ class GNNFF(torch.nn.Module):
         # Force prediction block:
         force = self.force_predictor(edge_emb) * unit_vec
 
-        return scatter(force, i, dim=0)
+        return scatter(force, i, dim=0, reduce='sum')
