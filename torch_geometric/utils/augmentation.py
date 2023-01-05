@@ -143,7 +143,7 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
         mask = torch.rand(x.size(1), device=x.device) >= p
         mask = mask.view(1, -1)
     else:
-        mask = torch.randn_like(x) >= p
+        mask = torch.rand_like(x) >= p
 
     x = x.masked_fill(~mask, fill_value)
     return x, mask

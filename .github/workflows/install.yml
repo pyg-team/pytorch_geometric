@@ -1,4 +1,4 @@
-name: Testing Minimal Installation
+name: Minimal Installation
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -9,36 +9,39 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   import:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.9]
-        torch-version: [1.12.0]
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          python-version: ${{ matrix.python-version }}
+          fetch-depth: 40
 
-      - name: Install PyTorch ${{ matrix.torch-version }}+cpu
-        run: |
-          pip install numpy typing-extensions dataclasses
-          pip install torch==${{ matrix.torch-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+      # Skip workflow if only certain files have been changed.
+      - name: Get changed files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            benchmark/**
+            conda/**
+            docker/**
+            docs/**
+            examples/**
+            graphgym/**
+            CHANGELOG.md
 
-      - name: Install internal dependencies
-        run: |
-          pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
+      - name: Setup packages
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        uses: ./.github/actions/setup
 
       - name: Install main package
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
           pip install -e .[test]
 
       - name: Test imports
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
           python -c "import torch_geometric"
           python -c "import torch_geometric.datasets"
@@ -46,5 +49,6 @@ jobs:
           python -c "import torch_geometric.graphgym"
 
       - name: Run tests
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
           pytest

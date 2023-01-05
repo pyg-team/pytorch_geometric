@@ -1,24 +1,30 @@
 import os
 import random
+import subprocess
 import sys
+from time import sleep
 
 import numpy as np
 import pytest
 import torch
 from torch_sparse import SparseTensor
 
+import torch_geometric.typing
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import onlyUnix, withPackage
-from torch_geometric.testing.feature_store import MyFeatureStore
-from torch_geometric.testing.graph_store import MyGraphStore
+from torch_geometric.testing import (
+    MyFeatureStore,
+    MyGraphStore,
+    onlyUnix,
+    withPackage,
+)
 from torch_geometric.utils import k_hop_subgraph
 
 
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
+def get_edge_index(num_src_nodes, num_dst_nodes, num_edges, dtype=torch.int64):
+    row = torch.randint(num_src_nodes, (num_edges, ), dtype=dtype)
+    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=dtype)
     return torch.stack([row, col], dim=0)
 
 
@@ -31,13 +37,17 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_homogeneous_neighbor_loader(directed):
+@pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
+def test_homo_neighbor_loader_basic(directed, dtype):
+    if dtype != torch.int64 and not torch_geometric.typing.WITH_PYG_LIB:
+        return
+
     torch.manual_seed(12345)
 
     data = Data()
 
     data.x = torch.arange(100)
-    data.edge_index = get_edge_index(100, 100, 500)
+    data.edge_index = get_edge_index(100, 100, 500, dtype)
     data.edge_attr = torch.arange(500)
 
     loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
@@ -46,7 +56,7 @@ def test_homogeneous_neighbor_loader(directed):
     assert str(loader) == 'NeighborLoader()'
     assert len(loader) == 5
 
-    for batch in loader:
+    for i, batch in enumerate(loader):
         assert isinstance(batch, Data)
         assert len(batch) == 5
         assert batch.x.size(0) <= 100
@@ -57,11 +67,25 @@ def test_homogeneous_neighbor_loader(directed):
         assert batch.edge_attr.min() >= 0
         assert batch.edge_attr.max() < 500
 
-        assert is_subset(batch.edge_index, data.edge_index, batch.x, batch.x)
+        # Input nodes are always sampled first:
+        assert torch.equal(
+            batch.x[:batch.batch_size],
+            torch.arange(i * batch.batch_size, (i + 1) * batch.batch_size))
+
+        assert is_subset(
+            batch.edge_index.to(torch.int64),
+            data.edge_index.to(torch.int64),
+            batch.x,
+            batch.x,
+        )
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_heterogeneous_neighbor_loader(directed):
+@pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
+def test_hetero_neighbor_loader_basic(directed, dtype):
+    if dtype != torch.int64 and not torch_geometric.typing.WITH_PYG_LIB:
+        return
+
     torch.manual_seed(12345)
 
     data = HeteroData()
@@ -69,11 +93,11 @@ def test_heterogeneous_neighbor_loader(directed):
     data['paper'].x = torch.arange(100)
     data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500, dtype)
     data['paper', 'paper'].edge_attr = torch.arange(500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
+    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000, dtype)
     data['paper', 'author'].edge_attr = torch.arange(500, 1500)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000, dtype)
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     r1, c1 = data['paper', 'paper'].edge_index
@@ -145,9 +169,12 @@ def test_heterogeneous_neighbor_loader(directed):
             assert torch.allclose(col.unique(), adj.storage.col().unique())
             assert torch.allclose(value.unique(), adj.storage.value().unique())
 
-        assert is_subset(batch['paper', 'paper'].edge_index,
-                         data['paper', 'paper'].edge_index, batch['paper'].x,
-                         batch['paper'].x)
+        assert is_subset(
+            batch['paper', 'paper'].edge_index.to(torch.int64),
+            data['paper', 'paper'].edge_index.to(torch.int64),
+            batch['paper'].x,
+            batch['paper'].x,
+        )
 
         assert len(batch['paper', 'author']) == 2
         row, col = batch['paper', 'author'].edge_index
@@ -162,9 +189,12 @@ def test_heterogeneous_neighbor_loader(directed):
             assert torch.allclose(col.unique(), adj.storage.col().unique())
             assert torch.allclose(value.unique(), adj.storage.value().unique())
 
-        assert is_subset(batch['paper', 'author'].edge_index,
-                         data['paper', 'author'].edge_index, batch['paper'].x,
-                         batch['author'].x - 100)
+        assert is_subset(
+            batch['paper', 'author'].edge_index.to(torch.int64),
+            data['paper', 'author'].edge_index.to(torch.int64),
+            batch['paper'].x,
+            batch['author'].x - 100,
+        )
 
         assert len(batch['author', 'paper']) == 2
         row, col = batch['author', 'paper'].edge_index
@@ -179,9 +209,12 @@ def test_heterogeneous_neighbor_loader(directed):
             assert torch.allclose(col.unique(), adj.storage.col().unique())
             assert torch.allclose(value.unique(), adj.storage.value().unique())
 
-        assert is_subset(batch['author', 'paper'].edge_index,
-                         data['author', 'paper'].edge_index,
-                         batch['author'].x - 100, batch['paper'].x)
+        assert is_subset(
+            batch['author', 'paper'].edge_index.to(torch.int64),
+            data['author', 'paper'].edge_index.to(torch.int64),
+            batch['author'].x - 100,
+            batch['paper'].x,
+        )
 
         # Test for isolated nodes (there shouldn't exist any):
         n_id = torch.cat([batch['paper'].x, batch['author'].x])
@@ -190,7 +223,7 @@ def test_heterogeneous_neighbor_loader(directed):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
+def test_homo_neighbor_loader_on_cora(get_dataset, directed):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.n_id = torch.arange(data.num_nodes)
@@ -233,7 +266,7 @@ def test_homogeneous_neighbor_loader_on_cora(get_dataset, directed):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
+def test_hetero_neighbor_loader_on_cora(get_dataset, directed):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
@@ -285,7 +318,7 @@ def test_heterogeneous_neighbor_loader_on_cora(get_dataset, directed):
 
 
 @withPackage('pyg_lib')
-def test_temporal_heterogeneous_neighbor_loader_on_cora(get_dataset):
+def test_temporal_hetero_neighbor_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
 
@@ -319,8 +352,6 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     x = torch.arange(100, 300)
     data['author'].x = x
     feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
-
-    # Set up edge indices:
 
     # COO:
     edge_index = get_edge_index(100, 100, 500)
@@ -368,7 +399,8 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     assert len(loader1) == len(loader2)
 
     for batch1, batch2 in zip(loader1, loader2):
-        assert len(batch1) == len(batch2)
+        # loader2 excplicitly adds `num_nodes` to the batch
+        assert len(batch1) + 1 == len(batch2)
         assert batch1['paper'].batch_size == batch2['paper'].batch_size
 
         # Mapped indices of neighbors may be differently sorted:
@@ -451,7 +483,7 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
 
 @withPackage('pyg_lib')
-def test_pyg_lib_homogeneous_neighbor_loader():
+def test_pyg_lib_homo_neighbor_loader():
     import pyg_lib  # noqa
 
     adj = SparseTensor.from_edge_index(get_edge_index(20, 20, 100))
@@ -473,7 +505,7 @@ def test_pyg_lib_homogeneous_neighbor_loader():
 
 
 @withPackage('pyg_lib')
-def test_pyg_lib_heterogeneous_neighbor_loader():
+def test_pyg_lib_hetero_neighbor_loader():
     import pyg_lib  # noqa
 
     adj1 = SparseTensor.from_edge_index(get_edge_index(20, 10, 50))
@@ -536,10 +568,38 @@ def test_memmap_neighbor_loader():
     assert data.num_nodes == 100
 
     loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
-                            num_workers=6)
+                            num_workers=2)
     batch = next(iter(loader))
     assert batch.num_nodes <= 100
     assert isinstance(batch.x, torch.Tensor)
     assert batch.x.size() == (batch.num_nodes, 32)
 
     os.remove(path)
+
+
+@onlyUnix
+@pytest.mark.parametrize('num_workers,loader_cores', [
+    (1, None),
+    (1, [1]),
+])
+def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
+    data = Data(x=torch.randn(1, 1))
+    loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
+                            num_workers=num_workers)
+    loader.is_cuda_available = False  # Force 'cpu_affinity'.
+
+    if isinstance(loader_cores, list):
+        loader_cores = loader_cores[:num_workers]
+
+    out = []
+    with loader.enable_cpu_affinity(loader_cores):
+        iterator = loader._get_iterator().iterator
+        workers = iterator._workers
+        for worker in workers:
+            sleep(1)  # Gives time for worker to initialize.
+            process = subprocess.Popen(
+                ['taskset', '-c', '-p', f'{worker.pid}'],
+                stdout=subprocess.PIPE)
+            stdout = process.communicate()[0].decode('utf-8')
+            out.append(int(stdout.split(':')[1].strip()))
+    assert out == list(range(1, num_workers + 1))

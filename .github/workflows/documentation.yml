@@ -9,36 +9,40 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   make_html:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        python-version: [3.8]
-        torch-version: [1.12.0]
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          python-version: ${{ matrix.python-version }}
+          fetch-depth: 40
 
-      - name: Install PyTorch ${{ matrix.torch-version }}+cpu
-        run: |
-          pip install numpy typing-extensions dataclasses
-          pip install torch==${{ matrix.torch-version}}+cpu -f https://download.pytorch.org/whl/torch_stable.html
+      # Skip workflow if only certain files have been changed.
+      - name: Get changed files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            benchmark/**
+            conda/**
+            docker/**
+            examples/**
+            graphgym/**
+            CHANGELOG.md
 
-      - name: Install internal dependencies
-        run: |
-          pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ matrix.torch-version }}+cpu.html
-          pip install torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-${{ matrix.torch-version }}+cpu.html
-          pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
+      - name: Setup packages
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        uses: ./.github/actions/setup
+        with:
+          python-version: 3.8
 
       - name: Install main package
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
+          pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
           pip install -e .
 
       - name: Build documentation
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
           cd docs && make clean && make html SPHINXOPTS="-W"  # Fail on warning.

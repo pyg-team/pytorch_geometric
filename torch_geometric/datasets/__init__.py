@@ -43,9 +43,9 @@ from .pascal import PascalVOCKeypoints
 from .pascal_pf import PascalPF
 from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
-# from .particle import TrackMLParticleTrackingDataset
 from .aminer import AMiner
 from .word_net import WordNet18, WordNet18RR
+from .freebase import FB15k_237
 from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
@@ -67,6 +67,7 @@ from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
 from .ba_shapes import BAShapes
+from .lrgb import LRGBDataset
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
@@ -76,6 +77,11 @@ from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
 from .elliptic import EllipticBitcoinDataset
 from .dgraph import DGraphFin
+from .hydro_net import HydroNet
+from .explainer_dataset import ExplainerDataset
+from .infection_dataset import InfectionDataset
+from .ba2motif_dataset import BA2MotifDataset
+from .airfrans import AirfRANS
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -127,10 +133,10 @@ __all__ = [
     'PascalPF',
     'SNAPDataset',
     'SuiteSparseMatrixCollection',
-    # 'TrackMLParticleTrackingDataset',
     'AMiner',
     'WordNet18',
     'WordNet18RR',
+    'FB15k_237',
     'WikiCS',
     'WebKB',
     'WikipediaNetwork',
@@ -152,6 +158,7 @@ __all__ = [
     'Twitch',
     'Airports',
     'BAShapes',
+    'LRGBDataset',
     'MalNetTiny',
     'OMDB',
     'PolBlogs',
@@ -161,6 +168,11 @@ __all__ = [
     'LINKXDataset',
     'EllipticBitcoinDataset',
     'DGraphFin',
+    'HydroNet',
+    'ExplainerDataset',
+    'InfectionDataset',
+    'BA2MotifDataset',
+    'AirfRANS',
 ]
 
 classes = __all__

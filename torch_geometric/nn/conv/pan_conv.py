@@ -92,6 +92,9 @@ class PANConv(MessagePassing):
     def panentropy(self, adj_t: SparseTensor,
                    dtype: Optional[int] = None) -> SparseTensor:
 
+        if not adj_t.has_value():
+            adj_t = adj_t.fill_value(1.0)
+
         tmp = SparseTensor.eye(adj_t.size(0), adj_t.size(1), has_value=True,
                                dtype=dtype, device=adj_t.device())
         tmp = tmp.mul_nnz(self.weight[0], layout='coo')
