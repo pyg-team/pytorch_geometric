@@ -11,7 +11,7 @@ def test_gnnff():
     model = GNNFF(
         hidden_node_channels=5,
         hidden_edge_channels=5,
-        num_message_passings=5,
+        num_layers=5,
     )
     model.reset_parameters()
 

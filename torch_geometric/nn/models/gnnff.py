@@ -1,39 +1,25 @@
-from typing import Tuple
-
 import torch
-import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Linear, ModuleList, Sequential
-from torch_scatter import scatter
-from torch_sparse import SparseTensor
+from torch.nn import Embedding, Linear, ModuleList, Sequential
 
 from torch_geometric.nn import radius_graph
+from torch_geometric.nn.models.dimenet import triplets
+from torch_geometric.nn.models.schnet import ShiftedSoftplus
 from torch_geometric.typing import OptTensor
+from torch_geometric.utils import scatter
 
-
-class AtomType2NodeEmb(torch.nn.Module):
-    def __init__(self, num_atom_types: int, hidden_node_channels: int):
-        super().__init__()
-        self.num_atom_types = num_atom_types
-        self.lin_emb = Sequential(
-            Linear(num_atom_types, hidden_node_channels),
-            ShiftedSoftplus(),
-            Linear(hidden_node_channels, hidden_node_channels),
-            ShiftedSoftplus(),
-            Linear(hidden_node_channels, hidden_node_channels),
-        )
-
-    def forward(self, z: Tensor) -> Tensor:
-        return self.lin_emb(
-            F.one_hot(z - 1, self.num_atom_types).to(torch.float))
+from ..inits import reset
 
 
 class GaussianFilter(torch.nn.Module):
     def __init__(self, start=0.0, stop=5.0, num_gaussians=50):
         super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
-        self.coeff = -0.5 / (offset[1] - offset[0]).item()**2
-        self.register_buffer("offset", offset)
+        self.coeff = -0.5 / (float(offset[1]) - float(offset[0]))**2
+        self.register_buffer('offset', offset)
+
+    def reset_parameters(self):
+        pass
 
     def forward(self, dist: Tensor) -> Tensor:
         dist = dist.view(-1, 1) - self.offset.view(1, -1)
@@ -124,6 +110,9 @@ class MessagePassing(torch.nn.Module):
         self.edge_update = EdgeUpdate(hidden_node_channels,
                                       hidden_edge_channels)
 
+    def reset_parameters(self):
+        pass
+
     def forward(
         self,
         node_emb: Tensor,
@@ -143,10 +132,54 @@ class MessagePassing(torch.nn.Module):
         return node_emb, edge_emb
 
 
-class ForcePredictor(torch.nn.Module):
-    def __init__(self, hidden_edge_channels: int):
+class GNNFF(torch.nn.Module):
+    r"""The Graph Neural Network Force Field (GNNFF) from the
+    `"Accurate and scalable graph neural network force field and molecular
+    dynamics with direct force architecture"
+    <https://www.nature.com/articles/s41524-021-00543-3>`_ paper.
+    :class:`GNNFF` directly predicts atomic forces from automatically
+    extracted features of the local atomic environment that are
+    translationally-invariant, but rotationally-covariant to the coordinate of
+    the atoms.
+
+    Args:
+        hidden_node_channels (int): Hidden node embedding size.
+        hidden_edge_channels (int): Hidden edge embedding size.
+        num_layers (int): Number of message passing blocks.
+        cutoff (float): Cutoff distance for interatomic
+            interactions. (default: :obj:`5.0`)
+        max_num_neighbors (int): Maximum number of neighbors
+            for each atom. (default: :obj:`32`)
+    """
+    def __init__(
+        self,
+        hidden_node_channels: int,
+        hidden_edge_channels: int,
+        num_layers: int,
+        cutoff: float = 5.0,
+        max_num_neighbors: int = 32,
+    ):
         super().__init__()
-        self.lin = Sequential(
+
+        self.cutoff = cutoff
+        self.max_num_neighbors = max_num_neighbors
+
+        self.node_emb = Sequential(
+            Embedding(95, hidden_node_channels),
+            ShiftedSoftplus(),
+            Linear(hidden_node_channels, hidden_node_channels),
+            ShiftedSoftplus(),
+            Linear(hidden_node_channels, hidden_node_channels),
+        )
+
+        self.edge_emb = GaussianFilter(0.0, 5.0, hidden_edge_channels)
+
+        self.convs = ModuleList([
+            MessagePassing(hidden_node_channels, hidden_edge_channels)
+            for _ in range(num_layers)
+        ])
+
+        self.force_predictor = Sequential(
             Linear(hidden_edge_channels, hidden_edge_channels),
             ShiftedSoftplus(),
             Linear(hidden_edge_channels, hidden_edge_channels),
@@ -154,88 +187,12 @@ class ForcePredictor(torch.nn.Module):
             Linear(hidden_edge_channels, 1),
         )
 
-    def forward(self, edge_emb: Tensor, unit_vec: Tensor):
-        return self.lin(edge_emb) * unit_vec
-
-
-class ShiftedSoftplus(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.shift = torch.log(torch.tensor(2.0)).item()
-
-    def forward(self, x):
-        return F.softplus(x) - self.shift
-
-
-class GNNFF(torch.nn.Module):
-    r"""Accurate and scalable graph neural network force field (GNNFF) from the
-    `"Accurate and scalable graph neural network force field and molecular
-    dynamics with direct force architecture"
-    <https://www.nature.com/articles/s41524-021-00543-3>`_ paper.
-    GNNFF directly predict atomic forces from automatically extracted features
-    of the local atomic environment that are translationally-invariant,
-    but rotationally-covariant to the coordinate of the atoms.
-
-    Args:
-        hidden_node_channels (int): Hidden node embedding size.
-        hidden_edge_channels (int): Hidden edge embedding size.
-        num_message_passings (int): Number of message passing blocks.
-        cutoff (float): Cutoff distance for interatomic
-            interactions. (default: :obj:`5.0`)
-        max_num_neighbors (int): Maximum number of neighbors
-            for each atom. (default: :obj:`32`)
-        num_atom_types (int): Number of atom types. (default: :obj:`100`)
-    """
-    def __init__(
-        self,
-        hidden_node_channels: int,
-        hidden_edge_channels: int,
-        num_message_passings: int,
-        cutoff: float = 5.0,
-        max_num_neighbors: int = 32,
-        num_atom_types: int = 100,
-    ):
-        super().__init__()
-        self.cutoff = cutoff
-        self.max_num_neighbors = max_num_neighbors
-        self.node_emb = AtomType2NodeEmb(num_atom_types, hidden_node_channels)
-        self.edge_emb = GaussianFilter(0.0, 5.0, hidden_edge_channels)
-
-        self.message_passings = ModuleList([
-            MessagePassing(hidden_node_channels, hidden_edge_channels)
-            for _ in range(num_message_passings)
-        ])
-
-        self.force_predictor = ForcePredictor(hidden_edge_channels)
-
     def reset_parameters(self):
-        pass
-
-    def triplets(
-        self,
-        edge_index: Tensor,
-        num_nodes: int,
-    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
-        row, col = edge_index  # j->i
-
-        value = torch.arange(row.size(0), device=row.device)
-        adj_t = SparseTensor(row=col, col=row, value=value,
-                             sparse_sizes=(num_nodes, num_nodes))
-        adj_t_row = adj_t[row]
-        num_triplets = adj_t_row.set_value(None).sum(dim=1).to(torch.long)
-
-        # Node indices (k->j->i) for triplets.
-        idx_i = col.repeat_interleave(num_triplets)
-        idx_j = row.repeat_interleave(num_triplets)
-        idx_k = adj_t_row.storage.col()
-        mask = idx_i != idx_k  # Remove i == k triplets.
-        idx_i, idx_j, idx_k = idx_i[mask], idx_j[mask], idx_k[mask]
-
-        # Edge indices (k-j, j->i) for triplets.
-        idx_kj = adj_t_row.storage.value()[mask]
-        idx_ji = adj_t_row.storage.row()[mask]
-
-        return col, row, idx_i, idx_j, idx_k, idx_kj, idx_ji
+        reset(self.node_emb)
+        self.edge_emb.reset_parameters()
+        for conv in self.convs:
+            conv.reset_parameters()
+        reset(self.force_predictor)
 
     def forward(self, z: Tensor, pos: Tensor,
                 batch: OptTensor = None) -> Tensor:
@@ -243,24 +200,22 @@ class GNNFF(torch.nn.Module):
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
 
-        i, j, idx_i, idx_j, idx_k, idx_kj, idx_ji = self.triplets(
+        i, j, idx_i, idx_j, idx_k, idx_kj, idx_ji = triplets(
             edge_index, num_nodes=z.size(0))
 
-        # Calculate distances and unit vecs.
+        # Calculate distances and unit vector:
         dist = (pos[i] - pos[j]).pow(2).sum(dim=-1).sqrt()
         unit_vec = (pos[i] - pos[j]) / dist.view(-1, 1)
 
-        # Embedding block.
+        # Embedding blocks:
         node_emb = self.node_emb(z)
         edge_emb = self.edge_emb(dist)
 
-        # Message passing blocks.
-        for message_passing in self.message_passings:
-            node_emb, edge_emb = message_passing(node_emb, edge_emb, i, j,
-                                                 idx_i, idx_j, idx_k, idx_ji,
-                                                 idx_kj)
+        for conv in self.convs:  # Message passing blocks:
+            node_emb, edge_emb = conv(node_emb, edge_emb, i, j, idx_i, idx_j,
+                                      idx_k, idx_ji, idx_kj)
 
-        # Force prediction block.
-        force = self.force_predictor(edge_emb, unit_vec)
+        # Force prediction block:
+        force = self.force_predictor(edge_emb) * unit_vec
 
         return scatter(force, i, dim=0)
