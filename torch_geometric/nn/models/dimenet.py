@@ -377,6 +377,32 @@ class OutputPPBlock(torch.nn.Module):
         return self.lin(x)
 
 
+def triplets(
+    edge_index: Tensor,
+    num_nodes: int,
+) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+    row, col = edge_index  # j->i
+
+    value = torch.arange(row.size(0), device=row.device)
+    adj_t = SparseTensor(row=col, col=row, value=value,
+                         sparse_sizes=(num_nodes, num_nodes))
+    adj_t_row = adj_t[row]
+    num_triplets = adj_t_row.set_value(None).sum(dim=1).to(torch.long)
+
+    # Node indices (k->j->i) for triplets.
+    idx_i = col.repeat_interleave(num_triplets)
+    idx_j = row.repeat_interleave(num_triplets)
+    idx_k = adj_t_row.storage.col()
+    mask = idx_i != idx_k  # Remove i == k triplets.
+    idx_i, idx_j, idx_k = idx_i[mask], idx_j[mask], idx_k[mask]
+
+    # Edge indices (k-j, j->i) for triplets.
+    idx_kj = adj_t_row.storage.value()[mask]
+    idx_ji = adj_t_row.storage.row()[mask]
+
+    return col, row, idx_i, idx_j, idx_k, idx_kj, idx_ji
+
+
 class DimeNet(torch.nn.Module):
     r"""The directional message passing neural network (DimeNet) from the
     `"Directional Message Passing for Molecular Graphs"
@@ -461,8 +487,6 @@ class DimeNet(torch.nn.Module):
                              num_radial, num_before_skip, num_after_skip, act)
             for _ in range(num_blocks)
         ])
-
-        self.reset_parameters()
 
     def reset_parameters(self):
         self.rbf.reset_parameters()
@@ -572,32 +596,6 @@ class DimeNet(torch.nn.Module):
 
         return model, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    def triplets(
-        self,
-        edge_index: Tensor,
-        num_nodes: int,
-    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
-        row, col = edge_index  # j->i
-
-        value = torch.arange(row.size(0), device=row.device)
-        adj_t = SparseTensor(row=col, col=row, value=value,
-                             sparse_sizes=(num_nodes, num_nodes))
-        adj_t_row = adj_t[row]
-        num_triplets = adj_t_row.set_value(None).sum(dim=1).to(torch.long)
-
-        # Node indices (k->j->i) for triplets.
-        idx_i = col.repeat_interleave(num_triplets)
-        idx_j = row.repeat_interleave(num_triplets)
-        idx_k = adj_t_row.storage.col()
-        mask = idx_i != idx_k  # Remove i == k triplets.
-        idx_i, idx_j, idx_k = idx_i[mask], idx_j[mask], idx_k[mask]
-
-        # Edge indices (k-j, j->i) for triplets.
-        idx_kj = adj_t_row.storage.value()[mask]
-        idx_ji = adj_t_row.storage.row()[mask]
-
-        return col, row, idx_i, idx_j, idx_k, idx_kj, idx_ji
-
     def forward(
         self,
         z: Tensor,
@@ -608,7 +606,7 @@ class DimeNet(torch.nn.Module):
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
 
-        i, j, idx_i, idx_j, idx_k, idx_kj, idx_ji = self.triplets(
+        i, j, idx_i, idx_j, idx_k, idx_kj, idx_ji = triplets(
             edge_index, num_nodes=z.size(0))
 
         # Calculate distances.

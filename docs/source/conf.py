@@ -1,4 +1,8 @@
 import datetime
+import os.path as osp
+import sys
+
+import pyg_sphinx_theme
 
 import torch_geometric
 
@@ -7,6 +11,8 @@ project = 'pytorch_geometric'
 version = torch_geometric.__version__
 copyright = f'{datetime.datetime.now().year}, {author}'
 
+sys.path.append(osp.join(osp.dirname(pyg_sphinx_theme.__file__), 'extension'))
+
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
@@ -14,6 +20,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'pyg',
 ]
 
 html_theme = 'pyg_sphinx_theme'
