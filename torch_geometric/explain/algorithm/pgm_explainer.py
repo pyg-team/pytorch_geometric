@@ -314,7 +314,6 @@ class PGMExplainer(ExplainerAlgorithm):
         pred_samples = []
 
         for iteration in range(num_samples):
-            X_perturb = x.detach().clone()
             # a subset of neighbours are selected randomly for perturbing
             seeds = np.random.choice([1, 0], size=(len(neighbors), ))
             X_perturb = self.perturb_features_on_nodes(
