@@ -27,6 +27,13 @@ class PGMExplainer(ExplainerAlgorithm):
         is_perturbation_scaled (bool): whether to normalise the range
             of the perturbed features
 
+    The generated explanation will provide a node_mask where neighbouring
+    nodes that are statistically significant in the model providing
+    the prediction have a value of 1 and the others 0. There is also a
+    `pgm_stats` tensor which stores the p_values of each of the nodes
+    as calculated by the chi_square test (pgmpy.estimators.CITests.chi_square)
+    used to generate the node mask
+
     """
     def __init__(
         self,
@@ -44,16 +51,16 @@ class PGMExplainer(ExplainerAlgorithm):
 
     def perturb_features_on_nodes(
         self,
-        feature_matrix: torch.Tensor,
-        node_indexes: torch.Tensor,
+        x: torch.Tensor,
+        index: torch.Tensor,
     ) -> torch.Tensor:
         r"""perturb node feature matrix. This is used later to calculate
         how much influence neighbouring nodes has on the output
 
         Args:
-            feature_matrix (torch.Tensor) : node feature matrix of
+            x (torch.Tensor) : node feature matrix of
                 the input graph of shape [num_nodes, num_features]
-            node_indexes (torch.Tensor): indexes of the nodes
+            index (torch.Tensor): indexes of the nodes
                 that the perturbed features will be generated for
 
         Returns:
@@ -61,34 +68,34 @@ class PGMExplainer(ExplainerAlgorithm):
 
         """
 
-        X_perturb = feature_matrix.detach().clone()
-        perturb_array = X_perturb[node_indexes]
-        epsilon = 0.05 * torch.max(feature_matrix, dim=0).values
+        X_perturb = x.detach().clone()
+        perturb_array = X_perturb[index]
+        epsilon = 0.05 * torch.max(x, dim=0).values
 
         if self.perturbation_mode == "randint":
             perturb_array = torch.randint(high=2, size=perturb_array.size(),
-                                          device=feature_matrix.device)
+                                          device=x.device)
         # graph explainers
         elif self.perturbation_mode == "mean":
             perturb_array[:, self.perturb_feature_list] = torch.mean(
-                feature_matrix[:, self.perturb_feature_list])
+                x[:, self.perturb_feature_list])
         elif self.perturbation_mode == "zero":
             perturb_array[:, self.perturb_feature_list] = 0
         elif self.perturbation_mode == "max":
             perturb_array[:, self.perturb_feature_list] = torch.max(
-                feature_matrix[:, self.perturb_feature_list])
+                x[:, self.perturb_feature_list])
         elif self.perturbation_mode == "uniform":
             random_perturbations = torch.rand(
                 perturb_array.shape) * 2 * epsilon - epsilon
             perturb_array[:, self.perturb_feature_list] = perturb_array[
                 self.perturb_feature_list] + random_perturbations
-            perturb_array.clamp(min=0, max=torch.max(feature_matrix, dim=0))
+            perturb_array.clamp(min=0, max=torch.max(x, dim=0))
 
         if self.is_perturbation_scaled:
             perturb_array = torch.multiply(
                 perturb_array, torch.rand(size=perturb_array.size())) * 2
 
-        X_perturb[node_indexes] = perturb_array.type(X_perturb.dtype)
+        X_perturb[index] = perturb_array.type(X_perturb.dtype)
         return X_perturb
 
     def batch_perturb_features_on_node(
@@ -129,8 +136,8 @@ class PGMExplainer(ExplainerAlgorithm):
             seeds = np.random.randint(0, 100, size=len(indices_to_perturb))
             perturbed_node_indexes = indices_to_perturb[(seeds < percentage)]
             X_perturb = self.perturb_features_on_nodes(
-                feature_matrix=X_perturb,
-                node_indexes=perturbed_node_indexes,
+                x=X_perturb,
+                index=perturbed_node_indexes,
             )
             sample = np.zeros(num_nodes + 1)
             sample[perturbed_node_indexes] = 1
@@ -257,7 +264,7 @@ class PGMExplainer(ExplainerAlgorithm):
         self,
         model: torch.nn.Module,
         x: torch.Tensor,
-        node_index: int,
+        index: int,
         edge_index: torch.Tensor,
         edge_weight: torch.Tensor,
         target: torch.Tensor,
@@ -271,7 +278,7 @@ class PGMExplainer(ExplainerAlgorithm):
         Args:
             model (torch.nn.Module): model that generated the predictions
             x (torch.Tensor): node feature matrix
-            node_index (torch.Tensor): the index of the node that the
+            index (torch.Tensor): the index of the node that the
                 explanations are being generated for
             edge_index (torch.Tensor): edge_index of the input graph
             edge_weight (torch.Tensor): apply weighting to edges (Optional)
@@ -293,18 +300,18 @@ class PGMExplainer(ExplainerAlgorithm):
         import pandas as pd
         from pgmpy.estimators.CITests import chi_square
 
-        logging.info(f'Explaining node: {node_index}')
+        logging.info(f'Explaining node: {index}')
 
         neighbors, edge_index_new, mapping, edge_mask_new = k_hop_subgraph(
-            node_idx=node_index,
+            node_idx=index,
             num_hops=get_num_hops(model),
             edge_index=edge_index,
             relabel_nodes=False,
             num_nodes=x.size(0),
         )
 
-        if node_index not in neighbors:
-            neighbors = torch.cat([neighbors, node_index], dim=1)
+        if index not in neighbors:
+            neighbors = torch.cat([neighbors, index], dim=1)
 
         pred_model = model(x, edge_index, edge_weight)
 
@@ -317,8 +324,8 @@ class PGMExplainer(ExplainerAlgorithm):
             # a subset of neighbours are selected randomly for perturbing
             seeds = np.random.choice([1, 0], size=(len(neighbors), ))
             X_perturb = self.perturb_features_on_nodes(
-                feature_matrix=X_perturb,
-                node_indexes=neighbors[seeds == 1],
+                x=x,
+                index=neighbors[seeds == 1],
             )
 
             # prediction after pertubation
@@ -351,14 +358,14 @@ class PGMExplainer(ExplainerAlgorithm):
         dependent_neighbors = []
         dependent_neighbors_p_values = []
         for node in neighbors:
-            if node == node_index:
+            if node == index:
                 # null hypothesis is perturbing a particular
                 # node has no effect on result
                 p = 0
             else:
                 chi2, p, _ = chi_square(
                     index_original_to_subgraph[node],
-                    index_original_to_subgraph[node_index], [], data_pgm,
+                    index_original_to_subgraph[index], [], data_pgm,
                     boolean=False, significance_level=significance_threshold)
             p_values.append(p)
             if p < significance_threshold:
@@ -423,7 +430,7 @@ class PGMExplainer(ExplainerAlgorithm):
         if self.model_config.task_level == ModelTaskLevel.node:
 
             node_mask, pgm_stats = self.explain_node(
-                model=model, x=x, node_index=index, edge_index=edge_index,
+                model=model, x=x, index=index, edge_index=edge_index,
                 edge_weight=edge_weight, target=target[index],
                 num_samples=num_samples, max_subgraph_size=max_subgraph_size,
                 significance_threshold=significance_threshold,

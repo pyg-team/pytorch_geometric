@@ -108,9 +108,7 @@ if __name__ == "__main__":
         model_config=dict(mode="multiclass_classification", task_level="graph",
                           return_type="raw"))
     i = 0
-    # todo bit of a hack--nicer to find a way to get the correct
-    #  graph with the collate?
-    # somthing like explain_dataset[10]is wrong shape for model??
+
     for explain_dataset in test_loader:
         explain_dataset.to(device)
         node_idx = 10
