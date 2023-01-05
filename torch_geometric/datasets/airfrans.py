@@ -34,7 +34,7 @@ class AirfRANS(InMemoryDataset):
     Finaly, a boolean is attached to each point to inform if this point lies on
     the airfoil or not.
 
-    A library for manipulang simulations of the dataset is available `here
+    A library for manipulating simulations of the dataset is available `here
     <https://airfrans.readthedocs.io/en/latest/index.html>`_.
 
     The dataset is released under the `ODbL v1.0 License
