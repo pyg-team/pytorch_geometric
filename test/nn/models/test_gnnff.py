@@ -3,10 +3,9 @@ import torch.nn.functional as F
 
 from torch_geometric.data import Data
 from torch_geometric.nn import GNNFF
-from torch_geometric.testing import is_full_test, onlyFullTest
+from torch_geometric.testing import is_full_test
 
 
-@onlyFullTest
 def test_gnnff():
     data = Data(
         z=torch.randint(1, 10, (20, )),
