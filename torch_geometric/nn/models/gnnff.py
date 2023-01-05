@@ -132,8 +132,9 @@ class GNNFF(torch.nn.Module):
         num_layers (int): Number of message passing blocks.
         cutoff (float): Cutoff distance for interatomic
             interactions. (default: :obj:`5.0`)
-        max_num_neighbors (int): Maximum number of neighbors
-            for each atom. (default: :obj:`32`)
+        max_num_neighbors (int, optional): The maximum number of neighbors to
+            collect for each node within the :attr:`cutoff` distance.
+            (default: :obj:`32`)
     """
     def __init__(
         self,
