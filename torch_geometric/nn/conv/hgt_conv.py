@@ -177,13 +177,16 @@ class HGTConv(MessagePassing):
                     #initialize lazy params
                     max_channels = self.dims.max()
                     for node_type, u_k_lin in self.k_lin.items():
-                        self.k_lin[node_type] = Linear(max_channels, self.out_channels)
+                        self.k_lin[node_type] = Linear(max_channels,
+                                                       self.out_channels)
                     reset(self.k_lin)
                     for node_type, u_q_lin in self.q_lin.items():
-                        self.q_lin[node_type] = Linear(max_channels, self.out_channels)
+                        self.q_lin[node_type] = Linear(max_channels,
+                                                       self.out_channels)
                     reset(self.q_lin)
                     for node_type, u_v_lin in self.v_lin.items():
-                        self.v_lin[node_type] = Linear(max_channels, self.out_channels)
+                        self.v_lin[node_type] = Linear(max_channels,
+                                                       self.out_channels)
                     reset(self.v_lin)
                 x = torch.cat(pad_list(xs, self.dims))
 
@@ -270,10 +273,14 @@ class HGTConv(MessagePassing):
         m_rels = [
             self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
-        
+
         if self.use_gmm:
-            k_ins = [k_dict[src_type].transpose(0, 1) for src_type in src_types]
-            v_ins = [v_dict[src_type].transpose(0, 1) for src_type in src_types]
+            k_ins = [
+                k_dict[src_type].transpose(0, 1) for src_type in src_types
+            ]
+            v_ins = [
+                v_dict[src_type].transpose(0, 1) for src_type in src_types
+            ]
             k_outs = [
                 k_o_i.transpose(1, 0)
                 for k_o_i in pyg_lib.ops.grouped_matmul(k_ins, a_rels)
@@ -297,10 +304,12 @@ class HGTConv(MessagePassing):
             for k_i in k_ins:
                 count += k_i.size(0)
                 trans_ptr.append(count)
-            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins).transpose(0, 1), trans_ptr,
-                                               a_rel).transpose(1, 0)
-            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins).transpose(0, 1), trans_ptr,
-                                               m_rel).transpose(1, 0)
+            k_out = pyg_lib.ops.segment_matmul(
+                torch.cat(k_ins).transpose(0, 1), trans_ptr,
+                a_rel).transpose(1, 0)
+            v_out = pyg_lib.ops.segment_matmul(
+                torch.cat(v_ins).transpose(0, 1), trans_ptr,
+                m_rel).transpose(1, 0)
             increment_dict = {
                 src_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
                 for i, src_type in enumerate(src_types)
