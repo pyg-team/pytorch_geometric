@@ -1,4 +1,3 @@
-import copy
 import warnings
 from typing import Any, Dict, Optional, Union
 
@@ -10,14 +9,19 @@ from torch_geometric.explain import (
     Explanation,
     HeteroExplanation,
 )
+from torch_geometric.explain.algorithm.utils import (
+    clear_masks,
+    set_hetero_masks,
+    set_masks,
+)
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ExplanationType,
     MaskType,
     ModelConfig,
     ModelMode,
+    ModelReturnType,
     ThresholdConfig,
-    ThresholdType,
 )
 from torch_geometric.typing import EdgeType, NodeType
 
@@ -81,21 +85,16 @@ class Explainer:
         self.model = model
         self.algorithm = algorithm
 
-        # is_hetero is set to None, overwritten in __call__
-        self.is_hetero = None
-
-        self.explainer_config = ExplainerConfig.cast(explainer_config)
         self.explanation_type = explainer_config.explanation_type
         self.model_config = ModelConfig.cast(model_config)
         self.node_mask_type = explainer_config.node_mask_type
         self.edge_mask_type = explainer_config.edge_mask_type
         self.threshold_config = ThresholdConfig.cast(threshold_config)
 
-        self.algorithm.connect(self.explainer_config, self.model_config,
-                               self.is_hetero)
+        self.algorithm.connect(explainer_config, self.model_config)
 
     @torch.no_grad()
-    def get_prediction(self, *args, **kwargs) -> torch.Tensor:
+    def get_prediction(self, *args, **kwargs) -> Tensor:
         r"""Returns the prediction of the model on the input graph.
 
         If the model mode is :obj:`"regression"`, the prediction is returned as
@@ -114,17 +113,34 @@ class Explainer:
 
         with torch.no_grad():
             out = self.model(*args, **kwargs)
-        if self.model_config.mode == ModelMode.multiclass_classification:
-            out = out.argmax(dim=-1)
-        elif self.model_config.mode == ModelMode.binary_classification:
-            # TODO: allow customization of the thresholds used below
-            if self.model_config.return_type.value == 'raw':
-                out = (out > 0).long().view(-1)
-            elif self.model_config.return_type.value == 'probs':
-                out = (out > 0.5).long().view(-1)
 
         self.model.train(training)
 
+        return out
+
+    def get_masked_prediction(
+        self,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        node_mask: Optional[Union[Tensor, Dict[NodeType, Tensor]]] = None,
+        edge_mask: Optional[Union[Tensor, Dict[EdgeType, Tensor]]] = None,
+        **kwargs,
+    ) -> Tensor:
+        r"""Returns the prediction of the model on the input graph with node
+        and edge masks applied."""
+        if isinstance(x, Tensor) and node_mask is not None:
+            x = node_mask * x
+        elif isinstance(x, dict) and node_mask is not None:
+            x = {key: value * node_mask[key] for key, value in x.items()}
+
+        if isinstance(edge_mask, Tensor):
+            set_masks(self.model, edge_mask, edge_index, apply_sigmoid=False)
+        elif isinstance(edge_mask, dict):
+            set_hetero_masks(self.model, edge_mask, edge_index,
+                             apply_sigmoid=False)
+
+        out = self.get_prediction(x, edge_index, **kwargs)
+        clear_masks(self.model)
         return out
 
     def __call__(
@@ -134,7 +150,6 @@ class Explainer:
         *,
         target: Optional[Tensor] = None,
         index: Optional[Union[int, Tensor]] = None,
-        target_index: Optional[int] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation of the GNN for the given inputs and
@@ -148,10 +163,9 @@ class Explainer:
 
         Args:
             x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
-                node features. This is a dictionary in the heterogeneous case.
+                node features of a homogeneous or heterogeneous graph.
             edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
-                input edge indices. This is a dictionary in the heterogeneous
-                case.
+                input edge indices of a homogeneous or heterogeneous graph.
             target (torch.Tensor): The target of the model.
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
@@ -161,20 +175,10 @@ class Explainer:
             index (Union[int, Tensor], optional): The index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
-            target_index (int, optional): The index of the model outputs to
-                reference in case the model returns a list of tensors, *e.g.*,
-                in a multi-task learning scenario. Should be kept to
-                :obj:`None` in case the model only returns a single output
-                tensor. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
-        # Checks new is_hetero value and updates self.is_hetero
-        if self.is_hetero is None:
-            self.is_hetero = isinstance(x, dict)
-            self.algorithm.connect(self.explainer_config, self.model_config,
-                                   self.is_hetero)
-
         # Choose the `target` depending on the explanation type:
+        prediction: Optional[Tensor] = None
         if self.explanation_type == ExplanationType.phenomenon:
             if target is None:
                 raise ValueError(
@@ -185,7 +189,8 @@ class Explainer:
                 warnings.warn(
                     f"The 'target' should not be provided for the explanation "
                     f"type '{self.explanation_type.value}'")
-            target = self.get_prediction(x, edge_index, **kwargs)
+            prediction = self.get_prediction(x, edge_index, **kwargs)
+            target = self.get_target(prediction)
 
         training = self.model.training
         self.model.eval()
@@ -196,97 +201,68 @@ class Explainer:
             edge_index,
             target=target,
             index=index,
-            target_index=target_index,
             **kwargs,
         )
 
         self.model.train(training)
 
-        return self._post_process(explanation)
+        # Add explainer objectives to the `Explanation` object:
+        explanation._model_config = self.model_config
+        explanation.prediction = prediction
+        explanation.target = target
+        explanation.index = index
 
-    def _post_process(
-        self, explanation: Union[Explanation, HeteroExplanation]
-    ) -> Union[Explanation, HeteroExplanation]:
-        r"""Post-processes the explanation mask according to the thresholding
-        method and the user configuration.
-
-        Args:
-            explanation (Union[Explanation, HeteroExplanation]): The
-                explanation mask to post-process.
-        """
-        explanation = self._threshold(explanation)
-        return explanation
-
-    def _threshold_homogeneous_explanation(
-            self, mask_dict: Dict[str, Tensor]) -> Dict[str, Tensor]:
-        if self.threshold_config.type == ThresholdType.hard:
-            mask_dict = {
-                key: (mask > self.threshold_config.value).float()
-                for key, mask in mask_dict.items()
-            }
-
-        elif self.threshold_config.type in [
-                ThresholdType.topk,
-                ThresholdType.topk_hard,
-        ]:
-            for key, mask in mask_dict.items():
-                if self.threshold_config.value >= mask.numel():
-                    if self.threshold_config.type != ThresholdType.topk:
-                        mask_dict[key] = torch.ones_like(mask)
-                    continue
-
-                value, index = torch.topk(
-                    mask.flatten(),
-                    k=self.threshold_config.value,
-                )
-
-                out = torch.zeros_like(mask.flatten())
-                if self.threshold_config.type == ThresholdType.topk:
-                    out[index] = value
-                else:
-                    out[index] = 1.0
-                mask_dict[key] = out.reshape(mask.size())
-
-        else:
-            raise NotImplementedError
-
-        return mask_dict
-
-    def _threshold_heterogeneous_explanation(
-        self, mask_dict: Dict[str, Dict[Union[NodeType, EdgeType], Tensor]]
-    ) -> Dict[Union[NodeType, EdgeType], Tensor]:
-        for key, mask in mask_dict.items():
-            mask_dict[key] = self._threshold_homogeneous_explanation(mask)
-        return mask_dict
-
-    def _threshold(
-        self, explanation: Union[Explanation, HeteroExplanation]
-    ) -> Union[Explanation, HeteroExplanation]:
-        """Threshold the explanation mask according to the thresholding method.
-
-        Args:
-            explanation (Explanation or HeteroExplanation): The explanation to
-                threshold.
-        """
-
-        if self.threshold_config is None:
-            return explanation
-
-        # Avoid modification of the original explanation:
-        explanation = copy.copy(explanation)
-
-        mask_dict = {  # Get the available masks:
-            key: explanation[key]
-            for key in explanation.available_explanations
-        }
-
+        # Add model inputs to the `Explanation` object:
         if isinstance(explanation, Explanation):
-            mask_dict = self._threshold_homogeneous_explanation(mask_dict)
-        else:
-            mask_dict = self._threshold_heterogeneous_explanation(mask_dict)
+            explanation._model_args = list(kwargs.keys())
+            explanation.x = x
+            explanation.edge_index = edge_index
 
-        # Update the explanation with the thresholded masks:
-        for key, mask in mask_dict.items():
-            explanation[key] = mask
+            for key, arg in kwargs.items():  # Add remaining `kwargs`:
+                explanation[key] = arg
 
-        return explanation
+        elif isinstance(explanation, HeteroExplanation):
+            assert isinstance(x, dict)
+            # TODO Add `explanation._model_args`
+            for node_type, value in x.items():
+                explanation[node_type].x = value
+
+            assert isinstance(edge_index, dict)
+            for edge_type, value in edge_index.items():
+                explanation[edge_type].edge_index = value
+
+            for key, arg in kwargs.items():  # Add remaining `kwargs`:
+                if isinstance(arg, dict):
+                    # Keyword arguments are likely named `{attr_name}_dict`
+                    # while we only want to assign the `{attr_name}` to the
+                    # `HeteroExplanation` object:
+                    key = key[:-5] if key.endswith('_dict') else key
+                    for type_name, value in arg.items():
+                        explanation[type_name][key] = value
+                else:
+                    explanation[key] = arg
+
+        explanation.validate_masks()
+        return explanation.threshold(self.threshold_config)
+
+    def get_target(self, prediction: Tensor) -> Tensor:
+        r"""Returns the target of the model from a given prediction.
+
+        If the model mode is of type :obj:`"regression"`, the prediction is
+        returned as it is.
+        If the model mode is of type :obj:`"multiclass_classification"` or
+        :obj:`"binary_classification"`, the prediction is returned as the
+        predicted class label.
+        """
+        if self.model_config.mode == ModelMode.binary_classification:
+            # TODO: Allow customization of the thresholds used below.
+            if self.model_config.return_type == ModelReturnType.raw:
+                return (prediction > 0).long().view(-1)
+            if self.model_config.return_type == ModelReturnType.probs:
+                return (prediction > 0.5).long().view(-1)
+            assert False
+
+        if self.model_config.mode == ModelMode.multiclass_classification:
+            return prediction.argmax(dim=-1)
+
+        return prediction

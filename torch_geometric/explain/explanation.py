@@ -1,117 +1,179 @@
 import copy
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.data.data import Data, warn_or_raise
 from torch_geometric.data.hetero_data import HeteroData
+from torch_geometric.explain.config import ThresholdConfig, ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
+from torch_geometric.visualization import visualize_graph
 
 
-class Explanation(Data):
-    r"""Holds all the obtained explanations of a homogenous graph.
-
-    The explanation object is a :obj:`~torch_geometric.data.Data` object and
-    can hold node-attribution, edge-attribution, feature-attribution. It can
-    also hold the original graph if needed.
-
-    Args:
-        node_mask (Tensor, optional): Node-level mask with shape
-            :obj:`[num_nodes]`. (default: :obj:`None`)
-        edge_mask (Tensor, optional): Edge-level mask with shape
-            :obj:`[num_edges]`. (default: :obj:`None`)
-        node_feat_mask (Tensor, optional): Node-level feature mask with shape
-            :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
-        edge_feat_mask (Tensor, optional): Edge-level feature mask with shape
-            :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
-        **kwargs (optional): Additional attributes.
-    """
-    def __init__(
-        self,
-        node_mask: Optional[Tensor] = None,
-        edge_mask: Optional[Tensor] = None,
-        node_feat_mask: Optional[Tensor] = None,
-        edge_feat_mask: Optional[Tensor] = None,
-        **kwargs,
-    ):
-        super().__init__(
-            node_mask=node_mask,
-            edge_mask=edge_mask,
-            node_feat_mask=node_feat_mask,
-            edge_feat_mask=edge_feat_mask,
-            **kwargs,
-        )
-
+class ExplanationMixin:
     @property
     def available_explanations(self) -> List[str]:
         """Returns the available explanation masks."""
-        return [
-            key for key in self.keys
-            if key.endswith('_mask') and self[key] is not None
-        ]
+        return [key for key in self.keys if key.endswith('_mask')]
 
+    def validate_masks(self, raise_on_error: bool = True) -> bool:
+        r"""Validates the correctness of the :class:`Explanation` masks."""
+        status = True
+
+        for store in self.node_stores:
+            if 'node_mask' not in store:
+                continue
+
+            if store.node_mask.dim() != 2:
+                status = False
+                warn_or_raise(
+                    f"Expected a 'node_mask' with two dimensions (got "
+                    f"{store.node_mask.dim()} dimensions)", raise_on_error)
+
+            if store.node_mask.size(0) not in {1, store.num_nodes}:
+                status = False
+                warn_or_raise(
+                    f"Expected a 'node_mask' with {store.num_nodes} nodes "
+                    f"(got {store.node_mask.size(0)} nodes)", raise_on_error)
+
+            if 'x' in store:
+                num_features = store.x.size(-1)
+            else:
+                num_features = store.node_mask.size(-1)
+
+            if store.node_mask.size(1) not in {1, num_features}:
+                status = False
+                warn_or_raise(
+                    f"Expected a 'node_mask' with {num_features} features ("
+                    f"got {store.node_mask.size(1)} features)", raise_on_error)
+
+        for store in self.edge_stores:
+            if 'edge_mask' not in store:
+                continue
+
+            if store.edge_mask.dim() != 1:
+                status = False
+                warn_or_raise(
+                    f"Expected an 'edge_mask' with one dimension (got "
+                    f"{store.edge_mask.dim()} dimensions)", raise_on_error)
+
+            if store.edge_mask.size(0) not in {store.num_edges}:
+                status = False
+                warn_or_raise(
+                    f"Expected an 'edge_mask' with {store.num_edges} edges "
+                    f"(got {store.edge_mask.size(0)} edges)", raise_on_error)
+
+        return status
+
+    def _threshold_mask(
+        self,
+        mask: Optional[Tensor],
+        threshold_config: ThresholdConfig,
+    ) -> Optional[Tensor]:
+
+        if mask is None:
+            return None
+
+        if threshold_config.type == ThresholdType.hard:
+            return (mask > threshold_config.value).float()
+
+        if threshold_config.type in [
+                ThresholdType.topk,
+                ThresholdType.topk_hard,
+        ]:
+            if threshold_config.value >= mask.numel():
+                if threshold_config.type == ThresholdType.topk:
+                    return mask
+                else:
+                    return torch.ones_like(mask)
+
+            value, index = torch.topk(
+                mask.flatten(),
+                k=threshold_config.value,
+            )
+
+            out = torch.zeros_like(mask.flatten())
+            if threshold_config.type == ThresholdType.topk:
+                out[index] = value
+            else:
+                out[index] = 1.0
+            return out.view(mask.size())
+
+        assert False
+
+    def threshold(
+        self,
+        *args,
+        **kwargs,
+    ) -> Union['Explanation', 'HeteroExplanation']:
+        """Thresholds the explanation masks according to the thresholding
+        method.
+
+        Args:
+            threshold_config (ThresholdConfig): The threshold configuration.
+        """
+        threshold_config = ThresholdConfig.cast(*args, **kwargs)
+
+        if threshold_config is None:
+            return self
+
+        # Avoid modification of the original explanation:
+        out = copy.copy(self)
+
+        for store in out.node_stores:
+            store.node_mask = self._threshold_mask(store.get('node_mask'),
+                                                   threshold_config)
+
+        for store in out.edge_stores:
+            store.edge_mask = self._threshold_mask(store.get('edge_mask'),
+                                                   threshold_config)
+
+        return out
+
+
+class Explanation(Data, ExplanationMixin):
+    r"""Holds all the obtained explanations of a homogenous graph.
+
+    The explanation object is a :obj:`~torch_geometric.data.Data` object and
+    can hold node attributions and edge attributions.
+    It can also hold the original graph if needed.
+
+    Args:
+        node_mask (Tensor, optional): Node-level mask with shape
+            :obj:`[num_nodes, 1]`, :obj:`[1, num_features]` or
+            :obj:`[num_nodes, num_features]`. (default: :obj:`None`)
+        edge_mask (Tensor, optional): Edge-level mask with shape
+            :obj:`[num_edges]`. (default: :obj:`None`)
+        **kwargs (optional): Additional attributes.
+    """
     def validate(self, raise_on_error: bool = True) -> bool:
-        r"""Validates the correctness of the explanation"""
-        status = super().validate()
-
-        if 'node_mask' in self and self.num_nodes != self.node_mask.size(0):
-            status = False
-            warn_or_raise(
-                f"Expected a 'node_mask' with {self.num_nodes} nodes "
-                f"(got {self.node_mask.size(0)} nodes)", raise_on_error)
-
-        if 'edge_mask' in self and self.num_edges != self.edge_mask.size(0):
-            status = False
-            warn_or_raise(
-                f"Expected an 'edge_mask' with {self.num_edges} edges "
-                f"(got {self.edge_mask.size(0)} edges)", raise_on_error)
-
-        if 'node_feat_mask' in self:
-            if 'x' in self and self.x.size() != self.node_feat_mask.size():
-                status = False
-                warn_or_raise(
-                    f"Expected a 'node_feat_mask' of shape "
-                    f"{list(self.x.size())} (got shape "
-                    f"{list(self.node_feat_mask.size())})", raise_on_error)
-            elif self.num_nodes != self.node_feat_mask.size(0):
-                status = False
-                warn_or_raise(
-                    f"Expected a 'node_feat_mask' with {self.num_nodes} nodes "
-                    f"(got {self.node_feat_mask.size(0)} nodes)",
-                    raise_on_error)
-
-        if 'edge_feat_mask' in self:
-            if ('edge_attr' in self
-                    and self.edge_attr.size() != self.edge_feat_mask.size()):
-                status = False
-                warn_or_raise(
-                    f"Expected an 'edge_feat_mask' of shape "
-                    f"{list(self.edge_attr.size())} (got shape "
-                    f"{list(self.edge_feat_mask.size())})", raise_on_error)
-            elif self.num_edges != self.edge_feat_mask.size(0):
-                status = False
-                warn_or_raise(
-                    f"Expected an 'edge_feat_mask' with {self.num_edges} "
-                    f"edges (got {self.edge_feat_mask.size(0)} edges)",
-                    raise_on_error)
-
+        r"""Validates the correctness of the :class:`Explanation` object."""
+        status = super().validate(raise_on_error)
+        status &= self.validate_masks(raise_on_error)
         return status
 
     def get_explanation_subgraph(self) -> 'Explanation':
         r"""Returns the induced subgraph, in which all nodes and edges with
         zero attribution are masked out."""
-        return self._apply_masks(
-            node_mask=self.node_mask > 0 if 'node_mask' in self else None,
-            edge_mask=self.edge_mask > 0 if 'edge_mask' in self else None,
-        )
+        node_mask = self.get('node_mask')
+        if node_mask is not None:
+            node_mask = node_mask.sum(dim=-1) > 0
+        edge_mask = self.get('edge_mask')
+        if edge_mask is not None:
+            edge_mask = edge_mask > 0
+        return self._apply_masks(node_mask, edge_mask)
 
     def get_complement_subgraph(self) -> 'Explanation':
         r"""Returns the induced subgraph, in which all nodes and edges with any
         attribution are masked out."""
-        return self._apply_masks(
-            node_mask=self.node_mask == 0 if 'node_mask' in self else None,
-            edge_mask=self.edge_mask == 0 if 'edge_mask' in self else None,
-        )
+        node_mask = self.get('node_mask')
+        if node_mask is not None:
+            node_mask = node_mask.sum(dim=-1) == 0
+        edge_mask = self.get('edge_mask')
+        if edge_mask is not None:
+            edge_mask = edge_mask == 0
+        return self._apply_masks(node_mask, edge_mask)
 
     def _apply_masks(
         self,
@@ -132,201 +194,152 @@ class Explanation(Data):
 
         return out
 
+    def visualize_feature_importance(
+        self,
+        path: Optional[str] = None,
+        feat_labels: Optional[List[str]] = None,
+        top_k: Optional[int] = None,
+    ):
+        r"""Creates a bar plot of the node features importance by summing up
+        :attr:`self.node_mask` across all nodes.
 
-class HeteroExplanation(HeteroData):
+        Args:
+            path (str, optional): The path to where the plot is saved.
+                If set to :obj:`None`, will visualize the plot on-the-fly.
+                (default: :obj:`None`)
+            feat_labels (List[str], optional): Optional labels for features.
+                (default :obj:`None`)
+            top_k (int, optional): Top k features to plot. If :obj:`None`
+                plots all features. (default: :obj:`None`)
+        """
+        import matplotlib.pyplot as plt
+        import pandas as pd
+
+        node_mask = self.get('node_mask')
+        if node_mask is None:
+            raise ValueError(f"The attribute 'node_mask' is not available "
+                             f"in '{self.__class__.__name__}' "
+                             f"(got {self.available_explanations})")
+        if node_mask.dim() != 2 or node_mask.size(1) <= 1:
+            raise ValueError(f"Cannot compute feature importance for "
+                             f"object-level 'node_mask' "
+                             f"(got shape {node_mask.size()})")
+
+        feat_importance = node_mask.sum(dim=0).cpu().numpy()
+
+        if feat_labels is None:
+            feat_labels = range(feat_importance.shape[0])
+
+        if len(feat_labels) != feat_importance.shape[0]:
+            raise ValueError(f"The '{self.__class__.__name__}' object holds "
+                             f"{feat_importance.numel()} features, but "
+                             f"only {len(feat_labels)} were passed")
+
+        df = pd.DataFrame({'feat_importance': feat_importance},
+                          index=feat_labels)
+        df = df.sort_values("feat_importance", ascending=False)
+        df = df.round(decimals=3)
+
+        if top_k is not None:
+            df = df.head(top_k)
+            title = f"Feature importance for top {len(df)} features"
+        else:
+            title = f"Feature importance for {len(df)} features"
+
+        ax = df.plot(
+            kind='barh',
+            figsize=(10, 7),
+            title=title,
+            xlabel='Feature label',
+            xlim=[0, float(feat_importance.max()) + 0.3],
+            legend=False,
+        )
+        plt.gca().invert_yaxis()
+        ax.bar_label(container=ax.containers[0], label_type='edge')
+
+        if path is not None:
+            plt.savefig(path)
+        else:
+            plt.show()
+
+        plt.close()
+
+    def visualize_graph(self, path: Optional[str] = None,
+                        backend: Optional[str] = None):
+        r"""Visualizes the explanation graph with edge opacity corresponding to
+        edge importance.
+
+        Args:
+            path (str, optional): The path to where the plot is saved.
+                If set to :obj:`None`, will visualize the plot on-the-fly.
+                (default: :obj:`None`)
+            backend (str, optional): The graph drawing backend to use for
+                visualization (:obj:`"graphviz"`, :obj:`"networkx"`).
+                If set to :obj:`None`, will use the most appropriate
+                visualization backend based on available system packages.
+                (default: :obj:`None`)
+        """
+        edge_mask = self.get('edge_mask')
+        if edge_mask is None:
+            raise ValueError(f"The attribute 'edge_mask' is not available "
+                             f"in '{self.__class__.__name__}' "
+                             f"(got {self.available_explanations})")
+        visualize_graph(self.edge_index, edge_mask, path, backend)
+
+
+class HeteroExplanation(HeteroData, ExplanationMixin):
     r"""Holds all the obtained explanations of a heterogeneous graph.
 
     The explanation object is a :obj:`~torch_geometric.hetero_data.HeteroData`
-    object and can hold node-attribution, edge-attribution,
-    feature-attribution. It also holds the original graph.
-
-    Args:
-        x_dict (Dict[NodeType, Tensor]): A dictionary of node features for each
-            node type, as a `Tensor` of shape
-            :obj:`[num_nodes, num_node_features]`.
-        edge_index_dict (Dict[EdgeType, Tensor]): A dictionary of edge indices
-            for each edge type, as a `Tensor` of shape :obj:`[2, num_edges]`.
-        edge_attr_dict (Dict[EdgeType, Tensor], optional): A dictionary of
-            edge features for each edge type, as a `Tensor` of shape
-            :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
-        node_mask (Dict[NodeType, Tensor], optional): A dictionary of node
-            masks for each node type, as a :obj:`Tensor` of shape
-            :obj:`[num_nodes]`. (default: :obj:`None`)
-        edge_mask (Dict[EdgeType, Tensor], optional): A dictionary of node
-            masks for each node type, as a :obj:`Tensor` of shape
-            :obj:`[num_nodes]`. (default: :obj:`None`)
-        node_feat_mask (Dict[NodeType, Tensor], optional): A dictionary of
-            node feature masks for each node type, as a :obj:`Tensor` of
-            shape :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
-        edge_feat_mask (Dict[EdgeType, Tensor], optional): A dictionary of
-            edge feature masks for each node type, as a :obj:`Tensor` of
-            shape :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
-        **kwargs (optional): Additional attributes.
+    and can hold node-attributions, edge-attributions and feature-attributions.
+    It can also hold the original graph if needed.
     """
-    def __init__(
-        self,
-        x_dict: Optional[Dict[NodeType, Tensor]] = None,
-        edge_index_dict: Optional[Dict[EdgeType, Tensor]] = None,
-        edge_attr_dict: Optional[Dict[EdgeType, Tensor]] = None,
-        node_mask: Optional[Dict[NodeType, Tensor]] = None,
-        edge_mask: Optional[Dict[EdgeType, Tensor]] = None,
-        node_feat_mask: Optional[Dict[NodeType, Tensor]] = None,
-        edge_feat_mask: Optional[Dict[EdgeType, Tensor]] = None,
-        **kwargs,
-    ):
-        super().__init__(**kwargs)
-
-        # x_dict and edge_index_dict marked optional to allow
-        # HeteroData.subgraph() to initialize an empty HeteroExplanation
-        # and then fill it with the subgraph. Users should always pass in
-        # x_dict and edge_index_dict when initializing a HeteroExplanation.
-
-        if x_dict is not None:
-            for key, val in x_dict.items():
-                self[key].x = val
-        if edge_index_dict is not None:
-            for key, val in edge_index_dict.items():
-                self[key].edge_index = val
-        if edge_attr_dict is not None:
-            for key, val in edge_attr_dict.items():
-                self[key].edge_attr = edge_attr_dict[key]
-
-        if node_mask is not None:
-            self.node_mask = node_mask
-        if edge_mask is not None:
-            self.edge_mask = edge_mask
-        if node_feat_mask is not None:
-            self.node_feat_mask = node_feat_mask
-        if edge_feat_mask is not None:
-            self.edge_feat_mask = edge_feat_mask
-
-    @property
-    def available_explanations(self) -> List[str]:
-        """Returns the available explanation masks."""
-        return [
-            key for key in self.keys if isinstance(key, str)
-            and key.endswith('_mask') and self[key] is not None
-        ]
-
     def validate(self, raise_on_error: bool = True) -> bool:
-        r"""Validates the correctness of the explanation"""
-        status = super().validate()
-
-        if 'node_mask' in self:
-            for key in self.x_dict.keys():
-                if key not in self.node_mask:
-                    status = False
-                    warn_or_raise(
-                        f"Expected a 'node_mask' for node type {key}, but got "
-                        f"none", raise_on_error)
-                elif self.x_dict[key].size(0) != self.node_mask[key].size(0):
-                    status = False
-                    warn_or_raise(
-                        f"Expected a 'node_mask' for node type {key} with "
-                        f"{self.x_dict[key].size(0)} nodes (got "
-                        f"{self.node_mask[key].size(0)} nodes)",
-                        raise_on_error)
-
-        if 'edge_mask' in self:
-            for key in self.edge_index_dict.keys():
-                if key not in self.edge_mask:
-                    status = False
-                    warn_or_raise(
-                        f"Expected an 'edge_mask' for edge type {key}, but "
-                        f"got none", raise_on_error)
-                elif self.edge_index_dict[key].size(
-                        1) != self.edge_mask[key].size(0):
-                    status = False
-                    warn_or_raise(
-                        f"Expected a 'edge_mask' for edge type {key} with "
-                        f"{self.edge_index_dict[key].size(1)} edges (got "
-                        f"{self.edge_mask[key].size(0)} edges)",
-                        raise_on_error)
-
-        if 'node_feat_mask' in self:
-            for key in self.x_dict.keys():
-                if key not in self.node_feat_mask:
-                    status = False
-                    warn_or_raise(
-                        f"Expected a 'node_feat_mask' for node type {key}, "
-                        f"but got none", raise_on_error)
-                elif self.x_dict[key].size() != self.node_feat_mask[key].size(
-                ):
-                    status = False
-                    warn_or_raise(
-                        f"Expected a 'node_feat_mask' for node type {key} of "
-                        f"shape {list(self.x_dict[key].size())} (got shape "
-                        f"{list(self.node_feat_mask[key].size())})",
-                        raise_on_error)
-
-        if 'edge_feat_mask' in self:
-            for key in self.edge_attr_dict.keys():
-                if key not in self.edge_feat_mask:
-                    status = False
-                    warn_or_raise(
-                        f"Expected an 'edge_feat_mask' for edge type {key}, "
-                        f"but got none", raise_on_error)
-                elif self.edge_attr_dict[key].size(
-                ) != self.edge_feat_mask[key].size():
-                    status = False
-                    warn_or_raise(
-                        f"Expected a 'edge_feat_mask' for edge type {key} of "
-                        f"shape {list(self.edge_attr_dict[key].size())} (got "
-                        f"shape {list(self.edge_feat_mask[key].size())})",
-                        raise_on_error)
-
+        r"""Validates the correctness of the :class:`Explanation` object."""
+        status = super().validate(raise_on_error)
+        status &= self.validate_masks(raise_on_error)
         return status
 
     def get_explanation_subgraph(self) -> 'HeteroExplanation':
         r"""Returns the induced subgraph, in which all nodes and edges with
         zero attribution are masked out."""
         return self._apply_masks(
-            node_mask={
-                key: value > 0
-                for key, value in self.node_mask.items()
-            } if 'node_mask' in self else None,
-            edge_mask={
-                key: value > 0
-                for key, value in self.edge_mask.items()
-            } if 'edge_mask' in self else None,
+            node_mask_dict={
+                key: mask.sum(dim=-1) > 0
+                for key, mask in self.node_mask_dict.items()
+            },
+            edge_mask_dict={
+                key: mask > 0
+                for key, mask in self.edge_mask_dict.items()
+            },
         )
 
     def get_complement_subgraph(self) -> 'HeteroExplanation':
         r"""Returns the induced subgraph, in which all nodes and edges with any
         attribution are masked out."""
         return self._apply_masks(
-            node_mask={
-                key: value == 0
-                for key, value in self.node_mask.items()
-            } if 'node_mask' in self else None,
-            edge_mask={
-                key: value == 0
-                for key, value in self.edge_mask.items()
-            } if 'edge_mask' in self else None,
+            node_mask_dict={
+                key: mask.sum(dim=-1) == 0
+                for key, mask in self.node_mask_dict.items()
+            },
+            edge_mask_dict={
+                key: mask == 0
+                for key, mask in self.edge_mask_dict.items()
+            },
         )
 
     def _apply_masks(
         self,
-        node_mask: Optional[Tensor] = None,
-        edge_mask: Optional[Tensor] = None,
+        node_mask_dict: Dict[NodeType, Tensor],
+        edge_mask_dict: Dict[EdgeType, Tensor],
     ) -> 'HeteroExplanation':
         out = copy.deepcopy(self)
 
-        if edge_mask is not None:
-            for edge_type in self.edge_types:
-                value = edge_mask[edge_type]
-                out[edge_type].edge_index = out[edge_type].edge_index[:, value]
-                if out[edge_type].edge_attr is not None:
-                    out[edge_type].edge_attr = out[edge_type].edge_attr[value]
+        for edge_type, edge_mask in edge_mask_dict.items():
+            for key, value in self[edge_type].items():
+                if key == 'edge_index':
+                    out[edge_type].edge_index = value[:, edge_mask]
+                elif self[edge_type].is_edge_attr(key):
+                    out[edge_type][key] = value[edge_mask]
 
-        if node_mask is not None:
-            out = out.subgraph(node_mask)
-
-        # Unlike Explanation, HeteroExplanation stores masks separately
-        # from the data, so we need to update the masks as well.
-        for expl in out.available_explanations:
-            update_mask = node_mask if "node" in expl else edge_mask
-            for key, value in getattr(out, expl).items():
-                out[expl][key] = value[update_mask[key]]
-
-        return out
+        return out.subgraph(node_mask_dict)

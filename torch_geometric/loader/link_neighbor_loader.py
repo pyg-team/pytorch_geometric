@@ -2,8 +2,7 @@ from typing import Callable, Optional, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
-from torch_geometric.sampler import NeighborSampler
-from torch_geometric.sampler.base import NegativeSamplingConfig
+from torch_geometric.sampler import NegativeSampling, NeighborSampler
 from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
 
 
@@ -113,12 +112,11 @@ class LinkNeighborLoader(LinkLoader):
             If set to :obj:`"last"`, will sample the last `num_neighbors` that
             fulfill temporal constraints.
             (default: :obj:`"uniform"`)
-        neg_sampling (NegativeSamplingConfig, optional): The negative sampling
-            strategy. Can be either :obj:`"binary"` or :obj:`"triplet"`, and
-            can be further customized by an additional :obj:`amount` argument
-            to control the ratio of sampled negatives to positive edges.
-            If set to :obj:`"binary"`, will randomly sample negative links
-            from the graph.
+        neg_sampling (NegativeSampling, optional): The negative sampling
+            configuration.
+            For negative sampling mode :obj:`"binary"`, samples can be accessed
+            via the attributes :obj:`edge_label_index` and :obj:`edge_label` in
+            the respective edge type of the returned mini-batch.
             In case :obj:`edge_label` does not exist, it will be automatically
             created and represents a binary classification task (:obj:`0` =
             negative edge, :obj:`1` = positive edge).
@@ -132,13 +130,12 @@ class LinkNeighborLoader(LinkLoader):
             :meth:`F.binary_cross_entropy`) and of type
             :obj:`torch.long` for multi-class classification (to facilitate the
             ease-of-use of :meth:`F.cross_entropy`).
-            If set to :obj:`"triplet"`, will randomly sample negative
-            destination nodes for each positive source node.
-            Samples can be accessed via the attributes :obj:`src_index`,
-            :obj:`dst_pos_index` and :obj:`dst_neg_index` in the respective
-            node types of the returned mini-batch.
-            :obj:`edge_label` needs to be :obj:`None` for
-            :obj:`"triplet"`-based negative sampling.
+            For negative sampling mode :obj:`"triplet"`, samples can be
+            accessed via the attributes :obj:`src_index`, :obj:`dst_pos_index`
+            and :obj:`dst_neg_index` in the respective node types of the
+            returned mini-batch.
+            :obj:`edge_label` needs to be :obj:`None` for :obj:`"triplet"`
+            negative sampling mode.
             If set to :obj:`None`, no negative sampling strategy is applied.
             (default: :obj:`None`)
         neg_sampling_ratio (int or float, optional): The ratio of sampled
@@ -184,7 +181,7 @@ class LinkNeighborLoader(LinkLoader):
         directed: bool = True,
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
-        neg_sampling: Optional[NegativeSamplingConfig] = None,
+        neg_sampling: Optional[NegativeSampling] = None,
         neg_sampling_ratio: Optional[Union[int, float]] = None,
         time_attr: Optional[str] = None,
         transform: Optional[Callable] = None,

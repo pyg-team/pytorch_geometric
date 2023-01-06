@@ -121,9 +121,9 @@ def load_ogb(name, dataset_dir):
         splits = dataset.get_idx_split()
         split_names = ['train_mask', 'val_mask', 'test_mask']
         for i, key in enumerate(splits.keys()):
-            mask = index_to_mask(splits[key], size=dataset.data.y.shape[0])
+            mask = index_to_mask(splits[key], size=dataset._data.y.shape[0])
             set_dataset_attr(dataset, split_names[i], mask, len(mask))
-        edge_index = to_undirected(dataset.data.edge_index)
+        edge_index = to_undirected(dataset._data.edge_index)
         set_dataset_attr(dataset, 'edge_index', edge_index,
                          edge_index.shape[1])
 
@@ -146,7 +146,7 @@ def load_ogb(name, dataset_dir):
             dataset.transform = neg_sampling_transform
         else:
             id_neg = negative_sampling(edge_index=id,
-                                       num_nodes=dataset.data.num_nodes,
+                                       num_nodes=dataset._data.num_nodes,
                                        num_neg_samples=id.shape[1])
             id_all = torch.cat([id, id_neg], dim=-1)
             label = create_link_label(id, id_neg)
@@ -209,24 +209,24 @@ def set_dataset_info(dataset):
 
     # get dim_in and dim_out
     try:
-        cfg.share.dim_in = dataset.data.x.shape[1]
+        cfg.share.dim_in = dataset._data.x.shape[1]
     except Exception:
         cfg.share.dim_in = 1
     try:
         if cfg.dataset.task_type == 'classification':
-            cfg.share.dim_out = torch.unique(dataset.data.y).shape[0]
+            cfg.share.dim_out = torch.unique(dataset._data.y).shape[0]
         else:
-            cfg.share.dim_out = dataset.data.y.shape[1]
+            cfg.share.dim_out = dataset._data.y.shape[1]
     except Exception:
         cfg.share.dim_out = 1
 
     # count number of dataset splits
     cfg.share.num_splits = 1
-    for key in dataset.data.keys:
+    for key in dataset._data.keys:
         if 'val' in key:
             cfg.share.num_splits += 1
             break
-    for key in dataset.data.keys:
+    for key in dataset._data.keys:
         if 'test' in key:
             cfg.share.num_splits += 1
             break

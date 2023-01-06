@@ -15,6 +15,7 @@ from .glob import *  # noqa
 from .norm import *  # noqa
 from .unpool import *  # noqa
 from .dense import *  # noqa
+from .kge import *  # noqa
 from .models import *  # noqa
 from .functional import *  # noqa
 

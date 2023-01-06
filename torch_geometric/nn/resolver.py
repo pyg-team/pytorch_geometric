@@ -1,10 +1,10 @@
 import inspect
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 import torch
 from torch import Tensor
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import ReduceLROnPlateau, _LRScheduler
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from torch_geometric.nn.lr_scheduler import (
     ConstantWithWarmupLR,
@@ -13,46 +13,12 @@ from torch_geometric.nn.lr_scheduler import (
     LinearWithWarmupLR,
     PolynomialWithWarmupLR,
 )
+from torch_geometric.resolver import normalize_string, resolver
 
-
-def normalize_string(s: str) -> str:
-    return s.lower().replace('-', '').replace('_', '').replace(' ', '')
-
-
-def resolver(classes: List[Any], class_dict: Dict[str, Any],
-             query: Union[Any, str], base_cls: Optional[Any],
-             base_cls_repr: Optional[str], *args, **kwargs):
-
-    if not isinstance(query, str):
-        return query
-
-    query_repr = normalize_string(query)
-    if base_cls_repr is None:
-        base_cls_repr = base_cls.__name__ if base_cls else ''
-    base_cls_repr = normalize_string(base_cls_repr)
-
-    for key_repr, cls in class_dict.items():
-        if query_repr == key_repr:
-            if inspect.isclass(cls):
-                obj = cls(*args, **kwargs)
-                assert callable(obj)
-                return obj
-            assert callable(cls)
-            return cls
-
-    for cls in classes:
-        cls_repr = normalize_string(cls.__name__)
-        if query_repr in [cls_repr, cls_repr.replace(base_cls_repr, '')]:
-            if inspect.isclass(cls):
-                obj = cls(*args, **kwargs)
-                assert callable(obj)
-                return obj
-            assert callable(cls)
-            return cls
-
-    choices = set(cls.__name__ for cls in classes) | set(class_dict.keys())
-    raise ValueError(f"Could not resolve '{query}' among choices {choices}")
-
+try:
+    from torch.optim.lr_scheduler import LRScheduler
+except ImportError:  # PyTorch < 2.0
+    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
 
 # Activation Resolver #########################################################
 
@@ -120,7 +86,7 @@ def lr_scheduler_resolver(
     warmup_ratio_or_steps: Optional[Union[float, int]] = 0.1,
     num_training_steps: Optional[int] = None,
     **kwargs,
-) -> Union[_LRScheduler, ReduceLROnPlateau]:
+) -> Union[LRScheduler, ReduceLROnPlateau]:
     r"""A resolver to obtain a learning rate scheduler implemented in either
     PyG or PyTorch from its name or type.
 
@@ -156,7 +122,7 @@ def lr_scheduler_resolver(
         raise ValueError(f"Found invalid type of `warmup_ratio_or_steps` "
                          f"(got {type(warmup_ratio_or_steps)})")
 
-    base_cls = _LRScheduler
+    base_cls = LRScheduler
     classes = [
         scheduler for scheduler in vars(torch.optim.lr_scheduler).values()
         if isinstance(scheduler, type) and issubclass(scheduler, base_cls)
