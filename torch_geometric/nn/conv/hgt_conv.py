@@ -200,6 +200,9 @@ class HGTConv(MessagePassing):
                 count += x_type_i.size(0)
                 ptr.append(count)
             ptr = torch.tensor(ptr).to(x.device)
+            if self.infer_shapes:
+                #initialize lazy params
+                pass
             k_wt = torch.stack(k_wts)
             k_bias = torch.stack(k_biases)
             q_wt = torch.stack(q_wts)
@@ -282,9 +285,9 @@ class HGTConv(MessagePassing):
             for k_i in k_ins:
                 count += k_i.size(0)
                 trans_ptr.append(count)
-            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
+            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins, dim=1), trans_ptr,
                                                a_rel).transpose(1, 0)
-            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
+            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins, dim=1), trans_ptr,
                                                m_rel).transpose(1, 0)
             increment_dict = {
                 src_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
