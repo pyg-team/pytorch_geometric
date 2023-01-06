@@ -166,6 +166,7 @@ class HGTConv(MessagePassing):
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
+        xs = list(x_dict.values())
         if not self.use_gmm:
             if self.no_pad and not self.infer_shapes:
                 x = torch.cat(xs)
@@ -190,7 +191,6 @@ class HGTConv(MessagePassing):
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
         # parralelize over node-types
-        xs = list(x_dict.values())
         k_wts = [self.k_lin[node_type].weight for node_type in self.node_types]
         k_biases = [
             self.k_lin[node_type].bias for node_type in self.node_types
