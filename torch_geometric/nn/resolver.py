@@ -4,7 +4,7 @@ from typing import Any, Optional, Union
 import torch
 from torch import Tensor
 from torch.optim import Optimizer
-from torch.optim.lr_scheduler import ReduceLROnPlateau, _LRScheduler
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from torch_geometric.nn.lr_scheduler import (
     ConstantWithWarmupLR,
@@ -14,6 +14,11 @@ from torch_geometric.nn.lr_scheduler import (
     PolynomialWithWarmupLR,
 )
 from torch_geometric.resolver import normalize_string, resolver
+
+try:
+    from torch.optim.lr_scheduler import LRScheduler
+except ImportError:  # PyTorch < 2.0
+    from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
 
 # Activation Resolver #########################################################
 
@@ -81,7 +86,7 @@ def lr_scheduler_resolver(
     warmup_ratio_or_steps: Optional[Union[float, int]] = 0.1,
     num_training_steps: Optional[int] = None,
     **kwargs,
-) -> Union[_LRScheduler, ReduceLROnPlateau]:
+) -> Union[LRScheduler, ReduceLROnPlateau]:
     r"""A resolver to obtain a learning rate scheduler implemented in either
     PyG or PyTorch from its name or type.
 
@@ -116,11 +121,6 @@ def lr_scheduler_resolver(
     else:
         raise ValueError(f"Found invalid type of `warmup_ratio_or_steps` "
                          f"(got {type(warmup_ratio_or_steps)})")
-
-    try:
-        from torch.optim.lr_scheduler import LRScheduler
-    except ImportError:  # PyTorch < 2.0
-        from torch.optim.lr_scheduler import _LRScheduler as LRScheduler
 
     base_cls = LRScheduler
     classes = [
