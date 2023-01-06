@@ -12,18 +12,6 @@ from torch_geometric.explain.config import MaskType
 from torch_geometric.testing import withPackage
 
 
-@pytest.fixture
-def data():
-    return Data(
-        x=torch.randn(4, 3),
-        edge_index=torch.tensor([
-            [0, 0, 0, 1, 1, 2],
-            [1, 2, 3, 2, 3, 3],
-        ]),
-        edge_attr=torch.randn(6, 3),
-    )
-
-
 def create_random_explanation(
     data: Data,
     node_mask_type: Optional[Union[MaskType, str]] = None,
