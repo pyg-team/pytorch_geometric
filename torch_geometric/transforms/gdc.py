@@ -619,9 +619,10 @@ def get_calc_heat():
     from numba.typed import Dict
 
     @numba.jit(nopython=True)
-    def calc_heat(indptr: np.ndarray, indices: np.ndarray,
-                  out_degree: np.ndarray, t: int,
-                  eps: float) -> Tuple[List[List[int]], List[List[float]]]:
+    def calc_heat(
+        indptr: np.ndarray, indices: np.ndarray, out_degree: np.ndarray,
+        t: int, eps: float
+    ) -> Tuple[List[List[int]], List[List[float]]]:  # pragma: no cover
         r"""Calculate the heat kernel diffusion vector for all nodes using a
         variant of the Kloster-Gleich algorithm (see Kloster and Gleich: Heat
         kernel based community detection (KDD 2014).)
