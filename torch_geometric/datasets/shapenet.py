@@ -145,7 +145,7 @@ class ShapeNet(InMemoryDataset):
                               'train, val, trainval or test'))
 
         self.data, self.slices = torch.load(path)
-        self.data.x = self.data.x if include_normals else None
+        self._data.x = self._data.x if include_normals else None
 
         self.y_mask = torch.zeros((len(self.seg_classes.keys()), 50),
                                   dtype=torch.bool)

@@ -155,18 +155,29 @@ class Aggregation(torch.nn.Module):
         assert index is not None
         return scatter(x, index, dim, dim_size, reduce)
 
-    def to_dense_batch(self, x: Tensor, index: Optional[Tensor] = None,
-                       ptr: Optional[Tensor] = None,
-                       dim_size: Optional[int] = None, dim: int = -2,
-                       fill_value: float = 0.) -> Tuple[Tensor, Tensor]:
+    def to_dense_batch(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        fill_value: float = 0.,
+        max_num_elements: Optional[int] = None,
+    ) -> Tuple[Tensor, Tensor]:
 
         # TODO Currently, `to_dense_batch` can only operate on `index`:
         self.assert_index_present(index)
         self.assert_sorted_index(index)
         self.assert_two_dimensional_input(x, dim)
 
-        return to_dense_batch(x, index, batch_size=dim_size,
-                              fill_value=fill_value)
+        return to_dense_batch(
+            x,
+            index,
+            batch_size=dim_size,
+            fill_value=fill_value,
+            max_num_nodes=max_num_elements,
+        )
 
 
 ###############################################################################

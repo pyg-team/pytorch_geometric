@@ -68,3 +68,20 @@ Explainer Algorithms
 .. automodule:: torch_geometric.explain.algorithm
    :members:
    :exclude-members: ExplainerAlgorithm, forward, loss, supports
+
+Explanation Metrics
+-------------------
+
+The quality of an explanation can be judged by a variety of different methods.
+PyG supports the following metrics out-of-the-box:
+
+.. currentmodule:: torch_geometric.explain.metric
+
+.. autosummary::
+    :nosignatures:
+    {% for cls in torch_geometric.explain.metric.classes %}
+      {{ cls }}
+    {% endfor %}
+
+.. automodule:: torch_geometric.explain.metric
+    :members:

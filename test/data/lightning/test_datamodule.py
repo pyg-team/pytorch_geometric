@@ -190,10 +190,9 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
 
     batch_size = 1 if loader == 'full' else 32
     num_workers = 0 if loader == 'full' else 3
-    kwargs, kwargs_repr = {}, ''
+    kwargs = {}
     if loader == 'neighbor':
         kwargs['num_neighbors'] = [5]
-        kwargs_repr += 'num_neighbors=[5], '
 
     trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
                          max_epochs=5, log_every_n_steps=1)
@@ -202,7 +201,7 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
     old_x = data.x.clone().cpu()
     assert str(datamodule) == (f'LightningNodeData(data={data_repr}, '
                                f'loader={loader}, batch_size={batch_size}, '
-                               f'num_workers={num_workers}, {kwargs_repr}'
+                               f'num_workers={num_workers}, '
                                f'pin_memory={loader != "full"}, '
                                f'persistent_workers={loader != "full"})')
     trainer.fit(model, datamodule)

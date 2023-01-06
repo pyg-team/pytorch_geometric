@@ -26,6 +26,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install graphviz
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo apt-get install graphviz
+
       - name: Install main package
         run: |
           pip install -e .[full,test]
