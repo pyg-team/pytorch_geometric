@@ -98,7 +98,7 @@ Assume we have a GNN `model` that does graph classification on homogenous `data`
             return_type='raw',
             ),
         # Include only top 10 most important edges.
-        threshold_config = ('top_k', 10) 
+        threshold_config = ('top_k', 10)
     )
 
     # PGExplainer algorithm needs to be trained separately since its a
