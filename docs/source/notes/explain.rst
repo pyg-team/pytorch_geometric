@@ -7,9 +7,9 @@ Interpretting GNN models is crucial for many use cases. PyG (2.2 and beyond) inc
 
 #. Several explanation algorithms like :class:`~torch_geometric.explain.algorithm.GNNExplainer`, :class:`~torch_geometric.explain.algorithm.AttentionExplainer` etc.
 
-#. Support to visualize explanations like .
+#. Support to visualize explanations in :class:`~torch_geometric.explain.Explanation`.
 
-#. Metrics to evalaute explanations like .
+#. Metrics to evalaute explanations in `:class:`~torch_geometric.explain.metrics`, 
 
 .. warning::
 
@@ -23,7 +23,7 @@ The :class:`~torch_geometric.explain.Explainer` class is designed to handle all 
 
 #. which algorithm from the :class:`torch_geometric.explain.algorithm` module to use (e.g., `GNNExplainer`)
 
-#. the type of explanation to compute (e.g., `explanation_type="phenomenon"` or `explanation_type="model"`)
+#. the type of explanation to compute `explanation_type="phenomenon"` to explain the underlying phenomenon of a dataset `explanation_type="model"` to explain the prediction of a PyG model (see the `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods for Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper for more details). 
 
 #. the different type of masks for node and edges (e.g., `mask="object"` or `mask="attributes"`)
 
@@ -36,11 +36,13 @@ Examples
 
 **Example 1 : Explaining node classification on a homogenous graph.**
 
-Assume we have a GNN `model` that does node classification on homogenous `data`. Lets use `GNNExplainer` to generate an `Explanation`. We configure the `Explainer` using `node_mask_type` and `edge_mask_type`, so that `Explanation` contains 1.) `edge_mask` indicating which edges are most important and 2.) a `node_mask` indicating which feature are crucial in explaining the nodes prediction
+Assume we have a GNN :obj:`model` that does node classification on homogenous graph. Lets use :class:`torch_geometric.explain.algorithm.GNNExplainer` to generate an :class:`Explanation`. We configure the :class:`Explainer` using :obj:`node_mask_type` and :obj:`edge_mask_type`, so that `Explanation` contains 1.) :obj:`edge_mask` indicating which edges are most important and 2.) a :obj:`node_mask` indicating which feature are crucial in explaining the nodes prediction
 
 .. code-block:: python
 
+    from torch_geometric.data import Data
     from torch_geometric.explain import Explainer, GNNExplainer, Explanation
+    data = Data(...)
     explainer = Explainer(
         model=model,
         algorithm=GNNExplainer(epochs=200),
@@ -68,7 +70,7 @@ To visulaize the explanation(node mask, edge mask):
     path = 'subgraph.pdf'
     explanation.visualize_graph(path)
 
-To evaluate the explanation from the `GNNExplainer`:
+To evaluate the explanation from the :class:`GNNExplainer`:
 
 .. code-block:: python
 
@@ -77,10 +79,13 @@ To evaluate the explanation from the `GNNExplainer`:
 
 **Example 2 : Explaining graph regression on a homogenous graph.**
 
-Assume we have a GNN `model` that does graph classification on homogenous `data`. Lets use `PGExplainer` to generate an `Explanation`. Since `PGExplainer` only explains which edges are crucial. We configure the `Explainer` using `node_mask_type` and `edge_mask_type`, so that `Explanation` contains only `edge_mask` indicating which edges are most important.
+Assume we have a GNN :obj:`model` that does graph classification on homogenous graph. Lets use :class:`~torch_geometric.explain.algorithm.PGExplainer` to generate an :class:`Explanation`. We configure the :class:`Explainer` using `edge_mask_type`, so that `Explanation` contains only `edge_mask` indicating which edges are most important. Passing a `node_mask_type` will throw an error since :class:`PGExplainer` only explains which edges are crucial.
 
 .. code-block:: python
 
+    from torch_geometric.data import Data
+    from torch_geometric.explain import Explainer, PGExplainer, Explanation
+    data = Data(...)
     explainer = Explainer(
         model=model,
         algorithm=PGExplainer(epochs=30, lr=0.003),
@@ -104,6 +109,9 @@ Assume we have a GNN `model` that does graph classification on homogenous `data`
     # Generate explanation for a particular graph.
     explanation: Explanation = explainer(data.x, data.edge_index)
     print(explanation.edge_mask)
+    
+        path = 'subgraph.pdf'
+    explanation.visualize_graph(path)
 
 
 Since this feature is still undergoing heavy development, please feel free to reach out to the PyG core team either on `GitHub <https://github.com/pyg-team/pytorch_geometric/discussions>`_ or `Slack <https://data.pyg.org/slack.html>`_ if you have any questions, comments or concerns.
