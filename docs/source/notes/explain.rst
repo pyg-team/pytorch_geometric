@@ -24,13 +24,13 @@ Explainer Interface
 
 The :class:`~torch_geometric.explain.Explainer` class is designed to handle all explainability parameters (see the :class:`~torch_geometric.explain.config.ExplainerConfig` class for more details):
 
-#. which algorithm from the torch_geometric.explain.algorithm module to use (e.g., GNNExplainer)
+#. which algorithm from the :class:`torch_geometric.explain.algorithm` module to use (e.g., `GNNExplainer`)
 
-#. the type of explanation to compute (e.g., explanation_type="phenomenon" or explanation_type="model")
+#. the type of explanation to compute (e.g., `explanation_type="phenomenon"` or `explanation_type="model"`)
 
-#. the different type of masks for node and edges (e.g., mask="object" or mask="attributes")
+#. the different type of masks for node and edges (e.g., `mask="object"` or `mask="attributes"`)
 
-#. any postprocessing of the masks (e.g., threshold_type="topk" or threshold_type="hard")
+#. any postprocessing of the masks (e.g., `threshold_type="topk"` or `threshold_type="hard"`)
 
 Metrics and Visualization
 -------------------------
