@@ -52,7 +52,7 @@ Assume you have a GNN `model` that does node classification on homogenous `data`
             return_type='log_probs', # model returns log of probability
         ),
     )
-    
+
     # Generate explanation for node 10s prediction.
     node_index = 10
     explanation: Explanation = explainer(data.x, data.edge_index, index=node_index)
