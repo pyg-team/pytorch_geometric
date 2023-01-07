@@ -15,9 +15,6 @@ Interpretting GNN models is crucial for many use cases. PyG (2.2 and beyond) inc
 
     The explanation APIs discussed here may change in the future as we continuously work to improve their ease-of-use and generalizability.
 
-Background
-----------
-
 
 Explainer Interface
 -------------------
@@ -32,10 +29,7 @@ The :class:`~torch_geometric.explain.Explainer` class is designed to handle all 
 
 #. any postprocessing of the masks (e.g., `threshold_type="topk"` or `threshold_type="hard"`)
 
-Metrics and Visualization
--------------------------
-
-
+Using the above algorithm and configurations `Explainer` generates an :class:`~torch_geometric.explain.Explanation` which contains information on which node, edges and node features are crucial to explain a GNN models prediction.
 
 Examples
 --------
