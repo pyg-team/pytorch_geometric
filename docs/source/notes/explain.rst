@@ -2,10 +2,10 @@ GNN Explainability
 ===================================
 
 Interpretting GNN models is crucial for many use cases. PyG (2.2 and beyond) includes:
-1. Flexible interface to generate a variety of explanations :class:`~torch_geometric.explain.Explainer`.
-2. Several explanation algorithms like :class:`~torch_geometric.explain.algorithm.GNNExplainer`, :class:`~torch_geometric.explain.algorithm.AttentionExplainer` etc.
-3. Support to visualize explanations like .
-4. Metrics to evalaute explanations like .
+#. Flexible interface to generate a variety of explanations :class:`~torch_geometric.explain.Explainer`.
+#. Several explanation algorithms like :class:`~torch_geometric.explain.algorithm.GNNExplainer`, :class:`~torch_geometric.explain.algorithm.AttentionExplainer` etc.
+#. Support to visualize explanations like .
+#. Metrics to evalaute explanations like .
 
 .. warning::
 
@@ -31,9 +31,46 @@ any postprocessing of the masks (e.g., threshold_type="topk" or threshold_type="
 Metrics and Visualization
 --------------------------
 
-Putting it All Together
------------------------
+Examples
+--------
 
+**Example 1 : Explaining node prediciton on a homogenous graph.
 
+Assume you have a GNN `model` that does node classification on homogenous `data`. You can get `Explanation` with a edge mask and node feature mask, that explains a nodes prediction as follows:
+
+.. code-block:: python
+    from torch_geometric.explain import Explainer, GNNExplainer, Explanation
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=200),
+        explanation_type='model',
+        node_mask_type='attributes',
+        edge_mask_type='object',
+        model_config=dict(
+            mode='multiclass_classification',
+            task_level='node',
+            return_type='log_probs', # model returns log of probability
+        ),
+    )
+    
+    # Generate explanation for node 10s prediction.
+    node_index = 10
+    explanation: Explanation = explainer(data.x, data.edge_index, index=node_index)
+
+Visulaize the generate explanation(node mask, edge mask):
+
+.. code-block:: python
+    path = 'feature_importance.png'
+    explanation.visualize_feature_importance(path, top_k=10)
+    path = 'subgraph.pdf'
+    explanation.visualize_graph(path)
+
+Sometimes we want to measure how good an explanation is
+
+.. code-block:: python
+    from torch_geometric.explain.metrics import unfaithfulness
+    metric = unfaithfulness(explainer, explanation)
+
+**Example 2 : Explaining node prediciton on a heterogenous graph.
 
 Since this feature is still undergoing heavy development, please feel free to reach out to the PyG core team either on `GitHub <https://github.com/pyg-team/pytorch_geometric/discussions>`_ or `Slack <https://data.pyg.org/slack.html>`_ if you have any questions, comments or concerns.
