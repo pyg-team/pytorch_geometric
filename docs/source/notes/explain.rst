@@ -9,7 +9,7 @@ Interpretting GNN models is crucial for many use cases. PyG (2.2 and beyond) inc
 
 #. Support to visualize explanations in :class:`~torch_geometric.explain.Explanation`.
 
-#. Metrics to evalaute explanations in `:class:`~torch_geometric.explain.metrics`, 
+#. Metrics to evalaute explanations in `:class:`~torch_geometric.explain.metrics`,
 
 .. warning::
 
@@ -23,7 +23,7 @@ The :class:`~torch_geometric.explain.Explainer` class is designed to handle all 
 
 #. which algorithm from the :class:`torch_geometric.explain.algorithm` module to use (e.g., `GNNExplainer`)
 
-#. the type of explanation to compute `explanation_type="phenomenon"` to explain the underlying phenomenon of a dataset `explanation_type="model"` to explain the prediction of a PyG model (see the `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods for Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper for more details). 
+#. the type of explanation to compute `explanation_type="phenomenon"` to explain the underlying phenomenon of a dataset `explanation_type="model"` to explain the prediction of a PyG model (see the `"GraphFramEx: Towards Systematic Evaluation of Explainability Methods for Graph Neural Networks" <https://arxiv.org/abs/2206.09677>`_ paper for more details).
 
 #. the different type of masks for node and edges (e.g., `mask="object"` or `mask="attributes"`)
 
@@ -109,7 +109,7 @@ Assume we have a GNN :obj:`model` that does graph classification on homogenous g
     # Generate explanation for a particular graph.
     explanation: Explanation = explainer(data.x, data.edge_index)
     print(explanation.edge_mask)
-    
+
         path = 'subgraph.pdf'
     explanation.visualize_graph(path)
 
