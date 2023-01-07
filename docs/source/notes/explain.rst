@@ -29,7 +29,7 @@ The :class:`~torch_geometric.explain.Explainer` class is designed to handle all 
 
 #. any postprocessing of the masks (e.g., `threshold_type="topk"` or `threshold_type="hard"`)
 
-Using the above algorithm and configurations `Explainer` generates an :class:`~torch_geometric.explain.Explanation` which contains information on which node, edges and node features are crucial to explain a GNN models prediction.
+This class allows the user to easily compare different explainability methods and to easily switch between different types of masks, while making sure the high-level framework stays the same. `Explainer` generates an :class:`~torch_geometric.explain.Explanation` object which contains information on which node, edges and node features are crucial to explain a GNN models.
 
 Examples
 --------
