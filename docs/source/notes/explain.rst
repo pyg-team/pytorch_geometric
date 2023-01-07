@@ -9,7 +9,7 @@ Interpretting GNN models is crucial for many use cases. PyG (2.2 and beyond) inc
 
 #. Support to visualize explanations in :class:`~torch_geometric.explain.Explanation`.
 
-#. Metrics to evalaute explanations in `:class:`~torch_geometric.explain.metrics`,
+#. Metrics to evalaute explanations in :class:`~torch_geometric.explain.metrics`,
 
 .. warning::
 
