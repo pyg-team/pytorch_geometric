@@ -15,17 +15,25 @@ Background
 ----------
 
 
-Explainer
--------------
+Explainer Interface and Explaienr Algorithms
+---------------------------------------------
 
+The :class:`~torch_geometric.explain.Explainer` class is designed to handle all explainability parameters (see the :class:`~torch_geometric.explain.config.ExplainerConfig` class for more details):
 
-Explainer Algorithms
------------------------
+which algorithm from the torch_geometric.explain.algorithm module to use (e.g., GNNExplainer)
+
+the type of explanation to compute (e.g., explanation_type="phenomenon" or explanation_type="model")
+
+the different type of masks for node and edges (e.g., mask="object" or mask="attributes")
+
+any postprocessing of the masks (e.g., threshold_type="topk" or threshold_type="hard")
 
 Metrics and Visualization
 --------------------------
 
 Putting it All Together
 -----------------------
+
+
 
 Since this feature is still undergoing heavy development, please feel free to reach out to the PyG core team either on `GitHub <https://github.com/pyg-team/pytorch_geometric/discussions>`_ or `Slack <https://data.pyg.org/slack.html>`_ if you have any questions, comments or concerns.
