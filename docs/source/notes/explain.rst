@@ -77,7 +77,7 @@ To evaluate the explanation from the `GNNExplainer`:
 
 **Example 2 : Explaining graph regression on a homogenous graph.**
 
-Assume we have a GNN `model` that does graph classification on homogenous `data`. Lets use `PGExplainer` to generate an `Explanation`. Since `PGExplainer` only explains which edges are crucial. We configure the `Explainer` using `node_mask_type` and `edge_mask_type`, so that `Explanation` contains only `edge_mask` indicating which edges are most important. 
+Assume we have a GNN `model` that does graph classification on homogenous `data`. Lets use `PGExplainer` to generate an `Explanation`. Since `PGExplainer` only explains which edges are crucial. We configure the `Explainer` using `node_mask_type` and `edge_mask_type`, so that `Explanation` contains only `edge_mask` indicating which edges are most important.
 
 .. code-block:: python
 
@@ -92,13 +92,13 @@ Assume we have a GNN `model` that does graph classification on homogenous `data`
             return_type='raw',
             ),
     )
-    
-    # PGExplainer algorithm needs to be trained separately since its a 
+
+    # PGExplainer algorithm needs to be trained separately since its a
     # parametric explainer i.e it uses a neural network to generate explanation.
     for epoch in range(30):
         loss = explainer.algorithm.train(epoch, model, x, edge_index,
                                          target=target)
-    
+
     # Generate explanation for a particular graph.
     explanation: Explanation = explainer(data.x, data.edge_index)
     print(explanation.edge_mask)
