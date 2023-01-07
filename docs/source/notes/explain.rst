@@ -2,9 +2,13 @@ GNN Explainability
 ===================================
 
 Interpretting GNN models is crucial for many use cases. PyG (2.2 and beyond) includes:
+
 #. Flexible interface to generate a variety of explanations :class:`~torch_geometric.explain.Explainer`.
+
 #. Several explanation algorithms like :class:`~torch_geometric.explain.algorithm.GNNExplainer`, :class:`~torch_geometric.explain.algorithm.AttentionExplainer` etc.
+
 #. Support to visualize explanations like .
+
 #. Metrics to evalaute explanations like .
 
 .. warning::
@@ -15,8 +19,8 @@ Background
 ----------
 
 
-Explainer Interface and Explaienr Algorithms
----------------------------------------------
+Explainer Interface
+-------------------
 
 The :class:`~torch_geometric.explain.Explainer` class is designed to handle all explainability parameters (see the :class:`~torch_geometric.explain.config.ExplainerConfig` class for more details):
 
@@ -29,7 +33,9 @@ The :class:`~torch_geometric.explain.Explainer` class is designed to handle all 
 #. any postprocessing of the masks (e.g., threshold_type="topk" or threshold_type="hard")
 
 Metrics and Visualization
---------------------------
+-------------------------
+
+
 
 Examples
 --------
@@ -91,6 +97,8 @@ Assume we have a GNN `model` that does graph classification on homogenous `data`
             task_level='graph',
             return_type='raw',
             ),
+        # Include only top 10 most important edges.
+        threshold_config = ('top_k', 10) 
     )
 
     # PGExplainer algorithm needs to be trained separately since its a
