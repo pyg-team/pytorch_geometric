@@ -45,6 +45,7 @@ from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
 from .aminer import AMiner
 from .word_net import WordNet18, WordNet18RR
+from .freebase import FB15k_237
 from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
@@ -135,6 +136,7 @@ __all__ = [
     'AMiner',
     'WordNet18',
     'WordNet18RR',
+    'FB15k_237',
     'WikiCS',
     'WebKB',
     'WikipediaNetwork',

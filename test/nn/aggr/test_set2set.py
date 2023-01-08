@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.nn import Set2Set
+from torch_geometric.nn.aggr import Set2Set
 
 
 def test_set2set():

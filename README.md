@@ -240,6 +240,7 @@ These GNN layers can be stacked together to create Graph Neural Network models.
 * A **[MetaLayer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.meta.MetaLayer)** for building any kind of graph network similar to the [TensorFlow Graph Nets library](https://github.com/deepmind/graph_nets) from Battaglia *et al.*: [Relational Inductive Biases, Deep Learning, and Graph Networks](https://arxiv.org/abs/1806.01261) (CoRR 2018)
 * **[SSGConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.SSGConv)** from Zhu *et al.*: [Simple Spectral Graph Convolution](https://openreview.net/forum?id=CYO5T-YjWZV) (ICLR 2021)
 * **[FusedGATConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.FusedGATConv)** from Zhang *et al.*: [Understanding GNN Computational Graph: A Coordinated Computation, IO, and Memory Perspective](https://proceedings.mlsys.org/paper/2022/file/9a1158154dfa42caddbd0694a4e9bdc8-Paper.pdf) (MLSys 2022)
+* **[GPSConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GPSConv)** from Rampášek *et al.*: [Recipe for a General, Powerful, Scalable Graph Transformer](https://arxiv.org/abs/2205.12454) (NeurIPS 2022) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_gps.py)]
 </details>
 
 **Pooling layers:**
@@ -299,6 +300,7 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 * **[LINKX](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.LINKX)** from Lim *et al.*: [Large Scale Learning on Non-Homophilous Graphs:
 New Benchmarks and Strong Simple Methods](https://arxiv.org/abs/2110.14446) (NeurIPS 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/linkx.py)]
 * **[RevGNN](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.GroupAddRev)** from Li *et al.*: [Training Graph Neural with 1000 Layers](https://arxiv.org/abs/2106.07476) (ICML 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/rev_gnn.py)]
+* **[TransE](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.kge.TransE)** from Bordes *et al.*: [Translating Embeddings for Modeling Multi-Relational Data](https://proceedings.neurips.cc/paper/2013/file/1cecc7a77928ca8133fa24680a88d2f9-Paper.pdf) (NIPS 2013) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/transe_fb15k_237.py)]
 </details>
 
 **GNN operators and utilities:**

@@ -63,7 +63,7 @@ class OGB_MAG(InMemoryDataset):
 
     @property
     def num_classes(self) -> int:
-        return int(self.data['paper'].y.max()) + 1
+        return int(self._data['paper'].y.max()) + 1
 
     @property
     def raw_dir(self) -> str:

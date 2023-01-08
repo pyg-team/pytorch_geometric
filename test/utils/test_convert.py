@@ -4,10 +4,12 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.testing import withPackage
 from torch_geometric.utils import (
+    from_networkit,
     from_networkx,
     from_scipy_sparse_matrix,
     from_trimesh,
     subgraph,
+    to_networkit,
     to_networkx,
     to_scipy_sparse_matrix,
     to_trimesh,
@@ -276,6 +278,19 @@ def test_from_networkx_subgraph_convert():
     sub_edge_index_2 = from_networkx(G.subgraph([0, 1, 3, 4])).edge_index
 
     assert sub_edge_index_1.tolist() == sub_edge_index_2.tolist()
+
+
+@withPackage('networkit')
+def test_to_networkit():
+    edge_index = torch.tensor([[0, 1], [1, 0]])
+
+    g = to_networkit(edge_index, directed=False)
+    assert not g.isDirected()
+    assert not g.isWeighted()
+
+    edge_index, edge_weight = from_networkit(g)
+    assert edge_index.tolist() == [[0, 1], [1, 0]]
+    assert edge_weight is None
 
 
 @withPackage('trimesh')
