@@ -326,6 +326,9 @@ class HGTConv(MessagePassing):
             print('k_dict.shape:',
                   {node_type: k.shape
                    for node_type, k in k_dict.items()})
+            print('v_dict.shape:',
+                  {node_type: k.shape
+                   for node_type, v in v_dict.items()})
             for src_type in src_types:
                 k_src = k_dict[src_type]
                 v_src = v_dict[src_type]
