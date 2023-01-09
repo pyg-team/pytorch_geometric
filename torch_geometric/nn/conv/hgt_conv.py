@@ -194,15 +194,21 @@ class HGTConv(MessagePassing):
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
         # parralelize over node-types
-        k_wts = [self.k_lin[node_type].weight.T for node_type in self.node_types]
+        k_wts = [
+            self.k_lin[node_type].weight.T for node_type in self.node_types
+        ]
         k_biases = [
             self.k_lin[node_type].bias for node_type in self.node_types
         ]
-        q_wts = [self.q_lin[node_type].weight.T for node_type in self.node_types]
+        q_wts = [
+            self.q_lin[node_type].weight.T for node_type in self.node_types
+        ]
         q_biases = [
             self.q_lin[node_type].bias for node_type in self.node_types
         ]
-        v_wts = [self.v_lin[node_type].weight.T for node_type in self.node_types]
+        v_wts = [
+            self.v_lin[node_type].weight.T for node_type in self.node_types
+        ]
         v_biases = [
             self.v_lin[node_type].bias for node_type in self.node_types
         ]
