@@ -201,7 +201,7 @@ def _raise_on_invalid_mask_type(mask_type: str):
 
 
 def _expand_input(input: Tensor, n_samples: int) -> Tensor:
-    return input.repeat(n_samples, *[1] * input.dim())
+    return input.expand(n_samples, *input.shape)
 
 
 def to_captum_input(
