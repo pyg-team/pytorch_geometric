@@ -227,7 +227,7 @@ def to_captum_input(
             for each edge type.
         mask_type (str): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
-            and :obj:`"node_and_edge"`:
+            and :obj:`"node_and_edge"`.
         n_samples (int): The number of samples to explain. (default: :obj:`1`)
                          Has only been tested for the
                         `Captum.ai <https://captum.ai/>`_ attribution method
