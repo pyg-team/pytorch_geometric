@@ -70,10 +70,7 @@ class HeteroSAGE(torch.nn.Module):
 @withPackage('captum')
 @pytest.mark.parametrize('mask_type', mask_types)
 @pytest.mark.parametrize('method', methods)
-@pytest.mark.parametrize('batch_size, output_idx',
-                         ([1, None], [2, None], [1, 1], [2, [0, 1]]))
-def test_captum_attribution_methods_hetero(mask_type, method, batch_size,
-                                           output_idx):
+def test_captum_attribution_methods_hetero(mask_type, method):
     from captum import attr  # noqa
     data = get_hetero_data()
     metadata = data.metadata()
@@ -83,9 +80,8 @@ def test_captum_attribution_methods_hetero(mask_type, method, batch_size,
     assert isinstance(captum_model, CaptumHeteroModel)
 
     args = ['additional_arg1']
-    n_sample = len(output_idx) if type(output_idx) == list else 1
     input, additional_forward_args = to_captum_input(
-        data.x_dict, data.edge_index_dict, mask_type, n_sample,
+        data.x_dict, data.edge_index_dict, mask_type, 1,
         additional_forward_args=args)
     if mask_type == 'node':
         sliding_window_shapes = ((3, 3), (3, 3))
@@ -95,22 +91,44 @@ def test_captum_attribution_methods_hetero(mask_type, method, batch_size,
         sliding_window_shapes = ((3, 3), (3, 3), (5, ), (5, ), (5, ))
 
     # Compute attributions.
+    # TODO (ramona): Make sure which of those methods work with a list
+    # of output indices.
     if method == 'IntegratedGradients':
         attributions, _ = explainer.attribute(
-            input, target=0, internal_batch_size=batch_size,
+            input,
+            target=0,
+            internal_batch_size=1,
             additional_forward_args=additional_forward_args,
-            return_convergence_delta=True)
+            n_steps=5,
+            return_convergence_delta=True,
+        )
     elif method == 'GradientShap':
         attributions, _ = explainer.attribute(
-            input, target=0, return_convergence_delta=True, baselines=input,
-            n_samples=1, additional_forward_args=additional_forward_args)
+            input,
+            target=0,
+            return_convergence_delta=True,
+            baselines=input,
+            n_samples=5,
+            additional_forward_args=additional_forward_args,
+        )
     elif method in ['DeepLiftShap', 'DeepLift']:
         attributions, _ = explainer.attribute(
-            input, target=0, return_convergence_delta=True, baselines=input,
-            additional_forward_args=additional_forward_args)
+            input,
+            target=0,
+            return_convergence_delta=True,
+            baselines=input,
+            additional_forward_args=additional_forward_args,
+        )
     elif method == 'Occlusion':
         attributions = explainer.attribute(
-            input, target=0, sliding_window_shapes=sliding_window_shapes,
+            input,
+            target=0,
+            sliding_window_shapes=sliding_window_shapes,
+            additional_forward_args=additional_forward_args,
+        )
+    elif method in ["Lime", 'KernelShap']:
+        attributions = explainer.attribute(
+            input, target=0, n_samples=5,
             additional_forward_args=additional_forward_args)
     else:
         attributions = explainer.attribute(
@@ -144,18 +162,53 @@ def test_captum_attribution_methods_hetero(mask_type, method, batch_size,
         for node_type in metadata[0]:
             num_nodes = data[node_type].num_nodes
             num_node_feats = data[node_type].x.shape[1]
-            if output_idx is None or type(output_idx) == int:
-                assert x_attr_dicts[node_type].shape == (num_nodes,
-                                                         num_node_feats)
-            else:
-                assert all(item[node_type].shape == (num_nodes, num_node_feats)
-                           for item in x_attr_dicts)
+            assert all(item[node_type].shape == (num_nodes, num_node_feats)
+                       for item in x_attr_dicts)
 
     if 'edge' in mask_type:
         for edge_type in metadata[1]:
             num_edges = data[edge_type].edge_index.shape[1]
-            if output_idx is None or type(output_idx) == int:
-                assert edge_attr_dicts[edge_type].shape == (num_edges, )
-            else:
-                assert all(item[edge_type].shape == (num_edges, )
-                           for item in edge_attr_dicts)
+            assert all(item[edge_type].shape == (num_edges, )
+                       for item in edge_attr_dicts)
+
+
+# Only test a few methods on several input samples
+@pytest.mark.parametrize(
+    'batch_size, output_idx',
+    ([1, None], [2, None], [1, 1], [2, [0, 1]], [10, [0, 1]]),
+)
+@pytest.mark.parametrize('mask_type', mask_types)
+def test_captum_batch_explanation(batch_size, output_idx, mask_type):
+    from captum import attr
+    data = get_hetero_data()
+    metadata = data.metadata()
+    model = HeteroSAGE(metadata)
+    captum_model = to_captum_model(model, mask_type, output_idx, metadata)
+    explainer = attr.IntegratedGradients(captum_model)
+    args = ['additional_arg1']
+
+    n_sample = len(output_idx) if type(output_idx) == list else 1
+    input, additional_forward_args = to_captum_input(
+        data.x_dict,
+        data.edge_index_dict,
+        mask_type,
+        n_sample,
+        additional_forward_args=args,
+    )
+
+    attributions, _ = explainer.attribute(
+        input,
+        target=0,
+        n_steps=5,
+        return_convergence_delta=True,
+        internal_batch_size=batch_size,
+        additional_forward_args=additional_forward_args,
+    )
+
+    # Check attributions and transform to dicts.
+    if mask_type == 'node':
+        assert len(attributions) == len(metadata[0])
+    elif mask_type == 'edge':
+        assert len(attributions) == len(metadata[1])
+    else:
+        assert len(attributions) == len(metadata[0]) + len(metadata[1])

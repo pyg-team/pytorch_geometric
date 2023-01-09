@@ -138,12 +138,14 @@ class CaptumHeteroModel(CaptumModel):
 
     def forward(self, *args):
         # Validate args:
-        batch_size = args[0].shape[0]
         if type(self.output_idx) == list:
-            msg = "`internal_batch_size` needs to be a multiple of the " \
-                  "number of objects to be evaluated."
+            msg = "`internal_batch_size` or `perturbations_per_eval` needs " \
+                  "to be a multiple of the number of objects to be evaluated."
             assert args[0].shape[0] % (len(self.output_idx)) == 0, msg
-            batch_size = args[0].shape[0] // len(self.output_idx)
+            num_samples_per_output_idx = args[0].shape[0] // len(
+                self.output_idx)
+        else:
+            num_samples_per_output_idx = args[0].shape[0]
 
         if self.mask_type == "node":
             assert len(args) >= self.num_node_types + 1
@@ -173,12 +175,18 @@ class CaptumHeteroModel(CaptumModel):
         if 'edge' in self.mask_type:
             clear_masks(self.model)
 
+        # Refactor if self.output_idx is not None:
         if self.output_idx is not None:
-            # TODO (ramona): Remove this hacky solution
-            indices = torch.tensor(self.output_idx * batch_size, dtype=int)
-            x = x[torch.tensor(
-                [x.shape[0] / batch_size * (i)
-                 for i in range(batch_size)], dtype=int) + indices]
+            # x contains the output for an entire batch and might contain
+            # multiple outputs for each object to be explained.
+            # Therefore, we need to replicate the output_idx to fit the
+            # batch size:
+            output_idx = self.output_idx * num_samples_per_output_idx
+            # Split x into individual outputs:
+            x = x.view(args[0].shape[0], -1, x.shape[-1])
+            # Select for each output the correct output_idx:
+            x = x[torch.arange(x.shape[0]), output_idx]
+
         return x
 
 
@@ -207,7 +215,7 @@ def to_captum_input(
     to a format to use in `Captum.ai <https://captum.ai/>`_ attribution
     methods. Returns :obj:`inputs` and :obj:`additional_forward_args`
     required for `Captum`'s :obj:`attribute` functions.
-    See :obj:`torch_geometric.nn.to_captum_model` for example usage.
+    See ~:obj:`torch_geometric.nn.to_captum_model` for example usage.
 
     Args:
 
@@ -221,6 +229,9 @@ def to_captum_input(
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
             and :obj:`"node_and_edge"`:
         n_samples (int): The number of samples to explain. (default: :obj:`1`)
+                         Has only been tested for the
+                        `Captum.ai <https://captum.ai/>`_ attribution method
+                        `IntegratedGradient`.
         additional_forward_args: Additional forward arguments of the model
             being explained which will be added to the generated
             :obj:`additional_forward_args`. For :class:`Data` this is
@@ -278,7 +289,7 @@ def captum_output_to_dicts(
     edge attribution tensors. If more than one object is explained, the
     explanations are stored in a list of dictionaries. This function is used
     while explaining :obj:`HeteroData` objects. See
-    :obj:`torch_geometric.nn.to_captum_model` for example usage.
+    :obj:`~torch_geometric.nn.to_captum_model` for example usage.
 
     Args:
         captum_attrs (tuple[tensor]): The output of attribution methods.
@@ -288,23 +299,20 @@ def captum_output_to_dicts(
 
             1. :obj:`"edge"`: :obj:`captum_attrs` contains only edge
                 attributions. The returned tuple has no node attributions but
-                one edge attribution dictionary or several dictionaries if
-                more than one object is explained. The edge attribution
+                a list of edge attribution dictionaries. The edge attribution
                 dictionary has key `EdgeType` and value edge mask tensor of
                 shape :obj:`[num_edges]`.
 
             2. :obj:`"node"`: :obj:`captum_attrs` contains only node
-                attributions. The returned tuple has one node attribution
-                dictonary or several dictionaries if more than one object is
-                explained. The node attribution dictionary has key `NodeType`
-                and value node mask tensor of shape
+                attributions. The returned tuple contains a list of node
+                attribution dictonaries. A node attribution dictionary has
+                key `NodeType` and value node mask tensor of shape
                 :obj:`[num_nodes, num_features]` and no edge attribution.
 
             3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains both node
-                and edge attributions. The returned tuple contains one node
-                attribution dictionary followed by one edge attribution
-                dictionary or several dictionaries if more than one object
-                is explained.
+                and edge attributions. The returned tuple contains a list of
+                node attribution dictionaries followed by a list of edge
+                attribution dictionaries.
 
         metadata (Metadata): The metadata of the heterogeneous graph.
     """
@@ -328,10 +336,10 @@ def captum_output_to_dicts(
                 dict(zip(node_types, captum_attrs_i[:len(node_types)])))
             edge_attr_dicts.append(
                 dict(zip(edge_types, captum_attrs_i[len(node_types):])))
-    if len(x_attr_dicts) == 1:
-        x_attr_dicts = x_attr_dicts[0]
-    if len(edge_attr_dicts) == 1:
-        edge_attr_dicts = edge_attr_dicts[0]
+    if len(x_attr_dicts) == 0:
+        x_attr_dicts = None
+    if len(edge_attr_dicts) == 0:
+        edge_attr_dicts = None
     return x_attr_dicts, edge_attr_dicts
 
 
@@ -377,7 +385,7 @@ def to_captum_model(
 
         # Explain predictions for node `10`:
         mask_type="edge"
-        output_idx = 10
+        output_idx = [10, 15]
         captum_model = to_captum_model(model, mask_type, output_idx)
         inputs, additional_forward_args = to_captum_input(data.x,
                                             data.edge_index,mask_type)
@@ -386,7 +394,7 @@ def to_captum_model(
         ig_attr = ig.attribute(inputs = inputs,
                                target=int(y[output_idx]),
                                additional_forward_args=additional_forward_args,
-                               internal_batch_size=1)
+                               internal_batch_size=2)
 
 
     Sample code for heterogenous graphs:
@@ -407,7 +415,7 @@ def to_captum_model(
         # Explain predictions for node `10`:
         mask_type="edge"
         metadata = data.metadata
-        output_idx = 10
+        output_idx = [10, 15]
         captum_model = to_captum_model(model, mask_type, output_idx, metadata)
         inputs, additional_forward_args = to_captum_input(data.x_dict,
                                             data.edge_index_dict, mask_type)
@@ -416,7 +424,7 @@ def to_captum_model(
         ig_attr = ig.attribute(inputs=inputs,
                                target=int(y[output_idx]),
                                additional_forward_args=additional_forward_args,
-                               internal_batch_size=1)
+                               internal_batch_size=2)
         edge_attr_dict = captum_output_to_dicts(ig_attr, mask_type, metadata)
 
 
