@@ -167,27 +167,29 @@ class HGTConv(MessagePassing):
             be set to :obj:`None`.
         """
         xs = list(x_dict.values())
+        if self.infer_shapes:
+            self.dims = torch.tensor([x.shape[-1] for x in xs])
+            #initialize lazy params
+            max_channels = self.dims.max()
+            for node_type, u_k_lin in self.k_lin.items():
+                self.k_lin[node_type] = Linear(max_channels,
+                                               self.out_channels)
+            reset(self.k_lin)
+            for node_type, u_q_lin in self.q_lin.items():
+                self.q_lin[node_type] = Linear(max_channels,
+                                               self.out_channels)
+            reset(self.q_lin)
+            for node_type, u_v_lin in self.v_lin.items():
+                self.v_lin[node_type] = Linear(max_channels,
+                                               self.out_channels)
+            reset(self.v_lin)
+
         if not self.use_gmm:
             if self.no_pad and not self.infer_shapes:
                 x = torch.cat(xs)
             else:
                 if self.infer_shapes:
                     self.infer_shapes = False
-                    self.dims = torch.tensor([x.shape[-1] for x in xs])
-                    #initialize lazy params
-                    max_channels = self.dims.max()
-                    for node_type, u_k_lin in self.k_lin.items():
-                        self.k_lin[node_type] = Linear(max_channels,
-                                                       self.out_channels)
-                    reset(self.k_lin)
-                    for node_type, u_q_lin in self.q_lin.items():
-                        self.q_lin[node_type] = Linear(max_channels,
-                                                       self.out_channels)
-                    reset(self.q_lin)
-                    for node_type, u_v_lin in self.v_lin.items():
-                        self.v_lin[node_type] = Linear(max_channels,
-                                                       self.out_channels)
-                    reset(self.v_lin)
                 x = torch.cat(pad_list(xs, self.dims))
 
         H, D = self.heads, self.out_channels // self.heads
