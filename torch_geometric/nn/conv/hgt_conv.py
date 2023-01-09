@@ -332,13 +332,11 @@ class HGTConv(MessagePassing):
             print('a_rels.shape:', [a.shape for a in a_rels])
             print('a_rel.shape:', a_rel.shape)
             print('trans_ptr.shape:', trans_ptr.shape)
-            k_out = pyg_lib.ops.segment_matmul(
-                torch.cat(k_ins), trans_ptr, a_rel
-            )
+            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
+                                               a_rel)
             print('k_out.shape:', k_out.shape)
-            v_out = pyg_lib.ops.segment_matmul(
-                torch.cat(v_ins), trans_ptr, m_rel
-            )
+            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
+                                               m_rel)
             increment_dict = {
                 src_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
                 for i, src_type in enumerate(src_types)
