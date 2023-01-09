@@ -168,7 +168,6 @@ class HGTConv(MessagePassing):
         """
         xs = list(x_dict.values())
 
-
         if not self.use_gmm:
             if self.no_pad and not self.infer_shapes:
                 x = torch.cat(xs)
@@ -178,18 +177,24 @@ class HGTConv(MessagePassing):
                     #initialize lazy params
                     max_channels = self.dims.max()
                     for node_type, u_k_lin in self.k_lin.items():
-                        self.k_lin[node_type] = Linear(max_channels, self.out_channels)
+                        self.k_lin[node_type] = Linear(max_channels,
+                                                       self.out_channels)
                     reset(self.k_lin)
                     for node_type, u_q_lin in self.q_lin.items():
-                        self.q_lin[node_type] = Linear(max_channels, self.out_channels)
+                        self.q_lin[node_type] = Linear(max_channels,
+                                                       self.out_channels)
                     reset(self.q_lin)
                     for node_type, u_v_lin in self.v_lin.items():
-                        self.v_lin[node_type] = Linear(max_channels, self.out_channels)
+                        self.v_lin[node_type] = Linear(max_channels,
+                                                       self.out_channels)
                     reset(self.v_lin)
                     self.infer_shapes = False
                 x = torch.cat(pad_list(xs, self.dims))
         elif self.infer_shapes:
-            self.dims = {node_type:x.shape[-1] for node_type, x in x_dict.items()}
+            self.dims = {
+                node_type: x.shape[-1]
+                for node_type, x in x_dict.items()
+            }
             #initialize lazy params
             for node_type, dim in self.dims.items():
                 self.k_lin[node_type] = Linear(dim, self.out_channels)
@@ -199,8 +204,6 @@ class HGTConv(MessagePassing):
             reset(self.q_lin)
             reset(self.v_lin)
             self.infer_shapes = False
-
-
 
         H, D = self.heads, self.out_channels // self.heads
 
