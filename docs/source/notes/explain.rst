@@ -39,7 +39,7 @@ Examples
 
 Assume we have a GNN :obj:`model` that does node classification on homogenous graph.
 We can use the :class:`torch_geometric.explain.algorithm.GNNExplainer` algorithm to generate an :class:`Explanation`.
-We configure the :class:`Explainer` to use both a :obj:`node_mask_type` and an :obj:`edge_mask_type` such that the final :class:`~torch_geometric.explain.Explanation` object contains 1) a :obj:`node_mask` indicating which nodes and features are crucial for prediction, and 2) an :obj:`edge_mask` indicating which edges are crucial for prediction.
+We configure the :class:`Explainer` to use both a :obj:`node_mask_type` and an :obj:`edge_mask_type` such that the final :class:`~torch_geometric.explain.Explanation` object contains (1) a :obj:`node_mask` indicating which nodes and features are crucial for prediction, and (2) an :obj:`edge_mask` indicating which edges are crucial for prediction.
 
 .. code-block:: python
 
