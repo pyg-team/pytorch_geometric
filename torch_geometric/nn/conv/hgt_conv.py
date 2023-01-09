@@ -189,7 +189,7 @@ class HGTConv(MessagePassing):
                     self.infer_shapes = False
                 x = torch.cat(pad_list(xs, self.dims))
         elif self.infer_shapes:
-            self.dims = {node_tpye:x.shape[-1] for node_type, x in x_dict.items()}
+            self.dims = {node_type:x.shape[-1] for node_type, x in x_dict.items()}
             #initialize lazy params
             for node_type, dim in self.dims.items():
                 self.k_lin[node_type] = Linear(dim, self.out_channels)
