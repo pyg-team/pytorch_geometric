@@ -163,7 +163,7 @@ In case a specific version is not supported by `our wheels <https://data.pyg.org
       pip install torch-spline-conv
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
-:obj:`pip` may even signal a successful installation, execution simply crashes with :obj:`Segmentation fault (core dumped)`.
+:obj:`pip` may even signal a successful installation, but execution simply crashes with :obj:`Segmentation fault (core dumped)`.
 We collected common installation errors in the `Frequently Asked Questions <https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#frequently-asked-questions>`_ subsection.
 In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/pyg-team/pytorch_geometric/issues>`_.
 Before, please verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda>`_.
