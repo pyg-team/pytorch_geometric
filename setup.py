@@ -10,6 +10,7 @@ install_requires = [
     'jinja2',
     'requests',
     'pyparsing',
+    'torchmetrics',
     'scikit-learn',
     'psutil>=5.8.0',
 ]
@@ -31,16 +32,19 @@ full_requires = graphgym_requires + [
     'rdflib',
     'trimesh',
     'networkx',
+    'graphviz',
     'tabulate',
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
-    'torchmetrics>=0.7',
 ]
 
 benchmark_requires = [
     'protobuf<4.21',
     'wandb',
+    'pandas',
+    'networkx',
+    'matplotlib',
 ]
 
 test_requires = [

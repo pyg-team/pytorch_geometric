@@ -78,6 +78,9 @@ class HGTLoader(NodeLoader):
         transform (Callable, optional): A function/transform that takes in
             an a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column. This avoids internal
             re-sorting of the data and can improve runtime and memory
@@ -101,7 +104,8 @@ class HGTLoader(NodeLoader):
         num_samples: Union[List[int], Dict[NodeType, List[int]]],
         input_nodes: Union[NodeType, Tuple[NodeType, Optional[Tensor]]],
         is_sorted: bool = False,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
         **kwargs,
     ):
@@ -117,6 +121,7 @@ class HGTLoader(NodeLoader):
             node_sampler=hgt_sampler,
             input_nodes=input_nodes,
             transform=transform,
+            transform_sampler_output=transform_sampler_output,
             filter_per_worker=filter_per_worker,
             **kwargs,
         )
