@@ -101,6 +101,9 @@ class HGTConv(MessagePassing):
         self.skip = ParameterDict()
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
+        self.dims = torch.tensor(list(self.in_channels.values()))
+        self.max_channels = self.dims.max()
+        self.infer_shapes = self.max_channels == -1
         if self.use_gmm:
             # grouped gemm allows us not to have to pad
             for node_type, in_channels in self.in_channels.items():
@@ -111,10 +114,7 @@ class HGTConv(MessagePassing):
                 self.skip[node_type] = Parameter(torch.Tensor(1))
         else:
             # need to pad xs to concatenate them
-            self.dims = torch.tensor(list(self.in_channels.values()))
-            self.max_channels = self.dims.max()
             self.no_pad = (self.dims == self.max_channels).all()
-            self.infer_shapes = self.max_channels == -1
             for node_type in self.node_types:
                 self.k_lin[node_type] = Linear(self.max_channels, out_channels)
                 self.q_lin[node_type] = Linear(self.max_channels, out_channels)
