@@ -9,8 +9,7 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet, DimeNetPlusPlus
-from .captum import (to_captum, to_captum_model, to_captum_input,
-                     captum_output_to_dicts)
+from .captum import to_captum_model
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -46,10 +45,7 @@ __all__ = classes = [
     'SchNet',
     'DimeNet',
     'DimeNetPlusPlus',
-    'to_captum',
     'to_captum_model',
-    'to_captum_input',
-    'captum_output_to_dicts',
     'MetaPath2Vec',
     'DeepGCNLayer',
     'TGNMemory',
@@ -63,15 +59,3 @@ __all__ = classes = [
     'GroupAddRev',
     'GNNFF',
 ]
-
-import copy
-from torch_geometric.deprecation import deprecated
-from torch_geometric.explain.algorithm.gnn_explainer import GNNExplainer_
-from .captum import Explainer
-
-GNNExplainer = deprecated(
-    "use 'explain.Explainer' with 'explain.algorithm.GNNExplainer' instead",
-    'nn.models.GNNExplainer')(GNNExplainer_)
-
-classes = copy.copy(classes)
-__all__ += ['Explainer', 'GNNExplainer']

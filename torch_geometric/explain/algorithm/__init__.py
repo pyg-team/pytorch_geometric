@@ -1,4 +1,5 @@
 from .base import ExplainerAlgorithm
+from .captum import to_captum_input, captum_output_to_dicts
 from .dummy_explainer import DummyExplainer
 from .gnn_explainer import GNNExplainer
 from .pg_explainer import PGExplainer
@@ -10,4 +11,6 @@ __all__ = classes = [
     'GNNExplainer',
     'PGExplainer',
     'AttentionExplainer',
+    'to_captum_input',
+    'captum_output_to_dicts',
 ]
