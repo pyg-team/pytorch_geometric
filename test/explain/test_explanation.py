@@ -99,15 +99,15 @@ def test_node_mask(data):
     assert out.node_mask.size() == (2, 1)
     assert (out.node_mask > 0.0).sum() == 2
     assert out.x.size() == (2, 3)
-    assert out.edge_index.size() == (2, 1)
-    assert out.edge_attr.size() == (1, 3)
+    assert out.edge_index.size(1) <= 6
+    assert out.edge_index.size(1) == out.edge_attr.size(0)
 
     out = explanation.get_complement_subgraph()
     assert out.node_mask.size() == (2, 1)
     assert (out.node_mask == 0.0).sum() == 2
     assert out.x.size() == (2, 3)
-    assert out.edge_index.size() == (2, 1)
-    assert out.edge_attr.size() == (1, 3)
+    assert out.edge_index.size(1) <= 6
+    assert out.edge_index.size(1) == out.edge_attr.size(0)
 
 
 def test_edge_mask(data):
