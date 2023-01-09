@@ -167,27 +167,40 @@ class HGTConv(MessagePassing):
             be set to :obj:`None`.
         """
         xs = list(x_dict.values())
-        if self.infer_shapes:
-            self.dims = torch.tensor([x.shape[-1] for x in xs])
-            #initialize lazy params
-            max_channels = self.dims.max()
-            for node_type, u_k_lin in self.k_lin.items():
-                self.k_lin[node_type] = Linear(max_channels, self.out_channels)
-            reset(self.k_lin)
-            for node_type, u_q_lin in self.q_lin.items():
-                self.q_lin[node_type] = Linear(max_channels, self.out_channels)
-            reset(self.q_lin)
-            for node_type, u_v_lin in self.v_lin.items():
-                self.v_lin[node_type] = Linear(max_channels, self.out_channels)
-            reset(self.v_lin)
+
 
         if not self.use_gmm:
             if self.no_pad and not self.infer_shapes:
                 x = torch.cat(xs)
             else:
                 if self.infer_shapes:
+                    self.dims = torch.tensor([x.shape[-1] for x in xs])
+                    #initialize lazy params
+                    max_channels = self.dims.max()
+                    for node_type, u_k_lin in self.k_lin.items():
+                        self.k_lin[node_type] = Linear(max_channels, self.out_channels)
+                    reset(self.k_lin)
+                    for node_type, u_q_lin in self.q_lin.items():
+                        self.q_lin[node_type] = Linear(max_channels, self.out_channels)
+                    reset(self.q_lin)
+                    for node_type, u_v_lin in self.v_lin.items():
+                        self.v_lin[node_type] = Linear(max_channels, self.out_channels)
+                    reset(self.v_lin)
                     self.infer_shapes = False
                 x = torch.cat(pad_list(xs, self.dims))
+        elif self.infer_shapes:
+            self.dims = {node_tpye:x.shape[-1] for node_type, x in x_dict.items()}
+            #initialize lazy params
+            for node_type, dim in self.dims.items():
+                self.k_lin[node_type] = Linear(dim, self.out_channels)
+                self.q_lin[node_type] = Linear(dim, self.out_channels)
+                self.k_lin[node_type] = Linear(dim, self.out_channels)
+            reset(self.k_lin)
+            reset(self.q_lin)
+            reset(self.v_lin)
+            self.infer_shapes = False
+
+
 
         H, D = self.heads, self.out_channels // self.heads
 
@@ -286,6 +299,8 @@ class HGTConv(MessagePassing):
             v_ins = [
                 v_dict[src_type].transpose(0, 1) for src_type in src_types
             ]
+            print([k.shape for k in k_ins])
+            print([a.shape for a in a_rels])
             k_outs = [
                 k_o_i.transpose(1, 0)
                 for k_o_i in pyg_lib.ops.grouped_matmul(k_ins, a_rels)
