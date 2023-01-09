@@ -319,15 +319,18 @@ class HGTConv(MessagePassing):
             k_out = torch.cat(k_outs)
             v_out = torch.cat(v_outs)
         else:
-            k_ins = [k_dict[src_type].view(-1, D) for src_type in src_types]
-            v_ins = [v_dict[src_type].view(-1, D) for src_type in src_types]
-            a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
-            trans_ptr = [0]
+            k_ins = []
+            v_ins = []
             count = 0
-            for k_i in k_ins:
-                count += k_i.size(0)
+            trans_ptr = [count]
+            for src_type in src_types:
+                k_ins.append(k_dict[src_type].view(-1, D))
+                v_ins.append(v_dict[src_type].view(-1, D))
+                count += H
                 trans_ptr.append(count)
             trans_ptr = torch.tensor(trans_ptr)
+            a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
+            
             print('k_ins.shape:', [k.shape for k in k_ins])
             print('a_rels.shape:', [a.shape for a in a_rels])
             print('a_rel.shape:', a_rel.shape)
@@ -355,7 +358,7 @@ class HGTConv(MessagePassing):
                 edge_index_dict[e_type][1, :] = edge_index_dict[e_type][
                     1, :] + increment_dict[dst_type]
                 q_list.append(q_dict[dst_type])
-                p_rels.append(self.p_rel[edge_type])
+                p_rels.append(self.p_rel[e_type])
         q = torch.cat(q_list)
         p = torch.cat(p_rels)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
