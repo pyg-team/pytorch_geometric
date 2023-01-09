@@ -105,8 +105,8 @@ class LinkLoader(torch.utils.data.DataLoader):
             (3) it requires operating on CPU tensors.
             (default: :obj:`False`)
         custom_cls (HeteroData, optional): A custom
-            :class:`~torch_geometric.data.HeteroData` class to return as
-            mini-batch in case of remote backends. (default: :obj:`None`)
+            :class:`~torch_geometric.data.HeteroData` class to return for
+            mini-batches in case of remote backends. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
