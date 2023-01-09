@@ -302,8 +302,8 @@ class HGTConv(MessagePassing):
             v_ins = [
                 v_dict[src_type].transpose(0, 1) for src_type in src_types
             ]
-            print([k.shape for k in k_ins])
-            print([a.shape for a in a_rels])
+            print('k_ins.shape:',[k.shape for k in k_ins])
+            print('a_rels.shape:',[a.shape for a in a_rels])
             k_outs = [
                 k_o_i.transpose(1, 0)
                 for k_o_i in pyg_lib.ops.grouped_matmul(k_ins, a_rels)
@@ -339,6 +339,7 @@ class HGTConv(MessagePassing):
                 for i, src_type in enumerate(src_types)
             }
 
+        #combine edge_index dict into single tensor
         q_list = []
         p_rels = []
         for e_type in self.edge_types:
@@ -353,6 +354,8 @@ class HGTConv(MessagePassing):
         q = torch.cat(q_list)
         p = torch.cat(p_rels)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
+
+        # propogate
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         for e_type in enumerate(self.edge_types):
             dst_type = e_type[-1]
