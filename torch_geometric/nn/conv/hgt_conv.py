@@ -302,8 +302,8 @@ class HGTConv(MessagePassing):
             v_ins = [
                 v_dict[src_type].transpose(0, 1) for src_type in src_types
             ]
-            print('k_ins.shape:',[k.shape for k in k_ins])
-            print('a_rels.shape:',[a.shape for a in a_rels])
+            print('k_ins.shape:', [k.shape for k in k_ins])
+            print('a_rels.shape:', [a.shape for a in a_rels])
             k_outs = [
                 k_o_i.transpose(1, 0)
                 for k_o_i in pyg_lib.ops.grouped_matmul(k_ins, a_rels)
