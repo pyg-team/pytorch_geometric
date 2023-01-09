@@ -159,13 +159,14 @@ def filter_custom_store(
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
     edge_dict: Dict[str, Tensor],
+    custom_cls: Optional[HeteroData] = None,
 ) -> HeteroData:
     r"""Constructs a `HeteroData` object from a feature store that only holds
     nodes in `node` end edges in `edge` for each node and edge type,
     respectively."""
 
     # Construct a new `HeteroData` object:
-    data = HeteroData()
+    data = custom_cls() if custom_cls is not None else HeteroData()
 
     # Filter edge storage:
     # TODO support edge attributes
