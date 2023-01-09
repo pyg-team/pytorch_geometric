@@ -321,24 +321,30 @@ class HGTConv(MessagePassing):
         else:
             k_ins = []
             v_ins = []
-            count = 0
-            trans_ptr = [count]
+            k_count, v_count = 0, 0
+            k_ptr, v_ptr = [k_count], [v_count]
             for src_type in src_types:
-                k_ins.append(k_dict[src_type].view(-1, D))
-                v_ins.append(v_dict[src_type].view(-1, D))
-                count += H
-                trans_ptr.append(count)
-            trans_ptr = torch.tensor(trans_ptr)
+                k_src = k_dict[src_type]
+                v_src = v_dict[src_type]
+                k_ins.append(k_src.view(-1, D))
+                v_ins.append(v_src.view(-1, D))
+                for i in range(H):
+                    k_count += k_src.size(0)
+                    v_count += v_src.size(0)
+                    k_ptr.append(k_count)
+                    v_ptr.append(v_count)
+            k_ptr = torch.tensor(k_ptr)
+            v_ptr = torch.tensor(v_ptr)
             a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
             
             print('k_ins.shape:', [k.shape for k in k_ins])
             print('a_rels.shape:', [a.shape for a in a_rels])
             print('a_rel.shape:', a_rel.shape)
             print('trans_ptr.shape:', trans_ptr.shape)
-            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
+            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), k_ptr,
                                                a_rel)
             print('k_out.shape:', k_out.shape)
-            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
+            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), v_ptr,
                                                m_rel)
             increment_dict = {
                 src_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
