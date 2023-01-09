@@ -42,8 +42,8 @@ class DataParallel(torch.nn.DataParallel):
                  follow_batch=None, exclude_keys=None):
         super().__init__(module, device_ids, output_device)
         self.src_device = torch.device(f'cuda:{self.device_ids[0]}')
-        self.follow_batch = follow_batch if follow_batch is not None else []
-        self.exclude_keys = exclude_keys if exclude_keys is not None else []
+        self.follow_batch = follow_batch or []
+        self.exclude_keys = exclude_keys or []
 
     def forward(self, data_list):
         """"""
