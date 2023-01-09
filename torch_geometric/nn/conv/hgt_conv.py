@@ -341,7 +341,8 @@ class HGTConv(MessagePassing):
             print('k_ins.shape:', [k.shape for k in k_ins])
             print('a_rels.shape:', [a.shape for a in a_rels])
             print('a_rel.shape:', a_rel.shape)
-            print('trans_ptr.shape:', trans_ptr.shape)
+            print('k_ptr.shape:', k_ptr.shape)
+            print('k_ptr=', k_ptr)
             k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), k_ptr,
                                                a_rel)
             print('k_out.shape:', k_out.shape)
