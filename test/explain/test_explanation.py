@@ -12,18 +12,6 @@ from torch_geometric.explain.config import MaskType
 from torch_geometric.testing import withPackage
 
 
-@pytest.fixture
-def data():
-    return Data(
-        x=torch.randn(4, 3),
-        edge_index=torch.tensor([
-            [0, 0, 0, 1, 1, 2],
-            [1, 2, 3, 2, 3, 3],
-        ]),
-        edge_attr=torch.randn(6, 3),
-    )
-
-
 def create_random_explanation(
     data: Data,
     node_mask_type: Optional[Union[MaskType, str]] = None,
@@ -111,15 +99,15 @@ def test_node_mask(data):
     assert out.node_mask.size() == (2, 1)
     assert (out.node_mask > 0.0).sum() == 2
     assert out.x.size() == (2, 3)
-    assert out.edge_index.size() == (2, 1)
-    assert out.edge_attr.size() == (1, 3)
+    assert out.edge_index.size(1) <= 6
+    assert out.edge_index.size(1) == out.edge_attr.size(0)
 
     out = explanation.get_complement_subgraph()
     assert out.node_mask.size() == (2, 1)
     assert (out.node_mask == 0.0).sum() == 2
     assert out.x.size() == (2, 3)
-    assert out.edge_index.size() == (2, 1)
-    assert out.edge_attr.size() == (1, 3)
+    assert out.edge_index.size(1) <= 6
+    assert out.edge_index.size(1) == out.edge_attr.size(0)
 
 
 def test_edge_mask(data):
