@@ -305,10 +305,12 @@ class HGTConv(MessagePassing):
                 count += k_i.size(0)
                 trans_ptr.append(count)
             trans_ptr = torch.tensor(trans_ptr)
-            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins).transpose(0, 1), trans_ptr,
-                                               a_rel).transpose(1, 0)
-            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins).transpose(0, 1), trans_ptr,
-                                               m_rel).transpose(1, 0)
+            k_out = pyg_lib.ops.segment_matmul(
+                torch.cat(k_ins).transpose(0, 1), trans_ptr,
+                a_rel).transpose(1, 0)
+            v_out = pyg_lib.ops.segment_matmul(
+                torch.cat(v_ins).transpose(0, 1), trans_ptr,
+                m_rel).transpose(1, 0)
             increment_dict = {
                 src_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
                 for i, src_type in enumerate(src_types)
