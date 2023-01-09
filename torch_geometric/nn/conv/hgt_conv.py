@@ -280,7 +280,7 @@ class HGTConv(MessagePassing):
                 for i, node_type in enumerate(self.node_types)
             }
             v = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=v_wt,
-                                           bias=vp_bias)
+                                           bias=v_bias)
             v_dict = {
                 node_type: v[ptr[i]:ptr[i + 1]].view(-1, H, D)
                 for i, node_type in enumerate(self.node_types)
