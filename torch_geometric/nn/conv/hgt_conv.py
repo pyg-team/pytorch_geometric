@@ -194,15 +194,15 @@ class HGTConv(MessagePassing):
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
         # parralelize over node-types
-        k_wts = [self.k_lin[node_type].weight for node_type in self.node_types]
+        k_wts = [self.k_lin[node_type].weight.T for node_type in self.node_types]
         k_biases = [
             self.k_lin[node_type].bias for node_type in self.node_types
         ]
-        q_wts = [self.q_lin[node_type].weight for node_type in self.node_types]
+        q_wts = [self.q_lin[node_type].weight.T for node_type in self.node_types]
         q_biases = [
             self.q_lin[node_type].bias for node_type in self.node_types
         ]
-        v_wts = [self.v_lin[node_type].weight for node_type in self.node_types]
+        v_wts = [self.v_lin[node_type].weight.T for node_type in self.node_types]
         v_biases = [
             self.v_lin[node_type].bias for node_type in self.node_types
         ]
@@ -229,21 +229,21 @@ class HGTConv(MessagePassing):
                                                 biases=k_biases)
             k_dict = {
                 node_type: k_list[i].view(-1, H, D)
-                for i, node_type in enumerate(k_list)
+                for i, node_type in enumerate(self.node_types)
             }
             # compute Q
             q_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=q_wts,
                                                 biases=q_biases)
             q_dict = {
                 node_type: q_list[i].view(-1, H, D)
-                for i, node_type in enumerate(q_list)
+                for i, node_type in enumerate(self.node_types)
             }
             # compute V
             v_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=v_wts,
                                                 biases=v_biases)
             v_dict = {
                 node_type: v_list[i].view(-1, H, D)
-                for i, node_type in enumerate(v_list)
+                for i, node_type in enumerate(self.node_types)
             }
         else:
             k = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=k_wt,
@@ -259,7 +259,7 @@ class HGTConv(MessagePassing):
                 for i, node_type in enumerate(self.node_types)
             }
             v = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=v_wt,
-                                           bias=v_bias)
+                                           bias=vp_bias)
             v_dict = {
                 node_type: v[ptr[i]:ptr[i + 1]].view(-1, H, D)
                 for i, node_type in enumerate(self.node_types)
