@@ -336,7 +336,7 @@ class HGTConv(MessagePassing):
             k_ptr = torch.tensor(k_ptr)
             v_ptr = torch.tensor(v_ptr)
             a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
-            
+
             print('k_ins.shape:', [k.shape for k in k_ins])
             print('a_rels.shape:', [a.shape for a in a_rels])
             print('a_rel.shape:', a_rel.shape)
