@@ -194,7 +194,7 @@ class HGTConv(MessagePassing):
             for node_type, dim in self.dims.items():
                 self.k_lin[node_type] = Linear(dim, self.out_channels)
                 self.q_lin[node_type] = Linear(dim, self.out_channels)
-                self.k_lin[node_type] = Linear(dim, self.out_channels)
+                self.v_lin[node_type] = Linear(dim, self.out_channels)
             reset(self.k_lin)
             reset(self.q_lin)
             reset(self.v_lin)
