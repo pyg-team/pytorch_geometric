@@ -65,8 +65,8 @@ def test_forward(hetero_data, target, explanation_type):
         assert isinstance(explanation, HeteroExplanation)
         assert 'node_mask' in explanation.available_explanations
         for key in explanation.node_types:
-            assert explanation[key].node_mask.size(
-            ) == hetero_data[key].x.size()
+            expected_size = hetero_data[key].x.size()
+            assert explanation[key].node_mask.size() == expected_size
 
 
 @pytest.mark.parametrize('threshold_value', [0.2, 0.5, 0.8])
