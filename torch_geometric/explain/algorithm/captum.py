@@ -1,20 +1,14 @@
-from inspect import signature
-from math import sqrt
 from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data
-from torch_geometric.deprecation import deprecated
 from torch_geometric.explain.algorithm.utils import (
     clear_masks,
     set_hetero_masks,
     set_masks,
 )
-from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils import get_num_hops, k_hop_subgraph, to_networkx
 
 
 class CaptumModel(torch.nn.Module):
