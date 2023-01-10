@@ -6,6 +6,10 @@ from .attention_explainer import AttentionExplainer
 from .captum_explainer import CaptumExplainer
 
 __all__ = classes = [
-    'ExplainerAlgorithm', 'DummyExplainer', 'GNNExplainer', 'PGExplainer',
-    'AttentionExplainer', 'CaptumExplainer'
+    'ExplainerAlgorithm',
+    'DummyExplainer',
+    'GNNExplainer',
+    'PGExplainer',
+    'AttentionExplainer',
+    'CaptumExplainer',
 ]

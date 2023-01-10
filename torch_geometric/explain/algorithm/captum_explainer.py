@@ -1,8 +1,8 @@
 import logging
 from typing import Optional, Union
 
+import captum
 import torch
-from captum.attr import Attribution
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
@@ -18,15 +18,15 @@ class CaptumExplainer(ExplainerAlgorithm):
 
     Args:
         attribution_method (Union[str, Attribution]): The Captum
-            attribution method to use. Can be a string or a captum.Attribution.
+            attribution method to use. Can be a string or a captum.attr method.
             Defaults to "Integrated Gradients".
         **kwargs: Additional arguments for the Captum attribution method.
     """
     def __init__(
-            self,
-            attribution_method: Union[str,
-                                      Attribution] = "Integrated Gradients",
-            **kwargs):
+        self,
+        attribution_method: Union[str, captum.attr] = "Integrated Gradients",
+        **kwargs,
+    ):
         super().__init__()
         self.attribution_method = attribution_method
         self.kwargs = kwargs
