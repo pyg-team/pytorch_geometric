@@ -52,12 +52,14 @@ def test_captum_explainer(node_mask_type, edge_mask_type, task_level):
     allowed_node_mask_types = [MaskType.attributes, None]
     allowed_edge_mask_types = [MaskType.object, None]
 
+    algorithm = CaptumExplainer(attribution_method="IntegratedGradients")
+
     if (node_mask_type in allowed_node_mask_types) and (
             edge_mask_type
             in allowed_edge_mask_types) and (node_mask_type != edge_mask_type):
         Explainer(
             model,
-            algorithm=CaptumExplainer(),
+            algorithm=algorithm,
             explanation_type='model',
             model_config=model_config,
             edge_mask_type=edge_mask_type,
@@ -67,7 +69,7 @@ def test_captum_explainer(node_mask_type, edge_mask_type, task_level):
         with pytest.raises(ValueError):
             Explainer(
                 model,
-                algorithm=CaptumExplainer(),
+                algorithm=algorithm,
                 explanation_type='model',
                 model_config=model_config,
                 edge_mask_type=edge_mask_type,

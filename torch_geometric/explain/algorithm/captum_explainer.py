@@ -19,7 +19,7 @@ class CaptumExplainer(ExplainerAlgorithm):
     Args:
         attribution_method (Union[str, Attribution]): The Captum
             attribution method to use. Can be a string or a `captum.attr`
-            method. Defaults to "IntegratedGradients".
+            method.
         **kwargs: Additional arguments for the Captum attribution method.
     """
     def __init__(
