@@ -49,8 +49,8 @@ class CaptumExplainer(ExplainerAlgorithm):
         node_mask_type = self.explainer_config.node_mask_type
         if node_mask_type not in [None, MaskType.attributes]:
             logging.error(f"'{self.__class__.__name__}' only supports "
-                          f"'node_mask_type' in [None, 'attributes'], "
-                          f"but got '{node_mask_type}'")
+                          f"'node_mask_type' in [None, 'attributes'] "
+                          f"(got '{node_mask_type.value}')")
             return False
 
         edge_mask_type = self.explainer_config.edge_mask_type
