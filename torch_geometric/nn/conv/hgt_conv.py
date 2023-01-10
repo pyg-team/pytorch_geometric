@@ -321,8 +321,8 @@ class HGTConv(MessagePassing):
         else:
             k_ins = []
             v_ins = []
-            k_count, v_count = 0, 0
-            k_ptr, v_ptr = [k_count], [v_count]
+            count = 0
+            trans_ptr = [count]
             print('k_dict.shape:',
                   {node_type: k.shape
                    for node_type, k in k_dict.items()})
@@ -335,24 +335,21 @@ class HGTConv(MessagePassing):
                 k_ins.append(k_src.view(-1, D))
                 v_ins.append(v_src.view(-1, D))
                 for i in range(H):
-                    k_count += k_src.size(0)
-                    v_count += v_src.size(0)
-                    k_ptr.append(k_count)
-                    v_ptr.append(v_count)
-            k_ptr = torch.tensor(k_ptr)
-            v_ptr = torch.tensor(v_ptr)
+                    count += k_src.size(0)
+                    trans_ptr.append(count)
+            trans_ptr = torch.tensor(trans_ptr)
             a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
 
             print('k_ins.shape:', [k.shape for k in k_ins])
             print('a_rels.shape:', [a.shape for a in a_rels])
             print('a_rel.shape:', a_rel.shape)
-            print('k_ptr.shape:', k_ptr.shape)
-            print('k_ptr=', k_ptr)
-            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), k_ptr, a_rel)
+            print('trans_ptr.shape:', trans_ptr.shape)
+            print('trans_ptr=', trans_ptr)
+            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr, a_rel)
             print('k_out.shape:', k_out.shape)
-            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), v_ptr, m_rel)
+            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr, m_rel)
             increment_dict = {
-                src_type: k_out[k_ptr[i]:k_ptr[i + 1]].shape[0]
+                src_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
                 for i, src_type in enumerate(src_types)
             }
 
@@ -367,7 +364,7 @@ class HGTConv(MessagePassing):
                 edge_index_dict[e_type][1, :] = edge_index_dict[e_type][
                     1, :] + increment_dict[dst_type]
                 q_list.append(q_dict[dst_type])
-                p_rels.append(self.p_rel[e_type])
+                p_rels.append(self.p_rel['__'.join(e_type)])
         q = torch.cat(q_list)
         p = torch.cat(p_rels)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
