@@ -313,11 +313,10 @@ class HGTConv(MessagePassing):
                 for v_o_i in pyg_lib.ops.grouped_matmul(v_ins, m_rels)
             ]
             increment_dict = {}
+            inc_counter = 0
             for i, src_type in enumerate(src_types):
-                k_out_shape = k_outs[i].shape[0]
-                if i == 0:
-                    first_shape = k_outs[i].shape[0]
-                increment_dict[src_type] = k_out_shape - first_shape
+                increment_dict[src_type] = inc_counter
+                inc_counter += k_outs[i].shape[0]
             k_out = torch.cat(k_outs)
             v_out = torch.cat(v_outs)
         else:
@@ -348,16 +347,16 @@ class HGTConv(MessagePassing):
             print('trans_ptr.shape=', trans_ptr.shape)
             print('trans_ptr=', trans_ptr)
             k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
-                                               a_rel).view(-1, H, D)
+                                               a_rel).view(H, -1, D)
             print('k_out.shape:', k_out.shape)
             v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
-                                               m_rel).view(-1, H, D)
+                                               m_rel).view(H, -1, D)
             increment_dict = {}
+            inc_counter = 0
             for i, src_type in enumerate(src_types):
-                k_out_shape = k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
-                if i == 0:
-                    first_shape = k_out_shape
-                increment_dict[src_type] = k_out_shape - first_shape
+                increment_dict[src_type] = inc_counter
+                inc_counter_counter += k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
+
             print('increment_dict=', increment_dict)
 
         #combine edge_index dict into single tensor
