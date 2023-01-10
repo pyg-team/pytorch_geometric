@@ -24,8 +24,7 @@ class CaptumExplainer(ExplainerAlgorithm):
     """
     def __init__(
         self,
-        attribution_method: Union[str,
-                                  attr.Attribution] = "IntegratedGradients",
+        attribution_method: Union[str, Type],
         **kwargs,
     ):
         super().__init__()
