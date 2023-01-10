@@ -9,7 +9,7 @@ __all__ = classes = [
     'ExplainerAlgorithm',
     'DummyExplainer',
     'GNNExplainer',
+    'CaptumExplainer',
     'PGExplainer',
     'AttentionExplainer',
-    'CaptumExplainer',
 ]

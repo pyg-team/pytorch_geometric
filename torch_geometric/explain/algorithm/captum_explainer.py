@@ -1,13 +1,13 @@
 import logging
-from typing import Optional, Union
+from typing import Dict, Optional, Type, Union
 
 import torch
-from captum import attr  # noqa
 from torch import Tensor
 
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.config import MaskType
+from torch_geometric.typing import EdgeType, NodeType
 
 
 class CaptumExplainer(ExplainerAlgorithm):
@@ -18,8 +18,8 @@ class CaptumExplainer(ExplainerAlgorithm):
 
     Args:
         attribution_method (Union[str, Attribution]): The Captum
-            attribution method to use. Can be a string or a `captum.attr` method.
-            Defaults to "IntegratedGradients".
+            attribution method to use. Can be a string or a `captum.attr`
+            method. Defaults to "IntegratedGradients".
         **kwargs: Additional arguments for the Captum attribution method.
     """
     def __init__(
@@ -28,6 +28,7 @@ class CaptumExplainer(ExplainerAlgorithm):
         **kwargs,
     ):
         super().__init__()
+
         self.attribution_method = attribution_method
         self.kwargs = kwargs
 
