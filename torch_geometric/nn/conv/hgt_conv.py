@@ -355,7 +355,8 @@ class HGTConv(MessagePassing):
             inc_counter = 0
             for i, src_type in enumerate(src_types):
                 increment_dict[src_type] = inc_counter
-                inc_counter_counter += k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
+                inc_counter_counter += k_out[
+                    trans_ptr[i]:trans_ptr[i + 1]].shape[0]
 
             print('increment_dict=', increment_dict)
 
