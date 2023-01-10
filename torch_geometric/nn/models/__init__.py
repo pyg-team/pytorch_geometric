@@ -9,7 +9,7 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet, DimeNetPlusPlus
-from .captum import (to_captum_model, to_captum_input, captum_output_to_dicts)
+from .captum import to_captum_model, to_captum_input, captum_output_to_dicts
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
