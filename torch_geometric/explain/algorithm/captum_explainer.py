@@ -64,20 +64,30 @@ class CaptumExplainer(ExplainerAlgorithm):
 
         mask_type = self._get_mask_type()
 
-        inputs, add_forward_args = to_captum_input(x, edge_index, mask_type,
-                                                   *kwargs.values())
+        inputs, add_forward_args = to_captum_input(
+            x,
+            edge_index,
+            mask_type,
+            *kwargs.values(),
+        )
 
         if hasattr(model, 'metadata'):
             metadata = model.metadata
-            captum_model = CaptumHeteroModel(model, mask_type, index,
-                                             model.metadata)
+            captum_model = CaptumHeteroModel(
+                model,
+                mask_type,
+                index,
+                model.metadata,
+            )
         else:
             metadata = None
             captum_model = CaptumModel(model, mask_type, index)
 
         if isinstance(self.attribution_method, str):
-            attribution_method = getattr(captum.attr,
-                                         self.attribution_method)(captum_model)
+            attribution_method = getattr(
+                captum.attr,
+                self.attribution_method,
+            )(captum_model)
         else:
             attribution_method = self.attribution_method(captum_model)
 
@@ -88,12 +98,17 @@ class CaptumExplainer(ExplainerAlgorithm):
             **self.kwargs,
         )
 
-        node_mask, edge_mask = convert_captum_output(attributions, mask_type,
-                                                     metadata)
+        node_mask, edge_mask = convert_captum_output(
+            attributions,
+            mask_type,
+            metadata,
+        )
 
         if hasattr(model, 'metadata'):
-            return HeteroExplanation(node_mask_dict=node_mask,
-                                     edge_mask_dict=edge_mask)
+            return HeteroExplanation(
+                node_mask_dict=node_mask,
+                edge_mask_dict=edge_mask,
+            )
         else:
             return Explanation(node_mask=node_mask, edge_mask=edge_mask)
 
