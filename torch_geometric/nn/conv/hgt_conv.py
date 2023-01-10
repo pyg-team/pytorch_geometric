@@ -347,15 +347,15 @@ class HGTConv(MessagePassing):
             print('trans_ptr.shape=', trans_ptr.shape)
             print('trans_ptr=', trans_ptr)
             k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
-                                               a_rel).view(H, -1, D)
+                                               a_rel).view(-1, H, D)
             print('k_out.shape:', k_out.shape)
             v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
-                                               m_rel).view(H, -1, D)
+                                               m_rel).view(-1, H, D)
             increment_dict = {}
             inc_counter = 0
             for i, src_type in enumerate(src_types):
                 increment_dict[src_type] = inc_counter
-                inc_counter += k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[1]
+                inc_counter += k_out[:,trans_ptr[i]:trans_ptr[i + 1],:].shape[0]
             print('increment_dict=', increment_dict)
 
         #combine edge_index dict into single tensor
