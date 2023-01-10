@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added support for custom `HeteroData` mini-batch class in remote backends ([#6377](https://github.com/pyg-team/pytorch_geometric/pull/6377))
 - Added the `GNNFF` model ([#5866](https://github.com/pyg-team/pytorch_geometric/pull/5866))
 - Added `MLPAggregation`, `SetTransformerAggregation`, `GRUAggregation`, and `DeepSetsAggregation` as adaptive readout functions ([#6301](https://github.com/pyg-team/pytorch_geometric/pull/6301), [#6336](https://github.com/pyg-team/pytorch_geometric/pull/6336), [#6338](https://github.com/pyg-team/pytorch_geometric/pull/6338))
 - Added `Dataset.to_datapipe` for converting PyG datasets into a torchdata `DataPipe`([#6141](https://github.com/pyg-team/pytorch_geometric/pull/6141))
@@ -45,6 +46,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added support for dropping nodes in `utils.to_dense_batch` in case `max_num_nodes` is smaller than the number of nodes  ([#6124](https://github.com/pyg-team/pytorch_geometric/pull/6124))
 - Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
 ### Changed
+- Fix the default arguments of `DataParallel` class ([#6376](https://github.com/pyg-team/pytorch_geometric/pull/6376))
 - Fix `ImbalancedSampler` on sliced `InMemoryDataset` ([#6374](https://github.com/pyg-team/pytorch_geometric/pull/6374))
 - Breaking Change: Changed the interface and implementation of `GraphMultisetTransformer` ([#6343](https://github.com/pyg-team/pytorch_geometric/pull/6343))
 - Fixed the approximate PPR variant in `transforms.GDC` to not crash on graphs with isolated nodes ([#6242](https://github.com/pyg-team/pytorch_geometric/pull/6242))
