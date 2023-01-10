@@ -58,21 +58,22 @@ class BA2MotifDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 1000
-              - 25
-              - ~51.0
-              - 10
-              - 2
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 1000
+          - 25
+          - ~51.0
+          - 10
+          - 2
     """
     url = 'https://github.com/flyingdoog/PGExplainer/raw/master/dataset'
     filename = 'BA-2motif.pkl'
