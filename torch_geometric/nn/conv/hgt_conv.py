@@ -312,10 +312,12 @@ class HGTConv(MessagePassing):
                 v_o_i.transpose(1, 0)
                 for v_o_i in pyg_lib.ops.grouped_matmul(v_ins, m_rels)
             ]
-            increment_dict = {
-                src_type: k_outs[i].shape[0]
-                for i, src_type in enumerate(src_types)
-            }
+            increment_dict = {}
+            for i, src_type in enumerate(src_types):
+                k_out_shape = k_outs[i].shape[0]
+                if i == 0:
+                    first_shape = k_outs[i].shape[0]
+                increment_dict[src_type] = k_out_shape - first_shape
             k_out = torch.cat(k_outs)
             v_out = torch.cat(v_outs)
         else:
@@ -327,7 +329,7 @@ class HGTConv(MessagePassing):
                   {node_type: k.shape
                    for node_type, k in k_dict.items()})
             print('v_dict.shape:',
-                  {node_type: k.shape
+                  {node_type: v.shape
                    for node_type, v in v_dict.items()})
             for src_type in src_types:
                 k_src = k_dict[src_type]
@@ -346,14 +348,16 @@ class HGTConv(MessagePassing):
             print('trans_ptr.shape=', trans_ptr.shape)
             print('trans_ptr=', trans_ptr)
             k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
-                                               a_rel)
+                                               a_rel).view(-1, H, D)
             print('k_out.shape:', k_out.shape)
             v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
-                                               m_rel)
-            increment_dict = {
-                src_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
-                for i, src_type in enumerate(src_types)
-            }
+                                               m_rel).view(-1, H, D)
+            increment_dict = {}
+            for i, src_type in enumerate(src_types):
+                k_out_shape = k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
+                if i == 0:
+                    first_shape = k_out_shape
+                increment_dict[src_type] = k_out_shape - first_shape
             print('increment_dict=', increment_dict)
 
         #combine edge_index dict into single tensor
