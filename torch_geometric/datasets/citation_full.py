@@ -27,41 +27,42 @@ class CitationFull(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - Cora
-              - 19,793
-              - 126,842
-              - 8,710
-              - 70
-            * - Cora_ML
-              - 2,995
-              - 16,316
-              - 2,879
-              - 7
-            * - CiteSeer
-              - 4,230
-              - 10,674
-              - 602
-              - 6
-            * - DBLP
-              - 17,716
-              - 105,734
-              - 1,639
-              - 4
-            * - PubMed
-              - 19,717
-              - 88,648
-              - 500
-              - 3
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Cora
+          - 19,793
+          - 126,842
+          - 8,710
+          - 70
+        * - Cora_ML
+          - 2,995
+          - 16,316
+          - 2,879
+          - 7
+        * - CiteSeer
+          - 4,230
+          - 10,674
+          - 602
+          - 6
+        * - DBLP
+          - 17,716
+          - 105,734
+          - 1,639
+          - 4
+        * - PubMed
+          - 19,717
+          - 88,648
+          - 500
+          - 3
     """
 
     url = 'https://github.com/abojchevski/graph2gauss/raw/master/data/{}.npz'
@@ -107,19 +108,20 @@ class CoraFull(CitationFull):
     r"""Alias for :class:`torch_geometric.datasets.CitationFull` with
     :obj:`name="cora"`.
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 19,793
-              - 126,842
-              - 8,710
-              - 70
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 19,793
+          - 126,842
+          - 8,710
+          - 70
     """
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
