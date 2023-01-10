@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, Optional, Type, Union
+from typing import Any, Dict, Optional, Union
 
 import torch
 from torch import Tensor
@@ -18,14 +18,13 @@ class CaptumExplainer(ExplainerAlgorithm):
     attributions.
 
     Args:
-        attribution_method (Union[str, Attribution]): The Captum
-            attribution method to use. Can be a string or a
-            :class:`captum.attr` method.
+        attribution_method (Attribution or str): The Captum attribution method
+            to use. Can be a string or a :class:`captum.attr` method.
         **kwargs: Additional arguments for the Captum attribution method.
     """
     def __init__(
         self,
-        attribution_method: Union[str, Type],
+        attribution_method: Union[str, Any],
         **kwargs,
     ):
         super().__init__()
