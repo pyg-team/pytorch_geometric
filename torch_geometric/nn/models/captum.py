@@ -2,9 +2,11 @@ from typing import Optional, Union
 
 import torch
 
+from torch_geometric.explain.algorithm.captum import (
+    CaptumHeteroModel,
+    CaptumModel,
+)
 from torch_geometric.typing import Metadata
-from torch_geometric.explain.algorithm.captum import (CaptumModel,
-                                                      CaptumHeteroModel)
 
 
 def to_captum_model(

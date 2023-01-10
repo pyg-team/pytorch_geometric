@@ -2,10 +2,10 @@ import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.explain.algorithm import to_captum_input
 from torch_geometric.nn import GAT, GCN, SAGEConv
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.models import to_captum_model
-from torch_geometric.explain.algorithm import to_captum_input
 from torch_geometric.testing import withPackage
 
 x = torch.randn(8, 3, requires_grad=True)
