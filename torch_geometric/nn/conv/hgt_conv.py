@@ -340,18 +340,19 @@ class HGTConv(MessagePassing):
             trans_ptr = torch.tensor(trans_ptr)
             a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
 
-            print('k_ins.shape:', [k.shape for k in k_ins])
-            print('a_rels.shape:', [a.shape for a in a_rels])
-            print('a_rel.shape:', a_rel.shape)
-            print('trans_ptr.shape:', trans_ptr.shape)
+            print('k_ins.shape=', [k.shape for k in k_ins])
+            print('a_rels.shape=', [a.shape for a in a_rels])
+            print('a_rel.shape=', a_rel.shape)
+            print('trans_ptr.shape=', trans_ptr.shape)
             print('trans_ptr=', trans_ptr)
             k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr, a_rel)
-            print('k_out.shape:', k_out.shape)
+            print('k_out.shape=', k_out.shape)
             v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr, m_rel)
             increment_dict = {
                 src_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
                 for i, src_type in enumerate(src_types)
             }
+            print('increment_dict=', increment_dict)
 
         #combine edge_index dict into single tensor
         q_list = []
@@ -396,6 +397,11 @@ class HGTConv(MessagePassing):
                 index: Tensor, ptr: Optional[Tensor],
                 size_i: Optional[int]) -> Tensor:
 
+        print('k_j.shape=', k_j.shape)
+        print('q_i.shape=', q_i.shape)
+        print('v_j.shape=', v_j.shape)
+        print('rel.shape=', rel.shape)
+        print('index.shape=', index.shape)
         alpha = (q_i * k_j).sum(dim=-1) * rel
         alpha = alpha / math.sqrt(q_i.size(-1))
         alpha = softmax(alpha, index, ptr, size_i)
