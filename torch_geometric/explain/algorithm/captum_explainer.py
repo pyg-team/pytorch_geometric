@@ -34,8 +34,8 @@ class CaptumExplainer(ExplainerAlgorithm):
     def forward(
         self,
         model: torch.nn.Module,
-        x: Tensor,
-        edge_index: Tensor,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
         target: Optional[Tensor] = None,
         index: Optional[Tensor] = None,
