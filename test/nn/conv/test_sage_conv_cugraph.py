@@ -6,6 +6,7 @@ from torch_geometric.nn import SAGEConv, SAGEConvCuGraph
 options = {
     "aggr": ["sum", "mean", "min", "max"],
     "bias": [True, False],
+    "normalize": [True, False],
     "root_weight": [True, False],
 }
 
@@ -13,14 +14,16 @@ device = 'cuda:0'
 
 
 @pytest.mark.parametrize("root_weight", options["root_weight"])
+@pytest.mark.parametrize("normalize", options["normalize"])
 @pytest.mark.parametrize("bias", options["bias"])
 @pytest.mark.parametrize("aggr", options["aggr"])
-def test_sage_conv_equality(aggr, bias, root_weight):
+def test_sage_conv_equality(aggr, bias, normalize, root_weight):
     in_channels, out_channels = 4, 2
     args = (in_channels, out_channels)
     kwargs = {
         'aggr': aggr,
         'bias': bias,
+        'normalize': normalize,
         'root_weight': root_weight,
     }
     u = torch.tensor([0, 1, 0, 2, 3, 0, 4, 0, 5, 0, 6, 7, 0, 8, 9])
