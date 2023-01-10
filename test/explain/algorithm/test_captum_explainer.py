@@ -85,7 +85,8 @@ def test_captum_explainer_multiclass_classification(
 
     explainer = Explainer(
         model,
-        algorithm=CaptumExplainer('IntegratedGradients'),
+        algorithm=CaptumExplainer('IntegratedGradients',
+                                  internal_batch_size=1),
         explanation_type='model',
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
@@ -99,5 +100,12 @@ def test_captum_explainer_multiclass_classification(
         batch=batch,
         edge_label_index=edge_label_index,
     )
-    assert explanation.get('node_mask') is None
-    assert explanation.get('edge_mask') is None
+
+    if node_mask_type is not None:
+        assert explanation.get('node_mask') is not None
+    else:
+        assert explanation.get('node_mask') is None
+    if edge_mask_type is not None:
+        assert explanation.get('edge_mask') is not None
+    else:
+        assert explanation.get('edge_mask') is None

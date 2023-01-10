@@ -262,3 +262,27 @@ def captum_output_to_dicts(
         x_attr_dict = dict(zip(node_types, captum_attrs[:len(node_types)]))
         edge_attr_dict = dict(zip(edge_types, captum_attrs[len(node_types):]))
     return x_attr_dict, edge_attr_dict
+
+
+def convert_captum_output(
+    captum_attrs: Tuple[Tensor],
+    mask_type: str,
+    metadata: Optional[Metadata] = None,
+):
+    r"""Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
+    methods which is a tuple of attributions to either
+    :obj:`(node_mask, edge_mask)` or :obj:`(node_mask_dict, edge_mask_dict)`.
+    """
+    if metadata is not None:
+        return captum_output_to_dicts(captum_attrs, mask_type, metadata)
+
+    node_mask = edge_mask = None
+    if mask_type == 'edge':
+        edge_mask = captum_attrs[0].squeeze(0)
+    elif mask_type == 'node':
+        node_mask = captum_attrs[0].squeeze(0)
+    else:
+        node_mask = captum_attrs[0].squeeze(0)
+        edge_mask = captum_attrs[1].squeeze(0)
+
+    return node_mask, edge_mask
