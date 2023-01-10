@@ -2,9 +2,10 @@ import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.nn import GAT, GCN, Explainer, SAGEConv
+from torch_geometric.explain.algorithm.captum import to_captum_input
+from torch_geometric.nn import GAT, GCN, SAGEConv
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.models import to_captum_input, to_captum_model
+from torch_geometric.nn.models import to_captum_model
 from torch_geometric.testing import withPackage
 
 x = torch.randn(8, 3, requires_grad=True)
@@ -103,20 +104,6 @@ def test_captum_attribution_methods(mask_type, method):
     else:
         assert attributions[0].shape == (1, 8, 3)
         assert attributions[1].shape == (1, 14)
-
-
-@pytest.mark.parametrize('model', [GCN, GAT])
-def test_explainer_to_log_prob(model):
-    raw_to_log = Explainer(model, return_type='raw')._to_log_prob
-    prob_to_log = Explainer(model, return_type='prob')._to_log_prob
-    log_to_log = Explainer(model, return_type='log_prob')._to_log_prob
-
-    raw = torch.tensor([[1, 3.2, 6.1], [9, 9, 0.1]])
-    prob = raw.softmax(dim=-1)
-    log_prob = raw.log_softmax(dim=-1)
-
-    assert torch.allclose(raw_to_log(raw), prob_to_log(prob))
-    assert torch.allclose(prob_to_log(prob), log_to_log(log_prob))
 
 
 def test_custom_explain_message():

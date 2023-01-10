@@ -17,7 +17,7 @@ class ToSLIC(BaseTransform):
 
     This transform can be used with any :obj:`torchvision` dataset.
 
-    Example::
+    .. code-block:: python
 
         from torchvision.datasets import MNIST
         import torchvision.transforms as T
