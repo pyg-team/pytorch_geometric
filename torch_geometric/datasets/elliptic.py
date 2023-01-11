@@ -38,19 +38,20 @@ class EllipticBitcoinDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 203,769
-              - 234,355
-              - 165
-              - 2
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 203,769
+          - 234,355
+          - 165
+          - 2
     """
     url = 'https://data.pyg.org/datasets/elliptic'
 

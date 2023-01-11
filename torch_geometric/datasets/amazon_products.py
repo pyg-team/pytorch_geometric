@@ -26,19 +26,20 @@ class AmazonProducts(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 1,569,960
-              - 264,339,468
-              - 200
-              - 107
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 1,569,960
+          - 264,339,468
+          - 200
+          - 107
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 

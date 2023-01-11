@@ -26,19 +26,20 @@ class Yelp(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 716,847
-              - 13,954,819
-              - 300
-              - 100
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 716,847
+          - 13,954,819
+          - 300
+          - 100
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
