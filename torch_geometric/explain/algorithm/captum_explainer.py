@@ -79,8 +79,8 @@ class CaptumExplainer(ExplainerAlgorithm):
             *kwargs.values(),
         )
 
-        if hasattr(model, 'metadata'):
-            metadata = model.metadata
+        if isinstance(x, dict):
+            metadata = (x.keys(), edge_index.keys())
             captum_model = CaptumHeteroModel(
                 model,
                 mask_type,
@@ -106,7 +106,7 @@ class CaptumExplainer(ExplainerAlgorithm):
             metadata,
         )
 
-        if not hasattr(model, 'metadata'):
+        if not isinstance(x, dict):
             return Explanation(node_mask=node_mask, edge_mask=edge_mask)
 
         explanation = HeteroExplanation()
