@@ -11,7 +11,7 @@ from torch_geometric.explain.config import (
     ModelTaskLevel,
 )
 from torch_geometric.nn import GCNConv, global_add_pool
-from torch_geometric.testing.decorators import withPackage
+from torch_geometric.testing import withPackage
 
 
 class GCN(torch.nn.Module):
