@@ -4,14 +4,12 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear as Lin
 from torch_cluster import fps, knn_graph
-from torch_scatter import scatter_max
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, global_mean_pool
-from torch_geometric.nn.conv import PointTransformerConv
-from torch_geometric.nn.pool import knn
+from torch_geometric.nn import MLP, PointTransformerConv, global_mean_pool, knn
+from torch_geometric.utils import scatter
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
@@ -69,8 +67,8 @@ class TransitionDown(torch.nn.Module):
         x = self.mlp(x)
 
         # Max pool onto each cluster the features from knn in points
-        x_out, _ = scatter_max(x[id_k_neighbor[1]], id_k_neighbor[0],
-                               dim_size=id_clusters.size(0), dim=0)
+        x_out = scatter(x[id_k_neighbor[1]], id_k_neighbor[0], dim=0,
+                        dim_size=id_clusters.size(0), reduce='max')
 
         # keep only the clusters and their max-pooled features
         sub_pos, out = pos[id_clusters], x_out
