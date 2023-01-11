@@ -85,7 +85,7 @@ class CaptumExplainer(ExplainerAlgorithm):
                 model,
                 mask_type,
                 index,
-                model.metadata,
+                metadata,
             )
         else:
             metadata = None
