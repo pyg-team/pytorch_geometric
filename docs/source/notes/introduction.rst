@@ -272,7 +272,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
 
 .. code-block:: python
 
-    from torch_scatter import scatter_mean
+    from torch_geometric.utils import scatter
     from torch_geometric.datasets import TUDataset
     from torch_geometric.loader import DataLoader
 
@@ -286,7 +286,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
         data.num_graphs
         >>> 32
 
-        x = scatter_mean(data.x, data.batch, dim=0)
+        x = scatter(data.x, data.batch, dim=0, reduce='mean')
         x.size()
         >>> torch.Size([32, 21])
 
