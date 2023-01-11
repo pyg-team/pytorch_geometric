@@ -3,11 +3,10 @@ from typing import Callable, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add
 from torch_sparse import SparseTensor
 
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import softmax
+from torch_geometric.utils import scatter, softmax
 
 from .topk_pool import filter_adj, topk
 
@@ -79,7 +78,7 @@ class PANPooling(torch.nn.Module):
         assert edge_weight is not None
 
         score1 = (x * self.p).sum(dim=-1)
-        score2 = scatter_add(edge_weight, col, dim=0, dim_size=x.size(0))
+        score2 = scatter(edge_weight, col, 0, dim_size=x.size(0), reduce='sum')
         score = self.beta[0] * score1 + self.beta[1] * score2
 
         if self.min_score is None:
