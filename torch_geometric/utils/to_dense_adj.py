@@ -89,12 +89,10 @@ def to_dense_adj(
 
     size = [batch_size, max_num_nodes, max_num_nodes]
     size += list(edge_attr.size())[1:]
-    adj = torch.zeros(size, dtype=edge_attr.dtype, device=edge_index.device)
-
     flattened_size = batch_size * max_num_nodes * max_num_nodes
-    adj = adj.view([flattened_size] + list(adj.size())[3:])
+
     idx = idx0 * max_num_nodes * max_num_nodes + idx1 * max_num_nodes + idx2
-    scatter(edge_attr, idx, dim=0, out=adj, reduce='sum')
+    adj = scatter(edge_attr, idx, dim=0, dim_size=flattened_size, reduce='sum')
     adj = adj.view(size)
 
     return adj

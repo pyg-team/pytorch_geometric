@@ -119,12 +119,10 @@ def coalesce(
     idx.sub_(mask.logical_not_().cumsum(dim=0))
 
     if isinstance(edge_attr, Tensor):
-        edge_attr = scatter(edge_attr, idx, 0, None, dim_size, reduce)
+        edge_attr = scatter(edge_attr, idx, 0, dim_size, reduce)
         return edge_index, edge_attr
     elif isinstance(edge_attr, (list, tuple)):
-        edge_attr = [
-            scatter(e, idx, 0, None, dim_size, reduce) for e in edge_attr
-        ]
+        edge_attr = [scatter(e, idx, 0, dim_size, reduce) for e in edge_attr]
         return edge_index, edge_attr
 
     return edge_index

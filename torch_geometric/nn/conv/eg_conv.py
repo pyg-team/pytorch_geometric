@@ -206,16 +206,16 @@ class EGConv(MessagePassing):
             if aggr == 'symnorm':
                 assert symnorm_weight is not None
                 out = scatter(inputs * symnorm_weight.view(-1, 1), index, 0,
-                              None, dim_size, reduce='sum')
+                              dim_size, reduce='sum')
             elif aggr == 'var' or aggr == 'std':
                 mean = scatter(inputs, index, 0, None, dim_size, reduce='mean')
-                mean_squares = scatter(inputs * inputs, index, 0, None,
-                                       dim_size, reduce='mean')
+                mean_squares = scatter(inputs * inputs, index, 0, dim_size,
+                                       reduce='mean')
                 out = mean_squares - mean * mean
                 if aggr == 'std':
                     out = out.clamp(min=1e-5).sqrt()
             else:
-                out = scatter(inputs, index, 0, None, dim_size, reduce=aggr)
+                out = scatter(inputs, index, 0, dim_size, reduce=aggr)
 
             outs.append(out)
 
