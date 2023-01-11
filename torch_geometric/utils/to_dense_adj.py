@@ -2,9 +2,9 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter
 
 from torch_geometric.typing import OptTensor
+from torch_geometric.utils import scatter
 
 
 def to_dense_adj(
@@ -66,7 +66,7 @@ def to_dense_adj(
         batch_size = int(batch.max()) + 1 if batch.numel() > 0 else 1
 
     one = batch.new_ones(batch.size(0))
-    num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce='add')
+    num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce='sum')
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
 
     idx0 = batch[edge_index[0]]
@@ -89,12 +89,10 @@ def to_dense_adj(
 
     size = [batch_size, max_num_nodes, max_num_nodes]
     size += list(edge_attr.size())[1:]
-    adj = torch.zeros(size, dtype=edge_attr.dtype, device=edge_index.device)
-
     flattened_size = batch_size * max_num_nodes * max_num_nodes
-    adj = adj.view([flattened_size] + list(adj.size())[3:])
+
     idx = idx0 * max_num_nodes * max_num_nodes + idx1 * max_num_nodes + idx2
-    scatter(edge_attr, idx, dim=0, out=adj, reduce='add')
+    adj = scatter(edge_attr, idx, dim=0, dim_size=flattened_size, reduce='sum')
     adj = adj.view(size)
 
     return adj

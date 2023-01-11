@@ -395,15 +395,14 @@ class LightningNodeData(LightningDataModule):
             )
 
         else:
-            loader = NodeLoader(
+            return NodeLoader(
                 self.data,
                 node_sampler=self.neighbor_sampler,
                 input_nodes=input_nodes,
                 input_time=input_time,
+                input_id=input_id,
                 **kwargs,
             )
-            loader.input_data.input_id = input_id
-            return loader
 
     def train_dataloader(self) -> DataLoader:
         """"""
@@ -644,16 +643,15 @@ class LightningLinkData(LightningDataModule):
             )
 
         else:
-            loader = LinkLoader(
+            return LinkLoader(
                 self.data,
                 link_sampler=self.neighbor_sampler,
                 edge_label_index=input_edges,
                 edge_label=input_labels,
                 edge_label_time=input_time,
+                input_id=input_id,
                 **kwargs,
             )
-            loader.input_data.input_id = input_id
-            return loader
 
     def train_dataloader(self) -> DataLoader:
         """"""

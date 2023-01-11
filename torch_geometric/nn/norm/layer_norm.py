@@ -2,10 +2,9 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter
 
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import degree
+from torch_geometric.utils import degree, scatter
 
 from ..inits import ones, zeros
 
@@ -72,12 +71,12 @@ class LayerNorm(torch.nn.Module):
                 norm = norm.mul_(x.size(-1)).view(-1, 1)
 
                 mean = scatter(x, batch, dim=0, dim_size=batch_size,
-                               reduce='add').sum(dim=-1, keepdim=True) / norm
+                               reduce='sum').sum(dim=-1, keepdim=True) / norm
 
                 x = x - mean.index_select(0, batch)
 
                 var = scatter(x * x, batch, dim=0, dim_size=batch_size,
-                              reduce='add').sum(dim=-1, keepdim=True)
+                              reduce='sum').sum(dim=-1, keepdim=True)
                 var = var / norm
 
                 out = x / (var + self.eps).sqrt().index_select(0, batch)

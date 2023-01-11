@@ -5,7 +5,6 @@ from typing import Callable, List, Optional
 
 import torch
 import torch.nn.functional as F
-from torch_scatter import scatter
 from tqdm import tqdm
 
 from torch_geometric.data import (
@@ -14,6 +13,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.utils import scatter
 
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
@@ -275,7 +275,7 @@ class QM9(InMemoryDataset):
 
             row, col = edge_index
             hs = (z == 1).to(torch.float)
-            num_hs = scatter(hs[row], col, dim_size=N).tolist()
+            num_hs = scatter(hs[row], col, dim_size=N, reduce='sum').tolist()
 
             x1 = F.one_hot(torch.tensor(type_idx), num_classes=len(types))
             x2 = torch.tensor([atomic_number, aromatic, sp, sp2, sp3, num_hs],
