@@ -1,10 +1,9 @@
 from typing import Callable, Optional, Tuple
 
 from torch import Tensor
-from torch_scatter import scatter
 
 from torch_geometric.data import Batch, Data
-from torch_geometric.utils import add_self_loops
+from torch_geometric.utils import add_self_loops, scatter
 
 from .consecutive import consecutive_cluster
 from .pool import pool_batch, pool_edge, pool_pos
