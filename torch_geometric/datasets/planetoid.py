@@ -50,31 +50,32 @@ class Planetoid(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - Cora
-              - 2,708
-              - 10,556
-              - 1,433
-              - 7
-            * - CiteSeer
-              - 3,327
-              - 9,104
-              - 3,703
-              - 6
-            * - PubMed
-              - 19,717
-              - 88,648
-              - 500
-              - 3
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Cora
+          - 2,708
+          - 10,556
+          - 1,433
+          - 7
+        * - CiteSeer
+          - 3,327
+          - 9,104
+          - 3,703
+          - 6
+        * - PubMed
+          - 19,717
+          - 88,648
+          - 500
+          - 3
     """
 
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'

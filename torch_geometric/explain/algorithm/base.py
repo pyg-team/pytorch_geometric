@@ -17,6 +17,7 @@ from torch_geometric.utils import k_hop_subgraph
 
 
 class ExplainerAlgorithm(torch.nn.Module):
+    r"""An abstract base class for implementing explainer algorithms."""
     @abstractmethod
     def forward(
         self,

@@ -2,14 +2,12 @@ import pytest
 import torch
 
 from torch_geometric.data import HeteroData
-from torch_geometric.nn import (
-    SAGEConv,
+from torch_geometric.explain.algorithm.captum import (
+    CaptumHeteroModel,
     captum_output_to_dicts,
     to_captum_input,
-    to_captum_model,
-    to_hetero,
 )
-from torch_geometric.nn.models.captum import CaptumHeteroModel
+from torch_geometric.nn import SAGEConv, to_captum_model, to_hetero
 from torch_geometric.testing import withPackage
 
 mask_types = ['edge', 'node_and_edge', 'node']

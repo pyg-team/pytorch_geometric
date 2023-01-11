@@ -66,21 +66,22 @@ class AirfRANS(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 1,000
-              - ~180,000
-              - 0
-              - 5
-              - 4
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 1,000
+          - ~180,000
+          - 0
+          - 5
+          - 4
     """
     url = 'https://data.isir.upmc.fr/extrality/pytorch_geometric/AirfRANS.zip'
     tasks = ['full', 'scarce', 'reynolds', 'aoa']
