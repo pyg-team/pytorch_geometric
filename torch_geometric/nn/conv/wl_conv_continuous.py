@@ -1,10 +1,10 @@
 from typing import Union
 
 from torch import Tensor
-from torch_scatter import scatter_add
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import OptPairTensor, OptTensor, Size
+from torch_geometric.utils import scatter
 
 
 class WLConvContinuous(MessagePassing):
@@ -50,7 +50,7 @@ class WLConvContinuous(MessagePassing):
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=size)
 
-        deg = scatter_add(edge_weight, edge_index[1], dim_size=out.size(0))
+        deg = scatter(edge_weight, edge_index[1], 0, out.size(0), reduce='sum')
         deg_inv = 1. / deg
         deg_inv.masked_fill_(deg_inv == float('inf'), 0)
         out = deg_inv.view(-1, 1) * out
