@@ -11,6 +11,7 @@ from torch_geometric.explain.config import (
     ModelTaskLevel,
 )
 from torch_geometric.nn import GCNConv, global_add_pool
+from torch_geometric.testing import withPackage
 
 
 class GCN(torch.nn.Module):
@@ -65,6 +66,7 @@ batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 
 
+@withPackage('captum')
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
@@ -85,7 +87,8 @@ def test_captum_explainer_multiclass_classification(
 
     explainer = Explainer(
         model,
-        algorithm=CaptumExplainer('IntegratedGradients'),
+        algorithm=CaptumExplainer('IntegratedGradients',
+                                  internal_batch_size=1),
         explanation_type='model',
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
@@ -99,5 +102,13 @@ def test_captum_explainer_multiclass_classification(
         batch=batch,
         edge_label_index=edge_label_index,
     )
-    assert explanation.get('node_mask') is None
-    assert explanation.get('edge_mask') is None
+
+    if node_mask_type is not None:
+        assert explanation.node_mask.size() == x.size()
+    else:
+        assert 'node_mask' not in explanation
+
+    if edge_mask_type is not None:
+        assert explanation.edge_mask.size() == (edge_index.size(1), )
+    else:
+        assert 'edge_mask' not in explanation

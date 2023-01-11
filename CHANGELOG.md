@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.3.0] - 2023-MM-DD
 ### Added
 - Added a new external resource for link prediction ([#6396](https://github.com/pyg-team/pytorch_geometric/pull/6396))
-- Added `CaptumExplainer` ([#6383](https://github.com/pyg-team/pytorch_geometric/pull/6383))
+- Added `CaptumExplainer` ([#6383](https://github.com/pyg-team/pytorch_geometric/pull/6383), [#6387](https://github.com/pyg-team/pytorch_geometric/pull/6387))
 - Added support for custom `HeteroData` mini-batch class in remote backends ([#6377](https://github.com/pyg-team/pytorch_geometric/pull/6377))
 - Added the `GNNFF` model ([#5866](https://github.com/pyg-team/pytorch_geometric/pull/5866))
 - Added `MLPAggregation`, `SetTransformerAggregation`, `GRUAggregation`, and `DeepSetsAggregation` as adaptive readout functions ([#6301](https://github.com/pyg-team/pytorch_geometric/pull/6301), [#6336](https://github.com/pyg-team/pytorch_geometric/pull/6336), [#6338](https://github.com/pyg-team/pytorch_geometric/pull/6338))
