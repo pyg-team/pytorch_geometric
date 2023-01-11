@@ -2,9 +2,8 @@ from typing import Tuple
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_add
 
-from torch_geometric.utils import add_self_loops, coalesce
+from torch_geometric.utils import add_self_loops, coalesce, scatter
 
 
 def get_mesh_laplacian(pos: Tensor, face: Tensor) -> Tuple[Tensor, Tensor]:
@@ -66,8 +65,8 @@ def get_mesh_laplacian(pos: Tensor, face: Tensor) -> Tuple[Tensor, Tensor]:
 
     # Compute the diagonal part:
     row, col = edge_index
-    cot_deg = scatter_add(cot_weight, row, dim=0, dim_size=num_nodes)
-    area_deg = scatter_add(area_weight, row, dim=0, dim_size=num_nodes)
+    cot_deg = scatter(cot_weight, row, 0, num_nodes, reduce='sum')
+    area_deg = scatter(area_weight, row, 0, num_nodes, reduce='sum')
     deg = cot_deg / area_deg
     edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
     edge_weight = torch.cat([-cot_weight, deg], dim=0)
