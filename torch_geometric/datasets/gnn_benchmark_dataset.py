@@ -47,53 +47,54 @@ class GNNBenchmarkDataset(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 20 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - PATTERN
-              - 10,000
-              - ~118.9
-              - ~6,098.9
-              - 3
-              - 2
-            * - CLUSTER
-              - 10,000
-              - ~117.2
-              - ~4,303.9
-              - 7
-              - 6
-            * - MNIST
-              - 55,000
-              - ~70.6
-              - ~564.5
-              - 3
-              - 10
-            * - CIFAR10
-              - 45,000
-              - ~117.6
-              - ~941.2
-              - 5
-              - 10
-            * - TSP
-              - 10,000
-              - ~275.4
-              - ~6,885.0
-              - 2
-              - 2
-            * - CSL
-              - 150
-              - ~41.0
-              - ~164.0
-              - 0
-              - 10
+    .. list-table::
+        :widths: 20 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - PATTERN
+          - 10,000
+          - ~118.9
+          - ~6,098.9
+          - 3
+          - 2
+        * - CLUSTER
+          - 10,000
+          - ~117.2
+          - ~4,303.9
+          - 7
+          - 6
+        * - MNIST
+          - 55,000
+          - ~70.6
+          - ~564.5
+          - 3
+          - 10
+        * - CIFAR10
+          - 45,000
+          - ~117.6
+          - ~941.2
+          - 5
+          - 10
+        * - TSP
+          - 10,000
+          - ~275.4
+          - ~6,885.0
+          - 2
+          - 2
+        * - CSL
+          - 150
+          - ~41.0
+          - ~164.0
+          - 0
+          - 10
     """
 
     names = ['PATTERN', 'CLUSTER', 'MNIST', 'CIFAR10', 'TSP', 'CSL']
