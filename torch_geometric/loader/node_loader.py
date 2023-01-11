@@ -103,16 +103,6 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
         self.custom_cls = custom_cls
-        # self.input_id = kwargs.pop('input_id', None)
-
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("INSTANTIATE LOADER")
-        print(input_id)
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-        print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
 
         self.input_data = NodeSamplerInput(
             input_id=input_id,
