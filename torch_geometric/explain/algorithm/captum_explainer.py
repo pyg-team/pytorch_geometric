@@ -80,7 +80,7 @@ class CaptumExplainer(ExplainerAlgorithm):
         )
 
         if isinstance(x, dict):
-            metadata = (x.keys(), edge_index.keys())
+            metadata = (list(x.keys()), list(edge_index.keys()))
             captum_model = CaptumHeteroModel(
                 model,
                 mask_type,
