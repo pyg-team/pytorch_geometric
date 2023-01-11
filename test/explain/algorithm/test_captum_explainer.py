@@ -102,10 +102,11 @@ def test_captum_explainer_multiclass_classification(
     )
 
     if node_mask_type is not None:
-        assert explanation.get('node_mask') is not None
+        assert explanation.node_mask.size() == x.size()
     else:
-        assert explanation.get('node_mask') is None
+        assert 'node_mask' not in explanation
+
     if edge_mask_type is not None:
-        assert explanation.get('edge_mask') is not None
+        assert explanation.edge_mask.size() == (edge_index.size(1), )
     else:
-        assert explanation.get('edge_mask') is None
+        assert 'edge_mask' not in explanation
