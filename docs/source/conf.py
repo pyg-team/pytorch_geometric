@@ -30,6 +30,7 @@ html_favicon = ('https://raw.githubusercontent.com/pyg-team/pyg_sphinx_theme/'
                 'master/pyg_sphinx_theme/static/img/favicon.png')
 html_static_path = ['_static']
 html_css_files = ['css/custom.css']
+html_js_files = ['js/mytheme.css']
 
 add_module_names = False
 autodoc_member_order = 'bysource'
