@@ -376,7 +376,6 @@ class HGTConv(MessagePassing):
         print('e_idx.shape =',e_idx.shape)
 
         # propogate
-        #out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         for e_type in enumerate(self.edge_types):
             dst_type = e_type[-1]
