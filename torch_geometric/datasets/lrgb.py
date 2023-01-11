@@ -60,41 +60,42 @@ class LRGBDataset(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 15 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #classes
-            * - PascalVOC-SP
-              - 11,355
-              - ~479.40
-              - ~2,710.48
-              - 21
-            * - COCO-SP
-              - 123,286
-              - ~476.88
-              - ~2,693.67
-              - 81
-            * - PCQM-Contact
-              - 529,434
-              - ~30.14
-              - ~61.09
-              - 1
-            * - Peptides-func
-              - 15,535
-              - ~150.94
-              - ~307.30
-              - 10
-            * - Peptides-struct
-              - 15,535
-              - ~150.94
-              - ~307.30
-              - 11
+    .. list-table::
+        :widths: 15 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #classes
+        * - PascalVOC-SP
+          - 11,355
+          - ~479.40
+          - ~2,710.48
+          - 21
+        * - COCO-SP
+          - 123,286
+          - ~476.88
+          - ~2,693.67
+          - 81
+        * - PCQM-Contact
+          - 529,434
+          - ~30.14
+          - ~61.09
+          - 1
+        * - Peptides-func
+          - 15,535
+          - ~150.94
+          - ~307.30
+          - 10
+        * - Peptides-struct
+          - 15,535
+          - ~150.94
+          - ~307.30
+          - 11
     """
 
     names = [

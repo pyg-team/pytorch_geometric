@@ -56,21 +56,22 @@ class ShapeNet(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 16,881
-              - ~2,616.2
-              - 0
-              - 3
-              - 50
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 16,881
+          - ~2,616.2
+          - 0
+          - 3
+          - 50
     """
 
     url = ('https://shapenet.cs.stanford.edu/media/'

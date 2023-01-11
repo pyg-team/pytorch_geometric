@@ -25,21 +25,22 @@ class QM7b(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 7,211
-              - ~15.4
-              - ~245.0
-              - 0
-              - 14
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 7,211
+          - ~15.4
+          - ~245.0
+          - 0
+          - 14
     """
 
     url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/qm7b.mat'

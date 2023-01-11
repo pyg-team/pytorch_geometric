@@ -98,114 +98,114 @@ class MD17(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 20 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - Benzene FHI-aims
-              - 49,863
-              - 12
-              - 0
-              - 0
-              - 0
-            * - Benzene
-              - 627,983
-              - 12
-              - 0
-              - 0
-              - 0
-            * - Benzene CCSD-T
-              - 1,500
-              - 12
-              - 0
-              - 0
-              - 0
-            * - Uracil
-              - 133,770
-              - 12
-              - 0
-              - 0
-              - 0
-            * - Naphthalene
-              - 326,250
-              - 10
-              - 0
-              - 0
-              - 0
-            * - Aspirin
-              - 211,762
-              - 21
-              - 0
-              - 0
-              - 0
-            * - Aspirin CCSD-T
-              - 1,500
-              - 21
-              - 0
-              - 0
-              - 0
-            * - Salicylic acid
-              - 320,231
-              - 16
-              - 0
-              - 0
-              - 0
-            * - Malonaldehyde
-              - 993,237
-              - 9
-              - 0
-              - 0
-              - 0
-            * - Malonaldehyde CCSD-T
-              - 1,500
-              - 9
-              - 0
-              - 0
-              - 0
-            * - Ethanol
-              - 555,092
-              - 9
-              - 0
-              - 0
-              - 0
-            * - Ethanol CCSD-T
-              - 2000
-              - 9
-              - 0
-              - 0
-              - 0
-            * - Toluene
-              - 442,790
-              - 15
-              - 0
-              - 0
-              - 0
-            * - Toluene CCSD-T
-              - 1,501
-              - 15
-              - 0
-              - 0
-              - 0
-            * - Paracetamol
-              - 106,490
-              - 20
-              - 0
-              - 0
-              - 0
-            * - Azobenzene
-              - 99,999
-              - 24
-              - 0
-              - 0
-              - 0
+    .. list-table::
+        :widths: 20 10 10 10 10 10
+        :header-rows: 1
 
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Benzene FHI-aims
+          - 49,863
+          - 12
+          - 0
+          - 0
+          - 0
+        * - Benzene
+          - 627,983
+          - 12
+          - 0
+          - 0
+          - 0
+        * - Benzene CCSD-T
+          - 1,500
+          - 12
+          - 0
+          - 0
+          - 0
+        * - Uracil
+          - 133,770
+          - 12
+          - 0
+          - 0
+          - 0
+        * - Naphthalene
+          - 326,250
+          - 10
+          - 0
+          - 0
+          - 0
+        * - Aspirin
+          - 211,762
+          - 21
+          - 0
+          - 0
+          - 0
+        * - Aspirin CCSD-T
+          - 1,500
+          - 21
+          - 0
+          - 0
+          - 0
+        * - Salicylic acid
+          - 320,231
+          - 16
+          - 0
+          - 0
+          - 0
+        * - Malonaldehyde
+          - 993,237
+          - 9
+          - 0
+          - 0
+          - 0
+        * - Malonaldehyde CCSD-T
+          - 1,500
+          - 9
+          - 0
+          - 0
+          - 0
+        * - Ethanol
+          - 555,092
+          - 9
+          - 0
+          - 0
+          - 0
+        * - Ethanol CCSD-T
+          - 2000
+          - 9
+          - 0
+          - 0
+          - 0
+        * - Toluene
+          - 442,790
+          - 15
+          - 0
+          - 0
+          - 0
+        * - Toluene CCSD-T
+          - 1,501
+          - 15
+          - 0
+          - 0
+          - 0
+        * - Paracetamol
+          - 106,490
+          - 20
+          - 0
+          - 0
+          - 0
+        * - Azobenzene
+          - 99,999
+          - 24
+          - 0
+          - 0
+          - 0
     """  # noqa: E501
     url = 'http://quantum-machine.org/gdml/data/npz'
 
