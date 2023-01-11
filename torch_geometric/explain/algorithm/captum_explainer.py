@@ -35,8 +35,17 @@ class CaptumExplainer(ExplainerAlgorithm):
     ):
         super().__init__()
 
-        self.attribution_method = attribution_method
+        import captum.attr  # noqa
+
         self.kwargs = kwargs
+
+        if isinstance(attribution_method, str):
+            self.attribution_method = getattr(
+                captum.attr,
+                attribution_method,
+            )
+        else:
+            self.attribution_method = attribution_method
 
     def _get_mask_type(self):
         "Based on the explainer config, return the mask type."
@@ -60,7 +69,6 @@ class CaptumExplainer(ExplainerAlgorithm):
         index: Optional[Tensor] = None,
         **kwargs,
     ) -> Explanation:
-        import captum.attr  # noqa
 
         mask_type = self._get_mask_type()
 
@@ -83,15 +91,9 @@ class CaptumExplainer(ExplainerAlgorithm):
             metadata = None
             captum_model = CaptumModel(model, mask_type, index)
 
-        if isinstance(self.attribution_method, str):
-            attribution_method = getattr(
-                captum.attr,
-                self.attribution_method,
-            )(captum_model)
-        else:
-            attribution_method = self.attribution_method(captum_model)
+        self.attribution_method = self.attribution_method(captum_model)
 
-        attributions = attribution_method.attribute(
+        attributions = self.attribution_method.attribute(
             inputs=inputs,
             target=target[index],
             additional_forward_args=add_forward_args,
@@ -104,13 +106,15 @@ class CaptumExplainer(ExplainerAlgorithm):
             metadata,
         )
 
-        if hasattr(model, 'metadata'):
-            return HeteroExplanation(
-                node_mask_dict=node_mask,
-                edge_mask_dict=edge_mask,
-            )
-        else:
+        if not hasattr(model, 'metadata'):
             return Explanation(node_mask=node_mask, edge_mask=edge_mask)
+
+        explanation = HeteroExplanation()
+        for type, mask in node_mask.items():
+            explanation.node_mask_dict[type] = mask
+        for type, mask in edge_mask.items():
+            explanation.edge_mask_dict[type] = mask
+        return explanation
 
     def supports(self) -> bool:
         node_mask_type = self.explainer_config.node_mask_type

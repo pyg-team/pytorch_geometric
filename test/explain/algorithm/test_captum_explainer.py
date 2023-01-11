@@ -11,6 +11,7 @@ from torch_geometric.explain.config import (
     ModelTaskLevel,
 )
 from torch_geometric.nn import GCNConv, global_add_pool
+from torch_geometric.testing.decorators import withPackage
 
 
 class GCN(torch.nn.Module):
@@ -65,6 +66,7 @@ batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 
 
+@withPackage('captum')
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
