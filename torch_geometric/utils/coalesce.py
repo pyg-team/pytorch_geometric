@@ -2,7 +2,8 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter
+
+from torch_geometric.utils import scatter
 
 from .num_nodes import maybe_num_nodes
 

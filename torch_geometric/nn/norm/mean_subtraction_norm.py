@@ -2,7 +2,8 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter
+
+from torch_geometric.utils import scatter
 
 
 class MeanSubtractionNorm(torch.nn.Module):

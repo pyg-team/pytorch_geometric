@@ -1,7 +1,8 @@
 from typing import Optional
 
 from torch import Tensor
-from torch_scatter import scatter
+
+from torch_geometric.utils import scatter
 
 
 def global_add_pool(x: Tensor, batch: Optional[Tensor],

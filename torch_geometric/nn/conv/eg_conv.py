@@ -3,7 +3,6 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter
 from torch_sparse import SparseTensor, fill_diag, matmul
 
 from torch_geometric.nn.conv import MessagePassing
@@ -11,7 +10,7 @@ from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import add_remaining_self_loops, scatter
 
 
 class EGConv(MessagePassing):
