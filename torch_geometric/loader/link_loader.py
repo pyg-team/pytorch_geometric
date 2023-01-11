@@ -124,6 +124,7 @@ class LinkLoader(torch.utils.data.DataLoader):
         transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
         custom_cls: Optional[HeteroData] = None,
+        input_id: OptTensor = None,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
@@ -163,7 +164,7 @@ class LinkLoader(torch.utils.data.DataLoader):
                              "negative samples.")
 
         self.input_data = EdgeSamplerInput(
-            input_id=None,
+            input_id=input_id,
             row=edge_label_index[0].clone(),
             col=edge_label_index[1].clone(),
             label=edge_label,
