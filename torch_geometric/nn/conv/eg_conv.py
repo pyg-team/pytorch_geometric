@@ -3,7 +3,6 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter
 from torch_sparse import SparseTensor, fill_diag, matmul
 
 from torch_geometric.nn.conv import MessagePassing
@@ -11,7 +10,7 @@ from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import add_remaining_self_loops, scatter
 
 
 class EGConv(MessagePassing):
@@ -207,16 +206,16 @@ class EGConv(MessagePassing):
             if aggr == 'symnorm':
                 assert symnorm_weight is not None
                 out = scatter(inputs * symnorm_weight.view(-1, 1), index, 0,
-                              None, dim_size, reduce='sum')
+                              dim_size, reduce='sum')
             elif aggr == 'var' or aggr == 'std':
                 mean = scatter(inputs, index, 0, None, dim_size, reduce='mean')
-                mean_squares = scatter(inputs * inputs, index, 0, None,
-                                       dim_size, reduce='mean')
+                mean_squares = scatter(inputs * inputs, index, 0, dim_size,
+                                       reduce='mean')
                 out = mean_squares - mean * mean
                 if aggr == 'std':
                     out = out.clamp(min=1e-5).sqrt()
             else:
-                out = scatter(inputs, index, 0, None, dim_size, reduce=aggr)
+                out = scatter(inputs, index, 0, dim_size, reduce=aggr)
 
             outs.append(out)
 
