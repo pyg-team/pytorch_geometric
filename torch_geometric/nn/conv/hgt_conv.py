@@ -384,7 +384,8 @@ class HGTConv(MessagePassing):
             if out.size(-1) == x_dict[node_type].size(-1):
                 alpha = self.skip[node_type].sigmoid()
                 print('alpha.shape =', alpha.shape)
-                print('x_dict[' + node_type +'].shape =', x_dict[node_type].shape)
+                print('x_dict[' + node_type + '].shape =',
+                      x_dict[node_type].shape)
                 print('alpha.shape =', out.shape)
                 out = alpha * out + (1 - alpha) * x_dict[node_type]
             out_dict[node_type] = out
