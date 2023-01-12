@@ -371,7 +371,7 @@ class HGTConv(MessagePassing):
                 q_list.append(q_dict[dst_type])
                 p_rels.append(self.p_rel['__'.join(e_type)].reshape(-1, 1))
         q = torch.cat(q_list)
-        p = torch.cat(p_rels, dim=1)
+        p = group(p_rels, self.group)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
         # propogate
         print('For .propogate:')
