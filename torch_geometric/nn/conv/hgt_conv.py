@@ -348,7 +348,7 @@ class HGTConv(MessagePassing):
             print('trans_ptr=', trans_ptr)
             k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
                                                a_rel).view(-1, H, D)
-            
+
             v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
                                                m_rel).view(-1, H, D)
             increment_dict = {}
@@ -380,7 +380,7 @@ class HGTConv(MessagePassing):
         print('q.shape = ', q.shape)
         print('v.shape = ', v_out.shape)
         print('rel.shape = ', p.shape)
-        
+
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         for e_type in enumerate(self.edge_types):
             dst_type = e_type[-1]
