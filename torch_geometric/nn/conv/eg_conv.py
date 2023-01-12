@@ -208,7 +208,7 @@ class EGConv(MessagePassing):
                 out = scatter(inputs * symnorm_weight.view(-1, 1), index, 0,
                               dim_size, reduce='sum')
             elif aggr == 'var' or aggr == 'std':
-                mean = scatter(inputs, index, 0, None, dim_size, reduce='mean')
+                mean = scatter(inputs, index, 0, dim_size, reduce='mean')
                 mean_squares = scatter(inputs * inputs, index, 0, dim_size,
                                        reduce='mean')
                 out = mean_squares - mean * mean
