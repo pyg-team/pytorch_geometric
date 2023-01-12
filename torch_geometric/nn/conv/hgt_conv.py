@@ -302,8 +302,6 @@ class HGTConv(MessagePassing):
             v_ins = [
                 v_dict[src_type].transpose(0, 1) for src_type in src_types
             ]
-            print('k_ins.shape:', [k.shape for k in k_ins])
-            print('a_rels.shape:', [a.shape for a in a_rels])
             k_outs = [
                 k_o_i.transpose(1, 0)
                 for k_o_i in pyg_lib.ops.grouped_matmul(k_ins, a_rels)
@@ -324,12 +322,6 @@ class HGTConv(MessagePassing):
             v_ins = []
             count = 0
             trans_ptr = [count]
-            print('k_dict.shape:',
-                  {node_type: k.shape
-                   for node_type, k in k_dict.items()})
-            print('v_dict.shape:',
-                  {node_type: v.shape
-                   for node_type, v in v_dict.items()})
             for src_type in src_types:
                 k_src = k_dict[src_type]
                 v_src = v_dict[src_type]
@@ -340,12 +332,6 @@ class HGTConv(MessagePassing):
                     trans_ptr.append(count)
             trans_ptr = torch.tensor(trans_ptr)
             a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
-
-            print('k_ins.shape=', [k.shape for k in k_ins])
-            print('a_rels.shape=', [a.shape for a in a_rels])
-            print('a_rel.shape=', a_rel.shape)
-            print('trans_ptr.shape=', trans_ptr.shape)
-            print('trans_ptr=', trans_ptr)
             k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
                                                a_rel).view(-1, H, D)
 
@@ -356,7 +342,6 @@ class HGTConv(MessagePassing):
             for i, src_type in enumerate(src_types):
                 increment_dict[src_type] = inc_counter
                 inc_counter += k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
-            print('increment_dict=', increment_dict)
 
         #combine edge_index dict into single tensor
         q_list = []
@@ -379,7 +364,7 @@ class HGTConv(MessagePassing):
         print('k.shape:', k_out.shape)
         print('q.shape = ', q.shape)
         print('v.shape = ', v_out.shape)
-        print('rel.shape = ', p.shape)
+        print('p.shape = ', p.shape)
 
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         for e_type in self.edge_types:
@@ -398,6 +383,9 @@ class HGTConv(MessagePassing):
             out = self.a_lin[node_type](F.gelu(out))
             if out.size(-1) == x_dict[node_type].size(-1):
                 alpha = self.skip[node_type].sigmoid()
+                print('alpha.shape =', alpha.shape)
+                print('x_dict[' + node_type +'].shape =', x_dict[node_type].shape)
+                print('alpha.shape =', out.shape)
                 out = alpha * out + (1 - alpha) * x_dict[node_type]
             out_dict[node_type] = out
 
@@ -406,12 +394,6 @@ class HGTConv(MessagePassing):
     def message(self, k_j: Tensor, q_i: Tensor, v_j: Tensor, rel: Tensor,
                 index: Tensor, ptr: Optional[Tensor],
                 size_i: Optional[int]) -> Tensor:
-
-        print('k_j.shape=', k_j.shape)
-        print('q_i.shape=', q_i.shape)
-        print('v_j.shape=', v_j.shape)
-        print('rel.shape=', rel.shape)
-        print('index.shape=', index.shape)
         alpha = (q_i * k_j).sum(dim=-1) * rel
         alpha = alpha / math.sqrt(q_i.size(-1))
         alpha = softmax(alpha, index, ptr, size_i)
