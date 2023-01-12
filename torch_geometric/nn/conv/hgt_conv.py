@@ -370,7 +370,7 @@ class HGTConv(MessagePassing):
                     1, :] + increment_dict[dst_type]
                 q_list.append(q_dict[dst_type])
                 p_rels.append(self.p_rel['__'.join(e_type)].reshape(-1, 1))
-        q = torch.cat(q_list)
+        q = torch.cat(q_list).transpose(-1, -2)
         p = torch.cat(p_rels, dim=1)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
         print('e_idx.shape =', e_idx.shape)
