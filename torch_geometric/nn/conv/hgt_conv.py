@@ -373,8 +373,6 @@ class HGTConv(MessagePassing):
         q = torch.cat(q_list).transpose(-1, -2)
         p = torch.cat(p_rels, dim=1)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
-        print('e_idx.shape =', e_idx.shape)
-
         # propogate
         print('For .propogate:')
         print('e_idx.shape:', e_idx.shape)
