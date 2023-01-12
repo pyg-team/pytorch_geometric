@@ -4,6 +4,7 @@ import torch
 from torch_geometric.nn import GATConv, GATConvCuGraph
 
 options = {
+    "add_self_loops": [True, False],
     "bias": [True, False],
     "concat": [True, False],
     "heads": [1, 2, 3],
@@ -15,10 +16,11 @@ device = 'cuda:0'
 @pytest.mark.parametrize("heads", options["heads"])
 @pytest.mark.parametrize("concat", options["concat"])
 @pytest.mark.parametrize("bias", options["bias"])
-def test_gat_conv_equality(bias, concat, heads):
+@pytest.mark.parametrize("add_self_loops", options["add_self_loops"])
+def test_gat_conv_equality(add_self_loops, bias, concat, heads):
     in_channels, out_channels = 5, 2
     args = (in_channels, out_channels, heads)
-    kwargs = {"add_self_loops": False, "bias": bias, "concat": concat}
+    kwargs = {"add_self_loops": add_self_loops, "bias": bias, "concat": concat}
     u = torch.tensor([0, 1, 0, 2, 3, 0, 4, 0, 5, 0, 6, 7, 0, 8, 9])
     v = torch.tensor([1, 9, 2, 9, 9, 4, 9, 5, 9, 6, 9, 9, 8, 9, 0])
     num_nodes = 10
