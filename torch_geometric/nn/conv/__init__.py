@@ -54,6 +54,7 @@ from .lg_conv import LGConv
 from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
 from .gps_conv import GPSConv
+from .gat_conv_cugraph import GATConvCuGraph
 
 __all__ = [
     'MessagePassing',
@@ -117,6 +118,7 @@ __all__ = [
     'LGConv',
     'PointGNNConv',
     'GPSConv',
+    'GATConvCuGraph',
 ]
 
 classes = __all__
