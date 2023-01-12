@@ -369,9 +369,9 @@ class HGTConv(MessagePassing):
                 edge_index_dict[e_type][1, :] = edge_index_dict[e_type][
                     1, :] + increment_dict[dst_type]
                 q_list.append(q_dict[dst_type])
-                p_rels.append(self.p_rel['__'.join(e_type)].reshape(-1, 1))
+                p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
         q = torch.cat(q_list)
-        p = group(p_rels, self.group)
+        p = group(p_rels, self.group).view(-1)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
         # propogate
         print('For .propogate:')
@@ -384,7 +384,7 @@ class HGTConv(MessagePassing):
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         for e_type in enumerate(self.edge_types):
             dst_type = e_type[-1]
-            dst_n_ids = edge_index_dict[edge_type][1, :]
+            dst_n_ids = edge_index_dict[e_type][1, :]
             out_dict[dst_type].append(out[dst_n_ids])
 
         # Iterate over node-types:
