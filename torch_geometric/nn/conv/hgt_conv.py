@@ -376,7 +376,7 @@ class HGTConv(MessagePassing):
         # propogate
         print('For .propogate:')
         print('e_idx.shape:', e_idx.shape)
-        print('k_out.shape:', k_out.shape)
+        print('k.shape:', k_out.shape)
         print('q.shape = ', q.shape)
         print('v.shape = ', v_out.shape)
         print('rel.shape = ', p.shape)
