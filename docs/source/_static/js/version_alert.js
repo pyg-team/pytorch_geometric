@@ -3,20 +3,17 @@ function warnOnLatestVersion() {
     return;  // not on ReadTheDocs and not latest.
   }
 
-  var warning = document.createElement('div');
-  warning.setAttribute('class', 'admonition danger');
-  warning.innerHTML = "<p class='first admonition-title'>Note</p> " +
-    "<p class='last'> " +
-    "This document is for an <strong>unreleased development version</strong>. " +
-    "Documentation is available for the <a href='/en/stable/'>current stable release</a>, " +
-    "or for older versions through the &ldquo;v:&rdquo; menu at bottom left." +
+  var note = document.createElement('div');
+  note.setAttribute('class', 'admonition note');
+  note.innerHTML = "<p class='first admonition-title'>Note</p> " +
+    "<p> " +
+    "This documentation is for an <b>unreleased development version</b>. " +
+    "Click <a href='/en/stable'><b>here</b></a> to access the documentation of the current stable release." +
     "</p>";
-  warning.querySelector('a').href = window.location.pathname.replace('/latest', '/stable');
 
-  var parent = document.querySelector('div.body')
-    || document.querySelector('div.document')
-    || document.body;
-  parent.insertBefore(warning, parent.firstChild);
+  var parent = document.querySelector('#pyg-documentation');
+  if (parent)
+    parent.insertBefore(note, parent.querySelector('h1'));
 }
 
 document.addEventListener('DOMContentLoaded', warnOnLatestVersion);
