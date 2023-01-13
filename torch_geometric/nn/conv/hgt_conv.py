@@ -114,7 +114,7 @@ class HGTConv(MessagePassing):
                 self.skip[node_type] = Parameter(torch.Tensor(1))
         else:
             # need to pad xs to concatenate them
-            self.no_pad = (self.dims == self.max_channels).all()
+            self.no_pad = (self.dims == self.max_channels).all() and not self.infer_shapes
             for node_type in self.node_types:
                 self.k_lin[node_type] = Linear(self.max_channels, out_channels)
                 self.q_lin[node_type] = Linear(self.max_channels, out_channels)
@@ -189,6 +189,7 @@ class HGTConv(MessagePassing):
                                                        self.out_channels)
                     reset(self.v_lin)
                     self.infer_shapes = False
+                    self.no_pad = (self.dims == self.max_channels).all()
                 x = torch.cat(pad_list(xs, self.dims))
         elif self.infer_shapes:
             self.dims = {
@@ -352,7 +353,7 @@ class HGTConv(MessagePassing):
             convert = isinstance(indices, SparseTensor)
             if convert:
                 src, dst, _ = indices.coo()
-                indices = torch.cat(src.view(1, -1), dst.view(1, -1))
+                indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
                 convert = True
 
             if torch.numel(indices) != 0:
