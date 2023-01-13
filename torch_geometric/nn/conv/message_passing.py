@@ -239,7 +239,7 @@ class MessagePassing(torch.nn.Module):
                 return src.index_select(self.node_dim, index)
             except (IndexError, RuntimeError) as e:
                 if index.min() < 0 or index.max() >= src.size(self.node_dim):
-                    raise ValueError(
+                    raise IndexError(
                         f"Encountered an index error. Please ensure that all "
                         f"indices in 'edge_index' point to valid indices in "
                         f"the interval [0, {src.size(self.node_dim) - 1}] "

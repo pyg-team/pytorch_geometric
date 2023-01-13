@@ -100,11 +100,11 @@ def test_my_conv_out_of_bounds():
 
     conv = MyConv(8, 32)
 
-    with pytest.raises(ValueError, match="valid indices"):
+    with pytest.raises(IndexError, match="valid indices"):
         edge_index = torch.tensor([[-1, 1, 2, 2], [0, 0, 1, 1]])
         conv(x, edge_index, value)
 
-    with pytest.raises(ValueError, match="valid indices"):
+    with pytest.raises(IndexError, match="valid indices"):
         edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
         conv(x, edge_index, value)
 
