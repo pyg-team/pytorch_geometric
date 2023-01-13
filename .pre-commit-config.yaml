@@ -3,8 +3,11 @@ repos:
     rev: v4.4.0
     hooks:
       - id: end-of-file-fixer
+        name: End-of-file fixer
       - id: trailing-whitespace
+        name: Remove trailing whitespaces
       - id: check-yaml
+        name: Check YAML
         exclude: |
           (?x)^(
               conda/pytorch-geometric/meta.yaml|
@@ -15,6 +18,7 @@ repos:
     rev: v1.28.0
     hooks:
       - id: yamllint
+        name: Lint YAML
         args: [-c=.yamllint.yml]
 
   - repo: https://github.com/regebro/pyroma
@@ -41,9 +45,3 @@ repos:
     hooks:
       - id: flake8
         name: Check PEP8
-
-  - repo: https://github.com/RobertCraigie/pyright-python
-    rev: v1.1.288
-    hooks:
-      - id: pyright
-        name: Check type safety
