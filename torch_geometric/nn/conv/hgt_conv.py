@@ -385,9 +385,7 @@ class HGTConv(MessagePassing):
                for n, o_l in out_dict.items()})
 
         # Iterate over node-types:
-        for node_type, outs in out_dict.items():
-            out = group(outs, self.group)
-
+        for node_type, out in out_dict.items():
             if out is None:
                 out_dict[node_type] = None
                 continue
