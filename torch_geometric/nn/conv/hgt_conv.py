@@ -373,10 +373,10 @@ class HGTConv(MessagePassing):
 
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         print('after propogate out.shape =', out.shape)
-        for e_type in self.edge_types:
-            dst_type = e_type[-1]
-            dst_n_ids = edge_index_dict[e_type][1, :]
-            out_dict[dst_type].append(out[dst_n_ids])
+        k_ptr = 0
+        for node_type, k in k_dict:
+            out_dict[node_type] = out[k_ptr:k_ptr+k.size(0)]
+            k_ptr += k.size(0)
         print('edge_index_dict.shape =',
               {e_t: e_i.shape
                for e_t, e_i in edge_index_dict.items()})
