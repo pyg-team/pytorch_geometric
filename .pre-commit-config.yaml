@@ -3,8 +3,11 @@ repos:
     rev: v4.4.0
     hooks:
       - id: end-of-file-fixer
+        name: End-of-file fixer
       - id: trailing-whitespace
+        name: Remove trailing whitespaces
       - id: check-yaml
+        name: Check YAML
         exclude: |
           (?x)^(
               conda/pytorch-geometric/meta.yaml|
@@ -15,6 +18,7 @@ repos:
     rev: v1.28.0
     hooks:
       - id: yamllint
+        name: Lint YAML
         args: [-c=.yamllint.yml]
 
   - repo: https://github.com/regebro/pyroma
