@@ -370,9 +370,9 @@ class HGTConv(MessagePassing):
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
         if convert:
             # convert back to CSR
-            print('edge_index_dict.shape = ', {e:idx for e, idx in edge_index_dict.items()})
+            print('edge_index_dict.shape = ', {e:idx.shape for e, idx in edge_index_dict.items()})
             print('e_idx.shape (preconversion) =', e_idx.shape)
-            e_idx = SparseTensor.from_edge_index(e_idx)
+            e_idx = SparseTensor.from_edge_index(e_idx, sparse_sizes=(k_out.size(0), k_out.size(0)))
             print('e_idx=', e_idx)
             print('k.shape=', k_out.shape)
             print('q.shape=', q.shape)
