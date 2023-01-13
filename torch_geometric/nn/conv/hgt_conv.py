@@ -357,16 +357,14 @@ class HGTConv(MessagePassing):
                 convert = True
 
             if torch.numel(indices) != 0:
-                edge_index_dict[e_type][
-                    0, :] = indices[0, :] + increment_dict[src_type]
-                edge_index_dict[e_type][
-                    1, :] = indices[1, :] + increment_dict[dst_type]
+                indices[0, :] = indices[0, :] + increment_dict[src_type]
+                indices[1, :] = indices[1, :] + increment_dict[dst_type]
                 q_list.append(q_dict[dst_type])
                 p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
 
             if convert:
-                edge_index_dict[e_type] = SparseTensor.from_edge_index(
-                    edge_index_dict[e_type])
+                indices = SparseTensor.from_edge_index(indices)
+            edge_index_dict[e_type] = indices
 
         q = torch.cat(q_list)
         p = group(p_rels, self.group).view(-1)
