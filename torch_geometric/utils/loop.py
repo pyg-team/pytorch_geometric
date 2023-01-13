@@ -126,9 +126,11 @@ def add_self_loops(edge_index, edge_attr=None, fill_value=None,
 
 
 def add_self_loops(
-        edge_index: Tensor, edge_attr: OptTensor = None,
-        fill_value: Union[float, Tensor, str] = None,
-        num_nodes: Optional[int] = None) -> Tuple[Tensor, OptTensor]:
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    fill_value: Optional[Union[float, Tensor, str]] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, OptTensor]:
     r"""Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features
@@ -234,9 +236,11 @@ def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
 
 
 def add_remaining_self_loops(
-        edge_index: Tensor, edge_attr: OptTensor = None,
-        fill_value: Union[float, Tensor, str] = None,
-        num_nodes: Optional[int] = None) -> Tuple[Tensor, OptTensor]:
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    fill_value: Optional[Union[float, Tensor, str]] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, OptTensor]:
     r"""Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features

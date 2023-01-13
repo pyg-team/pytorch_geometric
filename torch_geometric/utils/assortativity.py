@@ -1,4 +1,5 @@
 import torch
+from torch import Tensor
 
 from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import coalesce, degree
@@ -29,7 +30,8 @@ def assortativity(edge_index: Adj) -> float:
         -0.666667640209198
     """
     if isinstance(edge_index, SparseTensor):
-        row, col, _ = edge_index.coo()
+        adj: SparseTensor = edge_index
+        row, col, _ = adj.coo()
     else:
         row, col = edge_index
 
@@ -48,6 +50,7 @@ def assortativity(edge_index: Adj) -> float:
     pairs = torch.stack([src_deg, dst_deg], dim=0)
     occurrence = torch.ones(pairs.size(1), device=device)
     pairs, occurrence = coalesce(pairs, occurrence)
+    assert isinstance(occurrence, Tensor)
     M = to_dense_adj(pairs, edge_attr=occurrence, max_num_nodes=num_degrees)[0]
     # normalization
     M /= M.sum()
