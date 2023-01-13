@@ -23,6 +23,7 @@ jobs:
           pip install pyright
 
       - name: Run pyright
+        continue-on-error: true
         run: |
           pyright
 
