@@ -374,7 +374,8 @@ class HGTConv(MessagePassing):
                   {e: idx.shape
                    for e, idx in edge_index_dict.items()})
             print('e_idx.shape (preconversion) =', e_idx.shape)
-            e_idx = SparseTensor.from_edge_index(e_idx, sparse_sizes=(k_out.size(0), k_out.size(0)))
+            e_idx = SparseTensor.from_edge_index(
+                e_idx, sparse_sizes=(k_out.size(0), k_out.size(0)))
             print('e_idx=', e_idx)
             print('k.shape=', k_out.shape)
             print('q.shape=', q.shape)
