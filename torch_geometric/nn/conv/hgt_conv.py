@@ -375,7 +375,7 @@ class HGTConv(MessagePassing):
         print('after propogate out.shape =', out.shape)
         k_ptr = 0
         for node_type, k in k_dict.items():
-            out_dict[node_type] = out[k_ptr:k_ptr+k.size(0)]
+            out_dict[node_type] = out[k_ptr:k_ptr + k.size(0)]
             k_ptr += k.size(0)
         print('edge_index_dict.shape =',
               {e_t: e_i.shape
