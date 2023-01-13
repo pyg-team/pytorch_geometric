@@ -41,3 +41,9 @@ repos:
     hooks:
       - id: flake8
         name: Check PEP8
+
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.288
+    hooks:
+      - id: pyright
+        name: Check type safety
