@@ -82,7 +82,7 @@ class GATConvCuGraph(nn.Module):
 
     def forward(self, x: Tensor, edge_index: Adj, num_nodes: int,
                 from_neighbor_sampler: bool = False,
-                max_num_neighbors: int = None):
+                max_num_neighbors: int = None) -> Tensor:
         r"""
         Args:
             x: The input node features.
