@@ -363,7 +363,7 @@ class HGTConv(MessagePassing):
                 indices[1, :] = indices[1, :] + increment_dict[dst_type]
                 q_list.append(q_dict[dst_type])
                 p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
-            edge_index_dict[e_type] = indices
+                edge_index_dict[e_type] = indices
 
         q = torch.cat(q_list)
         p = group(p_rels, self.group).view(-1)
@@ -371,6 +371,12 @@ class HGTConv(MessagePassing):
         if convert:
             # convert back to CSR
             e_idx = SparseTensor.from_edge_index(e_idx)
+            print('e_idx=',e_idx)
+            print('k.shape=', k_out.shape)
+            print('q.shape=', q.shape)
+            print('v.shape=', v_out.shape)
+            print('p.shape=', p.shape)
+
         # propogate
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         k_ptr = 0
