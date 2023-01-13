@@ -372,8 +372,12 @@ class HGTConv(MessagePassing):
             dst_type = e_type[-1]
             dst_n_ids = edge_index_dict[e_type][1, :]
             out_dict[dst_type].append(out[dst_n_ids])
-        print('edge_index_dict.shape =', {e_t:e_i.shape for e_t, e_i in edge_index_dict.items()})
-        print('out_dict.shape =', {n:[o.shape for o in o_l] for n, o_l in out_dict.items()})
+        print('edge_index_dict.shape =',
+              {e_t: e_i.shape
+               for e_t, e_i in edge_index_dict.items()})
+        print('out_dict.shape =',
+              {n: [o.shape for o in o_l]
+               for n, o_l in out_dict.items()})
 
         # Iterate over node-types:
         for node_type, outs in out_dict.items():
