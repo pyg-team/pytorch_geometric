@@ -294,7 +294,12 @@ class HGTConv(MessagePassing):
         m_rels = [
             self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
-
+        print('k_dict.shape:',
+              {node_type: k.shape
+               for node_type, k in k_dict.items()})
+        print('v_dict.shape:',
+              {node_type: v.shape
+               for node_type, v in v_dict.items()})
         if self.use_gmm:
             k_ins = [
                 k_dict[src_type].transpose(0, 1) for src_type in src_types
