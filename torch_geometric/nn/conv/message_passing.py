@@ -243,7 +243,8 @@ class MessagePassing(torch.nn.Module):
                         f"Encountered a CUDA error. Please ensure that all "
                         f"indices in 'edge_index' point to valid indices "
                         f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
+                        f"your node feature matrix and try again.\n\n"
+                        f"Original error:\n{e}")
 
                 if index.numel() > 0 and index.min() < 0:
                     raise ValueError(
