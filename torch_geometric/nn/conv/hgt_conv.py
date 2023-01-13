@@ -169,7 +169,7 @@ class HGTConv(MessagePassing):
         xs = list(x_dict.values())
 
         if not self.use_gmm:
-            if self.no_pad and not self.infer_shapes:
+            if self.no_pad:
                 x = torch.cat(xs)
             else:
                 if self.infer_shapes:
@@ -294,12 +294,6 @@ class HGTConv(MessagePassing):
         m_rels = [
             self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
-        print('k_dict.shape:',
-              {node_type: k.shape
-               for node_type, k in k_dict.items()})
-        print('v_dict.shape:',
-              {node_type: v.shape
-               for node_type, v in v_dict.items()})
         if self.use_gmm:
             k_ins = [
                 k_dict[src_type].transpose(0, 1) for src_type in src_types
@@ -353,36 +347,32 @@ class HGTConv(MessagePassing):
         p_rels = []
         for e_type in self.edge_types:
             src_type, dst_type = e_type[0], e_type[-1]
-            if torch.numel(edge_index_dict[e_type]) != 0:
-                edge_index_dict[e_type][0, :] = edge_index_dict[e_type][
-                    0, :] + increment_dict[src_type]
-                edge_index_dict[e_type][1, :] = edge_index_dict[e_type][
-                    1, :] + increment_dict[dst_type]
+            indices = edge_index_dict[e_type]
+            # (TODO) Add support for SparseTensor w/o converting
+            convert = isinstance(indices, SparseTensor)
+            if convert:
+                src, dst, _ = indices.coo()
+                indices = torch.cat(src.view(1, -1), dst.view(1, -1))
+                convert = True
+
+            if torch.numel(indices) != 0:
+                edge_index_dict[e_type][0, :] = indices[0, :] + increment_dict[src_type]
+                edge_index_dict[e_type][1, :] = indices[1, :] + increment_dict[dst_type]
                 q_list.append(q_dict[dst_type])
                 p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
+
+            if convert:
+                edge_index_dict[e_type] = SparseTensor.from_edge_index(edge_index_dict[e_type])
+
         q = torch.cat(q_list)
         p = group(p_rels, self.group).view(-1)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
         # propogate
-        print('For .propogate:')
-        print('e_idx.shape:', e_idx.shape)
-        print('k.shape:', k_out.shape)
-        print('q.shape = ', q.shape)
-        print('v.shape = ', v_out.shape)
-        print('p.shape = ', p.shape)
-
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
-        print('after propogate out.shape =', out.shape)
         k_ptr = 0
         for node_type, k in k_dict.items():
             out_dict[node_type] = out[k_ptr:k_ptr + k.size(0)]
             k_ptr += k.size(0)
-        print('edge_index_dict.shape =',
-              {e_t: e_i.shape
-               for e_t, e_i in edge_index_dict.items()})
-        print('out_dict.shape =',
-              {n: [o.shape for o in o_l]
-               for n, o_l in out_dict.items()})
 
         # Iterate over node-types:
         for node_type, out in out_dict.items():
@@ -393,10 +383,6 @@ class HGTConv(MessagePassing):
             out = self.a_lin[node_type](F.gelu(out))
             if out.size(-1) == x_dict[node_type].size(-1):
                 alpha = self.skip[node_type].sigmoid()
-                print('alpha.shape =', alpha.shape)
-                print('x_dict[' + node_type + '].shape =',
-                      x_dict[node_type].shape)
-                print('out.shape =', out.shape)
                 out = alpha * out + (1 - alpha) * x_dict[node_type]
             out_dict[node_type] = out
 
