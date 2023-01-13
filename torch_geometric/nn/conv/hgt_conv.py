@@ -353,6 +353,7 @@ class HGTConv(MessagePassing):
             # (TODO) Add support for SparseTensor w/o converting
             convert = isinstance(indices, SparseTensor)
             if convert:
+                # convert to COO
                 src, dst, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
                 convert = True
@@ -362,14 +363,14 @@ class HGTConv(MessagePassing):
                 indices[1, :] = indices[1, :] + increment_dict[dst_type]
                 q_list.append(q_dict[dst_type])
                 p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
-
-            if convert:
-                indices = SparseTensor.from_edge_index(indices)
             edge_index_dict[e_type] = indices
 
         q = torch.cat(q_list)
         p = group(p_rels, self.group).view(-1)
         e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
+        if convert:
+            # convert back to CSR
+            e_idx = SparseTensor.from_edge_index(e_idx)
         # propogate
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         k_ptr = 0
