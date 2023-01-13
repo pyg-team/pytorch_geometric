@@ -371,7 +371,7 @@ class HGTConv(MessagePassing):
         if convert:
             # convert back to CSR
             e_idx = SparseTensor.from_edge_index(e_idx)
-            print('e_idx=',e_idx)
+            print('e_idx=', e_idx)
             print('k.shape=', k_out.shape)
             print('q.shape=', q.shape)
             print('v.shape=', v_out.shape)
