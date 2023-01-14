@@ -89,8 +89,6 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
 
-.. _installation_from_source:
-
 Installation from Source
 ------------------------
 
