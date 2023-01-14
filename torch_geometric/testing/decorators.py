@@ -81,7 +81,7 @@ def withPackage(*args) -> Callable:
 
         version = module.__version__
         # `req.specifier` does not support `.dev` suffixes, e.g., for
-        # `pyg_lib.0.1.0.dev*`, so we manually drop them:
+        # `pyg_lib==0.1.0.dev*`, so we manually drop them:
         if '.dev' in version:
             version = '.'.join(version.split('.dev')[:-1])
 
