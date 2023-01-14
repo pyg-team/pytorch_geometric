@@ -572,7 +572,7 @@ def neg_sample(seed: Tensor, neg_sampling: NegativeSampling, num_nodes: int,
     num_samples = math.ceil(neg_sampling.amount)
     seed_time = seed_time.view(1, -1).expand(num_samples, -1)
 
-    out = neg_sampling.sample(num_neg, num_nodes)
+    out = neg_sampling.sample(num_samples * seed.numel(), num_nodes)
     out = out.view(num_samples, seed.numel())
     mask = node_time[out] >= seed_time  # holds all invalid samples.
     neg_sampling_complete = False
