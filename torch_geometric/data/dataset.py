@@ -18,7 +18,7 @@ IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
 class Dataset(torch.utils.data.Dataset):
     r"""Dataset base class for creating graph datasets.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html>`__ for the accompanying tutorial.
 
     Args:

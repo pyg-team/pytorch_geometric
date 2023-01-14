@@ -50,8 +50,8 @@ Recent works also show that using **multiple aggregations** (`Corso et al. (2020
 Another line of research studies optimization-based and implicitly-defined aggregations (`Bartunov et al. (2022) <https://arxiv.org/abs/2202.12795>`__).
 Furthermore, an interesting discussion concerns the trade-off between representational power (usually gained through learnable functions implemented as neural networks) and the formal property of permutation invariance (`Buterez et al. (2022) <https://arxiv.org/abs/2211.04952>`__).
 
-To facilitate further experimentation and unify the concepts of aggregation within GNNs across both :class:`~torch_geometric.nn.conv.MessagePassing` and global readouts, we have made the concept of :class:`~torch_geometric.nn.aggr.Aggregation` a first-class principle in PyG.
-As of now, PyG provides support for various aggregations --- from rather simple ones (*e.g.*, :obj:`mean`, :obj:`max`, :obj:`sum`), to advanced ones (*e.g.*, :obj:`median`, :obj:`var`, :obj:`std`), learnable ones (*e.g.*, :class:`~torch_geometric.nn.aggr.SoftmaxAggregation`, :class:`~torch_geometric.nn.aggr.PowerMeanAggregation`, :class:`~torch_geometric.nn.aggr.SetTransformerAggregation`), and exotic ones (*e.g.*, :class:`~torch_geometric.nn.aggr.MLPAggregation`, :class:`~torch_geometric.nn.aggr.LSTMAggregation`, :class:`~torch_geometric.nn.aggr.SortAggregation`, :class:`~torch_geometric.nn.aggr.EquilibriumAggregation`):
+To facilitate further experimentation and unify the concepts of aggregation within GNNs across both :class:`~torch_geometric.nn.conv.MessagePassing` and global readouts, we have made the concept of :class:`~torch_geometric.nn.aggr.Aggregation` a first-class principle in :pyg:`PyG`.
+As of now, :pyg:`PyG` provides support for various aggregations --- from rather simple ones (*e.g.*, :obj:`mean`, :obj:`max`, :obj:`sum`), to advanced ones (*e.g.*, :obj:`median`, :obj:`var`, :obj:`std`), learnable ones (*e.g.*, :class:`~torch_geometric.nn.aggr.SoftmaxAggregation`, :class:`~torch_geometric.nn.aggr.PowerMeanAggregation`, :class:`~torch_geometric.nn.aggr.SetTransformerAggregation`), and exotic ones (*e.g.*, :class:`~torch_geometric.nn.aggr.MLPAggregation`, :class:`~torch_geometric.nn.aggr.LSTMAggregation`, :class:`~torch_geometric.nn.aggr.SortAggregation`, :class:`~torch_geometric.nn.aggr.EquilibriumAggregation`):
 
 .. code-block:: python
 
@@ -118,7 +118,7 @@ Each of the provided aggregations can be used within :class:`~torch_geometric.nn
             x = self.classifier(x)
             return x
 
-In addition, the aggregation package of PyG introduces two new concepts:
+In addition, the aggregation package of :pyg:`PyG` introduces two new concepts:
 First, aggregations can be **resolved from pure strings** via a lookup table, following the design principles of the `class-resolver <https://github.com/cthoyt/class-resolver>`__ library, *e.g.*, by simply passing in :obj:`"median"` to the :class:`~torch_geometric.nn.conv.MessagePassing` module.
 This will automatically resolve to the :obj:`~torch_geometric.nn.aggr.MedianAggregation` class:
 
