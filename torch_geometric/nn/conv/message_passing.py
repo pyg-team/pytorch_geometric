@@ -238,12 +238,15 @@ class MessagePassing(torch.nn.Module):
                 index = edge_index[dim]
                 return src.index_select(self.node_dim, index)
             except (IndexError, RuntimeError) as e:
-                if 'CUDA' in str(e):
-                    raise ValueError(
-                        f"Encountered a CUDA error. Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
+                if index.min() < 0 or index.max() >= src.size(self.node_dim):
+                    raise IndexError(
+                        f"Encountered an index error. Please ensure that all "
+                        f"indices in 'edge_index' point to valid indices in "
+                        f"the interval [0, {src.size(self.node_dim) - 1}] "
+                        f"(got interval "
+                        f"[{int(index.min())}, {int(index.max())}])")
+                else:
+                    raise e
 
                 if index.numel() > 0 and index.min() < 0:
                     raise ValueError(

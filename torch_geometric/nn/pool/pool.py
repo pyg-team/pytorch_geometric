@@ -1,10 +1,9 @@
 from typing import Optional
 
 import torch
-from torch_scatter import scatter_mean
 from torch_sparse import coalesce
 
-from torch_geometric.utils import remove_self_loops
+from torch_geometric.utils import remove_self_loops, scatter
 
 
 def pool_edge(cluster, edge_index, edge_attr: Optional[torch.Tensor] = None):
@@ -22,4 +21,4 @@ def pool_batch(perm, batch):
 
 
 def pool_pos(cluster, pos):
-    return scatter_mean(pos, cluster, dim=0)
+    return scatter(pos, cluster, dim=0, reduce='mean')

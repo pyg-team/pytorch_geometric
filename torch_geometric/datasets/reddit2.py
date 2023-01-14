@@ -34,19 +34,20 @@ class Reddit2(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 232,965
-              - 23,213,838
-              - 602
-              - 41
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 232,965
+          - 23,213,838
+          - 602
+          - 41
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 

@@ -20,7 +20,6 @@ We represent explanations using the :class:`torch_geometric.explain.Explanation`
 
 The :class:`torch_geometric.explain.Explainer` class is designed to handle all explainability parameters (see the :class:`torch_geometric.explain.config.ExplainerConfig` class for more details):
 
-
 - which algorithm from the :class:`torch_geometric.explain.algorithm` module to use (*e.g.*, :class:`~torch_geometric.explain.algorithm.GNNExplainer`)
 - the type of explanation to compute (*e.g.*, :obj:`explanation_type="phenomenon"` or :obj:`explanation_type="model"`)
 - the different type of masks for node and edges (*e.g.*, :obj:`mask="object"` or :obj:`mask="attributes"`)

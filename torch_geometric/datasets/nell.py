@@ -35,19 +35,20 @@ class NELL(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 65,755
-              - 251,550
-              - 61,278
-              - 186
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 65,755
+          - 251,550
+          - 61,278
+          - 186
     """
 
     url = 'http://www.cs.cmu.edu/~zhiliny/data/nell_data.tar.gz'

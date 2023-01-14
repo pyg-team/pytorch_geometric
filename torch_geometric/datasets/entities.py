@@ -37,36 +37,37 @@ class Entities(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - AIFB
-              - 8,285
-              - 58,086
-              - 0
-              - 4
-            * - AM
-              - 1,666,764
-              - 11,976,642
-              - 0
-              - 11
-            * - MUTAG
-              - 23,644
-              - 148,454
-              - 0
-              - 2
-            * - BGS
-              - 333,845
-              - 1,832,398
-              - 0
-              - 2
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - AIFB
+          - 8,285
+          - 58,086
+          - 0
+          - 4
+        * - AM
+          - 1,666,764
+          - 11,976,642
+          - 0
+          - 11
+        * - MUTAG
+          - 23,644
+          - 148,454
+          - 0
+          - 2
+        * - BGS
+          - 333,845
+          - 1,832,398
+          - 0
+          - 2
     """
 
     url = 'https://data.dgl.ai/dataset/{}.tgz'

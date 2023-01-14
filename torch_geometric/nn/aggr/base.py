@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter, segment_csr
+from torch_scatter import segment_csr
 
 from torch_geometric.utils import scatter, to_dense_batch
 
