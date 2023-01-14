@@ -1,8 +1,8 @@
 Introduction by Example
 =======================
 
-We shortly introduce the fundamental concepts of PyG through self-contained examples.
-At its core, PyG provides the following main features:
+We shortly introduce the fundamental concepts of :pyg:`PyG` through self-contained examples.
+At its core, :pyg:`PyG` provides the following main features:
 
 .. contents::
     :local:
@@ -11,7 +11,7 @@ Data Handling of Graphs
 -----------------------
 
 A graph is used to model pairwise relations (edges) between objects (nodes).
-A single graph in PyG is described by an instance of :class:`torch_geometric.data.Data`, which holds the following attributes by default:
+A single graph in :pyg:`PyG` is described by an instance of :class:`torch_geometric.data.Data`, which holds the following attributes by default:
 
 - :obj:`data.x`: Node feature matrix with shape :obj:`[num_nodes, num_node_features]`
 - :obj:`data.edge_index`: Graph connectivity in `COO format <https://pytorch.org/docs/stable/sparse.html#sparse-coo-docs>`_ with shape :obj:`[2, num_edges]` and type :obj:`torch.long`
@@ -24,8 +24,8 @@ In fact, the :class:`~torch_geometric.data.Data` object is not even restricted t
 We can, *e.g.*, extend it by :obj:`data.face` to save the connectivity of triangles from a 3D mesh in a tensor with shape :obj:`[3, num_faces]` and type :obj:`torch.long`.
 
 .. Note::
-    PyTorch and :obj:`torchvision` define an example as a tuple of an image and a target.
-    We omit this notation in PyG to allow for various data structures in a clean and understandable way.
+    :pytorch:`PyTorch` and :obj:`torchvision` define an example as a tuple of an image and a target.
+    We omit this notation in :pyg:`PyG` to allow for various data structures in a clean and understandable way.
 
 We show a simple example of an unweighted and undirected graph with three nodes and four edges.
 Each node contains exactly one feature:
@@ -125,7 +125,7 @@ You can find a complete list of all methods at :class:`torch_geometric.data.Data
 Common Benchmark Datasets
 -------------------------
 
-PyG contains a large number of common benchmark datasets, *e.g.*, all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de <http://graphkernels.cs.tu-dortmund.de/>`_ and their `cleaned versions <https://github.com/nd7141/graph_datasets>`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
+:pyg:`PyG` contains a large number of common benchmark datasets, *e.g.*, all Planetoid datasets (Cora, Citeseer, Pubmed), all graph classification datasets from `http://graphkernels.cs.tu-dortmund.de <http://graphkernels.cs.tu-dortmund.de/>`_ and their `cleaned versions <https://github.com/nd7141/graph_datasets>`_, the QM7 and QM9 dataset, and a handful of 3D mesh/point cloud datasets like FAUST, ModelNet10/40 and ShapeNet.
 
 Initializing a dataset is straightforward.
 An initialization of a dataset will automatically download its raw files and process them to the previously described :class:`~torch_geometric.data.Data` format.
@@ -235,14 +235,14 @@ Mini-batches
 ------------
 
 Neural networks are usually trained in a batch-wise fashion.
-PyG achieves parallelization over a mini-batch by creating sparse block diagonal adjacency matrices (defined by :obj:`edge_index`) and concatenating feature and target matrices in the node dimension.
+:pyg:`PyG` achieves parallelization over a mini-batch by creating sparse block diagonal adjacency matrices (defined by :obj:`edge_index`) and concatenating feature and target matrices in the node dimension.
 This composition allows differing number of nodes and edges over examples in one batch:
 
 .. math::
 
     \mathbf{A} = \begin{bmatrix} \mathbf{A}_1 & & \\ & \ddots & \\ & & \mathbf{A}_n \end{bmatrix}, \qquad \mathbf{X} = \begin{bmatrix} \mathbf{X}_1 \\ \vdots \\ \mathbf{X}_n \end{bmatrix}, \qquad \mathbf{Y} = \begin{bmatrix} \mathbf{Y}_1 \\ \vdots \\ \mathbf{Y}_n \end{bmatrix}
 
-PyG contains its own :class:`torch_geometric.loader.DataLoader`, which already takes care of this concatenation process.
+:pyg:`PyG` contains its own :class:`torch_geometric.loader.DataLoader`, which already takes care of this concatenation process.
 Let's learn about it in an example:
 
 .. code-block:: python
@@ -290,14 +290,14 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
         x.size()
         >>> torch.Size([32, 21])
 
-You can learn more about the internal batching procedure of PyG, *e.g.*, how to modify its behaviour, `here <../advanced/batching.html>`__.
+You can learn more about the internal batching procedure of :pyg:`PyG`, *e.g.*, how to modify its behaviour, `here <../advanced/batching.html>`__.
 For documentation of scatter operations, we refer the interested reader to the :obj:`torch-scatter` `documentation <https://pytorch-scatter.readthedocs.io>`_.
 
 Data Transforms
 ---------------
 
 Transforms are a common way in :obj:`torchvision` to transform images and perform augmentation.
-PyG comes with its own transforms, which expect a :class:`~torch_geometric.data.Data` object as input and return a new transformed :class:`~torch_geometric.data.Data` object.
+:pyg:`PyG` comes with its own transforms, which expect a :class:`~torch_geometric.data.Data` object as input and return a new transformed :class:`~torch_geometric.data.Data` object.
 Transforms can be chained together using :class:`torch_geometric.transforms.Compose` and are applied before saving a processed dataset on disk (:obj:`pre_transform`) or before accessing a graph in a dataset (:obj:`transform`).
 
 Let's look at an example, where we apply transforms on the ShapeNet dataset (containing 17,000 3D shape point clouds and per point labels from 16 shape categories).
@@ -348,7 +348,7 @@ You can find a complete list of all implemented transforms at :mod:`torch_geomet
 Learning Methods on Graphs
 --------------------------
 
-After learning about data handling, datasets, loader and transforms in PyG, it's time to implement our first graph neural network!
+After learning about data handling, datasets, loader and transforms in :pyg:`PyG`, it's time to implement our first graph neural network!
 
 We will use a simple GCN layer and replicate the experiments on the Cora citation dataset.
 For a high-level explanation on GCN, have a look at its `blog post <http://tkipf.github.io/graph-convolutional-networks/>`_.
@@ -388,7 +388,7 @@ Now let's implement a two-layer GCN:
             return F.log_softmax(x, dim=1)
 
 The constructor defines two :class:`~torch_geometric.nn.conv.GCNConv` layers which get called in the forward pass of our network.
-Note that the non-linearity is not integrated in the :obj:`conv` calls and hence needs to be applied afterwards (something which is consistent accross all operators in PyG).
+Note that the non-linearity is not integrated in the :obj:`conv` calls and hence needs to be applied afterwards (something which is consistent accross all operators in :pyg:`PyG`).
 Here, we chose to use ReLU as our intermediate non-linearity and finally output a softmax distribution over the number of classes.
 Let's train this model on the training nodes for 200 epochs:
 

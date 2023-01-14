@@ -88,7 +88,7 @@ We can make use of those two columns to define a feature representation that can
 The :obj:`ratings.csv` data connects users (as given by :obj:`userId`) and movies (as given by :obj:`movieId`), and defines how a given user has rated a specific movie (:obj:`rating`).
 Due to simplicity, we do not make use of the additional :obj:`timestamp` information.
 
-For representing this data in the PyG data format, we first define a method :meth:`load_node_csv` that reads in a :obj:`*.csv` file and returns a node-level feature representation :obj:`x` of shape :obj:`[num_nodes, num_features]`:
+For representing this data in the :pyg:`PyG` data format, we first define a method :meth:`load_node_csv` that reads in a :obj:`*.csv` file and returns a node-level feature representation :obj:`x` of shape :obj:`[num_nodes, num_features]`:
 
 .. code-block:: python
 
@@ -129,7 +129,7 @@ For this, we make use of the excellent `sentence-transformers <https://www.sbert
                                   convert_to_tensor=True, device=self.device)
             return x.cpu()
 
-The :class:`SequenceEncoder` class loads a pre-trained NLP model as given by :obj:`model_name`, and uses it to encode a list of strings into a PyTorch tensor of shape :obj:`[num_strings, embedding_dim]`.
+The :class:`SequenceEncoder` class loads a pre-trained NLP model as given by :obj:`model_name`, and uses it to encode a list of strings into a :pytorch:`PyTorch` tensor of shape :obj:`[num_strings, embedding_dim]`.
 We can use this :class:`SequenceEncoder` to encode the :obj:`title` of the :obj:`movies.csv` file.
 
 In a similar fashion, we can create another encoder that converts the genres of movies, *e.g.*, :obj:`Adventure|Children|Fantasy`, into categorical labels.
@@ -214,7 +214,7 @@ We further make use of the node-level mappings :obj:`src_mapping` and :obj:`dst_
 For every edge defined in the file, it looks up the forward indices in :obj:`src_mapping` and :obj:`dst_mapping`, and moves the data appropriately.
 
 Similarly to :meth:`load_node_csv`, encoders are used to return additional edge-level feature information.
-For example, for loading the ratings from the :obj:`rating` column in :obj:`ratings.csv`, we can define an :class:`IdentityEncoder` that simply converts a list of floating-point values into a PyTorch tensor:
+For example, for loading the ratings from the :obj:`rating` column in :obj:`ratings.csv`, we can define an :class:`IdentityEncoder` that simply converts a list of floating-point values into a :pytorch:`PyTorch` tensor:
 
 .. code-block:: python
 
@@ -251,7 +251,7 @@ With this, we are ready to finalize our :class:`~torch_geometric.data.HeteroData
       }
     )
 
-This :class:`~torch_geometric.data.HeteroData` object is the native format of heterogenous graphs in PyG and can be used as input for `heterogenous graph models <heterogeneous.html>`__.
+This :class:`~torch_geometric.data.HeteroData` object is the native format of heterogenous graphs in :pyg:`PyG` and can be used as input for `heterogenous graph models <heterogeneous.html>`__.
 
 .. note::
 

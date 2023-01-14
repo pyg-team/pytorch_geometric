@@ -1,9 +1,9 @@
 Heterogeneous Graph Learning
 ============================
 
-A large set of real-world datasets are stored as heterogeneous graphs, motivating the introduction of specialized functionality for them in Pytorch Geometric (PyG).
+A large set of real-world datasets are stored as heterogeneous graphs, motivating the introduction of specialized functionality for them in :pyg:`PyG`.
 For example, most graphs in the area of recommendation, such as social graphs, are heterogeneous, as they store information about different types of entities and their different types of relations.
-This tutorial introduces how heterogeneous graphs are mapped to PyG and how they can be used as input to Graph Neural Network models.
+This tutorial introduces how heterogeneous graphs are mapped to :pyg:`PyG` and how they can be used as input to Graph Neural Network models.
 
 Heterogeneous graphs come with different types of information attached to nodes and edges.
 Thus, a single node or edge feature tensor cannot hold all node or edge features of the whole graph, due to differences in type and dimensionality.
@@ -180,7 +180,7 @@ Most `transformations <https://pytorch-geometric.readthedocs.io/en/latest/module
     data = T.AddSelfLoops()(data)
     data = T.NormalizeFeatures()(data)
 
-Here, :meth:`~torch_geometric.transforms.ToUndirected` transforms a directed graph into (the PyG representation of) an undirected graph, by adding reverse edges for all edges in the graph.
+Here, :meth:`~torch_geometric.transforms.ToUndirected` transforms a directed graph into (the :pyg:`PyG` representation of) an undirected graph, by adding reverse edges for all edges in the graph.
 Thus, future message passing is performed in both direction of all edges.
 The function may add reverse edge types to the heterogeneous graph, if necessary.
 
@@ -199,7 +199,7 @@ During runtime, the MP-GNN algorithm would need to iterate over edge type dictio
 To avoid unnecessary runtime overheads and to make the creation of heterogeneous MP-GNNs as simple as possible, Pytorch Geometric provides three ways for the user to create models on heterogeneous graph data:
 
 #. Automatically convert a homogenous GNN model to a heterogeneous GNN model by making use of :meth:`torch_geometric.nn.to_hetero` or :meth:`torch_geometric.nn.to_hetero_with_bases`
-#. Define inidividual functions for different types using PyGs wrapper :class:`torch_geometric.nn.conv.HeteroConv` for heterogeneous convolution
+#. Define inidividual functions for different types using :pyg:`PyG's` wrapper :class:`torch_geometric.nn.conv.HeteroConv` for heterogeneous convolution
 #. Deploy existing (or write your own) heterogeneous GNN operators
 
 In the following, each option is introduced in detail.
@@ -207,7 +207,7 @@ In the following, each option is introduced in detail.
 Automatically Converting GNN Models
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Pytorch Geometric allows to automatically convert any PyG GNN model to a model for heterogeneous input graphs, using the built in functions :meth:`torch_geometric.nn.to_hetero` or :meth:`torch_geometric.nn.to_hetero_with_bases`.
+Pytorch Geometric allows to automatically convert any :pyg:`PyG` GNN model to a model for heterogeneous input graphs, using the built in functions :meth:`torch_geometric.nn.to_hetero` or :meth:`torch_geometric.nn.to_hetero_with_bases`.
 The following `example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py>`__ shows how to apply it:
 
 .. code-block:: python
@@ -247,9 +247,9 @@ Note that we pass in a tuple of :obj:`in_channels` to :class:`~torch_geometric.n
 .. _lazyinit:
 
 .. note::
-   Since the number of input features and thus the size of tensors varies between different types, PyG can make use of **lazy initialization** to initialize parameters in heterogeneous GNNs (as denoted by :obj:`-1` as the :obj:`in_channels` argument).
+   Since the number of input features and thus the size of tensors varies between different types, :pyg:`PyG` can make use of **lazy initialization** to initialize parameters in heterogeneous GNNs (as denoted by :obj:`-1` as the :obj:`in_channels` argument).
    This allows us to avoid calculating and keeping track of all tensor sizes of the computation graph.
-   Lazy initialization is supported for all existing PyG operators.
+   Lazy initialization is supported for all existing :pyg:`PyG` operators.
    We can initialize the model's parameters by calling it once:
 
    .. code-block:: python
@@ -352,7 +352,7 @@ and run the standard training procedure as outlined :ref:`here<trainfunc>`.
 Deploy Existing Heterogenous Operators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-PyG provides operators (*e.g.*, :class:`torch_geometric.nn.conv.HGTConv`), which are specifically designed for heterogeneous graphs.
+:pyg:`PyG` provides operators (*e.g.*, :class:`torch_geometric.nn.conv.HGTConv`), which are specifically designed for heterogeneous graphs.
 These operators can be directly used to build heterogeneous GNN models as can be seen in the following `example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/hgt_dblp.py>`__:
 
 .. code-block:: python
@@ -405,7 +405,7 @@ and run the standard training procedure as outlined :ref:`here<trainfunc>`.
 Heterogeneous Graph Samplers
 ----------------------------
 
-PyG provides various functionalities for sampling heterogeneous graphs, *i.e.* in the standard :class:`torch_geometric.loader.NeighborLoader` class  or in dedicated heterogeneous graph samplers such as :class:`torch_geometric.loader.HGTLoader`.
+:pyg:`PyG` provides various functionalities for sampling heterogeneous graphs, *i.e.* in the standard :class:`torch_geometric.loader.NeighborLoader` class  or in dedicated heterogeneous graph samplers such as :class:`torch_geometric.loader.HGTLoader`.
 This is especially useful for efficient representation learning on large heterogeneous graphs, where processing the full number of neighbors is too computationally expensive.
 Heterogeneous graph support for other samplers such as :class:`torch_geometric.loader.ClusterLoader` or :class:`torch_geometric.loader.GraphSAINTLoader` will be added soon.
 Overall, all heterogeneous graph loaders will produce a :class:`~torch_geometric.data.HeteroData` object as output, holding a subset of the original data, and mainly differ in the way their sampling procedures works.

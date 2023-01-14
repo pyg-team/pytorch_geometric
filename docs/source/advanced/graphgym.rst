@@ -2,11 +2,11 @@ Managing Experiments with GraphGym
 ==================================
 
 GraphGym is a platform for **designing and evaluating Graph Neural Networks (GNNs)**, as originally proposed in the `"Design Space for Graph Neural Networks" <https://arxiv.org/abs/2011.08843>`__ paper.
-We now officially support GraphGym as part of of PyG.
+We now officially support GraphGym as part of of :pyg:`PyG`.
 
 .. warning::
 
-    GraphGym API may change in the future as we are continuously working on better and deeper integration with PyG.
+    GraphGym API may change in the future as we are continuously working on better and deeper integration with :pyg:`PyG`.
 
 Highlights
 ----------
@@ -39,7 +39,7 @@ Why GraphGym?
 **Scenario 1:** You are a beginner to graph representation learning and want to understand how GNNs work:
 
 You probably have read many exciting papers on GNNs, and try to write your own GNN implementation.
-Even if using raw PyG, you still have to code up the essential pipeline on your own.
+Even if using raw :pyg:`PyG`, you still have to code up the essential pipeline on your own.
 GraphGym is a perfect place for your to start learning about *standardized GNN implementation and evaluation*.
 
 .. figure:: ../_figures/graphgym_design_space.png
@@ -78,7 +78,7 @@ In sum, GraphGym can greatly facilitate your GNN research.
 Basic Usage
 -----------
 
-To use GraphGym, you need to clone PyG from Github, then change to the :obj:`graphgym/` directory.
+To use GraphGym, you need to clone :pyg:`PyG` from Github, then change to the :obj:`graphgym/` directory.
 
 .. code-block:: bash
 
@@ -117,7 +117,7 @@ To use GraphGym, you need to clone PyG from Github, then change to the :obj:`gra
 In-Depth Usage
 --------------
 
-To use GraphGym, you need to clone PyG from Github, then change to the :obj:`graphgym/` directory.
+To use GraphGym, you need to clone :pyg:`PyG` from Github, then change to the :obj:`graphgym/` directory.
 
 .. code-block:: bash
 
@@ -210,12 +210,12 @@ Eventually, every GraphGym-powered project will be unique.
 
 There are two ways for customizing GraphGym:
 
-#. Use the :obj:`graphgym/custom_graphgym` directory outside the PyG package:
-   You can register your customized modules here without touching PyG. This use case will be great for your own customized project.
+#. Use the :obj:`graphgym/custom_graphgym` directory outside the :pyg:`PyG` package:
+   You can register your customized modules here without touching :pyg:`PyG`. This use case will be great for your own customized project.
 
-#. Use the :obj:`torch_geometric/graphgym/contrib` directory inside the PyG package:
-   If you have come up with a nice customized module, you can directly copy your files into :obj:`torch_geometric/graphgym/contrib`, and **create a pull request** to PyG.
-   This way, your idea can ship with PyG installations, and will have a much higher visibility and impact.
+#. Use the :obj:`torch_geometric/graphgym/contrib` directory inside the :pyg:`PyG` package:
+   If you have come up with a nice customized module, you can directly copy your files into :obj:`torch_geometric/graphgym/contrib`, and **create a pull request** to :pyg:`PyG`.
+   This way, your idea can ship with :pyg:`PyG` installations, and will have a much higher visibility and impact.
 
 Concretely, the supported customized modules includes
 

@@ -1,7 +1,7 @@
 Memory-Efficient Aggregations
 =============================
 
-The :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` interface of PyG relies on a gather-scatter scheme to aggregate messages from neighboring nodes.
+The :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` interface of :pyg:`PyG` relies on a gather-scatter scheme to aggregate messages from neighboring nodes.
 For example, consider the message passing layer
 
 .. math::
@@ -64,7 +64,7 @@ is equivalent to computing
 where :math:`\mathbf{A}` denotes a sparse adjacency matrix of shape :obj:`[num_nodes, num_nodes]`.
 This formulation allows to leverage dedicated and fast sparse-matrix multiplication implementations.
 
-In **PyG >= 1.6.0**, we officially introduce better support for sparse-matrix multiplication GNNs, resulting in a **lower memory footprint** and a **faster execution time**.
+In :pyg:`null` **PyG >= 1.6.0**, we officially introduce better support for sparse-matrix multiplication GNNs, resulting in a **lower memory footprint** and a **faster execution time**.
 As a result, we introduce the :class:`SparseTensor` class (from the :obj:`torch-sparse` package), which implements fast forward and backward passes for sparse-matrix multiplication based on the `"Design Principles for Sparse Matrix Multiplication on the GPU" <https://arxiv.org/abs/1803.08601>`_ paper.
 
 Using the :class:`SparseTensor` class is straightforward and similar to the way :obj:`scipy` treats sparse matrices:

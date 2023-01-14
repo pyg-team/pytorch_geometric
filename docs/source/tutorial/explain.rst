@@ -2,7 +2,7 @@ GNN Explainability
 ==================
 
 Interpreting GNN models is crucial for many use cases.
-PyG 2.3 (and beyond) provides the :class:`torch_geometric.explain` package for first-class GNN explainability support that currently includes
+:pyg:`PyG` (2.3 and beyond) provides the :class:`torch_geometric.explain` package for first-class GNN explainability support that currently includes
 
 #. a flexible interface to generate a variety of explanations via the :class:`~torch_geometric.explain.Explainer` class,
 
@@ -124,4 +124,4 @@ Importantly, passing a :obj:`node_mask_type` to the :class:`~torch_geometric.exp
     explanation = explainer(dataset[0].x, dataset[0].edge_index)
     print(explanation.edge_mask)
 
-Since this feature is still undergoing heavy development, please feel free to reach out to the PyG core team either on `GitHub <https://github.com/pyg-team/pytorch_geometric/discussions>`_ or `Slack <https://data.pyg.org/slack.html>`_ if you have any questions, comments or concerns.
+Since this feature is still undergoing heavy development, please feel free to reach out to the :pyg:`PyG` core team either on `GitHub <https://github.com/pyg-team/pytorch_geometric/discussions>`_ or `Slack <https://data.pyg.org/slack.html>`_ if you have any questions, comments or concerns.
