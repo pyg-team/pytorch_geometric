@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.3.0] - 2023-MM-DD
 ### Added
+- Added the `torch_geometric.contrib` sub-package ([#6422](https://github.com/pyg-team/pytorch_geometric/pull/6422))
 - Warn on using latest documentation ([#6418](https://github.com/pyg-team/pytorch_geometric/pull/6418))
 - Added basic `pyright` type checker support ([#6415](https://github.com/pyg-team/pytorch_geometric/pull/6415))
 - Added a new external resource for link prediction ([#6396](https://github.com/pyg-team/pytorch_geometric/pull/6396))
@@ -51,6 +52,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
 - Added `torch_geometric.explain.algorithm.PGMExplainer` and examples of using this for explaining node classifier and graph classifier([#6149](https://github.com/pyg-team/pytorch_geometric/pull/6149))
 ### Changed
+- Re-structured the documentation ([#6420](https://github.com/pyg-team/pytorch_geometric/pull/6420), [#6423](https://github.com/pyg-team/pytorch_geometric/pull/6423))
 - Fix the default arguments of `DataParallel` class ([#6376](https://github.com/pyg-team/pytorch_geometric/pull/6376))
 - Fix `ImbalancedSampler` on sliced `InMemoryDataset` ([#6374](https://github.com/pyg-team/pytorch_geometric/pull/6374))
 - Breaking Change: Changed the interface and implementation of `GraphMultisetTransformer` ([#6343](https://github.com/pyg-team/pytorch_geometric/pull/6343))

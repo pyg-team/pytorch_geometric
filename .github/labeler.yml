@@ -29,6 +29,9 @@ transform:
 utils:
   - torch_geometric/utils/**/*
 
+contrib:
+  - torch_geometric/contrib/**/*
+
 graphgym:
   - graphgym/**/*
   - torch_geometric/graphgym/**/*

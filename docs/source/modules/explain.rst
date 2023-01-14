@@ -6,7 +6,7 @@ torch_geometric.explain
 .. warning::
 
     This module is in active development and may not be stable.
-    Access requires installing PyTorch Geometric from master.
+    Access requires installing :pyg:`PyG` from master.
 
 .. contents:: Contents
     :local:
