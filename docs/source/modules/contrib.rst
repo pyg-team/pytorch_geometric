@@ -3,6 +3,9 @@ torch_geometric.contrib
 
 .. currentmodule:: torch_geometric.contrib
 
+:obj:`torch_geometric.contrib` is a staging area for earyly stage experimental code.
+Modules might be moved to the main library in the future.
+
 .. warning::
 
     This module contains experimental code, which is not guaranteed to be
