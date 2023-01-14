@@ -63,7 +63,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    :maxdepth: 1
    :caption: Cheatsheets
 
-   cheatsheet/cheatsheet
+   cheatsheet/gnn_cheatsheet
    cheatsheet/data_cheatsheet
 
 .. toctree::
