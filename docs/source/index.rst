@@ -11,29 +11,39 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
 .. slack::
 
 .. toctree::
-   :glob:
    :maxdepth: 1
-   :caption: Notes
+   :caption: Install PyG
 
-   notes/installation
-   notes/introduction
-   notes/create_gnn
-   notes/create_dataset
-   notes/heterogeneous
-   notes/load_csv
-   notes/graphgym
-   notes/batching
-   notes/sparse_tensor
-   notes/jit
-   notes/remote
-   notes/explain
-   notes/cheatsheet
-   notes/data_cheatsheet
-   notes/colabs
-   notes/resources
+   install/installation
 
 .. toctree::
-   :glob:
+   :maxdepth: 1
+   :caption: Get Started
+
+   get_started/introduction
+   get_started/colabs
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Tutorials
+
+   tutorial/create_gnn
+   tutorial/create_dataset
+   tutorial/heterogeneous
+   tutorial/load_csv
+   tutorial/explain
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Advanced Concepts
+
+   advanced/batching
+   advanced/sparse_tensor
+   advanced/jit
+   advanced/remote
+   advanced/graphgym
+
+.. toctree::
    :maxdepth: 1
    :caption: Package Reference
 
@@ -48,3 +58,16 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    modules/graphgym
    modules/explain
    modules/profile
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Cheatsheets
+
+   cheatsheet/gnn_cheatsheet
+   cheatsheet/data_cheatsheet
+
+.. toctree::
+   :maxdepth: 1
+   :caption: External Resources
+
+   external/resources
