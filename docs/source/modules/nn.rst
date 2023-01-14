@@ -202,7 +202,6 @@ Unpooling Layers
 .. currentmodule:: torch_geometric.nn.unpool
 .. autosummary::
    :nosignatures:
-
    {% for cls in torch_geometric.nn.unpool.classes %}
      {{ cls }}
    {% endfor %}
@@ -218,7 +217,6 @@ Models
 .. currentmodule:: torch_geometric.nn.models
 .. autosummary::
    :nosignatures:
-
    {% for cls in torch_geometric.nn.models.classes %}
      {{ cls }}
    {% endfor %}
@@ -226,7 +224,7 @@ Models
 .. automodule:: torch_geometric.nn.models
    :members:
    :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv, Explainer
+   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv
 
 KGE Models
 ----------
