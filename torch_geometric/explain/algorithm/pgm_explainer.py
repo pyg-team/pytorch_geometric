@@ -16,10 +16,12 @@ class PGMExplainer(ExplainerAlgorithm):
     r"""The PGMExplainer model from the `"PGMExplainer: Probabilistic
     Graphical Model Explanations  for Graph Neural Networks"
     <https://arxiv.org/abs/1903.03894>`_ paper
+
     The generated :obj:`Explanation` will provide a :obj:`node_mask` and also a
     :obj:`pgm_stats` tensor which stores the p_values of each of the nodes
     as calculated by the chi_square test (pgmpy.estimators.CITests.chi_square)
     used to generate the node mask
+
     Args:
         feature_index (List): The indices of the perturbed features
             for graph classification explanations
@@ -112,11 +114,11 @@ class PGMExplainer(ExplainerAlgorithm):
             edge_index (torch.Tensor): edge_index of the input graph
             num_samples: num of samples to generate for constructing the pgm
             indices_to_perturb (np.array): the index numbers of
-                the nodes to be pertubed
+                the nodes to be perturbed
             percentage:
 
         Returns:
-            samples (torch.Tensor): the
+            samples (torch.Tensor): the batch of perturbed features
 
         """
 
