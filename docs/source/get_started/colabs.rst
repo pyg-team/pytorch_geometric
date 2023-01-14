@@ -22,6 +22,10 @@ All colab notebooks are released under the MIT license.
   :width: 941px
   :target: https://medium.com/stanford-cs224w
 
+.. raw:: html
+
+   <br/>
+
 The `Stanford CS224W <http://web.stanford.edu/class/cs224w/>`__ course has collected a set of `graph machine learning tutorial blog posts <https://medium.com/stanford-cs224w>`__, fully realized with :pyg:`PyG`.
 Students worked on projects spanning all kinds of tasks, model architectures and applications.
 All tutorials also link to a Google Colab with the code in the tutorial for you to follow along with as you read it!
