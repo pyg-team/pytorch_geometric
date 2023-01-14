@@ -412,7 +412,7 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
                 assert batch.time[batch.batch == i].max() <= batch.seed_time[i]
 
 
-# @withPackage('pyg_lib')
+@withPackage('pyg_lib')
 @pytest.mark.parametrize('disjoint', [False, True])
 @pytest.mark.parametrize('temporal', [False, True])
 @pytest.mark.parametrize('amount', [1, 2])
