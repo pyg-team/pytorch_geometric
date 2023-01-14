@@ -3,9 +3,8 @@ from typing import Callable, List, NamedTuple, Optional, Tuple
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch_scatter import scatter_add
 
-from torch_geometric.utils import coalesce, softmax
+from torch_geometric.utils import coalesce, scatter, softmax
 
 
 class UnpoolInfo(NamedTuple):
@@ -178,7 +177,7 @@ class EdgePooling(torch.nn.Module):
         i += j
 
         # We compute the new features as an addition of the old ones.
-        new_x = scatter_add(x, cluster, dim=0, dim_size=i)
+        new_x = scatter(x, cluster, dim=0, dim_size=i, reduce='sum')
         new_edge_score = edge_score[new_edge_indices]
         if int(mask.sum()) > 0:
             remaining_score = x.new_ones(

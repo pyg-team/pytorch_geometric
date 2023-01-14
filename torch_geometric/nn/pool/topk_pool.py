@@ -3,9 +3,8 @@ from typing import Callable, Optional, Tuple, Union
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add, scatter_max
 
-from torch_geometric.utils import softmax
+from torch_geometric.utils import scatter, softmax
 
 from ...utils.num_nodes import maybe_num_nodes
 from ..inits import uniform
@@ -20,13 +19,13 @@ def topk(
 ) -> Tensor:
     if min_score is not None:
         # Make sure that we do not drop all nodes in a graph.
-        scores_max = scatter_max(x, batch)[0].index_select(0, batch) - tol
+        scores_max = scatter(x, batch, reduce='max')[batch] - tol
         scores_min = scores_max.clamp(max=min_score)
 
         perm = (x > scores_min).nonzero().view(-1)
 
     elif ratio is not None:
-        num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
+        num_nodes = scatter(batch.new_ones(x.size(0)), batch, reduce='sum')
         batch_size, max_num_nodes = num_nodes.size(0), int(num_nodes.max())
 
         cum_num_nodes = torch.cat(

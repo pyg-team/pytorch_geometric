@@ -31,7 +31,7 @@ Under the hood, the :class:`~torch_geometric.nn.conv.message_passing.MessagePass
 
 .. code-block:: python
 
-    from torch_scatter import scatter
+    from torch_geometric.utils import scatter
 
     x = ...           # Node features of shape [num_nodes, num_features]
     edge_index = ...  # Edge indices of shape [2, num_edges]
@@ -42,7 +42,7 @@ Under the hood, the :class:`~torch_geometric.nn.conv.message_passing.MessagePass
     msg = MLP(x_j - x_i)  # Compute message for each edge
 
     # Aggregate messages based on target node indices
-    out = scatter(msg, edge_index[1], dim=0, dim_size=x.size(0), reduce="add")
+    out = scatter(msg, edge_index[1], dim=0, dim_size=x.size(0), reduce='sum')
 
 While the gather-scatter formulation generalizes to a lot of useful GNN implementations, it has the disadvantage of explicitely materalizing :obj:`x_j` and :obj:`x_i`, resulting in a high memory footprint on large and dense graphs.
 

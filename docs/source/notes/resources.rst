@@ -34,3 +34,5 @@ External Resources
 * Amitoz Azad: **torch_pdegraph** - Solving PDEs on Graphs with PyTorch Geometric [`Devpost <https://devpost.com/software/gdfgddfd>`__, `GitHub <https://github.com/aGIToz/Pytorch_pdegraph>`__]
 
 * Amitoz Azad: **Primal-Dual Algorithm for Total Variation Processing on Graphs** [`Jupyter <https://nbviewer.jupyter.org/github/aGIToz/Graph_Signal_Processing/tree/main>`__]
+
+* Manan Goel: **Recommending Amazon Products using Graph Neural Networks in PyTorch Geometric** [`W&B Report <https://wandb.ai/manan-goel/gnn-recommender/reports/Recommending-Amazon-Products-using-Graph-Neural-Networks-in-PyTorch-Geometric--VmlldzozMTA3MzYw>`__]
