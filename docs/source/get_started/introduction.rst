@@ -290,7 +290,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
         x.size()
         >>> torch.Size([32, 21])
 
-You can learn more about the internal batching procedure of PyG, *e.g.*, how to modify its behaviour, `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/batching.html>`_.
+You can learn more about the internal batching procedure of PyG, *e.g.*, how to modify its behaviour, `here <../advanced/batching.html>`__.
 For documentation of scatter operations, we refer the interested reader to the :obj:`torch-scatter` `documentation <https://pytorch-scatter.readthedocs.io>`_.
 
 Data Transforms

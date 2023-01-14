@@ -26,7 +26,7 @@ Given that you have PyTorch installed (:obj:`>=1.8.0`), simply run
 
 .. warning::
    Conda packages are currently not available for M1/M2/M3 macs.
-   Please install the extension packages :ref:`from source<installation_from_source>`.
+   Please install the extension packages `from source <installation.html#installation-from-source>`__.
 
 Installation via Pip Wheels
 ---------------------------
@@ -37,7 +37,7 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 
 .. warning::
    Wheels are currently not available for M1/M2/M3 macs.
-   Please install the extension packages :ref:`from source<installation_from_source>`.
+   Please install the extension packages `from source <installation.html#installation-from-source>`__.
 
 #. Ensure that at least PyTorch 1.12.0 is installed:
 
@@ -88,8 +88,6 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 **Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2,a nd PyTorch 1.11.0 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
-
-.. _installation_from_source:
 
 Installation from Source
 ------------------------
@@ -164,7 +162,7 @@ In case a specific version is not supported by `our wheels <https://data.pyg.org
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
 :obj:`pip` may even signal a successful installation, but execution simply crashes with :obj:`Segmentation fault (core dumped)`.
-We collected common installation errors in the `Frequently Asked Questions <https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#frequently-asked-questions>`_ subsection.
+We collected common installation errors in the `Frequently Asked Questions <installation.html#frequently-asked-questions>`__ subsection.
 In case the FAQ does not help you in solving your problem, please create an `issue <https://github.com/pyg-team/pytorch_geometric/issues>`_.
 Before, please verify that your CUDA is set up correctly by following the official `installation guide <https://docs.nvidia.com/cuda>`_.
 
@@ -182,4 +180,4 @@ Frequently Asked Questions
 
    For re-installation, ensure that you do not run into any caching issues by using the :obj:`pip --force-reinstall --no-cache-dir` flags.
    In addition, the :obj:`pip --verbose` option may help to track down any issues during installation.
-   If you still do not find any success in installation, please try to install the extension packages :ref:`from source<installation_from_source>`.
+   If you still do not find any success in installation, please try to install the extension packages `from source <installation.html#installation-from-source>`__.
