@@ -16,23 +16,19 @@ class PGMExplainer(ExplainerAlgorithm):
     r"""The PGMExplainer model from the `"PGMExplainer: Probabilistic
     Graphical Model Explanations  for Graph Neural Networks"
     <https://arxiv.org/abs/1903.03894>`_ paper
-
-    Args:
-        perturb_feature_list (List): indices of the perturbed features
-            for graph classification explanations
-        perturb_mode (str): which method to generate the variations in
-            features one of ['randint', 'mean', 'zero', 'max', 'uniform']
-        perturbations_is_positive_only (bool): whether to apply the
-            abs function to restrict perturbed values to be +ve
-        is_perturbation_scaled (bool): whether to normalise the range
-            of the perturbed features
-
-    The generated explanation will provide a node_mask where neighbouring
-    nodes that are statistically significant in the model providing
-    the prediction have a value of 1 and the others 0. There is also a
-    `pgm_stats` tensor which stores the p_values of each of the nodes
+    The generated :obj:`Explanation` will provide a :obj:`node_mask` and also a
+    :obj:`pgm_stats` tensor which stores the p_values of each of the nodes
     as calculated by the chi_square test (pgmpy.estimators.CITests.chi_square)
     used to generate the node mask
+    Args:
+        feature_index (List): The indices of the perturbed features
+            for graph classification explanations
+        perturb_mode (str): The method to generate the variations in
+            features one of ['randint', 'mean', 'zero', 'max', 'uniform']
+        perturbations_is_positive_only (bool): If `True` restrict
+             perturbed values to be +ve
+        is_perturbation_scaled (bool): If `True` normalise the range
+            of the perturbed features
 
     """
     def __init__(
@@ -68,8 +64,8 @@ class PGMExplainer(ExplainerAlgorithm):
 
         """
 
-        X_perturb = x.detach().clone()
-        perturb_array = X_perturb[index]
+        x_perturb = x.detach().clone()
+        perturb_array = x_perturb[index]
         epsilon = 0.05 * torch.max(x, dim=0).values
 
         if self.perturbation_mode == "randint":
@@ -95,8 +91,8 @@ class PGMExplainer(ExplainerAlgorithm):
             perturb_array = torch.multiply(
                 perturb_array, torch.rand(size=perturb_array.size())) * 2
 
-        X_perturb[index] = perturb_array.type(X_perturb.dtype)
-        return X_perturb
+        x_perturb[index] = perturb_array.type(x_perturb.dtype)
+        return x_perturb
 
     def batch_perturb_features_on_node(
             self,
@@ -131,18 +127,18 @@ class PGMExplainer(ExplainerAlgorithm):
 
         samples = []
         for iteration in range(num_samples):
-            X_perturb = x.detach().clone()
+            x_perturb = x.detach().clone()
 
             seeds = np.random.randint(0, 100, size=len(indices_to_perturb))
             perturbed_node_indexes = indices_to_perturb[(seeds < percentage)]
-            X_perturb = self.perturb_features_on_nodes(
-                x=X_perturb,
+            x_perturb = self.perturb_features_on_nodes(
+                x=x_perturb,
                 index=perturbed_node_indexes,
             )
             sample = np.zeros(num_nodes + 1)
             sample[perturbed_node_indexes] = 1
 
-            pred_perturb_torch = model(X_perturb, edge_index, **kwargs)
+            pred_perturb_torch = model(x_perturb, edge_index, **kwargs)
             soft_pred_perturb = torch.softmax(pred_perturb_torch,
                                               dim=1).squeeze()
 
@@ -215,9 +211,6 @@ class PGMExplainer(ExplainerAlgorithm):
         data = pd.DataFrame(np.array(samples.detach().cpu()))
 
         p_values = []
-        # todo to check --
-        # https://github.com/vunhatminh/PGMExplainer/blob/715402aa9a014403815f518c4c7d9258eb49bbe9/PGM_Graph/pgm_explainer_graph.py#L138 # noqa
-        # sets target = num_nodes, which doesnt seem correct?
         for node in range(num_nodes):
             chi2, p, _ = chi_square(node, int(target.detach().cpu()), [], data,
                                     boolean=False,
@@ -323,13 +316,13 @@ class PGMExplainer(ExplainerAlgorithm):
         for iteration in range(num_samples):
             # a subset of neighbours are selected randomly for perturbing
             seeds = np.random.choice([1, 0], size=(len(neighbors), ))
-            X_perturb = self.perturb_features_on_nodes(
+            x_perturb = self.perturb_features_on_nodes(
                 x=x,
                 index=neighbors[seeds == 1],
             )
 
             # prediction after pertubation
-            pred_perturb = model(X_perturb, edge_index, edge_weight)
+            pred_perturb = model(x_perturb, edge_index, edge_weight)
             softmax_pred_perturb = torch.softmax(pred_perturb, dim=1)
             sample_bool = np.ones(shape=(len(neighbors), ))
             sample_bool[(
