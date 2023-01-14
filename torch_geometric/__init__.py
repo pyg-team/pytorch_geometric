@@ -16,6 +16,7 @@ from .experimental import (is_experimental_mode_enabled, experimental_mode,
 from .lazy_loader import LazyLoader
 
 graphgym = LazyLoader('graphgym', globals(), 'torch_geometric.graphgym')
+contrib = LazyLoader('contrib', globals(), 'torch_geometric.contrib')
 
 __version__ = '2.2.0'
 
