@@ -15,7 +15,7 @@ where :math:`\square` denotes a differentiable, permutation invariant function, 
 The "MessagePassing" Base Class
 -------------------------------
 
-PyG provides the :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` base class, which helps in creating such kinds of message passing graph neural networks by automatically taking care of message propagation.
+:pyg:`PyG` provides the :class:`~torch_geometric.nn.conv.message_passing.MessagePassing` base class, which helps in creating such kinds of message passing graph neural networks by automatically taking care of message propagation.
 The user only has to define the functions :math:`\phi` , *i.e.* :meth:`~torch_geometric.nn.conv.message_passing.MessagePassing.message`, and :math:`\gamma` , *i.e.* :meth:`~torch_geometric.nn.conv.message_passing.MessagePassing.update`, as well as the aggregation scheme to use, *i.e.* :obj:`aggr="add"`, :obj:`aggr="mean"` or :obj:`aggr="max"`.
 
 This is done with the help of the following methods:
@@ -176,7 +176,7 @@ In analogy to the GCN layer, we can use the :class:`~torch_geometric.nn.conv.mes
 Inside the :meth:`~torch_geometric.nn.conv.message_passing.MessagePassing.message` function, we use :obj:`self.mlp` to transform both the target node features :obj:`x_i` and the relative source node features :obj:`x_j - x_i` for each edge :math:`(j,i) \in \mathcal{E}`.
 
 The edge convolution is actually a dynamic convolution, which recomputes the graph for each layer using nearest neighbors in the feature space.
-Luckily, PyG comes with a GPU accelerated batch-wise k-NN graph generation method named :meth:`torch_geometric.nn.pool.knn_graph`:
+Luckily, :pyg:`PyG` comes with a GPU accelerated batch-wise k-NN graph generation method named :meth:`torch_geometric.nn.pool.knn_graph`:
 
 .. code-block:: python
 
