@@ -62,8 +62,8 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
-   * :pytorch:`PyTorch` 1.13: :obj:`TORCH=1.13.0` and :obj:`CUDA=cpu|cu116|cu117`
-   * :pytorch:`PyTorch` 1.12: :obj:`TORCH=1.12.0` and :obj:`CUDA=cpu|cu102|cu113|cu116`
+   * :pytorch:`PyTorch` 1.13: :obj:`${TORCH}=1.13.0` and :obj:`${CUDA}=cpu|cu116|cu117`
+   * :pytorch:`PyTorch` 1.12: :obj:`${TORCH}=1.12.0` and :obj:`${CUDA}=cpu|cu102|cu113|cu116`
 
    For example, for :pytorch:`PyTorch` 1.13.* and CUDA 11.6, type:
 
