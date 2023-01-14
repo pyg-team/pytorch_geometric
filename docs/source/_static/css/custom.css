@@ -1,6 +1,5 @@
 /* Monospace font in "Package Reference" navigation */
-.wy-menu-vertical > ul:nth-child(10) li.toctree-l1 > a,
-#pyg-documentation div.toctree-wrapper:nth-child(9) ul {
+.wy-menu-vertical > ul:nth-child(10) li.toctree-l1 > a {
   font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,Courier,monospace;
 }
 
