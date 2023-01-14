@@ -1,0 +1,1 @@
+.. include:: ../advanced/graphgym.rst

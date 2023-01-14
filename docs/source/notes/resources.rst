@@ -1,0 +1,1 @@
+.. include:: ../external/resources.rst
