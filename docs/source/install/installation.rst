@@ -89,7 +89,7 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 
    following the same procedure as mentioned above.
 
-**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, :pytorch:`PyTorch` 1.5.0, :pytorch:`PyTorch` 1.6.0, :pytorch:`PyTorch` 1.7.0/1.7.1, :pytorch:`PyTorch` 1.8.0/1.8.1, :pytorch:`PyTorch` 1.9.0, :pytorch:`PyTorch` 1.10.0/1.10.1/1.10.2, and :pytorch:`PyTorch` 1.11.0 (following the same procedure).
+**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0, 1.7.1, 1.8.0, 1.8.1, 1.9.0, 1.10.0, 1.10.1, 1.10.2, and 1.11.0 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
 

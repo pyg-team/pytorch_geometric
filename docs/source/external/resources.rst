@@ -13,7 +13,7 @@ External Resources
 
 * DAIR.AI | elvis: **Introduction to GNNs with** :pyg:`null` **PyTorch Geometric** [`Website <https://github.com/dair-ai/GNNs-Recipe>`__, `Colab <https://colab.research.google.com/drive/1d0jLDwgNBtjBVQOFe8lO_1WrqTVeVZx9?usp=sharing>`__]
 
-* Nicolas Chaulet *et al.*: **PyTorch Points 3D** - A framework for running common deep learning models for point cloud analysis tasks that heavily relies on Pytorch Geometric [`Github <https://github.com/nicolas-chaulet/torch-points3d>`__, `Documentation <https://torch-points3d.readthedocs.io/en/latest/>`__]
+* Nicolas Chaulet *et al.*: **PyTorch Points 3D** - A framework for running common deep learning models for point cloud analysis tasks that heavily relies on Pytorch Geometric [`GitHub <https://github.com/nicolas-chaulet/torch-points3d>`__, `Documentation <https://torch-points3d.readthedocs.io/en/latest/>`__]
 
 * Weihua Hu *et al.*: **Open Graph Benchmark** - A collection of large-scale benchmark datasets, data loaders, and evaluators for graph machine learning, including :pyg:`PyG` support and examples [`Website <https://ogb.stanford.edu>`__, `GitHub <https://github.com/snap-stanford/ogb>`__]
 

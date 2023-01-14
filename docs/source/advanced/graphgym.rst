@@ -78,7 +78,7 @@ In sum, GraphGym can greatly facilitate your GNN research.
 Basic Usage
 -----------
 
-To use GraphGym, you need to clone :pyg:`PyG` from Github, then change to the :obj:`graphgym/` directory.
+To use GraphGym, you need to clone :pyg:`PyG` from GitHub, then change to the :obj:`graphgym/` directory.
 
 .. code-block:: bash
 
@@ -117,7 +117,7 @@ To use GraphGym, you need to clone :pyg:`PyG` from Github, then change to the :o
 In-Depth Usage
 --------------
 
-To use GraphGym, you need to clone :pyg:`PyG` from Github, then change to the :obj:`graphgym/` directory.
+To use GraphGym, you need to clone :pyg:`PyG` from GitHub, then change to the :obj:`graphgym/` directory.
 
 .. code-block:: bash
 
