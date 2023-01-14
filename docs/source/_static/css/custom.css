@@ -12,8 +12,9 @@
 #torch-geometric-datasets h1,
 #torch-geometric-transforms h1,
 #torch-geometric-utils h1,
-#torch-geometric-graphgym h1,
 #torch-geometric-explain h1,
+#torch-geometric-contrib h1,
+#torch-geometric-graphgym h1,
 #torch-geometric-profile h1 {
   font-family: SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,Courier,monospace;
   letter-spacing: -1px;
