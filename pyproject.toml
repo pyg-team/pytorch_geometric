@@ -1,3 +1,18 @@
+[project]
+name = "torch_geometric"
+version = "2.3.0"
+readme = "README.md"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3 :: Only",
+]
+
 [tool.yapf]
 based_on_style = "pep8"
 split_before_named_assigns = false
