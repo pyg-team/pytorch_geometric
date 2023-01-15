@@ -1,33 +1,38 @@
 torch_geometric.data
 ====================
 
-Data Objects and Helper Functions
----------------------------------
+.. contents:: Contents
+    :local:
+
+Data Objects
+------------
 
 .. currentmodule:: torch_geometric.data
 
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.data.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
 
-.. automodule:: torch_geometric.data
-    :members:
-    :exclude-members: Data, HeteroData, TemporalData
+   Data
+   HeteroData
+   Batch
+   TemporalData
+   Dataset
+   InMemoryDataset
 
-    .. autoclass:: Data
-       :special-members: __cat_dim__, __inc__
-       :inherited-members:
+Remote Backend Interfaces
+-------------------------
 
-    .. autoclass:: HeteroData
-       :special-members: __cat_dim__, __inc__
-       :inherited-members:
+.. currentmodule:: torch_geometric.data
 
-    .. autoclass:: TemporalData
-       :special-members: __cat_dim__, __inc__
-       :inherited-members:
-       :exclude-members: coalesce, has_isolated_nodes, has_self_loops, is_undirected, is_directed
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   FeatureStore
+   GraphStore
+   TensorAttr
+   EdgeAttr
 
 PyTorch Lightning Wrappers
 --------------------------
@@ -36,9 +41,25 @@ PyTorch Lightning Wrappers
 
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.data.lightning.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
+   :template: autosummary/only_class.rst
 
-.. automodule:: torch_geometric.data.lightning
-    :members:
+   LightningDataset
+   LightningNodeData
+   LightningLinkData
+
+Helper Functions
+----------------
+
+.. currentmodule:: torch_geometric.data
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   makedirs
+   download_url
+   extract_tar
+   extract_zip
+   extract_bz2
+   extract_gz

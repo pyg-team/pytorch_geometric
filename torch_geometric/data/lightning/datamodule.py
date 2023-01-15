@@ -114,7 +114,7 @@ class LightningDataset(LightningDataModule):
             (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
-        num_workers: How many subprocesses to use for data loading.
+        num_workers (int): How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
@@ -213,7 +213,7 @@ class LightningNodeData(LightningDataModule):
             :obj:`data` object by searching for :obj:`train_mask`,
             :obj:`train_idx`, or :obj:`train_index` attributes.
             (default: :obj:`None`)
-        input_train_time (Tensor, optional): The timestamp
+        input_train_time (torch.Tensor, optional): The timestamp
             of training nodes. (default: :obj:`None`)
         input_val_nodes (torch.Tensor or str or (str, torch.Tensor)): The
             indices of validation nodes.
@@ -222,7 +222,7 @@ class LightningNodeData(LightningDataModule):
             :obj:`valid_mask`, :obj:`val_idx`, :obj:`valid_idx`,
             :obj:`val_index`, or :obj:`valid_index` attributes.
             (default: :obj:`None`)
-        input_val_time (Tensor, optional): The timestamp
+        input_val_time (torch.Tensor, optional): The timestamp
             of validation edges. (default: :obj:`None`)
         input_test_nodes (torch.Tensor or str or (str, torch.Tensor)): The
             indices of test nodes.
@@ -230,7 +230,7 @@ class LightningNodeData(LightningDataModule):
             :obj:`data` object by searching for :obj:`test_mask`,
             :obj:`test_idx`, or :obj:`test_index` attributes.
             (default: :obj:`None`)
-        input_test_time (Tensor, optional): The timestamp
+        input_test_time (torch.Tensor, optional): The timestamp
             of test nodes. (default: :obj:`None`)
         input_pred_nodes (torch.Tensor or str or (str, torch.Tensor)): The
             indices of prediction nodes.
@@ -238,7 +238,7 @@ class LightningNodeData(LightningDataModule):
             :obj:`data` object by searching for :obj:`pred_mask`,
             :obj:`pred_idx`, or :obj:`pred_index` attributes.
             (default: :obj:`None`)
-        input_pred_time (Tensor, optional): The timestamp
+        input_pred_time (torch.Tensor, optional): The timestamp
             of prediction nodes. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
@@ -247,7 +247,7 @@ class LightningNodeData(LightningDataModule):
             option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
-        num_workers: How many subprocesses to use for data loading.
+        num_workers (int): How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
@@ -481,21 +481,21 @@ class LightningLinkData(LightningDataModule):
             :class:`~torch_geometric.data.GraphStore` objects.
         input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The training edges. (default: :obj:`None`)
-        input_train_labels (Tensor, optional):
+        input_train_labels (torch.Tensor, optional):
             The labels of train edges. (default: :obj:`None`)
-        input_train_time (Tensor, optional): The timestamp
+        input_train_time (torch.Tensor, optional): The timestamp
             of train edges. (default: :obj:`None`)
         input_val_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The validation edges. (default: :obj:`None`)
-        input_val_labels (Tensor, optional):
+        input_val_labels (torch.Tensor, optional):
             The labels of validation edges. (default: :obj:`None`)
-        input_val_time (Tensor, optional): The timestamp
+        input_val_time (torch.Tensor, optional): The timestamp
             of validation edges. (default: :obj:`None`)
         input_test_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The test edges. (default: :obj:`None`)
-        input_test_labels (Tensor, optional):
+        input_test_labels (torch.Tensor, optional):
             The labels of train edges. (default: :obj:`None`)
-        input_test_time (Tensor, optional): The timestamp
+        input_test_time (torch.Tensor, optional): The timestamp
             of test edges. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
@@ -504,7 +504,7 @@ class LightningLinkData(LightningDataModule):
             option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
-        num_workers: How many subprocesses to use for data loading.
+        num_workers (int): How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
