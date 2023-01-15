@@ -114,7 +114,7 @@ class LightningDataset(LightningDataModule):
             (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
-        num_workers: How many subprocesses to use for data loading.
+        num_workers (int): How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
@@ -247,7 +247,7 @@ class LightningNodeData(LightningDataModule):
             option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
-        num_workers: How many subprocesses to use for data loading.
+        num_workers (int): How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
@@ -504,7 +504,7 @@ class LightningLinkData(LightningDataModule):
             option. (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
-        num_workers: How many subprocesses to use for data loading.
+        num_workers (int): How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
         **kwargs (optional): Additional arguments of
