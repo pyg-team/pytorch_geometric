@@ -51,7 +51,7 @@ variable-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
 generated-members = ["torch.*"]
 
 [tool.coverage.run]
-source = "torch_geometric"
+source = ["torch_geometric"]
 omit = [
     "torch_geometric/datasets/*",
     "torch_geometric/data/extract.py",
