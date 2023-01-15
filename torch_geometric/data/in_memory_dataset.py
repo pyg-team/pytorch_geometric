@@ -20,8 +20,8 @@ class InMemoryDataset(Dataset):
     tutorial.
 
     Args:
-        root (string, optional): Root directory where the dataset should be
-            saved. (default: :obj:`None`)
+        root (str, optional): Root directory where the dataset should be saved.
+            (optional: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

@@ -392,15 +392,15 @@ class Data(BaseData, FeatureStore, GraphStore):
         data = data.to('cuda:0', non_blocking=True)
 
     Args:
-        x (Tensor, optional): Node feature matrix with shape :obj:`[num_nodes,
-            num_node_features]`. (default: :obj:`None`)
+        x (torch.Tensor, optional): Node feature matrix with shape
+            :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
         edge_index (LongTensor, optional): Graph connectivity in COO format
             with shape :obj:`[2, num_edges]`. (default: :obj:`None`)
-        edge_attr (Tensor, optional): Edge feature matrix with shape
+        edge_attr (torch.Tensor, optional): Edge feature matrix with shape
             :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
-        y (Tensor, optional): Graph-level or node-level ground-truth labels
-            with arbitrary shape. (default: :obj:`None`)
-        pos (Tensor, optional): Node position matrix with shape
+        y (torch.Tensor, optional): Graph-level or node-level ground-truth
+            labels with arbitrary shape. (default: :obj:`None`)
+        pos (torch.Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
@@ -658,10 +658,10 @@ class Data(BaseData, FeatureStore, GraphStore):
         be reconstructed without any need to pass in additional arguments.
 
         Args:
-            node_type (Tensor, optional): A node-level vector denoting the type
-                of each node. (default: :obj:`None`)
-            edge_type (Tensor, optional): An edge-level vector denoting the
-                type of each edge. (default: :obj:`None`)
+            node_type (torch.Tensor, optional): A node-level vector denoting
+                the type of each node. (default: :obj:`None`)
+            edge_type (torch.Tensor, optional): An edge-level vector denoting
+                the type of each edge. (default: :obj:`None`)
             node_type_names (List[str], optional): The names of node types.
                 (default: :obj:`None`)
             edge_type_names (List[Tuple[str, str, str]], optional): The names
