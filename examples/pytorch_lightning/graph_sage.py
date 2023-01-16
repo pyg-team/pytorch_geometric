@@ -76,7 +76,8 @@ def main():
 
     devices = torch.cuda.device_count()
     strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
-    checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1)
+    checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1,
+                                              mode='max')
     trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
                          max_epochs=20, callbacks=[checkpoint])
 

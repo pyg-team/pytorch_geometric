@@ -6,7 +6,7 @@ torch_geometric.explain
 .. warning::
 
     This module is in active development and may not be stable.
-    Access requires installing PyTorch Geometric from master.
+    Access requires installing :pyg:`PyG` from master.
 
 .. contents:: Contents
     :local:
@@ -19,7 +19,6 @@ This module provides a set of tools to explain the predictions of a PyG model or
 We represent explanations using the :class:`torch_geometric.explain.Explanation` class, which is a :class:`~torch_geometric.data.Data` object containing masks for the nodes, edges, features and any attributes of the data.
 
 The :class:`torch_geometric.explain.Explainer` class is designed to handle all explainability parameters (see the :class:`torch_geometric.explain.config.ExplainerConfig` class for more details):
-
 
 - which algorithm from the :class:`torch_geometric.explain.algorithm` module to use (*e.g.*, :class:`~torch_geometric.explain.algorithm.GNNExplainer`)
 - the type of explanation to compute (*e.g.*, :obj:`explanation_type="phenomenon"` or :obj:`explanation_type="model"`)

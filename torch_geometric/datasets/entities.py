@@ -37,36 +37,37 @@ class Entities(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - AIFB
-              - 8,285
-              - 58,086
-              - 0
-              - 4
-            * - AM
-              - 1,666,764
-              - 11,976,642
-              - 0
-              - 11
-            * - MUTAG
-              - 23,644
-              - 148,454
-              - 0
-              - 2
-            * - BGS
-              - 333,845
-              - 1,832,398
-              - 0
-              - 2
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - AIFB
+          - 8,285
+          - 58,086
+          - 0
+          - 4
+        * - AM
+          - 1,666,764
+          - 11,976,642
+          - 0
+          - 11
+        * - MUTAG
+          - 23,644
+          - 148,454
+          - 0
+          - 2
+        * - BGS
+          - 333,845
+          - 1,832,398
+          - 0
+          - 2
     """
 
     url = 'https://data.dgl.ai/dataset/{}.tgz'
@@ -90,11 +91,11 @@ class Entities(InMemoryDataset):
 
     @property
     def num_relations(self) -> int:
-        return self.data.edge_type.max().item() + 1
+        return self._data.edge_type.max().item() + 1
 
     @property
     def num_classes(self) -> int:
-        return self.data.train_y.max().item() + 1
+        return self._data.train_y.max().item() + 1
 
     @property
     def raw_file_names(self) -> List[str]:

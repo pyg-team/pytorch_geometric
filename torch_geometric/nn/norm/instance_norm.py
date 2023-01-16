@@ -1,10 +1,9 @@
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.modules.instancenorm import _InstanceNorm
-from torch_scatter import scatter
 
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import degree
+from torch_geometric.utils import degree, scatter
 
 
 class InstanceNorm(_InstanceNorm):
@@ -66,12 +65,12 @@ class InstanceNorm(_InstanceNorm):
             unbiased_norm = (norm - 1).clamp_(min=1)
 
             mean = scatter(x, batch, dim=0, dim_size=batch_size,
-                           reduce='add') / norm
+                           reduce='sum') / norm
 
             x = x - mean.index_select(0, batch)
 
             var = scatter(x * x, batch, dim=0, dim_size=batch_size,
-                          reduce='add')
+                          reduce='sum')
             unbiased_var = var / unbiased_norm
             var = var / norm
 

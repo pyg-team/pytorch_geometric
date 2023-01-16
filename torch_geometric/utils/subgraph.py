@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.typing import PairTensor
+from torch_geometric.typing import OptTensor, PairTensor
 
 from .mask import index_to_mask
 from .num_nodes import maybe_num_nodes
@@ -40,11 +40,11 @@ def get_num_hops(model: torch.nn.Module) -> int:
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
-    edge_attr: Optional[Tensor] = None,
+    edge_attr: OptTensor = None,
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
     return_edge_mask: bool = False,
-) -> Tuple[Tensor, Tensor]:
+) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`.
 
@@ -114,11 +114,11 @@ def subgraph(
 def bipartite_subgraph(
     subset: Union[PairTensor, Tuple[List[int], List[int]]],
     edge_index: Tensor,
-    edge_attr: Optional[Tensor] = None,
+    edge_attr: OptTensor = None,
     relabel_nodes: bool = False,
-    size: Tuple[int, int] = None,
+    size: Optional[Tuple[int, int]] = None,
     return_edge_mask: bool = False,
-) -> Tuple[Tensor, Tensor]:
+) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
     r"""Returns the induced subgraph of the bipartite graph
     :obj:`(edge_index, edge_attr)` containing the nodes in :obj:`subset`.
 
@@ -161,35 +161,34 @@ def bipartite_subgraph(
 
     device = edge_index.device
 
-    if isinstance(subset[0], (list, tuple)):
-        subset = (torch.tensor(subset[0], dtype=torch.long, device=device),
-                  torch.tensor(subset[1], dtype=torch.long, device=device))
+    src_subset, dst_subset = subset
+    if not isinstance(src_subset, Tensor):
+        src_subset = torch.tensor(src_subset, dtype=torch.long, device=device)
+    if not isinstance(dst_subset, Tensor):
+        dst_subset = torch.tensor(dst_subset, dtype=torch.long, device=device)
 
-    if subset[0].dtype == torch.bool or subset[0].dtype == torch.uint8:
-        size = subset[0].size(0), subset[1].size(0)
-    else:
-        if size is None:
-            size = (maybe_num_nodes(edge_index[0]),
-                    maybe_num_nodes(edge_index[1]))
-        subset = (index_to_mask(subset[0], size=size[0]),
-                  index_to_mask(subset[1], size=size[1]))
+    if src_subset.dtype != torch.bool:
+        src_size = int(edge_index[0].max()) + 1 if size is None else size[0]
+        src_subset = index_to_mask(src_subset, size=src_size)
+        dst_size = int(edge_index[1].max()) + 1 if size is None else size[1]
+        dst_subset = index_to_mask(dst_subset, size=dst_size)
 
-    node_mask = subset
-    edge_mask = node_mask[0][edge_index[0]] & node_mask[1][edge_index[1]]
+    # node_mask = subset
+    edge_mask = src_subset[edge_index[0]] & dst_subset[edge_index[1]]
     edge_index = edge_index[:, edge_mask]
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        node_idx_i = torch.zeros(node_mask[0].size(0), dtype=torch.long,
-                                 device=device)
-        node_idx_j = torch.zeros(node_mask[1].size(0), dtype=torch.long,
-                                 device=device)
-        node_idx_i[node_mask[0]] = torch.arange(node_mask[0].sum().item(),
-                                                device=device)
-        node_idx_j[node_mask[1]] = torch.arange(node_mask[1].sum().item(),
-                                                device=device)
-        edge_index = torch.stack(
-            [node_idx_i[edge_index[0]], node_idx_j[edge_index[1]]])
+        node_idx_i = edge_index.new_zeros(src_subset.size(0))
+        node_idx_j = edge_index.new_zeros(dst_subset.size(0))
+        node_idx_i[src_subset] = torch.arange(int(src_subset.sum()),
+                                              device=node_idx_i.device)
+        node_idx_j[dst_subset] = torch.arange(int(dst_subset.sum()),
+                                              device=node_idx_j.device)
+        edge_index = torch.stack([
+            node_idx_i[edge_index[0]],
+            node_idx_j[edge_index[1]],
+        ], dim=0)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask

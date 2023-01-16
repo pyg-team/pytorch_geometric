@@ -5,7 +5,6 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
-from torch_scatter import scatter
 from torch_sparse import (
     SparseTensor,
     fill_diag,
@@ -17,7 +16,7 @@ from torch_sparse import t as transpose
 
 from torch_geometric.nn import LEConv
 from torch_geometric.nn.pool.topk_pool import topk
-from torch_geometric.utils import add_remaining_self_loops, softmax
+from torch_geometric.utils import add_remaining_self_loops, scatter, softmax
 
 
 class ASAPooling(torch.nn.Module):
@@ -124,7 +123,7 @@ class ASAPooling(torch.nn.Module):
         score = F.dropout(score, p=self.dropout, training=self.training)
 
         v_j = x[edge_index[0]] * score.view(-1, 1)
-        x = scatter(v_j, edge_index[1], dim=0, reduce='add')
+        x = scatter(v_j, edge_index[1], dim=0, reduce='sum')
 
         # Cluster selection.
         fitness = self.gnn_score(x, edge_index).sigmoid().view(-1)

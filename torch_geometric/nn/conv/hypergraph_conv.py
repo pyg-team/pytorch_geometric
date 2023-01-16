@@ -4,12 +4,11 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.utils import softmax
+from torch_geometric.utils import scatter, softmax
 
 
 class HypergraphConv(MessagePassing):
@@ -148,13 +147,13 @@ class HypergraphConv(MessagePassing):
             alpha = softmax(alpha, hyperedge_index[0], num_nodes=x.size(0))
             alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
-        D = scatter_add(hyperedge_weight[hyperedge_index[1]],
-                        hyperedge_index[0], dim=0, dim_size=num_nodes)
+        D = scatter(hyperedge_weight[hyperedge_index[1]], hyperedge_index[0],
+                    dim=0, dim_size=num_nodes, reduce='sum')
         D = 1.0 / D
         D[D == float("inf")] = 0
 
-        B = scatter_add(x.new_ones(hyperedge_index.size(1)),
-                        hyperedge_index[1], dim=0, dim_size=num_edges)
+        B = scatter(x.new_ones(hyperedge_index.size(1)), hyperedge_index[1],
+                    dim=0, dim_size=num_edges, reduce='sum')
         B = 1.0 / B
         B[B == float("inf")] = 0
 

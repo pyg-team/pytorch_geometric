@@ -18,12 +18,12 @@ IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
 class Dataset(torch.utils.data.Dataset):
     r"""Dataset base class for creating graph datasets.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html>`__ for the accompanying tutorial.
 
     Args:
-        root (string, optional): Root directory where the dataset should be
-            saved. (optional: :obj:`None`)
+        root (str, optional): Root directory where the dataset should be saved.
+            (optional: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -307,6 +307,30 @@ class Dataset(torch.utils.data.Dataset):
     def print_summary(self):
         r"""Prints summary statistics of the dataset to the console."""
         print(str(self.get_summary()))
+
+    def to_datapipe(self):
+        r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
+
+        The returned instance can then be used with PyG's built-in DataPipes
+        for baching graphs as follows:
+
+        .. code-block:: python
+
+            from torch_geometric.datasets import QM9
+
+            dp = QM9(root='./data/QM9/').to_datapipe()
+            dp = dp.batch_graphs(batch_size=2, drop_last=True)
+
+            for batch in dp:
+                pass
+
+        See the `PyTorch tutorial
+        <https://pytorch.org/data/main/tutorial.html>`_ for further background
+        on DataPipes.
+        """
+        from torch_geometric.data.datapipes import DatasetAdapter
+
+        return DatasetAdapter(self)
 
 
 def to_list(value: Any) -> Sequence:

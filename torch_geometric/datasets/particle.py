@@ -3,9 +3,9 @@ import os.path as osp
 
 import numpy as np
 import torch
-from torch_scatter import scatter_add
 
 from torch_geometric.data import Data, Dataset
+from torch_geometric.utils import scatter
 
 
 class TrackingData(Data):
@@ -71,8 +71,8 @@ class TrackMLParticleTrackingDataset(Dataset):
         hit_id = torch.from_numpy(cell['hit_id'].values).to(torch.long).sub_(1)
         value = torch.from_numpy(cell['value'].values).to(torch.float)
         ones = torch.ones(hit_id.size(0))
-        num_cells = scatter_add(ones, hit_id, dim_size=pos.size(0)).div_(10.)
-        value = scatter_add(value, hit_id, dim_size=pos.size(0))
+        num_cells = scatter(ones, hit_id, 0, pos.size(0), 'sum').div_(10.)
+        value = scatter(value, hit_id, 0, pos.size(0), 'sum')
         x = torch.stack([num_cells, value], dim=-1)
 
         # Get ground-truth hit assignments.

@@ -53,59 +53,60 @@ class TUDataset(InMemoryDataset):
         cleaned (bool, optional): If :obj:`True`, the dataset will
             contain only non-isomorphic graphs. (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 20 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - MUTAG
-              - 188
-              - ~17.9
-              - ~39.6
-              - 7
-              - 2
-            * - ENZYMES
-              - 600
-              - ~32.6
-              - ~124.3
-              - 3
-              - 6
-            * - PROTEINS
-              - 1,113
-              - ~39.1
-              - ~145.6
-              - 3
-              - 2
-            * - COLLAB
-              - 5,000
-              - ~74.5
-              - ~4914.4
-              - 0
-              - 3
-            * - IMDB-BINARY
-              - 1,000
-              - ~19.8
-              - ~193.1
-              - 0
-              - 2
-            * - REDDIT-BINARY
-              - 2,000
-              - ~429.6
-              - ~995.5
-              - 0
-              - 2
-            * - ...
-              -
-              -
-              -
-              -
-              -
+    .. list-table::
+        :widths: 20 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - MUTAG
+          - 188
+          - ~17.9
+          - ~39.6
+          - 7
+          - 2
+        * - ENZYMES
+          - 600
+          - ~32.6
+          - ~124.3
+          - 3
+          - 6
+        * - PROTEINS
+          - 1,113
+          - ~39.1
+          - ~145.6
+          - 3
+          - 2
+        * - COLLAB
+          - 5,000
+          - ~74.5
+          - ~4914.4
+          - 0
+          - 3
+        * - IMDB-BINARY
+          - 1,000
+          - ~19.8
+          - ~193.1
+          - 0
+          - 2
+        * - REDDIT-BINARY
+          - 2,000
+          - ~429.6
+          - ~995.5
+          - 0
+          - 2
+        * - ...
+          -
+          -
+          -
+          -
+          -
     """
 
     url = 'https://www.chrsmrrs.com/graphkerneldatasets'
@@ -131,12 +132,12 @@ class TUDataset(InMemoryDataset):
                 "root folder and try again.")
         self.data, self.slices, self.sizes = out
 
-        if self.data.x is not None and not use_node_attr:
+        if self._data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
-            self.data.x = self.data.x[:, num_node_attributes:]
-        if self.data.edge_attr is not None and not use_edge_attr:
-            num_edge_attributes = self.num_edge_attributes
-            self.data.edge_attr = self.data.edge_attr[:, num_edge_attributes:]
+            self._data.x = self._data.x[:, num_node_attributes:]
+        if self._data.edge_attr is not None and not use_edge_attr:
+            num_edge_attrs = self.num_edge_attributes
+            self._data.edge_attr = self._data.edge_attr[:, num_edge_attrs:]
 
     @property
     def raw_dir(self) -> str:
@@ -197,7 +198,7 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        torch.save((self.data, self.slices, sizes), self.processed_paths[0])
+        torch.save((self._data, self.slices, sizes), self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'
