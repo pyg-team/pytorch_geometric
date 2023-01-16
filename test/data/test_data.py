@@ -62,7 +62,7 @@ def test_data():
     assert clone.edge_index.data_ptr() != data.edge_index.data_ptr()
     assert clone.edge_index.tolist() == data.edge_index.tolist()
 
-    # Test `data.to_heterogenous()`:
+    # Test `data.to_heterogeneous()`:
     out = data.to_heterogeneous()
     assert torch.allclose(data.x, out['0'].x)
     assert torch.allclose(data.edge_index, out['0', '0'].edge_index)
@@ -263,7 +263,9 @@ def test_data_share_memory():
 
 
 def test_data_setter_properties():
+
     class MyData(Data):
+
         def __init__(self):
             super().__init__()
             self.my_attr1 = 1

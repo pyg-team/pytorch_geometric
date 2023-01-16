@@ -47,7 +47,7 @@ def to_captum_model(
                                internal_batch_size=1)
 
 
-    Sample code for heterogenous graphs:
+    Sample code for heterogeneous graphs:
 
     .. code-block:: python
 
