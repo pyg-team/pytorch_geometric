@@ -13,9 +13,12 @@ from torch_geometric.typing import EdgeType, Metadata, NodeType
 
 
 class CaptumModel(torch.nn.Module):
-    def __init__(self, model: torch.nn.Module, mask_type: Union[str,
-                                                                MaskLevelType],
-                 output_idx: Optional[int] = None):
+    def __init__(
+        self,
+        model: torch.nn.Module,
+        mask_type: Union[str, MaskLevelType],
+        output_idx: Optional[int] = None,
+    ):
         super().__init__()
 
         self.mask_type = MaskLevelType(mask_type)
@@ -65,9 +68,13 @@ class CaptumModel(torch.nn.Module):
 
 # TODO(jinu) Is there any point of inheriting from `CaptumModel`
 class CaptumHeteroModel(CaptumModel):
-    def __init__(self, model: torch.nn.Module, mask_type: Union[str,
-                                                                MaskLevelType],
-                 output_id: int, metadata: Metadata):
+    def __init__(
+        self,
+        model: torch.nn.Module,
+        mask_type: Union[str, MaskLevelType],
+        output_id: int,
+        metadata: Metadata,
+    ):
         super().__init__(model, mask_type, output_id)
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
@@ -216,10 +223,10 @@ def to_captum_input(
 
 
 def captum_output_to_dicts(
-    captum_attrs: Tuple[Tensor], mask_type: Union[str, MaskLevelType],
-    metadata: Metadata
-) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType,
-                                                           Tensor]], ]:
+    captum_attrs: Tuple[Tensor],
+    mask_type: Union[str, MaskLevelType],
+    metadata: Metadata,
+) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
     r"""Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
     methods which is a tuple of attributions to two dictonaries with node and
     edge attribution tensors. This function is used while explaining
