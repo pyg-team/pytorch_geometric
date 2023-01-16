@@ -18,6 +18,13 @@ class MaskType(Enum):
     attributes = 'attributes'
 
 
+class MaskLevelType(Enum):
+    """Enum class for the mask level type."""
+    node = 'node'
+    edge = 'edge'
+    node_and_edge = 'node_and_edge'
+
+
 class ModelMode(Enum):
     """Enum class for the model return type."""
     binary_classification = 'binary_classification'
