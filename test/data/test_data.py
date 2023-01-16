@@ -263,9 +263,7 @@ def test_data_share_memory():
 
 
 def test_data_setter_properties():
-
     class MyData(Data):
-
         def __init__(self):
             super().__init__()
             self.my_attr1 = 1
