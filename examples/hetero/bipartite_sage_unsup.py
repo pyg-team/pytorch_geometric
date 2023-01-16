@@ -20,93 +20,88 @@ from torch_geometric.nn import SAGEConv
 from torch_geometric.utils.convert import to_scipy_sparse_matrix
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Taobao')
 
 dataset = Taobao(path)
 data = dataset[0]
 
-data['user'].x = torch.LongTensor(torch.arange(0, data['user'].num_nodes))
-data['item'].x = torch.LongTensor(torch.arange(0, data['item'].num_nodes))
+data['user'].x = torch.arange(0, data['user'].num_nodes)
+data['item'].x = torch.arange(0, data['item'].num_nodes)
 
-# Add a reverse ('item', 'rev_2', 'user') relation for message passing:
+# Only consider user<>item relationships for simplicity:
+del data['category']
+del data['item', 'category']
+del data['user', 'item'].time
+del data['user', 'item'].behavior
+
+# Add a reverse ('item', 'rev_to', 'user') relation for message passing:
 data = T.ToUndirected()(data)
-del data['item', 'rev_2', 'user'].edge_label  # Remove "reverse" label.
-del data[('user', '2', 'item')].edge_attr
 
 # Perform a link-level split into training, validation, and test edges:
+print('Computing data splits...')
 train_data, val_data, test_data = T.RandomLinkSplit(
     num_val=0.1,
     num_test=0.1,
     neg_sampling_ratio=1.0,
-    edge_types=[('user', '2', 'item')],
-    rev_edge_types=[('item', 'rev_2', 'user')],
+    add_negative_train_samples=False,
+    edge_types=[('user', 'to', 'item')],
+    rev_edge_types=[('item', 'rev_to', 'user')],
 )(data)
-del train_data[('user', '2', 'item')].edge_label
-del train_data[('user', '2', 'item')].edge_label_index
+print('Done!')
 
+# Compute sparsified item<>item relationships through users:
+print('Computing item<>item relationships...')
+mat = to_scipy_sparse_matrix(data['user', 'item'].edge_index).tocsr()
+mat = mat[:data['user'].num_nodes, :data['item'].num_nodes]
+comat = mat.T @ mat
+comat.setdiag(0)
+comat = comat >= 3.
+comat = comat.tocoo()
+row = torch.from_numpy(comat.row).to(torch.long)
+col = torch.from_numpy(comat.col).to(torch.long)
+item_to_item_edge_index = torch.stack([row, col], dim=0)
 
-def to_u2i_mat(edge_index, u_num, i_num):
-    # Convert the bipartite edge_index format to the csr matrix format.
-    u2imat = to_scipy_sparse_matrix(edge_index).tocsr()
-
-    return u2imat[:u_num, :i_num]
-
-
-def get_coocur_mat(train_mat, threshold):
-    # Generate the co-occurrence matrix with weight filtering.
-    comat = train_mat.T @ train_mat
-    comat.setdiag(0)
-    comat = (comat >= threshold).nonzero()
-    comat = torch.stack(
-        (torch.from_numpy(comat[0]), torch.from_numpy(comat[1])), dim=0)
-
-    return comat
-
-
-u2i_mat = to_u2i_mat(train_data.edge_index_dict[('user', '2', 'item')],
-                     train_data['user'].num_nodes,
-                     train_data['item'].num_nodes)
-i2i_edge_index = get_coocur_mat(u2i_mat, 3)
-
-# Add the generated i2i graph for high-order information
-train_data[('item', 'sims', 'item')].edge_index = i2i_edge_index
-val_data[('item', 'sims', 'item')].edge_index = i2i_edge_index
-test_data[('item', 'sims', 'item')].edge_index = i2i_edge_index
+# Add the generated item<>item relationships for high-order information:
+train_data['item', 'item'].edge_index = item_to_item_edge_index
+val_data['item', 'item'].edge_index = item_to_item_edge_index
+test_data['item', 'item'].edge_index = item_to_item_edge_index
+print('Done!')
 
 train_loader = LinkNeighborLoader(
     data=train_data,
     num_neighbors=[8, 4],
-    edge_label_index=['user', '2', 'item'],
-    neg_sampling='triplet',
+    edge_label_index=('user', 'to', 'item'),
+    neg_sampling='binary',
     batch_size=2048,
-    num_workers=32,
-    pin_memory=True,
+    shuffle=True,
+    num_workers=16,
     drop_last=True,
 )
 
 val_loader = LinkNeighborLoader(
     data=val_data,
     num_neighbors=[8, 4],
-    edge_label_index=(('user', '2', 'item'),
-                      val_data[('user', '2', 'item')].edge_label_index),
-    edge_label=val_data[('user', '2', 'item')].edge_label,
+    edge_label_index=(
+        ('user', 'to', 'item'),
+        val_data[('user', 'to', 'item')].edge_label_index,
+    ),
+    edge_label=val_data[('user', 'to', 'item')].edge_label,
     batch_size=2048,
     shuffle=True,
-    num_workers=32,
-    pin_memory=True,
+    num_workers=16,
 )
 
 test_loader = LinkNeighborLoader(
     data=test_data,
     num_neighbors=[8, 4],
-    edge_label_index=(('user', '2', 'item'),
-                      test_data[('user', '2', 'item')].edge_label_index),
-    edge_label=test_data[('user', '2', 'item')].edge_label,
+    edge_label_index=(
+        ('user', 'to', 'item'),
+        test_data[('user', 'to', 'item')].edge_label_index,
+    ),
+    edge_label=test_data[('user', 'to', 'item')].edge_label,
     batch_size=2048,
     shuffle=True,
-    num_workers=32,
-    pin_memory=True,
+    num_workers=16,
 )
 
 
@@ -134,17 +129,17 @@ class UserGNNEncoder(torch.nn.Module):
     def forward(self, x_dict, edge_index_dict):
         item_x = self.conv1(
             x_dict['item'],
-            edge_index_dict[('item', 'sims', 'item')],
+            edge_index_dict[('item', 'to', 'item')],
         ).relu()
 
         user_x = self.conv2(
             (x_dict['item'], x_dict['user']),
-            edge_index_dict[('item', 'rev_2', 'user')],
+            edge_index_dict[('item', 'rev_to', 'user')],
         ).relu()
 
         user_x = self.conv3(
             (item_x, user_x),
-            edge_index_dict[('item', 'rev_2', 'user')],
+            edge_index_dict[('item', 'to', 'user')],
         ).relu()
 
         return self.lin(user_x)
@@ -172,92 +167,90 @@ class Model(torch.nn.Module):
         self.item_emb = Embedding(num_items, hidden_channels, device=device)
         self.item_encoder = ItemGNNEncoder(hidden_channels, out_channels)
         self.user_encoder = UserGNNEncoder(hidden_channels, out_channels)
-        self.decoder = EdgeDecoder(hidden_channels)
+        self.decoder = EdgeDecoder(out_channels)
 
     def forward(self, x_dict, edge_index_dict, edge_label_index):
         z_dict = {}
         x_dict['user'] = self.user_emb(x_dict['user'])
         x_dict['item'] = self.item_emb(x_dict['item'])
         z_dict['item'] = self.item_encoder(
-            x_dict['item'], edge_index_dict[('item', 'sims', 'item')])
+            x_dict['item'],
+            edge_index_dict[('item', 'to', 'item')],
+        )
         z_dict['user'] = self.user_encoder(x_dict, edge_index_dict)
 
         return self.decoder(z_dict['user'], z_dict['item'], edge_label_index)
 
 
-model = Model(num_users=data['user'].num_nodes,
-              num_items=data['item'].num_nodes, hidden_channels=64,
-              out_channels=64)
-model = model.to(device)
+model = Model(
+    num_users=data['user'].num_nodes,
+    num_items=data['item'].num_nodes,
+    hidden_channels=64,
+    out_channels=64,
+).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
 def train():
     model.train()
-    total_loss = 0
+
+    total_loss = total_examples = 0
     for batch in tqdm.tqdm(train_loader):
         batch = batch.to(device)
         optimizer.zero_grad()
-        row = torch.cat((batch['user'].src_index, batch['user'].src_index),
-                        dim=0)
-        col = torch.cat(
-            (batch['item'].dst_pos_index, batch['item'].dst_neg_index), dim=0)
-        edge_label_index = torch.stack((row, col), dim=0)
+
         pred = model(
             batch.x_dict,
             batch.edge_index_dict,
-            edge_label_index,
+            batch['user', 'item'].edge_label_index,
         )
-        target = torch.cat((torch.ones(
-            2048, device=device), torch.zeros(2048, device=device)), dim=0)
-        loss = F.binary_cross_entropy_with_logits(pred, target)
+        loss = F.binary_cross_entropy_with_logits(
+            pred, batch['user', 'item'].edge_label)
+
         loss.backward()
         optimizer.step()
-        total_loss += loss
+        total_loss += float(loss)
+        total_examples += pred.numel()
 
-    return float(total_loss)
+    return total_loss / total_examples
 
 
 @torch.no_grad()
 def test(loader):
     model.eval()
-    accs, precs, recs, f1s = [], [], [], []
 
+    preds, targets = [], []
     for batch in tqdm.tqdm(loader):
         batch = batch.to(device)
-        out = model(batch.x_dict, batch.edge_index_dict,
-                    batch['user',
-                          'item'].edge_label_index).clamp(min=0,
-                                                          max=1).round().cpu()
-        target = batch['user', 'item'].edge_label.round().cpu()
 
-        acc = accuracy_score(target, out)
-        prec = precision_score(target, out)
-        rec = recall_score(target, out)
-        f1 = f1_score(target, out)
-        accs.append(acc)
-        precs.append(prec)
-        recs.append(rec)
-        f1s.append(f1)
+        pred = model(
+            batch.x_dict,
+            batch.edge_index_dict,
+            batch['user', 'item'].edge_label_index,
+        ).sigmoid().view(-1).cpu()
+        target = batch['user', 'item'].edge_label.long().cpu()
 
-    import numpy as np
+        preds.append(pred)
+        targets.append(pred)
 
-    total_acc = float(np.mean(accs))
-    total_prec = float(np.mean(precs))
-    total_rec = float(np.mean(recs))
-    total_f1 = float(np.mean(f1s))
+    pred = torch.cat(preds, dim=0).numpy()
+    target = torch.cat(target, dim=0).numpy()
 
-    return total_acc, total_prec, total_rec, total_f1
+    acc = accuracy_score(target, pred)
+    prec = precision_score(target, pred)
+    rec = recall_score(target, pred)
+    f1 = f1_score(target, pred)
+
+    return acc, prec, rec, f1
 
 
 for epoch in range(1, 21):
     loss = train()
     val_acc, val_prec, val_rec, val_f1 = test(val_loader)
-    tst_acc, tst_prec, tst_rec, tst_f1 = test(test_loader)
+    test_acc, test_prec, test_rec, test_f1 = test(test_loader)
 
-    print(f'Epoch: {epoch:03d} | Loss: {loss:4f}')
-    print('Eval: Accuracy | Precision | Recall | F1 score')
-    print(
-        f'Val: {val_acc:.4f}  | {val_prec:.4f} | {val_rec:.4f} | {val_f1:.4f}')
-    print(
-        f'Test: {tst_acc:.4f} | {tst_prec:.4f} | {tst_rec:.4f} | {tst_f1:.4f}')
+    print(f'Epoch: {epoch:03d}, Loss: {loss:4f}')
+    print(f'Val Acc: {val_acc:.4f}, Val Precision {val_prec:.4f}, '
+          f'Val Recall {val_rec:.4f}, Val F1 {val_f1:.4f}')
+    print(f'Test Acc: {test_acc:.4f}, Test Precision {test_prec:.4f}, '
+          f'Test Recall {test_rec:.4f}, Test F1 {test_f1:.4f}')

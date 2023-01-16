@@ -92,10 +92,14 @@ class Taobao(InMemoryDataset):
         row = torch.from_numpy(df['userId'].values)
         col = torch.from_numpy(df['itemId'].values)
         data['user', 'item'].edge_index = torch.stack([row, col], dim=0)
-
         data['user', 'item'].time = torch.from_numpy(df['timestamp'].values)
         behavior = torch.from_numpy(df['behaviorType'].values)
         data['user', 'item'].behavior = behavior
+
+        df = df[['itemId', 'categoryId']].drop_duplicates()
+        row = torch.from_numpy(df['itemId'].values)
+        col = torch.from_numpy(df['categoryId'].values)
+        data['item', 'category'].edge_index = torch.stack([row, col], dim=0)
 
         data = data if self.pre_transform is None else self.pre_transform(data)
 
