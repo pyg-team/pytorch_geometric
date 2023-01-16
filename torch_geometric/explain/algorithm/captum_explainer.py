@@ -76,13 +76,13 @@ class CaptumExplainer(ExplainerAlgorithm):
     ) -> Explanation:
 
         # Check if the method supports multiple indices.
-        if index is not None and len(index) > 1:
+        if isinstance(index, list) and len(index) > 1:
             if not self._support_multiple_indices():
                 raise ValueError(
                     f"{self.attribution_method.__name__} does not "
                     "support multiple indices. Please use a single "
                     "index or a different method.")
-            if self.kwargs.get('internal_batch_size', 1) != 1:
+            if self.kwargs.get('internal_batch_size') != 1:
                 warnings.warn("Overriding 'internal_batch_size' to 1")
                 self.kwargs['internal_batch_size'] = 1
             warnings.warn(

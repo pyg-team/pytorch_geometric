@@ -57,7 +57,8 @@ class CaptumModel(torch.nn.Module):
 
         if self.output_idx is not None:
             x = x[self.output_idx]
-            x = x.unsqueeze(0) if len(self.output_idx) == 1 else x
+            if isinstance(self.output_idx, int) or (len(self.output_idx) == 1):
+                x = x.unsqueeze(0)
 
         return x
 
@@ -136,7 +137,8 @@ class CaptumHeteroModel(CaptumModel):
 
         if self.output_idx is not None:
             x = x[self.output_idx]
-            x = x.unsqueeze(0) if len(self.output_idx) == 1 else x
+            if isinstance(self.output_idx, int) or (len(self.output_idx) == 1):
+                x = x.unsqueeze(0)
         return x
 
 
