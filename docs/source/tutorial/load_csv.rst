@@ -1,7 +1,7 @@
 Loading Graphs from CSV
 =======================
 
-In this example, we will show how to load a set of :obj:`*.csv` files as input and construct a **heterogeneous graph** from it, which can be used as input to a `heterogenous graph model <heterogeneous.html>`__.
+In this example, we will show how to load a set of :obj:`*.csv` files as input and construct a **heterogeneous graph** from it, which can be used as input to a `heterogeneous graph model <heterogeneous.html>`__.
 This tutorial is also available as an executable `example script <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/hetero/load_csv.py>`_ in the :obj:`examples/hetero` directory.
 
 We are going to use the `MovieLens dataset <https://grouplens.org/datasets/movielens/>`_ collected by the GroupLens research group.
@@ -251,7 +251,7 @@ With this, we are ready to finalize our :class:`~torch_geometric.data.HeteroData
       }
     )
 
-This :class:`~torch_geometric.data.HeteroData` object is the native format of heterogenous graphs in :pyg:`PyG` and can be used as input for `heterogenous graph models <heterogeneous.html>`__.
+This :class:`~torch_geometric.data.HeteroData` object is the native format of heterogeneous graphs in :pyg:`PyG` and can be used as input for `heterogeneous graph models <heterogeneous.html>`__.
 
 .. note::
 

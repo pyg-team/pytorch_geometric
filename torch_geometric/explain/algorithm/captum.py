@@ -162,10 +162,10 @@ def to_captum_input(x: Union[Tensor, Dict[EdgeType, Tensor]],
     Args:
 
         x (Tensor or Dict[NodeType, Tensor]): The node features. For
-            heterogenous graphs this is a dictionary holding node featues
+            heterogeneous graphs this is a dictionary holding node featues
             for each node type.
         edge_index(Tensor or Dict[EdgeType, Tensor]): The edge indicies. For
-            heterogenous graphs this is a dictionary holding edge index
+            heterogeneous graphs this is a dictionary holding edge index
             for each edge type.
         mask_type (str): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,

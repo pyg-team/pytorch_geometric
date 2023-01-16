@@ -13,7 +13,7 @@ As a consequence of the different data structure, the message passing formulatio
 Example Graph
 -------------
 
-As a guiding example, we take a look at the heterogenous `ogbn-mag <https://ogb.stanford.edu/docs/nodeprop>`__ network from the `OGB datasets <https://ogb.stanford.edu>`_:
+As a guiding example, we take a look at the heterogeneous `ogbn-mag <https://ogb.stanford.edu/docs/nodeprop>`__ network from the `OGB datasets <https://ogb.stanford.edu>`_:
 
 .. image:: ../_figures/hg_example.svg
   :align: center
@@ -192,7 +192,7 @@ The transform :meth:`~torch_geometric.transforms.NormalizeFeatures` works like i
 Creating Heterogeneous GNNs
 ---------------------------
 
-Standard Message Passing GNNs (MP-GNNs) can not trivially be applied to heterogenous graph data, as node and edge features from different types can not be processed by the same functions due to differences in feature type.
+Standard Message Passing GNNs (MP-GNNs) can not trivially be applied to heterogeneous graph data, as node and edge features from different types can not be processed by the same functions due to differences in feature type.
 A natural way to circumvent this is to implement message and update functions individually for each edge type.
 During runtime, the MP-GNN algorithm would need to iterate over edge type dictionaries during message computation and over node type dictionaries during node updates.
 
@@ -298,10 +298,10 @@ Afterwards, the created model can be trained as usual:
         optimizer.step()
         return float(loss)
 
-Using the Heterogenous Convolution Wrapper
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using the Heterogeneous Convolution Wrapper
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The heterogenous convolution wrapper :class:`torch_geometric.nn.conv.HeteroConv` allows to define custom heterogenous message and update functions to build arbitrary MP-GNNs for heterogeneous graphs from scratch.
+The heterogeneous convolution wrapper :class:`torch_geometric.nn.conv.HeteroConv` allows to define custom heterogeneous message and update functions to build arbitrary MP-GNNs for heterogeneous graphs from scratch.
 While the automatic converter :meth:`~torch_geometric.nn.to_hetero` uses the same operator for all edge types, the wrapper allows to define different operators for different edge types.
 Here, :class:`~torch_geometric.nn.conv.HeteroConv` takes a dictionary of submodules as input, one for each edge type in the graph data.
 The following `example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/hetero_conv_dblp.py>`__ shows how to apply it.
@@ -349,8 +349,8 @@ We can initialize the model by calling it once (see :ref:`here<lazyinit>` for mo
 
 and run the standard training procedure as outlined :ref:`here<trainfunc>`.
 
-Deploy Existing Heterogenous Operators
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Deploy Existing Heterogeneous Operators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :pyg:`PyG` provides operators (*e.g.*, :class:`torch_geometric.nn.conv.HGTConv`), which are specifically designed for heterogeneous graphs.
 These operators can be directly used to build heterogeneous GNN models as can be seen in the following `example <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/hgt_dblp.py>`__:

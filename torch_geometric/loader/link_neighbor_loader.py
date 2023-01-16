@@ -61,7 +61,7 @@ class LinkNeighborLoader(LinkLoader):
 
     The rest of the functionality mirrors that of
     :class:`~torch_geometric.loader.NeighborLoader`, including support for
-    heterogenous graphs.
+    heterogeneous graphs.
 
     .. note::
         Negative sampling is currently implemented in an approximate
