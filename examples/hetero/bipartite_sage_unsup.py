@@ -87,7 +87,7 @@ val_loader = LinkNeighborLoader(
     ),
     edge_label=val_data[('user', 'to', 'item')].edge_label,
     batch_size=2048,
-    shuffle=True,
+    shuffle=False,
     num_workers=16,
 )
 
@@ -100,7 +100,7 @@ test_loader = LinkNeighborLoader(
     ),
     edge_label=test_data[('user', 'to', 'item')].edge_label,
     batch_size=2048,
-    shuffle=True,
+    shuffle=False,
     num_workers=16,
 )
 
