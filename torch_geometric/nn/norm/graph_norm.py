@@ -40,12 +40,19 @@ class GraphNorm(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         ones(self.weight)
         zeros(self.bias)
         ones(self.mean_scale)
 
     def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example. (default: :obj:`None`)
+        """
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.long)
 

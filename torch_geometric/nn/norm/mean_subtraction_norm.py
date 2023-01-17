@@ -15,12 +15,17 @@ class MeanSubtractionNorm(torch.nn.Module):
         \mathbf{x}_i = \mathbf{x}_i - \frac{1}{|\mathcal{V}|}
         \sum_{j \in \mathcal{V}} \mathbf{x}_j
     """
-    def reset_parameters(self):
-        pass
-
     def forward(self, x: Tensor, batch: Optional[Tensor] = None,
                 dim_size: Optional[int] = None) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example. (default: :obj:`None`)
+            dim_size (int, optional): The number of examples :math:`B` in case
+                :obj:`batch` is given. (default: :obj:`None`)
+        """
         if batch is None:
             return x - x.mean(dim=0, keepdim=True)
 

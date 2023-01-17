@@ -12,6 +12,7 @@ Data Objects
 .. autosummary::
    :nosignatures:
    :toctree: ../generated
+   :template: autosummary/inherited_class.rst
 
    {% for name in torch_geometric.data.data_classes %}
      {{ name }}
