@@ -73,8 +73,8 @@ class SchNet(torch.nn.Module):
         max_num_neighbors (int, optional): The maximum number of neighbors to
             collect for each node within the :attr:`cutoff` distance.
             (default: :obj:`32`)
-        readout (string, optional): Whether to apply :obj:`"add"` or
-            :obj:`"mean"` global aggregation. (default: :obj:`"add"`)
+        readout (str, optional): Whether to apply :obj:`"add"` or :obj:`"mean"`
+            global aggregation. (default: :obj:`"add"`)
         dipole (bool, optional): If set to :obj:`True`, will use the magnitude
             of the dipole moment to make the final prediction, *e.g.*, for
             target 0 of :class:`torch_geometric.datasets.QM9`.

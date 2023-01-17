@@ -107,7 +107,7 @@ class CitationFull(InMemoryDataset):
 
 class CoraFull(CitationFull):
     r"""Alias for :class:`~torch_geometric.datasets.CitationFull` with
-    :obj:`name="cora"`.
+    :obj:`name="Cora"`.
 
     **STATS:**
 
