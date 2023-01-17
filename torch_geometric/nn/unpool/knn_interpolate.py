@@ -1,8 +1,8 @@
 import torch
-from torch_scatter import scatter_add
 
 from torch_geometric.nn import knn
 from torch_geometric.typing import OptTensor
+from torch_geometric.utils import scatter
 
 
 def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
@@ -51,7 +51,7 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
         squared_distance = (diff * diff).sum(dim=-1, keepdim=True)
         weights = 1.0 / torch.clamp(squared_distance, min=1e-16)
 
-    y = scatter_add(x[x_idx] * weights, y_idx, dim=0, dim_size=pos_y.size(0))
-    y = y / scatter_add(weights, y_idx, dim=0, dim_size=pos_y.size(0))
+    y = scatter(x[x_idx] * weights, y_idx, 0, pos_y.size(0), reduce='sum')
+    y = y / scatter(weights, y_idx, 0, pos_y.size(0), reduce='sum')
 
     return y

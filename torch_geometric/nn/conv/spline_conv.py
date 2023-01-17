@@ -49,7 +49,7 @@ class SplineConv(MessagePassing):
             operator will use a closed B-spline basis in this dimension.
             (default :obj:`True`)
         degree (int, optional): B-spline basis degrees. (default: :obj:`1`)
-        aggr (string, optional): The aggregation operator to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will

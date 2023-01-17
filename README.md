@@ -5,7 +5,7 @@
 [linting-image]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/linting.yml/badge.svg
 [linting-url]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/linting.yml
 [docs-image]: https://readthedocs.org/projects/pytorch-geometric/badge/?version=latest
-[docs-url]: https://pytorch-geometric.readthedocs.io/en/latest/?badge=latest
+[docs-url]: https://pytorch-geometric.readthedocs.io/en/latest
 [coverage-image]: https://codecov.io/gh/pyg-team/pytorch_geometric/branch/master/graph/badge.svg
 [coverage-url]: https://codecov.io/github/pyg-team/pytorch_geometric?branch=master
 [contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
@@ -26,12 +26,12 @@
 [![Contributing][contributing-image]][contributing-url]
 [![Slack][slack-image]][slack-url]
 
-**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[Colab Notebooks and Video Tutorials](https://pytorch-geometric.readthedocs.io/en/latest/notes/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/notes/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
+**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[Colab Notebooks and Video Tutorials](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
 
 **PyG** *(PyTorch Geometric)* is a library built upon [PyTorch](https://pytorch.org/) to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as *[geometric deep learning](http://geometricdeeplearning.com/)*, from a variety of published papers.
-In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, [multi GPU-support](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/multi_gpu), [`DataPipe` support](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/datapipe.py), distributed graph learning via [Quiver](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/quiver), a large number of common benchmark datasets (based on simple interfaces to create your own), the [GraphGym](https://pytorch-geometric.readthedocs.io/en/latest/notes/graphgym.html) experiment manager, and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
+In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, [multi GPU-support](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/multi_gpu), [`DataPipe` support](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/datapipe.py), distributed graph learning via [Quiver](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/quiver), a large number of common benchmark datasets (based on simple interfaces to create your own), the [GraphGym](https://pytorch-geometric.readthedocs.io/en/latest/advanced/graphgym.html) experiment manager, and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
 [Click here to join our Slack community!][slack-url]
 
 <p align="center">
@@ -70,7 +70,7 @@ In this quick tour, we highlight the ease of creating and training a GNN model w
 ### Train your own GNN model
 
 In the first glimpse of PyG, we implement the training of a GNN for classifying papers in a citation graph.
-For this, we load the [Cora](https://pytorch-geometric.readthedocs.io/en/latest/modules/datasets.html#torch_geometric.datasets.Planetoid) dataset, and create a simple 2-layer GCN model using the pre-defined [`GCNConv`](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GCNConv):
+For this, we load the [Cora](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.Planetoid.html) dataset, and create a simple 2-layer GCN model using the pre-defined [`GCNConv`](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GCNConv):
 
 ```python
 import torch
@@ -120,7 +120,7 @@ More information about evaluating final model performance can be found in the co
 
 ### Create your own GNN layer
 
-In addition to the easy application of existing GNNs, PyG makes it simple to implement custom Graph Neural Networks (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html) for the accompanying tutorial).
+In addition to the easy application of existing GNNs, PyG makes it simple to implement custom Graph Neural Networks (see [here](https://pytorch-geometric.readthedocs.io/en/latest/tutorial/create_gnn.html) for the accompanying tutorial).
 For example, this is all it takes to implement the [edge convolutional layer](https://arxiv.org/abs/1801.07829) from Wang *et al.*:
 
 $$x_i^{\prime} ~ = ~ \max_{j \in \mathcal{N}(i)} ~ \textrm{MLP}_{\theta} \left( [ ~ x_i, ~ x_j - x_i ~ ] \right)$$
@@ -154,7 +154,7 @@ class EdgeConv(MessagePassing):
 
 ### Manage experiments with GraphGym
 
-GraphGym allows you to manage and launch GNN experiments, using a highly modularized pipeline (see [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/graphgym.html) for the accompanying tutorial).
+GraphGym allows you to manage and launch GNN experiments, using a highly modularized pipeline (see [here](https://pytorch-geometric.readthedocs.io/en/latest/advanced/graphgym.html) for the accompanying tutorial).
 
 ```
 git clone https://github.com/pyg-team/pytorch_geometric.git
@@ -186,7 +186,7 @@ We list currently supported PyG models, layers and operators according to catego
 
 **GNN layers:**
 All Graph Neural Network layers are implemented via the **[`nn.MessagePassing`](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.message_passing.MessagePassing)** interface.
-A GNN layer specifies how to perform message passing, *i.e.* by designing different message, aggregation and update functions as defined [here](https://pytorch-geometric.readthedocs.io/en/latest/notes/create_gnn.html).
+A GNN layer specifies how to perform message passing, *i.e.* by designing different message, aggregation and update functions as defined [here](https://pytorch-geometric.readthedocs.io/en/latest/tutorial/create_gnn.html).
 These GNN layers can be stacked together to create Graph Neural Network models.
 
 * **[GCNConv](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.GCNConv)** from Kipf and Welling: [Semi-Supervised Classification with Graph Convolutional Networks](https://arxiv.org/abs/1609.02907) (ICLR 2017) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn.py)]
@@ -253,9 +253,9 @@ It is commonly applied to graph-level tasks, which require combining node featur
 <details>
 <summary><b>Expand to see all implemented pooling layers...</b></summary>
 
-* **[Attentional Aggregation](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.aggr.AttentionalAggregation)** from Li *et al.*: [Graph Matching Networks for Learning the Similarity of Graph Structured Objects](https://arxiv.org/abs/1904.12787) (ICML 2019) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/benchmark/kernel/global_attention.py)]
-* **[Set2Set](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.aggr.Set2Set)** from Vinyals *et al.*: [Order Matters: Sequence to Sequence for Sets](https://arxiv.org/abs/1511.06391) (ICLR 2016) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/benchmark/kernel/set2set.py)]
-* **[Sort Aggregation](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.aggr.SortAggregation)** from Zhang *et al.*: [An End-to-End Deep Learning Architecture for Graph Classification](https://www.cse.wustl.edu/~muhan/papers/AAAI_2018_DGCNN.pdf) (AAAI 2018) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/benchmark/kernel/sort_pool.py)]
+* **[Attentional Aggregation](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.aggr.AttentionalAggregation.html)** from Li *et al.*: [Graph Matching Networks for Learning the Similarity of Graph Structured Objects](https://arxiv.org/abs/1904.12787) (ICML 2019) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/benchmark/kernel/global_attention.py)]
+* **[Set2Set](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.aggr.Set2Set.html)** from Vinyals *et al.*: [Order Matters: Sequence to Sequence for Sets](https://arxiv.org/abs/1511.06391) (ICLR 2016) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/benchmark/kernel/set2set.py)]
+* **[Sort Aggregation](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.aggr.SortAggregation.html)** from Zhang *et al.*: [An End-to-End Deep Learning Architecture for Graph Classification](https://www.cse.wustl.edu/~muhan/papers/AAAI_2018_DGCNN.pdf) (AAAI 2018) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/benchmark/kernel/sort_pool.py)]
 * **[MinCut Pooling](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.dense.mincut_pool.dense_mincut_pool)** from Bianchi *et al.*: [Spectral Clustering with Graph Neural Networks for Graph Pooling](https://arxiv.org/abs/1907.00481) (ICML 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/proteins_mincut_pool.py)]
 * **[DMoN Pooling](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.dense.dmon_pool.DMoNPooling)** from Tsitsulin *et al.*: [Graph Clustering with Graph Neural Networks](https://arxiv.org/abs/2006.16904) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/proteins_dmon_pool.py)]
 * **[Graclus Pooling](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.pool.graclus)** from Dhillon *et al.*: [Weighted Graph Cuts without Eigenvectors: A Multilevel Approach](http://www.cs.utexas.edu/users/inderjit/public_papers/multilevel_pami.pdf) (PAMI 2007) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/mnist_graclus.py)]
@@ -265,8 +265,8 @@ It is commonly applied to graph-level tasks, which require combining node featur
 * **[ASAPooling](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.pool.ASAPooling)** from Ranjan *et al.*: [ASAP: Adaptive Structure Aware Pooling for Learning Hierarchical Graph Representations](https://arxiv.org/abs/1911.07979) (AAAI 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/benchmark/kernel/asap.py)]
 * **[PANPooling](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.pool.PANPooling)** from Ma *et al.*: [Path Integral Based Convolution and Pooling for Graph Neural Networks](https://arxiv.org/abs/2006.16811) (NeurIPS 2020)
 * **[MemPooling](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.pool.MemPooling)** from Khasahmadi *et al.*: [Memory-Based Graph Networks](https://arxiv.org/abs/2002.09518) (ICLR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/mem_pool.py)]
-* **[Graph Multiset Transformer](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.aggr.GraphMultisetTransformer)** from Baek *et al.*: [Accurate Learning of Graph Representations with Graph Multiset Pooling](https://arxiv.org/abs/2102.11533) (ICLR 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/proteins_gmt.py)]
-* **[Equilibrium Aggregation](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.aggr.EquilibriumAggregation)** from Bartunov *et al.*: [](https://arxiv.org/abs/2202.12795) (UAI 2022) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/equilibrium_median.py)]
+* **[Graph Multiset Transformer](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.aggr.GraphMultisetTransformer.html)** from Baek *et al.*: [Accurate Learning of Graph Representations with Graph Multiset Pooling](https://arxiv.org/abs/2102.11533) (ICLR 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/proteins_gmt.py)]
+* **[Equilibrium Aggregation](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.aggr.EquilibriumAggregation.html)** from Bartunov *et al.*: [](https://arxiv.org/abs/2202.12795) (UAI 2022) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/equilibrium_median.py)]
 </details>
 
 **GNN models:**
@@ -311,16 +311,16 @@ They follow an extensible design: It is easy to apply these operators and graph 
 * **[DropNode](https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.dropout_node)**, **[MaskFeature](https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.mask_feature)** and **[AddRandomEdge](https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.add_random_edge)** from You *et al.*: [Graph Contrastive Learning with Augmentations](https://arxiv.org/abs/2010.13902) (NeurIPS 2020)
 * **[DropPath](https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.dropout_path)** from Li *et al.*: [MaskGAE: Masked Graph Modeling Meets Graph Autoencoders](https://arxiv.org/abs/2205.10053) (arXiv 2022)
 * **[ShuffleNode](https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.shuffle_node)** from Veličković *et al.*: [Deep Graph Infomax](https://arxiv.org/abs/1809.10341) (ICLR 2019)
-* **[GraphNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.GraphNorm)** from Cai *et al.*: [GraphNorm: A Principled Approach to Accelerating Graph Neural Network Training](https://proceedings.mlr.press/v139/cai21e.html) (ICML 2021)
-* **[GDC](https://pytorch-geometric.readthedocs.io/en/latest/modules/transforms.html#torch_geometric.transforms.GDC)** from Klicpera *et al.*: [Diffusion Improves Graph Learning](https://arxiv.org/abs/1911.05485) (NeurIPS 2019) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn.py)]
+* **[GraphNorm](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.GraphNorm.html)** from Cai *et al.*: [GraphNorm: A Principled Approach to Accelerating Graph Neural Network Training](https://proceedings.mlr.press/v139/cai21e.html) (ICML 2021)
+* **[GDC](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.transforms.GDC.html)** from Klicpera *et al.*: [Diffusion Improves Graph Learning](https://arxiv.org/abs/1911.05485) (NeurIPS 2019) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/gcn.py)]
 
 <details>
 <summary><b>Expand to see all implemented GNN operators and utilities...</b></summary>
 
-* **[GraphSizeNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.GraphSizeNorm)** from Dwivedi *et al.*: [Benchmarking Graph Neural Networks](https://arxiv.org/abs/2003.00982) (CoRR 2020)
-* **[PairNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.PairNorm)** from Zhao and Akoglu: [PairNorm: Tackling Oversmoothing in GNNs](https://arxiv.org/abs/1909.12223) (ICLR 2020)
-* **[MeanSubtractionNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.MeanSubtractionNorm)** from Yang *et al.*: [Revisiting "Over-smoothing" in Deep GCNs](https://arxiv.org/abs/2003.13663) (CoRR 2020)
-* **[DiffGroupNorm](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.norm.DiffGroupNorm)** from Zhou *et al.*: [Towards Deeper Graph Neural Networks with Differentiable Group Normalization](https://arxiv.org/abs/2006.06972) (NeurIPS 2020)
+* **[GraphSizeNorm](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.GraphSizeNorm.html)** from Dwivedi *et al.*: [Benchmarking Graph Neural Networks](https://arxiv.org/abs/2003.00982) (CoRR 2020)
+* **[PairNorm](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.PairNorm.html)** from Zhao and Akoglu: [PairNorm: Tackling Oversmoothing in GNNs](https://arxiv.org/abs/1909.12223) (ICLR 2020)
+* **[MeanSubtractionNorm](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.MeanSubtractionNorm.html)** from Yang *et al.*: [Revisiting "Over-smoothing" in Deep GCNs](https://arxiv.org/abs/2003.13663) (CoRR 2020)
+* **[DiffGroupNorm](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.DiffGroupNorm.html)** from Zhou *et al.*: [Towards Deeper Graph Neural Networks with Differentiable Group Normalization](https://arxiv.org/abs/2006.06972) (NeurIPS 2020)
 * **[Tree Decomposition](https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.tree_decomposition)** from Jin *et al.*: [Junction Tree Variational Autoencoder for Molecular Graph Generation](https://arxiv.org/abs/1802.04364) (ICML 2018)
 * **[TGN](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.models.TGNMemory)** from Rossi *et al.*: [Temporal Graph Networks for Deep Learning on Dynamic Graphs](https://arxiv.org/abs/2006.10637) (GRL+ 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/tgn.py)]
 * **[Weisfeiler Lehman Operator](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.WLConv)** from Weisfeiler and Lehman: [A Reduction of a Graph to a Canonical Form and an Algebra Arising During this Reduction](https://www.iti.zcu.cz/wl2018/pdf/wl_paper_translation.pdf) (Nauchno-Technicheskaya Informatsia 1968) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/wl_kernel.py)]
@@ -339,16 +339,16 @@ Such application is challenging since the entire graph, its associated features 
 Many state-of-the-art scalability approaches tackle this challenge by sampling neighborhoods for mini-batch training, graph clustering and partitioning, or by using simplified GNN models.
 These approaches have been implemented in PyG, and can benefit from the above GNN layers, operators and models.
 
-* **[NeighborSampler](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.loader.NeighborSampler)** and **[NeighborLoader](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.loader.NeighborLoader)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_gat.py), [**Example4**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py)]
-* **[ClusterGCN](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.loader.ClusterLoader)** from Chiang *et al.*: [Cluster-GCN: An Efficient Algorithm for Training Deep and Large Graph Convolutional Networks](https://arxiv.org/abs/1905.07953) (KDD 2019) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cluster_gcn_reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cluster_gcn_ppi.py)]
-* **[GraphSAINT](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.loader.GraphSAINTSampler)** from Zeng *et al.*: [GraphSAINT: Graph Sampling Based Inductive Learning Method](https://arxiv.org/abs/1907.04931) (ICLR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_saint.py)]
+* **[NeighborLoader](https://pytorch-geometric.readthedocs.io/en/latest/modules/loader.html#torch_geometric.loader.NeighborLoader)** from Hamilton *et al.*: [Inductive Representation Learning on Large Graphs](https://arxiv.org/abs/1706.02216) (NIPS 2017) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_sage.py), [**Example3**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_gat.py), [**Example4**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py)]
+* **[ClusterGCN](https://pytorch-geometric.readthedocs.io/en/latest/modules/loader.html#torch_geometric.loader.ClusterLoader)** from Chiang *et al.*: [Cluster-GCN: An Efficient Algorithm for Training Deep and Large Graph Convolutional Networks](https://arxiv.org/abs/1905.07953) (KDD 2019) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cluster_gcn_reddit.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/cluster_gcn_ppi.py)]
+* **[GraphSAINT](https://pytorch-geometric.readthedocs.io/en/latest/modules/loader.html#torch_geometric.loader.GraphSAINTSampler)** from Zeng *et al.*: [GraphSAINT: Graph Sampling Based Inductive Learning Method](https://arxiv.org/abs/1907.04931) (ICLR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/graph_saint.py)]
 
 <details>
 <summary><b>Expand to see all implemented scalable GNNs...</b></summary>
 
-* **[ShaDow](https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.loader.ShaDowKHopSampler)** from Zeng *et al.*: [Decoupling the Depth and Scope of Graph Neural Networks](https://arxiv.org/abs/2201.07858) (NeurIPS 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/shadow.py)]
-* **[SIGN](https://pytorch-geometric.readthedocs.io/en/latest/modules/transforms.html#torch_geometric.transforms.SIGN)** from Rossi *et al.*: [SIGN: Scalable Inception Graph Neural Networks](https://arxiv.org/abs/2004.11198) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/sign.py)]
-* **[HGTLoader](https://pytorch-geometric.readthedocs.io/en/latest/modules/transforms.html#torch_geometric.loader.HGTLoader)** from Hu *et al.*: [Heterogeneous Graph Transformer](https://arxiv.org/abs/2003.01332) (WWW 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py)]
+* **[ShaDow](https://pytorch-geometric.readthedocs.io/en/latest/modules/loader.html#torch_geometric.loader.ShaDowKHopSampler)** from Zeng *et al.*: [Decoupling the Depth and Scope of Graph Neural Networks](https://arxiv.org/abs/2201.07858) (NeurIPS 2021) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/shadow.py)]
+* **[SIGN](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.transforms.SIGN.html)** from Rossi *et al.*: [SIGN: Scalable Inception Graph Neural Networks](https://arxiv.org/abs/2004.11198) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/sign.py)]
+* **[HGTLoader](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.loader.HGTLoader.html)** from Hu *et al.*: [Heterogeneous Graph Transformer](https://arxiv.org/abs/2003.01332) (WWW 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/to_hetero_mag.py)]
 </details>
 
 ## Installation
@@ -446,7 +446,7 @@ Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective pa
 }
 ```
 
-Feel free to [email us](mailto:matthias.fey@tu-dortmund.de) if you wish your work to be listed in the [external resources](https://pytorch-geometric.readthedocs.io/en/latest/notes/resources.html).
+Feel free to [email us](mailto:matthias.fey@tu-dortmund.de) if you wish your work to be listed in the [external resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html).
 If you notice anything unexpected, please open an [issue](https://github.com/pyg-team/pytorch_geometric/issues) and let us know.
 If you have any questions or are missing a specific feature, feel free [to discuss them with us](https://github.com/pyg-team/pytorch_geometric/discussions).
 We are motivated to constantly make PyG even better.

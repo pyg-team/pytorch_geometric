@@ -31,7 +31,7 @@ class GatedGraphConv(MessagePassing):
     Args:
         out_channels (int): Size of each output sample.
         num_layers (int): The sequence length :math:`L`.
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn

@@ -8,7 +8,6 @@ import numpy as np
 import torch
 from torch import Tensor
 from torch.nn import Embedding, Linear
-from torch_scatter import scatter
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Dataset, download_url
@@ -17,6 +16,7 @@ from torch_geometric.nn import radius_graph
 from torch_geometric.nn.inits import glorot_orthogonal
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import OptTensor
+from torch_geometric.utils import scatter
 
 qm9_target_dict = {
     0: 'mu',
@@ -211,7 +211,7 @@ class InteractionBlock(torch.nn.Module):
         x_kj = self.act(self.lin_kj(x))
         x_kj = x_kj * rbf
         x_kj = torch.einsum('wj,wl,ijl->wi', sbf, x_kj[idx_kj], self.W)
-        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0))
+        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce='sum')
 
         h = x_ji + x_kj
         for layer in self.layers_before_skip:
@@ -298,7 +298,7 @@ class InteractionPPBlock(torch.nn.Module):
         x_kj = x_kj[idx_kj] * sbf
 
         # Aggregate interactions and up-project embeddings:
-        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0))
+        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce='sum')
         x_kj = self.act(self.lin_up(x_kj))
 
         h = x_ji + x_kj
@@ -335,7 +335,7 @@ class OutputBlock(torch.nn.Module):
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
                 num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
-        x = scatter(x, i, dim=0, dim_size=num_nodes)
+        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce='sum')
         for lin in self.lins:
             x = self.act(lin(x))
         return self.lin(x)
@@ -370,7 +370,7 @@ class OutputPPBlock(torch.nn.Module):
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
                 num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
-        x = scatter(x, i, dim=0, dim_size=num_nodes)
+        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce='sum')
         x = self.lin_up(x)
         for lin in self.lins:
             x = self.act(lin(x))
@@ -632,7 +632,10 @@ class DimeNet(torch.nn.Module):
             x = interaction_block(x, rbf, sbf, idx_kj, idx_ji)
             P = P + output_block(x, rbf, i, num_nodes=pos.size(0))
 
-        return P.sum(dim=0) if batch is None else scatter(P, batch, dim=0)
+        if batch is None:
+            return P.sum(dim=0)
+        else:
+            return scatter(P, batch, dim=0, reduce='sum')
 
 
 class DimeNetPlusPlus(DimeNet):
