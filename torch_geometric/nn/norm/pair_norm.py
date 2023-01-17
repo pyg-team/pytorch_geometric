@@ -37,7 +37,13 @@ class PairNorm(torch.nn.Module):
         self.eps = eps
 
     def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example. (default: :obj:`None`)
+        """
         scale = self.scale
 
         if batch is None:
