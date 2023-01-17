@@ -80,8 +80,8 @@ class MD17(InMemoryDataset):
     +----------------+-----------------+------------------------------+-----------+
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): Keyword of the trajectory that should be loaded.
+        root (str): Root directory where the dataset should be saved.
+        name (str): Keyword of the trajectory that should be loaded.
         train (bool, optional): Determines whether the train or test split
             gets loaded for the coupled cluster trajectories.
             (default: :obj:`None`)

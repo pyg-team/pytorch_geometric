@@ -135,7 +135,7 @@ class NeighborLoader(NodeLoader):
             vector holding the mapping of nodes to their respective subgraph.
             Will get automatically set to :obj:`True` in case of temporal
             sampling. (default: :obj:`False`)
-        temporal_strategy (string, optional): The sampling strategy when using
+        temporal_strategy (str, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
             If set to :obj:`"uniform"`, will sample uniformly across neighbors
             that fulfill temporal constraints.

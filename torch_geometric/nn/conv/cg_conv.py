@@ -31,7 +31,7 @@ class CGConv(MessagePassing):
         channels (int or tuple): Size of each input sample. A tuple
             corresponds to the sizes of source and target dimensionalities.
         dim (int, optional): Edge feature dimensionality. (default: :obj:`0`)
-        aggr (string, optional): The aggregation operator to use
+        aggr (str, optional): The aggregation operator to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
         batch_norm (bool, optional): If set to :obj:`True`, will make use of

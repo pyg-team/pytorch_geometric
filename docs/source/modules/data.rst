@@ -12,13 +12,11 @@ Data Objects
 .. autosummary::
    :nosignatures:
    :toctree: ../generated
+   :template: autosummary/inherited_class.rst
 
-   Data
-   HeteroData
-   Batch
-   TemporalData
-   Dataset
-   InMemoryDataset
+   {% for name in torch_geometric.data.data_classes %}
+     {{ name }}
+   {% endfor %}
 
 Remote Backend Interfaces
 -------------------------
@@ -29,10 +27,9 @@ Remote Backend Interfaces
    :nosignatures:
    :toctree: ../generated
 
-   FeatureStore
-   GraphStore
-   TensorAttr
-   EdgeAttr
+   {% for name in torch_geometric.data.remote_backend_classes %}
+     {{ name }}
+   {% endfor %}
 
 PyTorch Lightning Wrappers
 --------------------------
@@ -44,9 +41,9 @@ PyTorch Lightning Wrappers
    :toctree: ../generated
    :template: autosummary/only_class.rst
 
-   LightningDataset
-   LightningNodeData
-   LightningLinkData
+   {% for name in torch_geometric.data.lightning.classes %}
+     {{ name }}
+   {% endfor %}
 
 Helper Functions
 ----------------
@@ -57,9 +54,6 @@ Helper Functions
    :nosignatures:
    :toctree: ../generated
 
-   makedirs
-   download_url
-   extract_tar
-   extract_zip
-   extract_bz2
-   extract_gz
+   {% for name in torch_geometric.data.helper_functions %}
+     {{ name }}
+   {% endfor %}

@@ -26,8 +26,8 @@ class DBP15K(InMemoryDataset):
     Matching Neural Network" <https://arxiv.org/abs/1905.11605>`_ paper.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        pair (string): The pair of languages (:obj:`"en_zh"`, :obj:`"en_fr"`,
+        root (str): Root directory where the dataset should be saved.
+        pair (str): The pair of languages (:obj:`"en_zh"`, :obj:`"en_fr"`,
             :obj:`"en_ja"`, :obj:`"zh_en"`, :obj:`"fr_en"`, :obj:`"ja_en"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed

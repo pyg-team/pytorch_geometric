@@ -31,7 +31,7 @@ class JumpingKnowledge(torch.nn.Module):
     LSTM (:obj:`"lstm"`).
 
     Args:
-        mode (string): The aggregation scheme to use
+        mode (str): The aggregation scheme to use
             (:obj:`"cat"`, :obj:`"max"` or :obj:`"lstm"`).
         channels (int, optional): The number of channels per representation.
             Needs to be only set for LSTM-style aggregation.

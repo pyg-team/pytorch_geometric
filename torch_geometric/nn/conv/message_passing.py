@@ -57,7 +57,7 @@ class MessagePassing(torch.nn.Module):
     create_gnn.html>`__ for the accompanying tutorial.
 
     Args:
-        aggr (string or list or Aggregation, optional): The aggregation scheme
+        aggr (str or [str] or Aggregation, optional): The aggregation scheme
             to use, *e.g.*, :obj:`"add"`, :obj:`"sum"` :obj:`"mean"`,
             :obj:`"min"`, :obj:`"max"` or :obj:`"mul"`.
             In addition, can be any
@@ -71,7 +71,7 @@ class MessagePassing(torch.nn.Module):
         aggr_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
-        flow (string, optional): The flow direction of message passing
+        flow (str, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
         node_dim (int, optional): The axis along which to propagate.
@@ -748,9 +748,9 @@ class MessagePassing(torch.nn.Module):
         jittable module.
 
         Args:
-            typing (string, optional): If given, will generate a concrete
-                instance with :meth:`forward` types based on :obj:`typing`,
-                *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
+            typing (str, optional): If given, will generate a concrete instance
+                with :meth:`forward` types based on :obj:`typing`, *e.g.*,
+                :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
         try:
             from jinja2 import Template
