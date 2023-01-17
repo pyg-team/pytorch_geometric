@@ -74,7 +74,7 @@ class RGCNConv(MessagePassing):
             block-diagonal-decomposition regularization scheme where
             :obj:`num_blocks` denotes the number of blocks to use.
             (default: :obj:`None`)
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will

@@ -17,7 +17,7 @@ class DegreeScalerAggregation(Aggregation):
     See :class:`torch_geometric.nn.conv.PNAConv` for more information.
 
     Args:
-        aggr (string or list or Aggregation): The aggregation scheme to use.
+        aggr (str or [str] or Aggregation): The aggregation scheme to use.
             See :class:`~torch_geometric.nn.conv.MessagePassing` for more
             information.
         scaler (str or list): Set of scaling function identifiers, namely one
