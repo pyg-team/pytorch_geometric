@@ -8,13 +8,16 @@ from torch_geometric.explain.algorithm.captum import to_captum_input  # noqa
 from torch_geometric.explain.algorithm.captum import (
     CaptumHeteroModel,
     CaptumModel,
+    MaskLevelType,
 )
 from torch_geometric.typing import Metadata
 
 
 def to_captum_model(
-    model: torch.nn.Module, mask_type: str = "edge",
-    output_idx: Optional[int] = None, metadata: Optional[Metadata] = None
+    model: torch.nn.Module,
+    mask_type: Union[str, MaskLevelType] = MaskLevelType.edge,
+    output_idx: Optional[int] = None,
+    metadata: Optional[Metadata] = None,
 ) -> Union[CaptumModel, CaptumHeteroModel]:
     r"""Converts a model to a model that can be used for
     `Captum.ai <https://captum.ai/>`_ attribution methods.
