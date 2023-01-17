@@ -377,13 +377,15 @@ class LightningNodeData(LightningDataModule):
 
             if hasattr(self, 'neighbor_sampler'):
                 self.eval_neighbor_sampler = copy.copy(self.neighbor_sampler)
+                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
 
-                eval_sampler_kwargs, self.eval_loader_kwargs = split_kwargs(
+                eval_sampler_kwargs, eval_loader_kwargs = split_kwargs(
                     eval_loader_kwargs,
                     self.neighbor_sampler.__class__,
                 )
                 for key, value in eval_sampler_kwargs.items():
                     setattr(self.eval_neighbor_sampler, key, value)
+                self.eval_loader_kwargs.update(eval_loader_kwargs)
             else:
                 self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
                 self.eval_loader_kwargs.update(eval_loader_kwargs)
@@ -692,13 +694,15 @@ class LightningLinkData(LightningDataModule):
 
             if hasattr(self, 'neighbor_sampler'):
                 self.eval_neighbor_sampler = copy.copy(self.neighbor_sampler)
+                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
 
-                eval_sampler_kwargs, self.eval_loader_kwargs = split_kwargs(
+                eval_sampler_kwargs, eval_loader_kwargs = split_kwargs(
                     eval_loader_kwargs,
                     self.neighbor_sampler.__class__,
                 )
                 for key, value in eval_sampler_kwargs.items():
                     setattr(self.eval_neighbor_sampler, key, value)
+                self.eval_loader_kwargs.update(eval_loader_kwargs)
             else:
                 self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
                 self.eval_loader_kwargs.update(eval_loader_kwargs)
