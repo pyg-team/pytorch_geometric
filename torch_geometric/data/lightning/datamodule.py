@@ -1,7 +1,7 @@
 import copy
 import inspect
 import warnings
-from typing import Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Type, Union
 
 import torch
 
@@ -112,6 +112,8 @@ class LightningDataset(LightningDataModule):
             (default: :obj:`None`)
         test_dataset (Dataset, optional): The test dataset.
             (default: :obj:`None`)
+        pred_dataset (Dataset, optional): The prediction dataset.
+            (default: :obj:`None`)
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
         num_workers (int): How many subprocesses to use for data loading.
@@ -125,6 +127,7 @@ class LightningDataset(LightningDataModule):
         train_dataset: Dataset,
         val_dataset: Optional[Dataset] = None,
         test_dataset: Optional[Dataset] = None,
+        pred_dataset: Optional[Dataset] = None,
         batch_size: int = 1,
         num_workers: int = 0,
         **kwargs,
@@ -140,6 +143,7 @@ class LightningDataset(LightningDataModule):
         self.train_dataset = train_dataset
         self.val_dataset = val_dataset
         self.test_dataset = test_dataset
+        self.pred_dataset = pred_dataset
 
     def dataloader(self, dataset: Dataset, **kwargs) -> DataLoader:
         return DataLoader(dataset, **kwargs)
@@ -147,9 +151,10 @@ class LightningDataset(LightningDataModule):
     def train_dataloader(self) -> DataLoader:
         """"""
         from torch.utils.data import IterableDataset
-        shuffle = (not isinstance(self.train_dataset, IterableDataset)
-                   and self.kwargs.get('sampler', None) is None
-                   and self.kwargs.get('batch_sampler', None) is None)
+
+        shuffle = not isinstance(self.train_dataset, IterableDataset)
+        shuffle &= self.kwargs.get('sampler', None) is None
+        shuffle &= self.kwargs.get('batch_sampler', None) is None
 
         return self.dataloader(self.train_dataset, shuffle=shuffle,
                                **self.kwargs)
@@ -169,6 +174,14 @@ class LightningDataset(LightningDataModule):
         kwargs.pop('batch_sampler', None)
 
         return self.dataloader(self.test_dataset, shuffle=False, **kwargs)
+
+    def predict_dataloader(self) -> DataLoader:
+        """"""
+        kwargs = copy.copy(self.kwargs)
+        kwargs.pop('sampler', None)
+        kwargs.pop('batch_sampler', None)
+
+        return self.dataloader(self.pred_dataset, shuffle=False, **kwargs)
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(train_dataset=self.train_dataset,
@@ -250,6 +263,9 @@ class LightningNodeData(LightningDataModule):
         num_workers (int): How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
+        eval_loader_kwargs (Dict[str, Any], optional): Custom keyword arguments
+            that override the :class:`torch_geometric.loader.NeighborLoader`
+            configuration during evaluation. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.loader.NeighborLoader`.
     """
@@ -268,6 +284,7 @@ class LightningNodeData(LightningDataModule):
         node_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
+        eval_loader_kwargs: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         if node_sampler is not None:
@@ -301,6 +318,16 @@ class LightningNodeData(LightningDataModule):
                           f"(got '{num_workers}')")
             num_workers = 0
 
+        if loader == 'full' and kwargs.get('sampler') is not None:
+            warnings.warn("'sampler' option is not supported for "
+                          "loader='full'")
+            kwargs.pop('sampler', None)
+
+        if loader == 'full' and kwargs.get('batch_sampler') is not None:
+            warnings.warn("'batch_sampler' option is not supported for "
+                          "loader='full'")
+            kwargs.pop('sampler', None)
+
         super().__init__(
             has_val=input_val_nodes is not None,
             has_test=input_test_nodes is not None,
@@ -319,28 +346,60 @@ class LightningNodeData(LightningDataModule):
         self.data = data
         self.loader = loader
 
-        if loader == 'neighbor':
-            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
-            sampler_args.pop('data')
-            sampler_args.pop('share_memory')
-            sampler_kwargs = {
-                key: kwargs.get(key, param.default)
-                for key, param in sampler_args.items()
-            }
+        # Determine sampler and loader arguments ##############################
 
-            self.neighbor_sampler = NeighborSampler(
-                data=data,
-                share_memory=num_workers > 0,
-                **sampler_kwargs,
+        if loader == 'neighbor':
+            # Define a new `NeighborSampler` that can be re-used across
+            # different data loaders.
+            sampler_kwargs, self.loader_kwargs = split_kwargs(
+                self.kwargs,
+                NeighborSampler,
             )
-        elif node_sampler is not None:
+            sampler_kwargs.setdefault('share_memory', num_workers > 0)
+
             # TODO Consider renaming to `self.node_sampler`
+            self.neighbor_sampler = NeighborSampler(data, **sampler_kwargs)
+
+        elif node_sampler is not None:
+            _, self.loader_kwargs = split_kwargs(
+                self.kwargs,
+                node_sampler.__class__,
+            )
             self.neighbor_sampler = node_sampler
 
-        if getattr(self, 'neighbor_sampler', None) is not None:
-            cls = self.neighbor_sampler.__class__
-            for param in inspect.signature(cls).parameters:
-                self.kwargs.pop(param, None)
+        else:
+            self.loader_kwargs = self.kwargs
+
+        # Determine validation sampler and loader arguments ###################
+
+        if eval_loader_kwargs is not None:
+            # The user wants to override certain values during evaluation, so
+            # we shallow-copy the sampler and update its attributes.
+
+            if hasattr(self, 'neighbor_sampler'):
+                self.eval_neighbor_sampler = copy.copy(self.neighbor_sampler)
+                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
+
+                eval_sampler_kwargs, eval_loader_kwargs = split_kwargs(
+                    eval_loader_kwargs,
+                    self.neighbor_sampler.__class__,
+                )
+                for key, value in eval_sampler_kwargs.items():
+                    setattr(self.eval_neighbor_sampler, key, value)
+                self.eval_loader_kwargs.update(eval_loader_kwargs)
+            else:
+                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
+                self.eval_loader_kwargs.update(eval_loader_kwargs)
+        else:
+            if hasattr(self, 'neighbor_sampler'):
+                self.eval_neighbor_sampler = self.neighbor_sampler
+
+            self.eval_loader_kwargs = self.loader_kwargs
+
+        self.eval_loader_kwargs.pop('sampler', None)
+        self.eval_loader_kwargs.pop('batch_sampler', None)
+
+        #######################################################################
 
         self.input_train_nodes = input_train_nodes
         self.input_train_time = input_train_time
@@ -378,15 +437,12 @@ class LightningNodeData(LightningDataModule):
         input_nodes: InputNodes,
         input_time: OptTensor = None,
         input_id: OptTensor = None,
+        node_sampler: Optional[BaseSampler] = None,
         **kwargs,
     ) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
-
-            kwargs['shuffle'] = True
-            kwargs.pop('sampler', None)
-            kwargs.pop('batch_sampler', None)
 
             return torch.utils.data.DataLoader(
                 [self.data],
@@ -395,9 +451,14 @@ class LightningNodeData(LightningDataModule):
             )
 
         else:
+            if node_sampler is None:
+                warnings.warn("No 'node_sampler' specified. Falling back to "
+                              "using the default training sampler.")
+                node_sampler = self.neighbor_sampler
+
             return NodeLoader(
                 self.data,
-                node_sampler=self.neighbor_sampler,
+                node_sampler=node_sampler,
                 input_nodes=input_nodes,
                 input_time=input_time,
                 input_id=input_id,
@@ -406,39 +467,50 @@ class LightningNodeData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        shuffle = (self.kwargs.get('sampler', None) is None
-                   and self.kwargs.get('batch_sampler', None) is None)
+        shuffle = self.loader_kwargs.get('sampler', None) is None
+        shuffle &= self.loader_kwargs.get('batch_sampler', None) is None
 
-        return self.dataloader(self.input_train_nodes, self.input_train_time,
-                               self.input_train_id, shuffle=shuffle,
-                               **self.kwargs)
+        return self.dataloader(
+            self.input_train_nodes,
+            self.input_train_time,
+            self.input_train_id,
+            node_sampler=getattr(self, 'neighbor_sampler', None),
+            shuffle=shuffle,
+            **self.loader_kwargs,
+        )
 
     def val_dataloader(self) -> DataLoader:
         """"""
-        kwargs = copy.copy(self.kwargs)
-        kwargs.pop('sampler', None)
-        kwargs.pop('batch_sampler', None)
-
-        return self.dataloader(self.input_val_nodes, self.input_val_time,
-                               self.input_val_id, shuffle=False, **kwargs)
+        return self.dataloader(
+            self.input_val_nodes,
+            self.input_val_time,
+            self.input_val_id,
+            node_sampler=getattr(self, 'eval_neighbor_sampler', None),
+            shuffle=False,
+            **self.eval_loader_kwargs,
+        )
 
     def test_dataloader(self) -> DataLoader:
         """"""
-        kwargs = copy.copy(self.kwargs)
-        kwargs.pop('sampler', None)
-        kwargs.pop('batch_sampler', None)
-
-        return self.dataloader(self.input_test_nodes, self.input_test_time,
-                               self.input_test_id, shuffle=False, **kwargs)
+        return self.dataloader(
+            self.input_test_nodes,
+            self.input_test_time,
+            self.input_test_id,
+            node_sampler=getattr(self, 'eval_neighbor_sampler', None),
+            shuffle=False,
+            **self.eval_loader_kwargs,
+        )
 
     def predict_dataloader(self) -> DataLoader:
         """"""
-        kwargs = copy.copy(self.kwargs)
-        kwargs.pop('sampler', None)
-        kwargs.pop('batch_sampler', None)
-
-        return self.dataloader(self.input_pred_nodes, self.input_pred_time,
-                               self.input_pred_id, shuffle=False, **kwargs)
+        return self.dataloader(
+            self.input_pred_nodes,
+            self.input_pred_time,
+            self.input_pred_id,
+            node_sampler=getattr(self, 'eval_neighbor_sampler', None),
+            shuffle=False,
+            **self.eval_loader_kwargs,
+        )
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
@@ -482,9 +554,9 @@ class LightningLinkData(LightningDataModule):
         input_train_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The training edges. (default: :obj:`None`)
         input_train_labels (torch.Tensor, optional):
-            The labels of train edges. (default: :obj:`None`)
+            The labels of training edges. (default: :obj:`None`)
         input_train_time (torch.Tensor, optional): The timestamp
-            of train edges. (default: :obj:`None`)
+            of training edges. (default: :obj:`None`)
         input_val_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The validation edges. (default: :obj:`None`)
         input_val_labels (torch.Tensor, optional):
@@ -494,9 +566,15 @@ class LightningLinkData(LightningDataModule):
         input_test_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The test edges. (default: :obj:`None`)
         input_test_labels (torch.Tensor, optional):
-            The labels of train edges. (default: :obj:`None`)
+            The labels of test edges. (default: :obj:`None`)
         input_test_time (torch.Tensor, optional): The timestamp
             of test edges. (default: :obj:`None`)
+        input_pred_edges (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
+            The prediction edges. (default: :obj:`None`)
+        input_pred_labels (torch.Tensor, optional):
+            The labels of prediction edges. (default: :obj:`None`)
+        input_pred_time (torch.Tensor, optional): The timestamp
+            of prediction edges. (default: :obj:`None`)
         loader (str): The scalability technique to use (:obj:`"full"`,
             :obj:`"neighbor"`). (default: :obj:`"neighbor"`)
         link_sampler (BaseSampler, optional): A custom sampler object to
@@ -507,6 +585,10 @@ class LightningLinkData(LightningDataModule):
         num_workers (int): How many subprocesses to use for data loading.
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
+        eval_loader_kwargs (Dict[str, Any], optional): Custom keyword arguments
+            that override the
+            :class:`torch_geometric.loader.LinkNeighborLoader` configuration
+            during evaluation. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.loader.LinkNeighborLoader`.
     """
@@ -522,10 +604,14 @@ class LightningLinkData(LightningDataModule):
         input_test_edges: InputEdges = None,
         input_test_labels: OptTensor = None,
         input_test_time: OptTensor = None,
+        input_pred_edges: InputEdges = None,
+        input_pred_labels: OptTensor = None,
+        input_pred_time: OptTensor = None,
         loader: str = "neighbor",
         link_sampler: Optional[BaseSampler] = None,
         batch_size: int = 1,
         num_workers: int = 0,
+        eval_loader_kwargs: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
         if link_sampler is not None:
@@ -549,6 +635,16 @@ class LightningLinkData(LightningDataModule):
                           f"(got '{num_workers}')")
             num_workers = 0
 
+        if loader == 'full' and kwargs.get('sampler') is not None:
+            warnings.warn("'sampler' option is not supported for "
+                          "loader='full'")
+            kwargs.pop('sampler', None)
+
+        if loader == 'full' and kwargs.get('batch_sampler') is not None:
+            warnings.warn("'batch_sampler' option is not supported for "
+                          "loader='full'")
+            kwargs.pop('sampler', None)
+
         super().__init__(
             has_val=input_val_edges is not None,
             has_test=input_test_edges is not None,
@@ -567,27 +663,58 @@ class LightningLinkData(LightningDataModule):
         self.data = data
         self.loader = loader
 
+        # Determine sampler and loader arguments ##############################
+
         if loader in ['neighbor', 'link_neighbor']:
-            sampler_args = dict(inspect.signature(NeighborSampler).parameters)
-            sampler_args.pop('data')
-            sampler_args.pop('share_memory')
-            sampler_kwargs = {
-                key: kwargs.get(key, param.default)
-                for key, param in sampler_args.items()
-            }
-            self.neighbor_sampler = NeighborSampler(
-                data=data,
-                share_memory=num_workers > 0,
-                **sampler_kwargs,
+            # Define a new `NeighborSampler` that can be re-used across
+            # different data loaders.
+            sampler_kwargs, self.loader_kwargs = split_kwargs(
+                self.kwargs,
+                NeighborSampler,
             )
-        elif link_sampler is not None:
+            sampler_kwargs.setdefault('share_memory', num_workers > 0)
+
             # TODO Consider renaming to `self.link_sampler`
+            self.neighbor_sampler = NeighborSampler(data, **sampler_kwargs)
+
+        elif link_sampler is not None:
+            _, self.loader_kwargs = split_kwargs(
+                self.kwargs,
+                link_sampler.__class__,
+            )
             self.neighbor_sampler = link_sampler
 
-        if getattr(self, 'neighbor_sampler', None) is not None:
-            cls = self.neighbor_sampler.__class__
-            for param in inspect.signature(cls).parameters:
-                self.kwargs.pop(param, None)
+        else:
+            self.loader_kwargs = self.kwargs
+
+        # Determine validation sampler and loader arguments ###################
+
+        if eval_loader_kwargs is not None:
+            # The user wants to override certain values during evaluation, so
+            # we shallow-copy the sampler and update its attributes.
+
+            if hasattr(self, 'neighbor_sampler'):
+                self.eval_neighbor_sampler = copy.copy(self.neighbor_sampler)
+                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
+
+                eval_sampler_kwargs, eval_loader_kwargs = split_kwargs(
+                    eval_loader_kwargs,
+                    self.neighbor_sampler.__class__,
+                )
+                for key, value in eval_sampler_kwargs.items():
+                    setattr(self.eval_neighbor_sampler, key, value)
+                self.eval_loader_kwargs.update(eval_loader_kwargs)
+            else:
+                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
+                self.eval_loader_kwargs.update(eval_loader_kwargs)
+        else:
+            if hasattr(self, 'neighbor_sampler'):
+                self.eval_neighbor_sampler = self.neighbor_sampler
+
+            self.eval_loader_kwargs = self.loader_kwargs
+
+        self.eval_loader_kwargs.pop('sampler', None)
+        self.eval_loader_kwargs.pop('batch_sampler', None)
 
         self.input_train_edges = input_train_edges
         self.input_train_labels = input_train_labels
@@ -598,11 +725,15 @@ class LightningLinkData(LightningDataModule):
         self.input_test_edges = input_test_edges
         self.input_test_labels = input_test_labels
         self.input_test_time = input_test_time
+        self.input_pred_edges = input_pred_edges
+        self.input_pred_labels = input_pred_labels
+        self.input_pred_time = input_pred_time
 
         # Can be overriden to set input indices of the `LinkLoader`:
         self.input_train_id: OptTensor = None
         self.input_val_id: OptTensor = None
         self.input_test_id: OptTensor = None
+        self.input_pred_id: OptTensor = None
 
     def prepare_data(self):
         """"""
@@ -626,15 +757,12 @@ class LightningLinkData(LightningDataModule):
         input_labels: OptTensor = None,
         input_time: OptTensor = None,
         input_id: OptTensor = None,
+        link_sampler: Optional[BaseSampler] = None,
         **kwargs,
     ) -> DataLoader:
         if self.loader == 'full':
             warnings.filterwarnings('ignore', '.*does not have many workers.*')
             warnings.filterwarnings('ignore', '.*data loading bottlenecks.*')
-
-            kwargs['shuffle'] = True
-            kwargs.pop('sampler', None)
-            kwargs.pop('batch_sampler', None)
 
             return torch.utils.data.DataLoader(
                 [self.data],
@@ -643,9 +771,14 @@ class LightningLinkData(LightningDataModule):
             )
 
         else:
+            if link_sampler is None:
+                warnings.warn("No 'link_sampler' specified. Falling back to "
+                              "using the default training sampler.")
+                link_sampler = self.neighbor_sampler
+
             return LinkLoader(
                 self.data,
-                link_sampler=self.neighbor_sampler,
+                link_sampler=link_sampler,
                 edge_label_index=input_edges,
                 edge_label=input_labels,
                 edge_label_time=input_time,
@@ -655,32 +788,54 @@ class LightningLinkData(LightningDataModule):
 
     def train_dataloader(self) -> DataLoader:
         """"""
-        shuffle = (self.kwargs.get('sampler', None) is None
-                   and self.kwargs.get('batch_sampler', None) is None)
+        shuffle = self.loader_kwargs.get('sampler', None) is None
+        shuffle &= self.loader_kwargs.get('batch_sampler', None) is None
 
-        return self.dataloader(self.input_train_edges, self.input_train_labels,
-                               self.input_train_time, self.input_train_id,
-                               shuffle=shuffle, **self.kwargs)
+        return self.dataloader(
+            self.input_train_edges,
+            self.input_train_labels,
+            self.input_train_time,
+            self.input_train_id,
+            link_sampler=getattr(self, 'neighbor_sampler', None),
+            shuffle=shuffle,
+            **self.loader_kwargs,
+        )
 
     def val_dataloader(self) -> DataLoader:
         """"""
-        kwargs = copy.copy(self.kwargs)
-        kwargs.pop('sampler', None)
-        kwargs.pop('batch_sampler', None)
-
-        return self.dataloader(self.input_val_edges, self.input_val_labels,
-                               self.input_val_time, self.input_val_id,
-                               shuffle=False, **kwargs)
+        return self.dataloader(
+            self.input_val_edges,
+            self.input_val_labels,
+            self.input_val_time,
+            self.input_val_id,
+            link_sampler=getattr(self, 'eval_neighbor_sampler', None),
+            shuffle=False,
+            **self.eval_loader_kwargs,
+        )
 
     def test_dataloader(self) -> DataLoader:
         """"""
-        kwargs = copy.copy(self.kwargs)
-        kwargs.pop('sampler', None)
-        kwargs.pop('batch_sampler', None)
+        return self.dataloader(
+            self.input_test_edges,
+            self.input_test_labels,
+            self.input_test_time,
+            self.input_test_id,
+            link_sampler=getattr(self, 'eval_neighbor_sampler', None),
+            shuffle=False,
+            **self.eval_loader_kwargs,
+        )
 
-        return self.dataloader(self.input_test_edges, self.input_test_labels,
-                               self.input_test_time, self.input_test_id,
-                               shuffle=False, **kwargs)
+    def predict_dataloader(self) -> DataLoader:
+        """"""
+        return self.dataloader(
+            self.input_pred_edges,
+            self.input_pred_labels,
+            self.input_pred_time,
+            self.input_pred_id,
+            link_sampler=getattr(self, 'eval_neighbor_sampler', None),
+            shuffle=False,
+            **self.eval_loader_kwargs,
+        )
 
     def __repr__(self) -> str:
         kwargs = kwargs_repr(data=self.data, loader=self.loader, **self.kwargs)
@@ -717,3 +872,22 @@ def infer_input_nodes(data: Union[Data, HeteroData], split: str) -> InputNodes:
 
 def kwargs_repr(**kwargs) -> str:
     return ', '.join([f'{k}={v}' for k, v in kwargs.items() if v is not None])
+
+
+def split_kwargs(
+    kwargs: Dict[str, Any],
+    sampler_cls: Type,
+) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    r"""Splits keyword arguments into sampler and loader arguments."""
+    sampler_args = inspect.signature(sampler_cls).parameters
+
+    sampler_kwargs: Dict[str, Any] = {}
+    loader_kwargs: Dict[str, Any] = {}
+
+    for key, value in kwargs.items():
+        if key in sampler_args:
+            sampler_kwargs[key] = value
+        else:
+            loader_kwargs[key] = value
+
+    return sampler_kwargs, loader_kwargs

@@ -48,7 +48,7 @@ class FiLMConv(MessagePassing):
             linear layer. (default: :obj:`None`)
         act (callable, optional): Activation function :math:`\sigma`.
             (default: :meth:`torch.nn.ReLU()`)
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         **kwargs (optional): Additional arguments of

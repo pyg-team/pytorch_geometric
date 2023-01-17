@@ -34,13 +34,12 @@ class ZINC(InMemoryDataset):
     <https://proceedings.mlr.press/v70/kusner17a.html>`_ papers.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         subset (boolean, optional): If set to :obj:`True`, will only load a
             subset of the dataset (12,000 molecular graphs), following the
             `"Benchmarking Graph Neural Networks"
             <https://arxiv.org/abs/2003.00982>`_ paper. (default: :obj:`False`)
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
             (default: :obj:`"train"`)

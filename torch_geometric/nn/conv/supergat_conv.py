@@ -104,7 +104,7 @@ class SuperGATConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        attention_type (string, optional): Type of attention to use.
+        attention_type (str, optional): Type of attention to use
             (:obj:`'MX'`, :obj:`'SD'`). (default: :obj:`'MX'`)
         neg_sample_ratio (float, optional): The ratio of the number of sampled
             negative edges to the number of positive edges.

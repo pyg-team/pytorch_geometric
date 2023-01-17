@@ -7,7 +7,7 @@ from torch_geometric.utils import to_undirected
 
 @functional_transform('knn_graph')
 class KNNGraph(BaseTransform):
-    r"""Creates a k-NN graph based on node positions :obj:`pos`
+    r"""Creates a k-NN graph based on node positions :obj:`data.pos`
     (functional name: :obj:`knn_graph`).
 
     Args:
@@ -16,8 +16,8 @@ class KNNGraph(BaseTransform):
             self-loops. (default: :obj:`False`)
         force_undirected (bool, optional): If set to :obj:`True`, new edges
             will be undirected. (default: :obj:`False`)
-        flow (string, optional): The flow direction when used in combination
-            with message passing (:obj:`"source_to_target"` or
+        flow (str, optional): The flow direction when used in combination with
+            message passing (:obj:`"source_to_target"` or
             :obj:`"target_to_source"`).
             If set to :obj:`"source_to_target"`, every target node will have
             exactly :math:`k` source nodes pointing to it.

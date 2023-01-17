@@ -47,8 +47,8 @@ class AirfRANS(InMemoryDataset):
         :obj:`torch_geometric.transforms.RadiusGraph` transform.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        task (string): The task to study (:obj:`"full"`, :obj:`"scarce"`,
+        root (str): Root directory where the dataset should be saved.
+        task (str): The task to study (:obj:`"full"`, :obj:`"scarce"`,
             :obj:`"reynolds"`, :obj:`"aoa"`) that defines the utilized training
             and test splits.
         train (bool, optional): If :obj:`True`, loads the training dataset,

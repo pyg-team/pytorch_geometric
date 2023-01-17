@@ -85,7 +85,7 @@ For this, an :obj:`index` vector defines the mapping from input elements to thei
 
    output = mean_aggr(x, index)  #  Output shape: [100, 64]
 
-Notably, all aggregations share the same set of forward arguments, as described in detail in :class:`torch_geometric.nn.aggr.Aggregation`.
+Notably, all aggregations share the same set of forward arguments, as described in detail in the :class:`torch_geometric.nn.aggr.Aggregation` base class.
 
 Each of the provided aggregations can be used within :class:`~torch_geometric.nn.conv.MessagePassing` as well as for hierachical/global pooling to obtain graph-level representations:
 
@@ -155,31 +155,24 @@ Finally, we added full support for customization of aggregations into the :class
 
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.aggr.classes %}
-     {{ cls }}
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.aggr.classes %}
+     {{ name }}
    {% endfor %}
-
-.. autoclass:: torch_geometric.nn.aggr.Aggregation
-   :members:
-
-.. automodule:: torch_geometric.nn.aggr
-   :members:
-   :exclude-members: Aggregation, forward
 
 Normalization Layers
 --------------------
 
 .. currentmodule:: torch_geometric.nn.norm
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.norm.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
 
-.. automodule:: torch_geometric.nn.norm
-   :members:
-   :undoc-members:
-   :exclude-members: training
+   {% for name in torch_geometric.nn.norm.classes %}
+     {{ name }}
+   {% endfor %}
 
 Pooling Layers
 --------------

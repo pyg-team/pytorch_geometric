@@ -38,7 +38,7 @@ class NNConv(MessagePassing):
             num_edge_features]` to shape
             :obj:`[-1, in_channels * out_channels]`, *e.g.*, defined by
             :class:`torch.nn.Sequential`.
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
