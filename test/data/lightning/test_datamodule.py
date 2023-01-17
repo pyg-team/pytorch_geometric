@@ -199,7 +199,6 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
                          max_epochs=5, log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader=loader, batch_size=batch_size,
                                    num_workers=num_workers, **kwargs)
-
     old_x = data.x.clone().cpu()
     assert str(datamodule) == (f'LightningNodeData(data={data_repr}, '
                                f'loader={loader}, batch_size={batch_size}, '
