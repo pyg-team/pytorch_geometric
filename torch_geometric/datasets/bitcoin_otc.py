@@ -19,7 +19,7 @@ class BitcoinOTC(InMemoryDataset):
     who-trusts-whom networks of sequential time steps.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         edge_window_size (int, optional): The window size for the existence of
             an edge in the graph sequence since its initial creation.
             (default: :obj:`10`)

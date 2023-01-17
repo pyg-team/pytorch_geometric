@@ -18,11 +18,11 @@ class MoleculeNet(InMemoryDataset):
     the `Open Graph Benchmark <https://ogb.stanford.edu/docs/graphprop/>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"ESOL"`,
-            :obj:`"FreeSolv"`, :obj:`"Lipo"`, :obj:`"PCBA"`, :obj:`"MUV"`,
-            :obj:`"HIV"`, :obj:`"BACE"`, :obj:`"BBPB"`, :obj:`"Tox21"`,
-            :obj:`"ToxCast"`, :obj:`"SIDER"`, :obj:`"ClinTox"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"ESOL"`, :obj:`"FreeSolv"`,
+            :obj:`"Lipo"`, :obj:`"PCBA"`, :obj:`"MUV"`, :obj:`"HIV"`,
+            :obj:`"BACE"`, :obj:`"BBPB"`, :obj:`"Tox21"`, :obj:`"ToxCast"`,
+            :obj:`"SIDER"`, :obj:`"ClinTox"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

@@ -16,7 +16,7 @@ class StochasticBlockModelDataset(InMemoryDataset):
     :meth:`sklearn.datasets.make_classification` method.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         block_sizes ([int] or LongTensor): The sizes of blocks.
         edge_probs ([[float]] or FloatTensor): The density of edges going from
             each block to each other block. Must be symmetric if the graph is
@@ -126,7 +126,7 @@ class RandomPartitionGraphDataset(StochasticBlockModelDataset):
     :meth:`sklearn.datasets.make_classification` method.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         num_classes (int): The number of classes.
         num_nodes_per_class (int): The number of nodes per class.
         node_homophily_ratio (float): The degree of node homophily.

@@ -16,8 +16,8 @@ class CitationFull(InMemoryDataset):
     :obj:`"DBLP"`, :obj:`"PubMed"`.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Cora"`, :obj:`"Cora_ML"`
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Cora"`, :obj:`"Cora_ML"`
             :obj:`"CiteSeer"`, :obj:`"DBLP"`, :obj:`"PubMed"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed

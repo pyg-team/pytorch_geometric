@@ -29,8 +29,8 @@ class TUDataset(InMemoryDataset):
         :class:`torch_geometric.transforms.OneHotDegree`.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The `name
+        root (str): Root directory where the dataset should be saved.
+        name (str): The `name
             <https://chrsmrrs.github.io/datasets/docs/datasets/>`_ of the
             dataset.
         transform (callable, optional): A function/transform that takes in an
