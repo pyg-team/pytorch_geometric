@@ -7,6 +7,7 @@ from typing import Any, Dict, Optional, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
@@ -19,15 +20,13 @@ class DataType(Enum):
 
     @classmethod
     def from_data(cls, data: Any):
-        import torch_geometric.data
-
-        if isinstance(data, torch_geometric.data.Data):
+        if isinstance(data, Data):
             return cls.homogeneous
-        elif isinstance(data, torch_geometric.data.HeteroData):
+        elif isinstance(data, HeteroData):
             return cls.heterogeneous
         elif (isinstance(data, (list, tuple)) and len(data) == 2
-              and isinstance(data[0], torch_geometric.data.FeatureStore)
-              and isinstance(data[1], torch_geometric.data.GraphStore)):
+              and isinstance(data[0], FeatureStore)
+              and isinstance(data[1], GraphStore)):
             return cls.remote
 
         raise ValueError(f"Expected a 'Data', 'HeteroData', or a tuple of "
