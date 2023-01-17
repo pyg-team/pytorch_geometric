@@ -109,7 +109,7 @@ class NeighborSampler(BaseSampler):
                     copy.copy(attr) for attr in node_attrs
                     if attr.attr_name == time_attr
                 ]
-                for attr in time_attr:  # Reset the index to obtain full data.
+                for attr in time_attrs:  # Reset the index to obtain full data.
                     attr.index = None
                 time_tensors = feature_store.multi_get_tensor(time_attrs)
                 self.node_time = {
