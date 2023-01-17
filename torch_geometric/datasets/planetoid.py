@@ -9,9 +9,9 @@ from torch_geometric.io import read_planetoid_data
 
 
 class Planetoid(InMemoryDataset):
-    r"""The citation network datasets "Cora", "CiteSeer" and "PubMed" from the
-    `"Revisiting Semi-Supervised Learning with Graph Embeddings"
-    <https://arxiv.org/abs/1603.08861>`_ paper.
+    r"""The citation network datasets :obj:`"Cora"`, :obj:`"CiteSeer"` and
+    :obj:`"PubMed"` from the `"Revisiting Semi-Supervised Learning with Graph
+    Embeddings" <https://arxiv.org/abs/1603.08861>`_ paper.
     Nodes represent documents and edges represent citation links.
     Training, validation and test splits are given by binary masks.
 
