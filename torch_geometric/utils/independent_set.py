@@ -7,7 +7,7 @@ from torch_geometric.typing import Adj, OptTensor, SparseTensor, Tensor
 def maximal_independent_set(edge_index: Adj, k: int = 1,
                             rank: OptTensor = None) -> Tensor:
     r"""Returns a Maximal :math:`k`-Independent Set of a graph, i.e., a set of
-    nodes (as a tensor mask) such that none of them are :math:`k`-hop
+    nodes (as a :class:`ByteTensor`) such that none of them are :math:`k`-hop
     neighbors, and any node in the graph has a :math:`k`-hop neighbor in the
     returned set.
 
@@ -25,6 +25,8 @@ def maximal_independent_set(edge_index: Adj, k: int = 1,
         k (int): The :math:`k` value (defaults to 1).
         rank (Tensor): Node rank vector. Must be of size :obj:`(n,)` (defaults
             to :obj:`None`).
+
+    :rtype: :class:`ByteTensor`
     """
     if isinstance(edge_index, SparseTensor):
         row, col, _ = edge_index.coo()
