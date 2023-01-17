@@ -61,7 +61,7 @@ class CaptumExplainer(ExplainerAlgorithm):
         return mask_type
 
     def _support_multiple_indices(self):
-        "Check if the method supports multiple indices."
+        r"""Checks if the method supports multiple indices."""
         return self.attribution_method.__name__ == 'IntegratedGradients'
 
     def forward(
@@ -75,19 +75,15 @@ class CaptumExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Explanation:
 
-        # Check if the method supports multiple indices.
-        if isinstance(index, list) and len(index) > 1:
+        if isinstance(index, torch.Tensor) and (index.numel() > 1):
             if not self._support_multiple_indices():
                 raise ValueError(
                     f"{self.attribution_method.__name__} does not "
                     "support multiple indices. Please use a single "
                     "index or a different method.")
-            if self.kwargs.get('internal_batch_size') != 1:
+            if self.kwargs.get('internal_batch_size', 1) != 1:
                 warnings.warn("Overriding 'internal_batch_size' to 1")
-                self.kwargs['internal_batch_size'] = 1
-            warnings.warn(
-                "For all indices, the explanations are computed on the"
-                "same mask. This can lead to overlapping explanations.")
+            self.kwargs['internal_batch_size'] = 1
 
         mask_type = self._get_mask_type()
 

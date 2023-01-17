@@ -64,6 +64,7 @@ edge_index = torch.tensor([
 ])
 batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
+index = torch.tensor([1, 2])
 
 
 def _verify_mask_size(explanation, node_mask_type, edge_mask_type):
@@ -125,11 +126,9 @@ def test_captum_explainer_multiclass_classification_batch(
     node_mask_type,
     edge_mask_type,
 ):
-    index = [2, 3]
-    task_level = 'node'
     model_config = ModelConfig(
         mode='multiclass_classification',
-        task_level=task_level,
+        task_level='node',
         return_type='probs',
     )
 

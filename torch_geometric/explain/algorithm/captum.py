@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Dict, Optional, Tuple, Union
 
 import torch
@@ -8,8 +9,14 @@ from torch_geometric.explain.algorithm.utils import (
     set_hetero_masks,
     set_masks,
 )
-from torch_geometric.explain.config import MaskLevelType
 from torch_geometric.typing import EdgeType, Metadata, NodeType
+
+
+class MaskLevelType(Enum):
+    """Enum class for the mask level type."""
+    node = 'node'
+    edge = 'edge'
+    node_and_edge = 'node_and_edge'
 
 
 class CaptumModel(torch.nn.Module):
@@ -60,7 +67,8 @@ class CaptumModel(torch.nn.Module):
 
         if self.output_idx is not None:
             x = x[self.output_idx]
-            if isinstance(self.output_idx, int) or (len(self.output_idx) == 1):
+            if isinstance(self.output_idx, int) or (self.output_idx.numel()
+                                                    == 1):
                 x = x.unsqueeze(0)
 
         return x
@@ -144,7 +152,8 @@ class CaptumHeteroModel(CaptumModel):
 
         if self.output_idx is not None:
             x = x[self.output_idx]
-            if isinstance(self.output_idx, int) or (len(self.output_idx) == 1):
+            if isinstance(self.output_idx, int) or (self.output_idx.numel()
+                                                    == 1):
                 x = x.unsqueeze(0)
         return x
 
@@ -275,20 +284,21 @@ def captum_output_to_dicts(
 
 def convert_captum_output(
     captum_attrs: Tuple[Tensor],
-    mask_type: str,
+    mask_type: Union[str, MaskLevelType],
     metadata: Optional[Metadata] = None,
 ):
     r"""Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
     methods which is a tuple of attributions to either
     :obj:`(node_mask, edge_mask)` or :obj:`(node_mask_dict, edge_mask_dict)`.
     """
+    mask_type = MaskLevelType(mask_type)
     if metadata is not None:
         return captum_output_to_dicts(captum_attrs, mask_type, metadata)
 
     node_mask = edge_mask = None
-    if mask_type == 'edge':
+    if mask_type == MaskLevelType.edge:
         edge_mask = captum_attrs[0].squeeze(0)
-    elif mask_type == 'node':
+    elif mask_type == MaskLevelType.node:
         node_mask = captum_attrs[0].squeeze(0)
     else:
         node_mask = captum_attrs[0].squeeze(0)
