@@ -7,7 +7,7 @@ from torch_geometric.utils import to_undirected
 
 @functional_transform('knn_graph')
 class KNNGraph(BaseTransform):
-    r"""Creates a k-NN graph based on node positions :obj:`pos`
+    r"""Creates a k-NN graph based on node positions :obj:`data.pos`
     (functional name: :obj:`knn_graph`).
 
     Args:
