@@ -139,4 +139,5 @@ class CaptumExplainer(ExplainerAlgorithm):
                           f"(got '{node_mask_type.value}')")
             return False
 
+        # TODO (ramona): Confirm that output type is valid.
         return True
