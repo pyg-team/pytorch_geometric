@@ -6,8 +6,8 @@ from torch_geometric.transforms import BaseTransform
 
 @functional_transform('radius_graph')
 class RadiusGraph(BaseTransform):
-    r"""Creates edges based on node positions :obj:`pos` to all points within a
-    given distance (functional name: :obj:`radius_graph`).
+    r"""Creates edges based on node positions :obj:`data.pos` to all points
+    within a given distance (functional name: :obj:`radius_graph`).
 
     Args:
         r (float): The distance.
