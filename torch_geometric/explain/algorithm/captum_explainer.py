@@ -75,7 +75,7 @@ class CaptumExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Explanation:
 
-        if isinstance(index, torch.Tensor) and (index.numel() > 1):
+        if isinstance(index, torch.Tensor) and index.numel() > 1:
             if not self._support_multiple_indices():
                 raise ValueError(
                     f"{self.attribution_method.__name__} does not "
