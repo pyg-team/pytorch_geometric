@@ -25,7 +25,7 @@ class TUDataset(InMemoryDataset):
         You can then either make use of the argument :obj:`use_node_attr`
         to load additional continuous node attributes (if present) or provide
         synthetic node features using transforms such as
-        like :class:`torch_geometric.transforms.Constant` or
+        :class:`torch_geometric.transforms.Constant` or
         :class:`torch_geometric.transforms.OneHotDegree`.
 
     Args:
