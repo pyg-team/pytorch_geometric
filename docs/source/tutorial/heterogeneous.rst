@@ -199,7 +199,7 @@ During runtime, the MP-GNN algorithm would need to iterate over edge type dictio
 To avoid unnecessary runtime overheads and to make the creation of heterogeneous MP-GNNs as simple as possible, Pytorch Geometric provides three ways for the user to create models on heterogeneous graph data:
 
 #. Automatically convert a homogenous GNN model to a heterogeneous GNN model by making use of :meth:`torch_geometric.nn.to_hetero` or :meth:`torch_geometric.nn.to_hetero_with_bases`
-#. Define inidividual functions for different types using :pyg:`PyG's` wrapper :class:`torch_geometric.nn.conv.HeteroConv` for heterogeneous convolution
+#. Define individual functions for different types using :pyg:`PyG's` wrapper :class:`torch_geometric.nn.conv.HeteroConv` for heterogeneous convolution
 #. Deploy existing (or write your own) heterogeneous GNN operators
 
 In the following, each option is introduced in detail.
