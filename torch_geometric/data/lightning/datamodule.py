@@ -251,7 +251,7 @@ class LightningNodeData(LightningDataModule):
             :obj:`0` means that the data will be loaded in the main process.
             (default: :obj:`0`)
         eval_loader_kwargs (Dict[str, Any], optional): Custom keyword arguments
-            to override :class:`~torch_geometric.loader.NeighborLoader`
+            that override the :class:`~torch_geometric.loader.NeighborLoader`
             configuration during evaluation. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.loader.NeighborLoader`.
@@ -363,7 +363,7 @@ class LightningNodeData(LightningDataModule):
             # The user wants to override certain values during evaluation, so
             # we shallow-copy the sampler and update its attributes.
 
-            if hasattr(self.eval_neighbor_sampler):
+            if hasattr(self.neighbor_sampler):
                 self.eval_neighbor_sampler = copy.copy(self.neighbor_sampler)
 
                 eval_sampler_kwargs, self.eval_loader_kwargs = split_kwargs(
@@ -376,7 +376,7 @@ class LightningNodeData(LightningDataModule):
                 self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
                 self.eval_loader_kwargs.update(eval_loader_kwargs)
         else:
-            if hasattr(self.eval_neighbor_sampler):
+            if hasattr(self.neighbor_sampler):
                 self.eval_neighbor_sampler = self.neighbor_sampler
 
             self.eval_loader_kwargs = self.loader_kwargs
