@@ -24,9 +24,9 @@ class ShapeNet(InMemoryDataset):
     Each category is annotated with 2 to 6 parts.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        categories (string or [string], optional): The category of the CAD
-            models (one or a combination of :obj:`"Airplane"`, :obj:`"Bag"`,
+        root (str): Root directory where the dataset should be saved.
+        categories (str or [str], optional): The category of the CAD models
+            (one or a combination of :obj:`"Airplane"`, :obj:`"Bag"`,
             :obj:`"Cap"`, :obj:`"Car"`, :obj:`"Chair"`, :obj:`"Earphone"`,
             :obj:`"Guitar"`, :obj:`"Knife"`, :obj:`"Lamp"`, :obj:`"Laptop"`,
             :obj:`"Motorbike"`, :obj:`"Mug"`, :obj:`"Pistol"`, :obj:`"Rocket"`,
@@ -37,8 +37,7 @@ class ShapeNet(InMemoryDataset):
             include normal vectors as input features to :obj:`data.x`.
             As a result, :obj:`data.x` will be :obj:`None`.
             (default: :obj:`True`)
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"trainval"`, loads the training and validation dataset.
             If :obj:`"test"`, loads the test dataset.

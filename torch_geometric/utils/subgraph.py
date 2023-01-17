@@ -229,9 +229,9 @@ def k_hop_subgraph(
             starting from zero. (default: :obj:`False`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
-        flow (string, optional): The flow direction of :math:`k`-hop
-            aggregation (:obj:`"source_to_target"` or
-            :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
+        flow (str, optional): The flow direction of :math:`k`-hop aggregation
+            (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
+            (default: :obj:`"source_to_target"`)
         directed (bool, optional): If set to :obj:`False`, will include all
             edges between all sampled nodes. (default: :obj:`True`)
 

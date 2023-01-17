@@ -83,7 +83,7 @@ def from_smiles(smiles: str, with_hydrogen: bool = False,
     instance.
 
     Args:
-        smiles (string, optional): The SMILES string.
+        smiles (str): The SMILES string.
         with_hydrogen (bool, optional): If set to :obj:`True`, will store
             hydrogens in the molecule graph. (default: :obj:`False`)
         kekulize (bool, optional): If set to :obj:`True`, converts aromatic

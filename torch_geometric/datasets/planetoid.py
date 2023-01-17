@@ -16,12 +16,11 @@ class Planetoid(InMemoryDataset):
     Training, validation and test splits are given by binary masks.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Cora"`,
-            :obj:`"CiteSeer"`, :obj:`"PubMed"`).
-        split (string): The type of dataset split
-            (:obj:`"public"`, :obj:`"full"`, :obj:`"geom-gcn"`,
-            :obj:`"random"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Cora"`, :obj:`"CiteSeer"`,
+            :obj:`"PubMed"`).
+        split (str, optional): The type of dataset split (:obj:`"public"`,
+            :obj:`"full"`, :obj:`"geom-gcn"`, :obj:`"random"`).
             If set to :obj:`"public"`, the split will be the public fixed split
             from the `"Revisiting Semi-Supervised Learning with Graph
             Embeddings" <https://arxiv.org/abs/1603.08861>`_ paper.
