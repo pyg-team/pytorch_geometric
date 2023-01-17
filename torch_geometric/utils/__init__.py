@@ -13,6 +13,7 @@ from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import (get_num_hops, subgraph, k_hop_subgraph,
                        bipartite_subgraph)
 from .homophily import homophily
+from .independent_set import maximal_independent_set
 from .assortativity import assortativity
 from .get_laplacian import get_laplacian
 from .get_mesh_laplacian import get_mesh_laplacian
@@ -70,6 +71,7 @@ __all__ = [
     'bipartite_subgraph',
     'k_hop_subgraph',
     'homophily',
+    'maximal_independent_set',
     'assortativity',
     'get_laplacian',
     'get_mesh_laplacian',
