@@ -79,7 +79,7 @@ class DynamicEdgeConv(MessagePassing):
             `:obj:`[-1, 2 * in_channels]` to shape :obj:`[-1, out_channels]`,
             *e.g.* defined by :class:`torch.nn.Sequential`.
         k (int): Number of nearest neighbors.
-        aggr (str, optional): The aggregation operator to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"max"`)
         num_workers (int): Number of workers to use for k-NN computation.
