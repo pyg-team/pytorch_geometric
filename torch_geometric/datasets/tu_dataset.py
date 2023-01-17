@@ -10,8 +10,9 @@ from torch_geometric.io import read_tu_data
 
 
 class TUDataset(InMemoryDataset):
-    r"""A variety of graph kernel benchmark datasets, *.e.g.* "IMDB-BINARY",
-    "REDDIT-BINARY" or "PROTEINS", collected from the `TU Dortmund University
+    r"""A variety of graph kernel benchmark datasets, *.e.g.*,
+    :obj:`"IMDB-BINARY"`, :obj:`"REDDIT-BINARY"` or :obj:`"PROTEINS"`,
+    collected from the `TU Dortmund University
     <https://chrsmrrs.github.io/datasets>`_.
     In addition, this dataset wrapper provides `cleaned dataset versions
     <https://github.com/nd7141/graph_datasets>`_ as motivated by the
@@ -24,7 +25,7 @@ class TUDataset(InMemoryDataset):
         You can then either make use of the argument :obj:`use_node_attr`
         to load additional continuous node attributes (if present) or provide
         synthetic node features using transforms such as
-        like :class:`torch_geometric.transforms.Constant` or
+        :class:`torch_geometric.transforms.Constant` or
         :class:`torch_geometric.transforms.OneHotDegree`.
 
     Args:

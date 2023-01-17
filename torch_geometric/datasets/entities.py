@@ -16,9 +16,9 @@ from torch_geometric.data import (
 
 
 class Entities(InMemoryDataset):
-    r"""The relational entities networks "AIFB", "MUTAG", "BGS" and "AM" from
-    the `"Modeling Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper.
+    r"""The relational entities networks :obj:`"AIFB"`, :obj:`"MUTAG"`,
+    :obj:`"BGS"` and :obj:`"AM"` from the `"Modeling Relational Data with Graph
+    Convolutional Networks" <https://arxiv.org/abs/1703.06103>`_ paper.
     Training and test splits are given by node indices.
 
     Args:

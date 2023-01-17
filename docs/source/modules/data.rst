@@ -13,8 +13,8 @@ Data Objects
    :nosignatures:
    :toctree: ../generated
 
-   {% for cls in torch_geometric.data.data_classes %}
-     {{ cls }}
+   {% for name in torch_geometric.data.data_classes %}
+     {{ name }}
    {% endfor %}
 
 Remote Backend Interfaces
@@ -26,8 +26,8 @@ Remote Backend Interfaces
    :nosignatures:
    :toctree: ../generated
 
-   {% for cls in torch_geometric.data.remote_backend_classes %}
-     {{ cls }}
+   {% for name in torch_geometric.data.remote_backend_classes %}
+     {{ name }}
    {% endfor %}
 
 PyTorch Lightning Wrappers
@@ -40,8 +40,8 @@ PyTorch Lightning Wrappers
    :toctree: ../generated
    :template: autosummary/only_class.rst
 
-   {% for cls in torch_geometric.data.lightning.classes %}
-     {{ cls }}
+   {% for name in torch_geometric.data.lightning.classes %}
+     {{ name }}
    {% endfor %}
 
 Helper Functions
@@ -53,6 +53,6 @@ Helper Functions
    :nosignatures:
    :toctree: ../generated
 
-   {% for cls in torch_geometric.data.helper_functions %}
-     {{ cls }}
+   {% for name in torch_geometric.data.helper_functions %}
+     {{ name }}
    {% endfor %}
