@@ -22,7 +22,7 @@ class KNNGraph(BaseTransform):
             If set to :obj:`"source_to_target"`, every target node will have
             exactly :math:`k` source nodes pointing to it.
             (default: :obj:`"source_to_target"`)
-        cosine (boolean, optional): If :obj:`True`, will use the cosine
+        cosine (bool, optional): If :obj:`True`, will use the cosine
             distance instead of euclidean distance to find nearest neighbors.
             (default: :obj:`False`)
         num_workers (int): Number of workers to use for computation. Has no

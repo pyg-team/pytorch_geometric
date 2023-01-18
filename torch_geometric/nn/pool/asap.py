@@ -46,17 +46,6 @@ class ASAPooling(torch.nn.Module):
             loops to the new graph connectivity. (default: :obj:`False`)
         **kwargs (optional): Additional parameters for initializing the
             graph neural network layer.
-
-    Returns:
-        A tuple of tensors containing
-
-            - **x** (*Tensor*): The pooled node embeddings.
-            - **edge_index** (*Tensor*): The coarsened graph connectivity.
-            - **edge_weight** (*Tensor*): The edge weights corresponding to the
-              coarsened graph connectivity.
-            - **batch** (*Tensor*): The pooled :obj:`batch` vector.
-            - **perm** (*Tensor*): The top-:math:`k` node indices of nodes
-              which are kept after pooling.
     """
     def __init__(self, in_channels: int, ratio: Union[float, int] = 0.5,
                  GNN: Optional[Callable] = None, dropout: float = 0.0,
@@ -82,6 +71,7 @@ class ASAPooling(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.lin.reset_parameters()
         self.att.reset_parameters()
         self.gnn_score.reset_parameters()
@@ -95,7 +85,25 @@ class ASAPooling(torch.nn.Module):
         edge_weight: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor]:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The node feature matrix.
+            edge_index (torch.Tensor): The edge indices.
+            edge_weight (torch.Tensor, optional): The edge weights.
+                (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each node to a specific example. (default: :obj:`None`)
+
+        Return types:
+            * **x** (*torch.Tensor*): The pooled node embeddings.
+            * **edge_index** (*torch.Tensor*): The coarsened edge indices.
+            * **edge_weight** (*torch.Tensor, optional*): The coarsened edge
+              weights.
+            * **batch** (*torch.Tensor*): The coarsened batch vector.
+            * **index** (*torch.Tensor*): The top-:math:`k` node indices of
+              nodes which are kept after pooling.
+        """
         N = x.size(0)
 
         edge_index, edge_weight = add_remaining_self_loops(

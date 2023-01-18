@@ -8,8 +8,8 @@ torch_geometric.nn
 
 .. currentmodule:: torch_geometric.nn.dense
 
-   {% for cls in torch_geometric.nn.dense.lin_classes %}
-.. autoclass:: {{ cls }}
+   {% for name in torch_geometric.nn.dense.lin_classes %}
+.. autoclass:: {{ name }}
    :members:
    :undoc-members:
    :exclude-members: training, initialize_parameters
@@ -21,8 +21,8 @@ Convolutional Layers
 .. currentmodule:: torch_geometric.nn.conv
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.conv.classes %}
-     {{ cls }}
+   {% for name in torch_geometric.nn.conv.classes %}
+     {{ name }}
    {% endfor %}
 
 .. autoclass:: torch_geometric.nn.conv.MessagePassing
@@ -178,31 +178,27 @@ Pooling Layers
 --------------
 
 .. currentmodule:: torch_geometric.nn.pool
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.pool.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
 
-.. automodule:: torch_geometric.nn.pool
-   :members:
-   :undoc-members:
-   :exclude-members: training
+   {% for name in torch_geometric.nn.pool.classes %}
+     {{ name }}
+   {% endfor %}
 
 Unpooling Layers
 ----------------
 
 .. currentmodule:: torch_geometric.nn.unpool
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.unpool.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
 
-.. automodule:: torch_geometric.nn.unpool
-   :members:
-   :undoc-members:
-   :exclude-members: training
+   {% for name in torch_geometric.nn.unpool.classes %}
+     {{ name }}
+   {% endfor %}
 
 Models
 ------
@@ -210,8 +206,8 @@ Models
 .. currentmodule:: torch_geometric.nn.models
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.models.classes %}
-     {{ cls }}
+   {% for name in torch_geometric.nn.models.classes %}
+     {{ name }}
    {% endfor %}
 
 .. automodule:: torch_geometric.nn.models
@@ -226,16 +222,11 @@ KGE Models
 
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.kge.classes %}
-     {{ cls }}
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.kge.classes %}
+     {{ name }}
    {% endfor %}
-
-.. autoclass:: torch_geometric.nn.kge.KGEModel
-   :members:
-
-.. automodule:: torch_geometric.nn.kge
-   :members:
-   :exclude-members: KGEModel, loss
 
 Encodings
 ---------
@@ -249,15 +240,40 @@ Functional
 ----------
 
 .. py:currentmodule:: torch_geometric.nn.functional
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.functional.classes %}
-     {{ cls }}
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.functional.classes %}
+     {{ name }}
    {% endfor %}
 
-.. automodule:: torch_geometric.nn.functional
-   :members:
-   :undoc-members:
+Dense Convolutional Layers
+--------------------------
+
+.. currentmodule:: torch_geometric.nn.dense
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.dense.conv_classes %}
+     {{ name }}
+   {% endfor %}
+
+Dense Pooling Layers
+--------------------
+
+.. currentmodule:: torch_geometric.nn.dense
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.dense.pool_classes %}
+     {{ name }}
+   {% endfor %}
 
 Model Transformations
 ---------------------
@@ -270,41 +286,6 @@ Model Transformations
 .. autofunction:: torch_geometric.nn.to_hetero_transformer.to_hetero
 
 .. autofunction:: torch_geometric.nn.to_hetero_with_bases_transformer.to_hetero_with_bases
-
-Dense Convolutional Layers
---------------------------
-
-.. currentmodule:: torch_geometric.nn.dense
-.. autosummary::
-   :nosignatures:
-   {% for cls in torch_geometric.nn.dense.conv_classes %}
-     {{ cls }}
-   {% endfor %}
-
-   {% for cls in torch_geometric.nn.dense.conv_classes %}
-.. autoclass:: {{ cls }}
-   :members:
-   :undoc-members:
-   :exclude-members: training
-   {% endfor %}
-
-Dense Pooling Layers
---------------------
-
-.. currentmodule:: torch_geometric.nn.dense
-.. autosummary::
-   :nosignatures:
-   {% for cls in torch_geometric.nn.dense.pool_classes %}
-     {{ cls }}
-   {% endfor %}
-
-
-   {% for cls in torch_geometric.nn.dense.pool_classes %}
-.. autoclass:: {{ cls }}
-   :members:
-   :undoc-members:
-   :exclude-members: training
-   {% endfor %}
 
 DataParallel Layers
 -------------------
