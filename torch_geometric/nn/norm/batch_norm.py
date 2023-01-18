@@ -51,10 +51,14 @@ class BatchNorm(torch.nn.Module):
         self.allow_single_element = allow_single_element
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.module.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+        """
         if self.allow_single_element and x.size(0) <= 1:
             return torch.nn.functional.batch_norm(
                 x,

@@ -1,0 +1,68 @@
+[project]
+name = "torch_geometric"
+version = "2.3.0"
+readme = "README.md"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3 :: Only",
+]
+
+[tool.yapf]
+based_on_style = "pep8"
+split_before_named_assigns = false
+blank_line_before_nested_class_or_def = false
+
+[tool.pyright]
+include = ["torch_geometric/utils/*"]
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+skip = [".gitingore", "__init__.py"]
+
+[tool.pytest.ini_options]
+addopts = "--capture=no"
+filterwarnings = [
+    "ignore::DeprecationWarning:tensorboard.*",
+]
+
+[tool.pylint.messages_control]
+disable = [
+    "import-outside-toplevel",
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "empty-docstring",
+    "import-error",
+    "too-many-arguments",
+    "arguments-differ",
+    "invalid-name",
+    "redefined-builtin",
+]
+attr-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
+argument-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
+variable-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
+generated-members = ["torch.*"]
+
+[tool.coverage.run]
+source = ["torch_geometric"]
+omit = [
+    "torch_geometric/datasets/*",
+    "torch_geometric/data/extract.py",
+    "torch_geometric/nn/data_parallel.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise",
+    "except",
+    "register_parameter",
+    "warn",
+]

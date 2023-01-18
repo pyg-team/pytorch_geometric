@@ -17,9 +17,8 @@ class Coauthor(InMemoryDataset):
     to their respective field of study.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"CS"`,
-            :obj:`"Physics"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"CS"`, :obj:`"Physics"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

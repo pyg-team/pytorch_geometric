@@ -22,8 +22,8 @@ class FB15k_237(InMemoryDataset):
         :class:`FB15k` where inverse relations are removed.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        split (string): If :obj:`"train"`, loads the training dataset.
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         transform (callable, optional): A function/transform that takes in an

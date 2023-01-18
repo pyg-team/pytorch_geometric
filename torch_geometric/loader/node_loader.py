@@ -85,6 +85,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
         custom_cls: Optional[HeteroData] = None,
+        input_id: OptTensor = None,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
@@ -104,7 +105,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.custom_cls = custom_cls
 
         self.input_data = NodeSamplerInput(
-            input_id=None,
+            input_id=input_id,
             node=input_nodes,
             time=input_time,
             input_type=input_type,

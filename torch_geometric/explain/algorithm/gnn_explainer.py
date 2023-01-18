@@ -22,9 +22,11 @@ class GNNExplainer(ExplainerAlgorithm):
 
         For an example of using :class:`GNNExplainer`, see
         `examples/gnn_explainer.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_ and
+        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_,
         `examples/gnn_explainer_ba_shapes.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`_.
+        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`_,
+        and `examples/gnn_explainer_link_pred.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/gnn_explainer_link_pred.py>`_.
 
     Args:
         epochs (int, optional): The number of epochs to train.
@@ -53,9 +55,6 @@ class GNNExplainer(ExplainerAlgorithm):
         self.coeffs.update(kwargs)
 
         self.node_mask = self.edge_mask = None
-
-    def supports(self) -> bool:
-        return True
 
     def forward(
         self,
@@ -88,6 +87,9 @@ class GNNExplainer(ExplainerAlgorithm):
         self._clean_model(model)
 
         return Explanation(node_mask=node_mask, edge_mask=edge_mask)
+
+    def supports(self) -> bool:
+        return True
 
     def _train(
         self,

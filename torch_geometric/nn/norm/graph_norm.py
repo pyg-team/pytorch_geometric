@@ -2,7 +2,8 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_mean
+
+from torch_geometric.utils import scatter
 
 from ..inits import ones, zeros
 
@@ -39,20 +40,27 @@ class GraphNorm(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         ones(self.weight)
         zeros(self.bias)
         ones(self.mean_scale)
 
     def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example. (default: :obj:`None`)
+        """
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.long)
 
         batch_size = int(batch.max()) + 1
 
-        mean = scatter_mean(x, batch, dim=0, dim_size=batch_size)
+        mean = scatter(x, batch, 0, batch_size, reduce='mean')
         out = x - mean.index_select(0, batch) * self.mean_scale
-        var = scatter_mean(out.pow(2), batch, dim=0, dim_size=batch_size)
+        var = scatter(out.pow(2), batch, 0, batch_size, reduce='mean')
         std = (var + self.eps).sqrt().index_select(0, batch)
         return self.weight * out / std + self.bias
 

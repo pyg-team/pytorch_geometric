@@ -33,8 +33,8 @@ class ModelNet(InMemoryDataset):
         face area.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string, optional): The name of the dataset (:obj:`"10"` for
+        root (str): Root directory where the dataset should be saved.
+        name (str, optional): The name of the dataset (:obj:`"10"` for
             ModelNet10, :obj:`"40"` for ModelNet40). (default: :obj:`"10"`)
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)

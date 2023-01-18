@@ -38,12 +38,11 @@ class LRGBDataset(InMemoryDataset):
     +------------------------+-------------------+----------------------+
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (one of :obj:`"PascalVOC-SP"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (one of :obj:`"PascalVOC-SP"`,
             :obj:`"COCO-SP"`, :obj:`"PCQM-Contact"`, :obj:`"Peptides-func"`,
             :obj:`"Peptides-struct"`)
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
             (default: :obj:`"train"`)

@@ -9,7 +9,6 @@ import torch
 import torch.nn.functional as F
 from randlanet_classification import DilatedResidualBlock, SharedMLP, decimate
 from torch.nn import Linear
-from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
 from tqdm import tqdm
 
@@ -17,6 +16,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import knn_interpolate
+from torch_geometric.utils import scatter
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 category_num_classes = 4  # 4 for Airplane - see ShapeNet for details

@@ -53,11 +53,11 @@ class MessagePassing(torch.nn.Module):
     function, *e.g.*, sum, mean, min, max or mul, and
     :math:`\gamma_{\mathbf{\Theta}}` and :math:`\phi_{\mathbf{\Theta}}` denote
     differentiable functions such as MLPs.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_gnn.html>`__ for the accompanying tutorial.
 
     Args:
-        aggr (string or list or Aggregation, optional): The aggregation scheme
+        aggr (str or [str] or Aggregation, optional): The aggregation scheme
             to use, *e.g.*, :obj:`"add"`, :obj:`"sum"` :obj:`"mean"`,
             :obj:`"min"`, :obj:`"max"` or :obj:`"mul"`.
             In addition, can be any
@@ -71,7 +71,7 @@ class MessagePassing(torch.nn.Module):
         aggr_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
-        flow (string, optional): The flow direction of message passing
+        flow (str, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
         node_dim (int, optional): The axis along which to propagate.
@@ -238,12 +238,15 @@ class MessagePassing(torch.nn.Module):
                 index = edge_index[dim]
                 return src.index_select(self.node_dim, index)
             except (IndexError, RuntimeError) as e:
-                if 'CUDA' in str(e):
-                    raise ValueError(
-                        f"Encountered a CUDA error. Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
+                if index.min() < 0 or index.max() >= src.size(self.node_dim):
+                    raise IndexError(
+                        f"Encountered an index error. Please ensure that all "
+                        f"indices in 'edge_index' point to valid indices in "
+                        f"the interval [0, {src.size(self.node_dim) - 1}] "
+                        f"(got interval "
+                        f"[{int(index.min())}, {int(index.max())}])")
+                else:
+                    raise e
 
                 if index.numel() > 0 and index.min() < 0:
                     raise ValueError(
@@ -745,9 +748,9 @@ class MessagePassing(torch.nn.Module):
         jittable module.
 
         Args:
-            typing (string, optional): If given, will generate a concrete
-                instance with :meth:`forward` types based on :obj:`typing`,
-                *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
+            typing (str, optional): If given, will generate a concrete instance
+                with :meth:`forward` types based on :obj:`typing`, *e.g.*,
+                :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
         try:
             from jinja2 import Template
