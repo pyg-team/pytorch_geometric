@@ -372,13 +372,12 @@ class LightningNodeData(LightningDataModule):
 
         # Determine validation sampler and loader arguments ###################
 
+        self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
         if eval_loader_kwargs is not None:
-            # The user wants to override certain values during evaluation, so
+            # If the user wants to override certain values during evaluation,
             # we shallow-copy the sampler and update its attributes.
-
             if hasattr(self, 'neighbor_sampler'):
                 self.eval_neighbor_sampler = copy.copy(self.neighbor_sampler)
-                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
 
                 eval_sampler_kwargs, eval_loader_kwargs = split_kwargs(
                     eval_loader_kwargs,
@@ -386,15 +385,11 @@ class LightningNodeData(LightningDataModule):
                 )
                 for key, value in eval_sampler_kwargs.items():
                     setattr(self.eval_neighbor_sampler, key, value)
-                self.eval_loader_kwargs.update(eval_loader_kwargs)
-            else:
-                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
-                self.eval_loader_kwargs.update(eval_loader_kwargs)
-        else:
-            if hasattr(self, 'neighbor_sampler'):
-                self.eval_neighbor_sampler = self.neighbor_sampler
 
-            self.eval_loader_kwargs = self.loader_kwargs
+            self.eval_loader_kwargs.update(eval_loader_kwargs)
+
+        elif hasattr(self, 'neighbor_sampler'):
+            self.eval_neighbor_sampler = self.neighbor_sampler
 
         self.eval_loader_kwargs.pop('sampler', None)
         self.eval_loader_kwargs.pop('batch_sampler', None)
@@ -689,13 +684,12 @@ class LightningLinkData(LightningDataModule):
 
         # Determine validation sampler and loader arguments ###################
 
+        self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
         if eval_loader_kwargs is not None:
-            # The user wants to override certain values during evaluation, so
+            # If the user wants to override certain values during evaluation,
             # we shallow-copy the sampler and update its attributes.
-
             if hasattr(self, 'neighbor_sampler'):
                 self.eval_neighbor_sampler = copy.copy(self.neighbor_sampler)
-                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
 
                 eval_sampler_kwargs, eval_loader_kwargs = split_kwargs(
                     eval_loader_kwargs,
@@ -703,15 +697,11 @@ class LightningLinkData(LightningDataModule):
                 )
                 for key, value in eval_sampler_kwargs.items():
                     setattr(self.eval_neighbor_sampler, key, value)
-                self.eval_loader_kwargs.update(eval_loader_kwargs)
-            else:
-                self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
-                self.eval_loader_kwargs.update(eval_loader_kwargs)
-        else:
-            if hasattr(self, 'neighbor_sampler'):
-                self.eval_neighbor_sampler = self.neighbor_sampler
 
-            self.eval_loader_kwargs = self.loader_kwargs
+            self.eval_loader_kwargs.update(eval_loader_kwargs)
+
+        elif hasattr(self, 'neighbor_sampler'):
+            self.eval_neighbor_sampler = self.neighbor_sampler
 
         self.eval_loader_kwargs.pop('sampler', None)
         self.eval_loader_kwargs.pop('batch_sampler', None)
