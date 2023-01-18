@@ -1,5 +1,6 @@
 import torch
 
+from torch_geometric.testing import is_full_test
 from torch_geometric.utils import maximal_independent_set
 
 
@@ -8,13 +9,17 @@ def test_independent_set():
                           [1, 4, 0, 2, 4, 1, 3, 2, 4, 0, 1, 3]]).long()
     rank = torch.arange(5)
 
-    jit = torch.jit.script(maximal_independent_set)
+    mis1 = maximal_independent_set(index, k=0, rank=rank)
+    assert mis1.equal(torch.ones_like(mis1))
 
-    mis = jit(index, k=0, rank=rank)
-    assert mis.equal(torch.ones_like(mis))
+    mis2 = maximal_independent_set(index, k=1, rank=rank)
+    assert mis2.equal(torch.tensor([1, 0, 1, 0, 0]).bool())
 
-    mis = jit(index, k=1, rank=rank)
-    assert mis.equal(torch.tensor([1, 0, 1, 0, 0]).bool())
+    mis3 = maximal_independent_set(index, k=2, rank=rank)
+    assert mis3.equal(torch.tensor([1, 0, 0, 0, 0]).bool())
 
-    mis = jit(index, k=2, rank=rank)
-    assert mis.equal(torch.tensor([1, 0, 0, 0, 0]).bool())
+    if is_full_test():
+        jit = torch.jit.script(maximal_independent_set)
+        assert mis1.equal(jit(index, k=0, rank=rank))
+        assert mis2.equal(jit(index, k=1, rank=rank))
+        assert mis3.equal(jit(index, k=2, rank=rank))
