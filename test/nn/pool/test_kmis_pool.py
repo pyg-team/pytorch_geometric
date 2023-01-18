@@ -50,9 +50,9 @@ def test_kmis_pooling():
 
     pool3 = KMISPooling(in_channels, k=2)
     assert str(pool3) == f'KMISPooling(in_channels={in_channels}, k=2)'
-    out3 = pool2(x, index)
-    assert out3[0].size(0) == 2
-    assert out3[1].shape == (2, 2)
+    out3 = pool3(x, index)
+    assert out3[0].size(0) == 1
+    assert out3[1].shape == (2, 0)
 
     if is_full_test():
         jit1 = torch.jit.script(pool1)
