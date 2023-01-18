@@ -190,9 +190,10 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
 
     batch_size = 1 if loader == 'full' else 32
     num_workers = 0 if loader == 'full' else 3
-    kwargs = {}
+    kwargs, kwargs_repr = {}, ''
     if loader == 'neighbor':
         kwargs['num_neighbors'] = [5]
+        kwargs_repr += 'num_neighbors=[5], '
 
     trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
                          max_epochs=5, log_every_n_steps=1)
@@ -201,7 +202,7 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
     old_x = data.x.clone().cpu()
     assert str(datamodule) == (f'LightningNodeData(data={data_repr}, '
                                f'loader={loader}, batch_size={batch_size}, '
-                               f'num_workers={num_workers}, '
+                               f'num_workers={num_workers}, {kwargs_repr}'
                                f'pin_memory={loader != "full"}, '
                                f'persistent_workers={loader != "full"})')
     trainer.fit(model, datamodule)
@@ -387,3 +388,28 @@ def test_lightning_hetero_link_data_custom_store():
 
     batch = next(iter(datamodule.train_dataloader()))
     assert 'edge_label_index' in batch['author', 'paper']
+
+
+@withPackage('pytorch_lightning')
+def test_eval_loader_kwargs(get_dataset):
+    data = get_dataset(name='Cora')[0]
+
+    node_sampler = NeighborSampler(data, num_neighbors=[5])
+
+    datamodule = LightningNodeData(
+        data,
+        node_sampler=node_sampler,
+        batch_size=32,
+        eval_loader_kwargs=dict(num_neighbors=[-1], batch_size=64),
+    )
+
+    assert datamodule.loader_kwargs['batch_size'] == 32
+    assert datamodule.neighbor_sampler.num_neighbors == [5]
+    assert datamodule.eval_loader_kwargs['batch_size'] == 64
+    assert datamodule.eval_neighbor_sampler.num_neighbors == [-1]
+
+    train_loader = datamodule.train_dataloader()
+    assert math.ceil(int(data.train_mask.sum()) / 32) == len(train_loader)
+
+    val_loader = datamodule.val_dataloader()
+    assert math.ceil(int(data.val_mask.sum()) / 64) == len(val_loader)

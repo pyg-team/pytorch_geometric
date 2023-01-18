@@ -28,10 +28,17 @@ class MessageNorm(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.scale.data.fill_(1.0)
 
     def forward(self, x: Tensor, msg: Tensor, p: float = 2.0) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            msg (torch.Tensor): The message tensor :math:`\mathbf{M}`.
+            p (float, optional): The norm :math:`p` to use for normalization.
+                (default: :obj:`2.0`)
+        """
         msg = F.normalize(msg, p=p, dim=-1)
         x_norm = x.norm(p=p, dim=-1, keepdim=True)
         return msg * x_norm * self.scale

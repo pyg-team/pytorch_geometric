@@ -1,8 +1,8 @@
 import torch
-from torch_scatter import scatter_add
 
 from torch_geometric.nn import EdgePooling
 from torch_geometric.testing import is_full_test
+from torch_geometric.utils import scatter
 
 
 def test_compute_edge_score_softmax():
@@ -13,7 +13,7 @@ def test_compute_edge_score_softmax():
     assert torch.all(e >= 0) and torch.all(e <= 1)
 
     # Test whether all incoming edge scores sum up to one.
-    assert torch.allclose(scatter_add(e, edge_index[1]),
+    assert torch.allclose(scatter(e, edge_index[1], reduce='sum'),
                           torch.Tensor([1, 1, 1, 1, 1, 1]))
 
     if is_full_test():

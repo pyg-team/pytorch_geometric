@@ -5,12 +5,12 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
-from torch_scatter import scatter
 from torch_sparse import SparseTensor, masked_select_nnz, matmul
 
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor, pyg_lib
+from torch_geometric.utils import scatter
 
 from ..inits import glorot, zeros
 
@@ -74,7 +74,7 @@ class RGCNConv(MessagePassing):
             block-diagonal-decomposition regularization scheme where
             :obj:`num_blocks` denotes the number of blocks to use.
             (default: :obj:`None`)
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will

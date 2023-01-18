@@ -25,7 +25,7 @@ class NELL(InMemoryDataset):
         :obj:`data.x.to_scipy()` or :obj:`data.x.to_torch_sparse_coo_tensor()`.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -35,19 +35,20 @@ class NELL(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 65,755
-              - 251,550
-              - 61,278
-              - 186
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 65,755
+          - 251,550
+          - 61,278
+          - 186
     """
 
     url = 'http://www.cs.cmu.edu/~zhiliny/data/nell_data.tar.gz'
