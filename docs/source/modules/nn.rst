@@ -253,17 +253,13 @@ Dense Convolutional Layers
 --------------------------
 
 .. currentmodule:: torch_geometric.nn.dense
+
 .. autosummary::
    :nosignatures:
-   {% for name in torch_geometric.nn.dense.conv_classes %}
-     {{ name }}
-   {% endfor %}
+   :toctree: ../generated
 
    {% for name in torch_geometric.nn.dense.conv_classes %}
-.. autoclass:: {{ name }}
-   :members:
-   :undoc-members:
-   :exclude-members: training
+     {{ name }}
    {% endfor %}
 
 Dense Pooling Layers
