@@ -54,9 +54,6 @@ class GNNExplainer(ExplainerAlgorithm):
 
         self.node_mask = self.edge_mask = None
 
-    def supports(self) -> bool:
-        return True
-
     def forward(
         self,
         model: torch.nn.Module,
@@ -88,6 +85,9 @@ class GNNExplainer(ExplainerAlgorithm):
         self._clean_model(model)
 
         return Explanation(node_mask=node_mask, edge_mask=edge_mask)
+
+    def supports(self) -> bool:
+        return True
 
     def _train(
         self,
