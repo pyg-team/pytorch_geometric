@@ -12,11 +12,12 @@ class CitationFull(InMemoryDataset):
     `"Deep Gaussian Embedding of Graphs: Unsupervised Inductive Learning via
     Ranking" <https://arxiv.org/abs/1707.03815>`_ paper.
     Nodes represent documents and edges represent citation links.
-    Datasets include `citeseer`, `cora`, `cora_ml`, `dblp`, `pubmed`.
+    Datasets include :obj:`"Cora"`, :obj:`"Cora_ML"`, :obj:`"CiteSeer"`,
+    :obj:`"DBLP"`, :obj:`"PubMed"`.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Cora"`, :obj:`"Cora_ML"`
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Cora"`, :obj:`"Cora_ML"`
             :obj:`"CiteSeer"`, :obj:`"DBLP"`, :obj:`"PubMed"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -105,8 +106,8 @@ class CitationFull(InMemoryDataset):
 
 
 class CoraFull(CitationFull):
-    r"""Alias for :class:`torch_geometric.datasets.CitationFull` with
-    :obj:`name="cora"`.
+    r"""Alias for :class:`~torch_geometric.datasets.CitationFull` with
+    :obj:`name="Cora"`.
 
     **STATS:**
 

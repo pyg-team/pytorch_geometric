@@ -290,8 +290,8 @@ class Explanation(Data, ExplanationMixin):
 class HeteroExplanation(HeteroData, ExplanationMixin):
     r"""Holds all the obtained explanations of a heterogeneous graph.
 
-    The explanation object is a :obj:`~torch_geometric.hetero_data.HeteroData`
-    and can hold node-attributions, edge-attributions and feature-attributions.
+    The explanation object is a :obj:`~torch_geometric.data.HEteroData` object
+    and can hold node attributions and edge attributions.
     It can also hold the original graph if needed.
     """
     def validate(self, raise_on_error: bool = True) -> bool:

@@ -26,10 +26,10 @@ class SHREC2016(InMemoryDataset):
         face area.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        partiality (string): The partiality of the dataset (one of
-            :obj:`"Holes"`, :obj:`"Cuts"`).
-        category (string): The category of the dataset (one of
+        root (str): Root directory where the dataset should be saved.
+        partiality (str): The partiality of the dataset (one of :obj:`"Holes"`,
+            :obj:`"Cuts"`).
+        category (str): The category of the dataset (one of
             :obj:`"Cat"`, :obj:`"Centaur"`, :obj:`"David"`, :obj:`"Dog"`,
             :obj:`"Horse"`, :obj:`"Michael"`, :obj:`"Victoria"`,
             :obj:`"Wolf"`).

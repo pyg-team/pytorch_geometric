@@ -41,8 +41,8 @@ class GEDDataset(InMemoryDataset):
         <https://github.com/yunshengb/SimGNN>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (one of :obj:`"AIDS700nef"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (one of :obj:`"AIDS700nef"`,
             :obj:`"LINUX"`, :obj:`"ALKANE"`, :obj:`"IMDBMulti"`).
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)

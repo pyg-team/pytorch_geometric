@@ -4,14 +4,13 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter, ReLU
-from torch_scatter import scatter_add
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, ones, zeros
 from torch_geometric.typing import Adj, OptTensor, Size
-from torch_geometric.utils import softmax
+from torch_geometric.utils import scatter, softmax
 
 
 class RGATConv(MessagePassing):
@@ -442,8 +441,8 @@ class RGATConv(MessagePassing):
         elif self.mod == "scaled":
             if self.attention_mode == "additive-self-attention":
                 ones = alpha.new_ones(index.size())
-                degree = scatter_add(ones, index,
-                                     dim_size=size_i)[index].unsqueeze(-1)
+                degree = scatter(ones, index, dim_size=size_i,
+                                 reduce='sum')[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
                 degree = self.activation(degree)
                 degree = torch.matmul(degree, self.l2) + self.b2
@@ -454,8 +453,8 @@ class RGATConv(MessagePassing):
                     degree.view(-1, 1, self.out_channels))
             elif self.attention_mode == "multiplicative-self-attention":
                 ones = alpha.new_ones(index.size())
-                degree = scatter_add(ones, index,
-                                     dim_size=size_i)[index].unsqueeze(-1)
+                degree = scatter(ones, index, dim_size=size_i,
+                                 reduce='sum')[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
                 degree = self.activation(degree)
                 degree = torch.matmul(degree, self.l2) + self.b2
@@ -470,8 +469,8 @@ class RGATConv(MessagePassing):
 
         elif self.mod == "f-scaled":
             ones = alpha.new_ones(index.size())
-            degree = scatter_add(ones, index,
-                                 dim_size=size_i)[index].unsqueeze(-1)
+            degree = scatter(ones, index, dim_size=size_i,
+                             reduce='sum')[index].unsqueeze(-1)
             alpha = alpha * degree
 
         elif self.training and self.dropout > 0:

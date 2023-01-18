@@ -14,7 +14,7 @@ class FacebookPagePage(InMemoryDataset):
     It contains 22,470 nodes, 342,004 edges, 128 node features and 4 classes.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

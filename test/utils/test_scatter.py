@@ -1,8 +1,7 @@
 import pytest
 import torch
-import torch_scatter
 
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.utils import scatter
 
 
@@ -21,8 +20,11 @@ def test_scatter_validate():
 
 
 @withCUDA
+@withPackage('torch_scatter')
 @pytest.mark.parametrize('reduce', ['sum', 'add', 'mean', 'min', 'max'])
 def test_scatter(reduce, device):
+    import torch_scatter
+
     src = torch.randn(100, 16, device=device)
     index = torch.randint(0, 8, (100, ), device=device)
 
