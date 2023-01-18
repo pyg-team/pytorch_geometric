@@ -266,18 +266,13 @@ Dense Pooling Layers
 --------------------
 
 .. currentmodule:: torch_geometric.nn.dense
+
 .. autosummary::
    :nosignatures:
+   :toctree: ../generated
+
    {% for name in torch_geometric.nn.dense.pool_classes %}
      {{ name }}
-   {% endfor %}
-
-
-   {% for name in torch_geometric.nn.dense.pool_classes %}
-.. autoclass:: {{ name }}
-   :members:
-   :undoc-members:
-   :exclude-members: training
    {% endfor %}
 
 Model Transformations
