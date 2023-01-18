@@ -1,12 +1,11 @@
 name: Nightly Build
 
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   workflow_dispatch:
   schedule:
-    - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
+    - cron: "0 6 * * *" # Everyday at 6:00am UTC/10:00pm PST
 
 jobs:
-
   sdist:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
@@ -19,6 +18,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.7
+          cache: "pip"
 
       - name: Set version
         run: echo "VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" torch_geometric/__init__.py)" >> ${GITHUB_ENV}
