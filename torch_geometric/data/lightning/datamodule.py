@@ -686,7 +686,7 @@ class LightningLinkData(LightningDataModule):
 
         self.eval_loader_kwargs = copy.copy(self.loader_kwargs)
         if eval_loader_kwargs is not None:
-            # The user wants to override certain values during evaluation, so
+            # If the user wants to override certain values during evaluation,
             # we shallow-copy the sampler and update its attributes.
             if hasattr(self, 'neighbor_sampler'):
                 self.eval_neighbor_sampler = copy.copy(self.neighbor_sampler)
