@@ -178,16 +178,14 @@ Pooling Layers
 --------------
 
 .. currentmodule:: torch_geometric.nn.pool
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.pool.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
 
-.. automodule:: torch_geometric.nn.pool
-   :members:
-   :undoc-members:
-   :exclude-members: training
+   {% for name in torch_geometric.nn.pool.classes %}
+     {{ name }}
+   {% endfor %}
 
 Unpooling Layers
 ----------------

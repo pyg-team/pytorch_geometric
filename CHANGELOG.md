@@ -59,7 +59,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- Re-structured the documentation ([#6420](https://github.com/pyg-team/pytorch_geometric/pull/6420), [#6423](https://github.com/pyg-team/pytorch_geometric/pull/6423), [#6429](https://github.com/pyg-team/pytorch_geometric/pull/6429), [#6440](https://github.com/pyg-team/pytorch_geometric/pull/6440), [#6443](https://github.com/pyg-team/pytorch_geometric/pull/6443), [#6445](https://github.com/pyg-team/pytorch_geometric/pull/6445), [#6452](https://github.com/pyg-team/pytorch_geometric/pull/6452))
+- Re-structured the documentation ([#6420](https://github.com/pyg-team/pytorch_geometric/pull/6420), [#6423](https://github.com/pyg-team/pytorch_geometric/pull/6423), [#6429](https://github.com/pyg-team/pytorch_geometric/pull/6429), [#6440](https://github.com/pyg-team/pytorch_geometric/pull/6440), [#6443](https://github.com/pyg-team/pytorch_geometric/pull/6443), [#6445](https://github.com/pyg-team/pytorch_geometric/pull/6445), [#6452](https://github.com/pyg-team/pytorch_geometric/pull/6452), [#6453](https://github.com/pyg-team/pytorch_geometric/pull/6453))
 - Fix the default arguments of `DataParallel` class ([#6376](https://github.com/pyg-team/pytorch_geometric/pull/6376))
 - Fix `ImbalancedSampler` on sliced `InMemoryDataset` ([#6374](https://github.com/pyg-team/pytorch_geometric/pull/6374))
 - Breaking Change: Changed the interface and implementation of `GraphMultisetTransformer` ([#6343](https://github.com/pyg-team/pytorch_geometric/pull/6343))

@@ -16,26 +16,27 @@ class UnpoolInfo(NamedTuple):
 
 class EdgePooling(torch.nn.Module):
     r"""The edge pooling operator from the `"Towards Graph Pooling by Edge
-    Contraction" <https://graphreason.github.io/papers/17.pdf>`_ and
+    Contraction" <https://graphreason.github.io/papers/17.pdf>`__ and
     `"Edge Contraction Pooling for Graph Neural Networks"
-    <https://arxiv.org/abs/1905.10990>`_ papers.
+    <https://arxiv.org/abs/1905.10990>`__ papers.
 
     In short, a score is computed for each edge.
     Edges are contracted iteratively according to that score unless one of
     their nodes has already been part of a contracted edge.
 
-    To duplicate the configuration from the "Towards Graph Pooling by Edge
-    Contraction" paper, use either
-    :func:`EdgePooling.compute_edge_score_softmax`
+    To duplicate the configuration from the `"Towards Graph Pooling by Edge
+    Contraction" <https://graphreason.github.io/papers/17.pdf>`__ paper, use
+    either :func:`EdgePooling.compute_edge_score_softmax`
     or :func:`EdgePooling.compute_edge_score_tanh`, and set
     :obj:`add_to_edge_score` to :obj:`0.0`.
 
-    To duplicate the configuration from the "Edge Contraction Pooling for
-    Graph Neural Networks" paper, set :obj:`dropout` to :obj:`0.2`.
+    To duplicate the configuration from the `"Edge Contraction Pooling for
+    Graph Neural Networks" <https://arxiv.org/abs/1905.10990>`__ paper,
+    set :obj:`dropout` to :obj:`0.2`.
 
     Args:
         in_channels (int): Size of each input sample.
-        edge_score_method (function, optional): The function to apply
+        edge_score_method (callable, optional): The function to apply
             to compute the edge score from raw edge scores. By default,
             this is the softmax over all incoming edges for each node.
             This function takes in a :obj:`raw_edge_score` tensor of shape
@@ -49,8 +50,8 @@ class EdgePooling(torch.nn.Module):
             (default: :func:`EdgePooling.compute_edge_score_softmax`)
         dropout (float, optional): The probability with
             which to drop edge scores during training. (default: :obj:`0.0`)
-        add_to_edge_score (float, optional): This is added to each
-            computed edge score. Adding this greatly helps with unpool
+        add_to_edge_score (float, optional): A value to be added to each
+            computed edge score. Adding this greatly helps with unpooling
             stability. (default: :obj:`0.5`)
     """
     def __init__(
@@ -73,6 +74,7 @@ class EdgePooling(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.lin.reset_parameters()
 
     @staticmethod
@@ -81,6 +83,7 @@ class EdgePooling(torch.nn.Module):
         edge_index: Tensor,
         num_nodes: int,
     ) -> Tensor:
+        r"""Normalizes edge scores via softmax application."""
         return softmax(raw_edge_score, edge_index[1], num_nodes=num_nodes)
 
     @staticmethod
@@ -89,6 +92,7 @@ class EdgePooling(torch.nn.Module):
         edge_index: Optional[Tensor] = None,
         num_nodes: Optional[int] = None,
     ) -> Tensor:
+        r"""Normalizes edge scores via hyperbolic tangent application."""
         return torch.tanh(raw_edge_score)
 
     @staticmethod
@@ -97,6 +101,7 @@ class EdgePooling(torch.nn.Module):
         edge_index: Optional[Tensor] = None,
         num_nodes: Optional[int] = None,
     ) -> Tensor:
+        r"""Normalizes edge scores via sigmoid application."""
         return torch.sigmoid(raw_edge_score)
 
     def forward(
@@ -105,20 +110,18 @@ class EdgePooling(torch.nn.Module):
         edge_index: Tensor,
         batch: Tensor,
     ) -> Tuple[Tensor, Tensor, Tensor, UnpoolInfo]:
-        r"""Forward computation which computes the raw edge score, normalizes
-        it, and merges the edges.
-
+        r"""
         Args:
-            x (Tensor): The node features.
-            edge_index (LongTensor): The edge indices.
-            batch (LongTensor): Batch vector
+            x (torch.Tensor): The node features.
+            edge_index (torch.Tensor): The edge indices.
+            batch (torch.Tensor): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each node to a specific example.
 
         Return types:
-            * **x** *(Tensor)* - The pooled node features.
-            * **edge_index** *(LongTensor)* - The coarsened edge indices.
-            * **batch** *(LongTensor)* - The coarsened batch vector.
+            * **x** *(torch.Tensor)* - The pooled node features.
+            * **edge_index** *(torch.Tensor)* - The coarsened edge indices.
+            * **batch** *(torch.Tensor)* - The coarsened batch vector.
             * **unpool_info** *(UnpoolInfo)* - Information that is
               consumed by :func:`EdgePooling.unpool` for unpooling.
         """
@@ -206,14 +209,14 @@ class EdgePooling(torch.nn.Module):
         unpooled :obj:`x` in addition to :obj:`edge_index` and :obj:`batch`.
 
         Args:
-            x (Tensor): The node features.
-            unpool_info (UnpoolInfo): Information that has
-                been produced by :func:`EdgePooling.forward`.
+            x (torch.Tensor): The node features.
+            unpool_info (UnpoolInfo): Information that has been produced by
+                :func:`EdgePooling.forward`.
 
         Return types:
-            * **x** *(Tensor)* - The unpooled node features.
-            * **edge_index** *(LongTensor)* - The new edge indices.
-            * **batch** *(LongTensor)* - The new batch vector.
+            * **x** *(torch.Tensor)* - The unpooled node features.
+            * **edge_index** *(torch.Tensor)* - The new edge indices.
+            * **batch** *(torch.Tensor)* - The new batch vector.
         """
         new_x = x / unpool_info.new_edge_score.view(-1, 1)
         new_x = new_x[unpool_info.cluster]

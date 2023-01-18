@@ -18,12 +18,12 @@ def global_add_pool(x: Tensor, batch: Optional[Tensor],
     :class:`~torch_geometric.nn.aggr.SumAggregation` module.
 
     Args:
-        x (Tensor): Node feature matrix
+        x (torch.Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
-        batch (LongTensor, optional): Batch vector
-            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example.
-        size (int, optional): Batch-size :math:`B`.
+        batch (torch.Tensor, optional): The batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+            each node to a specific example.
+        size (int, optional): The number of examples :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
     """
     if batch is None:
@@ -45,12 +45,12 @@ def global_mean_pool(x: Tensor, batch: Optional[Tensor],
     :class:`~torch_geometric.nn.aggr.MeanAggregation` module.
 
     Args:
-        x (Tensor): Node feature matrix
+        x (torch.Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
-        batch (LongTensor, optional): Batch vector
-            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example.
-        size (int, optional): Batch-size :math:`B`.
+        batch (torch.Tensor, optional): The batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+            each node to a specific example.
+        size (int, optional): The number of examples :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
     """
     if batch is None:
@@ -72,12 +72,12 @@ def global_max_pool(x: Tensor, batch: Optional[Tensor],
     :class:`~torch_geometric.nn.aggr.MaxAggregation` module.
 
     Args:
-        x (Tensor): Node feature matrix
+        x (torch.Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
-        batch (LongTensor, optional): Batch vector
-            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example.
-        size (int, optional): Batch-size :math:`B`.
+        batch (torch.Tensor, optional): The batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+            each element to a specific example.
+        size (int, optional): The number of examples :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
     """
     if batch is None:
