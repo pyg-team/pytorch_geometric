@@ -22,9 +22,11 @@ class GNNExplainer(ExplainerAlgorithm):
 
         For an example of using :class:`GNNExplainer`, see
         `examples/gnn_explainer.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_ and
+        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_,
         `examples/gnn_explainer_ba_shapes.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`_.
+        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`_,
+        and `examples/gnn_explainer_link_pred.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/gnn_explainer_link_pred.py>`_.
 
     Args:
         epochs (int, optional): The number of epochs to train.
