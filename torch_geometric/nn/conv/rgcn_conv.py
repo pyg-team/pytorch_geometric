@@ -204,7 +204,8 @@ class RGCNConv(MessagePassing):
 
         if self.num_blocks is not None:  # Block-diagonal-decomposition =====
 
-            if x_l.dtype == torch.long and self.num_blocks is not None:
+            if not torch.is_floating_point(
+                    x_r) and self.num_blocks is not None:
                 raise ValueError('Block-diagonal decomposition not supported '
                                  'for non-continuous input features.')
 
@@ -231,7 +232,7 @@ class RGCNConv(MessagePassing):
                 for i in range(self.num_relations):
                     tmp = masked_edge_index(edge_index, edge_type == i)
 
-                    if x_l.dtype == torch.long:
+                    if not torch.is_floating_point(x_r):
                         out = out + self.propagate(
                             tmp,
                             x=weight[i, x_l],
@@ -245,7 +246,10 @@ class RGCNConv(MessagePassing):
 
         root = self.root
         if root is not None:
-            out = out + (root[x_r] if x_r.dtype == torch.long else x_r @ root)
+            if not torch.is_floating_point(x_r):
+                out = out + root[x_r]
+            else:
+                out = out + x_r @ root
 
         if self.bias is not None:
             out = out + self.bias
@@ -296,7 +300,10 @@ class FastRGCNConv(RGCNConv):
 
         root = self.root
         if root is not None:
-            out = out + (root[x_r] if x_r.dtype == torch.long else x_r @ root)
+            if not torch.is_floating_point(x_r):
+                out = out + root[x_r]
+            else:
+                out = out + x_r @ root
 
         if self.bias is not None:
             out = out + self.bias
@@ -311,7 +318,7 @@ class FastRGCNConv(RGCNConv):
                 self.num_relations, self.in_channels_l, self.out_channels)
 
         if self.num_blocks is not None:  # Block-diagonal-decomposition =======
-            if x_j.dtype == torch.long:
+            if not torch.is_floating_point(x_j):
                 raise ValueError('Block-diagonal decomposition not supported '
                                  'for non-continuous input features.')
 
@@ -320,7 +327,7 @@ class FastRGCNConv(RGCNConv):
             return torch.bmm(x_j, weight).view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if x_j.dtype == torch.long:
+            if not torch.is_floating_point(x_j):
                 weight_index = edge_type * weight.size(1) + edge_index_j
                 return weight.view(-1, self.out_channels)[weight_index]
 
