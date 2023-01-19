@@ -320,7 +320,8 @@ class HGTConv(MessagePassing):
             ]
             increment_dict = {}
             inc_counter = 0
-            for i, src_type in enumerate(src_types):
+            for i, e_type in enumerate(self.edge_types):
+                src_type = e_type[0]
                 increment_dict[src_type] = inc_counter
                 inc_counter += k_outs[i].shape[0]
             k_out = torch.cat(k_outs)
@@ -347,7 +348,8 @@ class HGTConv(MessagePassing):
                                                m_rel).view(-1, H, D)
             increment_dict = {}
             inc_counter = 0
-            for i, src_type in enumerate(src_types):
+            for i, e_type in enumerate(self.edge_types):
+                src_type = e_type[0]
                 increment_dict[src_type] = inc_counter
                 inc_counter += k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
 
