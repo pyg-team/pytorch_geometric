@@ -375,7 +375,6 @@ class HGTConv(MessagePassing):
             q_list.append(q_dict[dst_type])
             p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
 
-
         q = torch.cat(q_list)
         p = group(p_rels, self.group).view(-1)
         e_idx = torch.cat(edge_index_list, dim=1)
