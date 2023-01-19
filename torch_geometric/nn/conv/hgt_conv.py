@@ -322,7 +322,7 @@ class HGTConv(MessagePassing):
             cumsum = 0
             for i, n_type in enumerate(self.node_types):
                 num_nodes = k_outs[i].shape[0]
-                node_slices[node_type] = (cumsum, cumsum + num_nodes)
+                node_slices[n_type] = (cumsum, cumsum + num_nodes)
                 cumsum += num_nodes
             k_out = torch.cat(k_outs)
             v_out = torch.cat(v_outs)
@@ -350,7 +350,7 @@ class HGTConv(MessagePassing):
             cumsum = 0
             for i, n_type in enumerate(self.node_types):
                 num_nodes = k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
-                node_slices[node_type] = (cumsum, cumsum + num_nodes)
+                node_slices[n_type] = (cumsum, cumsum + num_nodes)
                 cumsum += num_nodes
 
         #combine edge_index dict into single tensor
