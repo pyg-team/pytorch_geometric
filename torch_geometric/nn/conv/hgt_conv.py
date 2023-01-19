@@ -321,7 +321,7 @@ class HGTConv(MessagePassing):
             increment_dict = {}
             inc_counter = 0
             for i, e_type in enumerate(self.edge_types):
-                if src_type not in increment_dict.keys()
+                if src_type not in increment_dict.keys():
                     src_type = e_type[0]
                     increment_dict[src_type] = inc_counter
                 inc_counter += k_outs[i].shape[0]
@@ -350,7 +350,7 @@ class HGTConv(MessagePassing):
             increment_dict = {}
             inc_counter = 0
             for i, e_type in enumerate(self.edge_types):
-                if src_type not in increment_dict.keys()
+                if src_type not in increment_dict.keys():
                     src_type = e_type[0]
                     increment_dict[src_type] = inc_counter
                 inc_counter += k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
