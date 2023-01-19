@@ -353,23 +353,6 @@ class HGTConv(MessagePassing):
                 node_slices[node_type] = (cumsum, cumsum + num_nodes)
                 cumsum += num_nodes
 
-        # # Record edge indices and slice information per edge type:
-        for edge_type, store in data._edge_store_dict.items():
-            src, _, dst = edge_type
-            offset = [[node_slices[src][0]], [node_slices[dst][0]]]
-            offset = torch.tensor(offset, device=store.edge_index.device)
-            edge_indices.append(store.edge_index + offset)
-
-            num_edges = store.num_edges
-            edge_slices[edge_type] = (cumsum, cumsum + num_edges)
-            cumsum += num_edges
-
-        edge_index = None
-        if len(edge_indices) == 1:  # Memory-efficient `torch.cat`:
-            edge_index = edge_indices[0]
-        elif len(edge_indices) > 0:
-            edge_index = torch.cat(edge_indices, dim=-1)
-
         #combine edge_index dict into single tensor
         q_list = []
         p_rels = []
