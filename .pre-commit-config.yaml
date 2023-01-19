@@ -48,3 +48,4 @@ repos:
     hooks:
       - id: flake8
         name: Check PEP8
+        args: ["--ignore=F811, W503, W504"]
