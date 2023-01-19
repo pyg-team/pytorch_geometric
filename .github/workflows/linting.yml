@@ -1,13 +1,12 @@
 name: Linting
 
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   push:
     branches:
       - master
   pull_request:
 
 jobs:
-
   pyright:
     runs-on: ubuntu-latest
 
@@ -38,6 +37,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.7
+          cache: "pip"
+          cache-dependency-path: setup.py
 
       - name: Install dependencies
         run: pip install pylint
@@ -57,6 +58,8 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.7
+          cache: "pip"
+          cache-dependency-path: setup.py
 
       - name: Install dependencies
         run: pip install mypy

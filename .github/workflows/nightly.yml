@@ -19,6 +19,7 @@ jobs:
         with:
           python-version: 3.7
           cache: "pip"
+          cache-dependency-path: setup.py
 
       - name: Set version
         run: echo "VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" torch_geometric/__init__.py)" >> ${GITHUB_ENV}
