@@ -187,7 +187,7 @@ class HGTConv(MessagePassing):
                     reset(self.q_lin)
                     for node_type, u_v_lin in self.v_lin.items():
                         self.v_lin[node_type] = Linear(
-                            max_channels, self.out_channels).to(u_k_lin.device)
+                            max_channels, self.out_channels).to(u_v_lin.device)
                     reset(self.v_lin)
                     self.infer_shapes = False
                     self.no_pad = (self.dims == self.max_channels).all()
@@ -201,11 +201,11 @@ class HGTConv(MessagePassing):
 
             for node_type, dim in self.dims.items():
                 self.k_lin[node_type] = Linear(dim, self.out_channels).to(
-                    u_k_lin[node_type].device)
+                    self.k_lin[node_type].device)
                 self.q_lin[node_type] = Linear(dim, self.out_channels).to(
-                    u_q_lin[node_type].device)
+                    self.q_lin[node_type].device)
                 self.v_lin[node_type] = Linear(dim, self.out_channels).to(
-                    u_v_lin[node_type].device)
+                    self.v_lin[node_type].device)
             reset(self.k_lin)
             reset(self.q_lin)
             reset(self.v_lin)
