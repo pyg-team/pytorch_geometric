@@ -321,7 +321,7 @@ class HGTConv(MessagePassing):
             increment_dict = {}
             inc_counter = 0
             for i, n_type in enumerate(self.node_types):
-                increment_dict[src_type] = inc_counter
+                increment_dict[n_type] = inc_counter
                 inc_counter += k_outs[i].shape[0]
             k_out = torch.cat(k_outs)
             v_out = torch.cat(v_outs)
@@ -348,7 +348,7 @@ class HGTConv(MessagePassing):
             increment_dict = {}
             inc_counter = 0
             for i, n_type in enumerate(self.node_types):
-                increment_dict[src_type] = inc_counter
+                increment_dict[n_type] = inc_counter
                 inc_counter += k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
 
         #combine edge_index dict into single tensor
