@@ -318,11 +318,12 @@ class HGTConv(MessagePassing):
                 v_o_i.transpose(1, 0)
                 for v_o_i in pyg_lib.ops.grouped_matmul(v_ins, m_rels)
             ]
-            increment_dict = {}
-            inc_counter = 0
+            node_slices = {}
+            cumsum = 0
             for i, n_type in enumerate(self.node_types):
-                increment_dict[n_type] = inc_counter
-                inc_counter += k_outs[i].shape[0]
+                num_nodes = k_outs[i].shape[0]
+                node_slices[node_type] = (cumsum, cumsum + num_nodes)
+                cumsum += num_nodes
             k_out = torch.cat(k_outs)
             v_out = torch.cat(v_outs)
         else:
@@ -345,18 +346,37 @@ class HGTConv(MessagePassing):
 
             v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
                                                m_rel).view(-1, H, D)
-            increment_dict = {}
-            inc_counter = 0
+            node_slices = {}
+            cumsum = 0
             for i, n_type in enumerate(self.node_types):
-                increment_dict[n_type] = inc_counter
-                inc_counter += k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
+                num_nodes = k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
+                node_slices[node_type] = (cumsum, cumsum + num_nodes)
+                cumsum += num_nodes
+
+        # # Record edge indices and slice information per edge type:
+        for edge_type, store in data._edge_store_dict.items():
+            src, _, dst = edge_type
+            offset = [[node_slices[src][0]], [node_slices[dst][0]]]
+            offset = torch.tensor(offset, device=store.edge_index.device)
+            edge_indices.append(store.edge_index + offset)
+
+            num_edges = store.num_edges
+            edge_slices[edge_type] = (cumsum, cumsum + num_edges)
+            cumsum += num_edges
+
+        edge_index = None
+        if len(edge_indices) == 1:  # Memory-efficient `torch.cat`:
+            edge_index = edge_indices[0]
+        elif len(edge_indices) > 0:
+            edge_index = torch.cat(edge_indices, dim=-1)
 
         #combine edge_index dict into single tensor
         q_list = []
         p_rels = []
+        cumsum = 0
+        edge_index_list = []
+        edge_slices = {}
         for e_type in self.edge_types:
-            src_type, dst_type = e_type[0], e_type[-1]
-            indices = edge_index_dict[e_type]
             # (TODO) Add support for SparseTensor w/o converting
             convert = isinstance(indices, SparseTensor)
             if convert:
@@ -364,17 +384,18 @@ class HGTConv(MessagePassing):
                 src, dst, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
                 convert = True
+            src_type, _, dst_type = e_type
+            indices = edge_index_dict[e_type]
+            offset = [[node_slices[src_type][0]], [node_slices[dst_type][0]]]
+            offset = torch.tensor(offset, device=indices.device)
+            edge_index_list.append(indices + offset)
+            q_list.append(q_dict[dst_type])
+            p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
 
-            if torch.numel(indices) != 0:
-                indices[0, :] = indices[0, :] + increment_dict[src_type]
-                indices[1, :] = indices[1, :] + increment_dict[dst_type]
-                q_list.append(q_dict[dst_type])
-                p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
-                edge_index_dict[e_type] = indices
 
         q = torch.cat(q_list)
         p = group(p_rels, self.group).view(-1)
-        e_idx = torch.cat(list(edge_index_dict.values()), dim=1)
+        e_idx = torch.cat(edge_index_list, dim=1)
         if convert:
             # convert back to CSR
             print('edge_index_dict.shape = ',
