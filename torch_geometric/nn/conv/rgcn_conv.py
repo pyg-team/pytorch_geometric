@@ -204,7 +204,8 @@ class RGCNConv(MessagePassing):
 
         if self.num_blocks is not None:  # Block-diagonal-decomposition =====
 
-            if not torch.is_floating_point(x_r) and self.num_blocks is not None:
+            if not torch.is_floating_point(
+                    x_r) and self.num_blocks is not None:
                 raise ValueError('Block-diagonal decomposition not supported '
                                  'for non-continuous input features.')
 
@@ -245,8 +246,10 @@ class RGCNConv(MessagePassing):
 
         root = self.root
         if root is not None:
-            out = out + \
-                (root[x_r] if not torch.is_floating_point(x_r) else x_r @ root)
+            if not torch.is_floating_point(x_r):
+                out = out + root[x_r]
+            else:
+                out = out + x_r @ root
 
         if self.bias is not None:
             out = out + self.bias
@@ -271,7 +274,6 @@ class RGCNConv(MessagePassing):
 
 class FastRGCNConv(RGCNConv):
     r"""See :class:`RGCNConv`."""
-
     def forward(self, x: Union[OptTensor, Tuple[OptTensor, Tensor]],
                 edge_index: Adj, edge_type: OptTensor = None):
         """"""
@@ -298,8 +300,10 @@ class FastRGCNConv(RGCNConv):
 
         root = self.root
         if root is not None:
-            out = out + \
-                (root[x_r] if not torch.is_floating_point(x_r) else x_r @ root)
+            if not torch.is_floating_point(x_r):
+                out = out + root[x_r]
+            else:
+                out = out + x_r @ root
 
         if self.bias is not None:
             out = out + self.bias
