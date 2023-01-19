@@ -128,10 +128,11 @@ class LightningData(LightningDataModule):
 
         super().__init__(has_val, has_test, **kwargs)
 
-        if loader == 'full' and self.kwargs.get('pin_memory', False):
-            warnings.warn(f"Re-setting 'pin_memory' to 'False' in "
-                          f"'{self.__class__.__name__}' for loader='full' "
-                          f"(got 'True')")
+        if loader == 'full':
+            if kwargs.get('pin_memory', False):
+                warnings.warn(f"Re-setting 'pin_memory' to 'False' in "
+                              f"'{self.__class__.__name__}' for loader='full' "
+                              f"(got 'True')")
             self.kwargs['pin_memory'] = False
 
         self.data = data
