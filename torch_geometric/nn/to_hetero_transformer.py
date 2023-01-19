@@ -482,7 +482,7 @@ class ToHeteroTransformer(Transformer):
             kwargslist = []
             args_dict = {}
             for key in self.metadata[int(self.is_edge_level(node))]:
-                args, kwargs = self.map_args_kwpyargs(node, key)
+                args, kwargs = self.map_args_kwargs(node, key)
                 args_dict[key] = args
                 kwargslist.extend(kwargs)
             # remove duplicate kwargs
@@ -496,7 +496,7 @@ class ToHeteroTransformer(Transformer):
             # Add calls to node type-wise or edge type-wise modules.
             self.graph.inserting_after(node)
             for key in self.metadata[int(self.is_edge_level(node))]:
-                args, kwargs = self.map_args_kwpyargs(node, key)
+                args, kwargs = self.map_args_kwargs(node, key)
                 out = self.graph.create_node('call_module',
                                              target=f'{target}.{key2str(key)}',
                                              args=args, kwargs=kwargs,
