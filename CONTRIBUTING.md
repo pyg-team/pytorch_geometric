@@ -7,7 +7,7 @@ If you are interested in contributing to PyG, your contributions will likely fal
 2. You want to fix a bug:
    - Feel free to send a Pull Request(PR) any time you encounter a bug. Please provide a clear and concise description of what the bug was. If you are unsure about if this is a bug at all or how to fix, post about it in an issue.
 
-Once you finish implementing a feature or bug-fix, please send a PR to https://github.com/pyg-team/pytorch_geometric. Your PR will be merged after 1 or more rounds of reveiws by the [pyg_team](https://github.com/pyg-team). Sometimes PR merges get delayed due to its large size, complexity or unavailabiltiy of reviewers, in such cases you can move your contribution to [torch_geometric.contrib](https://pytorch-geometric.readthedocs.io/en/latest/modules/contrib.html). [torch_geometric.contrib](https://pytorch-geometric.readthedocs.io/en/latest/modules/contrib.html) has less rigourous review requirements and might lead to your PR getting merged faster.
+Once you finish implementing a feature or bug-fix, please send a PR to https://github.com/pyg-team/pytorch_geometric. Your PR will be merged after 1 or more rounds of reveiws by the [pyg_team](https://github.com/pyg-team). If your PR isn't merged in around 4 weeks, due to its large size, complexity or unavailabiltiy of reviewers. Try moving your contribution to [torch_geometric.contrib](https://pytorch-geometric.readthedocs.io/en/latest/modules/contrib.html). [torch_geometric.contrib](https://pytorch-geometric.readthedocs.io/en/latest/modules/contrib.html) has less rigourous review requirements and might lead to your PR getting merged faster.
 
 ## Developing PyG
 
