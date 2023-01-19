@@ -8,8 +8,8 @@ from torch import Tensor
 from torch.nn import Module
 
 import torch_geometric
-from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.dense import HeteroLinear
+from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.typing import EdgeType, Metadata, NodeType, OptTensor
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
