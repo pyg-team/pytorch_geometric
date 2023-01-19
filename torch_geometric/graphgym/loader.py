@@ -291,6 +291,7 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
 
     else:
         raise NotImplementedError("%s sampler is not implemented!" % sampler)
+   
     return loader_train
 
 
@@ -313,11 +314,11 @@ def create_loader():
     if cfg.dataset.split_mode == "random":
         dataset.shuffle()
 
-    # Split indexes accrding to porportions in `cfg.dataset.split`
+    # Split indexes according to porportions in `cfg.dataset.split`
     ratios = np.array(cfg.dataset.split)
-    split_indexs = ratios.cumsum() * dataset.len()
-    split_indexs = split_indexs.astype(int)
+    split_indexs = (ratios.cumsum() * dataset.len()).astype(int)
     splits = np.split(range(dataset.len()), split_indexs)
+    splits.pop() # Remove last split which is empty. 
 
     # For every split build and append loader
     for i, split in enumerate(splits):
