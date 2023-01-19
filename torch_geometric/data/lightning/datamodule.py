@@ -41,16 +41,15 @@ class LightningDataModule(PLLightningDataModule):
 
         kwargs.setdefault('batch_size', 1)
         kwargs.setdefault('num_workers', 0)
+        kwargs.setdefault('pin_memory', True)
+        kwargs.setdefault('persistent_workers',
+                          kwargs.get('num_workers', 0) > 0)
 
         if 'shuffle' in kwargs:
             warnings.warn(f"The 'shuffle={kwargs['shuffle']}' option is "
                           f"ignored in '{self.__class__.__name__}'. Remove it "
                           f"from the argument list to disable this warning")
             del kwargs['shuffle']
-
-        kwargs.setdefault('pin_memory', True)
-        kwargs.setdefault('persistent_workers',
-                          kwargs.get('num_workers', 0) > 0)
 
         self.kwargs = kwargs
 
