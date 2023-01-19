@@ -1,7 +1,7 @@
 from typing import Callable
 
-import torch
 import numpy as np
+import torch
 
 import torch_geometric.graphgym.register as register
 import torch_geometric.transforms as T
@@ -221,7 +221,7 @@ def set_dataset_info(dataset):
     except Exception:
         cfg.share.dim_out = 1
 
-    # count number of dataset splits. 
+    # count number of dataset splits.
     cfg.share.num_splits = len(cfg.dataset.split)
 
 
@@ -291,7 +291,7 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
 
     else:
         raise NotImplementedError("%s sampler is not implemented!" % sampler)
-   
+
     return loader_train
 
 
@@ -318,7 +318,7 @@ def create_loader():
     ratios = np.array(cfg.dataset.split)
     split_indexs = (ratios.cumsum() * dataset.len()).astype(int)
     splits = np.split(range(dataset.len()), split_indexs)
-    splits.pop() # Remove last split which is empty. 
+    splits.pop()  # Remove last split which is empty.
 
     # For every split build and append loader
     for i, split in enumerate(splits):
@@ -337,11 +337,11 @@ def create_loader():
                 id = split
 
             loaders.append(
-                get_loader(dataset[id], sampler, cfg.train.batch_size, shuffle=shuffle)
-                )
+                get_loader(dataset[id], sampler, cfg.train.batch_size,
+                           shuffle=shuffle))
         else:
             loaders.append(
-                get_loader(dataset, sampler, cfg.train.batch_size, shuffle=shuffle)
-                )
+                get_loader(dataset, sampler, cfg.train.batch_size,
+                           shuffle=shuffle))
 
     return loaders
