@@ -474,19 +474,21 @@ class ToHeteroTransformer(Transformer):
         self.replace_all_uses_with(node, out)
 
     def call_module(self, node: Node, target: Any, name: str):
+        print("node:", node)
+        print("target:, target)
+        print("name:", name)
+        quit()
         if self.is_graph_level(node):
             return
-        if is_linear(getattr(self.module, name)):
+        if hasattr(self.module, name) and is_linear(getattr(self.module, name)):
             #insert a HeteroLinear HeteroModule instead
             self.graph.inserting_after(node)
-            kwargslist = []
+            kwargs_dict = {}
             args_dict = {}
             for key in self.metadata[int(self.is_edge_level(node))]:
                 args, kwargs = self.map_args_kwargs(node, key)
-                args_dict[key] = args
-                kwargslist.extend(kwargs)
-            # remove duplicate kwargs
-            kwargs = set(kwargslist)
+                args_dict.update(args)
+                kwargs_dict.update(kwargs)
             out = self.graph.create_node('call_module',
                                          target=f'{target}.{key2str(key)}',
                                          args=args, kwargs=kwargs,
