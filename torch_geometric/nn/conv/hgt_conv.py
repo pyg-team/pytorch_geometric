@@ -360,6 +360,8 @@ class HGTConv(MessagePassing):
         edge_index_list = []
         edge_slices = {}
         for e_type in self.edge_types:
+            src_type, _, dst_type = e_type
+            indices = edge_index_dict[e_type]
             # (TODO) Add support for SparseTensor w/o converting
             convert = isinstance(indices, SparseTensor)
             if convert:
@@ -367,8 +369,6 @@ class HGTConv(MessagePassing):
                 src, dst, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
                 convert = True
-            src_type, _, dst_type = e_type
-            indices = edge_index_dict[e_type]
             offset = [[node_slices[src_type][0]], [node_slices[dst_type][0]]]
             offset = torch.tensor(offset, device=indices.device)
             edge_index_list.append(indices + offset)
