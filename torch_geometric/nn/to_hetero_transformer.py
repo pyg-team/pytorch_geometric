@@ -480,7 +480,8 @@ class ToHeteroTransformer(Transformer):
         quit()
         if self.is_graph_level(node):
             return
-        if hasattr(self.module, name) and is_linear(getattr(self.module, name)):
+        if hasattr(self.module, name) and is_linear(getattr(self.module,
+                                                            name)):
             #insert a HeteroLinear HeteroModule instead
             self.graph.inserting_after(node)
             kwargs_dict = {}
