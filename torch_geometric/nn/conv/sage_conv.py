@@ -64,7 +64,6 @@ class SAGEConv(MessagePassing):
         - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
-
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
