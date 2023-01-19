@@ -70,7 +70,7 @@ class BitcoinOTC(InMemoryDataset):
             edge_index = edge_index.t().contiguous()
             num_nodes = edge_index.max().item() + 1
 
-            edge_attr = [float(line[2]) for line in data]
+            edge_attr = [int(line[2]) for line in data]
             edge_attr = torch.tensor(edge_attr, dtype=torch.long)
 
             stamps = [int(float(line[3])) for line in data]
