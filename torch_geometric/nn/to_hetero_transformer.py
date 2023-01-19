@@ -9,6 +9,7 @@ from torch.nn import Module
 
 import torch_geometric
 from torch_geometric.nn.fx import Transformer, get_submodule
+from torch_geometric.nn.dense import HeteroLinear
 from torch_geometric.typing import EdgeType, Metadata, NodeType, OptTensor
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
@@ -159,9 +160,7 @@ class ToHeteroModule(Module):
             else:
                 in_ft = module.in_channels
                 out_ft = module.out_channels
-            heteromodule = torch_geometric.nn.dense.HeteroLinear(
-                in_ft, out_ft,
-                len(self.node_types)).to(list(module.parameters())[0].device)
+            heteromodule = HeteroLinear(in_ft, out_ft, len(self.node_types)).to(list(module.parameters())[0].device)
             heteromodule.reset_parameters()
         else:
             # copy MessagePassing module for each edge type
@@ -476,16 +475,18 @@ class ToHeteroTransformer(Transformer):
     def call_module(self, node: Node, target: Any, name: str):
         if self.is_graph_level(node):
             return
-
-        # Add calls to node type-wise or edge type-wise modules.
-        self.graph.inserting_after(node)
-        for key in self.metadata[int(self.is_edge_level(node))]:
-            args, kwargs = self.map_args_kwargs(node, key)
-            out = self.graph.create_node('call_module',
-                                         target=f'{target}.{key2str(key)}',
-                                         args=args, kwargs=kwargs,
-                                         name=f'{name}__{key2str(key)}')
-            self.graph.inserting_after(out)
+        if is_linear(getattr(self.module, name)):
+            #insert a HeteroLinear HeteroModule instead
+        else:
+            # Add calls to node type-wise or edge type-wise modules.
+            self.graph.inserting_after(node)
+            for key in self.metadata[int(self.is_edge_level(node))]:
+                args, kwargs = self.map_args_kwpyargs(node, key)
+                out = self.graph.create_node('call_module',
+                                             target=f'{target}.{key2str(key)}',
+                                             args=args, kwargs=kwargs,
+                                             name=f'{name}__{key2str(key)}')
+                self.graph.inserting_after(out)
 
     def call_method(self, node: Node, target: Any, name: str):
         if self.is_graph_level(node):
