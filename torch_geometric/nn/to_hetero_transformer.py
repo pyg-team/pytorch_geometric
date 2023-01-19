@@ -160,7 +160,8 @@ class ToHeteroModule(Module):
             else:
                 in_ft = module.in_channels
                 out_ft = module.out_channels
-            heteromodule = HeteroLinear(in_ft, out_ft, len(self.node_types)).to(list(module.parameters())[0].device)
+            heteromodule = HeteroLinear(in_ft, out_ft, len(
+                self.node_types)).to(list(module.parameters())[0].device)
             heteromodule.reset_parameters()
         else:
             # copy MessagePassing module for each edge type
@@ -487,10 +488,10 @@ class ToHeteroTransformer(Transformer):
             # remove duplicate kwargs
             kwargs = set(kwargslist)
             out = self.graph.create_node('call_module',
-                                     target=f'{target}.{key2str(key)}',
-                                     args=args, kwargs=kwargs,
-                                     name=f'{name}__{key2str(key)}')
-            self.graph.inserting_after(out) 
+                                         target=f'{target}.{key2str(key)}',
+                                         args=args, kwargs=kwargs,
+                                         name=f'{name}__{key2str(key)}')
+            self.graph.inserting_after(out)
         else:
             # Add calls to node type-wise or edge type-wise modules.
             self.graph.inserting_after(node)
