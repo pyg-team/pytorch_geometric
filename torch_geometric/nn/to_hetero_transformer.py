@@ -497,7 +497,7 @@ class ToHeteroTransformer(Transformer):
                 out_type = Dict[EdgeType, Tensor]
             else:
                 out_type = Dict[NodeType, Tensor]
-            out = self.graph.create_node('call_module', target=f'{target}',
+            out = self.graph.create_node('call_module', target=f'{target}_heterolinear',
                                          args=(args_dict, ),
                                          kwargs=kwargs_dict,
                                          name=f'{name}_heterolinear',
@@ -548,7 +548,6 @@ class ToHeteroTransformer(Transformer):
         # Replace the output by dictionaries, holding either node type-wise or
         # edge type-wise data.
         def _recurse(value: Any) -> Any:
-            print(type(value))
             if isinstance(value, Node):
                 print(value.name)
                 if self.is_graph_level(value):
