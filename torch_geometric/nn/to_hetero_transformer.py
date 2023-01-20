@@ -509,8 +509,12 @@ class ToHeteroTransformer(Transformer):
                                          name=f'{name}')
             self.graph.inserting_after(out)
             print('out:', out)
-            # for key in self.metadata[int(self.is_edge_level(node))]:
-            #     self.graph.inserting_after(out)
+            for key in self.metadata[int(self.is_edge_level(node))]:
+                args, kwargs = self.map_args_kwargs(out, key)
+                out_k = self.graph.create_node('get_attr', target=f'{target}.{key2str(key)}',
+                                         args=args, kwargs=kwargs,
+                                         name=f'{name}__{key2str(key)}')
+                self.graph.inserting_after(out_k)
         else:
             print('inside other if')
             # Add calls to node type-wise or edge type-wise modules.
@@ -597,8 +601,7 @@ class ToHeteroTransformer(Transformer):
 
         if not has_node_level_target and not has_edge_level_target:
             return module
-        module_is_lin = is_linear(module)
-        if module_is_lin:
+        if is_linear(module):
             return ToHeteroModule(module, self.metadata, self.aggr)
         else:
             module_dict = torch.nn.ModuleDict()
