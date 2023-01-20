@@ -260,8 +260,7 @@ class ToHeteroModule(Module):
         edge_index: Optional[Union[Dict[EdgeType, Tensor], Tensor]] = None,
         node_type: OptTensor = None,
         edge_type: OptTensor = None,
-    # ) -> Union[Dict[Union[NodeType, EdgeType], Tensor], Tensor]:
-    ) -> Dict[Union[NodeType, EdgeType], Tensor]:
+    ) -> Union[Dict[Union[NodeType, EdgeType], Tensor], Tensor]:
         r"""
         Args:
             x (Dict[str, Tensor] or Tensor): A dictionary holding node feature
@@ -508,6 +507,7 @@ class ToHeteroTransformer(Transformer):
             out = self.graph.create_node('call_module', target=f'{target}',
                                          args=args, kwargs=kwargs,
                                          name=f'{name}')
+            out.type = Dict[Union[NodeType, EdgeType], Tensor]
             self.graph.inserting_after(out)
         else:
             print('inside other if')
