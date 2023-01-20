@@ -497,9 +497,14 @@ class ToHeteroTransformer(Transformer):
                 print('kwargs:', kwargs)
                 args_dict[key] = args[0]
                 kwargs_dict.update(kwargs)
+            args = (args_dict, )
+            print("(args_dict,):",args)
+            
+            kwargs = kwargs_dict
+            print("kwargs_dict", kwargs)
             out = self.graph.create_node('call_module', target=f'{target}',
-                                         args=(args_dict, ),
-                                         kwargs=kwargs_dict, name=f'{name}')
+                                         args=args, kwargs=kwargs,
+                                         name=f'{name}')
             self.graph.inserting_after(out)
         else:
             print('inside other if')
