@@ -511,7 +511,6 @@ class ToHeteroTransformer(Transformer):
             print('out:', out)
             print('out.args:', out.args)
             print('dir(out)', dir(out))
-            print('var(out)', var(out))
             print("assigning output of heterolinear...")
             for key in self.metadata[int(self.is_edge_level(node))]:
                 args, kwargs = self.map_args_kwargs(out, key)
