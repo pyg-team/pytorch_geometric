@@ -630,6 +630,7 @@ class ToHeteroTransformer(Transformer):
     def map_args_kwargs(self, node: Node,
                         key: Union[NodeType, EdgeType]) -> Tuple[Tuple, Dict]:
         def _recurse(value: Any) -> Any:
+            print('value:', value)
             if isinstance(value, Node):
                 out = self.find_by_name(f'{value.name}__{key2str(key)}')
                 if out is not None:
