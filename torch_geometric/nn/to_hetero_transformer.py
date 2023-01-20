@@ -260,7 +260,7 @@ class ToHeteroModule(Module):
         edge_index: Optional[Union[Dict[EdgeType, Tensor], Tensor]] = None,
         node_type: OptTensor = None,
         edge_type: OptTensor = None,
-    ) -> Union[Dict[NodeType, Tensor], Tensor]:
+    ) -> Union[Dict[Union[NodeType, EdgeType], Tensor], Tensor]:
         r"""
         Args:
             x (Dict[str, Tensor] or Tensor): A dictionary holding node feature
@@ -633,6 +633,7 @@ class ToHeteroTransformer(Transformer):
             print('value:', value)
             if isinstance(value, Node):
                 out = self.find_by_name(f'{value.name}__{key2str(key)}')
+                print("found out:", out)
                 if out is not None:
                     return out
                 elif isinstance(key, tuple) and key[0] == key[-1]:
