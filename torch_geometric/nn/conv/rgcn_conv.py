@@ -59,6 +59,11 @@ class RGCNConv(MessagePassing):
         compensate.
         We advise to check out both implementations to see which one fits your
         needs.
+        RGCNConv can use `dynamic shapes
+        <https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index
+        .html#work_dynamic_shapes>`_. Dynamic shape means that the shape of the
+        interim tensors can be determined at runtime. If your device doesn't
+        support dynamic shapes, use FastRGCNConv.
 
     Args:
         in_channels (int or tuple): Size of each input sample. A tuple
