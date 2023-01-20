@@ -502,6 +502,7 @@ class ToHeteroTransformer(Transformer):
                                          kwargs=kwargs_dict,
                                          name=f'{name}_heterolinear',
                                          type_expr=out_type)
+            print('out.name', out.name)
             print('out.type', out.type)
             self.graph.inserting_after(out)
         else:
@@ -549,7 +550,7 @@ class ToHeteroTransformer(Transformer):
         # edge type-wise data.
         def _recurse(value: Any) -> Any:
             if isinstance(value, Node):
-                print(value.name)
+                print('value.name:', value.name)
                 if self.is_graph_level(value):
                     return value
                 if 'heterolinear' in value.name:
