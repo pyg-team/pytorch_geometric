@@ -517,7 +517,8 @@ class ToHeteroTransformer(Transformer):
                 print('args:', args)
                 print('kwargs:', kwargs)
                 out_k = self.graph.create_node(
-                    'get_attr', target=f'{target}.{key2str(key)}',name=f'{name}__{key2str(key)}')
+                    'get_attr', target=f'{target}.{key2str(key)}',
+                    name=f'{name}__{key2str(key)}')
                 self.graph.inserting_after(out_k)
         else:
             print('inside other if')
