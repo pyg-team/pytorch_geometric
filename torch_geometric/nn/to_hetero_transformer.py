@@ -586,7 +586,7 @@ class ToHeteroTransformer(Transformer):
             node.type = None
 
         node.args = (_recurse(node.args[0]), )
-        print('final val node.args=',node.args)
+        print('final val node.args=', node.args)
 
     def init_submodule(self, module: Module, target: str) -> Module:
         # Replicate each module for each node type or edge type.
