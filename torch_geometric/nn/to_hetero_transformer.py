@@ -557,9 +557,8 @@ class ToHeteroTransformer(Transformer):
                 heterolinear_name = str(value.name) + '__heterolinear'
                 is_heterolinear = True
                 print('self.find_by_name(heterolinear_name):',
-                          self.find_by_name(heterolinear_name))
-                print('self.find_by_name(bs):',
-                          self.find_by_name('deez'))
+                      self.find_by_name(heterolinear_name))
+                print('self.find_by_name(bs):', self.find_by_name('deez'))
                 if is_heterolinear:
                     return {
                         key: self.find_by_name(heterolinear_name)[key]
