@@ -479,9 +479,10 @@ class ToHeteroTransformer(Transformer):
         print("name:", name)
         if self.is_graph_level(node):
             return
-        print('hasattr(self.module, name):',hasattr(self.module, name))
+        print('hasattr(self.module, name):', hasattr(self.module, name))
         if hasattr(self.module, name):
-            print('is_linear(getattr(self.module,name)):', is_linear(getattr(self.module,name)))
+            print('is_linear(getattr(self.module,name)):',
+                  is_linear(getattr(self.module, name)))
         if hasattr(self.module, name) and is_linear(getattr(self.module,
                                                             name)):
             print('inside heterolinear if')
@@ -491,15 +492,15 @@ class ToHeteroTransformer(Transformer):
             args_dict = {}
             for key in self.metadata[int(self.is_edge_level(node))]:
                 args, kwargs = self.map_args_kwargs(node, key)
-                print('args[0] type:',type(args[0]))
+                print('args[0] type:', type(args[0]))
                 print('args[0]:', args[0])
-                print('kwargs type:',type(kwargs))
+                print('kwargs type:', type(kwargs))
                 print('kwargs:', kwargs)
                 args_dict[key] = args[0]
                 kwargs_dict.update(kwargs)
             args = (args_dict, )
-            print("(args_dict,):",args)
-            
+            print("(args_dict,):", args)
+
             kwargs = kwargs_dict
             print("kwargs_dict", kwargs)
             out = self.graph.create_node('call_module', target=f'{target}',
