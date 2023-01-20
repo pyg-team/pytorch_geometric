@@ -520,49 +520,14 @@ class ToHeteroTransformer(Transformer):
                 self.graph.inserting_after(out)
 
     def call_method(self, node: Node, target: Any, name: str):
-        print('inside call_method')
-        print("node:", node)
-        print("target:", target)
-        print("name:", name)
-        if self.is_graph_level(node):
-            return
-        print('hasattr(self.module, name):', hasattr(self.module, name))
-        if hasattr(self.module, name):
-            print('is_linear(getattr(self.module,name)):',
-                  is_linear(getattr(self.module, name)))
+        # Add calls to node type-wise or edge type-wise methods.
         self.graph.inserting_after(node)
-        if hasattr(self.module, name) and is_linear(getattr(self.module,
-                                                            name)):
-            print('inside heterolinear if')
-            #insert a HeteroLinear HeteroModule instead
-            kwargs_dict = {}
-            args_dict = {}
-            for key in self.metadata[int(self.is_edge_level(node))]:
-                args, kwargs = self.map_args_kwargs(node, key)
-                print('args[0] type:', type(args[0]))
-                print('args[0]:', args[0])
-                print('kwargs type:', type(kwargs))
-                print('kwargs:', kwargs)
-                args_dict[key] = args[0]
-                kwargs_dict.update(kwargs)
-            args = (args_dict, )
-            print("(args_dict,):", args)
-
-            kwargs = kwargs_dict
-            print("kwargs_dict", kwargs)
-            out = self.graph.create_node('call_method', target=f'{target}',
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            args, kwargs = self.map_args_kwargs(node, key)
+            out = self.graph.create_node('call_method', target=target,
                                          args=args, kwargs=kwargs,
-                                         name=f'{name}')
+                                         name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
-        else:
-            print('inside other if')
-            # Add calls to node type-wise or edge type-wise methods.
-            for key in self.metadata[int(self.is_edge_level(node))]:
-                args, kwargs = self.map_args_kwargs(node, key)
-                out = self.graph.create_node('call_method', target=target,
-                                             args=args, kwargs=kwargs,
-                                             name=f'{name}__{key2str(key)}')
-                self.graph.inserting_after(out)
 
     def call_function(self, node: Node, target: Any, name: str):
         if self.is_graph_level(node):
