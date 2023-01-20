@@ -558,6 +558,8 @@ class ToHeteroTransformer(Transformer):
                 is_heterolinear = True
                 print('self.find_by_name(heterolinear_name):',
                           self.find_by_name(heterolinear_name))
+                print('self.find_by_name(bs):',
+                          self.find_by_name('deez'))
                 if is_heterolinear:
                     return {
                         key: self.find_by_name(heterolinear_name)[key]
