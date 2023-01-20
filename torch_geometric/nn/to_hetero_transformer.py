@@ -482,8 +482,9 @@ class ToHeteroTransformer(Transformer):
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
-        if hasattr(self.module, name) and is_linear(getattr(self.module,
-                                                            name)):
+        # if hasattr(self.module, name) and is_linear(getattr(self.module,
+        #                                                     name)):
+        if False:
             print('inside heterolinear if')
             # insert a HeteroLinear HeteroModule instead
             kwargs_dict = {}
@@ -612,7 +613,8 @@ class ToHeteroTransformer(Transformer):
 
         if not has_node_level_target and not has_edge_level_target:
             return module
-        if is_linear(module):
+        # if is_linear(module):
+        if False:
             return ToHeteroModule(module, self.metadata, self.aggr)
         else:
             module_dict = torch.nn.ModuleDict()
