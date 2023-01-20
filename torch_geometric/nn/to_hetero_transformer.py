@@ -593,7 +593,8 @@ class ToHeteroTransformer(Transformer):
 
         if not has_node_level_target and not has_edge_level_target:
             return module
-        if is_linear(module):
+        # if is_linear(module):
+        if False:
             return ToHeteroModule(module, self.metadata, self.aggr)
         else:
             module_dict = torch.nn.ModuleDict()
