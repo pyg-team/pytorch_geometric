@@ -565,7 +565,7 @@ class ToHeteroTransformer(Transformer):
                 return tuple(_recurse(v) for v in value)
             else:
                 return value
-        print('node:',node.type)
+        print('node.type:',node.type)
         print('isinstance(node.args[0], Node):',isinstance(node.args[0], Node))
         if node.type is not None and isinstance(node.args[0], Node):
             output = node.args[0]
