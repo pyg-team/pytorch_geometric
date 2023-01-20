@@ -555,7 +555,7 @@ class ToHeteroTransformer(Transformer):
                     return value
                 #check if heterolinear
                 is_heterolinear = 'heterolinear' in value.name
-                #for key in self.metadata[int(self.is_edge_level(value))]                  
+                #for key in self.metadata[int(self.is_edge_level(value))]
                 if is_heterolinear:
                     heterolinear_name = str(value.name) + '__heterolinear'
                     print('self.find_by_name(value.name):',
