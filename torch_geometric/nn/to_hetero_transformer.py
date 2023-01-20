@@ -484,11 +484,11 @@ class ToHeteroTransformer(Transformer):
         if hasattr(self.module, name):
             print('is_linear(getattr(self.module,name)):',
                   is_linear(getattr(self.module, name)))
+        self.graph.inserting_after(node)
         if hasattr(self.module, name) and is_linear(getattr(self.module,
                                                             name)):
             print('inside heterolinear if')
             #insert a HeteroLinear HeteroModule instead
-            self.graph.inserting_after(node)
             kwargs_dict = {}
             args_dict = {}
             for key in self.metadata[int(self.is_edge_level(node))]:
@@ -511,7 +511,6 @@ class ToHeteroTransformer(Transformer):
         else:
             print('inside other if')
             # Add calls to node type-wise or edge type-wise modules.
-            self.graph.inserting_after(node)
             for key in self.metadata[int(self.is_edge_level(node))]:
                 args, kwargs = self.map_args_kwargs(node, key)
                 out = self.graph.create_node('call_module',
@@ -531,11 +530,11 @@ class ToHeteroTransformer(Transformer):
         if hasattr(self.module, name):
             print('is_linear(getattr(self.module,name)):',
                   is_linear(getattr(self.module, name)))
+        self.graph.inserting_after(node)
         if hasattr(self.module, name) and is_linear(getattr(self.module,
                                                             name)):
             print('inside heterolinear if')
             #insert a HeteroLinear HeteroModule instead
-            self.graph.inserting_after(node)
             kwargs_dict = {}
             args_dict = {}
             for key in self.metadata[int(self.is_edge_level(node))]:
@@ -558,7 +557,6 @@ class ToHeteroTransformer(Transformer):
         else:
             print('inside other if')
             # Add calls to node type-wise or edge type-wise methods.
-            self.graph.inserting_after(node)
             for key in self.metadata[int(self.is_edge_level(node))]:
                 args, kwargs = self.map_args_kwargs(node, key)
                 out = self.graph.create_node('call_method', target=target,
@@ -572,10 +570,7 @@ class ToHeteroTransformer(Transformer):
 
         # Add calls to node type-wise or edge type-wise functions.
         self.graph.inserting_after(node)
-        if hasattr(self.module, name) and is_linear(getattr(self.module,
-                                                            name)):
-        else:
-            for key in self.metadata[int(self.is_edge_level(node))]:
+        for key in self.metadata[int(self.is_edge_level(node))]:
                 args, kwargs = self.map_args_kwargs(node, key)
                 out = self.graph.create_node('call_function', target=target,
                                              args=args, kwargs=kwargs,
