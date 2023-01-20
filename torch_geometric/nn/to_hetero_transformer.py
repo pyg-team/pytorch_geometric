@@ -508,6 +508,9 @@ class ToHeteroTransformer(Transformer):
                                          args=args, kwargs=kwargs,
                                          name=f'{name}')
             self.graph.inserting_after(out)
+            print(out)
+            # for key in self.metadata[int(self.is_edge_level(node))]:
+            #     self.graph.inserting_after(out)
         else:
             print('inside other if')
             # Add calls to node type-wise or edge type-wise modules.
