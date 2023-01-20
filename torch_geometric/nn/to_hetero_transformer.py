@@ -571,6 +571,7 @@ class ToHeteroTransformer(Transformer):
         print('isinstance(node.args[0], Node):',
               isinstance(node.args[0], Node))
         print('node.args[0]:', node.args[0])
+        print('node.args', node.args)
         if node.type is not None and isinstance(node.args[0], Node):
             print('inside if')
             output = node.args[0]
