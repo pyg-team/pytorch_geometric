@@ -491,14 +491,15 @@ class ToHeteroTransformer(Transformer):
                 args, kwargs = self.map_args_kwargs(node, key)
                 args_dict[key] = args[0]
                 kwargs_dict.update(kwargs)
-            print('(args_dict,):', (args_dict,))
+            print('(args_dict,):', (args_dict, ))
             if self.is_edge_level(node):
                 out_type = Dict[EdgeType, Tensor]
             else:
                 out_type = Dict[NodeType, Tensor]
             out = self.graph.create_node('call_module', target=f'{target}',
                                          args=(args_dict, ), kwargs=kwargs_dict,
-                                         name=f'{name}_heterolinear', type_expr=out_type)
+                                         name=f'{name}_heterolinear',
+                                         type_expr=out_type)
             print('out.type', out.type)
             self.graph.inserting_after(out)
         else:
