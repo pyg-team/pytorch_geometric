@@ -509,8 +509,12 @@ class ToHeteroTransformer(Transformer):
                                          name=f'{name}')
             self.graph.inserting_after(out)
             print('out:', out)
+            print("assigning output of heterolinear...")
             for key in self.metadata[int(self.is_edge_level(node))]:
                 args, kwargs = self.map_args_kwargs(out, key)
+                print('key:', key)
+                print('args:',args)
+                print('kwargs:', kwargs)
                 out_k = self.graph.create_node('get_attr', target=f'{target}.{key2str(key)}',
                                          args=args, kwargs=kwargs,
                                          name=f'{name}__{key2str(key)}')
