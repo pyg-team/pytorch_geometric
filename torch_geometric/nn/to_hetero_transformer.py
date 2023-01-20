@@ -493,7 +493,8 @@ class ToHeteroTransformer(Transformer):
                 kwargs_dict.update(kwargs)
             out = self.graph.create_node('call_module',
                                          target=f'{target}.{key2str(key)}',
-                                         args=(args_dict,), kwargs=kwargs_dict,
+                                         args=(args_dict, ),
+                                         kwargs=kwargs_dict,
                                          name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
         else:
