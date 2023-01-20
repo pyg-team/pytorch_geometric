@@ -45,7 +45,7 @@ class LinearGraphModule(LightningModule):
 
     def forward(self, x, batch):
         # Basic test to ensure that the dataset is not replicated:
-        self.trainer.datamodule.train_dataset.data.x.add_(1)
+        self.trainer.datamodule.train_dataset._data.x.add_(1)
 
         x = self.lin1(x).relu()
         x = global_mean_pool(x, batch)
@@ -93,14 +93,14 @@ def test_lightning_dataset(get_dataset, strategy_type):
                          max_epochs=1, log_every_n_steps=1)
     datamodule = LightningDataset(train_dataset, val_dataset, test_dataset,
                                   batch_size=5, num_workers=3)
-    old_x = train_dataset.data.x.clone()
+    old_x = train_dataset._data.x.clone()
     assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
                                'val_dataset=MUTAG(30), '
                                'test_dataset=MUTAG(10), batch_size=5, '
                                'num_workers=3, pin_memory=True, '
                                'persistent_workers=True)')
     trainer.fit(model, datamodule)
-    new_x = train_dataset.data.x
+    new_x = train_dataset._data.x
     offset = 10 + 6 + 2 * devices  # `train_steps` + `val_steps` + `sanity`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
     if strategy_type is None:
@@ -274,7 +274,7 @@ def test_lightning_hetero_node_data(get_dataset):
                          max_epochs=5, log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader='neighbor', num_neighbors=[5],
                                    batch_size=32, num_workers=3)
-    assert isinstance(datamodule.neighbor_sampler, NeighborSampler)
+    assert isinstance(datamodule.graph_sampler, NeighborSampler)
     old_x = data['author'].x.clone()
     trainer.fit(model, datamodule)
     new_x = data['author'].x
@@ -298,12 +298,12 @@ def test_lightning_data_custom_sampler():
 
     datamodule = LightningNodeData(data, node_sampler=DummySampler(),
                                    input_train_nodes=torch.arange(2))
-    assert isinstance(datamodule.neighbor_sampler, DummySampler)
+    assert isinstance(datamodule.graph_sampler, DummySampler)
 
     datamodule = LightningLinkData(
         data, link_sampler=DummySampler(),
         input_train_edges=torch.tensor([[0, 1], [0, 1]]))
-    assert isinstance(datamodule.neighbor_sampler, DummySampler)
+    assert isinstance(datamodule.graph_sampler, DummySampler)
 
 
 @onlyCUDA
@@ -330,7 +330,7 @@ def test_lightning_hetero_link_data():
         batch_size=32,
         num_workers=0,
     )
-    assert isinstance(datamodule.neighbor_sampler, NeighborSampler)
+    assert isinstance(datamodule.graph_sampler, NeighborSampler)
     for batch in datamodule.train_dataloader():
         assert 'edge_label_index' in batch['author', 'paper']
 
@@ -404,9 +404,9 @@ def test_eval_loader_kwargs(get_dataset):
     )
 
     assert datamodule.loader_kwargs['batch_size'] == 32
-    assert datamodule.neighbor_sampler.num_neighbors == [5]
+    assert datamodule.graph_sampler.num_neighbors == [5]
     assert datamodule.eval_loader_kwargs['batch_size'] == 64
-    assert datamodule.eval_neighbor_sampler.num_neighbors == [-1]
+    assert datamodule.eval_graph_sampler.num_neighbors == [-1]
 
     train_loader = datamodule.train_dataloader()
     assert math.ceil(int(data.train_mask.sum()) / 32) == len(train_loader)
