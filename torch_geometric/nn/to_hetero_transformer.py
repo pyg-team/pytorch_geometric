@@ -575,7 +575,8 @@ class ToHeteroTransformer(Transformer):
                 node.type = Dict[NodeType, node.type]
             elif self.is_edge_level(output):
                 node.type = Dict[EdgeType, node.type]
-        elif node.type == Dict[NodeType, node.type] or Dict[EdgeType, node.type]:
+        elif node.type == Dict[NodeType, node.type] or Dict[EdgeType,
+                                                            node.type]:
             print('')
         else:
             print('inside else')
