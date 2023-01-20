@@ -552,7 +552,7 @@ class ToHeteroTransformer(Transformer):
             if isinstance(value, Node):
                 print('value.name:', value.name)
                 if self.is_graph_level(value):
-                    return value
+                    return value                    
                 if 'heterolinear' in value.name:
                     print('self.find_by_name(value.name):',
                           self.find_by_name(value.name))
