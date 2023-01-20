@@ -474,7 +474,7 @@ class ToHeteroTransformer(Transformer):
         self.replace_all_uses_with(node, out)
 
     def call_module(self, node: Node, target: Any, name: str):
-        print('\n*3')
+        print('\n'*3)
         print('inside call_module')
         print("node:", node)
         print("target:", target)
@@ -539,7 +539,7 @@ class ToHeteroTransformer(Transformer):
             self.graph.inserting_after(out)
 
     def output(self, node: Node, target: Any, name: str):
-        print('\n*3')
+        print('\n'*3)
         print("inside output")
         print("node:", node)
         print("target:", target)
