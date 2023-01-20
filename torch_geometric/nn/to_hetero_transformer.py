@@ -552,7 +552,8 @@ class ToHeteroTransformer(Transformer):
                 if self.is_graph_level(value):
                     return value
                 if 'heterolinear' in value.name:
-                    print('self.find_by_name(value.name):',self.find_by_name(value.name))
+                    print('self.find_by_name(value.name):',
+                          self.find_by_name(value.name))
                     return {
                         key: self.find_by_name(value.name)[key]
                         for key in self.metadata[int(self.is_edge_level(
