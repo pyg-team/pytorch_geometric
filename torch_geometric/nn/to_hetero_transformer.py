@@ -499,8 +499,7 @@ class ToHeteroTransformer(Transformer):
                 out_type = Dict[Union[NodeType], Tensor]
             out = self.graph.create_node('call_module', target=f'{target}',
                                          args=args, kwargs=kwargs,
-                                         name=f'{name}',
-                                         type_expr=out_type)
+                                         name=f'{name}', type_expr=out_type)
             self.graph.inserting_after(out)
         else:
             print('inside other if')
