@@ -493,10 +493,9 @@ class ToHeteroTransformer(Transformer):
                 print('kwargs:', kwargs)
                 args_dict[key] = args[0]
                 kwargs_dict.update(kwargs)
-            out = self.graph.create_node('call_module',
-                                         target=f'{target}',
-                                         args=(args_dict,), kwargs=kwargs_dict,
-                                         name=f'{name}')
+            out = self.graph.create_node('call_module', target=f'{target}',
+                                         args=(args_dict, ),
+                                         kwargs=kwargs_dict, name=f'{name}')
             self.graph.inserting_after(out)
         else:
             # Add calls to node type-wise or edge type-wise modules.
