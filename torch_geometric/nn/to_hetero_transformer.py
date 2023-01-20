@@ -476,9 +476,7 @@ class ToHeteroTransformer(Transformer):
     def call_module(self, node: Node, target: Any, name: str):
         print("node:", node)
         print("target:", target)
-        print("target is module:", isinstance(target, torch.nn.Module))
         print("name:", name)
-        quit()
         if self.is_graph_level(node):
             return
         if hasattr(self.module, name) and is_linear(getattr(self.module,
