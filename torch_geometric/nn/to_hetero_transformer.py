@@ -508,15 +508,6 @@ class ToHeteroTransformer(Transformer):
                                          args=args, kwargs=kwargs,
                                          name=f'{name}')
             self.graph.inserting_after(out)
-            print('out:', out)
-            print('out.args:', out.args)
-            print('dir(out)', dir(out))
-            print("assigning output of heterolinear...")
-            for key in self.metadata[int(self.is_edge_level(node))]:
-                out_k = self.graph.create_node(
-                    'get_attr', target=f'{target}.{key2str(key)}',
-                    name=f'{name}__{key2str(key)}')
-                self.graph.inserting_after(out_k)
         else:
             print('inside other if')
             # Add calls to node type-wise or edge type-wise modules.p
