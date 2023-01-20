@@ -497,7 +497,8 @@ class ToHeteroTransformer(Transformer):
                 out_type = Dict[EdgeType, Tensor]
             else:
                 out_type = Dict[NodeType, Tensor]
-            out = self.graph.create_node('call_module', target=f'{target}_heterolinear',
+            out = self.graph.create_node('call_module',
+                                         target=f'{target}_heterolinear',
                                          args=(args_dict, ),
                                          kwargs=kwargs_dict,
                                          name=f'{name}_heterolinear',
