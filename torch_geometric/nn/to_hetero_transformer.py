@@ -498,7 +498,7 @@ class ToHeteroTransformer(Transformer):
                 out_type = Dict[NodeType, Tensor]
             out = self.graph.create_node('call_module', target=f'{target}',
                                          args=(args_dict, ), kwargs=kwargs_dict,
-                                         name=f'{name}', type_expr=out_type)
+                                         name=f'{name}_heterolinear', type_expr=out_type)
             print('out.type', out.type)
             self.graph.inserting_after(out)
         else:
@@ -547,10 +547,13 @@ class ToHeteroTransformer(Transformer):
             if isinstance(value, Node):
                 if self.is_graph_level(value):
                     return value
-                return {
-                    key: self.find_by_name(f'{value.name}__{key2str(key)}')
-                    for key in self.metadata[int(self.is_edge_level(value))]
-                }
+                if 'heterolinear' in value.name:
+
+                else:
+                    return {
+                        key: self.find_by_name(f'{value.name}__{key2str(key)}')
+                        for key in self.metadata[int(self.is_edge_level(value))]
+                    }
             elif isinstance(value, dict):
                 return {k: _recurse(v) for k, v in value.items()}
             elif isinstance(value, list):
