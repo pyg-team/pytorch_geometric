@@ -487,7 +487,9 @@ class ToHeteroTransformer(Transformer):
             args_dict = {}
             for key in self.metadata[int(self.is_edge_level(node))]:
                 args, kwargs = self.map_args_kwargs(node, key)
-                args_dict.update(args)
+                print(type(args))
+                print(args)
+                args_dict[key] = args
                 kwargs_dict.update(kwargs)
             out = self.graph.create_node('call_module',
                                          target=f'{target}.{key2str(key)}',
