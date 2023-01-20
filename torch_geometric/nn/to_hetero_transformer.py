@@ -479,7 +479,7 @@ class ToHeteroTransformer(Transformer):
         print("name:", name)
         if self.is_graph_level(node):
             return
-        print('(self.module, name):',(self.module, name))
+        print('hasattr(self.module, name):',hasattr(self.module, name))
         print('is_linear(getattr(self.module,name)):', is_linear(getattr(self.module,name)))
         if hasattr(self.module, name) and is_linear(getattr(self.module,
                                                             name)):
