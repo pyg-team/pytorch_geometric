@@ -548,6 +548,7 @@ class ToHeteroTransformer(Transformer):
         # Replace the output by dictionaries, holding either node type-wise or
         # edge type-wise data.
         def _recurse(value: Any) -> Any:
+            print(type(value))
             if isinstance(value, Node):
                 print(value.name)
                 if self.is_graph_level(value):
@@ -578,6 +579,7 @@ class ToHeteroTransformer(Transformer):
         print('node.type:', node.type)
         print('isinstance(node.args[0], Node):',
               isinstance(node.args[0], Node))
+        print('type(node.args[0])):', type(node.args[0]))
         print('node.args[0]:', node.args[0])
         print('node.args', node.args)
         if node.type is not None and isinstance(node.args[0], Node):
