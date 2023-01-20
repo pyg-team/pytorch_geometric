@@ -508,7 +508,7 @@ class ToHeteroTransformer(Transformer):
                                          args=args, kwargs=kwargs,
                                          name=f'{name}')
             self.graph.inserting_after(out)
-            print(out)
+            print('out:', out)
             # for key in self.metadata[int(self.is_edge_level(node))]:
             #     self.graph.inserting_after(out)
         else:
