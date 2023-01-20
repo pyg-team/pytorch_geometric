@@ -571,11 +571,11 @@ class ToHeteroTransformer(Transformer):
         # Add calls to node type-wise or edge type-wise functions.
         self.graph.inserting_after(node)
         for key in self.metadata[int(self.is_edge_level(node))]:
-                args, kwargs = self.map_args_kwargs(node, key)
-                out = self.graph.create_node('call_function', target=target,
-                                             args=args, kwargs=kwargs,
-                                             name=f'{name}__{key2str(key)}')
-                self.graph.inserting_after(out)
+            args, kwargs = self.map_args_kwargs(node, key)
+            out = self.graph.create_node('call_function', target=target,
+                                         args=args, kwargs=kwargs,
+                                         name=f'{name}__{key2str(key)}')
+            self.graph.inserting_after(out)
 
     def output(self, node: Node, target: Any, name: str):
         # Replace the output by dictionaries, holding either node type-wise or
