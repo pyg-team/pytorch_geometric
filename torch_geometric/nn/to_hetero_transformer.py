@@ -556,9 +556,10 @@ class ToHeteroTransformer(Transformer):
                 #check if heterolinear
                 heterolinear_name = str(value.name) + '__heterolinear'
                 searched_heterolin = self.find_by_name(heterolinear_name)
-                is_heterolinear = searched_heterolin is not None and isinstance(searched_heterolin, Node)
+                is_heterolinear = searched_heterolin is not None and isinstance(
+                    searched_heterolin, Node)
                 print('self.find_by_name(heterolinear_name):',
-                          searched_heterolin)
+                      searched_heterolin)
                 if is_heterolinear:
                     print('dir(searched_heterolin):',dir(searched_heterolin))
                     print("searched_heterolin.__dict__:",searched_heterolin.__dict__)
