@@ -215,9 +215,9 @@ class ToHeteroModule(Module):
 
     def dict_forward(
         self,
-        x_dict: Dict[NodeType, Tensor],
+        x_dict: Dict[Union[NodeType, EdgeType], Tensor],
         edge_index_dict: Optional[Dict[EdgeType, Tensor]] = None,
-    ) -> Dict[NodeType, Tensor]:
+    ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         r"""
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding node feature
@@ -260,7 +260,8 @@ class ToHeteroModule(Module):
         edge_index: Optional[Union[Dict[EdgeType, Tensor], Tensor]] = None,
         node_type: OptTensor = None,
         edge_type: OptTensor = None,
-    ) -> Union[Dict[Union[NodeType, EdgeType], Tensor], Tensor]:
+    # ) -> Union[Dict[Union[NodeType, EdgeType], Tensor], Tensor]:
+    ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         r"""
         Args:
             x (Dict[str, Tensor] or Tensor): A dictionary holding node feature
