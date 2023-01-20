@@ -488,7 +488,7 @@ class ToHeteroTransformer(Transformer):
         if hasattr(self.module, name) and is_linear(getattr(self.module,
                                                             name)):
             print('inside heterolinear if')
-            #insert a HeteroLinear HeteroModule instead
+            # insert a HeteroLinear HeteroModule instead
             kwargs_dict = {}
             args_dict = {}
             for key in self.metadata[int(self.is_edge_level(node))]:
