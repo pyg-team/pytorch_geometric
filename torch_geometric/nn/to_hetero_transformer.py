@@ -260,7 +260,7 @@ class ToHeteroModule(Module):
         edge_index: Optional[Union[Dict[EdgeType, Tensor], Tensor]] = None,
         node_type: OptTensor = None,
         edge_type: OptTensor = None,
-    # ) -> Union[Dict[Union[NodeType, EdgeType], Tensor], Tensor]:
+        # ) -> Union[Dict[Union[NodeType, EdgeType], Tensor], Tensor]:
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         r"""
         Args:
