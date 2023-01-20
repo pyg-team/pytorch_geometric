@@ -500,7 +500,7 @@ class ToHeteroTransformer(Transformer):
             out = self.graph.create_node('call_module', target=f'{target}',
                                          args=(args_dict, ),
                                          kwargs=kwargs_dict,
-                                         name=f'{name}_heterolinear',
+                                         name=f'{name}__heterolinear',
                                          type_expr=out_type)
             print('out.name', out.name)
             print('out.type', out.type)
@@ -552,10 +552,13 @@ class ToHeteroTransformer(Transformer):
             if isinstance(value, Node):
                 print('value.name:', value.name)
                 if self.is_graph_level(value):
-                    return value                    
-                if 'heterolinear' in value.name:
+                    return value
+                #check if heterolinear
+                heterolinear = 'heterolinear' in value.name
+                #for key in self.metadata[int(self.is_edge_level(value))]                  
+                if heterolinear:
                     print('self.find_by_name(value.name):',
-                          self.find_by_name(value.name))
+                          self.find_by_name(str(value.name) + '__heterolinear'))
                     return {
                         key: self.find_by_name(value.name)[key]
                         for key in self.metadata[int(self.is_edge_level(
