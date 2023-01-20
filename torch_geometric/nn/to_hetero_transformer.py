@@ -562,8 +562,9 @@ class ToHeteroTransformer(Transformer):
                 print('self.find_by_name(heterolinear_name):',
                       searched_heterolin)
                 if is_heterolinear:
-                    print('dir(searched_heterolin):',dir(searched_heterolin))
-                    print("searched_heterolin.__dict__:",searched_heterolin.__dict__)
+                    print('dir(searched_heterolin):', dir(searched_heterolin))
+                    print("searched_heterolin.__dict__:",
+                          searched_heterolin.__dict__)
                     return {
                         key: searched_heterolin[key]
                         for key in self.metadata[int(self.is_edge_level(
