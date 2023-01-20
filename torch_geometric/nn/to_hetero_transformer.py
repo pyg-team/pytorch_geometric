@@ -481,9 +481,8 @@ class ToHeteroTransformer(Transformer):
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
-        # if hasattr(self.module, name) and is_linear(getattr(self.module,
-        #                                                     name)):
-        if False:
+        if hasattr(self.module, name) and is_linear(getattr(self.module,
+                                                            name)):
             print('inside heterolinear if')
             # insert a HeteroLinear HeteroModule instead
             kwargs_dict = {}
@@ -492,15 +491,14 @@ class ToHeteroTransformer(Transformer):
                 args, kwargs = self.map_args_kwargs(node, key)
                 args_dict[key] = args[0]
                 kwargs_dict.update(kwargs)
-            print('(args_dict,):', (args_dict, ))
+            print('(args_dict,):', (args_dict,))
             if self.is_edge_level(node):
                 out_type = Dict[EdgeType, Tensor]
             else:
                 out_type = Dict[NodeType, Tensor]
             out = self.graph.create_node('call_module', target=f'{target}',
-                                         args=(args_dict, ),
-                                         kwargs=kwargs_dict, name=f'{name}',
-                                         type_expr=out_type)
+                                         args=(args_dict, ), kwargs=kwargs_dict,
+                                         name=f'{name}', type_expr=out_type)
             print('out.type', out.type)
             self.graph.inserting_after(out)
         else:
@@ -512,7 +510,6 @@ class ToHeteroTransformer(Transformer):
                                              target=f'{target}.{key2str(key)}',
                                              args=args, kwargs=kwargs,
                                              name=f'{name}__{key2str(key)}')
-                print('out.type', out.type)
                 self.graph.inserting_after(out)
 
     def call_method(self, node: Node, target: Any, name: str):
@@ -575,9 +572,6 @@ class ToHeteroTransformer(Transformer):
                 node.type = Dict[NodeType, node.type]
             elif self.is_edge_level(output):
                 node.type = Dict[EdgeType, node.type]
-        elif node.type == Dict[NodeType, node.type] or Dict[EdgeType,
-                                                            node.type]:
-            print('')
         else:
             print('inside else')
             node.type = None
@@ -594,8 +588,7 @@ class ToHeteroTransformer(Transformer):
 
         if not has_node_level_target and not has_edge_level_target:
             return module
-        # if is_linear(module):
-        if False:
+        if is_linear(module):
             return ToHeteroModule(module, self.metadata, self.aggr)
         else:
             module_dict = torch.nn.ModuleDict()
