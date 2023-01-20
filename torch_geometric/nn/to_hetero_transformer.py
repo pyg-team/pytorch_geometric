@@ -481,8 +481,9 @@ class ToHeteroTransformer(Transformer):
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
-        if hasattr(self.module, name) and is_linear(getattr(self.module,
-                                                            name)):
+        # if hasattr(self.module, name) and is_linear(getattr(self.module,
+        #                                                     name)):
+        if False:
             print('inside heterolinear if')
             # insert a HeteroLinear HeteroModule instead
             kwargs_dict = {}
@@ -510,6 +511,7 @@ class ToHeteroTransformer(Transformer):
                                              target=f'{target}.{key2str(key)}',
                                              args=args, kwargs=kwargs,
                                              name=f'{name}__{key2str(key)}')
+                print('out.type', out.type)
                 self.graph.inserting_after(out)
 
     def call_method(self, node: Node, target: Any, name: str):
@@ -572,6 +574,8 @@ class ToHeteroTransformer(Transformer):
                 node.type = Dict[NodeType, node.type]
             elif self.is_edge_level(output):
                 node.type = Dict[EdgeType, node.type]
+        elif node.type == Dict[NodeType, node.type] or Dict[EdgeType, node.type]:
+            print('')
         else:
             print('inside else')
             node.type = None
