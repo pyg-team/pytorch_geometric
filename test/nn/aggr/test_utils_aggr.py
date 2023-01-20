@@ -16,7 +16,8 @@ def test_multihead_attention_block():
 
     block = MultiheadAttentionBlock(8, heads=2)
     block.reset_parameters()
-    assert str(block) == 'MultiheadAttentionBlock(8, heads=2, layer_norm=True)'
+    assert str(block) == ('MultiheadAttentionBlock(8, heads=2, '
+                          'layer_norm=True, dropout=0.0)')
 
     out = block(x, y, x_mask, y_mask)
     assert out.size() == (2, 4, 8)
@@ -31,7 +32,8 @@ def test_set_attention_block():
 
     block = SetAttentionBlock(8, heads=2)
     block.reset_parameters()
-    assert str(block) == 'SetAttentionBlock(8, heads=2, layer_norm=True)'
+    assert str(block) == ('SetAttentionBlock(8, heads=2, layer_norm=True, '
+                          'dropout=0.0)')
 
     out = block(x, mask)
     assert out.size() == (2, 4, 8)
@@ -46,7 +48,7 @@ def test_induced_set_attention_block():
 
     block = InducedSetAttentionBlock(8, num_induced_points=2, heads=2)
     assert str(block) == ('InducedSetAttentionBlock(8, num_induced_points=2, '
-                          'heads=2, layer_norm=True)')
+                          'heads=2, layer_norm=True, dropout=0.0)')
 
     out = block(x, mask)
     assert out.size() == (2, 4, 8)
@@ -61,7 +63,7 @@ def test_pooling_by_multihead_attention():
 
     block = PoolingByMultiheadAttention(8, num_seed_points=2, heads=2)
     assert str(block) == ('PoolingByMultiheadAttention(8, num_seed_points=2, '
-                          'heads=2, layer_norm=True)')
+                          'heads=2, layer_norm=True, dropout=0.0)')
 
     out = block(x, mask)
     assert out.size() == (2, 2, 8)
