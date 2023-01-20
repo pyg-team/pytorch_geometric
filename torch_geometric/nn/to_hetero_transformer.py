@@ -555,14 +555,13 @@ class ToHeteroTransformer(Transformer):
                     return value
                 #check if heterolinear
                 heterolinear_name = str(value.name) + '__heterolinear'
-                is_heterolinear = True
+                searched_heterolin = self.find_by_name(heterolinear_name)
+                is_heterolinear = searched_heterolin is not None and isinstance(searched_heterolin, Node)
                 print('self.find_by_name(heterolinear_name):',
-                          self.find_by_name(heterolinear_name))
-                print('self.find_by_name(bs):',
-                          self.find_by_name('deez'))
+                          searched_heterolin)
                 if is_heterolinear:
                     return {
-                        key: self.find_by_name(heterolinear_name)[key]
+                        key: searched_heterolin[key]
                         for key in self.metadata[int(self.is_edge_level(
                             value))]
                     }
