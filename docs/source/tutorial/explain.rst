@@ -37,11 +37,42 @@ Examples
 **Example: Explaianing node classification on a heterogenous graph**
 
 Assume we have a GNN :obj:`model` that does node classification on heterogenous graph.
-We can use the :class:`torch_geometric.explain.algorithm.CaptumExplainer` algorithm to generate an :class:`HeteroExplanation`.
-We configure the :class:`Explainer` to use both a :obj:`node_mask_type` and an :obj:`edge_mask_type` such that the final :class:`~torch_geometric.explain.HeeroExplanation` object contains (1) a :obj:`node_mask` a dictionary indicating which nodes and features for each node type are crucial for prediction, and (2) an :obj:`edge_mask` a dictionary indicating which edges for each edge type are crucial for prediction.
+We can use `IntegratedGradient` via :class:`torch_geometric.explain.algorithm.CaptumExplainer` algorithm to generate an :class:`HeteroExplanation`. Note: all algorithms in :class:`torch_geometric.explain.algorithm` don't support explaining heterogenous graphs.
+We configure the :class:`Explainer` to use both a :obj:`node_mask_type` and an :obj:`edge_mask_type` such that the final :class:`~torch_geometric.explain.HeeroExplanation` object contains (1) a :obj:`node_mask_dict` a dictionary indicating which nodes and features for each node type are crucial for prediction, and (2) an :obj:`edge_mask_dict` a dictionary indicating which edges for each edge type are crucial for prediction.
 
 .. code-block:: python
 
+    from torch_geometric.data import HeteroData
+    from torch_geometric.explain import Explainer
+    from torch_geometric.explain.algorithm import CaptumExplainer
+    from torch_geometric.explain.config import ModelConfig
+ 
+    hetero_data = HeteroData(...)
+ 
+    model_config = ModelConfig(
+        mode='multiclass_classification',
+        task_level=task_level,
+        return_type='probs',
+    )
+
+    explainer = Explainer(
+        model, # It is assumed that model outputs a tensor.
+        algorithm=CaptumExplainer('IntegratedGradients',
+                                  internal_batch_size=1),
+        explanation_type='model',
+        edge_mask_type='attributes',
+        node_mask_type='object',
+        model_config=model_config,
+    )
+
+    # Explain predictions of nodes 1 and 3.
+    explanation = explainer(
+        hetero_data.x_dict,
+        hetero_data.edge_index_dict,
+        index=torch.tensor([1,3]),
+    )
+    print(explanation.edge_mask_dict)
+    print(explanation.node_mask_dict)
 
 **Example: Explaining node classification on a homogenous graph**
 
