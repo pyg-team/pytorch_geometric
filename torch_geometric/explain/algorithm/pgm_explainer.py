@@ -308,7 +308,7 @@ class PGMExplainer(ExplainerAlgorithm):
         if index not in neighbors:
             neighbors = torch.cat([neighbors, index], dim=1)
 
-        pred_model = model(x, edge_index, edge_weight)
+        pred_model = model(x, edge_index,  **kwargs)
 
         softmax_pred = torch.softmax(pred_model, dim=1)
 
