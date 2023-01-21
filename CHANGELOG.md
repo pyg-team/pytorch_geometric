@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `dropout` option to `SetTransformer` and `GraphMultisetTransformer` ([#6484](https://github.com/pyg-team/pytorch_geometric/pull/6484))
 - Added option to customize loader arguments for evaluation in `LightningNodeData` and `LightningLinkData` ([#6450](https://github.com/pyg-team/pytorch_geometric/pull/6450), [#6456](https://github.com/pyg-team/pytorch_geometric/pull/6456))
 - Added option to customize `num_neighbors` in `NeighborSampler` after instantiation ([#6446](https://github.com/pyg-team/pytorch_geometric/pull/6446))
 - Added the `Taobao` dataset and a corresponding example for it ([#6144](https://github.com/pyg-team/pytorch_geometric/pull/6144))
@@ -65,7 +66,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Re-structured the documentation ([#6420](https://github.com/pyg-team/pytorch_geometric/pull/6420), [#6423](https://github.com/pyg-team/pytorch_geometric/pull/6423), [#6429](https://github.com/pyg-team/pytorch_geometric/pull/6429), [#6440](https://github.com/pyg-team/pytorch_geometric/pull/6440), [#6443](https://github.com/pyg-team/pytorch_geometric/pull/6443), [#6445](https://github.com/pyg-team/pytorch_geometric/pull/6445), [#6452](https://github.com/pyg-team/pytorch_geometric/pull/6452), [#6453](https://github.com/pyg-team/pytorch_geometric/pull/6453), [#6458](https://github.com/pyg-team/pytorch_geometric/pull/6458), [#6459](https://github.com/pyg-team/pytorch_geometric/pull/6459), [#6460](https://github.com/pyg-team/pytorch_geometric/pull/6460))
 - Fix the default arguments of `DataParallel` class ([#6376](https://github.com/pyg-team/pytorch_geometric/pull/6376))
 - Fix `ImbalancedSampler` on sliced `InMemoryDataset` ([#6374](https://github.com/pyg-team/pytorch_geometric/pull/6374))
-- Breaking Change: Changed the interface and implementation of `GraphMultisetTransformer` ([#6343](https://github.com/pyg-team/pytorch_geometric/pull/6343), [#6484](https://github.com/pyg-team/pytorch_geometric/pull/6484))
+- Breaking Change: Changed the interface and implementation of `GraphMultisetTransformer` ([#6343](https://github.com/pyg-team/pytorch_geometric/pull/6343))
 - Fixed the approximate PPR variant in `transforms.GDC` to not crash on graphs with isolated nodes ([#6242](https://github.com/pyg-team/pytorch_geometric/pull/6242))
 - Added a warning when accesing `InMemoryDataset.data` ([#6318](https://github.com/pyg-team/pytorch_geometric/pull/6318))
 - Drop `SparseTensor` dependency in `GraphStore` ([#5517](https://github.com/pyg-team/pytorch_geometric/pull/5517))
