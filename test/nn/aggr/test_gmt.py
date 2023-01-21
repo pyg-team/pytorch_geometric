@@ -11,7 +11,7 @@ def test_graph_multiset_transformer():
     aggr = GraphMultisetTransformer(16, k=2, heads=2)
     aggr.reset_parameters()
     assert str(aggr) == ('GraphMultisetTransformer(16, k=2, heads=2, '
-                         'layer_norm=False)')
+                         'layer_norm=False, dropout=0.0)')
 
     out = aggr(x, index)
     assert out.size() == (3, 16)
