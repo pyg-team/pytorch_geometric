@@ -150,13 +150,13 @@ def evaluate(model, data):
     model.eval()
 
     with torch.no_grad():
-        logits = model(data)
+        out = model(data)
 
     outs = {}
     for key in ['train', 'val', 'test']:
         mask = data[f'{key}_mask']
-        loss = F.nll_loss(logits[mask], data.y[mask]).item()
-        pred = logits[mask].max(1)[1]
+        loss = F.nll_loss(out[mask], data.y[mask]).item()
+        pred = out[mask].max(1)[1]
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
 
         outs[f'{key}_loss'] = loss
