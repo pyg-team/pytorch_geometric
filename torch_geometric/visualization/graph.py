@@ -29,6 +29,7 @@ def visualize_graph(
 ) -> Any:
     r"""Visualizes the graph given via :obj:`edge_index` and (optional)
     :obj:`edge_weight`.
+
     Args:
         edge_index (torch.Tensor): The edge indices.
         edge_weight (torch.Tensor, optional): The edge weights.
@@ -44,7 +45,10 @@ def visualize_graph(
     if edge_weight is not None:  # Normalize edge weights.
         edge_weight = edge_weight - edge_weight.min()
         edge_weight = edge_weight / edge_weight.max()
+
+    if edge_weight is not None:  # Discard any edges with zero edge weight:
         mask = edge_weight > 1e-7
+        edge_index = edge_index[:, mask]
         edge_weight = edge_weight[mask]
 
     if edge_weight is None:
