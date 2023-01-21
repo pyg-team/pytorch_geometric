@@ -413,9 +413,6 @@ class PGMExplainer(ExplainerAlgorithm):
                     f"`index` for now")
             index = index.item()
 
-        assert self.model_config.task_level in [
-            ModelTaskLevel.graph, ModelTaskLevel.node
-        ]
 
         edge_weight = kwargs.pop('edge_weight', None)
         num_samples = kwargs.pop('num_samples', 100)
