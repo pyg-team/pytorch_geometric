@@ -26,6 +26,13 @@ def test_multihead_attention_block():
     assert torch.allclose(jit(x, y, x_mask, y_mask), out)
 
 
+def test_multihead_attention_block_dropout():
+    x = torch.randn(2, 4, 8)
+
+    block = MultiheadAttentionBlock(8, dropout=0.5)
+    assert not torch.allclose(block(x, x), block(x, x))
+
+
 def test_set_attention_block():
     x = torch.randn(2, 4, 8)
     mask = torch.tensor([[1, 1, 1, 1], [1, 1, 0, 0]], dtype=torch.bool)
