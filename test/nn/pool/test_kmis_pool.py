@@ -1,31 +1,34 @@
 import torch
 
-from torch_geometric.nn.pool import KMISPooling, cluster_mis
+from torch_geometric.nn.pool import (
+    KMISPooling,
+    maximal_independent_set_cluster,
+)
 from torch_geometric.testing import is_full_test
 
 
-def test_cluster_mis():
+def test_maximal_independent_set_cluster():
     index = torch.tensor([[0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 4],
                           [1, 4, 0, 2, 4, 1, 3, 2, 4, 0, 1, 3]]).long()
-    rank = torch.arange(5)
+    perm = torch.arange(5)
 
-    mis1, cluster1 = cluster_mis(index, k=0, rank=rank)
+    mis1, cluster1 = maximal_independent_set_cluster(index, k=0, perm=perm)
     assert mis1.equal(torch.ones_like(mis1))
-    assert cluster1.equal(rank)
+    assert cluster1.equal(perm)
 
-    mis2, cluster2 = cluster_mis(index, k=1, rank=rank)
+    mis2, cluster2 = maximal_independent_set_cluster(index, k=1, perm=perm)
     assert mis2.equal(torch.tensor([1, 0, 1, 0, 0]).bool())
     assert cluster2.equal(torch.tensor([0, 0, 1, 1, 0]).long())
 
-    mis3, cluster3 = cluster_mis(index, k=2, rank=rank)
+    mis3, cluster3 = maximal_independent_set_cluster(index, k=2, perm=perm)
     assert mis3.equal(torch.tensor([1, 0, 0, 0, 0]).bool())
     assert cluster3.equal(torch.tensor([0, 0, 0, 0, 0]).long())
 
     if is_full_test():
-        jit = torch.jit.script(cluster_mis)
-        assert cluster1.equal(jit(index, k=0, rank=rank)[1])
-        assert cluster2.equal(jit(index, k=1, rank=rank)[1])
-        assert cluster3.equal(jit(index, k=2, rank=rank)[1])
+        jit = torch.jit.script(maximal_independent_set_cluster)
+        assert cluster1.equal(jit(index, k=0, perm=perm)[1])
+        assert cluster2.equal(jit(index, k=1, perm=perm)[1])
+        assert cluster3.equal(jit(index, k=2, perm=perm)[1])
 
 
 def test_kmis_pooling():

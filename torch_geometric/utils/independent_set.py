@@ -5,15 +5,15 @@ from torch_geometric.typing import Adj, OptTensor, SparseTensor, Tensor
 
 
 def maximal_independent_set(edge_index: Adj, k: int = 1,
-                            rank: OptTensor = None) -> Tensor:
+                            perm: OptTensor = None) -> Tensor:
     r"""Returns a Maximal :math:`k`-Independent Set of a graph, i.e., a set of
     nodes (as a :class:`ByteTensor`) such that none of them are :math:`k`-hop
     neighbors, and any node in the graph has a :math:`k`-hop neighbor in the
     returned set.
 
-    If :obj:`rank` is provided, the algorithm greedily selects first the nodes
-    with lower corresponding :obj:`rank` value. Otherwise, the nodes are
-    selected in their canonical order (i.e., :obj:`rank = torch.arange(n)`).
+    The algorithm greedily selects the nodes in their canonical order. If a
+    permutation :obj:`perm` is provided, the nodes are extracted following
+    that permutation instead.
 
     This method follows `Blelloch's Alogirithm
     <https://arxiv.org/abs/1202.3205>`_ for :math:`k = 1`, and its
@@ -23,8 +23,8 @@ def maximal_independent_set(edge_index: Adj, k: int = 1,
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
         k (int): The :math:`k` value (defaults to 1).
-        rank (Tensor): Node rank vector. Must be of size :obj:`(n,)` (defaults
-            to :obj:`None`).
+        perm (LongTensor, optional): Permutation vector. Must be of size
+            :obj:`(n,)` (defaults to :obj:`None`).
 
     :rtype: :class:`ByteTensor`
     """
@@ -37,8 +37,11 @@ def maximal_independent_set(edge_index: Adj, k: int = 1,
         device = row.device
         n = edge_index.max().item() + 1
 
-    if rank is None:
+    if perm is None:
         rank = torch.arange(n, dtype=torch.long, device=device)
+    else:
+        rank = torch.zeros_like(perm)
+        rank[perm] = torch.arange(n, dtype=torch.long, device=device)
 
     mis = torch.zeros(n, dtype=torch.bool, device=device)
     mask = mis.clone()

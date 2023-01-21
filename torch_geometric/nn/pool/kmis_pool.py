@@ -13,15 +13,15 @@ from torch_geometric.utils import maximal_independent_set
 Scorer = Callable[[Tensor, Adj, OptTensor, OptTensor], Tensor]
 
 
-def cluster_mis(edge_index: Adj, k: int = 1,
-                rank: OptTensor = None) -> PairTensor:
+def maximal_independent_set_cluster(edge_index: Adj, k: int = 1,
+                                    perm: OptTensor = None) -> PairTensor:
     r"""Computes the Maximal :math:`k`-Independent Set (:math:`k`-MIS)
     clustering of a graph, as defined in `"Generalizing Downsampling from
     Regular Data to Graphs" <https://arxiv.org/abs/2208.03523>`_.
 
-    If :obj:`rank` is provided, the algorithm greedily selects first the nodes
-    with lower corresponding :obj:`rank` value. Otherwise, the nodes are
-    selected in their canonical order (i.e., :obj:`rank = torch.arange(n)`).
+    The algorithm greedily selects the nodes in their canonical order. If a
+    permutation :obj:`perm` is provided, the nodes are extracted following
+    that permutation instead.
 
     This method returns both the :math:`k`-MIS and the clustering, where the
     :math:`c`-th cluster refers to the :math:`c`-th element of the
@@ -30,12 +30,12 @@ def cluster_mis(edge_index: Adj, k: int = 1,
     Args:
         edge_index (Tensor or SparseTensor): The graph connectivity.
         k (int): The :math:`k` value (defaults to 1).
-        rank (Tensor): Node rank vector. Must be of size :obj:`(n,)` (defaults
-            to :obj:`None`).
+        perm (LongTensor, optional): Permutation vector. Must be of size
+            :obj:`(n,)` (defaults to :obj:`None`).
 
     :rtype: (:class:`ByteTensor`, :class:`LongTensor`)
     """
-    mis = maximal_independent_set(edge_index=edge_index, k=k, rank=rank)
+    mis = maximal_independent_set(edge_index=edge_index, k=k, perm=perm)
     n, device = mis.size(0), mis.device
 
     if isinstance(edge_index, SparseTensor):
@@ -43,8 +43,11 @@ def cluster_mis(edge_index: Adj, k: int = 1,
     else:
         row, col = edge_index[0], edge_index[1]
 
-    if rank is None:
+    if perm is None:
         rank = torch.arange(n, dtype=torch.long, device=device)
+    else:
+        rank = torch.zeros_like(perm)
+        rank[perm] = torch.arange(n, dtype=torch.long, device=device)
 
     min_rank = torch.full((n, ), fill_value=n, dtype=torch.long, device=device)
     rank_mis = rank[mis]
@@ -189,14 +192,6 @@ class KMISPooling(Module):
 
         return x / k_sums
 
-    @staticmethod
-    def _get_ranking(value: Tensor) -> Tensor:
-        perm = torch.argsort(value.view(-1), 0, descending=True)
-        rank = torch.zeros_like(perm)
-        rank[perm] = torch.arange(rank.size(0), dtype=torch.long,
-                                  device=rank.device)
-        return rank
-
     def _scorer(self, x: Tensor, edge_index: Adj, edge_attr: OptTensor = None,
                 batch: OptTensor = None) -> Tensor:
         if self.scorer == 'random':
@@ -228,9 +223,9 @@ class KMISPooling(Module):
 
         score = self._scorer(x, edge_index, edge_attr, batch)
         updated_score = self._apply_heuristic(score, adj)
-        rank = self._get_ranking(updated_score)
+        perm = torch.argsort(updated_score.view(-1), 0, descending=True)
 
-        mis, cluster = cluster_mis(adj, self.k, rank)
+        mis, cluster = maximal_independent_set_cluster(adj, self.k, perm)
 
         row, col, val = adj.coo()
         c = mis.sum()

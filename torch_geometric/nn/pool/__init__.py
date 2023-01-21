@@ -5,7 +5,7 @@ from torch_geometric.typing import OptTensor
 from .asap import ASAPooling
 from .avg_pool import avg_pool, avg_pool_neighbor_x, avg_pool_x
 from .edge_pool import EdgePooling
-from .kmis_pool import cluster_mis, KMISPooling
+from .kmis_pool import KMISPooling, maximal_independent_set_cluster
 from .glob import global_add_pool, global_max_pool, global_mean_pool
 from .graclus import graclus
 from .max_pool import max_pool, max_pool_neighbor_x, max_pool_x
@@ -264,7 +264,7 @@ __all__ = [
     'avg_pool_neighbor_x',
     'graclus',
     'voxel_grid',
-    'cluster_mis',
+    'maximal_independent_set_cluster',
     'fps',
     'knn',
     'knn_graph',
