@@ -546,7 +546,7 @@ class PRBCDAttack(torch.nn.Module):
         labels.
 
         Args:
-            score (Tensor): Some score (e.g. logits) of shape
+            score (Tensor): Some score (*e.g.*, logits) of shape
                 :obj:`[n_elem, dim]`.
             labels (LongTensor): The labels of shape :obj:`[n_elem]`.
             idx_mask (Tensor, optional): To select subset of `score` and
@@ -586,8 +586,8 @@ class PRBCDAttack(torch.nn.Module):
 
         :rtype: (Tensor)
         """
-        log_logits = F.log_softmax(prediction, dim=-1)
-        margin_ = GRBCDAttack._margin_loss(log_logits, labels, idx_mask)
+        log_prob = F.log_softmax(prediction, dim=-1)
+        margin_ = GRBCDAttack._margin_loss(log_prob, labels, idx_mask)
         loss = torch.tanh(margin_).mean()
         return loss
 
@@ -607,18 +607,18 @@ class PRBCDAttack(torch.nn.Module):
 
         :rtype: (Tensor)
         """
-        logits = F.softmax(prediction, dim=-1)
-        margin_ = GRBCDAttack._margin_loss(logits, labels, idx_mask)
+        prob = F.softmax(prediction, dim=-1)
+        margin_ = GRBCDAttack._margin_loss(prob, labels, idx_mask)
         return margin_.mean()
 
     @staticmethod
-    def _masked_cross_entropy(log_logits: Tensor, labels: Tensor,
+    def _masked_cross_entropy(log_prob: Tensor, labels: Tensor,
                               idx_mask: Optional[Tensor] = None) -> Tensor:
         """Calculate masked cross entropy loss, a node-classification loss that
         focuses on nodes next to decision boundary.
 
         Args:
-            log_logits (Tensor): Log logits of shape :obj:`[n_elem, dim]`.
+            log_prob (Tensor): Log probabilities of shape :obj:`[n_elem, dim]`.
             labels (LongTensor): The labels of shape :obj:`[n_elem]`.
             idx_mask (Tensor, optional): To select subset of `score` and
                 `labels` of shape :obj:`[n_select]`. Defaults to None.
@@ -626,16 +626,15 @@ class PRBCDAttack(torch.nn.Module):
         :rtype: (Tensor)
         """
         if idx_mask is not None:
-            log_logits = log_logits[idx_mask]
+            log_prob = log_prob[idx_mask]
             labels = labels[idx_mask]
 
-        is_correct = log_logits.argmax(-1) == labels
+        is_correct = log_prob.argmax(-1) == labels
         if is_correct.any():
-            log_logits = log_logits[is_correct]
+            log_prob = log_prob[is_correct]
             labels = labels[is_correct]
 
-        loss = F.cross_entropy(log_logits, labels)
-        return loss
+        return F.nll_loss(log_prob, labels)
 
     def _append_statistics(self, mapping: Dict[str, Any]):
         for key, value in mapping.items():
