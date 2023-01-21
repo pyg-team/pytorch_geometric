@@ -16,15 +16,15 @@ from torch_geometric.data import (
 
 
 class Entities(InMemoryDataset):
-    r"""The relational entities networks "AIFB", "MUTAG", "BGS" and "AM" from
-    the `"Modeling Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper.
+    r"""The relational entities networks :obj:`"AIFB"`, :obj:`"MUTAG"`,
+    :obj:`"BGS"` and :obj:`"AM"` from the `"Modeling Relational Data with Graph
+    Convolutional Networks" <https://arxiv.org/abs/1703.06103>`_ paper.
     Training and test splits are given by node indices.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"AIFB"`,
-            :obj:`"MUTAG"`, :obj:`"BGS"`, :obj:`"AM"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"AIFB"`, :obj:`"MUTAG"`,
+            :obj:`"BGS"`, :obj:`"AM"`).
         hetero (bool, optional): If set to :obj:`True`, will save the dataset
             as a :class:`~torch_geometric.data.HeteroData` object.
             (default: :obj:`False`)
@@ -37,36 +37,37 @@ class Entities(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - AIFB
-              - 8,285
-              - 58,086
-              - 0
-              - 4
-            * - AM
-              - 1,666,764
-              - 11,976,642
-              - 0
-              - 11
-            * - MUTAG
-              - 23,644
-              - 148,454
-              - 0
-              - 2
-            * - BGS
-              - 333,845
-              - 1,832,398
-              - 0
-              - 2
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - AIFB
+          - 8,285
+          - 58,086
+          - 0
+          - 4
+        * - AM
+          - 1,666,764
+          - 11,976,642
+          - 0
+          - 11
+        * - MUTAG
+          - 23,644
+          - 148,454
+          - 0
+          - 2
+        * - BGS
+          - 333,845
+          - 1,832,398
+          - 0
+          - 2
     """
 
     url = 'https://data.dgl.ai/dataset/{}.tgz'
@@ -90,11 +91,11 @@ class Entities(InMemoryDataset):
 
     @property
     def num_relations(self) -> int:
-        return self.data.edge_type.max().item() + 1
+        return self._data.edge_type.max().item() + 1
 
     @property
     def num_classes(self) -> int:
-        return self.data.train_y.max().item() + 1
+        return self._data.train_y.max().item() + 1
 
     @property
     def raw_file_names(self) -> List[str]:

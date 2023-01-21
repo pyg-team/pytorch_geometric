@@ -3,8 +3,13 @@ repos:
     rev: v4.4.0
     hooks:
       - id: end-of-file-fixer
+        name: End-of-file fixer
       - id: trailing-whitespace
+        name: Remove trailing whitespaces
+      - id: check-toml
+        name: Check toml
       - id: check-yaml
+        name: Check yaml
         exclude: |
           (?x)^(
               conda/pytorch-geometric/meta.yaml|
@@ -12,9 +17,10 @@ repos:
           )$
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.28.0
+    rev: v1.29.0
     hooks:
       - id: yamllint
+        name: Lint yaml
         args: [-c=.yamllint.yml]
 
   - repo: https://github.com/regebro/pyroma
@@ -29,9 +35,10 @@ repos:
     hooks:
       - id: yapf
         name: Format code
+        additional_dependencies: [toml]
 
   - repo: https://github.com/pycqa/isort
-    rev: v5.11.3
+    rev: 5.11.4
     hooks:
       - id: isort
         name: Sort imports

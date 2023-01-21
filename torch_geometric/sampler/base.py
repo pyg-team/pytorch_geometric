@@ -7,8 +7,31 @@ from typing import Any, Dict, Optional, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
+
+
+class DataType(Enum):
+    r"""The data type a sampler is operating on."""
+    homogeneous = 'homogeneous'
+    heterogeneous = 'heterogeneous'
+    remote = 'remote'
+
+    @classmethod
+    def from_data(cls, data: Any):
+        if isinstance(data, Data):
+            return cls.homogeneous
+        elif isinstance(data, HeteroData):
+            return cls.heterogeneous
+        elif (isinstance(data, (list, tuple)) and len(data) == 2
+              and isinstance(data[0], FeatureStore)
+              and isinstance(data[1], GraphStore)):
+            return cls.remote
+
+        raise ValueError(f"Expected a 'Data', 'HeteroData', or a tuple of "
+                         f"'FeatureStore' and 'GraphStore' "
+                         f"(got '{type(data)}')")
 
 
 @dataclass

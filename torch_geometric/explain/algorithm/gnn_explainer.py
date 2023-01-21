@@ -2,19 +2,13 @@ from math import sqrt
 from typing import Optional, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.parameter import Parameter
 
 from torch_geometric.explain import ExplainerConfig, Explanation, ModelConfig
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
-from torch_geometric.explain.config import (
-    MaskType,
-    ModelMode,
-    ModelReturnType,
-    ModelTaskLevel,
-)
+from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 
 
 class GNNExplainer(ExplainerAlgorithm):
@@ -28,9 +22,11 @@ class GNNExplainer(ExplainerAlgorithm):
 
         For an example of using :class:`GNNExplainer`, see
         `examples/gnn_explainer.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_ and
+        pytorch_geometric/blob/master/examples/gnn_explainer.py>`_,
         `examples/gnn_explainer_ba_shapes.py <https://github.com/pyg-team/
-        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`_.
+        pytorch_geometric/blob/master/examples/gnn_explainer_ba_shapes.py>`_,
+        and `examples/gnn_explainer_link_pred.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/gnn_explainer_link_pred.py>`_.
 
     Args:
         epochs (int, optional): The number of epochs to train.
@@ -60,9 +56,6 @@ class GNNExplainer(ExplainerAlgorithm):
 
         self.node_mask = self.edge_mask = None
 
-    def supports(self) -> bool:
-        return True
-
     def forward(
         self,
         model: torch.nn.Module,
@@ -73,6 +66,10 @@ class GNNExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Explanation:
+        if isinstance(x, dict) or isinstance(edge_index, dict):
+            raise ValueError(f"Heterogeneous graphs not yet supported in "
+                             f"'{self.__class__.__name__}'")
+
         hard_node_mask = hard_edge_mask = None
         if self.model_config.task_level == ModelTaskLevel.node:
             # We need to compute hard masks to properly clean up edges and
@@ -91,6 +88,9 @@ class GNNExplainer(ExplainerAlgorithm):
 
         return Explanation(node_mask=node_mask, edge_mask=edge_mask)
 
+    def supports(self) -> bool:
+        return True
+
     def _train(
         self,
         model: torch.nn.Module,
@@ -101,10 +101,6 @@ class GNNExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ):
-        if isinstance(x, dict) or isinstance(edge_index, dict):
-            raise ValueError(f"Heterogeneous graphs not yet supported in "
-                             f"'{self.__class__.__name__}'")
-
         self._initialize_masks(x, edge_index)
 
         parameters = [self.node_mask]  # We always learn a node mask.
@@ -150,37 +146,6 @@ class GNNExplainer(ExplainerAlgorithm):
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
         elif edge_mask_type is not None:
             assert False
-
-    def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if self.model_config.return_type == ModelReturnType.raw:
-            loss_fn = F.binary_cross_entropy_with_logits
-        elif self.model_config.return_type == ModelReturnType.probs:
-            loss_fn = F.binary_cross_entropy
-        else:
-            assert False
-
-        return loss_fn(y_hat.view_as(y), y.float())
-
-    def _loss_multiclass_classification(
-        self,
-        y_hat: Tensor,
-        y: Tensor,
-    ) -> Tensor:
-        if self.model_config.return_type == ModelReturnType.raw:
-            loss_fn = F.cross_entropy
-        elif self.model_config.return_type == ModelReturnType.probs:
-            loss_fn = F.nll_loss
-            y_hat = y_hat.log()
-        elif self.model_config.return_type == ModelReturnType.log_probs:
-            loss_fn = F.nll_loss
-        else:
-            assert False
-
-        return loss_fn(y_hat, y)
-
-    def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        assert self.model_config.return_type == ModelReturnType.raw
-        return F.mse_loss(y_hat, y)
 
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
         if self.model_config.mode == ModelMode.binary_classification:

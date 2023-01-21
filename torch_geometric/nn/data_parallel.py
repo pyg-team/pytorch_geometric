@@ -34,16 +34,16 @@ class DataParallel(torch.nn.DataParallel):
         output_device (int or torch.device): Device location of output.
             (default: :obj:`device_ids[0]`)
         follow_batch (list or tuple, optional): Creates assignment batch
-            vectors for each key in the list. (default: :obj:`[]`)
+            vectors for each key in the list. (default: :obj:`None`)
         exclude_keys (list or tuple, optional): Will exclude each key in the
-            list. (default: :obj:`[]`)
+            list. (default: :obj:`None`)
     """
     def __init__(self, module, device_ids=None, output_device=None,
-                 follow_batch=[], exclude_keys=[]):
+                 follow_batch=None, exclude_keys=None):
         super().__init__(module, device_ids, output_device)
         self.src_device = torch.device(f'cuda:{self.device_ids[0]}')
-        self.follow_batch = follow_batch
-        self.exclude_keys = exclude_keys
+        self.follow_batch = follow_batch or []
+        self.exclude_keys = exclude_keys or []
 
     def forward(self, data_list):
         """"""

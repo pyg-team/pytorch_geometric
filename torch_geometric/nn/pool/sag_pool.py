@@ -13,9 +13,9 @@ class SAGPooling(torch.nn.Module):
     r"""The self-attention pooling operator from the `"Self-Attention Graph
     Pooling" <https://arxiv.org/abs/1904.08082>`_ and `"Understanding
     Attention and Generalization in Graph Neural Networks"
-    <https://arxiv.org/abs/1905.02850>`_ papers
+    <https://arxiv.org/abs/1905.02850>`_ papers.
 
-    if :obj:`min_score` :math:`\tilde{\alpha}` is :obj:`None`:
+    If :obj:`min_score` :math:`\tilde{\alpha}` is :obj:`None`, computes:
 
         .. math::
             \mathbf{y} &= \textrm{GNN}(\mathbf{X}, \mathbf{A})
@@ -27,7 +27,8 @@ class SAGPooling(torch.nn.Module):
 
             \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}}
 
-    if :obj:`min_score` :math:`\tilde{\alpha}` is a value in [0, 1]:
+    If :obj:`min_score` :math:`\tilde{\alpha}` is a value in :obj:`[0, 1]`,
+    computes:
 
         .. math::
             \mathbf{y} &= \mathrm{softmax}(\textrm{GNN}(\mathbf{X},\mathbf{A}))
@@ -63,8 +64,8 @@ class SAGPooling(torch.nn.Module):
         multiplier (float, optional): Coefficient by which features gets
             multiplied after pooling. This can be useful for large graphs and
             when :obj:`min_score` is used. (default: :obj:`1`)
-        nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
-            (default: :obj:`torch.tanh`)
+        nonlinearity (str or callable, optional): The non-linearity to use.
+            (default: :obj:`"tanh"`)
         **kwargs (optional): Additional parameters for initializing the graph
             neural network layer.
     """
@@ -75,10 +76,13 @@ class SAGPooling(torch.nn.Module):
         GNN: torch.nn.Module = GraphConv,
         min_score: Optional[float] = None,
         multiplier: float = 1.0,
-        nonlinearity: Callable = torch.tanh,
+        nonlinearity: Union[str, Callable] = 'tanh',
         **kwargs,
     ):
         super().__init__()
+
+        if isinstance(nonlinearity, str):
+            nonlinearity = getattr(torch, nonlinearity)
 
         self.in_channels = in_channels
         self.ratio = ratio
@@ -90,6 +94,7 @@ class SAGPooling(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.gnn.reset_parameters()
 
     def forward(
@@ -100,7 +105,19 @@ class SAGPooling(torch.nn.Module):
         batch: OptTensor = None,
         attn: OptTensor = None,
     ) -> Tuple[Tensor, Tensor, OptTensor, Tensor, Tensor, Tensor]:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The node feature matrix.
+            edge_index (torch.Tensor): The edge indices.
+            edge_attr (torch.Tensor, optional): The edge features.
+                (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each node to a specific example. (default: :obj:`None`)
+            attn (torch.Tensor, optional): Optional node-level matrix to use
+                for computing attention scores instead of using the node
+                feature matrix :obj:`x`. (default: :obj:`None`)
+        """
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
 

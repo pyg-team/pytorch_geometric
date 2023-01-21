@@ -21,9 +21,7 @@ class FeaturePropagation(BaseTransform):
 
     where missing node features are inferred by known features via propagation.
 
-    Example:
-
-    .. code-block::
+    .. code-block:: python
 
         from torch_geometric.transforms import FeaturePropagation
 
