@@ -45,12 +45,13 @@ class PRBCDAttack(torch.nn.Module):
 
     .. note::
         For examples of using the PRBCD Attack, see
-        `examples/rbcd_attack.py
+        `examples/contrib/rbcd_attack.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        rbcd_attack.py>`_
-        for a test time attack (evasion) or `examples/rbcd_attack_poisoning.py
+        contrib/rbcd_attack.py>`_
+        for a test time attack (evasion) or
+        `examples/contrib/rbcd_attack_poisoning.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        rbcd_attack_poisoning.py>`_
+        contrib/rbcd_attack_poisoning.py>`_
         for a training time (poisoning) attack.
 
     Args:
@@ -61,7 +62,7 @@ class PRBCDAttack(torch.nn.Module):
             :obj:`mode='greedy'` and budget is satisfied) (default: :obj:`125`)
         epochs_resampling (int, optional): Number of epochs to resample the
             random block. (default: obj:`100`)
-        loss (str or Callable, optional): A loss to quantify the "strength" of
+        loss (str or callable, optional): A loss to quantify the "strength" of
             an attack. Note that this function must match the output format of
             :attr:`model`. By default, it is assumed that the task is
             classification and that the model returns raw predictions (*i.e.*,
@@ -81,7 +82,6 @@ class PRBCDAttack(torch.nn.Module):
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
-
     coeffs = {
         'max_final_samples': 20,
         'max_trials_sampling': 20,
@@ -148,23 +148,22 @@ class PRBCDAttack(torch.nn.Module):
         resulting perturbed :attr:`edge_index` as well as the perturbations.
 
         Args:
-            x (Tensor): The node feature matrix.
-            edge_index (LongTensor): The edge indices.
-            labels (Tensor): The labels.
+            x (torch.Tensor): The node feature matrix.
+            edge_index (torch.Tensor): The edge indices.
+            labels (torch.Tensor): The labels.
             budget (int): The number of allowed perturbations (i.e.
                 number of edges that are flipped at most).
-            idx_attack (Tensor, optional): Filter for predictions/labels.
+            idx_attack (torch.Tensor, optional): Filter for predictions/labels.
                 Shape and type must match that it can index :attr:`labels`
                 and the model's predictions.
             **kwargs (optional): Additional arguments passed to the GNN module.
 
-        :rtype: (:class:`Tensor`, :class:`Tensor`)
+        :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`)
         """
         self.model.eval()
 
         self.device = x.device
-        assert kwargs.get('edge_weight', None) is None, \
-            '`edge_weight` is not supported'
+        assert kwargs.get('edge_weight') is None
         edge_weight = torch.ones(edge_index.size(1), device=self.device)
         self.edge_index = edge_index.cpu().clone()
         self.edge_weight = edge_weight.cpu().clone()
@@ -658,9 +657,9 @@ class GRBCDAttack(PRBCDAttack):
 
     .. note::
         For examples of using the GRBCD Attack, see
-        `examples/rbcd_attack.py
+        `examples/contrib/rbcd_attack.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        rbcd_attack.py>`_
+        contrib/rbcd_attack.py>`_
         for a test time attack (evasion).
 
     Args:
@@ -669,7 +668,7 @@ class GRBCDAttack(PRBCDAttack):
             adjacency matrix to consider.
         epochs (int, optional): Number of epochs (aborts early if
             :obj:`mode='greedy'` and budget is satisfied) (default: :obj:`125`)
-        loss (str or Callable, optional): A loss to quantify the "strength" of
+        loss (str or callable, optional): A loss to quantify the "strength" of
             an attack. Note that this function must match the output format of
             :attr:`model`. By default, it is assumed that the task is
             classification and that the model returns raw predictions (*i.e.*,
@@ -683,7 +682,6 @@ class GRBCDAttack(PRBCDAttack):
         log (bool, optional): If set to :obj:`False`, will not log any learning
             progress. (default: :obj:`True`)
     """
-
     coeffs = {'max_trials_sampling': 20, 'eps': 1e-7}
 
     def __init__(
