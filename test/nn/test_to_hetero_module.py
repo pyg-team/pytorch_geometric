@@ -2,9 +2,9 @@ import pytest  # noqa
 import torch
 
 from torch_geometric.data import HeteroData
-from torch_geometric.nn import ToHeteroModule
 from torch_geometric.nn.conv import GCNConv
 from torch_geometric.nn.dense import Linear
+from torch_geometric.nn.to_hetero_module import ToHeteroModule
 
 heterodata = HeteroData()
 heterodata['v0'].x = torch.randn(20, 10)
