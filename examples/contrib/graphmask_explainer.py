@@ -2,23 +2,15 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from sklearn.metrics import roc_auc_score
 
-import torch_geometric.transforms as T
-from torch_geometric.datasets import Entities, Planetoid, TUDataset
-from torch_geometric.explain import Explainer, GraphMaskExplainer
-from torch_geometric.loader import DataLoader
-from torch_geometric.nn import (
-    FastRGCNConv,
-    GATConv,
-    GCNConv,
-    global_add_pool,
-    global_mean_pool,
-)
+from torch_geometric.contrib.explain import GraphMaskExplainer
+from torch_geometric.datasets import Planetoid
+from torch_geometric.explain import Explainer
+from torch_geometric.nn import GATConv, GCNConv
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+path = osp.join(osp.dirname(osp.realpath(__file__)), 'data', 'Planetoid')
 dataset = Planetoid(path, name='Cora')
 data = dataset[0].to(device)
 

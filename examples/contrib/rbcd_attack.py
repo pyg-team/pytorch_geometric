@@ -14,7 +14,7 @@ from torch_geometric.nn import GATConv, GCNConv
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.utils import softmax
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+path = osp.join(osp.dirname(osp.realpath(__file__)), 'data', 'Planetoid')
 
 
 class GCN(torch.nn.Module):

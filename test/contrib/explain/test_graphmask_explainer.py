@@ -1,7 +1,8 @@
 import pytest
 import torch
 
-from torch_geometric.explain import Explainer, GraphMaskExplainer
+from torch_geometric.contrib.explain import GraphMaskExplainer
+from torch_geometric.explain import Explainer
 from torch_geometric.explain.config import (
     ModelConfig,
     ModelMode,

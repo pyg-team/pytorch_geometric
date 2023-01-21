@@ -19,7 +19,7 @@ try:
 except ImportError:
     sys.exit('Install `higher` via `pip install higher` for poisoning example')
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
+path = osp.join(osp.dirname(osp.realpath(__file__)), 'data', 'Planetoid')
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # IMPORTANT: Edge weights are being ignored later and most adjacency matrix
