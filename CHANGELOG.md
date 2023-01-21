@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `ToHeteroLinear` and `ToHeteroMessagePassing` modules to accelerate `to_hetero` functionality ([#5992](https://github.com/pyg-team/pytorch_geometric/pull/5992), [#6456](https://github.com/pyg-team/pytorch_geometric/pull/6456))
 - Added option to customize loader arguments for evaluation in `LightningNodeData` and `LightningLinkData` ([#6450](https://github.com/pyg-team/pytorch_geometric/pull/6450), [#6456](https://github.com/pyg-team/pytorch_geometric/pull/6456))
 - Added option to customize `num_neighbors` in `NeighborSampler` after instantiation ([#6446](https://github.com/pyg-team/pytorch_geometric/pull/6446))
 - Added the `Taobao` dataset and a corresponding example for it ([#6144](https://github.com/pyg-team/pytorch_geometric/pull/6144))
