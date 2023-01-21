@@ -47,9 +47,8 @@ class GraphMaskExplainer(ExplainerAlgorithm):
     r"""The GraphMask-Explainer model from the `"Interpreting Graph Neural
     Networks for NLP With Differentiable Edge Masking"
     <https://arxiv.org/abs/2010.00577>`_ paper for identifying layer-wise
-    compact subgraph structures and small subsets node features that play
-    a crucial role in a GNN’s node-level, edge-level, or graph-level
-    predictions.
+    compact subgraph structures and node features that play a crucial role in
+    the predictions made by a GNN.
 
     .. note::
 
@@ -70,8 +69,8 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             the Lagrange multiplier. (default: :obj:`1e-2`)
         init_lambda (float, optional): The Lagrange multiplier. Value must lie
             between :obj:`0` and `1`. (default: :obj:`0.55`)
-        allowance (float): A float value between :obj:`0` and :obj:`1` denotes
-            tolerance level. (default: :obj:`0.03`)
+        allowance (float, optional): A float value between :obj:`0` and
+            :obj:`1` denotes tolerance level. (default: :obj:`0.03`)
         layer_type (str, optional): The type of GNN layer being used in the GNN
             model. (default: :obj:`GCN`)
         log (bool, optional): If set to :obj:`False`, will not log any
