@@ -31,9 +31,9 @@ Explainer
 ---------
 
 .. autoclass:: torch_geometric.explain.Explainer
+   :show-inheritance:
    :members:
-
-   .. automethod:: __call__
+   :special-members: __call__
 
 .. autoclass:: torch_geometric.explain.config.ExplainerConfig
    :members:
@@ -48,6 +48,11 @@ Explanations
 ------------
 
 .. autoclass:: torch_geometric.explain.Explanation
+   :show-inheritance:
+   :members:
+
+.. autoclass:: torch_geometric.explain.HeteroExplanation
+   :show-inheritance:
    :members:
 
 Explainer Algorithms
@@ -57,16 +62,11 @@ Explainer Algorithms
 
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.explain.algorithm.classes %}
-     {{ cls }}
+   :toctree: ../generated
+
+   {% for name in torch_geometric.explain.algorithm.classes %}
+     {{ name }}
    {% endfor %}
-
-.. autoclass:: torch_geometric.explain.algorithm.ExplainerAlgorithm
-   :members:
-
-.. automodule:: torch_geometric.explain.algorithm
-   :members:
-   :exclude-members: ExplainerAlgorithm, forward, loss, supports
 
 Explanation Metrics
 -------------------
@@ -77,10 +77,9 @@ PyG supports the following metrics out-of-the-box:
 .. currentmodule:: torch_geometric.explain.metric
 
 .. autosummary::
-    :nosignatures:
-    {% for cls in torch_geometric.explain.metric.classes %}
-      {{ cls }}
-    {% endfor %}
+   :nosignatures:
+   :toctree: ../generated
 
-.. automodule:: torch_geometric.explain.metric
-    :members:
+   {% for name in torch_geometric.explain.metric.classes %}
+     {{ name }}
+   {% endfor %}
