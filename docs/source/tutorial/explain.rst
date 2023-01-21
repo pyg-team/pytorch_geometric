@@ -46,9 +46,9 @@ We configure the :class:`Explainer` to use both a :obj:`node_mask_type` and an :
     from torch_geometric.explain import Explainer
     from torch_geometric.explain.algorithm import CaptumExplainer
     from torch_geometric.explain.config import ModelConfig
- 
+
     hetero_data = HeteroData(...)
- 
+
     model_config = ModelConfig(
         mode='multiclass_classification',
         task_level=task_level,
