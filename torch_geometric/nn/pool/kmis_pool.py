@@ -219,7 +219,7 @@ class KMISPooling(Module):
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None,
                 batch: OptTensor = None) \
-            -> Tuple[Tensor, Adj, OptTensor, OptTensor]:
+            -> Tuple[Tensor, Adj, OptTensor, OptTensor, Tensor, Tensor]:
         """"""
         adj, n = edge_index, x.size(0)
 
@@ -259,16 +259,16 @@ class KMISPooling(Module):
         if self.score_passthrough == 'after':
             x = x * score[mis]
 
-        if torch.is_tensor(edge_index):
+        if isinstance(edge_index, SparseTensor):
+            edge_index, edge_attr = adj, None
+        else:
             row, col, edge_attr = adj.coo()
             edge_index = torch.stack([row, col])
-        else:
-            edge_index, edge_attr = adj, None
 
         if batch is not None:
             batch = batch[mis]
 
-        return x, edge_index, edge_attr, batch
+        return x, edge_index, edge_attr, batch, mis, cluster
 
     def __repr__(self):
         if self.scorer == 'linear':
