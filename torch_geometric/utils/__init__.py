@@ -19,6 +19,7 @@ from .get_mesh_laplacian import get_mesh_laplacian
 from .mask import mask_select, index_to_mask, mask_to_index
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
+from .nested import to_nested_tensor, from_nested_tensor
 from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
                      to_torch_coo_tensor)
 from .spmm import spmm
@@ -28,6 +29,7 @@ from .grid import grid
 from .geodesic import geodesic_distance
 from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
+from .convert import to_networkit, from_networkit
 from .convert import to_trimesh, from_trimesh
 from .convert import to_cugraph
 from .smiles import from_smiles, to_smiles
@@ -76,6 +78,8 @@ __all__ = [
     'mask_to_index',
     'to_dense_batch',
     'to_dense_adj',
+    'to_nested_tensor',
+    'from_nested_tensor',
     'dense_to_sparse',
     'is_torch_sparse_tensor',
     'is_sparse',
@@ -90,6 +94,8 @@ __all__ = [
     'from_scipy_sparse_matrix',
     'to_networkx',
     'from_networkx',
+    'to_networkit',
+    'from_networkit',
     'to_trimesh',
     'from_trimesh',
     'to_cugraph',

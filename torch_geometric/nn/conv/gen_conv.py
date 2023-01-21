@@ -68,7 +68,7 @@ class GENConv(MessagePassing):
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
-        aggr (string or Aggregation, optional): The aggregation scheme to use.
+        aggr (str or Aggregation, optional): The aggregation scheme to use.
             Any aggregation of :obj:`torch_geometric.nn.aggr` can be used,
             (:obj:`"softmax"`, :obj:`"powermean"`, :obj:`"add"`, :obj:`"mean"`,
             :obj:`max`). (default: :obj:`"softmax"`)

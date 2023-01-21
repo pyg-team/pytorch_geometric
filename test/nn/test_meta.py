@@ -5,10 +5,10 @@ from torch import Tensor
 from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
-from torch_scatter import scatter_mean
 
 from torch_geometric.nn import MetaLayer
 from torch_geometric.testing import is_full_test
+from torch_geometric.utils import scatter
 
 count = 0
 
@@ -79,7 +79,7 @@ def test_meta_layer_example():
             col = edge_index[1]
             out = torch.cat([x[row], edge_attr], dim=1)
             out = self.node_mlp_1(out)
-            out = scatter_mean(out, col, dim=0, dim_size=x.size(0))
+            out = scatter(out, col, dim=0, dim_size=x.size(0), reduce='mean')
             out = torch.cat([x, out, u[batch]], dim=1)
             return self.node_mlp_2(out)
 
@@ -98,7 +98,10 @@ def test_meta_layer_example():
         ) -> Tensor:
             assert u is not None
             assert batch is not None
-            out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)
+            out = torch.cat([
+                u,
+                scatter(x, batch, dim=0, reduce='mean'),
+            ], dim=1)
             return self.global_mlp(out)
 
     op = MetaLayer(EdgeModel(), NodeModel(), GlobalModel())

@@ -4,9 +4,9 @@ from typing import Callable, Tuple
 import torch
 from torch import Tensor
 from torch.nn import GRUCell, Linear
-from torch_scatter import scatter, scatter_max
 
 from torch_geometric.nn.inits import zeros
+from torch_geometric.utils import scatter
 
 
 class TGNMemory(torch.nn.Module):
@@ -138,7 +138,7 @@ class TGNMemory(torch.nn.Module):
 
         # Get local copy of updated `last_update`.
         dim_size = self.last_update.size(0)
-        last_update = scatter_max(t, idx, dim=0, dim_size=dim_size)[0][n_id]
+        last_update = scatter(t, idx, 0, dim_size, reduce='max')[n_id]
 
         return memory, last_update
 
@@ -183,6 +183,7 @@ class IdentityMessage(torch.nn.Module):
 
 class LastAggregator(torch.nn.Module):
     def forward(self, msg, index, t, dim_size):
+        from torch_scatter import scatter_max
         _, argmax = scatter_max(t, index, dim=0, dim_size=dim_size)
         out = msg.new_zeros((dim_size, msg.size(-1)))
         mask = argmax < msg.size(0)  # Filter items with at least one entry.

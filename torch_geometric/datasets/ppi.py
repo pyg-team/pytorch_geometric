@@ -24,8 +24,8 @@ class PPI(InMemoryDataset):
     total) and gene ontology sets as labels (121 in total).
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        split (string): If :obj:`"train"`, loads the training dataset.
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         transform (callable, optional): A function/transform that takes in an
@@ -41,21 +41,22 @@ class PPI(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 20
-              - ~2,245.3
-              - ~61,318.4
-              - 50
-              - 121
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 20
+          - ~2,245.3
+          - ~61,318.4
+          - 50
+          - 121
     """
 
     url = 'https://data.dgl.ai/dataset/ppi.zip'

@@ -5,6 +5,7 @@ from torch import tensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.transforms import AddMetaPaths, AddRandomMetaPaths
+from torch_geometric.utils import coalesce
 
 
 def generate_data() -> HeteroData:
@@ -107,25 +108,40 @@ def test_add_weighted_metapaths():
          ('b', 'a')],
     ]
     transform = AddMetaPaths(metapaths, weighted=True)
-    metapath_data = transform(copy.copy(data))
+    out = transform(copy.copy(data))
 
-    # Make sure manually added metapaths compute the correct number of edges
-    assert metapath_data['a', 'c'].edge_weight.tolist() == [1, 2]
-    assert metapath_data['a', 'd'].edge_weight.tolist() == [1, 2]
-    assert metapath_data['a', 'a'].edge_weight.tolist() == [2, 1, 4, 2]
+    # Make sure manually added metapaths compute the correct number of edges:
+    edge_index = out['a', 'a'].edge_index
+    edge_weight = out['a', 'a'].edge_weight
+    edge_index, edge_weight = coalesce(edge_index, edge_weight)
+    assert edge_index.tolist() == [[0, 0, 1, 1], [0, 1, 0, 1]]
+    assert edge_weight.tolist() == [1, 2, 2, 4]
 
-    # Compute intra-table metapaths efficiently
+    edge_index = out['a', 'c'].edge_index
+    edge_weight = out['a', 'c'].edge_weight
+    edge_index, edge_weight = coalesce(edge_index, edge_weight)
+    assert edge_index.tolist() == [[0, 1], [0, 1]]
+    assert edge_weight.tolist() == [1, 2]
+
+    edge_index = out['a', 'd'].edge_index
+    edge_weight = out['a', 'd'].edge_weight
+    edge_index, edge_weight = coalesce(edge_index, edge_weight)
+    assert edge_index.tolist() == [[0, 1], [0, 0]]
+    assert edge_weight.tolist() == [1, 2]
+
+    # Compute intra-table metapaths efficiently:
     metapaths = [[('a', 'b'), ('b', 'c'), ('c', 'd')]]
-    metapath_data = AddMetaPaths(metapaths, weighted=True)(copy.copy(data))
-    metapath_data['d',
-                  'a'].edge_index = metapath_data['a',
-                                                  'd'].edge_index.flip([0])
-    metapath_data['d', 'a'].edge_weight = metapath_data['a', 'd'].edge_weight
+    out = AddMetaPaths(metapaths, weighted=True)(copy.copy(data))
+    out['d', 'a'].edge_index = out['a', 'd'].edge_index.flip([0])
+    out['d', 'a'].edge_weight = out['a', 'd'].edge_weight
     metapaths = [[('a', 'd'), ('d', 'a')]]
-    metapath_data = AddMetaPaths(metapaths, weighted=True)(metapath_data)
-    del metapath_data['a', 'd']
-    del metapath_data['d', 'a']
-    assert metapath_data['a', 'a'].edge_weight.tolist() == [2, 1, 4, 2]
+    out = AddMetaPaths(metapaths, weighted=True)(out)
+
+    edge_index = out['a', 'a'].edge_index
+    edge_weight = out['a', 'a'].edge_weight
+    edge_index, edge_weight = coalesce(edge_index, edge_weight)
+    assert edge_index.tolist() == [[0, 0, 1, 1], [0, 1, 0, 1]]
+    assert edge_weight.tolist() == [1, 2, 2, 4]
 
 
 def test_add_random_metapaths():

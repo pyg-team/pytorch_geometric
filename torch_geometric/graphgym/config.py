@@ -483,7 +483,6 @@ def dump_cfg(cfg):
 
     Args:
         cfg (CfgNode): Configuration node
-
     """
     makedirs(cfg.out_dir)
     cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
@@ -498,7 +497,6 @@ def load_cfg(cfg, args):
     Args:
         cfg (CfgNode): Configuration node
         args (ArgumentParser): Command argument parser
-
     """
     cfg.merge_from_file(args.cfg_file)
     cfg.merge_from_list(args.opts)
@@ -516,7 +514,7 @@ def get_fname(fname):
     Extract filename from file name path
 
     Args:
-        fname (string): Filename for the yaml format configuration file
+        fname (str): Filename for the yaml format configuration file
     """
     fname = fname.split('/')[-1]
     if fname.endswith('.yaml'):
@@ -531,9 +529,8 @@ def set_out_dir(out_dir, fname):
     Create the directory for full experiment run
 
     Args:
-        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
-        fname (string): Filename for the yaml format configuration file
-
+        out_dir (str): Directory for output, specified in :obj:`cfg.out_dir`
+        fname (str): Filename for the yaml format configuration file
     """
     fname = get_fname(fname)
     cfg.out_dir = os.path.join(out_dir, fname)
@@ -549,9 +546,7 @@ def set_run_dir(out_dir):
     Create the directory for each random seed experiment run
 
     Args:
-        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
-        fname (string): Filename for the yaml format configuration file
-
+        out_dir (str): Directory for output, specified in :obj:`cfg.out_dir`
     """
     cfg.run_dir = os.path.join(out_dir, str(cfg.seed))
     # Make output directory

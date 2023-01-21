@@ -25,7 +25,7 @@ def register_base(mapping: Dict[str, Any], key: str,
     Args:
         mapping (dict): Python dictionary to register the module.
             hosting all the registered modules
-        key (string): The name of the module.
+        key (str): The name of the module.
         module (any, optional): The module. If set to :obj:`None`, will return
             a decorator to register a module.
     """

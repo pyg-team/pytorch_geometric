@@ -568,7 +568,7 @@ def test_memmap_neighbor_loader():
     assert data.num_nodes == 100
 
     loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
-                            num_workers=6)
+                            num_workers=2)
     batch = next(iter(loader))
     assert batch.num_nodes <= 100
     assert isinstance(batch.x, torch.Tensor)

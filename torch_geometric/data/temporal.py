@@ -72,13 +72,13 @@ class TemporalData(BaseData):
         events = events.to('cuda:0', non_blocking=True)
 
     Args:
-        src (Tensor, optional): A list of source nodes for the events with
-            shape :obj:`[num_events]`. (default: :obj:`None`)
-        dst (Tensor, optional): A list of destination nodes for the events
+        src (torch.Tensor, optional): A list of source nodes for the events
             with shape :obj:`[num_events]`. (default: :obj:`None`)
-        t (Tensor, optional): The timestamps for each event with shape
+        dst (torch.Tensor, optional): A list of destination nodes for the
+            events with shape :obj:`[num_events]`. (default: :obj:`None`)
+        t (torch.Tensor, optional): The timestamps for each event with shape
             :obj:`[num_events]`. (default: :obj:`None`)
-        msg (Tensor, optional): Messages feature matrix with shape
+        msg (torch.Tensor, optional): Messages feature matrix with shape
             :obj:`[num_events, num_msg_features]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
 
