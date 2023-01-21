@@ -1,1 +1,5 @@
-__all__ = classes = []
+from .graphmask_explainer import GraphMaskExplainer
+
+__all__ = classes = [
+    'GraphMaskExplainer',
+]
