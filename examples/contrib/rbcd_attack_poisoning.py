@@ -15,8 +15,8 @@ except ImportError:
         'Install `higher` (e.g. `pip install higher`) for poisoning example')
 
 import torch_geometric.transforms as T
+from torch_geometric.contrib.nn import PRBCDAttack
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import PRBCDAttack
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')

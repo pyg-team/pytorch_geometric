@@ -6,9 +6,10 @@ import torch.nn.functional as F
 from torch import Tensor
 
 import torch_geometric.transforms as T
+from torch_geometric.contrib.nn import GRBCDAttack, PRBCDAttack
 from torch_geometric.data import Data
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GATConv, GCNConv, GRBCDAttack, PRBCDAttack
+from torch_geometric.nn import GATConv, GCNConv
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.utils import softmax
 

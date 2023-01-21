@@ -3,12 +3,8 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.nn import (
-    GCNConv,
-    GRBCDAttack,
-    PRBCDAttack,
-    global_add_pool,
-)
+from torch_geometric.contrib.nn import GRBCDAttack, PRBCDAttack
+from torch_geometric.nn import GCNConv, global_add_pool
 from torch_geometric.testing import is_full_test
 from torch_geometric.utils import to_undirected
 
