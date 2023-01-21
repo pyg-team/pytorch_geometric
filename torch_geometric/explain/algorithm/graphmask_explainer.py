@@ -20,7 +20,8 @@ from torch_geometric.nn import MessagePassing
 
 
 def explain_message(self, out, x_i, x_j):
-    basis_messages = Sequential(LayerNorm(out.size(-1)), ReLU())(out)
+    norm = Sequential(LayerNorm(out.size(-1)).to(out.device), ReLU())
+    basis_messages = norm(out)
 
     if getattr(self, 'message_scale', None) is not None:
         basis_messages = basis_messages * self.message_scale.unsqueeze(-1)
@@ -53,9 +54,9 @@ class GraphMaskExplainer(ExplainerAlgorithm):
     .. note::
 
         For an example of using GraphMask-Explainer,
-        see `examples/graphmask_explainer.py
+        see `examples/contrib/graphmask_explainer.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        graphmask_explainer.py>`_.
+        /contrib/graphmask_explainer.py>`_.
 
     Args:
         num_layers (int): The number of layers to use.
@@ -65,21 +66,20 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             (default: :obj:`0.01`)
         penalty_scaling (int, optional): Scaling value of penalty term. Value
             must lie between 0 and 10. (default: :obj:`5`)
-        lambda_optimizer_lr (float): The learning rate to optimize the
-            Lagrange multiplier. (default: :obj:`1e-2`)
-        init_lambda (float): The Lagrange multiplier. Value must lie between
-            0 and 1. (default: :obj:`0.55`)
-        allowance (float): A float value between 0 and 1 denotes tolerance
-            level. (default: :obj:`0.03`)
-        layer_type (str): The type of GNN layer being used in the GNN model.
-            (default: :obj:`GCN`)
+        lambda_optimizer_lr (float, optional): The learning rate to optimize
+            the Lagrange multiplier. (default: :obj:`1e-2`)
+        init_lambda (float, optional): The Lagrange multiplier. Value must lie
+            between :obj:`0` and `1`. (default: :obj:`0.55`)
+        allowance (float): A float value between :obj:`0` and :obj:`1` denotes
+            tolerance level. (default: :obj:`0.03`)
+        layer_type (str, optional): The type of GNN layer being used in the GNN
+            model. (default: :obj:`GCN`)
         log (bool, optional): If set to :obj:`False`, will not log any
             learning progress. (default: :obj:`True`)
         **kwargs (optional): Additional hyper-parameters to override default
             settings in
             :attr:`~torch_geometric.nn.models.GraphMaskExplainer.coeffs`.
     """
-
     coeffs = {
         'node_feat_size': 1.0,
         'node_feat_reduction': 'mean',
@@ -87,12 +87,20 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         'EPS': 1e-15,
     }
 
-    def __init__(self, num_layers, epochs: int = 100, lr: float = 0.01,
-                 penalty_scaling: int = 5, lambda_optimizer_lr: int = 1e-2,
-                 init_lambda: int = 0.55, allowance: int = 0.03,
-                 layer_type: str = 'GCN',
-                 allow_multiple_explanations: bool = False, log: bool = True,
-                 **kwargs):
+    def __init__(
+        self,
+        num_layers: int,
+        epochs: int = 100,
+        lr: float = 0.01,
+        penalty_scaling: int = 5,
+        lambda_optimizer_lr: int = 1e-2,
+        init_lambda: int = 0.55,
+        allowance: int = 0.03,
+        layer_type: str = 'GCN',
+        allow_multiple_explanations: bool = False,
+        log: bool = True,
+        **kwargs,
+    ):
         super().__init__()
         assert layer_type in ['GCN', 'GAT', 'FastRGCN']
         assert 0 <= penalty_scaling <= 10
@@ -111,9 +119,17 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         self.log = log
         self.coeffs.update(kwargs)
 
-    def forward(self, model: torch.nn.Module, x: Tensor, edge_index: Tensor, *,
-                target: Tensor, index: Optional[Union[int, Tensor]] = None,
-                **kwargs) -> Explanation:
+    def forward(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ) -> Explanation:
+
         hard_node_mask = None
 
         if self.model_config.task_level == ModelTaskLevel.node:
@@ -160,7 +176,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         return clipped_s, penalty
 
-    def set_masks(self, i_dim, j_dim, h_dim, x):
+    def set_masks(self, i_dim, j_dim, h_dim, x, device):
         if self.layer_type == 'GCN' or self.layer_type == 'GAT':
             i_dim = j_dim
         (num_nodes, num_feat), std = x.size(), 0.1
@@ -168,13 +184,13 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         if self.feat_mask_type == MaskType.attributes:
             self.node_feat_mask = torch.nn.Parameter(
-                torch.randn(num_nodes, num_feat) * std)
+                torch.randn(num_nodes, num_feat, device=device) * std)
         elif self.feat_mask_type == MaskType.object:
             self.node_feat_mask = torch.nn.Parameter(
-                torch.randn(num_nodes, 1) * std)
+                torch.randn(num_nodes, 1, device=device) * std)
         else:
             self.node_feat_mask = torch.nn.Parameter(
-                torch.randn(1, num_feat) * std)
+                torch.randn(1, num_feat, device=device) * std)
 
         baselines, self.gates, full_biases = [], torch.nn.ModuleList(), []
 
@@ -182,19 +198,21 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             self.transform, self.layer_norm = [], []
             input_dims = [v_dim, m_dim, v_dim]
             for _, input_dim in enumerate(input_dims):
-                self.transform.append(Linear(input_dim, h_dim, bias=False))
-                self.layer_norm.append(LayerNorm(h_dim))
+                self.transform.append(
+                    Linear(input_dim, h_dim, bias=False).to(device))
+                self.layer_norm.append(LayerNorm(h_dim).to(device))
 
             self.transforms = torch.nn.ModuleList(self.transform)
             self.layer_norms = torch.nn.ModuleList(self.layer_norm)
 
-            self.full_bias = Parameter(torch.Tensor(h_dim))
+            self.full_bias = Parameter(
+                torch.tensor(h_dim, dtype=torch.float, device=device))
             full_biases.append(self.full_bias)
 
             self.reset_parameters(input_dims, h_dim)
 
             self.non_linear = ReLU()
-            self.output_layer = Linear(h_dim, 1)
+            self.output_layer = Linear(h_dim, 1).to(device)
 
             gate = [
                 self.transforms, self.layer_norms, self.non_linear,
@@ -202,7 +220,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             ]
             self.gates.extend(gate)
 
-            baseline = torch.FloatTensor(m_dim)
+            baseline = torch.tensor(m_dim, dtype=torch.float, device=device)
             stdv = 1. / math.sqrt(m_dim)
             baseline.uniform_(-stdv, stdv)
             baseline = torch.nn.Parameter(baseline)
@@ -335,7 +353,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 input_dims.append(module.in_channels)
                 output_dims.append(module.out_channels)
 
-        self.set_masks(input_dims, output_dims, output_dims, x)
+        self.set_masks(input_dims, output_dims, output_dims, x, x.device)
 
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
