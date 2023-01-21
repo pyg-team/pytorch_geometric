@@ -48,12 +48,12 @@ class GraphMaskExplainer(ExplainerAlgorithm):
     Networks for NLP With Differentiable Edge Masking"
     <https://arxiv.org/abs/2010.00577>`_ paper for identifying layer-wise
     compact subgraph structures and small subsets node features that play
-    a crucial role in a GNN’s node-level, edge-level, and graph-level
+    a crucial role in a GNN’s node-level, edge-level, or graph-level
     predictions.
 
     .. note::
 
-        For an example of using GraphMask-Explainer,
+        For an example of using :class:`GraphMaskExplainer`,
         see `examples/contrib/graphmask_explainer.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         /contrib/graphmask_explainer.py>`_.
