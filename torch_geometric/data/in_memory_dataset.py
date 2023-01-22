@@ -15,13 +15,13 @@ class InMemoryDataset(Dataset):
     r"""Dataset base class for creating graph datasets which easily fit
     into CPU memory.
     Inherits from :class:`torch_geometric.data.Dataset`.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html#creating-in-memory-datasets>`__ for the accompanying
     tutorial.
 
     Args:
-        root (string, optional): Root directory where the dataset should be
-            saved. (default: :obj:`None`)
+        root (str, optional): Root directory where the dataset should be saved.
+            (optional: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

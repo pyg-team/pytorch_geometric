@@ -74,7 +74,7 @@ class Net(torch.nn.Module):
         super().__init__()
 
         self.decimation = decimation
-        # An option to return logits instead of probas
+        # An option to return logits instead of log probabilities:
         self.return_logits = return_logits
 
         # Authors use 8, which is a bottleneck

@@ -5,7 +5,7 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 
-from torch_geometric.explain import Explanation
+from torch_geometric.explain import Explanation, HeteroExplanation
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ModelConfig,
@@ -28,7 +28,7 @@ class ExplainerAlgorithm(torch.nn.Module):
         target: Tensor,
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Explanation:
+    ) -> Union[Explanation, HeteroExplanation]:
         r"""Computes the explanation.
 
         Args:

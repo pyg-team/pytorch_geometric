@@ -64,6 +64,19 @@ edge_index = torch.tensor([
 ])
 batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
+index = torch.tensor([1, 2])
+
+
+def _verify_mask_size(explanation, node_mask_type, edge_mask_type):
+    if node_mask_type is not None:
+        assert explanation.node_mask.size() == x.size()
+    else:
+        assert 'node_mask' not in explanation
+
+    if edge_mask_type is not None:
+        assert explanation.edge_mask.size() == (edge_index.size(1), )
+    else:
+        assert 'edge_mask' not in explanation
 
 
 @withPackage('captum')
@@ -103,12 +116,39 @@ def test_captum_explainer_multiclass_classification(
         edge_label_index=edge_label_index,
     )
 
-    if node_mask_type is not None:
-        assert explanation.node_mask.size() == x.size()
-    else:
-        assert 'node_mask' not in explanation
+    _verify_mask_size(explanation, node_mask_type, edge_mask_type)
 
-    if edge_mask_type is not None:
-        assert explanation.edge_mask.size() == (edge_index.size(1), )
-    else:
-        assert 'edge_mask' not in explanation
+
+@withPackage('captum')
+@pytest.mark.parametrize('node_mask_type', node_mask_types)
+@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
+def test_captum_explainer_multiclass_classification_batch(
+    node_mask_type,
+    edge_mask_type,
+):
+    model_config = ModelConfig(
+        mode='multiclass_classification',
+        task_level='node',
+        return_type='probs',
+    )
+
+    model = GCN(model_config)
+
+    explainer = Explainer(
+        model,
+        algorithm=CaptumExplainer('IntegratedGradients'),
+        edge_mask_type=edge_mask_type,
+        node_mask_type=node_mask_type,
+        model_config=model_config,
+        explanation_type='model',
+    )
+
+    explanation = explainer(
+        x,
+        edge_index,
+        index=index,
+        batch=batch,
+        edge_label_index=edge_label_index,
+    )
+
+    _verify_mask_size(explanation, node_mask_type, edge_mask_type)

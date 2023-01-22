@@ -1,4 +1,5 @@
 import logging
+import warnings
 from typing import Any, Dict, Optional, Union
 
 import torch
@@ -17,8 +18,9 @@ from torch_geometric.typing import EdgeType, NodeType
 
 
 class CaptumExplainer(ExplainerAlgorithm):
-    """A Captum-based explainer for identifying compact subgraph structures and
-    node features that play a crucial role in the predictions made by a GNN.
+    """A `Captum <https://captum.ai>`__-based explainer for identifying compact
+    subgraph structures and node features that play a crucial role in the
+    predictions made by a GNN.
 
     This explainer algorithm uses `Captum <https://captum.ai/>`_ to compute
     attributions.
@@ -59,16 +61,31 @@ class CaptumExplainer(ExplainerAlgorithm):
             mask_type = 'edge'
         return mask_type
 
+    def _support_multiple_indices(self):
+        r"""Checks if the method supports multiple indices."""
+        return self.attribution_method.__name__ == 'IntegratedGradients'
+
     def forward(
         self,
         model: torch.nn.Module,
         x: Union[Tensor, Dict[NodeType, Tensor]],
         edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
-        target: Optional[Tensor] = None,
-        index: Optional[Tensor] = None,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Explanation:
+    ) -> Union[Explanation, HeteroExplanation]:
+
+        if isinstance(index, torch.Tensor) and index.numel() > 1:
+            if not self._support_multiple_indices():
+                raise ValueError(
+                    f"{self.attribution_method.__name__} does not "
+                    "support multiple indices. Please use a single "
+                    "index or a different method.")
+            # TODO (matthias): Check if `internal_batch_size` can be passed.
+            if self.kwargs.get('internal_batch_size', 1) != 1:
+                warnings.warn("Overriding 'internal_batch_size' to 1")
+            self.kwargs['internal_batch_size'] = 1
 
         mask_type = self._get_mask_type()
 
@@ -124,4 +141,5 @@ class CaptumExplainer(ExplainerAlgorithm):
                           f"(got '{node_mask_type.value}')")
             return False
 
+        # TODO (ramona): Confirm that output type is valid.
         return True

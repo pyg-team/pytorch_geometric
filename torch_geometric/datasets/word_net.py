@@ -24,7 +24,7 @@ class WordNet18(InMemoryDataset):
         :class:`~torch_geometric.datasets.WordNet18RR` instead.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -105,7 +105,7 @@ class WordNet18RR(InMemoryDataset):
     entities, 11 relations and 93,003 fact triplets.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

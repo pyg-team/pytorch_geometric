@@ -1,6 +1,7 @@
 from .mlp import MLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
 from .jumping_knowledge import JumpingKnowledge
+from .meta import MetaLayer
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
 from .autoencoder import InnerProductDecoder, GAE, VGAE, ARGA, ARGVA
@@ -32,6 +33,7 @@ __all__ = classes = [
     'PNA',
     'EdgeCNN',
     'JumpingKnowledge',
+    'MetaLayer',
     'Node2Vec',
     'DeepGraphInfomax',
     'InnerProductDecoder',

@@ -49,7 +49,7 @@ def coalesce(
             its entries. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
-        reduce (string, optional): The reduce operation to use for merging edge
+        reduce (str, optional): The reduce operation to use for merging edge
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"`). (default: :obj:`"add"`)
         is_sorted (bool, optional): If set to :obj:`True`, will expect

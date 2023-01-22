@@ -46,8 +46,18 @@ class InstanceNorm(_InstanceNorm):
         super().__init__(in_channels, eps, momentum, affine,
                          track_running_stats)
 
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
+        super().reset_parameters()
+
     def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example. (default: :obj:`None`)
+        """
         if batch is None:
             out = F.instance_norm(
                 x.t().unsqueeze(0), self.running_mean, self.running_var,
