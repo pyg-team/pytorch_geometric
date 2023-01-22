@@ -255,19 +255,13 @@ class PGMExplainer(ExplainerAlgorithm):
 
         return node_mask, pgm_stats
 
-    def explain_node(
-        self,
-        model: torch.nn.Module,
-        x: torch.Tensor,
-        index: int,
-        edge_index: torch.Tensor,
-        edge_weight: torch.Tensor,
-        target: torch.Tensor,
-        num_samples: int = 100,
-        max_subgraph_size: int = None,
-        significance_threshold: float = 0.05,
-        pred_threshold: float = 0.1,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    def explain_node(self, model: torch.nn.Module, x: torch.Tensor, index: int,
+                     edge_index: torch.Tensor, edge_weight: torch.Tensor,
+                     target: torch.Tensor, num_samples: int = 100,
+                     max_subgraph_size: int = None,
+                     significance_threshold: float = 0.05,
+                     pred_threshold: float = 0.1,
+                     **kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
         r"""Generate explanations for node classification tasks
 
         Args:
@@ -308,7 +302,7 @@ class PGMExplainer(ExplainerAlgorithm):
         if index not in neighbors:
             neighbors = torch.cat([neighbors, index], dim=1)
 
-        pred_model = model(x, edge_index,  **kwargs)
+        pred_model = model(x, edge_index, **kwargs)
 
         softmax_pred = torch.softmax(pred_model, dim=1)
 
@@ -412,7 +406,6 @@ class PGMExplainer(ExplainerAlgorithm):
                     f"'{self.__class__.__name}' only supports a single "
                     f"`index` for now")
             index = index.item()
-
 
         edge_weight = kwargs.pop('edge_weight', None)
         num_samples = kwargs.pop('num_samples', 100)

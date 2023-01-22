@@ -1,8 +1,8 @@
 import pytest
 import torch
 
+from torch_geometric.contrib.explain import PGMExplainer
 from torch_geometric.explain import Explainer
-from torch_geometric.explain.algorithm import PGMExplainer
 from torch_geometric.explain.config import ModelConfig
 from torch_geometric.nn import GCNConv, global_add_pool
 from torch_geometric.testing import withPackage
