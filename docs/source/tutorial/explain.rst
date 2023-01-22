@@ -6,7 +6,7 @@ Interpreting GNN models is crucial for many use cases.
 
 #. a flexible interface to generate a variety of explanations via the :class:`~torch_geometric.explain.Explainer` class,
 
-#. several underlying explanation algorithms including :class:`~torch_geometric.explain.algorithm.GNNExplainer`,  :class:`~torch_geometric.explain.algorithm.PGExplainer` and :class:`~torch_geometric.explain.algorithm.CaptumExplainer` which uses algorithms [Captum.ai](https://captum.ai/).
+#. several underlying explanation algorithms including, *e.g.*, :class:`~torch_geometric.explain.algorithm.GNNExplainer`,  :class:`~torch_geometric.explain.algorithm.PGExplainer` and :class:`~torch_geometric.explain.algorithm.CaptumExplainer`,
 
 #. support to visualize explanations via the :class:`~torch_geometric.explain.Explanation` class,
 
@@ -34,7 +34,59 @@ The :class:`~torch_geometric.explain.Explainer` generates an :class:`~torch_geom
 
 Examples
 --------
-**Example: Explaianing node classification on a heterogenous graph**
+
+Explaining node classification on a homogeneous graph
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Assume we have a GNN :obj:`model` that does node classification on homogeneous graph.
+We can use the :class:`torch_geometric.explain.algorithm.GNNExplainer` algorithm to generate an :class:`Explanation`.
+We configure the :class:`Explainer` to use both a :obj:`node_mask_type` and an :obj:`edge_mask_type` such that the final :class:`~torch_geometric.explain.Explanation` object contains (1) a :obj:`node_mask` indicating which nodes and features are crucial for prediction, and (2) an :obj:`edge_mask` indicating which edges are crucial for prediction.
+
+.. code-block:: python
+
+    from torch_geometric.data import Data
+    from torch_geometric.explain import Explainer, GNNExplainer
+
+    data = Data(...)  # A homogeneous graph data object.
+
+    explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=200),
+        explanation_type='model',
+        node_mask_type='attributes',
+        edge_mask_type='object',
+        model_config=dict(
+            mode='multiclass_classification',
+            task_level='node',
+            return_type='log_probs',  # Model returns log of probability.
+        ),
+    )
+
+    # Generate explanation for the node at index `10`:
+    explanation = explainer(data.x, data.edge_index, index=10)
+    print(explanation.edge_mask)
+    print(explanation.node_mask)
+
+Finally, we can visualize both feature importance and the crucial subgraph of the explanation:
+
+.. code-block:: python
+
+    explanation.visualize_feature_importance(top_k=10)
+
+    explanation.visualize_graph()
+
+To evaluate the explanation from the :class:`~torch_geometric.explain.algorithm.GNNExplainer`, we can utilize the :class:`torch_geometric.explain.metric` module.
+For example, to compute the :meth:`~torch_geometric.explain.metric.unfaithfulness` of an explanation, run:
+
+.. code-block:: python
+
+    from torch_geometric.explain import unfaithfulness
+
+    metric = unfaithfulness(explainer, explanation)
+    print(metric)
+
+Explaining node classification on a heterogeneous graph
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Assume we have a GNN :obj:`model` that does node classification on heterogenous graph.
 We can use `IntegratedGradient` via :class:`torch_geometric.explain.algorithm.CaptumExplainer` algorithm to generate an :class:`HeteroExplanation`. Note: all algorithms in :class:`torch_geometric.explain.algorithm` don't support explaining heterogenous graphs.
@@ -74,58 +126,10 @@ We configure the :class:`Explainer` to use both a :obj:`node_mask_type` and an :
     print(explanation.edge_mask_dict)
     print(explanation.node_mask_dict)
 
-**Example: Explaining node classification on a homogenous graph**
+Explaining graph regression on a homogeneous graph
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Assume we have a GNN :obj:`model` that does node classification on homogenous graph.
-We can use the :class:`torch_geometric.explain.algorithm.GNNExplainer` algorithm to generate an :class:`Explanation`.
-We configure the :class:`Explainer` to use both a :obj:`node_mask_type` and an :obj:`edge_mask_type` such that the final :class:`~torch_geometric.explain.Explanation` object contains (1) a :obj:`node_mask` indicating which nodes and features are crucial for prediction, and (2) an :obj:`edge_mask` indicating which edges are crucial for prediction.
-
-.. code-block:: python
-
-    from torch_geometric.data import Data
-    from torch_geometric.explain import Explainer, GNNExplainer
-
-    data = Data(...)  # A homogenous graph data object.
-
-    explainer = Explainer(
-        model=model,
-        algorithm=GNNExplainer(epochs=200),
-        explanation_type='model',
-        node_mask_type='attributes',
-        edge_mask_type='object',
-        model_config=dict(
-            mode='multiclass_classification',
-            task_level='node',
-            return_type='log_probs',  # Model returns log of probability.
-        ),
-    )
-
-    # Generate explanation for the node at index `10`:
-    explanation = explainer(data.x, data.edge_index, index=10)
-    print(explanation.edge_mask)
-    print(explanation.node_mask)
-
-Finally, we can visualize both feature importance and the crucial subgraph of the explanation:
-
-.. code-block:: python
-
-    explanation.visualize_feature_importance(top_k=10)
-
-    explanation.visualize_graph()
-
-To evaluate the explanation from the :class:`~torch_geometric.explain.algorithm.GNNExplainer`, we can utilize the :class:`torch_geometric.explain.metric` module.
-For example, to compute the :meth:`~torch_geometric.explain.metric.unfaithfulness` of an explanation, run:
-
-.. code-block:: python
-
-    from torch_geometric.explain import unfaithfulness
-
-    metric = unfaithfulness(explainer, explanation)
-    print(metric)
-
-**Example: Explaining graph regression on a homogenous graph**
-
-Assume we have a GNN :obj:`model` that does graph regression on homogenous graph.
+Assume we have a GNN :obj:`model` that does graph regression on homogeneous graph.
 We can use the :class:`torch_geometric.explain.algorithm.PGExplainer` algorithm to generate an :class:`Explanation`.
 We configure the :class:`~torch_geometric.explain.Explainer` to use an :obj:`edge_mask_type` such that the final :class:`~torch_geometric.explain.Explanation` object contains an :obj:`edge_mask` indicating which edges are crucial for prediction.
 Importantly, passing a :obj:`node_mask_type` to the :class:`~torch_geometric.explain.Explainer` will throw an error since :class:`~torch_geometric.explain.algorithm.PGExplainer` cannot explain the importance of nodes:
