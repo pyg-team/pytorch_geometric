@@ -10,14 +10,12 @@ from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.transforms import Pad
 from torch_geometric.transforms.pad import (
     AttrNamePadding,
-    AttrNameType,
-    EdgeStoreType,
     EdgeTypePadding,
-    NodeStoreType,
     NodeTypePadding,
     Padding,
     UniformPadding,
 )
+from torch_geometric.typing import EdgeType, NodeType
 
 
 def fake_data() -> Data:
@@ -30,15 +28,13 @@ def fake_hetero_data(node_types=2, edge_types=5) -> HeteroData:
                              edge_dim=2)[0]
 
 
-def _generate_homodata_node_attrs(
-        data: Data) -> Generator[AttrNameType, None, None]:
+def _generate_homodata_node_attrs(data: Data) -> Generator[str, None, None]:
     for attr in data.keys:
         if data.is_node_attr(attr):
             yield attr
 
 
-def _generate_homodata_edge_attrs(
-        data: Data) -> Generator[AttrNameType, None, None]:
+def _generate_homodata_edge_attrs(data: Data) -> Generator[str, None, None]:
     for attr in data.keys:
         if data.is_edge_attr(attr):
             yield attr
@@ -46,7 +42,7 @@ def _generate_homodata_edge_attrs(
 
 def _generate_heterodata_nodes(
     data: HeteroData
-) -> Generator[Tuple[NodeStoreType, str, torch.Tensor], None, None]:
+) -> Generator[Tuple[NodeType, str, torch.Tensor], None, None]:
     for node_type, store in data.node_items():
         for attr in store.keys():
             yield node_type, attr
@@ -54,14 +50,14 @@ def _generate_heterodata_nodes(
 
 def _generate_heterodata_edges(
     data: HeteroData
-) -> Generator[Tuple[EdgeStoreType, str, torch.Tensor], None, None]:
+) -> Generator[Tuple[EdgeType, str, torch.Tensor], None, None]:
     for edge_type, store in data.edge_items():
         for attr in store.keys():
             yield edge_type, attr
 
 
 def _check_homo_data_nodes(original: Data, padded: Data,
-                           max_num_nodes: Union[int, Dict[NodeStoreType, int]],
+                           max_num_nodes: Union[int, Dict[NodeType, int]],
                            node_pad_value: Optional[Padding] = None,
                            exclude_keys: Optional[List[str]] = None) -> None:
     assert padded.num_nodes == max_num_nodes
@@ -132,8 +128,7 @@ def _check_homo_data_edges(original: Data, padded: Data,
 
 
 def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
-                             max_num_nodes: Union[int, Dict[NodeStoreType,
-                                                            int]],
+                             max_num_nodes: Union[int, Dict[NodeType, int]],
                              node_pad_value: Optional[Padding] = None,
                              exclude_keys: Optional[List[str]] = None) -> None:
 
@@ -167,7 +162,7 @@ def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
 
 def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
                              max_num_edges: Optional[Union[int,
-                                                           Dict[EdgeStoreType,
+                                                           Dict[EdgeType,
                                                                 int]]] = None,
                              edge_pad_value: Optional[Padding] = None,
                              exclude_keys: Optional[List[str]] = None) -> None:
@@ -226,8 +221,8 @@ def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
 
 def _check_data(original: Union[Data, HeteroData], padded: Union[Data,
                                                                  HeteroData],
-                max_num_nodes: Union[int, Dict[NodeStoreType, int]],
-                max_num_edges: Optional[Union[int, Dict[EdgeStoreType,
+                max_num_nodes: Union[int, Dict[NodeType, int]],
+                max_num_edges: Optional[Union[int, Dict[EdgeType,
                                                         int]]] = None,
                 node_pad_value: Optional[Union[Padding, int, float]] = None,
                 edge_pad_value: Optional[Union[Padding, int, float]] = None,

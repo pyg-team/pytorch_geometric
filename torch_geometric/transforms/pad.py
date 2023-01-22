@@ -13,18 +13,13 @@ from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import EdgeType, NodeType
 
-AttrNameType = str
-NodeStoreType = str
-EdgeStoreType = Tuple[str, str, str]
 PadValTypes = (int, float)
 
 
 class Padding(ABC):
-    r"""Abstract class for specifying the padding values to use by :class:`Pad`
-    transform.
-    """
-    @abstractmethod
-    def __init__(self, *args, **kwargs) -> None:
+    r"""An abstract class for specifying padding values to use by the
+    :class:`Pad` transform."""
+    def __init__(self, *args, **kwargs):
         pass
 
     @abstractmethod
@@ -32,9 +27,8 @@ class Padding(ABC):
         pass
 
     @abstractmethod
-    def get_val(self, store_type: Optional[Union[NodeStoreType,
-                                                 EdgeStoreType]] = None,
-                attr_name: Optional[AttrNameType] = None) -> None:
+    def get_val(self, store_type: Optional[Union[NodeType, EdgeType]] = None,
+                attr_name: Optional[str] = None) -> None:
         pass
 
 
@@ -97,8 +91,7 @@ class UniformPadding(Padding):
             padding the data object uniformly regardless of store types and
             attribute names. (default: :obj:`0.0`)
     """
-    def __init__(self, padding_values: Optional[Union[float,
-                                                      int]] = 0.0) -> None:
+    def __init__(self, padding_values: Union[float, int] = 0.0):
         self.padding_values = padding_values
         self._validate()
         super().__init__(padding_values)
@@ -108,9 +101,8 @@ class UniformPadding(Padding):
             f'Type of attribute `padding_values` must be one of ' \
             f'{PadValTypes} but is {type(self.padding_values)}.'
 
-    def get_val(self, store_type: Optional[Union[NodeStoreType,
-                                                 EdgeStoreType]] = None,
-                attr_name: Optional[AttrNameType] = None) -> Union[int, float]:
+    def get_val(self, store_type: Optional[Union[NodeType, EdgeType]] = None,
+                attr_name: Optional[str] = None) -> Union[int, float]:
         return self.padding_values
 
     def __repr__(self) -> str:
@@ -137,19 +129,18 @@ class AttrNamePadding(MappingPadding):
             attributes not specified in the :obj:`padding_values` mapping.
             (default: :obj:`0.0`)
     """
-    _key_types = (AttrNameType, )
+    _key_types = (str, )
     _val_types = (UniformPadding, *PadValTypes)
 
     def __init__(self,
-                 padding_values: Optional[Dict[AttrNameType,
+                 padding_values: Optional[Dict[str,
                                                Union[int, float,
                                                      UniformPadding]]] = None,
                  default_value: Optional[Union[int, float]] = 0.0) -> None:
         super().__init__(padding_values, default_value)
 
-    def get_val(self, store_type: Optional[Union[NodeStoreType,
-                                                 EdgeStoreType]] = None,
-                attr_name: Optional[AttrNameType] = None) -> Union[int, float]:
+    def get_val(self, store_type: Optional[Union[NodeType, EdgeType]] = None,
+                attr_name: Optional[str] = None) -> Union[int, float]:
         if attr_name in self.padding_values.keys():
             return self.padding_values[attr_name].get_val()
         else:
@@ -178,19 +169,19 @@ class NodeTypePadding(MappingPadding):
             node types not specified in the :obj:`padding_values` mapping.
             (default: :obj:`0.0`)
     """
-    _key_types = (NodeStoreType, )
+    _key_types = (NodeType, )
     _val_types = (UniformPadding, AttrNamePadding, *PadValTypes)
 
     def __init__(self,
-                 padding_values: Optional[Dict[NodeStoreType,
+                 padding_values: Optional[Dict[NodeType,
                                                Union[int, float,
                                                      UniformPadding,
                                                      AttrNamePadding]]] = None,
                  default_value=0.0) -> None:
         super().__init__(padding_values, default_value)
 
-    def get_val(self, store_type: Optional[NodeStoreType] = None,
-                attr_name: Optional[AttrNameType] = None) -> Union[int, float]:
+    def get_val(self, store_type: Optional[NodeType] = None,
+                attr_name: Optional[str] = None) -> Union[int, float]:
         if store_type in self.padding_values.keys():
             return self.padding_values[store_type].get_val(None, attr_name)
         else:
@@ -227,7 +218,7 @@ class EdgeTypePadding(MappingPadding):
     _val_types = (UniformPadding, AttrNamePadding, *PadValTypes)
 
     def __init__(self,
-                 padding_values: Optional[Dict[EdgeStoreType,
+                 padding_values: Optional[Dict[EdgeType,
                                                Union[int, float,
                                                      UniformPadding,
                                                      AttrNamePadding]]] = None,
@@ -244,8 +235,8 @@ class EdgeTypePadding(MappingPadding):
                 f'Not all the types of elements of `padding_values` ' \
                 f'keys are in {self._key_elem_types}.'
 
-    def get_val(self, store_type: Optional[EdgeStoreType] = None,
-                attr_name: Optional[AttrNameType] = None) -> Union[int, float]:
+    def get_val(self, store_type: Optional[EdgeType] = None,
+                attr_name: Optional[str] = None) -> Union[int, float]:
         if store_type in self.padding_values.keys():
             return self.padding_values[store_type].get_val(None, attr_name)
         else:
@@ -417,7 +408,7 @@ class Pad(BaseTransform):
                 f'but is {type(value)}.'
             super().__init__(value)
 
-        def get_val(self, key: Optional[NodeStoreType] = None) -> int:
+        def get_val(self, key: Optional[NodeType] = None) -> int:
             if self.is_number or self.value is None:
                 # Homodata case.
                 return self.value
@@ -428,7 +419,7 @@ class Pad(BaseTransform):
             return self.value[key]
 
     class _NumEdges(_IntOrDict):
-        def __init__(self, value: Union[int, Dict[EdgeStoreType, int], None],
+        def __init__(self, value: Union[int, Dict[EdgeType, int], None],
                      num_nodes: '_NumNodes') -> None:  # noqa: F821
             assert value is None or isinstance(value, (int, dict)), \
                 f'If provided, parameter `max_num_edges` must be of type ' \
@@ -450,7 +441,7 @@ class Pad(BaseTransform):
             self.num_nodes = num_nodes
             super().__init__(num_edges)
 
-        def get_val(self, key: Optional[EdgeStoreType] = None) -> int:
+        def get_val(self, key: Optional[EdgeType] = None) -> int:
             if self.is_number or self.value is None:
                 # Homodata case.
                 return self.value
@@ -466,14 +457,14 @@ class Pad(BaseTransform):
             self.value[src_v, dst_v][edge_type] = max_num_edges
             return self.value[src_v, dst_v][edge_type]
 
-    def __should_pad_node_attr(self, attr_name: AttrNameType) -> bool:
+    def __should_pad_node_attr(self, attr_name: str) -> bool:
         if attr_name in self.node_additional_attrs_pad:
             return True
         if self.exclude_keys is None or attr_name not in self.exclude_keys:
             return True
         return False
 
-    def __should_pad_edge_attr(self, attr_name: AttrNameType) -> bool:
+    def __should_pad_edge_attr(self, attr_name: str) -> bool:
         if self.max_num_edges.is_none():
             return False
         if attr_name == 'edge_index':
@@ -483,15 +474,15 @@ class Pad(BaseTransform):
         return False
 
     def __get_node_padding(
-            self, attr_name: AttrNameType,
-            node_type: Optional[NodeStoreType] = None) -> Union[int, float]:
+            self, attr_name: str,
+            node_type: Optional[NodeType] = None) -> Union[int, float]:
         if attr_name in self.node_additional_attrs_pad:
             return self.node_additional_attrs_pad[attr_name]
         return self.node_pad.get_val(node_type, attr_name)
 
     def __get_edge_padding(
-            self, attr_name: AttrNameType,
-            edge_type: Optional[EdgeStoreType] = None) -> Union[int, float]:
+            self, attr_name: str,
+            edge_type: Optional[EdgeType] = None) -> Union[int, float]:
         return self.edge_pad.get_val(edge_type, attr_name)
 
     def __call__(self, data: Union[Data,
