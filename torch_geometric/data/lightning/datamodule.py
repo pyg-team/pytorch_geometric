@@ -101,7 +101,7 @@ class LightningData(LightningDataModule):
         # For full-batch training, we use reasonable defaults for a lot of
         # data-loading options:
         if loader not in ['full', 'neighbor', 'link_neighbor', 'custom']:
-            raise ValueError("Undefined 'loader' option (got '{loader}')")
+            raise ValueError(f"Undefined 'loader' option (got '{loader}')")
 
         if loader == 'full' and kwargs['batch_size'] != 1:
             warnings.warn(f"Re-setting 'batch_size' to 1 in "
