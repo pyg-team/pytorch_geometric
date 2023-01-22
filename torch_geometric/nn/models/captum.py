@@ -22,7 +22,7 @@ def to_captum_model(
     r"""Converts a model to a model that can be used for
     `Captum.ai <https://captum.ai/>`_ attribution methods.
 
-    Sample code for homogenous graphs:
+    Sample code for homogeneous graphs:
 
     .. code-block:: python
 
