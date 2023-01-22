@@ -478,10 +478,6 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
-    def __init__(self, *args, **kwargs):
-        self._attrs_cache = {"node": set(), "edge": set(), "other": set()}
-        super().__init__(*args, **kwargs)
-
     @property
     def _key(self) -> Any:
         return None

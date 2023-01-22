@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.3.0] - 2023-MM-DD
 
 ### Added
+
 - Added `Pad` transform ([#5940](https://github.com/pyg-team/pytorch_geometric/pull/5940))
 - Added `ToHeteroLinear` and `ToHeteroMessagePassing` modules to accelerate `to_hetero` functionality ([#5992](https://github.com/pyg-team/pytorch_geometric/pull/5992), [#6456](https://github.com/pyg-team/pytorch_geometric/pull/6456))
 - Added `GraphMaskExplainer` ([#6284](https://github.com/pyg-team/pytorch_geometric/pull/6284))
