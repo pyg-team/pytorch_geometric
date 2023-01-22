@@ -11,8 +11,6 @@ torch_geometric.nn
    {% for name in torch_geometric.nn.dense.lin_classes %}
 .. autoclass:: {{ name }}
    :members:
-   :undoc-members:
-   :exclude-members: training, initialize_parameters
    {% endfor %}
 
 Convolutional Layers
