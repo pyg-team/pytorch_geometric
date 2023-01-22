@@ -11,6 +11,7 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.typing import EdgeType, NodeType
 
 AttrNameType = str
 NodeStoreType = str
@@ -278,40 +279,42 @@ class Pad(BaseTransform):
       all attributes of all node (or edge) stores are going to be padded with
       the same value;
     * an object of :class:`AttrNamePadding` class for cases when padding is
-      going to differ based on attribute names and not based on a node
-      (or edge) types;
-    * an object of class :class:`NodeTypePadding` (or :class:`EdgeTypePadding`)
-      for cases when padding values are going to differ based on a node
-      (or edge) types. Padding values can also differ based on attribute names
-      for a given node type by using objects of :class:`AttrNamePadding` class
-      as values of `padding_values` argument of :class:`NodeTypePadding`
-      (or :class:`EdgeTypePadding`) class.
+      going to differ based on attribute names (but not based on node or edge
+      types);
+    * an object of class :class:`NodeTypePadding` or :class:`EdgeTypePadding`
+      for cases when padding values are going to differ based on node or edge
+      types. Padding values can also differ based on attribute names for a
+      given node or edge type by using :class:`AttrNamePadding` objects as
+      values of its `padding_values` argument.
 
-    Note that in order to allow for at least one padding node for any padding
-    edge, below conditions must be met:
+    Note that in order to allow for consistent padding across all graphs in a
+    dataset, below conditions must be met:
 
-    * if :obj:`max_num_nodes` is a single value, it must be greater than the
-      maximum number of nodes of any graph in the dataset;
+    * if :obj:`max_num_nodes` is a single value, it must be greater than or
+      equal to the maximum number of nodes of any graph in the dataset;
     * if :obj:`max_num_nodes` is a dictionary, value for every node type must
-      be greater than the maximum number of this type nodes of any graph in the
-      dataset.
+      be greater than or equal to the maximum number of this type nodes of any
+      graph in the dataset.
 
-    Example below shows how to create a `Pad` transform for
-    :class:`~torch_geometric.data.Data` object. The object is padded to have
-    :obj:`10` nodes of type :obj:`v0`, :obj:`20` of type :obj:`v1` and
-    :obj:`30` of type :obj:`v2`.
-    It is padded to have :obj:`80` edges of type :obj:`('v0', 'e0', 'v1')` and
-    other types of edges are padded so all the possible edges are created.
-    All the attributes of the :obj:`v0` nodes are padded using value
-    :obj:`3.0`, the :obj:`x` attribute of the :obj:`v1` nodes is padded using
-    value :obj:`-1.0` and the other attributes of those nodes are padded using
-    value :obj:`0.5`. All the attributes of nodes different than :obj:`v0`,
-    :obj:`v1` are padded using value :obj:`1.0`.
-    All the attributes of the :obj:`('v0', 'e0', 'v1')` edges are padded using
-    value :obj:`3.5`, the :obj:`edge_attr` attributes of the
-    :obj:`('v1', 'e0', 'v0')` edges use value :obj:`-1.5` and any other
-    attributes of this type of edges use value :obj:`5.5`. All the attributes
-    of any other type of edges use value :obj:`1.5`.
+    Example below shows how to create a :class:`Pad` transform for an
+    :class:`~torch_geometric.data.HeteroData` object. The object is padded to
+    have :obj:`10` nodes of type :obj:`v0`, :obj:`20` nodes of type :obj:`v1`
+    and :obj:`30` nodes of type :obj:`v2`.
+    It is padded to have :obj:`80` edges of type :obj:`('v0', 'e0', 'v1')`.
+    All the attributes of the :obj:`v0` nodes are padded using a value of
+    :obj:`3.0`.
+    The :obj:`x` attribute of the :obj:`v1` node type is padded using a value
+    of :obj:`-1.0`, and the other attributes of this node type are padded using
+    a value of :obj:`0.5`.
+    All the attributes of node types other than :obj:`v0` and :obj:`v1` are
+    padded using a value of :obj:`1.0`.
+    All the attributes of the :obj:`('v0', 'e0', 'v1')` edge type are padded
+    usin a value of :obj:`3.5`.
+    The :obj:`edge_attr` attributes of the :obj:`('v1', 'e0', 'v0')` edge type
+    are padded using a value of :obj:`-1.5`, and any other attributes of this
+    edge type are padded using a value of :obj:`5.5`.
+    All the attributes of edge types other than these two are padded using a
+    value of :obj:`1.5`.
 
     Example:
 
@@ -319,59 +322,50 @@ class Pad(BaseTransform):
 
         num_nodes = {'v0': 10, 'v1': 20, 'v2':30}
         num_edges = {('v0', 'e0', 'v1'): 80}
-        node_padding = NodeTypePadding(
-                {'v0': 3.0,
-                 'v1': AttrNamePadding({'x': -1.0}, default_value=0.5)},
-                default_value=1.0)
-        edge_padding = EdgeTypePadding(
-                {('v0', 'e0', 'v1'): 3.5,
-                 ('v1', 'e0', 'v0'): AttrNamePadding(
-                     {'edge_attr': -1.5},
-                     default_value=5.5)},
-                default_value=1.5)
+
+        node_padding = NodeTypePadding({
+            'v0': 3.0,
+            'v1': AttrNamePadding({'x': -1.0}, default_value=0.5),
+        }, default_value=1.0)
+
+        edge_padding = EdgeTypePadding({
+            ('v0', 'e0', 'v1'): 3.5,
+            ('v1', 'e0', 'v0'): AttrNamePadding({'edge_attr': -1.5},
+                                                default_value=5.5),
+        }, default_value=1.5)
+
         transform = Pad(num_nodes, num_edges, node_padding, edge_padding)
 
     Args:
         max_num_nodes (int or dict): The number of nodes after padding.
             In heterogeneous graphs, may also take in a dictionary denoting the
-            number of nodes for specific node types. The dictionary must
-            specify values for all the possible node types.
+            number of nodes for specific node types.
         max_num_edges (int or dict, optional): The number of edges after
-            padding. If not specified, the edges will be padded to a
-            maximum size (creating a fully connected graph with loops).
+            padding.
             In heterogeneous graphs, may also take in a dictionary denoting the
-            number of edges for specific edge types. If some edge type is not
-            included in the dictionary, all the attributes of edges of that
-            type will be padded to a maximum size. (default: :obj:`None`)
+            number of edges for specific edge types. (default: :obj:`None`)
         node_pad_value (int or float or Padding, optional): The fill value to
             use for node features. (default: :obj:`0.0`)
         edge_pad_value (int or float or Padding, optional): The fill value to
             use for edge features. (default: :obj:`0.0`)
-            Note that in case of :obj:`edge_index` attribute the tensors are
-            padded with the index of the first padded node (which represents a
-            set of self loops on the padded node). (default: :obj:`0.0`)
+            The :obj:`edge_index` tensor is padded with with the index of the
+            first padded node (which represents a set of self-loops on the
+            padded node). (default: :obj:`0.0`)
         mask_pad_value (bool, optional): The fill value to use for
-            :obj:`train_mask`, :obj:`val_mask` and :obj:`test_mask`
+            :obj:`train_mask`, :obj:`val_mask` and :obj:`test_mask` attributes
             (default: :obj:`False`).
         exclude_keys (list or tuple, optional): Keys to be removed
             from the input data object. (default: :obj:`None`)
     """
     def __init__(
         self,
-        max_num_nodes: Union[int, Dict[str, int]],
-        max_num_edges: Optional[Union[int, Dict[Tuple[str, str, str],
-                                                int]]] = None,
-        node_pad_value: Optional[Union[int, float, UniformPadding,
-                                       AttrNamePadding,
-                                       NodeTypePadding]] = None,
-        edge_pad_value: Optional[Union[int, float, UniformPadding,
-                                       AttrNamePadding,
-                                       EdgeTypePadding]] = None,
-        mask_pad_value: Optional[bool] = None,
+        max_num_nodes: Union[int, Dict[NodeType, int]],
+        max_num_edges: Optional[Union[int, Dict[EdgeType, int]]] = None,
+        node_pad_value: Optional[Union[int, float, Padding]] = None,
+        edge_pad_value: Optional[Union[int, float, Padding]] = None,
+        mask_pad_value: bool = False,
         exclude_keys: Optional[Union[List[str], Tuple[str]]] = None,
-    ) -> None:
-        super().__init__()
-
+    ):
         self._default_pad_value = UniformPadding(0.0)
         self.max_num_nodes = self._NumNodes(max_num_nodes)
         self.max_num_edges = self._NumEdges(max_num_edges, self.max_num_nodes)
