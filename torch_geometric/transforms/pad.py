@@ -1,4 +1,3 @@
-import copy
 import numbers
 from abc import ABC, abstractmethod
 from collections import defaultdict
@@ -33,20 +32,27 @@ class Padding(ABC):
 
 
 class MappingPadding(Padding):
-    r"""Abstract class for specifying the padding values to use by :class:`Pad`
-    transform. This class supports padding values represented as a dictionary.
+    r"""An abstract class for specifying the padding values to use by the
+    :class:`Pad` transform.
+    This class supports padding values represented as a dictionary.
     """
     _key_types = ()
     _val_types = ()
 
-    def __init__(self, padding_values: Optional[Dict[Any, Any]] = None,
-                 default_value: Optional[Union[int, float]] = 0.0) -> None:
-        if padding_values is None:
-            padding_values = {}
-        self.padding_values = copy.copy(padding_values)
+    def __init__(
+        self,
+        padding_values: Optional[Dict[Any, Any]] = None,
+        default_value: Union[int, float] = 0.0,
+    ):
+        self.padding_values = padding_values or {}
         self.default_value = default_value
+
         self._validate()
-        self._process()
+
+        self.padding_values = {
+            k: UniformPadding(v) if isinstance(v, (int, float)) else v
+            for k, v in (padding_values or {}).items()
+        }
 
     def _validate(self) -> None:
         assert isinstance(self.padding_values, dict), \
@@ -62,11 +68,6 @@ class MappingPadding(Padding):
         assert isinstance(val, self._val_types), \
             f'Not all the types of `padding_values` values are in ' \
             f'{self._val_types}.'
-
-    def _process(self) -> None:
-        for key, pad_val in self.padding_values.items():
-            if isinstance(pad_val, PadValTypes):
-                self.padding_values[key] = UniformPadding(pad_val)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}' \
@@ -90,22 +91,22 @@ class UniformPadding(Padding):
             padding the data object uniformly regardless of store types and
             attribute names. (default: :obj:`0.0`)
     """
-    def __init__(self, padding_values: Union[float, int] = 0.0):
-        self.padding_values = padding_values
+    def __init__(self, value: Union[float, int] = 0.0):
+        self.value = value
         self._validate()
 
     def _validate(self) -> None:
-        assert isinstance(self.padding_values, PadValTypes), \
+        assert isinstance(self.value, PadValTypes), \
             f'Type of attribute `padding_values` must be one of ' \
-            f'{PadValTypes} but is {type(self.padding_values)}.'
+            f'{PadValTypes} but is {type(self.value)}.'
 
     def get_val(self, store_type: Optional[Union[NodeType, EdgeType]] = None,
                 attr_name: Optional[str] = None) -> Union[int, float]:
-        return self.padding_values
+        return self.value
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}' \
-               f'(padding_values={self.padding_values})'
+               f'(value={self.value})'
 
 
 class AttrNamePadding(MappingPadding):

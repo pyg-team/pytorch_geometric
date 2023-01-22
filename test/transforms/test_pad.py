@@ -250,8 +250,8 @@ def _check_data(original: Union[Data, HeteroData], padded: Union[Data,
 
 def test_pad_repr():
     pad_str = 'Pad(max_num_nodes=10, max_num_edges=15, ' \
-        'node_pad_value=UniformPadding(padding_values=3.0), ' \
-        'edge_pad_value=UniformPadding(padding_values=1.5))'
+        'node_pad_value=UniformPadding(value=3.0), ' \
+        'edge_pad_value=UniformPadding(value=1.5))'
     assert eval(pad_str).__repr__() == pad_str
 
 
