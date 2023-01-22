@@ -100,7 +100,6 @@ We configure the :class:`~torch_geometric.explain.Explainer` to use both a :obj:
 
     from torch_geometric.data import HeteroData
     from torch_geometric.explain import Explainer, CaptumExplainer
-    from torch_geometric.explain.config import ModelConfig
 
     hetero_data = HeteroData(...)  # A heterogeneous graph data object.
 
