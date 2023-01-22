@@ -7,6 +7,7 @@ import torch_sparse
 
 import torch_geometric
 from torch_geometric.data import Data
+from torch_geometric.data.storage import AttrType
 
 
 def test_data():
@@ -136,6 +137,35 @@ def test_data():
     assert data.get('title') == 'test'
 
     torch_geometric.set_debug(False)
+
+
+def test_data_attr_cache():
+    x = torch.randn(3, 16)
+    edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
+    edge_attr = torch.randn(5, 4)
+    y = torch.tensor([0])
+
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
+
+    assert data.is_node_attr('x')
+    assert 'x' in data._store._cached_attr[AttrType.NODE]
+    assert 'x' not in data._store._cached_attr[AttrType.EDGE]
+    assert 'x' not in data._store._cached_attr[AttrType.OTHER]
+
+    assert not data.is_node_attr('edge_index')
+    assert 'edge_index' not in data._store._cached_attr[AttrType.NODE]
+    assert 'edge_index' in data._store._cached_attr[AttrType.EDGE]
+    assert 'edge_index' not in data._store._cached_attr[AttrType.OTHER]
+
+    assert data.is_edge_attr('edge_attr')
+    assert 'edge_attr' not in data._store._cached_attr[AttrType.NODE]
+    assert 'edge_attr' in data._store._cached_attr[AttrType.EDGE]
+    assert 'edge_attr' not in data._store._cached_attr[AttrType.OTHER]
+
+    assert not data.is_edge_attr('y')
+    assert 'y' not in data._store._cached_attr[AttrType.NODE]
+    assert 'y' not in data._store._cached_attr[AttrType.EDGE]
+    assert 'y' in data._store._cached_attr[AttrType.OTHER]
 
 
 def test_to_heterogeneous_empty_edge_index():

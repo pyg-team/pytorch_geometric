@@ -133,7 +133,7 @@ class ExplanationMixin:
 
 
 class Explanation(Data, ExplanationMixin):
-    r"""Holds all the obtained explanations of a homogenous graph.
+    r"""Holds all the obtained explanations of a homogeneous graph.
 
     The explanation object is a :obj:`~torch_geometric.data.Data` object and
     can hold node attributions and edge attributions.
