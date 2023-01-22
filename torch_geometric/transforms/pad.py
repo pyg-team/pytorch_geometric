@@ -19,16 +19,16 @@ PadValTypes = (int, float)
 class Padding(ABC):
     r"""An abstract class for specifying padding values to use by the
     :class:`Pad` transform."""
-    def __init__(self, *args, **kwargs):
+    @abstractmethod
+    def _validate(self):
         pass
 
     @abstractmethod
-    def _validate(self) -> None:
-        pass
-
-    @abstractmethod
-    def get_val(self, store_type: Optional[Union[NodeType, EdgeType]] = None,
-                attr_name: Optional[str] = None) -> None:
+    def get_val(
+        self,
+        store_type: Optional[Union[NodeType, EdgeType]] = None,
+        attr_name: Optional[str] = None,
+    ) -> Union[int, float]:
         pass
 
 
@@ -47,7 +47,6 @@ class MappingPadding(Padding):
         self.default_value = default_value
         self._validate()
         self._process()
-        super().__init__(padding_values, default_value)
 
     def _validate(self) -> None:
         assert isinstance(self.padding_values, dict), \
@@ -94,7 +93,6 @@ class UniformPadding(Padding):
     def __init__(self, padding_values: Union[float, int] = 0.0):
         self.padding_values = padding_values
         self._validate()
-        super().__init__(padding_values)
 
     def _validate(self) -> None:
         assert isinstance(self.padding_values, PadValTypes), \
