@@ -124,8 +124,8 @@ We configure the :class:`~torch_geometric.explain.Explainer` to use both a :obj:
         hetero_data.edge_index_dict,
         index=torch.tensor([1, 3]),
     )
-    print(explanation.edge_mask_dict)
-    print(explanation.node_mask_dict)
+    print(hetero_explanation.edge_mask_dict)
+    print(hetero_explanation.node_mask_dict)
 
 Explaining graph regression on a homogeneous graph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
