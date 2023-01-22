@@ -31,11 +31,6 @@ Convolutional Layers
    :undoc-members:
    :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, initialize_parameters
 
-.. automodule:: torch_geometric.nn.meta
-   :members:
-   :undoc-members:
-   :exclude-members: training
-
 Aggregation Operators
 ---------------------
 
