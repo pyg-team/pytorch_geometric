@@ -40,7 +40,11 @@ def test_kmis_pooling_repr():
         assert str(pool2) == f'KMISPooling(k={k})'
 
 
-@pytest.mark.parametrize('scorer', KMISPooling._scorers)
+def _custom_scorer(x, *args, **kwargs):
+    return x.norm(dim=-1, keepdim=True)
+
+
+@pytest.mark.parametrize('scorer', KMISPooling._scorers | {_custom_scorer})
 @pytest.mark.parametrize('score_heuristic', KMISPooling._heuristics)
 @pytest.mark.parametrize('score_passthrough',
                          KMISPooling._passthroughs - {None})
