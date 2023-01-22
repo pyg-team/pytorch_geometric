@@ -34,7 +34,7 @@ N_KEYS = {'x', 'feat', 'pos', 'batch'}
 
 class AttrType(Enum):
     NODE = 'NODE'
-    EDGE = 'OTHER'
+    EDGE = 'EDGE'
     OTHER = 'OTHER'
 
 
@@ -515,9 +515,6 @@ class EdgeStorage(BaseStorage):
 
 
 class GlobalStorage(NodeStorage, EdgeStorage):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     @property
     def _key(self) -> Any:
         return None
