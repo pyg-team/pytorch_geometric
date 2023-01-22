@@ -19,10 +19,6 @@ class Padding(ABC):
     r"""An abstract class for specifying padding values to use by the
     :class:`Pad` transform."""
     @abstractmethod
-    def _validate(self):
-        pass
-
-    @abstractmethod
     def get_val(
         self,
         store_type: Optional[Union[NodeType, EdgeType]] = None,
@@ -44,30 +40,24 @@ class MappingPadding(Padding):
         padding_values: Optional[Dict[Any, Any]] = None,
         default_value: Union[int, float] = 0.0,
     ):
-        self.padding_values = padding_values or {}
+        padding_values = padding_values or {}
+        if not isinstance(padding_values, dict):
+            raise ValueError(f"Expected 'padding_values' to be a dictionary "
+                             f"(got '{type(padding_values)}'")
+
         self.default_value = default_value
-
-        self._validate()
-
         self.padding_values = {
-            k: UniformPadding(v) if isinstance(v, (int, float)) else v
-            for k, v in (padding_values or {}).items()
+            key: UniformPadding(val) if isinstance(val, (int, float)) else val
+            for key, val in padding_values.items()
         }
 
-    def _validate(self) -> None:
-        assert isinstance(self.padding_values, dict), \
-            f'Attribute `padding_values` must be a dict but is ' \
-            f'{type(self.padding_values)}.'
         for key, val in self.padding_values.items():
-            self._validate_key_val(key, val)
-
-    def _validate_key_val(self, key: Any, val: Any) -> None:
-        assert isinstance(key, self._key_types), \
-            f'Not all the types of `padding_values` keys are in ' \
-            f'{self._key_types}.'
-        assert isinstance(val, self._val_types), \
-            f'Not all the types of `padding_values` values are in ' \
-            f'{self._val_types}.'
+            if not isinstance(key, self._key_types):
+                raise ValueError(f"Expected '{key}' to be of type "
+                                 f"{self._key_types} (got '{type(key)}')")
+            if not isinstance(val, self._val_types):
+                raise ValueError(f"Expected the value of '{key}' to be of "
+                                 f"type {self._val_types} (got '{type(val)}')")
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}' \
@@ -91,17 +81,18 @@ class UniformPadding(Padding):
             padding the data object uniformly regardless of store types and
             attribute names. (default: :obj:`0.0`)
     """
-    def __init__(self, value: Union[float, int] = 0.0):
+    def __init__(self, value: Union[int, float] = 0.0):
+        if not isinstance(value, (int, float)):
+            raise ValueError(f"Expected 'value' to be an integer or float "
+                             f"(got '{type(value)}'")
+
         self.value = value
-        self._validate()
 
-    def _validate(self) -> None:
-        assert isinstance(self.value, PadValTypes), \
-            f'Type of attribute `padding_values` must be one of ' \
-            f'{PadValTypes} but is {type(self.value)}.'
-
-    def get_val(self, store_type: Optional[Union[NodeType, EdgeType]] = None,
-                attr_name: Optional[str] = None) -> Union[int, float]:
+    def get_val(
+        self,
+        store_type: Optional[Union[NodeType, EdgeType]] = None,
+        attr_name: Optional[str] = None,
+    ) -> Union[int, float]:
         return self.value
 
     def __repr__(self) -> str:
@@ -131,19 +122,14 @@ class AttrNamePadding(MappingPadding):
     _key_types = (str, )
     _val_types = (UniformPadding, *PadValTypes)
 
-    def __init__(self,
-                 padding_values: Optional[Dict[str,
-                                               Union[int, float,
-                                                     UniformPadding]]] = None,
-                 default_value: Optional[Union[int, float]] = 0.0) -> None:
-        super().__init__(padding_values, default_value)
-
-    def get_val(self, store_type: Optional[Union[NodeType, EdgeType]] = None,
-                attr_name: Optional[str] = None) -> Union[int, float]:
+    def get_val(
+        self,
+        store_type: Optional[Union[NodeType, EdgeType]] = None,
+        attr_name: Optional[str] = None,
+    ) -> Union[int, float]:
         if attr_name in self.padding_values.keys():
             return self.padding_values[attr_name].get_val()
-        else:
-            return self.default_value
+        return self.default_value
 
 
 class NodeTypePadding(MappingPadding):
@@ -171,20 +157,14 @@ class NodeTypePadding(MappingPadding):
     _key_types = (NodeType, )
     _val_types = (UniformPadding, AttrNamePadding, *PadValTypes)
 
-    def __init__(self,
-                 padding_values: Optional[Dict[NodeType,
-                                               Union[int, float,
-                                                     UniformPadding,
-                                                     AttrNamePadding]]] = None,
-                 default_value=0.0) -> None:
-        super().__init__(padding_values, default_value)
-
-    def get_val(self, store_type: Optional[NodeType] = None,
-                attr_name: Optional[str] = None) -> Union[int, float]:
+    def get_val(
+        self,
+        store_type: Optional[NodeType] = None,
+        attr_name: Optional[str] = None,
+    ) -> Union[int, float]:
         if store_type in self.padding_values.keys():
             return self.padding_values[store_type].get_val(None, attr_name)
-        else:
-            return self.default_value
+        return self.default_value
 
 
 class EdgeTypePadding(MappingPadding):
@@ -212,34 +192,30 @@ class EdgeTypePadding(MappingPadding):
             (default: :obj:`0.0`)
     """
     _key_types = (tuple, )
-    _key_elem_types = (str, )
-    _key_num_elems = 3
     _val_types = (UniformPadding, AttrNamePadding, *PadValTypes)
 
-    def __init__(self,
-                 padding_values: Optional[Dict[EdgeType,
-                                               Union[int, float,
-                                                     UniformPadding,
-                                                     AttrNamePadding]]] = None,
-                 default_value=0.0) -> None:
+    def __init__(
+        self,
+        padding_values: Optional[Dict[EdgeType,
+                                      Union[int, float, UniformPadding,
+                                            AttrNamePadding]]] = None,
+        default_value=0.0,
+    ):
         super().__init__(padding_values, default_value)
 
-    def _validate_key_val(self, key: Any, val: Any) -> None:
-        super()._validate_key_val(key, val)
-        assert len(key) == self._key_num_elems, \
-            f'Invalid edge type. Should be a tuple with ' \
-            f'{self._key_num_elems} elements but contains {len(key)} elements.'
-        for key_elem in key:
-            assert isinstance(key_elem, self._key_elem_types), \
-                f'Not all the types of elements of `padding_values` ' \
-                f'keys are in {self._key_elem_types}.'
+        for key in self.padding_values.keys():
+            if not len(key) == 3:
+                raise ValueError(f"Edge type '{key}'' must be a tuple of "
+                                 f"length 3 (got {len(key)})")
 
-    def get_val(self, store_type: Optional[EdgeType] = None,
-                attr_name: Optional[str] = None) -> Union[int, float]:
+    def get_val(
+        self,
+        store_type: Optional[EdgeType] = None,
+        attr_name: Optional[str] = None,
+    ) -> Union[int, float]:
         if store_type in self.padding_values.keys():
             return self.padding_values[store_type].get_val(None, attr_name)
-        else:
-            return self.default_value
+        return self.default_value
 
 
 @functional_transform('pad')

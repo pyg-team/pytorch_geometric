@@ -377,11 +377,9 @@ def test_pad_num_nodes_not_complete():
 
 
 def test_pad_invalid_padding_type():
-    with pytest.raises(AssertionError,
-                       match='Invalid type of `node_pad_value`'):
+    with pytest.raises(ValueError, match="to be an integer or float"):
         Pad(max_num_nodes=100, node_pad_value='somestring')
-    with pytest.raises(AssertionError,
-                       match='Invalid type of `edge_pad_value`'):
+    with pytest.raises(ValueError, match="to be an integer or float"):
         Pad(max_num_nodes=100, edge_pad_value='somestring')
 
 
@@ -431,13 +429,8 @@ def test_uniform_padding():
     p = UniformPadding()
     assert p.get_val() == 0.0
 
-    with pytest.raises(AssertionError,
-                       match='Type of attribute `padding_values`'):
+    with pytest.raises(ValueError, match="to be an integer or float"):
         UniformPadding('')
-
-    with pytest.raises(AssertionError,
-                       match='Type of attribute `padding_values`'):
-        UniformPadding({})
 
 
 def test_attr_name_padding():
@@ -458,20 +451,20 @@ def test_attr_name_padding():
 
 
 def test_attr_name_padding_invalid():
-    with pytest.raises(AssertionError, match='Attribute `padding_values`'):
+    with pytest.raises(ValueError, match="to be a dictionary"):
         AttrNamePadding(10.0)
 
-    with pytest.raises(AssertionError, match='Not all the types of'):
+    with pytest.raises(ValueError, match="to be of type"):
         AttrNamePadding({10: 10.0})
 
-    with pytest.raises(AssertionError, match='Not all the types of'):
+    with pytest.raises(ValueError, match="to be of type"):
         AttrNamePadding({"x": {}})
 
-    with pytest.raises(AssertionError, match='Not all the types of'):
+    with pytest.raises(ValueError, match="to be of type"):
         AttrNamePadding({"x": {}})
 
     node_type_padding = NodeTypePadding({"x": 10.0})
-    with pytest.raises(AssertionError, match='Not all the types of'):
+    with pytest.raises(ValueError, match="to be of type"):
         AttrNamePadding({'x': node_type_padding})
 
 
@@ -518,14 +511,14 @@ def test_node_edge_type_padding(store_type):
 
 
 def test_edge_padding_invalid():
-    with pytest.raises(AssertionError, match='Not all the types of'):
+    with pytest.raises(ValueError, match="to be of type"):
         EdgeTypePadding({'v1': 10.0})
 
-    with pytest.raises(AssertionError, match='contains 1 elements.'):
+    with pytest.raises(ValueError, match="got 1"):
         EdgeTypePadding({('v1', ): 10.0})
 
-    with pytest.raises(AssertionError, match='contains 2 elements.'):
+    with pytest.raises(ValueError, match="got 2"):
         EdgeTypePadding({('v1', 'v2'): 10.0})
 
-    with pytest.raises(AssertionError, match='contains 4 elements.'):
+    with pytest.raises(ValueError, match="got 4"):
         EdgeTypePadding({('v1', 'e2', 'v1', 'v2'): 10.0})
