@@ -10,7 +10,7 @@ from torch_geometric.utils import sort_edge_index
 class ToSparseTensor(BaseTransform):
     r"""Converts the :obj:`edge_index` attributes of a homogeneous or
     heterogeneous data object into a (transposed)
-    :class:`torch_sparse.SparseTensor` type with key :obj:`adj_t`
+    :class:`torch_sparse.SparseTensor` object with key :obj:`adj_t`
     (functional name: :obj:`to_sparse_tensor`).
 
     .. note::

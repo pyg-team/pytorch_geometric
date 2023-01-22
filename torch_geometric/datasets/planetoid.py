@@ -9,19 +9,18 @@ from torch_geometric.io import read_planetoid_data
 
 
 class Planetoid(InMemoryDataset):
-    r"""The citation network datasets "Cora", "CiteSeer" and "PubMed" from the
-    `"Revisiting Semi-Supervised Learning with Graph Embeddings"
-    <https://arxiv.org/abs/1603.08861>`_ paper.
+    r"""The citation network datasets :obj:`"Cora"`, :obj:`"CiteSeer"` and
+    :obj:`"PubMed"` from the `"Revisiting Semi-Supervised Learning with Graph
+    Embeddings" <https://arxiv.org/abs/1603.08861>`_ paper.
     Nodes represent documents and edges represent citation links.
     Training, validation and test splits are given by binary masks.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Cora"`,
-            :obj:`"CiteSeer"`, :obj:`"PubMed"`).
-        split (string): The type of dataset split
-            (:obj:`"public"`, :obj:`"full"`, :obj:`"geom-gcn"`,
-            :obj:`"random"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Cora"`, :obj:`"CiteSeer"`,
+            :obj:`"PubMed"`).
+        split (str, optional): The type of dataset split (:obj:`"public"`,
+            :obj:`"full"`, :obj:`"geom-gcn"`, :obj:`"random"`).
             If set to :obj:`"public"`, the split will be the public fixed split
             from the `"Revisiting Semi-Supervised Learning with Graph
             Embeddings" <https://arxiv.org/abs/1603.08861>`_ paper.
@@ -50,31 +49,32 @@ class Planetoid(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - Cora
-              - 2,708
-              - 10,556
-              - 1,433
-              - 7
-            * - CiteSeer
-              - 3,327
-              - 9,104
-              - 3,703
-              - 6
-            * - PubMed
-              - 19,717
-              - 88,648
-              - 500
-              - 3
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Cora
+          - 2,708
+          - 10,556
+          - 1,433
+          - 7
+        * - CiteSeer
+          - 3,327
+          - 9,104
+          - 3,703
+          - 6
+        * - PubMed
+          - 19,717
+          - 88,648
+          - 500
+          - 3
     """
 
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'

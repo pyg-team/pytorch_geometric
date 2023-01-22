@@ -1,4 +1,5 @@
 import torch
+from torch import Tensor
 
 from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import coalesce, degree
@@ -29,8 +30,10 @@ def assortativity(edge_index: Adj) -> float:
         -0.666667640209198
     """
     if isinstance(edge_index, SparseTensor):
-        row, col, _ = edge_index.coo()
+        adj: SparseTensor = edge_index
+        row, col, _ = adj.coo()
     else:
+        assert isinstance(edge_index, Tensor)
         row, col = edge_index
 
     device = row.device

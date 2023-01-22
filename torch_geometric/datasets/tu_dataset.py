@@ -10,8 +10,9 @@ from torch_geometric.io import read_tu_data
 
 
 class TUDataset(InMemoryDataset):
-    r"""A variety of graph kernel benchmark datasets, *.e.g.* "IMDB-BINARY",
-    "REDDIT-BINARY" or "PROTEINS", collected from the `TU Dortmund University
+    r"""A variety of graph kernel benchmark datasets, *.e.g.*,
+    :obj:`"IMDB-BINARY"`, :obj:`"REDDIT-BINARY"` or :obj:`"PROTEINS"`,
+    collected from the `TU Dortmund University
     <https://chrsmrrs.github.io/datasets>`_.
     In addition, this dataset wrapper provides `cleaned dataset versions
     <https://github.com/nd7141/graph_datasets>`_ as motivated by the
@@ -24,12 +25,12 @@ class TUDataset(InMemoryDataset):
         You can then either make use of the argument :obj:`use_node_attr`
         to load additional continuous node attributes (if present) or provide
         synthetic node features using transforms such as
-        like :class:`torch_geometric.transforms.Constant` or
+        :class:`torch_geometric.transforms.Constant` or
         :class:`torch_geometric.transforms.OneHotDegree`.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The `name
+        root (str): Root directory where the dataset should be saved.
+        name (str): The `name
             <https://chrsmrrs.github.io/datasets/docs/datasets/>`_ of the
             dataset.
         transform (callable, optional): A function/transform that takes in an
@@ -53,59 +54,60 @@ class TUDataset(InMemoryDataset):
         cleaned (bool, optional): If :obj:`True`, the dataset will
             contain only non-isomorphic graphs. (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 20 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - MUTAG
-              - 188
-              - ~17.9
-              - ~39.6
-              - 7
-              - 2
-            * - ENZYMES
-              - 600
-              - ~32.6
-              - ~124.3
-              - 3
-              - 6
-            * - PROTEINS
-              - 1,113
-              - ~39.1
-              - ~145.6
-              - 3
-              - 2
-            * - COLLAB
-              - 5,000
-              - ~74.5
-              - ~4914.4
-              - 0
-              - 3
-            * - IMDB-BINARY
-              - 1,000
-              - ~19.8
-              - ~193.1
-              - 0
-              - 2
-            * - REDDIT-BINARY
-              - 2,000
-              - ~429.6
-              - ~995.5
-              - 0
-              - 2
-            * - ...
-              -
-              -
-              -
-              -
-              -
+    .. list-table::
+        :widths: 20 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - MUTAG
+          - 188
+          - ~17.9
+          - ~39.6
+          - 7
+          - 2
+        * - ENZYMES
+          - 600
+          - ~32.6
+          - ~124.3
+          - 3
+          - 6
+        * - PROTEINS
+          - 1,113
+          - ~39.1
+          - ~145.6
+          - 3
+          - 2
+        * - COLLAB
+          - 5,000
+          - ~74.5
+          - ~4914.4
+          - 0
+          - 3
+        * - IMDB-BINARY
+          - 1,000
+          - ~19.8
+          - ~193.1
+          - 0
+          - 2
+        * - REDDIT-BINARY
+          - 2,000
+          - ~429.6
+          - ~995.5
+          - 0
+          - 2
+        * - ...
+          -
+          -
+          -
+          -
+          -
     """
 
     url = 'https://www.chrsmrrs.com/graphkerneldatasets'

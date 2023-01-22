@@ -18,7 +18,7 @@ class ToUndirected(BaseTransform):
     edge types.
 
     Args:
-        reduce (string, optional): The reduce operation to use for merging edge
+        reduce (str, optional): The reduce operation to use for merging edge
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"`). (default: :obj:`"add"`)
         merge (bool, optional): If set to :obj:`False`, will create reverse

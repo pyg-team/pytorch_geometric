@@ -5,12 +5,11 @@ import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear
-from torch_scatter import scatter
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import MessagePassing, aggr
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
-from torch_geometric.utils import spmm
+from torch_geometric.utils import scatter, spmm
 
 
 class MyConv(MessagePassing):
@@ -101,11 +100,11 @@ def test_my_conv_out_of_bounds():
 
     conv = MyConv(8, 32)
 
-    with pytest.raises(ValueError, match="valid indices"):
+    with pytest.raises(IndexError, match="valid indices"):
         edge_index = torch.tensor([[-1, 1, 2, 2], [0, 0, 1, 1]])
         conv(x, edge_index, value)
 
-    with pytest.raises(ValueError, match="valid indices"):
+    with pytest.raises(IndexError, match="valid indices"):
         edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
         conv(x, edge_index, value)
 
@@ -283,7 +282,7 @@ def test_my_edge_conv():
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
     torch_adj = adj.to_torch_sparse_coo_tensor()
 
-    expected = scatter(x[row] - x[col], col, dim=0, dim_size=4, reduce='add')
+    expected = scatter(x[row] - x[col], col, dim=0, dim_size=4, reduce='sum')
 
     conv = MyEdgeConv()
     out = conv(x, edge_index)
@@ -472,7 +471,7 @@ class MyMultipleOutputConv(MessagePassing):
 
     def aggregate(self, inputs: Tuple[Tensor, Tensor],
                   index: Tensor) -> Tuple[Tensor, Tensor]:
-        return (scatter(inputs[0], index, dim=0, reduce='add'),
+        return (scatter(inputs[0], index, dim=0, reduce='sum'),
                 scatter(inputs[0], index, dim=0, reduce='mean'))
 
     def update(self, inputs: Tuple[Tensor, Tensor]) -> Tuple[Tensor, Tensor]:
