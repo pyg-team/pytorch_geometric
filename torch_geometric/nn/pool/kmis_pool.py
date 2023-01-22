@@ -219,6 +219,9 @@ class KMISPooling(Module):
 
     def _scorer(self, x: Tensor, edge_index: Adj, edge_attr: OptTensor = None,
                 batch: OptTensor = None) -> Tensor:
+        if self.scorer == 'linear':
+            return self.lin(x).sigmoid()
+
         if self.scorer == 'random':
             return torch.rand((x.size(0), 1), device=x.device)
 
@@ -233,9 +236,6 @@ class KMISPooling(Module):
 
         if self.scorer == 'last':
             return x[..., [-1]]
-
-        if self.scorer == 'linear':
-            return self.lin(x).sigmoid()
 
         return self.scorer(x, edge_index, edge_attr, batch)
 
