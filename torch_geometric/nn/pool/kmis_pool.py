@@ -88,6 +88,9 @@ class KMISPooling(Module):
 
             - :obj:`"constant"`: assigns :math:`1` to every node;
 
+            - :obj:`"canonical"`: assigns :math:`-i` to every :math:`i`-th
+              node;
+
             - :obj:`"first"` (or :obj:`"last"`): use the first (resp. last)
               feature dimension of :math:`\mathbf{X}` as node scores;
 
@@ -120,12 +123,13 @@ class KMISPooling(Module):
               where :math:`\oslash` is the element-wise division. All scores
               must be strictly positive when using this option.
 
-        score_passthrough (str, optional): Whether to multiply the node scores
-            to the feature vectors. If :obj:`"before"`, all the node scores are
-            multiplied to their respective feature vector before the cluster
+        score_passthrough (str, optional): Whether to aggregate the node
+            scores to the feature vectors, using the function specified by
+            :obj:`aggr_score`. If :obj:`"before"`, all the node scores are
+            aggregated to their respective feature vector before the cluster
             aggregation. If :obj:`"after"`, the score of the selected nodes are
-            multiplied to the feature vectors after the cluster aggregation.
-            If :obj:`None`, the score is not multiplied. Defaults to
+            aggregated to the feature vectors after the cluster aggregation.
+            If :obj:`None`, the score is not aggregated. Defaults to
             :obj:`"before"`.
 
                 .. note::
@@ -144,19 +148,39 @@ class KMISPooling(Module):
             crossing the the same two clusters. Can be any string
             admitted by :obj:`scatter` (e.g., :obj:`'sum'`, :obj:`'mean'`,
             :obj:`'max'`). Defaults to :obj:`'sum'`.
+        aggr_score (Callable): The aggregation function to be applied to the
+            feature matrix and the score vector. Defaults to :obj:`torch.mul`.
         remove_self_loops (bool): Whether to remove the self-loops from the
             graph after its reduction. Defaults to :obj:`True`.
     """
+    _heuristics = {None, 'greedy', 'w-greedy'}
+    _passthroughs = {None, 'before', 'after'}
+    _scorers = {
+        'linear',
+        'random',
+        'constant',
+        'canonical',
+        'first',
+        'last',
+    }
+
     def __init__(self, in_channels: Optional[int] = None, k: int = 1,
-                 scorer: Optional[Union[Scorer, str]] = 'linear',
+                 scorer: Union[Scorer, str] = 'linear',
                  score_heuristic: Optional[str] = 'greedy',
                  score_passthrough: Optional[str] = 'before',
                  aggr_x: Optional[Union[str, Aggregation]] = None,
                  aggr_edge: str = 'sum',
+                 aggr_score: Callable[[Tensor, Tensor], Tensor] = torch.mul,
                  remove_self_loops: bool = True) -> None:
         super(KMISPooling, self).__init__()
-        assert score_heuristic in {None, 'greedy', 'w-greedy'}
-        assert score_passthrough in {None, 'before', 'after'}
+        assert score_heuristic in self._heuristics, \
+            "Unrecognized `score_heuristic` value."
+        assert score_passthrough in self._passthroughs, \
+            "Unrecognized `score_passthrough` value."
+
+        if not callable(scorer):
+            assert scorer in self._scorers, \
+                "Unrecognized `scorer` value."
 
         self.k = k
         self.scorer = scorer
@@ -165,6 +189,7 @@ class KMISPooling(Module):
 
         self.aggr_x = aggr_x
         self.aggr_edge = aggr_edge
+        self.aggr_score = aggr_score
         self.remove_self_loops = remove_self_loops
 
         if scorer == 'linear':
@@ -200,11 +225,14 @@ class KMISPooling(Module):
         if self.scorer == 'constant':
             return torch.ones((x.size(0), 1), device=x.device)
 
+        if self.scorer == 'canonical':
+            return -torch.arange(x.size(0), device=x.device).view(-1, 1)
+
         if self.scorer == 'first':
-            return x[..., 0]
+            return x[..., [0]]
 
         if self.scorer == 'last':
-            return x[..., -1]
+            return x[..., [-1]]
 
         if self.scorer == 'linear':
             return self.lin(x).sigmoid()
@@ -241,7 +269,7 @@ class KMISPooling(Module):
             adj = remove_diag(adj)
 
         if self.score_passthrough == 'before':
-            x = x * score
+            x = self.aggr_score(x, score)
 
         if self.aggr_x is None:
             x = x[mis]
@@ -252,7 +280,7 @@ class KMISPooling(Module):
             x = self.aggr_x(x, cluster, dim_size=c)
 
         if self.score_passthrough == 'after':
-            x = x * score[mis]
+            x = self.aggr_score(x, score[mis])
 
         if isinstance(edge_index, SparseTensor):
             edge_index, edge_attr = adj, None
