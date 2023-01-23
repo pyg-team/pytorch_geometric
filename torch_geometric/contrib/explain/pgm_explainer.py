@@ -53,10 +53,9 @@ class PGMExplainer(ExplainerAlgorithm):
         r"""Perturb feature matrix :obj:`x`.
 
         Args:
-            x (torch.Tensor) : node feature matrix of
-                the input graph of shape [num_nodes, num_features]
-            index (torch.Tensor): indexes of the nodes
-                that the perturbed features will be generated for
+            x (torch.Tensor) : The feature matrix of
+                the input graph of shape :obj:`[num_nodes, num_features]`.
+            index (torch.Tensor): The indexes of the nodes to perturb.
 
         Returns:
             a randomly perturbed feature matrix
