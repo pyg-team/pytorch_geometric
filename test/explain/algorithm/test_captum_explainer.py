@@ -142,8 +142,7 @@ def test_captum_hetero_data(node_mask_type, edge_mask_type, index, hetero_data,
 
     explainer = Explainer(
         model,
-        algorithm=CaptumExplainer('IntegratedGradients',
-                                  internal_batch_size=1),
+        algorithm=CaptumExplainer('IntegratedGradients'),
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
         model_config=model_config,
