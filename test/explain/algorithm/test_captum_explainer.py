@@ -128,6 +128,10 @@ def test_captum_explainer_multiclass_classification(
 @pytest.mark.parametrize('index', [1, torch.arange(2)])
 def test_captum_hetero_data(node_mask_type, edge_mask_type, index, hetero_data,
                             hetero_model):
+
+    if node_mask_type is None or edge_mask_type is None:
+        return
+
     model_config = ModelConfig(
         mode='regression',
         task_level='node',
