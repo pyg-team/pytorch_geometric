@@ -169,7 +169,7 @@ class PGMExplainer(ExplainerAlgorithm):
         significance_threshold: float = 0.05,
         **kwargs,
     ) -> Tuple[torch.Tensor, torch.Tensor]:
-        r"""generate explanations for graph classification tasks
+        r"""Generate explanations for graph classification tasks
 
         Args:
             model: pytorch model
