@@ -1,13 +1,11 @@
 import pytest
-import torch
 
-from torch_geometric.data import HeteroData
 from torch_geometric.explain.algorithm.captum import (
     CaptumHeteroModel,
     captum_output_to_dicts,
     to_captum_input,
 )
-from torch_geometric.nn import SAGEConv, to_captum_model, to_hetero
+from torch_geometric.nn import to_captum_model
 from torch_geometric.testing import withPackage
 
 mask_types = ['edge', 'node_and_edge', 'node']
@@ -26,53 +24,15 @@ methods = [
 ]
 
 
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
-
-
-def get_hetero_data():
-    data = HeteroData()
-    data['paper'].x = torch.randn(8, 16)
-    data['author'].x = torch.randn(10, 8)
-    data['paper', 'paper'].edge_index = get_edge_index(8, 8, 10)
-    data['author', 'paper'].edge_index = get_edge_index(10, 8, 10)
-    data['paper', 'author'].edge_index = get_edge_index(8, 10, 10)
-    return data
-
-
-class GraphSAGE(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv1 = SAGEConv((-1, -1), 32)
-        self.conv2 = SAGEConv((-1, -1), 32)
-
-    def forward(self, x, edge_index):
-        x = self.conv1(x, edge_index).relu()
-        return self.conv2(x, edge_index)
-
-
-class HeteroSAGE(torch.nn.Module):
-    def __init__(self, metadata):
-        super().__init__()
-        self.graph_sage = to_hetero(GraphSAGE(), metadata, debug=False)
-
-    def forward(self, x_dict, edge_index_dict,
-                additonal_arg=None) -> torch.Tensor:
-        # Make sure additonal args gets passed.
-        assert additonal_arg is not None
-        return self.graph_sage(x_dict, edge_index_dict)['paper']
-
-
 @withPackage('captum')
 @pytest.mark.parametrize('mask_type', mask_types)
 @pytest.mark.parametrize('method', methods)
-def test_captum_attribution_methods_hetero(mask_type, method):
+def test_captum_attribution_methods_hetero(mask_type, method, hetero_data,
+                                           hetero_model):
     from captum import attr  # noqa
-    data = get_hetero_data()
+    data = hetero_data
     metadata = data.metadata()
-    model = HeteroSAGE(metadata)
+    model = hetero_model(metadata)
     captum_model = to_captum_model(model, mask_type, 0, metadata)
     explainer = getattr(attr, method)(captum_model)
     assert isinstance(captum_model, CaptumHeteroModel)
