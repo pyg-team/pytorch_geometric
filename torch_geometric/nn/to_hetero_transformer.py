@@ -320,7 +320,10 @@ class ToHeteroTransformer(Transformer):
             print('out.type', out.type)
             self.graph.inserting_after(out)
             # insert dict extraction functions
+            print("inserting dict extraction functions to graph")
             for key in self.metadata[int(self.is_edge_level(node))]:
+                print("inserting for key:", key)
+                print("target =",f'{target}.extract_from_dict')
                 out = self.graph.create_node(
                     'call_method', target=f'{target}.extract_from_dict',
                     args=(key, ), name=f'{name}__{key2str(key)}')
