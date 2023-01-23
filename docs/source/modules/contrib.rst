@@ -73,4 +73,18 @@ Transforms
 
 .. automodule:: torch_geometric.contrib.transforms
     :members:
-    :undoc-members:
+
+
+Explainer
+---------
+
+.. currentmodule:: torch_geometric.contrib.explain
+
+.. autosummary::
+    :nosignatures:
+    {% for cls in torch_geometric.contrib.explain.classes %}
+      {{ cls }}
+    {% endfor %}
+
+.. automodule:: torch_geometric.contrib.explain
+    :members:

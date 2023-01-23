@@ -80,10 +80,10 @@ class CaptumHeteroModel(CaptumModel):
         self,
         model: torch.nn.Module,
         mask_type: Union[str, MaskLevelType],
-        output_id: int,
+        output_idx: int,
         metadata: Metadata,
     ):
-        super().__init__(model, mask_type, output_id)
+        super().__init__(model, mask_type, output_idx)
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
         self.num_node_types = len(self.node_types)

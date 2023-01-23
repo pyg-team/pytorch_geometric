@@ -187,7 +187,7 @@ The function may add reverse edge types to the heterogeneous graph, if necessary
 For all nodes of type :obj:`'node_type'` and all existing edge types of the form :obj:`('node_type', 'edge_type', 'node_type')`, the function :meth:`~torch_geometric.transforms.AddSelfLoops` will add self-loop edges.
 As a result, each node might receive one or more (one per appropriate edge type) messages from itself during message passing.
 
-The transform :meth:`~torch_geometric.transforms.NormalizeFeatures` works like in the homogenous case, and normalizes all specified features (of all types) to sum up to one.
+The transform :meth:`~torch_geometric.transforms.NormalizeFeatures` works like in the homogeneous case, and normalizes all specified features (of all types) to sum up to one.
 
 Creating Heterogeneous GNNs
 ---------------------------
@@ -198,7 +198,7 @@ During runtime, the MP-GNN algorithm would need to iterate over edge type dictio
 
 To avoid unnecessary runtime overheads and to make the creation of heterogeneous MP-GNNs as simple as possible, Pytorch Geometric provides three ways for the user to create models on heterogeneous graph data:
 
-#. Automatically convert a homogenous GNN model to a heterogeneous GNN model by making use of :meth:`torch_geometric.nn.to_hetero` or :meth:`torch_geometric.nn.to_hetero_with_bases`
+#. Automatically convert a homogeneous GNN model to a heterogeneous GNN model by making use of :meth:`torch_geometric.nn.to_hetero` or :meth:`torch_geometric.nn.to_hetero_with_bases`
 #. Define individual functions for different types using :pyg:`PyG's` wrapper :class:`torch_geometric.nn.conv.HeteroConv` for heterogeneous convolution
 #. Deploy existing (or write your own) heterogeneous GNN operators
 

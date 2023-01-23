@@ -11,8 +11,6 @@ torch_geometric.nn
    {% for name in torch_geometric.nn.dense.lin_classes %}
 .. autoclass:: {{ name }}
    :members:
-   :undoc-members:
-   :exclude-members: training, initialize_parameters
    {% endfor %}
 
 Convolutional Layers
@@ -32,11 +30,6 @@ Convolutional Layers
    :members:
    :undoc-members:
    :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, initialize_parameters
-
-.. automodule:: torch_geometric.nn.meta
-   :members:
-   :undoc-members:
-   :exclude-members: training
 
 Aggregation Operators
 ---------------------
