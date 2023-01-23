@@ -76,16 +76,17 @@ class CaptumExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
 
-        if isinstance(index, torch.Tensor) and index.numel() > 1:
+        if isinstance(index, Tensor) and index.numel() > 1:
             if not self._support_multiple_indices():
                 raise ValueError(
-                    f"{self.attribution_method.__name__} does not "
-                    "support multiple indices. Please use a single "
-                    "index or a different method.")
-            # TODO (matthias): Check if `internal_batch_size` can be passed.
-            if self.kwargs.get('internal_batch_size', 1) != 1:
-                warnings.warn("Overriding 'internal_batch_size' to 1")
-            self.kwargs['internal_batch_size'] = 1
+                    f"{self.attribution_method.__name__} does not support "
+                    "multiple indices. Please use a single index or a "
+                    "different attribution method.")
+
+        # TODO (matthias) Check if `internal_batch_size` can be passed.
+        if self.kwargs.get('internal_batch_size', 1) != 1:
+            warnings.warn("Overriding 'internal_batch_size' to 1")
+        self.kwargs['internal_batch_size'] = 1
 
         mask_type = self._get_mask_type()
 

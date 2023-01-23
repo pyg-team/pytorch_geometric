@@ -1,7 +1,9 @@
+from typing import Optional
+
 import pytest
 import torch
 
-from torch_geometric.explain import Explainer
+from torch_geometric.explain import Explainer, Explanation
 from torch_geometric.explain.algorithm import CaptumExplainer
 from torch_geometric.explain.config import (
     MaskType,
@@ -51,31 +53,27 @@ class GCN(torch.nn.Module):
 
 node_mask_types = [
     MaskType.attributes,
+    None,
 ]
 edge_mask_types = [
     MaskType.object,
     None,
 ]
 
-x = torch.randn(8, 3)
-edge_index = torch.tensor([
-    [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-    [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6],
-])
-batch = torch.tensor([0, 0, 1, 1])
-edge_label_index = torch.tensor([[0, 1, 2], [2, 3, 1]])
-index = torch.tensor([0, 1])
 
-
-def _verify_mask_size(explanation, node_mask_type, edge_mask_type, data):
-    if node_mask_type is not None:
-        assert explanation.node_mask.size() == data.x.size()
-    else:
+def check_explanation(
+    explanation: Explanation,
+    node_mask_type: Optional[MaskType],
+    edge_mask_type: Optional[MaskType],
+):
+    if node_mask_type == MaskType.attributes:
+        assert explanation.node_mask.size() == explanation.x.size()
+    elif node_mask_type is None:
         assert 'node_mask' not in explanation
 
-    if edge_mask_type is not None:
-        assert explanation.edge_mask.size() == (data.edge_index.size(1), )
-    else:
+    if edge_mask_type == MaskType.object:
+        assert explanation.edge_mask.size() == (explanation.num_edges, )
+    elif edge_mask_type is None:
         assert 'edge_mask' not in explanation
 
 
@@ -83,10 +81,20 @@ def _verify_mask_size(explanation, node_mask_type, edge_mask_type, data):
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
-@pytest.mark.parametrize('index', [1])
-def test_captum_explainer_multiclass_classification(node_mask_type,
-                                                    edge_mask_type, task_level,
-                                                    index, data):
+@pytest.mark.parametrize('index', [1, torch.arange(2)])
+def test_captum_explainer_multiclass_classification(
+    data,
+    node_mask_type,
+    edge_mask_type,
+    task_level,
+    index,
+):
+    if node_mask_type is None or edge_mask_type is None:
+        return
+
+    batch = torch.tensor([0, 0, 1, 1])
+    edge_label_index = torch.tensor([[0, 1, 2], [2, 3, 1]])
+
     model_config = ModelConfig(
         mode='multiclass_classification',
         task_level=task_level,
@@ -97,45 +105,11 @@ def test_captum_explainer_multiclass_classification(node_mask_type,
 
     explainer = Explainer(
         model,
-        algorithm=CaptumExplainer('IntegratedGradients',
-                                  internal_batch_size=1),
-        explanation_type='model',
-        edge_mask_type=edge_mask_type,
-        node_mask_type=node_mask_type,
-        model_config=model_config,
-    )
-
-    explanation = explainer(
-        data.x,
-        data.edge_index,
-        index=index,
-        batch=batch,
-        edge_label_index=edge_label_index,
-    )
-
-    _verify_mask_size(explanation, node_mask_type, edge_mask_type, data)
-
-
-@withPackage('captum')
-@pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-def test_captum_explainer_multiclass_classification_batch(
-        node_mask_type, edge_mask_type, data):
-    model_config = ModelConfig(
-        mode='multiclass_classification',
-        task_level='node',
-        return_type='probs',
-    )
-
-    model = GCN(model_config)
-
-    explainer = Explainer(
-        model,
         algorithm=CaptumExplainer('IntegratedGradients'),
+        explanation_type='model',
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
         model_config=model_config,
-        explanation_type='model',
     )
 
     explanation = explainer(
@@ -145,14 +119,14 @@ def test_captum_explainer_multiclass_classification_batch(
         batch=batch,
         edge_label_index=edge_label_index,
     )
-
-    _verify_mask_size(explanation, node_mask_type, edge_mask_type, data)
+    check_explanation(explanation, node_mask_type, edge_mask_type)
 
 
 @withPackage('captum')
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-def test_captum_hetero_data(node_mask_type, edge_mask_type, hetero_data,
+@pytest.mark.parametrize('index', [1, torch.arange(2)])
+def test_captum_hetero_data(node_mask_type, edge_mask_type, index, hetero_data,
                             hetero_model):
     model_config = ModelConfig(
         mode='regression',
