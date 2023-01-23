@@ -10,33 +10,6 @@ from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import scatter
 
 
-class DictExtractor(Module):
-    def __init__(self, heteromodule):
-        self.types = self.heteromodule.types
-
-    @_copy_to_script_wrapper
-    def __getitem__(self, key: str) -> Module:
-        return self._modules[key]
-
-    def __setitem__(self, key: str, module: Module) -> None:
-        self.add_module(key, module)
-
-    def __delitem__(self, key: str) -> None:
-        del self._modules[key]
-
-    @_copy_to_script_wrapper
-    def __len__(self) -> int:
-        return len(self._modules)
-
-    @_copy_to_script_wrapper
-    def __iter__(self) -> Iterator[str]:
-        return iter(self._modules)
-
-    @_copy_to_script_wrapper
-    def __contains__(self, key: str) -> bool:
-        return key in self._modules
-
-
 class ToHeteroLinear(torch.nn.Module):
     def __init__(
         self,
@@ -48,7 +21,7 @@ class ToHeteroLinear(torch.nn.Module):
         super().__init__()
 
         self.types = types
-
+        self.out_dict = None
         if isinstance(module, Linear):
             in_channels = module.in_channels
             out_channels = module.out_channels
@@ -92,7 +65,8 @@ class ToHeteroLinear(torch.nn.Module):
         size = torch.tensor(sizes, device=x.device)
         type_vec = type_vec.repeat_interleave(size)
         outs = self.hetero_module(x, type_vec).split(sizes)
-        return {key: out for key, out in zip(self.types, outs)}
+        self.out_dict = {key: out for key, out in zip(self.types, outs)}
+        return self.out_dict
 
     def forward(
         self,
@@ -108,6 +82,11 @@ class ToHeteroLinear(torch.nn.Module):
 
         raise ValueError(f"Encountered invalid forward types in "
                          f"'{self.__class__.__name__}'")
+
+    def extract_from_dict(key):
+        assert self.out_dict is note None, "Forward pass must be called\
+            before outputs can be extracted"
+        return self.out_dict[key]
 
 
 class ToHeteroMessagePassing(torch.nn.Module):

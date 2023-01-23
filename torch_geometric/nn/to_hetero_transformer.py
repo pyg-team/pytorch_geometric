@@ -10,10 +10,7 @@ from torch.nn import Module
 import torch_geometric
 from torch_geometric.nn.dense import HeteroLinear
 from torch_geometric.nn.fx import Transformer, get_submodule
-from torch_geometric.nn.to_hetero_module import (
-    ToHeteroLinear,
-    DictExtractor,
-)
+from torch_geometric.nn.to_hetero_module import ToHeteroLinear
 
 from torch_geometric.typing import EdgeType, Metadata, NodeType, OptTensor
 from torch_geometric.utils.hetero import (
@@ -299,19 +296,52 @@ class ToHeteroTransformer(Transformer):
         print("name:", name)
         if self.is_graph_level(node):
             return
-
-        # Add calls to node type-wise or edge type-wise modules.
         self.graph.inserting_after(node)
-        for key in self.metadata[int(self.is_edge_level(node))]:
-            args, kwargs = self.map_args_kwargs(node, key)
-            out = self.graph.create_node('call_module',
-                                         target=f'{target}.{key2str(key)}',
-                                         args=args, kwargs=kwargs,
-                                         name=f'{name}__{key2str(key)}')
+        if hasattr(self.module, name) and is_linear(getattr(self.module,
+                                                            name)):
+            print('inside heterolinear if')
+            # insert a HeteroLinear HeteroModule instead
+            kwargs_dict = {}
+            args_dict = {}
+            for key in self.metadata[int(self.is_edge_level(node))]:
+                args, kwargs = self.map_args_kwargs(node, key)
+                args_dict[key] = args[0]
+                kwargs_dict.update(kwargs)
+            print('(args_dict,):', (args_dict, ))
+            if self.is_edge_level(node):
+                out_type = Dict[EdgeType, Tensor]
+            else:
+                out_type = Dict[NodeType, Tensor]
+            out = self.graph.create_node('call_module', target=f'{target}',
+                                         args=(args_dict, ),
+                                         kwargs=kwargs_dict,
+                                         name=f'{name}__heterolinear',
+                                         type_expr=out_type)
+            print('out.name', out.name)
+            print('out.type', out.type)
             self.graph.inserting_after(out)
+            # insert dict extraction functions
+            for key in self.metadata[int(self.is_edge_level(node))]:
+                out = self.graph.create_node('call_method',
+                                             target=f'{target}.extract_from_dict',
+                                             args=(key,),
+                                             name=f'{name}__{key2str(key)}')
+                self.graph.inserting_after(out)
+        else:
+            print('inside other if')
+            # Add calls to node type-wise or edge type-wise modules.p
+            for key in self.metadata[int(self.is_edge_level(node))]:
+                args, kwargs = self.map_args_kwargs(node, key)
+                out = self.graph.create_node('call_module',
+                                             target=f'{target}.{key2str(key)}',
+                                             args=args, kwargs=kwargs,
+                                             name=f'{name}__{key2str(key)}')
+                self.graph.inserting_after(out)
 
     def call_method(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise methods.
+        if self.is_graph_level(node):
+            return
         self.graph.inserting_after(node)
         for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
@@ -390,9 +420,7 @@ class ToHeteroTransformer(Transformer):
         if not has_node_level_target and not has_edge_level_target:
             return module
         if is_linear(module):
-            # wrap ToHeteroModule to have the same access API as ModuleDict
-            return DictExtractor(
-                ToHeteroModule(module, self.metadata, self.aggr))
+            return ToHeteroModule(module, self.metadata, self.aggr)
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
