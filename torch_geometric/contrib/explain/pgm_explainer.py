@@ -381,19 +381,6 @@ class PGMExplainer(ExplainerAlgorithm):
         index: Optional[int] = None,  # node index
         **kwargs,
     ) -> Explanation:
-        r"""generate the explanations
-
-        Args:
-            model (torch.nn.Module): model used to generate predictions
-            x (torch.Tensor): the node feature matrix tensor
-            edge_index:
-            target (torch.Tensor): the prediction labels
-            index (int): index of the node generating explanations for
-            **kwargs:
-
-        Returns:
-            Explanation
-        """
 
         if isinstance(index, torch.Tensor):
             if index.numel() > 1:
