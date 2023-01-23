@@ -83,6 +83,7 @@ class CaptumExplainer(ExplainerAlgorithm):
                     "multiple indices. Please use a single index or a "
                     "different attribution method.")
 
+        # TODO (matthias) Check if `internal_batch_size` can be passed.
         if self.kwargs.get('internal_batch_size', 1) != 1:
             warnings.warn("Overriding 'internal_batch_size' to 1")
         self.kwargs['internal_batch_size'] = 1
