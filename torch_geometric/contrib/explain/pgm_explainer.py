@@ -4,12 +4,11 @@ from typing import List, Optional, Tuple
 import numpy as np
 import torch
 
+from torch_geometric.explain import ExplainerAlgorithm
 from torch_geometric.explain.config import ModelTaskLevel
 from torch_geometric.explain.explanation import Explanation
 from torch_geometric.utils import k_hop_subgraph
 from torch_geometric.utils.subgraph import get_num_hops
-
-from .base import ExplainerAlgorithm
 
 
 class PGMExplainer(ExplainerAlgorithm):
@@ -24,7 +23,6 @@ class PGMExplainer(ExplainerAlgorithm):
 
     Args:
         feature_index (List): The indices of the perturbed features
-            for graph classification explanations
         perturb_mode (str): The method to generate the variations in
             features one of ['randint', 'mean', 'zero', 'max', 'uniform']
         perturbations_is_positive_only (bool): If `True` restrict
@@ -35,14 +33,14 @@ class PGMExplainer(ExplainerAlgorithm):
     """
     def __init__(
         self,
-        perturb_feature_list: List = None,
+        feature_index: List = None,
         perturbation_mode: str = "randint",
         perturbations_is_positive_only: bool = False,
         is_perturbation_scaled: bool = False,
         **kwargs,
     ):
         super().__init__()
-        self.perturb_feature_list = perturb_feature_list
+        self.feature_index = feature_index
         self.perturbation_mode = perturbation_mode
         self.perturbations_is_positive_only = perturbations_is_positive_only
         self.is_perturbation_scaled = is_perturbation_scaled
@@ -75,18 +73,18 @@ class PGMExplainer(ExplainerAlgorithm):
                                           device=x.device)
         # graph explainers
         elif self.perturbation_mode == "mean":
-            perturb_array[:, self.perturb_feature_list] = torch.mean(
-                x[:, self.perturb_feature_list])
+            perturb_array[:, self.feature_index] = torch.mean(
+                x[:, self.feature_index])
         elif self.perturbation_mode == "zero":
-            perturb_array[:, self.perturb_feature_list] = 0
+            perturb_array[:, self.feature_index] = 0
         elif self.perturbation_mode == "max":
-            perturb_array[:, self.perturb_feature_list] = torch.max(
-                x[:, self.perturb_feature_list])
+            perturb_array[:, self.feature_index] = torch.max(
+                x[:, self.feature_index])
         elif self.perturbation_mode == "uniform":
             random_perturbations = torch.rand(
                 perturb_array.shape) * 2 * epsilon - epsilon
-            perturb_array[:, self.perturb_feature_list] = perturb_array[
-                self.perturb_feature_list] + random_perturbations
+            perturb_array[:, self.feature_index] = perturb_array[
+                self.feature_index] + random_perturbations
             perturb_array.clamp(min=0, max=torch.max(x, dim=0))
 
         if self.is_perturbation_scaled:
@@ -317,7 +315,7 @@ class PGMExplainer(ExplainerAlgorithm):
                 index=neighbors[seeds == 1],
             )
 
-            # prediction after pertubation
+            # prediction after perturbation
             pred_perturb = model(x_perturb, edge_index, edge_weight)
             softmax_pred_perturb = torch.softmax(pred_perturb, dim=1)
             sample_bool = np.ones(shape=(len(neighbors), ))

@@ -68,7 +68,7 @@ def test_pgm_explainer_classification(node_idx, task_level, perturbation_mode):
 
     explainer = Explainer(
         model=model,
-        algorithm=PGMExplainer(perturb_feature_list=[0],
+        algorithm=PGMExplainer(feature_index=[0],
                                perturbation_mode=perturbation_mode),
         explanation_type='phenomenon',
         node_mask_type='object',
