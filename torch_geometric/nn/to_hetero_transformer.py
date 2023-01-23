@@ -309,6 +309,33 @@ class ToHeteroModule(Module):
                                           edge_type=edge_type)
 
 
+class DictExtractor(Module):
+    def __init__(self, heteromodule):
+        self.types = self.heteromodule.types
+
+    @_copy_to_script_wrapper
+    def __getitem__(self, key: str) -> Module:
+        return self._modules[key]
+
+    def __setitem__(self, key: str, module: Module) -> None:
+        self.add_module(key, module)
+
+    def __delitem__(self, key: str) -> None:
+        del self._modules[key]
+
+    @_copy_to_script_wrapper
+    def __len__(self) -> int:
+        return len(self._modules)
+
+    @_copy_to_script_wrapper
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._modules)
+
+    @_copy_to_script_wrapper
+    def __contains__(self, key: str) -> bool:
+        return key in self._modules
+
+
 class ToHeteroTransformer(Transformer):
 
     aggrs = {
@@ -481,41 +508,16 @@ class ToHeteroTransformer(Transformer):
         print("name:", name)
         if self.is_graph_level(node):
             return
+
+        # Add calls to node type-wise or edge type-wise modules.
         self.graph.inserting_after(node)
-        # if hasattr(self.module, name) and is_linear(getattr(self.module,
-        #                                                     name)):
-        if False:
-            print('inside heterolinear if')
-            # insert a HeteroLinear HeteroModule instead
-            kwargs_dict = {}
-            args_dict = {}
-            for key in self.metadata[int(self.is_edge_level(node))]:
-                args, kwargs = self.map_args_kwargs(node, key)
-                args_dict[key] = args[0]
-                kwargs_dict.update(kwargs)
-            print('(args_dict,):', (args_dict, ))
-            if self.is_edge_level(node):
-                out_type = Dict[EdgeType, Tensor]
-            else:
-                out_type = Dict[NodeType, Tensor]
-            out = self.graph.create_node('call_module', target=f'{target}',
-                                         args=(args_dict, ),
-                                         kwargs=kwargs_dict,
-                                         name=f'{name}__heterolinear',
-                                         type_expr=out_type)
-            print('out.name', out.name)
-            print('out.type', out.type)
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            args, kwargs = self.map_args_kwargs(node, key)
+            out = self.graph.create_node('call_module',
+                                         target=f'{target}.{key2str(key)}',
+                                         args=args, kwargs=kwargs,
+                                         name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
-        else:
-            print('inside other if')
-            # Add calls to node type-wise or edge type-wise modules.p
-            for key in self.metadata[int(self.is_edge_level(node))]:
-                args, kwargs = self.map_args_kwargs(node, key)
-                out = self.graph.create_node('call_module',
-                                             target=f'{target}.{key2str(key)}',
-                                             args=args, kwargs=kwargs,
-                                             name=f'{name}__{key2str(key)}')
-                self.graph.inserting_after(out)
 
     def call_method(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise methods.
@@ -554,28 +556,11 @@ class ToHeteroTransformer(Transformer):
                 print('value.name:', value.name)
                 if self.is_graph_level(value):
                     return value
-                #check if heterolinear
-                heterolinear_name = str(value.name) + '__heterolinear'
-                searched_heterolin = self.find_by_name(heterolinear_name)
-                is_heterolinear = searched_heterolin is not None and isinstance(
-                    searched_heterolin, Node)
-                print('self.find_by_name(heterolinear_name):',
-                      searched_heterolin)
-                if is_heterolinear:
-                    print('dir(searched_heterolin):', dir(searched_heterolin))
-                    print("searched_heterolin.__dict__:",
-                          searched_heterolin.__dict__)
-                    return {
-                        key: searched_heterolin[key]
-                        for key in self.metadata[int(self.is_edge_level(
-                            value))]
-                    }
-                else:
-                    return {
-                        key: self.find_by_name(f'{value.name}__{key2str(key)}')
-                        for key in self.metadata[int(self.is_edge_level(
-                            value))]
-                    }
+                return {
+                    key: self.find_by_name(f'{value.name}__{key2str(key)}')
+                    for key in self.metadata[int(self.is_edge_level(
+                        value))]
+                }
             elif isinstance(value, dict):
                 return {k: _recurse(v) for k, v in value.items()}
             elif isinstance(value, list):
@@ -614,9 +599,9 @@ class ToHeteroTransformer(Transformer):
 
         if not has_node_level_target and not has_edge_level_target:
             return module
-        # if is_linear(module):
-        if False:
-            return ToHeteroModule(module, self.metadata, self.aggr)
+        if is_linear(module):
+            # wrap ToHeteroModule to have the same access API as ModuleDict
+            return DictExtractor(ToHeteroModule(module, self.metadata, self.aggr))
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
