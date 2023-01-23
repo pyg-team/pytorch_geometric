@@ -24,12 +24,12 @@ class PGMExplainer(ExplainerAlgorithm):
     Args:
         feature_index (List): The indices of the perturbed features
         perturb_mode (str): The method to generate the variations in
-            features one of ['randint', 'mean', 'zero', 'max', 'uniform']
+            features one of
+            :obj:`['randint', 'mean', 'zero', 'max', 'uniform']`.
         perturbations_is_positive_only (bool): If set to :obj:`True` restrict
              perturbed values to be positive.
-        is_perturbation_scaled (bool): If set to :obj:`True` normalise the range
-            of the perturbed features.
-
+        is_perturbation_scaled (bool): If set to :obj:`True` normalise the
+            range of the perturbed features.
     """
     def __init__(
         self,
@@ -45,7 +45,7 @@ class PGMExplainer(ExplainerAlgorithm):
         self.perturbations_is_positive_only = perturbations_is_positive_only
         self.is_perturbation_scaled = is_perturbation_scaled
 
-    def perturb_features_on_nodes(
+    def _perturb_features_on_nodes(
         self,
         x: torch.Tensor,
         index: torch.Tensor,
@@ -92,7 +92,7 @@ class PGMExplainer(ExplainerAlgorithm):
         x_perturb[index] = perturb_array.type(x_perturb.dtype)
         return x_perturb
 
-    def batch_perturb_features_on_node(
+    def _batch_perturb_features_on_node(
             self,
             model: torch.nn.Module,
             x: torch.Tensor,
@@ -108,7 +108,8 @@ class PGMExplainer(ExplainerAlgorithm):
             model (torch.nn.Module): The GNN model.
             x (torch.Tensor): The node feature matrix
             edge_index (torch.Tensor): The edge index.
-            num_samples: Number of samples to generate for constructing the pgm.
+            num_samples: Number of samples to generate for constructing the
+                pgm.
             indices_to_perturb (np.array): The indexes of nodes to perturb.
             percentage: The percentage of times a node gets perturbed.
 
@@ -128,7 +129,7 @@ class PGMExplainer(ExplainerAlgorithm):
 
             seeds = np.random.randint(0, 100, size=len(indices_to_perturb))
             perturbed_node_indexes = indices_to_perturb[(seeds < percentage)]
-            x_perturb = self.perturb_features_on_nodes(
+            x_perturb = self._perturb_features_on_nodes(
                 x=x_perturb,
                 index=perturbed_node_indexes,
             )
@@ -158,7 +159,7 @@ class PGMExplainer(ExplainerAlgorithm):
 
         return samples
 
-    def explain_graph(
+    def _explain_graph(
         self,
         model: torch.nn.Module,
         x: torch.Tensor,
@@ -198,7 +199,7 @@ class PGMExplainer(ExplainerAlgorithm):
         if not max_subgraph_size:
             max_subgraph_size = int(num_nodes / 20)
 
-        samples = self.batch_perturb_features_on_node(
+        samples = self._batch_perturb_features_on_node(
             num_samples=int(num_samples / 2),
             indices_to_perturb=np.array(range(num_nodes)), x=x, model=model,
             edge_index=edge_index, **kwargs)
@@ -221,7 +222,7 @@ class PGMExplainer(ExplainerAlgorithm):
             p_values, max_subgraph_size)[0:max_subgraph_size]
 
         # Round 2
-        samples = self.batch_perturb_features_on_node(
+        samples = self._batch_perturb_features_on_node(
             num_samples=num_samples, indices_to_perturb=candidate_nodes, x=x,
             edge_index=edge_index, model=model, **kwargs)
 
@@ -250,13 +251,13 @@ class PGMExplainer(ExplainerAlgorithm):
 
         return node_mask, pgm_stats
 
-    def explain_node(self, model: torch.nn.Module, x: torch.Tensor, index: int,
-                     edge_index: torch.Tensor, edge_weight: torch.Tensor,
-                     target: torch.Tensor, num_samples: int = 100,
-                     max_subgraph_size: int = None,
-                     significance_threshold: float = 0.05,
-                     pred_threshold: float = 0.1,
-                     **kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _explain_node(self, model: torch.nn.Module, x: torch.Tensor,
+                      index: int, edge_index: torch.Tensor,
+                      target: torch.Tensor, num_samples: int = 100,
+                      max_subgraph_size: int = None,
+                      significance_threshold: float = 0.05,
+                      pred_threshold: float = 0.1,
+                      **kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
         r"""Generate explanations for node classification tasks
 
         Args:
@@ -265,7 +266,6 @@ class PGMExplainer(ExplainerAlgorithm):
             index (torch.Tensor): the index of the node that the
                 explanations are being generated for
             edge_index (torch.Tensor): edge_index of the input graph
-            edge_weight (torch.Tensor): apply weighting to edges (Optional)
             target (torch.Tensor):  the prediction labels
             num_samples (int): num of samples of perturbations used to test
                 the significance of neighbour nodes to the prediction
@@ -307,13 +307,13 @@ class PGMExplainer(ExplainerAlgorithm):
         for iteration in range(num_samples):
             # a subset of neighbours are selected randomly for perturbing
             seeds = np.random.choice([1, 0], size=(len(neighbors), ))
-            x_perturb = self.perturb_features_on_nodes(
+            x_perturb = self._perturb_features_on_nodes(
                 x=x,
                 index=neighbors[seeds == 1],
             )
 
             # prediction after perturbation
-            pred_perturb = model(x_perturb, edge_index, edge_weight)
+            pred_perturb = model(x_perturb, edge_index, **kwargs)
             softmax_pred_perturb = torch.softmax(pred_perturb, dim=1)
             sample_bool = np.ones(shape=(len(neighbors), ))
             sample_bool[(
@@ -389,19 +389,18 @@ class PGMExplainer(ExplainerAlgorithm):
                     f"`index` for now")
             index = index.item()
 
-        edge_weight = kwargs.pop('edge_weight', None)
         num_samples = kwargs.pop('num_samples', 100)
         significance_threshold = kwargs.pop('significance_threshold', 0.05)
         max_subgraph_size = kwargs.get('max_subgraph_size', None)
         pred_threshold = kwargs.pop('pred_threshold', 0.1)
         if self.model_config.task_level == ModelTaskLevel.node:
 
-            node_mask, pgm_stats = self.explain_node(
+            node_mask, pgm_stats = self._explain_node(
                 model=model, x=x, index=index, edge_index=edge_index,
-                edge_weight=edge_weight, target=target[index],
-                num_samples=num_samples, max_subgraph_size=max_subgraph_size,
+                target=target[index], num_samples=num_samples,
+                max_subgraph_size=max_subgraph_size,
                 significance_threshold=significance_threshold,
-                pred_threshold=pred_threshold)
+                pred_threshold=pred_threshold, **kwargs)
             return Explanation(
                 x=x,
                 edge_index=edge_index,
@@ -409,7 +408,7 @@ class PGMExplainer(ExplainerAlgorithm):
                 pgm_stats=pgm_stats,
             )
         elif self.model_config.task_level == ModelTaskLevel.graph:
-            node_mask, pgm_stats = self.explain_graph(
+            node_mask, pgm_stats = self._explain_graph(
                 model=model, x=x, target=target, edge_index=edge_index,
                 num_samples=num_samples, max_subgraph_size=max_subgraph_size,
                 significance_threshold=significance_threshold,

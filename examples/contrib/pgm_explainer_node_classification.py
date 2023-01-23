@@ -8,9 +8,9 @@ import torch
 import torch.nn.functional as F
 
 import torch_geometric.transforms as T
+from torch_geometric.contrib.explain import PGMExplainer
 from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import Explainer, ModelConfig
-from torch_geometric.explain.algorithm import PGMExplainer
 from torch_geometric.nn import GCNConv
 
 dataset = 'Cora'
@@ -42,8 +42,8 @@ if __name__ == "__main__":
     x, edge_index, edge_weight, target = \
         data.x, data.edge_index, data.edge_weight, data.y
 
+    model.train()
     for epoch in range(1, 500):
-        model.train()
         optimizer.zero_grad()
         log_logits = model(x, edge_index, edge_weight)
         loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])

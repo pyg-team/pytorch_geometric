@@ -9,9 +9,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import torch_geometric.transforms as T
+from torch_geometric.contrib.explain import PGMExplainer
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.explain import Explainer
-from torch_geometric.explain.algorithm import PGMExplainer
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import (
     NNConv,
@@ -73,16 +73,8 @@ class Net(nn.Module):
         return F.log_softmax(self.fc2(x), dim=1)
 
 
-def train(model, dataloader, epoch):
+def train(model, dataloader):
     model.train()
-
-    if epoch == 16:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.001
-
-    if epoch == 26:
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = 0.0001
 
     for data in dataloader:
         data = data.to(device)
@@ -99,7 +91,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
     for epoch in range(2):
-        train(model, train_loader, epoch)
+        train(model, train_loader)
 
     explainer = Explainer(
         model=model, algorithm=PGMExplainer(perturb_feature_list=[0],
@@ -119,7 +111,6 @@ if __name__ == "__main__":
                                 data=explain_dataset)
         for k in explanation.available_explanations:
             print(explanation[k])
-        print()
         i += 1
         if i > 2:
             break
