@@ -558,8 +558,7 @@ class ToHeteroTransformer(Transformer):
                     return value
                 return {
                     key: self.find_by_name(f'{value.name}__{key2str(key)}')
-                    for key in self.metadata[int(self.is_edge_level(
-                        value))]
+                    for key in self.metadata[int(self.is_edge_level(value))]
                 }
             elif isinstance(value, dict):
                 return {k: _recurse(v) for k, v in value.items()}
@@ -601,7 +600,8 @@ class ToHeteroTransformer(Transformer):
             return module
         if is_linear(module):
             # wrap ToHeteroModule to have the same access API as ModuleDict
-            return DictExtractor(ToHeteroModule(module, self.metadata, self.aggr))
+            return DictExtractor(
+                ToHeteroModule(module, self.metadata, self.aggr))
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
