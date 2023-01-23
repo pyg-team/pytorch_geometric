@@ -288,10 +288,9 @@ def test_pad_heterodata_explicit_edges(num_nodes, num_edges):
     _check_data(original, padded, num_nodes, num_edges)
 
 
-@pytest.mark.parametrize('node_pad_value',
-                         [None, 10, AttrNamePadding({'x': 3.0})])
-@pytest.mark.parametrize(
-    'edge_pad_value', [None, 11, AttrNamePadding({'edge_attr': 2.0})])
+@pytest.mark.parametrize('node_pad_value', [10, AttrNamePadding({'x': 3.0})])
+@pytest.mark.parametrize('edge_pad_value',
+                         [11, AttrNamePadding({'edge_attr': 2.0})])
 def test_pad_data_pad_values(node_pad_value, edge_pad_value):
     data = fake_data()
     original = deepcopy(data)
@@ -304,7 +303,6 @@ def test_pad_data_pad_values(node_pad_value, edge_pad_value):
 
 
 @pytest.mark.parametrize('node_pad_value', [
-    None,
     UniformPadding(12),
     AttrNamePadding({'x': 0}),
     NodeTypePadding({
@@ -313,7 +311,6 @@ def test_pad_data_pad_values(node_pad_value, edge_pad_value):
     })
 ])
 @pytest.mark.parametrize('edge_pad_value', [
-    None,
     UniformPadding(13),
     EdgeTypePadding({
         ('v0', 'e0', 'v1'):

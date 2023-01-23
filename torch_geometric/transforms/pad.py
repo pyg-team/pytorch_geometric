@@ -13,8 +13,6 @@ from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import EdgeType, NodeType
 
-PadValTypes = (int, float)
-
 
 class Padding(ABC):
     r"""An abstract class for specifying padding values."""
@@ -267,49 +265,35 @@ class Pad(BaseTransform):
         mask_pad_value (bool, optional): The fill value to use for
             :obj:`train_mask`, :obj:`val_mask` and :obj:`test_mask` attributes
             (default: :obj:`False`).
-        exclude_keys (list or tuple, optional): Keys to be removed
+        exclude_keys ([str], optional): Keys to be removed
             from the input data object. (default: :obj:`None`)
     """
     def __init__(
         self,
         max_num_nodes: Union[int, Dict[NodeType, int]],
         max_num_edges: Optional[Union[int, Dict[EdgeType, int]]] = None,
-        node_pad_value: Optional[Union[int, float, Padding]] = None,
-        edge_pad_value: Optional[Union[int, float, Padding]] = None,
+        node_pad_value: Union[int, float, Padding] = 0.0,
+        edge_pad_value: Union[int, float, Padding] = 0.0,
         mask_pad_value: bool = False,
-        exclude_keys: Optional[Union[List[str], Tuple[str]]] = None,
+        exclude_keys: Optional[List[str]] = None,
     ):
-        self._default_pad_value = UniformPadding(0.0)
         self.max_num_nodes = self._NumNodes(max_num_nodes)
         self.max_num_edges = self._NumEdges(max_num_edges, self.max_num_nodes)
 
-        self.exclude_keys = set(
-            exclude_keys) if exclude_keys is not None else set()
-        assert 'x' not in self.exclude_keys, \
-            'Cannot create a `Pad` with `x` attribute being excluded.'
+        self.node_pad = node_pad_value
+        if not isinstance(self.node_pad, Padding):
+            self.node_pad = UniformPadding(self.node_pad)
 
-        self.node_pad = self._process_padding_argument(node_pad_value,
-                                                       'node_pad_value')
-        self.edge_pad = self._process_padding_argument(edge_pad_value,
-                                                       'edge_pad_value')
+        self.edge_pad = edge_pad_value
+        if not isinstance(self.edge_pad, Padding):
+            self.edge_pad = UniformPadding(self.edge_pad)
 
-        if mask_pad_value is None:
-            mask_pad_value = 0.0
-        mask_attrs = ['train_mask', 'val_mask', 'test_mask']
         self.node_additional_attrs_pad = {
             key: mask_pad_value
-            for key in mask_attrs
+            for key in ['train_mask', 'val_mask', 'test_mask']
         }
 
-    def _process_padding_argument(self, padding: Any, name: str) -> Padding:
-        if isinstance(padding, Padding):
-            return padding
-        if padding is None:
-            return self._default_pad_value
-        try:
-            return UniformPadding(padding)
-        except AssertionError as e:
-            raise AssertionError(f'Invalid type of `{name}`.') from e
+        self.exclude_keys = set(exclude_keys or [])
 
     class _IntOrDict(ABC):
         def __init__(self, value):
@@ -407,31 +391,21 @@ class Pad(BaseTransform):
             edge_type: Optional[EdgeType] = None) -> Union[int, float]:
         return self.edge_pad.get_value(edge_type, attr_name)
 
-    def __call__(self, data: Union[Data,
-                                   HeteroData]) -> Union[Data, HeteroData]:
-        if isinstance(data, Data):
-            assert isinstance(self.node_pad,
-                              (UniformPadding, AttrNamePadding)), \
-                f'Node padding for Data objects must be of type ' \
-                f'UniformPadding or AttrNamePadding and is ' \
-                f'{type(self.node_pad)}'
-            assert isinstance(self.edge_pad,
-                              (UniformPadding, AttrNamePadding)), \
-                f'Edge padding for Data objects must be of type ' \
-                f'UniformPadding or AttrNamePadding and is ' \
-                f'{type(self.edge_pad)}'
+    def __call__(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
 
-            assert self.max_num_nodes.is_number, \
-                f'Number of nodes for Data objects must be a number and is ' \
-                f'of type {type(self.max_num_nodes.value)}'
-            assert self.max_num_edges.is_number or \
-                   self.max_num_edges.is_none(), \
-                   'Number of edges for Data objects must be a number or None.'
+        if isinstance(data, Data):
+            assert isinstance(self.node_pad, (UniformPadding, AttrNamePadding))
+            assert isinstance(self.edge_pad, (UniformPadding, AttrNamePadding))
+            # assert isinstance(self.max_num_nodes, int)
+            # assert (self.max_num_edges is None
+            #         or isinstance(self.max_num_edges, int))
 
             for store in data.stores:
                 for key in self.exclude_keys:
-                    if key in store.keys():
-                        del store[key]
+                    del store[key]
                 self.__pad_edge_store(store, data.__cat_dim__, data.num_nodes)
                 self.__pad_node_store(store, data.__cat_dim__)
         else:
@@ -441,30 +415,32 @@ class Pad(BaseTransform):
             assert isinstance(
                 self.edge_pad,
                 (UniformPadding, AttrNamePadding, EdgeTypePadding))
+
             for edge_type, store in data.edge_items():
                 for key in self.exclude_keys:
-                    if key in store.keys():
-                        del store[key]
+                    del store[key]
+
                 src_node_type, _, dst_node_type = edge_type
                 self.__pad_edge_store(store, data.__cat_dim__,
                                       (data[src_node_type].num_nodes,
                                        data[dst_node_type].num_nodes),
                                       edge_type)
+
             for node_type, store in data.node_items():
                 for key in self.exclude_keys:
-                    if key in store.keys():
-                        del store[key]
+                    del store[key]
                 self.__pad_node_store(store, data.__cat_dim__, node_type)
+
         return data
 
     def __pad_node_store(self, store: NodeStorage, get_dim_fn: Callable,
-                         node_type: Optional[str] = None) -> None:
-        attrs_to_pad = [
-            attr for attr in store.keys()
-            if store.is_node_attr(attr) and self.__should_pad_node_attr(attr)
-        ]
+                         node_type: Optional[str] = None):
+
+        attrs_to_pad = [key for key in store if store.is_node_attr(key)]
+
         if not attrs_to_pad:
             return
+
         num_target_nodes = self.max_num_nodes.get_value(node_type)
         assert num_target_nodes > store.num_nodes, \
             f'The number of nodes after padding ({num_target_nodes}) must ' \
