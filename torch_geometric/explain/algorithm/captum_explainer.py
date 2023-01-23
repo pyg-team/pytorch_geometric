@@ -13,7 +13,7 @@ from torch_geometric.explain.algorithm.captum import (
     convert_captum_output,
     to_captum_input,
 )
-from torch_geometric.explain.config import MaskType
+from torch_geometric.explain.config import MaskType, ModelMode
 from torch_geometric.typing import EdgeType, NodeType
 
 
@@ -110,9 +110,16 @@ class CaptumExplainer(ExplainerAlgorithm):
 
         self.attribution_method = self.attribution_method(captum_model)
 
+        # In captum, the target is the index for which
+        # the attribution is computed.
+        if self.model_config.mode == ModelMode.regression:
+            target = None
+        else:
+            target = target[index]
+
         attributions = self.attribution_method.attribute(
             inputs=inputs,
-            target=target[index],
+            target=target,
             additional_forward_args=add_forward_args,
             **self.kwargs,
         )
@@ -127,10 +134,12 @@ class CaptumExplainer(ExplainerAlgorithm):
             return Explanation(node_mask=node_mask, edge_mask=edge_mask)
 
         explanation = HeteroExplanation()
-        for type, mask in node_mask.items():
-            explanation.node_mask_dict[type] = mask
-        for type, mask in edge_mask.items():
-            explanation.edge_mask_dict[type] = mask
+        if node_mask is not None:
+            for type, mask in node_mask.items():
+                explanation.node_mask_dict[type] = mask
+        if edge_mask is not None:
+            for type, mask in edge_mask.items():
+                explanation.edge_mask_dict[type] = mask
         return explanation
 
     def supports(self) -> bool:

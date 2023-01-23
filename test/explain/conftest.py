@@ -2,6 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.nn import SAGEConv, to_hetero
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
@@ -33,3 +34,30 @@ def hetero_data():
     data['author', 'paper'].edge_attr = torch.randn(10, 8)
 
     return data
+
+
+@pytest.fixture()
+def hetero_model():
+    return HeteroSAGE
+
+
+class GraphSAGE(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = SAGEConv((-1, -1), 32)
+        self.conv2 = SAGEConv((-1, -1), 32)
+
+    def forward(self, x, edge_index):
+        x = self.conv1(x, edge_index).relu()
+        return self.conv2(x, edge_index)
+
+
+class HeteroSAGE(torch.nn.Module):
+    def __init__(self, metadata):
+        super().__init__()
+        self.graph_sage = to_hetero(GraphSAGE(), metadata, debug=False)
+        self.lin = torch.nn.Linear(32, 1)
+
+    def forward(self, x_dict, edge_index_dict,
+                additonal_arg=None) -> torch.Tensor:
+        return self.lin(self.graph_sage(x_dict, edge_index_dict)['paper'])

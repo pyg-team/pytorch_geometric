@@ -147,3 +147,32 @@ def test_captum_explainer_multiclass_classification_batch(
     )
 
     _verify_mask_size(explanation, node_mask_type, edge_mask_type, data)
+
+
+@withPackage('captum')
+@pytest.mark.parametrize('node_mask_type', node_mask_types)
+@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
+def test_captum_hetero_data(node_mask_type, edge_mask_type, hetero_data,
+                            hetero_model):
+    model_config = ModelConfig(
+        mode='regression',
+        task_level='node',
+        return_type='raw',
+    )
+
+    model = hetero_model(hetero_data.metadata())
+
+    explainer = Explainer(
+        model,
+        algorithm=CaptumExplainer('IntegratedGradients',
+                                  internal_batch_size=1),
+        edge_mask_type=edge_mask_type,
+        node_mask_type=node_mask_type,
+        model_config=model_config,
+        explanation_type='model',
+    )
+
+    explanation = explainer(hetero_data.x_dict, hetero_data.edge_index_dict,
+                            index=index)
+
+    explanation.validate(raise_on_error=True)
