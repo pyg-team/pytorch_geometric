@@ -50,8 +50,7 @@ class PGMExplainer(ExplainerAlgorithm):
         x: torch.Tensor,
         index: torch.Tensor,
     ) -> torch.Tensor:
-        r"""perturb node feature matrix. This is used later to calculate
-        how much influence neighbouring nodes has on the output
+        r"""Perturb feature matrix :obj:`x`.
 
         Args:
             x (torch.Tensor) : node feature matrix of
