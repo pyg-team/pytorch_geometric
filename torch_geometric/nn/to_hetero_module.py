@@ -84,7 +84,7 @@ class ToHeteroLinear(torch.nn.Module):
                          f"'{self.__class__.__name__}'")
 
     def extract_from_dict(key):
-        assert self.out_dict is note None, "Forward pass must be called\
+        assert self.out_dict is not None, "Forward pass must be called\
             before outputs can be extracted"
         return self.out_dict[key]
 
