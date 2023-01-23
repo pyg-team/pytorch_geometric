@@ -1,7 +1,7 @@
 import numbers
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
@@ -25,41 +25,6 @@ class Padding(ABC):
         attr_name: Optional[str] = None,
     ) -> Union[int, float]:
         pass
-
-
-class MappingPadding(Padding):
-    r"""An abstract class for specifying different padding values."""
-    _key_types = ()
-    _val_types = ()
-
-    def __init__(
-        self,
-        padding_values: Optional[Dict[Any, Any]] = None,
-        default_value: Union[int, float] = 0.0,
-    ):
-        padding_values = padding_values or {}
-        if not isinstance(padding_values, dict):
-            raise ValueError(f"Expected 'padding_values' to be a dictionary "
-                             f"(got '{type(padding_values)}'")
-
-        self.default_value = default_value
-        self.padding_values = {
-            key: UniformPadding(val) if isinstance(val, (int, float)) else val
-            for key, val in padding_values.items()
-        }
-
-        for key, val in self.padding_values.items():
-            if not isinstance(key, self._key_types):
-                raise ValueError(f"Expected '{key}' to be of type "
-                                 f"{self._key_types} (got '{type(key)}')")
-            if not isinstance(val, self._val_types):
-                raise ValueError(f"Expected the value of '{key}' to be of "
-                                 f"type {self._val_types} (got '{type(val)}')")
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}' \
-               f'(padding_values={self.padding_values}, ' \
-               f'default_value={self.default_value})'
 
 
 @dataclass(init=False)
@@ -87,122 +52,117 @@ class UniformPadding(Padding):
         return self.value
 
 
+@dataclass(init=False)
+class MappingPadding(Padding):
+    r"""An abstract class for specifying different padding values."""
+    values: Dict[Any, Padding] = field(default_factory=dict)
+    default: UniformPadding = 0.0
+
+    def __init__(
+        self,
+        values: Dict[Any, Union[int, float, Padding]],
+        default: Union[int, float] = 0.0,
+    ):
+        if not isinstance(values, dict):
+            raise ValueError(f"Expected 'values' to be a dictionary "
+                             f"(got '{type(values)}'")
+
+        self.values = {
+            key: UniformPadding(val) if isinstance(val, (int, float)) else val
+            for key, val in values.items()
+        }
+        self.default = UniformPadding(default)
+
+        for key, value in self.values.items():
+            self.validate_key_value(key, value)
+
+    def validate_key_value(self, key: Any, value: Any):
+        pass
+
+
 class AttrNamePadding(MappingPadding):
-    r"""Indicates specific padding values for different attribute names. To use
-    with :class:`Pad` transform.
-
-    Example:
-
-    .. code-block::
-
-        padding = AttrNamePadding({'x': 3.0, 'y': 0.0}, default_value=1.0)
-        transform = Pad(max_num_nodes, node_pad_value=padding)
+    r"""Padding dependent on attribute names.
 
     Args:
-        padding_values (dict, optional): The mapping from attribute names to
-            padding values. If an attribute is not specified in the mapping,
-            the :obj:`default_value` value is used. (default: :obj:`None`)
-        default_value (int or float, optional): The padding value used for
-            attributes not specified in the :obj:`padding_values` mapping.
+        values (dict): The mapping from attribute names to padding values.
+        default (int or float, optional): The padding value to use for
+            attribute names not specified in :obj:`values`.
             (default: :obj:`0.0`)
     """
-    _key_types = (str, )
-    _val_types = (UniformPadding, *PadValTypes)
+    def validate_key_value(self, key: Any, value: Any):
+        if not isinstance(key, str):
+            raise ValueError(f"Expected the attribute name '{key}' to be a "
+                             f"string (got '{type(key)}')")
+
+        if not isinstance(value, UniformPadding):
+            raise ValueError(f"Expected the value of '{key}' to be of "
+                             f"type 'UniformPadding' (got '{type(value)}')")
 
     def get_value(
         self,
         store_type: Optional[Union[NodeType, EdgeType]] = None,
         attr_name: Optional[str] = None,
     ) -> Union[int, float]:
-        if attr_name in self.padding_values.keys():
-            return self.padding_values[attr_name].get_value()
-        return self.default_value
+        padding = self.values.get(attr_name, self.default)
+        return padding.get_value()
 
 
 class NodeTypePadding(MappingPadding):
-    r"""Indicates specific padding values for different types of nodes. To use
-    with :class:`Pad` transform for :class:`~torch_geometric.data.HeteroData`
-    objects.
-
-    Example:
-
-    .. code-block::
-
-        p1 = AttrNamePadding({'x': 3.0, 'y': 0.0})
-        p2 = 3.0
-        padding = NodeTypePadding({'v1': p1, 'v2': p2}, default_value=1.0)
-        transform = Pad(max_num_nodes, node_pad_value=padding)
+    r"""Padding dependent on node types.
 
     Args:
-        padding_values (dict, optional): The mapping from node types to
-            padding values. If a node type is not specified in the mapping,
-            the :obj:`default_value` value is used. (default: :obj:`None`)
-        default_value (int or float, optional): The padding value used for
-            node types not specified in the :obj:`padding_values` mapping.
-            (default: :obj:`0.0`)
+        values (dict): The mapping from node types to padding values.
+        default (int or float, optional): The padding value to use for node
+            types not specified in :obj:`values`. (default: :obj:`0.0`)
     """
-    _key_types = (NodeType, )
-    _val_types = (UniformPadding, AttrNamePadding, *PadValTypes)
+    def validate_key_value(self, key: Any, value: Any):
+        if not isinstance(key, str):
+            raise ValueError(f"Expected the node type '{key}' to be a string "
+                             f"(got '{type(key)}')")
+
+        if not isinstance(value, (UniformPadding, AttrNamePadding)):
+            raise ValueError(f"Expected the value of '{key}' to be of "
+                             f"type 'UniformPadding' or 'AttrNamePadding' "
+                             f"(got '{type(value)}')")
 
     def get_value(
         self,
         store_type: Optional[NodeType] = None,
         attr_name: Optional[str] = None,
     ) -> Union[int, float]:
-        if store_type in self.padding_values.keys():
-            return self.padding_values[store_type].get_value(None, attr_name)
-        return self.default_value
+        padding = self.values.get(store_type, self.default)
+        return padding.get_value(attr_name=attr_name)
 
 
 class EdgeTypePadding(MappingPadding):
-    r"""Indicates specific padding values for different types of edges. To use
-    with :class:`Pad` transform for :class:`~torch_geometric.data.HeteroData`
-    objects.
-
-    Example:
-
-    .. code-block::
-
-        p1 = AttrNamePadding({'edge_x': 3.0, 'edge_y': 0.0})
-        p2 = -4.0
-        padding = EdgeTypePadding(
-            {('v1', 'e1', 'v2'): p1, ('v2', 'e1', 'v1'): p2},
-            default_value=1.0)
-        transform = Pad(max_num_nodes, edge_pad_value=padding)
+    r"""Padding dependent on node types.
 
     Args:
-        padding_values (dict, optional): The mapping from edge types to
-            padding values. If an edge type is not specified in the mapping,
-            the :obj:`default_value` value is used. (default: :obj:`None`)
-        default_value (int or float, optional): The padding value used for
-            edge types not specified in the :obj:`padding_values` mapping.
-            (default: :obj:`0.0`)
+        values (dict): The mapping from edge types to padding values.
+        default (int or float, optional): The padding value to use for edge
+            types not specified in :obj:`values`. (default: :obj:`0.0`)
     """
-    _key_types = (tuple, )
-    _val_types = (UniformPadding, AttrNamePadding, *PadValTypes)
+    def validate_key_value(self, key: Any, value: Any):
+        if not isinstance(key, tuple):
+            raise ValueError(f"Expected the edge type '{key}' to be a tuple "
+                             f"(got '{type(key)}')")
 
-    def __init__(
-        self,
-        padding_values: Optional[Dict[EdgeType,
-                                      Union[int, float, UniformPadding,
-                                            AttrNamePadding]]] = None,
-        default_value=0.0,
-    ):
-        super().__init__(padding_values, default_value)
+        if len(key) != 3:
+            raise ValueError(f"Expected the edge type '{key}' to hold exactly "
+                             f"three elements (got {len(key)})")
 
-        for key in self.padding_values.keys():
-            if not len(key) == 3:
-                raise ValueError(f"Edge type '{key}'' must be a tuple of "
-                                 f"length 3 (got {len(key)})")
+        if not isinstance(value, (UniformPadding, AttrNamePadding)):
+            raise ValueError(f"Expected the value of '{key}' to be of "
+                             f"type 'UniformPadding' or 'AttrNamePadding' "
+                             f"(got '{type(value)}')")
 
     def get_value(
         self,
         store_type: Optional[EdgeType] = None,
         attr_name: Optional[str] = None,
     ) -> Union[int, float]:
-        if store_type in self.padding_values.keys():
-            return self.padding_values[store_type].get_value(None, attr_name)
-        return self.default_value
+        padding = self.values.get(store_type, self.default)
+        return padding.get_value(attr_name=attr_name)
 
 
 @functional_transform('pad')
@@ -238,7 +198,7 @@ class Pad(BaseTransform):
       for cases when padding values are going to differ based on node or edge
       types. Padding values can also differ based on attribute names for a
       given node or edge type by using :class:`AttrNamePadding` objects as
-      values of its `padding_values` argument.
+      values of its `values` argument.
 
     Note that in order to allow for consistent padding across all graphs in a
     dataset, below conditions must be met:
@@ -278,14 +238,14 @@ class Pad(BaseTransform):
 
         node_padding = NodeTypePadding({
             'v0': 3.0,
-            'v1': AttrNamePadding({'x': -1.0}, default_value=0.5),
-        }, default_value=1.0)
+            'v1': AttrNamePadding({'x': -1.0}, default=0.5),
+        }, default=1.0)
 
         edge_padding = EdgeTypePadding({
             ('v0', 'e0', 'v1'): 3.5,
             ('v1', 'e0', 'v0'): AttrNamePadding({'edge_attr': -1.5},
-                                                default_value=5.5),
-        }, default_value=1.5)
+                                                default=5.5),
+        }, default=1.5)
 
         transform = Pad(num_nodes, num_edges, node_padding, edge_padding)
 

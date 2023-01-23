@@ -438,7 +438,7 @@ def test_attr_name_padding():
     y_val = 15.0
     default = 3.0
     padding_dict = {'x': x_val, 'y': UniformPadding(y_val)}
-    padding = AttrNamePadding(padding_dict, default_value=default)
+    padding = AttrNamePadding(padding_dict, default=default)
 
     assert padding.get_value(attr_name='x') == x_val
     assert padding.get_value('v1', 'x') == x_val
@@ -446,7 +446,7 @@ def test_attr_name_padding():
     assert padding.get_value('v1', 'y') == y_val
     assert padding.get_value(attr_name='x2') == default
 
-    padding = AttrNamePadding()
+    padding = AttrNamePadding({})
     assert padding.get_value(attr_name='x') == 0.0
 
 
@@ -454,7 +454,7 @@ def test_attr_name_padding_invalid():
     with pytest.raises(ValueError, match="to be a dictionary"):
         AttrNamePadding(10.0)
 
-    with pytest.raises(ValueError, match="to be of type"):
+    with pytest.raises(ValueError, match="to be a string"):
         AttrNamePadding({10: 10.0})
 
     with pytest.raises(ValueError, match="to be of type"):
@@ -511,7 +511,7 @@ def test_node_edge_type_padding(store_type):
 
 
 def test_edge_padding_invalid():
-    with pytest.raises(ValueError, match="to be of type"):
+    with pytest.raises(ValueError, match="to be a tuple"):
         EdgeTypePadding({'v1': 10.0})
 
     with pytest.raises(ValueError, match="got 1"):
