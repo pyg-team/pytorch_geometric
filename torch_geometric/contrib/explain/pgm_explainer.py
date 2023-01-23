@@ -101,17 +101,16 @@ class PGMExplainer(ExplainerAlgorithm):
             indices_to_perturb: np.array,
             percentage: float = 50.,  # % time node gets perturbed
             **kwargs) -> torch.Tensor:
-        r"""perturb the node features of a batch of graphs
+        r"""Perturb the node features of a batch of graphs
         for graph classification tasks
 
         Args:
-            model (torch.nn.Module): graph neural net model
-            x (torch.Tensor): node feature matrix
-            edge_index (torch.Tensor): edge_index of the input graph
-            num_samples: num of samples to generate for constructing the pgm
-            indices_to_perturb (np.array): the index numbers of
-                the nodes to be perturbed
-            percentage:
+            model (torch.nn.Module): The GNN model.
+            x (torch.Tensor): The node feature matrix
+            edge_index (torch.Tensor): The edge index.
+            num_samples: Number of samples to generate for constructing the pgm.
+            indices_to_perturb (np.array): The indexes of nodes to perturb.
+            percentage: The percentage of times a node gets perturbed.
 
         Returns:
             samples (torch.Tensor): the batch of perturbed features
