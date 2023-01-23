@@ -10,6 +10,33 @@ from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import scatter
 
 
+class DictExtractor(Module):
+    def __init__(self, heteromodule):
+        self.types = self.heteromodule.types
+
+    @_copy_to_script_wrapper
+    def __getitem__(self, key: str) -> Module:
+        return self._modules[key]
+
+    def __setitem__(self, key: str, module: Module) -> None:
+        self.add_module(key, module)
+
+    def __delitem__(self, key: str) -> None:
+        del self._modules[key]
+
+    @_copy_to_script_wrapper
+    def __len__(self) -> int:
+        return len(self._modules)
+
+    @_copy_to_script_wrapper
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._modules)
+
+    @_copy_to_script_wrapper
+    def __contains__(self, key: str) -> bool:
+        return key in self._modules
+
+
 class ToHeteroLinear(torch.nn.Module):
     def __init__(
         self,
