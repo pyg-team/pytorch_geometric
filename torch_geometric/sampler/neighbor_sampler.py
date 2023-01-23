@@ -202,7 +202,7 @@ class NeighborSampler(BaseSampler):
         neg_sampling: Optional[NegativeSampling] = None
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         return edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
-                           self.node_time, neg_sampling)
+                           self.node_time, neg_sampling, self.hard_negatives_dict)
 
     # Other Utilities #########################################################
 
@@ -358,6 +358,7 @@ def edge_sample(
     disjoint: bool,
     node_time: Optional[Union[Tensor, Dict[str, Tensor]]] = None,
     neg_sampling: Optional[NegativeSampling] = None,
+    hard_negatives_dict = None,
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
     function of the same signature as `node_sample`."""
@@ -427,8 +428,14 @@ def edge_sample(
             else:
                 dst_node_time = node_time
 
-            dst_neg = neg_sample(dst, neg_sampling, num_dst_nodes, dst_time,
-                                 dst_node_time)
+            #dst_neg = neg_sample(dst, neg_sampling, num_dst_nodes, dst_time,
+            #                     dst_node_time)
+            
+            hard_negs = []
+            for (n, t) in zip(src.tolist(), edge_label_time.tolist()):
+                hard_negs.append(hard_negatives_dict[(n, t)])
+            dst_neg = torch.tensor(hard_negs) 
+
             dst = torch.cat([dst, dst_neg], dim=0)
 
             assert edge_label is None
