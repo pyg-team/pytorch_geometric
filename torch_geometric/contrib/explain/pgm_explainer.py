@@ -25,10 +25,10 @@ class PGMExplainer(ExplainerAlgorithm):
         feature_index (List): The indices of the perturbed features
         perturb_mode (str): The method to generate the variations in
             features one of ['randint', 'mean', 'zero', 'max', 'uniform']
-        perturbations_is_positive_only (bool): If `True` restrict
-             perturbed values to be +ve
-        is_perturbation_scaled (bool): If `True` normalise the range
-            of the perturbed features
+        perturbations_is_positive_only (bool): If set to :obj:`True` restrict
+             perturbed values to be positive.
+        is_perturbation_scaled (bool): If set to :obj:`True` normalise the range
+            of the perturbed features.
 
     """
     def __init__(
