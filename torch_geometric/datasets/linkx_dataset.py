@@ -18,10 +18,10 @@ class LINKXDataset(InMemoryDataset):
         sources, but have been updated with new features and/or labels.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"penn94"`,
-            :obj:`"reed98"`, :obj:`"amherst41"`, :obj:`"cornell5"`,
-            :obj:`"johnshopkins55"`, :obj:`"genius"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"penn94"`, :obj:`"reed98"`,
+            :obj:`"amherst41"`, :obj:`"cornell5"`, :obj:`"johnshopkins55"`,
+            :obj:`"genius"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

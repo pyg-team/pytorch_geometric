@@ -12,7 +12,7 @@ class ToSLIC(BaseTransform):
     r"""Converts an image to a superpixel representation using the
     :meth:`skimage.segmentation.slic` algorithm, resulting in a
     :obj:`torch_geometric.data.Data` object holding the centroids of
-    superpixels in :obj:`pos` and their mean color in :obj:`x`
+    superpixels in :obj:`data.pos` and their mean color in :obj:`data.x`
     (functional name: :obj:`to_slic`).
 
     This transform can be used with any :obj:`torchvision` dataset.

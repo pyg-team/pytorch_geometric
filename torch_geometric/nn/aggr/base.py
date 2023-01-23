@@ -22,7 +22,8 @@ class Aggregation(torch.nn.Module):
 
     |
 
-    Notably, :obj:`index` does not have to be sorted:
+    Notably, :obj:`index` does not have to be sorted (for most aggregation
+    operators):
 
     .. code-block::
 
@@ -52,26 +53,24 @@ class Aggregation(torch.nn.Module):
 
     Shapes:
         - **input:**
-          node features :math:`(|\mathcal{V}|, F_{in})` or edge features
-          :math:`(|\mathcal{E}|, F_{in})`,
+          node features :math:`(*, |\mathcal{V}|, F_{in})` or edge features
+          :math:`(*, |\mathcal{E}|, F_{in})`,
           index vector :math:`(|\mathcal{V}|)` or :math:`(|\mathcal{E}|)`,
-        - **output:** graph features :math:`(|\mathcal{G}|, F_{out})` or node
-          features :math:`(|\mathcal{V}|, F_{out})`
+        - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
+          node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
-
-    # @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
-            index (torch.LongTensor, optional): The indices of elements for
+            index (torch.Tensor, optional): The indices of elements for
                 applying the aggregation.
                 One of :obj:`index` or :obj:`ptr` must be defined.
                 (default: :obj:`None`)
-            ptr (torch.LongTensor, optional): If given, computes the
-                aggregation based on sorted inputs in CSR representation.
+            ptr (torch.Tensor, optional): If given, computes the aggregation
+                based on sorted inputs in CSR representation.
                 One of :obj:`index` or :obj:`ptr` must be defined.
                 (default: :obj:`None`)
             dim_size (int, optional): The size of the output tensor at
@@ -82,6 +81,7 @@ class Aggregation(torch.nn.Module):
         pass
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         pass
 
     def __call__(self, x: Tensor, index: Optional[Tensor] = None,

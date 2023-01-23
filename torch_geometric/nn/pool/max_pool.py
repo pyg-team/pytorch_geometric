@@ -27,20 +27,21 @@ def max_pool_x(
     :attr:`cluster`.
 
     Args:
-        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
-            \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
-        x (Tensor): Node feature matrix
-            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
-        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
-            B-1\}}^N`, which assigns each node to a specific example.
+        cluster (torch.Tensor): The cluster vector
+            :math:`\mathbf{c} \in \{ 0, \ldots, N - 1 \}^N`, which assigns each
+            node to a specific cluster.
+        x (Tensor): The node feature matrix.
+        batch (torch.Tensor): The batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
+            node to a specific example.
         size (int, optional): The maximum number of clusters in a single
             example. This property is useful to obtain a batch-wise dense
             representation, *e.g.* for applying FC layers, but should only be
             used if the size of the maximum number of clusters per example is
             known in advance. (default: :obj:`None`)
 
-    :rtype: (:class:`Tensor`, :class:`LongTensor`) if :attr:`size` is
-        :obj:`None`, else :class:`Tensor`
+    :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`) if :attr:`size` is
+        :obj:`None`, else :class:`torch.Tensor`
     """
     if size is not None:
         batch_size = int(batch.max().item()) + 1
@@ -68,8 +69,9 @@ def max_pool(
     cluster.
 
     Args:
-        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
-            \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
+        cluster (torch.Tensor): The cluster vector
+            :math:`\mathbf{c} \in \{ 0, \ldots, N - 1 \}^N`, which assigns each
+            node to a specific cluster.
         data (Data): Graph data object.
         transform (callable, optional): A function/transform that takes in the
             coarsened and pooled :obj:`torch_geometric.data.Data` object and

@@ -30,8 +30,8 @@ class PascalVOCKeypoints(InMemoryDataset):
     on ImageNet (:obj:`relu4_2` and :obj:`relu5_1`).
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        category (string): The category of the images (one of
+        root (str): Root directory where the dataset should be saved.
+        category (str): The category of the images (one of
             :obj:`"Aeroplane"`, :obj:`"Bicycle"`, :obj:`"Bird"`,
             :obj:`"Boat"`, :obj:`"Bottle"`, :obj:`"Bus"`, :obj:`"Car"`,
             :obj:`"Cat"`, :obj:`"Chair"`, :obj:`"Diningtable"`, :obj:`"Dog"`,

@@ -14,7 +14,7 @@ from torch_geometric.utils import scatter
 
 @functional_transform('grid_sampling')
 class GridSampling(BaseTransform):
-    r"""Clusters points into voxels with size :attr:`size`
+    r"""Clusters points into fixed-sized voxels
     (functional name: :obj:`grid_sampling`).
     Each cluster returned is a new point based on the mean of all points
     inside the given cluster.

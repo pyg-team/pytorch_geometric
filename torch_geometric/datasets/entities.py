@@ -16,15 +16,15 @@ from torch_geometric.data import (
 
 
 class Entities(InMemoryDataset):
-    r"""The relational entities networks "AIFB", "MUTAG", "BGS" and "AM" from
-    the `"Modeling Relational Data with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1703.06103>`_ paper.
+    r"""The relational entities networks :obj:`"AIFB"`, :obj:`"MUTAG"`,
+    :obj:`"BGS"` and :obj:`"AM"` from the `"Modeling Relational Data with Graph
+    Convolutional Networks" <https://arxiv.org/abs/1703.06103>`_ paper.
     Training and test splits are given by node indices.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"AIFB"`,
-            :obj:`"MUTAG"`, :obj:`"BGS"`, :obj:`"AM"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"AIFB"`, :obj:`"MUTAG"`,
+            :obj:`"BGS"`, :obj:`"AM"`).
         hetero (bool, optional): If set to :obj:`True`, will save the dataset
             as a :class:`~torch_geometric.data.HeteroData` object.
             (default: :obj:`False`)
