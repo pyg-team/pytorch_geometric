@@ -103,10 +103,9 @@ if __name__ == "__main__":
 
     for explain_dataset in test_loader:
         explain_dataset.to(device)
-        node_idx = 10
         explanation = explainer(x=explain_dataset.x,
                                 edge_index=explain_dataset.edge_index,
-                                index=node_idx, target=explain_dataset.y,
+                                target=explain_dataset.y,
                                 edge_attr=explain_dataset.edge_attr,
                                 data=explain_dataset)
         for k in explanation.available_explanations:

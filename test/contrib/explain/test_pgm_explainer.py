@@ -83,6 +83,7 @@ def test_pgm_explainer_classification(node_idx, task_level, perturbation_mode):
     )
 
     assert 'node_mask' in explanation
+    assert 'pgm_stats' in explanation
     assert explanation.node_mask.size(0) == explanation.num_nodes
     assert explanation.node_mask.min() >= 0
     assert explanation.node_mask.max() <= 1
