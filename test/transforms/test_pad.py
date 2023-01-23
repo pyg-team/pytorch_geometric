@@ -71,7 +71,7 @@ def _check_homo_data_nodes(original: Data, padded: Data,
         assert padded[attr].shape[0] == max_num_nodes
         compare_pad_start_idx = original[attr].shape[0]
         # Check values in padded area.
-        pad_value = node_pad_value.get_val(
+        pad_value = node_pad_value.get_value(
             None, attr) if node_pad_value is not None else 0.0
         assert all(
             i == pad_value
@@ -116,7 +116,7 @@ def _check_homo_data_edges(original: Data, padded: Data,
         assert padded[attr].shape[0] == max_num_edges
 
         # Check values in padded area.
-        pad_value = edge_pad_value.get_val(
+        pad_value = edge_pad_value.get_value(
             None, attr) if edge_pad_value is not None else 0.0
         assert all(
             i == pad_value
@@ -150,7 +150,7 @@ def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
         assert padded_tensor.shape[0] == expected_nodes
 
         compare_pad_start_idx = original_tensor.shape[0]
-        pad_value = node_pad_value.get_val(
+        pad_value = node_pad_value.get_value(
             node_type, attr) if node_pad_value is not None else 0.0
         assert all(
             i == pad_value
@@ -209,7 +209,7 @@ def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
             assert padded_tensor.shape[0] == expected_num_edges
 
             # Check padded area values.
-            pad_value = edge_pad_value.get_val(
+            pad_value = edge_pad_value.get_value(
                 edge_type, attr) if edge_pad_value is not None else 0.0
             assert all(i == pad_value for i in torch.flatten(padded_tensor[
                 compare_pad_start_idx:, :]))
@@ -423,11 +423,11 @@ def test_pad_node_additional_attr_mask(mask_pad_value):
 def test_uniform_padding():
     pad_val = 10.0
     p = UniformPadding(pad_val)
-    assert p.get_val() == pad_val
-    assert p.get_val("v1", "x") == pad_val
+    assert p.get_value() == pad_val
+    assert p.get_value("v1", "x") == pad_val
 
     p = UniformPadding()
-    assert p.get_val() == 0.0
+    assert p.get_value() == 0.0
 
     with pytest.raises(ValueError, match="to be an integer or float"):
         UniformPadding('')
@@ -440,14 +440,14 @@ def test_attr_name_padding():
     padding_dict = {'x': x_val, 'y': UniformPadding(y_val)}
     padding = AttrNamePadding(padding_dict, default_value=default)
 
-    assert padding.get_val(attr_name='x') == x_val
-    assert padding.get_val('v1', 'x') == x_val
-    assert padding.get_val(attr_name='y') == y_val
-    assert padding.get_val('v1', 'y') == y_val
-    assert padding.get_val(attr_name='x2') == default
+    assert padding.get_value(attr_name='x') == x_val
+    assert padding.get_value('v1', 'x') == x_val
+    assert padding.get_value(attr_name='y') == y_val
+    assert padding.get_value('v1', 'y') == y_val
+    assert padding.get_value(attr_name='x2') == default
 
     padding = AttrNamePadding()
-    assert padding.get_val(attr_name='x') == 0.0
+    assert padding.get_value(attr_name='x') == 0.0
 
 
 def test_attr_name_padding_invalid():
@@ -494,20 +494,20 @@ def test_node_edge_type_padding(store_type):
     }
     padding = padding_cls(padding_dict, store_default)
 
-    assert padding.get_val(stores[0], 'x') == s0_padding_dict['x']
-    assert padding.get_val(stores[0], 'y') == s0_padding_dict['y']
-    assert padding.get_val(stores[0], 'p') == s0_default
-    assert padding.get_val(stores[0], 'z') == s0_default
+    assert padding.get_value(stores[0], 'x') == s0_padding_dict['x']
+    assert padding.get_value(stores[0], 'y') == s0_padding_dict['y']
+    assert padding.get_value(stores[0], 'p') == s0_default
+    assert padding.get_value(stores[0], 'z') == s0_default
 
-    assert padding.get_val(stores[1], 'x') == s1_default
-    assert padding.get_val(stores[1], 'y') == s1_padding_dict['y']
-    assert padding.get_val(stores[1], 'p') == s1_padding_dict['p']
-    assert padding.get_val(stores[1], 'z') == s1_default
+    assert padding.get_value(stores[1], 'x') == s1_default
+    assert padding.get_value(stores[1], 'y') == s1_padding_dict['y']
+    assert padding.get_value(stores[1], 'p') == s1_padding_dict['p']
+    assert padding.get_value(stores[1], 'z') == s1_default
 
-    assert padding.get_val(stores[2], 'x') == s2_default
-    assert padding.get_val(stores[2], 'z') == s2_default
+    assert padding.get_value(stores[2], 'x') == s2_default
+    assert padding.get_value(stores[2], 'z') == s2_default
 
-    assert padding.get_val(stores[3], 'x') == store_default
+    assert padding.get_value(stores[3], 'x') == store_default
 
 
 def test_edge_padding_invalid():
