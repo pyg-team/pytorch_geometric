@@ -1,7 +1,6 @@
 import pytest
 import torch
 
-from torch_geometric.data import HeteroData
 from torch_geometric.explain.algorithm.captum import (
     CaptumHeteroModel,
     captum_output_to_dicts,
@@ -24,22 +23,6 @@ methods = [
     'KernelShap',
     'Lime',
 ]
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
-
-
-def get_hetero_data():
-    data = HeteroData()
-    data['paper'].x = torch.randn(8, 16)
-    data['author'].x = torch.randn(10, 8)
-    data['paper', 'paper'].edge_index = get_edge_index(8, 8, 10)
-    data['author', 'paper'].edge_index = get_edge_index(10, 8, 10)
-    data['paper', 'author'].edge_index = get_edge_index(8, 10, 10)
-    return data
 
 
 class GraphSAGE(torch.nn.Module):
@@ -68,9 +51,9 @@ class HeteroSAGE(torch.nn.Module):
 @withPackage('captum')
 @pytest.mark.parametrize('mask_type', mask_types)
 @pytest.mark.parametrize('method', methods)
-def test_captum_attribution_methods_hetero(mask_type, method):
+def test_captum_attribution_methods_hetero(mask_type, method, hetero_data):
     from captum import attr  # noqa
-    data = get_hetero_data()
+    data = hetero_data
     metadata = data.metadata()
     model = HeteroSAGE(metadata)
     captum_model = to_captum_model(model, mask_type, 0, metadata)

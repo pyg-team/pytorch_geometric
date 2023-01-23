@@ -10,7 +10,7 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
     return torch.stack([row, col], dim=0)
 
 
-@pytest.fixture
+@pytest.fixture()
 def data():
     return Data(
         x=torch.randn(4, 3),
@@ -19,7 +19,7 @@ def data():
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def hetero_data():
     data = HeteroData()
     data['paper'].x = torch.randn(8, 16)
