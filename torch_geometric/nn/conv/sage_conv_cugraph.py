@@ -75,7 +75,7 @@ class SAGEConvCuGraph(nn.Module):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
-                max_num_neighbors: Optional[int] = None):
+                max_num_neighbors: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (Tensor): The input node features.
