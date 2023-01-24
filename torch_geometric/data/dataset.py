@@ -263,7 +263,7 @@ class Dataset(torch.utils.data.Dataset):
         elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
             return self.index_select(idx.flatten().tolist())
 
-        elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
+        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
             idx = idx.flatten().nonzero()[0]
             return self.index_select(idx.flatten().tolist())
 
