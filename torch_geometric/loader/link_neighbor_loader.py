@@ -1,9 +1,9 @@
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
 from torch_geometric.sampler import NegativeSampling, NeighborSampler
-from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
+from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
 class LinkNeighborLoader(LinkLoader):
@@ -173,7 +173,7 @@ class LinkNeighborLoader(LinkLoader):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
