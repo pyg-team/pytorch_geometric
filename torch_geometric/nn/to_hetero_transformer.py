@@ -311,11 +311,12 @@ class ToHeteroTransformer(Transformer):
                 out_type = Dict[EdgeType, Tensor]
             else:
                 out_type = Dict[NodeType, Tensor]
-            out_hetero = self.graph.create_node('call_module', target=f'{target}',
-                                         args=(args_dict, ),
-                                         kwargs=kwargs_dict,
-                                         name=f'{name}__heterolinear',
-                                         type_expr=out_type)
+            out_hetero = self.graph.create_node('call_module',
+                                                target=f'{target}',
+                                                args=(args_dict, ),
+                                                kwargs=kwargs_dict,
+                                                name=f'{name}__heterolinear',
+                                                type_expr=out_type)
             print('out.name', out_hetero.name)
             print('out.type', out_hetero.type)
             self.graph.inserting_after(out_hetero)
@@ -327,7 +328,7 @@ class ToHeteroTransformer(Transformer):
                 print("name =", f'{name}__{key2str(key)}')
                 out = self.graph.create_node(
                     'call_method', target=f'{out_hetero}.get',
-                    args=(key, ),
+                    args=(key,),
                     name=f'{name}__{key2str(key)}')
                 self.graph.inserting_after(out)
         else:
