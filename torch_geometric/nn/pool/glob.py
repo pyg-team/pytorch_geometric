@@ -29,7 +29,7 @@ def global_add_pool(x: Tensor, batch: Optional[Tensor],
     dim = -1 if x.dim() == 1 else -2
 
     if batch is None:
-        return x.sum(dim=dim, keepdim=x.dim() == 2 or x.dim() == 1)
+        return x.sum(dim=dim, keepdim=True)
     size = int(batch.max().item() + 1) if size is None else size
     return scatter(x, batch, dim=dim, dim_size=size, reduce='sum')
 
@@ -58,7 +58,7 @@ def global_mean_pool(x: Tensor, batch: Optional[Tensor],
     dim = -1 if x.dim() == 1 else -2
 
     if batch is None:
-        return x.mean(dim=dim, keepdim=x.dim() == 2 or x.dim() == 1)
+        return x.mean(dim=dim, keepdim=True)
     size = int(batch.max().item() + 1) if size is None else size
     return scatter(x, batch, dim=dim, dim_size=size, reduce='mean')
 
@@ -87,6 +87,6 @@ def global_max_pool(x: Tensor, batch: Optional[Tensor],
     dim = -1 if x.dim() == 1 else -2
 
     if batch is None:
-        return x.max(dim=dim, keepdim=x.dim() == 2 or x.dim() == 1)[0]
+        return x.max(dim=dim, keepdim=True)[0]
     size = int(batch.max().item() + 1) if size is None else size
     return scatter(x, batch, dim=dim, dim_size=size, reduce='max')
