@@ -383,7 +383,9 @@ class HGTConv(MessagePassing):
             e_idx = SparseTensor(
                 row=e_idx[0], col=e_idx[1], sparse_sizes=(k_out.size(0), k_out.size(0))).t()
 
-        # propogate
+        # propagate
+        print("k_out.shape =",k_out.shape)
+        print("k_out[0,0] =",k_out[0,0])
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         k_ptr = 0
         for node_type, k in k_dict.items():
