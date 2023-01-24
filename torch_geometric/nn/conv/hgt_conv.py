@@ -386,9 +386,9 @@ class HGTConv(MessagePassing):
 
         # propagate
         print("k[0,0] =",k_out[0,0])
-        print("v[0,0] =",v_out[0,0])
         print("q[0,0] =",q[0,0])
-        print("p[0,0] =",p[0,0])
+        print("v[0,0] =",v_out[0,0])
+        print("p[0,0] =",p)
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         k_ptr = 0
         for node_type, k in k_dict.items():
