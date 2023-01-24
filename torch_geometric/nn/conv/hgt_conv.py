@@ -400,7 +400,7 @@ class HGTConv(MessagePassing):
         else:
             print("e_idx =", e_idx)
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
-        print("propogate_out[0,0] =", out[0, 0])
+        print("propagate_out[0,0] =", out[0, 0])
         k_ptr = 0
         for node_type, k in k_dict.items():
             out_dict[node_type] = out[k_ptr:k_ptr + k.size(0)]
