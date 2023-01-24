@@ -22,22 +22,24 @@ class PGMExplainer(ExplainerAlgorithm):
     used to generate the node mask
 
     Args:
-        feature_index (List): The indices of the perturbed features
+        feature_index (List): The indices of the perturbed features. If set
+            to :obj:`None` all features are perturbed. (default: :obj:`None`)
         perturb_mode (str): The method to generate the variations in
             features one of
-            :obj:`['randint', 'mean', 'zero', 'max', 'uniform']`.
+            :obj:`['randint', 'mean', 'zero', 'max', 'uniform']`
+            . (default: :obj:`'randint'`)
         perturbations_is_positive_only (bool): If set to :obj:`True` restrict
-             perturbed values to be positive.
+             perturbed values to be positive. (default: :obj:`False`)
         is_perturbation_scaled (bool): If set to :obj:`True` normalise the
-            range of the perturbed features.
+            range of the perturbed features. (default: :obj:`False`)
         num_samples (int): num of samples of perturbations used to test
-                the significance of neighbour nodes to the prediction
-        significance_threshold (float): statistical value (p-value) threshold
-            below which to consider a node has an effect on the prediction
-        max_subgraph_size (int): max number of neighbours to consider
-            for the explanation
-        pred_threshold (float): buffer value (in the range 0-1) to consider
-            the output from a perturbed data to be different from the original
+                the significance of nodes to the prediction. (default: :obj:`100`)
+        significance_threshold (float): statistical threshold (p-value)
+            below which a node is considered to have an effect on
+            the prediction. (default: :obj:`0.05`)
+        pred_threshold (float): buffer value (in the range :obj:`0-1`) to consider
+            the output from a perturbed data to be different
+            from the original. (default: :obj:`0.1`)
 
     """
     def __init__(
@@ -48,7 +50,6 @@ class PGMExplainer(ExplainerAlgorithm):
         is_perturbation_scaled: bool = False,
         num_samples: int = 100,
         significance_threshold: float = 0.05,
-        max_subgraph_size: int = None,
         pred_threshold: float = 0.1,
         **kwargs,
     ):
@@ -59,7 +60,6 @@ class PGMExplainer(ExplainerAlgorithm):
         self.is_perturbation_scaled = is_perturbation_scaled
         self.num_samples = num_samples
         self.significance_threshold = significance_threshold
-        self.max_subgraph_size = max_subgraph_size
         self.pred_threshold = pred_threshold
 
     def _perturb_features_on_nodes(
@@ -383,6 +383,9 @@ class PGMExplainer(ExplainerAlgorithm):
         index: Optional[int] = None,  # node index
         **kwargs,
     ) -> Explanation:
+        
+        if self.feature_index is None:
+            self.feature_index = list(range(x.shape[-1])
 
         if isinstance(index, torch.Tensor):
             if index.numel() > 1:
