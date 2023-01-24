@@ -321,9 +321,9 @@ class ToHeteroTransformer(Transformer):
             print("extracting tensors from dict")
             for key in self.metadata[int(self.is_edge_level(node))]:
                 print("inserting for key:", key)
-                out = self.graph.create_node('call_method', target='get',
-                                             args=(out_hetero, key),
-                                             name=f'{name}_hetero_get_{key2str(key)}')
+                out = self.graph.create_node(
+                    'call_method', target='get', args=(out_hetero, key),
+                    name=f'{name}_hetero_get_{key2str(key)}')
                 print("out.__dict__ =", out.__dict__)
                 self.graph.inserting_after(out)
         else:
