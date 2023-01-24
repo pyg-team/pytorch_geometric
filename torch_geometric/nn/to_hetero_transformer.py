@@ -321,9 +321,9 @@ class ToHeteroTransformer(Transformer):
             print("extracting tensors from dict")
             for key in self.metadata[int(self.is_edge_level(node))]:
                 print("inserting for key:", key)
-                out = self.graph.create_node(
-                    'call_method', target='get', args=(out_hetero, key),
-                    name=f'{name}__{key2str(key)}')
+                out = self.graph.create_node('call_method', target='get',
+                                             args=(out_hetero, key),
+                                             name=f'{name}__{key2str(key)}')
                 print("out.__dict__ =", out.__dict__)
                 self.graph.inserting_after(out)
         else:
@@ -412,8 +412,10 @@ class ToHeteroTransformer(Transformer):
     def init_submodule(self, module: Module, target: str) -> Module:
         print("initing submodule")
         # Replicate each module for each node type or edge type.
-        has_node_level_target = bool(self.find_by_name(f'{target}__{key2str(self.metadata[0][0])}'))
-        has_edge_level_target = bool(self.find_by_name(f'{target}__{key2str(self.metadata[1][0])}'))
+        has_node_level_target = bool(
+            self.find_by_name(f'{target}__{key2str(self.metadata[0][0])}'))
+        has_edge_level_target = bool(
+            self.find_by_name(f'{target}__{key2str(self.metadata[1][0])}'))
         print("has_node_level_target:", has_node_level_target)
         print("has_edge_level_target:", has_edge_level_target)
         if not has_node_level_target and not has_edge_level_target:
