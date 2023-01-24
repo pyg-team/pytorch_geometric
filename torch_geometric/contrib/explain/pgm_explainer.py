@@ -383,7 +383,7 @@ class PGMExplainer(ExplainerAlgorithm):
         index: Optional[int] = None,  # node index
         **kwargs,
     ) -> Explanation:
-        
+
         if self.feature_index is None:
             self.feature_index = list(range(x.shape[-1])
 
