@@ -33,12 +33,12 @@ class PGMExplainer(ExplainerAlgorithm):
         is_perturbation_scaled (bool): If set to :obj:`True` normalise the
             range of the perturbed features. (default: :obj:`False`)
         num_samples (int): num of samples of perturbations used to test
-                the significance of nodes to the prediction. (default: :obj:`100`)
+            the significance of nodes to the prediction. (default: :obj:`100`)
         significance_threshold (float): statistical threshold (p-value)
             below which a node is considered to have an effect on
             the prediction. (default: :obj:`0.05`)
-        pred_threshold (float): buffer value (in the range :obj:`0-1`) to consider
-            the output from a perturbed data to be different
+        pred_threshold (float): buffer value (in the range :obj:`0-1`) to
+            consider the output from a perturbed data to be different
             from the original. (default: :obj:`0.1`)
 
     """
@@ -61,6 +61,7 @@ class PGMExplainer(ExplainerAlgorithm):
         self.num_samples = num_samples
         self.significance_threshold = significance_threshold
         self.pred_threshold = pred_threshold
+        self.max_subgraph_size = None
 
     def _perturb_features_on_nodes(
         self,
@@ -262,18 +263,18 @@ class PGMExplainer(ExplainerAlgorithm):
         return node_mask, pgm_stats
 
     def _explain_node(self, model: torch.nn.Module, x: torch.Tensor,
-                      index: int, edge_index: torch.Tensor,
-                      target: torch.Tensor,
+                      edge_index: torch.Tensor, target: torch.Tensor,
+                      index: int,
                       **kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
         r"""Generate explanations for node classification tasks
 
         Args:
             model (torch.nn.Module): model that generated the predictions
             x (torch.Tensor): node feature matrix
-            index (torch.Tensor): the index of the node that the
-                explanations are being generated for
             edge_index (torch.Tensor): edge_index of the input graph
             target (torch.Tensor):  the prediction labels
+            index (torch.Tensor): the index of the node that the
+                explanations are being generated for
 
         Returns:
             node_mask (torch.Tensor): 1 or 0 corresponding to whether a node
@@ -287,7 +288,7 @@ class PGMExplainer(ExplainerAlgorithm):
 
         logging.info(f'Explaining node: {index}')
 
-        neighbors, edge_index_new, mapping, edge_mask_new = k_hop_subgraph(
+        neighbors, _, _, _ = k_hop_subgraph(
             node_idx=index,
             num_hops=get_num_hops(model),
             edge_index=edge_index,
@@ -348,7 +349,7 @@ class PGMExplainer(ExplainerAlgorithm):
                 # node has no effect on result
                 p = 0
             else:
-                chi2, p, _ = chi_square(
+                _, p, _ = chi_square(
                     index_original_to_subgraph[node],
                     index_original_to_subgraph[index], [], data_pgm,
                     boolean=False,
@@ -396,12 +397,10 @@ class PGMExplainer(ExplainerAlgorithm):
 
         if self.model_config.task_level == ModelTaskLevel.node:
 
-            node_mask, pgm_stats = self._explain_node(
-                model=model, x=x, index=index, edge_index=edge_index,
-                target=target[index], num_samples=self.num_samples,
-                max_subgraph_size=self.max_subgraph_size,
-                significance_threshold=self.significance_threshold,
-                pred_threshold=self.pred_threshold, **kwargs)
+            node_mask, pgm_stats = self._explain_node(model=model, x=x,
+                                                      edge_index=edge_index,
+                                                      target=target[index],
+                                                      index=index, **kwargs)
             return Explanation(
                 x=x,
                 edge_index=edge_index,
@@ -409,12 +408,10 @@ class PGMExplainer(ExplainerAlgorithm):
                 pgm_stats=pgm_stats,
             )
         elif self.model_config.task_level == ModelTaskLevel.graph:
-            node_mask, pgm_stats = self._explain_graph(
-                model=model, x=x, target=target, edge_index=edge_index,
-                num_samples=self.num_samples,
-                max_subgraph_size=self.max_subgraph_size,
-                significance_threshold=self.significance_threshold,
-                pred_threshold=self.pred_threshold, **kwargs)
+            node_mask, pgm_stats = self._explain_graph(model=model, x=x,
+                                                       target=target,
+                                                       edge_index=edge_index,
+                                                       **kwargs)
             return Explanation(
                 node_mask=node_mask,
                 pgm_stats=pgm_stats,
