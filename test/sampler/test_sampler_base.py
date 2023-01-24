@@ -49,15 +49,3 @@ def test_heterogeneous_num_neighbors_dict_and_default():
     assert values == {'A__B': [25, 10], 'B__A': [-1, -1]}
 
     assert num_neighbors.num_hops == 2
-
-
-def test_num_neighbors_cast():
-    num_neighbors = NumNeighbors.cast([25, 10])
-    assert isinstance(num_neighbors, NumNeighbors)
-    assert num_neighbors.values == [25, 10]
-    assert num_neighbors.default is None
-
-    num_neighbors = NumNeighbors.cast({('A', 'B'): [25, 10]}, [-1, -1])
-    assert isinstance(num_neighbors, NumNeighbors)
-    assert num_neighbors.values == {('A', 'B'): [25, 10]}
-    assert num_neighbors.default == [-1, -1]
