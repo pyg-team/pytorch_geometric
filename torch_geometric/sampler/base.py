@@ -278,6 +278,10 @@ class NumNeighbors:
         self.__dict__['_num_hops'] = num_hops
         return num_hops
 
+    def __len__(self) -> int:
+        r"""Returns the number of hops."""
+        return self.num_hops
+
 
 class NegativeSamplingMode(Enum):
     # 'binary': Randomly sample negative edges in the graph.
