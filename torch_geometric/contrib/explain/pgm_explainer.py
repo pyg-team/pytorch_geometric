@@ -385,7 +385,7 @@ class PGMExplainer(ExplainerAlgorithm):
     ) -> Explanation:
 
         if self.feature_index is None:
-            self.feature_index = list(range(x.shape[-1])
+            self.feature_index = list(range(x.shape[-1]))
 
         if isinstance(index, torch.Tensor):
             if index.numel() > 1:
