@@ -390,6 +390,11 @@ class HGTConv(MessagePassing):
         print("q[0,0] =", q[0,0])
         print("v[0,0] =", v_out[0,0])
         print("p[0,0] =", p)
+        if convert:
+            printsrc, printdst, _ = e_idx.coo()
+            print("e_idx =", torch.cat((printsrc.view(1, -1), printdst.view(1, -1))))
+        else:
+            print("e_idx =", e_idx)
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         print("propogate_out[0,0] =", out[0,0])
         k_ptr = 0
