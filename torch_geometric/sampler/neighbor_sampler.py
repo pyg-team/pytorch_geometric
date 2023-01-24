@@ -35,7 +35,7 @@ class NeighborSampler(BaseSampler):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
+        num_neighbors: NumNeighborsType,
         replace: bool = False,
         directed: bool = True,
         disjoint: bool = False,
