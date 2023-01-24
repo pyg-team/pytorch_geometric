@@ -184,7 +184,7 @@ class NumNeighbors(CastMixin):
     graph. In heterogeneous graphs, may also take in a dictionary denoting
     the amount of neighbors to sample for individual edge types.
 
-    Args
+    Args:
         values (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample.
             If an entry is set to :obj:`-1`, all neighbors will be included.
