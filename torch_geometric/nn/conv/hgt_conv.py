@@ -380,8 +380,9 @@ class HGTConv(MessagePassing):
         e_idx = torch.cat(edge_index_list, dim=1)
         if convert:
             # convert back to CSR
-            e_idx = SparseTensor(
-                row=e_idx[0], col=e_idx[1], sparse_sizes=(k_out.size(0), k_out.size(0))).t()
+            e_idx = SparseTensor(row=e_idx[0], col=e_idx[1],
+                                 sparse_sizes=(k_out.size(0),
+                                               k_out.size(0))).t()
 
         # propagate
         print("k_out.shape =",k_out.shape)
