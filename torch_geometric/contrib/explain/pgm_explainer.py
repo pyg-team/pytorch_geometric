@@ -34,6 +34,8 @@ class PGMExplainer(ExplainerAlgorithm):
             range of the perturbed features. (default: :obj:`False`)
         num_samples (int): num of samples of perturbations used to test
             the significance of nodes to the prediction. (default: :obj:`100`)
+        max_subgraph_size (int): The maximum number neighbors to consider
+            for the explanation. (default: :obj:`None`)
         significance_threshold (float): statistical threshold (p-value)
             below which a node is considered to have an effect on
             the prediction. (default: :obj:`0.05`)
@@ -44,14 +46,14 @@ class PGMExplainer(ExplainerAlgorithm):
     """
     def __init__(
         self,
-        feature_index: List = None,
+        feature_index: Optional[List] = None,
         perturbation_mode: str = "randint",
         perturbations_is_positive_only: bool = False,
         is_perturbation_scaled: bool = False,
         num_samples: int = 100,
+        max_subgraph_size: Optional[int] = None,
         significance_threshold: float = 0.05,
         pred_threshold: float = 0.1,
-        **kwargs,
     ):
         super().__init__()
         self.feature_index = feature_index
@@ -59,9 +61,9 @@ class PGMExplainer(ExplainerAlgorithm):
         self.perturbations_is_positive_only = perturbations_is_positive_only
         self.is_perturbation_scaled = is_perturbation_scaled
         self.num_samples = num_samples
+        self.max_subgraph_size = max_subgraph_size
         self.significance_threshold = significance_threshold
         self.pred_threshold = pred_threshold
-        self.max_subgraph_size = None
 
     def _perturb_features_on_nodes(
         self,
