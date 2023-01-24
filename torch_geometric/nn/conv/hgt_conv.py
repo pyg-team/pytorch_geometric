@@ -359,6 +359,7 @@ class HGTConv(MessagePassing):
         cumsum = 0
         edge_index_list = []
         edge_slices = {}
+        print("\n" * 2)
         for e_type in self.edge_types:
             src_type, _, dst_type = e_type
             indices = edge_index_dict[e_type]
@@ -385,7 +386,6 @@ class HGTConv(MessagePassing):
                                  sparse_sizes=(k_out.size(0), k_out.size(0)))
 
         # propagate
-        print("\n" * 2)
         print("k[0,0] =", k_out[0, 0])
         print("k.shape =", k_out.shape)
         print("q[0,0] =", q[0, 0])
