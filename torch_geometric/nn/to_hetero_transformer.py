@@ -412,8 +412,14 @@ class ToHeteroTransformer(Transformer):
     def init_submodule(self, module: Module, target: str) -> Module:
         print("initing submodule")
         # Replicate each module for each node type or edge type.
-        has_node_level_target = bool(self.find_by_name(f'{target}__{key2str(self.metadata[0][0])}')) or bool(self.find_by_target(f'{target}.{key2str(self.metadata[0][0])}'))
-        has_edge_level_target = bool(self.find_by_name(f'{target}__{key2str(self.metadata[1][0])}')) or bool(self.find_by_target(f'{target}.{key2str(self.metadata[1][0])}'))
+        has_node_level_target = bool(
+            self.find_by_name(f'{target}__{key2str(self.metadata[0][0])}')
+        ) or bool(
+            self.find_by_target(f'{target}.{key2str(self.metadata[0][0])}'))
+        has_edge_level_target = bool(
+            self.find_by_name(f'{target}__{key2str(self.metadata[1][0])}')
+        ) or bool(
+            self.find_by_target(f'{target}.{key2str(self.metadata[1][0])}'))
         print("has_node_level_target:", has_node_level_target)
         print("has_edge_level_target:", has_edge_level_target)
         if not has_node_level_target and not has_edge_level_target:
