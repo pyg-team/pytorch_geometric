@@ -60,6 +60,14 @@ class RGCNConv(MessagePassing):
         We advise to check out both implementations to see which one fits your
         needs.
 
+    .. note::
+        :class:`RGCNConv` can use `dynamic shapes
+        <https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index
+        .html#work_dynamic_shapes>`_, which means that the shape of the interim
+        tensors can be determined at runtime.
+        If your device doesn't support dynamic shapes, use
+        :class:`FastRGCNConv` instead.
+
     Args:
         in_channels (int or tuple): Size of each input sample. A tuple
             corresponds to the sizes of source and target dimensionalities.

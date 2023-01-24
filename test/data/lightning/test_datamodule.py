@@ -404,9 +404,9 @@ def test_eval_loader_kwargs(get_dataset):
     )
 
     assert datamodule.loader_kwargs['batch_size'] == 32
-    assert datamodule.graph_sampler.num_neighbors == [5]
+    assert datamodule.graph_sampler.num_neighbors.values == [5]
     assert datamodule.eval_loader_kwargs['batch_size'] == 64
-    assert datamodule.eval_graph_sampler.num_neighbors == [-1]
+    assert datamodule.eval_graph_sampler.num_neighbors.values == [-1]
 
     train_loader = datamodule.train_dataloader()
     assert math.ceil(int(data.train_mask.sum()) / 32) == len(train_loader)

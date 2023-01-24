@@ -37,6 +37,9 @@ full_requires = graphgym_requires + [
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
+    'pgmpy',
+    'opt_einsum',  # required for pgmpy
+    'statsmodels',
 ]
 
 benchmark_requires = [
