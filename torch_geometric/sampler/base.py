@@ -181,8 +181,8 @@ class HeteroSamplerOutput(CastMixin):
 @dataclass(frozen=True)
 class NumNeighbors(CastMixin):
     r"""The number of neighbors to sample in a homogeneous or heterogeneous
-    graph. Supports specifying sampling different number of neighbors for
-    individual edge types.
+    graph. In heterogeneous graphs, may also take in a dictionary denoting
+    the amount of neighbors to sample for individual edge types.
 
     Args
         values (List[int] or Dict[Tuple[str, str, str], List[int]]): The
@@ -198,7 +198,7 @@ class NumNeighbors(CastMixin):
 
     def __post_init__(self):
         if isinstance(self.values, (tuple, list)) and self.default is not None:
-            raise ValueError(f"'default' must be set to `None` in case a "
+            raise ValueError(f"'default' must be set to 'None' in case a "
                              f"single list is given as the number of "
                              f"neighbors (got '{type(self.default)})'")
 

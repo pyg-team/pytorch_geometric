@@ -4,6 +4,9 @@ from torch_geometric.sampler.base import NumNeighbors
 
 
 def test_homogeneous_num_neighbors():
+    with pytest.raises(ValueError, match="'default' must be set to 'None'"):
+        num_neighbors = NumNeighbors([25, 10], default=[-1, -1])
+
     num_neighbors = NumNeighbors([25, 10])
     assert str(num_neighbors) == 'NumNeighbors(values=[25, 10], default=None)'
 
