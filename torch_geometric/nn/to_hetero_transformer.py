@@ -311,23 +311,24 @@ class ToHeteroTransformer(Transformer):
                 out_type = Dict[EdgeType, Tensor]
             else:
                 out_type = Dict[NodeType, Tensor]
-            out = self.graph.create_node('call_module', target=f'{target}',
+            out_hetero = self.graph.create_node('call_module', target=f'{target}',
                                          args=(args_dict, ),
                                          kwargs=kwargs_dict,
                                          name=f'{name}__heterolinear',
                                          type_expr=out_type)
-            print('out.name', out.name)
-            print('out.type', out.type)
-            self.graph.inserting_after(out)
-            # insert dict extraction functions
-            print("inserting dict extraction functions to graph")
+            print('out.name', out_hetero.name)
+            print('out.type', out_hetero.type)
+            self.graph.inserting_after(out_hetero)
+            # extract tensors from dict
+            print("extracting tensors from dict")
             for key in self.metadata[int(self.is_edge_level(node))]:
                 print("inserting for key:", key)
                 print("target =", f'{target}.extract_from_dict')
                 print("name =", f'{name}__{key2str(key)}')
                 out = self.graph.create_node(
-                    'call_function', target=(f'eval("{target}.extract_from_dict")'),
-                    args=(str(key), ), name=f'{name}__{key2str(key)}')
+                    'call_method', target='.get',
+                    args=(out_hetero, key),
+                    name=f'{name}__{key2str(key)}')
                 print("out.dict:", out.__dict__)
                 self.graph.inserting_after(out)
         else:
