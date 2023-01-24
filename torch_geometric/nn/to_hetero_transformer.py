@@ -424,6 +424,7 @@ class ToHeteroTransformer(Transformer):
         print("has_edge_level_target:", has_edge_level_target)
         if not has_node_level_target and not has_edge_level_target:
             return module
+        print('is_linear(module):', is_linear(module))
         if is_linear(module):
             print("replacing w/ to_hetero_module")
             return ToHeteroModule(module, self.metadata, self.aggr)
