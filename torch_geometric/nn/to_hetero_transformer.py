@@ -311,12 +311,9 @@ class ToHeteroTransformer(Transformer):
                 out_type = Dict[EdgeType, Tensor]
             else:
                 out_type = Dict[NodeType, Tensor]
-            out_hetero = self.graph.create_node('call_module',
-                                                target=f'{target}',
-                                                args=(args_dict, ),
-                                                kwargs=kwargs_dict,
-                                                name=f'{name}__hetero',
-                                                type_expr=out_type)
+            out_hetero = self.graph.create_node(
+                'call_module', target=f'{target}', args=(args_dict, ),
+                kwargs=kwargs_dict, name=f'{name}__hetero', type_expr=out_type)
             print('out.name', out_hetero.name)
             print('out.type', out_hetero.type)
             self.graph.inserting_after(out_hetero)
@@ -326,9 +323,9 @@ class ToHeteroTransformer(Transformer):
                 print("inserting for key:", key)
                 print("target =", f'{target}.extract_from_dict')
                 print("name =", f'{name}__{key2str(key)}')
-                out = self.graph.create_node('call_method', target='get',
-                                             args=(out_hetero, key),
-                                             name=f'{name}_hetero_get_{key2str(key)}')
+                out = self.graph.create_node(
+                    'call_method', target='get', args=(out_hetero, key),
+                    name=f'{name}_hetero_get_{key2str(key)}')
                 self.graph.inserting_after(out)
         else:
             print('inside other if')
@@ -417,11 +414,15 @@ class ToHeteroTransformer(Transformer):
         print("initing submodule")
         # Replicate each module for each node type or edge type.
         has_node_level_target = bool(
-            self.find_by_target(f'{target}.{key2str(self.metadata[0][0])}')) or bool(
-            self.find_by_name(f'{target}__hetero_get_{key2str(self.metadata[0][0])}'))
+            self.find_by_target(f'{target}.{key2str(self.metadata[0][0])}')
+        ) or bool(
+            self.find_by_name(
+                f'{target}__hetero_get_{key2str(self.metadata[0][0])}'))
         has_edge_level_target = bool(
-            self.find_by_target(f'{target}.{key2str(self.metadata[1][0])}')) or bool(
-            self.find_by_name(f'{target}__hetero_get_{key2str(self.metadata[1][0])}'))
+            self.find_by_target(f'{target}.{key2str(self.metadata[1][0])}')
+        ) or bool(
+            self.find_by_name(
+                f'{target}__hetero_get_{key2str(self.metadata[1][0])}'))
         print("has_node_level_target:", has_node_level_target)
         print("has_edge_level_target:", has_edge_level_target)
         if not has_node_level_target and not has_edge_level_target:
@@ -429,7 +430,8 @@ class ToHeteroTransformer(Transformer):
         print('is_linear(module):', is_linear(module))
         if is_linear(module):
             print("replacing w/ to_hetero_module")
-            return ToHeteroLinear(module, self.metadata[int(has_edge_level_target)])
+            return ToHeteroLinear(module,
+                                  self.metadata[int(has_edge_level_target)])
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
