@@ -382,7 +382,7 @@ class HGTConv(MessagePassing):
             # convert back to CSR
             e_idx = SparseTensor(row=e_idx[0], col=e_idx[1],
                                  sparse_sizes=(k_out.size(0),
-                                               k_out.size(0))).t()
+                                               k_out.size(0)))
 
         # propagate
         print("\n" * 2)
