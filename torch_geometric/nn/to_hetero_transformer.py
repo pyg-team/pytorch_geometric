@@ -418,7 +418,7 @@ class ToHeteroTransformer(Transformer):
         print('is_linear(module):', is_linear(module))
         if is_linear(module):
             print("replacing w/ to_hetero_module")
-            return ToHeteroModule(module, self.metadata, self.aggr)
+            return ToHeteroLinear(module, self.metadata, self.aggr)
         # Replicate each module for each node type or edge type.
         has_node_level_target = bool(
             self.find_by_target(f'{target}.{key2str(self.metadata[0][0])}'))
