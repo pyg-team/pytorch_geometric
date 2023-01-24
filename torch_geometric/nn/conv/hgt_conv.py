@@ -385,6 +385,7 @@ class HGTConv(MessagePassing):
                                                k_out.size(0))).t()
 
         # propagate
+        print("\n"*2)
         print("k[0,0] =",k_out[0,0])
         print("q[0,0] =",q[0,0])
         print("v[0,0] =",v_out[0,0])
