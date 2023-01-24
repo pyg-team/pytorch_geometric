@@ -387,8 +387,11 @@ class HGTConv(MessagePassing):
         # propagate
         print("\n" * 2)
         print("k[0,0] =", k_out[0, 0])
+        print("k.shape =", k_out.shape)
         print("q[0,0] =", q[0, 0])
+        print("q.shape =", q.shape)
         print("v[0,0] =", v_out[0, 0])
+        print("v.shape =", v_out.shape)
         print("p[0,0] =", p)
         if convert:
             printsrc, printdst, _ = e_idx.coo()
