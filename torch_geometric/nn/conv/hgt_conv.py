@@ -381,10 +381,10 @@ class HGTConv(MessagePassing):
         if convert:
             # convert back to CSR
             #e_idx = SparseTensor.from_edge_index(
-                #e_idx, sparse_sizes=(k_out.size(0), k_out.size(0)))
-            e_idx = SparseTensor(
-                row=e_idx[0], col=e_idx[1],
-                sparse_sizes=(k_out.size(0), k_out.size(0))).t()
+            #e_idx, sparse_sizes=(k_out.size(0), k_out.size(0)))
+            e_idx = SparseTensor(row=e_idx[0], col=e_idx[1],
+                                 sparse_sizes=(k_out.size(0),
+                                               k_out.size(0))).t()
 
         # propogate
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
