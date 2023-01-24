@@ -83,7 +83,7 @@ class ToHeteroLinear(torch.nn.Module):
         raise ValueError(f"Encountered invalid forward types in "
                          f"'{self.__class__.__name__}'")
 
-    def extract_from_dict(key: Union[EdgeType, NodeType]) -> Tensor:
+    def extract_from_dict(key: Union[NodeType, EdgeType]) -> Tensor:
         assert self.out_dict is not None, "Forward pass must be called\
             before outputs can be extracted"
 

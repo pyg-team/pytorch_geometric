@@ -327,7 +327,7 @@ class ToHeteroTransformer(Transformer):
                 print("name =", f'{name}__{key2str(key)}')
                 out = self.graph.create_node(
                     'call_function', target=f'{target}.extract_from_dict',
-                    args=(key, ), name=f'{name}__{key2str(key)}')
+                    args=(str(key), ), name=f'{name}__{key2str(key)}')
                 print("out.dict:", out.__dict__)
                 self.graph.inserting_after(out)
         else:
