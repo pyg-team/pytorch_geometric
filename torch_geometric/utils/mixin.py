@@ -7,7 +7,7 @@ class CastMixin:
                 return None
             if isinstance(elem, CastMixin):
                 return elem
-            if isinstance(elem, (tuple, list)):
+            if isinstance(elem, tuple):
                 return cls(*elem)
             if isinstance(elem, dict):
                 return cls(**elem)

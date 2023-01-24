@@ -22,9 +22,11 @@ from torch_geometric.sampler import (
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import DataType
+from torch_geometric.sampler.base import DataType, NumNeighbors
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
-from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
+
+NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 
 class NeighborSampler(BaseSampler):
@@ -33,7 +35,7 @@ class NeighborSampler(BaseSampler):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: NumNeighborsType,
         replace: bool = False,
         directed: bool = True,
         disjoint: bool = False,
@@ -133,47 +135,15 @@ class NeighborSampler(BaseSampler):
         self.temporal_strategy = temporal_strategy
 
     @property
-    def num_neighbors(self) -> Union[List[int], Dict[EdgeType, List[int]]]:
+    def num_neighbors(self) -> NumNeighbors:
         return self._num_neighbors
 
     @num_neighbors.setter
-    def num_neighbors(
-        self,
-        num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
-    ):
-        if self.data_type == DataType.homogeneous:
-            if not isinstance(num_neighbors, (list, tuple)):
-                raise ValueError(f"Expected 'num_neighbors' to be a list or a "
-                                 f"tuple (got {type(self.num_neighbors)})")
-            self._num_hops = len(num_neighbors)
-            self._num_neighbors = list(num_neighbors)
-            return
-
-        assert self.data_type in [DataType.heterogeneous, DataType.remote]
-
-        if isinstance(num_neighbors, (list, tuple)):
-            num_neighbors = {k: list(num_neighbors) for k in self.edge_types}
-
-        if not isinstance(num_neighbors, dict):
-            raise ValueError(f"Expected 'num_neighbors' to be a dictionary "
-                             f"(got '{type(self.num_neighbors)}')")
-
-        for edge_type, values in num_neighbors.items():
-            if not isinstance(values, (list, tuple)):
-                raise ValueError(f"Expected 'num_neighbors' to be a list or a "
-                                 f"tuple (got {type(values)})")
-            num_neighbors[edge_type] = list(values)
-
-        # Add at least one element to the list to ensure `max` is well-defined:
-        self._num_hops = max([0] + [len(v) for v in num_neighbors.values()])
-
-        for edge_type, values in num_neighbors.items():
-            if len(values) != self._num_hops:
-                raise ValueError(
-                    f"Expected the edge type {edge_type} to have "
-                    f"{self._num_hops} entries (got {len(values)})")
-
-        self._num_neighbors = remap_keys(num_neighbors, self.to_rel_type)
+    def num_neighbors(self, num_neighbors: NumNeighborsType):
+        if isinstance(num_neighbors, NumNeighbors):
+            self._num_neighbors = num_neighbors
+        else:
+            self._num_neighbors = NumNeighbors(num_neighbors)
 
     @property
     def is_temporal(self) -> bool:
@@ -234,7 +204,7 @@ class NeighborSampler(BaseSampler):
                     self.colptr_dict,
                     self.row_dict,
                     seed,
-                    self.num_neighbors,
+                    self.num_neighbors.get_mapped_values(self.edge_types),
                     self.node_time,
                     seed_time,
                     True,  # csc
@@ -263,8 +233,8 @@ class NeighborSampler(BaseSampler):
                     self.colptr_dict,
                     self.row_dict,
                     seed,  # seed_dict
-                    self.num_neighbors,
-                    self._num_hops,
+                    self.num_neighbors.get_mapped_values(self.edge_types),
+                    self.num_neighbors.num_hops,
                     self.replace,
                     self.directed,
                 )
@@ -286,7 +256,7 @@ class NeighborSampler(BaseSampler):
                     self.colptr,
                     self.row,
                     seed.to(self.colptr.dtype),  # seed
-                    self.num_neighbors,
+                    self.num_neighbors.get_mapped_values(),
                     self.node_time,
                     seed_time,
                     True,  # csc
@@ -311,7 +281,7 @@ class NeighborSampler(BaseSampler):
                     self.colptr,
                     self.row,
                     seed,  # seed
-                    self.num_neighbors,
+                    self.num_neighbors.get_mapped_values(),
                     self.replace,
                     self.directed,
                 )
