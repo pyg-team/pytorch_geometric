@@ -50,7 +50,7 @@ class GMMConv(MessagePassing):
         separate_gaussians (bool, optional): If set to :obj:`True`, will
             learn separate GMMs for every pair of input and output channel,
             inspired by traditional CNNs. (default: :obj:`False`)
-        aggr (string, optional): The aggregation operator to use
+        aggr (str, optional): The aggregation operator to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will

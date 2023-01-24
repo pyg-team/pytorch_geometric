@@ -4,7 +4,6 @@ import numpy as np
 import torch
 from scipy.linalg import expm
 from torch import Tensor
-from torch_scatter import scatter_add
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -13,6 +12,7 @@ from torch_geometric.utils import (
     add_self_loops,
     coalesce,
     is_undirected,
+    scatter,
     to_dense_adj,
 )
 
@@ -166,19 +166,19 @@ class GDC(BaseTransform):
         """
         if normalization == 'sym':
             row, col = edge_index
-            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
             deg_inv_sqrt = deg.pow(-0.5)
             deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
             edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
         elif normalization == 'col':
             _, col = edge_index
-            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
             deg_inv = 1. / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[col]
         elif normalization == 'row':
             row, _ = edge_index
-            deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
             deg_inv = 1. / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[row]
@@ -300,7 +300,7 @@ class GDC(BaseTransform):
             if normalization == 'sym':
                 # Calculate original degrees.
                 _, col = edge_index
-                deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+                deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
             edge_index_np = edge_index.cpu().numpy()
 

@@ -142,6 +142,7 @@ class Net(torch.nn.Module):
     ):
         super().__init__()
         self.decimation = decimation
+        # An option to return logits instead of log probabilities:
         self.return_logits = return_logits
         self.fc0 = Linear(in_features=num_features, out_features=8)
         # 2 DilatedResidualBlock converges better than 4 on ModelNet.

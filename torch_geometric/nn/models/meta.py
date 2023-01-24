@@ -12,7 +12,7 @@ class MetaLayer(torch.nn.Module):
     A graph network takes a graph as input and returns an updated graph as
     output (with same connectivity).
     The input graph has node features :obj:`x`, edge features :obj:`edge_attr`
-    as well as global-level features :obj:`u`.
+    as well as graph-level features :obj:`u`.
     The output graph has the same structure, but updated features.
 
     Edge features, node features as well as global features are updated by
@@ -24,21 +24,23 @@ class MetaLayer(torch.nn.Module):
     edges or nodes to their specific graphs.
 
     Args:
-        edge_model (Module, optional): A callable which updates a graph's edge
-            features based on its source and target node features, its current
-            edge features and its global features. (default: :obj:`None`)
-        node_model (Module, optional): A callable which updates a graph's node
-            features based on its current node features, its graph
+        edge_model (torch.nn.Module, optional): A callable which updates a
+            graph's edge features based on its source and target node features,
+            its current edge features and its global features.
+            (default: :obj:`None`)
+        node_model (torch.nn.Module, optional): A callable which updates a
+            graph's node features based on its current node features, its graph
             connectivity, its edge features and its global features.
             (default: :obj:`None`)
-        global_model (Module, optional): A callable which updates a graph's
-            global features based on its node features, its graph connectivity,
-            its edge features and its current global features.
+        global_model (torch.nn.Module, optional): A callable which updates a
+            graph's global features based on its node features, its graph
+            connectivity, its edge features and its current global features.
+            (default: :obj:`None`)
 
     .. code-block:: python
 
         from torch.nn import Sequential as Seq, Linear as Lin, ReLU
-        from torch_scatter import scatter_mean
+        from torch_geometric.utils import scatter
         from torch_geometric.nn import MetaLayer
 
         class EdgeModel(torch.nn.Module):
@@ -69,7 +71,8 @@ class MetaLayer(torch.nn.Module):
                 row, col = edge_index
                 out = torch.cat([x[row], edge_attr], dim=1)
                 out = self.node_mlp_1(out)
-                out = scatter_mean(out, col, dim=0, dim_size=x.size(0))
+                out = scatter(out, col, dim=0, dim_size=x.size(0),
+                              reduce='mean')
                 out = torch.cat([x, out, u[batch]], dim=1)
                 return self.node_mlp_2(out)
 
@@ -84,7 +87,10 @@ class MetaLayer(torch.nn.Module):
                 # edge_attr: [E, F_e]
                 # u: [B, F_u]
                 # batch: [N] with max entry B - 1.
-                out = torch.cat([u, scatter_mean(x, batch, dim=0)], dim=1)
+                out = torch.cat([
+                    u,
+                    scatter(x, batch, dim=0, reduce='mean'),
+                ], dim=1)
                 return self.global_mlp(out)
 
         op = MetaLayer(EdgeModel(), NodeModel(), GlobalModel())
@@ -104,6 +110,7 @@ class MetaLayer(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for item in [self.node_model, self.edge_model, self.global_model]:
             if hasattr(item, 'reset_parameters'):
                 item.reset_parameters()
@@ -116,7 +123,18 @@ class MetaLayer(torch.nn.Module):
         u: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Optional[Tensor], Optional[Tensor]]:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The node features.
+            edge_index (torch.Tensor): The edge indices.
+            edge_attr (torch.Tensor, optional): The edge features.
+                (default: :obj:`None`)
+            u (torch.Tensor, optional): The global graph features.
+                (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each node to a specific graph. (default: :obj:`None`)
+        """
         row = edge_index[0]
         col = edge_index[1]
 

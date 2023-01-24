@@ -63,7 +63,6 @@ class TransE(KGEModel):
 
     def forward(self, head_index: Tensor, rel_type: Tensor,
                 tail_index: Tensor) -> Tensor:
-        """"""
         head = self.node_emb(head_index)
         rel = self.rel_emb(rel_type)
         tail = self.node_emb(tail_index)
