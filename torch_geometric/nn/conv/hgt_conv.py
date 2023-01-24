@@ -369,7 +369,7 @@ class HGTConv(MessagePassing):
                 src, dst, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
                 convert = True
-            print("e_idx[" + e_type + "] =", indices)
+            print("e_idx[" + str(e_type) + "] =", indices)
             offset = [[node_slices[src_type][0]], [node_slices[dst_type][0]]]
             offset = torch.tensor(offset, device=indices.device)
             edge_index_list.append(indices + offset)
