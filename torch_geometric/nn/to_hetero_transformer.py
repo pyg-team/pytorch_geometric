@@ -436,18 +436,10 @@ class ToHeteroTransformer(Transformer):
         if not has_node_level_target and not has_edge_level_target:
             return module
         print('is_linear(module):', is_linear(module))
-        print("is_linearmodulelist(module):", is_linearmodulelist(module))
         if is_linear(module):
             print("replacing w/ ToHeteroLinear")
             return ToHeteroLinear(module,
                                   self.metadata[int(has_edge_level_target)])
-        elif is_linearmodulelist(module):
-            print("replacing w/ list of ToHeteroLinear")
-            for i in range(len(module)):
-                if is_linear(module[i]):
-                    module[i] = ToHeteroLinear(
-                        module, self.metadata[int(has_edge_level_target)])
-            return module
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
@@ -506,13 +498,3 @@ def key2str(key: Union[NodeType, EdgeType]) -> str:
 def is_linear(module):
     return isinstance(module, torch.nn.Linear) or isinstance(
         module, torch_geometric.nn.dense.Linear)
-
-
-def is_linearmodulelist(module):
-    if isinstance(module, torch.nn.ModuleList):
-        for submod in module:
-            if not is_linear(submod):
-                return False
-        return True
-    else:
-        return False
