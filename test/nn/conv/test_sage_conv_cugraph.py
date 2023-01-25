@@ -1,11 +1,15 @@
 # pylint: disable=too-many-arguments, too-many-locals
+from collections import OrderedDict
+from itertools import product
+
 import pytest
 import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import SAGEConv, SAGEConvCuGraph
+from torch_geometric.testing import onlyCUDA
 
-options = {
+options = OrderedDict({
     "aggr": ["sum", "mean", "min", "max"],
     "bias": [True, False],
     "bipartite": [True, False],
@@ -13,20 +17,14 @@ options = {
     "normalize": [True, False],
     "root_weight": [True, False],
     "use_sparse": [True, False],
-}
-
-device = 'cuda:0'
+})
 
 
-@pytest.mark.parametrize("use_sparse", options["use_sparse"])
-@pytest.mark.parametrize("root_weight", options["root_weight"])
-@pytest.mark.parametrize("normalize", options["normalize"])
-@pytest.mark.parametrize("max_num_neighbors", options["max_num_neighbors"])
-@pytest.mark.parametrize("bipartite", options["bipartite"])
-@pytest.mark.parametrize("bias", options["bias"])
-@pytest.mark.parametrize("aggr", options["aggr"])
+@onlyCUDA
+@pytest.mark.parametrize(",".join(options.keys()), product(*options.values()))
 def test_sage_conv_equality(aggr, bias, bipartite, max_num_neighbors,
                             normalize, root_weight, use_sparse):
+    device = 'cuda:0'
     in_channels, out_channels = 4, 2
     args = (in_channels, out_channels)
     kwargs = {
