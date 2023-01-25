@@ -296,8 +296,17 @@ class ToHeteroTransformer(Transformer):
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
-        if hasattr(self.module, name) and is_linear(getattr(self.module,
-                                                            name)):
+        if hasattr(self.module, name):
+            submod = getattr(self.module, name)
+            is_heterolin = is_linear(submod)
+        else:
+            # for module lists with lineart
+            if isinstance(getattr(submod, name), torch.nn.ModuleList)
+                idx = int(name.split('_')[-1])
+                is_heterolin = is_linear(submod[idx])
+            else:
+                is_heterolin = False
+        if is_heterolin:
             print('inside heterolinear if')
             # insert a HeteroLinear HeteroModule instead
             kwargs_dict = {}
