@@ -1,7 +1,8 @@
-from typing import Dict
+from typing import Dict, Union
 
 import torch
 from torch import Tensor
+from torch.nn import Parameter
 
 from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType
@@ -9,7 +10,7 @@ from torch_geometric.typing import EdgeType
 
 def set_masks(
     model: torch.nn.Module,
-    mask: Tensor,
+    mask: Union[Tensor, Parameter],
     edge_index: Tensor,
     apply_sigmoid: bool = True,
 ):
@@ -19,6 +20,14 @@ def set_masks(
     # Loop over layers and set masks on MessagePassing layers:
     for module in model.modules():
         if isinstance(module, MessagePassing):
+
+            # Convert mask to a param if it was previously registered as one.
+            # This is a workaround for the fact that PyTorch does not allow
+            # assignments of pure tensors to parameter attributes:
+            if (not isinstance(mask, Parameter)
+                    and '_edge_mask' in module._parameters):
+                mask = Parameter(mask)
+
             module.explain = True
             module._edge_mask = mask
             module._loop_mask = loop_mask
@@ -27,7 +36,7 @@ def set_masks(
 
 def set_hetero_masks(
     model: torch.nn.Module,
-    mask_dict: Dict[EdgeType, Tensor],
+    mask_dict: Dict[EdgeType, Union[Tensor, Parameter]],
     edge_index_dict: Dict[EdgeType, Tensor],
     apply_sigmoid: bool = True,
 ):
