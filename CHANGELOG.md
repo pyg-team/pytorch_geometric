@@ -38,7 +38,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the `AirfRANS` dataset ([#6287](https://github.com/pyg-team/pytorch_geometric/pull/6287))
 - Added `AttentionExplainer` ([#6279](https://github.com/pyg-team/pytorch_geometric/pull/6279))
 - Added (un)faithfulness explainability metric ([#6090](https://github.com/pyg-team/pytorch_geometric/pull/6090))
-- Added fidelity explainability metric ([#6116](https://github.com/pyg-team/pytorch_geometric/pull/6116))
+- Added fidelity explainability metric ([#6116](https://github.com/pyg-team/pytorch_geometric/pull/6116), [#6510](https://github.com/pyg-team/pytorch_geometric/pull/6510))
 - Added subgraph visualization of GNN explanations ([#6235](https://github.com/pyg-team/pytorch_geometric/pull/6235), [#6271](https://github.com/pyg-team/pytorch_geometric/pull/6271))
 - Added weighted negative sampling option in `LinkNeighborLoader` ([#6264](https://github.com/pyg-team/pytorch_geometric/pull/6264))
 - Added the `BA2MotifDataset` explainer dataset ([#6257](https://github.com/pyg-team/pytorch_geometric/pull/6257))
