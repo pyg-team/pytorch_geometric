@@ -441,8 +441,12 @@ class ToHeteroTransformer(Transformer):
             print("replacing w/ to_hetero_module")
             return ToHeteroLinear(module,
                                   self.metadata[int(has_edge_level_target)])
-        elif is_modulelist(module):
         else:
+            if is_modulelist(module):
+                for i in range(len(module)):
+                    if is_linear(module[i]):
+                        module[i] = ToHeteroLinear(module,
+                                  self.metadata[int(has_edge_level_target)])
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
 
@@ -495,7 +499,6 @@ class ToHeteroTransformer(Transformer):
 def key2str(key: Union[NodeType, EdgeType]) -> str:
     key = '__'.join(key) if isinstance(key, tuple) else key
     return key.replace(' ', '_').replace('-', '_').replace(':', '_')
-
 
 def is_linear(module):
     return isinstance(module, torch.nn.Linear) or isinstance(
