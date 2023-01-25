@@ -427,12 +427,12 @@ class ToHeteroTransformer(Transformer):
         print("type(module):", type(module))
         # Replicate each module for each node type or edge type.
         has_node_level_target = bool(
-            self.find_by_name(f'{target.replace('.', '_')}__{key2str(self.metadata[0][0])}')
+            self.find_by_name(f'{target.replace(".", "_")}__{key2str(self.metadata[0][0])}')
         ) or bool(
             self.find_by_target(f'{target}.{key2str(self.metadata[0][0])}')
         )
         has_edge_level_target = bool(
-            self.find_by_name(f'{target.replace('.', '_')}__{key2str(self.metadata[1][0])}')
+            self.find_by_name(f'{target.replace(".", "_")}__{key2str(self.metadata[1][0])}')
         ) or bool(
             self.find_by_target(f'{target}.{key2str(self.metadata[1][0])}'))
         print("has_node_level_target:", has_node_level_target)
