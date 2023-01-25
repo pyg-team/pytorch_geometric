@@ -1,7 +1,7 @@
 from typing import Optional
 
 import torch
-from torch import nn
+from torch import Tensor, nn
 from torch_sparse import SparseTensor
 
 from torch_geometric.typing import Adj, OptTensor
@@ -27,17 +27,10 @@ class RGCNConvCuGraph(nn.Module):
 
     See :class:`RGCNConv` for the mathematical model.
 
-    .. note::
-        This module depends on :code:`pylibcugraphops` package, which can be
-        installed via :code:`conda install -c nvidia pylibcugraphops>=23.02`.
-        Compared with :class:`torch_geometric.nn.conv.RGCNConv`, this model
-        only works on cuda devices and only supports basis-decomposition
-        regularization.
-
     Args:
         in_channels (int): Size of each input sample. In case no input features
             are given, this argument should correspond to the number of nodes
-            in your graph.
+            in the graph.
         out_channels (int): Size of each output sample.
         num_relations (int): Number of relations.
         num_bases (int, optional): If set, this layer will use the
@@ -100,7 +93,7 @@ class RGCNConvCuGraph(nn.Module):
     def forward(self, x: OptTensor, edge_index: Adj, num_nodes: int,
                 edge_type: OptTensor = None,
                 from_neighbor_sampler: Optional[bool] = False,
-                max_num_neighbors: Optional[int] = None):
+                max_num_neighbors: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x: The input node features. Can be either a :obj:`[num_nodes,
