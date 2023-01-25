@@ -502,12 +502,10 @@ def key2str(key: Union[NodeType, EdgeType]) -> str:
     key = '__'.join(key) if isinstance(key, tuple) else key
     return key.replace(' ', '_').replace('-', '_').replace(':', '_')
 
-
 def is_linear(module):
     return isinstance(module, torch.nn.Linear) or isinstance(
         module, torch_geometric.nn.dense.Linear)
 
-<<<<<<< HEAD
 def is_linearmodulelist(module):
     if isinstance(module, torch.nn.ModuleList):
         for submod in module:
@@ -516,8 +514,3 @@ def is_linearmodulelist(module):
         return True
     else:
         return False
-=======
-
-def is_modulelist(module):
-    return isinstance(module, torch.nn.ModuleList)
->>>>>>> 9a9ec891a11e8bd4cc462593646632acd228afa4
