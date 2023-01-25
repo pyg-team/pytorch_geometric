@@ -216,7 +216,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         .. code-block:: python
 
             loader = NeigborLoader(data, num_workers=3)
-            with loader.enable_cpu_affinity(loader_cores=[0,1,2]):
+            with loader.enable_cpu_affinity(loader_cores=[0, 1, 2]):
                 for batch in loader:
                     pass
 
