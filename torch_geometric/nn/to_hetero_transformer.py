@@ -297,12 +297,15 @@ class ToHeteroTransformer(Transformer):
             return
         self.graph.inserting_after(node)
         if hasattr(self.module, name):
+            print("has attr")
             submod = getattr(self.module, name)
             is_heterolin = is_linear(submod)
         else:
+            print("not has attr")
             # for ModuleList containing Linear
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
+            print("submod:", submod)
             if isinstance(submod, torch.nn.ModuleList):
                 idx = int(split_name[-1])
                 is_heterolin = is_linear(submod[idx])
