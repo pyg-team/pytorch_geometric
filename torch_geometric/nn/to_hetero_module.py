@@ -19,7 +19,9 @@ class ToHeteroLinear(torch.nn.Module):
         from torch_geometric.nn import HeteroLinear, Linear
 
         super().__init__()
+
         self.types = types
+
         if isinstance(module, Linear):
             in_channels = module.in_channels
             out_channels = module.out_channels
