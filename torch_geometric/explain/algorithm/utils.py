@@ -31,7 +31,7 @@ def set_masks(
 
 def set_hetero_masks(
     model: torch.nn.Module,
-    mask_dict: Dict[EdgeType, Tensor],
+    mask_dict: Dict[EdgeType, Union[Tensor, Parameter]],
     edge_index_dict: Dict[EdgeType, Tensor],
     apply_sigmoid: bool = True,
 ):
@@ -40,12 +40,18 @@ def set_hetero_masks(
     for module in model.modules():
         if isinstance(module, torch.nn.ModuleDict):
             for edge_type in mask_dict.keys():
+
+                mask = mask_dict[edge_type]
+
+                if not isinstance(mask, Parameter):
+                    mask = Parameter(mask)
+
                 # TODO (jinu) Use common function get `str_edge_type`.
                 str_edge_type = '__'.join(edge_type)
                 if str_edge_type in module:
                     set_masks(
                         module[str_edge_type],
-                        mask_dict[edge_type],
+                        mask,
                         edge_index_dict[edge_type],
                         apply_sigmoid=apply_sigmoid,
                     )
