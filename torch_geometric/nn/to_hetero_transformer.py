@@ -303,7 +303,7 @@ class ToHeteroTransformer(Transformer):
             # for ModuleList containing Linear
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
-            if is_modulelist(submod):
+            if is_linearmodulelist(submod):
                 idx = int(split_name[-1])
                 is_heterolin = is_linear(submod[idx])
             else:
@@ -438,15 +438,17 @@ class ToHeteroTransformer(Transformer):
         print('is_linear(module):', is_linear(module))
         print("is_modulelist(module):", is_modulelist(module))
         if is_linear(module):
-            print("replacing w/ to_hetero_module")
+            print("replacing w/ ToHeteroLinear")
             return ToHeteroLinear(module,
                                   self.metadata[int(has_edge_level_target)])
+        elif is_linearmodulelist(module):
+            print("replacing w/ list of ToHeteroLinear")
+            for i in range(len(module)):
+                if is_linear(module[i]):
+                    module[i] = ToHeteroLinear(module,
+                              self.metadata[int(has_edge_level_target)])
+            return module
         else:
-            if is_modulelist(module):
-                for i in range(len(module)):
-                    if is_linear(module[i]):
-                        module[i] = ToHeteroLinear(module,
-                                  self.metadata[int(has_edge_level_target)])
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
 
@@ -504,5 +506,11 @@ def is_linear(module):
     return isinstance(module, torch.nn.Linear) or isinstance(
         module, torch_geometric.nn.dense.Linear)
 
-def is_modulelist(module):
-    return isinstance(module, torch.nn.ModuleList)
+def is_linearmodulelist(module):
+    if isinstance(module, torch.nn.ModuleList):
+        for submod in module:
+            if not is_linear(submod):
+                return False
+        return True
+    else:
+        return False
