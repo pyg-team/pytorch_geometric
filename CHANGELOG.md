@@ -66,6 +66,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Changed `DataLoader` workers with affinity to start at `cpu0` ([#6512](https://github.com/pyg-team/pytorch_geometric/pull/6512))
 - Allow 1D input to `global_*_pool` functions ([#6504](https://github.com/pyg-team/pytorch_geometric/pull/6504))
 - Add information about dynamic shapes in `RGCNConv` ([#6482](https://github.com/pyg-team/pytorch_geometric/pull/6482))
 - Fixed the use of types removed in `numpy 1.24.0` ([#6495](https://github.com/pyg-team/pytorch_geometric/pull/6495))
