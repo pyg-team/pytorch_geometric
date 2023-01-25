@@ -19,7 +19,6 @@ class ToHeteroLinear(torch.nn.Module):
         from torch_geometric.nn import HeteroLinear, Linear
 
         super().__init__()
-
         self.types = types
         if isinstance(module, Linear):
             in_channels = module.in_channels
@@ -63,7 +62,7 @@ class ToHeteroLinear(torch.nn.Module):
         type_vec = torch.arange(len(self.types), device=x.device)
         size = torch.tensor(sizes, device=x.device)
         type_vec = type_vec.repeat_interleave(size)
-        outs = self.hetero_module(x, type_vec).split(sizes) 
+        outs = self.hetero_module(x, type_vec).split(sizes)
         return {key: out for key, out in zip(self.types, outs)}
 
     def forward(
