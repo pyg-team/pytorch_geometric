@@ -1,11 +1,15 @@
 # pylint: disable=too-many-arguments, too-many-locals
+from collections import OrderedDict
+from itertools import product
+
 import pytest
 import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import GATConv, GATConvCuGraph
+from torch_geometric.testing import onlyCUDA
 
-options = {
+options = OrderedDict({
     "add_self_loops": [True, False],
     "bias": [True, False],
     "bipartite": [True, False],
@@ -13,20 +17,14 @@ options = {
     "heads": [1, 2, 3],
     "max_num_neighbors": [8, None],
     "use_sparse": [True, False],
-}
-
-device = 'cuda:0'
+})
 
 
-@pytest.mark.parametrize("use_sparse", options["use_sparse"])
-@pytest.mark.parametrize("max_num_neighbors", options["max_num_neighbors"])
-@pytest.mark.parametrize("heads", options["heads"])
-@pytest.mark.parametrize("concat", options["concat"])
-@pytest.mark.parametrize("bipartite", options["bipartite"])
-@pytest.mark.parametrize("bias", options["bias"])
-@pytest.mark.parametrize("add_self_loops", options["add_self_loops"])
+@onlyCUDA
+@pytest.mark.parametrize(",".join(options.keys()), product(*options.values()))
 def test_gat_conv_equality(add_self_loops, bias, bipartite, concat, heads,
                            max_num_neighbors, use_sparse):
+    device = 'cuda:0'
     in_channels, out_channels = 5, 2
     args = (in_channels, out_channels, heads)
     kwargs = {"add_self_loops": add_self_loops, "bias": bias, "concat": concat}
