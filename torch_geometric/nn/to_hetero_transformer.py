@@ -301,7 +301,7 @@ class ToHeteroTransformer(Transformer):
             is_heterolin = is_linear(submod)
         else:
             # for module lists with lineart
-            if isinstance(getattr(submod, name), torch.nn.ModuleList)
+            if isinstance(getattr(submod, name), torch.nn.ModuleList):
                 idx = int(name.split('_')[-1])
                 is_heterolin = is_linear(submod[idx])
             else:
