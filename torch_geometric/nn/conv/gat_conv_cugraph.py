@@ -1,9 +1,11 @@
+from typing import Optional, Tuple, Union
+
 import torch
 from torch import Tensor, nn
 from torch_sparse import SparseTensor, set_diag
 
 from torch_geometric.typing import Adj
-from torch_geometric.utils import add_self_loops, degree
+from torch_geometric.utils import degree
 
 from ..inits import zeros
 
@@ -37,6 +39,14 @@ class GATConvCuGraph(nn.Module):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})` or
+          :math:`(|\mathcal{V_s}|, F_{in})` if bipartite;
+          edge indices :math:`(2, |\mathcal{E}|)`,
+        - **output:** node features :math:`(|\mathcal{V}|, H * F_{out})` or
+          :math:`((|\mathcal{V}_t|, H * F_{out})` if bipartite.
     """
     def __init__(
         self,
@@ -48,7 +58,6 @@ class GATConvCuGraph(nn.Module):
         add_self_loops: bool = True,
         bias: bool = True,
     ):
-
         if has_pylibcugraphops is False:
             raise ModuleNotFoundError(
                 "torch_geometric.nn.GATConvCuGraph requires pylibcugraphops "
@@ -80,26 +89,27 @@ class GATConvCuGraph(nn.Module):
                                gain=gain)
         zeros(self.bias)
 
-    def forward(self, x: Tensor, edge_index: Adj, num_nodes: int,
-                from_neighbor_sampler: bool = False,
-                max_num_neighbors: int = None) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj,
+                num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+                max_num_neighbors: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x: The input node features.
             edge_index (LongTensor or SparseTensor): The edge indices.
-            num_nodes (int): The number of nodes in the graph.
-            from_neighbor_sampler: Set to :obj:`True` when :obj:`edge_index`
-                comes from a neighbor sampler. This allows the model to opt for
-                a more performant aggregation primitive that is designed for
-                sampled graphs. (default: :obj:`False`)
+            num_nodes (int or tuple, optional): The number of nodes in the
+                graph. A tuple corresponds to (:obj:`num_src_nodes`,
+                :obj:`num_trg_nodes`) for a bipartite graph. This field can
+                only be omitted when :obj:`edge_index` is :obj:`SparseTensor`.
+                (default: :obj:`None`)
             max_num_neighbors (int, optional): The maximum number of neighbors
-                of an output node, i.e. :obj:`max(num_neighbors)`, with
-                the :obj:`num_neighbors` being the one used in the neighbor
-                sampler. It only becomes effective when
-                :obj:`from_neighbor_sampler` is :obj:`True`. If :obj:`None`,
-                the value will be computed on-the-fly using the :obj:`degree()`
-                utility, and therefore, it is recommended to pass in this value
-                directly for better performance. (default: :obj:`None`)
+                of a target node. It is only effective when :obj:`edge_index`
+                is bipartite. For example, if the sampled graph is generated
+                from :obj:`NeighborSampler`, the value should equal the
+                :obj:`size` argument; if emitted from a :obj:`NeighborLoader`,
+                the value should be set to :obj:`max(num_neighbors)`. When not
+                given, the value will be computed on-the-fly using
+                :obj:`degree()` utility, leading to slightly worse performance.
+                (default: :obj:`None`)
         """
         _device = next(self.parameters()).device
         if _device.type != "cuda":
@@ -107,33 +117,30 @@ class GATConvCuGraph(nn.Module):
                 f"torch_geometric.nn.GATConvCuGraph requires the model to be "
                 f"on device 'cuda', but got '{_device.type}'.")
 
-        if self.add_self_loops:
-            if isinstance(edge_index, Tensor):
-                edge_index, _ = add_self_loops(edge_index)
-            elif isinstance(edge_index, SparseTensor):
-                edge_index = set_diag(edge_index)
-
-        # Create csc-representation.
         if isinstance(edge_index, SparseTensor):
             adj = edge_index
-            assert adj.storage.value() is not None
-            assert adj.size(0) == adj.size(1)
         else:
+            assert num_nodes is not None
+            if isinstance(num_nodes, int):
+                num_nodes = (num_nodes, num_nodes)
             adj = SparseTensor(row=edge_index[0], col=edge_index[1],
-                               sparse_sizes=(num_nodes, num_nodes))
+                               sparse_sizes=num_nodes)
+        if self.add_self_loops:
+            adj = set_diag(adj)
 
+        # Create csc-representation.
         offsets, indices, _ = adj.csc()
 
         # Create cugraph-ops graph.
-        if from_neighbor_sampler:
+        if adj.size(0) != adj.size(1):
             if max_num_neighbors is None:
+                assert isinstance(edge_index, Tensor)
                 max_num_neighbors = int(degree(edge_index[1]).max().item())
+            num_src_nodes = adj.size(0)
+            dst_nodes = torch.arange(adj.size(1), device=_device)
 
-            src_nodes = torch.arange(num_nodes, device=_device)
-            dst_nodes = torch.arange(num_nodes, device=_device)
-
-            _graph = make_mfg_csr(dst_nodes, src_nodes, offsets, indices,
-                                  max_num_neighbors)
+            _graph = make_mfg_csr(dst_nodes, offsets, indices,
+                                  max_num_neighbors, num_src_nodes)
         else:
             _graph = make_fg_csr(offsets, indices)
 
