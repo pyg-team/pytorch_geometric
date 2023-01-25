@@ -421,6 +421,7 @@ class ToHeteroTransformer(Transformer):
         print('final val node.args=', node.args)
 
     def init_submodule(self, module: Module, target: str) -> Module:
+        print("\n"*2)
         print("initing submodule:", module)
         print("target:", target)
         print("type(module):", type(module))
