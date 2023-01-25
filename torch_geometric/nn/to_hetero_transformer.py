@@ -421,7 +421,7 @@ class ToHeteroTransformer(Transformer):
         print('final val node.args=', node.args)
 
     def init_submodule(self, module: Module, target: str) -> Module:
-        print("initing submodule")
+        print("initing submodule:", module)
         # Replicate each module for each node type or edge type.
         has_node_level_target = bool(
             self.find_by_name(f'{target}__{key2str(self.metadata[0][0])}')
