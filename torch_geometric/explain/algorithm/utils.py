@@ -1,7 +1,8 @@
-from typing import Dict
+from typing import Dict, Union
 
 import torch
 from torch import Tensor
+from torch.nn import Parameter
 
 from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType
@@ -9,12 +10,15 @@ from torch_geometric.typing import EdgeType
 
 def set_masks(
     model: torch.nn.Module,
-    mask: Tensor,
+    mask: Union[Tensor, Parameter],
     edge_index: Tensor,
     apply_sigmoid: bool = True,
 ):
     r"""Apply mask to every graph layer in the :obj:`model`."""
     loop_mask = edge_index[0] != edge_index[1]
+
+    if not isinstance(mask, Parameter):
+        mask = Parameter(mask)
 
     # Loop over layers and set masks on MessagePassing layers:
     for module in model.modules():
