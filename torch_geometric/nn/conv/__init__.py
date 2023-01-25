@@ -54,6 +54,8 @@ from .lg_conv import LGConv
 from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
 from .rgcn_conv_cugraph import RGCNConvCuGraph
+from .gps_conv import GPSConv
+
 
 __all__ = [
     'MessagePassing',
@@ -117,6 +119,7 @@ __all__ = [
     'LGConv',
     'PointGNNConv',
     'RGCNConvCuGraph',
+    'GPSConv',
 ]
 
 classes = __all__

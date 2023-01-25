@@ -118,13 +118,14 @@ class Linear(torch.nn.Module):
         return out
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset_weight_(self.weight, self.in_channels, self.weight_initializer)
         reset_bias_(self.bias, self.in_channels, self.bias_initializer)
 
     def forward(self, x: Tensor) -> Tensor:
         r"""
         Args:
-            x (Tensor): The features.
+            x (torch.Tensor): The input features.
         """
         return F.linear(x, self.weight, self.bias)
 
@@ -232,6 +233,7 @@ class HeteroLinear(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         if torch_geometric.typing.WITH_PYG_LIB:
             reset_weight_(self.weight, self.in_channels,
                           self.kwargs.get('weight_initializer', None))
@@ -244,8 +246,8 @@ class HeteroLinear(torch.nn.Module):
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
         Args:
-            x (Tensor): The input features.
-            type_vec (LongTensor): A vector that maps each entry to a type.
+            x (torch.Tensor): The input features.
+            type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
         if torch_geometric.typing.WITH_PYG_LIB:
             assert self.weight is not None

@@ -8,7 +8,6 @@ import numpy as np
 import torch
 from torch import Tensor
 from torch.nn import Embedding, Linear
-from torch_scatter import scatter
 from torch_sparse import SparseTensor
 
 from torch_geometric.data import Dataset, download_url
@@ -17,6 +16,7 @@ from torch_geometric.nn import radius_graph
 from torch_geometric.nn.inits import glorot_orthogonal
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import OptTensor
+from torch_geometric.utils import scatter
 
 qm9_target_dict = {
     0: 'mu',
@@ -211,7 +211,7 @@ class InteractionBlock(torch.nn.Module):
         x_kj = self.act(self.lin_kj(x))
         x_kj = x_kj * rbf
         x_kj = torch.einsum('wj,wl,ijl->wi', sbf, x_kj[idx_kj], self.W)
-        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0))
+        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce='sum')
 
         h = x_ji + x_kj
         for layer in self.layers_before_skip:
@@ -298,7 +298,7 @@ class InteractionPPBlock(torch.nn.Module):
         x_kj = x_kj[idx_kj] * sbf
 
         # Aggregate interactions and up-project embeddings:
-        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0))
+        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce='sum')
         x_kj = self.act(self.lin_up(x_kj))
 
         h = x_ji + x_kj
@@ -335,7 +335,7 @@ class OutputBlock(torch.nn.Module):
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
                 num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
-        x = scatter(x, i, dim=0, dim_size=num_nodes)
+        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce='sum')
         for lin in self.lins:
             x = self.act(lin(x))
         return self.lin(x)
@@ -370,11 +370,37 @@ class OutputPPBlock(torch.nn.Module):
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
                 num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
-        x = scatter(x, i, dim=0, dim_size=num_nodes)
+        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce='sum')
         x = self.lin_up(x)
         for lin in self.lins:
             x = self.act(lin(x))
         return self.lin(x)
+
+
+def triplets(
+    edge_index: Tensor,
+    num_nodes: int,
+) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+    row, col = edge_index  # j->i
+
+    value = torch.arange(row.size(0), device=row.device)
+    adj_t = SparseTensor(row=col, col=row, value=value,
+                         sparse_sizes=(num_nodes, num_nodes))
+    adj_t_row = adj_t[row]
+    num_triplets = adj_t_row.set_value(None).sum(dim=1).to(torch.long)
+
+    # Node indices (k->j->i) for triplets.
+    idx_i = col.repeat_interleave(num_triplets)
+    idx_j = row.repeat_interleave(num_triplets)
+    idx_k = adj_t_row.storage.col()
+    mask = idx_i != idx_k  # Remove i == k triplets.
+    idx_i, idx_j, idx_k = idx_i[mask], idx_j[mask], idx_k[mask]
+
+    # Edge indices (k-j, j->i) for triplets.
+    idx_kj = adj_t_row.storage.value()[mask]
+    idx_ji = adj_t_row.storage.row()[mask]
+
+    return col, row, idx_i, idx_j, idx_k, idx_kj, idx_ji
 
 
 class DimeNet(torch.nn.Module):
@@ -461,8 +487,6 @@ class DimeNet(torch.nn.Module):
                              num_radial, num_before_skip, num_after_skip, act)
             for _ in range(num_blocks)
         ])
-
-        self.reset_parameters()
 
     def reset_parameters(self):
         self.rbf.reset_parameters()
@@ -572,32 +596,6 @@ class DimeNet(torch.nn.Module):
 
         return model, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    def triplets(
-        self,
-        edge_index: Tensor,
-        num_nodes: int,
-    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
-        row, col = edge_index  # j->i
-
-        value = torch.arange(row.size(0), device=row.device)
-        adj_t = SparseTensor(row=col, col=row, value=value,
-                             sparse_sizes=(num_nodes, num_nodes))
-        adj_t_row = adj_t[row]
-        num_triplets = adj_t_row.set_value(None).sum(dim=1).to(torch.long)
-
-        # Node indices (k->j->i) for triplets.
-        idx_i = col.repeat_interleave(num_triplets)
-        idx_j = row.repeat_interleave(num_triplets)
-        idx_k = adj_t_row.storage.col()
-        mask = idx_i != idx_k  # Remove i == k triplets.
-        idx_i, idx_j, idx_k = idx_i[mask], idx_j[mask], idx_k[mask]
-
-        # Edge indices (k-j, j->i) for triplets.
-        idx_kj = adj_t_row.storage.value()[mask]
-        idx_ji = adj_t_row.storage.row()[mask]
-
-        return col, row, idx_i, idx_j, idx_k, idx_kj, idx_ji
-
     def forward(
         self,
         z: Tensor,
@@ -608,7 +606,7 @@ class DimeNet(torch.nn.Module):
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
 
-        i, j, idx_i, idx_j, idx_k, idx_kj, idx_ji = self.triplets(
+        i, j, idx_i, idx_j, idx_k, idx_kj, idx_ji = triplets(
             edge_index, num_nodes=z.size(0))
 
         # Calculate distances.
@@ -632,9 +630,12 @@ class DimeNet(torch.nn.Module):
         for interaction_block, output_block in zip(self.interaction_blocks,
                                                    self.output_blocks[1:]):
             x = interaction_block(x, rbf, sbf, idx_kj, idx_ji)
-            P = P + output_block(x, rbf, i)
+            P = P + output_block(x, rbf, i, num_nodes=pos.size(0))
 
-        return P.sum(dim=0) if batch is None else scatter(P, batch, dim=0)
+        if batch is None:
+            return P.sum(dim=0)
+        else:
+            return scatter(P, batch, dim=0, reduce='sum')
 
 
 class DimeNetPlusPlus(DimeNet):

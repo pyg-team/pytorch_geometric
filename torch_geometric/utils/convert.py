@@ -283,6 +283,74 @@ def from_networkx(
     return data
 
 
+def to_networkit(
+    edge_index: Tensor,
+    edge_weight: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+    directed: bool = True,
+) -> Any:
+    r"""Converts a :obj:`(edge_index, edge_weight)` tuple to a
+    :class:`networkit.Graph`.
+
+    Args:
+        edge_index (torch.Tensor): The edge indices of the graph.
+        edge_weight (torch.Tensor, optional): The edge weights of the graph.
+            (default: :obj:`None`)
+        num_nodes (int, optional): The number of nodes in the graph.
+            (default: :obj:`None`)
+        directed (bool, optional): If set to :obj:`False`, the graph will be
+            undirected. (default: :obj:`True`)
+    """
+    import networkit as nk
+
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+    g = nk.graph.Graph(
+        num_nodes,
+        weighted=edge_weight is not None,
+        directed=directed,
+    )
+
+    if edge_weight is None:
+        edge_weight = torch.ones(edge_index.size(1))
+
+    if not directed:
+        mask = edge_index[0] <= edge_index[1]
+        edge_index = edge_index[:, mask]
+        edge_weight = edge_weight[mask]
+
+    for (u, v), w in zip(edge_index.t().tolist(), edge_weight.tolist()):
+        g.addEdge(u, v, w)
+
+    return g
+
+
+def from_networkit(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
+    r"""Converts a :class:`networkit.Graph` to a
+    :obj:`(edge_index, edge_weight)` tuple.
+    If the :class:`networkit.Graph` is not weighted, the returned
+    :obj:`edge_weight` will be :obj:`None`.
+
+    Args:
+        g (networkkit.graph.Graph): A :obj:`networkit` graph object.
+    """
+    is_directed = g.isDirected()
+    is_weighted = g.isWeighted()
+
+    edge_indices, edge_weights = [], []
+    for u, v, w in g.iterEdgesWeights():
+        edge_indices.append([u, v])
+        edge_weights.append(w)
+        if not is_directed:
+            edge_indices.append([v, u])
+            edge_weights.append(w)
+
+    edge_index = torch.tensor(edge_indices).t().contiguous()
+    edge_weight = torch.tensor(edge_weights) if is_weighted else None
+
+    return edge_index, edge_weight
+
+
 def to_trimesh(data):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`trimesh.Trimesh`.

@@ -12,8 +12,8 @@ def download_url(url: str, folder: str, log: bool = True,
     r"""Downloads the content of an URL to a specific folder.
 
     Args:
-        url (string): The url.
-        folder (string): The folder.
+        url (str): The URL.
+        folder (str): The folder.
         log (bool, optional): If :obj:`False`, will not print anything to the
             console. (default: :obj:`True`)
     """

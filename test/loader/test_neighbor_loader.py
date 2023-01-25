@@ -111,18 +111,19 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
 
     batch_size = 20
 
-    with pytest.raises(ValueError, match="to have 2 entries"):
+    with pytest.raises(ValueError, match="hops must be the same across all"):
         loader = NeighborLoader(
             data,
             num_neighbors={
-                ('paper', 'paper'): [-1],
-                ('paper', 'author'): [-1, -1],
-                ('author', 'paper'): [-1, -1],
+                ('paper', 'to', 'paper'): [-1],
+                ('paper', 'to', 'author'): [-1, -1],
+                ('author', 'to', 'paper'): [-1, -1],
             },
             input_nodes='paper',
             batch_size=batch_size,
             directed=directed,
         )
+        next(iter(loader))
 
     loader = NeighborLoader(
         data,
@@ -568,7 +569,7 @@ def test_memmap_neighbor_loader():
     assert data.num_nodes == 100
 
     loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
-                            num_workers=6)
+                            num_workers=2)
     batch = next(iter(loader))
     assert batch.num_nodes <= 100
     assert isinstance(batch.x, torch.Tensor)

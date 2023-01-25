@@ -23,11 +23,11 @@ def test_perfect_groundtruth_metrics():
     accuracy, recall, precision, f1_score, auroc = groundtruth_metrics(
         pred_mask, target_mask)
 
-    assert accuracy == 1.0
-    assert recall == 1.0
-    assert precision == 1.0
-    assert f1_score == 1.0
-    assert auroc == 1.0
+    assert round(accuracy, 6) == 1.0
+    assert round(recall, 6) == 1.0
+    assert round(precision, 6) == 1.0
+    assert round(f1_score, 6) == 1.0
+    assert round(auroc, 6) == 1.0
 
 
 def test_groundtruth_true_negative():
@@ -36,8 +36,8 @@ def test_groundtruth_true_negative():
     accuracy, recall, precision, f1_score, auroc = groundtruth_metrics(
         pred_mask, target_mask)
 
-    assert accuracy == 1.0
-    assert recall == 0.0
-    assert precision == 0.0
-    assert f1_score == 0.0
-    assert auroc == 0.0
+    assert round(accuracy, 6) == 1.0
+    assert round(recall, 6) == 0.0
+    assert round(precision, 6) == 0.0
+    assert round(f1_score, 6) == 0.0
+    assert round(auroc, 6) == 0.0

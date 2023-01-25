@@ -12,9 +12,9 @@ class SuiteSparseMatrixCollection(InMemoryDataset):
     applications.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        group (string): The group of the sparse matrix.
-        name (string): The name of the sparse matrix.
+        root (str): Root directory where the dataset should be saved.
+        group (str): The group of the sparse matrix.
+        name (str): The name of the sparse matrix.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

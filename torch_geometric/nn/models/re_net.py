@@ -5,9 +5,9 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import GRU, Linear, Parameter
-from torch_scatter import scatter_mean
 
 from torch_geometric.data.data import Data
+from torch_geometric.utils import scatter
 
 
 class RENet(torch.nn.Module):
@@ -180,12 +180,12 @@ class RENet(torch.nn.Module):
         h_sub_t = data.h_sub_t + data.h_sub_batch * seq_len
         h_obj_t = data.h_obj_t + data.h_obj_batch * seq_len
 
-        h_sub = scatter_mean(self.ent[data.h_sub], h_sub_t, dim=0,
-                             dim_size=batch_size * seq_len).view(
-                                 batch_size, seq_len, -1)
-        h_obj = scatter_mean(self.ent[data.h_obj], h_obj_t, dim=0,
-                             dim_size=batch_size * seq_len).view(
-                                 batch_size, seq_len, -1)
+        h_sub = scatter(self.ent[data.h_sub], h_sub_t, dim=0,
+                        dim_size=batch_size * seq_len,
+                        reduce='mean').view(batch_size, seq_len, -1)
+        h_obj = scatter(self.ent[data.h_obj], h_obj_t, dim=0,
+                        dim_size=batch_size * seq_len,
+                        reduce='mean').view(batch_size, seq_len, -1)
 
         sub = self.ent[data.sub].unsqueeze(1).repeat(1, seq_len, 1)
         rel = self.rel[data.rel].unsqueeze(1).repeat(1, seq_len, 1)
