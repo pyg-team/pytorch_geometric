@@ -73,6 +73,11 @@ class SAGEConvCuGraph(nn.Module):
         else:
             self.linear = nn.Linear(in_channels, out_channels, bias=bias)
 
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        self.linear.reset_parameters()
+
     def forward(self, x: Tensor, edge_index: Adj,
                 num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
                 max_num_neighbors: Optional[int] = None) -> Tensor:
