@@ -18,12 +18,12 @@ IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
 class Dataset(torch.utils.data.Dataset):
     r"""Dataset base class for creating graph datasets.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html>`__ for the accompanying tutorial.
 
     Args:
-        root (string, optional): Root directory where the dataset should be
-            saved. (optional: :obj:`None`)
+        root (str, optional): Root directory where the dataset should be saved.
+            (optional: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -263,7 +263,7 @@ class Dataset(torch.utils.data.Dataset):
         elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
             return self.index_select(idx.flatten().tolist())
 
-        elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
+        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
             idx = idx.flatten().nonzero()[0]
             return self.index_select(idx.flatten().tolist())
 

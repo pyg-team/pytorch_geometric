@@ -1,9 +1,9 @@
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
 from torch_geometric.sampler import NegativeSampling, NeighborSampler
-from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
+from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
 class LinkNeighborLoader(LinkLoader):
@@ -61,7 +61,7 @@ class LinkNeighborLoader(LinkLoader):
 
     The rest of the functionality mirrors that of
     :class:`~torch_geometric.loader.NeighborLoader`, including support for
-    heterogenous graphs.
+    heterogeneous graphs.
 
     .. note::
         Negative sampling is currently implemented in an approximate
@@ -74,9 +74,9 @@ class LinkNeighborLoader(LinkLoader):
             :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
-            If an entry is set to :obj:`-1`, all neighbors will be included.
         edge_label_index (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The edge indices for which neighbors are sampled to create
             mini-batches.
@@ -105,7 +105,7 @@ class LinkNeighborLoader(LinkLoader):
             vector holding the mapping of nodes to their respective subgraph.
             Will get automatically set to :obj:`True` in case of temporal
             sampling. (default: :obj:`False`)
-        temporal_strategy (string, optional): The sampling strategy when using
+        temporal_strategy (str, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
             If set to :obj:`"uniform"`, will sample uniformly across neighbors
             that fulfill temporal constraints.
@@ -173,7 +173,7 @@ class LinkNeighborLoader(LinkLoader):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,

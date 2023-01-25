@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Callable, Dict, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -22,8 +22,11 @@ from torch_geometric.sampler import (
     NodeSamplerInput,
     SamplerOutput,
 )
+from torch_geometric.sampler.base import DataType, NumNeighbors
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
-from torch_geometric.typing import EdgeType, NodeType, NumNeighbors, OptTensor
+from torch_geometric.typing import EdgeType, NodeType, OptTensor
+
+NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 
 
 class NeighborSampler(BaseSampler):
@@ -32,7 +35,7 @@ class NeighborSampler(BaseSampler):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: NumNeighborsType,
         replace: bool = False,
         directed: bool = True,
         disjoint: bool = False,
@@ -41,27 +44,22 @@ class NeighborSampler(BaseSampler):
         is_sorted: bool = False,
         share_memory: bool = False,
     ):
-        self.num_neighbors = num_neighbors
-        self.replace = replace
-        self.directed = directed
-        self._disjoint = disjoint
-        self.temporal_strategy = temporal_strategy
+        self.data_type = DataType.from_data(data)
 
-        if isinstance(data, Data):
-            if not isinstance(self.num_neighbors, (list, tuple)):
-                raise ValueError(f"Expected 'num_neighbors' to be a list or a "
-                                 f"tuple (got {type(self.num_neighbors)})")
-
+        if self.data_type == DataType.homogeneous:
+            self.num_nodes = data.num_nodes
             self.node_time = data[time_attr] if time_attr else None
 
-            # Convert the graph data into a suitable format for sampling:
+            # Convert the graph data into CSC format for sampling:
             self.colptr, self.row, self.perm = to_csc(
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, src_node_time=self.node_time)
-            self.num_nodes = self.colptr.numel() - 1
 
-        elif isinstance(data, HeteroData):
+        elif self.data_type == DataType.heterogeneous:
             self.node_types, self.edge_types = data.metadata()
+
+            self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
+            self.node_time = data.collect(time_attr) if time_attr else None
 
             # Conversion to/from C++ string type: Since C++ cannot take
             # dictionaries with tuples as key as input, edge type triplets need
@@ -69,19 +67,14 @@ class NeighborSampler(BaseSampler):
             self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
             self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
 
-            self._process_hetero_num_neighbors()
-
-            self.node_time = data.collect(time_attr) if time_attr else None
-            self.num_nodes = {k: data[k].num_nodes for k in self.node_types}
-
-            # Convert the graph data into a suitable format for sampling:
+            # Convert the graph data into CSC format for sampling:
             colptr_dict, row_dict, self.perm = to_hetero_csc(
                 data, device='cpu', share_memory=share_memory,
                 is_sorted=is_sorted, node_time_dict=self.node_time)
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
-        elif isinstance(data, tuple):
+        else:  # self.data_type == DataType.remote
             feature_store, graph_store = data
 
             # Obtain graph metadata:
@@ -91,13 +84,12 @@ class NeighborSampler(BaseSampler):
             edge_attrs = graph_store.get_all_edge_attrs()
             self.edge_types = list(set(attr.edge_type for attr in edge_attrs))
 
-            # Conversion to/from C++ string type (see above):
-            self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
-            self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
+            self.num_nodes = {
+                node_type: remote_backend_utils.size(*data, node_type)
+                for node_type in self.node_types
+            }
 
-            self._process_hetero_num_neighbors()
-
-            self.node_time = None
+            self.node_time: Optional[Dict[str, Tensor]] = None
             if time_attr is not None:
                 # If the `time_attr` is present, we expect that `GraphStore`
                 # holds all edges sorted by destination, and within local
@@ -119,27 +111,39 @@ class NeighborSampler(BaseSampler):
                     copy.copy(attr) for attr in node_attrs
                     if attr.attr_name == time_attr
                 ]
-                for attr in time_attrs:
-                    attr.index = None  # Reset the index to obtain full data.
+                for attr in time_attrs:  # Reset the index to obtain full data.
+                    attr.index = None
                 time_tensors = feature_store.multi_get_tensor(time_attrs)
                 self.node_time = {
                     time_attr.group_name: time_tensor
                     for time_attr, time_tensor in zip(time_attrs, time_tensors)
                 }
 
-            self.num_nodes = {
-                node_type: remote_backend_utils.size(*data, node_type)
-                for node_type in self.node_types
-            }
+            # Conversion to/from C++ string type (see above):
+            self.to_rel_type = {k: '__'.join(k) for k in self.edge_types}
+            self.to_edge_type = {v: k for k, v in self.to_rel_type.items()}
 
-            # Obtain CSC representations for in-memory sampling:
+            # Convert the graph data into CSC format for sampling:
             row_dict, colptr_dict, self.perm = graph_store.csc()
             self.row_dict = remap_keys(row_dict, self.to_rel_type)
             self.colptr_dict = remap_keys(colptr_dict, self.to_rel_type)
 
+        self.num_neighbors = num_neighbors
+        self.replace = replace
+        self.directed = directed
+        self.disjoint = disjoint
+        self.temporal_strategy = temporal_strategy
+
+    @property
+    def num_neighbors(self) -> NumNeighbors:
+        return self._num_neighbors
+
+    @num_neighbors.setter
+    def num_neighbors(self, num_neighbors: NumNeighborsType):
+        if isinstance(num_neighbors, NumNeighbors):
+            self._num_neighbors = num_neighbors
         else:
-            raise TypeError(f"'{self.__class__.__name__}'' found invalid "
-                            f"type: '{type(data)}'")
+            self._num_neighbors = NumNeighbors(num_neighbors)
 
     @property
     def is_temporal(self) -> bool:
@@ -148,6 +152,10 @@ class NeighborSampler(BaseSampler):
     @property
     def disjoint(self) -> bool:
         return self._disjoint or self.is_temporal
+
+    @disjoint.setter
+    def disjoint(self, disjoint: bool):
+        self._disjoint = disjoint
 
     # Node-based sampling #####################################################
 
@@ -174,25 +182,6 @@ class NeighborSampler(BaseSampler):
 
     # Helper functions ########################################################
 
-    def _process_hetero_num_neighbors(self):
-        num_neighbors = self.num_neighbors
-
-        if isinstance(num_neighbors, (list, tuple)):
-            num_neighbors = {k: num_neighbors for k in self.edge_types}
-        if not isinstance(num_neighbors, dict):
-            raise ValueError(f"Expected 'num_neighbors' to be a dictionary "
-                             f"(got {type(self.num_neighbors)})")
-
-        # Add at least one element to the list to ensure `max` is well-defined:
-        self.num_hops = max([0] + [len(v) for v in num_neighbors.values()])
-
-        for edge_type, value in num_neighbors.items():
-            if len(value) != self.num_hops:
-                raise ValueError(f"Expected the edge type {edge_type} to have "
-                                 f"{self.num_hops} entries (got {len(value)})")
-
-        self.num_neighbors = remap_keys(num_neighbors, self.to_rel_type)
-
     def _sample(
         self,
         seed: Union[Tensor, Dict[NodeType, Tensor]],
@@ -215,7 +204,7 @@ class NeighborSampler(BaseSampler):
                     self.colptr_dict,
                     self.row_dict,
                     seed,
-                    self.num_neighbors,
+                    self.num_neighbors.get_mapped_values(self.edge_types),
                     self.node_time,
                     seed_time,
                     True,  # csc
@@ -244,8 +233,8 @@ class NeighborSampler(BaseSampler):
                     self.colptr_dict,
                     self.row_dict,
                     seed,  # seed_dict
-                    self.num_neighbors,
-                    self.num_hops,
+                    self.num_neighbors.get_mapped_values(self.edge_types),
+                    self.num_neighbors.num_hops,
                     self.replace,
                     self.directed,
                 )
@@ -267,7 +256,7 @@ class NeighborSampler(BaseSampler):
                     self.colptr,
                     self.row,
                     seed.to(self.colptr.dtype),  # seed
-                    self.num_neighbors,
+                    self.num_neighbors.get_mapped_values(),
                     self.node_time,
                     seed_time,
                     True,  # csc
@@ -292,7 +281,7 @@ class NeighborSampler(BaseSampler):
                     self.colptr,
                     self.row,
                     seed,  # seed
-                    self.num_neighbors,
+                    self.num_neighbors.get_mapped_values(),
                     self.replace,
                     self.directed,
                 )
@@ -572,7 +561,7 @@ def neg_sample(seed: Tensor, neg_sampling: NegativeSampling, num_nodes: int,
     num_samples = math.ceil(neg_sampling.amount)
     seed_time = seed_time.view(1, -1).expand(num_samples, -1)
 
-    out = neg_sampling.sample(num_neg, num_nodes)
+    out = neg_sampling.sample(num_samples * seed.numel(), num_nodes)
     out = out.view(num_samples, seed.numel())
     mask = node_time[out] >= seed_time  # holds all invalid samples.
     neg_sampling_complete = False
