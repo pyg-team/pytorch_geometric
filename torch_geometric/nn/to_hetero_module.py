@@ -18,10 +18,10 @@ class SubParam():
         self.param = param
 
     def get_data(self):
-        return self.param[self.idx].data 
+        return self.param[self.idx].data.squeeze()
 
     def set_data(self, data):
-        self.param.data[self.idx] = data
+        self.param.data[self.idx].squeeze() = data
 
     data = property(get_data, set_data)
 
