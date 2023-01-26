@@ -21,8 +21,10 @@ class SubParam():
         return self.param[self.idx].data.squeeze()
 
     def set_data(self, data):
-        print("self.param.data[self.idx].squeeze().shape =", self.param.data[self.idx].squeeze().shape)
-        print("self.param.data[self.idx].shape =", self.param.data[self.idx].shape)
+        print("self.param.data[self.idx].squeeze().shape =",
+              self.param.data[self.idx].squeeze().shape)
+        print("self.param.data[self.idx].shape =",
+              self.param.data[self.idx].shape)
         print("data.shape =", data.shape)
         return
         #self.param.data[self.idx].squeeze() = data
