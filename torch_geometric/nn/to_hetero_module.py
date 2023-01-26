@@ -26,7 +26,12 @@ class SubParam():
         print("self.param.data[self.idx].shape =",
               self.param.data[self.idx].shape)
         print("data.shape =", data.shape)
-        self.param.data[self.idx] = data
+        if self.param.data[self.idx].shape == data.t().shape:
+            self.param.data[self.idx] = data.t()
+        else:
+            self.param.data[self.idx] = data
+
+
 
     data = property(get_data, set_data)
 
@@ -94,7 +99,7 @@ class ToHeteroLinear(torch.nn.Module):
             self, get_type: Union[NodeType,
                                   EdgeType]) -> Union[Linear, DummyLinear]:
         # returns a Linear layer for type
-        # neccesary to support the following examples:
+        # neccesary to avoid changing usage in the following examples:
         # 1) model.lin[node_type].weight.data = conv.root.data.t()
         # 2) model.lin[node_type].bias.data = conv.bias.data
         if not torch_geometric.typing.WITH_PYG_LIB:
