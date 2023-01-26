@@ -12,6 +12,19 @@ from torch_geometric.utils import scatter
 from .dense import HeteroLinear, Linear
 
 
+def SubParam():
+    def __init__(self, param: torch.nn.Parameter, idx: int):
+        self.idx = idx
+        self.param = param
+
+    def get_data(self):
+        return self.param[self.idx].data 
+
+    def set_data(self, data):
+        self.param.data[self.idx] = data
+
+    data = property(get_data, set_data)
+
 class DummyLinear():
     def __init__(self, get_type: Union[NodeType, EdgeType],
                  types: Union[List[NodeType],
@@ -28,13 +41,12 @@ class DummyLinear():
 
     @property
     def weight(self):
-        return self.hetero_weight[self.idx].view(self.in_channels,
-                                                 self.out_channels)
+        return SubParam(self.hetero_weight, self.idx)
 
     @property
-    def bias(self):
+    def get_bias(self):
         if self.use_bias:
-            return self.hetero_bias[self.idx].view(self.out_channels)
+            return SubParam(self.hetero_bias, self.idx)
         else:
             return None
 
