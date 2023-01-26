@@ -18,12 +18,13 @@ class SubParam():
         self.param = param
 
     def get_data(self):
-        return self.param[self.idx].data 
+        return self.param[self.idx].data
 
     def set_data(self, data):
         self.param.data[self.idx] = data
 
     data = property(get_data, set_data)
+
 
 class DummyLinear():
     def __init__(self, get_type: Union[NodeType, EdgeType],
