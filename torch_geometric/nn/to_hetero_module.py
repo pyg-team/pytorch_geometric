@@ -45,7 +45,8 @@ class ToHeteroLinear(torch.nn.Module):
             bias=bias,
         )
 
-    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> torch.nn.Linear:
+    def __getitem__(self, get_type: Union[NodeType,
+                                          EdgeType]) -> torch.nn.Linear:
         # returns a Linear layer for type
         if not torch_geometric.typing.WITH_PYG_LIB:
             return self.hetero_module.lins[self.types.index(get_type)]
