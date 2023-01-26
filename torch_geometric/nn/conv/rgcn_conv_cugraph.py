@@ -164,8 +164,8 @@ class RGCNConvCuGraph(nn.Module):
         if x is None:
             x = torch.eye(self.in_channels, device=_device)
 
-        out = RGCNConvAgg(x, self.comp, _graph, not self.root_weight,
-                          bool(self.aggr == 'mean'))
+        out = RGCNConvAgg(x, self.comp, _graph, concat_own=self.root_weight,
+                          norm_by_out_degree=bool(self.aggr == 'mean'))
 
         out = out @ self.weight.view(-1, self.out_channels)
         if self.bias is not None:
