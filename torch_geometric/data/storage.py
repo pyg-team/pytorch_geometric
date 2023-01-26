@@ -29,7 +29,8 @@ from torch_geometric.utils import (
     is_undirected,
 )
 
-N_KEYS = {'x', 'feat', 'pos', 'batch'}
+N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type'}
+E_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type'}
 
 
 class AttrType(Enum):
@@ -281,8 +282,11 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items():
-            if (isinstance(value, (Tensor, np.ndarray))
-                    and (key in N_KEYS or 'node' in key)):
+            if isinstance(value, (Tensor, np.ndarray)) and key in N_KEYS:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.shape[cat_dim]
+        for key, value in self.items():
+            if isinstance(value, (Tensor, np.ndarray)) and 'node' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
         if 'adj' in self and isinstance(self.adj, SparseTensor):
@@ -386,6 +390,10 @@ class EdgeStorage(BaseStorage):
     @property
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
+        for key, value in self.items():
+            if isinstance(value, (Tensor, np.ndarray)) and key in E_KEYS:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.shape[cat_dim]
         for key, value in self.items():
             if isinstance(value, (Tensor, np.ndarray)) and 'edge' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
