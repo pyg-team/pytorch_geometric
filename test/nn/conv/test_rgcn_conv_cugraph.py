@@ -6,15 +6,19 @@ import pytest
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.nn import RGCNConv, RGCNConvCuGraph
+from torch_geometric.nn import FastRGCNConv as RGCNConv
+from torch_geometric.nn import RGCNConvCuGraph
 from torch_geometric.testing import onlyCUDA
+
+# Note: There is a discrepancy between the results from FastRGCNConv and
+# RGCNConv when `num_bases` is `None`, and we use the former for validation.
 
 options = OrderedDict({
     "aggr": ["add", "sum", "mean"],
     "bias": [True, False],
     "bipartite": [True, False],
     "max_num_neighbors": [8, None],
-    "num_bases": [2, None],
+    "num_bases": [1, 2, None],
     "root_weight": [True, False],
     "use_sparse": [True, False],
 })
