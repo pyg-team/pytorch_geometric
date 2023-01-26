@@ -603,4 +603,7 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
                 stdout=subprocess.PIPE)
             stdout = process.communicate()[0].decode('utf-8')
             out.append(int(stdout.split(':')[1].strip()))
-    assert out == list(range(1, num_workers + 1))
+        if not loader_cores:
+            assert out == list(range(0, num_workers))
+        else:
+            assert out == loader_cores
