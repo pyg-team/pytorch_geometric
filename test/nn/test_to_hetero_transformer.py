@@ -382,6 +382,8 @@ def test_to_hetero_and_rgcn_equal_output():
         weight = model.conv['__'.join(edge_type)].lin.weight
         weight.data = conv.weight[i].data.t()
     for i, node_type in enumerate(node_types):
+        print("conv.root.data.shape =", conv.root.data.shape)
+        print("conv.root.data.t().shape =", conv.root.data.t().shape)
         model.lin[node_type].weight.data = conv.root.data.t()
         model.lin[node_type].bias.data = conv.bias.data
 
