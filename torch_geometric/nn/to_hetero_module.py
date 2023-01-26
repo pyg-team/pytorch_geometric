@@ -18,20 +18,13 @@ class SubParam():
         self.param = param
 
     def get_data(self):
-        return self.param[self.idx].data.squeeze()
+        return self.param[self.idx].data
 
     def set_data(self, data):
-        print("self.param.data[self.idx].squeeze().shape =",
-              self.param.data[self.idx].squeeze().shape)
-        print("self.param.data[self.idx].shape =",
-              self.param.data[self.idx].shape)
-        print("data.shape =", data.shape)
         if self.param.data[self.idx].shape == data.t().shape:
             self.param.data[self.idx] = data.t()
         else:
             self.param.data[self.idx] = data
-
-
 
     data = property(get_data, set_data)
 
