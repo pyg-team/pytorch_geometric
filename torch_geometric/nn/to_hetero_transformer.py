@@ -305,7 +305,7 @@ class ToHeteroTransformer(Transformer):
 
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
-            print("submod:", submod)    
+            print("submod:", submod)
             # handle iterable Modules (dict/list/sequential) containing Linear
             if is_iterable_module(submod):
                 try:
@@ -519,5 +519,7 @@ def is_linear(module):
     return isinstance(module, torch.nn.Linear) or isinstance(
         module, torch_geometric.nn.dense.Linear)
 
+
 def is_iterable_module(module):
-    return isinstance(module, torch.nn.ModuleList) or isinstance(module, torch.nn.ModuleDict) or isinstance(module, torch.nn.Sequential)
+    return isinstance(module, torch.nn.ModuleList) or isinstance(
+        module, torch.nn.ModuleDict) or isinstance(module, torch.nn.Sequential)
