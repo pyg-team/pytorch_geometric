@@ -55,11 +55,11 @@ class ToHeteroLinear(torch.nn.Module):
         else:
             lin_to_fill = torch_geometric.nn.dense.Linear(
                 self.in_channels, self.out_channels)
-            lin_to_fill.weight.data = self.hetero_module.weight[self.types.index(
-                get_type)].view(self.in_channels, self.out_channels).data
+            lin_to_fill.weight = torch.nn.Parameter(self.hetero_module.weight[self.types.index(
+                get_type)].view(self.in_channels, self.out_channels))
             if self.bias:
-                lin_to_fill.bias.data = self.hetero_module.bias[self.types.index(
-                    get_type)].view(-1).data
+                lin_to_fill.bias = torch.nn.Parameter(self.hetero_module.bias[self.types.index(
+                    get_type)].view(-1))
             return lin_to_fill
 
     def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
