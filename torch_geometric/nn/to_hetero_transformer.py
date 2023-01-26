@@ -302,12 +302,13 @@ class ToHeteroTransformer(Transformer):
             is_heterolin = is_linear(submod)
         else:
             print("not has attr")
-            
+
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
-            print("submod:", submod)    
+            print("submod:", submod)
             # handle iterable Modules (dict/list) containing Linear
-            if isinstance(submod, torch.nn.ModuleList) or isinstance(submod, torch.nn.ModuleDict):
+            if isinstance(submod, torch.nn.ModuleList) or isinstance(
+                    submod, torch.nn.ModuleDict):
                 try:
                     is_heterolin = is_linear(submod[split_name[-1]])
                 except TypeError:
@@ -328,8 +329,6 @@ class ToHeteroTransformer(Transformer):
         if is_heterolin:
             print('inside heterolinear if')
             add_heterolin_to_graph(node, target, name)
-
-            
 
     def call_method(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise methods.
@@ -489,9 +488,11 @@ class ToHeteroTransformer(Transformer):
             out_type = Dict[EdgeType, Tensor]
         else:
             out_type = Dict[NodeType, Tensor]
-        out_hetero = self.graph.create_node(
-            'call_module', target=f'{target}', args=(args_dict, ),
-            kwargs=kwargs_dict, name=f'{name}__hetero', type_expr=out_type)
+        out_hetero = self.graph.create_node('call_module', target=f'{target}',
+                                            args=(args_dict, ),
+                                            kwargs=kwargs_dict,
+                                            name=f'{name}__hetero',
+                                            type_expr=out_type)
         print('out.name', out_hetero.name)
         print('out.type', out_hetero.type)
         self.graph.inserting_after(out_hetero)
@@ -505,7 +506,7 @@ class ToHeteroTransformer(Transformer):
             print("out.__dict__ =", out.__dict__)
             self.graph.inserting_after(out)
 
-    def add_nonlin_to_graph(self, node: Node, target: Any, name: str):    
+    def add_nonlin_to_graph(self, node: Node, target: Any, name: str):
         for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
             out = self.graph.create_node('call_module',
