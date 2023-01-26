@@ -34,7 +34,7 @@ class DummyLinear():
     @property
     def bias(self):
         if self.use_bias:
-            self.hetero_bias[self.idx].view(self.out_channels)
+            return self.hetero_bias[self.idx].view(self.out_channels)
         else:
             return None
 
