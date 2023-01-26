@@ -56,7 +56,6 @@ from .point_gnn_conv import PointGNNConv
 from .rgcn_conv_cugraph import RGCNConvCuGraph
 from .gps_conv import GPSConv
 
-
 __all__ = [
     'MessagePassing',
     'GCNConv',
