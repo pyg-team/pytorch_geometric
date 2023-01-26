@@ -12,6 +12,30 @@ from torch_geometric.utils import scatter
 from .dense import HeteroLinear, Linear
 
 
+class DummyLinear():
+    def __init__(self, get_type: Union[NodeType, EdgeType], types:Union[List[NodeType], List[EdgeType]], hetero_module: torch.nn.Module):
+        self.type = get_type
+        self.types = types
+        self.idx = types.index(get_type)
+        self.in_channels = self.hetero_module.in_channels
+        self.out_channels = self.hetero_module.out_channels
+        self.hetero_weight = hetero_module.weight
+        self.use_bias = heteromodule.kwargs.get('bias', True)
+
+        self.hetero_bias = hetero_module.bias
+
+    @property
+    def weight(self):
+        return self.hetero_weight[self.idx].view(self.in_channels, self.out_channels)
+
+    @property
+    def bias(self):
+        if self.use_bias:
+            self.hetero_biasself.idx.view(self.out_channels)
+        else:
+            return None
+
+
 class ToHeteroLinear(torch.nn.Module):
     def __init__(
         self,
@@ -45,7 +69,7 @@ class ToHeteroLinear(torch.nn.Module):
             bias=self.bias,
         )
 
-    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Linear:
+    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Union[Linear, DummyLinear]:
         # returns a Linear layer for type
         # neccesary to support the following examples:
         # 1) model.lin[node_type].weight.data = conv.root.data.t()
@@ -53,14 +77,7 @@ class ToHeteroLinear(torch.nn.Module):
         if not torch_geometric.typing.WITH_PYG_LIB:
             return self.hetero_module.lins[self.types.index(get_type)]
         else:
-            lin_to_fill = torch_geometric.nn.dense.Linear(
-                self.in_channels, self.out_channels)
-            lin_to_fill.weight = torch.nn.Parameter(self.hetero_module.weight[self.types.index(
-                get_type)].view(self.in_channels, self.out_channels))
-            if self.bias:
-                lin_to_fill.bias = torch.nn.Parameter(self.hetero_module.bias[self.types.index(
-                    get_type)].view(-1))
-            return lin_to_fill
+            return DummyLinear(get_type, self.types, self.hetero_module)
 
     def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         return self.hetero_module(x, type_vec)
