@@ -22,6 +22,7 @@ class SubParam():
 
     def set_data(self, data):
         print("self.param.data[self.idx].squeeze().shape =", self.param.data[self.idx].squeeze().shape)
+        print("self.param.data[self.idx].shape =", self.param.data[self.idx].shape)
         print("data.shape =", data.shape)
         return
         #self.param.data[self.idx].squeeze() = data
@@ -48,7 +49,7 @@ class DummyLinear():
         return SubParam(self.hetero_weight, self.idx)
 
     @property
-    def get_bias(self):
+    def bias(self):
         if self.use_bias:
             return SubParam(self.hetero_bias, self.idx)
         else:
