@@ -305,8 +305,7 @@ class ToHeteroTransformer(Transformer):
             
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
-            print("submod:", submod)
-            
+            print("submod:", submod)    
             # handle iterable Modules (dict/list) containing Linear
             if isinstance(submod, torch.nn.ModuleList) or isinstance(submod, torch.nn.ModuleDict):
                 try:
