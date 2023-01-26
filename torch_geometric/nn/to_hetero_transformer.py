@@ -302,13 +302,12 @@ class ToHeteroTransformer(Transformer):
             is_heterolin = is_linear(submod)
         else:
             print("not has attr")
-            # for ModuleList containing Linear
+            # for iterable Modules (dict/list) containing Linear
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
             print("submod:", submod)
-            if isinstance(submod, torch.nn.ModuleList):
-                idx = int(split_name[-1])
-                is_heterolin = is_linear(submod[idx])
+            if isinstance(submod, torch.nn.ModuleList) or isinstance(submod, torch.nn.ModuleDict):
+                is_heterolin = is_linear(submod[split_name[-1]])
             else:
                 is_heterolin = False
         if is_heterolin:
