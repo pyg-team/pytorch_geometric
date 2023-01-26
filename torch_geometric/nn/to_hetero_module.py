@@ -20,7 +20,7 @@ class DummyLinear():
         self.in_channels = hetero_module.in_channels
         self.out_channels = hetero_module.out_channels
         self.hetero_weight = hetero_module.weight
-        self.use_bias = heteromodule.kwargs.get('bias', True)
+        self.use_bias = hetero_module.kwargs.get('bias', True)
 
         self.hetero_bias = hetero_module.bias
 
