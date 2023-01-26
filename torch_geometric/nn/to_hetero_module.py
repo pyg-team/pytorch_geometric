@@ -8,6 +8,7 @@ from torch import Tensor
 import torch_geometric
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import scatter
+
 from .dense import HeteroLinear, Linear
 
 
