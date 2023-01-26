@@ -824,9 +824,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             sizes = torch.tensor(sizes, dtype=torch.long, device=device)
             edge_type = torch.arange(len(sizes), device=device)
             data.edge_type = edge_type.repeat_interleave(sizes)
-            print('--------')
-            print(data.edge_type.shape)
-            print('--------')
 
         return data
 
