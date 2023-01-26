@@ -8,6 +8,7 @@ from torch import Tensor
 import torch_geometric
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import scatter
+from torch_geometric.nn import HeteroLinear, Linear
 
 
 class ToHeteroLinear(torch.nn.Module):
@@ -16,8 +17,6 @@ class ToHeteroLinear(torch.nn.Module):
         module: torch.nn.Module,
         types: Union[List[NodeType], List[EdgeType]],
     ):
-        from torch_geometric.nn import HeteroLinear, Linear
-
         super().__init__()
 
         self.types = types
