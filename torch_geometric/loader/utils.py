@@ -191,6 +191,7 @@ def filter_custom_store(
     tensors = feature_store.multi_get_tensor(required_attrs)
     for i, attr in enumerate(required_attrs):
         data[attr.group_name][attr.attr_name] = tensors[i]
+        data[attr.group_name][f'{attr.attr_name}__index__'] = attr.index
 
     return data
 
