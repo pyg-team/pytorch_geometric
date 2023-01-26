@@ -302,58 +302,35 @@ class ToHeteroTransformer(Transformer):
             is_heterolin = is_linear(submod)
         else:
             print("not has attr")
-            # for iterable Modules (dict/list) containing Linear
+            
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
             print("submod:", submod)
-            for subsubmod in submod:
-                print("subsubmod:", subsubmod)
+            
+            # handle iterable Modules (dict/list) containing Linear
             if isinstance(submod, torch.nn.ModuleList) or isinstance(submod, torch.nn.ModuleDict):
                 try:
                     is_heterolin = is_linear(submod[split_name[-1]])
                 except TypeError:
                     is_heterolin = is_linear(submod[int(split_name[-1])])
+            elif isinstance(submod, torch.nn.Sequential):
+                print("handling Sequential")
+                for subsubmod in submod:
+                    print("subsubmod:", subsubmod)
+                    if is_linear(subsubmod):
+                        add_heterolin_to_graph(node, target, name)
+                    else:
+                        add_nonlin_to_graph(node, target, name)
             else:
+                print('inside else')
                 is_heterolin = False
+                # Add calls to node type-wise or edge type-wise modules.p
+                add_nonlin_to_graph(node, target, name)
         if is_heterolin:
             print('inside heterolinear if')
-            # insert a HeteroLinear HeteroModule instead
-            kwargs_dict = {}
-            args_dict = {}
-            for key in self.metadata[int(self.is_edge_level(node))]:
-                args, kwargs = self.map_args_kwargs(node, key)
-                args_dict[key] = args[0]
-                kwargs_dict.update(kwargs)
-            print('(args_dict,):', (args_dict, ))
-            if self.is_edge_level(node):
-                out_type = Dict[EdgeType, Tensor]
-            else:
-                out_type = Dict[NodeType, Tensor]
-            out_hetero = self.graph.create_node(
-                'call_module', target=f'{target}', args=(args_dict, ),
-                kwargs=kwargs_dict, name=f'{name}__hetero', type_expr=out_type)
-            print('out.name', out_hetero.name)
-            print('out.type', out_hetero.type)
-            self.graph.inserting_after(out_hetero)
-            # extract tensors from dict
-            print("extracting tensors from dict")
-            for key in self.metadata[int(self.is_edge_level(node))]:
-                print("inserting for key:", key)
-                out = self.graph.create_node('call_method', target='get',
-                                             args=(out_hetero, key),
-                                             name=f'{name}__{key2str(key)}')
-                print("out.__dict__ =", out.__dict__)
-                self.graph.inserting_after(out)
-        else:
-            print('inside other if')
-            # Add calls to node type-wise or edge type-wise modules.p
-            for key in self.metadata[int(self.is_edge_level(node))]:
-                args, kwargs = self.map_args_kwargs(node, key)
-                out = self.graph.create_node('call_module',
-                                             target=f'{target}.{key2str(key)}',
-                                             args=args, kwargs=kwargs,
-                                             name=f'{name}__{key2str(key)}')
-                self.graph.inserting_after(out)
+            add_heterolin_to_graph(node, target, name)
+
+            
 
     def call_method(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise methods.
@@ -500,6 +477,43 @@ class ToHeteroTransformer(Transformer):
         args = tuple(_recurse(v) for v in node.args)
         kwargs = {k: _recurse(v) for k, v in node.kwargs.items()}
         return args, kwargs
+
+    def add_heterolin_to_graph(self, node: Node, target: Any, name: str):
+        kwargs_dict = {}
+        args_dict = {}
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            args, kwargs = self.map_args_kwargs(node, key)
+            args_dict[key] = args[0]
+            kwargs_dict.update(kwargs)
+        print('(args_dict,):', (args_dict, ))
+        if self.is_edge_level(node):
+            out_type = Dict[EdgeType, Tensor]
+        else:
+            out_type = Dict[NodeType, Tensor]
+        out_hetero = self.graph.create_node(
+            'call_module', target=f'{target}', args=(args_dict, ),
+            kwargs=kwargs_dict, name=f'{name}__hetero', type_expr=out_type)
+        print('out.name', out_hetero.name)
+        print('out.type', out_hetero.type)
+        self.graph.inserting_after(out_hetero)
+        # extract tensors from dict
+        print("extracting tensors from dict")
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            print("inserting for key:", key)
+            out = self.graph.create_node('call_method', target='get',
+                                         args=(out_hetero, key),
+                                         name=f'{name}__{key2str(key)}')
+            print("out.__dict__ =", out.__dict__)
+            self.graph.inserting_after(out)
+
+    def add_nonlin_to_graph(self, node: Node, target: Any, name: str):    
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            args, kwargs = self.map_args_kwargs(node, key)
+            out = self.graph.create_node('call_module',
+                                         target=f'{target}.{key2str(key)}',
+                                         args=args, kwargs=kwargs,
+                                         name=f'{name}__{key2str(key)}')
+            self.graph.inserting_after(out)
 
 
 def key2str(key: Union[NodeType, EdgeType]) -> str:
