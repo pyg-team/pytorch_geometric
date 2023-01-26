@@ -17,8 +17,8 @@ class DummyLinear():
         self.type = get_type
         self.types = types
         self.idx = types.index(get_type)
-        self.in_channels = self.hetero_module.in_channels
-        self.out_channels = self.hetero_module.out_channels
+        self.in_channels = hetero_module.in_channels
+        self.out_channels = hetero_module.out_channels
         self.hetero_weight = hetero_module.weight
         self.use_bias = heteromodule.kwargs.get('bias', True)
 
