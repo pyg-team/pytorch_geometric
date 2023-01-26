@@ -306,28 +306,20 @@ class ToHeteroTransformer(Transformer):
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
             print("submod:", submod)    
-            # handle iterable Modules (dict/list) containing Linear
-            if isinstance(submod, torch.nn.ModuleList) or isinstance(submod, torch.nn.ModuleDict):
+            # handle iterable Modules (dict/list/sequential) containing Linear
+            if is_iterable_module(submod):
                 try:
                     is_heterolin = is_linear(submod[split_name[-1]])
                 except TypeError:
                     is_heterolin = is_linear(submod[int(split_name[-1])])
-            elif isinstance(submod, torch.nn.Sequential):
-                print("handling Sequential")
-                for subsubmod in submod:
-                    print("subsubmod:", subsubmod)
-                    if is_linear(subsubmod):
-                        add_heterolin_to_graph(node, target, name)
-                    else:
-                        add_nonlin_to_graph(node, target, name)
             else:
                 print('inside else')
                 is_heterolin = False
                 # Add calls to node type-wise or edge type-wise modules.p
-                add_nonlin_to_graph(node, target, name)
+                self.add_nonlin_to_graph(node, target, name)
         if is_heterolin:
             print('inside heterolinear if')
-            add_heterolin_to_graph(node, target, name)
+            self.add_heterolin_to_graph(node, target, name)
 
             
 
@@ -523,3 +515,6 @@ def key2str(key: Union[NodeType, EdgeType]) -> str:
 def is_linear(module):
     return isinstance(module, torch.nn.Linear) or isinstance(
         module, torch_geometric.nn.dense.Linear)
+
+def is_iterable_module(module):
+    return isinstance(module, torch.nn.ModuleList) or isinstance(module, torch.nn.ModuleDict) or isinstance(module, torch.nn.Sequential)
