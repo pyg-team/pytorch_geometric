@@ -12,7 +12,7 @@ from torch_geometric.utils import scatter
 from .dense import HeteroLinear, Linear
 
 
-def SubParam():
+class SubParam():
     def __init__(self, param: torch.nn.Parameter, idx: int):
         self.idx = idx
         self.param = param
