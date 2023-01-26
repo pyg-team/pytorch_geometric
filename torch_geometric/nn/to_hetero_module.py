@@ -24,8 +24,7 @@ class SubParam():
         print("self.param.data[self.idx].squeeze().shape =", self.param.data[self.idx].squeeze().shape)
         print("self.param.data[self.idx].shape =", self.param.data[self.idx].shape)
         print("data.shape =", data.shape)
-        return
-        #self.param.data[self.idx].squeeze() = data
+        self.param.data[self.idx] = data
 
     data = property(get_data, set_data)
 
