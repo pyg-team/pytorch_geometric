@@ -309,17 +309,20 @@ class ToHeteroTransformer(Transformer):
             # handle iterable Modules (dict/list/sequential) containing Linear
             if is_iterable_module(submod):
                 try:
-                    is_heterolin = is_linear(submod[split_name[-1]])
+                    selected_subsubmod = submod[split_name[-1]]
                 except TypeError:
-                    is_heterolin = is_linear(submod[int(split_name[-1])])
+                    selected_subsubmod = submod[int(split_name[-1])]
+                print("selected subsubmod:", selected_subsubmod)
+                is_heterolin = is_linear(selected_subsubmod)
             else:
                 print('inside else')
                 is_heterolin = False
-                # Add calls to node type-wise or edge type-wise modules.p
-                self.add_nonlin_to_graph(node, target, name)
         if is_heterolin:
             print('inside heterolinear if')
             self.add_heterolin_to_graph(node, target, name)
+        else:
+            # Add calls to node type-wise or edge type-wise modules.
+            self.add_nonlin_to_graph(node, target, name)
 
     def call_method(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise methods.
