@@ -13,7 +13,9 @@ from .dense import HeteroLinear, Linear
 
 
 class DummyLinear():
-    def __init__(self, get_type: Union[NodeType, EdgeType], types:Union[List[NodeType], List[EdgeType]], hetero_module: torch.nn.Module):
+    def __init__(self, get_type: Union[NodeType, EdgeType],
+                 types: Union[List[NodeType],
+                              List[EdgeType]], hetero_module: torch.nn.Module):
         self.type = get_type
         self.types = types
         self.idx = types.index(get_type)
@@ -26,7 +28,8 @@ class DummyLinear():
 
     @property
     def weight(self):
-        return self.hetero_weight[self.idx].view(self.in_channels, self.out_channels)
+        return self.hetero_weight[self.idx].view(self.in_channels,
+                                                 self.out_channels)
 
     @property
     def bias(self):
@@ -69,7 +72,9 @@ class ToHeteroLinear(torch.nn.Module):
             bias=self.bias,
         )
 
-    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Union[Linear, DummyLinear]:
+    def __getitem__(
+            self, get_type: Union[NodeType,
+                                  EdgeType]) -> Union[Linear, DummyLinear]:
         # returns a Linear layer for type
         # neccesary to support the following examples:
         # 1) model.lin[node_type].weight.data = conv.root.data.t()
