@@ -45,7 +45,7 @@ class ToHeteroLinear(torch.nn.Module):
             bias=self.bias,
         )
 
-    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> torch_geometric.nn.dense.Linear:
+    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Linear:
         # returns a Linear layer for type
         # neccesary to support the following examples:
         # 1) model.lin[node_type].weight.data = conv.root.data.t()
