@@ -25,7 +25,7 @@ class CoMA(InMemoryDataset):
         face area.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
@@ -41,21 +41,22 @@ class CoMA(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 20,465
-              - 5,023
-              - 29,990
-              - 3
-              - 12
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 20,465
+          - 5,023
+          - 29,990
+          - 3
+          - 12
     """
 
     url = 'https://coma.is.tue.mpg.de/'

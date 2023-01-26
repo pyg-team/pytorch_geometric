@@ -52,8 +52,8 @@ def load_pyg(name, dataset_dir):
     Load PyG dataset objects. (More PyG datasets will be supported)
 
     Args:
-        name (string): dataset name
-        dataset_dir (string): data directory
+        name (str): dataset name
+        dataset_dir (str): data directory
 
     Returns: PyG dataset object
 
@@ -106,8 +106,8 @@ def load_ogb(name, dataset_dir):
 
 
     Args:
-        name (string): dataset name
-        dataset_dir (string): data directory
+        name (str): dataset name
+        dataset_dir (str): data directory
 
     Returns: PyG dataset object
 

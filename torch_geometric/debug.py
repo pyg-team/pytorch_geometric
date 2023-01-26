@@ -2,7 +2,7 @@ __debug_flag__ = {'enabled': False}
 
 
 def is_debug_enabled():
-    r"""Returns :obj:`True`, if the debug mode is enabled."""
+    r"""Returns :obj:`True` if the debug mode is enabled."""
     return __debug_flag__['enabled']
 
 

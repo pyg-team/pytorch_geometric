@@ -34,8 +34,8 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 for epoch in range(1, 201):
     model.train()
     optimizer.zero_grad()
-    log_logits = model(data.x, data.edge_index)
-    loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
+    out = model(data.x, data.edge_index)
+    loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
     loss.backward()
     optimizer.step()
 

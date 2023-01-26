@@ -24,12 +24,12 @@ def voxel_grid(
     cloud and clusters all points within the same voxel.
 
     Args:
-        pos (Tensor): Node position matrix
+        pos (torch.Tensor): Node position matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times D}`.
         size (float or [float] or Tensor): Size of a voxel (in each dimension).
-        batch (LongTensor, optional): Batch vector :math:`\mathbf{b} \in {\{ 0,
-            \ldots,B-1\}}^N`, which assigns each node to a specific example.
-            (default: :obj:`None`)
+        batch (torch.Tensor, optional): Batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots,B-1\}}^N`, which assigns each
+            node to a specific example. (default: :obj:`None`)
         start (float or [float] or Tensor, optional): Start coordinates of the
             grid (in each dimension). If set to :obj:`None`, will be set to the
             minimum coordinates found in :attr:`pos`. (default: :obj:`None`)
@@ -37,7 +37,7 @@ def voxel_grid(
             (in each dimension). If set to :obj:`None`, will be set to the
             maximum coordinates found in :attr:`pos`. (default: :obj:`None`)
 
-    :rtype: :class:`LongTensor`
+    :rtype: :class:`torch.Tensor`
     """
 
     if grid_cluster is None:

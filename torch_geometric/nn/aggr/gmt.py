@@ -30,6 +30,8 @@ class GraphMultisetTransformer(Aggregation):
             (default: :obj:`1`)
         norm (str, optional): If set to :obj:`True`, will apply layer
             normalization. (default: :obj:`False`)
+        dropout (float, optional): Dropout probability of attention weights.
+            (default: :obj:`0`)
     """
     def __init__(
         self,
@@ -38,6 +40,7 @@ class GraphMultisetTransformer(Aggregation):
         num_encoder_blocks: int = 1,
         heads: int = 1,
         layer_norm: bool = False,
+        dropout: float = 0.0,
     ):
         super().__init__()
 
@@ -45,13 +48,16 @@ class GraphMultisetTransformer(Aggregation):
         self.k = k
         self.heads = heads
         self.layer_norm = layer_norm
+        self.dropout = dropout
 
-        self.pma1 = PoolingByMultiheadAttention(channels, k, heads, layer_norm)
+        self.pma1 = PoolingByMultiheadAttention(channels, k, heads, layer_norm,
+                                                dropout)
         self.encoders = torch.nn.ModuleList([
-            SetAttentionBlock(channels, heads, layer_norm)
+            SetAttentionBlock(channels, heads, layer_norm, dropout)
             for _ in range(num_encoder_blocks)
         ])
-        self.pma2 = PoolingByMultiheadAttention(channels, 1, heads, layer_norm)
+        self.pma2 = PoolingByMultiheadAttention(channels, 1, heads, layer_norm,
+                                                dropout)
 
     def reset_parameters(self):
         self.pma1.reset_parameters()
@@ -77,4 +83,5 @@ class GraphMultisetTransformer(Aggregation):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.channels}, '
                 f'k={self.k}, heads={self.heads}, '
-                f'layer_norm={self.layer_norm})')
+                f'layer_norm={self.layer_norm}, '
+                f'dropout={self.dropout})')

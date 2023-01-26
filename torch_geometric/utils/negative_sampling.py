@@ -28,8 +28,8 @@ def negative_sampling(edge_index: Tensor,
             samples to return.
             If set to :obj:`None`, will try to return a negative edge for every
             positive edge. (default: :obj:`None`)
-        method (string, optional): The method to use for negative sampling,
-            *i.e.*, :obj:`"sparse"` or :obj:`"dense"`.
+        method (str, optional): The method to use for negative sampling,
+            *i.e.* :obj:`"sparse"` or :obj:`"dense"`.
             This is a memory/runtime trade-off.
             :obj:`"sparse"` will work on any graph of any size, while
             :obj:`"dense"` can perform faster true-negative checks.
@@ -128,8 +128,8 @@ def batched_negative_sampling(
         num_neg_samples (int, optional): The number of negative samples to
             return. If set to :obj:`None`, will try to return a negative edge
             for every positive edge. (default: :obj:`None`)
-        method (string, optional): The method to use for negative sampling,
-            *i.e.*, :obj:`"sparse"` or :obj:`"dense"`.
+        method (str, optional): The method to use for negative sampling,
+            *i.e.* :obj:`"sparse"` or :obj:`"dense"`.
             This is a memory/runtime trade-off.
             :obj:`"sparse"` will work on any graph of any size, while
             :obj:`"dense"` can perform faster true-negative checks.

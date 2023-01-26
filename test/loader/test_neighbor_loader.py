@@ -111,18 +111,19 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
 
     batch_size = 20
 
-    with pytest.raises(ValueError, match="to have 2 entries"):
+    with pytest.raises(ValueError, match="hops must be the same across all"):
         loader = NeighborLoader(
             data,
             num_neighbors={
-                ('paper', 'paper'): [-1],
-                ('paper', 'author'): [-1, -1],
-                ('author', 'paper'): [-1, -1],
+                ('paper', 'to', 'paper'): [-1],
+                ('paper', 'to', 'author'): [-1, -1],
+                ('author', 'to', 'paper'): [-1, -1],
             },
             input_nodes='paper',
             batch_size=batch_size,
             directed=directed,
         )
+        next(iter(loader))
 
     loader = NeighborLoader(
         data,
@@ -602,4 +603,7 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
                 stdout=subprocess.PIPE)
             stdout = process.communicate()[0].decode('utf-8')
             out.append(int(stdout.split(':')[1].strip()))
-    assert out == list(range(1, num_workers + 1))
+        if not loader_cores:
+            assert out == list(range(0, num_workers))
+        else:
+            assert out == loader_cores
