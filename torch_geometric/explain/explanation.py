@@ -250,7 +250,7 @@ class Explanation(Data, ExplanationMixin):
             kind='barh',
             figsize=(10, 7),
             title=title,
-            xlabel='Feature label',
+            ylabel='Feature label',
             xlim=[0, float(feat_importance.max()) + 0.3],
             legend=False,
         )
