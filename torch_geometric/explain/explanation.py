@@ -58,7 +58,7 @@ class ExplanationMixin:
                     f"Expected an 'edge_mask' with one dimension (got "
                     f"{store.edge_mask.dim()} dimensions)", raise_on_error)
 
-            if store.edge_mask.size(0) not in {store.num_edges}:
+            if store.edge_mask.size(0) != store.num_edges:
                 status = False
                 warn_or_raise(
                     f"Expected an 'edge_mask' with {store.num_edges} edges "
