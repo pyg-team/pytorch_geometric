@@ -30,7 +30,7 @@ from torch_geometric.utils import (
 )
 
 N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type'}
-E_KEYS = {'edge_weight', 'edge_attr', 'edge_type'}
+E_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type'}
 
 
 class AttrType(Enum):
