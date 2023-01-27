@@ -146,6 +146,12 @@ class HGTConv(MessagePassing):
         glorot(self.a_rel)
         glorot(self.m_rel)
 
+    def init_params(self, x_dict: Dict[NodeType, Tensor]):
+        for node_type, x_n in self.x_dict.items():
+            self.k_lin[node_type].initialize_parameters(_, x_n)
+            self.q_lin[node_type].initialize_parameters(_, x_n)
+            self.v_lin[node_type].initialize_parameters(_, x_n)
+
     def forward(
         self,
         x_dict: Dict[NodeType, Tensor],
@@ -167,45 +173,9 @@ class HGTConv(MessagePassing):
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
-        xs = list(x_dict.values())
-
-        if not self.use_gmm:
-            if self.no_pad:
-                x = torch.cat(xs)
-            else:
-                if self.infer_shapes:
-                    self.dims = torch.tensor([x.shape[-1] for x in xs])
-                    #initialize lazy params
-                    max_channels = self.dims.max()
-                    for node_type, u_k_lin in self.k_lin.items():
-                        self.k_lin[node_type].materialize(max_channels,
-                            self.out_channels)
-                    reset(self.k_lin)
-                    for node_type, u_q_lin in self.q_lin.items():
-                        self.q_lin[node_type].materialize(max_channels,
-                            self.out_channels)
-                    reset(self.q_lin)
-                    for node_type, u_v_lin in self.v_lin.items():
-                        self.v_lin[node_type].materialize(max_channels,
-                            self.out_channels)
-                    reset(self.v_lin)
-                    self.infer_shapes = False
-                    self.no_pad = (self.dims == self.max_channels).all()
-                x = torch.cat(pad_list(xs, self.dims))
-        elif self.infer_shapes:
-            self.dims = {
-                node_type: x.shape[-1]
-                for node_type, x in x_dict.items()
-            }
+        if self.infer_shapes:
             #initialize lazy params
-
-            for node_type, dim in self.dims.items():
-                self.k_lin[node_type].materialize(dim, self.out_channels)
-                self.q_lin[node_type].materialize(dim, self.out_channels)
-                self.v_lin[node_type].materialize(dim, self.out_channels)
-            reset(self.k_lin)
-            reset(self.q_lin)
-            reset(self.v_lin)
+            self.init_params(x_dict)
             self.infer_shapes = False
 
         H, D = self.heads, self.out_channels // self.heads
@@ -232,7 +202,14 @@ class HGTConv(MessagePassing):
         ]
         out_dict = {node_type: [] for node_type in self.node_types}
 
+        xs = list(x_dict.values())
+
         if not self.use_gmm:
+            # for segment_matmul check if need padding
+            if self.no_pad:
+                x = torch.cat(xs)
+            else:
+                x = torch.cat(pad_list(xs, self.dims))
             ptr = [0]
             count = 0
             for x_type_i in xs:
