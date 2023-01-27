@@ -144,10 +144,7 @@ class HGTConv(MessagePassing):
         ones(self.skip)
         ones(self.p_rel)
         glorot(self.a_rel)
-        glorot(self.m_rel)
-
-    def init_params(self, x_dict: Dict[NodeType, Tensor]):
-        
+        glorot(self.m_rel)        
 
     def forward(
         self,
