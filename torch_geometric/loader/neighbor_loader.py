@@ -90,17 +90,15 @@ class NeighborLoader(NodeLoader):
     The :class:`~torch_geometric.loader.NeighborLoader` will return subgraphs
     where global node indices are mapped to local indices corresponding to this
     specific subgraph. However, often times it is desired to map the nodes of
-    the current subgraph back to the global node indices. A simple trick to
-    achieve this is to include this mapping as part of the :obj:`data` object:
+    the current subgraph back to the global node indices. The
+    :class:`~torch_geometric.loader.NeighborLoader` will include this mapping
+    as part of the :obj:`data` object:
 
     .. code-block:: python
 
-        # Assign each node its global node index:
-        data.n_id = torch.arange(data.num_nodes)
-
         loader = NeighborLoader(data, ...)
         sampled_data = next(iter(loader))
-        print(sampled_data.n_id)
+        print(sampled_data.n_id)  # Global node index of each node in batch.
 
     Args:
         data (Any): A :class:`~torch_geometric.data.Data`,
