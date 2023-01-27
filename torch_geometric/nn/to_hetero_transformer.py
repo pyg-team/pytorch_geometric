@@ -334,7 +334,14 @@ class ToHeteroTransformer(Transformer):
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
-        op, target = is_builtin_inplace(str(target))
+        if torch_geometric.typing.WITH_PYG_LIB:
+            # Addresses "RuntimeError: Output 0 of SplitWithSizesBackward0
+            # is a view and is being modified inplace."
+            # Cause: split_with_sizes for pyg-lib.ops.segment_matmul returns a view
+            # Then using relu_ or other in place triggers the RuntimeError.
+            op, target = is_builtin_inplace(str(target))
+        else:
+            op = "call_method"
         for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
             out = self.graph.create_node(op, target=target,
