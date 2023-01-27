@@ -28,7 +28,7 @@ class SubParam:
     data = property(get_data, set_data)
 
 
-class DummyLinear():
+class DummyLinear:
     def __init__(self, get_type: Union[NodeType, EdgeType],
                  types: Union[List[NodeType],
                               List[EdgeType]], hetero_module: torch.nn.Module):
