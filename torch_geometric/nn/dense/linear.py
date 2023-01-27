@@ -218,7 +218,8 @@ class HeteroLinear(torch.nn.Module):
             self.lins = None
             if self.in_channels == -1:
                 self.weight = nn.parameter.UninitializedParameter()
-                self._hook = self.register_forward_pre_hook(self.initialize_parameters)
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
             else:
                 self.weight = torch.nn.Parameter(
                     torch.Tensor(num_types, in_channels, out_channels))
