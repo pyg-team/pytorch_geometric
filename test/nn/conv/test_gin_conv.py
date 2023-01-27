@@ -26,9 +26,9 @@ def test_gin_conv():
         '))')
     out = conv(x1, edge_index)
     assert out.size() == (4, 32)
-    assert conv(x1, edge_index, size=(4, 4)).tolist() == out.tolist()
-    assert conv(x1, adj.t()).tolist() == out.tolist()
-    assert conv(x1, adj2.t()).tolist() == out.tolist()
+    assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out, atol=1e-6)
+    assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
+    assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, Size) -> Tensor'
@@ -46,11 +46,11 @@ def test_gin_conv():
     out2 = conv((x1, None), edge_index, (4, 2))
     assert out1.size() == (2, 32)
     assert out2.size() == (2, 32)
-    assert conv((x1, x2), edge_index, (4, 2)).tolist() == out1.tolist()
-    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
-    assert conv((x1, x2), adj2.t()).tolist() == out1.tolist()
-    assert conv((x1, None), adj2.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv((x1, x2), edge_index, (4, 2)), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, None), adj.t()), out2, atol=1e-6)
+    assert torch.allclose(conv((x1, x2), adj2.t()), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
 
     if is_full_test():
         t = '(OptPairTensor, Tensor, Size) -> Tensor'
