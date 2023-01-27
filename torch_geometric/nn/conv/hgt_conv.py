@@ -177,7 +177,20 @@ class HGTConv(MessagePassing):
             #initialize lazy params
             self.init_params(x_dict)
             self.infer_shapes = False
-
+        if not self.use_gmm:
+            # for segment_matmul check if need padding
+            if self.no_pad:
+                x = torch.cat(xs)
+            else:
+                if self.infer_shapes:
+                    self.init_params(x_dict)
+                    self.infer_shapes = False
+                    self.no_pad = (self.dims == self.max_channels).all()
+                x = torch.cat(pad_list(xs, self.dims))
+        elif self.infer_shapes:
+            #initialize lazy params
+            self.init_params(x_dict)
+            self.infer_shapes = False
         H, D = self.heads, self.out_channels // self.heads
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
@@ -205,11 +218,6 @@ class HGTConv(MessagePassing):
         xs = list(x_dict.values())
 
         if not self.use_gmm:
-            # for segment_matmul check if need padding
-            if self.no_pad:
-                x = torch.cat(xs)
-            else:
-                x = torch.cat(pad_list(xs, self.dims))
             ptr = [0]
             count = 0
             for x_type_i in xs:
