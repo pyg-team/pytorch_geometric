@@ -173,8 +173,9 @@ class HGTConv(MessagePassing):
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
+        xs = list(x_dict.values())
         if self.infer_shapes:
-            #initialize lazy params
+            # initialize lazy params
             self.init_params(x_dict)
             self.infer_shapes = False
         if not self.use_gmm:
@@ -188,7 +189,7 @@ class HGTConv(MessagePassing):
                     self.no_pad = (self.dims == self.max_channels).all()
                 x = torch.cat(pad_list(xs, self.dims))
         elif self.infer_shapes:
-            #initialize lazy params
+            # initialize lazy params
             self.init_params(x_dict)
             self.infer_shapes = False
         H, D = self.heads, self.out_channels // self.heads
@@ -214,8 +215,6 @@ class HGTConv(MessagePassing):
             self.v_lin[node_type].bias for node_type in self.node_types
         ]
         out_dict = {node_type: [] for node_type in self.node_types}
-
-        xs = list(x_dict.values())
 
         if not self.use_gmm:
             ptr = [0]
@@ -332,12 +331,11 @@ class HGTConv(MessagePassing):
                 node_slices[n_type] = (cumsum, cumsum + num_nodes)
                 cumsum += num_nodes
 
-        #combine edge_index dict into single tensor
+        # combine edge_index dict into single tensor
         q_list = []
         p_rels = []
         cumsum = 0
         edge_index_list = []
-        edge_slices = {}
         for e_type in self.edge_types:
             src_type, _, dst_type = e_type
             indices = edge_index_dict[e_type]
