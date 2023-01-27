@@ -284,7 +284,7 @@ class HeteroLinear(torch.nn.Module):
     @torch.no_grad()
     def initialize_parameters(self, module, input):
         if is_uninitialized_parameter(self.weight):
-            self.in_channels = max([i.size(-1) for in in input])
+            self.in_channels = max([i.size(-1) for i in input])
             self.weight.materialize((self.num_types, self.in_channels, self.out_channels))
             self.reset_parameters()
         self._hook.remove()
