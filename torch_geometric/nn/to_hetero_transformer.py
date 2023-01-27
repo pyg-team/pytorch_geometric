@@ -334,11 +334,7 @@ class ToHeteroTransformer(Transformer):
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
-        if is_builtin_inplace(str(target)):
-            op = "call_function"
-            target = inplace_2_outplace(str(target))
-        else:
-            op = 'call_method'
+        op, target = is_builtin_inplace(str(target))
         for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
             out = self.graph.create_node(op, target=target,
@@ -535,9 +531,13 @@ def is_iterable_module(module: torch.nn.Module) -> bool:
         module, torch.nn.ModuleDict) or isinstance(module, torch.nn.Sequential)
 
 
-def is_iterable_module(target_str: str) -> bool:
-    return isinstance(module, torch.nn.ModuleList) or isinstance(
-        module, torch.nn.ModuleDict) or isinstance(module, torch.nn.Sequential)
+def is_builtin_inplace(target_str: str) -> bool:
+    potential_outplace = inplace_2_outplace(target_str)
+    try:
+        target_func = eval(potential_outplace)
+        return "call_function", potential_outplace
+    except AttributeError:
+        return "call_method", target_str
 
 
 def inplace_2_outplace(target_str: str) -> str:
