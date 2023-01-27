@@ -174,10 +174,6 @@ class HGTConv(MessagePassing):
             be set to :obj:`None`.
         """
         xs = list(x_dict.values())
-        if self.infer_shapes:
-            # initialize lazy params
-            self.init_params(x_dict)
-            self.infer_shapes = False
         if not self.use_gmm:
             # for segment_matmul check if need padding
             if self.no_pad:
