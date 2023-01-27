@@ -1,12 +1,13 @@
-from typing import Any, Callable
-
-from torch.utils.data.dataloader import _BaseDataLoaderIter
 import logging
 from contextlib import contextmanager
 from typing import Any, Callable, List, Optional
-from torch_geometric.loader.utils import get_numa_nodes_cores
+
 import psutil
 import torch
+from torch.utils.data.dataloader import _BaseDataLoaderIter
+
+from torch_geometric.loader.utils import get_numa_nodes_cores
+
 
 class DataLoaderIterator:
     r"""A data loader iterator extended by a simple post transformation
@@ -50,7 +51,8 @@ class WorkerInitWrapper:
     def __call__(self, worker_id):
         if self.func is not None:
             self.func(worker_id)
-            
+
+
 class AffinityMixin:
     def __init__(self, dataloader: torch.utils.data.DataLoader = None):
         self.dataloader = dataloader
@@ -62,7 +64,7 @@ class AffinityMixin:
             print("Dataloader CPU affinitization enabled!")
         else:
             raise ValueError("Can't enable CPU affintity for GPU device.")
-        
+
     @contextmanager
     def enable_cpu_affinity(self, loader_cores):
         r"""A context manager to enable CPU affinity for data loader workers
@@ -115,7 +117,7 @@ class AffinityMixin:
                 psutil.Process().cpu_affinity([loader_cores[worker_id]])
             except IndexError:
                 raise ValueError(f"Cannot use CPU affinity for worker ID "
-                                    f"{worker_id} on CPU {loader_cores}")
+                                 f"{worker_id} on CPU {loader_cores}")
 
             worker_init_fn_old(worker_id)
 
@@ -141,7 +143,7 @@ class AffinityMixin:
             # Set CPU affinity for dataloader:
             self.dataloader.worker_init_fn = init_fn
             logging.info(f'{self.dataloader.num_workers} data loader workers '
-                            f'are assigned to CPUs {loader_cores}')
+                         f'are assigned to CPUs {loader_cores}')
             yield
         finally:
             # Restore omp_num_threads and cpu affinity:

@@ -18,6 +18,7 @@ from torch_geometric.sampler import (
 )
 from torch_geometric.typing import InputNodes, OptTensor
 
+
 class NodeLoader(torch.utils.data.DataLoader):
     r"""A data loader that performs mini-batch sampling from node information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
@@ -99,8 +100,6 @@ class NodeLoader(torch.utils.data.DataLoader):
             time=input_time,
             input_type=input_type,
         )
-
-
 
         iterator = range(input_nodes.size(0))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)

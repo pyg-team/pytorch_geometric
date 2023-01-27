@@ -7,9 +7,9 @@ from tqdm import tqdm
 
 from benchmark.utils import emit_itt, get_dataset, get_model
 from torch_geometric.loader import NeighborLoader
+from torch_geometric.loader.base import AffinityMixin
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
-from torch_geometric.loader.base import AffinityMixin
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
@@ -153,10 +153,12 @@ def run(args: argparse.ArgumentParser) -> None:
 
                         progress_bar = False if args.no_progress_bar else True
                         train = train_hetero if hetero else train_homo
-                        
+
                         # define context manager parameters
-                        cpu_affinity = AffinityMixin(subgraph_loader
-                        ).enable_cpu_affinity(args.loader_cores) if args.cpu_affinity else nullcontext()
+                        cpu_affinity = AffinityMixin(
+                            subgraph_loader).enable_cpu_affinity(
+                                args.loader_cores
+                            ) if args.cpu_affinity else nullcontext()
 
                         with amp, cpu_affinity:
                             for _ in range(args.warmup):
@@ -188,30 +190,29 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN training benchmark')
     add = argparser.add_argument
 
-    add('--datasets', nargs='+',default=['ogbn-mag', 
-        'ogbn-products','Reddit'], type=str)
+    add('--datasets', nargs='+',
+        default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
     add('--use-sparse-tensor', action='store_true',
         help='use torch_sparse.SparseTensor as graph storage format')
-    add('--models', nargs='+', 
+    add('--models', nargs='+',
         default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
     add('--root', default='../../data', type=str,
         help='relative path to look for the datasets')
-    add('--batch-sizes', nargs='+',
-        default=[512, 1024, 2048, 4096, 8192], type=int)
+    add('--batch-sizes', nargs='+', default=[512, 1024, 2048, 4096, 8192],
+        type=int)
     add('--num-layers', nargs='+', default=[2, 3], type=int)
-    add('--num-hidden-channels', nargs='+',
-        default=[64, 128, 256], type=int)
+    add('--num-hidden-channels', nargs='+', default=[64, 128, 256], type=int)
     add('--num-heads', default=2, type=int,
         help='number of hidden attention heads, applies only for gat and rgat')
-    add('--num-neighbors', default=[10],type=ast.literal_eval,
+    add('--num-neighbors', default=[10], type=ast.literal_eval,
         help='number of neighbors to sample per layer')
     add('--num-workers', default=2, type=int)
     add('--warmup', default=1, type=int)
     add('--profile', action='store_true')
     add('--vtune-profile', action='store_true')
     add('--bf16', action='store_true')
-    add('--no-progress-bar', action='store_true',
-        default=False, help='turn off using progress bar')
+    add('--no-progress-bar', action='store_true', default=False,
+        help='turn off using progress bar')
     add('--num-epochs', default=1, type=int)
     add('--num-steps', default=-1, type=int,
         help='number of steps, -1 means iterating through all the data')

@@ -10,8 +10,8 @@ from ogb.nodeproppred import PygNodePropPredDataset
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.profile import torch_profile
 from torch_geometric.loader.base import AffinityMixin
+from torch_geometric.profile import torch_profile
 
 
 def run(args: argparse.ArgumentParser) -> None:
@@ -49,8 +49,10 @@ def run(args: argparse.ArgumentParser) -> None:
                         input_nodes=train_idx, batch_size=batch_size,
                         shuffle=True, num_workers=args.num_workers,
                         filter_per_worker=args.filter)
-                    cpu_affinity = AffinityMixin(train_loader
-                    ).enable_cpu_affinity(args.loader_cores) if args.cpu_affinity else nullcontext()
+                    cpu_affinity = AffinityMixin(
+                        train_loader).enable_cpu_affinity(
+                            args.loader_cores
+                        ) if args.cpu_affinity else nullcontext()
                     runtimes = []
                     num_iterations = 0
                     with profile, cpu_affinity:
@@ -77,8 +79,10 @@ def run(args: argparse.ArgumentParser) -> None:
                                                  shuffle=False,
                                                  num_workers=args.num_workers,
                                                  filter_per_worker=args.filter)
-                cpu_affinity = AffinityMixin(subgraph_loader
-                ).enable_cpu_affinity(args.loader_cores) if args.cpu_affinity else nullcontext()
+                cpu_affinity = AffinityMixin(
+                    subgraph_loader).enable_cpu_affinity(
+                        args.loader_cores
+                    ) if args.cpu_affinity else nullcontext()
                 runtimes = []
                 num_iterations = 0
                 with profile, cpu_affinity:
