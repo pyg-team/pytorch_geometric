@@ -174,7 +174,6 @@ class HGTConv(MessagePassing):
                 x = torch.cat(xs)
             else:
                 if self.infer_shapes:
-                    self.init_params(x_dict)
                     self.dims = torch.tensor(
                         [x_j.shape[-1] for x_j in x_dict.values()])
                     self.max_channels = self.dims.max()
