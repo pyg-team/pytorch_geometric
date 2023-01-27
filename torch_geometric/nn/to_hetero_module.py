@@ -138,7 +138,7 @@ class ToHeteroLinear(torch.nn.Module):
             }
             self.dims_tensor = torch.tensor(list(self.dim_dict.values()))
             self.max_size = self.dims_tensor.max()
-        if not (self.dims == self.max_size).all():
+        if not (self.dims_tensor == self.max_size).all():
             for key, x in x_dict.items():
                 if x.shape[1] < self.max_size:
                     x_dict[key] = torch.concat(
