@@ -123,20 +123,27 @@ class ToHeteroLinear(torch.nn.Module):
         type_vec = type_vec.repeat_interleave(size)
         outs = self.hetero_module(x, type_vec).split(sizes)
         if self.in_channels == -1:
-            return {key: out[:, self.dim_dict[key]:] for (key, out) in zip(self.types, outs)}
+            return {
+                key: out[:, self.dim_dict[key]:]
+                for (key, out) in zip(self.types, outs)
+            }
         else:
             return {key: out for key, out in zip(self.types, outs)}
 
     def pad_xs(x_dict: Dict[Tensor]) -> List[Tensor]:
         if self.dim_dict is None:
-            self.dim_dict = {key:x_dict[key].size(-1) for key in x_dict.keys()}
+            self.dim_dict = {
+                key: x_dict[key].size(-1)
+                for key in x_dict.keys()
+            }
             self.dims_tensor = torch.tensor(list(self.dim_dict.values()))
             self.max_size = self.dims_tensor.max()
         if not (self.dims == self.max_size).all():
             for key, x in x_dict.items():
                 if x.shape[1] < self.max_size:
                     x_dict[key] = torch.concat(
-                        (x, torch.zeros(x.shape[0], self.max_size - x.shape[1])), dim=1)
+                        (x, torch.zeros(x.shape[0],
+                                        self.max_size - x.shape[1])), dim=1)
         return list(x_dict.values())
 
     def forward(
