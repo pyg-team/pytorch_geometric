@@ -365,6 +365,7 @@ class HGTConv(MessagePassing):
             indices = edge_index_dict[e_type]
             # (TODO) Add support for SparseTensor w/o converting
             convert = isinstance(indices, SparseTensor)
+            print("Sparse:" if convert else "COO:")
             if convert:
                 # convert to COO
                 src, dst, _ = indices.coo()
