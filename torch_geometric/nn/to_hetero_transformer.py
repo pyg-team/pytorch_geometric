@@ -8,10 +8,9 @@ from torch import Tensor
 from torch.nn import Module
 
 import torch_geometric
-from torch_geometric.nn.dense import HeteroLinear
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
-from torch_geometric.typing import EdgeType, Metadata, NodeType, OptTensor
+from torch_geometric.typing import EdgeType, Metadata, NodeType
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
@@ -318,10 +317,12 @@ class ToHeteroTransformer(Transformer):
             return
         self.graph.inserting_after(node)
         if torch_geometric.typing.WITH_PYG_LIB:
-            # Addresses "RuntimeError: Output 0 of SplitWithSizesBackward0
+            # Addresses:
+            # "RuntimeError: Output 0 of SplitWithSizesBackward0
             # is a view and is being modified inplace."
-            # Cause: split_with_sizes for pyg-lib.ops.segment_matmul returns a view
-            # Then using relu_ or other in place triggers the RuntimeError.
+            # Cause:
+            # split_with_sizes for pyg-lib.ops.segment_matmul returns a view.
+            # Using relu_ or other in place on this triggers the RuntimeError.
             op, target = is_builtin_inplace(str(target))
         else:
             op = "call_method"
@@ -496,7 +497,7 @@ def is_builtin_inplace(target_str: str) -> bool:
     try:
         target_op = eval(potential_outplace)
         return "call_function", target_op
-    except:
+    except Exception:
         return "call_method", target_str
 
 
