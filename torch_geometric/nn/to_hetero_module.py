@@ -77,9 +77,8 @@ class ToHeteroLinear(torch.nn.Module):
             raise ValueError(f"Expected 'Linear' module (got '{type(module)}'")
 
         self.bias = module.bias is not None
-
-        # TODO: Need to handle `in_channels=-1` case.
-        # TODO We currently assume that `x` is sorted according to `type`.
+        if self.in_channels == -1:
+            self.dim_dict = None
         self.hetero_module = HeteroLinear(
             self.in_channels,
             self.out_channels,
@@ -113,14 +112,32 @@ class ToHeteroLinear(torch.nn.Module):
                 key: self.hetero_module.lins[i](x_dict[key])
                 for i, key in enumerate(self.types)
             }
-
-        x = torch.cat([x_dict[key] for key in self.types], dim=0)
+        if self.in_channels == -1:
+            padded_list = self.pad_xs(x_dict)
+            x = torch.cat(padded_list, dim=0)
+        else:
+            x = torch.cat([x_dict[key] for key in self.types], dim=0)
         sizes = [x_dict[key].size(0) for key in self.types]
         type_vec = torch.arange(len(self.types), device=x.device)
         size = torch.tensor(sizes, device=x.device)
         type_vec = type_vec.repeat_interleave(size)
         outs = self.hetero_module(x, type_vec).split(sizes)
-        return {key: out for key, out in zip(self.types, outs)}
+        if self.in_channels == -1:
+            return {key: out[:, self.dim_dict[key]:] for (key, out) in zip(self.types, outs)}
+        else:
+            return {key: out for key, out in zip(self.types, outs)}
+
+    def pad_xs(x_dict: Dict[Tensor]) -> List[Tensor]:
+        if self.dim_dict is None:
+            self.dim_dict = {key:x_dict[key].size(-1) for key in x_dict.keys()}
+            self.dims_tensor = torch.tensor(list(self.dim_dict.values()))
+            self.max_size = self.dims_tensor.max()
+        if not (self.dims == self.max_size).all():
+            for key, x in x_dict.items():
+                if x.shape[1] < self.max_size:
+                    x_dict[key] = torch.concat(
+                        (x, torch.zeros(x.shape[0], self.max_size - x.shape[1])), dim=1)
+        return list(x_dict.values())
 
     def forward(
         self,
