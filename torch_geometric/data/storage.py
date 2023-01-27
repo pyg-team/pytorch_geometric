@@ -63,6 +63,10 @@ class BaseStorage(MutableMapping):
     def _key(self) -> Any:
         return None
 
+    def _pop_cache(self, key: str):
+        for cache in getattr(self, '_cached_attr', {}).values():
+            cache.discard(key)
+
     def __len__(self) -> int:
         return len(self._mapping)
 
@@ -85,18 +89,21 @@ class BaseStorage(MutableMapping):
         elif key[:1] == '_':
             self.__dict__[key] = value
         else:
+            self._pop_cache(key)
             self[key] = value
 
     def __delattr__(self, key: str):
         if key[:1] == '_':
             del self.__dict__[key]
         else:
+            self._pop_cache(key)
             del self[key]
 
     def __getitem__(self, key: str) -> Any:
         return self._mapping[key]
 
     def __setitem__(self, key: str, value: Any):
+        self._pop_cache(key)
         if value is None and key in self._mapping:
             del self._mapping[key]
         elif value is not None:
@@ -104,6 +111,7 @@ class BaseStorage(MutableMapping):
 
     def __delitem__(self, key: str):
         if key in self._mapping:
+            self._pop_cache(key)
             del self._mapping[key]
 
     def __iter__(self) -> Iterable:
