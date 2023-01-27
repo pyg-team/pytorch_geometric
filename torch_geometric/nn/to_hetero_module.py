@@ -11,7 +11,7 @@ from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import scatter
 
 
-class SubParam():
+class SubParam:
     def __init__(self, param: torch.nn.Parameter, idx: int):
         self.idx = idx
         self.param = param
