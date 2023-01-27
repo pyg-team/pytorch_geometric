@@ -326,6 +326,7 @@ class ToHeteroTransformer(Transformer):
 
     def call_method(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise methods.
+        print('\n' * 3)
         print("inside call_method")
         print("node:", node)
         print("target:", target)
@@ -333,9 +334,15 @@ class ToHeteroTransformer(Transformer):
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
+        if is_builtin_inplace(str(target)):
+            op = "call_function"
+            target = inplace_2_outplace(str(target))
+        else:
+            op = 'call_method'
         for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
-            op = 'call_method' # not is_builtin_inplace(node) 
+
+            
             out = self.graph.create_node(op, target=target,
                                              args=args, kwargs=kwargs,
                                              name=f'{name}__{key2str(key)}')
@@ -520,11 +527,21 @@ def key2str(key: Union[NodeType, EdgeType]) -> str:
     return key.replace(' ', '_').replace('-', '_').replace(':', '_')
 
 
-def is_linear(module):
+def is_linear(module: torch.nn.Module) -> bool:
     return isinstance(module, torch.nn.Linear) or isinstance(
         module, torch_geometric.nn.dense.Linear)
 
 
-def is_iterable_module(module):
+def is_iterable_module(module: torch.nn.Module) -> bool:
     return isinstance(module, torch.nn.ModuleList) or isinstance(
         module, torch.nn.ModuleDict) or isinstance(module, torch.nn.Sequential)
+
+
+def is_iterable_module(target_str: str) -> bool:
+    return isinstance(module, torch.nn.ModuleList) or isinstance(
+        module, torch.nn.ModuleDict) or isinstance(module, torch.nn.Sequential)
+
+
+def inplace_2_outplace(target_str: str) -> str:
+    # ex: for args.relu_() call torch.relu(args)
+    return 'torch.' + '_'.join(target_str.split('_')[:-1])
