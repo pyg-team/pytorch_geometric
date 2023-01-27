@@ -326,14 +326,19 @@ class ToHeteroTransformer(Transformer):
 
     def call_method(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise methods.
+        print("inside call_method")
+        print("node:", node)
+        print("target:", target)
+        print("name:", name)
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
         for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
-            out = self.graph.create_node('call_method', target=target,
-                                         args=args, kwargs=kwargs,
-                                         name=f'{name}__{key2str(key)}')
+            op = 'call_method' # not is_builtin_inplace(node) 
+            out = self.graph.create_node(op, target=target,
+                                             args=args, kwargs=kwargs,
+                                             name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
 
     def call_function(self, node: Node, target: Any, name: str):
