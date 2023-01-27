@@ -31,6 +31,8 @@ jobs:
           sed -i "s/name='torch_geometric'/name='pyg-nightly'/" setup.py
           sed -i "s/$VERSION/$VERSION.dev$TODAY/" setup.py
           sed -i "s/$VERSION/$VERSION.dev$TODAY/" torch_geometric/__init__.py
+          sed -i 's/name="torch_geometric"/name="pyg-nightly"/' pyproject.toml
+          sed -i 's/version="$VERSION"/version="$VERSION.dev$TODAY"/' pyproject.toml
 
       - name: Build package
         run: python setup.py sdist

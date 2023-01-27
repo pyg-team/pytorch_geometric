@@ -202,6 +202,11 @@ class LinkLoader(torch.utils.data.DataLoader):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.link_sampler.edge_permutation)
 
+            if 'n_id' not in data:
+                data.n_id = out.node
+            if out.edge is not None and 'e_id' not in data:
+                data.e_id = out.edge
+
             data.batch = out.batch
             data.input_id = out.metadata[0]
 
@@ -228,8 +233,18 @@ class LinkLoader(torch.utils.data.DataLoader):
                 data = filter_custom_store(*self.data, out.node, out.row,
                                            out.col, out.edge, self.custom_cls)
 
-            for key, batch in (out.batch or {}).items():
-                data[key].batch = batch
+            for key, node in out.node.items():
+                if 'n_id' not in data[key]:
+                    data[key].n_id = node
+
+            if out.edge is not None:
+                for key, edge in out.edge.items():
+                    if 'e_id' not in data[key]:
+                        data[key].e_id = edge
+
+            if out.batch is not None:
+                for key, batch in out.batch.items():
+                    data[key].batch = batch
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]
