@@ -129,8 +129,7 @@ def test_summary_with_reusing_layers():
 
 
 @withPackage('tabulate')
-def test_summary_with_to_hetero_model():
-    # flake8: noqa
+def test_summary_with_to_hetero_model():  
     x_dict = {
         'p': torch.randn(100, 16),
         'a': torch.randn(100, 16),
@@ -142,7 +141,7 @@ def test_summary_with_to_hetero_model():
     }
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
     model = to_hetero(GraphSAGE(), metadata)
-
+    # flake8: noqa
     expected = """
 +------------------------------------+---------------------+----------------+----------+
 | Layer                              | Input Shape         | Output Shape   | #Param   |
