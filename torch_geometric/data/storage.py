@@ -111,6 +111,7 @@ class BaseStorage(MutableMapping):
 
     def __delitem__(self, key: str):
         if key in self._mapping:
+            self._pop_cache(key)
             del self._mapping[key]
 
     def __iter__(self) -> Iterable:
