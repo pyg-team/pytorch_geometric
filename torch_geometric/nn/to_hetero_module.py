@@ -124,7 +124,9 @@ class ToHeteroLinear(torch.nn.Module):
         outs = self.hetero_module(x, type_vec).split(sizes)
         return {key: out for key, out in zip(self.types, outs)}
 
-    def pad_xs(self, x_dict: Dict[Union[NodeType, EdgeType], Tensor]) -> List[Tensor]:
+    def pad_xs(
+            self, x_dict: Dict[Union[NodeType, EdgeType],
+                               Tensor]) -> List[Tensor]:
         if self.dim_dict is None:
             self.dim_dict = {
                 key: x_dict[key].size(-1)
