@@ -288,37 +288,25 @@ class ToHeteroTransformer(Transformer):
         self.replace_all_uses_with(node, out)
 
     def call_module(self, node: Node, target: Any, name: str):
-        print('\n' * 3)
-        print('inside call_module')
-        print("node:", node)
-        print("target:", target)
-        print("name:", name)
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
         if hasattr(self.module, name):
-            print("has attr")
             submod = getattr(self.module, name)
             is_heterolin = is_linear(submod)
         else:
-            print("not has attr")
-
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
-            print("submod:", submod)
             # handle iterable Modules (dict/list/sequential) containing Linear
             if is_iterable_module(submod):
                 try:
                     selected_subsubmod = submod[split_name[-1]]
                 except TypeError:
                     selected_subsubmod = submod[int(split_name[-1])]
-                print("selected subsubmod:", selected_subsubmod)
                 is_heterolin = is_linear(selected_subsubmod)
             else:
-                print('inside else')
                 is_heterolin = False
         if is_heterolin:
-            print('inside heterolinear if')
             self.add_heterolin_to_graph(node, target, name)
         else:
             # Add calls to node type-wise or edge type-wise modules.
@@ -326,11 +314,6 @@ class ToHeteroTransformer(Transformer):
 
     def call_method(self, node: Node, target: Any, name: str):
         # Add calls to node type-wise or edge type-wise methods.
-        print('\n' * 3)
-        print("inside call_method")
-        print("node:", node)
-        print("target:", target)
-        print("name:", name)
         if self.is_graph_level(node):
             return
         self.graph.inserting_after(node)
@@ -363,17 +346,10 @@ class ToHeteroTransformer(Transformer):
             self.graph.inserting_after(out)
 
     def output(self, node: Node, target: Any, name: str):
-        print('\n' * 3)
-        print("inside output")
-        print("node:", node)
-        print("target:", target)
-        print("name:", name)
-
         # Replace the output by dictionaries, holding either node type-wise or
         # edge type-wise data.
         def _recurse(value: Any) -> Any:
             if isinstance(value, Node):
-                print('value.name:', value.name)
                 if self.is_graph_level(value):
                     return value
                 return {
@@ -389,31 +365,18 @@ class ToHeteroTransformer(Transformer):
             else:
                 return value
 
-        print('node.type:', node.type)
-        print('isinstance(node.args[0], Node):',
-              isinstance(node.args[0], Node))
-        print('type(node.args[0])):', type(node.args[0]))
-        print('node.args[0]:', node.args[0])
-        print('node.args', node.args)
         if node.type is not None and isinstance(node.args[0], Node):
-            print('inside if')
             output = node.args[0]
             if self.is_node_level(output):
                 node.type = Dict[NodeType, node.type]
             elif self.is_edge_level(output):
                 node.type = Dict[EdgeType, node.type]
         else:
-            print('inside else')
             node.type = None
 
         node.args = (_recurse(node.args[0]), )
-        print('final val node.args=', node.args)
 
     def init_submodule(self, module: Module, target: str) -> Module:
-        print("\n" * 2)
-        print("initing submodule:", module)
-        print("target:", target)
-        print("type(module):", type(module))
         # Replicate each module for each node type or edge type.
         has_node_level_target = bool(
             self.find_by_name(
@@ -425,13 +388,9 @@ class ToHeteroTransformer(Transformer):
                 f'{target.replace(".", "_")}__{key2str(self.metadata[1][0])}')
         ) or bool(
             self.find_by_target(f'{target}.{key2str(self.metadata[1][0])}'))
-        print("has_node_level_target:", has_node_level_target)
-        print("has_edge_level_target:", has_edge_level_target)
-        print('is_linear(module):', is_linear(module))
         if not has_node_level_target and not has_edge_level_target:
             return module
         if is_linear(module):
-            print("replacing w/ ToHeteroLinear")
             return ToHeteroLinear(module,
                                   self.metadata[int(has_edge_level_target)])
         else:
@@ -490,7 +449,6 @@ class ToHeteroTransformer(Transformer):
             args, kwargs = self.map_args_kwargs(node, key)
             args_dict[key] = args[0]
             kwargs_dict.update(kwargs)
-        print('(args_dict,):', (args_dict, ))
         if self.is_edge_level(node):
             out_type = Dict[EdgeType, Tensor]
         else:
@@ -500,17 +458,12 @@ class ToHeteroTransformer(Transformer):
                                             kwargs=kwargs_dict,
                                             name=f'{name}__hetero',
                                             type_expr=out_type)
-        print('out.name', out_hetero.name)
-        print('out.type', out_hetero.type)
         self.graph.inserting_after(out_hetero)
         # extract tensors from dict
-        print("extracting tensors from dict")
         for key in self.metadata[int(self.is_edge_level(node))]:
-            print("inserting for key:", key)
             out = self.graph.create_node('call_method', target='get',
                                          args=(out_hetero, key),
                                          name=f'{name}__{key2str(key)}')
-            print("out.__dict__ =", out.__dict__)
             self.graph.inserting_after(out)
 
     def add_nonlin_to_graph(self, node: Node, target: Any, name: str):
