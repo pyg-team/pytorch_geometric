@@ -122,13 +122,7 @@ class ToHeteroLinear(torch.nn.Module):
         size = torch.tensor(sizes, device=x.device)
         type_vec = type_vec.repeat_interleave(size)
         outs = self.hetero_module(x, type_vec).split(sizes)
-        if self.in_channels == -1:
-            return {
-                key: out[:, self.dim_dict[key]:]
-                for (key, out) in zip(self.types, outs)
-            }
-        else:
-            return {key: out for key, out in zip(self.types, outs)}
+        return {key: out for key, out in zip(self.types, outs)}
 
     def pad_xs(self, x_dict: Dict[Union[NodeType, EdgeType], Tensor]) -> List[Tensor]:
         if self.dim_dict is None:
