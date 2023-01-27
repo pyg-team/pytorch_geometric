@@ -341,9 +341,9 @@ class ToHeteroTransformer(Transformer):
             op = 'call_method'
         for key in self.metadata[int(self.is_edge_level(node))]:
             args, kwargs = self.map_args_kwargs(node, key)
-            out = self.graph.create_node(op, target=target,
-                                             args=args, kwargs=kwargs,
-                                             name=f'{name}__{key2str(key)}')
+            out = self.graph.create_node(op, target=target, args=args,
+                                         kwargs=kwargs,
+                                         name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
 
     def call_function(self, node: Node, target: Any, name: str):
