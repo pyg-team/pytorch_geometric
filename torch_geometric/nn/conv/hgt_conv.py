@@ -330,19 +330,16 @@ class HGTConv(MessagePassing):
         cumsum = 0
         edge_index_list = []
         edge_slices = {}
-        print("\n" * 2)
         for e_type in self.edge_types:
             src_type, _, dst_type = e_type
             indices = edge_index_dict[e_type]
             # (TODO) Add support for SparseTensor w/o converting
             convert = isinstance(indices, SparseTensor)
-            print("Sparse:" if convert else "COO:")
             if convert:
                 # convert to COO
                 dst, src, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
                 convert = True
-            print("e_idx[" + str(e_type) + "] =", indices)
             offset = [[node_slices[src_type][0]], [node_slices[dst_type][0]]]
             offset = torch.tensor(offset, device=indices.device)
             edge_index_list.append(indices + offset)
@@ -358,21 +355,7 @@ class HGTConv(MessagePassing):
                                  sparse_sizes=(k_out.size(0), k_out.size(0)))
 
         # propagate
-        print("k[0,0] =", k_out[0, 0])
-        print("k.shape =", k_out.shape)
-        print("q[0,0] =", q[0, 0])
-        print("q.shape =", q.shape)
-        print("v[0,0] =", v_out[0, 0])
-        print("v.shape =", v_out.shape)
-        print("p[0,0] =", p)
-        if convert:
-            printdst, printsrc, _ = e_idx.coo()
-            print("e_idx =",
-                  torch.cat((printsrc.view(1, -1), printdst.view(1, -1))))
-        else:
-            print("e_idx =", e_idx)
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
-        print("propagate_out[0,0] =", out[0, 0])
         k_ptr = 0
         for node_type, k in k_dict.items():
             out_dict[node_type] = out[k_ptr:k_ptr + k.size(0)]
