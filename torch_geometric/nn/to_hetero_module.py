@@ -6,12 +6,12 @@ import torch
 from torch import Tensor
 
 import torch_geometric
+from torch_geometric.dense import HeteroLinear, Linear
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import scatter
-from torch_geometric.dense import HeteroLinear, Linear
 
 
-class SubParam():
+class SubParam:
     def __init__(self, param: torch.nn.Parameter, idx: int):
         self.idx = idx
         self.param = param
@@ -28,7 +28,7 @@ class SubParam():
     data = property(get_data, set_data)
 
 
-class DummyLinear():
+class DummyLinear:
     def __init__(self, get_type: Union[NodeType, EdgeType],
                  types: Union[List[NodeType],
                               List[EdgeType]], hetero_module: torch.nn.Module):
