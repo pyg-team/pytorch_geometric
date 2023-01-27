@@ -282,6 +282,27 @@ class NumNeighbors:
         r"""Returns the number of hops."""
         return self.num_hops
 
+    def config(self) -> Dict[str, Any]:
+        values = self.values
+        if isinstance(values, dict):
+            values = {'__'.join(k): v for k, v in values.items()}
+
+        cls_name = f'{self.__class__.__module__}.{self.__class__.__name__}'
+
+        return {
+            '_target_': cls_name,
+            'values': values,
+            'default': self.default,
+        }
+
+    @classmethod
+    def from_config(cls, cfg: Dict[str, Any]) -> 'NumNeighbors':
+        values = cfg['values']
+        if isinstance(values, dict):
+            values = {tuple(k.split('__')): v for k, v in values.items()}
+
+        return cls(values, cfg.get('default'))
+
 
 class NegativeSamplingMode(Enum):
     # 'binary': Randomly sample negative edges in the graph.
