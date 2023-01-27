@@ -53,7 +53,6 @@ class BaseStorage(MutableMapping):
     #    `storage.cpu()`, `storage.cuda()` or `storage.share_memory_()`.
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__()
-        self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
         self._mapping = {}
         for key, value in (_mapping or {}).items():
             setattr(self, key, value)
@@ -324,6 +323,9 @@ class NodeStorage(BaseStorage):
         return self.num_node_features
 
     def is_node_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
         if key in self._cached_attr[AttrType.NODE]:
             return True
         if key in self._cached_attr[AttrType.OTHER]:
@@ -431,6 +433,9 @@ class EdgeStorage(BaseStorage):
         return False
 
     def is_edge_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
         if key in self._cached_attr[AttrType.EDGE]:
             return True
         if key in self._cached_attr[AttrType.OTHER]:
@@ -538,6 +543,9 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         return size if dim is None else size[dim]
 
     def is_node_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
         if key in self._cached_attr[AttrType.NODE]:
             return True
         if key in self._cached_attr[AttrType.EDGE]:
@@ -576,6 +584,9 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
     def is_edge_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
         if key in self._cached_attr[AttrType.EDGE]:
             return True
         if key in self._cached_attr[AttrType.NODE]:
