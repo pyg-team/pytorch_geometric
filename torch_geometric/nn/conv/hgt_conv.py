@@ -178,19 +178,16 @@ class HGTConv(MessagePassing):
                     #initialize lazy params
                     max_channels = self.dims.max()
                     for node_type, u_k_lin in self.k_lin.items():
-                        self.k_lin[node_type] = Linear(
-                            max_channels,
-                            self.out_channels).to(u_k_lin.weight.device)
+                        self.k_lin[node_type].materialize(max_channels,
+                            self.out_channels)
                     reset(self.k_lin)
                     for node_type, u_q_lin in self.q_lin.items():
-                        self.q_lin[node_type] = Linear(
-                            max_channels,
-                            self.out_channels).to(u_q_lin.weight.device)
+                        self.q_lin[node_type].materialize(max_channels,
+                            self.out_channels)
                     reset(self.q_lin)
                     for node_type, u_v_lin in self.v_lin.items():
-                        self.v_lin[node_type] = Linear(
-                            max_channels,
-                            self.out_channels).to(u_v_lin.weight.device)
+                        self.v_lin[node_type].materialize(max_channels,
+                            self.out_channels)
                     reset(self.v_lin)
                     self.infer_shapes = False
                     self.no_pad = (self.dims == self.max_channels).all()
@@ -203,12 +200,9 @@ class HGTConv(MessagePassing):
             #initialize lazy params
 
             for node_type, dim in self.dims.items():
-                self.k_lin[node_type] = Linear(dim, self.out_channels).to(
-                    self.k_lin[node_type].weight.device)
-                self.q_lin[node_type] = Linear(dim, self.out_channels).to(
-                    self.q_lin[node_type].weight.device)
-                self.v_lin[node_type] = Linear(dim, self.out_channels).to(
-                    self.v_lin[node_type].weight.device)
+                self.k_lin[node_type].materialize(dim, self.out_channels)
+                self.q_lin[node_type].materialize(dim, self.out_channels)
+                self.v_lin[node_type].materialize(dim, self.out_channels)
             reset(self.k_lin)
             reset(self.q_lin)
             reset(self.v_lin)
