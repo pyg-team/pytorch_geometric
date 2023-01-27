@@ -147,7 +147,7 @@ class HGTConv(MessagePassing):
         glorot(self.m_rel)
 
     def init_params(self, x_dict: Dict[NodeType, Tensor]):
-        for node_type, x_n in self.x_dict.items():
+        for node_type, x_n in x_dict.items():
             self.k_lin[node_type].initialize_parameters(_, x_n)
             self.q_lin[node_type].initialize_parameters(_, x_n)
             self.v_lin[node_type].initialize_parameters(_, x_n)
