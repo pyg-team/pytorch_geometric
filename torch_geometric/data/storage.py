@@ -63,7 +63,7 @@ class BaseStorage(MutableMapping):
     def _key(self) -> Any:
         return None
 
-    def _pop_cache(self, key):
+    def _pop_cache(self, key: str):
         for cache in getattr(self, '_cached_attr', {}).values():
             cache.discard(key)
 
