@@ -543,7 +543,7 @@ def is_builtin_inplace(target_str: str) -> bool:
     try:
         target_op = eval(potential_outplace)
         return "call_function", target_op
-    except AttributeError:
+    except:
         return "call_method", target_str
 
 
