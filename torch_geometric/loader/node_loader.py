@@ -68,6 +68,9 @@ class NodeLoader(torch.utils.data.DataLoader):
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
             (default: :obj:`False`)
+        custom_cls (HeteroData, optional): A custom
+            :class:`~torch_geometric.data.HeteroData` class to return for
+            mini-batches in case of remote backends. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -81,6 +84,8 @@ class NodeLoader(torch.utils.data.DataLoader):
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
+        custom_cls: Optional[HeteroData] = None,
+        input_id: OptTensor = None,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
@@ -97,9 +102,10 @@ class NodeLoader(torch.utils.data.DataLoader):
         self.transform = transform
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
+        self.custom_cls = custom_cls
 
         self.input_data = NodeSamplerInput(
-            input_id=None,
+            input_id=input_id,
             node=input_nodes,
             time=input_time,
             input_type=input_type,
@@ -141,6 +147,12 @@ class NodeLoader(torch.utils.data.DataLoader):
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.node_sampler.edge_permutation)
+
+            if 'n_id' not in data:
+                data.n_id = out.node
+            if out.edge is not None and 'e_id' not in data:
+                data.e_id = out.edge
+
             data.batch = out.batch
             data.input_id = out.metadata[0]
             data.seed_time = out.metadata[1]
@@ -153,10 +165,20 @@ class NodeLoader(torch.utils.data.DataLoader):
                                           self.node_sampler.edge_permutation)
             else:  # Tuple[FeatureStore, GraphStore]
                 data = filter_custom_store(*self.data, out.node, out.row,
-                                           out.col, out.edge)
+                                           out.col, out.edge, self.custom_cls)
 
-            for key, batch in (out.batch or {}).items():
-                data[key].batch = batch
+            for key, node in out.node.items():
+                if 'n_id' not in data[key]:
+                    data[key].n_id = node
+
+            if out.edge is not None:
+                for key, edge in out.edge.items():
+                    if 'e_id' not in data[key]:
+                        data[key].e_id = edge
+
+            if out.batch is not None:
+                for key, batch in out.batch.items():
+                    data[key].batch = batch
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]
@@ -210,7 +232,7 @@ class NodeLoader(torch.utils.data.DataLoader):
         .. code-block:: python
 
             loader = NeigborLoader(data, num_workers=3)
-            with loader.enable_cpu_affinity(loader_cores=[1,2,3]):
+            with loader.enable_cpu_affinity(loader_cores=[0, 1, 2]):
                 for batch in loader:
                     pass
 
@@ -223,7 +245,7 @@ class NodeLoader(torch.utils.data.DataLoader):
                 By default, :obj:`cpu0` is reserved for all auxiliary threads
                 and ops.
                 The :class:`DataLoader` wil affinitize to cores starting at
-                :obj:`cpu1`. (default: :obj:`node0_cores[1:num_workers]`)
+                :obj:`cpu0`. (default: :obj:`node0_cores[:num_workers]`)
         """
         if not self.is_cuda_available:
             if not self.num_workers > 0:
@@ -260,13 +282,13 @@ class NodeLoader(torch.utils.data.DataLoader):
                 else:
                     node0_cores = list(range(psutil.cpu_count(logical=False)))
 
-                if len(node0_cores) - 1 < self.num_workers:
+                if len(node0_cores) < self.num_workers:
                     raise ValueError(
                         f"More workers (got {self.num_workers}) than "
-                        f"available cores (got {len(node0_cores) - 1})")
+                        f"available cores (got {len(node0_cores)})")
 
                 # Set default loader core IDs:
-                loader_cores = node0_cores[1:self.num_workers + 1]
+                loader_cores = node0_cores[:self.num_workers]
 
             try:
                 # Set CPU affinity for dataloader:

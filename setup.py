@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-__version__ = '2.2.0'
+__version__ = '2.3.0'
 URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
@@ -37,6 +37,9 @@ full_requires = graphgym_requires + [
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
+    'pgmpy',
+    'opt_einsum',  # required for pgmpy
+    'statsmodels',
 ]
 
 benchmark_requires = [

@@ -2,10 +2,9 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_add
 
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import add_self_loops, remove_self_loops
+from torch_geometric.utils import add_self_loops, remove_self_loops, scatter
 
 from .num_nodes import maybe_num_nodes
 
@@ -70,7 +69,7 @@ def get_laplacian(
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     row, col = edge_index[0], edge_index[1]
-    deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+    deg = scatter(edge_weight, row, 0, dim_size=num_nodes, reduce='sum')
 
     if normalization is None:
         # L = D - A.

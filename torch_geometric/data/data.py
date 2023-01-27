@@ -366,7 +366,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     behaviour of a regular Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/get_started/
     introduction.html#data-handling-of-graphs>`__ for the accompanying
     tutorial.
 
@@ -392,15 +392,15 @@ class Data(BaseData, FeatureStore, GraphStore):
         data = data.to('cuda:0', non_blocking=True)
 
     Args:
-        x (Tensor, optional): Node feature matrix with shape :obj:`[num_nodes,
-            num_node_features]`. (default: :obj:`None`)
+        x (torch.Tensor, optional): Node feature matrix with shape
+            :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
         edge_index (LongTensor, optional): Graph connectivity in COO format
             with shape :obj:`[2, num_edges]`. (default: :obj:`None`)
-        edge_attr (Tensor, optional): Edge feature matrix with shape
+        edge_attr (torch.Tensor, optional): Edge feature matrix with shape
             :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
-        y (Tensor, optional): Graph-level or node-level ground-truth labels
-            with arbitrary shape. (default: :obj:`None`)
-        pos (Tensor, optional): Node position matrix with shape
+        y (torch.Tensor, optional): Graph-level or node-level ground-truth
+            labels with arbitrary shape. (default: :obj:`None`)
+        pos (torch.Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
@@ -658,10 +658,10 @@ class Data(BaseData, FeatureStore, GraphStore):
         be reconstructed without any need to pass in additional arguments.
 
         Args:
-            node_type (Tensor, optional): A node-level vector denoting the type
-                of each node. (default: :obj:`None`)
-            edge_type (Tensor, optional): An edge-level vector denoting the
-                type of each edge. (default: :obj:`None`)
+            node_type (torch.Tensor, optional): A node-level vector denoting
+                the type of each node. (default: :obj:`None`)
+            edge_type (torch.Tensor, optional): An edge-level vector denoting
+                the type of each edge. (default: :obj:`None`)
             node_type_names (List[str], optional): The names of node types.
                 (default: :obj:`None`)
             edge_type_names (List[Tuple[str, str, str]], optional): The names
@@ -725,7 +725,8 @@ class Data(BaseData, FeatureStore, GraphStore):
                 if attr in {'node_type', 'edge_type', 'ptr'}:
                     continue
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
-                    data[key][attr] = value[node_ids[i]]
+                    cat_dim = self.__cat_dim__(attr, value)
+                    data[key][attr] = value.index_select(cat_dim, node_ids[i])
 
             if len(data[key]) == 0:
                 data[key].num_nodes = node_ids[i].size(0)
@@ -741,7 +742,8 @@ class Data(BaseData, FeatureStore, GraphStore):
                     edge_index[1] = index_map[edge_index[1]]
                     data[key].edge_index = edge_index
                 elif isinstance(value, Tensor) and self.is_edge_attr(attr):
-                    data[key][attr] = value[edge_ids[i]]
+                    cat_dim = self.__cat_dim__(attr, value)
+                    data[key][attr] = value.index_select(cat_dim, edge_ids[i])
 
         # Add global attributes.
         exclude_keys = set(data.keys) | {

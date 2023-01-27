@@ -37,12 +37,14 @@ class KGEModel(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.node_emb.reset_parameters()
         self.rel_emb.reset_parameters()
 
     def forward(self, head_index: Tensor, rel_type: Tensor,
                 tail_index: Tensor) -> Tensor:
-        r"""
+        r"""Returns the score for the given triplet.
+
         Args:
             head_index (torch.Tensor): The head indices.
             rel_type (torch.Tensor): The relation type.
@@ -52,7 +54,8 @@ class KGEModel(torch.nn.Module):
 
     def loss(self, head_index: Tensor, rel_type: Tensor,
              tail_index: Tensor) -> Tensor:
-        r"""
+        r"""Returns the loss value for the given triplet.
+
         Args:
             head_index (torch.Tensor): The head indices.
             rel_type (torch.Tensor): The relation type.

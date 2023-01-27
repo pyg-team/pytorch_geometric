@@ -104,6 +104,9 @@ class LinkLoader(torch.utils.data.DataLoader):
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
             (default: :obj:`False`)
+        custom_cls (HeteroData, optional): A custom
+            :class:`~torch_geometric.data.HeteroData` class to return for
+            mini-batches in case of remote backends. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -120,6 +123,8 @@ class LinkLoader(torch.utils.data.DataLoader):
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
+        custom_cls: Optional[HeteroData] = None,
+        input_id: OptTensor = None,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
@@ -142,6 +147,7 @@ class LinkLoader(torch.utils.data.DataLoader):
         self.transform = transform
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
+        self.custom_cls = custom_cls
 
         if (self.neg_sampling is not None and self.neg_sampling.is_binary()
                 and edge_label is not None and edge_label.min() == 0):
@@ -158,7 +164,7 @@ class LinkLoader(torch.utils.data.DataLoader):
                              "negative samples.")
 
         self.input_data = EdgeSamplerInput(
-            input_id=None,
+            input_id=input_id,
             row=edge_label_index[0].clone(),
             col=edge_label_index[1].clone(),
             label=edge_label,
@@ -196,6 +202,11 @@ class LinkLoader(torch.utils.data.DataLoader):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.link_sampler.edge_permutation)
 
+            if 'n_id' not in data:
+                data.n_id = out.node
+            if out.edge is not None and 'e_id' not in data:
+                data.e_id = out.edge
+
             data.batch = out.batch
             data.input_id = out.metadata[0]
 
@@ -220,10 +231,20 @@ class LinkLoader(torch.utils.data.DataLoader):
                                           self.link_sampler.edge_permutation)
             else:  # Tuple[FeatureStore, GraphStore]
                 data = filter_custom_store(*self.data, out.node, out.row,
-                                           out.col, out.edge)
+                                           out.col, out.edge, self.custom_cls)
 
-            for key, batch in (out.batch or {}).items():
-                data[key].batch = batch
+            for key, node in out.node.items():
+                if 'n_id' not in data[key]:
+                    data[key].n_id = node
+
+            if out.edge is not None:
+                for key, edge in out.edge.items():
+                    if 'e_id' not in data[key]:
+                        data[key].e_id = edge
+
+            if out.batch is not None:
+                for key, batch in out.batch.items():
+                    data[key].batch = batch
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]

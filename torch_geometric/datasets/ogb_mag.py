@@ -30,10 +30,10 @@ class OGB_MAG(InMemoryDataset):
     In total, there are 349 different venues.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        preprocess (string, optional): Pre-processes the original
-            dataset by adding structural features (:obj:`"metapath2vec",
-            :obj:`"TransE") to featureless nodes. (default: :obj:`None`)
+        root (str): Root directory where the dataset should be saved.
+        preprocess (str, optional): Pre-processes the original dataset by
+            adding structural features (:obj:`"metapath2vec", :obj:`"TransE")
+            to featureless nodes. (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
