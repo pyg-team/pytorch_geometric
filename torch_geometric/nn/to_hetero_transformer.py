@@ -541,8 +541,8 @@ def is_iterable_module(module: torch.nn.Module) -> bool:
 def is_builtin_inplace(target_str: str) -> bool:
     potential_outplace = inplace_2_outplace(target_str)
     try:
-        target_func = eval(potential_outplace)
-        return "call_function", potential_outplace
+        target_op = eval(potential_outplace)
+        return "call_function", target_op
     except AttributeError:
         return "call_method", target_str
 
