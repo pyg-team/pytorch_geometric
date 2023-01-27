@@ -29,8 +29,8 @@ from torch_geometric.utils import (
     is_undirected,
 )
 
-N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type'}
-E_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type'}
+N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id'}
+E_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type', 'e_id'}
 
 
 class AttrType(Enum):
@@ -53,7 +53,6 @@ class BaseStorage(MutableMapping):
     #    `storage.cpu()`, `storage.cuda()` or `storage.share_memory_()`.
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__()
-        self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
         self._mapping = {}
         for key, value in (_mapping or {}).items():
             setattr(self, key, value)
@@ -63,6 +62,10 @@ class BaseStorage(MutableMapping):
     @property
     def _key(self) -> Any:
         return None
+
+    def _pop_cache(self, key: str):
+        for cache in getattr(self, '_cached_attr', {}).values():
+            cache.discard(key)
 
     def __len__(self) -> int:
         return len(self._mapping)
@@ -86,18 +89,21 @@ class BaseStorage(MutableMapping):
         elif key[:1] == '_':
             self.__dict__[key] = value
         else:
+            self._pop_cache(key)
             self[key] = value
 
     def __delattr__(self, key: str):
         if key[:1] == '_':
             del self.__dict__[key]
         else:
+            self._pop_cache(key)
             del self[key]
 
     def __getitem__(self, key: str) -> Any:
         return self._mapping[key]
 
     def __setitem__(self, key: str, value: Any):
+        self._pop_cache(key)
         if value is None and key in self._mapping:
             del self._mapping[key]
         elif value is not None:
@@ -105,6 +111,7 @@ class BaseStorage(MutableMapping):
 
     def __delitem__(self, key: str):
         if key in self._mapping:
+            self._pop_cache(key)
             del self._mapping[key]
 
     def __iter__(self) -> Iterable:
@@ -324,6 +331,9 @@ class NodeStorage(BaseStorage):
         return self.num_node_features
 
     def is_node_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
         if key in self._cached_attr[AttrType.NODE]:
             return True
         if key in self._cached_attr[AttrType.OTHER]:
@@ -431,6 +441,9 @@ class EdgeStorage(BaseStorage):
         return False
 
     def is_edge_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
         if key in self._cached_attr[AttrType.EDGE]:
             return True
         if key in self._cached_attr[AttrType.OTHER]:
@@ -538,6 +551,9 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         return size if dim is None else size[dim]
 
     def is_node_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
         if key in self._cached_attr[AttrType.NODE]:
             return True
         if key in self._cached_attr[AttrType.EDGE]:
@@ -576,6 +592,9 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
     def is_edge_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
         if key in self._cached_attr[AttrType.EDGE]:
             return True
         if key in self._cached_attr[AttrType.NODE]:
