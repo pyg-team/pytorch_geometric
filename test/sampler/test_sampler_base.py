@@ -49,3 +49,17 @@ def test_heterogeneous_num_neighbors_dict_and_default():
     assert values == {'A__B': [25, 10], 'B__A': [-1, -1]}
 
     assert num_neighbors.num_hops == 2
+
+
+def test_num_neighbors_config():
+    num_neighbors = NumNeighbors({('A', 'B'): [25, 10]}, default=[-1, -1])
+
+    config = num_neighbors.config()
+    assert len(config) == 3
+    assert config['_target_'] == 'torch_geometric.sampler.base.NumNeighbors'
+    assert config['values'] == {'A__B': [25, 10]}
+    assert config['default'] == [-1, -1]
+
+    num_neighbors = NumNeighbors.from_config(config)
+    assert num_neighbors.values == {('A', 'B'): [25, 10]}
+    assert num_neighbors.default == [-1, -1]
