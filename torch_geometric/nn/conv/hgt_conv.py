@@ -144,7 +144,7 @@ class HGTConv(MessagePassing):
         ones(self.skip)
         ones(self.p_rel)
         glorot(self.a_rel)
-        glorot(self.m_rel)        
+        glorot(self.m_rel)
 
     def forward(
         self,
@@ -179,9 +179,12 @@ class HGTConv(MessagePassing):
                     self.max_channels = self.dims.max()
                     input_to_init_w = xs[self.dims.argmax()]
                     for node_type in x_dict.keys():
-                        self.k_lin[node_type].initialize_parameters(None, input_to_init_w)
-                        self.q_lin[node_type].initialize_parameters(None, input_to_init_w)
-                        self.v_lin[node_type].initialize_parameters(None, input_to_init_w)
+                        self.k_lin[node_type].initialize_parameters(
+                            None, input_to_init_w)
+                        self.q_lin[node_type].initialize_parameters(
+                            None, input_to_init_w)
+                        self.v_lin[node_type].initialize_parameters(
+                            None, input_to_init_w)
                     self.infer_shapes = False
                     self.no_pad = (self.dims == self.max_channels).all()
                 x = torch.cat(pad_list(xs, self.dims))
