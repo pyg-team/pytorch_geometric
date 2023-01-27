@@ -339,7 +339,7 @@ class HGTConv(MessagePassing):
             print("Sparse:" if convert else "COO:")
             if convert:
                 # convert to COO
-                src, dst, _ = indices.coo()
+                dst, src, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
                 convert = True
             print("e_idx[" + str(e_type) + "] =", indices)
@@ -366,7 +366,7 @@ class HGTConv(MessagePassing):
         print("v.shape =", v_out.shape)
         print("p[0,0] =", p)
         if convert:
-            printsrc, printdst, _ = e_idx.coo()
+            printdst, printsrc, _ = e_idx.coo()
             print("e_idx =",
                   torch.cat((printsrc.view(1, -1), printdst.view(1, -1))))
         else:
