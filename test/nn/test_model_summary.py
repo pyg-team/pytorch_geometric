@@ -129,7 +129,7 @@ def test_summary_with_reusing_layers():
 
 
 @withPackage('tabulate')
-def test_summary_with_to_hetero_model():  
+def test_summary_with_to_hetero_model():
     x_dict = {
         'p': torch.randn(100, 16),
         'a': torch.randn(100, 16),
