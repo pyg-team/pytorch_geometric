@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 import torch
 
 from torch_geometric.nn.aggr import Aggregation
+
 from .connect import Connect
 from .select import Select
 
