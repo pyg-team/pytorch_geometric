@@ -1,7 +1,7 @@
 import pytest
 
 
-def test_bamultishapes(get_dataset):   
+def test_bamultishapes(get_dataset):
     dataset = get_dataset(name='BAMultiShapesDataset')
 
     assert str(dataset) == 'BAMultiShapesDataset(1000)'
