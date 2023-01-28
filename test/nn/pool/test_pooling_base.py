@@ -26,7 +26,6 @@ class DummyConnect(Connect):
 def test_pooling():
     pool = Pooling(DummySelect(), MaxAggregation(), DummyConnect())
     pool.reset_parameters()
-    print(pool)
     assert str(pool) == ('Pooling(\n'
                          '  select=DummySelect(),\n'
                          '  reduce=MaxAggregation(),\n'
