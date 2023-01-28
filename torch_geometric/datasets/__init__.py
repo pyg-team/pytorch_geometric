@@ -81,6 +81,7 @@ from .hydro_net import HydroNet
 from .explainer_dataset import ExplainerDataset
 from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
+from .bamultishapes import BAMultiShapesDataset
 from .airfrans import AirfRANS
 from .taobao import Taobao
 
@@ -175,6 +176,7 @@ __all__ = [
     'BA2MotifDataset',
     'AirfRANS',
     'Taobao',
+    'BAMultiShapesDataset'
 ]
 
 classes = __all__
