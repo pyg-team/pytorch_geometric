@@ -4,6 +4,7 @@ import torch
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
+from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
     filter_custom_store,
     filter_data,
@@ -19,7 +20,7 @@ from torch_geometric.sampler import (
 from torch_geometric.typing import InputNodes, OptTensor
 
 
-class NodeLoader(torch.utils.data.DataLoader):
+class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
     r"""A data loader that performs mini-batch sampling from node information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
     implementation that defines a
