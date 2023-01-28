@@ -1,10 +1,9 @@
 import torch
+from networkx import to_numpy_array
+from networkx.generators import random_graphs
 
 from torch_geometric.data import Data
 from torch_geometric.datasets.graph_generator import GraphGenerator
-
-from networkx import to_numpy_array
-from networkx.generators import random_graphs
 
 house = Data(
     num_nodes=5,
