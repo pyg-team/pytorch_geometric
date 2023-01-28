@@ -9,15 +9,18 @@ from torch_geometric.data import Data, InMemoryDataset, download_url
 
 class BAMultiShapesDataset(InMemoryDataset):
     r"""The synthetic BAMultiShapes graph classification dataset for evaluating
-    explainabilty algorithms, as described in the `"Global Explainability of GNNs
-    via Logic Combination of Learned Concepts" <https://arxiv.org/abs/2210.07147>`_ paper.
+    explainabilty algorithms, as described in the `"Global Explainability of
+    GNNs via Logic Combination of Learned Concepts"
+    <https://arxiv.org/abs/2210.07147>`_ paper.
     Given three atomic motifs, namely House (H), Wheel (W), and Grid (G),
     :class:`~torch_geometric.datasets.BAMultiShapesDataset` contains 1000
-    graphs where each graph is obtained by attaching to a random Barabasi-Albert (BA)
-    the motifs as follows:
+    graphs where each graph is obtained by attaching to a random
+    Barabasi-Albert (BA) the motifs as follows:
 
-        class 0: :math:`\emptyset` :math:`\lor` H :math:`\lor` W :math:`\lor` G :math:`\lor` :math:`\{H, W, G\}`
-        class 1: H :math:`\land` W :math:`\lor` H :math:`\land` G :math:`\lor` W :math:`\land` G
+        class 0: :math:`\emptyset` :math:`\lor` H :math:`\lor` W :math:`\lor`
+            G :math:`\lor` :math:`\{H, W, G\}`
+        class 1: H :math:`\land` W :math:`\lor` H :math:`\land` G :math:`\lor`
+            W :math:`\land` G
 
     This dataset is pre-computed from the official implementation.
 
@@ -50,7 +53,8 @@ class BAMultiShapesDataset(InMemoryDataset):
           - 10
           - 2
     """
-    url = 'https://github.com/steveazzolin/gnn_logic_global_expl/raw/master/datasets/BAMultiShapes'
+    url = ("https://github.com/steveazzolin/gnn_logic_global_expl/raw/master/"
+           "datasets/BAMultiShapes")
     filename = 'BAMultiShapes.pkl'
 
     def __init__(

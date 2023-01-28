@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_bamultishapes(get_dataset):
     dataset = get_dataset(name='BAMultiShapesDataset')
 

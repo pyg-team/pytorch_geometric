@@ -1,8 +1,10 @@
 import torch
-from networkx.generators import random_graphs
 
 from torch_geometric.data import Data
 from torch_geometric.datasets.graph_generator import GraphGenerator
+
+from networkx import to_numpy_array
+from networkx.generators import random_graphs
 
 house = Data(
     num_nodes=5,
@@ -34,30 +36,33 @@ wheel = Data(
 
 
 class BAMultiShapesGraph(GraphGenerator):
-    r"""Generates random graphs as described inthe `"Global Explainability of GNNs
-    via Logic Combination of Learned Concepts"
+    r"""Generates random graphs as described inthe `"Global Explainability of
+    GNNs via Logic Combination of Learned Concepts"
     <https://arxiv.org/abs/2210.07147>`__ paper.
     Given three atomic motifs, namely House (H), Wheel (W), and Grid (G),
-    :class:`~torch_geometric.datasets.graph_generator.BAMultiShapesGraph` generates
-    1000 new graphs where each graph is obtained by attaching to a random Barabasi-Albert (BA)
-    the motifs as follows:
+    :class:`~torch_geometric.datasets.graph_generator.BAMultiShapesGraph`
+    generates 1000 new graphs where each graph is obtained by attaching to a
+    random Barabasi-Albert (BA) the motifs as follows:
 
-        class 0: :math:`\emptyset` :math:`\lor` H :math:`\lor` W :math:`\lor` G :math:`\lor` :math:`\{H, W, G\}`
-        class 1: H :math:`\land` W :math:`\lor` H :math:`\land` G :math:`\lor` W :math:`\land` G
+        class 0: :math:`\emptyset` :math:`\lor` H :math:`\lor` W :math:`\lor`
+        G :math:`\lor` :math:`\{H, W, G\}`
+        class 1: H :math:`\land` W :math:`\lor` H :math:`\land` G :math:`\lor`
+        W :math:`\land` G
 
 
     Args:
         target_class (int): The class for which generating a graph.
             Can be either :math:`0` or :math:`1`.
-        num_nodes (int): The number of nodes in each graph. (default: :obj:`40`)
-        num_connecting_edges (int): The number of random connections between the random
-            Barabasi-Albert base and the motifs. (default: :obj:`1`)
+        num_nodes (int): The number of nodes in each graph.
+            (default: :obj:`40`)
+        num_connecting_edges (int): The number of random connections between
+            the random Barabasi-Albert base and the motifs. (default: :obj:`1`)
     """
     def __init__(self, target_class, num_nodes=40, num_connecting_edges=1):
         if target_class < 0 or target_class > 2:
             raise ValueError(
-                f"The value for target_class must lie in  0 <= target_class <= 2 "
-                f"got {target_class}")
+                f"The value for target_class must lie in 0<=target_class<=2"
+                f" got {target_class}")
 
         super().__init__()
 
@@ -67,7 +72,7 @@ class BAMultiShapesGraph(GraphGenerator):
 
     def _barabasi_albert_graph(self, **kwargs):
         ba = random_graphs.barabasi_albert_graph(**kwargs)
-        row, col = nx.to_numpy_array(ba).nonzero()
+        row, col = to_numpy_array(ba).nonzero()
         row = torch.from_numpy(row)
         col = torch.from_numpy(col)
 
@@ -113,8 +118,9 @@ class BAMultiShapesGraph(GraphGenerator):
     def __call__(self, seed=None) -> Data:
         r"""
         Args:
-            seed (int): Random seed to select which motif to add to the generated graph.
-                If :obj:`None` the seed will be randomly extracted. (default: :obj:`None`)
+            seed (int): Random seed to select which motif to add to the
+                generated graph. If :obj:`None` the seed will be randomly
+                extracted. (default: :obj:`None`)
         """
         # extract number and return selected motif as list
         seed = int(torch.randint(0, 10 if self.target_class == 0 else 3,
