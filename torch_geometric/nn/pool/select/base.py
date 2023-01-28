@@ -22,7 +22,6 @@ class Select(torch.nn.Module):
         edge_index: Tensor,
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
-        **kwargs,
     ) -> Tuple[Tensor, int]:
         r"""
         Args:

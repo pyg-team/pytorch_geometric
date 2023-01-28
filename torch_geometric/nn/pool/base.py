@@ -5,8 +5,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.pool.connect import Connect
-from torch_geometric.pool.select import Select
+from torch_geometric.nn.pool.connect import Connect
+from torch_geometric.nn.pool.select import Select
 from torch_geometric.utils.mixin import CastMixin
 
 
@@ -81,10 +81,10 @@ class Pooling(torch.nn.Module):
                                              batch)
 
         if batch is not None:
-            out_batch = torch.arange(num_clusters, device=x.device)
-            out_batch.scatter_(0, cluster, batch)
+            batch = (torch.arange(num_clusters, device=x.device)).scatter_(
+                0, cluster, batch)
 
-        return PoolingOutput(x, edge_index, edge_attr, out_batch)
+        return PoolingOutput(x, edge_index, edge_attr, batch)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(\n'
