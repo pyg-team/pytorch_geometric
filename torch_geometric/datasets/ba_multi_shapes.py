@@ -19,7 +19,7 @@ class BAMultiShapesDataset(InMemoryDataset):
 
     * class 0: :math:`\emptyset \lor H \lor W \lor G \lor \{ H, W, G \}`
 
-    * class 1: :math:`H \land W \lor H \land G \lor W  \land G`
+    * class 1: :math:`(H \land W) \lor (H \land G) \lor (W \land G)`
 
     This dataset is pre-computed from the official implementation.
 
