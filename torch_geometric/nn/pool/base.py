@@ -81,7 +81,14 @@ class Pooling(torch.nn.Module):
                                              batch)
 
         if batch is not None:
-            out_batch = torch.arange(x.size(0), device=x.device)
+            out_batch = torch.arange(num_clusters, device=x.device)
             out_batch.scatter_(0, cluster, batch)
 
         return PoolingOutput(x, edge_index, edge_attr, out_batch)
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(\n'
+                f'  select={self.select},\n'
+                f'  reduce={self.reduce},\n'
+                f'  connect={self.connect},\n'
+                f')')
