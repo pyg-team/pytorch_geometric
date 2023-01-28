@@ -5,7 +5,6 @@ import torch
 
 from benchmark.utils import emit_itt, get_dataset, get_model
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.loader.base import AffinityMixin
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
 
@@ -112,10 +111,9 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         # define context manager parameters
-                        cpu_affinity = AffinityMixin(
-                            subgraph_loader).enable_cpu_affinity(
-                                args.loader_cores
-                            ) if args.cpu_affinity else nullcontext()
+                        cpu_affinity = subgraph_loader.enable_cpu_affinity(
+                            args.loader_cores
+                        ) if args.cpu_affinity else nullcontext()
                         profile = torch_profile(
                         ) if args.profile else nullcontext()
                         itt = emit_itt(
