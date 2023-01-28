@@ -39,10 +39,6 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
         from torch_geometric.datasets import EllipticBitcoinDataset
         path = osp.join(root, 'EllipticBitcoinDataset')
         return EllipticBitcoinDataset(path, *args, **kwargs)
-    if 'bamultishapes' in name.lower():
-        from torch_geometric.datasets import BAMultiShapesDataset
-        path = osp.join(root, 'BAMultiShapesDataset')
-        return BAMultiShapesDataset(path, *args, **kwargs)
 
     raise NotImplementedError
 
