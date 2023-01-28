@@ -35,6 +35,12 @@ def test_neighbor_sampler():
     for batch_size, n_id, adjs in sparse_loader:
         for (edge_index, e_id, size) in adjs:
             edge_index.to(device)
+            assert int(edge_index.storage.col().max() + 1) <= size[0]
+            assert int(edge_index.storage.row().max() + 1) <= size[1]
+            assert all(np.isin(e_id, torch.arange(E)).tolist())
+            assert e_id.unique().size(0) == e_id.size(0)
+            assert size[0] >= size[1]
+
     out = loader.sample([1, 2])
     assert len(out) == 3
 
