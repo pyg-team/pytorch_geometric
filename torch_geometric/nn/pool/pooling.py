@@ -69,8 +69,7 @@ class Pooling(torch.nn.Module):
     def forward(
         self, x: torch.Tensor, edge_index: torch.Tensor,
         edge_attr: Optional[torch.Tensor] = None,
-        batch: Optional[torch.Tensor] = None, 
-        **kwargs
+        batch: Optional[torch.Tensor] = None, **kwargs
     ) -> Tuple[torch.Tensor, torch.Tensor, Optional[torch.Tensor],
                torch.Tensor]:
         mapping = self.select(x, edge_index, edge_attr, batch, **kwargs)
