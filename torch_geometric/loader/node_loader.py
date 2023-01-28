@@ -1,4 +1,4 @@
-from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
+from typing import Any, Callable, Iterator, Optional, Tuple, Union
 
 import torch
 
