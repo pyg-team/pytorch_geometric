@@ -1,3 +1,5 @@
 from .base import Select
 
-__all__ = ['Select']
+__all__ = [
+    'Select',
+]

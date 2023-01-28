@@ -1,3 +1,5 @@
 from .base import Connect
 
-__all__ = ['Connect']
+__all__ = [
+    'Connect',
+]
