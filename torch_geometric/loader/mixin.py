@@ -2,18 +2,24 @@ import glob
 import logging
 import os
 from contextlib import contextmanager
+from typing import Any, Dict
 
 import psutil
 import torch
 
 
-def get_numa_nodes_cores():
-    """ Returns numa nodes info, format:
+def get_numa_nodes_cores() -> Dict[str, Any]:
+    """ Returns numa nodes info in format:
+
+    ..code-block::
+
         {<node_id>: [(<core_id>, [<sibling_thread_id_0>, <sibling_thread_id_1>
         ...]), ...], ...}
-        E.g.: {0: [(0, [0, 4]), (1, [1, 5])], 1: [(2, [2, 6]), (3, [3, 7])]}
 
-        If not available, returns {}
+        # For example:
+        {0: [(0, [0, 4]), (1, [1, 5])], 1: [(2, [2, 6]), (3, [3, 7])]}
+
+    If not available, returns an empty dictionary.
     """
     numa_node_paths = glob.glob('/sys/devices/system/node/node[0-9]*')
 
