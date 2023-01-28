@@ -110,8 +110,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         model = model.to(device)
                         model.eval()
 
-                        # define context manager parameters
-
+                        # Define context manager parameters:
                         cpu_affinity = subgraph_loader.enable_cpu_affinity(
                             args.loader_cores
                         ) if args.cpu_affinity else nullcontext()
