@@ -1,10 +1,10 @@
 import numpy as np
 import torch
+from torch_sparse import SparseTensor
 
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn.conv import GATConv, SAGEConv
 from torch_geometric.utils import erdos_renyi_graph
-from torch_sparse import SparseTensor
 
 
 def test_neighbor_sampler():
@@ -14,8 +14,9 @@ def test_neighbor_sampler():
     E = edge_index.size(1)
 
     loader = NeighborSampler(edge_index, sizes=[2, 4], batch_size=2)
-    sparse_loader = NeighborSampler(sparse_edge_index, sizes=[
-                                    2, 4], batch_size=2, collate_fn="test_init", dataset="test_init")
+    sparse_loader = NeighborSampler(sparse_edge_index, sizes=[2, 4],
+                                    batch_size=2, collate_fn="test_init",
+                                    dataset="test_init")
     assert loader.__repr__() == 'NeighborSampler(sizes=[2, 4])'
     assert len(loader) == 5
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
