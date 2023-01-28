@@ -1,8 +1,8 @@
 [project]
-name = "torch_geometric"
-version = "2.3.0"
-readme = "README.md"
-classifiers = [
+name="torch_geometric"
+version="2.3.0"
+readme="README.md"
+classifiers=[
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
