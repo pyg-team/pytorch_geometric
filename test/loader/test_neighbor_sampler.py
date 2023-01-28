@@ -4,27 +4,37 @@ import torch
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn.conv import GATConv, SAGEConv
 from torch_geometric.utils import erdos_renyi_graph
+from torch_sparse import SparseTensor
+
 
 
 def test_neighbor_sampler():
     torch.manual_seed(12345)
     edge_index = erdos_renyi_graph(num_nodes=10, edge_prob=0.5)
+    sparse_edge_index = SparseTensor.from_edge_index(edge_index)
     E = edge_index.size(1)
 
     loader = NeighborSampler(edge_index, sizes=[2, 4], batch_size=2)
+    sparse_loader = NeighborSampler(sparse_edge_index, sizes=[2, 4], batch_size=2,collate_fn="test_init",dataset="test_init")
     assert loader.__repr__() == 'NeighborSampler(sizes=[2, 4])'
     assert len(loader) == 5
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     for batch_size, n_id, adjs in loader:
         assert batch_size == 2
         assert all(np.isin(n_id, torch.arange(10)).tolist())
         assert n_id.unique().size(0) == n_id.size(0)
         for (edge_index, e_id, size) in adjs:
+            edge_index.to(device)
             assert int(edge_index[0].max() + 1) <= size[0]
             assert int(edge_index[1].max() + 1) <= size[1]
             assert all(np.isin(e_id, torch.arange(E)).tolist())
             assert e_id.unique().size(0) == e_id.size(0)
             assert size[0] >= size[1]
+
+    for batch_size, n_id, adjs in sparse_loader:
+        for (edge_index, e_id, size) in adjs:
+            edge_index.to(device)
 
     out = loader.sample([1, 2])
     assert len(out) == 3
