@@ -154,7 +154,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         progress_bar = False if args.no_progress_bar else True
                         train = train_hetero if hetero else train_homo
 
-                        # define context manager parameters
+                        # Define context manager parameters:
                         cpu_affinity = subgraph_loader.enable_cpu_affinity(
                             args.loader_cores
                         ) if args.cpu_affinity else nullcontext()
