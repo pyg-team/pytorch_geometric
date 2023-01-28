@@ -17,7 +17,7 @@ class BAMultiShapesDataset(InMemoryDataset):
     graphs where each graph is obtained by attaching the motifs to a random
     Barabasi-Albert (BA) as follows:
 
-    * class 0: :math:`\emptyset \lor` H \lor W \lor G \lor \{ H, W, G \}`
+    * class 0: :math:`\emptyset \lor H \lor W \lor G \lor \{ H, W, G \}`
 
     * class 1: :math:`H \land W \lor H \land G \lor W  \land G`
 
