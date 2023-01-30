@@ -41,6 +41,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
 from .tree_decomposition import tree_decomposition
 from .embedding import get_message_passing_embeddings
 from .train_test_split_edges import train_test_split_edges
+from .sort import index_sort
 
 __all__ = [
     'scatter',
@@ -111,6 +112,7 @@ __all__ = [
     'tree_decomposition',
     'get_message_passing_embeddings',
     'train_test_split_edges',
+    'index_sort',
 ]
 
 classes = __all__

@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from .num_nodes import maybe_num_nodes
+from .sort import index_sort
 
 
 @torch.jit._overload
@@ -71,7 +72,7 @@ def sort_edge_index(
     idx = edge_index[1 - int(sort_by_row)] * num_nodes
     idx += edge_index[int(sort_by_row)]
 
-    perm = idx.argsort()
+    _, perm = index_sort(idx)
 
     edge_index = edge_index[:, perm]
 
