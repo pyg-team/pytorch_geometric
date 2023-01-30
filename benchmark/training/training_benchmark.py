@@ -1,5 +1,6 @@
 import argparse
 import ast
+from contextlib import nullcontext
 
 import torch
 import torch.nn.functional as F
@@ -152,7 +153,13 @@ def run(args: argparse.ArgumentParser) -> None:
 
                         progress_bar = False if args.no_progress_bar else True
                         train = train_hetero if hetero else train_homo
-                        with amp:
+
+                        # Define context manager parameters:
+                        cpu_affinity = subgraph_loader.enable_cpu_affinity(
+                            args.loader_cores
+                        ) if args.cpu_affinity else nullcontext()
+
+                        with amp, cpu_affinity:
                             for _ in range(args.warmup):
                                 train(model, subgraph_loader, optimizer,
                                       device, progress_bar=progress_bar,
@@ -180,40 +187,38 @@ def run(args: argparse.ArgumentParser) -> None:
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN training benchmark')
-    argparser.add_argument('--datasets', nargs='+',
-                           default=['ogbn-mag', 'ogbn-products',
-                                    'Reddit'], type=str)
-    argparser.add_argument(
-        '--use-sparse-tensor', action='store_true',
-        help='use torch_sparse.SparseTensor as graph storage format')
-    argparser.add_argument(
-        '--models', nargs='+',
-        default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
-    argparser.add_argument('--root', default='../../data', type=str,
-                           help='relative path to look for the datasets')
-    argparser.add_argument('--batch-sizes', nargs='+',
-                           default=[512, 1024, 2048, 4096, 8192], type=int)
-    argparser.add_argument('--num-layers', nargs='+', default=[2, 3], type=int)
-    argparser.add_argument('--num-hidden-channels', nargs='+',
-                           default=[64, 128, 256], type=int)
-    argparser.add_argument(
-        '--num-heads', default=2, type=int,
-        help='number of hidden attention heads, applies only for gat and rgat')
-    argparser.add_argument('--num-neighbors', default=[10],
-                           type=ast.literal_eval,
-                           help='number of neighbors to sample per layer')
-    argparser.add_argument('--num-workers', default=2, type=int)
-    argparser.add_argument('--warmup', default=1, type=int)
-    argparser.add_argument('--profile', action='store_true')
-    argparser.add_argument('--vtune-profile', action='store_true')
-    argparser.add_argument('--bf16', action='store_true')
-    argparser.add_argument('--no-progress-bar', action='store_true',
-                           default=False, help='turn off using progress bar')
-    argparser.add_argument('--num-epochs', default=1, type=int)
-    argparser.add_argument(
-        '--num-steps', default=-1, type=int,
-        help='number of steps, -1 means iterating through all the data')
+    add = argparser.add_argument
 
+    add('--datasets', nargs='+',
+        default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
+    add('--use-sparse-tensor', action='store_true',
+        help='use torch_sparse.SparseTensor as graph storage format')
+    add('--models', nargs='+',
+        default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
+    add('--root', default='../../data', type=str,
+        help='relative path to look for the datasets')
+    add('--batch-sizes', nargs='+', default=[512, 1024, 2048, 4096, 8192],
+        type=int)
+    add('--num-layers', nargs='+', default=[2, 3], type=int)
+    add('--num-hidden-channels', nargs='+', default=[64, 128, 256], type=int)
+    add('--num-heads', default=2, type=int,
+        help='number of hidden attention heads, applies only for gat and rgat')
+    add('--num-neighbors', default=[10], type=ast.literal_eval,
+        help='number of neighbors to sample per layer')
+    add('--num-workers', default=2, type=int)
+    add('--warmup', default=1, type=int)
+    add('--profile', action='store_true')
+    add('--vtune-profile', action='store_true')
+    add('--bf16', action='store_true')
+    add('--no-progress-bar', action='store_true', default=False,
+        help='turn off using progress bar')
+    add('--num-epochs', default=1, type=int)
+    add('--num-steps', default=-1, type=int,
+        help='number of steps, -1 means iterating through all the data')
+    add('--cpu-affinity', action='store_true',
+        help="Use DataLoader affinitzation.")
+    add('--loader-cores', nargs='+', default=[], type=int,
+        help="List of CPU core IDs to use for DataLoader workers.")
     args = argparser.parse_args()
 
     run(args)
