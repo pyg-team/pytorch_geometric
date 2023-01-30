@@ -43,6 +43,12 @@ def test_dense_to_sparse():
         assert edge_attr.tolist() == [3, 1, 2, 1, 2]
 
 
+def test_dense_to_sparse_bipartite():
+    edge_index, edge_attr = dense_to_sparse(torch.rand(2, 10, 5))
+    assert edge_index[0].max() == 19
+    assert edge_index[1].max() == 9
+
+
 def test_is_torch_sparse_tensor():
     x = torch.randn(5, 5)
 
