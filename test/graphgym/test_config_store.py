@@ -91,7 +91,7 @@ def test_hydra_config_store():
     assert (cfg.dataset.transform.AddSelfLoops._target_.split('.')[-1] ==
             'AddSelfLoops')
     assert cfg.dataset.transform.AddSelfLoops.attr == 'edge_weight'
-    assert cfg.dataset.transform.AddSelfLoops.fill_value is None
+    assert cfg.dataset.transform.AddSelfLoops.fill_value == 1.0
 
     # Check `cfg.model`:
     assert len(cfg.model) == 12
