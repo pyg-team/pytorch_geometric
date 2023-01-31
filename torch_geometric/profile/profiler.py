@@ -5,8 +5,6 @@ from typing import List, NamedTuple, Tuple
 import torch
 import torch.profiler as torch_profiler
 
-from torch_geometric.profile.utils import format_memory, format_time
-
 # predefined namedtuple for variable setting (global template)
 Trace = namedtuple("Trace", ["path", "leaf", "module"])
 
