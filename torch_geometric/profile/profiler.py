@@ -1,9 +1,11 @@
 import functools
 from collections import OrderedDict, defaultdict, namedtuple
 from typing import List, NamedTuple, Tuple
-from torch_geometric.profile.utils import format_time, format_memory
+
 import torch
 import torch.profiler as torch_profiler
+
+from torch_geometric.profile.utils import format_memory, format_time
 
 # predefined namedtuple for variable setting (global template)
 Trace = namedtuple("Trace", ["path", "leaf", "module"])
@@ -38,7 +40,6 @@ class Profiler(object):
             will not be used.
             (default: :obj:`False`)
     """
-
     def __init__(self, model, enabled=True, use_cuda=False,
                  profile_memory=False, paths=None):
         self._model = model
