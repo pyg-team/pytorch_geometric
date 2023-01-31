@@ -1,7 +1,8 @@
-import torch
-import torch_geometric
-
 from typing import Optional, Tuple
+
+import torch
+
+import torch_geometric
 
 if torch_geometric.typing.WITH_PYG_LIB:  # pragma: no cover
 

@@ -10,7 +10,7 @@ from torch_sparse import SparseTensor, masked_select_nnz, matmul
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor, pyg_lib
-from torch_geometric.utils import scatter, index_sort
+from torch_geometric.utils import index_sort, scatter
 
 from ..inits import glorot, zeros
 

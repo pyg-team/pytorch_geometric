@@ -5,7 +5,7 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data, Dataset
-from torch_geometric.utils import scatter, index_sort
+from torch_geometric.utils import index_sort, scatter
 
 
 class TrackingData(Data):
