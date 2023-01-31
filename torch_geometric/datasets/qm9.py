@@ -96,6 +96,12 @@ class QM9(InMemoryDataset):
     | 18     | :math:`C`                        | Rotational constant                                                               | :math:`\textrm{GHz}`                        |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
 
+    .. note::
+
+        We also provide a pre-processed version of the dataset in case
+        :class:`rdkit` is not installed. The pre-processed version matches with
+        the manually processed version as outlined in :meth:`process`.
+
     Args:
         root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an

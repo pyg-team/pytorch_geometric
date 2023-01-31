@@ -1,11 +1,10 @@
 import copy
 import inspect
+from collections import defaultdict
 from dataclasses import dataclass, field, make_dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
-from hydra.core.config_store import ConfigNode, ConfigStore
-from omegaconf import MISSING
 
 EXCLUDE = {'self', 'args', 'kwargs'}
 
@@ -13,6 +12,115 @@ MAPPING = {
     torch.nn.Module: Any,
     torch.Tensor: Any,
 }
+
+try:
+    from omegaconf import MISSING
+except ImportError:
+    MISSING: Any = '???'
+
+try:
+    from hydra.core.config_store import ConfigStore
+
+    def get_node(cls: Union[str, Any]) -> Optional[Any]:
+        if (not isinstance(cls, str)
+                and cls.__module__ in {'builtins', 'typing'}):
+            return None
+
+        def _recursive_get_node(repo: Dict[str, Any]) -> Optional[Any]:
+            for key, value in repo.items():
+                if isinstance(value, dict):
+                    out = _recursive_get_node(value)
+                    if out is not None:
+                        return out
+                elif isinstance(cls, str) and key == f'{cls}.yaml':
+                    return value.node
+                elif getattr(value.node._metadata, 'object_type', None) == cls:
+                    return value.node
+                elif getattr(value.node._metadata, 'orig_type', None) == cls:
+                    return value.node
+
+        return _recursive_get_node(get_config_store().repo)
+
+    def dataclass_from_class(cls: Union[str, Any]) -> Optional[Any]:
+        r"""Returns the :obj:`dataclass` of a class registered in the global
+        configuration store."""
+        node = get_node(cls)
+        return node._metadata.object_type if node is not None else None
+
+    def class_from_dataclass(cls: Union[str, Any]) -> Optional[Any]:
+        r"""Returns the original class of a :obj:`dataclass` registered in the
+        global configuration store."""
+        node = get_node(cls)
+        return node._metadata.orig_type if node is not None else None
+
+except ImportError:
+
+    class Singleton(type):
+        _instances: Dict[type, Any] = {}
+
+        def __call__(cls, *args, **kwargs) -> Any:
+            if cls not in cls._instances:
+                instance = super(Singleton, cls).__call__(*args, **kwargs)
+                cls._instances[cls] = instance
+                return instance
+            return cls._instances[cls]
+
+    @dataclass
+    class Metadata:
+        orig_type: Optional[Any] = None
+
+    @dataclass
+    class ConfigNode:
+        name: str
+        node: Any
+        group: Optional[str] = None
+        _metadata: Metadata = field(default_factory=Metadata)
+
+    class ConfigStore(metaclass=Singleton):
+        def __init__(self):
+            self.repo: Dict[str, Any] = defaultdict(dict)
+
+        @classmethod
+        def instance(cls, *args, **kwargs) -> 'ConfigStore':
+            return cls(*args, **kwargs)
+
+        def store(self, name: str, node: Any, group: Optional[str] = None):
+            cur = self.repo
+            if group is not None:
+                cur = cur[group]
+            cur[name] = ConfigNode(name, node, group)
+
+    def get_node(cls: Union[str, Any]) -> Optional[ConfigNode]:
+        if (not isinstance(cls, str)
+                and cls.__module__ in {'builtins', 'typing'}):
+            return None
+
+        def _recursive_get_node(repo: Dict[str, Any]) -> Optional[ConfigNode]:
+            for key, value in repo.items():
+                if isinstance(value, dict):
+                    out = _recursive_get_node(value)
+                    if out is not None:
+                        return out
+                elif isinstance(cls, str) and key == cls:
+                    return value
+                elif value.node == cls:
+                    return value
+                elif value._metadata.orig_type == cls:
+                    return value
+
+        return _recursive_get_node(get_config_store().repo)
+
+    def dataclass_from_class(cls: Union[str, Any]) -> Optional[Any]:
+        r"""Returns the :obj:`dataclass` of a class registered in the global
+        configuration store."""
+        node = get_node(cls)
+        return node.node if node is not None else None
+
+    def class_from_dataclass(cls: Union[str, Any]) -> Optional[Any]:
+        r"""Returns the original class of a :obj:`dataclass` registered in the
+        global configuration store."""
+        node = get_node(cls)
+        return node._metadata.orig_type if node is not None else None
 
 
 def map_annotation(
@@ -155,43 +263,9 @@ def to_dataclass(
                           bases=() if base_cls is None else (base_cls, ))
 
 
-def get_config_store() -> Any:
+def get_config_store() -> ConfigStore:
     r"""Returns the global configuration store."""
     return ConfigStore.instance()
-
-
-def get_node(cls: Union[str, Any]) -> Optional[ConfigNode]:
-    if not isinstance(cls, str) and cls.__module__ in {'builtins', 'typing'}:
-        return None
-
-    def _recursive_get_node(repo: Dict[str, Any]) -> Optional[ConfigNode]:
-        for key, value in repo.items():
-            if isinstance(value, dict):
-                out = _recursive_get_node(value)
-                if out is not None:
-                    return out
-            elif isinstance(cls, str) and key == f'{cls}.yaml':
-                return value.node
-            elif getattr(value.node._metadata, 'object_type', None) == cls:
-                return value.node
-            elif getattr(value.node._metadata, 'orig_type', None) == cls:
-                return value.node
-
-    return _recursive_get_node(get_config_store().repo)
-
-
-def dataclass_from_class(cls: Union[str, Any]) -> Optional[Any]:
-    r"""Returns the :obj:`dataclass` of a class registered in the global
-    configuration store."""
-    node = get_node(cls)
-    return node._metadata.object_type if node is not None else None
-
-
-def class_from_dataclass(cls: Union[str, Any]) -> Optional[Any]:
-    r"""Returns the original class of a :obj:`dataclass` registered in the
-    global configuration store."""
-    node = get_node(cls)
-    return node._metadata.orig_type if node is not None else None
 
 
 def register(
