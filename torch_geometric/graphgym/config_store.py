@@ -19,7 +19,7 @@ except ImportError:
     MISSING: Any = '???'
 
 try:
-    from hydra.core.config_store import ConfigNode, ConfigStore
+    from hydra.core.config_store import ConfigStore
 
     def get_node(cls: Union[str, Any]) -> Optional[Any]:
         if (not isinstance(cls, str)
