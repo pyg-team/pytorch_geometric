@@ -10,8 +10,9 @@ from torch_geometric.profile import (
     rename_profile_file,
     timeit,
 )
-from torch_geometric.testing import onlyCUDA
 from torch_geometric.profile.profile import torch_profile
+from torch_geometric.testing import onlyCUDA
+
 
 @onlyCUDA
 def test_profile(get_dataset):
