@@ -11,7 +11,10 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
     by edge indices and edge attributes.
 
     Args:
-        adj (Tensor): The dense adjacency matrix.
+        adj (Tensor): The dense adjacency matrix of shape
+            :obj:`[num_nodes, num_nodes]` or
+            :obj:`[batch_size, num_nodes, num_nodes]`.
+
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Examples:
@@ -34,8 +37,9 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
                 [0, 1, 0, 3, 3]]),
         tensor([3, 1, 2, 1, 2]))
     """
-    assert adj.dim() >= 2 and adj.dim() <= 3
-    assert adj.size(-1) == adj.size(-2)
+    if adj.dim() < 2 or adj.dim() > 3:
+        raise ValueError(f"Dense adjacency matrix 'adj' must be 2- or "
+                         f"3-dimensional (got {adj.dim()} dimensions)")
 
     edge_index = adj.nonzero().t()
 
@@ -44,9 +48,8 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
         return edge_index, edge_attr
     else:
         edge_attr = adj[edge_index[0], edge_index[1], edge_index[2]]
-        batch = edge_index[0] * adj.size(-1)
-        row = batch + edge_index[1]
-        col = batch + edge_index[2]
+        row = edge_index[1] + adj.size(-2) * edge_index[0]
+        col = edge_index[2] + adj.size(-1) * edge_index[0]
         return torch.stack([row, col], dim=0), edge_attr
 
 
