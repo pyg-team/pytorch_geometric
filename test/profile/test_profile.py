@@ -69,6 +69,7 @@ def test_profile(get_dataset):
     assert stats_summary.min_nvidia_smi_free_cuda > 0
     assert stats_summary.max_nvidia_smi_used_cuda > 0
 
+
 @onlyFullTest
 def test_torch_profile(get_dataset):
     dataset = get_dataset(name='PubMed')
