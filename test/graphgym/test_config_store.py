@@ -3,11 +3,10 @@ from typing import Any, Optional
 from torch_geometric.graphgym import (
     class_from_dataclass,
     dataclass_from_class,
-    fill_config_store,
     get_config_store,
-    register,
     to_dataclass,
 )
+from torch_geometric.graphgym.config_store import fill_config_store, register
 from torch_geometric.testing import withPackage
 
 

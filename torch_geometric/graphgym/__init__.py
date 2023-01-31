@@ -19,8 +19,7 @@ from .register import (register_base, register_act, register_node_encoder,
                        register_optimizer, register_scheduler, register_loss,
                        register_train, register_metric)
 from .config_store import (to_dataclass, dataclass_from_class,
-                           class_from_dataclass, register, get_config_store,
-                           fill_config_store)
+                           class_from_dataclass, get_config_store)
 
 __all__ = classes = [
     'load_ckpt',
@@ -64,7 +63,5 @@ __all__ = classes = [
     'to_dataclass',
     'dataclass_from_class',
     'class_from_dataclass',
-    'register',
     'get_config_store',
-    'fill_config_store',
 ]
