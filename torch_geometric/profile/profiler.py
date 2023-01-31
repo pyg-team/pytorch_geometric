@@ -142,7 +142,7 @@ class Profiler(object):
             module.forward = self._forwards[path]
 
 
-def _layer_trace(
+def layer_trace(
         traces: NamedTuple,
         trace_events: object,
         show_events: bool = True,

@@ -50,7 +50,7 @@ def test_profile(get_dataset):
 
         with timeit() as t:
             t.reset()
-            z = test(model, data.x, data.edge_index, data.y)
+            test(model, data.x, data.edge_index, data.y)
         assert t.duration > 0
         t.reset()
 
