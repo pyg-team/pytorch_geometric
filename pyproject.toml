@@ -30,6 +30,7 @@ skip = [".gitingore", "__init__.py"]
 addopts = "--capture=no"
 filterwarnings = [
     "ignore::DeprecationWarning:tensorboard.*",
+    "ignore:distutils:DeprecationWarning",
 ]
 
 [tool.pylint.messages_control]
