@@ -139,7 +139,7 @@ class UserGNNEncoder(torch.nn.Module):
 
         user_x = self.conv3(
             (item_x, user_x),
-            edge_index_dict[('item', 'to', 'user')],
+            edge_index_dict[('item', 'rev_to', 'user')],
         ).relu()
 
         return self.lin(user_x)
@@ -231,11 +231,12 @@ def test(loader):
         target = batch['user', 'item'].edge_label.long().cpu()
 
         preds.append(pred)
-        targets.append(pred)
+        targets.append(target)
 
     pred = torch.cat(preds, dim=0).numpy()
-    target = torch.cat(target, dim=0).numpy()
+    target = torch.cat(targets, dim=0).numpy()
 
+    pred = pred > 0.5
     acc = accuracy_score(target, pred)
     prec = precision_score(target, pred)
     rec = recall_score(target, pred)
