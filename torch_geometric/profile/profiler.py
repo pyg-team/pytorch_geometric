@@ -182,7 +182,7 @@ def layer_trace(
                                        (paths is not None and path in paths)):
                 # tree measurements have key None, avoiding name conflict
                 if show_events:
-                    for event_name, event_group in _group_by(
+                    for event_name, event_group in group_by(
                             events, lambda e: e.name):
                         event_group = list(event_group)
                         current_tree[name][event_name] = {
@@ -399,7 +399,7 @@ def _format_measure_tuple(measure: NamedTuple) -> NamedTuple:
     )
 
 
-def _group_by(events, keyfn):
+def group_by(events, keyfn):
     """Internal method, not for external use.
     """
     event_groups = OrderedDict()
