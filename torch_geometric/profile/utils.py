@@ -139,3 +139,31 @@ def byte_to_megabyte(value: int, digits: int = 2) -> float:
 
 def medibyte_to_megabyte(value: int, digits: int = 2) -> float:
     return round(1.0485 * value, digits)
+
+
+def format_time(time_us):
+    """Defines how to format time in torch profiler Event.
+    """
+    US_IN_SECOND = 1000.0 * 1000.0
+    US_IN_MS = 1000.0
+    if time_us >= US_IN_SECOND:
+        return '{:.3f}s'.format(time_us / US_IN_SECOND)
+    if time_us >= US_IN_MS:
+        return '{:.3f}ms'.format(time_us / US_IN_MS)
+    return '{:.3f}us'.format(time_us)
+
+
+def format_memory(nbytes):
+    """Returns a formatted memory size string in torch profiler Event
+    """
+    KB = 1024
+    MB = 1024 * KB
+    GB = 1024 * MB
+    if (abs(nbytes) >= GB):
+        return '{:.2f} Gb'.format(nbytes * 1.0 / GB)
+    elif (abs(nbytes) >= MB):
+        return '{:.2f} Mb'.format(nbytes * 1.0 / MB)
+    elif (abs(nbytes) >= KB):
+        return '{:.2f} Kb'.format(nbytes * 1.0 / KB)
+    else:
+        return str(nbytes) + ' b'

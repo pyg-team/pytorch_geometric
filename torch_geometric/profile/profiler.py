@@ -1,7 +1,7 @@
 import functools
 from collections import OrderedDict, defaultdict, namedtuple
 from typing import List, NamedTuple, Tuple
-
+from torch_geometric.profile.utils import format_time, format_memory
 import torch
 import torch.profiler as torch_profiler
 
@@ -38,6 +38,7 @@ class Profiler(object):
             will not be used.
             (default: :obj:`False`)
     """
+
     def __init__(self, model, enabled=True, use_cuda=False,
                  profile_memory=False, paths=None):
         self._model = model
@@ -140,7 +141,7 @@ class Profiler(object):
             module.forward = self._forwards[path]
 
 
-def layer_trace(
+def _layer_trace(
         traces: NamedTuple,
         trace_events: object,
         show_events: bool = True,
@@ -182,7 +183,7 @@ def layer_trace(
                                        (paths is not None and path in paths)):
                 # tree measurements have key None, avoiding name conflict
                 if show_events:
-                    for event_name, event_group in group_by(
+                    for event_name, event_group in _group_by(
                             events, lambda e: e.name):
                         event_group = list(event_group)
                         current_tree[name][event_name] = {
@@ -399,7 +400,7 @@ def _format_measure_tuple(measure: NamedTuple) -> NamedTuple:
     )
 
 
-def group_by(events, keyfn):
+def _group_by(events, keyfn):
     """Internal method, not for external use.
     """
     event_groups = OrderedDict()
@@ -434,31 +435,3 @@ def _walk_modules(module, name="", path=()):
     # recursively walk into all submodules
     for name, child_module in named_children:
         yield from _walk_modules(child_module, name=name, path=path)
-
-
-def format_time(time_us):
-    """Defines how to format time in torch profiler Event.
-    """
-    US_IN_SECOND = 1000.0 * 1000.0
-    US_IN_MS = 1000.0
-    if time_us >= US_IN_SECOND:
-        return '{:.3f}s'.format(time_us / US_IN_SECOND)
-    if time_us >= US_IN_MS:
-        return '{:.3f}ms'.format(time_us / US_IN_MS)
-    return '{:.3f}us'.format(time_us)
-
-
-def format_memory(nbytes):
-    """Returns a formatted memory size string in torch profiler Event
-    """
-    KB = 1024
-    MB = 1024 * KB
-    GB = 1024 * MB
-    if (abs(nbytes) >= GB):
-        return '{:.2f} Gb'.format(nbytes * 1.0 / GB)
-    elif (abs(nbytes) >= MB):
-        return '{:.2f} Mb'.format(nbytes * 1.0 / MB)
-    elif (abs(nbytes) >= KB):
-        return '{:.2f} Kb'.format(nbytes * 1.0 / KB)
-    else:
-        return str(nbytes) + ' b'

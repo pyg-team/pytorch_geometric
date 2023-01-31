@@ -11,10 +11,8 @@ from torch_geometric.profile import (
     timeit,
 )
 from torch_geometric.profile.profile import torch_profile
-from torch_geometric.testing import onlyFullTest
 
 
-# @onlyFullTest
 def test_profile(get_dataset):
     dataset = get_dataset(name='PubMed')
     data = dataset[0].cuda()
@@ -50,10 +48,10 @@ def test_profile(get_dataset):
         assert stats.nvidia_smi_used_cuda > 0
 
         with timeit() as t:
+            t.reset()
             z = test(model, data.x, data.edge_index, data.y)
         assert t.duration > 0
         t.reset()
-        
 
         if epoch >= 2:  # Warm-up
             stats_list.append(stats)
@@ -69,7 +67,6 @@ def test_profile(get_dataset):
     assert stats_summary.max_nvidia_smi_used_cuda > 0
 
 
-@onlyFullTest
 def test_torch_profile(get_dataset):
     dataset = get_dataset(name='PubMed')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -91,3 +88,4 @@ def test_torch_profile(get_dataset):
         inference_profile(model, data)
     rename_profile_file('test_profile')
     assert os.path.exists('profile-test_profile.json')
+    os.remove('profile-test_profile.json')
