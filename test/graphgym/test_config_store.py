@@ -1,12 +1,65 @@
+from typing import Any, Optional
+
+from torch_geometric.graphgym import (
+    class_from_dataclass,
+    dataclass_from_class,
+    get_config_store,
+    to_dataclass,
+)
+from torch_geometric.graphgym.config_store import fill_config_store, register
 from torch_geometric.testing import withPackage
 
 
+def test_to_dataclass():
+    from torch_geometric.transforms import AddSelfLoops
+
+    AddSelfLoopsConfig = to_dataclass(AddSelfLoops, with_target=True)
+    assert AddSelfLoopsConfig.__name__ == 'AddSelfLoops'
+
+    fields = AddSelfLoopsConfig.__dataclass_fields__
+
+    assert fields['attr'].name == 'attr'
+    assert fields['attr'].type == Optional[str]
+    assert fields['attr'].default == 'edge_weight'
+
+    assert fields['fill_value'].name == 'fill_value'
+    assert fields['fill_value'].type == Any
+    assert fields['fill_value'].default == 1.0
+
+    assert fields['_target_'].name == '_target_'
+    assert fields['_target_'].type == str
+    assert fields['_target_'].default == (
+        'torch_geometric.transforms.add_self_loops.AddSelfLoops')
+
+    cfg = AddSelfLoopsConfig()
+    assert str(cfg) == ("AddSelfLoops(attr='edge_weight', fill_value=1.0, "
+                        "_target_='torch_geometric.transforms.add_self_loops."
+                        "AddSelfLoops')")
+
+
+def test_register():
+    from torch_geometric.transforms import AddSelfLoops
+
+    register(AddSelfLoops, group='transforms')
+    assert 'transforms' in get_config_store().repo
+
+    AddSelfLoopsConfig = dataclass_from_class('AddSelfLoops')
+
+    Cls = class_from_dataclass('AddSelfLoops')
+    assert Cls == AddSelfLoops
+    Cls = class_from_dataclass(AddSelfLoopsConfig)
+    assert Cls == AddSelfLoops
+
+    ConfigCls = dataclass_from_class('AddSelfLoops')
+    assert ConfigCls == AddSelfLoopsConfig
+    ConfigCls = dataclass_from_class(ConfigCls)
+    assert ConfigCls == AddSelfLoopsConfig
+
+
 @withPackage('hydra')
-def test_config_store():
+def test_hydra_config_store():
     import hydra
     from omegaconf import DictConfig
-
-    from torch_geometric.graphgym.config_store import fill_config_store
 
     fill_config_store()
 
@@ -38,7 +91,7 @@ def test_config_store():
     assert (cfg.dataset.transform.AddSelfLoops._target_.split('.')[-1] ==
             'AddSelfLoops')
     assert cfg.dataset.transform.AddSelfLoops.attr == 'edge_weight'
-    assert cfg.dataset.transform.AddSelfLoops.fill_value is None
+    assert cfg.dataset.transform.AddSelfLoops.fill_value == 1.0
 
     # Check `cfg.model`:
     assert len(cfg.model) == 12
