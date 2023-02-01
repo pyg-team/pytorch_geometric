@@ -41,4 +41,3 @@ def test_appnp():
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv1.jittable(t))
         assert torch.allclose(jit(x, adj.t()), out1, atol=1e-6)
-
