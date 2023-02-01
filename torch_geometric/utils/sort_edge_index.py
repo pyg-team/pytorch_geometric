@@ -3,8 +3,9 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.utils import index_sort
+
 from .num_nodes import maybe_num_nodes
-from .sort import index_sort
 
 
 @torch.jit._overload

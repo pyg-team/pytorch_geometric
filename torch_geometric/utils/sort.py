@@ -2,29 +2,27 @@ from typing import Optional, Tuple
 
 import torch
 
-import torch_geometric
+from torch_geometric.typing import WITH_PYG_LIB, pyg_lib
 
-if torch_geometric.typing.WITH_PYG_LIB:  # pragma: no cover
+WITH_INDEX_SORT = WITH_PYG_LIB and hasattr(torch.ops.pyg, 'index_sort')
 
-    import pyg_lib
 
-    def index_sort(
-            inputs: torch.Tensor, max_value: Optional[int] = None
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """This function should be used only for positive integer values. See
-        pyg-lib docuemntation for more details:
-        https://pyg-lib.readthedocs.io/en/latest/modules/ops.html"""
-        if inputs.dim() == 1 and is_integral(inputs):
-            return pyg_lib.ops.index_sort(inputs, max_value=max_value)
+def index_sort(
+    inputs: torch.Tensor,
+    max_value: Optional[int] = None,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    r"""Sorts the elements of the :obj:`inputs` tensor in ascending order.
+    It is expected that :obj:`inputs` is one-dimensional and that it only
+    contains positive integer values. If :obj:`max_value` is given, it can
+    be used by the underlying algorithm for better performance.
+
+    Args:
+        inputs (torch.Tensor): A vector with positive integer values.
+        max_value (int, optional): The maximum value stored inside
+            :obj:`inputs`. This value can be an estimation, but needs to be
+            greater than or equal to the real maximum.
+            (default: :obj:`None`)
+    """
+    if not WITH_INDEX_SORT:
         return inputs.sort()
-
-else:
-
-    def index_sort(
-            inputs: torch.Tensor, max_value: Optional[int] = None
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        return inputs.sort()
-
-
-def is_integral(tensor: torch.Tensor) -> bool:
-    return tensor.dtype in [torch.int8, torch.int16, torch.int32, torch.int64]
+    return pyg_lib.ops.index_sort(inputs, max_value=max_value)
