@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import scatter
+from torch_geometric.utils import index_sort, scatter
 
 from .num_nodes import maybe_num_nodes
 
@@ -94,7 +94,7 @@ def coalesce(
     idx[1:].mul_(num_nodes).add_(edge_index[int(sort_by_row)])
 
     if not is_sorted:
-        idx[1:], perm = idx[1:].sort()
+        idx[1:], perm = index_sort(idx[1:], max_value=num_nodes * num_nodes)
         edge_index = edge_index[:, perm]
         if isinstance(edge_attr, Tensor):
             edge_attr = edge_attr[perm]
