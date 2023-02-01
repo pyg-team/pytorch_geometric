@@ -39,7 +39,10 @@ def test_appnp():
 def test_appnp_dropout():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+    row, col = edge_index
+    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     # With dropout probability of 1.0, the final output equals to alpha * x:
     conv = APPNP(K=2, alpha=0.1, dropout=1.0)
     assert torch.allclose(0.1 * x, conv(x, edge_index))
+    assert torch.allclose(0.1 * x, conv(x, adj.t()))
