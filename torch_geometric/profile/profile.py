@@ -32,7 +32,7 @@ class StatsSummary(NamedTuple):
     max_nvidia_smi_used_cuda: float
 
 
-def profileit():
+def profileit():  # pragma: no cover
     r"""A decorator to facilitate profiling a function, *e.g.*, obtaining
     training runtime and memory statistics of a specific model on a specific
     dataset.
@@ -141,19 +141,19 @@ class timeit(ContextDecorator):
         self.duration = self.t_end - self.t_start
         if self.avg_time_divisor > 1:
             self.duration = self.duration / self.avg_time_divisor
-        if self.log:
+        if self.log:  # pragma: no cover
             print(f'Time: {self.duration:.8f}s', flush=True)
 
     def reset(self):
         r"""Prints the duration and resets current timer."""
         if self.t_start is None:
-            raise Exception("Timer wasn't started.")
+            raise RuntimeError("Timer wasn't started.")
         else:
             self.__exit__()
             self.__enter__()
 
 
-def get_stats_summary(stats_list: List[Stats]):
+def get_stats_summary(stats_list: List[Stats]):  # pragma: no cover
     r"""Creates a summary of collected runtime and memory statistics.
     Returns a :obj:`StatsSummary` object with the attributes :obj:`time_mean`,
     :obj:`time_std`,
@@ -165,8 +165,8 @@ def get_stats_summary(stats_list: List[Stats]):
             by :meth:`~torch_geometric.profile.profileit`.
     """
     return StatsSummary(
-        time_mean=mean([stats.time for stats in stats_list]),
-        time_std=std([stats.time for stats in stats_list]),
+        time_mean=float(torch.tensor([s.time for s in stats_list]).mean()),
+        time_std=float(torch.tensor([s.time for s in stats_list]).std()),
         max_allocated_cuda=max([s.max_allocated_cuda for s in stats_list]),
         max_reserved_cuda=max([s.max_reserved_cuda for s in stats_list]),
         max_active_cuda=max([s.max_active_cuda for s in stats_list]),
@@ -180,7 +180,7 @@ def get_stats_summary(stats_list: List[Stats]):
 ###############################################################################
 
 
-def read_from_memlab(line_profiler: Any) -> List[float]:
+def read_from_memlab(line_profiler: Any) -> List[float]:  # pragma: no cover
     from pytorch_memlab.line_profiler.line_records import LineRecords
 
     # See: https://pytorch.org/docs/stable/cuda.html#torch.cuda.memory_stats
@@ -195,14 +195,6 @@ def read_from_memlab(line_profiler: Any) -> List[float]:
                           line_profiler._code_infos)
     stats = records.display(None, track_stats)._line_records
     return [byte_to_megabyte(x) for x in stats.values.max(axis=0).tolist()]
-
-
-def std(values: List[float]):
-    return float(torch.tensor(values).std())
-
-
-def mean(values: List[float]):
-    return float(torch.tensor(values).mean())
 
 
 def trace_handler(p):
