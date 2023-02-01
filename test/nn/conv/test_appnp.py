@@ -11,17 +11,34 @@ def test_appnp():
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    conv = APPNP(K=10, alpha=0.1)
-    assert conv.__repr__() == 'APPNP(K=10, alpha=0.1)'
-    out = conv(x, edge_index)
-    assert out.size() == (4, 16)
-    assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
+    conv1 = APPNP(K=3, alpha=0.1, cached=True)
+    assert conv1.__repr__() == 'APPNP(K=3, alpha=0.1)'
+    out1 = conv1(x, edge_index)
+    assert out1.size() == (4, 16)
+    out2 = conv1(x, adj.t())
+    assert torch.allclose(out1, out2, atol=1e-6)
+    assert conv1._cached_edge_index is not None
+    assert conv1._cached_adj_t is not None
+
+    # Run again to test the cached functionality
+    assert torch.allclose(conv1(x, edge_index), conv1(x, adj.t()), atol=1e-6)
+
+    conv1.reset_parameters()
+    assert conv1._cached_edge_index is None
+    assert conv1._cached_adj_t is None
+
+    # With dropout probability of 1.0, the final output
+    # equals to alpha * x in this APPNP case
+    conv2 = APPNP(K=2, alpha=0.1, dropout=1.0)
+    assert torch.allclose(0.1 * x, conv2(x, edge_index), atol=1e-6)
+    assert torch.allclose(0.1 * x, conv2(x, adj.t()), atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert jit(x, edge_index).tolist() == out.tolist()
+        jit = torch.jit.script(conv1.jittable(t))
+        assert jit(x, edge_index).tolist() == out1.tolist()
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+        jit = torch.jit.script(conv1.jittable(t))
+        assert torch.allclose(jit(x, adj.t()), out1, atol=1e-6)
+
