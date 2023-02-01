@@ -70,8 +70,10 @@ def run(args: argparse.ArgumentParser) -> None:
         assert dataset_name in supported_sets.keys(
         ), f"Dataset {dataset_name} isn't supported."
         print(f'Dataset: {dataset_name}')
-        data, num_classes = get_dataset(dataset_name, args.root,
-                                        args.use_sparse_tensor, args.bf16)
+        load_time = timeit() if args.measure_load_time else nullcontext()
+        with load_time:
+            data, num_classes = get_dataset(dataset_name, args.root,
+                                            args.use_sparse_tensor, args.bf16)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', data['paper'].train_mask
                 ) if dataset_name == 'ogbn-mag' else data.train_mask
@@ -219,6 +221,7 @@ if __name__ == '__main__':
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
+    add('--measure-load-time', action='store_true')
     args = argparser.parse_args()
 
     run(args)
