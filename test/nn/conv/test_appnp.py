@@ -29,11 +29,11 @@ def test_appnp():
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x, edge_index).tolist() == out1.tolist()
+        assert torch.allclose(jit(x, edge_index), out)
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t()), out1, atol=1e-6)
+        assert torch.allclose(jit(x, adj.t()), out)
 
 
 def test_appnp_dropout():
