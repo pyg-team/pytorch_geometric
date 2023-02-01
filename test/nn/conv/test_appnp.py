@@ -13,15 +13,14 @@ def test_appnp():
 
     conv = APPNP(K=3, alpha=0.1, cached=True)
     assert str(conv) == 'APPNP(K=3, alpha=0.1)'
-    out1 = conv(x, edge_index)
-    assert out1.size() == (4, 16)
-    out2 = conv(x, adj.t())
-    assert torch.allclose(out1, out2, atol=1e-6)
-    assert conv._cached_edge_index is not None
-    assert conv._cached_adj_t is not None
+    out = conv(x, edge_index)
+    assert out.size() == (4, 16)
+    assert torch.allclose(conv(x, adj.t()), out)
 
     # Run again to test the cached functionality:
-    assert torch.allclose(conv(x, edge_index), conv(x, adj.t()), atol=1e-6)
+    assert conv._cached_edge_index is not None
+    assert conv._cached_adj_t is not None
+    assert torch.allclose(conv(x, edge_index), conv(x, adj.t()))
 
     conv.reset_parameters()
     assert conv._cached_edge_index is None
