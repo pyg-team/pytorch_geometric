@@ -11,46 +11,31 @@ from torch_geometric.profile import (
     timeit,
 )
 from torch_geometric.profile.profile import torch_profile
-from torch_geometric.testing import onlyCUDA, onlyFullTest
+from torch_geometric.testing import onlyCUDA, onlyFullTest, withCUDA
 
 
-@onlyFullTest
-def test_profile(get_dataset):
-    dataset = get_dataset(name='PubMed')
-    data = dataset[0]
-    model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
-                      out_channels=dataset.num_classes)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+@withCUDA
+def test_timeit(device):
+    x = torch.randn(100, 16, device=device)
+    lin = torch.nn.Linear(16, 32).to(device)
 
-    def train(model, x, edge_index, y):
-        model.train()
-        optimizer.zero_grad()
-        out = model(x, edge_index)
-        loss = F.cross_entropy(out, y)
-        loss.backward()
-        return float(loss)
+    with timeit(log=False) as t:
+        assert not hasattr(t, 'duration')
 
-    @timeit()
-    @torch.no_grad()
-    def test(model, x, edge_index, y):
-        model.eval()
-        out = model(x, edge_index).argmax(dim=-1)
-        return int((out == y).sum()) / y.size(0)
-
-    for epoch in range(5):
-        train(model, data.x, data.edge_index, data.y)
-
-        with timeit() as t:
-            t.reset()
-            test(model, data.x, data.edge_index, data.y)
-        assert t.duration > 0
+        with torch.no_grad():
+            lin(x)
         t.reset()
+        assert t.duration > 0
+
+        del t.duration
+        assert not hasattr(t, 'duration')
+    assert t.duration > 0
 
 
 @onlyCUDA
 @onlyFullTest
-def test_profile_cuda(get_dataset):
-    dataset = get_dataset(name='PubMed')
+def test_profile(get_dataset):
+    dataset = get_dataset(name='Cora')
     data = dataset[0].cuda()
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
                       out_channels=dataset.num_classes).cuda()
@@ -65,13 +50,6 @@ def test_profile_cuda(get_dataset):
         loss.backward()
         return float(loss)
 
-    @timeit()
-    @torch.no_grad()
-    def test(model, x, edge_index, y):
-        model.eval()
-        out = model(x, edge_index).argmax(dim=-1)
-        return int((out == y).sum()) / y.size(0)
-
     stats_list = []
     for epoch in range(5):
         _, stats = train(model, data.x, data.edge_index, data.y)
@@ -82,12 +60,6 @@ def test_profile_cuda(get_dataset):
         assert stats.max_active_cuda > 0
         assert stats.nvidia_smi_free_cuda > 0
         assert stats.nvidia_smi_used_cuda > 0
-
-        with timeit() as t:
-            t.reset()
-            test(model, data.x, data.edge_index, data.y)
-        assert t.duration > 0
-        t.reset()
 
         if epoch >= 2:  # Warm-up
             stats_list.append(stats)
@@ -103,26 +75,16 @@ def test_profile_cuda(get_dataset):
     assert stats_summary.max_nvidia_smi_used_cuda > 0
 
 
-@onlyFullTest
-def test_torch_profile(get_dataset):
-    dataset = get_dataset(name='PubMed')
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+@withCUDA
+def test_torch_profile(get_dataset, device):
+    dataset = get_dataset(name='Cora')
     data = dataset[0].to(device)
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
                       out_channels=dataset.num_classes).to(device)
-    model.eval()
 
-    @timeit()
-    def inference_e2e(model, data):
+    with torch_profile():
         model(data.x, data.edge_index)
 
-    @torch_profile()
-    def inference_profile(model, data):
-        model(data.x, data.edge_index)
-
-    for epoch in range(3):
-        inference_e2e(model, data)
-        inference_profile(model, data)
     rename_profile_file('test_profile')
     assert os.path.exists('profile-test_profile.json')
     os.remove('profile-test_profile.json')
