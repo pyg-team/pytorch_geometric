@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Fix incorrect device in `EquilibriumAggregration` ([#6560](https://github.com/pyg-team/pytorch_geometric/pull/6560))
 - Added bipartite graph support in `dense_to_sparse()` ([#6546](https://github.com/pyg-team/pytorch_geometric/pull/6546))
 - Add CPU affinity support for more data loaders ([#6534](https://github.com/pyg-team/pytorch_geometric/pull/6534))
 - Added the `BAMultiShapesDataset` ([#6541](https://github.com/pyg-team/pytorch_geometric/pull/6541))
@@ -103,7 +104,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Make `torch_sparse` an optional dependency ([#6132](https://github.com/pyg-team/pytorch_geometric/pull/6132), [#6134](https://github.com/pyg-team/pytorch_geometric/pull/6134), [#6138](https://github.com/pyg-team/pytorch_geometric/pull/6138), [#6139](https://github.com/pyg-team/pytorch_geometric/pull/6139))
 - Optimized `utils.softmax` implementation ([#6113](https://github.com/pyg-team/pytorch_geometric/pull/6113), [#6155](https://github.com/pyg-team/pytorch_geometric/pull/6155))
 - Optimized `topk` implementation for large enough graphs ([#6123](https://github.com/pyg-team/pytorch_geometric/pull/6123))
-- Create temporary tensor on correct device in `EquilibriumAggregration.forward` ([#6560](https://github.com/pyg-team/pytorch_geometric/pull/6560))
 
 ### Removed
 
