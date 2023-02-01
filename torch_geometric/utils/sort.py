@@ -23,6 +23,6 @@ def index_sort(
             greater than or equal to the real maximum.
             (default: :obj:`None`)
     """
-    if not WITH_INDEX_SORT:
+    if not WITH_INDEX_SORT:  # pragma: no cover
         return inputs.sort()
     return pyg_lib.ops.index_sort(inputs, max_value=max_value)
