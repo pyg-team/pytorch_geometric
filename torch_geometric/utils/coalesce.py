@@ -94,7 +94,7 @@ def coalesce(
     idx[1:].mul_(num_nodes).add_(edge_index[int(sort_by_row)])
 
     if not is_sorted:
-        idx[1:], perm = index_sort(idx[1:])
+        idx[1:], perm = index_sort(idx[1:], max_value=num_nodes * num_nodes)
         edge_index = edge_index[:, perm]
         if isinstance(edge_attr, Tensor):
             edge_attr = edge_attr[perm]

@@ -230,7 +230,8 @@ class RGCNConv(MessagePassing):
                     and isinstance(edge_index, Tensor)):
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
-                        edge_type, perm = index_sort(edge_type)
+                        edge_type, perm = index_sort(
+                            edge_type, max_value=self.num_relations)
                         edge_index = edge_index[:, perm]
                 edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
                     edge_type, self.num_relations)

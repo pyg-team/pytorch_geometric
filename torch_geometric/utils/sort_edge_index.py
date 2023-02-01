@@ -73,7 +73,7 @@ def sort_edge_index(
     idx = edge_index[1 - int(sort_by_row)] * num_nodes
     idx += edge_index[int(sort_by_row)]
 
-    _, perm = index_sort(idx)
+    _, perm = index_sort(idx, max_value=num_nodes * num_nodes)
 
     edge_index = edge_index[:, perm]
 
