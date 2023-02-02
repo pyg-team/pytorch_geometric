@@ -143,8 +143,11 @@ class LinkNeighborLoader(LinkLoader):
             Deprecated in favor of the :obj:`neg_sampling` argument.
             (default: :obj:`None`)
         time_attr (str, optional): The name of the attribute that denotes
-            timestamps for the nodes in the graph. Only used if
-            :obj:`edge_label_time` is set. (default: :obj:`None`)
+            timestamps for the nodes in the graph.
+            If set, temporal sampling will be used such that neighbors are
+            guaranteed to fulfill temporal constraints, *i.e.* neighbors have
+            an earlier or equal timestamp than the center node.
+            Only used if :obj:`edge_label_time` is set. (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)

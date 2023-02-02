@@ -77,7 +77,7 @@ def run(args: argparse.ArgumentParser) -> None:
                                                  shuffle=False,
                                                  num_workers=args.num_workers,
                                                  filter_per_worker=args.filter)
-                cpu_affinity = train_loader.enable_cpu_affinity(
+                cpu_affinity = subgraph_loader.enable_cpu_affinity(
                     args.loader_cores) if args.cpu_affinity else nullcontext()
                 runtimes = []
                 num_iterations = 0

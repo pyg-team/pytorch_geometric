@@ -257,11 +257,12 @@ class RandomLinkSplit(BaseTransform):
         rev_edge_type: EdgeType,
     ) -> EdgeStorage:
 
+        edge_attrs = {key for key in store.keys() if store.is_edge_attr(key)}
         for key, value in store.items():
             if key == 'edge_index':
                 continue
 
-            if store.is_edge_attr(key):
+            if key in edge_attrs:
                 value = value[index]
                 if is_undirected:
                     value = torch.cat([value, value], dim=0)

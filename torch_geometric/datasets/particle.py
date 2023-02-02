@@ -5,7 +5,7 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data, Dataset
-from torch_geometric.utils import scatter
+from torch_geometric.utils import index_sort, scatter
 
 
 class TrackingData(Data):
@@ -85,7 +85,7 @@ class TrackMLParticleTrackingDataset(Dataset):
         weight = torch.from_numpy(y['weight'].values).to(torch.float)
 
         # Sort.
-        perm = (particle_id * hit_id.size(0) + hit_id).argsort()
+        _, perm = index_sort(particle_id * hit_id.size(0) + hit_id)
         hit_id = hit_id[perm]
         particle_id = particle_id[perm]
         weight = weight[perm]

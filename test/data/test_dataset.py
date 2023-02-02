@@ -54,6 +54,23 @@ def test_in_memory_dataset():
     assert torch.equal(dataset[1:].x, x2)
 
 
+def test_in_memory_dataset_copy():
+    data_list = [Data(x=torch.randn(5, 16)) for _ in range(4)]
+    dataset = MyTestDataset(data_list)
+
+    copied_dataset = dataset.copy()
+    assert id(copied_dataset) != id(dataset)
+
+    assert len(copied_dataset) == len(dataset) == 4
+    for copied_data, data in zip(copied_dataset, dataset):
+        assert torch.equal(copied_data.x, data.x)
+
+    copied_dataset = dataset.copy([1, 2])
+    assert len(copied_dataset) == 2
+    assert torch.equal(copied_dataset[0].x, data_list[1].x)
+    assert torch.equal(copied_dataset[1].x, data_list[2].x)
+
+
 def test_to_datapipe():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
