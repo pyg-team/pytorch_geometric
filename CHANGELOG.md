@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Added AntiSymmetricConv ([#6577]https://github.com/pyg-team/pytorch_geometric/pull/6577)
+- Added AntiSymmetricConv ([#6577](https://github.com/pyg-team/pytorch_geometric/pull/6577))
 - Added support for accelerated GNN layers in `nn.conv.cugraph` via `cugraph-ops` ([#6388](https://github.com/pyg-team/pytorch_geometric/pull/6388))
 - Added accelerated `index_sort` function from `pyg-lib` for faster sorting ([#6554](https://github.com/pyg-team/pytorch_geometric/pull/6554))
 - Fix incorrect device in `EquilibriumAggregration` ([#6560](https://github.com/pyg-team/pytorch_geometric/pull/6560))
