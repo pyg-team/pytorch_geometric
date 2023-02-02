@@ -1,5 +1,4 @@
 import torch
-import torch.nn.functional as F
 
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.profile.profiler import Profiler
