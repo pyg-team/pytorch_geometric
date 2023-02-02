@@ -19,6 +19,7 @@ from .sg_conv import SGConv
 from .appnp import APPNP
 from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
+from .cugraph.rgcn_conv import CuGraphRGCNConv
 from .rgat_conv import RGATConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
@@ -54,7 +55,6 @@ from .han_conv import HANConv
 from .lg_conv import LGConv
 from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
-from .rgcn_conv_cugraph import RGCNConvCuGraph
 from .gps_conv import GPSConv
 
 __all__ = [
@@ -81,6 +81,7 @@ __all__ = [
     'APPNP',
     'MFConv',
     'RGCNConv',
+    'CuGraphRGCNConv',
     'FastRGCNConv',
     'RGATConv',
     'SignedConv',
@@ -119,7 +120,6 @@ __all__ = [
     'HANConv',
     'LGConv',
     'PointGNNConv',
-    'RGCNConvCuGraph',
     'GPSConv',
 ]
 

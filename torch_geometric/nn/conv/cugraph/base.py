@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -13,12 +13,15 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
     def to_csc(
         edge_index: Tensor,
         size: Optional[Tuple[int, int]] = None,
-    ) -> Tuple[Tensor, Tensor]:
+        value: Optional[Tensor] = None,
+    ) -> Union[Tuple[Tensor, Tensor], Tuple[Tensor, Tensor, Tensor]]:
         r"""
         Args:
             edge_index (torch.Tensor): The edge indices.
             size ((int, int), optional). The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
+            value (torch.Tensor): The values on the edges.
+                (default: :obj:`None`)
         """
         row, col = edge_index
         num_target_nodes = size[1] if size is not None else int(col.max() + 1)
@@ -26,6 +29,10 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
         row = row[perm]
 
         colptr = torch._convert_indices_from_coo_to_csr(col, num_target_nodes)
+
+        if value is not None:
+            value = value[perm]
+            return row, colptr, value
 
         return row, colptr
 
