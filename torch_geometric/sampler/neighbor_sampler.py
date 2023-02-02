@@ -551,7 +551,7 @@ def neg_sample(seed: Tensor, neg_sampling: NegativeSampling, num_nodes: int,
 
     # If we are in a temporal-sampling scenario, we need to respect the
     # timestamp of the given nodes we can use as negative examples.
-    # That is, we can only sample nodes for which `node_time < seed_time`.
+    # That is, we can only sample nodes for which `node_time <= seed_time`.
     # For now, we use a greedy algorithm which randomly samples negative
     # nodes and discard any which do not respect the temporal constraint.
     # We iteratively repeat this process until we have sampled a valid node for
@@ -563,7 +563,7 @@ def neg_sample(seed: Tensor, neg_sampling: NegativeSampling, num_nodes: int,
 
     out = neg_sampling.sample(num_samples * seed.numel(), num_nodes)
     out = out.view(num_samples, seed.numel())
-    mask = node_time[out] >= seed_time  # holds all invalid samples.
+    mask = node_time[out] > seed_time  # holds all invalid samples.
     neg_sampling_complete = False
     for i in range(5):  # pragma: no cover
         num_invalid = int(mask.sum())

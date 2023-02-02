@@ -10,6 +10,7 @@ from torch.nn.parameter import Parameter
 import torch_geometric.typing
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
+from torch_geometric.utils import index_sort
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
@@ -255,7 +256,7 @@ class HeteroLinear(torch.nn.Module):
             perm: Optional[Tensor] = None
             if not self.is_sorted:
                 if (type_vec[1:] < type_vec[:-1]).any():
-                    type_vec, perm = type_vec.sort()
+                    type_vec, perm = index_sort(type_vec, self.num_types)
                     x = x[perm]
 
             type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
