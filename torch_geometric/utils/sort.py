@@ -2,9 +2,8 @@ from typing import Optional, Tuple
 
 import torch
 
-from torch_geometric.typing import WITH_PYG_LIB, pyg_lib
-
-WITH_INDEX_SORT = WITH_PYG_LIB and hasattr(torch.ops.pyg, 'index_sort')
+import torch_geometric.typing
+from torch_geometric.typing import pyg_lib
 
 
 def index_sort(
@@ -23,6 +22,6 @@ def index_sort(
             greater than or equal to the real maximum.
             (default: :obj:`None`)
     """
-    if not WITH_INDEX_SORT:  # pragma: no cover
+    if not torch_geometric.typing.WITH_INDEX_SORT:  # pragma: no cover
         return inputs.sort()
     return pyg_lib.ops.index_sort(inputs, max_value=max_value)
