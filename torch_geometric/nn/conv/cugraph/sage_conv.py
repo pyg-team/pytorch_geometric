@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
 
-from torch_geometric.nn.conv.cugraph.base import CuGraphModule
+from torch_geometric.nn.conv.cugraph import CuGraphModule
 
 try:
     from pylibcugraphops import make_fg_csr, make_mfg_csr

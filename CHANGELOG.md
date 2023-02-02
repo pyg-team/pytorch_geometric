@@ -15,7 +15,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the `BAMultiShapesDataset` ([#6541](https://github.com/pyg-team/pytorch_geometric/pull/6541))
 - Added the interfaces of a graph pooling framework ([#6540](https://github.com/pyg-team/pytorch_geometric/pull/6540))
 - Added automatic `n_id` and `e_id` attributes to mini-batches produced by `NodeLoader` and `LinkLoader` ([#6524](https://github.com/pyg-team/pytorch_geometric/pull/6524))
->>>>>>> 9c1bce64f6d3f55616cb85e298a4a8a747f3a010
 - Added `PGMExplainer` to `torch_geometric.contrib` ([#6149](https://github.com/pyg-team/pytorch_geometric/pull/6149))
 - Added a `NumNeighbors` helper class for specifying the number of neighbors when sampling ([#6501](https://github.com/pyg-team/pytorch_geometric/pull/6501), [#6505](https://github.com/pyg-team/pytorch_geometric/pull/6505))
 - Added caching to `is_node_attr()` and `is_edge_attr()` calls ([#6492](https://github.com/pyg-team/pytorch_geometric/pull/6492))
