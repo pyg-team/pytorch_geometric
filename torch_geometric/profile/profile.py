@@ -123,6 +123,14 @@ class timeit(ContextDecorator):
         with timeit() as t:
             z = test(model, x, edge_index)
         time = t.duration
+
+    Args:
+        log (bool, optional): If set to :obj:`False`, will not log any runtime
+            to the console. (default: :obj:`True`)
+        avg_time_divisor (int, optional): If set to a value greater than
+            :obj:`1`, will divide the total time by this value. Useful for
+            calculating the average of runtimes within a for-loop.
+            (default: :obj:`0`)
     """
     def __init__(self, log: bool = True, avg_time_divisor: int = 0):
         self.log = log
