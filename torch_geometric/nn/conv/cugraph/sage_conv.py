@@ -21,7 +21,7 @@ class CuGraphSAGEConv(CuGraphModule):  # pragma: no cover
 
     :class:`CuGraphSAGEConv` is an optimized version of
     :class:`~torch_geometric.nn.conv.SAGEConv` based on the :obj:`cugraph-ops`
-    package that fuses message passing computation for accelerated exeuction
+    package that fuses message passing computation for accelerated execution
     and lower memory footprint.
     """
     def __init__(
