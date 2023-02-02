@@ -7,17 +7,15 @@ from torch_geometric.testing import onlyCUDA, withPackage
 
 @onlyCUDA
 @withPackage('pylibcugraphops>=23.02')
-@pytest.mark.parametrize('add_self_loops', [True, False])
 @pytest.mark.parametrize('bias', [True, False])
 @pytest.mark.parametrize('bipartite', [True, False])
 @pytest.mark.parametrize('concat', [True, False])
 @pytest.mark.parametrize('heads', [1, 2, 3])
 @pytest.mark.parametrize('max_num_neighbors', [8, None])
-def test_gat_conv_equality(add_self_loops, bias, bipartite, concat, heads,
-                           max_num_neighbors):
+def test_gat_conv_equality(bias, bipartite, concat, heads, max_num_neighbors):
 
     in_channels, out_channels = (5, 2)
-    kwargs = dict(add_self_loops=add_self_loops, bias=bias, concat=concat)
+    kwargs = dict(bias=bias, concat=concat)
 
     size = (10, 8) if bipartite else (10, 10)
     x = torch.rand(size[0], in_channels, device='cuda')
@@ -26,7 +24,8 @@ def test_gat_conv_equality(add_self_loops, bias, bipartite, concat, heads,
         [0, 1, 2, 3, 4, 5, 6, 7, 7, 7, 7, 7, 7, 7, 7],
     ], device='cuda')
 
-    conv1 = GATConv(in_channels, out_channels, heads, **kwargs).cuda()
+    conv1 = GATConv(in_channels, out_channels, heads, add_self_loops=False,
+                    **kwargs).cuda()
     conv2 = CuGraphGATConv(in_channels, out_channels, heads, **kwargs).cuda()
 
     with torch.no_grad():

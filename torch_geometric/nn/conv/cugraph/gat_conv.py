@@ -30,7 +30,6 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         heads: int = 1,
         concat: bool = True,
         negative_slope: float = 0.2,
-        add_self_loops: bool = True,
         bias: bool = True,
     ):
         if HAS_PYLIBCUGRAPHOPS is False:
@@ -43,7 +42,6 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         self.heads = heads
         self.concat = concat
         self.negative_slope = negative_slope
-        self.add_self_loops = add_self_loops
 
         self.lin = nn.Linear(in_channels, heads * out_channels, bias=False)
         self.att = nn.Parameter(torch.Tensor(2 * heads * out_channels))
