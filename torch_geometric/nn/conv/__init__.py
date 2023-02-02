@@ -8,6 +8,7 @@ from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
+from .cugraph.gat_conv import CuGraphGATConv
 from .fused_gat_conv import FusedGATConv
 from .gatv2_conv import GATv2Conv
 from .transformer_conv import TransformerConv
@@ -55,7 +56,6 @@ from .lg_conv import LGConv
 from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
 from .gps_conv import GPSConv
-from .gat_conv_cugraph import GATConvCuGraph
 
 __all__ = [
     'MessagePassing',
@@ -68,6 +68,7 @@ __all__ = [
     'GatedGraphConv',
     'ResGatedGraphConv',
     'GATConv',
+    'CuGraphGATConv',
     'FusedGATConv',
     'GATv2Conv',
     'TransformerConv',
@@ -120,7 +121,6 @@ __all__ = [
     'LGConv',
     'PointGNNConv',
     'GPSConv',
-    'GATConvCuGraph',
 ]
 
 classes = __all__
