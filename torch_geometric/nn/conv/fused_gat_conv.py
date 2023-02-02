@@ -16,7 +16,7 @@ class FusedGATConv(GATConv):  # pragma: no cover
 
     :class:`FusedGATConv` is an optimized version of
     :class:`~torch_geometric.nn.conv.GATConv` based on the :obj:`dgNN` package
-    that fuses message passing computation for accelerated exeuction and lower
+    that fuses message passing computation for accelerated execution and lower
     memory footprint.
 
     .. note::
