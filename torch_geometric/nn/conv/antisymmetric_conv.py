@@ -4,7 +4,7 @@ from typing import Optional
 import torch
 from torch.nn import Parameter, init
 
-from torch_geometric.nn import GCNConv, MessagePassing
+from torch_geometric.nn.conv import GCNConv, MessagePassing
 
 
 class AntiSymmetricConv(MessagePassing):
@@ -73,6 +73,7 @@ class AntiSymmetricConv(MessagePassing):
 
     def forward(self, x: torch.Tensor, edge_index: torch.Tensor,
                 edge_weight: Optional[torch.Tensor] = None) -> torch.Tensor:
+        """"""
         antisymmetric_W = self.W - self.W.T - self.gamma * self.I
 
         for _ in range(self.num_iters):
@@ -87,6 +88,7 @@ class AntiSymmetricConv(MessagePassing):
         return x
 
     def propagate(self, x, edge_index, edge_weight):
+        """"""
         return self.phi(x=x, edge_index=edge_index, edge_weight=edge_weight)
 
     def reset_parameters(self):
