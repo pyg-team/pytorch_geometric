@@ -6,7 +6,7 @@ from torch import Tensor
 from torch_geometric.utils import index_sort
 
 
-class CuGraphModule(torch.nn.Module):
+class CuGraphModule(torch.nn.Module):  # pragma: no cover
     r"""An abstract base class for implementing cugraph message passing layers.
     """
     @staticmethod
@@ -20,7 +20,6 @@ class CuGraphModule(torch.nn.Module):
             size ((int, int), optional). The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
         """
-        # TODO Consider out-sourcing to base class or utility function.
         row, col = edge_index
         num_target_nodes = size[1] if size is not None else int(col.max() + 1)
         col, perm = index_sort(col, max_value=num_target_nodes)

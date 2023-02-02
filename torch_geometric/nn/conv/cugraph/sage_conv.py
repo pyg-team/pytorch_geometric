@@ -15,7 +15,7 @@ except ImportError:
     HAS_PYLIBCUGRAPHOPS = False
 
 
-class CuGraphSAGEConv(CuGraphModule):
+class CuGraphSAGEConv(CuGraphModule):  # pragma: no cover
     r"""The GraphSAGE operator from the `"Inductive Representation Learning on
     Large Graphs" <https://arxiv.org/abs/1706.02216>`_ paper.
 
@@ -63,7 +63,7 @@ class CuGraphSAGEConv(CuGraphModule):
     def reset_parameters(self):
         if self.project:
             self.pre_lin.reset_parameters()
-        self.linear.reset_parameters()
+        self.lin.reset_parameters()
 
     def forward(
         self,
