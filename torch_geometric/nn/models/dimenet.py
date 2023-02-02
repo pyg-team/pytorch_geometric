@@ -275,7 +275,7 @@ class InteractionPPBlock(torch.nn.Module):
             res_layer.reset_parameters()
         glorot_orthogonal(self.lin.weight, scale=2.0)
         self.lin.bias.data.fill_(0)
-        for res_layer in self.layers_before_skip:
+        for res_layer in self.layers_after_skip:
             res_layer.reset_parameters()
 
     def forward(self, x: Tensor, rbf: Tensor, sbf: Tensor, idx_kj: Tensor,

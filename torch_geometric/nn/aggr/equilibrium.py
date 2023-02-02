@@ -175,7 +175,7 @@ class EquilibriumAggregation(Aggregation):
                                iterations=self.grad_iter)
 
         if dim_size > index_size:
-            zero = torch.zeros(dim_size - index_size, *y.size()[1:])
+            zero = y.new_zeros(dim_size - index_size, *y.size()[1:])
             y = torch.cat([y, zero])
 
         return y
