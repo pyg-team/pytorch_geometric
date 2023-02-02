@@ -25,11 +25,11 @@ def test_hetero_conv(aggr):
     data['author'].x = torch.randn(30, 64)
     data['paper', 'paper'].edge_index = get_edge_index(50, 50, 200)
     data['paper', 'author'].edge_index = get_edge_index(50, 30, 100)
-    # Test edge `args_dict` with `edge_attr` args in the `GATConv`
-    data['paper', 'author'].edge_attr = torch.rand(100, 3)
+    data['paper', 'author'].edge_attr = torch.randn(100, 3)
     data['author', 'paper'].edge_index = get_edge_index(30, 50, 100)
     data['paper', 'paper'].edge_weight = torch.rand(200)
-    # Test missing edge type in convs
+
+    # Unspecified edge types should be ignored:
     data['author', 'author'].edge_index = get_edge_index(30, 30, 100)
 
     conv = HeteroConv(
@@ -80,7 +80,7 @@ def test_hetero_conv_with_custom_conv():
     data['author', 'paper'].edge_index = get_edge_index(30, 50, 100)
 
     conv = HeteroConv({key: CustomConv(64) for key in data.edge_types})
-    # Test node `args_dict` and `kwargs_dict` with `y_dict` and `z_dict`
+    # Test node `args_dict` and `kwargs_dict` with `y_dict` and `z_dict`:
     out = conv(data.x_dict, data.edge_index_dict, data.y_dict,
                z_dict=data.z_dict)
     assert len(out) == 2
