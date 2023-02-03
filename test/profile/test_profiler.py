@@ -2,11 +2,10 @@ import torch
 
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.profile.profiler import Profiler
-from torch_geometric.testing import onlyFullTest, withCUDA
+from torch_geometric.testing import withCUDA
 
 
 @withCUDA
-@onlyFullTest
 def test_torch_profiler(get_dataset, device):
     x = torch.randn(10, 16, device=device)
     edge_index = torch.tensor([

@@ -22,7 +22,7 @@ Measure = namedtuple('Measure', [
 ])
 
 
-class Profiler:  # pragma: no cover
+class Profiler:
     r"""Layer by layer profiling of PyTorch models, using the PyTorch profiler
     for memory profiling. Parts of the code are adapted from :obj:`torchprof`
     for layer-wise grouping.
