@@ -4,7 +4,6 @@ import os.path as osp
 from collections import Counter
 from typing import Callable, List, Optional
 
-import numpy as np
 import torch
 
 from torch_geometric.data import (
@@ -13,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_tar,
 )
+from torch_geometric.utils import index_sort
 
 
 class Entities(InMemoryDataset):
@@ -148,7 +148,7 @@ class Entities(InMemoryDataset):
             edges.append([dst, src, 2 * rel + 1])
 
         edges = torch.tensor(edges, dtype=torch.long).t().contiguous()
-        perm = (N * R * edges[0] + R * edges[1] + edges[2]).argsort()
+        _, perm = index_sort(N * R * edges[0] + R * edges[1] + edges[2])
         edges = edges[:, perm]
 
         edge_index, edge_type = edges[:2], edges[2]
@@ -169,7 +169,7 @@ class Entities(InMemoryDataset):
         labels_df = pd.read_csv(task_file, sep='\t')
         labels_set = set(labels_df[label_header].values.tolist())
         labels_dict = {lab: i for i, lab in enumerate(list(labels_set))}
-        nodes_dict = {np.unicode(key): val for key, val in nodes_dict.items()}
+        nodes_dict = {str(key): val for key, val in nodes_dict.items()}
 
         train_labels_df = pd.read_csv(train_file, sep='\t')
         train_indices, train_labels = [], []

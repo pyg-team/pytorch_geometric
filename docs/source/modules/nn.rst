@@ -11,8 +11,6 @@ torch_geometric.nn
    {% for name in torch_geometric.nn.dense.lin_classes %}
 .. autoclass:: {{ name }}
    :members:
-   :undoc-members:
-   :exclude-members: training, initialize_parameters
    {% endfor %}
 
 Convolutional Layers
@@ -32,11 +30,6 @@ Convolutional Layers
    :members:
    :undoc-members:
    :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, initialize_parameters
-
-.. automodule:: torch_geometric.nn.meta
-   :members:
-   :undoc-members:
-   :exclude-members: training
 
 Aggregation Operators
 ---------------------
@@ -150,6 +143,8 @@ For combining via attention, we need to additionally specify the :obj:`in_channe
                                       out_channels=64, num_heads=4))
 
 If aggregations are given as a list, they will be automatically resolved to a :class:`~torch_geometric.nn.aggr.MultiAggregation`, *e.g.*, :obj:`aggr=['mean', 'std', 'median']`.
+
+Read more about the `Aggregation` package in this [blog](https://medium.com/@pytorch_geometric/a-principled-approach-to-aggregations-983c086b10b3).
 
 Finally, we added full support for customization of aggregations into the :class:`~torch_geometric.nn.conv.SAGEConv` layer --- simply override its :obj:`aggr` argument and **utilize the power of aggregation within your GNN**.
 

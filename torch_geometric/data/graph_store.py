@@ -28,6 +28,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import EdgeTensorType, EdgeType, OptTensor
+from torch_geometric.utils import index_sort
 from torch_geometric.utils.mixin import CastMixin
 
 # The output of converting between two types in the GraphStore is a Tuple of
@@ -276,9 +277,9 @@ class GraphStore:
                 col = ptr2ind(col, row.numel())
 
             if attr.layout != EdgeLayout.CSR:  # COO->CSR
-                row, perm = row.sort()  # Cannot be sorted by destination.
-                col = col[perm]
                 num_rows = attr.size[0] if attr.size else int(row.max()) + 1
+                row, perm = index_sort(row, max_value=num_rows)
+                col = col[perm]
                 row = ind2ptr(row, num_rows)
 
         else:  # CSC output requested:
@@ -286,10 +287,10 @@ class GraphStore:
                 row = ptr2ind(row, col.numel())
 
             if attr.layout != EdgeLayout.CSC:  # COO->CSC
-                if not attr.is_sorted:  # Not sorted by destination.
-                    col, perm = col.sort()
-                    row = row[perm]
                 num_cols = attr.size[1] if attr.size else int(col.max()) + 1
+                if not attr.is_sorted:  # Not sorted by destination.
+                    col, perm = index_sort(col, max_value=num_cols)
+                    row = row[perm]
                 col = ind2ptr(col, num_cols)
 
         if attr.layout != layout and store:

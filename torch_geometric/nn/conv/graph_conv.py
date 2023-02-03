@@ -1,11 +1,12 @@
 from typing import Tuple, Union
 
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
+from torch_geometric.utils import spmm
 
 
 class GraphConv(MessagePassing):
@@ -91,4 +92,4 @@ class GraphConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
-        return matmul(adj_t, x[0], reduce=self.aggr)
+        return spmm(adj_t, x[0], reduce=self.aggr)
