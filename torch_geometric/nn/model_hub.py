@@ -30,40 +30,48 @@ class PyGModelHubMixin(ModelHubMixin):
 
     Example of using this with Node2Vec and the Cora dataset from Planetoid:
 
-    from torch_geometric.datasets import Planetoid
-    from torch_geometric.nn import Node2Vec
-    from torch_geometric.nn.model_hub import PyGModelHubMixin
+    .. code-block:: python
+    
+      from torch_geometric.datasets import Planetoid
+      from torch_geometric.nn import Node2Vec
+      from torch_geometric.nn.model_hub import PyGModelHubMixin
+  
+      # Define your class with the mixin:
+      class N2V(Node2Vec, PyGModelHubMixin):
+          def __init__(self,model_name, dataset_name, model_kwargs ):
+              Node2Vec.__init__(self,**model_kwargs)
+              PyGModelHubMixin.__init__(self, model_name,
+                  dataset_name, model_kwargs)
+      
+      # instantiate your model:
+      n2v = N2V(model_name='node2vec',
+          dataset_name='Cora', model_kwargs=dict(
+          edge_index=data.edge_index, embedding_dim=128,
+          walk_length=20, context_size=10, walks_per_node=10,
+          num_negative_samples=1, p=1, q=1, sparse=True))
+      
+      # train model
+      ...
+      
+      # push to Huggingface:
+      repo_id = ... # your repo id
+      n2v.save_pretrained(local_file_path, push_to_hub=True,
+          repo_id=repo_id)
+  
+      # Load the model for inference:
+      # The required arguments are the repo id/local folder, and any model
+      # initialisation arguments that are not native python types (e.g
+      # Node2Vec requires the edge_index argument which is a tensor--
+      # this is not saved in model hub)
+  
+      model = N2V.from_pretrained( repo_id,
+          model_name='node2vec', dataset_name='Cora',
+          edge_index=data.edge_index)
 
-    1. Define your class with the mixin:
-    class N2V(Node2Vec, PyGModelHubMixin):
-        def __init__(self,model_name, dataset_name, model_kwargs ):
-            Node2Vec.__init__(self,**model_kwargs)
-            PyGModelHubMixin.__init__(self, model_name,
-                dataset_name, model_kwargs)
-    2. instantiate your model:
-    n2v = N2V(model_name='node2vec',
-        dataset_name='Cora', model_kwargs=dict(
-        edge_index=data.edge_index, embedding_dim=128,
-        walk_length=20, context_size=10, walks_per_node=10,
-        num_negative_samples=1, p=1, q=1, sparse=True))
-    3. train model
-    4. push to Huggingface:
-    n2v.save_pretrained(local_file_path, push_to_hub=True,
-        repo_id=[huggingface repo id])
-
-    Load the model for inference:
-    the required arguments are the repo id/local folder, and any model
-    initialisation arguments that are not native python types (e.g
-    Node2Vec requires the edge_index argument which is a tensor--
-    this is not saved in model hub)
-
-    model = N2V.from_pretrained([huggingface repo id/ local filepath],
-        model_name='node2vec', dataset_name='Cora',
-        edge_index=data.edge_index)
-
-    Note: at the moment the model card is fairly basic--
-    override the `construct_model_card` method if you want to have
-    a more detailed model card
+    ..note::
+        At the moment the model card is fairly basic--
+        override the `construct_model_card` method if you want to have
+        a more detailed model card
 
     """
     def __init__(self, model_name: str, dataset_name: str, model_kwargs: Dict):
