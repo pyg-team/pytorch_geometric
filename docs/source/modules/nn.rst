@@ -144,6 +144,8 @@ For combining via attention, we need to additionally specify the :obj:`in_channe
 
 If aggregations are given as a list, they will be automatically resolved to a :class:`~torch_geometric.nn.aggr.MultiAggregation`, *e.g.*, :obj:`aggr=['mean', 'std', 'median']`.
 
+Read more about the `Aggregation` package in this [blog](https://medium.com/@pytorch_geometric/a-principled-approach-to-aggregations-983c086b10b3).
+
 Finally, we added full support for customization of aggregations into the :class:`~torch_geometric.nn.conv.SAGEConv` layer --- simply override its :obj:`aggr` argument and **utilize the power of aggregation within your GNN**.
 
 .. autosummary::
