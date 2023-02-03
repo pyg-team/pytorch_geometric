@@ -1,6 +1,5 @@
 import torch
 from torch_sparse import SparseTensor
-
 from torch_geometric.nn import AntiSymmetricConv
 
 
@@ -15,15 +14,17 @@ def test_antisymmetric_conv():
     assert conv.__repr__() == (
         'AntiSymmetricConv(in_channels=8, phi=GCNConv(8, 8), num_iters=1, '
         'epsilon=0.1, gamma=0.1, activ_fun=tanh, bias=True)')
-    out = conv(x1, edge_index, value)
-    assert out.size() == (4, 8)
-    assert conv(x1, edge_index, value).tolist() == out.tolist()
-    assert torch.allclose(conv(x1, edge_index, value), out)
+    
+    out1 = conv(x1, edge_index, value)
+    assert out1.size() == (4, 8)
+    assert conv(x1, edge_index, value).tolist() == out1.tolist()
+    assert torch.allclose(conv(x1, edge_index, value), out1)
+    
+    out2 = conv(x1, adj.t())
+    assert conv(x1, adj.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv(x1, adj.t()), out2)
 
-    out = conv(x1, edge_index)
-    assert out.size() == (4, 8)
-    assert conv(x1, edge_index).tolist() == out.tolist()
-    assert torch.allclose(conv(x1, edge_index), out)
-
-    assert conv(x1, adj.t()).tolist() == out.tolist()
-    assert torch.allclose(conv(x1, adj.t()), out)
+    out3 = conv(x1, edge_index)
+    assert out3.size() == (4, 8)
+    assert conv(x1, edge_index).tolist() == out3.tolist()
+    assert torch.allclose(conv(x1, edge_index), out3)
