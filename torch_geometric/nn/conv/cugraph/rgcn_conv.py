@@ -1,7 +1,8 @@
 from typing import Optional, Tuple
 
 import torch
-from torch import Parameter, Tensor
+from torch import Tensor
+from torch.nn import Parameter
 
 from torch_geometric.nn.conv.cugraph import CuGraphModule
 from torch_geometric.nn.inits import glorot, zeros
