@@ -12,7 +12,7 @@ try:
         hf_hub_download,
     )
 except ImportError:
-    print('please install huggingface hub to use this mixin')
+    raise ImportError("'PyGModelHubMixin' requires 'huggingface_hub'")
 
 CONFIG_NAME = 'config.json'
 MODEL_HUB_ORGANIZATION = "pytorch_geometric"
