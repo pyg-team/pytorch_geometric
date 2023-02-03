@@ -38,7 +38,6 @@ class Profiler(object):
             will not be used.
             (default: :obj:`False`)
     """
-
     def __init__(self, model, enabled=True, use_cuda=False,
                  profile_memory=False, paths=None):
         self._model = model
