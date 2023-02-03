@@ -73,7 +73,7 @@ class Profiler(object):
 
     def __str__(self):
         full_table, heading, raw_info, layer_names, layer_stats = \
-            layer_trace(self.traces,
+            _layer_trace(self.traces,
                         self.trace_profile_events)
         # print layer-wise memory consumption
         return full_table
@@ -140,7 +140,7 @@ class Profiler(object):
             module.forward = self._forwards[path]
 
 
-def layer_trace(
+def _layer_trace(
         traces: NamedTuple,
         trace_events: object,
         show_events: bool = True,
