@@ -32,11 +32,12 @@ The :class:`torch_geometric.explain.Explainer` class is designed to handle all e
 This class allows the user to easily compare different explainability methods and to easily switch between different types of masks, while making sure the high-level framework stays the same.
 The :class:`~torch_geometric.explain.Explainer` generates an :class:`~torch_geometric.explain.Explanation` or :class:`~torch_geometric.explain.HeteroExplanation` object which contains the final information about which nodes, edges and features are crucial to explain a GNN model.
 
-Check out this [blog](https://medium.com/@pytorch_geometric/graph-machine-learning-explainability-with-pyg-ff13cffc23c2) to understand the desing of the
-`torch_geometric.explain` module. Below we discuss a few use cases with code.
+You can read more about the :class:`~torch_geometric.explain` package in this [blog post](https://medium.com/@pytorch_geometric/graph-machine-learning-explainability-with-pyg-ff13cffc23c2).
 
 Examples
 --------
+
+In what follows, we discuss a few use-codes with code.
 
 Explaining node classification on a homogeneous graph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
