@@ -1,7 +1,8 @@
 from typing import Optional, Tuple
 
 import torch
-from torch import Tensor, nn
+from torch import Tensor
+from torch.nn import Linear, Parameter
 
 from torch_geometric.nn.conv.cugraph import CuGraphModule
 from torch_geometric.nn.inits import zeros
@@ -38,13 +39,13 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         self.concat = concat
         self.negative_slope = negative_slope
 
-        self.lin = nn.Linear(in_channels, heads * out_channels, bias=False)
-        self.att = nn.Parameter(torch.Tensor(2 * heads * out_channels))
+        self.lin = Linear(in_channels, heads * out_channels, bias=False)
+        self.att = Parameter(torch.Tensor(2 * heads * out_channels))
 
         if bias and concat:
-            self.bias = nn.Parameter(torch.Tensor(heads * out_channels))
+            self.bias = Parameter(torch.Tensor(heads * out_channels))
         elif bias and not concat:
-            self.bias = nn.Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.Tensor(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -52,9 +53,9 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
 
     def reset_parameters(self):
         self.lin.reset_parameters()
-        gain = nn.init.calculate_gain('relu')
-        nn.init.xavier_normal_(self.att.view(2, self.heads, self.out_channels),
-                               gain=gain)
+        gain = torch.nn.init.calculate_gain('relu')
+        torch.nn.init.xavier_normal_(
+            self.att.view(2, self.heads, self.out_channels), gain=gain)
         zeros(self.bias)
 
     def forward(
