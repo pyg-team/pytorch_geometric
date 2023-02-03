@@ -41,7 +41,7 @@ def test_get_cpu_memory_from_gc():
 
 
 @onlyCUDA
-def test_get_cpu_memory_from_gc():
+def test_get_gpu_memory_from_gc():
     old_mem = get_gpu_memory_from_gc()
     _ = torch.randn(10, 128, device='cuda')
     new_mem = get_gpu_memory_from_gc()
