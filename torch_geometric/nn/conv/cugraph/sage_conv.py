@@ -31,11 +31,12 @@ class CuGraphSAGEConv(CuGraphModule):  # pragma: no cover
         project: bool = False,
         bias: bool = True,
     ):
+        super().__init__()
+
         if aggr not in ['mean', 'sum', 'min', 'max']:
             raise ValueError(f"Aggregation function must be either 'mean', "
                              f"'sum', 'min' or 'max' (got '{aggr}')")
 
-        super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.aggr = aggr
