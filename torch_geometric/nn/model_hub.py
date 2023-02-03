@@ -254,7 +254,7 @@ class PyGModelHubMixin(ModelHubMixin):
             model_kwargs will be passed to the model during
             initialization
         """
-        super().from_pretrained(
+        return super().from_pretrained(
             pretrained_model_name_or_path,
             force_download,
             resume_download,
