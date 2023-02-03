@@ -1,6 +1,5 @@
 from typing import Optional, Tuple
 
-import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
@@ -8,11 +7,9 @@ from torch.nn import Linear
 from torch_geometric.nn.conv.cugraph import CuGraphModule
 
 try:
-    from pylibcugraphops import make_fg_csr, make_mfg_csr
     from pylibcugraphops.torch.autograd import agg_concat_n2n as SAGEConvAgg
-    HAS_PYLIBCUGRAPHOPS = True
 except ImportError:
-    HAS_PYLIBCUGRAPHOPS = False
+    pass
 
 
 class CuGraphSAGEConv(CuGraphModule):  # pragma: no cover
@@ -34,10 +31,6 @@ class CuGraphSAGEConv(CuGraphModule):  # pragma: no cover
         project: bool = False,
         bias: bool = True,
     ):
-        if HAS_PYLIBCUGRAPHOPS is False:
-            raise ModuleNotFoundError(f"'{self.__class__.__name__}' requires "
-                                      f"'pylibcugraphops >= 23.02.00'")
-
         if aggr not in ['mean', 'sum', 'min', 'max']:
             raise ValueError(f"Aggregation function must be either 'mean', "
                              f"'sum', 'min' or 'max' (got '{aggr}')")
@@ -71,30 +64,12 @@ class CuGraphSAGEConv(CuGraphModule):  # pragma: no cover
         csc: Tuple[Tensor, Tensor],
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
-        """"""
-        if not x.is_cuda:
-            raise RuntimeError(f"'{self.__class__.__name__}' requires GPU-"
-                               f"based processing (got CPU tensor)")
+        graph = self.get_cugraph(x.size(0), csc, max_num_neighbors)
 
         if self.project:
             x = self.pre_lin(x).relu()
 
-        row, colptr = csc
-
-        # Create `cugraph-ops` graph:
-        if x.size(0) != colptr.numel() - 1:  # Operating in a bipartite graph:
-            if max_num_neighbors is None:
-                max_num_neighbors = int((colptr[1:] - colptr[:-1]).max())
-
-            num_src_nodes = x.size(0)
-            dst_nodes = torch.arange(colptr.numel() - 1, device=x.device)
-
-            _graph = make_mfg_csr(dst_nodes, colptr, row, max_num_neighbors,
-                                  num_src_nodes)
-        else:
-            _graph = make_fg_csr(colptr, row)
-
-        out = SAGEConvAgg(x, _graph, self.aggr)
+        out = SAGEConvAgg(x, graph, self.aggr)
 
         if self.root_weight:
             out = self.lin(out)
