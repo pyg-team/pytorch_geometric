@@ -13,7 +13,7 @@ def test_assortativity():
     assert pytest.approx(out, abs=1e-5) == 1.0
 
     # Test SpraseTensor:
-    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes = [6, 6])
+    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=[6, 6])
     out = assortativity(adj)
     assert pytest.approx(out, abs=1e-5) == 1.0
 
@@ -24,6 +24,6 @@ def test_assortativity():
     assert pytest.approx(out, abs=1e-5) == -1.0
 
     # Test SpraseTensor:
-    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes = [6, 6])
+    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=[6, 6])
     out = assortativity(adj)
     assert pytest.approx(out, abs=1e-5) == -1.0
