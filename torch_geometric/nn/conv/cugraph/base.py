@@ -5,7 +5,7 @@ from torch import Tensor
 
 from torch_geometric.utils import index_sort
 
-try:
+try:  # pragma: no cover
     from pylibcugraphops import (
         make_fg_csr,
         make_fg_csr_hg,

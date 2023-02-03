@@ -51,7 +51,7 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
             self.weight = Parameter(
                 torch.Tensor(num_relations + dim_root_weight, in_channels,
                              out_channels))
-            self.comp = None
+            self.register_parameter('comp', None)
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
