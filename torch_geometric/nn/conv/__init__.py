@@ -8,6 +8,7 @@ from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
+from .cugraph.gat_conv import CuGraphGATConv
 from .fused_gat_conv import FusedGATConv
 from .gatv2_conv import GATv2Conv
 from .transformer_conv import TransformerConv
@@ -19,6 +20,7 @@ from .sg_conv import SGConv
 from .appnp import APPNP
 from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
+from .cugraph.rgcn_conv import CuGraphRGCNConv
 from .rgat_conv import RGATConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
@@ -67,6 +69,7 @@ __all__ = [
     'GatedGraphConv',
     'ResGatedGraphConv',
     'GATConv',
+    'CuGraphGATConv',
     'FusedGATConv',
     'GATv2Conv',
     'TransformerConv',
@@ -80,6 +83,7 @@ __all__ = [
     'APPNP',
     'MFConv',
     'RGCNConv',
+    'CuGraphRGCNConv',
     'FastRGCNConv',
     'RGATConv',
     'SignedConv',
