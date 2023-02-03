@@ -15,8 +15,9 @@ class FusedGATConv(GATConv):  # pragma: no cover
     9a1158154dfa42caddbd0694a4e9bdc8-Paper.pdf>`_ paper.
 
     :class:`FusedGATConv` is an optimized version of
-    :class:`~torch_geometric.nn.conv.GATConv` that fuses message passing
-    computation  for accelerated exeuction and lower memory footprint.
+    :class:`~torch_geometric.nn.conv.GATConv` based on the :obj:`dgNN` package
+    that fuses message passing computation for accelerated execution and lower
+    memory footprint.
 
     .. note::
 
@@ -68,9 +69,9 @@ class FusedGATConv(GATConv):  # pragma: no cover
         r"""
         Args:
             x (Tensor): The node features.
-            csr: ((Tensor, Tensor)): A tuple containing the CSR representation
+            csr ((Tensor, Tensor)): A tuple containing the CSR representation
                 of a graph, given as a tuple of :obj:`(rowptr, col)`.
-            csc: ((Tensor, Tensor)): A tuple containing the CSC representation
+            csc ((Tensor, Tensor)): A tuple containing the CSC representation
                 of a graph, given as a tuple of :obj:`(row, colptr)`.
             perm (Tensor): Permutation tensor to map the CSR representation to
                 the CSC representation.
