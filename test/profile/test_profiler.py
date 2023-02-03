@@ -18,8 +18,8 @@ def test_torch_profiler(get_dataset, device):
 
     with Profiler(model, profile_memory=True, use_cuda=x.is_cuda) as prof:
         model(x, edge_index)
-    _, heading_list, raw_results, layer_names, layer_stats = prof.get_trace()
 
+    _, heading_list, raw_results, layer_names, layer_stats = prof.get_trace()
     assert 'Self CPU total' in heading_list
     assert 'aten::relu' in raw_results
     assert '-act--aten::relu' in layer_names
