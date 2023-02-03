@@ -16,7 +16,6 @@ DATASET_NAME = 'some_dataset'
 CONFIG = {"hello": "world"}
 
 
-@withPackage('huggingface_hub')
 @pytest.fixture
 def dummy_model_class():
     class DummyModel(torch.nn.Module, PyGModelHubMixin):
@@ -31,13 +30,11 @@ def dummy_model_class():
     return DummyModel
 
 
-@withPackage('huggingface_hub')
 @pytest.fixture
 def model(dummy_model_class):
     return dummy_model_class(MODEL_NAME, DATASET_NAME, CONFIG)
 
 
-@withPackage('huggingface_hub')
 def test_model_init(dummy_model_class):
     model = dummy_model_class(
         MODEL_NAME, DATASET_NAME, model_kwargs={
@@ -46,7 +43,6 @@ def test_model_init(dummy_model_class):
     assert model.model_config == CONFIG
 
 
-@withPackage('huggingface_hub')
 def test_save_pretrained(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
     # model._save_pretrained = Mock()
@@ -56,7 +52,6 @@ def test_save_pretrained(model, tmp_path):
     assert len(files) >= 1
 
 
-@withPackage('huggingface_hub')
 def test_save_pretrained_internal(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
     model._save_pretrained = Mock()
@@ -64,7 +59,6 @@ def test_save_pretrained_internal(model, tmp_path):
     model._save_pretrained.assert_called_with(save_directory)
 
 
-@withPackage('huggingface_hub')
 def test_save_pretrained_with_push_to_hub(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
 
@@ -87,7 +81,6 @@ def test_save_pretrained_with_push_to_hub(model, tmp_path):
     model.push_to_hub.assert_called_with(repo_id=REPO_NAME, config=CONFIG)
 
 
-@withPackage('huggingface_hub')
 def test_from_pretrained(model, dummy_model_class, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
     model.save_pretrained(save_directory)
