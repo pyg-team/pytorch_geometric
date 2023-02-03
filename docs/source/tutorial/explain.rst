@@ -37,7 +37,7 @@ You can read more about the :class:`torch_geometric.explain` package in this [bl
 Examples
 --------
 
-In what follows, we discuss a few use-codes with code.
+In what follows, we discuss a few use-cases with corresponding code examples.
 
 Explaining node classification on a homogeneous graph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
