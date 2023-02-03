@@ -13,7 +13,6 @@ from torch_geometric.testing import onlyCUDA, withPackage
 @pytest.mark.parametrize('heads', [1, 2, 3])
 @pytest.mark.parametrize('max_num_neighbors', [8, None])
 def test_gat_conv_equality(bias, bipartite, concat, heads, max_num_neighbors):
-
     in_channels, out_channels = (5, 2)
     kwargs = dict(bias=bias, concat=concat)
 
