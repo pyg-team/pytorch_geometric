@@ -135,6 +135,8 @@ class BGCNConv(MessagePassing):
             self.prior_bias_sigma.fill_(self.prior_variance)
             self.mu_bias.data.normal_(mean=self.posterior_mu_init, std=0.1)
             self.rho_bias.data.normal_(mean=self.posterior_rho_init,std=0.1)
+        self._cached_edge_index = None
+        self._cached_adj_t = None
 
     def kl_div(self, mu_q, sigma_q, mu_p, sigma_p):
         """
@@ -172,7 +174,7 @@ class BGCNConv(MessagePassing):
 
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
 
-        Weight = self.mu_weight + \
+        weight = self.mu_weight + \
             (sigma_weight * self.eps_weight.data.normal_())
 
         if return_kl:
