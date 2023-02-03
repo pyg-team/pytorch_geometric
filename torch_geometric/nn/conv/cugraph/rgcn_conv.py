@@ -97,7 +97,7 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
                                        self.num_relations, max_num_neighbors)
 
         out = RGCNConvAgg(x, self.comp, graph, concat_own=self.root_weight,
-                          norm_by_out_degree=bool(self.aggr == 'mean'))
+                          norm_by_out_degree=self.aggr == 'mean')
 
         out = out @ self.weight.view(-1, self.out_channels)
 
