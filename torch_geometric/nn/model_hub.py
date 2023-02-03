@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 import torch
 
@@ -110,9 +110,18 @@ class PyGModelHubMixin(ModelHubMixin):
         model_to_save = self.module if hasattr(self, "module") else self
         torch.save(model_to_save.state_dict(), path)
 
-    def save_pretrained(self, save_directory: str, push_to_hub: bool = False,
-                        **kwargs):
-
+    def save_pretrained(self, save_directory: Union[str, Path],
+                        push_to_hub: bool = False, repo_id=None, **kwargs):
+        r"""
+        Save a trained model to a local directory or to huggingface model hub
+        Args:
+            save_directory (`str` or `Path`):
+                File directory in which you want to save weights.
+            push_to_hub: Whether to save weights on model hub
+            repo_id: the repository you want to push to
+                (will default to the name of `save_directory` in your
+                namespace).
+        """
         config = self.model_config
         # due to way huggingface hub handles the loading/saving of models,
         # the model config can end up in one of the items in the kwargs
@@ -121,11 +130,10 @@ class PyGModelHubMixin(ModelHubMixin):
         kwargs.pop('config', None)
 
         ModelHubMixin.save_pretrained(self, save_directory, config,
-                                      push_to_hub, **kwargs)
+                                      push_to_hub, repo_id=repo_id, **kwargs)
         model_card = self.construct_model_card(self.model_name,
                                                self.dataset_name)
         if push_to_hub:
-            repo_id = kwargs.get('repo_id')
             model_card.push_to_hub(repo_id)
 
     @classmethod
@@ -177,3 +185,82 @@ class PyGModelHubMixin(ModelHubMixin):
         model.eval()
 
         return model
+
+    @classmethod
+    def from_pretrained(
+        cls,
+        pretrained_model_name_or_path: str,
+        force_download: bool = False,
+        resume_download: bool = False,
+        proxies: Optional[Dict] = None,
+        token: Optional[Union[str, bool]] = None,
+        cache_dir: Optional[str] = None,
+        local_files_only: bool = False,
+        **model_kwargs,
+    ):
+        r"""
+        Download and instantiate a model from the Hugging Face Hub.
+
+        Args:
+        pretrained_model_name_or_path (`str` or `os.PathLike`):
+        Can be either:
+            - A string, the `model id` of a pretrained model
+              hosted inside a model repo on huggingface.co.
+              Valid model ids can be located at the root-level,
+              like `bert-base-uncased`, or namespaced under a
+              user or organization name, like
+              `dbmdz/bert-base-german-cased`.
+            - You can add `revision` by appending `@` at the end
+              of model_id simply like this:
+              `dbmdz/bert-base-german-cased@main` Revision is
+              the specific model version to use. It can be a
+              branch name, a tag name, or a commit id, since we
+              use a git-based system for storing models and
+              other artifacts on huggingface.co, so `revision`
+              can be any identifier allowed by git.
+            - A path to a `directory` containing model weights
+              saved using
+              [`~transformers.PreTrainedModel.save_pretrained`],
+              e.g., `./my_model_directory/`.
+            - `None` if you are both providing the configuration
+              and state dictionary (resp. with keyword arguments
+              `config` and `state_dict`).
+        force_download (`bool`, *optional*, defaults to `False`):
+            Whether to force the (re-)download of the model weights
+            and configuration files, overriding the cached versions
+            if they exist.
+        resume_download (`bool`, *optional*, defaults to `False`):
+            Whether to delete incompletely received files. Will
+            attempt to resume the download if such a file exists.
+        proxies (`Dict[str, str]`, *optional*):
+            A dictionary of proxy servers to use by protocol or
+            endpoint, e.g., `{'http': 'foo.bar:3128',
+            'http://hostname': 'foo.bar:4012'}`. The proxies are
+            used on each request.
+        token (`str` or `bool`, *optional*):
+            The token to use as HTTP bearer authorization for remote
+            files. If `True`, will use the token generated when
+            running `transformers-cli login` (stored in
+            `~/.huggingface`). It is **required** if you
+            want to use a private model
+        cache_dir (`Union[str, os.PathLike]`, *optional*):
+            Path to a directory in which a downloaded pretrained
+            model configuration should be cached if the standard
+            cache should not be used.
+        local_files_only(`bool`, *optional*, defaults to `False`):
+            Whether to only look at local files (i.e., do not try to
+            download the model).
+        model_kwargs (`Dict`, *optional*):
+            model_kwargs will be passed to the model during
+            initialization
+        """
+        super().from_pretrained(
+            pretrained_model_name_or_path,
+            force_download,
+            resume_download,
+            proxies,
+            token,
+            cache_dir,
+            local_files_only,
+            **model_kwargs,
+        )
