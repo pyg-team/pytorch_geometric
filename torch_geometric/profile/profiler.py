@@ -38,6 +38,7 @@ class Profiler(object):
             will not be used.
             (default: :obj:`False`)
     """
+
     def __init__(self, model, enabled=True, use_cuda=False,
                  profile_memory=False, paths=None):
         self._model = model
@@ -74,7 +75,7 @@ class Profiler(object):
     def __str__(self):
         full_table, heading, raw_info, layer_names, layer_stats = \
             _layer_trace(self.traces,
-                        self.trace_profile_events)
+                         self.trace_profile_events)
         # print layer-wise memory consumption
         return full_table
 
