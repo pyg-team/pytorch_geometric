@@ -2,9 +2,9 @@ from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter
 
 from torch_geometric.typing import OptTensor
+from torch_geometric.utils import scatter
 
 from .num_nodes import maybe_num_nodes
 
@@ -34,8 +34,10 @@ def contains_self_loops(edge_index: Tensor) -> bool:
     return mask.sum().item() > 0
 
 
-def remove_self_loops(edge_index: Tensor,
-                      edge_attr: OptTensor = None) -> Tuple[Tensor, OptTensor]:
+def remove_self_loops(
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+) -> Tuple[Tensor, OptTensor]:
     r"""Removes every self-loop in the graph given by :attr:`edge_index`, so
     that :math:`(i,i) \not\in \mathcal{E}` for every :math:`i \in \mathcal{V}`.
 
@@ -124,9 +126,11 @@ def add_self_loops(edge_index, edge_attr=None, fill_value=None,
 
 
 def add_self_loops(
-        edge_index: Tensor, edge_attr: OptTensor = None,
-        fill_value: Union[float, Tensor, str] = None,
-        num_nodes: Optional[int] = None) -> Tuple[Tensor, OptTensor]:
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    fill_value: Optional[Union[float, Tensor, str]] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, OptTensor]:
     r"""Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features
@@ -232,9 +236,11 @@ def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
 
 
 def add_remaining_self_loops(
-        edge_index: Tensor, edge_attr: OptTensor = None,
-        fill_value: Union[float, Tensor, str] = None,
-        num_nodes: Optional[int] = None) -> Tuple[Tensor, OptTensor]:
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    fill_value: Optional[Union[float, Tensor, str]] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, OptTensor]:
     r"""Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features

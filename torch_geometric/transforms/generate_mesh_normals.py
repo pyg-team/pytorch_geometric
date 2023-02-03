@@ -1,10 +1,10 @@
 import torch
 import torch.nn.functional as F
-from torch_scatter import scatter_add
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import scatter
 
 
 @functional_transform('generate_mesh_normals')
@@ -22,7 +22,7 @@ class GenerateMeshNormals(BaseTransform):
         idx = torch.cat([face[0], face[1], face[2]], dim=0)
         face_norm = face_norm.repeat(3, 1)
 
-        norm = scatter_add(face_norm, idx, dim=0, dim_size=pos.size(0))
+        norm = scatter(face_norm, idx, 0, pos.size(0), reduce='sum')
         norm = F.normalize(norm, p=2, dim=-1)  # [N, 3]
 
         data.norm = norm

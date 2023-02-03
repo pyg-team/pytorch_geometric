@@ -2,8 +2,9 @@ import os.path as osp
 from typing import Optional
 
 import torch
-from torch_sparse import SparseTensor
 from tqdm import tqdm
+
+from torch_geometric.typing import SparseTensor
 
 
 class GraphSAINTSampler(torch.utils.data.DataLoader):
@@ -32,8 +33,8 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
             (default: :obj:`1`)
         sample_coverage (int): How many samples per node should be used to
             compute normalization statistics. (default: :obj:`0`)
-        save_dir (string, optional): If set, will save normalization
-            statistics to the :obj:`save_dir` directory for faster re-use.
+        save_dir (str, optional): If set, will save normalization statistics to
+            the :obj:`save_dir` directory for faster re-use.
             (default: :obj:`None`)
         log (bool, optional): If set to :obj:`False`, will not log any
             pre-processing progress. (default: :obj:`True`)

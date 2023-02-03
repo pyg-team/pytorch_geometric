@@ -2,6 +2,7 @@ import copy
 import warnings
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from itertools import chain
 from typing import (
     Any,
     Callable,
@@ -17,22 +18,10 @@ from typing import (
 import numpy as np
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
-from torch_geometric.data.feature_store import (
-    FeatureStore,
-    FeatureTensorType,
-    TensorAttr,
-    _field_status,
-)
-from torch_geometric.data.graph_store import (
-    EDGE_LAYOUT_TO_ATTR_NAME,
-    EdgeAttr,
-    EdgeLayout,
-    GraphStore,
-    adj_type_to_edge_tensor_type,
-    edge_tensor_type_to_adj_type,
-)
+from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
+from torch_geometric.data.feature_store import _field_status
+from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import (
     BaseStorage,
     EdgeStorage,
@@ -46,8 +35,9 @@ from torch_geometric.typing import (
     FeatureTensorType,
     NodeType,
     OptTensor,
+    SparseTensor,
 )
-from torch_geometric.utils import subgraph
+from torch_geometric.utils import mask_select, subgraph
 
 
 class BaseData(object):
@@ -99,6 +89,11 @@ class BaseData(object):
 
     def to_namedtuple(self) -> NamedTuple:
         r"""Returns a :obj:`NamedTuple` of stored key/value pairs."""
+        raise NotImplementedError
+
+    def update(self, data: 'BaseData') -> 'BaseData':
+        r"""Updates the data object with the elements from another data object.
+        """
         raise NotImplementedError
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
@@ -192,10 +187,26 @@ class BaseData(object):
         edges, which is double the amount of unique edges."""
         return sum([v.num_edges for v in self.edge_stores])
 
+    def node_attrs(self) -> List[str]:
+        r"""Returns all node-level tensor attribute names."""
+        return list(set(chain(*[s.node_attrs() for s in self.node_stores])))
+
+    def edge_attrs(self) -> List[str]:
+        r"""Returns all edge-level tensor attribute names."""
+        return list(set(chain(*[s.edge_attrs() for s in self.edge_stores])))
+
     def is_coalesced(self) -> bool:
         r"""Returns :obj:`True` if edge indices :obj:`edge_index` are sorted
         and do not contain duplicate entries."""
         return all([store.is_coalesced() for store in self.edge_stores])
+
+    def generate_ids(self):
+        r"""Generates and sets :obj:`n_id` and :obj:`e_id` attributes to assign
+        each node and edge to a continuously ascending and unique ID."""
+        for store in self.node_stores:
+            store.n_id = torch.arange(store.num_nodes)
+        for store in self.edge_stores:
+            store.e_id = torch.arange(store.num_edges)
 
     def coalesce(self):
         r"""Sorts and removes duplicated entries from edge indices
@@ -324,26 +335,28 @@ class BaseData(object):
 
 @dataclass
 class DataTensorAttr(TensorAttr):
-    r"""Attribute class for `Data`, which does not require a `group_name`."""
-    def __init__(self, attr_name=_field_status.UNSET,
-                 index=_field_status.UNSET):
-        # Treat group_name as optional, and move it to the end
+    r"""Tensor attribute for `Data` without group name."""
+    def __init__(
+        self,
+        attr_name=_field_status.UNSET,
+        index=None,
+    ):
         super().__init__(None, attr_name, index)
 
 
 @dataclass
 class DataEdgeAttr(EdgeAttr):
-    r"""Edge attribute class for `Data`, which does not require a
-    `edge_type`."""
+    r"""Edge attribute class for `Data` without edge type."""
     def __init__(
         self,
         layout: Optional[EdgeLayout] = None,
         is_sorted: bool = False,
         size: Optional[Tuple[int, int]] = None,
-        edge_type: EdgeType = None,
     ):
-        # Treat edge_type as optional, and move it to the end
-        super().__init__(edge_type, layout, is_sorted, size)
+        super().__init__(None, layout, is_sorted, size)
+
+
+###############################################################################
 
 
 class Data(BaseData, FeatureStore, GraphStore):
@@ -353,7 +366,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     behaviour of a regular Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/get_started/
     introduction.html#data-handling-of-graphs>`__ for the accompanying
     tutorial.
 
@@ -379,15 +392,15 @@ class Data(BaseData, FeatureStore, GraphStore):
         data = data.to('cuda:0', non_blocking=True)
 
     Args:
-        x (Tensor, optional): Node feature matrix with shape :obj:`[num_nodes,
-            num_node_features]`. (default: :obj:`None`)
+        x (torch.Tensor, optional): Node feature matrix with shape
+            :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
         edge_index (LongTensor, optional): Graph connectivity in COO format
             with shape :obj:`[2, num_edges]`. (default: :obj:`None`)
-        edge_attr (Tensor, optional): Edge feature matrix with shape
+        edge_attr (torch.Tensor, optional): Edge feature matrix with shape
             :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
-        y (Tensor, optional): Graph-level or node-level ground-truth labels
-            with arbitrary shape. (default: :obj:`None`)
-        pos (Tensor, optional): Node position matrix with shape
+        y (torch.Tensor, optional): Graph-level or node-level ground-truth
+            labels with arbitrary shape. (default: :obj:`None`)
+        pos (torch.Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
@@ -499,6 +512,11 @@ class Data(BaseData, FeatureStore, GraphStore):
     def to_namedtuple(self) -> NamedTuple:
         return self._store.to_namedtuple()
 
+    def update(self, data: 'Data') -> 'Data':
+        for key, value in data.items():
+            self[key] = value
+        return self
+
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if isinstance(value, SparseTensor) and 'adj' in key:
             return (0, 1)
@@ -556,22 +574,21 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     def is_node_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes a
-        node-level attribute."""
+        node-level tensor attribute."""
         return self._store.is_node_attr(key)
 
     def is_edge_attr(self, key: str) -> bool:
         r"""Returns :obj:`True` if the object at key :obj:`key` denotes an
-        edge-level attribute."""
+        edge-level tensor attribute."""
         return self._store.is_edge_attr(key)
 
-    def subgraph(self, subset: Tensor):
+    def subgraph(self, subset: Tensor) -> 'Data':
         r"""Returns the induced subgraph given by the node indices
         :obj:`subset`.
 
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-
         out = subgraph(subset, self.edge_index, relabel_nodes=True,
                        num_nodes=self.num_nodes, return_edge_mask=True)
         edge_index, _, edge_mask = out
@@ -583,23 +600,51 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         data = copy.copy(self)
 
-        for key, value in data:
+        for key, value in self:
             if key == 'edge_index':
                 data.edge_index = edge_index
             elif key == 'num_nodes':
                 data.num_nodes = num_nodes
-            elif isinstance(value, Tensor):
-                if self.is_node_attr(key):
-                    data[key] = value[subset]
-                elif self.is_edge_attr(key):
-                    data[key] = value[edge_mask]
+            elif self.is_node_attr(key):
+                cat_dim = self.__cat_dim__(key, value)
+                if subset.dtype == torch.bool:
+                    data[key] = mask_select(value, cat_dim, subset)
+                else:
+                    data[key] = value.index_select(cat_dim, subset)
+            elif self.is_edge_attr(key):
+                cat_dim = self.__cat_dim__(key, value)
+                data[key] = mask_select(value, cat_dim, edge_mask)
 
         return data
 
-    def to_heterogeneous(self, node_type: Optional[Tensor] = None,
-                         edge_type: Optional[Tensor] = None,
-                         node_type_names: Optional[List[NodeType]] = None,
-                         edge_type_names: Optional[List[EdgeType]] = None):
+    def edge_subgraph(self, subset: Tensor) -> 'Data':
+        r"""Returns the induced subgraph given by the edge indices
+        :obj:`subset`.
+        Will currently preserve all the nodes in the graph, even if they are
+        isolated after subgraph computation.
+
+        Args:
+            subset (LongTensor or BoolTensor): The edges to keep.
+        """
+        data = copy.copy(self)
+
+        for key, value in self:
+            if self.is_edge_attr(key):
+                cat_dim = self.__cat_dim__(key, value)
+                if subset.dtype == torch.bool:
+                    data[key] = mask_select(value, cat_dim, subset)
+                else:
+                    data[key] = value.index_select(cat_dim, subset)
+
+        return data
+
+    def to_heterogeneous(
+        self,
+        node_type: Optional[Tensor] = None,
+        edge_type: Optional[Tensor] = None,
+        node_type_names: Optional[List[NodeType]] = None,
+        edge_type_names: Optional[List[EdgeType]] = None,
+    ):
         r"""Converts a :class:`~torch_geometric.data.Data` object to a
         heterogeneous :class:`~torch_geometric.data.HeteroData` object.
         For this, node and edge attributes are splitted according to the
@@ -613,10 +658,10 @@ class Data(BaseData, FeatureStore, GraphStore):
         be reconstructed without any need to pass in additional arguments.
 
         Args:
-            node_type (Tensor, optional): A node-level vector denoting the type
-                of each node. (default: :obj:`None`)
-            edge_type (Tensor, optional): An edge-level vector denoting the
-                type of each edge. (default: :obj:`None`)
+            node_type (torch.Tensor, optional): A node-level vector denoting
+                the type of each node. (default: :obj:`None`)
+            edge_type (torch.Tensor, optional): An edge-level vector denoting
+                the type of each edge. (default: :obj:`None`)
             node_type_names (List[str], optional): The names of node types.
                 (default: :obj:`None`)
             edge_type_names (List[Tuple[str, str, str]], optional): The names
@@ -677,10 +722,11 @@ class Data(BaseData, FeatureStore, GraphStore):
 
         for i, key in enumerate(node_type_names):
             for attr, value in self.items():
-                if attr == 'node_type' or attr == 'edge_type':
+                if attr in {'node_type', 'edge_type', 'ptr'}:
                     continue
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
-                    data[key][attr] = value[node_ids[i]]
+                    cat_dim = self.__cat_dim__(attr, value)
+                    data[key][attr] = value.index_select(cat_dim, node_ids[i])
 
             if len(data[key]) == 0:
                 data[key].num_nodes = node_ids[i].size(0)
@@ -688,7 +734,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         for i, key in enumerate(edge_type_names):
             src, _, dst = key
             for attr, value in self.items():
-                if attr == 'node_type' or attr == 'edge_type':
+                if attr in {'node_type', 'edge_type', 'ptr'}:
                     continue
                 elif attr == 'edge_index':
                     edge_index = value[:, edge_ids[i]]
@@ -696,24 +742,24 @@ class Data(BaseData, FeatureStore, GraphStore):
                     edge_index[1] = index_map[edge_index[1]]
                     data[key].edge_index = edge_index
                 elif isinstance(value, Tensor) and self.is_edge_attr(attr):
-                    data[key][attr] = value[edge_ids[i]]
+                    cat_dim = self.__cat_dim__(attr, value)
+                    data[key][attr] = value.index_select(cat_dim, edge_ids[i])
 
         # Add global attributes.
-        keys = set(data.keys) | {'node_type', 'edge_type', 'num_nodes'}
+        exclude_keys = set(data.keys) | {
+            'node_type', 'edge_type', 'edge_index', 'num_nodes', 'ptr'
+        }
         for attr, value in self.items():
-            if attr in keys:
+            if attr in exclude_keys:
                 continue
-            if len(data.node_stores) == 1:
-                data.node_stores[0][attr] = value
-            else:
-                data[attr] = value
+            data[attr] = value
 
         return data
 
     ###########################################################################
 
     @classmethod
-    def from_dict(cls, mapping: Dict[str, Any]):
+    def from_dict(cls, mapping: Dict[str, Any]) -> 'Data':
         r"""Creates a :class:`~torch_geometric.data.Data` object from a Python
         dictionary."""
         return cls(**mapping)
@@ -733,6 +779,16 @@ class Data(BaseData, FeatureStore, GraphStore):
     def num_edge_features(self) -> int:
         r"""Returns the number of features per edge in the graph."""
         return self._store.num_edge_features
+
+    @property
+    def num_node_types(self) -> int:
+        r"""Returns the number of node types in the graph."""
+        return int(self.node_type.max()) + 1 if 'node_type' in self else 1
+
+    @property
+    def num_edge_types(self) -> int:
+        r"""Returns the number of edge types in the graph."""
+        return int(self.edge_type.max()) + 1 if 'edge_type' in self else 1
 
     def __iter__(self) -> Iterable:
         r"""Iterates over all attributes in the data, yielding their attribute
@@ -787,27 +843,16 @@ class Data(BaseData, FeatureStore, GraphStore):
 
     # FeatureStore interface ##################################################
 
-    def items(self):
-        r"""Returns an `ItemsView` over the stored attributes in the `Data`
-        object."""
-        # NOTE this is necessary to override the default `MutableMapping`
-        # items() method.
-        return self._store.items()
-
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
-        r"""Stores a feature tensor in node storage."""
-        out = getattr(self, attr.attr_name, None)
+        out = self.get(attr.attr_name)
         if out is not None and attr.index is not None:
-            # Attr name exists, handle index:
             out[attr.index] = tensor
         else:
-            # No attr name (or None index), just store tensor:
+            assert attr.index is None
             setattr(self, attr.attr_name, tensor)
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
-        r"""Obtains a feature tensor from node storage."""
-        # Retrieve tensor and index accordingly:
         tensor = getattr(self, attr.attr_name, None)
         if tensor is not None:
             # TODO this behavior is a bit odd, since TensorAttr requires that
@@ -818,15 +863,12 @@ class Data(BaseData, FeatureStore, GraphStore):
         return None
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
-        r"""Deletes a feature tensor from node storage."""
-        # Remove tensor entirely:
         if hasattr(self, attr.attr_name):
             delattr(self, attr.attr_name)
             return True
         return False
 
     def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
-        r"""Returns the size of the tensor corresponding to `attr`."""
         return self._get_tensor(attr).size()
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
@@ -836,70 +878,80 @@ class Data(BaseData, FeatureStore, GraphStore):
             if self._store.is_node_attr(name)
         ]
 
-    def __len__(self) -> int:
-        return BaseData.__len__(self)
-
     # GraphStore interface ####################################################
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        r"""Stores `edge_index` in `Data`, in the specified layout."""
-
-        # Convert the edge index to a recognizable layout:
-        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
-        attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
-        setattr(self, attr_name, attr_val)
-
-        # Set edge attributes:
         if not hasattr(self, '_edge_attrs'):
             self._edge_attrs = {}
+        self._edge_attrs[edge_attr.layout] = edge_attr
 
-        self._edge_attrs[edge_attr.layout.value] = edge_attr
+        row, col = edge_index
 
-        # Set size, if possible:
-        size = edge_attr.size
-        if size is not None:
-            if size[0] != size[1]:
-                raise ValueError(
-                    f"'Data' requires size[0] == size[1], but received "
-                    f"the tuple {size}.")
-            self.num_nodes = size[0]
+        if edge_attr.layout == EdgeLayout.COO:
+            self.edge_index = torch.stack([row, col], dim=0)
+        elif edge_attr.layout == EdgeLayout.CSR:
+            self.adj = SparseTensor(
+                rowptr=row,
+                col=col,
+                sparse_sizes=edge_attr.size,
+                is_sorted=True,
+                trust_data=True,
+            )
+        else:  # edge_attr.layout == EdgeLayout.CSC:
+            size = edge_attr.size[::-1] if edge_attr.size is not None else None
+            self.adj_t = SparseTensor(
+                rowptr=col,
+                col=row,
+                sparse_sizes=size,
+                is_sorted=True,
+                trust_data=True,
+            )
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
-        r"""Obtains the edge index corresponding to `edge_attr` in `Data`,
-        in the specified layout."""
-        # Get the requested layout and the edge tensor type associated with it:
-        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
-        attr_val = getattr(self._store, attr_name, None)
-        if attr_val is not None:
-            # Convert from Adj type to Tuple[Tensor, Tensor]
-            attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
-        return attr_val
+        if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
+            row, col = self.edge_index
+            return row, col
+        elif edge_attr.layout == EdgeLayout.CSR and 'adj' in self:
+            rowptr, col, _ = self.adj.csr()
+            return rowptr, col
+        elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in self:
+            colptr, row, _ = self.adj_t.csr()
+            return row, colptr
+        return None
+
+    def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
+        if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
+            del self.edge_index
+            if hasattr(self, '_edge_attrs'):
+                self._edges_to_layout.pop(EdgeLayout.COO, None)
+            return True
+        elif edge_attr.layout == EdgeLayout.CSR and 'adj' in self:
+            del self.adj
+            if hasattr(self, '_edge_attrs'):
+                self._edges_to_layout.pop(EdgeLayout.CSR, None)
+            return True
+        elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in self:
+            del self.adj_t
+            if hasattr(self, '_edge_attrs'):
+                self._edges_to_layout.pop(EdgeLayout.CSC, None)
+            return True
+        return False
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        r"""Returns `EdgeAttr` objects corresponding to the edge indices stored
-        in `Data` and their layouts"""
-        if not hasattr(self, '_edge_attrs'):
-            return []
-        added_attrs = set()
+        edge_attrs = getattr(self, '_edge_attrs', {})
 
-        # Check edges added via _put_edge_index:
-        edge_attrs = self._edge_attrs.values()
-        for attr in edge_attrs:
-            attr.size = (self.num_nodes, self.num_nodes)
-            added_attrs.add(attr.layout)
+        if 'edge_index' in self and EdgeLayout.COO not in edge_attrs:
+            edge_attrs[EdgeLayout.COO] = DataEdgeAttr('coo', is_sorted=False)
+        if 'adj' in self and EdgeLayout.CSR not in edge_attrs:
+            size = self.adj.sparse_sizes()
+            edge_attrs[EdgeLayout.CSR] = DataEdgeAttr('csr', size=size)
+        if 'adj_t' in self and EdgeLayout.CSC not in edge_attrs:
+            size = self.adj_t.sparse_sizes()[::-1]
+            edge_attrs[EdgeLayout.CSC] = DataEdgeAttr('csc', size=size)
 
-        # Check edges added through regular interface:
-        # TODO deprecate this and store edge attributes for all edges in
-        # EdgeStorage
-        for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
-            if attr_name in self and layout not in added_attrs:
-                edge_attrs.append(
-                    EdgeAttr(edge_type=None, layout=layout,
-                             size=(self.num_nodes, self.num_nodes)))
-
-        return edge_attrs
+        return list(edge_attrs.values())
 
 
 ###############################################################################

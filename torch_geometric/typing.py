@@ -1,8 +1,25 @@
-from typing import Dict, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 from torch import Tensor
-from torch_sparse import SparseTensor
+
+try:
+    import pyg_lib  # noqa
+    WITH_PYG_LIB = True
+    WITH_INDEX_SORT = WITH_PYG_LIB and hasattr(pyg_lib.ops, 'index_sort')
+except ImportError:
+    pyg_lib = object
+    WITH_PYG_LIB = False
+    WITH_INDEX_SORT = False
+
+try:
+    from torch_sparse import SparseTensor
+except ImportError:
+
+    class SparseTensor:
+        def __init__(self, *args, **kwargs):
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
 
 # Types for accessing data ####################################################
 
@@ -44,4 +61,3 @@ NoneType = Optional[Tensor]
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
 InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
-NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]

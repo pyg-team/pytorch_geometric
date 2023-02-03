@@ -10,7 +10,7 @@ from torch_geometric.transforms import BaseTransform
 
 @functional_transform('linear_transformation')
 class LinearTransformation(BaseTransform):
-    r"""Transforms node positions :obj:`pos` with a square transformation
+    r"""Transforms node positions :obj:`data.pos` with a square transformation
     matrix computed offline (functional name: :obj:`linear_transformation`)
 
     Args:

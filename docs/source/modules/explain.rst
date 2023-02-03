@@ -6,7 +6,7 @@ torch_geometric.explain
 .. warning::
 
     This module is in active development and may not be stable.
-    Access requires installing PyTorch Geometric from master.
+    Access requires installing :pyg:`PyG` from master.
 
 .. contents:: Contents
     :local:
@@ -18,11 +18,12 @@ This module provides a set of tools to explain the predictions of a PyG model or
 
 We represent explanations using the :class:`torch_geometric.explain.Explanation` class, which is a :class:`~torch_geometric.data.Data` object containing masks for the nodes, edges, features and any attributes of the data.
 
-The :class:`torch_geometric.explain.Explainer` class is designed to handle all explainability parameters:
+The :class:`torch_geometric.explain.Explainer` class is designed to handle all explainability parameters (see the :class:`torch_geometric.explain.config.ExplainerConfig` class for more details):
 
 - which algorithm from the :class:`torch_geometric.explain.algorithm` module to use (*e.g.*, :class:`~torch_geometric.explain.algorithm.GNNExplainer`)
+- the type of explanation to compute (*e.g.*, :obj:`explanation_type="phenomenon"` or :obj:`explanation_type="model"`)
 - the different type of masks for node and edges (*e.g.*, :obj:`mask="object"` or :obj:`mask="attributes"`)
-- any postprocessing of the masks (*e.g.*, :obj:`threshold="topk"` or :obj:`threshold="hard"`)
+- any postprocessing of the masks (*e.g.*, :obj:`threshold_type="topk"` or :obj:`threshold_type="hard"`)
 
 This class allows the user to easily compare different explainability methods and to easily switch between different types of masks, while making sure the high-level framework stays the same.
 
@@ -30,9 +31,9 @@ Explainer
 ---------
 
 .. autoclass:: torch_geometric.explain.Explainer
+   :show-inheritance:
    :members:
-
-   .. automethod:: __call__
+   :special-members: __call__
 
 .. autoclass:: torch_geometric.explain.config.ExplainerConfig
    :members:
@@ -47,6 +48,11 @@ Explanations
 ------------
 
 .. autoclass:: torch_geometric.explain.Explanation
+   :show-inheritance:
+   :members:
+
+.. autoclass:: torch_geometric.explain.HeteroExplanation
+   :show-inheritance:
    :members:
 
 Explainer Algorithms
@@ -56,13 +62,24 @@ Explainer Algorithms
 
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.explain.algorithm.classes %}
-     {{ cls }}
+   :toctree: ../generated
+
+   {% for name in torch_geometric.explain.algorithm.classes %}
+     {{ name }}
    {% endfor %}
 
-.. autoclass:: torch_geometric.explain.algorithm.ExplainerAlgorithm
-   :members:
+Explanation Metrics
+-------------------
 
-.. automodule:: torch_geometric.explain.algorithm
-   :members:
-   :exclude-members: ExplainerAlgorithm, forward, loss, supports
+The quality of an explanation can be judged by a variety of different methods.
+PyG supports the following metrics out-of-the-box:
+
+.. currentmodule:: torch_geometric.explain.metric
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.explain.metric.classes %}
+     {{ name }}
+   {% endfor %}

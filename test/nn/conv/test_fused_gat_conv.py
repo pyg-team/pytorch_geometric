@@ -1,10 +1,10 @@
 import torch
 
 from torch_geometric.nn import FusedGATConv
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import onlyCUDA, withPackage
 
 
-@withCUDA
+@onlyCUDA
 @withPackage('dgNN')
 def test_fused_gat_conv():
     device = torch.device('cuda')

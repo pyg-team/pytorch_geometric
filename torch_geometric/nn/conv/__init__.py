@@ -2,6 +2,7 @@ from .message_passing import MessagePassing
 from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
 from .sage_conv import SAGEConv
+from .cugraph.sage_conv import CuGraphSAGEConv
 from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
@@ -52,12 +53,15 @@ from .hetero_conv import HeteroConv
 from .han_conv import HANConv
 from .lg_conv import LGConv
 from .ssg_conv import SSGConv
+from .point_gnn_conv import PointGNNConv
+from .gps_conv import GPSConv
 
 __all__ = [
     'MessagePassing',
     'GCNConv',
     'ChebConv',
     'SAGEConv',
+    'CuGraphSAGEConv',
     'GraphConv',
     'GravNetConv',
     'GatedGraphConv',
@@ -113,6 +117,8 @@ __all__ = [
     'HeteroConv',
     'HANConv',
     'LGConv',
+    'PointGNNConv',
+    'GPSConv',
 ]
 
 classes = __all__

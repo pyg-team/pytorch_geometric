@@ -2,6 +2,7 @@ import os.path as osp
 import random
 import shutil
 import sys
+import warnings
 from collections import namedtuple
 
 import pytest
@@ -49,6 +50,9 @@ def trivial_metric(true, pred, task_type):
 @pytest.mark.parametrize('skip_train_eval', [True, False])
 @pytest.mark.parametrize('use_trivial_metric', [True, False])
 def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
+    warnings.filterwarnings('ignore', ".*does not have many workers.*")
+    warnings.filterwarnings('ignore', ".*lower value for log_every_n_steps.*")
+
     Args = namedtuple('Args', ['cfg_file', 'opts'])
     root = osp.join(osp.dirname(osp.realpath(__file__)))
     args = Args(osp.join(root, 'example_node.yml'), [])
@@ -166,6 +170,8 @@ def test_graphgym_module(tmpdir):
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
 def test_train(tmpdir):
+    warnings.filterwarnings('ignore', ".*does not have many workers.*")
+
     import pytorch_lightning as pl
 
     load_cfg(cfg, args)

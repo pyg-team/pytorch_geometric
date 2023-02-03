@@ -2,7 +2,8 @@ from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_add
+
+from torch_geometric.utils import scatter
 
 from .num_nodes import maybe_num_nodes
 
@@ -58,7 +59,7 @@ def shuffle_node(x: Tensor, batch: Optional[Tensor] = None,
     if batch is None:
         perm = torch.randperm(x.size(0), device=x.device)
         return x[perm], perm
-    num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
+    num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0, reduce='sum')
     cumsum = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
     perm = torch.cat([
         torch.randperm(n, device=x.device) + offset
@@ -143,7 +144,7 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
         mask = torch.rand(x.size(1), device=x.device) >= p
         mask = mask.view(1, -1)
     else:
-        mask = torch.randn_like(x) >= p
+        mask = torch.rand_like(x) >= p
 
     x = x.masked_fill(~mask, fill_value)
     return x, mask

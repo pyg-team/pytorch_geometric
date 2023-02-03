@@ -2,7 +2,6 @@ from typing import Any, Optional
 
 import numpy as np
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -116,6 +115,8 @@ class AddRandomWalkPE(BaseTransform):
         self.attr_name = attr_name
 
     def __call__(self, data: Data) -> Data:
+        from torch_sparse import SparseTensor
+
         num_nodes = data.num_nodes
         edge_index, edge_weight = data.edge_index, data.edge_weight
 

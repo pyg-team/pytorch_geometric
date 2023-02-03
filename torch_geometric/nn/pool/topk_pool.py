@@ -3,9 +3,8 @@ from typing import Callable, Optional, Tuple, Union
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add, scatter_max
 
-from torch_geometric.utils import softmax
+from torch_geometric.utils import scatter, softmax
 
 from ...utils.num_nodes import maybe_num_nodes
 from ..inits import uniform
@@ -20,13 +19,13 @@ def topk(
 ) -> Tensor:
     if min_score is not None:
         # Make sure that we do not drop all nodes in a graph.
-        scores_max = scatter_max(x, batch)[0].index_select(0, batch) - tol
+        scores_max = scatter(x, batch, reduce='max')[batch] - tol
         scores_min = scores_max.clamp(max=min_score)
 
         perm = (x > scores_min).nonzero().view(-1)
 
     elif ratio is not None:
-        num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0)
+        num_nodes = scatter(batch.new_ones(x.size(0)), batch, reduce='sum')
         batch_size, max_num_nodes = num_nodes.size(0), int(num_nodes.max())
 
         cum_num_nodes = torch.cat(
@@ -51,13 +50,20 @@ def topk(
         else:
             k = (float(ratio) * num_nodes.to(x.dtype)).ceil().to(torch.long)
 
-        mask = [
-            torch.arange(k[i], dtype=torch.long, device=x.device) +
-            i * max_num_nodes for i in range(batch_size)
-        ]
-        mask = torch.cat(mask, dim=0)
+        if isinstance(ratio, int) and (k == ratio).all():
+            # If all graphs have exactly `ratio` or more than `ratio` entries,
+            # we can just pick the first entries in `perm` batch-wise:
+            index = torch.arange(batch_size, device=x.device) * max_num_nodes
+            index = index.view(-1, 1).repeat(1, ratio).view(-1)
+            index += torch.arange(ratio, device=x.device).repeat(batch_size)
+        else:
+            # Otherwise, compute indices per graph:
+            index = torch.cat([
+                torch.arange(k[i], device=x.device) + i * max_num_nodes
+                for i in range(batch_size)
+            ], dim=0)
 
-        perm = perm[mask]
+        perm = perm[index]
 
     else:
         raise ValueError("At least one of 'min_score' and 'ratio' parameters "
@@ -94,9 +100,9 @@ class TopKPooling(torch.nn.Module):
     <https://arxiv.org/abs/1905.05178>`_, `"Towards Sparse
     Hierarchical Graph Classifiers" <https://arxiv.org/abs/1811.01287>`_
     and `"Understanding Attention and Generalization in Graph Neural
-    Networks" <https://arxiv.org/abs/1905.02850>`_ papers
+    Networks" <https://arxiv.org/abs/1905.02850>`_ papers.
 
-    if min_score :math:`\tilde{\alpha}` is None:
+    If :obj:`min_score` :math:`\tilde{\alpha}` is :obj:`None`, computes:
 
         .. math::
             \mathbf{y} &= \frac{\mathbf{X}\mathbf{p}}{\| \mathbf{p} \|}
@@ -108,7 +114,8 @@ class TopKPooling(torch.nn.Module):
 
             \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}}
 
-    if min_score :math:`\tilde{\alpha}` is a value in [0, 1]:
+    If :obj:`min_score` :math:`\tilde{\alpha}` is a value in :obj:`[0, 1]`,
+    computes:
 
         .. math::
             \mathbf{y} &= \mathrm{softmax}(\mathbf{X}\mathbf{p})
@@ -138,8 +145,8 @@ class TopKPooling(torch.nn.Module):
         multiplier (float, optional): Coefficient by which features gets
             multiplied after pooling. This can be useful for large graphs and
             when :obj:`min_score` is used. (default: :obj:`1`)
-        nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
-            (default: :obj:`torch.tanh`)
+        nonlinearity (str or callable, optional): The non-linearity to use.
+            (default: :obj:`"tanh"`)
     """
     def __init__(
         self,
@@ -147,9 +154,12 @@ class TopKPooling(torch.nn.Module):
         ratio: Union[int, float] = 0.5,
         min_score: Optional[float] = None,
         multiplier: float = 1.,
-        nonlinearity: Callable = torch.tanh,
+        nonlinearity: Union[str, Callable] = 'tanh',
     ):
         super().__init__()
+
+        if isinstance(nonlinearity, str):
+            nonlinearity = getattr(torch, nonlinearity)
 
         self.in_channels = in_channels
         self.ratio = ratio
@@ -162,8 +172,8 @@ class TopKPooling(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        size = self.in_channels
-        uniform(size, self.weight)
+        r"""Resets all learnable parameters of the module."""
+        uniform(self.in_channels, self.weight)
 
     def forward(
         self,
@@ -173,8 +183,19 @@ class TopKPooling(torch.nn.Module):
         batch: Optional[Tensor] = None,
         attn: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor, Tensor]:
-        """"""
-
+        r"""
+        Args:
+            x (torch.Tensor): The node feature matrix.
+            edge_index (torch.Tensor): The edge indices.
+            edge_attr (torch.Tensor, optional): The edge features.
+                (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each node to a specific example. (default: :obj:`None`)
+            attn (torch.Tensor, optional): Optional node-level matrix to use
+                for computing attention scores instead of using the node
+                feature matrix :obj:`x`. (default: :obj:`None`)
+        """
         if batch is None:
             batch = edge_index.new_zeros(x.size(0))
 

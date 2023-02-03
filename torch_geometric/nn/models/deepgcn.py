@@ -41,7 +41,7 @@ class DeepGCNLayer(torch.nn.Module):
             (default: :obj:`None`)
         norm (torch.nn.Module): the normalization layer. (default: :obj:`None`)
         act (torch.nn.Module): the activation layer. (default: :obj:`None`)
-        block (string, optional): The skip connection operation to use
+        block (str, optional): The skip connection operation to use
             (:obj:`"res+"`, :obj:`"res"`, :obj:`"dense"` or :obj:`"plain"`).
             (default: :obj:`"res+"`)
         dropout (float, optional): Whether to apply or dropout.

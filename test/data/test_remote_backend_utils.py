@@ -3,8 +3,7 @@ import torch
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.remote_backend_utils import num_nodes, size
-from torch_geometric.testing.feature_store import MyFeatureStore
-from torch_geometric.testing.graph_store import MyGraphStore
+from torch_geometric.testing import MyFeatureStore, MyGraphStore
 
 
 def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):

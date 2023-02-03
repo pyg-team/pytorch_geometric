@@ -3,12 +3,11 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.typing import EdgeType
+from torch_geometric.typing import EdgeType, SparseTensor
 from torch_geometric.utils import coalesce, degree
 
 
@@ -279,7 +278,7 @@ class AddRandomMetaPaths(BaseTransform):
 
     @staticmethod
     def sample(adj: SparseTensor, subset: Tensor) -> Tuple[Tensor, Tensor]:
-        """Sample a neighbor form `adj` for each node in `subset`"""
+        """Sample a neighbor form :obj:`adj` for each node in :obj:`subset`."""
 
         rowcount = adj.storage.rowcount()[subset]
         mask = rowcount > 0

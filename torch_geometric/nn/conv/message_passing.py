@@ -26,7 +26,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size
-from torch_geometric.utils import is_torch_sparse_tensor
+from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
 
 from .utils.helpers import expand_left
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
@@ -53,11 +53,11 @@ class MessagePassing(torch.nn.Module):
     function, *e.g.*, sum, mean, min, max or mul, and
     :math:`\gamma_{\mathbf{\Theta}}` and :math:`\phi_{\mathbf{\Theta}}` denote
     differentiable functions such as MLPs.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_gnn.html>`__ for the accompanying tutorial.
 
     Args:
-        aggr (string or list or Aggregation, optional): The aggregation scheme
+        aggr (str or [str] or Aggregation, optional): The aggregation scheme
             to use, *e.g.*, :obj:`"add"`, :obj:`"sum"` :obj:`"mean"`,
             :obj:`"min"`, :obj:`"max"` or :obj:`"mul"`.
             In addition, can be any
@@ -71,7 +71,7 @@ class MessagePassing(torch.nn.Module):
         aggr_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
-        flow (string, optional): The flow direction of message passing
+        flow (str, optional): The flow direction of message passing
             (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
             (default: :obj:`"source_to_target"`)
         node_dim (int, optional): The axis along which to propagate.
@@ -183,14 +183,15 @@ class MessagePassing(torch.nn.Module):
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
 
-        if is_torch_sparse_tensor(edge_index):
+        if is_sparse(edge_index):
             if self.flow == 'target_to_source':
                 raise ValueError(
                     ('Flow direction "target_to_source" is invalid for '
-                     'message propagation via `torch.sparse.Tensor`. If '
-                     'you really want to make use of a reverse message '
-                     'passing flow, pass in the transposed sparse tensor to '
-                     'the message passing module, e.g., `adj_t.t()`.'))
+                     'message propagation via `torch_sparse.SparseTensor` '
+                     'or `torch.sparse.Tensor`. If you really want to make '
+                     'use of a reverse message passing flow, pass in the '
+                     'transposed sparse tensor to the message passing module, '
+                     'e.g., `adj_t.t()`.'))
             the_size[0] = edge_index.size(1)
             the_size[1] = edge_index.size(0)
             return the_size
@@ -210,18 +211,6 @@ class MessagePassing(torch.nn.Module):
             if size is not None:
                 the_size[0] = size[0]
                 the_size[1] = size[1]
-            return the_size
-
-        elif isinstance(edge_index, SparseTensor):
-            if self.flow == 'target_to_source':
-                raise ValueError(
-                    ('Flow direction "target_to_source" is invalid for '
-                     'message propagation via `torch_sparse.SparseTensor`. If '
-                     'you really want to make use of a reverse message '
-                     'passing flow, pass in the transposed sparse tensor to '
-                     'the message passing module, e.g., `adj_t.t()`.'))
-            the_size[0] = edge_index.sparse_size(1)
-            the_size[1] = edge_index.sparse_size(0)
             return the_size
 
         raise ValueError(
@@ -249,12 +238,15 @@ class MessagePassing(torch.nn.Module):
                 index = edge_index[dim]
                 return src.index_select(self.node_dim, index)
             except (IndexError, RuntimeError) as e:
-                if 'CUDA' in str(e):
-                    raise ValueError(
-                        f"Encountered a CUDA error. Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
+                if index.min() < 0 or index.max() >= src.size(self.node_dim):
+                    raise IndexError(
+                        f"Encountered an index error. Please ensure that all "
+                        f"indices in 'edge_index' point to valid indices in "
+                        f"the interval [0, {src.size(self.node_dim) - 1}] "
+                        f"(got interval "
+                        f"[{int(index.min())}, {int(index.max())}])")
+                else:
+                    raise e
 
                 if index.numel() > 0 and index.min() < 0:
                     raise ValueError(
@@ -403,9 +395,7 @@ class MessagePassing(torch.nn.Module):
         size = self.__check_input__(edge_index, size)
 
         # Run "fused" message and aggregation (if applicable).
-        if ((isinstance(edge_index, SparseTensor)
-             or is_torch_sparse_tensor(edge_index)) and self.fuse
-                and not self.explain):
+        if is_sparse(edge_index) and self.fuse and not self.explain:
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
@@ -758,9 +748,9 @@ class MessagePassing(torch.nn.Module):
         jittable module.
 
         Args:
-            typing (string, optional): If given, will generate a concrete
-                instance with :meth:`forward` types based on :obj:`typing`,
-                *e.g.*: :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
+            typing (str, optional): If given, will generate a concrete instance
+                with :meth:`forward` types based on :obj:`typing`, *e.g.*,
+                :obj:`"(Tensor, Optional[Tensor]) -> Tensor"`.
         """
         try:
             from jinja2 import Template

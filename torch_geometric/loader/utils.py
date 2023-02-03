@@ -1,37 +1,28 @@
 import copy
 import math
 from collections.abc import Sequence
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, HeteroData, remote_backend_utils
-from torch_geometric.data.feature_store import FeatureStore, TensorAttr
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import (
+    Data,
+    FeatureStore,
+    GraphStore,
+    HeteroData,
+    TensorAttr,
+    remote_backend_utils,
+)
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import (
     FeatureTensorType,
     InputEdges,
     InputNodes,
     OptTensor,
+    SparseTensor,
 )
-
-
-class InputData:
-    def __init__(self, *args):
-        self.args = args
-
-    def __getitem__(self, index: Union[Tensor, List[int]]) -> Any:
-        if not isinstance(index, Tensor):
-            index = torch.tensor(index, dtype=torch.long)
-
-        outs = [index]
-        for arg in self.args:
-            outs.append(arg[index] if arg is not None else None)
-        return tuple(outs)
 
 
 def index_select(value: FeatureTensorType, index: Tensor,
@@ -61,7 +52,7 @@ def index_select(value: FeatureTensorType, index: Tensor,
 
 
 def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
-                       index: Tensor) -> NodeStorage:
+                       index: Tensor) -> None:
     # Filters a node storage object to only hold the nodes in `index`:
     for key, value in store.items():
         if key == 'num_nodes':
@@ -75,12 +66,10 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
             dim = store._parent().__cat_dim__(key, value, store)
             out_store[key] = index_select(value, index, dim=dim)
 
-    return store
-
 
 def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                        col: Tensor, index: Tensor,
-                       perm: OptTensor = None) -> EdgeStorage:
+                       perm: OptTensor = None) -> None:
     # Filters a edge storage object to only hold the edges in `index`,
     # which represents the new graph as denoted by `(row, col)`:
     for key, value in store.items():
@@ -121,8 +110,6 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                     perm[index.to(torch.int64)],
                     dim=dim,
                 )
-
-    return store
 
 
 def filter_data(data: Data, node: Tensor, row: Tensor, col: Tensor,
@@ -170,13 +157,14 @@ def filter_custom_store(
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
     edge_dict: Dict[str, Tensor],
+    custom_cls: Optional[HeteroData] = None,
 ) -> HeteroData:
     r"""Constructs a `HeteroData` object from a feature store that only holds
     nodes in `node` end edges in `edge` for each node and edge type,
     respectively."""
 
     # Construct a new `HeteroData` object:
-    data = HeteroData()
+    data = custom_cls() if custom_cls is not None else HeteroData()
 
     # Filter edge storage:
     # TODO support edge attributes

@@ -1,12 +1,9 @@
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.node_loader import NodeLoader
-from torch_geometric.loader.utils import get_input_nodes
 from torch_geometric.sampler import NeighborSampler
-from torch_geometric.typing import InputNodes, NumNeighbors, OptTensor
+from torch_geometric.typing import EdgeType, InputNodes, OptTensor
 
 
 class NeighborLoader(NodeLoader):
@@ -93,27 +90,26 @@ class NeighborLoader(NodeLoader):
     The :class:`~torch_geometric.loader.NeighborLoader` will return subgraphs
     where global node indices are mapped to local indices corresponding to this
     specific subgraph. However, often times it is desired to map the nodes of
-    the current subgraph back to the global node indices. A simple trick to
-    achieve this is to include this mapping as part of the :obj:`data` object:
+    the current subgraph back to the global node indices. The
+    :class:`~torch_geometric.loader.NeighborLoader` will include this mapping
+    as part of the :obj:`data` object:
 
     .. code-block:: python
 
-        # Assign each node its global node index:
-        data.n_id = torch.arange(data.num_nodes)
-
         loader = NeighborLoader(data, ...)
         sampled_data = next(iter(loader))
-        print(sampled_data.n_id)
+        print(sampled_data.n_id)  # Global node index of each node in batch.
 
     Args:
-        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
-            The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
-            If an entry is set to :obj:`-1`, all neighbors will be included.
         input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
             indices of nodes for which neighbors are sampled to create
             mini-batches.
@@ -137,7 +133,7 @@ class NeighborLoader(NodeLoader):
             vector holding the mapping of nodes to their respective subgraph.
             Will get automatically set to :obj:`True` in case of temporal
             sampling. (default: :obj:`False`)
-        temporal_strategy (string, optional): The sampling strategy when using
+        temporal_strategy (str, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
             If set to :obj:`"uniform"`, will sample uniformly across neighbors
             that fulfill temporal constraints.
@@ -148,10 +144,14 @@ class NeighborLoader(NodeLoader):
             timestamps for the nodes in the graph.
             If set, temporal sampling will be used such that neighbors are
             guaranteed to fulfill temporal constraints, *i.e.* neighbors have
-            an earlier timestamp than the center node. (default: :obj:`None`)
+            an earlier or equal timestamp than the center node.
+            (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (Callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column.
             If :obj:`time_attr` is set, additionally requires that rows are
@@ -161,7 +161,8 @@ class NeighborLoader(NodeLoader):
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
             the returning data in each worker's subprocess rather than in the
             main process.
-            Setting this to :obj:`True` is generally not recommended:
+            Setting this to :obj:`True` for in-memory datasets is generally not
+            recommended:
             (1) it may result in too many open file handles,
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
@@ -173,7 +174,7 @@ class NeighborLoader(NodeLoader):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
         input_nodes: InputNodes = None,
         input_time: OptTensor = None,
         replace: bool = False,
@@ -181,15 +182,13 @@ class NeighborLoader(NodeLoader):
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
         filter_per_worker: bool = False,
         neighbor_sampler: Optional[NeighborSampler] = None,
         **kwargs,
     ):
-        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
-        node_type, _ = get_input_nodes(data, input_nodes)
-
         if input_time is not None and time_attr is None:
             raise ValueError("Received conflicting 'input_time' and "
                              "'time_attr' arguments: 'input_time' is set "
@@ -203,7 +202,6 @@ class NeighborLoader(NodeLoader):
                 directed=directed,
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
-                input_type=node_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
@@ -215,6 +213,7 @@ class NeighborLoader(NodeLoader):
             input_nodes=input_nodes,
             input_time=input_time,
             transform=transform,
+            transform_sampler_output=transform_sampler_output,
             filter_per_worker=filter_per_worker,
             **kwargs,
         )

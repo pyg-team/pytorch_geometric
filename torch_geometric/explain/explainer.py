@@ -1,18 +1,29 @@
-import copy
-from typing import Optional, Union
+import warnings
+from typing import Any, Dict, Optional, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.explain import ExplainerAlgorithm, Explanation
+from torch_geometric.explain import (
+    ExplainerAlgorithm,
+    Explanation,
+    HeteroExplanation,
+)
+from torch_geometric.explain.algorithm.utils import (
+    clear_masks,
+    set_hetero_masks,
+    set_masks,
+)
 from torch_geometric.explain.config import (
     ExplainerConfig,
     ExplanationType,
+    MaskType,
     ModelConfig,
     ModelMode,
+    ModelReturnType,
     ThresholdConfig,
-    ThresholdType,
 )
+from torch_geometric.typing import EdgeType, NodeType
 
 
 class Explainer:
@@ -22,162 +33,236 @@ class Explainer:
     Args:
         model (torch.nn.Module): The model to explain.
         algorithm (ExplainerAlgorithm): The explanation algorithm.
-        explainer_config (ExplainerConfig): The explainer configuration.
+        explanation_type (ExplanationType or str): The type of explanation to
+            compute. The possible values are:
+
+                - :obj:`"model"`: Explains the model prediction.
+
+                - :obj:`"phenomenon"`: Explains the phenomenon that the model
+                  is trying to predict.
+
+            In practice, this means that the explanation algorithm will either
+            compute their losses with respect to the model output
+            (:obj:`"model"`) or the target output (:obj:`"phenomenon"`).
         model_config (ModelConfig): The model configuration.
+            See :class:`~torch_geometric.explain.config.ModelConfig` for
+            available options. (default: :obj:`None`)
+        node_mask_type (MaskType or str, optional): The type of mask to apply
+            on nodes. The possible values are (default: :obj:`None`):
+
+                - :obj:`None`: Will not apply any mask on nodes.
+
+                - :obj:`"object"`: Will mask each node.
+
+                - :obj:`"common_attributes"`: Will mask each feature.
+
+                - :obj:`"attributes"`: Will mask each feature across all nodes.
+
+        edge_mask_type (MaskType or str, optional): The type of mask to apply
+            on edges. Has the sample possible values as :obj:`node_mask_type`.
+            (default: :obj:`None`)
         threshold_config (ThresholdConfig, optional): The threshold
-            configuration. (default: :obj:`None`)
+            configuration.
+            See :class:`~torch_geometric.explain.config.ThresholdConfig` for
+            available options. (default: :obj:`None`)
     """
     def __init__(
         self,
         model: torch.nn.Module,
         algorithm: ExplainerAlgorithm,
-        explainer_config: ExplainerConfig,
-        model_config: ModelConfig,
+        explanation_type: Union[ExplanationType, str],
+        model_config: Union[ModelConfig, Dict[str, Any]],
+        node_mask_type: Optional[Union[MaskType, str]] = None,
+        edge_mask_type: Optional[Union[MaskType, str]] = None,
         threshold_config: Optional[ThresholdConfig] = None,
     ):
+        explainer_config = ExplainerConfig(
+            explanation_type=explanation_type,
+            node_mask_type=node_mask_type,
+            edge_mask_type=edge_mask_type,
+        )
+
         self.model = model
         self.algorithm = algorithm
 
-        self.explainer_config = ExplainerConfig.cast(explainer_config)
+        self.explanation_type = explainer_config.explanation_type
         self.model_config = ModelConfig.cast(model_config)
+        self.node_mask_type = explainer_config.node_mask_type
+        self.edge_mask_type = explainer_config.edge_mask_type
         self.threshold_config = ThresholdConfig.cast(threshold_config)
 
-        if not self.algorithm.supports(
-                self.explainer_config,
-                self.model_config,
-        ):
-            raise ValueError(
-                f"The explanation algorithm "
-                f"'{self.algorithm.__class__.__name__}' does not support the "
-                f"given explanation settings.")
+        self.algorithm.connect(explainer_config, self.model_config)
 
-    def get_prediction(self, *args, **kwargs) -> torch.Tensor:
+    @torch.no_grad()
+    def get_prediction(self, *args, **kwargs) -> Tensor:
         r"""Returns the prediction of the model on the input graph.
 
         If the model mode is :obj:`"regression"`, the prediction is returned as
         a scalar value.
-        If the model mode :obj:`"classification"`, the prediction is returned
-        as the predicted class label.
+        If the model mode is :obj:`"multiclass_classification"` or
+        :obj:`"binary_classification"`, the prediction is returned as the
+        predicted class label.
 
         Args:
             *args: Arguments passed to the model.
             **kwargs (optional): Additional keyword arguments passed to the
                 model.
         """
+        training = self.model.training
+        self.model.eval()
+
         with torch.no_grad():
             out = self.model(*args, **kwargs)
-        if self.model_config.mode == ModelMode.classification:
-            return out.argmax(dim=-1)
+
+        self.model.train(training)
+
+        return out
+
+    def get_masked_prediction(
+        self,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
+        node_mask: Optional[Union[Tensor, Dict[NodeType, Tensor]]] = None,
+        edge_mask: Optional[Union[Tensor, Dict[EdgeType, Tensor]]] = None,
+        **kwargs,
+    ) -> Tensor:
+        r"""Returns the prediction of the model on the input graph with node
+        and edge masks applied."""
+        if isinstance(x, Tensor) and node_mask is not None:
+            x = node_mask * x
+        elif isinstance(x, dict) and node_mask is not None:
+            x = {key: value * node_mask[key] for key, value in x.items()}
+
+        if isinstance(edge_mask, Tensor):
+            set_masks(self.model, edge_mask, edge_index, apply_sigmoid=False)
+        elif isinstance(edge_mask, dict):
+            set_hetero_masks(self.model, edge_mask, edge_index,
+                             apply_sigmoid=False)
+
+        out = self.get_prediction(x, edge_index, **kwargs)
+        clear_masks(self.model)
         return out
 
     def __call__(
         self,
-        x: Tensor,
-        edge_index: Tensor,
+        x: Union[Tensor, Dict[NodeType, Tensor]],
+        edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
         *,
         target: Optional[Tensor] = None,
-        target_index: Optional[Union[int, Tensor]] = None,
+        index: Optional[Union[int, Tensor]] = None,
         **kwargs,
-    ) -> Explanation:
-        r"""Computes the explanation of the GNN  for the given inputs and
+    ) -> Union[Explanation, HeteroExplanation]:
+        r"""Computes the explanation of the GNN for the given inputs and
         target.
 
+        .. note::
+
+            If you get an error message like "Trying to backward through the
+            graph a second time", make sure that the target you provided
+            was computed with :meth:`torch.no_grad`.
+
         Args:
-            x (torch.Tensor): The input node features.
-            edge_index (torch.Tensor): The input edge indices.
-            target (torch.Tensor): the target of the model.
+            x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
+                node features of a homogeneous or heterogeneous graph.
+            edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
+                input edge indices of a homogeneous or heterogeneous graph.
+            target (torch.Tensor): The target of the model.
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
                 If the explanation type is :obj:`"model"`, the target should be
                 set to :obj:`None` and will get automatically inferred.
                 (default: :obj:`None`)
-            target_index (int or torch.Tensor, optional): The target indices to
-                explain. (default: :obj:`None`)
+            index (Union[int, Tensor], optional): The index of the model
+                output to explain. Can be a single index or a tensor of
+                indices. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
-        if (self.explainer_config.explanation_type ==
-                ExplanationType.phenomenon):
+        prediction: Optional[Tensor] = None
+        if self.explanation_type == ExplanationType.phenomenon:
             if target is None:
                 raise ValueError(
-                    f"The target has to be provided for the explanation type "
-                    f"'{self.explainer_config.explanation_type.value}'")
-        else:
-            target = self.get_prediction(x=x, edge_index=edge_index, **kwargs)
+                    f"The 'target' has to be provided for the explanation "
+                    f"type '{self.explanation_type.value}'")
+        elif self.explanation_type == ExplanationType.model:
+            if target is not None:
+                warnings.warn(
+                    f"The 'target' should not be provided for the explanation "
+                    f"type '{self.explanation_type.value}'")
+            prediction = self.get_prediction(x, edge_index, **kwargs)
+            target = self.get_target(prediction)
+
+        training = self.model.training
+        self.model.eval()
 
         explanation = self.algorithm(
-            model=self.model,
-            x=x,
-            edge_index=edge_index,
-            explainer_config=self.explainer_config,
-            model_config=self.model_config,
+            self.model,
+            x,
+            edge_index,
             target=target,
-            target_index=target_index,
+            index=index,
             **kwargs,
         )
 
-        return self._post_process(explanation)
+        self.model.train(training)
 
-    def _post_process(self, explanation: Explanation) -> Explanation:
-        R"""Post-processes the explanation mask according to the thresholding
-        method and the user configuration.
+        # Add explainer objectives to the `Explanation` object:
+        explanation._model_config = self.model_config
+        explanation.prediction = prediction
+        explanation.target = target
+        explanation.index = index
 
-        Args:
-            explanation (Explanation): The explanation mask to post-process.
-        """
-        explanation = self._threshold(explanation)
-        return explanation
+        # Add model inputs to the `Explanation` object:
+        if isinstance(explanation, Explanation):
+            explanation._model_args = list(kwargs.keys())
+            explanation.x = x
+            explanation.edge_index = edge_index
 
-    def _threshold(self, explanation: Explanation) -> Explanation:
-        """Threshold the explanation mask according to the thresholding method.
+            for key, arg in kwargs.items():  # Add remaining `kwargs`:
+                explanation[key] = arg
 
-        Args:
-            explanation (Explanation): The explanation to threshold.
-        """
-        if self.threshold_config is None:
-            return explanation
+        elif isinstance(explanation, HeteroExplanation):
+            assert isinstance(x, dict)
+            # TODO Add `explanation._model_args`
+            for node_type, value in x.items():
+                explanation[node_type].x = value
 
-        # Avoid modification of the original explanation:
-        explanation = copy.copy(explanation)
+            assert isinstance(edge_index, dict)
+            for edge_type, value in edge_index.items():
+                explanation[edge_type].edge_index = value
 
-        mask_dict = {  # Get the available masks:
-            key: explanation[key]
-            for key in explanation.available_explanations
-        }
-
-        if self.threshold_config.type == ThresholdType.hard:
-            mask_dict = {
-                key: (mask > self.threshold_config.value).float()
-                for key, mask in mask_dict.items()
-            }
-
-        elif self.threshold_config.type in [
-                ThresholdType.topk,
-                ThresholdType.topk_hard,
-        ]:
-            for key, mask in mask_dict.items():
-                if self.threshold_config.value >= mask.numel():
-                    if self.threshold_config.type != ThresholdType.topk:
-                        mask_dict[key] = torch.ones_like(mask)
-                    continue
-
-                value, index = torch.topk(
-                    mask.flatten(),
-                    k=self.threshold_config.value,
-                )
-
-                out = torch.zeros_like(mask.flatten())
-                if self.threshold_config.type == ThresholdType.topk:
-                    out[index] = value
+            for key, arg in kwargs.items():  # Add remaining `kwargs`:
+                if isinstance(arg, dict):
+                    # Keyword arguments are likely named `{attr_name}_dict`
+                    # while we only want to assign the `{attr_name}` to the
+                    # `HeteroExplanation` object:
+                    key = key[:-5] if key.endswith('_dict') else key
+                    for type_name, value in arg.items():
+                        explanation[type_name][key] = value
                 else:
-                    out[index] = 1.0
-                mask_dict[key] = out.reshape(mask.size())
+                    explanation[key] = arg
 
-        else:
-            raise NotImplementedError
+        explanation.validate_masks()
+        return explanation.threshold(self.threshold_config)
 
-        # Update the explanation with the thresholded masks:
-        for key, mask in mask_dict.items():
-            explanation[key] = mask
+    def get_target(self, prediction: Tensor) -> Tensor:
+        r"""Returns the target of the model from a given prediction.
 
-        return explanation
+        If the model mode is of type :obj:`"regression"`, the prediction is
+        returned as it is.
+        If the model mode is of type :obj:`"multiclass_classification"` or
+        :obj:`"binary_classification"`, the prediction is returned as the
+        predicted class label.
+        """
+        if self.model_config.mode == ModelMode.binary_classification:
+            # TODO: Allow customization of the thresholds used below.
+            if self.model_config.return_type == ModelReturnType.raw:
+                return (prediction > 0).long().view(-1)
+            if self.model_config.return_type == ModelReturnType.probs:
+                return (prediction > 0.5).long().view(-1)
+            assert False
+
+        if self.model_config.mode == ModelMode.multiclass_classification:
+            return prediction.argmax(dim=-1)
+
+        return prediction

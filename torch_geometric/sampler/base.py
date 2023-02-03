@@ -1,53 +1,138 @@
-from abc import ABC, abstractmethod
+import copy
+import math
+from abc import ABC
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Tuple, Union
+from enum import Enum
+from typing import Any, Dict, List, Optional, Union
 
+import torch
 from torch import Tensor
 
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
-
-# An input to a node-based sampler consists of two tensors:
-#  * The example indices
-#  * The node indices
-#  * The timestamps of the given node indices (optional)
-NodeSamplerInput = Tuple[Tensor, Tensor, OptTensor]
-
-# An input to an edge-based sampler consists of four tensors:
-#   * The example indices
-#   * The row of the edge index in COO format
-#   * The column of the edge index in COO format
-#   * The labels of the edges
-#   * The time attribute corresponding to the edge label (optional)
-EdgeSamplerInput = Tuple[Tensor, Tensor, Tensor, Tensor, OptTensor]
+from torch_geometric.utils.mixin import CastMixin
 
 
-# A sampler output contains the following information.
-#   * node: a tensor of `n` output nodes resulting from sampling. In the
-#       heterogeneous case, this is a dictionary mapping node types to the
-#       associated output tensors, each with potentially varying length.
-#   * row: a tensor of edge indices that correspond to the COO row values of
-#       the edges in the sampled subgraph. Note that these indices must be
-#       re-indexed from 0..n-1 corresponding to the nodes in the 'node' tensor.
-#       In the heterogeneous case, this is a dictionary mapping edge types to
-#       the associated COO row tensors.
-#   * col: a tensor of edge indices that correspond to the COO column values of
-#       the edges in the sampled subgraph. Note that these indices must be
-#       re-indexed from 0..n-1 corresponding to the nodes in the 'node' tensor.
-#       In the heterogeneous case, this is a dictionary mapping edge types to
-#       the associated COO column tensors.
-#   * edge: a tensor of the indices of the sampled edges in the original graph.
-#       This tensor is used to obtain edge attributes from the original graph;
-#       if no edge attributes are present, it may be omitted.
-#   * batch: a tensor identifying the seed node for each sampled node.
-#   * metadata: any additional metadata required by a loader using the sampler
-#       output.
-# There exist both homogeneous and heterogeneous versions.
+class DataType(Enum):
+    r"""The data type a sampler is operating on."""
+    homogeneous = 'homogeneous'
+    heterogeneous = 'heterogeneous'
+    remote = 'remote'
+
+    @classmethod
+    def from_data(cls, data: Any):
+        if isinstance(data, Data):
+            return cls.homogeneous
+        elif isinstance(data, HeteroData):
+            return cls.heterogeneous
+        elif (isinstance(data, (list, tuple)) and len(data) == 2
+              and isinstance(data[0], FeatureStore)
+              and isinstance(data[1], GraphStore)):
+            return cls.remote
+
+        raise ValueError(f"Expected a 'Data', 'HeteroData', or a tuple of "
+                         f"'FeatureStore' and 'GraphStore' "
+                         f"(got '{type(data)}')")
+
+
 @dataclass
-class SamplerOutput:
+class NodeSamplerInput(CastMixin):
+    r"""The sampling input of
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_nodes`.
+
+    Args:
+        input_id (torch.Tensor, optional): The indices of the data loader input
+            of the current mini-batch.
+        node (torch.Tensor): The indices of seed nodes to start sampling from.
+        time (torch.Tensor, optional): The timestamp for the seed nodes.
+            (default: :obj:`None`)
+        input_type (str, optional): The input node type (in case of sampling in
+            a heterogeneous graph). (default: :obj:`None`)
+    """
+    input_id: OptTensor
+    node: Tensor
+    time: OptTensor = None
+    input_type: Optional[NodeType] = None
+
+    def __getitem__(self, index: Union[Tensor, Any]) -> 'NodeSamplerInput':
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        return NodeSamplerInput(
+            self.input_id[index] if self.input_id is not None else index,
+            self.node[index],
+            self.time[index] if self.time is not None else None,
+            self.input_type,
+        )
+
+
+@dataclass
+class EdgeSamplerInput(CastMixin):
+    r"""The sampling input of
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
+
+    Args:
+        input_id (torch.Tensor, optional): The indices of the data loader input
+            of the current mini-batch.
+        row (torch.Tensor): The source node indices of seed links to start
+            sampling from.
+        col (torch.Tensor): The destination node indices of seed links to start
+            sampling from.
+        label (torch.Tensor, optional): The label for the seed links.
+            (default: :obj:`None`)
+        time (torch.Tensor, optional): The timestamp for the seed links.
+            (default: :obj:`None`)
+        input_type (Tuple[str, str, str], optional): The input edge type (in
+            case of sampling in a heterogeneous graph). (default: :obj:`None`)
+    """
+    input_id: OptTensor
+    row: Tensor
+    col: Tensor
+    label: OptTensor = None
+    time: OptTensor = None
+    input_type: Optional[EdgeType] = None
+
+    def __getitem__(self, index: Union[Tensor, Any]) -> 'EdgeSamplerInput':
+        if not isinstance(index, Tensor):
+            index = torch.tensor(index, dtype=torch.long)
+
+        return EdgeSamplerInput(
+            self.input_id[index] if self.input_id is not None else index,
+            self.row[index],
+            self.col[index],
+            self.label[index] if self.label is not None else None,
+            self.time[index] if self.time is not None else None,
+            self.input_type,
+        )
+
+
+@dataclass
+class SamplerOutput(CastMixin):
+    r"""The sampling output of a :class:`~torch_geometric.sampler.BaseSampler`
+    on homogeneous graphs.
+
+    Args:
+        node (torch.Tensor): The sampled nodes in the original graph.
+        row (torch.Tensor): The source node indices of the sampled subgraph.
+            Indices must be re-indexed to :obj:`{ 0, ..., num_nodes - 1 }`
+            corresponding to the nodes in the :obj:`node` tensor.
+        col (torch.Tensor): The destination node indices of the sampled
+            subgraph.
+            Indices must be re-indexed to :obj:`{ 0, ..., num_nodes - 1 }`
+            corresponding to the nodes in the :obj:`node` tensor.
+        edge (torch.Tensor, optional): The sampled edges in the original graph.
+            This tensor is used to obtain edge features from the original
+            graph. If no edge attributes are present, it may be omitted.
+        batch (torch.Tensor, optional): The vector to identify the seed node
+            for each sampled node. Can be present in case of disjoint subgraph
+            sampling per seed node. (default: :obj:`None`)
+        metadata: (Any, optional): Additional metadata information.
+            (default: :obj:`None`)
+    """
     node: Tensor
     row: Tensor
     col: Tensor
-    edge: Tensor
+    edge: OptTensor
     batch: OptTensor = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
@@ -55,19 +140,251 @@ class SamplerOutput:
 
 
 @dataclass
-class HeteroSamplerOutput:
+class HeteroSamplerOutput(CastMixin):
+    r"""The sampling output of a :class:`~torch_geometric.sampler.BaseSampler`
+    on heterogeneous graphs.
+
+    Args:
+        node (Dict[str, torch.Tensor]): The sampled nodes in the original graph
+            for each node type.
+        row (Dict[Tuple[str, str, str], torch.Tensor]): The source node indices
+            of the sampled subgraph for each edge type.
+            Indices must be re-indexed to :obj:`{ 0, ..., num_nodes - 1 }`
+            corresponding to the nodes in the :obj:`node` tensor of the source
+            node type.
+        col (Dict[Tuple[str, str, str], torch.Tensor]): The destination node
+            indices of the sampled subgraph for each edge type.
+            Indices must be re-indexed to :obj:`{ 0, ..., num_nodes - 1 }`
+            corresponding to the nodes in the :obj:`node` tensor of the
+            destination node type.
+        edge (Dict[Tuple[str, str, str], torch.Tensor], optional): The sampled
+            edges in the original graph for each edge type.
+            This tensor is used to obtain edge features from the original
+            graph. If no edge attributes are present, it may be omitted.
+        batch (Dict[str, torch.Tensor], optional): The vector to identify the
+            seed node for each sampled node for each node type. Can be present
+            in case of disjoint subgraph sampling per seed node.
+            (default: :obj:`None`)
+        metadata: (Any, optional): Additional metadata information.
+            (default: :obj:`None`)
+    """
     node: Dict[NodeType, Tensor]
     row: Dict[EdgeType, Tensor]
     col: Dict[EdgeType, Tensor]
-    edge: Dict[EdgeType, Tensor]
+    edge: Optional[Dict[EdgeType, Tensor]]
     batch: Optional[Dict[NodeType, Tensor]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
 
 
+@dataclass(frozen=True)
+class NumNeighbors:
+    r"""The number of neighbors to sample in a homogeneous or heterogeneous
+    graph. In heterogeneous graphs, may also take in a dictionary denoting
+    the amount of neighbors to sample for individual edge types.
+
+    Args:
+        values (List[int] or Dict[Tuple[str, str, str], List[int]]): The
+            number of neighbors to sample.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
+            In heterogeneous graphs, may also take in a dictionary denoting
+            the amount of neighbors to sample for individual edge types.
+        default (List[int], optional): The default number of neighbors for edge
+            types not specified in :obj:`values`. (default: :obj:`None`)
+    """
+    values: Union[List[int], Dict[EdgeType, List[int]]]
+    default: Optional[List[int]] = None
+
+    def __post_init__(self):
+        if isinstance(self.values, (tuple, list)) and self.default is not None:
+            raise ValueError(f"'default' must be set to 'None' in case a "
+                             f"single list is given as the number of "
+                             f"neighbors (got '{type(self.default)})'")
+
+    def get_values(
+        self,
+        edge_types: Optional[List[EdgeType]] = None,
+    ) -> Union[List[int], Dict[EdgeType, List[int]]]:
+        r"""Returns the number of neighbors.
+
+        Args:
+            edge_types (List[Tuple[str, str, str]], optional): The edge types
+                to generate the number of neighbors for. (default: :obj:`None`)
+        """
+        if '_values' in self.__dict__:
+            return self.__dict__['_values']
+
+        values = self.values
+
+        if edge_types is not None:
+            if isinstance(values, (tuple, list)):
+                default = values
+                values = {}
+            else:  # isinstance(self.values, dict):
+                default = self.default
+                values = copy.copy(values)
+
+            for edge_type in edge_types:
+                if edge_type not in values:
+                    if default is None:
+                        raise ValueError(f"Missing number of neighbors for "
+                                         f"edge type '{edge_type}'")
+                    values[edge_type] = default
+
+        if isinstance(values, dict):
+            num_hops = set(len(v) for v in values.values())
+            if len(num_hops) > 1:
+                raise ValueError(f"Number of hops must be the same across all "
+                                 f"edge types (got {len(num_hops)} different "
+                                 f"number of hops)")
+
+        self.__dict__['_values'] = values
+        return values
+
+    def get_mapped_values(
+        self,
+        edge_types: Optional[List[EdgeType]] = None,
+    ) -> Union[List[int], Dict[str, List[int]]]:
+        r"""Returns the number of neighbors.
+        For heterogeneous graphs, a dictionary is returned in which edge type
+        tuples are converted to strings.
+
+        Args:
+            edge_types (List[Tuple[str, str, str]], optional): The edge types
+                to generate the number of neighbors for. (default: :obj:`None`)
+        """
+        if '_mapped_values' in self.__dict__:
+            return self.__dict__['_mapped_values']
+
+        values = self.get_values(edge_types)
+        if isinstance(values, dict):
+            values = {'__'.join(key): value for key, value in values.items()}
+
+        self.__dict__['_mapped_values'] = values
+        return values
+
+    @property
+    def num_hops(self) -> int:
+        r"""Returns the number of hops."""
+        if '_num_hops' in self.__dict__:
+            return self.__dict__['_num_hops']
+
+        if isinstance(self.values, (tuple, list)):
+            num_hops = len(self.values)
+        else:  # isinstance(self.values, dict):
+            num_hops = max([0] + [len(v) for v in self.values.values()])
+
+        self.__dict__['_num_hops'] = num_hops
+        return num_hops
+
+    def __len__(self) -> int:
+        r"""Returns the number of hops."""
+        return self.num_hops
+
+    def config(self) -> Dict[str, Any]:
+        values = self.values
+        if isinstance(values, dict):
+            values = {'__'.join(k): v for k, v in values.items()}
+
+        cls_name = f'{self.__class__.__module__}.{self.__class__.__name__}'
+
+        return {
+            '_target_': cls_name,
+            'values': values,
+            'default': self.default,
+        }
+
+    @classmethod
+    def from_config(cls, cfg: Dict[str, Any]) -> 'NumNeighbors':
+        values = cfg['values']
+        if isinstance(values, dict):
+            values = {tuple(k.split('__')): v for k, v in values.items()}
+
+        return cls(values, cfg.get('default'))
+
+
+class NegativeSamplingMode(Enum):
+    # 'binary': Randomly sample negative edges in the graph.
+    binary = 'binary'
+    # 'triplet': Randomly sample negative destination nodes for each positive
+    # source node.
+    triplet = 'triplet'
+
+
+@dataclass
+class NegativeSampling(CastMixin):
+    r"""The negative sampling configuration of a
+    :class:`~torch_geometric.sampler.BaseSampler` when calling
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
+
+    Args:
+        mode (str): The negative sampling mode
+            (:obj:`"binary"` or :obj:`"triplet"`).
+            If set to :obj:`"binary"`, will randomly sample negative links
+            from the graph.
+            If set to :obj:`"triplet"`, will randomly sample negative
+            destination nodes for each positive source node.
+        amount (int or float, optional): The ratio of sampled negative edges to
+            the number of positive edges. (default: :obj:`1`)
+        weight (torch.Tensor, optional): A node-level vector determining the
+            sampling of nodes. Does not necessariyl need to sum up to one.
+            If not given, negative nodes will be sampled uniformly.
+            (default: :obj:`None`)
+    """
+    mode: NegativeSamplingMode
+    amount: Union[int, float] = 1
+    weight: Optional[Tensor] = None
+
+    def __init__(
+        self,
+        mode: Union[NegativeSamplingMode, str],
+        amount: Union[int, float] = 1,
+        weight: Optional[Tensor] = None,
+    ):
+        self.mode = NegativeSamplingMode(mode)
+        self.amount = amount
+        self.weight = weight
+
+        if self.amount <= 0:
+            raise ValueError(f"The attribute 'amount' needs to be positive "
+                             f"for '{self.__class__.__name__}' "
+                             f"(got {self.amount})")
+
+        if self.is_triplet():
+            if self.amount != math.ceil(self.amount):
+                raise ValueError(f"The attribute 'amount' needs to be an "
+                                 f"integer for '{self.__class__.__name__}' "
+                                 f"with 'triplet' negative sampling "
+                                 f"(got {self.amount}).")
+            self.amount = math.ceil(self.amount)
+
+    def is_binary(self) -> bool:
+        return self.mode == NegativeSamplingMode.binary
+
+    def is_triplet(self) -> bool:
+        return self.mode == NegativeSamplingMode.triplet
+
+    def sample(self, num_samples: int,
+               num_nodes: Optional[int] = None) -> Tensor:
+        r"""Generates :obj:`num_samples` negative samples."""
+        if self.weight is None:
+            if num_nodes is None:
+                raise ValueError(
+                    f"Cannot sample negatives in '{self.__class__.__name__}' "
+                    f"without passing the 'num_nodes' argument")
+            return torch.randint(num_nodes, (num_samples, ))
+
+        if num_nodes is not None and self.weight.numel() != num_nodes:
+            raise ValueError(
+                f"The 'weight' attribute in '{self.__class__.__name__}' "
+                f"needs to match the number of nodes {num_nodes} "
+                f"(got {self.weight.numel()})")
+        return torch.multinomial(self.weight, num_samples, replacement=True)
+
+
 class BaseSampler(ABC):
-    r"""A base class that initializes a graph sampler and provides
+    r"""An abstract base class that initializes a graph sampler and provides
     :meth:`sample_from_nodes` and :meth:`sample_from_edges` routines.
 
     .. note ::
@@ -78,7 +395,6 @@ class BaseSampler(ABC):
         As such, it is recommended to limit the amount of information stored in
         the sampler.
     """
-    @abstractmethod
     def sample_from_nodes(
         self,
         index: NodeSamplerInput,
@@ -87,27 +403,39 @@ class BaseSampler(ABC):
         r"""Performs sampling from the nodes specified in :obj:`index`,
         returning a sampled subgraph in the specified output format.
 
-        Args:
-            index (Tensor): The node indices to start sampling from.
-        """
-        pass
+        The :obj:`index` is a tuple holding the following information:
 
-    @abstractmethod
+        1. The example indices of the seed nodes
+        2. The node indices to start sampling from
+        3. The timestamps of the given seed nodes (optional)
+
+        Args:
+            index (NodeSamplerInput): The node sampler input object.
+        """
+        raise NotImplementedError
+
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,
-        **kwargs,
+        neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
         r"""Performs sampling from the edges specified in :obj:`index`,
         returning a sampled subgraph in the specified output format.
 
+        The :obj:`index` is a tuple holding the following information:
+
+        1. The example indices of the seed links
+        2. The source node indices to start sampling from
+        3. The destination node indices to start sampling from
+        4. The labels of the seed links (optional)
+        5. The timestamps of the given seed nodes (optional)
+
         Args:
-            index (Tuple[Tensor, Tensor, Tensor, Optional[Tensor]]): The (1)
-                source node indices, the (2) destination node indices, the (3)
-                edge labels and the (4) optional timestamp of edges to start
-                sampling from.
+            index (EdgeSamplerInput): The edge sampler input object.
+            neg_sampling (NegativeSampling, optional): The negative sampling
+                configuration. (default: :obj:`None`)
         """
-        pass
+        raise NotImplementedError
 
     @property
     def edge_permutation(self) -> Union[OptTensor, Dict[EdgeType, OptTensor]]:

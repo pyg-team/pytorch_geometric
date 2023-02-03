@@ -1,5 +1,4 @@
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -22,9 +21,7 @@ class FeaturePropagation(BaseTransform):
 
     where missing node features are inferred by known features via propagation.
 
-    Example:
-
-    .. code-block::
+    .. code-block:: python
 
         from torch_geometric.transforms import FeaturePropagation
 
@@ -43,6 +40,8 @@ class FeaturePropagation(BaseTransform):
         self.num_iterations = num_iterations
 
     def __call__(self, data: Data) -> Data:
+        from torch_sparse import SparseTensor
+
         assert 'edge_index' in data or 'adj_t' in data
         assert data.x.size() == self.missing_mask.size()
 

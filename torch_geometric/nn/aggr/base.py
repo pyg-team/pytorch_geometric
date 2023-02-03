@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter, segment_csr
+from torch_scatter import segment_csr
 
 from torch_geometric.utils import scatter, to_dense_batch
 
@@ -22,7 +22,8 @@ class Aggregation(torch.nn.Module):
 
     |
 
-    Notably, :obj:`index` does not have to be sorted:
+    Notably, :obj:`index` does not have to be sorted (for most aggregation
+    operators):
 
     .. code-block::
 
@@ -52,27 +53,24 @@ class Aggregation(torch.nn.Module):
 
     Shapes:
         - **input:**
-          node features :math:`(|\mathcal{V}|, F_{in})` or edge features
-          :math:`(|\mathcal{E}|, F_{in})`,
+          node features :math:`(*, |\mathcal{V}|, F_{in})` or edge features
+          :math:`(*, |\mathcal{E}|, F_{in})`,
           index vector :math:`(|\mathcal{V}|)` or :math:`(|\mathcal{E}|)`,
-        - **output:** graph features :math:`(|\mathcal{G}|, F_{out})` or node
-          features :math:`(|\mathcal{V}|, F_{out})`
+        - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
+          node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
-    _validate = __debug__
-
-    # @abstractmethod
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
-            index (torch.LongTensor, optional): The indices of elements for
+            index (torch.Tensor, optional): The indices of elements for
                 applying the aggregation.
                 One of :obj:`index` or :obj:`ptr` must be defined.
                 (default: :obj:`None`)
-            ptr (torch.LongTensor, optional): If given, computes the
-                aggregation based on sorted inputs in CSR representation.
+            ptr (torch.Tensor, optional): If given, computes the aggregation
+                based on sorted inputs in CSR representation.
                 One of :obj:`index` or :obj:`ptr` must be defined.
                 (default: :obj:`None`)
             dim_size (int, optional): The size of the output tensor at
@@ -83,22 +81,8 @@ class Aggregation(torch.nn.Module):
         pass
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         pass
-
-    @staticmethod
-    def set_validate_args(value: bool):
-        r"""Sets whether validation is enabled or disabled.
-
-        The default behavior mimics Python's :obj:`assert`` statement:
-        validation is on by default, but is disabled if Python is run in
-        optimized mode (via :obj:`python -O`).
-        Validation may be expensive, so you may want to disable it once a model
-        is working.
-
-        Args:
-            value (bool): Whether to enable validation.
-        """
-        Aggregation._validate = value
 
     def __call__(self, x: Tensor, index: Optional[Tensor] = None,
                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -119,16 +103,18 @@ class Aggregation(torch.nn.Module):
                                  f"'{dim_size}' but expected "
                                  f"'{ptr.numel() - 1}')")
 
-        if index is not None:
-            if dim_size is None:
-                dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
-            elif self._validate:
+        if index is not None and dim_size is None:
+            dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
+
+        try:
+            return super().__call__(x, index, ptr, dim_size, dim, **kwargs)
+        except (IndexError, RuntimeError) as e:
+            if index is not None:
                 if index.numel() > 0 and dim_size <= int(index.max()):
                     raise ValueError(f"Encountered invalid 'dim_size' (got "
                                      f"'{dim_size}' but expected "
                                      f">= '{int(index.max()) + 1}')")
-
-        return super().__call__(x, index, ptr, dim_size, dim, **kwargs)
+            raise e
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
@@ -160,27 +146,38 @@ class Aggregation(torch.nn.Module):
 
     def reduce(self, x: Tensor, index: Optional[Tensor] = None,
                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-               dim: int = -2, reduce: str = 'add') -> Tensor:
+               dim: int = -2, reduce: str = 'sum') -> Tensor:
 
         if ptr is not None:
             ptr = expand_left(ptr, dim, dims=x.dim())
             return segment_csr(x, ptr, reduce=reduce)
 
         assert index is not None
-        return scatter(x, index, dim=dim, dim_size=dim_size, reduce=reduce)
+        return scatter(x, index, dim, dim_size, reduce)
 
-    def to_dense_batch(self, x: Tensor, index: Optional[Tensor] = None,
-                       ptr: Optional[Tensor] = None,
-                       dim_size: Optional[int] = None, dim: int = -2,
-                       fill_value: float = 0.) -> Tuple[Tensor, Tensor]:
+    def to_dense_batch(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        fill_value: float = 0.,
+        max_num_elements: Optional[int] = None,
+    ) -> Tuple[Tensor, Tensor]:
 
         # TODO Currently, `to_dense_batch` can only operate on `index`:
         self.assert_index_present(index)
         self.assert_sorted_index(index)
         self.assert_two_dimensional_input(x, dim)
 
-        return to_dense_batch(x, index, batch_size=dim_size,
-                              fill_value=fill_value)
+        return to_dense_batch(
+            x,
+            index,
+            batch_size=dim_size,
+            fill_value=fill_value,
+            max_num_nodes=max_num_elements,
+        )
 
 
 ###############################################################################

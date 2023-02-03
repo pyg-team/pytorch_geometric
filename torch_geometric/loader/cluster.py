@@ -5,7 +5,8 @@ from typing import Optional
 
 import torch
 import torch.utils.data
-from torch_sparse import SparseTensor, cat
+
+from torch_geometric.typing import SparseTensor
 
 
 class ClusterData(torch.utils.data.Dataset):
@@ -23,9 +24,8 @@ class ClusterData(torch.utils.data.Dataset):
         recursive (bool, optional): If set to :obj:`True`, will use multilevel
             recursive bisection instead of multilevel k-way partitioning.
             (default: :obj:`False`)
-        save_dir (string, optional): If set, will save the partitioned data to
-            the :obj:`save_dir` directory for faster re-use.
-            (default: :obj:`None`)
+        save_dir (str, optional): If set, will save the partitioned data to the
+            :obj:`save_dir` directory for faster re-use. (default: :obj:`None`)
         log (bool, optional): If set to :obj:`False`, will not log any
             progress. (default: :obj:`True`)
     """
@@ -140,6 +140,8 @@ class ClusterLoader(torch.utils.data.DataLoader):
                          **kwargs)
 
     def __collate__(self, batch):
+        from torch_sparse import cat
+
         if not isinstance(batch, torch.Tensor):
             batch = torch.tensor(batch)
 

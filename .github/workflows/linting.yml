@@ -8,15 +8,36 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
+  pyright:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup packages
+        uses: ./.github/actions/setup
+
+      - name: Install pyright
+        run: |
+          pip install pyright
+
+      - name: Run pyright
+        continue-on-error: true
+        run: |
+          pyright
+
   pylint:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.7
 
       - name: Install dependencies
         run: pip install pylint
@@ -27,13 +48,15 @@ jobs:
 
   mypy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.7
 
       - name: Install dependencies
         run: pip install mypy

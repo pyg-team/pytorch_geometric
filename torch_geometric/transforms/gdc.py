@@ -4,13 +4,17 @@ import numpy as np
 import torch
 from scipy.linalg import expm
 from torch import Tensor
-from torch_scatter import scatter_add
-from torch_sparse import coalesce
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
+from torch_geometric.utils import (
+    add_self_loops,
+    coalesce,
+    is_undirected,
+    scatter,
+    to_dense_adj,
+)
 
 
 @functional_transform('gdc')
@@ -108,7 +112,7 @@ class GDC(BaseTransform):
                 edge_index, edge_weight, fill_value=self.self_loop_weight,
                 num_nodes=N)
 
-        edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
+        edge_index, edge_weight = coalesce(edge_index, edge_weight, N)
 
         if self.exact:
             edge_index, edge_weight = self.transition_matrix(
@@ -124,7 +128,7 @@ class GDC(BaseTransform):
             edge_index, edge_weight = self.sparsify_sparse(
                 edge_index, edge_weight, N, **self.sparsification_kwargs)
 
-        edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
+        edge_index, edge_weight = coalesce(edge_index, edge_weight, N)
         edge_index, edge_weight = self.transition_matrix(
             edge_index, edge_weight, N, self.normalization_out)
 
@@ -162,19 +166,19 @@ class GDC(BaseTransform):
         """
         if normalization == 'sym':
             row, col = edge_index
-            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
             deg_inv_sqrt = deg.pow(-0.5)
             deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
             edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
         elif normalization == 'col':
             _, col = edge_index
-            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
             deg_inv = 1. / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[col]
         elif normalization == 'row':
             row, _ = edge_index
-            deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
             deg_inv = 1. / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[row]
@@ -296,14 +300,14 @@ class GDC(BaseTransform):
             if normalization == 'sym':
                 # Calculate original degrees.
                 _, col = edge_index
-                deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+                deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
             edge_index_np = edge_index.cpu().numpy()
-            # Assumes coalesced edge_index.
-            _, indptr, out_degree = np.unique(edge_index_np[0],
-                                              return_index=True,
-                                              return_counts=True)
-            indptr = np.append(indptr, len(edge_index_np[0]))
+
+            # Assumes sorted and coalesced edge indices:
+            indptr = torch._convert_indices_from_coo_to_csr(
+                edge_index[0], num_nodes).cpu().numpy()
+            out_degree = indptr[1:] - indptr[:-1]
 
             neighbors, neighbor_weights = self.__calc_ppr__(
                 indptr, edge_index_np[1], out_degree, kwargs['alpha'],

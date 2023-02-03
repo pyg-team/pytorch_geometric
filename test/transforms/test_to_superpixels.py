@@ -17,7 +17,7 @@ resources = [
 ]
 
 
-@withPackage('torchvision')
+@withPackage('torchvision', 'skimage')
 def test_to_superpixels():
     import torchvision.transforms as T
     from torchvision.datasets.mnist import (

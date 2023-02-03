@@ -32,7 +32,7 @@ class TOSCA(InMemoryDataset):
         face area.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         categories (list, optional): List of categories to include in the
             dataset. Can include the categories :obj:`"Cat"`, :obj:`"Centaur"`,
             :obj:`"David"`, :obj:`"Dog"`, :obj:`"Gorilla"`, :obj:`"Horse"`,

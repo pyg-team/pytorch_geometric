@@ -14,13 +14,14 @@ class ExplanationType(Enum):
 class MaskType(Enum):
     """Enum class for the mask type."""
     object = 'object'
+    common_attributes = 'common_attributes'
     attributes = 'attributes'
-    both = 'both'
 
 
 class ModelMode(Enum):
     """Enum class for the model return type."""
-    classification = 'classification'
+    binary_classification = 'binary_classification'
+    multiclass_classification = 'multiclass_classification'
     regression = 'regression'
 
 
@@ -60,23 +61,23 @@ class ExplainerConfig(CastMixin):
                 - :obj:`"phenomenon"`: Explains the phenomenon that the model
                   is trying to predict.
 
-            In practice this means that the explanation algorithm will either
-            compute their losses with respect to the model output or the target
-            output.
+            In practice, this means that the explanation algorithm will either
+            compute their losses with respect to the model output
+            (:obj:`"model"`) or the target output (:obj:`"phenomenon"`).
 
         node_mask_type (MaskType or str, optional): The type of mask to apply
             on nodes. The possible values are (default: :obj:`None`):
 
                 - :obj:`None`: Will not apply any mask on nodes.
 
-                - :obj:`"object"`: Will mask the whole node.
+                - :obj:`"object"`: Will mask each node.
 
-                - :obj:`"attributes"`: Will mask the node attributes.
+                - :obj:`"common_attributes"`: Will mask each feature.
 
-                - :obj:`"both"`: Will mask both the node and its attributes..
+                - :obj:`"attributes"`: Will mask each feature across all nodes.
 
         edge_mask_type (MaskType or str, optional): The type of mask to apply
-            on edges. Same types as :obj:`node_mask_type`.
+            on edges. Has the sample possible values as :obj:`node_mask_type`.
             (default: :obj:`None`)
     """
     explanation_type: ExplanationType
@@ -94,13 +95,17 @@ class ExplainerConfig(CastMixin):
         if edge_mask_type is not None:
             edge_mask_type = MaskType(edge_mask_type)
 
+        if edge_mask_type is not None and edge_mask_type != MaskType.object:
+            raise ValueError(f"'edge_mask_type' needs be None or of type "
+                             f"'object' (got '{edge_mask_type.value}')")
+
+        if node_mask_type is None and edge_mask_type is None:
+            raise ValueError("Either 'node_mask_type' or 'edge_mask_type' "
+                             "must be provided")
+
         self.explanation_type = ExplanationType(explanation_type)
         self.node_mask_type = node_mask_type
         self.edge_mask_type = edge_mask_type
-
-        if self.node_mask_type is None and self.edge_mask_type is None:
-            raise ValueError("Either 'node_mask_type' or 'edge_mask_type' "
-                             "must be provided.")
 
 
 @dataclass
@@ -111,7 +116,11 @@ class ModelConfig(CastMixin):
         mode (ModelMode or str): The mode of the model. The possible values
             are:
 
-                - :obj:`"classification"`: A classification model.
+                - :obj:`"binary_classification"`: A binary classification
+                  model.
+
+                - :obj:`"multiclass_classification"`: A multiclass
+                  classification model.
 
                 - :obj:`"regression"`: A regression model.
 
@@ -156,6 +165,12 @@ class ModelConfig(CastMixin):
             raise ValueError(f"A model for regression needs to return raw "
                              f"outputs (got {self.return_type.value})")
 
+        if (self.mode == ModelMode.binary_classification and self.return_type
+                not in [ModelReturnType.raw, ModelReturnType.probs]):
+            raise ValueError(
+                f"A model for binary classification needs to return raw "
+                f"outputs or probabilities (got {self.return_type.value})")
+
 
 @dataclass
 class ThresholdConfig(CastMixin):
@@ -175,7 +190,7 @@ class ThresholdConfig(CastMixin):
                   The top obj:`value` elements of each mask are kept, the
                   others are set to :obj:`0`.
 
-                - :obj:`"topk_hard"`: Aame as :obj:`"topk"` but values are set
+                - :obj:`"topk_hard"`: Same as :obj:`"topk"` but values are set
                   to :obj:`1` for all elements which are kept.
 
         value (int or float, optional): The value to use when thresholding.
