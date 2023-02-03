@@ -17,4 +17,3 @@ def test_torch_profiler(get_dataset, device):
     with Profiler(model, profile_memory=True, use_cuda=use_cuda) as prof:
         model(data.x, data.edge_index)
         print(prof)
-
