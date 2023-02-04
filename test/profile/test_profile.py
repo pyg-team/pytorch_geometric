@@ -11,11 +11,11 @@ from torch_geometric.profile import (
     timeit,
 )
 from torch_geometric.profile.profile import torch_profile
-from torch_geometric.testing import onlyCUDA, onlyUnix, withCUDA, withPackage
+from torch_geometric.testing import onlyCUDA, onlyLinux, withCUDA, withPackage
 
 
 @withCUDA
-@onlyUnix
+@onlyLinux
 def test_timeit(device):
     x = torch.randn(100, 16, device=device)
     lin = torch.nn.Linear(16, 32).to(device)
