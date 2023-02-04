@@ -11,9 +11,9 @@ pytest.importorskip("huggingface_hub")
 
 from torch_geometric.nn.model_hub import PyGModelHubMixin  # noqa
 
-REPO_NAME = "test"
-MODEL_NAME = 'test_model'
-DATASET_NAME = 'some_dataset'
+REPO_NAME = "pyg_hugging_test"
+MODEL_NAME = 'pyg_test_model'
+DATASET_NAME = 'pyg_dataset'
 CONFIG = {"hello": "world"}
 
 
@@ -22,28 +22,22 @@ class DummyModel(GCN, PyGModelHubMixin):
         GCN.__init__(self, in_channels=3, hidden_channels=5, num_layers=2)
         PyGModelHubMixin.__init__(self, model_name, dataset_name, model_kwargs)
 
-    def load_state_dict(self, state_dict, strict):
-        return None
+
+@pytest.fixture
+def model():
+    return DummyModel(MODEL_NAME, DATASET_NAME, CONFIG)
 
 
 @withPackage('huggingface_hub')
-@pytest.fixture
-def Model():
-    return DummyModel
-
-
-@pytest.fixture
-def model(Model):
-    return Model(MODEL_NAME, DATASET_NAME, CONFIG)
-
-
-def test_model_init(Model):
-    model = Model(MODEL_NAME, DATASET_NAME, model_kwargs={
-        **CONFIG, "tensor": torch.Tensor([1, 2, 3])
-    })
+def test_model_init():
+    model = DummyModel(
+        MODEL_NAME, DATASET_NAME, model_kwargs={
+            **CONFIG, "tensor": torch.Tensor([1, 2, 3])
+        })
     assert model.model_config == CONFIG
 
 
+@withPackage('huggingface_hub')
 def test_save_pretrained(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
     # model._save_pretrained = Mock()
@@ -53,6 +47,7 @@ def test_save_pretrained(model, tmp_path):
     assert len(files) >= 1
 
 
+@withPackage('huggingface_hub')
 def test_save_pretrained_internal(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
     model._save_pretrained = Mock()
@@ -60,6 +55,7 @@ def test_save_pretrained_internal(model, tmp_path):
     model._save_pretrained.assert_called_with(save_directory)
 
 
+@withPackage('huggingface_hub')
 def test_save_pretrained_with_push_to_hub(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
 
@@ -82,23 +78,24 @@ def test_save_pretrained_with_push_to_hub(model, tmp_path):
     model.push_to_hub.assert_called_with(repo_id=REPO_NAME, config=CONFIG)
 
 
-def test_from_pretrained(model, Model, tmp_path):
+@withPackage('huggingface_hub')
+def test_from_pretrained(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
     model.save_pretrained(save_directory)
 
-    model = Model.from_pretrained(save_directory)
+    model = model.from_pretrained(save_directory)
     assert model.model_config == CONFIG
 
 
 @withPackage('huggingface_hub')
-def test_from_pretrained_internal(model, Model, tmp_path, monkeypatch):
+def test_from_pretrained_internal(model, monkeypatch):
     hf_hub_download = Mock(side_effect='model')
     monkeypatch.setattr("torch_geometric.nn.model_hub.hf_hub_download",
                         hf_hub_download)
     monkeypatch.setattr("torch_geometric.nn.model_hub.torch.load",
                         lambda x, **kwargs: {'state_dict': 1})
 
-    model = Model._from_pretrained(
+    model = model._from_pretrained(
         model_id=MODEL_NAME, revision=None, cache_dir=None,
         force_download=False, proxies=None, resume_download=True,
         local_files_only=False, use_auth_token=False,
