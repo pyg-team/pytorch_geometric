@@ -66,4 +66,5 @@ exclude_lines = [
     "except",
     "register_parameter",
     "warn",
+    "torch.cuda.is_available",
 ]
