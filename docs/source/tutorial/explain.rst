@@ -14,7 +14,7 @@ Interpreting GNN models is crucial for many use cases.
 
 .. warning::
 
-    The explanation APIs discussed here may change in the future as we continuously work to improve their ease-of-use and generalizability.
+   The explanation APIs discussed here may change in the future as we continuously work to improve their ease-of-use and generalizability.
 
 Explainer Interface
 -------------------
@@ -32,8 +32,14 @@ The :class:`torch_geometric.explain.Explainer` class is designed to handle all e
 This class allows the user to easily compare different explainability methods and to easily switch between different types of masks, while making sure the high-level framework stays the same.
 The :class:`~torch_geometric.explain.Explainer` generates an :class:`~torch_geometric.explain.Explanation` or :class:`~torch_geometric.explain.HeteroExplanation` object which contains the final information about which nodes, edges and features are crucial to explain a GNN model.
 
+.. note::
+
+   You can read more about the :class:`torch_geometric.explain` package in this [blog post](https://medium.com/@pytorch_geometric/graph-machine-learning-explainability-with-pyg-ff13cffc23c2).
+
 Examples
 --------
+
+In what follows, we discuss a few use-cases with corresponding code examples.
 
 Explaining node classification on a homogeneous graph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

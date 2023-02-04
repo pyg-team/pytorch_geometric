@@ -1,45 +1,51 @@
 import functools
 from collections import OrderedDict, defaultdict, namedtuple
-from typing import List, NamedTuple, Tuple
+from typing import Any, List, NamedTuple, Optional, Tuple
 
 import torch
 import torch.profiler as torch_profiler
 
 # predefined namedtuple for variable setting (global template)
-Trace = namedtuple("Trace", ["path", "leaf", "module"])
+Trace = namedtuple('Trace', ['path', 'leaf', 'module'])
 
 # the metrics returned from the torch profiler
-Measure = namedtuple("Measure", [
-    "self_cpu_total", "cpu_total", "self_cuda_total", "cuda_total",
-    "self_cpu_memory", "cpu_memory", "self_cuda_memory", "cuda_memory",
-    "occurrences"
+Measure = namedtuple('Measure', [
+    'self_cpu_total',
+    'cpu_total',
+    'self_cuda_total',
+    'cuda_total',
+    'self_cpu_memory',
+    'cpu_memory',
+    'self_cuda_memory',
+    'cuda_memory',
+    'occurrences',
 ])
 
 
-class Profiler(object):
+class Profiler:
     r"""Layer by layer profiling of PyTorch models, using the PyTorch profiler
-    for memory profiling and part of the code is adapted from torchprof for
-    layer-wise grouping (https://github.com/awwong1/torchprof).
-
-    .. note::
-        torch 1.8.1 and above is needed. For Windows OS, torch 1.9 is expected.
+    for memory profiling. Parts of the code are adapted from :obj:`torchprof`
+    for layer-wise grouping.
 
     Args:
-        model (PyG model): the underlying model to be profiled. It should
-            be a valid Pytorch nn model.
-        enabled (bool, optional): If true, turn on the profiler.
+        model (torch.nn.Module): The underlying model to be profiled.
+        enabled (bool, optional): If set to :obj:`True`, turn on the profiler.
             (default: :obj:`False`)
-        use_cuda (bool, optional):
+        use_cuda (bool, optional): Whether to profile CUDA execution.
             (default: :obj:`False`)
-        profile_memory (bool, optional): If True, also profile for the memory
-            usage information.
-            (default: :obj:`False`)
-        paths (str, optional): Predefine path for fast loading. By default, it
-            will not be used.
-            (default: :obj:`False`)
+        profile_memory (bool, optional): If set to :obj:`True`, also profile
+            memory usage. (default: :obj:`False`)
+        paths ([str], optional): Pre-defined paths for fast loading.
+            (default: :obj:`None`)
     """
-    def __init__(self, model, enabled=True, use_cuda=False,
-                 profile_memory=False, paths=None):
+    def __init__(
+        self,
+        model: torch.nn.Module,
+        enabled: bool = True,
+        use_cuda: bool = False,
+        profile_memory: bool = False,
+        paths: Optional[List[str]] = None,
+    ):
         self._model = model
         self.enabled = enabled
         self.use_cuda = use_cuda
@@ -71,12 +77,11 @@ class Profiler(object):
         del self._forwards  # remove unnecessary forwards
         self.exited = True
 
-    def __str__(self):
-        full_table, heading, raw_info, layer_names, layer_stats = \
-            layer_trace(self.traces,
-                        self.trace_profile_events)
-        # print layer-wise memory consumption
-        print(full_table)
+    def get_trace(self):
+        return _layer_trace(self.traces, self.trace_profile_events)
+
+    def __repr__(self) -> str:
+        return self.get_trace()[0]
 
     def __call__(self, *args, **kwargs):
         return self._model(*args, **kwargs)
@@ -140,14 +145,14 @@ class Profiler(object):
             module.forward = self._forwards[path]
 
 
-def layer_trace(
+def _layer_trace(
         traces: NamedTuple,
-        trace_events: object,
+        trace_events: Any,
         show_events: bool = True,
-        paths: str = None,
+        paths: List[str] = None,
         use_cuda: bool = False,
         profile_memory: bool = False,
-        dt: Tuple[str] = ('-', '-', '-', ' '),
+        dt: Tuple[str, ...] = ('-', '-', '-', ' '),
 ) -> object:
     """Construct human readable output of the profiler traces and events. The
     information is presented in layers, and each layer contains its underlying
@@ -182,7 +187,7 @@ def layer_trace(
                                        (paths is not None and path in paths)):
                 # tree measurements have key None, avoiding name conflict
                 if show_events:
-                    for event_name, event_group in group_by(
+                    for event_name, event_group in _group_by(
                             events, lambda e: e.name):
                         event_group = list(event_group)
                         current_tree[name][event_name] = {
@@ -312,8 +317,6 @@ def layer_trace(
 
 
 def _flatten_tree(t, depth=0):
-    """Internal method, not for external use.
-    """
     flat = []
     for name, st in t.items():
         measures = st.pop(None, None)
@@ -323,8 +326,6 @@ def _flatten_tree(t, depth=0):
 
 
 def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
-    """This internal function builds the specific information for an event.
-    """
     # memory profiling supported in torch >= 1.6
     self_cpu_memory = None
     has_self_cpu_memory = any(
@@ -369,8 +370,6 @@ def _build_measure_tuple(events: List, occurrences: List) -> NamedTuple:
 
 
 def _format_measure_tuple(measure: NamedTuple) -> NamedTuple:
-    """Internal method, not for external use.
-    """
     self_cpu_total = (format_time(measure.self_cpu_total) if measure else "")
     cpu_total = format_time(measure.cpu_total) if measure else ""
     self_cuda_total = (format_time(measure.self_cuda_total) if measure
@@ -399,9 +398,7 @@ def _format_measure_tuple(measure: NamedTuple) -> NamedTuple:
     )
 
 
-def group_by(events, keyfn):
-    """Internal method, not for external use.
-    """
+def _group_by(events, keyfn):
     event_groups = OrderedDict()
     for event in events:
         key = keyfn(event)
@@ -411,12 +408,9 @@ def group_by(events, keyfn):
     return event_groups.items()
 
 
-def _walk_modules(module, name="", path=()):
-    """Internal function only. Walk through a PyTorch Model and
-    output Trace tuples (its path, whether has leaf, specific model)
-    """
-
-    # if not defined, use the class name of the model
+def _walk_modules(module, name: str = "", path=()):
+    # Walk through a PyTorch model and output trace tuples (its path, leafe
+    # node, model).
     if not name:
         name = module.__class__.__name__
 
@@ -436,9 +430,8 @@ def _walk_modules(module, name="", path=()):
         yield from _walk_modules(child_module, name=name, path=path)
 
 
-def format_time(time_us):
-    """Defines how to format time in torch profiler Event.
-    """
+def format_time(time_us: int) -> str:
+    r"""Returns a formatted time string."""
     US_IN_SECOND = 1000.0 * 1000.0
     US_IN_MS = 1000.0
     if time_us >= US_IN_SECOND:
@@ -448,9 +441,8 @@ def format_time(time_us):
     return '{:.3f}us'.format(time_us)
 
 
-def format_memory(nbytes):
-    """Returns a formatted memory size string in torch profiler Event
-    """
+def format_memory(nbytes: int) -> str:
+    """Returns a formatted memory size string."""
     KB = 1024
     MB = 1024 * KB
     GB = 1024 * MB
