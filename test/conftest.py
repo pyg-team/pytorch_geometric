@@ -47,5 +47,5 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
 def get_dataset():
     root = osp.join('/', 'tmp', 'pyg_test_datasets')
     yield functools.partial(load_dataset, root)
-    if osp.exists(root):
-        shutil.rmtree(root)
+    # if osp.exists(root):
+    #     shutil.rmtree(root)

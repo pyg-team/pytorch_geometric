@@ -597,7 +597,6 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
     data = Data(x=torch.randn(1, 1))
     loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
                             num_workers=num_workers)
-    loader.is_cuda_available = False  # Force 'cpu_affinity'.
 
     if isinstance(loader_cores, list):
         loader_cores = loader_cores[:num_workers]

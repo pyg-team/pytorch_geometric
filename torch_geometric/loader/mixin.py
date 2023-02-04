@@ -109,13 +109,10 @@ class AffinityMixin:
                 The :class:`DataLoader` wil affinitize to cores starting at
                 :obj:`cpu0`. (default: :obj:`node0_cores[:num_workers]`)
         """
-        # if not torch.cuda.is_available():
         if not self.num_workers > 0:
             raise ValueError(
                 f"'enable_cpu_affinity' should be used with at least one "
                 f"worker (got {self.num_workers})")
-        # else:
-        #     raise ValueError("Can't enable CPU affintity for GPU device")
 
         if loader_cores and len(loader_cores) != self.num_workers:
             raise ValueError(
