@@ -73,7 +73,7 @@ class PyGModelHubMixin(ModelHubMixin):
 
     Args:
         model_name (str): Name of the model shown on the model card
-            hugging face hub.
+            on hugging face hub.
         dataset_name (str): Name of the dataset the model was trained against.
         model_kwargs (Dict): Arguments to initialise the Pyg model.
     """
