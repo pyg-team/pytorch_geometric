@@ -17,6 +17,7 @@ except ImportError:
 CONFIG_NAME = 'config.json'
 MODEL_HUB_ORGANIZATION = "pytorch_geometric"
 MODEL_WEIGHTS_NAME = 'model.pth'
+ADDITIONAL_TAGS = ['graph-machine-learning']
 
 
 class PyGModelHubMixin(ModelHubMixin):
@@ -93,7 +94,7 @@ class PyGModelHubMixin(ModelHubMixin):
             language='en',
             license='mit',
             library_name=MODEL_HUB_ORGANIZATION,
-            tags=[MODEL_HUB_ORGANIZATION, model_name],
+            tags=[MODEL_HUB_ORGANIZATION] + ADDITIONAL_TAGS,
             datasets=dataset_name,
             model_name=model_name,
         )
