@@ -93,13 +93,12 @@ class AntiSymmetricConv(torch.nn.Module):
         self.phi.reset_parameters()
         zeros(self.bias)
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Adj, *args, **kwargs) -> Tensor:
         """"""
         antisymmetric_W = self.W - self.W.t() - self.gamma * self.eye
 
         for _ in range(self.num_iters):
-            h = self.phi(x, edge_index, edge_weight=edge_weight)
+            h = self.phi(x, edge_index, *args, **kwargs)
             h = x @ antisymmetric_W.t() + h
 
             if self.bias is not None:
