@@ -1,8 +1,9 @@
 import logging
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import torch
+from torch import Tensor
 
 from torch_geometric.explain import ExplainerAlgorithm
 from torch_geometric.explain.config import ModelMode, ModelTaskLevel
@@ -66,9 +67,9 @@ class PGMExplainer(ExplainerAlgorithm):
 
     def _perturb_features_on_nodes(
         self,
-        x: torch.Tensor,
-        index: torch.Tensor,
-    ) -> torch.Tensor:
+        x: Tensor,
+        index: Tensor,
+    ) -> Tensor:
         r"""Perturbs feature matrix :obj:`x`.
 
         Args:
@@ -107,11 +108,11 @@ class PGMExplainer(ExplainerAlgorithm):
     def _batch_perturb_features_on_node(
             self,
             model: torch.nn.Module,
-            x: torch.Tensor,
-            edge_index: torch.Tensor,
+            x: Tensor,
+            edge_index: Tensor,
             indices_to_perturb: np.array,
             percentage: float = 50.,  # % time node gets perturbed
-            **kwargs) -> torch.Tensor:
+            **kwargs) -> Tensor:
         r"""Perturbs the node features of a batch of graphs for graph
         classification tasks.
 
@@ -167,12 +168,12 @@ class PGMExplainer(ExplainerAlgorithm):
     def _explain_graph(
         self,
         model: torch.nn.Module,
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
+        x: Tensor,
+        edge_index: Tensor,
         target=None,
         **kwargs,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        r"""Generate explanations for graph classification tasks.
+    ) -> Tuple[Tensor, Tensor]:
+        r"""Generates explanations for graph classification tasks.
 
         Args:
             model (torch.nn.Module): The model to explain.
@@ -248,11 +249,16 @@ class PGMExplainer(ExplainerAlgorithm):
 
         return node_mask, pgm_stats
 
-    def _explain_node(self, model: torch.nn.Module, x: torch.Tensor,
-                      edge_index: torch.Tensor, target: torch.Tensor,
-                      index: int,
-                      **kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
-        r"""Generate explanations for node classification tasks.
+    def _explain_node(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        target: Tensor,
+        index: int,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
+        r"""Generates explanations for node classification tasks.
 
         Args:
             model (torch.nn.Module): The model to explain.
@@ -364,17 +370,18 @@ class PGMExplainer(ExplainerAlgorithm):
     def forward(
         self,
         model: torch.nn.Module,
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
-        target: torch.Tensor,
-        index: Optional[int] = None,  # node index
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,  # node index
         **kwargs,
     ) -> Explanation:
 
         if self.feature_index is None:
             self.feature_index = list(range(x.shape[-1]))
 
-        if isinstance(index, torch.Tensor):
+        if isinstance(index, Tensor):
             if index.numel() > 1:
                 raise NotImplementedError(
                     f"'{self.__class__.__name}' only supports a single "
@@ -382,22 +389,29 @@ class PGMExplainer(ExplainerAlgorithm):
             index = index.item()
 
         if self.model_config.task_level == ModelTaskLevel.node:
-
-            node_mask, pgm_stats = self._explain_node(model=model, x=x,
-                                                      edge_index=edge_index,
-                                                      target=target[index],
-                                                      index=index, **kwargs)
+            node_mask, pgm_stats = self._explain_node(
+                model=model,
+                x=x,
+                edge_index=edge_index,
+                target=target[index],
+                index=index,
+                **kwargs,
+            )
             return Explanation(
                 x=x,
                 edge_index=edge_index,
                 node_mask=node_mask,
                 pgm_stats=pgm_stats,
             )
+
         elif self.model_config.task_level == ModelTaskLevel.graph:
-            node_mask, pgm_stats = self._explain_graph(model=model, x=x,
-                                                       target=target,
-                                                       edge_index=edge_index,
-                                                       **kwargs)
+            node_mask, pgm_stats = self._explain_graph(
+                model=model,
+                x=x,
+                target=target,
+                edge_index=edge_index,
+                **kwargs,
+            )
             return Explanation(
                 node_mask=node_mask,
                 pgm_stats=pgm_stats,
@@ -409,9 +423,9 @@ class PGMExplainer(ExplainerAlgorithm):
             logging.error(f"Task level '{task_level.value}' not supported")
             return False
         if self.explainer_config.edge_mask_type is not None:
-            logging.error("Edge masks not supported by PGM explainer")
+            logging.error("Generation of edge masks is not supported")
             return False
         if self.model_config.mode == ModelMode.regression:
-            logging.error("PGM explainer only supports classification tasks")
+            logging.error("'PGMExplainer' only supports classification tasks")
             return False
         return True
