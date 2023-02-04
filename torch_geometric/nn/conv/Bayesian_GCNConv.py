@@ -10,13 +10,9 @@ from torch_sparse import sum as sparsesum
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor
-from torch_geometric.utils.num_nodes import maybe_num_nodes
-
 # for the last version of torch_geometric
-from torch_geometric.utils import (
-    scatter,
-    spmm,
-)
+from torch_geometric.utils import scatter, spmm
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 # Inspired from IntelLabs :
 # https://github.com/IntelLabs/bayesian-torch/blob/main/bayesian_torch/
