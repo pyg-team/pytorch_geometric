@@ -4,7 +4,6 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add as scatter  # previous version of pyg
 from torch_sparse import SparseTensor, fill_diag, matmul, mul
 from torch_sparse import sum as sparsesum
 
@@ -13,17 +12,15 @@ from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
-#for the last version of torch_geometric
-# from torch_geometric.utils import (
-#     add_remaining_self_loops,
-#     is_torch_sparse_tensor,
-#     scatter,
-#     spmm,
-#     to_torch_coo_tensor,
-# )
+# for the last version of torch_geometric
+from torch_geometric.utils import (
+    scatter,
+    spmm,
+)
 
-#Inspired from IntelLabs :
-#https://github.com/IntelLabs/bayesian-torch/blob/main/bayesian_torch/layers/base_variational_layer.py
+# Inspired from IntelLabs :
+# https://github.com/IntelLabs/bayesian-torch/blob/main/bayesian_torch/
+# layers/base_variational_layer.py
 
 
 def gcn_norm(edge_index, edge_weight=None, num_nodes=None, dtype=None):
@@ -32,8 +29,6 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, dtype=None):
         adj_t = edge_index
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
-        if add_self_loops:
-            adj_t = fill_diag(adj_t, fill_value)
         deg = sparsesum(adj_t, dim=1)
         deg_inv_sqrt = deg.pow_(-0.5)
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
@@ -193,7 +188,7 @@ class BGCNConv(MessagePassing):
                                     self.prior_weight_mu,
                                     self.prior_weight_sigma)
 
-        bias = None  #Initialization of bias
+        bias = None  # Initialization of bias
 
         if self.mu_bias is not None:
             sigma_bias = torch.log1p(torch.exp(self.rho_bias))
@@ -223,10 +218,10 @@ class BGCNConv(MessagePassing):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
 
-#example of testing (can work faster with gpu to device)
+# example of testing (can work faster with gpu to device)
 # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # print(f"Let's use {torch.cuda.device_count()} GPUs!")
 
