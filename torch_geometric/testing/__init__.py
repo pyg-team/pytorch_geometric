@@ -1,7 +1,7 @@
 from .decorators import (
     is_full_test,
     onlyFullTest,
-    onlyUnix,
+    onlyLinux,
     onlyPython,
     onlyCUDA,
     onlyGraphviz,
@@ -14,7 +14,7 @@ from .graph_store import MyGraphStore
 __all__ = [
     'is_full_test',
     'onlyFullTest',
-    'onlyUnix',
+    'onlyLinux',
     'onlyPython',
     'onlyCUDA',
     'onlyGraphviz',

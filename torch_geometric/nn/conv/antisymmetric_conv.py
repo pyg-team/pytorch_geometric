@@ -6,7 +6,7 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.conv import GCNConv, MessagePassing
-from torch_geometric.nn.inits import ones, zeros
+from torch_geometric.nn.inits import zeros
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import Adj
 
@@ -27,17 +27,17 @@ class AntiSymmetricConv(torch.nn.Module):
     Args:
         in_channels (int): Size of each input sample.
         phi (MessagePassing, optional): The message passing module
-            :math:`\Phi`. If set to :obj:`None`, will use
-            :class:`~torch_geometric.nn.conv.GCNConv` as default.
-            (default :obj:`None`)
+            :math:`\Phi`. If set to :obj:`None`, will use a
+            :class:`~torch_geometric.nn.conv.GCNConv` layer as default.
+            (default: :obj:`None`)
         num_iters (int, optional): The number of times the anti-symmetric deep
-            graph network operator is called. (default :obj:`1`)
+            graph network operator is called. (default: :obj:`1`)
         epsilon (float, optional): The discretization step size
-            :math:`\epsilon`. (default :obj:`0.1`)
+            :math:`\epsilon`. (default: :obj:`0.1`)
         gamma (float, optional): The strength of the diffusion :math:`\gamma`.
-            It regulates the stability of the method. (default :obj:`0.1`)
-        act (str or Callable, optional): The monotonically non-decreasing
-            activation function :math:`\sigma`. (default: :obj:`"tanh"`)
+            It regulates the stability of the method. (default: :obj:`0.1`)
+        act (str, optional): The non-linear activation function :math:`\sigma`,
+            *e.g.*, :obj:`"tanh"` or :obj:`"relu"`. (default: :class:`"tanh"`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
@@ -74,7 +74,7 @@ class AntiSymmetricConv(torch.nn.Module):
             phi = GCNConv(in_channels, in_channels, bias=False)
 
         self.W = Parameter(torch.Tensor(in_channels, in_channels))
-        self.eye = torch.eye(in_channels)
+        self.register_buffer('eye', torch.eye(in_channels))
         self.phi = phi
 
         if bias:
