@@ -36,9 +36,6 @@ class AntiSymmetricConv(torch.nn.Module):
             :math:`\epsilon`. (default :obj:`0.1`)
         gamma (float, optional): The strength of the diffusion :math:`\gamma`.
             It regulates the stability of the method. (default :obj:`0.1`)
-        act (str, optional): The monotonically non-decreasing activation
-            function :math:`\sigma`, *e.g.*, :obj:`"tanh"` or :obj:`"relu"`.
-            (default :class:`torch.tanh`)
         act (str or Callable, optional): The monotonically non-decreasing
             activation function :math:`\sigma`. (default: :obj:`"tanh"`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -77,7 +74,7 @@ class AntiSymmetricConv(torch.nn.Module):
             phi = GCNConv(in_channels, in_channels, bias=False)
 
         self.W = Parameter(torch.Tensor(in_channels, in_channels))
-        self.eye = Parameter(torch.Tensor(in_channels))
+        self.eye = torch.eye(in_channels)
         self.phi = phi
 
         if bias:
@@ -89,7 +86,6 @@ class AntiSymmetricConv(torch.nn.Module):
 
     def reset_parameters(self):
         torch.nn.init.kaiming_uniform_(self.W, a=math.sqrt(5))
-        ones(self.eye)
         self.phi.reset_parameters()
         zeros(self.bias)
 
