@@ -119,11 +119,11 @@ class PyGModelHubMixin(ModelHubMixin):
         r"""
         Save a trained model to a local directory or to huggingface model hub.
         Args:
-            save_directory (:obj:`str` or :obj:`Path`):
+            save_directory (str, Path):
                 The directory where weights are saved, to a file
                 called :obj:`"model.pth"`.
-            push_to_hub: If :obj:`True`, push the model to the model hub.
-                (default: :obj:`False`)
+            push_to_hub(bool): If :obj:`True`, push the model to the
+                model hub. (default: :obj:`False`)
             repo_id (str, optional): The repository name in the hub.
                 If not provided will default to the name of
                 :obj:`save_directory` in your namespace.
