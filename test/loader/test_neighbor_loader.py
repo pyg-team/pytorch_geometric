@@ -16,7 +16,7 @@ from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
-    onlyUnix,
+    onlyLinux,
     withPackage,
 )
 from torch_geometric.utils import k_hop_subgraph
@@ -565,7 +565,7 @@ def test_pyg_lib_hetero_neighbor_loader():
         assert torch.equal(edge_id1_dict[key], edge_id2_dict[key])
 
 
-@onlyUnix
+@onlyLinux
 def test_memmap_neighbor_loader():
     path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.npy')
     x = np.memmap(path, dtype=np.float32, mode='w+', shape=(100, 32))
@@ -588,7 +588,7 @@ def test_memmap_neighbor_loader():
     os.remove(path)
 
 
-@onlyUnix
+@onlyLinux
 @pytest.mark.parametrize('num_workers,loader_cores', [
     (1, None),
     (1, [1]),
