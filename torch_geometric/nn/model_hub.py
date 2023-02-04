@@ -118,10 +118,10 @@ class PyGModelHubMixin(ModelHubMixin):
                         repo_id: Optional[str] = None, **kwargs):
         r"""
         Save a trained model to a local directory or to huggingface model hub.
+
         Args:
-            save_directory (str, Path):
-                The directory where weights are saved, to a file
-                called :obj:`"model.pth"`.
+            save_directory (str, Path): The directory where weights are saved,
+                to a file called :obj:`"model.pth"`.
             push_to_hub(bool): If :obj:`True`, push the model to the
                 model hub. (default: :obj:`False`)
             repo_id (str, optional): The repository name in the hub.
@@ -234,29 +234,29 @@ class PyGModelHubMixin(ModelHubMixin):
                 - `None` if you are both providing the configuration
                 and state dictionary (resp. with keyword arguments
                 :obj:`config` and :obj:`state_dict`).
-            force_download (bool): Whether to force the (re-)download of the model
-                weights and configuration files, overriding the cached versions
-                if they exist. (default: :obj:`False`)
-            resume_download (bool): Whether to delete incompletely received files.
-                Will attempt to resume the download if such a file exists. (default: :obj:`False`)
-            proxies (Dict[str, str], optional): A dictionary of proxy servers to use by protocol or
-                endpoint, e.g., `{'http': 'foo.bar:3128', 'http://hostname': 'foo.bar:4012'}`.
+            force_download (bool): Whether to force the (re-)download of the
+                model weights and configuration files, overriding the cached
+                versions if they exist. (default: :obj:`False`)
+            resume_download (bool): Whether to delete incompletely received
+                files. Will attempt to resume the download if such a
+                file exists.(default: :obj:`False`)
+            proxies (Dict[str, str], optional): A dictionary of proxy servers
+                to use by protocol or endpoint,
+                e.g.,`{'http': 'foo.bar:3128', 'http://host': 'foo.bar:4012'}`.
                 The proxies are used on each request. (default: :obj:`None`)
-            token (str, bool, optional): The token to use as HTTP bearer authorization
-                for remote files. If `True`, will use the token generated when
-                running `transformers-cli login` (stored in
+            token (str, bool, optional): The token to use as HTTP bearer
+                authorization for remote files. If `True`, will use the token
+                generated when running `transformers-cli login` (stored in
                 `~/.huggingface`). It is **required** if you
                 want to use a private model. (default: :obj:`None`)
-            cache_dir (`Union[str, os.PathLike]`, *optional*):
-                Path to a directory in which a downloaded pretrained
-                model configuration should be cached if the standard
-                cache should not be used.
-            local_files_only(`bool`, *optional*, defaults to `False`):
-                Whether to only look at local files (i.e., do not try to
-                download the model).
-            model_kwargs (`Dict`, *optional*):
-                model_kwargs will be passed to the model during
-                initialization
+            cache_dir (str, Path, optional): Path to a directory in which a
+                downloaded model configuration should be cached if the
+                standard cache should not be used. (default: :obj:`None`)
+            local_files_only(bool): Whether to only look at local files
+                (i.e., do not try to download the model).
+                (default: :obj:`False`)
+            **model_kwargs: Keyword arguments passed along to
+                model during initialization. (default: :obj:`None`)
         """
         return super().from_pretrained(
             pretrained_model_name_or_path,
