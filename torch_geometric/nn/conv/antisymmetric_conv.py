@@ -8,7 +8,7 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import GCNConv, MessagePassing
 from torch_geometric.nn.inits import ones, zeros
 from torch_geometric.nn.resolver import activation_resolver
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj
 
 
 class AntiSymmetricConv(torch.nn.Module):
