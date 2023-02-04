@@ -211,7 +211,7 @@ class PyGModelHubMixin(ModelHubMixin):
         Download and instantiate a model from the Hugging Face Hub.
 
         Args:
-            pretrained_model_name_or_path (`str` or `os.PathLike`):
+            pretrained_model_name_or_path (str, Path):
                 Can be either:
                 - A string, the `model id` of a pretrained model
                 hosted inside a model repo on huggingface.co.
@@ -233,25 +233,20 @@ class PyGModelHubMixin(ModelHubMixin):
                 e.g., `./my_model_directory/`.
                 - `None` if you are both providing the configuration
                 and state dictionary (resp. with keyword arguments
-                `config` and `state_dict`).
-            force_download (`bool`, *optional*, defaults to `False`):
-                Whether to force the (re-)download of the model weights
-                and configuration files, overriding the cached versions
-                if they exist.
-            resume_download (`bool`, *optional*, defaults to `False`):
-                Whether to delete incompletely received files. Will
-                attempt to resume the download if such a file exists.
-            proxies (`Dict[str, str]`, *optional*):
-                A dictionary of proxy servers to use by protocol or
-                endpoint, e.g., `{'http': 'foo.bar:3128',
-                'http://hostname': 'foo.bar:4012'}`. The proxies are
-                used on each request.
-            token (`str` or `bool`, *optional*):
-                The token to use as HTTP bearer authorization for remote
-                files. If `True`, will use the token generated when
+                :obj:`config` and :obj:`state_dict`).
+            force_download (bool): Whether to force the (re-)download of the model
+                weights and configuration files, overriding the cached versions
+                if they exist. (default: :obj:`False`)
+            resume_download (bool): Whether to delete incompletely received files.
+                Will attempt to resume the download if such a file exists. (default: :obj:`False`)
+            proxies (Dict[str, str], optional): A dictionary of proxy servers to use by protocol or
+                endpoint, e.g., `{'http': 'foo.bar:3128', 'http://hostname': 'foo.bar:4012'}`.
+                The proxies are used on each request. (default: :obj:`None`)
+            token (str, bool, optional): The token to use as HTTP bearer authorization
+                for remote files. If `True`, will use the token generated when
                 running `transformers-cli login` (stored in
                 `~/.huggingface`). It is **required** if you
-                want to use a private model
+                want to use a private model. (default: :obj:`None`)
             cache_dir (`Union[str, os.PathLike]`, *optional*):
                 Path to a directory in which a downloaded pretrained
                 model configuration should be cached if the standard
