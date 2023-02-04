@@ -21,14 +21,9 @@ MODEL_WEIGHTS_NAME = 'model.pth'
 
 class PyGModelHubMixin(ModelHubMixin):
     r"""
-    Mixin for saving and loading models to Huggingface Model Hub
+    Mixin for saving and loading models to Huggingface Model Hub.
 
-    Args:
-        model_name (str): Name of the model as shown on the model card
-        dataset_name (str): Name of the dataset you trained model against
-        model_kwargs (Dict): Arguments that will be passed to the PyG model
-
-    Example of using this with Node2Vec and the Cora dataset from Planetoid:
+    Sample code for saving a :obj:`Node2Vec` model to the model hub:
 
     .. code-block:: python
 
@@ -68,11 +63,16 @@ class PyGModelHubMixin(ModelHubMixin):
           model_name='node2vec', dataset_name='Cora',
           edge_index=data.edge_index)
 
+
     ..note::
         At the moment the model card is fairly basic--
         override the `construct_model_card` method if you want to have
         a more detailed model card
 
+    Args:
+        model_name (str): Name of the model as shown on the model card.
+        dataset_name (str): Name of the dataset you trained model against.
+        model_kwargs (Dict): Arguments that will be passed to the PyG model.
     """
     def __init__(self, model_name: str, dataset_name: str, model_kwargs: Dict):
         ModelHubMixin.__init__(self)
