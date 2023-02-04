@@ -4,11 +4,10 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, fill_diag, matmul, mul
+from torch_sparse import SparseTensor, mul
 from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 # for the last version of torch_geometric
 from torch_geometric.utils import scatter, spmm
