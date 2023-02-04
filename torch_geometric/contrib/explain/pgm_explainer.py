@@ -173,7 +173,7 @@ class PGMExplainer(ExplainerAlgorithm):
         target=None,
         **kwargs,
     ) -> Tuple[Tensor, Tensor]:
-        r"""Generate explanations for graph classification tasks.
+        r"""Generates explanations for graph classification tasks.
 
         Args:
             model (torch.nn.Module): The model to explain.
@@ -258,7 +258,7 @@ class PGMExplainer(ExplainerAlgorithm):
         index: int,
         **kwargs,
     ) -> Tuple[Tensor, Tensor]:
-        r"""Generate explanations for node classification tasks.
+        r"""Generates explanations for node classification tasks.
 
         Args:
             model (torch.nn.Module): The model to explain.
