@@ -6,7 +6,7 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.conv import GCNConv, MessagePassing
-from torch_geometric.nn.inits import ones, zeros
+from torch_geometric.nn.inits import zeros
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import Adj
 
@@ -38,8 +38,6 @@ class AntiSymmetricConv(torch.nn.Module):
             It regulates the stability of the method. (default: :obj:`0.1`)
         act (str, optional): The non-linear activation function :math:`\sigma`,
             *e.g.*, :obj:`"tanh"` or :obj:`"relu"`. (default: :class:`"tanh"`)
-        act (str or Callable, optional): The monotonically non-decreasing
-            activation function :math:`\sigma`. (default: :obj:`"tanh"`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
@@ -76,7 +74,7 @@ class AntiSymmetricConv(torch.nn.Module):
             phi = GCNConv(in_channels, in_channels, bias=False)
 
         self.W = Parameter(torch.Tensor(in_channels, in_channels))
-        self.eye = Parameter(torch.Tensor(in_channels))
+        self.register_buffer('eye', torch.eye(in_channels))
         self.phi = phi
 
         if bias:
@@ -88,7 +86,6 @@ class AntiSymmetricConv(torch.nn.Module):
 
     def reset_parameters(self):
         torch.nn.init.kaiming_uniform_(self.W, a=math.sqrt(5))
-        ones(self.eye)
         self.phi.reset_parameters()
         zeros(self.bias)
 
