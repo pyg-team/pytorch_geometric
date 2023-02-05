@@ -615,6 +615,16 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 return_edge_mask=True,
             )
 
+            # reorder source nodes if needed
+            if src_subset.dtype == torch.long and (src_subset[:-1] > src_subset[1:]).any():
+                src_node_idx = torch.argsort(src_subset)
+                edge_index[0] = src_node_idx[edge_index[0]]
+
+            # reorder destination nodes if needed
+            if dst_subset.dtype == torch.long and (dst_subset[:-1] > dst_subset[1:]).any():
+                dst_node_idx = torch.argsort(dst_subset)
+                edge_index[1] = dst_node_idx[edge_index[1]]
+
             for key, value in self[edge_type].items():
                 if key == 'edge_index':
                     data[edge_type].edge_index = edge_index

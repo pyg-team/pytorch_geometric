@@ -598,6 +598,11 @@ class Data(BaseData, FeatureStore, GraphStore):
         else:
             num_nodes = subset.size(0)
 
+            # check if selection is unordered and re-map edge_index if necessary
+            if (subset[:-1] > subset[1:]).any():
+                node_idx = torch.argsort(subset)
+                edge_index = node_idx[edge_index]
+
         data = copy.copy(self)
 
         for key, value in self:
