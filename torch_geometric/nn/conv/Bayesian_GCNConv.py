@@ -66,7 +66,6 @@ class BGCNConv(MessagePassing):
         self.cached = cached
         self.normalize = normalize
 
-        self._cached_edge_index = None
 
         self.mu_weight = Parameter(torch.Tensor(out_channels, in_channels))
         self.rho_weight = Parameter(torch.Tensor(out_channels, in_channels))
