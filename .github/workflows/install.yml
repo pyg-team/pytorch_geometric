@@ -1,13 +1,12 @@
 name: Minimal Installation
 
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   push:
     branches:
       - master
   pull_request:
 
 jobs:
-
   import:
     runs-on: ubuntu-latest
 
@@ -34,6 +33,11 @@ jobs:
       - name: Setup packages
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
+        with:
+          cache: "pip"
+          cache-dependency-path: |
+            setup.py
+            **/requirements*.txt
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'

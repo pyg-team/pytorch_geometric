@@ -16,6 +16,12 @@ jobs:
 
       - name: Setup packages
         uses: ./.github/actions/setup
+        with:
+          python-version: 3.7
+          cache: "pip"
+          cache-dependency-path: |
+            setup.py
+            **/requirements*.txt
 
       - name: Install pyright
         run: |
@@ -38,7 +44,9 @@ jobs:
         with:
           python-version: 3.7
           cache: "pip"
-          cache-dependency-path: setup.py
+          cache-dependency-path: |
+            setup.py
+            **/requirements*.txt
 
       - name: Install dependencies
         run: pip install pylint
@@ -59,7 +67,9 @@ jobs:
         with:
           python-version: 3.7
           cache: "pip"
-          cache-dependency-path: setup.py
+          cache-dependency-path: |
+            setup.py
+            **/requirements*.txt
 
       - name: Install dependencies
         run: pip install mypy

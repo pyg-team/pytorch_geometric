@@ -1,12 +1,11 @@
 name: Full Testing
 
-on:  # yamllint disable-line rule:truthy
+on: # yamllint disable-line rule:truthy
   workflow_dispatch:
   schedule:
-    - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
+    - cron: "0 6 * * *" # Everyday at 6:00am UTC/10:00pm PST
 
 jobs:
-
   pytest:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ${{ matrix.os }}
@@ -15,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
 
     steps:
       - name: Checkout repository
@@ -25,6 +24,10 @@ jobs:
         uses: ./.github/actions/setup
         with:
           python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: |
+            setup.py
+            **/requirements*.txt
 
       - name: Install graphviz
         if: ${{ runner.os == 'Linux' }}
@@ -38,8 +41,7 @@ jobs:
       - name: Run tests
         run: |
           FULL_TEST=1 pytest --cov --cov-report=xml
-        shell:
-          bash
+        shell: bash
 
       - name: Upload coverage
         uses: codecov/codecov-action@v2

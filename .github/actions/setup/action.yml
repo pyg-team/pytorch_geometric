@@ -23,7 +23,9 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
         cache: "pip"
-        cache-dependency-path: setup.py
+        cache-dependency-path: |
+          setup.py
+          **/requirements*.txt
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       run: |
