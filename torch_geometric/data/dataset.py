@@ -87,10 +87,12 @@ class Dataset(torch.utils.data.Dataset):
         self.log = log
         self._indices: Optional[Sequence] = None
 
-        if self.download.__qualname__.split('.')[0] != 'Dataset':
+        flag = self.__class__.__name__ == 'Dataset' and has_parent(
+            self.__class__.__bases__, Dataset)
+        if self.download.__qualname__.split('.')[0] != 'Dataset' or flag:
             self._download()
 
-        if self.process.__qualname__.split('.')[0] != 'Dataset':
+        if self.process.__qualname__.split('.')[0] != 'Dataset' or flag:
             self._process()
 
     def indices(self) -> Sequence:
@@ -331,6 +333,16 @@ class Dataset(torch.utils.data.Dataset):
         from torch_geometric.data.datapipes import DatasetAdapter
 
         return DatasetAdapter(self)
+
+
+def has_parent(classes, cls) -> bool:
+    """Check if a set of classes has a parent class `cls`."""
+    for c in classes:
+        if c is cls:
+            return True
+        else:
+            return has_parent(c.__bases__, cls)
+    return False
 
 
 def to_list(value: Any) -> Sequence:
