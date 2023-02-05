@@ -66,7 +66,6 @@ class BGCNConv(MessagePassing):
         self.cached = cached
         self.normalize = normalize
 
-
         self.mu_weight = Parameter(torch.Tensor(out_channels, in_channels))
         self.rho_weight = Parameter(torch.Tensor(out_channels, in_channels))
 
@@ -138,7 +137,8 @@ class BGCNConv(MessagePassing):
         return kl
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None, return_kl: bool =True) -> Tensor:
+                edge_weight: OptTensor = None,
+                return_kl: bool = True) -> Tensor:
         """"""
 
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
