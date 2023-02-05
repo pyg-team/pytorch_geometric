@@ -10,7 +10,7 @@ from torch_sparse import SparseTensor, masked_select_nnz, matmul
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import Adj, OptTensor, pyg_lib
-from torch_geometric.utils import scatter
+from torch_geometric.utils import index_sort, scatter
 
 from ..inits import glorot, zeros
 
@@ -59,6 +59,14 @@ class RGCNConv(MessagePassing):
         compensate.
         We advise to check out both implementations to see which one fits your
         needs.
+
+    .. note::
+        :class:`RGCNConv` can use `dynamic shapes
+        <https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index
+        .html#work_dynamic_shapes>`_, which means that the shape of the interim
+        tensors can be determined at runtime.
+        If your device doesn't support dynamic shapes, use
+        :class:`FastRGCNConv` instead.
 
     Args:
         in_channels (int or tuple): Size of each input sample. A tuple
@@ -222,7 +230,8 @@ class RGCNConv(MessagePassing):
                     and isinstance(edge_index, Tensor)):
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
-                        edge_type, perm = edge_type.sort()
+                        edge_type, perm = index_sort(
+                            edge_type, max_value=self.num_relations)
                         edge_index = edge_index[:, perm]
                 edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
                     edge_type, self.num_relations)

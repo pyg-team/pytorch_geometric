@@ -3,12 +3,13 @@ from typing import List, Optional, Tuple, Union
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import LSTM
-from torch_sparse import SparseTensor, matmul
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptPairTensor, Size
+from torch_geometric.utils import spmm
 
 
 class SAGEConv(MessagePassing):
@@ -145,8 +146,9 @@ class SAGEConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
-        adj_t = adj_t.set_value(None, layout=None)
-        return matmul(adj_t, x[0], reduce=self.aggr)
+        if isinstance(adj_t, SparseTensor):
+            adj_t = adj_t.set_value(None, layout=None)
+        return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

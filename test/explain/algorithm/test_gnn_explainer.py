@@ -50,9 +50,9 @@ class GCN(torch.nn.Module):
 
 
 def check_explanation(
-    edge_mask_type: Optional[MaskType],
-    node_mask_type: Optional[MaskType],
     explanation: Explanation,
+    node_mask_type: Optional[MaskType],
+    edge_mask_type: Optional[MaskType],
 ):
     if node_mask_type == MaskType.attributes:
         assert explanation.node_mask.size() == explanation.x.size()
@@ -145,7 +145,7 @@ def test_gnn_explainer_binary_classification(
         edge_label_index=edge_label_index,
     )
 
-    check_explanation(edge_mask_type, node_mask_type, explanation)
+    check_explanation(explanation, node_mask_type, edge_mask_type)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -193,7 +193,7 @@ def test_gnn_explainer_multiclass_classification(
         edge_label_index=edge_label_index,
     )
 
-    check_explanation(edge_mask_type, node_mask_type, explanation)
+    check_explanation(explanation, node_mask_type, edge_mask_type)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -238,4 +238,4 @@ def test_gnn_explainer_regression(
         edge_label_index=edge_label_index,
     )
 
-    check_explanation(edge_mask_type, node_mask_type, explanation)
+    check_explanation(explanation, node_mask_type, edge_mask_type)
