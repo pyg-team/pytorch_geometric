@@ -203,4 +203,4 @@ we now execute our GNN operator as
         row, col, edge_attr = adj_t.t().coo()
         edge_index = torch.stack([row, col], dim=0)
 
-Please let us know what you think of :class:`SparseTensor`, how we can improve it, and whenever you encounter any unexpected behaviour.
+Please let us know what you think of :class:`SparseTensor`, how we can improve it, and whenever you encounter any unexpected behavior.
