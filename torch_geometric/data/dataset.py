@@ -87,12 +87,10 @@ class Dataset(torch.utils.data.Dataset):
         self.log = log
         self._indices: Optional[Sequence] = None
 
-        flag = self.__class__.__name__ == 'Dataset' and has_parent(
-            self.__class__.__bases__, Dataset)
-        if self.download.__qualname__.split('.')[0] != 'Dataset' or flag:
+        if 'download' in self.__class__.__dict__:
             self._download()
 
-        if self.process.__qualname__.split('.')[0] != 'Dataset' or flag:
+        if 'process' in self.__class__.__dict__:
             self._process()
 
     def indices(self) -> Sequence:
