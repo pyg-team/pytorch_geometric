@@ -203,6 +203,7 @@ class PNAConv(MessagePassing):
                 d_bincount[:deg_histogram.size(0)] += deg_histogram
                 deg_histogram = d_bincount
             else:
-                deg_histogram[:d_bincount.size(0)] += d_bincount
+                assert d_bincount.size(0) == deg_histogram.size(0)
+                deg_histogram += d_bincount
 
         return deg_histogram
