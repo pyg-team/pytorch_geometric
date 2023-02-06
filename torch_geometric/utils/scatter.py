@@ -25,7 +25,7 @@ if has_pytorch112:  # pragma: no cover
         specified in the :obj:`index` tensor along a given dimension
         :obj:`dim`. See the `documentation
         <https://pytorch-scatter.readthedocs.io/en/latest/functions/
-        scatter.html>`_ of :obj:`torch-scatter` for more information.
+        scatter.html>`__ of :obj:`torch-scatter` for more information.
 
         Args:
             src (torch.Tensor): The source tensor.
