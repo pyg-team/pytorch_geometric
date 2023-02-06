@@ -57,6 +57,7 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True,
         loss.backward()
         optimizer.step()
 
+
 @torch.no_grad()
 def test(model, loader, device, hetero, progress_bar=True, desc="") -> None:
     if progress_bar:
@@ -92,6 +93,7 @@ def test(model, loader, device, hetero, progress_bar=True, desc="") -> None:
             total_correct += int((pred == batch.y[:batch_size]).sum())
     return total_correct / total_examples
 
+
 def run(args: argparse.ArgumentParser) -> None:
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -113,7 +115,7 @@ def run(args: argparse.ArgumentParser) -> None:
                 ) if dataset_name == 'ogbn-mag' else data.train_mask
         if args.evaluate:
             val_mask = ('paper', data['paper'].val_mask
-                    ) if dataset_name == 'ogbn-mag' else data.val_mask
+                        ) if dataset_name == 'ogbn-mag' else data.val_mask
         degree = None
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
@@ -223,8 +225,12 @@ def run(args: argparse.ArgumentParser) -> None:
                                               desc=f"Epoch={epoch}")
                                         if args.evaluate:
                                             # In evaluate mode, throughput and latency are not accurate.
-                                            val_acc = test(model, val_loader, device, hetero, progress_bar=progress_bar)
-                                            print(f'Val Accuracy: {val_acc:.4f}')
+                                            val_acc = test(
+                                                model, val_loader, device,
+                                                hetero,
+                                                progress_bar=progress_bar)
+                                            print(
+                                                f'Val Accuracy: {val_acc:.4f}')
 
                             if args.profile:
                                 with torch_profile():
