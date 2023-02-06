@@ -30,7 +30,7 @@ In its most general form, the :pyg:`PyG` :class:`~torch_geometric.loader.DataLoa
 The same is true for :obj:`face` tensors, *i.e.*, face indices in meshes.
 All other tensors will just get concatenated in the first dimension without any further increasement of their values.
 
-However, there are a few special use-cases (as outlined below) where the user actively wants to modify this behaviour to its own needs.
+However, there are a few special use-cases (as outlined below) where the user actively wants to modify this behavior to its own needs.
 :pyg:`PyG` allows modification to the underlying batching procedure by overwriting the :func:`torch_geometric.data.Data.__inc__` and :func:`torch_geometric.data.Data.__cat_dim__` functionalities.
 Without any modifications, these are defined as follows in the :class:`~torch_geometric.data.Data` class:
 
@@ -56,7 +56,7 @@ In what follows, we present a few use-cases where the modification of :func:`__i
 Pairs of Graphs
 ---------------
 
-In case you want to store multiple graphs in a single :class:`~torch_geometric.data.Data` object, *e.g.*, for applications such as graph matching, you need to ensure correct batching behaviour across all those graphs.
+In case you want to store multiple graphs in a single :class:`~torch_geometric.data.Data` object, *e.g.*, for applications such as graph matching, you need to ensure correct batching behavior across all those graphs.
 For example, consider storing two graphs, a source graph :math:`\mathcal{G}_s` and a target graph :math:`\mathcal{G}_t` in a :class:`~torch_geometric.data.Data`, *e.g.*:
 
 .. code-block:: python
@@ -83,7 +83,7 @@ In this case, :obj:`edge_index_s` should be increased by the number of nodes in 
         else:
             return super().__inc__(key, value, *args, **kwargs)
 
-We can test our :class:`PairData` batching behaviour by setting up a simple test script:
+We can test our :class:`PairData` batching behavior by setting up a simple test script:
 
 .. code-block:: python
 
@@ -195,7 +195,7 @@ We can again test our implementation by running a simple test script:
     >>> tensor([[0, 0, 1, 1, 2, 2, 3, 3],
                 [0, 1, 1, 2, 3, 4, 4, 5]])
 
-Again, this is exactly the behaviour we aimed for!
+Again, this is exactly the behavior we aimed for!
 
 Batching Along New Dimensions
 -----------------------------
