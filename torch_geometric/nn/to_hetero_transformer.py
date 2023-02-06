@@ -156,14 +156,14 @@ class ToHeteroTransformer(Transformer):
                 f"There exist node types ({unused_node_types}) whose "
                 f"representations do not get updated during message passing "
                 f"as they do not occur as destination type in any edge type. "
-                f"This may lead to unexpected behaviour.")
+                f"This may lead to unexpected behavior.")
 
         names = self.metadata[0] + [rel for _, rel, _ in self.metadata[1]]
         for name in names:
             if not name.isidentifier():
                 warnings.warn(
                     f"The type '{name}' contains invalid characters which "
-                    f"may lead to unexpected behaviour. To avoid any issues, "
+                    f"may lead to unexpected behavior. To avoid any issues, "
                     f"ensure that your types only contain letters, numbers "
                     f"and underscores.")
 
