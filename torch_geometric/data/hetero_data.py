@@ -38,7 +38,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     Storage objects can hold either node-level, link-level or graph-level
     attributes.
     In general, :class:`~torch_geometric.data.HeteroData` tries to mimic the
-    behaviour of a regular **nested** Python dictionary.
+    behavior of a regular **nested** Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 
@@ -482,7 +482,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def _check_type_name(self, name: str):
         if '__' in name:
             warnings.warn(f"The type '{name}' contains double underscores "
-                          f"('__') which may lead to unexpected behaviour. "
+                          f"('__') which may lead to unexpected behavior. "
                           f"To avoid any issues, ensure that your type names "
                           f"only contain single underscores.")
 

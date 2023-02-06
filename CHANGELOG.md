@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `torch.compile` support and benchmark study ([#6610](https://github.com/pyg-team/pytorch_geometric/pull/6610))
+- Added the `AntiSymmetricConv` layer ([#6577](https://github.com/pyg-team/pytorch_geometric/pull/6577))
+- Added a mixin for Huggingface model hub integration ([#5930](https://github.com/pyg-team/pytorch_geometric/pull/5930))
 - Added support for accelerated GNN layers in `nn.conv.cugraph` via `cugraph-ops` ([#6278](https://github.com/pyg-team/pytorch_geometric/pull/6278), [#6388](https://github.com/pyg-team/pytorch_geometric/pull/6388), [#6412](https://github.com/pyg-team/pytorch_geometric/pull/6412))
 - Added accelerated `index_sort` function from `pyg-lib` for faster sorting ([#6554](https://github.com/pyg-team/pytorch_geometric/pull/6554))
 - Fix incorrect device in `EquilibriumAggregration` ([#6560](https://github.com/pyg-team/pytorch_geometric/pull/6560))
@@ -15,7 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the `BAMultiShapesDataset` ([#6541](https://github.com/pyg-team/pytorch_geometric/pull/6541))
 - Added the interfaces of a graph pooling framework ([#6540](https://github.com/pyg-team/pytorch_geometric/pull/6540))
 - Added automatic `n_id` and `e_id` attributes to mini-batches produced by `NodeLoader` and `LinkLoader` ([#6524](https://github.com/pyg-team/pytorch_geometric/pull/6524))
-- Added `PGMExplainer` to `torch_geometric.contrib` ([#6149](https://github.com/pyg-team/pytorch_geometric/pull/6149))
+- Added `PGMExplainer` to `torch_geometric.contrib` ([#6149](https://github.com/pyg-team/pytorch_geometric/pull/6149), [#6588](https://github.com/pyg-team/pytorch_geometric/pull/6588), [#6589](https://github.com/pyg-team/pytorch_geometric/pull/6589))
 - Added a `NumNeighbors` helper class for specifying the number of neighbors when sampling ([#6501](https://github.com/pyg-team/pytorch_geometric/pull/6501), [#6505](https://github.com/pyg-team/pytorch_geometric/pull/6505))
 - Added caching to `is_node_attr()` and `is_edge_attr()` calls ([#6492](https://github.com/pyg-team/pytorch_geometric/pull/6492))
 - Added `ToHeteroLinear` and `ToHeteroMessagePassing` modules to accelerate `to_hetero` functionality ([#5992](https://github.com/pyg-team/pytorch_geometric/pull/5992), [#6456](https://github.com/pyg-team/pytorch_geometric/pull/6456))
@@ -74,8 +77,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- Fixed a bug in `Data.subgraph() and HeteroData.subgraph()` ([#6613](https://github.com/pyg-team/pytorch_geometric/pull/6613)
-- Improved code coverage ([#6523](https://github.com/pyg-team/pytorch_geometric/pull/6523), [#6538](https://github.com/pyg-team/pytorch_geometric/pull/6538), [#6555](https://github.com/pyg-team/pytorch_geometric/pull/6555), [#6558](https://github.com/pyg-team/pytorch_geometric/pull/6558), [#6568](https://github.com/pyg-team/pytorch_geometric/pull/6568), [#6573](https://github.com/pyg-team/pytorch_geometric/pull/6573), [#6578](https://github.com/pyg-team/pytorch_geometric/pull/6578))
+- Fixed a bug in `Data.subgraph()` and `HeteroData.subgraph()` ([#6613](https://github.com/pyg-team/pytorch_geometric/pull/6613)
+- Fixed a bug in `PNAConv` and `DegreeScalerAggregation` to correctly incorporate degree statistics of isolated nodes ([#6609](https://github.com/pyg-team/pytorch_geometric/pull/6609))
+- Improved code coverage ([#6523](https://github.com/pyg-team/pytorch_geometric/pull/6523), [#6538](https://github.com/pyg-team/pytorch_geometric/pull/6538), [#6555](https://github.com/pyg-team/pytorch_geometric/pull/6555), [#6558](https://github.com/pyg-team/pytorch_geometric/pull/6558), [#6568](https://github.com/pyg-team/pytorch_geometric/pull/6568), [#6573](https://github.com/pyg-team/pytorch_geometric/pull/6573), [#6578](https://github.com/pyg-team/pytorch_geometric/pull/6578), [#6597](https://github.com/pyg-team/pytorch_geometric/pull/6597), [#6600](https://github.com/pyg-team/pytorch_geometric/pull/6600))
 - Fixed a bug in which `data.to_heterogeneous()` filtered attributs in the wrong dimension ([#6522](https://github.com/pyg-team/pytorch_geometric/pull/6522))
 - Breaking Change: Temporal sampling will now also sample nodes with an equal timestamp to the seed time (requires `pyg-lib>0.1.0`) ([#6517](https://github.com/pyg-team/pytorch_geometric/pull/6517))
 - Changed `DataLoader` workers with affinity to start at `cpu0` ([#6512](https://github.com/pyg-team/pytorch_geometric/pull/6512))
@@ -367,7 +371,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - The generated node features of `StochasticBlockModelDataset` are now ordered with respect to their labels ([#4617](https://github.com/pyg-team/pytorch_geometric/pull/4617))
 - Fixed typos in the documentation ([#4616](https://github.com/pyg-team/pytorch_geometric/pull/4616), [#4824](https://github.com/pyg-team/pytorch_geometric/pull/4824), [#4895](https://github.com/pyg-team/pytorch_geometric/pull/4895), [#5161](https://github.com/pyg-team/pytorch_geometric/pull/5161))
 - The `bias` argument in `TAGConv` is now actually applied ([#4597](https://github.com/pyg-team/pytorch_geometric/pull/4597))
-- Fixed subclass behaviour of `process` and `download` in `Datsaet` ([#4586](https://github.com/pyg-team/pytorch_geometric/pull/4586))
+- Fixed subclass behavior of `process` and `download` in `Datsaet` ([#4586](https://github.com/pyg-team/pytorch_geometric/pull/4586))
 - Fixed filtering of attributes for loaders in case `__cat_dim__ != 0` ([#4629](https://github.com/pyg-team/pytorch_geometric/pull/4629))
 - Fixed `SparseTensor` support in `NeighborLoader` ([#4320](https://github.com/pyg-team/pytorch_geometric/pull/4320))
 - Fixed average degree handling in `PNAConv` ([#4312](https://github.com/pyg-team/pytorch_geometric/pull/4312))
