@@ -2,6 +2,7 @@ import time
 from typing import Any, Callable, List, Optional, Tuple
 
 import torch
+from torch import Tensor
 
 
 def benchmark(
@@ -50,7 +51,8 @@ def benchmark(
         for i in range(num_warmups + num_steps):
             args = [
                 arg.detach().requires_grad_(backward)
-                if arg.is_floating_point() else arg for arg in args
+                if isinstance(arg, Tensor) and arg.is_floating_point() else arg
+                for arg in args
             ]
 
             if torch.cuda.is_available():
@@ -78,9 +80,10 @@ def benchmark(
         ts.append([name, f'{t_forward:.4f}s'])
         if backward:
             ts[-1].append(f'{t_backward:.4f}s')
+            ts[-1].append(f'{t_forward + t_backward:.4f}s')
 
     header = ['Name', 'Forward']
     if backward:
-        header.append('Backward')
+        header.extend(['Backward', 'Total'])
 
     print(tabulate(ts, headers=header, tablefmt='psql'))
