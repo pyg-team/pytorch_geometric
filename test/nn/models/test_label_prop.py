@@ -22,13 +22,13 @@ def test_label_prop(num_layer, alpha):
 
     out1 = model(y, edge_index)
     assert out1.size() == (6, 3)
-    
+
     # Test with SparseTensor:
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(6, 6))
     out2 = model(y, adj)
     assert torch.allclose(out1, out2)
-    
+
     # Test with mask:
     assert model(y, edge_index, mask).size() == (6, 3)
     assert model(y, adj, mask).size() == (6, 3)
