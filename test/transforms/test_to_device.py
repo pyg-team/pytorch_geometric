@@ -13,9 +13,11 @@ def test_to_device():
 
     data = Data(edge_index=edge_index, edge_weight=edge_weight,
                 edge_attr=edge_attr, num_nodes=3)
-    to_device_obj = ToDevice(0)
-    data = to_device_obj(data)
-    assert to_device_obj.device == 0
+
+    if(torch.cuda.is_available()):
+        to_device_obj = ToDevice(0)
+        data = to_device_obj(data)
+        assert to_device_obj.device == 0
 
     to_device_obj = ToDevice('cpu')
     data = to_device_obj(data)
