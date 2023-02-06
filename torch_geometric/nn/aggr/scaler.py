@@ -15,7 +15,6 @@ class DegreeScalerAggregation(Aggregation):
     The scalers are normalised by the in-degree of the training set and so must
     be provided at time of construction.
     See :class:`torch_geometric.nn.conv.PNAConv` for more information.
-
     Args:
         aggr (str or [str] or Aggregation): The aggregation scheme to use.
             See :class:`~torch_geometric.nn.conv.MessagePassing` for more
@@ -25,7 +24,7 @@ class DegreeScalerAggregation(Aggregation):
             :obj:`"attenuation"`, :obj:`"linear"` and :obj:`"inverse_linear"`.
         deg (Tensor): Histogram of in-degrees of nodes in the training set,
             used by scalers to normalize.
-        train_norm (bool, optional): Whether normalization parameters
+        train_norm (bool, optional) Whether normalization parameters
             are trainable. (default: :obj:`False`)
         aggr_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective aggregation function in case it gets automatically
@@ -82,7 +81,7 @@ class DegreeScalerAggregation(Aggregation):
         out = self.aggr(x, index, ptr, dim_size, dim)
 
         assert index is not None
-        deg = degree(index, num_nodes=dim_size, dtype=out.dtype)
+        deg = degree(index, num_nodes=dim_size, dtype=out.dtype).clamp_(1)
         size = [1] * len(out.size())
         size[dim] = -1
         deg = deg.view(size)
@@ -98,8 +97,7 @@ class DegreeScalerAggregation(Aggregation):
             elif scaler == 'linear':
                 out_scaler = out * (deg / self.avg_deg_lin)
             elif scaler == 'inverse_linear':
-                # Clamps minimum degree into one to avoid dividing by zero
-                out_scaler = out * (self.avg_deg_lin / deg.clamp(1))
+                out_scaler = out * (self.avg_deg_lin / deg)
             else:
                 raise ValueError(f"Unknown scaler '{scaler}'")
             outs.append(out_scaler)
