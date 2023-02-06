@@ -18,12 +18,15 @@ class PNAConv(MessagePassing):
     r"""The Principal Neighbourhood Aggregation graph convolution operator
     from the `"Principal Neighbourhood Aggregation for Graph Nets"
     <https://arxiv.org/abs/2004.05718>`_ paper
+
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left(
         \mathbf{x}_i, \underset{j \in \mathcal{N}(i)}{\bigoplus}
         h_{\mathbf{\Theta}} \left( \mathbf{x}_i, \mathbf{x}_j \right)
         \right)
+
     with
+
     .. math::
         \bigoplus = \underbrace{\begin{bmatrix}
             1 \\
@@ -36,12 +39,16 @@ class PNAConv(MessagePassing):
             \max \\
             \min
         \end{bmatrix}}_{\text{aggregators}},
+
     where :math:`\gamma_{\mathbf{\Theta}}` and :math:`h_{\mathbf{\Theta}}`
     denote MLPs.
+
     .. note::
+
         For an example of using :obj:`PNAConv`, see `examples/pna.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/
         examples/pna.py>`_.
+
     Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
@@ -73,6 +80,7 @@ class PNAConv(MessagePassing):
             are trainable. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
+
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F_{in})`,

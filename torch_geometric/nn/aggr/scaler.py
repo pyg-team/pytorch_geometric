@@ -15,6 +15,7 @@ class DegreeScalerAggregation(Aggregation):
     The scalers are normalised by the in-degree of the training set and so must
     be provided at time of construction.
     See :class:`torch_geometric.nn.conv.PNAConv` for more information.
+
     Args:
         aggr (str or [str] or Aggregation): The aggregation scheme to use.
             See :class:`~torch_geometric.nn.conv.MessagePassing` for more
