@@ -14,14 +14,14 @@ if __name__ == '__main__':
     x = torch.randn(num_nodes, 64, device=args.device)
     edge_index = torch.randint(num_nodes, (2, num_edges), device=args.device)
 
-    def mpnn(x, edge_index):
+    def gather_scatter(x, edge_index):
         row, col = edge_index
         x_j = x[row]
         col = col.view(-1, 1).expand(-1, x.size(-1))
         return torch.zeros_like(x).scatter_add_(0, col, x_j)
 
     benchmark(
-        funcs=[mpnn, torch.compile(mpnn)],
+        funcs=[gather_scatter, torch.compile(gather_scatter)],
         func_names=['Vanilla', 'Compiled'],
         args=(x, edge_index),
         num_steps=100 if args.device == 'cpu' else 1000,
@@ -29,8 +29,8 @@ if __name__ == '__main__':
         backward=args.backward,
     )
 
-    # # TODO Test aggregation
-    # # TODO Test MPNNs
+    # # TODO Test aggregation package
+    # # TODO Test conv package
     # # TODO Test different reductions
     # # TODO Test concat + transformation
     # # TODO Test dynamic
