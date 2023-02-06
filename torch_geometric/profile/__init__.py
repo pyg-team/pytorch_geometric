@@ -22,6 +22,8 @@ __all__ = [
     'get_cpu_memory_from_gc',
     'get_gpu_memory_from_gc',
     'get_gpu_memory_from_nvidia_smi',
+    'byte_to_megabyte',
+    'medibyte_to_megabyte',
     'benchmark',
 ]
 
