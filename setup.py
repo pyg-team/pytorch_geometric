@@ -22,8 +22,6 @@ graphgym_requires = [
     'pytorch-lightning',
 ]
 
-huggingface_requires = ['huggingface_hub']
-
 full_requires = graphgym_requires + huggingface_requires + [
     'ase',
     'h5py',
@@ -42,6 +40,7 @@ full_requires = graphgym_requires + huggingface_requires + [
     'pgmpy',
     'opt_einsum',  # required for pgmpy
     'statsmodels',
+    'huggingface_hub',
 ]
 
 benchmark_requires = [
@@ -82,7 +81,6 @@ setup(
     install_requires=install_requires,
     extras_require={
         'graphgym': graphgym_requires,
-        'huggingface': huggingface_requires,
         'full': full_requires,
         'benchmark': benchmark_requires,
         'test': test_requires,
