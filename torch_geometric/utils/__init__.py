@@ -1,4 +1,5 @@
 from .scatter import scatter
+from .segment import segment
 from .sort import index_sort
 from .degree import degree
 from .softmax import softmax
@@ -45,6 +46,7 @@ from .train_test_split_edges import train_test_split_edges
 
 __all__ = [
     'scatter',
+    'segment',
     'index_sort',
     'degree',
     'softmax',
