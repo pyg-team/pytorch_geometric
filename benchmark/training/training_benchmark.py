@@ -231,7 +231,8 @@ def run(args: argparse.ArgumentParser) -> None:
                                                 model, val_loader, device,
                                                 hetero,
                                                 progress_bar=progress_bar)
-                                            print(f'Val Accuracy: {val_acc:.4f}')
+                                            print(
+                                                f'Val Accuracy: {val_acc:.4f}')
 
                             if args.profile:
                                 with torch_profile():
