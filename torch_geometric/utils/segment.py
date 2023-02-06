@@ -4,7 +4,7 @@ from torch_scatter import segment_csr
 
 def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
     r"""Reduces all values in the first dimension of the :obj:`src` tensor
-    within the range specified in the :obj:`ptr`. See the `documentation
+    within the ranges specified in the :obj:`ptr`. See the `documentation
     <https://pytorch-scatter.readthedocs.io/en/latest/functions/
     segment_csr.html>`_ of :obj:`torch-scatter` for more information.
 
