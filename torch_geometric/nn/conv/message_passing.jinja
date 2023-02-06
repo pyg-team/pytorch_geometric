@@ -64,13 +64,12 @@ class {{cls_name}}({{parent_cls_name}}):
             return src.index_select(self.node_dim, index)
 
         elif isinstance(edge_index, SparseTensor):
-            if dim == 1:
-                rowptr = edge_index.storage.rowptr()
-                rowptr = expand_left(rowptr, dim=self.node_dim, dims=src.dim())
-                return gather_csr(src, rowptr)
-            elif dim == 0:
+            if dim == 0:
                 col = edge_index.storage.col()
                 return src.index_select(self.node_dim, col)
+            elif dim == 1:
+                row = edge_index.storage.row()
+                return src.index_select(self.node_dim, row)
 
         raise ValueError(
             ('`MessagePassing.propagate` only supports integer tensors of '

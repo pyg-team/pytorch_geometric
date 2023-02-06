@@ -20,7 +20,6 @@ from uuid import uuid1
 import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
-from torch_scatter import gather_csr
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
@@ -28,7 +27,6 @@ from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size
 from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
 
-from .utils.helpers import expand_left
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
 from .utils.typing import (
@@ -269,13 +267,12 @@ class MessagePassing(torch.nn.Module):
                 raise e
 
         elif isinstance(edge_index, SparseTensor):
-            if dim == 1:
-                rowptr = edge_index.storage.rowptr()
-                rowptr = expand_left(rowptr, dim=self.node_dim, dims=src.dim())
-                return gather_csr(src, rowptr)
-            elif dim == 0:
+            if dim == 0:
                 col = edge_index.storage.col()
                 return src.index_select(self.node_dim, col)
+            elif dim == 1:
+                row = edge_index.storage.row()
+                return src.index_select(self.node_dim, row)
 
         raise ValueError(
             ('`MessagePassing.propagate` only supports integer tensors of '
