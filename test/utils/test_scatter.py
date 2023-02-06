@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.utils import scatter
 
@@ -75,9 +76,7 @@ if __name__ == '__main__':
     # * "mul" (probably not worth branching for this):
     #   * Prefer `scatter_reduce_` implementation without gradients
     #   * Prefer `torch_sparse` implementation with gradients
-
     import argparse
-    import time
 
     import torch_scatter
 
@@ -86,112 +85,36 @@ if __name__ == '__main__':
     parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
 
-    num_nodes, num_edges, num_feats = 1000, 50000, 64
+    num_nodes, num_edges = 1_000, 50_000
+    x = torch.randn(num_edges, 64, device=args.device)
+    index = torch.randint(num_nodes, (num_edges, ), device=args.device)
 
-    num_warmups, num_steps = 500, 1000
-    if args.device == 'cpu':
-        num_warmups, num_steps = num_warmups // 10, num_steps // 10
+    def pytorch_scatter(x, index, dim_size, reduce):
+        if reduce == 'min' or reduce == 'max':
+            reduce = f'a{aggr}'  # `amin` or `amax`
+        elif reduce == 'mul':
+            reduce = 'prod'
+        out = x.new_zeros((dim_size, x.size(-1)))
+        include_self = reduce in ['sum', 'mean']
+        index = index.view(-1, 1).expand(-1, x.size(-1))
+        out.scatter_reduce_(0, index, x, reduce, include_self=include_self)
+        return out
 
-    index = torch.randint(num_nodes - 5, (num_edges, ), device=args.device)
-    out_grad = torch.randn(num_nodes, num_feats, device=args.device)
+    def own_scatter(x, index, dim_size, reduce):
+        return torch_scatter.scatter(x, index, dim=0, dim_size=num_nodes,
+                                     reduce=reduce)
+
+    def optimized_scatter(x, index, dim_size, reduce):
+        return scatter(x, index, dim=0, dim_size=dim_size, reduce=reduce)
 
     aggrs = ['sum', 'mean', 'min', 'max', 'mul']
     for aggr in aggrs:
         print(f'Aggregator: {aggr}')
-        print('==============================')
-
-        reduce = aggr
-        if reduce == 'min' or reduce == 'max':
-            reduce = f'a{aggr}'  # `amin` or `max`
-        elif reduce == 'mul':
-            reduce = 'prod'
-
-        t_forward = t_backward = 0
-        for i in range(num_warmups + num_steps):
-            x = torch.randn(num_edges, num_feats, device=args.device)
-            if args.backward:
-                x.requires_grad_(True)
-
-            torch.cuda.synchronize()
-            t_start = time.perf_counter()
-
-            out = x.new_zeros((num_nodes, num_feats))
-            include_self = reduce in ['sum', 'mean']
-            broadcasted_index = index.view(-1, 1).expand(-1, num_feats)
-            out.scatter_reduce_(0, broadcasted_index, x, reduce,
-                                include_self=include_self)
-
-            torch.cuda.synchronize()
-            if i >= num_warmups:
-                t_forward += time.perf_counter() - t_start
-
-            if args.backward:
-                t_start = time.perf_counter()
-                out.backward(out_grad)
-
-                torch.cuda.synchronize()
-                if i >= num_warmups:
-                    t_backward += time.perf_counter() - t_start
-
-        print(f'PyTorch forward:       {t_forward:.4f}s')
-        if args.backward:
-            print(f'PyTorch backward:      {t_backward:.4f}s')
-        print('==============================')
-
-        t_forward = t_backward = 0
-        for i in range(num_warmups + num_steps):
-            x = torch.randn(num_edges, num_feats, device=args.device)
-            if args.backward:
-                x.requires_grad_(True)
-
-            torch.cuda.synchronize()
-            t_start = time.perf_counter()
-
-            out = torch_scatter.scatter(x, index, dim=0, dim_size=num_nodes,
-                                        reduce=aggr)
-
-            torch.cuda.synchronize()
-            if i >= num_warmups:
-                t_forward += time.perf_counter() - t_start
-
-            if args.backward:
-                t_start = time.perf_counter()
-                out.backward(out_grad)
-
-                torch.cuda.synchronize()
-                if i >= num_warmups:
-                    t_backward += time.perf_counter() - t_start
-
-        print(f'torch_sparse forward:  {t_forward:.4f}s')
-        if args.backward:
-            print(f'torch_sparse backward: {t_backward:.4f}s')
-        print('==============================')
-
-        t_forward = t_backward = 0
-        for i in range(num_warmups + num_steps):
-            x = torch.randn(num_edges, num_feats, device=args.device)
-            if args.backward:
-                x.requires_grad_(True)
-
-            torch.cuda.synchronize()
-            t_start = time.perf_counter()
-
-            out = scatter(x, index, dim=0, dim_size=num_nodes, reduce=aggr)
-
-            torch.cuda.synchronize()
-            if i >= num_warmups:
-                t_forward += time.perf_counter() - t_start
-
-            if args.backward:
-                t_start = time.perf_counter()
-                out.backward(out_grad)
-
-                torch.cuda.synchronize()
-                if i >= num_warmups:
-                    t_backward += time.perf_counter() - t_start
-
-        print(f'torch_sparse forward:  {t_forward:.4f}s')
-        if args.backward:
-            print(f'torch_sparse backward: {t_backward:.4f}s')
-
-        print()
+        benchmark(
+            funcs=[pytorch_scatter, own_scatter, optimized_scatter],
+            func_names=['PyTorch', 'torch_scatter', 'Optimized'],
+            args=(x, index, num_nodes, aggr),
+            num_steps=100 if args.device == 'cpu' else 1000,
+            num_warmups=50 if args.device == 'cpu' else 500,
+            backward=args.backward,
+        )
