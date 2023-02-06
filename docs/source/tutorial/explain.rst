@@ -159,7 +159,7 @@ Importantly, passing a :obj:`node_mask_type` to the :class:`~torch_geometric.exp
             return_type='raw',
         ),
         # Include only the top 10 most important edges:
-        threshold_config=dict(type='topk', value=10),
+        threshold_config=dict(threshold_type='topk', value=10),
     )
 
     # PGExplainer needs to be trained separately since it is a parametric
