@@ -16,7 +16,7 @@ class WikiCS(InMemoryDataset):
     216,123 edges, 10 classes and 20 different training splits.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -38,7 +38,7 @@ class WikiCS(InMemoryDataset):
             warnings.warn(
                 f"The {self.__class__.__name__} dataset now returns an "
                 f"undirected graph by default. Please explicitly specify "
-                f"'is_undirected=False' to restore the old behaviour.")
+                f"'is_undirected=False' to restore the old behavior.")
             is_undirected = True
         self.is_undirected = is_undirected
         super().__init__(root, transform, pre_transform)

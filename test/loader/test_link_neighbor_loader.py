@@ -18,7 +18,7 @@ def unique_edge_pairs(edge_index):
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
-def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
+def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio):
     pos_edge_index = get_edge_index(100, 50, 500)
     neg_edge_index = get_edge_index(100, 50, 500)
     neg_edge_index[1, :] += 50
@@ -49,7 +49,9 @@ def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
     for batch in loader:
         assert isinstance(batch, Data)
 
-        assert len(batch) == 6
+        assert len(batch) == 8
+        assert batch.n_id.size() == (batch.num_nodes, )
+        assert batch.e_id.size() == (batch.num_edges, )
         assert batch.x.size(0) <= 100
         assert batch.x.min() >= 0 and batch.x.max() < 100
         assert batch.input_id.numel() == 20
@@ -81,7 +83,7 @@ def test_homogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
-def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
+def test_hetero_link_neighbor_loader_basic(directed, neg_sampling_ratio):
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -109,7 +111,7 @@ def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert len(batch) == 5 + (1 if neg_sampling_ratio is not None else 0)
+        assert len(batch) == 7 + (1 if neg_sampling_ratio is not None else 0)
         if neg_sampling_ratio is None:
             # Assert only positive samples are present in the original graph:
             edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)
@@ -124,7 +126,7 @@ def test_heterogeneous_link_neighbor_loader(directed, neg_sampling_ratio):
 
 
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_heterogeneous_link_neighbor_loader_loop(directed):
+def test_hetero_link_neighbor_loader_loop(directed):
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -180,7 +182,7 @@ def test_link_neighbor_loader_edge_label():
 
 
 @withPackage('pyg_lib')
-def test_temporal_heterogeneous_link_neighbor_loader():
+def test_temporal_hetero_link_neighbor_loader():
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -227,7 +229,7 @@ def test_temporal_heterogeneous_link_neighbor_loader():
 
 @pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
 @pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
-def test_custom_heterogeneous_link_neighbor_loader(FeatureStore, GraphStore):
+def test_custom_hetero_link_neighbor_loader(FeatureStore, GraphStore):
     data = HeteroData()
     feature_store = FeatureStore()
     graph_store = GraphStore()
@@ -295,7 +297,7 @@ def test_custom_heterogeneous_link_neighbor_loader(FeatureStore, GraphStore):
             'author', 'to', 'paper'].edge_index.size())
 
 
-def test_homogeneous_link_neighbor_loader_no_edges():
+def test_homo_link_neighbor_loader_no_edges():
     loader = LinkNeighborLoader(
         Data(num_nodes=100),
         num_neighbors=[],
@@ -305,13 +307,13 @@ def test_homogeneous_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert len(batch) == 3
+        assert len(batch) == 5
         assert batch.input_id.numel() == 20
         assert batch.edge_label_index.size(1) == 20
         assert batch.num_nodes == batch.edge_label_index.unique().numel()
 
 
-def test_heterogeneous_link_neighbor_loader_no_edges():
+def test_hetero_link_neighbor_loader_no_edges():
     loader = LinkNeighborLoader(
         HeteroData(paper=dict(num_nodes=100)),
         num_neighbors=[],
@@ -321,7 +323,7 @@ def test_heterogeneous_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert len(batch) == 3
+        assert len(batch) == 4
         assert batch['paper', 'paper'].input_id.numel() == 20
         assert batch['paper', 'paper'].edge_label_index.size(1) == 20
         assert batch['paper'].num_nodes == batch[
@@ -361,7 +363,7 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
         time_attr=time_attr,
         directed=True,
         disjoint=disjoint,
-        neg_sampling=dict(strategy='triplet', amount=amount),
+        neg_sampling=dict(mode='triplet', amount=amount),
         shuffle=True,
     )
 
@@ -370,7 +372,7 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
     for batch in loader:
         assert isinstance(batch, Data)
-        num_elems = 7 + (1 if disjoint else 0) + (2 if temporal else 0)
+        num_elems = 9 + (1 if disjoint else 0) + (2 if temporal else 0)
         assert len(batch) == num_elems
 
         # Check that `src_index` and `dst_pos_index` point to valid edges:
@@ -442,6 +444,8 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         )
         edge_label_time = edge_label_time + 50
 
+    weight = torch.rand(data['paper'].num_nodes) if not temporal else None
+
     batch_size = 20
     index = (('paper', 'paper'), data['paper', 'paper'].edge_label_index)
     loader = LinkNeighborLoader(
@@ -453,7 +457,7 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         time_attr=time_attr,
         directed=True,
         disjoint=disjoint,
-        neg_sampling=dict(strategy='triplet', amount=amount),
+        neg_sampling=dict(mode='triplet', amount=amount, weight=weight),
         shuffle=True,
     )
 
@@ -462,7 +466,7 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        num_elems = 6 + (1 if disjoint else 0) + (2 if temporal else 0)
+        num_elems = 8 + (1 if disjoint else 0) + (2 if temporal else 0)
         assert len(batch) == num_elems
 
         node_store = batch['paper']

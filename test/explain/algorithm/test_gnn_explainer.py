@@ -1,18 +1,25 @@
+from typing import Optional
+
 import pytest
 import torch
 
 from torch_geometric.explain import Explainer, Explanation, GNNExplainer
-from torch_geometric.explain.config import MaskType, ModelConfig
+from torch_geometric.explain.config import (
+    MaskType,
+    ModelConfig,
+    ModelMode,
+    ModelReturnType,
+    ModelTaskLevel,
+)
 from torch_geometric.nn import GCNConv, global_add_pool
 
 
 class GCN(torch.nn.Module):
-    def __init__(self, model_config: ModelConfig, multi_output: bool = False):
+    def __init__(self, model_config: ModelConfig):
         super().__init__()
         self.model_config = model_config
-        self.multi_output = multi_output
 
-        if model_config.mode.value == 'multiclass_classification':
+        if model_config.mode == ModelMode.multiclass_classification:
             out_channels = 7
         else:
             out_channels = 1
@@ -24,48 +31,50 @@ class GCN(torch.nn.Module):
         x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
 
-        if self.model_config.task_level.value == 'graph':
+        if self.model_config.task_level == ModelTaskLevel.graph:
             x = global_add_pool(x, batch)
-        elif self.model_config.task_level.value == 'edge':
+        elif self.model_config.task_level == ModelTaskLevel.edge:
             assert edge_label_index is not None
             x = x[edge_label_index[0]] * x[edge_label_index[1]]
 
-        if self.model_config.mode.value == 'binary_classification':
-            if self.model_config.return_type.value == 'probs':
+        if self.model_config.mode == ModelMode.binary_classification:
+            if self.model_config.return_type == ModelReturnType.probs:
                 x = x.sigmoid()
-        elif self.model_config.mode.value == 'multiclass_classification':
-            if self.model_config.return_type.value == 'probs':
+        elif self.model_config.mode == ModelMode.multiclass_classification:
+            if self.model_config.return_type == ModelReturnType.probs:
                 x = x.softmax(dim=-1)
-            elif self.model_config.return_type.value == 'log_probs':
+            elif self.model_config.return_type == ModelReturnType.log_probs:
                 x = x.log_softmax(dim=-1)
 
-        return torch.stack([x, x], dim=0) if self.multi_output else x
+        return x
 
 
 def check_explanation(
-    edge_mask_type: MaskType,
-    node_mask_type: MaskType,
     explanation: Explanation,
+    node_mask_type: Optional[MaskType],
+    edge_mask_type: Optional[MaskType],
 ):
     if node_mask_type == MaskType.attributes:
-        assert explanation.node_feat_mask.size() == explanation.x.size()
-        assert explanation.node_feat_mask.min() >= 0
-        assert explanation.node_feat_mask.max() <= 1
+        assert explanation.node_mask.size() == explanation.x.size()
+        assert explanation.node_mask.min() >= 0
+        assert explanation.node_mask.max() <= 1
     elif node_mask_type == MaskType.object:
-        assert explanation.node_mask.size() == (explanation.num_nodes, )
+        assert explanation.node_mask.size() == (explanation.num_nodes, 1)
         assert explanation.node_mask.min() >= 0
         assert explanation.node_mask.max() <= 1
     elif node_mask_type == MaskType.common_attributes:
-        assert explanation.node_feat_mask.size() == explanation.x.size()
-        assert explanation.node_feat_mask.min() >= 0
-        assert explanation.node_feat_mask.max() <= 1
-        assert torch.allclose(explanation.node_feat_mask[0],
-                              explanation.node_feat_mask[1])
+        assert explanation.node_mask.size() == (1, explanation.num_features)
+        assert explanation.node_mask.min() >= 0
+        assert explanation.node_mask.max() <= 1
+    elif node_mask_type is None:
+        assert 'node_mask' not in explanation
 
     if edge_mask_type == MaskType.object:
         assert explanation.edge_mask.size() == (explanation.num_edges, )
         assert explanation.edge_mask.min() >= 0
         assert explanation.edge_mask.max() <= 1
+    elif edge_mask_type is None:
+        assert 'edge_mask' not in explanation
 
 
 node_mask_types = [
@@ -93,7 +102,6 @@ edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
 @pytest.mark.parametrize('return_type', ['probs', 'raw'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-@pytest.mark.parametrize('multi_output', [False])
 def test_gnn_explainer_binary_classification(
     edge_mask_type,
     node_mask_type,
@@ -101,7 +109,6 @@ def test_gnn_explainer_binary_classification(
     task_level,
     return_type,
     index,
-    multi_output,
 ):
     model_config = ModelConfig(
         mode='binary_classification',
@@ -109,15 +116,15 @@ def test_gnn_explainer_binary_classification(
         return_type=return_type,
     )
 
-    model = GCN(model_config, multi_output)
+    model = GCN(model_config)
 
     target = None
     if explanation_type == 'phenomenon':
         with torch.no_grad():
             out = model(x, edge_index, batch, edge_label_index)
-            if model_config.return_type.value == 'raw':
+            if model_config.return_type == ModelReturnType.raw:
                 target = (out > 0).long().view(-1)
-            if model_config.return_type.value == 'probs':
+            if model_config.return_type == ModelReturnType.probs:
                 target = (out > 0.5).long().view(-1)
 
     explainer = Explainer(
@@ -134,12 +141,11 @@ def test_gnn_explainer_binary_classification(
         edge_index,
         target=target,
         index=index,
-        target_index=0 if multi_output else None,
         batch=batch,
         edge_label_index=edge_label_index,
     )
 
-    check_explanation(edge_mask_type, node_mask_type, explanation)
+    check_explanation(explanation, node_mask_type, edge_mask_type)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -148,7 +154,6 @@ def test_gnn_explainer_binary_classification(
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
 @pytest.mark.parametrize('return_type', ['log_probs', 'probs', 'raw'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-@pytest.mark.parametrize('multi_output', [False, True])
 def test_gnn_explainer_multiclass_classification(
     edge_mask_type,
     node_mask_type,
@@ -156,7 +161,6 @@ def test_gnn_explainer_multiclass_classification(
     task_level,
     return_type,
     index,
-    multi_output,
 ):
     model_config = ModelConfig(
         mode='multiclass_classification',
@@ -164,7 +168,7 @@ def test_gnn_explainer_multiclass_classification(
         return_type=return_type,
     )
 
-    model = GCN(model_config, multi_output)
+    model = GCN(model_config)
 
     target = None
     if explanation_type == 'phenomenon':
@@ -185,12 +189,11 @@ def test_gnn_explainer_multiclass_classification(
         edge_index,
         target=target,
         index=index,
-        target_index=0 if multi_output else None,
         batch=batch,
         edge_label_index=edge_label_index,
     )
 
-    check_explanation(edge_mask_type, node_mask_type, explanation)
+    check_explanation(explanation, node_mask_type, edge_mask_type)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
@@ -198,21 +201,19 @@ def test_gnn_explainer_multiclass_classification(
 @pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-@pytest.mark.parametrize('multi_output', [False, True])
 def test_gnn_explainer_regression(
     edge_mask_type,
     node_mask_type,
     explanation_type,
     task_level,
     index,
-    multi_output,
 ):
     model_config = ModelConfig(
         mode='regression',
         task_level=task_level,
     )
 
-    model = GCN(model_config, multi_output)
+    model = GCN(model_config)
 
     target = None
     if explanation_type == 'phenomenon':
@@ -233,9 +234,8 @@ def test_gnn_explainer_regression(
         edge_index,
         target=target,
         index=index,
-        target_index=0 if multi_output else None,
         batch=batch,
         edge_label_index=edge_label_index,
     )
 
-    check_explanation(edge_mask_type, node_mask_type, explanation)
+    check_explanation(explanation, node_mask_type, edge_mask_type)

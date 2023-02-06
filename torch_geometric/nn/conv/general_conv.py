@@ -30,7 +30,7 @@ class GeneralConv(MessagePassing):
         out_channels (int): Size of each output sample.
         in_edge_channels (int, optional): Size of each input edge.
             (default: :obj:`None`)
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         skip_linear (bool, optional): Whether apply linear function in skip

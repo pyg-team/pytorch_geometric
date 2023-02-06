@@ -2,7 +2,8 @@ from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter
+
+from torch_geometric.utils import index_sort, scatter
 
 from .num_nodes import maybe_num_nodes
 
@@ -48,7 +49,7 @@ def coalesce(
             its entries. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
-        reduce (string, optional): The reduce operation to use for merging edge
+        reduce (str, optional): The reduce operation to use for merging edge
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"`). (default: :obj:`"add"`)
         is_sorted (bool, optional): If set to :obj:`True`, will expect
@@ -93,7 +94,7 @@ def coalesce(
     idx[1:].mul_(num_nodes).add_(edge_index[int(sort_by_row)])
 
     if not is_sorted:
-        idx[1:], perm = idx[1:].sort()
+        idx[1:], perm = index_sort(idx[1:], max_value=num_nodes * num_nodes)
         edge_index = edge_index[:, perm]
         if isinstance(edge_attr, Tensor):
             edge_attr = edge_attr[perm]
@@ -118,12 +119,10 @@ def coalesce(
     idx.sub_(mask.logical_not_().cumsum(dim=0))
 
     if isinstance(edge_attr, Tensor):
-        edge_attr = scatter(edge_attr, idx, 0, None, dim_size, reduce)
+        edge_attr = scatter(edge_attr, idx, 0, dim_size, reduce)
         return edge_index, edge_attr
     elif isinstance(edge_attr, (list, tuple)):
-        edge_attr = [
-            scatter(e, idx, 0, None, dim_size, reduce) for e in edge_attr
-        ]
+        edge_attr = [scatter(e, idx, 0, dim_size, reduce) for e in edge_attr]
         return edge_index, edge_attr
 
     return edge_index

@@ -1,14 +1,38 @@
+import copy
 import math
 from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
 
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
+
+
+class DataType(Enum):
+    r"""The data type a sampler is operating on."""
+    homogeneous = 'homogeneous'
+    heterogeneous = 'heterogeneous'
+    remote = 'remote'
+
+    @classmethod
+    def from_data(cls, data: Any):
+        if isinstance(data, Data):
+            return cls.homogeneous
+        elif isinstance(data, HeteroData):
+            return cls.heterogeneous
+        elif (isinstance(data, (list, tuple)) and len(data) == 2
+              and isinstance(data[0], FeatureStore)
+              and isinstance(data[1], GraphStore)):
+            return cls.remote
+
+        raise ValueError(f"Expected a 'Data', 'HeteroData', or a tuple of "
+                         f"'FeatureStore' and 'GraphStore' "
+                         f"(got '{type(data)}')")
 
 
 @dataclass
@@ -154,7 +178,133 @@ class HeteroSamplerOutput(CastMixin):
     metadata: Optional[Any] = None
 
 
-class NegativeSamplingStrategy(Enum):
+@dataclass(frozen=True)
+class NumNeighbors:
+    r"""The number of neighbors to sample in a homogeneous or heterogeneous
+    graph. In heterogeneous graphs, may also take in a dictionary denoting
+    the amount of neighbors to sample for individual edge types.
+
+    Args:
+        values (List[int] or Dict[Tuple[str, str, str], List[int]]): The
+            number of neighbors to sample.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
+            In heterogeneous graphs, may also take in a dictionary denoting
+            the amount of neighbors to sample for individual edge types.
+        default (List[int], optional): The default number of neighbors for edge
+            types not specified in :obj:`values`. (default: :obj:`None`)
+    """
+    values: Union[List[int], Dict[EdgeType, List[int]]]
+    default: Optional[List[int]] = None
+
+    def __post_init__(self):
+        if isinstance(self.values, (tuple, list)) and self.default is not None:
+            raise ValueError(f"'default' must be set to 'None' in case a "
+                             f"single list is given as the number of "
+                             f"neighbors (got '{type(self.default)})'")
+
+    def get_values(
+        self,
+        edge_types: Optional[List[EdgeType]] = None,
+    ) -> Union[List[int], Dict[EdgeType, List[int]]]:
+        r"""Returns the number of neighbors.
+
+        Args:
+            edge_types (List[Tuple[str, str, str]], optional): The edge types
+                to generate the number of neighbors for. (default: :obj:`None`)
+        """
+        if '_values' in self.__dict__:
+            return self.__dict__['_values']
+
+        values = self.values
+
+        if edge_types is not None:
+            if isinstance(values, (tuple, list)):
+                default = values
+                values = {}
+            else:  # isinstance(self.values, dict):
+                default = self.default
+                values = copy.copy(values)
+
+            for edge_type in edge_types:
+                if edge_type not in values:
+                    if default is None:
+                        raise ValueError(f"Missing number of neighbors for "
+                                         f"edge type '{edge_type}'")
+                    values[edge_type] = default
+
+        if isinstance(values, dict):
+            num_hops = set(len(v) for v in values.values())
+            if len(num_hops) > 1:
+                raise ValueError(f"Number of hops must be the same across all "
+                                 f"edge types (got {len(num_hops)} different "
+                                 f"number of hops)")
+
+        self.__dict__['_values'] = values
+        return values
+
+    def get_mapped_values(
+        self,
+        edge_types: Optional[List[EdgeType]] = None,
+    ) -> Union[List[int], Dict[str, List[int]]]:
+        r"""Returns the number of neighbors.
+        For heterogeneous graphs, a dictionary is returned in which edge type
+        tuples are converted to strings.
+
+        Args:
+            edge_types (List[Tuple[str, str, str]], optional): The edge types
+                to generate the number of neighbors for. (default: :obj:`None`)
+        """
+        if '_mapped_values' in self.__dict__:
+            return self.__dict__['_mapped_values']
+
+        values = self.get_values(edge_types)
+        if isinstance(values, dict):
+            values = {'__'.join(key): value for key, value in values.items()}
+
+        self.__dict__['_mapped_values'] = values
+        return values
+
+    @property
+    def num_hops(self) -> int:
+        r"""Returns the number of hops."""
+        if '_num_hops' in self.__dict__:
+            return self.__dict__['_num_hops']
+
+        if isinstance(self.values, (tuple, list)):
+            num_hops = len(self.values)
+        else:  # isinstance(self.values, dict):
+            num_hops = max([0] + [len(v) for v in self.values.values()])
+
+        self.__dict__['_num_hops'] = num_hops
+        return num_hops
+
+    def __len__(self) -> int:
+        r"""Returns the number of hops."""
+        return self.num_hops
+
+    def config(self) -> Dict[str, Any]:
+        values = self.values
+        if isinstance(values, dict):
+            values = {'__'.join(k): v for k, v in values.items()}
+
+        cls_name = f'{self.__class__.__module__}.{self.__class__.__name__}'
+
+        return {
+            '_target_': cls_name,
+            'values': values,
+            'default': self.default,
+        }
+
+    @classmethod
+    def from_config(cls, cfg: Dict[str, Any]) -> 'NumNeighbors':
+        values = cfg['values']
+        if isinstance(values, dict):
+            values = {tuple(k.split('__')): v for k, v in values.items()}
+
+        return cls(values, cfg.get('default'))
+
+
+class NegativeSamplingMode(Enum):
     # 'binary': Randomly sample negative edges in the graph.
     binary = 'binary'
     # 'triplet': Randomly sample negative destination nodes for each positive
@@ -163,17 +313,38 @@ class NegativeSamplingStrategy(Enum):
 
 
 @dataclass
-class NegativeSamplingConfig(CastMixin):
-    strategy: NegativeSamplingStrategy
+class NegativeSampling(CastMixin):
+    r"""The negative sampling configuration of a
+    :class:`~torch_geometric.sampler.BaseSampler` when calling
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
+
+    Args:
+        mode (str): The negative sampling mode
+            (:obj:`"binary"` or :obj:`"triplet"`).
+            If set to :obj:`"binary"`, will randomly sample negative links
+            from the graph.
+            If set to :obj:`"triplet"`, will randomly sample negative
+            destination nodes for each positive source node.
+        amount (int or float, optional): The ratio of sampled negative edges to
+            the number of positive edges. (default: :obj:`1`)
+        weight (torch.Tensor, optional): A node-level vector determining the
+            sampling of nodes. Does not necessariyl need to sum up to one.
+            If not given, negative nodes will be sampled uniformly.
+            (default: :obj:`None`)
+    """
+    mode: NegativeSamplingMode
     amount: Union[int, float] = 1
+    weight: Optional[Tensor] = None
 
     def __init__(
         self,
-        strategy: Union[NegativeSamplingStrategy, str],
+        mode: Union[NegativeSamplingMode, str],
         amount: Union[int, float] = 1,
+        weight: Optional[Tensor] = None,
     ):
-        self.strategy = NegativeSamplingStrategy(strategy)
+        self.mode = NegativeSamplingMode(mode)
         self.amount = amount
+        self.weight = weight
 
         if self.amount <= 0:
             raise ValueError(f"The attribute 'amount' needs to be positive "
@@ -189,10 +360,27 @@ class NegativeSamplingConfig(CastMixin):
             self.amount = math.ceil(self.amount)
 
     def is_binary(self) -> bool:
-        return self.strategy == NegativeSamplingStrategy.binary
+        return self.mode == NegativeSamplingMode.binary
 
     def is_triplet(self) -> bool:
-        return self.strategy == NegativeSamplingStrategy.triplet
+        return self.mode == NegativeSamplingMode.triplet
+
+    def sample(self, num_samples: int,
+               num_nodes: Optional[int] = None) -> Tensor:
+        r"""Generates :obj:`num_samples` negative samples."""
+        if self.weight is None:
+            if num_nodes is None:
+                raise ValueError(
+                    f"Cannot sample negatives in '{self.__class__.__name__}' "
+                    f"without passing the 'num_nodes' argument")
+            return torch.randint(num_nodes, (num_samples, ))
+
+        if num_nodes is not None and self.weight.numel() != num_nodes:
+            raise ValueError(
+                f"The 'weight' attribute in '{self.__class__.__name__}' "
+                f"needs to match the number of nodes {num_nodes} "
+                f"(got {self.weight.numel()})")
+        return torch.multinomial(self.weight, num_samples, replacement=True)
 
 
 class BaseSampler(ABC):
@@ -220,13 +408,16 @@ class BaseSampler(ABC):
         1. The example indices of the seed nodes
         2. The node indices to start sampling from
         3. The timestamps of the given seed nodes (optional)
+
+        Args:
+            index (NodeSamplerInput): The node sampler input object.
         """
         raise NotImplementedError
 
     def sample_from_edges(
         self,
         index: EdgeSamplerInput,
-        **kwargs,
+        neg_sampling: Optional[NegativeSampling] = None,
     ) -> Union[HeteroSamplerOutput, SamplerOutput]:
         r"""Performs sampling from the edges specified in :obj:`index`,
         returning a sampled subgraph in the specified output format.
@@ -238,6 +429,11 @@ class BaseSampler(ABC):
         3. The destination node indices to start sampling from
         4. The labels of the seed links (optional)
         5. The timestamps of the given seed nodes (optional)
+
+        Args:
+            index (EdgeSamplerInput): The edge sampler input object.
+            neg_sampling (NegativeSampling, optional): The negative sampling
+                configuration. (default: :obj:`None`)
         """
         raise NotImplementedError
 

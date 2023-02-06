@@ -19,7 +19,7 @@ class BitcoinOTC(InMemoryDataset):
     who-trusts-whom networks of sequential time steps.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         edge_window_size (int, optional): The window size for the existence of
             an edge in the graph sequence since its initial creation.
             (default: :obj:`10`)
@@ -52,7 +52,7 @@ class BitcoinOTC(InMemoryDataset):
 
     @property
     def num_nodes(self) -> int:
-        return self.data.edge_index.max().item() + 1
+        return self._data.edge_index.max().item() + 1
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -70,7 +70,7 @@ class BitcoinOTC(InMemoryDataset):
             edge_index = edge_index.t().contiguous()
             num_nodes = edge_index.max().item() + 1
 
-            edge_attr = [float(line[2]) for line in data]
+            edge_attr = [int(line[2]) for line in data]
             edge_attr = torch.tensor(edge_attr, dtype=torch.long)
 
             stamps = [int(float(line[3])) for line in data]

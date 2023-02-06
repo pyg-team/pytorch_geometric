@@ -7,6 +7,8 @@ from typing import Callable
 import torch
 from packaging.requirements import Requirement
 
+from torch_geometric.visualization.graph import has_graphviz
+
 
 def is_full_test() -> bool:
     r"""Whether to run the full but time-consuming test suite."""
@@ -23,13 +25,13 @@ def onlyFullTest(func: Callable) -> Callable:
     )(func)
 
 
-def onlyUnix(func: Callable) -> Callable:
+def onlyLinux(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute on
-    UNIX-like systems."""
+    Linux systems."""
     import pytest
     return pytest.mark.skipif(
-        sys.platform == 'win32',
-        reason="Windows not supported",
+        sys.platform != 'linux',
+        reason="No Linux system",
     )(func)
 
 
@@ -47,6 +49,25 @@ def onlyPython(*args) -> Callable:
     return decorator
 
 
+def onlyCUDA(func: Callable) -> Callable:
+    r"""A decorator to skip tests if CUDA is not found."""
+    import pytest
+    return pytest.mark.skipif(
+        not torch.cuda.is_available(),
+        reason="CUDA not available",
+    )(func)
+
+
+def onlyGraphviz(func: Callable) -> Callable:
+    r"""A decorator to specify that this function should only execute in case
+    :obj:`graphviz` is installed."""
+    import pytest
+    return pytest.mark.skipif(
+        not has_graphviz(),
+        reason="Graphviz not installed",
+    )(func)
+
+
 def withPackage(*args) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification."""
@@ -57,7 +78,14 @@ def withPackage(*args) -> Callable:
         module = import_module(req.name)
         if not hasattr(module, '__version__'):
             return True
-        return module.__version__ in req.specifier
+
+        version = module.__version__
+        # `req.specifier` does not support `.dev` suffixes, e.g., for
+        # `pyg_lib==0.1.0.dev*`, so we manually drop them:
+        if '.dev' in version:
+            version = '.'.join(version.split('.dev')[:-1])
+
+        return version in req.specifier
 
     na_packages = set(package for package in args if not is_installed(package))
 
@@ -69,15 +97,6 @@ def withPackage(*args) -> Callable:
         )(func)
 
     return decorator
-
-
-def onlyCUDA(func: Callable) -> Callable:
-    r"""A decorator to skip tests if CUDA is not found."""
-    import pytest
-    return pytest.mark.skipif(
-        not torch.cuda.is_available(),
-        reason="CUDA not available",
-    )(func)
 
 
 def withCUDA(func: Callable):
