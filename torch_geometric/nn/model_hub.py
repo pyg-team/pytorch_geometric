@@ -5,9 +5,10 @@ from typing import Any, Dict, Optional, Union
 import torch
 
 try:
-    from huggingface_hub import ModelHubMixin
+    from huggingface_hub import ModelHubMixin, hf_hub_download
 except ImportError:
     ModelHubMixin = object
+    hf_hub_download = None
 
 CONFIG_NAME = 'config.json'
 MODEL_HUB_ORGANIZATION = "pytorch_geometric"
@@ -158,8 +159,6 @@ class PyGModelHubMixin(ModelHubMixin):
         **model_kwargs,
     ):
         r"""Load trained model."""
-        from huggingface_hub import hf_hub_download
-
         map_location = torch.device(map_location)
 
         if os.path.isdir(model_id):
