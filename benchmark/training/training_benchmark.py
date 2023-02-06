@@ -114,8 +114,10 @@ def run(args: argparse.ArgumentParser) -> None:
         mask = ('paper', data['paper'].train_mask
                 ) if dataset_name == 'ogbn-mag' else data.train_mask
         if args.evaluate:
-            val_mask = ('paper', data['paper'].val_mask
-                        ) if dataset_name == 'ogbn-mag' else data.val_mask
+            if dataset_name == 'ogbn-mag':
+                val_mask = ('paper', data['paper'].val_mask)
+            else:
+                val_mask = data.val_mask
         degree = None
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
