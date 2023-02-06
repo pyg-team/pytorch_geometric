@@ -13,8 +13,18 @@ except ImportError:
     WITH_INDEX_SORT = False
 
 try:
-    from torch_sparse import SparseTensor
+    import torch_scatter  # noqa
+    WITH_TORCH_SCATTER = True
 except ImportError:
+    torch_scatter = object
+    WITH_TORCH_SCATTER = False
+
+try:
+    from torch_sparse import SparseTensor
+    WITH_TORCH_SPARSE = True
+except ImportError:
+    torch_sparse = object
+    WITH_TORCH_SPARSE = False
 
     class SparseTensor:
         def __init__(self, *args, **kwargs):
