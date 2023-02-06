@@ -55,11 +55,14 @@ class GCN(torch.nn.Module):
 
 
 model = GCN(dataset.num_features, args.hidden_channels, dataset.num_classes)
+# model = torch.compile(model)
 model, data = model.to(device), data.to(device)
 optimizer = torch.optim.Adam([
     dict(params=model.conv1.parameters(), weight_decay=5e-4),
     dict(params=model.conv2.parameters(), weight_decay=0)
 ], lr=args.lr)  # Only perform weight-decay on first convolution.
+
+import time
 
 
 def train():
@@ -83,6 +86,7 @@ def test():
     return accs
 
 
+t = time.perf_counter()
 best_val_acc = final_test_acc = 0
 for epoch in range(1, args.epochs + 1):
     loss = train()
@@ -91,3 +95,4 @@ for epoch in range(1, args.epochs + 1):
         best_val_acc = val_acc
         test_acc = tmp_test_acc
     log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
+print(time.perf_counter() - t)
