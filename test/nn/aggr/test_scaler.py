@@ -4,7 +4,7 @@ import torch
 from torch_geometric.nn import DegreeScalerAggregation
 
 
-@pytest.mark.parametrize("train_norm", [True, False])
+@pytest.mark.parametrize('train_norm', [True, False])
 def test_degree_scaler_aggregation(train_norm):
     x = torch.randn(6, 16)
     index = torch.tensor([0, 0, 1, 1, 1, 2])
