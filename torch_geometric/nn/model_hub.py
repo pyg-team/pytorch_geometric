@@ -1,18 +1,14 @@
 import os
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import torch
 
 try:
-    from huggingface_hub import (
-        ModelCard,
-        ModelCardData,
-        ModelHubMixin,
-        hf_hub_download,
-    )
+    from huggingface_hub import ModelHubMixin, hf_hub_download
 except ImportError:
-    raise ImportError("'PyGModelHubMixin' requires 'huggingface_hub'")
+    ModelHubMixin = object
+    hf_hub_download = None
 
 CONFIG_NAME = 'config.json'
 MODEL_HUB_ORGANIZATION = "pytorch_geometric"
@@ -90,8 +86,8 @@ class PyGModelHubMixin(ModelHubMixin):
         self.model_name = model_name
         self.dataset_name = dataset_name
 
-    def construct_model_card(self, model_name: str,
-                             dataset_name: str) -> ModelCard:
+    def construct_model_card(self, model_name: str, dataset_name: str) -> Any:
+        from huggingface_hub import ModelCard, ModelCardData
         card_data = ModelCardData(
             language='en',
             license='mit',
@@ -162,9 +158,7 @@ class PyGModelHubMixin(ModelHubMixin):
         strict=False,
         **model_kwargs,
     ):
-        r"""
-        Load trained model.
-        """
+        r"""Load trained model."""
         map_location = torch.device(map_location)
 
         if os.path.isdir(model_id):
