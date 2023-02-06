@@ -333,16 +333,6 @@ class Dataset(torch.utils.data.Dataset):
         return DatasetAdapter(self)
 
 
-def has_parent(classes, cls) -> bool:
-    """Check if a set of classes has a parent class `cls`."""
-    for c in classes:
-        if c is cls:
-            return True
-        else:
-            return has_parent(c.__bases__, cls)
-    return False
-
-
 def to_list(value: Any) -> Sequence:
     if isinstance(value, Sequence) and not isinstance(value, str):
         return value
