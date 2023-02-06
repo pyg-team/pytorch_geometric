@@ -25,7 +25,7 @@ if __name__ == '__main__':
         func_names=['Vanilla', 'Compiled'],
         args=(x, edge_index),
         num_steps=100 if args.device == 'cpu' else 1000,
-        num_warmups=10 if args.device == 'cpu' else 100,
+        num_warmups=50 if args.device == 'cpu' else 500,
         backward=args.backward,
     )
 
