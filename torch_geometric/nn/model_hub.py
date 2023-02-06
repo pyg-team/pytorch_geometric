@@ -3,16 +3,12 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 import torch
-
-try:
-    from huggingface_hub import (
-        ModelCard,
-        ModelCardData,
-        ModelHubMixin,
-        hf_hub_download,
-    )
-except ImportError:
-    raise ImportError("'PyGModelHubMixin' requires 'huggingface_hub'")
+from huggingface_hub import (
+    ModelCard,
+    ModelCardData,
+    ModelHubMixin,
+    hf_hub_download,
+)
 
 CONFIG_NAME = 'config.json'
 MODEL_HUB_ORGANIZATION = "pytorch_geometric"
