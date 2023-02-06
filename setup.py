@@ -22,7 +22,7 @@ graphgym_requires = [
     'pytorch-lightning',
 ]
 
-full_requires = graphgym_requires + huggingface_requires + [
+full_requires = graphgym_requires + [
     'ase',
     'h5py',
     'numba',
