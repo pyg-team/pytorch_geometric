@@ -6,6 +6,7 @@ from .utils import get_data_size
 from .utils import get_cpu_memory_from_gc
 from .utils import get_gpu_memory_from_gc
 from .utils import get_gpu_memory_from_nvidia_smi
+from .utils import byte_to_megabyte, medibyte_to_megabyte
 from .benchmark import benchmark
 
 __all__ = [
