@@ -20,6 +20,7 @@ from .sg_conv import SGConv
 from .appnp import APPNP
 from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
+from .cugraph.rgcn_conv import CuGraphRGCNConv
 from .rgat_conv import RGATConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
@@ -56,6 +57,7 @@ from .lg_conv import LGConv
 from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
 from .gps_conv import GPSConv
+from .antisymmetric_conv import AntiSymmetricConv
 
 __all__ = [
     'MessagePassing',
@@ -82,6 +84,7 @@ __all__ = [
     'APPNP',
     'MFConv',
     'RGCNConv',
+    'CuGraphRGCNConv',
     'FastRGCNConv',
     'RGATConv',
     'SignedConv',
@@ -121,6 +124,7 @@ __all__ = [
     'LGConv',
     'PointGNNConv',
     'GPSConv',
+    'AntiSymmetricConv',
 ]
 
 classes = __all__
