@@ -1,8 +1,10 @@
 import torch
 
 from torch_geometric.profile import benchmark
+from torch_geometric.testing import withPackage
 
 
+@withPackage('tabulate')
 def test_benchmark():
     def add(x, y):
         return x + y
