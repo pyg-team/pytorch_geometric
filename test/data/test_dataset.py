@@ -164,7 +164,7 @@ def test_hetero_in_memory_dataset():
         'paper', 'paper'].edge_index.tolist())
 
 
-def test_override_behaviour():
+def test_override_behavior():
     class DS(Dataset):
         def __init__(self):
             self.enter_download = False
