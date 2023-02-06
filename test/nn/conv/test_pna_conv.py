@@ -1,3 +1,4 @@
+import pytest
 import torch
 from torch_sparse import SparseTensor
 
@@ -12,16 +13,17 @@ scalers = [
 ]
 
 
-def test_pna_conv():
+@pytest.mark.parametrize('divide_input', [True, False])
+def test_pna_conv(divide_input):
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+    deg = torch.tensor([0, 3, 0, 1])
     row, col = edge_index
     value = torch.rand(row.size(0), 3)
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
-
-    conv = PNAConv(16, 32, aggregators, scalers,
-                   deg=torch.tensor([0, 3, 0, 1]), edge_dim=3, towers=4)
-    assert conv.__repr__() == 'PNAConv(16, 32, towers=4, edge_dim=3)'
+    conv = PNAConv(16, 32, aggregators, scalers, deg=deg, edge_dim=3, towers=4,
+                   pre_layers=2, post_layers=2, divide_input=divide_input)
+    assert str(conv) == 'PNAConv(16, 32, towers=4, edge_dim=3)'
     out = conv(x, edge_index, value)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)

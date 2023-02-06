@@ -34,7 +34,7 @@ class TemporalData(BaseData):
     represented with these four values.
 
     In general, :class:`~torch_geometric.data.TemporalData` tries to mimic
-    the behaviour of a regular Python dictionary.
+    the behavior of a regular Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 

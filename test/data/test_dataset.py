@@ -164,8 +164,8 @@ def test_hetero_in_memory_dataset():
         'paper', 'paper'].edge_index.tolist())
 
 
-def test_override_behaviour():
-    class DS(Dataset):
+def test_override_behavior():
+    class DS1(Dataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -210,7 +210,10 @@ def test_override_behaviour():
         def _process(self):
             self.enter_process = True
 
-    ds = DS()
+    class DS4(DS1):
+        pass
+
+    ds = DS1()
     assert ds.enter_download
     assert ds.enter_process
 
@@ -221,6 +224,10 @@ def test_override_behaviour():
     ds = DS3()
     assert not ds.enter_download
     assert not ds.enter_process
+
+    ds = DS4()
+    assert ds.enter_download
+    assert ds.enter_process
 
 
 def test_lists_of_tensors_in_memory_dataset():

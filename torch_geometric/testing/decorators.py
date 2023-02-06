@@ -25,13 +25,13 @@ def onlyFullTest(func: Callable) -> Callable:
     )(func)
 
 
-def onlyUnix(func: Callable) -> Callable:
+def onlyLinux(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute on
-    UNIX-like systems."""
+    Linux systems."""
     import pytest
     return pytest.mark.skipif(
-        sys.platform == 'win32',
-        reason="Windows not supported",
+        sys.platform != 'linux',
+        reason="No Linux system",
     )(func)
 
 
