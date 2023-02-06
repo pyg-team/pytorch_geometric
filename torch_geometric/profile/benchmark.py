@@ -39,7 +39,7 @@ def benchmark(
                          f"(got {num_warmups})")
 
     if func_names is None:
-        func_names = [func.__name__ for func in funcs]
+        func_names = [get_func_name(func) for func in funcs]
 
     if len(funcs) != len(func_names):
         raise ValueError(f"Length of 'funcs' (got {len(funcs)}) and "
@@ -87,3 +87,11 @@ def benchmark(
         header.extend(['Backward', 'Total'])
 
     print(tabulate(ts, headers=header, tablefmt='psql'))
+
+
+def get_func_name(func: Callable) -> str:
+    if hasattr(func, '__name__'):
+        return func.__name__
+    elif hasattr(func, '__class__'):
+        return func.__class__.__name__
+    raise ValueError("Could not infer name for function '{func}'")
