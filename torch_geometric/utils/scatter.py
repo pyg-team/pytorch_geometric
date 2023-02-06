@@ -90,8 +90,8 @@ if has_pytorch112:  # pragma: no cover
 
                 if src.is_cuda or src.requires_grad:
                     warnings.warn("The usage of `scatter(reduce='{reduce}')` "
-                                  "can be accelerated via 'torch-scatter', "
-                                  "but it was not not found")
+                                  "can be accelerated via the 'torch-scatter' "
+                                  "package, but it was not not found")
 
                 index = broadcast(index, src, dim)
                 return src.new_zeros(size).scatter_reduce_(
@@ -107,8 +107,8 @@ if has_pytorch112:  # pragma: no cover
 
                 if src.is_cuda:
                     warnings.warn("The usage of `scatter(reduce='{reduce}')` "
-                                  "can be accelerated via 'torch-scatter', "
-                                  "but it was not not found")
+                                  "can be accelerated via the 'torch-scatter' "
+                                  "package, but it was not not found")
 
                 index = broadcast(index, src, dim)
                 # We initialize with `one` here to match `scatter_mul` output:
