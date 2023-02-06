@@ -1,5 +1,7 @@
 from torch import Tensor
-from torch_scatter import segment_csr
+
+import torch_geometric.typing
+from torch_geometric.typing import torch_scatter
 
 
 def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
@@ -17,4 +19,6 @@ def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
             :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
             (default: :obj:`"sum"`)
     """
-    return segment_csr(src, ptr, reduce=reduce)
+    if not torch_geometric.typing.WITH_TORCH_SCATTER:
+        raise ImportError("'segment' requires the 'torch-scatter' package")
+    return torch_scatter.segment_csr(src, ptr, reduce=reduce)
