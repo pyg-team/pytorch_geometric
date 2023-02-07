@@ -113,7 +113,7 @@ With it, the :class:`~torch_geometric.nn.conv.GINConv` layer can now be implemen
 
 .. code-block:: python
 
-    from torch_sparse import matmul
+    import torch_sparse
 
     class GINConv(MessagePassing):
         def __init__(self):
@@ -127,7 +127,7 @@ With it, the :class:`~torch_geometric.nn.conv.GINConv` layer can now be implemen
             return x_j
 
         def message_and_aggregate(self, adj_t, x):
-            return matmul(adj_t, x, reduce=self.aggr)
+            return torch_sparse.matmul(adj_t, x, reduce=self.aggr)
 
 Playing around with the new :class:`SparseTensor` format is straightforward since all of our GNNs work with it out-of-the-box.
 To convert the :obj:`edge_index` format to the newly introduced :class:`SparseTensor` format, you can make use of the :class:`torch_geometric.transforms.ToSparseTensor` transform:
