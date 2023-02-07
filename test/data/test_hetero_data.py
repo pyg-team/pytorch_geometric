@@ -242,7 +242,7 @@ def test_hetero_data_subgraph():
         assert torch.equal(out[key].edge_index, subgraph_edge_index[key])
         if key == ('paper', 'to', 'paper'):
             assert torch.allclose(out[key].edge_attr,
-                data[key].edge_attr[edge_mask[key]])
+                                  data[key].edge_attr[edge_mask[key]])
             assert out[key].name == 'cites'
 
     out = data.node_type_subgraph(['paper', 'author'])
