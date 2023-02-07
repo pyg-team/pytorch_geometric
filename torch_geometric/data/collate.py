@@ -7,7 +7,7 @@ from torch import Tensor
 
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import SparseTensor, torch_sparse
 
 
 def collate(
@@ -156,8 +156,6 @@ def _collate(
         return value, slices, incs
 
     elif isinstance(elem, SparseTensor) and increment:
-        from torch_sparse import cat
-
         # Concatenate a list of `SparseTensor` along the `cat_dim`.
         # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
         key = str(key)
@@ -165,7 +163,7 @@ def _collate(
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
         slices = cumsum(repeats)
-        value = cat(values, dim=cat_dim)
+        value = torch_sparse.cat(values, dim=cat_dim)
         return value, slices, None
 
     elif isinstance(elem, (int, float)):

@@ -259,7 +259,7 @@ class HeteroLinear(torch.nn.Module):
                     type_vec, perm = index_sort(type_vec, self.num_types)
                     x = x[perm]
 
-            type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
+            type_vec_ptr = torch._convert_indices_from_coo_to_csr(
                 type_vec, self.num_types)
             out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:

@@ -194,22 +194,41 @@ def test_hetero_data_subgraph():
         'conf': torch.randperm(x_conference.size(0))[:2],
     }
 
+    subset_sorted = {key: torch.sort(idx)[0] for key, idx in subset.items()}
+
     out = data.subgraph(subset)
     out.validate(raise_on_error=True)
 
     assert out.num_node_types == data.num_node_types
     assert out.node_types == ['paper', 'author', 'conf']
 
-    assert len(out['paper']) == 3
-    assert torch.allclose(out['paper'].x, data['paper'].x[subset['paper']])
-    assert out['paper'].name == 'paper'
-    assert out['paper'].num_nodes == 4
-    assert len(out['author']) == 2
-    assert torch.allclose(out['author'].x, data['author'].x[subset['author']])
-    assert out['author'].num_nodes == 2
-    assert len(out['conf']) == 2
-    assert torch.allclose(out['conf'].x, data['conf'].x[subset['conf']])
-    assert out['conf'].num_nodes == 2
+    for key in out.node_types:
+        assert len(out[key]) == len(data[key])
+        assert torch.allclose(out[key].x, data[key].x[subset_sorted[key]])
+        assert out[key].num_nodes == subset[key].size(0)
+        if key == 'paper':
+            assert out['paper'].name == 'paper'
+
+    # Construct correct edge index manually:
+    node_mask = {}  # for each node type a mask of nodes in the subgraph
+    node_map = {}  # for each node type a map from old node id to new node id
+    for key in out.node_types:
+        node_mask[key] = torch.zeros((data[key].num_nodes, ), dtype=torch.bool)
+        node_map[key] = torch.zeros((data[key].num_nodes, ), dtype=torch.long)
+        node_mask[key][subset_sorted[key]] = True
+        node_map[key][subset_sorted[key]] = torch.arange(subset[key].size(0))
+
+    edge_mask = {}  # for each edge type a mask of edges in the subgraph
+    subgraph_edge_index = {
+    }  # for each edge type the edge index of the subgraph
+    for key in out.edge_types:
+        edge_mask[key] = (node_mask[key[0]][data[key].edge_index[0]]
+                          & node_mask[key[-1]][data[key].edge_index[1]])
+        subgraph_edge_index[key] = data[key].edge_index[:, edge_mask[key]]
+        subgraph_edge_index[key][0] = node_map[key[0]][subgraph_edge_index[key]
+                                                       [0]]
+        subgraph_edge_index[key][1] = node_map[key[-1]][
+            subgraph_edge_index[key][1]]
 
     assert out.edge_types == [
         ('paper', 'to', 'paper'),
@@ -218,14 +237,13 @@ def test_hetero_data_subgraph():
         ('paper', 'to', 'conf'),
     ]
 
-    assert len(out['paper', 'paper']) == 3
-    assert out['paper', 'paper'].edge_index is not None
-    assert out['paper', 'paper'].edge_attr is not None
-    assert out['paper', 'paper'].name == 'cites'
-    assert len(out['paper', 'author']) == 1
-    assert out['paper', 'author'].edge_index is not None
-    assert len(out['author', 'paper']) == 1
-    assert out['author', 'paper'].edge_index is not None
+    for key in out.edge_types:
+        assert len(out[key]) == len(data[key])
+        assert torch.equal(out[key].edge_index, subgraph_edge_index[key])
+        if key == ('paper', 'to', 'paper'):
+            assert torch.allclose(out[key].edge_attr,
+                                  data[key].edge_attr[edge_mask[key]])
+            assert out[key].name == 'cites'
 
     out = data.node_type_subgraph(['paper', 'author'])
     assert out.node_types == ['paper', 'author']
