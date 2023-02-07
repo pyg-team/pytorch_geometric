@@ -8,14 +8,13 @@ import numpy as np
 import torch
 from torch import Tensor
 from torch.nn import Embedding, Linear
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Dataset, download_url
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import radius_graph
 from torch_geometric.nn.inits import glorot_orthogonal
 from torch_geometric.nn.resolver import activation_resolver
-from torch_geometric.typing import OptTensor
+from torch_geometric.typing import OptTensor, SparseTensor
 from torch_geometric.utils import scatter
 
 qm9_target_dict = {

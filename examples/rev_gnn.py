@@ -9,12 +9,12 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch.nn import LayerNorm, Linear
-from torch_sparse import SparseTensor
 from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.loader import RandomNodeLoader
 from torch_geometric.nn import GroupAddRev, SAGEConv
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import index_to_mask
 
 

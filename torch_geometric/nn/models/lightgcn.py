@@ -5,10 +5,9 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Embedding, ModuleList
 from torch.nn.modules.loss import _Loss
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import LGConv
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
 
 
 class LightGCN(torch.nn.Module):

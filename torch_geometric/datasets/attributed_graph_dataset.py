@@ -12,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.typing import SparseTensor
 
 
 class AttributedGraphDataset(InMemoryDataset):
@@ -88,7 +89,6 @@ class AttributedGraphDataset(InMemoryDataset):
 
     def process(self):
         import pandas as pd
-        from torch_sparse import SparseTensor
 
         x = sp.load_npz(self.raw_paths[0])
         if x.shape[-1] > 10000 or self.name == 'mag':

@@ -5,14 +5,13 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.nn.parameter_dict import ParameterDict
-from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.typing import EdgeType, Metadata, NodeType, SparseTensor
 from torch_geometric.utils import softmax
 
 

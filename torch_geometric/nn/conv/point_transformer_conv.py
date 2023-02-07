@@ -1,11 +1,11 @@
 from typing import Callable, Optional, Tuple, Union
 
 from torch import Tensor
-from torch_sparse import SparseTensor, set_diag
+from torch_sparse import set_diag
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor, PairTensor
+from torch_geometric.typing import Adj, OptTensor, PairTensor, SparseTensor
 from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 from ..inits import reset
