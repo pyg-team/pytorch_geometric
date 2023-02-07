@@ -43,9 +43,6 @@ from torch_geometric.utils.mixin import CastMixin
 ConversionOutputType = Tuple[Dict[EdgeType, Tensor], Dict[EdgeType, Tensor],
                              Dict[EdgeType, OptTensor]]
 
-ptr2ind = torch.ops.torch_sparse.ptr2ind
-ind2ptr = torch.ops.torch_sparse.ind2ptr
-
 
 class EdgeLayout(Enum):
     COO = 'coo'
@@ -264,17 +261,23 @@ class GraphStore:
         store: bool = False,
     ) -> Tuple[Tensor, Tensor, OptTensor]:
 
+        ind2ptr = torch._convert_indices_from_coo_to_csr
+
+        def ptr2ind(ptr: Tensor) -> Tensor:
+            ind = torch.arange(ptr.numel() - 1, device=ptr.device)
+            return ind.repeat_interleave(ptr[1:] - ptr[:-1])
+
         (row, col), perm = self.get_edge_index(attr), None
 
         if layout == EdgeLayout.COO:  # COO output requested:
             if attr.layout == EdgeLayout.CSR:  # CSR->COO
-                row = ptr2ind(row, col.numel())
+                row = ptr2ind(row)
             elif attr.layout == EdgeLayout.CSC:  # CSC->COO
-                col = ptr2ind(col, row.numel())
+                col = ptr2ind(col)
 
         elif layout == EdgeLayout.CSR:  # CSR output requested:
             if attr.layout == EdgeLayout.CSC:  # CSC->COO
-                col = ptr2ind(col, row.numel())
+                col = ptr2ind(col)
 
             if attr.layout != EdgeLayout.CSR:  # COO->CSR
                 num_rows = attr.size[0] if attr.size else int(row.max()) + 1
@@ -284,7 +287,7 @@ class GraphStore:
 
         else:  # CSC output requested:
             if attr.layout == EdgeLayout.CSR:  # CSR->COO
-                row = ptr2ind(row, col.numel())
+                row = ptr2ind(row)
 
             if attr.layout != EdgeLayout.CSC:  # COO->CSC
                 num_cols = attr.size[1] if attr.size else int(col.max()) + 1

@@ -3,15 +3,10 @@ from typing import Callable, List, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch_sparse import spspmm
 
 from torch_geometric.nn import GCNConv, TopKPooling
-from torch_geometric.typing import OptTensor, PairTensor
-from torch_geometric.utils import (
-    add_self_loops,
-    remove_self_loops,
-    sort_edge_index,
-)
+from torch_geometric.typing import OptTensor, PairTensor, SparseTensor
+from torch_geometric.utils import add_self_loops, remove_self_loops
 from torch_geometric.utils.repeat import repeat
 
 
@@ -131,11 +126,11 @@ class GraphUNet(torch.nn.Module):
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
                                                  num_nodes=num_nodes)
-        edge_index, edge_weight = sort_edge_index(edge_index, edge_weight,
-                                                  num_nodes)
-        edge_index, edge_weight = spspmm(edge_index, edge_weight, edge_index,
-                                         edge_weight, num_nodes, num_nodes,
-                                         num_nodes)
+        adj = SparseTensor.from_edge_index(edge_index, edge_weight,
+                                           sparse_sizes=(num_nodes, num_nodes))
+        adj = adj @ adj
+        row, col, edge_weight = adj.coo()
+        edge_index = torch.stack([row, col], dim=0)
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         return edge_index, edge_weight
 

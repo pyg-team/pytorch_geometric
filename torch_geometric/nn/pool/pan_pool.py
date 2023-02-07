@@ -3,9 +3,8 @@ from typing import Callable, Optional, Tuple, Union
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor
 
-from torch_geometric.typing import OptTensor
+from torch_geometric.typing import OptTensor, SparseTensor
 from torch_geometric.utils import scatter, softmax
 
 from .topk_pool import filter_adj, topk

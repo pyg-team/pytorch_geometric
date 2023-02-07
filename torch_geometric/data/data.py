@@ -163,7 +163,7 @@ class BaseData(object):
             PyG then *guesses* the number of nodes according to
             :obj:`edge_index.max().item() + 1`.
             However, in case there exists isolated nodes, this number does not
-            have to be correct which can result in unexpected behaviour.
+            have to be correct which can result in unexpected behavior.
             Thus, we recommend to set the number of nodes in your data object
             explicitly via :obj:`data.num_nodes = ...`.
             You will be given a warning that requests you to do so.
@@ -363,7 +363,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a homogeneous graph.
     The data object can hold node-level, link-level and graph-level attributes.
     In general, :class:`~torch_geometric.data.Data` tries to mimic the
-    behaviour of a regular Python dictionary.
+    behavior of a regular Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
     See `here <https://pytorch-geometric.readthedocs.io/en/latest/get_started/
@@ -589,14 +589,15 @@ class Data(BaseData, FeatureStore, GraphStore):
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-        out = subgraph(subset, self.edge_index, relabel_nodes=True,
-                       num_nodes=self.num_nodes, return_edge_mask=True)
-        edge_index, _, edge_mask = out
-
         if subset.dtype == torch.bool:
             num_nodes = int(subset.sum())
         else:
             num_nodes = subset.size(0)
+            subset = torch.unique(subset, sorted=True)
+
+        out = subgraph(subset, self.edge_index, relabel_nodes=True,
+                       num_nodes=self.num_nodes, return_edge_mask=True)
+        edge_index, _, edge_mask = out
 
         data = copy.copy(self)
 

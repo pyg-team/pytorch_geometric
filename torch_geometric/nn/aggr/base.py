@@ -2,9 +2,8 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_scatter import segment_csr
 
-from torch_geometric.utils import scatter, to_dense_batch
+from torch_geometric.utils import scatter, segment, to_dense_batch
 
 
 class Aggregation(torch.nn.Module):
@@ -150,7 +149,7 @@ class Aggregation(torch.nn.Module):
 
         if ptr is not None:
             ptr = expand_left(ptr, dim, dims=x.dim())
-            return segment_csr(x, ptr, reduce=reduce)
+            return segment(x, ptr, reduce=reduce)
 
         assert index is not None
         return scatter(x, index, dim, dim_size, reduce)

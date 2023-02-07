@@ -38,7 +38,7 @@ class WikiCS(InMemoryDataset):
             warnings.warn(
                 f"The {self.__class__.__name__} dataset now returns an "
                 f"undirected graph by default. Please explicitly specify "
-                f"'is_undirected=False' to restore the old behaviour.")
+                f"'is_undirected=False' to restore the old behavior.")
             is_undirected = True
         self.is_undirected = is_undirected
         super().__init__(root, transform, pre_transform)
