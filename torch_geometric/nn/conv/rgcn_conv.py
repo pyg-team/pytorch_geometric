@@ -237,7 +237,7 @@ class RGCNConv(MessagePassing):
                         edge_type, perm = index_sort(
                             edge_type, max_value=self.num_relations)
                         edge_index = edge_index[:, perm]
-                edge_type_ptr = torch.ops.torch_sparse.ind2ptr(
+                edge_type_ptr = torch._convert_indices_from_coo_to_csr(
                     edge_type, self.num_relations)
                 out = self.propagate(edge_index, x=x_l,
                                      edge_type_ptr=edge_type_ptr, size=size)
