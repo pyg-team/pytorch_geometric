@@ -3,12 +3,11 @@ from typing import Tuple, Union
 import torch
 from torch import Tensor
 from torch.nn import ModuleList
-from torch_sparse import matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptPairTensor, Size, SparseTensor
-from torch_geometric.utils import degree
+from torch_geometric.utils import degree, spmm
 
 
 class MFConv(MessagePassing):
@@ -113,4 +112,4 @@ class MFConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
         adj_t = adj_t.set_value(None, layout=None)
-        return matmul(adj_t, x[0], reduce=self.aggr)
+        return spmm(adj_t, x[0], reduce=self.aggr)

@@ -3,12 +3,12 @@ import math
 import torch
 from torch import Tensor
 from torch.nn import BatchNorm1d, Parameter
-from torch_sparse import matmul
 
 from torch_geometric.nn import inits
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.models import MLP
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.utils import spmm
 
 
 class SparseLinear(MessagePassing):
@@ -47,7 +47,7 @@ class SparseLinear(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               weight: Tensor) -> Tensor:
-        return matmul(adj_t, weight, reduce=self.aggr)
+        return spmm(adj_t, weight, reduce=self.aggr)
 
 
 class LINKX(torch.nn.Module):

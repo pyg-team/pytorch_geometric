@@ -1,10 +1,14 @@
 from torch import Tensor
-from torch_sparse import matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
-from torch_geometric.utils import add_self_loops, degree, remove_self_loops
+from torch_geometric.utils import (
+    add_self_loops,
+    degree,
+    remove_self_loops,
+    spmm,
+)
 
 
 class ClusterGCNConv(MessagePassing):
@@ -98,7 +102,7 @@ class ClusterGCNConv(MessagePassing):
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

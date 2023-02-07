@@ -3,11 +3,11 @@ from typing import Callable, Optional
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch_sparse import matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.utils import spmm
 
 
 class LabelPropagation(MessagePassing):
@@ -66,7 +66,7 @@ class LabelPropagation(MessagePassing):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(num_layers={self.num_layers}, '
