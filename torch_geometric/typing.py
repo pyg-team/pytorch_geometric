@@ -10,8 +10,8 @@ try:
     WITH_INDEX_SORT = WITH_PYG_LIB and hasattr(pyg_lib.ops, 'index_sort')
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
-        warnings.warn(f"An issue occurred while importing 'pyg-lib'\n"
-                      f"Stacktrace: {e}")
+        warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
+                      f"Disabling its usage. Stacktrace: {e}")
     pyg_lib = object
     WITH_PYG_LIB = False
     WITH_INDEX_SORT = False
@@ -21,8 +21,8 @@ try:
     WITH_TORCH_SCATTER = True
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
-        warnings.warn(f"An issue occurred while importing 'torch-scatter'\n"
-                      f"Stacktrace: {e}")
+        warnings.warn(f"An issue occurred while importing 'torch-scatter'. "
+                      f"Disabling its usage. Stacktrace: {e}")
     torch_scatter = object
     WITH_TORCH_SCATTER = False
 
@@ -32,8 +32,8 @@ try:
     WITH_TORCH_SPARSE = True
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
-        warnings.warn(f"An issue occurred while importing 'torch-sparse'\n"
-                      f"Stacktrace: {e}")
+        warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
+                      f"Disabling its usage. Stacktrace: {e}")
     torch_sparse = object
     WITH_TORCH_SPARSE = False
 
