@@ -7,6 +7,7 @@ from torch_geometric import get_home_dir, set_home_dir
 ENV_PYG_HOME = 'PYG_HOME'
 DEFAULT_CACHE_DIR = osp.join('~', '.cache', 'pyg')
 
+
 def test_home():
     home_dir = os.getenv(ENV_PYG_HOME, DEFAULT_CACHE_DIR)
     home_dir = osp.expanduser(home_dir)
