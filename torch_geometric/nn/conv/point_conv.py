@@ -2,7 +2,6 @@ from typing import Callable, Optional, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import set_diag
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.typing import (
@@ -11,6 +10,7 @@ from torch_geometric.typing import (
     PairOptTensor,
     PairTensor,
     SparseTensor,
+    torch_sparse,
 )
 from torch_geometric.utils import add_self_loops, remove_self_loops
 
@@ -93,7 +93,7 @@ class PointNetConv(MessagePassing):
                 edge_index, _ = add_self_loops(
                     edge_index, num_nodes=min(pos[0].size(0), pos[1].size(0)))
             elif isinstance(edge_index, SparseTensor):
-                edge_index = set_diag(edge_index)
+                edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairOptTensor, pos: PairTensor)
         out = self.propagate(edge_index, x=x, pos=pos, size=None)

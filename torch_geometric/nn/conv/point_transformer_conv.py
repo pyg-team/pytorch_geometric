@@ -1,11 +1,16 @@
 from typing import Callable, Optional, Tuple, Union
 
 from torch import Tensor
-from torch_sparse import set_diag
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor, PairTensor, SparseTensor
+from torch_geometric.typing import (
+    Adj,
+    OptTensor,
+    PairTensor,
+    SparseTensor,
+    torch_sparse,
+)
 from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 from ..inits import reset
@@ -126,7 +131,7 @@ class PointTransformerConv(MessagePassing):
                 edge_index, _ = add_self_loops(
                     edge_index, num_nodes=min(pos[0].size(0), pos[1].size(0)))
             elif isinstance(edge_index, SparseTensor):
-                edge_index = set_diag(edge_index)
+                edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairTensor, pos: PairTensor, alpha: PairTensor)
         out = self.propagate(edge_index, x=x, pos=pos, alpha=alpha, size=None)
