@@ -220,13 +220,13 @@ class NeighborSampler(BaseSampler):
                     batch = {k: v[0] for k, v in node.items()}
                     node = {k: v[1] for k, v in node.items()}
 
-            else:
+            elif torch_geometric.typing.WITH_TORCH_SPARSE:
                 if self.disjoint:
                     raise ValueError("'disjoint' sampling not supported for "
                                      "neighbor sampling via 'torch-sparse'. "
                                      "Please install 'pyg-lib' for improved "
                                      "and optimized sampling routines.")
-                import torch_sparse  # noqa
+
                 out = torch.ops.torch_sparse.hetero_neighbor_sample(
                     self.node_types,
                     self.edge_types,
@@ -239,6 +239,10 @@ class NeighborSampler(BaseSampler):
                     self.directed,
                 )
                 node, row, col, edge, batch = out + (None, )
+
+            else:
+                raise ImportError(f"'{self.__class__.__name__}' requires "
+                                  f"either 'pyg-lib' or 'torch-sparse'")
 
             return HeteroSamplerOutput(
                 node=node,
@@ -270,13 +274,13 @@ class NeighborSampler(BaseSampler):
                 if self.disjoint:
                     batch, node = node.t().contiguous()
 
-            else:
+            elif torch_geometric.typing.WITH_TORCH_SPARSE:
                 if self.disjoint:
                     raise ValueError("'disjoint' sampling not supported for "
                                      "neighbor sampling via 'torch-sparse'. "
                                      "Please install 'pyg-lib' for improved "
                                      "and optimized sampling routines.")
-                import torch_sparse  # noqa
+
                 out = torch.ops.torch_sparse.neighbor_sample(
                     self.colptr,
                     self.row,
@@ -286,6 +290,10 @@ class NeighborSampler(BaseSampler):
                     self.directed,
                 )
                 node, row, col, edge, batch = out + (None, )
+
+            else:
+                raise ImportError(f"'{self.__class__.__name__}' requires "
+                                  f"either 'pyg-lib' or 'torch-sparse'")
 
             return SamplerOutput(
                 node=node,
