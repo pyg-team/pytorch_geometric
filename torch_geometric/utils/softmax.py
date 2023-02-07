@@ -2,11 +2,10 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_scatter import gather_csr, segment_csr
 
 import torch_geometric.typing
 from torch_geometric.typing import pyg_lib
-from torch_geometric.utils import scatter
+from torch_geometric.utils import scatter, segment
 
 from .num_nodes import maybe_num_nodes
 
@@ -58,13 +57,14 @@ def softmax(
     if ptr is not None:
         dim = dim + src.dim() if dim < 0 else dim
         size = ([1] * dim) + [-1]
+        count = ptr[1:] - ptr[:-1]
         ptr = ptr.view(size)
         with torch.no_grad():
-            src_max = segment_csr(src, ptr, reduce='max')
-            src_max = gather_csr(src_max, ptr)
+            src_max = segment(src, ptr, reduce='max')
+            src_max = src_max.repeat_interleave(count, dim=dim)
         out = (src - src_max).exp()
-        out_sum = segment_csr(out, ptr, reduce='sum') + 1e-16
-        out_sum = gather_csr(out_sum, ptr)
+        out_sum = segment(out, ptr, reduce='sum') + 1e-16
+        out_sum = out_sum.repeat_interleave(count, dim=dim)
     elif index is not None:
         N = maybe_num_nodes(index, num_nodes)
         with torch.no_grad():
