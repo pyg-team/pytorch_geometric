@@ -124,10 +124,11 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         # Define context manager parameters:
-                        cpu_affinity = subgraph_loader.enable_cpu_affinity(
-                            args.loader_cores
-                        ) if args.cpu_affinity and with_loader else nullcontext(
-                        )
+                        if args.cpu_affinity and with_loader:
+                            cpu_affinity = subgraph_loader.enable_cpu_affinity(
+                                args.loader_cores)
+                        else:
+                            cpu_affinity = nullcontext()
                         profile = torch_profile(
                         ) if args.profile else nullcontext()
                         itt = emit_itt(
@@ -140,7 +141,8 @@ def run(args: argparse.ArgumentParser) -> None:
                                 else:
                                     model.inference(subgraph_loader, device,
                                                     progress_bar=True)
-                            if args.warmup > 0: time.reset()
+                            if args.warmup > 0:
+                                time.reset()
                             with itt, profile:
                                 if args.full_batch:
                                     full_batch_inference(model, data)
