@@ -5,8 +5,7 @@ from torch_geometric.nn.models import CorrectAndSmooth
 
 
 def test_correct_and_smooth():
-    y_soft = torch.tensor([[0.1, 0.5, 0.4], [0.1, 0.5, 0.4], [0.1, 0.5, 0.4],
-                           [0.1, 0.5, 0.4], [0.1, 0.5, 0.4], [0.1, 0.5, 0.4]])
+    y_soft = torch.tensor([0.1, 0.5, 0.4]).repeat(6, 1)
     y_true = torch.tensor([1, 0, 0, 2, 1, 1])
     edge_index = torch.tensor([[0, 1, 1, 2, 4, 5], [1, 0, 2, 1, 5, 4]])
     adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(6, 6))
