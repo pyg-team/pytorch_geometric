@@ -5,7 +5,6 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
-from torch_sparse import matmul
 
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
@@ -16,7 +15,7 @@ from torch_geometric.typing import (
     pyg_lib,
     torch_sparse,
 )
-from torch_geometric.utils import index_sort, scatter
+from torch_geometric.utils import index_sort, scatter, spmm
 
 from ..inits import glorot, zeros
 
@@ -279,7 +278,7 @@ class RGCNConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         adj_t = adj_t.set_value(None)
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
