@@ -3,6 +3,7 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.transforms import RemoveTrainingClasses
 
+
 def test_remove_training_classes():
     x = torch.randn(6, 8)
     y = torch.tensor([1, 0, 0, 2, 1, 3])
