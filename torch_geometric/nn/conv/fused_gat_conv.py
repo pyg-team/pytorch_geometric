@@ -2,9 +2,9 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import GATConv
+from torch_geometric.typing import SparseTensor
 
 
 class FusedGATConv(GATConv):  # pragma: no cover
