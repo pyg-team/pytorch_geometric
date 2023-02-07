@@ -32,6 +32,11 @@ def run(args: argparse.ArgumentParser) -> None:
         data = dataset.to(device)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
+        if args.evaluate:
+            if dataset_name == 'ogbn-mag':
+                test_mask = ('paper', data['paper'].test_mask)
+            else:
+                test_mask = data.test_mask
         degree = None
 
         if args.num_layers != [1] and not hetero and args.num_steps != -1:
@@ -70,6 +75,16 @@ def run(args: argparse.ArgumentParser) -> None:
                         num_workers=args.num_workers,
                         sampler=sampler,
                     )
+                    if args.evaluate:
+                        test_loader = NeighborLoader(
+                            data,
+                            num_neighbors=[-1],  # layer-wise inference
+                            input_nodes=test_mask,
+                            batch_size=batch_size,
+                            shuffle=False,
+                            num_workers=args.num_workers,
+                            sampler=None,
+                        )
 
                 for layers in args.num_layers:
                     num_neighbors = [args.hetero_num_neighbors] * layers
@@ -111,6 +126,9 @@ def run(args: argparse.ArgumentParser) -> None:
                             model_name, params,
                             metadata=data.metadata() if hetero else None)
                         model = model.to(device)
+                        if args.ckpt_path:
+                            state_dict = torch.load(args.ckpt_path)
+                            model.load_state_dict(state_dict)
                         model.eval()
 
                         # Define context manager parameters:
@@ -128,8 +146,12 @@ def run(args: argparse.ArgumentParser) -> None:
                                                 progress_bar=True)
                             time.reset()
                             with itt, profile:
-                                model.inference(subgraph_loader, device,
+                                y = model.inference(subgraph_loader, device,
                                                 progress_bar=True)
+                            if args.evaluate:
+                                test_acc = model.test(y, test_loader, device,
+                                                      progress_bar=True)
+                                print(f'Test Accuracy: {test_acc:.4f}')
 
                         if args.profile:
                             rename_profile_file(model_name, dataset_name,
@@ -179,4 +201,7 @@ if __name__ == '__main__':
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
     add('--measure-load-time', action='store_true')
+    add('--evaluate', action='store_true')
+    add('--ckpt_path', type=str,
+        help='checkpoint path to look for the model dict')
     run(argparser.parse_args())

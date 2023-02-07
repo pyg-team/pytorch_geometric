@@ -116,8 +116,10 @@ def run(args: argparse.ArgumentParser) -> None:
         if args.evaluate:
             if dataset_name == 'ogbn-mag':
                 val_mask = ('paper', data['paper'].val_mask)
+                test_mask = ('paper', data['paper'].test_mask)
             else:
                 val_mask = data.val_mask
+                test_mask = data.test_mask
         degree = None
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
@@ -168,6 +170,15 @@ def run(args: argparse.ArgumentParser) -> None:
                             data,
                             num_neighbors=num_neighbors,
                             input_nodes=val_mask,
+                            batch_size=batch_size,
+                            shuffle=shuffle,
+                            num_workers=args.num_workers,
+                            sampler=None,
+                        )
+                        test_loader = NeighborLoader(
+                            data,
+                            num_neighbors=num_neighbors,
+                            input_nodes=test_mask,
                             batch_size=batch_size,
                             shuffle=shuffle,
                             num_workers=args.num_workers,
@@ -234,6 +245,12 @@ def run(args: argparse.ArgumentParser) -> None:
                                                 progress_bar=progress_bar)
                                             print(
                                                 f'Val Accuracy: {val_acc:.4f}')
+
+                            if args.evaluate:
+                                test_acc = test(model, test_loader, device,
+                                                hetero,
+                                                progress_bar=progress_bar)
+                                print(f'Test Accuracy: {test_acc:.4f}')
 
                             if args.profile:
                                 with torch_profile():
