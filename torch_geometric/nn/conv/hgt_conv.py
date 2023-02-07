@@ -23,7 +23,7 @@ def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
     elif len(xs) == 1:
         return xs[0]
     elif aggr == "cat":
-        return torch.cat(xs, dim=1)
+        return torch.cat(xs, dim=-1)
     else:
         out = torch.stack(xs, dim=0)
         out = getattr(torch, aggr)(out, dim=0)
