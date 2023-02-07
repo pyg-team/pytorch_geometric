@@ -42,7 +42,7 @@ except (ImportError, OSError) as e:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         @classmethod
-        def from_edge_index(cls, *args, **kwargs):
+        def from_edge_index(cls, *args, **kwargs) -> 'SparseTensor':
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
 
