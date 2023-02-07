@@ -5,11 +5,17 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
-from torch_sparse import masked_select_nnz, matmul
+from torch_sparse import matmul
 
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj, OptTensor, SparseTensor, pyg_lib
+from torch_geometric.typing import (
+    Adj,
+    OptTensor,
+    SparseTensor,
+    pyg_lib,
+    torch_sparse,
+)
 from torch_geometric.utils import index_sort, scatter
 
 from ..inits import glorot, zeros
@@ -30,8 +36,7 @@ def masked_edge_index(edge_index, edge_mask):
 def masked_edge_index(edge_index, edge_mask):
     if isinstance(edge_index, Tensor):
         return edge_index[:, edge_mask]
-    else:
-        return masked_select_nnz(edge_index, edge_mask, layout='coo')
+    return torch_sparse.masked_select_nnz(edge_index, edge_mask, layout='coo')
 
 
 class RGCNConv(MessagePassing):

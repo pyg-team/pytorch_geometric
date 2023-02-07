@@ -3,13 +3,13 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import fill_diag, matmul
+from torch_sparse import matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
 from torch_geometric.utils import add_remaining_self_loops, scatter
 
 
@@ -163,7 +163,7 @@ class EGConv(MessagePassing):
                 if self.cached and cache is not None:
                     edge_index = cache
                 else:
-                    edge_index = fill_diag(edge_index, 1.0)
+                    edge_index = torch_sparse.fill_diag(edge_index, 1.0)
                     if self.cached:
                         self._cached_adj_t = edge_index
 
