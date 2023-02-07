@@ -3,6 +3,7 @@ from typing import Optional, Union
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import sort_edge_index
 
 
@@ -41,7 +42,6 @@ class ToSparseTensor(BaseTransform):
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
-        from torch_sparse import SparseTensor
 
         for store in data.edge_stores:
             if 'edge_index' not in store:
