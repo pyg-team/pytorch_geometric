@@ -226,7 +226,8 @@ def run(args: argparse.ArgumentParser) -> None:
                                               progress_bar=progress_bar,
                                               desc=f"Epoch={epoch}")
                                         if args.evaluate:
-                                            # In evaluate mode, throughput and latency are not accurate.
+                                            # In evaluate, throughput and
+                                            # latency are not accurate.
                                             val_acc = test(
                                                 model, val_loader, device,
                                                 hetero,
@@ -246,7 +247,10 @@ def run(args: argparse.ArgumentParser) -> None:
                                                     str(num_neighbors))
 
                         total_time = t.duration
-                        total_num_samples = args.num_steps * batch_size if args.num_steps != -1 else num_nodes
+                        if args.num_steps != -1:
+                            total_num_samples = args.num_steps * batch_size
+                        else:
+                            total_num_samples = num_nodes
                         throughput = total_num_samples / total_time
                         latency = total_time / total_num_samples * 1000
                         print(f'Throughput: {throughput:.3f} fps')

@@ -137,7 +137,10 @@ def run(args: argparse.ArgumentParser) -> None:
                                                 str(hidden_channels),
                                                 str(num_neighbors))
                         total_time = time.duration
-                        total_num_samples = args.num_steps * batch_size if args.num_steps != -1 else num_nodes
+                        if args.num_steps != -1:
+                            total_num_samples = args.num_steps * batch_size
+                        else:
+                            total_num_samples = num_nodes
                         throughput = total_num_samples / total_time
                         latency = total_time / total_num_samples * 1000
                         print(f'Throughput: {throughput:.3f} fps')
