@@ -589,19 +589,15 @@ class Data(BaseData, FeatureStore, GraphStore):
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-        out = subgraph(subset, self.edge_index, relabel_nodes=True,
-                       num_nodes=self.num_nodes, return_edge_mask=True)
-        edge_index, _, edge_mask = out
-
         if subset.dtype == torch.bool:
             num_nodes = int(subset.sum())
         else:
             num_nodes = subset.size(0)
+            subset = torch.unique(subset, sorted=True)
 
-            # check if selection is unordered and re-map edge_index if necessary
-            if (subset[:-1] > subset[1:]).any():
-                node_idx = torch.argsort(subset)
-                edge_index = node_idx[edge_index]
+        out = subgraph(subset, self.edge_index, relabel_nodes=True,
+                       num_nodes=self.num_nodes, return_edge_mask=True)
+        edge_index, _, edge_mask = out
 
         data = copy.copy(self)
 

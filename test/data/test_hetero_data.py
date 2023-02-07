@@ -194,6 +194,8 @@ def test_hetero_data_subgraph():
         'conf': torch.randperm(x_conference.size(0))[:2],
     }
 
+    subset_sorted = {key: torch.sort(idx)[0] for key, idx in subset.items()}
+
     out = data.subgraph(subset)
     out.validate(raise_on_error=True)
 
@@ -201,64 +203,71 @@ def test_hetero_data_subgraph():
     assert out.node_types == ['paper', 'author', 'conf']
 
     assert len(out['paper']) == 3
-    assert torch.allclose(out['paper'].x, data['paper'].x[subset['paper']])
+    assert torch.allclose(
+        out['paper'].x,
+        data['paper'].x[subset_sorted['paper']]
+    )
     assert out['paper'].name == 'paper'
     assert out['paper'].num_nodes == 4
+
     assert len(out['author']) == 2
-    assert torch.allclose(out['author'].x, data['author'].x[subset['author']])
+    assert torch.allclose(
+        out['author'].x,
+        data['author'].x[subset_sorted['author']]
+    )
     assert out['author'].num_nodes == 2
+
     assert len(out['conf']) == 2
-    assert torch.allclose(out['conf'].x, data['conf'].x[subset['conf']])
+    assert torch.allclose(
+        out['conf'].x,
+        data['conf'].x[subset_sorted['conf']]
+    )
     assert out['conf'].num_nodes == 2
 
     # construct correct edge index manually
     paper_mask = torch.zeros((x_paper.size(0), ), dtype=torch.bool)
     paper_node_map = torch.zeros((x_paper.size(0), ), dtype=torch.long)
-    paper_mask[subset['paper']] = True
-    paper_node_map[subset['paper']] = torch.arange(subset['paper'].size(0))
+    paper_mask[subset_sorted['paper']] = True
+    paper_node_map[subset_sorted['paper']] = torch.arange(4)
 
     author_mask = torch.zeros((x_author.size(0), ), dtype=torch.bool)
     author_node_map = torch.zeros((x_author.size(0), ), dtype=torch.long)
-    author_mask[subset['author']] = True
-    author_node_map[subset['author']] = torch.arange(subset['author'].size(0))
+    author_mask[subset_sorted['author']] = True
+    author_node_map[subset_sorted['author']] = torch.arange(2)
 
     conf_mask = torch.zeros((x_conference.size(0), ), dtype=torch.bool)
     conf_node_map = torch.zeros((x_conference.size(0), ), dtype=torch.long)
-    conf_mask[subset['conf']] = True
-    conf_node_map[subset['conf']] = torch.arange(subset['conf'].size(0))
+    conf_mask[subset_sorted['conf']] = True
+    conf_node_map[subset_sorted['conf']] = torch.arange(2)
 
-    edge_mask_paper_paper = paper_mask[edge_index_paper_paper[0]] \
-                            & paper_mask[edge_index_paper_paper[1]]
-    sub_edge_index_paper_paper = edge_index_paper_paper[:,
-                                                        edge_mask_paper_paper]
+    edge_mask_paper_paper = paper_mask[edge_index_paper_paper[0]]
+    edge_mask_paper_paper &= paper_mask[edge_index_paper_paper[1]]
+    sub_edge_index_paper_paper = edge_index_paper_paper[:, edge_mask_paper_paper]
     sub_edge_index_paper_paper[0] = paper_node_map[
         sub_edge_index_paper_paper[0]]
     sub_edge_index_paper_paper[1] = paper_node_map[
         sub_edge_index_paper_paper[1]]
     sub_edge_attr_paper_paper = edge_attr_paper_paper[edge_mask_paper_paper]
 
-    edge_mask_paper_author = paper_mask[edge_index_paper_author[0]] \
-                           & author_mask[edge_index_paper_author[1]]
-    sub_edge_index_paper_author = edge_index_paper_author[:,
-                                                          edge_mask_paper_author]
+    edge_mask_paper_author = paper_mask[edge_index_paper_author[0]]
+    edge_mask_paper_author &= author_mask[edge_index_paper_author[1]]
+    sub_edge_index_paper_author = edge_index_paper_author[:, edge_mask_paper_author]
     sub_edge_index_paper_author[0] = paper_node_map[
         sub_edge_index_paper_author[0]]
     sub_edge_index_paper_author[1] = author_node_map[
         sub_edge_index_paper_author[1]]
 
-    edge_mask_author_paper = author_mask[edge_index_author_paper[0]] \
-                           & paper_mask[edge_index_author_paper[1]]
-    sub_edge_index_author_paper = edge_index_author_paper[:,
-                                                          edge_mask_author_paper]
+    edge_mask_author_paper = author_mask[edge_index_author_paper[0]]
+    edge_mask_author_paper &= paper_mask[edge_index_author_paper[1]]
+    sub_edge_index_author_paper = edge_index_author_paper[:, edge_mask_author_paper]
     sub_edge_index_author_paper[0] = author_node_map[
         sub_edge_index_author_paper[0]]
     sub_edge_index_author_paper[1] = paper_node_map[
         sub_edge_index_author_paper[1]]
 
-    edge_mask_paper_conf = paper_mask[edge_index_paper_conference[0]] \
-                           & conf_mask[edge_index_paper_conference[1]]
-    sub_edge_index_paper_conf = edge_index_paper_conference[:,
-                                                            edge_mask_paper_conf]
+    edge_mask_paper_conf = paper_mask[edge_index_paper_conference[0]]
+    edge_mask_paper_conf &= conf_mask[edge_index_paper_conference[1]]
+    sub_edge_index_paper_conf = edge_index_paper_conference[:, edge_mask_paper_conf]
     sub_edge_index_paper_conf[0] = paper_node_map[sub_edge_index_paper_conf[0]]
     sub_edge_index_paper_conf[1] = conf_node_map[sub_edge_index_paper_conf[1]]
 

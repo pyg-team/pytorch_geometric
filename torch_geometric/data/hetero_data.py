@@ -584,14 +584,20 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 holding the nodes to keep for each node type.
         """
         data = copy.copy(self)
+        subset_dict = copy.copy(subset_dict)
 
         for node_type, subset in subset_dict.items():
+
+            if subset.dtype == torch.bool:
+                num_nodes = int(subset.sum())
+            else:
+                num_nodes = subset.size(0)
+                subset = torch.unique(subset, sorted=True)
+                subset_dict[node_type] = subset
+
             for key, value in self[node_type].items():
                 if key == 'num_nodes':
-                    if subset.dtype == torch.bool:
-                        data[node_type].num_nodes = int(subset.sum())
-                    else:
-                        data[node_type].num_nodes = subset.size(0)
+                    data[node_type].num_nodes = num_nodes
                 elif self[node_type].is_node_attr(key):
                     data[node_type][key] = value[subset]
                 else:
@@ -614,18 +620,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 size=(self[src].num_nodes, self[dst].num_nodes),
                 return_edge_mask=True,
             )
-
-            # reorder source nodes if needed
-            if src_subset.dtype == torch.long and (src_subset[:-1] >
-                                                   src_subset[1:]).any():
-                src_node_idx = torch.argsort(src_subset)
-                edge_index[0] = src_node_idx[edge_index[0]]
-
-            # reorder destination nodes if needed
-            if dst_subset.dtype == torch.long and (dst_subset[:-1] >
-                                                   dst_subset[1:]).any():
-                dst_node_idx = torch.argsort(dst_subset)
-                edge_index[1] = dst_node_idx[edge_index[1]]
 
             for key, value in self[edge_type].items():
                 if key == 'edge_index':
