@@ -4,10 +4,10 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, set_diag
+from torch_sparse import set_diag
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
 from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 

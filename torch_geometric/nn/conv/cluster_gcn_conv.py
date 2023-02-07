@@ -1,10 +1,10 @@
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul, set_diag
+from torch_sparse import matmul, set_diag
 from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
 from torch_geometric.utils import add_self_loops, degree, remove_self_loops
 
 

@@ -3,11 +3,11 @@ from typing import Callable, Optional, Tuple, Union
 
 from torch import Tensor
 from torch.nn import ModuleList, ReLU
-from torch_sparse import SparseTensor, masked_select_nnz
+from torch_sparse import masked_select_nnz
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor, PairTensor
+from torch_geometric.typing import Adj, OptTensor, PairTensor, SparseTensor
 
 from ..inits import reset
 
