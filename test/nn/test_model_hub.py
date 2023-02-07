@@ -4,12 +4,9 @@ from unittest.mock import Mock
 import pytest
 import torch
 
+from torch_geometric.nn.model_hub import PyGModelHubMixin
 from torch_geometric.nn.models import GCN
 from torch_geometric.testing import withPackage
-
-pytest.importorskip("huggingface_hub")
-
-from torch_geometric.nn.model_hub import PyGModelHubMixin  # noqa
 
 REPO_NAME = "pyg_hugging_test"
 MODEL_NAME = 'pyg_test_model'
@@ -40,7 +37,6 @@ def test_model_init():
 @withPackage('huggingface_hub')
 def test_save_pretrained(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
-    # model._save_pretrained = Mock()
     model.save_pretrained(save_directory)
     files = os.listdir(save_directory)
     assert "model.pth" in files

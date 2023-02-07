@@ -22,9 +22,11 @@ graphgym_requires = [
     'pytorch-lightning',
 ]
 
-huggingface_requires = ['huggingface_hub']
+modelhub_requires = [
+    'huggingface_hub',
+]
 
-full_requires = graphgym_requires + huggingface_requires + [
+full_requires = graphgym_requires + modelhub_requires + [
     'ase',
     'h5py',
     'numba',
@@ -82,7 +84,7 @@ setup(
     install_requires=install_requires,
     extras_require={
         'graphgym': graphgym_requires,
-        'huggingface': huggingface_requires,
+        'modelhub': modelhub_requires,
         'full': full_requires,
         'benchmark': benchmark_requires,
         'test': test_requires,
