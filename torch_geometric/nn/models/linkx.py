@@ -3,12 +3,12 @@ import math
 import torch
 from torch import Tensor
 from torch.nn import BatchNorm1d, Parameter
-from torch_sparse import SparseTensor, matmul
+from torch_sparse import matmul
 
 from torch_geometric.nn import inits
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.models import MLP
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
 
 
 class SparseLinear(MessagePassing):
