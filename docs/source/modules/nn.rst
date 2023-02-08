@@ -289,11 +289,15 @@ DataParallel Layers
 
 .. automodule:: torch_geometric.nn.data_parallel
    :members:
-   :undoc-members:
-   :exclude-members: training
 
+Model Hub
+---------
+
+.. automodule:: torch_geometric.nn.model_hub
+   :members:
 
 Model Summary
 -------------
 
-.. autofunction:: torch_geometric.nn.summary.summary
+.. automodule:: torch_geometric.nn.summary
+   :members:
