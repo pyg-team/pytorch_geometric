@@ -3,7 +3,14 @@ from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 
-from torch_geometric.nn.inits import glorot, ones, reset, uniform, zeros
+from torch_geometric.nn.inits import (
+    glorot,
+    ones,
+    reset,
+    uniform,
+    zeros,
+    glorot_orthogonal,
+)
 
 
 def test_inits():
@@ -14,6 +21,10 @@ def test_inits():
     assert x.max() <= 0.5
 
     glorot(x)
+    assert x.min() >= -1.25
+    assert x.max() <= 1.25
+
+    glorot_orthogonal(x, scale=1.0)
     assert x.min() >= -1.25
     assert x.max() <= 1.25
 
