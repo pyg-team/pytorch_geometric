@@ -24,4 +24,4 @@ class RemoveTrainingClasses(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return 'f{self.__class__.__name__}({self.classes})'
+        return f'{self.__class__.__name__}({self.classes})'
