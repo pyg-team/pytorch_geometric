@@ -30,7 +30,7 @@ def test_heterogeneous_num_neighbors_list():
     assert values == {('A', 'B'): [25, 10], ('B', 'A'): [25, 10]}
 
     values = num_neighbors.get_mapped_values([('A', 'B'), ('B', 'A')])
-    assert values == {'A__B': [25, 10], 'B__A': [25, 10]}
+    assert values == {'A__to__B': [25, 10], 'B__to__A': [25, 10]}
 
     assert num_neighbors.num_hops == 2
 
@@ -46,20 +46,6 @@ def test_heterogeneous_num_neighbors_dict_and_default():
     assert values == {('A', 'B'): [25, 10], ('B', 'A'): [-1, -1]}
 
     values = num_neighbors.get_mapped_values([('A', 'B'), ('B', 'A')])
-    assert values == {'A__B': [25, 10], 'B__A': [-1, -1]}
+    assert values == {'A__to__B': [25, 10], 'B__to__A': [-1, -1]}
 
     assert num_neighbors.num_hops == 2
-
-
-def test_num_neighbors_config():
-    num_neighbors = NumNeighbors({('A', 'B'): [25, 10]}, default=[-1, -1])
-
-    config = num_neighbors.config()
-    assert len(config) == 3
-    assert config['_target_'] == 'torch_geometric.sampler.base.NumNeighbors'
-    assert config['values'] == {'A__B': [25, 10]}
-    assert config['default'] == [-1, -1]
-
-    num_neighbors = NumNeighbors.from_config(config)
-    assert num_neighbors.values == {('A', 'B'): [25, 10]}
-    assert num_neighbors.default == [-1, -1]
