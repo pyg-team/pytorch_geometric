@@ -4,9 +4,9 @@ from typing import Any, List, Optional, Union
 import torch
 from torch.jit import ScriptModule
 from torch.nn import Module
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.typing import SparseTensor
 
 
 def summary(

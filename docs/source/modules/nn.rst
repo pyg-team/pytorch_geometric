@@ -6,6 +6,8 @@ torch_geometric.nn
 
 .. autoclass:: torch_geometric.nn.sequential.Sequential
 
+.. autoclass:: torch_geometric.nn.model_hub.PyGModelHubMixin
+
 .. currentmodule:: torch_geometric.nn.dense
 
    {% for name in torch_geometric.nn.dense.lin_classes %}

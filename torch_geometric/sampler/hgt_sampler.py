@@ -9,7 +9,12 @@ from torch_geometric.sampler import (
     NodeSamplerInput,
 )
 from torch_geometric.sampler.utils import remap_keys, to_hetero_csc
-from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.typing import (
+    WITH_TORCH_SPARSE,
+    EdgeType,
+    NodeType,
+    OptTensor,
+)
 
 
 class HGTSampler(BaseSampler):
@@ -22,9 +27,7 @@ class HGTSampler(BaseSampler):
         is_sorted: bool = False,
         share_memory: bool = False,
     ):
-        try:
-            import torch_sparse  # noqa
-        except ImportError:
+        if not WITH_TORCH_SPARSE:
             raise ImportError(
                 f"'{self.__class__.__name__}' requires 'torch-sparse'")
 

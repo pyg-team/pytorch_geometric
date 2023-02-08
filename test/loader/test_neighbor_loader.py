@@ -16,7 +16,7 @@ from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
-    onlyUnix,
+    onlyLinux,
     withPackage,
 )
 from torch_geometric.utils import k_hop_subgraph
@@ -495,8 +495,6 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
 @withPackage('pyg_lib')
 def test_pyg_lib_homo_neighbor_loader():
-    import pyg_lib  # noqa
-
     adj = SparseTensor.from_edge_index(get_edge_index(20, 20, 100))
     colptr, row, _ = adj.csc()
 
@@ -517,8 +515,6 @@ def test_pyg_lib_homo_neighbor_loader():
 
 @withPackage('pyg_lib')
 def test_pyg_lib_hetero_neighbor_loader():
-    import pyg_lib  # noqa
-
     adj1 = SparseTensor.from_edge_index(get_edge_index(20, 10, 50))
     colptr1, row1, _ = adj1.csc()
 
@@ -565,7 +561,7 @@ def test_pyg_lib_hetero_neighbor_loader():
         assert torch.equal(edge_id1_dict[key], edge_id2_dict[key])
 
 
-@onlyUnix
+@onlyLinux
 def test_memmap_neighbor_loader():
     path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.npy')
     x = np.memmap(path, dtype=np.float32, mode='w+', shape=(100, 32))
@@ -588,7 +584,7 @@ def test_memmap_neighbor_loader():
     os.remove(path)
 
 
-@onlyUnix
+@onlyLinux
 @pytest.mark.parametrize('num_workers,loader_cores', [
     (1, None),
     (1, [1]),
@@ -597,7 +593,6 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
     data = Data(x=torch.randn(1, 1))
     loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
                             num_workers=num_workers)
-    loader.is_cuda_available = False  # Force 'cpu_affinity'.
 
     if isinstance(loader_cores, list):
         loader_cores = loader_cores[:num_workers]

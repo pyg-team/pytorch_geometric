@@ -4,10 +4,10 @@ import scipy.sparse
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch_sparse import coalesce
 
 from torch_geometric.nn import SignedConv
 from torch_geometric.utils import (
+    coalesce,
     negative_sampling,
     structured_negative_sampling,
 )
@@ -111,7 +111,7 @@ class SignedGCN(torch.nn.Module):
         edge_index = torch.cat([edge_index, torch.stack([col, row])], dim=1)
         val = torch.cat([val, val], dim=0)
 
-        edge_index, val = coalesce(edge_index, val, N, N)
+        edge_index, val = coalesce(edge_index, val, num_nodes=N)
         val = val - 1
 
         # Borrowed from:
