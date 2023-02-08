@@ -5,16 +5,14 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, mul
-from torch_sparse import sum as sparsesum
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.testing import is_full_test
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 # for the last version of torch_geometric
-from torch_geometric.utils import scatter, spmm
-from torch_geometric.utils.num_nodes import maybe_num_nodes
+from torch_geometric.utils import spmm
 
 # Inspired from IntelLabs :
 # https://github.com/IntelLabs/bayesian-torch/blob/main/bayesian_torch/
@@ -235,11 +233,11 @@ def test_gcn_conv(device="cpu"):
     x = torch.randn(4, 16).to(device)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
                                                     0]]).to(device)
-    row, col = edge_index
-    value = torch.rand(row.size(0)).to(device)
-    zeros_values = torch.zeros(value.size())
-    adj1 = torch.sparse_coo_tensor(edge_index, value, device=x.device)
-    adj2 = torch.sparse_coo_tensor(edge_index, value, device=x.device)
+    # row, col = edge_index
+    # value = torch.rand(row.size(0)).to(device)
+    # zeros_values = torch.zeros(value.size()).to(device)
+    # adj1 = torch.sparse_coo_tensor(edge_index, value, device=x.device)
+    # adj2 = torch.sparse_coo_tensor(edge_index, zeros_value, device=x.device)
     conv = BayesianGCNConv(16, 32).to(device)
     assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
     out1, kl = conv(x, edge_index)
