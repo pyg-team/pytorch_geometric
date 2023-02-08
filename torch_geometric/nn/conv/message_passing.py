@@ -319,7 +319,7 @@ class MessagePassing(torch.nn.Module):
             if out.get('edge_attr', None) is None:
                 out['edge_attr'] = None if values.dim() == 1 else values
             if out.get('edge_type', None) is None:
-                out['edge_type'] = None if values.dim() == 1 else values
+                out['edge_type'] = values
 
         elif isinstance(edge_index, Tensor):
             out['adj_t'] = None
