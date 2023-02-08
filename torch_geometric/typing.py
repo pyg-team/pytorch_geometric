@@ -55,6 +55,44 @@ NodeType = str
 # `data[('author', 'writes', 'paper')]
 EdgeType = Tuple[str, str, str]
 
+DEFAULT_REL = 'to'
+EDGE_TYPE_STR_SPLIT = '__'
+
+
+class EdgeTypeStr(str):
+    r"""A helper class to construct serializable edge types by merging an edge
+    type tuple into a single string."""
+    def __new__(cls, *args):
+        if isinstance(args[0], (list, tuple)):
+            # Unwrap `EdgeType((src, rel, dst))` and `EdgeTypeStr((src, dst))`:
+            args = tuple(args[0])
+
+        if len(args) == 1 and isinstance(args[0], str):
+            args = args[0]  # An edge type string was passed.
+
+        elif len(args) == 2 and all(isinstance(arg, str) for arg in args):
+            # A `(src, dst)` edge type was passed - add `DEFAULT_REL`:
+            args = (args[0], DEFAULT_REL, args[1])
+            args = EDGE_TYPE_STR_SPLIT.join(args)
+
+        elif len(args) == 3 and all(isinstance(arg, str) for arg in args):
+            # A `(src, rel, dst)` edge type was passed:
+            args = EDGE_TYPE_STR_SPLIT.join(args)
+
+        else:
+            raise ValueError(f"Encountered invalid edge type '{args}'")
+
+        return str.__new__(cls, args)
+
+    def to_tuple(self) -> EdgeType:
+        r"""Returns the original edge type."""
+        out = tuple(self.split(EDGE_TYPE_STR_SPLIT))
+        if len(out) != 3:
+            raise ValueError(f"Cannot convert the edge type '{self}' to a "
+                             f"tuple since it holds invalid characters")
+        return out
+
+
 # There exist some short-cuts to query edge-types (given that the full triplet
 # can be uniquely reconstructed, e.g.:
 # * via str: `data['writes']`
