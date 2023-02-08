@@ -42,7 +42,7 @@ class CorrectAndSmooth(torch.nn.Module):
     .. math::
         \mathbf{\hat{Z}}^{(\ell)} = \alpha_2 \mathbf{D}^{-1/2}\mathbf{A}
         \mathbf{D}^{-1/2} \mathbf{\hat{Z}}^{(\ell - 1)} +
-        (1 - \alpha_1) \mathbf{\hat{Z}}^{(\ell - 1)}
+        (1 - \alpha_2) \mathbf{\hat{Z}}^{(\ell - 1)}
 
     to obtain the final prediction :math:`\mathbf{\hat{Z}}^{(L_2)}`.
 
@@ -128,6 +128,7 @@ class CorrectAndSmooth(torch.nn.Module):
             y_true = F.one_hot(y_true.view(-1), y_soft.size(-1))
             y_true = y_true.to(y_soft.dtype)
 
+        y_soft = y_soft.clone()
         y_soft[mask] = y_true
 
         return self.prop2(y_soft, edge_index, edge_weight=edge_weight)
