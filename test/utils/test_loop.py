@@ -63,6 +63,10 @@ def test_add_self_loops():
     assert out[0].tolist() == expected
     assert out[1].tolist() == [0.5, 0.5, 0.5, 1., 1.]
 
+    out = add_self_loops(edge_index, edge_weight, fill_value=6)
+    assert out[0].tolist() == expected
+    assert out[1].tolist() == [0.5, 0.5, 0.5, 6.0, 6.0]
+
     out = add_self_loops(edge_index, edge_weight, fill_value=torch.tensor(2.))
     assert out[0].tolist() == expected
     assert out[1].tolist() == [0.5, 0.5, 0.5, 2., 2.]
