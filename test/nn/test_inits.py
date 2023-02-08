@@ -5,11 +5,11 @@ from torch.nn import Sequential as Seq
 
 from torch_geometric.nn.inits import (
     glorot,
+    glorot_orthogonal,
     ones,
     reset,
     uniform,
     zeros,
-    glorot_orthogonal,
 )
 
 
