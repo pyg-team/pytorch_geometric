@@ -11,7 +11,13 @@ from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.nn.parameter_dict import ParameterDict
-from torch_geometric.typing import EdgeType, Metadata, NodeType, SparseTensor, pyg_lib
+from torch_geometric.typing import (
+    EdgeType,
+    Metadata,
+    NodeType,
+    SparseTensor,
+    pyg_lib,
+)
 from torch_geometric.utils import softmax
 
 
