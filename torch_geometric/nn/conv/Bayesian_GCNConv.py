@@ -1,5 +1,5 @@
 from typing import Optional
-
+import copy
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -10,6 +10,8 @@ from torch_sparse import sum as sparsesum
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.testing import is_full_test
 # for the last version of torch_geometric
 from torch_geometric.utils import scatter, spmm
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -186,3 +188,75 @@ class BayesianGCNConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
+
+
+def test_gcn_conv_with_sparse_input_feature(device="cpu"):
+    x = torch.sparse_coo_tensor(indices=torch.tensor([[0, 0], [0, 1]]),
+                                    values=torch.tensor([1., 1.]),
+                                    size=torch.Size([4, 16])).to(device)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]).to(device)
+    conv = BayesianGCNConv(16, 32).to(device)
+    out, kl = conv(x, edge_index)
+    print(out.shape, kl.detach().cpu())
+    assert out.size() == (4, 32)
+
+def test_static_gcn_conv(device="cpu"):
+    x = torch.randn(3, 4, 16).to(device)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]).to(device)
+    conv = BayesianGCNConv(16, 32).to(device)
+    out, kl = conv(x, edge_index)
+    print(out.shape, kl.detach().cpu())
+    assert out.size() == (3,4,32)
+    
+
+def test_gcn_conv_with_decomposed_layers(device="cpu"):
+    x = torch.randn(4, 16).to(device)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]).to(device)
+    conv = BayesianGCNConv(16, 32).to(device)
+    decomposed_conv = copy.deepcopy(conv)
+    decomposed_conv.decomposed_layers = 2
+    out1, kl = conv(x, edge_index)
+    out2, kl_2 = decomposed_conv(x, edge_index)
+    print(out1.shape, out2.shape)
+    # the weight differs from out1 to out2 because different weight and biases
+    assert torch.allclose(out1, out2, atol=1.0)
+
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(decomposed_conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out1.tolist()
+
+def test_gcn_conv(device="cpu"):
+    x = torch.randn(4, 16).to(device)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]).to(device)
+    row, col = edge_index
+    value = torch.rand(row.size(0)).to(device)
+    zeros_values = torch.zeros(value.size())
+    adj1 = torch.sparse_coo_tensor(edge_index, value, device=x.device)
+    adj2 = torch.sparse_coo_tensor(edge_index, value, device=x.device)
+    conv = BayesianGCNConv(16, 32).to(device)
+    assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
+    out1, kl = conv(x, edge_index)
+    print(out1.shape, kl.detach().cpu())
+    assert out1.size() == (4, 32)
+
+    out2, kl = conv(x, edge_index, value)
+    print(out2.shape, kl.detach().cpu())
+    assert out2.size() == (4, 32)
+
+    if is_full_test():
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert jit(x, edge_index).tolist() == out1.tolist()
+        assert jit(x, edge_index, value).tolist() == out2.tolist()
+
+if __name__ == "__main__":
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print('Testing simple Bayesian gcn_conv')
+    test_gcn_conv(device)
+    print('Testing Bayesian gcn_conv with sparse input feature')
+    test_gcn_conv_with_sparse_input_feature(device)
+    print('Static Test')
+    test_static_gcn_conv(device)
+    print('Test with decomposed layers')
+    test_gcn_conv_with_decomposed_layers(device)
