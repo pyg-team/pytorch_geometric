@@ -1,5 +1,6 @@
-from typing import Optional
 import copy
+from typing import Optional
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -9,9 +10,8 @@ from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor
-from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 # for the last version of torch_geometric
 from torch_geometric.utils import scatter, spmm
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -192,26 +192,30 @@ class BayesianGCNConv(MessagePassing):
 
 def test_gcn_conv_with_sparse_input_feature(device="cpu"):
     x = torch.sparse_coo_tensor(indices=torch.tensor([[0, 0], [0, 1]]),
-                                    values=torch.tensor([1., 1.]),
-                                    size=torch.Size([4, 16])).to(device)
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]).to(device)
+                                values=torch.tensor([1., 1.]),
+                                size=torch.Size([4, 16])).to(device)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
+                                                    0]]).to(device)
     conv = BayesianGCNConv(16, 32).to(device)
     out, kl = conv(x, edge_index)
     print(out.shape, kl.detach().cpu())
     assert out.size() == (4, 32)
 
+
 def test_static_gcn_conv(device="cpu"):
     x = torch.randn(3, 4, 16).to(device)
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]).to(device)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
+                                                    0]]).to(device)
     conv = BayesianGCNConv(16, 32).to(device)
     out, kl = conv(x, edge_index)
     print(out.shape, kl.detach().cpu())
-    assert out.size() == (3,4,32)
-    
+    assert out.size() == (3, 4, 32)
+
 
 def test_gcn_conv_with_decomposed_layers(device="cpu"):
     x = torch.randn(4, 16).to(device)
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]).to(device)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
+                                                    0]]).to(device)
     conv = BayesianGCNConv(16, 32).to(device)
     decomposed_conv = copy.deepcopy(conv)
     decomposed_conv.decomposed_layers = 2
@@ -226,9 +230,11 @@ def test_gcn_conv_with_decomposed_layers(device="cpu"):
         jit = torch.jit.script(decomposed_conv.jittable(t))
         assert jit(x, edge_index).tolist() == out1.tolist()
 
+
 def test_gcn_conv(device="cpu"):
     x = torch.randn(4, 16).to(device)
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]).to(device)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
+                                                    0]]).to(device)
     row, col = edge_index
     value = torch.rand(row.size(0)).to(device)
     zeros_values = torch.zeros(value.size())
@@ -249,6 +255,7 @@ def test_gcn_conv(device="cpu"):
         jit = torch.jit.script(conv.jittable(t))
         assert jit(x, edge_index).tolist() == out1.tolist()
         assert jit(x, edge_index, value).tolist() == out2.tolist()
+
 
 if __name__ == "__main__":
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
