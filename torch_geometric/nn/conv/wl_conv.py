@@ -2,9 +2,8 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj
+from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import scatter
 
 

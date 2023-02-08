@@ -4,6 +4,7 @@ import torch
 from torch_geometric.explain import Explainer, PGExplainer
 from torch_geometric.explain.config import ModelConfig, ModelTaskLevel
 from torch_geometric.nn import GCNConv, global_add_pool
+from torch_geometric.testing import withCUDA
 
 
 class GCN(torch.nn.Module):
@@ -22,26 +23,26 @@ class GCN(torch.nn.Module):
         return x
 
 
-x = torch.randn(8, 3)
-edge_index = torch.tensor([
-    [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-    [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6],
-])
+@withCUDA
+def test_pg_explainer_node(device):
+    x = torch.randn(8, 3, device=device)
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
+        [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6],
+    ], device=device)
+    target = torch.randint(7, (x.size(0), ), device=device)
 
-
-def test_pg_explainer_node():
     model_config = ModelConfig(
         mode='multiclass_classification',
         task_level='node',
         return_type='raw',
     )
 
-    model = GCN(model_config)
-    target = torch.randint(7, (x.size(0), ))
+    model = GCN(model_config).to(device)
 
     explainer = Explainer(
         model=model,
-        algorithm=PGExplainer(epochs=2),
+        algorithm=PGExplainer(epochs=2).to(device),
         explanation_type='phenomenon',
         edge_mask_type='object',
         model_config=model_config,
@@ -65,19 +66,26 @@ def test_pg_explainer_node():
     assert explanation.edge_mask.max() <= 1
 
 
-def test_pg_explainer_graph():
+@withCUDA
+def test_pg_explainer_graph(device):
+    x = torch.randn(8, 3, device=device)
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
+        [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6],
+    ], device=device)
+    target = torch.randint(7, (1, ), device=device)
+
     model_config = ModelConfig(
         mode='multiclass_classification',
         task_level='graph',
         return_type='raw',
     )
 
-    model = GCN(model_config)
-    target = torch.randint(7, (1, ))
+    model = GCN(model_config).to(device)
 
     explainer = Explainer(
         model=model,
-        algorithm=PGExplainer(epochs=10),
+        algorithm=PGExplainer(epochs=10).to(device),
         explanation_type='phenomenon',
         edge_mask_type='object',
         model_config=model_config,
