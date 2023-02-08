@@ -18,6 +18,7 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 # https://github.com/IntelLabs/bayesian-torch/blob/main/bayesian_torch/
 # layers/base_variational_layer.py
 
+
 class BayesianGCNConv(MessagePassing):
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
@@ -185,5 +186,3 @@ class BayesianGCNConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
-
-
