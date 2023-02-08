@@ -67,6 +67,8 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         adj_t = edge_index
         num_nodes = adj_t.size(0)
         if adj_t.requires_grad:
+            # Calling adj_t._values() will return a detached tensor.
+            # Use `adj_t.coalesce().values()` instead to track gradients.
             adj_t = adj_t.coalesce()
             edge_index = adj_t.indices()
             edge_weight = adj_t.values()

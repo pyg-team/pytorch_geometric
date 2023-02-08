@@ -1,5 +1,6 @@
 import copy
 
+import pytest
 import torch
 from torch_sparse import SparseTensor
 
@@ -94,3 +95,14 @@ def test_gcn_conv_norm():
     conv.flow = "target_to_source"
     out2 = conv(x, edge_index.flip(0))
     assert torch.allclose(out1, out2, atol=1e-6)
+
+
+@pytest.mark.parametrize('requires_grad', [False, True])
+def test_gcn_conv_norm_gradient(requires_grad):
+    from torch_geometric.nn.conv.gcn_conv import gcn_norm
+    from torch_geometric.utils import to_torch_coo_tensor
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+    edge_weight = torch.ones(edge_index.size(1), requires_grad=requires_grad)
+    adj = to_torch_coo_tensor(edge_index, edge_weight)
+
+    assert adj.requires_grad == gcn_norm(adj)[0].requires_grad
