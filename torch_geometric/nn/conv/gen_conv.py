@@ -9,13 +9,18 @@ from torch.nn import (
     ReLU,
     Sequential,
 )
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.norm import MessageNorm
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    Size,
+    SparseTensor,
+)
 
 from ..inits import reset
 

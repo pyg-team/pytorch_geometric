@@ -9,9 +9,9 @@ from typing import Any, Tuple
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.data.data import BaseData
+from torch_geometric.typing import SparseTensor
 
 
 def count_parameters(model: torch.nn.Module) -> int:

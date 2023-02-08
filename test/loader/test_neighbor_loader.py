@@ -495,8 +495,6 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
 @withPackage('pyg_lib')
 def test_pyg_lib_homo_neighbor_loader():
-    import pyg_lib  # noqa
-
     adj = SparseTensor.from_edge_index(get_edge_index(20, 20, 100))
     colptr, row, _ = adj.csc()
 
@@ -517,8 +515,6 @@ def test_pyg_lib_homo_neighbor_loader():
 
 @withPackage('pyg_lib')
 def test_pyg_lib_hetero_neighbor_loader():
-    import pyg_lib  # noqa
-
     adj1 = SparseTensor.from_edge_index(get_edge_index(20, 10, 50))
     colptr1, row1, _ = adj1.csc()
 

@@ -20,11 +20,10 @@ from uuid import uuid1
 import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
-from torch_geometric.typing import Adj, Size
+from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
 
 from .utils.inspector import Inspector, func_body_repr, func_header_repr

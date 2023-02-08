@@ -75,7 +75,7 @@ if has_pytorch112:  # pragma: no cover
         if reduce == 'mean':
             count = src.new_zeros(dim_size)
             count.scatter_add_(0, index, src.new_ones(src.size(dim)))
-            count = count.clamp_(min=1)
+            count = count.clamp(min=1)
 
             index = broadcast(index, src, dim)
             out = src.new_zeros(size).scatter_add_(dim, index, src)
@@ -91,7 +91,7 @@ if has_pytorch112:  # pragma: no cover
                 if src.is_cuda and src.requires_grad:
                     warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
                                   f"can be accelerated via the 'torch-scatter'"
-                                  f" package, but it was not not found")
+                                  f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
                 return src.new_zeros(size).scatter_reduce_(
@@ -108,7 +108,7 @@ if has_pytorch112:  # pragma: no cover
                 if src.is_cuda:
                     warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
                                   f"can be accelerated via the 'torch-scatter'"
-                                  f" package, but it was not not found")
+                                  f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
                 # We initialize with `one` here to match `scatter_mul` output:
