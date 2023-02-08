@@ -1,12 +1,12 @@
 import multiprocessing
 import sys
+from collections import namedtuple
 
 import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.loader.dataloader import DataLoader, Collater
-from collections import namedtuple
+from torch_geometric.loader.dataloader import Collater, DataLoader
 
 with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]
