@@ -222,13 +222,12 @@ class NumNeighbors:
         if edge_types is not None:
             if isinstance(self.values, (tuple, list)):
                 default = self.values
-                out = {}
             elif isinstance(self.values, dict):
                 default = self.default
-                out = {}
             else:
                 assert False
 
+            out = {}
             for edge_type in edge_types:
                 edge_type_str = EdgeTypeStr(edge_type)
                 if edge_type_str in self.values:
