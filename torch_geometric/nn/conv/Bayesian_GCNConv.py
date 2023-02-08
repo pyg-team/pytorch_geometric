@@ -233,8 +233,8 @@ def test_gcn_conv(device="cpu"):
     x = torch.randn(4, 16).to(device)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
                                                     0]]).to(device)
-    # row, col = edge_index
-    # value = torch.rand(row.size(0)).to(device)
+    row, col = edge_index
+    value = torch.rand(row.size(0)).to(device)
     # zeros_values = torch.zeros(value.size()).to(device)
     # adj1 = torch.sparse_coo_tensor(edge_index, value, device=x.device)
     # adj2 = torch.sparse_coo_tensor(edge_index, zeros_value, device=x.device)
