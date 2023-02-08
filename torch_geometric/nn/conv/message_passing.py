@@ -317,7 +317,7 @@ class MessagePassing(torch.nn.Module):
             if out.get('edge_weight', None) is None:
                 out['edge_weight'] = values
             if out.get('edge_attr', None) is None:
-                out['edge_attr'] = values
+                out['edge_attr'] = None if values.dim() == 1 else values
             if out.get('edge_type', None) is None:
                 out['edge_type'] = values
 
