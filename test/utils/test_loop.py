@@ -104,25 +104,29 @@ def test_add_remaining_self_loops():
 
     expected = [[0, 1, 0, 1], [1, 0, 0, 1]]
 
-    edge_index_out, edge_weight_out = add_remaining_self_loops(edge_index, edge_weight)
+    edge_index_out, edge_weight_out = add_remaining_self_loops(
+        edge_index, edge_weight)
     assert edge_index_out.tolist() == expected
     assert edge_weight_out.tolist() == [0.5, 0.5, 0.5, 1]
 
     # fill_value as int
     fill_value = 5
-    edge_index_out, edge_weight_out = add_remaining_self_loops(edge_index, edge_weight, fill_value)
+    edge_index_out, edge_weight_out = add_remaining_self_loops(
+        edge_index, edge_weight, fill_value)
     assert edge_index_out.tolist() == expected
     assert edge_weight_out.tolist() == [0.5, 0.5, 0.5, 5.0]
 
     # fill_value as Tensor
     fill_value = torch.Tensor([2])
-    edge_index_out, edge_weight_out = add_remaining_self_loops(edge_index, edge_weight, fill_value)
+    edge_index_out, edge_weight_out = add_remaining_self_loops(
+        edge_index, edge_weight, fill_value)
     assert edge_index_out.tolist() == expected
     assert edge_weight_out.tolist() == [0.5, 0.5, 0.5, 2.0]
 
     # fill_value as str
     fill_value = "add"
-    edge_index_out, edge_weight_out = add_remaining_self_loops(edge_index, edge_weight, fill_value)
+    edge_index_out, edge_weight_out = add_remaining_self_loops(
+        edge_index, edge_weight, fill_value)
     assert edge_index_out.tolist() == expected
     assert edge_weight_out.tolist() == [0.5, 0.5, 0.5, 0.5]
 
@@ -133,25 +137,29 @@ def test_add_remaining_self_loops_without_initial_loops():
 
     expected = [[0, 1, 0, 1], [1, 0, 0, 1]]
 
-    edge_index_out, edge_weight_out = add_remaining_self_loops(edge_index, edge_weight)
+    edge_index_out, edge_weight_out = add_remaining_self_loops(
+        edge_index, edge_weight)
     assert edge_index_out.tolist() == expected
     assert edge_weight_out.tolist() == [0.5, 0.5, 1, 1]
 
     # fill_value as int
     fill_value = 5
-    edge_index_out, edge_weight_out = add_remaining_self_loops(edge_index, edge_weight, fill_value)
+    edge_index_out, edge_weight_out = add_remaining_self_loops(
+        edge_index, edge_weight, fill_value)
     assert edge_index_out.tolist() == expected
     assert edge_weight_out.tolist() == [0.5, 0.5, 5.0, 5.0]
 
     # fill_value as Tensor
     fill_value = torch.Tensor([2])
-    edge_index_out, edge_weight_out = add_remaining_self_loops(edge_index, edge_weight, fill_value)
+    edge_index_out, edge_weight_out = add_remaining_self_loops(
+        edge_index, edge_weight, fill_value)
     assert edge_index_out.tolist() == expected
     assert edge_weight_out.tolist() == [0.5, 0.5, 2.0, 2.0]
 
     # fill_value as str
     fill_value = "add"
-    edge_index_out, edge_weight_out = add_remaining_self_loops(edge_index, edge_weight, fill_value)
+    edge_index_out, edge_weight_out = add_remaining_self_loops(
+        edge_index, edge_weight, fill_value)
     assert edge_index_out.tolist() == expected
     assert edge_weight_out.tolist() == [0.5, 0.5, 0.5, 0.5]
 
