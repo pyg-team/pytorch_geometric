@@ -34,6 +34,19 @@ def test_inits():
     ones(x)
     assert x.tolist() == [[1, 1, 1, 1]]
 
+    nn = Lin(16, 16)
+    uniform(size=4, value=nn.weight)
+    assert min(nn.weight.tolist()[0]) >= -0.5
+    assert max(nn.weight.tolist()[0]) <= 0.5
+
+    glorot(nn.weight)
+    assert min(nn.weight.tolist()[0]) >= -1.25
+    assert max(nn.weight.tolist()[0]) <= 1.25
+
+    glorot_orthogonal(nn.weight, scale=1.0)
+    assert min(nn.weight.tolist()[0]) >= -1.25
+    assert max(nn.weight.tolist()[0]) <= 1.25
+
 
 def test_reset():
     nn = Lin(16, 16)
