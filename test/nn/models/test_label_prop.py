@@ -3,9 +3,6 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.nn.models import LabelPropagation
 
-num_layers = [0, 5]
-alphas = [0, 0.5]
-
 
 def test_label_prop():
     y = torch.tensor([1, 0, 0, 2, 1, 1])
