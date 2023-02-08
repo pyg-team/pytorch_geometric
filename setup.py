@@ -44,7 +44,6 @@ full_requires = graphgym_requires + modelhub_requires + [
     'pgmpy',
     'opt_einsum',  # required for pgmpy
     'statsmodels',
-    'huggingface_hub',
 ]
 
 benchmark_requires = [
