@@ -8,6 +8,7 @@ from torch_sparse import SparseTensor, mul
 from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 # for the last version of torch_geometric
 from torch_geometric.utils import scatter, spmm
@@ -17,35 +18,7 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 # https://github.com/IntelLabs/bayesian-torch/blob/main/bayesian_torch/
 # layers/base_variational_layer.py
 
-
-def gcn_norm(edge_index, edge_weight=None, num_nodes=None, dtype=None):
-
-    if isinstance(edge_index, SparseTensor):
-        adj_t = edge_index
-        if not adj_t.has_value():
-            adj_t = adj_t.fill_value(1., dtype=dtype)
-        deg = sparsesum(adj_t, dim=1)
-        deg_inv_sqrt = deg.pow_(-0.5)
-        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
-        adj_t = mul(adj_t, deg_inv_sqrt.view(-1, 1))
-        adj_t = mul(adj_t, deg_inv_sqrt.view(1, -1))
-        return adj_t
-
-    else:
-        num_nodes = maybe_num_nodes(edge_index, num_nodes)
-
-        if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
-                                     device=edge_index.device)
-
-        row, col = edge_index[0], edge_index[1]
-        deg = scatter(edge_weight, col, dim=0, dim_size=num_nodes)
-        deg_inv_sqrt = deg.pow_(-0.5)
-        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
-        return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
-
-
-class BGCNConv(MessagePassing):
+class BayesianGCNConv(MessagePassing):
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
@@ -214,13 +187,3 @@ class BGCNConv(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
 
-# example of testing (can work faster with gpu to device)
-# device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-# print(f"Let's use {torch.cuda.device_count()} GPUs!")
-
-# dataset = torch.load('dataset.pt')
-# data = dataset[-1]
-# edge_index = data.edge_index.to(device)
-# x = data.x.to(device)
-# conv = BGCNConv(in_channels=1, out_channels=1).to(device)
-# output, kl = conv(x, edge_index)
