@@ -7,6 +7,7 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.typing import SparseTensor
 
 
 class RootedSubgraphData(Data):
@@ -114,7 +115,6 @@ class RootedEgoNets(RootedSubgraph):
         self,
         data: Data,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
-        from torch_sparse import SparseTensor
 
         adj_t = SparseTensor.from_edge_index(
             data.edge_index,

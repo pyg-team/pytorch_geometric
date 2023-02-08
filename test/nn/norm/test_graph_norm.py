@@ -5,6 +5,7 @@ from torch_geometric.testing import is_full_test
 
 
 def test_graph_norm():
+    torch.manual_seed(42)
     x = torch.randn(200, 16)
     batch = torch.arange(4).view(-1, 1).repeat(1, 50).view(-1)
 
