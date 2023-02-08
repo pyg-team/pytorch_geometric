@@ -112,7 +112,7 @@ class PyGModelHubMixin(ModelHubMixin):
                 If not provided will default to the name of
                 :obj:`save_directory` in your namespace. (default: :obj:`None`)
             **kwargs: Additional keyword arguments passed to
-                :obj:`huggingface_hub.ModelHubMixin.save_pretrained`.
+                :meth:`huggingface_hub.ModelHubMixin.save_pretrained`.
         """
         config = self.model_config
         # due to way huggingface hub handles the loading/saving of models,
@@ -186,7 +186,7 @@ class PyGModelHubMixin(ModelHubMixin):
         cache_dir: Optional[str] = None,
         local_files_only: bool = False,
         **model_kwargs,
-    ):
+    ) -> Any:
         r"""Downloads and instantiates a model from the HuggingFace hub.
 
         Args:
