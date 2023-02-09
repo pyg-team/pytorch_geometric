@@ -135,10 +135,10 @@ def test_add_remaining_self_loops():
 
     # Test with 'edge_attr':
     fill_value = torch.Tensor([0, 1, 0])
-    edge_index_out, edge_weight_out = add_remaining_self_loops(
+    edge_index_out, edge_attr_out = add_remaining_self_loops(
         edge_index, edge_attr, fill_value)
-    assert out[0].tolist() == expected
-    assert out[1].tolist() == [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
+    assert edge_index_out.tolist() == expected
+    assert edge_attr_out.tolist() == [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
                                [0., 1., 0.]]
 
 
