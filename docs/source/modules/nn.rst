@@ -146,6 +146,10 @@ If aggregations are given as a list, they will be automatically resolved to a :c
 
 Finally, we added full support for customization of aggregations into the :class:`~torch_geometric.nn.conv.SAGEConv` layer --- simply override its :obj:`aggr` argument and **utilize the power of aggregation within your GNN**.
 
+.. note::
+
+   You can read more about the :class:`torch_geometric.nn.aggr` package in this [blog post](https://medium.com/@pytorch_geometric/a-principled-approach-to-aggregations-983c086b10b3).
+
 .. autosummary::
    :nosignatures:
    :toctree: ../generated
@@ -285,11 +289,15 @@ DataParallel Layers
 
 .. automodule:: torch_geometric.nn.data_parallel
    :members:
-   :undoc-members:
-   :exclude-members: training
 
+Model Hub
+---------
+
+.. automodule:: torch_geometric.nn.model_hub
+   :members:
 
 Model Summary
 -------------
 
-.. autofunction:: torch_geometric.nn.summary.summary
+.. automodule:: torch_geometric.nn.summary
+   :members:

@@ -1,4 +1,6 @@
 from .scatter import scatter
+from .segment import segment
+from .sort import index_sort
 from .degree import degree
 from .softmax import softmax
 from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
@@ -44,6 +46,8 @@ from .train_test_split_edges import train_test_split_edges
 
 __all__ = [
     'scatter',
+    'segment',
+    'index_sort',
     'degree',
     'softmax',
     'dropout_node',

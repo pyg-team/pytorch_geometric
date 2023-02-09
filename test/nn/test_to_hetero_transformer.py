@@ -144,7 +144,20 @@ class Net10(torch.nn.Module):
         return self.conv(x, edge_index)
 
 
-def test_to_hetero():
+class Net11(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = SAGEConv(16, 16)
+        self.num_layers = 3
+
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        xs = [x]
+        for _ in range(self.num_layers):
+            xs.append(self.conv(xs[-1], edge_index))
+        return torch.cat(xs, dim=-1)
+
+
+def test_to_hetero_basic():
     x_dict = {
         'paper': torch.randn(100, 16),
         'author': torch.randn(100, 16),
@@ -252,6 +265,13 @@ def test_to_hetero():
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (100, 32)
     assert out['author'].size() == (100, 32)
+
+    model = Net11()
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (100, 64)
+    assert out['author'].size() == (100, 64)
 
 
 class GCN(torch.nn.Module):

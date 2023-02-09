@@ -12,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_tar,
 )
+from torch_geometric.utils import index_sort
 
 
 class Entities(InMemoryDataset):
@@ -147,7 +148,7 @@ class Entities(InMemoryDataset):
             edges.append([dst, src, 2 * rel + 1])
 
         edges = torch.tensor(edges, dtype=torch.long).t().contiguous()
-        perm = (N * R * edges[0] + R * edges[1] + edges[2]).argsort()
+        _, perm = index_sort(N * R * edges[0] + R * edges[1] + edges[2])
         edges = edges[:, perm]
 
         edge_index, edge_type = edges[:2], edges[2]
