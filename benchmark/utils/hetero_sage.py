@@ -27,7 +27,7 @@ class HeteroGraphSAGE(torch.nn.Module):
                 self.model(batch.x_dict, batch.edge_index_dict)
 
     @torch.no_grad()
-    def evaluate(self, loader, device, progress_bar=False):
+    def test(self, loader, device, progress_bar=False):
         self.model.eval()
         total_examples = total_correct = 0
         if progress_bar:

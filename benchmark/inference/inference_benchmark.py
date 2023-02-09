@@ -110,6 +110,16 @@ def run(args: argparse.ArgumentParser) -> None:
                             num_workers=args.num_workers,
                             sampler=sampler,
                         ) if with_loader else None
+                        if args.evaluate and not args.full_batch:
+                            test_loader = NeighborLoader(
+                                data,
+                                num_neighbors=num_neighbors,
+                                input_nodes=test_mask,
+                                batch_size=batch_size,
+                                shuffle=False,
+                                num_workers=args.num_workers,
+                                sampler=None,
+                            )
 
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
@@ -174,8 +184,7 @@ def run(args: argparse.ArgumentParser) -> None:
                                     y = model.inference(subgraph_loader, device,
                                                     progress_bar=True)
                                     if args.evaluate:
-                                        test_acc = model.test(y, test_loader, device,
-                                                            progress_bar=True)
+                                        test_acc = model.test(y, test_loader, device, progress_bar=True)
                                         print(f'Mini Batch Test Accuracy: {test_acc:.4f}')
 
                         if args.profile:
