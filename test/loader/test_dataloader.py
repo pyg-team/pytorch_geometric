@@ -99,17 +99,17 @@ def test_collater():
 
     # Test inputs of type List[Tuple]
     named_tuple = namedtuple('data', 'x y')
-    data_list = [named_tuple(1, 2.0)]*4
+    data_list = [named_tuple(1, 2.0)] * 4
     batch = collater.collate(data_list)
     assert torch.equal(batch.x, torch.ones(4))
-    assert torch.equal(batch[1], torch.ones(4)+1)
+    assert torch.equal(batch[1], torch.ones(4) + 1)
 
     # Test inputs of type List[Sequence]
-    data_list = [[1,2,3]]*4
+    data_list = [[1, 2, 3]] * 4
     batch = collater.collate(data_list)
     assert torch.equal(batch[0], torch.ones(4))
-    assert torch.equal(batch[1], torch.ones(4)+1)
-    assert torch.equal(batch[2], torch.ones(4)+2)
+    assert torch.equal(batch[1], torch.ones(4) + 1)
+    assert torch.equal(batch[2], torch.ones(4) + 2)
 
     # Test that inputs of unsupported types raise an error.
     with pytest.raises(TypeError):
@@ -118,7 +118,7 @@ def test_collater():
             def __init__(self):
                 self.ones = torch.ones(2)
 
-        data_list = [DummyClass()]*4
+        data_list = [DummyClass()] * 4
         batch = collater.collate(data_list)
 
 
