@@ -87,16 +87,15 @@ def test_collater():
     assert torch.equal(batch, torch.ones(4))
 
     # Test inputs of type List[str]
-    data_list = ['test']*4
+    data_list = ['test'] * 4
     batch = collater.collate(data_list)
     assert batch == data_list
 
     # Test inputs of type List[Mapping]
-    data_list = [{'x': torch.ones(3), 'y': 1}]*4
+    data_list = [{'x': torch.ones(3), 'y': 1}] * 4
     batch = collater.collate(data_list)
     assert torch.equal(batch['x'], torch.ones(4, 3))
     assert torch.equal(batch['y'], torch.ones(4))
-       
 
     # Test inputs of type List[Tuple]
     NamedTuple = namedtuple('data', 'x y')
