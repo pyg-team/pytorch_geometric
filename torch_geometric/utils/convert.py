@@ -1,18 +1,20 @@
+from collections import defaultdict
+from typing import Any, Iterable, List, Optional, Tuple, Union
+
 import scipy.sparse
 import torch
-import torch_geometric
-from collections import defaultdict
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
-from typing import Any, Iterable, List, Optional, Tuple, Union
+
+import torch_geometric
 
 from .num_nodes import maybe_num_nodes
 
 
 def to_scipy_sparse_matrix(
-        edge_index: Tensor,
-        edge_attr: Optional[Tensor] = None,
-        num_nodes: Optional[int] = None,
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
 ) -> scipy.sparse.coo_matrix:
     r"""Converts a graph given by edge indices and edge attributes to a scipy
     sparse matrix.
@@ -77,12 +79,12 @@ def from_scipy_sparse_matrix(
 
 
 def to_networkx(
-        data: 'torch_geometric.data.Data',
-        node_attrs: Optional[Iterable[str]] = None,
-        edge_attrs: Optional[Iterable[str]] = None,
-        graph_attrs: Optional[Iterable[str]] = None,
-        to_undirected: Optional[Union[bool, str]] = False,
-        remove_self_loops: bool = False,
+    data: 'torch_geometric.data.Data',
+    node_attrs: Optional[Iterable[str]] = None,
+    edge_attrs: Optional[Iterable[str]] = None,
+    graph_attrs: Optional[Iterable[str]] = None,
+    to_undirected: Optional[Union[bool, str]] = False,
+    remove_self_loops: bool = False,
 ) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`networkx.Graph` if :attr:`to_undirected` is set to :obj:`True`, or
@@ -165,9 +167,9 @@ def to_networkx(
 
 
 def from_networkx(
-        G: Any,
-        group_node_attrs: Optional[Union[List[str], all]] = None,
-        group_edge_attrs: Optional[Union[List[str], all]] = None,
+    G: Any,
+    group_node_attrs: Optional[Union[List[str], all]] = None,
+    group_edge_attrs: Optional[Union[List[str], all]] = None,
 ) -> 'torch_geometric.data.Data':
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
@@ -282,10 +284,10 @@ def from_networkx(
 
 
 def to_networkit(
-        edge_index: Tensor,
-        edge_weight: Optional[Tensor] = None,
-        num_nodes: Optional[int] = None,
-        directed: bool = True,
+    edge_index: Tensor,
+    edge_weight: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+    directed: bool = True,
 ) -> Any:
     r"""Converts a :obj:`(edge_index, edge_weight)` tuple to a
     :class:`networkit.Graph`.
@@ -426,10 +428,9 @@ def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
         assert edge_weight.dim() == 1
         df['2'] = cudf.from_dlpack(to_dlpack(edge_weight))
 
-    g.from_cudf_edgelist(
-        df, source=0, destination=1,
-        edge_attr='2' if edge_weight is not None else None,
-        renumber=relabel_nodes)
+    g.from_cudf_edgelist(df, source=0, destination=1,
+                         edge_attr='2' if edge_weight is not None else None,
+                         renumber=relabel_nodes)
     return g
 
 

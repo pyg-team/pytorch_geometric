@@ -1,22 +1,24 @@
 import pytest
 import scipy.sparse
 import torch
+from torch.utils.dlpack import from_dlpack, to_dlpack
+
 from torch_geometric.data import Data
 from torch_geometric.testing import withPackage
 from torch_geometric.utils import (
+    from_cugraph,
     from_networkit,
     from_networkx,
     from_scipy_sparse_matrix,
     from_trimesh,
-    from_cugraph,
     subgraph,
+    to_cugraph,
     to_networkit,
     to_networkx,
     to_scipy_sparse_matrix,
     to_trimesh,
-    to_cugraph
 )
-from torch.utils.dlpack import from_dlpack, to_dlpack
+
 
 def test_to_scipy_sparse_matrix():
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
@@ -312,7 +314,8 @@ def test_trimesh():
 @withPackage("networkit")
 @pytest.mark.parametrize('directed', [True, False])
 @pytest.mark.parametrize('num_nodes', [None, 3])
-@pytest.mark.parametrize('edge_weight', [None, torch.tensor([1, 2, 3], dtype=torch.float)])
+@pytest.mark.parametrize(
+    'edge_weight', [None, torch.tensor([1, 2, 3], dtype=torch.float)])
 def test_to_networkit(directed, edge_weight, num_nodes):
     from networkit import Graph
     print(directed, edge_weight)
@@ -325,7 +328,8 @@ def test_to_networkit(directed, edge_weight, num_nodes):
 
     # test case for graph with no edge weights
     if edge_weight is None:
-        edge_weight = torch.tensor([1, 1, 1], dtype=torch.float)  # all set to one in networkit
+        edge_weight = torch.tensor(
+            [1, 1, 1], dtype=torch.float)  # all set to one in networkit
 
     # checking number of edges and edges weights
     assert g.weight(0, 1) == edge_weight[0].item()
@@ -358,7 +362,8 @@ def test_from_networkit(directed, weighted):
     assert g.isDirected() == directed
 
     edge_index, edge_weight = from_networkit(g)
-    expected_edge_index = [[0, 1, 1], [1, 2, 0]] if directed else [[0, 1, 1, 2], [1, 0, 2, 1]]
+    expected_edge_index = [[0, 1, 1], [1, 2, 0]
+                           ] if directed else [[0, 1, 1, 2], [1, 0, 2, 1]]
     assert edge_index.tolist() == expected_edge_index
     if not weighted:
         assert edge_weight is None
@@ -427,7 +432,8 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
     assert edge_list is not None
 
     cu_edge_index = edge_list[['src', 'dst']].to_pandas().values.tolist()
-    assert edge_index.tolist() == torch.tensor(sorted(cu_edge_index)).t().contiguous().tolist()
+    assert edge_index.tolist() == torch.tensor(
+        sorted(cu_edge_index)).t().contiguous().tolist()
 
     if edge_weight is not None:
         edge_list = edge_list.sort_values(by=['src', 'dst'])
@@ -441,8 +447,8 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
 @pytest.mark.parametrize("directed", [True, False])
 @pytest.mark.parametrize("relabel_nodes", [True, False])
 def test_from_cugraph(edge_weight, directed, relabel_nodes):
-    import cugraph
     import cudf
+    import cugraph
 
     edge_index = torch.tensor([[0, 1], [1, 2]])
     if directed:
@@ -459,16 +465,17 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
     if edge_weight is not None:
         df['2'] = cudf.from_dlpack(to_dlpack(edge_weight))
 
-    G.from_cudf_edgelist(
-        df, source=0, destination=1,
-        edge_attr='2' if edge_weight is not None else None,
-        renumber=relabel_nodes)
+    G.from_cudf_edgelist(df, source=0, destination=1,
+                         edge_attr='2' if edge_weight is not None else None,
+                         renumber=relabel_nodes)
 
     cu_edge_index, cu_edge_weight = from_cugraph(G)
     # NOTE: If the graph is of type Graph() then the displayed undirected edges are the same as displayed by networkx Graph(),
     # but the direction could be different i.e. an edge displayed by cugraph as (src, dst) could be displayed as (dst, src) by networkx.
     # cugraph.Graph stores symmetrized edgelist internally.
-    assert sorted(cu_edge_index.t().tolist()) == [[0, 0], [1, 0], [1, 2], [2, 0]] if directed else [[1, 0], [2, 1]]
+    assert sorted(cu_edge_index.t().tolist()) == [[0, 0], [1, 0], [1, 2], [
+        2, 0
+    ]] if directed else [[1, 0], [2, 1]]
 
     if edge_weight is None:
         assert cu_edge_weight is None
