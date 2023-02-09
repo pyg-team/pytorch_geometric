@@ -406,6 +406,7 @@ def test_from_trimesh():
     assert data.pos.tolist() == vertices
     assert data.face.t().contiguous().tolist() == faces
 
+
 @withPackage("cudf")
 @withPackage("cugraph")
 @pytest.mark.parametrize("edge_weight", [None, [1, 2, 3, 4]])
