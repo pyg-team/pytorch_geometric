@@ -73,36 +73,30 @@ def test_collater():
 
     # Test inputs of type List[torch.Tensor]
     data_list = [torch.ones(3) for _ in range(4)]
-    loader = DataLoader(data_list, batch_size=2, shuffle=False)
-    for batch in loader:
-        assert torch.equal(batch, torch.ones(2, 3))
+    batch = collater.collate(data_list)
+    assert torch.equal(batch, torch.ones(4, 3))
 
     # Test inputs of type List[float]
     data_list = [1.0, 1.0, 1.0, 1.0]
-    loader = DataLoader(data_list, batch_size=2, shuffle=False)
-    for batch in loader:
-        assert torch.equal(batch, torch.tensor([1.0, 1.0]))
+    batch = collater.collate(data_list)
+    assert torch.equal(batch, torch.ones(4))
 
     # Test inputs of type List[int]
     data_list = [1, 1, 1, 1]
-    loader = DataLoader(data_list, batch_size=2, shuffle=False)
-    for batch in loader:
-        assert torch.equal(batch, torch.tensor([1, 1]))
+    batch = collater.collate(data_list)
+    assert torch.equal(batch, torch.ones(4))
 
     # Test inputs of type List[str]
-    data = 'test'
-    data_list = [data, data, data, data]
-    loader = DataLoader(data_list, batch_size=2, shuffle=False)
-    for batch in loader:
-        assert batch == [data, data]
+    data_list = ['test']*4
+    batch = collater.collate(data_list)
+    assert batch == data_list
 
     # Test inputs of type List[Mapping]
-    data = {'x': torch.ones(3), 'y': 1}
-    data_list = [data, data, data, data]
-    loader = DataLoader(data_list, batch_size=2, shuffle=False)
-    for batch in loader:
-        assert torch.equal(batch['x'], torch.ones(2, 3))
-        assert torch.equal(batch['y'], torch.tensor([1, 1]))
+    data_list = [{'x': torch.ones(3), 'y': 1}]*4
+    batch = collater.collate(data_list)
+    assert torch.equal(batch['x'], torch.ones(4, 3))
+    assert torch.equal(batch['y'], torch.ones(4))
+       
 
     # Test inputs of type List[Tuple]
     NamedTuple = namedtuple('data', 'x y')
