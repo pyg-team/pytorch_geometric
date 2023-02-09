@@ -5,21 +5,21 @@ from torch_geometric.transforms import LinearTransformation
 
 
 def test_linear_transformation():
-    # matrix as 2D array
-    matrix = [[2, 0], [0, 2]]
-    transform = LinearTransformation(matrix)
-    assert str(transform) == ('LinearTransformation(\n'
-                              '[[2 0]\n'
-                              ' [0 2]]\n'
+    # expected __repr__ output
+    expected = ('LinearTransformation(\n'
+                              '[[2. 0.]\n'
+                              ' [0. 2.]]\n'
                               ')')
+
+    # matrix as 2D array
+    matrix = [[2., 0.], [0., 2.]]
+    transform = LinearTransformation(matrix)
+    assert str(transform) == expected
 
     # matrix as Tensor
     matrix = torch.tensor([[2, 0], [0, 2]], dtype=torch.float)
     transform = LinearTransformation(matrix)
-    assert str(transform) == ('LinearTransformation(\n'
-                              '[[2. 0.]\n'
-                              ' [0. 2.]]\n'
-                              ')')
+    assert str(transform) == expected
 
     # matrix as Tensor without pos
     data = Data()
