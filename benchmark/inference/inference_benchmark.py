@@ -180,10 +180,8 @@ def run(args: argparse.ArgumentParser) -> None:
                                         pred = y[mask].argmax(1)
                                         test_acc = pred.eq(data.y[mask]).sum(
                                         ).item() / mask.sum().item()
-                                        print(
-                                            f'Full Batch Test Accuracy: \
-                                            {test_acc:.4f}'
-                                        )
+                                        print(f'Full Batch Test Accuracy: \
+                                            {test_acc:.4f}')
                                 else:
                                     y = model.inference(
                                         subgraph_loader, device,
@@ -192,10 +190,8 @@ def run(args: argparse.ArgumentParser) -> None:
                                         test_acc = model.test(
                                             y, test_loader, device,
                                             progress_bar=True)
-                                        print(
-                                            f'Mini Batch Test Accuracy: \
-                                            {test_acc:.4f}'
-                                        )
+                                        print(f'Mini Batch Test Accuracy: \
+                                            {test_acc:.4f}')
 
                         if args.profile:
                             rename_profile_file(model_name, dataset_name,
