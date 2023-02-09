@@ -99,6 +99,7 @@ def test_add_self_loops():
     assert out[0].tolist() == [[0], [0]]
     assert out[1].tolist() == [1.]
 
+
 def test_add_remaining_self_loops():
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
     edge_weight = torch.tensor([0.5, 0.5, 0.5])
@@ -135,11 +136,12 @@ def test_add_remaining_self_loops():
     # Test with 'edge_attr':
     fill_value = torch.Tensor([0, 1, 0])
     edge_index_out, edge_weight_out = add_remaining_self_loops(
-        edge_index, edge_attr, fill_value)   
+        edge_index, edge_attr, fill_value)
     assert out[0].tolist() == expected
     assert out[1].tolist() == [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
                                [0., 1., 0.]]
- 
+
+
 def test_add_remaining_self_loops_without_initial_loops():
     edge_index = torch.tensor([[0, 1], [1, 0]])
     edge_weight = torch.tensor([0.5, 0.5])
