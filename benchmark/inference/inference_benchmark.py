@@ -15,9 +15,17 @@ supported_sets = {
 }
 
 
+@torch.no_grad()
+def full_batch_inference(model, data):
+    model.eval()
+    model(data.x, data.edge_index)
+
+
 def run(args: argparse.ArgumentParser) -> None:
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # cuda device is not suitable for full batch mode
+    device = torch.device(
+        'cuda' if not args.full_batch and torch.cuda.is_available() else 'cpu')
 
     print('BENCHMARK STARTS')
     for dataset_name in args.datasets:
@@ -51,14 +59,16 @@ def run(args: argparse.ArgumentParser) -> None:
                 print(f'Configuration of {dataset_name} + {model_name} '
                       f'not supported. Skipping.')
                 continue
+            with_loader = not args.full_batch or (model_name == 'pna'
+                                                  and degree is None)
             print(f'Evaluation bench for {model_name}:')
 
             for batch_size in args.eval_batch_sizes:
                 num_nodes = data[
                     'paper'].num_nodes if hetero else data.num_nodes
                 sampler = torch.utils.data.RandomSampler(
-                    range(num_nodes), num_samples=args.num_steps *
-                    batch_size) if args.num_steps != -1 else None
+                    range(num_nodes), num_samples=args.num_steps * batch_size
+                ) if args.num_steps != -1 and with_loader else None
 
                 if not hetero:
                     subgraph_loader = NeighborLoader(
@@ -69,7 +79,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         shuffle=False,
                         num_workers=args.num_workers,
                         sampler=sampler,
-                    )
+                    ) if with_loader else None
 
                 for layers in args.num_layers:
                     num_neighbors = [args.hetero_num_neighbors] * layers
@@ -83,7 +93,7 @@ def run(args: argparse.ArgumentParser) -> None:
                             shuffle=False,
                             num_workers=args.num_workers,
                             sampler=sampler,
-                        )
+                        ) if with_loader else None
 
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
@@ -114,9 +124,11 @@ def run(args: argparse.ArgumentParser) -> None:
                         model.eval()
 
                         # Define context manager parameters:
-                        cpu_affinity = subgraph_loader.enable_cpu_affinity(
-                            args.loader_cores
-                        ) if args.cpu_affinity else nullcontext()
+                        if args.cpu_affinity and with_loader:
+                            cpu_affinity = subgraph_loader.enable_cpu_affinity(
+                                args.loader_cores)
+                        else:
+                            cpu_affinity = nullcontext()
                         profile = torch_profile(
                         ) if args.profile else nullcontext()
                         itt = emit_itt(
@@ -124,12 +136,19 @@ def run(args: argparse.ArgumentParser) -> None:
 
                         with cpu_affinity, amp, timeit() as time:
                             for _ in range(args.warmup):
-                                model.inference(subgraph_loader, device,
-                                                progress_bar=True)
-                            time.reset()
+                                if args.full_batch:
+                                    full_batch_inference(model, data)
+                                else:
+                                    model.inference(subgraph_loader, device,
+                                                    progress_bar=True)
+                            if args.warmup > 0:
+                                time.reset()
                             with itt, profile:
-                                model.inference(subgraph_loader, device,
-                                                progress_bar=True)
+                                if args.full_batch:
+                                    full_batch_inference(model, data)
+                                else:
+                                    model.inference(subgraph_loader, device,
+                                                    progress_bar=True)
 
                         if args.profile:
                             rename_profile_file(model_name, dataset_name,
@@ -166,8 +185,9 @@ if __name__ == '__main__':
     add('--vtune-profile', action='store_true')
     add('--bf16', action='store_true')
     add('--cpu-affinity', action='store_true',
-        help="Use DataLoader affinitzation.")
+        help='Use DataLoader affinitzation.')
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
     add('--measure-load-time', action='store_true')
+    add('--full-batch', action='store_true', help='Use full batch mode.')
     run(argparser.parse_args())

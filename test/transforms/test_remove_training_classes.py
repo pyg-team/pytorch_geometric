@@ -6,13 +6,14 @@ from torch_geometric.transforms import RemoveTrainingClasses
 
 def test_remove_training_classes():
     y = torch.tensor([1, 0, 0, 2, 1, 3])
+    train_mask = torch.tensor([False, False, True, True, True, True])
 
-    data = Data(y=y)
-    data.train_mask = torch.tensor([0, 0, 1, 1, 1, 1]).to(torch.bool)
+    data = Data(y=y, train_mask=train_mask)
 
-    classes = [0, 1]
-    transform = RemoveTrainingClasses(classes)
-    assert str(transform) == f'RemoveTrainingClasses({classes})'
+    transform = RemoveTrainingClasses(classes=[0, 1])
+    assert str(transform) == 'RemoveTrainingClasses([0, 1])'
 
     data = transform(data)
-    assert data.y[data.train_mask].unique().tolist() == [2, 3]
+    assert len(data) == 2
+    assert torch.equal(data.y, y)
+    assert data.train_mask.tolist() == [False, False, False, True, False, True]
