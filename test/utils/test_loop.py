@@ -139,7 +139,7 @@ def test_add_remaining_self_loops():
         edge_index, edge_attr, fill_value)
     assert edge_index_out.tolist() == expected
     assert edge_attr_out.tolist() == [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
-                               [0., 1., 0.]]
+                                      [0., 1., 0.]]
 
 
 def test_add_remaining_self_loops_without_initial_loops():
