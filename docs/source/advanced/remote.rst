@@ -63,7 +63,7 @@ Feature storage is often the primary storage bottleneck in graph learning applic
 
 The implementation details of a :class:`~torch_geometric.data.FeatureStore` are abstracted from :pyg:`PyG` through a CRUD-like interface.
 In particular, implementors of the :class:`~torch_geometric.data.FeatureStore` abstraction are expected to primarily override :meth:`~torch_geometric.data.FeatureStore.put_tensor`, :meth:`~torch_geometric.data.FeatureStore.get_tensor`, and :meth:`~torch_geometric.data.FeatureStore.remove_tensor` functionalities.
-Doing so both enables :pyg:`PyG` to leverage the features stored in the inmplementation and allows a user to employ a pythonic interface to inspect and modify the :class:`~torch_geometric.data.FeatureStore` elements:
+Doing so both enables :pyg:`PyG` to leverage the features stored in the implementation and allows a user to employ a pythonic interface to inspect and modify the :class:`~torch_geometric.data.FeatureStore` elements:
 
 .. code-block:: python
 
