@@ -9,7 +9,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
-from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 
 
@@ -193,14 +193,66 @@ class NumNeighbors:
         default (List[int], optional): The default number of neighbors for edge
             types not specified in :obj:`values`. (default: :obj:`None`)
     """
-    values: Union[List[int], Dict[EdgeType, List[int]]]
+    values: Union[List[int], Dict[EdgeTypeStr, List[int]]]
     default: Optional[List[int]] = None
 
-    def __post_init__(self):
-        if isinstance(self.values, (tuple, list)) and self.default is not None:
+    def __init__(
+        self,
+        values: Union[List[int], Dict[EdgeType, List[int]]],
+        default: Optional[List[int]] = None,
+    ):
+        if isinstance(values, (tuple, list)) and default is not None:
             raise ValueError(f"'default' must be set to 'None' in case a "
                              f"single list is given as the number of "
-                             f"neighbors (got '{type(self.default)})'")
+                             f"neighbors (got '{type(default)})'")
+
+        if isinstance(values, dict):
+            values = {EdgeTypeStr(key): value for key, value in values.items()}
+
+        # Write to `__dict__` since dataclass is annotated with `frozen=True`:
+        self.__dict__['values'] = values
+        self.__dict__['default'] = default
+
+    def _get_values(
+        self,
+        edge_types: Optional[List[EdgeType]] = None,
+        mapped: bool = False,
+    ) -> Union[List[int], Dict[Union[EdgeType, EdgeTypeStr], List[int]]]:
+
+        if edge_types is not None:
+            if isinstance(self.values, (tuple, list)):
+                default = self.values
+            elif isinstance(self.values, dict):
+                default = self.default
+            else:
+                assert False
+
+            out = {}
+            for edge_type in edge_types:
+                edge_type_str = EdgeTypeStr(edge_type)
+                if edge_type_str in self.values:
+                    out[edge_type_str if mapped else edge_type] = (
+                        self.values[edge_type_str])
+                else:
+                    if default is None:
+                        raise ValueError(f"Missing number of neighbors for "
+                                         f"edge type '{edge_type}'")
+                    out[edge_type_str if mapped else edge_type] = default
+
+        elif isinstance(self.values, dict) and not mapped:
+            out = {key.to_tuple(): value for key, value in self.values.items()}
+
+        else:
+            out = copy.copy(self.values)
+
+        if isinstance(out, dict):
+            num_hops = set(len(v) for v in out.values())
+            if len(num_hops) > 1:
+                raise ValueError(f"Number of hops must be the same across all "
+                                 f"edge types (got {len(num_hops)} different "
+                                 f"number of hops)")
+
+        return out
 
     def get_values(
         self,
@@ -215,29 +267,7 @@ class NumNeighbors:
         if '_values' in self.__dict__:
             return self.__dict__['_values']
 
-        values = self.values
-
-        if edge_types is not None:
-            if isinstance(values, (tuple, list)):
-                default = values
-                values = {}
-            else:  # isinstance(self.values, dict):
-                default = self.default
-                values = copy.copy(values)
-
-            for edge_type in edge_types:
-                if edge_type not in values:
-                    if default is None:
-                        raise ValueError(f"Missing number of neighbors for "
-                                         f"edge type '{edge_type}'")
-                    values[edge_type] = default
-
-        if isinstance(values, dict):
-            num_hops = set(len(v) for v in values.values())
-            if len(num_hops) > 1:
-                raise ValueError(f"Number of hops must be the same across all "
-                                 f"edge types (got {len(num_hops)} different "
-                                 f"number of hops)")
+        values = self._get_values(edge_types, mapped=False)
 
         self.__dict__['_values'] = values
         return values
@@ -257,9 +287,7 @@ class NumNeighbors:
         if '_mapped_values' in self.__dict__:
             return self.__dict__['_mapped_values']
 
-        values = self.get_values(edge_types)
-        if isinstance(values, dict):
-            values = {'__'.join(key): value for key, value in values.items()}
+        values = self._get_values(edge_types, mapped=True)
 
         self.__dict__['_mapped_values'] = values
         return values
@@ -281,27 +309,6 @@ class NumNeighbors:
     def __len__(self) -> int:
         r"""Returns the number of hops."""
         return self.num_hops
-
-    def config(self) -> Dict[str, Any]:
-        values = self.values
-        if isinstance(values, dict):
-            values = {'__'.join(k): v for k, v in values.items()}
-
-        cls_name = f'{self.__class__.__module__}.{self.__class__.__name__}'
-
-        return {
-            '_target_': cls_name,
-            'values': values,
-            'default': self.default,
-        }
-
-    @classmethod
-    def from_config(cls, cfg: Dict[str, Any]) -> 'NumNeighbors':
-        values = cfg['values']
-        if isinstance(values, dict):
-            values = {tuple(k.split('__')): v for k, v in values.items()}
-
-        return cls(values, cfg.get('default'))
 
 
 class NegativeSamplingMode(Enum):

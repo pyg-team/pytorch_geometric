@@ -18,7 +18,7 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
     return torch.stack([row, col], dim=0)
 
 
-@pytest.mark.parametrize('aggr', ['sum', 'mean', 'min', 'max', None])
+@pytest.mark.parametrize('aggr', ['sum', 'mean', 'min', 'max', 'cat', None])
 def test_hetero_conv(aggr):
     data = HeteroData()
     data['paper'].x = torch.randn(50, 32)
@@ -49,7 +49,10 @@ def test_hetero_conv(aggr):
                edge_weight_dict=data.edge_weight_dict)
 
     assert len(out) == 2
-    if aggr is not None:
+    if aggr == 'cat':
+        assert out['paper'].size() == (50, 128)
+        assert out['author'].size() == (30, 64)
+    elif aggr is not None:
         assert out['paper'].size() == (50, 64)
         assert out['author'].size() == (30, 64)
     else:

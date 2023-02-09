@@ -14,6 +14,7 @@ from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
 from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
+    DEFAULT_REL,
     EdgeTensorType,
     EdgeType,
     FeatureTensorType,
@@ -102,9 +103,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             { 'edge_index': edge_index_author_paper }
         })
     """
-
-    DEFAULT_REL = 'to'
-
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__()
 
@@ -435,7 +433,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 args = edge_types[0]
                 return args
             elif len(edge_types) == 0:
-                args = (args[0], self.DEFAULT_REL, args[1])
+                args = (args[0], DEFAULT_REL, args[1])
                 return args
 
         return args
@@ -584,14 +582,20 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 holding the nodes to keep for each node type.
         """
         data = copy.copy(self)
+        subset_dict = copy.copy(subset_dict)
 
         for node_type, subset in subset_dict.items():
+
+            if subset.dtype == torch.bool:
+                num_nodes = int(subset.sum())
+            else:
+                num_nodes = subset.size(0)
+                subset = torch.unique(subset, sorted=True)
+                subset_dict[node_type] = subset
+
             for key, value in self[node_type].items():
                 if key == 'num_nodes':
-                    if subset.dtype == torch.bool:
-                        data[node_type].num_nodes = int(subset.sum())
-                    else:
-                        data[node_type].num_nodes = subset.size(0)
+                    data[node_type].num_nodes = num_nodes
                 elif self[node_type].is_node_attr(key):
                     data[node_type][key] = value[subset]
                 else:

@@ -11,6 +11,10 @@ from torch_geometric.profile import (
     get_gpu_memory_from_nvidia_smi,
     get_model_size,
 )
+from torch_geometric.profile.utils import (
+    byte_to_megabyte,
+    medibyte_to_megabyte,
+)
 from torch_geometric.testing import onlyCUDA
 
 
@@ -53,3 +57,8 @@ def test_get_gpu_memory_from_nvidia_smi():
     free_mem, used_mem = get_gpu_memory_from_nvidia_smi(device=0, digits=2)
     assert free_mem >= 0
     assert used_mem >= 0
+
+
+def test_bytes_function():
+    assert byte_to_megabyte((1024 * 1024)) == 1.00
+    assert medibyte_to_megabyte(1 / 1.0485) == 1.00
