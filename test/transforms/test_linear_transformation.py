@@ -7,9 +7,9 @@ from torch_geometric.transforms import LinearTransformation
 def test_linear_transformation():
     # expected __repr__ output
     expected = ('LinearTransformation(\n'
-                              '[[2. 0.]\n'
-                              ' [0. 2.]]\n'
-                              ')')
+                '[[2. 0.]\n'
+                ' [0. 2.]]\n'
+                ')')
 
     # matrix as 2D array
     matrix = [[2., 0.], [0., 2.]]
