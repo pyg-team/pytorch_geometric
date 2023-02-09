@@ -573,8 +573,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             >>> HeteroData(
                 paper={ x=[4, 16] },
                 author={ x=[2, 32] },
+                conference={ x=[5, 8] },
                 (paper, cites, paper)={ edge_index=[2, 24] },
-                (author, to, paper)={ edge_index=[2, 5] }
+                (author, to, paper)={ edge_index=[2, 5] },
+                (paper, to, conference)={ edge_index=[2, 10] }
             )
 
         Args:
