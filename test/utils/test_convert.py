@@ -435,7 +435,7 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
 
         assert edge_weight.tolist() == cu_edge_weight.tolist()
 
-
+@withPackage("cudf")
 @withPackage("cugraph")
 @pytest.mark.parametrize("edge_weight", [None, [1, 2, 7, 5]])
 @pytest.mark.parametrize("directed", [True, False])
