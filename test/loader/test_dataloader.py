@@ -66,9 +66,9 @@ def test_dataloader(num_workers):
 
 def test_collater():
     # Test collator.collate()
-    collator = Collater(False, [])
+    collater = Collater(False, [])
     data_list = [torch.ones(3) for _ in range(4)]
-    batch = collator.collate(data_list)
+    batch = collater.collate(data_list)
     assert torch.equal(batch, torch.ones(4, 3))
 
     # Test inputs of type List[torch.Tensor]
