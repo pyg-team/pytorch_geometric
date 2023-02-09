@@ -252,8 +252,8 @@ class BasicGNN(torch.nn.Module):
 
     @torch.no_grad()
     def test(self, x_all: Tensor, loader: NeighborLoader,
-                  device: Optional[torch.device] = None,
-                  progress_bar: bool = False) -> Tensor:
+             device: Optional[torch.device] = None,
+             progress_bar: bool = False) -> Tensor:
         y_hat = x_all.argmax(dim=-1)
         y = loader.data.y.to(y_hat.device)
 
