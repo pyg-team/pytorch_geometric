@@ -98,22 +98,18 @@ def test_collater():
     assert torch.equal(batch['y'], torch.ones(4))
 
     # Test inputs of type List[Tuple]
-    NamedTuple = namedtuple('data', 'x y')
-    data = NamedTuple(1, 2.0)
-    data_list = [data, data, data, data]
-    loader = DataLoader(data_list, batch_size=2, shuffle=False)
-    for batch in loader:
-        assert torch.equal(batch.x, torch.tensor([1, 1]))
-        assert torch.equal(batch[1], torch.tensor([2.0, 2.0]))
+    named_tuple = namedtuple('data', 'x y')
+    data_list = [named_tuple(1, 2.0)]*4
+    batch = collater.collate(data_list)
+    assert torch.equal(batch.x, torch.ones(4))
+    assert torch.equal(batch[1], torch.ones(4)+1)
 
     # Test inputs of type List[Sequence]
-    data = [1, 2, 3]
-    data_list = [data, data, data, data]
-    loader = DataLoader(data_list, batch_size=2, shuffle=False)
-    for batch in loader:
-        assert torch.equal(batch[0], torch.tensor([1, 1]))
-        assert torch.equal(batch[1], torch.tensor([2, 2]))
-        assert torch.equal(batch[2], torch.tensor([3, 3]))
+    data_list = [[1,2,3]]*4
+    batch = collater.collate(data_list)
+    assert torch.equal(batch[0], torch.ones(4))
+    assert torch.equal(batch[1], torch.ones(4)+1)
+    assert torch.equal(batch[2], torch.ones(4)+2)
 
     # Test that inputs of unsupported types raise an error.
     with pytest.raises(TypeError):
@@ -122,11 +118,8 @@ def test_collater():
             def __init__(self):
                 self.ones = torch.ones(2)
 
-        data = DummyClass
-        data_list = [data, data, data, data]
-        loader = DataLoader(data_list, batch_size=2, shuffle=False)
-        for batch in loader:
-            continue
+        data_list = [DummyClass()]*4
+        batch = collater.collate(data_list)
 
 
 @pytest.mark.skipif(not with_mp, reason='Multi-processing not available')
