@@ -3,6 +3,7 @@ from typing import List
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.datasets import FakeDataset
 from torch_geometric.loader import (
     DataLoader,
     ImbalancedSampler,
@@ -35,6 +36,29 @@ def test_dataloader_with_imbalanced_sampler():
     loader = DataLoader(data_list, batch_size=10, sampler=sampler)
 
     assert torch.allclose(y, torch.cat([batch.y for batch in loader]))
+
+    # Test with list of Data where each y is a tensor:
+    for data in data_list:
+        data['y'] = torch.tensor([data.y])
+    torch.manual_seed(12345)
+    sampler = ImbalancedSampler(data_list)
+    loader = DataLoader(data_list, batch_size=100, sampler=sampler)
+
+    assert torch.allclose(y, torch.cat([batch.y for batch in loader]))
+
+    # Test with InMemoryDataset as input:
+    torch.manual_seed(12345)
+    dataset = FakeDataset(num_graphs=100, avg_num_nodes=10, avg_degree=0,
+                          num_channels=0, num_classes=2)
+    sampler = ImbalancedSampler(dataset)
+    loader = DataLoader(dataset, batch_size=10, sampler=sampler)
+
+    y = torch.cat([batch.y for batch in loader])
+    histogram = y.bincount()
+    prob = histogram / histogram.sum()
+
+    assert histogram.sum() == len(dataset)
+    assert prob.min() > 0.4 and prob.max() < 0.6
 
 
 def test_neighbor_loader_with_imbalanced_sampler():
