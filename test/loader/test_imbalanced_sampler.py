@@ -37,7 +37,7 @@ def test_dataloader_with_imbalanced_sampler():
 
     assert torch.allclose(y, torch.cat([batch.y for batch in loader]))
 
-    # Test with list of Data where each y is a tensor as input:
+    # Test with list of Data where each y is a tensor:
     for data in data_list:
         data['y'] = torch.tensor([data.y])
     torch.manual_seed(12345)
