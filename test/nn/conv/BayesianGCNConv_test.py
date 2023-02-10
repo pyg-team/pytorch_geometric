@@ -1,5 +1,7 @@
-import torch
 import copy
+
+import torch
+
 from torch_geometric.nn.conv.Bayesian_GCNConv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
 
@@ -8,8 +10,7 @@ def test_gcn_conv_with_sparse_input_feature():
     x = torch.sparse_coo_tensor(indices=torch.tensor([[0, 0], [0, 1]]),
                                 values=torch.tensor([1., 1.]),
                                 size=torch.Size([4, 16]))
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
-                                                    0]])
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     conv = BayesianGCNConv(16, 32)
     out, kl = conv(x, edge_index)
     print(out.shape, kl.detach())
@@ -18,8 +19,7 @@ def test_gcn_conv_with_sparse_input_feature():
 
 def test_static_gcn_conv():
     x = torch.randn(3, 4, 16)
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
-                                                    0]])
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     conv = BayesianGCNConv(16, 32)
     out, kl = conv(x, edge_index)
     print(out.shape, kl.detach().cpu())
@@ -28,8 +28,7 @@ def test_static_gcn_conv():
 
 def test_gcn_conv_with_decomposed_layers():
     x = torch.randn(4, 16)
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
-                                                    0]])
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     conv = BayesianGCNConv(16, 32)
     decomposed_conv = copy.deepcopy(conv)
     decomposed_conv.decomposed_layers = 2
@@ -47,8 +46,7 @@ def test_gcn_conv_with_decomposed_layers():
 
 def test_gcn_conv():
     x = torch.randn(4, 16)
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0,
-                                                    0]])
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     row, col = edge_index
     value = torch.rand(row.size(0))
     # zeros_values = torch.zeros(value.size()).to(device)
