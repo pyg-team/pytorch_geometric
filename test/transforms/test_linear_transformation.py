@@ -7,7 +7,7 @@ from torch_geometric.transforms import LinearTransformation
 def test_linear_transformation():
     pos = torch.Tensor([[-1, 1], [-3, 0], [2, -1]])
     data = Data(pos=pos)
-    
+
     # expected __repr__ output
     expected = ('LinearTransformation(\n'
                 '[[2. 0.]\n'
