@@ -57,7 +57,7 @@ def test_dataloader_with_imbalanced_sampler():
     histogram = y.bincount()
     prob = histogram / histogram.sum()
 
-    assert histogram.sum() == len(data_list)
+    assert histogram.sum() == len(dataset)
     assert prob.min() > 0.4 and prob.max() < 0.6
 
 
