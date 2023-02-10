@@ -34,7 +34,7 @@ class TemporalData(BaseData):
     represented with these four values.
 
     In general, :class:`~torch_geometric.data.TemporalData` tries to mimic
-    the behaviour of a regular Python dictionary.
+    the behavior of a regular Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 
@@ -72,13 +72,13 @@ class TemporalData(BaseData):
         events = events.to('cuda:0', non_blocking=True)
 
     Args:
-        src (Tensor, optional): A list of source nodes for the events with
-            shape :obj:`[num_events]`. (default: :obj:`None`)
-        dst (Tensor, optional): A list of destination nodes for the events
+        src (torch.Tensor, optional): A list of source nodes for the events
             with shape :obj:`[num_events]`. (default: :obj:`None`)
-        t (Tensor, optional): The timestamps for each event with shape
+        dst (torch.Tensor, optional): A list of destination nodes for the
+            events with shape :obj:`[num_events]`. (default: :obj:`None`)
+        t (torch.Tensor, optional): The timestamps for each event with shape
             :obj:`[num_events]`. (default: :obj:`None`)
-        msg (Tensor, optional): Messages feature matrix with shape
+        msg (torch.Tensor, optional): Messages feature matrix with shape
             :obj:`[num_events, num_msg_features]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
 

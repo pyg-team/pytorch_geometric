@@ -10,6 +10,7 @@ from torch.nn.parameter import Parameter
 import torch_geometric.typing
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
+from torch_geometric.utils import index_sort
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
@@ -118,13 +119,14 @@ class Linear(torch.nn.Module):
         return out
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset_weight_(self.weight, self.in_channels, self.weight_initializer)
         reset_bias_(self.bias, self.in_channels, self.bias_initializer)
 
     def forward(self, x: Tensor) -> Tensor:
         r"""
         Args:
-            x (Tensor): The features.
+            x (torch.Tensor): The input features.
         """
         return F.linear(x, self.weight, self.bias)
 
@@ -232,6 +234,7 @@ class HeteroLinear(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         if torch_geometric.typing.WITH_PYG_LIB:
             reset_weight_(self.weight, self.in_channels,
                           self.kwargs.get('weight_initializer', None))
@@ -244,8 +247,8 @@ class HeteroLinear(torch.nn.Module):
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
         Args:
-            x (Tensor): The input features.
-            type_vec (LongTensor): A vector that maps each entry to a type.
+            x (torch.Tensor): The input features.
+            type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
         if torch_geometric.typing.WITH_PYG_LIB:
             assert self.weight is not None
@@ -253,10 +256,10 @@ class HeteroLinear(torch.nn.Module):
             perm: Optional[Tensor] = None
             if not self.is_sorted:
                 if (type_vec[1:] < type_vec[:-1]).any():
-                    type_vec, perm = type_vec.sort()
+                    type_vec, perm = index_sort(type_vec, self.num_types)
                     x = x[perm]
 
-            type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
+            type_vec_ptr = torch._convert_indices_from_coo_to_csr(
                 type_vec, self.num_types)
             out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:

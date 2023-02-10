@@ -7,7 +7,7 @@ from torch_geometric.datasets.motif_generator import CustomMotif
 class HouseMotif(CustomMotif):
     r"""Generates the house-structured motif from the `"GNNExplainer:
     Generating Explanations for Graph Neural Networks"
-    <https://arxiv.org/pdf/1903.03894.pdf>`_ paper, containing 5 nodes and 6
+    <https://arxiv.org/abs/1903.03894>`__ paper, containing 5 nodes and 6
     undirected edges. Nodes are labeled according to their structural role:
     the top, middle and bottom of the house."""
     def __init__(self):

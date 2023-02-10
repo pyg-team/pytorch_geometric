@@ -1,13 +1,11 @@
-from typing import Callable, Optional, Tuple
+from typing import Callable, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add
-from torch_sparse import SparseTensor
 
-from torch_geometric.typing import OptTensor
-from torch_geometric.utils import softmax
+from torch_geometric.typing import OptTensor, SparseTensor
+from torch_geometric.utils import scatter, softmax
 
 from .topk_pool import filter_adj, topk
 
@@ -21,7 +19,7 @@ class PANPooling(torch.nn.Module):
 
     .. math::
         {\rm score} = \beta_1 \mathbf{X} \cdot \mathbf{p} + \beta_2
-        {\rm deg}(M)
+        {\rm deg}(\mathbf{M})
 
     Args:
         in_channels (int): Size of each input sample.
@@ -37,8 +35,8 @@ class PANPooling(torch.nn.Module):
         multiplier (float, optional): Coefficient by which features gets
             multiplied after pooling. This can be useful for large graphs and
             when :obj:`min_score` is used. (default: :obj:`1.0`)
-        nonlinearity (torch.nn.functional, optional): The nonlinearity to use.
-            (default: :obj:`torch.tanh`)
+        nonlinearity (str or callable, optional): The non-linearity to use.
+            (default: :obj:`"tanh"`)
     """
     def __init__(
         self,
@@ -46,9 +44,12 @@ class PANPooling(torch.nn.Module):
         ratio: float = 0.5,
         min_score: Optional[float] = None,
         multiplier: float = 1.0,
-        nonlinearity: Callable = torch.tanh,
+        nonlinearity: Union[str, Callable] = 'tanh',
     ):
         super().__init__()
+
+        if isinstance(nonlinearity, str):
+            nonlinearity = getattr(torch, nonlinearity)
 
         self.in_channels = in_channels
         self.ratio = ratio
@@ -62,6 +63,7 @@ class PANPooling(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.p.data.fill_(1)
         self.beta.data.fill_(0.5)
 
@@ -71,7 +73,14 @@ class PANPooling(torch.nn.Module):
         M: SparseTensor,
         batch: OptTensor = None,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The node feature matrix.
+            M (SparseTensor): The MET matrix :math:`\mathbf{M}`.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each node to a specific example. (default: :obj:`None`)
+        """
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.long)
 
@@ -79,7 +88,7 @@ class PANPooling(torch.nn.Module):
         assert edge_weight is not None
 
         score1 = (x * self.p).sum(dim=-1)
-        score2 = scatter_add(edge_weight, col, dim=0, dim_size=x.size(0))
+        score2 = scatter(edge_weight, col, 0, dim_size=x.size(0), reduce='sum')
         score = self.beta[0] * score1 + self.beta[1] * score2
 
         if self.min_score is None:

@@ -24,8 +24,8 @@ class WILLOWObjectClass(InMemoryDataset):
     on ImageNet (:obj:`relu4_2` and :obj:`relu5_1`).
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        category (string): The category of the images (one of :obj:`"Car"`,
+        root (str): Root directory where the dataset should be saved.
+        category (str): The category of the images (one of :obj:`"Car"`,
             :obj:`"Duck"`, :obj:`"Face"`, :obj:`"Motorbike"`,
             :obj:`"Winebottle"`).
         transform (callable, optional): A function/transform that takes in an

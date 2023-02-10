@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-__version__ = '2.2.0'
+__version__ = '2.3.0'
 URL = 'https://github.com/pyg-team/pytorch_geometric'
 
 install_requires = [
@@ -10,6 +10,7 @@ install_requires = [
     'jinja2',
     'requests',
     'pyparsing',
+    'torchmetrics',
     'scikit-learn',
     'psutil>=5.8.0',
 ]
@@ -21,7 +22,11 @@ graphgym_requires = [
     'pytorch-lightning',
 ]
 
-full_requires = graphgym_requires + [
+modelhub_requires = [
+    'huggingface_hub',
+]
+
+full_requires = graphgym_requires + modelhub_requires + [
     'ase',
     'h5py',
     'numba',
@@ -31,17 +36,21 @@ full_requires = graphgym_requires + [
     'rdflib',
     'trimesh',
     'networkx',
+    'graphviz',
     'tabulate',
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
-    'torchmetrics>=0.7',
+    'pgmpy',
+    'opt_einsum',  # required for pgmpy
+    'statsmodels',
 ]
 
 benchmark_requires = [
     'protobuf<4.21',
     'wandb',
     'pandas',
+    'networkx',
     'matplotlib',
 ]
 
@@ -75,6 +84,7 @@ setup(
     install_requires=install_requires,
     extras_require={
         'graphgym': graphgym_requires,
+        'modelhub': modelhub_requires,
         'full': full_requires,
         'benchmark': benchmark_requires,
         'test': test_requires,

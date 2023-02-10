@@ -5,11 +5,10 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, fill_diag
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
 from torch_geometric.utils import (
     add_self_loops,
     batched_negative_sampling,
@@ -104,7 +103,7 @@ class SuperGATConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        attention_type (string, optional): Type of attention to use.
+        attention_type (str, optional): Type of attention to use
             (:obj:`'MX'`, :obj:`'SD'`). (default: :obj:`'MX'`)
         neg_sample_ratio (float, optional): The ratio of the number of sampled
             negative edges to the number of positive edges.
@@ -191,7 +190,7 @@ class SuperGATConv(MessagePassing):
 
         if self.add_self_loops:
             if isinstance(edge_index, SparseTensor):
-                edge_index = fill_diag(edge_index, 1.)
+                edge_index = torch_sparse.fill_diag(edge_index, 1.)
             else:
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(edge_index, num_nodes=N)

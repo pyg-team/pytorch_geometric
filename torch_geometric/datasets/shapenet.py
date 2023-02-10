@@ -24,9 +24,9 @@ class ShapeNet(InMemoryDataset):
     Each category is annotated with 2 to 6 parts.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        categories (string or [string], optional): The category of the CAD
-            models (one or a combination of :obj:`"Airplane"`, :obj:`"Bag"`,
+        root (str): Root directory where the dataset should be saved.
+        categories (str or [str], optional): The category of the CAD models
+            (one or a combination of :obj:`"Airplane"`, :obj:`"Bag"`,
             :obj:`"Cap"`, :obj:`"Car"`, :obj:`"Chair"`, :obj:`"Earphone"`,
             :obj:`"Guitar"`, :obj:`"Knife"`, :obj:`"Lamp"`, :obj:`"Laptop"`,
             :obj:`"Motorbike"`, :obj:`"Mug"`, :obj:`"Pistol"`, :obj:`"Rocket"`,
@@ -37,8 +37,7 @@ class ShapeNet(InMemoryDataset):
             include normal vectors as input features to :obj:`data.x`.
             As a result, :obj:`data.x` will be :obj:`None`.
             (default: :obj:`True`)
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"trainval"`, loads the training and validation dataset.
             If :obj:`"test"`, loads the test dataset.
@@ -56,21 +55,22 @@ class ShapeNet(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 16,881
-              - ~2,616.2
-              - 0
-              - 3
-              - 50
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 16,881
+          - ~2,616.2
+          - 0
+          - 3
+          - 50
     """
 
     url = ('https://shapenet.cs.stanford.edu/media/'
@@ -145,7 +145,7 @@ class ShapeNet(InMemoryDataset):
                               'train, val, trainval or test'))
 
         self.data, self.slices = torch.load(path)
-        self.data.x = self.data.x if include_normals else None
+        self._data.x = self._data.x if include_normals else None
 
         self.y_mask = torch.zeros((len(self.seg_classes.keys()), 50),
                                   dtype=torch.bool)

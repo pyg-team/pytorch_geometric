@@ -1,6 +1,5 @@
 import os.path as osp
 
-import matplotlib.pyplot as plt
 import torch
 import torch.nn.functional as F
 
@@ -35,8 +34,8 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 for epoch in range(1, 201):
     model.train()
     optimizer.zero_grad()
-    log_logits = model(data.x, data.edge_index)
-    loss = F.nll_loss(log_logits[data.train_mask], data.y[data.train_mask])
+    out = model(data.x, data.edge_index)
+    loss = F.nll_loss(out[data.train_mask], data.y[data.train_mask])
     loss.backward()
     optimizer.step()
 
@@ -57,6 +56,9 @@ explanation = explainer(data.x, data.edge_index, index=node_index)
 print(f'Generated explanations in {explanation.available_explanations}')
 
 path = 'feature_importance.png'
-ax = explanation.visualize_feature_importance()
-plt.savefig(path)
+explanation.visualize_feature_importance(path, top_k=10)
 print(f"Feature importance plot has been saved to '{path}'")
+
+path = 'subgraph.pdf'
+explanation.visualize_graph(path)
+print(f"Subgraph visualization plot has been saved to '{path}'")

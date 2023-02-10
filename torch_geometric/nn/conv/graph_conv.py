@@ -1,11 +1,17 @@
 from typing import Tuple, Union
 
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    Size,
+    SparseTensor,
+)
+from torch_geometric.utils import spmm
 
 
 class GraphConv(MessagePassing):
@@ -26,7 +32,7 @@ class GraphConv(MessagePassing):
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
@@ -91,4 +97,4 @@ class GraphConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
-        return matmul(adj_t, x[0], reduce=self.aggr)
+        return spmm(adj_t, x[0], reduce=self.aggr)
