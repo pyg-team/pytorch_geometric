@@ -43,7 +43,7 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
           pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
-          pip install -e .
+          pip install .
 
       - name: Build documentation
         if: steps.changed-files-specific.outputs.only_changed != 'true'
