@@ -8,7 +8,7 @@ from torch.nn import GRUCell, Linear
 from torch_geometric.nn.inits import zeros
 from torch_geometric.utils import scatter
 
-MessageStoreType = Dict[int, Tuple[Tensor, Tensor, Tensor, Tensor]]
+TGNMessageStoreType = Dict[int, Tuple[Tensor, Tensor, Tensor, Tensor]]
 
 
 class TGNMemory(torch.nn.Module):
@@ -146,13 +146,13 @@ class TGNMemory(torch.nn.Module):
         return memory, last_update
 
     def __update_msg_store__(self, src: Tensor, dst: Tensor, t: Tensor,
-                             raw_msg: Tensor, msg_store: MessageStoreType):
+                             raw_msg: Tensor, msg_store: TGNMessageStoreType):
         n_id, perm = src.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
         for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
             msg_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
 
-    def __compute_msg__(self, n_id: Tensor, msg_store: MessageStoreType,
+    def __compute_msg__(self, n_id: Tensor, msg_store: TGNMessageStoreType,
                         msg_module: Callable):
         data = [msg_store[i] for i in n_id.tolist()]
         src, dst, t, raw_msg = list(zip(*data))
