@@ -18,15 +18,15 @@ from torch_geometric.utils import spmm
 
 
 class BayesianGCNConv(MessagePassing):
-   r"""The Bayesian graph convolutional operator inspired from the `"Improving model calibration with 
+   r"""The Bayesian graph convolutional operator inspired from the `"Improving model calibration with
     accuracy versus uncertainty optimization"
     <https://arxiv.org/abs/2012.07923>`_ paper
     We first proceed wth linear transformation:
 
     .. math::
         \mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
-    
-    where :math:\mathbf{W}^{T}  denotes the weights with a fully factorized 
+
+    where :math:\mathbf{W}^{T}  denotes the weights with a fully factorized
     Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
     an unconstrained parameter :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
     to avoid non-negative variance.
@@ -34,7 +34,7 @@ class BayesianGCNConv(MessagePassing):
     CAUTION: the weights and `edge_weight` are different parameters, since the `edge_weight``
     are initialized to one, they are not considered as a Parameter.
     NOTE : the weights and bias are initialized with a Gaussian distribution of mean equal to
-    0.0 and a standard deviation of 0.1 
+    0.0 and a standard deviation of 0.1
 
 
     Then propagate the message through the graph with a graph convolution operator
@@ -67,13 +67,13 @@ class BayesianGCNConv(MessagePassing):
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
-        prior_mean (float): Mean of the prior arbitrary distribution to be 
+        prior_mean (float): Mean of the prior arbitrary distribution to be
             used on the complexity cost (default: :obj:`0.0`)
-        prior_variance (float): Variance of the prior arbitrary distribution 
+        prior_variance (float): Variance of the prior arbitrary distribution
             to be used on the complexity cost (default: :obj:`1.0`)
-        posterior_mu_init (float): Init trainable mu parameter representing 
+        posterior_mu_init (float): Init trainable mu parameter representing
             mean of the approximate posterior (default: :obj:`-3.0`)
-        posterior_rho_init (float): Init trainable rho parameter representing 
+        posterior_rho_init (float): Init trainable rho parameter representing
             the sigma of the approximate posterior through softplus function
             (default: :obj:`0.0`)
         improved (bool, optional): If set to :obj:`True`, the layer computes
@@ -98,7 +98,7 @@ class BayesianGCNConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{in})`,
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
-        - **output:** 
+        - **output:**
           node features :math:`(|\mathcal{V}|, F_{out})`,
           Kullback-Leibler divergence for weights and bias (optional):
           math : `(\mathrm{KL}[q_{\theta}(w)||p(w)])`
