@@ -20,10 +20,12 @@ def test_largest_connected_components():
     assert out.edge_index.tolist() == data.edge_index[:, :12].tolist()
 
     # Testing with `connection = strong`
-    transform = LargestConnectedComponents(num_components=2, connection='strong')
+    transform = LargestConnectedComponents(num_components=2,
+                                           connection='strong')
     out = transform(data)
     assert out.num_nodes == 7
-    assert out.edge_index.tolist() == [[0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 5, 6], [1, 2, 0, 2, 0, 1, 3, 2, 4, 3, 6, 5]]
+    assert out.edge_index.tolist() == [[0, 0, 1, 1, 2, 2, 2, 3, 3, 4, 5, 6],
+                                       [1, 2, 0, 2, 0, 1, 3, 2, 4, 3, 6, 5]]
 
     edge_index = torch.tensor([
         [0, 1, 2, 3, 3, 4],
