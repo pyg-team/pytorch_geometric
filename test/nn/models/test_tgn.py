@@ -18,7 +18,7 @@ def test_tgn():
     t = torch.arange(10)
     msg = torch.randn(10, 16)
     data = TemporalData(src=src, dst=dst, t=t, msg=msg)
-    loader = TemporalDataLoader(data, batch_size=data.num_nodes // 2)
+    loader = TemporalDataLoader(data, batch_size=5)
 
     neighbor_loader = LastNeighborLoader(data.num_nodes, size=3)
     assert neighbor_loader.cur_e_id == 0
