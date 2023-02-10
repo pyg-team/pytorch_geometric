@@ -72,3 +72,7 @@ def test_tgn():
     post_z, post_last_update = memory(all_n_id)
     assert torch.allclose(z[0:3], post_z[0:3])
     assert torch.equal(post_last_update, torch.tensor([4, 6, 8, 10, 10]))
+
+    memory.reset_state()
+    assert memory.memory.sum() == 0
+    assert memory.last_update.sum() == 0
