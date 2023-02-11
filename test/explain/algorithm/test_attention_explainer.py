@@ -28,7 +28,7 @@ edge_index = torch.tensor([
 
 
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
-def test_attention_explainer(index):
+def test_attention_explainer(index, check_explanation):
     model = GAT()
 
     explainer = Explainer(
@@ -44,11 +44,7 @@ def test_attention_explainer(index):
     )
 
     explanation = explainer(x, edge_index, index=index)
-
-    assert 'node_mask' not in explanation
-    assert explanation.edge_mask.size() == (explanation.num_edges, )
-    assert explanation.edge_mask.min() >= 0
-    assert explanation.edge_mask.max() <= 1
+    check_explanation(explanation, None, explainer.edge_mask_type)
 
 
 @pytest.mark.parametrize('mask_type', [m for m in MaskType])
