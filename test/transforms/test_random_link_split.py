@@ -177,6 +177,15 @@ def test_random_link_split_on_hetero_data():
     assert train_data['p', 'a'].edge_index.size() == (2, 600)
     assert train_data['a', 'p'].edge_index.size() == (2, 600)
 
+    edge_types = [('p', 'p'), ('p', 'a')]
+    transform = RandomLinkSplit(edge_types=edge_types, rev_edge_types=None)
+    assert transform.rev_edge_types == [None, None]
+
+    edge_types = [('p', 'a')]
+    transform = RandomLinkSplit(edge_types=edge_types, rev_edge_types=None)
+    data['p', 'a'].edge_label = torch.ones(size=(1000, 1), dtype=torch.long)
+    train_data, val_data, test_data = transform(data)
+
 
 def test_random_link_split_on_undirected_hetero_data():
     data = HeteroData()
