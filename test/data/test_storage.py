@@ -20,7 +20,9 @@ def test_base_storage():
     assert storage.get('z', 2) == 2
     assert storage.get('z', None) is None
     assert getattr(storage, '_mapping') == {
-        'x': torch.zeros(1), 'y': torch.ones(1)}
+        'x': torch.zeros(1),
+        'y': torch.ones(1)
+    }
     assert len(list(storage.keys('x', 'y', 'z'))) == 2
     assert len(list(storage.keys('x', 'y', 'z'))) == 2
     assert len(list(storage.values('x', 'y', 'z'))) == 2
