@@ -1,7 +1,11 @@
+from typing import Callable, Optional
+
 import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.explain import Explanation
+from torch_geometric.explain.config import MaskType
 from torch_geometric.nn import SAGEConv, to_hetero
 
 
@@ -61,3 +65,36 @@ class HeteroSAGE(torch.nn.Module):
     def forward(self, x_dict, edge_index_dict,
                 additonal_arg=None) -> torch.Tensor:
         return self.lin(self.graph_sage(x_dict, edge_index_dict)['paper'])
+
+
+@pytest.fixture()
+def check_explanation() -> Callable:
+    return _check_explanation
+
+
+def _check_explanation(
+    explanation: Explanation,
+    node_mask_type: Optional[MaskType],
+    edge_mask_type: Optional[MaskType],
+):
+    if node_mask_type == MaskType.attributes:
+        assert explanation.node_mask.size() == explanation.x.size()
+        assert explanation.node_mask.min() >= 0
+        assert explanation.node_mask.max() <= 1
+    elif node_mask_type == MaskType.object:
+        assert explanation.node_mask.size() == (explanation.num_nodes, 1)
+        assert explanation.node_mask.min() >= 0
+        assert explanation.node_mask.max() <= 1
+    elif node_mask_type == MaskType.common_attributes:
+        assert explanation.node_mask.size() == (1, explanation.num_features)
+        assert explanation.node_mask.min() >= 0
+        assert explanation.node_mask.max() <= 1
+    elif node_mask_type is None:
+        assert 'node_mask' not in explanation
+
+    if edge_mask_type == MaskType.object:
+        assert explanation.edge_mask.size() == (explanation.num_edges, )
+        assert explanation.edge_mask.min() >= 0
+        assert explanation.edge_mask.max() <= 1
+    elif edge_mask_type is None:
+        assert 'edge_mask' not in explanation
