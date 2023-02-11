@@ -56,8 +56,9 @@ def test_attention_explainer(index):
 def test_attention_explainer_supports(mask_type, explanation_type):
     model = GAT()
 
-    with pytest.raises(ValueError,
-         match = r".* does not support the given explanation setting"):
+    with pytest.raises(
+            ValueError,
+            match=r".* does not support the given explanation setting"):
         _ = Explainer(
             model=model,
             algorithm=AttentionExplainer(),
