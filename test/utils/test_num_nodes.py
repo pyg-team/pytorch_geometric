@@ -19,10 +19,7 @@ def test_maybe_num_nodes_dict():
         '1': torch.tensor([[0, 0, 1, 1, 2, 2, 2], [1, 2, 0, 2, 0, 1, 1]]),
         '2': torch.tensor([[0, 0, 1, 3], [1, 2, 0, 4]])
     }
-    num_nodes_dict = {'2': 5}
+    num_nodes_dict = {'2': 6}
 
-    expected_num_nodes_dict = {'1': 3, '2': 5}
-
-    assert maybe_num_nodes_dict(edge_index_dict) == expected_num_nodes_dict
-    assert maybe_num_nodes_dict(edge_index_dict,
-                                num_nodes_dict) == expected_num_nodes_dict
+    assert maybe_num_nodes_dict(edge_index_dict) == {'1': 3, '2': 5}
+    assert maybe_num_nodes_dict(edge_index_dict, num_nodes_dict) == {'1': 3, '2': 6}
