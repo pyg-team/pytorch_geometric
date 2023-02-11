@@ -2,18 +2,21 @@ import pytest
 import torch
 
 from torch_geometric.explain import AttentionExplainer, Explainer
-from torch_geometric.nn import GATConv
+from torch_geometric.explain.config import ExplanationType, MaskType
+from torch_geometric.nn import GATConv, GATv2Conv, TransformerConv
 
 
 class GAT(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = GATConv(3, 16, heads=4)
-        self.conv2 = GATConv(4 * 16, 7, heads=1)
+        self.conv2 = GATv2Conv(4 * 16, 16, heads=2)
+        self.conv3 = TransformerConv(2 * 16, 7, heads=1)
 
     def forward(self, x, edge_index):
         x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index)
+        x = self.conv3(x, edge_index)
         return x
 
 
@@ -46,3 +49,25 @@ def test_attention_explainer(index):
     assert explanation.edge_mask.size() == (explanation.num_edges, )
     assert explanation.edge_mask.min() >= 0
     assert explanation.edge_mask.max() <= 1
+
+
+@pytest.mark.parametrize('mask_type', [m for m in MaskType])
+@pytest.mark.parametrize('explanation_type', [e for e in ExplanationType])
+def test_attention_explainer_supports(mask_type, explanation_type):
+    model = GAT()
+
+    with pytest.raises(
+            ValueError,
+            match=r".* does not support the given explanation setting"):
+        _ = Explainer(
+            model=model,
+            algorithm=AttentionExplainer(),
+            explanation_type=explanation_type,
+            edge_mask_type='object',
+            model_config=dict(
+                mode='multiclass_classification',
+                task_level='node',
+                return_type='raw',
+            ),
+            node_mask_type=mask_type,
+        )
