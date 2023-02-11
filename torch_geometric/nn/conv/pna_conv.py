@@ -3,6 +3,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import torch
 from torch import Tensor
 from torch.nn import ModuleList, Sequential
+from torch.utils.data import DataLoader
 
 from torch_geometric.nn.aggr import DegreeScalerAggregation
 from torch_geometric.nn.conv import MessagePassing
@@ -76,7 +77,7 @@ class PNAConv(MessagePassing):
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
-        train_norm (bool, optional) Whether normalization parameters
+        train_norm (bool, optional): Whether normalization parameters
             are trainable. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -192,17 +193,17 @@ class PNAConv(MessagePassing):
                 f'edge_dim={self.edge_dim})')
 
     @staticmethod
-    def get_degree_histogram(loader) -> Tensor:
-        max_degree = 0
+    def get_degree_histogram(loader: DataLoader) -> Tensor:
+        deg_histogram = torch.zeros(1, dtype=torch.long)
         for data in loader:
             d = degree(data.edge_index[1], num_nodes=data.num_nodes,
                        dtype=torch.long)
-            max_degree = max(max_degree, int(d.max()))
-        # Compute the in-degree histogram tensor
-        deg_histogram = torch.zeros(max_degree + 1, dtype=torch.long)
-        for data in loader:
-            d = degree(data.edge_index[1], num_nodes=data.num_nodes,
-                       dtype=torch.long)
-            deg_histogram += torch.bincount(d, minlength=deg_histogram.numel())
+            d_bincount = torch.bincount(d, minlength=deg_histogram.numel())
+            if d_bincount.size(0) > deg_histogram.size(0):
+                d_bincount[:deg_histogram.size(0)] += deg_histogram
+                deg_histogram = d_bincount
+            else:
+                assert d_bincount.size(0) == deg_histogram.size(0)
+                deg_histogram += d_bincount
 
         return deg_histogram

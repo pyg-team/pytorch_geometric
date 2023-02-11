@@ -3,6 +3,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import HGTConv
+from torch_geometric.profile import benchmark
 
 
 def test_hgt_conv_same_dimensions():
@@ -148,17 +149,15 @@ def test_hgt_conv_out_of_place():
 
 if __name__ == '__main__':
     import argparse
-    import time
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     args = parser.parse_args()
 
-    num_nodes, num_edges, num_feats, num_heads = 30000, 300000, 64, 4
-
+    num_nodes, num_edges = 30_000, 300_000
     x_dict = {
-        'paper': torch.randn(num_nodes, num_feats, device=args.device),
-        'author': torch.randn(num_nodes, num_feats, device=args.device),
+        'paper': torch.randn(num_nodes, 64, device=args.device),
+        'author': torch.randn(num_nodes, 64, device=args.device),
     }
     edge_index_dict = {
         ('paper', 'to', 'paper'):
@@ -173,22 +172,13 @@ if __name__ == '__main__':
         in_channels=64,
         out_channels=64,
         metadata=(list(x_dict.keys()), list(edge_index_dict.keys())),
-        heads=num_heads,
+        heads=4,
     ).to(args.device)
 
-    num_warmups, num_steps = 50, 100
-    if args.device == 'cpu':
-        num_warmups, num_steps = num_warmups // 10, num_steps // 10
-
-    t_forward = 0
-    for i in range(num_warmups + num_steps):
-        torch.cuda.synchronize()
-        t_start = time.perf_counter()
-
-        out_dict = conv(x_dict, edge_index_dict)
-
-        torch.cuda.synchronize()
-        if i >= num_warmups:
-            t_forward += time.perf_counter() - t_start
-
-    print(f'Forward: {t_forward:.4f}s')
+    benchmark(
+        funcs=[conv],
+        args=(x_dict, edge_index_dict),
+        num_steps=10 if args.device == 'cpu' else 100,
+        num_warmups=5 if args.device == 'cpu' else 50,
+        backward=False,
+    )

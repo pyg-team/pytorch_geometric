@@ -54,6 +54,23 @@ def test_in_memory_dataset():
     assert torch.equal(dataset[1:].x, x2)
 
 
+def test_in_memory_dataset_copy():
+    data_list = [Data(x=torch.randn(5, 16)) for _ in range(4)]
+    dataset = MyTestDataset(data_list)
+
+    copied_dataset = dataset.copy()
+    assert id(copied_dataset) != id(dataset)
+
+    assert len(copied_dataset) == len(dataset) == 4
+    for copied_data, data in zip(copied_dataset, dataset):
+        assert torch.equal(copied_data.x, data.x)
+
+    copied_dataset = dataset.copy([1, 2])
+    assert len(copied_dataset) == 2
+    assert torch.equal(copied_dataset[0].x, data_list[1].x)
+    assert torch.equal(copied_dataset[1].x, data_list[2].x)
+
+
 def test_to_datapipe():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -147,8 +164,8 @@ def test_hetero_in_memory_dataset():
         'paper', 'paper'].edge_index.tolist())
 
 
-def test_override_behaviour():
-    class DS(Dataset):
+def test_override_behavior():
+    class DS1(Dataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -193,7 +210,10 @@ def test_override_behaviour():
         def _process(self):
             self.enter_process = True
 
-    ds = DS()
+    class DS4(DS1):
+        pass
+
+    ds = DS1()
     assert ds.enter_download
     assert ds.enter_process
 
@@ -204,6 +224,10 @@ def test_override_behaviour():
     ds = DS3()
     assert not ds.enter_download
     assert not ds.enter_process
+
+    ds = DS4()
+    assert ds.enter_download
+    assert ds.enter_process
 
 
 def test_lists_of_tensors_in_memory_dataset():

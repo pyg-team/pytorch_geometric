@@ -87,10 +87,10 @@ class Dataset(torch.utils.data.Dataset):
         self.log = log
         self._indices: Optional[Sequence] = None
 
-        if self.download.__qualname__.split('.')[0] != 'Dataset':
+        if self.has_download:
             self._download()
 
-        if self.process.__qualname__.split('.')[0] != 'Dataset':
+        if self.has_process:
             self._process()
 
     def indices(self) -> Sequence:
@@ -177,12 +177,22 @@ class Dataset(torch.utils.data.Dataset):
             files = files()
         return [osp.join(self.processed_dir, f) for f in to_list(files)]
 
+    @property
+    def has_download(self) -> bool:
+        r"""Checks whether the dataset defines a :meth:`download` method."""
+        return overrides_method(self.__class__, 'download')
+
     def _download(self):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
         makedirs(self.raw_dir)
         self.download()
+
+    @property
+    def has_process(self) -> bool:
+        r"""Checks whether the dataset defines a :meth:`process` method."""
+        return overrides_method(self.__class__, 'process')
 
     def _process(self):
         f = osp.join(self.processed_dir, 'pre_transform.pt')
@@ -263,7 +273,7 @@ class Dataset(torch.utils.data.Dataset):
         elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
             return self.index_select(idx.flatten().tolist())
 
-        elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
+        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
             idx = idx.flatten().nonzero()[0]
             return self.index_select(idx.flatten().tolist())
 
@@ -331,6 +341,19 @@ class Dataset(torch.utils.data.Dataset):
         from torch_geometric.data.datapipes import DatasetAdapter
 
         return DatasetAdapter(self)
+
+
+def overrides_method(cls, method_name: str):
+    from torch_geometric.data import InMemoryDataset
+
+    if method_name in cls.__dict__:
+        return True
+
+    out = False
+    for base in cls.__bases__:
+        if base != Dataset and base != InMemoryDataset:
+            out |= overrides_method(base, method_name)
+    return out
 
 
 def to_list(value: Any) -> Sequence:

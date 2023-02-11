@@ -1,9 +1,9 @@
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.node_loader import NodeLoader
 from torch_geometric.sampler import NeighborSampler
-from torch_geometric.typing import InputNodes, NumNeighbors, OptTensor
+from torch_geometric.typing import EdgeType, InputNodes, OptTensor
 
 
 class NeighborLoader(NodeLoader):
@@ -90,17 +90,15 @@ class NeighborLoader(NodeLoader):
     The :class:`~torch_geometric.loader.NeighborLoader` will return subgraphs
     where global node indices are mapped to local indices corresponding to this
     specific subgraph. However, often times it is desired to map the nodes of
-    the current subgraph back to the global node indices. A simple trick to
-    achieve this is to include this mapping as part of the :obj:`data` object:
+    the current subgraph back to the global node indices. The
+    :class:`~torch_geometric.loader.NeighborLoader` will include this mapping
+    as part of the :obj:`data` object:
 
     .. code-block:: python
 
-        # Assign each node its global node index:
-        data.n_id = torch.arange(data.num_nodes)
-
         loader = NeighborLoader(data, ...)
         sampled_data = next(iter(loader))
-        print(sampled_data.n_id)
+        print(sampled_data.n_id)  # Global node index of each node in batch.
 
     Args:
         data (Any): A :class:`~torch_geometric.data.Data`,
@@ -109,9 +107,9 @@ class NeighborLoader(NodeLoader):
             :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
-            If an entry is set to :obj:`-1`, all neighbors will be included.
         input_nodes (torch.Tensor or str or Tuple[str, torch.Tensor]): The
             indices of nodes for which neighbors are sampled to create
             mini-batches.
@@ -146,7 +144,8 @@ class NeighborLoader(NodeLoader):
             timestamps for the nodes in the graph.
             If set, temporal sampling will be used such that neighbors are
             guaranteed to fulfill temporal constraints, *i.e.* neighbors have
-            an earlier timestamp than the center node. (default: :obj:`None`)
+            an earlier or equal timestamp than the center node.
+            (default: :obj:`None`)
         transform (Callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -175,7 +174,7 @@ class NeighborLoader(NodeLoader):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
         input_nodes: InputNodes = None,
         input_time: OptTensor = None,
         replace: bool = False,

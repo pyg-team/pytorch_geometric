@@ -3,14 +3,13 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, fill_diag, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.utils import add_remaining_self_loops, scatter
+from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
+from torch_geometric.utils import add_remaining_self_loops, scatter, spmm
 
 
 class EGConv(MessagePassing):
@@ -163,7 +162,7 @@ class EGConv(MessagePassing):
                 if self.cached and cache is not None:
                     edge_index = cache
                 else:
-                    edge_index = fill_diag(edge_index, 1.0)
+                    edge_index = torch_sparse.fill_diag(edge_index, 1.0)
                     if self.cached:
                         self._cached_adj_t = edge_index
 
@@ -229,15 +228,15 @@ class EGConv(MessagePassing):
         outs = []
         for aggr in self.aggregators:
             if aggr == 'symnorm':
-                out = matmul(adj_t, x, reduce='sum')
+                out = spmm(adj_t, x, reduce='sum')
             elif aggr in ['var', 'std']:
-                mean = matmul(adj_t_2, x, reduce='mean')
-                mean_sq = matmul(adj_t_2, x * x, reduce='mean')
+                mean = spmm(adj_t_2, x, reduce='mean')
+                mean_sq = spmm(adj_t_2, x * x, reduce='mean')
                 out = mean_sq - mean * mean
                 if aggr == 'std':
                     out = torch.sqrt(out.relu_() + 1e-5)
             else:
-                out = matmul(adj_t_2, x, reduce=aggr)
+                out = spmm(adj_t_2, x, reduce=aggr)
 
             outs.append(out)
 

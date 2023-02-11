@@ -20,7 +20,7 @@ class Taobao(InMemoryDataset):
     Taobao is a heterogeneous graph for recommendation.
     Nodes represent users with user IDs, items with item IDs, and categories
     with category ID.
-    Edges between users and items represent different types of user behaviours
+    Edges between users and items represent different types of user behaviors
     towards items (alongside with timestamps).
     Edges between items and categories assign each item to its set of
     categories.

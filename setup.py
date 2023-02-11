@@ -22,7 +22,11 @@ graphgym_requires = [
     'pytorch-lightning',
 ]
 
-full_requires = graphgym_requires + [
+modelhub_requires = [
+    'huggingface_hub',
+]
+
+full_requires = graphgym_requires + modelhub_requires + [
     'ase',
     'h5py',
     'numba',
@@ -37,6 +41,9 @@ full_requires = graphgym_requires + [
     'matplotlib',
     'scikit-image',
     'pytorch-memlab',
+    'pgmpy',
+    'opt_einsum',  # required for pgmpy
+    'statsmodels',
 ]
 
 benchmark_requires = [
@@ -77,6 +84,7 @@ setup(
     install_requires=install_requires,
     extras_require={
         'graphgym': graphgym_requires,
+        'modelhub': modelhub_requires,
         'full': full_requires,
         'benchmark': benchmark_requires,
         'test': test_requires,

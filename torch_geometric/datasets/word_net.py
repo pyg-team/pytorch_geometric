@@ -4,6 +4,7 @@ from typing import Callable, List, Optional
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import index_sort
 
 
 class WordNet18(InMemoryDataset):
@@ -81,7 +82,7 @@ class WordNet18(InMemoryDataset):
         test_mask[srcs[0].size(0) + srcs[1].size(0):] = True
 
         num_nodes = max(int(src.max()), int(dst.max())) + 1
-        perm = (num_nodes * src + dst).argsort()
+        _, perm = index_sort(num_nodes * src + dst)
 
         edge_index = torch.stack([src[perm], dst[perm]], dim=0)
         edge_type = edge_type[perm]
@@ -191,7 +192,7 @@ class WordNet18RR(InMemoryDataset):
         test_mask[srcs[0].size(0) + srcs[1].size(0):] = True
 
         num_nodes = max(int(src.max()), int(dst.max())) + 1
-        perm = (num_nodes * src + dst).argsort()
+        _, perm = index_sort(num_nodes * src + dst)
 
         edge_index = torch.stack([src[perm], dst[perm]], dim=0)
         edge_type = edge_type[perm]
