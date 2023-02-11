@@ -53,8 +53,7 @@ def test_feature_store():
     view['index'] = index
     assert view == AttrView(store, TensorAttr(group_name, attr_name, index))
     assert (view == 0) is False
-    assert view.__repr__(
-    ) == "AttrView(store=MyFeatureStore(), attr=TensorAttr(group_name='A', attr_name='feat', index=tensor([0, 1, 2])))"
+    assert view.__repr__() == "AttrView(store=MyFeatureStore(),attr=TensorAttr(group_name='A', attr_name='feat', index=tensor([0, 1, 2])))"
 
     # Indexing:
     store[group_name, attr_name, index] = tensor
