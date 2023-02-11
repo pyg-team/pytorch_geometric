@@ -30,6 +30,8 @@ def test_feature_store():
     attr_name = 'feat'
     index = torch.tensor([0, 1, 2])
     attr = TensorAttr(group_name, attr_name, index)
+    attr2 = TensorAttr(group_name)
+    attr2.update(attr)
 
     # Normal API:
     store.put_tensor(tensor, attr)
@@ -38,15 +40,20 @@ def test_feature_store():
         store.get_tensor(group_name, attr_name, index=torch.tensor([0, 2])),
         tensor[torch.tensor([0, 2])],
     )
+    assert store.update_tensor(torch.tensor([0, 2]),group_name, attr_name, None)
     store.remove_tensor(group_name, attr_name, None)
     with pytest.raises(KeyError):
         _ = store.get_tensor(attr)
+    
 
     # Views:
     view = store.view(group_name=group_name)
     view.attr_name = attr_name
     view['index'] = index
     assert view == AttrView(store, TensorAttr(group_name, attr_name, index))
+    assert (view == 0) is False
+    assert view.__repr__(
+    ) == "AttrView(store=MyFeatureStore(), attr=TensorAttr(group_name='A', attr_name='feat', index=tensor([0, 1, 2])))"
 
     # Indexing:
     store[group_name, attr_name, index] = tensor
