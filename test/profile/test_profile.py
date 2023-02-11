@@ -11,11 +11,11 @@ from torch_geometric.profile import (
     timeit,
 )
 from torch_geometric.profile.profile import torch_profile
-from torch_geometric.testing import onlyCUDA, onlyFullTest, onlyUnix, withCUDA
+from torch_geometric.testing import onlyCUDA, onlyLinux, withCUDA, withPackage
 
 
 @withCUDA
-@onlyUnix
+@onlyLinux
 def test_timeit(device):
     x = torch.randn(100, 16, device=device)
     lin = torch.nn.Linear(16, 32).to(device)
@@ -34,8 +34,8 @@ def test_timeit(device):
 
 
 @onlyCUDA
-@onlyFullTest
-def test_profile(get_dataset):
+@withPackage('pytorch_memlab')
+def test_profileit(get_dataset):
     dataset = get_dataset(name='Cora')
     data = dataset[0].cuda()
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,

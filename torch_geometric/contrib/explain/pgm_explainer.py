@@ -1,8 +1,9 @@
 import logging
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import torch
+from torch import Tensor
 
 from torch_geometric.explain import ExplainerAlgorithm
 from torch_geometric.explain.config import ModelMode, ModelTaskLevel
@@ -14,35 +15,34 @@ from torch_geometric.utils.subgraph import get_num_hops
 class PGMExplainer(ExplainerAlgorithm):
     r"""The PGMExplainer model from the `"PGMExplainer: Probabilistic
     Graphical Model Explanations  for Graph Neural Networks"
-    <https://arxiv.org/abs/1903.03894>`_ paper
+    <https://arxiv.org/abs/1903.03894>`_ paper.
 
-    The generated :obj:`Explanation` will provide a :obj:`node_mask` and also a
-    :obj:`pgm_stats` tensor which stores the p_values of each of the nodes
-    as calculated by the chi_square test (pgmpy.estimators.CITests.chi_square)
-    used to generate the node mask
+    The generated :class:`~torch_geometric.explain.Explanation` provides a
+    :obj:`node_mask` and a :obj:`pgm_stats` tensor, which stores the
+    :math:`p`-values of each node as calculated by the Chi-squared test.
 
     Args:
         feature_index (List): The indices of the perturbed features. If set
-            to :obj:`None` all features are perturbed. (default: :obj:`None`)
-        perturb_mode (str): The method to generate the variations in
-            features one of
-            :obj:`['randint', 'mean', 'zero', 'max', 'uniform']`
-            . (default: :obj:`'randint'`)
-        perturbations_is_positive_only (bool): If set to :obj:`True` restrict
-             perturbed values to be positive. (default: :obj:`False`)
-        is_perturbation_scaled (bool): If set to :obj:`True` normalise the
-            range of the perturbed features. (default: :obj:`False`)
-        num_samples (int): num of samples of perturbations used to test
-            the significance of nodes to the prediction. (default: :obj:`100`)
-        max_subgraph_size (int): The maximum number neighbors to consider
-            for the explanation. (default: :obj:`None`)
-        significance_threshold (float): statistical threshold (p-value)
-            below which a node is considered to have an effect on
-            the prediction. (default: :obj:`0.05`)
-        pred_threshold (float): buffer value (in the range :obj:`0-1`) to
-            consider the output from a perturbed data to be different
-            from the original. (default: :obj:`0.1`)
-
+            to :obj:`None`, all features are perturbed. (default: :obj:`None`)
+        perturb_mode (str, optional): The method to generate the variations in
+            features. One of :obj:`"randint"`, :obj:`"mean"`, :obj:`"zero"`,
+            :obj:`"max"` or :obj:`"uniform"`. (default: :obj:`"randint"`)
+        perturbations_is_positive_only (bool, optional): If set to :obj:`True`,
+            restrict perturbed values to be positive. (default: :obj:`False`)
+        is_perturbation_scaled (bool, optional): If set to :obj:`True`, will
+            normalize the range of the perturbed features.
+            (default: :obj:`False`)
+        num_samples (int, optional): The number of samples of perturbations
+            used to test the significance of nodes to the prediction.
+            (default: :obj:`100`)
+        max_subgraph_size (int, optional): The maximum number of neighbors to
+            consider for the explanation. (default: :obj:`None`)
+        significance_threshold (float, optional): The statistical threshold
+            (:math:`p`-value) for which a node is considered to have an effect
+            on the prediction. (default: :obj:`0.05`)
+        pred_threshold (float, optional): The buffer value (in range
+            :obj:`[0, 1]`) to consider the output from a perturbed data to be
+            different from the original. (default: :obj:`0.1`)
     """
     def __init__(
         self,
@@ -67,21 +67,15 @@ class PGMExplainer(ExplainerAlgorithm):
 
     def _perturb_features_on_nodes(
         self,
-        x: torch.Tensor,
-        index: torch.Tensor,
-    ) -> torch.Tensor:
-        r"""Perturb feature matrix :obj:`x`.
+        x: Tensor,
+        index: Tensor,
+    ) -> Tensor:
+        r"""Perturbs feature matrix :obj:`x`.
 
         Args:
-            x (torch.Tensor) : The feature matrix of
-                the input graph of shape :obj:`[num_nodes, num_features]`.
-            index (torch.Tensor): The indexes of the nodes to perturb.
-
-        Returns:
-            a randomly perturbed feature matrix
-
+            x (torch.Tensor): The feature matrix.
+            index (torch.Tensor): The indices of nodes to perturb.
         """
-
         x_perturb = x.detach().clone()
         perturb_array = x_perturb[index]
         epsilon = 0.05 * torch.max(x, dim=0).values
@@ -89,7 +83,6 @@ class PGMExplainer(ExplainerAlgorithm):
         if self.perturbation_mode == "randint":
             perturb_array = torch.randint(high=2, size=perturb_array.size(),
                                           device=x.device)
-        # graph explainers
         elif self.perturbation_mode == "mean":
             perturb_array[:, self.feature_index] = torch.mean(
                 x[:, self.feature_index])
@@ -115,28 +108,22 @@ class PGMExplainer(ExplainerAlgorithm):
     def _batch_perturb_features_on_node(
             self,
             model: torch.nn.Module,
-            x: torch.Tensor,
-            edge_index: torch.Tensor,
+            x: Tensor,
+            edge_index: Tensor,
             indices_to_perturb: np.array,
             percentage: float = 50.,  # % time node gets perturbed
-            **kwargs) -> torch.Tensor:
-        r"""Perturb the node features of a batch of graphs
-        for graph classification tasks
+            **kwargs) -> Tensor:
+        r"""Perturbs the node features of a batch of graphs for graph
+        classification tasks.
 
         Args:
             model (torch.nn.Module): The GNN model.
             x (torch.Tensor): The node feature matrix
-            edge_index (torch.Tensor): The edge index.
-            num_samples: Number of samples to generate for constructing the
-                pgm.
-            indices_to_perturb (np.array): The indexes of nodes to perturb.
-            percentage: The percentage of times a node gets perturbed.
-
-        Returns:
-            samples (torch.Tensor): the batch of perturbed features
-
+            edge_index (torch.Tensor): The edge indices.
+            indices_to_perturb (np.array): The indices of nodes to perturb.
+            percentage (float, optional): The percentage of times a node gets
+                perturbed. (default: :obj:`50.`)
         """
-
         pred_torch = model(x, edge_index, **kwargs)
         soft_pred = torch.softmax(pred_torch, dim=1)
         pred_label = torch.argmax(soft_pred, dim=1)
@@ -181,27 +168,25 @@ class PGMExplainer(ExplainerAlgorithm):
     def _explain_graph(
         self,
         model: torch.nn.Module,
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
+        x: Tensor,
+        edge_index: Tensor,
         target=None,
         **kwargs,
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        r"""Generate explanations for graph classification tasks
+    ) -> Tuple[Tensor, Tensor]:
+        r"""Generates explanations for graph classification tasks.
 
         Args:
-            model: pytorch model
-            x (torch.Tensor): node features
-            edge_index (torch.Tensor): edge_index of the input graph
-            target(torch.Tensor): The predicted label from the model
+            model (torch.nn.Module): The model to explain.
+            x (torch.Tensor): The node features.
+            edge_index (torch.Tensor): The edge indices of the input graph.
+            target (torch.Tensor): The predicted label from the model.
 
         Returns:
-            pgm_nodes (List): neighbour nodes that are significant
-                 in the selected node's prediction
-            pgm_stats (torch.Tensor): : p-values of all the nodes in the graph
-                ordered by node index
-
+            pgm_nodes (List): The neighbor nodes that are significant in the
+                selected node's prediction.
+            pgm_stats (torch.Tensor): The :math:`p`-values of all the nodes in
+                the graph, ordered by node index.
         """
-
         import pandas as pd
         from pgmpy.estimators.CITests import chi_square
 
@@ -264,25 +249,30 @@ class PGMExplainer(ExplainerAlgorithm):
 
         return node_mask, pgm_stats
 
-    def _explain_node(self, model: torch.nn.Module, x: torch.Tensor,
-                      edge_index: torch.Tensor, target: torch.Tensor,
-                      index: int,
-                      **kwargs) -> Tuple[torch.Tensor, torch.Tensor]:
-        r"""Generate explanations for node classification tasks
+    def _explain_node(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        target: Tensor,
+        index: int,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
+        r"""Generates explanations for node classification tasks.
 
         Args:
-            model (torch.nn.Module): model that generated the predictions
-            x (torch.Tensor): node feature matrix
-            edge_index (torch.Tensor): edge_index of the input graph
-            target (torch.Tensor):  the prediction labels
-            index (torch.Tensor): the index of the node that the
-                explanations are being generated for
+            model (torch.nn.Module): The model to explain.
+            x (torch.Tensor): The node features.
+            edge_index (torch.Tensor): The edge indices of the input graph.
+            target (torch.Tensor): The predicted label from the model.
+            index (torch.Tensor): The index of the node that the
+                explanations are generated for.
 
         Returns:
-            node_mask (torch.Tensor): 1 or 0 corresponding to whether a node
-                is significant in the selected node's prediction
-            pgm_stats (torch.Tensor): p-values of all the nodes in the
-                graph ordered by node index
+            node_mask (torch.Tensor): A hard node mask corresponding to whether
+                a node is significant in the selected node's prediction.
+            pgm_stats (torch.Tensor): The :math:`p`-values of all the nodes in
+                the graph, ordered by node index.
         """
 
         import pandas as pd
@@ -380,17 +370,18 @@ class PGMExplainer(ExplainerAlgorithm):
     def forward(
         self,
         model: torch.nn.Module,
-        x: torch.Tensor,
-        edge_index: torch.Tensor,
-        target: torch.Tensor,
-        index: Optional[int] = None,  # node index
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,  # node index
         **kwargs,
     ) -> Explanation:
 
         if self.feature_index is None:
             self.feature_index = list(range(x.shape[-1]))
 
-        if isinstance(index, torch.Tensor):
+        if isinstance(index, Tensor):
             if index.numel() > 1:
                 raise NotImplementedError(
                     f"'{self.__class__.__name}' only supports a single "
@@ -398,22 +389,29 @@ class PGMExplainer(ExplainerAlgorithm):
             index = index.item()
 
         if self.model_config.task_level == ModelTaskLevel.node:
-
-            node_mask, pgm_stats = self._explain_node(model=model, x=x,
-                                                      edge_index=edge_index,
-                                                      target=target[index],
-                                                      index=index, **kwargs)
+            node_mask, pgm_stats = self._explain_node(
+                model=model,
+                x=x,
+                edge_index=edge_index,
+                target=target[index],
+                index=index,
+                **kwargs,
+            )
             return Explanation(
                 x=x,
                 edge_index=edge_index,
                 node_mask=node_mask,
                 pgm_stats=pgm_stats,
             )
+
         elif self.model_config.task_level == ModelTaskLevel.graph:
-            node_mask, pgm_stats = self._explain_graph(model=model, x=x,
-                                                       target=target,
-                                                       edge_index=edge_index,
-                                                       **kwargs)
+            node_mask, pgm_stats = self._explain_graph(
+                model=model,
+                x=x,
+                target=target,
+                edge_index=edge_index,
+                **kwargs,
+            )
             return Explanation(
                 node_mask=node_mask,
                 pgm_stats=pgm_stats,
@@ -425,9 +423,9 @@ class PGMExplainer(ExplainerAlgorithm):
             logging.error(f"Task level '{task_level.value}' not supported")
             return False
         if self.explainer_config.edge_mask_type is not None:
-            logging.error("Edge masks not supported by PGM explainer")
+            logging.error("Generation of edge masks is not supported")
             return False
         if self.model_config.mode == ModelMode.regression:
-            logging.error("PGM explainer only supports classification tasks")
+            logging.error("'PGMExplainer' only supports classification tasks")
             return False
         return True

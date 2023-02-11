@@ -17,8 +17,7 @@ try:  # Define global config object
 except ImportError:
     cfg = None
     warnings.warn("Could not define global config object. Please install "
-                  "'yacs' for using the GraphGym experiment manager via "
-                  "'pip install yacs'.")
+                  "'yacs' via 'pip install yacs' in order to use GraphGym")
 
 
 def set_cfg(cfg):

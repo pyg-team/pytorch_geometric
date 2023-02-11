@@ -49,7 +49,7 @@ class DataParallel(torch.nn.DataParallel):
         """"""
         if len(data_list) == 0:
             logging.warning('DataParallel received an empty data list, which '
-                            'may result in unexpected behaviour.')
+                            'may result in unexpected behavior.')
             return None
 
         if not self.device_ids or len(self.device_ids) == 1:  # Fallback
