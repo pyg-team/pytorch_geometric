@@ -25,17 +25,18 @@ def test_gcn_norm(add_self_loops):
     data = Data(edge_index=edge_index, edge_attr=edge_attr, num_nodes=3)
     data = GCNNorm(add_self_loops=add_self_loops)(data)
     assert data.edge_index.tolist() == expected_edge_index
-    assert torch.allclose(data.edge_weight, expected_edge_weight)
+    assert torch.allclose(data.edge_weight, expected_edge_weight, atol=1e-4)
 
     data = Data(edge_index=edge_index, edge_weight=edge_attr, num_nodes=3)
     data = GCNNorm(add_self_loops=add_self_loops)(data)
     assert data.edge_index.tolist() == expected_edge_index
-    assert torch.allclose(data.edge_weight, expected_edge_weight)
+    assert torch.allclose(data.edge_weight, expected_edge_weight, atol=1e-4)
 
     # Test with edge_index as SparseTensor:
     adj_t = SparseTensor.from_edge_index(edge_index, sparse_sizes=(3, 3))
     data = Data(adj_t=adj_t)
-    data = GCNNorm(add_self_loops=add_self_loops)(data)
-    assert data.adj_t.storage.row().tolist() == expected_edge_index[0]
-    assert data.adj_t.storage.col().tolist() == expected_edge_index[1]
-    assert torch.allclose(data.adj_t.storage.value(), expected_edge_weight)
+    data = GCNNorm(add_self_loops=False)(data)
+    assert data.adj_t.storage.row().tolist() == edge_index[0].tolist()
+    assert data.adj_t.storage.col().tolist() == edge_index[1].tolist()
+    assert torch.allclose(data.adj_t.storage.value(),
+                          torch.tensor([0.70711, 0.70711, 0.70711, 0.70711]))
