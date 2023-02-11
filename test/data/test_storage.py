@@ -3,7 +3,7 @@ from typing import Any
 
 import torch
 
-from torch_geometric.data.storage import BaseStorage, NodeStorage
+from torch_geometric.data.storage import BaseStorage
 from torch_geometric.testing import onlyCUDA
 
 
