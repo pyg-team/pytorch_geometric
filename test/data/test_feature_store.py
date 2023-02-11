@@ -32,6 +32,7 @@ def test_feature_store():
     attr = TensorAttr(group_name, attr_name, index)
     attr2 = TensorAttr(group_name)
     attr2.update(attr)
+    assert attr2 == attr
 
     # Normal API:
     store.put_tensor(tensor, attr)
