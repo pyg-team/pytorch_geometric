@@ -27,6 +27,8 @@ def test_in_memory_dataset():
     assert str(dataset) == 'MyTestDataset(2)'
     assert len(dataset) == 2
 
+    assert dataset.num_classes == 0
+
     assert len(dataset[0]) == 6
     assert dataset[0].num_nodes == 10
     assert dataset[0].x.tolist() == x1.tolist()
