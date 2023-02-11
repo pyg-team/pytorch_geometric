@@ -75,14 +75,10 @@ edge_label_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
 @pytest.mark.parametrize('return_type',
                          [ModelReturnType.probs, ModelReturnType.raw])
 @pytest.mark.parametrize('index', indices)
-def test_gnn_explainer_binary_classification(
-    edge_mask_type,
-    node_mask_type,
-    explanation_type,
-    task_level,
-    return_type,
-    index,
-):
+def test_gnn_explainer_binary_classification(edge_mask_type, node_mask_type,
+                                             explanation_type, task_level,
+                                             return_type, index,
+                                             check_explanation):
     model_config = ModelConfig(
         mode='binary_classification',
         task_level=task_level,
@@ -127,6 +123,7 @@ def test_gnn_explainer_multiclass_classification(
     task_level,
     return_type,
     index,
+    check_explanation,
 ):
     model_config = ModelConfig(
         mode='multiclass_classification',
@@ -164,6 +161,7 @@ def test_gnn_explainer_regression(
     explanation_type,
     task_level,
     index,
+    check_explanation,
 ):
     model_config = ModelConfig(
         mode='regression',
@@ -187,34 +185,6 @@ def test_gnn_explainer_regression(
     assert explainer.algorithm.edge_mask is None
 
     check_explanation(explanation, node_mask_type, edge_mask_type)
-
-
-def check_explanation(
-    explanation: Explanation,
-    node_mask_type: Optional[MaskType],
-    edge_mask_type: Optional[MaskType],
-):
-    if node_mask_type == MaskType.attributes:
-        assert explanation.node_mask.size() == explanation.x.size()
-        assert explanation.node_mask.min() >= 0
-        assert explanation.node_mask.max() <= 1
-    elif node_mask_type == MaskType.object:
-        assert explanation.node_mask.size() == (explanation.num_nodes, 1)
-        assert explanation.node_mask.min() >= 0
-        assert explanation.node_mask.max() <= 1
-    elif node_mask_type == MaskType.common_attributes:
-        assert explanation.node_mask.size() == (1, explanation.num_features)
-        assert explanation.node_mask.min() >= 0
-        assert explanation.node_mask.max() <= 1
-    elif node_mask_type is None:
-        assert 'node_mask' not in explanation
-
-    if edge_mask_type == MaskType.object:
-        assert explanation.edge_mask.size() == (explanation.num_edges, )
-        assert explanation.edge_mask.min() >= 0
-        assert explanation.edge_mask.max() <= 1
-    elif edge_mask_type is None:
-        assert 'edge_mask' not in explanation
 
 
 def create_explainer(model: torch.nn.Module, explanation_type: ExplanationType,
