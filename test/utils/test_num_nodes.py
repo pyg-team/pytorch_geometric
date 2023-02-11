@@ -23,5 +23,5 @@ def test_maybe_num_nodes_dict():
     assert maybe_num_nodes_dict(edge_index_dict) == {'1': 3, '2': 5}
     assert maybe_num_nodes_dict(edge_index_dict, num_nodes_dict) == {
         '1': 3,
-        '2': 6
+        '2': 6,
     }
