@@ -41,11 +41,11 @@ def test_feature_store():
         store.get_tensor(group_name, attr_name, index=torch.tensor([0, 2])),
         tensor[torch.tensor([0, 2])],
     )
-    assert store.update_tensor(torch.tensor([0, 2]),group_name, attr_name, None)
+    assert store.update_tensor(torch.tensor([0, 2]), group_name, attr_name,
+                               None)
     store.remove_tensor(group_name, attr_name, None)
     with pytest.raises(KeyError):
         _ = store.get_tensor(attr)
-    
 
     # Views:
     view = store.view(group_name=group_name)
