@@ -11,6 +11,7 @@ def test_dataset_summary():
     num_edges = torch.Tensor([data.num_edges for data in dataset])
 
     summary = dataset.get_summary()
+
     assert summary.name == 'FakeDataset'
     assert summary.num_graphs == 10
 
