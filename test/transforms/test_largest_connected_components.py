@@ -13,13 +13,13 @@ def test_largest_connected_components():
     ])
     data = Data(edge_index=edge_index, num_nodes=10)
 
-    # Testing without `connection` specified
+    # Testing without `connection` specified:
     transform = LargestConnectedComponents(num_components=2)
     out = transform(data)
     assert out.num_nodes == 8
     assert out.edge_index.tolist() == data.edge_index[:, :12].tolist()
 
-    # Testing with `connection = strong`
+    # Testing with `connection = strong`:
     transform = LargestConnectedComponents(num_components=2,
                                            connection='strong')
     out = transform(data)
@@ -33,14 +33,14 @@ def test_largest_connected_components():
     ])
     data = Data(edge_index=edge_index, num_nodes=5)
 
-    # Testing without `num_components` and `connection` specified
+    # Testing without `num_components` and `connection` specified:
     transform = LargestConnectedComponents()
     out = transform(data)
     assert out.num_nodes == 3
     assert out.edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
 
-    # Testing with specified num_components more than scipy's num_components
+    # Testing with larger `num_components` than actual number of components:
     transform = LargestConnectedComponents(num_components=3)
     out = transform(data)
-    assert out.num_nodes == int(edge_index.max()) + 1
+    assert out.num_nodes == 5
     assert out.edge_index.tolist() == data.edge_index.tolist()

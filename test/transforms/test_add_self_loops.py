@@ -5,7 +5,7 @@ from torch_geometric.transforms import AddSelfLoops
 
 
 def test_add_self_loops():
-    assert AddSelfLoops().__repr__() == 'AddSelfLoops()'
+    assert str(AddSelfLoops()) == 'AddSelfLoops()'
 
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     edge_weight = torch.tensor([1, 2, 3, 4])
