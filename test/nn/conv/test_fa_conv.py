@@ -12,11 +12,11 @@ def test_fa_conv():
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
-    conv = FAConv(16, eps=1.0)
+    conv = FAConv(16, eps=1.0, cached=True)
     assert conv.__repr__() == 'FAConv(16, eps=1.0)'
     out = conv(x, x_0, edge_index)
     assert out.size() == (4, 16)
-    assert torch.allclose(conv(x, x_0, adj.t()), out, atol=1e-6)
+    assert torch.allclose(conv(x, x_0, adj.t()), out)
 
     if is_full_test():
         t = '(Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor'
@@ -56,3 +56,7 @@ def test_fa_conv():
         assert torch.allclose(result[0], out, atol=1e-6)
         assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
         assert conv._alpha is None
+
+    conv.reset_parameters()
+    assert conv._cached_edge_index is None
+    assert conv._cached_adj_t is None
