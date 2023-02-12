@@ -314,7 +314,7 @@ class Dataset(torch.utils.data.Dataset):
         from torch_geometric.data.summary import Summary
         return Summary.from_dataset(self)
 
-    def print_summary(self):
+    def print_summary(self):  # pragma: no cover
         r"""Prints summary statistics of the dataset to the console."""
         print(str(self.get_summary()))
 
