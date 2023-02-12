@@ -9,9 +9,11 @@ from torch_geometric.testing import onlyCUDA
 
 def test_base_storage():
     storage = BaseStorage()
+    assert storage._mapping == {}
     storage.x = torch.zeros(1)
     storage.y = torch.ones(1)
     assert len(storage) == 2
+    assert storage._mapping == {'x': torch.zeros(1), 'y': torch.ones(1)}
     assert storage.x is not None
     assert storage.y is not None
 
@@ -19,10 +21,6 @@ def test_base_storage():
     assert torch.allclose(storage.get('y', None), storage.y)
     assert storage.get('z', 2) == 2
     assert storage.get('z', None) is None
-    assert getattr(storage, '_mapping') == {
-        'x': torch.zeros(1),
-        'y': torch.ones(1)
-    }
     assert len(list(storage.keys('x', 'y', 'z'))) == 2
     assert len(list(storage.keys('x', 'y', 'z'))) == 2
     assert len(list(storage.values('x', 'y', 'z'))) == 2
@@ -48,27 +46,45 @@ def test_base_storage():
     assert int(storage.x) == 0
     assert int(copied_storage.x) == 0
 
-    deepcopied_storage = storage.clone()
+    deepcopied_storage = copy.deepcopy(storage)
     assert storage == deepcopied_storage
     assert id(storage) != id(deepcopied_storage)
     assert storage.x.data_ptr() != deepcopied_storage.x.data_ptr()
     assert int(storage.x) == 0
     assert int(deepcopied_storage.x) == 0
 
-    storage.share_memory_()
-    storage.detach()
-    storage.detach_()
 
+def test_storage_tensor_methods():
+    x = torch.randn(5)
+    storage = BaseStorage({'x': x})
 
-@onlyCUDA
-def test_cuda_storage():
-    storage = BaseStorage()
-    storage.x = torch.zeros(1)
-    storage.y = torch.ones(1)
-    storage.to("cuda:0")
-    storage.cpu()
-    storage.pin_memory()  # only dense CPU tensors can be pinned
-    storage.cuda(0)
+    storage = storage.clone()
+    assert storage.x.data_ptr() != x.data_ptr()
+
+    storage = storage.contiguous()
+    assert storage.x.is_contiguous()
+
+    storage = storage.to('cpu')
+    assert storage.x.device == torch.device('cpu')
+
+    storage = storage.cpu()
+    assert storage.x.device == torch.device('cpu')
+
+    if torch.cuda.is_available():
+        storage = storage.pin_memory()
+        assert storage.x.is_pinned()
+
+    storage = storage.share_memory_()
+    assert storage.x.is_shared
+
+    storage = storage.detach_()
+    assert not storage.x.requires_grad
+
+    storage = storage.detach()
+    assert not storage.x.requires_grad
+
+    storage = storage.requires_grad_()
+    assert storage.x.requires_grad
 
 
 def test_setter_and_getter():
