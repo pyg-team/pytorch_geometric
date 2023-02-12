@@ -302,7 +302,7 @@ class RandomLinkSplit(BaseTransform):
             # in case no negative edges are added.
             if neg_edge_index.numel() > 0:
                 assert edge_label.dtype == torch.long
-                assert edge_label.size(0) == store.edge_index.size(1)
+                assert edge_label.size(0) == edge_index.size(1)
                 edge_label.add_(1)
             if hasattr(out, self.key):
                 delattr(out, self.key)

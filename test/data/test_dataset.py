@@ -54,6 +54,24 @@ def test_in_memory_dataset():
     assert torch.equal(dataset[1:].x, x2)
 
 
+def test_in_memory_num_classes():
+    dataset = MyTestDataset([Data(), Data()])
+    assert dataset.num_classes == 0
+
+    dataset = MyTestDataset([Data(y=0), Data(y=1)])
+    assert dataset.num_classes == 2
+
+    dataset = MyTestDataset([Data(y=1.5), Data(y=2.5), Data(y=3.5)])
+    assert dataset.num_classes == 3
+
+    dataset = MyTestDataset([
+        Data(y=torch.tensor([[0, 1, 0, 1]])),
+        Data(y=torch.tensor([[1, 0, 0, 0]])),
+        Data(y=torch.tensor([[0, 0, 1, 0]])),
+    ])
+    assert dataset.num_classes == 4
+
+
 def test_in_memory_dataset_copy():
     data_list = [Data(x=torch.randn(5, 16)) for _ in range(4)]
     dataset = MyTestDataset(data_list)
