@@ -124,8 +124,8 @@ def test_add_remaining_self_loops():
     assert out[1].tolist() == [0.5, 0.5, 0.5, 0.5]
 
     # Test with `edge_attr`:
-    fill_value = torch.Tensor([0, 1, 0])
-    out = add_remaining_self_loops(edge_index, edge_attr, fill_value)
+    out = add_remaining_self_loops(edge_index, edge_attr,
+                                   fill_value=torch.tensor([0., 1., 0.]))
     assert out[0].tolist() == expected
     assert out[1].tolist() == [[1., 0., 0.], [0., 1., 0.], [0., 0., 1.],
                                [0., 1., 0.]]
