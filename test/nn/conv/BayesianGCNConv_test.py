@@ -1,5 +1,5 @@
-from typing import Optional
 import copy
+from typing import Optional
 
 import torch
 import torch.nn.functional as F
@@ -9,13 +9,12 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor
-# for the last version of torch_geometric
-from torch_geometric.utils import spmm
-
 # Import BayesianGCNConv once merged in the library
 # from torch_geometric.nn.conv.BayesianGCNConv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor
+# for the last version of torch_geometric
+from torch_geometric.utils import spmm
 
 
 class BayesianGCNConv(MessagePassing):
