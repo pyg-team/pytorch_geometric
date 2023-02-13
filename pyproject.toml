@@ -34,6 +34,7 @@ filterwarnings = [
     "ignore:scatter_reduce() is in beta and the API may change at any time:UserWarning",
     "ignore:'torch_geometric.contrib' contains experimental code:UserWarning",
     "ignore:Setting backward hooks on ReLU activations:UserWarning",
+    "ignore:did not already require gradients, required_grads has been set automatically:UserWarning",
 ]
 
 [tool.pylint.messages_control]
