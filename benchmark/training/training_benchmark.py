@@ -148,29 +148,20 @@ def run(args: argparse.ArgumentParser) -> None:
                         f'''num_neighbors={num_neighbors} lenght
                         != num of layers={layers}'''
 
-                    kwargs = {'num_neighbors': num_neighbors,
-                              'batch_size': batch_size,
-                              'shuffle': shuffle,
-                              'num_workers': args.num_workers}
-                    subgraph_loader = NeighborLoader(
-                        data,
-                        input_nodes=mask,
-                        sampler=sampler,
-                        **kwargs
-                    )
+                    kwargs = {
+                        'num_neighbors': num_neighbors,
+                        'batch_size': batch_size,
+                        'shuffle': shuffle,
+                        'num_workers': args.num_workers
+                    }
+                    subgraph_loader = NeighborLoader(data, input_nodes=mask,
+                                                     sampler=sampler, **kwargs)
                     if args.evaluate:
-                        val_loader = NeighborLoader(
-                            data,
-                            input_nodes=val_mask,
-                            sampler=None,
-                            **kwargs
-                        )
-                        test_loader = NeighborLoader(
-                            data,
-                            input_nodes=test_mask,
-                            sampler=None,
-                            **kwargs
-                        )
+                        val_loader = NeighborLoader(data, input_nodes=val_mask,
+                                                    sampler=None, **kwargs)
+                        test_loader = NeighborLoader(data,
+                                                     input_nodes=test_mask,
+                                                     sampler=None, **kwargs)
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
                         print(f'Batch size={batch_size}, '

@@ -77,45 +77,38 @@ def run(args: argparse.ArgumentParser) -> None:
                 sampler = torch.utils.data.RandomSampler(
                     range(num_nodes), num_samples=args.num_steps * batch_size
                 ) if args.num_steps != -1 and with_loader else None
-                kwargs = {'batch_size': batch_size,
-                          'shuffle': False,
-                          'num_workers': args.num_workers}
+                kwargs = {
+                    'batch_size': batch_size,
+                    'shuffle': False,
+                    'num_workers': args.num_workers
+                }
                 if not hetero:
                     subgraph_loader = NeighborLoader(
                         data,
                         num_neighbors=[-1],  # layer-wise inference
                         input_nodes=mask,
                         sampler=sampler,
-                        **kwargs
-                    ) if with_loader else None
+                        **kwargs) if with_loader else None
                     if args.evaluate and not args.full_batch:
                         test_loader = NeighborLoader(
                             data,
                             num_neighbors=[-1],  # layer-wise inference
                             input_nodes=test_mask,
                             sampler=None,
-                            **kwargs
-                        )
+                            **kwargs)
 
                 for layers in args.num_layers:
                     num_neighbors = [args.hetero_num_neighbors] * layers
                     if hetero:
                         # batch-wise inference
                         subgraph_loader = NeighborLoader(
-                            data,
-                            num_neighbors=num_neighbors,
-                            input_nodes=mask,
-                            sampler=sampler,
-                            **kwargs
-                        ) if with_loader else None
+                            data, num_neighbors=num_neighbors,
+                            input_nodes=mask, sampler=sampler, **
+                            kwargs) if with_loader else None
                         if args.evaluate and not args.full_batch:
                             test_loader = NeighborLoader(
-                                data,
-                                num_neighbors=num_neighbors,
-                                input_nodes=test_mask,
-                                sampler=None,
-                                **kwargs
-                            )
+                                data, num_neighbors=num_neighbors,
+                                input_nodes=test_mask, sampler=None, **kwargs)
 
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
