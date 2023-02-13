@@ -394,7 +394,7 @@ class HGTConv(MessagePassing):
                 self.q_lin[node_type].initialize_parameters(None, x_n)
                 self.v_lin[node_type].initialize_parameters(None, x_n)
         else:
-            xs = x_dict.values()
+            xs = list(x_dict.values())
             self.dims = torch.tensor([x_j.shape[-1] for x_j in xs])
             self.max_channels = self.dims.max()
             input_to_init_w = xs[self.dims.argmax()]
