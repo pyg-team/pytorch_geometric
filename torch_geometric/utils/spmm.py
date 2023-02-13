@@ -31,9 +31,9 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum", convert_to_csr: bool = Fa
     """
     assert reduce in ['sum', 'add', 'mean', 'min', 'max'], (reduce, 
                     " reduction is not supported for `torch.sparse.Tensor`.")
-    if not is_sparse(src):
-        raise ValueError("`src` must be a `torch_sparse.SparseTensor` "
-                         f"or a `torch.sparse.Tensor` (got {type(src)}).")
+    # if not is_sparse(src):
+    #     raise ValueError("`src` must be a `torch_sparse.SparseTensor` "
+    #                      f"or a `torch.sparse.Tensor` (got {type(src)}).")
     
     if isinstance(src, SparseTensor):
         return torch_sparse.matmul(src, other, reduce)
