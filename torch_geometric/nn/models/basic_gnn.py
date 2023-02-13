@@ -250,16 +250,6 @@ class BasicGNN(torch.nn.Module):
 
         return x_all
 
-    @torch.no_grad()
-    def test(self, x_all: Tensor, loader: NeighborLoader,
-             device: Optional[torch.device] = None,
-             progress_bar: bool = False) -> Tensor:
-        y_hat = x_all.argmax(dim=-1)
-        y = loader.data.y.to(y_hat.device)
-
-        mask = loader.data.test_mask
-        return int((y_hat[mask] == y[mask]).sum()) / int(mask.sum())
-
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, num_layers={self.num_layers})')

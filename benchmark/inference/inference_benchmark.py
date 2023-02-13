@@ -3,7 +3,7 @@ from contextlib import nullcontext
 
 import torch
 
-from benchmark.utils import emit_itt, get_dataset, get_model
+from benchmark.utils import emit_itt, get_dataset, get_model, get_split_mask
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -18,8 +18,14 @@ supported_sets = {
 @torch.no_grad()
 def full_batch_inference(model, data):
     model.eval()
-    y = model(data.x, data.edge_index)
-    return y
+    return model(data.x, data.edge_index)
+
+
+def test(y, loader):
+    y_hat = y.argmax(dim=-1)
+    y = loader.data.y.to(y_hat.device)
+    mask = loader.data.test_mask
+    return int((y_hat[mask] == y[mask]).sum()) / int(mask.sum())
 
 
 def run(args: argparse.ArgumentParser) -> None:
@@ -41,11 +47,7 @@ def run(args: argparse.ArgumentParser) -> None:
         data = dataset.to(device)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
-        if args.evaluate:
-            if dataset_name == 'ogbn-mag':
-                test_mask = ('paper', data['paper'].test_mask)
-            else:
-                test_mask = data.test_mask
+        _, _, test_mask = get_split_mask(data, dataset_name)
         degree = None
 
         if args.num_layers != [1] and not hetero and args.num_steps != -1:
@@ -75,26 +77,24 @@ def run(args: argparse.ArgumentParser) -> None:
                 sampler = torch.utils.data.RandomSampler(
                     range(num_nodes), num_samples=args.num_steps * batch_size
                 ) if args.num_steps != -1 and with_loader else None
-
+                kwargs = {'batch_size': batch_size,
+                          'shuffle': False,
+                          'num_workers': args.num_workers}
                 if not hetero:
                     subgraph_loader = NeighborLoader(
                         data,
                         num_neighbors=[-1],  # layer-wise inference
                         input_nodes=mask,
-                        batch_size=batch_size,
-                        shuffle=False,
-                        num_workers=args.num_workers,
                         sampler=sampler,
+                        **kwargs
                     ) if with_loader else None
                     if args.evaluate and not args.full_batch:
                         test_loader = NeighborLoader(
                             data,
                             num_neighbors=[-1],  # layer-wise inference
                             input_nodes=test_mask,
-                            batch_size=batch_size,
-                            shuffle=False,
-                            num_workers=args.num_workers,
                             sampler=None,
+                            **kwargs
                         )
 
                 for layers in args.num_layers:
@@ -105,20 +105,16 @@ def run(args: argparse.ArgumentParser) -> None:
                             data,
                             num_neighbors=num_neighbors,
                             input_nodes=mask,
-                            batch_size=batch_size,
-                            shuffle=False,
-                            num_workers=args.num_workers,
                             sampler=sampler,
+                            **kwargs
                         ) if with_loader else None
                         if args.evaluate and not args.full_batch:
                             test_loader = NeighborLoader(
                                 data,
                                 num_neighbors=num_neighbors,
                                 input_nodes=test_mask,
-                                batch_size=batch_size,
-                                shuffle=False,
-                                num_workers=args.num_workers,
                                 sampler=None,
+                                **kwargs
                             )
 
                     for hidden_channels in args.num_hidden_channels:
@@ -147,6 +143,7 @@ def run(args: argparse.ArgumentParser) -> None:
                             model_name, params,
                             metadata=data.metadata() if hetero else None)
                         model = model.to(device)
+                        # TODO: migrate this to ModelHubMixin when it's done.
                         if args.ckpt_path:
                             state_dict = torch.load(args.ckpt_path)
                             model.load_state_dict(state_dict)
@@ -205,7 +202,7 @@ def run(args: argparse.ArgumentParser) -> None:
                             total_num_samples = num_nodes
                         throughput = total_num_samples / total_time
                         latency = total_time / total_num_samples * 1000
-                        print(f'Throughput: {throughput:.3f} fps')
+                        print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
 

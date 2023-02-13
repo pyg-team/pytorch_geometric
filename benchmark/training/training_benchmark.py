@@ -6,7 +6,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from benchmark.utils import emit_itt, get_dataset, get_model
+from benchmark.utils import emit_itt, get_dataset, get_model, get_split_mask
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -111,15 +111,7 @@ def run(args: argparse.ArgumentParser) -> None:
             data, num_classes = get_dataset(dataset_name, args.root,
                                             args.use_sparse_tensor, args.bf16)
         hetero = True if dataset_name == 'ogbn-mag' else False
-        mask = ('paper', data['paper'].train_mask
-                ) if dataset_name == 'ogbn-mag' else data.train_mask
-        if args.evaluate:
-            if dataset_name == 'ogbn-mag':
-                val_mask = ('paper', data['paper'].val_mask)
-                test_mask = ('paper', data['paper'].test_mask)
-            else:
-                val_mask = data.val_mask
-                test_mask = data.test_mask
+        mask, val_mask, test_mask = get_split_mask(data, dataset_name)
         degree = None
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
@@ -156,33 +148,28 @@ def run(args: argparse.ArgumentParser) -> None:
                         f'''num_neighbors={num_neighbors} lenght
                         != num of layers={layers}'''
 
+                    kwargs = {'num_neighbors': num_neighbors,
+                              'batch_size': batch_size,
+                              'shuffle': shuffle,
+                              'num_workers': args.num_workers}
                     subgraph_loader = NeighborLoader(
                         data,
-                        num_neighbors=num_neighbors,
                         input_nodes=mask,
-                        batch_size=batch_size,
-                        shuffle=shuffle,
-                        num_workers=args.num_workers,
                         sampler=sampler,
+                        **kwargs
                     )
                     if args.evaluate:
                         val_loader = NeighborLoader(
                             data,
-                            num_neighbors=num_neighbors,
                             input_nodes=val_mask,
-                            batch_size=batch_size,
-                            shuffle=shuffle,
-                            num_workers=args.num_workers,
                             sampler=None,
+                            **kwargs
                         )
                         test_loader = NeighborLoader(
                             data,
-                            num_neighbors=num_neighbors,
                             input_nodes=test_mask,
-                            batch_size=batch_size,
-                            shuffle=shuffle,
-                            num_workers=args.num_workers,
                             sampler=None,
+                            **kwargs
                         )
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
@@ -270,7 +257,7 @@ def run(args: argparse.ArgumentParser) -> None:
                             total_num_samples = num_nodes
                         throughput = total_num_samples / total_time
                         latency = total_time / total_num_samples * 1000
-                        print(f'Throughput: {throughput:.3f} fps')
+                        print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
 
