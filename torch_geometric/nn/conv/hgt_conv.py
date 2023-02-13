@@ -12,7 +12,6 @@ from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.nn.parameter_dict import ParameterDict
-
 from torch_geometric.typing import (
     EdgeType,
     Metadata,
@@ -119,8 +118,8 @@ class HGTConv(MessagePassing):
         self.infer_shapes = self.max_channels == -1
         if self.infer_shapes:
             self._hook = self.register_forward_pre_hook(
-                        self.initialize_parameters)
-        if self.use_gmm: # pragma: no cover
+                self.initialize_parameters)
+        if self.use_gmm:  # pragma: no cover
             # grouped gemm allows us not to have to pad
             for node_type, in_channels in self.in_channels.items():
                 self.k_lin[node_type] = Linear(in_channels, out_channels)
@@ -229,7 +228,7 @@ class HGTConv(MessagePassing):
             v_bias = torch.stack(v_biases)
 
         # compute K, Q, V over node-types
-        if self.use_gmm: # pragma: no cover
+        if self.use_gmm:  # pragma: no cover
             # compute K
             k_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=k_wts,
                                                 biases=k_biases)
@@ -278,7 +277,7 @@ class HGTConv(MessagePassing):
         m_rels = [
             self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
-        if self.use_gmm: # pragma: no cover
+        if self.use_gmm:  # pragma: no cover
             k_ins = [
                 k_dict[src_type].transpose(0, 1) for src_type in self.src_types
             ]
@@ -390,7 +389,7 @@ class HGTConv(MessagePassing):
     @torch.no_grad()
     def initialize_parameters(self, module, input):
         x_dict = input[0]
-        if self.use_gmm: # pragma: no cover
+        if self.use_gmm:  # pragma: no cover
             for node_type, x_n in x_dict.items():
                 self.k_lin[node_type].initialize_parameters(None, x_n)
                 self.q_lin[node_type].initialize_parameters(None, x_n)
