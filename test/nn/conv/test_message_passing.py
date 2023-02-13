@@ -54,7 +54,7 @@ def test_my_conv():
     row, col = edge_index
     value = torch.randn(row.size(0))
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
-    torch_adj = adj.to_torch_sparse_coo_tensor()
+    torch_adj = adj.to_torch_sparse_csr_tensor()
 
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
@@ -68,7 +68,7 @@ def test_my_conv():
     conv.fuse = True
 
     adj = adj.sparse_resize((4, 2))
-    torch_adj = adj.to_torch_sparse_coo_tensor()
+    torch_adj = adj.to_torch_sparse_csr_tensor()
 
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
@@ -211,7 +211,7 @@ def test_my_multiple_aggr_conv(multi_aggr_tuple):
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    torch_adj = adj.to_torch_sparse_coo_tensor()
+    torch_adj = adj.to_torch_sparse_csr_tensor()
 
     conv = MyMultipleAggrConv(aggr_kwargs=aggr_kwargs)
     out = conv(x, edge_index)
@@ -280,7 +280,7 @@ def test_my_edge_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    torch_adj = adj.to_torch_sparse_coo_tensor()
+    torch_adj = adj.to_torch_sparse_csr_tensor()
 
     expected = scatter(x[row] - x[col], col, dim=0, dim_size=4, reduce='sum')
 
@@ -443,7 +443,7 @@ def test_my_default_arg_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    torch_adj = adj.to_torch_sparse_coo_tensor()
+    torch_adj = adj.to_torch_sparse_csr_tensor()
 
     conv = MyDefaultArgConv()
     assert conv(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
