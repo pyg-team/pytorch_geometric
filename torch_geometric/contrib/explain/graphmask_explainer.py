@@ -366,7 +366,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                         f'{layer}')
                 elif self.model_config.task_level == ModelTaskLevel.edge:
                     pbar.set_description(
-                        f"Train explainer for 'edge' Task-level with layer "
+                        f"Train explainer for edge-level task with layer "
                         f"{layer}")
                 else:
                     pbar.set_description(
@@ -479,7 +479,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     if self.model_config.task_level == ModelTaskLevel.node:
                         pbar.set_description(f'Explain node(s) {index}')
                     elif self.model_config.task_level == ModelTaskLevel.edge:
-                        pbar.set_description("Explain 'edge' Task-level")
+                        pbar.set_description("Explain 'edge'-level task")
                     else:
                         pbar.set_description(f'Explain graph {index}')
                 output = self.full_biases[i]
