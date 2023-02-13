@@ -476,12 +476,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 pbar = tqdm(total=self.num_layers)
             for i in range(self.num_layers):
                 if self.log:
-                    if self.model_config.task_level == ModelTaskLevel.node:
-                        pbar.set_description(f'Explain node(s) {index}')
-                    elif self.model_config.task_level == ModelTaskLevel.edge:
-                        pbar.set_description("Explain 'edge'-level task")
-                    else:
-                        pbar.set_description(f'Explain graph {index}')
+                    pbar.set_description("Explain")
                 output = self.full_biases[i]
                 for j in range(len(gate_input)):
                     partial = self.gates[i * 4][j](gate_input[j][i])
