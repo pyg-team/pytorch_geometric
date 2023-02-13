@@ -70,7 +70,7 @@ class FAConv(MessagePassing):
                  normalize: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
-        super(FAConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.channels = channels
         self.eps = eps
