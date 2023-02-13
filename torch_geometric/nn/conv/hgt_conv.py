@@ -336,13 +336,12 @@ class HGTConv(MessagePassing):
         for e_type in self.edge_types:
             src_type, _, dst_type = e_type
             indices = edge_index_dict[e_type]
-            # (TODO) Add support for SparseTensor w/o converting
+            # (TODO) Add support for SparseTensor w/o converting?
             convert = isinstance(indices, SparseTensor)
             if convert:
                 # convert to COO
                 dst, src, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
-                convert = True
             offset = [[node_slices[src_type][0]], [node_slices[dst_type][0]]]
             offset = torch.tensor(offset, device=indices.device)
             edge_index_list.append(indices + offset)
@@ -396,8 +395,8 @@ class HGTConv(MessagePassing):
                 self.q_lin[node_type].initialize_parameters(None, x_n)
                 self.v_lin[node_type].initialize_parameters(None, x_n)
         else:
-            self.dims = torch.tensor(
-                [x_j.shape[-1] for x_j in x_dict.values()])
+            xs = x_dict.values()
+            self.dims = torch.tensor([x_j.shape[-1] for x_j in xs])
             self.max_channels = self.dims.max()
             input_to_init_w = xs[self.dims.argmax()]
             for node_type in x_dict.keys():
