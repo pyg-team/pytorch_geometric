@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.3.0] - 2023-MM-DD
 
 ### Added
-
+- Added high-level API for the CPU optimized `spmm_reduce` using CSR format ([#6689](https://github.com/pyg-team/pytorch_geometric/pull/6689))
 - Added `Pad` transform ([#5940](https://github.com/pyg-team/pytorch_geometric/pull/5940))
 - Added full batch mode to the inference benchmark ([#6631](https://github.com/pyg-team/pytorch_geometric/pull/6631))
 - Added `cat` aggregation type to the `HeteroConv` class so that features can be concatenated during grouping ([#6634](https://github.com/pyg-team/pytorch_geometric/pull/6634))
