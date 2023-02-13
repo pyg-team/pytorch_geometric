@@ -130,17 +130,31 @@ class InMemoryDataset(Dataset):
 
     @property
     def data(self) -> Any:
-        warnings.warn("It is not recommended to directly access the internal "
-                      "storage format `data` of an 'InMemoryDataset'. If you "
-                      "are absolutely certain what you are doing, access the "
-                      "internal storage via `InMemoryDataset._data` instead. "
-                      "Alternatively, you can access stacked individual "
-                      "attributes of every graph via `dataset.{attr_name}`.")
+        msg1 = ("It is not recommended to directly access the internal "
+                "storage format `data` of an 'InMemoryDataset'.")
+        msg2 = ("If you are absolutely certain what you are doing, access the "
+                "internal storage via `InMemoryDataset._data` instead to "
+                "suppress this warning. Alternatively, you can access stacked "
+                "individual attributes of every graph via "
+                "`dataset.{attr_name}`.")
+
+        if self._indices is not None:
+            msg = (f"{msg1} The given 'InMemoryDataset' only references a "
+                   f"subset of examples in the full dataset, but 'data' will "
+                   f"return the data of the full dataset. {msg2}")
+        else:
+            msg = f"{msg1} {msg2}"
+
+        warnings.warn(msg)
+
+        self._data_list = None
+
         return self._data
 
     @data.setter
     def data(self, value: Any):
         self._data = value
+        self._data_list = None
 
     def __getattr__(self, key: str) -> Any:
         data = self.__dict__.get('_data')
