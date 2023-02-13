@@ -37,16 +37,17 @@ def test_dataloader_with_imbalanced_sampler():
 
     assert torch.allclose(y, torch.cat([batch.y for batch in loader]))
 
-    # Test with list of Data where each y is a tensor:
-    for data in data_list:
-        data['y'] = torch.tensor([data.y])
+    # Test with list of data objects as input where each y is a tensor:
     torch.manual_seed(12345)
+    for data in data_list:
+        data.y = torch.tensor([data.y])
     sampler = ImbalancedSampler(data_list)
     loader = DataLoader(data_list, batch_size=100, sampler=sampler)
 
     assert torch.allclose(y, torch.cat([batch.y for batch in loader]))
 
-    # Test with InMemoryDataset as input:
+
+def test_in_memory_dataset_imbalanced_sampler():
     torch.manual_seed(12345)
     dataset = FakeDataset(num_graphs=100, avg_num_nodes=10, avg_degree=0,
                           num_channels=0, num_classes=2)

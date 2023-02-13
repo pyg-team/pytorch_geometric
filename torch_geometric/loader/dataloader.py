@@ -35,7 +35,8 @@ class Collater:
 
         raise TypeError(f'DataLoader found invalid type: {type(elem)}')
 
-    def collate(self, batch):  # Deprecated...
+    def collate(self, batch):  # pragma: no cover
+        # TODO Deprecated, remove soon.
         return self(batch)
 
 

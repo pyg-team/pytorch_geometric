@@ -24,7 +24,7 @@ class GCN(torch.nn.Module):
 
 
 @withCUDA
-def test_pg_explainer_node(device):
+def test_pg_explainer_node(device, check_explanation):
     x = torch.randn(8, 3, device=device)
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
@@ -60,14 +60,11 @@ def test_pg_explainer_node(device):
 
     explanation = explainer(x, edge_index, target=target, index=0)
 
-    assert 'node_mask' not in explanation
-    assert explanation.edge_mask.size() == (explanation.num_edges, )
-    assert explanation.edge_mask.min() >= 0
-    assert explanation.edge_mask.max() <= 1
+    check_explanation(explanation, None, explainer.edge_mask_type)
 
 
 @withCUDA
-def test_pg_explainer_graph(device):
+def test_pg_explainer_graph(device, check_explanation):
     x = torch.randn(8, 3, device=device)
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
@@ -102,7 +99,4 @@ def test_pg_explainer_graph(device):
 
     explanation = explainer(x, edge_index, target=target)
 
-    assert 'node_mask' not in explanation
-    assert explanation.edge_mask.size() == (explanation.num_edges, )
-    assert explanation.edge_mask.min() >= 0
-    assert explanation.edge_mask.max() <= 1
+    check_explanation(explanation, None, explainer.edge_mask_type)

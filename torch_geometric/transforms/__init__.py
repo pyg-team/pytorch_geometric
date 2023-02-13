@@ -11,6 +11,7 @@ from .remove_training_classes import RemoveTrainingClasses
 from .random_node_split import RandomNodeSplit
 from .random_link_split import RandomLinkSplit
 from .mask import IndexToMask, MaskToIndex
+from .pad import Pad
 
 from .to_undirected import ToUndirected
 from .one_hot_degree import OneHotDegree
@@ -70,6 +71,7 @@ general_transforms = [
     'RandomLinkSplit',
     'IndexToMask',
     'MaskToIndex',
+    'Pad',
 ]
 
 graph_transforms = [
