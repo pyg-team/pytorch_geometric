@@ -545,8 +545,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns the induced subgraph containing the node types and
         corresponding nodes in :obj:`subset_dict`.
 
-        If a node type is not a key in :obj:`subset_dict` then all nodes of that type remain in the graph.
-
+        If a node type is not a key in :obj:`subset_dict` then all nodes of that
+        type remain in the graph.
         .. code-block:: python
 
             data = HeteroData()
