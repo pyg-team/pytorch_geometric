@@ -18,7 +18,7 @@ from torch_geometric.utils import spmm
 
 
 class BayesianGCNConv(MessagePassing):
-   r"""The Bayesian graph convolutional operator inspired from the `"Improving model calibration with
+    r"""The Bayesian graph convolutional operator inspired from the `"Improving model calibration with
    accuracy versus uncertainty optimization"
    <https://arxiv.org/abs/2012.07923>`_ paper
    We first proceed wth linear transformation:
@@ -105,10 +105,10 @@ class BayesianGCNConv(MessagePassing):
           with variational parameters math:`(\theta = (\mu, \rho))` to make an approximation
           of the variational posterior math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
    """
-   _cached_edge_index: Optional[OptPairTensor]
-   _cached_adj_t: Optional[SparseTensor]
+    _cached_edge_index: Optional[OptPairTensor]
+    _cached_adj_t: Optional[SparseTensor]
 
-   def __init__(self, in_channels: int, out_channels: int, prior_mean=0,
+    def __init__(self, in_channels: int, out_channels: int, prior_mean=0,
                  prior_variance=1, posterior_mu_init=0,
                  posterior_rho_init=-3.0, cached: bool = False,
                  normalize: bool = False, bias: bool = True, **kwargs):
@@ -156,7 +156,7 @@ class BayesianGCNConv(MessagePassing):
 
         self.reset_parameters()
 
-   def reset_parameters(self):
+    def reset_parameters(self):
         self.prior_weight_mu.fill_(self.prior_mean)
         self.prior_weight_sigma.fill_(self.prior_variance)
 
@@ -170,7 +170,7 @@ class BayesianGCNConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-   def kl_div(self, mu_q, sigma_q, mu_p, sigma_p):
+    def kl_div(self, mu_q, sigma_q, mu_p, sigma_p):
         """
         Calculates kl divergence between two gaussians (Q || P)
         Parameters:
@@ -185,7 +185,7 @@ class BayesianGCNConv(MessagePassing):
                                                           (sigma_p**2)) - 0.5
         return kl.mean()
 
-   def kl_loss(self):
+    def kl_loss(self):
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
         kl = self.kl_div(self.mu_weight, sigma_weight, self.prior_weight_mu,
                          self.prior_weight_sigma)
@@ -195,7 +195,7 @@ class BayesianGCNConv(MessagePassing):
                               self.prior_bias_sigma)
         return kl
 
-   def forward(self, x: Tensor, edge_index: Adj,
+    def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None,
                 return_kl: bool = True) -> Tensor:
         """"""
@@ -264,8 +264,8 @@ class BayesianGCNConv(MessagePassing):
                 kl = kl_weight
                 return out
 
-   def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
-      return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
+    def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
-   def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-      return spmm(adj_t, x, reduce=self.aggr)
+    def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
+        return spmm(adj_t, x, reduce=self.aggr)
