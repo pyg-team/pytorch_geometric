@@ -1,5 +1,7 @@
 import torch
 from torch import Tensor
+from torch_geometric.nn.to_hetero_module import ToHeteroLinear
+from torch_geometric.nn.typing import Metadata
 
 
 class HeteroNorm(torch.nn.Module):
@@ -10,6 +12,8 @@ class HeteroNorm(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
+        norm_type (str): Which of "BatchNorm", "InstanceNorm", "LayerNorm" to use
+            (default: "BatchNorm")
         eps (float, optional): A value added to the denominator for numerical
             stability. (default: :obj:`1e-5`)
         momentum (float, optional): The value used for the running mean and
@@ -27,19 +31,18 @@ class HeteroNorm(torch.nn.Module):
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
-    def __init__(self, in_channels: int, eps: float = 1e-5,
+    def __init__(self, in_channels: int, norm_type: str, metadata: Metadata, eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
                  track_running_stats: bool = True,
                  allow_single_element: bool = False):
         super().__init__()
-
+        if not norm_type.lower() in ["batchnorm", "instancenorm", "layernorm"]:
+            raise ValueError('Please choose norm type from "BatchNorm", "InstanceNorm", "LayerNorm"')
         if allow_single_element and not track_running_stats:
             raise ValueError("'allow_single_element' requires "
                              "'track_running_stats' to be set to `True`")
-
-        self.module = torch.nn.BatchNorm1d(in_channels, eps, momentum, affine,
-                                           track_running_stats)
         self.in_channels = in_channels
+        self.hetero_linear = ToHeteroLinear(Linear(self.in_channels, self.in_channels), metadata)
         self.allow_single_element = allow_single_element
 
     def reset_parameters(self):
