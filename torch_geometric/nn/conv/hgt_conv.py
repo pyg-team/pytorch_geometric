@@ -26,7 +26,10 @@ def pad_list(xs: List[Tensor]) -> List[Tensor]:
     for i, x in enumerate(xs):
         if x.shape[1] < max_size:
             xs[i] = torch.concat(
-                (x, torch.zeros((x.shape[0], max_size - x.shape[1]), device=x.device)), dim=1)
+                (x,
+                 torch.zeros(
+                     (x.shape[0], max_size - x.shape[1]), device=x.device)),
+                dim=1)
     return xs
 
 
@@ -112,7 +115,7 @@ class HGTConv(MessagePassing):
         self.dims = torch.tensor(list(self.in_channels.values()))
         self.max_channels = self.dims.max()
         self.infer_shapes = self.max_channels == -1
-        if self.use_gmm: # pragma: no cover
+        if self.use_gmm:  # pragma: no cover
             # grouped gemm allows us not to have to pad
             for node_type, in_channels in self.in_channels.items():
                 self.k_lin[node_type] = Linear(in_channels, out_channels)
@@ -196,7 +199,7 @@ class HGTConv(MessagePassing):
                     self.infer_shapes = False
                     self.no_pad = (self.dims == self.max_channels).all()
                 x = torch.cat(pad_list(xs))
-        elif self.infer_shapes: # pragma: no cover
+        elif self.infer_shapes:  # pragma: no cover
             # initialize lazy params
             for node_type, x_n in x_dict.items():
                 self.k_lin[node_type].initialize_parameters(None, x_n)
@@ -242,7 +245,7 @@ class HGTConv(MessagePassing):
             v_bias = torch.stack(v_biases)
 
         # compute K, Q, V over node-types
-        if self.use_gmm: # pragma: no cover
+        if self.use_gmm:  # pragma: no cover
             # compute K
             k_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=k_wts,
                                                 biases=k_biases)
@@ -291,7 +294,7 @@ class HGTConv(MessagePassing):
         m_rels = [
             self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
-        if self.use_gmm: # pragma: no cover
+        if self.use_gmm:  # pragma: no cover
             k_ins = [
                 k_dict[src_type].transpose(0, 1) for src_type in self.src_types
             ]
