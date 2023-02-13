@@ -21,12 +21,12 @@ from torch_geometric.typing import (
 from torch_geometric.utils import softmax
 
 
-def pad_list(xs: List[Tensor], dims: Tensor) -> List[Tensor]:
-    max_size = dims.max()
+def pad_list(xs: List[Tensor]) -> List[Tensor]:
+    max_size = max(x.size(-1) for x in xs)
     for i, x in enumerate(xs):
         if x.shape[1] < max_size:
             xs[i] = torch.concat(
-                (x, torch.zeros(x.shape[0], max_size - x.shape[1])), dim=1)
+                (x, torch.zeros((x.shape[0], max_size - x.shape[1]), device=x.device)), dim=1)
     return xs
 
 
@@ -108,10 +108,11 @@ class HGTConv(MessagePassing):
         self.skip = ParameterDict()
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
+        self.src_types = [edge_type[0] for edge_type in self.edge_types]
         self.dims = torch.tensor(list(self.in_channels.values()))
         self.max_channels = self.dims.max()
         self.infer_shapes = self.max_channels == -1
-        if self.use_gmm:
+        if self.use_gmm: # pragma: no cover
             # grouped gemm allows us not to have to pad
             for node_type, in_channels in self.in_channels.items():
                 self.k_lin[node_type] = Linear(in_channels, out_channels)
@@ -194,8 +195,8 @@ class HGTConv(MessagePassing):
                             None, input_to_init_w)
                     self.infer_shapes = False
                     self.no_pad = (self.dims == self.max_channels).all()
-                x = torch.cat(pad_list(xs, self.dims))
-        elif self.infer_shapes:
+                x = torch.cat(pad_list(xs))
+        elif self.infer_shapes: # pragma: no cover
             # initialize lazy params
             for node_type, x_n in x_dict.items():
                 self.k_lin[node_type].initialize_parameters(None, x_n)
@@ -204,8 +205,8 @@ class HGTConv(MessagePassing):
             self.infer_shapes = False
         H, D = self.heads, self.out_channels // self.heads
 
-        k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
-        # parralelize over node-types
+        k_dict, q_dict, v_dict = {}, {}, {}
+        # parallelize over node-types
         k_wts = [
             self.k_lin[node_type].weight.T for node_type in self.node_types
         ]
@@ -224,7 +225,7 @@ class HGTConv(MessagePassing):
         v_biases = [
             self.v_lin[node_type].bias for node_type in self.node_types
         ]
-        out_dict = {node_type: [] for node_type in self.node_types}
+        out_dict = defaultdict(list)
 
         if not self.use_gmm:
             ptr = [0]
@@ -241,7 +242,7 @@ class HGTConv(MessagePassing):
             v_bias = torch.stack(v_biases)
 
         # compute K, Q, V over node-types
-        if self.use_gmm:
+        if self.use_gmm: # pragma: no cover
             # compute K
             k_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=k_wts,
                                                 biases=k_biases)
@@ -284,19 +285,18 @@ class HGTConv(MessagePassing):
             }
 
         # parallelize over edge-types
-        src_types = [edge_type[0] for edge_type in self.edge_types]
         a_rels = [
             self.a_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
         m_rels = [
             self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
-        if self.use_gmm:
+        if self.use_gmm: # pragma: no cover
             k_ins = [
-                k_dict[src_type].transpose(0, 1) for src_type in src_types
+                k_dict[src_type].transpose(0, 1) for src_type in self.src_types
             ]
             v_ins = [
-                v_dict[src_type].transpose(0, 1) for src_type in src_types
+                v_dict[src_type].transpose(0, 1) for src_type in self.src_types
             ]
             k_outs = [
                 k_o_i.transpose(1, 0)
@@ -319,7 +319,7 @@ class HGTConv(MessagePassing):
             v_ins = []
             count = 0
             trans_ptr = [count]
-            for src_type in src_types:
+            for src_type in self.src_types:
                 k_src = k_dict[src_type]
                 v_src = v_dict[src_type]
                 k_ins.append(k_src.view(-1, D))
