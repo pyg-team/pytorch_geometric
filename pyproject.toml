@@ -29,8 +29,10 @@ skip = [".gitingore", "__init__.py"]
 [tool.pytest.ini_options]
 addopts = "--capture=no"
 filterwarnings = [
-    "ignore::DeprecationWarning:tensorboard.*",
     "ignore:distutils:DeprecationWarning",
+    "ignore:The PyTorch API of nested tensors is in prototype stage:UserWarning",
+    "ignore:scatter_reduce() is in beta and the API may change at any time:UserWarning",
+    "ignore:'torch_geometric.contrib' contains experimental code:UserWarning",
 ]
 
 [tool.pylint.messages_control]
