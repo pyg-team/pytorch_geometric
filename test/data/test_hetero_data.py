@@ -245,7 +245,7 @@ def test_hetero_data_subgraph():
                                   data[key].edge_attr[edge_mask[key]])
             assert out[key].name == 'cites'
 
-    # test for mixed selection with ints, bools and missing ntypes
+    # Test for bool and long in `subset_dict`.
     author_mask = torch.zeros((x_author.size(0), ), dtype=torch.bool)
     author_mask[subset['author']] = True
     subset_mixed = {
