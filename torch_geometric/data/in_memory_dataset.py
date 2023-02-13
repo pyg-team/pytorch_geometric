@@ -132,22 +132,28 @@ class InMemoryDataset(Dataset):
     def data(self) -> Any:
         msg1 = ("It is not recommended to directly access the internal "
                 "storage format `data` of an 'InMemoryDataset'.")
-        msg2 = ("If you are absolutely certain what you are doing, access the "
+        msg2 = ("The given 'InMemoryDataset' only references a subset of "
+                "examples of the full dataset, but 'data' will contain "
+                "information of the full dataset.")
+        msg3 = ("The data of the dataset is already cached, so any "
+                "modifications to `data` will not be reflected when accessing "
+                "its elements. Clearing the cache now by removing all "
+                "elements in `dataset._data_list`.")
+        msg4 = ("If you are absolutely certain what you are doing, access the "
                 "internal storage via `InMemoryDataset._data` instead to "
                 "suppress this warning. Alternatively, you can access stacked "
                 "individual attributes of every graph via "
                 "`dataset.{attr_name}`.")
 
+        msg = msg1
         if self._indices is not None:
-            msg = (f"{msg1} The given 'InMemoryDataset' only references a "
-                   f"subset of examples in the full dataset, but 'data' will "
-                   f"return the data of the full dataset. {msg2}")
-        else:
-            msg = f"{msg1} {msg2}"
+            msg += f' {msg2}'
+        if self._data_list is not None:
+            msg += f' {msg3}'
+            self._data_list = None
+        msg += f' {msg4}'
 
         warnings.warn(msg)
-
-        self._data_list = None
 
         return self._data
 
