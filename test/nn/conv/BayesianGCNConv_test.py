@@ -18,7 +18,8 @@ from torch_geometric.utils import spmm
 
 
 class BayesianGCNConv(MessagePassing):
-    r"""The Bayesian graph convolutional operator inspired from the `"Improving model calibration with
+    r"""The Bayesian graph convolutional operator inspired 
+    from the `"Improving model calibration with
    accuracy versus uncertainty optimization"
    <https://arxiv.org/abs/2012.07923>`_ paper
    We first proceed wth linear transformation:
@@ -29,11 +30,14 @@ class BayesianGCNConv(MessagePassing):
    an unconstrained parameter :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
    to avoid non-negative variance.
    \mathbf{b} denotes the bias which is based on the same structure as the weights
-   CAUTION: the weights and `edge_weight` are different parameters, since the `edge_weight``
+   CAUTION: the weights and `edge_weight` 
+   are different parameters, since the `edge_weight``
    are initialized to one, they are not considered as a Parameter.
-   NOTE : the weights and bias are initialized with a Gaussian distribution of mean equal to
+   NOTE : the weights and bias are initialized with 
+   a Gaussian distribution of mean equal to
    0.0 and a standard deviation of 0.1
-   Then propagate the message through the graph with a graph convolution operator
+   Then propagate the message through the graph 
+   with a graph convolution operator
    from the `"Semi-supervised
    Classification with Graph Convolutional Networks"
    <https://arxiv.org/abs/1609.02907>`_ paper
@@ -42,29 +46,39 @@ class BayesianGCNConv(MessagePassing):
         \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta},
    where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
    adjacency matrix with inserted self-loops and
-   :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
-   The adjacency matrix can include other values than :obj:`1` representing
+   :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` 
+   its diagonal degree matrix.
+   The adjacency matrix can include 
+   other values than :obj:`1` representing
    edge weights via the optional :obj:`edge_weight` tensor.
    Its node-wise formulation is given by:
    .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
         \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
         \hat{d}_i}} \mathbf{x}_j
-   with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
-   :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
+   with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`
+   , where
+   :math:`e_{j,i}` denotes the edge weight 
+   from source node :obj:`j` to target
    node :obj:`i` (default: :obj:`1.0`)
    Args:
-        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+        in_channels (int): Size of each input sample,
+        or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
-        prior_mean (float): Mean of the prior arbitrary distribution to be
+        prior_mean (float): Mean of the prior
+        arbitrary distribution to be
             used on the complexity cost (default: :obj:`0.0`)
-        prior_variance (float): Variance of the prior arbitrary distribution
+        prior_variance (float): Variance of 
+        the prior arbitrary distribution
             to be used on the complexity cost (default: :obj:`1.0`)
-        posterior_mu_init (float): Init trainable mu parameter representing
+        posterior_mu_init (float): Init trainable mu 
+        parameter representing
             mean of the approximate posterior (default: :obj:`-3.0`)
-        posterior_rho_init (float): Init trainable rho parameter representing
-            the sigma of the approximate posterior through softplus function
+        posterior_rho_init (float): Init trainable 
+        rho parameter representing
+            the sigma of the approximate 
+            posterior through softplus function
             (default: :obj:`0.0`)
         improved (bool, optional): If set to :obj:`True`, the layer computes
             :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
@@ -73,12 +87,14 @@ class BayesianGCNConv(MessagePassing):
             the computation of :math:`\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
             \mathbf{\hat{D}}^{-1/2}` on first execution, and will use the
             cached version for further executions.
-            This parameter should only be set to :obj:`True` in transductive
+            This parameter should only 
+            be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
         normalize (bool, optional): Whether to add self-loops and compute
             symmetric normalization coefficients on the fly.
             (default: :obj:`True`)
-        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+        bias (bool, optional): If set to :obj:`False`,
+        the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -91,8 +107,10 @@ class BayesianGCNConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{out})`,
           Kullback-Leibler divergence for weights and bias (optional):
           math : `(\mathrm{KL}[q_{\theta}(w)||p(w)])`
-          with variational parameters math:`(\theta = (\mu, \rho))` to make an approximation
-          of the variational posterior math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
+          with variational parameters math:`(\theta = (\mu, \rho))` 
+          to make an approximation
+          of the variational posterior 
+          math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
    """
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
