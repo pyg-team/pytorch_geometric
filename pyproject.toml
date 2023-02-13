@@ -33,6 +33,7 @@ filterwarnings = [
     "ignore:The PyTorch API of nested tensors is in prototype stage:UserWarning",
     "ignore:scatter_reduce() is in beta and the API may change at any time:UserWarning",
     "ignore:'torch_geometric.contrib' contains experimental code:UserWarning",
+    "ignore:Setting backward hooks on ReLU activations:UserWarning",
 ]
 
 [tool.pylint.messages_control]
