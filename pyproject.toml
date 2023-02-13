@@ -29,8 +29,14 @@ skip = [".gitingore", "__init__.py"]
 [tool.pytest.ini_options]
 addopts = "--capture=no"
 filterwarnings = [
-    "ignore::DeprecationWarning:tensorboard.*",
     "ignore:distutils:DeprecationWarning",
+    "ignore:'torch_geometric.contrib' contains experimental code:UserWarning",
+    # Filter `torch` warnings:
+    "ignore:The PyTorch API of nested tensors is in prototype stage:UserWarning",
+    "ignore:scatter_reduce():UserWarning",
+    # Filter `captum` warnings:
+    "ignore:Setting backward hooks on ReLU activations:UserWarning",
+    "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
 ]
 
 [tool.pylint.messages_control]

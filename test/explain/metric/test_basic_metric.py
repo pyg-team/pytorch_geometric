@@ -1,3 +1,5 @@
+import warnings
+
 import torch
 
 from torch_geometric.explain import groundtruth_metrics
@@ -31,6 +33,7 @@ def test_perfect_groundtruth_metrics():
 
 
 def test_groundtruth_true_negative():
+    warnings.filterwarnings('ignore', '.*No positive samples in targets.*')
     pred_mask = target_mask = torch.zeros(10)
 
     accuracy, recall, precision, f1_score, auroc = groundtruth_metrics(
