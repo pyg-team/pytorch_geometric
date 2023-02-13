@@ -1,8 +1,8 @@
 import copy
 
 import torch
-
-from torch_geometric.nn.conv.Bayesian_GCNConv import BayesianGCNConv
+# Import BayesianGCNConv once merged in the library
+# from torch_geometric.nn.conv.BayesianGCNConv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
 
 
