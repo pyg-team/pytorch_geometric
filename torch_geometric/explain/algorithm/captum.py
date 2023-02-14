@@ -236,7 +236,7 @@ def captum_output_to_dicts(
     r"""Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
     methods which is a tuple of attributions to two dictonaries with node and
     edge attribution tensors. This function is used while explaining
-    :obj:`HeteroData` objects.
+    :class:`~torch_geometric.data.HeteroData` objects.
     See :meth:`~torch_geometric.nn.models.to_captum_model` for example usage.
 
     Args:
