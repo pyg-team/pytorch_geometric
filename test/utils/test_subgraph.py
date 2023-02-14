@@ -56,8 +56,9 @@ def test_bipartite_subgraph():
            torch.tensor([2, 3], dtype=torch.long))
     mask = (index_to_mask(idx[0], 7), index_to_mask(idx[1], 4))
     indices = (idx[0].tolist(), idx[1].tolist())
+    mixed = (mask[0], idx[1])
 
-    for subset in [idx, mask, indices]:
+    for subset in [idx, mask, indices, mixed]:
         out = bipartite_subgraph(subset, edge_index, edge_attr,
                                  return_edge_mask=True)
         assert out[0].tolist() == [[2, 3, 5, 5], [3, 2, 2, 3]]

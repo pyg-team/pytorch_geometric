@@ -61,7 +61,7 @@ class AntiSymmetricConv(torch.nn.Module):
         act: Union[str, Callable, None] = 'tanh',
         act_kwargs: Optional[Dict[str, Any]] = None,
         bias: bool = True,
-    ) -> None:
+    ):
         super().__init__()
 
         self.in_channels = in_channels

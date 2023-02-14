@@ -29,10 +29,10 @@ class ModuleDict(torch.nn.ModuleDict):
     def __getitem__(self, key: str) -> Module:
         return super().__getitem__(self.to_internal_key(key))
 
-    def __setitem__(self, key: str, module: Module) -> None:
+    def __setitem__(self, key: str, module: Module):
         return super().__setitem__(self.to_internal_key(key), module)
 
-    def __delitem__(self, key: str) -> None:
+    def __delitem__(self, key: str):
         return super().__delitem__(self.to_internal_key(key))
 
     def __contains__(self, key: str) -> bool:

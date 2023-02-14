@@ -28,7 +28,7 @@ def test(y, loader):
     return int((y_hat[mask] == y[mask]).sum()) / int(mask.sum())
 
 
-def run(args: argparse.ArgumentParser) -> None:
+def run(args: argparse.ArgumentParser):
 
     # cuda device is not suitable for full batch mode
     device = torch.device(
