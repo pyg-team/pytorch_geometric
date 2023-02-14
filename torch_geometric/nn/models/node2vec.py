@@ -31,7 +31,7 @@ class Node2Vec(torch.nn.Module):
         node2vec.py>`_.
 
     Args:
-        edge_index (LongTensor): The edge indices.
+        edge_index (torch.Tensor): The edge indices.
         embedding_dim (int): The size of each embedding vector.
         walk_length (int): The walk length.
         context_size (int): The actual context size which is considered for

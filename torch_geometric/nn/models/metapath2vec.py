@@ -26,10 +26,10 @@ class MetaPath2Vec(torch.nn.Module):
         hetero/metapath2vec.py>`_.
 
     Args:
-        edge_index_dict (Dict[Tuple[str, str, str], Tensor]): Dictionary
+        edge_index_dict (Dict[Tuple[str, str, str], torch.Tensor]): Dictionary
             holding edge indices for each
-            :obj:`(src_node_type, rel_type, dst_node_type)` present in the
-            heterogeneous graph.
+            :obj:`(src_node_type, rel_type, dst_node_type)` edge type present
+            in the heterogeneous graph.
         embedding_dim (int): The size of each embedding vector.
         metapath (List[Tuple[str, str, str]]): The metapath described as a list
             of :obj:`(src_node_type, rel_type, dst_node_type)` tuples.
