@@ -6,7 +6,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from benchmark.utils import emit_itt, get_dataset, get_model, get_split_mask
+from benchmark.utils import emit_itt, get_dataset, get_model, get_split_masks
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -111,7 +111,7 @@ def run(args: argparse.ArgumentParser) -> None:
             data, num_classes = get_dataset(dataset_name, args.root,
                                             args.use_sparse_tensor, args.bf16)
         hetero = True if dataset_name == 'ogbn-mag' else False
-        mask, val_mask, test_mask = get_split_mask(data, dataset_name)
+        mask, val_mask, test_mask = get_split_masks(data, dataset_name)
         degree = None
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
@@ -152,7 +152,7 @@ def run(args: argparse.ArgumentParser) -> None:
                         'num_neighbors': num_neighbors,
                         'batch_size': batch_size,
                         'shuffle': shuffle,
-                        'num_workers': args.num_workers
+                        'num_workers': args.num_workers,
                     }
                     subgraph_loader = NeighborLoader(data, input_nodes=mask,
                                                      sampler=sampler, **kwargs)

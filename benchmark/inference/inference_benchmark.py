@@ -3,7 +3,7 @@ from contextlib import nullcontext
 
 import torch
 
-from benchmark.utils import emit_itt, get_dataset, get_model, get_split_mask
+from benchmark.utils import emit_itt, get_dataset, get_model, get_split_masks
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -47,7 +47,7 @@ def run(args: argparse.ArgumentParser) -> None:
         data = dataset.to(device)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
-        _, _, test_mask = get_split_mask(data, dataset_name)
+        _, _, test_mask = get_split_masks(data, dataset_name)
         degree = None
 
         if args.num_layers != [1] and not hetero and args.num_steps != -1:
@@ -80,7 +80,7 @@ def run(args: argparse.ArgumentParser) -> None:
                 kwargs = {
                     'batch_size': batch_size,
                     'shuffle': False,
-                    'num_workers': args.num_workers
+                    'num_workers': args.num_workers,
                 }
                 if not hetero:
                     subgraph_loader = NeighborLoader(
@@ -88,27 +88,36 @@ def run(args: argparse.ArgumentParser) -> None:
                         num_neighbors=[-1],  # layer-wise inference
                         input_nodes=mask,
                         sampler=sampler,
-                        **kwargs) if with_loader else None
+                        **kwargs,
+                    ) if with_loader else None
                     if args.evaluate and not args.full_batch:
                         test_loader = NeighborLoader(
                             data,
                             num_neighbors=[-1],  # layer-wise inference
                             input_nodes=test_mask,
                             sampler=None,
-                            **kwargs)
+                            **kwargs,
+                        )
 
                 for layers in args.num_layers:
                     num_neighbors = [args.hetero_num_neighbors] * layers
                     if hetero:
                         # batch-wise inference
                         subgraph_loader = NeighborLoader(
-                            data, num_neighbors=num_neighbors,
-                            input_nodes=mask, sampler=sampler, **
-                            kwargs) if with_loader else None
+                            data,
+                            num_neighbors=num_neighbors,
+                            input_nodes=mask,
+                            sampler=sampler,
+                            **kwargs,
+                        ) if with_loader else None
                         if args.evaluate and not args.full_batch:
                             test_loader = NeighborLoader(
-                                data, num_neighbors=num_neighbors,
-                                input_nodes=test_mask, sampler=None, **kwargs)
+                                data,
+                                num_neighbors=num_neighbors,
+                                input_nodes=test_mask,
+                                sampler=None,
+                                **kwargs,
+                            )
 
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
@@ -136,7 +145,7 @@ def run(args: argparse.ArgumentParser) -> None:
                             model_name, params,
                             metadata=data.metadata() if hetero else None)
                         model = model.to(device)
-                        # TODO: migrate this to ModelHubMixin when it's done.
+                        # TODO: Migrate to ModelHubMixin.
                         if args.ckpt_path:
                             state_dict = torch.load(args.ckpt_path)
                             model.load_state_dict(state_dict)
@@ -174,12 +183,17 @@ def run(args: argparse.ArgumentParser) -> None:
                                             {test_acc:.4f}')
                                 else:
                                     y = model.inference(
-                                        subgraph_loader, device,
-                                        progress_bar=True)
+                                        subgraph_loader,
+                                        device,
+                                        progress_bar=True,
+                                    )
                                     if args.evaluate:
                                         test_acc = model.test(
-                                            y, test_loader, device,
-                                            progress_bar=True)
+                                            y,
+                                            test_loader,
+                                            device,
+                                            progress_bar=True,
+                                        )
                                         print(f'Mini Batch Test Accuracy: \
                                             {test_acc:.4f}')
 
@@ -229,10 +243,9 @@ if __name__ == '__main__':
     add('--cpu-affinity', action='store_true',
         help='Use DataLoader affinitzation.')
     add('--loader-cores', nargs='+', default=[], type=int,
-        help="List of CPU core IDs to use for DataLoader workers.")
+        help="List of CPU core IDs to use for DataLoader workers")
     add('--measure-load-time', action='store_true')
-    add('--full-batch', action='store_true', help='Use full batch mode.')
+    add('--full-batch', action='store_true', help='Use full batch mode')
     add('--evaluate', action='store_true')
-    add('--ckpt_path', type=str,
-        help='checkpoint path to look for the model dict')
+    add('--ckpt_path', type=str, help='Checkpoint path for loading a model')
     run(argparser.parse_args())
