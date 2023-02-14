@@ -47,5 +47,15 @@ def setup(app):
         rst_context = {'torch_geometric': torch_geometric}
         source[0] = app.builder.templates.render_string(source[0], rst_context)
 
+    def maybe_skip_member(app, what, name, obj, skip, options):
+        import torch
+
+        # if hasattr('__self__', obj) and isinstance(obj.__self__.__class__,
+        #                                            torch.nn.Module):
+        print(app, what, name, obj, skip, options)
+        #     print(app, what, name, obj, skip, options)
+        return True
+
     app.connect('source-read', rst_jinja_render)
+    app.connect('autodoc-skip-member', maybe_skip_member)
     app.add_js_file('js/version_alert.js')
