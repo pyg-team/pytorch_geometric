@@ -7,6 +7,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
+from torch_geometric.data.hetero_data import make_node_slices, offset_edge_idx, combine_edge_slices
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
@@ -292,12 +293,7 @@ class HGTConv(MessagePassing):
                 v_o_i.transpose(1, 0)
                 for v_o_i in pyg_lib.ops.grouped_matmul(v_ins, m_rels)
             ]
-            node_slices = {}
-            cumsum = 0
-            for i, n_type in enumerate(self.node_types):
-                num_nodes = k_outs[i].shape[0]
-                node_slices[n_type] = (cumsum, cumsum + num_nodes)
-                cumsum += num_nodes
+            node_slices = make_node_slices({n_type:k_outs[i].shape[0] for i, n_type in enumerate(self.node_types)})
             k_out = torch.cat(k_outs)
             v_out = torch.cat(v_outs)
         else:
@@ -320,12 +316,7 @@ class HGTConv(MessagePassing):
 
             v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
                                                m_rel).view(-1, H, D)
-            node_slices = {}
-            cumsum = 0
-            for i, n_type in enumerate(self.node_types):
-                num_nodes = k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
-                node_slices[n_type] = (cumsum, cumsum + num_nodes)
-                cumsum += num_nodes
+            node_slices = make_node_slices({n_type:k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0] for i, n_type in enumerate(self.node_types)})
 
         # combine edge_index dict into single tensor
         q_list = []
@@ -333,7 +324,6 @@ class HGTConv(MessagePassing):
         cumsum = 0
         edge_index_list = []
         for e_type in self.edge_types:
-            src_type, _, dst_type = e_type
             indices = edge_index_dict[e_type]
             # (TODO) Add support for SparseTensor w/o converting?
             convert = isinstance(indices, SparseTensor)
@@ -341,15 +331,15 @@ class HGTConv(MessagePassing):
                 # convert to COO
                 dst, src, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
-            offset = [[node_slices[src_type][0]], [node_slices[dst_type][0]]]
-            offset = torch.tensor(offset, device=indices.device)
-            edge_index_list.append(indices + offset)
+            edge_index_list.append(
+                offset_edge_idx(node_slices, e_type, indices)
+            )
             q_list.append(q_dict[dst_type])
             p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
 
         q = torch.cat(q_list)
         p = group(p_rels, self.group).view(-1)
-        e_idx = torch.cat(edge_index_list, dim=1)
+        e_idx = combine_edge_slices(edge_index_list)
         if convert:
             # convert back to CSR
             e_idx = SparseTensor(row=e_idx[0], col=e_idx[1],
