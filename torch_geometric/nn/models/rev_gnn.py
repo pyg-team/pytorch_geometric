@@ -213,9 +213,9 @@ class GroupAddRev(InvertibleModule):
     Args:
         conv (torch.nn.Module or torch.nn.ModuleList]): A seed GNN. The input
             and output feature dimensions need to match.
-        split_dim (int optional): The dimension across which to split groups.
+        split_dim (int, optional): The dimension across which to split groups.
             (default: :obj:`-1`)
-        num_groups (Optional[int], optional): The number of groups :math:`C`.
+        num_groups (int, optional): The number of groups :math:`C`.
             (default: :obj:`None`)
         disable (bool, optional): If set to :obj:`True`, will disable the usage
             of :class:`InvertibleFunction` and will execute the module without

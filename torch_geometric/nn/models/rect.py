@@ -25,7 +25,7 @@ class RECT_L(torch.nn.Module):
         in_channels (int): Size of each input sample.
         hidden_channels (int): Intermediate size of each sample.
         normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
+            symmetric normalization coefficients on-the-fly.
             (default: :obj:`True`)
         dropout (float, optional): The dropout probability.
             (default: :obj:`0.0`)

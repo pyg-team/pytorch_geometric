@@ -61,7 +61,7 @@ class SchNet(torch.nn.Module):
             (default: :obj:`6`)
         num_gaussians (int, optional): The number of gaussians :math:`\mu`.
             (default: :obj:`50`)
-        interaction_graph (Callable, optional): The function used to compute
+        interaction_graph (callable, optional): The function used to compute
             the pairwise interaction graph and interatomic distances. If set to
             :obj:`None`, will construct a graph based on :obj:`cutoff` and
             :obj:`max_num_neighbors` properties.
@@ -264,12 +264,12 @@ class SchNet(torch.nn.Module):
                 batch: OptTensor = None) -> Tensor:
         r"""
         Args:
-            z (LongTensor): Atomic number of each atom with shape
+            z (torch.Tensor): Atomic number of each atom with shape
                 :obj:`[num_atoms]`.
-            pos (Tensor): Coordinates of each atom with shape
+            pos (torch.Tensor): Coordinates of each atom with shape
                 :obj:`[num_atoms, 3]`.
-            batch (LongTensor, optional): Batch indices assigning each atom to
-                a separate molecule with shape :obj:`[num_atoms]`.
+            batch (torch.Tensor, optional): Batch indices assigning each atom
+                to a separate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
         """
         batch = torch.zeros_like(z) if batch is None else batch

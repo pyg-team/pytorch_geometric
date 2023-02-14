@@ -76,16 +76,24 @@ class LINKX(torch.nn.Module):
         hidden_channels (int): Size of each hidden sample.
         out_channels (int): Size of each output sample.
         num_layers (int): Number of layers of :math:`\textrm{MLP}_{f}`.
-        num_edge_layers (int): Number of layers of
+        num_edge_layers (int, optional): Number of layers of
             :math:`\textrm{MLP}_{\mathbf{A}}`. (default: :obj:`1`)
-        num_node_layers (int): Number of layers of
+        num_node_layers (int, optional): Number of layers of
             :math:`\textrm{MLP}_{\mathbf{X}}`. (default: :obj:`1`)
         dropout (float, optional): Dropout probability of each hidden
-            embedding. (default: :obj:`0.`)
+            embedding. (default: :obj:`0.0`)
     """
-    def __init__(self, num_nodes: int, in_channels: int, hidden_channels: int,
-                 out_channels: int, num_layers: int, num_edge_layers: int = 1,
-                 num_node_layers: int = 1, dropout: float = 0.):
+    def __init__(
+        self,
+        num_nodes: int,
+        in_channels: int,
+        hidden_channels: int,
+        out_channels: int,
+        num_layers: int,
+        num_edge_layers: int = 1,
+        num_node_layers: int = 1,
+        dropout: float = 0.0,
+    ):
         super().__init__()
 
         self.num_nodes = num_nodes
