@@ -981,7 +981,7 @@ def make_node_slices(
 
     node_slices: Dict[NodeType, Tuple[int, int]] = {}
     cumsum = 0
-    for node_type, num_nodes in num_nodes_dict:
+    for node_type, num_nodes in num_nodes_dict.items():
         node_slices[node_type] = (cumsum, cumsum + num_nodes)
         cumsum += num_nodes
     return node_slices
