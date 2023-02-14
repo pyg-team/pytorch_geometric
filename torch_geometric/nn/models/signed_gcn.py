@@ -56,6 +56,7 @@ class SignedGCN(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.conv1.reset_parameters()
         for conv in self.convs:
             conv.reset_parameters()

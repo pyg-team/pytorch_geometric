@@ -150,6 +150,7 @@ class InvertibleModule(torch.nn.Module, ABC):
         self.num_bwd_passes = num_bwd_passes
 
     def forward(self, *args):
+        """"""
         return self._fn_apply(args, self._forward, self._inverse)
 
     def inverse(self, *args):
@@ -251,10 +252,10 @@ class GroupAddRev(InvertibleModule):
 
     @property
     def num_groups(self) -> int:
-        r"""The number of groups :math:`C`."""
         return len(self.convs)
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for conv in self.convs:
             conv.reset_parameters()
 

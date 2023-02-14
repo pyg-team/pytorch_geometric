@@ -118,6 +118,7 @@ class MetaPath2Vec(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
 
     def forward(self, node_type: str, batch: OptTensor = None) -> Tensor:

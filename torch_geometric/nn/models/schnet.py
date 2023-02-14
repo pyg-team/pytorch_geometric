@@ -156,6 +156,7 @@ class SchNet(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
         for interaction in self.interactions:
             interaction.reset_parameters()
@@ -172,6 +173,9 @@ class SchNet(torch.nn.Module):
         dataset: Dataset,
         target: int,
     ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:
+        r"""Returns a pre-trained :class:`SchNet` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`."""
         import ase
         import schnetpack as spk  # noqa
 

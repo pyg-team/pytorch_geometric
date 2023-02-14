@@ -87,6 +87,7 @@ class Node2Vec(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
 
     def forward(self, batch: OptTensor = None) -> Tensor:
