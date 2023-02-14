@@ -1,8 +1,7 @@
 import torch
 from torch import Tensor
 
-from torch_geometric.typing import Adj, SparseTensor, torch_sparse
-from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
+from torch_geometric.typing import Adj, SparseTensor
 
 
 @torch.jit._overload

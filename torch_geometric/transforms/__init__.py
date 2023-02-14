@@ -19,6 +19,7 @@ from .target_indegree import TargetIndegree
 from .local_degree_profile import LocalDegreeProfile
 from .add_self_loops import AddSelfLoops
 from .remove_isolated_nodes import RemoveIsolatedNodes
+from .remove_duplicate_self_loops import RemoveDuplicateSelfLoops
 from .knn_graph import KNNGraph
 from .radius_graph import RadiusGraph
 from .to_dense import ToDense
@@ -34,7 +35,6 @@ from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
 from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
 from .feature_propagation import FeaturePropagation
-from .remove_duplicate_self_loops import RemoveDuplicateSelfLoops
 
 from .distance import Distance
 from .cartesian import Cartesian
