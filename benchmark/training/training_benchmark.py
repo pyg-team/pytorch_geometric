@@ -6,7 +6,7 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from benchmark.utils import emit_itt, get_dataset, get_model
+from benchmark.utils import emit_itt, get_dataset, get_model, get_split_masks
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -56,6 +56,42 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc=""):
         optimizer.step()
 
 
+@torch.no_grad()
+def test(model, loader, device, hetero, progress_bar=True, desc="") -> None:
+    if progress_bar:
+        loader = tqdm(loader, desc=desc)
+    total_examples = total_correct = 0
+    if hetero:
+        for batch in loader:
+            batch = batch.to(device)
+            if len(batch.adj_t_dict) > 0:
+                edge_index_dict = batch.adj_t_dict
+            else:
+                edge_index_dict = batch.edge_index_dict
+            out = model(batch.x_dict, edge_index_dict)
+            batch_size = batch['paper'].batch_size
+            out = out['paper'][:batch_size]
+            pred = out.argmax(dim=-1)
+
+            total_examples += batch_size
+            total_correct += int((pred == batch['paper'].y[:batch_size]).sum())
+    else:
+        for batch in loader:
+            batch = batch.to(device)
+            if hasattr(batch, 'adj_t'):
+                edge_index = batch.adj_t
+            else:
+                edge_index = batch.edge_index
+            out = model(batch.x, edge_index)
+            batch_size = batch.batch_size
+            out = out[:batch_size]
+            pred = out.argmax(dim=-1)
+
+            total_examples += batch_size
+            total_correct += int((pred == batch.y[:batch_size]).sum())
+    return total_correct / total_examples
+
+
 def run(args: argparse.ArgumentParser):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -73,8 +109,7 @@ def run(args: argparse.ArgumentParser):
             data, num_classes = get_dataset(dataset_name, args.root,
                                             args.use_sparse_tensor, args.bf16)
         hetero = True if dataset_name == 'ogbn-mag' else False
-        mask = ('paper', data['paper'].train_mask
-                ) if dataset_name == 'ogbn-mag' else data.train_mask
+        mask, val_mask, test_mask = get_split_masks(data, dataset_name)
         degree = None
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
@@ -111,15 +146,20 @@ def run(args: argparse.ArgumentParser):
                         f'''num_neighbors={num_neighbors} lenght
                         != num of layers={layers}'''
 
-                    subgraph_loader = NeighborLoader(
-                        data,
-                        num_neighbors=num_neighbors,
-                        input_nodes=mask,
-                        batch_size=batch_size,
-                        shuffle=shuffle,
-                        num_workers=args.num_workers,
-                        sampler=sampler,
-                    )
+                    kwargs = {
+                        'num_neighbors': num_neighbors,
+                        'batch_size': batch_size,
+                        'shuffle': shuffle,
+                        'num_workers': args.num_workers,
+                    }
+                    subgraph_loader = NeighborLoader(data, input_nodes=mask,
+                                                     sampler=sampler, **kwargs)
+                    if args.evaluate:
+                        val_loader = NeighborLoader(data, input_nodes=val_mask,
+                                                    sampler=None, **kwargs)
+                        test_loader = NeighborLoader(data,
+                                                     input_nodes=test_mask,
+                                                     sampler=None, **kwargs)
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
                         print(f'Batch size={batch_size}, '
@@ -164,7 +204,7 @@ def run(args: argparse.ArgumentParser):
                                 train(model, subgraph_loader, optimizer,
                                       device, progress_bar=progress_bar,
                                       desc="Warmup")
-                            with timeit(avg_time_divisor=args.num_epochs):
+                            with timeit(avg_time_divisor=args.num_epochs) as t:
                                 # becomes a no-op if vtune_profile == False
                                 with emit_itt(args.vtune_profile):
                                     for epoch in range(args.num_epochs):
@@ -172,6 +212,21 @@ def run(args: argparse.ArgumentParser):
                                               optimizer, device,
                                               progress_bar=progress_bar,
                                               desc=f"Epoch={epoch}")
+                                        if args.evaluate:
+                                            # In evaluate, throughput and
+                                            # latency are not accurate.
+                                            val_acc = test(
+                                                model, val_loader, device,
+                                                hetero,
+                                                progress_bar=progress_bar)
+                                            print(
+                                                f'Val Accuracy: {val_acc:.4f}')
+
+                            if args.evaluate:
+                                test_acc = test(model, test_loader, device,
+                                                hetero,
+                                                progress_bar=progress_bar)
+                                print(f'Test Accuracy: {test_acc:.4f}')
 
                             if args.profile:
                                 with torch_profile():
@@ -183,6 +238,16 @@ def run(args: argparse.ArgumentParser):
                                                     str(layers),
                                                     str(hidden_channels),
                                                     str(num_neighbors))
+
+                        total_time = t.duration
+                        if args.num_steps != -1:
+                            total_num_samples = args.num_steps * batch_size
+                        else:
+                            total_num_samples = num_nodes
+                        throughput = total_num_samples / total_time
+                        latency = total_time / total_num_samples * 1000
+                        print(f'Throughput: {throughput:.3f} samples/s')
+                        print(f'Latency: {latency:.3f} ms')
 
 
 if __name__ == '__main__':
@@ -220,6 +285,7 @@ if __name__ == '__main__':
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
     add('--measure-load-time', action='store_true')
+    add('--evaluate', action='store_true')
     args = argparser.parse_args()
 
     run(args)
