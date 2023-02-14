@@ -51,7 +51,6 @@ if version.parse(torch_version) <= version.parse('1.13'):
 else:
     from .spmm import spmm
 
-
 __all__ = [
     'scatter',
     'segment',
