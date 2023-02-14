@@ -302,10 +302,8 @@ class NumNeighbors:
         if isinstance(self.values, (tuple, list)):
             num_hops = max(len(self.values), len(self.default or []))
         else:  # isinstance(self.values, dict):
-            num_hops = max([0] + [
-                len(v) for v in itertools.chain(self.values.values(),
-                                                (self.default or []))
-            ])
+            num_hops = max([0] + [len(v) for v in self.values.values()])
+            num_hops = max(num_hops, len(self.default or []))
 
         self.__dict__['_num_hops'] = num_hops
         return num_hops
