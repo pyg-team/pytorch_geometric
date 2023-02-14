@@ -74,7 +74,7 @@ class CorrectAndSmooth(torch.nn.Module):
         self.prop2 = LabelPropagation(num_smoothing_layers, smoothing_alpha)
 
     def forward(self, y_soft: Tensor, *args, **kwargs) -> Tensor:
-        r"""Applies both :meth:`correct` and :meth:`smooth` functions."""
+        r"""Applies both :meth:`correct` and :meth:`smooth`."""
         y_soft = self.correct(y_soft, *args, **kwargs)
         return self.smooth(y_soft, *args, **kwargs)
 

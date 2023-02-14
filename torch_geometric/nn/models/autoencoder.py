@@ -72,7 +72,7 @@ class GAE(torch.nn.Module):
         reset(self.encoder)
         reset(self.decoder)
 
-    def forward(self, *args, **kwargs) -> Tensor:
+    def forward(self, *args, **kwargs) -> Tensor:  # pragma: no cover
         r"""Alias for :meth:`encode`."""
         return self.encoder(*args, **kwargs)
 
