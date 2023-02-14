@@ -7,7 +7,11 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.data.hetero_data import make_node_slices, offset_edge_idx, combine_edge_slices
+from torch_geometric.data.hetero_data import (
+    combine_edge_slices,
+    make_node_slices,
+    offset_edge_idx,
+)
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
@@ -293,7 +297,10 @@ class HGTConv(MessagePassing):
                 v_o_i.transpose(1, 0)
                 for v_o_i in pyg_lib.ops.grouped_matmul(v_ins, m_rels)
             ]
-            node_slices = make_node_slices({n_type:k_outs[i].shape[0] for i, n_type in enumerate(self.node_types)})
+            node_slices = make_node_slices({
+                n_type: k_outs[i].shape[0]
+                for i, n_type in enumerate(self.node_types)
+            })
             k_out = torch.cat(k_outs)
             v_out = torch.cat(v_outs)
         else:
@@ -316,7 +323,10 @@ class HGTConv(MessagePassing):
 
             v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
                                                m_rel).view(-1, H, D)
-            node_slices = make_node_slices({n_type:k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0] for i, n_type in enumerate(self.node_types)})
+            node_slices = make_node_slices({
+                n_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
+                for i, n_type in enumerate(self.node_types)
+            })
 
         # combine edge_index dict into single tensor
         q_list = []
@@ -332,8 +342,7 @@ class HGTConv(MessagePassing):
                 dst, src, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
             edge_index_list.append(
-                offset_edge_idx(node_slices, e_type, indices)
-            )
+                offset_edge_idx(node_slices, e_type, indices))
             q_list.append(q_dict[dst_type])
             p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
 
