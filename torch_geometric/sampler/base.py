@@ -1,5 +1,4 @@
 import copy
-import itertools
 import math
 from abc import ABC
 from dataclasses import dataclass
