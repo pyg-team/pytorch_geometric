@@ -5,14 +5,14 @@ from torch_geometric.typing import Adj, SparseTensor
 
 
 @torch.jit._overload
-def spmm(src, other, reduce, convert_to_csr):
-    # type: (SparseTensor, Tensor, str, bool) -> Tensor
+def spmm(src, other, reduce):
+    # type: (SparseTensor, Tensor, str) -> Tensor
     pass
 
 
 @torch.jit._overload
-def spmm(src, other, reduce, convert_to_csr):
-    # type: (Tensor, Tensor, str, bool) -> Tensor
+def spmm(src, other, reduce):
+    # type: (Tensor, Tensor, str) -> Tensor
     pass
 
 
@@ -40,11 +40,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum",
     if isinstance(src, SparseTensor):
         src = src.to_torch_sparse_csr_tensor(dtype=other.dtype)
 
-    if convert_to_csr:
+    if not src.layout == torch.sparse_csr:
         src = src.to_sparse_csr()
-    else:
-        if not src.layout == torch.sparse_csr:
-            raise ValueError("`src` must be a `torch.Tensor` in "
-                             f"`torch.sparse_csr` format (got {src.layout}). "
-                             "To auto-convert use `convert_to_csr=True`")
+
     return torch.sparse.mm(src, other, reduce)
