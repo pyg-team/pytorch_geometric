@@ -5,4 +5,7 @@
 .. autoclass:: {{ objname }}
    :show-inheritance:
    :members:
-   :inherited-members: reset_parameters, forward
+   :exclude-members: forward, reset_parameters
+
+   .. automethod:: forward
+   .. automethod:: reset_parameters
