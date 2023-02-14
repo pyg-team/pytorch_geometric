@@ -1,3 +1,4 @@
+import warnings
 from typing import Optional
 
 from torch.utils.data import DataLoader
@@ -30,6 +31,8 @@ class GraphGymDataModule(LightningDataModule):
 
 def train(model: GraphGymModule, datamodule, logger: bool = True,
           trainer_config: Optional[dict] = None):
+    warnings.filterwarnings('ignore', '.*use `CSVLogger` as the default.*')
+
     callbacks = []
     if logger:
         callbacks.append(LoggerCallback())
