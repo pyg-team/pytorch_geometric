@@ -343,7 +343,7 @@ class HGTConv(MessagePassing):
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
             edge_index_list.append(
                 offset_edge_idx(node_slices, e_type, indices))
-            q_list.append(q_dict[dst_type])
+            q_list.append(q_dict[e_type[-1]])
             p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
 
         q = torch.cat(q_list)
