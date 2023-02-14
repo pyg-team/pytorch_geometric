@@ -39,6 +39,7 @@ class MaskLabel(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.emb.reset_parameters()
 
     def forward(self, x: Tensor, y: Tensor, mask: Tensor) -> Tensor:
