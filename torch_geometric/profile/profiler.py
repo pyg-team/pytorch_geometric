@@ -113,12 +113,13 @@ class Profiler:
                     raise NotImplementedError(
                         "Profiler requires at least torch 1.8.1")
 
-                # profile the forward pass
+                activities = [torch.profiler.ProfilerActivity.CPU]
+                if self.use_cuda:
+                    activities.append(torch.profiler.ProfilerActivity.CUDA)
                 with torch_profiler.profile(
-                        activities=[
-                            torch.profiler.ProfilerActivity.CPU,
-                            torch.profiler.ProfilerActivity.CUDA,
-                        ], profile_memory=self.profile_memory) as prof:
+                        activities=activities,
+                        profile_memory=self.profile_memory,
+                ) as prof:
                     res = _forward(*args, **kwargs)
 
                 event_list = prof.events()
@@ -166,7 +167,7 @@ def _layer_trace(
         paths (str, optional): Predefine path for fast loading. By default, it
             will not be used.
             (default: :obj:`False`)
-        use_cuda (bool, optional):
+        use_cuda (bool, optional): Enables timing of CUDA events.
             (default: :obj:`False`)
         profile_memory (bool, optional): If True, also profile for the memory
             usage information.

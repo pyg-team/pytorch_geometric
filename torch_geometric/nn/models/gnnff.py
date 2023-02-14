@@ -19,6 +19,7 @@ class GaussianFilter(torch.nn.Module):
         self.register_buffer('offset', offset)
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         pass
 
     def forward(self, dist: Tensor) -> Tensor:
@@ -130,7 +131,7 @@ class GNNFF(torch.nn.Module):
         hidden_node_channels (int): Hidden node embedding size.
         hidden_edge_channels (int): Hidden edge embedding size.
         num_layers (int): Number of message passing blocks.
-        cutoff (float): Cutoff distance for interatomic
+        cutoff (float, optional): Cutoff distance for interatomic
             interactions. (default: :obj:`5.0`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
             collect for each node within the :attr:`cutoff` distance.
