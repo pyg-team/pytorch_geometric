@@ -28,14 +28,14 @@ class Net(torch.nn.Module):
         self.convs.append(FiLMConv(in_channels, hidden_channels).jittable())
         for _ in range(num_layers - 2):
             self.convs.append(FiLMConv(hidden_channels, hidden_channels).jittable())
-        self.last_conv = FiLMConv(hidden_channels, out_channels, act=None).jittable()
+        self.convs.append(FiLMConv(hidden_channels, out_channels, act=None).jittable())
 
         self.norms = torch.nn.ModuleList()
         for _ in range(num_layers - 1):
             self.norms.append(BatchNorm1d(hidden_channels))
 
     def forward(self, x, edge_index):
-        for conv, norm in zip(self.convs, self.norms):
+        for conv, norm in zip(self.convs[:-1], self.norms):
             x = norm(conv(x, edge_index))
             x = F.dropout(x, p=self.dropout, training=self.training)
         x = self.last_conv(x, edge_index)
