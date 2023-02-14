@@ -204,6 +204,7 @@ Models
 .. autosummary::
    :nosignatures:
    :toctree: ../generated
+   :template: autosummary/nn.rst
 
    {% for name in torch_geometric.nn.models.classes %}
      {{ name }}
