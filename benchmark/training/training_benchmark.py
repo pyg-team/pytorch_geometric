@@ -18,8 +18,7 @@ supported_sets = {
 }
 
 
-def train_homo(model, loader, optimizer, device, progress_bar=True,
-               desc="") -> None:
+def train_homo(model, loader, optimizer, device, progress_bar=True, desc=""):
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
@@ -38,8 +37,7 @@ def train_homo(model, loader, optimizer, device, progress_bar=True,
         optimizer.step()
 
 
-def train_hetero(model, loader, optimizer, device, progress_bar=True,
-                 desc="") -> None:
+def train_hetero(model, loader, optimizer, device, progress_bar=True, desc=""):
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
@@ -58,7 +56,7 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True,
         optimizer.step()
 
 
-def run(args: argparse.ArgumentParser) -> None:
+def run(args: argparse.ArgumentParser):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # If we use a custom number of steps, then we need to use RandomSampler,

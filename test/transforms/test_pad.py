@@ -59,7 +59,7 @@ def _generate_heterodata_edges(
 def _check_homo_data_nodes(original: Data, padded: Data,
                            max_num_nodes: Union[int, Dict[NodeType, int]],
                            node_pad_value: Optional[Padding] = None,
-                           exclude_keys: Optional[List[str]] = None) -> None:
+                           exclude_keys: Optional[List[str]] = None):
     assert padded.num_nodes == max_num_nodes
 
     for attr in _generate_homodata_node_attrs(original):
@@ -85,7 +85,7 @@ def _check_homo_data_nodes(original: Data, padded: Data,
 def _check_homo_data_edges(original: Data, padded: Data,
                            max_num_edges: Optional[int] = None,
                            edge_pad_value: Optional[Padding] = None,
-                           exclude_keys: Optional[List[str]] = None) -> None:
+                           exclude_keys: Optional[List[str]] = None):
     # Check edge index attribute.
     if max_num_edges is None:
         max_num_edges = padded.num_nodes**2
@@ -130,7 +130,7 @@ def _check_homo_data_edges(original: Data, padded: Data,
 def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
                              max_num_nodes: Union[int, Dict[NodeType, int]],
                              node_pad_value: Optional[Padding] = None,
-                             exclude_keys: Optional[List[str]] = None) -> None:
+                             exclude_keys: Optional[List[str]] = None):
 
     expected_nodes = max_num_nodes
 
@@ -165,7 +165,7 @@ def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
                                                            Dict[EdgeType,
                                                                 int]]] = None,
                              edge_pad_value: Optional[Padding] = None,
-                             exclude_keys: Optional[List[str]] = None) -> None:
+                             exclude_keys: Optional[List[str]] = None):
 
     for edge_type, attr in _generate_heterodata_edges(padded):
         if attr in exclude_keys:
@@ -226,7 +226,7 @@ def _check_data(original: Union[Data, HeteroData], padded: Union[Data,
                                                         int]]] = None,
                 node_pad_value: Optional[Union[Padding, int, float]] = None,
                 edge_pad_value: Optional[Union[Padding, int, float]] = None,
-                exclude_keys: Optional[List[str]] = None) -> None:
+                exclude_keys: Optional[List[str]] = None):
 
     if not isinstance(node_pad_value, Padding) and node_pad_value is not None:
         node_pad_value = UniformPadding(node_pad_value)
