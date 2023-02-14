@@ -122,7 +122,8 @@ class AttentiveFP(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.lin1.reset_parameters()
         self.gate_conv.reset_parameters()
         self.gru.reset_parameters()

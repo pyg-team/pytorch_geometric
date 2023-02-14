@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import warnings
 from itertools import product
 
 import pytest
@@ -170,6 +171,9 @@ def test_packaging():
 def test_onnx():
     import onnx
     import onnxruntime as ort
+
+    warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
+    warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
 
     class MyModel(torch.nn.Module):
         def __init__(self):

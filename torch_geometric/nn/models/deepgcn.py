@@ -72,6 +72,7 @@ class DeepGCNLayer(torch.nn.Module):
         self.ckpt_grad = ckpt_grad
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.conv.reset_parameters()
         self.norm.reset_parameters()
 
