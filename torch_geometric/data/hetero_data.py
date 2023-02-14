@@ -975,9 +975,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
 # Helper functions ############################################################
 
+
 def make_node_slices(
-    num_nodes_dict: Dict[NodeType, int]
-) -> Dict[NodeType, Tuple[int, int]]:
+        num_nodes_dict: Dict[NodeType,
+                             int]) -> Dict[NodeType, Tuple[int, int]]:
 
     node_slices: Dict[NodeType, Tuple[int, int]] = {}
     cumsum = 0
@@ -988,7 +989,7 @@ def make_node_slices(
 
 
 def offset_edge_idx(
-    node_slices:Dict[NodeType, Tuple[int, int]],
+    node_slices: Dict[NodeType, Tuple[int, int]],
     edge_type: EdgeType,
     edge_index: Tensor,
 ) -> Tuple[int, int]:
@@ -1019,8 +1020,7 @@ def to_homogeneous_edge_index(
     edge_slices: Dict[EdgeType, Tuple[int, int]] = {}
     for edge_type, store in data._edge_store_dict.items():
         edge_indices.append(
-            offset_edge_idx(node_slices, edge_type, store.edge_index)
-        )
+            offset_edge_idx(node_slices, edge_type, store.edge_index))
         num_edges = store.num_edges
         edge_slices[edge_type] = (cumsum, cumsum + num_edges)
         cumsum += num_edges
