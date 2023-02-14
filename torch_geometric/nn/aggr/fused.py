@@ -146,8 +146,8 @@ class FusedAggregation(Aggregation):
                         self.aggr_index['MeanAggregation'],
                     ))
                 elif 'SumAggregation' in self.aggr_index:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append((
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append((
                         'SumAggregation',
                         self.aggr_index['SumAggregation'],
                     ))
