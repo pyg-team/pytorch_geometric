@@ -232,7 +232,7 @@ class BPRLoss(_Loss):
     __constants__ = ['lambda_reg']
     lambda_reg: float
 
-    def __init__(self, lambda_reg: float = 0, **kwargs) -> None:
+    def __init__(self, lambda_reg: float = 0, **kwargs):
         super().__init__(None, None, "sum", **kwargs)
         self.lambda_reg = lambda_reg
 

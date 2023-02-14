@@ -21,7 +21,7 @@ def full_batch_inference(model, data):
     model(data.x, data.edge_index)
 
 
-def run(args: argparse.ArgumentParser) -> None:
+def run(args: argparse.ArgumentParser):
 
     # cuda device is not suitable for full batch mode
     device = torch.device(
