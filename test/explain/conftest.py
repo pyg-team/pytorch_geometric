@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Optional
 
 import pytest
 import torch
@@ -68,33 +68,32 @@ class HeteroSAGE(torch.nn.Module):
 
 
 @pytest.fixture()
-def check_explanation() -> Callable:
+def check_explanation():
+    def _check_explanation(
+        explanation: Explanation,
+        node_mask_type: Optional[MaskType],
+        edge_mask_type: Optional[MaskType],
+    ):
+        if node_mask_type == MaskType.attributes:
+            assert explanation.node_mask.size() == explanation.x.size()
+            assert explanation.node_mask.min() >= 0
+            assert explanation.node_mask.max() <= 1
+        elif node_mask_type == MaskType.object:
+            assert explanation.node_mask.size() == (explanation.num_nodes, 1)
+            assert explanation.node_mask.min() >= 0
+            assert explanation.node_mask.max() <= 1
+        elif node_mask_type == MaskType.common_attributes:
+            assert explanation.node_mask.size() == (1, explanation.x.size(-1))
+            assert explanation.node_mask.min() >= 0
+            assert explanation.node_mask.max() <= 1
+        elif node_mask_type is None:
+            assert 'node_mask' not in explanation
+
+        if edge_mask_type == MaskType.object:
+            assert explanation.edge_mask.size() == (explanation.num_edges, )
+            assert explanation.edge_mask.min() >= 0
+            assert explanation.edge_mask.max() <= 1
+        elif edge_mask_type is None:
+            assert 'edge_mask' not in explanation
+
     return _check_explanation
-
-
-def _check_explanation(
-    explanation: Explanation,
-    node_mask_type: Optional[MaskType],
-    edge_mask_type: Optional[MaskType],
-):
-    if node_mask_type == MaskType.attributes:
-        assert explanation.node_mask.size() == explanation.x.size()
-        assert explanation.node_mask.min() >= 0
-        assert explanation.node_mask.max() <= 1
-    elif node_mask_type == MaskType.object:
-        assert explanation.node_mask.size() == (explanation.num_nodes, 1)
-        assert explanation.node_mask.min() >= 0
-        assert explanation.node_mask.max() <= 1
-    elif node_mask_type == MaskType.common_attributes:
-        assert explanation.node_mask.size() == (1, explanation.num_features)
-        assert explanation.node_mask.min() >= 0
-        assert explanation.node_mask.max() <= 1
-    elif node_mask_type is None:
-        assert 'node_mask' not in explanation
-
-    if edge_mask_type == MaskType.object:
-        assert explanation.edge_mask.size() == (explanation.num_edges, )
-        assert explanation.edge_mask.min() >= 0
-        assert explanation.edge_mask.max() <= 1
-    elif edge_mask_type is None:
-        assert 'edge_mask' not in explanation
