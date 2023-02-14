@@ -68,6 +68,10 @@ def _check_homo_data_nodes(original: Data, padded: Data,
             continue
 
         assert attr in padded.keys
+
+        if not isinstance(padded[attr], torch.Tensor):
+            continue
+
         assert padded[attr].shape[0] == max_num_nodes
         compare_pad_start_idx = original[attr].shape[0]
         # Check values in padded area.
@@ -113,6 +117,10 @@ def _check_homo_data_edges(original: Data, padded: Data,
             continue
 
         assert attr in padded.keys
+
+        if not isinstance(padded[attr], torch.Tensor):
+            continue
+
         assert padded[attr].shape[0] == max_num_edges
 
         # Check values in padded area.
@@ -139,10 +147,14 @@ def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
             assert attr not in padded[node_type].keys()
             continue
 
+        assert attr in padded[node_type].keys()
+
+        if not isinstance(padded[node_type][attr], torch.Tensor):
+            continue
+
         original_tensor = original[node_type][attr]
         padded_tensor = padded[node_type][attr]
 
-        assert attr in padded[node_type].keys()
         # Check the number of nodes.
         if isinstance(max_num_nodes, dict):
             expected_nodes = max_num_nodes[node_type]
@@ -173,6 +185,10 @@ def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
             continue
 
         assert attr in padded[edge_type].keys()
+
+        if not isinstance(padded[edge_type][attr], torch.Tensor):
+            continue
+
         compare_pad_start_idx = original[edge_type].num_edges
         original_tensor = original[edge_type][attr]
         padded_tensor = padded[edge_type][attr]
