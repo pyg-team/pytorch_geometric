@@ -13,9 +13,9 @@ class RemoveDuplicateSelfLoops(BaseTransform):
     r"""Removes duplicate self-loops to the given homogeneous or heterogeneous
     graph. It will change the original order of dataset by concatenating
     unique self-looping edges at the end of the dataset. It can be used to
-    clean up known issue with ogbn-products dataset:
-    <https://tinyurl.com/ogbdocs>(functional name:
-    :obj:`remove_duplicate_self_loops`).
+    clean-up a known repeated self-connecting edges issue in ogbn-products.
+    Reference to ogbn-products Leaderboard: <https://tinyurl.com/ogbdocs>
+    (functional name::obj:`remove_duplicate_self_loops`).
     """
 
     def __call__(self, data: Union[Data, HeteroData]) -> Union[Data, HeteroData]:
