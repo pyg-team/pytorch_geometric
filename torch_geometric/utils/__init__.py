@@ -24,7 +24,6 @@ from .to_dense_adj import to_dense_adj
 from .nested import to_nested_tensor, from_nested_tensor
 from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
                      to_torch_coo_tensor)
-from .spmm import spmm
 from .unbatch import unbatch, unbatch_edge_index
 from .normalized_cut import normalized_cut
 from .grid import grid
@@ -43,6 +42,15 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
 from .tree_decomposition import tree_decomposition
 from .embedding import get_message_passing_embeddings
 from .train_test_split_edges import train_test_split_edges
+
+from packaging import version
+from torch import __version__ as torch_version
+
+if version.parse(torch_version) <= version.parse('1.13'):
+    from torch_sparse.matmul import spmm
+else:
+    from .spmm import spmm
+
 
 __all__ = [
     'scatter',
