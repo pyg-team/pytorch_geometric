@@ -27,8 +27,10 @@ class Net(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         self.convs.append(FiLMConv(in_channels, hidden_channels).jittable())
         for _ in range(num_layers - 2):
-            self.convs.append(FiLMConv(hidden_channels, hidden_channels).jittable())
-        self.convs.append(FiLMConv(hidden_channels, out_channels, act=None).jittable())
+            self.convs.append(
+                FiLMConv(hidden_channels, hidden_channels).jittable())
+        self.last_conv = FiLMConv(hidden_channels, out_channels,
+                                  act=None).jittable()
 
         self.norms = torch.nn.ModuleList()
         for _ in range(num_layers - 1):
@@ -49,6 +51,7 @@ model = Net(in_channels=train_dataset.num_features, hidden_channels=320,
 model = torch.jit.script(model)
 criterion = torch.nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+
 
 def train():
     model.train()

@@ -8,7 +8,6 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import GCNConv
-
 from torch_geometric.typing import OptTensor
 
 parser = argparse.ArgumentParser()
@@ -48,7 +47,7 @@ class GCN(torch.nn.Module):
         self.conv2 = GCNConv(hidden_channels, out_channels, cached=True,
                              normalize=not args.use_gdc).jittable()
 
-    def forward(self, x, edge_index, edge_weight:OptTensor=None):
+    def forward(self, x, edge_index, edge_weight: OptTensor = None):
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.conv1(x, edge_index, edge_weight).relu()
         x = F.dropout(x, p=0.5, training=self.training)
