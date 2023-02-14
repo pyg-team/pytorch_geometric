@@ -17,8 +17,8 @@ class RemoveDuplicateSelfLoops(BaseTransform):
     Reference to ogbn-products Leaderboard: <https://tinyurl.com/ogbdocs>
     (functional name::obj:`remove_duplicate_self_loops`).
     """
-
-    def __call__(self, data: Union[Data, HeteroData]) -> Union[Data, HeteroData]:
+    def __call__(self, data: Union[Data,
+                                   HeteroData]) -> Union[Data, HeteroData]:
 
         for store in data.edge_stores:
             if store.is_bipartite() or 'edge_index' not in store:
