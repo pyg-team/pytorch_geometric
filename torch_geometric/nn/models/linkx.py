@@ -111,6 +111,7 @@ class LINKX(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.edge_lin.reset_parameters()
         if self.num_edge_layers > 1:
             self.edge_norm.reset_parameters()

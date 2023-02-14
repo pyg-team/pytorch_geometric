@@ -19,6 +19,7 @@ class GaussianFilter(torch.nn.Module):
         self.register_buffer('offset', offset)
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         pass
 
     def forward(self, dist: Tensor) -> Tensor:

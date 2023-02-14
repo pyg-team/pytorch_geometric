@@ -43,6 +43,7 @@ class RECT_L(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.conv.reset_parameters()
         self.lin.reset_parameters()
         torch.nn.init.xavier_uniform_(self.lin.weight.data)

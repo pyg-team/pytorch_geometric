@@ -40,6 +40,7 @@ class DeepGraphInfomax(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset(self.encoder)
         reset(self.summary)
         uniform(self.hidden_channels, self.weight)

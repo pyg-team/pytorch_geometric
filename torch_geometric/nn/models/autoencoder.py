@@ -68,8 +68,13 @@ class GAE(torch.nn.Module):
         GAE.reset_parameters(self)
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset(self.encoder)
         reset(self.decoder)
+
+    def forward(self, *args, **kwargs) -> Tensor:
+        r"""Alias for :meth:`encode`."""
+        return self.encoder(*args, **kwargs)
 
     def encode(self, *args, **kwargs) -> Tensor:
         r"""Runs the encoder and computes node-wise latent variables."""
@@ -173,7 +178,7 @@ class VGAE(GAE):
                 (default: :obj:`None`)
             logstd (Tensor, optional): The latent space for
                 :math:`\log\sigma`.  If set to :obj:`None`, uses the last
-                computation of :math:`\log\sigma^2`.(default: :obj:`None`)
+                computation of :math:`\log\sigma^2`. (default: :obj:`None`)
         """
         mu = self.__mu__ if mu is None else mu
         logstd = self.__logstd__ if logstd is None else logstd.clamp(
