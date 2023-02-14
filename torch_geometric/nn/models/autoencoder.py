@@ -174,7 +174,7 @@ class VGAE(GAE):
 
         Args:
             mu (Tensor, optional): The latent space for :math:`\mu`. If set to
-                :obj:`None`, uses the last computation of :math:`mu`.
+                :obj:`None`, uses the last computation of :math:`\mu`.
                 (default: :obj:`None`)
             logstd (Tensor, optional): The latent space for
                 :math:`\log\sigma`.  If set to :obj:`None`, uses the last
