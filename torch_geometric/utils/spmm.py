@@ -36,10 +36,10 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum",
     ], (reduce, " reduction is not supported for `torch.sparse.Tensor`.")
 
     reduce = 'sum' if reduce == 'add' else reduce
-    
+
     if isinstance(src, SparseTensor):
         src = src.to_torch_sparse_csr_tensor(dtype=other.dtype)
-    
+
     if convert_to_csr:
         src = src.to_sparse_csr()
     else:
