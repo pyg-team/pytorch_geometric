@@ -91,3 +91,15 @@ def get_model(name, params, metadata=None):
 
     return Model(params['inputs_channels'], params['hidden_channels'],
                  params['num_layers'], params['output_channels'])
+
+
+def get_split_masks(data, dataset_name):
+    if dataset_name == 'ogbn-mag':
+        train_mask = ('paper', data['paper'].train_mask)
+        test_mask = ('paper', data['paper'].test_mask)
+        val_mask = ('paper', data['paper'].val_mask)
+    else:
+        train_mask = data.train_mask
+        val_mask = data.val_mask
+        test_mask = data.test_mask
+    return train_mask, val_mask, test_mask

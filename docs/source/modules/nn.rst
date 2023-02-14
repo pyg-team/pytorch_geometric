@@ -203,14 +203,12 @@ Models
 .. currentmodule:: torch_geometric.nn.models
 .. autosummary::
    :nosignatures:
+   :toctree: ../generated
+   :template: autosummary/nn.rst
+
    {% for name in torch_geometric.nn.models.classes %}
      {{ name }}
    {% endfor %}
-
-.. automodule:: torch_geometric.nn.models
-   :members:
-   :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv
 
 KGE Models
 ----------
