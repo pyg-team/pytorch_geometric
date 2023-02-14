@@ -34,7 +34,7 @@ templates_path = ['_templates']
 add_module_names = False
 autodoc_member_order = 'bysource'
 
-ignore_warnings = [('modules/nn.rst', 'failed to import method')]
+suppress_warnings = ['autodoc.import_object']
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
