@@ -83,11 +83,13 @@ class LightGCN(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         torch.nn.init.xavier_uniform_(self.embedding.weight)
         for conv in self.convs:
             conv.reset_parameters()
 
     def get_embedding(self, edge_index: Adj) -> Tensor:
+        r"""Returns the embedding of nodes in the graph."""
         x = self.embedding.weight
         out = x * self.alpha[0]
 

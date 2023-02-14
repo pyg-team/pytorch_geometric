@@ -73,6 +73,11 @@ class CorrectAndSmooth(torch.nn.Module):
         self.prop1 = LabelPropagation(num_correction_layers, correction_alpha)
         self.prop2 = LabelPropagation(num_smoothing_layers, smoothing_alpha)
 
+    def forward(self, y_soft: Tensor, *args) -> Tensor:  # pragma: no cover
+        r"""Applies both :meth:`correct` and :meth:`smooth`."""
+        y_soft = self.correct(y_soft, *args)
+        return self.smooth(y_soft, *args)
+
     def correct(self, y_soft: Tensor, y_true: Tensor, mask: Tensor,
                 edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
         r"""
@@ -120,7 +125,18 @@ class CorrectAndSmooth(torch.nn.Module):
 
     def smooth(self, y_soft: Tensor, y_true: Tensor, mask: Tensor,
                edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
-
+        r"""
+        Args:
+            y_soft (Tensor): The corrected predictions :math:`\mathbf{Z}`
+                obtained from :meth:`correct`.
+            y_true (Tensor): The ground-truth label information
+                :math:`\mathbf{Y}` of training nodes.
+            mask (LongTensor or BoolTensor): A mask or index tensor denoting
+                which nodes were used for training.
+            edge_index (Tensor or SparseTensor): The edge connectivity.
+            edge_weight (Tensor, optional): The edge weights.
+                (default: :obj:`None`)
+        """
         numel = int(mask.sum()) if mask.dtype == torch.bool else mask.size(0)
         assert y_true.size(0) == numel
 

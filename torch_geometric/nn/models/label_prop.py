@@ -37,7 +37,6 @@ class LabelPropagation(MessagePassing):
         post_step: Callable = lambda y: y.clamp_(0., 1.)
     ) -> Tensor:
         """"""
-
         if y.dtype == torch.long and y.size(0) == y.numel():
             y = F.one_hot(y.view(-1)).to(torch.float)
 

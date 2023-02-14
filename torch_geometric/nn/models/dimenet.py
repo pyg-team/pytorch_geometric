@@ -488,6 +488,7 @@ class DimeNet(torch.nn.Module):
         ])
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.rbf.reset_parameters()
         self.emb.reset_parameters()
         for out in self.output_blocks:
@@ -502,6 +503,9 @@ class DimeNet(torch.nn.Module):
         dataset: Dataset,
         target: int,
     ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:
+        r"""Returns a pre-trained :class:`DimeNet` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`."""
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -736,6 +740,9 @@ class DimeNetPlusPlus(DimeNet):
         dataset: Dataset,
         target: int,
     ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset, Dataset]:
+        r"""Returns a pre-trained :class:`DimeNetPlusPlus` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`."""
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
