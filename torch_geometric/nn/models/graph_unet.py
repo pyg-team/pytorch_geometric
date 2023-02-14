@@ -37,7 +37,7 @@ class GraphUNet(torch.nn.Module):
         pool_ratios: Union[float, List[float]] = 0.5,
         sum_res: bool = True,
         act: Union[str, Callable] = 'relu',
-    ) -> None:
+    ):
         super().__init__()
         assert depth >= 1
         self.in_channels = in_channels
