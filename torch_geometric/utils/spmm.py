@@ -6,6 +6,7 @@ from torch_geometric.typing import Adj, SparseTensor, torch_sparse
 
 if version.parse(torch.__version__) <= version.parse('2.0'):
     import torch_sparse.matmul as spmm
+
     # new spmm is only available for Pytorch release 2.0 and above
 else:
 
