@@ -19,6 +19,7 @@ from .target_indegree import TargetIndegree
 from .local_degree_profile import LocalDegreeProfile
 from .add_self_loops import AddSelfLoops
 from .remove_isolated_nodes import RemoveIsolatedNodes
+from .remove_duplicate_self_loops import RemoveDuplicateSelfLoops
 from .knn_graph import KNNGraph
 from .radius_graph import RadiusGraph
 from .to_dense import ToDense
