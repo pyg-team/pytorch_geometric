@@ -6,8 +6,11 @@ from torch_geometric.nn import GENConv
 from torch_geometric.testing import is_full_test
 
 
-@pytest.mark.parametrize('aggr',
-                         ['softmax', 'powermean', ['softmax', 'powermean'], ])
+@pytest.mark.parametrize('aggr', [
+    'softmax',
+    'powermean',
+    ['softmax', 'powermean'],
+])
 def test_gen_conv(aggr):
     x1 = torch.randn(4, 16)
     x2 = torch.randn(2, 16)
