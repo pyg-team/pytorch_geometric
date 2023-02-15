@@ -35,7 +35,7 @@ def test_simple_conv(aggr, combine_root):
         assert torch.allclose(jit(x1, edge_index), out)
         assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out)
 
-        t = '(Tensor, SparseTensor, Size) -> Tensor'
+        t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x1, adj.t()), out)
 

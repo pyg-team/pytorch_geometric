@@ -72,14 +72,11 @@ class SimpleConv(MessagePassing):
                              size=size)
 
         x_dst = x[1]
-        if x_dst is not None and self.combine_root == 'sum':
-            if out.size() != x_dst.size():
-                raise ValueError(f"The output size {tuple(out.size())} does "
-                                 f"not match the size of the destination "
-                                 f"node features {tuple(x_dst.size())}")
-            out = out + x_dst
-        elif x_dst is not None and self.combine_root == 'cat':
-            out = torch.cat([x_dst, out], dim=-1)
+        if x_dst is not None and self.combine_root is not None:
+            if self.combine_root == 'sum':
+                out = out + x_dst
+            elif self.combine_root == 'cat':
+                out = torch.cat([x_dst, out], dim=-1)
 
         return out
 
