@@ -2,6 +2,18 @@
 name="torch_geometric"
 version="2.3.0"
 readme="README.md"
+authors=[
+    {name="Matthias Fey", email="matthias@pyg.org"},
+]
+description="Graph Neural Network Library for PyTorch"
+requires-python=">=3.7"
+keywords=[
+    "deep-learning",
+    "pytorch",
+    "geometric-deep-learning",
+    "graph-neural-networks",
+    "graph-convolutional-networks",
+]
 classifiers=[
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
@@ -12,6 +24,14 @@ classifiers=[
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3 :: Only",
 ]
+
+dynamic=["dependencies", "optional-dependencies"]
+
+[project.urls]
+homepage="https://pyg.org"
+documentation="https://pytorch-geometric.readthedocs.io"
+repository="https://github.com/pyg-team/pytorch_geometric.git"
+changelog="https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md"
 
 [tool.yapf]
 based_on_style = "pep8"
