@@ -296,6 +296,7 @@ class RGATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if self.num_bases is not None:
             glorot(self.basis)
             glorot(self.att)

@@ -192,6 +192,7 @@ class GCNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         zeros(self.bias)
         self._cached_edge_index = None

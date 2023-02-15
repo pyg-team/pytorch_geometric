@@ -91,6 +91,7 @@ class HEATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.hetero_lin.reset_parameters()
         self.edge_type_emb.reset_parameters()
         self.edge_attr_emb.reset_parameters()

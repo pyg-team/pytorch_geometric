@@ -86,6 +86,7 @@ class NNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.nn)
         if self.root_weight:
             self.lin.reset_parameters()

@@ -72,6 +72,7 @@ class GraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 

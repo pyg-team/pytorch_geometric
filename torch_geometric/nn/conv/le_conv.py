@@ -61,6 +61,7 @@ class LEConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
         self.lin3.reset_parameters()

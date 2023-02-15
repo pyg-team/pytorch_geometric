@@ -109,6 +109,7 @@ class FiLMConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         for lin, film in zip(self.lins, self.films):
             lin.reset_parameters()
             reset(film)

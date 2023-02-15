@@ -252,6 +252,7 @@ class DNAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.multi_head.reset_parameters()
         self._cached_edge_index = None
         self._cached_adj_t = None
