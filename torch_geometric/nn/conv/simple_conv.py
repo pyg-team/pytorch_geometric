@@ -17,11 +17,13 @@ from torch_geometric.utils import spmm
 
 class SimpleConv(MessagePassing):
     r"""A simple message passing operator that performs (non-trainable)
-    propagation.
+    propagation
 
     .. math::
-        \mathbf{x}^{\prime}_i = \bigoplus_{j \in \mathcal{N(i)}} ~ e_{ji} \cdot
+        \mathbf{x}^{\prime}_i = \bigoplus_{j \in \mathcal{N(i)}} e_{ji} \cdot
         \mathbf{x}_j
+
+    where :math:`\bigoplus` defines a custom aggregation scheme.
 
     Args:
         aggr (str or [str] or Aggregation, optional): The aggregation scheme
@@ -57,9 +59,6 @@ class SimpleConv(MessagePassing):
 
         super().__init__(aggr, **kwargs)
         self.combine_root = combine_root
-
-    def reset_parameters(self):
-        pass
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None, size: Size = None) -> Tensor:

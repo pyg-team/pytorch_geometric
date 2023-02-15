@@ -177,6 +177,11 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks = OrderedDict()
         self._edge_update_forward_hooks = OrderedDict()
 
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
+        if self.aggr_module is not None:
+            self.aggr_module.reset_parameters()
+
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
 

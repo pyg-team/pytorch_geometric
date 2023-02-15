@@ -75,6 +75,7 @@ class PointNetConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.local_nn)
         reset(self.global_nn)
 

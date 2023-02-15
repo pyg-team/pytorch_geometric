@@ -65,6 +65,7 @@ class PointGNNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.mlp_h)
         reset(self.mlp_f)
         reset(self.mlp_g)
