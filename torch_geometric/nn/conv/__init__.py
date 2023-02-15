@@ -58,6 +58,7 @@ from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
 from .gps_conv import GPSConv
 from .antisymmetric_conv import AntiSymmetricConv
+from .gprgnn import GPRGNN
 
 __all__ = [
     'MessagePassing',
@@ -125,6 +126,7 @@ __all__ = [
     'PointGNNConv',
     'GPSConv',
     'AntiSymmetricConv',
+    'GPRGNN',
 ]
 
 classes = __all__
