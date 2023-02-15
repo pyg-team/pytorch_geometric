@@ -20,7 +20,7 @@ class SimpleConv(MessagePassing):
     propagation.
 
     .. math::
-        \mathbf{x}^{\prime}_i = \bigopolus_{j \in \mathcal{N(i)}} e_{ji} \cdot
+        \mathbf{x}^{\prime}_i = \bigoplus_{j \in \mathcal{N(i)}} ~ e_{ji} \cdot
         \mathbf{x}_j
 
     Args:
@@ -30,9 +30,9 @@ class SimpleConv(MessagePassing):
             In addition, can be any
             :class:`~torch_geometric.nn.aggr.Aggregation` module (or any string
             that automatically resolves to it). (default: :obj:`"sum"`)
-        combine_root (str, optional): Specified how to combine the central node
-            representation (one of :obj:`"sum"`, :obj:`"cat"`, :obj:`None`).
-            (default: :obj:`None`)
+        combine_root (str, optional): Specifies whether or how to combine the
+            central node representation (one of :obj:`"sum"`, :obj:`"cat"`,
+            :obj:`None`). (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
