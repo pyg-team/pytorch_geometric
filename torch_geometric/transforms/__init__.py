@@ -19,6 +19,7 @@ from .target_indegree import TargetIndegree
 from .local_degree_profile import LocalDegreeProfile
 from .add_self_loops import AddSelfLoops
 from .remove_isolated_nodes import RemoveIsolatedNodes
+from .remove_duplicated_edges import RemoveDuplicatedEdges
 from .knn_graph import KNNGraph
 from .radius_graph import RadiusGraph
 from .to_dense import ToDense
@@ -81,6 +82,7 @@ graph_transforms = [
     'LocalDegreeProfile',
     'AddSelfLoops',
     'RemoveIsolatedNodes',
+    'RemoveDuplicatedEdges',
     'KNNGraph',
     'RadiusGraph',
     'ToDense',

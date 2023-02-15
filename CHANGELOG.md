@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.3.0] - 2023-MM-DD
 
 ### Added
-
+- Added a `RemoveDuplicatedEdges` transform ([#6709](https://github.com/pyg-team/pytorch_geometric/pull/6709))
 - Added TorchScript support to the `LINKX` model ([#6712](https://github.com/pyg-team/pytorch_geometric/pull/6712))
 - Added `torch.jit` examples for `example/film.py` and `example/gcn.py`([#6602](https://github.com/pyg-team/pytorch_geometric/pull/6692))
 - Added `Pad` transform ([#5940](https://github.com/pyg-team/pytorch_geometric/pull/5940))
