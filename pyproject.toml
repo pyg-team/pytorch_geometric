@@ -3,7 +3,7 @@ name="torch_geometric"
 version="2.3.0"
 readme="README.md"
 authors=[
-    {name="Matthias Fey", email="matthias.fey@tu-dortmund.de"},
+    {name="Matthias Fey", email="matthias@pyg.org"},
 ]
 description="Graph Neural Network Library for PyTorch"
 requires-python=">=3.7"
