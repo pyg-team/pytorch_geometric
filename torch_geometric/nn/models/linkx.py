@@ -114,7 +114,7 @@ class LINKX(torch.nn.Module):
         self.edge_lin = SparseLinear(num_nodes, hidden_channels)
         # just make TorchScript happy
         self.edge_norm = BatchNorm1d(hidden_channels)
-        channels = [hidden_channels] * 2 
+        channels = [hidden_channels] * 2
         if self.num_edge_layers > 1:
             channels = [hidden_channels] * self.num_edge_layers
         self.edge_mlp = MLP(channels, dropout=0., act_first=True)
@@ -142,12 +142,13 @@ class LINKX(torch.nn.Module):
         self.final_mlp.reset_parameters()
 
     @torch.jit._overload_method
-    def forward(self, x:OptTensor, edge_index: SparseTensor, edge_weight=None):
+    def forward(self, x: OptTensor, edge_index: SparseTensor,
+                edge_weight=None):
         # type: (OptTensor, SparseTensor, OptTensor) -> Tensor
         pass
 
     @torch.jit._overload_method
-    def forward(self, x:OptTensor, edge_index: Tensor, edge_weight=None):
+    def forward(self, x: OptTensor, edge_index: Tensor, edge_weight=None):
         # type: (OptTensor, Tensor, OptTensor) -> Tensor
         pass
 
@@ -171,25 +172,27 @@ class LINKX(torch.nn.Module):
 
     def jittable(self, typing: str):
         edge_index_type = typing.split(",")[1]
-        print(self.edge_lin)
+
         class Jittable(torch.nn.Module):
             def __init__(self, unjittable):
                 super().__init__()
                 self.sub_module = unjittable
-            def forward(self, x: Tensor, edge_index: Tensor, edge_weight: OptTensor = None ):
+
+            def forward(self, x: Tensor, edge_index: Tensor,
+                        edge_weight: OptTensor = None):
                 return self.sub_module(x, edge_index, edge_weight)
 
         class SparseJittable(torch.nn.Module):
             def __init__(self, unjittable):
                 super().__init__()
                 self.sub_module = unjittable
-            def forward(self, x: Tensor, edge_index: SparseTensor, edge_weight: OptTensor = None):
+
+            def forward(self, x: Tensor, edge_index: SparseTensor,
+                        edge_weight: OptTensor = None):
                 return self.sub_module(x, edge_index, edge_weight)
 
         if self.edge_lin.jittable is not None:
-            edge_lin_typin = '(' + edge_index_type + ", OptTensor) -> Tensor"
             self.edge_lin = self.edge_lin.jittable()
-        
         if "SparseTensor" in edge_index_type:
             jittable_module = SparseJittable(self)
         elif "Tensor" in edge_index_type:
