@@ -21,7 +21,7 @@ def get_mesh_laplacian(pos: Tensor, face: Tensor) -> Tuple[Tensor, Tensor]:
       \end{cases}
 
     where :math:`a_{ij}` is the local area element, *i.e.* one-third of the
-    neighbouring triangle's area.
+    neighboring triangle's area.
 
     Args:
         pos (Tensor): The node positions.
