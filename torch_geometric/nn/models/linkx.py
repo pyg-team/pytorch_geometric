@@ -182,7 +182,7 @@ class LINKX(torch.nn.Module):
 
         return self.final_mlp(out.relu_())
 
-    def jittable(self, typing: str) -> torch.nn.Module:
+    def jittable(self, typing: str) -> torch.nn.Module:  # pragma: no cover
         edge_index_type = typing.split(',')[1].strip()
 
         class EdgeIndexJittable(torch.nn.Module):

@@ -22,7 +22,12 @@ def test_linkx(num_edge_layers):
     out = model(x, edge_index)
     assert out.size() == (4, 8)
     assert torch.allclose(out, model(x, adj1.t()), atol=1e-4)
+
     if is_full_test():
+        t = '(OptTensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(model.jittable(t))
+        assert torch.allclose(jit(x, edge_index), out)
+
         t = '(OptTensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(model.jittable(t))
         assert torch.allclose(jit(x, adj1.t()), out)
@@ -34,10 +39,6 @@ def test_linkx(num_edge_layers):
     out = model(x, edge_index, edge_weight)
     assert out.size() == (4, 8)
     assert torch.allclose(out, model(x, adj2.t()), atol=1e-4)
-    if is_full_test():
-        t = '(OptTensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(model.jittable(t))
-        assert torch.allclose(jit(x, adj2.t()), out)
 
     out = model(None, edge_index, edge_weight)
     assert out.size() == (4, 8)
