@@ -189,7 +189,7 @@ class MLP(torch.nn.Module):
         self,
         x: Tensor,
         return_emb: NoneType = None,
-    ):
+    ) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.

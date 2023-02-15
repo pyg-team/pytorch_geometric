@@ -120,7 +120,7 @@ class LINKX(torch.nn.Module):
 
         if self.num_edge_layers > 1:
             self.edge_norm = BatchNorm1d(hidden_channels)
-            channels = [hidden_channels] * self.num_edge_layers
+            channels = [hidden_channels] * num_edge_layers
             self.edge_mlp = MLP(channels, dropout=0., act_first=True)
         else:
             self.edge_norm = None
