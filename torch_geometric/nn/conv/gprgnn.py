@@ -37,8 +37,8 @@ class GPRGNN(MessagePassing):
     Args:
         K (int): Number of propagation layers :math:`K`.
         alpha (float): Initialization parameter :math:`\alpha`.
-        init (str, optional): Initialization method for GPR weights.
-            (default: :obj:`PPR`)
+        init (str, optional): Initialization method for GPR weights. Choices
+            include ['Delta', 'PPR', 'NPPR', 'Random']. (default: :obj:`PPR`)
         dropout (float, optional): Dropout probability of edges during
             training. (default: :obj:`0`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
@@ -163,5 +163,4 @@ class GPRGNN(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return '{}(K={}, temp={})'.format(self.__class__.__name__, self.K,
-                                          self.temp)
+        return f'{self.__class__.__name__}(K={self.K}, temp={self.temp})'
