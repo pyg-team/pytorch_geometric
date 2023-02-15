@@ -69,7 +69,7 @@ def test_gen_conv(aggr):
         assert torch.allclose(jit((x1, x2), adj2.t()), out22)
 
     conv.reset_parameters()
-    assert torch.allclose(torch.tensor([1.]), conv.msg_norm.scale)
+    assert float(conv.msg_norm.scale) == 1
 
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
