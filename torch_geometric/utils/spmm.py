@@ -1,18 +1,19 @@
 import torch
+from packaging import version
 from torch import Tensor
 
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
-from packaging import version
 
 if version.parse(torch.__version__) <= version.parse('1.13'):
     import torch_sparse.matmul as spmm
+
     # new spmm is only available for Pytorch release 2.0 and above
 else:
+
     @torch.jit._overload
     def spmm(src, other, reduce):
         # type: (Tensor, Tensor, str) -> Tensor
         pass
-
 
     @torch.jit._overload
     def spmm(src, other, reduce):
@@ -36,14 +37,14 @@ else:
         assert reduce in [
             'sum', 'add', 'mean', 'min', 'max'
         ], (reduce, " reduction is not supported for `torch.sparse.Tensor`.")
-            
+
         reduce = 'sum' if reduce == 'add' else reduce
 
-        if isinstance(src, SparseTensor): 
+        if isinstance(src, SparseTensor):
             src = src.to_torch_sparse_csr_tensor(dtype=other.dtype)
         elif isinstance(src, torch.Tensor) and src.layout != torch.sparse_csr:
             src = src.to_sparse_csr()
         else:
             raise ValueError("`src` must be a `torch_sparse.SparseTensor`"
-                            f"or a `torch.Tensor`(got {type(src)}).")
+                             f"or a `torch.Tensor`(got {type(src)}).")
         return torch.sparse.mm(src, other, reduce)
