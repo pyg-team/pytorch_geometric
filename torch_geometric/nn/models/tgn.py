@@ -62,6 +62,7 @@ class TGNMemory(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         if hasattr(self.msg_s_module, 'reset_parameters'):
             self.msg_s_module.reset_parameters()
         if hasattr(self.msg_d_module, 'reset_parameters'):
@@ -79,7 +80,7 @@ class TGNMemory(torch.nn.Module):
         self.__reset_message_store__()
 
     def detach(self):
-        """Detachs the memory from gradient computation."""
+        """Detaches the memory from gradient computation."""
         self.memory.detach_()
 
     def forward(self, n_id: Tensor) -> Tuple[Tensor, Tensor]:

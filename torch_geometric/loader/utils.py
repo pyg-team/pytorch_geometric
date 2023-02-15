@@ -52,7 +52,7 @@ def index_select(value: FeatureTensorType, index: Tensor,
 
 
 def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
-                       index: Tensor) -> None:
+                       index: Tensor):
     # Filters a node storage object to only hold the nodes in `index`:
     for key, value in store.items():
         if key == 'num_nodes':
@@ -68,8 +68,7 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
 
 
 def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
-                       col: Tensor, index: Tensor,
-                       perm: OptTensor = None) -> None:
+                       col: Tensor, index: Tensor, perm: OptTensor = None):
     # Filters a edge storage object to only hold the edges in `index`,
     # which represents the new graph as denoted by `(row, col)`:
     for key, value in store.items():
