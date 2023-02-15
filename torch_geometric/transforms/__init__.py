@@ -1,5 +1,6 @@
 # flake8: noqa
 
+from torch_geometric.deprecation import deprecated
 from .base_transform import BaseTransform
 from .compose import Compose
 from .to_device import ToDevice
@@ -19,7 +20,7 @@ from .target_indegree import TargetIndegree
 from .local_degree_profile import LocalDegreeProfile
 from .add_self_loops import AddSelfLoops
 from .remove_isolated_nodes import RemoveIsolatedNodes
-from .remove_duplicate_self_loops import RemoveDuplicateSelfLoops
+from .remove_duplicate_edges import RemoveDuplicateEdges
 from .knn_graph import KNNGraph
 from .radius_graph import RadiusGraph
 from .to_dense import ToDense
@@ -129,7 +130,6 @@ vision_transforms = [
 
 __all__ = general_transforms + graph_transforms + vision_transforms
 
-from torch_geometric.deprecation import deprecated
 
 RandomTranslate = deprecated("use 'transforms.RandomJitter' instead",
                              'transforms.RandomTranslate')(RandomJitter)
