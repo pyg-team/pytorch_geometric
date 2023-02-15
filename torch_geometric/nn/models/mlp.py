@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -189,7 +189,7 @@ class MLP(torch.nn.Module):
         self,
         x: Tensor,
         return_emb: NoneType = None,
-    ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+    ) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
