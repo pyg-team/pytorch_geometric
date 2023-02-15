@@ -10,7 +10,7 @@ from torch_geometric.utils import coalesce
 class RemoveDuplicatedEdges(BaseTransform):
     r"""Removes duplicated edges from a given homogeneous or heterogeneous
     graph. Useful to clean-up known repeated edges/self-loops in common
-    benchmark datasets, *e.g.*, :obj:`ogbn-products`.
+    benchmark datasets, *e.g.*, in :obj:`ogbn-products`.
     (functional name: :obj:`remove_duplicated_edges`).
 
     Args:
