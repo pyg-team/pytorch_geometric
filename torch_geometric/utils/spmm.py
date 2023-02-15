@@ -4,8 +4,9 @@ from torch import Tensor
 
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
 
-if version.parse(torch.__version__) <= version.parse('2.0'):
+if version.parse(torch.__version__).base_version < version.parse('2.0.0').base_version:
     import torch_sparse.matmul as spmm
+
     # new spmm is only available for Pytorch release 2.0 and above
 else:
 
@@ -41,9 +42,14 @@ else:
 
         if isinstance(src, SparseTensor):
             src = src.to_torch_sparse_csr_tensor(dtype=other.dtype)
-        elif isinstance(src, torch.Tensor) and src.layout != torch.sparse_csr:
-            src = src.to_sparse_csr()
-        else:
-            raise ValueError("`src` must be a `torch_sparse.SparseTensor`"
-                             f"or a `torch.Tensor`(got {type(src)}).")
-        return torch.sparse.mm(src, other, reduce)
+            return torch.sparse.mm(src, other, reduce)
+            
+        elif isinstance(src, torch.Tensor):
+            if src.layout != torch.sparse_csr:
+                src = src.to_sparse_csr()
+            return torch.sparse.mm(src, other, reduce)
+
+        raise ValueError("`src` must be a `torch_sparse.SparseTensor`"
+                        f"or a `torch.Tensor`(got {type(src)}).")
+            
+        

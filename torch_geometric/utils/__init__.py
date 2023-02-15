@@ -46,7 +46,7 @@ from .train_test_split_edges import train_test_split_edges
 from packaging import version
 from torch import __version__ as torch_version
 
-if version.parse(torch_version) <= version.parse('2.0'):
+if version.parse(torch_version).base_version < version.parse('2.0.0').base_version:
     from torch_sparse.matmul import spmm
 else:
     from .spmm import spmm
