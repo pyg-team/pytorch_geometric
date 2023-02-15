@@ -314,7 +314,7 @@ class LoggerCallback(Callback):
         batch: Any,
         batch_idx: int,
         unused: int = 0,
-    ) -> None:
+    ):
         stats = self._get_stats(self._train_epoch_start_time, outputs, trainer)
         self.train_logger.update_stats(**stats)
 
@@ -326,7 +326,7 @@ class LoggerCallback(Callback):
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
-    ) -> None:
+    ):
         stats = self._get_stats(self._val_epoch_start_time, outputs, trainer)
         self.val_logger.update_stats(**stats)
 
@@ -338,7 +338,7 @@ class LoggerCallback(Callback):
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
-    ) -> None:
+    ):
         stats = self._get_stats(self._test_epoch_start_time, outputs, trainer)
         self.test_logger.update_stats(**stats)
 

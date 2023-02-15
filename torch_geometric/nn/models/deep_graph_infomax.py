@@ -18,7 +18,7 @@ class DeepGraphInfomax(torch.nn.Module):
 
     Args:
         hidden_channels (int): The latent space dimensionality.
-        encoder (Module): The encoder module :math:`\mathcal{E}`.
+        encoder (torch.nn.Module): The encoder module :math:`\mathcal{E}`.
         summary (callable): The readout function :math:`\mathcal{R}`.
         corruption (callable): The corruption function :math:`\mathcal{C}`.
     """
@@ -40,6 +40,7 @@ class DeepGraphInfomax(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset(self.encoder)
         reset(self.summary)
         uniform(self.hidden_channels, self.weight)
@@ -60,8 +61,8 @@ class DeepGraphInfomax(torch.nn.Module):
         the probability scores assigned to this patch-summary pair.
 
         Args:
-            z (Tensor): The latent space.
-            summary (Tensor): The summary vector.
+            z (torch.Tensor): The latent space.
+            summary (torch.Tensor): The summary vector.
             sigmoid (bool, optional): If set to :obj:`False`, does not apply
                 the logistic sigmoid function to the output.
                 (default: :obj:`True`)

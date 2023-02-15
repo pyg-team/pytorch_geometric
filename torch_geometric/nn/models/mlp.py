@@ -1,5 +1,5 @@
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -178,14 +178,25 @@ class MLP(torch.nn.Module):
         return len(self.channel_list) - 1
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for lin in self.lins:
             lin.reset_parameters()
         for norm in self.norms:
             if hasattr(norm, 'reset_parameters'):
                 norm.reset_parameters()
 
-    def forward(self, x: Tensor, return_emb: NoneType = None) -> Tensor:
-        """"""
+    def forward(
+        self,
+        x: Tensor,
+        return_emb: NoneType = None,
+    ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            return_emb (bool, optional): If set to :obj:`True`, will
+                additionally return the embeddings before execution of to the
+                final output layer. (default: :obj:`False`)
+        """
         for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
             x = lin(x)
             if self.act is not None and self.act_first:

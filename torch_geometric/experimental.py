@@ -46,7 +46,7 @@ class experimental_mode:
             for option in self.options
         }
 
-    def __enter__(self) -> None:
+    def __enter__(self):
         set_experimental_mode_enabled(True, self.options)
 
     def __exit__(self, *args) -> bool:
