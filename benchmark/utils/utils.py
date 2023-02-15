@@ -44,9 +44,9 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
                           transform=transform)
     elif name == 'ogbn-products':
         if transform is None:
-            transform = T.RemoveDuplicateEdges()
+            transform = T.RemoveDuplicatedEdges()
         else:
-            transform = T.Compose([T.RemoveDuplicateEdges(), transform])
+            transform = T.Compose([T.RemoveDuplicatedEdges(), transform])
     elif name == 'Reddit':
         dataset = Reddit(root=path, transform=transform)
 
