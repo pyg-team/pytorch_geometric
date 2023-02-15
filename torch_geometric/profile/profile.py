@@ -228,7 +228,10 @@ def rename_profile_file(*args):
 
 @contextmanager
 def torch_profile():
-    with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-                 on_trace_ready=trace_handler) as p:
+    activities = [ProfilerActivity.CPU]
+    if torch.cuda.is_available():
+        activities.append(ProfilerActivity.CUDA)
+
+    with profile(activities=activities, on_trace_ready=trace_handler) as p:
         yield
         p.step()
