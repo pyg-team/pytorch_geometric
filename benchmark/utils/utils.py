@@ -1,7 +1,6 @@
 import os.path as osp
 
 import torch
-from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG, Reddit
