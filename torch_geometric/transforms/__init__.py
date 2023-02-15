@@ -130,6 +130,5 @@ vision_transforms = [
 
 __all__ = general_transforms + graph_transforms + vision_transforms
 
-
 RandomTranslate = deprecated("use 'transforms.RandomJitter' instead",
                              'transforms.RandomTranslate')(RandomJitter)
