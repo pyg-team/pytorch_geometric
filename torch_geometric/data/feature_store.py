@@ -78,12 +78,13 @@ class TensorAttr(CastMixin):
                 setattr(self, key, None)
         return self
 
-    def update(self, attr: 'TensorAttr'):
+    def update(self, attr: 'TensorAttr') -> 'TensorAttr':
         r"""Updates an :class:`TensorAttr` with set attributes from another
         :class:`TensorAttr`."""
         for key in self.__dataclass_fields__:
             if attr.is_set(key):
                 setattr(self, key, getattr(attr, key))
+        return self
 
 
 class AttrView(CastMixin):

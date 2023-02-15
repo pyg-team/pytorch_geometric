@@ -4,6 +4,7 @@ import os.path as osp
 import random
 import subprocess as sp
 import sys
+import warnings
 from collections.abc import Mapping, Sequence
 from typing import Any, Tuple
 
@@ -69,6 +70,8 @@ def get_cpu_memory_from_gc() -> int:
     r"""Returns the used CPU memory in bytes, as reported by the Python garbage
     collector.
     """
+    warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
+
     mem = 0
     for obj in gc.get_objects():
         try:
@@ -86,6 +89,8 @@ def get_gpu_memory_from_gc(device: int = 0) -> int:  # pragma: no cover
     Args:
         device (int, optional): The GPU device identifier. (default: :obj:`1`)
     """
+    warnings.filterwarnings('ignore', '.*torch.distributed.reduce_op.*')
+
     mem = 0
     for obj in gc.get_objects():
         try:
