@@ -326,9 +326,11 @@ class HeteroDictLinear(torch.nn.Module):
                  types: Optional[Union[List[NodeType],
                                        List[EdgeType]]] = None, **kwargs):
         super().__init__()
+        print("in channels passed in =", in_channels)
         if isinstance(in_channels, dict):
             self.types = list(in_channels.keys())
             if any(in_channels.values()) == -1:
+                print("registering hook")
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
             if types is not None and self.types != types:
@@ -336,6 +338,7 @@ class HeteroDictLinear(torch.nn.Module):
                  the keys of the `in_channels` dictionary")
         else:
             if in_channels == -1:
+                print("registering hook")
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
             self.types = types
