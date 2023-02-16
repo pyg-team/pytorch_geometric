@@ -22,21 +22,10 @@ from torch_geometric.typing import (
     Metadata,
     NodeType,
     SparseTensor,
+    grouped_matmul_avail,
     pyg_lib,
 )
 from torch_geometric.utils import softmax
-
-
-def pad_list(xs: List[Tensor]) -> List[Tensor]:
-    max_size = max(x.size(-1) for x in xs)
-    for i, x in enumerate(xs):
-        if x.shape[1] < max_size:
-            xs[i] = torch.concat(
-                (x,
-                 torch.zeros(
-                     (x.shape[0], max_size - x.shape[1]), device=x.device)),
-                dim=1)
-    return xs
 
 
 def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
@@ -102,46 +91,31 @@ class HGTConv(MessagePassing):
 
         if not isinstance(in_channels, dict):
             in_channels = {node_type: in_channels for node_type in metadata[0]}
-        # can only use grouped matmul if torch >= 1.14
-        major_vers, minor_vers = str(torch.__version__).split('.')[:2]
-        self.use_gmm = int(major_vers) >= 2 or int(minor_vers) >= 14
+        self.use_gmm = grouped_matmul_avail()
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
         self.group = group
 
-        self.k_lin = ModuleDict()
-        self.q_lin = ModuleDict()
-        self.v_lin = ModuleDict()
-        self.a_lin = ModuleDict()
-        self.skip = ParameterDict()
+        
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
         self.src_types = [edge_type[0] for edge_type in self.edge_types]
-        self.dims = torch.tensor(list(self.in_channels.values()))
-        self.max_channels = self.dims.max()
-        self.infer_shapes = self.max_channels == -1
-        if self.infer_shapes:
-            self._hook = self.register_forward_pre_hook(
-                self.initialize_parameters)
         if self.use_gmm:  # pragma: no cover
             # grouped gemm allows us not to have to pad
-            for node_type, in_channels in self.in_channels.items():
-                self.k_lin[node_type] = Linear(in_channels, out_channels)
-                self.q_lin[node_type] = Linear(in_channels, out_channels)
-                self.v_lin[node_type] = Linear(in_channels, out_channels)
-                self.a_lin[node_type] = Linear(out_channels, out_channels)
-                self.skip[node_type] = Parameter(torch.Tensor(1))
+            from torch_geometric.nn.dense import HeteroDictLinear
+            self.k_lin = HeteroDictLinear(self.in_channels, self.out_channels, **kwargs)
+            self.q_lin = HeteroDictLinear(self.in_channels, self.out_channels, **kwargs)
+            self.v_lin = HeteroDictLinear(self.in_channels, self.out_channels, **kwargs)
+            self.a_lin = HeteroDictLinear(self.in_channels, self.out_channels, **kwargs)
         else:
-            # need to pad xs to concatenate them
-            self.no_pad = (
-                self.dims == self.max_channels).all() and not self.infer_shapes
-            for node_type in self.node_types:
-                self.k_lin[node_type] = Linear(self.max_channels, out_channels)
-                self.q_lin[node_type] = Linear(self.max_channels, out_channels)
-                self.v_lin[node_type] = Linear(self.max_channels, out_channels)
-                self.a_lin[node_type] = Linear(self.max_channels, out_channels)
-                self.skip[node_type] = Parameter(torch.Tensor(1))
+            from torch_geometric.nn.to_hetero_module import ToHeteroLinear
+            self.max_channels = max(self.in_channels.values())
+            self.k_lin = ToHeteroLinear(Linear(self.max_channels, self.out_channels, **kwargs), self.node_types)
+            self.q_lin = ToHeteroLinear(Linear(self.max_channels, self.out_channels, **kwargs), self.node_types)
+            self.v_lin = ToHeteroLinear(Linear(self.max_channels, self.out_channels, **kwargs), self.node_types)
+            self.a_lin = ToHeteroLinear(Linear(self.max_channels, self.out_channels, **kwargs), self.node_types)
+        self.skip = ParameterDict({node_type:Parameter(torch.Tensor(1)) for node_type in self.node_types})
 
         self.a_rel = ParameterDict()
         self.m_rel = ParameterDict()
@@ -187,93 +161,16 @@ class HGTConv(MessagePassing):
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
-        xs = list(x_dict.values())
-        if not self.use_gmm:
-            # for segment_matmul check if need padding
-            if self.no_pad:
-                x = torch.cat(xs)
-            else:
-                x = torch.cat(pad_list(xs))
         H, D = self.heads, self.out_channels // self.heads
 
         k_dict, q_dict, v_dict = {}, {}, {}
-        # parallelize over node-types
-        k_wts = [
-            self.k_lin[node_type].weight.T for node_type in self.node_types
-        ]
-        k_biases = [
-            self.k_lin[node_type].bias for node_type in self.node_types
-        ]
-        q_wts = [
-            self.q_lin[node_type].weight.T for node_type in self.node_types
-        ]
-        q_biases = [
-            self.q_lin[node_type].bias for node_type in self.node_types
-        ]
-        v_wts = [
-            self.v_lin[node_type].weight.T for node_type in self.node_types
-        ]
-        v_biases = [
-            self.v_lin[node_type].bias for node_type in self.node_types
-        ]
         out_dict = defaultdict(list)
 
-        if not self.use_gmm:
-            ptr = [0]
-            count = 0
-            for x_type_i in xs:
-                count += x_type_i.size(0)
-                ptr.append(count)
-            ptr = torch.tensor(ptr).to(x.device)
-            k_wt = torch.stack(k_wts)
-            k_bias = torch.stack(k_biases)
-            q_wt = torch.stack(q_wts)
-            q_bias = torch.stack(q_biases)
-            v_wt = torch.stack(v_wts)
-            v_bias = torch.stack(v_biases)
-
+        # parallelize over node-types
         # compute K, Q, V over node-types
-        if self.use_gmm:  # pragma: no cover
-            # compute K
-            k_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=k_wts,
-                                                biases=k_biases)
-            k_dict = {
-                node_type: k_list[i].view(-1, H, D)
-                for i, node_type in enumerate(self.node_types)
-            }
-            # compute Q
-            q_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=q_wts,
-                                                biases=q_biases)
-            q_dict = {
-                node_type: q_list[i].view(-1, H, D)
-                for i, node_type in enumerate(self.node_types)
-            }
-            # compute V
-            v_list = pyg_lib.ops.grouped_matmul(inputs=xs, others=v_wts,
-                                                biases=v_biases)
-            v_dict = {
-                node_type: v_list[i].view(-1, H, D)
-                for i, node_type in enumerate(self.node_types)
-            }
-        else:
-            k = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=k_wt,
-                                           bias=k_bias)
-            k_dict = {
-                node_type: k[ptr[i]:ptr[i + 1]].view(-1, H, D)
-                for i, node_type in enumerate(self.node_types)
-            }
-            q = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=q_wt,
-                                           bias=q_bias)
-            q_dict = {
-                node_type: q[ptr[i]:ptr[i + 1]].view(-1, H, D)
-                for i, node_type in enumerate(self.node_types)
-            }
-            v = pyg_lib.ops.segment_matmul(inputs=x, ptr=ptr, other=v_wt,
-                                           bias=v_bias)
-            v_dict = {
-                node_type: v[ptr[i]:ptr[i + 1]].view(-1, H, D)
-                for i, node_type in enumerate(self.node_types)
-            }
+        k_dict = {node_type:k_j.view(-1, H, D) for node_type, k_j in self.k_lin(x_dict).items()}
+        q_dict = {node_type:q_j.view(-1, H, D) for node_type, q_j in self.q_lin(x_dict).items()}
+        v_dict = {node_type:v_j.view(-1, H, D) for node_type, v_j in self.v_lin(x_dict).items()}
 
         # parallelize over edge-types
         a_rels = [
@@ -331,7 +228,6 @@ class HGTConv(MessagePassing):
         # combine edge_index dict into single tensor
         q_list = []
         p_rels = []
-        cumsum = 0
         edge_index_list = []
         for e_type in self.edge_types:
             indices = edge_index_dict[e_type]
@@ -383,32 +279,6 @@ class HGTConv(MessagePassing):
         alpha = softmax(alpha, index, ptr, size_i)
         out = v_j * alpha.view(-1, self.heads, 1)
         return out.view(-1, self.out_channels)
-
-    @torch.no_grad()
-    def initialize_parameters(self, module, input):
-        x_dict = input[0]
-        if self.use_gmm:  # pragma: no cover
-            for node_type, x_n in x_dict.items():
-                self.k_lin[node_type].initialize_parameters(None, x_n)
-                self.q_lin[node_type].initialize_parameters(None, x_n)
-                self.v_lin[node_type].initialize_parameters(None, x_n)
-        else:
-            xs = list(x_dict.values())
-            self.dims = torch.tensor([x_j.shape[-1] for x_j in xs])
-            self.max_channels = self.dims.max()
-            input_to_init_w = xs[self.dims.argmax()]
-            for node_type in x_dict.keys():
-                self.k_lin[node_type].initialize_parameters(
-                    None, input_to_init_w)
-                self.q_lin[node_type].initialize_parameters(
-                    None, input_to_init_w)
-                self.v_lin[node_type].initialize_parameters(
-                    None, input_to_init_w)
-            self.no_pad = (self.dims == self.max_channels).all()
-
-        self.reset_parameters()
-        self._hook.remove()
-        delattr(self, '_hook')
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(-1, {self.out_channels}, '

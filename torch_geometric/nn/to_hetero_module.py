@@ -9,6 +9,16 @@ import torch_geometric
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import scatter
 
+def pad_list(xs: List[Tensor]) -> List[Tensor]:
+    max_size = max(x.size(-1) for x in xs)
+    for i, x in enumerate(xs):
+        if x.shape[1] < max_size:
+            xs[i] = torch.concat(
+                (x,
+                 torch.zeros(
+                     (x.shape[0], max_size - x.shape[1]), device=x.device)),
+                dim=1)
+    return xs
 
 class ToHeteroLinear(torch.nn.Module):
     def __init__(
@@ -35,8 +45,6 @@ class ToHeteroLinear(torch.nn.Module):
         else:
             raise ValueError(f"Expected 'Linear' module (got '{type(module)}'")
 
-        # TODO: Need to handle `in_channels=-1` case.
-        # TODO We currently assume that `x` is sorted according to `type`.
         self.hetero_module = HeteroLinear(
             in_channels,
             out_channels,
@@ -59,7 +67,10 @@ class ToHeteroLinear(torch.nn.Module):
                 for i, key in enumerate(self.types)
             }
 
-        x = torch.cat([x_dict[key] for key in self.types], dim=0)
+        if self.in_channels == -1:
+            x = torch.cat(pad_list([x_dict[key] for key in self.types]), dim=0)
+        else:
+            x = torch.cat([x_dict[key] for key in self.types], dim=0)
         sizes = [x_dict[key].size(0) for key in self.types]
         type_vec = torch.arange(len(self.types), device=x.device)
         size = torch.tensor(sizes, device=x.device)
