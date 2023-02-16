@@ -35,12 +35,12 @@ class ToHeteroLinear(torch.nn.Module):
         self.types = types
 
         if isinstance(module, Linear):
-            in_channels = module.in_channels
+            self.in_channels = module.in_channels
             out_channels = module.out_channels
             bias = module.bias is not None
 
         elif isinstance(module, torch.nn.Linear):
-            in_channels = module.in_features
+            self.in_channels = module.in_features
             out_channels = module.out_features
             bias = module.bias is not None
 
@@ -48,7 +48,7 @@ class ToHeteroLinear(torch.nn.Module):
             raise ValueError(f"Expected 'Linear' module (got '{type(module)}'")
 
         self.hetero_module = HeteroLinear(
-            in_channels,
+            self.in_channels,
             out_channels,
             num_types=len(types),
             is_sorted=True,
