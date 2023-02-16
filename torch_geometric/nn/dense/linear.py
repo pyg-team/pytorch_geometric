@@ -373,7 +373,7 @@ class HeteroDictLinear(torch.nn.Module):
             biases = [self.lins[x_type].bias for x_type in self.types]
             xs = [x_dict[x_type] for x_type in self.types]
             out_dict = {
-                self.types[i]: o.view(-1, H, D)
+                self.types[i]: o
                 for i, o in enumerate(
                     pyg_lib.ops.grouped_matmul(inputs=xs, others=wts,
                                                biases=biases))
