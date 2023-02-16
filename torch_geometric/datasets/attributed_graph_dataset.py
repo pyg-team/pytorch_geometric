@@ -96,7 +96,6 @@ class AttributedGraphDataset(InMemoryDataset):
           - 978,147,253
           - 2,000
           - 100
-
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
