@@ -315,10 +315,12 @@ class HeteroDictLinear(torch.nn.Module):
     initialization.
 
     Args:
-        in_channels (int or Dict[str, int]): Size of each input sample. Use :obj:`-1`
-            for lazy initialization. If passing as an int, types is required as well.
+        in_channels (int or Dict[str, int]): Size of each input sample.
+            Use :obj:`-1` for lazy initialization.
+            If passing as an int, types is required as well.
         out_channels (int): Size of each output sample.
-        types (List[str], optional): Only needed if in_channels is passed as an int
+        types (List[str], optional): Only needed if in_channels
+            is passed as an int.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
     """
@@ -341,7 +343,8 @@ class HeteroDictLinear(torch.nn.Module):
             self.types = types
             if self.types is None:
                 raise ValueError(
-                    "Please provide a list of types if passing `in_channels` as an int"
+                    "Please provide a list of types if \
+                    passing `in_channels` as an int"
                 )
             in_channels = {node_type: in_channels for node_type in self.types}
         self.in_channels = in_channels
@@ -384,7 +387,7 @@ class HeteroDictLinear(torch.nn.Module):
         else:
             out_dict = {}
             for x_type, x in x_dict:
-                out[x_type] = self.lins[x_type](x)
+                out_dict[x_type] = self.lins[x_type](x)
         return out_dict
 
     @torch.no_grad()
