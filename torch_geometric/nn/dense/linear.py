@@ -303,7 +303,7 @@ class HeteroLinear(torch.nn.Module):
                 f'bias={self.kwargs.get("bias", True)})')
 
 
-class HeteroDictLinear(torch.nn.Module):
+class HeteroDictLinear(torch.nn.Module): # pragma: no cover
     r"""Applies separate linear tranformations to the incoming data dictionary
 
     .. math::
