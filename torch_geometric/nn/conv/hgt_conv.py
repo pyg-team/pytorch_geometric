@@ -99,7 +99,7 @@ class HGTConv(MessagePassing):
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
         self.src_types = [edge_type[0] for edge_type in self.edge_types]
-        if self.use_gmm: # pragma: no cover
+        if self.use_gmm:  # pragma: no cover
             # grouped gemm allows us not to have to pad
             from torch_geometric.nn.dense import HeteroDictLinear
             self.k_lin = HeteroDictLinear(self.in_channels, self.out_channels,
@@ -202,7 +202,7 @@ class HGTConv(MessagePassing):
         m_rels = [
             self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
-        if self.use_gmm: # pragma: no cover
+        if self.use_gmm:  # pragma: no cover
             k_ins = [
                 k_dict[src_type].transpose(0, 1) for src_type in self.src_types
             ]

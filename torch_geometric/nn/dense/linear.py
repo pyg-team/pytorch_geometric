@@ -303,7 +303,7 @@ class HeteroLinear(torch.nn.Module):
                 f'bias={self.kwargs.get("bias", True)})')
 
 
-class HeteroDictLinear(torch.nn.Module): # pragma: no cover
+class HeteroDictLinear(torch.nn.Module):  # pragma: no cover
     r"""Applies separate linear tranformations to the incoming data dictionary
 
     .. math::
@@ -342,10 +342,8 @@ class HeteroDictLinear(torch.nn.Module): # pragma: no cover
                     self.initialize_parameters)
             self.types = types
             if self.types is None:
-                raise ValueError(
-                    "Please provide a list of types if \
-                    passing `in_channels` as an int"
-                )
+                raise ValueError("Please provide a list of types if \
+                    passing `in_channels` as an int")
             in_channels = {node_type: in_channels for node_type in self.types}
         self.in_channels = in_channels
         self.out_channels = out_channels
