@@ -1,4 +1,4 @@
-from .linear import Linear, HeteroLinear
+from .linear import Linear, HeteroLinear, HeteroDictLinear
 from .dense_sage_conv import DenseSAGEConv
 from .dense_gcn_conv import DenseGCNConv
 from .dense_graph_conv import DenseGraphConv
