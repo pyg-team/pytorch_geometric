@@ -10,7 +10,7 @@ from .dmon_pool import DMoNPooling
 __all__ = [
     'Linear',
     'HeteroLinear',
-    'HeteroDictLinear'
+    'HeteroDictLinear',
     'DenseGCNConv',
     'DenseGINConv',
     'DenseGraphConv',
