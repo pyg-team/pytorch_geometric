@@ -109,8 +109,8 @@ class HGTConv(MessagePassing):
                                           **kwargs)
             self.v_lin = HeteroDictLinear(self.in_channels, self.out_channels,
                                           **kwargs)
-            self.a_lin = HeteroDictLinear(self.out_channels, self.out_channels, self.node_types,
-                                          **kwargs)
+            self.a_lin = HeteroDictLinear(self.out_channels, self.out_channels,
+                                          self.node_types, **kwargs)
         else:
             from torch_geometric.nn.to_hetero_module import ToHeteroLinear
             self.max_channels = max(self.in_channels.values())
