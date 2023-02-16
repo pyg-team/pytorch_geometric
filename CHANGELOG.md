@@ -84,7 +84,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the RandLA-Net architecture as an example ([#5117](https://github.com/pyg-team/pytorch_geometric/pull/5117))
 
 ### Changed
-
+- Allow padding graphs with 0 nodes ([#6731](https://github.com/pyg-team/pytorch_geometric/pull/6731))
 - Allow setting the `EdgeStorage.num_edges` property ([#6710](https://github.com/pyg-team/pytorch_geometric/pull/6710))
 - Extended `Pad` transform to add `num_nodes` and `num_edges` directly to the padded objects ([#6697](https://github.com/pyg-team/pytorch_geometric/pull/6697))
 - Fixed a bug in `utils.bipartite_subgraph()` and updated docs of `HeteroData.subgraph()` ([#6654](https://github.com/pyg-team/pytorch_geometric/pull/6654))
