@@ -328,6 +328,9 @@ class HeteroDictLinear(torch.nn.Module):
         super().__init__()
         if isinstance(in_channels, dict):
             self.types = list(in_channels.keys())
+            if any(in_channels.values()) == -1:
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
             if types is not None and self.types != types:
                 raise ValueError("User provided `types` list does not match \
                  the keys of the `in_channels` dictionary")
@@ -384,7 +387,9 @@ class HeteroDictLinear(torch.nn.Module):
     @torch.no_grad()
     def initialize_parameters(self, module, input):
         for x_type, x_n in input[0]:
-            self.lins[x_type].initialize_parameters(None, x_n)
+            lin_x = self.lins[x_type]
+            if is_uninitialized_parameter(lin_x.weight):
+                self.lins[x_type].initialize_parameters(None, x_n)
         self.reset_parameters()
         self._hook.remove()
         delattr(self, '_hook')
