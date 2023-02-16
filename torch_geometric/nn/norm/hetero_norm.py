@@ -2,6 +2,7 @@ import torch
 from torch import Tensor
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
 from torch_geometric.nn.typing import Metadata
+from torch_geometric.nn.parameter_dict import ParameterDict
 from typing import Dict
 
 class HeteroNorm(torch.nn.Module):
@@ -66,11 +67,17 @@ class HeteroNorm(torch.nn.Module):
             in_channels = {node_type: in_channels for node_type in self.types}
         self.in_channels = in_channels
         self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types, **kwargs)
+        self.means = ParameterDict({mean_type:torch.zeros(self.in_channels) for mean_type in self.types})
+        self.vars = ParameterDict({var_type:torch.ones(self.in_channels) for var_type in self.types})
         self.allow_single_element = allow_single_element
+        self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         self.hetero_linear.reset_parameters()
+        for type_i in self.types:
+            self.means[type_i] = torch.zeros(self.in_channels)
+            self.vars[type_i] = torch.ones(self.in_channels)
 
     def forward(
         self,
