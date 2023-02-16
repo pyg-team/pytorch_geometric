@@ -153,3 +153,24 @@ def test_captum_hetero_data(node_mask_type, edge_mask_type, index, hetero_data,
                             index=index)
 
     explanation.validate(raise_on_error=True)
+
+
+@pytest.mark.parametrize('node_mask_type',
+                         [MaskType.object, MaskType.common_attributes])
+def test_captum_explainer_supports(node_mask_type):
+    model_config = ModelConfig(
+        mode='multiclass_classification',
+        task_level='node',
+        return_type='probs',
+    )
+
+    model = GCN(model_config)
+    with pytest.raises(ValueError, match="not support the given explanation"):
+        Explainer(
+            model,
+            algorithm=CaptumExplainer('IntegratedGradients'),
+            edge_mask_type=MaskType.object,
+            node_mask_type=node_mask_type,
+            model_config=model_config,
+            explanation_type='model',
+        )

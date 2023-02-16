@@ -49,8 +49,8 @@ class CaptumExplainer(ExplainerAlgorithm):
         else:
             self.attribution_method = attribution_method
 
-    def _get_mask_type(self):
-        "Based on the explainer config, return the mask type."
+    def _get_mask_type(self) -> str:
+        r"""Based on the explainer config, return the mask type."""
         node_mask_type = self.explainer_config.node_mask_type
         edge_mask_type = self.explainer_config.edge_mask_type
         if node_mask_type is not None and edge_mask_type is not None:
@@ -61,7 +61,7 @@ class CaptumExplainer(ExplainerAlgorithm):
             mask_type = 'edge'
         return mask_type
 
-    def _support_multiple_indices(self):
+    def _support_multiple_indices(self) -> bool:
         r"""Checks if the method supports multiple indices."""
         return self.attribution_method.__name__ == 'IntegratedGradients'
 
