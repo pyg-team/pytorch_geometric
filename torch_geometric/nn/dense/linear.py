@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Union, List
 
 import torch
 import torch.nn.functional as F
