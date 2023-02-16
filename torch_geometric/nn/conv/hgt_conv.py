@@ -281,13 +281,17 @@ class HGTConv(MessagePassing):
             out_dict[node_type] = out[k_ptr:k_ptr + k.size(0)]
             k_ptr += k.size(0)
 
+        # parralelize over node-types
+        a_dict = self.a_lin({node_type:F.gelu(out) for node_type, out in out_dict.items() if out is not None})
+
         # Iterate over node-types:
         for node_type, out in out_dict.items():
             if out is None:
                 out_dict[node_type] = None
                 continue
+            else:
+                out = a_dict[node_type]
 
-            out = self.a_lin[node_type](F.gelu(out))
             if out.size(-1) == x_dict[node_type].size(-1):
                 alpha = self.skip[node_type].sigmoid()
                 out = alpha * out + (1 - alpha) * x_dict[node_type]
