@@ -113,6 +113,7 @@ class EGConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.bases_lin.reset_parameters()
         self.comb_lin.reset_parameters()
         zeros(self.bias)

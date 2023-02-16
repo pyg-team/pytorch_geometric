@@ -89,6 +89,7 @@ class FAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.att_l.reset_parameters()
         self.att_r.reset_parameters()
         self._cached_edge_index = None

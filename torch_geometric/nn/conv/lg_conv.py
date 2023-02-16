@@ -34,9 +34,6 @@ class LGConv(MessagePassing):
         super().__init__(**kwargs)
         self.normalize = normalize
 
-    def reset_parameters(self):
-        pass
-
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
         """"""

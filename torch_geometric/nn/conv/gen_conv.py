@@ -189,8 +189,8 @@ class GENConv(MessagePassing):
             self.msg_norm = MessageNorm(learn_msg_scale)
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.mlp)
-        self.aggr_module.reset_parameters()
         if hasattr(self, 'msg_norm'):
             self.msg_norm.reset_parameters()
         if hasattr(self, 'lin_src'):

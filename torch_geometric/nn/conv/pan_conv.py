@@ -57,6 +57,7 @@ class PANConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         self.weight.data.fill_(0.5)
 

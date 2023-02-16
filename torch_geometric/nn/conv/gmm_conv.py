@@ -119,6 +119,7 @@ class GMMConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if not isinstance(self.g, torch.nn.UninitializedParameter):
             glorot(self.g)
             glorot(self.mu)

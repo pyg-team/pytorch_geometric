@@ -72,6 +72,7 @@ class CGConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_f.reset_parameters()
         self.lin_s.reset_parameters()
         if self.bn is not None:
