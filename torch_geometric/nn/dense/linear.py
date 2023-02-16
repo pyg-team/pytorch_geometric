@@ -329,7 +329,7 @@ class HeteroDictLinear(torch.nn.Module):
         print("in channels passed in =", in_channels)
         if isinstance(in_channels, dict):
             self.types = list(in_channels.keys())
-            if any([int(i) for i in in_channels.values()]) == -1:
+            if any([int(i) == -1 for i in in_channels.values()]):
                 print("registering hook")
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
