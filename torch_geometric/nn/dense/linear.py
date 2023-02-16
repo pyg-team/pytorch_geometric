@@ -353,7 +353,7 @@ class HeteroDictLinear(torch.nn.Module):
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        for lin in self.lins:
+        for lin in self.lins.values():
             lin.reset_parameters()
 
     def forward(
