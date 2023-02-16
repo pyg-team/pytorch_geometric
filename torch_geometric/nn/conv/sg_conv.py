@@ -72,6 +72,7 @@ class SGConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         self._cached_x = None
 

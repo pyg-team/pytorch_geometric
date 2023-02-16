@@ -116,6 +116,7 @@ class SplineConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if not isinstance(self.weight, nn.UninitializedParameter):
             size = self.weight.size(0) * self.weight.size(1)
             uniform(size, self.weight)

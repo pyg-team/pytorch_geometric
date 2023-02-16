@@ -87,6 +87,7 @@ class SignedConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_pos_l.reset_parameters()
         self.lin_pos_r.reset_parameters()
         self.lin_neg_l.reset_parameters()

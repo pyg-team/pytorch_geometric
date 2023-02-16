@@ -57,6 +57,7 @@ class AGNNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if self.requires_grad:
             self.beta.data.fill_(1)
 

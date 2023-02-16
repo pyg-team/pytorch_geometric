@@ -101,6 +101,7 @@ class PointTransformerConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.pos_nn)
         if self.attn_nn is not None:
             reset(self.attn_nn)

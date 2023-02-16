@@ -68,6 +68,7 @@ class MFConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         for lin in self.lins_l:
             lin.reset_parameters()
         for lin in self.lins_r:

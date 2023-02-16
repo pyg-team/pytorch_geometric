@@ -145,6 +145,7 @@ class HGTConv(MessagePassing):
         major_vers, minor_vers = str(torch.__version__).split('.')[:2]
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.k_lin)
         reset(self.q_lin)
         reset(self.v_lin)

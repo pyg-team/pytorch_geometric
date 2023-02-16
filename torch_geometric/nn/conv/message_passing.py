@@ -43,10 +43,10 @@ class MessagePassing(torch.nn.Module):
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
-        \square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
+        \bigoplus_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
         \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{j,i}\right) \right),
 
-    where :math:`\square` denotes a differentiable, permutation invariant
+    where :math:`\bigoplus` denotes a differentiable, permutation invariant
     function, *e.g.*, sum, mean, min, max or mul, and
     :math:`\gamma_{\mathbf{\Theta}}` and :math:`\phi_{\mathbf{\Theta}}` denote
     differentiable functions such as MLPs.
@@ -176,6 +176,11 @@ class MessagePassing(torch.nn.Module):
         self._message_and_aggregate_forward_hooks = OrderedDict()
         self._edge_update_forward_pre_hooks = OrderedDict()
         self._edge_update_forward_hooks = OrderedDict()
+
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
+        if self.aggr_module is not None:
+            self.aggr_module.reset_parameters()
 
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
@@ -565,7 +570,7 @@ class MessagePassing(torch.nn.Module):
                   ptr: Optional[Tensor] = None,
                   dim_size: Optional[int] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
-        :math:`\square_{j \in \mathcal{N}(i)}`.
+        :math:`\bigoplus_{j \in \mathcal{N}(i)}`.
 
         Takes in the output of message computation as first argument and any
         argument which was initially passed to :meth:`propagate`.

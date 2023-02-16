@@ -67,6 +67,7 @@ class GINConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 

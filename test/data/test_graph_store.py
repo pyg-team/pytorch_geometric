@@ -2,6 +2,7 @@ import pytest
 import torch
 from torch_sparse import SparseTensor
 
+from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
 from torch_geometric.testing import MyGraphStore
 
 
@@ -13,6 +14,8 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
 
 def test_graph_store():
     graph_store = MyGraphStore()
+
+    assert str(graph_store) == 'MyGraphStore()'
 
     coo = torch.tensor([0, 1]), torch.tensor([1, 2])
     csr = torch.tensor([0, 1, 2]), torch.tensor([1, 2])
@@ -30,6 +33,10 @@ def test_graph_store():
     assert torch.equal(graph_store['edge_type', 'csc'][1], csc[1])
 
     assert len(graph_store.get_all_edge_attrs()) == 3
+
+    del graph_store['edge_type', 'coo']
+    with pytest.raises(KeyError):
+        graph_store['edge_type', 'coo']
 
     with pytest.raises(KeyError):
         graph_store['edge_type_2', 'coo']
@@ -73,3 +80,17 @@ def test_graph_store_conversion():
     out = graph_store.coo([('v', '1', 'v')])
     assert torch.equal(list(out[0].values())[0], coo[0])
     assert torch.equal(list(out[1].values())[0], coo[1])
+
+    # Ensure that 'store' parameter works as intended:
+    key = EdgeAttr(edge_type=('v', '1', 'v'), layout=EdgeLayout.CSR,
+                   is_sorted=False, size=(100, 100))
+    with pytest.raises(KeyError):
+        graph_store[key]
+
+    out = graph_store.csr([('v', '1', 'v')], store=True)
+    assert torch.equal(list(out[0].values())[0], csr[0])
+    assert torch.equal(list(out[1].values())[0].sort()[0], csr[1].sort()[0])
+
+    out = graph_store[key]
+    assert torch.equal(out[0], csr[0])
+    assert torch.equal(out[1].sort()[0], csr[1].sort()[0])
