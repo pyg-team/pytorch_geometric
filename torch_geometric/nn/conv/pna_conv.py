@@ -147,6 +147,7 @@ class PNAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if self.edge_dim is not None:
             self.edge_encoder.reset_parameters()
         for nn in self.pre_nns:

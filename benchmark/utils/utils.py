@@ -1,7 +1,6 @@
 import os.path as osp
 
 import torch
-from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG, Reddit
@@ -44,8 +43,10 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
         dataset = OGB_MAG(root=path, preprocess='metapath2vec',
                           transform=transform)
     elif name == 'ogbn-products':
-        dataset = PygNodePropPredDataset('ogbn-products', root=path,
-                                         transform=transform)
+        if transform is None:
+            transform = T.RemoveDuplicatedEdges()
+        else:
+            transform = T.Compose([T.RemoveDuplicatedEdges(), transform])
     elif name == 'Reddit':
         dataset = Reddit(root=path, transform=transform)
 

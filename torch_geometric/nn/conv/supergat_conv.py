@@ -172,6 +172,7 @@ class SuperGATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         glorot(self.att_l)
         glorot(self.att_r)

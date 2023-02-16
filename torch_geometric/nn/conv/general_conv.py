@@ -131,6 +131,7 @@ class GeneralConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_msg.reset_parameters()
         if hasattr(self.lin_self, 'reset_parameters'):
             self.lin_self.reset_parameters()

@@ -95,6 +95,7 @@ class ARMAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.weight)
         if not isinstance(self.init_weight, torch.nn.UninitializedParameter):
             glorot(self.init_weight)

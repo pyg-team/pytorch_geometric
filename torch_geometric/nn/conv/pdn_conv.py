@@ -76,6 +76,7 @@ class PDNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.lin.weight)
         glorot(self.mlp[0].weight)
         glorot(self.mlp[2].weight)

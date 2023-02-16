@@ -59,7 +59,7 @@ class PolBlogs(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ['adjacency.csv', 'labels.csv']
+        return ['adjacency.tsv', 'labels.tsv']
 
     @property
     def processed_file_names(self) -> str:
@@ -73,10 +73,11 @@ class PolBlogs(InMemoryDataset):
     def process(self):
         import pandas as pd
 
-        edge_index = pd.read_csv(self.raw_paths[0], header=None)
+        edge_index = pd.read_csv(self.raw_paths[0], header=None, sep='\t',
+                                 usecols=[0, 1])
         edge_index = torch.from_numpy(edge_index.values).t().contiguous()
 
-        y = pd.read_csv(self.raw_paths[1], header=None)
+        y = pd.read_csv(self.raw_paths[1], header=None, sep='\t')
         y = torch.from_numpy(y.values).view(-1)
 
         data = Data(edge_index=edge_index, y=y, num_nodes=y.size(0))

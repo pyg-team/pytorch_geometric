@@ -1,4 +1,5 @@
 from .message_passing import MessagePassing
+from .simple_conv import SimpleConv
 from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
 from .sage_conv import SAGEConv
@@ -61,6 +62,7 @@ from .antisymmetric_conv import AntiSymmetricConv
 
 __all__ = [
     'MessagePassing',
+    'SimpleConv',
     'GCNConv',
     'ChebConv',
     'SAGEConv',
