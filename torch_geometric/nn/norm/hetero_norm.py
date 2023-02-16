@@ -2,7 +2,7 @@ import torch
 from torch import Tensor
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
 from torch_geometric.nn.typing import Metadata
-
+from typing import Dict
 
 class HeteroNorm(torch.nn.Module):
     r"""Applies normalization over node features for each node type using:
@@ -11,9 +11,13 @@ class HeteroNorm(torch.nn.Module):
     or LayerNorm <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.LayerNorm.html#torch_geometric.nn.norm.LayerNorm>
 
     Args:
-        in_channels (int): Size of each input sample.
+        in_channels (int or Dict[str, int]): Size of each input sample.
+            Use :obj:`-1` for lazy initialization.
+            If passing as an int, types is required as well.
         norm_type (str): Which of "BatchNorm", "InstanceNorm", "LayerNorm" to use
             (default: "BatchNorm")
+        types (List[str], optional): Only needed if in_channels
+            is passed as an int.
         eps (float, optional): A value added to the denominator for numerical
             stability. (default: :obj:`1e-5`)
         momentum (float, optional): The value used for the running mean and
@@ -31,7 +35,9 @@ class HeteroNorm(torch.nn.Module):
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
-    def __init__(self, in_channels: int, norm_type: str, metadata: Metadata, eps: float = 1e-5,
+    def __init__(self, in_channels: Dict[str, int], norm_type: str,
+                 types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
+                 eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
                  track_running_stats: bool = True,
                  allow_single_element: bool = False):
@@ -41,31 +47,41 @@ class HeteroNorm(torch.nn.Module):
         if allow_single_element and not track_running_stats:
             raise ValueError("'allow_single_element' requires "
                              "'track_running_stats' to be set to `True`")
+        if isinstance(in_channels, dict):
+            self.types = list(in_channels.keys())
+            if any([int(i) == -1 for i in in_channels.values()]):
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
+            if types is not None and self.types != types:
+                raise ValueError("User provided `types` list does not match \
+                 the keys of the `in_channels` dictionary")
+        else:
+            if in_channels == -1:
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
+            self.types = types
+            if self.types is None:
+                raise ValueError("Please provide a list of types if \
+                    passing `in_channels` as an int")
+            in_channels = {node_type: in_channels for node_type in self.types}
         self.in_channels = in_channels
-        self.hetero_linear = ToHeteroLinear(Linear(self.in_channels, self.in_channels), metadata)
+        self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types, **kwargs)
         self.allow_single_element = allow_single_element
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        self.module.reset_parameters()
+        self.hetero_linear.reset_parameters()
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(
+        self,
+        x_dict: Dict[Union[NodeType, EdgeType], Tensor],
+    ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         r"""
         Args:
-            x (torch.Tensor): The source tensor.
+            x_dict (Dict[str, Tensor]): A dictionary holding input
+                features for each individual type.
         """
-        if self.allow_single_element and x.size(0) <= 1:
-            return torch.nn.functional.batch_norm(
-                x,
-                self.module.running_mean,
-                self.module.running_var,
-                self.module.weight,
-                self.module.bias,
-                False,  # bn_training
-                0.0,  # momentum
-                self.module.eps,
-            )
-        return self.module(x)
+        pass
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.module.num_features})'
