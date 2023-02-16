@@ -172,25 +172,22 @@ def to_captum_input(
     r"""Given :obj:`x`, :obj:`edge_index` and :obj:`mask_type`, converts it
     to a format to use in `Captum.ai <https://captum.ai/>`_ attribution
     methods. Returns :obj:`inputs` and :obj:`additional_forward_args`
-    required for `Captum`'s :obj:`attribute` functions.
-    See :obj:`torch_geometric.nn.to_captum_model` for example usage.
+    required for Captum's :obj:`attribute` functions.
+    See :meth:`~torch_geometric.nn.models.to_captum_model` for example usage.
 
     Args:
 
-        x (Tensor or Dict[NodeType, Tensor]): The node features. For
-            heterogeneous graphs this is a dictionary holding node featues
+        x (torch.Tensor or Dict[NodeType, torch.Tensor]): The node features.
+            For heterogeneous graphs this is a dictionary holding node featues
             for each node type.
-        edge_index(Tensor or Dict[EdgeType, Tensor]): The edge indicies. For
-            heterogeneous graphs this is a dictionary holding edge index
-            for each edge type.
+        edge_index(torch.Tensor or Dict[EdgeType, torch.Tensor]): The edge
+            indices. For heterogeneous graphs this is a dictionary holding the
+            :obj:`edge index` for each edge type.
         mask_type (str): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
             and :obj:`"node_and_edge"`:
         *args: Additional forward arguments of the model being explained
             which will be added to :obj:`additonal_forward_args`.
-            For :class:`Data` this is arguments other than :obj:`x` and
-            :obj:`edge_index`. For :class:`HeteroData` this is arguments other
-            than :obj:`x_dict` and :obj:`edge_index_dict`.
     """
     mask_type = MaskLevelType(mask_type)
 
@@ -239,28 +236,28 @@ def captum_output_to_dicts(
     r"""Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
     methods which is a tuple of attributions to two dictonaries with node and
     edge attribution tensors. This function is used while explaining
-    :obj:`HeteroData` objects. See :obj:`torch_geometric.nn.to_captum_model`
-    for example usage.
+    :class:`~torch_geometric.data.HeteroData` objects.
+    See :meth:`~torch_geometric.nn.models.to_captum_model` for example usage.
 
     Args:
-        captum_attrs (tuple[tensor]): The output of attribution methods.
+        captum_attrs (tuple[torch.Tensor]): The output of attribution methods.
         mask_type (str): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
             and :obj:`"node_and_edge"`:
 
             1. :obj:`"edge"`: :obj:`captum_attrs` contains only edge
-               attributions. The returned tuple has no node attributions and a
-               edge attribution dictionary with key `EdgeType` and value
-               edge mask tensor of shape :obj:`[num_edges]`.
+               attributions. The returned tuple has no node attributions, and
+               an edge attribution dictionary edge types as keys and edge mask
+               tensors of shape :obj:`[num_edges]` as values.
 
             2. :obj:`"node"`: :obj:`captum_attrs` contains only node
-               attributions. The returned tuple has node attribution dictonary
-               with key `NodeType` and value node mask tensor of shape
-               :obj:`[num_nodes, num_features]` and no edge attribution.
+               attributions. The returned tuple has a node attribution
+               dictonary with node types as keys and node mask tensors of shape
+               :obj:`[num_nodes, num_features]` as values, and no edge
+               attributions.
 
-            3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains only node
-               attributions. The returned tuple contains node attribution
-               dictionary followed by edge attribution dictionary.
+            3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains node and
+                edge attributions.
 
         metadata (Metadata): The metadata of the heterogeneous graph.
     """
