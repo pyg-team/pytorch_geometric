@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Any, Optional, Union, Dict
+from typing import Any, Dict, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -9,7 +9,12 @@ from torch.nn.parameter import Parameter
 
 import torch_geometric.typing
 from torch_geometric.nn import inits
-from torch_geometric.typing import pyg_lib, EdgeType, NodeType, grouped_matmul_avail
+from torch_geometric.typing import (
+    EdgeType,
+    NodeType,
+    grouped_matmul_avail,
+    pyg_lib,
+)
 from torch_geometric.utils import index_sort
 
 
@@ -317,28 +322,31 @@ class HeteroDictLinear(torch.nn.Module):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
     """
-    def __init__(self, in_channels: Dict[str, int], out_channels: int, types: Optional[Union[List[NodeType], List[EdgeType]]] = None,
-                 **kwargs):
+    def __init__(self, in_channels: Dict[str, int], out_channels: int,
+                 types: Optional[Union[List[NodeType],
+                                       List[EdgeType]]] = None, **kwargs):
         super().__init__()
         if isinstance(in_channels, dict):
             self.types = list(in_channels.keys())
             if types is not None and self.types != types:
                 raise ValueError("User provided `types` list does not match \
-                 the keys of the `in_channels` dictionary")         
+                 the keys of the `in_channels` dictionary")
         else:
             if in_channels == -1:
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
             self.types = types
             if self.types is None:
-                raise ValueError("Please provide a list of types if passing `in_channels` as an int")
+                raise ValueError(
+                    "Please provide a list of types if passing `in_channels` as an int"
+                )
             in_channels = {node_type: in_channels for node_type in self.types}
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.kwargs = kwargs
         self.use_gmm = grouped_matmul_avail()
-        self.lins = torch.nn.ModuleDict({lin_type:
-            Linear(in_channel, self.out_channels, **self.kwargs)
+        self.lins = torch.nn.ModuleDict({
+            lin_type: Linear(in_channel, self.out_channels, **self.kwargs)
             for lin_type, in_channel in self.in_channels.items()
         })
         self.reset_parameters()
@@ -361,7 +369,12 @@ class HeteroDictLinear(torch.nn.Module):
             wts = [self.lins[node_type].weight.T for x_type in self.types]
             biases = [self.lins[node_type].bias for x_type in self.types]
             xs = [x_dict[x_type] for x_type in self.types]
-            out_dict = {self.types[i]: o.view(-1, H, D) for i, o in enumerate(pyg_lib.ops.grouped_matmul(inputs=xs, others=wts, biases=biases))}
+            out_dict = {
+                self.types[i]: o.view(-1, H, D)
+                for i, o in enumerate(
+                    pyg_lib.ops.grouped_matmul(inputs=xs, others=wts,
+                                               biases=biases))
+            }
         else:
             out_dict = {}
             for x_type, x in x_dict:

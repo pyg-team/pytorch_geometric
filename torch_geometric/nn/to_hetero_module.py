@@ -9,6 +9,7 @@ import torch_geometric
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import scatter
 
+
 def pad_list(xs: List[Tensor]) -> List[Tensor]:
     max_size = max(x.size(-1) for x in xs)
     for i, x in enumerate(xs):
@@ -19,6 +20,7 @@ def pad_list(xs: List[Tensor]) -> List[Tensor]:
                      (x.shape[0], max_size - x.shape[1]), device=x.device)),
                 dim=1)
     return xs
+
 
 class ToHeteroLinear(torch.nn.Module):
     def __init__(

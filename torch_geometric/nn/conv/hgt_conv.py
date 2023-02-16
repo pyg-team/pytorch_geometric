@@ -97,25 +97,39 @@ class HGTConv(MessagePassing):
         self.heads = heads
         self.group = group
 
-        
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
         self.src_types = [edge_type[0] for edge_type in self.edge_types]
         if self.use_gmm:  # pragma: no cover
             # grouped gemm allows us not to have to pad
             from torch_geometric.nn.dense import HeteroDictLinear
-            self.k_lin = HeteroDictLinear(self.in_channels, self.out_channels, **kwargs)
-            self.q_lin = HeteroDictLinear(self.in_channels, self.out_channels, **kwargs)
-            self.v_lin = HeteroDictLinear(self.in_channels, self.out_channels, **kwargs)
-            self.a_lin = HeteroDictLinear(self.in_channels, self.out_channels, **kwargs)
+            self.k_lin = HeteroDictLinear(self.in_channels, self.out_channels,
+                                          **kwargs)
+            self.q_lin = HeteroDictLinear(self.in_channels, self.out_channels,
+                                          **kwargs)
+            self.v_lin = HeteroDictLinear(self.in_channels, self.out_channels,
+                                          **kwargs)
+            self.a_lin = HeteroDictLinear(self.in_channels, self.out_channels,
+                                          **kwargs)
         else:
             from torch_geometric.nn.to_hetero_module import ToHeteroLinear
             self.max_channels = max(self.in_channels.values())
-            self.k_lin = ToHeteroLinear(Linear(self.max_channels, self.out_channels, **kwargs), self.node_types)
-            self.q_lin = ToHeteroLinear(Linear(self.max_channels, self.out_channels, **kwargs), self.node_types)
-            self.v_lin = ToHeteroLinear(Linear(self.max_channels, self.out_channels, **kwargs), self.node_types)
-            self.a_lin = ToHeteroLinear(Linear(self.max_channels, self.out_channels, **kwargs), self.node_types)
-        self.skip = ParameterDict({node_type:Parameter(torch.Tensor(1)) for node_type in self.node_types})
+            self.k_lin = ToHeteroLinear(
+                Linear(self.max_channels, self.out_channels, **kwargs),
+                self.node_types)
+            self.q_lin = ToHeteroLinear(
+                Linear(self.max_channels, self.out_channels, **kwargs),
+                self.node_types)
+            self.v_lin = ToHeteroLinear(
+                Linear(self.max_channels, self.out_channels, **kwargs),
+                self.node_types)
+            self.a_lin = ToHeteroLinear(
+                Linear(self.max_channels, self.out_channels, **kwargs),
+                self.node_types)
+        self.skip = ParameterDict({
+            node_type: Parameter(torch.Tensor(1))
+            for node_type in self.node_types
+        })
 
         self.a_rel = ParameterDict()
         self.m_rel = ParameterDict()
@@ -168,9 +182,18 @@ class HGTConv(MessagePassing):
 
         # parallelize over node-types
         # compute K, Q, V over node-types
-        k_dict = {node_type:k_j.view(-1, H, D) for node_type, k_j in self.k_lin(x_dict).items()}
-        q_dict = {node_type:q_j.view(-1, H, D) for node_type, q_j in self.q_lin(x_dict).items()}
-        v_dict = {node_type:v_j.view(-1, H, D) for node_type, v_j in self.v_lin(x_dict).items()}
+        k_dict = {
+            node_type: k_j.view(-1, H, D)
+            for node_type, k_j in self.k_lin(x_dict).items()
+        }
+        q_dict = {
+            node_type: q_j.view(-1, H, D)
+            for node_type, q_j in self.q_lin(x_dict).items()
+        }
+        v_dict = {
+            node_type: v_j.view(-1, H, D)
+            for node_type, v_j in self.v_lin(x_dict).items()
+        }
 
         # parallelize over edge-types
         a_rels = [
