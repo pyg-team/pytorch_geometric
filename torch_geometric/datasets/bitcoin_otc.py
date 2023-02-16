@@ -32,21 +32,22 @@ class BitcoinOTC(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 138
-              - 6,005
-              - ~2,573.2
-              - 0
-              - 0
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 138
+          - 6,005
+          - ~2,573.2
+          - 0
+          - 0
     """
 
     url = 'https://snap.stanford.edu/data/soc-sign-bitcoinotc.csv.gz'

@@ -40,22 +40,22 @@ class GeometricShapes(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 80
-              - ~148.8
-              - ~859.5
-              - 3
-              - 40
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
 
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 80
+          - ~148.8
+          - ~859.5
+          - 3
+          - 40
     """
 
     url = 'https://github.com/Yannick-S/geometric_shapes/raw/master/raw.zip'
