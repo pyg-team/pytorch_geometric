@@ -2,8 +2,8 @@ import warnings
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
-from torch import Tensor
 import torch
+from torch import Tensor
 
 try:
     import pyg_lib  # noqa
