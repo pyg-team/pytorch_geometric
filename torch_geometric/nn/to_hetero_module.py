@@ -69,7 +69,7 @@ class ToHeteroLinear(torch.nn.Module):
                 for i, key in enumerate(self.types)
             }
         if not hasattr(self, "need_pad"):
-            self.need_pad = any(self.in_channels != x.size(-1) for x in x_dict)
+            self.need_pad = any(self.in_channels != x.size(-1) for x in x_dict.values())
         if self.need_pad:
             x = torch.cat(pad_list([x_dict[key] for key in self.types]), dim=0)
         else:
