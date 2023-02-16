@@ -15,10 +15,23 @@ from torch_geometric.data import (
 
 
 class MD17(InMemoryDataset):
-    r"""A variety of ab-initio molecular dynamics trajectories.
+    r"""A variety of ab-initio molecular dynamics trajectories from the
+    authors of `sGDML <http://quantum-machine.org/gdml>`__.
+    This class provides access to the original MD17 datasets, the revised
+    version and the CCSD(T) trajectories.
 
-    This class contains all three versions of the dataset commonly found
-    in literature. The original MD17 dataset by Chmiela et al. [1] contains
+    For every trajectory, the dataset contains the Cartesian positions of atoms
+    (in Angstrom), their atomic numbers, as well as the total energy
+    (in kcal/mol) and forces (kcal/mol/Angstrom) on each atom.
+    The latter two are the regression targets for this collection.
+
+    .. note::
+
+        Data objects contain no edge indices as these are most commonly
+        constructed via the :obj:`torch_geometric.transforms.RadiusGraph`
+        transform, with its cut-off being a hyperparameter.
+
+    The original MD17 dataset by Chmiela et al. [1] contains
     ten molecule trajectories. This version of the dataset was found
     to suffer from high numerical noise. The revised MD17 dataset by Christensen
     and Von Lilienfeld [2] contains the same molecules, but the energies and
@@ -38,23 +51,14 @@ class MD17(InMemoryDataset):
     It is advised to not train a model on more than 1000 samples from the
     original or revised MD17 dataset.
 
-    For every trajectory, the dataset contains the Cartesian positions of atoms
-    (in Angstrom), their atomic numbers, as well as the total energy
-    (in kcal/mol) and forces (kcal/mol/Angstrom) on each atom.
-    The latter two are the regression targets for this collection.
-
-    .. note::
-
-        Data objects contain no edge indices as these are most commonly
-        constructed via the :obj:`torch_geometric.transforms.RadiusGraph`
-        transform, with its cut-off being a hyperparameter.
-
     When using these datasets, make sure to cite the appropriate publications
     listed on the `sGDML <http://quantum-machine.org/gdml/>`__ website as well
     as the authors of the revised MD17 dataset.
 
     [1] Chmiela, Stefan, et al. "Machine learning of accurate energy-conserving molecular force fields." Science advances 3.5 (2017): e1603015.
+
     [2] Christensen, Anders S., and O. Anatole Von Lilienfeld. "On the role of gradients for machine learning of molecular energies and forces." Machine Learning: Science and Technology 1.4 (2020): 045018.
+
     [3] Chmiela, Stefan, et al. "Towards exact molecular dynamics simulations with machine-learned force fields." Nature communications 9.1 (2018): 3887.
 
 
@@ -205,61 +209,61 @@ class MD17(InMemoryDataset):
           - 0
           - 0
           - 0
-        * - Benzene (R)
+        * - Benzene-R
           - 100,000
           - 12
           - 0
           - 0
           - 0
-        * - Uracil (R)
+        * - Uracil-R
           - 100,000
           - 12
           - 0
           - 0
           - 0
-        * - Naphthalene (R)
+        * - Naphthalene-R
           - 100,000
           - 10
           - 0
           - 0
           - 0
-        * - Aspirin (R)
+        * - Aspirin-R
           - 100,000
           - 21
           - 0
           - 0
           - 0
-        * - Salicylic acid (R)
+        * - Salicylic acid-R
           - 100,000
           - 16
           - 0
           - 0
           - 0
-        * - Malonaldehyde (R)
+        * - Malonaldehyde-R
           - 100,000
           - 9
           - 0
           - 0
           - 0
-        * - Ethanol (R)
+        * - Ethanol-R
           - 100,000
           - 9
           - 0
           - 0
           - 0
-        * - Toluene (R)
+        * - Toluene-R
           - 100,000
           - 15
           - 0
           - 0
           - 0
-        * - Paracetamol (R)
+        * - Paracetamol-R
           - 100,000
           - 20
           - 0
           - 0
           - 0
-        * - Azobenzene (R)
+        * - Azobenzene-R
           - 99,988
           - 24
           - 0
@@ -302,6 +306,7 @@ class MD17(InMemoryDataset):
           - 0
           - 0
     """  # noqa: E501
+
     gdml_url = 'http://quantum-machine.org/gdml/data/npz'
     revised_url = ('https://archive.materialscloud.org/record/'
                    'file?filename=rmd17.tar.bz2&record_id=466')
