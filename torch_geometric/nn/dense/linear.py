@@ -346,7 +346,6 @@ class HeteroDictLinear(torch.nn.Module):
             in_channels = {node_type: in_channels for node_type in self.types}
         self.in_channels = in_channels
         self.out_channels = out_channels
-        print(self.types, self.in_channels, self.out_channels)
         self.kwargs = kwargs
         self.use_gmm = grouped_matmul_avail()
         self.lins = torch.nn.ModuleDict({
@@ -390,6 +389,8 @@ class HeteroDictLinear(torch.nn.Module):
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
+        print(input)
+        print(module)
         for x_type, x_n in input[0]:
             lin_x = self.lins[x_type]
             if is_uninitialized_parameter(lin_x.weight):
