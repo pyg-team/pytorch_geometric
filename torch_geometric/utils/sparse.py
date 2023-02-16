@@ -81,6 +81,7 @@ def to_torch_coo_tensor(
 ) -> Tensor:
     """Converts a sparse adjacency matrix defined by edge indices and edge
     attributes to a :class:`torch.sparse.Tensor`.
+    See also :class:`torch_geometric.utils.to_edge_index`.
 
     Args:
         edge_index (LongTensor): The edge indices.
@@ -117,3 +118,36 @@ def to_torch_coo_tensor(
                                   device=edge_index.device)
     out = out.coalesce()
     return out
+
+
+def to_edge_index(adj: Tensor) -> Tuple[Tensor, Tensor]:
+    """Converts a :class:`torch.sparse.Tensor` to a sparse adjacency matrix
+    defined by edge indices and edge attributes
+    (:class:`LongTensor`, :class:`Tensor`).
+    See also :class:`torch_geometric.utils.to_torch_coo_tensor`.
+
+    Args:
+        adj (torch.sparse.FloatTensor): The adjacency matrix.
+
+    :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
+        ...                            [1, 0, 2, 1, 3, 2]])
+        >>> adj = to_torch_coo_tensor(edge_index)
+        >>> to_edge_index(adj)
+        (tensor([[0, 1, 1, 2, 2, 3],
+                [1, 0, 2, 1, 3, 2]]),
+        tensor([1., 1., 1., 1., 1., 1.]))
+    """
+    if adj.requires_grad:
+        # Calling adj_t._values() will return a detached tensor.
+        # Use `adj_t.coalesce().values()` instead to track gradients.
+        adj = adj.coalesce()
+        edge_index = adj.indices()
+        edge_attr = adj.values()
+    else:
+        edge_index = adj._indices()
+        edge_attr = adj._values()
+    return edge_index, edge_attr
