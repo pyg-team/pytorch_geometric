@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple, Union
 
 import numpy as np
 from torch import Tensor
+import torch
 
 try:
     import pyg_lib  # noqa
