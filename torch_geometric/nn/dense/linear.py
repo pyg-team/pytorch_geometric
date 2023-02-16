@@ -366,8 +366,8 @@ class HeteroDictLinear(torch.nn.Module):
                 features for each individual type.
         """
         if self.use_gmm:
-            wts = [self.lins[node_type].weight.T for x_type in self.types]
-            biases = [self.lins[node_type].bias for x_type in self.types]
+            wts = [self.lins[x_type].weight.T for x_type in self.types]
+            biases = [self.lins[x_type].bias for x_type in self.types]
             xs = [x_dict[x_type] for x_type in self.types]
             out_dict = {
                 self.types[i]: o.view(-1, H, D)
