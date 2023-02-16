@@ -14,8 +14,6 @@ try:
 except ImportError:
     random_walk = None
 
-EPS = 1e-15
-
 
 class Node2Vec(torch.nn.Module):
     r"""The Node2Vec model from the
@@ -71,7 +69,7 @@ class Node2Vec(torch.nn.Module):
         row, col = edge_index
         self.adj = SparseTensor(row=row, col=col, sparse_sizes=(N, N))
         self.adj = self.adj.to('cpu')
-
+        self.EPS = 1e-15
         assert walk_length >= context_size
 
         self.embedding_dim = embedding_dim
@@ -99,6 +97,7 @@ class Node2Vec(torch.nn.Module):
         return DataLoader(range(self.adj.sparse_size(0)),
                           collate_fn=self.sample, **kwargs)
 
+    @torch.jit.export
     def pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
         rowptr, col, _ = self.adj.csr()
@@ -112,6 +111,7 @@ class Node2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
+    @torch.jit.export
     def neg_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node * self.num_negative_samples)
 
@@ -125,11 +125,13 @@ class Node2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
+    @torch.jit.export
     def sample(self, batch: Tensor) -> Tuple[Tensor, Tensor]:
         if not isinstance(batch, Tensor):
             batch = torch.tensor(batch)
         return self.pos_sample(batch), self.neg_sample(batch)
 
+    @torch.jit.export
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
 
@@ -142,7 +144,7 @@ class Node2Vec(torch.nn.Module):
                                                     self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
-        pos_loss = -torch.log(torch.sigmoid(out) + EPS).mean()
+        pos_loss = -torch.log(torch.sigmoid(out) + self.EPS).mean()
 
         # Negative loss.
         start, rest = neg_rw[:, 0], neg_rw[:, 1:].contiguous()
@@ -153,7 +155,7 @@ class Node2Vec(torch.nn.Module):
                                                     self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
-        neg_loss = -torch.log(1 - torch.sigmoid(out) + EPS).mean()
+        neg_loss = -torch.log(1 - torch.sigmoid(out) + self.EPS).mean()
 
         return pos_loss + neg_loss
 
