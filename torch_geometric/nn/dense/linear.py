@@ -346,6 +346,7 @@ class HeteroDictLinear(torch.nn.Module):
             in_channels = {node_type: in_channels for node_type in self.types}
         self.in_channels = in_channels
         self.out_channels = out_channels
+        print(self.types, self.in_channels, self.out_channels)
         self.kwargs = kwargs
         self.use_gmm = grouped_matmul_avail()
         self.lins = torch.nn.ModuleDict({
@@ -353,6 +354,9 @@ class HeteroDictLinear(torch.nn.Module):
             for lin_type, in_channel in self.in_channels.items()
         })
         self.reset_parameters()
+
+    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Union[Linear, DummyLinear]:
+        return self.lins[get_type]
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
