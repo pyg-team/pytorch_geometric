@@ -99,7 +99,7 @@ class TransformerConv(MessagePassing):
         **kwargs,
     ):
         kwargs.setdefault('aggr', 'add')
-        super(TransformerConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -139,6 +139,7 @@ class TransformerConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_key.reset_parameters()
         self.lin_query.reset_parameters()
         self.lin_value.reset_parameters()

@@ -150,6 +150,7 @@ class InvertibleModule(torch.nn.Module, ABC):
         self.num_bwd_passes = num_bwd_passes
 
     def forward(self, *args):
+        """"""
         return self._fn_apply(args, self._forward, self._inverse)
 
     def inverse(self, *args):
@@ -212,9 +213,9 @@ class GroupAddRev(InvertibleModule):
     Args:
         conv (torch.nn.Module or torch.nn.ModuleList]): A seed GNN. The input
             and output feature dimensions need to match.
-        split_dim (int optional): The dimension across which to split groups.
+        split_dim (int, optional): The dimension across which to split groups.
             (default: :obj:`-1`)
-        num_groups (Optional[int], optional): The number of groups :math:`C`.
+        num_groups (int, optional): The number of groups :math:`C`.
             (default: :obj:`None`)
         disable (bool, optional): If set to :obj:`True`, will disable the usage
             of :class:`InvertibleFunction` and will execute the module without
@@ -251,10 +252,10 @@ class GroupAddRev(InvertibleModule):
 
     @property
     def num_groups(self) -> int:
-        r"""The number of groups :math:`C`."""
         return len(self.convs)
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for conv in self.convs:
             conv.reset_parameters()
 

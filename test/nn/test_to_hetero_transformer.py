@@ -291,8 +291,8 @@ def test_to_hetero_with_gcn():
         'paper': torch.randn(100, 16),
     }
     edge_index_dict = {
-        ('paper', '0', 'paper'): torch.randint(100, (2, 200)),
-        ('paper', '1', 'paper'): torch.randint(100, (2, 200)),
+        ('paper', 'cites', 'paper'): torch.randint(100, (2, 200)),
+        ('paper', 'rev_cites', 'paper'): torch.randint(100, (2, 200)),
     }
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 

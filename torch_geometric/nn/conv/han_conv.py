@@ -101,6 +101,7 @@ class HANConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.proj)
         glorot(self.lin_src)
         glorot(self.lin_dst)

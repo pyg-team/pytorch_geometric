@@ -301,14 +301,14 @@ class Pad(BaseTransform):
             self.is_number = isinstance(value, numbers.Number)
 
         @abstractmethod
-        def get_value(self, key: Optional[Any] = None) -> None:
+        def get_value(self, key: Optional[Any] = None):
             pass
 
         def is_none(self):
             return self.value is None
 
     class _NumNodes(_IntOrDict):
-        def __init__(self, value) -> None:
+        def __init__(self, value):
             assert isinstance(value, (int, dict)), \
                 f'Parameter `max_num_nodes` must be of type int or dict ' \
                 f'but is {type(value)}.'
@@ -326,7 +326,7 @@ class Pad(BaseTransform):
 
     class _NumEdges(_IntOrDict):
         def __init__(self, value: Union[int, Dict[EdgeType, int], None],
-                     num_nodes: '_NumNodes') -> None:  # noqa: F821
+                     num_nodes: '_NumNodes'):  # noqa: F821
             assert value is None or isinstance(value, (int, dict)), \
                 f'If provided, parameter `max_num_edges` must be of type ' \
                 f'int or dict but is {type(value)}.'
@@ -399,15 +399,14 @@ class Pad(BaseTransform):
         if isinstance(data, Data):
             assert isinstance(self.node_pad, (UniformPadding, AttrNamePadding))
             assert isinstance(self.edge_pad, (UniformPadding, AttrNamePadding))
-            # assert isinstance(self.max_num_nodes, int)
-            # assert (self.max_num_edges is None
-            #         or isinstance(self.max_num_edges, int))
 
             for store in data.stores:
                 for key in self.exclude_keys:
                     del store[key]
                 self.__pad_edge_store(store, data.__cat_dim__, data.num_nodes)
                 self.__pad_node_store(store, data.__cat_dim__)
+            data.num_edges = self.max_num_edges.get_value()
+            data.num_nodes = self.max_num_nodes.get_value()
         else:
             assert isinstance(
                 self.node_pad,
@@ -425,11 +424,15 @@ class Pad(BaseTransform):
                                       (data[src_node_type].num_nodes,
                                        data[dst_node_type].num_nodes),
                                       edge_type)
+                data[edge_type].num_edges = self.max_num_edges.get_value(
+                    edge_type)
 
             for node_type, store in data.node_items():
                 for key in self.exclude_keys:
                     del store[key]
                 self.__pad_node_store(store, data.__cat_dim__, node_type)
+                data[node_type].num_nodes = self.max_num_nodes.get_value(
+                    node_type)
 
         return data
 
@@ -457,7 +460,7 @@ class Pad(BaseTransform):
 
     def __pad_edge_store(self, store: EdgeStorage, get_dim_fn: Callable,
                          num_nodes: Union[int, Tuple[int, int]],
-                         edge_type: Optional[str] = None) -> None:
+                         edge_type: Optional[str] = None):
         attrs_to_pad = set(
             attr for attr in store.keys()
             if store.is_edge_attr(attr) and self.__should_pad_edge_attr(attr))

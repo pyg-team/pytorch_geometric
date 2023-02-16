@@ -13,7 +13,7 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.profile import torch_profile
 
 
-def run(args: argparse.ArgumentParser) -> None:
+def run(args: argparse.ArgumentParser):
     for dataset_name in args.datasets:
         print(f"Dataset: {dataset_name}")
         root = osp.join(args.root, dataset_name)

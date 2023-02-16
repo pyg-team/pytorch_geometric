@@ -13,11 +13,13 @@ from torch_geometric.nn.models.tgn import (
 def test_tgn():
     memory_dim = 16
     time_dim = 16
+
     src = torch.tensor([0, 1, 0, 2, 0, 3, 1, 4, 2, 3])
     dst = torch.tensor([1, 2, 1, 1, 3, 2, 4, 3, 3, 4])
     t = torch.arange(10)
     msg = torch.randn(10, 16)
     data = TemporalData(src=src, dst=dst, t=t, msg=msg)
+
     loader = TemporalDataLoader(data, batch_size=5)
 
     neighbor_loader = LastNeighborLoader(data.num_nodes, size=3)
@@ -26,18 +28,16 @@ def test_tgn():
 
     memory = TGNMemory(
         num_nodes=data.num_nodes,
-        raw_msg_dim=data.msg.size(-1),
+        raw_msg_dim=msg.size(-1),
         memory_dim=memory_dim,
         time_dim=time_dim,
-        message_module=IdentityMessage(data.msg.size(-1), memory_dim,
-                                       time_dim),
+        message_module=IdentityMessage(msg.size(-1), memory_dim, time_dim),
         aggregator_module=LastAggregator(),
     )
     assert memory.memory.size() == (data.num_nodes, memory_dim)
     assert memory.last_update.size() == (data.num_nodes, )
 
-    # Test during TGNMemory training:
-    memory.train()
+    # Test TGNMemory training:
     for i, batch in enumerate(loader):
         n_id = torch.cat([batch.src, batch.dst]).unique()
         n_id, edge_index, e_id = neighbor_loader(n_id)
@@ -57,7 +57,7 @@ def test_tgn():
             assert z.size() == (n_id.size(0), memory_dim)
             assert torch.equal(last_update, torch.tensor([4, 3, 3, 4, 0]))
 
-    # Test after TGNMemory training:
+    # Test TGNMemory inference:
     memory.eval()
     all_n_id = torch.arange(data.num_nodes)
     z, last_update = memory(all_n_id)
