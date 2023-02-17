@@ -319,24 +319,23 @@ class RGATConv(MessagePassing):
         r"""Runs the forward pass of the module.
 
         Args:
-            x (Tensor): The input node features. Can be either a
-                :obj:`[num_nodes, in_channels]` node feature matrix, or an
-                optional one-dimensional node index tensor (in which case
-                input features are treated as trainable node embeddings).
-            edge_index (LongTensor or SparseTensor): The edge indices.
-            edge_type: The one-dimensional relation type/index for each edge in
-                :obj:`edge_index`.
+            x (torch.Tensor or tuple, optional): The input node features.
+                Can be either a :obj:`[num_nodes, in_channels]` node feature
+                matrix, or an optional one-dimensional node index tensor (in
+                which case input features are treated as trainable node
+                embeddings).
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_type (torch.Tensor, optional): The one-dimensional relation
+                type/index for each edge in :obj:`edge_index`.
                 Should be only :obj:`None` in case :obj:`edge_index` is of type
-                :class:`torch_sparse.tensor.SparseTensor`.
-                (default: :obj:`None`)
-            edge_attr (Tensor, optional): Edge feature matrix.
+                :class:`torch_sparse.SparseTensor`. (default: :obj:`None`)
+            edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
                 :obj:`(edge_index, attention_weights)`, holding the computed
                 attention weights for each edge. (default: :obj:`None`)
         """
-
         # propagate_type: (x: Tensor, edge_type: OptTensor, edge_attr: OptTensor)  # noqa
         out = self.propagate(edge_index=edge_index, edge_type=edge_type, x=x,
                              size=size, edge_attr=edge_attr)

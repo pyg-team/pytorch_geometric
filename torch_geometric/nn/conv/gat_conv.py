@@ -76,8 +76,9 @@ class GATConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         edge_dim (int, optional): Edge feature dimensionality (in case
             there are any). (default: :obj:`None`)
-        fill_value (float or Tensor or str, optional): The way to generate
-            edge features of self-loops (in case :obj:`edge_dim != None`).
+        fill_value (float or torch.Tensor or str, optional): The way to
+            generate edge features of self-loops (in case
+            :obj:`edge_dim != None`).
             If given as :obj:`float` or :class:`torch.Tensor`, edge features of
             self-loops will be directly given by :obj:`fill_value`.
             If given as :obj:`str`, edge features of self-loops are computed by

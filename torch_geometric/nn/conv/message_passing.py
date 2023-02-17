@@ -360,31 +360,32 @@ class MessagePassing(torch.nn.Module):
         r"""The initial call to start propagating messages.
 
         Args:
-            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor`, a
-                :obj:`torch_sparse.SparseTensor` or a
-                :obj:`torch.sparse.Tensor` that defines the underlying
+            edge_index (torch.Tensor or SparseTensor): A :class:`torch.Tensor`,
+                a :class:`torch_sparse.SparseTensor` or a
+                :class:`torch.sparse.Tensor` that defines the underlying
                 graph connectivity/message passing flow.
                 :obj:`edge_index` holds the indices of a general (sparse)
                 assignment matrix of shape :obj:`[N, M]`.
-                If :obj:`edge_index` is of type :obj:`torch.LongTensor`, its
-                shape must be defined as :obj:`[2, num_messages]`, where
-                messages from nodes in :obj:`edge_index[0]` are sent to
-                nodes in :obj:`edge_index[1]`
+                If :obj:`edge_index` is a :obj:`torch.Tensor`, its :obj:`dtype`
+                should be :obj:`torch.long` and its shape needs to be defined
+                as :obj:`[2, num_messages]` where messages from nodes in
+                :obj:`edge_index[0]` are sent to nodes in :obj:`edge_index[1]`
                 (in case :obj:`flow="source_to_target"`).
-                If :obj:`edge_index` is of type
-                :obj:`torch_sparse.SparseTensor` or :obj:`torch.sparse.Tensor`,
-                its sparse indices :obj:`(row, col)` should relate to
-                :obj:`row = edge_index[1]` and :obj:`col = edge_index[0]`.
+                If :obj:`edge_index` is a :class:`torch_sparse.SparseTensor` or
+                a :class:`torch.sparse.Tensor`, its sparse indices
+                :obj:`(row, col)` should relate to :obj:`row = edge_index[1]`
+                and :obj:`col = edge_index[0]`.
                 The major difference between both formats is that we need to
                 input the *transposed* sparse adjacency matrix into
-                :func:`propagate`.
-            size (tuple, optional): The size :obj:`(N, M)` of the assignment
-                matrix in case :obj:`edge_index` is a :obj:`LongTensor`.
+                :meth:`propagate`.
+            size ((int, int), optional): The size :obj:`(N, M)` of the
+                assignment matrix in case :obj:`edge_index` is a
+                :class:`torch.Tensor`.
                 If set to :obj:`None`, the size will be automatically inferred
                 and assumed to be quadratic.
                 This argument is ignored in case :obj:`edge_index` is a
-                :obj:`torch_sparse.SparseTensor` or
-                a :obj:`torch.sparse.Tensor`. (default: :obj:`None`)
+                :class:`torch_sparse.SparseTensor` or
+                a :class:`torch.sparse.Tensor`. (default: :obj:`None`)
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
@@ -485,10 +486,10 @@ class MessagePassing(torch.nn.Module):
         graph.
 
         Args:
-            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor`, a
-                :obj:`torch_sparse.SparseTensor` or
-                a :obj:`torch.sparse.Tensor` that defines the underlying
-                graph connectivity/message passing flow.
+            edge_index (torch.Tensor or SparseTensor): A :obj:`torch.Tensor`, a
+                :class:`torch_sparse.SparseTensor` or a
+                :class:`torch.sparse.Tensor` that defines the underlying graph
+                connectivity/message passing flow.
                 See :meth:`propagate` for more information.
             **kwargs: Any additional data which is needed to compute or update
                 features for each edge in the graph.

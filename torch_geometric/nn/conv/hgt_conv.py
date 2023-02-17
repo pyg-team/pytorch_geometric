@@ -128,20 +128,19 @@ class HGTConv(MessagePassing):
         r"""Runs the forward pass of the module.
 
         Args:
-            x_dict (Dict[str, Tensor]): A dictionary holding input node
+            x_dict (Dict[str, torch.Tensor]): A dictionary holding input node
                 features  for each individual node type.
-            edge_index_dict (Dict[str, Union[Tensor, SparseTensor]]): A
+            edge_index_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
                 dictionary holding graph connectivity information for each
-                individual edge type, either as a :obj:`torch.LongTensor` of
+                individual edge type, either as a :class:`torch.Tensor` of
                 shape :obj:`[2, num_edges]` or a
-                :obj:`torch_sparse.SparseTensor`.
+                :class:`torch_sparse.SparseTensor`.
 
-        :rtype: :obj:`Dict[str, Optional[Tensor]]` - The output node embeddings
-            for each node type.
+        :rtype: :obj:`Dict[str, Optional[torch.Tensor]]` - The output node
+            embeddings for each node type.
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
-
         H, D = self.heads, self.out_channels // self.heads
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}

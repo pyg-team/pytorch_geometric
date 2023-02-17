@@ -113,16 +113,16 @@ class HypergraphConv(MessagePassing):
         r"""Runs the forward pass of the module.
 
         Args:
-            x (Tensor): Node feature matrix
+            x (torch.Tensor): Node feature matrix
                 :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
-            hyperedge_index (LongTensor): The hyperedge indices, *i.e.*
+            hyperedge_index (torch.Tensor): The hyperedge indices, *i.e.*
                 the sparse incidence matrix
                 :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}` mapping from
                 nodes to edges.
-            hyperedge_weight (Tensor, optional): Hyperedge weights
+            hyperedge_weight (torch.Tensor, optional): Hyperedge weights
                 :math:`\mathbf{W} \in \mathbb{R}^M`. (default: :obj:`None`)
-            hyperedge_attr (Tensor, optional): Hyperedge feature matrix in
-                :math:`\mathbb{R}^{M \times F}`.
+            hyperedge_attr (torch.Tensor, optional): Hyperedge feature matrix
+                in :math:`\mathbb{R}^{M \times F}`.
                 These features only need to get passed in case
                 :obj:`use_attention=True`. (default: :obj:`None`)
         """

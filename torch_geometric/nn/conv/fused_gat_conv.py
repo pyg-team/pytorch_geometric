@@ -51,7 +51,7 @@ class FusedGATConv(GATConv):  # pragma: no cover
         desired input format of :class:`FusedGATConv`.
 
         Args:
-            edge_index (Tensor): The edge indices.
+            edge_index (torch.Tensor): The edge indices.
             size ((int, int), optional). The shape of :obj:`edge_index` in each
                 dimension. (default: :obj:`None`)
         """
@@ -71,13 +71,15 @@ class FusedGATConv(GATConv):  # pragma: no cover
         r"""Runs the forward pass of the module.
 
         Args:
-            x (Tensor): The node features.
-            csr ((Tensor, Tensor)): A tuple containing the CSR representation
-                of a graph, given as a tuple of :obj:`(rowptr, col)`.
-            csc ((Tensor, Tensor)): A tuple containing the CSC representation
-                of a graph, given as a tuple of :obj:`(row, colptr)`.
-            perm (Tensor): Permutation tensor to map the CSR representation to
-                the CSC representation.
+            x (torch.Tensor): The node features.
+            csr ((torch.Tensor, torch.Tensor)): A tuple containing the CSR
+                representation of a graph, given as a tuple of
+                :obj:`(rowptr, col)`.
+            csc ((torch.Tensor, torch.Tensor)): A tuple containing the CSC
+                representation of a graph, given as a tuple of
+                :obj:`(row, colptr)`.
+            perm (torch.Tensor): Permutation tensor to map the CSR
+                representation to the CSC representation.
 
         .. note::
 
