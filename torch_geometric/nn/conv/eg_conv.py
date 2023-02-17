@@ -121,7 +121,6 @@ class EGConv(MessagePassing):
         self._cached_edge_index = None
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        """"""
         symnorm_weight: OptTensor = None
         if "symnorm" in self.aggregators:
             if isinstance(edge_index, Tensor):

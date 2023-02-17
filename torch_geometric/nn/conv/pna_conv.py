@@ -158,7 +158,7 @@ class PNAConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
-        """"""
+
         if self.divide_input:
             x = x.view(-1, self.towers, self.F_in)
         else:
