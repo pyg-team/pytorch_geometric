@@ -99,17 +99,19 @@ def test_to_torch_coo_tensor():
 
 
 def test_to_edge_index():
-    adj = torch.tensor([[0., 1., 0., 0.], [1., 0., 1., 0.], [0., 1., 0., 1.],
-                        [0., 0., 1., 0.]]).to_sparse()
+    adj = torch.tensor([
+        [0., 1., 0., 0.],
+        [1., 0., 1., 0.],
+        [0., 1., 0., 1.],
+        [0., 0., 1., 0.],
+    ]).to_sparse()
 
     edge_index, edge_attr = to_edge_index(adj)
-    assert torch.allclose(adj.indices(), edge_index)
     assert edge_index.tolist() == [[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]]
     assert edge_attr.tolist() == [1., 1., 1., 1., 1., 1.]
 
     if is_full_test():
         jit = torch.jit.script(to_edge_index)
         edge_index, edge_attr = jit(adj)
-        assert torch.allclose(adj.indices(), edge_index)
         assert edge_index.tolist() == [[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]]
         assert edge_attr.tolist() == [1., 1., 1., 1., 1., 1.]
