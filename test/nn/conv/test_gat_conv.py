@@ -1,3 +1,4 @@
+import pytest
 import torch
 from torch_sparse import SparseTensor
 
@@ -88,19 +89,29 @@ def test_gat_conv_with_edge_attr():
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 1, 1]])
     edge_weight = torch.randn(edge_index.size(1))
     edge_attr = torch.randn(edge_index.size(1), 4)
+    adj1 = SparseTensor.from_edge_index(edge_index, edge_weight)
+    adj2 = SparseTensor.from_edge_index(edge_index, edge_attr)
 
     conv = GATConv(8, 32, heads=2, edge_dim=1, fill_value=0.5)
     out = conv(x, edge_index, edge_weight)
     assert out.size() == (4, 64)
+    with pytest.raises(NotImplementedError):
+        assert torch.allclose(conv(x, adj1.t()), out)
 
     conv = GATConv(8, 32, heads=2, edge_dim=1, fill_value='mean')
     out = conv(x, edge_index, edge_weight)
     assert out.size() == (4, 64)
+    with pytest.raises(NotImplementedError):
+        assert torch.allclose(conv(x, adj1.t()), out)
 
     conv = GATConv(8, 32, heads=2, edge_dim=4, fill_value=0.5)
     out = conv(x, edge_index, edge_attr)
     assert out.size() == (4, 64)
+    with pytest.raises(NotImplementedError):
+        assert torch.allclose(conv(x, adj2.t()), out)
 
     conv = GATConv(8, 32, heads=2, edge_dim=4, fill_value='mean')
     out = conv(x, edge_index, edge_attr)
     assert out.size() == (4, 64)
+    with pytest.raises(NotImplementedError):
+        assert torch.allclose(conv(x, adj2.t()), out)
