@@ -486,10 +486,10 @@ class MessagePassing(torch.nn.Module):
         graph.
 
         Args:
-            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor`, a
-                :obj:`torch_sparse.SparseTensor` or
-                a :obj:`torch.sparse.Tensor` that defines the underlying
-                graph connectivity/message passing flow.
+            edge_index (torch.Tensor or SparseTensor): A :obj:`torch.Tensor`, a
+                :class:`torch_sparse.SparseTensor` or a
+                :class:`torch.sparse.Tensor` that defines the underlying graph
+                connectivity/message passing flow.
                 See :meth:`propagate` for more information.
             **kwargs: Any additional data which is needed to compute or update
                 features for each edge in the graph.
