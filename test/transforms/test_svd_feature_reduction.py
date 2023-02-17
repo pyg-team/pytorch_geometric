@@ -15,5 +15,5 @@ def test_svd_feature_reduction():
 
     x = torch.randn(4, 8)
     data.x = x
-    data = SVDFeatureReduction(10)(data)
+    data = SVDFeatureReduction(10)(Data(x=x))
     assert torch.allclose(data.x, x)
