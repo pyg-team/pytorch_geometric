@@ -31,7 +31,7 @@ class BayesianGCNConv(MessagePassing):
    an unconstrained parameter :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
    to avoid non-negative variance.
    \mathbf{b} denotes the bias which is based on the same structure as the weights
-   CAUTION: the weights and `edge_weight` are different parameters, since the `edge_weight``
+   CAUTION: the weights and :obj:`edge_weight` are different parameters, since the :obj:`edge_weight``
    are initialized to one, they are not considered as a Parameter.
    NOTE : the weights and bias are initialized with a Gaussian distribution of mean equal to
    0.0 and a standard deviation of 0.1
