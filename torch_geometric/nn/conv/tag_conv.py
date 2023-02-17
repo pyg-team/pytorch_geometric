@@ -64,6 +64,7 @@ class TAGConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         for lin in self.lins:
             lin.reset_parameters()
         zeros(self.bias)

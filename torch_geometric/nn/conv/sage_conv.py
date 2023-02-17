@@ -111,9 +111,9 @@ class SAGEConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if self.project:
             self.lin.reset_parameters()
-        self.aggr_module.reset_parameters()
         self.lin_l.reset_parameters()
         if self.root_weight:
             self.lin_r.reset_parameters()

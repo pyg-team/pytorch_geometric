@@ -24,7 +24,11 @@ from torch.utils.hooks import RemovableHandle
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
-from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
+from torch_geometric.utils import (
+    is_sparse,
+    is_torch_sparse_tensor,
+    to_edge_index,
+)
 
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
@@ -43,10 +47,10 @@ class MessagePassing(torch.nn.Module):
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
-        \square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
+        \bigoplus_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
         \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{j,i}\right) \right),
 
-    where :math:`\square` denotes a differentiable, permutation invariant
+    where :math:`\bigoplus` denotes a differentiable, permutation invariant
     function, *e.g.*, sum, mean, min, max or mul, and
     :math:`\gamma_{\mathbf{\Theta}}` and :math:`\phi_{\mathbf{\Theta}}` denote
     differentiable functions such as MLPs.
@@ -177,6 +181,11 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks = OrderedDict()
         self._edge_update_forward_hooks = OrderedDict()
 
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
+        if self.aggr_module is not None:
+            self.aggr_module.reset_parameters()
+
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
 
@@ -302,13 +311,7 @@ class MessagePassing(torch.nn.Module):
                 out[arg] = data
 
         if is_torch_sparse_tensor(edge_index):
-            if edge_index.requires_grad:
-                edge_index = edge_index.coalesce()
-                indices = edge_index.indices()
-                values = edge_index.values()
-            else:
-                indices = edge_index._indices()
-                values = edge_index._values()
+            indices, values = to_edge_index(edge_index)
             out['adj_t'] = edge_index
             out['edge_index'] = None
             out['edge_index_i'] = indices[0]
@@ -565,7 +568,7 @@ class MessagePassing(torch.nn.Module):
                   ptr: Optional[Tensor] = None,
                   dim_size: Optional[int] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
-        :math:`\square_{j \in \mathcal{N}(i)}`.
+        :math:`\bigoplus_{j \in \mathcal{N}(i)}`.
 
         Takes in the output of message computation as first argument and any
         argument which was initially passed to :meth:`propagate`.

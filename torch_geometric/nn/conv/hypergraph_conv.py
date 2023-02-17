@@ -101,6 +101,7 @@ class HypergraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         if self.use_attention:
             glorot(self.att)

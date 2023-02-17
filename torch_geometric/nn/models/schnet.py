@@ -61,7 +61,7 @@ class SchNet(torch.nn.Module):
             (default: :obj:`6`)
         num_gaussians (int, optional): The number of gaussians :math:`\mu`.
             (default: :obj:`50`)
-        interaction_graph (Callable, optional): The function used to compute
+        interaction_graph (callable, optional): The function used to compute
             the pairwise interaction graph and interatomic distances. If set to
             :obj:`None`, will construct a graph based on :obj:`cutoff` and
             :obj:`max_num_neighbors` properties.
@@ -156,6 +156,7 @@ class SchNet(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
         for interaction in self.interactions:
             interaction.reset_parameters()
@@ -172,6 +173,9 @@ class SchNet(torch.nn.Module):
         dataset: Dataset,
         target: int,
     ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:
+        r"""Returns a pre-trained :class:`SchNet` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`."""
         import ase
         import schnetpack as spk  # noqa
 
@@ -260,12 +264,12 @@ class SchNet(torch.nn.Module):
                 batch: OptTensor = None) -> Tensor:
         r"""
         Args:
-            z (LongTensor): Atomic number of each atom with shape
+            z (torch.Tensor): Atomic number of each atom with shape
                 :obj:`[num_atoms]`.
-            pos (Tensor): Coordinates of each atom with shape
+            pos (torch.Tensor): Coordinates of each atom with shape
                 :obj:`[num_atoms, 3]`.
-            batch (LongTensor, optional): Batch indices assigning each atom to
-                a separate molecule with shape :obj:`[num_atoms]`.
+            batch (torch.Tensor, optional): Batch indices assigning each atom
+                to a separate molecule with shape :obj:`[num_atoms]`.
                 (default: :obj:`None`)
         """
         batch = torch.zeros_like(z) if batch is None else batch

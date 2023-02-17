@@ -245,6 +245,28 @@ def test_hetero_data_subgraph():
                                   data[key].edge_attr[edge_mask[key]])
             assert out[key].name == 'cites'
 
+    # Test for bool and long in `subset_dict`.
+    author_mask = torch.zeros((x_author.size(0), ), dtype=torch.bool)
+    author_mask[subset['author']] = True
+    subset_mixed = {
+        'paper': subset['paper'],
+        'author': author_mask,
+    }
+    out = data.subgraph(subset_mixed)
+    out.validate(raise_on_error=True)
+
+    assert out.num_node_types == data.num_node_types
+    assert out.node_types == ['paper', 'author', 'conf']
+    assert out['paper'].num_nodes == subset['paper'].size(0)
+    assert out['author'].num_nodes == subset['author'].size(0)
+    assert out['conf'].num_nodes == data['conf'].num_nodes
+    assert out.edge_types == [
+        ('paper', 'to', 'paper'),
+        ('author', 'to', 'paper'),
+        ('paper', 'to', 'author'),
+        ('paper', 'to', 'conf'),
+    ]
+
     out = data.node_type_subgraph(['paper', 'author'])
     assert out.node_types == ['paper', 'author']
     assert out.edge_types == [('paper', 'to', 'paper'),

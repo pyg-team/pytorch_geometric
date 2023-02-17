@@ -6,7 +6,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.loader.dataloader import Collater, DataLoader
+from torch_geometric.loader import DataLoader
 
 with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]
@@ -64,62 +64,53 @@ def test_dataloader(num_workers):
         assert batch.edge_index_batch.tolist() == [0, 0, 0, 0, 1, 1, 1, 1]
 
 
-def test_collater():
-    # Test collator.collate()
-    collater = Collater(False, [])
+def test_dataloader_fallbacks():
+    # Test inputs of type List[torch.Tensor]:
     data_list = [torch.ones(3) for _ in range(4)]
-    batch = collater.collate(data_list)
+    batch = next(iter(DataLoader(data_list, batch_size=4)))
     assert torch.equal(batch, torch.ones(4, 3))
 
-    # Test inputs of type List[torch.Tensor]
-    data_list = [torch.ones(3) for _ in range(4)]
-    batch = collater.collate(data_list)
-    assert torch.equal(batch, torch.ones(4, 3))
-
-    # Test inputs of type List[float]
+    # Test inputs of type List[float]:
     data_list = [1.0, 1.0, 1.0, 1.0]
-    batch = collater.collate(data_list)
+    batch = next(iter(DataLoader(data_list, batch_size=4)))
     assert torch.equal(batch, torch.ones(4))
 
-    # Test inputs of type List[int]
+    # Test inputs of type List[int]:
     data_list = [1, 1, 1, 1]
-    batch = collater.collate(data_list)
-    assert torch.equal(batch, torch.ones(4))
+    batch = next(iter(DataLoader(data_list, batch_size=4)))
+    assert torch.equal(batch, torch.ones(4, dtype=torch.long))
 
-    # Test inputs of type List[str]
+    # Test inputs of type List[str]:
     data_list = ['test'] * 4
-    batch = collater.collate(data_list)
+    batch = next(iter(DataLoader(data_list, batch_size=4)))
     assert batch == data_list
 
-    # Test inputs of type List[Mapping]
+    # Test inputs of type List[Mapping]:
     data_list = [{'x': torch.ones(3), 'y': 1}] * 4
-    batch = collater.collate(data_list)
+    batch = next(iter(DataLoader(data_list, batch_size=4)))
     assert torch.equal(batch['x'], torch.ones(4, 3))
-    assert torch.equal(batch['y'], torch.ones(4))
+    assert torch.equal(batch['y'], torch.ones(4, dtype=torch.long))
 
-    # Test inputs of type List[Tuple]
-    named_tuple = namedtuple('data', 'x y')
-    data_list = [named_tuple(1, 2.0)] * 4
-    batch = collater.collate(data_list)
-    assert torch.equal(batch.x, torch.ones(4))
-    assert torch.equal(batch[1], torch.ones(4) + 1)
+    # Test inputs of type List[Tuple]:
+    DataTuple = namedtuple('DataTuple', 'x y')
+    data_list = [DataTuple(0.0, 1)] * 4
+    batch = next(iter(DataLoader(data_list, batch_size=4)))
+    assert torch.equal(batch.x, torch.zeros(4))
+    assert torch.equal(batch[1], torch.ones(4, dtype=torch.long))
 
-    # Test inputs of type List[Sequence]
-    data_list = [[1, 2, 3]] * 4
-    batch = collater.collate(data_list)
-    assert torch.equal(batch[0], torch.ones(4))
-    assert torch.equal(batch[1], torch.ones(4) + 1)
-    assert torch.equal(batch[2], torch.ones(4) + 2)
+    # Test inputs of type List[Sequence]:
+    data_list = [[0.0, 1]] * 4
+    batch = next(iter(DataLoader(data_list, batch_size=4)))
+    assert torch.equal(batch[0], torch.zeros(4))
+    assert torch.equal(batch[1], torch.ones(4, dtype=torch.long))
 
-    # Test that inputs of unsupported types raise an error.
+    # Test that inputs of unsupported types raise an error:
+    class DummyClass:
+        pass
+
     with pytest.raises(TypeError):
-        # Create a random class that does not inherit from any supported type
-        class DummyClass():
-            def __init__(self):
-                self.ones = torch.ones(2)
-
         data_list = [DummyClass()] * 4
-        batch = collater.collate(data_list)
+        next(iter(DataLoader(data_list, batch_size=4)))
 
 
 @pytest.mark.skipif(not with_mp, reason='Multi-processing not available')

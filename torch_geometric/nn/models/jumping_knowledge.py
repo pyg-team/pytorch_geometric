@@ -62,16 +62,17 @@ class JumpingKnowledge(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         if self.lstm is not None:
             self.lstm.reset_parameters()
         if self.att is not None:
             self.att.reset_parameters()
 
     def forward(self, xs: List[Tensor]) -> Tensor:
-        r"""Aggregates representations across different layers.
-
+        r"""
         Args:
-            xs (List[Tensor]): List containing layer-wise representations.
+            xs (List[torch.Tensor]): List containing the layer-wise
+                representations.
         """
         if self.mode == 'cat':
             return torch.cat(xs, dim=-1)

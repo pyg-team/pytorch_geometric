@@ -1,7 +1,6 @@
 import os.path as osp
 
 import torch
-from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG, Reddit
@@ -44,8 +43,10 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
         dataset = OGB_MAG(root=path, preprocess='metapath2vec',
                           transform=transform)
     elif name == 'ogbn-products':
-        dataset = PygNodePropPredDataset('ogbn-products', root=path,
-                                         transform=transform)
+        if transform is None:
+            transform = T.RemoveDuplicatedEdges()
+        else:
+            transform = T.Compose([T.RemoveDuplicatedEdges(), transform])
     elif name == 'Reddit':
         dataset = Reddit(root=path, transform=transform)
 
@@ -91,3 +92,15 @@ def get_model(name, params, metadata=None):
 
     return Model(params['inputs_channels'], params['hidden_channels'],
                  params['num_layers'], params['output_channels'])
+
+
+def get_split_masks(data, dataset_name):
+    if dataset_name == 'ogbn-mag':
+        train_mask = ('paper', data['paper'].train_mask)
+        test_mask = ('paper', data['paper'].test_mask)
+        val_mask = ('paper', data['paper'].val_mask)
+    else:
+        train_mask = data.train_mask
+        val_mask = data.val_mask
+        test_mask = data.test_mask
+    return train_mask, val_mask, test_mask
