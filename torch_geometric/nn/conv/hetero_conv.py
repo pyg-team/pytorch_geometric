@@ -2,16 +2,17 @@ import warnings
 from collections import defaultdict
 from typing import Dict, Optional
 
+import torch
 from torch import Tensor
-from torch.nn import Module
 
+from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.hgt_conv import group
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.typing import Adj, EdgeType, NodeType
 from torch_geometric.utils.hetero import check_add_self_loops
 
 
-class HeteroConv(Module):
+class HeteroConv(torch.nn.Module):
     r"""A generic wrapper for computing graph convolution on heterogeneous
     graphs.
     This layer will pass messages from source nodes to target nodes based on
@@ -36,7 +37,7 @@ class HeteroConv(Module):
         >>> ['paper', 'author']
 
     Args:
-        convs (Dict[Tuple[str, str, str], Module]): A dictionary
+        convs (Dict[Tuple[str, str, str], MessagePassing]): A dictionary
             holding a bipartite
             :class:`~torch_geometric.nn.conv.MessagePassing` layer for each
             individual edge type.
@@ -45,8 +46,11 @@ class HeteroConv(Module):
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"cat"`, :obj:`None`). (default: :obj:`"sum"`)
     """
-    def __init__(self, convs: Dict[EdgeType, Module],
-                 aggr: Optional[str] = "sum"):
+    def __init__(
+        self,
+        convs: Dict[EdgeType, MessagePassing],
+        aggr: Optional[str] = "sum",
+    ):
         super().__init__()
 
         for edge_type, module in convs.items():

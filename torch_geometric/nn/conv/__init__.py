@@ -25,10 +25,10 @@ from .cugraph.rgcn_conv import CuGraphRGCNConv
 from .rgat_conv import RGATConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
-from .point_conv import PointNetConv, PointConv
+from .point_conv import PointNetConv
 from .gmm_conv import GMMConv
 from .spline_conv import SplineConv
-from .nn_conv import NNConv, ECConv
+from .nn_conv import NNConv
 from .cg_conv import CGConv
 from .edge_conv import EdgeConv, DynamicEdgeConv
 from .x_conv import XConv
@@ -92,11 +92,9 @@ __all__ = [
     'SignedConv',
     'DNAConv',
     'PointNetConv',
-    'PointConv',
     'GMMConv',
     'SplineConv',
     'NNConv',
-    'ECConv',
     'CGConv',
     'EdgeConv',
     'DynamicEdgeConv',
@@ -130,3 +128,6 @@ __all__ = [
 ]
 
 classes = __all__
+
+ECConv = NNConv
+PointConv = PointNetConv
