@@ -1,8 +1,11 @@
-import torch
 import copy
+
+import torch
 from torch_sparse import SparseTensor
+
 from torch_geometric.nn.conv.BayesianGCNConv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
+
 
 def test_bayesian_conv_norm():
     x = torch.randn(4, 16)
@@ -22,23 +25,26 @@ def test_bayesian_conv_norm():
     assert torch.allclose(out1.mean(), out2.mean(), atol=0.1)
     assert torch.allclose(torch.var(out1), torch.var(out2), atol=1)
     assert torch.allclose(kl_out1, kl_out2, atol=1e-6)
-    
+
+
 def test_static_bayesian_conv():
     x = torch.randn(3, 4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     conv = BayesianGCNConv(16, 32)
     out, kl = conv(x, edge_index)
     assert out.size() == (3, 4, 32)
-    
+
+
 def test_gcn_conv_with_sparse_input_feature():
     x = torch.sparse_coo_tensor(indices=torch.tensor([[0, 0], [0, 1]]),
-                                    values=torch.tensor([1., 1.]),
-                                    size=torch.Size([4, 16]))
+                                values=torch.tensor([1., 1.]),
+                                size=torch.Size([4, 16]))
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     conv = BayesianGCNConv(16, 32)
     out, kl = conv(x, edge_index)
-    assert out.size() ==(4, 32)
-    
+    assert out.size() == (4, 32)
+
+
 def test_gcn_conv_with_decomposed_layers():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
@@ -57,12 +63,13 @@ def test_gcn_conv_with_decomposed_layers():
     assert torch.allclose(out1.mean(), out2.mean(), atol=0.1)
     assert torch.allclose(torch.var(out1), torch.var(out2), atol=1)
     assert torch.allclose(kl_out1, kl_out2, atol=1e-6)
-    
+
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(decomposed_conv.jittable(t))
         assert jit(x, edge_index).tolist() == out1.tolist()
-        
+
+
 def test_gcn_conv():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
@@ -99,12 +106,11 @@ def test_gcn_conv():
         assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
 
     conv.cached = True
-    out_f1 , kl_f1 = conv(x, edge_index)
+    out_f1, kl_f1 = conv(x, edge_index)
     for i in range(len(out1.tolist())):
         assert torch.allclose(out_f1[i].mean(), out1[i].mean(), atol=0.1)
         assert torch.allclose(torch.var(out_f1[i]), torch.var(out1[i]), atol=1)
     assert torch.allclose(kl_f1, kl_out1, atol=1e-6)
-
 
     out_f2, kl_f2 = conv(x, adj1.t())
     assert torch.allclose(out_f2.mean(), out1.mean(), atol=0.1)
@@ -120,12 +126,3 @@ def test_gcn_conv():
     assert torch.allclose(out4.mean(), out4.mean(), atol=0.1)
     assert torch.allclose(torch.var(out4), torch.var(out4), atol=1)
     assert torch.allclose(kl_out1, kl_4, atol=1e-6)
-
-
-   
- 
-
- 
-
-
- 
