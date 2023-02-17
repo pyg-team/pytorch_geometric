@@ -140,7 +140,7 @@ class MD17(InMemoryDataset):
     **STATS:**
 
     .. list-table::
-        :widths: 25 10 10 10 10 10
+        :widths: 20 10 10 10 10 10
         :header-rows: 1
 
         * - Name
