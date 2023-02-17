@@ -1,5 +1,6 @@
 import copy
 import warnings
+from abc import ABC
 from collections.abc import Mapping, Sequence
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
@@ -11,7 +12,7 @@ from torch_geometric.data.dataset import Dataset, IndexType
 from torch_geometric.data.separate import separate
 
 
-class InMemoryDataset(Dataset):
+class InMemoryDataset(Dataset, ABC):
     r"""Dataset base class for creating graph datasets which easily fit
     into CPU memory.
     Inherits from :class:`torch_geometric.data.Dataset`.
