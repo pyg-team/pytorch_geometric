@@ -31,6 +31,23 @@ class BitcoinOTC(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 138
+          - 6,005
+          - ~2,573.2
+          - 0
+          - 0
     """
 
     url = 'https://snap.stanford.edu/data/soc-sign-bitcoinotc.csv.gz'
