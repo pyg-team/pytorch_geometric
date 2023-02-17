@@ -445,9 +445,9 @@ class Pad(BaseTransform):
             return
 
         num_target_nodes = self.max_num_nodes.get_value(node_type)
-        assert num_target_nodes > store.num_nodes, \
-            f'The number of nodes after padding ({num_target_nodes}) must ' \
-            f'be greater than the number of nodes in the data object ' \
+        assert num_target_nodes >= store.num_nodes, \
+            f'The number of nodes after padding ({num_target_nodes}) cannot ' \
+            f'be lower than the number of nodes in the data object ' \
             f'({store.num_nodes}).'
         num_pad_nodes = num_target_nodes - store.num_nodes
 
