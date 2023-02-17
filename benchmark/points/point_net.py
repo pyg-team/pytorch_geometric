@@ -8,7 +8,7 @@ from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 
-from torch_geometric.nn import PointConv, fps, global_max_pool, radius_graph
+from torch_geometric.nn import PointNetConv, fps, global_max_pool, radius_graph
 from torch_geometric.profile import rename_profile_file
 
 parser = argparse.ArgumentParser()
@@ -29,13 +29,13 @@ class Net(torch.nn.Module):
         super().__init__()
 
         nn = Seq(Lin(3, 64), ReLU(), Lin(64, 64))
-        self.conv1 = PointConv(local_nn=nn)
+        self.conv1 = PointNetConv(local_nn=nn)
 
         nn = Seq(Lin(67, 128), ReLU(), Lin(128, 128))
-        self.conv2 = PointConv(local_nn=nn)
+        self.conv2 = PointNetConv(local_nn=nn)
 
         nn = Seq(Lin(131, 256), ReLU(), Lin(256, 256))
-        self.conv3 = PointConv(local_nn=nn)
+        self.conv3 = PointNetConv(local_nn=nn)
 
         self.lin1 = Lin(256, 256)
         self.lin2 = Lin(256, 256)
@@ -76,4 +76,4 @@ run(train_dataset, test_dataset, model, args.epochs, args.batch_size, args.lr,
     args.inference, args.profile, args.bf16)
 
 if args.profile:
-    rename_profile_file('points', PointConv.__name__)
+    rename_profile_file('points', PointNetConv.__name__)
