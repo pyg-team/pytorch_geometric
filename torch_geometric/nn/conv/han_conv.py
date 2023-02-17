@@ -118,13 +118,13 @@ class HANConv(MessagePassing):
         r"""Runs the forward pass of the module.
 
         Args:
-            x_dict (Dict[str, Tensor]): A dictionary holding input node
-                features  for each individual node type.
-            edge_index_dict (Dict[str, Union[Tensor, SparseTensor]]): A
+            x_dict (Dict[str, torch.Tensor]): A dictionary holding node feature
+                information for each individual node type.
+            edge_index_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
                 dictionary holding graph connectivity information for each
-                individual edge type, either as a :obj:`torch.LongTensor` of
+                individual edge type, either as a :class:`torch.Tensor` of
                 shape :obj:`[2, num_edges]` or a
-                :obj:`torch_sparse.SparseTensor`.
+                :class:`torch_sparse.SparseTensor`.
             return_semantic_attention_weights (bool, optional): If set to
                 :obj:`True`, will additionally return the semantic-level
                 attention weights for each destination node type.
