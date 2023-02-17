@@ -26,7 +26,7 @@ class BayesianGCNConv(MessagePassing):
    .. math::
       \mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
 
-   where :math:\mathbf{W}^{T}  denotes the weights with a fully factorized
+   where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
    Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
    an unconstrained parameter :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
    to avoid non-negative variance.
