@@ -194,9 +194,9 @@ class BayesianGCNConv(MessagePassing):
                               self.prior_bias_sigma)
         return kl
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None,
-                return_kl: bool = True) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+    def forward(
+            self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None,
+            return_kl: bool = True) -> Union[Tensor, Tuple[Tensor, Tensor]]:
         """"""
 
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
