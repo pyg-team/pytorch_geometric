@@ -101,7 +101,8 @@ class FAConv(MessagePassing):
         # type: (Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Tensor, Tensor, Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Tensor, Tensor, SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple

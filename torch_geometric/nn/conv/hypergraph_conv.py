@@ -110,7 +110,8 @@ class HypergraphConv(MessagePassing):
     def forward(self, x: Tensor, hyperedge_index: Tensor,
                 hyperedge_weight: Optional[Tensor] = None,
                 hyperedge_attr: Optional[Tensor] = None) -> Tensor:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             x (Tensor): Node feature matrix
                 :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.

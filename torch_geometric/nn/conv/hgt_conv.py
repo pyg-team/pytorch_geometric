@@ -125,7 +125,8 @@ class HGTConv(MessagePassing):
         edge_index_dict: Union[Dict[EdgeType, Tensor],
                                Dict[EdgeType, SparseTensor]]  # Support both.
     ) -> Dict[NodeType, Optional[Tensor]]:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
                 features  for each individual node type.
