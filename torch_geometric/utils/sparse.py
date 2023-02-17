@@ -54,7 +54,7 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
 
 
 def is_torch_sparse_tensor(src: Any) -> bool:
-    """Returns :obj:`True` if the input :obj:`src` is a
+    r"""Returns :obj:`True` if the input :obj:`src` is a
     :class:`torch.sparse.Tensor` (in any sparse layout).
 
     Args:
@@ -64,7 +64,7 @@ def is_torch_sparse_tensor(src: Any) -> bool:
 
 
 def is_sparse(src: Any) -> bool:
-    """Returns :obj:`True` if the input :obj:`src` is of type
+    r"""Returns :obj:`True` if the input :obj:`src` is of type
     :class:`torch.sparse.Tensor` (in any sparse layout) or of type
     :class:`torch_sparse.SparseTensor`.
 
@@ -79,9 +79,9 @@ def to_torch_coo_tensor(
     edge_attr: Optional[Tensor] = None,
     size: Optional[Union[int, Tuple[int, int]]] = None,
 ) -> Tensor:
-    """Converts a sparse adjacency matrix defined by edge indices and edge
+    r"""Converts a sparse adjacency matrix defined by edge indices and edge
     attributes to a :class:`torch.sparse.Tensor`.
-    See also :class:`torch_geometric.utils.to_edge_index`.
+    See :meth:`~torch_geometric.utils.to_edge_index` for the reverse operation.
 
     Args:
         edge_index (LongTensor): The edge indices.
@@ -120,14 +120,12 @@ def to_torch_coo_tensor(
     return out
 
 
-def to_edge_index(adj: Tensor) -> Tuple[Tensor, Tensor]:
-    """Converts a :class:`torch.sparse.Tensor` to a sparse adjacency matrix
-    defined by edge indices and edge attributes
-    (:class:`LongTensor`, :class:`Tensor`).
-    See also :class:`torch_geometric.utils.to_torch_coo_tensor`.
+def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
+    r"""Converts a :class:`torch.sparse.Tensor` or a
+    :class:`torch_sparse.SparseTensor` to edge indices and edge attributes.
 
     Args:
-        adj (torch.sparse.FloatTensor): The adjacency matrix.
+        adj (torch.sparse.Tensor or SparseTensor): The adjacency matrix.
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
@@ -141,13 +139,16 @@ def to_edge_index(adj: Tensor) -> Tuple[Tensor, Tensor]:
                 [1, 0, 2, 1, 3, 2]]),
         tensor([1., 1., 1., 1., 1., 1.]))
     """
+    if isinstance(adj, SparseTensor):
+        row, col, value = adj.coo()
+        if value is None:
+            value = torch.ones(row.size(0), device=row.device)
+        return torch.stack([row, col], dim=0), value
+
     if adj.requires_grad:
-        # Calling adj_t._values() will return a detached tensor.
-        # Use `adj_t.coalesce().values()` instead to track gradients.
+        # Calling adj._values() will return a detached tensor.
+        # Use `adj.coalesce().values()` instead to track gradients.
         adj = adj.coalesce()
-        edge_index = adj.indices()
-        edge_attr = adj.values()
-    else:
-        edge_index = adj._indices()
-        edge_attr = adj._values()
-    return edge_index, edge_attr
+        return adj.indices(), adj.values()
+
+    return adj._indices(), adj._values()
