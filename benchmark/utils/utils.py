@@ -1,4 +1,5 @@
 import os.path as osp
+from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch
 
@@ -47,6 +48,10 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
             transform = T.RemoveDuplicatedEdges()
         else:
             transform = T.Compose([T.RemoveDuplicatedEdges(), transform])
+
+        dataset = PygNodePropPredDataset('ogbn-products', root=path,
+                                         transform=transform)
+
     elif name == 'Reddit':
         dataset = Reddit(root=path, transform=transform)
 
