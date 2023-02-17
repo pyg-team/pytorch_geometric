@@ -72,8 +72,9 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
             num_src_nodes (int): The number of source nodes.
             csc ((torch.Tensor, torch.Tensor)): A tuple containing the CSC
                 representation of a graph, given as a tuple of
-                :obj:`(row, colptr)`. Use the :meth:`to_csc` method to convert
-                an :obj:`edge_index` representation to the desired format.
+                :obj:`(row, colptr)`. Use the :meth:`CuGraphModule.to_csc`
+                method to convert an :obj:`edge_index` representation to the
+                desired format.
             max_num_neighbors (int, optional): The maximum number of neighbors
                 of a target node. It is only effective when operating in a
                 bipartite graph. When not given, will be computed on-the-fly,

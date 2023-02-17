@@ -293,7 +293,7 @@ class SuperGATConv(MessagePassing):
         return alpha
 
     def get_attention_loss(self) -> Tensor:
-        r"""Compute the self-supervised graph attention loss."""
+        r"""Computes the self-supervised graph attention loss."""
         if not self.training:
             return torch.tensor([0], device=self.lin.weight.device)
 

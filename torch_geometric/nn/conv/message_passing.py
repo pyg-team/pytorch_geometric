@@ -186,6 +186,10 @@ class MessagePassing(torch.nn.Module):
         if self.aggr_module is not None:
             self.aggr_module.reset_parameters()
 
+    def forward(self, *args, **kwargs) -> Any:
+        r"""Runs the forward pass of the module."""
+        pass
+
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
 
