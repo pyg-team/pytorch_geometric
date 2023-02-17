@@ -24,7 +24,11 @@ from torch.utils.hooks import RemovableHandle
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
-from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
+from torch_geometric.utils import (
+    is_sparse,
+    is_torch_sparse_tensor,
+    to_edge_index,
+)
 
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
@@ -307,13 +311,7 @@ class MessagePassing(torch.nn.Module):
                 out[arg] = data
 
         if is_torch_sparse_tensor(edge_index):
-            if edge_index.requires_grad:
-                edge_index = edge_index.coalesce()
-                indices = edge_index.indices()
-                values = edge_index.values()
-            else:
-                indices = edge_index._indices()
-                values = edge_index._values()
+            indices, values = to_edge_index(edge_index)
             out['adj_t'] = edge_index
             out['edge_index'] = None
             out['edge_index_i'] = indices[0]

@@ -7,12 +7,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `utils.to_edge_index` to convert sparse tensors to edge indices and edge attributes ([#6728](https://github.com/pyg-team/pytorch_geometric/issues/6728))
 - Fixed expected data format in `PolBlogs` dataset ([#6714](https://github.com/pyg-team/pytorch_geometric/issues/6714))
 - Added `SimpleConv` to perform non-trainable propagation ([#6718](https://github.com/pyg-team/pytorch_geometric/pull/6718))
 - Added a `RemoveDuplicatedEdges` transform ([#6709](https://github.com/pyg-team/pytorch_geometric/pull/6709))
 - Added TorchScript support to the `LINKX` model ([#6712](https://github.com/pyg-team/pytorch_geometric/pull/6712))
 - Added `torch.jit` examples for `example/film.py` and `example/gcn.py`([#6602](https://github.com/pyg-team/pytorch_geometric/pull/6692))
-- Added `Pad` transform ([#5940](https://github.com/pyg-team/pytorch_geometric/pull/5940))
+- Added `Pad` transform ([#5940](https://github.com/pyg-team/pytorch_geometric/pull/5940), [#6697](https://github.com/pyg-team/pytorch_geometric/pull/6697), [#6731](https://github.com/pyg-team/pytorch_geometric/pull/6731))
 - Added full batch mode to the inference benchmark ([#6631](https://github.com/pyg-team/pytorch_geometric/pull/6631))
 - Added `cat` aggregation type to the `HeteroConv` class so that features can be concatenated during grouping ([#6634](https://github.com/pyg-team/pytorch_geometric/pull/6634))
 - Added `torch.compile` support and benchmark study ([#6610](https://github.com/pyg-team/pytorch_geometric/pull/6610))
@@ -86,7 +87,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - Allow setting the `EdgeStorage.num_edges` property ([#6710](https://github.com/pyg-team/pytorch_geometric/pull/6710))
-- Extended `Pad` transform to add `num_nodes` and `num_edges` directly to the padded objects ([#6697](https://github.com/pyg-team/pytorch_geometric/pull/6697))
 - Fixed a bug in `utils.bipartite_subgraph()` and updated docs of `HeteroData.subgraph()` ([#6654](https://github.com/pyg-team/pytorch_geometric/pull/6654))
 - Properly reset the `data_list` cache of an `InMemoryDataset` when accessing `dataset.data` ([#6685](https://github.com/pyg-team/pytorch_geometric/pull/6685))
 - Fixed a bug in `Data.subgraph()` and `HeteroData.subgraph()` ([#6613](https://github.com/pyg-team/pytorch_geometric/pull/6613))
