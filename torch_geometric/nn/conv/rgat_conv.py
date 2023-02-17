@@ -316,7 +316,8 @@ class RGATConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj, edge_type: OptTensor = None,
                 edge_attr: OptTensor = None, size: Size = None,
                 return_attention_weights=None):
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             x (Tensor): The input node features. Can be either a
                 :obj:`[num_nodes, in_channels]` node feature matrix, or an

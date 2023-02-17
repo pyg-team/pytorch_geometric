@@ -115,7 +115,8 @@ class HANConv(MessagePassing):
         return_semantic_attention_weights: bool = False,
     ) -> Union[Dict[NodeType, OptTensor], Tuple[Dict[NodeType, OptTensor],
                                                 Dict[NodeType, OptTensor]]]:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding input node
                 features  for each individual node type.

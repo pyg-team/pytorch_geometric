@@ -86,7 +86,6 @@ class PDNConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
-        """"""
 
         if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()

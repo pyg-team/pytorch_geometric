@@ -69,6 +69,7 @@ class HeteroConv(torch.nn.Module):
         self.aggr = aggr
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for conv in self.convs.values():
             conv.reset_parameters()
 
@@ -79,7 +80,8 @@ class HeteroConv(torch.nn.Module):
         *args_dict,
         **kwargs_dict,
     ) -> Dict[NodeType, Tensor]:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             x_dict (Dict[str, Tensor]): A dictionary holding node feature
                 information for each individual node type.

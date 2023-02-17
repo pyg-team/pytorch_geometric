@@ -47,7 +47,9 @@ class FusedGATConv(GATConv):  # pragma: no cover
         edge_index: Tensor,
         size: Optional[Tuple[int, int]] = None,
     ) -> Tuple[Tuple[Tensor, Tensor], Tuple[Tensor, Tensor], Tensor]:
-        r"""
+        r"""Converts an :obj:`edge_index` representation of a graph to the
+        desired input format of :class:`FusedGATConv`.
+
         Args:
             edge_index (Tensor): The edge indices.
             size ((int, int), optional). The shape of :obj:`edge_index` in each
@@ -66,7 +68,8 @@ class FusedGATConv(GATConv):  # pragma: no cover
 
     def forward(self, x: Tensor, csr: Tuple[Tensor, Tensor],
                 csc: Tuple[Tensor, Tensor], perm: Tensor) -> Tensor:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             x (Tensor): The node features.
             csr ((Tensor, Tensor)): A tuple containing the CSR representation
@@ -79,9 +82,9 @@ class FusedGATConv(GATConv):  # pragma: no cover
         .. note::
 
             Use the
-            :meth:`torch_geometric.nn.conv.FusedGATConv.to_graph_format` method
-            to obtain the :obj:`(csr, csc, perm)` graph format from an existing
-            :obj:`edge_index` representation.
+            :meth:`~torch_geometric.nn.conv.FusedGATConv.to_graph_format`
+            method to obtain the :obj:`(csr, csc, perm)` graph format from an
+            existing :obj:`edge_index` representation.
         """
         H, C = self.heads, self.out_channels
 

@@ -181,7 +181,8 @@ class SuperGATConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj,
                 neg_edge_index: OptTensor = None,
                 batch: OptTensor = None) -> Tensor:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             neg_edge_index (Tensor, optional): The negative edges to train
                 against. If not given, uses negative sampling to calculate

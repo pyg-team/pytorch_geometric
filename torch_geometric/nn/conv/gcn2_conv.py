@@ -111,7 +111,6 @@ class GCN2Conv(MessagePassing):
 
     def forward(self, x: Tensor, x_0: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
 
         if self.normalize:
             if isinstance(edge_index, Tensor):
