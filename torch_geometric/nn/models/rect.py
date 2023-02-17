@@ -82,7 +82,7 @@ class RECT_L(torch.nn.Module):
 
     def get_semantic_labels(self, x: Tensor, y: Tensor,
                             mask: Tensor) -> Tensor:
-        """Replaces the original labels by their class-centers."""
+        r"""Replaces the original labels by their class-centers."""
         with torch.no_grad():
             y = y[mask]
             mean = scatter(x[mask], y, dim=0, reduce='mean')
