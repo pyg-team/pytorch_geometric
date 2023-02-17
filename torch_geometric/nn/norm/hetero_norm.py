@@ -36,6 +36,7 @@ class HeteroNorm(torch.nn.Module):
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
+    self.mean_funcs = {"batchnorm":batch_mean, "instancenorm":instance_mean, "layernorm":layer_mean}
     def __init__(self, in_channels: Dict[str, int], norm_type: str,
                  types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
                  eps: float = 1e-5,
@@ -45,9 +46,11 @@ class HeteroNorm(torch.nn.Module):
         super().__init__()
         if not norm_type.lower() in ["batchnorm", "instancenorm", "layernorm"]:
             raise ValueError('Please choose norm type from "BatchNorm", "InstanceNorm", "LayerNorm"')
+
         if allow_single_element and not track_running_stats:
             raise ValueError("'allow_single_element' requires "
                              "'track_running_stats' to be set to `True`")
+
         if isinstance(in_channels, dict):
             self.types = list(in_channels.keys())
             if any([int(i) == -1 for i in in_channels.values()]):
@@ -65,11 +68,17 @@ class HeteroNorm(torch.nn.Module):
                 raise ValueError("Please provide a list of types if \
                     passing `in_channels` as an int")
             in_channels = {node_type: in_channels for node_type in self.types}
+        self.eps = eps
+        self.momentum = momentum
+        self.track_running_stats = track_running_stats
+        self.allow_single_element = allow_single_element
         self.in_channels = in_channels
         self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types, **kwargs)
         self.means = ParameterDict({mean_type:torch.zeros(self.in_channels) for mean_type in self.types})
         self.vars = ParameterDict({var_type:torch.ones(self.in_channels) for var_type in self.types})
         self.allow_single_element = allow_single_element
+        self.mean_func = self.mean_funcs[norm_type]
+        self.var_func = self.var_funcs[norm_type]
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -79,16 +88,34 @@ class HeteroNorm(torch.nn.Module):
             self.means[type_i] = torch.zeros(self.in_channels)
             self.vars[type_i] = torch.ones(self.in_channels)
 
-    def forward(
+    def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
+        out = x.new_empty(x.size(0), self.in_channels)
+        x_dict = {self.types[i]:x[type_vec == i] for i in range(len(self.types))}
+        return dict_forward(x_dict)
+
+    def dict_forward(
         self,
         x_dict: Dict[Union[NodeType, EdgeType], Tensor],
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
-        r"""
-        Args:
-            x_dict (Dict[str, Tensor]): A dictionary holding input
-                features for each individual type.
-        """
-        pass
+        out_dict = {}
+        for x_type, x in x_dict.items():
+            out_dict[x_type] = x - self.mean_func(x) / torch.sqrt(self.var_func(x) + self.eps)
+        return self.hetero_linear(out_dict)
+
+    def forward(
+        self,
+        x: Union[Tensor, Dict[Union[NodeType, EdgeType], Tensor]],
+        type_vec: Optional[Tensor] = None,
+    ) -> Union[Tensor, Dict[Union[NodeType, EdgeType], Tensor]]:
+
+        if isinstance(x, dict):
+            return self.dict_forward(x)
+
+        elif isinstance(x, Tensor) and type_vec is not None:
+            return self.fused_forward(x, type_vec)
+
+        raise ValueError(f"Encountered invalid forward types in "
+                         f"'{self.__class__.__name__}'")
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.module.num_features})'
