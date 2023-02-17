@@ -261,7 +261,6 @@ class BayesianGCNConv(MessagePassing):
                 kl = kl_weight + kl_bias
                 return out, kl
             else:
-                kl = kl_weight
                 return out
 
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
