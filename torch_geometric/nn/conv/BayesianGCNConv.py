@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Optional, Union, Tuple
 
 import torch
 import torch.nn.functional as F
@@ -8,42 +8,45 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
+# for the last version of torch_geometric
 from torch_geometric.utils import spmm
+
+# Inspired from IntelLabs :
+# https://github.com/IntelLabs/bayesian-torch/blob/main/bayesian_torch/
+# layers/base_variational_layer.py
 
 
 class BayesianGCNConv(MessagePassing):
-    r"""The Bayesian graph convolutional operator inspired from
-    the `"Improving model calibration with
+    r"""The Bayesian graph convolutional operator inspired from the `"Improving model calibration with
    accuracy versus uncertainty optimization"
    <https://arxiv.org/abs/2012.07923>`_ paper
    We first proceed wth linear transformation:
 
-   .. math::`\mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}`
+   .. math::
+      \mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
 
-   where
-   :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
-   Gaussian distributions represented by
-   :math:`\mu` and :math:`\sigma`, with
-   an unconstrained parameter
-   :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
+   where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
+   Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
+   an unconstrained parameter :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
    to avoid non-negative variance.
-   :math:`\mathbf{b}` denotes the bias which is based on the
-   same structure as the weights
+   :math:`\mathbf{b}` denotes the bias which is based 
+   on the same structure as the weights
    CAUTION: the weights and :obj:`edge_weight` are different parameters,
    since the :obj:`edge_weight`
    are initialized to one, they are not considered as a Parameter.
-   NB : the weights and bias are initialized with a Gaussian distribution
-   of mean equal to 0.0 and a standard deviation of 0.1
+   NOTE : the weights and bias are initialized with 
+   a Gaussian distribution of mean equal to
+   0.0 and a standard deviation of 0.1
 
 
-   Then propagate the message through the graph with
-   a graph convolution operator from the `"Semi-supervised
+   Then propagate the message through the graph with a graph convolution operator
+   from the `"Semi-supervised
    Classification with Graph Convolutional Networks"
    <https://arxiv.org/abs/1609.02907>`_ paper
 
    .. math::
-        `\mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
-         \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta}`,
+        \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
+        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta},
 
    where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
    adjacency matrix with inserted self-loops and
@@ -54,9 +57,9 @@ class BayesianGCNConv(MessagePassing):
    Its node-wise formulation is given by:
 
    .. math::
-        `\mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
         \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
-        \hat{d}_i}} \mathbf{x}_j`
+        \hat{d}_i}} \mathbf{x}_j
 
    with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
    :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
@@ -87,7 +90,8 @@ class BayesianGCNConv(MessagePassing):
         normalize (bool, optional): Whether to add self-loops and compute
             symmetric normalization coefficients on the fly.
             (default: :obj:`True`)
-        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+        bias (bool, optional): If set to :obj:`False`, 
+        the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -101,9 +105,9 @@ class BayesianGCNConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{out})`,
           Kullback-Leibler divergence for weights and bias (optional):
           math : `(\mathrm{KL}[q_{\theta}(w)||p(w)])`
-          with variational parameters math:`(\theta = (\mu, \rho))`
+          with variational parameters math:`(\theta = (\mu, \rho))` 
           to make an approximation
-          of the variational posterior
+          of the variational posterior 
           math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
    """
     _cached_edge_index: Optional[OptPairTensor]
@@ -172,7 +176,7 @@ class BayesianGCNConv(MessagePassing):
         self._cached_adj_t = None
 
     def kl_div(self, mu_q, sigma_q, mu_p, sigma_p):
-        r"""
+        """
         Calculates kl divergence between two gaussians (Q || P)
         Parameters:
              * mu_q: torch.Tensor -> mu parameter of distribution Q
@@ -197,16 +201,18 @@ class BayesianGCNConv(MessagePassing):
         return kl
 
     def forward(
-            self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None
-    ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+            self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+        """"""
 
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
 
         weight = self.mu_weight + \
             (sigma_weight * self.eps_weight.data.normal_())
 
+        
         kl_weight = self.kl_div(self.mu_weight, sigma_weight,
-                                self.prior_weight_mu, self.prior_weight_sigma)
+                                    self.prior_weight_mu,
+                                    self.prior_weight_sigma)
 
         if self.normalize:
             if isinstance(edge_index, Tensor):
@@ -233,26 +239,28 @@ class BayesianGCNConv(MessagePassing):
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
         weight = self.mu_weight + \
             (sigma_weight * self.eps_weight.data.normal_())
-
+        
         kl_weight = self.kl_div(self.mu_weight, sigma_weight,
-                                self.prior_weight_mu, self.prior_weight_sigma)
+                                    self.prior_weight_mu,
+                                    self.prior_weight_sigma)
 
-        bias = None
+        bias = None  # Initialization of bias
 
         if self.mu_bias is not None:
             sigma_bias = torch.log1p(torch.exp(self.rho_bias))
             bias = self.mu_bias + (sigma_bias * self.eps_bias.data.normal_())
-
-            kl_bias = self.kl_div(self.mu_bias, sigma_bias, self.prior_bias_mu,
-                                  self.prior_bias_sigma)
+            
+            kl_bias = self.kl_div(self.mu_bias, sigma_bias,
+                                      self.prior_bias_mu,
+                                      self.prior_bias_sigma)
 
         x = F.linear(x, weight, bias)
-        r"""
-        propagate_type: (x: Tensor, edge_weight: OptTensor)
-        """
+
+        # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=None)
 
+        
         if self.mu_bias is not None:
             kl = kl_weight + kl_bias
             return out, kl
