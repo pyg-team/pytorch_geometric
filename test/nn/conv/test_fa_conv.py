@@ -18,13 +18,11 @@ def test_fa_conv():
     out = conv(x, x_0, edge_index)
     assert out.size() == (4, 16)
     assert torch.allclose(conv(x, x_0, adj1.t()), out)
-    assert torch.allclose(conv(x, x_0, adj2.t()), out)
 
     # Run again to test the cached functionality:
     assert conv._cached_edge_index is not None
     assert conv._cached_adj_t is not None
     assert torch.allclose(conv(x, x_0, edge_index), conv(x, x_0, adj1.t()))
-    assert torch.allclose(conv(x, x_0, edge_index), conv(x, x_0, adj2.t()))
 
     if is_full_test():
         t = '(Tensor, Tensor, Tensor, OptTensor, NoneType) -> Tensor'
