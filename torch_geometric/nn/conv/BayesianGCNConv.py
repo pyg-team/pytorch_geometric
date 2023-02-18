@@ -241,7 +241,7 @@ class BayesianGCNConv(MessagePassing):
         kl_weight = self.kl_div(self.mu_weight, sigma_weight,
                                 self.prior_weight_mu, self.prior_weight_sigma)
 
-        bias = None 
+        bias = None
 
         if self.mu_bias is not None:
             sigma_bias = torch.log1p(torch.exp(self.rho_bias))
