@@ -4,12 +4,13 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_sparse import SparseTensor
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 from torch_geometric.utils import spmm
+
 
 class BayesianGCNConv(MessagePassing):
     r"""The Bayesian graph convolutional operator inspired from
@@ -22,12 +23,12 @@ class BayesianGCNConv(MessagePassing):
       \mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
 
    where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
-   Gaussian distributions represented by 
+   Gaussian distributions represented by
    :math:`\mu` and :math:`\sigma`, with
-   an unconstrained parameter 
+   an unconstrained parameter
    :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
    to avoid non-negative variance.
-   :math:`\mathbf{b}` denotes the bias which is based on the 
+   :math:`\mathbf{b}` denotes the bias which is based on the
    same structure as the weights
    CAUTION: the weights and :obj:`edge_weight` are different parameters,
    since the :obj:`edge_weight``
@@ -101,9 +102,9 @@ class BayesianGCNConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{out})`,
           Kullback-Leibler divergence for weights and bias (optional):
           math : `(\mathrm{KL}[q_{\theta}(w)||p(w)])`
-          with variational parameters math:`(\theta = (\mu, \rho))` 
+          with variational parameters math:`(\theta = (\mu, \rho))`
           to make an approximation
-          of the variational posterior 
+          of the variational posterior
           math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
    """
     _cached_edge_index: Optional[OptPairTensor]
@@ -247,8 +248,7 @@ class BayesianGCNConv(MessagePassing):
                                   self.prior_bias_sigma)
 
         x = F.linear(x, weight, bias)
-
-        r""" 
+        r"""
         propagate_type: (x: Tensor, edge_weight: OptTensor)
         """
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
