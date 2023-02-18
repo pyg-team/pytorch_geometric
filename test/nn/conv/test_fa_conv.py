@@ -40,7 +40,7 @@ def test_fa_conv():
     assert conv._cached_adj_t is None
 
     # Test without caching:
-    conv = FAConv(16, eps=1.0, cached=False)
+    conv.cached = False
     out = conv(x, x_0, edge_index)
     assert torch.allclose(conv(x, x_0, adj1.t()), out)
     assert torch.allclose(conv(x, x_0, adj2.t()), out)
