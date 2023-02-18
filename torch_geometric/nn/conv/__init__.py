@@ -59,7 +59,7 @@ from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
 from .gps_conv import GPSConv
 from .antisymmetric_conv import AntiSymmetricConv
-from .BayesianGCNConv import  BayesianGCNConv
+from .BayesianGCNConv import BayesianGCNConv
 
 __all__ = [
     'MessagePassing',
