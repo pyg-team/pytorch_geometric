@@ -59,7 +59,7 @@ def _generate_heterodata_edges(
 def _check_homo_data_nodes(original: Data, padded: Data,
                            max_num_nodes: Union[int, Dict[NodeType, int]],
                            node_pad_value: Optional[Padding] = None,
-                           exclude_keys: Optional[List[str]] = None) -> None:
+                           exclude_keys: Optional[List[str]] = None):
     assert padded.num_nodes == max_num_nodes
 
     for attr in _generate_homodata_node_attrs(original):
@@ -68,6 +68,10 @@ def _check_homo_data_nodes(original: Data, padded: Data,
             continue
 
         assert attr in padded.keys
+
+        if not isinstance(padded[attr], torch.Tensor):
+            continue
+
         assert padded[attr].shape[0] == max_num_nodes
         compare_pad_start_idx = original[attr].shape[0]
         # Check values in padded area.
@@ -85,7 +89,7 @@ def _check_homo_data_nodes(original: Data, padded: Data,
 def _check_homo_data_edges(original: Data, padded: Data,
                            max_num_edges: Optional[int] = None,
                            edge_pad_value: Optional[Padding] = None,
-                           exclude_keys: Optional[List[str]] = None) -> None:
+                           exclude_keys: Optional[List[str]] = None):
     # Check edge index attribute.
     if max_num_edges is None:
         max_num_edges = padded.num_nodes**2
@@ -113,6 +117,10 @@ def _check_homo_data_edges(original: Data, padded: Data,
             continue
 
         assert attr in padded.keys
+
+        if not isinstance(padded[attr], torch.Tensor):
+            continue
+
         assert padded[attr].shape[0] == max_num_edges
 
         # Check values in padded area.
@@ -130,7 +138,7 @@ def _check_homo_data_edges(original: Data, padded: Data,
 def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
                              max_num_nodes: Union[int, Dict[NodeType, int]],
                              node_pad_value: Optional[Padding] = None,
-                             exclude_keys: Optional[List[str]] = None) -> None:
+                             exclude_keys: Optional[List[str]] = None):
 
     expected_nodes = max_num_nodes
 
@@ -139,10 +147,14 @@ def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
             assert attr not in padded[node_type].keys()
             continue
 
+        assert attr in padded[node_type].keys()
+
+        if not isinstance(padded[node_type][attr], torch.Tensor):
+            continue
+
         original_tensor = original[node_type][attr]
         padded_tensor = padded[node_type][attr]
 
-        assert attr in padded[node_type].keys()
         # Check the number of nodes.
         if isinstance(max_num_nodes, dict):
             expected_nodes = max_num_nodes[node_type]
@@ -165,7 +177,7 @@ def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
                                                            Dict[EdgeType,
                                                                 int]]] = None,
                              edge_pad_value: Optional[Padding] = None,
-                             exclude_keys: Optional[List[str]] = None) -> None:
+                             exclude_keys: Optional[List[str]] = None):
 
     for edge_type, attr in _generate_heterodata_edges(padded):
         if attr in exclude_keys:
@@ -173,6 +185,10 @@ def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
             continue
 
         assert attr in padded[edge_type].keys()
+
+        if not isinstance(padded[edge_type][attr], torch.Tensor):
+            continue
+
         compare_pad_start_idx = original[edge_type].num_edges
         original_tensor = original[edge_type][attr]
         padded_tensor = padded[edge_type][attr]
@@ -226,7 +242,7 @@ def _check_data(original: Union[Data, HeteroData], padded: Union[Data,
                                                         int]]] = None,
                 node_pad_value: Optional[Union[Padding, int, float]] = None,
                 edge_pad_value: Optional[Union[Padding, int, float]] = None,
-                exclude_keys: Optional[List[str]] = None) -> None:
+                exclude_keys: Optional[List[str]] = None):
 
     if not isinstance(node_pad_value, Padding) and node_pad_value is not None:
         node_pad_value = UniformPadding(node_pad_value)
@@ -346,7 +362,7 @@ def test_pad_data_exclude_keys(data, exclude_keys):
 
 @pytest.mark.parametrize('data', [fake_data(), fake_hetero_data(node_types=1)])
 def test_pad_invalid_max_num_nodes(data):
-    transform = Pad(max_num_nodes=data.num_nodes)
+    transform = Pad(max_num_nodes=data.num_nodes - 1)
 
     with pytest.raises(AssertionError,
                        match='The number of nodes after padding'):

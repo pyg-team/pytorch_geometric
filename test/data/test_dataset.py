@@ -2,7 +2,7 @@ import pytest
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
+from torch_geometric.data import Data, HeteroData, InMemoryDataset
 
 
 class MyTestDataset(InMemoryDataset):
@@ -183,7 +183,7 @@ def test_hetero_in_memory_dataset():
 
 
 def test_override_behavior():
-    class DS1(Dataset):
+    class DS1(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -201,7 +201,7 @@ def test_override_behavior():
         def process(self):
             pass
 
-    class DS2(Dataset):
+    class DS2(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -216,7 +216,7 @@ def test_override_behavior():
         def process(self):
             pass
 
-    class DS3(Dataset):
+    class DS3(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False

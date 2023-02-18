@@ -61,7 +61,7 @@ class AntiSymmetricConv(torch.nn.Module):
         act: Union[str, Callable, None] = 'tanh',
         act_kwargs: Optional[Dict[str, Any]] = None,
         bias: bool = True,
-    ) -> None:
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -85,12 +85,13 @@ class AntiSymmetricConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         torch.nn.init.kaiming_uniform_(self.W, a=math.sqrt(5))
         self.phi.reset_parameters()
         zeros(self.bias)
 
     def forward(self, x: Tensor, edge_index: Adj, *args, **kwargs) -> Tensor:
-        """"""
+        r"""Runs the forward pass of the module."""
         antisymmetric_W = self.W - self.W.t() - self.gamma * self.eye
 
         for _ in range(self.num_iters):

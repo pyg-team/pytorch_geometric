@@ -400,6 +400,8 @@ class EdgeStorage(BaseStorage):
     @property
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
+        if 'num_edges' in self:
+            return self['num_edges']
         for key, value in self.items():
             if isinstance(value, (Tensor, np.ndarray)) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)

@@ -73,12 +73,13 @@ class APPNP(MessagePassing):
         self._cached_adj_t = None
 
     def reset_parameters(self):
+        super().reset_parameters()
         self._cached_edge_index = None
         self._cached_adj_t = None
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         if self.normalize:
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index

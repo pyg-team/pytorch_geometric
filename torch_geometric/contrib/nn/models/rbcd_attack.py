@@ -68,10 +68,10 @@ class PRBCDAttack(torch.nn.Module):
             classification and that the model returns raw predictions (*i.e.*,
             no output activation) or uses :obj:`logsoftmax`. Moreover, and the
             number of predictions should match the number of labels passed to
-            :attr:`attack`. Either pass Callable or one of: :obj:`'masked'`,
+            :attr:`attack`. Either pass a callable or one of: :obj:`'masked'`,
             :obj:`'margin'`, :obj:`'prob_margin'`, :obj:`'tanh_margin'`.
             (default: :obj:`'prob_margin'`)
-        metric (Callable, optional): Second (potentially
+        metric (callable, optional): Second (potentially
             non-differentiable) loss for monitoring or early stopping (if
             :obj:`mode='greedy'`). (default: same as :attr:`loss`)
         lr (float, optional): Learning rate for updating edge weights.

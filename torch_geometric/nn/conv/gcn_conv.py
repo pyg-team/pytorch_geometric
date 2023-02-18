@@ -19,6 +19,7 @@ from torch_geometric.utils import (
     is_torch_sparse_tensor,
     scatter,
     spmm,
+    to_edge_index,
     to_torch_coo_tensor,
 )
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -66,15 +67,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         flow = 'target_to_source'
         adj_t = edge_index
         num_nodes = adj_t.size(0)
-        if adj_t.requires_grad:
-            # Calling adj_t._values() will return a detached tensor.
-            # Use `adj_t.coalesce().values()` instead to track gradients.
-            adj_t = adj_t.coalesce()
-            edge_index = adj_t.indices()
-            edge_weight = adj_t.values()
-        else:
-            edge_index = adj_t._indices()
-            edge_weight = adj_t._values()
+        edge_index, edge_weight = to_edge_index(adj_t)
     else:
         assert flow in ["source_to_target", "target_to_source"]
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -192,6 +185,7 @@ class GCNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         zeros(self.bias)
         self._cached_edge_index = None
@@ -199,7 +193,6 @@ class GCNConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
 
         if self.normalize:
             if isinstance(edge_index, Tensor):

@@ -109,6 +109,7 @@ class FiLMConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         for lin, film in zip(self.lins, self.films):
             lin.reset_parameters()
             reset(film)
@@ -117,7 +118,7 @@ class FiLMConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_type: OptTensor = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 

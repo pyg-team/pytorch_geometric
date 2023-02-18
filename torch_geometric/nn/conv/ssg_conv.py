@@ -81,12 +81,13 @@ class SSGConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         self._cached_h = None
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         cache = self._cached_h
         if cache is None:
             if isinstance(edge_index, Tensor):

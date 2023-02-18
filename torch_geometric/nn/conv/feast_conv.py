@@ -73,13 +73,13 @@ class FeaStConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         self.u.reset_parameters()
         normal(self.c, mean=0, std=0.1)
         normal(self.bias, mean=0, std=0.1)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 

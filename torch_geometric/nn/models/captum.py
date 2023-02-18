@@ -97,8 +97,9 @@ def to_captum_model(
             function will return the output of the model for the element at
             the index specified. (default: :obj:`None`)
         metadata (Metadata, optional): The metadata of the heterogeneous graph.
-            Only required if explaning over a `HeteroData` object.
-            (default: :obj: `None`)
+            Only required if explaning a
+            :class:`~torch_geometric.data.HeteroData` object.
+            (default: :obj:`None`)
     """
     if metadata is None:
         return CaptumModel(model, mask_type, output_idx)
