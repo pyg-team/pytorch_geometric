@@ -11,10 +11,6 @@ from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
 # for the last version of torch_geometric
 from torch_geometric.utils import spmm
 
-# Inspired from IntelLabs :
-# https://github.com/IntelLabs/bayesian-torch/blob/main/bayesian_torch/
-# layers/base_variational_layer.py
-
 
 class BayesianGCNConv(MessagePassing):
     r"""The Bayesian graph convolutional operator
@@ -24,7 +20,7 @@ class BayesianGCNConv(MessagePassing):
    We first proceed wth linear transformation:
 
    .. math::
-      \mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
+      `\mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
 
    where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
    Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
@@ -38,7 +34,7 @@ class BayesianGCNConv(MessagePassing):
    are initialized to one, they are not considered as a Parameter.
    NOTE : the weights and bias are initialized with
    a Gaussian distribution of mean equal to
-   0.0 and a standard deviation of 0.1
+   (default: :obj:`0.0`) and a standard deviation of (default: :obj:`0.1`)
 
 
    Then propagate the message through the
@@ -48,8 +44,8 @@ class BayesianGCNConv(MessagePassing):
    <https://arxiv.org/abs/1609.02907>`_ paper
 
    .. math::
-        \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
-        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta},
+        `\mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
+        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta}`,
 
    where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
    adjacency matrix with inserted self-loops and
@@ -60,9 +56,9 @@ class BayesianGCNConv(MessagePassing):
    Its node-wise formulation is given by:
 
    .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
+        `\mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
         \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
-        \hat{d}_i}} \mathbf{x}_j
+        \hat{d}_i}} \mathbf{x}_j`
 
    with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
    :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
@@ -245,7 +241,7 @@ class BayesianGCNConv(MessagePassing):
         kl_weight = self.kl_div(self.mu_weight, sigma_weight,
                                 self.prior_weight_mu, self.prior_weight_sigma)
 
-        bias = None  # Initialization of bias
+        bias = None 
 
         if self.mu_bias is not None:
             sigma_bias = torch.log1p(torch.exp(self.rho_bias))
@@ -256,7 +252,6 @@ class BayesianGCNConv(MessagePassing):
 
         x = F.linear(x, weight, bias)
 
-        # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=None)
 
