@@ -75,8 +75,8 @@ def test_gcn_conv():
     value_zero = torch.zeros(6)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
-    adj1 = torch.randint(0, 4, (2,6))
-    adj2 = torch.randint(0, 4, (2,6))
+    adj1 = torch.randint(0, 4, (2, 6))
+    adj2 = torch.randint(0, 4, (2, 6))
 
     conv = BayesianGCNConv(16, 32)
     assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
@@ -92,7 +92,7 @@ def test_gcn_conv():
     assert torch.allclose(out2.mean(), out_2_adj2.mean(), atol=0.1)
     assert torch.allclose(torch.var(out2), torch.var(out_2_adj2), atol=1)
     assert torch.allclose(kl_out2, kl_adj2, atol=1e-6)
-    
+
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
@@ -105,7 +105,7 @@ def test_gcn_conv():
         assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
 
     conv.cached = True
-    out_f1 , kl_f1 = conv(x, edge_index)
+    out_f1, kl_f1 = conv(x, edge_index)
     for i in range(len(out1.tolist())):
         assert torch.allclose(out_f1[i].mean(), out1[i].mean(), atol=0.1)
         assert torch.allclose(torch.var(out_f1[i]), torch.var(out1[i]), atol=1)
