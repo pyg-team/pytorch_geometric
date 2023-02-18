@@ -7,13 +7,9 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
+from torch_sparse import SparseTensor
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor
 from torch_geometric.utils import spmm
-
-# Inspired from IntelLabs :
-# https://github.com/IntelLabs/bayesian-torch/blob/main/bayesian_torch/
-# layers/base_variational_layer.py
-
 
 class BayesianGCNConv(MessagePassing):
     r"""The Bayesian graph convolutional operator inspired from
@@ -26,14 +22,17 @@ class BayesianGCNConv(MessagePassing):
       \mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
 
    where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
-   Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
-   an unconstrained parameter :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
+   Gaussian distributions represented by 
+   :math:`\mu` and :math:`\sigma`, with
+   an unconstrained parameter 
+   :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
    to avoid non-negative variance.
-   :math:`\mathbf{b}` denotes the bias which is based on the same structure as the weights
+   :math:`\mathbf{b}` denotes the bias which is based on the 
+   same structure as the weights
    CAUTION: the weights and :obj:`edge_weight` are different parameters,
    since the :obj:`edge_weight``
    are initialized to one, they are not considered as a Parameter.
-   NOTE : the weights and bias are initialized with a Gaussian distribution
+   NB : the weights and bias are initialized with a Gaussian distribution
    of mean equal to 0.0 and a standard deviation of 0.1
 
 
@@ -102,8 +101,10 @@ class BayesianGCNConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{out})`,
           Kullback-Leibler divergence for weights and bias (optional):
           math : `(\mathrm{KL}[q_{\theta}(w)||p(w)])`
-          with variational parameters math:`(\theta = (\mu, \rho))` to make an approximation
-          of the variational posterior math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
+          with variational parameters math:`(\theta = (\mu, \rho))` 
+          to make an approximation
+          of the variational posterior 
+          math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
    """
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
@@ -171,7 +172,7 @@ class BayesianGCNConv(MessagePassing):
         self._cached_adj_t = None
 
     def kl_div(self, mu_q, sigma_q, mu_p, sigma_p):
-        """
+        r"""
         Calculates kl divergence between two gaussians (Q || P)
         Parameters:
              * mu_q: torch.Tensor -> mu parameter of distribution Q
@@ -198,7 +199,6 @@ class BayesianGCNConv(MessagePassing):
     def forward(
             self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None
     ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
-        """"""
 
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
 
@@ -237,7 +237,7 @@ class BayesianGCNConv(MessagePassing):
         kl_weight = self.kl_div(self.mu_weight, sigma_weight,
                                 self.prior_weight_mu, self.prior_weight_sigma)
 
-        bias = None  # Initialization of bias
+        bias = None
 
         if self.mu_bias is not None:
             sigma_bias = torch.log1p(torch.exp(self.rho_bias))
@@ -248,7 +248,9 @@ class BayesianGCNConv(MessagePassing):
 
         x = F.linear(x, weight, bias)
 
-        # propagate_type: (x: Tensor, edge_weight: OptTensor)
+        r""" 
+        propagate_type: (x: Tensor, edge_weight: OptTensor)
+        """
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=None)
 
