@@ -8,7 +8,6 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
-# for the last version of torch_geometric
 from torch_geometric.utils import spmm
 
 # Inspired from IntelLabs :
