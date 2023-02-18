@@ -22,3 +22,7 @@ def test_label_prop():
     out = model(y, edge_index, mask)
     assert out.size() == (6, 3)
     assert torch.allclose(model(y, adj.t(), mask), out)
+
+    # Test post step:
+    out = model(y, edge_index, mask, post_step=lambda y: y.clamp_(0., 0.))
+    assert torch.sum(out) == 0.
