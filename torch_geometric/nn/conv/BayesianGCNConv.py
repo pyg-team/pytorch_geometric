@@ -10,7 +10,6 @@ from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
 from torch_geometric.utils import spmm
 
-
 class BayesianGCNConv(MessagePassing):
     r"""The Bayesian graph convolutional operator inspired from
     the `"Improving model calibration with
@@ -18,19 +17,19 @@ class BayesianGCNConv(MessagePassing):
    <https://arxiv.org/abs/2012.07923>`_ paper
    We first proceed wth linear transformation:
 
-   .. math::
-      \mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
+   .. math::`\mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}`
 
-   where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
-   Gaussian distributions represented by
+   where 
+   :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
+   Gaussian distributions represented by 
    :math:`\mu` and :math:`\sigma`, with
-   an unconstrained parameter
+   an unconstrained parameter 
    :math:`\rho` for :math:`\sigma = log(1+exp(\rho))`
    to avoid non-negative variance.
-   :math:`\mathbf{b}` denotes the bias which is based on the
+   :math:`\mathbf{b}` denotes the bias which is based on the 
    same structure as the weights
    CAUTION: the weights and :obj:`edge_weight` are different parameters,
-   since the :obj:`edge_weight``
+   since the :obj:`edge_weight`
    are initialized to one, they are not considered as a Parameter.
    NB : the weights and bias are initialized with a Gaussian distribution
    of mean equal to 0.0 and a standard deviation of 0.1
@@ -42,8 +41,8 @@ class BayesianGCNConv(MessagePassing):
    <https://arxiv.org/abs/1609.02907>`_ paper
 
    .. math::
-        \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
-        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta},
+        `\mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
+         \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta}`,
 
    where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
    adjacency matrix with inserted self-loops and
@@ -54,9 +53,9 @@ class BayesianGCNConv(MessagePassing):
    Its node-wise formulation is given by:
 
    .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
+        `\mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
         \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
-        \hat{d}_i}} \mathbf{x}_j
+        \hat{d}_i}} \mathbf{x}_j`
 
    with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
    :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
@@ -101,9 +100,9 @@ class BayesianGCNConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{out})`,
           Kullback-Leibler divergence for weights and bias (optional):
           math : `(\mathrm{KL}[q_{\theta}(w)||p(w)])`
-          with variational parameters math:`(\theta = (\mu, \rho))`
+          with variational parameters math:`(\theta = (\mu, \rho))` 
           to make an approximation
-          of the variational posterior
+          of the variational posterior 
           math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
    """
     _cached_edge_index: Optional[OptPairTensor]
@@ -247,7 +246,8 @@ class BayesianGCNConv(MessagePassing):
                                   self.prior_bias_sigma)
 
         x = F.linear(x, weight, bias)
-        r"""
+
+        r""" 
         propagate_type: (x: Tensor, edge_weight: OptTensor)
         """
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
