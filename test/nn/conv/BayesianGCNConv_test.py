@@ -71,8 +71,6 @@ def test_gcn_conv_with_decomposed_layers():
 
 def test_gcn_conv():
     x = torch.randn(4, 16)
-    value = torch.rand(6)
-    value_zero = torch.zeros(6)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
     adj1 = torch.randint(0, 4, (2, 6))
