@@ -97,32 +97,32 @@ def test_gcn_conv():
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-         assert jit(x, edge_index).tolist() == out1.tolist()
-         assert jit(x, edge_index, value).tolist() == out2.tolist()
+        assert jit(x, edge_index).tolist() == out1.tolist()
+        assert jit(x, edge_index, value).tolist() == out2.tolist()
 
-         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-         jit = torch.jit.script(conv.jittable(t))
-         assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
-         assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
+        t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
+        assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
 
-    conv.cached = True
-    out_f1, kl_f1 = conv(x, edge_index)
-    for i in range(len(out1.tolist())):
-        assert torch.allclose(out_f1[i].mean(), out1[i].mean(), atol=0.1)
-        assert torch.allclose(torch.var(out_f1[i]), torch.var(out1[i]), atol=1)
-    assert torch.allclose(kl_f1, kl_out1, atol=1e-6)
+   conv.cached = True
+   out_f1, kl_f1 = conv(x, edge_index)
+   for i in range(len(out1.tolist())):
+       assert torch.allclose(out_f1[i].mean(), out1[i].mean(), atol=0.1)
+       assert torch.allclose(torch.var(out_f1[i]), torch.var(out1[i]), atol=1)
+   assert torch.allclose(kl_f1, kl_out1, atol=1e-6)
 
-    out_f2, kl_f2 = conv(x, adj1.t())
-    assert torch.allclose(out_f2.mean(), out1.mean(), atol=0.1)
-    assert torch.allclose(torch.var(out_f2), torch.var(out1), atol=1)
-    assert torch.allclose(kl_f2, kl_out1, atol=1e-6)
+   out_f2, kl_f2 = conv(x, adj1.t())
+   assert torch.allclose(out_f2.mean(), out1.mean(), atol=0.1)
+   assert torch.allclose(torch.var(out_f2), torch.var(out1), atol=1)
+   assert torch.allclose(kl_f2, kl_out1, atol=1e-6)
 
-    out3, kl_3 = conv(x, adj3.t())
-    assert torch.allclose(out3.mean(), out1.mean(), atol=0.1)
-    assert torch.allclose(torch.var(out3), torch.var(out1), atol=1)
-    assert torch.allclose(kl_out1, kl_3, atol=1e-6)
+   out3, kl_3 = conv(x, adj3.t())
+   assert torch.allclose(out3.mean(), out1.mean(), atol=0.1)
+   assert torch.allclose(torch.var(out3), torch.var(out1), atol=1)
+   assert torch.allclose(kl_out1, kl_3, atol=1e-6)
 
-    out4, kl_4 = conv(x, adj4.t())
-    assert torch.allclose(out4.mean(), out4.mean(), atol=0.1)
-    assert torch.allclose(torch.var(out4), torch.var(out4), atol=1)
-    assert torch.allclose(kl_out1, kl_4, atol=1e-6)
+   out4, kl_4 = conv(x, adj4.t())
+   assert torch.allclose(out4.mean(), out4.mean(), atol=0.1)
+   assert torch.allclose(torch.var(out4), torch.var(out4), atol=1)
+   assert torch.allclose(kl_out1, kl_4, atol=1e-6)
