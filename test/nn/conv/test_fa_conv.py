@@ -35,6 +35,16 @@ def test_fa_conv():
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x, x_0, adj1.t()), out)
 
+    conv.reset_parameters()
+    assert conv._cached_edge_index is None
+    assert conv._cached_adj_t is None
+
+    # Test without caching:
+    conv = FAConv(16, eps=1.0, cached=False)
+    out = conv(x, x_0, edge_index)
+    assert torch.allclose(conv(x, x_0, adj1.t()), out)
+    assert torch.allclose(conv(x, x_0, adj2.t()), out)
+
     # Test `return_attention_weights`.
     result = conv(x, x_0, edge_index, return_attention_weights=True)
     assert torch.allclose(result[0], out)
@@ -49,7 +59,7 @@ def test_fa_conv():
 
     result = conv(x, x_0, adj2.t(), return_attention_weights=True)
     assert torch.allclose(result[0], out)
-    # assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
+    assert result[1].size() == torch.Size([4, 4]) and result[1]._nnz() == 10
     assert conv._alpha is None
 
     if is_full_test():
@@ -69,7 +79,3 @@ def test_fa_conv():
         assert torch.allclose(result[0], out)
         assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
         assert conv._alpha is None
-
-    conv.reset_parameters()
-    assert conv._cached_edge_index is None
-    assert conv._cached_adj_t is None
