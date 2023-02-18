@@ -20,7 +20,7 @@ def fidelity(
     Fidelity evaluates the contribution of the produced explanatory subgraph
     to the initial prediction, either by giving only the subgraph to the model
     (fidelity-) or by removing it from the entire graph (fidelity+).
-    The fidelity scores capture how good an explanable model reproduces the
+    The fidelity scores capture how good an explainable model reproduces the
     natural phenomenon or the GNN model logic.
 
     For **phenomenon** explanations, the fidelity scores are given by:

@@ -4,12 +4,11 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, set_diag
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import normal
-from torch_geometric.typing import Adj, PairTensor
+from torch_geometric.typing import Adj, PairTensor, SparseTensor, torch_sparse
 from torch_geometric.utils import add_self_loops, remove_self_loops
 
 
@@ -74,13 +73,13 @@ class FeaStConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         self.u.reset_parameters()
         normal(self.c, mean=0, std=0.1)
         normal(self.bias, mean=0, std=0.1)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
@@ -90,7 +89,7 @@ class FeaStConv(MessagePassing):
                 edge_index, _ = add_self_loops(edge_index,
                                                num_nodes=x[1].size(0))
             elif isinstance(edge_index, SparseTensor):
-                edge_index = set_diag(edge_index)
+                edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairTensor)
         out = self.propagate(edge_index, x=x, size=None)

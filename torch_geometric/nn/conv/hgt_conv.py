@@ -5,14 +5,13 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.nn.parameter_dict import ParameterDict
-from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.typing import EdgeType, Metadata, NodeType, SparseTensor
 from torch_geometric.utils import softmax
 
 
@@ -23,6 +22,8 @@ def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
         return torch.stack(xs, dim=1)
     elif len(xs) == 1:
         return xs[0]
+    elif aggr == "cat":
+        return torch.cat(xs, dim=-1)
     else:
         out = torch.stack(xs, dim=0)
         out = getattr(torch, aggr)(out, dim=0)
@@ -108,6 +109,7 @@ class HGTConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.k_lin)
         reset(self.q_lin)
         reset(self.v_lin)
@@ -123,22 +125,22 @@ class HGTConv(MessagePassing):
         edge_index_dict: Union[Dict[EdgeType, Tensor],
                                Dict[EdgeType, SparseTensor]]  # Support both.
     ) -> Dict[NodeType, Optional[Tensor]]:
-        r"""
-        Args:
-            x_dict (Dict[str, Tensor]): A dictionary holding input node
-                features  for each individual node type.
-            edge_index_dict (Dict[str, Union[Tensor, SparseTensor]]): A
-                dictionary holding graph connectivity information for each
-                individual edge type, either as a :obj:`torch.LongTensor` of
-                shape :obj:`[2, num_edges]` or a
-                :obj:`torch_sparse.SparseTensor`.
+        r"""Runs the forward pass of the module.
 
-        :rtype: :obj:`Dict[str, Optional[Tensor]]` - The output node embeddings
-            for each node type.
+        Args:
+            x_dict (Dict[str, torch.Tensor]): A dictionary holding input node
+                features  for each individual node type.
+            edge_index_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
+                dictionary holding graph connectivity information for each
+                individual edge type, either as a :class:`torch.Tensor` of
+                shape :obj:`[2, num_edges]` or a
+                :class:`torch_sparse.SparseTensor`.
+
+        :rtype: :obj:`Dict[str, Optional[torch.Tensor]]` - The output node
+            embeddings for each node type.
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
-
         H, D = self.heads, self.out_channels // self.heads
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}

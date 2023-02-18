@@ -1,14 +1,15 @@
 import numpy as np
 import torch
+from torch_sparse import SparseTensor
 
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn.conv import GATConv, SAGEConv
 from torch_geometric.utils import erdos_renyi_graph
 
 
-def test_neighbor_sampler():
-    torch.manual_seed(12345)
+def test_neighbor_sampler_basic():
     edge_index = erdos_renyi_graph(num_nodes=10, edge_prob=0.5)
+    adj_t = SparseTensor.from_edge_index(edge_index, sparse_sizes=(10, 10)).t()
     E = edge_index.size(1)
 
     loader = NeighborSampler(edge_index, sizes=[2, 4], batch_size=2)
@@ -28,6 +29,19 @@ def test_neighbor_sampler():
 
     out = loader.sample([1, 2])
     assert len(out) == 3
+
+    loader = NeighborSampler(adj_t, sizes=[2, 4], batch_size=2)
+
+    for batch_size, n_id, adjs in loader:
+        for (adj_t, e_id, size) in adjs:
+            assert adj_t.size(0) == size[1]
+            assert adj_t.size(1) == size[0]
+
+
+def test_neighbor_sampler_invalid_kwargs():
+    # Ignore `collate_fn` and `dataset` arguments:
+    edge_index = torch.tensor([[0, 1], [1, 0]])
+    NeighborSampler(edge_index, sizes=[-1], collate_fn=None, dataset=None)
 
 
 def test_neighbor_sampler_on_cora(get_dataset):

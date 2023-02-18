@@ -11,7 +11,10 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
     by edge indices and edge attributes.
 
     Args:
-        adj (Tensor): The dense adjacency matrix.
+        adj (Tensor): The dense adjacency matrix of shape
+            :obj:`[num_nodes, num_nodes]` or
+            :obj:`[batch_size, num_nodes, num_nodes]`.
+
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
 
     Examples:
@@ -34,8 +37,9 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
                 [0, 1, 0, 3, 3]]),
         tensor([3, 1, 2, 1, 2]))
     """
-    assert adj.dim() >= 2 and adj.dim() <= 3
-    assert adj.size(-1) == adj.size(-2)
+    if adj.dim() < 2 or adj.dim() > 3:
+        raise ValueError(f"Dense adjacency matrix 'adj' must be 2- or "
+                         f"3-dimensional (got {adj.dim()} dimensions)")
 
     edge_index = adj.nonzero().t()
 
@@ -44,14 +48,13 @@ def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
         return edge_index, edge_attr
     else:
         edge_attr = adj[edge_index[0], edge_index[1], edge_index[2]]
-        batch = edge_index[0] * adj.size(-1)
-        row = batch + edge_index[1]
-        col = batch + edge_index[2]
+        row = edge_index[1] + adj.size(-2) * edge_index[0]
+        col = edge_index[2] + adj.size(-1) * edge_index[0]
         return torch.stack([row, col], dim=0), edge_attr
 
 
 def is_torch_sparse_tensor(src: Any) -> bool:
-    """Returns :obj:`True` if the input :obj:`src` is a
+    r"""Returns :obj:`True` if the input :obj:`src` is a
     :class:`torch.sparse.Tensor` (in any sparse layout).
 
     Args:
@@ -61,7 +64,7 @@ def is_torch_sparse_tensor(src: Any) -> bool:
 
 
 def is_sparse(src: Any) -> bool:
-    """Returns :obj:`True` if the input :obj:`src` is of type
+    r"""Returns :obj:`True` if the input :obj:`src` is of type
     :class:`torch.sparse.Tensor` (in any sparse layout) or of type
     :class:`torch_sparse.SparseTensor`.
 
@@ -76,8 +79,9 @@ def to_torch_coo_tensor(
     edge_attr: Optional[Tensor] = None,
     size: Optional[Union[int, Tuple[int, int]]] = None,
 ) -> Tensor:
-    """Converts a sparse adjacency matrix defined by edge indices and edge
+    r"""Converts a sparse adjacency matrix defined by edge indices and edge
     attributes to a :class:`torch.sparse.Tensor`.
+    See :meth:`~torch_geometric.utils.to_edge_index` for the reverse operation.
 
     Args:
         edge_index (LongTensor): The edge indices.
@@ -114,3 +118,37 @@ def to_torch_coo_tensor(
                                   device=edge_index.device)
     out = out.coalesce()
     return out
+
+
+def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
+    r"""Converts a :class:`torch.sparse.Tensor` or a
+    :class:`torch_sparse.SparseTensor` to edge indices and edge attributes.
+
+    Args:
+        adj (torch.sparse.Tensor or SparseTensor): The adjacency matrix.
+
+    :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
+        ...                            [1, 0, 2, 1, 3, 2]])
+        >>> adj = to_torch_coo_tensor(edge_index)
+        >>> to_edge_index(adj)
+        (tensor([[0, 1, 1, 2, 2, 3],
+                [1, 0, 2, 1, 3, 2]]),
+        tensor([1., 1., 1., 1., 1., 1.]))
+    """
+    if isinstance(adj, SparseTensor):
+        row, col, value = adj.coo()
+        if value is None:
+            value = torch.ones(row.size(0), device=row.device)
+        return torch.stack([row, col], dim=0), value
+
+    if adj.requires_grad:
+        # Calling adj._values() will return a detached tensor.
+        # Use `adj.coalesce().values()` instead to track gradients.
+        adj = adj.coalesce()
+        return adj.indices(), adj.values()
+
+    return adj._indices(), adj._values()

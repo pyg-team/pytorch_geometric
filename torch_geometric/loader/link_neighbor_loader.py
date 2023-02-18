@@ -1,9 +1,9 @@
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
 from torch_geometric.sampler import NegativeSampling, NeighborSampler
-from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
+from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
 class LinkNeighborLoader(LinkLoader):
@@ -74,9 +74,9 @@ class LinkNeighborLoader(LinkLoader):
             :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
-            If an entry is set to :obj:`-1`, all neighbors will be included.
         edge_label_index (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The edge indices for which neighbors are sampled to create
             mini-batches.
@@ -143,12 +143,15 @@ class LinkNeighborLoader(LinkLoader):
             Deprecated in favor of the :obj:`neg_sampling` argument.
             (default: :obj:`None`)
         time_attr (str, optional): The name of the attribute that denotes
-            timestamps for the nodes in the graph. Only used if
-            :obj:`edge_label_time` is set. (default: :obj:`None`)
-        transform (Callable, optional): A function/transform that takes in
+            timestamps for the nodes in the graph.
+            If set, temporal sampling will be used such that neighbors are
+            guaranteed to fulfill temporal constraints, *i.e.* neighbors have
+            an earlier or equal timestamp than the center node.
+            Only used if :obj:`edge_label_time` is set. (default: :obj:`None`)
+        transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
-        transform_sampler_output (Callable, optional): A function/transform
+        transform_sampler_output (callable, optional): A function/transform
             that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
             returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
@@ -173,7 +176,7 @@ class LinkNeighborLoader(LinkLoader):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,

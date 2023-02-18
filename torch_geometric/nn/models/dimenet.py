@@ -8,14 +8,13 @@ import numpy as np
 import torch
 from torch import Tensor
 from torch.nn import Embedding, Linear
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Dataset, download_url
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.nn import radius_graph
 from torch_geometric.nn.inits import glorot_orthogonal
 from torch_geometric.nn.resolver import activation_resolver
-from torch_geometric.typing import OptTensor
+from torch_geometric.typing import OptTensor, SparseTensor
 from torch_geometric.utils import scatter
 
 qm9_target_dict = {
@@ -275,7 +274,7 @@ class InteractionPPBlock(torch.nn.Module):
             res_layer.reset_parameters()
         glorot_orthogonal(self.lin.weight, scale=2.0)
         self.lin.bias.data.fill_(0)
-        for res_layer in self.layers_before_skip:
+        for res_layer in self.layers_after_skip:
             res_layer.reset_parameters()
 
     def forward(self, x: Tensor, rbf: Tensor, sbf: Tensor, idx_kj: Tensor,
@@ -489,6 +488,7 @@ class DimeNet(torch.nn.Module):
         ])
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.rbf.reset_parameters()
         self.emb.reset_parameters()
         for out in self.output_blocks:
@@ -503,6 +503,9 @@ class DimeNet(torch.nn.Module):
         dataset: Dataset,
         target: int,
     ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:
+        r"""Returns a pre-trained :class:`DimeNet` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`."""
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -602,7 +605,16 @@ class DimeNet(torch.nn.Module):
         pos: Tensor,
         batch: OptTensor = None,
     ) -> Tensor:
-        """"""
+        r"""
+        Args:
+            z (torch.Tensor): Atomic number of each atom with shape
+                :obj:`[num_atoms]`.
+            pos (torch.Tensor): Coordinates of each atom with shape
+                :obj:`[num_atoms, 3]`.
+            batch (torch.Tensor, optional): Batch indices assigning each atom
+                to a separate molecule with shape :obj:`[num_atoms]`.
+                (default: :obj:`None`)
+        """
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
 
@@ -737,6 +749,9 @@ class DimeNetPlusPlus(DimeNet):
         dataset: Dataset,
         target: int,
     ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset, Dataset]:
+        r"""Returns a pre-trained :class:`DimeNetPlusPlus` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`."""
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 

@@ -16,7 +16,7 @@ from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
-    onlyUnix,
+    onlyLinux,
     withPackage,
 )
 from torch_geometric.utils import k_hop_subgraph
@@ -58,8 +58,10 @@ def test_homo_neighbor_loader_basic(directed, dtype):
 
     for i, batch in enumerate(loader):
         assert isinstance(batch, Data)
-        assert len(batch) == 5
+        assert len(batch) == 7
         assert batch.x.size(0) <= 100
+        assert batch.n_id.size() == (batch.num_nodes, )
+        assert batch.e_id.size() == (batch.num_edges, )
         assert batch.input_id.numel() == batch.batch_size == 20
         assert batch.x.min() >= 0 and batch.x.max() < 100
         assert batch.edge_index.min() >= 0
@@ -111,18 +113,19 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
 
     batch_size = 20
 
-    with pytest.raises(ValueError, match="to have 2 entries"):
+    with pytest.raises(ValueError, match="hops must be the same across all"):
         loader = NeighborLoader(
             data,
             num_neighbors={
-                ('paper', 'paper'): [-1],
-                ('paper', 'author'): [-1, -1],
-                ('author', 'paper'): [-1, -1],
+                ('paper', 'to', 'paper'): [-1],
+                ('paper', 'to', 'author'): [-1, -1],
+                ('author', 'to', 'paper'): [-1, -1],
             },
             input_nodes='paper',
             batch_size=batch_size,
             directed=directed,
         )
+        next(iter(loader))
 
     loader = NeighborLoader(
         data,
@@ -141,13 +144,15 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
         # Test node type selection:
         assert set(batch.node_types) == {'paper', 'author'}
 
-        assert len(batch['paper']) == 3
+        assert len(batch['paper']) == 4
+        assert batch['paper'].n_id.size() == (batch['paper'].num_nodes, )
         assert batch['paper'].x.size(0) <= 100
         assert batch['paper'].input_id.numel() == batch_size
         assert batch['paper'].batch_size == batch_size
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
 
-        assert len(batch['author']) == 1
+        assert len(batch['author']) == 2
+        assert batch['author'].n_id.size() == (batch['author'].num_nodes, )
         assert batch['author'].x.size(0) <= 200
         assert batch['author'].x.min() >= 100 and batch['author'].x.max() < 300
 
@@ -156,7 +161,9 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
                                          ('paper', 'to', 'author'),
                                          ('author', 'to', 'paper')}
 
-        assert len(batch['paper', 'paper']) == 2
+        assert len(batch['paper', 'paper']) == 3
+        num_edges = batch['paper', 'paper'].num_edges
+        assert batch['paper', 'paper'].e_id.size() == (num_edges, )
         row, col = batch['paper', 'paper'].edge_index
         value = batch['paper', 'paper'].edge_attr
         assert row.min() >= 0 and row.max() < batch['paper'].num_nodes
@@ -176,7 +183,9 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
             batch['paper'].x,
         )
 
-        assert len(batch['paper', 'author']) == 2
+        assert len(batch['paper', 'author']) == 3
+        num_edges = batch['paper', 'author'].num_edges
+        assert batch['paper', 'author'].e_id.size() == (num_edges, )
         row, col = batch['paper', 'author'].edge_index
         value = batch['paper', 'author'].edge_attr
         assert row.min() >= 0 and row.max() < batch['paper'].num_nodes
@@ -196,7 +205,9 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
             batch['author'].x - 100,
         )
 
-        assert len(batch['author', 'paper']) == 2
+        assert len(batch['author', 'paper']) == 3
+        num_edges = batch['author', 'paper'].num_edges
+        assert batch['author', 'paper'].e_id.size() == (num_edges, )
         row, col = batch['author', 'paper'].edge_index
         value = batch['author', 'paper'].edge_attr
         assert row.min() >= 0 and row.max() < batch['author'].num_nodes
@@ -399,7 +410,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     assert len(loader1) == len(loader2)
 
     for batch1, batch2 in zip(loader1, loader2):
-        # loader2 excplicitly adds `num_nodes` to the batch
+        # loader2 explicitly adds `num_nodes` to the batch
         assert len(batch1) + 1 == len(batch2)
         assert batch1['paper'].batch_size == batch2['paper'].batch_size
 
@@ -484,8 +495,6 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
 @withPackage('pyg_lib')
 def test_pyg_lib_homo_neighbor_loader():
-    import pyg_lib  # noqa
-
     adj = SparseTensor.from_edge_index(get_edge_index(20, 20, 100))
     colptr, row, _ = adj.csc()
 
@@ -506,8 +515,6 @@ def test_pyg_lib_homo_neighbor_loader():
 
 @withPackage('pyg_lib')
 def test_pyg_lib_hetero_neighbor_loader():
-    import pyg_lib  # noqa
-
     adj1 = SparseTensor.from_edge_index(get_edge_index(20, 10, 50))
     colptr1, row1, _ = adj1.csc()
 
@@ -554,7 +561,7 @@ def test_pyg_lib_hetero_neighbor_loader():
         assert torch.equal(edge_id1_dict[key], edge_id2_dict[key])
 
 
-@onlyUnix
+@onlyLinux
 def test_memmap_neighbor_loader():
     path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.npy')
     x = np.memmap(path, dtype=np.float32, mode='w+', shape=(100, 32))
@@ -577,7 +584,7 @@ def test_memmap_neighbor_loader():
     os.remove(path)
 
 
-@onlyUnix
+@onlyLinux
 @pytest.mark.parametrize('num_workers,loader_cores', [
     (1, None),
     (1, [1]),
@@ -586,7 +593,6 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
     data = Data(x=torch.randn(1, 1))
     loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1,
                             num_workers=num_workers)
-    loader.is_cuda_available = False  # Force 'cpu_affinity'.
 
     if isinstance(loader_cores, list):
         loader_cores = loader_cores[:num_workers]
@@ -602,4 +608,7 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
                 stdout=subprocess.PIPE)
             stdout = process.communicate()[0].decode('utf-8')
             out.append(int(stdout.split(':')[1].strip()))
-    assert out == list(range(1, num_workers + 1))
+        if not loader_cores:
+            assert out == list(range(0, num_workers))
+        else:
+            assert out == loader_cores

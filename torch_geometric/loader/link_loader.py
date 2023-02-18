@@ -4,6 +4,7 @@ import torch
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
+from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
     filter_custom_store,
     filter_data,
@@ -20,7 +21,7 @@ from torch_geometric.sampler import (
 from torch_geometric.typing import InputEdges, OptTensor
 
 
-class LinkLoader(torch.utils.data.DataLoader):
+class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
     r"""A data loader that performs mini-batch sampling from link information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
     implementation that defines a
@@ -89,10 +90,10 @@ class LinkLoader(torch.utils.data.DataLoader):
             negative edges to the number of positive edges.
             Deprecated in favor of the :obj:`neg_sampling` argument.
             (default: :obj:`None`).
-        transform (Callable, optional): A function/transform that takes in
+        transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
-        transform_sampler_output (Callable, optional): A function/transform
+        transform_sampler_output (callable, optional): A function/transform
             that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
             returns a transformed version. (default: :obj:`None`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
@@ -202,6 +203,11 @@ class LinkLoader(torch.utils.data.DataLoader):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.link_sampler.edge_permutation)
 
+            if 'n_id' not in data:
+                data.n_id = out.node
+            if out.edge is not None and 'e_id' not in data:
+                data.e_id = out.edge
+
             data.batch = out.batch
             data.input_id = out.metadata[0]
 
@@ -228,8 +234,18 @@ class LinkLoader(torch.utils.data.DataLoader):
                 data = filter_custom_store(*self.data, out.node, out.row,
                                            out.col, out.edge, self.custom_cls)
 
-            for key, batch in (out.batch or {}).items():
-                data[key].batch = batch
+            for key, node in out.node.items():
+                if 'n_id' not in data[key]:
+                    data[key].n_id = node
+
+            if out.edge is not None:
+                for key, edge in out.edge.items():
+                    if 'e_id' not in data[key]:
+                        data[key].e_id = edge
+
+            if out.batch is not None:
+                for key, batch in out.batch.items():
+                    data[key].batch = batch
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]

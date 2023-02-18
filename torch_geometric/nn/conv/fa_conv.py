@@ -2,12 +2,11 @@ from typing import Optional
 
 import torch.nn.functional as F
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
 
 
 class FAConv(MessagePassing):
@@ -71,7 +70,7 @@ class FAConv(MessagePassing):
                  normalize: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
-        super(FAConv, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.channels = channels
         self.eps = eps
@@ -90,6 +89,7 @@ class FAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.att_l.reset_parameters()
         self.att_r.reset_parameters()
         self._cached_edge_index = None
@@ -101,7 +101,8 @@ class FAConv(MessagePassing):
         # type: (Tensor, Tensor, SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Tensor, Tensor, Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Tensor, Tensor, SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple

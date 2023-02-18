@@ -14,6 +14,7 @@ from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
 from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
+    DEFAULT_REL,
     EdgeTensorType,
     EdgeType,
     FeatureTensorType,
@@ -38,7 +39,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     Storage objects can hold either node-level, link-level or graph-level
     attributes.
     In general, :class:`~torch_geometric.data.HeteroData` tries to mimic the
-    behaviour of a regular **nested** Python dictionary.
+    behavior of a regular **nested** Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 
@@ -102,9 +103,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             { 'edge_index': edge_index_author_paper }
         })
     """
-
-    DEFAULT_REL = 'to'
-
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__()
 
@@ -435,7 +433,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 args = edge_types[0]
                 return args
             elif len(edge_types) == 0:
-                args = (args[0], self.DEFAULT_REL, args[1])
+                args = (args[0], DEFAULT_REL, args[1])
                 return args
 
         return args
@@ -482,7 +480,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def _check_type_name(self, name: str):
         if '__' in name:
             warnings.warn(f"The type '{name}' contains double underscores "
-                          f"('__') which may lead to unexpected behaviour. "
+                          f"('__') which may lead to unexpected behavior. "
                           f"To avoid any issues, ensure that your type names "
                           f"only contain single underscores.")
 
@@ -547,6 +545,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns the induced subgraph containing the node types and
         corresponding nodes in :obj:`subset_dict`.
 
+        If a node type is not a key in :obj:`subset_dict` then all nodes of
+        that type remain in the graph.
+
         .. code-block:: python
 
             data = HeteroData()
@@ -575,8 +576,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             >>> HeteroData(
                 paper={ x=[4, 16] },
                 author={ x=[2, 32] },
+                conference={ x=[5, 8] },
                 (paper, cites, paper)={ edge_index=[2, 24] },
-                (author, to, paper)={ edge_index=[2, 5] }
+                (author, to, paper)={ edge_index=[2, 5] },
+                (paper, to, conference)={ edge_index=[2, 10] }
             )
 
         Args:
@@ -584,14 +587,20 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 holding the nodes to keep for each node type.
         """
         data = copy.copy(self)
+        subset_dict = copy.copy(subset_dict)
 
         for node_type, subset in subset_dict.items():
+
+            if subset.dtype == torch.bool:
+                num_nodes = int(subset.sum())
+            else:
+                num_nodes = subset.size(0)
+                subset = torch.unique(subset, sorted=True)
+                subset_dict[node_type] = subset
+
             for key, value in self[node_type].items():
                 if key == 'num_nodes':
-                    if subset.dtype == torch.bool:
-                        data[node_type].num_nodes = int(subset.sum())
-                    else:
-                        data[node_type].num_nodes = subset.size(0)
+                    data[node_type].num_nodes = num_nodes
                 elif self[node_type].is_node_attr(key):
                     data[node_type][key] = value[subset]
                 else:

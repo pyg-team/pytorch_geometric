@@ -1,11 +1,12 @@
 import argparse
 import ast
+from contextlib import nullcontext
 
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from benchmark.utils import emit_itt, get_dataset, get_model
+from benchmark.utils import emit_itt, get_dataset, get_model, get_split_masks
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -17,8 +18,7 @@ supported_sets = {
 }
 
 
-def train_homo(model, loader, optimizer, device, progress_bar=True,
-               desc="") -> None:
+def train_homo(model, loader, optimizer, device, progress_bar=True, desc=""):
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
@@ -37,8 +37,7 @@ def train_homo(model, loader, optimizer, device, progress_bar=True,
         optimizer.step()
 
 
-def train_hetero(model, loader, optimizer, device, progress_bar=True,
-                 desc="") -> None:
+def train_hetero(model, loader, optimizer, device, progress_bar=True, desc=""):
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
@@ -57,7 +56,43 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True,
         optimizer.step()
 
 
-def run(args: argparse.ArgumentParser) -> None:
+@torch.no_grad()
+def test(model, loader, device, hetero, progress_bar=True, desc="") -> None:
+    if progress_bar:
+        loader = tqdm(loader, desc=desc)
+    total_examples = total_correct = 0
+    if hetero:
+        for batch in loader:
+            batch = batch.to(device)
+            if len(batch.adj_t_dict) > 0:
+                edge_index_dict = batch.adj_t_dict
+            else:
+                edge_index_dict = batch.edge_index_dict
+            out = model(batch.x_dict, edge_index_dict)
+            batch_size = batch['paper'].batch_size
+            out = out['paper'][:batch_size]
+            pred = out.argmax(dim=-1)
+
+            total_examples += batch_size
+            total_correct += int((pred == batch['paper'].y[:batch_size]).sum())
+    else:
+        for batch in loader:
+            batch = batch.to(device)
+            if hasattr(batch, 'adj_t'):
+                edge_index = batch.adj_t
+            else:
+                edge_index = batch.edge_index
+            out = model(batch.x, edge_index)
+            batch_size = batch.batch_size
+            out = out[:batch_size]
+            pred = out.argmax(dim=-1)
+
+            total_examples += batch_size
+            total_correct += int((pred == batch.y[:batch_size]).sum())
+    return total_correct / total_examples
+
+
+def run(args: argparse.ArgumentParser):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # If we use a custom number of steps, then we need to use RandomSampler,
@@ -69,11 +104,12 @@ def run(args: argparse.ArgumentParser) -> None:
         assert dataset_name in supported_sets.keys(
         ), f"Dataset {dataset_name} isn't supported."
         print(f'Dataset: {dataset_name}')
-        data, num_classes = get_dataset(dataset_name, args.root,
-                                        args.use_sparse_tensor, args.bf16)
+        load_time = timeit() if args.measure_load_time else nullcontext()
+        with load_time:
+            data, num_classes = get_dataset(dataset_name, args.root,
+                                            args.use_sparse_tensor, args.bf16)
         hetero = True if dataset_name == 'ogbn-mag' else False
-        mask = ('paper', data['paper'].train_mask
-                ) if dataset_name == 'ogbn-mag' else data.train_mask
+        mask, val_mask, test_mask = get_split_masks(data, dataset_name)
         degree = None
         if torch.cuda.is_available():
             amp = torch.cuda.amp.autocast(enabled=False)
@@ -110,15 +146,20 @@ def run(args: argparse.ArgumentParser) -> None:
                         f'''num_neighbors={num_neighbors} lenght
                         != num of layers={layers}'''
 
-                    subgraph_loader = NeighborLoader(
-                        data,
-                        num_neighbors=num_neighbors,
-                        input_nodes=mask,
-                        batch_size=batch_size,
-                        shuffle=shuffle,
-                        num_workers=args.num_workers,
-                        sampler=sampler,
-                    )
+                    kwargs = {
+                        'num_neighbors': num_neighbors,
+                        'batch_size': batch_size,
+                        'shuffle': shuffle,
+                        'num_workers': args.num_workers,
+                    }
+                    subgraph_loader = NeighborLoader(data, input_nodes=mask,
+                                                     sampler=sampler, **kwargs)
+                    if args.evaluate:
+                        val_loader = NeighborLoader(data, input_nodes=val_mask,
+                                                    sampler=None, **kwargs)
+                        test_loader = NeighborLoader(data,
+                                                     input_nodes=test_mask,
+                                                     sampler=None, **kwargs)
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
                         print(f'Batch size={batch_size}, '
@@ -152,12 +193,18 @@ def run(args: argparse.ArgumentParser) -> None:
 
                         progress_bar = False if args.no_progress_bar else True
                         train = train_hetero if hetero else train_homo
-                        with amp:
+
+                        # Define context manager parameters:
+                        cpu_affinity = subgraph_loader.enable_cpu_affinity(
+                            args.loader_cores
+                        ) if args.cpu_affinity else nullcontext()
+
+                        with amp, cpu_affinity:
                             for _ in range(args.warmup):
                                 train(model, subgraph_loader, optimizer,
                                       device, progress_bar=progress_bar,
                                       desc="Warmup")
-                            with timeit(avg_time_divisor=args.num_epochs):
+                            with timeit(avg_time_divisor=args.num_epochs) as t:
                                 # becomes a no-op if vtune_profile == False
                                 with emit_itt(args.vtune_profile):
                                     for epoch in range(args.num_epochs):
@@ -165,6 +212,21 @@ def run(args: argparse.ArgumentParser) -> None:
                                               optimizer, device,
                                               progress_bar=progress_bar,
                                               desc=f"Epoch={epoch}")
+                                        if args.evaluate:
+                                            # In evaluate, throughput and
+                                            # latency are not accurate.
+                                            val_acc = test(
+                                                model, val_loader, device,
+                                                hetero,
+                                                progress_bar=progress_bar)
+                                            print(
+                                                f'Val Accuracy: {val_acc:.4f}')
+
+                            if args.evaluate:
+                                test_acc = test(model, test_loader, device,
+                                                hetero,
+                                                progress_bar=progress_bar)
+                                print(f'Test Accuracy: {test_acc:.4f}')
 
                             if args.profile:
                                 with torch_profile():
@@ -177,43 +239,53 @@ def run(args: argparse.ArgumentParser) -> None:
                                                     str(hidden_channels),
                                                     str(num_neighbors))
 
+                        total_time = t.duration
+                        if args.num_steps != -1:
+                            total_num_samples = args.num_steps * batch_size
+                        else:
+                            total_num_samples = num_nodes
+                        throughput = total_num_samples / total_time
+                        latency = total_time / total_num_samples * 1000
+                        print(f'Throughput: {throughput:.3f} samples/s')
+                        print(f'Latency: {latency:.3f} ms')
+
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN training benchmark')
-    argparser.add_argument('--datasets', nargs='+',
-                           default=['ogbn-mag', 'ogbn-products',
-                                    'Reddit'], type=str)
-    argparser.add_argument(
-        '--use-sparse-tensor', action='store_true',
-        help='use torch_sparse.SparseTensor as graph storage format')
-    argparser.add_argument(
-        '--models', nargs='+',
-        default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
-    argparser.add_argument('--root', default='../../data', type=str,
-                           help='relative path to look for the datasets')
-    argparser.add_argument('--batch-sizes', nargs='+',
-                           default=[512, 1024, 2048, 4096, 8192], type=int)
-    argparser.add_argument('--num-layers', nargs='+', default=[2, 3], type=int)
-    argparser.add_argument('--num-hidden-channels', nargs='+',
-                           default=[64, 128, 256], type=int)
-    argparser.add_argument(
-        '--num-heads', default=2, type=int,
-        help='number of hidden attention heads, applies only for gat and rgat')
-    argparser.add_argument('--num-neighbors', default=[10],
-                           type=ast.literal_eval,
-                           help='number of neighbors to sample per layer')
-    argparser.add_argument('--num-workers', default=2, type=int)
-    argparser.add_argument('--warmup', default=1, type=int)
-    argparser.add_argument('--profile', action='store_true')
-    argparser.add_argument('--vtune-profile', action='store_true')
-    argparser.add_argument('--bf16', action='store_true')
-    argparser.add_argument('--no-progress-bar', action='store_true',
-                           default=False, help='turn off using progress bar')
-    argparser.add_argument('--num-epochs', default=1, type=int)
-    argparser.add_argument(
-        '--num-steps', default=-1, type=int,
-        help='number of steps, -1 means iterating through all the data')
+    add = argparser.add_argument
 
+    add('--datasets', nargs='+',
+        default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
+    add('--use-sparse-tensor', action='store_true',
+        help='use torch_sparse.SparseTensor as graph storage format')
+    add('--models', nargs='+',
+        default=['edge_cnn', 'gat', 'gcn', 'pna', 'rgat', 'rgcn'], type=str)
+    add('--root', default='../../data', type=str,
+        help='relative path to look for the datasets')
+    add('--batch-sizes', nargs='+', default=[512, 1024, 2048, 4096, 8192],
+        type=int)
+    add('--num-layers', nargs='+', default=[2, 3], type=int)
+    add('--num-hidden-channels', nargs='+', default=[64, 128, 256], type=int)
+    add('--num-heads', default=2, type=int,
+        help='number of hidden attention heads, applies only for gat and rgat')
+    add('--num-neighbors', default=[10], type=ast.literal_eval,
+        help='number of neighbors to sample per layer')
+    add('--num-workers', default=2, type=int)
+    add('--warmup', default=1, type=int)
+    add('--profile', action='store_true')
+    add('--vtune-profile', action='store_true')
+    add('--bf16', action='store_true')
+    add('--no-progress-bar', action='store_true', default=False,
+        help='turn off using progress bar')
+    add('--num-epochs', default=1, type=int)
+    add('--num-steps', default=-1, type=int,
+        help='number of steps, -1 means iterating through all the data')
+    add('--cpu-affinity', action='store_true',
+        help="Use DataLoader affinitzation.")
+    add('--loader-cores', nargs='+', default=[], type=int,
+        help="List of CPU core IDs to use for DataLoader workers.")
+    add('--measure-load-time', action='store_true')
+    add('--evaluate', action='store_true')
     args = argparser.parse_args()
 
     run(args)

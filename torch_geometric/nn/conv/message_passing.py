@@ -20,15 +20,16 @@ from uuid import uuid1
 import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
-from torch_scatter import gather_csr
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
-from torch_geometric.typing import Adj, Size
-from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
+from torch_geometric.typing import Adj, Size, SparseTensor
+from torch_geometric.utils import (
+    is_sparse,
+    is_torch_sparse_tensor,
+    to_edge_index,
+)
 
-from .utils.helpers import expand_left
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
 from .utils.typing import (
@@ -46,10 +47,10 @@ class MessagePassing(torch.nn.Module):
 
     .. math::
         \mathbf{x}_i^{\prime} = \gamma_{\mathbf{\Theta}} \left( \mathbf{x}_i,
-        \square_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
+        \bigoplus_{j \in \mathcal{N}(i)} \, \phi_{\mathbf{\Theta}}
         \left(\mathbf{x}_i, \mathbf{x}_j,\mathbf{e}_{j,i}\right) \right),
 
-    where :math:`\square` denotes a differentiable, permutation invariant
+    where :math:`\bigoplus` denotes a differentiable, permutation invariant
     function, *e.g.*, sum, mean, min, max or mul, and
     :math:`\gamma_{\mathbf{\Theta}}` and :math:`\phi_{\mathbf{\Theta}}` denote
     differentiable functions such as MLPs.
@@ -180,6 +181,15 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks = OrderedDict()
         self._edge_update_forward_hooks = OrderedDict()
 
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
+        if self.aggr_module is not None:
+            self.aggr_module.reset_parameters()
+
+    def forward(self, *args, **kwargs) -> Any:
+        r"""Runs the forward pass of the module."""
+        pass
+
     def __check_input__(self, edge_index, size):
         the_size: List[Optional[int]] = [None, None]
 
@@ -269,13 +279,12 @@ class MessagePassing(torch.nn.Module):
                 raise e
 
         elif isinstance(edge_index, SparseTensor):
-            if dim == 1:
-                rowptr = edge_index.storage.rowptr()
-                rowptr = expand_left(rowptr, dim=self.node_dim, dims=src.dim())
-                return gather_csr(src, rowptr)
-            elif dim == 0:
+            if dim == 0:
                 col = edge_index.storage.col()
                 return src.index_select(self.node_dim, col)
+            elif dim == 1:
+                row = edge_index.storage.row()
+                return src.index_select(self.node_dim, row)
 
         raise ValueError(
             ('`MessagePassing.propagate` only supports integer tensors of '
@@ -306,13 +315,7 @@ class MessagePassing(torch.nn.Module):
                 out[arg] = data
 
         if is_torch_sparse_tensor(edge_index):
-            if edge_index.requires_grad:
-                edge_index = edge_index.coalesce()
-                indices = edge_index.indices()
-                values = edge_index.values()
-            else:
-                indices = edge_index._indices()
-                values = edge_index._values()
+            indices, values = to_edge_index(edge_index)
             out['adj_t'] = edge_index
             out['edge_index'] = None
             out['edge_index_i'] = indices[0]
@@ -321,7 +324,7 @@ class MessagePassing(torch.nn.Module):
             if out.get('edge_weight', None) is None:
                 out['edge_weight'] = values
             if out.get('edge_attr', None) is None:
-                out['edge_attr'] = values
+                out['edge_attr'] = None if values.dim() == 1 else values
             if out.get('edge_type', None) is None:
                 out['edge_type'] = values
 
@@ -357,31 +360,32 @@ class MessagePassing(torch.nn.Module):
         r"""The initial call to start propagating messages.
 
         Args:
-            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor`, a
-                :obj:`torch_sparse.SparseTensor` or a
-                :obj:`torch.sparse.Tensor` that defines the underlying
+            edge_index (torch.Tensor or SparseTensor): A :class:`torch.Tensor`,
+                a :class:`torch_sparse.SparseTensor` or a
+                :class:`torch.sparse.Tensor` that defines the underlying
                 graph connectivity/message passing flow.
                 :obj:`edge_index` holds the indices of a general (sparse)
                 assignment matrix of shape :obj:`[N, M]`.
-                If :obj:`edge_index` is of type :obj:`torch.LongTensor`, its
-                shape must be defined as :obj:`[2, num_messages]`, where
-                messages from nodes in :obj:`edge_index[0]` are sent to
-                nodes in :obj:`edge_index[1]`
+                If :obj:`edge_index` is a :obj:`torch.Tensor`, its :obj:`dtype`
+                should be :obj:`torch.long` and its shape needs to be defined
+                as :obj:`[2, num_messages]` where messages from nodes in
+                :obj:`edge_index[0]` are sent to nodes in :obj:`edge_index[1]`
                 (in case :obj:`flow="source_to_target"`).
-                If :obj:`edge_index` is of type
-                :obj:`torch_sparse.SparseTensor` or :obj:`torch.sparse.Tensor`,
-                its sparse indices :obj:`(row, col)` should relate to
-                :obj:`row = edge_index[1]` and :obj:`col = edge_index[0]`.
+                If :obj:`edge_index` is a :class:`torch_sparse.SparseTensor` or
+                a :class:`torch.sparse.Tensor`, its sparse indices
+                :obj:`(row, col)` should relate to :obj:`row = edge_index[1]`
+                and :obj:`col = edge_index[0]`.
                 The major difference between both formats is that we need to
                 input the *transposed* sparse adjacency matrix into
-                :func:`propagate`.
-            size (tuple, optional): The size :obj:`(N, M)` of the assignment
-                matrix in case :obj:`edge_index` is a :obj:`LongTensor`.
+                :meth:`propagate`.
+            size ((int, int), optional): The size :obj:`(N, M)` of the
+                assignment matrix in case :obj:`edge_index` is a
+                :class:`torch.Tensor`.
                 If set to :obj:`None`, the size will be automatically inferred
                 and assumed to be quadratic.
                 This argument is ignored in case :obj:`edge_index` is a
-                :obj:`torch_sparse.SparseTensor` or
-                a :obj:`torch.sparse.Tensor`. (default: :obj:`None`)
+                :class:`torch_sparse.SparseTensor` or
+                a :class:`torch.sparse.Tensor`. (default: :obj:`None`)
             **kwargs: Any additional data which is needed to construct and
                 aggregate messages, and to update node embeddings.
         """
@@ -482,10 +486,10 @@ class MessagePassing(torch.nn.Module):
         graph.
 
         Args:
-            edge_index (Tensor or SparseTensor): A :obj:`torch.LongTensor`, a
-                :obj:`torch_sparse.SparseTensor` or
-                a :obj:`torch.sparse.Tensor` that defines the underlying
-                graph connectivity/message passing flow.
+            edge_index (torch.Tensor or SparseTensor): A :obj:`torch.Tensor`, a
+                :class:`torch_sparse.SparseTensor` or a
+                :class:`torch.sparse.Tensor` that defines the underlying graph
+                connectivity/message passing flow.
                 See :meth:`propagate` for more information.
             **kwargs: Any additional data which is needed to compute or update
                 features for each edge in the graph.
@@ -569,7 +573,7 @@ class MessagePassing(torch.nn.Module):
                   ptr: Optional[Tensor] = None,
                   dim_size: Optional[int] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
-        :math:`\square_{j \in \mathcal{N}(i)}`.
+        :math:`\bigoplus_{j \in \mathcal{N}(i)}`.
 
         Takes in the output of message computation as first argument and any
         argument which was initially passed to :meth:`propagate`.
