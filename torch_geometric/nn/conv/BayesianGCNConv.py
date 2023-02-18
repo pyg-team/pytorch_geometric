@@ -17,7 +17,7 @@ from torch_geometric.utils import spmm
 
 
 class BayesianGCNConv(MessagePassing):
-    r"""The Bayesian graph convolutional operator 
+    r"""The Bayesian graph convolutional operator
     inspired from the `"Improving model calibration with
    accuracy versus uncertainty optimization"
    <https://arxiv.org/abs/2012.07923>`_ paper
@@ -28,7 +28,7 @@ class BayesianGCNConv(MessagePassing):
 
    where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
    Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
-   an unconstrained parameter :math:`\rho` 
+   an unconstrained parameter :math:`\rho`
    for :math:`\sigma = log(1+exp(\rho))`
    to avoid non-negative variance.
    :math:`\mathbf{b}` denotes the bias which is based
@@ -41,7 +41,7 @@ class BayesianGCNConv(MessagePassing):
    0.0 and a standard deviation of 0.1
 
 
-   Then propagate the message through the 
+   Then propagate the message through the
    graph with a graph convolution operator
    from the `"Semi-supervised
    Classification with Graph Convolutional Networks"
