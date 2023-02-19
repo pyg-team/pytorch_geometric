@@ -30,6 +30,7 @@ runs:
           **/requirements*.txt
 
     - run: echo '${{ steps.py.outputs.cache-hit }}'
+      shell: bash
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       run: |
