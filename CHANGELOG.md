@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.3.0] - 2023-MM-DD
 
 ### Added
-- Added high-level API for the CPU optimized `spmm_reduce` using CSR format ([#6699](https://github.com/pyg-team/pytorch_geometric/pull/6699))
+
+- Added CPU-optimized `spmm_reduce` functionality via CSR format ([#6699](https://github.com/pyg-team/pytorch_geometric/pull/6699))
 - Fixed expected data format in `PolBlogs` dataset ([#6714](https://github.com/pyg-team/pytorch_geometric/issues/6714))
 - Added `SimpleConv` to perform non-trainable propagation ([#6718](https://github.com/pyg-team/pytorch_geometric/pull/6718))
 - Added a `RemoveDuplicatedEdges` transform ([#6709](https://github.com/pyg-team/pytorch_geometric/pull/6709))
