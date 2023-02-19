@@ -16,12 +16,16 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v4.3.0
+        id: py37
         with:
           python-version: 3.7
+          check-latest: true
           cache: "pip"
           cache-dependency-path: |
             setup.py
             **/requirements*.txt
+      
+      - run: echo '${{ steps.py37.outputs.cache-hit }}'
 
       - name: Set version
         run: echo "VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" torch_geometric/__init__.py)" >> ${GITHUB_ENV}
