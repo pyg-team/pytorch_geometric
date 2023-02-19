@@ -13,7 +13,7 @@ def test_eg_conv():
     adj2 = adj1.to_torch_sparse_coo_tensor()
 
     conv = EGConv(16, 32)
-    assert conv.__repr__() == "EGConv(16, 32, aggregators=['symnorm'])"
+    assert str(conv) == "EGConv(16, 32, aggregators=['symnorm'])"
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x, adj1.t()), out, atol=1e-6)
@@ -43,7 +43,7 @@ def test_eg_conv_multiple_aggregators():
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = EGConv(16, 32, aggregators=["max", "min"])
-    assert conv.__repr__() == "EGConv(16, 32, aggregators=['max', 'min'])"
+    assert str(conv) == "EGConv(16, 32, aggregators=['max', 'min'])"
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x, adj1.t()), out, atol=1e-6)

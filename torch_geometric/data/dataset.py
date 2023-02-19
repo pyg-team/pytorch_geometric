@@ -375,4 +375,4 @@ def files_exist(files: List[str]) -> bool:
 def _repr(obj: Any) -> str:
     if obj is None:
         return 'None'
-    return re.sub('(<.*?)\\s.*(>)', r'\1\2', obj.__repr__())
+    return re.sub('(<.*?)\\s.*(>)', r'\1\2', str(obj))

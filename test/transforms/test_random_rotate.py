@@ -5,8 +5,8 @@ from torch_geometric.transforms import RandomRotate
 
 
 def test_random_rotate():
-    assert RandomRotate([-180, 180]).__repr__() == ('RandomRotate('
-                                                    '[-180, 180], axis=0)')
+    assert str(RandomRotate([-180, 180])) == ('RandomRotate('
+                                              '[-180, 180], axis=0)')
 
     pos = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
 
