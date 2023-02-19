@@ -141,163 +141,163 @@ class MD17(InMemoryDataset):
           - #nodes
           - #edges
           - #features
-          - #classes
+          - #tasks
         * - Benzene
           - 627,983
           - 12
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Uracil
           - 133,770
           - 12
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Naphthalene
           - 326,250
           - 10
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Aspirin
           - 211,762
           - 21
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Salicylic acid
           - 320,231
           - 16
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Malonaldehyde
           - 993,237
           - 9
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Ethanol
           - 555,092
           - 9
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Toluene
           - 442,790
           - 15
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Paracetamol
           - 106,490
           - 20
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Azobenzene
           - 99,999
           - 24
           - 0
-          - 0
-          - 0
-        * - Benzene-R
+          - 1
+          - 2
+        * - Benzene (R)
           - 100,000
           - 12
           - 0
-          - 0
-          - 0
-        * - Uracil-R
+          - 1
+          - 2
+        * - Uracil (R)
           - 100,000
           - 12
           - 0
-          - 0
-          - 0
-        * - Naphthalene-R
+          - 1
+          - 2
+        * - Naphthalene (R)
           - 100,000
           - 10
           - 0
-          - 0
-          - 0
-        * - Aspirin-R
+          - 1
+          - 2
+        * - Aspirin (R)
           - 100,000
           - 21
           - 0
-          - 0
-          - 0
-        * - Salicylic acid-R
+          - 1
+          - 2
+        * - Salicylic acid (R)
           - 100,000
           - 16
           - 0
-          - 0
-          - 0
-        * - Malonaldehyde-R
+          - 1
+          - 2
+        * - Malonaldehyde (R)
           - 100,000
           - 9
           - 0
-          - 0
-          - 0
-        * - Ethanol-R
+          - 1
+          - 2
+        * - Ethanol (R)
           - 100,000
           - 9
           - 0
-          - 0
-          - 0
-        * - Toluene-R
+          - 1
+          - 2
+        * - Toluene (R)
           - 100,000
           - 15
           - 0
-          - 0
-          - 0
-        * - Paracetamol-R
+          - 1
+          - 2
+        * - Paracetamol (R)
           - 100,000
           - 20
           - 0
-          - 0
-          - 0
-        * - Azobenzene-R
+          - 1
+          - 2
+        * - Azobenzene (R)
           - 99,988
           - 24
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Benzene CCSD-T
           - 1,500
           - 12
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Aspirin CCSD-T
           - 1,500
           - 21
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Malonaldehyde CCSD-T
           - 1,500
           - 9
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Ethanol CCSD-T
           - 2000
           - 9
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Toluene CCSD-T
           - 1,501
           - 15
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
         * - Benzene FHI-aims
           - 49,863
           - 12
           - 0
-          - 0
-          - 0
+          - 1
+          - 2
     """  # noqa: E501
 
     gdml_url = 'http://quantum-machine.org/gdml/data/npz'
