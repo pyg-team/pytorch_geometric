@@ -1,14 +1,17 @@
+import pytest
 import scipy.sparse
 import torch
 
 from torch_geometric.data import Data
 from torch_geometric.testing import withPackage
 from torch_geometric.utils import (
+    from_cugraph,
     from_networkit,
     from_networkx,
     from_scipy_sparse_matrix,
     from_trimesh,
     subgraph,
+    to_cugraph,
     to_networkit,
     to_networkx,
     to_scipy_sparse_matrix,
@@ -281,7 +284,7 @@ def test_from_networkx_subgraph_convert():
 
 
 @withPackage('networkit')
-def test_to_networkit():
+def test_to_networkit_vice_versa():
     edge_index = torch.tensor([[0, 1], [1, 0]])
 
     g = to_networkit(edge_index, directed=False)
@@ -293,8 +296,67 @@ def test_to_networkit():
     assert edge_weight is None
 
 
+@withPackage('networkit')
+@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('num_nodes', [None, 3])
+@pytest.mark.parametrize('edge_weight', [None, torch.rand(3)])
+def test_to_networkit(directed, edge_weight, num_nodes):
+    import networkit
+
+    edge_index = torch.tensor([[0, 1, 1], [1, 0, 2]], dtype=torch.long)
+    g = to_networkit(edge_index, edge_weight, num_nodes, directed)
+
+    assert isinstance(g, networkit.Graph)
+    assert g.isDirected() == directed
+    assert g.numberOfNodes() == 3
+
+    if edge_weight is None:
+        edge_weight = torch.tensor([1., 1., 1.])
+
+    assert g.weight(0, 1) == float(edge_weight[0])
+    assert g.weight(1, 2) == float(edge_weight[2])
+
+    if directed:
+        assert g.numberOfEdges() == 3
+        assert g.weight(1, 0) == float(edge_weight[1])
+    else:
+        assert g.numberOfEdges() == 2
+
+
+@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('weighted', [True, False])
+@withPackage('networkit')
+def test_from_networkit(directed, weighted):
+    import networkit
+
+    g = networkit.Graph(3, weighted=weighted, directed=directed)
+    g.addEdge(0, 1)
+    g.addEdge(1, 2)
+    if directed:
+        g.addEdge(1, 0)
+
+    if weighted:
+        for i, (u, v) in enumerate(g.iterEdges()):
+            g.setWeight(u, v, i + 1)
+
+    edge_index, edge_weight = from_networkit(g)
+
+    if directed:
+        assert edge_index.tolist() == [[0, 1, 1], [1, 2, 0]]
+        if weighted:
+            assert edge_weight.tolist() == [1, 2, 3]
+        else:
+            assert edge_weight is None
+    else:
+        assert edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+        if weighted:
+            assert edge_weight.tolist() == [1, 1, 2, 2]
+        else:
+            assert edge_weight is None
+
+
 @withPackage('trimesh')
-def test_trimesh():
+def test_trimesh_vice_versa():
     pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
                        dtype=torch.float)
     face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
@@ -305,3 +367,108 @@ def test_trimesh():
 
     assert pos.tolist() == data.pos.tolist()
     assert face.tolist() == data.face.tolist()
+
+
+@withPackage('trimesh')
+def test_to_trimesh():
+    import trimesh
+
+    pos = torch.tensor([[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0]])
+    face = torch.tensor([[0, 1, 2], [2, 1, 3]]).t()
+    data = Data(pos=pos, face=face)
+
+    obj = to_trimesh(data)
+
+    assert isinstance(obj, trimesh.Trimesh)
+    assert obj.vertices.shape == (4, 3)
+    assert obj.faces.shape == (2, 3)
+    assert obj.vertices.tolist() == data.pos.tolist()
+    assert obj.faces.tolist() == data.face.t().contiguous().tolist()
+
+
+@withPackage('trimesh')
+def test_from_trimesh():
+    import trimesh
+
+    vertices = [[0, 0, 0], [1, 0, 0], [0, 1, 0]]
+    faces = [[0, 1, 2]]
+    mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=False)
+
+    data = from_trimesh(mesh)
+
+    assert data.pos.tolist() == vertices
+    assert data.face.t().contiguous().tolist() == faces
+
+
+@withPackage('cudf')
+@withPackage('cugraph')
+@pytest.mark.parametrize('edge_weight', [None, torch.rand(4)])
+@pytest.mark.parametrize('relabel_nodes', [True, False])
+@pytest.mark.parametrize('directed', [True, False])
+def test_to_cugraph(edge_weight, directed, relabel_nodes):
+    import cugraph
+
+    if directed:
+        edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    else:
+        edge_index = torch.tensor([[0, 1], [1, 2]])
+
+    if edge_weight is not None:
+        edge_weight[:edge_index.size(1)]
+
+    graph = to_cugraph(edge_index, edge_weight, relabel_nodes, directed)
+    assert isinstance(graph, cugraph.Graph)
+    assert graph.number_of_nodes() == 3
+
+    edge_list = graph.view_edge_list()
+    assert edge_list is not None
+
+    edge_list = edge_list.sort_values(by=['src', 'dst'])
+
+    cu_edge_index = edge_list[['src', 'dst']].to_pandas().values
+    assert edge_index.tolist() == cu_edge_index.T.tolist()
+
+    if edge_weight is not None:
+        cu_edge_weight = edge_list['weights'].to_pandas().values
+        assert edge_weight.tolist() == cu_edge_weight.tolist()
+
+
+@withPackage('cudf')
+@withPackage('cugraph')
+@pytest.mark.parametrize('edge_weight', [None, torch.randn(4)])
+@pytest.mark.parametrize('directed', [True, False])
+@pytest.mark.parametrize('relabel_nodes', [True, False])
+def test_from_cugraph(edge_weight, directed, relabel_nodes):
+    import cudf
+    import cugraph
+    from torch.utils.dlpack import to_dlpack
+
+    if directed:
+        edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    else:
+        edge_index = torch.tensor([[0, 1], [1, 2]])
+
+    if edge_weight is not None:
+        edge_weight[:edge_index.size(1)]
+
+    G = cugraph.Graph(directed=directed)
+    df = cudf.from_dlpack(to_dlpack(edge_index.t()))
+    if edge_weight is not None:
+        df['2'] = cudf.from_dlpack(to_dlpack(edge_weight))
+
+    G.from_cudf_edgelist(
+        df,
+        source=0,
+        destination=1,
+        edge_attr='2' if edge_weight is not None else None,
+        renumber=relabel_nodes,
+    )
+
+    cu_edge_index, cu_edge_weight = from_cugraph(G)
+
+    assert cu_edge_index.tolist() == edge_index.tolist()
+
+    if edge_weight is None:
+        assert cu_edge_weight is None
+    else:
+        assert cu_edge_weight.tolist() == edge_weight.tolist()
