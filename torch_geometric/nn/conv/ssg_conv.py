@@ -87,7 +87,7 @@ class SSGConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         cache = self._cached_h
         if cache is None:
             if isinstance(edge_index, Tensor):

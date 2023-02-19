@@ -204,7 +204,7 @@ class GENConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -228,7 +228,9 @@ class GENConv(MessagePassing):
             out = self.lin_aggr_out(out)
 
         if hasattr(self, 'msg_norm'):
-            out = self.msg_norm(x[1] if x[1] is not None else x[0], out)
+            h = x[1] if x[1] is not None else x[0]
+            assert h is not None
+            out = self.msg_norm(h, out)
 
         x_dst = x[1]
         if x_dst is not None:

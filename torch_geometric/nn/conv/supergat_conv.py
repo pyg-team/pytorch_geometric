@@ -181,11 +181,12 @@ class SuperGATConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj,
                 neg_edge_index: OptTensor = None,
                 batch: OptTensor = None) -> Tensor:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
-            neg_edge_index (Tensor, optional): The negative edges to train
-                against. If not given, uses negative sampling to calculate
-                negative edges. (default: :obj:`None`)
+            neg_edge_index (torch.Tensor, optional): The negative edges to
+                train against. If not given, uses negative sampling to
+                calculate negative edges. (default: :obj:`None`)
         """
         N, H, C = x.size(0), self.heads, self.out_channels
 
@@ -293,7 +294,7 @@ class SuperGATConv(MessagePassing):
         return alpha
 
     def get_attention_loss(self) -> Tensor:
-        r"""Compute the self-supervised graph attention loss."""
+        r"""Computes the self-supervised graph attention loss."""
         if not self.training:
             return torch.tensor([0], device=self.lin.weight.device)
 

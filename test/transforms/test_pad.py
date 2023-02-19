@@ -362,7 +362,7 @@ def test_pad_data_exclude_keys(data, exclude_keys):
 
 @pytest.mark.parametrize('data', [fake_data(), fake_hetero_data(node_types=1)])
 def test_pad_invalid_max_num_nodes(data):
-    transform = Pad(max_num_nodes=data.num_nodes)
+    transform = Pad(max_num_nodes=data.num_nodes - 1)
 
     with pytest.raises(AssertionError,
                        match='The number of nodes after padding'):

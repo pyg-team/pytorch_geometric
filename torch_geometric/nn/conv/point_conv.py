@@ -81,7 +81,7 @@ class PointNetConv(MessagePassing):
 
     def forward(self, x: Union[OptTensor, PairOptTensor],
                 pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """"""
+
         if not isinstance(x, tuple):
             x: PairOptTensor = (x, None)
 
@@ -116,6 +116,3 @@ class PointNetConv(MessagePassing):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(local_nn={self.local_nn}, '
                 f'global_nn={self.global_nn})')
-
-
-PointConv = PointNetConv

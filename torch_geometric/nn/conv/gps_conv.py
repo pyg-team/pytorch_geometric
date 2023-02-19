@@ -102,6 +102,7 @@ class GPSConv(torch.nn.Module):
             self.norm_with_batch = 'batch' in signature.parameters
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         if self.conv is not None:
             self.conv.reset_parameters()
         self.attn._reset_parameters()
@@ -120,7 +121,7 @@ class GPSConv(torch.nn.Module):
         batch: Optional[torch.Tensor] = None,
         **kwargs,
     ) -> Tensor:
-        """"""
+        r"""Runs the forward pass of the module."""
         hs = []
         if self.conv is not None:  # Local MPNN.
             h = self.conv(x, edge_index, **kwargs)

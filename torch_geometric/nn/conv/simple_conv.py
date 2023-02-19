@@ -62,7 +62,6 @@ class SimpleConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 

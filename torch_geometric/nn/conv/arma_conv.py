@@ -104,7 +104,6 @@ class ARMAConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
 
         if isinstance(edge_index, Tensor):
             edge_index, edge_weight = gcn_norm(  # yapf: disable
