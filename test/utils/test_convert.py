@@ -1,7 +1,6 @@
 import pytest
 import scipy.sparse
 import torch
-from torch.utils.dlpack import to_dlpack
 
 from torch_geometric.data import Data
 from torch_geometric.testing import withPackage
@@ -442,6 +441,7 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
 def test_from_cugraph(edge_weight, directed, relabel_nodes):
     import cudf
     import cugraph
+    from torch.utils.dlpack import to_dlpack
 
     if directed:
         edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])

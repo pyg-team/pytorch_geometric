@@ -438,9 +438,12 @@ def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
     return g
 
 
-def from_cugraph(g) -> Tuple[Tensor, Optional[Tensor]]:
+def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Converts a :obj:`cugraph` graph object into :obj:`edge_index` and
     optional :obj:`edge_weight` tensors.
+
+    Args:
+        g (cugraph.Graph): A :obj:`cugraph` graph object.
     """
     df = g.view_edge_list()
 
