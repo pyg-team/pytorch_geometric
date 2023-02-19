@@ -14,7 +14,7 @@ def test_instance_norm(conf):
 
     norm1 = InstanceNorm(16, affine=conf, track_running_stats=conf)
     norm2 = InstanceNorm(16, affine=conf, track_running_stats=conf)
-    assert norm1.__repr__() == 'InstanceNorm(16)'
+    assert str(norm1) == 'InstanceNorm(16)'
 
     if is_full_test():
         torch.jit.script(norm1)

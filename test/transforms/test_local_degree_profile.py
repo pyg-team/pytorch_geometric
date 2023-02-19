@@ -5,7 +5,7 @@ from torch_geometric.transforms import LocalDegreeProfile
 
 
 def test_target_indegree():
-    assert LocalDegreeProfile().__repr__() == 'LocalDegreeProfile()'
+    assert str(LocalDegreeProfile()) == 'LocalDegreeProfile()'
 
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     x = torch.Tensor([[1], [1], [1], [1]])  # One isolated node.

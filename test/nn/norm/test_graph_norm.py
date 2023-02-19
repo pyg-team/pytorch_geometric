@@ -10,7 +10,7 @@ def test_graph_norm():
     batch = torch.arange(4).view(-1, 1).repeat(1, 50).view(-1)
 
     norm = GraphNorm(16)
-    assert norm.__repr__() == 'GraphNorm(16)'
+    assert str(norm) == 'GraphNorm(16)'
 
     if is_full_test():
         torch.jit.script(norm)

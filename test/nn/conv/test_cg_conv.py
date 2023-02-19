@@ -14,7 +14,7 @@ def test_cg_conv():
     adj2 = adj1.to_torch_sparse_coo_tensor()
 
     conv = CGConv(8)
-    assert conv.__repr__() == 'CGConv(8, dim=0)'
+    assert str(conv) == 'CGConv(8, dim=0)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 8)
     assert torch.allclose(conv(x1, adj1.t()), out)
@@ -32,7 +32,7 @@ def test_cg_conv():
     adj1 = adj1.sparse_resize((4, 2))
     adj2 = adj1.to_torch_sparse_coo_tensor()
     conv = CGConv((8, 16))
-    assert conv.__repr__() == 'CGConv((8, 16), dim=0)'
+    assert str(conv) == 'CGConv((8, 16), dim=0)'
     out = conv((x1, x2), edge_index)
     assert out.size() == (2, 16)
     assert torch.allclose(conv((x1, x2), adj1.t()), out, atol=1e-6)
@@ -51,7 +51,7 @@ def test_cg_conv():
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
     adj2 = adj1.to_torch_sparse_coo_tensor()
     conv = CGConv(8, batch_norm=True)
-    assert conv.__repr__() == 'CGConv(8, dim=0)'
+    assert str(conv) == 'CGConv(8, dim=0)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 8)
     assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
@@ -72,7 +72,7 @@ def test_cg_conv_with_edge_features():
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
     conv = CGConv(8, dim=3)
-    assert conv.__repr__() == 'CGConv(8, dim=3)'
+    assert str(conv) == 'CGConv(8, dim=3)'
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 8)
     assert conv(x1, adj.t()).tolist() == out.tolist()
@@ -88,7 +88,7 @@ def test_cg_conv_with_edge_features():
 
     adj = adj.sparse_resize((4, 2))
     conv = CGConv((8, 16), dim=3)
-    assert conv.__repr__() == 'CGConv((8, 16), dim=3)'
+    assert str(conv) == 'CGConv((8, 16), dim=3)'
     out = conv((x1, x2), edge_index, value)
     assert out.size() == (2, 16)
     assert conv((x1, x2), adj.t()).tolist() == out.tolist()

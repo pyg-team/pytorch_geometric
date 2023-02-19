@@ -14,7 +14,7 @@ def test_film_conv():
     adj = SparseTensor(row=row, col=col, value=edge_type, sparse_sizes=(4, 4))
 
     conv = FiLMConv(4, 32)
-    assert conv.__repr__() == 'FiLMConv(4, 32, num_relations=1)'
+    assert str(conv) == 'FiLMConv(4, 32, num_relations=1)'
     out1 = conv(x1, edge_index)
     assert out1.size() == (4, 32)
     assert conv(x1, adj.t().set_value(None)).tolist() == out1.tolist()
@@ -28,7 +28,7 @@ def test_film_conv():
         assert jit(x1, adj.t().set_value(None)).tolist() == out1.tolist()
 
     conv = FiLMConv(4, 32, num_relations=2)
-    assert conv.__repr__() == 'FiLMConv(4, 32, num_relations=2)'
+    assert str(conv) == 'FiLMConv(4, 32, num_relations=2)'
     out1 = conv(x1, edge_index, edge_type)
     assert out1.size() == (4, 32)
     assert conv(x1, adj.t()).tolist() == out1.tolist()
@@ -44,7 +44,7 @@ def test_film_conv():
     adj = adj.sparse_resize((4, 2))
 
     conv = FiLMConv((4, 16), 32)
-    assert conv.__repr__() == 'FiLMConv((4, 16), 32, num_relations=1)'
+    assert str(conv) == 'FiLMConv((4, 16), 32, num_relations=1)'
     out1 = conv((x1, x2), edge_index)
     assert out1.size() == (2, 32)
     assert conv((x1, x2), adj.t().set_value(None)).tolist() == out1.tolist()
@@ -58,7 +58,7 @@ def test_film_conv():
         assert jit((x1, x2), adj.t().set_value(None)).tolist() == out1.tolist()
 
     conv = FiLMConv((4, 16), 32, num_relations=2)
-    assert conv.__repr__() == 'FiLMConv((4, 16), 32, num_relations=2)'
+    assert str(conv) == 'FiLMConv((4, 16), 32, num_relations=2)'
     out1 = conv((x1, x2), edge_index, edge_type)
     assert out1.size() == (2, 32)
     assert conv((x1, x2), adj.t()).tolist() == out1.tolist()

@@ -10,7 +10,7 @@ def test_node2vec():
 
     model = Node2Vec(edge_index, embedding_dim=16, walk_length=2,
                      context_size=2)
-    assert model.__repr__() == 'Node2Vec(3, 16)'
+    assert str(model) == 'Node2Vec(3, 16)'
 
     assert model(torch.arange(3)).size() == (3, 16)
 
