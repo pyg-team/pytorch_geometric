@@ -38,6 +38,7 @@ def get_stat(cls: str, name: str, child: Optional[str] = None,
     column = match.group().count(' -')
 
     if child is not None:
+        child = child.replace('(', r'\(').replace(')', r'\)')
         match = re.search(f'[*] - {child}\n.*$', stats_table, flags=re.DOTALL)
         stats_row = match.group()
     else:
