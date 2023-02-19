@@ -2,7 +2,10 @@ import warnings
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
+import torch
 from torch import Tensor
+
+WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
 
 try:
     import pyg_lib  # noqa
