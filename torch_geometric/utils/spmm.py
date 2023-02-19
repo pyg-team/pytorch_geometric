@@ -1,6 +1,9 @@
+import logging
+
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
 from torch_geometric.utils import is_torch_sparse_tensor
 
@@ -31,7 +34,10 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
 
     :rtype: :class:`Tensor`
     """
-    assert reduce in ['sum', 'add', 'mean', 'min', 'max']
+    reduce = 'sum' if reduce == 'add' else reduce
+
+    if reduce not in ['sum', 'mean', 'min', 'max']:
+        raise ValueError(f"`reduce` argument '{reduce}' not supported")
 
     if isinstance(src, SparseTensor):
         return torch_sparse.matmul(src, other, reduce)
@@ -40,9 +46,22 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         raise ValueError("`src` must be a `torch_sparse.SparseTensor` "
                          f"or a `torch.sparse.Tensor` (got {type(src)}).")
 
-    if reduce in ['sum', 'add']:
+    # `torch.sparse.mm` only supports reductions on CPU for PyTorch>=2.0.
+    # This will currently throw on error for CUDA tensors.
+    if torch_geometric.typing.WITH_PT2:
+        if src.layout != torch.sparse_csr:
+            logging.warning("Converting sparse tensor to CSR format for more "
+                            "efficient processing. Consider converting your "
+                            "sparse tensor to CSR format beforehand to avoid "
+                            "repeated conversion")
+            src = src.to_sparse_csr()
+        if reduce == 'sum':
+            return torch.sparse.mm(src, other)
+        return torch.sparse.mm(src, other, reduce)
+
+    if reduce == 'sum':
         return torch.sparse.mm(src, other)
 
     # TODO: Support `mean` reduction for PyTorch SparseTensor
     raise ValueError(f"`{reduce}` reduction is not supported for "
-                     f"`torch.sparse.Tensor`.")
+                     f"'torch.sparse.Tensor' on device '{src.device}'")
