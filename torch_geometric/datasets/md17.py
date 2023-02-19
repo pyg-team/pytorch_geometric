@@ -15,10 +15,10 @@ from torch_geometric.data import (
 
 
 class MD17(InMemoryDataset):
-    r"""A variety of ab-initio molecular dynamics trajectories from the
-    authors of `sGDML <http://quantum-machine.org/gdml>`__.
-    This class provides access to the original MD17 datasets, the revised
-    version and the CCSD(T) trajectories.
+    r"""A variety of ab-initio molecular dynamics trajectories from the authors
+    of `sGDML <http://quantum-machine.org/gdml>`_.
+    This class provides access to the original MD17 datasets, their revised
+    versions, and the CCSD(T) trajectories.
 
     For every trajectory, the dataset contains the Cartesian positions of atoms
     (in Angstrom), their atomic numbers, as well as the total energy
@@ -31,36 +31,24 @@ class MD17(InMemoryDataset):
         constructed via the :obj:`torch_geometric.transforms.RadiusGraph`
         transform, with its cut-off being a hyperparameter.
 
-    The original MD17 dataset by Chmiela et al. [1] contains
-    ten molecule trajectories. This version of the dataset was found
-    to suffer from high numerical noise. The revised MD17 dataset by Christensen
-    and Von Lilienfeld [2] contains the same molecules, but the energies and
-    forces were recalculated at the PBE/def2-SVP level of theory using very
-    tight SCF convergence and very dense DFT integration grid. The third
-    version of the dataset contains fewer molecules, computed at the CCSD(T)
-    level of theory. The benzene molecule at the DFT FHI-aims level of theory
-    was released separately by Chmiela et al. [3].
+    The `original MD17 dataset <https://arxiv.org/abs/1611.04678>`_ contains
+    ten molecule trajectories.
+    This version of the dataset was found to suffer from high numerical noise.
+    The `revised MD17 dataset <https://arxiv.org/abs/2007.09593>`_ contains the
+    same molecules, but the energies and forces were recalculated at the
+    PBE/def2-SVP level of theory using very tight SCF convergence and very
+    dense DFT integration grid.
+    The third version of the dataset contains fewer molecules, computed at the
+    CCSD(T) level of theory.
+    The benzene molecule at the DFT FHI-aims level of theory was
+    `released separately <https://arxiv.org/abs/1802.09238>`_.
 
-    Check the table below for detailed information on the molecule,
-    level of theory and number of data points contained in each dataset.
-    Which trajectory is loaded is determined by the :attr:`name` argument. The
-    revised parameters are indicated by parentheses. For the coupled cluster
-    trajectories, the dataset comes with pre-defined training and testing
-    splits which are loaded separately via the :attr:`train` argument.
-
-    It is advised to not train a model on more than 1000 samples from the
-    original or revised MD17 dataset.
-
-    When using these datasets, make sure to cite the appropriate publications
-    listed on the `sGDML <http://quantum-machine.org/gdml/>`__ website as well
-    as the authors of the revised MD17 dataset.
-
-    [1] Chmiela, Stefan, et al. "Machine learning of accurate energy-conserving molecular force fields." Science advances 3.5 (2017): e1603015.
-
-    [2] Christensen, Anders S., and O. Anatole Von Lilienfeld. "On the role of gradients for machine learning of molecular energies and forces." Machine Learning: Science and Technology 1.4 (2020): 045018.
-
-    [3] Chmiela, Stefan, et al. "Towards exact molecular dynamics simulations with machine-learned force fields." Nature communications 9.1 (2018): 3887.
-
+    Check the table below for detailed information on the molecule, level of
+    theory and number of data points contained in each dataset.
+    Which trajectory is loaded is determined by the :attr:`name` argument.
+    For the coupled cluster trajectories, the dataset comes with pre-defined
+    training and testing splits which are loaded separately via the
+    :attr:`train` argument.
 
     +--------------------+--------------------+-------------------------------+-----------+
     | Molecule           | Level of Theory    | Name                          | #Examples |
@@ -117,6 +105,11 @@ class MD17(InMemoryDataset):
     +--------------------+--------------------+-------------------------------+-----------+
     | Benzene            | DFT FHI-aims       | :obj:`benzene FHI-aims`       | 49,863    |
     +--------------------+--------------------+-------------------------------+-----------+
+
+    .. warning::
+
+        It is advised to not train a model on more than 1,000 samples from the
+        original or revised MD17 dataset.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -340,24 +333,32 @@ class MD17(InMemoryDataset):
         'benzene FHI-aims': 'benzene2018_dft.npz',
     }
 
-    def __init__(self, root: str, name: str, train: Optional[bool] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        train: Optional[bool] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
+        if name not in self.file_names:
+            raise ValueError(f"Unknown dataset name '{name}'")
+
         self.name = name
-        assert name in self.file_names
         self.revised = 'revised' in name
         self.ccsd = 'CCSD' in self.name
+
         super().__init__(root, transform, pre_transform, pre_filter)
 
         if len(self.processed_file_names) == 1 and train is not None:
             raise ValueError(
                 f"'{self.name}' dataset does not provide pre-defined splits "
-                f"but 'train' argument is set to '{train}'")
+                f"but the 'train' argument is set to '{train}'")
         elif len(self.processed_file_names) == 2 and train is None:
             raise ValueError(
                 f"'{self.name}' dataset does provide pre-defined splits but "
-                f"'train' argument was not specified")
+                f"the 'train' argument was not specified")
 
         idx = 0 if train is None or train else 1
         self.data, self.slices = torch.load(self.processed_paths[idx])
@@ -369,21 +370,20 @@ class MD17(InMemoryDataset):
     def raw_dir(self) -> str:
         if self.revised:
             return osp.join(self.root, 'raw')
-        name = self.file_names[self.name].split('.')[0]
-        return osp.join(self.root, name, 'raw')
+        return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         name = self.file_names[self.name]
         if self.revised:
-            return [osp.join('rmd17', 'npz_data', name)]
-        if self.ccsd:
-            return [name[:-4] + '-train.npz', name[:-4] + '-test.npz']
-        return [name]
+            return osp.join('rmd17', 'npz_data', name)
+        elif self.ccsd:
+            return name[:-4] + '-train.npz', name[:-4] + '-test.npz'
+        return name
 
     @property
     def processed_file_names(self) -> List[str]:
@@ -394,8 +394,7 @@ class MD17(InMemoryDataset):
 
     def download(self):
         if self.revised:
-            path = download_url(self.revised_url, self.raw_dir,
-                                filename='rmd17.tar.bz2')
+            path = download_url(self.revised_url, self.raw_dir)
             extract_tar(path, self.raw_dir, mode='r:bz2')
             os.unlink(path)
         else:
@@ -411,16 +410,15 @@ class MD17(InMemoryDataset):
             raw_data = np.load(raw_path)
 
             if self.revised:
-                z = torch.from_numpy(raw_data['nuclear_charges']).to(
-                    torch.long)
-                pos = torch.from_numpy(raw_data['coords']).to(torch.float)
-                energy = torch.from_numpy(raw_data['energies']).to(torch.float)
-                force = torch.from_numpy(raw_data['forces']).to(torch.float)
+                z = torch.from_numpy(raw_data['nuclear_charges']).long()
+                pos = torch.from_numpy(raw_data['coords']).float()
+                energy = torch.from_numpy(raw_data['energies']).float()
+                force = torch.from_numpy(raw_data['forces']).float()
             else:
-                z = torch.from_numpy(raw_data['z']).to(torch.long)
-                pos = torch.from_numpy(raw_data['R']).to(torch.float)
-                energy = torch.from_numpy(raw_data['E']).to(torch.float)
-                force = torch.from_numpy(raw_data['F']).to(torch.float)
+                z = torch.from_numpy(raw_data['z']).long()
+                pos = torch.from_numpy(raw_data['R']).float()
+                energy = torch.from_numpy(raw_data['E']).float()
+                force = torch.from_numpy(raw_data['F']).float()
 
             data_list = []
             for i in range(pos.size(0)):
