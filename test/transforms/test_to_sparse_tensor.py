@@ -5,7 +5,8 @@ from torch_geometric.transforms import ToSparseTensor
 
 
 def test_to_sparse_tensor():
-    assert ToSparseTensor().__repr__() == 'ToSparseTensor()'
+    transform = ToSparseTensor()
+    assert str(transform) == 'ToSparseTensor()'
 
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     edge_weight = torch.randn(edge_index.size(1))
@@ -15,7 +16,7 @@ def test_to_sparse_tensor():
 
     data = Data(edge_index=edge_index, edge_weight=edge_weight,
                 edge_attr=edge_attr, num_nodes=3)
-    data = ToSparseTensor()(data)
+    data = transform(data)
     assert len(data) == 3
     assert data.adj_t.storage.row().tolist() == [0, 1, 1, 2]
     assert data.adj_t.storage.col().tolist() == [1, 0, 2, 1]

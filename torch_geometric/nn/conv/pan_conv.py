@@ -63,7 +63,6 @@ class PANConv(MessagePassing):
 
     def forward(self, x: Tensor,
                 edge_index: Adj) -> Tuple[Tensor, SparseTensor]:
-        """"""
 
         adj_t: Optional[SparseTensor] = None
         if isinstance(edge_index, Tensor):

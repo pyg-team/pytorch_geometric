@@ -79,7 +79,7 @@ class APPNP(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         if self.normalize:
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index

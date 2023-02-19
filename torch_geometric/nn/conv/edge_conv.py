@@ -55,7 +55,6 @@ class EdgeConv(MessagePassing):
         reset(self.nn)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
         # propagate_type: (x: PairTensor)
@@ -120,7 +119,7 @@ class DynamicEdgeConv(MessagePassing):
             batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
         # type: (Tensor, OptTensor) -> Tensor  # noqa
         # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
-        """"""
+
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 

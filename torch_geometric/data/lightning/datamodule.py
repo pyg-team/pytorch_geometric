@@ -228,9 +228,10 @@ class LightningData(LightningDataModule):
 
 class LightningDataset(LightningDataModule):
     r"""Converts a set of :class:`~torch_geometric.data.Dataset` objects into a
-    :class:`pytorch_lightning.LightningDataModule` variant, which can be
+    :class:`pytorch_lightning.LightningDataModule` variant. It can then be
     automatically used as a :obj:`datamodule` for multi-GPU graph-level
-    training via `PyTorch Lightning <https://www.pytorchlightning.ai>`__.
+    training via :lightning:`null`
+    `PyTorch Lightning <https://www.pytorchlightning.ai>`__.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.DataLoader`.
 
@@ -239,7 +240,7 @@ class LightningDataset(LightningDataModule):
         Currently only the
         :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
         :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
-        strategies of `PyTorch Lightning
+        strategies of :lightning:`null` `PyTorch Lightning
         <https://pytorch-lightning.readthedocs.io/en/latest/guides/
         speed.html>`__ are supported in order to correctly share data across
         all devices/processes:
@@ -325,9 +326,10 @@ class LightningDataset(LightningDataModule):
 class LightningNodeData(LightningData):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
-    :class:`pytorch_lightning.LightningDataModule` variant, which can be
+    :class:`pytorch_lightning.LightningDataModule` variant. It can then be
     automatically used as a :obj:`datamodule` for multi-GPU node-level
-    training via `PyTorch Lightning <https://www.pytorchlightning.ai>`_.
+    training via :lightning:`null`
+    `PyTorch Lightning <https://www.pytorchlightning.ai>`__.
     :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.NeighborLoader`.
 
@@ -336,7 +338,7 @@ class LightningNodeData(LightningData):
         Currently only the
         :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
         :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
-        strategies of `PyTorch Lightning
+        strategies of :lightning:`null` `PyTorch Lightning
         <https://pytorch-lightning.readthedocs.io/en/latest/guides/
         speed.html>`__ are supported in order to correctly share data across
         all devices/processes:
@@ -517,11 +519,11 @@ class LightningNodeData(LightningData):
 class LightningLinkData(LightningData):
     r"""Converts a :class:`~torch_geometric.data.Data` or
     :class:`~torch_geometric.data.HeteroData` object into a
-    :class:`pytorch_lightning.LightningDataModule` variant, which can be
+    :class:`pytorch_lightning.LightningDataModule` variant. It can then be
     automatically used as a :obj:`datamodule` for multi-GPU link-level
-    training (such as for link prediction) via `PyTorch Lightning
-    <https://www.pytorchlightning.ai>`_. :class:`LightningDataset` will
-    take care of providing mini-batches via
+    training via :lightning:`null`
+    `PyTorch Lightning <https://www.pytorchlightning.ai>`__.
+    :class:`LightningDataset` will take care of providing mini-batches via
     :class:`~torch_geometric.loader.LinkNeighborLoader`.
 
     .. note::
@@ -529,7 +531,7 @@ class LightningLinkData(LightningData):
         Currently only the
         :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
         :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
-        strategies of `PyTorch Lightning
+        strategies of :lightning:`null` `PyTorch Lightning
         <https://pytorch-lightning.readthedocs.io/en/latest/guides/
         speed.html>`__ are supported in order to correctly share data across
         all devices/processes:

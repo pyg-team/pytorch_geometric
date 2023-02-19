@@ -8,7 +8,7 @@ def test_diff_group_norm():
     x = torch.randn(6, 16)
 
     norm = DiffGroupNorm(16, groups=4, lamda=0)
-    assert norm.__repr__() == 'DiffGroupNorm(16, groups=4)'
+    assert str(norm) == 'DiffGroupNorm(16, groups=4)'
 
     assert norm(x).tolist() == x.tolist()
 
@@ -17,7 +17,7 @@ def test_diff_group_norm():
         assert jit(x).tolist() == x.tolist()
 
     norm = DiffGroupNorm(16, groups=4, lamda=0.01)
-    assert norm.__repr__() == 'DiffGroupNorm(16, groups=4)'
+    assert str(norm) == 'DiffGroupNorm(16, groups=4)'
 
     out = norm(x)
     assert out.size() == x.size()

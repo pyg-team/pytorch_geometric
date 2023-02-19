@@ -7,7 +7,7 @@ from torch_geometric.transforms import Spherical
 
 
 def test_spherical():
-    assert Spherical().__repr__() == 'Spherical(norm=True, max_value=None)'
+    assert str(Spherical()) == 'Spherical(norm=True, max_value=None)'
 
     pos = torch.Tensor([[0, 0, 0], [1, 0, 0]])
     edge_index = torch.tensor([[0, 1], [1, 0]])

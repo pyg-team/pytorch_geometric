@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 
 
-def get_message_passing_embeddings(
+def get_embeddings(
     model: torch.nn.Module,
     *args,
     **kwargs,

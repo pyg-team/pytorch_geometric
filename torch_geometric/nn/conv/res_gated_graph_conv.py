@@ -99,7 +99,6 @@ class ResGatedGraphConv(MessagePassing):
             zeros(self.bias)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
