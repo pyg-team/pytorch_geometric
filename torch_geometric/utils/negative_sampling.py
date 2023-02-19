@@ -250,12 +250,14 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
 
 
 def structured_negative_sampling_feasible(
-        edge_index: Tensor, num_nodes: Optional[int] = None,
-        contains_neg_self_loops: bool = True) -> bool:
+    edge_index: Tensor,
+    num_nodes: Optional[int] = None,
+    contains_neg_self_loops: bool = True,
+) -> bool:
     r"""Returns :obj:`True` if
     :meth:`~torch_geometric.utils.structured_negative_sampling` is feasible
     on the graph given by :obj:`edge_index`.
-    :obj:`~torch_geometric.utils.structured_negative_sampling` is infeasible
+    :meth:`~torch_geometric.utils.structured_negative_sampling` is infeasible
     if atleast one node is connected to all other nodes.
 
     Args:
