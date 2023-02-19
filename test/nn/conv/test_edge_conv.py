@@ -13,7 +13,8 @@ def test_edge_conv_conv():
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
-    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+    adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+    adj2 = adj1.to_torch_sparse_coo_tensor()
 
     nn = Seq(Lin(32, 16), ReLU(), Lin(16, 32))
     conv = EdgeConv(nn)
@@ -26,13 +27,17 @@ def test_edge_conv_conv():
     out1 = conv(x1, edge_index)
     assert out1.size() == (4, 32)
     assert conv((x1, x1), edge_index).tolist() == out1.tolist()
-    assert conv(x1, adj.t()).tolist() == out1.tolist()
-    assert conv((x1, x1), adj.t()).tolist() == out1.tolist()
+    assert torch.allclose(conv(x1, adj1.t()), out1, atol=1e-6)
+    assert torch.allclose(conv(x1, adj2.t()), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, x1), adj1.t()), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, x1), adj2.t()), out1, atol=1e-6)
 
-    adj = adj.sparse_resize((4, 2))
+    adj1 = adj1.sparse_resize((4, 2))
+    adj2 = adj1.to_torch_sparse_coo_tensor()
     out2 = conv((x1, x2), edge_index)
     assert out2.size() == (2, 32)
-    assert conv((x1, x2), adj.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv((x1, x2), adj1.t()), out2, atol=1e-6)
+    assert torch.allclose(conv((x1, x2), adj2.t()), out2, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor) -> Tensor'
@@ -44,16 +49,16 @@ def test_edge_conv_conv():
         assert jit((x1, x1), edge_index).tolist() == out1.tolist()
         assert jit((x1, x2), edge_index).tolist() == out2.tolist()
 
-        adj = adj.sparse_resize((4, 4))
+        adj1 = adj1.sparse_resize((4, 4))
         t = '(Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x1, adj.t()).tolist() == out1.tolist()
+        assert jit(x1, adj1.t()).tolist() == out1.tolist()
 
         t = '(PairTensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit((x1, x1), adj.t()).tolist() == out1.tolist()
-        adj = adj.sparse_resize((4, 2))
-        assert jit((x1, x2), adj.t()).tolist() == out2.tolist()
+        assert jit((x1, x1), adj1.t()).tolist() == out1.tolist()
+        adj1 = adj1.sparse_resize((4, 2))
+        assert jit((x1, x2), adj1.t()).tolist() == out2.tolist()
 
 
 @withPackage('torch_cluster')
