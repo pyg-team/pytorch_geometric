@@ -324,8 +324,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
     def to_datapipe(self):
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
 
-        The returned instance can then be used with PyG's built-in DataPipes
-        for baching graphs as follows:
+        The returned instance can then be used with :pyg:`PyG's` built-in
+        :class:`DataPipes` for baching graphs as follows:
 
         .. code-block:: python
 
