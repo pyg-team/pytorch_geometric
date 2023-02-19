@@ -6,7 +6,7 @@ from torch_geometric.transforms import LineGraph
 
 def test_line_graph():
     transform = LineGraph()
-    assert transform(transform) == 'LineGraph()'
+    assert str(transform) == 'LineGraph()'
 
     # Directed.
     edge_index = torch.tensor([
