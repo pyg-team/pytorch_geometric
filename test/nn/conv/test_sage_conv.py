@@ -14,7 +14,7 @@ def test_sage_conv(project, aggr):
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj.to_torch_sparse_csr_tensor()
+    adj2 = adj.to_torch_sparse_coo_tensor()
 
     conv = SAGEConv(8, 32, project=project, aggr=aggr)
     assert str(conv) == f'SAGEConv(8, 32, aggr={aggr})'
@@ -36,7 +36,7 @@ def test_sage_conv(project, aggr):
         assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
 
     adj = adj.sparse_resize((4, 2))
-    adj2 = adj.to_torch_sparse_csr_tensor()
+    adj2 = adj.to_torch_sparse_coo_tensor()
     conv = SAGEConv((8, 16), 32, project=project, aggr=aggr)
     assert str(conv) == f'SAGEConv((8, 16), 32, aggr={aggr})'
     out1 = conv((x1, x2), edge_index)
