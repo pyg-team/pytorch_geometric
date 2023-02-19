@@ -7,7 +7,7 @@ External Resources
 
 * Soumith Chintala: **Automatic Differentiation,** :pytorch:`null` **PyTorch and Graph Neural Networks** [`Talk (starting from 26:15) <http://www.ipam.ucla.edu/abstract/?tid=15592&pcode=GLWS4>`__]
 
-* Stanford University: **Graph Neural Networks using** :pyg:`null` **PyTorch Geometric** [`Talk (starting from 33:33) <https://www.youtube.com/watch?v=-UjytpbqX4A&feature=youtu.be>`__]
+* Stanford University: **Graph Neural Networks using** :pyg:`null` **PyTorch Geometric** [:youtube:`null` `YouTube (starting from 33:33) <https://www.youtube.com/watch?v=-UjytpbqX4A&feature=youtu.be>`__]
 
 * Antonio Longa, Gabriele Santin and Giovanni Pellegrini: :pyg:`null` **PyTorch Geometric Tutorial** [`Website <https://antoniolonga.github.io/Pytorch_geometric_tutorials>`__, :github:`null` `GitHub <https://github.com/AntonioLonga/PytorchGeometricTutorial>`__]
 
