@@ -13,7 +13,7 @@ def test_dna_conv1():
     x = torch.randn((num_nodes, num_layers, channels))
 
     conv = DNAConv(channels, heads=4, groups=8, dropout=0.0)
-    assert conv.__repr__() == 'DNAConv(32, heads=4, groups=8)'
+    assert str(conv) == 'DNAConv(32, heads=4, groups=8)'
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, channels)
 
@@ -22,7 +22,7 @@ def test_dna_conv1():
         assert jit(x, edge_index).tolist() == out.tolist()
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0)
-    assert conv.__repr__() == 'DNAConv(32, heads=1, groups=1)'
+    assert str(conv) == 'DNAConv(32, heads=1, groups=1)'
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, channels)
 
@@ -51,7 +51,7 @@ def test_dna_conv2():
     adj4 = adj2.to_torch_sparse_coo_tensor()
 
     conv = DNAConv(32, heads=4, groups=8, dropout=0.0)
-    assert conv.__repr__() == 'DNAConv(32, heads=4, groups=8)'
+    assert str(conv) == 'DNAConv(32, heads=4, groups=8)'
     out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
     assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
