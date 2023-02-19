@@ -105,6 +105,7 @@ class ChebConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         for lin in self.lins:
             lin.reset_parameters()
         zeros(self.bias)
@@ -154,7 +155,7 @@ class ChebConv(MessagePassing):
         batch: OptTensor = None,
         lambda_max: OptTensor = None,
     ) -> Tensor:
-        """"""
+
         edge_index, norm = self.__norm__(
             edge_index,
             x.size(self.node_dim),

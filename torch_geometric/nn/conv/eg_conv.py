@@ -113,6 +113,7 @@ class EGConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.bases_lin.reset_parameters()
         self.comb_lin.reset_parameters()
         zeros(self.bias)
@@ -120,7 +121,6 @@ class EGConv(MessagePassing):
         self._cached_edge_index = None
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        """"""
         symnorm_weight: OptTensor = None
         if "symnorm" in self.aggregators:
             if isinstance(edge_index, Tensor):

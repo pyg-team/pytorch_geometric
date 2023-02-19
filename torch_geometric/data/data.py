@@ -160,7 +160,7 @@ class BaseData(object):
             in case node-level attributes are present, *e.g.*, :obj:`data.x`.
             In some cases, however, a graph may only be given without any
             node-level attributes.
-            PyG then *guesses* the number of nodes according to
+            :pyg:`PyG` then *guesses* the number of nodes according to
             :obj:`edge_index.max().item() + 1`.
             However, in case there exists isolated nodes, this number does not
             have to be correct which can result in unexpected behavior.

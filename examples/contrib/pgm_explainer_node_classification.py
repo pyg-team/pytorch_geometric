@@ -62,5 +62,4 @@ if __name__ == "__main__":
     node_idx = 100
     explanation = explainer(x=data.x, edge_index=edge_index, index=node_idx,
                             target=predicted_target, edge_weight=edge_weight)
-    print('significance of relevant neighbours using pgm explainer :',
-          explanation.pgm_stats)
+    print(f'Significance of relevant neighbors: {explanation.pgm_stats}')

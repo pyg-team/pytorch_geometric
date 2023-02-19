@@ -12,7 +12,7 @@ def test_deep_graph_infomax():
                              summary=lambda z, *args: z.mean(dim=0),
                              corruption=lambda x: x + 1)
 
-    assert model.__repr__() == 'DeepGraphInfomax(16)'
+    assert str(model) == 'DeepGraphInfomax(16)'
 
     x = torch.ones(20, 16)
 

@@ -126,8 +126,9 @@ class GraphStore:
         Returns whether insertion was successful.
 
         Args:
-            tensor (Tuple[torch.Tensor, torch.Tensor]): The :obj:`edge_index`
-                tuple in a format specified in :class:`EdgeAttr`.
+            edge_index (Tuple[torch.Tensor, torch.Tensor]): The
+                :obj:`edge_index` tuple in a format specified in
+                :class:`EdgeAttr`.
             **kwargs (EdgeAttr): Any relevant edge attributes that
                 correspond to the :obj:`edge_index` tuple. See the
                 :class:`EdgeAttr` documentation for required and optional

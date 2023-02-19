@@ -8,7 +8,7 @@ from torch_geometric.transforms import RadiusGraph
 
 @withPackage('torch_cluster')
 def test_radius_graph():
-    assert RadiusGraph(r=1).__repr__() == 'RadiusGraph(r=1)'
+    assert str(RadiusGraph(r=1)) == 'RadiusGraph(r=1)'
 
     pos = torch.Tensor([[0, 0], [1, 0], [2, 0], [0, 1], [-2, 0], [0, -2]])
 
