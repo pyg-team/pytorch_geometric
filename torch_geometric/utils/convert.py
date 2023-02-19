@@ -417,7 +417,6 @@ def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
         directed (bool, optional): If set to :obj:`False`, the graph will be
             undirected. (default: :obj:`True`)
     """
-
     import cudf
     import cugraph
 
@@ -428,9 +427,14 @@ def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
         assert edge_weight.dim() == 1
         df['2'] = cudf.from_dlpack(to_dlpack(edge_weight))
 
-    g.from_cudf_edgelist(df, source=0, destination=1,
-                         edge_attr='2' if edge_weight is not None else None,
-                         renumber=relabel_nodes)
+    g.from_cudf_edgelist(
+        df,
+        source=0,
+        destination=1,
+        edge_attr='2' if edge_weight is not None else None,
+        renumber=relabel_nodes,
+    )
+
     return g
 
 
