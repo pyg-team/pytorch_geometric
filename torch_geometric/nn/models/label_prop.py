@@ -81,7 +81,7 @@ class LabelPropagation(MessagePassing):
             out = self.propagate(edge_index, x=out, edge_weight=edge_weight,
                                  size=None)
             out.mul_(self.alpha).add_(res)
-            if isinstance(post_step, Callable):
+            if post_step is not None:
                 out = post_step(out)
             else:
                 out.clamp_(0., 1.)
