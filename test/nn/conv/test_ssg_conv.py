@@ -16,7 +16,7 @@ def test_ssg_conv():
     adj4 = adj2.to_torch_sparse_coo_tensor()
 
     conv = SSGConv(16, 32, alpha=0.1, K=10)
-    assert conv.__repr__() == 'SSGConv(16, 32, K=10, alpha=0.1)'
+    assert str(conv) == 'SSGConv(16, 32, K=10, alpha=0.1)'
     out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
     assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)

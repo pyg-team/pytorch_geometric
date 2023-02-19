@@ -268,7 +268,7 @@ def test_pad_repr():
     pad_str = 'Pad(max_num_nodes=10, max_num_edges=15, ' \
         'node_pad_value=UniformPadding(value=3.0), ' \
         'edge_pad_value=UniformPadding(value=1.5))'
-    assert eval(pad_str).__repr__() == pad_str
+    assert str(eval(pad_str)) == pad_str
 
 
 @pytest.mark.parametrize('data', [fake_data(), fake_hetero_data()])

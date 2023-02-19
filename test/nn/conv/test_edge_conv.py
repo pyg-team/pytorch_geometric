@@ -18,7 +18,7 @@ def test_edge_conv_conv():
 
     nn = Seq(Lin(32, 16), ReLU(), Lin(16, 32))
     conv = EdgeConv(nn)
-    assert conv.__repr__() == (
+    assert str(conv) == (
         'EdgeConv(nn=Sequential(\n'
         '  (0): Linear(in_features=32, out_features=16, bias=True)\n'
         '  (1): ReLU()\n'
@@ -70,7 +70,7 @@ def test_dynamic_edge_conv_conv():
 
     nn = Seq(Lin(32, 16), ReLU(), Lin(16, 32))
     conv = DynamicEdgeConv(nn, k=2)
-    assert conv.__repr__() == (
+    assert str(conv) == (
         'DynamicEdgeConv(nn=Sequential(\n'
         '  (0): Linear(in_features=32, out_features=16, bias=True)\n'
         '  (1): ReLU()\n'
