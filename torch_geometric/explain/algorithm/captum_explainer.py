@@ -22,8 +22,8 @@ class CaptumExplainer(ExplainerAlgorithm):
     subgraph structures and node features that play a crucial role in the
     predictions made by a GNN.
 
-    This explainer algorithm uses `Captum <https://captum.ai/>`_ to compute
-    attributions.
+    This explainer algorithm uses :captum:`null` `Captum <https://captum.ai/>`_
+    to compute attributions.
 
     Args:
         attribution_method (Attribution or str): The Captum attribution method

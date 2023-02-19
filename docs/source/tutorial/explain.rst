@@ -95,10 +95,10 @@ Explaining node classification on a heterogeneous graph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Assume we have a heterogeneous GNN :obj:`model` that does node classification on a heterogeneous graph.
-We can use the :class:`IntegratedGradient` attribution method from `Captum <https://captum.ai/docs/extension/integrated_gradients>`__ via the :class:`torch_geometric.explain.algorithm.CaptumExplainer` algorithm to generate a :class:`~torch_geometric.explain.HeteroExplanation`.
+We can use the :class:`IntegratedGradient` attribution method from :captum:`null` `Captum <https://captum.ai/docs/extension/integrated_gradients>`__ via the :class:`torch_geometric.explain.algorithm.CaptumExplainer` algorithm to generate a :class:`~torch_geometric.explain.HeteroExplanation`.
 
 .. note::
-    :class:`~torch_geometric.explain.algorithm.CaptumExplainer` is a wrapper around the `Captum <https://captum.ai>`__ library with support for most of attribution methods to explain *any* homogeneous or heterogeneous :pyg:`PyG` model.
+    :class:`~torch_geometric.explain.algorithm.CaptumExplainer` is a wrapper around the :captum:`null` `Captum <https://captum.ai>`__ library with support for most of attribution methods to explain *any* homogeneous or heterogeneous :pyg:`PyG` model.
 
 We configure the :class:`~torch_geometric.explain.Explainer` to use both a :obj:`node_mask_type` and an :obj:`edge_mask_type` such that the final :class:`~torch_geometric.explain.HeteroExplanation` object contains (1) a :obj:`node_mask` for *each* node type (indicating which nodes and features for each node type are crucial for prediction), and (2) an :obj:`edge_mask` for *each* edge type (indicating which edges for each edge type are crucial for prediction).
 
@@ -173,4 +173,4 @@ Importantly, passing a :obj:`node_mask_type` to the :class:`~torch_geometric.exp
     explanation = explainer(dataset[0].x, dataset[0].edge_index)
     print(explanation.edge_mask)
 
-Since this feature is still undergoing heavy development, please feel free to reach out to the :pyg:`PyG` core team either on `GitHub <https://github.com/pyg-team/pytorch_geometric/discussions>`_ or `Slack <https://data.pyg.org/slack.html>`_ if you have any questions, comments or concerns.
+Since this feature is still undergoing heavy development, please feel free to reach out to the :pyg:`PyG` core team either on :github:`null` `GitHub <https://github.com/pyg-team/pytorch_geometric/discussions>`_ or :slack:`null` `Slack <https://data.pyg.org/slack.html>`_ if you have any questions, comments or concerns.
