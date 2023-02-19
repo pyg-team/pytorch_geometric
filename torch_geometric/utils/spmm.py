@@ -64,4 +64,4 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
 
     # TODO: Support `mean` reduction for PyTorch SparseTensor
     raise ValueError(f"`{reduce}` reduction is not supported for "
-                     f"`torch.sparse.Tensor` on device {src.device}.")
+                     f"'torch.sparse.Tensor' on device '{src.device}'")
