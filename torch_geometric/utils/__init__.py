@@ -1,3 +1,5 @@
+import copy
+
 from .scatter import scatter
 from .segment import segment
 from .sort import index_sort
@@ -41,7 +43,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .tree_decomposition import tree_decomposition
-from .embedding import get_message_passing_embeddings
+from .embedding import get_embeddings
 from .train_test_split_edges import train_test_split_edges
 
 __all__ = [
@@ -114,8 +116,11 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'tree_decomposition',
-    'get_message_passing_embeddings',
+    'get_embeddings',
     'train_test_split_edges',
 ]
 
-classes = __all__
+# `structured_negative_sampling_feasible` is a long name and thus destroys the
+# documentation rendering. We remove it for now from the documentation:
+classes = copy.copy(__all__)
+classes.remove('structured_negative_sampling_feasible')
