@@ -7,7 +7,7 @@ from torch_geometric.transforms import NormalizeRotation
 
 
 def test_normalize_rotation():
-    assert NormalizeRotation().__repr__() == 'NormalizeRotation()'
+    assert str(NormalizeRotation()) == 'NormalizeRotation()'
 
     pos = torch.Tensor([[-2, -2], [-1, -1], [0, 0], [1, 1], [2, 2]])
     normal = torch.Tensor([[-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1]])

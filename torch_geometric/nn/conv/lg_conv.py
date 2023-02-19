@@ -36,7 +36,7 @@ class LGConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         if self.normalize and isinstance(edge_index, Tensor):
             out = gcn_norm(edge_index, edge_weight, x.size(self.node_dim),
                            add_self_loops=False, flow=self.flow, dtype=x.dtype)

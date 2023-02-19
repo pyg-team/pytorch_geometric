@@ -155,7 +155,7 @@ class ChebConv(MessagePassing):
         batch: OptTensor = None,
         lambda_max: OptTensor = None,
     ) -> Tensor:
-        """"""
+
         edge_index, norm = self.__norm__(
             edge_index,
             x.size(self.node_dim),

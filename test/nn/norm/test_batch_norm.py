@@ -10,7 +10,7 @@ def test_batch_norm(conf):
     x = torch.randn(100, 16)
 
     norm = BatchNorm(16, affine=conf, track_running_stats=conf)
-    assert norm.__repr__() == 'BatchNorm(16)'
+    assert str(norm) == 'BatchNorm(16)'
 
     if is_full_test():
         torch.jit.script(norm)

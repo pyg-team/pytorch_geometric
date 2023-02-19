@@ -10,8 +10,8 @@ class GitHub(InMemoryDataset):
     r"""The GitHub Web and ML Developers dataset introduced in the
     `"Multi-scale Attributed Node Embedding"
     <https://arxiv.org/abs/1909.13021>`_ paper.
-    Nodes represent developers on GitHub and edges are mutual follower
-    relationships.
+    Nodes represent developers on :obj:`github:`GitHub` and edges are mutual
+    follower relationships.
     It contains 37,300 nodes, 578,006 edges, 128 node features and 2 classes.
 
     Args:
