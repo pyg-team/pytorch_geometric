@@ -18,7 +18,8 @@ def test_dna_conv1():
     assert out.size() == (num_nodes, channels)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
         assert jit(x, edge_index).tolist() == out.tolist()
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0)
@@ -27,7 +28,8 @@ def test_dna_conv1():
     assert out.size() == (num_nodes, channels)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
         assert jit(x, edge_index).tolist() == out.tolist()
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0, cached=True)
@@ -36,7 +38,8 @@ def test_dna_conv1():
     assert out.size() == (num_nodes, channels)
 
     if is_full_test():
-        jit = torch.jit.script(conv.jittable())
+        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
         assert jit(x, edge_index).tolist() == out.tolist()
 
 
