@@ -57,7 +57,8 @@ def test_fa_conv():
 
     result = conv(x, x_0, adj2.t(), return_attention_weights=True)
     assert torch.allclose(result[0], out)
-    assert result[1].size() == torch.Size([4, 4]) and result[1]._nnz() == 10
+    assert result[1][0].size() == torch.Size([4, 4])
+    assert result[1][0]._nnz() == 10
     assert conv._alpha is None
 
     if is_full_test():

@@ -162,9 +162,13 @@ class FAConv(MessagePassing):
             assert alpha is not None
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
-                    indices, _ = to_edge_index(edge_index)
-                    return out, to_torch_coo_tensor(indices, alpha,
-                                                    size=edge_index.size(0))
+                    # TODO TorchScript requires to return a tuple
+                    adj = to_torch_coo_tensor(
+                        edge_index=to_edge_index(edge_index)[0],
+                        edge_attr=alpha,
+                        size=edge_index.size(0),
+                    )
+                    return out, (adj, alpha)
                 else:
                     return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
