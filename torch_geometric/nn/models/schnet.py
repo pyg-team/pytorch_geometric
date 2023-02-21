@@ -2,7 +2,7 @@ import os
 import os.path as osp
 import warnings
 from math import pi as PI
-from typing import Callable, Optional, Tuple, Dict
+from typing import Callable, Dict, Optional, Tuple
 
 import numpy as np
 import torch
@@ -132,15 +132,15 @@ class SchNet(torch.nn.Module):
         if interaction_graph is not None:
             self.interaction_graph = interaction_graph
         else:
-            self.interaction_graph = RadiusInteractionGraph(cutoff, max_num_neighbors)
+            self.interaction_graph = RadiusInteractionGraph(
+                cutoff, max_num_neighbors)
 
         self.distance_expansion = GaussianSmearing(0.0, cutoff, num_gaussians)
 
         self.interactions = ModuleList()
         for _ in range(num_interactions):
-            block = InteractionBlock(
-                hidden_channels, num_gaussians, num_filters, cutoff
-            )
+            block = InteractionBlock(hidden_channels, num_gaussians,
+                                     num_filters, cutoff)
             self.interactions.append(block)
 
         self.lin1 = Linear(hidden_channels, hidden_channels // 2)
@@ -230,7 +230,8 @@ class SchNet(torch.nn.Module):
 
         net.embedding.weight = state.representation.embedding.weight
 
-        for int1, int2 in zip(state.representation.interactions, net.interactions):
+        for int1, int2 in zip(state.representation.interactions,
+                              net.interactions):
             int2.mlp[0].weight = int1.filter_network[0].weight
             int2.mlp[0].bias = int1.filter_network[0].bias
             int2.mlp[2].weight = int1.filter_network[1].weight
@@ -265,7 +266,8 @@ class SchNet(torch.nn.Module):
 
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    def forward(self, z: Tensor, pos: Tensor, batch: OptTensor = None) -> Tensor:
+    def forward(self, z: Tensor, pos: Tensor,
+                batch: OptTensor = None) -> Tensor:
         r"""
         Args:
             z (torch.Tensor): Atomic number of each atom with shape
@@ -313,14 +315,12 @@ class SchNet(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}("
-            f"hidden_channels={self.hidden_channels}, "
-            f"num_filters={self.num_filters}, "
-            f"num_interactions={self.num_interactions}, "
-            f"num_gaussians={self.num_gaussians}, "
-            f"cutoff={self.cutoff})"
-        )
+        return (f"{self.__class__.__name__}("
+                f"hidden_channels={self.hidden_channels}, "
+                f"num_filters={self.num_filters}, "
+                f"num_interactions={self.num_interactions}, "
+                f"num_gaussians={self.num_gaussians}, "
+                f"cutoff={self.cutoff})")
 
 
 class RadiusInteractionGraph(torch.nn.Module):
@@ -335,8 +335,8 @@ class RadiusInteractionGraph(torch.nn.Module):
             default interaction graph method.
             (default: :obj:`32`)
     """
-
-    def __init__(self, cutoff: float = 10.0, max_num_neighbors: int = 32) -> None:
+    def __init__(self, cutoff: float = 10.0,
+                 max_num_neighbors: int = 32) -> None:
         super().__init__()
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors
@@ -350,27 +350,24 @@ class RadiusInteractionGraph(torch.nn.Module):
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        edge_index = radius_graph(
-            pos, r=self.cutoff, batch=batch, max_num_neighbors=self.max_num_neighbors
-        )
+        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
+                                  max_num_neighbors=self.max_num_neighbors)
         row, col = edge_index
         edge_weight = (pos[row] - pos[col]).norm(dim=-1)
         return edge_index, edge_weight
 
 
 class InteractionBlock(torch.nn.Module):
-    def __init__(
-        self, hidden_channels: int, num_gaussians: int, num_filters: int, cutoff: float
-    ) -> None:
+    def __init__(self, hidden_channels: int, num_gaussians: int,
+                 num_filters: int, cutoff: float) -> None:
         super().__init__()
         self.mlp = Sequential(
             Linear(num_gaussians, num_filters),
             ShiftedSoftplus(),
             Linear(num_filters, num_filters),
         )
-        self.conv = CFConv(
-            hidden_channels, hidden_channels, num_filters, self.mlp, cutoff
-        )
+        self.conv = CFConv(hidden_channels, hidden_channels, num_filters,
+                           self.mlp, cutoff)
         self.act = ShiftedSoftplus()
         self.lin = Linear(hidden_channels, hidden_channels)
 
@@ -385,9 +382,8 @@ class InteractionBlock(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.lin.weight)
         self.lin.bias.data.fill_(0)
 
-    def forward(
-        self, x: Tensor, edge_index: Tensor, edge_weight: Tensor, edge_attr: Tensor
-    ) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
+                edge_attr: Tensor) -> Tensor:
         x = self.conv(x, edge_index, edge_weight, edge_attr)
         x = self.act(x)
         x = self.lin(x)
@@ -416,9 +412,8 @@ class CFConv(MessagePassing):
         torch.nn.init.xavier_uniform_(self.lin2.weight)
         self.lin2.bias.data.fill_(0)
 
-    def forward(
-        self, x: Tensor, edge_index: Tensor, edge_weight: Tensor, edge_attr: Tensor
-    ) -> Tensor:
+    def forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
+                edge_attr: Tensor) -> Tensor:
         C = 0.5 * (torch.cos(edge_weight * PI / self.cutoff) + 1.0)
         W = self.nn(edge_attr) * C.view(-1, 1)
 
@@ -432,12 +427,11 @@ class CFConv(MessagePassing):
 
 
 class GaussianSmearing(torch.nn.Module):
-    def __init__(
-        self, start: float = 0.0, stop: float = 5.0, num_gaussians: int = 50
-    ) -> None:
+    def __init__(self, start: float = 0.0, stop: float = 5.0,
+                 num_gaussians: int = 50) -> None:
         super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
-        self.coeff = -0.5 / (offset[1] - offset[0]).item() ** 2
+        self.coeff = -0.5 / (offset[1] - offset[0]).item()**2
         self.register_buffer("offset", offset)
 
     def forward(self, dist: Tensor) -> Tensor:

@@ -7,7 +7,7 @@ from torch_geometric.testing import is_full_test, withPackage
 
 def generate_data():
     return Data(
-        z=torch.randint(1, 10, (20,)),
+        z=torch.randint(1, 10, (20, )),
         pos=torch.randn(20, 3),
     )
 
