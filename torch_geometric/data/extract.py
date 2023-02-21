@@ -7,7 +7,7 @@ import zipfile
 
 
 def maybe_log(path, log=True):
-    if log:
+    if log and 'pytest' not in sys.modules:
         print(f'Extracting {path}', file=sys.stderr)
 
 

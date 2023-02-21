@@ -77,7 +77,7 @@ def test_profileit(get_dataset):
 
 
 @withCUDA
-def test_torch_profile(get_dataset, device):
+def test_torch_profile(capfd, get_dataset, device):
     dataset = get_dataset(name='Cora')
     data = dataset[0].to(device)
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
@@ -85,6 +85,11 @@ def test_torch_profile(get_dataset, device):
 
     with torch_profile():
         model(data.x, data.edge_index)
+
+    out, _ = capfd.readouterr()
+    assert 'Self CPU time total' in out
+    if data.x.is_cuda:
+        assert 'Self CUDA time total' in out
 
     rename_profile_file('test_profile')
     assert os.path.exists('profile-test_profile.json')

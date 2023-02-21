@@ -217,7 +217,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
-        if self.log:
+        if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
         makedirs(self.processed_dir)
@@ -228,7 +228,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         path = osp.join(self.processed_dir, 'pre_filter.pt')
         torch.save(_repr(self.pre_filter), path)
 
-        if self.log:
+        if self.log and 'pytest' not in sys.modules:
             print('Done!', file=sys.stderr)
 
     def __len__(self) -> int:

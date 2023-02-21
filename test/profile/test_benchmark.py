@@ -5,7 +5,7 @@ from torch_geometric.testing import withPackage
 
 
 @withPackage('tabulate')
-def test_benchmark():
+def test_benchmark(capfd):
     def add(x, y):
         return x + y
 
@@ -16,3 +16,7 @@ def test_benchmark():
         num_warmups=1,
         backward=True,
     )
+
+    out, _ = capfd.readouterr()
+    assert '| Name   | Forward   | Backward   | Total   |' in out
+    assert '| add    |' in out
