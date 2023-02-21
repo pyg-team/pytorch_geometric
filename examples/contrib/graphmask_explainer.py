@@ -43,7 +43,7 @@ for epoch in range(1, 201):
 
 explainer = Explainer(
     model=model,
-    algorithm=GraphMaskExplainer(2, epochs=5, layer_type='GCN', log=False),
+    algorithm=GraphMaskExplainer(2, epochs=5, layer_type='GCN'),
     explanation_type='model',
     node_mask_type='attributes',
     edge_mask_type='object',
@@ -87,7 +87,7 @@ for epoch in range(1, 201):
 
 explainer = Explainer(
     model=model,
-    algorithm=GraphMaskExplainer(2, epochs=5, layer_type='GAT', log=False),
+    algorithm=GraphMaskExplainer(2, epochs=5, layer_type='GAT'),
     explanation_type='model',
     node_mask_type='attributes',
     edge_mask_type='object',
