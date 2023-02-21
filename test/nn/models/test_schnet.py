@@ -7,18 +7,26 @@ from torch_geometric.testing import is_full_test, withPackage
 
 def generate_data():
     return Data(
-        z=torch.randint(1, 10, (20, )),
+        z=torch.randint(1, 10, (20,)),
         pos=torch.randn(20, 3),
     )
 
 
-@withPackage('torch_cluster')
-@withPackage('ase')
+@withPackage("torch_cluster")
+@withPackage("ase")
 def test_schnet():
     data = generate_data()
 
-    model = SchNet(hidden_channels=16, num_filters=16, num_interactions=2,
-                   num_gaussians=10, cutoff=6.0, dipole=True)
+    model = SchNet(
+        hidden_channels=16,
+        num_filters=16,
+        num_interactions=2,
+        num_gaussians=10,
+        cutoff=6.0,
+        dipole=True,
+    )
+
+    assert str(model) == "SchNet(10, 16, 16, 2, 6.0, True)"
 
     with torch.no_grad():
         out = model(data.z, data.pos)
@@ -36,8 +44,13 @@ def test_schnet_batch():
     batch = [generate_data() for _ in range(num_graphs)]
     batch = Batch.from_data_list(batch)
 
-    model = SchNet(hidden_channels=16, num_filters=16, num_interactions=2,
-                   num_gaussians=10, cutoff=6.0)
+    model = SchNet(
+        hidden_channels=16,
+        num_filters=16,
+        num_interactions=2,
+        num_gaussians=10,
+        cutoff=6.0,
+    )
 
     with torch.no_grad():
         out = model(batch.z, batch.pos, batch.batch)
