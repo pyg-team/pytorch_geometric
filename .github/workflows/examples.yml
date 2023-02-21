@@ -1,9 +1,9 @@
 name: Examples
 
-on: # yamllint disable-line rule:truthy
+on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
   schedule:
-    - cron: "0 7 * * *" # Everyday at 7:00am UTC/11:00pm PST
+    - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11:00pm PST
 
 jobs:
   pytest:
@@ -16,11 +16,6 @@ jobs:
 
       - name: Setup packages
         uses: ./.github/actions/setup
-        with:
-          cache: "pip"
-          cache-dependency-path: |
-            setup.py
-            **/requirements*.txt
 
       - name: Install main package
         run: |

@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ['3.7', '3.8', '3.9', '3.10']
 
     steps:
       - name: Checkout repository
@@ -22,12 +22,6 @@ jobs:
 
       - name: Setup packages
         uses: ./.github/actions/setup
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "pip"
-          cache-dependency-path: |
-            setup.py
-            **/requirements*.txt
 
       - name: Install graphviz
         if: ${{ runner.os == 'Linux' }}

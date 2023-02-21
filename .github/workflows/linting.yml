@@ -1,12 +1,13 @@
 name: Linting
 
-on: # yamllint disable-line rule:truthy
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
   pull_request:
 
 jobs:
+
   pyright:
     runs-on: ubuntu-latest
 
@@ -16,12 +17,6 @@ jobs:
 
       - name: Setup packages
         uses: ./.github/actions/setup
-        with:
-          python-version: 3.7
-          cache: "pip"
-          cache-dependency-path: |
-            setup.py
-            **/requirements*.txt
 
       - name: Install pyright
         run: |
@@ -45,10 +40,9 @@ jobs:
         with:
           python-version: 3.7
           check-latest: true
-          cache: "pip"
+          cache: pip
           cache-dependency-path: |
             setup.py
-            **/requirements*.txt
 
       - run: echo '${{ steps.py37.outputs.cache-hit }}'
 
@@ -72,10 +66,9 @@ jobs:
         with:
           python-version: 3.7
           check-latest: true
-          cache: "pip"
+          cache: pip
           cache-dependency-path: |
             setup.py
-            **/requirements*.txt
 
       - run: echo '${{ steps.py37.outputs.cache-hit }}'
 

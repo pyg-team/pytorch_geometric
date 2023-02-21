@@ -1,9 +1,9 @@
 name: Nightly Build
 
-on: # yamllint disable-line rule:truthy
+on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
   schedule:
-    - cron: "0 6 * * *" # Everyday at 6:00am UTC/10:00pm PST
+    - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
 
 jobs:
   sdist:
@@ -23,9 +23,6 @@ jobs:
           cache: "pip"
           cache-dependency-path: |
             setup.py
-            **/requirements*.txt
-
-      - run: echo '${{ steps.py37.outputs.cache-hit }}'
 
       - name: Set version
         run: echo "VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" torch_geometric/__init__.py)" >> ${GITHUB_ENV}

@@ -1,12 +1,13 @@
 name: Documentation
 
-on: # yamllint disable-line rule:truthy
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
   pull_request:
 
 jobs:
+
   make_html:
     runs-on: ubuntu-latest
 
@@ -34,10 +35,9 @@ jobs:
         uses: ./.github/actions/setup
         with:
           python-version: 3.8
-          cache: "pip"
+          cache: pip
           cache-dependency-path: |
             setup.py
-            **/requirements*.txt
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
