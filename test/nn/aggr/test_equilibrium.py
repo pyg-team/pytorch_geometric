@@ -14,7 +14,7 @@ def test_equilibrium(iter, alpha):
     model = EquilibriumAggregation(feature_channels, output_channels,
                                    num_layers=[10, 10], grad_iter=iter)
 
-    assert model.__repr__() == 'EquilibriumAggregation()'
+    assert str(model) == 'EquilibriumAggregation()'
     out = model(x)
     assert out.size() == (1, 2)
 
@@ -39,7 +39,7 @@ def test_equilibrium_batch(iter, alpha):
     model = EquilibriumAggregation(feature_channels, output_channels,
                                    num_layers=[10, 10], grad_iter=iter)
 
-    assert model.__repr__() == 'EquilibriumAggregation()'
+    assert str(model) == 'EquilibriumAggregation()'
     out = model(x, batch)
     assert out.size() == (2, 2)
 

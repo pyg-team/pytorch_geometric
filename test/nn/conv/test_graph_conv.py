@@ -17,7 +17,7 @@ def test_graph_conv():
     adj4 = adj2.to_torch_sparse_coo_tensor()
 
     conv = GraphConv(8, 32)
-    assert conv.__repr__() == 'GraphConv(8, 32)'
+    assert str(conv) == 'GraphConv(8, 32)'
     out11 = conv(x1, edge_index)
     assert out11.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out11, atol=1e-6)
@@ -50,7 +50,7 @@ def test_graph_conv():
     adj3 = adj1.to_torch_sparse_coo_tensor()
     adj4 = adj2.to_torch_sparse_coo_tensor()
     conv = GraphConv((8, 16), 32)
-    assert conv.__repr__() == 'GraphConv((8, 16), 32)'
+    assert str(conv) == 'GraphConv((8, 16), 32)'
     out21 = conv((x1, x2), edge_index)
     out22 = conv((x1, x2), edge_index, value)
     out23 = conv((x1, None), edge_index, size=(4, 2))

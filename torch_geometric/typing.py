@@ -5,6 +5,8 @@ import numpy as np
 import torch
 from torch import Tensor
 
+WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
+
 try:
     import pyg_lib  # noqa
     WITH_PYG_LIB = True

@@ -14,7 +14,7 @@ def test_transformer_conv():
     adj2 = adj1.to_torch_sparse_coo_tensor()
 
     conv = TransformerConv(8, 32, heads=2, beta=True)
-    assert conv.__repr__() == 'TransformerConv(8, 32, heads=2)'
+    assert str(conv) == 'TransformerConv(8, 32, heads=2)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 64)
     assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
@@ -64,7 +64,7 @@ def test_transformer_conv():
     adj1 = adj1.sparse_resize((4, 2))
     adj2 = adj1.to_torch_sparse_coo_tensor()
     conv = TransformerConv((8, 16), 32, heads=2, beta=True)
-    assert conv.__repr__() == 'TransformerConv((8, 16), 32, heads=2)'
+    assert str(conv) == 'TransformerConv((8, 16), 32, heads=2)'
 
     out = conv((x1, x2), edge_index)
     assert out.size() == (2, 64)

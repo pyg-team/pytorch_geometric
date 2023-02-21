@@ -68,7 +68,7 @@ class LEConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x = (x, x)
 

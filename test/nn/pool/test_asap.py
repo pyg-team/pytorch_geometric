@@ -17,7 +17,7 @@ def test_asap():
     for GNN in [GraphConv, GCNConv]:
         pool = ASAPooling(in_channels, ratio=0.5, GNN=GNN,
                           add_self_loops=False)
-        assert pool.__repr__() == ('ASAPooling(16, ratio=0.5)')
+        assert str(pool) == ('ASAPooling(16, ratio=0.5)')
         out = pool(x, edge_index)
         assert out[0].size() == (num_nodes // 2, in_channels)
         assert out[1].size() == (2, 2)
@@ -26,13 +26,13 @@ def test_asap():
             torch.jit.script(pool.jittable())
 
         pool = ASAPooling(in_channels, ratio=0.5, GNN=GNN, add_self_loops=True)
-        assert pool.__repr__() == ('ASAPooling(16, ratio=0.5)')
+        assert str(pool) == ('ASAPooling(16, ratio=0.5)')
         out = pool(x, edge_index)
         assert out[0].size() == (num_nodes // 2, in_channels)
         assert out[1].size() == (2, 4)
 
         pool = ASAPooling(in_channels, ratio=2, GNN=GNN, add_self_loops=False)
-        assert pool.__repr__() == ('ASAPooling(16, ratio=2)')
+        assert str(pool) == ('ASAPooling(16, ratio=2)')
         out = pool(x, edge_index)
         assert out[0].size() == (2, in_channels)
         assert out[1].size() == (2, 2)

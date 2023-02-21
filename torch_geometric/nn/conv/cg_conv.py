@@ -80,7 +80,7 @@ class CGConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 

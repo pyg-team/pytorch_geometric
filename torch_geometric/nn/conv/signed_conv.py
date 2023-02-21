@@ -95,7 +95,6 @@ class SignedConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], pos_edge_index: Adj,
                 neg_edge_index: Adj):
-        """"""
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)

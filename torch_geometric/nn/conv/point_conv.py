@@ -81,7 +81,7 @@ class PointNetConv(MessagePassing):
 
     def forward(self, x: Union[OptTensor, PairOptTensor],
                 pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """"""
+
         if not isinstance(x, tuple):
             x: PairOptTensor = (x, None)
 

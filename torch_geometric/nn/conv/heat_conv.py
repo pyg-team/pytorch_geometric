@@ -100,7 +100,7 @@ class HEATConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj, node_type: Tensor,
                 edge_type: Tensor, edge_attr: OptTensor = None) -> Tensor:
-        """"""
+
         x = self.hetero_lin(x, node_type)
 
         edge_type_emb = F.leaky_relu(self.edge_type_emb(edge_type),

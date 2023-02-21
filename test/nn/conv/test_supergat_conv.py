@@ -12,7 +12,7 @@ def test_supergat_conv(att_type):
 
     conv = SuperGATConv(8, 32, heads=2, attention_type=att_type,
                         neg_sample_ratio=1.0, edge_sample_ratio=1.0)
-    assert conv.__repr__() == f'SuperGATConv(8, 32, heads=2, type={att_type})'
+    assert str(conv) == f'SuperGATConv(8, 32, heads=2, type={att_type})'
 
     out = conv(x, edge_index)
     assert out.size() == (4, 64)

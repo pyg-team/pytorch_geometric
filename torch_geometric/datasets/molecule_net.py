@@ -15,7 +15,8 @@ class MoleculeNet(InMemoryDataset):
     Learning" <https://arxiv.org/abs/1703.00564>`_ paper, containing datasets
     from physical chemistry, biophysics and physiology.
     All datasets come with the additional node and edge features introduced by
-    the `Open Graph Benchmark <https://ogb.stanford.edu/docs/graphprop/>`_.
+    the :ogb:`null`
+    `Open Graph Benchmark <https://ogb.stanford.edu/docs/graphprop/>`_.
 
     Args:
         root (str): Root directory where the dataset should be saved.

@@ -7,7 +7,7 @@ from torch_geometric.testing import is_full_test
 def test_graph_unet():
     model = GraphUNet(16, 32, 8, depth=3)
     out = 'GraphUNet(16, 32, 8, depth=3, pool_ratios=[0.5, 0.5, 0.5])'
-    assert model.__repr__() == out
+    assert str(model) == out
 
     x = torch.randn(3, 16)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])

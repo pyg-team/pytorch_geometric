@@ -152,7 +152,8 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
         csc: Tuple[Tensor, Tensor],
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             x (torch.Tensor): The node features.
             csc ((torch.Tensor, torch.Tensor)): A tuple containing the CSC

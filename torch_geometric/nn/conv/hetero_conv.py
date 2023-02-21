@@ -69,6 +69,7 @@ class HeteroConv(torch.nn.Module):
         self.aggr = aggr
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for conv in self.convs.values():
             conv.reset_parameters()
 
@@ -79,13 +80,16 @@ class HeteroConv(torch.nn.Module):
         *args_dict,
         **kwargs_dict,
     ) -> Dict[NodeType, Tensor]:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
-            x_dict (Dict[str, Tensor]): A dictionary holding node feature
+            x_dict (Dict[str, torch.Tensor]): A dictionary holding node feature
                 information for each individual node type.
-            edge_index_dict (Dict[Tuple[str, str, str], Tensor]): A dictionary
-                holding graph connectivity information for each individual
-                edge type.
+            edge_index_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
+                dictionary holding graph connectivity information for each
+                individual edge type, either as a :class:`torch.Tensor` of
+                shape :obj:`[2, num_edges]` or a
+                :class:`torch_sparse.SparseTensor`.
             *args_dict (optional): Additional forward arguments of invididual
                 :class:`torch_geometric.nn.conv.MessagePassing` layers.
             **kwargs_dict (optional): Additional forward arguments of
