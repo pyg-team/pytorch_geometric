@@ -79,8 +79,15 @@ class KGEModel(torch.nn.Module):
         return KGTripletLoader(head_index, rel_type, tail_index, **kwargs)
 
     @torch.no_grad()
-    def test(self, head_index: Tensor, rel_type: Tensor, tail_index: Tensor,
-             batch_size: int, k: int = 10) -> Tuple[float, float]:
+    def test(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+        batch_size: int,
+        k: int = 10,
+        log: bool = True,
+    ) -> Tuple[float, float]:
         r"""Evaluates the model quality by computing Mean Rank and
         Hits @ :math:`k` across all possible tail entities.
 
@@ -91,9 +98,14 @@ class KGEModel(torch.nn.Module):
             batch_size (int): The batch size to use for evaluating.
             k (int, optional): The :math:`k` in Hits @ :math:`k`.
                 (default: :obj:`10`)
+            log (bool, optional): If set to :obj:`False`, will not print a
+                progress bar to the console. (default: :obj:`True`)
         """
+        arange = range(head_index.numel())
+        arange = tqdm(arange) if log else arange
+
         mean_ranks, hits_at_k = [], []
-        for i in tqdm(range(head_index.numel())):
+        for i in arange:
             h, r, t = head_index[i], rel_type[i], tail_index[i]
 
             scores = []
