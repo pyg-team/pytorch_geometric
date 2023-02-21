@@ -6,6 +6,7 @@ from .dense_gin_conv import DenseGINConv
 from .diff_pool import dense_diff_pool
 from .mincut_pool import dense_mincut_pool
 from .dmon_pool import DMoNPooling
+from .hoscpool import dense_hoscpool
 
 __all__ = [
     'Linear',
@@ -17,6 +18,7 @@ __all__ = [
     'dense_diff_pool',
     'dense_mincut_pool',
     'DMoNPooling',
+    'dense_hoscpool',
 ]
 
 lin_classes = __all__[:2]
