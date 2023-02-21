@@ -6,6 +6,7 @@ on:  # yamllint disable-line rule:truthy
     - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
 
 jobs:
+
   pytest:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ${{ matrix.os }}
