@@ -42,7 +42,7 @@ class CorrectAndSmooth(torch.nn.Module):
     .. math::
         \mathbf{\hat{Z}}^{(\ell)} = \alpha_2 \mathbf{D}^{-1/2}\mathbf{A}
         \mathbf{D}^{-1/2} \mathbf{\hat{Z}}^{(\ell - 1)} +
-        (1 - \alpha_1) \mathbf{\hat{Z}}^{(\ell - 1)}
+        (1 - \alpha_2) \mathbf{\hat{Z}}^{(\ell - 1)}
 
     to obtain the final prediction :math:`\mathbf{\hat{Z}}^{(L_2)}`.
 
@@ -73,18 +73,23 @@ class CorrectAndSmooth(torch.nn.Module):
         self.prop1 = LabelPropagation(num_correction_layers, correction_alpha)
         self.prop2 = LabelPropagation(num_smoothing_layers, smoothing_alpha)
 
+    def forward(self, y_soft: Tensor, *args) -> Tensor:  # pragma: no cover
+        r"""Applies both :meth:`correct` and :meth:`smooth`."""
+        y_soft = self.correct(y_soft, *args)
+        return self.smooth(y_soft, *args)
+
     def correct(self, y_soft: Tensor, y_true: Tensor, mask: Tensor,
                 edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
         r"""
         Args:
-            y_soft (Tensor): The soft predictions :math:`\mathbf{Z}` obtained
-                from a simple base predictor.
-            y_true (Tensor): The ground-truth label information
+            y_soft (torch.Tensor): The soft predictions :math:`\mathbf{Z}`
+                obtained from a simple base predictor.
+            y_true (torch.Tensor): The ground-truth label information
                 :math:`\mathbf{Y}` of training nodes.
-            mask (LongTensor or BoolTensor): A mask or index tensor denoting
-                which nodes were used for training.
-            edge_index (Tensor or SparseTensor): The edge connectivity.
-            edge_weight (Tensor, optional): The edge weights.
+            mask (torch.Tensor): A mask or index tensor denoting which nodes
+                were used for training.
+            edge_index (torch.Tensor or SparseTensor): The edge connectivity.
+            edge_weight (torch.Tensor, optional): The edge weights.
                 (default: :obj:`None`)
         """
 
@@ -120,7 +125,18 @@ class CorrectAndSmooth(torch.nn.Module):
 
     def smooth(self, y_soft: Tensor, y_true: Tensor, mask: Tensor,
                edge_index: Adj, edge_weight: OptTensor = None) -> Tensor:
-
+        r"""
+        Args:
+            y_soft (torch.Tensor): The corrected predictions :math:`\mathbf{Z}`
+                obtained from :meth:`correct`.
+            y_true (torch.Tensor): The ground-truth label information
+                :math:`\mathbf{Y}` of training nodes.
+            mask (torch.Tensor): A mask or index tensor denoting which nodes
+                were used for training.
+            edge_index (torch.Tensor or SparseTensor): The edge connectivity.
+            edge_weight (torch.Tensor, optional): The edge weights.
+                (default: :obj:`None`)
+        """
         numel = int(mask.sum()) if mask.dtype == torch.bool else mask.size(0)
         assert y_true.size(0) == numel
 
@@ -128,6 +144,7 @@ class CorrectAndSmooth(torch.nn.Module):
             y_true = F.one_hot(y_true.view(-1), y_soft.size(-1))
             y_true = y_true.to(y_soft.dtype)
 
+        y_soft = y_soft.clone()
         y_soft[mask] = y_true
 
         return self.prop2(y_soft, edge_index, edge_weight=edge_weight)
@@ -136,7 +153,7 @@ class CorrectAndSmooth(torch.nn.Module):
         L1, alpha1 = self.prop1.num_layers, self.prop1.alpha
         L2, alpha2 = self.prop2.num_layers, self.prop2.alpha
         return (f'{self.__class__.__name__}(\n'
-                f'    correct: num_layers={L1}, alpha={alpha1}\n'
-                f'    smooth:  num_layers={L2}, alpha={alpha2}\n'
-                f'    autoscale={self.autoscale}, scale={self.scale}\n'
+                f'  correct: num_layers={L1}, alpha={alpha1}\n'
+                f'  smooth:  num_layers={L2}, alpha={alpha2}\n'
+                f'  autoscale={self.autoscale}, scale={self.scale}\n'
                 ')')

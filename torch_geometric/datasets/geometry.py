@@ -24,7 +24,7 @@ class GeometricShapes(InMemoryDataset):
         face area.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         train (bool, optional): If :obj:`True`, loads the training dataset,
             otherwise the test dataset. (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
@@ -39,6 +39,23 @@ class GeometricShapes(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 80
+          - ~148.8
+          - ~859.5
+          - 3
+          - 40
     """
 
     url = 'https://github.com/Yannick-S/geometric_shapes/raw/master/raw.zip'

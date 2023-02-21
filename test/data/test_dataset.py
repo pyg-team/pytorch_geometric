@@ -1,7 +1,8 @@
+import pytest
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
+from torch_geometric.data import Data, HeteroData, InMemoryDataset
 
 
 class MyTestDataset(InMemoryDataset):
@@ -41,6 +42,68 @@ def test_in_memory_dataset():
     assert dataset[1].face.tolist() == face.tolist()
     assert dataset[1].test_int == 2
     assert dataset[1].test_str == '2'
+
+    with pytest.warns(UserWarning, match="internal storage format"):
+        dataset.data
+
+    assert torch.equal(dataset.x, torch.cat([x1, x2], dim=0))
+    assert dataset.edge_index.tolist() == [
+        [0, 1, 1, 2, 10, 11, 11, 12],
+        [1, 0, 2, 1, 11, 10, 12, 11],
+    ]
+    assert torch.equal(dataset[1:].x, x2)
+
+
+def test_in_memory_num_classes():
+    dataset = MyTestDataset([Data(), Data()])
+    assert dataset.num_classes == 0
+
+    dataset = MyTestDataset([Data(y=0), Data(y=1)])
+    assert dataset.num_classes == 2
+
+    dataset = MyTestDataset([Data(y=1.5), Data(y=2.5), Data(y=3.5)])
+    assert dataset.num_classes == 3
+
+    dataset = MyTestDataset([
+        Data(y=torch.tensor([[0, 1, 0, 1]])),
+        Data(y=torch.tensor([[1, 0, 0, 0]])),
+        Data(y=torch.tensor([[0, 0, 1, 0]])),
+    ])
+    assert dataset.num_classes == 4
+
+
+def test_in_memory_dataset_copy():
+    data_list = [Data(x=torch.randn(5, 16)) for _ in range(4)]
+    dataset = MyTestDataset(data_list)
+
+    copied_dataset = dataset.copy()
+    assert id(copied_dataset) != id(dataset)
+
+    assert len(copied_dataset) == len(dataset) == 4
+    for copied_data, data in zip(copied_dataset, dataset):
+        assert torch.equal(copied_data.x, data.x)
+
+    copied_dataset = dataset.copy([1, 2])
+    assert len(copied_dataset) == 2
+    assert torch.equal(copied_dataset[0].x, data_list[1].x)
+    assert torch.equal(copied_dataset[1].x, data_list[2].x)
+
+
+def test_to_datapipe():
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    data = Data(x=x, edge_index=edge_index)
+    dataset = MyTestDataset([data, data])
+
+    dp = dataset.to_datapipe()
+
+    assert isinstance(dp, torch.utils.data.IterDataPipe)
+    assert len(dp) == 2
+
+    assert torch.equal(dataset[0].x, list(dp)[0].x)
+    assert torch.equal(dataset[0].edge_index, list(dp)[0].edge_index)
+    assert torch.equal(dataset[1].x, list(dp)[1].x)
+    assert torch.equal(dataset[1].edge_index, list(dp)[1].edge_index)
 
 
 def test_in_memory_sparse_tensor_dataset():
@@ -119,8 +182,8 @@ def test_hetero_in_memory_dataset():
         'paper', 'paper'].edge_index.tolist())
 
 
-def test_override_behaviour():
-    class DS(Dataset):
+def test_override_behavior():
+    class DS1(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -138,7 +201,7 @@ def test_override_behaviour():
         def process(self):
             pass
 
-    class DS2(Dataset):
+    class DS2(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -153,7 +216,7 @@ def test_override_behaviour():
         def process(self):
             pass
 
-    class DS3(Dataset):
+    class DS3(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -165,7 +228,10 @@ def test_override_behaviour():
         def _process(self):
             self.enter_process = True
 
-    ds = DS()
+    class DS4(DS1):
+        pass
+
+    ds = DS1()
     assert ds.enter_download
     assert ds.enter_process
 
@@ -176,6 +242,10 @@ def test_override_behaviour():
     ds = DS3()
     assert not ds.enter_download
     assert not ds.enter_process
+
+    ds = DS4()
+    assert ds.enter_download
+    assert ds.enter_process
 
 
 def test_lists_of_tensors_in_memory_dataset():

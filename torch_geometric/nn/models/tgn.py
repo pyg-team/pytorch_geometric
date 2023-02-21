@@ -1,12 +1,14 @@
 import copy
-from typing import Callable, Tuple
+from typing import Callable, Dict, Tuple
 
 import torch
 from torch import Tensor
 from torch.nn import GRUCell, Linear
-from torch_scatter import scatter, scatter_max
 
 from torch_geometric.nn.inits import zeros
+from torch_geometric.utils import scatter
+
+TGNMessageStoreType = Dict[int, Tuple[Tensor, Tensor, Tensor, Tensor]]
 
 
 class TGNMemory(torch.nn.Module):
@@ -60,6 +62,7 @@ class TGNMemory(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         if hasattr(self.msg_s_module, 'reset_parameters'):
             self.msg_s_module.reset_parameters()
         if hasattr(self.msg_d_module, 'reset_parameters'):
@@ -77,7 +80,7 @@ class TGNMemory(torch.nn.Module):
         self.__reset_message_store__()
 
     def detach(self):
-        """Detachs the memory from gradient computation."""
+        """Detaches the memory from gradient computation."""
         self.memory.detach_()
 
     def forward(self, n_id: Tensor) -> Tuple[Tensor, Tensor]:
@@ -90,7 +93,8 @@ class TGNMemory(torch.nn.Module):
 
         return memory, last_update
 
-    def update_state(self, src, dst, t, raw_msg):
+    def update_state(self, src: Tensor, dst: Tensor, t: Tensor,
+                     raw_msg: Tensor):
         """Updates the memory with newly encountered interactions
         :obj:`(src, dst, t, raw_msg)`."""
         n_id = torch.cat([src, dst]).unique()
@@ -111,12 +115,12 @@ class TGNMemory(torch.nn.Module):
         self.msg_s_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
         self.msg_d_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
 
-    def __update_memory__(self, n_id):
+    def __update_memory__(self, n_id: Tensor):
         memory, last_update = self.__get_updated_memory__(n_id)
         self.memory[n_id] = memory
         self.last_update[n_id] = last_update
 
-    def __get_updated_memory__(self, n_id):
+    def __get_updated_memory__(self, n_id: Tensor) -> Tuple[Tensor, Tensor]:
         self.__assoc__[n_id] = torch.arange(n_id.size(0), device=n_id.device)
 
         # Compute messages (src -> dst).
@@ -138,17 +142,19 @@ class TGNMemory(torch.nn.Module):
 
         # Get local copy of updated `last_update`.
         dim_size = self.last_update.size(0)
-        last_update = scatter_max(t, idx, dim=0, dim_size=dim_size)[0][n_id]
+        last_update = scatter(t, idx, 0, dim_size, reduce='max')[n_id]
 
         return memory, last_update
 
-    def __update_msg_store__(self, src, dst, t, raw_msg, msg_store):
+    def __update_msg_store__(self, src: Tensor, dst: Tensor, t: Tensor,
+                             raw_msg: Tensor, msg_store: TGNMessageStoreType):
         n_id, perm = src.sort()
         n_id, count = n_id.unique_consecutive(return_counts=True)
         for i, idx in zip(n_id.tolist(), perm.split(count.tolist())):
             msg_store[i] = (src[idx], dst[idx], t[idx], raw_msg[idx])
 
-    def __compute_msg__(self, n_id, msg_store, msg_module):
+    def __compute_msg__(self, n_id: Tensor, msg_store: TGNMessageStoreType,
+                        msg_module: Callable):
         data = [msg_store[i] for i in n_id.tolist()]
         src, dst, t, raw_msg = list(zip(*data))
         src = torch.cat(src, dim=0)
@@ -177,12 +183,14 @@ class IdentityMessage(torch.nn.Module):
         super().__init__()
         self.out_channels = raw_msg_dim + 2 * memory_dim + time_dim
 
-    def forward(self, z_src, z_dst, raw_msg, t_enc):
+    def forward(self, z_src: Tensor, z_dst: Tensor, raw_msg: Tensor,
+                t_enc: Tensor):
         return torch.cat([z_src, z_dst, raw_msg, t_enc], dim=-1)
 
 
 class LastAggregator(torch.nn.Module):
-    def forward(self, msg, index, t, dim_size):
+    def forward(self, msg: Tensor, index: Tensor, t: Tensor, dim_size: int):
+        from torch_scatter import scatter_max
         _, argmax = scatter_max(t, index, dim=0, dim_size=dim_size)
         out = msg.new_zeros((dim_size, msg.size(-1)))
         mask = argmax < msg.size(0)  # Filter items with at least one entry.
@@ -191,12 +199,12 @@ class LastAggregator(torch.nn.Module):
 
 
 class MeanAggregator(torch.nn.Module):
-    def forward(self, msg, index, t, dim_size):
+    def forward(self, msg: Tensor, index: Tensor, t: Tensor, dim_size: int):
         return scatter(msg, index, dim=0, dim_size=dim_size, reduce='mean')
 
 
 class TimeEncoder(torch.nn.Module):
-    def __init__(self, out_channels):
+    def __init__(self, out_channels: int):
         super().__init__()
         self.out_channels = out_channels
         self.lin = Linear(1, out_channels)
@@ -204,7 +212,7 @@ class TimeEncoder(torch.nn.Module):
     def reset_parameters(self):
         self.lin.reset_parameters()
 
-    def forward(self, t):
+    def forward(self, t: Tensor) -> Tensor:
         return self.lin(t.view(-1, 1)).cos()
 
 
@@ -221,7 +229,7 @@ class LastNeighborLoader(object):
 
         self.reset_state()
 
-    def __call__(self, n_id):
+    def __call__(self, n_id: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
         neighbors = self.neighbors[n_id]
         nodes = n_id.view(-1, 1).repeat(1, self.size)
         e_id = self.e_id[n_id]
@@ -237,8 +245,8 @@ class LastNeighborLoader(object):
 
         return n_id, torch.stack([neighbors, nodes]), e_id
 
-    def insert(self, src, dst):
-        # Inserts newly encountered interactions into an ever growing
+    def insert(self, src: Tensor, dst: Tensor):
+        # Inserts newly encountered interactions into an ever-growing
         # (undirected) temporal graph.
 
         # Collect central nodes, their neighbors and the current event ids.

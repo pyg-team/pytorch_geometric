@@ -3,6 +3,7 @@ import os.path as osp
 import re
 import sys
 import warnings
+from abc import ABC, abstractmethod
 from collections.abc import Sequence
 from typing import Any, Callable, List, Optional, Tuple, Union
 
@@ -16,14 +17,14 @@ from torch_geometric.data.makedirs import makedirs
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
 
-class Dataset(torch.utils.data.Dataset):
+class Dataset(torch.utils.data.Dataset, ABC):
     r"""Dataset base class for creating graph datasets.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html>`__ for the accompanying tutorial.
 
     Args:
-        root (string, optional): Root directory where the dataset should be
-            saved. (optional: :obj:`None`)
+        root (str, optional): Root directory where the dataset should be saved.
+            (optional: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -36,6 +37,8 @@ class Dataset(torch.utils.data.Dataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        log (bool, optional): Whether to print any console output while
+            downloading and processing the dataset. (default: :obj:`True`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -57,18 +60,24 @@ class Dataset(torch.utils.data.Dataset):
         r"""Processes the dataset to the :obj:`self.processed_dir` folder."""
         raise NotImplementedError
 
+    @abstractmethod
     def len(self) -> int:
         r"""Returns the number of graphs stored in the dataset."""
         raise NotImplementedError
 
+    @abstractmethod
     def get(self, idx: int) -> Data:
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
-    def __init__(self, root: Optional[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        log: bool = True,
+    ):
         super().__init__()
 
         if isinstance(root, str):
@@ -78,12 +87,13 @@ class Dataset(torch.utils.data.Dataset):
         self.transform = transform
         self.pre_transform = pre_transform
         self.pre_filter = pre_filter
+        self.log = log
         self._indices: Optional[Sequence] = None
 
-        if self.download.__qualname__.split('.')[0] != 'Dataset':
+        if self.has_download:
             self._download()
 
-        if self.process.__qualname__.split('.')[0] != 'Dataset':
+        if self.has_process:
             self._process()
 
     def indices(self) -> Sequence:
@@ -170,12 +180,22 @@ class Dataset(torch.utils.data.Dataset):
             files = files()
         return [osp.join(self.processed_dir, f) for f in to_list(files)]
 
+    @property
+    def has_download(self) -> bool:
+        r"""Checks whether the dataset defines a :meth:`download` method."""
+        return overrides_method(self.__class__, 'download')
+
     def _download(self):
         if files_exist(self.raw_paths):  # pragma: no cover
             return
 
         makedirs(self.raw_dir)
         self.download()
+
+    @property
+    def has_process(self) -> bool:
+        r"""Checks whether the dataset defines a :meth:`process` method."""
+        return overrides_method(self.__class__, 'process')
 
     def _process(self):
         f = osp.join(self.processed_dir, 'pre_transform.pt')
@@ -197,7 +217,8 @@ class Dataset(torch.utils.data.Dataset):
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
-        print('Processing...', file=sys.stderr)
+        if self.log and 'pytest' not in sys.modules:
+            print('Processing...', file=sys.stderr)
 
         makedirs(self.processed_dir)
         self.process()
@@ -207,7 +228,8 @@ class Dataset(torch.utils.data.Dataset):
         path = osp.join(self.processed_dir, 'pre_filter.pt')
         torch.save(_repr(self.pre_filter), path)
 
-        print('Done!', file=sys.stderr)
+        if self.log and 'pytest' not in sys.modules:
+            print('Done!', file=sys.stderr)
 
     def __len__(self) -> int:
         r"""The number of examples in the dataset."""
@@ -254,7 +276,7 @@ class Dataset(torch.utils.data.Dataset):
         elif isinstance(idx, np.ndarray) and idx.dtype == np.int64:
             return self.index_select(idx.flatten().tolist())
 
-        elif isinstance(idx, np.ndarray) and idx.dtype == np.bool:
+        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
             idx = idx.flatten().nonzero()[0]
             return self.index_select(idx.flatten().tolist())
 
@@ -290,6 +312,52 @@ class Dataset(torch.utils.data.Dataset):
         arg_repr = str(len(self)) if len(self) > 1 else ''
         return f'{self.__class__.__name__}({arg_repr})'
 
+    def get_summary(self):
+        r"""Collects summary statistics for the dataset."""
+        from torch_geometric.data.summary import Summary
+        return Summary.from_dataset(self)
+
+    def print_summary(self):  # pragma: no cover
+        r"""Prints summary statistics of the dataset to the console."""
+        print(str(self.get_summary()))
+
+    def to_datapipe(self):
+        r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
+
+        The returned instance can then be used with :pyg:`PyG's` built-in
+        :class:`DataPipes` for baching graphs as follows:
+
+        .. code-block:: python
+
+            from torch_geometric.datasets import QM9
+
+            dp = QM9(root='./data/QM9/').to_datapipe()
+            dp = dp.batch_graphs(batch_size=2, drop_last=True)
+
+            for batch in dp:
+                pass
+
+        See the `PyTorch tutorial
+        <https://pytorch.org/data/main/tutorial.html>`_ for further background
+        on DataPipes.
+        """
+        from torch_geometric.data.datapipes import DatasetAdapter
+
+        return DatasetAdapter(self)
+
+
+def overrides_method(cls, method_name: str):
+    from torch_geometric.data import InMemoryDataset
+
+    if method_name in cls.__dict__:
+        return True
+
+    out = False
+    for base in cls.__bases__:
+        if base != Dataset and base != InMemoryDataset:
+            out |= overrides_method(base, method_name)
+    return out
+
 
 def to_list(value: Any) -> Sequence:
     if isinstance(value, Sequence) and not isinstance(value, str):
@@ -307,4 +375,4 @@ def files_exist(files: List[str]) -> bool:
 def _repr(obj: Any) -> str:
     if obj is None:
         return 'None'
-    return re.sub('(<.*?)\\s.*(>)', r'\1\2', obj.__repr__())
+    return re.sub('(<.*?)\\s.*(>)', r'\1\2', str(obj))

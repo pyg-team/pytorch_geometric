@@ -1,10 +1,9 @@
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.modules.instancenorm import _InstanceNorm
-from torch_scatter import scatter
 
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import degree
+from torch_geometric.utils import degree, scatter
 
 
 class InstanceNorm(_InstanceNorm):
@@ -36,13 +35,29 @@ class InstanceNorm(_InstanceNorm):
             uses instance statistics in both training and eval modes.
             (default: :obj:`False`)
     """
-    def __init__(self, in_channels, eps=1e-5, momentum=0.1, affine=False,
-                 track_running_stats=False):
+    def __init__(
+        self,
+        in_channels: int,
+        eps: float = 1e-5,
+        momentum: float = 0.1,
+        affine: bool = False,
+        track_running_stats: bool = False,
+    ):
         super().__init__(in_channels, eps, momentum, affine,
                          track_running_stats)
 
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
+        super().reset_parameters()
+
     def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example. (default: :obj:`None`)
+        """
         if batch is None:
             out = F.instance_norm(
                 x.t().unsqueeze(0), self.running_mean, self.running_var,
@@ -60,12 +75,12 @@ class InstanceNorm(_InstanceNorm):
             unbiased_norm = (norm - 1).clamp_(min=1)
 
             mean = scatter(x, batch, dim=0, dim_size=batch_size,
-                           reduce='add') / norm
+                           reduce='sum') / norm
 
             x = x - mean.index_select(0, batch)
 
             var = scatter(x * x, batch, dim=0, dim_size=batch_size,
-                          reduce='add')
+                          reduce='sum')
             unbiased_var = var / unbiased_norm
             var = var / norm
 
@@ -92,5 +107,5 @@ class InstanceNorm(_InstanceNorm):
 
         return out
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.num_features})'

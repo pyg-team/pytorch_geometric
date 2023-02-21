@@ -1,12 +1,12 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch.nn.functional as F
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
+from torch_geometric.utils import spmm
 
 
 class APPNP(MessagePassing):
@@ -54,7 +54,7 @@ class APPNP(MessagePassing):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
-    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
+    _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, K: int, alpha: float, dropout: float = 0.,
@@ -73,12 +73,13 @@ class APPNP(MessagePassing):
         self._cached_adj_t = None
 
     def reset_parameters(self):
+        super().reset_parameters()
         self._cached_edge_index = None
         self._cached_adj_t = None
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         if self.normalize:
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
@@ -118,7 +119,7 @@ class APPNP(MessagePassing):
             x = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                                size=None)
             x = x * (1 - self.alpha)
-            x += self.alpha * h
+            x = x + self.alpha * h
 
         return x
 
@@ -126,7 +127,7 @@ class APPNP(MessagePassing):
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(K={self.K}, alpha={self.alpha})'

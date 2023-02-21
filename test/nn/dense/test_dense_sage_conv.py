@@ -1,13 +1,14 @@
 import torch
 
 from torch_geometric.nn import DenseSAGEConv, SAGEConv
+from torch_geometric.testing import is_full_test
 
 
 def test_dense_sage_conv():
     channels = 16
     sparse_conv = SAGEConv(channels, channels, normalize=True)
     dense_conv = DenseSAGEConv(channels, channels, normalize=True)
-    assert dense_conv.__repr__() == 'DenseSAGEConv(16, 16)'
+    assert str(dense_conv) == 'DenseSAGEConv(16, 16)'
 
     # Ensure same weights and bias.
     dense_conv.lin_rel = sparse_conv.lin_l
@@ -37,6 +38,10 @@ def test_dense_sage_conv():
 
     dense_out = dense_conv(x, adj, mask)
     assert dense_out.size() == (2, 3, channels)
+
+    if is_full_test():
+        jit = torch.jit.script(dense_conv)
+        assert torch.allclose(jit(x, adj, mask), dense_out)
 
     assert dense_out[1, 2].abs().sum().item() == 0
     dense_out = dense_out.view(6, channels)[:-1]

@@ -7,13 +7,10 @@ import torch.nn.functional as F
 from torch import Tensor, nn
 from torch.nn.parameter import Parameter
 
+import torch_geometric.typing
 from torch_geometric.nn import inits
-
-try:
-    from pyg_lib.ops import segment_matmul  # noqa
-    _WITH_PYG_LIB = True
-except ImportError:
-    _WITH_PYG_LIB = False
+from torch_geometric.typing import pyg_lib
+from torch_geometric.utils import index_sort
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
@@ -122,13 +119,14 @@ class Linear(torch.nn.Module):
         return out
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset_weight_(self.weight, self.in_channels, self.weight_initializer)
         reset_bias_(self.bias, self.in_channels, self.bias_initializer)
 
     def forward(self, x: Tensor) -> Tensor:
         r"""
         Args:
-            x (Tensor): The features.
+            x (torch.Tensor): The input features.
         """
         return F.linear(x, self.weight, self.bias)
 
@@ -142,12 +140,16 @@ class Linear(torch.nn.Module):
         delattr(self, '_hook')
 
     def _save_to_state_dict(self, destination, prefix, keep_vars):
-        if is_uninitialized_parameter(self.weight):
+        if (is_uninitialized_parameter(self.weight)
+                or torch.onnx.is_in_onnx_export()):
             destination[prefix + 'weight'] = self.weight
         else:
             destination[prefix + 'weight'] = self.weight.detach()
         if self.bias is not None:
-            destination[prefix + 'bias'] = self.bias.detach()
+            if torch.onnx.is_in_onnx_export():
+                destination[prefix + 'bias'] = self.bias
+            else:
+                destination[prefix + 'bias'] = self.bias.detach()
 
     def _lazy_load_hook(self, state_dict, prefix, local_metadata, strict,
                         missing_keys, unexpected_keys, error_msgs):
@@ -213,9 +215,8 @@ class HeteroLinear(torch.nn.Module):
         self.is_sorted = is_sorted
         self.kwargs = kwargs
 
-        self._WITH_PYG_LIB = torch.cuda.is_available() and _WITH_PYG_LIB
-
-        if self._WITH_PYG_LIB:
+        if torch_geometric.typing.WITH_PYG_LIB:
+            self.lins = None
             self.weight = torch.nn.Parameter(
                 torch.Tensor(num_types, in_channels, out_channels))
             if kwargs.get('bias', True):
@@ -227,11 +228,14 @@ class HeteroLinear(torch.nn.Module):
                 Linear(in_channels, out_channels, **kwargs)
                 for _ in range(num_types)
             ])
+            self.register_parameter('weight', None)
+            self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
-        if self._WITH_PYG_LIB:
+        r"""Resets all learnable parameters of the module."""
+        if torch_geometric.typing.WITH_PYG_LIB:
             reset_weight_(self.weight, self.in_channels,
                           self.kwargs.get('weight_initializer', None))
             reset_weight_(self.bias, self.in_channels,
@@ -243,20 +247,30 @@ class HeteroLinear(torch.nn.Module):
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
         Args:
-            x (Tensor): The input features.
-            type_vec (LongTensor): A vector that maps each entry to a type.
+            x (torch.Tensor): The input features.
+            type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
-        if self._WITH_PYG_LIB:
+        if torch_geometric.typing.WITH_PYG_LIB:
+            assert self.weight is not None
+
+            perm: Optional[Tensor] = None
             if not self.is_sorted:
                 if (type_vec[1:] < type_vec[:-1]).any():
-                    type_vec, perm = type_vec.sort()
-                    x = x[:, perm]
-            type_vec_ptr = torch.ops.torch_sparse.ind2ptr(
+                    type_vec, perm = index_sort(type_vec, self.num_types)
+                    x = x[perm]
+
+            type_vec_ptr = torch._convert_indices_from_coo_to_csr(
                 type_vec, self.num_types)
-            out = segment_matmul(x, type_vec_ptr, self.weight)
+            out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:
                 out += self.bias[type_vec]
+
+            if perm is not None:  # Restore original order (if necessary).
+                out_unsorted = torch.empty_like(out)
+                out_unsorted[perm] = out
+                out = out_unsorted
         else:
+            assert self.lins is not None
             out = x.new_empty(x.size(0), self.out_channels)
             for i, lin in enumerate(self.lins):
                 mask = type_vec == i

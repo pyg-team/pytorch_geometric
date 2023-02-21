@@ -110,6 +110,9 @@ def test_hetero_data_functions():
     assert data.num_nodes == 15
     assert data.num_edges == 110
 
+    assert data.node_attrs() == ['x']
+    assert sorted(data.edge_attrs()) == ['edge_attr', 'edge_index']
+
     assert data.num_node_features == {'paper': 16, 'author': 32}
     assert data.num_edge_features == {
         ('paper', 'to', 'paper'): 8,
@@ -176,47 +179,93 @@ def test_hetero_data_subgraph():
     data['paper'].num_nodes = x_paper.size(0)
     data['author'].x = x_author
     data['author'].num_nodes = x_author.size(0)
-    data['conference'].x = x_conference
-    data['conference'].num_nodes = x_conference.size(0)
+    data['conf'].x = x_conference
+    data['conf'].num_nodes = x_conference.size(0)
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'paper'].edge_attr = edge_attr_paper_paper
     data['paper', 'paper'].name = 'cites'
     data['author', 'paper'].edge_index = edge_index_author_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
-    data['paper', 'conference'].edge_index = edge_index_paper_conference
+    data['paper', 'conf'].edge_index = edge_index_paper_conference
 
     subset = {
         'paper': torch.randperm(x_paper.size(0))[:4],
-        'author': torch.randperm(x_author.size(0))[:2]
+        'author': torch.randperm(x_author.size(0))[:2],
+        'conf': torch.randperm(x_conference.size(0))[:2],
     }
 
+    subset_sorted = {key: torch.sort(idx)[0] for key, idx in subset.items()}
+
     out = data.subgraph(subset)
+    out.validate(raise_on_error=True)
 
     assert out.num_node_types == data.num_node_types
-    assert out.node_types == ['paper', 'author']
+    assert out.node_types == ['paper', 'author', 'conf']
 
-    assert len(out['paper']) == 3
-    assert torch.allclose(out['paper'].x, data['paper'].x[subset['paper']])
-    assert out['paper'].name == 'paper'
-    assert out['paper'].num_nodes == 4
-    assert len(out['author']) == 2
-    assert torch.allclose(out['author'].x, data['author'].x[subset['author']])
-    assert out['author'].num_nodes == 2
+    for key in out.node_types:
+        assert len(out[key]) == len(data[key])
+        assert torch.allclose(out[key].x, data[key].x[subset_sorted[key]])
+        assert out[key].num_nodes == subset[key].size(0)
+        if key == 'paper':
+            assert out['paper'].name == 'paper'
+
+    # Construct correct edge index manually:
+    node_mask = {}  # for each node type a mask of nodes in the subgraph
+    node_map = {}  # for each node type a map from old node id to new node id
+    for key in out.node_types:
+        node_mask[key] = torch.zeros((data[key].num_nodes, ), dtype=torch.bool)
+        node_map[key] = torch.zeros((data[key].num_nodes, ), dtype=torch.long)
+        node_mask[key][subset_sorted[key]] = True
+        node_map[key][subset_sorted[key]] = torch.arange(subset[key].size(0))
+
+    edge_mask = {}  # for each edge type a mask of edges in the subgraph
+    subgraph_edge_index = {
+    }  # for each edge type the edge index of the subgraph
+    for key in out.edge_types:
+        edge_mask[key] = (node_mask[key[0]][data[key].edge_index[0]]
+                          & node_mask[key[-1]][data[key].edge_index[1]])
+        subgraph_edge_index[key] = data[key].edge_index[:, edge_mask[key]]
+        subgraph_edge_index[key][0] = node_map[key[0]][subgraph_edge_index[key]
+                                                       [0]]
+        subgraph_edge_index[key][1] = node_map[key[-1]][
+            subgraph_edge_index[key][1]]
 
     assert out.edge_types == [
         ('paper', 'to', 'paper'),
         ('author', 'to', 'paper'),
         ('paper', 'to', 'author'),
+        ('paper', 'to', 'conf'),
     ]
 
-    assert len(out['paper', 'paper']) == 3
-    assert out['paper', 'paper'].edge_index is not None
-    assert out['paper', 'paper'].edge_attr is not None
-    assert out['paper', 'paper'].name == 'cites'
-    assert len(out['paper', 'author']) == 1
-    assert out['paper', 'author'].edge_index is not None
-    assert len(out['author', 'paper']) == 1
-    assert out['author', 'paper'].edge_index is not None
+    for key in out.edge_types:
+        assert len(out[key]) == len(data[key])
+        assert torch.equal(out[key].edge_index, subgraph_edge_index[key])
+        if key == ('paper', 'to', 'paper'):
+            assert torch.allclose(out[key].edge_attr,
+                                  data[key].edge_attr[edge_mask[key]])
+            assert out[key].name == 'cites'
+
+    # Test for bool and long in `subset_dict`.
+    author_mask = torch.zeros((x_author.size(0), ), dtype=torch.bool)
+    author_mask[subset['author']] = True
+    subset_mixed = {
+        'paper': subset['paper'],
+        'author': author_mask,
+    }
+    out = data.subgraph(subset_mixed)
+    out.validate(raise_on_error=True)
+
+    assert out.num_node_types == data.num_node_types
+    assert out.node_types == ['paper', 'author', 'conf']
+    assert out['paper'].num_nodes == subset['paper'].size(0)
+    assert out['author'].num_nodes == subset['author'].size(0)
+    assert out['conf'].num_nodes == data['conf'].num_nodes
+    assert out.edge_types == [
+        ('paper', 'to', 'paper'),
+        ('author', 'to', 'paper'),
+        ('paper', 'to', 'author'),
+        ('paper', 'to', 'conf'),
+    ]
 
     out = data.node_type_subgraph(['paper', 'author'])
     assert out.node_types == ['paper', 'author']
@@ -227,6 +276,22 @@ def test_hetero_data_subgraph():
     out = data.edge_type_subgraph([('paper', 'author')])
     assert out.node_types == ['paper', 'author']
     assert out.edge_types == [('paper', 'to', 'author')]
+
+    subset = {
+        ('paper', 'to', 'paper'): torch.arange(4),
+    }
+
+    out = data.edge_subgraph(subset)
+    assert out.node_types == data.node_types
+    assert out.edge_types == data.edge_types
+    assert data['paper'] == out['paper']
+    assert data['author'] == out['author']
+    assert data['paper', 'author'] == out['paper', 'author']
+    assert data['author', 'paper'] == out['author', 'paper']
+
+    assert out['paper', 'paper'].num_edges == 4
+    assert out['paper', 'paper'].edge_index.size() == (2, 4)
+    assert out['paper', 'paper'].edge_attr.size() == (4, 8)
 
 
 def test_copy_hetero_data():
@@ -265,6 +330,7 @@ def test_to_homogeneous_and_vice_versa():
     data = HeteroData()
 
     data['paper'].x = torch.randn(100, 128)
+    data['paper'].y = torch.randint(0, 10, (100, ))
     data['author'].x = torch.randn(200, 128)
 
     data['paper', 'paper'].edge_index = get_edge_index(100, 100, 250)
@@ -280,7 +346,7 @@ def test_to_homogeneous_and_vice_versa():
     data['author', 'paper'].edge_attr = torch.randn(1000, 64)
 
     out = data.to_homogeneous()
-    assert len(out) == 6
+    assert len(out) == 7
     assert out.num_nodes == 300
     assert out.num_edges == 1750
     assert out.num_node_features == 128
@@ -293,11 +359,16 @@ def test_to_homogeneous_and_vice_versa():
     assert out.edge_type.max() == 2
     assert len(out._node_type_names) == 2
     assert len(out._edge_type_names) == 3
+    assert out.y.size() == (300, )
+    assert torch.allclose(out.y[:100], data['paper'].y)
+    assert torch.all(out.y[100:] == -1)
+    assert 'y' not in data['author']
 
     out = out.to_heterogeneous()
-    assert len(out) == 4
+    assert len(out) == 5
     assert torch.allclose(data['paper'].x, out['paper'].x)
     assert torch.allclose(data['author'].x, out['author'].x)
+    assert torch.allclose(data['paper'].y, out['paper'].y)
 
     edge_index1 = data['paper', 'paper'].edge_index
     edge_index2 = out['paper', 'paper'].edge_index
@@ -343,7 +414,7 @@ def test_to_homogeneous_and_vice_versa():
     del out._edge_type_names
     del out._node_type_names
     out = out.to_heterogeneous(node_type, edge_type)
-    assert len(out) == 4
+    assert len(out) == 5
     assert torch.allclose(data['paper'].x, out['0'].x)
     assert torch.allclose(data['author'].x, out['1'].x)
 
@@ -412,6 +483,34 @@ def test_hetero_data_to_canonical():
 
     with pytest.raises(TypeError, match="missing 1 required"):
         data['user', 'product']
+
+
+def test_hetero_data_invalid_names():
+    data = HeteroData()
+    with pytest.warns(UserWarning, match="single underscores"):
+        data['my test', 'a__b', 'my test'].edge_attr = torch.randn(10, 16)
+    assert data.edge_types == [('my test', 'a__b', 'my test')]
+
+
+def test_hetero_data_update():
+    data = HeteroData()
+    data['paper'].x = torch.arange(0, 5)
+    data['paper'].y = torch.arange(5, 10)
+    data['author'].x = torch.arange(10, 15)
+
+    other = HeteroData()
+    other['paper'].x = torch.arange(15, 20)
+    other['author'].y = torch.arange(20, 25)
+    other['paper', 'paper'].edge_index = torch.randint(5, (2, 20))
+
+    data.update(other)
+    assert len(data) == 3
+    assert torch.equal(data['paper'].x, torch.arange(15, 20))
+    assert torch.equal(data['paper'].y, torch.arange(5, 10))
+    assert torch.equal(data['author'].x, torch.arange(10, 15))
+    assert torch.equal(data['author'].y, torch.arange(20, 25))
+    assert torch.equal(data['paper', 'paper'].edge_index,
+                       other['paper', 'paper'].edge_index)
 
 
 # Feature Store ###############################################################
@@ -493,3 +592,21 @@ def test_basic_graph_store():
     # Get attrs:
     edge_attrs = data.get_all_edge_attrs()
     assert len(edge_attrs) == 3
+
+
+def test_data_generate_ids():
+    data = HeteroData()
+
+    data['paper'].x = torch.randn(100, 128)
+    data['author'].x = torch.randn(200, 128)
+
+    data['paper', 'author'].edge_index = get_edge_index(100, 200, 300)
+    data['author', 'paper'].edge_index = get_edge_index(200, 100, 400)
+    assert len(data) == 2
+
+    data.generate_ids()
+    assert len(data) == 4
+    assert data['paper'].n_id.tolist() == list(range(100))
+    assert data['author'].n_id.tolist() == list(range(200))
+    assert data['paper', 'author'].e_id.tolist() == list(range(300))
+    assert data['author', 'paper'].e_id.tolist() == list(range(400))

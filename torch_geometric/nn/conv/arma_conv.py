@@ -4,11 +4,11 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor, nn
 from torch.nn import Parameter, ReLU
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.utils import spmm
 
 from ..inits import glorot, zeros
 
@@ -95,6 +95,7 @@ class ARMAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.weight)
         if not isinstance(self.init_weight, torch.nn.UninitializedParameter):
             glorot(self.init_weight)
@@ -103,7 +104,6 @@ class ARMAConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
 
         if isinstance(edge_index, Tensor):
             edge_index, edge_weight = gcn_norm(  # yapf: disable
@@ -128,10 +128,11 @@ class ARMAConv(MessagePassing):
                                  size=None)
 
             root = F.dropout(x, p=self.dropout, training=self.training)
-            out += root @ self.root_weight[0 if self.shared_weights else t]
+            root = root @ self.root_weight[0 if self.shared_weights else t]
+            out = out + root
 
             if self.bias is not None:
-                out += self.bias[0 if self.shared_weights else t]
+                out = out + self.bias[0 if self.shared_weights else t]
 
             if self.act is not None:
                 out = self.act(out)
@@ -142,7 +143,7 @@ class ARMAConv(MessagePassing):
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):

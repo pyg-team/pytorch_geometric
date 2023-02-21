@@ -3,6 +3,7 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import HGTConv
+from torch_geometric.profile import benchmark
 
 
 def test_hgt_conv_same_dimensions():
@@ -144,3 +145,40 @@ def test_hgt_conv_out_of_place():
 
     assert x_dict['author'].size() == (4, 16)
     assert x_dict['paper'].size() == (6, 32)
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    args = parser.parse_args()
+
+    num_nodes, num_edges = 30_000, 300_000
+    x_dict = {
+        'paper': torch.randn(num_nodes, 64, device=args.device),
+        'author': torch.randn(num_nodes, 64, device=args.device),
+    }
+    edge_index_dict = {
+        ('paper', 'to', 'paper'):
+        torch.randint(num_nodes, (2, num_edges), device=args.device),
+        ('author', 'to', 'paper'):
+        torch.randint(num_nodes, (2, num_edges), device=args.device),
+        ('paper', 'to', 'author'):
+        torch.randint(num_nodes, (2, num_edges), device=args.device),
+    }
+
+    conv = HGTConv(
+        in_channels=64,
+        out_channels=64,
+        metadata=(list(x_dict.keys()), list(edge_index_dict.keys())),
+        heads=4,
+    ).to(args.device)
+
+    benchmark(
+        funcs=[conv],
+        args=(x_dict, edge_index_dict),
+        num_steps=10 if args.device == 'cpu' else 100,
+        num_warmups=5 if args.device == 'cpu' else 50,
+        backward=False,
+    )

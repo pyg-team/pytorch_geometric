@@ -30,10 +30,6 @@ def test_validate():
     with pytest.raises(ValueError, match="invalid 'dim_size'"):
         aggr(x, index, dim_size=2)
 
-    aggr.set_validate_args(False)
-    with pytest.raises(RuntimeError, match="out of bounds"):
-        aggr(x, index, dim_size=2)
-
 
 @pytest.mark.parametrize('Aggregation', [
     MeanAggregation,
@@ -60,6 +56,18 @@ def test_basic_aggregation(Aggregation):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
+
+
+def test_var_aggregation():
+    x = torch.randn(6, 16)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+
+    var_aggr = VarAggregation()
+    out = var_aggr(x, index)
+
+    mean_aggr = MeanAggregation()
+    expected = mean_aggr((x - mean_aggr(x, index)[index]).pow(2), index)
+    assert torch.allclose(out, expected, atol=1e-6)
 
 
 @pytest.mark.parametrize('Aggregation', [

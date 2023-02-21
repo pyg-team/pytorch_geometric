@@ -89,6 +89,7 @@ class ResGatedGraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_key.reset_parameters()
         self.lin_query.reset_parameters()
         self.lin_value.reset_parameters()
@@ -98,7 +99,6 @@ class ResGatedGraphConv(MessagePassing):
             zeros(self.bias)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
@@ -110,10 +110,10 @@ class ResGatedGraphConv(MessagePassing):
         out = self.propagate(edge_index, k=k, q=q, v=v, size=None)
 
         if self.root_weight:
-            out += self.lin_skip(x[1])
+            out = out + self.lin_skip(x[1])
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

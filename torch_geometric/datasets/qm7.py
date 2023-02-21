@@ -1,3 +1,5 @@
+from typing import Callable, Optional
+
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
@@ -9,7 +11,7 @@ class QM7b(InMemoryDataset):
     7,211 molecules with 14 regression targets.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -23,36 +25,42 @@ class QM7b(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 7,211
-              - ~15.4
-              - ~245.0
-              - 0
-              - 14
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 7,211
+          - ~15.4
+          - ~245.0
+          - 0
+          - 14
     """
 
     url = 'https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/qm7b.mat'
 
-    def __init__(self, root, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> str:
         return 'qm7b.mat'
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):

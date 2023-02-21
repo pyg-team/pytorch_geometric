@@ -19,7 +19,7 @@ def test_spline_conv():
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
     conv = SplineConv(8, 32, dim=3, kernel_size=5)
-    assert conv.__repr__() == 'SplineConv(8, 32, dim=3)'
+    assert str(conv) == 'SplineConv(8, 32, dim=3)'
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, value, size=(4, 4)), out)
@@ -37,7 +37,7 @@ def test_spline_conv():
 
     adj = adj.sparse_resize((4, 2))
     conv = SplineConv((8, 16), 32, dim=3, kernel_size=5)
-    assert conv.__repr__() == 'SplineConv((8, 16), 32, dim=3)'
+    assert str(conv) == 'SplineConv((8, 16), 32, dim=3)'
     out1 = conv((x1, x2), edge_index, value)
     out2 = conv((x1, None), edge_index, value, (4, 2))
     assert out1.size() == (2, 32)
@@ -71,11 +71,11 @@ def test_lazy_spline_conv():
     value = torch.rand(edge_index.size(1), 3)
 
     conv = SplineConv(-1, 32, dim=3, kernel_size=5)
-    assert conv.__repr__() == 'SplineConv(-1, 32, dim=3)'
+    assert str(conv) == 'SplineConv(-1, 32, dim=3)'
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
 
     conv = SplineConv((-1, -1), 32, dim=3, kernel_size=5)
-    assert conv.__repr__() == 'SplineConv((-1, -1), 32, dim=3)'
+    assert str(conv) == 'SplineConv((-1, -1), 32, dim=3)'
     out = conv((x1, x2), edge_index, value)
     assert out.size() == (2, 32)

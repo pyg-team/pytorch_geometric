@@ -1,5 +1,6 @@
 from typing import Tuple
 
+import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
@@ -281,3 +282,11 @@ def test_to_hetero_with_bases_and_rgcn_equal_output():
     out3 = model(x_dict, adj_t_dict)
     out3 = torch.cat([out3['paper'], out3['author']], dim=0)
     assert torch.allclose(out1, out3, atol=1e-6)
+
+
+def test_to_hetero_with_bases_validate():
+    model = Net1()
+    metadata = (['my test'], [('my test', 'rel', 'my test')])
+
+    with pytest.warns(UserWarning, match="letters, numbers and underscores"):
+        model = to_hetero_with_bases(model, metadata, num_bases=4, debug=False)
