@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Batch, Data
-from torch_geometric.nn import RadiusInteractionGraph, SchNet
+from torch_geometric.nn.schnet import RadiusInteractionGraph, SchNet
 from torch_geometric.testing import is_full_test, withPackage
 
 
@@ -32,7 +32,7 @@ def test_schnet(use_interaction_graph: bool):
 
     assert (
         str(model) ==
-        "SchNet(hidden_channels=16, num_filters=16, num_interactions=2, num_gaussians=10, cutoff=6.0)"
+        "SchNet(hidden_channels=16, num_filters=16, num_interactions=2, num_gaussians=10, cutoff=6.0)"  # noqa
     )
 
     with torch.no_grad():
