@@ -5,12 +5,11 @@ from typing import Any, Dict, List, Optional, Union
 import torch
 from torch import Tensor
 from torch.nn import Module, Parameter
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.fx import Transformer
-from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.typing import EdgeType, Metadata, NodeType, SparseTensor
 from torch_geometric.utils.hetero import get_unused_node_types
 
 try:
@@ -43,6 +42,7 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
 
         class GNN(torch.nn.Module):
             def __init__(self):
+                super().__init__()
                 self.conv1 = SAGEConv((16, 16), 32)
                 self.conv2 = SAGEConv((32, 32), 32)
 
@@ -56,7 +56,7 @@ def to_hetero_with_bases(module: Module, metadata: Metadata, num_bases: int,
         node_types = ['paper', 'author']
         edge_types = [
             ('paper', 'cites', 'paper'),
-            ('paper' 'written_by', 'author'),
+            ('paper', 'written_by', 'author'),
             ('author', 'writes', 'paper'),
         ]
         metadata = (node_types, edge_types)
@@ -145,23 +145,35 @@ class ToHeteroWithBasesTransformer(Transformer):
     ):
         super().__init__(module, input_map, debug)
 
-        unused_node_types = get_unused_node_types(*metadata)
-        if len(unused_node_types) > 0:
-            warnings.warn(
-                f"There exist node types ({unused_node_types}) whose "
-                f"representations do not get updated during message passing "
-                f"as they do not occur as destination type in any edge type. "
-                f"This may lead to unexpected behaviour.")
-
         self.metadata = metadata
         self.num_bases = num_bases
         self.in_channels = in_channels or {}
         assert len(metadata) == 2
         assert len(metadata[0]) > 0 and len(metadata[1]) > 0
 
+        self.validate()
+
         # Compute IDs for each node and edge type:
         self.node_type2id = {k: i for i, k in enumerate(metadata[0])}
         self.edge_type2id = {k: i for i, k in enumerate(metadata[1])}
+
+    def validate(self):
+        unused_node_types = get_unused_node_types(*self.metadata)
+        if len(unused_node_types) > 0:
+            warnings.warn(
+                f"There exist node types ({unused_node_types}) whose "
+                f"representations do not get updated during message passing "
+                f"as they do not occur as destination type in any edge type. "
+                f"This may lead to unexpected behavior.")
+
+        names = self.metadata[0] + [rel for _, rel, _ in self.metadata[1]]
+        for name in names:
+            if not name.isidentifier():
+                warnings.warn(
+                    f"The type '{name}' contains invalid characters which "
+                    f"may lead to unexpected behavior. To avoid any issues, "
+                    f"ensure that your types only contain letters, numbers "
+                    f"and underscores.")
 
     def transform(self) -> GraphModule:
         self._node_offset_dict_initialized = False

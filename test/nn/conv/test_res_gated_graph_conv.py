@@ -13,7 +13,7 @@ def test_res_gated_graph_conv():
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = ResGatedGraphConv(8, 32)
-    assert conv.__repr__() == 'ResGatedGraphConv(8, 32)'
+    assert str(conv) == 'ResGatedGraphConv(8, 32)'
     out = conv(x1, edge_index)
     assert out.size() == (4, 32)
     assert conv(x1, adj.t()).tolist() == out.tolist()
@@ -29,7 +29,7 @@ def test_res_gated_graph_conv():
 
     adj = adj.sparse_resize((4, 2))
     conv = ResGatedGraphConv((8, 32), 32)
-    assert conv.__repr__() == 'ResGatedGraphConv((8, 32), 32)'
+    assert str(conv) == 'ResGatedGraphConv((8, 32), 32)'
     out = conv((x1, x2), edge_index)
     assert out.size() == (2, 32)
     assert conv((x1, x2), adj.t()).tolist() == out.tolist()

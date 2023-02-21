@@ -91,6 +91,7 @@ class HEATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.hetero_lin.reset_parameters()
         self.edge_type_emb.reset_parameters()
         self.edge_attr_emb.reset_parameters()
@@ -99,7 +100,7 @@ class HEATConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj, node_type: Tensor,
                 edge_type: Tensor, edge_attr: OptTensor = None) -> Tensor:
-        """"""
+
         x = self.hetero_lin(x, node_type)
 
         edge_type_emb = F.leaky_relu(self.edge_type_emb(edge_type),
@@ -111,12 +112,12 @@ class HEATConv(MessagePassing):
 
         if self.concat:
             if self.root_weight:
-                out += x.view(-1, 1, self.out_channels)
+                out = out + x.view(-1, 1, self.out_channels)
             out = out.view(-1, self.heads * self.out_channels)
         else:
             out = out.mean(dim=1)
             if self.root_weight:
-                out += x
+                out = out + x
 
         return out
 

@@ -4,11 +4,10 @@ from typing import Optional, Tuple, Union
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor, PairTensor
+from torch_geometric.typing import Adj, OptTensor, PairTensor, SparseTensor
 from torch_geometric.utils import softmax
 
 
@@ -100,7 +99,7 @@ class TransformerConv(MessagePassing):
         **kwargs,
     ):
         kwargs.setdefault('aggr', 'add')
-        super(TransformerConv, self).__init__(node_dim=0, **kwargs)
+        super().__init__(node_dim=0, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -140,6 +139,7 @@ class TransformerConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_key.reset_parameters()
         self.lin_query.reset_parameters()
         self.lin_value.reset_parameters()
@@ -155,7 +155,8 @@ class TransformerConv(MessagePassing):
         # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
@@ -191,7 +192,7 @@ class TransformerConv(MessagePassing):
                 beta = beta.sigmoid()
                 out = beta * x_r + (1 - beta) * out
             else:
-                out += x_r
+                out = out + x_r
 
         if isinstance(return_attention_weights, bool):
             assert alpha is not None
@@ -210,7 +211,7 @@ class TransformerConv(MessagePassing):
             assert edge_attr is not None
             edge_attr = self.lin_edge(edge_attr).view(-1, self.heads,
                                                       self.out_channels)
-            key_j += edge_attr
+            key_j = key_j + edge_attr
 
         alpha = (query_i * key_j).sum(dim=-1) / math.sqrt(self.out_channels)
         alpha = softmax(alpha, index, ptr, size_i)
@@ -219,9 +220,9 @@ class TransformerConv(MessagePassing):
 
         out = value_j
         if edge_attr is not None:
-            out += edge_attr
+            out = out + edge_attr
 
-        out *= alpha.view(-1, self.heads, 1)
+        out = out * alpha.view(-1, self.heads, 1)
         return out
 
     def __repr__(self) -> str:

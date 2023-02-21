@@ -1,15 +1,21 @@
 from collections import defaultdict
-from typing import List, Optional, Tuple, Union
+from typing import Any, Iterable, List, Optional, Tuple, Union
 
 import scipy.sparse
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
 
+import torch_geometric
+
 from .num_nodes import maybe_num_nodes
 
 
-def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
+def to_scipy_sparse_matrix(
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+) -> scipy.sparse.coo_matrix:
     r"""Converts a graph given by edge indices and edge attributes to a scipy
     sparse matrix.
 
@@ -19,6 +25,16 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
             edge features. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`index`. (default: :obj:`None`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([
+        ...     [0, 1, 1, 2, 2, 3],
+        ...     [1, 0, 2, 1, 3, 2],
+        ... ])
+        >>> to_scipy_sparse_matrix(edge_index)
+        <4x4 sparse matrix of type '<class 'numpy.float32'>'
+            with 6 stored elements in COOrdinate format>
     """
     row, col = edge_index.cpu()
 
@@ -34,11 +50,25 @@ def to_scipy_sparse_matrix(edge_index, edge_attr=None, num_nodes=None):
     return out
 
 
-def from_scipy_sparse_matrix(A):
+def from_scipy_sparse_matrix(
+        A: scipy.sparse.spmatrix) -> Tuple[Tensor, Tensor]:
     r"""Converts a scipy sparse matrix to edge indices and edge attributes.
 
     Args:
         A (scipy.sparse): A sparse matrix.
+
+    Examples:
+
+        >>> edge_index = torch.tensor([
+        ...     [0, 1, 1, 2, 2, 3],
+        ...     [1, 0, 2, 1, 3, 2],
+        ... ])
+        >>> adj = to_scipy_sparse_matrix(edge_index)
+        >>> # `edge_index` and `edge_weight` are both returned
+        >>> from_scipy_sparse_matrix(adj)
+        (tensor([[0, 1, 1, 2, 2, 3],
+                [1, 0, 2, 1, 3, 2]]),
+        tensor([1., 1., 1., 1., 1., 1.]))
     """
     A = A.tocoo()
     row = torch.from_numpy(A.row).to(torch.long)
@@ -48,9 +78,14 @@ def from_scipy_sparse_matrix(A):
     return edge_index, edge_weight
 
 
-def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
-                to_undirected: Union[bool, str] = False,
-                remove_self_loops: bool = False):
+def to_networkx(
+    data: 'torch_geometric.data.Data',
+    node_attrs: Optional[Iterable[str]] = None,
+    edge_attrs: Optional[Iterable[str]] = None,
+    graph_attrs: Optional[Iterable[str]] = None,
+    to_undirected: Optional[Union[bool, str]] = False,
+    remove_self_loops: bool = False,
+) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`networkx.Graph` if :attr:`to_undirected` is set to :obj:`True`, or
     a directed :obj:`networkx.DiGraph` otherwise.
@@ -72,13 +107,21 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
             :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
             include self loops in the resulting graph. (default: :obj:`False`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([
+        ...     [0, 1, 1, 2, 2, 3],
+        ...     [1, 0, 2, 1, 3, 2],
+        ... ])
+        >>> data = Data(edge_index=edge_index, num_nodes=4)
+        >>> to_networkx(data)
+        <networkx.classes.digraph.DiGraph at 0x2713fdb40d0>
+
     """
     import networkx as nx
 
-    if to_undirected:
-        G = nx.Graph()
-    else:
-        G = nx.DiGraph()
+    G = nx.Graph() if to_undirected else nx.DiGraph()
 
     G.add_nodes_from(range(data.num_nodes))
 
@@ -123,8 +166,11 @@ def to_networkx(data, node_attrs=None, edge_attrs=None, graph_attrs=None,
     return G
 
 
-def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
-                  group_edge_attrs: Optional[Union[List[str], all]] = None):
+def from_networkx(
+    G: Any,
+    group_node_attrs: Optional[Union[List[str], all]] = None,
+    group_edge_attrs: Optional[Union[List[str], all]] = None,
+) -> 'torch_geometric.data.Data':
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.Data` instance.
 
@@ -140,6 +186,18 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
 
         All :attr:`group_node_attrs` and :attr:`group_edge_attrs` values must
         be numeric.
+
+    Examples:
+
+        >>> edge_index = torch.tensor([
+        ...     [0, 1, 1, 2, 2, 3],
+        ...     [1, 0, 2, 1, 3, 2],
+        ... ])
+        >>> data = Data(edge_index=edge_index, num_nodes=4)
+        >>> g = to_networkx(data)
+        >>> # A `Data` object is returned
+        >>> from_networkx(g)
+        Data(edge_index=[2, 6], num_nodes=4)
     """
     import networkx as nx
 
@@ -190,7 +248,7 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
         else:
             try:
                 data[key] = torch.tensor(value)
-            except ValueError:
+            except (ValueError, TypeError):
                 pass
 
     data['edge_index'] = edge_index.view(2, -1)
@@ -225,12 +283,90 @@ def from_networkx(G, group_node_attrs: Optional[Union[List[str], all]] = None,
     return data
 
 
+def to_networkit(
+    edge_index: Tensor,
+    edge_weight: Optional[Tensor] = None,
+    num_nodes: Optional[int] = None,
+    directed: bool = True,
+) -> Any:
+    r"""Converts a :obj:`(edge_index, edge_weight)` tuple to a
+    :class:`networkit.Graph`.
+
+    Args:
+        edge_index (torch.Tensor): The edge indices of the graph.
+        edge_weight (torch.Tensor, optional): The edge weights of the graph.
+            (default: :obj:`None`)
+        num_nodes (int, optional): The number of nodes in the graph.
+            (default: :obj:`None`)
+        directed (bool, optional): If set to :obj:`False`, the graph will be
+            undirected. (default: :obj:`True`)
+    """
+    import networkit as nk
+
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+    g = nk.graph.Graph(
+        num_nodes,
+        weighted=edge_weight is not None,
+        directed=directed,
+    )
+
+    if edge_weight is None:
+        edge_weight = torch.ones(edge_index.size(1))
+
+    if not directed:
+        mask = edge_index[0] <= edge_index[1]
+        edge_index = edge_index[:, mask]
+        edge_weight = edge_weight[mask]
+
+    for (u, v), w in zip(edge_index.t().tolist(), edge_weight.tolist()):
+        g.addEdge(u, v, w)
+
+    return g
+
+
+def from_networkit(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
+    r"""Converts a :class:`networkit.Graph` to a
+    :obj:`(edge_index, edge_weight)` tuple.
+    If the :class:`networkit.Graph` is not weighted, the returned
+    :obj:`edge_weight` will be :obj:`None`.
+
+    Args:
+        g (networkkit.graph.Graph): A :obj:`networkit` graph object.
+    """
+    is_directed = g.isDirected()
+    is_weighted = g.isWeighted()
+
+    edge_indices, edge_weights = [], []
+    for u, v, w in g.iterEdgesWeights():
+        edge_indices.append([u, v])
+        edge_weights.append(w)
+        if not is_directed:
+            edge_indices.append([v, u])
+            edge_weights.append(w)
+
+    edge_index = torch.tensor(edge_indices).t().contiguous()
+    edge_weight = torch.tensor(edge_weights) if is_weighted else None
+
+    return edge_index, edge_weight
+
+
 def to_trimesh(data):
     r"""Converts a :class:`torch_geometric.data.Data` instance to a
     :obj:`trimesh.Trimesh`.
 
     Args:
         data (torch_geometric.data.Data): The data object.
+
+    Example:
+
+        >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
+        ...                    dtype=torch.float)
+        >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
+
+        >>> data = Data(pos=pos, face=face)
+        >>> to_trimesh(data)
+        <trimesh.Trimesh(vertices.shape=(4, 3), faces.shape=(2, 3))>
     """
     import trimesh
     return trimesh.Trimesh(vertices=data.pos.detach().cpu().numpy(),
@@ -244,6 +380,19 @@ def from_trimesh(mesh):
 
     Args:
         mesh (trimesh.Trimesh): A :obj:`trimesh` mesh.
+
+Example:
+
+    Example:
+
+        >>> pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
+        ...                    dtype=torch.float)
+        >>> face = torch.tensor([[0, 1, 2], [1, 2, 3]]).t()
+
+        >>> data = Data(pos=pos, face=face)
+        >>> mesh = to_trimesh(data)
+        >>> from_trimesh(mesh)
+        Data(pos=[4, 3], face=[3, 2])
     """
     from torch_geometric.data import Data
 
@@ -254,35 +403,49 @@ def from_trimesh(mesh):
 
 
 def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
-               relabel_nodes: bool = True):
+               relabel_nodes: bool = True, directed: bool = True):
     r"""Converts a graph given by :obj:`edge_index` and optional
     :obj:`edge_weight` into a :obj:`cugraph` graph object.
 
     Args:
+        edge_index (torch.Tensor): The edge indices of the graph.
+        edge_weight (torch.Tensor, optional): The edge weights of the graph.
+            (default: :obj:`None`)
         relabel_nodes (bool, optional): If set to :obj:`True`,
             :obj:`cugraph` will remove any isolated nodes, leading to a
             relabeling of nodes. (default: :obj:`True`)
+        directed (bool, optional): If set to :obj:`False`, the graph will be
+            undirected. (default: :obj:`True`)
     """
     import cudf
     import cugraph
 
+    g = cugraph.Graph(directed=directed)
     df = cudf.from_dlpack(to_dlpack(edge_index.t()))
 
     if edge_weight is not None:
         assert edge_weight.dim() == 1
-        df[2] = cudf.from_dlpack(to_dlpack(edge_weight))
+        df['2'] = cudf.from_dlpack(to_dlpack(edge_weight))
 
-    return cugraph.from_cudf_edgelist(
-        df, source=0, destination=1,
-        edge_attr=2 if edge_weight is not None else None,
-        renumber=relabel_nodes)
+    g.from_cudf_edgelist(
+        df,
+        source=0,
+        destination=1,
+        edge_attr='2' if edge_weight is not None else None,
+        renumber=relabel_nodes,
+    )
+
+    return g
 
 
-def from_cugraph(G) -> Tuple[Tensor, Optional[Tensor]]:
+def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Converts a :obj:`cugraph` graph object into :obj:`edge_index` and
     optional :obj:`edge_weight` tensors.
+
+    Args:
+        g (cugraph.Graph): A :obj:`cugraph` graph object.
     """
-    df = G.edgelist.edgelist_df
+    df = g.view_edge_list()
 
     src = from_dlpack(df['src'].to_dlpack()).long()
     dst = from_dlpack(df['dst'].to_dlpack()).long()

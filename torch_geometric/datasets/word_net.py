@@ -1,8 +1,10 @@
 from itertools import chain
+from typing import Callable, List, Optional
 
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import index_sort
 
 
 class WordNet18(InMemoryDataset):
@@ -23,7 +25,7 @@ class WordNet18(InMemoryDataset):
         :class:`~torch_geometric.datasets.WordNet18RR` instead.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -37,16 +39,21 @@ class WordNet18(InMemoryDataset):
     url = ('https://raw.githubusercontent.com/villmow/'
            'datasets_knowledge_embedding/master/WN18/original')
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['train.txt', 'valid.txt', 'test.txt']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -75,7 +82,7 @@ class WordNet18(InMemoryDataset):
         test_mask[srcs[0].size(0) + srcs[1].size(0):] = True
 
         num_nodes = max(int(src.max()), int(dst.max())) + 1
-        perm = (num_nodes * src + dst).argsort()
+        _, perm = index_sort(num_nodes * src + dst)
 
         edge_index = torch.stack([src[perm], dst[perm]], dim=0)
         edge_type = edge_type[perm]
@@ -92,9 +99,6 @@ class WordNet18(InMemoryDataset):
 
         torch.save(self.collate([data]), self.processed_paths[0])
 
-    def __repr__(self):
-        return f'{self.__class__.__name__}()'
-
 
 class WordNet18RR(InMemoryDataset):
     r"""The WordNet18RR dataset from the `"Convolutional 2D Knowledge Graph
@@ -102,7 +106,7 @@ class WordNet18RR(InMemoryDataset):
     entities, 11 relations and 93,003 fact triplets.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -130,16 +134,21 @@ class WordNet18RR(InMemoryDataset):
         '_verb_group': 10,
     }
 
-    def __init__(self, root, transform=None, pre_transform=None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return ['train.txt', 'valid.txt', 'test.txt']
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):
@@ -183,7 +192,7 @@ class WordNet18RR(InMemoryDataset):
         test_mask[srcs[0].size(0) + srcs[1].size(0):] = True
 
         num_nodes = max(int(src.max()), int(dst.max())) + 1
-        perm = (num_nodes * src + dst).argsort()
+        _, perm = index_sort(num_nodes * src + dst)
 
         edge_index = torch.stack([src[perm], dst[perm]], dim=0)
         edge_type = edge_type[perm]
@@ -199,6 +208,3 @@ class WordNet18RR(InMemoryDataset):
             data = self.pre_filter(data)
 
         torch.save(self.collate([data]), self.processed_paths[0])
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}()'

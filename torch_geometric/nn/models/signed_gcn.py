@@ -1,10 +1,13 @@
+from typing import Optional, Tuple
+
 import scipy.sparse
 import torch
 import torch.nn.functional as F
-from torch_sparse import coalesce
+from torch import Tensor
 
 from torch_geometric.nn import SignedConv
 from torch_geometric.utils import (
+    coalesce,
     negative_sampling,
     structured_negative_sampling,
 )
@@ -25,8 +28,14 @@ class SignedGCN(torch.nn.Module):
         bias (bool, optional): If set to :obj:`False`, all layers will not
             learn an additive bias. (default: :obj:`True`)
     """
-    def __init__(self, in_channels, hidden_channels, num_layers, lamb=5,
-                 bias=True):
+    def __init__(
+        self,
+        in_channels: int,
+        hidden_channels: int,
+        num_layers: int,
+        lamb: float = 5,
+        bias: bool = True,
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -47,12 +56,17 @@ class SignedGCN(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.conv1.reset_parameters()
         for conv in self.convs:
             conv.reset_parameters()
         self.lin.reset_parameters()
 
-    def split_edges(self, edge_index, test_ratio=0.2):
+    def split_edges(
+        self,
+        edge_index: Tensor,
+        test_ratio: float = 0.2,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Splits the edges :obj:`edge_index` into train and test edges.
 
         Args:
@@ -68,8 +82,12 @@ class SignedGCN(torch.nn.Module):
 
         return train_edge_index, test_edge_index
 
-    def create_spectral_features(self, pos_edge_index, neg_edge_index,
-                                 num_nodes=None):
+    def create_spectral_features(
+        self,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+        num_nodes: Optional[int] = None,
+    ) -> Tensor:
         r"""Creates :obj:`in_channels` spectral node features based on
         positive and negative edges.
 
@@ -94,7 +112,7 @@ class SignedGCN(torch.nn.Module):
         edge_index = torch.cat([edge_index, torch.stack([col, row])], dim=1)
         val = torch.cat([val, val], dim=0)
 
-        edge_index, val = coalesce(edge_index, val, N, N)
+        edge_index, val = coalesce(edge_index, val, num_nodes=N)
         val = val - 1
 
         # Borrowed from:
@@ -107,42 +125,52 @@ class SignedGCN(torch.nn.Module):
         x = svd.components_.T
         return torch.from_numpy(x).to(torch.float).to(pos_edge_index.device)
 
-    def forward(self, x, pos_edge_index, neg_edge_index):
+    def forward(
+        self,
+        x: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+    ) -> Tensor:
         """Computes node embeddings :obj:`z` based on positive edges
         :obj:`pos_edge_index` and negative edges :obj:`neg_edge_index`.
 
         Args:
-            x (Tensor): The input node features.
-            pos_edge_index (LongTensor): The positive edge indices.
-            neg_edge_index (LongTensor): The negative edge indices.
+            x (torch.Tensor): The input node features.
+            pos_edge_index (torch.Tensor): The positive edge indices.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
         z = F.relu(self.conv1(x, pos_edge_index, neg_edge_index))
         for conv in self.convs:
             z = F.relu(conv(z, pos_edge_index, neg_edge_index))
         return z
 
-    def discriminate(self, z, edge_index):
+    def discriminate(self, z: Tensor, edge_index: Tensor) -> Tensor:
         """Given node embeddings :obj:`z`, classifies the link relation
         between node pairs :obj:`edge_index` to be either positive,
         negative or non-existent.
 
         Args:
-            x (Tensor): The input node features.
-            edge_index (LongTensor): The edge indices.
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor): The edge indices.
         """
         value = torch.cat([z[edge_index[0]], z[edge_index[1]]], dim=1)
         value = self.lin(value)
         return torch.log_softmax(value, dim=1)
 
-    def nll_loss(self, z, pos_edge_index, neg_edge_index):
+    def nll_loss(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+    ) -> Tensor:
         """Computes the discriminator loss based on node embeddings :obj:`z`,
         and positive edges :obj:`pos_edge_index` and negative nedges
         :obj:`neg_edge_index`.
 
         Args:
-            z (Tensor): The node embeddings.
-            pos_edge_index (LongTensor): The positive edge indices.
-            neg_edge_index (LongTensor): The negative edge indices.
+            z (torch.Tensor): The node embeddings.
+            pos_edge_index (torch.Tensor): The positive edge indices.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
 
         edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=1)
@@ -160,53 +188,67 @@ class SignedGCN(torch.nn.Module):
             none_edge_index.new_full((none_edge_index.size(1), ), 2))
         return nll_loss / 3.0
 
-    def pos_embedding_loss(self, z, pos_edge_index):
+    def pos_embedding_loss(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+    ) -> Tensor:
         """Computes the triplet loss between positive node pairs and sampled
         non-node pairs.
 
         Args:
-            z (Tensor): The node embeddings.
-            pos_edge_index (LongTensor): The positive edge indices.
+            z (torch.Tensor): The node embeddings.
+            pos_edge_index (torch.Tensor): The positive edge indices.
         """
         i, j, k = structured_negative_sampling(pos_edge_index, z.size(0))
 
         out = (z[i] - z[j]).pow(2).sum(dim=1) - (z[i] - z[k]).pow(2).sum(dim=1)
         return torch.clamp(out, min=0).mean()
 
-    def neg_embedding_loss(self, z, neg_edge_index):
+    def neg_embedding_loss(self, z: Tensor, neg_edge_index: Tensor) -> Tensor:
         """Computes the triplet loss between negative node pairs and sampled
         non-node pairs.
 
         Args:
-            z (Tensor): The node embeddings.
-            neg_edge_index (LongTensor): The negative edge indices.
+            z (torch.Tensor): The node embeddings.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
         i, j, k = structured_negative_sampling(neg_edge_index, z.size(0))
 
         out = (z[i] - z[k]).pow(2).sum(dim=1) - (z[i] - z[j]).pow(2).sum(dim=1)
         return torch.clamp(out, min=0).mean()
 
-    def loss(self, z, pos_edge_index, neg_edge_index):
+    def loss(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+    ) -> Tensor:
         """Computes the overall objective.
 
         Args:
-            z (Tensor): The node embeddings.
-            pos_edge_index (LongTensor): The positive edge indices.
-            neg_edge_index (LongTensor): The negative edge indices.
+            z (torch.Tensor): The node embeddings.
+            pos_edge_index (torch.Tensor): The positive edge indices.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
         nll_loss = self.nll_loss(z, pos_edge_index, neg_edge_index)
         loss_1 = self.pos_embedding_loss(z, pos_edge_index)
         loss_2 = self.neg_embedding_loss(z, neg_edge_index)
         return nll_loss + self.lamb * (loss_1 + loss_2)
 
-    def test(self, z, pos_edge_index, neg_edge_index):
+    def test(
+        self,
+        z: Tensor,
+        pos_edge_index: Tensor,
+        neg_edge_index: Tensor,
+    ) -> Tuple[float, float]:
         """Evaluates node embeddings :obj:`z` on positive and negative test
         edges by computing AUC and F1 scores.
 
         Args:
-            z (Tensor): The node embeddings.
-            pos_edge_index (LongTensor): The positive edge indices.
-            neg_edge_index (LongTensor): The negative edge indices.
+            z (torch.Tensor): The node embeddings.
+            pos_edge_index (torch.Tensor): The positive edge indices.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
         from sklearn.metrics import f1_score, roc_auc_score
 

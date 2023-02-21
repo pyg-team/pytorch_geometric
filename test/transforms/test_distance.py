@@ -5,7 +5,7 @@ from torch_geometric.transforms import Distance
 
 
 def test_distance():
-    assert Distance().__repr__() == 'Distance(norm=True, max_value=None)'
+    assert str(Distance()) == 'Distance(norm=True, max_value=None)'
 
     pos = torch.Tensor([[-1, 0], [0, 0], [2, 0]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])

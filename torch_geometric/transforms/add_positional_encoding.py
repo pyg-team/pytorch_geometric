@@ -2,11 +2,11 @@ from typing import Any, Optional
 
 import numpy as np
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import (
     get_laplacian,
     get_self_loop_attr,
@@ -69,6 +69,7 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         num_nodes = data.num_nodes
         edge_index, edge_weight = get_laplacian(
             data.edge_index,
+            data.edge_weight,
             normalization='sym',
             num_nodes=num_nodes,
         )

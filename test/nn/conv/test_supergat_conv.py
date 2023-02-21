@@ -1,5 +1,6 @@
 import pytest
 import torch
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn import SuperGATConv
 
@@ -11,10 +12,13 @@ def test_supergat_conv(att_type):
 
     conv = SuperGATConv(8, 32, heads=2, attention_type=att_type,
                         neg_sample_ratio=1.0, edge_sample_ratio=1.0)
-    assert conv.__repr__() == f'SuperGATConv(8, 32, heads=2, type={att_type})'
+    assert str(conv) == f'SuperGATConv(8, 32, heads=2, type={att_type})'
 
     out = conv(x, edge_index)
     assert out.size() == (4, 64)
+
+    adj_t = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4)).t()
+    assert torch.allclose(conv(x, adj_t), out)
 
     # Negative samples are given.
     neg_edge_index = conv.negative_sampling(edge_index, x.size(0))

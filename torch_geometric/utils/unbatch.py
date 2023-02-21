@@ -19,6 +19,13 @@ def unbatch(src: Tensor, batch: Tensor, dim: int = 0) -> List[Tensor]:
             tensor. (default: :obj:`0`)
 
     :rtype: :class:`List[Tensor]`
+
+    Example:
+
+        >>> src = torch.arange(7)
+        >>> batch = torch.tensor([0, 0, 0, 1, 1, 2, 2])
+        >>> unbatch(src, batch)
+        (tensor([0, 1, 2]), tensor([3, 4]), tensor([5, 6]))
     """
     sizes = degree(batch, dtype=torch.long).tolist()
     return src.split(sizes, dim)
@@ -34,6 +41,17 @@ def unbatch_edge_index(edge_index: Tensor, batch: Tensor) -> List[Tensor]:
             node to a specific example. Must be ordered.
 
     :rtype: :class:`List[Tensor]`
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 4, 5, 5, 6],
+        ...                            [1, 0, 2, 1, 3, 2, 5, 4, 6, 5]])
+        >>> batch = torch.tensor([0, 0, 0, 0, 1, 1, 1])
+        >>> unbatch_edge_index(edge_index, batch)
+        (tensor([[0, 1, 1, 2, 2, 3],
+                [1, 0, 2, 1, 3, 2]]),
+        tensor([[0, 1, 1, 2],
+                [1, 0, 2, 1]]))
     """
     deg = degree(batch, dtype=torch.int64)
     ptr = torch.cat([deg.new_zeros(1), deg.cumsum(dim=0)[:-1]], dim=0)

@@ -1,4 +1,5 @@
 import os.path as osp
+import sys
 
 import matplotlib.pyplot as plt
 import torch
@@ -19,7 +20,9 @@ def main():
                      context_size=10, walks_per_node=10,
                      num_negative_samples=1, p=1, q=1, sparse=True).to(device)
 
-    loader = model.loader(batch_size=128, shuffle=True, num_workers=4)
+    num_workers = 0 if sys.platform.startswith('win') else 4
+    loader = model.loader(batch_size=128, shuffle=True,
+                          num_workers=num_workers)
     optimizer = torch.optim.SparseAdam(list(model.parameters()), lr=0.01)
 
     def train():

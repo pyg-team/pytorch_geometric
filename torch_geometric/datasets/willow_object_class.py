@@ -2,6 +2,7 @@ import glob
 import os
 import os.path as osp
 import shutil
+from typing import Callable, List, Optional
 
 import torch
 import torch.nn.functional as F
@@ -23,8 +24,8 @@ class WILLOWObjectClass(InMemoryDataset):
     on ImageNet (:obj:`relu4_2` and :obj:`relu5_1`).
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        category (string): The category of the images (one of :obj:`"Car"`,
+        root (str): Root directory where the dataset should be saved.
+        category (str): The category of the images (one of :obj:`"Car"`,
             :obj:`"Duck"`, :obj:`"Face"`, :obj:`"Motorbike"`,
             :obj:`"Winebottle"`).
         transform (callable, optional): A function/transform that takes in an
@@ -48,27 +49,33 @@ class WILLOWObjectClass(InMemoryDataset):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     batch_size = 32
 
-    def __init__(self, root, category, transform=None, pre_transform=None,
-                 pre_filter=None):
+    def __init__(
+        self,
+        root: str,
+        category: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+    ):
         assert category.lower() in self.categories
         self.category = category
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self):
+    def raw_dir(self) -> str:
         return osp.join(self.root, 'raw')
 
     @property
-    def processed_dir(self):
+    def processed_dir(self) -> str:
         return osp.join(self.root, self.category.capitalize(), 'processed')
 
     @property
-    def raw_file_names(self):
+    def raw_file_names(self) -> List[str]:
         return [category.capitalize() for category in self.categories]
 
     @property
-    def processed_file_names(self):
+    def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self):

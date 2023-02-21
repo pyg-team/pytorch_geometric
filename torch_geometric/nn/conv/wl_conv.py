@@ -2,10 +2,9 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_add
-from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj
+from torch_geometric.typing import Adj, SparseTensor
+from torch_geometric.utils import scatter
 
 
 class WLConv(torch.nn.Module):
@@ -30,11 +29,12 @@ class WLConv(torch.nn.Module):
         self.hashmap = {}
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.hashmap = {}
 
     @torch.no_grad()
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        """"""
+        r"""Runs the forward pass of the module."""
         if x.dim() > 1:
             assert (x.sum(dim=-1) == 1).sum() == x.size(0)
             x = x.argmax(dim=-1)  # one-hot -> integer.
@@ -68,8 +68,8 @@ class WLConv(torch.nn.Module):
         batch_size = int(batch.max()) + 1
 
         index = batch * num_colors + x
-        out = scatter_add(torch.ones_like(index), index, dim=0,
-                          dim_size=num_colors * batch_size)
+        out = scatter(torch.ones_like(index), index, dim=0,
+                      dim_size=num_colors * batch_size, reduce='sum')
         out = out.view(batch_size, num_colors)
 
         if norm:

@@ -16,9 +16,9 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
-from torch_geometric.utils import dropout_adj
+from torch_geometric.utils import dropout_edge
 
-torch.fx.wrap('dropout_adj')
+torch.fx.wrap('dropout_edge')
 
 
 class Net1(torch.nn.Module):
@@ -140,11 +140,24 @@ class Net10(torch.nn.Module):
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
         x = F.dropout(x, p=0.5, training=self.training)
-        edge_index, _ = dropout_adj(edge_index, p=0.5, training=self.training)
+        edge_index, _ = dropout_edge(edge_index, p=0.5, training=self.training)
         return self.conv(x, edge_index)
 
 
-def test_to_hetero():
+class Net11(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = SAGEConv(16, 16)
+        self.num_layers = 3
+
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        xs = [x]
+        for _ in range(self.num_layers):
+            xs.append(self.conv(xs[-1], edge_index))
+        return torch.cat(xs, dim=-1)
+
+
+def test_to_hetero_basic():
     x_dict = {
         'paper': torch.randn(100, 16),
         'author': torch.randn(100, 16),
@@ -253,6 +266,13 @@ def test_to_hetero():
     assert out['paper'].size() == (100, 32)
     assert out['author'].size() == (100, 32)
 
+    model = Net11()
+    model = to_hetero(model, metadata, debug=False)
+    out = model(x_dict, edge_index_dict)
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (100, 64)
+    assert out['author'].size() == (100, 64)
+
 
 class GCN(torch.nn.Module):
     def __init__(self):
@@ -271,8 +291,8 @@ def test_to_hetero_with_gcn():
         'paper': torch.randn(100, 16),
     }
     edge_index_dict = {
-        ('paper', '0', 'paper'): torch.randint(100, (2, 200)),
-        ('paper', '1', 'paper'): torch.randint(100, (2, 200)),
+        ('paper', 'cites', 'paper'): torch.randint(100, (2, 200)),
+        ('paper', 'rev_cites', 'paper'): torch.randint(100, (2, 200)),
     }
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
 
@@ -312,7 +332,7 @@ def test_to_hetero_with_basic_model():
 
 class GraphConv(MessagePassing):
     def __init__(self, in_channels, out_channels):
-        super().__init__(aggr='mean')
+        super().__init__(aggr='sum')
         self.lin = Linear(in_channels, out_channels, bias=False)
 
     def reset_parameters(self):
@@ -351,7 +371,7 @@ def test_to_hetero_and_rgcn_equal_output():
     edge_type[(row >= 6) & (col < 6)] = 2
     assert edge_type.min() == 0
 
-    conv = RGCNConv(16, 32, num_relations=3)
+    conv = RGCNConv(16, 32, num_relations=3, aggr='sum')
     out1 = conv(x, edge_index, edge_type)
 
     # Run `to_hetero`:
@@ -455,3 +475,11 @@ def test_hetero_transformer_self_loop_error():
     with pytest.raises(ValueError, match="incorrect message passing"):
         to_hetero(ModelLoops(), metadata=(['a', 'b'], [('a', 'to', 'b'),
                                                        ('b', 'to', 'a')]))
+
+
+def test_to_hetero_validate():
+    model = Net1()
+    metadata = (['my test'], [('my test', 'rel', 'my test')])
+
+    with pytest.warns(UserWarning, match="letters, numbers and underscores"):
+        model = to_hetero(model, metadata, debug=False)

@@ -7,7 +7,7 @@ from torchmetrics import Accuracy
 
 import torch_geometric.transforms as T
 from torch_geometric import seed_everything
-from torch_geometric.data import LightningDataset
+from torch_geometric.data.lightning import LightningDataset
 from torch_geometric.datasets import TUDataset
 from torch_geometric.nn import GIN, MLP, global_add_pool
 
@@ -75,7 +75,8 @@ def main():
 
     devices = torch.cuda.device_count()
     strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
-    checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1)
+    checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1,
+                                              mode='max')
     trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
                          max_epochs=50, log_every_n_steps=5,
                          callbacks=[checkpoint])
