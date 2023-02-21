@@ -1,5 +1,6 @@
 import pytest
 import torch
+from torch.nn import Embedding
 
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn.models.schnet import RadiusInteractionGraph, SchNet
@@ -15,8 +16,9 @@ def generate_data():
 
 @withPackage("torch_cluster")
 @withPackage("ase")
-@pytest.mark.parametrize("use_interaction_graph", [True, False])
-def test_schnet(use_interaction_graph: bool):
+@pytest.mark.parametrize("use_interaction_graph, use_atomref", [(False, True),
+                                                                (True, False)])
+def test_schnet(use_interaction_graph: bool, use_atomref: bool):
     data = generate_data()
 
     model = SchNet(
@@ -28,6 +30,7 @@ def test_schnet(use_interaction_graph: bool):
         num_gaussians=10,
         cutoff=6.0,
         dipole=True,
+        atomref=Embedding(100, 1) if use_atomref else None,
     )
 
     assert (
