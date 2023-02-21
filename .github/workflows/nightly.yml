@@ -6,6 +6,7 @@ on:  # yamllint disable-line rule:truthy
     - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
 
 jobs:
+
   sdist:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
@@ -16,11 +17,10 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v4.3.0
-        id: py37
         with:
           python-version: 3.7
           check-latest: true
-          cache: "pip"
+          cache: pip
           cache-dependency-path: |
             setup.py
 

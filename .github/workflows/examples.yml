@@ -6,6 +6,7 @@ on:  # yamllint disable-line rule:truthy
     - cron: "0 7 * * *"  # Everyday at 7:00am UTC/11:00pm PST
 
 jobs:
+
   pytest:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
