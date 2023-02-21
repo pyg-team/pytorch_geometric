@@ -29,7 +29,7 @@ def test_schnet(use_interaction_graph: bool, use_atomref: bool):
         num_gaussians=10,
         cutoff=6.0,
         dipole=True,
-        atomref=torch.randn(10, 1) if use_atomref else None,
+        atomref=torch.randn(100, 1) if use_atomref else None,
     )
 
     assert (
