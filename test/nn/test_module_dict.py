@@ -21,7 +21,7 @@ def test_dot_syntax_keys():
 
     expected_keys = {'lin1', 'model.lin2', 'model.sub_model.lin3'}
     assert set(module_dict.keys()) == expected_keys
-    assert set([key for key, value in module_dict.items()]) == expected_keys
+    assert set([key for key, _ in module_dict.items()]) == expected_keys
 
     for key in expected_keys:
         assert key in module_dict
