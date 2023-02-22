@@ -1,4 +1,4 @@
-from typing import Iterable, Mapping, Optional
+from typing import Iterable, Mapping, Optional, Tuple
 
 import torch
 from torch.nn import Module
@@ -10,8 +10,7 @@ from torch.nn import Module
 # representation.
 class ModuleDict(torch.nn.ModuleDict):
     def __init__(self, modules: Optional[Mapping[str, Module]] = None):
-        # Replace the keys in modules.
-        if modules:
+        if modules is not None:  # Replace the keys in modules:
             modules = {
                 self.to_internal_key(key): module
                 for key, module in modules.items()
@@ -40,3 +39,7 @@ class ModuleDict(torch.nn.ModuleDict):
 
     def keys(self) -> Iterable[str]:
         return [self.to_external_key(key) for key in super().keys()]
+
+    def items(self) -> Iterable[Tuple[str, Module]]:
+        return [(self.to_external_key(key), value)
+                for key, value in super().items()]
