@@ -6,7 +6,7 @@ from torch_geometric.explain import groundtruth_metrics
 from torch_geometric.testing import withPackage
 
 
-@withPackage('torchmetrics')
+@withPackage('torchmetrics>=0.10.0')
 def test_groundtruth_metrics():
     pred_mask = torch.rand(10)
     target_mask = torch.rand(10)
@@ -21,7 +21,7 @@ def test_groundtruth_metrics():
     assert auroc >= 0.0 and auroc <= 1.0
 
 
-@withPackage('torchmetrics')
+@withPackage('torchmetrics>=0.10.0')
 def test_perfect_groundtruth_metrics():
     pred_mask = target_mask = torch.rand(10)
 
@@ -35,7 +35,7 @@ def test_perfect_groundtruth_metrics():
     assert round(auroc, 6) == 1.0
 
 
-@withPackage('torchmetrics')
+@withPackage('torchmetrics>=0.10.0')
 def test_groundtruth_true_negative():
     warnings.filterwarnings('ignore', '.*No positive samples in targets.*')
     pred_mask = target_mask = torch.zeros(10)
