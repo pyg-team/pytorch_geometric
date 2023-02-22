@@ -198,7 +198,8 @@ def test_onnx():
     model = onnx.load('model.onnx')
     onnx.checker.check_model(model)
 
-    ort_session = ort.InferenceSession('model.onnx')
+    providers = ['CPUExecutionProvider']
+    ort_session = ort.InferenceSession('model.onnx', providers=providers)
 
     out = ort_session.run(None, {
         'x': x.numpy(),
