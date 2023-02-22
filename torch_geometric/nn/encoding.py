@@ -41,6 +41,8 @@ class PositionalEncoding(torch.nn.Module):
         frequency = torch.logspace(0, 1, out_channels // 2, base_freq)
         self.register_buffer('frequency', frequency)
 
+        self.reset_parameters()
+
     def reset_parameters(self):
         pass
 
