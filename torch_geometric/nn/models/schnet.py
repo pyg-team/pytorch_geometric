@@ -17,18 +17,18 @@ from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import OptTensor
 
 qm9_target_dict: Dict[int, str] = {
-    0: "dipole_moment",
-    1: "isotropic_polarizability",
-    2: "homo",
-    3: "lumo",
-    4: "gap",
-    5: "electronic_spatial_extent",
-    6: "zpve",
-    7: "energy_U0",
-    8: "energy_U",
-    9: "enthalpy_H",
-    10: "free_energy",
-    11: "heat_capacity",
+    0: 'dipole_moment',
+    1: 'isotropic_polarizability',
+    2: 'homo',
+    3: 'lumo',
+    4: 'gap',
+    5: 'electronic_spatial_extent',
+    6: 'zpve',
+    7: 'energy_U0',
+    8: 'energy_U',
+    9: 'enthalpy_H',
+    10: 'free_energy',
+    11: 'heat_capacity',
 }
 
 
@@ -88,7 +88,7 @@ class SchNet(torch.nn.Module):
             Expects a vector of shape :obj:`(max_atomic_number, )`.
     """
 
-    url = "http://www.quantum-machine.org/datasets/trained_schnet_models.zip"
+    url = 'http://www.quantum-machine.org/datasets/trained_schnet_models.zip'
 
     def __init__(
         self,
@@ -99,12 +99,12 @@ class SchNet(torch.nn.Module):
         cutoff: float = 10.0,
         interaction_graph: Optional[Callable] = None,
         max_num_neighbors: int = 32,
-        readout: str = "add",
+        readout: str = 'add',
         dipole: bool = False,
         mean: Optional[float] = None,
         std: Optional[float] = None,
         atomref: OptTensor = None,
-    ) -> None:
+    ):
         super().__init__()
 
         self.hidden_channels = hidden_channels
@@ -114,7 +114,7 @@ class SchNet(torch.nn.Module):
         self.cutoff = cutoff
         self.dipole = dipole
         self.sum_aggr = SumAggregation()
-        self.readout = aggr_resolver("sum" if self.dipole else readout)
+        self.readout = aggr_resolver('sum' if self.dipole else readout)
         self.mean = mean
         self.std = std
         self.scale = None
@@ -123,7 +123,7 @@ class SchNet(torch.nn.Module):
             import ase
 
             atomic_mass = torch.from_numpy(ase.data.atomic_masses)
-            self.register_buffer("atomic_mass", atomic_mass)
+            self.register_buffer('atomic_mass', atomic_mass)
 
         # Support z == 0 for padding atoms so that their embedding vectors
         # are zeroed and do not receive any gradients.
@@ -147,7 +147,7 @@ class SchNet(torch.nn.Module):
         self.act = ShiftedSoftplus()
         self.lin2 = Linear(hidden_channels // 2, 1)
 
-        self.register_buffer("initial_atomref", atomref)
+        self.register_buffer('initial_atomref', atomref)
         self.atomref = None
         if atomref is not None:
             self.atomref = Embedding(100, 1)
@@ -155,7 +155,7 @@ class SchNet(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
         for interaction in self.interactions:
@@ -172,7 +172,7 @@ class SchNet(torch.nn.Module):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple["SchNet", Dataset, Dataset, Dataset]:  # pragma: no cover
+    ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`SchNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
         specified target :obj:`target`."""
@@ -189,19 +189,19 @@ class SchNet(torch.nn.Module):
 
         root = osp.expanduser(osp.normpath(root))
         makedirs(root)
-        folder = "trained_schnet_models"
+        folder = 'trained_schnet_models'
         if not osp.exists(osp.join(root, folder)):
             path = download_url(SchNet.url, root)
             extract_zip(path, root)
             os.unlink(path)
 
-        name = f"qm9_{qm9_target_dict[target]}"
-        path = osp.join(root, "trained_schnet_models", name, "split.npz")
+        name = f'qm9_{qm9_target_dict[target]}'
+        path = osp.join(root, 'trained_schnet_models', name, 'split.npz')
 
         split = np.load(path)
-        train_idx = split["train_idx"]
-        val_idx = split["val_idx"]
-        test_idx = split["test_idx"]
+        train_idx = split['train_idx']
+        val_idx = split['val_idx']
+        test_idx = split['test_idx']
 
         # Filter the splits to only contain characterized molecules.
         idx = dataset.data.idx
@@ -212,11 +212,11 @@ class SchNet(torch.nn.Module):
         val_idx = assoc[val_idx[np.isin(val_idx, idx)]]
         test_idx = assoc[test_idx[np.isin(test_idx, idx)]]
 
-        path = osp.join(root, "trained_schnet_models", name, "best_model")
+        path = osp.join(root, 'trained_schnet_models', name, 'best_model')
 
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            state = torch.load(path, map_location="cpu")
+            warnings.simplefilter('ignore')
+            state = torch.load(path, map_location='cpu')
 
         net = SchNet(
             hidden_channels=128,
@@ -249,9 +249,9 @@ class SchNet(torch.nn.Module):
         net.lin2.bias = state.output_modules[0].out_net[1].out_net[1].bias
 
         mean = state.output_modules[0].atom_pool.average
-        net.readout = "mean" if mean is True else "add"
+        net.readout = 'mean' if mean is True else 'add'
 
-        dipole = state.output_modules[0].__class__.__name__ == "DipoleMoment"
+        dipole = state.output_modules[0].__class__.__name__ == 'DipoleMoment'
         net.dipole = dipole
 
         net.mean = state.output_modules[0].standardize.mean.item()
@@ -315,12 +315,12 @@ class SchNet(torch.nn.Module):
         return out
 
     def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}("
-                f"hidden_channels={self.hidden_channels}, "
-                f"num_filters={self.num_filters}, "
-                f"num_interactions={self.num_interactions}, "
-                f"num_gaussians={self.num_gaussians}, "
-                f"cutoff={self.cutoff})")
+        return (f'{self.__class__.__name__}('
+                f'hidden_channels={self.hidden_channels}, '
+                f'num_filters={self.num_filters}, '
+                f'num_interactions={self.num_interactions}, '
+                f'num_gaussians={self.num_gaussians}, '
+                f'cutoff={self.cutoff})')
 
 
 class RadiusInteractionGraph(torch.nn.Module):
@@ -359,7 +359,7 @@ class RadiusInteractionGraph(torch.nn.Module):
 
 class InteractionBlock(torch.nn.Module):
     def __init__(self, hidden_channels: int, num_gaussians: int,
-                 num_filters: int, cutoff: float) -> None:
+                 num_filters: int, cutoff: float):
         super().__init__()
         self.mlp = Sequential(
             Linear(num_gaussians, num_filters),
@@ -373,7 +373,7 @@ class InteractionBlock(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
         torch.nn.init.xavier_uniform_(self.mlp[0].weight)
         self.mlp[0].bias.data.fill_(0)
         torch.nn.init.xavier_uniform_(self.mlp[2].weight)
@@ -398,8 +398,8 @@ class CFConv(MessagePassing):
         num_filters: int,
         nn: Sequential,
         cutoff: float,
-    ) -> None:
-        super().__init__(aggr="add")
+    ):
+        super().__init__(aggr='add')
         self.lin1 = Linear(in_channels, num_filters, bias=False)
         self.lin2 = Linear(num_filters, out_channels)
         self.nn = nn
@@ -407,7 +407,7 @@ class CFConv(MessagePassing):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
         torch.nn.init.xavier_uniform_(self.lin1.weight)
         torch.nn.init.xavier_uniform_(self.lin2.weight)
         self.lin2.bias.data.fill_(0)
@@ -427,12 +427,16 @@ class CFConv(MessagePassing):
 
 
 class GaussianSmearing(torch.nn.Module):
-    def __init__(self, start: float = 0.0, stop: float = 5.0,
-                 num_gaussians: int = 50) -> None:
+    def __init__(
+        self,
+        start: float = 0.0,
+        stop: float = 5.0,
+        num_gaussians: int = 50,
+    ):
         super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
         self.coeff = -0.5 / (offset[1] - offset[0]).item()**2
-        self.register_buffer("offset", offset)
+        self.register_buffer('offset', offset)
 
     def forward(self, dist: Tensor) -> Tensor:
         dist = dist.view(-1, 1) - self.offset.view(1, -1)
@@ -440,7 +444,7 @@ class GaussianSmearing(torch.nn.Module):
 
 
 class ShiftedSoftplus(torch.nn.Module):
-    def __init__(self) -> None:
+    def __init__(self):
         super().__init__()
         self.shift = torch.log(torch.tensor(2.0)).item()
 
