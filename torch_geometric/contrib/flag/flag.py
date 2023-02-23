@@ -6,7 +6,7 @@ class FLAG:
         self,
         device: str,
     ):
-        pass
+        self.device = device
 
     def augment_train(
             self,
