@@ -36,7 +36,10 @@ class HeteroNorm(torch.nn.Module):
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
-    self.mean_funcs = {"batchnorm":batch_mean, "instancenorm":instance_mean, "layernorm":layer_mean}
+    mean_funcs = {"batchnorm":batch_mean, "instancenorm":instance_mean, "layernorm":layer_mean}
+    var_funcs = {"batchnorm":batch_var, "instancenorm":instance_var, "layernorm":layer_var}
+    accepted_norm_types = ["batchnorm", "instancenorm", "layernorm"]
+
     def __init__(self, in_channels: Dict[str, int], norm_type: str,
                  types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
                  eps: float = 1e-5,
@@ -44,9 +47,9 @@ class HeteroNorm(torch.nn.Module):
                  track_running_stats: bool = True,
                  allow_single_element: bool = False):
         super().__init__()
-        if not norm_type.lower() in ["batchnorm", "instancenorm", "layernorm"]:
+        if not norm_type.lower() in accepted_norm_types:
             raise ValueError('Please choose norm type from "BatchNorm", "InstanceNorm", "LayerNorm"')
-
+        self.norm_type = norm_type
         if allow_single_element and not track_running_stats:
             raise ValueError("'allow_single_element' requires "
                              "'track_running_stats' to be set to `True`")
@@ -77,9 +80,39 @@ class HeteroNorm(torch.nn.Module):
         self.means = ParameterDict({mean_type:torch.zeros(self.in_channels) for mean_type in self.types})
         self.vars = ParameterDict({var_type:torch.ones(self.in_channels) for var_type in self.types})
         self.allow_single_element = allow_single_element
-        self.mean_func = self.mean_funcs[norm_type]
-        self.var_func = self.var_funcs[norm_type]
+        self.mean_func = mean_funcs[self.norm_type]
+        self.var_func = var_funcs[self.norm_type]
         self.reset_parameters()
+
+    @classmethod
+    def from_homogeneous(self, norm_module):
+        self.norm_type = None
+        for norm_type in accepted_norm_types:
+            if norm_type in str(norm_module).lower(): 
+                self.norm_type = norm_type 
+        if self.norm_type is None:
+            raise ValueError('Please only pass one of "BatchNorm", "InstanceNorm", "LayerNorm"')
+        try:
+            # pyg norms
+            self.in_channels = norm_module.in_channels
+        except AttributeError:
+            try:
+                # torch native batch/instance norm
+                self.in_channels = norm_module.num_features
+            except AttributeError:
+                # torch native layer norm
+                self.in_channels = norm_module.normalized_shape
+                if not isinstance(self.in_channels, int):
+                    raise ValueError("If passing torch.nn.LayerNorm, \
+                        please ensure that `normalized_shape` is a single integer")
+        self.eps = norm_module.eps
+        try:
+            # store batch/instance norm momentum
+            self.momentum = norm_module.momentum
+        except:
+            # layer norm has no momentum
+            self.momentum = None
+
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
