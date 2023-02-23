@@ -1,8 +1,30 @@
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.nn import DimeNet, DimeNetPlusPlus
+from torch_geometric.nn import (
+    BesselBasisLayer,
+    DimeNet,
+    DimeNetPlusPlus,
+    Envelope,
+)
 from torch_geometric.testing import onlyFullTest
+
+
+def test_envelope():
+    env = Envelope(exponent=5)
+    x = torch.randn(10, 3)
+
+    assert env(x).size() == (10, 3)  # Isotonic Layer
+    assert env(x).dtype == x.dtype
+
+
+def test_bessel_basis_layer():
+    bbl = BesselBasisLayer(5)
+    bbl.reset_parameters()
+    x = torch.randn(10, 3)
+
+    assert bbl(x).size() != (10, 3)  # Non-isotonic Layer
+    assert bbl(x).dtype == x.dtype
 
 
 @onlyFullTest
