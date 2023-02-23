@@ -1,8 +1,36 @@
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.nn import DimeNetPlusPlus
+from torch_geometric.nn import DimeNet, DimeNetPlusPlus
 from torch_geometric.testing import onlyFullTest
+
+
+@onlyFullTest
+def test_dimenet():
+    z = torch.randint(1, 10, (20, ))
+    pos = torch.randn(20, 3)
+
+    model = DimeNet(hidden_channels=5, out_channels=1, num_blocks=5)
+    model.reset_parameters()
+
+    with torch.no_grad():
+        out = model(z, pos)
+        assert out.size() == (1, )
+
+        jit = torch.jit.export(model)
+        assert torch.allclose(jit(z, pos), out)
+
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
+
+    min_loss = float("inf")
+    for i in range(100):
+        optimizer.zero_grad()
+        out = model(z, pos)
+        loss = F.l1_loss(out, torch.tensor([1.0]))
+        loss.backward()
+        optimizer.step()
+        min_loss = min(float(loss), min_loss)
+    assert min_loss < 2
 
 
 @onlyFullTest
@@ -33,11 +61,11 @@ def test_dimenet_plus_plus():
 
     optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
 
-    min_loss = float('inf')
+    min_loss = float("inf")
     for i in range(100):
         optimizer.zero_grad()
         out = model(z, pos)
-        loss = F.l1_loss(out, torch.tensor([1.]))
+        loss = F.l1_loss(out, torch.tensor([1.0]))
         loss.backward()
         optimizer.step()
         min_loss = min(float(loss), min_loss)

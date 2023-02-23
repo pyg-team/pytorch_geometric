@@ -2,7 +2,7 @@ import os
 import os.path as osp
 from math import pi as PI
 from math import sqrt
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -17,23 +17,23 @@ from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import OptTensor, SparseTensor
 from torch_geometric.utils import scatter
 
-qm9_target_dict = {
-    0: 'mu',
-    1: 'alpha',
-    2: 'homo',
-    3: 'lumo',
-    5: 'r2',
-    6: 'zpve',
-    7: 'U0',
-    8: 'U',
-    9: 'H',
-    10: 'G',
-    11: 'Cv',
+qm9_target_dict: Dict[int, str] = {
+    0: "mu",
+    1: "alpha",
+    2: "homo",
+    3: "lumo",
+    5: "r2",
+    6: "zpve",
+    7: "U0",
+    8: "U",
+    9: "H",
+    10: "G",
+    11: "Cv",
 }
 
 
 class Envelope(torch.nn.Module):
-    def __init__(self, exponent: int):
+    def __init__(self, exponent: int) -> None:
         super().__init__()
         self.p = exponent + 1
         self.a = -(self.p + 1) * (self.p + 2) / 2
@@ -45,13 +45,13 @@ class Envelope(torch.nn.Module):
         x_pow_p0 = x.pow(p - 1)
         x_pow_p1 = x_pow_p0 * x
         x_pow_p2 = x_pow_p1 * x
-        return (1. / x + a * x_pow_p0 + b * x_pow_p1 +
+        return (1.0 / x + a * x_pow_p0 + b * x_pow_p1 +
                 c * x_pow_p2) * (x < 1.0).to(x.dtype)
 
 
 class BesselBasisLayer(torch.nn.Module):
     def __init__(self, num_radial: int, cutoff: float = 5.0,
-                 envelope_exponent: int = 5):
+                 envelope_exponent: int = 5) -> None:
         super().__init__()
         self.cutoff = cutoff
         self.envelope = Envelope(envelope_exponent)
@@ -60,19 +60,24 @@ class BesselBasisLayer(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         with torch.no_grad():
             torch.arange(1, self.freq.numel() + 1, out=self.freq).mul_(PI)
         self.freq.requires_grad_()
 
     def forward(self, dist: Tensor) -> Tensor:
-        dist = (dist.unsqueeze(-1) / self.cutoff)
+        dist = dist.unsqueeze(-1) / self.cutoff
         return self.envelope(dist) * (self.freq * dist).sin()
 
 
 class SphericalBasisLayer(torch.nn.Module):
-    def __init__(self, num_spherical: int, num_radial: int,
-                 cutoff: float = 5.0, envelope_exponent: int = 5):
+    def __init__(
+        self,
+        num_spherical: int,
+        num_radial: int,
+        cutoff: float = 5.0,
+        envelope_exponent: int = 5,
+    ) -> None:
         super().__init__()
         import sympy as sym
 
@@ -92,8 +97,8 @@ class SphericalBasisLayer(torch.nn.Module):
         self.sph_funcs = []
         self.bessel_funcs = []
 
-        x, theta = sym.symbols('x theta')
-        modules = {'sin': torch.sin, 'cos': torch.cos}
+        x, theta = sym.symbols("x theta")
+        modules = {"sin": torch.sin, "cos": torch.cos}
         for i in range(num_spherical):
             if i == 0:
                 sph1 = sym.lambdify([theta], sph_harm_forms[i][0], modules)(0)
@@ -118,7 +123,8 @@ class SphericalBasisLayer(torch.nn.Module):
 
 
 class EmbeddingBlock(torch.nn.Module):
-    def __init__(self, num_radial: int, hidden_channels: int, act: Callable):
+    def __init__(self, num_radial: int, hidden_channels: int,
+                 act: Callable) -> None:
         super().__init__()
         self.act = act
 
@@ -128,7 +134,7 @@ class EmbeddingBlock(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         self.emb.weight.data.uniform_(-sqrt(3), sqrt(3))
         self.lin_rbf.reset_parameters()
         self.lin.reset_parameters()
@@ -140,7 +146,7 @@ class EmbeddingBlock(torch.nn.Module):
 
 
 class ResidualLayer(torch.nn.Module):
-    def __init__(self, hidden_channels: int, act: Callable):
+    def __init__(self, hidden_channels: int, act: Callable) -> None:
         super().__init__()
         self.act = act
         self.lin1 = Linear(hidden_channels, hidden_channels)
@@ -148,7 +154,7 @@ class ResidualLayer(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         glorot_orthogonal(self.lin1.weight, scale=2.0)
         self.lin1.bias.data.fill_(0)
         glorot_orthogonal(self.lin2.weight, scale=2.0)
@@ -159,9 +165,16 @@ class ResidualLayer(torch.nn.Module):
 
 
 class InteractionBlock(torch.nn.Module):
-    def __init__(self, hidden_channels: int, num_bilinear: int,
-                 num_spherical: int, num_radial: int, num_before_skip: int,
-                 num_after_skip: int, act: Callable):
+    def __init__(
+        self,
+        hidden_channels: int,
+        num_bilinear: int,
+        num_spherical: int,
+        num_radial: int,
+        num_before_skip: int,
+        num_after_skip: int,
+        act: Callable,
+    ) -> None:
         super().__init__()
         self.act = act
 
@@ -186,7 +199,7 @@ class InteractionBlock(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         glorot_orthogonal(self.lin_rbf.weight, scale=2.0)
         glorot_orthogonal(self.lin_sbf.weight, scale=2.0)
         glorot_orthogonal(self.lin_kj.weight, scale=2.0)
@@ -209,8 +222,8 @@ class InteractionBlock(torch.nn.Module):
         x_ji = self.act(self.lin_ji(x))
         x_kj = self.act(self.lin_kj(x))
         x_kj = x_kj * rbf
-        x_kj = torch.einsum('wj,wl,ijl->wi', sbf, x_kj[idx_kj], self.W)
-        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce='sum')
+        x_kj = torch.einsum("wj,wl,ijl->wi", sbf, x_kj[idx_kj], self.W)
+        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce="sum")
 
         h = x_ji + x_kj
         for layer in self.layers_before_skip:
@@ -223,9 +236,17 @@ class InteractionBlock(torch.nn.Module):
 
 
 class InteractionPPBlock(torch.nn.Module):
-    def __init__(self, hidden_channels: int, int_emb_size: int,
-                 basis_emb_size: int, num_spherical: int, num_radial: int,
-                 num_before_skip: int, num_after_skip: int, act: Callable):
+    def __init__(
+        self,
+        hidden_channels: int,
+        int_emb_size: int,
+        basis_emb_size: int,
+        num_spherical: int,
+        num_radial: int,
+        num_before_skip: int,
+        num_after_skip: int,
+        act: Callable,
+    ) -> None:
         super().__init__()
         self.act = act
 
@@ -256,7 +277,7 @@ class InteractionPPBlock(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         glorot_orthogonal(self.lin_rbf1.weight, scale=2.0)
         glorot_orthogonal(self.lin_rbf2.weight, scale=2.0)
         glorot_orthogonal(self.lin_sbf1.weight, scale=2.0)
@@ -297,7 +318,7 @@ class InteractionPPBlock(torch.nn.Module):
         x_kj = x_kj[idx_kj] * sbf
 
         # Aggregate interactions and up-project embeddings:
-        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce='sum')
+        x_kj = scatter(x_kj, idx_ji, dim=0, dim_size=x.size(0), reduce="sum")
         x_kj = self.act(self.lin_up(x_kj))
 
         h = x_ji + x_kj
@@ -311,8 +332,14 @@ class InteractionPPBlock(torch.nn.Module):
 
 
 class OutputBlock(torch.nn.Module):
-    def __init__(self, num_radial: int, hidden_channels: int,
-                 out_channels: int, num_layers: int, act: Callable):
+    def __init__(
+        self,
+        num_radial: int,
+        hidden_channels: int,
+        out_channels: int,
+        num_layers: int,
+        act: Callable,
+    ) -> None:
         super().__init__()
         self.act = act
 
@@ -324,7 +351,7 @@ class OutputBlock(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         glorot_orthogonal(self.lin_rbf.weight, scale=2.0)
         for lin in self.lins:
             glorot_orthogonal(lin.weight, scale=2.0)
@@ -334,16 +361,22 @@ class OutputBlock(torch.nn.Module):
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
                 num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
-        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce='sum')
+        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce="sum")
         for lin in self.lins:
             x = self.act(lin(x))
         return self.lin(x)
 
 
 class OutputPPBlock(torch.nn.Module):
-    def __init__(self, num_radial: int, hidden_channels: int,
-                 out_emb_channels: int, out_channels: int, num_layers: int,
-                 act: Callable):
+    def __init__(
+        self,
+        num_radial: int,
+        hidden_channels: int,
+        out_emb_channels: int,
+        out_channels: int,
+        num_layers: int,
+        act: Callable,
+    ) -> None:
         super().__init__()
         self.act = act
 
@@ -358,7 +391,7 @@ class OutputPPBlock(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         glorot_orthogonal(self.lin_rbf.weight, scale=2.0)
         glorot_orthogonal(self.lin_up.weight, scale=2.0)
         for lin in self.lins:
@@ -369,7 +402,7 @@ class OutputPPBlock(torch.nn.Module):
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
                 num_nodes: Optional[int] = None) -> Tensor:
         x = self.lin_rbf(rbf) * x
-        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce='sum')
+        x = scatter(x, i, dim=0, dim_size=num_nodes, reduce="sum")
         x = self.lin_up(x)
         for lin in self.lins:
             x = self.act(lin(x))
@@ -457,8 +490,8 @@ class DimeNet(torch.nn.Module):
         num_before_skip: int = 1,
         num_after_skip: int = 2,
         num_output_layers: int = 3,
-        act: Union[str, Callable] = 'swish',
-    ):
+        act: Union[str, Callable] = "swish",
+    ) -> None:
         super().__init__()
 
         if num_spherical < 2:
@@ -482,12 +515,18 @@ class DimeNet(torch.nn.Module):
         ])
 
         self.interaction_blocks = torch.nn.ModuleList([
-            InteractionBlock(hidden_channels, num_bilinear, num_spherical,
-                             num_radial, num_before_skip, num_after_skip, act)
-            for _ in range(num_blocks)
+            InteractionBlock(
+                hidden_channels,
+                num_bilinear,
+                num_spherical,
+                num_radial,
+                num_before_skip,
+                num_after_skip,
+                act,
+            ) for _ in range(num_blocks)
         ])
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
         self.rbf.reset_parameters()
         self.emb.reset_parameters()
@@ -502,28 +541,28 @@ class DimeNet(torch.nn.Module):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:
+    ) -> Tuple["DimeNet", Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
         specified target :obj:`target`."""
-        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
         import tensorflow as tf
 
         assert target >= 0 and target <= 12 and not target == 4
 
         root = osp.expanduser(osp.normpath(root))
-        path = osp.join(root, 'pretrained_dimenet', qm9_target_dict[target])
+        path = osp.join(root, "pretrained_dimenet", qm9_target_dict[target])
 
         makedirs(path)
-        url = f'{cls.url}/{qm9_target_dict[target]}'
+        url = f"{cls.url}/{qm9_target_dict[target]}"
 
-        if not osp.exists(osp.join(path, 'checkpoint')):
-            download_url(f'{url}/checkpoint', path)
-            download_url(f'{url}/ckpt.data-00000-of-00002', path)
-            download_url(f'{url}/ckpt.data-00001-of-00002', path)
-            download_url(f'{url}/ckpt.index', path)
+        if not osp.exists(osp.join(path, "checkpoint")):
+            download_url(f"{url}/checkpoint", path)
+            download_url(f"{url}/ckpt.data-00000-of-00002", path)
+            download_url(f"{url}/ckpt.data-00001-of-00002", path)
+            download_url(f"{url}/ckpt.index", path)
 
-        path = osp.join(path, 'ckpt')
+        path = osp.join(path, "ckpt")
         reader = tf.train.load_checkpoint(path)
 
         model = cls(
@@ -541,54 +580,70 @@ class DimeNet(torch.nn.Module):
         )
 
         def copy_(src, name, transpose=False):
-            init = reader.get_tensor(f'{name}/.ATTRIBUTES/VARIABLE_VALUE')
+            init = reader.get_tensor(f"{name}/.ATTRIBUTES/VARIABLE_VALUE")
             init = torch.from_numpy(init)
-            if name[-6:] == 'kernel':
+            if name[-6:] == "kernel":
                 init = init.t()
             src.data.copy_(init)
 
-        copy_(model.rbf.freq, 'rbf_layer/frequencies')
-        copy_(model.emb.emb.weight, 'emb_block/embeddings')
-        copy_(model.emb.lin_rbf.weight, 'emb_block/dense_rbf/kernel')
-        copy_(model.emb.lin_rbf.bias, 'emb_block/dense_rbf/bias')
-        copy_(model.emb.lin.weight, 'emb_block/dense/kernel')
-        copy_(model.emb.lin.bias, 'emb_block/dense/bias')
+        copy_(model.rbf.freq, "rbf_layer/frequencies")
+        copy_(model.emb.emb.weight, "emb_block/embeddings")
+        copy_(model.emb.lin_rbf.weight, "emb_block/dense_rbf/kernel")
+        copy_(model.emb.lin_rbf.bias, "emb_block/dense_rbf/bias")
+        copy_(model.emb.lin.weight, "emb_block/dense/kernel")
+        copy_(model.emb.lin.bias, "emb_block/dense/bias")
 
         for i, block in enumerate(model.output_blocks):
-            copy_(block.lin_rbf.weight, f'output_blocks/{i}/dense_rbf/kernel')
+            copy_(block.lin_rbf.weight, f"output_blocks/{i}/dense_rbf/kernel")
             for j, lin in enumerate(block.lins):
-                copy_(lin.weight, f'output_blocks/{i}/dense_layers/{j}/kernel')
-                copy_(lin.bias, f'output_blocks/{i}/dense_layers/{j}/bias')
-            copy_(block.lin.weight, f'output_blocks/{i}/dense_final/kernel')
+                copy_(lin.weight, f"output_blocks/{i}/dense_layers/{j}/kernel")
+                copy_(lin.bias, f"output_blocks/{i}/dense_layers/{j}/bias")
+            copy_(block.lin.weight, f"output_blocks/{i}/dense_final/kernel")
 
         for i, block in enumerate(model.interaction_blocks):
-            copy_(block.lin_rbf.weight, f'int_blocks/{i}/dense_rbf/kernel')
-            copy_(block.lin_sbf.weight, f'int_blocks/{i}/dense_sbf/kernel')
-            copy_(block.lin_kj.weight, f'int_blocks/{i}/dense_kj/kernel')
-            copy_(block.lin_kj.bias, f'int_blocks/{i}/dense_kj/bias')
-            copy_(block.lin_ji.weight, f'int_blocks/{i}/dense_ji/kernel')
-            copy_(block.lin_ji.bias, f'int_blocks/{i}/dense_ji/bias')
-            copy_(block.W, f'int_blocks/{i}/bilinear')
+            copy_(block.lin_rbf.weight, f"int_blocks/{i}/dense_rbf/kernel")
+            copy_(block.lin_sbf.weight, f"int_blocks/{i}/dense_sbf/kernel")
+            copy_(block.lin_kj.weight, f"int_blocks/{i}/dense_kj/kernel")
+            copy_(block.lin_kj.bias, f"int_blocks/{i}/dense_kj/bias")
+            copy_(block.lin_ji.weight, f"int_blocks/{i}/dense_ji/kernel")
+            copy_(block.lin_ji.bias, f"int_blocks/{i}/dense_ji/bias")
+            copy_(block.W, f"int_blocks/{i}/bilinear")
             for j, layer in enumerate(block.layers_before_skip):
-                copy_(layer.lin1.weight,
-                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel')
-                copy_(layer.lin1.bias,
-                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/bias')
-                copy_(layer.lin2.weight,
-                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel')
-                copy_(layer.lin2.bias,
-                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/bias')
-            copy_(block.lin.weight, f'int_blocks/{i}/final_before_skip/kernel')
-            copy_(block.lin.bias, f'int_blocks/{i}/final_before_skip/bias')
+                copy_(
+                    layer.lin1.weight,
+                    f"int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel",
+                )
+                copy_(
+                    layer.lin1.bias,
+                    f"int_blocks/{i}/layers_before_skip/{j}/dense_1/bias",
+                )
+                copy_(
+                    layer.lin2.weight,
+                    f"int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel",
+                )
+                copy_(
+                    layer.lin2.bias,
+                    f"int_blocks/{i}/layers_before_skip/{j}/dense_2/bias",
+                )
+            copy_(block.lin.weight, f"int_blocks/{i}/final_before_skip/kernel")
+            copy_(block.lin.bias, f"int_blocks/{i}/final_before_skip/bias")
             for j, layer in enumerate(block.layers_after_skip):
-                copy_(layer.lin1.weight,
-                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel')
-                copy_(layer.lin1.bias,
-                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/bias')
-                copy_(layer.lin2.weight,
-                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel')
-                copy_(layer.lin2.bias,
-                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/bias')
+                copy_(
+                    layer.lin1.weight,
+                    f"int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel",
+                )
+                copy_(
+                    layer.lin1.bias,
+                    f"int_blocks/{i}/layers_after_skip/{j}/dense_1/bias",
+                )
+                copy_(
+                    layer.lin2.weight,
+                    f"int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel",
+                )
+                copy_(
+                    layer.lin2.bias,
+                    f"int_blocks/{i}/layers_after_skip/{j}/dense_2/bias",
+                )
 
         # Use the same random seed as the official DimeNet` implementation.
         random_state = np.random.RandomState(seed=42)
@@ -647,7 +702,7 @@ class DimeNet(torch.nn.Module):
         if batch is None:
             return P.sum(dim=0)
         else:
-            return scatter(P, batch, dim=0, reduce='sum')
+            return scatter(P, batch, dim=0, reduce="sum")
 
 
 class DimeNetPlusPlus(DimeNet):
@@ -684,8 +739,8 @@ class DimeNetPlusPlus(DimeNet):
             (default: :obj:`"swish"`)
     """
 
-    url = ('https://raw.githubusercontent.com/gasteigerjo/dimenet/'
-           'master/pretrained/dimenet_pp')
+    url = ("https://raw.githubusercontent.com/gasteigerjo/dimenet/"
+           "master/pretrained/dimenet_pp")
 
     def __init__(
         self,
@@ -703,8 +758,8 @@ class DimeNetPlusPlus(DimeNet):
         num_before_skip: int = 1,
         num_after_skip: int = 2,
         num_output_layers: int = 3,
-        act: Union[str, Callable] = 'swish',
-    ):
+        act: Union[str, Callable] = "swish",
+    ) -> None:
         act = activation_resolver(act)
 
         super().__init__(
@@ -729,15 +784,27 @@ class DimeNetPlusPlus(DimeNet):
         # variable `num_bilinear` does not have any purpose as it is used
         # solely in the `OutputBlock` of DimeNet:
         self.output_blocks = torch.nn.ModuleList([
-            OutputPPBlock(num_radial, hidden_channels, out_emb_channels,
-                          out_channels, num_output_layers, act)
-            for _ in range(num_blocks + 1)
+            OutputPPBlock(
+                num_radial,
+                hidden_channels,
+                out_emb_channels,
+                out_channels,
+                num_output_layers,
+                act,
+            ) for _ in range(num_blocks + 1)
         ])
 
         self.interaction_blocks = torch.nn.ModuleList([
-            InteractionPPBlock(hidden_channels, int_emb_size, basis_emb_size,
-                               num_spherical, num_radial, num_before_skip,
-                               num_after_skip, act) for _ in range(num_blocks)
+            InteractionPPBlock(
+                hidden_channels,
+                int_emb_size,
+                basis_emb_size,
+                num_spherical,
+                num_radial,
+                num_before_skip,
+                num_after_skip,
+                act,
+            ) for _ in range(num_blocks)
         ])
 
         self.reset_parameters()
@@ -748,28 +815,29 @@ class DimeNetPlusPlus(DimeNet):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset, Dataset]:
+    ) -> Tuple["DimeNetPlusPlus", Dataset, Dataset,
+               Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNetPlusPlus` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
         specified target :obj:`target`."""
-        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
         import tensorflow as tf
 
         assert target >= 0 and target <= 12 and not target == 4
 
         root = osp.expanduser(osp.normpath(root))
-        path = osp.join(root, 'pretrained_dimenet_pp', qm9_target_dict[target])
+        path = osp.join(root, "pretrained_dimenet_pp", qm9_target_dict[target])
 
         makedirs(path)
-        url = f'{cls.url}/{qm9_target_dict[target]}'
+        url = f"{cls.url}/{qm9_target_dict[target]}"
 
-        if not osp.exists(osp.join(path, 'checkpoint')):
-            download_url(f'{url}/checkpoint', path)
-            download_url(f'{url}/ckpt.data-00000-of-00002', path)
-            download_url(f'{url}/ckpt.data-00001-of-00002', path)
-            download_url(f'{url}/ckpt.index', path)
+        if not osp.exists(osp.join(path, "checkpoint")):
+            download_url(f"{url}/checkpoint", path)
+            download_url(f"{url}/ckpt.data-00000-of-00002", path)
+            download_url(f"{url}/ckpt.data-00001-of-00002", path)
+            download_url(f"{url}/ckpt.index", path)
 
-        path = osp.join(path, 'ckpt')
+        path = osp.join(path, "ckpt")
         reader = tf.train.load_checkpoint(path)
 
         # Configuration from DimeNet++:
@@ -792,65 +860,81 @@ class DimeNetPlusPlus(DimeNet):
         )
 
         def copy_(src, name, transpose=False):
-            init = reader.get_tensor(f'{name}/.ATTRIBUTES/VARIABLE_VALUE')
+            init = reader.get_tensor(f"{name}/.ATTRIBUTES/VARIABLE_VALUE")
             init = torch.from_numpy(init)
-            if name[-6:] == 'kernel':
+            if name[-6:] == "kernel":
                 init = init.t()
             src.data.copy_(init)
 
-        copy_(model.rbf.freq, 'rbf_layer/frequencies')
-        copy_(model.emb.emb.weight, 'emb_block/embeddings')
-        copy_(model.emb.lin_rbf.weight, 'emb_block/dense_rbf/kernel')
-        copy_(model.emb.lin_rbf.bias, 'emb_block/dense_rbf/bias')
-        copy_(model.emb.lin.weight, 'emb_block/dense/kernel')
-        copy_(model.emb.lin.bias, 'emb_block/dense/bias')
+        copy_(model.rbf.freq, "rbf_layer/frequencies")
+        copy_(model.emb.emb.weight, "emb_block/embeddings")
+        copy_(model.emb.lin_rbf.weight, "emb_block/dense_rbf/kernel")
+        copy_(model.emb.lin_rbf.bias, "emb_block/dense_rbf/bias")
+        copy_(model.emb.lin.weight, "emb_block/dense/kernel")
+        copy_(model.emb.lin.bias, "emb_block/dense/bias")
 
         for i, block in enumerate(model.output_blocks):
-            copy_(block.lin_rbf.weight, f'output_blocks/{i}/dense_rbf/kernel')
+            copy_(block.lin_rbf.weight, f"output_blocks/{i}/dense_rbf/kernel")
             copy_(block.lin_up.weight,
-                  f'output_blocks/{i}/up_projection/kernel')
+                  f"output_blocks/{i}/up_projection/kernel")
             for j, lin in enumerate(block.lins):
-                copy_(lin.weight, f'output_blocks/{i}/dense_layers/{j}/kernel')
-                copy_(lin.bias, f'output_blocks/{i}/dense_layers/{j}/bias')
-            copy_(block.lin.weight, f'output_blocks/{i}/dense_final/kernel')
+                copy_(lin.weight, f"output_blocks/{i}/dense_layers/{j}/kernel")
+                copy_(lin.bias, f"output_blocks/{i}/dense_layers/{j}/bias")
+            copy_(block.lin.weight, f"output_blocks/{i}/dense_final/kernel")
 
         for i, block in enumerate(model.interaction_blocks):
-            copy_(block.lin_rbf1.weight, f'int_blocks/{i}/dense_rbf1/kernel')
-            copy_(block.lin_rbf2.weight, f'int_blocks/{i}/dense_rbf2/kernel')
-            copy_(block.lin_sbf1.weight, f'int_blocks/{i}/dense_sbf1/kernel')
-            copy_(block.lin_sbf2.weight, f'int_blocks/{i}/dense_sbf2/kernel')
+            copy_(block.lin_rbf1.weight, f"int_blocks/{i}/dense_rbf1/kernel")
+            copy_(block.lin_rbf2.weight, f"int_blocks/{i}/dense_rbf2/kernel")
+            copy_(block.lin_sbf1.weight, f"int_blocks/{i}/dense_sbf1/kernel")
+            copy_(block.lin_sbf2.weight, f"int_blocks/{i}/dense_sbf2/kernel")
 
-            copy_(block.lin_ji.weight, f'int_blocks/{i}/dense_ji/kernel')
-            copy_(block.lin_ji.bias, f'int_blocks/{i}/dense_ji/bias')
-            copy_(block.lin_kj.weight, f'int_blocks/{i}/dense_kj/kernel')
-            copy_(block.lin_kj.bias, f'int_blocks/{i}/dense_kj/bias')
+            copy_(block.lin_ji.weight, f"int_blocks/{i}/dense_ji/kernel")
+            copy_(block.lin_ji.bias, f"int_blocks/{i}/dense_ji/bias")
+            copy_(block.lin_kj.weight, f"int_blocks/{i}/dense_kj/kernel")
+            copy_(block.lin_kj.bias, f"int_blocks/{i}/dense_kj/bias")
 
             copy_(block.lin_down.weight,
-                  f'int_blocks/{i}/down_projection/kernel')
-            copy_(block.lin_up.weight, f'int_blocks/{i}/up_projection/kernel')
+                  f"int_blocks/{i}/down_projection/kernel")
+            copy_(block.lin_up.weight, f"int_blocks/{i}/up_projection/kernel")
 
             for j, layer in enumerate(block.layers_before_skip):
-                copy_(layer.lin1.weight,
-                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel')
-                copy_(layer.lin1.bias,
-                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/bias')
-                copy_(layer.lin2.weight,
-                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel')
-                copy_(layer.lin2.bias,
-                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/bias')
+                copy_(
+                    layer.lin1.weight,
+                    f"int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel",
+                )
+                copy_(
+                    layer.lin1.bias,
+                    f"int_blocks/{i}/layers_before_skip/{j}/dense_1/bias",
+                )
+                copy_(
+                    layer.lin2.weight,
+                    f"int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel",
+                )
+                copy_(
+                    layer.lin2.bias,
+                    f"int_blocks/{i}/layers_before_skip/{j}/dense_2/bias",
+                )
 
-            copy_(block.lin.weight, f'int_blocks/{i}/final_before_skip/kernel')
-            copy_(block.lin.bias, f'int_blocks/{i}/final_before_skip/bias')
+            copy_(block.lin.weight, f"int_blocks/{i}/final_before_skip/kernel")
+            copy_(block.lin.bias, f"int_blocks/{i}/final_before_skip/bias")
 
             for j, layer in enumerate(block.layers_after_skip):
-                copy_(layer.lin1.weight,
-                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel')
-                copy_(layer.lin1.bias,
-                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/bias')
-                copy_(layer.lin2.weight,
-                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel')
-                copy_(layer.lin2.bias,
-                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/bias')
+                copy_(
+                    layer.lin1.weight,
+                    f"int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel",
+                )
+                copy_(
+                    layer.lin1.bias,
+                    f"int_blocks/{i}/layers_after_skip/{j}/dense_1/bias",
+                )
+                copy_(
+                    layer.lin2.weight,
+                    f"int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel",
+                )
+                copy_(
+                    layer.lin2.bias,
+                    f"int_blocks/{i}/layers_after_skip/{j}/dense_2/bias",
+                )
 
         random_state = np.random.RandomState(seed=42)
         perm = torch.from_numpy(random_state.permutation(np.arange(130831)))
