@@ -16,16 +16,16 @@ class FLAG:
     #   optimizer, loss_fn, etc
     def augment_train(
         self,
-        model,
-        x,
-        edge_index,
-        y_true,
-        train_idx,
-        step_size,
-        n_ascent_steps,
-        optimizer,
-        loss_fn,
-    ):
+        model: torch.nn.Module,
+        x: torch.tensor,
+        edge_index: torch.tensor,
+        y_true: torch.tensor,
+        train_idx: torch.tensor,
+        step_size: float,
+        n_ascent_steps: int,
+        optimizer: torch.nn.Module,
+        loss_fn: torch.nn.Module,
+    ) -> tuple[torch.nn.Module, torch.tensor]:
         # Code below adapted from:
         #   https://github.com/devnkong/FLAG/blob/main/deep_gcns_torch
         #     /examples/ogb/ogbn_arxiv/main.py#L56
