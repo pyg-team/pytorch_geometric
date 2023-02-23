@@ -8,19 +8,25 @@ class FLAG:
     ):
         self.device = device
 
+    # TODO
+    # Should we make this class a torch.nn.Module and change this function
+    #   to be the forward function?
+    #
+    # The constructor could be parameterized with the external model, data
+    #   optimizer, loss_fn, etc
     def augment_train(
-            self,
-            model,
-            x,
-            edge_index,
-            y_true,
-            train_idx,
-            step_size,
-            optimizer,
-            loss_fn,
-            args,  # TODO ????
+        self,
+        model,
+        x,
+        edge_index,
+        y_true,
+        train_idx,
+        step_size,
+        n_ascent_steps,
+        optimizer,
+        loss_fn,
     ):
-        # TODO Code below adapted from:
+        # Code below adapted from:
         #   https://github.com/devnkong/FLAG/blob/main/deep_gcns_torch
         #     /examples/ogb/ogbn_arxiv/main.py#L56
         #
@@ -57,10 +63,12 @@ class FLAG:
         out = model(x + perturb, edge_index)[train_idx]
         loss = loss_fn(out, training_labels)
 
-        # TODO What is args.m??
-        loss /= args.m
+        # TODO Should this be loss += loss / args.m instead?
+        # loss /= args.m
+        loss /= n_ascent_steps
 
-        for _ in range(args.m - 1):
+        # for _ in range(args.m - 1):
+        for _ in range(n_ascent_steps - 1):
             loss.backward()
             # perturb_data = perturb.detach() + args.step_size *
             #   torch.sign(perturb.grad.detach())
@@ -73,8 +81,9 @@ class FLAG:
             out = model(x + perturb, edge_index)[train_idx]
             loss = loss_fn(out, training_labels)
 
-            # TODO What is args.m??
-            loss /= args.m
+            # TODO Should this be loss += loss / args.m instead?
+            # loss /= args.m
+            loss /= n_ascent_steps
 
         loss.backward()
         optimizer.step()
