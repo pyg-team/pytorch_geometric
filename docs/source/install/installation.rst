@@ -85,7 +85,7 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 
    .. code-block:: none
 
-      pip install torch_cluster torch_spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+      pip install torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
 
    following the same procedure as mentioned above.
 

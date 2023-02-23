@@ -389,7 +389,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu116`, or `cu117` dependin
 For additional but optional functionality, run
 
 ```
-pip install torch_cluster torch_spline-conv -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
+pip install torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
 ```
 
 #### PyTorch 1.12
@@ -412,7 +412,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu102`, `cu113`, or `cu116`
 For additional but optional functionality, run
 
 ```
-pip install torch_cluster torch_spline-conv -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
+pip install torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
 ```
 
 **Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, and PyTorch 1.11.0 (following the same procedure).
