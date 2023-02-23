@@ -9,7 +9,7 @@
 [coverage-image]: https://codecov.io/gh/pyg-team/pytorch_geometric/branch/master/graph/badge.svg
 [coverage-url]: https://codecov.io/github/pyg-team/pytorch_geometric?branch=master
 [contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
-[contributing-url]: https://github.com/pyg-team/pytorch_geometric/blob/master/CONTRIBUTING.md
+[contributing-url]: https://github.com/pyg-team/pytorch_geometric/blob/master/.github/CONTRIBUTING.md
 [slack-image]: https://img.shields.io/badge/slack-pyg-brightgreen
 [slack-url]: https://data.pyg.org/slack.html
 
