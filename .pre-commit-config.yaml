@@ -21,7 +21,7 @@ repos:
     hooks:
       - id: yamllint
         name: Lint yaml
-        args: [-c=.yamllint.yml]
+        args: [-d, '{extends: default, rules: {line-length: disable, document-start: disable, truthy: {level: error}, braces: {max-spaces-inside: 1}}}']
 
   - repo: https://github.com/regebro/pyroma
     rev: "4.1"
