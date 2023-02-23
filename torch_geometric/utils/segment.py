@@ -8,7 +8,8 @@ def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
     r"""Reduces all values in the first dimension of the :obj:`src` tensor
     within the ranges specified in the :obj:`ptr`. See the `documentation
     <https://pytorch-scatter.readthedocs.io/en/latest/functions/
-    segment_csr.html>`__ of :obj:`torch-scatter` for more information.
+    segment_csr.html>`__ of the :obj:`torch_scatter` package for more
+    information.
 
     Args:
         src (torch.Tensor): The source tensor.
