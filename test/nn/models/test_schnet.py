@@ -2,7 +2,8 @@ import pytest
 import torch
 
 from torch_geometric.data import Batch, Data
-from torch_geometric.nn.models.schnet import RadiusInteractionGraph, SchNet
+from torch_geometric.nn import SchNet
+from torch_geometric.nn.models.schnet import RadiusInteractionGraph
 from torch_geometric.testing import is_full_test, withPackage
 
 
