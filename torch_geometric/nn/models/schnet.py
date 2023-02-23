@@ -335,8 +335,7 @@ class RadiusInteractionGraph(torch.nn.Module):
             default interaction graph method.
             (default: :obj:`32`)
     """
-    def __init__(self, cutoff: float = 10.0,
-                 max_num_neighbors: int = 32) -> None:
+    def __init__(self, cutoff: float = 10.0, max_num_neighbors: int = 32):
         super().__init__()
         self.cutoff = cutoff
         self.max_num_neighbors = max_num_neighbors
