@@ -75,6 +75,7 @@ class HeteroNorm(torch.nn.Module):
         self.momentum = momentum
         self.track_running_stats = track_running_stats
         self.allow_single_element = allow_single_element
+        self.affine = affine
         self.in_channels = in_channels
         self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types, **kwargs)
         self.means = ParameterDict({mean_type:torch.zeros(self.in_channels) for mean_type in self.types})
@@ -107,12 +108,20 @@ class HeteroNorm(torch.nn.Module):
                         please ensure that `normalized_shape` is a single integer")
         self.eps = norm_module.eps
         try:
-            # store batch/instance norm momentum
+            # store batch/instance norm
             self.momentum = norm_module.momentum
-        except:
-            # layer norm has no momentum
+            self.track_running_stats = norm_module.track_running_stats
+        except AttributeError:
+            # layer norm
             self.momentum = None
+            self.track_running_stats = False
 
+        try:
+            self.affine = norm_module.affine
+        except AttributeError:
+            self.affine = norm_module.elementwise_affine
+
+        self.allow_single_element = hasattr(norm_module, "allow_single_element")
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
