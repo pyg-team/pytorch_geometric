@@ -13,29 +13,30 @@ def generate_data():
     )
 
 
-@withPackage("torch_cluster")
-@withPackage("ase")
-@pytest.mark.parametrize("use_interaction_graph, use_atomref", [(False, True),
-                                                                (True, False)])
-def test_schnet(use_interaction_graph: bool, use_atomref: bool):
+@withPackage('torch_cluster')
+@withPackage('ase')
+@pytest.mark.parametrize('use_interaction_graph', [False, True])
+@pytest.mark.parametrize('use_atomref', [False, True])
+def test_schnet(use_interaction_graph, use_atomref):
     data = generate_data()
+
+    interaction_graph = None
+    if use_interaction_graph:
+        interaction_graph = RadiusInteractionGraph(cutoff=6.0)
 
     model = SchNet(
         hidden_channels=16,
         num_filters=16,
         num_interactions=2,
-        interaction_graph=RadiusInteractionGraph(
-            cutoff=6.0) if use_interaction_graph else None,
+        interaction_graph=interaction_graph,
         num_gaussians=10,
         cutoff=6.0,
         dipole=True,
         atomref=torch.randn(100, 1) if use_atomref else None,
     )
 
-    assert (
-        str(model) ==
-        "SchNet(hidden_channels=16, num_filters=16, num_interactions=2, num_gaussians=10, cutoff=6.0)"  # noqa
-    )
+    assert str(model) == ('SchNet(hidden_channels=16, num_filters=16, '
+                          'num_interactions=2, num_gaussians=10, cutoff=6.0)')
 
     with torch.no_grad():
         out = model(data.z, data.pos)
@@ -47,7 +48,7 @@ def test_schnet(use_interaction_graph: bool, use_atomref: bool):
             assert out.size() == (1, 1)
 
 
-@withPackage("torch_cluster")
+@withPackage('torch_cluster')
 def test_schnet_batch():
     num_graphs = 3
     batch = [generate_data() for _ in range(num_graphs)]
