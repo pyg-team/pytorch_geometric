@@ -10,6 +10,7 @@ from torch_geometric.utils import (
     from_networkx,
     from_scipy_sparse_matrix,
     from_trimesh,
+    sort_edge_index,
     subgraph,
     to_cugraph,
     to_networkit,
@@ -414,7 +415,7 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
         edge_index = torch.tensor([[0, 1], [1, 2]])
 
     if edge_weight is not None:
-        edge_weight[:edge_index.size(1)]
+        edge_weight = edge_weight[:edge_index.size(1)]
 
     graph = to_cugraph(edge_index, edge_weight, relabel_nodes, directed)
     assert isinstance(graph, cugraph.Graph)
@@ -426,11 +427,18 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
     edge_list = edge_list.sort_values(by=['src', 'dst'])
 
     cu_edge_index = edge_list[['src', 'dst']].to_pandas().values
-    assert edge_index.tolist() == cu_edge_index.T.tolist()
-
+    cu_edge_index = torch.from_numpy(cu_edge_index).t()
+    cu_edge_weight = None
     if edge_weight is not None:
         cu_edge_weight = edge_list['weights'].to_pandas().values
-        assert edge_weight.tolist() == cu_edge_weight.tolist()
+        cu_edge_weight = torch.from_numpy(cu_edge_weight)
+
+    cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
+                                                    cu_edge_weight)
+
+    assert torch.equal(edge_index, cu_edge_index)
+    if edge_weight is not None:
+        assert torch.allclose(edge_weight, cu_edge_weight)
 
 
 @withPackage('cudf')
@@ -449,7 +457,7 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
         edge_index = torch.tensor([[0, 1], [1, 2]])
 
     if edge_weight is not None:
-        edge_weight[:edge_index.size(1)]
+        edge_weight = edge_weight[:edge_index.size(1)]
 
     G = cugraph.Graph(directed=directed)
     df = cudf.from_dlpack(to_dlpack(edge_index.t()))
@@ -466,9 +474,11 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
 
     cu_edge_index, cu_edge_weight = from_cugraph(G)
 
-    assert cu_edge_index.tolist() == edge_index.tolist()
+    cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
+                                                    cu_edge_weight)
 
-    if edge_weight is None:
-        assert cu_edge_weight is None
+    assert torch.equal(edge_index, cu_edge_index)
+    if edge_weight is not None:
+        assert torch.allclose(edge_weight, cu_edge_weight)
     else:
-        assert cu_edge_weight.tolist() == edge_weight.tolist()
+        assert cu_edge_weight is None
