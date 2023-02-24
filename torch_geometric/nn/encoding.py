@@ -61,10 +61,10 @@ class PositionalEncoding(torch.nn.Module):
 class TemporalEncoding(torch.nn.Module):
     r"""The time-encoding function from the `"Do We Really Need Complicated
     Model Architectures for Temporal Networks?"
-    <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper, which first maps
-    each entry to a vector with monotonically exponentially decreasing values,
-    and then uses the cosine function to project all values to range
-    :math:`[-1, 1]`:
+    <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
+    :class:`TemporalEncoding` first maps each entry to a vector with
+    monotonically exponentially decreasing values, and then uses the cosine
+    function to project all values to range :math:`[-1, 1]`
 
     .. math::
         y_{i} = \cos \left( \sqrt{d}^{-(i - 1)/\sqrt{d}} \right)
