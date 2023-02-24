@@ -1,9 +1,11 @@
+import math
+
 import torch
 from torch import Tensor
 
 
 class PositionalEncoding(torch.nn.Module):
-    r"""The positional encoding scheme from `"Attention Is All You Need"
+    r"""The positional encoding scheme from the `"Attention Is All You Need"
     <https://arxiv.org/pdf/1706.03762.pdf>`_ paper
 
     .. math::
@@ -51,6 +53,44 @@ class PositionalEncoding(torch.nn.Module):
         x = x / self.granularity if self.granularity != 1.0 else x
         out = x.view(-1, 1) * self.frequency.view(1, -1)
         return torch.cat([torch.sin(out), torch.cos(out)], dim=-1)
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({self.out_channels})'
+
+
+class TemporalEncoding(torch.nn.Module):
+    r"""The time-encoding function from the `"Do We Really Need Complicated
+    Model Architectures for Temporal Networks?"
+    <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
+    :class:`TemporalEncoding` first maps each entry to a vector with
+    monotonically exponentially decreasing values, and then uses the cosine
+    function to project all values to range :math:`[-1, 1]`
+
+    .. math::
+        y_{i} = \cos \left(x \cdot \sqrt{d}^{-(i - 1)/\sqrt{d}} \right)
+
+    where :math:`d` defines the output feature dimension, and
+    :math:`1 \leq i \leq d`.
+
+    Args:
+        out_channels (int): Size :math:`d` of each output sample.
+    """
+    def __init__(self, out_channels: int):
+        super().__init__()
+        self.out_channels = out_channels
+
+        sqrt = math.sqrt(out_channels)
+        weight = 1.0 / sqrt**torch.linspace(0, sqrt, out_channels).view(1, -1)
+        self.register_buffer('weight', weight)
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        pass
+
+    def forward(self, x: Tensor) -> Tensor:
+        """"""
+        return torch.cos(x.view(-1, 1) @ self.weight)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.out_channels})'
