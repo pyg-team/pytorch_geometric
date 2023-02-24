@@ -103,8 +103,10 @@ class GNNExplainer(ExplainerAlgorithm):
     ):
         self._initialize_masks(x, edge_index)
 
-        parameters = [self.node_mask]  # We always learn a node mask.
-        if self.explainer_config.edge_mask_type is not None:
+        parameters = []
+        if self.node_mask is not None:
+            parameters.append(self.node_mask)
+        if self.edge_mask is not None:
             set_masks(model, self.edge_mask, edge_index, apply_sigmoid=True)
             parameters.append(self.edge_mask)
 
@@ -113,7 +115,7 @@ class GNNExplainer(ExplainerAlgorithm):
         for i in range(self.epochs):
             optimizer.zero_grad()
 
-            h = x * self.node_mask.sigmoid()
+            h = x if self.node_mask is None else x * self.node_mask.sigmoid()
             y_hat, y = model(h, edge_index, **kwargs), target
 
             if index is not None:
@@ -140,7 +142,9 @@ class GNNExplainer(ExplainerAlgorithm):
         (N, F), E = x.size(), edge_index.size(1)
 
         std = 0.1
-        if node_mask_type == MaskType.object:
+        if node_mask_type is None:
+            self.node_mask = None
+        elif node_mask_type == MaskType.object:
             self.node_mask = Parameter(torch.randn(N, 1, device=device) * std)
         elif node_mask_type == MaskType.attributes:
             self.node_mask = Parameter(torch.randn(N, F, device=device) * std)
@@ -149,10 +153,12 @@ class GNNExplainer(ExplainerAlgorithm):
         else:
             assert False
 
-        if edge_mask_type == MaskType.object:
+        if edge_mask_type is None:
+            self.edge_mask = None
+        elif edge_mask_type == MaskType.object:
             std = torch.nn.init.calculate_gain('relu') * sqrt(2.0 / (2 * N))
             self.edge_mask = Parameter(torch.randn(E, device=device) * std)
-        elif edge_mask_type is not None:
+        else:
             assert False
 
     def _loss(self, y_hat: Tensor, y: Tensor) -> Tensor:
