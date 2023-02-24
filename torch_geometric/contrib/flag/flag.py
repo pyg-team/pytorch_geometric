@@ -77,11 +77,11 @@ class FLAG(torch.nn.Module):
         # out = forward(perturb)
         # TODO self.perturb is a Parameter - will that cause an issue here?
         out = self.model(self.x + self.perturb, self.edge_index)[train_idx]
-        loss = self.loss_fn(out, training_labels)
+        self.loss = self.loss_fn(out, training_labels)
 
         # TODO Should this be loss += loss / args.m instead?
         # loss /= args.m
-        loss /= n_ascent_steps
+        self.loss /= n_ascent_steps
 
         # for _ in range(args.m - 1):
         for _ in range(n_ascent_steps - 1):
@@ -97,11 +97,11 @@ class FLAG(torch.nn.Module):
             # out = forward(perturb)
             # TODO self.perturb is a Parameter - will that cause an issue here?
             out = self.model(self.x + self.perturb, self.edge_index)[train_idx]
-            loss = self.loss_fn(out, training_labels)
+            self.loss = self.loss_fn(out, training_labels)
 
             # TODO Should this be loss += loss / args.m instead?
             # loss /= args.m
-            loss /= n_ascent_steps
+            self.loss /= n_ascent_steps
 
         self.loss.backward()
         self.optimizer.step()
@@ -113,4 +113,4 @@ class FLAG(torch.nn.Module):
         # mitigate the undesirable effects if they do.
         self.optimizer.zero_grad()
 
-        return loss, out
+        return self.loss, out
