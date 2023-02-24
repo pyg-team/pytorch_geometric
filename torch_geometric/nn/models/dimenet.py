@@ -489,12 +489,12 @@ class DimeNet(torch.nn.Module):
         num_before_skip: int = 1,
         num_after_skip: int = 2,
         num_output_layers: int = 3,
-        act: Union[str, Callable] = "swish",
+        act: Union[str, Callable] = 'swish',
     ):
         super().__init__()
 
         if num_spherical < 2:
-            raise ValueError("num_spherical should be greater than 1")
+            raise ValueError("'num_spherical' should be greater than 1")
 
         act = activation_resolver(act)
 
@@ -540,7 +540,7 @@ class DimeNet(torch.nn.Module):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple["DimeNet", Dataset, Dataset, Dataset]:  # pragma: no cover
+    ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
         specified target :obj:`target`."""
@@ -608,41 +608,25 @@ class DimeNet(torch.nn.Module):
             copy_(block.lin_ji.bias, f'int_blocks/{i}/dense_ji/bias')
             copy_(block.W, f'int_blocks/{i}/bilinear')
             for j, layer in enumerate(block.layers_before_skip):
-                copy_(
-                    layer.lin1.weight,
-                    f'int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel',
-                )
-                copy_(
-                    layer.lin1.bias,
-                    f'int_blocks/{i}/layers_before_skip/{j}/dense_1/bias',
-                )
-                copy_(
-                    layer.lin2.weight,
-                    f'int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel',
-                )
-                copy_(
-                    layer.lin2.bias,
-                    f'int_blocks/{i}/layers_before_skip/{j}/dense_2/bias',
-                )
+                copy_(layer.lin1.weight,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel')
+                copy_(layer.lin1.bias,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/bias')
+                copy_(layer.lin2.weight,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel')
+                copy_(layer.lin2.bias,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/bias')
             copy_(block.lin.weight, f'int_blocks/{i}/final_before_skip/kernel')
             copy_(block.lin.bias, f'int_blocks/{i}/final_before_skip/bias')
             for j, layer in enumerate(block.layers_after_skip):
-                copy_(
-                    layer.lin1.weight,
-                    f'int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel',
-                )
-                copy_(
-                    layer.lin1.bias,
-                    f'int_blocks/{i}/layers_after_skip/{j}/dense_1/bias',
-                )
-                copy_(
-                    layer.lin2.weight,
-                    f'int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel',
-                )
-                copy_(
-                    layer.lin2.bias,
-                    f'int_blocks/{i}/layers_after_skip/{j}/dense_2/bias',
-                )
+                copy_(layer.lin1.weight,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel')
+                copy_(layer.lin1.bias,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/bias')
+                copy_(layer.lin2.weight,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel')
+                copy_(layer.lin2.bias,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/bias')
 
         # Use the same random seed as the official DimeNet` implementation.
         random_state = np.random.RandomState(seed=42)
@@ -738,8 +722,8 @@ class DimeNetPlusPlus(DimeNet):
             (default: :obj:`"swish"`)
     """
 
-    url = ("https://raw.githubusercontent.com/gasteigerjo/dimenet/"
-           "master/pretrained/dimenet_pp")
+    url = ('https://raw.githubusercontent.com/gasteigerjo/dimenet/'
+           'master/pretrained/dimenet_pp')
 
     def __init__(
         self,
@@ -814,7 +798,7 @@ class DimeNetPlusPlus(DimeNet):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple["DimeNetPlusPlus", Dataset, Dataset,
+    ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset,
                Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`DimeNetPlusPlus` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
@@ -897,43 +881,27 @@ class DimeNetPlusPlus(DimeNet):
             copy_(block.lin_up.weight, f'int_blocks/{i}/up_projection/kernel')
 
             for j, layer in enumerate(block.layers_before_skip):
-                copy_(
-                    layer.lin1.weight,
-                    f'int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel',
-                )
-                copy_(
-                    layer.lin1.bias,
-                    f'int_blocks/{i}/layers_before_skip/{j}/dense_1/bias',
-                )
-                copy_(
-                    layer.lin2.weight,
-                    f'int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel',
-                )
-                copy_(
-                    layer.lin2.bias,
-                    f'int_blocks/{i}/layers_before_skip/{j}/dense_2/bias',
-                )
+                copy_(layer.lin1.weight,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/kernel')
+                copy_(layer.lin1.bias,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_1/bias')
+                copy_(layer.lin2.weight,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/kernel')
+                copy_(layer.lin2.bias,
+                      f'int_blocks/{i}/layers_before_skip/{j}/dense_2/bias')
 
             copy_(block.lin.weight, f'int_blocks/{i}/final_before_skip/kernel')
             copy_(block.lin.bias, f'int_blocks/{i}/final_before_skip/bias')
 
             for j, layer in enumerate(block.layers_after_skip):
-                copy_(
-                    layer.lin1.weight,
-                    f'int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel',
-                )
-                copy_(
-                    layer.lin1.bias,
-                    f'int_blocks/{i}/layers_after_skip/{j}/dense_1/bias',
-                )
-                copy_(
-                    layer.lin2.weight,
-                    f'int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel',
-                )
-                copy_(
-                    layer.lin2.bias,
-                    f'int_blocks/{i}/layers_after_skip/{j}/dense_2/bias',
-                )
+                copy_(layer.lin1.weight,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/kernel')
+                copy_(layer.lin1.bias,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_1/bias')
+                copy_(layer.lin2.weight,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/kernel')
+                copy_(layer.lin2.bias,
+                      f'int_blocks/{i}/layers_after_skip/{j}/dense_2/bias')
 
         random_state = np.random.RandomState(seed=42)
         perm = torch.from_numpy(random_state.permutation(np.arange(130831)))
