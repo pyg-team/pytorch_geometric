@@ -1,3 +1,4 @@
+import pytest
 import torch
 import torch.nn.functional as F
 
@@ -7,71 +8,40 @@ from torch_geometric.nn.models.dimenet import (
     Envelope,
     ResidualLayer,
 )
-from torch_geometric.testing import onlyFullTest
+from torch_geometric.testing import is_full_test
 
 
-def test_modules():
+def test_dimenet_modules():
     env = Envelope(exponent=5)
     x = torch.randn(10, 3)
-
-    assert env(x).size() == (10, 3)  # Isotonic Layer
+    assert env(x).size() == (10, 3)  # Isotonic layer.
 
     bbl = BesselBasisLayer(5)
-    bbl.reset_parameters()
     x = torch.randn(10, 3)
-    assert bbl(x).size() != (10, 3)  # Non-isotonic Layer
+    assert bbl(x).size() == (10, 3, 5)  # Non-isotonic layer.
 
     rl = ResidualLayer(128, torch.nn.functional.relu)
-    rl.reset_parameters()
     x = torch.randn(128, 128)
+    assert rl(x).size() == (128, 128)  # Isotonic layer.
 
-    assert rl(x).size() == (128, 128)  # Isotonic Layer
 
-
-@onlyFullTest
-def test_dimenet():
+@pytest.mark.parametrize('Model', [DimeNet, DimeNetPlusPlus])
+def test_dimenet(Model):
     z = torch.randint(1, 10, (20, ))
     pos = torch.randn(20, 3)
 
-    model = DimeNet(hidden_channels=5, out_channels=1, num_blocks=5)
-    model.reset_parameters()
+    if Model == DimeNet:
+        kwargs = dict(num_bilinear=3)
+    else:
+        kwargs = dict(out_emb_channels=3, int_emb_size=5, basis_emb_size=5)
 
-    with torch.no_grad():
-        out = model(z, pos)
-        assert out.size() == (1, )
-
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit(z, pos), out)
-
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
-
-    min_loss = float("inf")
-    for i in range(100):
-        optimizer.zero_grad()
-        out = model(z, pos)
-        loss = F.l1_loss(out, torch.tensor([1.0]))
-        loss.backward()
-        optimizer.step()
-        min_loss = min(float(loss), min_loss)
-    assert min_loss < 2
-
-
-@onlyFullTest
-def test_dimenet_plus_plus():
-    z = torch.randint(1, 10, (20, ))
-    pos = torch.randn(20, 3)
-
-    model = DimeNetPlusPlus(
+    model = Model(
         hidden_channels=5,
         out_channels=1,
         num_blocks=5,
-        out_emb_channels=3,
-        int_emb_size=5,
-        basis_emb_size=5,
         num_spherical=5,
         num_radial=5,
-        num_before_skip=2,
-        num_after_skip=2,
+        **kwargs,
     )
     model.reset_parameters()
 
@@ -82,14 +52,15 @@ def test_dimenet_plus_plus():
         jit = torch.jit.export(model)
         assert torch.allclose(jit(z, pos), out)
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
+    if is_full_test():
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
 
-    min_loss = float("inf")
-    for i in range(100):
-        optimizer.zero_grad()
-        out = model(z, pos)
-        loss = F.l1_loss(out, torch.tensor([1.0]))
-        loss.backward()
-        optimizer.step()
-        min_loss = min(float(loss), min_loss)
-    assert min_loss < 2
+        min_loss = float("inf")
+        for i in range(100):
+            optimizer.zero_grad()
+            out = model(z, pos)
+            loss = F.l1_loss(out, torch.tensor([1.0]))
+            loss.backward()
+            optimizer.step()
+            min_loss = min(float(loss), min_loss)
+        assert min_loss < 2

@@ -482,7 +482,7 @@ class DimeNet(torch.nn.Module):
         num_blocks: int,
         num_bilinear: int,
         num_spherical: int,
-        num_radial,
+        num_radial: int,
         cutoff: float = 5.0,
         max_num_neighbors: int = 32,
         envelope_exponent: int = 5,
