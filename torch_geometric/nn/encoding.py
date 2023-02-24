@@ -67,7 +67,7 @@ class TemporalEncoding(torch.nn.Module):
     function to project all values to range :math:`[-1, 1]`
 
     .. math::
-        y_{i} = \cos \left( \sqrt{d}^{-(i - 1)/\sqrt{d}} \right)
+        y_{i} = \cos \left(x \cdot \sqrt{d}^{-(i - 1)/\sqrt{d}} \right)
 
     where :math:`d` defines the output feature dimension, and
     :math:`1 \leq i \leq d`.
