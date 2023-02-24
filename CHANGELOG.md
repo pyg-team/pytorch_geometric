@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Fixed get_mesh_laplacian, and user can select its normalization type ([#6037](https://github.com/pyg-team/pytorch_geometric/issues/6037))
 - Added the `TemporalEncoding` module ([#6785](https://github.com/pyg-team/pytorch_geometric/pull/6785))
 - Added CPU-optimized `spmm_reduce` functionality via CSR format ([#6699](https://github.com/pyg-team/pytorch_geometric/pull/6699), [#6759](https://github.com/pyg-team/pytorch_geometric/pull/6759))
 - Added support for the revised version of the `MD17` dataset ([#6734](https://github.com/pyg-team/pytorch_geometric/pull/6734))
