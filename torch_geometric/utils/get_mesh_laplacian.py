@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -81,7 +81,8 @@ def get_mesh_laplacian(
     if normalization is not None:
 
         def get_areas(left, centre, right):
-            left_pos, central_pos, right_pos = pos[left], pos[centre], pos[right]
+            left_pos, central_pos, right_pos = pos[left], pos[centre], pos[
+                right]
             left_vec = left_pos - central_pos
             right_vec = right_pos - central_pos
             cross = torch.norm(torch.cross(left_vec, right_vec, dim=1), dim=1)
@@ -94,15 +95,18 @@ def get_mesh_laplacian(
         area_012 = get_areas(face[0], face[1], face[2])
         area_weight = torch.cat([area_021, area_102, area_012])
         area_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
-        area_index, area_weight = to_undirected(*coalesce(area_index, area_weight))
+        area_index, area_weight = to_undirected(
+            *coalesce(area_index, area_weight))
         row, col = area_index
         area_deg = torch.zeros(num_nodes).scatter_add_(0, row, area_weight)
 
         if normalization == 'sym':
             area_deg_inv_sqrt = area_deg.pow_(-0.5)
-            area_deg_inv_sqrt.masked_fill_(area_deg_inv_sqrt == float('inf'), 0)
+            area_deg_inv_sqrt.masked_fill_(area_deg_inv_sqrt == float('inf'),
+                                           0)
             row, col = edge_index
-            edge_weight = area_deg_inv_sqrt[row] * edge_weight * area_deg_inv_sqrt[col]
+            edge_weight = area_deg_inv_sqrt[
+                row] * edge_weight * area_deg_inv_sqrt[col]
         elif normalization == 'rw':
             area_deg_inv = 1.0 / area_deg
             area_deg_inv.masked_fill_(area_deg_inv == float('inf'), 0)
