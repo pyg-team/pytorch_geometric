@@ -54,7 +54,8 @@ class GNNExplainer(ExplainerAlgorithm):
         self.lr = lr
         self.coeffs.update(kwargs)
 
-        self.node_mask = self.edge_mask = None
+        self.node_mask = self.hard_node_mask = None
+        self.edge_mask = self.hard_edge_mask = None
 
     def forward(
         self,
@@ -70,19 +71,18 @@ class GNNExplainer(ExplainerAlgorithm):
             raise ValueError(f"Heterogeneous graphs not yet supported in "
                              f"'{self.__class__.__name__}'")
 
-        hard_node_mask = hard_edge_mask = None
-        if self.model_config.task_level == ModelTaskLevel.node:
-            # We need to compute hard masks to properly clean up edges and
-            # nodes attributions not involved during message passing:
-            hard_node_mask, hard_edge_mask = self._get_hard_masks(
-                model, index, edge_index, num_nodes=x.size(0))
-
         self._train(model, x, edge_index, target=target, index=index, **kwargs)
 
-        node_mask = self._post_process_mask(self.node_mask, hard_node_mask,
-                                            apply_sigmoid=True)
-        edge_mask = self._post_process_mask(self.edge_mask, hard_edge_mask,
-                                            apply_sigmoid=True)
+        node_mask = self._post_process_mask(
+            self.node_mask,
+            self.hard_node_mask,
+            apply_sigmoid=True,
+        )
+        edge_mask = self._post_process_mask(
+            self.edge_mask,
+            self.hard_edge_mask,
+            apply_sigmoid=True,
+        )
 
         self._clean_model(model)
 
@@ -110,7 +110,7 @@ class GNNExplainer(ExplainerAlgorithm):
 
         optimizer = torch.optim.Adam(parameters, lr=self.lr)
 
-        for _ in range(self.epochs):
+        for i in range(self.epochs):
             optimizer.zero_grad()
 
             h = x * self.node_mask.sigmoid()
@@ -123,6 +123,14 @@ class GNNExplainer(ExplainerAlgorithm):
 
             loss.backward()
             optimizer.step()
+
+            # In the first iteration, we collect the nodes and edges that are
+            # involved into making the prediction. These are all the nodes and
+            # edges with gradient != 0 (without regularization applied).
+            if i == 0 and self.node_mask is not None:
+                self.hard_node_mask = self.node_mask.grad != 0.0
+            if i == 0 and self.edge_mask is not None:
+                self.hard_edge_mask = self.edge_mask.grad != 0.0
 
     def _initialize_masks(self, x: Tensor, edge_index: Tensor):
         node_mask_type = self.explainer_config.node_mask_type
@@ -157,27 +165,30 @@ class GNNExplainer(ExplainerAlgorithm):
         else:
             assert False
 
-        if self.explainer_config.edge_mask_type is not None:
-            m = self.edge_mask.sigmoid()
+        if self.hard_edge_mask is not None:
+            assert self.edge_mask is not None
+            m = self.edge_mask[self.hard_edge_mask].sigmoid()
             edge_reduce = getattr(torch, self.coeffs['edge_reduction'])
             loss = loss + self.coeffs['edge_size'] * edge_reduce(m)
             ent = -m * torch.log(m + self.coeffs['EPS']) - (
                 1 - m) * torch.log(1 - m + self.coeffs['EPS'])
             loss = loss + self.coeffs['edge_ent'] * ent.mean()
 
-        m = self.node_mask.sigmoid()
-        node_feat_reduce = getattr(torch, self.coeffs['node_feat_reduction'])
-        loss = loss + self.coeffs['node_feat_size'] * node_feat_reduce(m)
-        ent = -m * torch.log(m + self.coeffs['EPS']) - (
-            1 - m) * torch.log(1 - m + self.coeffs['EPS'])
-        loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
+        if self.hard_node_mask is not None:
+            assert self.node_mask is not None
+            m = self.node_mask[self.hard_node_mask].sigmoid()
+            node_reduce = getattr(torch, self.coeffs['node_feat_reduction'])
+            loss = loss + self.coeffs['node_feat_size'] * node_reduce(m)
+            ent = -m * torch.log(m + self.coeffs['EPS']) - (
+                1 - m) * torch.log(1 - m + self.coeffs['EPS'])
+            loss = loss + self.coeffs['node_feat_ent'] * ent.mean()
 
         return loss
 
     def _clean_model(self, model):
         clear_masks(model)
-        self.node_mask = None
-        self.edge_mask = None
+        self.node_mask = self.hard_node_mask = None
+        self.edge_mask = self.hard_edge_mask = None
 
 
 class GNNExplainer_:
