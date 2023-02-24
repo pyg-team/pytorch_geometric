@@ -55,7 +55,7 @@ def test_dimenet(Model):
     if is_full_test():
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
 
-        min_loss = float("inf")
+        min_loss = float('inf')
         for i in range(100):
             optimizer.zero_grad()
             out = model(z, pos)
