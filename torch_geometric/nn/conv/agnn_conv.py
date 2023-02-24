@@ -57,11 +57,11 @@ class AGNNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if self.requires_grad:
             self.beta.data.fill_(1)
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        """"""
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
                 edge_index, _ = remove_self_loops(edge_index)

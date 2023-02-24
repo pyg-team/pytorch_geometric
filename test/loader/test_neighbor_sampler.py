@@ -13,7 +13,7 @@ def test_neighbor_sampler_basic():
     E = edge_index.size(1)
 
     loader = NeighborSampler(edge_index, sizes=[2, 4], batch_size=2)
-    assert loader.__repr__() == 'NeighborSampler(sizes=[2, 4])'
+    assert str(loader) == 'NeighborSampler(sizes=[2, 4])'
     assert len(loader) == 5
 
     for batch_size, n_id, adjs in loader:

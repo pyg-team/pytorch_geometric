@@ -12,7 +12,7 @@ def test_arma_conv():
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = ARMAConv(16, 32, num_stacks=8, num_layers=4)
-    assert conv.__repr__() == 'ARMAConv(16, 32, num_stacks=8, num_layers=4)'
+    assert str(conv) == 'ARMAConv(16, 32, num_stacks=8, num_layers=4)'
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
     assert conv(x, adj.t()).tolist() == out.tolist()
@@ -32,6 +32,6 @@ def test_lazy_arma_conv():
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
     conv = ARMAConv(-1, 32, num_stacks=8, num_layers=4)
-    assert conv.__repr__() == 'ARMAConv(-1, 32, num_stacks=8, num_layers=4)'
+    assert str(conv) == 'ARMAConv(-1, 32, num_stacks=8, num_layers=4)'
     out = conv(x, edge_index)
     assert out.size() == (4, 32)

@@ -59,12 +59,13 @@ class GatedGraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         uniform(self.out_channels, self.weight)
         self.rnn.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         if x.size(-1) > self.out_channels:
             raise ValueError('The number of input channels is not allowed to '
                              'be larger than the number of output channels')

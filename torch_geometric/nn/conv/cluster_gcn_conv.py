@@ -62,11 +62,11 @@ class ClusterGCNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_out.reset_parameters()
         self.lin_root.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        """"""
         edge_weight: OptTensor = None
         if isinstance(edge_index, Tensor):
             num_nodes = x.size(self.node_dim)

@@ -9,9 +9,10 @@ def deprecated(details: Optional[str] = None, func_name: Optional[str] = None):
         name = func_name or func.__name__
 
         if inspect.isclass(func):
-            func = type(func.__name__, (func, ), {})
-            func.__init__ = deprecated(details, name)(func.__init__)
-            return func
+            cls = type(func.__name__, (func, ), {})
+            cls.__init__ = deprecated(details, name)(func.__init__)
+            cls.__doc__ = func.__doc__
+            return cls
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):

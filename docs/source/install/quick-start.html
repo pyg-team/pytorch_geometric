@@ -138,11 +138,11 @@
     }
 
     else if (os == "windows") {
-      $("#command pre").text(`pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+      $("#command pre").text(`pip install torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
 
     else {
-      $("#command pre").text(`pip install pyg-lib torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+      $("#command pre").text(`pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
   }
 

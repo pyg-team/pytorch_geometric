@@ -29,11 +29,12 @@ class WLConv(torch.nn.Module):
         self.hashmap = {}
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.hashmap = {}
 
     @torch.no_grad()
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        """"""
+        r"""Runs the forward pass of the module."""
         if x.dim() > 1:
             assert (x.sum(dim=-1) == 1).sum() == x.size(0)
             x = x.argmax(dim=-1)  # one-hot -> integer.

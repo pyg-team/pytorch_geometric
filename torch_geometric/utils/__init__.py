@@ -1,3 +1,5 @@
+import copy
+
 from .scatter import scatter
 from .segment import segment
 from .sort import index_sort
@@ -23,7 +25,7 @@ from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .nested import to_nested_tensor, from_nested_tensor
 from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
-                     to_torch_coo_tensor)
+                     to_torch_coo_tensor, to_edge_index)
 from .spmm import spmm
 from .unbatch import unbatch, unbatch_edge_index
 from .normalized_cut import normalized_cut
@@ -33,7 +35,7 @@ from .convert import to_scipy_sparse_matrix, from_scipy_sparse_matrix
 from .convert import to_networkx, from_networkx
 from .convert import to_networkit, from_networkit
 from .convert import to_trimesh, from_trimesh
-from .convert import to_cugraph
+from .convert import to_cugraph, from_cugraph
 from .smiles import from_smiles, to_smiles
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
@@ -41,7 +43,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .tree_decomposition import tree_decomposition
-from .embedding import get_message_passing_embeddings
+from .embedding import get_embeddings
 from .train_test_split_edges import train_test_split_edges
 
 __all__ = [
@@ -88,6 +90,7 @@ __all__ = [
     'is_torch_sparse_tensor',
     'is_sparse',
     'to_torch_coo_tensor',
+    'to_edge_index',
     'spmm',
     'unbatch',
     'unbatch_edge_index',
@@ -103,6 +106,7 @@ __all__ = [
     'to_trimesh',
     'from_trimesh',
     'to_cugraph',
+    'from_cugraph',
     'from_smiles',
     'to_smiles',
     'erdos_renyi_graph',
@@ -113,8 +117,11 @@ __all__ = [
     'structured_negative_sampling',
     'structured_negative_sampling_feasible',
     'tree_decomposition',
-    'get_message_passing_embeddings',
+    'get_embeddings',
     'train_test_split_edges',
 ]
 
-classes = __all__
+# `structured_negative_sampling_feasible` is a long name and thus destroys the
+# documentation rendering. We remove it for now from the documentation:
+classes = copy.copy(__all__)
+classes.remove('structured_negative_sampling_feasible')

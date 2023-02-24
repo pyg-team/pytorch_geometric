@@ -278,8 +278,6 @@ class PGMExplainer(ExplainerAlgorithm):
         import pandas as pd
         from pgmpy.estimators.CITests import chi_square
 
-        logging.info(f'Explaining node: {index}')
-
         neighbors, _, _, _ = k_hop_subgraph(
             node_idx=index,
             num_hops=get_num_hops(model),

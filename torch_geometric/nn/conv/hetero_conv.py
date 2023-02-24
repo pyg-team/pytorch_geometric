@@ -2,16 +2,17 @@ import warnings
 from collections import defaultdict
 from typing import Dict, Optional
 
+import torch
 from torch import Tensor
-from torch.nn import Module
 
+from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.hgt_conv import group
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.typing import Adj, EdgeType, NodeType
 from torch_geometric.utils.hetero import check_add_self_loops
 
 
-class HeteroConv(Module):
+class HeteroConv(torch.nn.Module):
     r"""A generic wrapper for computing graph convolution on heterogeneous
     graphs.
     This layer will pass messages from source nodes to target nodes based on
@@ -36,7 +37,7 @@ class HeteroConv(Module):
         >>> ['paper', 'author']
 
     Args:
-        convs (Dict[Tuple[str, str, str], Module]): A dictionary
+        convs (Dict[Tuple[str, str, str], MessagePassing]): A dictionary
             holding a bipartite
             :class:`~torch_geometric.nn.conv.MessagePassing` layer for each
             individual edge type.
@@ -45,8 +46,11 @@ class HeteroConv(Module):
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"cat"`, :obj:`None`). (default: :obj:`"sum"`)
     """
-    def __init__(self, convs: Dict[EdgeType, Module],
-                 aggr: Optional[str] = "sum"):
+    def __init__(
+        self,
+        convs: Dict[EdgeType, MessagePassing],
+        aggr: Optional[str] = "sum",
+    ):
         super().__init__()
 
         for edge_type, module in convs.items():
@@ -65,6 +69,7 @@ class HeteroConv(Module):
         self.aggr = aggr
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for conv in self.convs.values():
             conv.reset_parameters()
 
@@ -75,13 +80,16 @@ class HeteroConv(Module):
         *args_dict,
         **kwargs_dict,
     ) -> Dict[NodeType, Tensor]:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
-            x_dict (Dict[str, Tensor]): A dictionary holding node feature
+            x_dict (Dict[str, torch.Tensor]): A dictionary holding node feature
                 information for each individual node type.
-            edge_index_dict (Dict[Tuple[str, str, str], Tensor]): A dictionary
-                holding graph connectivity information for each individual
-                edge type.
+            edge_index_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
+                dictionary holding graph connectivity information for each
+                individual edge type, either as a :class:`torch.Tensor` of
+                shape :obj:`[2, num_edges]` or a
+                :class:`torch_sparse.SparseTensor`.
             *args_dict (optional): Additional forward arguments of invididual
                 :class:`torch_geometric.nn.conv.MessagePassing` layers.
             **kwargs_dict (optional): Additional forward arguments of

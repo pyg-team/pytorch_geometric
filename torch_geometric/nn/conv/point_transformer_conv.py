@@ -101,6 +101,7 @@ class PointTransformerConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.pos_nn)
         if self.attn_nn is not None:
             reset(self.attn_nn)
@@ -108,13 +109,9 @@ class PointTransformerConv(MessagePassing):
         self.lin_src.reset_parameters()
         self.lin_dst.reset_parameters()
 
-    def forward(
-        self,
-        x: Union[Tensor, PairTensor],
-        pos: Union[Tensor, PairTensor],
-        edge_index: Adj,
-    ) -> Tensor:
-        """"""
+    def forward(self, x: Union[Tensor, PairTensor],
+                pos: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
+
         if isinstance(x, Tensor):
             alpha = (self.lin_src(x), self.lin_dst(x))
             x: PairTensor = (self.lin(x), x)

@@ -76,6 +76,7 @@ class PDNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.lin.weight)
         glorot(self.mlp[0].weight)
         glorot(self.mlp[2].weight)
@@ -85,7 +86,6 @@ class PDNConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
-        """"""
 
         if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()

@@ -170,9 +170,9 @@ def to_captum_input(
     *args,
 ) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
     r"""Given :obj:`x`, :obj:`edge_index` and :obj:`mask_type`, converts it
-    to a format to use in `Captum.ai <https://captum.ai/>`_ attribution
+    to a format to use in `Captum <https://captum.ai/>`_ attribution
     methods. Returns :obj:`inputs` and :obj:`additional_forward_args`
-    required for Captum's :obj:`attribute` functions.
+    required for :captum:`Captum's` :obj:`attribute` functions.
     See :meth:`~torch_geometric.nn.models.to_captum_model` for example usage.
 
     Args:
@@ -185,7 +185,7 @@ def to_captum_input(
             :obj:`edge index` for each edge type.
         mask_type (str): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
-            and :obj:`"node_and_edge"`:
+            and :obj:`"node_and_edge"`.
         *args: Additional forward arguments of the model being explained
             which will be added to :obj:`additonal_forward_args`.
     """
@@ -233,7 +233,7 @@ def captum_output_to_dicts(
     mask_type: Union[str, MaskLevelType],
     metadata: Metadata,
 ) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
-    r"""Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
+    r"""Convert the output of `Captum <https://captum.ai/>`_ attribution
     methods which is a tuple of attributions to two dictonaries with node and
     edge attribution tensors. This function is used while explaining
     :class:`~torch_geometric.data.HeteroData` objects.

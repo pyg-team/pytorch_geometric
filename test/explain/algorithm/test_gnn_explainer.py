@@ -10,7 +10,7 @@ from torch_geometric.explain.config import (
     ModelReturnType,
     ModelTaskLevel,
 )
-from torch_geometric.nn import GCNConv, global_add_pool
+from torch_geometric.nn import ChebConv, GCNConv, global_add_pool
 
 
 class GCN(torch.nn.Module):
@@ -229,3 +229,25 @@ def test_gnn_explainer_regression(
     assert explainer.algorithm.edge_mask is None
 
     check_explanation(explanation, node_mask_type, edge_mask_type)
+
+
+def test_gnn_explainer_cheb_conv(check_explanation):
+    explainer = Explainer(
+        model=ChebConv(3, 1, K=2),
+        algorithm=GNNExplainer(epochs=2),
+        explanation_type='model',
+        node_mask_type='object',
+        edge_mask_type='object',
+        model_config=dict(
+            mode='binary_classification',
+            task_level='node',
+            return_type='raw',
+        ),
+    )
+
+    explanation = explainer(x, edge_index)
+
+    assert explainer.algorithm.node_mask is None
+    assert explainer.algorithm.edge_mask is None
+
+    check_explanation(explanation, MaskType.object, MaskType.object)

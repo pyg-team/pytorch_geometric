@@ -154,8 +154,8 @@ class AffinityMixin:
         try:
             # Set CPU affinity for dataloader:
             self.worker_init_fn = init_fn
-            logging.info(f"{self.num_workers} data loader workers are "
-                         f"assigned to CPUs {loader_cores}")
+            logging.debug(f"{self.num_workers} data loader workers are "
+                          f"assigned to CPUs {loader_cores}")
             yield
         finally:
             # Restore omp_num_threads and cpu affinity:

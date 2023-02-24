@@ -49,7 +49,8 @@ def trivial_metric(true, pred, task_type):
 @pytest.mark.parametrize('auto_resume', [True, False])
 @pytest.mark.parametrize('skip_train_eval', [True, False])
 @pytest.mark.parametrize('use_trivial_metric', [True, False])
-def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
+def test_run_single_graphgym(capfd, auto_resume, skip_train_eval,
+                             use_trivial_metric):
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
     warnings.filterwarnings('ignore', ".*lower value for log_every_n_steps.*")
 
@@ -110,6 +111,12 @@ def test_run_single_graphgym(auto_resume, skip_train_eval, use_trivial_metric):
 
     shutil.rmtree(cfg.out_dir)
 
+    out, _ = capfd.readouterr()
+    assert "train: {'epoch': 0," in out
+    assert "val: {'epoch': 0," in out
+    assert "train: {'epoch': 5," in out
+    assert "val: {'epoch': 5," in out
+
 
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
@@ -169,7 +176,7 @@ def test_graphgym_module(tmpdir):
 
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
-def test_train(tmpdir):
+def test_train(capfd, tmpdir):
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
 
     import pytorch_lightning as pl
@@ -197,3 +204,7 @@ def test_train(tmpdir):
     trainer.fit(model, train_loader, val_loader)
 
     shutil.rmtree(cfg.out_dir)
+
+    out, err = capfd.readouterr()
+    assert 'Sanity Checking' in out
+    assert 'Epoch 0:' in out
