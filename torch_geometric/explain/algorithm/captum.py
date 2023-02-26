@@ -27,7 +27,7 @@ class CaptumModel(torch.nn.Module):
         self,
         model: torch.nn.Module,
         mask_type: Union[str, MaskLevelType],
-        output_idx: Optional[Union[int, Tensor]],
+        output_idx: Optional[Union[int, Tensor]] = None,
     ):
         super().__init__()
 
