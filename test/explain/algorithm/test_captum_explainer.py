@@ -89,7 +89,9 @@ def test_captum_explainer_multiclass_classification(
     task_level,
     index,
 ):
-    if node_mask_type is None or edge_mask_type is None:
+    from captum import attr  # noqa
+
+    if node_mask_type is None and edge_mask_type is None:
         return
 
     batch = torch.tensor([0, 0, 1, 1])
@@ -105,7 +107,7 @@ def test_captum_explainer_multiclass_classification(
 
     explainer = Explainer(
         model,
-        algorithm=CaptumExplainer('IntegratedGradients'),
+        algorithm=CaptumExplainer(attr.IntegratedGradients),
         explanation_type='model',
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
@@ -155,6 +157,7 @@ def test_captum_hetero_data(node_mask_type, edge_mask_type, index, hetero_data,
     explanation.validate(raise_on_error=True)
 
 
+@withPackage('captum')
 @pytest.mark.parametrize('node_mask_type',
                          [MaskType.object, MaskType.common_attributes])
 def test_captum_explainer_supports(node_mask_type):

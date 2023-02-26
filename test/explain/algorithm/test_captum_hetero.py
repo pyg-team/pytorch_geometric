@@ -8,7 +8,12 @@ from torch_geometric.explain.algorithm.captum import (
 from torch_geometric.nn import to_captum_model
 from torch_geometric.testing import withPackage
 
-mask_types = ['edge', 'node_and_edge', 'node']
+mask_types = [
+    'node',
+    'edge',
+    'node_and_edge',
+]
+
 methods = [
     'Saliency',
     'InputXGradient',
@@ -38,9 +43,9 @@ def test_captum_attribution_methods_hetero(mask_type, method, hetero_data,
     assert isinstance(captum_model, CaptumHeteroModel)
 
     args = ['additional_arg1']
-    input, additional_forward_args = to_captum_input(data.x_dict,
-                                                     data.edge_index_dict,
-                                                     mask_type, *args)
+    inputs, additional_forward_args = to_captum_input(data.x_dict,
+                                                      data.edge_index_dict,
+                                                      mask_type, *args)
     if mask_type == 'node':
         sliding_window_shapes = ((3, 3), (3, 3))
     elif mask_type == 'edge':
@@ -50,24 +55,24 @@ def test_captum_attribution_methods_hetero(mask_type, method, hetero_data,
 
     if method == 'IntegratedGradients':
         attributions, delta = explainer.attribute(
-            input, target=0, internal_batch_size=1,
+            inputs, target=0, internal_batch_size=1,
             additional_forward_args=additional_forward_args,
             return_convergence_delta=True)
     elif method == 'GradientShap':
         attributions, delta = explainer.attribute(
-            input, target=0, return_convergence_delta=True, baselines=input,
+            inputs, target=0, return_convergence_delta=True, baselines=inputs,
             n_samples=1, additional_forward_args=additional_forward_args)
     elif method == 'DeepLiftShap' or method == 'DeepLift':
         attributions, delta = explainer.attribute(
-            input, target=0, return_convergence_delta=True, baselines=input,
+            inputs, target=0, return_convergence_delta=True, baselines=inputs,
             additional_forward_args=additional_forward_args)
     elif method == 'Occlusion':
         attributions = explainer.attribute(
-            input, target=0, sliding_window_shapes=sliding_window_shapes,
+            inputs, target=0, sliding_window_shapes=sliding_window_shapes,
             additional_forward_args=additional_forward_args)
     else:
         attributions = explainer.attribute(
-            input, target=0, additional_forward_args=additional_forward_args)
+            inputs, target=0, additional_forward_args=additional_forward_args)
 
     if mask_type == 'node':
         assert len(attributions) == len(metadata[0])
