@@ -91,6 +91,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Fixed a bug in which masks were not properly masked in `GNNExplainer` on link prediction tasks ([#6787](https://github.com/pyg-team/pytorch_geometric/pull/6787))
 - Allow the usage of `ChebConv` within `GNNExplainer` ([#6778](https://github.com/pyg-team/pytorch_geometric/pull/6778))
 - Allow setting the `EdgeStorage.num_edges` property ([#6710](https://github.com/pyg-team/pytorch_geometric/pull/6710))
 - Fixed a bug in `utils.bipartite_subgraph()` and updated docs of `HeteroData.subgraph()` ([#6654](https://github.com/pyg-team/pytorch_geometric/pull/6654))
