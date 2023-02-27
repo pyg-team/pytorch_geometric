@@ -78,12 +78,24 @@ class HeteroNorm(torch.nn.Module):
         self.affine = affine
         self.in_channels = in_channels
         self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types, **kwargs)
-        self.means = ParameterDict({mean_type:torch.zeros(self.in_channels) for mean_type in self.types})
-        self.vars = ParameterDict({var_type:torch.ones(self.in_channels) for var_type in self.types})
+        if not hasattr(self, "_hook"):
+            self.means = ParameterDict({mean_type:torch.zeros(self.in_channels[mean_type]) for mean_type in self.types})
+            self.vars = ParameterDict({var_type:torch.ones(self.in_channels[var_type]) for var_type in self.types})
         self.allow_single_element = allow_single_element
         self.mean_func = mean_funcs[self.norm_type]
         self.var_func = var_funcs[self.norm_type]
         self.reset_parameters()
+
+    @torch.no_grad()
+    def initialize_parameters(self, module, input):
+        self.in_channels = {}
+        for x_type, x_n in input[0].items():
+            lin_x = self.hetero_linear[x_type]
+            self.lins[x_type].initialize_parameters(None, x_n)
+            self.in_channels[x_type] = x_n.shape[-1]
+        self.reset_parameters()
+        self._hook.remove()
+        delattr(self, '_hook')
 
     @classmethod
     def from_homogeneous(cls, norm_module: torch.nn.Module, types: Union[List[NodeType],List[EdgeType]]):
@@ -132,8 +144,8 @@ class HeteroNorm(torch.nn.Module):
         r"""Resets all learnable parameters of the module."""
         self.hetero_linear.reset_parameters()
         for type_i in self.types:
-            self.means[type_i] = torch.zeros(self.in_channels)
-            self.vars[type_i] = torch.ones(self.in_channels)
+            self.means[type_i] = torch.zeros(self.in_channels[type_i])
+            self.vars[type_i] = torch.ones(self.in_channels[type_i])
 
     def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         out = x.new_empty(x.size(0), self.in_channels)
