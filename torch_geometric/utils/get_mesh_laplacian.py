@@ -16,10 +16,10 @@ def get_mesh_laplacian(
 
     .. math::
         \mathbf{C}_{ij} = \begin{cases}
-            \frac{\cot \angle_{i,k,j}~+\cot \angle_{i,l,j}}{2} &
-            \text{if } i, j \text{is an edge} \\
+            \frac{\cot \angle_{ikj}~+\cot \angle_{ilj}}{2} &
+            \text{if } i, j \text{ is an edge} \\
             -\sum_{j \in N(i)}{C_{ij}} &
-            \text{if} i \text{is in the diagonal} \\
+            \text{if } i \text{ is in the diagonal} \\
             0 & \text{otherwise}
       \end{cases}
 
@@ -27,8 +27,8 @@ def get_mesh_laplacian(
 
     .. math::
         \mathbf{M}_{ij} = \begin{cases}
-            a(i) \text{if} i \text{is in the diagonal} \\
-            0 \text{otherwise}
+            a(i) & \text{if } i \text{ is in the diagonal} \\
+            0 & \text{otherwise}
       \end{cases}
 
     where :math:`a(i)` is obtained by joining the barycenters of the
