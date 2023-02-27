@@ -203,51 +203,30 @@ class HGTConv(MessagePassing):
         m_rels = [
             self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
-        if self.use_gmm:  # pragma: no cover
-            k_ins = [
-                k_dict[src_type].transpose(0, 1) for src_type in self.src_types
-            ]
-            v_ins = [
-                v_dict[src_type].transpose(0, 1) for src_type in self.src_types
-            ]
-            k_outs = [
-                k_o_i.transpose(1, 0)
-                for k_o_i in pyg_lib.ops.grouped_matmul(k_ins, a_rels)
-            ]
-            v_outs = [
-                v_o_i.transpose(1, 0)
-                for v_o_i in pyg_lib.ops.grouped_matmul(v_ins, m_rels)
-            ]
-            node_slices = make_node_slices({
-                n_type: k_outs[i].shape[0]
-                for i, n_type in enumerate(self.node_types)
-            })
-            k_out = torch.cat(k_outs)
-            v_out = torch.cat(v_outs)
-        else:
-            k_ins = []
-            v_ins = []
-            count = 0
-            trans_ptr = [count]
-            for src_type in self.src_types:
-                k_src = k_dict[src_type]
-                v_src = v_dict[src_type]
-                k_ins.append(k_src.view(-1, D))
-                v_ins.append(v_src.view(-1, D))
-                for i in range(H):
-                    count += k_src.size(0)
-                    trans_ptr.append(count)
-            trans_ptr = torch.tensor(trans_ptr)
-            a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
-            k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
-                                               a_rel).view(-1, H, D)
 
-            v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
-                                               m_rel).view(-1, H, D)
-            node_slices = make_node_slices({
-                n_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
-                for i, n_type in enumerate(self.node_types)
-            })
+        k_ins = []
+        v_ins = []
+        count = 0
+        trans_ptr = [count]
+        for src_type in self.src_types:
+            k_src = k_dict[src_type]
+            v_src = v_dict[src_type]
+            k_ins.append(k_src.view(-1, D))
+            v_ins.append(v_src.view(-1, D))
+            for i in range(H):
+                count += k_src.size(0)
+                trans_ptr.append(count)
+        trans_ptr = torch.tensor(trans_ptr)
+        a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
+        k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
+                                           a_rel).view(-1, H, D)
+
+        v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
+                                           m_rel).view(-1, H, D)
+        node_slices = make_node_slices({
+            n_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
+            for i, n_type in enumerate(self.node_types)
+        })
 
         # combine edge_index dict into single tensor
         q_list = []
