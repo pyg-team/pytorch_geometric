@@ -122,6 +122,9 @@ class HeteroNorm(torch.nn.Module):
             self.affine = norm_module.elementwise_affine
 
         self.allow_single_element = hasattr(norm_module, "allow_single_element")
+        self.mean_func = mean_funcs[self.norm_type]
+        self.var_func = var_funcs[self.norm_type]
+
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
