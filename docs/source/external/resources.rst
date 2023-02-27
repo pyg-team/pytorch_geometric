@@ -3,6 +3,8 @@ External Resources
 
 * Matthias Fey and Jan E. Lenssen: **Fast Graph Representation Learning with** :pyg:`null` **PyTorch Geometric** [`Paper <https://arxiv.org/abs/1903.02428>`_, `Slides (3.3MB) <http://rusty1s.github.io/pyg_slides.pdf>`__, `Poster (2.3MB) <http://rusty1s.github.io/pyg_poster.pdf>`__, `Notebook <http://htmlpreview.github.io/?https://github.com/rusty1s/rusty1s.github.io/blob/master/pyg_notebook.html>`__]
 
+* :stanford:`Stanford CS224W: Machine Learning with Graphs`: **Graph Machine Learning lectures** [:youtube:`null` `Youtube <https://www.youtube.com/watch?v=JAB_plj2rbA>`__]
+
 * :stanford:`Stanford University`: **A collection of graph machine learning tutorial blog posts**, fully realized with :pyg:`null` **PyG** [`Website <https://medium.com/stanford-cs224w>`__]
 
 * Soumith Chintala: **Automatic Differentiation,** :pytorch:`null` **PyTorch and Graph Neural Networks** [`Talk (starting from 26:15) <http://www.ipam.ucla.edu/abstract/?tid=15592&pcode=GLWS4>`__]
