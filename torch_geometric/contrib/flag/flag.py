@@ -70,6 +70,7 @@ class FLAG(torch.nn.Module):
                 dtype=torch.float,
                 device=self.device,
             ))
+        self.perturb.detach().uniform_(-step_size, step_size)
 
         # out = forward(perturb)
         # TODO self.perturb is a Parameter - will that cause an issue here?
@@ -111,3 +112,10 @@ class FLAG(torch.nn.Module):
         self.optimizer.zero_grad()
 
         return self.loss, out
+
+    def get_model(self) -> torch.nn.Module:
+        """
+        returns: a reference to the underlying model that was trained by
+                 the FLAG module.
+        """
+        return self.model
