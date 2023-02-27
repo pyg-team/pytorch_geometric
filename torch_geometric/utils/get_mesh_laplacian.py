@@ -3,12 +3,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import (
-    add_self_loops,
-    coalesce,
-    scatter,
-    to_undirected,
-)
+from torch_geometric.utils import add_self_loops, scatter, to_undirected
 
 
 def get_mesh_laplacian(
