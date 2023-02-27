@@ -10,6 +10,7 @@ from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.captum import (
     CaptumHeteroModel,
     CaptumModel,
+    MaskLevelType,
     convert_captum_output,
     to_captum_input,
 )
@@ -49,19 +50,22 @@ class CaptumExplainer(ExplainerAlgorithm):
         else:
             self.attribution_method = attribution_method
 
-    def _get_mask_type(self):
-        "Based on the explainer config, return the mask type."
+    def _get_mask_type(self) -> MaskLevelType:
+        r"""Based on the explainer config, return the mask type."""
         node_mask_type = self.explainer_config.node_mask_type
         edge_mask_type = self.explainer_config.edge_mask_type
         if node_mask_type is not None and edge_mask_type is not None:
-            mask_type = 'node_and_edge'
+            mask_type = MaskLevelType.node_and_edge
         elif node_mask_type is not None:
-            mask_type = 'node'
+            mask_type = MaskLevelType.node
         elif edge_mask_type is not None:
-            mask_type = 'edge'
+            mask_type = MaskLevelType.edge
+        else:
+            raise ValueError("Neither node mask type nor "
+                             "edge mask type is specified.")
         return mask_type
 
-    def _support_multiple_indices(self):
+    def _support_multiple_indices(self) -> bool:
         r"""Checks if the method supports multiple indices."""
         return self.attribution_method.__name__ == 'IntegratedGradients'
 
@@ -136,11 +140,11 @@ class CaptumExplainer(ExplainerAlgorithm):
 
         explanation = HeteroExplanation()
         if node_mask is not None:
-            for type, mask in node_mask.items():
-                explanation.node_mask_dict[type] = mask
+            for node_type, mask in node_mask.items():
+                explanation.node_mask_dict[node_type] = mask
         if edge_mask is not None:
-            for type, mask in edge_mask.items():
-                explanation.edge_mask_dict[type] = mask
+            for edge_type, mask in edge_mask.items():
+                explanation.edge_mask_dict[edge_type] = mask
         return explanation
 
     def supports(self) -> bool:
