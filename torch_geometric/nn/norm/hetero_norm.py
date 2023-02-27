@@ -86,49 +86,46 @@ class HeteroNorm(torch.nn.Module):
         self.reset_parameters()
 
     @classmethod
-    def from_homogeneous(self, norm_module: torch.nn.Module, types: Union[List[NodeType],List[EdgeType]]):
-        self.norm_type = None
-        for norm_type in accepted_norm_types:
-            if norm_type in str(norm_module).lower(): 
-                self.norm_type = norm_type 
-        if self.norm_type is None:
+    def from_homogeneous(cls, norm_module: torch.nn.Module, types: Union[List[NodeType],List[EdgeType]]):
+        norm_type = None
+        for norm_type_i in accepted_norm_types:
+            if norm_type_i in str(norm_module).lower(): 
+                norm_type = norm_type_i 
+        if norm_type is None:
             raise ValueError('Please only pass one of "BatchNorm", "InstanceNorm", "LayerNorm"')
         try:
             # pyg norms
-            self.in_channels = norm_module.in_channels
+            in_channels = norm_module.in_channels
         except AttributeError:
             try:
                 # torch native batch/instance norm
-                self.in_channels = norm_module.num_features
+                in_channels = norm_module.num_features
             except AttributeError:
                 # torch native layer norm
-                self.in_channels = norm_module.normalized_shape
+                in_channels = norm_module.normalized_shape
                 if not isinstance(self.in_channels, int):
                     raise ValueError("If passing torch.nn.LayerNorm, \
                         please ensure that `normalized_shape` is a single integer")
-        if self.in_channels == -1:
-                self._hook = self.register_forward_pre_hook(
-                    self.initialize_parameters)
-        self.types = types
-        self.in_channels = {node_type: in_channels for node_type in self.types}
-        self.eps = norm_module.eps
+        in_channels = {node_type: in_channels for node_type in self.types}
+        eps = norm_module.eps
         try:
             # store batch/instance norm
-            self.momentum = norm_module.momentum
-            self.track_running_stats = norm_module.track_running_stats
+            momentum = norm_module.momentum
+            track_running_stats = norm_module.track_running_stats
         except AttributeError:
             # layer norm
-            self.momentum = None
-            self.track_running_stats = False
+            momentum = None
+            track_running_stats = False
 
         try:
-            self.affine = norm_module.affine
+            affine = norm_module.affine
         except AttributeError:
-            self.affine = norm_module.elementwise_affine
-
-        self.allow_single_element = hasattr(norm_module, "allow_single_element")
-        self.mean_func = mean_funcs[self.norm_type]
-        self.var_func = var_funcs[self.norm_type]
+            affine = norm_module.elementwise_affine
+        if hasattr(norm_module, "allow_single_element"):
+            allow_single_element = norm_module.allow_single_element
+        else:
+            allow_single_element = False
+        return cls(in_channels, norm_type, types, eps, momentum, affine, track_running_stats, allow_single_element)
 
 
     def reset_parameters(self):
