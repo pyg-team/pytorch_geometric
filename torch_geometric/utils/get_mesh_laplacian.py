@@ -16,19 +16,19 @@ def get_mesh_laplacian(
 
     .. math::
         \mathbf{C}_{ij} = \begin{cases}
-            \frac{\cot \angle_{ikj} + \cot \angle_{ilj}}{2} &
-            \mbox{if } i, j \mbox{ is an edge} \\
+            \frac{\cot \angle_{i,k,j}~+\cot \angle_{i,l,j}}{2} &
+            \text{if } i, j \text{is an edge} \\
             -\sum_{j \in N(i)}{C_{ij}} &
-            \mbox{if } i \mbox{ is in the diagonal} \\
-            0 \mbox{ otherwise}
+            \text{if} i \text{is in the diagonal} \\
+            0 & \text{otherwise}
       \end{cases}
 
     Normalization depends on the mass matrix defined as
 
     .. math::
         \mathbf{M}_{ij} = \begin{cases}
-            a(i) \mbox{ if } i \mbox{ is in the diagonal} \\
-            0 \mbox{ otherwise}
+            a(i) \text{if} i \text{is in the diagonal} \\
+            0 \text{otherwise}
       \end{cases}
 
     where :math:`a(i)` is obtained by joining the barycenters of the
