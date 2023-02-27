@@ -4,9 +4,6 @@ import torch
 class FLAG(torch.nn.Module):
     def __init__(
         self,
-        x: torch.tensor,
-        edge_index: torch.tensor,
-        y_true: torch.tensor,
         model: torch.nn.Module,
         optimizer: torch.nn.Module,
         loss_fn: torch.nn.Module,
@@ -14,9 +11,6 @@ class FLAG(torch.nn.Module):
     ) -> None:  # None return type as per https://peps.python.org/pep-0484/
         super(FLAG, self).__init__()
 
-        self.x = x
-        self.edge_index = edge_index
-        self.y_true = y_true
         self.model = model
         self.optimizer = optimizer
         self.loss_fn = loss_fn
@@ -25,6 +19,9 @@ class FLAG(torch.nn.Module):
 
     def forward(
         self,
+        x: torch.tensor,
+        edge_index: torch.tensor,
+        y_true: torch.tensor,
         train_idx: torch.tensor,
         step_size: float,
         n_ascent_steps: int,
@@ -37,7 +34,7 @@ class FLAG(torch.nn.Module):
         #   `perturb` argument
         # forward = lambda perturb : model(x+perturb, edge_index)[train_idx]
         # model_forward = (model, forward)
-        training_labels = self.y_true.squeeze(1)[train_idx]
+        training_labels = y_true.squeeze(1)[train_idx]
 
         # loss, out = flag(model_forward, x.shape, target,
         #   args, optimizer, device, F.nll_loss)
@@ -69,14 +66,14 @@ class FLAG(torch.nn.Module):
         # this back to to original implementation using tensor.uniform_()
         self.perturb = torch.nn.Parameter(
             torch.rand(
-                *self.x.shape,
+                *x.shape,
                 dtype=torch.float,
                 device=self.device,
             ))
 
         # out = forward(perturb)
         # TODO self.perturb is a Parameter - will that cause an issue here?
-        out = self.model(self.x + self.perturb, self.edge_index)[train_idx]
+        out = self.model(x + self.perturb, edge_index)[train_idx]
         self.loss = self.loss_fn(out, training_labels)
 
         # TODO Should this be loss += loss / args.m instead?
@@ -96,7 +93,7 @@ class FLAG(torch.nn.Module):
 
             # out = forward(perturb)
             # TODO self.perturb is a Parameter - will that cause an issue here?
-            out = self.model(self.x + self.perturb, self.edge_index)[train_idx]
+            out = self.model(x + self.perturb, edge_index)[train_idx]
             self.loss = self.loss_fn(out, training_labels)
 
             # TODO Should this be loss += loss / args.m instead?
