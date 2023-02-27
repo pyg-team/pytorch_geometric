@@ -89,7 +89,7 @@ def test_captum_explainer_multiclass_classification(
     task_level,
     index,
 ):
-    from captum import attr  # noqa
+    import captum
 
     if node_mask_type is None and edge_mask_type is None:
         return
@@ -107,7 +107,7 @@ def test_captum_explainer_multiclass_classification(
 
     explainer = Explainer(
         model,
-        algorithm=CaptumExplainer(attr.IntegratedGradients),
+        algorithm=CaptumExplainer(captum.attr.IntegratedGradients),
         explanation_type='model',
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
@@ -158,8 +158,10 @@ def test_captum_hetero_data(node_mask_type, edge_mask_type, index, hetero_data,
 
 
 @withPackage('captum')
-@pytest.mark.parametrize('node_mask_type',
-                         [MaskType.object, MaskType.common_attributes])
+@pytest.mark.parametrize('node_mask_type', [
+    MaskType.object,
+    MaskType.common_attributes,
+])
 def test_captum_explainer_supports(node_mask_type):
     model_config = ModelConfig(
         mode='multiclass_classification',
@@ -167,10 +169,9 @@ def test_captum_explainer_supports(node_mask_type):
         return_type='probs',
     )
 
-    model = GCN(model_config)
     with pytest.raises(ValueError, match="not support the given explanation"):
         Explainer(
-            model,
+            GCN(model_config),
             algorithm=CaptumExplainer('IntegratedGradients'),
             edge_mask_type=MaskType.object,
             node_mask_type=node_mask_type,

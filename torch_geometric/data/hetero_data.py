@@ -583,7 +583,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             )
 
         Args:
-            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
+            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictionary
                 holding the nodes to keep for each node type.
         """
         data = copy.copy(self)
@@ -645,7 +645,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         Args:
             subset_dict (Dict[Tuple[str, str, str], LongTensor or BoolTensor]):
-                A dictonary holding the edges to keep for each edge type.
+                A dictionary holding the edges to keep for each edge type.
         """
         data = copy.copy(self)
 

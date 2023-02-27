@@ -42,10 +42,13 @@ def test_captum_attribution_methods_hetero(mask_type, method, hetero_data,
     explainer = getattr(attr, method)(captum_model)
     assert isinstance(captum_model, CaptumHeteroModel)
 
-    args = ['additional_arg1']
-    inputs, additional_forward_args = to_captum_input(data.x_dict,
-                                                      data.edge_index_dict,
-                                                      mask_type, *args)
+    inputs, additional_forward_args = to_captum_input(
+        data.x_dict,
+        data.edge_index_dict,
+        mask_type,
+        'additional_arg',
+    )
+
     if mask_type == 'node':
         sliding_window_shapes = ((3, 3), (3, 3))
     elif mask_type == 'edge':

@@ -18,7 +18,8 @@ class MaskLevelType(Enum):
     edge = 'edge'
     node_and_edge = 'node_and_edge'
 
-    def has_edge(self) -> bool:
+    @property
+    def with_edge(self) -> bool:
         return self in [MaskLevelType.edge, MaskLevelType.node_and_edge]
 
 
@@ -116,7 +117,7 @@ class CaptumHeteroModel(CaptumModel):
                                      self.num_edge_types]
             edge_index_dict = args[self.num_node_types + self.num_edge_types]
 
-        if self.mask_type.has_edge():
+        if self.mask_type.with_edge:
             edge_mask_tensors = [mask.squeeze(0) for mask in edge_mask_tensors]
             edge_mask_dict = dict(zip(self.edge_types, edge_mask_tensors))
         else:
@@ -140,7 +141,7 @@ class CaptumHeteroModel(CaptumModel):
         (x_dict, edge_index_dict,
          edge_mask_dict) = self._captum_data_to_hetero_data(*args)
 
-        if self.mask_type.has_edge():
+        if self.mask_type.with_edge:
             set_hetero_masks(self.model, edge_mask_dict, edge_index_dict)
 
         if len_remaining_args > 0:
@@ -150,7 +151,7 @@ class CaptumHeteroModel(CaptumModel):
         else:
             x = self.model(x_dict, edge_index_dict)
 
-        if self.mask_type.has_edge():
+        if self.mask_type.with_edge:
             clear_masks(self.model)
 
         if self.output_idx is not None:
