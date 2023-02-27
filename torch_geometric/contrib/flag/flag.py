@@ -51,9 +51,6 @@ class FLAG(torch.nn.Module):
         self.model.train()
         self.optimizer.zero_grad()
 
-        # TODO
-        #   torch.FloatTensor is deprecated
-        #   Ensure that *x.shape works as we expect
         # perturb = torch.FloatTensor(*x.shape).uniform_(
         #   -args.step_size, args.step_size).to(self.device)
 
@@ -73,11 +70,9 @@ class FLAG(torch.nn.Module):
         self.perturb.detach().uniform_(-step_size, step_size)
 
         # out = forward(perturb)
-        # TODO self.perturb is a Parameter - will that cause an issue here?
         out = self.model(x + self.perturb, edge_index)[train_idx]
         self.loss = self.loss_fn(out, training_labels)
 
-        # TODO Should this be loss += loss / args.m instead?
         # loss /= args.m
         self.loss /= n_ascent_steps
 
@@ -86,18 +81,15 @@ class FLAG(torch.nn.Module):
             self.loss.backward()
             # perturb_data = perturb.detach() + args.step_size *
             #   torch.sign(perturb.grad.detach())
-            # TODO self.perturb is a Parameter - will that cause an issue here?
             perturb_data = self.perturb.detach() + step_size * torch.sign(
                 self.perturb.grad.detach())
             self.perturb.data = perturb_data.data
             self.perturb.grad[:] = 0
 
             # out = forward(perturb)
-            # TODO self.perturb is a Parameter - will that cause an issue here?
             out = self.model(x + self.perturb, edge_index)[train_idx]
             self.loss = self.loss_fn(out, training_labels)
 
-            # TODO Should this be loss += loss / args.m instead?
             # loss /= args.m
             self.loss /= n_ascent_steps
 
