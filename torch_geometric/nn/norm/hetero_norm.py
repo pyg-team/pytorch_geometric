@@ -86,7 +86,7 @@ class HeteroNorm(torch.nn.Module):
         self.reset_parameters()
 
     @classmethod
-    def from_homogeneous(self, norm_module):
+    def from_homogeneous(self, norm_module: torch.nn.Module, types: Union[List[NodeType],List[EdgeType]]):
         self.norm_type = None
         for norm_type in accepted_norm_types:
             if norm_type in str(norm_module).lower(): 
@@ -106,6 +106,11 @@ class HeteroNorm(torch.nn.Module):
                 if not isinstance(self.in_channels, int):
                     raise ValueError("If passing torch.nn.LayerNorm, \
                         please ensure that `normalized_shape` is a single integer")
+        if self.in_channels == -1:
+                self._hook = self.register_forward_pre_hook(
+                    self.initialize_parameters)
+        self.types = types
+        self.in_channels = {node_type: in_channels for node_type in self.types}
         self.eps = norm_module.eps
         try:
             # store batch/instance norm
