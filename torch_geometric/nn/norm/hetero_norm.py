@@ -5,6 +5,24 @@ from torch_geometric.nn.typing import Metadata
 from torch_geometric.nn.parameter_dict import ParameterDict
 from typing import Dict
 
+def batch_mean(x):
+    return
+
+def instance_mean(x):
+    return
+
+def layer_mean(x):
+    return
+
+def batch_var(x):
+    return
+
+def instance_var(x):
+    return
+
+def layer_var(x):
+    return
+
 class HeteroNorm(torch.nn.Module):
     r"""Applies normalization over node features for each node type using:
     BatchNorm <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.BatchNorm.html#torch_geometric.nn.norm.BatchNorm>,
