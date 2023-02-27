@@ -116,17 +116,17 @@ class ExplainerAlgorithm(torch.nn.Module):
     @staticmethod
     def _get_hard_masks(
         model: torch.nn.Module,
-        index: Optional[Union[int, Tensor]],
+        node_index: Optional[Union[int, Tensor]],
         edge_index: Tensor,
         num_nodes: int,
     ) -> Tuple[Optional[Tensor], Optional[Tensor]]:
         r"""Returns hard node and edge masks that only include the nodes and
         edges visited during message passing."""
-        if index is None:
+        if node_index is None:
             return None, None  # Consider all nodes and edges.
 
         index, _, _, edge_mask = k_hop_subgraph(
-            index,
+            node_index,
             num_hops=ExplainerAlgorithm._num_hops(model),
             edge_index=edge_index,
             num_nodes=num_nodes,

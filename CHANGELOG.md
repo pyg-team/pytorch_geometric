@@ -91,6 +91,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Fixed a bug in which masks were not properly masked in `GNNExplainer` on link prediction tasks ([#6787](https://github.com/pyg-team/pytorch_geometric/pull/6787))
 - Allow the usage of `ChebConv` within `GNNExplainer` ([#6778](https://github.com/pyg-team/pytorch_geometric/pull/6778))
 - Allow setting the `EdgeStorage.num_edges` property ([#6710](https://github.com/pyg-team/pytorch_geometric/pull/6710))
 - Fixed a bug in `utils.bipartite_subgraph()` and updated docs of `HeteroData.subgraph()` ([#6654](https://github.com/pyg-team/pytorch_geometric/pull/6654))
@@ -127,7 +128,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Correctly use edge weights in `GDC` example ([#6159](https://github.com/pyg-team/pytorch_geometric/pull/6159))
 - Breaking Change: Moved PyTorch Lightning data modules to `torch_geometric.data.lightning` ([#6140](https://github.com/pyg-team/pytorch_geometric/pull/6140))
 - Make `torch_sparse` an optional dependency ([#6132](https://github.com/pyg-team/pytorch_geometric/pull/6132), [#6134](https://github.com/pyg-team/pytorch_geometric/pull/6134), [#6138](https://github.com/pyg-team/pytorch_geometric/pull/6138), [#6139](https://github.com/pyg-team/pytorch_geometric/pull/6139))
-- Optimized `utils.softmax` implementation ([#6113](https://github.com/pyg-team/pytorch_geometric/pull/6113), [#6155](https://github.com/pyg-team/pytorch_geometric/pull/6155))
+- Optimized `utils.softmax` implementation ([#6113](https://github.com/pyg-team/pytorch_geometric/pull/6113), [#6155](https://github.com/pyg-team/pytorch_geometric/pull/6155), [#6805](https://github.com/pyg-team/pytorch_geometric/pull/6805))
 - Optimized `topk` implementation for large enough graphs ([#6123](https://github.com/pyg-team/pytorch_geometric/pull/6123))
 
 ### Removed
