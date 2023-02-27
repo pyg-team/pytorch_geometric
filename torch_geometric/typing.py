@@ -10,6 +10,7 @@ WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
 try:
     import pyg_lib  # noqa
     WITH_PYG_LIB = True
+    WITH_SAMPLED_OP = WITH_PYG_LIB and hasattr(pyg_lib.ops, 'sampled_add')
     WITH_INDEX_SORT = WITH_PYG_LIB and hasattr(pyg_lib.ops, 'index_sort')
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
@@ -17,6 +18,7 @@ except (ImportError, OSError) as e:
                       f"Disabling its usage. Stacktrace: {e}")
     pyg_lib = object
     WITH_PYG_LIB = False
+    WITH_SAMPLED_OP = False
     WITH_INDEX_SORT = False
 
 try:
