@@ -7,6 +7,7 @@ import torch
 import torch.utils.data
 
 from torch_geometric.typing import SparseTensor, torch_sparse
+from torch_geometric.utils import filter_node_attribute, narrow_node_attribute
 
 
 class ClusterData(torch.utils.data.Dataset):
@@ -66,7 +67,7 @@ class ClusterData(torch.utils.data.Dataset):
         out = copy.copy(data)
         for key, value in data.items():
             if data.is_node_attr(key):
-                out[key] = value[node_idx]
+                out[key] = filter_node_attribute(value, 0, node_idx)
 
         out.edge_index = None
         out.adj = adj
@@ -80,7 +81,7 @@ class ClusterData(torch.utils.data.Dataset):
         start = int(self.partptr[idx])
         length = int(self.partptr[idx + 1]) - start
 
-        N, E = self.data.num_nodes, self.data.num_edges
+        E = self.data.num_edges
         data = copy.copy(self.data)
         del data.num_nodes
         adj, data.adj = data.adj, None
@@ -89,9 +90,9 @@ class ClusterData(torch.utils.data.Dataset):
         edge_idx = adj.storage.value()
 
         for key, item in data:
-            if isinstance(item, torch.Tensor) and item.size(0) == N:
-                data[key] = item.narrow(0, start, length)
-            elif isinstance(item, torch.Tensor) and item.size(0) == E:
+            if data.is_node_attr(key):
+                data[key] = narrow_node_attribute(item, 0, start, length)
+            elif data.is_edge_attr(key) and item.size(0) == E:
                 data[key] = item[edge_idx]
             else:
                 data[key] = item
@@ -143,7 +144,6 @@ class ClusterLoader(torch.utils.data.DataLoader):
         if not isinstance(batch, torch.Tensor):
             batch = torch.tensor(batch)
 
-        N = self.cluster_data.data.num_nodes
         E = self.cluster_data.data.num_edges
 
         start = self.cluster_data.partptr[batch].tolist()
@@ -160,9 +160,9 @@ class ClusterLoader(torch.utils.data.DataLoader):
         data.edge_index = torch.stack([row, col], dim=0)
 
         for key, item in data:
-            if isinstance(item, torch.Tensor) and item.size(0) == N:
-                data[key] = item[node_idx]
-            elif isinstance(item, torch.Tensor) and item.size(0) == E:
+            if data.is_node_attr(key):
+                data[key] = filter_node_attribute(item, 0, node_idx)
+            elif data.is_edge_attr(key) and item.size(0) == E:
                 data[key] = item[edge_idx]
             else:
                 data[key] = item

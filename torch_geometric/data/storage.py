@@ -564,6 +564,10 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         value = self[key]
+        if isinstance(value, list) and len(value) == self.num_nodes:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False

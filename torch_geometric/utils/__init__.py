@@ -45,6 +45,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
 from .tree_decomposition import tree_decomposition
 from .embedding import get_embeddings
 from .train_test_split_edges import train_test_split_edges
+from .filter_node_attribute import filter_node_attribute, narrow_node_attribute
 
 __all__ = [
     'scatter',
@@ -119,6 +120,8 @@ __all__ = [
     'tree_decomposition',
     'get_embeddings',
     'train_test_split_edges',
+    'filter_node_attribute',
+    'narrow_node_attribute',
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
