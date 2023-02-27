@@ -6,7 +6,7 @@ from torch_geometric.nn.parameter_dict import ParameterDict
 from typing import Dict
 
 def batch_mean(x):
-    return
+    return torch.mean(x, dim=0)
 
 def instance_mean(x):
     return
@@ -15,7 +15,7 @@ def layer_mean(x):
     return
 
 def batch_var(x):
-    return
+    return torch.var(x, unbiased=False, dim=0)
 
 def instance_var(x):
     return
@@ -176,7 +176,7 @@ class HeteroNorm(torch.nn.Module):
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         out_dict = {}
         for x_type, x in x_dict.items():
-            out_dict[x_type] = x - self.mean_func(x) / torch.sqrt(self.var_func(x) + self.eps)
+            out_dict[x_type] = (x - self.mean_func(x)) / torch.sqrt(self.var_func(x) + self.eps)
         return self.hetero_linear(out_dict)
 
     def forward(
