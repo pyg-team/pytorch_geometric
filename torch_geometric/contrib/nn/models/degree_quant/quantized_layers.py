@@ -2,19 +2,19 @@ import inspect
 from collections import OrderedDict
 
 import torch
-from torch.nn import Parameter, Module, ModuleDict
 import torch.nn.functional as F
+import torch_scatter
+from torch.nn import Module, ModuleDict, Parameter
+from torch_scatter import scatter, scatter_add
+from utils import IntegerQuantizer
+
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.utils import (
-    softmax,
+    add_remaining_self_loops,
     add_self_loops,
     remove_self_loops,
-    add_remaining_self_loops,
+    softmax,
 )
-
-import torch_scatter
-from torch_scatter import scatter_add, scatter
-from torch_geometric.nn.inits import glorot, zeros
-from utils import IntegerQuantizer
 
 # REQUIRED_QUANTIZER_KEYS = ["aggregate", "message", "update_q"]
 
@@ -38,41 +38,40 @@ from utils import IntegerQuantizer
 
 # update_special_args = set([])
 
+
 class MessagePassingQuant(Module):
     """Modified from the PyTorch Geometric message passing class"""
-    # This would now be getting the following parameters for intializing the quantizers. 
+
+    # This would now be getting the following parameters for intializing the quantizers.
     #  qypte, ste, momentum, percentile, sign_input, sample_prop
 
-    def __init__(self, 
-                 qypte, 
-                 ste, 
-                 momentum, 
-                 percentile, 
-                 sign_input, 
-                 sample_prop, 
-                 aggr="add", 
-                 flow="source_to_target", 
-                 node_dim=0, 
-                 mp_quantizers=None
-                ):
+    def __init__(self, qypte, ste, momentum, percentile, sign_input,
+                 sample_prop, aggr="add", flow="source_to_target", node_dim=0,
+                 mp_quantizers=None):
         super(MessagePassingQuant, self).__init__()
 
-        # Supported aggregation methods. Add PyG compatible methods 
+        # Supported aggregation methods. Add PyG compatible methods
         self.qypte = qypte
         self.ste = ste
         self.momentum = momentum
         self.percentile = percentile
         self.sign_input = sign_input
         self.sample_prop = sample_prop
-        
+
         self.aggr = aggr
         assert self.aggr in ["add", "mean", "max"]
 
         # Changed this as an attribute to the class and then we can import the quantisers for each layers
         # self.keys = ["aggregate", "message", "update_q"]
-        self.aggr_quantizer = IntegerQuantizer(qypte, ste,momentum, percentile, sign_input, sample_prop)
-        self.message_quantizer = IntegerQuantizer(qypte, ste,momentum, percentile, sign_input, sample_prop)
-        self.update_quantizer = IntegerQuantizer(qypte, ste,momentum, percentile, sign_input, sample_prop)
+        self.aggr_quantizer = IntegerQuantizer(qypte, ste, momentum,
+                                               percentile, sign_input,
+                                               sample_prop)
+        self.message_quantizer = IntegerQuantizer(qypte, ste, momentum,
+                                                  percentile, sign_input,
+                                                  sample_prop)
+        self.update_quantizer = IntegerQuantizer(qypte, ste, momentum,
+                                                 percentile, sign_input,
+                                                 sample_prop)
 
         self.flow = flow
         assert self.flow in ["source_to_target", "target_to_source"]
@@ -91,8 +90,16 @@ class MessagePassingQuant(Module):
         self.__update_params__ = OrderedDict(self.__update_params__)
         self.__update_params__.popitem(last=False)
 
-        msg_args = set(self.__msg_params__.keys()) - set(["edge_index", "edge_index_i", "edge_index_j", "size", "size_i", "size_j",])
-        aggr_args = set(self.__aggr_params__.keys()) - set(["index", "dim_size"] )
+        msg_args = set(self.__msg_params__.keys()) - set([
+            "edge_index",
+            "edge_index_i",
+            "edge_index_j",
+            "size",
+            "size_i",
+            "size_j",
+        ])
+        aggr_args = set(self.__aggr_params__.keys()) - set(
+            ["index", "dim_size"])
         update_args = set(self.__update_params__.keys()) - set([])
 
         self.__args__ = set().union(msg_args, aggr_args, update_args)
@@ -103,13 +110,21 @@ class MessagePassingQuant(Module):
     def reset_parameters(self):
         # self.mp_quantizers = ModuleDict()
         # for key in self.keys:
-            # self.mp_quantizers[key] = self.mp_quant_fns[key]()
-        self.aggr_quantizer = IntegerQuantizer(self.qypte, self.ste,self.momentum, self.percentile, self.sign_input, self.sample_prop)
-        self.message_quantizer = IntegerQuantizer(self.qypte, self.ste,self.momentum, self.percentile, self.sign_input, self.sample_prop)
-        self.update_quantizer = IntegerQuantizer(self.qypte, self.ste,self.momentum, self.percentile, self.sign_input, self.sample_prop)
-
-
-
+        # self.mp_quantizers[key] = self.mp_quant_fns[key]()
+        self.aggr_quantizer = IntegerQuantizer(self.qypte, self.ste,
+                                               self.momentum, self.percentile,
+                                               self.sign_input,
+                                               self.sample_prop)
+        self.message_quantizer = IntegerQuantizer(self.qypte, self.ste,
+                                                  self.momentum,
+                                                  self.percentile,
+                                                  self.sign_input,
+                                                  self.sample_prop)
+        self.update_quantizer = IntegerQuantizer(self.qypte, self.ste,
+                                                 self.momentum,
+                                                 self.percentile,
+                                                 self.sign_input,
+                                                 self.sample_prop)
 
     def __set_size__(self, size, index, tensor):
         if not torch.is_tensor(tensor):
@@ -118,12 +133,9 @@ class MessagePassingQuant(Module):
             size[index] = tensor.size(self.node_dim)
         elif size[index] != tensor.size(self.node_dim):
             raise ValueError(
-                (
-                    f"Encountered node tensor with size "
-                    f"{tensor.size(self.node_dim)} in dimension {self.node_dim}, "
-                    f"but expected size {size[index]}."
-                )
-            )
+                (f"Encountered node tensor with size "
+                 f"{tensor.size(self.node_dim)} in dimension {self.node_dim}, "
+                 f"but expected size {size[index]}."))
 
     def __collect__(self, edge_index, size, kwargs):
         i, j = (0, 1) if self.flow == "target_to_source" else (1, 0)
@@ -205,14 +217,16 @@ class MessagePassingQuant(Module):
     def message(self, x_j):  # pragma: no cover
         return x_j
 
-    def aggregate(self, inputs, index, dim_size, limit = 10000):  # pragma: no cover
-        out = scatter( src= inputs, index = index, dim = self.node_dim, dim_size = dim_size, reduce = self.aggr)
+    def aggregate(self, inputs, index, dim_size,
+                  limit=10000):  # pragma: no cover
+        out = scatter(src=inputs, index=index, dim=self.node_dim,
+                      dim_size=dim_size, reduce=self.aggr)
 
         if self.aggr == "max":
             out[out < -limit] = 0
         elif self.aggr == "min":
             out[out > limit] = 0
-        return out 
+        return out
 
     def update(self, inputs):  # pragma: no cover
         return inputs
