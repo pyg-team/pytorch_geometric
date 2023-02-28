@@ -24,7 +24,5 @@ class TestQuantization(unittest.TestCase):
     def test_sample_tensor(self):
         pass
 
-    def test_
-
 if __name__ == '__main__':
     unittest.main()
