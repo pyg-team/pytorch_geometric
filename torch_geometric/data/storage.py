@@ -345,7 +345,7 @@ class NodeStorage(BaseStorage):
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
-        if not isinstance(value, (Tensor, np.ndarray, list, tuple)):
+        if not isinstance(value, (Tensor, np.ndarray)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False
 
