@@ -5,23 +5,6 @@ from torch_geometric.nn.typing import Metadata
 from torch_geometric.nn.parameter_dict import ParameterDict
 from typing import Dict
 
-def batch_mean(x):
-    return torch.mean(x, dim=0)
-
-def instance_mean(x):
-    return
-
-def layer_mean(x):
-    return
-
-def batch_var(x):
-    return torch.var(x, unbiased=False, dim=0)
-
-def instance_var(x):
-    return
-
-def layer_var(x):
-    return
 
 class HeteroNorm(torch.nn.Module):
     r"""Applies normalization over node features for each node type using:
@@ -100,8 +83,6 @@ class HeteroNorm(torch.nn.Module):
             self.means = ParameterDict({mean_type:torch.zeros(self.in_channels[mean_type]) for mean_type in self.types})
             self.vars = ParameterDict({var_type:torch.ones(self.in_channels[var_type]) for var_type in self.types})
         self.allow_single_element = allow_single_element
-        self.mean_func = mean_funcs[self.norm_type]
-        self.var_func = var_funcs[self.norm_type]
         self.reset_parameters()
 
     @torch.no_grad()
@@ -176,7 +157,9 @@ class HeteroNorm(torch.nn.Module):
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         out_dict = {}
         for x_type, x in x_dict.items():
-            out_dict[x_type] = (x - self.mean_func(x)) / torch.sqrt(self.var_func(x) + self.eps)
+            self.means[x_type] = torch.mean(x, dim=0)
+            self.vars[x_type] = torch.var(x, unbiased=False, dim=0)
+            out_dict[x_type] = (x - self.means[x_type]) / torch.sqrt(self.vars[x_type] + self.eps)
         return self.hetero_linear(out_dict)
 
     def forward(
