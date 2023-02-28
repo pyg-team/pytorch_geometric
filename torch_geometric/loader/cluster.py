@@ -90,7 +90,7 @@ class ClusterData(torch.utils.data.Dataset):
 
         for key, value in data:
             if key == 'num_nodes':
-                data.num_nodes == length
+                data.num_nodes = length
             elif self.data.is_node_attr(key):
                 cat_dim = self.data.__cat_dim__(key, value)
                 data[key] = narrow(value, cat_dim, start, length)
