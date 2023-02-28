@@ -63,120 +63,16 @@ class IntegerQuantizer(nn.Module):
         if cutoff_prop > prop:
             prop = cutoff_prop
 
-        x = x.view(-1)
-        probs = torch.tensor([prop], device=x.device).expand_as(x)
-        out = torch.empty(probs.shape, dtype=torch.bool, device=probs.device)
-        mask = torch.bernoulli(probs, out=out)
-        return x[mask]
-
-def get_qparams(max_val, min_val, num_bits, signed, eps, symmetric):
-    max_val, min_val = float(max_val), float(min_val)
-    min_val = min(0.0, min_val)
-    max_val = max(0.0, max_val)
-
-    qmin = -(2.0 ** (num_bits - 1)) if signed else 0.0
-    qmax = qmin + 2.0 ** num_bits - 1
-
-    if max_val == min_val:
-        scale = 1.0
-        zero_point = 0
-    else:
-
-        if symmetric:
-            scale = 2 * max(abs(min_val), max_val) / (qmax - qmin)
-            zero_point = 0.0 if signed else 128.0
-        else:
-            scale = (max_val - min_val) / float(qmax - qmin)
-            scale = max(scale, eps)
-            zero_point = qmin - round(min_val / scale)
-            zero_point = max(qmin, zero_point)
-            zero_point = min(qmax, zero_point)
-            zero_point = zero_point
-
-    return qmin, qmax, zero_point, scale
-
-
-class Quantize(InplaceFunction):
-    @classmethod
-    def forward(
-        cls, ctx, input, max_val, min_val, num_bits, signed, eps, symmetric, ste
-    ):
-        output = input.clone()
-
-        # compute qparams
-        qmin, qmax, zero_point, scale = get_qparams(
-            max_val, min_val, num_bits, signed, eps, symmetric
-        )
-
-        # save stuff for backprop (if STE not enabled)
-        ctx.STE = ste
-        if not ste:
-            ctx.save_for_backward(input)
-            ctx.qmin = qmin
-            ctx.qmax = qmax
-            ctx.scale = scale
-            ctx.zp = zero_point
-
-        inv_scale = 1.0 / scale
-
-        output.mul_(inv_scale).add_(zero_point)
-        output.round_().clamp_(qmin, qmax)  # quantize
-        output.add_(-zero_point).mul_(scale)  # dequantize
-
-        return output
-
-    @staticmethod
-    def backward(ctx, grad_output):
-
-        if ctx.STE:
-            return grad_output, None, None, None, None, None, None, None
-
-        # Applying gradient clippling as described here:
-        # https://github.com/pytorch/pytorch/blob/master/aten/src/ATen/native/quantized/cuda/fake_quantize_core.cu
-        (input,) = ctx.saved_tensors
-
-        mask = input.clone()
-        inv_scale = 1.0 / ctx.scale
-        mask.mul_(inv_scale).add_(ctx.zp).round_()
-
-        # gradient clipping
-        grad_input = grad_output.clone()
-        grad_input[mask.ge(ctx.qmax)] = 0
-        grad_input[mask.le(ctx.qmin)] = 0
-
-        return grad_input, None, None, None, None, None, None, None
-
-
-quantize = Quantize.apply
-
-
-SAMPLE_CUTOFF = 1000
-
-
-def sample_tensor(prop, x):
-    if x.numel() < SAMPLE_CUTOFF:
-        return x
-
-    cutoff_prop = SAMPLE_CUTOFF / x.numel()
-    if cutoff_prop > prop:
-        prop = cutoff_prop
-
-    x = x.view(-1)
-    probs = torch.tensor([prop], device=x.device).expand_as(x)
-    out = torch.empty(probs.shape, dtype=torch.bool, device=probs.device)
-    mask = torch.bernoulli(probs, out=out)
-    return x[mask]
-
-
 class IntegerQuantizer(nn.Module):
     """Allows for per-tensor integer uniform (symmetric or asymmetric/affine) quantization."""
     def __init__(
         self,
         qtype: str,
         signed: bool,
-        momentum: Optional[float] = 0.01,
+        use_momentum: bool,
         use_ste: bool,
         symmetric: bool = False,
+        momentum: float = 0.01,
         percentile: Optional[float] = None,
         sample: Optional[float] = None,
     ):
@@ -187,7 +83,6 @@ class IntegerQuantizer(nn.Module):
             'INT8': 8,
         }
         assert(qtype in qtype_to_num_bits, f"Invalid qtype: {qtype}")
-        num_bits = qtype_to_num_bits[qtype]
 
         self.register_buffer("min_val", torch.tensor([]))
         self.register_buffer("max_val", torch.tensor([]))
@@ -198,6 +93,7 @@ class IntegerQuantizer(nn.Module):
         self.eps = torch.finfo(torch.float32).eps
 
         self.ste = use_ste
+        self.momentum_min_max = use_momentum
 
         if percentile is None:
             self.min_fn = torch.min
@@ -237,8 +133,8 @@ class IntegerQuantizer(nn.Module):
         min_val = min(0.0, float(min_val))
         max_val = max(0.0, float(max_val))
 
-    qmin = -(2.0**(num_bits - 1)) if signed else 0.0
-    qmax = qmin + 2.0**num_bits - 1
+        qmin = -(2.0 ** (num_bits - 1)) if signed else 0.0
+        qmax = qmin + 2.0 ** num_bits - 1
 
         if max_val == min_val:
             scale = 1.0
@@ -271,7 +167,7 @@ class IntegerQuantizer(nn.Module):
             min_val = current_min
             max_val = current_max
         else:
-            if self.momentum:
+            if self.momentum_min_max:
                 min_val = min_val + self.momentum * (current_min - min_val)
                 max_val = max_val + self.momentum * (current_max - max_val)
             else:
@@ -300,13 +196,15 @@ class IntegerQuantizer(nn.Module):
 
 class Quantize(InplaceFunction):
     @classmethod
-    def forward(cls, ctx, input, max_val, min_val, num_bits, signed, eps,
-                symmetric, ste):
+    def forward(
+        cls, ctx, input, max_val, min_val, num_bits, signed, eps, symmetric, ste
+    ):
         output = input.clone()
 
         # compute qparams
-        qmin, qmax, zero_point, scale = get_qparams(max_val, min_val, num_bits,
-                                                    signed, eps, symmetric)
+        qmin, qmax, zero_point, scale = get_qparams(
+            max_val, min_val, num_bits, signed, eps, symmetric
+        )
 
         # save stuff for backprop (if STE not enabled)
         ctx.STE = ste
@@ -333,7 +231,7 @@ class Quantize(InplaceFunction):
 
         # Applying gradient clippling as described here:
         # https://github.com/pytorch/pytorch/blob/master/aten/src/ATen/native/quantized/cuda/fake_quantize_core.cu
-        (input, ) = ctx.saved_tensors
+        (input,) = ctx.saved_tensors
 
         mask = input.clone()
         inv_scale = 1.0 / ctx.scale
