@@ -17,17 +17,17 @@ quantized_layers.py:
         - Aggregate function of MPQ should use torch_scatter.scatter with reduce parameter = self.aggr
         - Aggregate function of MPQ should clamp output of scatter to 10000
             - Why is this hardcoded to 10000?
-        - add msg_special_args, aggr_special_args, and update_special_args in MPQ 
+        - add msg_special_args, aggr_special_args, and update_special_args in MPQ
         - add REQUIRED_QUANTIZER_KEYS to MPQ, add REQUIRED_X_KEYS inside X class
 - Hidden:
-    - 
+    -
 
 utils.py:
 - Exposed:
     - make_quantizer
     - ProbabilisticHighDegree masks
 - Hidden:
-    - IntegerQuantizer 
+    - IntegerQuantizer
         - Contains:
             - Quantizer
             - get_qparams

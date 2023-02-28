@@ -1,22 +1,20 @@
 import inspect
 from collections import OrderedDict
 
-
 import torch
-from torch.nn import Parameter, Module, ModuleDict
 import torch.nn.functional as F
+import torch_scatter
+from quantized_layers import MessagePassingQuant
+from torch.nn import Module, ModuleDict, Parameter
+from torch_scatter import scatter_add
+
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.utils import (
-    softmax,
+    add_remaining_self_loops,
     add_self_loops,
     remove_self_loops,
-    add_remaining_self_loops,
+    softmax,
 )
-import torch_scatter
-from torch_scatter import scatter_add
-from torch_geometric.nn.inits import glorot, zeros
-from quantized_layers import MessagePassingQuant
-
-
 
 REQUIRED_GCN_KEYS = [
     "weights",
@@ -39,7 +37,8 @@ class GCNConvQuant(MessagePassingQuant):
         layer_quantizers=None,
         **kwargs,
     ):
-        super(GCNConvQuant, self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
+        super(GCNConvQuant,
+              self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -71,16 +70,15 @@ class GCNConvQuant(MessagePassingQuant):
             self.layer_quantizers[key] = self.layer_quant_fns[key]()
 
     @staticmethod
-    def norm(edge_index, num_nodes, edge_weight=None, improved=False, dtype=None):
+    def norm(edge_index, num_nodes, edge_weight=None, improved=False,
+             dtype=None):
         if edge_weight is None:
-            edge_weight = torch.ones(
-                (edge_index.size(1),), dtype=dtype, device=edge_index.device
-            )
+            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
+                                     device=edge_index.device)
 
         fill_value = 1 if not improved else 2
         edge_index, edge_weight = add_remaining_self_loops(
-            edge_index, edge_weight, fill_value, num_nodes
-        )
+            edge_index, edge_weight, fill_value, num_nodes)
 
         row, col = edge_index
         deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
@@ -106,9 +104,7 @@ class GCNConvQuant(MessagePassingQuant):
                     "Cached {} number of edges, but found {}. Please "
                     "disable the caching behavior of this layer by removing "
                     "the `cached=True` argument in its constructor.".format(
-                        self.cached_num_edges, edge_index.size(1)
-                    )
-                )
+                        self.cached_num_edges, edge_index.size(1)))
 
         if not self.cached or self.cached_result is None:
             self.cached_num_edges = edge_index.size(1)
@@ -140,9 +136,8 @@ class GCNConvQuant(MessagePassingQuant):
         return aggr_out
 
     def __repr__(self):
-        return "{}({}, {})".format(
-            self.__class__.__name__, self.in_channels, self.out_channels
-        )
+        return "{}({}, {})".format(self.__class__.__name__, self.in_channels,
+                                   self.out_channels)
 
 
 REQUIRED_GAT_KEYS = [
@@ -168,7 +163,8 @@ class GATConvQuant(MessagePassingQuant):
         layer_quantizers=None,
         **kwargs,
     ):
-        super(GATConvQuant, self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
+        super(GATConvQuant,
+              self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -177,7 +173,8 @@ class GATConvQuant(MessagePassingQuant):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.weight = Parameter(torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
 
         if bias and concat:
@@ -225,8 +222,10 @@ class GATConvQuant(MessagePassingQuant):
             )
 
             x_q = (
-                None if x[0] is None else self.layer_quantizers["features"](x[0]),
-                None if x[1] is None else self.layer_quantizers["features"](x[1]),
+                None
+                if x[0] is None else self.layer_quantizers["features"](x[0]),
+                None
+                if x[1] is None else self.layer_quantizers["features"](x[1]),
             )
 
         return self.propagate(edge_index, size=size, x=x_q)
@@ -237,7 +236,7 @@ class GATConvQuant(MessagePassingQuant):
         att = self.layer_quantizers["attention"](self.att)
 
         if x_i is None:
-            alpha = (x_j * att[:, :, self.out_channels :]).sum(dim=-1)
+            alpha = (x_j * att[:, :, self.out_channels:]).sum(dim=-1)
         else:
             x_i = x_i.view(-1, self.heads, self.out_channels)
             alpha = (torch.cat([x_i, x_j], dim=-1) * att).sum(dim=-1)
@@ -262,18 +261,17 @@ class GATConvQuant(MessagePassingQuant):
         return aggr_out
 
     def __repr__(self):
-        return "{}({}, {}, heads={})".format(
-            self.__class__.__name__, self.in_channels, self.out_channels, self.heads
-        )
+        return "{}({}, {}, heads={})".format(self.__class__.__name__,
+                                             self.in_channels,
+                                             self.out_channels, self.heads)
 
 
 class GINConvQuant(MessagePassingQuant):
     """This is a reimplemented version of GINConv that uses the update function"""
-
-    def __init__(self, nn, eps=0, train_eps=False, mp_quantizers=None, **kwargs):
-        super(GINConvQuant, self).__init__(
-            aggr="add", mp_quantizers=mp_quantizers, **kwargs
-        )
+    def __init__(self, nn, eps=0, train_eps=False, mp_quantizers=None,
+                 **kwargs):
+        super(GINConvQuant,
+              self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
