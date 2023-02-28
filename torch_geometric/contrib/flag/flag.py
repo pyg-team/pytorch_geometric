@@ -62,12 +62,11 @@ class FLAG(torch.nn.Module):
         # If this implementation doesn't work as we expect, try changing
         # this back to to original implementation using tensor.uniform_()
         self.perturb = torch.nn.Parameter(
-            torch.rand(
+            torch.zeros(
                 *x.shape,
                 dtype=torch.float,
                 device=self.device,
-            ))
-        self.perturb.detach().uniform_(-step_size, step_size)
+            ).uniform_(-step_size, step_size))
 
         # out = forward(perturb)
         out = self.model(x + self.perturb, edge_index)[train_idx]
