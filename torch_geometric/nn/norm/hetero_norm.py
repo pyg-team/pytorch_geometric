@@ -37,8 +37,6 @@ class HeteroNorm(torch.nn.Module):
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
-    mean_funcs = {"batchnorm":batch_mean, "instancenorm":instance_mean, "layernorm":layer_mean}
-    var_funcs = {"batchnorm":batch_var, "instancenorm":instance_var, "layernorm":layer_var}
     accepted_norm_types = ["batchnorm", "instancenorm", "layernorm"]
 
     def __init__(self, in_channels: Union[Dict[str, int], int], norm_type: str,
@@ -78,7 +76,8 @@ class HeteroNorm(torch.nn.Module):
         self.allow_single_element = allow_single_element
         self.affine = affine
         self.in_channels = in_channels
-        self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types, **kwargs)
+        if self.affine:
+            self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types, **kwargs)
         if not hasattr(self, "_hook"):
             self.means = ParameterDict({mean_type:torch.zeros(self.in_channels[mean_type]) for mean_type in self.types})
             self.vars = ParameterDict({var_type:torch.ones(self.in_channels[var_type]) for var_type in self.types})
