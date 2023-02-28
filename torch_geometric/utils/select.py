@@ -34,9 +34,6 @@ def select(src: Union[Tensor, List[Any]], index_or_mask: Tensor,
 def narrow(src: Union[Tensor, List[Any]], dim: int, start: int,
            length: int) -> Union[Tensor, List[Any]]:
     r"""Narrows the input tensor or input list to the specified range.
-    For tensors, the dimension :obj:`dim` is input from
-    :obj:`start` to :obj:`start` + :obj:`length`.
-    For lists, the :obj:`dim` is ignored.
 
     Args:
         src (torch.Tensor or list): The input tensor or list.
