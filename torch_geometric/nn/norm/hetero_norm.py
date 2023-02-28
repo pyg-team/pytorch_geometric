@@ -114,8 +114,11 @@ class HeteroNorm(torch.nn.Module):
                 # torch native layer norm
                 in_channels = norm_module.normalized_shape
                 if not isinstance(in_channels, int):
-                    raise ValueError("If making a torch.nn.LayerNorm heterogeneous, \
+                    raise ValueError("If making torch.nn.LayerNorm heterogeneous, \
                         please ensure that `normalized_shape` is a single integer")
+                if norm_module.mode == "graph":
+                    raise ValueError("If making torch.nn.LayerNorm heterogeneous, \
+                        please ensure that mode == 'node'")
         in_channels = {node_type: in_channels for node_type in self.types}
         eps = norm_module.eps
         try:
@@ -191,3 +194,37 @@ class HeteroNorm(torch.nn.Module):
 
     def __repr__(self):
         return f'{self.__class__.__name__}({self.module.num_features})'
+
+
+class HeteroBatchNorm(HeteroNorm):
+    def __init__(self, in_channels: Union[Dict[str, int], int],
+                 types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
+                 eps: float = 1e-5,
+                 momentum: float = 0.1, affine: bool = True,
+                 track_running_stats: bool = True,
+                 allow_single_element: bool = False):
+        super().__init__(in_channels, "BatchNorm"
+                 types, eps, momentum, affine,
+                 track_running_stats, allow_single_element)
+
+
+class HeteroInstanceNorm(HeteroNorm):
+    def __init__(self, in_channels: Union[Dict[str, int], int],
+                 types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
+                 eps: float = 1e-5,
+                 momentum: float = 0.1, affine: bool = True,
+                 allow_single_element: bool = False):
+        super().__init__(in_channels, "InstanceNorm"
+                 types, eps, momentum, affine,
+                 track_running_stats, allow_single_element=False)
+
+
+class HeteroLayerNorm(HeteroNorm):
+    def __init__(self, in_channels: Union[Dict[str, int], int],
+                 types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
+                 eps: float = 1e-5,
+                 momentum: float = 0.1, affine: bool = True):
+        super().__init__(in_channels, "LayerNorm"
+                 types, eps, 0.0, affine,
+                 track_running_stats=False, allow_single_element=False)
+
