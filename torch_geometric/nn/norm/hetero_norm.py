@@ -78,9 +78,9 @@ class HeteroNorm(torch.nn.Module):
         self.in_channels = in_channels
         if self.affine:
             self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types, **kwargs)
-        if not hasattr(self, "_hook"):
-            self.means = ParameterDict({mean_type:torch.zeros(self.in_channels[mean_type]) for mean_type in self.types})
-            self.vars = ParameterDict({var_type:torch.ones(self.in_channels[var_type]) for var_type in self.types})
+        if not hasattr(self, "_hook") and self.track_running_stats::
+            self.running_means = ParameterDict({mean_type:torch.zeros(self.in_channels[mean_type]) for mean_type in self.types})
+            self.running_vars = ParameterDict({var_type:torch.ones(self.in_channels[var_type]) for var_type in self.types})
         self.allow_single_element = allow_single_element
         self.reset_parameters()
 
@@ -89,8 +89,10 @@ class HeteroNorm(torch.nn.Module):
         self.in_channels = {}
         for x_type, x_n in input[0].items():
             lin_x = self.hetero_linear[x_type]
-            self.lins[x_type].initialize_parameters(None, x_n)
+            self.hetero_linear[x_type].initialize_parameters(None, x_n)
             self.in_channels[x_type] = x_n.shape[-1]
+            self.running_means[type_i] = torch.zeros(self.in_channels[x_type])
+            self.running_vars[type_i] = torch.ones(self.in_channels[x_type])
         self.reset_parameters()
         self._hook.remove()
         delattr(self, '_hook')
@@ -142,8 +144,8 @@ class HeteroNorm(torch.nn.Module):
         r"""Resets all learnable parameters of the module."""
         self.hetero_linear.reset_parameters()
         for type_i in self.types:
-            self.means[type_i] = torch.zeros(self.in_channels[type_i])
-            self.vars[type_i] = torch.ones(self.in_channels[type_i])
+            self.running_means[type_i] = torch.zeros(self.in_channels[type_i])
+            self.running_vars[type_i] = torch.ones(self.in_channels[type_i])
 
     def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         out = x.new_empty(x.size(0), self.in_channels)
@@ -156,9 +158,9 @@ class HeteroNorm(torch.nn.Module):
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         out_dict = {}
         for x_type, x in x_dict.items():
-            self.means[x_type] = torch.mean(x, dim=0)
-            self.vars[x_type] = torch.var(x, unbiased=False, dim=0)
-            out_dict[x_type] = (x - self.means[x_type]) / torch.sqrt(self.vars[x_type] + self.eps)
+            mean_x = torch.mean(x, dim=0)
+            var_x = torch.var(x, unbiased=False, dim=0)
+            out_dict[x_type] = (x - mean_x) / torch.sqrt(var_x + self.eps)
         return self.hetero_linear(out_dict)
 
     def forward(
