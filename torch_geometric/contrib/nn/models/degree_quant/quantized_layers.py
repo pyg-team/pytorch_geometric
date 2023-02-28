@@ -16,6 +16,7 @@ from torch_scatter import scatter_add
 from torch_geometric.nn.inits import glorot, zeros
 
 # due to a collision with pytorch using the key "update"
+
 REQUIRED_QUANTIZER_KEYS = ["aggregate", "message", "update_q"]
 
 
