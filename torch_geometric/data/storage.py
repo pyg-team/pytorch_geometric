@@ -340,7 +340,12 @@ class NodeStorage(BaseStorage):
             return False
 
         value = self[key]
-        if not isinstance(value, (Tensor, np.ndarray)):
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_nodes:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
+        if not isinstance(value, (Tensor, np.ndarray, list, tuple)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False
 
@@ -452,6 +457,11 @@ class EdgeStorage(BaseStorage):
             return False
 
         value = self[key]
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_edges:
+            self._cached_attr[AttrType.EDGE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False
@@ -564,6 +574,7 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         value = self[key]
+
         if isinstance(value, (list, tuple)) and len(value) == self.num_nodes:
             self._cached_attr[AttrType.NODE].add(key)
             return True
@@ -609,6 +620,11 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         value = self[key]
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_edges:
+            self._cached_attr[AttrType.EDGE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False
