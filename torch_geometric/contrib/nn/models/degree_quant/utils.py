@@ -174,10 +174,9 @@ class IntegerQuantizer(nn.Module):
         self,
         qtype: str,
         signed: bool,
-        use_momentum: bool,
+        momentum: Optional[float] = 0.01,
         use_ste: bool,
         symmetric: bool = False,
-        momentum: float = 0.01,
         percentile: Optional[float] = None,
         sample: Optional[float] = None,
     ):
@@ -188,6 +187,7 @@ class IntegerQuantizer(nn.Module):
             'INT8': 8,
         }
         assert(qtype in qtype_to_num_bits, f"Invalid qtype: {qtype}")
+        num_bits = qtype_to_num_bits[qtype]
 
         self.register_buffer("min_val", torch.tensor([]))
         self.register_buffer("max_val", torch.tensor([]))
@@ -198,7 +198,6 @@ class IntegerQuantizer(nn.Module):
         self.eps = torch.finfo(torch.float32).eps
 
         self.ste = use_ste
-        self.momentum_min_max = use_momentum
 
         if percentile is None:
             self.min_fn = torch.min
@@ -272,7 +271,7 @@ class IntegerQuantizer(nn.Module):
             min_val = current_min
             max_val = current_max
         else:
-            if self.momentum_min_max:
+            if self.momentum:
                 min_val = min_val + self.momentum * (current_min - min_val)
                 max_val = max_val + self.momentum * (current_max - max_val)
             else:
