@@ -5,7 +5,7 @@ from torch_geometric.nn.typing import Metadata
 from torch_geometric.nn.parameter_dict import ParameterDict
 from typing import Dict
 
-class HeteroNorm(torch.nn.Module):
+class _HeteroNorm(torch.nn.Module):
     r"""Applies normalization over node features for each node type using:
     BatchNorm <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.BatchNorm.html#torch_geometric.nn.norm.BatchNorm>,
     InstanceNorm <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.InstanceNorm.html#torch_geometric.nn.norm.InstanceNorm>,
@@ -196,7 +196,7 @@ class HeteroNorm(torch.nn.Module):
         return f'{self.__class__.__name__}({self.module.num_features})'
 
 
-class HeteroBatchNorm(HeteroNorm):
+class HeteroBatchNorm(_HeteroNorm):
     def __init__(self, in_channels: Union[Dict[str, int], int],
                  types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
                  eps: float = 1e-5,
@@ -208,7 +208,7 @@ class HeteroBatchNorm(HeteroNorm):
                  track_running_stats, allow_single_element)
 
 
-class HeteroInstanceNorm(HeteroNorm):
+class HeteroInstanceNorm(_HeteroNorm):
     def __init__(self, in_channels: Union[Dict[str, int], int],
                  types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
                  eps: float = 1e-5,
@@ -219,7 +219,7 @@ class HeteroInstanceNorm(HeteroNorm):
                  track_running_stats, allow_single_element=False)
 
 
-class HeteroLayerNorm(HeteroNorm):
+class HeteroLayerNorm(_HeteroNorm):
     def __init__(self, in_channels: Union[Dict[str, int], int],
                  types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
                  eps: float = 1e-5,
