@@ -7,6 +7,7 @@ from .pair_norm import PairNorm
 from .mean_subtraction_norm import MeanSubtractionNorm
 from .msg_norm import MessageNorm
 from .diff_group_norm import DiffGroupNorm
+from .hetero_norm import HeteroBatchNorm, HeteroInstanceNorm, HeteroLayerNorm
 
 __all__ = [
     'BatchNorm',
@@ -18,6 +19,9 @@ __all__ = [
     'MeanSubtractionNorm',
     'MessageNorm',
     'DiffGroupNorm',
+    'HeteroBatchNorm',
+    'HeteroInstanceNorm',
+    'HeteroLayerNorm'
 ]
 
 classes = __all__
