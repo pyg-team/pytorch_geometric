@@ -1,7 +1,8 @@
 from typing import Optional
+
 import torch
-from torch.autograd.function import InplaceFunction
 import torch.nn as nn
+from torch.autograd.function import InplaceFunction
 
 
 def get_qparams(max_val, min_val, num_bits, signed, eps, symmetric):
@@ -9,8 +10,8 @@ def get_qparams(max_val, min_val, num_bits, signed, eps, symmetric):
     min_val = min(0.0, min_val)
     max_val = max(0.0, max_val)
 
-    qmin = -(2.0 ** (num_bits - 1)) if signed else 0.0
-    qmax = qmin + 2.0 ** num_bits - 1
+    qmin = -(2.0**(num_bits - 1)) if signed else 0.0
+    qmax = qmin + 2.0**num_bits - 1
 
     if max_val == min_val:
         scale = 1.0
@@ -33,15 +34,13 @@ def get_qparams(max_val, min_val, num_bits, signed, eps, symmetric):
 
 class Quantize(InplaceFunction):
     @classmethod
-    def forward(
-        cls, ctx, input, max_val, min_val, num_bits, signed, eps, symmetric, ste
-    ):
+    def forward(cls, ctx, input, max_val, min_val, num_bits, signed, eps,
+                symmetric, ste):
         output = input.clone()
 
         # compute qparams
-        qmin, qmax, zero_point, scale = get_qparams(
-            max_val, min_val, num_bits, signed, eps, symmetric
-        )
+        qmin, qmax, zero_point, scale = get_qparams(max_val, min_val, num_bits,
+                                                    signed, eps, symmetric)
 
         # save stuff for backprop (if STE not enabled)
         ctx.STE = ste
@@ -68,7 +67,7 @@ class Quantize(InplaceFunction):
 
         # Applying gradient clippling as described here:
         # https://github.com/pytorch/pytorch/blob/master/aten/src/ATen/native/quantized/cuda/fake_quantize_core.cu
-        (input,) = ctx.saved_tensors
+        (input, ) = ctx.saved_tensors
 
         mask = input.clone()
         inv_scale = 1.0 / ctx.scale
@@ -83,7 +82,6 @@ class Quantize(InplaceFunction):
 
 
 quantize = Quantize.apply
-
 
 SAMPLE_CUTOFF = 1000
 
@@ -105,7 +103,6 @@ def sample_tensor(prop, x):
 
 class IntegerQuantizer(nn.Module):
     """Allows for per-tensor integer uniform (symmetric or asymmetric/affine) quantization."""
-
     def __init__(
         self,
         num_bits: int,
@@ -134,8 +131,8 @@ class IntegerQuantizer(nn.Module):
             self.max_fn = torch.max
         else:
             self.min_fn = lambda t: torch.kthvalue(
-                torch.flatten(t), max(1, min(t.numel(), int(t.numel() * percentile)))
-            )[0]
+                torch.flatten(t),
+                max(1, min(t.numel(), int(t.numel() * percentile))))[0]
             self.max_fn = lambda t: torch.kthvalue(
                 torch.flatten(t),
                 min(t.numel(), max(1, int(t.numel() * (1 - percentile)))),
@@ -188,6 +185,7 @@ class IntegerQuantizer(nn.Module):
             self.ste,
         )
 
+
 def create_quantizer(qypte, ste, momentum, percentile, signed, sample_prop):
     if qypte == "FP32":
         return Identity
@@ -202,63 +200,64 @@ def create_quantizer(qypte, ste, momentum, percentile, signed, sample_prop):
         )
 
 
-def make_quantizers(qypte, dq, sign_input, ste, momentum, percentile, sample_prop):
+def make_quantizers(qypte, dq, sign_input, ste, momentum, percentile,
+                    sample_prop):
     if dq:
-        # GIN doesn't apply DQ to the LinearQuantize layers so we keep the 
+        # GIN doesn't apply DQ to the LinearQuantize layers so we keep the
         # default inputs, weights, features keys.
         # See NOTE in the multi_quant.py file
         layer_quantizers = {
-            "inputs": create_quantizer(
-                qypte, ste, momentum, percentile, sign_input, sample_prop
-            ),
-            "weights": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
-            "features": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
+            "inputs":
+            create_quantizer(qypte, ste, momentum, percentile, sign_input,
+                             sample_prop),
+            "weights":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
+            "features":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
         }
         mp_quantizers = {
-            "message_low": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
-            "message_high": create_quantizer(
-                "FP32", ste, momentum, percentile, True, sample_prop
-            ),
-            "update_low": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
-            "update_high": create_quantizer(
-                "FP32", ste, momentum, percentile, True, sample_prop
-            ),
-            "aggregate_low": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
-            "aggregate_high": create_quantizer(
-                "FP32", ste, momentum, percentile, True, sample_prop
-            ),
+            "message_low":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
+            "message_high":
+            create_quantizer("FP32", ste, momentum, percentile, True,
+                             sample_prop),
+            "update_low":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
+            "update_high":
+            create_quantizer("FP32", ste, momentum, percentile, True,
+                             sample_prop),
+            "aggregate_low":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
+            "aggregate_high":
+            create_quantizer("FP32", ste, momentum, percentile, True,
+                             sample_prop),
         }
     else:
         layer_quantizers = {
-            "inputs": create_quantizer(
-                qypte, ste, momentum, percentile, sign_input, sample_prop
-            ),
-            "weights": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
-            "features": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
+            "inputs":
+            create_quantizer(qypte, ste, momentum, percentile, sign_input,
+                             sample_prop),
+            "weights":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
+            "features":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
         }
         mp_quantizers = {
-            "message": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
-            "update_q": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
-            "aggregate": create_quantizer(
-                qypte, ste, momentum, percentile, True, sample_prop
-            ),
+            "message":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
+            "update_q":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
+            "aggregate":
+            create_quantizer(qypte, ste, momentum, percentile, True,
+                             sample_prop),
         }
     return layer_quantizers, mp_quantizers
