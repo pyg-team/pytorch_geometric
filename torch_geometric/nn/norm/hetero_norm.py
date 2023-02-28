@@ -163,7 +163,7 @@ class HeteroNorm(torch.nn.Module):
             var_x = torch.var(x, unbiased=False, dim=0)
             if self.track_running_stats:
                 self.running_means[x_type] = self.momentum * self.running_means[x_type] + (1 - self.momentum) * mean_x
-                self.running_vars[x_type] = self.momentum * self.running_vars[x_type] + (1 - self.momentum) * var_x
+                self.running_vars[x_type] = torch.sqrt(self.momentum * torch.square(self.running_vars[x_type]) + (1 - self.momentum) * torch.square(var_x))
                 mean_x, var_x = self.running_means[x_type], self.running_vars[x_type]
             out_dict[x_type] = (x - mean_x) / torch.sqrt(var_x + self.eps)
         return self.hetero_linear(out_dict)
