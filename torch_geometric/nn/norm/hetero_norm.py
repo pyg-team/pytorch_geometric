@@ -48,11 +48,10 @@ class HeteroNorm(torch.nn.Module):
         super().__init__()
         if not norm_type.lower() in accepted_norm_types:
             raise ValueError('Please choose norm type from "BatchNorm", "InstanceNorm", "LayerNorm"')
-        self.norm_type = norm_type
+        self.norm_type = norm_type.lower()
         if allow_single_element and not track_running_stats:
             raise ValueError("'allow_single_element' requires "
                              "'track_running_stats' to be set to `True`")
-
         if isinstance(in_channels, dict):
             self.types = list(in_channels.keys())
             if any([int(i) == -1 for i in in_channels.values()]):
@@ -89,7 +88,7 @@ class HeteroNorm(torch.nn.Module):
         self.in_channels = {}
         self.hetero_linear.initialize_parameters(None, input)
         for x_type, x_n in input[0].items():
-            self.in_channels[x_type] = x_n.shape[-1]
+            self.in_channels[x_type] = x_n.size(-1)
             if self.track_running_stats:
                 self.running_means[type_i] = torch.zeros(self.in_channels[x_type])
                 self.running_vars[type_i] = torch.ones(self.in_channels[x_type])
@@ -159,14 +158,22 @@ class HeteroNorm(torch.nn.Module):
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         out_dict = {}
         for x_type, x in x_dict.items():
-            mean_x = torch.mean(x, dim=0)
-            var_x = torch.var(x, unbiased=False, dim=0)
-            if self.track_running_stats:
-                self.running_means[x_type] = self.momentum * self.running_means[x_type] + (1 - self.momentum) * mean_x
-                self.running_vars[x_type] = torch.sqrt(self.momentum * torch.square(self.running_vars[x_type]) + (1 - self.momentum) * torch.square(var_x))
+            if self.allow_single_element and x.size(0) <= 1:
+                # for inference
                 mean_x, var_x = self.running_means[x_type], self.running_vars[x_type]
+            else:
+                # for training
+                mean_x = torch.mean(x, dim=0)
+                var_x = torch.var(x, unbiased=False, dim=0)
+                if self.track_running_stats:
+                    self.running_means[x_type] = self.momentum * self.running_means[x_type] + (1 - self.momentum) * mean_x
+                    self.running_vars[x_type] = torch.sqrt(self.momentum * torch.square(self.running_vars[x_type]) + (1 - self.momentum) * torch.square(var_x))
+                    mean_x, var_x = self.running_means[x_type], self.running_vars[x_type]
             out_dict[x_type] = (x - mean_x) / torch.sqrt(var_x + self.eps)
-        return self.hetero_linear(out_dict)
+        if self.affine:
+            return self.hetero_linear(out_dict)
+        else:
+            return out_dict
 
     def forward(
         self,
