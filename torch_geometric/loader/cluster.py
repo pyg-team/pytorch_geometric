@@ -145,27 +145,27 @@ class ClusterLoader(torch.utils.data.DataLoader):
         if not isinstance(batch, torch.Tensor):
             batch = torch.tensor(batch)
 
-        E = self.cluster_data.data.num_edges
-
         start = self.cluster_data.partptr[batch].tolist()
         end = self.cluster_data.partptr[batch + 1].tolist()
         node_idx = torch.cat([torch.arange(s, e) for s, e in zip(start, end)])
 
         data = copy.copy(self.cluster_data.data)
-        del data.num_nodes
+
         adj, data.adj = self.cluster_data.data.adj, None
         adj = torch_sparse.cat(
             [adj.narrow(0, s, e - s) for s, e in zip(start, end)], dim=0)
         adj = adj.index_select(1, node_idx)
         row, col, edge_idx = adj.coo()
-        data.edge_index = torch.stack([row, col], dim=0)
 
-        for key, item in data:
-            if data.is_node_attr(key):
-                data[key] = select(item, node_idx, dim=0)
-            elif data.is_edge_attr(key) and item.size(0) == E:
-                data[key] = item[edge_idx]
-            else:
-                data[key] = item
+        for key, value in data:
+            if key == 'num_nodes':
+                data.num_nodes = node_idx.numel()
+            elif self.cluster_data.data.is_node_attr(key):
+                cat_dim = self.cluster_data.data.__cat_dim__(key, value)
+                data[key] = select(value, node_idx, dim=cat_dim)
+            elif self.cluster_data.data.is_edge_attr(key):
+                data[key] = select(value, edge_idx, dim=cat_dim)
+
+        data.edge_index = torch.stack([row, col], dim=0)
 
         return data
