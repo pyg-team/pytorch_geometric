@@ -41,7 +41,7 @@ class HeteroNorm(torch.nn.Module):
     var_funcs = {"batchnorm":batch_var, "instancenorm":instance_var, "layernorm":layer_var}
     accepted_norm_types = ["batchnorm", "instancenorm", "layernorm"]
 
-    def __init__(self, in_channels: Dict[str, int], norm_type: str,
+    def __init__(self, in_channels: Union[Dict[str, int], int], norm_type: str,
                  types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
                  eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
