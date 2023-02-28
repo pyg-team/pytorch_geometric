@@ -67,7 +67,8 @@ class ClusterData(torch.utils.data.Dataset):
         out = copy.copy(data)
         for key, value in data.items():
             if data.is_node_attr(key):
-                out[key] = select(value, node_idx, dim=0)
+                cat_dim = data.__cat_dim__(key, value)
+                out[key] = select(value, node_idx, dim=cat_dim)
 
         out.edge_index = None
         out.adj = adj
@@ -81,21 +82,21 @@ class ClusterData(torch.utils.data.Dataset):
         start = int(self.partptr[idx])
         length = int(self.partptr[idx + 1]) - start
 
-        E = self.data.num_edges
         data = copy.copy(self.data)
-        del data.num_nodes
         adj, data.adj = data.adj, None
 
         adj = adj.narrow(0, start, length).narrow(1, start, length)
         edge_idx = adj.storage.value()
 
-        for key, item in data:
-            if data.is_node_attr(key):
-                data[key] = narrow(item, 0, start, length)
-            elif data.is_edge_attr(key) and item.size(0) == E:
-                data[key] = item[edge_idx]
-            else:
-                data[key] = item
+        for key, value in data:
+            if key == 'num_nodes':
+                data.num_nodes == length
+            elif self.data.is_node_attr(key):
+                cat_dim = self.data.__cat_dim__(key, value)
+                data[key] = narrow(value, cat_dim, start, length)
+            elif self.data.is_edge_attr(key):
+                cat_dim = self.data.__cat_dim__(key, value)
+                data[key] = select(value, edge_idx, dim=cat_dim)
 
         row, col, _ = adj.coo()
         data.edge_index = torch.stack([row, col], dim=0)

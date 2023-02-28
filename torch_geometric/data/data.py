@@ -608,10 +608,10 @@ class Data(BaseData, FeatureStore, GraphStore):
                 data.num_nodes = num_nodes
             elif self.is_node_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
-                data[key] = select(value, subset, cat_dim)
+                data[key] = select(value, subset, dim=cat_dim)
             elif self.is_edge_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
-                data[key] = mask_select(value, cat_dim, edge_mask)
+                data[key] = select(value, edge_mask, dim=cat_dim)
 
         return data
 

@@ -564,7 +564,7 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         value = self[key]
-        if isinstance(value, list) and len(value) == self.num_nodes:
+        if isinstance(value, (list, tuple)) and len(value) == self.num_nodes:
             self._cached_attr[AttrType.NODE].add(key)
             return True
 
