@@ -21,6 +21,7 @@ from .assortativity import assortativity
 from .get_laplacian import get_laplacian
 from .get_mesh_laplacian import get_mesh_laplacian
 from .mask import mask_select, index_to_mask, mask_to_index
+from .select import select, narrow
 from .to_dense_batch import to_dense_batch
 from .to_dense_adj import to_dense_adj
 from .nested import to_nested_tensor, from_nested_tensor
@@ -45,7 +46,6 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
 from .tree_decomposition import tree_decomposition
 from .embedding import get_embeddings
 from .train_test_split_edges import train_test_split_edges
-from .filter_node_attribute import filter_node_attribute, narrow_node_attribute
 
 __all__ = [
     'scatter',
@@ -83,6 +83,8 @@ __all__ = [
     'mask_select',
     'index_to_mask',
     'mask_to_index',
+    'select',
+    'narrow',
     'to_dense_batch',
     'to_dense_adj',
     'to_nested_tensor',
@@ -120,8 +122,6 @@ __all__ = [
     'tree_decomposition',
     'get_embeddings',
     'train_test_split_edges',
-    'filter_node_attribute',
-    'narrow_node_attribute',
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the

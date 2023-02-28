@@ -7,7 +7,7 @@ import torch
 import torch.utils.data
 
 from torch_geometric.typing import SparseTensor, torch_sparse
-from torch_geometric.utils import filter_node_attribute, narrow_node_attribute
+from torch_geometric.utils import narrow, select
 
 
 class ClusterData(torch.utils.data.Dataset):
@@ -67,7 +67,7 @@ class ClusterData(torch.utils.data.Dataset):
         out = copy.copy(data)
         for key, value in data.items():
             if data.is_node_attr(key):
-                out[key] = filter_node_attribute(value, 0, node_idx)
+                out[key] = select(value, node_idx, dim=0)
 
         out.edge_index = None
         out.adj = adj
@@ -91,7 +91,7 @@ class ClusterData(torch.utils.data.Dataset):
 
         for key, item in data:
             if data.is_node_attr(key):
-                data[key] = narrow_node_attribute(item, 0, start, length)
+                data[key] = narrow(item, 0, start, length)
             elif data.is_edge_attr(key) and item.size(0) == E:
                 data[key] = item[edge_idx]
             else:
@@ -161,7 +161,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
 
         for key, item in data:
             if data.is_node_attr(key):
-                data[key] = filter_node_attribute(item, 0, node_idx)
+                data[key] = select(item, node_idx, dim=0)
             elif data.is_edge_attr(key) and item.size(0) == E:
                 data[key] = item[edge_idx]
             else:
