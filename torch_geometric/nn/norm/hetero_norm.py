@@ -87,12 +87,12 @@ class HeteroNorm(torch.nn.Module):
     @torch.no_grad()
     def initialize_parameters(self, module, input):
         self.in_channels = {}
+        self.hetero_linear.initialize_parameters(None, input)
         for x_type, x_n in input[0].items():
-            lin_x = self.hetero_linear[x_type]
-            self.hetero_linear[x_type].initialize_parameters(None, x_n)
             self.in_channels[x_type] = x_n.shape[-1]
-            self.running_means[type_i] = torch.zeros(self.in_channels[x_type])
-            self.running_vars[type_i] = torch.ones(self.in_channels[x_type])
+            if self.track_running_stats:
+                self.running_means[type_i] = torch.zeros(self.in_channels[x_type])
+                self.running_vars[type_i] = torch.ones(self.in_channels[x_type])
         self.reset_parameters()
         self._hook.remove()
         delattr(self, '_hook')
@@ -115,8 +115,8 @@ class HeteroNorm(torch.nn.Module):
             except AttributeError:
                 # torch native layer norm
                 in_channels = norm_module.normalized_shape
-                if not isinstance(self.in_channels, int):
-                    raise ValueError("If passing torch.nn.LayerNorm, \
+                if not isinstance(in_channels, int):
+                    raise ValueError("If making a torch.nn.LayerNorm heterogeneous, \
                         please ensure that `normalized_shape` is a single integer")
         in_channels = {node_type: in_channels for node_type in self.types}
         eps = norm_module.eps
@@ -143,9 +143,10 @@ class HeteroNorm(torch.nn.Module):
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         self.hetero_linear.reset_parameters()
-        for type_i in self.types:
-            self.running_means[type_i] = torch.zeros(self.in_channels[type_i])
-            self.running_vars[type_i] = torch.ones(self.in_channels[type_i])
+        if self.track_running_stats:
+            for type_i in self.types:
+                self.running_means[type_i] = torch.zeros(self.in_channels[type_i])
+                self.running_vars[type_i] = torch.ones(self.in_channels[type_i])
 
     def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         out = x.new_empty(x.size(0), self.in_channels)
@@ -160,6 +161,10 @@ class HeteroNorm(torch.nn.Module):
         for x_type, x in x_dict.items():
             mean_x = torch.mean(x, dim=0)
             var_x = torch.var(x, unbiased=False, dim=0)
+            if self.track_running_stats:
+                self.running_means[x_type] = self.momentum * self.running_means[x_type] + (1 - self.momentum) * mean_x
+                self.running_vars[x_type] = self.momentum * self.running_vars[x_type] + (1 - self.momentum) * var_x
+                mean_x, var_x = self.running_means[x_type], self.running_vars[x_type]
             out_dict[x_type] = (x - mean_x) / torch.sqrt(var_x + self.eps)
         return self.hetero_linear(out_dict)
 
