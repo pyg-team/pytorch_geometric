@@ -49,9 +49,12 @@
     For example:
     ```bash
     python -u inference_benchmark.py --datasets=Reddit --models=gcn --eval-batch-sizes=512 --num-layers=2 --num-hidden-channels=64
+    python -u inference_benchmark.py --datasets=Reddit --models=gcn --eval-batch-sizes=1024 --num-layers=3 --num-hidden-channels=128
+    python -u inference_benchmark.py --datasets=Reddit --models=gcn --eval-batch-sizes=512 --num-layers=2 --num-hidden-channels=64 --use-sparse-tensor
     python -u inference_benchmark.py --datasets=Reddit --models=gcn --eval-batch-sizes=1024 --num-layers=3 --num-hidden-channels=128 --use-sparse-tensor
-    python -u inference_benchmark.py --datasets=Reddit --models=gcn --eval-batch-sizes=1024 --num-layers=3 --num-hidden-channels=128 --full-batch
     python -u inference_benchmark.py --datasets=ogbn-products --models=sage --eval-batch-sizes=512 --num-layers=2 --num-hidden-channels=64
+    python -u inference_benchmark.py --datasets=ogbn-products --models=sage --eval-batch-sizes=1024 --num-layers=3 --num-hidden-channels=128
+    python -u inference_benchmark.py --datasets=ogbn-products --models=sage --eval-batch-sizes=512 --num-layers=2 --num-hidden-channels=64 --use-sparse-tensor
     python -u inference_benchmark.py --datasets=ogbn-products --models=sage --eval-batch-sizes=1024 --num-layers=3 --num-hidden-channels=128 --use-sparse-tensor
     ```
 
