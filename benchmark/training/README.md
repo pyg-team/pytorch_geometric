@@ -2,12 +2,12 @@
 
 ## Environment setup
 
-#. Confirm that PyG is properly installed.
-#. Install dataset package:
+1. Confirm that PyG is properly installed.
+2. Install dataset package:
    ```bash
    pip install ogb
    ```
-# Install `jemalloc` for performance benchmark:
+3. Install `jemalloc` for performance benchmark:
    ```bash
    cd ${workspace}
    git clone https://github.com/jemalloc/jemalloc.git
@@ -21,7 +21,7 @@
 
 ## Running benchmark
 
-#. Set environment variables:
+1. Set environment variables:
    ```bash
    source activate env_name
    export DNNL_PRIMITIVE_CACHE_CAPACITY=1024
@@ -32,11 +32,11 @@
    export LD_PRELOAD="$jemalloc_lib"
    export MALLOC_CONF="oversize_threshold:1,background_thread:true,metadata_thp:auto,dirty_decay_ms:9000000000,muzzy_decay_ms:9000000000"
    ```
-#. Core binding, *e.g.*, single socket / single core / 4 cores per instance:
+2. Core binding, *e.g.*, single socket / single core / 4 cores per instance:
    ```bash
    OMP_NUM_THREADS=${CORES} numactl -C 0-${LAST_CORE} -m 0 CMD......
    ```
-#. Execute benchmarks, *e.g.*:
+3. Execute benchmarks, *e.g.*:
    ```bash
    python training_benchmark.py --models=gcn --datasets=Reddit --num-workers=0 --batch-sizes=512 --num-layers=2 --num-hidden-channels=64 --num-steps=50
    python training_benchmark.py --models=gcn --datasets=Reddit --num-workers=0 --batch-sizes=512 --num-layers=2 --num-hidden-channels=64 --num-steps=50 --use-sparse-tensor
