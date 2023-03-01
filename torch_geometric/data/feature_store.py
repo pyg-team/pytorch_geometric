@@ -295,7 +295,12 @@ class FeatureStore:
         r"""To be implemented by :class:`FeatureStore` subclasses."""
         pass
 
-    def get_tensor(self, *args, **kwargs) -> FeatureTensorType:
+    def get_tensor(
+        self,
+        *args,
+        convert_type: bool = False,
+        **kwargs,
+    ) -> FeatureTensorType:
         r"""Synchronously obtains a :class:`tensor` from the
         :class:`FeatureStore`.
 
@@ -320,17 +325,19 @@ class FeatureStore:
         tensor = self._get_tensor(attr)
         if tensor is None:
             raise KeyError(f"A tensor corresponding to '{attr}' was not found")
-        return self._to_type(attr, tensor)
+        return self._to_type(attr, tensor) if convert_type else tensor
 
     def _multi_get_tensor(
-            self,
-            attrs: List[TensorAttr]) -> List[Optional[FeatureTensorType]]:
+        self,
+        attrs: List[TensorAttr],
+    ) -> List[Optional[FeatureTensorType]]:
         r"""To be implemented by :class:`FeatureStore` subclasses."""
         return [self._get_tensor(attr) for attr in attrs]
 
     def multi_get_tensor(
         self,
         attrs: List[TensorAttr],
+        convert_type: bool = False,
     ) -> List[FeatureTensorType]:
         r"""Synchronously obtains a list of tensors from the
         :class:`FeatureStore` for each tensor associated with the attributes in
@@ -361,13 +368,13 @@ class FeatureStore:
                 f"'UNSET' fields")
 
         tensors = self._multi_get_tensor(attrs)
-        if None in tensors:
+        if any(v is None for v in tensors):
             bad_attrs = [attrs[i] for i, v in enumerate(tensors) if v is None]
             raise KeyError(f"Tensors corresponding to attributes "
                            f"'{bad_attrs}' were not found")
 
         return [
-            self._to_type(attr, tensor)
+            self._to_type(attr, tensor) if convert_type else tensor
             for attr, tensor in zip(attrs, tensors)
         ]
 
