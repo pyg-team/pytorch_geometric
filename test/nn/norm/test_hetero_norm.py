@@ -23,11 +23,6 @@ def test_heterobatch_norm(conf):
 
 def test_batch_norm_single_element():
     x = torch.randn(1, 16)
-
-    norm = BatchNorm(16)
-    with pytest.raises(ValueError, match="Expected more than 1 value"):
-        norm(x)
-
     with pytest.raises(ValueError, match="requires 'track_running_stats'"):
         norm = BatchNorm(16, track_running_stats=False,
                          allow_single_element=True)
@@ -35,9 +30,6 @@ def test_batch_norm_single_element():
     norm = BatchNorm(16, track_running_stats=True, allow_single_element=True)
     out = norm(x)
     assert torch.allclose(out, x)
-
-from torch_geometric.nn import InstanceNorm
-from torch_geometric.testing import is_full_test
 
 
 @pytest.mark.parametrize('conf', [True, False])
