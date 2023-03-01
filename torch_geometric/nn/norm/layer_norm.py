@@ -102,3 +102,44 @@ class LayerNorm(torch.nn.Module):
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'affine={self.affine}, mode={self.mode})')
+
+
+class HeteroLayerNorm(torch.nn.Module):
+    def __init__(self, in_channels: int, num_types: int,
+                 elementwise_affine: bool = True, eps: float = 1e-5,
+                 device=None, dtype=None):
+        factory_kwargs = {'device': device, 'dtype': dtype}
+        super(HeteroLayerNorm, self).__init__()
+        self.elementwise_affine = elementwise_affine
+        self.in_channels = in_channels
+        self.num_types = num_types
+        self.eps = eps
+        self.norm = torch.nn.LayerNorm(in_channels, elementwise_affine=False,
+                                       eps=eps, device=device, dtype=dtype)
+
+        if self.elementwise_affine:
+            self.weight = Parameter(
+                torch.empty((self.num_types, self.in_channels),
+                            **factory_kwargs))
+            self.bias = Parameter(
+                torch.empty((self.num_types, self.in_channels),
+                            **factory_kwargs))
+        else:
+            self.register_parameter('weight', None)
+            self.register_parameter('bias', None)
+
+        # initialize weights
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        if self.elementwise_affine:
+            ones(self.weight)
+            zeros(self.bias)
+
+    def forward(self, x, types):
+        out = self.norm(x)
+
+        if self.elementwise_affine:
+            out = out.mul_(self.weight[types]).add_(self.bias[types])
+
+        return out
