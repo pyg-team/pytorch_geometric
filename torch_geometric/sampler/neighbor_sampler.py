@@ -214,7 +214,7 @@ class NeighborSampler(BaseSampler):
                     self.temporal_strategy,
                     True,  # return_edge_id
                 )
-                row, col, node, edge, batch = out + (None, )
+                row, col, node, edge, batch = out[:4] + (None, )
                 if self.disjoint:
                     node = {k: v.t().contiguous() for k, v in node.items()}
                     batch = {k: v[0] for k, v in node.items()}
@@ -270,7 +270,7 @@ class NeighborSampler(BaseSampler):
                     self.temporal_strategy,
                     True,  # return_edge_id
                 )
-                row, col, node, edge, batch = out + (None, )
+                row, col, node, edge, batch = out[:4] + (None, )
                 if self.disjoint:
                     batch, node = node.t().contiguous()
 
