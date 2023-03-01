@@ -500,7 +500,7 @@ def test_pyg_lib_homo_neighbor_loader():
 
     seed = torch.arange(10)
 
-    sample = torch.ops.pyg.neighbor_sample
+    sample = torch.ops.pyg.neighbor_sample[:4]
     out1 = sample(colptr, row, seed, [-1, -1], None, None, True)
     sample = torch.ops.torch_sparse.neighbor_sample
     out2 = sample(colptr, row, seed, [-1, -1], False, True)
@@ -537,7 +537,7 @@ def test_pyg_lib_hetero_neighbor_loader():
         'author__to__paper': [-1, -1],
     }
 
-    sample = torch.ops.pyg.hetero_neighbor_sample
+    sample = torch.ops.pyg.hetero_neighbor_sample[:4]
     out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, None, None, True, False, True, False,
                   "uniform", True)
