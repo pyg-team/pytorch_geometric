@@ -164,6 +164,7 @@ class ClusterLoader(torch.utils.data.DataLoader):
                 cat_dim = self.cluster_data.data.__cat_dim__(key, value)
                 data[key] = select(value, node_idx, dim=cat_dim)
             elif self.cluster_data.data.is_edge_attr(key):
+                cat_dim = self.cluster_data.data.__cat_dim__(key, value)
                 data[key] = select(value, edge_idx, dim=cat_dim)
 
         data.edge_index = torch.stack([row, col], dim=0)
