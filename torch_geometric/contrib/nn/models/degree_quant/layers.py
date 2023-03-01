@@ -23,7 +23,6 @@ REQUIRED_GCN_KEYS = [
     "norm",
 ]
 
-
 class GCNConvQuant(MessagePassingQuant):
     def __init__(
         self,
