@@ -309,7 +309,7 @@ class FeatureStore:
                 correspond to the feature tensor. See the :class:`TensorAttr`
                 documentation for required and optional attributes.
             convert_type (bool): Whether to convert the type of the output
-                tensor to the type of the attribute index. (default: False).
+                tensor to the type of the attribute index. (default: False)
 
         Raises:
             ValueError: If the input :class:`TensorAttr` is not fully
@@ -355,7 +355,7 @@ class FeatureStore:
             attrs (List[TensorAttr]): A list of input :class:`TensorAttr`
                 objects that identify the tensors to obtain.
             convert_type (bool): Whether to convert the type of the output
-                tensor to the type of the attribute index. (default: False).
+                tensor to the type of the attribute index. (default: False)
 
         Raises:
             ValueError: If any input :class:`TensorAttr` is not fully
