@@ -505,7 +505,7 @@ def test_pyg_lib_homo_neighbor_loader():
     sample = torch.ops.torch_sparse.neighbor_sample
     out2 = sample(colptr, row, seed, [-1, -1], False, True)
 
-    row1, col1, node_id1, edge_id1 = out1
+    row1, col1, node_id1, edge_id1 = out1[:4]
     node_id2, row2, col2, edge_id2 = out2
     assert torch.equal(node_id1, node_id2)
     assert torch.equal(row1, row2)
@@ -545,7 +545,7 @@ def test_pyg_lib_hetero_neighbor_loader():
     out2 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, 2, False, True)
 
-    row1_dict, col1_dict, node_id1_dict, edge_id1_dict = out1
+    row1_dict, col1_dict, node_id1_dict, edge_id1_dict = out1[:4]
     node_id2_dict, row2_dict, col2_dict, edge_id2_dict = out2
     assert len(node_id1_dict) == len(node_id2_dict)
     for key in node_id1_dict.keys():
