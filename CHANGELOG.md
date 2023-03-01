@@ -7,8 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `ZipLoader` to execute multiple `NodeLoader` or `LinkLoader` instances ([#6829](https://github.com/pyg-team/pytorch_geometric/issues/6829))
 - Added common `utils.select` and `utils.narrow` functionality to support filtering of both tensors and lists ([#6162](https://github.com/pyg-team/pytorch_geometric/issues/6162))
-- Support `normalization` customization in `get_mesh_laplacian` ([#6037](https://github.com/pyg-team/pytorch_geometric/issues/6037))
+- Support `normalization` customization in `get_mesh_laplacian` ([#6790](https://github.com/pyg-team/pytorch_geometric/issues/6790))
 - Added the `TemporalEncoding` module ([#6785](https://github.com/pyg-team/pytorch_geometric/pull/6785))
 - Added CPU-optimized `spmm_reduce` functionality via CSR format ([#6699](https://github.com/pyg-team/pytorch_geometric/pull/6699), [#6759](https://github.com/pyg-team/pytorch_geometric/pull/6759))
 - Added support for the revised version of the `MD17` dataset ([#6734](https://github.com/pyg-team/pytorch_geometric/pull/6734))
@@ -93,7 +94,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- Fixed a bug in `get_mesh_laplacian` ([#6037](https://github.com/pyg-team/pytorch_geometric/issues/6037))
+- Fixed a bug in `get_mesh_laplacian` ([#6790](https://github.com/pyg-team/pytorch_geometric/issues/6790))
 - Fixed a bug in which masks were not properly masked in `GNNExplainer` on link prediction tasks ([#6787](https://github.com/pyg-team/pytorch_geometric/pull/6787))
 - Allow the usage of `ChebConv` within `GNNExplainer` ([#6778](https://github.com/pyg-team/pytorch_geometric/pull/6778))
 - Allow setting the `EdgeStorage.num_edges` property ([#6710](https://github.com/pyg-team/pytorch_geometric/pull/6710))

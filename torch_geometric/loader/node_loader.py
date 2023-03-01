@@ -1,6 +1,7 @@
-from typing import Any, Callable, Iterator, Optional, Tuple, Union
+from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
@@ -111,7 +112,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         iterator = range(input_nodes.size(0))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
-    def collate_fn(self, index: NodeSamplerInput) -> Any:
+    def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
         input_data: NodeSamplerInput = self.input_data[index]
 

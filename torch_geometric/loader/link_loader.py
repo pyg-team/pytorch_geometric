@@ -1,6 +1,7 @@
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
@@ -176,7 +177,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         iterator = range(edge_label_index.size(1))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
-    def collate_fn(self, index: List[int]) -> Any:
+    def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
         input_data: EdgeSamplerInput = self.input_data[index]
 
