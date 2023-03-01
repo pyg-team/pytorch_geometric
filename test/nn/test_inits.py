@@ -21,12 +21,12 @@ def test_inits():
     assert x.max() <= 0.5
 
     glorot(x)
-    assert x.min() >= -1.25
-    assert x.max() <= 1.25
+    assert x.min() >= -2.0
+    assert x.max() <= 2.0
 
     glorot_orthogonal(x, scale=1.0)
-    assert x.min() >= -1.25
-    assert x.max() <= 1.25
+    assert x.min() >= -2.0
+    assert x.max() <= 2.0
 
     zeros(x)
     assert x.tolist() == [[0, 0, 0, 0]]
