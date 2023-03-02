@@ -58,7 +58,7 @@ def test_homo_neighbor_loader_basic(directed, dtype):
 
     for i, batch in enumerate(loader):
         assert isinstance(batch, Data)
-        assert len(batch) == 7
+        assert len(batch) == 9
         assert batch.x.size(0) <= 100
         assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.e_id.size() == (batch.num_edges, )
@@ -612,3 +612,18 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
             assert out == list(range(0, num_workers))
         else:
             assert out == loader_cores
+
+
+@withPackage('pyg_lib')
+def test_homo_neighbor_loader_sampled_info():
+    data = Data()
+    data.edge_index = torch.tensor([[2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+                                    [0, 1, 2, 3, 2, 3, 7, 7, 7, 7]])
+    data.num_nodes = 14
+    loader = NeighborLoader(data, num_neighbors=[1, 2, 4], batch_size=2,
+                            shuffle=False)
+    num_sampled_nodes_expected = [2, 2, 3, 4]
+    num_sampled_edges_expected = [2, 4, 4]
+    batch = next(iter(loader))
+    assert batch.num_sampled_nodes == num_sampled_nodes_expected
+    assert batch.num_sampled_edges == num_sampled_edges_expected

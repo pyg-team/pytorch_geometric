@@ -143,6 +143,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             if out.edge is not None and 'e_id' not in data:
                 data.e_id = out.edge
 
+            data.num_sampled_nodes = out.num_sampled_nodes
+            data.num_sampled_edges = out.num_sampled_edges
             data.batch = out.batch
             data.input_id = out.metadata[0]
             data.seed_time = out.metadata[1]
@@ -174,6 +176,9 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             data[input_type].input_id = out.metadata[0]
             data[input_type].seed_time = out.metadata[1]
             data[input_type].batch_size = out.metadata[0].size(0)
+
+            data.num_sampled_edges = out.num_sampled_edges
+            data.num_sampled_nodes = out.num_sampled_nodes
 
         else:
             raise TypeError(f"'{self.__class__.__name__}'' found invalid "

@@ -123,6 +123,10 @@ class SamplerOutput(CastMixin):
         edge (torch.Tensor, optional): The sampled edges in the original graph.
             This tensor is used to obtain edge features from the original
             graph. If no edge attributes are present, it may be omitted.
+        num_sampled_nodes (List[int]): The list preserving information
+            about amount of the sampled nodes per layer.
+        num_sampled_edges (List[int]): The list preserving information
+             about amount of the sampled edges per layer.
         batch (torch.Tensor, optional): The vector to identify the seed node
             for each sampled node. Can be present in case of disjoint subgraph
             sampling per seed node. (default: :obj:`None`)
@@ -133,6 +137,8 @@ class SamplerOutput(CastMixin):
     row: Tensor
     col: Tensor
     edge: OptTensor
+    num_sampled_nodes: List[int]
+    num_sampled_edges: List[int]
     batch: OptTensor = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
@@ -161,6 +167,12 @@ class HeteroSamplerOutput(CastMixin):
             edges in the original graph for each edge type.
             This tensor is used to obtain edge features from the original
             graph. If no edge attributes are present, it may be omitted.
+        num_sampled_nodes (Dict[NodeType, List[int]]):
+            The dict preserving information
+            about amount of the sampled nodes per layer for each NodeType.
+        num_sampled_edges (Dict[EdgeType, List[int]]):
+            The dict preserving information
+            about amount of the sampled edges per layer for each EdgeType.
         batch (Dict[str, torch.Tensor], optional): The vector to identify the
             seed node for each sampled node for each node type. Can be present
             in case of disjoint subgraph sampling per seed node.
@@ -172,6 +184,8 @@ class HeteroSamplerOutput(CastMixin):
     row: Dict[EdgeType, Tensor]
     col: Dict[EdgeType, Tensor]
     edge: Optional[Dict[EdgeType, Tensor]]
+    num_sampled_nodes: Dict[NodeType, List[int]]
+    num_sampled_edges: Dict[EdgeType, List[int]]
     batch: Optional[Dict[NodeType, Tensor]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.

@@ -214,7 +214,8 @@ class NeighborSampler(BaseSampler):
                     self.temporal_strategy,
                     True,  # return_edge_id
                 )
-                row, col, node, edge, batch = out[:4] + (None, )
+                (row, col, node, edge, num_sampled_nodes, num_sampled_edges,
+                 batch) = out + (None, )
                 if self.disjoint:
                     node = {k: v.t().contiguous() for k, v in node.items()}
                     batch = {k: v[0] for k, v in node.items()}
@@ -249,6 +250,9 @@ class NeighborSampler(BaseSampler):
                 row=remap_keys(row, self.to_edge_type),
                 col=remap_keys(col, self.to_edge_type),
                 edge=remap_keys(edge, self.to_edge_type),
+                num_sampled_nodes=num_sampled_nodes,
+                num_sampled_edges=remap_keys(num_sampled_edges,
+                                             self.to_edge_type),
                 batch=batch,
             )
 
@@ -270,7 +274,8 @@ class NeighborSampler(BaseSampler):
                     self.temporal_strategy,
                     True,  # return_edge_id
                 )
-                row, col, node, edge, batch = out[:4] + (None, )
+                (row, col, node, edge, num_sampled_nodes, num_sampled_edges,
+                 batch) = out + (None, )
                 if self.disjoint:
                     batch, node = node.t().contiguous()
 
@@ -300,6 +305,8 @@ class NeighborSampler(BaseSampler):
                 row=row,
                 col=col,
                 edge=edge,
+                num_sampled_nodes=num_sampled_nodes,
+                num_sampled_edges=num_sampled_edges,
                 batch=batch,
             )
 
