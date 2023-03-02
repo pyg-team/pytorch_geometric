@@ -105,6 +105,29 @@ class LayerNorm(torch.nn.Module):
 
 
 class HeteroLayerNorm(torch.nn.Module):
+    r"""Applies layer normalization over each individual example in a batch
+    of node features as described in the `"Layer Normalization"
+    <https://arxiv.org/abs/1607.06450>`_ paper
+
+    .. math::
+        \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
+        \textrm{E}[\mathbf{x}]}{\sqrt{\textrm{Var}[\mathbf{x}] + \epsilon}}
+        \odot \gamma + \gamma
+
+    The mean and standard-deviation are calculated across all nodes and all
+    node channels separately for each object in a mini-batch.
+    \gamma and \beta earnable affine transform parameters of 
+    shape (num_types, in_channels).
+
+    Args:
+        in_channels (int): Size of each input sample.
+        num_types (torch.Tensor): Number of node types.
+        eps (float, optional): A value added to the denominator for numerical
+            stability. (default: :obj:`1e-5`)
+        elementwise_affine (bool, optional): If set to :obj:`True`, this module has
+            learnable affine parameters :math:`\gamma` and :math:`\beta`.
+            (default: :obj:`True`)
+    """
     def __init__(self, in_channels: int, num_types: int,
                  elementwise_affine: bool = True, eps: float = 1e-5,
                  device=None, dtype=None):

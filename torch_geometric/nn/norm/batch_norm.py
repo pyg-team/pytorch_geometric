@@ -81,6 +81,37 @@ class BatchNorm(torch.nn.Module):
 
 
 class HeteroBatchNorm(torch.nn.Module):
+    r"""Applies batch normalization over a batch of node features as described
+    in the `"Batch Normalization: Accelerating Deep Network Training by
+    Reducing Internal Covariate Shift" <https://arxiv.org/abs/1502.03167>`_
+    paper
+
+    .. math::
+        \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
+        \textrm{E}[\mathbf{x}]}{\sqrt{\textrm{Var}[\mathbf{x}] + \epsilon}}
+        \odot \gamma + \beta
+
+    The mean and standard-deviation are calculated per-dimension individually
+    for each node type inside the mini-batch.
+    \gamma and \beta earnable affine transform parameters of 
+    shape (num_types, in_channels).
+
+    Args:
+        in_channels (int): Size of each input sample.
+        num_types (torch.Tensor): Number of node types.
+        eps (float, optional): A value added to the denominator for numerical
+            stability. (default: :obj:`1e-5`)
+        momentum (float, optional): The value used for the running mean and
+            running variance computation. (default: :obj:`0.1`)
+        elementwise_affine (bool, optional): If set to :obj:`True`, this module has
+            learnable affine parameters :math:`\gamma` and :math:`\beta`.
+            (default: :obj:`True`)
+        track_running_stats (bool, optional): If set to :obj:`True`, this
+            module tracks the running mean and variance, and when set to
+            :obj:`False`, this module does not track such statistics and always
+            uses batch statistics in both training and eval modes.
+            (default: :obj:`True`)
+    """
     def __init__(self, in_channels: int, num_types: int,
                  elementwise_affine: bool = True,
                  track_running_stats: bool = True, eps: float = 1e-5,
