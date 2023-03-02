@@ -112,12 +112,13 @@ class HeteroLayerNorm(torch.nn.Module):
     .. math::
         \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
         \textrm{E}[\mathbf{x}]}{\sqrt{\textrm{Var}[\mathbf{x}] + \epsilon}}
-        \odot \gamma + \gamma
+        \odot \gamma_{\tau} + \beta_{\tau}
 
     The mean and standard-deviation are calculated across all nodes and all
     node channels separately for each object in a mini-batch.
-    \gamma and \beta earnable affine transform parameters of 
-    shape (num_types, in_channels).
+    \gamma_{\tau} and \beta_{\tau} are learnable affine transform parameters,
+    where {\tau} is the type of the node. There is a distint \gamma and \beta for 
+    each type.
 
     Args:
         in_channels (int): Size of each input sample.
