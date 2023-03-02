@@ -137,8 +137,8 @@ class SamplerOutput(CastMixin):
     row: Tensor
     col: Tensor
     edge: OptTensor
-    num_sampled_nodes: List[int]
-    num_sampled_edges: List[int]
+    num_sampled_nodes: List[int] = None
+    num_sampled_edges: List[int] = None
     batch: OptTensor = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
@@ -184,8 +184,8 @@ class HeteroSamplerOutput(CastMixin):
     row: Dict[EdgeType, Tensor]
     col: Dict[EdgeType, Tensor]
     edge: Optional[Dict[EdgeType, Tensor]]
-    num_sampled_nodes: Dict[NodeType, List[int]]
-    num_sampled_edges: Dict[EdgeType, List[int]]
+    num_sampled_nodes: Dict[NodeType, List[int]] = None
+    num_sampled_edges: Dict[EdgeType, List[int]] = None
     batch: Optional[Dict[NodeType, Tensor]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
