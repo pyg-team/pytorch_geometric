@@ -175,7 +175,7 @@ class HeteroSamplerOutput(CastMixin):
             sampled nodes for each node type and each layer.
             (default: :obj:`None`)
         num_sampled_edges (Dict[EdgeType, List[int]], optional): The number of
-            sampled nodes for each edge type and each layer.
+            sampled edges for each edge type and each layer.
             (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
