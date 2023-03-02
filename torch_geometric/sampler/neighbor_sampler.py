@@ -214,8 +214,13 @@ class NeighborSampler(BaseSampler):
                     self.temporal_strategy,
                     True,  # return_edge_id
                 )
-                (row, col, node, edge, num_sampled_nodes, num_sampled_edges,
-                 batch) = out + (None, )
+                row, col, node, edge, batch = out[:4] + (None, )
+
+                # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
+                num_sampled_nodes = num_sampled_edges = None
+                if len(out) == 6:
+                    num_sampled_nodes, num_sampled_edges = out[4:]
+
                 if self.disjoint:
                     node = {k: v.t().contiguous() for k, v in node.items()}
                     batch = {k: v[0] for k, v in node.items()}
@@ -240,20 +245,23 @@ class NeighborSampler(BaseSampler):
                     self.directed,
                 )
                 node, row, col, edge, batch = out + (None, )
+                num_sampled_nodes = num_sampled_edges = None
 
             else:
                 raise ImportError(f"'{self.__class__.__name__}' requires "
                                   f"either 'pyg-lib' or 'torch-sparse'")
+
+            if num_sampled_edges is not None:
+                remap_keys(num_sampled_edges, self.to_edge_type)
 
             return HeteroSamplerOutput(
                 node=node,
                 row=remap_keys(row, self.to_edge_type),
                 col=remap_keys(col, self.to_edge_type),
                 edge=remap_keys(edge, self.to_edge_type),
-                num_sampled_nodes=num_sampled_nodes,
-                num_sampled_edges=remap_keys(num_sampled_edges,
-                                             self.to_edge_type),
                 batch=batch,
+                num_sampled_nodes=num_sampled_nodes,
+                num_sampled_edges=num_sampled_edges,
             )
 
         else:  # Homogeneous sampling:
@@ -274,8 +282,13 @@ class NeighborSampler(BaseSampler):
                     self.temporal_strategy,
                     True,  # return_edge_id
                 )
-                (row, col, node, edge, num_sampled_nodes, num_sampled_edges,
-                 batch) = out + (None, )
+                row, col, node, edge, batch = out[:4] + (None, )
+
+                # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
+                num_sampled_nodes = num_sampled_edges = None
+                if len(out) == 6:
+                    num_sampled_nodes, num_sampled_edges = out[4:]
+
                 if self.disjoint:
                     batch, node = node.t().contiguous()
 
@@ -295,6 +308,7 @@ class NeighborSampler(BaseSampler):
                     self.directed,
                 )
                 node, row, col, edge, batch = out + (None, )
+                num_sampled_nodes = num_sampled_edges = None
 
             else:
                 raise ImportError(f"'{self.__class__.__name__}' requires "
@@ -305,9 +319,9 @@ class NeighborSampler(BaseSampler):
                 row=row,
                 col=col,
                 edge=edge,
+                batch=batch,
                 num_sampled_nodes=num_sampled_nodes,
                 num_sampled_edges=num_sampled_edges,
-                batch=batch,
             )
 
 
