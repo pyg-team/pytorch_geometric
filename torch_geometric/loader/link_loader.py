@@ -130,10 +130,8 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         if neg_sampling_ratio is not None and neg_sampling_ratio != 0.0:
             # TODO: Deprecation warning.
