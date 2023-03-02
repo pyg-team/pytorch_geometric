@@ -252,7 +252,10 @@ class NeighborSampler(BaseSampler):
                                   f"either 'pyg-lib' or 'torch-sparse'")
 
             if num_sampled_edges is not None:
-                remap_keys(num_sampled_edges, self.to_edge_type)
+                num_sampled_edges = remap_keys(
+                    num_sampled_edges,
+                    self.to_edge_type,
+                )
 
             return HeteroSamplerOutput(
                 node=node,
