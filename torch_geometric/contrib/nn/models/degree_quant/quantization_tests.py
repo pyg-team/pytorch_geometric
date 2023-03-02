@@ -1,5 +1,6 @@
 import unittest
 from utils import IntegerQuantizer
+from linear import LinearQuantized
 import torch
 
 class TestQuantization(unittest.TestCase):
@@ -13,7 +14,8 @@ class TestQuantization(unittest.TestCase):
             symmetric=False,
         )
 
-        x = torch.random()
+        x = torch.rand((5,5))
+        my_quantizer(x)
 
     def test_int8_quant(self):
         pass
@@ -23,6 +25,15 @@ class TestQuantization(unittest.TestCase):
 
     def test_sample_tensor(self):
         pass
+
+class TestLinearQuantized(unittest.TestCase):
+
+    def test_linear(self):
+        in_features = (3, 2)
+        out_features = (4)
+        x = torch.arange(6)
+        l = LinearQuantized(in_features, out_features)
+    
 
 if __name__ == '__main__':
     unittest.main()
