@@ -117,7 +117,7 @@ class HeteroLayerNorm(torch.nn.Module):
     The mean and standard-deviation are calculated across all nodes and all
     node channels separately for each object in a mini-batch.
     \gamma_{\tau} and \beta_{\tau} are learnable affine transform parameters,
-    where {\tau} is the type of the node. There is a distint \gamma and \beta for 
+    where {\tau} is the type of the node. There is a distint \gamma and \beta for
     each type.
 
     Args:
