@@ -627,3 +627,51 @@ def test_homo_neighbor_loader_sampled_info():
     batch = next(iter(loader))
     assert batch.num_sampled_nodes == num_sampled_nodes_expected
     assert batch.num_sampled_edges == num_sampled_edges_expected
+
+
+@withPackage('pyg_lib')
+def test_hetero_neighbor_loader_sampled_info():
+    edge_index_paper_paper = torch.tensor([[2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+                                           [0, 1, 2, 3, 2, 3, 7, 7, 7, 7]])
+    edge_index_paper_author = torch.tensor([[2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+                                            [0, 1, 2, 3, 2, 3, 7, 7, 7, 7]])
+    edge_index_author_paper = torch.tensor([[2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+                                            [0, 1, 2, 3, 2, 3, 7, 7, 7, 7]])
+    x_paper = torch.rand(14, 8)
+    x_author = torch.rand(14, 8)
+    data = HeteroData({
+        'paper': {
+            'x': x_paper
+        },
+        'author': {
+            'x': x_author
+        },
+        ('paper', 'paper'): {
+            'edge_index': edge_index_paper_paper
+        },
+        ('paper', 'author'): {
+            'edge_index': edge_index_paper_author
+        },
+        ('author', 'paper'): {
+            'edge_index': edge_index_author_paper
+        },
+    })
+    loader = NeighborLoader(data, num_neighbors=[1, 2, 4], batch_size=2,
+                            input_nodes='paper', shuffle=False)
+    num_sampled_nodes_expected = {
+        "paper": [2, 2, 3, 4],
+        "author": [0, 2, 3, 4]
+    }
+    num_sampled_edges_expected = {
+        ('paper', 'to', 'paper'): [2, 4, 4],
+        ('paper', 'to', 'author'): [0, 4, 4],
+        ('author', 'to', 'paper'): [2, 4, 4]
+    }
+
+    batch = next(iter(loader))
+    for node_type in batch.node_types:
+        assert batch.num_sampled_nodes[
+            node_type] == num_sampled_nodes_expected[node_type]
+    for edge_type in batch.edge_types:
+        assert batch.num_sampled_edges[
+            edge_type] == num_sampled_edges_expected[edge_type]
