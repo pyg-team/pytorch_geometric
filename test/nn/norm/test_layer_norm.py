@@ -41,13 +41,12 @@ def test_hetero_layer_norm(affine, device):
     hetero_out = hetero_norm(x, types)
 
     if affine:
-        out = hetero_norm(x, types)
         weight = hetero_norm.weight
         bias = hetero_norm.bias
         node = 5
         node_type = types[node]
 
         assert torch.allclose(
-            out[5], real_out[5] * weight[node_type] + bias[node_type])
+            hetero_out[5], real_out[5] * weight[node_type] + bias[node_type])
     else:
-        assert torch.allclose(out, hetero_out, atol=1e-6)
+        assert torch.allclose(real_out, hetero_out, atol=1e-6)

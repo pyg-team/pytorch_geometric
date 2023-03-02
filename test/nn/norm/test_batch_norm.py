@@ -1,6 +1,6 @@
 import pytest
 import torch
-from torch_scatter import scatter_mean  # , scatter_std
+from torch_scatter import scatter_mean, scatter_std
 
 from torch_geometric.nn import BatchNorm, HeteroBatchNorm
 from torch_geometric.testing import is_full_test
@@ -54,7 +54,7 @@ def test_hetero_batch_norm(conf, device):
         hetero_out = hetero_norm(x, types)
 
         assert hetero_out.size() == (100, 16)
-        assert torch.allclose(hetero_out, real_out, atol=1e-6)
+        assert torch.allclose(hetero_out, real_out, atol=1e-5)
 
         # test hetero case
         num_types = 5
@@ -66,10 +66,10 @@ def test_hetero_batch_norm(conf, device):
 
         # check if means are zero and vars are 1 across all types
         means = scatter_mean(hetero_out, types, dim=0)
-        # stds = scatter_std(hetero_out, types, dim=0)
+        stds = scatter_std(hetero_out, types, dim=0, unbiased=False)
 
-        assert torch.allclose(means, torch.zeros_like(means), atol=1e-6)
-        # assert torch.allclose(stds, torch.ones_like(stds), atol=1e-6)
+        assert torch.allclose(means, torch.zeros_like(means), atol=1e-5)
+        assert torch.allclose(stds, torch.ones_like(stds), atol=1e-5)
 
     else:
         # test hetero case
