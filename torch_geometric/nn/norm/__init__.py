@@ -1,4 +1,4 @@
-from .batch_norm import BatchNorm
+from .batch_norm import BatchNorm, HeteroBatchNorm
 from .instance_norm import InstanceNorm
 from .layer_norm import LayerNorm, HeteroLayerNorm
 from .graph_norm import GraphNorm
@@ -10,6 +10,7 @@ from .diff_group_norm import DiffGroupNorm
 
 __all__ = [
     'BatchNorm',
+    'HeteroBatchNorm',
     'InstanceNorm',
     'LayerNorm',
     'HeteroLayerNorm',

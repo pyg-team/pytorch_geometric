@@ -27,16 +27,18 @@ def test_layer_norm(affine, mode):
 
 
 @pytest.mark.parametrize('affine', [False, True])
-def test_hetero_layer_norm(affine):
+@pytest.mark.parametrize('device', ['cuda', 'cpu'])
+def test_hetero_layer_norm(affine, device):
     num_types = 5
-    x = torch.randn(100, 16)
-    types = torch.randint(num_types, (100, ))
+    x = torch.randn((100, 16), device=device)
+    types = torch.randint(num_types, (100, ), device=device)
 
     hetero_norm = HeteroLayerNorm(16, num_types=num_types,
-                                  elementwise_affine=affine)
-    norm = torch.nn.LayerNorm(16, elementwise_affine=False)
+                                  elementwise_affine=affine, device=device)
+    norm = torch.nn.LayerNorm(16, elementwise_affine=False, device=device)
 
-    real_norm = hetero_norm(x, types)
+    real_out = norm(x)
+    hetero_out = hetero_norm(x, types)
 
     if affine:
         out = hetero_norm(x, types)
@@ -44,8 +46,8 @@ def test_hetero_layer_norm(affine):
         bias = hetero_norm.bias
         node = 5
         node_type = types[node]
+
         assert torch.allclose(
-            out[5], real_norm[5] * weight[node_type] + bias[node_type])
+            out[5], real_out[5] * weight[node_type] + bias[node_type])
     else:
-        out = norm(x)
-        assert torch.allclose(out, real_norm, atol=1e-6)
+        assert torch.allclose(out, hetero_out, atol=1e-6)
