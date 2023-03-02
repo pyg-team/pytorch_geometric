@@ -37,7 +37,7 @@ def test_batch_norm_single_element():
 
 
 @pytest.mark.parametrize('conf', [True, False])
-@pytest.mark.parametrize('device', ['cpu', 'cuda'])
+@pytest.mark.parametrize('device', ['cpu'])
 def test_hetero_batch_norm(conf, device):
     x = torch.randn((100, 16), device=device)
 

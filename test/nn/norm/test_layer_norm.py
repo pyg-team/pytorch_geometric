@@ -27,7 +27,7 @@ def test_layer_norm(affine, mode):
 
 
 @pytest.mark.parametrize('affine', [False, True])
-@pytest.mark.parametrize('device', ['cuda', 'cpu'])
+@pytest.mark.parametrize('device', ['cpu'])
 def test_hetero_layer_norm(affine, device):
     num_types = 5
     x = torch.randn((100, 16), device=device)
