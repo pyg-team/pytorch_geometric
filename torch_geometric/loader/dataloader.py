@@ -69,9 +69,8 @@ class DataLoader(torch.utils.data.DataLoader):
         exclude_keys: Optional[List[str]] = None,
         **kwargs,
     ):
-
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        # Remove for PyTorch Lightning:
+        kwargs.pop('collate_fn', None)
 
         # Save for PyTorch Lightning < 1.6:
         self.follow_batch = follow_batch

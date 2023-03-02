@@ -34,10 +34,8 @@ class ZipLoader(torch.utils.data.DataLoader):
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         for loader in loaders:
             if not callable(getattr(loader, 'collate_fn', None)):
