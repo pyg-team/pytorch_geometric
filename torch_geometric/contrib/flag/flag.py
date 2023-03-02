@@ -1,3 +1,5 @@
+import numbers
+
 import torch
 
 
@@ -29,6 +31,10 @@ class FLAG(torch.nn.Module):
         if not isinstance(n_ascent_steps, int) or n_ascent_steps <= 0:
             raise ValueError(f"Invalid n_ascent_steps: {n_ascent_steps}." +
                              " n_ascent_steps should be a positive integer.")
+
+        if not isinstance(step_size, numbers.Number) or step_size <= 0:
+            raise ValueError(f"Invalid step_size: {step_size}." +
+                             " step_size should be a positive float.")
 
         # Code below adapted from:
         #   https://github.com/devnkong/FLAG/blob/main/deep_gcns_torch
