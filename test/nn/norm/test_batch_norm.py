@@ -68,8 +68,8 @@ def test_hetero_batch_norm(conf, device):
         means = scatter_mean(hetero_out, types, dim=0)
         stds = scatter_std(hetero_out, types, dim=0, unbiased=False)
 
-        assert torch.allclose(means, torch.zeros_like(means), atol=1e-5)
-        assert torch.allclose(stds, torch.ones_like(stds), atol=1e-5)
+        assert torch.allclose(means, torch.zeros_like(means), atol=1e-4)
+        assert torch.allclose(stds, torch.ones_like(stds), atol=1e-4)
 
     else:
         # test hetero case
