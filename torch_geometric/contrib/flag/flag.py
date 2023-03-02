@@ -7,7 +7,7 @@ class FLAG(torch.nn.Module):
         model: torch.nn.Module,
         optimizer: torch.nn.Module,
         loss_fn: torch.nn.Module,
-        device: str,
+        device: torch.device,
     ) -> None:  # None return type as per https://peps.python.org/pep-0484/
         super(FLAG, self).__init__()
 
@@ -24,8 +24,12 @@ class FLAG(torch.nn.Module):
         y_true: torch.tensor,
         train_idx: torch.tensor,
         step_size: float,
-        n_ascent_steps: int,
+        n_ascent_steps: int = 3,
     ) -> tuple[torch.nn.Module, torch.tensor]:
+        if not isinstance(n_ascent_steps, int) or n_ascent_steps <= 0:
+            raise ValueError(f"Invalid n_ascent_steps: {n_ascent_steps}." +
+                             " n_ascent_steps should be a positive integer.")
+
         # Code below adapted from:
         #   https://github.com/devnkong/FLAG/blob/main/deep_gcns_torch
         #     /examples/ogb/ogbn_arxiv/main.py#L56
@@ -34,7 +38,10 @@ class FLAG(torch.nn.Module):
         #   `perturb` argument
         # forward = lambda perturb : model(x+perturb, edge_index)[train_idx]
         # model_forward = (model, forward)
-        training_labels = y_true.squeeze(1)[train_idx]
+
+        # TODO
+        # Tyler, did you mean to have .squeeze(1)??
+        training_labels = y_true[train_idx]
 
         # loss, out = flag(model_forward, x.shape, target,
         #   args, optimizer, device, F.nll_loss)
