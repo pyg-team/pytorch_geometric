@@ -144,14 +144,14 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
         # Test node type selection:
         assert set(batch.node_types) == {'paper', 'author'}
 
-        assert len(batch['paper']) == 4
+        assert len(batch['paper']) == 5
         assert batch['paper'].n_id.size() == (batch['paper'].num_nodes, )
         assert batch['paper'].x.size(0) <= 100
         assert batch['paper'].input_id.numel() == batch_size
         assert batch['paper'].batch_size == batch_size
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
 
-        assert len(batch['author']) == 2
+        assert len(batch['author']) == 3
         assert batch['author'].n_id.size() == (batch['author'].num_nodes, )
         assert batch['author'].x.size(0) <= 200
         assert batch['author'].x.min() >= 100 and batch['author'].x.max() < 300
@@ -161,7 +161,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
                                          ('paper', 'to', 'author'),
                                          ('author', 'to', 'paper')}
 
-        assert len(batch['paper', 'paper']) == 3
+        assert len(batch['paper', 'paper']) == 4
         num_edges = batch['paper', 'paper'].num_edges
         assert batch['paper', 'paper'].e_id.size() == (num_edges, )
         row, col = batch['paper', 'paper'].edge_index
@@ -183,7 +183,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
             batch['paper'].x,
         )
 
-        assert len(batch['paper', 'author']) == 3
+        assert len(batch['paper', 'author']) == 4
         num_edges = batch['paper', 'author'].num_edges
         assert batch['paper', 'author'].e_id.size() == (num_edges, )
         row, col = batch['paper', 'author'].edge_index
@@ -205,7 +205,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
             batch['author'].x - 100,
         )
 
-        assert len(batch['author', 'paper']) == 3
+        assert len(batch['author', 'paper']) == 4
         num_edges = batch['author', 'paper'].num_edges
         assert batch['author', 'paper'].e_id.size() == (num_edges, )
         row, col = batch['author', 'paper'].edge_index
@@ -631,47 +631,39 @@ def test_homo_neighbor_loader_sampled_info():
 
 @withPackage('pyg_lib')
 def test_hetero_neighbor_loader_sampled_info():
-    edge_index_paper_paper = torch.tensor([[2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
-                                           [0, 1, 2, 3, 2, 3, 7, 7, 7, 7]])
-    edge_index_paper_author = torch.tensor([[2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
-                                            [0, 1, 2, 3, 2, 3, 7, 7, 7, 7]])
-    edge_index_author_paper = torch.tensor([[2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
-                                            [0, 1, 2, 3, 2, 3, 7, 7, 7, 7]])
-    x_paper = torch.rand(14, 8)
-    x_author = torch.rand(14, 8)
-    data = HeteroData({
-        'paper': {
-            'x': x_paper
-        },
-        'author': {
-            'x': x_author
-        },
-        ('paper', 'paper'): {
-            'edge_index': edge_index_paper_paper
-        },
-        ('paper', 'author'): {
-            'edge_index': edge_index_paper_author
-        },
-        ('author', 'paper'): {
-            'edge_index': edge_index_author_paper
-        },
-    })
-    loader = NeighborLoader(data, num_neighbors=[1, 2, 4], batch_size=2,
-                            input_nodes='paper', shuffle=False)
-    num_sampled_nodes_expected = {
-        "paper": [2, 2, 3, 4],
-        "author": [0, 2, 3, 4]
+    edge_index = torch.tensor([
+        [2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+        [0, 1, 2, 3, 2, 3, 7, 7, 7, 7],
+    ])
+
+    data = HeteroData()
+    data['paper'].num_nodes = data['author'].num_nodes = 14
+    data['paper', 'paper'].edge_index = edge_index
+    data['paper', 'author'].edge_index = edge_index
+    data['author', 'paper'].edge_index = edge_index
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[1, 2, 4],
+        batch_size=2,
+        input_nodes='paper',
+        shuffle=False,
+    )
+    batch = next(iter(loader))
+
+    expected_num_sampled_nodes = {
+        'paper': [2, 2, 3, 4],
+        'author': [0, 2, 3, 4],
     }
-    num_sampled_edges_expected = {
+    expected_num_sampled_edges = {
         ('paper', 'to', 'paper'): [2, 4, 4],
         ('paper', 'to', 'author'): [0, 4, 4],
-        ('author', 'to', 'paper'): [2, 4, 4]
+        ('author', 'to', 'paper'): [2, 4, 4],
     }
 
-    batch = next(iter(loader))
     for node_type in batch.node_types:
-        assert batch.num_sampled_nodes[
-            node_type] == num_sampled_nodes_expected[node_type]
+        assert (batch[node_type].num_sampled_nodes ==
+                expected_num_sampled_nodes[node_type])
     for edge_type in batch.edge_types:
-        assert batch.num_sampled_edges[
-            edge_type] == num_sampled_edges_expected[edge_type]
+        assert (batch[edge_type].num_sampled_edges ==
+                expected_num_sampled_edges[edge_type])
