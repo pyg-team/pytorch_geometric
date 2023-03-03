@@ -1,16 +1,16 @@
 import pytest
 import torch
-from torch_scatter import scatter_mean, scatter_std
 
 from torch_geometric.nn import BatchNorm, HeteroBatchNorm
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withCUDA
 
 
+@withCUDA
 @pytest.mark.parametrize('conf', [True, False])
-def test_batch_norm(conf):
-    x = torch.randn(100, 16)
+def test_batch_norm(device, conf):
+    x = torch.randn(100, 16, device=device)
 
-    norm = BatchNorm(16, affine=conf, track_running_stats=conf)
+    norm = BatchNorm(16, affine=conf, track_running_stats=conf).to(device)
     assert str(norm) == 'BatchNorm(16)'
 
     if is_full_test():
@@ -36,48 +36,31 @@ def test_batch_norm_single_element():
     assert torch.allclose(out, x)
 
 
+@withCUDA
 @pytest.mark.parametrize('conf', [True, False])
-@pytest.mark.parametrize('device', ['cpu'])
-def test_hetero_batch_norm(conf, device):
+def test_hetero_batch_norm(device, conf):
     x = torch.randn((100, 16), device=device)
 
-    norm = torch.nn.BatchNorm1d(16, device=device)
-    real_out = norm(x)
+    # Test single type:
+    norm = BatchNorm(16, affine=conf, track_running_stats=conf).to(device)
+    expected = norm(x)
 
-    if not conf:
-        # test homogeneous case
-        num_types = 1
-        types = torch.randint(num_types, (100, ), device=device)
-        hetero_norm = HeteroBatchNorm(16, num_types=num_types,
-                                      elementwise_affine=conf,
-                                      track_running_stats=conf, device=device)
-        hetero_out = hetero_norm(x, types)
+    type_vec = torch.zeros(100, dtype=torch.long, device=device)
+    norm = HeteroBatchNorm(16, num_types=1, affine=conf,
+                           track_running_stats=conf).to(device)
+    out = norm(x, type_vec)
+    assert out.size() == (100, 16)
+    assert torch.allclose(out, expected, atol=1e-3)
 
-        assert hetero_out.size() == (100, 16)
-        assert torch.allclose(hetero_out, real_out, atol=1e-5)
+    # Test multiple types:
+    type_vec = torch.randint(5, (100, ), device=device)
+    norm = HeteroBatchNorm(16, num_types=5, affine=conf,
+                           track_running_stats=conf).to(device)
+    out = norm(x, type_vec)
+    assert out.size() == (100, 16)
 
-        # test hetero case
-        num_types = 5
-        types = torch.randint(num_types, (100, ), device=device)
-        hetero_norm = HeteroBatchNorm(16, num_types=num_types,
-                                      elementwise_affine=conf,
-                                      track_running_stats=conf, device=device)
-        hetero_out = hetero_norm(x, types)
-
-        # check if means are zero and vars are 1 across all types
-        means = scatter_mean(hetero_out, types, dim=0)
-        stds = scatter_std(hetero_out, types, dim=0, unbiased=False)
-
-        assert torch.allclose(means, torch.zeros_like(means), atol=1e-4)
-        assert torch.allclose(stds, torch.ones_like(stds), atol=1e-4)
-
-    else:
-        # test hetero case
-        num_types = 5
-        types = torch.randint(num_types, (100, ), device=device)
-        hetero_norm = HeteroBatchNorm(16, num_types=num_types,
-                                      elementwise_affine=conf,
-                                      track_running_stats=conf, device=device)
-
-        assert hetero_norm.running_mean.size() == (num_types, 16)
-        assert hetero_norm.running_var.size() == (num_types, 16)
+    for i in range(5):  # Check that mean=0 and std=1 across all types:
+        mean = out[type_vec == i].mean()
+        std = out[type_vec == i].std(unbiased=False)
+        assert torch.allclose(mean, torch.zeros_like(mean), atol=1e-7)
+        assert torch.allclose(std, torch.ones_like(std), atol=1e-7)
