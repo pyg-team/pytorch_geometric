@@ -94,7 +94,7 @@ class HeteroBatchNorm(torch.nn.Module):
     The mean and standard-deviation are calculated per-dimension individually
     for each node type inside the mini-batch.
     :math:`\gamma_{\tau}` and :math:`\beta_{\tau}` are learnable affine transform parameters,
-    where :math:`\tau` is the type of the node. There is a distint :math:`\gamma_{\tau}` and :math:`\beta_{\tau}` for
+    where :math:`\tau` is the type of the node. There is a distinct :math:`\gamma_{\tau}` and :math:`\beta_{\tau}` for
     each type.
 
     Args:
