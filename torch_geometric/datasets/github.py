@@ -25,7 +25,6 @@ class GitHub(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
-
     url = 'https://graphmining.ai/datasets/ptg/github.npz'
 
     def __init__(self, root: str, transform: Optional[Callable] = None,
