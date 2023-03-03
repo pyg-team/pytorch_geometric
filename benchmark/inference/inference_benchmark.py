@@ -3,7 +3,12 @@ from contextlib import nullcontext
 
 import torch
 
-from benchmark.utils import emit_itt, get_dataset, get_model, get_split_masks
+from benchmark.utils import (
+    emit_itt,
+    get_dataset_with_transformation,
+    get_model,
+    get_split_masks,
+)
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -18,7 +23,11 @@ supported_sets = {
 @torch.no_grad()
 def full_batch_inference(model, data):
     model.eval()
-    return model(data.x, data.edge_index)
+    if hasattr(data, 'adj_t'):
+        edge_index = data.adj_t
+    else:
+        edge_index = data.edge_index
+    return model(data.x, edge_index)
 
 
 def test(y, loader):
@@ -41,9 +50,10 @@ def run(args: argparse.ArgumentParser):
         print(f'Dataset: {dataset_name}')
         load_time = timeit() if args.measure_load_time else nullcontext()
         with load_time:
-            dataset, num_classes = get_dataset(dataset_name, args.root,
-                                               args.use_sparse_tensor,
-                                               args.bf16)
+            result = get_dataset_with_transformation(dataset_name, args.root,
+                                                     args.use_sparse_tensor,
+                                                     args.bf16)
+            dataset, num_classes, transformation = result
         data = dataset.to(device)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
@@ -161,6 +171,9 @@ def run(args: argparse.ArgumentParser):
                         ) if args.profile else nullcontext()
                         itt = emit_itt(
                         ) if args.vtune_profile else nullcontext()
+
+                        if args.full_batch and args.use_sparse_tensor:
+                            data = transformation(data)
 
                         with cpu_affinity, amp, timeit() as time:
                             for _ in range(args.warmup):
