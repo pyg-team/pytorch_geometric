@@ -49,6 +49,7 @@ from .freebase import FB15k_237
 from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
+from .heterophilous_graph_dataset import HeterophilousGraphDataset
 from .actor import Actor
 from .ogb_mag import OGB_MAG
 from .dblp import DBLP
@@ -142,6 +143,7 @@ __all__ = [
     'WikiCS',
     'WebKB',
     'WikipediaNetwork',
+    'HeterophilousGraphDataset',
     'Actor',
     'OGB_MAG',
     'DBLP',
