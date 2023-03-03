@@ -26,7 +26,7 @@ def maybe_num_nodes(edge_index, num_nodes=None):
         return num_nodes
     elif isinstance(edge_index, Tensor):
         if is_torch_sparse_tensor(edge_index):
-            return max(edge_index.size())
+            return max(edge_index.size(0), edge_index.size(1))
         return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
     else:
         return max(edge_index.size(0), edge_index.size(1))
