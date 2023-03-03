@@ -1,5 +1,6 @@
 import torch
 
+from torch_geometric.utils import to_torch_coo_tensor
 from torch_geometric.utils.num_nodes import (
     maybe_num_nodes,
     maybe_num_nodes_dict,
@@ -11,6 +12,10 @@ def test_maybe_num_nodes():
 
     assert maybe_num_nodes(edge_index, 4) == 4
     assert maybe_num_nodes(edge_index) == 3
+
+    adj = to_torch_coo_tensor(edge_index)
+    assert maybe_num_nodes(adj, 4) == 4
+    assert maybe_num_nodes(adj) == 3
 
 
 def test_maybe_num_nodes_dict():
