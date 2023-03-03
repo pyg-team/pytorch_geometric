@@ -3,8 +3,12 @@ from contextlib import nullcontext
 
 import torch
 
-from benchmark.utils import (emit_itt, get_dataset_with_transformation,
-                             get_model, get_split_masks)
+from benchmark.utils import (
+    emit_itt,
+    get_dataset_with_transformation,
+    get_model,
+    get_split_masks,
+)
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile

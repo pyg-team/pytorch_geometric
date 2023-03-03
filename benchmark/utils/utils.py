@@ -32,7 +32,8 @@ models_dict = {
 }
 
 
-def get_dataset_with_transformation(name, root, use_sparse_tensor=False, bf16=False):
+def get_dataset_with_transformation(name, root, use_sparse_tensor=False,
+                                    bf16=False):
     path = osp.join(osp.dirname(osp.realpath(__file__)), root, name)
     transform = T.ToSparseTensor(
         remove_edge_index=False) if use_sparse_tensor else None
@@ -72,7 +73,8 @@ def get_dataset_with_transformation(name, root, use_sparse_tensor=False, bf16=Fa
 
 
 def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
-    data, num_classes, _ = get_dataset_with_transformation(name, root, use_sparse_tensor, bf16)
+    data, num_classes, _ = get_dataset_with_transformation(
+        name, root, use_sparse_tensor, bf16)
     return data, num_classes
 
 
