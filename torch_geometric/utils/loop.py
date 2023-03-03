@@ -198,6 +198,11 @@ def add_self_loops(
     """
     N = maybe_num_nodes(edge_index, num_nodes)
 
+    is_sparse = is_torch_sparse_tensor(edge_index)
+    if is_sparse:
+        assert edge_attr is None
+        edge_index, edge_attr = to_edge_index(edge_index)
+
     loop_index = torch.arange(0, N, dtype=torch.long, device=edge_index.device)
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
 
@@ -224,6 +229,8 @@ def add_self_loops(
         edge_attr = torch.cat([edge_attr, loop_attr], dim=0)
 
     edge_index = torch.cat([edge_index, loop_index], dim=1)
+    if is_sparse:
+        return to_torch_coo_tensor(edge_index, edge_attr), None
     return edge_index, edge_attr
 
 
