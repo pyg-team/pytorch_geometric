@@ -261,8 +261,7 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
                                         num_parts=cfg.train.train_parts,
                                         shuffle=shuffle,
                                         num_workers=cfg.num_workers,
-                                        pin_memory=True,
-                                        persistent_workers=pw)
+                                        pin_memory=True, persistent_workers=pw)
     elif sampler == "saint_rw":
         loader_train = \
             GraphSAINTRandomWalkSampler(dataset[0],
