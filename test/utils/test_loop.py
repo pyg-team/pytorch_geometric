@@ -7,6 +7,7 @@ from torch_geometric.utils import (
     get_self_loop_attr,
     remove_self_loops,
     segregate_self_loops,
+    to_torch_coo_tensor,
 )
 
 
@@ -31,6 +32,10 @@ def test_remove_self_loops():
     out = remove_self_loops(edge_index, edge_attr)
     assert out[0].tolist() == expected
     assert out[1].tolist() == [[1, 2], [3, 4]]
+
+    adj = to_torch_coo_tensor(edge_index)
+    adj, _ = remove_self_loops(adj)
+    assert torch.diag(adj.to_dense()).tolist() == [0, 0]
 
 
 def test_segregate_self_loops():
