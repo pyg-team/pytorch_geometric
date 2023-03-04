@@ -24,7 +24,7 @@ class JODIEDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
- 
+
     **STATS:**
 
     .. list-table::
