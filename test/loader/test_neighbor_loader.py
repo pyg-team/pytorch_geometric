@@ -1,7 +1,5 @@
-import os
-import random
+import os.path as osp
 import subprocess
-import sys
 from time import sleep
 
 import numpy as np
@@ -563,8 +561,8 @@ def test_pyg_lib_hetero_neighbor_loader():
 
 
 @onlyLinux
-def test_memmap_neighbor_loader():
-    path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.npy')
+def test_memmap_neighbor_loader(tmp_path):
+    path = osp.join(tmp_path, 'x.npy')
     x = np.memmap(path, dtype=np.float32, mode='w+', shape=(100, 32))
     x[:] = np.random.randn(100, 32)
 
@@ -581,8 +579,6 @@ def test_memmap_neighbor_loader():
     assert batch.num_nodes <= 100
     assert isinstance(batch.x, torch.Tensor)
     assert batch.x.size() == (batch.num_nodes, 32)
-
-    os.remove(path)
 
 
 @onlyLinux
