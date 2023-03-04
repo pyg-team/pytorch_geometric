@@ -96,8 +96,7 @@ class HeteroBatchNorm(torch.nn.Module):
     by Reducing Internal Covariate Shift" <https://arxiv.org/abs/1502.03167>`_
     paper.
     Compared to :class:`BatchNorm`, :class:`HeteroBatchNorm` applies
-    calculation of mean and standard-deviation individually for each node or
-    edge type.
+    normalization individually for each node or edge type.
 
     Args:
         in_channels (int): Size of each input sample.
