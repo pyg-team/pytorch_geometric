@@ -9,8 +9,7 @@ from torch_geometric.utils import coalesce
 
 
 class WebKB(InMemoryDataset):
-    r"""The WebKB datasets :obj:`"Cornell"`, :obj:`"Texas"`,
-    and :obj:`"Wisconsin"` used in the
+    r"""The WebKB datasets used in the
     `"Geom-GCN: Geometric Graph Convolutional Networks"
     <https://openreview.net/forum?id=S1e2agrFvS>`_ paper.
     Nodes represent web pages and edges represent hyperlinks between them.
