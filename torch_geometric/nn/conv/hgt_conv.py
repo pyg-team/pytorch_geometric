@@ -208,7 +208,6 @@ class HGTConv(MessagePassing):
         v_ins = []
         count = 0
         trans_ptr = [count]
-        print(self.src_types)
         for src_type in self.src_types:
             k_src = k_dict[src_type]
             v_src = v_dict[src_type]
@@ -219,18 +218,13 @@ class HGTConv(MessagePassing):
                 trans_ptr.append(count)
         trans_ptr = torch.tensor(trans_ptr)
         print("Trans", trans_ptr.shape, trans_ptr)
-        print("K_ins", torch.cat(k_ins).shape)
-        print("V_ins", torch.cat(v_ins).shape)
         a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
-        print("A_rel", a_rel.shape)
-        print("M_rel", m_rel.shape)
         k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
                                            a_rel).view(-1, H, D)
 
         v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
                                            m_rel).view(-1, H, D)
         print("K_out", k_out.shape)
-        print("V_out", v_out.shape)
         node_slices = make_node_slices({
             n_type: k_out[trans_ptr[i]:trans_ptr[i + 1]].shape[0]
             for i, n_type in enumerate(self.node_types)
@@ -254,6 +248,7 @@ class HGTConv(MessagePassing):
             p_rels.append(self.p_rel['__'.join(e_type)].view(-1, 1))
 
         q = torch.cat(q_list)
+        print('Q', q.shape)
         p = group(p_rels, self.group).view(-1)
         e_idx = combine_edge_slices(edge_index_list)
         if convert:
@@ -262,7 +257,6 @@ class HGTConv(MessagePassing):
                                  sparse_sizes=(k_out.size(0), k_out.size(0)))
 
         # propagate
-        print(q.shape, k_out.shape, v_out.shape, p.shape, e_idx.shape)
         out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
         k_ptr = 0
         for node_type, k in k_dict.items():
