@@ -8,8 +8,8 @@ from torch_geometric.nn.aggr.fused import FusedAggregation
 
 
 class BatchNorm(torch.nn.Module):
-    r"""Applies batch normalization over a batch of node features as described
-    in the `"Batch Normalization: Accelerating Deep Network Training by
+    r"""Applies batch normalization over a batch of features as described in
+    the `"Batch Normalization: Accelerating Deep Network Training by
     Reducing Internal Covariate Shift" <https://arxiv.org/abs/1502.03167>`_
     paper
 
@@ -91,10 +91,10 @@ class BatchNorm(torch.nn.Module):
 
 
 class HeteroBatchNorm(torch.nn.Module):
-    r"""Applies batch normalization over a batch of heterogeneous node features
-    as described in the `"Batch Normalization: Accelerating Deep Network
-    Training by Reducing Internal Covariate Shift"
-    <https://arxiv.org/abs/1502.03167>`_ paper.
+    r"""Applies batch normalization over a batch of heterogeneous features as
+    described in the `"Batch Normalization: Accelerating Deep Network Training
+    by Reducing Internal Covariate Shift" <https://arxiv.org/abs/1502.03167>`_
+    paper.
     Compared to :class:`BatchNorm`, :class:`HeteroBatchNorm` applies
     calculation of mean and standard-deviation individually for each node or
     edge type.
