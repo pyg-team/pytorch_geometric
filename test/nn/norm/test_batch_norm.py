@@ -11,6 +11,8 @@ def test_batch_norm(device, conf):
     x = torch.randn(100, 16, device=device)
 
     norm = BatchNorm(16, affine=conf, track_running_stats=conf).to(device)
+    norm.reset_running_stats()
+    norm.reset_parameters()
     assert str(norm) == 'BatchNorm(16)'
 
     if is_full_test():
@@ -48,6 +50,10 @@ def test_hetero_batch_norm(device, conf):
     type_vec = torch.zeros(100, dtype=torch.long, device=device)
     norm = HeteroBatchNorm(16, num_types=1, affine=conf,
                            track_running_stats=conf).to(device)
+    norm.reset_running_stats()
+    norm.reset_parameters()
+    assert str(norm) == 'HeteroBatchNorm(16, num_types=1)'
+
     out = norm(x, type_vec)
     assert out.size() == (100, 16)
     assert torch.allclose(out, expected, atol=1e-3)

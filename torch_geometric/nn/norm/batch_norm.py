@@ -1,11 +1,10 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.aggr.fused import FusedAggregation
-from torch_geometric.utils import scatter
 
 
 class BatchNorm(torch.nn.Module):
@@ -208,3 +207,7 @@ class HeteroBatchNorm(torch.nn.Module):
             out = out * self.weight[type_vec] + self.bias[type_vec]
 
         return out
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'num_types={self.num_types})')
