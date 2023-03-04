@@ -52,7 +52,7 @@ class WebKB(InMemoryDataset):
           - 325
           - 1,703
           - 5
-        * - Texas
+        * - Wisconsin
           - 251
           - 515
           - 1,703
