@@ -91,25 +91,17 @@ class BatchNorm(torch.nn.Module):
 
 
 class HeteroBatchNorm(torch.nn.Module):
-    r"""Applies batch normalization over a batch of node features as described
-    in the `"Batch Normalization: Accelerating Deep Network Training by
-    Reducing Internal Covariate Shift" <https://arxiv.org/abs/1502.03167>`_
-    paper
-
-    .. math::
-        \mathbf{x}^{\prime}_i = \frac{\mathbf{x} -
-        \textrm{E}[\mathbf{x}]}{\sqrt{\textrm{Var}[\mathbf{x}] + \epsilon}}
-        \odot \gamma_{\tau} + \beta_{\tau}
-
-    The mean and standard-deviation are calculated per-dimension individually
-    for each node type inside the mini-batch.
-    :math:`\gamma_{\tau}` and :math:`\beta_{\tau}` are learnable affine transform parameters,
-    where :math:`\tau` is the type of the node. There is a distinct :math:`\gamma_{\tau}` and :math:`\beta_{\tau}` for
-    each type.
+    r"""Applies batch normalization over a batch of heterogeneous node features
+    as described in the `"Batch Normalization: Accelerating Deep Network
+    Training by Reducing Internal Covariate Shift"
+    <https://arxiv.org/abs/1502.03167>`_ paper.
+    Compared to :class:`BatchNorm`, :class:`HeteroBatchNorm` applies
+    calculation of mean and standard-deviation individually for each node or
+    edge type.
 
     Args:
         in_channels (int): Size of each input sample.
-        num_types (torch.Tensor): Number of node types.
+        num_types (int): The number of types.
         eps (float, optional): A value added to the denominator for numerical
             stability. (default: :obj:`1e-5`)
         momentum (float, optional): The value used for the running mean and
