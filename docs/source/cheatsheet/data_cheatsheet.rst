@@ -64,7 +64,7 @@ Heterogeneous Graph Datasets
 {% endfor %}
 
 Synthetic Graph Datasets
------------------------
+------------------------
 .. list-table::
     :widths: 50 10 10 10 10 10
     :header-rows: 1

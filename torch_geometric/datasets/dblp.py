@@ -57,7 +57,7 @@ class DBLP(InMemoryDataset):
         * - Paper
           - 14,328
           -
-          - 4231
+          - 4,231
           -
         * - Term
           - 7,723
