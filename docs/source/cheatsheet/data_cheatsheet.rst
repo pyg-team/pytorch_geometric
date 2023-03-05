@@ -55,7 +55,7 @@ Heterogeneous Graph Datasets
       -
       -
     {% for child in torch_geometric.datasets.utils.get_children(cls) %}
-    * - └─ **Type**: {{ child }}
+    * - └─ **{{torch_geometric.datasets.utils.get_type(child)}} Type**: {{ child }}
       - {{ torch_geometric.datasets.utils.get_stat(cls, '#nodes', child, default='') }}
       - {{ torch_geometric.datasets.utils.get_stat(cls, '#edges', child, default='') }}
       - {{ torch_geometric.datasets.utils.get_stat(cls, '#features', child, default='') }}
