@@ -1,3 +1,5 @@
+# flake8: noqa
+
 from .karate import KarateClub
 from .tu_dataset import TUDataset
 from .gnn_benchmark_dataset import GNNBenchmarkDataset
@@ -88,13 +90,11 @@ from .taobao import Taobao
 
 import torch_geometric.datasets.utils  # noqa
 
-__all__ = [
+homo_grapgs = [
     'KarateClub',
     'TUDataset',
     'GNNBenchmarkDataset',
     'Planetoid',
-    'FakeDataset',
-    'FakeHeteroDataset',
     'NELL',
     'CitationFull',
     'CoraFull',
@@ -130,13 +130,11 @@ __all__ = [
     'BitcoinOTC',
     'ICEWS18',
     'GDELT',
-    'DBP15K',
     'WILLOWObjectClass',
     'PascalVOCKeypoints',
     'PascalPF',
     'SNAPDataset',
     'SuiteSparseMatrixCollection',
-    'AMiner',
     'WordNet18',
     'WordNet18RR',
     'FB15k_237',
@@ -145,14 +143,6 @@ __all__ = [
     'WikipediaNetwork',
     'HeterophilousGraphDataset',
     'Actor',
-    'OGB_MAG',
-    'DBLP',
-    'MovieLens',
-    'IMDB',
-    'LastFM',
-    'HGBDataset',
-    'JODIEDataset',
-    'MixHopSyntheticDataset',
     'UPFD',
     'GitHub',
     'FacebookPagePage',
@@ -167,18 +157,36 @@ __all__ = [
     'OMDB',
     'PolBlogs',
     'EmailEUCore',
-    'StochasticBlockModelDataset',
-    'RandomPartitionGraphDataset',
     'LINKXDataset',
     'EllipticBitcoinDataset',
-    'DGraphFin',
     'HydroNet',
+    'AirfRANS',
+    'DGraphFin',
+    'JODIEDataset',
+]
+
+hetero_graphs = [
+    'DBLP',
+    'AMiner',
+    'DBP15K',
+    'LastFM',
+    'HGBDataset',
+    'OGB_MAG',
+    'MovieLens',
+    'IMDB',
+    'Taobao',
+]
+synthetic_graphs = [
+    'FakeDataset',
+    'FakeHeteroDataset',
+    'MixHopSyntheticDataset',
+    'StochasticBlockModelDataset',
+    'RandomPartitionGraphDataset',
     'ExplainerDataset',
     'InfectionDataset',
     'BA2MotifDataset',
     'BAMultiShapesDataset',
-    'AirfRANS',
-    'Taobao',
 ]
 
+__all__ = homo_grapgs + hetero_graphs + synthetic_graphs
 classes = __all__
