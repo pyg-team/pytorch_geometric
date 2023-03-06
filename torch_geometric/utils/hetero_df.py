@@ -77,7 +77,7 @@ def _node_edge_dfs_to_sig_df(nodes: pd.DataFrame,
     return sig_df
 
 
-def nx2heteroDF(g: nx.MultiDiGraph, node_groupbycols: str = "node_type",
+def nx2heteroDf(g: nx.MultiDiGraph, node_groupbycols: str = "node_type",
                 edge_groupbycols: List[str] = None) -> HeteroDF:
     r"""Convert a networkx graph to
     :class:`~torch_geometric.typing.HeteroDF`. assumes nodes have
@@ -147,7 +147,7 @@ def nx2heteroDF(g: nx.MultiDiGraph, node_groupbycols: str = "node_type",
     return heterodf
 
 
-def heteroDF_merge(hdf1: HeteroDF, hdf2: HeteroDF, **kwargs) -> HeteroDF:
+def heteroDf_merge(hdf1: HeteroDF, hdf2: HeteroDF, **kwargs) -> HeteroDF:
     r"""merges 2 hetero dfs into 1, same keys are merged on "id" for nodes
     and ("source","target") for edges.
     Args:
@@ -182,7 +182,7 @@ def heteroDF_merge(hdf1: HeteroDF, hdf2: HeteroDF, **kwargs) -> HeteroDF:
     return merge_het
 
 
-def heteroDF_split(
+def heteroDf_split(
     hdf: HeteroDF,
     split_by: Union[List[str], HeteroColumnSet],
     keep_index_in_matched: bool = False,
@@ -328,11 +328,11 @@ def heteroDf2heteroData(hdf: HeteroDF, ignore=None,
     """
     # split hdf to remove ignored features
     if ignore is None and keep is not None:
-        hdf, ignored_features = heteroDF_split(hdf, split_by=keep,
+        hdf, ignored_features = heteroDf_split(hdf, split_by=keep,
                                                keep_index_in_matched=True)
 
     elif ignore is not None:
-        ignored_features, hdf = heteroDF_split(hdf, split_by=ignore,
+        ignored_features, hdf = heteroDf_split(hdf, split_by=ignore,
                                                keep_index_in_unmatched=True)
     else:
         ignored_features = None

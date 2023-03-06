@@ -10,9 +10,9 @@ from torch_geometric.utils.hetero_df import (
     _multi_map,
     _node_edge_dfs_to_sig_df,
     heteroDf2heteroData,
-    heteroDF_merge,
-    heteroDF_split,
-    nx2heteroDF,
+    heteroDf_merge,
+    heteroDf_split,
+    nx2heteroDf,
 )
 
 
@@ -214,8 +214,8 @@ def test_node_edge_dfs_to_sig_df():
     assert list(df["target_type"]) == ["a", "b", "b", "a"]
 
 
-def test_nx_to_HeteroDF():
-    nxHeteroDF = nx2heteroDF(college_nx)
+def test_nx2heteroDf():
+    nxHeteroDF = nx2heteroDf(college_nx)
 
     recordsDF = {k: _to_tuple_set(v) for k, v in nxHeteroDF.items()}
     assert recordsDF == {
@@ -231,9 +231,9 @@ def test_nx_to_HeteroDF():
     }
 
 
-def test_hereroDF_merge():
-    nxHeteroDF = nx2heteroDF(college_nx)
-    mergedHeteroDF = heteroDF_merge(nxHeteroDF, college_data_dict)
+def test_heteroDf_merge():
+    nxHeteroDF = nx2heteroDf(college_nx)
+    mergedHeteroDF = nx2heteroDf(nxHeteroDF, college_data_dict)
 
     recordsDF = {k: _to_tuple_set(v) for k, v in mergedHeteroDF.items()}
     assert recordsDF == {
@@ -249,10 +249,10 @@ def test_hereroDF_merge():
     }
 
 
-def test_hereroDF_split():
-    nxHeteroDF = nx2heteroDF(college_nx)
-    mergedHeteroDF = heteroDF_merge(nxHeteroDF, college_data_dict)
-    matchedHetDF, unmatchedHetDF = heteroDF_split(mergedHeteroDF,
+def test_heteroDf_split():
+    nxHeteroDF = nx2heteroDf(college_nx)
+    mergedHeteroDF = heteroDf_merge(nxHeteroDF, college_data_dict)
+    matchedHetDF, unmatchedHetDF = heteroDf_split(mergedHeteroDF,
                                                   split_by=["name"],
                                                   keep_index_in_unmatched=True)
     matchedRecords = {k: _to_tuple_set(v) for k, v in matchedHetDF.items()}
@@ -277,7 +277,7 @@ def test_hereroDF_split():
     }
     # Split different attributes for different keys
 
-    matchedHetDF, unmatchedHetDF = heteroDF_split(
+    matchedHetDF, unmatchedHetDF = heteroDf_split(
         mergedHeteroDF, split_by={
             'class': ['name'],
             ('student', 'takes', 'class'): ['score']
@@ -303,7 +303,7 @@ def test_hereroDF_split():
     # pairs in unmatched, even if all other fields matched. This is useful
     # if there is no feature data remaining in the unmatched heteroDF but we
     # still want to keep stuff like featureless edge data.
-    matchedHetDF, unmatchedHetDF = heteroDF_split(
+    matchedHetDF, unmatchedHetDF = heteroDf_split(
         mergedHeteroDF, split_by={
             'class': ['name'],
             ('student', 'takes', 'class'): ['score'],
@@ -329,7 +329,7 @@ def test_hereroDF_split():
         # were moved to the matched part
         ("student", "takes", "class"): {(1, 5), (1, 7), (2, 6)},
     }
-    matchedHetDF, unmatchedHetDF = heteroDF_split(
+    matchedHetDF, unmatchedHetDF = heteroDf_split(
         mergedHeteroDF, split_by={
             'class': ['name'],
             ('student', 'takes', 'class'): ['score'],
@@ -350,7 +350,7 @@ def test_hereroDF_split():
         "class": {(5, 3), (6, 5), (7, 2)},
     }
 
-    matchedHetDF, unmatchedHetDF = heteroDF_split(
+    matchedHetDF, unmatchedHetDF = heteroDf_split(
         mergedHeteroDF, split_by={
             'class': ['name'],
             ('student', 'takes', 'class'): ['score'],
@@ -421,7 +421,7 @@ def test_multi_map():
     assert list(mm[3]) == [3, 1]
 
 
-def test_heteroDF_to_hetero_data():
+def test_heteroDf2heteroData():
     tiny_heteroDF = {
         'A':
         pd.DataFrame.from_records([{
