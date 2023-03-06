@@ -1001,7 +1001,7 @@ def offset_edge_idx(
 
 def combine_edge_slices(edge_indices: List[Tensor]) -> Tensor:
     edge_index = None
-    if len(edge_indices) == 1:  # Memory-efficient `torch.cat`:
+    if len(edge_indices) == 1:
         edge_index = edge_indices[0]
     elif len(edge_indices) > 0:
         edge_index = torch.cat(edge_indices, dim=-1)
