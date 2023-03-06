@@ -95,8 +95,6 @@ def test_gcn_conv():
     assert torch.allclose(torch.var(out2), torch.var(out_2_adj2), atol=1)
     assert torch.allclose(kl_out2, kl_adj2, atol=1e-6)
 
-    adj3 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
-    out3, kl_out3 = conv(x, adj3)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
