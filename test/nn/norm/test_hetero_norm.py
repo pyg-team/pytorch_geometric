@@ -8,11 +8,12 @@ from torch_geometric.nn import BatchNorm, HeteroBatchNorm, HeteroInstanceNorm, H
 def test_heterobatch_norm(conf):
     x_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
 
-    hetero_norm = HeteroBatchNorm(16, types=x.keys(), affine=conf, track_running_stats=conf)
+    hetero_norm = HeteroBatchNorm(16, types=x_dict.keys(), affine=conf, track_running_stats=conf)
     homo_norm = BatchNorm(16, affine=conf, track_running_stats=conf)
     from_homo_norm = HeteroBatchNorm.from_homogeneous(homo_norm)
-    assert norm.__repr__() == 'HeteroBatchNorm(16)'
-    assert from_homo_norm.__repr__() == 'HeteroBatchNorm(16)'
+    expected_str_repr = 'HeteroBatchNorm(16)'
+    assert hetero_norm.__repr__() == expected_str_repr
+    assert from_homo_norm.__repr__() == expected_str_repr
 
     out_dict1 = hetero_norm(x_dict)
     out_dict2 = from_homo_norm(x_dict)
@@ -30,6 +31,30 @@ def test_batch_norm_single_element():
     norm = BatchNorm(16, track_running_stats=True, allow_single_element=True)
     out = norm(x)
     assert torch.allclose(out, x)
+
+
+@pytest.mark.parametrize('affine', [True, False])
+@pytest.mark.parametrize('mode', ['graph', 'node'])
+def test_heterolayer_norm(affine, mode):
+    x_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
+    batch = torch.zeros(100, dtype=torch.long)
+    hetero_norm = HeteroLayerNorm(16, types=x_dict.keys(), affine=affine, mode=mode)
+    homo_norm = LayerNorm(16, affine=affine, mode=mode)
+    from_homo_norm = HeteroLayerNorm.from_homogeneous(homo_norm)
+    expected_str_repr = 'HeteroLayerNorm(16)'
+    assert hetero_norm.__repr__() == expected_str_repr
+    assert from_homo_norm.__repr__() == expected_str_repr
+
+    if is_full_test():
+        torch.jit.script(norm)
+
+    out1 = norm(x)
+    assert out1.size() == (100, 16)
+    assert torch.allclose(norm(x, batch), out1, atol=1e-6)
+
+    out2 = norm(torch.cat([x, x], dim=0), torch.cat([batch, batch + 1], dim=0))
+    assert torch.allclose(out1, out2[:100], atol=1e-6)
+    assert torch.allclose(out1, out2[100:], atol=1e-6)
 
 
 @pytest.mark.parametrize('conf', [True, False])
@@ -77,23 +102,3 @@ def test_heteroinstance_norm(conf):
     out3 = norm2(torch.cat([x1, x2], dim=0), torch.cat([batch, batch + 1]))
     assert torch.allclose(out1, out3[:100], atol=1e-7)
     assert torch.allclose(out2, out3[100:], atol=1e-7)
-
-@pytest.mark.parametrize('affine', [True, False])
-@pytest.mark.parametrize('mode', ['graph', 'node'])
-def test_heterolayer_norm(affine, mode):
-    x = torch.randn(100, 16)
-    batch = torch.zeros(100, dtype=torch.long)
-
-    norm = LayerNorm(16, affine=affine, mode=mode)
-    assert norm.__repr__() == f'LayerNorm(16, affine={affine}, mode={mode})'
-
-    if is_full_test():
-        torch.jit.script(norm)
-
-    out1 = norm(x)
-    assert out1.size() == (100, 16)
-    assert torch.allclose(norm(x, batch), out1, atol=1e-6)
-
-    out2 = norm(torch.cat([x, x], dim=0), torch.cat([batch, batch + 1], dim=0))
-    assert torch.allclose(out1, out2[:100], atol=1e-6)
-    assert torch.allclose(out1, out2[100:], atol=1e-6)
