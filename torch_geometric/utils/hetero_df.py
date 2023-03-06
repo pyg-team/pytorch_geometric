@@ -13,14 +13,22 @@ def _groupby_to_dict(df: pd.DataFrame, groupbycols: Union[str, List[str]]) \
         -> Dict[Any, pd.DataFrame]:
     r"""groups a dataframe by a col or list of cols and returns a dictionary
     of {groupby_values:group_df}, return a dictionary with the group by
-    values as keys and the grouped dfs as values. .. code-block:: df =
-    pd.DataFrame({ "student": ["Ram", "Noa", "Song", "Ram", "Ram", "Song",
-    "Noa", "Noa"], "grades" : [100, 80, 90, 55, 50, 60, 70, 80], "class" : [
-    "history","history","history", "math", "art","history", "math", "art"]
-    }) print(groupby_to_dict(df, "student")) {'Noa':    grades    class 1
-      80  history 6      70     math 7      80      art, 'Ram':    grades
-      class 0     100  history 3      55     math 4      50      art,
-      'Song':    grades    class 2      90  history 5      60  history}
+    values as keys and the grouped dfs as values.
+    Examples:
+
+        >>> df = pd.DataFrame({
+        ...  "student": ["Ram", "Noa", "Song", "Ram", "Ram", "Song", "Noa",
+                                "Noa"],
+        ...  "grades" : [100, 80, 90, 55, 50, 60, 70, 80],
+        ...  "class" : ["history", "history", "history", "math",
+                        "art", "history", "math", "art"]
+                        })
+        >>> print(groupby_to_dict(df, "student"))
+        {'Noa':    grades    class 1
+        80  history 6      70     math 7      80      art, 'Ram':    grades
+        class 0     100  history 3      55     math 4      50      art,
+        'Song':    grades    class 2      90  history 5      60  history}
+
     """
     dict_df = dict(list(df.groupby(groupbycols)))
     dict_df = {k: df.drop(groupbycols, axis=1) for k, df in dict_df.items()}
@@ -36,11 +44,17 @@ def _node_edge_dfs_to_sig_df(nodes: pd.DataFrame,
     "edge_type" attributes returns a signature df which is like the edge df
     except with "source_type" and "target_type" columns derived from the
     nodes df a signature df which is like the edge df except with
-    "source_type" and "target_type" columns derived from the nodes df ..
-    code-block:: nodes = pd.DataFrame({"id": [1,2,3,4,5], "node_type": ["a",
-    "a","a","b","b"]}) edges = pd.DataFrame({"source": [1,2,3,5], "target":[
-    2,4,5,1], "edge_type": ["c","c","c","c"]}) print(
-    node_edge_dfs_to_sig_df(nodes, edges)) source  target source_type
+    "source_type" and "target_type" columns derived from the nodes df.
+
+    Examples:
+    >>> nodes = pd.DataFrame({
+    ... "id": [1,2,3,4,5],
+    ... "node_type": ["a", "a", "a", "b", "b"]})
+    >>> edges = pd.DataFrame({
+    ... "source": [1,2,3,5], "target":[2,4,5,1],
+    ... "edge_type": ["c","c","c","c"]})
+    >>> print(node_edge_dfs_to_sig_df(nodes, edges))
+    source  target source_type
     edge_type target_type 0       1       2           a         c
     a 1       2       4           a         c           b 2       3       5
              a         c           b 3       5       1           b         c
@@ -63,41 +77,50 @@ def _node_edge_dfs_to_sig_df(nodes: pd.DataFrame,
     return sig_df
 
 
-def nx_to_HeteroDF(g: nx.MultiDiGraph, node_groupbycols: str = "node_type",
-                   edge_groupbycols: List[str] = None) -> HeteroDF:
+def nx2heteroDF(g: nx.MultiDiGraph, node_groupbycols: str = "node_type",
+                edge_groupbycols: List[str] = None) -> HeteroDF:
     r"""Convert a networkx graph to
     :class:`~torch_geometric.typing.HeteroDF`. assumes nodes have
     "node_type" and "id" attributes and edges have "edge_type" attributes.
     Returns a HeteroDF representation of the graph.
 
-    Args: g (:class:`~nx.classes.multidigraph.MultiDiGraph`): Heterogeneous
-    Graph (A directed graph class that can store multiedges)
-    node_groupbycols: the column name representing the node types
-    edge_groupbycols: the columns names representing the edge source ,
-    type and target
+    Args:
+        g (:class:`~nx.classes.multidigraph.MultiDiGraph`): Heterogeneous
+            Graph (A directed graph class that can store multiedges)
+        node_groupbycols: the column name representing the node types
+        edge_groupbycols: the columns names representing the edge source ,
+            type and target
 
-    Returns: :class:`~torch_geometric.typing.HeteroDF`
+    Returns:
+        :class:`~torch_geometric.typing.HeteroDF`
 
     Example:
-        .. code-block::
-
-            college_nx = nx.MultiDiGraph() college_nx.add_nodes_from( [ (1,
-            {"id": 1, "name": "bob", "node_type": "student", }), (2, {"id":
-            2, "name": "dan", "node_type": "student", }), (3, {"id": 3,
-            "name": "tal", "node_type": "ta", }), (4, {"id": 4, "name":
-            "profG", "node_type": "lecturer", }), (5, {"id": 5, "name":
-            "phys101", "node_type": "class", }), (6, {"id": 6, "name":
-            "phys102", "node_type": "class", }), (7, {"id": 7, "name":
-            "chem101", "node_type": "class", }), (8, {"id": 8, "name":
-            "physics", "node_type": "topic"}), (9, {"id": 9, "name":
-            "chemistry", "node_type": "topic"}),
-            ] ) college_nx.add_edges_from( [ (1, 5, {"edge_type": "takes"}),
-            (1, 7, {"edge_type": "takes"}), (2, 6, {"edge_type": "takes"}),
-            (3, 5, {"edge_type": "teaches"}), (4, 6, {"edge_type":
-            "teaches"}), (5, 8, {"edge_type": "is_about"}), (6, 8,
-            {"edge_type": "is_about"}), (6, 9, {"edge_type": "is_about"}),
-            (7, 9, {"edge_type": "is_about"}), ] ) nxHeteroDF =
-            nx_to_HeteroDF(college_nx) print(nxHeteroDF.keys()) # >>>
+        >>> college_nx = nx.MultiDiGraph()
+        >>> college_nx.add_nodes_from([
+        ... (1, {"id": 1, "name": "bob", "node_type": "student", }),
+        ... (2, {"id": 2, "name": "dan", "node_type": "student", }),
+        ... (3, {"id": 3, "name": "tal", "node_type": "ta", }),
+        ... (4, {"id": 4, "name": "profG", "node_type": "lecturer", }),
+        ... (5, {"id": 5, "name": "phys101", "node_type": "class", }),
+        ... (6, {"id": 6, "name": "phys102", "node_type": "class", }),
+        ... (7, {"id": 7, "name": "chem101", "node_type": "class", }),
+        ... (8, {"id": 8, "name": "physics", "node_type": "topic"}),
+        ... (9, {"id": 9, "name": "chemistry", "node_type": "topic"}),
+        ... ])
+        >>> college_nx.add_edges_from([
+        ... (1, 5, {"edge_type": "takes"}),
+        ... (1, 7, {"edge_type": "takes"}),
+        ... (2, 6, {"edge_type": "takes"}),
+        ... (3, 5, {"edge_type": "teaches"}),
+        ... (4, 6, {"edge_type": "teaches"}),
+        ... (5, 8, {"edge_type": "is_about"}),
+        ... (6, 8, {"edge_type": "is_about"}),
+        ... (6, 9, {"edge_type": "is_about"}),
+        ... (7, 9, {"edge_type": "is_about"}),
+        ... ])
+        >>> nxHeteroDF = nx_to_HeteroDF(college_nx)
+        >>> print(nxHeteroDF.keys())
+        >>>
             dict_keys(['class', 'lecturer', 'student', 'ta', 'topic',
             ('class', 'is_about', 'topic'), # ('lecturer', 'teaches',
             'class'), ('student', 'takes', 'class'), ('ta', 'teaches',
@@ -127,12 +150,14 @@ def nx_to_HeteroDF(g: nx.MultiDiGraph, node_groupbycols: str = "node_type",
 def heteroDF_merge(hdf1: HeteroDF, hdf2: HeteroDF, **kwargs) -> HeteroDF:
     r"""merges 2 hetero dfs into 1, same keys are merged on "id" for nodes
     and ("source","target") for edges.
+    Args:
 
-    :param hdf1: :class:`~torch_geometric.typing.HeteroDF`.
-    :param hdf2: :class:`~torch_geometric.typing.HeteroDF`.
-    :param kwargs: Additional kwargs for function
-         :obj:`~pandas.DataFrame.merge`.
-    :return: merged :class:`~torch_geometric.typing.HeteroDF`
+        hdf1: :class:`~torch_geometric.typing.HeteroDF`.
+        hdf2: :class:`~torch_geometric.typing.HeteroDF`.
+        kwargs: Additional kwargs for function.
+
+    Returns:
+            merged :class:`~torch_geometric.typing.HeteroDF`
     """
 
     keys1 = set(hdf1.keys())
@@ -146,12 +171,13 @@ def heteroDF_merge(hdf1: HeteroDF, hdf2: HeteroDF, **kwargs) -> HeteroDF:
     for key in keys1.intersection(keys2):
         # merge node dfs
         if isinstance(key, str):
-            merge_het[key] = hdf1[key].merge(hdf2[key], on="id",
-                                             **kwargs).fillna(0)
+            merge_het[key] = hdf1[key]\
+                .merge(hdf2[key], on="id", **kwargs)\
+                .fillna(0)
         # merge signature dfs
         elif isinstance(key, tuple):
-            merge_het[key] = hdf1[key].merge(hdf2[key],
-                                             on=["source", "target"], **kwargs)
+            merge_het[key] = hdf1[key]\
+                .merge(hdf2[key], on=["source", "target"], **kwargs)
 
     return merge_het
 
@@ -251,11 +277,19 @@ def _edge_df_to_pygEdgeData(df: pd.DataFrame) -> Dict:
 def _multi_map(df: pd.DataFrame, dict_map: Dict[str,
                                                 Callable]) -> pd.DataFrame:
     r"""
-    Apply multiple dict maps on multiple columns (a dict of value mapping on
-    each column defined in dict_map). returns the df after applying the
-    mapping .. code-block:: cat_df = pd.DataFrame([["a", "a", "b", "c"],
-    ["d","d","d","a"]]) cat_df_map = {1:{'a':2, 'd':4},2:{'b':0, 'd':6},
-    3:{'c':3, 'a':1}} print(multi_map(cat_df, cat_df_map)) 0  1  2  3 0  a
+    Apply multiple dict maps on multiple columns
+    (a dict of value mapping on each column defined in dict_map).
+    returns the df after applying the
+    mapping
+    Examples:
+    >>> cat_df = pd.DataFrame([
+    ... ["a", "a", "b", "c"],
+    ... ["d","d","d","a"]]) c
+    >>> at_df_map = {
+    ... 1:{'a':2, 'd':4},
+    ... 2:{'b':0, 'd':6},
+    ... 3:{'c':3, 'a':1}}
+    >>> print(multi_map(cat_df, cat_df_map)) 0  1  2  3 0  a
     2  0  3 1  d  4  6  1
     """
     new_columns = {
@@ -265,8 +299,8 @@ def _multi_map(df: pd.DataFrame, dict_map: Dict[str,
     return pd.DataFrame.from_dict(new_columns)
 
 
-def heteroDf_to_HeteroData(hdf: HeteroDF, ignore=None,
-                           keep=None) -> Tuple[HeteroData, Dict]:
+def heteroDf2heteroData(hdf: HeteroDF, ignore=None,
+                        keep=None) -> Tuple[HeteroData, Dict]:
     r"""Converts a :class:`~torch_geometric.typing.HeteroDF` into a
     :class:`~torch_geometric.data.HeteroData`.
 
@@ -341,3 +375,34 @@ def heteroDf_to_HeteroData(hdf: HeteroDF, ignore=None,
     return HeteroData(heterodata_init_dict), \
         {'index_map': index_map, 'ignored_features': ignored_features,
          'node_features': node_features_dict}
+
+
+def heteroData2heteroDf(hetero_data: HeteroData, context: Dict) -> HeteroDF:
+    hetero_df = {}
+    for node_key, node_data in hetero_data.node_items():
+        nodes_df = pd.DataFrame(node_data.x.numpy(),
+                                columns=context["node_features"][node_key])
+        nodes_df.insert(0, "id",
+                        nodes_df.index.map(context["index_map"][node_key]))
+        hetero_df[node_key] = pd.merge(nodes_df,
+                                       context["ignored_features"][node_key],
+                                       on="id")
+
+    for edge_key, edge_data in hetero_data.edge_items():
+        if not bool(edge_data):
+            continue  # we can receive an empty dict for some reason
+        edges_df = pd.DataFrame(edge_data.edge_index.T.numpy(),
+                                columns=['source', 'target'])
+        src_node_name, _, tgt_node_name = edge_key
+        edges_df["source"] = edges_df["source"].map(
+            context["index_map"][src_node_name])
+        edges_df["target"] = edges_df["target"].map(
+            context["index_map"][tgt_node_name])
+
+        if edge_data.num_edge_features > 0:
+            edges_df = edges_df.join(
+                pd.DataFrame(edge_data.edge_attr.numpy(),
+                             columns=context["edges_attributes"][edge_key]))
+
+        hetero_df[edge_key] = edges_df
+    return hetero_df

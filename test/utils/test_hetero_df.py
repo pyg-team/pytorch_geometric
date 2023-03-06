@@ -4,15 +4,15 @@ import networkx as nx
 import pandas as pd
 import torch
 
-from torch_geometric.datasets.pandas_heterodata.hetero_df import (
+from torch_geometric.utils.hetero_df import (
     _edge_df_to_pygEdgeData,
     _groupby_to_dict,
     _multi_map,
     _node_edge_dfs_to_sig_df,
+    heteroDf2heteroData,
     heteroDF_merge,
     heteroDF_split,
-    heteroDf_to_HeteroData,
-    nx_to_HeteroDF,
+    nx2heteroDF,
 )
 
 
@@ -215,7 +215,7 @@ def test_node_edge_dfs_to_sig_df():
 
 
 def test_nx_to_HeteroDF():
-    nxHeteroDF = nx_to_HeteroDF(college_nx)
+    nxHeteroDF = nx2heteroDF(college_nx)
 
     recordsDF = {k: _to_tuple_set(v) for k, v in nxHeteroDF.items()}
     assert recordsDF == {
@@ -232,7 +232,7 @@ def test_nx_to_HeteroDF():
 
 
 def test_hereroDF_merge():
-    nxHeteroDF = nx_to_HeteroDF(college_nx)
+    nxHeteroDF = nx2heteroDF(college_nx)
     mergedHeteroDF = heteroDF_merge(nxHeteroDF, college_data_dict)
 
     recordsDF = {k: _to_tuple_set(v) for k, v in mergedHeteroDF.items()}
@@ -250,7 +250,7 @@ def test_hereroDF_merge():
 
 
 def test_hereroDF_split():
-    nxHeteroDF = nx_to_HeteroDF(college_nx)
+    nxHeteroDF = nx2heteroDF(college_nx)
     mergedHeteroDF = heteroDF_merge(nxHeteroDF, college_data_dict)
     matchedHetDF, unmatchedHetDF = heteroDF_split(mergedHeteroDF,
                                                   split_by=["name"],
@@ -460,8 +460,7 @@ def test_heteroDF_to_hetero_data():
         }]),
     }
 
-    tinyData, tinyContext = heteroDf_to_HeteroData(tiny_heteroDF,
-                                                   ignore=['name'])
+    tinyData, tinyContext = heteroDf2heteroData(tiny_heteroDF, ignore=['name'])
 
     assert tinyData["A"].num_nodes == 2
     assert tinyData["A"].x.equal(
