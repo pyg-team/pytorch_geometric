@@ -77,11 +77,10 @@ def test_gcn_conv():
     row, col = edge_index
     value = torch.rand(row.size(0))
 
-    
     adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
     adj1 = adj2.set_value(None)
     adj3 = to_torch_coo_tensor(edge_index)
-    
+
     conv = BayesianGCNConv(16, 32)
     assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
     out1, kl_out1 = conv(x, edge_index)
@@ -96,8 +95,8 @@ def test_gcn_conv():
     # assert torch.allclose(out2.mean(), out_2_adj2.mean(), atol=0.1)
     # assert torch.allclose(torch.var(out2), torch.var(out_2_adj2), atol=1)
     # assert torch.allclose(kl_out2, kl_adj2, atol=1e-6)
-    
-    out3, kl_out3 =  conv(x, adj3)
+
+    out3, kl_out3 = conv(x, adj3)
     assert out3.size() == (4, 32)
 
     if is_full_test():
