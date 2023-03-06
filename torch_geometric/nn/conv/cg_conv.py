@@ -31,7 +31,7 @@ class CGConv(MessagePassing):
         channels (int or tuple): Size of each input sample. A tuple
             corresponds to the sizes of source and target dimensionalities.
         dim (int, optional): Edge feature dimensionality. (default: :obj:`0`)
-        aggr (string, optional): The aggregation operator to use
+        aggr (str, optional): The aggregation operator to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"add"`)
         batch_norm (bool, optional): If set to :obj:`True`, will make use of
@@ -72,6 +72,7 @@ class CGConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_f.reset_parameters()
         self.lin_s.reset_parameters()
         if self.bn is not None:
@@ -79,7 +80,7 @@ class CGConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 

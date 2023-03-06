@@ -3,11 +3,11 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj
+from torch_geometric.typing import Adj, SparseTensor
+from torch_geometric.utils import spmm
 
 
 class PANConv(MessagePassing):
@@ -57,12 +57,12 @@ class PANConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         self.weight.data.fill_(0.5)
 
     def forward(self, x: Tensor,
                 edge_index: Adj) -> Tuple[Tensor, SparseTensor]:
-        """"""
 
         adj_t: Optional[SparseTensor] = None
         if isinstance(edge_index, Tensor):
@@ -87,7 +87,7 @@ class PANConv(MessagePassing):
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def panentropy(self, adj_t: SparseTensor,
                    dtype: Optional[int] = None) -> SparseTensor:

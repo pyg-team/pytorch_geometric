@@ -14,7 +14,7 @@ def test_agnn_conv(requires_grad):
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = AGNNConv(requires_grad=requires_grad)
-    assert conv.__repr__() == 'AGNNConv()'
+    assert str(conv) == 'AGNNConv()'
     out = conv(x, edge_index)
     assert out.size() == (4, 16)
     assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)

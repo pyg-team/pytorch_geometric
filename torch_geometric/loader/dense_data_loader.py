@@ -38,8 +38,8 @@ class DenseDataLoader(torch.utils.data.DataLoader):
     """
     def __init__(self, dataset: Union[Dataset, List[Data]],
                  batch_size: int = 1, shuffle: bool = False, **kwargs):
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        # Remove for PyTorch Lightning:
+        kwargs.pop('collate_fn', None)
 
         super().__init__(dataset, batch_size=batch_size, shuffle=shuffle,
                          collate_fn=collate_fn, **kwargs)

@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import warnings
 from itertools import product
 
 import pytest
@@ -167,9 +168,12 @@ def test_packaging():
 
 
 @withPackage('onnx', 'onnxruntime')
-def test_onnx():
+def test_onnx(tmp_path):
     import onnx
     import onnxruntime as ort
+
+    warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
+    warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
 
     class MyModel(torch.nn.Module):
         def __init__(self):
@@ -188,13 +192,15 @@ def test_onnx():
     expected = model(x, edge_index)
     assert expected.size() == (3, 16)
 
-    torch.onnx.export(model, (x, edge_index), 'model.onnx',
+    path = osp.join(tmp_path, 'model.onnx')
+    torch.onnx.export(model, (x, edge_index), path,
                       input_names=('x', 'edge_index'), opset_version=16)
 
-    model = onnx.load('model.onnx')
+    model = onnx.load(path)
     onnx.checker.check_model(model)
 
-    ort_session = ort.InferenceSession('model.onnx')
+    providers = ['CPUExecutionProvider']
+    ort_session = ort.InferenceSession(path, providers=providers)
 
     out = ort_session.run(None, {
         'x': x.numpy(),
@@ -202,5 +208,3 @@ def test_onnx():
     })[0]
     out = torch.from_numpy(out)
     assert torch.allclose(out, expected, atol=1e-6)
-
-    os.remove('model.onnx')

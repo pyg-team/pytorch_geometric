@@ -38,8 +38,7 @@ jobs:
       - name: Run tests
         run: |
           FULL_TEST=1 pytest --cov --cov-report=xml
-        shell:
-          bash
+        shell: bash
 
       - name: Upload coverage
         uses: codecov/codecov-action@v2

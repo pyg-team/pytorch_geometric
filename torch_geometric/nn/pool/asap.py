@@ -5,19 +5,11 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
-from torch_scatter import scatter
-from torch_sparse import (
-    SparseTensor,
-    fill_diag,
-    index_select,
-    matmul,
-    remove_diag,
-)
-from torch_sparse import t as transpose
 
 from torch_geometric.nn import LEConv
 from torch_geometric.nn.pool.topk_pool import topk
-from torch_geometric.utils import add_remaining_self_loops, softmax
+from torch_geometric.typing import SparseTensor, torch_sparse
+from torch_geometric.utils import add_remaining_self_loops, scatter, softmax
 
 
 class ASAPooling(torch.nn.Module):
@@ -47,17 +39,6 @@ class ASAPooling(torch.nn.Module):
             loops to the new graph connectivity. (default: :obj:`False`)
         **kwargs (optional): Additional parameters for initializing the
             graph neural network layer.
-
-    Returns:
-        A tuple of tensors containing
-
-            - **x** (*Tensor*): The pooled node embeddings.
-            - **edge_index** (*Tensor*): The coarsened graph connectivity.
-            - **edge_weight** (*Tensor*): The edge weights corresponding to the
-              coarsened graph connectivity.
-            - **batch** (*Tensor*): The pooled :obj:`batch` vector.
-            - **perm** (*Tensor*): The top-:math:`k` node indices of nodes
-              which are kept after pooling.
     """
     def __init__(self, in_channels: int, ratio: Union[float, int] = 0.5,
                  GNN: Optional[Callable] = None, dropout: float = 0.0,
@@ -83,6 +64,7 @@ class ASAPooling(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.lin.reset_parameters()
         self.att.reset_parameters()
         self.gnn_score.reset_parameters()
@@ -96,7 +78,25 @@ class ASAPooling(torch.nn.Module):
         edge_weight: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor]:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The node feature matrix.
+            edge_index (torch.Tensor): The edge indices.
+            edge_weight (torch.Tensor, optional): The edge weights.
+                (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each node to a specific example. (default: :obj:`None`)
+
+        Return types:
+            * **x** (*torch.Tensor*): The pooled node embeddings.
+            * **edge_index** (*torch.Tensor*): The coarsened edge indices.
+            * **edge_weight** (*torch.Tensor, optional*): The coarsened edge
+              weights.
+            * **batch** (*torch.Tensor*): The coarsened batch vector.
+            * **index** (*torch.Tensor*): The top-:math:`k` node indices of
+              nodes which are kept after pooling.
+        """
         N = x.size(0)
 
         edge_index, edge_weight = add_remaining_self_loops(
@@ -124,7 +124,7 @@ class ASAPooling(torch.nn.Module):
         score = F.dropout(score, p=self.dropout, training=self.training)
 
         v_j = x[edge_index[0]] * score.view(-1, 1)
-        x = scatter(v_j, edge_index[1], dim=0, reduce='add')
+        x = scatter(v_j, edge_index[1], dim=0, reduce='sum')
 
         # Cluster selection.
         fitness = self.gnn_score(x, edge_index).sigmoid().view(-1)
@@ -138,13 +138,13 @@ class ASAPooling(torch.nn.Module):
                          sparse_sizes=(N, N))
         S = SparseTensor(row=row, col=col, value=score, sparse_sizes=(N, N))
 
-        S = index_select(S, 1, perm)
-        A = matmul(matmul(transpose(S), A), S)
+        S = torch_sparse.index_select(S, 1, perm)
+        A = torch_sparse.matmul(torch_sparse.matmul(torch_sparse.t(S), A), S)
 
         if self.add_self_loops:
-            A = fill_diag(A, 1.)
+            A = torch_sparse.fill_diag(A, 1.)
         else:
-            A = remove_diag(A)
+            A = torch_sparse.remove_diag(A)
 
         row, col, edge_weight = A.coo()
         edge_index = torch.stack([row, col], dim=0)

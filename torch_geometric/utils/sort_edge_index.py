@@ -3,6 +3,8 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.utils import index_sort
+
 from .num_nodes import maybe_num_nodes
 
 
@@ -71,7 +73,7 @@ def sort_edge_index(
     idx = edge_index[1 - int(sort_by_row)] * num_nodes
     idx += edge_index[int(sort_by_row)]
 
-    perm = idx.argsort()
+    _, perm = index_sort(idx, max_value=num_nodes * num_nodes)
 
     edge_index = edge_index[:, perm]
 

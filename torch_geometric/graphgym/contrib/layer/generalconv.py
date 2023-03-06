@@ -1,12 +1,11 @@
 import torch
 import torch.nn as nn
 from torch.nn import Parameter
-from torch_scatter import scatter_add
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import add_remaining_self_loops, scatter
 
 
 class GeneralConvLayer(MessagePassing):
@@ -54,14 +53,13 @@ class GeneralConvLayer(MessagePassing):
             edge_index, edge_weight, fill_value, num_nodes)
 
         row, col = edge_index
-        deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+        deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
         deg_inv_sqrt = deg.pow(-0.5)
         deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
 
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
     def forward(self, x, edge_index, edge_weight=None, edge_feature=None):
-        """"""
         if cfg.gnn.self_msg == 'concat':
             x_self = torch.matmul(x, self.weight_self)
         x = torch.matmul(x, self.weight)
@@ -162,7 +160,7 @@ class GeneralEdgeConvLayer(MessagePassing):
             edge_index, edge_weight, fill_value, num_nodes)
 
         row, col = edge_index
-        deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+        deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
         deg_inv_sqrt = deg.pow(-0.5)
         deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
 

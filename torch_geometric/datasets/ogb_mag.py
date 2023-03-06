@@ -15,10 +15,10 @@ from torch_geometric.data import (
 
 
 class OGB_MAG(InMemoryDataset):
-    r"""The ogbn-mag dataset from the `"Open Graph Benchmark: Datasets for
-    Machine Learning on Graphs" <https://arxiv.org/abs/2005.00687>`_ paper.
-    ogbn-mag is a heterogeneous graph composed of a subset of the Microsoft
-    Academic Graph (MAG).
+    r"""The :obj:`ogbn-mag` dataset from the `"Open Graph Benchmark: Datasets
+    for Machine Learning on Graphs" <https://arxiv.org/abs/2005.00687>`_ paper.
+    :obj:`ogbn-mag` is a heterogeneous graph composed of a subset of the
+    Microsoft Academic Graph (MAG).
     It contains four types of entities — papers (736,389 nodes), authors
     (1,134,649 nodes), institutions (8,740 nodes), and fields of study
     (59,965 nodes) — as well as four types of directed relations connecting two
@@ -30,10 +30,10 @@ class OGB_MAG(InMemoryDataset):
     In total, there are 349 different venues.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        preprocess (string, optional): Pre-processes the original
-            dataset by adding structural features (:obj:`"metapath2vec",
-            :obj:`"TransE") to featureless nodes. (default: :obj:`None`)
+        root (str): Root directory where the dataset should be saved.
+        preprocess (str, optional): Pre-processes the original dataset by
+            adding structural features (:obj:`"metapath2vec"`, :obj:`"TransE"`)
+            to featureless nodes. (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before

@@ -28,8 +28,8 @@ class HGBDataset(InMemoryDataset):
         `HGB leaderboard <https://www.biendata.xyz/hgb/>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (one of :obj:`"ACM"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (one of :obj:`"ACM"`,
             :obj:`"DBLP"`, :obj:`"Freebase"`, :obj:`"IMDB"`)
         transform (callable, optional): A function/transform that takes in an
             :class:`torch_geometric.data.HeteroData` object and returns a

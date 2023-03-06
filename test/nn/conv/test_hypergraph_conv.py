@@ -13,7 +13,7 @@ def test_hypergraph_conv_with_more_nodes_than_edges():
     hyperedge_attr = torch.randn((num_edges, in_channels))
 
     conv = HypergraphConv(in_channels, out_channels)
-    assert conv.__repr__() == 'HypergraphConv(16, 32)'
+    assert str(conv) == 'HypergraphConv(16, 32)'
     out = conv(x, hyperedge_index)
     assert out.size() == (num_nodes, out_channels)
     out = conv(x, hyperedge_index, hyperedge_weight)
@@ -41,7 +41,7 @@ def test_hypergraph_conv_with_more_edges_than_nodes():
     x = torch.randn((num_nodes, in_channels))
 
     conv = HypergraphConv(in_channels, out_channels)
-    assert conv.__repr__() == 'HypergraphConv(16, 32)'
+    assert str(conv) == 'HypergraphConv(16, 32)'
     out = conv(x, hyperedge_index)
     assert out.size() == (num_nodes, out_channels)
     out = conv(x, hyperedge_index, hyperedge_weight)

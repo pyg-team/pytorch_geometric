@@ -49,7 +49,7 @@ class SplineConv(MessagePassing):
             operator will use a closed B-spline basis in this dimension.
             (default :obj:`True`)
         degree (int, optional): B-spline basis degrees. (default: :obj:`1`)
-        aggr (string, optional): The aggregation operator to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
@@ -116,6 +116,7 @@ class SplineConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if not isinstance(self.weight, nn.UninitializedParameter):
             size = self.weight.size(0) * self.weight.size(1)
             uniform(size, self.weight)
@@ -125,7 +126,7 @@ class SplineConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 

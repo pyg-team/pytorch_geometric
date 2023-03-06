@@ -25,13 +25,13 @@ def onlyFullTest(func: Callable) -> Callable:
     )(func)
 
 
-def onlyUnix(func: Callable) -> Callable:
+def onlyLinux(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute on
-    UNIX-like systems."""
+    Linux systems."""
     import pytest
     return pytest.mark.skipif(
-        sys.platform == 'win32',
-        reason="Windows not supported",
+        sys.platform != 'linux',
+        reason="No Linux system",
     )(func)
 
 
@@ -78,7 +78,14 @@ def withPackage(*args) -> Callable:
         module = import_module(req.name)
         if not hasattr(module, '__version__'):
             return True
-        return module.__version__ in req.specifier
+
+        version = module.__version__
+        # `req.specifier` does not support `.dev` suffixes, e.g., for
+        # `pyg_lib==0.1.0.dev*`, so we manually drop them:
+        if '.dev' in version:
+            version = '.'.join(version.split('.dev')[:-1])
+
+        return version in req.specifier
 
     na_packages = set(package for package in args if not is_installed(package))
 

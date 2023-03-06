@@ -3,18 +3,23 @@ from typing import Optional
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, fill_diag, mul
-from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    SparseTensor,
+    torch_sparse,
+)
 from torch_geometric.utils import (
     add_remaining_self_loops,
     is_torch_sparse_tensor,
     scatter,
     spmm,
+    to_edge_index,
     to_torch_coo_tensor,
 )
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -45,12 +50,12 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
         if add_self_loops:
-            adj_t = fill_diag(adj_t, fill_value)
-        deg = sparsesum(adj_t, dim=1)
+            adj_t = torch_sparse.fill_diag(adj_t, fill_value)
+        deg = torch_sparse.sum(adj_t, dim=1)
         deg_inv_sqrt = deg.pow_(-0.5)
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
-        adj_t = mul(adj_t, deg_inv_sqrt.view(-1, 1))
-        adj_t = mul(adj_t, deg_inv_sqrt.view(1, -1))
+        adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(-1, 1))
+        adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(1, -1))
 
         return adj_t
 
@@ -62,8 +67,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         flow = 'target_to_source'
         adj_t = edge_index
         num_nodes = adj_t.size(0)
-        edge_index = adj_t._indices()
-        edge_weight = adj_t._values()
+        edge_index, edge_weight = to_edge_index(adj_t)
     else:
         assert flow in ["source_to_target", "target_to_source"]
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -181,6 +185,7 @@ class GCNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         zeros(self.bias)
         self._cached_edge_index = None
@@ -188,7 +193,6 @@ class GCNConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
 
         if self.normalize:
             if isinstance(edge_index, Tensor):
