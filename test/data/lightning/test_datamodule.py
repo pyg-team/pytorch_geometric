@@ -126,22 +126,32 @@ def test_lightning_dataset(get_dataset, strategy_type):
 
 
 class LinearNodeModule(LightningModule):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels: int, out_channels: int):
         super().__init__()
         from torchmetrics import Accuracy
 
         self.lin = torch.nn.Linear(in_channels, out_channels)
 
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
+        try:
+            # For torchmetrics version < v0.11.0
+            self.train_acc = Accuracy()
+            self.val_acc = Accuracy()
+            self.test_acc = Accuracy()
+        except TypeError:
+            self.train_acc = Accuracy(task='multiclass',
+                                      num_classes=out_channels)
+            self.val_acc = Accuracy(task='multiclass',
+                                    num_classes=out_channels)
+            self.test_acc = Accuracy(task='multiclass',
+                                     num_classes=out_channels)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor):
         # Basic test to ensure that the dataset is not replicated:
         self.trainer.datamodule.data.x.add_(1)
 
         return self.lin(x)
 
-    def training_step(self, data, batch_idx):
+    def training_step(self, data: Data, batch_idx: int):
         y_hat = self(data.x)[data.train_mask]
         y = data.y[data.train_mask]
         loss = F.cross_entropy(y_hat, y)
@@ -150,11 +160,21 @@ class LinearNodeModule(LightningModule):
         self.log('train_acc', self.train_acc, batch_size=y.size(0))
         return loss
 
-    def validation_step(self, data, batch_idx):
+    def validation_step(self, data: Data, batch_idx: int):
         y_hat = self(data.x)[data.val_mask]
         y = data.y[data.val_mask]
         self.val_acc(y_hat.softmax(dim=-1), y)
         self.log('val_acc', self.val_acc, batch_size=y.size(0))
+
+    def test_step(self, data: Data, batch_idx: int):
+        y_hat = self(data.x)[data.test_mask]
+        y = data.y[data.test_mask]
+        self.test_acc(y_hat.softmax(dim=-1), y)
+        self.log('test_acc', self.test_acc, batch_size=y.size(0))
+
+    def predict_step(self, data: Data, batch_idx: int):
+        pred = self(data.x)
+        return pred
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
@@ -195,7 +215,7 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
         kwargs['num_neighbors'] = [5]
         kwargs_repr += 'num_neighbors=[5], '
 
-    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
+    trainer = pl.Trainer(strategy=strategy, accelerator='cpu', devices=devices,
                          max_epochs=5, log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader=loader, batch_size=batch_size,
                                    num_workers=num_workers, **kwargs)
@@ -206,14 +226,24 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
                                f'pin_memory={loader != "full"}, '
                                f'persistent_workers={loader != "full"})')
     trainer.fit(model, datamodule)
+    trainer.test(model, dataloaders=datamodule.test_dataloader())
+    pred = trainer.predict(model,
+                           dataloaders=datamodule.predict_dataloader())[0]
+    assert pred.shape == (data.num_nodes, dataset.num_classes)
     new_x = data.x.cpu()
     if loader == 'full':
-        offset = 5 + 5 + 1  # `train_steps` + `val_steps` + `sanity`
+        # `train_steps` + `val_steps` + `sanity` + `test` + `pred`
+        offset = 5 + 5 + 1 + 1 + 1
     else:
         offset = 0
         offset += devices * 2  # `sanity`
-        offset += 5 * devices * math.ceil(140 / (devices * batch_size))
-        offset += 5 * devices * math.ceil(500 / (devices * batch_size))
+        offset += 5 * devices * math.ceil(140 /
+                                          (devices * batch_size))  # `train`
+        offset += 5 * devices * math.ceil(500 /
+                                          (devices * batch_size))  # `val`
+        offset += devices * math.ceil(1000 / (devices * batch_size))  # `test`
+        offset += devices * math.ceil(2708 /
+                                      (devices * batch_size))  # `predict`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
     if strategy_type is None:
         assert trainer._data_connector._val_dataloader_source.is_defined()
@@ -221,22 +251,32 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
 
 
 class LinearHeteroNodeModule(LightningModule):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels: int, out_channels: int):
         super().__init__()
         from torchmetrics import Accuracy
 
         self.lin = torch.nn.Linear(in_channels, out_channels)
 
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
+        try:
+            # For torchmetrics version < v0.11.0
+            self.train_acc = Accuracy()
+            self.val_acc = Accuracy()
+            self.test_acc = Accuracy()
+        except TypeError:
+            self.train_acc = Accuracy(task='multiclass',
+                                      num_classes=out_channels)
+            self.val_acc = Accuracy(task='multiclass',
+                                    num_classes=out_channels)
+            self.test_acc = Accuracy(task='multiclass',
+                                     num_classes=out_channels)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor):
         # Basic test to ensure that the dataset is not replicated:
         self.trainer.datamodule.data['author'].x.add_(1)
 
         return self.lin(x)
 
-    def training_step(self, data, batch_idx):
+    def training_step(self, data: HeteroData, batch_idx: int):
         y_hat = self(data['author'].x)[data['author'].train_mask]
         y = data['author'].y[data['author'].train_mask]
         loss = F.cross_entropy(y_hat, y)
@@ -245,11 +285,17 @@ class LinearHeteroNodeModule(LightningModule):
         self.log('train_acc', self.train_acc, batch_size=y.size(0))
         return loss
 
-    def validation_step(self, data, batch_idx):
+    def validation_step(self, data: HeteroData, batch_idx: int):
         y_hat = self(data['author'].x)[data['author'].val_mask]
         y = data['author'].y[data['author'].val_mask]
         self.val_acc(y_hat.softmax(dim=-1), y)
         self.log('val_acc', self.val_acc, batch_size=y.size(0))
+
+    def test_step(self, data: HeteroData, batch_idx: int):
+        y_hat = self(data['author'].x)[data['author'].test_mask]
+        y = data['author'].y[data['author'].test_mask]
+        self.test_acc(y_hat.softmax(dim=-1), y)
+        self.log('test_acc', self.test_acc, batch_size=y.size(0))
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
@@ -413,3 +459,6 @@ def test_eval_loader_kwargs(get_dataset):
 
     val_loader = datamodule.val_dataloader()
     assert math.ceil(int(data.val_mask.sum()) / 64) == len(val_loader)
+
+    test_loader = datamodule.test_dataloader()
+    assert math.ceil(int(data.test_mask.sum()) / 64) == len(test_loader)
