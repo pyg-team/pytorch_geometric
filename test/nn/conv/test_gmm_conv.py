@@ -17,7 +17,7 @@ def test_gmm_conv(separate_gaussians):
 
     conv = GMMConv(8, 32, dim=3, kernel_size=25,
                    separate_gaussians=separate_gaussians)
-    assert conv.__repr__() == 'GMMConv(8, 32, dim=3)'
+    assert str(conv) == 'GMMConv(8, 32, dim=3)'
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, value, size=(4, 4)), out)
@@ -36,7 +36,7 @@ def test_gmm_conv(separate_gaussians):
     adj = adj.sparse_resize((4, 2))
     conv = GMMConv((8, 16), 32, dim=3, kernel_size=5,
                    separate_gaussians=separate_gaussians)
-    assert conv.__repr__() == 'GMMConv((8, 16), 32, dim=3)'
+    assert str(conv) == 'GMMConv((8, 16), 32, dim=3)'
     out1 = conv((x1, x2), edge_index, value)
     out2 = conv((x1, None), edge_index, value, (4, 2))
     assert out1.size() == (2, 32)
@@ -69,12 +69,12 @@ def test_lazy_gmm_conv(separate_gaussians):
 
     conv = GMMConv(-1, 32, dim=3, kernel_size=25,
                    separate_gaussians=separate_gaussians)
-    assert conv.__repr__() == 'GMMConv(-1, 32, dim=3)'
+    assert str(conv) == 'GMMConv(-1, 32, dim=3)'
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
 
     conv = GMMConv((-1, -1), 32, dim=3, kernel_size=25,
                    separate_gaussians=separate_gaussians)
-    assert conv.__repr__() == 'GMMConv((-1, -1), 32, dim=3)'
+    assert str(conv) == 'GMMConv((-1, -1), 32, dim=3)'
     out = conv((x1, x2), edge_index, value)
     assert out.size() == (2, 32)

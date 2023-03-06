@@ -124,12 +124,13 @@ class XConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset(self.mlp1)
         reset(self.mlp2)
         reset(self.conv)
 
     def forward(self, x: Tensor, pos: Tensor, batch: Optional[Tensor] = None):
-        """"""
+        r"""Runs the forward pass of the module."""
         pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
         (N, D), K = pos.size(), self.kernel_size
 

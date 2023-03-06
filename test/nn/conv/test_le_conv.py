@@ -11,7 +11,7 @@ def test_le_conv():
     x = torch.randn((num_nodes, in_channels))
 
     conv = LEConv(in_channels, out_channels)
-    assert conv.__repr__() == 'LEConv(16, 32)'
+    assert str(conv) == 'LEConv(16, 32)'
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, out_channels)
 

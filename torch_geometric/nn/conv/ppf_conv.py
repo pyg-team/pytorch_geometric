@@ -104,7 +104,7 @@ class PPFConv(MessagePassing):
         normal: Union[Tensor, PairTensor],
         edge_index: Adj,
     ) -> Tensor:
-        """"""
+
         if not isinstance(x, tuple):
             x: PairOptTensor = (x, None)
 

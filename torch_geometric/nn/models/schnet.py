@@ -2,7 +2,7 @@ import os
 import os.path as osp
 import warnings
 from math import pi as PI
-from typing import Callable, Optional, Tuple
+from typing import Callable, Dict, Optional, Tuple
 
 import numpy as np
 import torch
@@ -16,7 +16,7 @@ from torch_geometric.nn import MessagePassing, SumAggregation, radius_graph
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import OptTensor
 
-qm9_target_dict = {
+qm9_target_dict: Dict[int, str] = {
     0: 'dipole_moment',
     1: 'isotropic_polarizability',
     2: 'homo',
@@ -172,7 +172,7 @@ class SchNet(torch.nn.Module):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:
+    ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:  # pragma: no cover
         r"""Returns a pre-trained :class:`SchNet` model on the
         :class:`~torch_geometric.datasets.QM9` dataset, trained on the
         specified target :obj:`target`."""
@@ -218,9 +218,15 @@ class SchNet(torch.nn.Module):
             warnings.simplefilter('ignore')
             state = torch.load(path, map_location='cpu')
 
-        net = SchNet(hidden_channels=128, num_filters=128, num_interactions=6,
-                     num_gaussians=50, cutoff=10.0, dipole=is_dipole,
-                     atomref=dataset.atomref(target))
+        net = SchNet(
+            hidden_channels=128,
+            num_filters=128,
+            num_interactions=6,
+            num_gaussians=50,
+            cutoff=10.0,
+            dipole=is_dipole,
+            atomref=dataset.atomref(target),
+        )
 
         net.embedding.weight = state.representation.embedding.weight
 
@@ -256,7 +262,7 @@ class SchNet(torch.nn.Module):
         else:
             net.atomref = None
 
-        net.scale = 1. / units[target]
+        net.scale = 1.0 / units[target]
 
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
@@ -384,8 +390,14 @@ class InteractionBlock(torch.nn.Module):
 
 
 class CFConv(MessagePassing):
-    def __init__(self, in_channels: int, out_channels: int, num_filters: int,
-                 nn: Sequential, cutoff: float):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_filters: int,
+        nn: Sequential,
+        cutoff: float,
+    ):
         super().__init__(aggr='add')
         self.lin1 = Linear(in_channels, num_filters, bias=False)
         self.lin2 = Linear(num_filters, out_channels)
@@ -414,8 +426,12 @@ class CFConv(MessagePassing):
 
 
 class GaussianSmearing(torch.nn.Module):
-    def __init__(self, start: float = 0.0, stop: float = 5.0,
-                 num_gaussians: int = 50):
+    def __init__(
+        self,
+        start: float = 0.0,
+        stop: float = 5.0,
+        num_gaussians: int = 50,
+    ):
         super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
         self.coeff = -0.5 / (offset[1] - offset[0]).item()**2

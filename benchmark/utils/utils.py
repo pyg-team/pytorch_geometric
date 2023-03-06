@@ -1,6 +1,7 @@
 import os.path as osp
 
 import torch
+from ogb.nodeproppred import PygNodePropPredDataset
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG, Reddit
@@ -31,7 +32,8 @@ models_dict = {
 }
 
 
-def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
+def get_dataset_with_transformation(name, root, use_sparse_tensor=False,
+                                    bf16=False):
     path = osp.join(osp.dirname(osp.realpath(__file__)), root, name)
     transform = T.ToSparseTensor(
         remove_edge_index=False) if use_sparse_tensor else None
@@ -47,6 +49,10 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
             transform = T.RemoveDuplicatedEdges()
         else:
             transform = T.Compose([T.RemoveDuplicatedEdges(), transform])
+
+        dataset = PygNodePropPredDataset('ogbn-products', root=path,
+                                         transform=transform)
+
     elif name == 'Reddit':
         dataset = Reddit(root=path, transform=transform)
 
@@ -63,7 +69,13 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
     if bf16:
         data.x = data.x.to(torch.bfloat16)
 
-    return data, dataset.num_classes
+    return data, dataset.num_classes, transform
+
+
+def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
+    data, num_classes, _ = get_dataset_with_transformation(
+        name, root, use_sparse_tensor, bf16)
+    return data, num_classes
 
 
 def get_model(name, params, metadata=None):

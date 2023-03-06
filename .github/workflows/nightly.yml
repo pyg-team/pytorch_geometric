@@ -16,9 +16,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v4.3.0
         with:
           python-version: 3.7
+          check-latest: true
+          cache: pip
+          cache-dependency-path: |
+            setup.py
 
       - name: Set version
         run: echo "VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" torch_geometric/__init__.py)" >> ${GITHUB_ENV}

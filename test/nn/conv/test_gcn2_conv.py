@@ -15,7 +15,7 @@ def test_gcn2_conv():
     adj1 = adj2.set_value(None)
 
     conv = GCN2Conv(16, alpha=0.2)
-    assert conv.__repr__() == 'GCN2Conv(16, alpha=0.2, beta=1.0)'
+    assert str(conv) == 'GCN2Conv(16, alpha=0.2, beta=1.0)'
     out1 = conv(x, x_0, edge_index)
     assert out1.size() == (4, 16)
     assert torch.allclose(conv(x, x_0, adj1.t()), out1, atol=1e-6)

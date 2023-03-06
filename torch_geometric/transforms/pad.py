@@ -405,7 +405,6 @@ class Pad(BaseTransform):
                     del store[key]
                 self.__pad_edge_store(store, data.__cat_dim__, data.num_nodes)
                 self.__pad_node_store(store, data.__cat_dim__)
-            data.num_edges = self.max_num_edges.get_value()
             data.num_nodes = self.max_num_nodes.get_value()
         else:
             assert isinstance(
@@ -424,8 +423,6 @@ class Pad(BaseTransform):
                                       (data[src_node_type].num_nodes,
                                        data[dst_node_type].num_nodes),
                                       edge_type)
-                data[edge_type].num_edges = self.max_num_edges.get_value(
-                    edge_type)
 
             for node_type, store in data.node_items():
                 for key in self.exclude_keys:

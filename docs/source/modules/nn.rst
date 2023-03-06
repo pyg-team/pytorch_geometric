@@ -17,19 +17,15 @@ Convolutional Layers
 --------------------
 
 .. currentmodule:: torch_geometric.nn.conv
+
 .. autosummary::
    :nosignatures:
+   :toctree: ../generated
+   :template: autosummary/nn.rst
+
    {% for name in torch_geometric.nn.conv.classes %}
      {{ name }}
    {% endfor %}
-
-.. autoclass:: torch_geometric.nn.conv.MessagePassing
-   :members:
-
-.. automodule:: torch_geometric.nn.conv
-   :members:
-   :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, initialize_parameters
 
 Aggregation Operators
 ---------------------
@@ -201,6 +197,7 @@ Models
 ------
 
 .. currentmodule:: torch_geometric.nn.models
+
 .. autosummary::
    :nosignatures:
    :toctree: ../generated

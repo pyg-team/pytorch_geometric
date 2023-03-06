@@ -148,7 +148,6 @@ class PyGModelHubMixin(ModelHubMixin):
         map_location = torch.device(map_location)
 
         if os.path.isdir(model_id):
-            print("Loading weights from local directory")
             model_file = os.path.join(model_id, MODEL_WEIGHTS_NAME)
         else:
             model_file = hf_hub_download(

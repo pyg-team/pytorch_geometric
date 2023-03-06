@@ -13,7 +13,7 @@ As a consequence of the different data structure, the message passing formulatio
 Example Graph
 -------------
 
-As a guiding example, we take a look at the heterogeneous `ogbn-mag <https://ogb.stanford.edu/docs/nodeprop>`__ network from the `OGB datasets <https://ogb.stanford.edu>`_:
+As a guiding example, we take a look at the heterogeneous `ogbn-mag <https://ogb.stanford.edu/docs/nodeprop>`__ network from the :ogb:`null` `dataset suite <https://ogb.stanford.edu>`_:
 
 .. image:: ../_figures/hg_example.svg
   :align: center

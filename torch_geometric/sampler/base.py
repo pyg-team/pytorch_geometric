@@ -126,6 +126,10 @@ class SamplerOutput(CastMixin):
         batch (torch.Tensor, optional): The vector to identify the seed node
             for each sampled node. Can be present in case of disjoint subgraph
             sampling per seed node. (default: :obj:`None`)
+        num_sampled_nodes (List[int], optional): The number of sampled nodes
+            per layer. (default: :obj:`None`)
+        num_sampled_edges (List[int], optional): The number of sampled edges
+            per layer. (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
@@ -134,6 +138,8 @@ class SamplerOutput(CastMixin):
     col: Tensor
     edge: OptTensor
     batch: OptTensor = None
+    num_sampled_nodes: Optional[List[int]] = None
+    num_sampled_edges: Optional[List[int]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
@@ -165,6 +171,12 @@ class HeteroSamplerOutput(CastMixin):
             seed node for each sampled node for each node type. Can be present
             in case of disjoint subgraph sampling per seed node.
             (default: :obj:`None`)
+        num_sampled_nodes (Dict[str, List[int]], optional): The number of
+            sampled nodes for each node type and each layer.
+            (default: :obj:`None`)
+        num_sampled_edges (Dict[EdgeType, List[int]], optional): The number of
+            sampled edges for each edge type and each layer.
+            (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
@@ -173,6 +185,8 @@ class HeteroSamplerOutput(CastMixin):
     col: Dict[EdgeType, Tensor]
     edge: Optional[Dict[EdgeType, Tensor]]
     batch: Optional[Dict[NodeType, Tensor]] = None
+    num_sampled_nodes: Optional[Dict[NodeType, List[int]]] = None
+    num_sampled_edges: Optional[Dict[EdgeType, List[int]]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
