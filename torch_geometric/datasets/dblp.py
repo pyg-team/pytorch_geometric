@@ -41,46 +41,38 @@ class DBLP(InMemoryDataset):
     **STATS:**
 
     .. list-table::
-        :widths: 10 10 10 10 10
+        :widths: 20 10 10 10
         :header-rows: 1
 
         * - Name
-          - #nodes
-          - #edges
+          - #nodes/#edges
           - #features
           - #classes
         * - Author
           - 4,057
-          -
           - 334
           - 4
         * - Paper
           - 14,328
-          -
           - 4,231
           -
         * - Term
           - 7,723
-          -
           - 50
           -
         * - Conference
           - 20
-          -
           - 0
           -
         * - Author-Paper
-          -
           - 196,425
           -
           -
         * - Paper-Term
-          -
           - 85,810
           -
           -
         * - Conference-Paper
-          -
           - 14,328
           -
           -

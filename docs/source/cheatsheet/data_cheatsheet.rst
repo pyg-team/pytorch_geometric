@@ -40,12 +40,11 @@ Homogeneous Graph Datasets
 Heterogeneous Graph Datasets
 ----------------------------
 .. list-table::
-    :widths: 50 10 10 10 10
+    :widths: 50 30 10 10
     :header-rows: 1
 
     * - Name
-      - #nodes
-      - #edges
+      - #nodes/#edges
       - #features
       - #classes/#tasks
 {% for cls in torch_geometric.datasets.hetero_graphs %}
@@ -53,11 +52,9 @@ Heterogeneous Graph Datasets
       -
       -
       -
-      -
     {% for child in torch_geometric.datasets.utils.get_children(cls) %}
     * - └─ **{{torch_geometric.datasets.utils.get_type(child)}} Type**: {{ child }}
-      - {{ torch_geometric.datasets.utils.get_stat(cls, '#nodes', child, default='') }}
-      - {{ torch_geometric.datasets.utils.get_stat(cls, '#edges', child, default='') }}
+      - {{ torch_geometric.datasets.utils.get_stat(cls, '#nodes/#edges', child, default='') }}
       - {{ torch_geometric.datasets.utils.get_stat(cls, '#features', child, default='') }}
       - {{ torch_geometric.datasets.utils.get_stat(cls, '#classes', child, default='') }}{{ torch_geometric.datasets.utils.get_stat(cls, '#tasks', child, default='') }}
     {% endfor %}
