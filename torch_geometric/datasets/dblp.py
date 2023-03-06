@@ -44,7 +44,7 @@ class DBLP(InMemoryDataset):
         :widths: 20 10 10 10
         :header-rows: 1
 
-        * - Name
+        * - Node/Edge Type
           - #nodes/#edges
           - #features
           - #classes
