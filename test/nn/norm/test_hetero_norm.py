@@ -37,7 +37,7 @@ def test_batch_norm_single_element():
 @pytest.mark.parametrize('mode', ['graph', 'node'])
 def test_heterolayer_norm(affine, mode):
     x_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
-    batch = torch.zeros(100, dtype=torch.long)
+    batch_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
     hetero_norm = HeteroLayerNorm(16, types=x_dict.keys(), affine=affine, mode=mode)
     homo_norm = LayerNorm(16, affine=affine, mode=mode)
     from_homo_norm = HeteroLayerNorm.from_homogeneous(homo_norm)
@@ -45,16 +45,20 @@ def test_heterolayer_norm(affine, mode):
     assert hetero_norm.__repr__() == expected_str_repr
     assert from_homo_norm.__repr__() == expected_str_repr
 
-    if is_full_test():
-        torch.jit.script(norm)
+    out1_dict = hetero_norm(x_dict)
+    out2_dict = from_homo_norm(x_dict)
+    batch_out_dict = hetero_norm(x_dict, batch_dict=batch_dict)
+    for x_type in x_dict.keys():
+        assert out1_dict[x_type].size() == (100, 16)
+        assert out2_dict[x_type].size() == (100, 16)
+        assert torch.allclose(batch_out_dict[x_type], out1_dict[x_type], atol=1e-6)
 
-    out1 = norm(x)
-    assert out1.size() == (100, 16)
-    assert torch.allclose(norm(x, batch), out1, atol=1e-6)
-
-    out2 = norm(torch.cat([x, x], dim=0), torch.cat([batch, batch + 1], dim=0))
-    assert torch.allclose(out1, out2[:100], atol=1e-6)
-    assert torch.allclose(out1, out2[100:], atol=1e-6)
+    catted_x_dict = {x_type:torch.cat([x, x], dim=0) for x_type, x in x_dict}
+    catted_batch_dict = {x_type:torch.cat([batch, batch + 1], dim=0) for x_type, batch in batch_dict}
+    batch_cat_out_dict = hetero_norm(catted_x_dict, catted_batch_dict)
+    for x_type in x_dict.keys():
+        assert torch.allclose(out1, out2[:100], atol=1e-6)
+        assert torch.allclose(out1, out2[100:], atol=1e-6)
 
 
 @pytest.mark.parametrize('conf', [True, False])
