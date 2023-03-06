@@ -141,7 +141,6 @@ class HGTConv(MessagePassing):
             self.p_rel[edge_type] = Parameter(torch.Tensor(heads))
 
         self.reset_parameters()
-        major_vers, minor_vers = str(torch.__version__).split('.')[:2]
 
     def reset_parameters(self):
         super().reset_parameters()
