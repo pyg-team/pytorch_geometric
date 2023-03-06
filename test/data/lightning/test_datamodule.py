@@ -46,7 +46,7 @@ class LinearGraphModule(LightningModule):
         self.val_acc = Accuracy(task='multiclass', num_classes=out_channels)
         self.test_acc = Accuracy(task='multiclass', num_classes=out_channels)
 
-    def forward(self, x: Tensor, batch):
+    def forward(self, x: Tensor, batch: Data) -> Tensor:
         # Basic test to ensure that the dataset is not replicated:
         self.trainer.datamodule.train_dataset._data.x.add_(1)
 
@@ -150,7 +150,7 @@ class LinearNodeModule(LightningModule):
         self.val_acc = Accuracy(task='multiclass', num_classes=out_channels)
         self.test_acc = Accuracy(task='multiclass', num_classes=out_channels)
 
-    def forward(self, x: Tensor):
+    def forward(self, x: Tensor) -> Tensor:
         # Basic test to ensure that the dataset is not replicated:
         self.trainer.datamodule.data.x.add_(1)
 
@@ -264,7 +264,7 @@ class LinearHeteroNodeModule(LightningModule):
         self.val_acc = Accuracy(task='multiclass', num_classes=out_channels)
         self.test_acc = Accuracy(task='multiclass', num_classes=out_channels)
 
-    def forward(self, x: Tensor):
+    def forward(self, x: Tensor) -> Tensor:
         # Basic test to ensure that the dataset is not replicated:
         self.trainer.datamodule.data['author'].x.add_(1)
 
