@@ -95,7 +95,6 @@ def test_gcn_conv():
     assert torch.allclose(torch.var(out2), torch.var(out_2_adj2), atol=1)
     assert torch.allclose(kl_out2, kl_adj2, atol=1e-6)
 
-
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
