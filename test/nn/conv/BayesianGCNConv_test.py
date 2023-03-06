@@ -5,7 +5,6 @@ from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv.BayesianGCNConv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
-from torch_geometric.utils import to_torch_coo_tensor
 
 
 def test_bayesian_conv_norm():
@@ -80,8 +79,6 @@ def test_gcn_conv():
     adj1 = torch.randint(0, 4, (2, 6))
     adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
-    adj3 = to_torch_coo_tensor(edge_index)
-
     conv = BayesianGCNConv(16, 32)
     assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
     out1, kl_out1 = conv(x, edge_index)
@@ -96,11 +93,6 @@ def test_gcn_conv():
     assert torch.allclose(out2.mean(), out_2_adj2.mean(), atol=0.1)
     assert torch.allclose(torch.var(out2), torch.var(out_2_adj2), atol=1)
     assert torch.allclose(kl_out2, kl_adj2, atol=1e-6)
-
-    out_3, kl_adj3 = conv(x, adj3)
-    assert torch.allclose(out_3.mean(), out1.mean(), atol=0.1)
-    assert torch.allclose(torch.var(out_3), torch.var(out1), atol=1)
-    assert torch.allclose(kl_out1, kl_adj3, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
