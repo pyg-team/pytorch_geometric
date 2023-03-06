@@ -1,5 +1,4 @@
 from typing import Optional, Tuple, Union
-
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -8,7 +7,6 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
-# for the last version of torch_geometric
 from torch_geometric.utils import spmm
 
 
@@ -20,7 +18,7 @@ class BayesianGCNConv(MessagePassing):
    We first proceed wth linear transformation:
 
    .. math::
-      `\mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
+      `\mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}`
 
    where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
    Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
