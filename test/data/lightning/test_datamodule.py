@@ -3,6 +3,7 @@ import math
 import pytest
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.lightning import (
@@ -33,17 +34,19 @@ def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
 
 
 class LinearGraphModule(LightningModule):
-    def __init__(self, in_channels, hidden_channels, out_channels):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int):
         super().__init__()
         from torchmetrics import Accuracy
 
         self.lin1 = torch.nn.Linear(in_channels, hidden_channels)
         self.lin2 = torch.nn.Linear(hidden_channels, out_channels)
 
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
+        self.train_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.val_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.test_acc = Accuracy(task='multiclass', num_classes=out_channels)
 
-    def forward(self, x, batch):
+    def forward(self, x: Tensor, batch):
         # Basic test to ensure that the dataset is not replicated:
         self.trainer.datamodule.train_dataset._data.x.add_(1)
 
@@ -52,7 +55,7 @@ class LinearGraphModule(LightningModule):
         x = self.lin2(x)
         return x
 
-    def training_step(self, data, batch_idx):
+    def training_step(self, data: Data, batch_idx: int):
         y_hat = self(data.x, data.batch)
         loss = F.cross_entropy(y_hat, data.y)
         self.train_acc(y_hat.softmax(dim=-1), data.y)
@@ -60,10 +63,15 @@ class LinearGraphModule(LightningModule):
         self.log('train_acc', self.train_acc, batch_size=data.num_graphs)
         return loss
 
-    def validation_step(self, data, batch_idx):
+    def validation_step(self, data: Data, batch_idx: int):
         y_hat = self(data.x, data.batch)
         self.val_acc(y_hat.softmax(dim=-1), data.y)
         self.log('val_acc', self.val_acc, batch_size=data.num_graphs)
+
+    def test_step(self, data: Data, batch_idx: int):
+        y_hat = self(data.x, data.batch)
+        self.test_acc(y_hat.softmax(dim=-1), data.y)
+        self.log('test_acc', self.test_acc, batch_size=data.num_graphs)
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
@@ -72,6 +80,7 @@ class LinearGraphModule(LightningModule):
 @onlyCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
+@withPackage('torchmetrics>=0.11.0')
 @pytest.mark.parametrize('strategy_type', [None, 'ddp_spawn'])
 def test_lightning_dataset(get_dataset, strategy_type):
     import pytorch_lightning as pl
@@ -80,6 +89,7 @@ def test_lightning_dataset(get_dataset, strategy_type):
     train_dataset = dataset[:50]
     val_dataset = dataset[50:80]
     test_dataset = dataset[80:90]
+    pred_dataset = dataset[90:]
 
     devices = 1 if strategy_type is None else torch.cuda.device_count()
     if strategy_type == 'ddp_spawn':
@@ -92,14 +102,18 @@ def test_lightning_dataset(get_dataset, strategy_type):
     trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
                          max_epochs=1, log_every_n_steps=1)
     datamodule = LightningDataset(train_dataset, val_dataset, test_dataset,
-                                  batch_size=5, num_workers=3)
+                                  pred_dataset, batch_size=5, num_workers=3,
+                                  shuffle=True)
+    assert 'shuffle' not in datamodule.kwargs
     old_x = train_dataset._data.x.clone()
     assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
                                'val_dataset=MUTAG(30), '
-                               'test_dataset=MUTAG(10), batch_size=5, '
+                               'test_dataset=MUTAG(10), '
+                               'pred_dataset=MUTAG(98), batch_size=5, '
                                'num_workers=3, pin_memory=True, '
                                'persistent_workers=True)')
     trainer.fit(model, datamodule)
+    trainer.test(model, datamodule)
     new_x = train_dataset._data.x
     offset = 10 + 6 + 2 * devices  # `train_steps` + `val_steps` + `sanity`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
@@ -132,20 +146,11 @@ class LinearNodeModule(LightningModule):
 
         self.lin = torch.nn.Linear(in_channels, out_channels)
 
-        try:
-            # For torchmetrics version < v0.11.0
-            self.train_acc = Accuracy()
-            self.val_acc = Accuracy()
-            self.test_acc = Accuracy()
-        except TypeError:
-            self.train_acc = Accuracy(task='multiclass',
-                                      num_classes=out_channels)
-            self.val_acc = Accuracy(task='multiclass',
-                                    num_classes=out_channels)
-            self.test_acc = Accuracy(task='multiclass',
-                                     num_classes=out_channels)
+        self.train_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.val_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.test_acc = Accuracy(task='multiclass', num_classes=out_channels)
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: Tensor):
         # Basic test to ensure that the dataset is not replicated:
         self.trainer.datamodule.data.x.add_(1)
 
@@ -172,10 +177,6 @@ class LinearNodeModule(LightningModule):
         self.test_acc(y_hat.softmax(dim=-1), y)
         self.log('test_acc', self.test_acc, batch_size=y.size(0))
 
-    def predict_step(self, data: Data, batch_idx: int):
-        pred = self(data.x)
-        return pred
-
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
@@ -183,6 +184,7 @@ class LinearNodeModule(LightningModule):
 @onlyCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
+@withPackage('torchmetrics>=0.11.0')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
 @pytest.mark.parametrize('strategy_type', [None, 'ddp_spawn'])
 def test_lightning_node_data(get_dataset, strategy_type, loader):
@@ -208,17 +210,23 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
     else:
         strategy = None
 
-    batch_size = 1 if loader == 'full' else 32
-    num_workers = 0 if loader == 'full' else 3
+    batch_size = 32
+    num_workers = 3
     kwargs, kwargs_repr = {}, ''
     if loader == 'neighbor':
         kwargs['num_neighbors'] = [5]
         kwargs_repr += 'num_neighbors=[5], '
 
-    trainer = pl.Trainer(strategy=strategy, accelerator='cpu', devices=devices,
+    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
                          max_epochs=5, log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader=loader, batch_size=batch_size,
                                    num_workers=num_workers, **kwargs)
+
+    if loader == 'full':
+        # Test some reasonable defaults for full-batch training:
+        batch_size = 1
+        num_workers = 0
+
     old_x = data.x.clone().cpu()
     assert str(datamodule) == (f'LightningNodeData(data={data_repr}, '
                                f'loader={loader}, batch_size={batch_size}, '
@@ -226,14 +234,11 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
                                f'pin_memory={loader != "full"}, '
                                f'persistent_workers={loader != "full"})')
     trainer.fit(model, datamodule)
-    trainer.test(model, dataloaders=datamodule.test_dataloader())
-    pred = trainer.predict(model,
-                           dataloaders=datamodule.predict_dataloader())[0]
-    assert pred.shape == (data.num_nodes, dataset.num_classes)
+    trainer.test(model, datamodule)
     new_x = data.x.cpu()
     if loader == 'full':
-        # `train_steps` + `val_steps` + `sanity` + `test` + `pred`
-        offset = 5 + 5 + 1 + 1 + 1
+        # `train_steps` + `val_steps` + `sanity` + `test`
+        offset = 5 + 5 + 1 + 1
     else:
         offset = 0
         offset += devices * 2  # `sanity`
@@ -242,8 +247,6 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
         offset += 5 * devices * math.ceil(500 /
                                           (devices * batch_size))  # `val`
         offset += devices * math.ceil(1000 / (devices * batch_size))  # `test`
-        offset += devices * math.ceil(2708 /
-                                      (devices * batch_size))  # `predict`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
     if strategy_type is None:
         assert trainer._data_connector._val_dataloader_source.is_defined()
@@ -257,20 +260,11 @@ class LinearHeteroNodeModule(LightningModule):
 
         self.lin = torch.nn.Linear(in_channels, out_channels)
 
-        try:
-            # For torchmetrics version < v0.11.0
-            self.train_acc = Accuracy()
-            self.val_acc = Accuracy()
-            self.test_acc = Accuracy()
-        except TypeError:
-            self.train_acc = Accuracy(task='multiclass',
-                                      num_classes=out_channels)
-            self.val_acc = Accuracy(task='multiclass',
-                                    num_classes=out_channels)
-            self.test_acc = Accuracy(task='multiclass',
-                                     num_classes=out_channels)
+        self.train_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.val_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.test_acc = Accuracy(task='multiclass', num_classes=out_channels)
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: Tensor):
         # Basic test to ensure that the dataset is not replicated:
         self.trainer.datamodule.data['author'].x.add_(1)
 
@@ -304,6 +298,7 @@ class LinearHeteroNodeModule(LightningModule):
 @onlyCUDA
 @onlyFullTest
 @withPackage('pytorch_lightning')
+@withPackage('torchmetrics>=0.11.0')
 def test_lightning_hetero_node_data(get_dataset):
     import pytorch_lightning as pl
 
@@ -323,11 +318,13 @@ def test_lightning_hetero_node_data(get_dataset):
     assert isinstance(datamodule.graph_sampler, NeighborSampler)
     old_x = data['author'].x.clone()
     trainer.fit(model, datamodule)
+    trainer.test(model, datamodule)
     new_x = data['author'].x
     offset = 0
     offset += devices * 2  # `sanity`
     offset += 5 * devices * math.ceil(400 / (devices * 32))  # `train`
     offset += 5 * devices * math.ceil(400 / (devices * 32))  # `val`
+    offset += devices * math.ceil(3257 / (devices * 32))  # `test`
     assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
 
 
@@ -367,18 +364,31 @@ def test_lightning_hetero_link_data():
     data['paper', 'author'].edge_index = get_edge_index(10, 10, 10)
     data['author', 'paper'].edge_index = get_edge_index(10, 10, 10)
     data['paper', 'term'].edge_index = get_edge_index(10, 10, 10)
+    data['author', 'term'].edge_index = get_edge_index(10, 10, 10)
 
     datamodule = LightningLinkData(
         data,
         input_train_edges=('author', 'paper'),
+        input_val_edges=('paper', 'author'),
+        input_test_edges=('paper', 'term'),
+        input_pred_edges=('author', 'term'),
         loader='neighbor',
         num_neighbors=[5],
         batch_size=32,
         num_workers=0,
     )
+
     assert isinstance(datamodule.graph_sampler, NeighborSampler)
+    assert isinstance(datamodule.eval_graph_sampler, NeighborSampler)
+
     for batch in datamodule.train_dataloader():
         assert 'edge_label_index' in batch['author', 'paper']
+    for batch in datamodule.val_dataloader():
+        assert 'edge_label_index' in batch['paper', 'author']
+    for batch in datamodule.test_dataloader():
+        assert 'edge_label_index' in batch['paper', 'term']
+    for batch in datamodule.predict_dataloader():
+        assert 'edge_label_index' in batch['author', 'term']
 
     data['author'].time = torch.arange(data['author'].num_nodes)
     data['paper'].time = torch.arange(data['paper'].num_nodes)
@@ -462,3 +472,6 @@ def test_eval_loader_kwargs(get_dataset):
 
     test_loader = datamodule.test_dataloader()
     assert math.ceil(int(data.test_mask.sum()) / 64) == len(test_loader)
+
+    pred_loader = datamodule.predict_dataloader()
+    assert math.ceil(data.num_nodes / 64) == len(pred_loader)
