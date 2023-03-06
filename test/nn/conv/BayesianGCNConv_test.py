@@ -78,10 +78,10 @@ def test_gcn_conv():
     value = torch.rand(row.size(0))
 
     adj1 = torch.randint(0, 4, (2, 6))
-    adj2 = torch.randint(0, 4, (2, 6))
+    adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
 
-    adj3 = adj1.to_torch_sparse_coo_tensor()
-    adj4 = adj2.to_torch_sparse_coo_tensor()
+    adj3 = to_torch_coo_tensor(adj1)
+    adj4 = to_torch_coo_tensor(adj2)
 
     conv = BayesianGCNConv(16, 32)
     assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
