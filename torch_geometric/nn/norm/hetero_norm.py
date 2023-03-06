@@ -213,7 +213,7 @@ class HeteroInstanceNorm(_HeteroNorm):
                  types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
                  eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
-                 allow_single_element: bool = False):
+                 track_running_stats: bool = False):
         super().__init__(in_channels, "InstanceNorm"
                  types, eps, momentum, affine,
                  track_running_stats, allow_single_element=False)
