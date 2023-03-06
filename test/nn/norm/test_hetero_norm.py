@@ -57,8 +57,8 @@ def test_heterolayer_norm(affine, mode):
     catted_batch_dict = {x_type:torch.cat([batch, batch + 1], dim=0) for x_type, batch in batch_dict}
     batch_cat_out_dict = hetero_norm(catted_x_dict, catted_batch_dict)
     for x_type in x_dict.keys():
-        assert torch.allclose(out1, out2[:100], atol=1e-6)
-        assert torch.allclose(out1, out2[100:], atol=1e-6)
+        assert torch.allclose(out1_dict[x_type], batch_cat_out_dict[x_type][:100], atol=1e-6)
+        assert torch.allclose(out1_dict[x_type], batch_cat_out_dict[x_type][100:], atol=1e-6)
 
 
 @pytest.mark.parametrize('conf', [True, False])
