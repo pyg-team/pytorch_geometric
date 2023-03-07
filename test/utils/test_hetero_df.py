@@ -233,7 +233,7 @@ def test_nx2heteroDf():
 
 def test_heteroDf_merge():
     nxHeteroDF = nx2heteroDf(college_nx)
-    mergedHeteroDF = nx2heteroDf(nxHeteroDF, college_data_dict)
+    mergedHeteroDF = heteroDf_merge(nxHeteroDF, college_data_dict)
 
     recordsDF = {k: _to_tuple_set(v) for k, v in mergedHeteroDF.items()}
     assert recordsDF == {

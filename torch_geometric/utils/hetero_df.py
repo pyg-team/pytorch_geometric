@@ -130,7 +130,7 @@ def nx2heteroDf(g: nx.MultiDiGraph, node_groupbycols: str = "node_type",
     # get dataframes of edge and node type and ids, without all features
     if edge_groupbycols is None:
         edge_groupbycols = ["source_type", "edge_type", "target_type"]
-    node_df = pd.DataFrame.from_dict(dict(g.nodes(data=True)), orient="index")
+    node_df = pd.DataFrame.from_dict(dict(g.nodes.data()), orient="index")
 
     #
     node_type_df = node_df[["id", "node_type"]]
