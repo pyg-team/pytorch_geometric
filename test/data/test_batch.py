@@ -1,6 +1,4 @@
-import os
-import random
-import sys
+import os.path as osp
 
 import numpy as np
 import torch
@@ -190,25 +188,24 @@ def test_batching_with_new_dimension():
     torch_geometric.set_debug(True)
 
 
-def test_pickling():
+def test_pickling(tmp_path):
     data = Data(x=torch.randn(5, 16))
     batch = Batch.from_data_list([data, data, data, data])
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
-    filename = f'{random.randrange(sys.maxsize)}.pt'
-    torch.save(batch, filename)
+    # filename = f'{random.randrange(sys.maxsize)}.pt'
+    path = osp.join(tmp_path, 'batch.pt')
+    torch.save(batch, path)
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
-    batch = torch.load(filename)
+    batch = torch.load(path)
     assert id(batch._store._parent()) == id(batch)
     assert batch.num_nodes == 20
 
     assert batch.__class__.__name__ == 'DataBatch'
     assert batch.num_graphs == len(batch) == 4
-
-    os.remove(filename)
 
 
 def test_recursive_batch():

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `HeteroLayerNorm` and `HeteroBatchNorm` layers ([#6838](https://github.com/pyg-team/pytorch_geometric/pull/6838))
 - Added the `HeterophilousGraphDataset` suite ([#6846](https://github.com/pyg-team/pytorch_geometric/pull/6846))
 - Added support for sparse tensor in full batch mode inference benchmark ([#6843](https://github.com/pyg-team/pytorch_geometric/pull/6843))
 - Enabled `NeighborLoader` to return number of sampled nodes and edges per hop ([#6834](https://github.com/pyg-team/pytorch_geometric/pull/6834))
@@ -97,6 +98,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Fixed a bug in `to_hetero` when using an uninitialized submodule without implementing `reset_parameters` ([#6863](https://github.com/pyg-team/pytorch_geometric/issues/6790))
 - Fixed a bug in `get_mesh_laplacian` ([#6790](https://github.com/pyg-team/pytorch_geometric/issues/6790))
 - Fixed a bug in which masks were not properly masked in `GNNExplainer` on link prediction tasks ([#6787](https://github.com/pyg-team/pytorch_geometric/pull/6787))
 - Allow the usage of `ChebConv` within `GNNExplainer` ([#6778](https://github.com/pyg-team/pytorch_geometric/pull/6778))

@@ -83,9 +83,9 @@ def to_captum_model(
 
     .. note::
         For an example of using a :captum:`Captum` attribution method within
-        :pyg:`PyG`, see `examples/captum_explainability.py
+        :pyg:`PyG`, see `examples/explain/captum_explainability.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        captum_explainability.py>`_.
+        explain/captum_explainability.py>`_.
 
     Args:
         model (torch.nn.Module): The model to be explained.

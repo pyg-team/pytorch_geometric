@@ -29,6 +29,33 @@ class WebKB(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Cornell
+          - 183
+          - 298
+          - 1,703
+          - 5
+        * - Texas
+          - 183
+          - 325
+          - 1,703
+          - 5
+        * - Wisconsin
+          - 251
+          - 515
+          - 1,703
+          - 5
     """
 
     url = 'https://raw.githubusercontent.com/graphdml-uiuc-jlu/geom-gcn/master'
