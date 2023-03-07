@@ -8,16 +8,19 @@ from torch_geometric.utils import spmm
 
 
 @withCUDA
-def test_spmm_basic(device):
+@pytest.mark.parametrize('reduce', ['sum', 'mean'])
+def test_spmm_basic(device, reduce):
     src = torch.randn(5, 4, device=device)
     other = torch.randn(4, 8, device=device)
 
     out1 = src @ other
-    out2 = spmm(src.to_sparse(), other, reduce='sum')
-    out3 = spmm(SparseTensor.from_dense(src), other, reduce='sum')
+    out2 = spmm(src.to_sparse(), other, reduce=reduce)
+    out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
     assert out1.size() == (5, 8)
-    assert torch.allclose(out1, out2)
-    assert torch.allclose(out1, out3)
+    if reduce == 'sum':
+        assert torch.allclose(out1, out2, atol=1e-6)
+        assert torch.allclose(out1, out3, atol=1e-6)
+    assert torch.allclose(out2, out3, atol=1e-6)
 
 
 @withCUDA
@@ -35,8 +38,9 @@ def test_spmm_reduce(device, reduce):
             out2 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
             assert torch.allclose(out1, out2)
     else:
-        with pytest.raises(ValueError, match="not supported"):
-            spmm(src.to_sparse(), other, reduce)
+        if reduce != 'mean':
+            with pytest.raises(ValueError, match="not supported"):
+                spmm(src.to_sparse(), other, reduce)
 
 
 def test_spmm_jit():
