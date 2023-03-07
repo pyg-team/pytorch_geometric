@@ -50,21 +50,25 @@ def test_spmm_reduce(device, reduce):
                 spmm(src.to_sparse(), other, reduce)
 
 
-def test_spmm_jit():
+@pytest.mark.parametrize('reduce', ['sum', 'mean'])
+def test_spmm_jit(reduce):
     @torch.jit.script
-    def jit_torch_sparse(src: SparseTensor, other: Tensor) -> Tensor:
-        return spmm(src, other, reduce='sum')
+    def jit_torch_sparse(src: SparseTensor, other: Tensor,
+                         reduce: str) -> Tensor:
+        return spmm(src, other, reduce=reduce)
 
     @torch.jit.script
-    def jit_torch(src: Tensor, other: Tensor) -> Tensor:
-        return spmm(src, other, reduce='sum')
+    def jit_torch(src: Tensor, other: Tensor, reduce: str) -> Tensor:
+        return spmm(src, other, reduce=reduce)
 
     src = torch.randn(5, 4)
     other = torch.randn(4, 8)
 
     out1 = src @ other
-    out2 = jit_torch_sparse(SparseTensor.from_dense(src), other)
-    out3 = jit_torch(src.to_sparse(), other)
+    out2 = jit_torch_sparse(SparseTensor.from_dense(src), other, reduce=reduce)
+    out3 = jit_torch(src.to_sparse(), other, reduce=reduce)
     assert out1.size() == (5, 8)
-    assert torch.allclose(out1, out2)
-    assert torch.allclose(out1, out3)
+    if reduce == 'sum':
+        assert torch.allclose(out1, out2, atol=1e-6)
+        assert torch.allclose(out1, out3, atol=1e-6)
+    assert torch.allclose(out2, out3, atol=1e-6)
