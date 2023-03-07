@@ -157,6 +157,15 @@ class Net11(torch.nn.Module):
         return torch.cat(xs, dim=-1)
 
 
+class Net12(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = Net8()
+
+    def forward(self, x: Tensor) -> Tensor:
+        return self.conv(x)
+
+
 def test_to_hetero_basic():
     x_dict = {
         'paper': torch.randn(100, 16),
@@ -272,6 +281,13 @@ def test_to_hetero_basic():
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (100, 64)
     assert out['author'].size() == (100, 64)
+
+    model = Net12()
+    model = to_hetero(model, metadata, debug=False)
+    out = model({'paper': torch.randn(4, 8), 'author': torch.randn(8, 16)})
+    assert isinstance(out, dict) and len(out) == 2
+    assert out['paper'].size() == (4, 32)
+    assert out['author'].size() == (8, 32)
 
 
 class GCN(torch.nn.Module):
