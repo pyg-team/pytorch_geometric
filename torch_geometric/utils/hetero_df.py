@@ -509,7 +509,6 @@ def heteroData2heteroDf(hetero_data: HeteroData, context: Dict) -> HeteroDF:
         ... data["B"].x = torch.tensor([[101,102],[111,112]])
         ... data["B","to","A"].edge_index = torch.tensor([[0,1],[0,0]])
         ... data["B","to","A"].edge_attr = torch.tensor([[10],[100]])
-
         >>> context ={
         ... "index_map":{'A': bidict({0: 0, 1: 1}),
         ...              'B': bidict({0: 'b0', 1: 'b1'})},
