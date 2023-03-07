@@ -92,6 +92,7 @@ def agg_runs(dir, metric_best='auto'):
     results = {'train': None, 'val': None}
     results_best = {'train': None, 'val': None}
     for seed in os.listdir(dir):
+        print('seed', seed)
         if is_seed(seed):
             dir_seed = os.path.join(dir, seed)
 
@@ -100,6 +101,7 @@ def agg_runs(dir, metric_best='auto'):
                 dir_split = os.path.join(dir_seed, split)
                 fname_stats = os.path.join(dir_split, 'stats.json')
                 stats_list = json_to_dict_list(fname_stats)
+                print(stats_list)
                 if metric_best == 'auto':
                     metric = 'auc' if 'auc' in stats_list[0] else 'accuracy'
                 else:
