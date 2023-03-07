@@ -66,6 +66,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     if reduce == 'sum':
         return torch.sparse.mm(src, other)
     elif reduce == 'mean':
+        # TODO: Utilize `rowptr` instead when `src` is given as a CSR matrix.
         src = src.coalesce()
         deg = degree(src.indices()[0], num_nodes=src.size(0))
         out = torch.sparse.mm(src, other).div(deg.view(-1, 1))
