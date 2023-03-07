@@ -9,6 +9,7 @@ from torch_geometric.utils.hetero_df import (
     _groupby_to_dict,
     _multi_map,
     _node_edge_dfs_to_sig_df,
+    heteroData2heteroDf,
     heteroDf2heteroData,
     heteroDf_merge,
     heteroDf_split,
@@ -486,3 +487,58 @@ def test_heteroDf2heteroData():
 
     assert list(tinyContext['node_features']["A"]) == ["feat1", "feat2"]
     assert list(tinyContext['node_features']["B"]) == ["feat1", "feat2"]
+
+
+def _cast_to_float(x: pd.DataFrame) -> pd.DataFrame:
+    for col in x.columns:
+        if x[col].dtype == int:
+            x[col] = x[col].astype(float)
+    return x
+
+
+def test_heteroData2heteroDf():
+    input_hetero_df = {
+        'A':
+        pd.DataFrame.from_records([{
+            "id": 0,
+            "feat1": 1,
+            "feat2": 2,
+            'name': 'A0'
+        }, {
+            "id": 1,
+            "feat1": 11,
+            "feat2": 12,
+            'name': 'A1'
+        }]),
+        'B':
+        pd.DataFrame.from_records([{
+            "id": "b0",
+            "feat1": 101,
+            "feat2": 102,
+            'name': 'B0'
+        }, {
+            "id": "b1",
+            "feat1": 111,
+            "feat2": 112,
+            'name': 'B1'
+        }]),
+        ('B', 'to', 'A'):
+        pd.DataFrame.from_records([{
+            "source": "b0",
+            "target": 0,
+            'capacity': 10
+        }]),
+        ('A', 'self_edge', 'A'):
+        pd.DataFrame.from_records([{
+            "source": 0,
+            "target": 0
+        }]),
+    }
+    hetero_data, context = heteroDf2heteroData(input_hetero_df,
+                                               ignore=['name'])
+    output_hetero_df = heteroData2heteroDf(hetero_data, context)
+    assert set(input_hetero_df.keys()) == set(output_hetero_df.keys())
+    for key in input_hetero_df.keys():
+        assert (_cast_to_float(
+            input_hetero_df[key].copy()).to_numpy() == _cast_to_float(
+                output_hetero_df[key].copy()).to_numpy()).all()

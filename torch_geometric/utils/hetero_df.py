@@ -23,11 +23,18 @@ def _groupby_to_dict(df: pd.DataFrame, groupbycols: Union[str, List[str]]) \
         ...  "class" : ["history", "history", "history", "math",
                         "art", "history", "math", "art"]
                         })
-        >>> print(groupby_to_dict(df, "student"))
-        {'Noa':    grades    class 1
-        80  history 6      70     math 7      80      art, 'Ram':    grades
-        class 0     100  history 3      55     math 4      50      art,
-        'Song':    grades    class 2      90  history 5      60  history}
+        >>> print(pd.concat(
+        ...     _groupby_to_dict(df, "student"), axis=0).to_markdown())
+        ... |             |   grades | class   |
+        ... |:------------|---------:|:--------|
+        ... | ('Noa', 1)  |       80 | history |
+        ... | ('Noa', 6)  |       70 | math    |
+        ... | ('Noa', 7)  |       80 | art     |
+        ... | ('Ram', 0)  |      100 | history |
+        ... | ('Ram', 3)  |       55 | math    |
+        ... | ('Ram', 4)  |       50 | art     |
+        ... | ('Song', 2) |       90 | history |
+        ... | ('Song', 5) |       60 | history |
 
     """
     dict_df = dict(list(df.groupby(groupbycols)))
@@ -53,12 +60,13 @@ def _node_edge_dfs_to_sig_df(nodes: pd.DataFrame,
     >>> edges = pd.DataFrame({
     ... "source": [1,2,3,5], "target":[2,4,5,1],
     ... "edge_type": ["c","c","c","c"]})
-    >>> print(node_edge_dfs_to_sig_df(nodes, edges))
-    source  target source_type
-    edge_type target_type 0       1       2           a         c
-    a 1       2       4           a         c           b 2       3       5
-             a         c           b 3       5       1           b         c
-                       a
+    >>> print(_node_edge_dfs_to_sig_df(nodes, edges).to_markdown())
+    ... |    | source | target | source_type | edge_type | target_type|
+    ... |---:|-------:|-------:|:------------|:----------|:-----------|
+    ... |  0 |      1 |      2 | a           | c         | a          |
+    ... |  1 |      2 |      4 | a           | c         | b          |
+    ... |  2 |      3 |      5 | a           | c         | b          |
+    ... |  3 |      5 |      1 | b           | c         | a          |
     """
     sig_df = \
         edges.merge(nodes, how="left", left_on="source", right_on="id").merge(
@@ -118,13 +126,13 @@ def nx2heteroDf(g: nx.MultiDiGraph, node_groupbycols: str = "node_type",
         ... (6, 9, {"edge_type": "is_about"}),
         ... (7, 9, {"edge_type": "is_about"}),
         ... ])
-        >>> nxHeteroDF = nx_to_HeteroDF(college_nx)
-        >>> print(nxHeteroDF.keys())
-        >>>
-            dict_keys(['class', 'lecturer', 'student', 'ta', 'topic',
-            ('class', 'is_about', 'topic'), # ('lecturer', 'teaches',
-            'class'), ('student', 'takes', 'class'), ('ta', 'teaches',
-            'class')])
+        >>> nx_hetero_df = nx2heteroDf(college_nx)
+        >>> print(nx_hetero_df.keys())
+        >>> dict_keys(['class', 'lecturer', 'student', 'ta', 'topic',
+        ... ('class', 'is_about', 'topic'),
+        ... ('lecturer', 'teaches', 'class'),
+        ... ('student', 'takes', 'class'),
+        ... ('ta', 'teaches', 'class')])
     """
 
     # get dataframes of edge and node type and ids, without all features
@@ -158,6 +166,18 @@ def heteroDf_merge(hdf1: HeteroDF, hdf2: HeteroDF, **kwargs) -> HeteroDF:
 
     Returns:
             merged :class:`~torch_geometric.typing.HeteroDF`
+    Example:
+        >>> het_df0 = {"A":pd.DataFrame.from_records([
+        ... {"id": 0, "f0": 1, "f1": 2},
+        ... {"id": 1, "f0": 3, "f1": 4}])}
+        >>> het_df1 = {"A":pd.DataFrame.from_records([
+        ... {"id": 0, "f2": 1, "f3": 2},
+        ... {"id": 2, "f2": 2, "f3": 4}])}
+        >>> print(pd.concat(
+        ...     heteroDF_merge(het_df0,het_df1),axis=0).to_markdown())
+        >>> |          |   id |   f0 |   f1 |   f2 |   f3 |
+        ... |:---------|-----:|-----:|-----:|-----:|-----:|
+        ... | ('A', 0) |    0 |    1 |    2 |    1 |    2 |
     """
 
     keys1 = set(hdf1.keys())
@@ -199,7 +219,30 @@ def heteroDf_split(
     :class:`~torch_geometric.typing.HeteroColumnSet`): keep_index_in_matched
     (:obj:`bool`): keeping index in matched HeteroDF keep_index_in_unmatched
     (:obj:`bool`): keeping index in unmatched HeteroDF
-
+    Example:
+        >>> het_df = {
+        ... "A":pd.DataFrame.from_records(
+        ...     [{"id": 0, "f0": 1, "f1": 2},
+        ...     {"id": 1, "f0": 3, "f1": 4}])
+        ... ,"B":pd.DataFrame.from_records(
+        ...     [{"id": 0, "f0": 1, "f2": 2},
+        ...     {"id": 1, "f0": 2, "f2": 4}])
+        >>> matched, unmatched = heteroDF_split(het_df,["f0"])
+        >>> print(pd.concat(matched,axis=0).to_markdown())
+        >>> |          |   id |   f0 |
+        ... |:---------|-----:|-----:|
+        ... | ('A', 0) |    0 |    1 |
+        ... | ('A', 1) |    1 |    3 |
+        ... | ('B', 0) |    0 |    1 |
+        ... | ('B', 1) |    1 |    2 |
+        >>> print(pd.concat(unmatched,axis=0).to_markdown())
+        >>> |          |   id |   f1 |   f2 |
+        ... |:---------|-----:|-----:|-----:|
+        ... | ('A', 0) |    0 |    2 |  nan |
+        ... | ('A', 1) |    1 |    4 |  nan |
+        ... | ('B', 0) |    0 |  nan |    2 |
+        ... | ('B', 1) |    1 |  nan |    4 |
+}
     """
     # turn splitby into form dict
     if isinstance(split_by, list):
@@ -282,15 +325,18 @@ def _multi_map(df: pd.DataFrame, dict_map: Dict[str,
     returns the df after applying the
     mapping
     Examples:
-    >>> cat_df = pd.DataFrame([
-    ... ["a", "a", "b", "c"],
-    ... ["d","d","d","a"]]) c
-    >>> at_df_map = {
-    ... 1:{'a':2, 'd':4},
-    ... 2:{'b':0, 'd':6},
-    ... 3:{'c':3, 'a':1}}
-    >>> print(multi_map(cat_df, cat_df_map)) 0  1  2  3 0  a
-    2  0  3 1  d  4  6  1
+        >>> cat_df = pd.DataFrame([
+        ... ["a", "a", "b", "c"],
+        ... ["d","d","d","a"]]) c
+        >>> at_df_map = {
+        ... 1:{'a':2, 'd':4},
+        ... 2:{'b':0, 'd':6},
+        ... 3:{'c':3, 'a':1}}
+        >>> print(multi_map(cat_df, cat_df_map).to_markdown())
+        ... |    | 0   |   1 |   2 |   3 |
+        ... |---:|:----|----:|----:|----:|
+        ... |  0 | a   |   2 |   0 |   3 |
+        ... |  1 | d   |   4 |   6 |   1 |
     """
     new_columns = {
         col: series.map(dict_map[col]) if col in dict_map else series
@@ -312,19 +358,71 @@ def heteroDf2heteroData(hdf: HeteroDF, ignore=None,
     targetType) values are pd.Dataframes with source and target columns that
     contain the node ids that define the edge and other feature columns.
 
-    Args: hdf: :class:`~torch_geometric.typing.HeteroDF`. ignore: whether to
-    ignore some features of the heteroDF. takes either a list of columns to
-    ignore for each dataframe or a heteroColumnSet. keep: used only if
-    ignore is None. whether to keep some features of the heteroDF. takes
-    either a list of columns to keep for each dataframe or a
-    :class:`~torch_geometric.typing.HeteroColumnSet`.
+    Args:
+        hdf: :class:`~torch_geometric.typing.HeteroDF`. ignore: whether to
+        ignore some features of the heteroDF. takes either a list of columns to
+        ignore for each dataframe or a heteroColumnSet. keep: used only if
+        ignore is None. whether to keep some features of the heteroDF. takes
+        either a list of columns to keep for each dataframe or a
+        :class:`~torch_geometric.typing.HeteroColumnSet`.
 
-    Returns: (:class:`~torch_geometric.data.HeteroData`,:obj:`ContextObj`)
-    Where the ContextObj is a dict with keys and values as: 'index_map' : a
-    map from node type to a bidict that maps node id form the HeteroDF to
-    node index in the heteroData node features tensor. 'ignored_features' :
-    a heteroDF of all features that were ignored. 'node_features' : a map
-    from node type to list of feature names in each node type.
+    Returns:
+        (:class:`~torch_geometric.data.HeteroData`,:obj:`ContextObj`)
+        Where the ContextObj is a dict with keys and values as:
+        'index_map' : a map from node type to a bidict that
+            maps node id form the HeteroDF to node index
+            in the heteroData node features tensor.
+        'ignored_features' : a heteroDF of all features that were ignored.
+        'node_features' : a map from node type to list of
+            feature names in each node type.
+        'edge_attributes' : a map from edge type to list of feature names.
+
+    Example:
+        >>> het_df={
+        ... 'A':pd.DataFrame.from_records([
+        ...     {"id": 0, "feat1":1,"feat2":2,'name':'A0'},
+        ...     {"id": 1, "feat1":11,"feat2":12,'name':'A1'}
+        ... ]),
+        ... 'B':pd.DataFrame.from_records([
+        ...     {"id": "b0", "feat1":101,"feat2":102,'name':'B0'},
+        ...     {"id": "b1", "feat1":111,"feat2":112,'name':'B1'}
+        ... ]),
+        ... ('B','to','A'):pd.DataFrame.from_records([
+        ...     {"source": "b0","target":0,'capacity':10}
+        ... ]),
+        ... ('A','self_edge','A'):pd.DataFrame.from_records([
+        ...     {"source": 0,"target":0}
+        ... ]),}
+        >>> het_data,context = heteroDf2heteroData(het_df,ignore=['name'])
+        >>> het_data
+        >>> HeteroData(
+        ...     A={
+        ...         x=[2, 2],
+        ...         num_nodes=2
+        ...     },
+        ...     B={
+        ...         x=[2, 2],
+        ...         num_nodes=2
+        ...     },
+        ...     (B, to, A)={
+        ...         edge_index=[2, 1],
+        ...         edge_attr=[1, 1]
+        ...     },
+        ...     (A, self_edge, A)={ edge_index=[2, 1] }
+        ...     )
+        >>> context["index_map"]
+        >>> {'A': bidict({0: 0, 1: 1}), 'B': bidict({0: 'b0', 1: 'b1'})}
+        >>> print(pd.concat(context["ignored_features"]).to_markdown())
+        >>> |          | id   | name   |
+        ... |:---------|:-----|:-------|
+        ... | ('A', 0) | 0    | A0     |
+        ... | ('A', 1) | 1    | A1     |
+        ... | ('B', 0) | b0   | B0     |
+        ... | ('B', 1) | b1   | B1     |
+        >>> context["node_features"]
+        >>> {'A': ['feat1', 'feat2'], 'B': ['feat1', 'feat2']}
+        >>> context["edges_attributes"]
+        >>> {('B', 'to', 'A'): ['capacity']}
     """
     # split hdf to remove ignored features
     if ignore is None and keep is not None:
@@ -346,6 +444,7 @@ def heteroDf2heteroData(hdf: HeteroDF, ignore=None,
     index_map = {k: _reset_index_map(v) for k, v in nodes_hdf.items()}
     # transform edge source and target to new according to index map
     new_edge_hdf = {}
+    edge_attributes_dict = {}
     for key, df in edges_hdf.items():
         (source_type, edge_type, target_type) = key
         new_edge_hdf[key] = _multi_map(
@@ -353,6 +452,10 @@ def heteroDf2heteroData(hdf: HeteroDF, ignore=None,
                 "source": index_map[source_type].inverse,
                 "target": index_map[target_type].inverse
             })
+        edges_attributes = df.columns.drop(["source", "target"]).to_list()
+        if edges_attributes:
+            # meaning there are edge attributes (the list is not empty)
+            edge_attributes_dict[key] = edges_attributes
 
     heterodata_init_dict = {}
     node_features_dict = {}
@@ -372,21 +475,77 @@ def heteroDf2heteroData(hdf: HeteroDF, ignore=None,
     for key, df in new_edge_hdf.items():
         heterodata_init_dict[key] = _edge_df_to_pygEdgeData(df)
 
-    return HeteroData(heterodata_init_dict), \
-        {'index_map': index_map, 'ignored_features': ignored_features,
-         'node_features': node_features_dict}
+    return (HeteroData(heterodata_init_dict), {
+        'index_map': index_map,
+        'ignored_features': ignored_features,
+        'node_features': node_features_dict,
+        'edges_attributes': edge_attributes_dict
+    })
 
 
 def heteroData2heteroDf(hetero_data: HeteroData, context: Dict) -> HeteroDF:
+    """
+    heteroData2heteroDf Converts a :class:`~torch_geometric.data.HeteroData`
+        into a :class:`~torch_geometric.typing.HeteroDF`.
+
+    Args:
+        hetero_data (:class:`~torch_geometric.data.HeteroData`):
+            hetero_data to convert
+        context (Dict): a dict with keys and values as:
+        'index_map' : a map from node type to a bidict that
+            maps node id form the HeteroDF to node index
+            in the heteroData node features tensor.
+        'ignored_features' : a heteroDF of all features that were ignored.
+        'node_features' : a map from node type to list of
+            feature names in each node type.
+        'edge_attributes' : a map from edge type to list of feature names
+
+    Returns:
+        (:class:`~torch_geometric.typing.HeteroDF`)
+
+    Example:
+        >>> data = HeteroData()
+        ... data["A"].x = torch.tensor([[1,2],[11,12]])
+        ... data["B"].x = torch.tensor([[101,102],[111,112]])
+        ... data["B","to","A"].edge_index = torch.tensor([[0,1],[0,0]])
+        ... data["B","to","A"].edge_attr = torch.tensor([[10],[100]])
+
+        >>> context ={
+        ... "index_map":{'A': bidict({0: 0, 1: 1}),
+        ...              'B': bidict({0: 'b0', 1: 'b1'})},
+        ... "ignored_features":{
+        ...     "A":pd.DataFrame.from_records([
+        ...         {"id": 0, 'name':'A0'},
+        ...         {"id": 1, 'name':'A1'}
+        ...     ]),
+        ...     "B":pd.DataFrame.from_records([
+        ...         {"id": "b0",'name':'B0'},
+        ...         {"id": "b1",'name':'B1'}
+        ...     ])},
+        ... "node_features":{'A': ['f1', 'f2'],
+        ...                  'B': ['f1', 'f2']},
+        ... "edges_attributes": {('B','to','A'): ['attr1']}
+        ... }
+        >>> print(
+        ... pd.concat(heteroData2heteroDf(data,context),axis=0).to_markdown())
+        >>> |                      |id |f1 |f2 |name|source|target|attr1|
+        ... |:---------------------|:--|--:|--:|:---|:-----|-----:|----:|
+        ... | ('A', 0)             |0  |  1|  2|A0  |nan   |nan   | nan |
+        ... | ('A', 1)             |1  | 11| 12|A1  |nan   |nan   | nan |
+        ... | ('B', 0)             |b0 |101|102|B0  |nan   |nan   | nan |
+        ... | ('B', 1)             |b1 |111|112|B1  |nan   |nan   | nan |
+        ... | (('B', 'to', 'A'), 0)|nan|nan|nan|nan |b0    |0     |  10 |
+        ... | (('B', 'to', 'A'), 1)|nan|nan|nan|nan |b1    |0     |  00 |
+    """
     hetero_df = {}
     for node_key, node_data in hetero_data.node_items():
         nodes_df = pd.DataFrame(node_data.x.numpy(),
                                 columns=context["node_features"][node_key])
         nodes_df.insert(0, "id",
                         nodes_df.index.map(context["index_map"][node_key]))
-        hetero_df[node_key] = pd.merge(nodes_df,
-                                       context["ignored_features"][node_key],
-                                       on="id")
+        if context.get("ignored_features", None) is not None:
+            hetero_df[node_key] = pd.merge(
+                nodes_df, context["ignored_features"][node_key], on="id")
 
     for edge_key, edge_data in hetero_data.edge_items():
         if not bool(edge_data):

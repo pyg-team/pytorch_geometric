@@ -47,7 +47,7 @@ from .tree_decomposition import tree_decomposition
 from .embedding import get_embeddings
 from .train_test_split_edges import train_test_split_edges
 from .hetero_df import (heteroDf2heteroData, heteroDf_merge, heteroDf_split,
-                        nx2heteroDf)
+                        nx2heteroDf, heteroData2heteroDf)
 
 __all__ = [
     'scatter', 'segment', 'index_sort', 'degree', 'softmax', 'dropout_node',
@@ -72,7 +72,7 @@ __all__ = [
     'structured_negative_sampling', 'structured_negative_sampling_feasible',
     'tree_decomposition', 'get_embeddings', 'train_test_split_edges',
     'hetero_df', 'heteroDf2heteroData', 'heteroDf_merge', 'heteroDf_split',
-    'nx2heteroDF', 'nx2heteroDf'
+    'nx2heteroDf', 'heteroData2heteroDf'
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
