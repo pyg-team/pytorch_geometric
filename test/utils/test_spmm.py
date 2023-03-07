@@ -22,6 +22,13 @@ def test_spmm_basic(device, reduce):
         assert torch.allclose(out1, out3, atol=1e-6)
     assert torch.allclose(out2, out3, atol=1e-6)
 
+    # test `mean` reduction with isolated nodes
+    src[0] = 0.
+    out2 = spmm(src.to_sparse(), other, reduce=reduce)
+    out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
+    assert out1.size() == (5, 8)
+    assert torch.allclose(out2, out3, atol=1e-6)
+
 
 @withCUDA
 @pytest.mark.parametrize('reduce', ['mean', 'min', 'max'])
