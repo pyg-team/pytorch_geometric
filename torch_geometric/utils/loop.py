@@ -61,17 +61,20 @@ def remove_self_loops(
         tensor([[1, 2],
                 [3, 4]]))
     """
+    size: Optional[Tuple[int, int]] = None
+
     is_sparse = is_torch_sparse_tensor(edge_index)
     if is_sparse:
         assert edge_attr is None
-        size = edge_index.size()
+        size = (edge_index.size(0), edge_index.size(1))
         edge_index, edge_attr = to_edge_index(edge_index)
 
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
 
     if is_sparse:
-        edge_attr = edge_attr[mask]
+        if edge_attr is not None:
+            edge_attr = edge_attr[mask]
         adj = to_torch_coo_tensor(edge_index, edge_attr, size=size)
         return adj, None
 
