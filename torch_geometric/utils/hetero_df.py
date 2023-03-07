@@ -484,7 +484,7 @@ def heteroDf2heteroData(hdf: HeteroDF, ignore=None,
 
 
 def heteroData2heteroDf(hetero_data: HeteroData, context: Dict) -> HeteroDF:
-    """
+    r"""
     heteroData2heteroDf Converts a :class:`~torch_geometric.data.HeteroData`
         into a :class:`~torch_geometric.typing.HeteroDF`.
 
