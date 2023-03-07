@@ -7,6 +7,7 @@ from torch_geometric.typing import OptTensor
 from torch_geometric.utils import scatter
 
 from .num_nodes import maybe_num_nodes
+from .sparse import is_torch_sparse_tensor, to_edge_index, to_torch_coo_tensor
 
 
 def contains_self_loops(edge_index: Tensor) -> bool:
@@ -60,8 +61,20 @@ def remove_self_loops(
         tensor([[1, 2],
                 [3, 4]]))
     """
+    is_sparse = is_torch_sparse_tensor(edge_index)
+    if is_sparse:
+        assert edge_attr is None
+        size = edge_index.size()
+        edge_index, edge_attr = to_edge_index(edge_index)
+
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
+
+    if is_sparse:
+        edge_attr = edge_attr[mask]
+        adj = to_torch_coo_tensor(edge_index, edge_attr, size=size)
+        return adj, None
+
     if edge_attr is None:
         return edge_index, None
     else:
@@ -185,6 +198,11 @@ def add_self_loops(
     """
     N = maybe_num_nodes(edge_index, num_nodes)
 
+    is_sparse = is_torch_sparse_tensor(edge_index)
+    if is_sparse:
+        assert edge_attr is None
+        edge_index, edge_attr = to_edge_index(edge_index)
+
     loop_index = torch.arange(0, N, dtype=torch.long, device=edge_index.device)
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
 
@@ -211,6 +229,8 @@ def add_self_loops(
         edge_attr = torch.cat([edge_attr, loop_attr], dim=0)
 
     edge_index = torch.cat([edge_index, loop_index], dim=1)
+    if is_sparse:
+        return to_torch_coo_tensor(edge_index, edge_attr), None
     return edge_index, edge_attr
 
 
