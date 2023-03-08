@@ -55,9 +55,12 @@ filterwarnings = [
     "ignore:The PyTorch API of nested tensors is in prototype stage:UserWarning",
     "ignore:scatter_reduce():UserWarning",
     "ignore:Sparse CSR tensor support is in beta state:UserWarning",
+    "ignore:torch.distributed._sharded_tensor will be deprecated:DeprecationWarning",
     # Filter `captum` warnings:
     "ignore:Setting backward hooks on ReLU activations:UserWarning",
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
+    # Filter `pytorch_lightning` warnings:
+    "ignore:GPU available but not used:UserWarning",
 ]
 
 [tool.pylint.messages_control]
