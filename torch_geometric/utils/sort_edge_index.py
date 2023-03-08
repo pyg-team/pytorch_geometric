@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort
 
 from .num_nodes import maybe_num_nodes
@@ -30,10 +31,10 @@ def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):
 
 def sort_edge_index(
     edge_index: Tensor,
-    edge_attr: Union[Optional[Tensor], List[Tensor], str] = MISSING,
+    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
     sort_by_row: bool = True,
-) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
+) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:
     """Row-wise sorts :obj:`edge_index`.
 
     Args:
@@ -80,7 +81,7 @@ def sort_edge_index(
         return edge_index, None
     if isinstance(edge_attr, Tensor):
         return edge_index, edge_attr[perm]
-    elif isinstance(edge_attr, (list, tuple)):
+    if isinstance(edge_attr, (list, tuple)):
         return edge_index, [e[perm] for e in edge_attr]
 
     return edge_index
