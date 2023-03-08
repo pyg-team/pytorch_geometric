@@ -98,6 +98,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Changed the interface of `sort_edge_index` to only return single `edge_index` information in case the `edge_attr` argument is not specified ([#6875](https://github.com/pyg-team/pytorch_geometric/issues/6875))
 - Fixed a bug in `to_hetero` when using an uninitialized submodule without implementing `reset_parameters` ([#6863](https://github.com/pyg-team/pytorch_geometric/issues/6790))
 - Fixed a bug in `get_mesh_laplacian` ([#6790](https://github.com/pyg-team/pytorch_geometric/issues/6790))
 - Fixed a bug in which masks were not properly masked in `GNNExplainer` on link prediction tasks ([#6787](https://github.com/pyg-team/pytorch_geometric/pull/6787))
