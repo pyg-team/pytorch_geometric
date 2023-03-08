@@ -51,12 +51,9 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
     warnings.filterwarnings('ignore', ".*lower value for log_every_n_steps.*")
 
-    Args = namedtuple('Args', ['cfg_file', 'opts'])
-    root = osp.join(osp.dirname(osp.realpath(__file__)))
-    args = Args(osp.join(root, 'example_node.yml'), [])
-
     load_cfg(cfg, args)
-    cfg.out_dir = cfg.run_dir = tmp_path.resolve().as_posix()
+    cfg.out_dir = osp.join(tmp_path, 'out_dir')
+    cfg.run_dir = osp.join(tmp_path, 'run_dir')
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
     cfg.train.auto_resume = auto_resume
 
@@ -118,7 +115,8 @@ def test_graphgym_module(tmp_path):
     import pytorch_lightning as pl
 
     load_cfg(cfg, args)
-    cfg.out_dir = cfg.run_dir = tmp_path.resolve().as_posix()
+    cfg.out_dir = osp.join(tmp_path, 'out_dir')
+    cfg.run_dir = osp.join(tmp_path, 'run_dir')
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
 
     set_out_dir(cfg.out_dir, args.cfg_file)
@@ -173,7 +171,8 @@ def test_train(tmp_path, capfd):
     import pytorch_lightning as pl
 
     load_cfg(cfg, args)
-    cfg.out_dir = cfg.run_dir = tmp_path.resolve().as_posix()
+    cfg.out_dir = osp.join(tmp_path, 'out_dir')
+    cfg.run_dir = osp.join(tmp_path, 'run_dir')
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
 
     set_out_dir(cfg.out_dir, args.cfg_file)
