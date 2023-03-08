@@ -7,10 +7,10 @@ from torch_geometric.nn import BatchNorm, HeteroBatchNorm, HeteroInstanceNorm, H
 @pytest.mark.parametrize('conf', [True, False])
 def test_heterobatch_norm(conf):
     x_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
-
-    hetero_norm = HeteroBatchNorm(16, types=x_dict.keys(), affine=conf, track_running_stats=conf)
+    types = x_dict.keys()
+    hetero_norm = HeteroBatchNorm(16, types=types, affine=conf, track_running_stats=conf)
     homo_norm = BatchNorm(16, affine=conf, track_running_stats=conf)
-    from_homo_norm = HeteroBatchNorm.from_homogeneous(homo_norm, x_dict.keys())
+    from_homo_norm = HeteroBatchNorm.from_homogeneous(homo_norm, types)
     expected_str_repr = 'HeteroBatchNorm(16)'
     assert hetero_norm.__repr__() == expected_str_repr
     assert from_homo_norm.__repr__() == expected_str_repr
@@ -37,9 +37,10 @@ def test_batch_norm_single_element():
 def test_heterolayer_norm(affine):
     x_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
     batch_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
-    hetero_norm = HeteroLayerNorm(16, types=x_dict.keys(), affine=affine)
+    types = list(x_dict.keys())
+    hetero_norm = HeteroLayerNorm(16, types=types, affine=affine)
     homo_norm = LayerNorm(16, affine=affine)
-    from_homo_norm = HeteroLayerNorm.from_homogeneous(homo_norm, x_dict.keys())
+    from_homo_norm = HeteroLayerNorm.from_homogeneous(homo_norm, types)
     expected_str_repr = 'HeteroLayerNorm(16)'
     assert hetero_norm.__repr__() == expected_str_repr
     assert from_homo_norm.__repr__() == expected_str_repr
@@ -64,9 +65,10 @@ def test_heterolayer_norm(affine):
 def test_heteroinstance_norm(conf):
     x_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
     batch_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
-    hetero_norm = HeteroInstanceNorm(16, types=x_dict.keys(), affine=conf, track_running_stats=conf)
+    types = list(x_dict.keys())
+    hetero_norm = HeteroInstanceNorm(16, types=types, affine=conf, track_running_stats=conf)
     homo_norm = InstanceNorm(16, affine=conf, track_running_stats=conf)
-    from_homo_norm = HeteroInstanceNorm.from_homogeneous(homo_norm, x_dict.keys())
+    from_homo_norm = HeteroInstanceNorm.from_homogeneous(homo_norm, types)
     expected_str_repr = 'HeteroInstanceNorm(16)'
     assert hetero_norm.__repr__() == expected_str_repr
     assert from_homo_norm.__repr__() == expected_str_repr
