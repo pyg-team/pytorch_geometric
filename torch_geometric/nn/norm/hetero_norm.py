@@ -15,9 +15,8 @@ class _HeteroNorm(torch.nn.Module):
     or LayerNorm <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.LayerNorm.html#torch_geometric.nn.norm.LayerNorm>
 
     Args:
-        in_channels (int or Dict[str, int]): Size of each input sample.
+        in_channels (int): Size of each input sample.
             Use :obj:`-1` for lazy initialization.
-            If passing as an int, types is required as well.
         norm_type (str): Which of "BatchNorm", "InstanceNorm", "LayerNorm" to use
             (default: "BatchNorm")
         types (List[str], optional): Only needed if in_channels
@@ -39,8 +38,8 @@ class _HeteroNorm(torch.nn.Module):
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
-    def __init__(self, in_channels: Union[Dict[str, int], int], norm_type: str,
-                 types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
+    def __init__(self, in_channels: int, norm_type: str,
+                 types: Union[List[NodeType],List[EdgeType]],
                  eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
                  track_running_stats: bool = True,
@@ -52,23 +51,14 @@ class _HeteroNorm(torch.nn.Module):
         if allow_single_element and not track_running_stats:
             raise ValueError("'allow_single_element' requires "
                              "'track_running_stats' to be set to `True`")
-        if isinstance(in_channels, dict):
-            self.types = list(in_channels.keys())
-            if any([int(i) == -1 for i in in_channels.values()]):
-                self._hook = self.register_forward_pre_hook(
-                    self.initialize_parameters)
-            if types is not None and self.types != types:
-                raise ValueError("User provided `types` list does not match \
-                 the keys of the `in_channels` dictionary")
-        else:
-            if in_channels == -1:
-                self._hook = self.register_forward_pre_hook(
-                    self.initialize_parameters)
-            self.types = types
-            if self.types is None:
-                raise ValueError("Please provide a list of types if \
-                    passing `in_channels` as an int")
-            in_channels = {node_type: in_channels for node_type in self.types}
+        if in_channels == -1:
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
+        self.types = list(types)
+        if self.types is None:
+            raise ValueError("Please provide a list of types if \
+                passing `in_channels` as an int")
+        in_channels = {node_type: in_channels for node_type in self.types}
         self.eps = eps
         self.momentum = momentum
         self.track_running_stats = track_running_stats
@@ -210,8 +200,8 @@ class _HeteroNorm(torch.nn.Module):
 
 
 class HeteroBatchNorm(_HeteroNorm):
-    def __init__(self, in_channels: Union[Dict[str, int], int],
-                 types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
+    def __init__(self, in_channels: int,
+                 types: Union[List[NodeType],List[EdgeType]],
                  eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
                  track_running_stats: bool = True,
@@ -222,8 +212,8 @@ class HeteroBatchNorm(_HeteroNorm):
 
 
 class HeteroInstanceNorm(_HeteroNorm):
-    def __init__(self, in_channels: Union[Dict[str, int], int],
-                 types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
+    def __init__(self, in_channels: int,
+                 types: Union[List[NodeType],List[EdgeType]],
                  eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
                  track_running_stats: bool = False):
@@ -233,8 +223,8 @@ class HeteroInstanceNorm(_HeteroNorm):
 
 
 class HeteroLayerNorm(_HeteroNorm):
-    def __init__(self, in_channels: Union[Dict[str, int], int],
-                 types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
+    def __init__(self, in_channels: int,
+                 types: Union[List[NodeType],List[EdgeType]],
                  eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True):
         super().__init__(in_channels, "LayerNorm",
