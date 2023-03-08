@@ -76,6 +76,8 @@ class _HeteroNorm(torch.nn.Module):
         self.affine = affine
         self.in_channels = in_channels
         if self.affine:
+            print(list(self.in_channels.keys()))
+            print(self.types)
             self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types)
         if not hasattr(self, "_hook") and self.track_running_stats:
             self.running_means = ParameterDict({mean_type:torch.zeros(self.in_channels[mean_type]) for mean_type in self.types})
