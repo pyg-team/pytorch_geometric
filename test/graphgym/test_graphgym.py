@@ -62,7 +62,12 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
     cfg.train.auto_resume = auto_resume
 
+    print("%%%%%%%%%%%5")
+    print(cfg.out_dir)
+    print(args.cfg_file)
     set_out_dir(cfg.out_dir, args.cfg_file)
+    print(cfg.out_dir)
+    print("%%%%%%%%%%%5")
     dump_cfg(cfg)
     set_printing()
 
