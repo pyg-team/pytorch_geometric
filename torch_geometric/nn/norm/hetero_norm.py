@@ -67,20 +67,23 @@ class _HeteroNorm(torch.nn.Module):
         if self.affine:
             self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types)
         if not hasattr(self, "_hook") and self.track_running_stats:
-            self.running_means = ParameterDict({mean_type:torch.zeros(self.in_channels[mean_type]) for mean_type in self.types})
-            self.running_vars = ParameterDict({var_type:torch.ones(self.in_channels[var_type]) for var_type in self.types})
+            self.running_means = ParameterDict({mean_type:torch.zeros(self.in_channels) for _ in self.types})
+            self.running_vars = ParameterDict({var_type:torch.ones(self.in_channels) for _ in self.types})
         self.allow_single_element = allow_single_element
         self.reset_parameters()
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
         self.in_channels = {}
-        self.hetero_linear.initialize_parameters(None, input)
-        for x_type, x_n in input[0].items():
-            self.in_channels[x_type] = x_n.size(-1)
-            if self.track_running_stats:
-                self.running_means[type_i] = torch.zeros(self.in_channels[x_type])
-                self.running_vars[type_i] = torch.ones(self.in_channels[x_type])
+        if self.affine:
+            self.hetero_linear.initialize_parameters(None, input)
+        xs = list(input[0].values())
+        self.in_channels = xs[0].size(-1)
+        assert all([x_n.size(-1)==self.in_channels for x_n in xs]), "All inputs must have same num features"
+        if self.track_running_stats:
+            for type_i in self.types:
+                self.running_means[type_i] = torch.zeros(self.in_channels)
+                self.running_vars[type_i] = torch.ones(self.in_channels)
         self.reset_parameters()
         self._hook.remove()
         delattr(self, '_hook')
@@ -146,8 +149,8 @@ class _HeteroNorm(torch.nn.Module):
             self.hetero_linear.reset_parameters()
         if self.track_running_stats:
             for type_i in self.types:
-                self.running_means[type_i] = torch.zeros(self.in_channels[type_i])
-                self.running_vars[type_i] = torch.ones(self.in_channels[type_i])
+                self.running_means[type_i] = torch.zeros(self.in_channels)
+                self.running_vars[type_i] = torch.ones(self.in_channels)
 
     def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         out = x.new_empty(x.size(0), self.in_channels)
