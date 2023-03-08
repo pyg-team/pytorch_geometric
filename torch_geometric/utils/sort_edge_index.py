@@ -48,7 +48,7 @@ def sort_edge_index(
             :obj:`edge_index` column-wise.
 
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is not passed, else
-        (:class:`LongTensor`, :obj:`Tensor` or :obj:`List[Tensor]]`)
+        (:class:`LongTensor`, :obj:`Optional[Tensor]` or :obj:`List[Tensor]]`)
 
     Examples:
 
