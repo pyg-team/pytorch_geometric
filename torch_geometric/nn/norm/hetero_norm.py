@@ -5,6 +5,8 @@ from torch_geometric.typing import Metadata, NodeType, EdgeType
 from torch_geometric.nn.parameter_dict import ParameterDict
 from typing import Dict, Union, Optional, List
 
+accepted_norm_types = ["batchnorm", "instancenorm", "layernorm"]
+
 class _HeteroNorm(torch.nn.Module):
     r"""Applies normalization over node features for each node type using:
     BatchNorm <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.BatchNorm.html#torch_geometric.nn.norm.BatchNorm>,
@@ -36,8 +38,6 @@ class _HeteroNorm(torch.nn.Module):
             That is the running mean and variance will be used.
             Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
     """
-    accepted_norm_types = ["batchnorm", "instancenorm", "layernorm"]
-
     def __init__(self, in_channels: Union[Dict[str, int], int], norm_type: str,
                  types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
                  eps: float = 1e-5,
