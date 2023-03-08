@@ -67,8 +67,8 @@ class _HeteroNorm(torch.nn.Module):
         if self.affine:
             self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types)
         if not hasattr(self, "_hook") and self.track_running_stats:
-            self.running_means = ParameterDict({mean_type:torch.zeros(self.in_channels) for _ in self.types})
-            self.running_vars = ParameterDict({var_type:torch.ones(self.in_channels) for _ in self.types})
+            self.running_means = ParameterDict({mean_type:torch.zeros(self.in_channels) for mean_typ in self.types})
+            self.running_vars = ParameterDict({var_type:torch.ones(self.in_channels) for var_type in self.types})
         self.allow_single_element = allow_single_element
         self.reset_parameters()
 
@@ -80,10 +80,6 @@ class _HeteroNorm(torch.nn.Module):
         xs = list(input[0].values())
         self.in_channels = xs[0].size(-1)
         assert all([x_n.size(-1)==self.in_channels for x_n in xs]), "All inputs must have same num features"
-        if self.track_running_stats:
-            for type_i in self.types:
-                self.running_means[type_i] = torch.zeros(self.in_channels)
-                self.running_vars[type_i] = torch.ones(self.in_channels)
         self.reset_parameters()
         self._hook.remove()
         delattr(self, '_hook')
@@ -140,6 +136,8 @@ class _HeteroNorm(torch.nn.Module):
             allow_single_element = norm_module.allow_single_element
         else:
             allow_single_element = False
+        print(cls)
+        print(str(cls))
         return cls(in_channels, norm_type, types, eps, momentum, affine, track_running_stats, allow_single_element)
 
 
