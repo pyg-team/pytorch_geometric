@@ -16,6 +16,13 @@ except (ImportError, OSError) as e:
     WITH_PYG_LIB = False
     WITH_INDEX_SORT = False
 
+
+def grouped_matmul_avail():
+    # can only use grouped matmul if torch >= 1.14
+    major_vers, minor_vers = str(torch.__version__).split('.')[:2]
+    return int(major_vers) >= 2 or int(minor_vers) >= 14 and WITH_PYG_LIB
+
+
 try:
     import torch_scatter  # noqa
     WITH_TORCH_SCATTER = True
