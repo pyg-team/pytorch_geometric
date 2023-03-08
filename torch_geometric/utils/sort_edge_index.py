@@ -7,6 +7,8 @@ from torch_geometric.utils import index_sort
 
 from .num_nodes import maybe_num_nodes
 
+MISSING = '???'
+
 
 @torch.jit._overload
 def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):
@@ -28,7 +30,7 @@ def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):
 
 def sort_edge_index(
     edge_index: Tensor,
-    edge_attr: Union[Optional[Tensor], List[Tensor], str] = '???',
+    edge_attr: Union[Optional[Tensor], List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
     sort_by_row: bool = True,
 ) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
