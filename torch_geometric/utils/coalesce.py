@@ -3,40 +3,40 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort, scatter
 
 from .num_nodes import maybe_num_nodes
 
+MISSING = '???'
+
 
 @torch.jit._overload
-def coalesce(edge_index, edge_attr=None, num_nodes=None, reduce="add",
-             is_sorted=False, sort_by_row=True):
-    # type: (Tensor, Optional[bool], Optional[int], str, bool, bool) -> Tensor  # noqa
+def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
+    # type: (Tensor, str, Optional[int], str, bool, bool) -> Tensor  # noqa
     pass
 
 
 @torch.jit._overload
-def coalesce(edge_index, edge_attr=None, num_nodes=None, reduce="add",
-             is_sorted=False, sort_by_row=True):
-    # type: (Tensor, Tensor, Optional[int], str, bool, bool) -> Tuple[Tensor, Tensor]  # noqa
+def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
+    # type: (Tensor, Optional[Tensor], Optional[int], str, bool, bool) -> Tuple[Tensor, Optional[Tensor]]  # noqa
     pass
 
 
 @torch.jit._overload
-def coalesce(edge_index, edge_attr=None, num_nodes=None, reduce="add",
-             is_sorted=False, sort_by_row=True):
+def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
     # type: (Tensor, List[Tensor], Optional[int], str, bool, bool) -> Tuple[Tensor, List[Tensor]]  # noqa
     pass
 
 
 def coalesce(
     edge_index: Tensor,
-    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
+    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
-    reduce: str = "add",
+    reduce: str = 'add',
     is_sorted: bool = False,
     sort_by_row: bool = True,
-) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
+) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:
     """Row-wise sorts :obj:`edge_index` and removes its duplicated entries.
     Duplicate entries in :obj:`edge_attr` are merged by scattering them
     together according to the given :obj:`reduce` option.
@@ -57,8 +57,8 @@ def coalesce(
         sort_by_row (bool, optional): If set to :obj:`False`, will sort
             :obj:`edge_index` column-wise.
 
-    :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
-        (:class:`LongTensor`, :obj:`Tensor` or :obj:`List[Tensor]]`)
+    :rtype: :class:`LongTensor` if :attr:`edge_attr` is not passed, else
+        (:class:`LongTensor`, :obj:`Optional[Tensor]` or :obj:`List[Tensor]]`)
 
     Example:
 
@@ -105,23 +105,24 @@ def coalesce(
 
     # Only perform expensive merging in case there exists duplicates:
     if mask.all():
-        if isinstance(edge_attr, (Tensor, list, tuple)):
+        if edge_attr is None or isinstance(edge_attr, (Tensor, list, tuple)):
             return edge_index, edge_attr
         return edge_index
 
     edge_index = edge_index[:, mask]
 
+    dim_size: Optional[int] = None
+    if isinstance(edge_attr, (Tensor, list, tuple)):
+        dim_size = edge_index.size(1)
+        idx = torch.arange(0, nnz, device=edge_index.device)
+        idx.sub_(mask.logical_not_().cumsum(dim=0))
+
     if edge_attr is None:
-        return edge_index
-
-    dim_size = edge_index.size(1)
-    idx = torch.arange(0, nnz, device=edge_index.device)
-    idx.sub_(mask.logical_not_().cumsum(dim=0))
-
+        return edge_index, None
     if isinstance(edge_attr, Tensor):
         edge_attr = scatter(edge_attr, idx, 0, dim_size, reduce)
         return edge_index, edge_attr
-    elif isinstance(edge_attr, (list, tuple)):
+    if isinstance(edge_attr, (list, tuple)):
         edge_attr = [scatter(e, idx, 0, dim_size, reduce) for e in edge_attr]
         return edge_index, edge_attr
 
