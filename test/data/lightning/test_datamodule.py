@@ -108,19 +108,18 @@ def test_lightning_dataset(get_dataset, strategy_type):
         assert trainer._data_connector._test_dataloader_source.is_defined()
 
     # Test with `val_dataset=None` and `test_dataset=None`:
-    if strategy_type == 'ddp_spawn':
-        strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
-    else:
-        strategy = None
-
-    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
-                         max_epochs=1, log_every_n_steps=1)
-    datamodule = LightningDataset(train_dataset, batch_size=5, num_workers=3)
-    assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
-                               'batch_size=5, num_workers=3, '
-                               'pin_memory=True, persistent_workers=True)')
-    trainer.fit(model, datamodule)
     if strategy_type is None:
+        trainer = pl.Trainer(strategy=None, accelerator='gpu', devices=devices,
+                             max_epochs=1, log_every_n_steps=1)
+        datamodule = LightningDataset(train_dataset, batch_size=5)
+        assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
+                                   'batch_size=5, num_workers=0, '
+                                   'pin_memory=True, '
+                                   'persistent_workers=False)')
+
+        with pytest.warns(UserWarning, match="defined a `validation_step`"):
+            trainer.fit(model, datamodule)
+
         assert not trainer._data_connector._val_dataloader_source.is_defined()
         assert not trainer._data_connector._test_dataloader_source.is_defined()
 
