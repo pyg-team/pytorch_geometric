@@ -124,8 +124,8 @@ def test_graphgym_module(tmp_path):
     import pytorch_lightning as pl
 
     load_cfg(cfg, args)
-    cfg.out_dir = osp.join(tmp_path.resolve().as_posix(), 'out_dir')
-    cfg.run_dir = osp.join(tmp_path.resolve().as_posix(), 'run_dir')
+    cfg.out_dir = osp.join(tmp_path, 'out_dir')
+    cfg.run_dir = osp.join(tmp_path, 'run_dir')
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
 
     set_out_dir(cfg.out_dir, args.cfg_file)
@@ -180,8 +180,8 @@ def test_train(tmp_path, capfd):
     import pytorch_lightning as pl
 
     load_cfg(cfg, args)
-    cfg.out_dir = osp.join(tmp_path.resolve(), 'out_dir')
-    cfg.run_dir = osp.join(tmp_path.resolve(), 'run_dir')
+    cfg.out_dir = osp.join(tmp_path, 'out_dir')
+    cfg.run_dir = osp.join(tmp_path, 'run_dir')
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
 
     set_out_dir(cfg.out_dir, args.cfg_file)

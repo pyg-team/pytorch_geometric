@@ -73,8 +73,8 @@ def remove_self_loops(
     edge_index = edge_index[:, mask]
 
     if is_sparse:
-        if edge_attr is not None:
-            edge_attr = edge_attr[mask]
+        assert edge_attr is not None
+        edge_attr = edge_attr[mask]
         adj = to_torch_coo_tensor(edge_index, edge_attr, size=size)
         return adj, None
 
@@ -200,6 +200,7 @@ def add_self_loops(
         tensor([0.5000, 0.5000, 0.5000, 1.0000, 0.5000]))
     """
     N = maybe_num_nodes(edge_index, num_nodes)
+    size: Optional[Tuple[int, int]] = None
 
     is_sparse = is_torch_sparse_tensor(edge_index)
     if is_sparse:
