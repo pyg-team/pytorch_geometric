@@ -203,7 +203,7 @@ class HeteroBatchNorm(_HeteroNorm):
                  momentum: float = 0.1, affine: bool = True,
                  track_running_stats: bool = True,
                  allow_single_element: bool = False):
-        super().__init__(in_channels, "BatchNorm"
+        super().__init__(in_channels, "BatchNorm",
                  types, eps, momentum, affine,
                  track_running_stats, allow_single_element)
 
@@ -214,7 +214,7 @@ class HeteroInstanceNorm(_HeteroNorm):
                  eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True,
                  track_running_stats: bool = False):
-        super().__init__(in_channels, "InstanceNorm"
+        super().__init__(in_channels, "InstanceNorm",
                  types, eps, momentum, affine,
                  track_running_stats, allow_single_element=False)
 
@@ -224,7 +224,7 @@ class HeteroLayerNorm(_HeteroNorm):
                  types: Optional[Union[List[NodeType],List[EdgeType]]] = None,
                  eps: float = 1e-5,
                  momentum: float = 0.1, affine: bool = True):
-        super().__init__(in_channels, "LayerNorm"
+        super().__init__(in_channels, "LayerNorm",
                  types, eps, 0.0, affine,
                  track_running_stats=False, allow_single_element=False)
 
