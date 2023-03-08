@@ -1,9 +1,9 @@
 import torch
-from torch_sparse import coalesce
 
 from torch_geometric.data import Data
 from torch_geometric.testing import withPackage
 from torch_geometric.transforms import RadiusGraph
+from torch_geometric.utils import coalesce
 
 
 @withPackage('torch_cluster')
@@ -16,6 +16,5 @@ def test_radius_graph():
     data = RadiusGraph(r=1.5)(data)
     assert len(data) == 2
     assert data.pos.tolist() == pos.tolist()
-    edge_index, _ = coalesce(data.edge_index, None, 6, 6)
-    assert edge_index.tolist() == [[0, 0, 1, 1, 1, 2, 3, 3],
-                                   [1, 3, 0, 2, 3, 1, 0, 1]]
+    assert coalesce(data.edge_index).tolist() == [[0, 0, 1, 1, 1, 2, 3, 3],
+                                                  [1, 3, 0, 2, 3, 1, 0, 1]]
