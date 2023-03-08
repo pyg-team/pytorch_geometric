@@ -29,13 +29,16 @@ def test_sort_edge_index_jit():
 
     @torch.jit.script
     def wrapper2(
-            edge_index: Tensor,
-            edge_attr: Optional[Tensor]) -> Tuple[Tensor, Optional[Tensor]]:
+        edge_index: Tensor,
+        edge_attr: Optional[Tensor],
+    ) -> Tuple[Tensor, Optional[Tensor]]:
         return sort_edge_index(edge_index, edge_attr)
 
     @torch.jit.script
-    def wrapper3(edge_index: Tensor,
-                 edge_attr: List[Tensor]) -> Tuple[Tensor, List[Tensor]]:
+    def wrapper3(
+        edge_index: Tensor,
+        edge_attr: List[Tensor],
+    ) -> Tuple[Tensor, List[Tensor]]:
         return sort_edge_index(edge_index, edge_attr)
 
     edge_index = torch.tensor([[2, 1, 1, 0], [1, 2, 0, 1]])
