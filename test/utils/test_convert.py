@@ -434,7 +434,7 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
         cu_edge_weight = torch.from_numpy(cu_edge_weight)
 
     if edge_weight is None:
-        cu_edge_index = sort_edge_index(cu_edge_index, cu_edge_weight)
+        cu_edge_index = sort_edge_index(cu_edge_index)
     else:
         cu_edge_index, cu_edge_weight = sort_edge_index(
             cu_edge_index, cu_edge_weight)
