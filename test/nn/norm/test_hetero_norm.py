@@ -10,7 +10,7 @@ def test_heterobatch_norm(conf):
 
     hetero_norm = HeteroBatchNorm(16, types=x_dict.keys(), affine=conf, track_running_stats=conf)
     homo_norm = BatchNorm(16, affine=conf, track_running_stats=conf)
-    from_homo_norm = HeteroBatchNorm.from_homogeneous(homo_norm)
+    from_homo_norm = HeteroBatchNorm.from_homogeneous(homo_norm, x_dict.keys())
     expected_str_repr = 'HeteroBatchNorm(16)'
     assert hetero_norm.__repr__() == expected_str_repr
     assert from_homo_norm.__repr__() == expected_str_repr
@@ -39,7 +39,7 @@ def test_heterolayer_norm(affine):
     batch_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
     hetero_norm = HeteroLayerNorm(16, types=x_dict.keys(), affine=affine)
     homo_norm = LayerNorm(16, affine=affine)
-    from_homo_norm = HeteroLayerNorm.from_homogeneous(homo_norm)
+    from_homo_norm = HeteroLayerNorm.from_homogeneous(homo_norm, x_dict.keys())
     expected_str_repr = 'HeteroLayerNorm(16)'
     assert hetero_norm.__repr__() == expected_str_repr
     assert from_homo_norm.__repr__() == expected_str_repr
@@ -66,7 +66,7 @@ def test_heteroinstance_norm(conf):
     batch_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
     hetero_norm = HeteroInstanceNorm(16, types=x_dict.keys(), affine=conf, track_running_stats=conf)
     homo_norm = InstanceNorm(16, affine=conf, track_running_stats=conf)
-    from_homo_norm = HeteroInstanceNorm.from_homogeneous(homo_norm)
+    from_homo_norm = HeteroInstanceNorm.from_homogeneous(homo_norm, x_dict.keys())
     expected_str_repr = 'HeteroInstanceNorm(16)'
     assert hetero_norm.__repr__() == expected_str_repr
     assert from_homo_norm.__repr__() == expected_str_repr
