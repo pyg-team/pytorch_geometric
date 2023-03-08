@@ -74,24 +74,22 @@ class ClusterGCNConv(MessagePassing):
         if isinstance(edge_index, Tensor):
             is_sparse_tensor = is_torch_sparse_tensor(edge_index)
             if is_sparse_tensor:
-                edge_index, _ = to_edge_index(edge_index)
+                edge_index, _ = to_edge_index(edge_index.t())
+
             num_nodes = x.size(self.node_dim)
             if self.add_self_loops:
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
 
-            if is_sparse_tensor:
-                col, row = edge_index[0], edge_index[1]
-            else:
-                row, col = edge_index[0], edge_index[1]
+            row, col = edge_index[0], edge_index[1]
             deg_inv = 1. / degree(col, num_nodes=num_nodes).clamp_(1.)
 
             edge_weight = deg_inv[col]
             edge_weight[row == col] += self.diag_lambda * deg_inv
 
             if is_sparse_tensor:
-                edge_index = to_torch_coo_tensor(edge_index, edge_weight,
-                                                 size=num_nodes)
+                edge_index = to_torch_coo_tensor(edge_index.flip(0),
+                                                 edge_weight, size=num_nodes)
 
         elif isinstance(edge_index, SparseTensor):
             if self.add_self_loops:
