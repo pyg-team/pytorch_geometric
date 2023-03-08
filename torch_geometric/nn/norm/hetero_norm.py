@@ -1,7 +1,7 @@
 import torch
 from torch import Tensor
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
-from torch_geometric.nn import HeteroDictLinear
+from torch_geometric.nn.dense import HeteroDictLinear
 from torch_geometric.typing import Metadata, NodeType, EdgeType
 from torch_geometric.nn.parameter_dict import ParameterDict
 from typing import Dict, Union, Optional, List
