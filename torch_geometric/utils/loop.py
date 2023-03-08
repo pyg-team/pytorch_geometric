@@ -64,7 +64,7 @@ def remove_self_loops(
     is_sparse = is_torch_sparse_tensor(edge_index)
     if is_sparse:
         assert edge_attr is None
-        size = edge_index.size()
+        size = (edge_index.size(0), edge_index.size(1))
         edge_index, edge_attr = to_edge_index(edge_index)
 
     mask = edge_index[0] != edge_index[1]
