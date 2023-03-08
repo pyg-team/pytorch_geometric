@@ -63,7 +63,7 @@ Feature storage is often the primary storage bottleneck in graph learning applic
 
 The implementation details of a :class:`~torch_geometric.data.FeatureStore` are abstracted from :pyg:`PyG` through a CRUD-like interface.
 In particular, implementors of the :class:`~torch_geometric.data.FeatureStore` abstraction are expected to primarily override :meth:`~torch_geometric.data.FeatureStore.put_tensor`, :meth:`~torch_geometric.data.FeatureStore.get_tensor`, and :meth:`~torch_geometric.data.FeatureStore.remove_tensor` functionalities.
-Doing so both enables :pyg:`PyG` to leverage the features stored in the inmplementation and allows a user to employ a pythonic interface to inspect and modify the :class:`~torch_geometric.data.FeatureStore` elements:
+Doing so both enables :pyg:`PyG` to leverage the features stored in the implementation and allows a user to employ a pythonic interface to inspect and modify the :class:`~torch_geometric.data.FeatureStore` elements:
 
 .. code-block:: python
 
@@ -166,4 +166,4 @@ All of the outlined classes speak through common interfaces, making them extensi
 To get started with scalability, we recommend inspecting the interfaces listed above and defining your own :class:`~torch_geometric.data.FeatureStore`, :class:`~torch_geometric.data.GraphStore`, and :class:`~torch_geometric.sampler.BaseSampler` implementations behind them.
 Once a :class:`~torch_geometric.data.FeatureStore`, a :class:`~torch_geometric.data.GraphStore`, and a :class:`~torch_geometric.sampler.BaseSampler` are correctly implemented, simply pass them as parameters to a :class:`~torch_geometric.loader.NodeLoader` or a :class:`~torch_geometric.loader.LinkLoader`, and the rest of :pyg:`PyG` will work seamlessly and similar to any pure in-memory application.
 
-Since this feature is still undergoing heavy development, please feel free to reach out to the :pyg:`PyG` core team either on `GitHub <https://github.com/pyg-team/pytorch_geometric/discussions>`_ or `Slack <https://data.pyg.org/slack.html>`_ if you have any questions, comments or concerns.
+Since this feature is still undergoing heavy development, please feel free to reach out to the :pyg:`PyG` core team either on :github:`null` `GitHub <https://github.com/pyg-team/pytorch_geometric/discussions>`_ or :slack:`null` `Slack <https://data.pyg.org/slack.html>`_ if you have any questions, comments or concerns.

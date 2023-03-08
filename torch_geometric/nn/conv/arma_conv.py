@@ -95,6 +95,7 @@ class ARMAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.weight)
         if not isinstance(self.init_weight, torch.nn.UninitializedParameter):
             glorot(self.init_weight)
@@ -103,7 +104,6 @@ class ARMAConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
 
         if isinstance(edge_index, Tensor):
             edge_index, edge_weight = gcn_norm(  # yapf: disable

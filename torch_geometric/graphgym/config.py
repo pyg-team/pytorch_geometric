@@ -515,7 +515,7 @@ def get_fname(fname):
     Args:
         fname (str): Filename for the yaml format configuration file
     """
-    fname = fname.split('/')[-1]
+    fname = os.path.basename(fname)
     if fname.endswith('.yaml'):
         fname = fname[:-5]
     elif fname.endswith('.yml'):

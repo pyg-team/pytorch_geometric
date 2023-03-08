@@ -2,7 +2,7 @@ import os
 import os.path as osp
 from math import pi as PI
 from math import sqrt
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -17,7 +17,7 @@ from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import OptTensor, SparseTensor
 from torch_geometric.utils import scatter
 
-qm9_target_dict = {
+qm9_target_dict: Dict[int, str] = {
     0: 'mu',
     1: 'alpha',
     2: 'homo',
@@ -45,7 +45,7 @@ class Envelope(torch.nn.Module):
         x_pow_p0 = x.pow(p - 1)
         x_pow_p1 = x_pow_p0 * x
         x_pow_p2 = x_pow_p1 * x
-        return (1. / x + a * x_pow_p0 + b * x_pow_p1 +
+        return (1.0 / x + a * x_pow_p0 + b * x_pow_p1 +
                 c * x_pow_p2) * (x < 1.0).to(x.dtype)
 
 
@@ -66,13 +66,18 @@ class BesselBasisLayer(torch.nn.Module):
         self.freq.requires_grad_()
 
     def forward(self, dist: Tensor) -> Tensor:
-        dist = (dist.unsqueeze(-1) / self.cutoff)
+        dist = dist.unsqueeze(-1) / self.cutoff
         return self.envelope(dist) * (self.freq * dist).sin()
 
 
 class SphericalBasisLayer(torch.nn.Module):
-    def __init__(self, num_spherical: int, num_radial: int,
-                 cutoff: float = 5.0, envelope_exponent: int = 5):
+    def __init__(
+        self,
+        num_spherical: int,
+        num_radial: int,
+        cutoff: float = 5.0,
+        envelope_exponent: int = 5,
+    ):
         super().__init__()
         import sympy as sym
 
@@ -159,9 +164,16 @@ class ResidualLayer(torch.nn.Module):
 
 
 class InteractionBlock(torch.nn.Module):
-    def __init__(self, hidden_channels: int, num_bilinear: int,
-                 num_spherical: int, num_radial: int, num_before_skip: int,
-                 num_after_skip: int, act: Callable):
+    def __init__(
+        self,
+        hidden_channels: int,
+        num_bilinear: int,
+        num_spherical: int,
+        num_radial: int,
+        num_before_skip: int,
+        num_after_skip: int,
+        act: Callable,
+    ):
         super().__init__()
         self.act = act
 
@@ -223,9 +235,17 @@ class InteractionBlock(torch.nn.Module):
 
 
 class InteractionPPBlock(torch.nn.Module):
-    def __init__(self, hidden_channels: int, int_emb_size: int,
-                 basis_emb_size: int, num_spherical: int, num_radial: int,
-                 num_before_skip: int, num_after_skip: int, act: Callable):
+    def __init__(
+        self,
+        hidden_channels: int,
+        int_emb_size: int,
+        basis_emb_size: int,
+        num_spherical: int,
+        num_radial: int,
+        num_before_skip: int,
+        num_after_skip: int,
+        act: Callable,
+    ):
         super().__init__()
         self.act = act
 
@@ -311,8 +331,14 @@ class InteractionPPBlock(torch.nn.Module):
 
 
 class OutputBlock(torch.nn.Module):
-    def __init__(self, num_radial: int, hidden_channels: int,
-                 out_channels: int, num_layers: int, act: Callable):
+    def __init__(
+        self,
+        num_radial: int,
+        hidden_channels: int,
+        out_channels: int,
+        num_layers: int,
+        act: Callable,
+    ):
         super().__init__()
         self.act = act
 
@@ -341,9 +367,15 @@ class OutputBlock(torch.nn.Module):
 
 
 class OutputPPBlock(torch.nn.Module):
-    def __init__(self, num_radial: int, hidden_channels: int,
-                 out_emb_channels: int, out_channels: int, num_layers: int,
-                 act: Callable):
+    def __init__(
+        self,
+        num_radial: int,
+        hidden_channels: int,
+        out_emb_channels: int,
+        out_channels: int,
+        num_layers: int,
+        act: Callable,
+    ):
         super().__init__()
         self.act = act
 
@@ -450,7 +482,7 @@ class DimeNet(torch.nn.Module):
         num_blocks: int,
         num_bilinear: int,
         num_spherical: int,
-        num_radial,
+        num_radial: int,
         cutoff: float = 5.0,
         max_num_neighbors: int = 32,
         envelope_exponent: int = 5,
@@ -462,7 +494,7 @@ class DimeNet(torch.nn.Module):
         super().__init__()
 
         if num_spherical < 2:
-            raise ValueError("num_spherical should be greater than 1")
+            raise ValueError("'num_spherical' should be greater than 1")
 
         act = activation_resolver(act)
 
@@ -482,12 +514,19 @@ class DimeNet(torch.nn.Module):
         ])
 
         self.interaction_blocks = torch.nn.ModuleList([
-            InteractionBlock(hidden_channels, num_bilinear, num_spherical,
-                             num_radial, num_before_skip, num_after_skip, act)
-            for _ in range(num_blocks)
+            InteractionBlock(
+                hidden_channels,
+                num_bilinear,
+                num_spherical,
+                num_radial,
+                num_before_skip,
+                num_after_skip,
+                act,
+            ) for _ in range(num_blocks)
         ])
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.rbf.reset_parameters()
         self.emb.reset_parameters()
         for out in self.output_blocks:
@@ -501,7 +540,10 @@ class DimeNet(torch.nn.Module):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:
+    ) -> Tuple['DimeNet', Dataset, Dataset, Dataset]:  # pragma: no cover
+        r"""Returns a pre-trained :class:`DimeNet` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`."""
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 
@@ -601,7 +643,16 @@ class DimeNet(torch.nn.Module):
         pos: Tensor,
         batch: OptTensor = None,
     ) -> Tensor:
-        """"""
+        r"""
+        Args:
+            z (torch.Tensor): Atomic number of each atom with shape
+                :obj:`[num_atoms]`.
+            pos (torch.Tensor): Coordinates of each atom with shape
+                :obj:`[num_atoms, 3]`.
+            batch (torch.Tensor, optional): Batch indices assigning each atom
+                to a separate molecule with shape :obj:`[num_atoms]`.
+                (default: :obj:`None`)
+        """
         edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
                                   max_num_neighbors=self.max_num_neighbors)
 
@@ -716,15 +767,27 @@ class DimeNetPlusPlus(DimeNet):
         # variable `num_bilinear` does not have any purpose as it is used
         # solely in the `OutputBlock` of DimeNet:
         self.output_blocks = torch.nn.ModuleList([
-            OutputPPBlock(num_radial, hidden_channels, out_emb_channels,
-                          out_channels, num_output_layers, act)
-            for _ in range(num_blocks + 1)
+            OutputPPBlock(
+                num_radial,
+                hidden_channels,
+                out_emb_channels,
+                out_channels,
+                num_output_layers,
+                act,
+            ) for _ in range(num_blocks + 1)
         ])
 
         self.interaction_blocks = torch.nn.ModuleList([
-            InteractionPPBlock(hidden_channels, int_emb_size, basis_emb_size,
-                               num_spherical, num_radial, num_before_skip,
-                               num_after_skip, act) for _ in range(num_blocks)
+            InteractionPPBlock(
+                hidden_channels,
+                int_emb_size,
+                basis_emb_size,
+                num_spherical,
+                num_radial,
+                num_before_skip,
+                num_after_skip,
+                act,
+            ) for _ in range(num_blocks)
         ])
 
         self.reset_parameters()
@@ -735,7 +798,11 @@ class DimeNetPlusPlus(DimeNet):
         root: str,
         dataset: Dataset,
         target: int,
-    ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset, Dataset]:
+    ) -> Tuple['DimeNetPlusPlus', Dataset, Dataset,
+               Dataset]:  # pragma: no cover
+        r"""Returns a pre-trained :class:`DimeNetPlusPlus` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`."""
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
         import tensorflow as tf
 

@@ -221,13 +221,13 @@ class BaseStorage(MutableMapping):
         return self.apply(lambda x: x.cpu(), *args)
 
     def cuda(self, device: Optional[Union[int, str]] = None, *args: List[str],
-             non_blocking: bool = False):
+             non_blocking: bool = False):  # pragma: no cover
         r"""Copies attributes to CUDA memory, either for all attributes or only
         the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
                           *args)
 
-    def pin_memory(self, *args: List[str]):
+    def pin_memory(self, *args: List[str]):  # pragma: no cover
         r"""Copies attributes to pinned memory, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.pin_memory(), *args)
@@ -340,6 +340,11 @@ class NodeStorage(BaseStorage):
             return False
 
         value = self[key]
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_nodes:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False
@@ -400,6 +405,8 @@ class EdgeStorage(BaseStorage):
     @property
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
+        if 'num_edges' in self:
+            return self['num_edges']
         for key, value in self.items():
             if isinstance(value, (Tensor, np.ndarray)) and key in E_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
@@ -450,6 +457,11 @@ class EdgeStorage(BaseStorage):
             return False
 
         value = self[key]
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_edges:
+            self._cached_attr[AttrType.EDGE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False
@@ -562,6 +574,11 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         value = self[key]
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_nodes:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False
@@ -603,6 +620,11 @@ class GlobalStorage(NodeStorage, EdgeStorage):
             return False
 
         value = self[key]
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_edges:
+            self._cached_attr[AttrType.EDGE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
             self._cached_attr[AttrType.OTHER].add(key)
             return False

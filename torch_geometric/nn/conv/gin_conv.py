@@ -67,12 +67,13 @@ class GINConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -171,7 +172,7 @@ class GINEConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 

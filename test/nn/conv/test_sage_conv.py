@@ -13,17 +13,16 @@ def test_sage_conv(project, aggr):
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
-    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj.to_torch_sparse_coo_tensor()
+    adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+    adj2 = adj1.to_torch_sparse_coo_tensor()
 
     conv = SAGEConv(8, 32, project=project, aggr=aggr)
     assert str(conv) == f'SAGEConv(8, 32, aggr={aggr})'
     out = conv(x1, edge_index)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out, atol=1e-6)
-    assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
-    if aggr == 'sum':
-        assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
+    assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
+    assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, Size) -> Tensor'
@@ -33,10 +32,10 @@ def test_sage_conv(project, aggr):
 
         t = '(Tensor, SparseTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
+        assert torch.allclose(jit(x1, adj1.t()), out, atol=1e-6)
 
-    adj = adj.sparse_resize((4, 2))
-    adj2 = adj.to_torch_sparse_coo_tensor()
+    adj1 = adj1.sparse_resize((4, 2))
+    adj2 = adj1.to_torch_sparse_coo_tensor()
     conv = SAGEConv((8, 16), 32, project=project, aggr=aggr)
     assert str(conv) == f'SAGEConv((8, 16), 32, aggr={aggr})'
     out1 = conv((x1, x2), edge_index)
@@ -44,11 +43,10 @@ def test_sage_conv(project, aggr):
     assert out1.size() == (2, 32)
     assert out2.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), edge_index, (4, 2)), out1, atol=1e-6)
-    assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e-6)
-    assert torch.allclose(conv((x1, None), adj.t()), out2, atol=1e-6)
-    if aggr == 'sum':
-        assert torch.allclose(conv((x1, x2), adj2.t()), out1, atol=1e-6)
-        assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
+    assert torch.allclose(conv((x1, x2), adj1.t()), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, None), adj1.t()), out2, atol=1e-6)
+    assert torch.allclose(conv((x1, x2), adj2.t()), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
 
     if is_full_test():
         t = '(OptPairTensor, Tensor, Size) -> Tensor'
@@ -61,8 +59,8 @@ def test_sage_conv(project, aggr):
 
         t = '(OptPairTensor, SparseTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
-        assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
+        assert torch.allclose(jit((x1, x2), adj1.t()), out1, atol=1e-6)
+        assert torch.allclose(jit((x1, None), adj1.t()), out2, atol=1e-6)
 
 
 def test_lstm_aggr_sage_conv():

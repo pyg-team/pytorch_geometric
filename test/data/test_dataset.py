@@ -2,7 +2,7 @@ import pytest
 import torch
 from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
+from torch_geometric.data import Data, HeteroData, InMemoryDataset
 
 
 class MyTestDataset(InMemoryDataset):
@@ -52,6 +52,24 @@ def test_in_memory_dataset():
         [1, 0, 2, 1, 11, 10, 12, 11],
     ]
     assert torch.equal(dataset[1:].x, x2)
+
+
+def test_in_memory_num_classes():
+    dataset = MyTestDataset([Data(), Data()])
+    assert dataset.num_classes == 0
+
+    dataset = MyTestDataset([Data(y=0), Data(y=1)])
+    assert dataset.num_classes == 2
+
+    dataset = MyTestDataset([Data(y=1.5), Data(y=2.5), Data(y=3.5)])
+    assert dataset.num_classes == 3
+
+    dataset = MyTestDataset([
+        Data(y=torch.tensor([[0, 1, 0, 1]])),
+        Data(y=torch.tensor([[1, 0, 0, 0]])),
+        Data(y=torch.tensor([[0, 0, 1, 0]])),
+    ])
+    assert dataset.num_classes == 4
 
 
 def test_in_memory_dataset_copy():
@@ -165,7 +183,7 @@ def test_hetero_in_memory_dataset():
 
 
 def test_override_behavior():
-    class DS1(Dataset):
+    class DS1(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -183,7 +201,7 @@ def test_override_behavior():
         def process(self):
             pass
 
-    class DS2(Dataset):
+    class DS2(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -198,7 +216,7 @@ def test_override_behavior():
         def process(self):
             pass
 
-    class DS3(Dataset):
+    class DS3(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False

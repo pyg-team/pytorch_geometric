@@ -545,6 +545,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns the induced subgraph containing the node types and
         corresponding nodes in :obj:`subset_dict`.
 
+        If a node type is not a key in :obj:`subset_dict` then all nodes of
+        that type remain in the graph.
+
         .. code-block:: python
 
             data = HeteroData()
@@ -573,12 +576,14 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             >>> HeteroData(
                 paper={ x=[4, 16] },
                 author={ x=[2, 32] },
+                conference={ x=[5, 8] },
                 (paper, cites, paper)={ edge_index=[2, 24] },
-                (author, to, paper)={ edge_index=[2, 5] }
+                (author, to, paper)={ edge_index=[2, 5] },
+                (paper, to, conference)={ edge_index=[2, 10] }
             )
 
         Args:
-            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
+            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictionary
                 holding the nodes to keep for each node type.
         """
         data = copy.copy(self)
@@ -640,7 +645,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         Args:
             subset_dict (Dict[Tuple[str, str, str], LongTensor or BoolTensor]):
-                A dictonary holding the edges to keep for each edge type.
+                A dictionary holding the edges to keep for each edge type.
         """
         data = copy.copy(self)
 

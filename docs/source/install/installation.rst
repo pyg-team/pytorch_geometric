@@ -57,7 +57,7 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 
    .. code-block:: none
 
-      pip install pyg-lib torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+      pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
       pip install torch-geometric
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
@@ -69,14 +69,14 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 
    .. code-block:: none
 
-      pip install pyg-lib torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-1.13.0+cu116.html
+      pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-1.13.0+cu116.html
       pip install torch-geometric
 
    For :pytorch:`PyTorch` 1.12.* and CUDA 11.3, type:
 
    .. code-block:: none
 
-     pip install pyg-lib torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-1.12.0+cu113.html
+     pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-1.12.0+cu113.html
      pip install torch-geometric
 
 #. Install additional packages *(optional)*:
@@ -85,7 +85,7 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
 
    .. code-block:: none
 
-      pip install torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+      pip install torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
 
    following the same procedure as mentioned above.
 
@@ -153,16 +153,13 @@ In case a specific version is not supported by `our wheels <https://data.pyg.org
    .. code-block:: none
 
       pip install git+https://github.com/pyg-team/pyg-lib.git
-      pip install torch-scatter
-      pip install torch-sparse
-      pip install torch-geometric
+      pip install torch_scatter torch_sparse torch_geometric
 
 #. Install additional packages *(optional)*:
 
    .. code-block:: none
 
-      pip install torch-cluster
-      pip install torch-spline-conv
+      pip install torch_cluster torch_spline_conv
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
 :obj:`pip` may even signal a successful installation, but execution simply crashes with :obj:`Segmentation fault (core dumped)`.

@@ -2,6 +2,10 @@ Introduction by Example
 =======================
 
 We shortly introduce the fundamental concepts of :pyg:`PyG` through self-contained examples.
+
+For an introduction to Graph Machine Learning, we refer the interested reader to the :stanford:`null` `Stanford CS22W: Machine Learning with Graphs <https://www.youtube.com/watch?v=JAB_plj2rbA>`__ lectures.
+For an interactive introduction to :pyg:`PyG`, we recommend our carefully curated :colab:`null` `Google Colab <colabs.html>`__ notebooks.
+
 At its core, :pyg:`PyG` provides the following main features:
 
 .. contents::
@@ -291,7 +295,7 @@ You can use it to, *e.g.*, average node features in the node dimension for each 
         >>> torch.Size([32, 21])
 
 You can learn more about the internal batching procedure of :pyg:`PyG`, *e.g.*, how to modify its behavior, `here <../advanced/batching.html>`__.
-For documentation of scatter operations, we refer the interested reader to the :obj:`torch-scatter` `documentation <https://pytorch-scatter.readthedocs.io>`_.
+For documentation of scatter operations, we refer the interested reader to the :obj:`torch_scatter` `documentation <https://pytorch-scatter.readthedocs.io>`_.
 
 Data Transforms
 ---------------

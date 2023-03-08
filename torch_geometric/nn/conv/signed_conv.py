@@ -87,6 +87,7 @@ class SignedConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_pos_l.reset_parameters()
         self.lin_pos_r.reset_parameters()
         self.lin_neg_l.reset_parameters()
@@ -94,7 +95,6 @@ class SignedConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], pos_edge_index: Adj,
                 neg_edge_index: Adj):
-        """"""
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)

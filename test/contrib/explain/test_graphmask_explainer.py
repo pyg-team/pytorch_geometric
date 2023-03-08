@@ -54,7 +54,7 @@ def test_graph_mask_explainer(task_level):
 
     explainer = Explainer(
         model=model,
-        algorithm=GraphMaskExplainer(2, epochs=5),
+        algorithm=GraphMaskExplainer(2, epochs=5, log=False),
         explanation_type='model',
         node_mask_type='attributes',
         edge_mask_type='object',

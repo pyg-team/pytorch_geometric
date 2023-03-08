@@ -103,6 +103,7 @@ class GCN2Conv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.weight1)
         glorot(self.weight2)
         self._cached_edge_index = None
@@ -110,7 +111,6 @@ class GCN2Conv(MessagePassing):
 
     def forward(self, x: Tensor, x_0: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
 
         if self.normalize:
             if isinstance(edge_index, Tensor):

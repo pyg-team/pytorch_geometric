@@ -1,6 +1,7 @@
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
@@ -90,10 +91,10 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
             negative edges to the number of positive edges.
             Deprecated in favor of the :obj:`neg_sampling` argument.
             (default: :obj:`None`).
-        transform (Callable, optional): A function/transform that takes in
+        transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
-        transform_sampler_output (Callable, optional): A function/transform
+        transform_sampler_output (callable, optional): A function/transform
             that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
             returns a transformed version. (default: :obj:`None`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
@@ -129,10 +130,8 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         if neg_sampling_ratio is not None and neg_sampling_ratio != 0.0:
             # TODO: Deprecation warning.
@@ -176,7 +175,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         iterator = range(edge_label_index.size(1))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
-    def collate_fn(self, index: List[int]) -> Any:
+    def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
         input_data: EdgeSamplerInput = self.input_data[index]
 

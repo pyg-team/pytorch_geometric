@@ -68,6 +68,7 @@ class MFConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         for lin in self.lins_l:
             lin.reset_parameters()
         for lin in self.lins_r:
@@ -75,7 +76,7 @@ class MFConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
         x_r = x[1]

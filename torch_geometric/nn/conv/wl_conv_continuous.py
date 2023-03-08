@@ -39,7 +39,7 @@ class WLConvContinuous(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Tensor,
                 edge_weight: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 

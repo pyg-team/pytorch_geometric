@@ -18,13 +18,17 @@ class MaskLevelType(Enum):
     edge = 'edge'
     node_and_edge = 'node_and_edge'
 
+    @property
+    def with_edge(self) -> bool:
+        return self in [MaskLevelType.edge, MaskLevelType.node_and_edge]
+
 
 class CaptumModel(torch.nn.Module):
     def __init__(
         self,
         model: torch.nn.Module,
         mask_type: Union[str, MaskLevelType],
-        output_idx: Optional[int] = None,
+        output_idx: Optional[Union[int, Tensor]] = None,
     ):
         super().__init__()
 
@@ -80,7 +84,7 @@ class CaptumHeteroModel(CaptumModel):
         self,
         model: torch.nn.Module,
         mask_type: Union[str, MaskLevelType],
-        output_idx: int,
+        output_idx: Optional[Union[int, Tensor]],
         metadata: Metadata,
     ):
         super().__init__(model, mask_type, output_idx)
@@ -113,7 +117,7 @@ class CaptumHeteroModel(CaptumModel):
                                      self.num_edge_types]
             edge_index_dict = args[self.num_node_types + self.num_edge_types]
 
-        if 'edge' in self.mask_type.name:
+        if self.mask_type.with_edge:
             edge_mask_tensors = [mask.squeeze(0) for mask in edge_mask_tensors]
             edge_mask_dict = dict(zip(self.edge_types, edge_mask_tensors))
         else:
@@ -137,7 +141,7 @@ class CaptumHeteroModel(CaptumModel):
         (x_dict, edge_index_dict,
          edge_mask_dict) = self._captum_data_to_hetero_data(*args)
 
-        if 'edge' in self.mask_type.name:
+        if self.mask_type.with_edge:
             set_hetero_masks(self.model, edge_mask_dict, edge_index_dict)
 
         if len_remaining_args > 0:
@@ -147,7 +151,7 @@ class CaptumHeteroModel(CaptumModel):
         else:
             x = self.model(x_dict, edge_index_dict)
 
-        if 'edge' in self.mask_type.name:
+        if self.mask_type.with_edge:
             clear_masks(self.model)
 
         if self.output_idx is not None:
@@ -164,33 +168,30 @@ def _to_edge_mask(edge_index: Tensor) -> Tensor:
 
 
 def to_captum_input(
-    x: Union[Tensor, Dict[EdgeType, Tensor]],
+    x: Union[Tensor, Dict[NodeType, Tensor]],
     edge_index: Union[Tensor, Dict[EdgeType, Tensor]],
     mask_type: Union[str, MaskLevelType],
     *args,
-) -> Tuple[Tuple[Tensor], Tuple[Tensor]]:
+) -> Tuple[Tuple[Tensor, ...], Tuple[Tensor, ...]]:
     r"""Given :obj:`x`, :obj:`edge_index` and :obj:`mask_type`, converts it
-    to a format to use in `Captum.ai <https://captum.ai/>`_ attribution
+    to a format to use in `Captum <https://captum.ai/>`_ attribution
     methods. Returns :obj:`inputs` and :obj:`additional_forward_args`
-    required for `Captum`'s :obj:`attribute` functions.
-    See :obj:`torch_geometric.nn.to_captum_model` for example usage.
+    required for :captum:`Captum's` :obj:`attribute` functions.
+    See :meth:`~torch_geometric.nn.models.to_captum_model` for example usage.
 
     Args:
 
-        x (Tensor or Dict[NodeType, Tensor]): The node features. For
-            heterogeneous graphs this is a dictionary holding node featues
+        x (torch.Tensor or Dict[NodeType, torch.Tensor]): The node features.
+            For heterogeneous graphs this is a dictionary holding node featues
             for each node type.
-        edge_index(Tensor or Dict[EdgeType, Tensor]): The edge indicies. For
-            heterogeneous graphs this is a dictionary holding edge index
-            for each edge type.
+        edge_index(torch.Tensor or Dict[EdgeType, torch.Tensor]): The edge
+            indices. For heterogeneous graphs this is a dictionary holding the
+            :obj:`edge index` for each edge type.
         mask_type (str): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
-            and :obj:`"node_and_edge"`:
+            and :obj:`"node_and_edge"`.
         *args: Additional forward arguments of the model being explained
-            which will be added to :obj:`additonal_forward_args`.
-            For :class:`Data` this is arguments other than :obj:`x` and
-            :obj:`edge_index`. For :class:`HeteroData` this is arguments other
-            than :obj:`x_dict` and :obj:`edge_index_dict`.
+            which will be added to :obj:`additional_forward_args`.
     """
     mask_type = MaskLevelType(mask_type)
 
@@ -232,35 +233,35 @@ def to_captum_input(
 
 
 def captum_output_to_dicts(
-    captum_attrs: Tuple[Tensor],
+    captum_attrs: Tuple[Tensor, ...],
     mask_type: Union[str, MaskLevelType],
     metadata: Metadata,
 ) -> Tuple[Optional[Dict[NodeType, Tensor]], Optional[Dict[EdgeType, Tensor]]]:
-    r"""Convert the output of `Captum.ai <https://captum.ai/>`_ attribution
-    methods which is a tuple of attributions to two dictonaries with node and
+    r"""Convert the output of `Captum <https://captum.ai/>`_ attribution
+    methods which is a tuple of attributions to two dictionaries with node and
     edge attribution tensors. This function is used while explaining
-    :obj:`HeteroData` objects. See :obj:`torch_geometric.nn.to_captum_model`
-    for example usage.
+    :class:`~torch_geometric.data.HeteroData` objects.
+    See :meth:`~torch_geometric.nn.models.to_captum_model` for example usage.
 
     Args:
-        captum_attrs (tuple[tensor]): The output of attribution methods.
+        captum_attrs (tuple[torch.Tensor]): The output of attribution methods.
         mask_type (str): Denotes the type of mask to be created with
             a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
             and :obj:`"node_and_edge"`:
 
             1. :obj:`"edge"`: :obj:`captum_attrs` contains only edge
-               attributions. The returned tuple has no node attributions and a
-               edge attribution dictionary with key `EdgeType` and value
-               edge mask tensor of shape :obj:`[num_edges]`.
+               attributions. The returned tuple has no node attributions, and
+               an edge attribution dictionary edge types as keys and edge mask
+               tensors of shape :obj:`[num_edges]` as values.
 
             2. :obj:`"node"`: :obj:`captum_attrs` contains only node
-               attributions. The returned tuple has node attribution dictonary
-               with key `NodeType` and value node mask tensor of shape
-               :obj:`[num_nodes, num_features]` and no edge attribution.
+               attributions. The returned tuple has a node attribution
+               dictionary with node types as keys and node mask tensors of
+               shape :obj:`[num_nodes, num_features]` as values, and no edge
+               attributions.
 
-            3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains only node
-               attributions. The returned tuple contains node attribution
-               dictionary followed by edge attribution dictionary.
+            3. :obj:`"node_and_edge"`: :obj:`captum_attrs` contains node and
+                edge attributions.
 
         metadata (Metadata): The metadata of the heterogeneous graph.
     """
@@ -283,7 +284,7 @@ def captum_output_to_dicts(
 
 
 def convert_captum_output(
-    captum_attrs: Tuple[Tensor],
+    captum_attrs: Tuple[Tensor, ...],
     mask_type: Union[str, MaskLevelType],
     metadata: Optional[Metadata] = None,
 ):

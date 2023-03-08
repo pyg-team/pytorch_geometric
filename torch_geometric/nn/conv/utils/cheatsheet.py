@@ -66,4 +66,5 @@ def processes_hypergraphs(cls: str) -> bool:
 def processes_point_clouds(cls: str) -> bool:
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
     signature = inspect.signature(cls.forward)
-    return 'edge_index' not in str(signature)
+    return (('edge_index' not in str(signature)
+             and 'csc' not in str(signature)) or 'pos' in str(signature))

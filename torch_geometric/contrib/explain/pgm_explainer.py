@@ -278,8 +278,6 @@ class PGMExplainer(ExplainerAlgorithm):
         import pandas as pd
         from pgmpy.estimators.CITests import chi_square
 
-        logging.info(f'Explaining node: {index}')
-
         neighbors, _, _, _ = k_hop_subgraph(
             node_idx=index,
             num_hops=get_num_hops(model),
@@ -299,7 +297,7 @@ class PGMExplainer(ExplainerAlgorithm):
         pred_samples = []
 
         for _ in range(self.num_samples):
-            # a subset of neighbours are selected randomly for perturbing
+            # A subset of neighbors are selected randomly for perturbing:
             seeds = np.random.choice([1, 0], size=(len(neighbors), ))
             x_perturb = self._perturb_features_on_nodes(
                 x=x,

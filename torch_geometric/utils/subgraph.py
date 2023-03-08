@@ -170,6 +170,7 @@ def bipartite_subgraph(
     if src_subset.dtype != torch.bool:
         src_size = int(edge_index[0].max()) + 1 if size is None else size[0]
         src_subset = index_to_mask(src_subset, size=src_size)
+    if dst_subset.dtype != torch.bool:
         dst_size = int(edge_index[1].max()) + 1 if size is None else size[1]
         dst_subset = index_to_mask(dst_subset, size=dst_size)
 

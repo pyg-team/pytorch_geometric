@@ -1,6 +1,6 @@
-from .batch_norm import BatchNorm
+from .batch_norm import BatchNorm, HeteroBatchNorm
 from .instance_norm import InstanceNorm
-from .layer_norm import LayerNorm
+from .layer_norm import LayerNorm, HeteroLayerNorm
 from .graph_norm import GraphNorm
 from .graph_size_norm import GraphSizeNorm
 from .pair_norm import PairNorm
@@ -11,8 +11,10 @@ from .hetero_norm import HeteroBatchNorm, HeteroInstanceNorm, HeteroLayerNorm
 
 __all__ = [
     'BatchNorm',
+    'HeteroBatchNorm',
     'InstanceNorm',
     'LayerNorm',
+    'HeteroLayerNorm',
     'GraphNorm',
     'GraphSizeNorm',
     'PairNorm',

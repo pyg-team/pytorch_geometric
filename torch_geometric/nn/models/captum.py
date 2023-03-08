@@ -20,7 +20,7 @@ def to_captum_model(
     metadata: Optional[Metadata] = None,
 ) -> Union[CaptumModel, CaptumHeteroModel]:
     r"""Converts a model to a model that can be used for
-    `Captum.ai <https://captum.ai/>`_ attribution methods.
+    `Captum <https://captum.ai/>`_ attribution methods.
 
     Sample code for homogeneous graphs:
 
@@ -82,23 +82,24 @@ def to_captum_model(
 
 
     .. note::
-        For an example of using a Captum attribution method within PyG, see
-        `examples/captum_explainability.py
+        For an example of using a :captum:`Captum` attribution method within
+        :pyg:`PyG`, see `examples/explain/captum_explainability.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        captum_explainability.py>`_.
+        explain/captum_explainability.py>`_.
 
     Args:
         model (torch.nn.Module): The model to be explained.
         mask_type (str, optional): Denotes the type of mask to be created with
-            a Captum explainer. Valid inputs are :obj:`"edge"`, :obj:`"node"`,
-            and :obj:`"node_and_edge"`. (default: :obj:`"edge"`)
+            a :captum:`Captum` explainer. Valid inputs are :obj:`"edge"`,
+            :obj:`"node"`, and :obj:`"node_and_edge"`. (default: :obj:`"edge"`)
         output_idx (int, optional): Index of the output element (node or link
             index) to be explained. With :obj:`output_idx` set, the forward
             function will return the output of the model for the element at
             the index specified. (default: :obj:`None`)
         metadata (Metadata, optional): The metadata of the heterogeneous graph.
-            Only required if explaning over a `HeteroData` object.
-            (default: :obj: `None`)
+            Only required if explaning a
+            :class:`~torch_geometric.data.HeteroData` object.
+            (default: :obj:`None`)
     """
     if metadata is None:
         return CaptumModel(model, mask_type, output_idx)
