@@ -91,7 +91,7 @@ class Planetoid(InMemoryDataset):
 
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
-    
+
         if split == 'full':
             data = self.get(0)
             data.train_mask.fill_(True)
