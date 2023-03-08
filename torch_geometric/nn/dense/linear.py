@@ -322,7 +322,7 @@ class HeteroDictLinear(torch.nn.Module):  # pragma: no cover
             if any([int(i) == -1 for i in in_channels.values()]):
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
-            if types is not None and sort(self.types) != (types):
+            if types is not None and (self.types).sort() != (types).sort():
                 raise ValueError("User provided `types` list does not match \
                  the keys of the `in_channels` dictionary")
         else:
