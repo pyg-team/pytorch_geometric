@@ -283,7 +283,8 @@ def test_to_hetero_basic():
     assert out['author'].size() == (100, 64)
 
     model = Net12()
-    model = to_hetero(model, metadata, debug=False)
+    with pytest.warns(UserWarning, match="parameters cannot be reset"):
+        model = to_hetero(model, metadata, debug=False)
     out = model({'paper': torch.randn(4, 8), 'author': torch.randn(8, 16)})
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (4, 32)
