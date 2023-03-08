@@ -51,10 +51,6 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
     warnings.filterwarnings('ignore', ".*lower value for log_every_n_steps.*")
 
-    Args = namedtuple('Args', ['cfg_file', 'opts'])
-    root = osp.join(osp.dirname(osp.realpath(__file__)))
-    args = Args(osp.join(root, 'example_node.yml'), [])
-
     load_cfg(cfg, args)
     cfg.out_dir = osp.join(tmp_path, 'out_dir')
     cfg.run_dir = osp.join(tmp_path, 'run_dir')
