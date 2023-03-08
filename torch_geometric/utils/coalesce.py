@@ -3,6 +3,7 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort, scatter
 
 from .num_nodes import maybe_num_nodes
@@ -18,7 +19,7 @@ def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
 
 @torch.jit._overload
 def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
-    # type: (Tensor, Optional[Tensor], Optional[int], str, bool, bool) -> Tuple[Tensor, Tensor]  # noqa
+    # type: (Tensor, Optional[Tensor], Optional[int], str, bool, bool) -> Tuple[Tensor, Optional[Tensor]]  # noqa
     pass
 
 
@@ -30,12 +31,12 @@ def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
 
 def coalesce(
     edge_index: Tensor,
-    edge_attr: Union[Optional[Tensor], List[Tensor], str] = MISSING,
+    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
     reduce: str = 'add',
     is_sorted: bool = False,
     sort_by_row: bool = True,
-) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
+) -> Union[Tensor, Tuple[Tensor, OptTensor], Tuple[Tensor, List[Tensor]]]:
     """Row-wise sorts :obj:`edge_index` and removes its duplicated entries.
     Duplicate entries in :obj:`edge_attr` are merged by scattering them
     together according to the given :obj:`reduce` option.
@@ -104,12 +105,13 @@ def coalesce(
 
     # Only perform expensive merging in case there exists duplicates:
     if mask.all():
-        if isinstance(edge_attr, (Tensor, list, tuple)):
+        if edge_attr is None or isinstance(edge_attr, (Tensor, list, tuple)):
             return edge_index, edge_attr
         return edge_index
 
     edge_index = edge_index[:, mask]
 
+    dim_size: Optional[int] = None
     if isinstance(edge_attr, (Tensor, list, tuple)):
         dim_size = edge_index.size(1)
         idx = torch.arange(0, nnz, device=edge_index.device)

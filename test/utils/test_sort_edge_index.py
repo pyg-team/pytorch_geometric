@@ -21,6 +21,11 @@ def test_sort_edge_index():
     assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     assert out[1].tolist() == [[4], [3], [2], [1]]
 
+    out = sort_edge_index(edge_index, [edge_attr, edge_attr.view(-1)])
+    assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert out[1][0].tolist() == [[4], [3], [2], [1]]
+    assert out[1][1].tolist() == [4, 3, 2, 1]
+
 
 def test_sort_edge_index_jit():
     @torch.jit.script
@@ -55,8 +60,8 @@ def test_sort_edge_index_jit():
     assert out[0].size() == edge_index.size()
     assert out[1].size() == edge_attr.size()
 
-    out = wrapper3(edge_index, [edge_attr, edge_attr])
+    out = wrapper3(edge_index, [edge_attr, edge_attr.view(-1)])
     assert out[0].size() == edge_index.size()
     assert len(out[1]) == 2
     assert out[1][0].size() == edge_attr.size()
-    assert out[1][1].size() == edge_attr.size()
+    assert out[1][1].size() == edge_attr.view(-1).size()
