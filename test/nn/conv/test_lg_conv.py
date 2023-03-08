@@ -26,7 +26,9 @@ def test_lg_conv():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x, edge_index), out1)
+        assert torch.allclose(jit(x, edge_index, value), out2)
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x, adj1.t()), out1)
+        assert torch.allclose(jit(x, adj2.t()), out2)
