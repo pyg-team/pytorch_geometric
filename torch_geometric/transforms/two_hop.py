@@ -30,7 +30,6 @@ class TwoHop(BaseTransform):
                                              *edge_attr.size()[1:])
             edge_attr = torch.cat([edge_attr, edge_attr2], dim=0)
 
-        edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes=N)
-        data.edge_index, data.edge_attr = edge_index, edge_attr
+        data.edge_index, data.edge_attr = coalesce(edge_index, edge_attr, N)
 
         return data
