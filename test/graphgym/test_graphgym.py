@@ -54,22 +54,15 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
     load_cfg(cfg, args)
     cfg.out_dir = osp.join(tmp_path, 'out_dir')
     cfg.run_dir = osp.join(tmp_path, 'run_dir')
-    print(cfg.out_dir)
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
     cfg.train.auto_resume = auto_resume
 
-    print("%%%%%%%%%%%5")
-    print(cfg.out_dir)
-    print(args.cfg_file)
     set_out_dir(cfg.out_dir, args.cfg_file)
-    print(cfg.out_dir)
-    print("%%%%%%%%%%%5")
     dump_cfg(cfg)
     set_printing()
 
     seed_everything(cfg.seed)
     auto_select_device()
-    print(cfg.out_dir)
     set_run_dir(cfg.out_dir)
 
     cfg.train.skip_train_eval = skip_train_eval
@@ -101,21 +94,19 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
 
     cfg.params = params_count(model)
     assert cfg.params == 23883
-    print(cfg.out_dir)
 
     train(model, datamodule, logger=True,
           trainer_config={"enable_progress_bar": False})
 
-    print(cfg.out_dir)
     assert osp.isdir(get_ckpt_dir()) is cfg.train.enable_ckpt
 
     agg_runs(cfg.out_dir, cfg.metric_best)
 
-    # out, _ = capfd.readouterr()
-    # assert "train: {'epoch': 0," in out
-    # assert "val: {'epoch': 0," in out
-    # assert "train: {'epoch': 5," in out
-    # assert "val: {'epoch': 5," in out
+    out, _ = capfd.readouterr()
+    assert "train: {'epoch': 0," in out
+    assert "val: {'epoch': 0," in out
+    assert "train: {'epoch': 5," in out
+    assert "val: {'epoch': 5," in out
 
 
 @withPackage('yacs')
