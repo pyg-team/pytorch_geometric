@@ -48,6 +48,9 @@ def trivial_metric(true, pred, task_type):
 @pytest.mark.parametrize('use_trivial_metric', [True, False])
 def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
                              use_trivial_metric):
+    print(tmp_path)
+    print(tmp_path.resolve())
+    print(tmp_path.resolve().as_posix())
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
     warnings.filterwarnings('ignore', ".*lower value for log_every_n_steps.*")
 
@@ -56,8 +59,8 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
     args = Args(osp.join(root, 'example_node.yml'), [])
 
     load_cfg(cfg, args)
-    cfg.out_dir = osp.join(tmp_path.resolve().as_posix(), 'out_dir')
-    cfg.run_dir = osp.join(tmp_path.resolve().as_posix(), 'run_dir')
+    cfg.out_dir = osp.join(tmp_path.resolve(), 'out_dir')
+    cfg.run_dir = osp.join(tmp_path.resolve(), 'run_dir')
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
     cfg.train.auto_resume = auto_resume
 
@@ -102,10 +105,11 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
     train(model, datamodule, logger=True,
           trainer_config={"enable_progress_bar": False})
 
+    print(cfg.run_dir)
+    print(cfg.out_dir)
+    print(get_ckpt_dir())
     assert osp.isdir(get_ckpt_dir()) is cfg.train.enable_ckpt
 
-    print('-------------')
-    print(cfg.out_dir, cfg.metric_best)
     agg_runs(cfg.out_dir, cfg.metric_best)
 
     # out, _ = capfd.readouterr()
@@ -121,7 +125,8 @@ def test_graphgym_module(tmp_path):
     import pytorch_lightning as pl
 
     load_cfg(cfg, args)
-    cfg.out_dir = cfg.run_dir = tmp_path.resolve().as_posix()
+    cfg.out_dir = osp.join(tmp_path.resolve().as_posix(), 'out_dir')
+    cfg.run_dir = osp.join(tmp_path.resolve().as_posix(), 'run_dir')
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
 
     set_out_dir(cfg.out_dir, args.cfg_file)
@@ -176,7 +181,8 @@ def test_train(tmp_path, capfd):
     import pytorch_lightning as pl
 
     load_cfg(cfg, args)
-    cfg.out_dir = cfg.run_dir = tmp_path.resolve().as_posix()
+    cfg.out_dir = osp.join(tmp_path.resolve(), 'out_dir')
+    cfg.run_dir = osp.join(tmp_path.resolve(), 'run_dir')
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
 
     set_out_dir(cfg.out_dir, args.cfg_file)
