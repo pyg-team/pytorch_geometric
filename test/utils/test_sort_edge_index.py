@@ -13,8 +13,9 @@ def test_sort_edge_index():
     out = sort_edge_index(edge_index)
     assert out.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
 
-    out, _ = sort_edge_index(edge_index, None)
-    assert out.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    out = sort_edge_index(edge_index, None)
+    assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert out[1] is None
 
     out = sort_edge_index(edge_index, edge_attr)
     assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
@@ -43,16 +44,16 @@ def test_sort_edge_index_jit():
     out = wrapper1(edge_index)
     assert out.size() == edge_index.size()
 
-    out1, out2 = wrapper2(edge_index, None)
-    assert out1.size() == edge_index.size()
-    assert out2 is None
+    out = wrapper2(edge_index, None)
+    assert out[0].size() == edge_index.size()
+    assert out[1] is None
 
-    out1, out2 = wrapper2(edge_index, edge_attr)
-    assert out1.size() == edge_index.size()
-    assert out2.size() == edge_attr.size()
+    out = wrapper2(edge_index, edge_attr)
+    assert out[0].size() == edge_index.size()
+    assert out[1].size() == edge_attr.size()
 
-    out1, out2 = wrapper3(edge_index, [edge_attr, edge_attr])
-    assert out1.size() == edge_index.size()
-    assert len(out2) == 2
-    assert out2[0].size() == edge_attr.size()
-    assert out2[1].size() == edge_attr.size()
+    out = wrapper3(edge_index, [edge_attr, edge_attr])
+    assert out[0].size() == edge_index.size()
+    assert len(out[1]) == 2
+    assert out[1][0].size() == edge_attr.size()
+    assert out[1][1].size() == edge_attr.size()
