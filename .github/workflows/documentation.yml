@@ -37,7 +37,7 @@ jobs:
           python-version: 3.8
           cache: pip
           cache-dependency-path: |
-            setup.py
+            pyproject.toml
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'

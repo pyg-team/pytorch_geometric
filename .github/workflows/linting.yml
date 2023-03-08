@@ -41,7 +41,7 @@ jobs:
           check-latest: true
           cache: pip
           cache-dependency-path: |
-            setup.py
+            pyproject.toml
 
       - name: Install dependencies
         run: pip install pylint
@@ -64,7 +64,7 @@ jobs:
           check-latest: true
           cache: pip
           cache-dependency-path: |
-            setup.py
+            pyproject.toml
 
       - name: Install dependencies
         run: pip install mypy

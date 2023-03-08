@@ -22,7 +22,7 @@ jobs:
           check-latest: true
           cache: pip
           cache-dependency-path: |
-            setup.py
+            pyproject.toml
 
       - name: Set version
         run: echo "VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" torch_geometric/__init__.py)" >> ${GITHUB_ENV}
@@ -39,7 +39,7 @@ jobs:
           sed -i "s/version=\"$VERSION\"/version=\"$VERSION.dev$TODAY\"/" pyproject.toml
 
       - name: Build package
-        run: python setup.py sdist
+        run: python -m build
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1
