@@ -480,7 +480,7 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
         cu_edge_index = sort_edge_index(cu_edge_index, cu_edge_weight)
     else:
         cu_edge_index, cu_edge_weight = sort_edge_index(
-            cu_edge_index, cu_edge_weight)
+            cu_edge_index)
 
     assert torch.equal(edge_index, cu_edge_index.cpu())
     if edge_weight is not None:
