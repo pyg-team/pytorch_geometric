@@ -67,10 +67,7 @@ def read_tu_data(folder, prefix):
 
     num_nodes = edge_index.max().item() + 1 if x is None else x.size(0)
     edge_index, edge_attr = remove_self_loops(edge_index, edge_attr)
-    if edge_attr is None:
-        edge_index = coalesce(edge_index, num_nodes=num_nodes)
-    else:
-        edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes)
+    edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes)
 
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
     data, slices = split(data, batch)
