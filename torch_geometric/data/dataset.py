@@ -152,7 +152,14 @@ class Dataset(torch.utils.data.Dataset, ABC):
     @property
     def num_classes(self) -> int:
         r"""Returns the number of classes in the dataset."""
-        y = torch.cat([data.y for data in self], dim=0)
+        data_list = []
+        for data in self:
+            if isinstance(data, tuple):
+                for data_i in data:
+                    data_list.append(data_i.y)
+            else:
+                data_list.append(data.y)
+        y = torch.cat(data_list, dim=0)
         # Do not fill cache for `InMemoryDataset`:
         if hasattr(self, '_data_list') and self._data_list is not None:
             self._data_list = self.len() * [None]
