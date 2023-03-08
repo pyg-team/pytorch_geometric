@@ -247,8 +247,8 @@ class HGTConv(MessagePassing):
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
             # Add offset to edge indices. Offset needs to be added as
             # the src and dst node tensors are concatenated.
-            edge_index_list.append(
-                indices + (edge_src_offset, dst_offset[dst_type]))
+            edge_index_list.append(indices +
+                                   (edge_src_offset, dst_offset[dst_type]))
 
             # Update offsets.
             edge_src_offset += k_src.size(0)
