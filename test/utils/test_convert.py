@@ -433,12 +433,14 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
         cu_edge_weight = edge_list['weights'].to_pandas().values
         cu_edge_weight = torch.from_numpy(cu_edge_weight)
 
-    cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
-                                                    cu_edge_weight)
+    if edge_weight is None:
+        cu_edge_index = sort_edge_index(cu_edge_index, cu_edge_weight).cpu()
+    else:
+        cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index, cu_edge_weight).cpu()
 
-    assert torch.equal(edge_index, cu_edge_index.cpu())
+    assert torch.equal(edge_index, cu_edge_index)
     if edge_weight is not None:
-        assert torch.allclose(edge_weight, cu_edge_weight.cpu())
+        assert torch.allclose(edge_weight, cu_edge_weight)
 
 
 @withPackage('cudf')
@@ -473,12 +475,13 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
     )
 
     cu_edge_index, cu_edge_weight = from_cugraph(G)
+    if edge_weight is None:
+        cu_edge_index = sort_edge_index(cu_edge_index, cu_edge_weight).cpu()
+    else:
+        cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index, cu_edge_weight).cpu()
 
-    cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
-                                                    cu_edge_weight)
-
-    assert torch.equal(edge_index, cu_edge_index.cpu())
+    assert torch.equal(edge_index, cu_edge_index)
     if edge_weight is not None:
-        assert torch.allclose(edge_weight, cu_edge_weight.cpu())
+        assert torch.allclose(edge_weight, cu_edge_weight)
     else:
         assert cu_edge_weight is None
