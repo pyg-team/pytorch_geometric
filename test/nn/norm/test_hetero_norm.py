@@ -7,7 +7,7 @@ from torch_geometric.nn import BatchNorm, HeteroBatchNorm, HeteroInstanceNorm, H
 @pytest.mark.parametrize('conf', [True, False])
 def test_heterobatch_norm(conf):
     x_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
-    types = x_dict.keys()
+    types = list(x_dict.keys())
     hetero_norm = HeteroBatchNorm(16, types=types, affine=conf, track_running_stats=conf)
     homo_norm = BatchNorm(16, affine=conf, track_running_stats=conf)
     from_homo_norm = HeteroBatchNorm.from_homogeneous(homo_norm, types)

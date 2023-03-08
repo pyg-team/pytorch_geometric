@@ -137,9 +137,15 @@ class _HeteroNorm(torch.nn.Module):
             track_running_stats = False
 
         try:
-            affine = norm_module.affine
+            # PyG norms
+            affine = norm_module.module.affine
         except AttributeError:
-            affine = norm_module.elementwise_affine
+            try:
+                # torch native batch/instance norm
+                affine = norm_module.affine
+            except AttributeError:
+                # torch native layer norm
+                affine = norm_module.elementwise_affine
         if hasattr(norm_module, "allow_single_element"):
             allow_single_element = norm_module.allow_single_element
         else:
