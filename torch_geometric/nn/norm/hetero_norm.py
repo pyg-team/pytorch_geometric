@@ -120,7 +120,7 @@ class _HeteroNorm(torch.nn.Module):
                 if norm_module.mode == "graph":
                     raise ValueError("If making torch.nn.LayerNorm heterogeneous, \
                         please ensure that mode == 'node'")
-        in_channels = {node_type: in_channels for node_type in self.types}
+        in_channels = {node_type: in_channels for node_type in types}
         eps = norm_module.eps
         try:
             # store batch/instance norm
