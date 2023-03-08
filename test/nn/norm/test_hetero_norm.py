@@ -61,13 +61,13 @@ def test_heterolayer_norm(affine):
 
 
 @pytest.mark.parametrize('conf', [True, False])
-def test_heterolayer_norm(conf):
+def test_heteroinstance_norm(conf):
     x_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
     batch_dict = {'n'+str(i):torch.randn(100, 16) for i in range(10)}
-    hetero_norm = HeteroLayerNorm(16, types=x_dict.keys(), affine=conf, track_running_stats=conf)
-    homo_norm = LayerNorm(16, affine=conf, track_running_stats=conf)
-    from_homo_norm = HeteroLayerNorm.from_homogeneous(homo_norm)
-    expected_str_repr = 'HeteroLayerNorm(16)'
+    hetero_norm = HeteroInstanceNorm(16, types=x_dict.keys(), affine=conf, track_running_stats=conf)
+    homo_norm = InstanceNorm(16, affine=conf, track_running_stats=conf)
+    from_homo_norm = HeteroInstanceNorm.from_homogeneous(homo_norm)
+    expected_str_repr = 'HeteroInstanceNorm(16)'
     assert hetero_norm.__repr__() == expected_str_repr
     assert from_homo_norm.__repr__() == expected_str_repr
 
