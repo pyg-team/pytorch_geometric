@@ -3,7 +3,7 @@ from torch import Tensor
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
 from torch_geometric.typing import Metadata
 from torch_geometric.nn.parameter_dict import ParameterDict
-from typing import Dict, Union, Optional
+from typing import Dict, Union, Optional, List
 
 class _HeteroNorm(torch.nn.Module):
     r"""Applies normalization over node features for each node type using:
