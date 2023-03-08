@@ -1,6 +1,7 @@
 import torch
 from torch import Tensor
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
+from torch_geometric.nn import HeteroDictLinear
 from torch_geometric.typing import Metadata, NodeType, EdgeType
 from torch_geometric.nn.parameter_dict import ParameterDict
 from typing import Dict, Union, Optional, List
@@ -143,7 +144,8 @@ class _HeteroNorm(torch.nn.Module):
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        self.hetero_linear.reset_parameters()
+        if self.affine:
+            self.hetero_linear.reset_parameters()
         if self.track_running_stats:
             for type_i in self.types:
                 self.running_means[type_i] = torch.zeros(self.in_channels[type_i])
