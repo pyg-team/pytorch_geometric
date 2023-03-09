@@ -199,7 +199,7 @@ class _HeteroNorm(torch.nn.Module):
                          f"'{self.__class__.__name__}'")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}({self.module.in_channels})'
+        return f'{self.__class__.__name__}({self.in_channels})'
 
 
 class HeteroBatchNorm(_HeteroNorm):
