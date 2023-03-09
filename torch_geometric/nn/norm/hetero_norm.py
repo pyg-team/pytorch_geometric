@@ -108,7 +108,6 @@ class _HeteroNorm(torch.nn.Module):
                 if norm_module.mode == "graph":
                     raise ValueError("If making torch.nn.LayerNorm heterogeneous, \
                         please ensure that mode == 'node'")
-        in_channels = {node_type: in_channels for node_type in types}
         try:
             eps = norm_module.eps
         except:
@@ -200,7 +199,7 @@ class _HeteroNorm(torch.nn.Module):
                          f"'{self.__class__.__name__}'")
 
     def __repr__(self):
-        return f'{self.__class__.__name__}({self.module.num_features})'
+        return f'{self.__class__.__name__}({self.module.in_channels})'
 
 
 class HeteroBatchNorm(_HeteroNorm):
