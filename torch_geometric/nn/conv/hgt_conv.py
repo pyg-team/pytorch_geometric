@@ -199,7 +199,7 @@ class HGTConv(MessagePassing):
             self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
         ]
 
-        # Concatenate all dst node tensors.
+        # List of src node tensors for each node type.
         q_list = []
         dst_offset = {}
         offset = 0
@@ -209,21 +209,21 @@ class HGTConv(MessagePassing):
             offset += q_dict[node_type].size(0)
         q = torch.cat(q_list)
 
-        # list of edges and edge tensors.
+        # List of edges and edge tensors.
         edge_index_list = []
-        edge_src_offset = 0
         p_rels = []
 
-        # list of src node tensors for each edge
+        # List of src node tensors for each edge type.
         k_ins = []
         v_ins = []
+        src_offset = 0
         count = 0
         trans_ptr = [count]
 
         for edge_type in self.edge_types:
             src_type, _, dst_type = edge_type
 
-            # Collect src node tesnors.
+            # Collect src node tesnors for each edge type.
             k_src = k_dict[src_type]
             v_src = v_dict[src_type]
             k_ins.append(k_src.view(-1, D))
@@ -238,17 +238,17 @@ class HGTConv(MessagePassing):
             # (TODO) Add support for SparseTensor w/o converting?
             convert = isinstance(indices, SparseTensor)
             if convert:
-                # convert to COO
+                # Convert to COO
                 dst, src, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
-            # Add offset to edge indices. Offset needs to be added as
+            # Add offset to edge indices. Offset needs to be applied as
             # the src and dst node tensors are concatenated.
-            indices[0] += edge_src_offset
+            indices[0] += src_offset
             indices[1] += dst_offset[dst_type]
             edge_index_list.append(indices)
 
-            # Update offsets.
-            edge_src_offset += k_src.size(0)
+            # Update offset.
+            src_offset += k_src.size(0)
 
         # Concatenate all src node tensors.
         trans_ptr = torch.tensor(trans_ptr)
@@ -261,7 +261,6 @@ class HGTConv(MessagePassing):
         p = group(p_rels, self.group).view(-1)
         e_idx = combine_edge_slices(edge_index_list)
         if convert:
-            # convert back to CSR
             e_idx = SparseTensor(row=e_idx[0], col=e_idx[1],
                                  sparse_sizes=(k_out.size(0), k_out.size(0)))
 
