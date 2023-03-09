@@ -992,7 +992,7 @@ def offset_edge_idx(
     node_slices: Dict[NodeType, Tuple[int, int]],
     edge_type: EdgeType,
     edge_index: Tensor,
-) -> Tuple[int, int]:
+) -> Tensor:
     src, _, dst = edge_type
     offset = [[node_slices[src][0]], [node_slices[dst][0]]]
     offset = torch.tensor(offset, device=edge_index.device)
