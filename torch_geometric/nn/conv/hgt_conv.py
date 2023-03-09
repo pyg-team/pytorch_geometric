@@ -9,8 +9,6 @@ from torch.nn import Parameter
 
 from torch_geometric.data.hetero_data import (
     combine_edge_slices,
-    make_node_slices,
-    offset_edge_idx,
 )
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
