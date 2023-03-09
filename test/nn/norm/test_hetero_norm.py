@@ -23,14 +23,16 @@ def test_heterobatch_norm(conf):
 
 
 def test_heterobatch_norm_single_element():
-    x = torch.randn(1, 16)
+    x_dict = {'n'+str(i):torch.randn(1, 16) for i in range(10)}
+    types = list(x_dict.keys())
     with pytest.raises(ValueError, match="requires 'track_running_stats'"):
-        norm = BatchNorm(16, track_running_stats=False,
+        norm = HeteroBatchNorm(16, types=types, track_running_stats=False,
                          allow_single_element=True)
 
-    norm = BatchNorm(16, track_running_stats=True, allow_single_element=True)
-    out = norm(x)
-    assert torch.allclose(out, x)
+    hetero_norm = HeteroBatchNorm(16,  types=types, track_running_stats=True, allow_single_element=True)
+    out_dict = norm(x_dict)
+    for x_type, x in x_dict.items():
+        assert torch.allclose(out_dict[x_type], x)
 
 
 @pytest.mark.parametrize('affine', [True, False])
