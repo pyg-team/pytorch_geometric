@@ -90,7 +90,6 @@ class HGTConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
-        self.group = group
 
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
