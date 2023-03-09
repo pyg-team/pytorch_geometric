@@ -97,7 +97,7 @@ class FLAG(torch.nn.Module):
 
         # for _ in range(args.m - 1):
         for i in range(n_ascent_steps - 1):
-            [c.on_ascent_step_begin(i+1, self.loss) for c in self.callbacks]
+            [c.on_ascent_step_begin(i + 1, self.loss) for c in self.callbacks]
 
             self.loss.backward()
             # perturb_data = perturb.detach() + args.step_size *
@@ -114,7 +114,7 @@ class FLAG(torch.nn.Module):
             # loss /= args.m
             self.loss /= n_ascent_steps
 
-            [c.on_ascent_step_end(i+1, self.loss, self.perturb) for c in self.callbacks]
+            [c.on_ascent_step_end(i + 1, self.loss, self.perturb) for c in self.callbacks]
 
 
         [c.on_optimizer_step_begin(self.loss) for c in self.callbacks]
