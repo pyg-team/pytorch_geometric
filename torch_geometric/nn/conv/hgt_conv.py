@@ -241,7 +241,8 @@ class HGTConv(MessagePassing):
                 dst, src, _ = indices.coo()
                 indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
             num_edges = indices.size(1)
-            p_rels.append(self.p_rel['__'.join(edge_type)].view(1, H).expand(num_edges, -1))
+            p_rels.append(self.p_rel['__'.join(edge_type)].view(1, H).expand(
+                num_edges, -1))
             # Add offset to edge indices. Offset needs to be applied as
             # the src and dst node tensors are concatenated.
             indices[0] += src_offset
@@ -260,7 +261,7 @@ class HGTConv(MessagePassing):
                                            m_rel).view(-1, H, D)
 
         # Concatenate all edges and edge tensors.
-        p = torch.cat(p_rels, dim = 0)
+        p = torch.cat(p_rels, dim=0)
         e_idx = combine_edge_slices(edge_index_list)
         if convert:
             e_idx = SparseTensor(row=e_idx[0], col=e_idx[1],
