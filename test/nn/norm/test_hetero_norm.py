@@ -22,7 +22,7 @@ def test_heterobatch_norm(conf):
         assert out_dict2[x_type].size() == (100, 16)
 
 
-def test_batch_norm_single_element():
+def test_heterobatch_norm_single_element():
     x = torch.randn(1, 16)
     with pytest.raises(ValueError, match="requires 'track_running_stats'"):
         norm = BatchNorm(16, track_running_stats=False,
