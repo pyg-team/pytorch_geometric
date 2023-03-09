@@ -18,7 +18,7 @@ def test_gin_conv():
 
     nn = Seq(Lin(16, 32), ReLU(), Lin(32, 32))
     conv = GINConv(nn, train_eps=True)
-    assert conv.__repr__() == (
+    assert str(conv) == (
         'GINConv(nn=Sequential(\n'
         '  (0): Linear(in_features=16, out_features=32, bias=True)\n'
         '  (1): ReLU()\n'
@@ -76,7 +76,7 @@ def test_gine_conv():
 
     nn = Seq(Lin(16, 32), ReLU(), Lin(32, 32))
     conv = GINEConv(nn, train_eps=True)
-    assert conv.__repr__() == (
+    assert str(conv) == (
         'GINEConv(nn=Sequential(\n'
         '  (0): Linear(in_features=16, out_features=32, bias=True)\n'
         '  (1): ReLU()\n'

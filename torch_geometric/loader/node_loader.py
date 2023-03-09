@@ -1,6 +1,7 @@
-from typing import Any, Callable, Iterator, Optional, Tuple, Union
+from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
@@ -86,10 +87,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         # Get node type (or `None` for homogeneous graphs):
         input_type, input_nodes = get_input_nodes(data, input_nodes)
@@ -111,7 +110,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         iterator = range(input_nodes.size(0))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
-    def collate_fn(self, index: NodeSamplerInput) -> Any:
+    def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
         input_data: NodeSamplerInput = self.input_data[index]
 
@@ -143,6 +142,9 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                 data.e_id = out.edge
 
             data.batch = out.batch
+            data.num_sampled_nodes = out.num_sampled_nodes
+            data.num_sampled_edges = out.num_sampled_edges
+
             data.input_id = out.metadata[0]
             data.seed_time = out.metadata[1]
             data.batch_size = out.metadata[0].size(0)
@@ -160,14 +162,18 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                 if 'n_id' not in data[key]:
                     data[key].n_id = node
 
-            if out.edge is not None:
-                for key, edge in out.edge.items():
-                    if 'e_id' not in data[key]:
-                        data[key].e_id = edge
+            for key, edge in (out.edge or {}).items():
+                if 'e_id' not in data[key]:
+                    data[key].e_id = edge
 
-            if out.batch is not None:
-                for key, batch in out.batch.items():
-                    data[key].batch = batch
+            for key, batch in (out.batch or {}).items():
+                data[key].batch = batch
+
+            for key, value in (out.num_sampled_nodes or {}).items():
+                data[key].num_sampled_nodes = value
+
+            for key, value in (out.num_sampled_edges or {}).items():
+                data[key].num_sampled_edges = value
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]

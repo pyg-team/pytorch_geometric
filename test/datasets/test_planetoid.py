@@ -6,7 +6,7 @@ def test_citeseer(get_dataset):
     loader = DataLoader(dataset, batch_size=len(dataset))
 
     assert len(dataset) == 1
-    assert dataset.__repr__() == 'CiteSeer()'
+    assert str(dataset) == 'CiteSeer()'
 
     for batch in loader:
         assert batch.num_graphs == len(batch) == 1

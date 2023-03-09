@@ -8,11 +8,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import (
-    add_self_loops,
-    get_laplacian,
-    remove_self_loops,
-)
+from torch_geometric.utils import get_laplacian
 
 
 class ChebConv(MessagePassing):
@@ -120,8 +116,6 @@ class ChebConv(MessagePassing):
         dtype: Optional[int] = None,
         batch: OptTensor = None,
     ):
-        edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
-
         edge_index, edge_weight = get_laplacian(edge_index, edge_weight,
                                                 normalization, dtype,
                                                 num_nodes)
@@ -140,10 +134,8 @@ class ChebConv(MessagePassing):
         edge_weight = (2.0 * edge_weight) / lambda_max
         edge_weight.masked_fill_(edge_weight == float('inf'), 0)
 
-        edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
-                                                 fill_value=-1.,
-                                                 num_nodes=num_nodes)
-        assert edge_weight is not None
+        loop_mask = edge_index[0] == edge_index[1]
+        edge_weight[loop_mask] -= 1
 
         return edge_index, edge_weight
 

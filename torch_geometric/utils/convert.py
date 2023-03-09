@@ -403,35 +403,49 @@ Example:
 
 
 def to_cugraph(edge_index: Tensor, edge_weight: Optional[Tensor] = None,
-               relabel_nodes: bool = True):
+               relabel_nodes: bool = True, directed: bool = True):
     r"""Converts a graph given by :obj:`edge_index` and optional
     :obj:`edge_weight` into a :obj:`cugraph` graph object.
 
     Args:
+        edge_index (torch.Tensor): The edge indices of the graph.
+        edge_weight (torch.Tensor, optional): The edge weights of the graph.
+            (default: :obj:`None`)
         relabel_nodes (bool, optional): If set to :obj:`True`,
             :obj:`cugraph` will remove any isolated nodes, leading to a
             relabeling of nodes. (default: :obj:`True`)
+        directed (bool, optional): If set to :obj:`False`, the graph will be
+            undirected. (default: :obj:`True`)
     """
     import cudf
     import cugraph
 
+    g = cugraph.Graph(directed=directed)
     df = cudf.from_dlpack(to_dlpack(edge_index.t()))
 
     if edge_weight is not None:
         assert edge_weight.dim() == 1
-        df[2] = cudf.from_dlpack(to_dlpack(edge_weight))
+        df['2'] = cudf.from_dlpack(to_dlpack(edge_weight))
 
-    return cugraph.from_cudf_edgelist(
-        df, source=0, destination=1,
-        edge_attr=2 if edge_weight is not None else None,
-        renumber=relabel_nodes)
+    g.from_cudf_edgelist(
+        df,
+        source=0,
+        destination=1,
+        edge_attr='2' if edge_weight is not None else None,
+        renumber=relabel_nodes,
+    )
+
+    return g
 
 
-def from_cugraph(G) -> Tuple[Tensor, Optional[Tensor]]:
+def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Converts a :obj:`cugraph` graph object into :obj:`edge_index` and
     optional :obj:`edge_weight` tensors.
+
+    Args:
+        g (cugraph.Graph): A :obj:`cugraph` graph object.
     """
-    df = G.edgelist.edgelist_df
+    df = g.view_edge_list()
 
     src = from_dlpack(df['src'].to_dlpack()).long()
     dst = from_dlpack(df['dst'].to_dlpack()).long()

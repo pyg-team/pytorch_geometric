@@ -15,7 +15,7 @@ from torch_geometric.explain.config import (
 )
 from torch_geometric.nn import Linear
 from torch_geometric.nn.inits import reset
-from torch_geometric.utils import get_message_passing_embeddings
+from torch_geometric.utils import get_embeddings
 
 
 class PGExplainer(ExplainerAlgorithm):
@@ -120,7 +120,7 @@ class PGExplainer(ExplainerAlgorithm):
                 raise ValueError(f"Only scalars are supported for the 'index' "
                                  f"argument in '{self.__class__.__name__}'")
 
-        z = get_message_passing_embeddings(model, x, edge_index, **kwargs)[-1]
+        z = get_embeddings(model, x, edge_index, **kwargs)[-1]
 
         self.optimizer.zero_grad()
         temperature = self._get_temperature(epoch)
@@ -185,7 +185,7 @@ class PGExplainer(ExplainerAlgorithm):
             _, hard_edge_mask = self._get_hard_masks(model, index, edge_index,
                                                      num_nodes=x.size(0))
 
-        z = get_message_passing_embeddings(model, x, edge_index, **kwargs)[-1]
+        z = get_embeddings(model, x, edge_index, **kwargs)[-1]
 
         inputs = self._get_inputs(z, edge_index, index)
         logits = self.mlp(inputs).view(-1)

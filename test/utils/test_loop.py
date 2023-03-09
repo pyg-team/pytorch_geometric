@@ -7,6 +7,7 @@ from torch_geometric.utils import (
     get_self_loop_attr,
     remove_self_loops,
     segregate_self_loops,
+    to_torch_coo_tensor,
 )
 
 
@@ -32,6 +33,10 @@ def test_remove_self_loops():
     assert out[0].tolist() == expected
     assert out[1].tolist() == [[1, 2], [3, 4]]
 
+    adj = to_torch_coo_tensor(edge_index)
+    adj, _ = remove_self_loops(adj)
+    assert torch.diag(adj.to_dense()).tolist() == [0, 0]
+
 
 def test_segregate_self_loops():
     edge_index = torch.tensor([[0, 0, 1], [0, 1, 0]])
@@ -54,6 +59,7 @@ def test_add_self_loops():
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
     edge_weight = torch.tensor([0.5, 0.5, 0.5])
     edge_attr = torch.eye(3)
+    adj = to_torch_coo_tensor(edge_index, edge_weight)
 
     expected = [[0, 1, 0, 0, 1], [1, 0, 0, 0, 1]]
     assert add_self_loops(edge_index)[0].tolist() == expected
@@ -62,13 +68,25 @@ def test_add_self_loops():
     assert out[0].tolist() == expected
     assert out[1].tolist() == [0.5, 0.5, 0.5, 1., 1.]
 
+    out = add_self_loops(adj)[0]
+    assert out._indices().tolist() == [[0, 0, 1, 1], [0, 1, 0, 1]]
+    assert out._values().tolist() == [1.5, 0.5, 0.5, 1.0]
+
     out = add_self_loops(edge_index, edge_weight, fill_value=5)
     assert out[0].tolist() == expected
     assert out[1].tolist() == [0.5, 0.5, 0.5, 5.0, 5.0]
 
+    out = add_self_loops(adj, fill_value=5)[0]
+    assert out._indices().tolist() == [[0, 0, 1, 1], [0, 1, 0, 1]]
+    assert out._values().tolist() == [5.5, 0.5, 0.5, 5.0]
+
     out = add_self_loops(edge_index, edge_weight, fill_value=torch.tensor(2.))
     assert out[0].tolist() == expected
     assert out[1].tolist() == [0.5, 0.5, 0.5, 2., 2.]
+
+    out = add_self_loops(adj, fill_value=torch.tensor(2.))[0]
+    assert out._indices().tolist() == [[0, 0, 1, 1], [0, 1, 0, 1]]
+    assert out._values().tolist() == [2.5, 0.5, 0.5, 2.0]
 
     out = add_self_loops(edge_index, edge_weight, fill_value='add')
     assert out[0].tolist() == expected

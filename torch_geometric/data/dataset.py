@@ -217,7 +217,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if files_exist(self.processed_paths):  # pragma: no cover
             return
 
-        if self.log:
+        if self.log and 'pytest' not in sys.modules:
             print('Processing...', file=sys.stderr)
 
         makedirs(self.processed_dir)
@@ -228,7 +228,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         path = osp.join(self.processed_dir, 'pre_filter.pt')
         torch.save(_repr(self.pre_filter), path)
 
-        if self.log:
+        if self.log and 'pytest' not in sys.modules:
             print('Done!', file=sys.stderr)
 
     def __len__(self) -> int:
@@ -324,8 +324,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
     def to_datapipe(self):
         r"""Converts the dataset into a :class:`torch.utils.data.DataPipe`.
 
-        The returned instance can then be used with PyG's built-in DataPipes
-        for baching graphs as follows:
+        The returned instance can then be used with :pyg:`PyG's` built-in
+        :class:`DataPipes` for baching graphs as follows:
 
         .. code-block:: python
 
@@ -375,4 +375,4 @@ def files_exist(files: List[str]) -> bool:
 def _repr(obj: Any) -> str:
     if obj is None:
         return 'None'
-    return re.sub('(<.*?)\\s.*(>)', r'\1\2', obj.__repr__())
+    return re.sub('(<.*?)\\s.*(>)', r'\1\2', str(obj))
