@@ -30,7 +30,7 @@ def test_heterobatch_norm_single_element():
                          allow_single_element=True)
 
     hetero_norm = HeteroBatchNorm(16,  types=types, track_running_stats=True, allow_single_element=True)
-    out_dict = norm(x_dict)
+    out_dict = hetero_norm(x_dict)
     for x_type, x in x_dict.items():
         assert torch.allclose(out_dict[x_type], x)
 
