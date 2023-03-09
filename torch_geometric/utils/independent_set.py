@@ -1,7 +1,7 @@
 import torch
-from torch_scatter import scatter_max, scatter_min
 
 from torch_geometric.typing import Adj, OptTensor, SparseTensor, Tensor
+from torch_geometric.utils import scatter
 
 
 def maximal_independent_set(edge_index: Adj, k: int = 1,
@@ -37,6 +37,11 @@ def maximal_independent_set(edge_index: Adj, k: int = 1,
         device = row.device
         n = edge_index.max().item() + 1
 
+    # TODO: Use scatter's `out` and `include_self` arguments,
+    #       when available, instead of adding self-loops
+    self_loops = torch.arange(n, dtype=torch.long, device=device)
+    row, col = torch.cat([row, self_loops]), torch.cat([col, self_loops])
+
     if perm is None:
         rank = torch.arange(n, dtype=torch.long, device=device)
     else:
@@ -49,17 +54,13 @@ def maximal_independent_set(edge_index: Adj, k: int = 1,
 
     while not mask.all():
         for _ in range(k):
-            min_neigh = torch.full_like(min_rank, fill_value=n)
-            scatter_min(min_rank[row], col, out=min_neigh)
-            torch.minimum(min_neigh, min_rank, out=min_rank)  # self-loops
+            min_rank = scatter(min_rank[row], col, dim_size=n, reduce='min')
 
         mis = mis | torch.eq(rank, min_rank)
         mask = mis.clone().byte()
 
         for _ in range(k):
-            max_neigh = torch.full_like(mask, fill_value=0)
-            scatter_max(mask[row], col, out=max_neigh)
-            torch.maximum(max_neigh, mask, out=mask)  # self-loops
+            mask = scatter(mask[row], col, dim_size=n, reduce='max')
 
         mask = mask.to(dtype=torch.bool)
         min_rank = rank.clone()

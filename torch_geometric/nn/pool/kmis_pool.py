@@ -2,13 +2,17 @@ from typing import Callable, Optional, Tuple, Union
 
 import torch
 from torch.nn import Module
-from torch_scatter import scatter, scatter_add, scatter_min
-from torch_sparse import SparseTensor, remove_diag
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.dense import Linear
-from torch_geometric.typing import Adj, OptTensor, PairTensor, Tensor
-from torch_geometric.utils import maximal_independent_set
+from torch_geometric.typing import (
+    Adj,
+    OptTensor,
+    PairTensor,
+    SparseTensor,
+    Tensor,
+)
+from torch_geometric.utils import maximal_independent_set, scatter
 
 Scorer = Callable[[Tensor, Adj, OptTensor, OptTensor], Tensor]
 
@@ -43,6 +47,11 @@ def maximal_independent_set_cluster(edge_index: Adj, k: int = 1,
     else:
         row, col = edge_index[0], edge_index[1]
 
+    # TODO: Use scatter's `out` and `include_self` arguments,
+    #       when available, instead of adding self-loops
+    self_loops = torch.arange(n, dtype=torch.long, device=device)
+    row, col = torch.cat([row, self_loops]), torch.cat([col, self_loops])
+
     if perm is None:
         rank = torch.arange(n, dtype=torch.long, device=device)
     else:
@@ -54,9 +63,7 @@ def maximal_independent_set_cluster(edge_index: Adj, k: int = 1,
     min_rank[mis] = rank_mis
 
     for _ in range(k):
-        min_neigh = torch.full_like(min_rank, fill_value=n)
-        scatter_min(min_rank[row], col, out=min_neigh)
-        torch.minimum(min_neigh, min_rank, out=min_rank)
+        min_rank = scatter(min_rank[row], col, dim_size=n, reduce='min')
 
     _, clusters = torch.unique(min_rank, return_inverse=True)
     perm = torch.argsort(rank_mis)
@@ -204,6 +211,7 @@ class KMISPooling(Module):
         if self.score_heuristic is None:
             return x
 
+        n = adj.size(0)
         row, col, _ = adj.coo()
         x = x.view(-1)
 
@@ -213,7 +221,7 @@ class KMISPooling(Module):
             k_sums = x.clone()
 
         for _ in range(self.k):
-            scatter_add(k_sums[row], col, out=k_sums)
+            k_sums = scatter(k_sums[row], col, dim_size=n, reduce='add')
 
         return x / k_sums
 
@@ -266,7 +274,7 @@ class KMISPooling(Module):
                            sparse_sizes=(c, c)).coalesce(self.aggr_edge)
 
         if self.remove_self_loops:
-            adj = remove_diag(adj)
+            adj = adj.remove_diag()
 
         if self.score_passthrough == 'before':
             x = self.aggr_score(x, score)
