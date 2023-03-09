@@ -67,7 +67,7 @@ class _HeteroNorm(torch.nn.Module):
         if self.affine:
             self.hetero_linear = HeteroDictLinear(self.in_channels, self.in_channels, self.types)
         if not hasattr(self, "_hook") and self.track_running_stats:
-            self.running_means = ParameterDict({mean_type:torch.zeros(self.in_channels) for mean_typ in self.types})
+            self.running_means = ParameterDict({mean_type:torch.zeros(self.in_channels) for mean_type in self.types})
             self.running_vars = ParameterDict({var_type:torch.ones(self.in_channels) for var_type in self.types})
         self.allow_single_element = allow_single_element
         self.reset_parameters()
@@ -136,9 +136,15 @@ class _HeteroNorm(torch.nn.Module):
             allow_single_element = norm_module.allow_single_element
         else:
             allow_single_element = False
-        print(cls)
-        print(str(cls))
-        return cls(in_channels, norm_type, types, eps, momentum, affine, track_running_stats, allow_single_element)
+        if "_HeteroNorm" in str(cls):
+            return cls(in_channels, norm_type, types, eps, momentum, affine, track_running_stats, allow_single_element)
+        elif "HeteroBatchNorm" in str(cls):
+            return cls(in_channels, types, eps, momentum, affine, track_running_stats, allow_single_element)
+        elif "HeteroInstanceNorm" in str(cls):
+            return cls(in_channels, types, eps, momentum, affine, track_running_stats)
+        elif "HeteroLayerNorm" in str(cls):
+            return cls(in_channels, types, eps, momentum, affine)
+
 
 
     def reset_parameters(self):
