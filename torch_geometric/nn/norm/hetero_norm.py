@@ -203,6 +203,30 @@ class _HeteroNorm(torch.nn.Module):
 
 
 class HeteroBatchNorm(_HeteroNorm):
+    r"""Applies Batch Normalization over node features for each node type following:
+    BatchNorm <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.BatchNorm.html#torch_geometric.nn.norm.BatchNorm>,
+    Args:
+        in_channels (int): Size of each input sample.
+            Use :obj:`-1` for lazy initialization.
+        types (List[str], optional): Only needed if in_channels
+            is passed as an int.
+        eps (float, optional): A value added to the denominator for numerical
+            stability. (default: :obj:`1e-5`)
+        momentum (float, optional): The value used for the running mean and
+            running variance computation. (default: :obj:`0.1`)
+        affine (bool, optional): If set to :obj:`True`, this module has
+            learnable affine parameters :math:`\gamma` and :math:`\beta`.
+            (default: :obj:`True`)
+        track_running_stats (bool, optional): If set to :obj:`True`, this
+            module tracks the running mean and variance, and when set to
+            :obj:`False`, this module does not track such statistics and always
+            uses batch statistics in both training and eval modes.
+            (default: :obj:`True`)
+        allow_single_element (bool, optional): If set to :obj:`True`, batches
+            with only a single element will work as during in evaluation.
+            That is the running mean and variance will be used.
+            Requires :obj:`track_running_stats=True`. (default: :obj:`False`)
+    """
     def __init__(self, in_channels: int,
                  types: Union[List[NodeType],List[EdgeType]],
                  eps: float = 1e-5,
@@ -215,6 +239,26 @@ class HeteroBatchNorm(_HeteroNorm):
 
 
 class HeteroInstanceNorm(_HeteroNorm):
+    r"""Applies Instance Normalization over node features for each node type following:
+    InstanceNorm <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.InstanceNorm.html#torch_geometric.nn.norm.InstanceNorm>,
+    Args:
+        in_channels (int): Size of each input sample.
+            Use :obj:`-1` for lazy initialization.
+        types (List[str], optional): Only needed if in_channels
+            is passed as an int.
+        eps (float, optional): A value added to the denominator for numerical
+            stability. (default: :obj:`1e-5`)
+        momentum (float, optional): The value used for the running mean and
+            running variance computation. (default: :obj:`0.1`)
+        affine (bool, optional): If set to :obj:`True`, this module has
+            learnable affine parameters :math:`\gamma` and :math:`\beta`.
+            (default: :obj:`True`)
+        track_running_stats (bool, optional): If set to :obj:`True`, this
+            module tracks the running mean and variance, and when set to
+            :obj:`False`, this module does not track such statistics and always
+            uses batch statistics in both training and eval modes.
+            (default: :obj:`True`)
+    """
     def __init__(self, in_channels: int,
                  types: Union[List[NodeType],List[EdgeType]],
                  eps: float = 1e-5,
@@ -226,6 +270,21 @@ class HeteroInstanceNorm(_HeteroNorm):
 
 
 class HeteroLayerNorm(_HeteroNorm):
+    r"""Applies Layer Normalization over node features for each node type following:
+    LayerNorm <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.norm.InstanceNorm.html#torch_geometric.nn.norm.InstanceNorm>,
+    Args:
+        in_channels (int): Size of each input sample.
+            Use :obj:`-1` for lazy initialization.
+        types (List[str], optional): Only needed if in_channels
+            is passed as an int.
+        eps (float, optional): A value added to the denominator for numerical
+            stability. (default: :obj:`1e-5`)
+        momentum (float, optional): The value used for the running mean and
+            running variance computation. (default: :obj:`0.1`)
+        affine (bool, optional): If set to :obj:`True`, this module has
+            learnable affine parameters :math:`\gamma` and :math:`\beta`.
+            (default: :obj:`True`)
+    """
     def __init__(self, in_channels: int,
                  types: Union[List[NodeType],List[EdgeType]],
                  eps: float = 1e-5,
