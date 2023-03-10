@@ -56,9 +56,11 @@ class ToSparseTensor(BaseTransform):
                     keys.append(key)
                     values.append(value)
 
-            store.edge_index, values = sort_edge_index(store.edge_index,
-                                                       values,
-                                                       sort_by_row=False)
+            store.edge_index, values = sort_edge_index(
+                store.edge_index,
+                values,
+                sort_by_row=False,
+            )
 
             for key, value in zip(keys, values):
                 store[key] = value

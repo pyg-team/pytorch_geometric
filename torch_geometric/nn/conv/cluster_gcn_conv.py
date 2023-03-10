@@ -6,8 +6,11 @@ from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
 from torch_geometric.utils import (
     add_self_loops,
     degree,
+    is_torch_sparse_tensor,
     remove_self_loops,
     spmm,
+    to_edge_index,
+    to_torch_coo_tensor,
 )
 
 
@@ -69,6 +72,10 @@ class ClusterGCNConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         edge_weight: OptTensor = None
         if isinstance(edge_index, Tensor):
+            is_sparse_tensor = is_torch_sparse_tensor(edge_index)
+            if is_sparse_tensor:
+                edge_index, _ = to_edge_index(edge_index.t())
+
             num_nodes = x.size(self.node_dim)
             if self.add_self_loops:
                 edge_index, _ = remove_self_loops(edge_index)
@@ -79,6 +86,10 @@ class ClusterGCNConv(MessagePassing):
 
             edge_weight = deg_inv[col]
             edge_weight[row == col] += self.diag_lambda * deg_inv
+
+            if is_sparse_tensor:
+                edge_index = to_torch_coo_tensor(edge_index.flip(0),
+                                                 edge_weight, size=num_nodes)
 
         elif isinstance(edge_index, SparseTensor):
             if self.add_self_loops:

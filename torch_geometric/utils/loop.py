@@ -61,16 +61,19 @@ def remove_self_loops(
         tensor([[1, 2],
                 [3, 4]]))
     """
+    size: Optional[Tuple[int, int]] = None
+
     is_sparse = is_torch_sparse_tensor(edge_index)
     if is_sparse:
         assert edge_attr is None
-        size = edge_index.size()
+        size = (edge_index.size(0), edge_index.size(1))
         edge_index, edge_attr = to_edge_index(edge_index)
 
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
 
     if is_sparse:
+        assert edge_attr is not None
         edge_attr = edge_attr[mask]
         adj = to_torch_coo_tensor(edge_index, edge_attr, size=size)
         return adj, None
@@ -197,10 +200,12 @@ def add_self_loops(
         tensor([0.5000, 0.5000, 0.5000, 1.0000, 0.5000]))
     """
     N = maybe_num_nodes(edge_index, num_nodes)
+    size: Optional[Tuple[int, int]] = None
 
     is_sparse = is_torch_sparse_tensor(edge_index)
     if is_sparse:
         assert edge_attr is None
+        size = (edge_index.size(0), edge_index.size(1))
         edge_index, edge_attr = to_edge_index(edge_index)
 
     loop_index = torch.arange(0, N, dtype=torch.long, device=edge_index.device)
@@ -230,7 +235,7 @@ def add_self_loops(
 
     edge_index = torch.cat([edge_index, loop_index], dim=1)
     if is_sparse:
-        return to_torch_coo_tensor(edge_index, edge_attr), None
+        return to_torch_coo_tensor(edge_index, edge_attr, size=size), None
     return edge_index, edge_attr
 
 

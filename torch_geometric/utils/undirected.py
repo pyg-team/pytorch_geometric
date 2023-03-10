@@ -3,26 +3,29 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import coalesce, sort_edge_index
 
 from .num_nodes import maybe_num_nodes
 
+MISSING = '???'
+
 
 @torch.jit._overload
-def is_undirected(edge_index, edge_attr=None, num_nodes=None):
+def is_undirected(edge_index, edge_attr, num_nodes):
     # type: (Tensor, Optional[Tensor], Optional[int]) -> bool  # noqa
     pass
 
 
 @torch.jit._overload
-def is_undirected(edge_index, edge_attr=None, num_nodes=None):
+def is_undirected(edge_index, edge_attr, num_nodes):
     # type: (Tensor, List[Tensor], Optional[int]) -> bool  # noqa
     pass
 
 
 def is_undirected(
     edge_index: Tensor,
-    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
+    edge_attr: Union[OptTensor, List[Tensor]] = None,
     num_nodes: Optional[int] = None,
 ) -> bool:
     r"""Returns :obj:`True` if the graph given by :attr:`edge_index` is
@@ -84,29 +87,29 @@ def is_undirected(
 
 
 @torch.jit._overload
-def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
-    # type: (Tensor, Optional[bool], Optional[int], str) -> Tensor  # noqa
+def to_undirected(edge_index, edge_attr, num_nodes, reduce):
+    # type: (Tensor, str, Optional[int], str) -> Tensor  # noqa
     pass
 
 
 @torch.jit._overload
-def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
-    # type: (Tensor, Tensor, Optional[int], str) -> Tuple[Tensor, Tensor]  # noqa
+def to_undirected(edge_index, edge_attr, num_nodes, reduce):
+    # type: (Tensor, Optional[Tensor], Optional[int], str) -> Tuple[Tensor, Optional[Tensor]]  # noqa
     pass
 
 
 @torch.jit._overload
-def to_undirected(edge_index, edge_attr=None, num_nodes=None, reduce="add"):
+def to_undirected(edge_index, edge_attr, num_nodes, reduce):
     # type: (Tensor, List[Tensor], Optional[int], str) -> Tuple[Tensor, List[Tensor]]  # noqa
     pass
 
 
 def to_undirected(
     edge_index: Tensor,
-    edge_attr: Union[Optional[Tensor], List[Tensor]] = None,
+    edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
-    reduce: str = "add",
-) -> Union[Tensor, Tuple[Tensor, Tensor], Tuple[Tensor, List[Tensor]]]:
+    reduce: str = 'add',
+) -> Union[Tensor, Tuple[OptTensor, Tensor], Tuple[Tensor, List[Tensor]]]:
     r"""Converts the graph given by :attr:`edge_index` to an undirected graph
     such that :math:`(j,i) \in \mathcal{E}` for every edge :math:`(i,j) \in
     \mathcal{E}`.
@@ -123,8 +126,8 @@ def to_undirected(
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"`). (default: :obj:`"add"`)
 
-    :rtype: :class:`LongTensor` if :attr:`edge_attr` is :obj:`None`, else
-        (:class:`LongTensor`, :obj:`Tensor` or :obj:`List[Tensor]]`)
+    :rtype: :class:`LongTensor` if :attr:`edge_attr` is not passed, else
+        (:class:`LongTensor`, :obj:`Optional[Tensor]` or :obj:`List[Tensor]]`)
 
     Examples:
 
@@ -150,7 +153,7 @@ def to_undirected(
     """
     # Maintain backward compatibility to `to_undirected(edge_index, num_nodes)`
     if isinstance(edge_attr, int):
-        edge_attr = None
+        edge_attr = MISSING
         num_nodes = edge_attr
 
     row, col = edge_index[0], edge_index[1]
