@@ -1,3 +1,4 @@
+import pytest
 import torch
 from torch_sparse import SparseTensor
 
@@ -6,7 +7,8 @@ from torch_geometric.nn import HGTConv
 from torch_geometric.profile import benchmark
 
 
-def test_hgt_conv_same_dimensions():
+@pytest.mark.parametrize('use_gmm', [True, False])
+def test_hgt_conv_same_dimensions(use_gmm):
     x_dict = {
         'author': torch.randn(4, 16),
         'paper': torch.randn(6, 16),
@@ -30,7 +32,7 @@ def test_hgt_conv_same_dimensions():
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
-    conv = HGTConv(16, 16, metadata, heads=2)
+    conv = HGTConv(16, 16, metadata, heads=2, use_gmm=use_gmm)
     assert str(conv) == 'HGTConv(-1, 16, heads=2)'
     out_dict1 = conv(x_dict, edge_index_dict)
     assert len(out_dict1) == 2
@@ -86,7 +88,8 @@ def test_hgt_conv_different_dimensions():
                               atol=1e-6)
 
 
-def test_hgt_conv_lazy():
+@pytest.mark.parametrize('use_gmm', [True, False])
+def test_hgt_conv_lazy(use_gmm):
     x_dict = {
         'author': torch.randn(4, 16),
         'paper': torch.randn(6, 32),
@@ -110,7 +113,7 @@ def test_hgt_conv_lazy():
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
-    conv = HGTConv(-1, 32, metadata, heads=2)
+    conv = HGTConv(-1, 32, metadata, heads=2, use_gmm=use_gmm)
     assert str(conv) == 'HGTConv(-1, 32, heads=2)'
     out_dict1 = conv(x_dict, edge_index_dict)
     assert len(out_dict1) == 2
