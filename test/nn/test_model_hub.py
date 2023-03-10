@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
@@ -48,7 +49,7 @@ def test_save_pretrained_internal(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
     model._save_pretrained = Mock()
     model.save_pretrained(save_directory)
-    model._save_pretrained.assert_called_with(save_directory)
+    model._save_pretrained.assert_called_with(Path(save_directory))
 
 
 @withPackage('huggingface_hub')
@@ -92,11 +93,20 @@ def test_from_pretrained_internal(model, monkeypatch):
                         lambda x, **kwargs: {'state_dict': 1})
 
     model = model._from_pretrained(
-        model_id=MODEL_NAME, revision=None, cache_dir=None,
-        force_download=False, proxies=None, resume_download=True,
-        local_files_only=False, use_auth_token=False,
-        dataset_name=DATASET_NAME, model_name=MODEL_NAME, map_location="cpu",
-        strict=False, **CONFIG)
+        model_id=MODEL_NAME,
+        revision=None,
+        cache_dir=None,
+        force_download=False,
+        proxies=None,
+        resume_download=True,
+        local_files_only=False,
+        token=False,
+        dataset_name=DATASET_NAME,
+        model_name=MODEL_NAME,
+        map_location="cpu",
+        strict=False,
+        **CONFIG,
+    )
 
     assert hf_hub_download.call_count == 1
     assert model.model_config == CONFIG
