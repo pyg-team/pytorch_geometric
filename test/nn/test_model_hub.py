@@ -94,7 +94,7 @@ def test_from_pretrained_internal(model, monkeypatch):
     model = model._from_pretrained(
         model_id=MODEL_NAME, revision=None, cache_dir=None,
         force_download=False, proxies=None, resume_download=True,
-        local_files_only=False, use_auth_token=False,
+        local_files_only=False, token=False,
         dataset_name=DATASET_NAME, model_name=MODEL_NAME, map_location="cpu",
         strict=False, **CONFIG)
 
