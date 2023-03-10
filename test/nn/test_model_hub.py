@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
@@ -48,7 +49,7 @@ def test_save_pretrained_internal(model, tmp_path):
     save_directory = f"{str(tmp_path / REPO_NAME)}"
     model._save_pretrained = Mock()
     model.save_pretrained(save_directory)
-    model._save_pretrained.assert_called_with(save_directory)
+    model._save_pretrained.assert_called_with(Path(save_directory))
 
 
 @withPackage('huggingface_hub')
