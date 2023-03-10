@@ -1,7 +1,8 @@
 import warnings
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
+import pandas as pd
 import torch
 from torch import Tensor
 
@@ -9,6 +10,7 @@ WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
 
 try:
     import pyg_lib  # noqa
+
     WITH_PYG_LIB = True
     WITH_SAMPLED_OP = WITH_PYG_LIB and hasattr(pyg_lib.ops, 'sampled_add')
     WITH_INDEX_SORT = WITH_PYG_LIB and hasattr(pyg_lib.ops, 'index_sort')
@@ -129,3 +131,9 @@ NoneType = Optional[Tensor]
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
 InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
+NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
+
+# Types for HeteroDF ##########################################################
+
+HeteroDF = Dict[Union[NodeType, EdgeType], pd.DataFrame]
+HeteroColumnSet = Dict[Union["str", EdgeType], List[str]]

@@ -11,6 +11,9 @@ install_requires = [
     'pyparsing',
     'scikit-learn',
     'psutil>=5.8.0',
+    'networkx',
+    'pandas',
+    'bidict',
 ]
 
 graphgym_requires = [
@@ -40,6 +43,7 @@ full_requires = graphgym_requires + modelhub_requires + [
     'torchmetrics',
     'scikit-image',
     'pytorch-memlab',
+    'bidict',
     'pgmpy',
     'opt_einsum',  # required for pgmpy
     'statsmodels',
