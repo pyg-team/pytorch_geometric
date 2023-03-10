@@ -172,6 +172,7 @@ class HGTConv(MessagePassing):
             v_dict) -> Tuple[Tensor, Tensor, Dict[EdgeType, int]]:
         """Constructs a tensor of source node features by concatenating
         a tranformed source node tensor for each edge type.
+
         Returns:
             k (Tensor): A tensor of source node features.
             v (Tensor): A tensor of source node features.
@@ -222,6 +223,7 @@ class HGTConv(MessagePassing):
         """Constructs a tensor of edge indices by concatenating
         edge indices for each edge type. The edge indices are
         offseted by the offset of the source and destination nodes.
+
         Returns:
             edge_index (Tensor): A tensor of edge indices.
             p (Tensor): A tensor of weights for each edge type.
