@@ -123,7 +123,7 @@ class PyGModelHubMixin(ModelHubMixin):
 
         super().save_pretrained(save_directory=save_directory, config=config,
                                 push_to_hub=push_to_hub, repo_id=repo_id,
-                                **kwargs)
+                                **kwargs, )
         model_card = self.construct_model_card(self.model_name,
                                                self.dataset_name)
         if push_to_hub:
