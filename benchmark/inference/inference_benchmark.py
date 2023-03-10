@@ -229,12 +229,11 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
-                        if args.write_csv:
-                            save_benchmark_data(csv_data, batch_size, layers,
-                                                num_neighbors, hidden_channels,
-                                                total_time, model_name,
-                                                dataset_name,
-                                                args.use_sparse_tensor)
+                        save_benchmark_data(csv_data, batch_size, layers,
+                                            num_neighbors, hidden_channels,
+                                            total_time, model_name,
+                                            dataset_name,
+                                            args.use_sparse_tensor)
     if args.write_csv:
         write_to_csv(csv_data)
 

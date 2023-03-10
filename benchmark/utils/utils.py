@@ -125,9 +125,9 @@ def save_benchmark_data(csv_data, batch_size, layers, num_neighbors,
                         hidden_channels, total_time, model_name, dataset_name,
                         use_sparse_tensor):
     config = f'Batch size={batch_size}, ' \
-             f'Layers amount={layers}, ' \
-             f'Num_neighbors={num_neighbors}, ' \
-             f'Hidden features size={hidden_channels}'
+             f'#Layers={layers}, ' \
+             f'#Neighbors={num_neighbors}, ' \
+             f'#Hidden features={hidden_channels}'
     csv_data['DATE'].append(datetime.now().date())
     csv_data['TIME (s)'].append(round(total_time, 2))
     csv_data['MODEL'].append(model_name)
@@ -138,8 +138,7 @@ def save_benchmark_data(csv_data, batch_size, layers, num_neighbors,
 
 def write_to_csv(csv_data, training=False):
     results_path = osp.join(osp.dirname(osp.realpath(__file__)), '../results/')
-    if not osp.exists(results_path):
-        os.makedirs(results_path)
+    os.makedirs(results_path, exist_ok=True)
 
     name = 'training' if training else 'inference'
     csv_path = osp.join(results_path, f'TOTAL_{name}_benchmark.csv')
