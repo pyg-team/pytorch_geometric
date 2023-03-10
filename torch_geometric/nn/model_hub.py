@@ -138,7 +138,7 @@ class PyGModelHubMixin(ModelHubMixin):
         proxies,
         resume_download,
         local_files_only,
-        use_auth_token,
+        token,
         dataset_name="",
         model_name="",
         map_location="cpu",
@@ -158,7 +158,7 @@ class PyGModelHubMixin(ModelHubMixin):
                 force_download=force_download,
                 proxies=proxies,
                 resume_download=resume_download,
-                use_auth_token=use_auth_token,
+                token=token,
                 local_files_only=local_files_only,
             )
 
