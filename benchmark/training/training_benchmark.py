@@ -1,12 +1,20 @@
 import argparse
 import ast
+from collections import defaultdict
 from contextlib import nullcontext
 
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from benchmark.utils import emit_itt, get_dataset, get_model, get_split_masks
+from benchmark.utils import (
+    emit_itt,
+    get_dataset,
+    get_model,
+    get_split_masks,
+    save_benchmark_data,
+    write_to_csv,
+)
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -93,6 +101,7 @@ def test(model, loader, device, hetero, progress_bar=True, desc="") -> None:
 
 
 def run(args: argparse.ArgumentParser):
+    csv_data = defaultdict(list)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # If we use a custom number of steps, then we need to use RandomSampler,
@@ -249,6 +258,14 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
+                        save_benchmark_data(csv_data, batch_size, layers,
+                                            num_neighbors, hidden_channels,
+                                            total_time, model_name,
+                                            dataset_name,
+                                            args.use_sparse_tensor)
+    if args.write_csv:
+        write_to_csv(csv_data, training=True)
+
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN training benchmark')
@@ -286,6 +303,7 @@ if __name__ == '__main__':
         help="List of CPU core IDs to use for DataLoader workers.")
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
+    add('--write-csv', action='store_true', help='Write benchmark data to csv')
     args = argparser.parse_args()
 
     run(args)
