@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added option to write benchmark results to csv ([#6888](https://github.com/pyg-team/pytorch_geometric/pull/6888))
 - Added `HeteroLayerNorm` and `HeteroBatchNorm` layers ([#6838](https://github.com/pyg-team/pytorch_geometric/pull/6838))
 - Added the `HeterophilousGraphDataset` suite ([#6846](https://github.com/pyg-team/pytorch_geometric/pull/6846))
 - Added support for sparse tensor in full batch mode inference benchmark ([#6843](https://github.com/pyg-team/pytorch_geometric/pull/6843))
