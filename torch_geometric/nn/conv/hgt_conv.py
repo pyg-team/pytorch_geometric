@@ -1,6 +1,6 @@
 import math
 from collections import defaultdict
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -148,6 +148,117 @@ class HGTConv(MessagePassing):
         glorot(self.a_rel)
         glorot(self.m_rel)
 
+    def _construct_dst_node_tensor(
+            self, q_dict) -> Tuple[Tensor, Dict[NodeType, int]]:
+        """Constructs a tensor of dst node features by concatenating
+        features of different node types.
+        Returns:
+            q (Tensor): A tensor of destination node features.
+            dst_offset (Dict[str, int]): A dictionary holding the offset of
+                each node type in the concatenated tensor.
+        """
+        q_list = []
+        dst_offset = {}
+        offset = 0
+        for node_type in self.node_types:
+            q_list.append(q_dict[node_type])
+            dst_offset[node_type] = offset
+            offset += q_dict[node_type].size(0)
+        q = torch.cat(q_list)
+        return q, dst_offset
+
+    def _construct_src_node_tensors(
+            self, k_dict,
+            v_dict) -> Tuple[Tensor, Tensor, Dict[EdgeType, int]]:
+        """Constructs a tensor of source node features by concatenating
+        a tranformed source node tensor for each edge type.
+        Returns:
+            k (Tensor): A tensor of source node features.
+            v (Tensor): A tensor of source node features.
+            src_offset (Dict[EdgeType, int]): A dictionary holding the offset
+                of each source type in the concatenated tensor.
+        """
+        H, D = self.heads, self.out_channels // self.heads
+        a_rels = [
+            self.a_rel['__'.join(edge_type)] for edge_type in self.edge_types
+        ]
+        m_rels = [
+            self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
+        ]
+        k_ins = []
+        v_ins = []
+        offset = 0
+        src_offset = {}
+        count = 0
+        trans_ptr = [count]
+
+        for edge_type in self.edge_types:
+            src_type, _, _ = edge_type
+
+            # Collect src node tesnors for each edge type.
+            k_src = k_dict[src_type]
+            v_src = v_dict[src_type]
+            k_ins.append(k_src.view(-1, D))
+            v_ins.append(v_src.view(-1, D))
+            for _ in range(H):
+                count += k_src.size(0)
+                trans_ptr.append(count)
+
+            src_offset[edge_type] = offset
+            # Update offset.
+            offset += k_src.size(0)
+
+        trans_ptr = torch.tensor(trans_ptr)
+        a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
+        k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
+                                           a_rel).view(-1, H, D)
+        v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
+                                           m_rel).view(-1, H, D)
+
+        return k_out, v_out, src_offset
+
+    def _construct_edge_index(self, edge_index_dict, src_offset, dst_offset,
+                              sparse_size) -> Tuple[Tensor, Tensor]:
+        """Constructs a tensor of edge indices by concatenating
+        edge indices for each edge type. The edge indices are
+        offseted by the offset of the source and destination nodes.
+        Returns:
+            edge_index (Tensor): A tensor of edge indices.
+            p (Tensor): A tensor of weights for each edge type.
+        """
+        H = self.heads
+        # List of edges and edge tensors.
+        edge_index_list = []
+        p_rels = []
+
+        for edge_type in self.edge_types:
+            _, _, dst_type = edge_type
+
+            # Collect edges and edge tensors.
+            indices = edge_index_dict[edge_type]
+            # (TODO) Add support for SparseTensor w/o converting?
+            convert = isinstance(indices, SparseTensor)
+            if convert:
+                # Convert to COO
+                dst, src, _ = indices.coo()
+                indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
+            num_edges = indices.size(1)
+            p_rels.append(self.p_rel['__'.join(edge_type)].view(1, H).expand(
+                num_edges, -1))
+            # Add offset to edge indices. Offset needs to be applied as
+            # the src and dst node tensors are concatenated.
+            indices[0] += src_offset[edge_type]
+            indices[1] += dst_offset[dst_type]
+            edge_index_list.append(indices)
+
+        # Concatenate all edges and edge tensors.
+        p = torch.cat(p_rels, dim=0)
+        e_idx = combine_edge_slices(edge_index_list)
+        if convert:
+            e_idx = SparseTensor(row=e_idx[0], col=e_idx[1],
+                                 sparse_sizes=sparse_size)
+        return e_idx, p
+
     def forward(
         self,
         x_dict: Dict[NodeType, Tensor],
@@ -175,8 +286,7 @@ class HGTConv(MessagePassing):
         k_dict, q_dict, v_dict = {}, {}, {}
         out_dict = defaultdict(list)
 
-        # parallelize over node-types
-        # compute K, Q, V over node-types
+        # Compute K, Q, V over node-types
         k_dict = {
             node_type: k_j.view(-1, H, D)
             for node_type, k_j in self.k_lin(x_dict).items()
@@ -190,90 +300,20 @@ class HGTConv(MessagePassing):
             for node_type, v_j in self.v_lin(x_dict).items()
         }
 
-        # parallelize over edge-types
-        a_rels = [
-            self.a_rel['__'.join(edge_type)] for edge_type in self.edge_types
-        ]
-        m_rels = [
-            self.m_rel['__'.join(edge_type)] for edge_type in self.edge_types
-        ]
-
-        # List of src node tensors for each node type.
-        q_list = []
-        dst_offset = {}
-        offset = 0
-        for node_type in self.node_types:
-            q_list.append(q_dict[node_type])
-            dst_offset[node_type] = offset
-            offset += q_dict[node_type].size(0)
-        q = torch.cat(q_list)
-
-        # List of edges and edge tensors.
-        edge_index_list = []
-        p_rels = []
-
-        # List of src node tensors for each edge type.
-        k_ins = []
-        v_ins = []
-        src_offset = 0
-        count = 0
-        trans_ptr = [count]
-
-        for edge_type in self.edge_types:
-            src_type, _, dst_type = edge_type
-
-            # Collect src node tesnors for each edge type.
-            k_src = k_dict[src_type]
-            v_src = v_dict[src_type]
-            k_ins.append(k_src.view(-1, D))
-            v_ins.append(v_src.view(-1, D))
-            for _ in range(H):
-                count += k_src.size(0)
-                trans_ptr.append(count)
-
-            # Collect edges and edge tensors.
-            indices = edge_index_dict[edge_type]
-            # (TODO) Add support for SparseTensor w/o converting?
-            convert = isinstance(indices, SparseTensor)
-            if convert:
-                # Convert to COO
-                dst, src, _ = indices.coo()
-                indices = torch.cat((src.view(1, -1), dst.view(1, -1)))
-            num_edges = indices.size(1)
-            p_rels.append(self.p_rel['__'.join(edge_type)].view(1, H).expand(
-                num_edges, -1))
-            # Add offset to edge indices. Offset needs to be applied as
-            # the src and dst node tensors are concatenated.
-            indices[0] += src_offset
-            indices[1] += dst_offset[dst_type]
-            edge_index_list.append(indices)
-
-            # Update offset.
-            src_offset += k_src.size(0)
-
-        # Concatenate all src node tensors.
-        trans_ptr = torch.tensor(trans_ptr)
-        a_rel, m_rel = torch.cat(a_rels), torch.cat(m_rels)
-        k_out = pyg_lib.ops.segment_matmul(torch.cat(k_ins), trans_ptr,
-                                           a_rel).view(-1, H, D)
-        v_out = pyg_lib.ops.segment_matmul(torch.cat(v_ins), trans_ptr,
-                                           m_rel).view(-1, H, D)
-
-        # Concatenate all edges and edge tensors.
-        p = torch.cat(p_rels, dim=0)
-        e_idx = combine_edge_slices(edge_index_list)
-        if convert:
-            e_idx = SparseTensor(row=e_idx[0], col=e_idx[1],
-                                 sparse_sizes=(k_out.size(0), k_out.size(0)))
+        q, dst_offset = self._construct_dst_node_tensor(q_dict)
+        k, v, src_offset = self._construct_src_node_tensors(k_dict, v_dict)
+        edge_index, p = self._construct_edge_index(edge_index_dict, src_offset,
+                                                   dst_offset,
+                                                   (k.size(0), q.size(0)))
 
         # propagate
-        out = self.propagate(e_idx, k=k_out, q=q, v=v_out, rel=p, size=None)
+        out = self.propagate(edge_index, k=k, q=q, v=v, rel=p, size=None)
         k_ptr = 0
         for node_type, k in k_dict.items():
             out_dict[node_type] = out[k_ptr:k_ptr + k.size(0)]
             k_ptr += k.size(0)
 
-        # parralelize over node-types
+        # Transform output node embeddings.
         a_dict = self.a_lin({
             node_type: F.gelu(out)
             for node_type, out in out_dict.items() if out is not None
