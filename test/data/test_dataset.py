@@ -1,3 +1,5 @@
+import copy
+
 import pytest
 import torch
 from torch_sparse import SparseTensor
@@ -6,8 +8,8 @@ from torch_geometric.data import Data, HeteroData, InMemoryDataset
 
 
 class MyTestDataset(InMemoryDataset):
-    def __init__(self, data_list):
-        super().__init__('/tmp/MyTestDataset')
+    def __init__(self, data_list, transform=None):
+        super().__init__('/tmp/MyTestDataset', transform=transform)
         self.data, self.slices = self.collate(data_list)
 
 
@@ -70,6 +72,15 @@ def test_in_memory_num_classes():
         Data(y=torch.tensor([[0, 0, 1, 0]])),
     ])
     assert dataset.num_classes == 4
+
+    # Test when `__getitem__` returns a tuple of data objects.
+    def transform(data):
+        copied_data = copy.copy(data)
+        copied_data.y += 1
+        return data, copied_data, 'foo'
+
+    dataset = MyTestDataset([Data(y=0), Data(y=1)], transform=transform)
+    assert dataset.num_classes == 3
 
 
 def test_in_memory_dataset_copy():
