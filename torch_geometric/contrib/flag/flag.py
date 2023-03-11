@@ -84,11 +84,11 @@ class FLAG(torch.nn.Module):
             n_ascent_steps (int): The number of forward and backward passes
                 to take. Note that the FLAG paper uses 3 for experiments.
 
-        Returns:
-            self.loss (torch.nn.Module): The loss after the final iteration
-                of the FLAG algorithm.
-            out (torch.Tensor): The model output on the perturbed inputs from
-                the last iteration of the FLAG algorithm.
+        :returns:
+            - self.loss (torch.nn.Module) - The loss after the final \
+                iteration of the FLAG algorithm.
+            - out (torch.Tensor) - The model output on the perturbed inputs \
+                from the last iteration of the FLAG algorithm.
         """
 
         if not isinstance(n_ascent_steps, int) or n_ascent_steps <= 0:
@@ -173,8 +173,8 @@ class FLAG(torch.nn.Module):
 
     def get_model(self) -> torch.nn.Module:
         """
-        Returns:
-            self.model (torch.nn.Module): a reference to the underlying model
-                that was trained by the FLAG module.
+        :returns:
+            - self.model (torch.nn.Module): a reference to the underlying \
+                model that was trained by the FLAG module.
         """
         return self.model
