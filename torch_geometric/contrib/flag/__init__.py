@@ -1,5 +1,6 @@
 from .flag import FLAG
-from .flag_callback import FLAGCallback, FLAGLossHistoryCallback, FLAGPerturbHistoryCallback
+from .flag_callback import (FLAGCallback, FLAGLossHistoryCallback,
+                            FLAGPerturbHistoryCallback)
 
 __all__ = classes = [
     'FLAG',
