@@ -1,4 +1,5 @@
 import numbers
+from typing import List
 
 import torch
 
@@ -44,7 +45,7 @@ class FLAG(torch.nn.Module):
         optimizer: torch.optim.Optimizer,
         loss_fn: torch.nn.Module,
         device: torch.device,
-        callbacks: [FLAGCallback] = [],
+        callbacks: List[FLAGCallback] = [],
     ) -> None:  # None return type as per https://peps.python.org/pep-0484/
         super(FLAG, self).__init__()
 
@@ -57,26 +58,26 @@ class FLAG(torch.nn.Module):
 
     def forward(
         self,
-        x: torch.tensor,
-        edge_index: torch.tensor,
-        y_true: torch.tensor,
-        train_idx: torch.tensor,
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
+        y_true: torch.Tensor,
+        train_idx: torch.Tensor,
         step_size: float,
         n_ascent_steps: int = 3,
-    ) -> tuple[torch.nn.Module, torch.tensor]:
+    ) -> tuple[torch.nn.Module, torch.Tensor]:
         """
         Perform the FLAG forward and backward passes. Note that users should
         not invoke loss.backward() or optimizer.step() externally to this
         function in their epoch loop.
 
         Args:
-            x (torch.tensor): Node feature matrix with shape
+            x (torch.Tensor): Node feature matrix with shape
                 [num_nodes, num_node_features].
-            edge_index (torch.tensor): Graph connectivity in COO format with
+            edge_index (torch.Tensor): Graph connectivity in COO format with
                 shape [2, num_edges].
-            y_true (torch.tensor): Graph-level, node-level, or edge-level
+            y_true (torch.Tensor): Graph-level, node-level, or edge-level
                 ground-truth labels.
-            train_idx (torch.tensor): Indices of training data.
+            train_idx (torch.Tensor): Indices of training data.
             step_size (float): The step size to take during the gradient
                 ascent on the perturbation. This is also used as the ranges
                 when initializing the perturbation.
@@ -86,7 +87,7 @@ class FLAG(torch.nn.Module):
         Returns:
             self.loss (torch.nn.Module): The loss after the final iteration
                 of the FLAG algorithm.
-            out (torch.tensor): The model output on the perturbed inputs from
+            out (torch.Tensor): The model output on the perturbed inputs from
                 the last iteration of the FLAG algorithm.
         """
 

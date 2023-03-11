@@ -88,3 +88,17 @@ Explainer
 
 .. automodule:: torch_geometric.contrib.explain
     :members:
+
+FLAG Data Augmentation
+----------------------
+
+.. currentmodule:: torch_geometric.contrib.flag
+
+.. autosummary::
+    :nosignatures:
+    {% for cls in torch_geometric.contrib.flag.classes %}
+      {{ cls }}
+    {% endfor %}
+
+.. automodule:: torch_geometric.contrib.flag
+    :members:
