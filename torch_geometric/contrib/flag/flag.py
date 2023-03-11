@@ -4,6 +4,7 @@ import torch
 
 from .flag_callback import FLAGCallback
 
+
 class FLAG(torch.nn.Module):
     def __init__(
         self,
@@ -93,7 +94,10 @@ class FLAG(torch.nn.Module):
         # loss /= args.m
         self.loss /= n_ascent_steps
 
-        [c.on_ascent_step_end(0, self.loss, self.perturb) for c in self.callbacks]
+        [
+            c.on_ascent_step_end(0, self.loss, self.perturb)
+            for c in self.callbacks
+        ]
 
         # for _ in range(args.m - 1):
         for i in range(n_ascent_steps - 1):
@@ -114,8 +118,10 @@ class FLAG(torch.nn.Module):
             # loss /= args.m
             self.loss /= n_ascent_steps
 
-            [c.on_ascent_step_end(i + 1, self.loss, self.perturb) for c in self.callbacks]
-
+            [
+                c.on_ascent_step_end(i + 1, self.loss, self.perturb)
+                for c in self.callbacks
+            ]
 
         [c.on_optimizer_step_begin(self.loss) for c in self.callbacks]
 
@@ -139,4 +145,3 @@ class FLAG(torch.nn.Module):
                  the FLAG module.
         """
         return self.model
-
