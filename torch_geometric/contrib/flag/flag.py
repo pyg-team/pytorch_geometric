@@ -109,7 +109,7 @@ class FLAG(torch.nn.Module):
         # This example does not assume that the model forward function has a
         #   `perturb` argument
 
-        training_labels = y_true[train_idx]
+        training_labels = y_true.squeeze(1)[train_idx]
 
         self.model.train()
         self.optimizer.zero_grad()
