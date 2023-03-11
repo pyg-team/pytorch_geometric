@@ -21,6 +21,7 @@ from torch_geometric.typing import (
     Size,
     SparseTensor,
 )
+from torch_geometric.utils import is_torch_sparse_tensor, to_edge_index
 
 from ..inits import reset
 
@@ -213,6 +214,11 @@ class GENConv(MessagePassing):
 
         if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()
+        elif is_torch_sparse_tensor(edge_index):
+            _, edge_attr = to_edge_index(edge_index)
+            # TODO:
+            if edge_attr.dim() == 1 and edge_attr.all():
+                edge_attr = None
 
         if edge_attr is not None and hasattr(self, 'lin_edge'):
             edge_attr = self.lin_edge(edge_attr)
