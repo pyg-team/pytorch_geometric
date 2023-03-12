@@ -24,11 +24,14 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
         from torch_geometric.datasets import SNAPDataset
         path = osp.join(root, 'SNAPDataset')
         return SNAPDataset(path, name, *args, **kwargs)
+    if name.lower() in ['bashapes']:
+        from torch_geometric.datasets import BAShapes
+        return BAShapes(*args, **kwargs)
     if name in ['citationCiteseer', 'illc1850']:
         from torch_geometric.datasets import SuiteSparseMatrixCollection
         path = osp.join(root, 'SuiteSparseMatrixCollection')
         return SuiteSparseMatrixCollection(path, name=name, *args, **kwargs)
-    if name.lower() == 'hetero':
+    if name.lower() in ['hetero']:
         from torch_geometric.testing import FakeHeteroDataset
         return FakeHeteroDataset(*args, **kwargs)
 
