@@ -3,13 +3,12 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import LinkNeighborLoader
-from torch_geometric.testing import MyFeatureStore, MyGraphStore, withPackage
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
+from torch_geometric.testing import (
+    MyFeatureStore,
+    MyGraphStore,
+    get_random_edge_index,
+    withPackage,
+)
 
 
 def unique_edge_pairs(edge_index):
@@ -19,8 +18,8 @@ def unique_edge_pairs(edge_index):
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
 def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio):
-    pos_edge_index = get_edge_index(100, 50, 500)
-    neg_edge_index = get_edge_index(100, 50, 500)
+    pos_edge_index = get_random_edge_index(100, 50, 500)
+    neg_edge_index = get_random_edge_index(100, 50, 500)
     neg_edge_index[1, :] += 50
 
     edge_label_index = torch.cat([pos_edge_index, neg_edge_index], dim=-1)
@@ -89,11 +88,11 @@ def test_hetero_link_neighbor_loader_basic(directed, neg_sampling_ratio):
     data['paper'].x = torch.arange(100)
     data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'paper'].edge_index = get_random_edge_index(100, 100, 500)
     data['paper', 'paper'].edge_attr = torch.arange(500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 1000)
     data['paper', 'author'].edge_attr = torch.arange(500, 1500)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     loader = LinkNeighborLoader(
@@ -132,9 +131,9 @@ def test_hetero_link_neighbor_loader_loop(directed):
     data['paper'].x = torch.arange(100)
     data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['paper', 'paper'].edge_index = get_random_edge_index(100, 100, 500)
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 1000)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 1000)
 
     loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
                                 edge_label_index=('paper', 'paper'),
@@ -152,7 +151,7 @@ def test_hetero_link_neighbor_loader_loop(directed):
 
 
 def test_link_neighbor_loader_edge_label():
-    edge_index = get_edge_index(100, 100, 500)
+    edge_index = get_random_edge_index(100, 100, 500)
     data = Data(edge_index=edge_index, x=torch.arange(100))
 
     loader = LinkNeighborLoader(
@@ -190,9 +189,9 @@ def test_temporal_hetero_link_neighbor_loader():
     data['author'].x = torch.arange(100, 300)
     data['author'].time = torch.arange(data['author'].num_nodes)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['paper', 'paper'].edge_index = get_random_edge_index(100, 100, 500)
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 1000)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 1000)
 
     with pytest.raises(ValueError, match=r"'edge_label_time' is not set"):
         loader = LinkNeighborLoader(
@@ -245,19 +244,19 @@ def test_custom_hetero_link_neighbor_loader(FeatureStore, GraphStore):
 
     # Set up edge indices (GraphStore does not support `edge_attr` at the
     # moment):
-    edge_index = get_edge_index(100, 100, 500)
+    edge_index = get_random_edge_index(100, 100, 500)
     data['paper', 'to', 'paper'].edge_index = edge_index
     graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
                                edge_type=('paper', 'to', 'paper'),
                                layout='coo', size=(100, 100))
 
-    edge_index = get_edge_index(100, 200, 1000)
+    edge_index = get_random_edge_index(100, 200, 1000)
     data['paper', 'to', 'author'].edge_index = edge_index
     graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
                                edge_type=('paper', 'to', 'author'),
                                layout='coo', size=(100, 200))
 
-    edge_index = get_edge_index(200, 100, 1000)
+    edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'to', 'paper'].edge_index = edge_index
     graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
                                edge_type=('author', 'to', 'paper'),
@@ -302,7 +301,7 @@ def test_homo_link_neighbor_loader_no_edges():
         Data(num_nodes=100),
         num_neighbors=[],
         batch_size=20,
-        edge_label_index=get_edge_index(100, 100, 100),
+        edge_label_index=get_random_edge_index(100, 100, 100),
     )
 
     for batch in loader:
@@ -317,7 +316,10 @@ def test_hetero_link_neighbor_loader_no_edges():
     loader = LinkNeighborLoader(
         HeteroData(paper=dict(num_nodes=100)),
         num_neighbors=[],
-        edge_label_index=(('paper', 'paper'), get_edge_index(100, 100, 100)),
+        edge_label_index=(
+            ('paper', 'paper'),
+            get_random_edge_index(100, 100, 100),
+        ),
         batch_size=20,
     )
 
@@ -340,8 +342,8 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
     data = Data()
     data.x = torch.arange(100)
-    data.edge_index = get_edge_index(100, 100, 400)
-    data.edge_label_index = get_edge_index(100, 100, 500)
+    data.edge_index = get_random_edge_index(100, 100, 400)
+    data.edge_label_index = get_random_edge_index(100, 100, 500)
     data.edge_attr = torch.arange(data.num_edges)
 
     time_attr = edge_label_time = None
@@ -427,10 +429,11 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
     data['paper'].x = torch.arange(100)
     data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 400)
-    data['paper', 'paper'].edge_label_index = get_edge_index(100, 100, 500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['paper', 'paper'].edge_index = get_random_edge_index(100, 100, 400)
+    edge_label_index = get_random_edge_index(100, 100, 500)
+    data['paper', 'paper'].edge_label_index = edge_label_index
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 1000)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 1000)
 
     time_attr = edge_label_time = None
     if temporal:
