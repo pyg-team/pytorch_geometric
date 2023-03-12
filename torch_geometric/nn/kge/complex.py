@@ -16,7 +16,7 @@ class ComplEx(KGEModel):
 
     .. math::
         d(h, r, t) = Re(< \mathbf{e}_h,  \mathbf{w}_r, \mathbf{e}_t>)
-        
+
     .. note::
 
         For an example of using the :class:`ComplEx` model, see

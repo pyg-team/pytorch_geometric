@@ -1,19 +1,17 @@
-import os.path as osp
 import argparse
+import os.path as osp
 
 import torch
 
 from torch_geometric.datasets import FB15k_237
-from torch_geometric.nn import TransE, ComplEx
+from torch_geometric.nn import ComplEx, TransE
 
 available_models = ['transe', 'complex']
-model_map = {
-    'transe': TransE,
-    'complex': ComplEx
-}
+model_map = {'transe': TransE, 'complex': ComplEx}
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', choices=available_models, type=str.lower, required=True)
+parser.add_argument('--model', choices=available_models, type=str.lower,
+                    required=True)
 args = parser.parse_args()
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
