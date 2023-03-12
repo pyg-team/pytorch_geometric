@@ -216,7 +216,7 @@ class GENConv(MessagePassing):
             edge_attr = edge_index.storage.value()
         elif is_torch_sparse_tensor(edge_index):
             _, edge_attr = to_edge_index(edge_index)
-            # TODO:
+            # TODO: `edge_attr` is `None` for unweighted homogeneous graphs
             if edge_attr.dim() == 1 and edge_attr.all():
                 edge_attr = None
 
