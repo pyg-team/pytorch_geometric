@@ -133,9 +133,7 @@ def test_hgt_loader():
 
 def test_hgt_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
-    print(dataset)
     data = dataset[0]
-    print(data)
     data.edge_weight = torch.rand(data.num_edges)
 
     hetero_data = HeteroData()
