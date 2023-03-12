@@ -473,7 +473,6 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
     )
 
     cu_edge_index, cu_edge_weight = from_cugraph(G)
-
     cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
                                                     cu_edge_weight)
 

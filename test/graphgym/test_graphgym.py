@@ -1,7 +1,4 @@
 import os.path as osp
-import random
-import shutil
-import sys
 import warnings
 from collections import namedtuple
 
@@ -49,18 +46,14 @@ def trivial_metric(true, pred, task_type):
 @pytest.mark.parametrize('auto_resume', [True, False])
 @pytest.mark.parametrize('skip_train_eval', [True, False])
 @pytest.mark.parametrize('use_trivial_metric', [True, False])
-def test_run_single_graphgym(capfd, auto_resume, skip_train_eval,
+def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
                              use_trivial_metric):
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
     warnings.filterwarnings('ignore', ".*lower value for log_every_n_steps.*")
 
-    Args = namedtuple('Args', ['cfg_file', 'opts'])
-    root = osp.join(osp.dirname(osp.realpath(__file__)))
-    args = Args(osp.join(root, 'example_node.yml'), [])
-
     load_cfg(cfg, args)
-    cfg.out_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    cfg.run_dir = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
+    cfg.out_dir = osp.join(tmp_path, 'out_dir')
+    cfg.run_dir = osp.join(tmp_path, 'run_dir')
     cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
     cfg.train.auto_resume = auto_resume
 
@@ -109,8 +102,6 @@ def test_run_single_graphgym(capfd, auto_resume, skip_train_eval,
 
     agg_runs(cfg.out_dir, cfg.metric_best)
 
-    shutil.rmtree(cfg.out_dir)
-
     out, _ = capfd.readouterr()
     assert "train: {'epoch': 0," in out
     assert "val: {'epoch': 0," in out
@@ -120,13 +111,13 @@ def test_run_single_graphgym(capfd, auto_resume, skip_train_eval,
 
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
-def test_graphgym_module(tmpdir):
+def test_graphgym_module(tmp_path):
     import pytorch_lightning as pl
 
     load_cfg(cfg, args)
-    cfg.out_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
-    cfg.run_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
-    cfg.dataset.dir = osp.join(tmpdir, 'pyg_test_datasets', 'Planetoid')
+    cfg.out_dir = osp.join(tmp_path, 'out_dir')
+    cfg.run_dir = osp.join(tmp_path, 'run_dir')
+    cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
 
     set_out_dir(cfg.out_dir, args.cfg_file)
     dump_cfg(cfg)
@@ -171,20 +162,18 @@ def test_graphgym_module(tmpdir):
     assert keys == set(outputs.keys())
     assert isinstance(outputs["loss"], torch.Tensor)
 
-    shutil.rmtree(cfg.out_dir)
-
 
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
-def test_train(capfd, tmpdir):
+def test_train(tmp_path, capfd):
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
 
     import pytorch_lightning as pl
 
     load_cfg(cfg, args)
-    cfg.out_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
-    cfg.run_dir = osp.join(tmpdir, str(random.randrange(sys.maxsize)))
-    cfg.dataset.dir = osp.join(tmpdir, 'pyg_test_datasets', 'Planetoid')
+    cfg.out_dir = osp.join(tmp_path, 'out_dir')
+    cfg.run_dir = osp.join(tmp_path, 'run_dir')
+    cfg.dataset.dir = osp.join('/', 'tmp', 'pyg_test_datasets', 'Planetoid')
 
     set_out_dir(cfg.out_dir, args.cfg_file)
     dump_cfg(cfg)
@@ -202,8 +191,6 @@ def test_train(capfd, tmpdir):
                          log_every_n_steps=1)
     train_loader, val_loader = loaders[0], loaders[1]
     trainer.fit(model, train_loader, val_loader)
-
-    shutil.rmtree(cfg.out_dir)
 
     out, err = capfd.readouterr()
     assert 'Sanity Checking' in out

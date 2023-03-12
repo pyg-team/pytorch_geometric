@@ -86,6 +86,37 @@ def test_random_link_split():
     assert train_data.edge_label.size(0) == 6
 
 
+def test_random_link_split_with_label():
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5],
+                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4]])
+    edge_label = torch.tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
+
+    data = Data(edge_index=edge_index, edge_label=edge_label, num_nodes=6)
+
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2,
+                                neg_sampling_ratio=0.0)
+    train_data, _, _ = transform(data)
+    assert len(train_data) == 4
+    assert train_data.num_nodes == 6
+    assert train_data.edge_index.size() == (2, 6)
+    assert train_data.edge_label_index.size() == (2, 6)
+    assert train_data.edge_label.size() == (6, )
+    assert train_data.edge_label.min() == 0
+    assert train_data.edge_label.max() == 1
+
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2,
+                                neg_sampling_ratio=1.0)
+    train_data, _, _ = transform(data)
+    assert len(train_data) == 4
+    assert train_data.num_nodes == 6
+    assert train_data.edge_index.size() == (2, 6)
+    assert train_data.edge_label_index.size() == (2, 12)
+    assert train_data.edge_label.size() == (12, )
+    assert train_data.edge_label.min() == 0
+    assert train_data.edge_label.max() == 2
+    assert train_data.edge_label[6:].sum() == 0
+
+
 def test_random_link_split_increment_label():
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5],
                                [1, 0, 2, 1, 3, 2, 4, 3, 5, 4]])

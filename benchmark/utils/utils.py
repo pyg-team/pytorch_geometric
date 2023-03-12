@@ -1,5 +1,8 @@
+import os
 import os.path as osp
+from datetime import datetime
 
+import pandas as pd
 import torch
 from ogb.nodeproppred import PygNodePropPredDataset
 
@@ -32,7 +35,8 @@ models_dict = {
 }
 
 
-def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
+def get_dataset_with_transformation(name, root, use_sparse_tensor=False,
+                                    bf16=False):
     path = osp.join(osp.dirname(osp.realpath(__file__)), root, name)
     transform = T.ToSparseTensor(
         remove_edge_index=False) if use_sparse_tensor else None
@@ -68,7 +72,13 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
     if bf16:
         data.x = data.x.to(torch.bfloat16)
 
-    return data, dataset.num_classes
+    return data, dataset.num_classes, transform
+
+
+def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
+    data, num_classes, _ = get_dataset_with_transformation(
+        name, root, use_sparse_tensor, bf16)
+    return data, num_classes
 
 
 def get_model(name, params, metadata=None):
@@ -109,3 +119,29 @@ def get_split_masks(data, dataset_name):
         val_mask = data.val_mask
         test_mask = data.test_mask
     return train_mask, val_mask, test_mask
+
+
+def save_benchmark_data(csv_data, batch_size, layers, num_neighbors,
+                        hidden_channels, total_time, model_name, dataset_name,
+                        use_sparse_tensor):
+    config = f'Batch size={batch_size}, ' \
+             f'#Layers={layers}, ' \
+             f'#Neighbors={num_neighbors}, ' \
+             f'#Hidden features={hidden_channels}'
+    csv_data['DATE'].append(datetime.now().date())
+    csv_data['TIME (s)'].append(round(total_time, 2))
+    csv_data['MODEL'].append(model_name)
+    csv_data['DATASET'].append(dataset_name)
+    csv_data['CONFIG'].append(config)
+    csv_data['SPARSE'].append(use_sparse_tensor)
+
+
+def write_to_csv(csv_data, training=False):
+    results_path = osp.join(osp.dirname(osp.realpath(__file__)), '../results/')
+    os.makedirs(results_path, exist_ok=True)
+
+    name = 'training' if training else 'inference'
+    csv_path = osp.join(results_path, f'TOTAL_{name}_benchmark.csv')
+    with_header = not osp.exists(csv_path)
+    df = pd.DataFrame(csv_data)
+    df.to_csv(csv_path, mode='a', index_label='TEST_ID', header=with_header)

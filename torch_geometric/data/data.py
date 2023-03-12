@@ -37,7 +37,7 @@ from torch_geometric.typing import (
     OptTensor,
     SparseTensor,
 )
-from torch_geometric.utils import mask_select, subgraph
+from torch_geometric.utils import select, subgraph
 
 
 class BaseData(object):
@@ -608,13 +608,10 @@ class Data(BaseData, FeatureStore, GraphStore):
                 data.num_nodes = num_nodes
             elif self.is_node_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
-                if subset.dtype == torch.bool:
-                    data[key] = mask_select(value, cat_dim, subset)
-                else:
-                    data[key] = value.index_select(cat_dim, subset)
+                data[key] = select(value, subset, dim=cat_dim)
             elif self.is_edge_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
-                data[key] = mask_select(value, cat_dim, edge_mask)
+                data[key] = select(value, edge_mask, dim=cat_dim)
 
         return data
 
@@ -632,10 +629,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         for key, value in self:
             if self.is_edge_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
-                if subset.dtype == torch.bool:
-                    data[key] = mask_select(value, cat_dim, subset)
-                else:
-                    data[key] = value.index_select(cat_dim, subset)
+                data[key] = select(value, subset, dim=cat_dim)
 
         return data
 

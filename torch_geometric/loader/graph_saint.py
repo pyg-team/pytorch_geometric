@@ -46,8 +46,9 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
                  sample_coverage: int = 0, save_dir: Optional[str] = None,
                  log: bool = True, **kwargs):
 
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        # Remove for PyTorch Lightning:
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         assert data.edge_index is not None
         assert 'node_norm' not in data

@@ -3,48 +3,69 @@ from typing import List, Optional, Tuple
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import sort_edge_index
+from torch_geometric.utils import coalesce
 
 
-def test_sort_edge_index():
-    edge_index = torch.tensor([[2, 1, 1, 0], [1, 2, 0, 1]])
-    edge_attr = torch.tensor([[1], [2], [3], [4]])
+def test_coalesce():
+    edge_index = torch.tensor([[2, 1, 1, 0, 2], [1, 2, 0, 1, 1]])
+    edge_attr = torch.tensor([[1], [2], [3], [4], [5]])
 
-    out = sort_edge_index(edge_index)
+    out = coalesce(edge_index)
     assert out.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
 
-    out = sort_edge_index(edge_index, None)
+    out = coalesce(edge_index, None)
     assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     assert out[1] is None
 
-    out = sort_edge_index(edge_index, edge_attr)
+    out = coalesce(edge_index, edge_attr)
+    assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert out[1].tolist() == [[4], [3], [2], [6]]
+
+    out = coalesce(edge_index, [edge_attr, edge_attr.view(-1)])
+    assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert out[1][0].tolist() == [[4], [3], [2], [6]]
+    assert out[1][1].tolist() == [4, 3, 2, 6]
+
+
+def test_coalesce_without_duplicates():
+    edge_index = torch.tensor([[2, 1, 1, 0], [1, 2, 0, 1]])
+    edge_attr = torch.tensor([[1], [2], [3], [4]])
+
+    out = coalesce(edge_index)
+    assert out.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+
+    out = coalesce(edge_index, None)
+    assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert out[1] is None
+
+    out = coalesce(edge_index, edge_attr)
     assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     assert out[1].tolist() == [[4], [3], [2], [1]]
 
-    out = sort_edge_index(edge_index, [edge_attr, edge_attr.view(-1)])
+    out = coalesce(edge_index, [edge_attr, edge_attr.view(-1)])
     assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     assert out[1][0].tolist() == [[4], [3], [2], [1]]
     assert out[1][1].tolist() == [4, 3, 2, 1]
 
 
-def test_sort_edge_index_jit():
+def test_coalesce_jit():
     @torch.jit.script
     def wrapper1(edge_index: Tensor) -> Tensor:
-        return sort_edge_index(edge_index)
+        return coalesce(edge_index)
 
     @torch.jit.script
     def wrapper2(
         edge_index: Tensor,
         edge_attr: Optional[Tensor],
     ) -> Tuple[Tensor, Optional[Tensor]]:
-        return sort_edge_index(edge_index, edge_attr)
+        return coalesce(edge_index, edge_attr)
 
     @torch.jit.script
     def wrapper3(
         edge_index: Tensor,
         edge_attr: List[Tensor],
     ) -> Tuple[Tensor, List[Tensor]]:
-        return sort_edge_index(edge_index, edge_attr)
+        return coalesce(edge_index, edge_attr)
 
     edge_index = torch.tensor([[2, 1, 1, 0], [1, 2, 0, 1]])
     edge_attr = torch.tensor([[1], [2], [3], [4]])
