@@ -13,8 +13,8 @@ class FLAG(torch.nn.Module):
     <https://arxiv.org/pdf/2010.09891.pdf>`_ paper.
 
     FLAG is a model and task free data augmentation strategy for graphs. It
-    runs `n_ascent_step` forward and backward passes, perturbing the node
-    features, performing gradient ascent on this perturbation, and
+    runs :code:`n_ascent_step` forward and backward passes, perturbing the
+    node features, performing gradient ascent on this perturbation, and
     accumulating the gradients with respect to the model parameters. At the
     end of the steps, the model parameters are updated with these accumulated
     gradients.
@@ -22,7 +22,8 @@ class FLAG(torch.nn.Module):
     FLAG can be used in node classification, link prediction, and graph
     classification. However, this implementation is only meant for data with
     continuous node features (while the original paper handles discrete node
-    features, it does so through changes to the model's `forward` function).
+    features, it does so through changes to the model's :code:`forward`
+    function).
 
     Args:
         model (torch.nn.Module): The GNN module to train.
@@ -61,8 +62,8 @@ class FLAG(torch.nn.Module):
     ) -> tuple[torch.nn.Module, torch.Tensor]:
         """
         Perform the FLAG forward and backward passes. Note that users should
-        not invoke `loss.backward()` or `optimizer.step()` externally to this
-        function in their epoch loop.
+        not invoke :code:`loss.backward()` or :code:`optimizer.step()`
+        externally to this function in their epoch loop.
 
         Args:
             x (torch.Tensor): Node feature matrix with shape
