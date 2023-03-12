@@ -1,9 +1,20 @@
 import os.path as osp
+import argparse
 
 import torch
 
 from torch_geometric.datasets import FB15k_237
-from torch_geometric.nn import TransE
+from torch_geometric.nn import TransE, ComplEx
+
+available_models = ['transe', 'complex']
+model_map = {
+    'transe': TransE,
+    'complex': ComplEx
+}
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--model', choices=available_models, type=str.lower, required=True)
+args = parser.parse_args()
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'FB15k')
@@ -12,7 +23,7 @@ train_data = FB15k_237(path, split='train')[0].to(device)
 val_data = FB15k_237(path, split='val')[0].to(device)
 test_data = FB15k_237(path, split='test')[0].to(device)
 
-model = TransE(
+model = model_map[args.model](
     num_nodes=train_data.num_nodes,
     num_relations=train_data.num_edge_types,
     hidden_channels=50,

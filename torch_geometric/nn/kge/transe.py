@@ -26,9 +26,9 @@ class TransE(KGEModel):
     .. note::
 
         For an example of using the :class:`TransE` model, see
-        `examples/transe_fb15k_237.py
+        `examples/kge_fb15k_237.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        transe_fb15k_237.py>`_.
+        kge_fb15k_237.py>`_.
 
     Args:
         num_nodes (int): The number of nodes/entities in the graph.

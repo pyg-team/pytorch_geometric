@@ -16,6 +16,13 @@ class ComplEx(KGEModel):
 
     .. math::
         d(h, r, t) = Re(< \mathbf{e}_h,  \mathbf{w}_r, \mathbf{e}_t>)
+        
+    .. note::
+
+        For an example of using the :class:`ComplEx` model, see
+        `examples/kge_fb15k_237.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        kge_fb15k_237.py>`_.
 
     Args:
         num_nodes (int): The number of nodes/entities in the graph.
@@ -24,7 +31,6 @@ class ComplEx(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to
             the embedding matrices will be sparse. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         num_nodes: int,
@@ -32,13 +38,8 @@ class ComplEx(KGEModel):
         hidden_channels: int,
         sparse: bool = False,
     ):
-        super().__init__(
-            num_nodes,
-            num_relations,
-            hidden_channels,
-            sparse,
-            uses_complex=True
-        )
+        super().__init__(num_nodes, num_relations, hidden_channels, sparse,
+                         uses_complex=True)
 
     def forward(self, head_index: Tensor, rel_type: Tensor,
                 tail_index: Tensor) -> Tensor:
@@ -62,9 +63,7 @@ class ComplEx(KGEModel):
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
         input = torch.cat((pos_score, neg_score))
-        target = torch.cat((
-            torch.ones_like(pos_score).long(),
-            -torch.ones_like(neg_score).long()
-        ))
+        target = torch.cat((torch.ones_like(pos_score).long(),
+                            -torch.ones_like(neg_score).long()))
 
         return F.nll_loss(F.logsigmoid(input), target)

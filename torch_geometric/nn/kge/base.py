@@ -18,15 +18,9 @@ class KGEModel(torch.nn.Module):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             embedding matrices will be sparse. (default: :obj:`False`)
     """
-
-    def __init__(
-        self,
-        num_nodes: int,
-        num_relations: int,
-        hidden_channels: int,
-        sparse: bool = False,
-        uses_complex=False
-    ):
+    def __init__(self, num_nodes: int, num_relations: int,
+                 hidden_channels: int, sparse: bool = False,
+                 uses_complex=False):
         super().__init__()
 
         self.num_nodes = num_nodes
@@ -37,10 +31,10 @@ class KGEModel(torch.nn.Module):
         self.node_emb = Embedding(num_nodes, hidden_channels, sparse=sparse)
         self.rel_emb = Embedding(num_relations, hidden_channels, sparse=sparse)
         if uses_complex:
-            self.node_emb_im = Embedding(
-                num_nodes, hidden_channels, sparse=sparse)
-            self.rel_emb_im = Embedding(
-                num_relations, hidden_channels, sparse=sparse)
+            self.node_emb_im = Embedding(num_nodes, hidden_channels,
+                                         sparse=sparse)
+            self.rel_emb_im = Embedding(num_relations, hidden_channels,
+                                        sparse=sparse)
 
         self.reset_parameters()
 
