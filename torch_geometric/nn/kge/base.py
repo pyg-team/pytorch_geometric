@@ -24,15 +24,20 @@ class KGEModel(torch.nn.Module):
         num_relations: int,
         hidden_channels: int,
         sparse: bool = False,
+        uses_complex = False
     ):
         super().__init__()
 
         self.num_nodes = num_nodes
         self.num_relations = num_relations
         self.hidden_channels = hidden_channels
+        self.uses_complex = uses_complex
 
         self.node_emb = Embedding(num_nodes, hidden_channels, sparse=sparse)
         self.rel_emb = Embedding(num_relations, hidden_channels, sparse=sparse)
+        if uses_complex:
+            self.node_emb_im = Embedding(num_nodes, hidden_channels, sparse=sparse)
+            self.rel_emb_im = Embedding(num_relations, hidden_channels, sparse=sparse)
 
         self.reset_parameters()
 
@@ -40,6 +45,9 @@ class KGEModel(torch.nn.Module):
         r"""Resets all learnable parameters of the module."""
         self.node_emb.reset_parameters()
         self.rel_emb.reset_parameters()
+        if self.uses_complex:
+            self.node_emb_im.reset_parameters()
+            self.rel_emb_im.reset_parameters()
 
     def forward(self, head_index: Tensor, rel_type: Tensor,
                 tail_index: Tensor) -> Tensor:
