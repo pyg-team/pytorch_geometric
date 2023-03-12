@@ -10,12 +10,7 @@ from torch_geometric.nn import (
     MessagePassing,
     SAGEConv,
 )
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
+from torch_geometric.testing import get_random_edge_index
 
 
 @pytest.mark.parametrize('aggr', ['sum', 'mean', 'min', 'max', 'cat', None])
@@ -23,14 +18,14 @@ def test_hetero_conv(aggr):
     data = HeteroData()
     data['paper'].x = torch.randn(50, 32)
     data['author'].x = torch.randn(30, 64)
-    data['paper', 'paper'].edge_index = get_edge_index(50, 50, 200)
-    data['paper', 'author'].edge_index = get_edge_index(50, 30, 100)
+    data['paper', 'paper'].edge_index = get_random_edge_index(50, 50, 200)
+    data['paper', 'author'].edge_index = get_random_edge_index(50, 30, 100)
     data['paper', 'author'].edge_attr = torch.randn(100, 3)
-    data['author', 'paper'].edge_index = get_edge_index(30, 50, 100)
+    data['author', 'paper'].edge_index = get_random_edge_index(30, 50, 100)
     data['paper', 'paper'].edge_weight = torch.rand(200)
 
     # Unspecified edge types should be ignored:
-    data['author', 'author'].edge_index = get_edge_index(30, 30, 100)
+    data['author', 'author'].edge_index = get_random_edge_index(30, 30, 100)
 
     conv = HeteroConv(
         {
@@ -80,9 +75,9 @@ def test_hetero_conv_with_custom_conv():
     data['author'].x = torch.randn(30, 64)
     data['author'].y = torch.randn(30, 3)
     data['author'].z = torch.randn(30, 3)
-    data['paper', 'paper'].edge_index = get_edge_index(50, 50, 200)
-    data['paper', 'author'].edge_index = get_edge_index(50, 30, 100)
-    data['author', 'paper'].edge_index = get_edge_index(30, 50, 100)
+    data['paper', 'paper'].edge_index = get_random_edge_index(50, 50, 200)
+    data['paper', 'author'].edge_index = get_random_edge_index(50, 30, 100)
+    data['author', 'paper'].edge_index = get_random_edge_index(30, 50, 100)
 
     conv = HeteroConv({key: CustomConv(64) for key in data.edge_types})
     # Test node `args_dict` and `kwargs_dict` with `y_dict` and `z_dict`:
@@ -109,9 +104,10 @@ def test_hetero_conv_with_dot_syntax_node_types():
     data = HeteroData()
     data['src.paper'].x = torch.randn(50, 32)
     data['author'].x = torch.randn(30, 64)
-    data['src.paper', 'src.paper'].edge_index = get_edge_index(50, 50, 200)
-    data['src.paper', 'author'].edge_index = get_edge_index(50, 30, 100)
-    data['author', 'src.paper'].edge_index = get_edge_index(30, 50, 100)
+    edge_index = get_random_edge_index(50, 50, 200)
+    data['src.paper', 'src.paper'].edge_index = edge_index
+    data['src.paper', 'author'].edge_index = get_random_edge_index(50, 30, 100)
+    data['author', 'src.paper'].edge_index = get_random_edge_index(30, 50, 100)
     data['src.paper', 'src.paper'].edge_weight = torch.rand(200)
 
     conv = HeteroConv({
