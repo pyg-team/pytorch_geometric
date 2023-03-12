@@ -24,12 +24,6 @@ class FLAG(torch.nn.Module):
     continuous node features (while the original paper handles discrete node
     features, it does so through changes to the model's `forward` function).
 
-    .. note::
-        For examples of using FLAG in a training loop, see
-        `examples/contrib/flag.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        contrib/flag.py>`_
-
     Args:
         model (torch.nn.Module): The GNN module to train.
         optimizer (torch.optim.Optimizer): The optimizer object.
@@ -67,7 +61,7 @@ class FLAG(torch.nn.Module):
     ) -> tuple[torch.nn.Module, torch.Tensor]:
         """
         Perform the FLAG forward and backward passes. Note that users should
-        not invoke loss.backward() or optimizer.step() externally to this
+        not invoke `loss.backward()` or `optimizer.step()` externally to this
         function in their epoch loop.
 
         Args:
@@ -105,9 +99,6 @@ class FLAG(torch.nn.Module):
         #   and
         #   https://github.com/devnkong/FLAG/blob/main/deep_gcns_torch
         #     /examples/ogb/attacks.py
-        #
-        # This example does not assume that the model forward function has a
-        #   `perturb` argument
 
         training_labels = y_true.squeeze(1)[train_idx]
 

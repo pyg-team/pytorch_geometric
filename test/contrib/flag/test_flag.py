@@ -5,7 +5,12 @@ import numpy as np
 import pytest
 import torch
 
-from torch_geometric.contrib.flag import FLAG, FLAGCallback
+from torch_geometric.contrib.flag import (
+    FLAG,
+    FLAGCallback,
+    FLAGLossHistoryCallback,
+    FLAGPerturbHistoryCallback,
+)
 from torch_geometric.nn.models import GCN
 
 
@@ -110,37 +115,28 @@ def test_zero_grad(model: torch.nn.Module, optimizer: torch.nn.Module,
                 p.grad) == 0, "After running FLAG, the gradients should be 0!"
 
 
-class FLAGLossHistoryCallback(FLAGCallback):
-  def __init__(self):
-    self.loss_history = []
-
-  def on_ascent_step_end(self, step_index, loss, perturb):
-    self.loss_history.append(loss)
-
-
 class FLAGCounterCallback(FLAGCallback):
-  def __init__(self):
-    self.counts = defaultdict(int)
+    def __init__(self):
+        self.counts = defaultdict(int)
 
-  def on_ascent_step_begin(self, step_index, loss):
-    self.counts['on_ascent_step_begin'] += 1
+    def on_ascent_step_begin(self, step_index, loss):
+        self.counts['on_ascent_step_begin'] += 1
 
-  def on_ascent_step_end(self, step_index, loss, perturb_data):
-    self.counts['on_ascent_step_end'] += 1
+    def on_ascent_step_end(self, step_index, loss, perturb_data):
+        self.counts['on_ascent_step_end'] += 1
 
-  def on_optimizer_step_begin(self, loss):
-    self.counts['on_optimizer_step_begin'] += 1
+    def on_optimizer_step_begin(self, loss):
+        self.counts['on_optimizer_step_begin'] += 1
 
-  def on_optimizer_step_end(self, loss):
-    self.counts['on_optimizer_step_end'] += 1
+    def on_optimizer_step_end(self, loss):
+        self.counts['on_optimizer_step_end'] += 1
 
 
-def test_flag_callbacks(model: torch.nn.Module,
-                        optimizer: torch.nn.Module,
-                        loss_fn: torch.nn.Module,
-                        device: torch.device):
-        
+def test_flag_callbacks(model: torch.nn.Module, optimizer: torch.nn.Module,
+                        loss_fn: torch.nn.Module, device: torch.device):
+
     loss_history_callback = FLAGLossHistoryCallback()
+    perturb_history_callback = FLAGPerturbHistoryCallback()
     counter_callback = FLAGCounterCallback()
 
     number_of_ascent_steps = 10
@@ -150,16 +146,26 @@ def test_flag_callbacks(model: torch.nn.Module,
     step_size = 0.5
     train_idx = np.arange(3)
 
-    flag = FLAG(model, optimizer, loss_fn, device, [loss_history_callback, counter_callback])
-    loss, out = flag(x, edge_index, y_true, train_idx, step_size, number_of_ascent_steps)
+    flag = FLAG(
+        model, optimizer, loss_fn, device,
+        [loss_history_callback, perturb_history_callback, counter_callback])
+    loss, out = flag(x, edge_index, y_true, train_idx, step_size,
+                     number_of_ascent_steps)
 
-    assert counter_callback.counts['on_ascent_step_begin'] == number_of_ascent_steps
-    assert counter_callback.counts['on_ascent_step_end'] == number_of_ascent_steps
+    assert counter_callback.counts[
+        'on_ascent_step_begin'] == number_of_ascent_steps
+    assert counter_callback.counts[
+        'on_ascent_step_end'] == number_of_ascent_steps
     assert counter_callback.counts['on_optimizer_step_begin'] == 1
     assert counter_callback.counts['on_optimizer_step_end'] == 1
 
     # make sure the loss history is equal to the number of ascent steps,
     #   and that each loss value is unique
     loss_history = loss_history_callback.loss_history
-    loss_values = set(map(lambda l: l.item(), loss_history))
+    loss_values = set(map(lambda loss: loss.item(), loss_history))
     assert len(loss_values) == number_of_ascent_steps
+
+    # likewise, for the perturb data history
+    perturb_history = perturb_history_callback.perturb_history
+    perturb_values = set(map(lambda perturb: perturb.sum(), perturb_history))
+    assert len(perturb_values) == number_of_ascent_steps

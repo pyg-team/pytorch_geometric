@@ -69,3 +69,47 @@ class FLAGCallback:
             loss (torch.nn.Module): The loss after the ascent step.
         """
         pass
+
+
+class FLAGLossHistoryCallback(FLAGCallback):
+    """
+    Callback that collects the loss metric from each step.
+    """
+    def __init__(self):
+        self.loss_history = []
+
+    def on_ascent_step_end(self, step_index: int, loss: torch.nn.Module,
+                           perturb_data: torch.nn.Parameter):
+        """
+        Called at the end of an ascent step. Appends the loss from the
+        previous step to the loss_history.
+
+        Args:
+            step_index (int): The index of step.
+            loss (torch.nn.Module): The loss after the ascent step.
+            perturb_data (torch.nn.Parameter): The tensor containing the input
+                perturbations after the ascent step.
+        """
+        self.loss_history.append(loss)
+
+
+class FLAGPerturbHistoryCallback(FLAGCallback):
+    """
+    Callback that collects the perturbation from each step.
+    """
+    def __init__(self):
+        self.perturb_history = []
+
+    def on_ascent_step_end(self, step_index: int, loss: torch.nn.Module,
+                           perturb_data: torch.nn.Parameter):
+        """
+        Called at the end of an ascent step. Appends the perturbation from the
+        previous step to the perturb_history.
+
+        Args:
+            step_index (int): The index of step.
+            loss (torch.nn.Module): The loss after the ascent step.
+            perturb_data (torch.nn.Parameter): The tensor containing the input
+                perturbations after the ascent step.
+        """
+        self.perturb_history.append(perturb_data.cpu().detach().numpy())
