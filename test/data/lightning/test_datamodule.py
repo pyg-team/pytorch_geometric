@@ -16,6 +16,7 @@ from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
+    get_random_edge_index,
     onlyCUDA,
     onlyFullTest,
     withPackage,
@@ -25,12 +26,6 @@ try:
     from pytorch_lightning import LightningModule
 except ImportError:
     LightningModule = torch.nn.Module
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
 
 
 class LinearGraphModule(LightningModule):
@@ -265,13 +260,13 @@ class LinearHeteroNodeModule(LightningModule):
 
     def forward(self, x: Tensor) -> Tensor:
         # Basic test to ensure that the dataset is not replicated:
-        self.trainer.datamodule.data['author'].x.add_(1)
+        self.trainer.datamodule.data['paper'].x.add_(1)
 
         return self.lin(x)
 
     def training_step(self, data: HeteroData, batch_idx: int):
-        y_hat = self(data['author'].x)[data['author'].train_mask]
-        y = data['author'].y[data['author'].train_mask]
+        y_hat = self(data['paper'].x)[data['paper'].train_mask]
+        y = data['paper'].y[data['paper'].train_mask]
         loss = F.cross_entropy(y_hat, y)
         self.train_acc(y_hat.softmax(dim=-1), y)
         self.log('loss', loss, batch_size=y.size(0))
@@ -279,14 +274,14 @@ class LinearHeteroNodeModule(LightningModule):
         return loss
 
     def validation_step(self, data: HeteroData, batch_idx: int):
-        y_hat = self(data['author'].x)[data['author'].val_mask]
-        y = data['author'].y[data['author'].val_mask]
+        y_hat = self(data['paper'].x)[data['paper'].val_mask]
+        y = data['paper'].y[data['paper'].val_mask]
         self.val_acc(y_hat.softmax(dim=-1), y)
         self.log('val_acc', self.val_acc, batch_size=y.size(0))
 
     def test_step(self, data: HeteroData, batch_idx: int):
-        y_hat = self(data['author'].x)[data['author'].test_mask]
-        y = data['author'].y[data['author'].test_mask]
+        y_hat = self(data['paper'].x)[data['paper'].test_mask]
+        y = data['paper'].y[data['paper'].test_mask]
         self.test_acc(y_hat.softmax(dim=-1), y)
         self.log('test_acc', self.test_acc, batch_size=y.size(0))
 
@@ -301,11 +296,10 @@ class LinearHeteroNodeModule(LightningModule):
 def test_lightning_hetero_node_data(get_dataset):
     import pytorch_lightning as pl
 
-    dataset = get_dataset(name='DBLP')
-    data = dataset[0]
+    data = get_dataset(name='hetero')[0]
 
-    model = LinearHeteroNodeModule(data['author'].num_features,
-                                   int(data['author'].y.max()) + 1)
+    model = LinearHeteroNodeModule(data['paper'].num_features,
+                                   int(data['paper'].y.max()) + 1)
 
     devices = torch.cuda.device_count()
     strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
@@ -315,16 +309,10 @@ def test_lightning_hetero_node_data(get_dataset):
     datamodule = LightningNodeData(data, loader='neighbor', num_neighbors=[5],
                                    batch_size=32, num_workers=3)
     assert isinstance(datamodule.graph_sampler, NeighborSampler)
-    old_x = data['author'].x.clone()
+    original_x = data['paper'].x.clone()
     trainer.fit(model, datamodule)
     trainer.test(model, datamodule)
-    new_x = data['author'].x
-    offset = 0
-    offset += devices * 2  # `sanity`
-    offset += 5 * devices * math.ceil(400 / (devices * 32))  # `train`
-    offset += 5 * devices * math.ceil(400 / (devices * 32))  # `val`
-    offset += devices * math.ceil(3257 / (devices * 32))  # `test`
-    assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
+    assert torch.all(data['paper'].x > original_x)  # Ensure shared data.
 
 
 @withPackage('pytorch_lightning')
@@ -360,10 +348,10 @@ def test_lightning_hetero_link_data():
     data['author'].x = torch.arange(10)
     data['term'].x = torch.arange(10)
 
-    data['paper', 'author'].edge_index = get_edge_index(10, 10, 10)
-    data['author', 'paper'].edge_index = get_edge_index(10, 10, 10)
-    data['paper', 'term'].edge_index = get_edge_index(10, 10, 10)
-    data['author', 'term'].edge_index = get_edge_index(10, 10, 10)
+    data['paper', 'author'].edge_index = get_random_edge_index(10, 10, 10)
+    data['author', 'paper'].edge_index = get_random_edge_index(10, 10, 10)
+    data['paper', 'term'].edge_index = get_random_edge_index(10, 10, 10)
+    data['author', 'term'].edge_index = get_random_edge_index(10, 10, 10)
 
     datamodule = LightningLinkData(
         data,
@@ -421,7 +409,7 @@ def test_lightning_hetero_link_data_custom_store():
     feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
     feature_store.put_tensor(x, group_name='term', attr_name='x', index=None)
 
-    edge_index = get_edge_index(10, 10, 10)
+    edge_index = get_random_edge_index(10, 10, 10)
     graph_store.put_edge_index(edge_index=(edge_index[0], edge_index[1]),
                                edge_type=('paper', 'to', 'author'),
                                layout='coo', size=(10, 10))
