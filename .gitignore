@@ -24,6 +24,8 @@ coverage.xml
 *.out
 *.pt
 *.onnx
+*.swp
+*.swo
 examples/*.png
 examples/*.pdf
 benchmark/results/
