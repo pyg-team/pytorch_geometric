@@ -178,6 +178,8 @@ class HeteroLayerNorm(torch.nn.Module):
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
         if not hasattr(self, "types"):
             self.types = x_dict.keys()
+        if sorted(list(x_dict.keys())) != sorted(self.types):
+            raise ValueError("Dictionary inputs require consistent type names")
         x = torch.cat([x_dict[key] for key in self.types], dim=0)
         sizes = [x_dict[key].size(0) for key in self.types]
         type_vec = torch.arange(len(self.types), device=x.device)
