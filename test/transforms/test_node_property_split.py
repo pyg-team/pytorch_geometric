@@ -5,9 +5,11 @@ import numpy as np
 import torch
 
 from torch_geometric.datasets import graph_generator
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import NodePropertySplit
 
 
+@withPackage('networkx')
 def test_node_property_split():
     property_names = ["popularity", "locality", "density"]
 
