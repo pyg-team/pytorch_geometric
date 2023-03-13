@@ -1,7 +1,5 @@
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
-import networkx as nx
-import networkx.algorithms as A
 import numpy as np
 import torch
 
@@ -111,8 +109,9 @@ class NodePropertySplit(BaseTransform):
 
     @staticmethod
     def _compute_popularity_property(
-            graph_nx: nx.Graph,
-            ascending: Optional[bool] = True) -> np.ndarray:
+            graph_nx: Any, ascending: Optional[bool] = True) -> np.ndarray:
+        import networkx.algorithms as A
+
         direction = -1 if ascending else 1
         property_values = direction * np.array(
             list(A.pagerank(graph_nx).values()))
@@ -120,8 +119,9 @@ class NodePropertySplit(BaseTransform):
 
     @staticmethod
     def _compute_locality_property(
-            graph_nx: nx.Graph,
-            ascending: Optional[bool] = True) -> np.ndarray:
+            graph_nx: Any, ascending: Optional[bool] = True) -> np.ndarray:
+        import networkx.algorithms as A
+
         num_nodes = graph_nx.number_of_nodes()
         pagerank_values = np.array(list(A.pagerank(graph_nx).values()))
 
@@ -137,8 +137,9 @@ class NodePropertySplit(BaseTransform):
 
     @staticmethod
     def _compute_density_property(
-            graph_nx: nx.Graph,
-            ascending: Optional[bool] = True) -> np.ndarray:
+            graph_nx: Any, ascending: Optional[bool] = True) -> np.ndarray:
+        import networkx.algorithms as A
+
         direction = -1 if ascending else 1
         property_values = direction * np.array(
             list(A.clustering(graph_nx).values()))
