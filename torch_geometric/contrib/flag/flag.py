@@ -1,5 +1,5 @@
 import numbers
-from typing import List
+from typing import List, Tuple
 
 import torch
 
@@ -59,7 +59,7 @@ class FLAG(torch.nn.Module):
         train_idx: torch.Tensor,
         step_size: float,
         n_ascent_steps: int = 3,
-    ) -> tuple[torch.nn.Module, torch.Tensor]:
+    ) -> Tuple[torch.nn.Module, torch.Tensor]:
         """
         Perform the FLAG forward and backward passes. Note that users should
         not invoke :code:`loss.backward()` or :code:`optimizer.step()`
