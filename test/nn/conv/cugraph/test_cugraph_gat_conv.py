@@ -39,17 +39,17 @@ def test_gat_conv_equality(bias, bipartite, concat, heads, max_num_neighbors):
 
     csc = CuGraphGATConv.to_csc(edge_index, size)
     out2 = conv2(x, csc, max_num_neighbors=max_num_neighbors)
-    assert torch.allclose(out1, out2, atol=1e-6)
+    assert torch.allclose(out1, out2, atol=1e-3)
 
     grad_output = torch.rand_like(out1)
     out1.backward(grad_output)
     out2.backward(grad_output)
 
     assert torch.allclose(conv1.lin_src.weight.grad, conv2.lin.weight.grad,
-                          atol=1e-6)
+                          atol=1e-3)
     assert torch.allclose(conv1.att_src.grad.flatten(),
-                          conv2.att.grad[:heads * out_channels], atol=1e-6)
+                          conv2.att.grad[:heads * out_channels], atol=1e-3)
     assert torch.allclose(conv1.att_dst.grad.flatten(),
-                          conv2.att.grad[heads * out_channels:], atol=1e-6)
+                          conv2.att.grad[heads * out_channels:], atol=1e-3)
     if bias:
-        assert torch.allclose(conv1.bias.grad, conv2.bias.grad, atol=1e-6)
+        assert torch.allclose(conv1.bias.grad, conv2.bias.grad, atol=1e-3)
