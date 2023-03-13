@@ -2,9 +2,10 @@ import warnings
 from typing import Optional
 
 import torch
-import torch_scatter
 from torch import Tensor
-from torch_scatter import scatter_max, scatter_min, scatter_mul
+
+import torch_geometric.typing
+from torch_geometric.typing import torch_scatter
 
 major, minor, _ = torch.__version__.split('.', maxsplit=2)
 major, minor = int(major), int(minor)
@@ -25,7 +26,8 @@ if has_pytorch112:  # pragma: no cover
         specified in the :obj:`index` tensor along a given dimension
         :obj:`dim`. See the `documentation
         <https://pytorch-scatter.readthedocs.io/en/latest/functions/
-        scatter.html>`_ of :obj:`torch-scatter` for more information.
+        scatter.html>`__ of the :obj:`torch_scatter` package for more
+        information.
 
         Args:
             src (torch.Tensor): The source tensor.
@@ -74,7 +76,7 @@ if has_pytorch112:  # pragma: no cover
         if reduce == 'mean':
             count = src.new_zeros(dim_size)
             count.scatter_add_(0, index, src.new_ones(src.size(dim)))
-            count = count.clamp_(min=1)
+            count = count.clamp(min=1)
 
             index = broadcast(index, src, dim)
             out = src.new_zeros(size).scatter_add_(dim, index, src)
@@ -84,25 +86,38 @@ if has_pytorch112:  # pragma: no cover
         # For "min" and "max" reduction, we prefer `scatter_reduce_` on CPU or
         # in case the input does not require gradients:
         if reduce == 'min' or reduce == 'max':
-            if not src.is_cuda or not src.requires_grad:
+            if (not torch_geometric.typing.WITH_TORCH_SCATTER
+                    or not src.is_cuda or not src.requires_grad):
+
+                if src.is_cuda and src.requires_grad:
+                    warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
+                                  f"can be accelerated via the 'torch-scatter'"
+                                  f" package, but it was not found")
+
                 index = broadcast(index, src, dim)
                 return src.new_zeros(size).scatter_reduce_(
                     dim, index, src, reduce=f'a{reduce}', include_self=False)
 
-            if reduce == 'min':
-                return scatter_min(src, index, dim, dim_size=dim_size)[0]
-            else:
-                return scatter_max(src, index, dim, dim_size=dim_size)[0]
+            return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
+                                         reduce=reduce)
 
         # For "mul" reduction, we prefer `scatter_reduce_` on CPU:
         if reduce == 'mul':
-            if not src.is_cuda:
+            if (not torch_geometric.typing.WITH_TORCH_SCATTER
+                    or not src.is_cuda):
+
+                if src.is_cuda:
+                    warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
+                                  f"can be accelerated via the 'torch-scatter'"
+                                  f" package, but it was not found")
+
                 index = broadcast(index, src, dim)
                 # We initialize with `one` here to match `scatter_mul` output:
                 return src.new_ones(size).scatter_reduce_(
                     dim, index, src, reduce='prod', include_self=True)
-            else:
-                return scatter_mul(src, index, dim, dim_size=dim_size)
+
+            return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
+                                         reduce='mul')
 
         raise ValueError(f"Encountered invalid `reduce` argument '{reduce}'")
 
@@ -114,7 +129,8 @@ else:
         specified in the :obj:`index` tensor along a given dimension
         :obj:`dim`. See the `documentation
         <https://pytorch-scatter.readthedocs.io/en/latest/functions/
-        scatter.html>`_ of :obj:`torch-scatter` for more information.
+        scatter.html>`_ of the :obj:`torch_scatter` package for more
+        information.
 
         Args:
             src (torch.Tensor): The source tensor.
@@ -129,5 +145,7 @@ else:
                 :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
                 (default: :obj:`"sum"`)
         """
+        if not torch_geometric.typing.WITH_TORCH_SCATTER:
+            raise ImportError("'scatter' requires the 'torch-scatter' package")
         return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                      reduce=reduce)

@@ -75,11 +75,12 @@ def train():
     optimizer.step()
 
 
+@torch.no_grad()
 def test():
     model.eval()
-    logits, accs = model(data.x, data.edge_index), []
+    out, accs = model(data.x, data.edge_index), []
     for _, idx in data('train_idx', 'val_idx', 'test_idx'):
-        pred = logits[idx].max(1)[1]
+        pred = out[idx].argmax(1)
         acc = pred.eq(data.y[idx]).sum().item() / idx.numel()
         accs.append(acc)
     return accs

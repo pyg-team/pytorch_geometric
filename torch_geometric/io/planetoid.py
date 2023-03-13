@@ -7,6 +7,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import coalesce, index_to_mask, remove_self_loops
 
 try:
@@ -37,8 +38,6 @@ def read_planetoid_data(folder, prefix):
         tx, ty = tx_ext, ty_ext
 
     if prefix.lower() == 'nell.0.001':
-        from torch_sparse import SparseTensor
-
         tx_ext = torch.zeros(len(graph) - allx.size(0), x.size(1))
         tx_ext[sorted_test_index - allx.size(0)] = tx
 

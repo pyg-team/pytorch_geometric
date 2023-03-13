@@ -4,10 +4,10 @@ import scipy.sparse
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch_sparse import coalesce
 
 from torch_geometric.nn import SignedConv
 from torch_geometric.utils import (
+    coalesce,
     negative_sampling,
     structured_negative_sampling,
 )
@@ -56,6 +56,7 @@ class SignedGCN(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.conv1.reset_parameters()
         for conv in self.convs:
             conv.reset_parameters()
@@ -111,7 +112,7 @@ class SignedGCN(torch.nn.Module):
         edge_index = torch.cat([edge_index, torch.stack([col, row])], dim=1)
         val = torch.cat([val, val], dim=0)
 
-        edge_index, val = coalesce(edge_index, val, N, N)
+        edge_index, val = coalesce(edge_index, val, num_nodes=N)
         val = val - 1
 
         # Borrowed from:
@@ -134,9 +135,9 @@ class SignedGCN(torch.nn.Module):
         :obj:`pos_edge_index` and negative edges :obj:`neg_edge_index`.
 
         Args:
-            x (Tensor): The input node features.
-            pos_edge_index (LongTensor): The positive edge indices.
-            neg_edge_index (LongTensor): The negative edge indices.
+            x (torch.Tensor): The input node features.
+            pos_edge_index (torch.Tensor): The positive edge indices.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
         z = F.relu(self.conv1(x, pos_edge_index, neg_edge_index))
         for conv in self.convs:
@@ -149,8 +150,8 @@ class SignedGCN(torch.nn.Module):
         negative or non-existent.
 
         Args:
-            x (Tensor): The input node features.
-            edge_index (LongTensor): The edge indices.
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor): The edge indices.
         """
         value = torch.cat([z[edge_index[0]], z[edge_index[1]]], dim=1)
         value = self.lin(value)
@@ -167,9 +168,9 @@ class SignedGCN(torch.nn.Module):
         :obj:`neg_edge_index`.
 
         Args:
-            z (Tensor): The node embeddings.
-            pos_edge_index (LongTensor): The positive edge indices.
-            neg_edge_index (LongTensor): The negative edge indices.
+            z (torch.Tensor): The node embeddings.
+            pos_edge_index (torch.Tensor): The positive edge indices.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
 
         edge_index = torch.cat([pos_edge_index, neg_edge_index], dim=1)
@@ -196,8 +197,8 @@ class SignedGCN(torch.nn.Module):
         non-node pairs.
 
         Args:
-            z (Tensor): The node embeddings.
-            pos_edge_index (LongTensor): The positive edge indices.
+            z (torch.Tensor): The node embeddings.
+            pos_edge_index (torch.Tensor): The positive edge indices.
         """
         i, j, k = structured_negative_sampling(pos_edge_index, z.size(0))
 
@@ -209,8 +210,8 @@ class SignedGCN(torch.nn.Module):
         non-node pairs.
 
         Args:
-            z (Tensor): The node embeddings.
-            neg_edge_index (LongTensor): The negative edge indices.
+            z (torch.Tensor): The node embeddings.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
         i, j, k = structured_negative_sampling(neg_edge_index, z.size(0))
 
@@ -226,9 +227,9 @@ class SignedGCN(torch.nn.Module):
         """Computes the overall objective.
 
         Args:
-            z (Tensor): The node embeddings.
-            pos_edge_index (LongTensor): The positive edge indices.
-            neg_edge_index (LongTensor): The negative edge indices.
+            z (torch.Tensor): The node embeddings.
+            pos_edge_index (torch.Tensor): The positive edge indices.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
         nll_loss = self.nll_loss(z, pos_edge_index, neg_edge_index)
         loss_1 = self.pos_embedding_loss(z, pos_edge_index)
@@ -245,9 +246,9 @@ class SignedGCN(torch.nn.Module):
         edges by computing AUC and F1 scores.
 
         Args:
-            z (Tensor): The node embeddings.
-            pos_edge_index (LongTensor): The positive edge indices.
-            neg_edge_index (LongTensor): The negative edge indices.
+            z (torch.Tensor): The node embeddings.
+            pos_edge_index (torch.Tensor): The positive edge indices.
+            neg_edge_index (torch.Tensor): The negative edge indices.
         """
         from sklearn.metrics import f1_score, roc_auc_score
 

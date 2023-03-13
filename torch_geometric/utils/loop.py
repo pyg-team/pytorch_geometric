@@ -2,11 +2,12 @@ from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter
 
 from torch_geometric.typing import OptTensor
+from torch_geometric.utils import scatter
 
 from .num_nodes import maybe_num_nodes
+from .sparse import is_torch_sparse_tensor, to_edge_index, to_torch_coo_tensor
 
 
 def contains_self_loops(edge_index: Tensor) -> bool:
@@ -60,8 +61,23 @@ def remove_self_loops(
         tensor([[1, 2],
                 [3, 4]]))
     """
+    size: Optional[Tuple[int, int]] = None
+
+    is_sparse = is_torch_sparse_tensor(edge_index)
+    if is_sparse:
+        assert edge_attr is None
+        size = (edge_index.size(0), edge_index.size(1))
+        edge_index, edge_attr = to_edge_index(edge_index)
+
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
+
+    if is_sparse:
+        assert edge_attr is not None
+        edge_attr = edge_attr[mask]
+        adj = to_torch_coo_tensor(edge_index, edge_attr, size=size)
+        return adj, None
+
     if edge_attr is None:
         return edge_index, None
     else:
@@ -126,9 +142,11 @@ def add_self_loops(edge_index, edge_attr=None, fill_value=None,
 
 
 def add_self_loops(
-        edge_index: Tensor, edge_attr: OptTensor = None,
-        fill_value: Union[float, Tensor, str] = None,
-        num_nodes: Optional[int] = None) -> Tuple[Tensor, OptTensor]:
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    fill_value: Optional[Union[float, Tensor, str]] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, OptTensor]:
     r"""Adds a self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features
@@ -182,6 +200,13 @@ def add_self_loops(
         tensor([0.5000, 0.5000, 0.5000, 1.0000, 0.5000]))
     """
     N = maybe_num_nodes(edge_index, num_nodes)
+    size: Optional[Tuple[int, int]] = None
+
+    is_sparse = is_torch_sparse_tensor(edge_index)
+    if is_sparse:
+        assert edge_attr is None
+        size = (edge_index.size(0), edge_index.size(1))
+        edge_index, edge_attr = to_edge_index(edge_index)
 
     loop_index = torch.arange(0, N, dtype=torch.long, device=edge_index.device)
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
@@ -209,6 +234,8 @@ def add_self_loops(
         edge_attr = torch.cat([edge_attr, loop_attr], dim=0)
 
     edge_index = torch.cat([edge_index, loop_index], dim=1)
+    if is_sparse:
+        return to_torch_coo_tensor(edge_index, edge_attr, size=size), None
     return edge_index, edge_attr
 
 
@@ -234,9 +261,11 @@ def add_remaining_self_loops(edge_index, edge_attr=None, fill_value=None,
 
 
 def add_remaining_self_loops(
-        edge_index: Tensor, edge_attr: OptTensor = None,
-        fill_value: Union[float, Tensor, str] = None,
-        num_nodes: Optional[int] = None) -> Tuple[Tensor, OptTensor]:
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    fill_value: Optional[Union[float, Tensor, str]] = None,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, OptTensor]:
     r"""Adds remaining self-loop :math:`(i,i) \in \mathcal{E}` to every node
     :math:`i \in \mathcal{V}` in the graph given by :attr:`edge_index`.
     In case the graph is weighted or has multi-dimensional edge features

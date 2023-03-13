@@ -18,9 +18,9 @@ class WebKB(InMemoryDataset):
     project, course, staff, and faculty.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Cornell"`,
-            :obj:`"Texas"`, :obj:`"Wisconsin"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Cornell"`, :obj:`"Texas"`,
+            :obj:`"Wisconsin"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -29,6 +29,33 @@ class WebKB(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Cornell
+          - 183
+          - 298
+          - 1,703
+          - 5
+        * - Texas
+          - 183
+          - 325
+          - 1,703
+          - 5
+        * - Wisconsin
+          - 251
+          - 515
+          - 1,703
+          - 5
     """
 
     url = 'https://raw.githubusercontent.com/graphdml-uiuc-jlu/geom-gcn/master'

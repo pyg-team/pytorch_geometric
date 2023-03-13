@@ -1,11 +1,17 @@
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul, set_diag
-from torch_sparse import sum as sparsesum
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.utils import add_self_loops, degree, remove_self_loops
+from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
+from torch_geometric.utils import (
+    add_self_loops,
+    degree,
+    is_torch_sparse_tensor,
+    remove_self_loops,
+    spmm,
+    to_edge_index,
+    to_torch_coo_tensor,
+)
 
 
 class ClusterGCNConv(MessagePassing):
@@ -59,13 +65,17 @@ class ClusterGCNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_out.reset_parameters()
         self.lin_root.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        """"""
         edge_weight: OptTensor = None
         if isinstance(edge_index, Tensor):
+            is_sparse_tensor = is_torch_sparse_tensor(edge_index)
+            if is_sparse_tensor:
+                edge_index, _ = to_edge_index(edge_index.t())
+
             num_nodes = x.size(self.node_dim)
             if self.add_self_loops:
                 edge_index, _ = remove_self_loops(edge_index)
@@ -77,12 +87,16 @@ class ClusterGCNConv(MessagePassing):
             edge_weight = deg_inv[col]
             edge_weight[row == col] += self.diag_lambda * deg_inv
 
+            if is_sparse_tensor:
+                edge_index = to_torch_coo_tensor(edge_index.flip(0),
+                                                 edge_weight, size=num_nodes)
+
         elif isinstance(edge_index, SparseTensor):
             if self.add_self_loops:
-                edge_index = set_diag(edge_index)
+                edge_index = torch_sparse.set_diag(edge_index)
 
             col, row, _ = edge_index.coo()  # Transposed.
-            deg_inv = 1. / sparsesum(edge_index, dim=1).clamp_(1.)
+            deg_inv = 1. / torch_sparse.sum(edge_index, dim=1).clamp_(1.)
 
             edge_weight = deg_inv[col]
             edge_weight[row == col] += self.diag_lambda * deg_inv
@@ -99,7 +113,7 @@ class ClusterGCNConv(MessagePassing):
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

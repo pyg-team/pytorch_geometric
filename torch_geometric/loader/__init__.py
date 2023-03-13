@@ -11,6 +11,7 @@ from .graph_saint import (GraphSAINTSampler, GraphSAINTNodeSampler,
                           GraphSAINTEdgeSampler, GraphSAINTRandomWalkSampler)
 from .shadow import ShaDowKHopSampler
 from .random_node_loader import RandomNodeLoader
+from .zip_loader import ZipLoader
 from .data_list_loader import DataListLoader
 from .dense_data_loader import DenseDataLoader
 from .temporal_dataloader import TemporalDataLoader
@@ -20,13 +21,29 @@ from .dynamic_batch_sampler import DynamicBatchSampler
 from .ibmb_loader import IBMBBatchLoader, IBMBNodeLoader
 
 __all__ = classes = [
-    'DataLoader', 'NodeLoader', 'LinkLoader', 'NeighborLoader',
-    'LinkNeighborLoader', 'HGTLoader', 'ClusterData', 'ClusterLoader',
-    'GraphSAINTSampler', 'GraphSAINTNodeSampler', 'GraphSAINTEdgeSampler',
-    'GraphSAINTRandomWalkSampler', 'ShaDowKHopSampler', 'RandomNodeLoader',
-    'DataListLoader', 'DenseDataLoader', 'TemporalDataLoader',
-    'NeighborSampler', 'ImbalancedSampler', 'DynamicBatchSampler',
-    'IBMBBatchLoader', 'IBMBNodeLoader'
+    'DataLoader',
+    'NodeLoader',
+    'LinkLoader',
+    'NeighborLoader',
+    'LinkNeighborLoader',
+    'HGTLoader',
+    'ClusterData',
+    'ClusterLoader',
+    'GraphSAINTSampler',
+    'GraphSAINTNodeSampler',
+    'GraphSAINTEdgeSampler',
+    'GraphSAINTRandomWalkSampler',
+    'ShaDowKHopSampler',
+    'RandomNodeLoader',
+    'ZipLoader',
+    'DataListLoader',
+    'DenseDataLoader',
+    'TemporalDataLoader',
+    'NeighborSampler',
+    'ImbalancedSampler',
+    'DynamicBatchSampler',
+    'IBMBBatchLoader',
+    'IBMBNodeLoader',
 ]
 
 RandomNodeSampler = deprecated(

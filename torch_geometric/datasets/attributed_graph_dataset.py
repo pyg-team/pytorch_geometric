@@ -12,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.typing import SparseTensor
 
 
 class AttributedGraphDataset(InMemoryDataset):
@@ -20,8 +21,8 @@ class AttributedGraphDataset(InMemoryDataset):
     <https://arxiv.org/abs/2009.00826>`_ paper.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Wiki"`, :obj:`"Cora"`
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Wiki"`, :obj:`"Cora"`
             :obj:`"CiteSeer"`, :obj:`"PubMed"`, :obj:`"BlogCatalog"`,
             :obj:`"PPI"`, :obj:`"Flickr"`, :obj:`"Facebook"`, :obj:`"Twitter"`,
             :obj:`"TWeibo"`, :obj:`"MAG"`).
@@ -33,6 +34,68 @@ class AttributedGraphDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Wiki
+          - 2,405
+          - 17,981
+          - 4,973
+          - 17
+        * - Cora
+          - 2,708
+          - 5,429
+          - 1,433
+          - 7
+        * - CiteSeer
+          - 3,312
+          - 4,715
+          - 3,703
+          - 6
+        * - PubMed
+          - 19,717
+          - 44,338
+          - 500
+          - 3
+        * - BlogCatalog
+          - 5,196
+          - 343,486
+          - 8,189
+          - 6
+        * - PPI
+          - 56,944
+          - 1,612,348
+          - 50
+          - 121
+        * - Flickr
+          - 7,575
+          - 479,476
+          - 12,047
+          - 9
+        * - Facebook
+          - 4,039
+          - 88,234
+          - 1,283
+          - 193
+        * - TWeibo
+          - 2,320,895
+          - 9,840,066
+          - 1,657
+          - 8
+        * - MAG
+          - 59,249,719
+          - 978,147,253
+          - 2,000
+          - 100
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 
@@ -88,7 +151,6 @@ class AttributedGraphDataset(InMemoryDataset):
 
     def process(self):
         import pandas as pd
-        from torch_sparse import SparseTensor
 
         x = sp.load_npz(self.raw_paths[0])
         if x.shape[-1] > 10000 or self.name == 'mag':

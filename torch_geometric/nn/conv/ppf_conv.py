@@ -2,10 +2,16 @@ from typing import Callable, Optional, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor, set_diag
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import Adj, OptTensor, PairOptTensor, PairTensor
+from torch_geometric.typing import (
+    Adj,
+    OptTensor,
+    PairOptTensor,
+    PairTensor,
+    SparseTensor,
+    torch_sparse,
+)
 from torch_geometric.utils import add_self_loops, remove_self_loops
 
 from ..inits import reset
@@ -87,6 +93,7 @@ class PPFConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.local_nn)
         reset(self.global_nn)
 
@@ -97,7 +104,7 @@ class PPFConv(MessagePassing):
         normal: Union[Tensor, PairTensor],
         edge_index: Adj,
     ) -> Tensor:
-        """"""
+
         if not isinstance(x, tuple):
             x: PairOptTensor = (x, None)
 
@@ -113,7 +120,7 @@ class PPFConv(MessagePassing):
                 edge_index, _ = add_self_loops(edge_index,
                                                num_nodes=pos[1].size(0))
             elif isinstance(edge_index, SparseTensor):
-                edge_index = set_diag(edge_index)
+                edge_index = torch_sparse.set_diag(edge_index)
 
         # propagate_type: (x: PairOptTensor, pos: PairTensor, normal: PairTensor)  # noqa
         out = self.propagate(edge_index, x=x, pos=pos, normal=normal,

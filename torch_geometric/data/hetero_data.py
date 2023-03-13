@@ -11,13 +11,10 @@ from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
 from torch_geometric.data.data import BaseData, Data, size_repr, warn_or_raise
-from torch_geometric.data.graph_store import (
-    EDGE_LAYOUT_TO_ATTR_NAME,
-    adj_type_to_edge_tensor_type,
-    edge_tensor_type_to_adj_type,
-)
+from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import BaseStorage, EdgeStorage, NodeStorage
 from torch_geometric.typing import (
+    DEFAULT_REL,
     EdgeTensorType,
     EdgeType,
     FeatureTensorType,
@@ -42,7 +39,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     Storage objects can hold either node-level, link-level or graph-level
     attributes.
     In general, :class:`~torch_geometric.data.HeteroData` tries to mimic the
-    behaviour of a regular **nested** Python dictionary.
+    behavior of a regular **nested** Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 
@@ -106,9 +103,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             { 'edge_index': edge_index_author_paper }
         })
     """
-
-    DEFAULT_REL = 'to'
-
     def __init__(self, _mapping: Optional[Dict[str, Any]] = None, **kwargs):
         super().__init__()
 
@@ -278,6 +272,12 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         DataTuple = namedtuple('DataTuple', field_names)
         return DataTuple(*field_values)
 
+    def update(self, data: 'HeteroData') -> 'HeteroData':
+        for store in data.stores:
+            for key, value in store.items():
+                self[store._key][key] = value
+        return self
+
     def __cat_dim__(self, key: str, value: Any,
                     store: Optional[NodeOrEdgeStorage] = None, *args,
                     **kwargs) -> Any:
@@ -433,7 +433,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 args = edge_types[0]
                 return args
             elif len(edge_types) == 0:
-                args = (args[0], self.DEFAULT_REL, args[1])
+                args = (args[0], DEFAULT_REL, args[1])
                 return args
 
         return args
@@ -480,7 +480,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def _check_type_name(self, name: str):
         if '__' in name:
             warnings.warn(f"The type '{name}' contains double underscores "
-                          f"('__') which may lead to unexpected behaviour. "
+                          f"('__') which may lead to unexpected behavior. "
                           f"To avoid any issues, ensure that your type names "
                           f"only contain single underscores.")
 
@@ -545,6 +545,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Returns the induced subgraph containing the node types and
         corresponding nodes in :obj:`subset_dict`.
 
+        If a node type is not a key in :obj:`subset_dict` then all nodes of
+        that type remain in the graph.
+
         .. code-block:: python
 
             data = HeteroData()
@@ -573,23 +576,31 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             >>> HeteroData(
                 paper={ x=[4, 16] },
                 author={ x=[2, 32] },
+                conference={ x=[5, 8] },
                 (paper, cites, paper)={ edge_index=[2, 24] },
-                (author, to, paper)={ edge_index=[2, 5] }
+                (author, to, paper)={ edge_index=[2, 5] },
+                (paper, to, conference)={ edge_index=[2, 10] }
             )
 
         Args:
-            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictonary
+            subset_dict (Dict[str, LongTensor or BoolTensor]): A dictionary
                 holding the nodes to keep for each node type.
         """
         data = copy.copy(self)
+        subset_dict = copy.copy(subset_dict)
 
         for node_type, subset in subset_dict.items():
+
+            if subset.dtype == torch.bool:
+                num_nodes = int(subset.sum())
+            else:
+                num_nodes = subset.size(0)
+                subset = torch.unique(subset, sorted=True)
+                subset_dict[node_type] = subset
+
             for key, value in self[node_type].items():
                 if key == 'num_nodes':
-                    if subset.dtype == torch.bool:
-                        data[node_type].num_nodes = int(subset.sum())
-                    else:
-                        data[node_type].num_nodes = subset.size(0)
+                    data[node_type].num_nodes = num_nodes
                 elif self[node_type].is_node_attr(key):
                     data[node_type][key] = value[subset]
                 else:
@@ -634,7 +645,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         Args:
             subset_dict (Dict[Tuple[str, str, str], LongTensor or BoolTensor]):
-                A dictonary holding the edges to keep for each edge type.
+                A dictionary holding the edges to keep for each edge type.
         """
         data = copy.copy(self)
 
@@ -792,6 +803,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         if node_attrs is None:
             node_attrs = _consistent_size(self.node_stores)
         for key in node_attrs:
+            if key in {'ptr'}:
+                continue
             values = [store[key] for store in self.node_stores]
             dim = self.__cat_dim__(key, values[0], self.node_stores[0])
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
@@ -826,7 +839,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     # FeatureStore interface ##################################################
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
-        r"""Stores a feature tensor in node storage."""
         if not attr.is_set('index'):
             attr.index = None
 
@@ -837,6 +849,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             if val is not None:
                 val[attr.index] = tensor
             else:
+                assert attr.index is None
                 setattr(self[attr.group_name], attr.attr_name, tensor)
         else:
             # No node storage found, just store tensor in new one:
@@ -844,7 +857,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
-        r"""Obtains a feature tensor from node storage."""
         # Retrieve tensor and index accordingly:
         tensor = getattr(self[attr.group_name], attr.attr_name, None)
         if tensor is not None:
@@ -856,7 +868,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return None
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
-        r"""Deletes a feature tensor from node storage."""
         # Remove tensor entirely:
         if hasattr(self[attr.group_name], attr.attr_name):
             delattr(self[attr.group_name], attr.attr_name)
@@ -864,7 +875,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return False
 
     def _get_tensor_size(self, attr: TensorAttr) -> Tuple:
-        r"""Returns the size of the tensor corresponding to `attr`."""
         return self._get_tensor(attr).size()
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
@@ -875,81 +885,92 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     out.append(TensorAttr(group_name, attr_name))
         return out
 
-    def __len__(self) -> int:
-        return BaseData.__len__(self)
-
-    def __iter__(self):
-        raise NotImplementedError
-
     # GraphStore interface ####################################################
 
     def _put_edge_index(self, edge_index: EdgeTensorType,
                         edge_attr: EdgeAttr) -> bool:
-        r"""Stores an edge index in edge storage, in the specified layout."""
+        if not hasattr(self, '_edge_attrs'):
+            self._edge_attrs = {}
+        self._edge_attrs[(edge_attr.edge_type, edge_attr.layout)] = edge_attr
 
-        # Convert the edge index to a recognizable layout:
-        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
-        attr_val = edge_tensor_type_to_adj_type(edge_attr, edge_index)
-        setattr(self[edge_attr.edge_type], attr_name, attr_val)
+        row, col = edge_index
+        store = self[edge_attr.edge_type]
 
-        # Set edge attributes:
-        if not hasattr(self[edge_attr.edge_type], '_edge_attrs'):
-            self[edge_attr.edge_type]._edge_attrs = {}
-
-        self[edge_attr.edge_type]._edge_attrs[
-            edge_attr.layout.value] = edge_attr
-
-        key = self._to_canonical(edge_attr.edge_type)
-        src, _, dst = key
-
-        # Handle num_nodes, if possible:
-        size = edge_attr.size
-        if size is not None:
-            # TODO better warning in the case of overwriting 'num_nodes'
-            self[src].num_nodes = size[0]
-            self[dst].num_nodes = size[1]
-
+        if edge_attr.layout == EdgeLayout.COO:
+            store.edge_index = torch.stack([row, col], dim=0)
+        elif edge_attr.layout == EdgeLayout.CSR:
+            store.adj = SparseTensor(
+                rowptr=row,
+                col=col,
+                sparse_sizes=edge_attr.size,
+                is_sorted=True,
+                trust_data=True,
+            )
+        else:  # edge_attr.layout == EdgeLayout.CSC:
+            size = edge_attr.size[::-1] if edge_attr.size is not None else None
+            store.adj_t = SparseTensor(
+                rowptr=col,
+                col=row,
+                sparse_sizes=size,
+                is_sorted=True,
+                trust_data=True,
+            )
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         r"""Gets an edge index from edge storage, in the specified layout."""
-        # Get the requested layout and the Adj tensor associated with it:
-        attr_name = EDGE_LAYOUT_TO_ATTR_NAME[edge_attr.layout]
-        attr_val = getattr(self[edge_attr.edge_type], attr_name, None)
-        if attr_val is not None:
-            # Convert from Adj type to Tuple[Tensor, Tensor]
-            attr_val = adj_type_to_edge_tensor_type(edge_attr.layout, attr_val)
-        return attr_val
+        store = self[edge_attr.edge_type]
+        if edge_attr.layout == EdgeLayout.COO and 'edge_index' in store:
+            row, col = store.edge_index
+            return row, col
+        elif edge_attr.layout == EdgeLayout.CSR and 'adj' in store:
+            rowptr, col, _ = store.adj.csr()
+            return rowptr, col
+        elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in store:
+            colptr, row, _ = store.adj_t.csr()
+            return row, colptr
+        return None
+
+    def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
+        edge_type = edge_attr.edge_type
+        store = self[edge_type]
+        if edge_attr.layout == EdgeLayout.COO and 'edge_index' in store:
+            del store.edge_index
+            if hasattr(self, '_edge_attrs'):
+                self._edges_to_layout.pop((edge_type, EdgeLayout.COO), None)
+            return True
+        elif edge_attr.layout == EdgeLayout.CSR and 'adj' in store:
+            del store.adj
+            if hasattr(self, '_edge_attrs'):
+                self._edges_to_layout.pop((edge_type, EdgeLayout.CSR), None)
+            return True
+        elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in store:
+            del store.adj_t
+            if hasattr(self, '_edge_attrs'):
+                self._edges_to_layout.pop((edge_type, EdgeLayout.CSC), None)
+            return True
+        return False
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
-        r"""Returns a list of `EdgeAttr` objects corresponding to the edge
-        indices stored in `HeteroData` and their layouts."""
-        out = []
-        added_attrs = set()
+        edge_attrs = getattr(self, '_edge_attrs', {})
 
-        # Check edges added via _put_edge_index:
-        for edge_type, _ in self.edge_items():
-            if not hasattr(self[edge_type], '_edge_attrs'):
-                continue
-            edge_attrs = self[edge_type]._edge_attrs.values()
-            for attr in edge_attrs:
-                attr.size = self[edge_type].size()
-                added_attrs.add((attr.edge_type, attr.layout))
-            out.extend(edge_attrs)
+        for store in self.edge_stores:
+            if ('edge_index' in store
+                    and (store._key, EdgeLayout.COO) not in edge_attrs):
+                edge_attrs[(store._key, EdgeLayout.COO)] = EdgeAttr(
+                    store._key, 'coo', is_sorted=False)
+            if ('adj' in store
+                    and (store._key, EdgeLayout.CSR) not in edge_attrs):
+                size = store.adj.sparse_sizes()
+                edge_attrs[(store._key, EdgeLayout.CSR)] = EdgeAttr(
+                    store._key, 'csr', size=size)
+            if ('adj_t' in store
+                    and (store._key, EdgeLayout.CSC) not in edge_attrs):
+                size = store.adj_t.sparse_sizes()[::-1]
+                edge_attrs[(store._key, EdgeLayout.CSC)] = EdgeAttr(
+                    store._key, 'csc', size=size)
 
-        # Check edges added through regular interface:
-        # TODO deprecate this and store edge attributes for all edges in
-        # EdgeStorage
-        for edge_type, edge_store in self.edge_items():
-            for layout, attr_name in EDGE_LAYOUT_TO_ATTR_NAME.items():
-                # Don't double count:
-                if attr_name in edge_store and ((edge_type, layout)
-                                                not in added_attrs):
-                    out.append(
-                        EdgeAttr(edge_type=edge_type, layout=layout,
-                                 size=self[edge_type].size()))
-
-        return out
+        return list(edge_attrs.values())
 
 
 # Helper functions ############################################################

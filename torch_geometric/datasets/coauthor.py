@@ -17,9 +17,8 @@ class Coauthor(InMemoryDataset):
     to their respective field of study.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"CS"`,
-            :obj:`"Physics"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"CS"`, :obj:`"Physics"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -29,26 +28,27 @@ class Coauthor(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - CS
-              - 18,333
-              - 163,788
-              - 6,805
-              - 15
-            * - Physics
-              - 34,493
-              - 495,924
-              - 8,415
-              - 5
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - CS
+          - 18,333
+          - 163,788
+          - 6,805
+          - 15
+        * - Physics
+          - 34,493
+          - 495,924
+          - 8,415
+          - 5
     """
 
     url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'

@@ -145,6 +145,7 @@ class BasicGNN(torch.nn.Module):
         raise NotImplementedError
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for conv in self.convs:
             conv.reset_parameters()
         for norm in self.norms or []:
@@ -162,7 +163,15 @@ class BasicGNN(torch.nn.Module):
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
     ) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor): The edge indices.
+            edge_weight (torch.Tensor, optional): The edge weights (if
+                supported by the underlying GNN layer). (default: :obj:`None`)
+            edge_attr (torch.Tensor, optional): The edge features (if supported
+                by the underlying GNN layer). (default: :obj:`None`)
+        """
         xs: List[Tensor] = []
         for i in range(self.num_layers):
             # Tracing the module is not allowed with *args and **kwargs :(
@@ -197,9 +206,9 @@ class BasicGNN(torch.nn.Module):
     def inference(self, loader: NeighborLoader,
                   device: Optional[torch.device] = None,
                   progress_bar: bool = False) -> Tensor:
-        r"""Performs layer-wise inference on large-graphs using
-        :class:`~torch_geometric.loader.NeighborLoader`.
-        :class:`~torch_geometric.loader.NeighborLoader` should sample the the
+        r"""Performs layer-wise inference on large-graphs using a
+        :class:`~torch_geometric.loader.NeighborLoader`, where
+        :class:`~torch_geometric.loader.NeighborLoader` should sample the
         full neighborhood for only one layer.
         This is an efficient way to compute the output embeddings for all
         nodes in the graph.

@@ -26,6 +26,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install graphviz
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo apt-get install graphviz
+
       - name: Install main package
         run: |
           pip install -e .[full,test]
@@ -33,8 +38,7 @@ jobs:
       - name: Run tests
         run: |
           FULL_TEST=1 pytest --cov --cov-report=xml
-        shell:
-          bash
+        shell: bash
 
       - name: Upload coverage
         uses: codecov/codecov-action@v2

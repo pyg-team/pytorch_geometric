@@ -22,7 +22,7 @@ class MultiAggregation(Aggregation):
         aggrs_kwargs (dict, optional): Arguments passed to the
             respective aggregation function in case it gets automatically
             resolved. (default: :obj:`None`)
-        mode (string, optional): The combine mode to use for combining
+        mode (str, optional): The combine mode to use for combining
             aggregated results from multiple aggregations (:obj:`"cat"`,
             :obj:`"proj"`, :obj:`"sum"`, :obj:`"mean"`, :obj:`"max"`,
             :obj:`"min"`, :obj:`"logsumexp"`, :obj:`"std"`, :obj:`"var"`,

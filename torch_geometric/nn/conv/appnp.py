@@ -2,12 +2,16 @@ from typing import Optional
 
 import torch.nn.functional as F
 from torch import Tensor
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor
-from torch_geometric.utils import spmm
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
+from torch_geometric.utils import (
+    is_torch_sparse_tensor,
+    spmm,
+    to_edge_index,
+    to_torch_coo_tensor,
+)
 
 
 class APPNP(MessagePassing):
@@ -74,12 +78,13 @@ class APPNP(MessagePassing):
         self._cached_adj_t = None
 
     def reset_parameters(self):
+        super().reset_parameters()
         self._cached_edge_index = None
         self._cached_adj_t = None
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         if self.normalize:
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
@@ -107,8 +112,15 @@ class APPNP(MessagePassing):
         for k in range(self.K):
             if self.dropout > 0 and self.training:
                 if isinstance(edge_index, Tensor):
-                    assert edge_weight is not None
-                    edge_weight = F.dropout(edge_weight, p=self.dropout)
+                    if is_torch_sparse_tensor(edge_index):
+                        edge_index, edge_weight = to_edge_index(edge_index)
+                        edge_weight = F.dropout(edge_weight, p=self.dropout)
+                        edge_index = to_torch_coo_tensor(
+                            edge_index, edge_weight,
+                            size=x.size(self.node_dim))
+                    else:
+                        assert edge_weight is not None
+                        edge_weight = F.dropout(edge_weight, p=self.dropout)
                 else:
                     value = edge_index.storage.value()
                     assert value is not None

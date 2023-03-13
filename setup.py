@@ -1,7 +1,6 @@
 from setuptools import find_packages, setup
 
-__version__ = '2.2.0'
-URL = 'https://github.com/pyg-team/pytorch_geometric'
+__version__ = '2.3.0'
 
 install_requires = [
     'tqdm',
@@ -23,7 +22,11 @@ graphgym_requires = [
     'pytorch-lightning',
 ]
 
-full_requires = graphgym_requires + [
+modelhub_requires = [
+    'huggingface_hub',
+]
+
+full_requires = graphgym_requires + modelhub_requires + [
     'ase',
     'h5py',
     'sympy',
@@ -32,17 +35,22 @@ full_requires = graphgym_requires + [
     'rdflib',
     'trimesh',
     'networkx',
+    'graphviz',
     'tabulate',
     'matplotlib',
+    'torchmetrics',
     'scikit-image',
     'pytorch-memlab',
-    'torchmetrics>=0.7',
+    'pgmpy',
+    'opt_einsum',  # required for pgmpy
+    'statsmodels',
 ]
 
 benchmark_requires = [
     'protobuf<4.21',
     'wandb',
     'pandas',
+    'networkx',
     'matplotlib',
 ]
 
@@ -60,22 +68,10 @@ dev_requires = test_requires + [
 setup(
     name='torch_geometric',
     version=__version__,
-    description='Graph Neural Network Library for PyTorch',
-    author='Matthias Fey',
-    author_email='matthias.fey@tu-dortmund.de',
-    url=URL,
-    download_url=f'{URL}/archive/{__version__}.tar.gz',
-    keywords=[
-        'deep-learning',
-        'pytorch',
-        'geometric-deep-learning',
-        'graph-neural-networks',
-        'graph-convolutional-networks',
-    ],
-    python_requires='>=3.7',
     install_requires=install_requires,
     extras_require={
         'graphgym': graphgym_requires,
+        'modelhub': modelhub_requires,
         'full': full_requires,
         'benchmark': benchmark_requires,
         'test': test_requires,

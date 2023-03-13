@@ -1,9 +1,9 @@
 import torch
-from torch_scatter import scatter_max
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import scatter
 
 
 @functional_transform('local_cartesian')
@@ -29,7 +29,7 @@ class LocalCartesian(BaseTransform):
         cart = pos[row] - pos[col]
         cart = cart.view(-1, 1) if cart.dim() == 1 else cart
 
-        max_value, _ = scatter_max(cart.abs(), col, 0, dim_size=pos.size(0))
+        max_value = scatter(cart.abs(), col, 0, pos.size(0), reduce='max')
         max_value = max_value.max(dim=-1, keepdim=True)[0]
 
         if self.norm:

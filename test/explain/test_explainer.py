@@ -1,19 +1,8 @@
 import pytest
 import torch
 
-from torch_geometric.data import Data
 from torch_geometric.explain import DummyExplainer, Explainer, Explanation
 from torch_geometric.explain.config import ExplanationType
-
-
-@pytest.fixture
-def data():
-    return Data(
-        x=torch.randn(8, 3, requires_grad=True),
-        edge_index=torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
-                                 [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6]]),
-        edge_attr=torch.randn(14, 3),
-    )
 
 
 class DummyModel(torch.nn.Module):
@@ -69,8 +58,11 @@ def test_forward(data, target, explanation_type):
         )
         assert model.training
         assert isinstance(explanation, Explanation)
-        assert 'node_feat_mask' in explanation.available_explanations
-        assert explanation.node_feat_mask.size() == data.x.size()
+        assert 'x' in explanation
+        assert 'edge_index' in explanation
+        assert 'target' in explanation
+        assert 'node_mask' in explanation.available_explanations
+        assert explanation.node_mask.size() == data.x.size()
 
 
 @pytest.mark.parametrize('threshold_value', [0.2, 0.5, 0.8])
@@ -90,10 +82,7 @@ def test_hard_threshold(data, threshold_value, node_mask_type):
     )
     explanation = explainer(data.x, data.edge_index)
 
-    if node_mask_type == 'object':
-        assert 'node_mask' in explanation.available_explanations
-    elif node_mask_type == 'attributes':
-        assert 'node_feat_mask' in explanation.available_explanations
+    assert 'node_mask' in explanation.available_explanations
     assert 'edge_mask' in explanation.available_explanations
 
     for key in explanation.available_explanations:
@@ -119,10 +108,7 @@ def test_topk_threshold(data, threshold_value, threshold_type, node_mask_type):
     )
     explanation = explainer(data.x, data.edge_index)
 
-    if node_mask_type == 'object':
-        assert 'node_mask' in explanation.available_explanations
-    elif node_mask_type == 'attributes':
-        assert 'node_feat_mask' in explanation.available_explanations
+    assert 'node_mask' in explanation.available_explanations
     assert 'edge_mask' in explanation.available_explanations
 
     for key in explanation.available_explanations:

@@ -257,11 +257,12 @@ class RandomLinkSplit(BaseTransform):
         rev_edge_type: EdgeType,
     ) -> EdgeStorage:
 
+        edge_attrs = {key for key in store.keys() if store.is_edge_attr(key)}
         for key, value in store.items():
             if key == 'edge_index':
                 continue
 
-            if store.is_edge_attr(key):
+            if key in edge_attrs:
                 value = value[index]
                 if is_undirected:
                     value = torch.cat([value, value], dim=0)
@@ -301,7 +302,7 @@ class RandomLinkSplit(BaseTransform):
             # in case no negative edges are added.
             if neg_edge_index.numel() > 0:
                 assert edge_label.dtype == torch.long
-                assert edge_label.size(0) == store.edge_index.size(1)
+                assert edge_label.size(0) == edge_index.size(1)
                 edge_label.add_(1)
             if hasattr(out, self.key):
                 delattr(out, self.key)

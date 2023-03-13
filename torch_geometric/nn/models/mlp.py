@@ -105,7 +105,14 @@ class MLP(torch.nn.Module):
             in_channels = channel_list
 
         if in_channels is not None:
-            assert num_layers >= 1
+            if num_layers is None:
+                raise ValueError("Argument `num_layers` must be given")
+            if num_layers > 1 and hidden_channels is None:
+                raise ValueError(f"Argument `hidden_channels` must be given "
+                                 f"for `num_layers={num_layers}`")
+            if out_channels is None:
+                raise ValueError("Argument `out_channels` must be given")
+
             channel_list = [hidden_channels] * (num_layers - 1)
             channel_list = [in_channels] + channel_list + [out_channels]
 
@@ -171,14 +178,25 @@ class MLP(torch.nn.Module):
         return len(self.channel_list) - 1
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for lin in self.lins:
             lin.reset_parameters()
         for norm in self.norms:
             if hasattr(norm, 'reset_parameters'):
                 norm.reset_parameters()
 
-    def forward(self, x: Tensor, return_emb: NoneType = None) -> Tensor:
-        """"""
+    def forward(
+        self,
+        x: Tensor,
+        return_emb: NoneType = None,
+    ) -> Tensor:
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            return_emb (bool, optional): If set to :obj:`True`, will
+                additionally return the embeddings before execution of to the
+                final output layer. (default: :obj:`False`)
+        """
         for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
             x = lin(x)
             if self.act is not None and self.act_first:

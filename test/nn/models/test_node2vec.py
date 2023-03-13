@@ -10,7 +10,7 @@ def test_node2vec():
 
     model = Node2Vec(edge_index, embedding_dim=16, walk_length=2,
                      context_size=2)
-    assert model.__repr__() == 'Node2Vec(3, 16)'
+    assert str(model) == 'Node2Vec(3, 16)'
 
     assert model(torch.arange(3)).size() == (3, 16)
 
@@ -22,7 +22,7 @@ def test_node2vec():
     assert 0 <= acc and acc <= 1
 
     if is_full_test():
-        jit = torch.jit.export(model)
+        jit = torch.jit.script(model)
 
         assert jit(torch.arange(3)).size() == (3, 16)
 

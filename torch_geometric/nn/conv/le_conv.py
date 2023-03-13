@@ -61,13 +61,14 @@ class LEConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin1.reset_parameters()
         self.lin2.reset_parameters()
         self.lin3.reset_parameters()
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x = (x, x)
 

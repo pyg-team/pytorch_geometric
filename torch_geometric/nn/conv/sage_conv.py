@@ -3,12 +3,12 @@ from typing import List, Optional, Tuple, Union
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import LSTM
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptPairTensor, Size
+from torch_geometric.typing import Adj, OptPairTensor, Size, SparseTensor
+from torch_geometric.utils import spmm
 
 
 class SAGEConv(MessagePassing):
@@ -34,7 +34,7 @@ class SAGEConv(MessagePassing):
             A tuple corresponds to the sizes of source and target
             dimensionalities.
         out_channels (int): Size of each output sample.
-        aggr (string or Aggregation, optional): The aggregation scheme to use.
+        aggr (str or Aggregation, optional): The aggregation scheme to use.
             Any aggregation of :obj:`torch_geometric.nn.aggr` can be used,
             *e.g.*, :obj:`"mean"`, :obj:`"max"`, or :obj:`"lstm"`.
             (default: :obj:`"mean"`)
@@ -111,16 +111,16 @@ class SAGEConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if self.project:
             self.lin.reset_parameters()
-        self.aggr_module.reset_parameters()
         self.lin_l.reset_parameters()
         if self.root_weight:
             self.lin_r.reset_parameters()
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -145,8 +145,9 @@ class SAGEConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
-        adj_t = adj_t.set_value(None, layout=None)
-        return matmul(adj_t, x[0], reduce=self.aggr)
+        if isinstance(adj_t, SparseTensor):
+            adj_t = adj_t.set_value(None, layout=None)
+        return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
