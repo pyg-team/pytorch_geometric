@@ -14,17 +14,12 @@ from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
+    get_random_edge_index,
     onlyLinux,
     withPackage,
 )
 from torch_geometric.typing import WITH_PYG_LIB
 from torch_geometric.utils import k_hop_subgraph
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges, dtype=torch.int64):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=dtype)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=dtype)
-    return torch.stack([row, col], dim=0)
 
 
 def is_subset(subedge_index, edge_index, src_idx, dst_idx):
@@ -46,7 +41,7 @@ def test_homo_neighbor_loader_basic(directed, dtype):
     data = Data()
 
     data.x = torch.arange(100)
-    data.edge_index = get_edge_index(100, 100, 500, dtype)
+    data.edge_index = get_random_edge_index(100, 100, 500, dtype)
     data.edge_attr = torch.arange(500)
 
     loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
@@ -94,11 +89,14 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
     data['paper'].x = torch.arange(100)
     data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500, dtype)
+    edge_index = get_random_edge_index(100, 100, 500, dtype)
+    data['paper', 'paper'].edge_index = edge_index
     data['paper', 'paper'].edge_attr = torch.arange(500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000, dtype)
+    edge_index = get_random_edge_index(100, 200, 1000, dtype)
+    data['paper', 'author'].edge_index = edge_index
     data['paper', 'author'].edge_attr = torch.arange(500, 1500)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000, dtype)
+    edge_index = get_random_edge_index(200, 100, 1000, dtype)
+    data['author', 'paper'].edge_index = edge_index
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     r1, c1 = data['paper', 'paper'].edge_index
@@ -364,7 +362,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
 
     # COO:
-    edge_index = get_edge_index(100, 100, 500)
+    edge_index = get_random_edge_index(100, 100, 500)
     data['paper', 'to', 'paper'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
     graph_store.put_edge_index(edge_index=coo,
@@ -372,7 +370,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
                                layout='coo', size=(100, 100))
 
     # CSR:
-    edge_index = get_edge_index(100, 200, 1000)
+    edge_index = get_random_edge_index(100, 200, 1000)
     data['paper', 'to', 'author'].edge_index = edge_index
     csr = SparseTensor.from_edge_index(edge_index).csr()[:2]
     graph_store.put_edge_index(edge_index=csr,
@@ -380,7 +378,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
                                layout='csr', size=(100, 200))
 
     # CSC:
-    edge_index = get_edge_index(200, 100, 1000)
+    edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'to', 'paper'].edge_index = edge_index
     csc = SparseTensor(row=edge_index[1], col=edge_index[0]).csr()[-2::-1]
     graph_store.put_edge_index(edge_index=csc,
@@ -388,7 +386,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
                                layout='csc', size=(200, 100))
 
     # COO (sorted):
-    edge_index = get_edge_index(200, 200, 100)
+    edge_index = get_random_edge_index(200, 200, 100)
     edge_index = edge_index[:, edge_index[1].argsort()]
     data['author', 'to', 'author'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
@@ -494,7 +492,7 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
 @withPackage('pyg_lib')
 def test_pyg_lib_homo_neighbor_loader():
-    adj = SparseTensor.from_edge_index(get_edge_index(20, 20, 100))
+    adj = SparseTensor.from_edge_index(get_random_edge_index(20, 20, 100))
     colptr, row, _ = adj.csc()
 
     seed = torch.arange(10)
@@ -514,10 +512,10 @@ def test_pyg_lib_homo_neighbor_loader():
 
 @withPackage('pyg_lib')
 def test_pyg_lib_hetero_neighbor_loader():
-    adj1 = SparseTensor.from_edge_index(get_edge_index(20, 10, 50))
+    adj1 = SparseTensor.from_edge_index(get_random_edge_index(20, 10, 50))
     colptr1, row1, _ = adj1.csc()
 
-    adj2 = SparseTensor.from_edge_index(get_edge_index(10, 20, 50))
+    adj2 = SparseTensor.from_edge_index(get_random_edge_index(10, 20, 50))
     colptr2, row2, _ = adj2.csc()
 
     node_types = ['paper', 'author']
@@ -568,7 +566,7 @@ def test_memmap_neighbor_loader(tmp_path):
 
     data = Data()
     data.x = np.memmap(path, dtype=np.float32, mode='r', shape=(100, 32))
-    data.edge_index = get_edge_index(100, 100, 500)
+    data.edge_index = get_random_edge_index(100, 100, 500)
 
     assert str(data) == 'Data(x=[100, 32], edge_index=[2, 500])'
     assert data.num_nodes == 100
