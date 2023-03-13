@@ -319,7 +319,8 @@ class LightningDataset(LightningDataModule):
     def __repr__(self) -> str:
         kwargs = kwargs_repr(train_dataset=self.train_dataset,
                              val_dataset=self.val_dataset,
-                             test_dataset=self.test_dataset, **self.kwargs)
+                             test_dataset=self.test_dataset,
+                             pred_dataset=self.pred_dataset, **self.kwargs)
         return f'{self.__class__.__name__}({kwargs})'
 
 

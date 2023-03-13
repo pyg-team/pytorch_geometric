@@ -6,6 +6,7 @@ import torch_sparse
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
+from torch_geometric.testing import get_random_edge_index
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
@@ -23,12 +24,6 @@ edge_index_paper_conference = torch.stack(
 
 edge_attr_paper_paper = torch.randn(edge_index_paper_paper.size(1), 8)
 edge_attr_author_paper = torch.randn(edge_index_author_paper.size(1), 8)
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
 
 
 def test_init_hetero_data():
@@ -333,15 +328,15 @@ def test_to_homogeneous_and_vice_versa():
     data['paper'].y = torch.randint(0, 10, (100, ))
     data['author'].x = torch.randn(200, 128)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 250)
+    data['paper', 'paper'].edge_index = get_random_edge_index(100, 100, 250)
     data['paper', 'paper'].edge_weight = torch.randn(250, )
     data['paper', 'paper'].edge_attr = torch.randn(250, 64)
 
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 500)
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 500)
     data['paper', 'author'].edge_weight = torch.randn(500, )
     data['paper', 'author'].edge_attr = torch.randn(500, 64)
 
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'paper'].edge_weight = torch.randn(1000, )
     data['author', 'paper'].edge_attr = torch.randn(1000, 64)
 
@@ -600,8 +595,8 @@ def test_data_generate_ids():
     data['paper'].x = torch.randn(100, 128)
     data['author'].x = torch.randn(200, 128)
 
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 300)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 400)
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 300)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 400)
     assert len(data) == 2
 
     data.generate_ids()

@@ -234,11 +234,11 @@ class PyGModelHubMixin(ModelHubMixin):
         """
         return super().from_pretrained(
             pretrained_model_name_or_path,
-            force_download,
-            resume_download,
-            proxies,
-            token,
-            cache_dir,
-            local_files_only,
+            force_download=force_download,
+            resume_download=resume_download,
+            proxies=proxies,
+            use_auth_token=token,
+            cache_dir=cache_dir,
+            local_files_only=local_files_only,
             **model_kwargs,
         )
