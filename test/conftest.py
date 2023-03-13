@@ -31,6 +31,10 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
         from torch_geometric.datasets import SuiteSparseMatrixCollection
         path = osp.join(root, 'SuiteSparseMatrixCollection')
         return SuiteSparseMatrixCollection(path, name=name, *args, **kwargs)
+    if 'elliptic' in name.lower():
+        from torch_geometric.datasets import EllipticBitcoinDataset
+        path = osp.join(root, 'EllipticBitcoinDataset')
+        return EllipticBitcoinDataset(path, *args, **kwargs)
     if name.lower() in ['hetero']:
         from torch_geometric.testing import FakeHeteroDataset
         return FakeHeteroDataset(*args, **kwargs)
