@@ -1,6 +1,7 @@
+import inspect
 import logging
 import warnings
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
@@ -50,6 +51,11 @@ class CaptumExplainer(ExplainerAlgorithm):
         else:
             self.attribution_method = attribution_method
 
+        if self.unssuported_attribtuion_method():
+            raise ValueError(
+                "CaptumExplainer does not support attribution method"
+                f" {self.attribution_method.__name__}.")
+
     def _get_mask_type(self) -> MaskLevelType:
         r"""Based on the explainer config, return the mask type."""
         node_mask_type = self.explainer_config.node_mask_type
@@ -65,9 +71,34 @@ class CaptumExplainer(ExplainerAlgorithm):
                              "edge mask type is specified.")
         return mask_type
 
-    def _support_multiple_indices(self) -> bool:
-        r"""Checks if the method supports multiple indices."""
-        return self.attribution_method.__name__ == 'IntegratedGradients'
+    def _get_attribute_parameters(self) -> List[str]:
+        r"""Returns the attribute arguments."""
+        args = inspect.signature(self.attribution_method.attribute).parameters
+        return args
+
+    def _has_internal_batch_size(self) -> bool:
+        r"""Checks if the method has an internal batch size."""
+        return 'internal_batch_size' in self._get_attribute_parameters().keys()
+
+    def _needs_baseline(self) -> bool:
+        r"""Checks if the method needs a baseline."""
+        parameters = self._get_attribute_parameters()
+        if 'baselines' in parameters.keys():
+            param = parameters['baselines']
+            if param.default is inspect.Parameter.empty:
+                return True
+        return False
+
+    def unssuported_attribtuion_method(self) -> bool:
+        r"""Checks if the method is supported."""
+        name = self.attribution_method.__name__
+        if self._needs_baseline():
+            return True
+        elif name in [
+                'KernelShap', 'Lime', 'DeepLift', 'DeepLiftShap', 'Occlusion'
+        ]:
+            return True
+        return False
 
     def forward(
         self,
@@ -80,17 +111,10 @@ class CaptumExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
 
-        if isinstance(index, Tensor) and index.numel() > 1:
-            if not self._support_multiple_indices():
-                raise ValueError(
-                    f"{self.attribution_method.__name__} does not support "
-                    "multiple indices. Please use a single index or a "
-                    "different attribution method.")
-
-        # TODO (matthias) Check if `internal_batch_size` can be passed.
-        if self.kwargs.get('internal_batch_size', 1) != 1:
-            warnings.warn("Overriding 'internal_batch_size' to 1")
-        self.kwargs['internal_batch_size'] = 1
+        if self._has_internal_batch_size():
+            if self.kwargs.get('internal_batch_size', 1) != 1:
+                warnings.warn("Overriding 'internal_batch_size' to 1")
+            self.kwargs['internal_batch_size'] = 1
 
         mask_type = self._get_mask_type()
 

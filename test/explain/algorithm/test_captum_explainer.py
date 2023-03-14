@@ -60,6 +60,25 @@ edge_mask_types = [
     None,
 ]
 
+methods = [
+    'Saliency',
+    'InputXGradient',
+    'Deconvolution',
+    'FeatureAblation',
+    'ShapleyValueSampling',
+    'IntegratedGradients',
+    'GuidedBackprop',
+]
+
+unsupported_methods = [
+    'Occlusion',
+    'DeepLift',
+    'DeepLiftShap',
+    'GradientShap',
+    'KernelShap',
+    'Lime',
+]
+
 
 def check_explanation(
     explanation: Explanation,
@@ -82,15 +101,15 @@ def check_explanation(
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
 @pytest.mark.parametrize('index', [1, torch.arange(2)])
+@pytest.mark.parametrize('method', methods + unsupported_methods)
 def test_captum_explainer_multiclass_classification(
     data,
     node_mask_type,
     edge_mask_type,
     task_level,
     index,
+    method,
 ):
-    import captum
-
     if node_mask_type is None and edge_mask_type is None:
         return
 
@@ -105,9 +124,21 @@ def test_captum_explainer_multiclass_classification(
 
     model = GCN(model_config)
 
+    if method in unsupported_methods:
+        with pytest.raises(ValueError):
+            explainer = Explainer(
+                model,
+                algorithm=CaptumExplainer(method),
+                explanation_type='model',
+                edge_mask_type=edge_mask_type,
+                node_mask_type=node_mask_type,
+                model_config=model_config,
+            )
+        return
+
     explainer = Explainer(
         model,
-        algorithm=CaptumExplainer(captum.attr.IntegratedGradients),
+        algorithm=CaptumExplainer(method),
         explanation_type='model',
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
@@ -128,8 +159,9 @@ def test_captum_explainer_multiclass_classification(
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('index', [1, torch.arange(2)])
-def test_captum_hetero_data(node_mask_type, edge_mask_type, index, hetero_data,
-                            hetero_model):
+@pytest.mark.parametrize('method', methods + unsupported_methods)
+def test_captum_hetero_data(node_mask_type, edge_mask_type, index, method,
+                            hetero_data, hetero_model):
 
     if node_mask_type is None or edge_mask_type is None:
         return
@@ -142,9 +174,31 @@ def test_captum_hetero_data(node_mask_type, edge_mask_type, index, hetero_data,
 
     model = hetero_model(hetero_data.metadata())
 
+    kwargs = {}
+    if method == 'Occlusion':
+        if edge_mask_type is None:
+            sliding_window_shapes = ((3, 3), (3, 3))
+        elif node_mask_type is None:
+            sliding_window_shapes = ((5, ), (5, ), (5, ))
+        else:
+            sliding_window_shapes = ((3, 3), (3, 3), (5, ), (5, ), (5, ))
+        kwargs['sliding_window_shapes'] = sliding_window_shapes
+
+    if method in unsupported_methods:
+        with pytest.raises(ValueError):
+            _ = Explainer(
+                model,
+                algorithm=CaptumExplainer(method, **kwargs),
+                edge_mask_type=edge_mask_type,
+                node_mask_type=node_mask_type,
+                model_config=model_config,
+                explanation_type='model',
+            )
+        return
+
     explainer = Explainer(
         model,
-        algorithm=CaptumExplainer('IntegratedGradients'),
+        algorithm=CaptumExplainer(method, **kwargs),
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
         model_config=model_config,
