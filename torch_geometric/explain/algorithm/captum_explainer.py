@@ -1,3 +1,4 @@
+import inspect
 import logging
 import warnings
 from typing import Any, Dict, Optional, Union
@@ -26,11 +27,29 @@ class CaptumExplainer(ExplainerAlgorithm):
     This explainer algorithm uses :captum:`null` `Captum <https://captum.ai/>`_
     to compute attributions.
 
+    Currently, the following attribution methods are supported:
+
+    * :class:`captum.attr.IntegratedGradients`
+    * :class:`captum.attr.Saliency`
+    * :class:`captum.attr.InputXGradient`
+    * :class:`captum.attr.Deconvolution`
+    * :class:`captum.attr.ShapleyValueSampling`
+    * :class:`captum.attr.GuidedBackprop`
+
     Args:
         attribution_method (Attribution or str): The Captum attribution method
             to use. Can be a string or a :class:`captum.attr` method.
         **kwargs: Additional arguments for the Captum attribution method.
     """
+    SUPPORTED_METHODS = [  # TODO: Add support for more methods.
+        'IntegratedGradients',
+        'Saliency',
+        'InputXGradient',
+        'Deconvolution',
+        'ShapleyValueSampling',
+        'GuidedBackprop',
+    ]
+
     def __init__(
         self,
         attribution_method: Union[str, Any],
@@ -40,8 +59,6 @@ class CaptumExplainer(ExplainerAlgorithm):
 
         import captum.attr  # noqa
 
-        self.kwargs = kwargs
-
         if isinstance(attribution_method, str):
             self.attribution_method = getattr(
                 captum.attr,
@@ -49,6 +66,19 @@ class CaptumExplainer(ExplainerAlgorithm):
             )
         else:
             self.attribution_method = attribution_method
+
+        if not self._is_supported_attribution_method():
+            raise ValueError(f"{self.__class__.__name__} does not support "
+                             f"attribution method "
+                             f"{self.attribution_method.__name__}")
+
+        if kwargs.get('internal_batch_size', 1) != 1:
+            warnings.warn("Overriding 'internal_batch_size' to 1")
+
+        if 'internal_batch_size' in self._get_attribute_parameters():
+            kwargs['internal_batch_size'] = 1
+
+        self.kwargs = kwargs
 
     def _get_mask_type(self) -> MaskLevelType:
         r"""Based on the explainer config, return the mask type."""
@@ -65,9 +95,28 @@ class CaptumExplainer(ExplainerAlgorithm):
                              "edge mask type is specified.")
         return mask_type
 
-    def _support_multiple_indices(self) -> bool:
-        r"""Checks if the method supports multiple indices."""
-        return self.attribution_method.__name__ == 'IntegratedGradients'
+    def _get_attribute_parameters(self) -> Dict[str, Any]:
+        r"""Returns the attribute arguments."""
+        signature = inspect.signature(self.attribution_method.attribute)
+        return signature.parameters
+
+    def _needs_baseline(self) -> bool:
+        r"""Checks if the method needs a baseline."""
+        parameters = self._get_attribute_parameters()
+        if 'baselines' in parameters:
+            param = parameters['baselines']
+            if param.default is inspect.Parameter.empty:
+                return True
+        return False
+
+    def _is_supported_attribution_method(self) -> bool:
+        r"""Returns :obj:`True` if `self.attribution_method` is supported."""
+        # This is redundant for now since all supported methods need a baseline
+        if self._needs_baseline():
+            return False
+        elif self.attribution_method.__name__ in self.SUPPORTED_METHODS:
+            return True
+        return False
 
     def forward(
         self,
@@ -79,18 +128,6 @@ class CaptumExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
-
-        if isinstance(index, Tensor) and index.numel() > 1:
-            if not self._support_multiple_indices():
-                raise ValueError(
-                    f"{self.attribution_method.__name__} does not support "
-                    "multiple indices. Please use a single index or a "
-                    "different attribution method.")
-
-        # TODO (matthias) Check if `internal_batch_size` can be passed.
-        if self.kwargs.get('internal_batch_size', 1) != 1:
-            warnings.warn("Overriding 'internal_batch_size' to 1")
-        self.kwargs['internal_batch_size'] = 1
 
         mask_type = self._get_mask_type()
 
