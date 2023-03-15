@@ -96,6 +96,7 @@ def check_explanation(
         assert 'edge_mask' not in explanation
 
 
+@withPackage('captum')
 @pytest.mark.parametrize('method', unsupported_methods)
 def test_unsupported_methods(method):
     model_config = ModelConfig(mode='regression', task_level='node')
