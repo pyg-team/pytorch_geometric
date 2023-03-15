@@ -71,12 +71,11 @@ def run(args: argparse.ArgumentParser):
         if eval_batch_sizes is not None:
             print('Evaluation sampling with all neighbors')
             for batch_size in eval_batch_sizes:
-                subgraph_loader = NeighborLoader(data, num_neighbors=[-1],
-                                                 input_nodes=eval_idx,
-                                                 batch_size=batch_size,
-                                                 shuffle=False,
-                                                 num_workers=args.num_workers,
-                                                 filter_per_worker=args.filter_per_worker)
+                subgraph_loader = NeighborLoader(
+                    data, num_neighbors=[-1], input_nodes=eval_idx,
+                    batch_size=batch_size, shuffle=False,
+                    num_workers=args.num_workers,
+                    filter_per_worker=args.filter_per_worker)
                 cpu_affinity = subgraph_loader.enable_cpu_affinity(
                     args.loader_cores) if args.cpu_affinity else nullcontext()
                 runtimes = []

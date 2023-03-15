@@ -273,7 +273,7 @@ if __name__ == '__main__':
         help='Use DataLoader affinitzation.')
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers")
-    add('--filter-per-worker', action='store_true', 
+    add('--filter-per-worker', action='store_true',
         help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--full-batch', action='store_true', help='Use full batch mode')
