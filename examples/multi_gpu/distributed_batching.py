@@ -92,8 +92,8 @@ def run(rank, world_size: int, dataset_name: str, root: str):
             loss = criterion(logits, data.y.to(torch.float))
             loss.backward()
             optimizer.step()
-            total_loss[0] += loss.item() * logits.size(0)
-            total_loss[1] += len(data)
+            total_loss[0] += float(loss) * logits.size(0)
+            total_loss[1] += data.num_graphs
 
         dist.all_reduce(total_loss, op=dist.ReduceOp.SUM)
         loss = total_loss[0] / total_loss[1]
