@@ -9,10 +9,6 @@ from torch_geometric.nn import ComplEx, TransE
 
 available_models = ['transe', 'complex']
 model_map = {'transe': TransE, 'complex': ComplEx}
-optimizer_map = {
-    'transe': torch.optim.Adam(model.parameters(), lr=0.01),
-    'complex': optim.Adagrad(model.parameters(), lr=0.001, weight_decay=1e-6)
-}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', choices=available_models, type=str.lower,
@@ -40,6 +36,10 @@ loader = model.loader(
     shuffle=True,
 )
 
+optimizer_map = {
+    'transe': torch.optim.Adam(model.parameters(), lr=0.01),
+    'complex': optim.Adagrad(model.parameters(), lr=0.001, weight_decay=1e-6)
+}
 optimizer = optimizer_map[args.model]
 
 
