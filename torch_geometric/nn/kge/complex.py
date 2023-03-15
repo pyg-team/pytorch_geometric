@@ -31,6 +31,7 @@ class ComplEx(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to
             the embedding matrices will be sparse. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         num_nodes: int,
