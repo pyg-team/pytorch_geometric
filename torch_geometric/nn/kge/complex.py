@@ -40,7 +40,7 @@ class ComplEx(KGEModel):
     ):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse,
                          uses_complex=True)
-        
+
     def reset_parameters(self):
         torch.nn.init.xavier_uniform_(self.node_emb.weight)
         torch.nn.init.xavier_uniform_(self.node_emb_im.weight)
@@ -63,14 +63,14 @@ class ComplEx(KGEModel):
             triple_dot(head_im, rel_re, tail_im) + \
             triple_dot(head_re, rel_im, tail_im) - \
             triple_dot(head_im, rel_im, tail_re)
-        
 
     def loss(self, head_index: Tensor, rel_type: Tensor,
              tail_index: Tensor) -> Tensor:
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
         input = torch.cat((pos_score, neg_score))
-        target = torch.cat((torch.ones_like(pos_score),
-                            torch.zeros_like(neg_score)))
+        target = torch.cat(
+            (torch.ones_like(pos_score), torch.zeros_like(neg_score)))
 
-        return F.binary_cross_entropy_with_logits(input, target, reduction='sum')
+        return F.binary_cross_entropy_with_logits(input, target,
+                                                  reduction='sum')

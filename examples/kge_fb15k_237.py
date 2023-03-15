@@ -8,10 +8,7 @@ from torch_geometric.datasets import FB15k_237
 from torch_geometric.nn import ComplEx, TransE
 
 available_models = ['transe', 'complex']
-model_map = {
-    'transe': TransE,
-    'complex': ComplEx
-}
+model_map = {'transe': TransE, 'complex': ComplEx}
 optimizer_map = {
     'transe': torch.optim.Adam(model.parameters(), lr=0.01),
     'complex': optim.Adagrad(model.parameters(), lr=0.001, weight_decay=1e-6)
