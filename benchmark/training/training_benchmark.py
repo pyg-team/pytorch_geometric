@@ -163,7 +163,7 @@ def run(args: argparse.ArgumentParser):
                     }
                     subgraph_loader = NeighborLoader(
                         data, input_nodes=mask, sampler=sampler,
-                        filter_per_worker=args.filter_per_worker, **kwargs)
+                        filter_per_worker=args.filter_per_worker, **kwargs, )
                     if args.evaluate:
                         val_loader = NeighborLoader(
                             data, input_nodes=val_mask, sampler=None,
