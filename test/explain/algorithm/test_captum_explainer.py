@@ -64,13 +64,13 @@ methods = [
     'Saliency',
     'InputXGradient',
     'Deconvolution',
-    'FeatureAblation',
     'ShapleyValueSampling',
     'IntegratedGradients',
     'GuidedBackprop',
 ]
 
 unsupported_methods = [
+    'FeatureAblation',
     'Occlusion',
     'DeepLift',
     'DeepLiftShap',

@@ -32,6 +32,17 @@ class CaptumExplainer(ExplainerAlgorithm):
             to use. Can be a string or a :class:`captum.attr` method.
         **kwargs: Additional arguments for the Captum attribution method.
     """
+
+    # TODO: Add support for more methods.
+    SUPPORTED_METHODS = [
+        'Saliency',
+        'InputXGradient',
+        'Deconvolution',
+        'ShapleyValueSampling',
+        'IntegratedGradients',
+        'GuidedBackprop',
+    ]
+
     def __init__(
         self,
         attribution_method: Union[str, Any],
@@ -51,7 +62,7 @@ class CaptumExplainer(ExplainerAlgorithm):
         else:
             self.attribution_method = attribution_method
 
-        if self.unssuported_attribtuion_method():
+        if not self.is_supported_attribution_method():
             raise ValueError(
                 "CaptumExplainer does not support attribution method"
                 f" {self.attribution_method.__name__}.")
@@ -89,14 +100,15 @@ class CaptumExplainer(ExplainerAlgorithm):
                 return True
         return False
 
-    def unssuported_attribtuion_method(self) -> bool:
-        r"""Checks if the method is supported."""
+    def is_supported_attribution_method(self) -> bool:
+        r"""Returns :obj:`True` if `self.attribution_method` is supported.
+        All methods listed in :obj:`self.SUPPORTED_METHODS` are supported."""
         name = self.attribution_method.__name__
+        # This is redundant for now since all supported methods
+        # do not need a baseline
         if self._needs_baseline():
-            return True
-        elif name in [
-                'KernelShap', 'Lime', 'DeepLift', 'DeepLiftShap', 'Occlusion'
-        ]:
+            return False
+        elif name in self.SUPPORTED_METHODS:
             return True
         return False
 
