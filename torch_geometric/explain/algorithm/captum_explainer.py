@@ -27,19 +27,26 @@ class CaptumExplainer(ExplainerAlgorithm):
     This explainer algorithm uses :captum:`null` `Captum <https://captum.ai/>`_
     to compute attributions.
 
+    Currently, the following attribution methods are supported:
+
+    * :class:`captum.attr.IntegratedGradients`
+    * :class:`captum.attr.Saliency`
+    * :class:`captum.attr.InputXGradient`
+    * :class:`captum.attr.Deconvolution`
+    * :class:`captum.attr.ShapleyValueSampling`
+    * :class:`captum.attr.GuidedBackprop`
+
     Args:
         attribution_method (Attribution or str): The Captum attribution method
             to use. Can be a string or a :class:`captum.attr` method.
         **kwargs: Additional arguments for the Captum attribution method.
     """
-
-    # TODO: Add support for more methods.
-    SUPPORTED_METHODS = [
+    SUPPORTED_METHODS = [  # TODO: Add support for more methods.
+        'IntegratedGradients',
         'Saliency',
         'InputXGradient',
         'Deconvolution',
         'ShapleyValueSampling',
-        'IntegratedGradients',
         'GuidedBackprop',
     ]
 
