@@ -188,7 +188,7 @@ def test_captum_hetero_data(node_mask_type, edge_mask_type, index, method,
 
     explainer = Explainer(
         model,
-        algorithm=CaptumExplainer(method, **kwargs),
+        algorithm=CaptumExplainer(method),
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
         model_config=model_config,
