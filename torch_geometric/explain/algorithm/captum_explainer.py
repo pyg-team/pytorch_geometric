@@ -87,10 +87,6 @@ class CaptumExplainer(ExplainerAlgorithm):
         args = inspect.signature(self.attribution_method.attribute).parameters
         return args
 
-    def _has_internal_batch_size(self) -> bool:
-        r"""Checks if the method has an internal batch size."""
-        return 'internal_batch_size' in self._get_attribute_parameters().keys()
-
     def _needs_baseline(self) -> bool:
         r"""Checks if the method needs a baseline."""
         parameters = self._get_attribute_parameters()
@@ -123,9 +119,8 @@ class CaptumExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
 
-        if self._has_internal_batch_size():
-            if self.kwargs.get('internal_batch_size', 1) != 1:
-                warnings.warn("Overriding 'internal_batch_size' to 1")
+        if self.kwargs.get('internal_batch_size', 1) != 1:
+            warnings.warn("Overriding 'internal_batch_size' to 1")
             self.kwargs['internal_batch_size'] = 1
 
         mask_type = self._get_mask_type()
