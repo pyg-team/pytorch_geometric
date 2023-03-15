@@ -161,14 +161,28 @@ def run(args: argparse.ArgumentParser):
                         'shuffle': shuffle,
                         'num_workers': args.num_workers,
                     }
-                    subgraph_loader = NeighborLoader(data, input_nodes=mask,
-                                                     sampler=sampler, **kwargs)
+                    subgraph_loader = NeighborLoader(
+                        data,
+                        input_nodes=mask,
+                        sampler=sampler,
+                        filter_per_worker=args.filter_per_worker,
+                        **kwargs,
+                    )
                     if args.evaluate:
-                        val_loader = NeighborLoader(data, input_nodes=val_mask,
-                                                    sampler=None, **kwargs)
-                        test_loader = NeighborLoader(data,
-                                                     input_nodes=test_mask,
-                                                     sampler=None, **kwargs)
+                        val_loader = NeighborLoader(
+                            data,
+                            input_nodes=val_mask,
+                            sampler=None,
+                            filter_per_worker=args.filter_per_worker,
+                            **kwargs,
+                        )
+                        test_loader = NeighborLoader(
+                            data,
+                            input_nodes=test_mask,
+                            sampler=None,
+                            filter_per_worker=args.filter_per_worker,
+                            **kwargs,
+                        )
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
                         print(f'Batch size={batch_size}, '
@@ -301,6 +315,8 @@ if __name__ == '__main__':
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
+    add('--filter-per-worker', action='store_true',
+        help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
     add('--write-csv', action='store_true', help='Write benchmark data to csv')
