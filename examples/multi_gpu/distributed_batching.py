@@ -96,7 +96,7 @@ def run(rank, world_size: int, dataset_name: str, root: str):
             total_loss[1] += data.num_graphs
 
         dist.all_reduce(total_loss, op=dist.ReduceOp.SUM)
-        loss = total_loss[0] / total_loss[1]
+        loss = float(total_loss[0] / total_loss[1])
 
         if rank == 0:  # We evaluate on a single GPU for now.
             model.eval()
