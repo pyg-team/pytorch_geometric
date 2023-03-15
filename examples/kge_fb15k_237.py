@@ -7,11 +7,10 @@ import torch.optim as optim
 from torch_geometric.datasets import FB15k_237
 from torch_geometric.nn import ComplEx, TransE
 
-available_models = ['transe', 'complex']
 model_map = {'transe': TransE, 'complex': ComplEx}
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model', choices=available_models, type=str.lower,
+parser.add_argument('--model', choices=model_map.keys(), type=str.lower,
                     required=True)
 args = parser.parse_args()
 

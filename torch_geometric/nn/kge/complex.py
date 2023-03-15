@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from torch import Tensor
+from torch.nn import Embedding
 
 from torch_geometric.nn.kge import KGEModel
 
@@ -38,8 +39,13 @@ class ComplEx(KGEModel):
         hidden_channels: int,
         sparse: bool = False,
     ):
-        super().__init__(num_nodes, num_relations, hidden_channels, sparse,
-                         uses_complex=True)
+        super().__init__(num_nodes, num_relations, hidden_channels, sparse)
+
+        self.node_emb_im = Embedding(num_nodes, hidden_channels, sparse=sparse)
+        self.rel_emb_im = Embedding(num_relations, hidden_channels,
+                                    sparse=sparse)
+
+        self.reset_parameters()
 
     def reset_parameters(self):
         torch.nn.init.xavier_uniform_(self.node_emb.weight)

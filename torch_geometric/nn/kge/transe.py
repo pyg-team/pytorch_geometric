@@ -54,6 +54,8 @@ class TransE(KGEModel):
         self.margin = margin
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
 
+        self.reset_parameters()
+
     def reset_parameters(self):
         bound = 6. / math.sqrt(self.hidden_channels)
         torch.nn.init.uniform_(self.node_emb.weight, -bound, bound)
