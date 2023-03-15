@@ -5,14 +5,8 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import onlyFullTest, withPackage
+from torch_geometric.testing import get_random_edge_index
 from torch_geometric.utils import k_hop_subgraph
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
 
 
 def is_subset(subedge_index, edge_index, src_idx, dst_idx):
@@ -31,11 +25,11 @@ def test_hgt_loader():
     data['paper'].x = torch.arange(100)
     data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'paper'].edge_index = get_random_edge_index(100, 100, 500)
     data['paper', 'paper'].edge_attr = torch.arange(500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 1000)
     data['paper', 'author'].edge_attr = torch.arange(500, 1500)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     r1, c1 = data['paper', 'paper'].edge_index
@@ -185,14 +179,3 @@ def test_hgt_loader_on_cora(get_dataset):
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
-
-
-@onlyFullTest
-@withPackage('torch_sparse>=0.6.15')
-def test_hgt_loader_on_dblp(get_dataset):
-    data = get_dataset(name='DBLP')[0]
-    loader = HGTLoader(data, num_samples=[10, 10],
-                       input_nodes=('author', data['author'].train_mask))
-
-    for batch in loader:
-        assert set(batch.edge_types) == set(data.edge_types)

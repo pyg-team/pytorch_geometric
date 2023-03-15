@@ -436,9 +436,9 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
     cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
                                                     cu_edge_weight)
 
-    assert torch.equal(edge_index, cu_edge_index)
+    assert torch.equal(edge_index, cu_edge_index.cpu())
     if edge_weight is not None:
-        assert torch.allclose(edge_weight, cu_edge_weight)
+        assert torch.allclose(edge_weight, cu_edge_weight.cpu())
 
 
 @withPackage('cudf')
@@ -476,8 +476,8 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
     cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
                                                     cu_edge_weight)
 
-    assert torch.equal(edge_index, cu_edge_index)
+    assert torch.equal(edge_index, cu_edge_index.cpu())
     if edge_weight is not None:
-        assert torch.allclose(edge_weight, cu_edge_weight)
+        assert torch.allclose(edge_weight, cu_edge_weight.cpu())
     else:
         assert cu_edge_weight is None
