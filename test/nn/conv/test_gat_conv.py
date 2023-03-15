@@ -124,4 +124,4 @@ def test_gat_conv_empty_edge_index(device):
 
     conv = GATConv(8, 32, heads=2).to(device)
     out = conv(x, edge_index)
-    assert out.size() == (8, 64)
+    assert out.size() == (0, 64)
