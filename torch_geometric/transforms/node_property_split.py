@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import torch
@@ -35,16 +35,14 @@ class NodePropertySplit(BaseTransform):
 
     Args:
         property_name (str): The name of the node property to be used,
-            which must be ``'popularity'``, ``'locality'`` or ``'density'``.
-
+            which must be :obj:`"popularity"`, :obj:`"locality"`
+            or :obj:`"density"`.
         part_ratios (list): A list of 5 ratio values for training,
             ID validation, ID test, OOD validation and OOD test parts.
             The values must sum to 1.0.
-
         ascending (bool, optional): Whether to sort nodes in the ascending
             order of the node property, so that nodes with greater values
             of the property are considered to be OOD (default: :obj:`True`)
-
         random_seed (int, optional): Random seed to fix for the initial
             permutation of nodes. It is used to create a random order for
             the nodes that have the same property values or belong to the
@@ -70,8 +68,8 @@ class NodePropertySplit(BaseTransform):
     def __init__(
         self,
         property_name: str,
-        part_ratios: list,
-        ascending: Optional[bool] = True,
+        part_ratios: List[float],
+        ascending: bool = True,
         random_seed: Optional[int] = None,
     ):
         assert property_name in [
@@ -80,15 +78,13 @@ class NodePropertySplit(BaseTransform):
             "density",
         ], "`property_name` has to be 'popularity', 'locality', or 'density'"
 
+        assert len(part_ratios) == 5, "`part_ratios` must contain 5 values"
         assert sum(part_ratios) == 1.0, "`part_ratios` must sum to 1.0"
 
         self.property_name = property_name
         self.part_ratios = part_ratios
         self.ascending = ascending
         self.random_seed = random_seed
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(property_name={self.property_name})"
 
     def __call__(
         self,
@@ -148,7 +144,7 @@ class NodePropertySplit(BaseTransform):
     @staticmethod
     def mask_nodes_by_property(
         property_values: np.ndarray,
-        part_ratios: list,
+        part_ratios: List[float],
         random_seed: Optional[int] = None,
     ) -> Dict[str, torch.Tensor]:
         """Provides the split masks for a node split with distributional
@@ -194,6 +190,8 @@ class NodePropertySplit(BaseTransform):
                 property_values, part_ratios
             )
         """
+        assert len(part_ratios) == 5, "`part_ratios` must contain 5 values"
+        assert sum(part_ratios) == 1.0, "`part_ratios` must sum to 1.0"
 
         num_nodes = len(property_values)
         part_sizes = np.round(num_nodes * np.array(part_ratios)).astype(int)
@@ -227,6 +225,9 @@ class NodePropertySplit(BaseTransform):
             split_masks[mask_name] = torch.tensor(split_mask, dtype=bool)
 
         return split_masks
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(property_name={self.property_name})"
 
 
 _property_name_to_compute_fn = {
