@@ -167,10 +167,10 @@ def run(args: argparse.ArgumentParser):
                     if args.evaluate:
                         val_loader = NeighborLoader(
                             data, input_nodes=val_mask, sampler=None,
-                            filter_per_worker=args.filter_per_worker, **kwargs)
+                            filter_per_worker=args.filter_per_worker, **kwargs,)
                         test_loader = NeighborLoader(
                             data, input_nodes=test_mask, sampler=None,
-                            filter_per_worker=args.filter_per_worker, **kwargs)
+                            filter_per_worker=args.filter_per_worker, **kwargs,)
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
                         print(f'Batch size={batch_size}, '
