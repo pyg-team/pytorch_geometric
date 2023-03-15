@@ -4,17 +4,37 @@ from torch_geometric.nn import ComplEx
 
 
 def test_complex_scoring():
-    model = ComplEx(5, 2, 1)
-    model.node_emb.weight.data = torch.Tensor([[2.], [3.], [5.], [1.], [2.]])
-    model.node_emb_im.weight.data = torch.Tensor([[4.], [1.], [3.], [1.],
-                                                  [2.]])
-    model.rel_emb.weight.data = torch.Tensor([[2.], [3.]])
-    model.rel_emb_im.weight.data = torch.Tensor([[3.], [1.]])
+    model = ComplEx(num_nodes=5, num_relations=2, hidden_channels=1)
 
-    score = model(torch.IntTensor([1, 3]), torch.IntTensor([1, 0]),
-                  torch.IntTensor([2, 4]))
+    model.node_emb.weight.data = torch.tensor([
+        [2.],
+        [3.],
+        [5.],
+        [1.],
+        [2.],
+    ])
+    model.node_emb_im.weight.data = torch.tensor([
+        [4.],
+        [1.],
+        [3.],
+        [1.],
+        [2.],
+    ])
+    model.rel_emb.weight.data = torch.tensor([
+        [2.],
+        [3.],
+    ])
+    model.rel_emb_im.weight.data = torch.tensor([
+        [3.],
+        [1.],
+    ])
 
-    assert torch.all(torch.eq(score, torch.tensor([58, 8])))
+    score = model(
+        head_index=torch.tensor([1, 3]),
+        rel_type=torch.tensor([1, 0]),
+        tail_index=torch.tensor([2, 4]),
+    )
+    assert score.tolist() == [58., 8.]
 
 
 def test_complex():
