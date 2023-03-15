@@ -174,16 +174,6 @@ def test_captum_hetero_data(node_mask_type, edge_mask_type, index, method,
 
     model = hetero_model(hetero_data.metadata())
 
-    kwargs = {}
-    if method == 'Occlusion':
-        if edge_mask_type is None:
-            sliding_window_shapes = ((3, 3), (3, 3))
-        elif node_mask_type is None:
-            sliding_window_shapes = ((5, ), (5, ), (5, ))
-        else:
-            sliding_window_shapes = ((3, 3), (3, 3), (5, ), (5, ), (5, ))
-        kwargs['sliding_window_shapes'] = sliding_window_shapes
-
     if method in unsupported_methods:
         with pytest.raises(ValueError):
             _ = Explainer(
