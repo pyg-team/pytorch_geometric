@@ -16,7 +16,7 @@ class ComplEx(KGEModel):
     resulting in the scoring function:
 
     .. math::
-        d(h, r, t) = Re(< \mathbf{e}_h,  \mathbf{w}_r, \mathbf{e}_t>)
+        d(h, r, t) = Re(< \mathbf{e}_h,  \mathbf{e}_r, \mathbf{e}_t>)
 
     .. note::
 
