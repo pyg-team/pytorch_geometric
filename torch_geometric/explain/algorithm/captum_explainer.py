@@ -1,7 +1,7 @@
 import inspect
 import logging
 import warnings
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import torch
 from torch import Tensor
@@ -52,8 +52,6 @@ class CaptumExplainer(ExplainerAlgorithm):
 
         import captum.attr  # noqa
 
-        self.kwargs = kwargs
-
         if isinstance(attribution_method, str):
             self.attribution_method = getattr(
                 captum.attr,
@@ -62,10 +60,18 @@ class CaptumExplainer(ExplainerAlgorithm):
         else:
             self.attribution_method = attribution_method
 
-        if not self.is_supported_attribution_method():
-            raise ValueError(
-                "CaptumExplainer does not support attribution method"
-                f" {self.attribution_method.__name__}.")
+        if not self._is_supported_attribution_method():
+            raise ValueError(f"{self.__class__.__name__} does not support "
+                             f"attribution method "
+                             f"{self.attribution_method.__name__}")
+
+        if kwargs.get('internal_batch_size', 1) != 1:
+            warnings.warn("Overriding 'internal_batch_size' to 1")
+
+        if 'internal_batch_size' in self._get_attribute_parameters():
+            kwargs['internal_batch_size'] = 1
+
+        self.kwargs = kwargs
 
     def _get_mask_type(self) -> MaskLevelType:
         r"""Based on the explainer config, return the mask type."""
@@ -82,29 +88,26 @@ class CaptumExplainer(ExplainerAlgorithm):
                              "edge mask type is specified.")
         return mask_type
 
-    def _get_attribute_parameters(self) -> List[str]:
+    def _get_attribute_parameters(self) -> Dict[str, Any]:
         r"""Returns the attribute arguments."""
-        args = inspect.signature(self.attribution_method.attribute).parameters
-        return args
+        signature = inspect.signature(self.attribution_method.attribute)
+        return signature.parameters
 
     def _needs_baseline(self) -> bool:
         r"""Checks if the method needs a baseline."""
         parameters = self._get_attribute_parameters()
-        if 'baselines' in parameters.keys():
+        if 'baselines' in parameters:
             param = parameters['baselines']
             if param.default is inspect.Parameter.empty:
                 return True
         return False
 
-    def is_supported_attribution_method(self) -> bool:
-        r"""Returns :obj:`True` if `self.attribution_method` is supported.
-        All methods listed in :obj:`self.SUPPORTED_METHODS` are supported."""
-        name = self.attribution_method.__name__
-        # This is redundant for now since all supported methods
-        # do not need a baseline
+    def _is_supported_attribution_method(self) -> bool:
+        r"""Returns :obj:`True` if `self.attribution_method` is supported."""
+        # This is redundant for now since all supported methods need a baseline
         if self._needs_baseline():
             return False
-        elif name in self.SUPPORTED_METHODS:
+        elif self.attribution_method.__name__ in self.SUPPORTED_METHODS:
             return True
         return False
 
@@ -118,10 +121,6 @@ class CaptumExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
-
-        if self.kwargs.get('internal_batch_size', 1) != 1:
-            warnings.warn("Overriding 'internal_batch_size' to 1")
-            self.kwargs['internal_batch_size'] = 1
 
         mask_type = self._get_mask_type()
 

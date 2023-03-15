@@ -16,12 +16,12 @@ from torch_geometric.nn import GCNConv, global_add_pool
 from torch_geometric.testing import withPackage
 
 methods = [
-    # 'Saliency',
-    # 'InputXGradient',
-    # 'Deconvolution',
-    # 'ShapleyValueSampling',
+    'Saliency',
+    'InputXGradient',
+    'Deconvolution',
+    'ShapleyValueSampling',
     'IntegratedGradients',
-    # 'GuidedBackprop',
+    'GuidedBackprop',
 ]
 
 unsupported_methods = [
