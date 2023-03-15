@@ -39,8 +39,12 @@ class KGEModel(torch.nn.Module):
         self.node_emb.reset_parameters()
         self.rel_emb.reset_parameters()
 
-    def forward(self, head_index: Tensor, rel_type: Tensor,
-                tail_index: Tensor) -> Tensor:
+    def forward(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+    ) -> Tensor:
         r"""Returns the score for the given triplet.
 
         Args:
@@ -50,8 +54,12 @@ class KGEModel(torch.nn.Module):
         """
         raise NotImplementedError
 
-    def loss(self, head_index: Tensor, rel_type: Tensor,
-             tail_index: Tensor) -> Tensor:
+    def loss(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+    ) -> Tensor:
         r"""Returns the loss value for the given triplet.
 
         Args:
@@ -61,8 +69,13 @@ class KGEModel(torch.nn.Module):
         """
         raise NotImplementedError
 
-    def loader(self, head_index: Tensor, rel_type: Tensor, tail_index: Tensor,
-               **kwargs) -> Tensor:
+    def loader(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+        **kwargs,
+    ) -> Tensor:
         r"""Returns a mini-batch loader that samples a subset of triplets.
 
         Args:
@@ -121,8 +134,12 @@ class KGEModel(torch.nn.Module):
         return mean_rank, hits_at_k
 
     @torch.no_grad()
-    def random_sample(self, head_index: Tensor, rel_type: Tensor,
-                      tail_index: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
+    def random_sample(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+    ) -> Tuple[Tensor, Tensor, Tensor]:
         r"""Randomly samples negative triplets by either replacing the head or
         the tail (but not both).
 

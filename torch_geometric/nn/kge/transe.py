@@ -63,8 +63,13 @@ class TransE(KGEModel):
         F.normalize(self.rel_emb.weight.data, p=self.p_norm, dim=-1,
                     out=self.rel_emb.weight.data)
 
-    def forward(self, head_index: Tensor, rel_type: Tensor,
-                tail_index: Tensor) -> Tensor:
+    def forward(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+    ) -> Tensor:
+
         head = self.node_emb(head_index)
         rel = self.rel_emb(rel_type)
         tail = self.node_emb(tail_index)
@@ -75,8 +80,13 @@ class TransE(KGEModel):
         # Calculate *negative* TransE norm:
         return -((head + rel) - tail).norm(p=self.p_norm, dim=-1)
 
-    def loss(self, head_index: Tensor, rel_type: Tensor,
-             tail_index: Tensor) -> Tensor:
+    def loss(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+    ) -> Tensor:
+
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
 

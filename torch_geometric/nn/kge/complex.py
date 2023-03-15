@@ -11,8 +11,8 @@ class ComplEx(KGEModel):
     Prediction" <https://arxiv.org/pdf/1606.06357.pdf>`_ paper.
 
     :class:`ComplEx` models relations as complex-valued bilinear mappings
-    between head and tail entities using the Hermetian dot product. The
-    entities and relations are embedded in different dimensional spaces,
+    between head and tail entities using the Hermetian dot product.
+    The entities and relations are embedded in different dimensional spaces,
     resulting in the scoring function:
 
     .. math::
@@ -53,8 +53,13 @@ class ComplEx(KGEModel):
         torch.nn.init.xavier_uniform_(self.rel_emb.weight)
         torch.nn.init.xavier_uniform_(self.rel_emb_im.weight)
 
-    def forward(self, head_index: Tensor, rel_type: Tensor,
-                tail_index: Tensor) -> Tensor:
+    def forward(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+    ) -> Tensor:
+
         head_re = self.node_emb(head_index)
         head_im = self.node_emb_im(head_index)
         rel_re = self.rel_emb(rel_type)
@@ -62,21 +67,28 @@ class ComplEx(KGEModel):
         tail_re = self.node_emb(tail_index)
         tail_im = self.node_emb_im(tail_index)
 
-        def triple_dot(x, y, z):
-            return torch.sum(x * y * z, dim=-1)
+        return (triple_dot(head_re, rel_re, tail_re) +
+                triple_dot(head_im, rel_re, tail_im) +
+                triple_dot(head_re, rel_im, tail_im) -
+                triple_dot(head_im, rel_im, tail_re))
 
-        return triple_dot(head_re, rel_re, tail_re) + \
-            triple_dot(head_im, rel_re, tail_im) + \
-            triple_dot(head_re, rel_im, tail_im) - \
-            triple_dot(head_im, rel_im, tail_re)
+    def loss(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+    ) -> Tensor:
 
-    def loss(self, head_index: Tensor, rel_type: Tensor,
-             tail_index: Tensor) -> Tensor:
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
-        input = torch.cat((pos_score, neg_score))
-        target = torch.cat(
-            (torch.ones_like(pos_score), torch.zeros_like(neg_score)))
+        scores = torch.cat([pos_score, neg_score], dim=0)
 
-        return F.binary_cross_entropy_with_logits(input, target,
-                                                  reduction='sum')
+        pos_target = torch.ones_like(pos_score)
+        neg_target = torch.zeros_like(neg_score)
+        target = torch.cat([pos_target, neg_target], dim=0)
+
+        return F.binary_cross_entropy_with_logits(scores, target)
+
+
+def triple_dot(x: Tensor, y: Tensor, z: Tensor) -> Tensor:
+    return (x * y * z).sum(dim=-1)
