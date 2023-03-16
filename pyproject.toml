@@ -1,11 +1,11 @@
 [project]
 name="torch_geometric"
 version="2.3.0"
-readme="README.md"
 authors=[
     {name="Matthias Fey", email="matthias@pyg.org"},
 ]
 description="Graph Neural Network Library for PyTorch"
+readme="README.md"
 requires-python=">=3.7"
 keywords=[
     "deep-learning",
@@ -22,6 +22,7 @@ classifiers=[
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3 :: Only",
 ]
 
