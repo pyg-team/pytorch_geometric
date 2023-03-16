@@ -84,7 +84,7 @@ class AffinityMixin:
     close to their data, or be able to share data in a cache.
 
     .. warning::
-    
+
         To correctly affinitize compute threads
         (*i.e.* with OMP), please make sure that you exclude
         :obj:`loader_cores` from the list of cores available for the main process.
@@ -98,11 +98,11 @@ class AffinityMixin:
         with loader.enable_cpu_affinity(loader_cores=[0, 1, 2]):
             for batch in loader:
                 pass
-                
+
     Args:
         loader_cores ([int], optional): List of CPU cores to which data
             loader workers should affinitize to. By default, will affinitize
-            to cores starting at :obj:`cpu0`. 
+            to cores starting at :obj:`cpu0`.
             (default: :obj:`node0_cores[:num_workers]`)
     """
     @contextmanager
