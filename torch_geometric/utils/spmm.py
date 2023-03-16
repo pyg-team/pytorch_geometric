@@ -67,10 +67,10 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         return torch.sparse.mm(src, other)
     elif reduce == 'mean':
         # TODO: Utilize `rowptr` instead when `src` is given as a CSR matrix.
-        src = src.coalesce()
-        deg = degree(src.indices()[0], num_nodes=src.size(0))
-        out = torch.sparse.mm(src, other).div(deg.view(-1, 1))
-        return out.nan_to_num(0.)
+        # src = src.coalesce()
+        deg = degree(src._indices()[0], num_nodes=src.size(0))
+        out = torch.sparse.mm(src, other).div(deg.clamp_(min=1).view(-1, 1))
+        return out
 
     raise ValueError(f"`{reduce}` reduction is not supported for "
                      f"'torch.sparse.Tensor' on device '{src.device}'")
