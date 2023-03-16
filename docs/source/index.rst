@@ -44,7 +44,6 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    advanced/graphgym
    advanced/cpu_affinity
 
-
 .. toctree::
    :maxdepth: 1
    :caption: Package Reference
