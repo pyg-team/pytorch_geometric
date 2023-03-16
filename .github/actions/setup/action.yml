@@ -6,13 +6,13 @@ inputs:
     default: '3.8'
   torch-version:
     required: false
-    default: '1.13.0'
+    default: '2.0.0'
   cuda-version:
     required: false
     default: cpu
   torchvision-version:
     required: false
-    default: '0.14.0'
+    default: '0.15.0'
 
 runs:
   using: composite

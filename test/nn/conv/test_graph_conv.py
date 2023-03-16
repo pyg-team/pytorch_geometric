@@ -34,16 +34,15 @@ def test_graph_conv():
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x1, edge_index).tolist() == out11.tolist()
-        assert jit(x1, edge_index, size=(4, 4)).tolist() == out11.tolist()
-        assert jit(x1, edge_index, value).tolist() == out12.tolist()
-        assert jit(x1, edge_index, value,
-                   size=(4, 4)).tolist() == out12.tolist()
+        assert torch.allclose(jit(x1, edge_index), out11)
+        assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out11)
+        assert torch.allclose(jit(x1, edge_index, value), out12)
+        assert torch.allclose(jit(x1, edge_index, value, size=(4, 4)), out12)
 
         t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x1, adj1.t()).tolist() == out11.tolist()
-        assert jit(x1, adj2.t()).tolist() == out12.tolist()
+        assert torch.allclose(jit(x1, adj1.t()), out11)
+        assert torch.allclose(jit(x1, adj2.t()), out12)
 
     adj1 = adj1.sparse_resize((4, 2))
     adj2 = adj2.sparse_resize((4, 2))
@@ -71,20 +70,17 @@ def test_graph_conv():
     if is_full_test():
         t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit((x1, x2), edge_index).tolist() == out21.tolist()
-        assert jit((x1, x2), edge_index,
-                   size=(4, 2)).tolist() == out21.tolist()
-        assert jit((x1, x2), edge_index, value).tolist() == out22.tolist()
-        assert jit((x1, x2), edge_index, value,
-                   (4, 2)).tolist() == out22.tolist()
-        assert jit((x1, None), edge_index,
-                   size=(4, 2)).tolist() == out23.tolist()
-        assert jit((x1, None), edge_index, value,
-                   (4, 2)).tolist() == out24.tolist()
+        assert torch.allclose(jit((x1, x2), edge_index), out21)
+        assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out21)
+        assert torch.allclose(jit((x1, x2), edge_index, value), out22)
+        assert torch.allclose(jit((x1, x2), edge_index, value, (4, 2)), out22)
+        assert torch.allclose(jit((x1, None), edge_index, size=(4, 2)), out23)
+        assert torch.allclose(jit((x1, None), edge_index, value, (4, 2)),
+                              out24)
 
         t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit((x1, x2), adj1.t()).tolist() == out21.tolist()
-        assert jit((x1, x2), adj2.t()).tolist() == out22.tolist()
-        assert jit((x1, None), adj1.t()).tolist() == out23.tolist()
-        assert jit((x1, None), adj2.t()).tolist() == out24.tolist()
+        assert torch.allclose(jit((x1, x2), adj1.t()), out21)
+        assert torch.allclose(jit((x1, x2), adj2.t()), out22)
+        assert torch.allclose(jit((x1, None), adj1.t()), out23)
+        assert torch.allclose(jit((x1, None), adj2.t()), out24)
