@@ -19,13 +19,16 @@ def test_han_conv():
         ('paper', 'metapath2', 'paper'): edge3,
     }
 
-    adj_t_dict = {}
+    adj_t_dict1 = {}
+    adj_t_dict2 = {}
     for edge_type, edge_index in edge_index_dict.items():
         src_type, _, dst_type = edge_type
-        adj_t_dict[edge_type] = SparseTensor(
+        adj_t_dict1[edge_type] = SparseTensor(
             row=edge_index[0], col=edge_index[1],
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
+        adj_t_dict2[edge_type] = adj_t_dict1[
+            edge_type].to_torch_sparse_coo_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
     in_channels = {'author': 16, 'paper': 12, 'term': 3}
@@ -40,10 +43,16 @@ def test_han_conv():
     del out_dict1['term']
     del x_dict['term']
 
-    out_dict2 = conv(x_dict, adj_t_dict)
+    out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
     for node_type in out_dict1.keys():
         assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
+                              atol=1e-6)
+
+    out_dict3 = conv(x_dict, adj_t_dict2)
+    assert len(out_dict1) == len(out_dict3)
+    for node_type in out_dict3.keys():
+        assert torch.allclose(out_dict1[node_type], out_dict3[node_type],
                               atol=1e-6)
 
     # non zero dropout
@@ -67,13 +76,16 @@ def test_han_conv_lazy():
         ('paper', 'to', 'paper'): edge2,
     }
 
-    adj_t_dict = {}
+    adj_t_dict1 = {}
+    adj_t_dict2 = {}
     for edge_type, edge_index in edge_index_dict.items():
         src_type, _, dst_type = edge_type
-        adj_t_dict[edge_type] = SparseTensor(
+        adj_t_dict1[edge_type] = SparseTensor(
             row=edge_index[0], col=edge_index[1],
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
+        adj_t_dict2[edge_type] = adj_t_dict1[
+            edge_type].to_torch_sparse_coo_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
     conv = HANConv(-1, 16, metadata, heads=2)
@@ -82,11 +94,17 @@ def test_han_conv_lazy():
     assert len(out_dict1) == 2
     assert out_dict1['author'].size() == (6, 16)
     assert out_dict1['paper'].size() == (5, 16)
-    out_dict2 = conv(x_dict, adj_t_dict)
 
+    out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
     for node_type in out_dict1.keys():
         assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
+                              atol=1e-6)
+
+    out_dict3 = conv(x_dict, adj_t_dict2)
+    assert len(out_dict1) == len(out_dict3)
+    for node_type in out_dict1.keys():
+        assert torch.allclose(out_dict1[node_type], out_dict3[node_type],
                               atol=1e-6)
 
 
