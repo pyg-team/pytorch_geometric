@@ -1,8 +1,11 @@
-CPU affinity settings for PyG workloads
-==========================================
+CPU Affinity for PyG Workloads
+==============================
 
-The performance of :pyg:`PyG` workloads using CPU can be significantly improved by setting a proper affinity mask. Processor affinity, or core binding is a modification of native OS queue scheduling algorithm, that enables an application to assign a specific set of cores to processes or threads launched during its execution on the CPU.
-In consequence, it is possible to increase the overall effective hardware utilisation, by minimizing core stalls and memory bounds. It also secures the CPU resources to critical processes or threads, even if the system is under a heavy load. The affinity targets the two main performance-critical regions:
+The performance of :pyg:`PyG` workloads using CPU can be significantly improved by setting a proper affinity mask.
+Processor affinity, or core binding is a modification of native OS queue scheduling algorithm, that enables an application to assign a specific set of cores to processes or threads launched during its execution on the CPU.
+In consequence, it is possible to increase the overall effective hardware utilisation, by minimizing core stalls and memory bounds.
+It also secures the CPU resources to critical processes or threads, even if the system is under a heavy load.
+The affinity targets the two main performance-critical regions:
 
 * Execution bind: indicates a  core where process/thread will run.
 
@@ -10,28 +13,41 @@ In consequence, it is possible to increase the overall effective hardware utilis
 
 The following article discusses readily available tools and environment settings that one can use to maximize the performance of Intel CPUs with :pyg:`PyG`.
 
-**Disclaimer:** Overall, CPU affinity can be a useful tool for improving the performance and predictability of certain types of applications, but but one configuration does not fit all cases: it is important to carefully consider whether CPU affinity is appropriate for your use case, and to test and measure the impact of any changes you make.
+.. note::
+    Overall, CPU affinity can be a useful tool for improving the performance and predictability of certain types of applications, but one configuration does not fit all cases: it is important to carefully consider whether CPU affinity is appropriate for your use case, and to test and measure the impact of any changes you make.
 
-Using :attr:`cpu-affinity` and :attr:`filter-per-worker` setting
--------------------------------------------------------------------
-Each :pyg:`PyG` workload can be parallelized using a base-class Pytorch iterator :class:`MultiProcessingDataLoaderIter`, which is automatically enabled, when the :attr:`num_workers` > 0 on :class:`~torch_geometric.loader.DataLoader` initialization. It creates number of sub-processes equal to :attr:`num_workers` that will run in parallel to the main process.
-Setting CPU affinity mask for the data loading processes places :class:`~torch_geometric.loader.DataLoader` workers threads on specific CPU cores. In effect, it allows for more efficient data batch preparation by allocating pre-fetched batches in local memory. Every time a process or thread moves from one core to another, registers and caches need to be flushed and reloaded. This can become very costly if it happens often, and our threads may also no longer be close to their data, or be able to share data in a cache.
+Using :attr:`cpu-affinity` and :attr:`filter-per-worker`
+--------------------------------------------------------
 
-Since :pyg:`PyG` 2.3 release :class:`~torch_geometric.loader.NeighborLoader` and :class:`~torch_geometric.loader.LinkLoader` officially support native solution for CPU affinity using context manager :class:`~torch_geometric.loader.AffinityMixin` class. The affinity can be enabled with :func:`enable_cpu_affinity()` method only for multi-process :class:`~torch_geometric.loader.DataLoader` (only when :attr:`num_workers` > 0 ).
-This will assign a separate core to each worker at initialization. User-defined list of core IDs may be assinged using :attr:`loader_cores` argument. Else, :class:`~torch_geometric.loader.DataLoader` cores will be assigned automatically, starting at core ID 0. As of now, only a signle core can be assigned to a worker, hence by default multi-threading is disabled in workers' processes.
-The recommended number of workers to start with is in range [2,4], the optimum may vary based on workload characteristics.
+Each :pyg:`PyG` workload can be parallelized using the :pytorch:`PyTorch` iterator class :class:`MultiProcessingDataLoaderIter`, which is automatically enabled in case :obj:`num_workers > 0` is passed to a :class:`torch.utils.data.DataLoader`.
+Under the hood, it creates :obj:`num_workers` many sub-processes that will run in parallel to the main process.
+Setting a CPU affinity mask for the data loading processes places :class:`~torch.utils.data.DataLoader` worker threads on specific CPU cores.
+In effect, it allows for more efficient data batch preparation by allocating pre-fetched batches in local memory.
+Every time a process or thread moves from one core to another, registers and caches need to be flushed and reloaded.
+This can become very costly if it happens often, and threads may also no longer be close to their data, or be able to share data in a cache.
+
+Since :pyg:`PyG` (2.3 and beyond), :class:`~torch_geometric.loader.NodeLoader` and :class:`~torch_geometric.loader.LinkLoader` classes officially support a native solution for CPU affinity using the :class:`~torch_geometric.loader.AffinityMixin` context manager.
+CPU affinity can be enabled via the :func:`enable_cpu_affinity()` method for :obj:`num_workers > 0` use-cases,
+and will guarantee that a separate core is assigned to each worker at initialization.
+A user-defined list of core IDs may be assigned using the :attr:`loader_cores` argument.
+Otherwise, cores will be assigned automatically, starting at core ID 0.
+As of now, only a single core can be assigned to a worker, hence multi-threading is disabled in workers' processes by default.
+The recommended number of workers to start with lies between :obj:`[2, 4]`, and the optimum may vary based on workload characteristics:
 
 .. code-block:: python
 
-    loader = NeigborLoader(data,
+    loader = NeigborLoader(
+        data,
         num_workers=3,
         filter_per_worker=True,
-        **kwargs)
+        ...,
+    )
+
     with loader.enable_cpu_affinity(loader_cores=[0, 1, 2]):
         for batch in loader:
             pass
 
-It is generally adivisable to use :attr:`filter-per-worker=True`, when enabling multi-process dataloader.
+It is generally adivisable to use :obj:`filter_per_worker=True` when enabling multi-process dataloaders.
 The workers prepare each :obj:`input_data` tensor: first by sampling the node indices using pre-defined sampler in :func:`collate_fn()` and secondly triggering :func:`filter_fn()`.
 Filtering function selects node feature vectors from the complete input :class:`~torch_geometric.data.Data` tensor loaded into DRAM. This is a memory-expensive call which takes a significant time of each DataLoader iteration.
 By default :attr:`filter-per-worker` is set to :attr:`False`, which causes that :func:`filter_fn()` execution is sent back to the main process. This can cause performance issues, because the main process will not be able to process all requests efficiently, especially with larger number of workers.
