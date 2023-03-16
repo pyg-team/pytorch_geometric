@@ -8,6 +8,7 @@ from torch import Tensor
 from torch.nn import Module
 
 import torch_geometric
+from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.nn.to_hetero_module import ToHeteroLinear
 from torch_geometric.typing import EdgeType, Metadata, NodeType
@@ -403,7 +404,7 @@ class ToHeteroTransformer(Transformer):
                     continue
                 if hasattr(module, 'reset_parameters'):
                     module_dict[key2str(key)].reset_parameters()
-                elif sum([p.numel() for p in module.parameters()]) > 0:
+                elif sum([is_uninitialized_parameter(p) or p.numel() for p in module.parameters()]) > 0:
                     warnings.warn(
                         f"'{target}' will be duplicated, but its parameters "
                         f"cannot be reset. To suppress this warning, add a "

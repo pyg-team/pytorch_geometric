@@ -69,7 +69,7 @@ def softmax(
         N = maybe_num_nodes(index, num_nodes)
         with torch.no_grad():
             src_max = scatter(src, index, dim, dim_size=N, reduce='max')
-        if (torch_geometric.typing.WITH_PYG_LIB and src.dim() == 2
+        if (torch_geometric.typing.WITH_SAMPLED_OP and src.dim() == 2
                 and (dim == 0 or dim == -2)):
             out = pyg_lib.ops.sampled_sub(src, src_max, right_index=index)
         else:

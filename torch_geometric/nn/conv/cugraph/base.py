@@ -162,7 +162,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
                 an :obj:`edge_index` representation to the desired format.
             max_num_neighbors (int, optional): The maximum number of neighbors
                 of a target node. It is only effective when operating in a
-                bipartite graph.. When not given, the value will be computed
+                bipartite graph. When not given, the value will be computed
                 on-the-fly, leading to slightly worse performance.
                 (default: :obj:`None`)
         """

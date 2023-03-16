@@ -243,6 +243,22 @@ def test_data_subgraph():
     assert torch.equal(out.edge_weight, edge_weight[torch.tensor([1, 2, 3])])
 
 
+def test_data_subgraph_with_list_field():
+    x = torch.arange(5)
+    y = list(range(5))
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4],
+                               [1, 0, 2, 1, 3, 2, 4, 3]])
+    data = Data(x=x, y=y, edge_index=edge_index)
+
+    out = data.subgraph(torch.tensor([1, 2, 3]))
+    assert len(out) == 3
+    assert out.x.tolist() == out.y == [1, 2, 3]
+
+    out = data.subgraph(torch.tensor([False, True, True, True, False]))
+    assert len(out) == 3
+    assert out.x.tolist() == out.y == [1, 2, 3]
+
+
 def test_copy_data():
     data = Data(x=torch.randn(20, 5))
 

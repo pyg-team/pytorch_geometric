@@ -2,14 +2,9 @@ import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
+from torch_geometric.testing import get_random_edge_index
 from torch_geometric.transforms import RandomLinkSplit
 from torch_geometric.utils import is_undirected, to_undirected
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
 
 
 def test_random_link_split():
@@ -86,6 +81,37 @@ def test_random_link_split():
     assert train_data.edge_label.size(0) == 6
 
 
+def test_random_link_split_with_label():
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5],
+                               [1, 0, 2, 1, 3, 2, 4, 3, 5, 4]])
+    edge_label = torch.tensor([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
+
+    data = Data(edge_index=edge_index, edge_label=edge_label, num_nodes=6)
+
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2,
+                                neg_sampling_ratio=0.0)
+    train_data, _, _ = transform(data)
+    assert len(train_data) == 4
+    assert train_data.num_nodes == 6
+    assert train_data.edge_index.size() == (2, 6)
+    assert train_data.edge_label_index.size() == (2, 6)
+    assert train_data.edge_label.size() == (6, )
+    assert train_data.edge_label.min() == 0
+    assert train_data.edge_label.max() == 1
+
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2,
+                                neg_sampling_ratio=1.0)
+    train_data, _, _ = transform(data)
+    assert len(train_data) == 4
+    assert train_data.num_nodes == 6
+    assert train_data.edge_index.size() == (2, 6)
+    assert train_data.edge_label_index.size() == (2, 12)
+    assert train_data.edge_label.size() == (12, )
+    assert train_data.edge_label.min() == 0
+    assert train_data.edge_label.max() == 2
+    assert train_data.edge_label[6:].sum() == 0
+
+
 def test_random_link_split_increment_label():
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4, 4, 5],
                                [1, 0, 2, 1, 3, 2, 4, 3, 5, 4]])
@@ -113,10 +139,10 @@ def test_random_link_split_on_hetero_data():
     data['p'].x = torch.arange(100)
     data['a'].x = torch.arange(100, 300)
 
-    data['p', 'p'].edge_index = get_edge_index(100, 100, 500)
+    data['p', 'p'].edge_index = get_random_edge_index(100, 100, 500)
     data['p', 'p'].edge_index = to_undirected(data['p', 'p'].edge_index)
     data['p', 'p'].edge_attr = torch.arange(data['p', 'p'].num_edges)
-    data['p', 'a'].edge_index = get_edge_index(100, 200, 1000)
+    data['p', 'a'].edge_index = get_random_edge_index(100, 200, 1000)
     data['p', 'a'].edge_attr = torch.arange(500, 1500)
     data['a', 'p'].edge_index = data['p', 'a'].edge_index.flip([0])
     data['a', 'p'].edge_attr = torch.arange(1500, 2500)
@@ -209,7 +235,7 @@ def test_random_link_split_on_hetero_data():
 def test_random_link_split_on_undirected_hetero_data():
     data = HeteroData()
     data['p'].x = torch.arange(100)
-    data['p', 'p'].edge_index = get_edge_index(100, 100, 500)
+    data['p', 'p'].edge_index = get_random_edge_index(100, 100, 500)
     data['p', 'p'].edge_index = to_undirected(data['p', 'p'].edge_index)
 
     transform = RandomLinkSplit(is_undirected=True, edge_types=('p', 'p'))

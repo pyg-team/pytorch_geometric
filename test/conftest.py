@@ -27,10 +27,6 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
     if name.lower() in ['bashapes']:
         from torch_geometric.datasets import BAShapes
         return BAShapes(*args, **kwargs)
-    if name.lower() in ['dblp']:
-        from torch_geometric.datasets import DBLP
-        path = osp.join(root, 'DBLP')
-        return DBLP(path, *args, **kwargs)
     if name in ['citationCiteseer', 'illc1850']:
         from torch_geometric.datasets import SuiteSparseMatrixCollection
         path = osp.join(root, 'SuiteSparseMatrixCollection')
@@ -39,8 +35,11 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
         from torch_geometric.datasets import EllipticBitcoinDataset
         path = osp.join(root, 'EllipticBitcoinDataset')
         return EllipticBitcoinDataset(path, *args, **kwargs)
+    if name.lower() in ['hetero']:
+        from torch_geometric.testing import FakeHeteroDataset
+        return FakeHeteroDataset(*args, **kwargs)
 
-    raise NotImplementedError
+    raise ValueError(f"Cannot load dataset with name '{name}'")
 
 
 @pytest.fixture(scope='session')

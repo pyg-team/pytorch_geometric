@@ -7,6 +7,56 @@ from torch_geometric.data import InMemoryDataset, TemporalData, download_url
 
 
 class JODIEDataset(InMemoryDataset):
+    r"""The temporal graph datasets
+    from the `"JODIE: Predicting Dynamic Embedding
+    Trajectory in Temporal Interaction Networks"
+    <https://cs.stanford.edu/~srijan/pubs/jodie-kdd2019.pdf>`_ paper.
+
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Reddit"`,
+            :obj:`"Wikipedia"`, :obj:`"MOOC"`, and :obj:`"LastFM"`).
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Reddit
+          - 6,509
+          - 25,470
+          - 172
+          - 1
+        * - Wikipedia
+          - 9,227
+          - 157,474
+          - 172
+          - 2
+        * - MOOC
+          - 7,144
+          - 411,749
+          - 4
+          - 2
+        * - LastFM
+          - 1,980
+          - 1,293,103
+          - 2
+          - 1
+    """
     url = 'http://snap.stanford.edu/jodie/{}.csv'
     names = ['reddit', 'wikipedia', 'mooc', 'lastfm']
 

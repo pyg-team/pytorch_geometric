@@ -1,9 +1,17 @@
 import argparse
+from collections import defaultdict
 from contextlib import nullcontext
 
 import torch
 
-from benchmark.utils import emit_itt, get_dataset, get_model, get_split_masks
+from benchmark.utils import (
+    emit_itt,
+    get_dataset_with_transformation,
+    get_model,
+    get_split_masks,
+    save_benchmark_data,
+    write_to_csv,
+)
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -18,7 +26,11 @@ supported_sets = {
 @torch.no_grad()
 def full_batch_inference(model, data):
     model.eval()
-    return model(data.x, data.edge_index)
+    if hasattr(data, 'adj_t'):
+        edge_index = data.adj_t
+    else:
+        edge_index = data.edge_index
+    return model(data.x, edge_index)
 
 
 def test(y, loader):
@@ -29,6 +41,7 @@ def test(y, loader):
 
 
 def run(args: argparse.ArgumentParser):
+    csv_data = defaultdict(list)
 
     # cuda device is not suitable for full batch mode
     device = torch.device(
@@ -41,9 +54,10 @@ def run(args: argparse.ArgumentParser):
         print(f'Dataset: {dataset_name}')
         load_time = timeit() if args.measure_load_time else nullcontext()
         with load_time:
-            dataset, num_classes = get_dataset(dataset_name, args.root,
-                                               args.use_sparse_tensor,
-                                               args.bf16)
+            result = get_dataset_with_transformation(dataset_name, args.root,
+                                                     args.use_sparse_tensor,
+                                                     args.bf16)
+            dataset, num_classes, transformation = result
         data = dataset.to(device)
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask = ('paper', None) if dataset_name == 'ogbn-mag' else None
@@ -88,6 +102,7 @@ def run(args: argparse.ArgumentParser):
                         num_neighbors=[-1],  # layer-wise inference
                         input_nodes=mask,
                         sampler=sampler,
+                        filter_per_worker=args.filter_per_worker,
                         **kwargs,
                     ) if with_loader else None
                     if args.evaluate and not args.full_batch:
@@ -96,6 +111,7 @@ def run(args: argparse.ArgumentParser):
                             num_neighbors=[-1],  # layer-wise inference
                             input_nodes=test_mask,
                             sampler=None,
+                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         )
 
@@ -108,6 +124,7 @@ def run(args: argparse.ArgumentParser):
                             num_neighbors=num_neighbors,
                             input_nodes=mask,
                             sampler=sampler,
+                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         ) if with_loader else None
                         if args.evaluate and not args.full_batch:
@@ -116,6 +133,7 @@ def run(args: argparse.ArgumentParser):
                                 num_neighbors=num_neighbors,
                                 input_nodes=test_mask,
                                 sampler=None,
+                                filter_per_worker=args.filter_per_worker,
                                 **kwargs,
                             )
 
@@ -161,6 +179,9 @@ def run(args: argparse.ArgumentParser):
                         ) if args.profile else nullcontext()
                         itt = emit_itt(
                         ) if args.vtune_profile else nullcontext()
+
+                        if args.full_batch and args.use_sparse_tensor:
+                            data = transformation(data)
 
                         with cpu_affinity, amp, timeit() as time:
                             for _ in range(args.warmup):
@@ -212,6 +233,14 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
+                        save_benchmark_data(csv_data, batch_size, layers,
+                                            num_neighbors, hidden_channels,
+                                            total_time, model_name,
+                                            dataset_name,
+                                            args.use_sparse_tensor)
+    if args.write_csv:
+        write_to_csv(csv_data)
+
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN inference benchmark')
@@ -244,8 +273,11 @@ if __name__ == '__main__':
         help='Use DataLoader affinitzation.')
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers")
+    add('--filter-per-worker', action='store_true',
+        help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--full-batch', action='store_true', help='Use full batch mode')
     add('--evaluate', action='store_true')
     add('--ckpt_path', type=str, help='Checkpoint path for loading a model')
+    add('--write-csv', action='store_true', help='Write benchmark data to csv')
     run(argparser.parse_args())
