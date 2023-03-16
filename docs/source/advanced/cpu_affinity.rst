@@ -1,10 +1,10 @@
 CPU affinity settings for PyG workloads
 ==========================================
 
-The performance of :pyg:`PyG` workloads using CPU can be significantly improved by setting a proper affinity mask. Prcoessor affinity, or core binding is a modification of native OS queue scheduling algorithm, that enables an application to assign a specific set of cores to processes or threads launched during its execution on the CPU.
+The performance of :pyg:`PyG` workloads using CPU can be significantly improved by setting a proper affinity mask. Processor affinity, or core binding is a modification of native OS queue scheduling algorithm, that enables an application to assign a specific set of cores to processes or threads launched during its execution on the CPU.
 In consequence, it is possible to increase the overall effective hardware utilisation, by minimizing core stalls and memory bounds. It also secures the CPU resources to critical processes or threads, even if the system is under a heavy load. The affinity targets the two main performance-critical regions:
 
-* Execution bind: indicates a preferred core where process/thread will run.
+* Execution bind: indicates a  core where process/thread will run.
 
 * Memory bind: indicates a preferred memory area where memory pages will be bound (local areas in NUMA machine).
 
@@ -87,26 +87,27 @@ With dual-socket CPUs it might be beneficial to further isolate the processes be
 
     numactl -C M-(N-1) -m 1 python …
 
-where M is the cpuid of the first core of the second CPU socket. Adding a complementary memory-allocation flag "-m 1" prioritizes cache allocation on the same NUMA node, where the main process is running (alternatively for less strict memory allocation use "—preferred 1").  This makes the data readily available on the same socket where the computation takes place. Using this setting is very workload-specific and may require some fine-tuning, as one needs to manage a trade-off between using more OMP threads versus limiting the number of remote memory calls.
+where M is the cpuid of the first core of the second CPU socket. Adding a complementary memory-allocation flag "-m 1" prioritizes cache allocation on the same NUMA node, where the main process is running (alternatively for less strict memory allocation use "--preferred 1").  This makes the data readily available on the same socket where the computation takes place. Using this setting is very workload-specific and may require some fine-tuning, as one needs to manage a trade-off between using more OMP threads versus limiting the number of remote memory calls.
 
 Improving memory bound by using non-default memory allocator (jemalloc or TCMalloc)
 ------------------------------------------------------------------------------------
 On the final note, following CPU performanc optimization for Pytorch, also for :pyg:`PyG` it is advised to use jemalloc or TCMalloc that can generally get better memory usage than the default PyTorch memory allocator, PTMalloc [2]_. A non-default memory allocator can be specified using LD_PRELOAD prior to script execution [3]_.
 
 
-Quick start guidelines:
+Quick start guidelines
 --------------------------
 The general guidelines for achieving the best performance with CPU Affinity can be summarized in the following steps:
 
+#.  Test if your dataset benefits from using parallel Dataloader. For some datasets it might be more beneficial to use plain serial Dataloader, especially when the dimensions of the input :class:`~torch_geometric.data.Data` are relatively small.
+#.  Enable multi-process Dataloder by setting :attr:`num_workers` > 0. A good estimate for initial num_workers is in range [2,4], however for more complex datasets you might want to experiment with larger number of workers. Enable :class:`~torch_geometric.loader.DataLoader` with :obj:`filter_per_worker=True` and use :obj:`enable_cpu_affinity()` feature to affinitize :class:`~torch_geometric.loader.DataLoader` cores. 
 #.	Bind execution to physical cores. Alternatively, hyperthreading can be disabled completely at a system-level.
-#.	Enable multi-process Dataloder by setting :attr:`num_workers` > 0. A good estimate for initial num_workers is in range [2,4], however for more complex datasets you might want to experiment with larger number of workers. Enable :class:`~torch_geometric.loader.DataLoader` with :obj:`filter_per_worker=True` and use :obj:`enable_cpu_affinity()` feature to affinitize :class:`~torch_geometric.loader.DataLoader` cores. 
-#.	Separate the cores used for main process from the DL workers' cores by using numactl, KMP_AFFINITY of libiomp5 library of GOMP_CPU_AFFINITY of libgomp library.
-#.	Find the optimum number of OMP threads for your workload. The good starting point would be N-num_workers. Generally well-parallelized models will benefit from many OMP threads, however if your model computation flow has interlaced parallel & serial regions, the performance will decrease due to resource allocation needed for spawning and maintaining threads between parallel regions.
-#.	Using a dual-socket CPU you might want to experiment with assigning data loading to one socket and main process to another socket with memory allocation (numactl -m) on the same socket where main process is executed. This leads to best cache-allocation and often overweighs the benefit of using more OMP threads.
-#.	An additional boost in performance can be obtained by using non-default memory allocator, such as jemalloc or TCMalloc.
+#.	Separate the cores used for main process from the DL workers' cores by using `numactl`, `KMP_AFFINITY` of `libiomp5` library, or `GOMP_CPU_AFFINITY` of `libgomp` library.
+#.	Find the optimum number of OMP threads for your workload. The good starting point would be (N - `num_workers`). Generally well-parallelized models will benefit from many OMP threads, however if your model computation flow has interlaced parallel & serial regions, the performance will decrease due to resource allocation needed for spawning and maintaining threads between parallel regions.
+#.	Using a dual-socket CPU you might want to experiment with assigning data loading to one socket and main process to another socket with memory allocation (`numactl -m`) on the same socket where main process is executed. This leads to best cache-allocation and often overweighs the benefit of using more OMP threads.
+#.	An additional boost in performance can be obtained by using non-default memory allocator, such as `jemalloc` or `TCMalloc`.
 #.	Finding an optimal setup for CPU Affinity mask is a problem of managing the proportion of CPU time spent in each iteration for loading and preparing the data, versus time spent in computing the message-passing step. Different results may be obtained by changing model hyperparamethers, such as: batch size, number of sampled neighbors and number of layers. As a general rule, workloads which require sampling a complex graph may benefit more from reserving some CPU resources just for the data preparation step.
 
-Example results:
+Example results
 -----------------
 The figure below presents the outcome of applying CPU affinity mask to :py:obj:`training_benchmark.py`. 
 Measurements were taken for the variable number of workers, while other hyperparameters for each benchmark were constant: `--warmup 0 --use-sparse-tensor --num-layers 3 --num-hidden-channels 128 --batch-sizes 2048`.
@@ -131,7 +132,7 @@ Measurements were taken for the variable number of workers, while other hyperpar
   
     LD_PRELOAD=(path)/libjemalloc.so (path)/libiomp5.so MALLOC_CONF=oversize_threshold:1,background_thread:true,metadata_thp:auto OMP_NUM_THREADS=(N-M) KMP_AFFINITY=granularity=fine,compact,1,0 KMP_BLOCKTIME=0 numactl -C <M-(N-1)> -m 1 python training_benchmark.py --cpu-affinity --filter_per_worker --num-workers ...
 
-Mean training times were obtained by taking a mean of results for each model+dataset combination at variable number of dataloader workers: [0,2,4,8,16] for the Baseline and [2,4,8,16] workers for each affinity configuration. 
+Training times for each model+dataset combination were obtained by taking a mean of results  at variable number of dataloader workers: [0,2,4,8,16] for the Baseline and [2,4,8,16] workers for each affinity configuration. 
 Then the affinity means were normalized with respect to the mean Baseline measurement. This value is denoted on the y-axis. The labels above each result indicate the end-to-end performance gain from using the discussed config.
 Taking the average over all model+dataset samples, the average training time is increased by: 1.53x for plain affinity and 1.85x for the affinity with socket seapration discussed in `Dual socket CPU separation`_. 
 
@@ -142,14 +143,10 @@ Taking the average over all model+dataset samples, the average training time is 
     Generated on pre-production dual-socket Intel(R) Xeon(R) Platinum 8481C @ 2.0Ghz (2 x 56) cores CPU.
 
 
-.. [1] Grokking PyTorch Intel CPU Performance From First Principles
-    | PyTorch Tutorials 2.0.0+cu117 Documentation, https://pytorch.org/tutorials/intermediate/torchserve_with_ipex.html
+.. [1] Grokking PyTorch Intel CPU Performance From First Principles, PyTorch Tutorials 2.0.0+cu117 Documentation, https://pytorch.org/tutorials/intermediate/torchserve_with_ipex.html
 
-.. [2] Grokking PyTorch Intel CPU Performance From First Principles (Part 2)
-    | PyTorch Tutorials 2.0.0+cu117 Documentation, https://pytorch.org/tutorials/intermediate/torchserve_with_ipex_2.html
+.. [2] Grokking PyTorch Intel CPU Performance From First Principles (Part 2), PyTorch Tutorials 2.0.0+cu117 Documentation, https://pytorch.org/tutorials/intermediate/torchserve_with_ipex_2.html
 
-.. [3] Performance Tuning Guide
-    | PyTorch Tutorials 2.0.0+cu117 Documentation, https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html
+.. [3] Performance Tuning Guide, PyTorch Tutorials 2.0.0+cu117 Documentation, https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html
 
-.. [4] Maximize Performance of Intel® Software Optimization for PyTorch* on...
-    | Intel, https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-get-better-performance-on-pytorchcaffe2-with-intel-acceleration.html
+.. [4] Maximize Performance of Intel® Software Optimization for PyTorch* on..., Intel, https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-get-better-performance-on-pytorchcaffe2-with-intel-acceleration.html
