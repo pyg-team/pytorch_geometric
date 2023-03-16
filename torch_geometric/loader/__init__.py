@@ -21,27 +21,12 @@ from .dynamic_batch_sampler import DynamicBatchSampler
 from .mixin import AffinityMixin
 
 __all__ = classes = [
-    'DataLoader',
-    'NodeLoader',
-    'LinkLoader',
-    'NeighborLoader',
-    'LinkNeighborLoader',
-    'HGTLoader',
-    'ClusterData',
-    'ClusterLoader',
-    'GraphSAINTSampler',
-    'GraphSAINTNodeSampler',
-    'GraphSAINTEdgeSampler',
-    'GraphSAINTRandomWalkSampler',
-    'ShaDowKHopSampler',
-    'RandomNodeLoader',
-    'ZipLoader',
-    'DataListLoader',
-    'DenseDataLoader',
-    'TemporalDataLoader',
-    'NeighborSampler',
-    'ImbalancedSampler',
-    'DynamicBatchSampler',
+    'DataLoader', 'NodeLoader', 'LinkLoader', 'NeighborLoader',
+    'LinkNeighborLoader', 'HGTLoader', 'ClusterData', 'ClusterLoader',
+    'GraphSAINTSampler', 'GraphSAINTNodeSampler', 'GraphSAINTEdgeSampler',
+    'GraphSAINTRandomWalkSampler', 'ShaDowKHopSampler', 'RandomNodeLoader',
+    'ZipLoader', 'DataListLoader', 'DenseDataLoader', 'TemporalDataLoader',
+    'NeighborSampler', 'ImbalancedSampler', 'DynamicBatchSampler',
     'AffinityMixin'
 ]
 
