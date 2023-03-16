@@ -41,6 +41,7 @@ class ToSparseTensor(BaseTransform):
             a :class:`~torch_sparse.SparseTensor` object. If set to
             :obj:`'torch'`, the :obj:`edge_index`_index will be converted to a
             :class:`torch.spase.Tensor` object.
+            (default: :obj:`'torch_sparse'`)
     """
     def __init__(
         self,
