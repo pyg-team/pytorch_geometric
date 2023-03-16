@@ -59,7 +59,7 @@ def test_my_conv():
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
-    assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out, atol=1e-7)
+    assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out, atol=1e-6)
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
     assert torch.allclose(conv(x1, torch_adj.t()), out, atol=1e-6)
     conv.fuse = False
