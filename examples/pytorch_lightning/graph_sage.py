@@ -6,7 +6,6 @@ import torch.nn.functional as F
 from torch.nn import BatchNorm1d
 from torchmetrics import Accuracy
 
-from torch_geometric import seed_everything
 from torch_geometric.data.lightning import LightningNodeData
 from torch_geometric.datasets import Reddit
 from torch_geometric.nn import GraphSAGE
@@ -21,9 +20,9 @@ class Model(pl.LightningModule):
                              out_channels, dropout=dropout,
                              norm=BatchNorm1d(hidden_channels))
 
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
-        self.test_acc = Accuracy()
+        self.train_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.val_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.test_acc = Accuracy(task='multiclass', num_classes=out_channels)
 
     def forward(self, x, edge_index):
         return self.gnn(x, edge_index)
@@ -34,7 +33,7 @@ class Model(pl.LightningModule):
         loss = F.cross_entropy(y_hat, y)
         self.train_acc(y_hat.softmax(dim=-1), y)
         self.log('train_acc', self.train_acc, prog_bar=True, on_step=False,
-                 on_epoch=True, batch_size=y_hat.size(0))
+                 on_epoch=True)
         return loss
 
     def validation_step(self, data, batch_idx):
@@ -42,22 +41,20 @@ class Model(pl.LightningModule):
         y = data.y[:data.batch_size]
         self.val_acc(y_hat.softmax(dim=-1), y)
         self.log('val_acc', self.val_acc, prog_bar=True, on_step=False,
-                 on_epoch=True, batch_size=y_hat.size(0))
+                 on_epoch=True)
 
     def test_step(self, data, batch_idx):
         y_hat = self(data.x, data.edge_index)[:data.batch_size]
         y = data.y[:data.batch_size]
         self.test_acc(y_hat.softmax(dim=-1), y)
         self.log('test_acc', self.test_acc, prog_bar=True, on_step=False,
-                 on_epoch=True, batch_size=y_hat.size(0))
+                 on_epoch=True)
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
-def main():
-    seed_everything(42)
-
+if __name__ == '__main__':
     dataset = Reddit(osp.join('data', 'Reddit'))
     data = dataset[0]
 
@@ -74,16 +71,11 @@ def main():
 
     model = Model(dataset.num_node_features, dataset.num_classes)
 
-    devices = torch.cuda.device_count()
-    strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
+    strategy = pl.strategies.SingleDeviceStrategy('cuda:0')
     checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1,
                                               mode='max')
-    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
-                         max_epochs=20, callbacks=[checkpoint])
+    trainer = pl.Trainer(strategy=strategy, devices=1, max_epochs=20,
+                         callbacks=[checkpoint])
 
     trainer.fit(model, datamodule)
     trainer.test(ckpt_path='best', datamodule=datamodule)
-
-
-if __name__ == '__main__':
-    main()

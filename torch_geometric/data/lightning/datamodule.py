@@ -215,7 +215,7 @@ class LightningDataset(LightningDataModule):
 
         Currently only the
         :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
-        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        :class:`pytorch_lightning.strategies.DDPStrategy` training
         strategies of :lightning:`null` `PyTorch Lightning
         <https://pytorch-lightning.readthedocs.io/en/latest/guides/
         speed.html>`__ are supported in order to correctly share data across
@@ -314,7 +314,7 @@ class LightningNodeData(LightningData):
 
         Currently only the
         :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
-        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        :class:`pytorch_lightning.strategies.DDPStrategy` training
         strategies of :lightning:`null` `PyTorch Lightning
         <https://pytorch-lightning.readthedocs.io/en/latest/guides/
         speed.html>`__ are supported in order to correctly share data across
@@ -507,7 +507,7 @@ class LightningLinkData(LightningData):
 
         Currently only the
         :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
-        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        :class:`pytorch_lightning.strategies.DDPStrategy` training
         strategies of :lightning:`null` `PyTorch Lightning
         <https://pytorch-lightning.readthedocs.io/en/latest/guides/
         speed.html>`__ are supported in order to correctly share data across
