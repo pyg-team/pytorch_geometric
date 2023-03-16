@@ -12,15 +12,19 @@ def test_gated_graph_conv():
     value = torch.rand(row.size(0))
     adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
     adj1 = adj2.set_value(None)
+    adj3 = adj1.to_torch_sparse_coo_tensor()
+    adj4 = adj2.to_torch_sparse_coo_tensor()
 
     conv = GatedGraphConv(32, num_layers=3)
     assert str(conv) == 'GatedGraphConv(32, num_layers=3)'
     out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
     assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
+    assert torch.allclose(conv(x, adj3.t()), out1, atol=1e-6)
     out2 = conv(x, edge_index, value)
     assert out2.size() == (4, 32)
     assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
+    assert torch.allclose(conv(x, adj4.t()), out2, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
