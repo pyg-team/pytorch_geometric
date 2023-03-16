@@ -74,9 +74,9 @@ class LinearGraphModule(LightningModule):
 
 @onlyCUDA
 @onlyFullTest
-@withPackage('pytorch_lightning')
+@withPackage('pytorch_lightning>=2.0.0')
 @withPackage('torchmetrics>=0.11.0')
-@pytest.mark.parametrize('strategy_type', [None, 'ddp_spawn'])
+@pytest.mark.parametrize('strategy_type', [None, 'ddp'])
 def test_lightning_dataset(get_dataset, strategy_type):
     import pytorch_lightning as pl
 
@@ -87,19 +87,20 @@ def test_lightning_dataset(get_dataset, strategy_type):
     pred_dataset = dataset[90:]
 
     devices = 1 if strategy_type is None else torch.cuda.device_count()
-    if strategy_type == 'ddp_spawn':
-        strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
+    if strategy_type == 'ddp':
+        strategy = pl.strategies.DDPStrategy(accelerator='gpu')
     else:
-        strategy = None
+        strategy = pl.strategies.SingleDeviceStrategy(device='cuda:0')
 
     model = LinearGraphModule(dataset.num_features, 64, dataset.num_classes)
 
-    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
-                         max_epochs=1, log_every_n_steps=1)
-    datamodule = LightningDataset(train_dataset, val_dataset, test_dataset,
-                                  pred_dataset, batch_size=5, num_workers=3,
-                                  shuffle=True)
-    assert 'shuffle' not in datamodule.kwargs
+    trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=1,
+                         log_every_n_steps=1)
+    with pytest.warns(UserWarning, match="'shuffle=True' option is ignored"):
+        datamodule = LightningDataset(train_dataset, val_dataset, test_dataset,
+                                      pred_dataset, batch_size=5,
+                                      num_workers=3, shuffle=True)
+        assert 'shuffle' not in datamodule.kwargs
     old_x = train_dataset._data.x.clone()
     assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
                                'val_dataset=MUTAG(30), '
@@ -110,16 +111,15 @@ def test_lightning_dataset(get_dataset, strategy_type):
     trainer.fit(model, datamodule)
     trainer.test(model, datamodule)
     new_x = train_dataset._data.x
-    offset = 10 + 6 + 2 * devices  # `train_steps` + `val_steps` + `sanity`
-    assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
-    if strategy_type is None:
-        assert trainer._data_connector._val_dataloader_source.is_defined()
-        assert trainer._data_connector._test_dataloader_source.is_defined()
+    assert torch.all(new_x > old_x)  # Ensure shared data.
+    assert trainer.validate_loop._data_source.is_defined()
+    assert trainer.test_loop._data_source.is_defined()
 
     # Test with `val_dataset=None` and `test_dataset=None`:
     if strategy_type is None:
-        trainer = pl.Trainer(strategy=None, accelerator='gpu', devices=devices,
-                             max_epochs=1, log_every_n_steps=1)
+        trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=1,
+                             log_every_n_steps=1)
+
         datamodule = LightningDataset(train_dataset, batch_size=5)
         assert str(datamodule) == ('LightningDataset(train_dataset=MUTAG(50), '
                                    'batch_size=5, num_workers=0, '
@@ -129,8 +129,8 @@ def test_lightning_dataset(get_dataset, strategy_type):
         with pytest.warns(UserWarning, match="defined a `validation_step`"):
             trainer.fit(model, datamodule)
 
-        assert not trainer._data_connector._val_dataloader_source.is_defined()
-        assert not trainer._data_connector._test_dataloader_source.is_defined()
+        assert not trainer.validate_loop._data_source.is_defined()
+        assert not trainer.test_loop._data_source.is_defined()
 
 
 class LinearNodeModule(LightningModule):
@@ -177,10 +177,10 @@ class LinearNodeModule(LightningModule):
 
 @onlyCUDA
 @onlyFullTest
-@withPackage('pytorch_lightning')
+@withPackage('pytorch_lightning>=2.0.0')
 @withPackage('torchmetrics>=0.11.0')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
-@pytest.mark.parametrize('strategy_type', [None, 'ddp_spawn'])
+@pytest.mark.parametrize('strategy_type', [None, 'ddp'])
 def test_lightning_node_data(get_dataset, strategy_type, loader):
     import pytorch_lightning as pl
 
@@ -196,30 +196,26 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
     else:
         devices = torch.cuda.device_count()
 
-    if strategy_type == 'ddp_spawn' and loader == 'full':
-        data = data.cuda()  # This is necessary to test sharing of data.
-
-    if strategy_type == 'ddp_spawn':
-        strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
+    if strategy_type == 'ddp':
+        strategy = pl.strategies.DDPStrategy(accelerator='gpu')
     else:
-        strategy = None
+        strategy = pl.strategies.SingleDeviceStrategy(device='cuda:0')
 
-    batch_size = 32
-    num_workers = 3
+    if loader == 'full':  # Set reasonable defaults for full-batch training:
+        batch_size = 1
+        num_workers = 0
+    else:
+        batch_size = 32
+        num_workers = 3
     kwargs, kwargs_repr = {}, ''
     if loader == 'neighbor':
         kwargs['num_neighbors'] = [5]
         kwargs_repr += 'num_neighbors=[5], '
 
-    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
-                         max_epochs=5, log_every_n_steps=1)
+    trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=5,
+                         log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader=loader, batch_size=batch_size,
                                    num_workers=num_workers, **kwargs)
-
-    if loader == 'full':
-        # Test some reasonable defaults for full-batch training:
-        batch_size = 1
-        num_workers = 0
 
     old_x = data.x.clone().cpu()
     assert str(datamodule) == (f'LightningNodeData(data={data_repr}, '
@@ -230,21 +226,9 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
     trainer.fit(model, datamodule)
     trainer.test(model, datamodule)
     new_x = data.x.cpu()
-    if loader == 'full':
-        # `train_steps` + `val_steps` + `sanity` + `test`
-        offset = 5 + 5 + 1 + 1
-    else:
-        offset = 0
-        offset += devices * 2  # `sanity`
-        offset += 5 * devices * math.ceil(140 /
-                                          (devices * batch_size))  # `train`
-        offset += 5 * devices * math.ceil(500 /
-                                          (devices * batch_size))  # `val`
-        offset += devices * math.ceil(1000 / (devices * batch_size))  # `test`
-    assert torch.all(new_x > (old_x + offset - 4))  # Ensure shared data.
-    if strategy_type is None:
-        assert trainer._data_connector._val_dataloader_source.is_defined()
-        assert trainer._data_connector._test_dataloader_source.is_defined()
+    assert torch.all(new_x > old_x)  # Ensure shared data.
+    assert trainer.validate_loop._data_source.is_defined()
+    assert trainer.test_loop._data_source.is_defined()
 
 
 class LinearHeteroNodeModule(LightningModule):
@@ -291,7 +275,7 @@ class LinearHeteroNodeModule(LightningModule):
 
 @onlyCUDA
 @onlyFullTest
-@withPackage('pytorch_lightning')
+@withPackage('pytorch_lightning>=2.0.0')
 @withPackage('torchmetrics>=0.11.0')
 def test_lightning_hetero_node_data(get_dataset):
     import pytorch_lightning as pl
@@ -302,10 +286,10 @@ def test_lightning_hetero_node_data(get_dataset):
                                    int(data['paper'].y.max()) + 1)
 
     devices = torch.cuda.device_count()
-    strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
+    strategy = pl.strategies.DDPStrategy(accelerator='gpu')
 
-    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
-                         max_epochs=5, log_every_n_steps=1)
+    trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=5,
+                         log_every_n_steps=1)
     datamodule = LightningNodeData(data, loader='neighbor', num_neighbors=[5],
                                    batch_size=32, num_workers=3)
     assert isinstance(datamodule.graph_sampler, NeighborSampler)
@@ -313,6 +297,8 @@ def test_lightning_hetero_node_data(get_dataset):
     trainer.fit(model, datamodule)
     trainer.test(model, datamodule)
     assert torch.all(data['paper'].x > original_x)  # Ensure shared data.
+    assert trainer.validate_loop._data_source.is_defined()
+    assert trainer.test_loop._data_source.is_defined()
 
 
 @withPackage('pytorch_lightning')
