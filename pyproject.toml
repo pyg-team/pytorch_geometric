@@ -3,15 +3,15 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "torch_geometric"
-dynamic = ["version"]
-readme = "README.md"
-authors = [
-    { name = "Matthias Fey", email = "matthias@pyg.org" },
+name="torch_geometric"
+version="2.3.0"
+authors=[
+    {name="Matthias Fey", email="matthias@pyg.org"},
 ]
-description = "Graph Neural Network Library for PyTorch"
-requires-python = ">=3.7"
-keywords = [
+description="Graph Neural Network Library for PyTorch"
+readme="README.md"
+requires-python=">=3.7"
+keywords=[
     "deep-learning",
     "pytorch",
     "geometric-deep-learning",
@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies = [
