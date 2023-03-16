@@ -9,7 +9,13 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, ones, zeros
 from torch_geometric.typing import Adj, OptTensor, Size, SparseTensor
-from torch_geometric.utils import scatter, softmax
+from torch_geometric.utils import (
+    is_torch_sparse_tensor,
+    scatter,
+    softmax,
+    to_edge_index,
+    to_torch_coo_tensor,
+)
 
 
 class RGATConv(MessagePassing):
@@ -328,7 +334,8 @@ class RGATConv(MessagePassing):
             edge_type (torch.Tensor, optional): The one-dimensional relation
                 type/index for each edge in :obj:`edge_index`.
                 Should be only :obj:`None` in case :obj:`edge_index` is of type
-                :class:`torch_sparse.SparseTensor`. (default: :obj:`None`)
+                :class:`torch_sparse.SparseTensor` or
+                :class:`torch.sparse.Tensor`. (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
@@ -346,7 +353,16 @@ class RGATConv(MessagePassing):
 
         if isinstance(return_attention_weights, bool):
             if isinstance(edge_index, Tensor):
-                return out, (edge_index, alpha)
+                if is_torch_sparse_tensor(edge_index):
+                    # TODO TorchScript requires to return a tuple
+                    adj = to_torch_coo_tensor(
+                        edge_index=to_edge_index(edge_index)[0],
+                        edge_attr=alpha,
+                        size=(edge_index.size(0), edge_index.size(1)),
+                    )
+                    return out, (adj, alpha)
+                else:
+                    return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
         else:
