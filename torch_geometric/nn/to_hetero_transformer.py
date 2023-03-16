@@ -404,7 +404,10 @@ class ToHeteroTransformer(Transformer):
                     continue
                 if hasattr(module, 'reset_parameters'):
                     module_dict[key2str(key)].reset_parameters()
-                elif sum([is_uninitialized_parameter(p) or p.numel() for p in module.parameters()]) > 0:
+                elif sum([
+                        is_uninitialized_parameter(p) or p.numel()
+                        for p in module.parameters()
+                ]) > 0:
                     warnings.warn(
                         f"'{target}' will be duplicated, but its parameters "
                         f"cannot be reset. To suppress this warning, add a "
