@@ -99,7 +99,7 @@ Quick start guidelines
 The general guidelines for achieving the best performance with CPU Affinity can be summarized in the following steps:
 
 #.  Test if your dataset benefits from using parallel Dataloader. For some datasets it might be more beneficial to use plain serial Dataloader, especially when the dimensions of the input :class:`~torch_geometric.data.Data` are relatively small.
-#.  Enable multi-process Dataloder by setting :attr:`num_workers` > 0. A good estimate for initial num_workers is in range [2,4], however for more complex datasets you might want to experiment with larger number of workers. Enable :class:`~torch_geometric.loader.DataLoader` with :obj:`filter_per_worker=True` and use :obj:`enable_cpu_affinity()` feature to affinitize :class:`~torch_geometric.loader.DataLoader` cores. 
+#.  Enable multi-process Dataloder by setting :attr:`num_workers` > 0. A good estimate for initial num_workers is in range [2,4], however for more complex datasets you might want to experiment with larger number of workers. Enable :class:`~torch_geometric.loader.DataLoader` with :obj:`filter_per_worker=True` and use :obj:`enable_cpu_affinity()` feature to affinitize :class:`~torch_geometric.loader.DataLoader` cores.
 #.	Bind execution to physical cores. Alternatively, hyperthreading can be disabled completely at a system-level.
 #.	Separate the cores used for main process from the DL workers' cores by using `numactl`, `KMP_AFFINITY` of `libiomp5` library, or `GOMP_CPU_AFFINITY` of `libgomp` library.
 #.	Find the optimum number of OMP threads for your workload. The good starting point would be (N - `num_workers`). Generally well-parallelized models will benefit from many OMP threads, however if your model computation flow has interlaced parallel & serial regions, the performance will decrease due to resource allocation needed for spawning and maintaining threads between parallel regions.
@@ -132,7 +132,7 @@ Measurements were taken for the variable number of workers, while other hyperpar
 
     LD_PRELOAD=(path)/libjemalloc.so (path)/libiomp5.so MALLOC_CONF=oversize_threshold:1,background_thread:true,metadata_thp:auto OMP_NUM_THREADS=(N-M) KMP_AFFINITY=granularity=fine,compact,1,0 KMP_BLOCKTIME=0 numactl -C <M-(N-1)> -m 1 python training_benchmark.py --cpu-affinity --filter_per_worker --num-workers ...
 
-Training times for each model+dataset combination were obtained by taking a mean of results  at variable number of dataloader workers: [0,2,4,8,16] for the Baseline and [2,4,8,16] workers for each affinity configuration. 
+Training times for each model+dataset combination were obtained by taking a mean of results  at variable number of dataloader workers: [0,2,4,8,16] for the Baseline and [2,4,8,16] workers for each affinity configuration.
 Then the affinity means were normalized with respect to the mean Baseline measurement. This value is denoted on the y-axis. The labels above each result indicate the end-to-end performance gain from using the discussed config.
 Taking the average over all model+dataset samples, the average training time is increased by: 1.53x for plain affinity and 1.85x for the affinity with socket seapration discussed in `Dual socket CPU separation`_.
 
