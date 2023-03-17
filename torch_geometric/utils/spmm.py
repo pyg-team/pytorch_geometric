@@ -1,4 +1,4 @@
-import logging
+import warnings
 
 import torch
 from torch import Tensor
@@ -40,7 +40,8 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         raise ValueError(f"`reduce` argument '{reduce}' not supported")
 
     if isinstance(src, SparseTensor):
-        if torch_geometric.typing.WITH_PT2 and not src.is_cuda():
+        if (torch_geometric.typing.WITH_PT2 and other.dim() == 2
+                and not src.is_cuda()):
             # Use optimized PyTorch `torch.sparse.mm` path:
             csr = src.to_torch_sparse_csr_tensor()
             return torch.sparse.mm(csr, other, reduce)
@@ -54,13 +55,17 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     # This will currently throw on error for CUDA tensors.
     if torch_geometric.typing.WITH_PT2:
         if src.layout != torch.sparse_csr:
-            logging.warning("Converting sparse tensor to CSR format for more "
-                            "efficient processing. Consider converting your "
-                            "sparse tensor to CSR format beforehand to avoid "
-                            "repeated conversion")
+            warnings.warn("Converting sparse tensor to CSR format for more "
+                          "efficient processing. Consider converting your "
+                          "sparse tensor to CSR format beforehand to avoid "
+                          "repeated conversion")
             src = src.to_sparse_csr()
         if reduce == 'sum':
             return torch.sparse.mm(src, other)
+        elif reduce == 'mean' and src.is_cuda:
+            ptr = src.crow_indices()
+            deg = ptr[1:] - ptr[:-1]
+            return torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
         return torch.sparse.mm(src, other, reduce)
 
     if reduce == 'sum':
@@ -69,7 +74,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         # TODO: Utilize `rowptr` instead when `src` is given as a CSR matrix.
         src = src.coalesce()
         deg = degree(src.indices()[0], num_nodes=src.size(0))
-        out = torch.sparse.mm(src, other).div(deg.view(-1, 1))
+        out = torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
         return out.nan_to_num(0.)
 
     raise ValueError(f"`{reduce}` reduction is not supported for "

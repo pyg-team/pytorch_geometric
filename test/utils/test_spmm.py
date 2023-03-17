@@ -31,7 +31,7 @@ def test_spmm_basic(device, reduce):
 
 
 @withCUDA
-@pytest.mark.parametrize('reduce', ['mean', 'min', 'max'])
+@pytest.mark.parametrize('reduce', ['min', 'max'])
 def test_spmm_reduce(device, reduce):
     src = torch.randn(5, 4, device=device)
     other = torch.randn(4, 8, device=device)
@@ -45,9 +45,8 @@ def test_spmm_reduce(device, reduce):
             out2 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
             assert torch.allclose(out1, out2)
     else:
-        if reduce != 'mean':
-            with pytest.raises(ValueError, match="not supported"):
-                spmm(src.to_sparse(), other, reduce)
+        with pytest.raises(ValueError, match="not supported"):
+            spmm(src.to_sparse(), other, reduce)
 
 
 @pytest.mark.parametrize('reduce', ['sum', 'mean'])
