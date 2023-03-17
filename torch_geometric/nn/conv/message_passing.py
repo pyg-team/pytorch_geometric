@@ -42,6 +42,11 @@ from .utils.typing import (
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 
 
+def ptr2ind(ptr: Tensor) -> Tensor:
+    ind = torch.arange(ptr.numel() - 1, device=ptr.device)
+    return ind.repeat_interleave(ptr[1:] - ptr[:-1])
+
+
 class MessagePassing(torch.nn.Module):
     r"""Base class for creating message passing layers of the form
 
@@ -240,7 +245,21 @@ class MessagePassing(torch.nn.Module):
     def __lift__(self, src, edge_index, dim):
         if is_torch_sparse_tensor(edge_index):
             assert dim == 0 or dim == 1
-            index = edge_index._indices()[1 - dim]
+            if edge_index.layout == torch.sparse_coo:
+                index = edge_index._indices()[1 - dim]
+            elif edge_index.layout == torch.sparse_csr:
+                if dim == 0:
+                    index = edge_index.col_indices()
+                else:
+                    index = ptr2ind(edge_index.crow_indices())
+            elif edge_index.layout == torch.sparse_csc:
+                if dim == 0:
+                    index = ptr2ind(edge_index.ccol_indices())
+                else:
+                    index = edge_index.row_indices()
+            else:
+                raise ValueError(f"Unsupported sparse tensor layout "
+                                 f"(got '{edge_index.layout}')")
             return src.index_select(self.node_dim, index)
 
         elif isinstance(edge_index, Tensor):

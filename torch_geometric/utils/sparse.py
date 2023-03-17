@@ -65,6 +65,8 @@ def is_torch_sparse_tensor(src: Any) -> bool:
             return True
         if src.layout == torch.sparse_csr:
             return True
+        if src.layout == torch.sparse_csc:
+            return True
     return False
 
 

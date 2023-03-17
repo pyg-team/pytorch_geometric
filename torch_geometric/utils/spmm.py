@@ -55,10 +55,10 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     # This will currently throw on error for CUDA tensors.
     if torch_geometric.typing.WITH_PT2:
         if src.layout != torch.sparse_csr:
-            warnings.warn("Converting sparse tensor to CSR format for more "
-                          "efficient processing. Consider converting your "
-                          "sparse tensor to CSR format beforehand to avoid "
-                          "repeated conversion")
+            warnings.warn(f"Converting sparse tensor to CSR format for more "
+                          f"efficient processing. Consider converting your "
+                          f"sparse tensor to CSR format beforehand to avoid "
+                          f"repeated conversion (got '{src.layout}')")
             src = src.to_sparse_csr()
         if reduce == 'sum':
             return torch.sparse.mm(src, other)
