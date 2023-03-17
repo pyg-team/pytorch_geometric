@@ -56,8 +56,8 @@ class InvertibleFunction(torch.autograd.Function):
         # Detaches outputs in-place, allows discarding the intermedate result:
         detached_outputs = tuple(element.detach_() for element in outputs)
 
-        # Clear memory of node features
-        inputs[0].storage().resize_(0)
+        # Clear memory of node features:
+        inputs[0].untyped_storage().resize_(0)
 
         # Store these tensor nodes for backward passes:
         ctx.inputs = [inputs] * num_bwd_passes
@@ -81,13 +81,14 @@ class InvertibleFunction(torch.autograd.Function):
             inputs_inverted = ctx.fn_inverse(*(outputs + inputs[1:]))
             if len(ctx.outputs) == 0:  # Clear memory from outputs:
                 for element in outputs:
-                    element.storage().resize_(0)
+                    element.untyped_storage().resize_(0)
 
             if not isinstance(inputs_inverted, tuple):
                 inputs_inverted = (inputs_inverted, )
 
             for elem_orig, elem_inv in zip(inputs, inputs_inverted):
-                elem_orig.storage().resize_(int(np.prod(elem_orig.size())))
+                elem_orig.untyped_storage().resize_(
+                    int(np.prod(elem_orig.size())) * elem_orig.element_size())
                 elem_orig.set_(elem_inv)
 
         # Compute gradients with grad enabled:

@@ -60,7 +60,12 @@ def is_torch_sparse_tensor(src: Any) -> bool:
     Args:
         src (Any): The input object to be checked.
     """
-    return isinstance(src, Tensor) and src.is_sparse
+    if isinstance(src, Tensor):
+        if src.layout == torch.sparse_coo:
+            return True
+        if src.layout == torch.sparse_csr:
+            return True
+    return False
 
 
 def is_sparse(src: Any) -> bool:
@@ -80,7 +85,8 @@ def to_torch_coo_tensor(
     size: Optional[Union[int, Tuple[int, int]]] = None,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
-    attributes to a :class:`torch.sparse.Tensor`.
+    attributes to a :class:`torch.sparse.Tensor` with layout
+    `torch.sparse_coo`.
     See :meth:`~torch_geometric.utils.to_edge_index` for the reverse operation.
 
     Args:
@@ -92,7 +98,7 @@ def to_torch_coo_tensor(
             If set to :obj:`None`, will infer a quadratic sparse matrix based
             on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
 
-    :rtype: :class:`torch.sparse.FloatTensor`
+    :rtype: :class:`torch.sparse.Tensor`
 
     Example:
 
@@ -100,9 +106,9 @@ def to_torch_coo_tensor(
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> to_torch_coo_tensor(edge_index)
         tensor(indices=tensor([[0, 1, 1, 2, 2, 3],
-                            [1, 0, 2, 1, 3, 2]]),
-            values=tensor([1., 1., 1., 1., 1., 1.]),
-            size=(4, 4), nnz=6, layout=torch.sparse_coo)
+                               [1, 0, 2, 1, 3, 2]]),
+               values=tensor([1., 1., 1., 1., 1., 1.]),
+               size=(4, 4), nnz=6, layout=torch.sparse_coo)
 
     """
     if size is None:
@@ -120,6 +126,42 @@ def to_torch_coo_tensor(
     return out
 
 
+def to_torch_csr_tensor(
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    size: Optional[Union[int, Tuple[int, int]]] = None,
+) -> Tensor:
+    r"""Converts a sparse adjacency matrix defined by edge indices and edge
+    attributes to a :class:`torch.sparse.Tensor` with layout
+    `torch.sparse_csr`.
+    See :meth:`~torch_geometric.utils.to_edge_index` for the reverse operation.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        edge_attr (Tensor, optional): The edge attributes.
+            (default: :obj:`None`)
+        size (int or (int, int), optional): The size of the sparse matrix.
+            If given as an integer, will create a quadratic sparse matrix.
+            If set to :obj:`None`, will infer a quadratic sparse matrix based
+            on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
+
+    :rtype: :class:`torch.sparse.Tensor`
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
+        ...                            [1, 0, 2, 1, 3, 2]])
+        >>> to_torch_csr_tensor(edge_index)
+        tensor(crow_indices=tensor([0, 1, 3, 5, 6]),
+               col_indices=tensor([1, 0, 2, 1, 3, 2]),
+               values=tensor([1., 1., 1., 1., 1., 1.]),
+               size=(4, 4), nnz=6, layout=torch.sparse_csr)
+
+    """
+    adj = to_torch_coo_tensor(edge_index, edge_attr, size)
+    return adj.to_sparse(layout=torch.sparse_csr)
+
+
 def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
     r"""Converts a :class:`torch.sparse.Tensor` or a
     :class:`torch_sparse.SparseTensor` to edge indices and edge attributes.
@@ -127,7 +169,7 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
     Args:
         adj (torch.sparse.Tensor or SparseTensor): The adjacency matrix.
 
-    :rtype: (:class:`LongTensor`, :class:`Tensor`)
+    :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`)
 
     Example:
 
@@ -144,6 +186,8 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
         if value is None:
             value = torch.ones(row.size(0), device=row.device)
         return torch.stack([row, col], dim=0), value
+
+    adj = adj.to_sparse(layout=torch.sparse_coo)
 
     if adj.requires_grad:
         # Calling adj._values() will return a detached tensor.
