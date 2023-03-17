@@ -122,7 +122,7 @@ class AddRandomWalkPE(BaseTransform):
         adj = SparseTensor.from_edge_index(edge_index, edge_weight,
                                            sparse_sizes=(num_nodes, num_nodes))
 
-        # Compute A D^{-1} :
+        # Compute D^{-1} A:
         deg_inv = 1.0 / adj.sum(dim=1)
         deg_inv[deg_inv == float('inf')] = 0
         adj = adj * deg_inv.view(-1, 1)
