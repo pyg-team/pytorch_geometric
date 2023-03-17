@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import Adj, SparseTensor
-from torch_geometric.utils import scatter
+from torch_geometric.utils import is_torch_sparse_tensor, scatter
 
 
 class WLConv(torch.nn.Module):
@@ -42,8 +42,12 @@ class WLConv(torch.nn.Module):
 
         adj_t = edge_index
         if not isinstance(adj_t, SparseTensor):
-            adj_t = SparseTensor(row=edge_index[1], col=edge_index[0],
-                                 sparse_sizes=(x.size(0), x.size(0)))
+            if is_torch_sparse_tensor(edge_index):
+                # TODO: handle PyTorch sparse tensor directly
+                adj_t = SparseTensor.from_torch_sparse_coo_tensor(edge_index)
+            else:
+                adj_t = SparseTensor(row=edge_index[1], col=edge_index[0],
+                                     sparse_sizes=(x.size(0), x.size(0)))
 
         out = []
         _, col, _ = adj_t.coo()
