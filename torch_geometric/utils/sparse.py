@@ -158,7 +158,8 @@ def to_torch_csr_tensor(
                size=(4, 4), nnz=6, layout=torch.sparse_csr)
 
     """
-    return to_torch_coo_tensor(edge_index, edge_attr, size).to_sparse_csr()
+    adj = to_torch_coo_tensor(edge_index, edge_attr, size)
+    return adj.to_sparse(layout=torch.sparse_csr)
 
 
 def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
@@ -186,7 +187,7 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
             value = torch.ones(row.size(0), device=row.device)
         return torch.stack([row, col], dim=0), value
 
-    adj = adj.to_sparse_coo()
+    adj = adj.to_sparse(layout=torch.sparse_coo)
 
     if adj.requires_grad:
         # Calling adj._values() will return a detached tensor.
