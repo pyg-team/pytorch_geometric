@@ -40,14 +40,6 @@ jobs:
         run: |
           pip install -e .[test]
 
-      - name: Test imports
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
-        run: |
-          python -c "import torch_geometric"
-          python -c "import torch_geometric.datasets"
-          python -c "import torch_geometric.nn"
-          python -c "import torch_geometric.graphgym"
-
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
