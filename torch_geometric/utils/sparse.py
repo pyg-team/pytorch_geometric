@@ -60,7 +60,14 @@ def is_torch_sparse_tensor(src: Any) -> bool:
     Args:
         src (Any): The input object to be checked.
     """
-    return isinstance(src, Tensor) and src.is_sparse
+    if isinstance(src, Tensor):
+        if src.layout == torch.sparse_coo:
+            return True
+        if src.layout == torch.sparse_csr:
+            return True
+        if src.layout == torch.sparse_csc:
+            return True
+    return False
 
 
 def is_sparse(src: Any) -> bool:
