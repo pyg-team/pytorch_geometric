@@ -46,5 +46,6 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
           python -c "import torch_geometric"
+          python -c "import torch_geometric.utils"
           python -c "import torch_geometric.contrib"
           python -c "import torch_geometric.graphgym"
