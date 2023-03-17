@@ -10,9 +10,10 @@ class MixHopConv(MessagePassing):
                  p=[0, 1, 2],
                  dropout=0,
                  activation=None,
-                 batchnorm=False):
+                 batchnorm=False,kwargs):
       
-        super().__init__(aggr='add')  
+        kwargs.setdefault('aggr', 'add')
+        super().__init__(**kwargs)
 
         self.in_dim = in_dim
         self.out_dim = out_dim
@@ -33,9 +34,6 @@ class MixHopConv(MessagePassing):
         })
 
         self.max_j =  max(self.p) + 1
-
-
-
 
     def forward(self, x, edge_index):
 
@@ -130,3 +128,4 @@ class MixHop(nn.Module):
         x = self.fc_layers(x)
 
         return x
+
