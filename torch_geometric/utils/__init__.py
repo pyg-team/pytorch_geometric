@@ -1,4 +1,5 @@
 import copy
+import torch_scatter  # noqa
 
 from .scatter import scatter
 from .segment import segment

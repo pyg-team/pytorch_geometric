@@ -1,4 +1,3 @@
-import torch_scatter  # noqa
 from .utils import emit_itt
 from .utils import get_dataset, get_dataset_with_transformation
 from .utils import get_model
