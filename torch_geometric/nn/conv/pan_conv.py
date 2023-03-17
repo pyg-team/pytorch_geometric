@@ -7,7 +7,7 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, SparseTensor
-from torch_geometric.utils import spmm
+from torch_geometric.utils import is_torch_sparse_tensor, spmm
 
 
 class PANConv(MessagePassing):
@@ -66,8 +66,12 @@ class PANConv(MessagePassing):
 
         adj_t: Optional[SparseTensor] = None
         if isinstance(edge_index, Tensor):
-            adj_t = SparseTensor(row=edge_index[1], col=edge_index[0],
-                                 sparse_sizes=(x.size(0), x.size(0)))
+            if is_torch_sparse_tensor(edge_index):
+                # TODO: handle PyTorch sparse tensor directly
+                adj_t = SparseTensor.from_torch_sparse_coo_tensor(edge_index)
+            else:
+                adj_t = SparseTensor(row=edge_index[1], col=edge_index[0],
+                                     sparse_sizes=(x.size(0), x.size(0)))
         elif isinstance(edge_index, SparseTensor):
             adj_t = edge_index.set_value(None)
         assert adj_t is not None
