@@ -34,7 +34,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
     @staticmethod
     def to_csc(
         edge_index: Tensor,
-        size: Optional[Tuple[int, int]] = None,
+        size: Tuple[int, int],
         edge_attr: Optional[Tensor] = None,
     ) -> Union[Tuple[Tensor, Tensor], Tuple[Tuple[Tensor, Tensor], Tensor]]:
         r"""Returns a CSC representation of an :obj:`edge_index` tensor to be
@@ -42,13 +42,13 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
 
         Args:
             edge_index (torch.Tensor): The edge indices.
-            size ((int, int), optional). The shape of :obj:`edge_index` in each
-                dimension. (default: :obj:`None`)
+            size ((int, int)). The shape of :obj:`edge_index` in each
+                dimension.
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
         """
         row, col = edge_index
-        num_target_nodes = size[1] if size is not None else int(col.max() + 1)
+        num_target_nodes = size[1]
         col, perm = index_sort(col, max_value=num_target_nodes)
         row = row[perm]
 
