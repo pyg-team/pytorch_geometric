@@ -1,7 +1,6 @@
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import Embedding
 
 from torch_geometric.nn.kge import KGEModel
 
@@ -72,7 +71,6 @@ class DistMult(KGEModel):
 
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
-        scores = torch.cat([pos_score, neg_score], dim=0)
 
         return F.margin_ranking_loss(
             pos_score,
