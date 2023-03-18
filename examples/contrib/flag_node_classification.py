@@ -18,17 +18,17 @@ data = dataset[0]
 train_idx = split_idx['train']
 
 # TODO: change this back 
-train_loader = NeighborSampler(data.edge_index, node_idx=train_idx,
-                               sizes=[15, 10, 5], batch_size=1024,
-                               shuffle=True, num_workers=12)
-subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
-                                  batch_size=4096, shuffle=False,
-                                  num_workers=12)
 # train_loader = NeighborSampler(data.edge_index, node_idx=train_idx,
 #                                sizes=[15, 10, 5], batch_size=1024,
-#                                shuffle=True)
+#                                shuffle=True, num_workers=12)
 # subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
-#                                   batch_size=4096, shuffle=False)
+#                                   batch_size=4096, shuffle=False,
+#                                   num_workers=12)
+train_loader = NeighborSampler(data.edge_index, node_idx=train_idx,
+                               sizes=[15, 10, 5], batch_size=1024,
+                               shuffle=True)
+subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
+                                  batch_size=4096, shuffle=False)
 
 
 class SAGE(torch.nn.Module):
@@ -208,7 +208,7 @@ for run in range(1, 11):
 
     # Since FLAG runs M forward and backwards passes, we can reduce the
     # number of epochs by a factor of M
-    for epoch in range(1, 22):
+    for epoch in range(1, 8):
         loss = train_normal(epoch)
         print(f'Epoch {epoch:02d}, Loss: {loss:.4f}')
 
