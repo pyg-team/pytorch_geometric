@@ -12,7 +12,7 @@ def test_agnn_conv(requires_grad):
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     row, col = edge_index
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     conv = AGNNConv(requires_grad=requires_grad)
     assert str(conv) == 'AGNNConv()'
