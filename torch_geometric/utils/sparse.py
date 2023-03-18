@@ -200,7 +200,7 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
     return adj._indices(), adj._values()
 
 
-# Helper methods ##############################################################
+# Helper functions ############################################################
 
 
 def ptr2index(ptr: Tensor) -> Tensor:
