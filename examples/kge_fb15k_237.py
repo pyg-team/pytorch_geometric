@@ -5,9 +5,9 @@ import torch
 import torch.optim as optim
 
 from torch_geometric.datasets import FB15k_237
-from torch_geometric.nn import ComplEx, TransE
+from torch_geometric.nn import ComplEx, TransE, DistMult
 
-model_map = {'transe': TransE, 'complex': ComplEx}
+model_map = {'transe': TransE, 'complex': ComplEx, 'distmult': DistMult}
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', choices=model_map.keys(), type=str.lower,
@@ -36,7 +36,8 @@ loader = model.loader(
 )
 
 optimizer_map = {
-    'transe': torch.optim.Adam(model.parameters(), lr=0.01),
+    'transe': optim.Adam(model.parameters(), lr=0.01),
+    'distmult': optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-6),
     'complex': optim.Adagrad(model.parameters(), lr=0.001, weight_decay=1e-6)
 }
 optimizer = optimizer_map[args.model]
