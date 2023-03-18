@@ -5,7 +5,7 @@ import torch
 import torch.optim as optim
 
 from torch_geometric.datasets import FB15k_237
-from torch_geometric.nn import ComplEx, TransE, DistMult
+from torch_geometric.nn import ComplEx, DistMult, TransE
 
 model_map = {'transe': TransE, 'complex': ComplEx, 'distmult': DistMult}
 
