@@ -232,7 +232,6 @@ class MessagePassingQuant(Module):
         return inputs
 
 
-    class LinearQuantized(nn.Linear):
         
         
         """A quantizable linear layer"""

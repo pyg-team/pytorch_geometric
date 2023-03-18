@@ -25,17 +25,17 @@ REQUIRED_GCN_KEYS = [
 
 class GCNConvQuant(MessagePassingQuant):
     def __init__(
-        self,
-        in_channels,
-        out_channels,
-        improved=False,
-        cached=False,
-        bias=True,
-        normalize=True,
-        mp_quantizers=None,
-        layer_quantizers=None,
-        **kwargs,
-    ):
+                self,
+                in_channels,
+                out_channels,
+                improved=False,
+                cached=False,
+                bias=True,
+                normalize=True,
+                mp_quantizers=None,
+                layer_quantizers=None,
+                **kwargs,
+                ):
         super(GCNConvQuant,
               self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
 
