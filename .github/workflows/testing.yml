@@ -11,6 +11,16 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        torch-version: ['1.13.0', '2.0.0']
+      include:
+        - torch-version: 1.13.0
+          torchvision-version: 0.14.0
+        - torch-version: 2.0.0
+          torchvision-version: 0.15.0
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -34,6 +44,9 @@ jobs:
       - name: Setup packages
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
+        with:
+          torch-version: ${{ matrix.torch-version }}
+          torchvision-version: ${{ matrix.torchvision-version }}
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
