@@ -11,7 +11,7 @@ from torch_geometric.utils import sort_edge_index, to_torch_coo_tensor
 class ToSparseTensor(BaseTransform):
     r"""Converts the :obj:`edge_index` attributes of a homogeneous or
     heterogeneous data object into a (transposed)
-    :class:`torch_sparse.SparseTensor` or a :class:`torch.spase.Tensor`
+    :class:`torch_sparse.SparseTensor` or a native PyTorch sparse tensor
     object with key :obj:`adj_t`
     (functional name: :obj:`to_sparse_tensor`).
 
