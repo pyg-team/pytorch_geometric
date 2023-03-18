@@ -43,6 +43,11 @@ from .utils.typing import (
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 
 
+def ptr2ind(ptr: Tensor) -> Tensor:
+    ind = torch.arange(ptr.numel() - 1, device=ptr.device)
+    return ind.repeat_interleave(ptr[1:] - ptr[:-1])
+
+
 class MessagePassing(torch.nn.Module):
     r"""Base class for creating message passing layers of the form
 
