@@ -263,11 +263,16 @@ def get_sparse_diag(
 
 
 def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
+    size = adj.size()
+
+    if value.dim() > 1:
+        size = size + value.size()[1:]
+
     if adj.layout == torch.sparse_coo:
         return torch.sparse_coo_tensor(
             indices=adj.indices(),
             values=value,
-            size=adj.size(),
+            size=size,
             device=value.device,
         ).coalesce()
 
@@ -276,7 +281,7 @@ def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
             crow_indices=adj.crow_indices(),
             col_indices=adj.col_indices(),
             values=value,
-            size=adj.size(),
+            size=size,
             device=value.device,
         )
 
@@ -285,7 +290,7 @@ def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
             ccol_indices=adj.ccol_indices(),
             row_indices=adj.row_indices(),
             values=value,
-            size=adj.size(),
+            size=size,
             device=value.device,
         )
 

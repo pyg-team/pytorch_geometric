@@ -97,7 +97,8 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
             edge_index, edge_weight, fill_value, num_nodes)
 
     if edge_weight is None:
-        edge_weight = edge_index.new_ones((edge_index.size(1), ), dtype=dtype)
+        edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
+                                 device=edge_index.device)
 
     row, col = edge_index[0], edge_index[1]
     idx = col if flow == 'source_to_target' else row
