@@ -166,7 +166,7 @@ class FAConv(MessagePassing):
                     adj = to_torch_coo_tensor(
                         edge_index=to_edge_index(edge_index)[0],
                         edge_attr=alpha,
-                        size=edge_index.size(0),
+                        size=(edge_index.size(0), edge_index.size(1)),
                     )
                     return out, (adj, alpha)
                 else:

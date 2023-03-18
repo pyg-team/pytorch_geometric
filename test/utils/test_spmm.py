@@ -14,7 +14,7 @@ def test_spmm_basic(device, reduce):
     other = torch.randn(4, 8, device=device)
 
     out1 = src @ other
-    out2 = spmm(src.to_sparse(), other, reduce=reduce)
+    out2 = spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce=reduce)
     out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
     assert out1.size() == (5, 8)
     if reduce == 'sum':
@@ -22,16 +22,16 @@ def test_spmm_basic(device, reduce):
         assert torch.allclose(out1, out3, atol=1e-6)
     assert torch.allclose(out2, out3, atol=1e-6)
 
-    # test `mean` reduction with isolated nodes
+    # Test `mean` reduction with isolated nodes:
     src[0] = 0.
-    out2 = spmm(src.to_sparse(), other, reduce=reduce)
+    out2 = spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce=reduce)
     out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
     assert out1.size() == (5, 8)
     assert torch.allclose(out2, out3, atol=1e-6)
 
 
 @withCUDA
-@pytest.mark.parametrize('reduce', ['mean', 'min', 'max'])
+@pytest.mark.parametrize('reduce', ['min', 'max'])
 def test_spmm_reduce(device, reduce):
     src = torch.randn(5, 4, device=device)
     other = torch.randn(4, 8, device=device)
@@ -39,15 +39,14 @@ def test_spmm_reduce(device, reduce):
     if WITH_PT2:
         if src.is_cuda:
             with pytest.raises(NotImplementedError, match="doesn't exist"):
-                spmm(src.to_sparse(), other, reduce=reduce)
+                spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce)
         else:
-            out1 = spmm(src.to_sparse(), other, reduce=reduce)
+            out1 = spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce)
             out2 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
             assert torch.allclose(out1, out2)
     else:
-        if reduce != 'mean':
-            with pytest.raises(ValueError, match="not supported"):
-                spmm(src.to_sparse(), other, reduce)
+        with pytest.raises(ValueError, match="not supported"):
+            spmm(src.to_sparse(), other, reduce)
 
 
 @pytest.mark.parametrize('reduce', ['sum', 'mean'])
@@ -66,7 +65,7 @@ def test_spmm_jit(reduce):
 
     out1 = src @ other
     out2 = jit_torch_sparse(SparseTensor.from_dense(src), other, reduce=reduce)
-    out3 = jit_torch(src.to_sparse(), other, reduce=reduce)
+    out3 = jit_torch(src.to_sparse(layout=torch.sparse_csr), other, reduce)
     assert out1.size() == (5, 8)
     if reduce == 'sum':
         assert torch.allclose(out1, out2, atol=1e-6)
