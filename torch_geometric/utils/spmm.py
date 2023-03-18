@@ -68,6 +68,13 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
                           f"repeated conversion (got '{src.layout}')")
             src = src.to_sparse(layout=torch.sparse_csr)
 
+        # Warn in case of CSC format without gradient computation:
+        if src.layout == torch.sparse_csc and not other.requires_grad:
+            warnings.warn(f"Converting sparse tensor to CSR format for more "
+                          f"efficient processing. Consider converting your "
+                          f"sparse tensor to CSR format beforehand to avoid "
+                          f"repeated conversion (got '{src.layout}')")
+
         # Use the default code path for `sum` reduction (works on CPU/GPU):
         if reduce == 'sum':
             return torch.sparse.mm(src, other)
@@ -78,14 +85,13 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
 
         # Simulate `mean` reduction by dividing by degree:
         if reduce == 'mean':
-            with torch.no_grad():
-                if src.layout == torch.sparse_csr:
-                    ptr = src.crow_indices()
-                    deg = ptr[1:] - ptr[:-1]
-                else:
-                    assert src.layout == torch.sparse_csc
-                    deg = scatter(src.values(), src.row_indices(), dim=0,
-                                  dim_size=src.size(0), reduce='sum')
+            if src.layout == torch.sparse_csr:
+                ptr = src.crow_indices()
+                deg = ptr[1:] - ptr[:-1]
+            else:
+                assert src.layout == torch.sparse_csc
+                deg = scatter(src.values(), src.row_indices(), dim=0,
+                              dim_size=src.size(0), reduce='sum')
 
             return torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
 

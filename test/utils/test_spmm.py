@@ -18,7 +18,7 @@ def test_spmm_basic(device, reduce):
     other = torch.randn(4, 8, device=device)
 
     out1 = src @ other
-    out2 = spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce=reduce)
+    out2 = spmm(src.to_sparse_csr(), other, reduce=reduce)
     out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
     assert out1.size() == (5, 8)
     if reduce == 'sum':
@@ -28,7 +28,7 @@ def test_spmm_basic(device, reduce):
 
     # Test `mean` reduction with isolated nodes:
     src[0] = 0.
-    out2 = spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce=reduce)
+    out2 = spmm(src.to_sparse_csr(), other, reduce=reduce)
     out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
     assert out1.size() == (5, 8)
     assert torch.allclose(out2, out3, atol=1e-6)
@@ -42,9 +42,9 @@ def test_spmm_reduce(device, reduce):
 
     if src.is_cuda:
         with pytest.raises(NotImplementedError, match="not yet supported"):
-            spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce)
+            spmm(src.to_sparse_csr(), other, reduce)
     else:
-        out1 = spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce)
+        out1 = spmm(src.to_sparse_csr(), other, reduce)
         out2 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
         assert torch.allclose(out1, out2)
 
@@ -61,10 +61,7 @@ def test_spmm_layout(device, layout, reduce):
     if src.is_cuda and reduce in {'min', 'max'}:
         with pytest.raises(NotImplementedError, match="not yet supported"):
             spmm(src, other, reduce=reduce)
-    elif layout == torch.sparse_coo:
-        with pytest.warns(UserWarning, match="Converting sparse tensor"):
-            spmm(src, other, reduce=reduce)
-    elif layout == torch.sparse_csc and reduce in {'min', 'max'}:
+    elif layout != torch.sparse_csr:
         with pytest.warns(UserWarning, match="Converting sparse tensor"):
             spmm(src, other, reduce=reduce)
     else:
@@ -87,7 +84,7 @@ def test_spmm_jit(reduce):
 
     out1 = src @ other
     out2 = jit_torch_sparse(SparseTensor.from_dense(src), other, reduce=reduce)
-    out3 = jit_torch(src.to_sparse(layout=torch.sparse_csr), other, reduce)
+    out3 = jit_torch(src.to_sparse_csr(), other, reduce)
     assert out1.size() == (5, 8)
     if reduce == 'sum':
         assert torch.allclose(out1, out2, atol=1e-6)

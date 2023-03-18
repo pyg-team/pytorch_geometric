@@ -54,23 +54,21 @@ def test_my_conv_basic():
     row, col = edge_index
     value = torch.randn(row.size(0))
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
-    torch_adj = adj.to_torch_sparse_coo_tensor()
-    torch_adj_t = torch_adj.t().to_sparse_csr()
+    torch_adj = adj.to_torch_sparse_csr_tensor()
 
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out, atol=1e-6)
     assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
-    assert torch.allclose(conv(x1, torch_adj_t), out, atol=1e-6)
+    assert torch.allclose(conv(x1, torch_adj.t()), out, atol=1e-6)
     conv.fuse = False
     assert torch.allclose(conv(x1, adj.t()), out)
-    assert torch.allclose(conv(x1, torch_adj_t), out, atol=1e-6)
+    assert torch.allclose(conv(x1, torch_adj.t()), out, atol=1e-6)
     conv.fuse = True
 
     adj = adj.sparse_resize((4, 2))
-    torch_adj = adj.to_torch_sparse_coo_tensor()
-    torch_adj_t = torch_adj.t().to_sparse_csr()
+    torch_adj = adj.to_torch_sparse_csr_tensor()
 
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
@@ -79,20 +77,19 @@ def test_my_conv_basic():
     assert out2.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), edge_index, value, (4, 2)), out1)
     assert torch.allclose(conv((x1, x2), adj.t()), out1)
-    assert torch.allclose(conv((x1, x2), torch_adj_t), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, x2), torch_adj.t()), out1, atol=1e-6)
     assert torch.allclose(conv((x1, None), adj.t()), out2)
-    assert torch.allclose(conv((x1, None), torch_adj_t), out2, atol=1e-6)
+    assert torch.allclose(conv((x1, None), torch_adj.t()), out2, atol=1e-6)
     conv.fuse = False
     assert torch.allclose(conv((x1, x2), adj.t()), out1)
-    assert torch.allclose(conv((x1, x2), torch_adj_t), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, x2), torch_adj.t()), out1, atol=1e-6)
     assert torch.allclose(conv((x1, None), adj.t()), out2)
-    assert torch.allclose(conv((x1, None), torch_adj_t), out2, atol=1e-6)
+    assert torch.allclose(conv((x1, None), torch_adj.t()), out2, atol=1e-6)
 
     # Test gradient computation for `torch.sparse` tensors:
     conv.fuse = True
     torch_adj = torch_adj.requires_grad_()
-    torch_adj_t = torch_adj.t().to_sparse_csr()
-    out = conv((x1, x2), torch_adj_t)
+    out = conv((x1, x2), torch_adj.t().to_sparse_csr())
     out.sum().backward()
     assert torch_adj.grad is not None
 
