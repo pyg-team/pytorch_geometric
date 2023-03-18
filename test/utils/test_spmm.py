@@ -19,7 +19,6 @@ def test_spmm_basic(device, reduce):
 
     out1 = src @ other
     out2 = spmm(src.to_sparse_csr(), other, reduce=reduce)
-    return
     out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
     assert out1.size() == (5, 8)
     if reduce == 'sum':
