@@ -8,6 +8,7 @@ from torch_geometric.utils import (
     is_torch_sparse_tensor,
     to_edge_index,
     to_torch_coo_tensor,
+    to_torch_csc_tensor,
     to_torch_csr_tensor,
 )
 
@@ -116,6 +117,25 @@ def test_to_torch_csr_tensor():
     assert adj.layout == torch.sparse_csr
     assert torch.allclose(adj.to_sparse_coo().indices(), edge_index)
     assert torch.allclose(adj.to_sparse_coo().values(), edge_attr)
+
+
+def test_to_torch_csc_tensor():
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3],
+        [1, 0, 2, 1, 3, 2],
+    ])
+    edge_attr = torch.randn(edge_index.size(1), 8)
+
+    adj = to_torch_csc_tensor(edge_index)
+    assert adj.size() == (4, 4)
+    assert adj.layout == torch.sparse_csc
+    assert torch.allclose(adj.to_sparse_coo().coalesce().indices(), edge_index)
+
+    adj = to_torch_csc_tensor(edge_index, edge_attr)
+    assert adj.size() == (4, 4, 8)
+    assert adj.layout == torch.sparse_csc
+    assert torch.allclose(adj.to_sparse_coo().coalesce().indices(), edge_index)
+    assert torch.allclose(adj.to_sparse_coo().coalesce().values(), edge_attr)
 
 
 def test_to_edge_index():
