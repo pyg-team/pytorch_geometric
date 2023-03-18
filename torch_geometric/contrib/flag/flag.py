@@ -78,16 +78,17 @@ class FLAG(torch.nn.Module):
                 is also used as the ranges when initializing the perturbation.
         """
         perturb_tensor = torch.zeros(*x.shape, dtype=torch.float)
-        labeled_values = torch.tensor(
-            len(train_idx), x.shape[1], dtype=torch.float,
-            device=self.device).uniform_(-step_size_labeled, step_size_labeled)
+        labeled_values = torch.zeros(len(train_idx), x.shape[1],
+                                     dtype=torch.float,
+                                     device=self.device).uniform_(
+                                         -step_size_labeled, step_size_labeled)
         perturb_tensor[train_idx] = labeled_values
 
-        unlabeled_values = torch.tensor(len(unlabeled_idx), x.shape[1],
-                                        dtype=torch.float,
-                                        device=self.device).uniform_(
-                                            -step_size_unlabeled,
-                                            step_size_unlabeled)
+        unlabeled_values = torch.zeros(len(unlabeled_idx), x.shape[1],
+                                       dtype=torch.float,
+                                       device=self.device).uniform_(
+                                           -step_size_unlabeled,
+                                           step_size_unlabeled)
         perturb_tensor[unlabeled_idx] = unlabeled_values
         self.perturb = torch.nn.Parameter(perturb_tensor)
 
