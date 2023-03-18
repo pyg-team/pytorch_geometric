@@ -5,7 +5,7 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
-from torch_geometric.utils import degree, is_torch_sparse_tensor, scatter
+from torch_geometric.utils import is_torch_sparse_tensor, scatter
 
 
 @torch.jit._overload
@@ -90,8 +90,8 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
                 deg = ptr[1:] - ptr[:-1]
             else:
                 assert src.layout == torch.sparse_csc
-                deg = scatter(src.values(), src.row_indices(), dim=0,
-                              dim_size=src.size(0), reduce='sum')
+                deg = scatter(torch.ones_like(src.values()), src.row_indices(),
+                              dim=0, dim_size=src.size(0), reduce='sum')
 
             return torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
 
@@ -110,11 +110,20 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     if reduce == 'sum':
         return torch.sparse.mm(src, other)
     elif reduce == 'mean':
-        # TODO: Utilize `rowptr` instead when `src` is given as a CSR matrix.
-        src = src.coalesce()
-        deg = degree(src.indices()[0], num_nodes=src.size(0))
-        out = torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
-        return out.nan_to_num(0.)
+        if src.layout == torch.sparse_csr:
+            ptr = src.crow_indices()
+            deg = ptr[1:] - ptr[:-1]
+        elif src.layout == torch.sparse_csc:
+            assert src.layout == torch.sparse_csc
+            deg = scatter(torch.ones_like(src.values()), src.row_indices(),
+                          dim=0, dim_size=src.size(0), reduce='sum')
+        else:
+            assert src.layout == torch.sparse_coo
+            src = src.coalesce()
+            deg = scatter(torch.ones_like(src.values()), src.indices(), dim=0,
+                          dim_size=src.size(0), reduce='sum')
+
+        return torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
 
     raise ValueError(f"`{reduce}` reduction is not supported for "
                      f"'torch.sparse.Tensor' on device '{src.device}'")
