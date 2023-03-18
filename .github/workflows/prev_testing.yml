@@ -8,7 +8,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  outdated_pytest:
+  pytest_v113:
     runs-on: ubuntu-latest
 
     steps:
