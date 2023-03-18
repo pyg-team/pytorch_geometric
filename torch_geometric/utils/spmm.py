@@ -106,6 +106,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
 
         return torch.sparse.mm(src, other, reduce)
 
+    # pragma: no cover
     # PyTorch < 2.0 only supports sparse COO format:
     if reduce == 'sum':
         return torch.sparse.mm(src, other)

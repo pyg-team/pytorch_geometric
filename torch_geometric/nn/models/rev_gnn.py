@@ -60,7 +60,7 @@ class InvertibleFunction(torch.autograd.Function):
         # Clear memory of node features:
         if torch_geometric.typing.WITH_PT2:
             inputs[0].untyped_storage().resize_(0)
-        else:
+        else:  # pragma: no cover
             inputs[0].storage().resize_(0)
 
         # Store these tensor nodes for backward passes:
@@ -87,7 +87,7 @@ class InvertibleFunction(torch.autograd.Function):
                 for element in outputs:
                     if torch_geometric.typing.WITH_PT2:
                         element.untyped_storage().resize_(0)
-                    else:
+                    else:  # pragma: no cover
                         element.storage().resize_(0)
 
             if not isinstance(inputs_inverted, tuple):
@@ -98,7 +98,7 @@ class InvertibleFunction(torch.autograd.Function):
                     elem_orig.untyped_storage().resize_(
                         int(np.prod(elem_orig.size())) *
                         elem_orig.element_size())
-                else:
+                else:  # pragma: no cover
                     elem_orig.storage().resize_(int(np.prod(elem_orig.size())))
                 elem_orig.set_(elem_inv)
 
