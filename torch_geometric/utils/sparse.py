@@ -190,8 +190,8 @@ def to_torch_csc_tensor(
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
         ...                            [1, 0, 2, 1, 3, 2]])
         >>> to_torch_csc_tensor(edge_index)
-        tensor(crow_indices=tensor([0, 1, 3, 5, 6]),
-               col_indices=tensor([1, 0, 2, 1, 3, 2]),
+        tensor(ccol_indices=tensor([0, 1, 3, 5, 6]),
+               row_indices=tensor([1, 0, 2, 1, 3, 2]),
                values=tensor([1., 1., 1., 1., 1., 1.]),
                size=(4, 4), nnz=6, layout=torch.sparse_csc)
 
