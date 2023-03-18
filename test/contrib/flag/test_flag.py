@@ -46,7 +46,8 @@ def test_flag_n_ascent_steps_validation(model: torch.nn.Module,
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     y_true = torch.tensor([1, 0, 0], dtype=torch.float).repeat(3, 1)
-    step_size = 0.5
+    step_size_labeled = 0.5
+    step_size_unlabeled = 0.3
 
     flag = FLAG(model, optimizer, loss_fn, device)
     train_idx = np.arange(3)
@@ -54,25 +55,50 @@ def test_flag_n_ascent_steps_validation(model: torch.nn.Module,
     expected_message = f"Invalid n_ascent_steps: {n_ascent_steps}." \
         + " n_ascent_steps should be a positive integer."
     with pytest.raises(ValueError, match=expected_message):
-        flag(x, edge_index, y_true, train_idx, step_size, n_ascent_steps)
+        flag(x, edge_index, y_true, train_idx, step_size_labeled,
+             step_size_unlabeled, n_ascent_steps)
 
 
-@pytest.mark.parametrize('step_size', [-10, 0, "pyg", None])
-def test_flag_step_size_validation(model: torch.nn.Module,
-                                   optimizer: torch.nn.Module,
-                                   loss_fn: torch.nn.Module,
-                                   device: torch.device, step_size: Any):
+@pytest.mark.parametrize('step_size_labeled', [-10, 0, "pyg", None])
+def test_flag_step_size_labeled_validation(model: torch.nn.Module,
+                                           optimizer: torch.nn.Module,
+                                           loss_fn: torch.nn.Module,
+                                           device: torch.device,
+                                           step_size_labeled: Any):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     y_true = torch.tensor([1, 0, 0], dtype=torch.float).repeat(3, 1)
 
     flag = FLAG(model, optimizer, loss_fn, device)
     train_idx = np.arange(3)
+    step_size_unlabeled = 0.3
 
-    expected_message = f"Invalid step_size: {step_size}." \
-        + " step_size should be a positive float."
+    expected_message = f"Invalid step_size_labeled: {step_size_labeled}." \
+        + " step_size_labeled should be a positive float."
     with pytest.raises(ValueError, match=expected_message):
-        flag(x, edge_index, y_true, train_idx, step_size)
+        flag(x, edge_index, y_true, train_idx, step_size_labeled,
+             step_size_unlabeled)
+
+
+@pytest.mark.parametrize('step_size_unlabeled', [-10, 0, "pyg", None])
+def test_flag_step_size_unlabeled_validation(model: torch.nn.Module,
+                                             optimizer: torch.nn.Module,
+                                             loss_fn: torch.nn.Module,
+                                             device: torch.device,
+                                             step_size_unlabeled: Any):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    y_true = torch.tensor([1, 0, 0], dtype=torch.float).repeat(3, 1)
+
+    flag = FLAG(model, optimizer, loss_fn, device)
+    train_idx = np.arange(3)
+    step_size_labeled = 0.5
+
+    expected_message = f"Invalid step_size_unlabeled: {step_size_unlabeled}." \
+        + " step_size_unlabeled should be a positive float."
+    with pytest.raises(ValueError, match=expected_message):
+        flag(x, edge_index, y_true, train_idx, step_size_labeled,
+             step_size_unlabeled)
 
 
 @pytest.mark.parametrize('num_nodes, num_labeled_nodes', [(3, 3), (10, 5),
@@ -86,10 +112,12 @@ def test_output_size(model: torch.nn.Module, optimizer: torch.nn.Module,
 
     flag = FLAG(model, optimizer, loss_fn, device)
     train_idx = np.arange(num_labeled_nodes)
-    step_size = 0.5
+    step_size_labeled = 0.5
+    step_size_unlabeled = 0.3
 
     flag = FLAG(model, optimizer, loss_fn, device)
-    loss, out = flag(x, edge_index, y_true, train_idx, step_size)
+    loss, out = flag(x, edge_index, y_true, train_idx, step_size_labeled,
+                     step_size_unlabeled)
 
     assert out.size() == (
         num_labeled_nodes,
@@ -103,11 +131,13 @@ def test_zero_grad(model: torch.nn.Module, optimizer: torch.nn.Module,
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     y_true = torch.tensor([1, 0, 0], dtype=torch.float).repeat(3, 1)
-    step_size = 0.5
+    step_size_labeled = 0.5
+    step_size_unlabeled = 0.3
     train_idx = np.arange(3)
 
     flag = FLAG(model, optimizer, loss_fn, device)
-    loss, out = flag(x, edge_index, y_true, train_idx, step_size)
+    loss, out = flag(x, edge_index, y_true, train_idx, step_size_labeled,
+                     step_size_unlabeled)
 
     for group in optimizer.param_groups:
         for p in group['params']:
@@ -143,14 +173,15 @@ def test_flag_callbacks(model: torch.nn.Module, optimizer: torch.nn.Module,
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     y_true = torch.tensor([1, 0, 0], dtype=torch.float).repeat(3, 1)
-    step_size = 0.5
+    step_size_labeled = 0.5
+    step_size_unlabeled = 0.3
     train_idx = np.arange(3)
 
     flag = FLAG(
         model, optimizer, loss_fn, device,
         [loss_history_callback, perturb_history_callback, counter_callback])
-    loss, out = flag(x, edge_index, y_true, train_idx, step_size,
-                     number_of_ascent_steps)
+    loss, out = flag(x, edge_index, y_true, train_idx, step_size_labeled,
+                     step_size_unlabeled, number_of_ascent_steps)
 
     assert counter_callback.counts[
         'on_ascent_step_begin'] == number_of_ascent_steps
