@@ -19,7 +19,7 @@ class ToSparseTensor(BaseTransform):
 
         In case of composing multiple transforms, it is best to convert the
         :obj:`data` object to a :class:`~torch_sparse.SparseTensor` or a
-        :class:`torch.spase.Tensor` as late as possible,
+        :class:`torch.sparse.Tensor` as late as possible,
         since there exist some transforms that are only able to
         operate on :obj:`data.edge_index` for now.
 
