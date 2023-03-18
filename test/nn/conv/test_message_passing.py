@@ -68,15 +68,6 @@ def test_my_conv_basic():
     assert torch.allclose(conv(x1, torch_adj_t), out, atol=1e-6)
     conv.fuse = True
 
-    # Test gradient computation for `torch.sparse` tensors:
-    conv = MyConv(8, 32)
-    x1 = torch.randn(4, 8)
-    torch_adj_t = adj.to_torch_sparse_coo_tensor().t()
-    torch_adj_t = torch_adj_t.requires_grad_()
-    out = conv(x1, torch_adj_t)
-    out.sum().backward()
-    assert torch_adj_t.grad is not None
-
     adj = adj.sparse_resize((4, 2))
     torch_adj_t = adj.to_torch_sparse_coo_tensor().t()
     # torch_adj_t = torch_adj_t.to_sparse(layout=torch.sparse_csr)
@@ -97,6 +88,13 @@ def test_my_conv_basic():
     assert torch.allclose(conv((x1, None), adj.t()), out2)
     assert torch.allclose(conv((x1, None), torch_adj_t), out2, atol=1e-6)
     conv.fuse = True
+
+    # Test gradient computation for `torch.sparse` tensors:
+    torch_adj = adj.to_torch_sparse_coo_tensor().requires_grad_()
+    torch_adj_t = torch_adj.t()
+    out = conv((x1, x2), torch_adj_t)
+    out.sum().backward()
+    assert torch_adj.grad is not None
 
 
 def test_my_conv_out_of_bounds():
