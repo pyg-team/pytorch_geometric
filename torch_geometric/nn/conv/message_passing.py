@@ -29,6 +29,7 @@ from torch_geometric.utils import (
     is_torch_sparse_tensor,
     to_edge_index,
 )
+from torch_geometric.utils.sparse import ptr2index
 
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
@@ -40,11 +41,6 @@ from .utils.typing import (
 )
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
-
-
-def ptr2ind(ptr: Tensor) -> Tensor:
-    ind = torch.arange(ptr.numel() - 1, device=ptr.device)
-    return ind.repeat_interleave(ptr[1:] - ptr[:-1])
 
 
 class MessagePassing(torch.nn.Module):
@@ -251,10 +247,10 @@ class MessagePassing(torch.nn.Module):
                 if dim == 0:
                     index = edge_index.col_indices()
                 else:
-                    index = ptr2ind(edge_index.crow_indices())
+                    index = ptr2index(edge_index.crow_indices())
             elif edge_index.layout == torch.sparse_csc:
                 if dim == 0:
-                    index = ptr2ind(edge_index.ccol_indices())
+                    index = ptr2index(edge_index.ccol_indices())
                 else:
                     index = edge_index.row_indices()
             else:
