@@ -55,7 +55,13 @@ def test_spmm_reduce(device, reduce):
 @pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
 def test_spmm_layout(device, layout, reduce):
     src = torch.randn(5, 4, device=device)
-    src = src.to_sparse(layout=layout)
+    if layout == torch.sparse_coo:
+        src = src.to_sparse_coo()
+    elif layout == torch.sparse_csr:
+        src = src.to_sparse_csr()
+    else:
+        assert layout == torch.sparse_csc
+        src = src.to_sparse_csc()
     other = torch.randn(4, 8, device=device)
 
     if src.is_cuda and reduce in {'min', 'max'}:

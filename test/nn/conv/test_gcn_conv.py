@@ -107,7 +107,8 @@ def test_gcn_norm_gradient(requires_grad, layout):
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     edge_weight = torch.ones(edge_index.size(1), requires_grad=requires_grad)
     adj = to_torch_coo_tensor(edge_index, edge_weight)
-    adj = adj.to_sparse(layout=layout)
+    if layout == torch.sparse_csr:
+        adj = adj.to_sparse_csr()
 
     # TODO Sparse CSR tensor does not yet inherit `requires_grad` from `value`.
     if layout == torch.sparse_csr:
