@@ -39,7 +39,7 @@ class ToSparseTensor(BaseTransform):
             for converting the :obj:`edge_index` to a sparse tensor. If set to
             :obj:`'torch_sparse'`, the :obj:`edge_index` will be converted to
             a :class:`~torch_sparse.SparseTensor` object. If set to
-            :obj:`'torch'`, the :obj:`edge_index`_index will be converted to a
+            :obj:`'torch'`, the :obj:`edge_index` will be converted to a
             :class:`torch.sparse.Tensor` object.
             (default: :obj:`'torch_sparse'`)
     """
