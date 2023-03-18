@@ -79,7 +79,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         if reduce == 'sum':
             return torch.sparse.mm(src, other)
 
-        # Use the default reduce code path for (works on CPU):
+        # Use the default code path with custom reduction (works on CPU):
         if src.layout == torch.sparse_csr and not src.is_cuda:
             return torch.sparse.mm(src, other, reduce)
 
