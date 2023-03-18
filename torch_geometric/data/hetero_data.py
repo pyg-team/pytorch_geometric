@@ -283,12 +283,14 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         key: str,
         value_dict: Dict[str, Any],
     ) -> 'HeteroData':
-        r"""Sets the values in the dictionary to the attribute with name
-        :obj:`key` to all node/edge types present in the dictionary.
+        r"""Sets the values in the dictionary :obj:`value_dict` to the
+        attribute with name :obj:`key` to all node/edge types present in the
+        dictionary.
 
         .. code-block:: python
 
            data = HeteroData()
+
            data.set_value_dict('x', {
                'paper': torch.randn(4, 16),
                'author': torch.randn(8, 32),
