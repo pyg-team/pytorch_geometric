@@ -198,3 +198,16 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
         return adj.indices(), adj.values()
 
     return adj._indices(), adj._values()
+
+
+# Helper functions ############################################################
+
+
+def ptr2index(ptr: Tensor) -> Tensor:
+    ind = torch.arange(ptr.numel() - 1, dtype=ptr.dtype, device=ptr.device)
+    return ind.repeat_interleave(ptr[1:] - ptr[:-1])
+
+
+def index2ptr(index: Tensor, size: int) -> Tensor:
+    return torch._convert_indices_from_coo_to_csr(
+        index, size, out_int32=index.dtype == torch.int32)
