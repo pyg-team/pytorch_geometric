@@ -21,7 +21,7 @@ def test_revgnn_forward_inverse(num_groups):
     h_o = h.clone().detach()
 
     out = conv(h, edge_index)
-    assert h.storage().size() == 0
+    assert h.untyped_storage().size() == 0
 
     h_rev = conv.inverse(out, edge_index)
     assert torch.allclose(h_o, h_rev, atol=0.001)
@@ -76,7 +76,7 @@ def test_revgnn_diable(num_groups):
     target.backward()
 
     # Memory will not be freed if disable:
-    assert h.storage().size() == 4 * 32
+    assert h.untyped_storage().size() == 4 * 4 * 32
 
 
 @pytest.mark.parametrize('num_groups', [2, 4, 8, 16])

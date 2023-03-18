@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
-from torch_geometric.testing import onlyPython, withPackage
+from torch_geometric.testing import withPackage
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
@@ -139,8 +139,9 @@ def test_basic_gnn_inference(get_dataset, jk):
     assert 'n_id' not in data
 
 
-@onlyPython('3.7', '3.8', '3.9')  # Packaging does not support Python 3.10 yet.
 def test_packaging():
+    warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
+
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
 
     x = torch.randn(3, 8)
@@ -168,11 +169,10 @@ def test_packaging():
 
 
 @withPackage('onnx', 'onnxruntime')
-def test_onnx(tmp_path):
+def test_onnx(tmp_path, capfd):
     import onnx
     import onnxruntime as ort
 
-    warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
     warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
 
     class MyModel(torch.nn.Module):
@@ -195,6 +195,8 @@ def test_onnx(tmp_path):
     path = osp.join(tmp_path, 'model.onnx')
     torch.onnx.export(model, (x, edge_index), path,
                       input_names=('x', 'edge_index'), opset_version=16)
+    out, _ = capfd.readouterr()
+    assert '0 NONE 0 NOTE 0 WARNING 0 ERROR' in out
 
     model = onnx.load(path)
     onnx.checker.check_model(model)

@@ -17,6 +17,8 @@ jobs:
 
       - name: Setup packages
         uses: ./.github/actions/setup
+        with:
+          full_install: false
 
       - name: Install pyright
         run: |

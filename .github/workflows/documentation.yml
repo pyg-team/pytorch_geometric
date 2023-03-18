@@ -35,6 +35,7 @@ jobs:
         uses: ./.github/actions/setup
         with:
           python-version: 3.8
+          full_install: false
           cache: pip
           cache-dependency-path: |
             pyproject.toml
