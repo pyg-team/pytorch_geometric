@@ -4,7 +4,7 @@ import warnings
 import torch
 
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import onlyLinux, withCUDA
+from torch_geometric.testing import onlyLinux, withCUDA, withPackage
 from torch_geometric.utils import scatter
 
 
@@ -42,6 +42,7 @@ def fused_gather_scatter(x, edge_index, reduce=['sum', 'mean', 'max']):
 
 @withCUDA
 @onlyLinux
+@withPackage('torch>=2.0.0')
 def test_torch_compile(device):
     logging.getLogger('torch._dynamo').setLevel(logging.WARNING)
     logging.getLogger('torch._inductor').setLevel(logging.WARNING)
@@ -74,6 +75,7 @@ def test_torch_compile(device):
 
 @withCUDA
 @onlyLinux
+@withPackage('torch>=2.0.0')
 def test_dynamic_torch_compile(device):
     logging.getLogger('torch._dynamo').setLevel(logging.WARNING)
     logging.getLogger('torch._inductor').setLevel(logging.WARNING)

@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import spmm, to_torch_coo_tensor
 
@@ -35,6 +35,7 @@ def test_spmm_basic(device, reduce):
 
 
 @withCUDA
+@withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('reduce', ['min', 'max'])
 def test_spmm_reduce(device, reduce):
     src = torch.randn(5, 4, device=device)
@@ -50,12 +51,19 @@ def test_spmm_reduce(device, reduce):
 
 
 @withCUDA
+@withPackage('torch>=2.0.0')
 @pytest.mark.parametrize(
     'layout', [torch.sparse_coo, torch.sparse_csr, torch.sparse_csc])
 @pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
 def test_spmm_layout(device, layout, reduce):
     src = torch.randn(5, 4, device=device)
-    src = src.to_sparse(layout=layout)
+    if layout == torch.sparse_coo:
+        src = src.to_sparse_coo()
+    elif layout == torch.sparse_csr:
+        src = src.to_sparse_csr()
+    else:
+        assert layout == torch.sparse_csc
+        src = src.to_sparse_csc()
     other = torch.randn(4, 8, device=device)
 
     if src.is_cuda and reduce in {'min', 'max'}:
