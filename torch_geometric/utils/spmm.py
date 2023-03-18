@@ -5,7 +5,7 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
-from torch_geometric.utils import degree, is_torch_sparse_tensor, scatter
+from torch_geometric.utils import degree, is_torch_sparse_tensor
 
 CONVERSION_WARNING = ("Converting sparse tensor to CSR format for more "
                       "efficient processing. Consider converting your "
@@ -65,27 +65,15 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
             warnings.warn(CONVERSION_WARNING.format(layout=src.layout))
             src = src.to_sparse(layout=torch.sparse_csr)
 
-        # Custom reductions only supported for CSR matrices:
-        if ((reduce == 'min' or reduce == 'max')
-                and src.layout != torch.sparse_csr):
-            warnings.warn(CONVERSION_WARNING.format(layout=src.layout))
-            src = src.to_sparse(layout=torch.sparse_csr)
-
         # Use the default code path for `sum` reduction (works on CPU/GPU):
         if reduce == 'sum':
             return torch.sparse.mm(src, other)
 
-        # Simulate `mean` reduction by dividing by the degree
-        # (if we are on GPU or not in CSR sparse format):
-        if reduce == 'mean' and src.is_cuda or src.layout:
-
-            if src.layout == torch.sparse_csr:
+        # Simulate `mean` reduction by dividing by the degree (on GPU):
+        if reduce == 'mean' and src.is_cuda:
+            with torch.no_grad():
                 ptr = src.crow_indices()
                 deg = ptr[1:] - ptr[:-1]
-            else:
-                deg = scatter(torch.ones_like(src.values()), src.row_indices(),
-                              dim_size=src.size(0), reduce='sum')
-
             return torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
 
         return torch.sparse.mm(src, other, reduce)

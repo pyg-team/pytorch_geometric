@@ -104,10 +104,14 @@ if __name__ == '__main__':
     x = torch.randn(num_nodes, 64, device=args.device)
     edge_index = torch.randint(num_nodes, (2, num_edges), device=args.device)
 
-    for reduce, layout in itertools.product(
-        ['sum', 'mean', 'min', 'max'],
-        [torch.sparse_coo, torch.sparse_csr, torch.sparse_csc],
-    ):
+    reductions = ['sum', 'mean']
+    if not x.is_cuda:
+        reductions.extend(['min', 'max'])
+    layouts = [torch.sparse_coo, torch.sparse_csr]
+    if not args.backward:
+        layouts.append(torch.sparse_csc)
+
+    for reduce, layout in itertools.product(reductions, layouts):
         print(f'Aggregator: {reduce}, Layout: {layout}')
 
         adj = to_torch_coo_tensor(edge_index, size=num_nodes)

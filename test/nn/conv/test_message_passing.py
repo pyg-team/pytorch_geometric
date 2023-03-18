@@ -87,9 +87,9 @@ def test_my_conv_basic():
     assert torch.allclose(conv((x1, x2), torch_adj_t), out1, atol=1e-6)
     assert torch.allclose(conv((x1, None), adj.t()), out2)
     assert torch.allclose(conv((x1, None), torch_adj_t), out2, atol=1e-6)
-    conv.fuse = True
 
     # Test gradient computation for `torch.sparse` tensors:
+    conv.fuse = True
     torch_adj = torch_adj.requires_grad_()
     torch_adj_t = torch_adj.t().to_sparse_csr()
     out = conv((x1, x2), torch_adj_t)
