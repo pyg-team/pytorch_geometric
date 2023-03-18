@@ -122,10 +122,13 @@ def to_torch_coo_tensor(
         edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
 
     size = tuple(size) + edge_attr.size()[1:]
-    out = torch.sparse_coo_tensor(edge_index, edge_attr, size,
-                                  device=edge_index.device)
-    out = out.coalesce()
-    return out
+
+    return torch.sparse_coo_tensor(
+        indices=edge_index,
+        values=edge_attr,
+        size=size,
+        device=edge_index.device,
+    ).coalesce()
 
 
 def to_torch_csr_tensor(

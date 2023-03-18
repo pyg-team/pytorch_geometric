@@ -19,22 +19,21 @@ from torch_geometric.utils import (
     is_torch_sparse_tensor,
     scatter,
     spmm,
-    to_edge_index,
-    to_torch_coo_tensor,
 )
 from torch_geometric.utils.num_nodes import maybe_num_nodes
+from torch_geometric.utils.sparse import ptr2index
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             add_self_loops=True, flow="source_to_target", dtype=None):
+def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
+             flow, dtype):
     # type: (Tensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> OptPairTensor  # noqa
     pass
 
 
 @torch.jit._overload
-def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
-             add_self_loops=True, flow="source_to_target", dtype=None):
+def gcn_norm(edge_index, edge_weight, num_nodes, improved, add_self_loops,
+             flow, dtype):
     # type: (SparseTensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> SparseTensor  # noqa
     pass
 
@@ -46,6 +45,7 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
 
     if isinstance(edge_index, SparseTensor):
         assert flow == 'source_to_target'
+        assert edge_index.size(0) == edge_index.size(1)
         adj_t = edge_index
         if not adj_t.has_value():
             adj_t = adj_t.fill_value(1., dtype=dtype)
@@ -56,44 +56,78 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
         deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
         adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(-1, 1))
         adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(1, -1))
-
         return adj_t
 
-    # `edge_index` can be a `torch.LongTensor` or `torch.sparse.Tensor`:
-    is_sparse_tensor = is_torch_sparse_tensor(edge_index)
-    if is_sparse_tensor:
+    if is_torch_sparse_tensor(edge_index):
         assert flow == 'source_to_target'
-        # Reverse `flow` since sparse tensors model transposed adjacencies:
-        flow = 'target_to_source'
-        adj_t = edge_index
-        num_nodes = adj_t.size(0)
-        edge_index, edge_weight = to_edge_index(adj_t)
-    else:
-        assert flow in ["source_to_target", "target_to_source"]
-        num_nodes = maybe_num_nodes(edge_index, num_nodes)
+        assert edge_index.size(0) == edge_index.size(1)
 
-        if edge_weight is None:
-            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
-                                     device=edge_index.device)
+        if edge_index.layout == torch.sparse_csc:
+            raise NotImplementedError("Sparse CSC matrices are not yet "
+                                      "supported in 'gcn_norm'")
+
+        # Create diagonal matrix:
+        diag = torch.sparse.spdiags(
+            torch.full((1, edge_index.size(0)), fill_value,
+                       dtype=edge_index.dtype, device=edge_index.device),
+            offsets=torch.zeros(1, dtype=torch.long, device=edge_index.device),
+            shape=edge_index.size(),
+            layout=edge_index.layout,
+        )
+        adj_t = edge_index + diag
+
+        if adj_t.layout == torch.sparse_coo:
+            adj_t = adj_t.coalesce()
+            col = adj_t.indices()[0].detach()
+            row = adj_t.indices()[1].detach()
+        else:
+            assert adj_t.layout == torch.sparse_csr
+            col = ptr2index(adj_t.crow_indices().detach())
+            row = adj_t.col_indices().detach()
+
+        row, col = row.to(torch.long), col.to(torch.long)
+        value = adj_t.values()
+
+        deg = scatter(value, col, 0, dim_size=num_nodes, reduce='sum')
+        deg_inv_sqrt = deg.pow_(-0.5)
+        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
+        value = deg_inv_sqrt[row] * value * deg_inv_sqrt[col]
+
+        if adj_t.layout == torch.sparse_coo:
+            return torch.sparse_coo_tensor(
+                indices=adj_t.indices(),
+                values=value,
+                size=adj_t.size(),
+                device=value.device,
+            ).coalesce(), None
+        else:
+            assert adj_t.layout == torch.sparse_csr
+            return torch.sparse_csr_tensor(
+                crow_indices=adj_t.crow_indices(),
+                col_indices=adj_t.col_indices(),
+                values=value,
+                size=adj_t.size(),
+                device=value.device,
+            ), None
+
+    assert flow in ['source_to_target', 'target_to_source']
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     if add_self_loops:
-        edge_index, tmp_edge_weight = add_remaining_self_loops(
+        edge_index, edge_weight = add_remaining_self_loops(
             edge_index, edge_weight, fill_value, num_nodes)
-        assert tmp_edge_weight is not None
-        edge_weight = tmp_edge_weight
+
+    if edge_weight is None:
+        edge_weight = edge_index.new_ones((edge_index.size(1), ), dtype=dtype)
 
     row, col = edge_index[0], edge_index[1]
-    idx = col if flow == "source_to_target" else row
+    idx = col if flow == 'source_to_target' else row
     deg = scatter(edge_weight, idx, dim=0, dim_size=num_nodes, reduce='sum')
     deg_inv_sqrt = deg.pow_(-0.5)
     deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
     edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
-    if is_sparse_tensor:
-        adj_t = to_torch_coo_tensor(edge_index, edge_weight, size=num_nodes)
-        return adj_t, None
-    else:
-        return edge_index, edge_weight
+    return edge_index, edge_weight
 
 
 class GCNConv(MessagePassing):
