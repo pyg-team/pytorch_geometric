@@ -1,3 +1,4 @@
+import logging
 import warnings
 
 import torch
@@ -42,6 +43,9 @@ def fused_gather_scatter(x, edge_index, reduce=['sum', 'mean', 'max']):
 @withCUDA
 @onlyLinux
 def test_torch_compile(device):
+    logging.getLogger('torch._dynamo').setLevel(logging.WARNING)
+    logging.getLogger('torch._inductor').setLevel(logging.WARNING)
+
     x = torch.randn(10, 16, device=device)
     edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
     edge_weight = torch.rand(edge_index.size(1), device=device)
@@ -71,6 +75,9 @@ def test_torch_compile(device):
 @withCUDA
 @onlyLinux
 def test_dynamic_torch_compile(device):
+    logging.getLogger('torch._dynamo').setLevel(logging.WARNING)
+    logging.getLogger('torch._inductor').setLevel(logging.WARNING)
+
     compiled_gather_scatter = torch.compile(gather_scatter)
 
     x = torch.randn(10, 16, device=device)

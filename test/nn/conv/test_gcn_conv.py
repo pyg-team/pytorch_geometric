@@ -17,8 +17,8 @@ def test_gcn_conv():
     value = torch.rand(row.size(0))
     adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
     adj1 = adj2.set_value(None)
-    adj3 = adj1.to_torch_sparse_coo_tensor()
-    adj4 = adj2.to_torch_sparse_coo_tensor()
+    adj3 = adj1.to_torch_sparse_csc_tensor()
+    adj4 = adj2.to_torch_sparse_csc_tensor()
 
     conv = GCNConv(16, 32)
     assert str(conv) == 'GCNConv(16, 32)'
@@ -69,9 +69,11 @@ def test_gcn_conv_with_decomposed_layers():
 
 
 def test_gcn_conv_with_sparse_input_feature():
-    x = torch.sparse_coo_tensor(indices=torch.tensor([[0, 0], [0, 1]]),
-                                values=torch.tensor([1., 1.]),
-                                size=torch.Size([4, 16]))
+    x = torch.sparse_coo_tensor(
+        indices=torch.tensor([[0, 0], [0, 1]]),
+        values=torch.tensor([1., 1.]),
+        size=torch.Size([4, 16]),
+    )
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
     conv = GCNConv(16, 32)
@@ -100,9 +102,15 @@ def test_gcn_conv_norm():
 
 
 @pytest.mark.parametrize('requires_grad', [False, True])
-def test_gcn_conv_norm_gradient(requires_grad):
+@pytest.mark.parametrize('layout', [torch.sparse_coo, torch.sparse_csr])
+def test_gcn_norm_gradient(requires_grad, layout):
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     edge_weight = torch.ones(edge_index.size(1), requires_grad=requires_grad)
     adj = to_torch_coo_tensor(edge_index, edge_weight)
+    adj = adj.to_sparse(layout=layout)
 
-    assert adj.requires_grad == gcn_norm(adj)[0].requires_grad
+    # TODO Sparse CSR tensor does not yet inherit `requires_grad` from `value`.
+    if layout == torch.sparse_csr:
+        assert not gcn_norm(adj)[0].requires_grad
+    else:
+        assert adj.requires_grad == gcn_norm(adj)[0].requires_grad
