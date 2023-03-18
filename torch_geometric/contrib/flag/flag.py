@@ -77,7 +77,8 @@ class FLAG(torch.nn.Module):
                 gradient ascent on the perturbation for labeled nodes. This
                 is also used as the ranges when initializing the perturbation.
         """
-        perturb_tensor = torch.zeros(*x.shape, dtype=torch.float)
+        perturb_tensor = torch.zeros(*x.shape, dtype=torch.float,
+                                     device=self.device)
         labeled_values = torch.zeros(len(train_idx), x.shape[1],
                                      dtype=torch.float,
                                      device=self.device).uniform_(
