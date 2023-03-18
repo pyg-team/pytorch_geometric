@@ -54,8 +54,8 @@ def test_my_conv_basic():
     row, col = edge_index
     value = torch.randn(row.size(0))
     adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
-    torch_adj_t = adj.to_torch_sparse_coo_tensor().t()
-    # torch_adj_t = torch_adj_t.to_sparse(layout=torch.sparse_csr)
+    torch_adj = adj.to_torch_sparse_coo_tensor()
+    torch_adj_t = torch_adj.t().to_sparse_csr()
 
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
@@ -69,8 +69,8 @@ def test_my_conv_basic():
     conv.fuse = True
 
     adj = adj.sparse_resize((4, 2))
-    torch_adj_t = adj.to_torch_sparse_coo_tensor().t()
-    # torch_adj_t = torch_adj_t.to_sparse(layout=torch.sparse_csr)
+    torch_adj = adj.to_torch_sparse_coo_tensor()
+    torch_adj_t = torch_adj.t().to_sparse_csr()
 
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
@@ -90,8 +90,8 @@ def test_my_conv_basic():
     conv.fuse = True
 
     # Test gradient computation for `torch.sparse` tensors:
-    torch_adj = adj.to_torch_sparse_coo_tensor().requires_grad_()
-    torch_adj_t = torch_adj.t()
+    torch_adj = torch_adj.requires_grad_()
+    torch_adj_t = torch_adj.t().to_sparse_csr()
     out = conv((x1, x2), torch_adj_t)
     out.sum().backward()
     assert torch_adj.grad is not None
