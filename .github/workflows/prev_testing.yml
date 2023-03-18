@@ -1,4 +1,4 @@
-name: Testing
+name: Testing PyTorch 1.13
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -8,7 +8,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  prev_pytest:
+  pytest:
     runs-on: ubuntu-latest
 
     steps:
