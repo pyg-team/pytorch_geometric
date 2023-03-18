@@ -41,7 +41,7 @@ def test_spmm_reduce(device, reduce):
     other = torch.randn(4, 8, device=device)
 
     if src.is_cuda:
-        with pytest.raises(NotImplementedError, match="doesn't exist"):
+        with pytest.raises(NotImplementedError, match="not yet supported"):
             spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce)
     else:
         out1 = spmm(src.to_sparse(layout=torch.sparse_csr), other, reduce)
@@ -59,7 +59,13 @@ def test_spmm_layout(device, layout, reduce):
     other = torch.randn(4, 8, device=device)
 
     if src.is_cuda and reduce in {'min', 'max'}:
-        with pytest.raises(NotImplementedError, match="doesn't exist"):
+        with pytest.raises(NotImplementedError, match="not yet supported"):
+            spmm(src, other, reduce=reduce)
+    elif layout == torch.sparse_coo:
+        with pytest.warns(UserWarning, match="Converting sparse tensor"):
+            spmm(src, other, reduce=reduce)
+    elif layout == torch.sparse_csc and reduce in {'min', 'max'}:
+        with pytest.warns(UserWarning, match="Converting sparse tensor"):
             spmm(src, other, reduce=reduce)
     else:
         spmm(src, other, reduce=reduce)
@@ -107,9 +113,7 @@ if __name__ == '__main__':
     reductions = ['sum', 'mean']
     if not x.is_cuda:
         reductions.extend(['min', 'max'])
-    layouts = [torch.sparse_coo, torch.sparse_csr]
-    if not args.backward:
-        layouts.append(torch.sparse_csc)
+    layouts = [torch.sparse_coo, torch.sparse_csr, torch.sparse_csc]
 
     for reduce, layout in itertools.product(reductions, layouts):
         print(f'Aggregator: {reduce}, Layout: {layout}')

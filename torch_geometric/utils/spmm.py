@@ -5,12 +5,7 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
-from torch_geometric.utils import degree, is_torch_sparse_tensor
-
-CONVERSION_WARNING = ("Converting sparse tensor to CSR format for more "
-                      "efficient processing. Consider converting your "
-                      "sparse tensor to CSR format beforehand to avoid "
-                      "repeated conversion (got '{layout}')")
+from torch_geometric.utils import degree, is_torch_sparse_tensor, scatter
 
 
 @torch.jit._overload
@@ -60,21 +55,48 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     # This will currently throw on error for CUDA tensors.
     if torch_geometric.typing.WITH_PT2:
 
+        if src.is_cuda and (reduce == 'min' or reduce == 'max'):
+            raise NotImplementedError(f"`{reduce}` reduction is not yet "
+                                      f"supported for 'torch.sparse.Tensor' "
+                                      f"on device '{src.device}'")
+
         # Always convert COO to CSR for more efficient processing:
-        if src.layout != torch.sparse_csr:
-            warnings.warn(CONVERSION_WARNING.format(layout=src.layout))
+        if src.layout == torch.sparse_coo:
+            warnings.warn(f"Converting sparse tensor to CSR format for more "
+                          f"efficient processing. Consider converting your "
+                          f"sparse tensor to CSR format beforehand to avoid "
+                          f"repeated conversion (got '{src.layout}')")
             src = src.to_sparse(layout=torch.sparse_csr)
 
         # Use the default code path for `sum` reduction (works on CPU/GPU):
         if reduce == 'sum':
             return torch.sparse.mm(src, other)
 
-        # Simulate `mean` reduction by dividing by the degree (on GPU):
-        if reduce == 'mean' and src.is_cuda:
+        # Use the default reduce code path for (works on CPU):
+        if src.layout == torch.sparse_csr and not src.is_cuda:
+            return torch.sparse.mm(src, other, reduce)
+
+        # Simulate `mean` reduction by dividing by degree:
+        if reduce == 'mean':
             with torch.no_grad():
-                ptr = src.crow_indices()
-                deg = ptr[1:] - ptr[:-1]
+                if src.layout == torch.sparse_csr:
+                    ptr = src.crow_indices()
+                    deg = ptr[1:] - ptr[:-1]
+                else:
+                    assert src.layout == torch.sparse_csc
+                    deg = scatter(src.values(), src.row_indices(), dim=0,
+                                  dim_size=src.size(0), reduce='sum')
+
             return torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
+
+        # TODO The `torch.sparse.mm` code path with the `reduce` argument does
+        # not yet support CSC :(
+        if src.layout == torch.sparse_csc:
+            warnings.warn(f"Converting sparse tensor to CSR format for more "
+                          f"efficient processing. Consider converting your "
+                          f"sparse tensor to CSR format beforehand to avoid "
+                          f"repeated conversion (got '{src.layout}')")
+            src = src.to_sparse(layout=torch.sparse_csr)
 
         return torch.sparse.mm(src, other, reduce)
 
