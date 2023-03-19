@@ -8,7 +8,7 @@ from torch_geometric.nn.kge import KGEModel
 
 class ComplEx(KGEModel):
     r"""The ComplEx model from the `"Complex Embeddings for Simple Link
-    Prediction" <https://arxiv.org/pdf/1606.06357.pdf>`_ paper.
+    Prediction" <https://arxiv.org/abs/1606.06357>`_ paper.
 
     :class:`ComplEx` models relations as complex-valued bilinear mappings
     between head and tail entities using the Hermetian dot product.

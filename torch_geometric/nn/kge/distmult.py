@@ -7,8 +7,8 @@ from torch_geometric.nn.kge import KGEModel
 
 class DistMult(KGEModel):
     r"""The DistMult model from the `"Embedding Entities and Relations for
-    Learning and Inference in Knowledge Bases" <https://arxiv.org/pdf/
-    1412.6575v4.pdf>`_ paper.
+    Learning and Inference in Knowledge Bases"
+    <https://arxiv.org/abs/1412.6575>`_ paper.
 
     :class:`DistMult` models relations as diagonal matrices, which simplifies
     the bi-linear interaction between the head and tail entities to the score
