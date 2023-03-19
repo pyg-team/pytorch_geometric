@@ -4,6 +4,10 @@ from .basics import (
     Cache,
     GCNNorm
 )
+from .loop import (
+    MaskEdges, RemoveSelfLoops, SegregateSelfLoops,
+    AddMaskedSelfLoops, AddSelfLoops, AddRemainingSelfLoops
+)
 from .compose import Compose
 
 __all__ = classes = [
@@ -12,4 +16,10 @@ __all__ = classes = [
     'Cache',
     'GCNNorm',
     'Compose',
+    'MaskEdges',
+    'RemoveSelfLoops',
+    'SegregateSelfLoops',
+    'AddMaskedSelfLoops',
+    'AddSelfLoops',
+    'AddRemainingSelfLoops'
 ]
