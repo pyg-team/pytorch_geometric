@@ -53,7 +53,8 @@ def test_rgat_conv_jittable():
     assert out.size() == (4, 40)
     assert torch.allclose(conv(x, adj1.t(), edge_type), out)
     # t() expects a tensor with <= 2 sparse and 0 dense dimensions
-    assert torch.allclose(conv(x, adj2.transpose(0, 1), edge_type), out)
+    adj2_t = adj2.transpose(0, 1).coalesce()
+    assert torch.allclose(conv(x, adj2_t, edge_type), out)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, OptTensor, Size, NoneType) -> Tensor'

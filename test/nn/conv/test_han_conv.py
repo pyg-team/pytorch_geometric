@@ -28,7 +28,7 @@ def test_han_conv():
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
         adj_t_dict2[edge_type] = adj_t_dict1[
-            edge_type].to_torch_sparse_coo_tensor()
+            edge_type].to_torch_sparse_csr_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
     in_channels = {'author': 16, 'paper': 12, 'term': 3}
@@ -45,17 +45,15 @@ def test_han_conv():
 
     out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
 
     out_dict3 = conv(x_dict, adj_t_dict2)
     assert len(out_dict1) == len(out_dict3)
-    for node_type in out_dict3.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict3[node_type],
-                              atol=1e-6)
+    for key in out_dict3.keys():
+        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
-    # non zero dropout
+    # Test non-zero dropout:
     conv = HANConv(in_channels, 16, metadata, heads=2, dropout=0.1)
     assert str(conv) == 'HANConv(16, heads=2)'
     out_dict1 = conv(x_dict, edge_index_dict)
@@ -85,7 +83,7 @@ def test_han_conv_lazy():
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
         adj_t_dict2[edge_type] = adj_t_dict1[
-            edge_type].to_torch_sparse_coo_tensor()
+            edge_type].to_torch_sparse_csr_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
     conv = HANConv(-1, 16, metadata, heads=2)
@@ -97,15 +95,13 @@ def test_han_conv_lazy():
 
     out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
 
     out_dict3 = conv(x_dict, adj_t_dict2)
     assert len(out_dict1) == len(out_dict3)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict3[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
 
 def test_han_conv_empty_tensor():

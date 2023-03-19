@@ -29,7 +29,7 @@ def test_hgt_conv_same_dimensions():
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
         adj_t_dict2[edge_type] = adj_t_dict1[
-            edge_type].to_torch_sparse_coo_tensor()
+            edge_type].to_torch_sparse_csr_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
@@ -42,15 +42,13 @@ def test_hgt_conv_same_dimensions():
 
     out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
 
     out_dict3 = conv(x_dict, adj_t_dict2)
     assert len(out_dict1) == len(out_dict3)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict3[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
     # TODO: Test JIT functionality. We need to wait on this one until PyTorch
     # allows indexing `ParameterDict` mappings :(
@@ -79,7 +77,7 @@ def test_hgt_conv_different_dimensions():
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
         adj_t_dict2[edge_type] = adj_t_dict1[
-            edge_type].to_torch_sparse_coo_tensor()
+            edge_type].to_torch_sparse_csr_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
@@ -95,15 +93,13 @@ def test_hgt_conv_different_dimensions():
 
     out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
 
     out_dict3 = conv(x_dict, adj_t_dict2)
     assert len(out_dict1) == len(out_dict3)
     for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict3[node_type],
-                              atol=1e-6)
+        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
 
 def test_hgt_conv_lazy():
@@ -129,7 +125,7 @@ def test_hgt_conv_lazy():
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
         adj_t_dict2[edge_type] = adj_t_dict1[
-            edge_type].to_torch_sparse_coo_tensor()
+            edge_type].to_torch_sparse_csr_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
@@ -142,15 +138,13 @@ def test_hgt_conv_lazy():
 
     out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
 
     out_dict3 = conv(x_dict, adj_t_dict2)
     assert len(out_dict1) == len(out_dict3)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict3[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
 
 def test_hgt_conv_out_of_place():
