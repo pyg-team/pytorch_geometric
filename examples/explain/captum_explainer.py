@@ -40,8 +40,8 @@ for _ in range(1, 201):
     loss.backward()
     optimizer.step()
 
-# Select the output of a node to be explained:
-node_index = 10
+# Select the output index of a node to be explained:
+index = 10
 
 # Instantiate the CaptumExplainer algorithm:
 algorithm = CaptumExplainer(attribution_method='IntegratedGradients', )
@@ -59,14 +59,19 @@ explainer = Explainer(
     ),
     node_mask_type='attributes',
     edge_mask_type='object',
+    threshold_config=dict(
+        threshold_type='topk',
+        value=200,
+    ),
 )
 
 # Compute the explanation:
 explanation = explainer(
     x=data.x,
     edge_index=data.edge_index,
-    index=node_index,
+    index=index,
 )
+print(f'Generated explanations in {explanation.available_explanations}')
 
 # Visualize the node feature importance:
 path = 'feature_importance.png'
