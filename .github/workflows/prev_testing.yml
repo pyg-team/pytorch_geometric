@@ -1,4 +1,4 @@
-name: Testing PyTorch 2.0
+name: Testing PyTorch 1.13
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -8,7 +8,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  pytest:
+  prev_pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,6 +34,9 @@ jobs:
       - name: Setup packages
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
+        with:
+          torch-version: 1.13.0
+          torchvision-version: 0.14.0
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
@@ -43,10 +46,4 @@ jobs:
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pytest --cov --cov-report=xml
-
-      - name: Upload coverage
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
-        uses: codecov/codecov-action@v2
-        with:
-          fail_ci_if_error: false
+          pytest
