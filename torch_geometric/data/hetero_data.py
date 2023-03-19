@@ -77,11 +77,14 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         from torch_geometric.data import HeteroData
 
+        # (1) Assign attributes after initialization,
         data = HeteroData()
         data['paper'].x = x_paper
 
+        # or (2) pass them as keyword arguments during initialization,
         data = HeteroData(paper={ 'x': x_paper })
 
+        # or (3) pass them as dictionaries during initialization,
         data = HeteroData({'paper': { 'x': x_paper }})
 
     * To initialize an edge from source node type :obj:`"author"` to
@@ -91,13 +94,16 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
       .. code-block:: python
 
+        # (1) Assign attributes after initialization,
         data = HeteroData()
         data['author', 'writes', 'paper'].edge_index = edge_index_author_paper
 
+        # or (2) pass them as keyword arguments during initialization,
         data = HeteroData(author__writes__paper={
             'edge_index': edge_index_author_paper
         })
 
+        # or (3) pass them as dictionaries during initialization,
         data = HeteroData({
             ('author', 'writes', 'paper'):
             { 'edge_index': edge_index_author_paper }
@@ -271,6 +277,30 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         ]
         DataTuple = namedtuple('DataTuple', field_names)
         return DataTuple(*field_values)
+
+    def set_value_dict(
+        self,
+        key: str,
+        value_dict: Dict[str, Any],
+    ) -> 'HeteroData':
+        r"""Sets the values in the dictionary :obj:`value_dict` to the
+        attribute with name :obj:`key` to all node/edge types present in the
+        dictionary.
+
+        .. code-block:: python
+
+           data = HeteroData()
+
+           data.set_value_dict('x', {
+               'paper': torch.randn(4, 16),
+               'author': torch.randn(8, 32),
+           })
+
+           print(data['paper'].x)
+        """
+        for k, v in value_dict.items():
+            self[k][key] = v
+        return self
 
     def update(self, data: 'HeteroData') -> 'HeteroData':
         for store in data.stores:
