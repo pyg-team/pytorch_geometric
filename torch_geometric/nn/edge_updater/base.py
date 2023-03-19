@@ -22,7 +22,7 @@ class EdgeUpdater(torch.nn.Module):
         """
         raise NotImplementedError
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         r"""Resets all learnable parameters of the module."""
         pass
 

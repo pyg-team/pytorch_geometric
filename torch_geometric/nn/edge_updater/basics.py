@@ -21,7 +21,6 @@ class Fill(EdgeUpdater):
         self.value = value
 
     def forward(self, edge_weight) -> Dict:
-        print('called')
         return {
             'edge_weight': torch.fill(edge_weight, self.value)
         }
@@ -33,7 +32,7 @@ class Cache(EdgeUpdater):
         self.edge_updater = edge_updater
         self._cached = None
 
-    def reset_parameters(self):
+    def reset_parameters(self) -> None:
         self.edge_updater.reset_parameters()
         self._cached = None
 
