@@ -164,7 +164,7 @@ def to_torch_csr_tensor(
 
     """
     adj = to_torch_coo_tensor(edge_index, edge_attr, size)
-    return adj.to_sparse(layout=torch.sparse_csr)
+    return adj.to_sparse_csr()
 
 
 def to_torch_csc_tensor(
@@ -200,7 +200,7 @@ def to_torch_csc_tensor(
 
     """
     adj = to_torch_coo_tensor(edge_index, edge_attr, size)
-    return adj.to_sparse(layout=torch.sparse_csc)
+    return adj.to_sparse_csc()
 
 
 def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:

@@ -5,8 +5,8 @@ import torch
 
 
 def seed_everything(seed: int):
-    r"""Sets the seed for generating random numbers in PyTorch, numpy and
-    Python.
+    r"""Sets the seed for generating random numbers in :pytorch:`PyTorch`,
+    :obj:`numpy` and Python.
 
     Args:
         seed (int): The desired seed.

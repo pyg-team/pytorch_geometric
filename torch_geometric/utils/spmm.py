@@ -66,7 +66,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
                           f"efficient processing. Consider converting your "
                           f"sparse tensor to CSR format beforehand to avoid "
                           f"repeated conversion (got '{src.layout}')")
-            src = src.to_sparse(layout=torch.sparse_csr)
+            src = src.to_sparse_csr()
 
         # Warn in case of CSC format without gradient computation:
         if src.layout == torch.sparse_csc and not other.requires_grad:
@@ -102,10 +102,11 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
                           f"efficient processing. Consider converting your "
                           f"sparse tensor to CSR format beforehand to avoid "
                           f"repeated conversion (got '{src.layout}')")
-            src = src.to_sparse(layout=torch.sparse_csr)
+            src = src.to_sparse_csr()
 
         return torch.sparse.mm(src, other, reduce)
 
+    # pragma: no cover
     # PyTorch < 2.0 only supports sparse COO format:
     if reduce == 'sum':
         return torch.sparse.mm(src, other)
