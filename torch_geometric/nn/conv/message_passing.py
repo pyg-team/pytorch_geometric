@@ -104,7 +104,8 @@ class MessagePassing(torch.nn.Module):
 
     special_args: Set[str] = {
         'edge_index', 'adj_t', 'edge_index_i', 'edge_index_j', 'size',
-        'size_i', 'size_j', 'ptr', 'index', 'dim_size'
+        'size_i', 'size_j', 'ptr', 'index', 'dim_size',
+        'edge_weight', 'edge_attr', 'edge_type'
     }
 
     def __init__(
@@ -152,11 +153,11 @@ class MessagePassing(torch.nn.Module):
         self.inspector.inspect(self.edge_update)
 
         self.__user_args__ = self.inspector.keys(
-            ['message', 'aggregate', 'update']).difference(self.special_args)
+            ['message', 'aggregate', 'update'])
         self.__fused_user_args__ = self.inspector.keys(
-            ['message_and_aggregate', 'update']).difference(self.special_args)
+            ['message_and_aggregate', 'update'])
         self.__edge_user_args__ = self.inspector.keys(
-            ['edge_update']).difference(self.special_args)
+            ['edge_update'])
 
         # Support for "fused" message passing.
         self.fuse = self.inspector.implements('message_and_aggregate')
@@ -237,116 +238,97 @@ class MessagePassing(torch.nn.Module):
                 (f'Encountered tensor with size {src.size(self.node_dim)} in '
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
-    def __lift__(self, src, edge_index, dim):
-        if is_torch_sparse_tensor(edge_index):
-            assert dim == 0 or dim == 1
-            index = edge_index._indices()[1 - dim]
+    def __lift__(self, src, index):
+        try:
             return src.index_select(self.node_dim, index)
+        except (IndexError, RuntimeError) as e:
+            if index.min() < 0 or index.max() >= src.size(self.node_dim):
+                raise IndexError(
+                    f"Encountered an index error. Please ensure that all "
+                    f"indices in 'edge_index' point to valid indices in "
+                    f"the interval [0, {src.size(self.node_dim) - 1}] "
+                    f"(got interval "
+                    f"[{int(index.min())}, {int(index.max())}])")
 
-        elif isinstance(edge_index, Tensor):
-            try:
-                index = edge_index[dim]
-                return src.index_select(self.node_dim, index)
-            except (IndexError, RuntimeError) as e:
-                if index.min() < 0 or index.max() >= src.size(self.node_dim):
-                    raise IndexError(
-                        f"Encountered an index error. Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices in "
-                        f"the interval [0, {src.size(self.node_dim) - 1}] "
-                        f"(got interval "
-                        f"[{int(index.min())}, {int(index.max())}])")
-                else:
-                    raise e
+            if index.numel() > 0 > index.min():
+                raise ValueError(
+                    f"Found negative indices in 'edge_index' (got "
+                    f"{index.min().item()}). Please ensure that all "
+                    f"indices in 'edge_index' point to valid indices "
+                    f"in the interval [0, {src.size(self.node_dim)}) in "
+                    f"your node feature matrix and try again.")
 
-                if index.numel() > 0 and index.min() < 0:
-                    raise ValueError(
-                        f"Found negative indices in 'edge_index' (got "
-                        f"{index.min().item()}). Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
+            if (index.numel() > 0
+                    and index.max() >= src.size(self.node_dim)):
+                raise ValueError(
+                    f"Found indices in 'edge_index' that are larger "
+                    f"than {src.size(self.node_dim) - 1} (got "
+                    f"{index.max().item()}). Please ensure that all "
+                    f"indices in 'edge_index' point to valid indices "
+                    f"in the interval [0, {src.size(self.node_dim)}) in "
+                    f"your node feature matrix and try again.")
 
-                if (index.numel() > 0
-                        and index.max() >= src.size(self.node_dim)):
-                    raise ValueError(
-                        f"Found indices in 'edge_index' that are larger "
-                        f"than {src.size(self.node_dim) - 1} (got "
-                        f"{index.max().item()}). Please ensure that all "
-                        f"indices in 'edge_index' point to valid indices "
-                        f"in the interval [0, {src.size(self.node_dim)}) in "
-                        f"your node feature matrix and try again.")
-
-                raise e
-
-        elif isinstance(edge_index, SparseTensor):
-            if dim == 0:
-                col = edge_index.storage.col()
-                return src.index_select(self.node_dim, col)
-            elif dim == 1:
-                row = edge_index.storage.row()
-                return src.index_select(self.node_dim, row)
-
-        raise ValueError(
-            ('`MessagePassing.propagate` only supports integer tensors of '
-             'shape `[2, num_messages]`, `torch_sparse.SparseTensor` '
-             'or `torch.sparse.Tensor` for argument `edge_index`.'))
+            raise e
 
     def __collect__(self, args, edge_index, size, kwargs):
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
-
         out = {}
-        for arg in args:
-            if arg[-2:] not in ['_i', '_j']:
-                out[arg] = kwargs.get(arg, Parameter.empty)
-            else:
-                dim = j if arg[-2:] == '_j' else i
-                data = kwargs.get(arg[:-2], Parameter.empty)
 
-                if isinstance(data, (tuple, list)):
-                    assert len(data) == 2
-                    if isinstance(data[1 - dim], Tensor):
-                        self.__set_size__(size, 1 - dim, data[1 - dim])
-                    data = data[dim]
-
-                if isinstance(data, Tensor):
-                    self.__set_size__(size, dim, data)
-                    data = self.__lift__(data, edge_index, dim)
-
-                out[arg] = data
+        def get_value(dict, key, alt):
+            out = dict.get(key, None)
+            return alt if out is None else out
 
         if is_torch_sparse_tensor(edge_index):
             indices, values = to_edge_index(edge_index)
+            out['ptr'] = None  # TODO Get `rowptr` from CSR representation.
             out['adj_t'] = edge_index
             out['edge_index'] = None
-            out['edge_index_i'] = indices[0]
-            out['edge_index_j'] = indices[1]
-            out['ptr'] = None  # TODO Get `rowptr` from CSR representation.
-            if out.get('edge_weight', None) is None:
-                out['edge_weight'] = values
-            if out.get('edge_attr', None) is None:
-                out['edge_attr'] = None if values.dim() == 1 else values
-            if out.get('edge_type', None) is None:
-                out['edge_type'] = values
+            out['edge_index_i'] = get_value(kwargs, 'edge_index_i', indices[0])
+            out['edge_index_j'] = get_value(kwargs, 'edge_index_j', indices[1])
+            out['edge_weight'] = get_value(kwargs, 'edge_weight', values)
+            out['edge_attr'] = get_value(kwargs, 'edge_attr', None if values.dim() == 1 else values)
+            out['edge_type'] = get_value(kwargs, 'edge_type', values)
 
         elif isinstance(edge_index, Tensor):
+            values = torch.ones(edge_index.size(1), device=edge_index.device)
+            out['ptr'] = None
             out['adj_t'] = None
             out['edge_index'] = edge_index
-            out['edge_index_i'] = edge_index[i]
-            out['edge_index_j'] = edge_index[j]
-            out['ptr'] = None
+            out['edge_index_i'] = get_value(kwargs, 'edge_index_i', edge_index[i])
+            out['edge_index_j'] = get_value(kwargs, 'edge_index_j', edge_index[j])
+            out['edge_weight'] = get_value(kwargs, 'edge_weight', values)
+            out['edge_attr'] = get_value(kwargs, 'edge_attr', None)
+            out['edge_type'] = get_value(kwargs, 'edge_type', values)
 
         elif isinstance(edge_index, SparseTensor):
+            out['ptr'] = edge_index.storage.rowptr()
             out['adj_t'] = edge_index
             out['edge_index'] = None
-            out['edge_index_i'] = edge_index.storage.row()
-            out['edge_index_j'] = edge_index.storage.col()
-            out['ptr'] = edge_index.storage.rowptr()
-            if out.get('edge_weight', None) is None:
-                out['edge_weight'] = edge_index.storage.value()
-            if out.get('edge_attr', None) is None:
-                out['edge_attr'] = edge_index.storage.value()
-            if out.get('edge_type', None) is None:
-                out['edge_type'] = edge_index.storage.value()
+            out['edge_index_i'] = get_value(kwargs, 'edge_index_i', edge_index.storage.row())
+            out['edge_index_j'] = get_value(kwargs, 'edge_index_j', edge_index.storage.col())
+            out['edge_weight'] = get_value(kwargs, 'edge_weight', edge_index.storage.value())
+            out['edge_attr'] = get_value(kwargs, 'edge_attr', edge_index.storage.value())  # TODO This is an inconsistent behaviour wrt the other types of edge_indexes
+            out['edge_type'] = get_value(kwargs, 'edge_type', edge_index.storage.value())
+
+        for arg in args:
+            if arg not in self.special_args:
+                if arg[-2:] not in ['_i', '_j']:
+                    out[arg] = kwargs.get(arg, Parameter.empty)
+                else:
+                    dim = j if arg[-2:] == '_j' else i
+                    data = kwargs.get(arg[:-2], Parameter.empty)
+
+                    if isinstance(data, (tuple, list)):
+                        assert len(data) == 2
+                        if isinstance(data[1 - dim], Tensor):
+                            self.__set_size__(size, 1 - dim, data[1 - dim])
+                        data = data[dim]
+
+                    if isinstance(data, Tensor):
+                        self.__set_size__(size, dim, data)
+                        data = self.__lift__(data, out[f'edge_index{arg[-2:]}'])
+
+                    out[arg] = data
 
         out['index'] = out['edge_index_i']
         out['size'] = size
