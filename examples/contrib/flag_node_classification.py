@@ -17,12 +17,18 @@ data = dataset[0]
 
 train_idx = split_idx['train']
 
+# train_loader = NeighborSampler(data.edge_index, node_idx=train_idx,
+#                                sizes=[15, 10, 5], batch_size=1024,
+#                                shuffle=True, num_workers=12)
+# subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
+#                                   batch_size=4096, shuffle=False,
+#                                   num_workers=12)
+
 train_loader = NeighborSampler(data.edge_index, node_idx=train_idx,
-                               sizes=[15, 10, 5], batch_size=1024,
-                               shuffle=True, num_workers=12)
+                               sizes=[15, 10,
+                                      5], batch_size=1024, shuffle=True)
 subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
-                                  batch_size=4096, shuffle=False,
-                                  num_workers=12)
+                                  batch_size=4096, shuffle=False)
 
 
 class SAGE(torch.nn.Module):
@@ -115,8 +121,9 @@ def train(epoch):
         # `torch.tensor([i for i in range(batch_size)]`
         loss, _ = flag(
             x[n_id], adjs, torch.unsqueeze(y[n_id[:batch_size]], 1),
-            torch.tensor([i for i in range(batch_size)], device=device),
-            step_size_labeled, step_size_unlabeled, n_ascent_steps=M)
+            torch.tensor([i for i in range(batch_size)],
+                         device=device), step_size_labeled,
+            step_size_unlabeled=step_size_unlabeled, n_ascent_steps=M)
         total_loss += float(loss)
         pbar.update(batch_size)
 
