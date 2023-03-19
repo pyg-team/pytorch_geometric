@@ -1,7 +1,10 @@
 import logging
 import warnings
 
-from torch.utils._contextlib import _DecoratorContextManager
+try:
+    from torch.utils._contextlib import _DecoratorContextManager
+except ImportError:
+    from torch.autograd.grad_mode import _DecoratorContextManager
 
 import torch_geometric.typing
 
