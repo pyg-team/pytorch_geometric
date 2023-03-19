@@ -64,8 +64,10 @@ def test_ppf_conv():
         t = '(PairOptTensor, PairTensor, PairTensor, Tensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(
-            jit((x1, None), (pos1, pos2), (n1, n2), edge_index), out,
-            atol=1e-6)
+            jit((x1, None), (pos1, pos2), (n1, n2), edge_index),
+            out,
+            atol=1e-6,
+        )
 
         t = '(PairOptTensor, PairTensor, PairTensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
