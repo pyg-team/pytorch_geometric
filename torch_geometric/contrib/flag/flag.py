@@ -1,5 +1,5 @@
 import numbers
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import torch
 
@@ -51,6 +51,57 @@ class FLAG(torch.nn.Module):
         self.device = device
         self.callbacks = callbacks
 
+    def _set_perturb(
+        self,
+        x: torch.Tensor,
+        train_idx: torch.Tensor,
+        unlabeled_idx: torch.Tensor,
+        step_size: float,
+        step_size_unlabeled: Optional[float] = None,
+    ) -> None:
+        """
+        Set the perturb tensor by randomly initializing its values. Values
+        corresponding to both labeled and unlabeled samples are drawn from
+        uniform distributions, but these distributions may be parametrized
+        by different ranges.
+
+        Args:
+            x (torch.Tensor): Node feature matrix with shape
+                [num_nodes, num_node_features].
+            train_idx (torch.Tensor): Indices of training data.
+            unlabeled_idx (torch.Tensor): Indices of non-training data.
+            step_size (float): `-step_size` and `step_size` are the ranges
+                when initializing the perturbation. If `step_size_unlabeled`
+                is set, `step_size` will only be applied to the labeled nodes.
+            step_size_unlabeled (Optional[float]): `-step_size_unlabeled` and
+                `step_size_unlabeled` are the ranges when initializing the
+                perturbation for unlabeled nodes. If this is not set,
+                `step_size` is applied to both labeled and unlabeled nodes.
+        """
+        if step_size_unlabeled is None:
+            self.perturb = torch.nn.Parameter(
+                torch.zeros(
+                    *x.shape,
+                    dtype=torch.float,
+                    device=self.device,
+                ).uniform_(-step_size, step_size))
+        else:
+            perturb_tensor = torch.zeros(*x.shape, dtype=torch.float,
+                                         device=self.device)
+            labeled_values = torch.zeros(len(train_idx), x.shape[1],
+                                         dtype=torch.float,
+                                         device=self.device).uniform_(
+                                             -step_size, step_size)
+            perturb_tensor[train_idx] = labeled_values
+
+            unlabeled_values = torch.zeros(len(unlabeled_idx), x.shape[1],
+                                           dtype=torch.float,
+                                           device=self.device).uniform_(
+                                               -step_size_unlabeled,
+                                               step_size_unlabeled)
+            perturb_tensor[unlabeled_idx] = unlabeled_values
+            self.perturb = torch.nn.Parameter(perturb_tensor)
+
     def forward(
         self,
         x: torch.Tensor,
@@ -58,6 +109,7 @@ class FLAG(torch.nn.Module):
         y_true: torch.Tensor,
         train_idx: torch.Tensor,
         step_size: float,
+        step_size_unlabeled: Optional[float] = None,
         n_ascent_steps: int = 3,
     ) -> Tuple[torch.nn.Module, torch.Tensor]:
         """
@@ -73,9 +125,16 @@ class FLAG(torch.nn.Module):
             y_true (torch.Tensor): Graph-level, node-level, or edge-level
                 ground-truth labels.
             train_idx (torch.Tensor): Indices of training data.
-            step_size (float): The step size to take during the gradient
-                ascent on the perturbation. This is also used as the ranges
-                when initializing the perturbation.
+            step_size (float): The step size to take during the
+                gradient ascent on the perturbation. It is also used for
+                the ranges when initializing the perturbation. If
+                `step_size_unlabeled` is set, `step_size` will only be applied
+                to the labeled nodes.
+            step_size_unlabeled (Optional[float]): The step size to take
+                during the gradient ascent on the perturbation for unlabeled
+                nodes. This is also used for the ranges when initializing the
+                perturbation. If this is not set, `step_size` is applied to
+                both labeled and unlabeled nodes.
             n_ascent_steps (int): The number of forward and backward passes
                 to take. Note that the FLAG paper uses 3 for experiments.
 
@@ -86,6 +145,7 @@ class FLAG(torch.nn.Module):
                 from the last iteration of the FLAG algorithm.
         """
 
+        # Check the parameters are specified correctly
         if not isinstance(n_ascent_steps, int) or n_ascent_steps <= 0:
             raise ValueError(f"Invalid n_ascent_steps: {n_ascent_steps}." +
                              " n_ascent_steps should be a positive integer.")
@@ -93,6 +153,13 @@ class FLAG(torch.nn.Module):
         if not isinstance(step_size, numbers.Number) or step_size <= 0:
             raise ValueError(f"Invalid step_size: {step_size}." +
                              " step_size should be a positive float.")
+
+        if step_size_unlabeled is not None and (
+                not isinstance(step_size_unlabeled, numbers.Number)
+                or step_size_unlabeled <= 0):
+            raise ValueError(
+                f"Invalid step_size_unlabeled: {step_size_unlabeled}." +
+                " step_size_unlabeled should be None or a positive float.")
 
         # Code below adapted from:
         #   https://github.com/devnkong/FLAG/blob/main/deep_gcns_torch
@@ -102,19 +169,17 @@ class FLAG(torch.nn.Module):
         #     /examples/ogb/attacks.py
 
         training_labels = y_true.squeeze(1)[train_idx]
+        unlabeled_idx = torch.tensor(
+            list(set(range(x.shape[0])) - set(train_idx)), dtype=torch.long)
+        self._set_perturb(x, train_idx, unlabeled_idx, step_size,
+                          step_size_unlabeled)
 
         self.model.train()
         self.optimizer.zero_grad()
 
-        self.perturb = torch.nn.Parameter(
-            torch.zeros(
-                *x.shape,
-                dtype=torch.float,
-                device=self.device,
-            ).uniform_(-step_size, step_size))
-
         [c.on_ascent_step_begin(0, None) for c in self.callbacks]
 
+        # Perturb the input and calculate the loss
         out = self.model(x + self.perturb, edge_index)[train_idx]
         self.loss = self.loss_fn(out, training_labels)
         self.loss /= n_ascent_steps
@@ -131,15 +196,25 @@ class FLAG(torch.nn.Module):
             self.loss.backward()
 
             # Update the perturbation at each step using gradient ascent
-            perturb_data = self.perturb.detach() + step_size * torch.sign(
-                self.perturb.grad.detach())
-            self.perturb.data = perturb_data.data
+            if step_size_unlabeled is None:
+                self.perturb.data = self.perturb.detach(
+                ) + step_size * torch.sign(self.perturb.grad.detach())
+            else:
+                perturb_data_labeled = self.perturb[train_idx].detach(
+                ) + step_size * torch.sign(
+                    self.perturb.grad[train_idx].detach())
+                self.perturb.data[train_idx] = perturb_data_labeled.data
+
+                perturb_data_unlabeled = self.perturb[unlabeled_idx].detach(
+                ) + step_size_unlabeled * torch.sign(
+                    self.perturb.grad[unlabeled_idx].detach())
+                self.perturb.data[unlabeled_idx] = perturb_data_unlabeled.data
+
             self.perturb.grad[:] = 0
 
-            # Calculate the loss on the perturbed input
+            # Perturb the input and calculate the loss
             out = self.model(x + self.perturb, edge_index)[train_idx]
             self.loss = self.loss_fn(out, training_labels)
-
             self.loss /= n_ascent_steps
 
             [
@@ -150,6 +225,8 @@ class FLAG(torch.nn.Module):
         [c.on_optimizer_step_begin(self.loss) for c in self.callbacks]
 
         self.loss.backward()
+
+        # After all ascent steps are over, update the model parameters
         self.optimizer.step()
 
         [c.on_optimizer_step_end(self.loss) for c in self.callbacks]
