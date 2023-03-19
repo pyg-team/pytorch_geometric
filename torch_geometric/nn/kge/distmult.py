@@ -10,12 +10,12 @@ class DistMult(KGEModel):
     Learning and Inference in Knowledge Bases" <https://arxiv.org/pdf/
     1412.6575v4.pdf>`_ paper.
 
-    :class:`DistMult` models relations as diagonal matrices, which
-    simplifies the bilinear interaction between the head and tail
-    entities to the score function:
+    :class:`DistMult` models relations as diagonal matrices, which simplifies
+    the bi-linear interaction between the head and tail entities to the score
+    function:
 
     .. math::
-        d(h, r, t) = < \mathbf{e}_h,  \mathbf{e}_r, \mathbf{e}_t>
+        d(h, r, t) = < \mathbf{e}_h,  \mathbf{e}_r, \mathbf{e}_t >
 
     .. note::
 
@@ -41,8 +41,10 @@ class DistMult(KGEModel):
         margin: float = 1.0,
         sparse: bool = False,
     ):
-        self.margin = margin
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
+
+        self.margin = margin
+
         self.reset_parameters()
 
     def reset_parameters(self):
