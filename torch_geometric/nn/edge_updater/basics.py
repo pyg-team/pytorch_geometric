@@ -52,10 +52,7 @@ class Cache(EdgeUpdater):
 class GCNNorm(EdgeUpdater):
     r"""TODO
     """
-    def __init__(self):
-        super().__init__()
-
-    def forward(self, edge_index_i: LongTensor, edge_index_j: LongTensor,
+    def forward(self, edge_index_i: LongTensor, edge_index_j: LongTensor,  # TODO I might have mixed _i and _j
                 edge_weight: Tensor, dim_size: int) -> Dict:
         deg = scatter(edge_weight, edge_index_i, dim=0, dim_size=dim_size, reduce='sum')
         deg_inv_sqrt = deg.pow_(-0.5)
