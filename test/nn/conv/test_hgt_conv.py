@@ -4,6 +4,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import HGTConv
 from torch_geometric.profile import benchmark
+from torch_geometric.utils import coalesce
 
 
 def test_hgt_conv_same_dimensions():
@@ -12,12 +13,13 @@ def test_hgt_conv_same_dimensions():
         'paper': torch.randn(6, 16),
     }
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    row = torch.randint(0, 4, (20, ), dtype=torch.long)
+    col = torch.randint(0, 6, (20, ), dtype=torch.long)
+    edge_index = coalesce(torch.stack([row, col], dim=0))
 
     edge_index_dict = {
-        ('author', 'writes', 'paper'): torch.stack([index1, index2]),
-        ('paper', 'written_by', 'author'): torch.stack([index2, index1]),
+        ('author', 'writes', 'paper'): edge_index,
+        ('paper', 'written_by', 'author'): edge_index.flip([0]),
     }
 
     adj_t_dict1 = {}
@@ -60,12 +62,13 @@ def test_hgt_conv_different_dimensions():
         'paper': torch.randn(6, 32),
     }
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    row = torch.randint(0, 4, (20, ), dtype=torch.long)
+    col = torch.randint(0, 6, (20, ), dtype=torch.long)
+    edge_index = coalesce(torch.stack([row, col], dim=0))
 
     edge_index_dict = {
-        ('author', 'writes', 'paper'): torch.stack([index1, index2]),
-        ('paper', 'written_by', 'author'): torch.stack([index2, index1]),
+        ('author', 'writes', 'paper'): edge_index,
+        ('paper', 'written_by', 'author'): edge_index.flip([0]),
     }
 
     adj_t_dict1 = {}
@@ -108,12 +111,13 @@ def test_hgt_conv_lazy():
         'paper': torch.randn(6, 32),
     }
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    row = torch.randint(0, 4, (20, ), dtype=torch.long)
+    col = torch.randint(0, 6, (20, ), dtype=torch.long)
+    edge_index = coalesce(torch.stack([row, col], dim=0))
 
     edge_index_dict = {
-        ('author', 'writes', 'paper'): torch.stack([index1, index2]),
-        ('paper', 'written_by', 'author'): torch.stack([index2, index1]),
+        ('author', 'writes', 'paper'): edge_index,
+        ('paper', 'written_by', 'author'): edge_index.flip([0]),
     }
 
     adj_t_dict1 = {}

@@ -2,6 +2,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import HANConv
+from torch_geometric.utils import coalesce
 
 
 def test_han_conv():
@@ -10,13 +11,13 @@ def test_han_conv():
         'paper': torch.randn(5, 12),
         'term': torch.randn(4, 3)
     }
-    edge1 = torch.randint(0, 6, (2, 7), dtype=torch.long)
-    edge2 = torch.randint(0, 5, (2, 4), dtype=torch.long)
-    edge3 = torch.randint(0, 3, (2, 5), dtype=torch.long)
+    edge_index1 = coalesce(torch.randint(0, 6, (2, 7)))
+    edge_index2 = coalesce(torch.randint(0, 5, (2, 4)))
+    edge_index3 = coalesce(torch.randint(0, 3, (2, 5)))
     edge_index_dict = {
-        ('author', 'metapath0', 'author'): edge1,
-        ('paper', 'metapath1', 'paper'): edge2,
-        ('paper', 'metapath2', 'paper'): edge3,
+        ('author', 'metapath0', 'author'): edge_index1,
+        ('paper', 'metapath1', 'paper'): edge_index2,
+        ('paper', 'metapath2', 'paper'): edge_index3,
     }
 
     adj_t_dict1 = {}
@@ -67,11 +68,11 @@ def test_han_conv_lazy():
         'author': torch.randn(6, 16),
         'paper': torch.randn(5, 12),
     }
-    edge1 = torch.randint(0, 6, (2, 8), dtype=torch.long)
-    edge2 = torch.randint(0, 5, (2, 6), dtype=torch.long)
+    edge_index1 = coalesce(torch.randint(0, 6, (2, 8)))
+    edge_index2 = coalesce(torch.randint(0, 5, (2, 6)))
     edge_index_dict = {
-        ('author', 'to', 'author'): edge1,
-        ('paper', 'to', 'paper'): edge2,
+        ('author', 'to', 'author'): edge_index1,
+        ('paper', 'to', 'paper'): edge_index2,
     }
 
     adj_t_dict1 = {}
