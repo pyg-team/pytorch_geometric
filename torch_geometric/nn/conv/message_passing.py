@@ -378,7 +378,27 @@ class MessagePassing(torch.nn.Module):
             if res is not None:
                 edge_index, size, kwargs = res
 
+        for hook in self._edge_update_forward_pre_hooks.values():
+            res = hook(self, (edge_index, kwargs))
+            if res is not None:
+                edge_index, kwargs = res
+
         size = self.__check_input__(edge_index, size)
+
+        coll_dict = self.__collect__(self.__edge_user_args__, edge_index, size,
+                                     kwargs)
+
+        edge_kwargs = self.inspector.distribute('edge_update', coll_dict)
+        out = self.edge_update(**edge_kwargs)
+
+        for hook in self._edge_update_forward_hooks.values():
+            res = hook(self, (edge_index, kwargs), out)
+            if res is not None:
+                out = res
+
+        if isinstance(out, dict):  # TODO remove
+            size = out.pop('size', size)
+            kwargs.update(out)
 
         # Run "fused" message and aggregation (if applicable).
         if is_sparse(edge_index) and self.fuse and not self.explain:
@@ -458,39 +478,6 @@ class MessagePassing(torch.nn.Module):
 
         for hook in self._propagate_forward_hooks.values():
             res = hook(self, (edge_index, size, kwargs), out)
-            if res is not None:
-                out = res
-
-        return out
-
-    def edge_updater(self, edge_index: Adj, **kwargs):
-        r"""The initial call to compute or update features for each edge in the
-        graph.
-
-        Args:
-            edge_index (torch.Tensor or SparseTensor): A :obj:`torch.Tensor`, a
-                :class:`torch_sparse.SparseTensor` or a
-                :class:`torch.sparse.Tensor` that defines the underlying graph
-                connectivity/message passing flow.
-                See :meth:`propagate` for more information.
-            **kwargs: Any additional data which is needed to compute or update
-                features for each edge in the graph.
-        """
-        for hook in self._edge_update_forward_pre_hooks.values():
-            res = hook(self, (edge_index, kwargs))
-            if res is not None:
-                edge_index, kwargs = res
-
-        size = self.__check_input__(edge_index, size=None)
-
-        coll_dict = self.__collect__(self.__edge_user_args__, edge_index, size,
-                                     kwargs)
-
-        edge_kwargs = self.inspector.distribute('edge_update', coll_dict)
-        out = self.edge_update(**edge_kwargs)
-
-        for hook in self._edge_update_forward_hooks.values():
-            res = hook(self, (edge_index, kwargs), out)
             if res is not None:
                 out = res
 
@@ -590,15 +577,16 @@ class MessagePassing(torch.nn.Module):
         """
         return inputs
 
-    def edge_update(self) -> Tensor:
+    def edge_update(self) -> Dict:
         r"""Computes or updates features for each edge in the graph.
         This function can take any argument as input which was initially passed
         to :meth:`edge_updater`.
         Furthermore, tensors passed to :meth:`edge_updater` can be mapped to
         the respective nodes :math:`i` and :math:`j` by appending :obj:`_i` or
         :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
+        TODO
         """
-        raise NotImplementedError
+        return {}
 
     def register_propagate_forward_pre_hook(self,
                                             hook: Callable) -> RemovableHandle:
