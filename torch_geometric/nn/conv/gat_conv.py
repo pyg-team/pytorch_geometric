@@ -243,11 +243,10 @@ class GATConv(MessagePassing):
                         "simultaneously is currently not yet supported for "
                         "'edge_index' in a 'SparseTensor' form")
 
-        # edge_updater_type: (alpha: OptPairTensor, edge_attr: OptTensor)
-        alpha = self.edge_updater(edge_index, alpha=alpha, edge_attr=edge_attr)
-
         # propagate_type: (x: OptPairTensor, alpha: Tensor)
         out = self.propagate(edge_index, x=x, alpha=alpha, size=size)
+        alpha = self._alpha
+        self._alpha = None
 
         if self.concat:
             out = out.view(-1, self.heads * self.out_channels)
@@ -265,7 +264,7 @@ class GATConv(MessagePassing):
         else:
             return out
 
-    def edge_update(self, alpha_j: Tensor, alpha_i: OptTensor,
+    def message(self, x_j, alpha_j: Tensor, alpha_i: OptTensor,
                     edge_attr: OptTensor, index: Tensor, ptr: OptTensor,
                     size_i: Optional[int]) -> Tensor:
         # Given edge-level attention coefficients for source and target nodes,
@@ -282,10 +281,8 @@ class GATConv(MessagePassing):
 
         alpha = F.leaky_relu(alpha, self.negative_slope)
         alpha = softmax(alpha, index, ptr, size_i)
+        self._alpha = alpha
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
-        return alpha
-
-    def message(self, x_j: Tensor, alpha: Tensor) -> Tensor:
         return alpha.unsqueeze(-1) * x_j
 
     def __repr__(self) -> str:
