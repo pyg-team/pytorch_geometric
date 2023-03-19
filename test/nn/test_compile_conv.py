@@ -16,10 +16,9 @@ class MySAGEConv(torch.nn.Module):
         self.lin_dst = torch.nn.Linear(in_channels, out_channels)
 
     def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
-        x = self.lin_src(x)
         x_j = x[edge_index[0]]
         out = scatter(x_j, edge_index[1], dim_size=x.size(0), reduce='mean')
-        return out + self.lin_dst(x)
+        return self.lin_src(out) + self.lin_dst(x)
 
 
 @withCUDA
