@@ -14,7 +14,7 @@ def test_point_transformer_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     conv = PointTransformerConv(in_channels=16, out_channels=32)
     assert str(conv) == 'PointTransformerConv(16, 32)'
@@ -44,7 +44,7 @@ def test_point_transformer_conv():
 
     conv = PointTransformerConv((16, 8), 32)
     adj1 = adj1.sparse_resize((4, 2))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     out = conv((x1, x2), (pos1, pos2), edge_index)
     assert out.size() == (2, 32)

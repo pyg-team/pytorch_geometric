@@ -5,13 +5,13 @@ from torch_geometric.nn import MLP, PointGNNConv
 from torch_geometric.testing import is_full_test
 
 
-def test_pointgnn_conv():
+def test_point_gnn_conv():
     x = torch.randn(6, 8)
     pos = torch.randn(6, 3)
     edge_index = torch.tensor([[0, 1, 1, 1, 2, 5], [1, 2, 3, 4, 3, 4]])
     row, col = edge_index
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(6, 6))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     conv = PointGNNConv(
         mlp_h=MLP([8, 16, 3]),

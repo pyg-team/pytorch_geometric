@@ -11,7 +11,7 @@ def test_res_gated_graph_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     conv = ResGatedGraphConv(8, 32)
     assert str(conv) == 'ResGatedGraphConv(8, 32)'
@@ -30,7 +30,7 @@ def test_res_gated_graph_conv():
         assert torch.allclose(jit(x1, adj1.t()), out, atol=1e-6)
 
     adj1 = adj1.sparse_resize((4, 2))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
     conv = ResGatedGraphConv((8, 32), 32)
     assert str(conv) == 'ResGatedGraphConv((8, 32), 32)'
     out = conv((x1, x2), edge_index)

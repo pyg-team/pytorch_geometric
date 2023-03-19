@@ -18,7 +18,7 @@ def test_ppf_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     local_nn = Seq(Lin(16 + 4, 32), ReLU(), Lin(32, 32))
     global_nn = Seq(Lin(32, 32))
@@ -46,7 +46,7 @@ def test_ppf_conv():
         assert torch.allclose(jit(x1, pos1, n1, adj1.t()), out, atol=1e-6)
 
     adj1 = adj1.sparse_resize((4, 2))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
     out = conv(x1, (pos1, pos2), (n1, n2), edge_index)
     assert out.size() == (2, 32)
     assert torch.allclose(conv((x1, None), (pos1, pos2), (n1, n2), edge_index),
