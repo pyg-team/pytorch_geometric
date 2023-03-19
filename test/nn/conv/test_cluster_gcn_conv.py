@@ -10,7 +10,7 @@ def test_cluster_gcn_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     conv = ClusterGCNConv(16, 32, diag_lambda=1.)
     assert str(conv) == 'ClusterGCNConv(16, 32, diag_lambda=1.0)'

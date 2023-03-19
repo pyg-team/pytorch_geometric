@@ -1,4 +1,4 @@
-name: Minimal Installation
+name: Testing PyTorch 1.13
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -8,7 +8,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  import:
+  prev_pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,16 +35,15 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
         with:
-          full_install: false
+          torch-version: 1.13.0
+          torchvision-version: 0.14.0
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e .
+          pip install -e .[full,test]
 
-      - name: Test imports
+      - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          python -c "import torch_geometric"
-          python -c "import torch_geometric.contrib"
-          python -c "import torch_geometric.graphgym"
+          pytest
