@@ -11,7 +11,7 @@ def test_gatv2_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     conv = GATv2Conv(8, 32, heads=2)
     assert str(conv) == 'GATv2Conv(8, 32, heads=2)'
@@ -68,7 +68,7 @@ def test_gatv2_conv():
         assert conv._alpha is None
 
     adj1 = adj1.sparse_resize((4, 2))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
     out1 = conv((x1, x2), edge_index)
     assert out1.size() == (2, 64)
     assert torch.allclose(conv((x1, x2), edge_index), out1)

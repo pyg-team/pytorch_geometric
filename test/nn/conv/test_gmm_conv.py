@@ -24,7 +24,7 @@ def test_gmm_conv(separate_gaussians):
     assert torch.allclose(conv(x1, edge_index, value, size=(4, 4)), out)
     assert torch.allclose(conv(x1, adj1.t()), out)
     # t() expects a tensor with <= 2 sparse and 0 dense dimensions
-    assert torch.allclose(conv(x1, adj2.transpose(0, 1)), out)
+    assert torch.allclose(conv(x1, adj2.transpose(0, 1).coalesce()), out)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
@@ -47,9 +47,11 @@ def test_gmm_conv(separate_gaussians):
     assert out2.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), edge_index, value, (4, 2)), out1)
     assert torch.allclose(conv((x1, x2), adj1.t()), out1)
-    assert torch.allclose(conv((x1, x2), adj2.transpose(0, 1)), out1)
+    assert torch.allclose(conv((x1, x2),
+                               adj2.transpose(0, 1).coalesce()), out1)
     assert torch.allclose(conv((x1, None), adj1.t()), out2)
-    assert torch.allclose(conv((x1, None), adj2.transpose(0, 1)), out2)
+    assert torch.allclose(conv((x1, None),
+                               adj2.transpose(0, 1).coalesce()), out2)
 
     if is_full_test():
         t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
