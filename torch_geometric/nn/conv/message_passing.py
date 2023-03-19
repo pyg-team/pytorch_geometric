@@ -280,17 +280,22 @@ class MessagePassing(torch.nn.Module):
 
         if is_torch_sparse_tensor(edge_index):
             indices, values = to_edge_index(edge_index)
+            num_nodes = max(edge_index.size(0), edge_index.size(1))
+
             out['ptr'] = None  # TODO Get `rowptr` from CSR representation.
             out['adj_t'] = edge_index
             out['edge_index'] = None
             out['edge_index_i'] = get_value(kwargs, 'edge_index_i', indices[0])
             out['edge_index_j'] = get_value(kwargs, 'edge_index_j', indices[1])
             out['edge_weight'] = get_value(kwargs, 'edge_weight', values)
-            out['edge_attr'] = get_value(kwargs, 'edge_attr', None if values.dim() == 1 else values)
+            out['edge_attr'] = get_value(kwargs, 'edge_attr',
+                                         None if values.dim() == 1 else values)
             out['edge_type'] = get_value(kwargs, 'edge_type', values)
 
         elif isinstance(edge_index, Tensor):
             values = torch.ones(edge_index.size(1), device=edge_index.device)
+            num_nodes = int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
+
             out['ptr'] = None
             out['adj_t'] = None
             out['edge_index'] = edge_index
@@ -301,6 +306,8 @@ class MessagePassing(torch.nn.Module):
             out['edge_type'] = get_value(kwargs, 'edge_type', values)
 
         elif isinstance(edge_index, SparseTensor):
+            num_nodes = max(edge_index.size(0), edge_index.size(1))
+
             out['ptr'] = edge_index.storage.rowptr()
             out['adj_t'] = edge_index
             out['edge_index'] = None
@@ -309,6 +316,12 @@ class MessagePassing(torch.nn.Module):
             out['edge_weight'] = get_value(kwargs, 'edge_weight', edge_index.storage.value())
             out['edge_attr'] = get_value(kwargs, 'edge_attr', edge_index.storage.value())  # TODO This is an inconsistent behaviour wrt the other types of edge_indexes
             out['edge_type'] = get_value(kwargs, 'edge_type', edge_index.storage.value())
+
+        else:
+            raise ValueError(f'edge_index must by of type torch.Tensor, '
+                             f'torch.sparse.Tensor, or SparseTensor.')  # TODO Improve
+
+        out['num_nodes'] = get_value(kwargs, 'num_nodes', num_nodes)
 
         for arg in args:
             if arg not in self.special_args:
