@@ -30,7 +30,7 @@ class experimental_mode:
     r"""Context-manager that enables the experimental mode to test new but
     potentially unstable features.
 
-    code-block:: python
+    .. code-block:: python
 
         with torch_geometric.experimental_mode():
             out = model(data.x, data.edge_index)

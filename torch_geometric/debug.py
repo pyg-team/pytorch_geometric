@@ -14,7 +14,7 @@ class debug:
     r"""Context-manager that enables the debug mode to help track down errors
     and separate usage errors from real bugs.
 
-    code-block:: python
+    .. code-block:: python
 
         with torch_geometric.debug():
             out = model(data.x, data.edge_index)
