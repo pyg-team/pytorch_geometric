@@ -28,14 +28,14 @@ def test_gen_conv(aggr):
     assert out11.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, size=(4, 4)), out11)
     assert torch.allclose(conv(x1, adj1.t()), out11)
-    assert torch.allclose(conv(x1, adj3.t()), out11)
+    assert torch.allclose(conv(x1, adj3.t().coalesce()), out11)
 
     out12 = conv(x1, edge_index, value)
     assert out12.size() == (4, 32)
     assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out12)
     assert torch.allclose(conv(x1, adj2.t()), out12)
     # t() expects a tensor with <= 2 sparse and 0 dense dimensions
-    assert torch.allclose(conv(x1, adj4.transpose(1, 0)), out12)
+    assert torch.allclose(conv(x1, adj4.transpose(1, 0).coalesce()), out12)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
@@ -59,13 +59,14 @@ def test_gen_conv(aggr):
     assert out21.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), edge_index, size=(4, 2)), out21)
     assert torch.allclose(conv((x1, x2), adj1.t()), out21)
-    assert torch.allclose(conv((x1, x2), adj3.t()), out21)
+    assert torch.allclose(conv((x1, x2), adj3.t().coalesce()), out21)
 
     out22 = conv((x1, x2), edge_index, value)
     assert out22.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), edge_index, value, (4, 2)), out22)
     assert torch.allclose(conv((x1, x2), adj2.t()), out22)
-    assert torch.allclose(conv((x1, x2), adj4.transpose(1, 0)), out22)
+    assert torch.allclose(conv((x1, x2),
+                               adj4.transpose(1, 0).coalesce()), out22)
 
     if is_full_test():
         t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
@@ -95,9 +96,9 @@ def test_gen_conv(aggr):
     assert out2.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), edge_index, size=(4, 2)), out1)
     assert torch.allclose(conv((x1, x2), adj1.t()), out1)
-    assert torch.allclose(conv((x1, x2), adj2.t()), out1)
+    assert torch.allclose(conv((x1, x2), adj2.t().coalesce()), out1)
     assert torch.allclose(conv((x1, None), adj1.t()), out2)
-    assert torch.allclose(conv((x1, None), adj2.t()), out2)
+    assert torch.allclose(conv((x1, None), adj2.t().coalesce()), out2)
 
     value = torch.randn(row.size(0), 4)
     adj1 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 2))
@@ -110,9 +111,11 @@ def test_gen_conv(aggr):
     assert out2.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), edge_index, value, size=(4, 2)), out1)
     assert torch.allclose(conv((x1, x2), adj1.t()), out1)
-    assert torch.allclose(conv((x1, x2), adj2.transpose(1, 0)), out1)
+    assert torch.allclose(conv((x1, x2),
+                               adj2.transpose(1, 0).coalesce()), out1)
     assert torch.allclose(conv((x1, None), adj1.t()), out2)
-    assert torch.allclose(conv((x1, None), adj2.transpose(1, 0)), out2)
+    assert torch.allclose(conv((x1, None),
+                               adj2.transpose(1, 0).coalesce()), out2)
 
     if is_full_test():
         t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'

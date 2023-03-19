@@ -122,10 +122,13 @@ def to_torch_coo_tensor(
         edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
 
     size = tuple(size) + edge_attr.size()[1:]
-    out = torch.sparse_coo_tensor(edge_index, edge_attr, size,
-                                  device=edge_index.device)
-    out = out.coalesce()
-    return out
+
+    return torch.sparse_coo_tensor(
+        indices=edge_index,
+        values=edge_attr,
+        size=size,
+        device=edge_index.device,
+    ).coalesce()
 
 
 def to_torch_csr_tensor(
@@ -161,7 +164,43 @@ def to_torch_csr_tensor(
 
     """
     adj = to_torch_coo_tensor(edge_index, edge_attr, size)
-    return adj.to_sparse(layout=torch.sparse_csr)
+    return adj.to_sparse_csr()
+
+
+def to_torch_csc_tensor(
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    size: Optional[Union[int, Tuple[int, int]]] = None,
+) -> Tensor:
+    r"""Converts a sparse adjacency matrix defined by edge indices and edge
+    attributes to a :class:`torch.sparse.Tensor` with layout
+    `torch.sparse_csc`.
+    See :meth:`~torch_geometric.utils.to_edge_index` for the reverse operation.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        edge_attr (Tensor, optional): The edge attributes.
+            (default: :obj:`None`)
+        size (int or (int, int), optional): The size of the sparse matrix.
+            If given as an integer, will create a quadratic sparse matrix.
+            If set to :obj:`None`, will infer a quadratic sparse matrix based
+            on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
+
+    :rtype: :class:`torch.sparse.Tensor`
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 2, 3],
+        ...                            [1, 0, 2, 1, 3, 2]])
+        >>> to_torch_csc_tensor(edge_index)
+        tensor(ccol_indices=tensor([0, 1, 3, 5, 6]),
+               row_indices=tensor([1, 0, 2, 1, 3, 2]),
+               values=tensor([1., 1., 1., 1., 1., 1.]),
+               size=(4, 4), nnz=6, layout=torch.sparse_csc)
+
+    """
+    adj = to_torch_coo_tensor(edge_index, edge_attr, size)
+    return adj.to_sparse_csc()
 
 
 def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
@@ -187,20 +226,75 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
         row, col, value = adj.coo()
         if value is None:
             value = torch.ones(row.size(0), device=row.device)
-        return torch.stack([row, col], dim=0), value
+        return torch.stack([row, col], dim=0).long(), value
 
-    adj = adj.to_sparse(layout=torch.sparse_coo)
+    if adj.layout == torch.sparse_coo:
+        return adj.indices().detach().long(), adj.values()
 
-    if adj.requires_grad:
-        # Calling adj._values() will return a detached tensor.
-        # Use `adj.coalesce().values()` instead to track gradients.
-        adj = adj.coalesce()
-        return adj.indices(), adj.values()
+    if adj.layout == torch.sparse_csr:
+        row = ptr2index(adj.crow_indices().detach())
+        col = adj.col_indices().detach()
+        return torch.stack([row, col], dim=0).long(), adj.values()
 
-    return adj._indices(), adj._values()
+    if adj.layout == torch.sparse_csc:
+        col = ptr2index(adj.ccol_indices().detach())
+        row = adj.row_indices().detach()
+        return torch.stack([row, col], dim=0).long(), adj.values()
+
+    raise ValueError(f"Expected sparse tensor layout (got '{adj.layout}')")
 
 
 # Helper functions ############################################################
+
+
+def get_sparse_diag(
+    size: int,
+    fill_value: float = 1.0,
+    layout: Optional[int] = None,
+    dtype: Optional[torch.dtype] = None,
+    device: Optional[torch.device] = None,
+) -> Tensor:
+    return torch.sparse.spdiags(
+        torch.full((1, size), fill_value, dtype=dtype, device=device),
+        offsets=torch.zeros(1, dtype=torch.long, device=device),
+        shape=(size, size),
+        layout=layout,
+    )
+
+
+def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
+    size = adj.size()
+
+    if value.dim() > 1:
+        size = size + value.size()[1:]
+
+    if adj.layout == torch.sparse_coo:
+        return torch.sparse_coo_tensor(
+            indices=adj.indices(),
+            values=value,
+            size=size,
+            device=value.device,
+        ).coalesce()
+
+    if adj.layout == torch.sparse_csr:
+        return torch.sparse_csr_tensor(
+            crow_indices=adj.crow_indices(),
+            col_indices=adj.col_indices(),
+            values=value,
+            size=size,
+            device=value.device,
+        )
+
+    if adj.layout == torch.sparse_csc:
+        return torch.sparse_csc_tensor(
+            ccol_indices=adj.ccol_indices(),
+            row_indices=adj.row_indices(),
+            values=value,
+            size=size,
+            device=value.device,
+        )
+
+    raise ValueError(f"Expected sparse tensor layout (got '{adj.layout}')")
 
 
 def ptr2index(ptr: Tensor) -> Tensor:

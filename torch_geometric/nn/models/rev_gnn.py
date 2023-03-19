@@ -6,6 +6,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.typing import Adj
 
 
@@ -57,7 +58,10 @@ class InvertibleFunction(torch.autograd.Function):
         detached_outputs = tuple(element.detach_() for element in outputs)
 
         # Clear memory of node features:
-        inputs[0].untyped_storage().resize_(0)
+        if torch_geometric.typing.WITH_PT2:
+            inputs[0].untyped_storage().resize_(0)
+        else:  # pragma: no cover
+            inputs[0].storage().resize_(0)
 
         # Store these tensor nodes for backward passes:
         ctx.inputs = [inputs] * num_bwd_passes
@@ -81,14 +85,21 @@ class InvertibleFunction(torch.autograd.Function):
             inputs_inverted = ctx.fn_inverse(*(outputs + inputs[1:]))
             if len(ctx.outputs) == 0:  # Clear memory from outputs:
                 for element in outputs:
-                    element.untyped_storage().resize_(0)
+                    if torch_geometric.typing.WITH_PT2:
+                        element.untyped_storage().resize_(0)
+                    else:  # pragma: no cover
+                        element.storage().resize_(0)
 
             if not isinstance(inputs_inverted, tuple):
                 inputs_inverted = (inputs_inverted, )
 
             for elem_orig, elem_inv in zip(inputs, inputs_inverted):
-                elem_orig.untyped_storage().resize_(
-                    int(np.prod(elem_orig.size())) * elem_orig.element_size())
+                if torch_geometric.typing.WITH_PT2:
+                    elem_orig.untyped_storage().resize_(
+                        int(np.prod(elem_orig.size())) *
+                        elem_orig.element_size())
+                else:  # pragma: no cover
+                    elem_orig.storage().resize_(int(np.prod(elem_orig.size())))
                 elem_orig.set_(elem_inv)
 
         # Compute gradients with grad enabled:
