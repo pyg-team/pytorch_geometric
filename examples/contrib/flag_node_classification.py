@@ -5,9 +5,9 @@ import torch.nn.functional as F
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from tqdm import tqdm
 
+from torch_geometric.contrib.flag.flag import FLAG
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn import SAGEConv
-from torch_geometric.contrib.flag.flag import FLAG
 
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root)
@@ -17,18 +17,12 @@ data = dataset[0]
 
 train_idx = split_idx['train']
 
-# TODO: change this back 
 train_loader = NeighborSampler(data.edge_index, node_idx=train_idx,
                                sizes=[15, 10, 5], batch_size=1024,
                                shuffle=True, num_workers=12)
 subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
                                   batch_size=4096, shuffle=False,
                                   num_workers=12)
-# train_loader = NeighborSampler(data.edge_index, node_idx=train_idx,
-#                                sizes=[15, 10, 5], batch_size=1024,
-#                                shuffle=True)
-# subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
-#                                   batch_size=4096, shuffle=False)
 
 
 class SAGE(torch.nn.Module):
@@ -93,8 +87,6 @@ class SAGE(torch.nn.Module):
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device(
     'cpu')
-print(f"Using device {device}")
-
 model = SAGE(dataset.num_features, 256, dataset.num_classes, num_layers=3)
 model = model.to(device)
 
@@ -115,59 +107,22 @@ def train(epoch):
 
     total_loss = 0
     for batch_size, n_id, adjs in train_loader:
-
-        print("starting batch")
-        loss, _ = flag.forward(x[n_id], adjs, torch.unsqueeze(y[n_id[:batch_size]], 1), torch.tensor([i for i in range(batch_size)], device=device), step_size_labeled, step_size_unlabeled, n_ascent_steps=M)
-
-        print(loss)
-
-        # # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
-        # adjs = [adj.to(device) for adj in adjs]
-
-        # optimizer.zero_grad()
-        # out = model(x[n_id], adjs)
-        # loss = F.nll_loss(out, y[n_id[:batch_size]])
-
-
-        # loss.backward()
-        # optimizer.step()
-
-        total_loss += float(loss)
-        pbar.update(batch_size)
-
-    pbar.close()
-
-    loss = total_loss / len(train_loader)
-
-    return loss
-
-
-def train_normal(epoch):
-    model.train()
-
-    pbar = tqdm(total=train_idx.size(0))
-    pbar.set_description(f'Epoch {epoch:02d}')
-
-    total_loss = 0
-    for batch_size, n_id, adjs in train_loader:
-        # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
         adjs = [adj.to(device) for adj in adjs]
 
-        optimizer.zero_grad()
-        out = model(x[n_id], adjs)
-        loss = F.nll_loss(out, y[n_id[:batch_size]])
-        loss.backward()
-        optimizer.step()
-
+        # Since we're passing in x for the whole training set but only using
+        # labels for the first `batch_size` nodes in `n_id`, we set flag's
+        # `train_idx` argument to
+        # `torch.tensor([i for i in range(batch_size)]`
+        loss, _ = flag(
+            x[n_id], adjs, torch.unsqueeze(y[n_id[:batch_size]], 1),
+            torch.tensor([i for i in range(batch_size)], device=device),
+            step_size_labeled, step_size_unlabeled, n_ascent_steps=M)
         total_loss += float(loss)
         pbar.update(batch_size)
 
     pbar.close()
-
     loss = total_loss / len(train_loader)
-
     return loss
-
 
 
 @torch.no_grad()
@@ -194,8 +149,6 @@ def test():
 
     return train_acc, val_acc, test_acc
 
-
-## Test acc for 1 iteration: 0.7868
 
 test_accs = []
 for run in range(1, 11):
