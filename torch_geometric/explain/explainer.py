@@ -222,14 +222,13 @@ class Explainer:
                 explanation[key] = arg
 
         elif isinstance(explanation, HeteroExplanation):
-            assert isinstance(x, dict)
             # TODO Add `explanation._model_args`
-            for node_type, value in x.items():
-                explanation[node_type].x = value
+
+            assert isinstance(x, dict)
+            explanation.set_value_dict('x', x)
 
             assert isinstance(edge_index, dict)
-            for edge_type, value in edge_index.items():
-                explanation[edge_type].edge_index = value
+            explanation.set_value_dict('edge_index', edge_index)
 
             for key, arg in kwargs.items():  # Add remaining `kwargs`:
                 if isinstance(arg, dict):
@@ -237,8 +236,7 @@ class Explainer:
                     # while we only want to assign the `{attr_name}` to the
                     # `HeteroExplanation` object:
                     key = key[:-5] if key.endswith('_dict') else key
-                    for type_name, value in arg.items():
-                        explanation[type_name][key] = value
+                    explanation.set_value_dict(key, arg)
                 else:
                     explanation[key] = arg
 
