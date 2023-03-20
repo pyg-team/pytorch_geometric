@@ -17,13 +17,13 @@ def test_le_conv():
     assert str(conv) == 'LEConv(16, 32)'
     out = conv(x, edge_index)
     assert out.size() == (num_nodes, out_channels)
-    assert torch.allclose(conv(x, adj1.t()), out, atol=1e-6)
-    assert torch.allclose(conv(x, adj2.t()), out, atol=1e-6)
+    assert torch.allclose(conv(x, adj1.t()), out)
+    assert torch.allclose(conv(x, adj2.t()), out)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        torch.allclose(jit(x, edge_index), out, atol=1e-6)
+        torch.allclose(jit(x, edge_index), out)
 
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))

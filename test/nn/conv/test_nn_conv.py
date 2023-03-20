@@ -73,5 +73,5 @@ def test_nn_conv():
 
         t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj1.t()), out1, atol=1e-6)
-        assert torch.allclose(jit((x1, None), adj1.t()), out2, atol=1e-6)
+        assert torch.allclose(jit((x1, x2), adj1.t()), out1)
+        assert torch.allclose(jit((x1, None), adj1.t()), out2)

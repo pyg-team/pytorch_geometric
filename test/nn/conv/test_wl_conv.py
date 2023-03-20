@@ -17,11 +17,11 @@ def test_wl_conv():
 
     out = conv(x1, edge_index)
     assert out.tolist() == [0, 1, 1, 0]
-    assert torch.allclose(conv(x2, edge_index), out)
-    assert torch.allclose(conv(x1, adj1.t()), out)
-    assert torch.allclose(conv(x1, adj2.t()), out)
-    assert torch.allclose(conv(x2, adj1.t()), out)
-    assert torch.allclose(conv(x2, adj2.t()), out)
+    assert torch.equal(conv(x2, edge_index), out)
+    assert torch.equal(conv(x1, adj1.t()), out)
+    assert torch.equal(conv(x1, adj2.t()), out)
+    assert torch.equal(conv(x2, adj1.t()), out)
+    assert torch.equal(conv(x2, adj2.t()), out)
 
     assert conv.histogram(out).tolist() == [[2, 2]]
     assert torch.allclose(conv.histogram(out, norm=True),
