@@ -518,7 +518,8 @@ class MessagePassing(torch.nn.Module):
                 features for each edge in the graph.
         """
         if edge_index.is_cuda and edge_index.numel() == 0:
-            return torch.zeros(0, device=edge_index.device) # return empty source
+            return torch.zeros(0,
+                               device=edge_index.device)  # return empty source
         for hook in self._edge_update_forward_pre_hooks.values():
             res = hook(self, (edge_index, kwargs))
             if res is not None:
