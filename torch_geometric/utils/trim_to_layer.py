@@ -103,6 +103,13 @@ class TrimToLayer(torch.nn.Module):
         edge_attr: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
 
+        if (num_sampled_nodes_per_hop is None
+                and num_sampled_edges_per_hop is not None):
+            raise ValueError("'num_sampled_nodes_per_hop' needs to be given")
+        if (num_sampled_edges_per_hop is None
+                and num_sampled_nodes_per_hop is not None):
+            raise ValueError("'num_sampled_edges_per_hop' needs to be given")
+
         if num_sampled_nodes_per_hop is None:
             return x, edge_index, edge_attr
         if num_sampled_edges_per_hop is None:

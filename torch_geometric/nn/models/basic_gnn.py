@@ -141,7 +141,9 @@ class BasicGNN(torch.nn.Module):
                 in_channels = hidden_channels
             self.lin = Linear(in_channels, self.out_channels)
 
-        self.trim = TrimToLayer()
+        # We define `trim_to_layer` functionality as a module such that we can
+        # still use `to_hetero` on-top.
+        self._trim = TrimToLayer()
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
@@ -187,12 +189,6 @@ class BasicGNN(torch.nn.Module):
                 scenarios to only operate on minimal-sized representations.
                 (default: :obj:`None`)
         """
-        if (num_sampled_edges_per_hop is not None
-                and num_sampled_nodes_per_hop is None):
-            raise ValueError("'num_sampled_nodes_per_hop' needs to be given")
-        if (num_sampled_nodes_per_hop is not None
-                and num_sampled_edges_per_hop is None):
-            raise ValueError("'num_sampled_edges_per_hop' needs to be given")
         if (num_sampled_nodes_per_hop is not None
                 and isinstance(edge_weight, Tensor)
                 and isinstance(edge_attr, Tensor)):
@@ -202,8 +198,8 @@ class BasicGNN(torch.nn.Module):
 
         xs: List[Tensor] = []
         for i in range(self.num_layers):
-            if num_sampled_nodes_per_hop is not None:
-                x, edge_index, value = self.trim(
+            if isinstance(num_sampled_nodes_per_hop, (list, tuple)):
+                x, edge_index, value = self._trim(
                     i,
                     num_sampled_nodes_per_hop,
                     num_sampled_edges_per_hop,
