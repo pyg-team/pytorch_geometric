@@ -517,8 +517,9 @@ class MessagePassing(torch.nn.Module):
             **kwargs: Any additional data which is needed to compute or update
                 features for each edge in the graph.
         """
-        if edge_index.is_cuda and edge_index.numel() == 0:
+        if edge_index.is_cuda and edge_index.numel() == 0 and "alpha" in kwargs.keys():
             return kwargs["alpha"][0][edge_index[0]]
+
         for hook in self._edge_update_forward_pre_hooks.values():
             res = hook(self, (edge_index, kwargs))
             if res is not None:
