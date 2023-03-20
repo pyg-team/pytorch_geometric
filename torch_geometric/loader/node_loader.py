@@ -166,14 +166,9 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                 if 'e_id' not in data[key]:
                     data[key].e_id = edge
 
-            for key, batch in (out.batch or {}).items():
-                data[key].batch = batch
-
-            for key, value in (out.num_sampled_nodes or {}).items():
-                data[key].num_sampled_nodes = value
-
-            for key, value in (out.num_sampled_edges or {}).items():
-                data[key].num_sampled_edges = value
+            data.set_value_dict('batch', out.batch)
+            data.set_value_dict('num_sampled_nodes', out.num_sampled_nodes)
+            data.set_value_dict('num_sampled_edges', out.num_sampled_edges)
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]

@@ -298,7 +298,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
            print(data['paper'].x)
         """
-        for k, v in value_dict.items():
+        for k, v in (value_dict or {}).items():
             self[k][key] = v
         return self
 
