@@ -1,7 +1,6 @@
 import os
 import os.path as osp
 import warnings
-from itertools import product
 
 import pytest
 import torch
@@ -21,8 +20,11 @@ norms = [None, 'batch_norm', 'layer_norm']
 jks = [None, 'last', 'cat', 'max', 'lstm']
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_gcn(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -34,8 +36,11 @@ def test_gcn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_graph_sage(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -47,8 +52,11 @@ def test_graph_sage(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_gin(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -60,8 +68,11 @@ def test_gin(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_gat(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -79,8 +90,11 @@ def test_gat(out_dim, dropout, act, norm, jk):
         assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_pna(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -98,8 +112,11 @@ def test_pna(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_edge_cnn(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -111,7 +128,8 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,jk', product(out_dims, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('jk', jks)
 def test_one_layer_gnn(out_dim, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])

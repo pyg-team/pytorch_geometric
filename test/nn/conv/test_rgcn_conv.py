@@ -1,5 +1,3 @@
-from itertools import product
-
 import pytest
 import torch
 from torch_sparse import SparseTensor
@@ -41,7 +39,8 @@ def test_rgcn_conv_equality(conf):
         assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@pytest.mark.parametrize('cls,conf', product(classes, confs))
+@pytest.mark.parametrize('cls', classes)
+@pytest.mark.parametrize('conf', confs)
 def test_rgcn_conv(cls, conf):
     num_bases, num_blocks = conf
 
