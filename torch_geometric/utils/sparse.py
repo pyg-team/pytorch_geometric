@@ -294,7 +294,7 @@ def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
             device=value.device,
         )
 
-    raise ValueError(f"Expected sparse tensor layout (got '{adj.layout}')")
+    raise ValueError(f"Unexpected sparse tensor layout (got '{adj.layout}')")
 
 
 def ptr2index(ptr: Tensor) -> Tensor:
