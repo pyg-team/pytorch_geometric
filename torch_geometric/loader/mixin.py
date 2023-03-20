@@ -75,22 +75,23 @@ class AffinityMixin:
     r"""A context manager to enable CPU affinity for data loader workers
     (only used when running on CPU devices).
 
-    Affinitization places data loader workers threads on specific CPU
-    cores. In effect, it allows for more efficient local memory allocation
-    and reduces remote memory calls.
-    Every time a process or thread moves from one core to another,
-    registers and caches need to be flushed and reloaded. This can become
-    very costly if it happens often, and our threads may also no longer be
-    close to their data, or be able to share data in a cache.
+    Affinitization places data loader workers threads on specific CPU cores.
+    In effect, it allows for more efficient local memory allocation and reduces
+    remote memory calls.
+    Every time a process or thread moves from one core to another, registers
+    and caches need to be flushed and reloaded.
+    This can become very costly if it happens often, and our threads may also
+    no longer be close to their data, or be able to share data in a cache.
+
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/advanced/
+    cpu_affinity.html>`__ for the accompanying tutorial.
 
     .. warning::
 
-        To correctly affinitize compute threads
-        (*i.e.* with OMP), please make sure that you exclude
-        :obj:`loader_cores` from the list of cores available for the main process.
+        To correctly affinitize compute threads (*i.e.* with OMP), please make
+        sure that you exclude :obj:`loader_cores` from the list of cores
+        available for the main process.
         This will cause core oversubsription and exacerbate performance.
-        For the instructions on CPU affinity you can refer to the manual page:
-        https://pytorch-geometric.readthedocs.io/en/latest/advanced/cpu_affinity.html
 
     .. code-block:: python
 
