@@ -5,6 +5,7 @@ from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import reset
 from torch_geometric.typing import (
     Adj,
     OptPairTensor,
@@ -13,8 +14,6 @@ from torch_geometric.typing import (
     SparseTensor,
 )
 from torch_geometric.utils import spmm
-
-from ..inits import reset
 
 
 class GINConv(MessagePassing):

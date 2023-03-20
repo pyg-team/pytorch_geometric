@@ -22,6 +22,18 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
+from torch_geometric.nn.conv.utils.inspector import (
+    Inspector,
+    func_body_repr,
+    func_header_repr,
+)
+from torch_geometric.nn.conv.utils.jit import class_from_module_repr
+from torch_geometric.nn.conv.utils.typing import (
+    parse_types,
+    resolve_types,
+    sanitize,
+    split_types_repr,
+)
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
@@ -30,15 +42,6 @@ from torch_geometric.utils import (
     to_edge_index,
 )
 from torch_geometric.utils.sparse import ptr2index
-
-from .utils.inspector import Inspector, func_body_repr, func_header_repr
-from .utils.jit import class_from_module_repr
-from .utils.typing import (
-    parse_types,
-    resolve_types,
-    sanitize,
-    split_types_repr,
-)
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
 
