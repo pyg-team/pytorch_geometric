@@ -33,6 +33,8 @@ jobs:
       - name: Setup packages
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
+        with:
+          full_install: false
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
