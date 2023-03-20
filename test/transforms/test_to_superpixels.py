@@ -1,7 +1,4 @@
 import os.path as osp
-import random
-import shutil
-import sys
 
 import torch
 
@@ -18,7 +15,7 @@ resources = [
 
 
 @withPackage('torchvision', 'skimage')
-def test_to_superpixels():
+def test_to_superpixels(tmp_path):
     import torchvision.transforms as T
     from torchvision.datasets.mnist import (
         MNIST,
@@ -26,16 +23,14 @@ def test_to_superpixels():
         read_label_file,
     )
 
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-
-    raw_folder = osp.join(root, 'MNIST', 'raw')
-    processed_folder = osp.join(root, 'MNIST', 'processed')
+    raw_folder = osp.join(tmp_path, 'MNIST', 'raw')
+    processed_folder = osp.join(tmp_path, 'MNIST', 'processed')
 
     makedirs(raw_folder)
     makedirs(processed_folder)
     for resource in resources:
         path = download_url(resource, raw_folder)
-        extract_gz(path, osp.join(root, raw_folder))
+        extract_gz(path, osp.join(tmp_path, raw_folder))
 
     test_set = (
         read_image_file(osp.join(raw_folder, 't10k-images-idx3-ubyte')),
@@ -45,7 +40,7 @@ def test_to_superpixels():
     torch.save(test_set, osp.join(processed_folder, 'training.pt'))
     torch.save(test_set, osp.join(processed_folder, 'test.pt'))
 
-    dataset = MNIST(root, download=False)
+    dataset = MNIST(tmp_path, download=False)
 
     dataset.transform = T.Compose([T.ToTensor(), ToSLIC()])
 
@@ -92,5 +87,3 @@ def test_to_superpixels():
         assert batch.img.size() == (2, 1, 28, 28)
         assert y.tolist() == [7, 2]
         break
-
-    shutil.rmtree(root)

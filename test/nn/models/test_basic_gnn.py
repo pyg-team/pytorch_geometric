@@ -7,10 +7,11 @@ import pytest
 import torch
 import torch.nn.functional as F
 
+import torch_geometric.typing
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
-from torch_geometric.testing import onlyPython, withPackage
+from torch_geometric.testing import withPackage
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
@@ -139,8 +140,9 @@ def test_basic_gnn_inference(get_dataset, jk):
     assert 'n_id' not in data
 
 
-@onlyPython('3.7', '3.8', '3.9')  # Packaging does not support Python 3.10 yet.
 def test_packaging():
+    warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
+
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
 
     x = torch.randn(3, 8)
@@ -168,12 +170,12 @@ def test_packaging():
 
 
 @withPackage('onnx', 'onnxruntime')
-def test_onnx():
+def test_onnx(tmp_path, capfd):
     import onnx
     import onnxruntime as ort
 
-    warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
     warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
+    warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
 
     class MyModel(torch.nn.Module):
         def __init__(self):
@@ -192,14 +194,18 @@ def test_onnx():
     expected = model(x, edge_index)
     assert expected.size() == (3, 16)
 
-    torch.onnx.export(model, (x, edge_index), 'model.onnx',
+    path = osp.join(tmp_path, 'model.onnx')
+    torch.onnx.export(model, (x, edge_index), path,
                       input_names=('x', 'edge_index'), opset_version=16)
+    if torch_geometric.typing.WITH_PT2:
+        out, _ = capfd.readouterr()
+        assert '0 NONE 0 NOTE 0 WARNING 0 ERROR' in out
 
-    model = onnx.load('model.onnx')
+    model = onnx.load(path)
     onnx.checker.check_model(model)
 
     providers = ['CPUExecutionProvider']
-    ort_session = ort.InferenceSession('model.onnx', providers=providers)
+    ort_session = ort.InferenceSession(path, providers=providers)
 
     out = ort_session.run(None, {
         'x': x.numpy(),
@@ -207,5 +213,3 @@ def test_onnx():
     })[0]
     out = torch.from_numpy(out)
     assert torch.allclose(out, expected, atol=1e-6)
-
-    os.remove('model.onnx')

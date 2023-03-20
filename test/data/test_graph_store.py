@@ -3,13 +3,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
-from torch_geometric.testing import MyGraphStore
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return row, col
+from torch_geometric.testing import MyGraphStore, get_random_edge_index
 
 
 def test_graph_store():
@@ -45,7 +39,7 @@ def test_graph_store():
 def test_graph_store_conversion():
     graph_store = MyGraphStore()
 
-    coo = (row, col) = get_edge_index(100, 100, 300)
+    coo = (row, col) = get_random_edge_index(100, 100, 300)
     adj = SparseTensor(row=row, col=col, sparse_sizes=(100, 100))
     csr, csc = adj.csr()[:2], adj.csc()[:2][::-1]
 

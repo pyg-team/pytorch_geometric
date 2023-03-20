@@ -1,12 +1,20 @@
 import argparse
 import ast
+from collections import defaultdict
 from contextlib import nullcontext
 
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-from benchmark.utils import emit_itt, get_dataset, get_model, get_split_masks
+from benchmark.utils import (
+    emit_itt,
+    get_dataset,
+    get_model,
+    get_split_masks,
+    save_benchmark_data,
+    write_to_csv,
+)
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -100,6 +108,7 @@ def test(model, loader, device, hetero, progress_bar=True, desc="") -> None:
 
 
 def run(args: argparse.ArgumentParser):
+    csv_data = defaultdict(list)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # If we use a custom number of steps, then we need to use RandomSampler,
@@ -159,14 +168,28 @@ def run(args: argparse.ArgumentParser):
                         'shuffle': shuffle,
                         'num_workers': args.num_workers,
                     }
-                    subgraph_loader = NeighborLoader(data, input_nodes=mask,
-                                                     sampler=sampler, **kwargs)
+                    subgraph_loader = NeighborLoader(
+                        data,
+                        input_nodes=mask,
+                        sampler=sampler,
+                        filter_per_worker=args.filter_per_worker,
+                        **kwargs,
+                    )
                     if args.evaluate:
-                        val_loader = NeighborLoader(data, input_nodes=val_mask,
-                                                    sampler=None, **kwargs)
-                        test_loader = NeighborLoader(data,
-                                                     input_nodes=test_mask,
-                                                     sampler=None, **kwargs)
+                        val_loader = NeighborLoader(
+                            data,
+                            input_nodes=val_mask,
+                            sampler=None,
+                            filter_per_worker=args.filter_per_worker,
+                            **kwargs,
+                        )
+                        test_loader = NeighborLoader(
+                            data,
+                            input_nodes=test_mask,
+                            sampler=None,
+                            filter_per_worker=args.filter_per_worker,
+                            **kwargs,
+                        )
                     for hidden_channels in args.num_hidden_channels:
                         print('----------------------------------------------')
                         print(f'Batch size={batch_size}, '
@@ -267,6 +290,14 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
+                        save_benchmark_data(csv_data, batch_size, layers,
+                                            num_neighbors, hidden_channels,
+                                            total_time, model_name,
+                                            dataset_name,
+                                            args.use_sparse_tensor)
+    if args.write_csv:
+        write_to_csv(csv_data, training=True)
+
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN training benchmark')
@@ -302,8 +333,11 @@ if __name__ == '__main__':
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
+    add('--filter-per-worker', action='store_true',
+        help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
+    add('--write-csv', action='store_true', help='Write benchmark data to csv')
     add('--trim', action='store_true',
         help="Use trim_to_layer utils function optimization")
     args = argparser.parse_args()

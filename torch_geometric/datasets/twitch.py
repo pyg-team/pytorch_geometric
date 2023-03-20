@@ -28,6 +28,47 @@ class Twitch(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - DE
+          - 9,498
+          - 315,774
+          - 128
+          - 2
+        * - EN
+          - 7,126
+          - 77,774
+          - 128
+          - 2
+        * - ES
+          - 4,648
+          - 123,412
+          - 128
+          - 2
+        * - FR
+          - 6,551
+          - 231,883
+          - 128
+          - 2
+        * - PT
+          - 1,912
+          - 64,510
+          - 128
+          - 2
+        * - RU
+          - 4,385
+          - 78,993
+          - 128
+          - 2
     """
 
     url = 'https://graphmining.ai/datasets/ptg/twitch'

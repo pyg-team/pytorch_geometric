@@ -94,12 +94,14 @@ class DegreeScalerAggregation(Aggregation):
             elif scaler == 'amplification':
                 out_scaler = out * (torch.log(deg + 1) / self.avg_deg_log)
             elif scaler == 'attenuation':
-                out_scaler = out * (self.avg_deg_log / torch.log(deg + 1))
+                # Clamp minimum degree to one to avoid dividing by zero:
+                out_scaler = out * (self.avg_deg_log /
+                                    torch.log(deg.clamp(min=1) + 1))
             elif scaler == 'linear':
                 out_scaler = out * (deg / self.avg_deg_lin)
             elif scaler == 'inverse_linear':
-                # Clamps minimum degree into one to avoid dividing by zero
-                out_scaler = out * (self.avg_deg_lin / deg.clamp(1))
+                # Clamp minimum degree to one to avoid dividing by zero:
+                out_scaler = out * (self.avg_deg_lin / deg.clamp(min=1))
             else:
                 raise ValueError(f"Unknown scaler '{scaler}'")
             outs.append(out_scaler)

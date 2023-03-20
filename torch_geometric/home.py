@@ -9,7 +9,7 @@ _home_dir: Optional[str] = None
 
 
 def get_home_dir() -> str:
-    r"""Get the cache directory used for storing all PyG-related data.
+    r"""Get the cache directory used for storing all :pyg:`PyG`-related data.
 
     If :meth:`set_home_dir` is not called, the path is given by the environment
     variable :obj:`$PYG_HOME` which defaults to :obj:`"~/.cache/pyg"`.
@@ -23,7 +23,7 @@ def get_home_dir() -> str:
 
 
 def set_home_dir(path: str):
-    r"""Set the cache directory used for storing all PyG-related data.
+    r"""Set the cache directory used for storing all :pyg:`PyG`-related data.
 
     Args:
         path (str): The path to a local folder.
