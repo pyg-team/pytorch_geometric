@@ -90,8 +90,6 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
                 on-the-fly, leading to slightly worse performance.
                 (default: :obj:`None`)
         """
-        assert x.size(0) == csc[
-            -1], "Size mismatch between node feature tensor and CuGraph graph."
         graph = self.get_typed_cugraph(csc, edge_type, self.num_relations,
                                        max_num_neighbors)
 

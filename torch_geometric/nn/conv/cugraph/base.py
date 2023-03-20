@@ -36,7 +36,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
     @staticmethod
     def to_csc(
         edge_index: Tensor,
-        size: Tuple[int, int] = None,
+        size: Optional[Tuple[int, int]] = None,
         edge_attr: Optional[Tensor] = None,
     ) -> Union[Tuple[Tensor, Tensor, int], Tuple[Tuple[Tensor, Tensor, int],
                                                  Tensor]]:
@@ -51,13 +51,11 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
                 (default: :obj:`None`)
         """
         if size is None:
-            warnings.warn(
-                "Inferring graph size from 'edge_index' causes a "
-                "decline in performance and does not work for "
-                "bipartite graphs. To suppress this warning, pass in "
-                f"'size' explicitly in {__name__}.to_csc().")
-            max_id = edge_index.max().item()
-            num_src_nodes = num_dst_nodes = max_id + 1
+            warnings.warn(f"Inferring the graph size from 'edge_index' causes "
+                          f"a decline in performance and does not work for "
+                          f"bipartite graphs. To suppress this warning, pass "
+                          f"the 'size' explicitly in '{__name__}.to_csc()'.")
+            num_src_nodes = num_dst_nodes = int(edge_index.max()) + 1
         else:
             num_src_nodes, num_dst_nodes = size
 

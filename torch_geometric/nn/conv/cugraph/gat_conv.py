@@ -64,8 +64,6 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         csc: Tuple[Tensor, Tensor, int],
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
-        assert x.size(0) == csc[
-            -1], "Size mismatch between node feature tensor and CuGraph graph."
         graph = self.get_cugraph(csc, max_num_neighbors)
 
         x = self.lin(x)
