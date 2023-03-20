@@ -4,6 +4,7 @@ from torch_sparse import SparseTensor
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import HGTConv
 from torch_geometric.profile import benchmark
+from torch_geometric.utils import coalesce
 
 
 def test_hgt_conv_same_dimensions():
@@ -12,21 +13,25 @@ def test_hgt_conv_same_dimensions():
         'paper': torch.randn(6, 16),
     }
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    row = torch.randint(0, 4, (20, ), dtype=torch.long)
+    col = torch.randint(0, 6, (20, ), dtype=torch.long)
+    edge_index = coalesce(torch.stack([row, col], dim=0))
 
     edge_index_dict = {
-        ('author', 'writes', 'paper'): torch.stack([index1, index2]),
-        ('paper', 'written_by', 'author'): torch.stack([index2, index1]),
+        ('author', 'writes', 'paper'): edge_index,
+        ('paper', 'written_by', 'author'): edge_index.flip([0]),
     }
 
-    adj_t_dict = {}
+    adj_t_dict1 = {}
+    adj_t_dict2 = {}
     for edge_type, edge_index in edge_index_dict.items():
         src_type, _, dst_type = edge_type
-        adj_t_dict[edge_type] = SparseTensor(
+        adj_t_dict1[edge_type] = SparseTensor(
             row=edge_index[0], col=edge_index[1],
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
+        adj_t_dict2[edge_type] = adj_t_dict1[
+            edge_type].to_torch_sparse_csr_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
@@ -36,11 +41,16 @@ def test_hgt_conv_same_dimensions():
     assert len(out_dict1) == 2
     assert out_dict1['author'].size() == (4, 16)
     assert out_dict1['paper'].size() == (6, 16)
-    out_dict2 = conv(x_dict, adj_t_dict)
+
+    out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
+
+    out_dict3 = conv(x_dict, adj_t_dict2)
+    assert len(out_dict1) == len(out_dict3)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
     # TODO: Test JIT functionality. We need to wait on this one until PyTorch
     # allows indexing `ParameterDict` mappings :(
@@ -52,21 +62,25 @@ def test_hgt_conv_different_dimensions():
         'paper': torch.randn(6, 32),
     }
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    row = torch.randint(0, 4, (20, ), dtype=torch.long)
+    col = torch.randint(0, 6, (20, ), dtype=torch.long)
+    edge_index = coalesce(torch.stack([row, col], dim=0))
 
     edge_index_dict = {
-        ('author', 'writes', 'paper'): torch.stack([index1, index2]),
-        ('paper', 'written_by', 'author'): torch.stack([index2, index1]),
+        ('author', 'writes', 'paper'): edge_index,
+        ('paper', 'written_by', 'author'): edge_index.flip([0]),
     }
 
-    adj_t_dict = {}
+    adj_t_dict1 = {}
+    adj_t_dict2 = {}
     for edge_type, edge_index in edge_index_dict.items():
         src_type, _, dst_type = edge_type
-        adj_t_dict[edge_type] = SparseTensor(
+        adj_t_dict1[edge_type] = SparseTensor(
             row=edge_index[0], col=edge_index[1],
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
+        adj_t_dict2[edge_type] = adj_t_dict1[
+            edge_type].to_torch_sparse_csr_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
@@ -79,11 +93,16 @@ def test_hgt_conv_different_dimensions():
     assert len(out_dict1) == 2
     assert out_dict1['author'].size() == (4, 32)
     assert out_dict1['paper'].size() == (6, 32)
-    out_dict2 = conv(x_dict, adj_t_dict)
+
+    out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
+
+    out_dict3 = conv(x_dict, adj_t_dict2)
+    assert len(out_dict1) == len(out_dict3)
     for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
 
 def test_hgt_conv_lazy():
@@ -92,21 +111,25 @@ def test_hgt_conv_lazy():
         'paper': torch.randn(6, 32),
     }
 
-    index1 = torch.randint(0, 4, (20, ), dtype=torch.long)
-    index2 = torch.randint(0, 6, (20, ), dtype=torch.long)
+    row = torch.randint(0, 4, (20, ), dtype=torch.long)
+    col = torch.randint(0, 6, (20, ), dtype=torch.long)
+    edge_index = coalesce(torch.stack([row, col], dim=0))
 
     edge_index_dict = {
-        ('author', 'writes', 'paper'): torch.stack([index1, index2]),
-        ('paper', 'written_by', 'author'): torch.stack([index2, index1]),
+        ('author', 'writes', 'paper'): edge_index,
+        ('paper', 'written_by', 'author'): edge_index.flip([0]),
     }
 
-    adj_t_dict = {}
+    adj_t_dict1 = {}
+    adj_t_dict2 = {}
     for edge_type, edge_index in edge_index_dict.items():
         src_type, _, dst_type = edge_type
-        adj_t_dict[edge_type] = SparseTensor(
+        adj_t_dict1[edge_type] = SparseTensor(
             row=edge_index[0], col=edge_index[1],
             sparse_sizes=(x_dict[src_type].size(0),
                           x_dict[dst_type].size(0))).t()
+        adj_t_dict2[edge_type] = adj_t_dict1[
+            edge_type].to_torch_sparse_csr_tensor()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
 
@@ -116,12 +139,16 @@ def test_hgt_conv_lazy():
     assert len(out_dict1) == 2
     assert out_dict1['author'].size() == (4, 32)
     assert out_dict1['paper'].size() == (6, 32)
-    out_dict2 = conv(x_dict, adj_t_dict)
 
+    out_dict2 = conv(x_dict, adj_t_dict1)
     assert len(out_dict1) == len(out_dict2)
-    for node_type in out_dict1.keys():
-        assert torch.allclose(out_dict1[node_type], out_dict2[node_type],
-                              atol=1e-6)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
+
+    out_dict3 = conv(x_dict, adj_t_dict2)
+    assert len(out_dict1) == len(out_dict3)
+    for key in out_dict1.keys():
+        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
 
 def test_hgt_conv_out_of_place():
