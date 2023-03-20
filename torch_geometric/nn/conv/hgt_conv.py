@@ -245,8 +245,8 @@ class HGTConv(MessagePassing):
                 num_edges, -1))
             # Add offset to edge indices. Offset needs to be applied as
             # the src and dst node tensors are concatenated.
-            indices[0] += src_offset[edge_type]
-            indices[1] += dst_offset[dst_type]
+            indices[0] = indices[0] + src_offset[edge_type]
+            indices[1] = indices[1] + dst_offset[dst_type]
             edge_index_list.append(indices)
 
         # Concatenate all edges and edge tensors.
