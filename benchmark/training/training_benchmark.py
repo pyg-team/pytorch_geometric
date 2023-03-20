@@ -37,12 +37,15 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
             edge_index = batch.adj_t
         else:
             edge_index = batch.edge_index
-        if trim:
-            out = model(batch.x, edge_index, use_trim_to_layer=trim,
-                        num_sampled_nodes=batch.num_sampled_nodes,
-                        num_sampled_edges=batch.num_sampled_edges)
-        else:
+        if not trim:
             out = model(batch.x, edge_index)
+        else:
+            out = model(
+                batch.x,
+                edge_index,
+                num_sampled_nodes_per_hop=batch.num_sampled_nodes,
+                num_sampled_edges_per_hop=batch.num_sampled_edges,
+            )
         batch_size = batch.batch_size
         out = out[:batch_size]
         target = batch.y[:batch_size]
@@ -338,8 +341,7 @@ if __name__ == '__main__':
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
     add('--write-csv', action='store_true', help='Write benchmark data to csv')
-    add('--trim', action='store_true',
-        help="Use trim_to_layer utils function optimization")
+    add('--trim', action='store_true', help="Use `trim_to_layer` optimization")
     args = argparser.parse_args()
 
     run(args)
