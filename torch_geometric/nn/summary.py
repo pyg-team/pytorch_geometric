@@ -77,6 +77,9 @@ def summary(
         name, module, depth = stack.pop()
         module_id = id(module)
 
+        if name.startswith('(_'):  # Do not summarize private modules.
+            continue
+
         if module_id in hooks:  # Avoid duplicated hooks.
             hooks[module_id].remove()
 
