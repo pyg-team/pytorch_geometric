@@ -16,8 +16,8 @@ The following article discusses readily available tools and environment settings
 .. note::
     Overall, CPU affinity can be a useful tool for improving the performance and predictability of certain types of applications, but one configuration does not necessarily fit all cases: it is important to carefully consider whether CPU affinity is appropriate for your use case, and to test and measure the impact of any changes you make.
 
-Using :attr:`cpu-affinity` and :attr:`filter-per-worker`
---------------------------------------------------------
+Using CPU affinity and :attr:`filter_per_worker`
+------------------------------------------------
 
 Each :pyg:`PyG` workload can be parallelized using the :pytorch:`PyTorch` iterator class :class:`MultiProcessingDataLoaderIter`, which is automatically enabled in case :obj:`num_workers > 0` is passed to a :class:`torch.utils.data.DataLoader`.
 Under the hood, it creates :obj:`num_workers` many sub-processes that will run in parallel to the main process.

@@ -2,7 +2,7 @@ import glob
 import logging
 import os
 from contextlib import contextmanager
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import psutil
 import torch
@@ -101,7 +101,7 @@ class AffinityMixin:
                 pass
     """
     @contextmanager
-    def enable_cpu_affinity(self, loader_cores: List[int]):
+    def enable_cpu_affinity(self, loader_cores: Optional[List[int]] = None):
         r"""Enables CPU affinity.
 
         Args:
