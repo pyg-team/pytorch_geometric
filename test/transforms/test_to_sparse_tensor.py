@@ -102,8 +102,7 @@ def test_hetero_to_sparse_tensor():
     assert adj_coo._indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     assert adj_coo._values().tolist() == [1., 1., 1., 1.]
     adj_coo = data['v', 'w'].adj_t.to_sparse_coo()
-    assert adj_coo._indices().tolist() == [[0, 1, 1, 2],
-                                                           [1, 0, 2, 1]]
+    assert adj_coo._indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
     assert adj_coo._values().tolist() == [1., 1., 1., 1.]
 
 
