@@ -176,12 +176,8 @@ class CaptumExplainer(ExplainerAlgorithm):
             return Explanation(node_mask=node_mask, edge_mask=edge_mask)
 
         explanation = HeteroExplanation()
-        if node_mask is not None:
-            for node_type, mask in node_mask.items():
-                explanation.node_mask_dict[node_type] = mask
-        if edge_mask is not None:
-            for edge_type, mask in edge_mask.items():
-                explanation.edge_mask_dict[edge_type] = mask
+        explanation.set_value_dict('node_mask', node_mask)
+        explanation.set_value_dict('edge_mask', edge_mask)
         return explanation
 
     def supports(self) -> bool:
