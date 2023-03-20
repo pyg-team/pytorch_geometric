@@ -1,5 +1,6 @@
 import argparse
 import ast
+import warnings
 from collections import defaultdict
 from contextlib import nullcontext
 
@@ -26,7 +27,8 @@ supported_sets = {
 }
 
 
-def train_homo(model, loader, optimizer, device, progress_bar=True, desc=""):
+def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
+               trim=False):
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
@@ -36,7 +38,15 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc=""):
             edge_index = batch.adj_t
         else:
             edge_index = batch.edge_index
-        out = model(batch.x, edge_index)
+        if not trim:
+            out = model(batch.x, edge_index)
+        else:
+            out = model(
+                batch.x,
+                edge_index,
+                num_sampled_nodes_per_hop=batch.num_sampled_nodes,
+                num_sampled_edges_per_hop=batch.num_sampled_edges,
+            )
         batch_size = batch.batch_size
         out = out[:batch_size]
         target = batch.y[:batch_size]
@@ -45,7 +55,11 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc=""):
         optimizer.step()
 
 
-def train_hetero(model, loader, optimizer, device, progress_bar=True, desc=""):
+def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
+                 trim=False):
+    if trim:
+        warnings.warn("Trimming not yet implemented for heterogeneous graphs")
+
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
@@ -224,17 +238,28 @@ def run(args: argparse.ArgumentParser):
 
                         with amp, cpu_affinity:
                             for _ in range(args.warmup):
-                                train(model, subgraph_loader, optimizer,
-                                      device, progress_bar=progress_bar,
-                                      desc="Warmup")
+                                train(
+                                    model,
+                                    subgraph_loader,
+                                    optimizer,
+                                    device,
+                                    progress_bar=progress_bar,
+                                    desc="Warmup",
+                                    trim=args.trim,
+                                )
                             with timeit(avg_time_divisor=args.num_epochs) as t:
                                 # becomes a no-op if vtune_profile == False
                                 with emit_itt(args.vtune_profile):
                                     for epoch in range(args.num_epochs):
-                                        train(model, subgraph_loader,
-                                              optimizer, device,
-                                              progress_bar=progress_bar,
-                                              desc=f"Epoch={epoch}")
+                                        train(
+                                            model,
+                                            subgraph_loader,
+                                            optimizer,
+                                            device,
+                                            progress_bar=progress_bar,
+                                            desc=f"Epoch={epoch}",
+                                            trim=args.trim,
+                                        )
                                         if args.evaluate:
                                             # In evaluate, throughput and
                                             # latency are not accurate.
@@ -320,6 +345,7 @@ if __name__ == '__main__':
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
     add('--write-csv', action='store_true', help='Write benchmark data to csv')
+    add('--trim', action='store_true', help="Use `trim_to_layer` optimization")
     args = argparser.parse_args()
 
     run(args)

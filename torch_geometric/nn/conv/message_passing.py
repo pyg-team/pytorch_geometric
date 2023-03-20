@@ -22,6 +22,18 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
+from torch_geometric.nn.conv.utils.inspector import (
+    Inspector,
+    func_body_repr,
+    func_header_repr,
+)
+from torch_geometric.nn.conv.utils.jit import class_from_module_repr
+from torch_geometric.nn.conv.utils.typing import (
+    parse_types,
+    resolve_types,
+    sanitize,
+    split_types_repr,
+)
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
@@ -29,17 +41,14 @@ from torch_geometric.utils import (
     is_torch_sparse_tensor,
     to_edge_index,
 )
-
-from .utils.inspector import Inspector, func_body_repr, func_header_repr
-from .utils.jit import class_from_module_repr
-from .utils.typing import (
-    parse_types,
-    resolve_types,
-    sanitize,
-    split_types_repr,
-)
+from torch_geometric.utils.sparse import ptr2index
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
+
+
+def ptr2ind(ptr: Tensor) -> Tensor:
+    ind = torch.arange(ptr.numel() - 1, device=ptr.device)
+    return ind.repeat_interleave(ptr[1:] - ptr[:-1])
 
 
 class MessagePassing(torch.nn.Module):
@@ -240,7 +249,21 @@ class MessagePassing(torch.nn.Module):
     def __lift__(self, src, edge_index, dim):
         if is_torch_sparse_tensor(edge_index):
             assert dim == 0 or dim == 1
-            index = edge_index._indices()[1 - dim]
+            if edge_index.layout == torch.sparse_coo:
+                index = edge_index._indices()[1 - dim]
+            elif edge_index.layout == torch.sparse_csr:
+                if dim == 0:
+                    index = edge_index.col_indices()
+                else:
+                    index = ptr2index(edge_index.crow_indices())
+            elif edge_index.layout == torch.sparse_csc:
+                if dim == 0:
+                    index = ptr2index(edge_index.ccol_indices())
+                else:
+                    index = edge_index.row_indices()
+            else:
+                raise ValueError(f"Unsupported sparse tensor layout "
+                                 f"(got '{edge_index.layout}')")
             return src.index_select(self.node_dim, index)
 
         elif isinstance(edge_index, Tensor):

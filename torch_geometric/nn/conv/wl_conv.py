@@ -3,8 +3,14 @@ from typing import Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.typing import Adj, SparseTensor
-from torch_geometric.utils import scatter
+from torch_geometric.typing import Adj
+from torch_geometric.utils import (
+    degree,
+    is_sparse,
+    scatter,
+    sort_edge_index,
+    to_edge_index,
+)
 
 
 class WLConv(torch.nn.Module):
@@ -40,15 +46,20 @@ class WLConv(torch.nn.Module):
             x = x.argmax(dim=-1)  # one-hot -> integer.
         assert x.dtype == torch.long
 
-        adj_t = edge_index
-        if not isinstance(adj_t, SparseTensor):
-            adj_t = SparseTensor(row=edge_index[1], col=edge_index[0],
-                                 sparse_sizes=(x.size(0), x.size(0)))
+        if is_sparse(edge_index):
+            col_and_row, _ = to_edge_index(edge_index)
+            col = col_and_row[0]
+            row = col_and_row[1]
+        else:
+            edge_index = sort_edge_index(edge_index, num_nodes=x.size(0),
+                                         sort_by_row=False)
+            row, col = edge_index[0], edge_index[1]
+
+        # `col` is sorted, so we can use it to `split` neighbors to groups:
+        deg = degree(col, x.size(0), dtype=torch.long).tolist()
 
         out = []
-        _, col, _ = adj_t.coo()
-        deg = adj_t.storage.rowcount().tolist()
-        for node, neighbors in zip(x.tolist(), x[col].split(deg)):
+        for node, neighbors in zip(x.tolist(), x[row].split(deg)):
             idx = hash(tuple([node] + neighbors.sort()[0].tolist()))
             if idx not in self.hashmap:
                 self.hashmap[idx] = len(self.hashmap)

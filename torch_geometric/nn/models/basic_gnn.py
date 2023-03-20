@@ -25,6 +25,7 @@ from torch_geometric.nn.resolver import (
     normalization_resolver,
 )
 from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils.trim_to_layer import TrimToLayer
 
 
 class BasicGNN(torch.nn.Module):
@@ -140,6 +141,10 @@ class BasicGNN(torch.nn.Module):
                 in_channels = hidden_channels
             self.lin = Linear(in_channels, self.out_channels)
 
+        # We define `trim_to_layer` functionality as a module such that we can
+        # still use `to_hetero` on-top.
+        self._trim = TrimToLayer()
+
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
         raise NotImplementedError
@@ -162,6 +167,8 @@ class BasicGNN(torch.nn.Module):
         *,
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
+        num_sampled_nodes_per_hop: Optional[List[int]] = None,
+        num_sampled_edges_per_hop: Optional[List[int]] = None,
     ) -> Tensor:
         r"""
         Args:
@@ -171,9 +178,40 @@ class BasicGNN(torch.nn.Module):
                 supported by the underlying GNN layer). (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features (if supported
                 by the underlying GNN layer). (default: :obj:`None`)
+            num_sampled_nodes_per_hop (List[int], optional): The number of
+                sampled nodes per hop.
+                Useful in :class:~torch_geometric.loader.NeighborLoader`
+                scenarios to only operate on minimal-sized representations.
+                (default: :obj:`None`)
+            num_sampled_edges_per_hop (List[int], optional): The number of
+                sampled edges per hop.
+                Useful in :class:~torch_geometric.loader.NeighborLoader`
+                scenarios to only operate on minimal-sized representations.
+                (default: :obj:`None`)
         """
+        if (num_sampled_nodes_per_hop is not None
+                and isinstance(edge_weight, Tensor)
+                and isinstance(edge_attr, Tensor)):
+            raise NotImplementedError("'trim_to_layer' functionality does not "
+                                      "yet support trimming of both "
+                                      "'edge_weight' and 'edge_attr'")
+
         xs: List[Tensor] = []
         for i in range(self.num_layers):
+            if num_sampled_nodes_per_hop is not None:
+                x, edge_index, value = self._trim(
+                    i,
+                    num_sampled_nodes_per_hop,
+                    num_sampled_edges_per_hop,
+                    x,
+                    edge_index,
+                    edge_weight if edge_weight is not None else edge_attr,
+                )
+                if edge_weight is not None:
+                    edge_weight = value
+                else:
+                    edge_attr = value
+
             # Tracing the module is not allowed with *args and **kwargs :(
             # As such, we rely on a static solution to pass optional edge
             # weights and edge attributes to the module.
