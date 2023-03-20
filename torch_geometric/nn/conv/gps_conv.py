@@ -152,9 +152,9 @@ class GPSConv(torch.nn.Module):
         out = out + self.mlp(out)
         if self.norm3 is not None:
             if self.norm_with_batch:
-                h = self.norm3(h, batch=batch)
+                out = self.norm3(out, batch=batch)
             else:
-                h = self.norm3(h)
+                out = self.norm3(out)
 
         return out
 
