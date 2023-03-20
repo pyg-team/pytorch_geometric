@@ -32,8 +32,10 @@ def test_to_sparse_tensor_basic(layout):
         assert col.tolist() == [1, 0, 2, 1]
         assert torch.equal(value, edge_weight[perm])
     else:
-        data.adj_t.layout == layout
-        adj_t = data.adj_t.to_sparse_coo()
+        adj_t = data.adj_t
+        assert adj_t.layout == layout
+        if layout != torch.sparse_coo:
+            adj_t = adj_t.to_sparse_coo()
         assert adj_t.indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
         assert torch.equal(adj_t.values(), edge_weight[perm])
 
@@ -78,13 +80,17 @@ def test_hetero_to_sparse_tensor(layout):
         assert col.tolist() == [1, 0, 2, 1]
         assert value is None
     else:
-        data['v', 'v'].adj_t.layout == layout
-        adj_t = data['v', 'v'].adj_t.to_sparse_coo()
+        adj_t = data['v', 'v'].adj_t
+        assert adj_t.layout == layout
+        if layout != torch.sparse_coo:
+            adj_t = adj_t.to_sparse_coo()
         assert adj_t.indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
         assert adj_t.values().tolist() == [1., 1., 1., 1.]
 
-        data['v', 'w'].adj_t.layout == layout
-        adj_t = data['v', 'w'].adj_t.to_sparse_coo()
+        adj_t = data['v', 'w'].adj_t
+        assert adj_t.layout == layout
+        if layout != torch.sparse_coo:
+            adj_t = adj_t.to_sparse_coo()
         assert adj_t.indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
         assert adj_t.values().tolist() == [1., 1., 1., 1.]
 
