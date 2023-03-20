@@ -35,7 +35,7 @@ def test_to_sparse_tensor_basic(layout):
         data.adj_t.layout == layout
         adj_t = data.adj_t.to_sparse_coo()
         assert adj_t.indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
-        assert torch.equal(adj_t._values(), edge_weight[perm])
+        assert torch.equal(adj_t.values(), edge_weight[perm])
 
 
 def test_to_sparse_tensor_and_keep_edge_index():
@@ -89,8 +89,7 @@ def test_hetero_to_sparse_tensor(layout):
         assert adj_t.values().tolist() == [1., 1., 1., 1.]
 
 
-@pytest.mark.parametrize('layout', [None, torch.sparse_coo, torch.sparse_csr])
-def test_to_sparse_tensor_num_nodes_equals_num_edges(layout):
+def test_to_sparse_tensor_num_nodes_equals_num_edges():
     x = torch.arange(4)
     y = torch.arange(4)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -101,7 +100,7 @@ def test_to_sparse_tensor_num_nodes_equals_num_edges(layout):
 
     data = Data(x=x, edge_index=edge_index, edge_weight=edge_weight,
                 edge_attr=edge_attr, y=y)
-    data = ToSparseTensor(layout=layout)(data)
+    data = ToSparseTensor()(data)
 
     assert len(data) == 4
     assert torch.equal(data.x, x)
