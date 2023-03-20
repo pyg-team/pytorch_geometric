@@ -25,7 +25,7 @@ from torch_geometric.nn.resolver import (
     normalization_resolver,
 )
 from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.utils import trim_to_layer
+from torch_geometric.utils.trim_to_layer import TrimToLayer
 
 
 class BasicGNN(torch.nn.Module):
@@ -141,6 +141,8 @@ class BasicGNN(torch.nn.Module):
                 in_channels = hidden_channels
             self.lin = Linear(in_channels, self.out_channels)
 
+        self.trim = TrimToLayer()
+
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
         raise NotImplementedError
@@ -163,8 +165,8 @@ class BasicGNN(torch.nn.Module):
         *,
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
-        num_sampled_nodes_per_hop: List[int] = None,
-        num_sampled_edges_per_hop: List[int] = None,
+        num_sampled_nodes_per_hop: OptTensor = None,
+        num_sampled_edges_per_hop: OptTensor = None,
     ) -> Tensor:
         r"""
         Args:
@@ -191,16 +193,17 @@ class BasicGNN(torch.nn.Module):
         if (num_sampled_nodes_per_hop is not None
                 and num_sampled_edges_per_hop is None):
             raise ValueError("'num_sampled_edges_per_hop' needs to be given")
-        if (num_sampled_nodes_per_hop is not None and edge_weight is not None
-                and edge_attr is not None):
+        if (num_sampled_nodes_per_hop is not None
+                and isinstance(edge_weight, Tensor)
+                and isinstance(edge_attr, Tensor)):
             raise NotImplementedError("'trim_to_layer' functionality does not "
                                       "yet support trimming of both "
                                       "'edge_weight' and 'edge_attr'")
 
         xs: List[Tensor] = []
         for i in range(self.num_layers):
-            if num_sampled_nodes_per_hop:
-                x, edge_index, value = trim_to_layer(
+            if num_sampled_nodes_per_hop is not None:
+                x, edge_index, value = self.trim(
                     i,
                     num_sampled_nodes_per_hop,
                     num_sampled_edges_per_hop,

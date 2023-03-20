@@ -1,5 +1,8 @@
 from typing import Dict, List, Optional, Tuple, Union
 
+import torch
+from torch import Tensor
+
 from torch_geometric.typing import (
     EdgeType,
     MaybeHeteroEdgeTensor,
@@ -87,3 +90,29 @@ def trim_to_layer(
             length=edge_attr.size(0) - num_sampled_edges_per_hop[-layer],
         )
     return x, edge_index, edge_attr
+
+
+class TrimToLayer(torch.nn.Module):
+    def forward(
+        self,
+        layer: int,
+        num_sampled_nodes_per_hop: Optional[List[int]],
+        num_sampled_edges_per_hop: Optional[List[int]],
+        x: Tensor,
+        edge_index: Tensor,
+        edge_attr: Optional[Tensor] = None,
+    ) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+
+        if num_sampled_nodes_per_hop is None:
+            return x, edge_index, edge_attr
+        if num_sampled_edges_per_hop is None:
+            return x, edge_index, edge_attr
+
+        return trim_to_layer(
+            layer,
+            num_sampled_nodes_per_hop,
+            num_sampled_edges_per_hop,
+            x,
+            edge_index,
+            edge_attr,
+        )
