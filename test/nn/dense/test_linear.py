@@ -1,5 +1,4 @@
 import copy
-from itertools import product
 
 import pytest
 import torch
@@ -13,7 +12,8 @@ weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
 
 
-@pytest.mark.parametrize('weight,bias', product(weight_inits, bias_inits))
+@pytest.mark.parametrize('weight', weight_inits)
+@pytest.mark.parametrize('bias', bias_inits)
 def test_linear(weight, bias):
     x = torch.randn(3, 4, 16)
     lin = Linear(16, 32, weight_initializer=weight, bias_initializer=bias)
@@ -21,7 +21,8 @@ def test_linear(weight, bias):
     assert lin(x).size() == (3, 4, 32)
 
 
-@pytest.mark.parametrize('weight,bias', product(weight_inits, bias_inits))
+@pytest.mark.parametrize('weight', weight_inits)
+@pytest.mark.parametrize('bias', bias_inits)
 def test_lazy_linear(weight, bias):
     x = torch.randn(3, 4, 16)
     lin = Linear(-1, 32, weight_initializer=weight, bias_initializer=bias)
@@ -30,7 +31,8 @@ def test_lazy_linear(weight, bias):
     assert str(lin) == 'Linear(16, 32, bias=True)'
 
 
-@pytest.mark.parametrize('dim1,dim2', product([-1, 16], [-1, 16]))
+@pytest.mark.parametrize('dim1', [-1, 16])
+@pytest.mark.parametrize('dim2', [-1, 16])
 def test_load_lazy_linear(dim1, dim2):
     lin1 = Linear(dim1, 32)
     lin2 = Linear(dim1, 32)

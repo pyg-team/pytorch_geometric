@@ -267,3 +267,24 @@ def test_random_link_split_insufficient_negative_edges():
     assert train_data.neg_edge_label_index.size() == (2, 2)
     assert val_data.neg_edge_label_index.size() == (2, 2)
     assert test_data.neg_edge_label_index.size() == (2, 2)
+
+
+def test_random_link_split_non_contiguous():
+    edge_index = get_random_edge_index(40, 40, num_edges=150)
+    edge_index = edge_index[:, :100]
+    assert not edge_index.is_contiguous()
+
+    data = Data(edge_index=edge_index, num_nodes=40)
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2)
+    train_data, val_data, test_data = transform(data)
+    assert train_data.num_edges == 60
+    assert train_data.edge_index.is_contiguous()
+
+    data = HeteroData()
+    data['p'].num_nodes = 40
+    data['p', 'p'].edge_index = edge_index
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2,
+                                edge_types=('p', 'p'))
+    train_data, val_data, test_data = transform(data)
+    assert train_data['p', 'p'].num_edges == 60
+    assert train_data['p', 'p'].edge_index.is_contiguous()

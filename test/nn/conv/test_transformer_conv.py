@@ -11,7 +11,7 @@ def test_transformer_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     conv = TransformerConv(8, 32, heads=2, beta=True)
     assert str(conv) == 'TransformerConv(8, 32, heads=2)'
@@ -62,7 +62,7 @@ def test_transformer_conv():
         assert conv._alpha is None
 
     adj1 = adj1.sparse_resize((4, 2))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj2 = adj1.to_torch_sparse_csc_tensor()
     conv = TransformerConv((8, 16), 32, heads=2, beta=True)
     assert str(conv) == 'TransformerConv((8, 16), 32, heads=2)'
 

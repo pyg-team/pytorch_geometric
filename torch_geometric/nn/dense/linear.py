@@ -16,6 +16,7 @@ from torch_geometric.typing import (
     pyg_lib,
 )
 from torch_geometric.utils import index_sort
+from torch_geometric.utils.sparse import index2ptr
 
 
 def is_uninitialized_parameter(x: Any) -> bool:
@@ -269,8 +270,7 @@ class HeteroLinear(torch.nn.Module):
                     type_vec, perm = index_sort(type_vec, self.num_types)
                     x = x[perm]
 
-            type_vec_ptr = torch._convert_indices_from_coo_to_csr(
-                type_vec, self.num_types)
+            type_vec_ptr = index2ptr(type_vec, self.num_types)
             out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:
                 out += self.bias[type_vec]

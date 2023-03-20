@@ -53,6 +53,6 @@ def test_complex():
         loss = model.loss(h, r, t)
         assert loss >= 0.
 
-        mean_rank, hits_at_10 = model.test(h, r, t, batch_size=5)
+        mean_rank, hits_at_10 = model.test(h, r, t, batch_size=5, log=False)
         assert mean_rank <= 10
         assert hits_at_10 == 1.0

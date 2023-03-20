@@ -8,6 +8,7 @@ from torch.nn import Parameter as Param
 
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
     Adj,
     OptTensor,
@@ -16,8 +17,7 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import index_sort, scatter, spmm
-
-from ..inits import glorot, zeros
+from torch_geometric.utils.sparse import index2ptr
 
 
 @torch.jit._overload
@@ -238,8 +238,7 @@ class RGCNConv(MessagePassing):
                         edge_type, perm = index_sort(
                             edge_type, max_value=self.num_relations)
                         edge_index = edge_index[:, perm]
-                edge_type_ptr = torch._convert_indices_from_coo_to_csr(
-                    edge_type, self.num_relations)
+                edge_type_ptr = index2ptr(edge_type, self.num_relations)
                 out = self.propagate(edge_index, x=x_l,
                                      edge_type_ptr=edge_type_ptr, size=size)
             else:
