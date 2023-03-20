@@ -24,7 +24,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     """Matrix product of sparse matrix with dense matrix.
 
     Args:
-        src (Tensor or torch_sparse.SparseTensor]): The input sparse matrix,
+        src (Tensor or torch_sparse.SparseTensor): The input sparse matrix,
             either a :class:`torch_sparse.SparseTensor` or a
             :class:`torch.sparse.Tensor`.
         other (Tensor): The input dense matrix.
