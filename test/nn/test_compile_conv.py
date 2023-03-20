@@ -50,14 +50,28 @@ if __name__ == '__main__':
     x = torch.randn(num_nodes, 64, device=args.device)
     edge_index = torch.randint(num_nodes, (2, num_edges), device=args.device)
 
-    for Conv in [GCNConv, SAGEConv, MySAGEConv, GATConv]:
+    conv = MySAGEConv(64, 64).to(args.device)
+    benchmark(
+        funcs=[conv, torch.compile(enable_compile()(conv))],
+        func_names=['Vanilla', 'Compiled'],
+        args=(x, edge_index),
+        num_steps=50 if args.device == 'cpu' else 500,
+        num_warmups=10 if args.device == 'cpu' else 100,
+        backward=args.backward,
+    )
+
+    for Conv in [GCNConv, SAGEConv]:
         print(f'Conv: {Conv.__name__}')
 
         conv = Conv(64, 64).to(args.device)
+        compiled_conv = torch.compile(enable_compile()(conv))
+
+        jit_conv = Conv(64, 64).jittable().to(args.device)
+        compiled_jit_conv = torch.compile(enable_compile()(jit_conv))
 
         benchmark(
-            funcs=[conv, torch.compile(enable_compile()(conv))],
-            func_names=['Vanilla', 'Compiled'],
+            funcs=[conv, compiled_conv, jit_conv, compiled_jit_conv],
+            func_names=['Vanilla', 'Compiled', 'JIT', 'JIT Compiled'],
             args=(x, edge_index),
             num_steps=50 if args.device == 'cpu' else 500,
             num_warmups=10 if args.device == 'cpu' else 100,
