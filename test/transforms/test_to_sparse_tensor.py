@@ -12,7 +12,10 @@ def test_to_sparse_tensor():
     perm = torch.tensor([1, 0, 3, 2])
 
     transform = ToSparseTensor()
-    assert str(transform) == 'ToSparseTensor(backend=torch_sparse)'
+    assert str(transform) == ('ToSparseTensor(attr=edge_weight, '
+                              'remove_edge_index=True, '
+                              'fill_cache=True, '
+                              'backend=torch_sparse)')
     data = Data(edge_index=edge_index, edge_weight=edge_weight,
                 edge_attr=edge_attr, num_nodes=3)
     data = transform(data)
@@ -26,11 +29,16 @@ def test_to_sparse_tensor():
     data = Data(edge_index=edge_index, edge_weight=edge_weight,
                 edge_attr=edge_attr, num_nodes=3)
     transform = ToSparseTensor(backend='torch')
-    assert str(transform) == 'ToSparseTensor(backend=torch)'
+    assert str(transform) == ('ToSparseTensor(attr=edge_weight, '
+                              'remove_edge_index=True, '
+                              'fill_cache=True, '
+                              'backend=torch)')
     data = transform(data)
     assert len(data) == 3
-    assert data.adj_t._indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
-    assert data.adj_t._values().tolist() == edge_weight[perm].tolist()
+    assert data.adj_t.layout == torch.sparse_csr
+    adj_coo = data.adj_t.to_sparse_coo()
+    assert adj_coo._indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert adj_coo._values().tolist() == edge_weight[perm].tolist()
     assert data.edge_attr.tolist() == edge_attr[perm].tolist()
     assert data.num_nodes == 3
 
@@ -46,8 +54,10 @@ def test_to_sparse_tensor_and_keep_edge_index():
                 edge_attr=edge_attr, num_nodes=3)
     data = ToSparseTensor(remove_edge_index=False, backend='torch')(data)
     assert len(data) == 5
-    assert data.adj_t._indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
-    assert data.adj_t._values().tolist() == edge_weight[perm].tolist()
+    assert data.adj_t.layout == torch.sparse_csr
+    adj_coo = data.adj_t.to_sparse_coo()
+    assert adj_coo._indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert adj_coo._values().tolist() == edge_weight[perm].tolist()
     assert data.edge_index.tolist() == edge_index[:, perm].tolist()
     assert data.edge_weight.tolist() == edge_weight[perm].tolist()
     assert data.edge_attr.tolist() == edge_attr[perm].tolist()
@@ -88,12 +98,13 @@ def test_hetero_to_sparse_tensor():
     data['v', 'v'].edge_index = edge_index
     data['v', 'w'].edge_index = edge_index
     data = ToSparseTensor(backend='torch')(data)
-    assert data['v', 'v'].adj_t._indices().tolist() == [[0, 1, 1, 2],
-                                                        [1, 0, 2, 1]]
-    assert data['v', 'v'].adj_t._values().tolist() == [1., 1., 1., 1.]
-    assert data['v', 'w'].adj_t._indices().tolist() == [[0, 1, 1, 2],
-                                                        [1, 0, 2, 1]]
-    assert data['v', 'w'].adj_t._values().tolist() == [1., 1., 1., 1.]
+    adj_coo = data['v', 'v'].adj_t.to_sparse_coo()
+    assert adj_coo._indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert adj_coo._values().tolist() == [1., 1., 1., 1.]
+    adj_coo = data['v', 'w'].adj_t.to_sparse_coo()
+    assert adj_coo.to_sparse_coo()._indices().tolist() == [[0, 1, 1, 2],
+                                                           [1, 0, 2, 1]]
+    assert adj_coo._values().tolist() == [1., 1., 1., 1.]
 
 
 def test_to_sparse_tensor_num_nodes_equals_num_edges():
@@ -121,7 +132,8 @@ def test_to_sparse_tensor_num_nodes_equals_num_edges():
     data = ToSparseTensor(backend='torch')(data)
     assert len(data) == 4
     assert data.x.tolist() == [0, 1, 2, 3]
-    assert data.adj_t._indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
-    assert data.adj_t._values().tolist() == edge_weight[perm].tolist()
+    adj_coo = data.adj_t.to_sparse_coo()
+    assert adj_coo._indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert adj_coo._values().tolist() == edge_weight[perm].tolist()
     assert data.edge_attr.tolist() == edge_attr[perm].tolist()
     assert data.y.tolist() == [0, 1, 2, 3]

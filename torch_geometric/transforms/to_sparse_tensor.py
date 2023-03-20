@@ -4,7 +4,7 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import sort_edge_index, to_torch_coo_tensor
+from torch_geometric.utils import sort_edge_index, to_torch_csr_tensor
 
 
 @functional_transform('to_sparse_tensor')
@@ -90,7 +90,7 @@ class ToSparseTensor(BaseTransform):
                     else store[self.attr], sparse_sizes=store.size()[::-1],
                     is_sorted=True, trust_data=True)
             else:
-                store.adj_t = to_torch_coo_tensor(
+                store.adj_t = to_torch_csr_tensor(
                     store.edge_index.flip([0]),
                     edge_attr=None if self.attr is None
                     or self.attr not in store else store[self.attr],
