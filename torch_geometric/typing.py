@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -124,6 +124,9 @@ OptPairTensor = Tuple[Tensor, Optional[Tensor]]
 PairOptTensor = Tuple[Optional[Tensor], Optional[Tensor]]
 Size = Optional[Tuple[int, int]]
 NoneType = Optional[Tensor]
+
+MaybeHeteroNodeTensor = Union[Tensor, Dict[NodeType, Tensor]]
+MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 
 # Types for sampling ##########################################################
 

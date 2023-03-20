@@ -3,7 +3,7 @@ from typing import Any, List, Union
 import torch
 from torch import Tensor
 
-from .mask import mask_select
+from torch_geometric.utils.mask import mask_select
 
 
 def select(src: Union[Tensor, List[Any]], index_or_mask: Tensor,

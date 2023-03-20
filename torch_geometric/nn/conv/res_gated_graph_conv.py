@@ -5,9 +5,8 @@ from torch.nn import Parameter, Sigmoid
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import zeros
 from torch_geometric.typing import Adj, PairTensor
-
-from ..inits import zeros
 
 
 class ResGatedGraphConv(MessagePassing):

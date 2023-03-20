@@ -61,10 +61,10 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
     def forward(
         self,
         x: Tensor,
-        csc: Tuple[Tensor, Tensor],
+        csc: Tuple[Tensor, Tensor, int],
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
-        graph = self.get_cugraph(x.size(0), csc, max_num_neighbors)
+        graph = self.get_cugraph(csc, max_num_neighbors)
 
         x = self.lin(x)
         out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',

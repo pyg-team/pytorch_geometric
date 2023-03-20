@@ -6,8 +6,7 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import scatter, segment
-
-from .num_nodes import maybe_num_nodes
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def softmax(
