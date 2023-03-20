@@ -105,7 +105,7 @@ class AddRandomWalkPE(BaseTransform):
         attr_name (str, optional): The attribute name of the data object to add
             positional encodings to. If set to :obj:`None`, will be
             concatenated to :obj:`data.x`.
-            (default: :obj:`"laplacian_eigenvector_pe"`)
+            (default: :obj:`"random_walk_pe"`)
     """
     def __init__(
         self,

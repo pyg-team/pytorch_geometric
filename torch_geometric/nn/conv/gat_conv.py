@@ -16,7 +16,13 @@ from torch_geometric.typing import (
     SparseTensor,
     torch_sparse,
 )
-from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
+from torch_geometric.utils import (
+    add_self_loops,
+    is_torch_sparse_tensor,
+    remove_self_loops,
+    softmax,
+)
+from torch_geometric.utils.sparse import set_sparse_value
 
 from ..inits import glorot, zeros
 
@@ -259,7 +265,12 @@ class GATConv(MessagePassing):
 
         if isinstance(return_attention_weights, bool):
             if isinstance(edge_index, Tensor):
-                return out, (edge_index, alpha)
+                if is_torch_sparse_tensor(edge_index):
+                    # TODO TorchScript requires to return a tuple
+                    adj = set_sparse_value(edge_index, alpha)
+                    return out, (adj, alpha)
+                else:
+                    return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
         else:

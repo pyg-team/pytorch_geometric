@@ -11,8 +11,8 @@ def test_antisymmetric_conv():
     value = torch.rand(row.size(0))
     adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
     adj1 = adj2.set_value(None)
-    adj3 = adj1.to_torch_sparse_coo_tensor()
-    adj4 = adj2.to_torch_sparse_coo_tensor()
+    adj3 = adj1.to_torch_sparse_csc_tensor()
+    adj4 = adj2.to_torch_sparse_csc_tensor()
 
     conv = AntiSymmetricConv(8)
     assert str(conv) == ('AntiSymmetricConv(8, phi=GCNConv(8, 8), '

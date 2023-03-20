@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.utils import index_sort
+from torch_geometric.utils.sparse import index2ptr
 
 try:  # pragma: no cover
     from pylibcugraphops import (
@@ -52,7 +53,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
         col, perm = index_sort(col, max_value=num_target_nodes)
         row = row[perm]
 
-        colptr = torch._convert_indices_from_coo_to_csr(col, num_target_nodes)
+        colptr = index2ptr(col, num_target_nodes)
 
         if edge_attr is not None:
             return (row, colptr), edge_attr[perm]
