@@ -57,7 +57,7 @@ class ToSparseTensor(BaseTransform):
         attr: Optional[str] = 'edge_weight',
         remove_edge_index: bool = True,
         fill_cache: bool = True,
-        layout: Optional[int] = None,
+        layout: Optional[torch.layout] = None,
     ):
         if layout not in {None, torch.sparse_coo, torch.sparse_csr}:
             raise ValueError(f"Unexpected sparse tensor layout "
