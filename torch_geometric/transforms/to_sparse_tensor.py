@@ -19,7 +19,7 @@ from torch_geometric.utils import (
 class ToSparseTensor(BaseTransform):
     r"""Converts the :obj:`edge_index` attributes of a homogeneous or
     heterogeneous data object into a **transposed**
-    :class:`torch_sparse.SparseTensor` or a :pytorch:`PyTorch`
+    :class:`torch_sparse.SparseTensor` or :pytorch:`PyTorch`
     :class:`torch.sparse.Tensor` object with key :obj:`adj_t`
     (functional name: :obj:`to_sparse_tensor`).
 
@@ -111,7 +111,7 @@ class ToSparseTensor(BaseTransform):
                     trust_data=True,
                 )
 
-            # TODO Multi-dimensional edge attributes only support for COO.
+            # TODO Multi-dimensional edge attributes only supported for COO.
             elif ((value is not None and value.dim() > 1)
                   or layout == torch.sparse_coo):
                 store.adj_t = to_torch_coo_tensor(
