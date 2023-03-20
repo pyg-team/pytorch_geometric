@@ -1,5 +1,6 @@
 import argparse
 import ast
+import warnings
 from collections import defaultdict
 from contextlib import nullcontext
 
@@ -56,6 +57,9 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
 
 def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
                  trim=False):
+    if trim:
+        warnings.warn("Trimming not yet implemented for heterogeneous graphs")
+
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
