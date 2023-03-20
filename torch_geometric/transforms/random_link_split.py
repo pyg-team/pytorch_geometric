@@ -128,20 +128,12 @@ class RandomLinkSplit(BaseTransform):
         if isinstance(data, HeteroData):
             if edge_types is None:
                 raise ValueError(
-                    "The 'RandomLinkSplit' transform expects 'edge_types' to"
+                    "The 'RandomLinkSplit' transform expects 'edge_types' to "
                     "be specified when operating on 'HeteroData' objects")
 
             if not isinstance(edge_types, list):
                 edge_types = [edge_types]
                 rev_edge_types = [rev_edge_types]
-
-            for edge_type in edge_types:
-                if not data[edge_type]["edge_index"].is_contiguous():
-                    raise ValueError(
-                        "The 'RandomLinkSplit' transform expects the edge list of 'edge_types' to "
-                        "be contiguous, when operating on 'HeteroData' objects. "
-                        "You can use '.contiguous()' to convert a tensor into contiguous type."
-                    )
 
             stores = [data[edge_type] for edge_type in edge_types]
             train_stores = [train_data[edge_type] for edge_type in edge_types]
