@@ -1,4 +1,5 @@
 from .linear import Linear, HeteroLinear
+from .dense_gat_conv import DenseGATConv
 from .dense_sage_conv import DenseSAGEConv
 from .dense_gcn_conv import DenseGCNConv
 from .dense_graph_conv import DenseGraphConv
@@ -14,11 +15,12 @@ __all__ = [
     'DenseGINConv',
     'DenseGraphConv',
     'DenseSAGEConv',
+    'DenseGATConv',
     'dense_diff_pool',
     'dense_mincut_pool',
     'DMoNPooling',
 ]
 
 lin_classes = __all__[:2]
-conv_classes = __all__[2:6]
-pool_classes = __all__[6:]
+conv_classes = __all__[2:7]
+pool_classes = __all__[7:]

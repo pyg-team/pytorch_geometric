@@ -7,6 +7,7 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import NoneType  # noqa
 from torch_geometric.typing import (
     Adj,
@@ -21,11 +22,8 @@ from torch_geometric.utils import (
     is_torch_sparse_tensor,
     remove_self_loops,
     softmax,
-    to_edge_index,
-    to_torch_coo_tensor,
 )
-
-from ..inits import glorot, zeros
+from torch_geometric.utils.sparse import set_sparse_value
 
 
 class GATConv(MessagePassing):
@@ -268,11 +266,7 @@ class GATConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
                     # TODO TorchScript requires to return a tuple
-                    adj = to_torch_coo_tensor(
-                        edge_index=to_edge_index(edge_index)[0],
-                        edge_attr=alpha,
-                        size=(edge_index.size(0), edge_index.size(1)),
-                    )
+                    adj = set_sparse_value(edge_index, alpha)
                     return out, (adj, alpha)
                 else:
                     return out, (edge_index, alpha)

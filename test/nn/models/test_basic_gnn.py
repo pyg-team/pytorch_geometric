@@ -1,12 +1,13 @@
 import os
 import os.path as osp
 import warnings
-from itertools import product
 
 import pytest
 import torch
 import torch.nn.functional as F
 
+import torch_geometric.typing
+from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
@@ -19,8 +20,11 @@ norms = [None, 'batch_norm', 'layer_norm']
 jks = [None, 'last', 'cat', 'max', 'lstm']
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_gcn(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -32,8 +36,11 @@ def test_gcn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_graph_sage(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -45,8 +52,11 @@ def test_graph_sage(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_gin(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -58,8 +68,11 @@ def test_gin(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_gat(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -77,8 +90,11 @@ def test_gat(out_dim, dropout, act, norm, jk):
         assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_pna(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -96,8 +112,11 @@ def test_pna(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,dropout,act,norm,jk',
-                         product(out_dims, dropouts, acts, norms, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('dropout', dropouts)
+@pytest.mark.parametrize('act', acts)
+@pytest.mark.parametrize('norm', norms)
+@pytest.mark.parametrize('jk', jks)
 def test_edge_cnn(out_dim, dropout, act, norm, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -109,7 +128,8 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@pytest.mark.parametrize('out_dim,jk', product(out_dims, jks))
+@pytest.mark.parametrize('out_dim', out_dims)
+@pytest.mark.parametrize('jk', jks)
 def test_one_layer_gnn(out_dim, jk):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -159,6 +179,7 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_package.pt')
     with torch.package.PackageExporter(path) as pe:
         pe.extern('torch_geometric.nn.**')
+        pe.extern('torch_geometric.utils.trim_to_layer')
         pe.extern('_operator')
         pe.save_pickle('models', 'model.pkl', model)
 
@@ -174,6 +195,7 @@ def test_onnx(tmp_path, capfd):
     import onnxruntime as ort
 
     warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
+    warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
 
     class MyModel(torch.nn.Module):
         def __init__(self):
@@ -195,8 +217,9 @@ def test_onnx(tmp_path, capfd):
     path = osp.join(tmp_path, 'model.onnx')
     torch.onnx.export(model, (x, edge_index), path,
                       input_names=('x', 'edge_index'), opset_version=16)
-    out, _ = capfd.readouterr()
-    assert '0 NONE 0 NOTE 0 WARNING 0 ERROR' in out
+    if torch_geometric.typing.WITH_PT2:
+        out, _ = capfd.readouterr()
+        assert '0 NONE 0 NOTE 0 WARNING 0 ERROR' in out
 
     model = onnx.load(path)
     onnx.checker.check_model(model)
@@ -210,3 +233,35 @@ def test_onnx(tmp_path, capfd):
     })[0]
     out = torch.from_numpy(out)
     assert torch.allclose(out, expected, atol=1e-6)
+
+
+@withPackage('pyg_lib')
+def test_trim_to_layer():
+    x = torch.randn(14, 16)
+    edge_index = torch.tensor([
+        [2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+        [0, 1, 2, 3, 2, 3, 7, 7, 7, 7],
+    ])
+    data = Data(x=x, edge_index=edge_index)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[1, 2, 4],
+        batch_size=2,
+        shuffle=False,
+    )
+    batch = next(iter(loader))
+
+    model = GraphSAGE(in_channels=16, hidden_channels=16, num_layers=3)
+    out1 = model(batch.x, batch.edge_index)[:2]
+    assert out1.size() == (2, 16)
+
+    out2 = model(
+        batch.x,
+        batch.edge_index,
+        num_sampled_nodes_per_hop=batch.num_sampled_nodes,
+        num_sampled_edges_per_hop=batch.num_sampled_edges,
+    )[:2]
+    assert out2.size() == (2, 16)
+
+    assert torch.allclose(out1, out2)

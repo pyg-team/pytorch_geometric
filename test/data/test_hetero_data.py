@@ -145,6 +145,18 @@ def test_hetero_data_functions():
     assert len(data.to_namedtuple().paper) == 1
 
 
+def test_hetero_data_set_value_dict():
+    data = HeteroData()
+    data.set_value_dict('x', {
+        'paper': torch.randn(4, 16),
+        'author': torch.randn(8, 32),
+    })
+    assert data.node_types == ['paper', 'author']
+    assert data.edge_types == []
+    assert data['paper'].x.size() == (4, 16)
+    assert data['author'].x.size() == (8, 32)
+
+
 def test_hetero_data_rename():
     data = HeteroData()
     data['paper'].x = x_paper
