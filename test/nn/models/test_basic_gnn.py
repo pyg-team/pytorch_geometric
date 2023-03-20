@@ -8,6 +8,7 @@ import torch
 import torch.nn.functional as F
 
 import torch_geometric.typing
+from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
@@ -160,6 +161,7 @@ def test_packaging():
     path = osp.join(torch.hub._get_torch_home(), 'pyg_test_package.pt')
     with torch.package.PackageExporter(path) as pe:
         pe.extern('torch_geometric.nn.**')
+        pe.extern('torch_geometric.utils.trim_to_layer')
         pe.extern('_operator')
         pe.save_pickle('models', 'model.pkl', model)
 
@@ -213,3 +215,35 @@ def test_onnx(tmp_path, capfd):
     })[0]
     out = torch.from_numpy(out)
     assert torch.allclose(out, expected, atol=1e-6)
+
+
+@withPackage('pyg_lib')
+def test_trim_to_layer():
+    x = torch.randn(14, 16)
+    edge_index = torch.tensor([
+        [2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+        [0, 1, 2, 3, 2, 3, 7, 7, 7, 7],
+    ])
+    data = Data(x=x, edge_index=edge_index)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[1, 2, 4],
+        batch_size=2,
+        shuffle=False,
+    )
+    batch = next(iter(loader))
+
+    model = GraphSAGE(in_channels=16, hidden_channels=16, num_layers=3)
+    out1 = model(batch.x, batch.edge_index)[:2]
+    assert out1.size() == (2, 16)
+
+    out2 = model(
+        batch.x,
+        batch.edge_index,
+        num_sampled_nodes_per_hop=batch.num_sampled_nodes,
+        num_sampled_edges_per_hop=batch.num_sampled_edges,
+    )[:2]
+    assert out2.size() == (2, 16)
+
+    assert torch.allclose(out1, out2)
