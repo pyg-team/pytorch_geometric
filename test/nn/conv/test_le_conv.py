@@ -9,10 +9,9 @@ def test_le_conv():
     in_channels, out_channels = (16, 32)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     num_nodes = edge_index.max().item() + 1
-    row, col = edge_index
     x = torch.randn((num_nodes, in_channels))
-    adj1 = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj1.to_torch_sparse_coo_tensor()
+    adj1 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+    adj2 = adj1.to_torch_sparse_csc_tensor()
 
     conv = LEConv(in_channels, out_channels)
     assert str(conv) == 'LEConv(16, 32)'
