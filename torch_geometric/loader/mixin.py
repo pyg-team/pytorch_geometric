@@ -2,7 +2,7 @@ import glob
 import logging
 import os
 from contextlib import contextmanager
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import psutil
 import torch
@@ -99,15 +99,17 @@ class AffinityMixin:
         with loader.enable_cpu_affinity(loader_cores=[0, 1, 2]):
             for batch in loader:
                 pass
-
-    Args:
-        loader_cores ([int], optional): List of CPU cores to which data
-            loader workers should affinitize to. By default, will affinitize
-            to cores starting at :obj:`cpu0`.
-            (default: :obj:`node0_cores[:num_workers]`)
     """
     @contextmanager
-    def enable_cpu_affinity(self, loader_cores):
+    def enable_cpu_affinity(self, loader_cores: List[int]):
+        r"""Enables CPU affinity.
+
+        Args:
+            loader_cores ([int], optional): List of CPU cores to which data
+                loader workers should affinitize to.
+                By default, will affinitize to cores starting at :obj:`cpu0`.
+                (default: :obj:`node0_cores[:num_workers]`)
+        """
         if not self.num_workers > 0:
             raise ValueError(
                 f"'enable_cpu_affinity' should be used with at least one "

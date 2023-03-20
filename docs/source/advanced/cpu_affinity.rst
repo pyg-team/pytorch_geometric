@@ -61,7 +61,7 @@ Binding processes to physical cores
 
 Following general performance tuning principles, it is advisable to use only physical cores for deep learning workloads.
 For example, while two logical threads run :obj:`GEMM` at the same time, they will be sharing the same core resources causing front end bound, such that the overhead from this front end bound is greater than the gain from running both logical threads at the same time.
-This is because OpenMP threads will contend for the same :obj:`GEMM` execution units [1]_.
+This is because OpenMP threads will contend for the same :obj:`GEMM` execution units, see `here <https://pytorch.org/tutorials/intermediate/torchserve_with_ipex.html>`__.
 
 The binding can be done in many ways, however the most common tools are:
 
@@ -71,7 +71,7 @@ The binding can be done in many ways, however the most common tools are:
 
      --physcpubind=<cpus>, -C <cpus>  or --cpunodebind=<nodes>, -N <nodes>
 
-* Intel OMP :obj:`libiomp`: [4]_
+* `Intel OMP <https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-get-better-performance-on-pytorchcaffe2-with-intel-acceleration.html>`__ :obj:`libiomp`:
 
   .. code-block:: console
 
@@ -104,7 +104,7 @@ Dual socket CPU separation
 
 With dual-socket CPUs, it might be beneficial to further isolate the processes between the sockets.
 This leads to decreased frequency of remote memory calls for the main process.
-The goal is to utilize high-speed cache on local memory and reduces memory bound caused by migrating cached data between NUMA nodes [1]_.
+The goal is to `utilize high-speed cache on local memory and reduces memory bound caused by migrating cached data between NUMA nodes <https://pytorch.org/tutorials/intermediate/torchserve_with_ipex.html>`__.
 This can be achieved by using :class:`~torch.utils.data.DataLoader` affinity, and launching main process on the cores of the second socket, *i.e.* with:
 
 .. code-block:: console
@@ -120,8 +120,8 @@ Improving memory bounds
 -----------------------
 
 Following the CPU performance optimization guidelines for :pytorch:`PyTorch`, it is also advised for :pyg:`PyG` to use :obj:`jemalloc` or :obj:`TCMalloc`.
-These generally can reach better memory usage than the default :pytorch:`PyTorch` memory allocator :obj:`PTMalloc` [2]_.
-A non-default memory allocator can be specified using :obj:`LD_PRELOAD` prior to script execution [3]_.
+These generally can reach better memory usage than the default :pytorch:`PyTorch` `memory allocator <https://pytorch.org/tutorials/intermediate/torchserve_with_ipex_2.html>`__ :obj:`PTMalloc`.
+A `non-default memory allocator <https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html>`__ can be specified using :obj:`LD_PRELOAD` prior to script execution.
 
 Quick start guidelines
 ----------------------
@@ -131,7 +131,7 @@ The general guidelines for achieving the best performance with CPU affinity can 
 #. Test if your dataset benefits from using parallel data loaders.
    For some datasets, it might be more beneficial to use a plain serial data loader, especially when the dimensions of the input :class:`~torch_geometric.data.Data` are relatively small.
 #. Enable multi-process data loaders by setting :attr:`num_workers > 0`.
-   A good estimate for :obj:`num_workers` is in range :obj:`[2, 4]`.
+   A good estimate for :obj:`num_workers` lies in the range :obj:`[2, 4]`.
    However, for more complex datasets you might want to experiment with larger number of workers.
    Enable :pyg:`PyG` data loaders with :obj:`filter_per_worker=True` and use the :meth:`~torch_geometric.loader.AffinityMixin.enable_cpu_affinity` feature to affinitize :class:`~torch.utils.data.DataLoader` cores.
 #. Bind execution to physical cores.
@@ -181,16 +181,6 @@ The labels above each result indicate the end-to-end performance gain from using
 Over all model/dataset samples, the average training time is increased by **1.53x** for plain affinity and **1.85x** for the affinity with socket seapration.
 
 .. figure:: ../_figures/training_affinity.png
-    :align: center
-    :width: 1600px
+    :width: 100%
 
-    Generated on pre-production dual-socket Intel(R) Xeon(R) Platinum 8481C @ 2.0Ghz (2 x 56) cores CPU.
-
-
-.. [1] Grokking PyTorch Intel CPU Performance From First Principles, PyTorch Tutorials 2.0.0+cu117 Documentation, https://pytorch.org/tutorials/intermediate/torchserve_with_ipex.html
-
-.. [2] Grokking PyTorch Intel CPU Performance From First Principles (Part 2), PyTorch Tutorials 2.0.0+cu117 Documentation, https://pytorch.org/tutorials/intermediate/torchserve_with_ipex_2.html
-
-.. [3] Performance Tuning Guide, PyTorch Tutorials 2.0.0+cu117 Documentation, https://pytorch.org/tutorials/recipes/recipes/tuning_guide.html
-
-.. [4] Maximize Performance of Intel® Software Optimization for PyTorch* on..., Intel, https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-get-better-performance-on-pytorchcaffe2-with-intel-acceleration.html
+    Pre-production dual-socket Intel(R) Xeon(R) Platinum 8481C @ 2.0Ghz (2 x 56) cores CPU.
