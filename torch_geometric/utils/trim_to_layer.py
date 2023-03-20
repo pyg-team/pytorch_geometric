@@ -19,7 +19,7 @@ def trim_to_layer(
            Optional[MaybeHeteroEdgeTensor]]:
     r"""Trims the :obj:`edge_index` representation, node features :obj:`x` and
     edge features :obj:`edge_attr` to a minimal-sized representation for the
-    current GNN layer :obj:`layer` in
+    current GNN layer :obj:`layer` in directed
     :class:`~torch_geometric.loader.NeighborLoader` scenarios.
 
     This ensures that no computation is performed for nodes and edges that are
@@ -80,9 +80,10 @@ def trim_to_layer(
         start=0,
         length=edge_index.size(1) - num_sampled_edges_per_hop[-layer],
     )
-    edge_attr = edge_attr.narrow(
-        dim=0,
-        start=0,
-        length=edge_attr.size(0) - num_sampled_edges_per_hop[-layer],
-    )
+    if edge_attr is not None:
+        edge_attr = edge_attr.narrow(
+            dim=0,
+            start=0,
+            length=edge_attr.size(0) - num_sampled_edges_per_hop[-layer],
+        )
     return x, edge_index, edge_attr
