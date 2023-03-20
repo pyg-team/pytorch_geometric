@@ -7,10 +7,9 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import uniform, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils.repeat import repeat
-
-from ..inits import uniform, zeros
 
 try:
     from torch_spline_conv import spline_basis, spline_weighting

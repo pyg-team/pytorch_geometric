@@ -3,7 +3,7 @@ import re
 from collections import OrderedDict
 from typing import Any, Callable, Dict, List, Optional, Set
 
-from .typing import parse_types
+from torch_geometric.nn.conv.utils.typing import parse_types
 
 
 class Inspector(object):

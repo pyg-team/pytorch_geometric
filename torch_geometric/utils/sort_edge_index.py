@@ -5,8 +5,7 @@ from torch import Tensor
 
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort
-
-from .num_nodes import maybe_num_nodes
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 MISSING = '???'
 

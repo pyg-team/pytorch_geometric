@@ -8,6 +8,7 @@ from torch.nn import Parameter as Param
 
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
     Adj,
     OptTensor,
@@ -17,8 +18,6 @@ from torch_geometric.typing import (
 )
 from torch_geometric.utils import index_sort, scatter, spmm
 from torch_geometric.utils.sparse import index2ptr
-
-from ..inits import glorot, zeros
 
 
 @torch.jit._overload

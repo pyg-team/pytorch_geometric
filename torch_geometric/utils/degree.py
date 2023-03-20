@@ -3,7 +3,7 @@ from typing import Optional
 import torch
 from torch import Tensor
 
-from .num_nodes import maybe_num_nodes
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def degree(index: Tensor, num_nodes: Optional[int] = None,
