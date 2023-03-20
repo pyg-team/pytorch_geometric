@@ -165,8 +165,8 @@ class BasicGNN(torch.nn.Module):
         *,
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
-        num_sampled_nodes_per_hop: OptTensor = None,
-        num_sampled_edges_per_hop: OptTensor = None,
+        num_sampled_nodes_per_hop: Optional[List[int]] = None,
+        num_sampled_edges_per_hop: Optional[List[int]] = None,
     ) -> Tensor:
         r"""
         Args:
