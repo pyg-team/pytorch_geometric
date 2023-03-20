@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.datasets import Planetoid
-from torch_geometric.explain import Explainer, GNNExplainer
+from torch_geometric.explain import CaptumExplainer, Explainer
 from torch_geometric.nn import GCNConv
 
 dataset = 'Cora'
@@ -31,7 +31,7 @@ model = GCN().to(device)
 data = data.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
-for epoch in range(1, 201):
+for _ in range(1, 201):
     model.train()
     optimizer.zero_grad()
     out = model(data.x, data.edge_index)
@@ -41,16 +41,21 @@ for epoch in range(1, 201):
 
 explainer = Explainer(
     model=model,
-    algorithm=GNNExplainer(epochs=200),
+    algorithm=CaptumExplainer('IntegratedGradients'),
     explanation_type='model',
-    node_mask_type='attributes',
-    edge_mask_type='object',
     model_config=dict(
         mode='multiclass_classification',
         task_level='node',
         return_type='log_probs',
     ),
+    node_mask_type='attributes',
+    edge_mask_type='object',
+    threshold_config=dict(
+        threshold_type='topk',
+        value=200,
+    ),
 )
+
 node_index = 10
 explanation = explainer(data.x, data.edge_index, index=node_index)
 print(f'Generated explanations in {explanation.available_explanations}')
@@ -61,4 +66,4 @@ print(f"Feature importance plot has been saved to '{path}'")
 
 path = 'subgraph.pdf'
 explanation.visualize_graph(path)
-print(f"Subgraph visualization plot has been saved to '{path}'")
+print(f"Subgraph plot has been saved to '{path}'")
