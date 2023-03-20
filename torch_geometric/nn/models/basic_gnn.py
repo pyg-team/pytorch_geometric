@@ -198,7 +198,7 @@ class BasicGNN(torch.nn.Module):
 
         xs: List[Tensor] = []
         for i in range(self.num_layers):
-            if isinstance(num_sampled_nodes_per_hop, (list, tuple)):
+            if num_sampled_nodes_per_hop is not None:
                 x, edge_index, value = self._trim(
                     i,
                     num_sampled_nodes_per_hop,
