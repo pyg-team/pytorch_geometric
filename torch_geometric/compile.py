@@ -71,7 +71,6 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
     prev_state = {
         'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
         'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
-        'WITH_TORCH_SPARSE': torch_geometric.typing.WITH_TORCH_SPARSE,
     }
     warnings.filterwarnings('ignore', ".*the 'torch-scatter' package.*")
     for key in prev_state.keys():
