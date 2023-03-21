@@ -82,7 +82,8 @@ DATAPIPES = {
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--task', required=True, choices=DATAPIPES.keys())
+    parser.add_argument('--task', default='molecule', choices=DATAPIPES.keys())
+
     args = parser.parse_args()
 
     datapipe = DATAPIPES[args.task]()
