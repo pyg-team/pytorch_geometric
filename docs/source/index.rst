@@ -32,6 +32,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    tutorial/heterogeneous
    tutorial/load_csv
    tutorial/explain
+   tutorial/compile
 
 .. toctree::
    :maxdepth: 1
