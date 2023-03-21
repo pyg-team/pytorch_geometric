@@ -12,6 +12,7 @@ from torch.nn import Module, Parameter
 from torch.nn.functional import cross_entropy
 from torch.nn.init import trunc_normal_
 from torch.optim import Adam, Optimizer
+from torch.linalg import norm
 
 from torch_geometric.data import Data
 
@@ -35,7 +36,7 @@ class GLTModel(Module):
     ORIG = "_orig"
     EDGE_MASK = "adj"
 
-    def __init__(self, module: Module, graph: Data, ignore_keys=None):
+    def __init__(self, module: Module, graph: Data, ignore_keys: set[str] = set()):
         super().__init__()
 
         if ignore_keys is None:
@@ -137,7 +138,7 @@ class GLTModel(Module):
             raise RuntimeError("invalid adjacency mask!")
 
         pruned_graph = self.graph.clone()
-        pruned_graph.edge_weight = adj_mask
+        pruned_graph.edge_weight = adj_mask  # type: ignore
         if hasattr(pruned_graph, "edges"):
             return self.module(pruned_graph.x, pruned_graph.edge_index,
                                edge_weight=pruned_graph.edge_weight,
@@ -194,8 +195,9 @@ class GLTMask:
     torch.device): Torch device to place masks on. ignore_keys (set,
     optional): Set of keys to ignore when injecting masks into the model.
     """
-    def __init__(self, module: Module, graph: Data, device: torch.device)\
-            -> None:
+
+    def __init__(self, module: Module, graph: Data, device: torch.device,
+                 ignore_keys: set[str] = set()) -> None:
         self.graph_mask = INIT_FUNC(
             torch.ones((graph.edge_index.shape[1] or graph.num_edges),
                        device=device))
@@ -375,7 +377,7 @@ class GLTSearch:
     save_all_masks: bool = False
     seed: int = field(default_factory=lambda: randint(1, 9999))
     verbose: bool = False
-    ignore_keys: Optional[set] = None
+    ignore_keys: set = field(default_factory=lambda: set())
 
     def __post_init__(self):
         """fixes internal hyperparams and generates GLTMask from
@@ -461,9 +463,9 @@ class GLTSearch:
                 if ugs:
                     for mask_name, mask in ticket.get_masks().items():
                         if mask_name.startswith("adj"):
-                            loss += self.reg_graph * mask.norm(p=1)
+                            loss += self.reg_graph * norm(mask, ord=1)
                         else:
-                            loss += self.reg_model * mask.norm(p=1)
+                            loss += self.reg_model * norm(mask, ord=1)
 
                 loss.backward()
                 optimizer.step()
