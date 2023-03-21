@@ -295,7 +295,7 @@ if __name__ == '__main__':
     x = torch.randn(num_nodes, 64, device=args.device)
     edge_index = torch.randint(num_nodes, (2, num_edges), device=args.device)
 
-    for Model in [GCN, GraphSAGE]:
+    for Model in [GCN, GraphSAGE, GIN, EdgeCNN]:
         print(f'Model: {Model.__name__}')
 
         model = Model(64, 64, num_layers=3).to(args.device)
