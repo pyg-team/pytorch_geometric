@@ -164,9 +164,6 @@ def test_basic_gnn_inference(get_dataset, jk):
 @onlyLinux
 @withPackage('torch>=2.0.0')
 def test_compile(device):
-    if device == torch.device('cuda:0'):
-        return
-
     x = torch.randn(3, 8, device=device)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
