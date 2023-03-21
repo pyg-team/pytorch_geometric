@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.data import Data, Batch
-from torch_geometric.transform import SubgraphData, SubgraphPolicy, NodeDeletionPolicy, EdgeDeletionPolicy, EgoNetPolicy
+from torch_geometric.transforms import SubgraphData, SubgraphPolicy, NodeDeletionPolicy, EdgeDeletionPolicy, EgoNetPolicy
 
 def test_subgraph_data():
     x = torch.randn(5, 10)
