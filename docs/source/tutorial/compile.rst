@@ -57,8 +57,8 @@ and execute it as usual:
 
 We have incorporated multiple examples in :obj:`examples/compile` that further show the practical usage of :meth:`torch_geometric.compile`:
 
-#. `**Node Classification** <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gcn.py>`__ via :class:`~torch_geometric.nn.models.GCN`
-#. `**Graph Classification** <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gin.py>`__ via :class:`~torch_geometric.nn.models.GIN`
+#. `Node Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gcn.py>`__ via :class:`~torch_geometric.nn.models.GCN`
+#. `Graph Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gin.py>`__ via :class:`~torch_geometric.nn.models.GIN`
 
 Note that :meth:`torch.compile` will currently re-compile the model everytime it sees an input with a different shape.
 That currently does not play that nicely with the way :pyg:`PyG` performs mini-batching.
