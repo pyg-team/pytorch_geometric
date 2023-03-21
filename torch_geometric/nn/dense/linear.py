@@ -340,17 +340,16 @@ class HeteroDictLinear(torch.nn.Module):
                                  "keys in the 'in_channels' dictionary")
 
         else:
-
             if types is None:
                 raise ValueError("Please provide a list of 'types' if passing "
                                  "'in_channels' as an integer")
 
-            self.types = types
-            in_channels = {node_type: in_channels for node_type in types}
-
             if in_channels == -1:
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
+
+            self.types = types
+            in_channels = {node_type: in_channels for node_type in types}
 
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -377,11 +376,10 @@ class HeteroDictLinear(torch.nn.Module):
             x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
                 features for each individual type.
         """
-        print(torch_geometric.typing.WITH_GMM)
         if torch_geometric.typing.WITH_GMM:
             xs = [x_dict[key] for key in x_dict.keys()]
             weights = [self.lins[key].weight.t() for key in x_dict.keys()]
-            if self.kwargs('bias', True):
+            if self.kwargs.get('bias', True):
                 biases = [self.lins[key].bias for key in x_dict.keys()]
             else:
                 biases = None
@@ -399,8 +397,9 @@ class HeteroDictLinear(torch.nn.Module):
                 self.lins[key].initialize_parameters(None, x)
         self.reset_parameters()
         self._hook.remove()
+        self.in_channels = {key: x.size(-1) for key, x in input[0].items()}
         delattr(self, '_hook')
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels} bias={self.kwargs.get("bias", True)})')
+                f'{self.out_channels}, bias={self.kwargs.get("bias", True)})')

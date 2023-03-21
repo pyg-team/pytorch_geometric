@@ -10,8 +10,7 @@ WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
 try:
     import pyg_lib  # noqa
     WITH_PYG_LIB = True
-    WITH_GMM = (WITH_PT2 and int(pyg_lib.__version__.split('.')[1]) >= 2
-                and hasattr(pyg_lib.ops, 'grouped_matmul'))
+    WITH_GMM = WITH_PT2 and hasattr(pyg_lib.ops, 'grouped_matmul')
     WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
     WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
 except (ImportError, OSError) as e:

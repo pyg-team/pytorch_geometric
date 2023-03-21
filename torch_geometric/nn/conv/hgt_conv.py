@@ -16,7 +16,6 @@ from torch_geometric.typing import (
     Metadata,
     NodeType,
     SparseTensor,
-    grouped_matmul_avail,
     pyg_lib,
 )
 from torch_geometric.utils import softmax
