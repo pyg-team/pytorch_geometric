@@ -199,8 +199,7 @@ class GLTMask:
                        device=device))
         self.weight_mask = {
             param_name + GLTModel.MASK: INIT_FUNC(torch.ones_like(param))
-            for param_name, param in module.named_parameters()
-            if param_name
+            for param_name, param in module.named_parameters() if param_name
         }
 
     def sparsity(self) -> Tuple[float, float]:
@@ -251,8 +250,7 @@ class GLTMask:
         if len(missing_masks):
             raise ValueError(
                 f"Model has no masks for the following parameters:"
-                f" {missing_masks} "
-            )
+                f" {missing_masks} ")
 
         # splitting out m_g and m_theta
         graph_mask = model_masks[EDGE_MASK]
@@ -392,9 +390,9 @@ class GLTSearch:
         self.ignore_keys = self.ignore_keys if self.ignore_keys is not None\
             else set()
 
-        self.mask = GLTMask(self.module, self.graph,
-                            torch.device("cuda" if torch.cuda.is_available()
-                                         else "cpu"))
+        self.mask = GLTMask(
+            self.module, self.graph,
+            torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
     def prune(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """UGS algorithm. Train model with UGS to train masks and params.

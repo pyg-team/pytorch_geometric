@@ -2,9 +2,9 @@ from copy import deepcopy
 
 import pytest
 import torch
-from torch_geometric.contrib.nn import GLTMask, GLTModel
 from torch.nn import Module
 
+from torch_geometric.contrib.nn import GLTMask, GLTModel
 from torch_geometric.data import Data
 from torch_geometric.nn import GAT, GCN
 from torch_geometric.utils import negative_sampling
@@ -38,7 +38,6 @@ generate_edge_data(test_data_link_prediction)
 
 class LinkPredictor(Module):
     """helper model to get dot product interaction on edges"""
-
     def __init__(self, model):
         super().__init__()
         self.model = model
@@ -157,8 +156,8 @@ def test_rewind(architecture, link_prediction):
 
     model = build_test_model(architecture, link_prediction)
     initial_params = {
-        "module." + k + GLTModel.ORIG if k.rpartition(".")[
-            -1] else "module." + k: v.detach().clone()
+        "module." + k + GLTModel.ORIG if k.rpartition(".")[-1] else "module." +
+        k: v.detach().clone()
         for k, v in model.state_dict().items()
     }
     pruned_model = GLTModel(model, graph)
@@ -167,7 +166,6 @@ def test_rewind(architecture, link_prediction):
     pruned_model.apply_mask(mask.to_dict())
     pruned_model.rewind(mask.to_dict(weight_prefix=True) | initial_params)
 
-    for param in (mask.to_dict(weight_prefix=True) |
-                  initial_params).values():
+    for param in (mask.to_dict(weight_prefix=True) | initial_params).values():
         assert not param.requires_grad
         assert param.grad is None
