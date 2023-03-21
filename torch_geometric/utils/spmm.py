@@ -25,8 +25,8 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
 
     Args:
         src (Tensor or torch_sparse.SparseTensor): The input sparse matrix,
-            either a :class:`torch_sparse.SparseTensor` or a
-            :class:`torch.sparse.Tensor`.
+            either a :pyg:`PyG` :class:`torch_sparse.SparseTensor` or a
+            :pytorch:`PyTorch` :class:`torch.sparse.Tensor`.
         other (Tensor): The input dense matrix.
         reduce (str, optional): The reduce operation to use
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`).
