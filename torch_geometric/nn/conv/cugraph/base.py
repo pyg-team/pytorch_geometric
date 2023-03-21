@@ -8,11 +8,11 @@ from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
 
 try:  # pragma: no cover
-    from pylibcugraphops import (
-        make_fg_csr,
-        make_fg_csr_hg,
-        make_mfg_csr,
-        make_mfg_csr_hg,
+    from pylibcugraphops.pytorch import (
+        StaticCSC,
+        StaticHeteroCSC,
+        SampledCSC,
+        SampledHeteroCSC,
     )
     HAS_PYLIBCUGRAPHOPS = True
 except ImportError:
@@ -99,12 +99,9 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
             if max_num_neighbors is None:
                 max_num_neighbors = int((colptr[1:] - colptr[:-1]).max())
 
-            dst_nodes = torch.arange(colptr.numel() - 1, device=row.device)
+            return SampledCSC(colptr, row, max_num_neighbors, num_src_nodes)
 
-            return make_mfg_csr(dst_nodes, colptr, row, max_num_neighbors,
-                                num_src_nodes)
-
-        return make_fg_csr(colptr, row)
+        return StaticCSC(colptr, row)
 
     def get_typed_cugraph(
         self,
@@ -142,17 +139,10 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
             if max_num_neighbors is None:
                 max_num_neighbors = int((colptr[1:] - colptr[:-1]).max())
 
-            dst_nodes = torch.arange(colptr.numel() - 1, device=row.device)
+            return SampledHeteroCSC(colptr, row, edge_type, max_num_neighbors,
+                                    num_src_nodes, num_edge_types)
 
-            return make_mfg_csr_hg(dst_nodes, colptr, row, max_num_neighbors,
-                                   num_src_nodes, n_node_types=0,
-                                   n_edge_types=num_edge_types,
-                                   out_node_types=None, in_node_types=None,
-                                   edge_types=edge_type)
-
-        return make_fg_csr_hg(colptr, row, n_node_types=0,
-                              n_edge_types=num_edge_types, node_types=None,
-                              edge_types=edge_type)
+        return StaticHeteroCSC(colptr, row, edge_type, num_edge_types)
 
     def forward(
         self,

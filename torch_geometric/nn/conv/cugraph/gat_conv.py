@@ -8,7 +8,7 @@ from torch_geometric.nn.conv.cugraph import CuGraphModule
 from torch_geometric.nn.inits import zeros
 
 try:
-    from pylibcugraphops.torch.autograd import mha_gat_n2n as GATConvAgg
+    from pylibcugraphops.pytorch.operators import mha_gat_n2n as GATConvAgg
 except ImportError:
     pass
 
@@ -68,7 +68,7 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
 
         x = self.lin(x)
         out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
-                         self.negative_slope, False, self.concat)
+                         self.negative_slope, self.concat)
 
         if self.bias is not None:
             out = out + self.bias
