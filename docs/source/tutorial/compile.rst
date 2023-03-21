@@ -69,7 +69,7 @@ Benchmark
 :meth:`torch.compile` works **fantastically well** for many :pyg:`PyG` models.
 **Overall, we observe runtime improvements of nearly up to 300%.**
 
-Specifically, we benchmark :class:`~torch_geometric.nn.models.GCN`, :class:`~torch_geometric.nn.models.GCN` and :class:`~torch_geometric.nn.models.GCN` and compare runtimes obtained from traditional eager mode and :meth:`torch_geometric.compile`.
+Specifically, we benchmark :class:`~torch_geometric.nn.models.GCN`, :class:`~torch_geometric.nn.models.GraphSAGE` and :class:`~torch_geometric.nn.models.GIN` and compare runtimes obtained from traditional eager mode and :meth:`torch_geometric.compile`.
 We use a synthetic graph with 10,000 nodes and 200,000 edges, and a hidden feature dimensionality of 64.
 We report runtimes over 500 optimization steps:
 
