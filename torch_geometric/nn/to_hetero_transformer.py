@@ -397,7 +397,7 @@ class ToHeteroTransformer(Transformer):
             return module
 
         if is_linear(module):
-            if USE_GMM:
+            if WITH_GMM:
                 # faster grouped matmul path
                 in_channels, out_channels = get_linear_channels(module)
                 return HeteroDictLinear(in_channels, out_channels, types=self.metadata[int(has_edge_level_target)])
