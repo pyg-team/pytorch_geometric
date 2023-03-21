@@ -1046,9 +1046,10 @@ def to_homogeneous_edge_index(
         edge_slices[edge_type] = (cumsum, cumsum + edge_index.size(1))
         cumsum += edge_index.size(1)
 
+    edge_index: Optional[Tensor] = None
     if len(edge_indices) == 1:  # Memory-efficient `torch.cat`:
         edge_index = edge_indices[0]
-    else:
+    elif len(edge_indices) > 1:
         edge_index = torch.cat(edge_indices, dim=-1)
 
     return edge_index, node_slices, edge_slices
