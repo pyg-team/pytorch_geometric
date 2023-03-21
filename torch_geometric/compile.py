@@ -1,64 +1,75 @@
 import logging
 import warnings
+from typing import Callable, Optional
 
-try:
-    from torch.utils._contextlib import _DecoratorContextManager
-except ImportError:
-    from torch.autograd.grad_mode import _DecoratorContextManager
+import torch
 
 import torch_geometric.typing
 
 
-class enable_compile(_DecoratorContextManager):
-    r"""Context-manager to enable :meth:`torch.compile` mode in :pyg:`PyG`.
+def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
+    r"""Optimizes the given :pyg:`PyG` model/function via
+    :meth:`torch.compile`.
 
-    Specifically, this context-manager temporarily disables the usage of the
-    external extension packages :obj:`pyg_lib`, :obj:`torch_scatter` and
-    :obj:`torch_sparse` as they are not compatible with :meth:`torch.compile`.
+    This function has the same signature as :meth:`torch.compile`, but it
+    applies further optimization to make :pyg:`PyG` models/functions more
+    compiler-friendly.
 
-    .. code-block:: python
+    Specifically, it
 
-        # Use as a context manager:
-        with torch_geometric.enable_compile():
-            model = torch.compile(model)
+    1. temporarily disables the usage of the extension packages
+       :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib`, and
 
-        # Use as a decorator:
-        @torch_geometric.enable_compile()
-        def main(model):
-            model = torch.compile(model)
+    2. converts all instances of
+       :class:`~torch_geometric.nn.conv.MessagePassing` modules into their
+       jittable instances
+       (see :meth:`~torch_geometric.nn.conv.MessagePassing.jittable`)
 
-    Args:
-        log_level (int, optional): The log level to use during
-            :meth:`torch.compile`. (default: :obj:`logging.WARNING`)
+    .. note::
+        Without these adjustments, :meth:`torch.compile` may currently fail to
+        correctly optimize your :pyg:`PyG` model.
+        We are working on fully relying on :meth:`torch.compile` for future
+        releases.
     """
-    def __init__(self, log_level: int = logging.WARNING):
-        super().__init__()
-        self.log_level = log_level
+    if model is None:
 
-        self.prev_state = {}
-        self.prev_log_level = {}
+        def fn(model: Callable) -> Callable:
+            return compile(model, *args, **kwargs)
 
-    def __enter__(self):
-        self.prev_state = {
-            'WITH_PYG_LIB': torch_geometric.typing.WITH_PYG_LIB,
-            'WITH_SAMPLED_OP': torch_geometric.typing.WITH_SAMPLED_OP,
-            'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
-            'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
-            'WITH_TORCH_SPARSE': torch_geometric.typing.WITH_TORCH_SPARSE,
-        }
-        self.prev_log_level = {
-            'torch._dynamo': logging.getLogger('torch._dynamo').level,
-            'torch._inductor': logging.getLogger('torch._inductor').level,
-        }
-        for key in self.prev_state.keys():
-            setattr(torch_geometric.typing, key, False)
-        for key in self.prev_log_level.keys():
-            logging.getLogger(key).setLevel(self.log_level)
+        return fn
 
-        warnings.filterwarnings('ignore', ".*the 'torch-scatter' package.*")
+    # Temporarily disable the usage of external extension packages:
+    prev_state = {
+        'WITH_PYG_LIB': torch_geometric.typing.WITH_PYG_LIB,
+        'WITH_SAMPLED_OP': torch_geometric.typing.WITH_SAMPLED_OP,
+        'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
+        'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
+        'WITH_TORCH_SPARSE': torch_geometric.typing.WITH_TORCH_SPARSE,
+    }
+    warnings.filterwarnings('ignore', ".*the 'torch-scatter' package.*")
+    for key in prev_state.keys():
+        setattr(torch_geometric.typing, key, False)
 
-    def __exit__(self, *args, **kwargs):
-        for key, value in self.prev_state.items():
-            setattr(torch_geometric.typing, key, value)
-        for key, value in self.prev_log_level.items():
-            logging.getLogger(key).setLevel(value)
+    # Temporarily adjust the logging level of `torch.compile`:
+    prev_log_level = {
+        'torch._dynamo': logging.getLogger('torch._dynamo').level,
+        'torch._inductor': logging.getLogger('torch._inductor').level,
+    }
+    log_level = kwargs.pop('log_level', logging.WARNING)
+    for key in prev_log_level.keys():
+        logging.getLogger(key).setLevel(log_level)
+
+    # Replace instances of `MessagePassing` by their jittable version:
+    if isinstance(model, torch_geometric.nn.MessagePassing):
+        model = model.jittable()
+        # TODO Apply recursively.
+
+    out = torch.compile(model, *args, **kwargs)
+
+    # Restore the previous state:
+    for key, value in prev_state.items():
+        setattr(torch_geometric.typing, key, value)
+    for key, value in prev_log_level.items():
+        logging.getLogger(key).setLevel(value)
+
+    return out
