@@ -331,12 +331,13 @@ class GLTSearch:
         .. note::
             For examples of using the GLTSearch, see
             `examples/contrib/graph_lottery_ticket.py
-            <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-            contrib/graph_lottery_ticket.py>`_.
+            <https://github.com/pyg-team/pytorch_geometric/blob/master/
+            examples/contrib/graph_lottery_ticket.py>`_.
 
         Args:
             module (torch.nn.Module): The GNN module to prune.
-            graph (torch_geometric.data.Data): Graph to perform GLT search over.
+            graph (torch_geometric.data.Data): Graph to perform GLT search
+                over.
             lr (float): Learning rate for training. Is propagated to masks if
                 individual lr not specified.
             reg_graph (float): L2 regularization for graph mask.
@@ -411,7 +412,8 @@ class GLTSearch:
         self.mask.load_and_binarize(masks, self.prune_rate_model,
                                     self.prune_rate_graph)
 
-        ticket.rewind(self.mask.to_dict(weight_prefix=True) | initial_params)
+        mask_dict = self.mask.to_dict(weight_prefix=True)
+        ticket.rewind({**mask_dict, **initial_params})
         test_score, masks = self.train(ticket, False)
 
         print("[FIXED MASK] Final test performance:", test_score)

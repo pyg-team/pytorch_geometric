@@ -77,8 +77,8 @@ def test_make_mask(architecture, link_prediction):
     mask = GLTMask(model, graph, device).to_dict()
 
     for name, param in model.named_parameters():
-        mask = mask[name + GLTModel.MASK]
-        assert param.shape == mask.shape
+        param_mask = mask[name + GLTModel.MASK]
+        assert param.shape == param_mask.shape
 
     assert mask[GLTModel.EDGE_MASK + GLTModel.MASK].shape[0] == \
            adjacency_shape
@@ -125,7 +125,9 @@ def test_apply_mask_ignore_keys(architecture, link_prediction):
     for name, param in original_params.items():
         key = name.rpartition('.')[-1]
         if key in ignore_keys:
-            assert param not in new_params
+            assert name in new_params
+            assert name + GLTModel.MASK not in new_params
+            assert name + GLTModel.ORIG not in new_params
 
 
 @pytest.mark.parametrize('architecture', [GCN, GAT])
@@ -133,7 +135,7 @@ def test_apply_mask_ignore_keys(architecture, link_prediction):
 def test_forward(architecture, link_prediction):
     if link_prediction:
         graph = test_data_link_prediction
-        input_len = graph.edges.shape[0]
+        input_len = graph.edges.shape[1]
     else:
         graph = test_data_node_classification
         input_len = graph.x.shape[0]
@@ -165,7 +167,7 @@ def test_rewind(architecture, link_prediction):
     mask = GLTMask(model, graph, device)
 
     pruned_model.apply_mask(mask.to_dict())
-    pruned_model.rewind(mask.to_dict(weight_prefix=True) | initial_params)
+    pruned_model.rewind({**mask.to_dict(weight_prefix=True), **initial_params})
 
     for param in (mask.to_dict(weight_prefix=True) | initial_params).values():
         assert not param.requires_grad
