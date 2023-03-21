@@ -233,7 +233,7 @@ class GLTMask:
             **{pref + k: v.detach().clone() for k, v in self.weight_mask.items()},
         }
 
-    def load_and_binarise(
+    def load_and_binarize(
             self,
             model_masks: Dict[str, Parameter],
             p_theta: float,
@@ -407,7 +407,7 @@ class GLTSearch:
 
         test_score, masks = self.train(ticket, True)
         print("[UNREWOUND] Final test performance:", test_score)
-        self.mask.load_and_binarise(masks, self.prune_rate_model, self.prune_rate_graph)
+        self.mask.load_and_binarize(masks, self.prune_rate_model, self.prune_rate_graph)
 
         ticket.rewind(self.mask.to_dict(weight_prefix=True) | initial_params)
         test_score, masks = self.train(ticket, False)
