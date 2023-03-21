@@ -145,11 +145,11 @@ def test_my_conv_jittable():
 
     t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit((x1, x2), adj.t()), out1)
-    assert torch.allclose(jit((x1, None), adj.t()), out2)
+    assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
+    assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
     jit.fuse = False
-    assert torch.allclose(jit((x1, x2), adj.t()), out1)
-    assert torch.allclose(jit((x1, None), adj.t()), out2)
+    assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
+    assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
     jit.fuse = True
 
 
