@@ -1,6 +1,6 @@
 import copy
 import math
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -9,12 +9,7 @@ from torch.nn.parameter import Parameter
 
 import torch_geometric.typing
 from torch_geometric.nn import inits
-from torch_geometric.typing import (
-    EdgeType,
-    NodeType,
-    grouped_matmul_avail,
-    pyg_lib,
-)
+from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
 
