@@ -14,101 +14,7 @@ from torch.nn.functional import nll_loss
 from torch.nn.init import trunc_normal_
 from torch.optim import Adam, Optimizer
 
-from torch_geometric.contrib.nn import GLTModel
 from torch_geometric.data import Data
-
-EDGE_MASK = GLTModel.EDGE_MASK + GLTModel.MASK
-INIT_FUNC = functools.partial(trunc_normal_, mean=1, a=1 - 1e-3, b=1 + 1e-3)
-
-
-class GLTMask:
-    def __init__(self, module: Module, graph: Data, device: torch.device, ignore_keys: Optional[set] = None) -> None:
-        self.graph_mask = INIT_FUNC(
-            torch.ones((graph.edge_index.shape[1] or graph.num_edges), device=device)
-        )
-        self.weight_mask = {
-            param_name + GLTModel.MASK: INIT_FUNC(torch.ones_like(param))
-            for param_name, param in module.named_parameters()
-            if param_name not in ignore_keys
-        }
-
-    def sparsity(self) -> Tuple[float, float]:
-        norm_graph_mask = float(torch.count_nonzero(self.graph_mask))
-        norm_graph = torch.numel(self.graph_mask)
-        graph_sparsity = 1 - norm_graph_mask / norm_graph
-
-        norm_weight_mask = 0
-        norm_weight = 0
-
-        for v in self.weight_mask.values():
-            norm_weight_mask += float(torch.count_nonzero(v))
-            norm_weight += torch.numel(v)
-
-        weight_sparsity = 1 - norm_weight_mask / norm_weight
-        return graph_sparsity, weight_sparsity
-
-    def to_dict(self, weight_prefix=False) -> Dict[str, Any]:
-        pref = "module." if weight_prefix else ""
-
-        return {
-            EDGE_MASK: self.graph_mask.detach().clone(),
-            **{pref + k: v.detach().clone() for k, v in self.weight_mask.items()},
-        }
-
-    def load_and_binarise(
-            self,
-            model_masks: Dict[str, Parameter],
-            p_theta: float,
-            p_g: float,
-    ) -> None:
-        # Validation
-        missing_masks = [
-            name
-            for name in [
-                EDGE_MASK,
-                *self.weight_mask.keys(),
-            ]
-            if name not in model_masks.keys()
-        ]
-
-        if len(missing_masks):
-            raise ValueError(
-                f"Model has no masks for the following parameters: {missing_masks}"
-            )
-
-        # splitting out m_g and m_theta
-        graph_mask = model_masks[EDGE_MASK]
-        del model_masks[EDGE_MASK]
-
-        # process graph mask
-        self.graph_mask = torch.where(
-            self.graph_mask > 0, 1.0, 0.
-        )  # needed to support non-binary inits
-        all_weights_graph = graph_mask[self.graph_mask == 1]
-        num_prune_graph = min(
-            math.floor(p_g * len(all_weights_graph)), len(all_weights_graph) - 1
-        )
-        threshold_graph = all_weights_graph.sort()[0][num_prune_graph]
-        self.graph_mask = torch.where(
-            graph_mask > threshold_graph, self.graph_mask, 0.
-        )
-
-        # process weight masks
-        self.weight_mask = {
-            k: torch.where(v > 0, 1.0, 0.0) for k, v in self.weight_mask.items()
-        }  # needed to support non-binary inits
-        all_weights_model = torch.concat(
-            [v[self.weight_mask[k] == 1] for k, v in model_masks.items()]
-        )
-        num_prune_weights = min(
-            math.floor(p_theta * len(all_weights_model)), len(all_weights_model) - 1
-        )
-        threshold_model = all_weights_model.sort()[0][num_prune_weights]
-
-        self.weight_mask = {
-            k: torch.where(v > threshold_model, self.weight_mask[k], 0.0)
-            for k, v in model_masks.items()
-        }
 
 
 class GLTModel(Module):
@@ -156,6 +62,7 @@ class GLTModel(Module):
         }
 
     def rewind(self, state_dict: Dict[str, Any]) -> None:
+        """rewind model state dict"""
         for k, v in state_dict.items():
             module_path, _, param_name = k.rpartition(".")
 
@@ -170,6 +77,7 @@ class GLTModel(Module):
             setattr(sub_mod, param_name, curr_param)
 
     def apply_mask(self, mask_dict: Dict[str, Any]) -> None:
+        """Inject GLTMask into model params and adjacency mask. Ignore keys specified by ignore_keys."""
         # Input validation
         param_names = [
                           name
@@ -221,6 +129,7 @@ class GLTModel(Module):
         self.register_forward_pre_hook(GLTModel._compute_masked_adjacency)
 
     def forward(self):
+        """model forward, uses graph edges if present (link prediction)"""
         adj_mask = getattr(self, GLTModel.EDGE_MASK)
 
         if not isinstance(adj_mask, torch.Tensor):
@@ -276,6 +185,112 @@ class GLTModel(Module):
         ]
 
 
+EDGE_MASK = GLTModel.EDGE_MASK + GLTModel.MASK
+INIT_FUNC = functools.partial(trunc_normal_, mean=1, a=1 - 1e-3, b=1 + 1e-3)
+
+
+class GLTMask:
+    r"""Generate UGLT masks for pruning model according to named parameters.
+    Args:
+        module (torch.nn.Module): The GNN module to make masks for.
+        graph (torch_geometric.data.Data): Graph to make adjacency mask for.
+        device (torch.device): Torch device to place masks on.
+        ignore_keys (set, optional): Set of keys to ignore when injecting masks into the model.
+    """
+
+    def __init__(self, module: Module, graph: Data, device: torch.device, ignore_keys: Optional[set] = None) -> None:
+        self.graph_mask = INIT_FUNC(
+            torch.ones((graph.edge_index.shape[1] or graph.num_edges), device=device)
+        )
+        self.weight_mask = {
+            param_name + GLTModel.MASK: INIT_FUNC(torch.ones_like(param))
+            for param_name, param in module.named_parameters()
+            if param_name not in ignore_keys
+        }
+
+    def sparsity(self) -> Tuple[float, float]:
+        """calculate sparsity for masks"""
+        norm_graph_mask = float(torch.count_nonzero(self.graph_mask))
+        norm_graph = torch.numel(self.graph_mask)
+        graph_sparsity = 1 - norm_graph_mask / norm_graph
+
+        norm_weight_mask = 0
+        norm_weight = 0
+
+        for v in self.weight_mask.values():
+            norm_weight_mask += float(torch.count_nonzero(v))
+            norm_weight += torch.numel(v)
+
+        weight_sparsity = 1 - norm_weight_mask / norm_weight
+        return graph_sparsity, weight_sparsity
+
+    def to_dict(self, weight_prefix=False) -> Dict[str, Any]:
+        """convert masks to dict of masks"""
+        pref = "module." if weight_prefix else ""
+
+        return {
+            EDGE_MASK: self.graph_mask.detach().clone(),
+            **{pref + k: v.detach().clone() for k, v in self.weight_mask.items()},
+        }
+
+    def load_and_binarise(
+            self,
+            model_masks: Dict[str, Parameter],
+            p_theta: float,
+            p_g: float,
+    ) -> None:
+        """Parse masks and set bottom fraction of weights equal to 0 and rest equal to 1 for all masks. Number of
+        zeroed out params is determined by pruning rates p_theta and p_g (model and graph, respectively)."""
+        # Validation
+        missing_masks = [
+            name
+            for name in [
+                EDGE_MASK,
+                *self.weight_mask.keys(),
+            ]
+            if name not in model_masks.keys()
+        ]
+
+        if len(missing_masks):
+            raise ValueError(
+                f"Model has no masks for the following parameters: {missing_masks}"
+            )
+
+        # splitting out m_g and m_theta
+        graph_mask = model_masks[EDGE_MASK]
+        del model_masks[EDGE_MASK]
+
+        # process graph mask
+        self.graph_mask = torch.where(
+            self.graph_mask > 0, 1.0, 0.
+        )  # needed to support non-binary inits
+        all_weights_graph = graph_mask[self.graph_mask == 1]
+        num_prune_graph = min(
+            math.floor(p_g * len(all_weights_graph)), len(all_weights_graph) - 1
+        )
+        threshold_graph = all_weights_graph.sort()[0][num_prune_graph]
+        self.graph_mask = torch.where(
+            graph_mask > threshold_graph, self.graph_mask, 0.
+        )
+
+        # process weight masks
+        self.weight_mask = {
+            k: torch.where(v > 0, 1.0, 0.0) for k, v in self.weight_mask.items()
+        }  # needed to support non-binary inits
+        all_weights_model = torch.concat(
+            [v[self.weight_mask[k] == 1] for k, v in model_masks.items()]
+        )
+        num_prune_weights = min(
+            math.floor(p_theta * len(all_weights_model)), len(all_weights_model) - 1
+        )
+        threshold_model = all_weights_model.sort()[0][num_prune_weights]
+
+        self.weight_mask = {
+            k: torch.where(v > threshold_model, self.weight_mask[k], 0.0)
+            for k, v in model_masks.items()
+        }
+
+
 def score_link_prediction(targets, preds, val_mask, test_mask):
     """helper for getting AUC for link preds"""
     val_preds = preds[val_mask]
@@ -300,29 +315,43 @@ def score_node_classification(targets, preds, val_mask, test_mask):
 
 @dataclass
 class GLTSearch:
-    r"""The Unified Graph Lottery Ticket pruning model from the `A Unified Lottery Ticket Hypothesis for Graph Neural
+    r"""The Unified Graph Lottery Ticket search algorithm from the `A Unified Lottery Ticket Hypothesis for Graph Neural
         Networks <https://arxiv.org/abs/2102.06790>`_ paper.
 
-        This paper presents a unified GNN sparsification (UGS) framework that simultaneously prunes the graph adjacency
-        matrix and the model weights, for accelerating GNN inference on large-scale graphs. This pruning wrapper supports
-        all models that can handle weighted graphs that are differentiable w.r.t. these edge weights, *e.g.*,
-        :class:`~torch_geometric.nn.conv.GCNConv` or :class:`~torch_geometric.nn.conv.GraphConv`.
+        This paper presents a unified GNN sparsification (UGS) framework that simultaneously prunes the graph
+        adjacency matrix and the model weights, for accelerating GNN inference on large-scale graphs. This pruning
+        wrapper supports all models that can handle weighted graphs that are differentiable w.r.t. these edge
+        weights, *e.g.*, :class:`~torch_geometric.nn.conv.GCNConv` or :class:`~torch_geometric.nn.conv.GraphConv`.
 
-        Notably, the model requires additional memory overhead as masks are constructed for all named parameters in the
-        model other than those specified by :attr:`ignore_keys`
+        GLTSearch class provides an interface to prune a model to a specified graph/model pruning rate.
 
         This methodology is built for both node classification and link prediction, but any other tasks should be easily
         extensible given the appropriate loss function and data.
 
         .. note::
-            For examples of using the GLTModel, see
+            For examples of using the GLTSearch, see
             `examples/contrib/graph_lottery_ticket.py
             <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
             contrib/graph_lottery_ticket.py>`_.
 
         Args:
             module (torch.nn.Module): The GNN module to prune.
-            graph (torch_geometric.data.Data): Graph to perform GLT over.
+            graph (torch_geometric.data.Data): Graph to perform GLT search over.
+            lr (float): Learning rate for training. Is propagated to masks if individual lr not specified.
+            reg_graph (float): L2 regularization for graph mask.
+            reg_model (float): L2 regularization for model masks.
+            optim_args (dict): Args for internal optimizer.
+            task (str): Specifies to use node or link train loop.
+            lr_mask_model (float, optional):  LR to apply to model mask only.
+            lr_mask_graph Optional[float] LR to apply to graph mask only.
+            optimizer (torch.optim.Optimizer): Optimizer to use for training.
+            prune_rate_model (float): Sparsity level induced in model masks.
+            prune_rate_graph (float): Sparsity level induced in graph mask.
+            max_train_epochs (int): max number of epochs to train.
+            loss_fn (callable): loss function to train with.
+            save_all_masks (bool): toggles saving all masks.
+            seed (int): random seed.
+            verbose (bool): toggles trainer verbosity.
             ignore_keys (set, optional): Set of keys to ignore when injecting masks into the model.
         """
     module: Module
@@ -335,7 +364,6 @@ class GLTSearch:
     lr_mask_model: Optional[float] = None
     lr_mask_graph: Optional[float] = None
     optimizer: Type[Optimizer] = Adam
-    sparsity: float = 0.99
     prune_rate_model: float = 0.2
     prune_rate_graph: float = 0.05
     max_train_epochs: int = 200
@@ -366,6 +394,8 @@ class GLTSearch:
         )
 
     def prune(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """UGS algorithm. Train model with UGS to train masks and params. Disretize masks by pruning rates. Retrain
+        without UGS for final performance. """
         initial_params = {
             "module." + k + GLTModel.ORIG if k.rpartition(".")[
                                                  -1] not in self.ignore_keys else "module." + k: v.detach().clone()
@@ -396,6 +426,7 @@ class GLTSearch:
     def train(
             self, ticket: GLTModel, ugs: bool
     ) -> Tuple[float, Dict[str, Parameter]]:
+        """train loop. If ugs flag, use mask regularization."""
         best_val_score = 0.0
         final_test_score = 0.0
         best_masks = {}

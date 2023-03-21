@@ -1,14 +1,12 @@
-import functools
 from argparse import ArgumentParser
 
 import torch
 import tqdm
 from torch.nn import Module
 from torch.nn.functional import nll_loss
-from torch.nn.init import trunc_normal_
 
 import torch_geometric
-from torch_geometric.contrib.nn import GLTModel, GLTSearch
+from torch_geometric.contrib.nn import GLTSearch
 from torch_geometric.contrib.nn.models.graph_lottery_ticket import score_node_classification, score_link_prediction
 from torch_geometric.data import Data
 from torch_geometric.datasets import Planetoid
@@ -16,11 +14,9 @@ from torch_geometric.nn import GAT, GIN, GCN
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-EDGE_MASK = GLTModel.EDGE_MASK + GLTModel.MASK
-INIT_FUNC = functools.partial(trunc_normal_, mean=1, a=1 - 1e-3, b=1 + 1e-3)
-
 
 def generate_edge_data(dataset):
+    """sample  negative edges and labels"""
     negative_edges = torch_geometric.utils.negative_sampling(dataset.edge_index)
     edge_labels = [0] * negative_edges.shape[-1] + [1] * dataset.edge_index.shape[-1]
     dataset.edges = torch.cat([dataset.edge_index, negative_edges], dim=-1)
@@ -28,6 +24,8 @@ def generate_edge_data(dataset):
 
 
 class LinkPredictor(Module):
+    """helper model to get dot product interaction on edges"""
+
     def __init__(self, model):
         super().__init__()
         self.model = model
@@ -40,6 +38,7 @@ class LinkPredictor(Module):
 
 
 def baseline(model: Module, graph: Data, task, verbose: bool = False):
+    """baseline training looop for GNN on graph of choice"""
     initial_params = model.state_dict()
     best_val_score = 0.0
     final_test_score = 0.0
@@ -97,6 +96,49 @@ def baseline(model: Module, graph: Data, task, verbose: bool = False):
 
 
 if __name__ == "__main__":
+    """ GLT Trainer example. To reproduce GLT models from paper run the following:
+        python graph_lottery_ticket.py --dataset Cora --model gcn --prune_rate_graph .1855 --prune_rate_model .5904 \
+        --task node_classification
+        python graph_lottery_ticket.py --dataset Cora --model gin --prune_rate_graph .05 --prune_rate_model .2 \
+        --task node_classification
+        python graph_lottery_ticket.py --dataset Cora --model gat --prune_rate_graph .4596 --prune_rate_model .9313 \
+        --task node_classification
+        
+        python graph_lottery_ticket.py --dataset CiteSeer --model gcn --prune_rate_graph .4867 --prune_rate_model .945 \
+        --task node_classification
+        python graph_lottery_ticket.py --dataset CiteSeer --model gin --prune_rate_graph .5819 --prune_rate_model .982 \
+        --task node_classification
+        python graph_lottery_ticket.py --dataset CiteSeer --model gat --prune_rate_graph .5123 --prune_rate_model .956 \
+        --task node_classification
+        
+        python graph_lottery_ticket.py --dataset PubMed --model gcn --prune_rate_graph .5819 --prune_rate_model .9775 \
+        --task node_classification
+        python graph_lottery_ticket.py --dataset PubMed --model gin --prune_rate_graph .4867 --prune_rate_model .9450 \
+        --task node_classification
+        python graph_lottery_ticket.py --dataset PubMed --model gat --prune_rate_graph .5819 --prune_rate_model .9775 \
+        --task node_classification
+        
+        python graph_lottery_ticket.py --dataset Cora --model gcn --prune_rate_graph .2649 --prune_rate_model .7379 \
+        --task link_prediction
+        python graph_lottery_ticket.py --dataset Cora --model gin --prune_rate_graph .2262 --prune_rate_model .6723 \
+        --task link_prediction
+        python graph_lottery_ticket.py --dataset Cora --model gat --prune_rate_graph .4312 --prune_rate_model .9141 \
+        --task link_prediction
+        
+        python graph_lottery_ticket.py --dataset CiteSeer --model gcn --prune_rate_graph .3366 --prune_rate_model .8322\
+        --task link_prediction
+        python graph_lottery_ticket.py --dataset CiteSeer --model gin --prune_rate_graph .2649 --prune_rate_model .7379\
+        --task link_prediction
+        python graph_lottery_ticket.py --dataset CiteSeer --model gat --prune_rate_graph .4312 --prune_rate_model .9141\
+        --task link_prediction
+        
+        python graph_lottery_ticket.py --dataset PubMed --model gcn --prune_rate_graph .4013 --prune_rate_model .8926 \
+        --task link_prediction
+        python graph_lottery_ticket.py --dataset PubMed --model gin --prune_rate_graph .1426 --prune_rate_model .488 \
+        --task link_prediction
+        python graph_lottery_ticket.py --dataset PubMed --model gat --prune_rate_graph .5599 --prune_rate_model .9719 \
+        --task link_prediction
+    """
     parser = ArgumentParser()
     parser.add_argument('-d', "--dataset", default="Cora")
     parser.add_argument('-m', "--model", default="gcn")
