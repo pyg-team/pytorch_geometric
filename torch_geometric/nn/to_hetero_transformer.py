@@ -14,6 +14,7 @@ from torch_geometric.nn.to_hetero_module import (
     ToHeteroLinear,
     get_linear_channels,
 )
+from torch_geometric.nn.dense import HeteroDictLinear
 from torch_geometric.typing import WITH_GMM, EdgeType, Metadata, NodeType
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
