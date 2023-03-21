@@ -35,9 +35,11 @@ class GLTModel(Module):
     ORIG = "_orig"
     EDGE_MASK = "adj"
 
-    def __init__(self, module: Module, graph: Data, ignore_keys: set = None):
+    def __init__(self, module: Module, graph: Data, ignore_keys=None):
         super().__init__()
 
+        if ignore_keys is None:
+            ignore_keys = set()
         self.module = module
         self.graph = graph
         self.device = torch.device(
