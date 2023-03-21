@@ -55,7 +55,8 @@ def build_test_model(architecture, link_prediction=False):
     hidden_dim = 5
     if link_prediction:
         model = architecture(in_channels=input_dim, hidden_channels=hidden_dim,
-                             out_channels=hidden_dim, num_layers=2, device=device)
+                             out_channels=hidden_dim, num_layers=2,
+                             device=device)
         model = LinkPredictor(model)
     else:
         model = architecture(in_channels=input_dim, hidden_channels=hidden_dim,
@@ -173,6 +174,7 @@ def test_rewind(architecture, link_prediction):
         assert not param.requires_grad
         assert param.grad is None
 
+
 @pytest.mark.parametrize('architecture', [GCN, GAT])
 @pytest.mark.parametrize('link_prediction', [False, True])
 @pytest.mark.parametrize('ugs', [True, False])
@@ -188,24 +190,19 @@ def test_search_train(architecture, link_prediction, ugs):
     mask_names = [name + GLTModel.MASK for name, _ in model.named_parameters()]
 
     search = GLTSearch(
-        module=model,
-        graph=graph,
-        lr=0.001,
-        reg_graph=0.01,
-        reg_model=0.01,
+        module=model, graph=graph, lr=0.001, reg_graph=0.01, reg_model=0.01,
         optim_args={
             'weight_decay': 8e-5,
             'rho': 0.8
         },
         task='link_prediction' if link_prediction else 'node_classification',
-        optimizer=Adadelta,
-        max_train_epochs=2
-    )
+        optimizer=Adadelta, max_train_epochs=2)
 
-    ticket = GLTModel(search.module, search.graph, ignore_keys=search.ignore_keys)
+    ticket = GLTModel(search.module, search.graph,
+                      ignore_keys=search.ignore_keys)
     ticket.apply_mask(search.mask.to_dict())
     final_test_score, best_masks = search.train(ticket, ugs)
-    
+
     if not ugs:
         assert len(best_masks) == 0
     else:
@@ -225,18 +222,14 @@ def test_search_prune(architecture, link_prediction):
     param_names = [name for name, _ in model.named_parameters()]
 
     search = GLTSearch(
-        module=model,
-        graph=graph,
-        lr=0.001,
-        reg_graph=0.01,
-        reg_model=0.01,
+        module=model, graph=graph, lr=0.001, reg_graph=0.01, reg_model=0.01,
         task='link_prediction' if link_prediction else 'node_classification',
-        max_train_epochs=2
-    )
+        max_train_epochs=2)
 
     init_params, mask_dict = search.prune()
 
     for name in param_names:
         assert name + GLTModel.MASK in mask_dict.keys()
-        assert getattr(model, name).shape == mask_dict['module.' + name + GLTModel.MASK].shape
+        assert getattr(model, name).shape == mask_dict['module.' + name +
+                                                       GLTModel.MASK].shape
         assert 'module.' + name + GLTModel.ORIG in init_params.keys()

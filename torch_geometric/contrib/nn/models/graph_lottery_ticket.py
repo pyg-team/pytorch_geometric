@@ -36,8 +36,7 @@ class GLTModel(Module):
     ORIG = "_orig"
     EDGE_MASK = "adj"
 
-    def __init__(self, module: Module, graph: Data,
-                 ignore_keys: set[str]):
+    def __init__(self, module: Module, graph: Data, ignore_keys: set[str]):
         super().__init__()
 
         self.module = module
@@ -191,9 +190,10 @@ class GLTMask:
     r"""Generate UGLT masks for pruning model according to named parameters.
     Args: module (torch.nn.Module): The GNN module to make masks for. graph (
     torch_geometric.data.Data): Graph to make adjacency mask for. device (
-    torch.device): Torch device to place masks on. 
+    torch.device): Torch device to place masks on.
     """
-    def __init__(self, module: Module, graph: Data, device: torch.device) -> None:
+    def __init__(self, module: Module, graph: Data,
+                 device: torch.device) -> None:
         self.graph_mask = INIT_FUNC(
             torch.ones((graph.edge_index.shape[1] or graph.num_edges),
                        device=device))
