@@ -8,11 +8,11 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 import torch
 import tqdm
 from sklearn import metrics
+from torch.linalg import norm
 from torch.nn import Module, Parameter
 from torch.nn.functional import cross_entropy
 from torch.nn.init import trunc_normal_
 from torch.optim import Adam, Optimizer
-from torch.linalg import norm
 
 from torch_geometric.data import Data
 
@@ -36,7 +36,8 @@ class GLTModel(Module):
     ORIG = "_orig"
     EDGE_MASK = "adj"
 
-    def __init__(self, module: Module, graph: Data, ignore_keys: set[str] = set()):
+    def __init__(self, module: Module, graph: Data,
+                 ignore_keys: set[str] = set()):
         super().__init__()
 
         if ignore_keys is None:
@@ -195,7 +196,6 @@ class GLTMask:
     torch.device): Torch device to place masks on. ignore_keys (set,
     optional): Set of keys to ignore when injecting masks into the model.
     """
-
     def __init__(self, module: Module, graph: Data, device: torch.device,
                  ignore_keys: set[str] = set()) -> None:
         self.graph_mask = INIT_FUNC(

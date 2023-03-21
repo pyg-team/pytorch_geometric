@@ -20,8 +20,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def generate_edge_data(dataset):
     """sample  negative edges and labels"""
-    negative_edges = negative_sampling(
-        dataset.edge_index)
+    negative_edges = negative_sampling(dataset.edge_index)
     edge_labels = [0] * negative_edges.shape[-1] + [
         1
     ] * dataset.edge_index.shape[-1]
@@ -31,7 +30,6 @@ def generate_edge_data(dataset):
 
 class LinkPredictor(Module):
     """helper model to get dot product interaction on edges"""
-
     def __init__(self, model):
         super().__init__()
         self.model = model
