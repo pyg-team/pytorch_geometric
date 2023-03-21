@@ -7,7 +7,13 @@ from typing import Callable
 import torch
 from packaging.requirements import Requirement
 
+import torch_geometric.typing
 from torch_geometric.visualization.graph import has_graphviz
+
+try:
+    from torch.utils._contextlib import _DecoratorContextManager
+except ImportError:
+    from torch.autograd.grad_mode import _DecoratorContextManager
 
 
 def is_full_test() -> bool:
@@ -108,3 +114,27 @@ def withCUDA(func: Callable):
         devices.append(torch.device('cuda:0'))
 
     return pytest.mark.parametrize('device', devices)(func)
+
+
+class disableExtensions(_DecoratorContextManager):
+    r"""A decorator to temporarily disable the usage of the
+    :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` extension
+    packages."""
+    def __init__(self):
+        super().__init__()
+        self.prev_state = {}
+
+    def __enter__(self):
+        self.prev_state = {
+            'WITH_PYG_LIB': torch_geometric.typing.WITH_PYG_LIB,
+            'WITH_SAMPLED_OP': torch_geometric.typing.WITH_SAMPLED_OP,
+            'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
+            'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
+            'WITH_TORCH_SPARSE': torch_geometric.typing.WITH_TORCH_SPARSE,
+        }
+        for key in self.prev_state.keys():
+            setattr(torch_geometric.typing, key, False)
+
+    def __exit__(self, *args, **kwargs):
+        for key, value in self.prev_state.items():
+            setattr(torch_geometric.typing, key, value)

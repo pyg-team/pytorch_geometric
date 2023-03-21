@@ -1,4 +1,4 @@
-from .linear import Linear, HeteroLinear
+from .linear import Linear, HeteroLinear, HeteroDictLinear
 from .dense_gat_conv import DenseGATConv
 from .dense_sage_conv import DenseSAGEConv
 from .dense_gcn_conv import DenseGCNConv
@@ -11,6 +11,7 @@ from .dmon_pool import DMoNPooling
 __all__ = [
     'Linear',
     'HeteroLinear',
+    'HeteroDictLinear',
     'DenseGCNConv',
     'DenseGINConv',
     'DenseGraphConv',
