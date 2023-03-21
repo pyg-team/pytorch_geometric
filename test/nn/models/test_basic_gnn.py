@@ -11,7 +11,8 @@ from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
-from torch_geometric.testing import withPackage
+from torch_geometric.profile import benchmark
+from torch_geometric.testing import onlyLinux, withCUDA, withPackage
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
@@ -159,6 +160,21 @@ def test_basic_gnn_inference(get_dataset, jk):
     assert 'n_id' not in data
 
 
+@withCUDA
+@onlyLinux
+@withPackage('torch>=2.0.0')
+def test_compile(device):
+    x = torch.randn(3, 8, device=device)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
+
+    model = GCN(8, 16, num_layers=3).to(device)
+    compiled_model = torch_geometric.compile(model)
+
+    expected = model(x, edge_index)
+    out = compiled_model(x, edge_index)
+    assert torch.allclose(out, expected, atol=1e-6)
+
+
 def test_packaging():
     warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
 
@@ -265,3 +281,31 @@ def test_trim_to_layer():
     assert out2.size() == (2, 16)
 
     assert torch.allclose(out1, out2)
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--backward', action='store_true')
+    args = parser.parse_args()
+
+    num_nodes, num_edges = 10_000, 200_000
+    x = torch.randn(num_nodes, 64, device=args.device)
+    edge_index = torch.randint(num_nodes, (2, num_edges), device=args.device)
+
+    for Model in [GCN, GraphSAGE]:
+        print(f'Model: {Model.__name__}')
+
+        model = Model(64, 64, num_layers=3).to(args.device)
+        compiled_model = torch_geometric.compile(model)
+
+        benchmark(
+            funcs=[model, compiled_model],
+            func_names=['Vanilla', 'Compiled'],
+            args=(x, edge_index),
+            num_steps=50 if args.device == 'cpu' else 500,
+            num_warmups=10 if args.device == 'cpu' else 100,
+            backward=args.backward,
+        )

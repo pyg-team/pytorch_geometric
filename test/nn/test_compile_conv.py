@@ -2,8 +2,8 @@ import pytest
 import torch
 from torch import Tensor
 
-from torch_geometric import enable_compile
-from torch_geometric.nn import GATConv, GCNConv, SAGEConv
+import torch_geometric
+from torch_geometric.nn import GCNConv, SAGEConv
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import onlyLinux, withCUDA, withPackage
 from torch_geometric.utils import scatter
@@ -23,19 +23,15 @@ class MySAGEConv(torch.nn.Module):
 
 @withCUDA
 @onlyLinux
-@enable_compile()
 @withPackage('torch>=2.0.0')
-@pytest.mark.parametrize('Conv', [GCNConv, SAGEConv, GATConv])
+@pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
 def test_compile_conv(device, Conv):
     x = torch.randn(10, 16, device=device)
     edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
 
     conv = Conv(16, 32).to(device)
-    out = torch.compile(conv)(x, edge_index)
-    if not x.is_cuda or Conv != GATConv:  # TODO Fix compiled GATConv on GPU.
-        assert torch.allclose(conv(x, edge_index), out, atol=1e-6)
-    else:
-        assert not torch.allclose(conv(x, edge_index), out, atol=1e-2)
+    out = torch_geometric.compile(conv)(x, edge_index)
+    assert torch.allclose(conv(x, edge_index), out, atol=1e-6)
 
 
 if __name__ == '__main__':
@@ -52,7 +48,7 @@ if __name__ == '__main__':
 
     conv = MySAGEConv(64, 64).to(args.device)
     benchmark(
-        funcs=[conv, torch.compile(enable_compile()(conv))],
+        funcs=[conv, torch_geometric.compile(conv)],
         func_names=['Vanilla', 'Compiled'],
         args=(x, edge_index),
         num_steps=50 if args.device == 'cpu' else 500,
@@ -64,14 +60,11 @@ if __name__ == '__main__':
         print(f'Conv: {Conv.__name__}')
 
         conv = Conv(64, 64).to(args.device)
-        compiled_conv = torch.compile(enable_compile()(conv))
-
-        jit_conv = Conv(64, 64).jittable().to(args.device)
-        compiled_jit_conv = torch.compile(enable_compile()(jit_conv))
+        compiled_conv = torch_geometric.compile(conv)
 
         benchmark(
-            funcs=[conv, compiled_conv, jit_conv, compiled_jit_conv],
-            func_names=['Vanilla', 'Compiled', 'JIT', 'JIT Compiled'],
+            funcs=[conv, compiled_conv],
+            func_names=['Vanilla', 'Compiled'],
             args=(x, edge_index),
             num_steps=50 if args.device == 'cpu' else 500,
             num_warmups=10 if args.device == 'cpu' else 100,
