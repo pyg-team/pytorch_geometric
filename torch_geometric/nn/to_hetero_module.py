@@ -54,6 +54,16 @@ class DummyLinear:
             return None
 
 
+def get_linear_channels(module):
+    if isinstance(module, Linear):
+        return module.in_channels, module.out_channels
+
+    elif isinstance(module, torch.nn.Linear):
+        return module.in_features, module.out_features
+    else:
+        raise ValueError(f"Expected 'Linear' module (got '{type(module)}'")
+
+
 class ToHeteroLinear(torch.nn.Module):
     def __init__(
         self,
@@ -64,16 +74,7 @@ class ToHeteroLinear(torch.nn.Module):
 
         self.types = types
 
-        if isinstance(module, Linear):
-            self.in_channels = module.in_channels
-            self.out_channels = module.out_channels
-
-        elif isinstance(module, torch.nn.Linear):
-            in_channels = module.in_features
-            out_channels = module.out_features
-
-        else:
-            raise ValueError(f"Expected 'Linear' module (got '{type(module)}'")
+        self.in_channels, self.out_channels = get_linear_channels(module)
 
         self.bias = module.bias is not None
         if self.in_channels == -1:

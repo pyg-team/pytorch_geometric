@@ -10,8 +10,8 @@ from torch.nn import Module
 import torch_geometric
 from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
-from torch_geometric.nn.to_hetero_module import ToHeteroLinear
-from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.nn.to_hetero_module import ToHeteroLinear, get_linear_channels
+from torch_geometric.typing import EdgeType, Metadata, NodeType, WITH_GMM
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
@@ -397,7 +397,13 @@ class ToHeteroTransformer(Transformer):
             return module
 
         if is_linear(module):
-            return ToHeteroLinear(module,
+            if USE_GMM:
+                # faster grouped matmul path
+                in_channels, out_channels = get_linear_channels(module)
+                return HeteroDictLinear(in_channels, out_channels, types=self.metadata[int(has_edge_level_target)])
+
+            else:
+                return ToHeteroLinear(module,
                                   self.metadata[int(has_edge_level_target)])
         else:
             module_dict = torch.nn.ModuleDict()
