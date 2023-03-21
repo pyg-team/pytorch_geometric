@@ -21,7 +21,7 @@ As such, in :pyg:`PyG 2.3`, we introduce :meth:`torch_geometric.compile`, a wrap
 Specifically, it:
 
 #. Temporarily disables the usage of the extension packages :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` during GNN execution workflows (since these are not *yet* directly optimizable by :pytorch:`PyTorch`).
-   From :pyg:`PyG 2.3` onwards, these packages are purely optional and not required anymore for running :pyg:`PyG` models (but may be required for graph sampling routines).
+   From :pyg:`PyG 2.3` onwards, these packages are purely optional and not required anymore for running :pyg:`PyG` models (but :obj:`pyg_lib` may be required for graph sampling routines).
 
 #. Converts all instances of :class:`~torch_geometric.nn.conv.MessagePassing` modules into their jittable instances (see :meth:`torch_geometric.nn.conv.MessagePassing.jittable`)
 
