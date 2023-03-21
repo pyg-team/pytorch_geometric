@@ -10,18 +10,6 @@ from torch_geometric.typing import EdgeType, NodeType, OptTensor
 from torch_geometric.utils import scatter
 
 
-def pad_list(xs: List[Tensor]) -> List[Tensor]:
-    max_size = max(x.size(-1) for x in xs)
-    for i, x in enumerate(xs):
-        if x.shape[1] < max_size:
-            xs[i] = torch.concat(
-                (x,
-                 torch.zeros(
-                     (x.shape[0], max_size - x.shape[1]), device=x.device)),
-                dim=1)
-    return xs
-
-
 class ToHeteroLinear(torch.nn.Module):
     def __init__(
         self,
@@ -35,20 +23,21 @@ class ToHeteroLinear(torch.nn.Module):
         self.types = types
 
         if isinstance(module, Linear):
-            self.in_channels = module.in_channels
+            in_channels = module.in_channels
             out_channels = module.out_channels
             bias = module.bias is not None
 
         elif isinstance(module, torch.nn.Linear):
-            self.in_channels = module.in_features
+            in_channels = module.in_features
             out_channels = module.out_features
             bias = module.bias is not None
 
         else:
             raise ValueError(f"Expected 'Linear' module (got '{type(module)}'")
 
+        # TODO We currently assume that `x` is sorted according to `type`.
         self.hetero_module = HeteroLinear(
-            self.in_channels,
+            in_channels,
             out_channels,
             num_types=len(types),
             is_sorted=True,
@@ -68,13 +57,7 @@ class ToHeteroLinear(torch.nn.Module):
                 key: self.hetero_module.lins[i](x_dict[key])
                 for i, key in enumerate(self.types)
             }
-        if not hasattr(self, "need_pad"):
-            self.need_pad = any(self.in_channels != x.size(-1)
-                                for x in x_dict.values())
-        if self.need_pad:
-            x = torch.cat(pad_list([x_dict[key] for key in self.types]), dim=0)
-        else:
-            x = torch.cat([x_dict[key] for key in self.types], dim=0)
+        x = torch.cat([x_dict[key] for key in self.types], dim=0)
         sizes = [x_dict[key].size(0) for key in self.types]
         type_vec = torch.arange(len(self.types), device=x.device)
         size = torch.tensor(sizes, device=x.device)
