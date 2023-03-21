@@ -3,13 +3,14 @@ from copy import deepcopy
 import pytest
 import torch
 from torch.nn import Module
+from torch.optim import Adadelta
 
-from torch_geometric.contrib.nn import GLTMask, GLTModel
+from torch_geometric.contrib.nn import GLTMask, GLTModel, GLTSearch
 from torch_geometric.data import Data
 from torch_geometric.nn import GAT, GCN
 from torch_geometric.utils import negative_sampling
 
-device = torch.device('cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 edge_index = torch.tensor([[0, 1], [1, 0], [1, 2], [2, 1], [3, 4], [4, 3],
                            [1, 3], [3, 1], [0, 5], [5, 0]], dtype=torch.long)
@@ -54,11 +55,11 @@ def build_test_model(architecture, link_prediction=False):
     hidden_dim = 5
     if link_prediction:
         model = architecture(in_channels=input_dim, hidden_channels=hidden_dim,
-                             out_channels=hidden_dim, num_layers=2)
+                             out_channels=hidden_dim, num_layers=2, device=device)
         model = LinkPredictor(model)
     else:
         model = architecture(in_channels=input_dim, hidden_channels=hidden_dim,
-                             out_channels=1, num_layers=2)
+                             out_channels=1, num_layers=2, device=device)
     return model
 
 
@@ -92,7 +93,7 @@ def test_apply_mask(architecture, link_prediction):
         graph = test_data_node_classification
 
     model = build_test_model(architecture, link_prediction)
-    pruned_model = GLTModel(model, graph)
+    pruned_model = GLTModel(model, graph, ignore_keys=set())
     mask = GLTMask(model, graph, device).to_dict()
 
     original_params = deepcopy(dict(model.named_parameters()))
@@ -138,7 +139,7 @@ def test_forward(architecture, link_prediction):
         input_len = graph.x.shape[0]
 
     model = build_test_model(architecture, link_prediction)
-    pruned_model = GLTModel(model, graph)
+    pruned_model = GLTModel(model, graph, ignore_keys=set())
     mask = GLTMask(model, graph, device).to_dict()
 
     pruned_model.apply_mask(mask)
@@ -160,7 +161,7 @@ def test_rewind(architecture, link_prediction):
         k: v.detach().clone()
         for k, v in model.state_dict().items()
     }
-    pruned_model = GLTModel(model, graph)
+    pruned_model = GLTModel(model, graph, ignore_keys=set())
     mask = GLTMask(model, graph, device)
 
     pruned_model.apply_mask(mask.to_dict())
@@ -169,3 +170,71 @@ def test_rewind(architecture, link_prediction):
     for param in (mask.to_dict(weight_prefix=True) | initial_params).values():
         assert not param.requires_grad
         assert param.grad is None
+
+@pytest.mark.parametrize('architecture', [GCN, GAT])
+@pytest.mark.parametrize('link_prediction', [False, True])
+@pytest.mark.parametrize('ugs', [True, False])
+def test_search_train(architecture, link_prediction, ugs):
+    torch.autograd.anomaly_mode.set_detect_anomaly(True)
+
+    if link_prediction:
+        graph = test_data_link_prediction
+    else:
+        graph = test_data_node_classification
+
+    model = build_test_model(architecture, link_prediction)
+    mask_names = [name + GLTModel.MASK for name, _ in model.named_parameters()]
+
+    search = GLTSearch(
+        module=model,
+        graph=graph,
+        lr=0.001,
+        reg_graph=0.01,
+        reg_model=0.01,
+        optim_args={
+            'weight_decay': 8e-5,
+            'rho': 0.8
+        },
+        task='link_prediction' if link_prediction else 'node_classification',
+        optimizer=Adadelta,
+        max_train_epochs=2
+    )
+
+    ticket = GLTModel(search.module, search.graph, ignore_keys=search.ignore_keys)
+    ticket.apply_mask(search.mask.to_dict())
+    final_test_score, best_masks = search.train(ticket, ugs)
+    
+    if not ugs:
+        assert len(best_masks) == 0
+    else:
+        for name in mask_names:
+            assert name in best_masks.keys()
+
+
+@pytest.mark.parametrize('architecture', [GCN, GAT])
+@pytest.mark.parametrize('link_prediction', [False, True])
+def test_search_prune(architecture, link_prediction):
+    if link_prediction:
+        graph = test_data_link_prediction
+    else:
+        graph = test_data_node_classification
+
+    model = build_test_model(architecture, link_prediction)
+    param_names = [name for name, _ in model.named_parameters()]
+
+    search = GLTSearch(
+        module=model,
+        graph=graph,
+        lr=0.001,
+        reg_graph=0.01,
+        reg_model=0.01,
+        task='link_prediction' if link_prediction else 'node_classification',
+        max_train_epochs=2
+    )
+
+    init_params, mask_dict = search.prune()
+
+    for name in param_names:
+        assert name + GLTModel.MASK in mask_dict.keys()
+        assert getattr(model, name).shape == mask_dict['module.' + name + GLTModel.MASK].shape
+        assert 'module.' + name + GLTModel.ORIG in init_params.keys()

@@ -37,11 +37,9 @@ class GLTModel(Module):
     EDGE_MASK = "adj"
 
     def __init__(self, module: Module, graph: Data,
-                 ignore_keys: set[str] = set()):
+                 ignore_keys: set[str]):
         super().__init__()
 
-        if ignore_keys is None:
-            ignore_keys = set()
         self.module = module
         self.graph = graph
         self.device = torch.device(
@@ -193,11 +191,9 @@ class GLTMask:
     r"""Generate UGLT masks for pruning model according to named parameters.
     Args: module (torch.nn.Module): The GNN module to make masks for. graph (
     torch_geometric.data.Data): Graph to make adjacency mask for. device (
-    torch.device): Torch device to place masks on. ignore_keys (set,
-    optional): Set of keys to ignore when injecting masks into the model.
+    torch.device): Torch device to place masks on. 
     """
-    def __init__(self, module: Module, graph: Data, device: torch.device,
-                 ignore_keys: set[str] = set()) -> None:
+    def __init__(self, module: Module, graph: Data, device: torch.device) -> None:
         self.graph_mask = INIT_FUNC(
             torch.ones((graph.edge_index.shape[1] or graph.num_edges),
                        device=device))
@@ -365,8 +361,8 @@ class GLTSearch:
     lr: float
     reg_graph: float
     reg_model: float
-    optim_args: Dict[str, Any]
     task: str
+    optim_args: Dict[str, Any] = field(default_factory=lambda: {})
     lr_mask_model: Optional[float] = None
     lr_mask_graph: Optional[float] = None
     optimizer: Type[Optimizer] = Adam
@@ -391,8 +387,6 @@ class GLTSearch:
             self.lr_mask_model = self.lr
 
         self.optim_args = {"lr": self.lr, **self.optim_args}
-        self.ignore_keys = self.ignore_keys if self.ignore_keys is not None\
-            else set()
 
         self.mask = GLTMask(
             self.module, self.graph,
