@@ -23,6 +23,7 @@ from .lightgcn import LightGCN
 from .mask_label import MaskLabel
 from .rev_gnn import GroupAddRev
 from .gnnff import GNNFF
+from .esan import DSnetwork, DSSnetwork
 
 __all__ = classes = [
     'MLP',
@@ -62,4 +63,6 @@ __all__ = classes = [
     'MaskLabel',
     'GroupAddRev',
     'GNNFF',
+    'DSnetwork',
+    'DSSnetwork',
 ]
