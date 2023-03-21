@@ -39,7 +39,7 @@ def test_dynamic_torch_compile(device):
     if device == torch.device('cpu'):
         return
     # conv = MySAGEConv(16, 16).to(device)
-    conv = GraphSAGE(16, 16, num_layers=3).to(device)
+    conv = GraphSAGE(64, 64, num_layers=3).to(device)
     compiled_conv = torch_geometric.compile(conv, dynamic=True)
 
     t_total = 0
