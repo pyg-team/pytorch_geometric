@@ -8,7 +8,7 @@ from torch_geometric.nn.conv.cugraph import CuGraphModule
 from torch_geometric.nn.inits import glorot, zeros
 
 try:
-    from pylibcugraphops.torch.autograd import \
+    from pylibcugraphops.pytorch.operators import \
         agg_hg_basis_n2n_post as RGCNConvAgg
 except ImportError:
     pass

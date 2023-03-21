@@ -7,7 +7,7 @@ from torch.nn import Linear
 from torch_geometric.nn.conv.cugraph import CuGraphModule
 
 try:
-    from pylibcugraphops.torch.autograd import agg_concat_n2n as SAGEConvAgg
+    from pylibcugraphops.pytorch.operators import agg_concat_n2n as SAGEConvAgg
 except ImportError:
     pass
 
