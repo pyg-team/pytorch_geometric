@@ -1006,55 +1006,49 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 # Helper functions ############################################################
 
 
-def make_node_slices(
-        num_nodes_dict: Dict[NodeType,
-                             int]) -> Dict[NodeType, Tuple[int, int]]:
-
+def get_node_slices(num_nodes: Dict[str, int]) -> Dict[str, Tuple[int, int]]:
+    r"""Returns the boundaries of each node type in a graph."""
     node_slices: Dict[NodeType, Tuple[int, int]] = {}
     cumsum = 0
-    for node_type, num_nodes in num_nodes_dict.items():
-        node_slices[node_type] = (cumsum, cumsum + num_nodes)
-        cumsum += num_nodes
+    for node_type, N in num_nodes.items():
+        node_slices[node_type] = (cumsum, cumsum + N)
+        cumsum += N
     return node_slices
 
 
-def offset_edge_idx(
+def offset_edge_index(
     node_slices: Dict[NodeType, Tuple[int, int]],
     edge_type: EdgeType,
     edge_index: Tensor,
 ) -> Tensor:
+    r"""Increases the edge indices by the offsets of source and destination
+    node types."""
     src, _, dst = edge_type
     offset = [[node_slices[src][0]], [node_slices[dst][0]]]
     offset = torch.tensor(offset, device=edge_index.device)
     return edge_index + offset
 
 
-def combine_edge_slices(edge_indices: List[Tensor]) -> Tensor:
-    edge_index = None
-    if len(edge_indices) == 1:
-        edge_index = edge_indices[0]
-    elif len(edge_indices) > 0:
-        edge_index = torch.cat(edge_indices, dim=-1)
-    return edge_index
-
-
 def to_homogeneous_edge_index(
     data: HeteroData,
 ) -> Tuple[Optional[Tensor], Dict[NodeType, Any], Dict[EdgeType, Any]]:
+    r"""Converts a heterogeneous graph into a homogeneous typed graph."""
     # Record slice information per node type:
-    node_slices = make_node_slices(data.collect('num_nodes'))
+    node_slices = get_node_slices(data.num_nodes_dict)
 
     # Record edge indices and slice information per edge type:
     cumsum = 0
     edge_indices: List[Tensor] = []
     edge_slices: Dict[EdgeType, Tuple[int, int]] = {}
-    for edge_type, store in data._edge_store_dict.items():
-        edge_indices.append(
-            offset_edge_idx(node_slices, edge_type, store.edge_index))
-        num_edges = store.num_edges
-        edge_slices[edge_type] = (cumsum, cumsum + num_edges)
-        cumsum += num_edges
+    for edge_type, edge_index in data.edge_index_dict.items():
+        edge_index = offset_edge_index(node_slices, edge_type, edge_index)
+        edge_indices.append(edge_index)
+        edge_slices[edge_type] = (cumsum, cumsum + edge_index.size(1))
+        cumsum += edge_index.size(1)
 
-    edge_index = combine_edge_slices(edge_indices)
+    if len(edge_indices) == 1:  # Memory-efficient `torch.cat`:
+        edge_index = edge_indices[0]
+    else:
+        edge_index = torch.cat(edge_indices, dim=-1)
 
     return edge_index, node_slices, edge_slices

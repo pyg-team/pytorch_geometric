@@ -7,7 +7,6 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.data.hetero_data import combine_edge_slices
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.inits import glorot, ones, reset
@@ -251,7 +250,10 @@ class HGTConv(MessagePassing):
 
         # Concatenate all edges and edge tensors.
         p = torch.cat(p_rels, dim=0)
-        e_idx = combine_edge_slices(edge_index_list)
+        if len(edge_index_list) == 1:  # Memory-efficient `torch.cat`:
+            e_idx = edge_index_list[0]
+        else:
+            e_idx = torch.cat(edge_index_list, dim=-1)
         if convert:
             e_idx = SparseTensor(row=e_idx[0], col=e_idx[1],
                                  sparse_sizes=sparse_size)
