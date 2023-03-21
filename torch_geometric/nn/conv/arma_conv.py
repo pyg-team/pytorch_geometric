@@ -7,10 +7,9 @@ from torch.nn import Parameter, ReLU
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
 from torch_geometric.utils import spmm
-
-from ..inits import glorot, zeros
 
 
 class ARMAConv(MessagePassing):

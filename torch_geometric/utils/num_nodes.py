@@ -5,8 +5,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import SparseTensor  # noqa
-
-from .sparse import is_torch_sparse_tensor
+from torch_geometric.utils.sparse import is_torch_sparse_tensor
 
 
 @torch.jit._overload
