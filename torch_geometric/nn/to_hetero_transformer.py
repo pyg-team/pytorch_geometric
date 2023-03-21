@@ -10,8 +10,11 @@ from torch.nn import Module
 import torch_geometric
 from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
-from torch_geometric.nn.to_hetero_module import ToHeteroLinear, get_linear_channels
-from torch_geometric.typing import EdgeType, Metadata, NodeType, WITH_GMM
+from torch_geometric.nn.to_hetero_module import (
+    ToHeteroLinear,
+    get_linear_channels,
+)
+from torch_geometric.typing import WITH_GMM, EdgeType, Metadata, NodeType
 from torch_geometric.utils.hetero import (
     check_add_self_loops,
     get_unused_node_types,
@@ -400,11 +403,13 @@ class ToHeteroTransformer(Transformer):
             if USE_GMM:
                 # faster grouped matmul path
                 in_channels, out_channels = get_linear_channels(module)
-                return HeteroDictLinear(in_channels, out_channels, types=self.metadata[int(has_edge_level_target)])
+                return HeteroDictLinear(
+                    in_channels, out_channels,
+                    types=self.metadata[int(has_edge_level_target)])
 
             else:
-                return ToHeteroLinear(module,
-                                  self.metadata[int(has_edge_level_target)])
+                return ToHeteroLinear(
+                    module, self.metadata[int(has_edge_level_target)])
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
@@ -489,6 +494,7 @@ class ToHeteroTransformer(Transformer):
                                          args=args, kwargs=kwargs,
                                          name=f'{name}__{key2str(key)}')
             self.graph.inserting_after(out)
+
 
 def key2str(key: Union[NodeType, EdgeType]) -> str:
     key = '__'.join(key) if isinstance(key, tuple) else key
