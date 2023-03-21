@@ -3,8 +3,7 @@ import math
 from dataclasses import dataclass, field
 from functools import partial
 from random import randint
-from typing import Dict, Any, Tuple, Optional
-from typing import Type, Callable, List
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 
 import torch
 import tqdm
@@ -34,17 +33,13 @@ class GLTModel(Module):
     ORIG = "_orig"
     EDGE_MASK = "adj"
 
-    def __init__(
-            self,
-            module: Module,
-            graph: Data,
-            ignore_keys: set = None
-    ):
+    def __init__(self, module: Module, graph: Data, ignore_keys: set = None):
         super().__init__()
 
         self.module = module
         self.graph = graph
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         self.ignore_keys = ignore_keys
 
     @property
@@ -52,7 +47,9 @@ class GLTModel(Module):
         return self.module
 
     def get_params(self) -> List[Parameter]:
-        return [param for param_name, param in self.named_parameters(recurse=True)]
+        return [
+            param for param_name, param in self.named_parameters(recurse=True)
+        ]
 
     def get_masks(self) -> Dict[str, Parameter]:
         return {
@@ -80,18 +77,18 @@ class GLTModel(Module):
         """Inject GLTMask into model params and adjacency mask. Ignore keys specified by ignore_keys."""
         # Input validation
         param_names = [
-                          name
-                          for name, _ in self.module.named_parameters()
-                          if not GLTModel._is_injected_parameter(name) and name not in self.ignore_keys
-                      ] + [GLTModel.EDGE_MASK]
+            name for name, _ in self.module.named_parameters()
+            if not GLTModel._is_injected_parameter(name)
+            and name not in self.ignore_keys
+        ] + [GLTModel.EDGE_MASK]
         missing_keys = [
-            name
-            for name in param_names
+            name for name in param_names
             if name + GLTModel.MASK not in mask_dict.keys()
         ]
 
         if len(missing_keys):
-            raise ValueError(f"Masks for {missing_keys} missing from mask_dict!")
+            raise ValueError(
+                f"Masks for {missing_keys} missing from mask_dict!")
 
         # Injecting module masks
         for param_path in self._get_parameter_paths():
@@ -117,11 +114,11 @@ class GLTModel(Module):
                 partial(
                     GLTModel._hook,
                     param_name=param_name,
-                )
-            )
+                ))
 
         adj_mask_name = GLTModel.EDGE_MASK + GLTModel.MASK
-        self.register_parameter(adj_mask_name, Parameter(mask_dict[adj_mask_name].data))
+        self.register_parameter(adj_mask_name,
+                                Parameter(mask_dict[adj_mask_name].data))
         self.register_buffer(
             GLTModel.EDGE_MASK + GLTModel.MASK_FIXED,
             torch.ones_like(mask_dict[adj_mask_name]),
@@ -138,13 +135,12 @@ class GLTModel(Module):
         pruned_graph = self.graph.clone()
         pruned_graph.edge_weight = adj_mask
         if hasattr(pruned_graph, "edges"):
-            return self.module(
-                pruned_graph.x, pruned_graph.edge_index, edge_weight=pruned_graph.edge_weight, edges=pruned_graph.edges
-            )
+            return self.module(pruned_graph.x, pruned_graph.edge_index,
+                               edge_weight=pruned_graph.edge_weight,
+                               edges=pruned_graph.edges)
         else:
-            return self.module(
-                pruned_graph.x, pruned_graph.edge_index, edge_weight=pruned_graph.edge_weight
-            )
+            return self.module(pruned_graph.x, pruned_graph.edge_index,
+                               edge_weight=pruned_graph.edge_weight)
 
     @staticmethod
     def _hook(sub_mod: Module, input: Any, param_name: str) -> None:
@@ -171,11 +167,9 @@ class GLTModel(Module):
 
     @staticmethod
     def _is_injected_parameter(param_name: str):
-        return (
-                param_name.endswith(GLTModel.MASK)
+        return (param_name.endswith(GLTModel.MASK)
                 or param_name.endswith(GLTModel.ORIG)
-                or param_name.endswith(GLTModel.MASK_FIXED)
-        )
+                or param_name.endswith(GLTModel.MASK_FIXED))
 
     def _get_parameter_paths(self):
         return [
@@ -197,11 +191,11 @@ class GLTMask:
         device (torch.device): Torch device to place masks on.
         ignore_keys (set, optional): Set of keys to ignore when injecting masks into the model.
     """
-
-    def __init__(self, module: Module, graph: Data, device: torch.device, ignore_keys: Optional[set] = None) -> None:
+    def __init__(self, module: Module, graph: Data, device: torch.device,
+                 ignore_keys: Optional[set] = None) -> None:
         self.graph_mask = INIT_FUNC(
-            torch.ones((graph.edge_index.shape[1] or graph.num_edges), device=device)
-        )
+            torch.ones((graph.edge_index.shape[1] or graph.num_edges),
+                       device=device))
         self.weight_mask = {
             param_name + GLTModel.MASK: INIT_FUNC(torch.ones_like(param))
             for param_name, param in module.named_parameters()
@@ -230,25 +224,26 @@ class GLTMask:
 
         return {
             EDGE_MASK: self.graph_mask.detach().clone(),
-            **{pref + k: v.detach().clone() for k, v in self.weight_mask.items()},
+            **{
+                pref + k: v.detach().clone()
+                for k, v in self.weight_mask.items()
+            },
         }
 
     def load_and_binarize(
-            self,
-            model_masks: Dict[str, Parameter],
-            p_theta: float,
-            p_g: float,
+        self,
+        model_masks: Dict[str, Parameter],
+        p_theta: float,
+        p_g: float,
     ) -> None:
         """Parse masks and set bottom fraction of weights equal to 0 and rest equal to 1 for all masks. Number of
         zeroed out params is determined by pruning rates p_theta and p_g (model and graph, respectively)."""
         # Validation
         missing_masks = [
-            name
-            for name in [
+            name for name in [
                 EDGE_MASK,
                 *self.weight_mask.keys(),
-            ]
-            if name not in model_masks.keys()
+            ] if name not in model_masks.keys()
         ]
 
         if len(missing_masks):
@@ -261,28 +256,24 @@ class GLTMask:
         del model_masks[EDGE_MASK]
 
         # process graph mask
-        self.graph_mask = torch.where(
-            self.graph_mask > 0, 1.0, 0.
-        )  # needed to support non-binary inits
+        self.graph_mask = torch.where(self.graph_mask > 0, 1.0,
+                                      0.)  # needed to support non-binary inits
         all_weights_graph = graph_mask[self.graph_mask == 1]
-        num_prune_graph = min(
-            math.floor(p_g * len(all_weights_graph)), len(all_weights_graph) - 1
-        )
+        num_prune_graph = min(math.floor(p_g * len(all_weights_graph)),
+                              len(all_weights_graph) - 1)
         threshold_graph = all_weights_graph.sort()[0][num_prune_graph]
-        self.graph_mask = torch.where(
-            graph_mask > threshold_graph, self.graph_mask, 0.
-        )
+        self.graph_mask = torch.where(graph_mask > threshold_graph,
+                                      self.graph_mask, 0.)
 
         # process weight masks
         self.weight_mask = {
-            k: torch.where(v > 0, 1.0, 0.0) for k, v in self.weight_mask.items()
+            k: torch.where(v > 0, 1.0, 0.0)
+            for k, v in self.weight_mask.items()
         }  # needed to support non-binary inits
         all_weights_model = torch.concat(
-            [v[self.weight_mask[k] == 1] for k, v in model_masks.items()]
-        )
-        num_prune_weights = min(
-            math.floor(p_theta * len(all_weights_model)), len(all_weights_model) - 1
-        )
+            [v[self.weight_mask[k] == 1] for k, v in model_masks.items()])
+        num_prune_weights = min(math.floor(p_theta * len(all_weights_model)),
+                                len(all_weights_model) - 1)
         threshold_model = all_weights_model.sort()[0][num_prune_weights]
 
         self.weight_mask = {
@@ -295,11 +286,13 @@ def score_link_prediction(targets, preds, val_mask, test_mask):
     """helper for getting AUC for link preds"""
     val_preds = preds[val_mask]
     val_gt = targets[val_mask].cpu().detach().numpy()
-    val_score = metrics.auc(val_gt, torch.sigmoid(val_preds).cpu().detach().numpy())
+    val_score = metrics.auc(val_gt,
+                            torch.sigmoid(val_preds).cpu().detach().numpy())
 
     test_preds = preds[test_mask]
     test_gt = targets[test_mask].cpu().detach().numpy()
-    test_score = metrics.auc(test_gt, torch.sigmoid(test_preds).cpu().detach().numpy())
+    test_score = metrics.auc(test_gt,
+                             torch.sigmoid(test_preds).cpu().detach().numpy())
     return val_score, test_score
 
 
@@ -384,7 +377,8 @@ class GLTSearch:
             self.lr_mask_model = self.lr
 
         self.optim_args = {"lr": self.lr, **self.optim_args}
-        self.ignore_keys = self.ignore_keys if self.ignore_keys is not None else set()
+        self.ignore_keys = self.ignore_keys if self.ignore_keys is not None else set(
+        )
 
         self.mask = GLTMask(
             self.module,
@@ -397,17 +391,19 @@ class GLTSearch:
         """UGS algorithm. Train model with UGS to train masks and params. Disretize masks by pruning rates. Retrain
         without UGS for final performance. """
         initial_params = {
-            "module." + k + GLTModel.ORIG if k.rpartition(".")[
-                                                 -1] not in self.ignore_keys else "module." + k: v.detach().clone()
+            "module." + k + GLTModel.ORIG if k.rpartition(".")[-1]
+            not in self.ignore_keys else "module." + k: v.detach().clone()
             for k, v in self.module.state_dict().items()
         }
 
-        ticket = GLTModel(self.module, self.graph, ignore_keys=self.ignore_keys)
+        ticket = GLTModel(self.module, self.graph,
+                          ignore_keys=self.ignore_keys)
         ticket.apply_mask(self.mask.to_dict())
 
         test_score, masks = self.train(ticket, True)
         print("[UNREWOUND] Final test performance:", test_score)
-        self.mask.load_and_binarize(masks, self.prune_rate_model, self.prune_rate_graph)
+        self.mask.load_and_binarize(masks, self.prune_rate_model,
+                                    self.prune_rate_graph)
 
         ticket.rewind(self.mask.to_dict(weight_prefix=True) | initial_params)
         test_score, masks = self.train(ticket, False)
@@ -423,9 +419,8 @@ class GLTSearch:
 
         return initial_params, self.mask.to_dict()
 
-    def train(
-            self, ticket: GLTModel, ugs: bool
-    ) -> Tuple[float, Dict[str, Parameter]]:
+    def train(self, ticket: GLTModel,
+              ugs: bool) -> Tuple[float, Dict[str, Parameter]]:
         """train loop. If ugs flag, use mask regularization."""
         best_val_score = 0.0
         final_test_score = 0.0
@@ -440,16 +435,18 @@ class GLTSearch:
                 output = ticket()
 
                 if self.task == "node_classification":
-                    loss = self.loss_fn(
-                        output[self.graph.train_mask], self.graph.y[self.graph.train_mask]
-                    )
+                    loss = self.loss_fn(output[self.graph.train_mask],
+                                        self.graph.y[self.graph.train_mask])
                 elif self.task == "link_prediction":
-                    edge_mask = self.graph.train_mask[self.graph.edges[0]] & self.graph.train_mask[self.graph.edges[1]]
+                    edge_mask = self.graph.train_mask[self.graph.edges[
+                        0]] & self.graph.train_mask[self.graph.edges[1]]
                     loss = self.loss_fn(
-                        output[edge_mask], self.graph.edge_labels[edge_mask].float()
-                    )
+                        output[edge_mask],
+                        self.graph.edge_labels[edge_mask].float())
                 else:
-                    raise ValueError(f"{self.task} must be one of node class. or link pred.")
+                    raise ValueError(
+                        f"{self.task} must be one of node class. or link pred."
+                    )
 
                 if ugs:
                     for mask_name, mask in ticket.get_masks().items():
@@ -464,15 +461,21 @@ class GLTSearch:
                 ticket.eval()
                 if self.task == "node_classification":
                     preds = ticket().argmax(dim=1)
-                    val_score, test_score = score_node_classification(self.graph.y, preds, self.graph.val_mask,
-                                                                      self.graph.test_mask)
+                    val_score, test_score = score_node_classification(
+                        self.graph.y, preds, self.graph.val_mask,
+                        self.graph.test_mask)
                 elif self.task == "link_prediction":
                     preds = ticket()
-                    val_mask = self.graph.val_mask[self.graph.edges[0]] & self.graph.val_mask[self.graph.edges[1]]
-                    test_mask = self.graph.test_mask[self.graph.edges[0]] & self.graph.test_mask[self.graph.edges[1]]
-                    val_score, test_score = score_link_prediction(self.graph.edge_labels, preds, val_mask, test_mask)
+                    val_mask = self.graph.val_mask[self.graph.edges[
+                        0]] & self.graph.val_mask[self.graph.edges[1]]
+                    test_mask = self.graph.test_mask[self.graph.edges[
+                        0]] & self.graph.test_mask[self.graph.edges[1]]
+                    val_score, test_score = score_link_prediction(
+                        self.graph.edge_labels, preds, val_mask, test_mask)
                 else:
-                    raise ValueError(f"{self.task} must be one of node class. or link pred.")
+                    raise ValueError(
+                        f"{self.task} must be one of node class. or link pred."
+                    )
                 if val_score > best_val_score:
                     best_val_score = val_score
                     final_test_score = test_score
@@ -480,7 +483,9 @@ class GLTSearch:
                     if ugs:
                         best_masks = ticket.get_masks()
 
-                t.set_postfix(
-                    {"loss": loss.item(), "val_score": val_score, "test_score": test_score}
-                )
+                t.set_postfix({
+                    "loss": loss.item(),
+                    "val_score": val_score,
+                    "test_score": test_score
+                })
         return final_test_score, best_masks
