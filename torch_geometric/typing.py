@@ -10,23 +10,19 @@ WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
 try:
     import pyg_lib  # noqa
     WITH_PYG_LIB = True
-    WITH_SAMPLED_OP = WITH_PYG_LIB and hasattr(pyg_lib.ops, 'sampled_add')
-    WITH_INDEX_SORT = WITH_PYG_LIB and hasattr(pyg_lib.ops, 'index_sort')
+    WITH_GMM = (WITH_PT2 and int(pyg_lib.__version__.split('.')[1]) >= 2
+                and hasattr(pyg_lib.ops, 'grouped_matmul'))
+    WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
+    WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
                       f"Disabling its usage. Stacktrace: {e}")
     pyg_lib = object
     WITH_PYG_LIB = False
+    WITH_GMM = False
     WITH_SAMPLED_OP = False
     WITH_INDEX_SORT = False
-
-
-def grouped_matmul_avail():
-    # can only use grouped matmul if torch >= 1.14
-    major_vers, minor_vers = str(torch.__version__).split('.')[:2]
-    return int(major_vers) >= 2 or int(minor_vers) >= 14 and WITH_PYG_LIB
-
 
 try:
     import torch_scatter  # noqa

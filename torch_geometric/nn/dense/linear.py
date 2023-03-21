@@ -303,60 +303,70 @@ class HeteroLinear(torch.nn.Module):
                 f'bias={self.kwargs.get("bias", True)})')
 
 
-class HeteroDictLinear(torch.nn.Module):  # pragma: no cover
+class HeteroDictLinear(torch.nn.Module):
     r"""Applies separate linear tranformations to the incoming data dictionary
 
     .. math::
         \mathbf{x}^{\prime}_{\kappa} = \mathbf{x}_{\kappa}
         \mathbf{W}^{\top}_{\kappa} + \mathbf{b}_{\kappa}
 
-    for type :math:`\kappa`.
+    for key :math:`\kappa`.
     It supports lazy initialization and customizable weight and bias
     initialization.
 
     Args:
-        in_channels (int or Dict[str, int]): Size of each input sample.
-            Use :obj:`-1` for lazy initialization.
-            If passing as an int, types is required as well.
+        in_channels (int or Dict[Any, int]): Size of each input sample. If
+            passed an integer, :obj:`types` will be a mandatory argument.
+            initialized lazily in case it is given as :obj:`-1`.
         out_channels (int): Size of each output sample.
-        types (List[str], optional): Only needed if in_channels
-            is passed as an int.
+        types (List[Any], optional): The keys of the input dictionary.
+            (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
     """
-    def __init__(self, in_channels: Dict[str, int], out_channels: int,
-                 types: Optional[Union[List[NodeType],
-                                       List[EdgeType]]] = None, **kwargs):
+    def __init__(
+        self,
+        in_channels: Union[int, Dict[Any, int]],
+        out_channels: int,
+        types: Optional[Any] = None,
+        **kwargs,
+    ):
         super().__init__()
+
         if isinstance(in_channels, dict):
             self.types = list(in_channels.keys())
-            if any([int(i) == -1 for i in in_channels.values()]):
+
+            if any([i == -1 for i in in_channels.values()]):
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
-            if types is not None and self.types != types:
-                raise ValueError("User provided `types` list does not match \
-                 the keys of the `in_channels` dictionary")
+
+            if types is not None and set(self.types) != set(types):
+                raise ValueError("The provided 'types' do not match with the "
+                                 "keys in the 'in_channels' dictionary")
+
         else:
+
+            if types is None:
+                raise ValueError("Please provide a list of 'types' if passing "
+                                 "'in_channels' as an integer")
+
+            self.types = types
+            in_channels = {node_type: in_channels for node_type in types}
+
             if in_channels == -1:
                 self._hook = self.register_forward_pre_hook(
                     self.initialize_parameters)
-            self.types = types
-            if self.types is None:
-                raise ValueError("Please provide a list of types if \
-                    passing `in_channels` as an int")
-            in_channels = {node_type: in_channels for node_type in self.types}
+
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.kwargs = kwargs
-        self.use_gmm = grouped_matmul_avail()
-        self.lins = torch.nn.ModuleDict({
-            lin_type: Linear(in_channel, self.out_channels, **self.kwargs)
-            for lin_type, in_channel in self.in_channels.items()
-        })
-        self.reset_parameters()
 
-    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Linear:
-        return self.lins[get_type]
+        self.lins = torch.nn.ModuleDict({
+            key: Linear(channels, self.out_channels, **kwargs)
+            for key, channels in self.in_channels.items()
+        })
+
+        self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
@@ -365,40 +375,37 @@ class HeteroDictLinear(torch.nn.Module):  # pragma: no cover
 
     def forward(
         self,
-        x_dict: Dict[Union[NodeType, EdgeType], Tensor],
-    ) -> Dict[Union[NodeType, EdgeType], Tensor]:
+        x_dict: Dict[Any, Tensor],
+    ) -> Dict[Any, Tensor]:
         r"""
         Args:
-            x_dict (Dict[str, Tensor]): A dictionary holding input
+            x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
                 features for each individual type.
         """
-        if self.use_gmm:
-            wts = [self.lins[x_type].weight.T for x_type in self.types]
-            biases = [self.lins[x_type].bias for x_type in self.types]
-            xs = [x_dict[x_type] for x_type in self.types]
-            out_dict = {
-                self.types[i]: o
-                for i, o in enumerate(
-                    pyg_lib.ops.grouped_matmul(inputs=xs, others=wts,
-                                               biases=biases))
-            }
-        else:
-            out_dict = {}
-            for x_type, x in x_dict:
-                out_dict[x_type] = self.lins[x_type](x)
-        return out_dict
+        print(torch_geometric.typing.WITH_GMM)
+        if torch_geometric.typing.WITH_GMM:
+            xs = [x_dict[key] for key in x_dict.keys()]
+            weights = [self.lins[key].weight.t() for key in x_dict.keys()]
+            if self.kwargs('bias', True):
+                biases = [self.lins[key].bias for key in x_dict.keys()]
+            else:
+                biases = None
+
+            outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
+            return {key: out for key, out in zip(x_dict.keys(), outs)}
+
+        return {key: self.lins[key](x) for key, x in x_dict.items()}
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
-        for x_type, x_n in input[0].items():
-            lin_x = self.lins[x_type]
-            if is_uninitialized_parameter(lin_x.weight):
-                self.lins[x_type].initialize_parameters(None, x_n)
+        for key, x in input[0].items():
+            lin = self.lins[key]
+            if is_uninitialized_parameter(lin.weight):
+                self.lins[key].initialize_parameters(None, x)
         self.reset_parameters()
         self._hook.remove()
         delattr(self, '_hook')
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.out_channels}, types={self.types}, '
-                f'bias={self.kwargs.get("bias", True)})')
+                f'{self.out_channels} bias={self.kwargs.get("bias", True)})')

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `HeteroDictLinear` and an optimized `HGTConv` module ([#6178](https://github.com/pyg-team/pytorch_geometric/pull/6178))
 - Added the `DenseGATConv` module ([#6928](https://github.com/pyg-team/pytorch_geometric/pull/6928))
 - Added `trim_to_layer` utility function for more efficient `NeighborLoader` use-cases ([#6661](https://github.com/pyg-team/pytorch_geometric/pull/6661))
 - Added the `DistMult` KGE model ([#6958](https://github.com/pyg-team/pytorch_geometric/pull/6958))
