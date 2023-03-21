@@ -5,7 +5,12 @@ from torch import Tensor
 import torch_geometric
 from torch_geometric.nn import GCNConv, SAGEConv
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import onlyLinux, withCUDA, withPackage
+from torch_geometric.testing import (
+    disableExtensions,
+    onlyLinux,
+    withCUDA,
+    withPackage,
+)
 from torch_geometric.utils import scatter
 
 
@@ -23,6 +28,7 @@ class MySAGEConv(torch.nn.Module):
 
 @withCUDA
 @onlyLinux
+@disableExtensions()
 @withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
 def test_compile_conv(device, Conv):

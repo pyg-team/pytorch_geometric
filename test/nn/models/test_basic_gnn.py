@@ -12,7 +12,12 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import onlyLinux, withCUDA, withPackage
+from torch_geometric.testing import (
+    disableExtensions,
+    onlyLinux,
+    withCUDA,
+    withPackage,
+)
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
@@ -162,6 +167,7 @@ def test_basic_gnn_inference(get_dataset, jk):
 
 @withCUDA
 @onlyLinux
+@disableExtensions()
 @withPackage('torch>=2.0.0')
 def test_compile(device):
     x = torch.randn(3, 8, device=device)
@@ -295,7 +301,7 @@ if __name__ == '__main__':
     x = torch.randn(num_nodes, 64, device=args.device)
     edge_index = torch.randint(num_nodes, (2, num_edges), device=args.device)
 
-    for Model in [GCN, GraphSAGE]:
+    for Model in [GCN, GraphSAGE, GIN, EdgeCNN]:
         print(f'Model: {Model.__name__}')
 
         model = Model(64, 64, num_layers=3).to(args.device)

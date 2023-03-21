@@ -66,13 +66,11 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
 
         return fn
 
-    # Temporarily disable the usage of external extension packages:
+    # Disable the usage of external extension packages:
+    # TODO (matthias) Disable only temporarily
     prev_state = {
-        'WITH_PYG_LIB': torch_geometric.typing.WITH_PYG_LIB,
-        'WITH_SAMPLED_OP': torch_geometric.typing.WITH_SAMPLED_OP,
         'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
         'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
-        'WITH_TORCH_SPARSE': torch_geometric.typing.WITH_TORCH_SPARSE,
     }
     warnings.filterwarnings('ignore', ".*the 'torch-scatter' package.*")
     for key in prev_state.keys():
@@ -94,8 +92,6 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
     out = torch.compile(model, *args, **kwargs)
 
     # Restore the previous state:
-    for key, value in prev_state.items():
-        setattr(torch_geometric.typing, key, value)
     for key, value in prev_log_level.items():
         logging.getLogger(key).setLevel(value)
 
