@@ -108,8 +108,7 @@ if __name__ == '__main__':
     edge_weight = torch.rand(num_edges, device=args.device)
     matrix = torch.randn(64, 64, device=args.device)
 
-    # for reduce in ['sum', 'mean', 'max']:
-    for reduce in ['max']:
+    for reduce in ['sum', 'mean', 'max']:
         print(f'Aggregator: {reduce}')
 
         benchmark(
@@ -124,50 +123,50 @@ if __name__ == '__main__':
             backward=args.backward,
         )
 
-        # benchmark(
-        #     funcs=[
-        #         gather_cat_scatter,
-        #         torch_geometric.compile(gather_cat_scatter),
-        #     ],
-        #     func_names=['Vanilla Cat', 'Compiled Cat'],
-        #     args=(x, edge_index, reduce),
-        #     num_steps=50 if args.device == 'cpu' else 500,
-        #     num_warmups=10 if args.device == 'cpu' else 100,
-        #     backward=args.backward,
-        # )
+        benchmark(
+            funcs=[
+                gather_cat_scatter,
+                torch_geometric.compile(gather_cat_scatter),
+            ],
+            func_names=['Vanilla Cat', 'Compiled Cat'],
+            args=(x, edge_index, reduce),
+            num_steps=50 if args.device == 'cpu' else 500,
+            num_warmups=10 if args.device == 'cpu' else 100,
+            backward=args.backward,
+        )
 
-        # benchmark(
-        #     funcs=[
-        #         gather_weight_scatter,
-        #         torch_geometric.compile(gather_weight_scatter),
-        #     ],
-        #     func_names=['Vanilla Weight', 'Compiled Weight'],
-        #     args=(x, edge_index, edge_weight, reduce),
-        #     num_steps=50 if args.device == 'cpu' else 500,
-        #     num_warmups=10 if args.device == 'cpu' else 100,
-        #     backward=args.backward,
-        # )
+        benchmark(
+            funcs=[
+                gather_weight_scatter,
+                torch_geometric.compile(gather_weight_scatter),
+            ],
+            func_names=['Vanilla Weight', 'Compiled Weight'],
+            args=(x, edge_index, edge_weight, reduce),
+            num_steps=50 if args.device == 'cpu' else 500,
+            num_warmups=10 if args.device == 'cpu' else 100,
+            backward=args.backward,
+        )
 
-        # benchmark(
-        #     funcs=[
-        #         gather_transform_scatter,
-        #         torch_geometric.compile(gather_transform_scatter),
-        #     ],
-        #     func_names=['Vanilla Transform', 'Compiled Transform'],
-        #     args=(x, edge_index, matrix, reduce),
-        #     num_steps=50 if args.device == 'cpu' else 500,
-        #     num_warmups=10 if args.device == 'cpu' else 100,
-        #     backward=args.backward,
-        # )
+        benchmark(
+            funcs=[
+                gather_transform_scatter,
+                torch_geometric.compile(gather_transform_scatter),
+            ],
+            func_names=['Vanilla Transform', 'Compiled Transform'],
+            args=(x, edge_index, matrix, reduce),
+            num_steps=50 if args.device == 'cpu' else 500,
+            num_warmups=10 if args.device == 'cpu' else 100,
+            backward=args.backward,
+        )
 
-    # benchmark(
-    # funcs=[
-    #     fused_gather_scatter,
-    #     torch_geometric.compile(fused_gather_scatter),
-    # ],
-    # func_names=['Vanilla Fused', 'Compiled Fused'],
-    # args=(x, edge_index),
-    # num_steps=50 if args.device == 'cpu' else 500,
-    # num_warmups=10 if args.device == 'cpu' else 100,
-    # backward=args.backward,
-    # )
+    benchmark(
+        funcs=[
+            fused_gather_scatter,
+            torch_geometric.compile(fused_gather_scatter),
+        ],
+        func_names=['Vanilla Fused', 'Compiled Fused'],
+        args=(x, edge_index),
+        num_steps=50 if args.device == 'cpu' else 500,
+        num_warmups=10 if args.device == 'cpu' else 100,
+        backward=args.backward,
+    )
