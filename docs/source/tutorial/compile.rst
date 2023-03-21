@@ -120,7 +120,7 @@ We report runtimes over 500 optimization steps:
      - **1.4727s**
      - **2.29x**
 
-To reproduce these results, run:
+To reproduce these results, run
 
 .. code-block:: console
 
