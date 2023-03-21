@@ -57,6 +57,7 @@ class ToHeteroLinear(torch.nn.Module):
                 key: self.hetero_module.lins[i](x_dict[key])
                 for i, key in enumerate(self.types)
             }
+
         x = torch.cat([x_dict[key] for key in self.types], dim=0)
         sizes = [x_dict[key].size(0) for key in self.types]
         type_vec = torch.arange(len(self.types), device=x.device)

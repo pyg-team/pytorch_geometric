@@ -37,11 +37,13 @@ class HGTConv(MessagePassing):
     paper.
 
     .. note::
+
         For an example of using HGT, see `examples/hetero/hgt_dblp.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         hetero/hgt_dblp.py>`_.
 
     .. note::
+
         For a faster alternative, use :class:`FastHGTConv` which does not
         iterate over individual node and edge types.
 
@@ -129,6 +131,7 @@ class HGTConv(MessagePassing):
                                Dict[EdgeType, SparseTensor]]  # Support both.
     ) -> Dict[NodeType, Optional[Tensor]]:
         r"""Runs the forward pass of the module.
+
         Args:
             x_dict (Dict[str, torch.Tensor]): A dictionary holding input node
                 features  for each individual node type.
@@ -137,6 +140,7 @@ class HGTConv(MessagePassing):
                 individual edge type, either as a :class:`torch.Tensor` of
                 shape :obj:`[2, num_edges]` or a
                 :class:`torch_sparse.SparseTensor`.
+
         :rtype: :obj:`Dict[str, Optional[torch.Tensor]]` - The output node
             embeddings for each node type.
             In case a node type does not receive any message, its output will
