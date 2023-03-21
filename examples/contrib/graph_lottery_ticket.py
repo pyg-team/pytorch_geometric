@@ -5,7 +5,6 @@ import tqdm
 from torch.nn import Module
 from torch.nn.functional import nll_loss
 
-import torch_geometric
 from torch_geometric.contrib.nn import GLTSearch
 from torch_geometric.contrib.nn.models.graph_lottery_ticket import (
     score_link_prediction,
@@ -14,13 +13,14 @@ from torch_geometric.contrib.nn.models.graph_lottery_ticket import (
 from torch_geometric.data import Data
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GAT, GCN, GIN
+from torch_geometric.utils import negative_sampling
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def generate_edge_data(dataset):
     """sample  negative edges and labels"""
-    negative_edges = torch_geometric.utils.negative_sampling(
+    negative_edges = negative_sampling(
         dataset.edge_index)
     edge_labels = [0] * negative_edges.shape[-1] + [
         1
@@ -31,6 +31,7 @@ def generate_edge_data(dataset):
 
 class LinkPredictor(Module):
     """helper model to get dot product interaction on edges"""
+
     def __init__(self, model):
         super().__init__()
         self.model = model
@@ -168,10 +169,10 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', action='store_true')
     args = parser.parse_args()
 
-    dataset = Planetoid(root=f"tmp/{args.dataset}", name=args.dataset)
+    dataset = Planetoid(root=f"/tmp/{args.dataset}", name=args.dataset)
     print(args.dataset)
     print(args.model)
-    data = dataset[0].to(device)
+    data = dataset[0].to(device)  # type: ignore
     if args.task == "link_prediction":
         generate_edge_data(data)
 
