@@ -220,10 +220,9 @@ class GATConv(MessagePassing):
 
         x = (x_src, x_dst)
 
-        # Next, we compute node-level attention coefficients, both for source
-        # and target nodes (if present):
+        # Next, we compute node-level attention coefficients:
         alpha_src = (x_src * self.att_src).sum(dim=-1)
-        alpha_dst = None if x_dst is None else (x_dst * self.att_dst).sum(-1)
+        alpha_dst = (x_dst * self.att_dst).sum(dim=-1)
         alpha = (alpha_src, alpha_dst)
 
         if self.add_self_loops:
