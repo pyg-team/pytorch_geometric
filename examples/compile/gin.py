@@ -86,4 +86,3 @@ for epoch in range(1, 101):
     test_acc = test(test_loader)
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
           f'Test: {test_acc:.4f}')
-
