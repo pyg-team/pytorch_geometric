@@ -4,14 +4,16 @@ import torch
 import torch.nn.functional as F
 
 import torch_geometric
+import torch_geometric.transforms as T
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import MLP, GINConv, SAGEConv, global_add_pool
+from torch_geometric.nn import MLP, GINConv, global_add_pool
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join('data', 'TUDatasets')
-dataset = TUDataset(path, name='MUTAG').shuffle()
+transform = T.Pad(max_num_nodes=28, max_num_edges=66)
+dataset = TUDataset(path, name='MUTAG', pre_transform=transform).shuffle()
 
 train_dataset = dataset[len(dataset) // 10:]
 train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True,
@@ -27,26 +29,26 @@ class GIN(torch.nn.Module):
 
         self.convs = torch.nn.ModuleList()
         for _ in range(5):
-            # mlp = MLP([in_channels, 32, 32])
-            self.convs.append(torch.nn.Linear(in_channels, 32))
-            # self.convs.append(SAGEConv(in_channels, 32))
-            # self.convs.append(GINConv(mlp, train_eps=False))
+            mlp = MLP([in_channels, 32, 32])
+            self.convs.append(GINConv(mlp, train_eps=False))
             in_channels = 32
 
-        self.mlp = torch.nn.Linear(32, out_channels)
-        # self.mlp = MLP([32, 32, out_channels], norm=None, dropout=0.5)
+        self.mlp = MLP([32, 32, out_channels], norm=None, dropout=0.5)
 
-    def forward(self, x, edge_index, batch, batch_size):
+    def forward(self, x, edge_index, batch):
         for conv in self.convs:
-            x = conv(x).relu()
-        x = global_add_pool(x, batch, size=batch_size)
+            x = conv(x, edge_index).relu()
+        x = global_add_pool(x, batch)
         return self.mlp(x)
 
 
 model = GIN(dataset.num_features, dataset.num_classes).to(device)
 
 # Compile the model into an optimized version:
-model = torch_geometric.compile(model, dynamic=True)
+# Note that `compile(model, dynamic=True)` does not work yet in PyTorch 2.0, so
+# we use `transforms.Pad` and static compilation as a current workaround.
+# See: https://github.com/pytorch/pytorch/issues/94640
+model = torch_geometric.compile(model)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
@@ -58,7 +60,7 @@ def train():
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        out = model(data.x, data.edge_index, data.batch, data.num_graphs)
+        out = model(data.x, data.edge_index, data.batch)
         loss = F.cross_entropy(out, data.y)
         loss.backward()
         optimizer.step()
@@ -73,8 +75,7 @@ def test(loader):
     total_correct = 0
     for data in loader:
         data = data.to(device)
-        pred = model(data.x, data.edge_index, data.batch,
-                     data.num_graphs).argmax(dim=-1)
+        pred = model(data.x, data.edge_index, data.batch).argmax(dim=-1)
         total_correct += int((pred == data.y).sum())
     return total_correct / len(loader.dataset)
 
@@ -85,3 +86,4 @@ for epoch in range(1, 101):
     test_acc = test(test_loader)
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
           f'Test: {test_acc:.4f}')
+
