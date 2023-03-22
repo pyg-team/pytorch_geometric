@@ -45,6 +45,9 @@ class GIN(torch.nn.Module):
 model = GIN(dataset.num_features, dataset.num_classes).to(device)
 
 # Compile the model into an optimized version:
+# Note that `compile(model, dynamic=True)` does not work yet in PyTorch 2.0, so
+# we use `transforms.Pad` and static compilation as a current workaround.
+# See: https://github.com/pytorch/pytorch/issues/94640
 model = torch_geometric.compile(model)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)

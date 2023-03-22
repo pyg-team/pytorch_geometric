@@ -1,10 +1,9 @@
 import torch
-import torch.nn.functional as F
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import degree
+from torch_geometric.utils import degree, one_hot
 
 
 @functional_transform('one_hot_degree')
@@ -33,7 +32,7 @@ class OneHotDegree(BaseTransform):
     def __call__(self, data: Data) -> Data:
         idx, x = data.edge_index[1 if self.in_degree else 0], data.x
         deg = degree(idx, data.num_nodes, dtype=torch.long)
-        deg = F.one_hot(deg, num_classes=self.max_degree + 1).to(torch.float)
+        deg = one_hot(deg, num_classes=self.max_degree + 1)
 
         if x is not None and self.cat:
             x = x.view(-1, 1) if x.dim() == 1 else x
