@@ -7,7 +7,6 @@ from typing import Callable
 import torch
 from packaging.requirements import Requirement
 
-import torch_geometric.typing
 from torch_geometric.visualization.graph import has_graphviz
 
 
@@ -115,19 +114,6 @@ def disableExtensions(func: Callable):
     r"""A decorator to temporarily disable the usage of the
     :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` extension
     packages."""
-    def wrapper(*args, **kwargs):
-        prev_state = {
-            'WITH_PYG_LIB': torch_geometric.typing.WITH_PYG_LIB,
-            'WITH_SAMPLED_OP': torch_geometric.typing.WITH_SAMPLED_OP,
-            'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
-            'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
-            'WITH_TORCH_SPARSE': torch_geometric.typing.WITH_TORCH_SPARSE,
-        }
-        for key in prev_state.keys():
-            setattr(torch_geometric.typing, key, False)
-        out = func(*args, **kwargs)
-        for key, value in prev_state.items():
-            setattr(torch_geometric.typing, key, value)
-        return out
+    import pytest
 
-    return wrapper
+    return pytest.mark.usefixtures('disable_extensions')(func)
