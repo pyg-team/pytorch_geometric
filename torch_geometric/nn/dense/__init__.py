@@ -22,6 +22,6 @@ __all__ = [
     'DMoNPooling',
 ]
 
-lin_classes = __all__[:2]
-conv_classes = __all__[2:7]
-pool_classes = __all__[7:]
+lin_classes = __all__[:3]
+conv_classes = __all__[3:8]
+pool_classes = __all__[8:]
