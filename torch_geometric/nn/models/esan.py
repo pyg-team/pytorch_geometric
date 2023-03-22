@@ -184,7 +184,7 @@ class DSSnetwork(torch.nn.Module):
                 torch.cumsum(num_nodes_per_subgraph, dim=0)
             ])
             graph_offset = tmp[batch]
-            node_idx = graph_offset + batched_data.subgraph_n_id
+            node_idx = graph_offset + batched_data.subgraph_n_idx
 
             # Sum node features across subgraphs
             x_sum = torch_scatter.scatter(src=x, index=node_idx, dim=0,
