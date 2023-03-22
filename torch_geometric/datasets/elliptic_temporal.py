@@ -57,7 +57,8 @@ class EllipticBitcoinTemporalDataset(InMemoryDataset):
     """
     url = 'https://data.pyg.org/datasets/elliptic'
 
-    def __init__(self, root: str, t: int = 0, transform: Optional[Callable] = None,
+    def __init__(self, root: str, t: int = 0,
+                 transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         self.t = t
         super().__init__(root, transform, pre_transform)
