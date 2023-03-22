@@ -204,6 +204,11 @@ def run(args, device):
 
 
 def main():
+    """ESAN (DS, DSS) Trainer example on TUDatasets (e.g. MUTAG).
+    To reproduce model performance from paper run the following:
+        python esan.py --dataset MUTAG --model dss --gnn_type graphconv
+        python esan.py --dataset MUTAG --model ds --gnn_type graphconv
+    """
     # Training settings
     parser = argparse.ArgumentParser(
         description='GNN baselines with Pytorch Geometrics')
