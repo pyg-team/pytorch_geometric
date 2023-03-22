@@ -367,7 +367,7 @@ class HeteroDictLinear(torch.nn.Module):
             self, get_type: Union[NodeType,
                                   EdgeType]) -> Linear:
         # returns a Linear layer for type
-        return self.hetero_module.lins[self.types.index(get_type)]
+        return self.lins[self.types.index(get_type)]
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
