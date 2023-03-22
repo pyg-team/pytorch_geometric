@@ -412,9 +412,13 @@ class ToHeteroTransformer(Transformer):
                 return ToHeteroLinear(
                     module, self.metadata[int(has_edge_level_target)])
         elif is_batch_norm(module):
-            return HeteroBatchNorm(get_norm_channels(module), len(self.metadata[int(has_edge_level_target)]))
+            return HeteroBatchNorm(
+                get_norm_channels(module),
+                len(self.metadata[int(has_edge_level_target)]))
         elif is_layer_norm(module):
-            return HeteroLayerNorm(get_norm_channels(module), len(self.metadata[int(has_edge_level_target)]))
+            return HeteroLayerNorm(
+                get_norm_channels(module),
+                len(self.metadata[int(has_edge_level_target)]))
         else:
             module_dict = torch.nn.ModuleDict()
             for key in self.metadata[int(has_edge_level_target)]:
@@ -510,11 +514,14 @@ def is_linear(module: torch.nn.Module) -> bool:
     return isinstance(module, torch.nn.Linear) or isinstance(
         module, torch_geometric.nn.dense.Linear)
 
+
 def is_batch_norm(module: torch.nn.Module) -> bool:
     return "batchnorm" in str(module).lower()
 
+
 def is_layer_norm(module: torch.nn.Module) -> bool:
     return "layernorm" in str(module).lower()
+
 
 def get_norm_channels(module: torch.nn.Module) -> int:
     if hasattr(module, "in_channels"):
@@ -523,6 +530,7 @@ def get_norm_channels(module: torch.nn.Module) -> int:
         return module.num_features
     elif hasattr(module, "normalized_shape"):
         return module.normalized_shape
+
 
 def is_iterable_module(module: torch.nn.Module) -> bool:
     return isinstance(module, torch.nn.ModuleList) or isinstance(
