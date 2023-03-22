@@ -2,14 +2,19 @@ import torch
 import torch_scatter
 import time
 import numpy as np
-from torch.nn import Sequential
+from torch.nn import Sequential, Identity
 from torch_geometric.utils import degree
 from torch import nn
-# Finds the quantization minimum and maximum range along with the zero point and the scaling factor
+from quantizer import IntegerQuantizer
 
 
 
-# Builds a tensor using the bernoulli mask generated using the number of elements in the tensor.
+def create_quantizer(qypte, ste, momentum, percentile, signed, sample_prop):
+    if qypte == "FP32":
+        return Identity
+    elif qypte == 'INT8':
+
+        return lambda: IntegerQuantizer(8, signed, ste, momentum, percentile, sample_prop)
 
 
 def scatter_(name, src, index, dim=0, dim_size=None):
