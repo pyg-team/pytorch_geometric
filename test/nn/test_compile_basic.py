@@ -45,7 +45,7 @@ def fused_gather_scatter(x, edge_index, reduce=['sum', 'mean', 'max']):
 
 @withCUDA
 @onlyLinux
-@disableExtensions()
+@disableExtensions
 @withPackage('torch>=2.0.0')
 def test_torch_compile(device):
     x = torch.randn(10, 16, device=device)
@@ -81,7 +81,7 @@ def test_torch_compile(device):
 
 @withCUDA
 @onlyLinux
-@disableExtensions()
+@disableExtensions
 @withPackage('torch>=2.0.0')
 def test_dynamic_torch_compile(device):
     compiled_gather_scatter = torch_geometric.compile(gather_scatter)
