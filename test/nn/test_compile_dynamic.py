@@ -1,11 +1,10 @@
 import random
-import time
 
+import pytest
 import torch
 from torch import Tensor
 
 import torch_geometric
-from torch_geometric.nn import GraphSAGE, SAGEConv
 from torch_geometric.testing import (
     disableExtensions,
     get_random_edge_index,
@@ -33,31 +32,20 @@ class MySAGEConv(torch.nn.Module):
 @disableExtensions()
 @withPackage('torch>=2.0.0')
 def test_dynamic_torch_compile(device):
-    # torch._dynamo.config.specialize_int = False
-    # torch._dynamo.config.verbose = True
-    # torch._dynamo.config.verbose = True
-    if device == torch.device('cpu'):
-        return
-    # conv = MySAGEConv(16, 16).to(device)
-    conv = GraphSAGE(64, 64, num_layers=3).to(device)
-    compiled_conv = torch_geometric.compile(conv, dynamic=True)
+    conv = MySAGEConv(64, 64).to(device)
+    conv = torch_geometric.compile(conv, dynamic=True)
 
-    t_total = 0
-    for i in range(1000):
-        N = random.randrange(50, 200)
-        E = random.randrange(1000, 2000)
+    optimizer = torch.optim.Adam(conv.parameters(), lr=0.01)
 
-        x = torch.randn(N, 16, device=device)
-        edge_index = get_random_edge_index(N, N, num_edges=E, device=device)
+    with pytest.raises(RuntimeError):
+        for _ in range(10):
+            N = random.randrange(100, 500)
+            E = random.randrange(200, 1000)
 
-        if i > 100:
-            torch.cuda.synchronize()
-            t = time.perf_counter()
-        # expected = conv(x, edge_index)
-        out = compiled_conv(x, edge_index)
+            x = torch.randn(N, 64, device=device)
+            edge_index = get_random_edge_index(N, N, E, device=device)
 
-        if i > 100:
-            torch.cuda.synchronize()
-            t_total += time.perf_counter() - t
-        # assert torch.allclose(out, expected, atol=1e-6)
-    print(t_total)
+            optimizer.zero_grad()
+            expected = conv(x, edge_index)
+            expected.mean().backward()
+            optimizer.step()
