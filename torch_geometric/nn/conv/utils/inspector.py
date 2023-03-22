@@ -25,15 +25,15 @@ class Inspector(object):
             keys += self.params[func].keys()
         return set(keys)
 
-    def __implements__(self, cls, func_name: str) -> bool:
+    def _implements(self, cls, func_name: str) -> bool:
         if cls.__name__ == 'MessagePassing':
             return False
         if func_name in cls.__dict__.keys():
             return True
-        return any(self.__implements__(c, func_name) for c in cls.__bases__)
+        return any(self._implements(c, func_name) for c in cls.__bases__)
 
     def implements(self, func_name: str) -> bool:
-        return self.__implements__(self.base_class.__class__, func_name)
+        return self._implements(self.base_class.__class__, func_name)
 
     def types(self, func_names: Optional[List[str]] = None) -> Dict[str, str]:
         out: Dict[str, str] = {}
