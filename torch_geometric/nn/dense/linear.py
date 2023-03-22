@@ -385,16 +385,24 @@ class HeteroDictLinear(torch.nn.Module):
         """
         if torch_geometric.typing.WITH_GMM:
             xs = [x_dict[key] for key in x_dict.keys()]
-            weights = [self.lins[self.get_key(key)].weight.t() for key in x_dict.keys()]
+            weights = [
+                self.lins[self.get_key(key)].weight.t()
+                for key in x_dict.keys()
+            ]
             if self.kwargs.get('bias', True):
-                biases = [self.lins[self.get_key(key)].bias for key in x_dict.keys()]
+                biases = [
+                    self.lins[self.get_key(key)].bias for key in x_dict.keys()
+                ]
             else:
                 biases = None
 
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
             return {key: out for key, out in zip(x_dict.keys(), outs)}
 
-        return {key: self.lins[self.get_key(key)](x) for key, x in x_dict.items()}
+        return {
+            key: self.lins[self.get_key(key)](x)
+            for key, x in x_dict.items()
+        }
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
