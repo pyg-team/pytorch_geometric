@@ -3,9 +3,9 @@ from typing import Callable, List, Optional
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import one_hot
 
 
 class LINKXDataset(InMemoryDataset):
@@ -132,7 +132,7 @@ class LINKXDataset(InMemoryDataset):
         x = torch.cat([metadata[:, :1], metadata[:, 2:]], dim=-1)
         for i in range(x.size(1)):
             _, out = x[:, i].unique(return_inverse=True)
-            xs.append(F.one_hot(out).to(torch.float))
+            xs.append(one_hot(out))
         x = torch.cat(xs, dim=-1)
 
         data = Data(x=x, edge_index=edge_index, y=y)

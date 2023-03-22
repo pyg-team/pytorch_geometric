@@ -4,7 +4,6 @@ import sys
 from typing import Callable, List, Optional
 
 import torch
-import torch.nn.functional as F
 from tqdm import tqdm
 
 from torch_geometric.data import (
@@ -13,7 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
-from torch_geometric.utils import scatter
+from torch_geometric.utils import one_hot, scatter
 
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
@@ -271,8 +270,7 @@ class QM9(InMemoryDataset):
 
             edge_index = torch.tensor([row, col], dtype=torch.long)
             edge_type = torch.tensor(edge_type, dtype=torch.long)
-            edge_attr = F.one_hot(edge_type,
-                                  num_classes=len(bonds)).to(torch.float)
+            edge_attr = one_hot(edge_type, num_classes=len(bonds))
 
             perm = (edge_index[0] * N + edge_index[1]).argsort()
             edge_index = edge_index[:, perm]
@@ -283,10 +281,10 @@ class QM9(InMemoryDataset):
             hs = (z == 1).to(torch.float)
             num_hs = scatter(hs[row], col, dim_size=N, reduce='sum').tolist()
 
-            x1 = F.one_hot(torch.tensor(type_idx), num_classes=len(types))
+            x1 = one_hot(torch.tensor(type_idx), num_classes=len(types))
             x2 = torch.tensor([atomic_number, aromatic, sp, sp2, sp3, num_hs],
                               dtype=torch.float).t().contiguous()
-            x = torch.cat([x1.to(torch.float), x2], dim=-1)
+            x = torch.cat([x1, x2], dim=-1)
 
             y = target[i].unsqueeze(0)
             name = mol.GetProp('_Name')
