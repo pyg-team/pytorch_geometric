@@ -102,44 +102,35 @@ class EllipticBitcoinTemporalDataset(InMemoryDataset):
         df_filtered_features = df_features[df_features['time_step'] == t]
 
         df_classes['time_step'] = df_classes.apply(
-            lambda row: txId2timestep[row.txId],
-            axis=1
-        )
-        df_filtered_classes = df_classes[
-            df_classes['time_step'] == t
-        ].drop('time_step', axis=1)
+            lambda row: txId2timestep[row.txId], axis=1)
+        df_filtered_classes = df_classes[df_classes['time_step'] == t].drop(
+            'time_step', axis=1)
 
         df_edges['time_step'] = df_edges.apply(
-            lambda row: max(txId2timestep[row.txId1],
-                            txId2timestep[row.txId2]
-                            ),
-            axis=1
-        )
-        df_filtered_edges = df_edges[
-            df_edges['time_step'] == t
-        ].drop('time_step', axis=1)
+            lambda row: max(txId2timestep[row.txId1], txId2timestep[row.txId2]
+                            ), axis=1)
+        df_filtered_edges = df_edges[df_edges['time_step'] == t].drop(
+            'time_step', axis=1)
 
-        x = torch.from_numpy(
-            df_filtered_features.loc[:, 2:].values
-        ).to(torch.float)
+        x = torch.from_numpy(df_filtered_features.loc[:, 2:].values).to(
+            torch.float)
 
         # There exists 3 different classes in the dataset:
         # 0=licit,  1=illicit, 2=unknown
         mapping = {'unknown': 2, '1': 1, '2': 0}
-        df_filtered_classes['class'] = df_filtered_classes[
-            'class'
-        ].map(mapping)
+        df_filtered_classes['class'] = df_filtered_classes['class'].map(
+            mapping)
 
         y = torch.from_numpy(df_filtered_classes['class'].values)
 
-        mapping = {idx: i for i, idx in enumerate(
-            df_filtered_features['txId'].values
-        )}
+        mapping = {
+            idx: i
+            for i, idx in enumerate(df_filtered_features['txId'].values)
+        }
         df_filtered_edges['txId1'] = df_filtered_edges['txId1'].map(mapping)
         df_filtered_edges['txId2'] = df_filtered_edges['txId2'].map(mapping)
         edge_index = torch.from_numpy(
-            df_filtered_edges.values
-        ).t().contiguous()
+            df_filtered_edges.values).t().contiguous()
 
         # Timestamp based split:
         # train_mask: 1 - 34 time_step, test_mask: 35-49 time_step
