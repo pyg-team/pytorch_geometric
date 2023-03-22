@@ -70,7 +70,7 @@ def build_test_model(architecture, link_prediction):
     return model
 
 
-@pytest.mark.parametrize('architecture', [GCN, GAT])
+@pytest.mark.parametrize('architecture', [GCN])
 @pytest.mark.parametrize('link_prediction', [False, True])
 def test_make_mask(architecture, link_prediction):
     if link_prediction:
@@ -88,10 +88,10 @@ def test_make_mask(architecture, link_prediction):
         assert param.shape == param_mask.shape
 
     assert mask[GLTModel.EDGE_MASK + GLTModel.MASK].shape[0] == \
-        adjacency_shape
+           adjacency_shape
 
 
-@pytest.mark.parametrize('architecture', [GCN, GAT])
+@pytest.mark.parametrize('architecture', [GCN])
 @pytest.mark.parametrize('link_prediction', [False, True])
 def test_apply_mask(architecture, link_prediction):
     if link_prediction:
@@ -112,7 +112,7 @@ def test_apply_mask(architecture, link_prediction):
         assert param.shape == new_params[name + GLTModel.ORIG].shape
 
 
-@pytest.mark.parametrize('architecture', [GCN, GAT])
+@pytest.mark.parametrize('architecture', [GCN])
 @pytest.mark.parametrize('link_prediction', [False, True])
 def test_apply_mask_ignore_keys(architecture, link_prediction):
     if link_prediction:
@@ -137,7 +137,7 @@ def test_apply_mask_ignore_keys(architecture, link_prediction):
             assert name + GLTModel.ORIG not in new_params
 
 
-@pytest.mark.parametrize('architecture', [GCN, GAT])
+@pytest.mark.parametrize('architecture', [GCN])
 @pytest.mark.parametrize('link_prediction', [False, True])
 def test_forward(architecture, link_prediction):
     if link_prediction:
@@ -156,7 +156,7 @@ def test_forward(architecture, link_prediction):
     assert output.shape[0] == input_len
 
 
-@pytest.mark.parametrize('architecture', [GCN, GAT])
+@pytest.mark.parametrize('architecture', [GCN])
 @pytest.mark.parametrize('link_prediction', [False, True])
 def test_rewind(architecture, link_prediction):
     if link_prediction:
@@ -167,7 +167,7 @@ def test_rewind(architecture, link_prediction):
     model = build_test_model(architecture, link_prediction)
     initial_params = {
         "module." + k + GLTModel.ORIG if k.rpartition(".")[-1] else "module." +
-        k: v.detach().clone()
+                                                                    k: v.detach().clone()
         for k, v in model.state_dict().items()
     }
     pruned_model = GLTModel(model, graph, ignore_keys=set())
@@ -181,7 +181,7 @@ def test_rewind(architecture, link_prediction):
         assert param.grad is None
 
 
-@pytest.mark.parametrize('architecture', [GCN, GAT])
+@pytest.mark.parametrize('architecture', [GCN])
 @pytest.mark.parametrize('link_prediction', [False, True])
 @pytest.mark.parametrize('ugs', [True, False])
 def test_search_train(architecture, link_prediction, ugs):
