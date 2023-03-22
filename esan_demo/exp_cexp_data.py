@@ -6,15 +6,18 @@ import networkx as nx
 import numpy as np
 import torch
 from sklearn.model_selection import StratifiedKFold
+
 from torch_geometric.data import InMemoryDataset
 
 NAME = "GRAPHSAT"
 
 
 class PlanarSATPairsDataset(InMemoryDataset):
-    def __init__(self, root, name=None, transform=None, pre_transform=None, pre_filter=None):
+    def __init__(self, root, name=None, transform=None, pre_transform=None,
+                 pre_filter=None):
         self.name = name
-        super(PlanarSATPairsDataset, self).__init__(root, transform, pre_transform, pre_filter)
+        super(PlanarSATPairsDataset, self).__init__(root, transform,
+                                                    pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
@@ -42,7 +45,8 @@ class PlanarSATPairsDataset(InMemoryDataset):
 
         for data in data_list:
             n_edge = data.edge_index.size(1)
-            data.edge_attr = torch.ones((n_edge, 1))  # added a fake edge_attr for EXP/CEXP dataset
+            data.edge_attr = torch.ones(
+                (n_edge, 1))  # added a fake edge_attr for EXP/CEXP dataset
             data.x = data.x.type(torch.float32)
 
         if self.pre_filter is not None:
@@ -78,10 +82,15 @@ class PlanarSATPairsDataset(InMemoryDataset):
             idx_list.append(idx)
         train_idx, test_idx = idx_list[fold_idx]
 
-        return {'train': torch.tensor(train_idx), 'valid': torch.tensor(test_idx), 'test': torch.tensor(test_idx)}
+        return {
+            'train': torch.tensor(train_idx),
+            'valid': torch.tensor(test_idx),
+            'test': torch.tensor(test_idx)
+        }
 
 
 def viz_graph(g, node_size=5, edge_width=1, node_color='b', show=False):
     pos = nx.planar_layout(g)
-    nx.draw(g, pos, node_color=node_color, node_size=node_size, with_labels=False, width=edge_width)
+    nx.draw(g, pos, node_color=node_color, node_size=node_size,
+            with_labels=False, width=edge_width)
     if show: plt.show()

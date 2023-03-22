@@ -1,36 +1,45 @@
 import numpy as np
 import torch
-
-from torch_geometric.transforms import OneHotDegree
+from conv import (
+    GNN,
+    GCNConv,
+    GINConv,
+    GNNComplete,
+    OriginalGINConv,
+    ZincAtomEncoder,
+    ZINCGINConv,
+)
 from csl_data import MyGNNBenchmarkDataset
 from exp_cexp_data import PlanarSATPairsDataset
-from torch_geometric.loader import DataLoader
-
-from sklearn.model_selection import StratifiedKFold
-from torch_geometric.datasets import TUDataset, ZINC
-from conv import GNN, GNNComplete, GINConv, OriginalGINConv, ZINCGINConv, GCNConv, ZincAtomEncoder
-from torch_geometric.nn import GraphConv
-
-from torch_geometric.nn.models import DSnetwork, DSSnetwork
 from ogb.graphproppred import Evaluator as Evaluator_
+from sklearn.model_selection import StratifiedKFold
 
-from torch_geometric.transforms import subgraph_policy
+from torch_geometric.datasets import ZINC, TUDataset
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import GraphConv
+from torch_geometric.nn.models import DSnetwork, DSSnetwork
+from torch_geometric.transforms import OneHotDegree, subgraph_policy
 
 
 def separate_data(dataset, seed, fold_idx):
-        # code taken from GIN and adapted
-        # since we only consider train and valid, use valid as test
+    # code taken from GIN and adapted
+    # since we only consider train and valid, use valid as test
 
-        assert 0 <= fold_idx and fold_idx < 10, "fold_idx must be from 0 to 9."
-        skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=seed)
+    assert 0 <= fold_idx and fold_idx < 10, "fold_idx must be from 0 to 9."
+    skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=seed)
 
-        labels = dataset.data.y.numpy()
-        idx_list = []
-        for idx in skf.split(np.zeros(len(labels)), labels):
-            idx_list.append(idx)
-        train_idx, test_idx = idx_list[fold_idx]
+    labels = dataset.data.y.numpy()
+    idx_list = []
+    for idx in skf.split(np.zeros(len(labels)), labels):
+        idx_list.append(idx)
+    train_idx, test_idx = idx_list[fold_idx]
 
-        return {'train': torch.tensor(train_idx), 'valid': torch.tensor(test_idx), 'test': torch.tensor(test_idx)}
+    return {
+        'train': torch.tensor(train_idx),
+        'valid': torch.tensor(test_idx),
+        'test': torch.tensor(test_idx)
+    }
+
 
 def get_data(args, fold_idx):
     if args.model == 'gnn': assert args.policy == 'original'
@@ -38,10 +47,13 @@ def get_data(args, fold_idx):
     if args.policy == 'original':
         pre_transform = None
     elif args.dataset == 'CSL':
-        pre_transform = subgraph_policy(policy=args.policy, num_hops=args.num_hops, subgraph_transform=OneHotDegree(5))
+        pre_transform = subgraph_policy(policy=args.policy,
+                                        num_hops=args.num_hops,
+                                        subgraph_transform=OneHotDegree(5))
     else:
-        pre_transform = subgraph_policy(policy=args.policy, num_hops=args.num_hops)
-    
+        pre_transform = subgraph_policy(policy=args.policy,
+                                        num_hops=args.num_hops)
+
     # automatic dataloading and splitting
     if args.dataset == 'CSL':
         dataset = MyGNNBenchmarkDataset(root="dataset/" + args.policy,
@@ -50,9 +62,12 @@ def get_data(args, fold_idx):
         split_idx = dataset.separate_data(args.seed, fold_idx=fold_idx)
 
     elif args.dataset == 'ZINC':
-        dataset = ZINC(root="dataset/" + args.policy, subset=True, split="train")
-        val_dataset = ZINC(root="dataset/" + args.policy, subset=True, split="val")
-        test_dataset = ZINC(root="dataset/" + args.policy, subset=True, split="test")
+        dataset = ZINC(root="dataset/" + args.policy, subset=True,
+                       split="train")
+        val_dataset = ZINC(root="dataset/" + args.policy, subset=True,
+                           split="val")
+        test_dataset = ZINC(root="dataset/" + args.policy, subset=True,
+                            split="test")
 
     elif args.dataset in ['CEXP', 'EXP']:
         dataset = PlanarSATPairsDataset(root="dataset/" + args.policy,
@@ -61,26 +76,31 @@ def get_data(args, fold_idx):
         split_idx = dataset.separate_data(args.seed, fold_idx=fold_idx)
 
     else:
-        dataset = TUDataset(root="dataset/" + args.policy,
-                            name=args.dataset,
-                            pre_transform=pre_transform,
-                            )
+        dataset = TUDataset(
+            root="dataset/" + args.policy,
+            name=args.dataset,
+            pre_transform=pre_transform,
+        )
         # ensure edge_attr is not considered
         dataset.data.edge_attr = None
         split_idx = separate_data(dataset, args.seed, fold_idx=fold_idx)
 
-    train_loader = DataLoader(dataset[split_idx["train"]] if args.dataset != 'ZINC' else dataset,
-                              batch_size=args.batch_size, shuffle=True,
-                              num_workers=args.num_workers, follow_batch=['subgraph_id'])
-    train_loader_eval = DataLoader(dataset[split_idx["train"]] if args.dataset != 'ZINC' else dataset,
-                                   batch_size=args.batch_size, shuffle=False,
-                                   num_workers=args.num_workers, follow_batch=['subgraph_id'])
-    valid_loader = DataLoader(dataset[split_idx["valid"]] if args.dataset != 'ZINC' else val_dataset,
-                              batch_size=args.batch_size, shuffle=False,
-                              num_workers=args.num_workers, follow_batch=['subgraph_id'])
-    test_loader = DataLoader(dataset[split_idx["test"]] if args.dataset != 'ZINC' else test_dataset,
-                             batch_size=args.batch_size, shuffle=False,
-                             num_workers=args.num_workers, follow_batch=['subgraph_id'])
+    train_loader = DataLoader(
+        dataset[split_idx["train"]] if args.dataset != 'ZINC' else dataset,
+        batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers,
+        follow_batch=['subgraph_id'])
+    train_loader_eval = DataLoader(
+        dataset[split_idx["train"]] if args.dataset != 'ZINC' else dataset,
+        batch_size=args.batch_size, shuffle=False,
+        num_workers=args.num_workers, follow_batch=['subgraph_id'])
+    valid_loader = DataLoader(
+        dataset[split_idx["valid"]] if args.dataset != 'ZINC' else val_dataset,
+        batch_size=args.batch_size, shuffle=False,
+        num_workers=args.num_workers, follow_batch=['subgraph_id'])
+    test_loader = DataLoader(
+        dataset[split_idx["test"]] if args.dataset != 'ZINC' else test_dataset,
+        batch_size=args.batch_size, shuffle=False,
+        num_workers=args.num_workers, follow_batch=['subgraph_id'])
 
     if 'ZINC' in args.dataset:
         in_dim = args.emb_dim if args.policy != "ego_plus" else args.emb_dim + 2
@@ -90,22 +110,27 @@ def get_data(args, fold_idx):
         in_dim = dataset.num_features
     out_dim = dataset.num_tasks if args.dataset != 'ZINC' and args.dataset != 'MUTAG' else 1
 
-    task_type = 'regression' if args.dataset == 'ZINC' else ('classification' if args.dataset == 'MUTAG' else dataset.task_type)
-    eval_metric = 'mae' if args.dataset == 'ZINC' else ('acc' if args.dataset == 'MUTAG' else dataset.eval_metric)
-    return train_loader, train_loader_eval, valid_loader, test_loader, (in_dim, out_dim, task_type, eval_metric)
+    task_type = 'regression' if args.dataset == 'ZINC' else (
+        'classification' if args.dataset == 'MUTAG' else dataset.task_type)
+    eval_metric = 'mae' if args.dataset == 'ZINC' else (
+        'acc' if args.dataset == 'MUTAG' else dataset.eval_metric)
+    return train_loader, train_loader_eval, valid_loader, test_loader, (
+        in_dim, out_dim, task_type, eval_metric)
 
 
 def get_model(args, in_dim, out_dim, device):
     encoder = lambda x: x
-    
+
     if 'ZINC' in args.dataset:
         encoder = ZincAtomEncoder(policy=args.policy, emb_dim=args.emb_dim)
 
     if args.model == 'gnn':
-        model = GNNComplete(gnn_type=args.gnn_type, num_tasks=out_dim, num_layer=args.num_layer, in_dim=in_dim,
-                            emb_dim=args.emb_dim, drop_ratio=args.drop_ratio, JK=args.jk,
-                            graph_pooling='sum' if args.gnn_type != 'gin' else 'mean',
-                            feature_encoder=encoder).to(device)
+        model = GNNComplete(
+            gnn_type=args.gnn_type, num_tasks=out_dim,
+            num_layer=args.num_layer, in_dim=in_dim, emb_dim=args.emb_dim,
+            drop_ratio=args.drop_ratio, JK=args.jk,
+            graph_pooling='sum' if args.gnn_type != 'gin' else 'mean',
+            feature_encoder=encoder).to(device)
         return model
 
     if args.gnn_type == 'gin':
@@ -123,15 +148,19 @@ def get_model(args, in_dim, out_dim, device):
 
     if args.model == 'deepsets':
 
-        subgraph_gnn = GNN(GNNConv=GNNConv, num_tasks=out_dim, num_layer=args.num_layer, in_dim=in_dim,
-                           emb_dim=args.emb_dim, drop_ratio=args.drop_ratio, JK=args.jk,
-                           graph_pooling='sum' if args.gnn_type != 'gin' else 'mean', feature_encoder=encoder
-                           ).to(device)
-        model = DSnetwork(subgraph_gnn=subgraph_gnn, fc_channels=args.channels, num_tasks=out_dim,
+        subgraph_gnn = GNN(
+            GNNConv=GNNConv, num_tasks=out_dim, num_layer=args.num_layer,
+            in_dim=in_dim, emb_dim=args.emb_dim, drop_ratio=args.drop_ratio,
+            JK=args.jk,
+            graph_pooling='sum' if args.gnn_type != 'gin' else 'mean',
+            feature_encoder=encoder).to(device)
+        model = DSnetwork(subgraph_gnn=subgraph_gnn, fc_channels=args.channels,
+                          num_tasks=out_dim,
                           invariant=args.dataset == 'ZINC').to(device)
     elif args.model == 'dss':
 
-        model = DSSnetwork(num_layers=args.num_layer, in_dim=in_dim, emb_dim=args.emb_dim, num_tasks=out_dim,
+        model = DSSnetwork(num_layers=args.num_layer, in_dim=in_dim,
+                           emb_dim=args.emb_dim, num_tasks=out_dim,
                            feature_encoder=encoder, GNNConv=GNNConv).to(device)
     else:
         raise ValueError('Undefined model type called {}'.format(args.model))
@@ -169,6 +198,7 @@ class SimpleEvaluator():
     def eval(self, input_dict):
         if self.task_type == 'classification': return self.acc(input_dict)
         return self.mae(input_dict)
+
 
 class NonBinaryEvaluator():
     def __init__(self, num_tasks):

@@ -5,21 +5,31 @@ Code taken from ogb examples and adapted
 import torch
 import torch.nn.functional as F
 from ogb.graphproppred.mol_encoder import BondEncoder
+
 from torch_geometric.nn import GINConv as PyGINConv
-from torch_geometric.nn import GraphConv
-from torch_geometric.nn import MessagePassing
+from torch_geometric.nn import (
+    GlobalAttention,
+    GraphConv,
+    MessagePassing,
+    global_add_pool,
+    global_max_pool,
+    global_mean_pool,
+)
 from torch_geometric.utils import degree
-from torch_geometric.nn import global_add_pool, global_mean_pool, global_max_pool, GlobalAttention
+
 
 def subgraph_pool(h_node, batched_data, pool):
     # Represent each subgraph as the pool of its node representations
     num_subgraphs = batched_data.num_subgraphs
-    tmp = torch.cat([torch.zeros(1, device=num_subgraphs.device, dtype=num_subgraphs.dtype),
-                     torch.cumsum(num_subgraphs, dim=0)])
+    tmp = torch.cat([
+        torch.zeros(1, device=num_subgraphs.device, dtype=num_subgraphs.dtype),
+        torch.cumsum(num_subgraphs, dim=0)
+    ])
     graph_offset = tmp[batched_data.batch]
     subgraph_id = batched_data.subgraph_batch + graph_offset
 
     return pool(h_node, subgraph_id)
+
 
 ### GIN convolution along the graph structure
 class GINConv(MessagePassing):
@@ -30,15 +40,19 @@ class GINConv(MessagePassing):
 
         super(GINConv, self).__init__(aggr="add")
 
-        self.mlp = torch.nn.Sequential(torch.nn.Linear(in_dim, 2 * emb_dim), torch.nn.BatchNorm1d(2 * emb_dim),
-                                       torch.nn.ReLU(), torch.nn.Linear(2 * emb_dim, emb_dim))
+        self.mlp = torch.nn.Sequential(torch.nn.Linear(in_dim, 2 * emb_dim),
+                                       torch.nn.BatchNorm1d(2 * emb_dim),
+                                       torch.nn.ReLU(),
+                                       torch.nn.Linear(2 * emb_dim, emb_dim))
         self.eps = torch.nn.Parameter(torch.Tensor([0]))
 
         self.bond_encoder = BondEncoder(emb_dim=in_dim)
 
     def forward(self, x, edge_index, edge_attr):
         edge_embedding = self.bond_encoder(edge_attr)
-        out = self.mlp((1 + self.eps) * x + self.propagate(edge_index, x=x, edge_attr=edge_embedding))
+        out = self.mlp(
+            (1 + self.eps) * x +
+            self.propagate(edge_index, x=x, edge_attr=edge_embedding))
 
         return out
 
@@ -53,7 +67,9 @@ class ZINCGINConv(MessagePassing):
     def __init__(self, in_dim, emb_dim):
         super(ZINCGINConv, self).__init__(aggr="add")
 
-        self.mlp = torch.nn.Sequential(torch.nn.Linear(in_dim, emb_dim), torch.nn.BatchNorm1d(emb_dim), torch.nn.ReLU(),
+        self.mlp = torch.nn.Sequential(torch.nn.Linear(in_dim, emb_dim),
+                                       torch.nn.BatchNorm1d(emb_dim),
+                                       torch.nn.ReLU(),
                                        torch.nn.Linear(emb_dim, emb_dim))
         self.eps = torch.nn.Parameter(torch.Tensor([0]))
 
@@ -61,7 +77,9 @@ class ZINCGINConv(MessagePassing):
 
     def forward(self, x, edge_index, edge_attr):
         edge_embedding = self.bond_encoder(edge_attr.squeeze())
-        out = self.mlp((1 + self.eps) * x + self.propagate(edge_index, x=x, edge_attr=edge_embedding))
+        out = self.mlp(
+            (1 + self.eps) * x +
+            self.propagate(edge_index, x=x, edge_attr=edge_embedding))
 
         return out
 
@@ -75,12 +93,10 @@ class ZINCGINConv(MessagePassing):
 class OriginalGINConv(torch.nn.Module):
     def __init__(self, in_dim, emb_dim):
         super(OriginalGINConv, self).__init__()
-        mlp = torch.nn.Sequential(
-            torch.nn.Linear(in_dim, emb_dim),
-            torch.nn.BatchNorm1d(emb_dim),
-            torch.nn.ReLU(),
-            torch.nn.Linear(emb_dim, emb_dim)
-        )
+        mlp = torch.nn.Sequential(torch.nn.Linear(in_dim, emb_dim),
+                                  torch.nn.BatchNorm1d(emb_dim),
+                                  torch.nn.ReLU(),
+                                  torch.nn.Linear(emb_dim, emb_dim))
         self.layer = PyGINConv(nn=mlp, train_eps=False)
 
     def forward(self, x, edge_index, edge_attr):
@@ -124,9 +140,9 @@ class GNN_node(torch.nn.Module):
     Output:
         node representations
     """
-
-    def __init__(self, num_layer, in_dim, emb_dim, drop_ratio=0.5, JK="last", residual=False, GNNConv=GraphConv,
-                 num_random_features=0, feature_encoder=lambda x: x):
+    def __init__(self, num_layer, in_dim, emb_dim, drop_ratio=0.5, JK="last",
+                 residual=False, GNNConv=GraphConv, num_random_features=0,
+                 feature_encoder=lambda x: x):
         '''
             emb_dim (int): node embedding dimensionality
             num_layer (int): number of GNN message passing layers
@@ -151,7 +167,8 @@ class GNN_node(torch.nn.Module):
         self.batch_norms = torch.nn.ModuleList()
 
         for layer in range(num_layer):
-            self.convs.append(GNNConv(emb_dim if layer != 0 else in_dim, emb_dim))
+            self.convs.append(
+                GNNConv(emb_dim if layer != 0 else in_dim, emb_dim))
             self.batch_norms.append(torch.nn.BatchNorm1d(emb_dim))
 
     def forward(self, batched_data):
@@ -185,11 +202,11 @@ class GNN_node(torch.nn.Module):
 
         return node_representation
 
-class GNN(torch.nn.Module):
 
+class GNN(torch.nn.Module):
     def __init__(self, num_tasks, num_layer=5, in_dim=300, emb_dim=300,
-                 GNNConv=GraphConv, residual=False, drop_ratio=0.5, JK="last", graph_pooling="mean",
-                 feature_encoder=lambda x: x):
+                 GNNConv=GraphConv, residual=False, drop_ratio=0.5, JK="last",
+                 graph_pooling="mean", feature_encoder=lambda x: x):
 
         super(GNN, self).__init__()
 
@@ -205,8 +222,10 @@ class GNN(torch.nn.Module):
             raise ValueError("Number of GNN layers must be greater than 1.")
 
         ### GNN to generate node embeddings
-        self.gnn_node = GNN_node(num_layer, in_dim, emb_dim, JK=JK, drop_ratio=drop_ratio, residual=residual,
-                                 GNNConv=GNNConv, feature_encoder=feature_encoder)
+        self.gnn_node = GNN_node(num_layer, in_dim, emb_dim, JK=JK,
+                                 drop_ratio=drop_ratio, residual=residual,
+                                 GNNConv=GNNConv,
+                                 feature_encoder=feature_encoder)
 
         ### Pooling function to generate whole-graph embeddings
         if self.graph_pooling == "sum":
@@ -216,9 +235,10 @@ class GNN(torch.nn.Module):
         elif self.graph_pooling == "max":
             self.pool = global_max_pool
         elif self.graph_pooling == "attention":
-            self.pool = GlobalAttention(
-                gate_nn=torch.nn.Sequential(torch.nn.Linear(emb_dim, 2 * emb_dim), torch.nn.BatchNorm1d(2 * emb_dim),
-                                            torch.nn.ReLU(), torch.nn.Linear(2 * emb_dim, 1)))
+            self.pool = GlobalAttention(gate_nn=torch.nn.Sequential(
+                torch.nn.Linear(emb_dim, 2 *
+                                emb_dim), torch.nn.BatchNorm1d(2 * emb_dim),
+                torch.nn.ReLU(), torch.nn.Linear(2 * emb_dim, 1)))
         else:
             raise ValueError("Invalid graph pooling type.")
 
@@ -227,10 +247,11 @@ class GNN(torch.nn.Module):
 
         return subgraph_pool(h_node, batched_data, self.pool)
 
+
 class GNNComplete(GNN):
     def __init__(self, num_tasks, num_layer=5, in_dim=300, emb_dim=300,
-                 gnn_type='gin', residual=False, drop_ratio=0.5, JK="last", graph_pooling="mean",
-                 feature_encoder=lambda x: x):
+                 gnn_type='gin', residual=False, drop_ratio=0.5, JK="last",
+                 graph_pooling="mean", feature_encoder=lambda x: x):
 
         if gnn_type == 'gin':
             GNNConv = GINConv
@@ -243,29 +264,34 @@ class GNNComplete(GNN):
         elif gnn_type == 'zincgin':
             GNNConv = ZINCGINConv
         else:
-            raise ValueError('Undefined GNN type called {}'.format(args.gnn_type))
+            raise ValueError('Undefined GNN type called {}'.format(
+                args.gnn_type))
 
-        super(GNNComplete, self).__init__(num_tasks, num_layer, in_dim, emb_dim, GNNConv,
-                                          residual, drop_ratio, JK, graph_pooling, feature_encoder)
+        super(GNNComplete,
+              self).__init__(num_tasks, num_layer, in_dim, emb_dim, GNNConv,
+                             residual, drop_ratio, JK, graph_pooling,
+                             feature_encoder)
 
         if gnn_type == 'graphconv':
             self.final_layers = torch.nn.Sequential(
-                torch.nn.Linear(in_features=self.out_dim, out_features=self.out_dim),
+                torch.nn.Linear(in_features=self.out_dim,
+                                out_features=self.out_dim), torch.nn.ELU(),
+                torch.nn.Linear(in_features=self.out_dim,
+                                out_features=self.out_dim // 2),
                 torch.nn.ELU(),
-                torch.nn.Linear(in_features=self.out_dim, out_features=self.out_dim // 2),
-                torch.nn.ELU(),
-                torch.nn.Linear(in_features=self.out_dim // 2, out_features=num_tasks)
-            )
+                torch.nn.Linear(in_features=self.out_dim // 2,
+                                out_features=num_tasks))
         else:
             self.final_layers = torch.nn.Sequential(
-                torch.nn.Linear(in_features=self.out_dim, out_features=num_tasks),
-            )
+                torch.nn.Linear(in_features=self.out_dim,
+                                out_features=num_tasks), )
 
     def forward(self, batched_data):
         h_node = self.gnn_node(batched_data)
         h_graph = self.pool(h_node, batched_data.batch)
 
         return self.final_layers(h_graph)
+
 
 class ZincAtomEncoder(torch.nn.Module):
     def __init__(self, policy, emb_dim):
@@ -276,6 +302,7 @@ class ZincAtomEncoder(torch.nn.Module):
 
     def forward(self, x):
         if self.policy == 'ego_plus':
-            return torch.hstack((x[:, :self.num_added], self.enc(x[:, self.num_added:].squeeze())))
+            return torch.hstack((x[:, :self.num_added],
+                                 self.enc(x[:, self.num_added:].squeeze())))
         else:
             return self.enc(x.squeeze())

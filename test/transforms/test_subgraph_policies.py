@@ -1,10 +1,13 @@
 import pytest
 import torch
+
 from torch_geometric.data import Data
-from torch_geometric.transforms import NodeDeletionPolicy, EdgeDeletionPolicy, EgoNetPolicy
+from torch_geometric.transforms import (
+    EdgeDeletionPolicy,
+    EgoNetPolicy,
+    NodeDeletionPolicy,
+)
 
-
- 
 
 def test_node_deletion_policy():
     x = torch.randn(3, 8)
@@ -12,13 +15,11 @@ def test_node_deletion_policy():
     edge_attr = torch.randn(4, 8)
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
 
-
     policy = NodeDeletionPolicy()
     subgraphs = policy.graph_to_subgraphs(data)
 
     # Ensure correct number of subgraphs are produced
     assert len(subgraphs) == 3
-
 
     # Ensure each node is deleted once
     deleted_nodes = set()
@@ -27,7 +28,7 @@ def test_node_deletion_policy():
         assert subgraph.num_nodes == 3
     assert len(deleted_nodes) == 3
 
-        
+
 def test_edge_deletion_policy():
     # Create a small undirected graph with 4 nodes and 4 edges
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 2, 3, 0]])
@@ -49,9 +50,6 @@ def test_edge_deletion_policy():
     assert subgraphs[0].num_edges == 4
     assert subgraphs[1].num_edges == 4
     assert subgraphs[2].num_edges == 4
-  
-
-
 
     # Check that the subgraphs have the expected subgraph IDs
     assert subgraphs[0].subgraph_id == 0
@@ -59,13 +57,17 @@ def test_edge_deletion_policy():
     assert subgraphs[2].subgraph_id == 2
 
     # Check that the subgraphs have the expected subgraph node IDs
-    assert torch.all(torch.eq(subgraphs[0].subgraph_n_id, torch.tensor([0, 1, 2, 3])))
-    assert torch.all(torch.eq(subgraphs[1].subgraph_n_id, torch.tensor([0, 1, 2, 3])))
-    assert torch.all(torch.eq(subgraphs[2].subgraph_n_id, torch.tensor([0, 1, 2, 3]))) 
+    assert torch.all(
+        torch.eq(subgraphs[0].subgraph_n_id, torch.tensor([0, 1, 2, 3])))
+    assert torch.all(
+        torch.eq(subgraphs[1].subgraph_n_id, torch.tensor([0, 1, 2, 3])))
+    assert torch.all(
+        torch.eq(subgraphs[2].subgraph_n_id, torch.tensor([0, 1, 2, 3])))
 
-@pytest.mark.parametrize('ego_plus', [True, False])        
+
+@pytest.mark.parametrize('ego_plus', [True, False])
 def test_ego_net_policy(ego_plus):
-    edge_index = torch.tensor([[0, 1, 2, 3, 4, 5],[2, 2, 4, 4, 6, 6]])
+    edge_index = torch.tensor([[0, 1, 2, 3, 4, 5], [2, 2, 4, 4, 6, 6]])
     x = torch.randn(7, 16)
     data = Data(x=x, edge_index=edge_index)
 
