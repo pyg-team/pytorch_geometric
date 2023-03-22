@@ -1,6 +1,6 @@
 import copy
 from abc import ABC, abstractmethod
-from typing import Any, Tuple, Optional
+from typing import Any, Optional, Tuple
 
 import torch
 from torch import Tensor

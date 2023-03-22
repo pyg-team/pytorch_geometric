@@ -7,8 +7,8 @@ import torch
 import torch.optim as optim
 import wandb
 from tqdm import tqdm
+from utils import NonBinaryEvaluator, SimpleEvaluator, get_data, get_model
 
-from utils import get_data, get_model, SimpleEvaluator, NonBinaryEvaluator
 
 def train(model, device, loader, optimizer, criterion, epoch, fold_idx):
     model.train()
@@ -21,7 +21,8 @@ def train(model, device, loader, optimizer, criterion, epoch, fold_idx):
         # ignore nan targets (unlabeled) when computing training loss.
         is_labeled = batch.y == batch.y
 
-        y = batch.y.view(pred.shape).to(torch.float32) if pred.size(-1) == 1 else batch.y
+        y = batch.y.view(pred.shape).to(
+            torch.float32) if pred.size(-1) == 1 else batch.y
         loss = criterion(pred.to(torch.float32)[is_labeled], y[is_labeled])
 
         wandb.log({f'Loss/train': loss.item()})
@@ -56,6 +57,7 @@ def eval(model, device, loader, evaluator, voting_times=1):
     input_dict = {"y_true": y_true, "y_pred": all_y_pred}
     return evaluator.eval(input_dict)
 
+
 def reset_wandb_env():
     exclude = {
         "WANDB_PROJECT",
@@ -65,6 +67,7 @@ def reset_wandb_env():
     for k, v in os.environ.items():
         if k.startswith("WANDB_") and k not in exclude:
             del os.environ[k]
+
 
 def run(args, device, fold_idx, sweep_run_name, sweep_id):
     # set seed
@@ -81,21 +84,27 @@ def run(args, device, fold_idx, sweep_run_name, sweep_id):
         config=args,
     )
 
-    train_loader, train_loader_eval, valid_loader, test_loader, attributes = get_data(args, fold_idx)
+    train_loader, train_loader_eval, valid_loader, test_loader, attributes = get_data(
+        args, fold_idx)
     in_dim, out_dim, task_type, eval_metric = attributes
 
-    evaluator = SimpleEvaluator(task_type) if args.dataset != "CSL" else NonBinaryEvaluator(out_dim)
+    evaluator = SimpleEvaluator(
+        task_type) if args.dataset != "CSL" else NonBinaryEvaluator(out_dim)
 
     model = get_model(args, in_dim, out_dim, device)
 
     optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
     if 'ZINC' in args.dataset:
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=args.patience)
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, mode='min', factor=0.5, patience=args.patience)
     else:
-        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=args.decay_step, gamma=args.decay_rate)
+        scheduler = optim.lr_scheduler.StepLR(optimizer,
+                                              step_size=args.decay_step,
+                                              gamma=args.decay_rate)
 
     if "classification" in task_type:
-        criterion = torch.nn.BCEWithLogitsLoss() if args.dataset != "CSL" else torch.nn.CrossEntropyLoss()
+        criterion = torch.nn.BCEWithLogitsLoss(
+        ) if args.dataset != "CSL" else torch.nn.CrossEntropyLoss()
     else:
         criterion = torch.nn.L1Loss()
 
@@ -109,10 +118,12 @@ def run(args, device, fold_idx, sweep_run_name, sweep_id):
     results = []
     for epoch in tqdm(range(1, args.epochs + 1)):
 
-        train(model, device, train_loader, optimizer, criterion, epoch=epoch, fold_idx=fold_idx)
+        train(model, device, train_loader, optimizer, criterion, epoch=epoch,
+              fold_idx=fold_idx)
 
         # Only valid_perf is used for TUD
-        train_perf = eval(model, device, train_loader_eval, evaluator, voting_times)
+        train_perf = eval(model, device, train_loader_eval, evaluator,
+                          voting_times)
         valid_perf = eval(model, device, valid_loader, evaluator, voting_times)
         test_perf = eval(model, device, test_loader, evaluator, voting_times)
 
@@ -128,38 +139,43 @@ def run(args, device, fold_idx, sweep_run_name, sweep_id):
         valid_curve.append(valid_perf[eval_metric])
         test_curve.append(test_perf[eval_metric])
 
-        run.log(
-            {
-                f'Metric/train': train_perf[eval_metric],
-                f'Metric/valid': valid_perf[eval_metric],
-                f'Metric/test': test_perf[eval_metric]
-            }
-        )
+        run.log({
+            f'Metric/train': train_perf[eval_metric],
+            f'Metric/valid': valid_perf[eval_metric],
+            f'Metric/test': test_perf[eval_metric]
+        })
 
     wandb.join()
 
     return (train_curve, valid_curve, test_curve)
 
+
 def main():
     # Training settings
-    parser = argparse.ArgumentParser(description='GNN baselines with Pytorch Geometrics')
+    parser = argparse.ArgumentParser(
+        description='GNN baselines with Pytorch Geometrics')
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
     parser.add_argument('--model', type=str,
                         help='Type of model {deepsets, dss}')
-    parser.add_argument('--gnn_type', type=str,
-                        help='Type of convolution {gin, originalgin, zincgin, graphconv}')
+    parser.add_argument(
+        '--gnn_type', type=str,
+        help='Type of convolution {gin, originalgin, zincgin, graphconv}')
     parser.add_argument('--drop_ratio', type=float, default=0.5,
                         help='dropout ratio (default: 0.5)')
-    parser.add_argument('--num_layer', type=int, default=5,
-                        help='number of GNN message passing layers (default: 5)')
-    parser.add_argument('--channels', type=str,
-                        help='String with dimension of each DS layer, separated by "-"'
-                             '(considered only if args.model is deepsets)')
-    parser.add_argument('--emb_dim', type=int, default=300,
-                        help='dimensionality of hidden units in GNNs (default: 300)')
-    parser.add_argument('--jk', type=str, default="last",
-                        help='JK strategy, either last or concat (default: last)')
+    parser.add_argument(
+        '--num_layer', type=int, default=5,
+        help='number of GNN message passing layers (default: 5)')
+    parser.add_argument(
+        '--channels', type=str,
+        help='String with dimension of each DS layer, separated by "-"'
+        '(considered only if args.model is deepsets)')
+    parser.add_argument(
+        '--emb_dim', type=int, default=300,
+        help='dimensionality of hidden units in GNNs (default: 300)')
+    parser.add_argument(
+        '--jk', type=str, default="last",
+        help='JK strategy, either last or concat (default: last)')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='input batch size for training (default: 32)')
     parser.add_argument('--learning_rate', type=float, default=0.01,
@@ -174,17 +190,18 @@ def main():
                         help='number of workers (default: 0)')
     parser.add_argument('--dataset', type=str, default="MUTAG",
                         help='dataset name (default: MUTAG)')
-    parser.add_argument('--policy', type=str, default="edge_deletion",
-                        help='Subgraph selection policy in {edge_deletion, node_deletion, ego, ego_plus, original}'
-                             ' (default: edge_deletion)')
-    parser.add_argument('--num_hops', type=int, default=2,
-                        help='Depth of the ego net if policy is ego (default: 2)')
+    parser.add_argument(
+        '--policy', type=str, default="edge_deletion", help=
+        'Subgraph selection policy in {edge_deletion, node_deletion, ego, ego_plus, original}'
+        ' (default: edge_deletion)')
+    parser.add_argument(
+        '--num_hops', type=int, default=2,
+        help='Depth of the ego net if policy is ego (default: 2)')
     parser.add_argument('--seed', type=int, default=0,
                         help='random seed (default: 0)')
     parser.add_argument('--patience', type=int, default=20,
                         help='patience (default: 20)')
-    parser.add_argument('--test', action='store_true',
-                        help='quick test')
+    parser.add_argument('--test', action='store_true', help='quick test')
 
     parser.add_argument('--filename', type=str, default="",
                         help='filename to output result (default: )')
@@ -192,7 +209,9 @@ def main():
     args = parser.parse_args()
 
     args.channels = list(map(int, args.channels.split("-")))
-    device = torch.device("cuda:" + str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
+    device = torch.device(
+        "cuda:" +
+        str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
 
     # set seed
     torch.manual_seed(args.seed)
@@ -257,15 +276,16 @@ def main():
     # sweep_run.summary[f'Metric/test_std'] = test_accs_std[best_val_epoch]
 
     if not args.filename == '':
-        torch.save({'Val': valid_curve[best_val_epoch],
-                    'Test': test_curve[best_val_epoch],
-                    'Train': train_curve[best_val_epoch],
-                    'BestTrain': best_train}, args.filename)
+        torch.save(
+            {
+                'Val': valid_curve[best_val_epoch],
+                'Test': test_curve[best_val_epoch],
+                'Train': train_curve[best_val_epoch],
+                'BestTrain': best_train
+            }, args.filename)
 
     wandb.join()
 
 
 if __name__ == "__main__":
     main()
-
-

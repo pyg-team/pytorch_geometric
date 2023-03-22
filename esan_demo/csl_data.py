@@ -3,13 +3,18 @@ import logging
 import os
 import os.path as osp
 import pickle
-from typing import Optional, Callable, List
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
 from sklearn.model_selection import StratifiedKFold
-from torch_geometric.data import (InMemoryDataset, download_url, extract_zip,
-                                  Data)
+
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.utils import remove_self_loops
 
 
@@ -131,7 +136,11 @@ class MyGNNBenchmarkDataset(InMemoryDataset):
             idx_list.append(idx)
         train_idx, test_idx = idx_list[fold_idx]
 
-        return {'train': torch.tensor(train_idx), 'valid': torch.tensor(test_idx), 'test': torch.tensor(test_idx)}
+        return {
+            'train': torch.tensor(train_idx),
+            'valid': torch.tensor(test_idx),
+            'test': torch.tensor(test_idx)
+        }
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'
