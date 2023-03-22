@@ -408,7 +408,6 @@ class ToHeteroTransformer(Transformer):
                 return HeteroDictLinear(
                     in_channels, out_channels,
                     types=self.metadata[int(has_edge_level_target)])
-
             else:
                 return ToHeteroLinear(
                     module, self.metadata[int(has_edge_level_target)])
@@ -522,7 +521,7 @@ def get_norm_channels(module: torch.nn.Module) -> int:
         return module.in_channels
     elif hasattr(module, "num_features"):
         return module.num_features
-    elif hasattr(module, "normalized_shape")
+    elif hasattr(module, "normalized_shape"):
         return module.normalized_shape
 
 def is_iterable_module(module: torch.nn.Module) -> bool:
