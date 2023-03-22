@@ -356,15 +356,17 @@ class HeteroDictLinear(torch.nn.Module):
         self.kwargs = kwargs
 
         self.lins = torch.nn.ModuleDict({
-            "_".join(key) if isinstance(key, tuple) else key: Linear(channels, self.out_channels, **kwargs)
+            self.get_key(key): Linear(channels, self.out_channels, **kwargs)
             for key, channels in self.in_channels.items()
         })
 
         self.reset_parameters()
 
+    def get_key(self, get_type):
+        return "_".join(get_type) if isinstance(get_type, tuple) else get_type
     def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Linear:
         # returns a Linear layer for type
-        return self.lins["_".join(get_type) if isinstance(get_type, tuple) else get_type]
+        return self.lins[self.get_key(get_type)]
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
@@ -382,16 +384,16 @@ class HeteroDictLinear(torch.nn.Module):
         """
         if torch_geometric.typing.WITH_GMM:
             xs = [x_dict[key] for key in x_dict.keys()]
-            weights = [self.lins[key].weight.t() for key in x_dict.keys()]
+            weights = [self.lins[self.get_key(key)].weight.t() for key in x_dict.keys()]
             if self.kwargs.get('bias', True):
-                biases = [self.lins[key].bias for key in x_dict.keys()]
+                biases = [self.lins[self.get_key(key)].bias for key in x_dict.keys()]
             else:
                 biases = None
 
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
             return {key: out for key, out in zip(x_dict.keys(), outs)}
 
-        return {key: self.lins[key](x) for key, x in x_dict.items()}
+        return {key: self.lins[self.get_key(key)](x) for key, x in x_dict.items()}
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
