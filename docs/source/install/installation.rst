@@ -16,7 +16,7 @@ Quick Start
 Installation via Anaconda
 -------------------------
 
-You can now install :pyg:`PyG` via `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS/PyTorch/CUDA combinations 🤗
+You can now install :pyg:`PyG` via `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS, :pytorch:`PyTorch` and CUDA combinations 🤗
 If you have not yet installed :pytorch:`PyTorch`, install it via :obj:`conda` as described in its `official documentation <https://pytorch.org/get-started/locally/>`_.
 Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.8.0`), simply run
 
@@ -30,7 +30,7 @@ Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.8.0`), simply run
 Installation via PyPi
 ---------------------
 
-From :pyg:`null` **PyG 2.3** onwards, you can install and use :pyg:`PyG` **without any external library** required except for PyTorch.
+From :pyg:`null` **PyG 2.3** onwards, you can install and use :pyg:`PyG` **without any external library** required except for :pytorch:`PyTorch`.
 For this, simply run
 
 .. code-block:: none
@@ -48,7 +48,7 @@ If you want to utilize the full set of features from :pyg:`PyG`, there exists se
 * `torch-cluster <https://github.com/rusty1s/pytorch_cluster>`__: Graph clustering routines
 * `torch-spline-conv <https://github.com/rusty1s/pytorch_spline_conv>`__: :class:`~torch_geometric.nn.conv.SplineConv` support
 
-These packages come with their own CPU and GPU kernel implementations based on the `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
+These packages come with their own CPU and GPU kernel implementations based on the :pytorch:`null` `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
 For a basic usage of :pyg:`PyG`, these dependencies are **fully optional**.
 We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
 
