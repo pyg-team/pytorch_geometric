@@ -2,7 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from typing import Dict
+from typing import Dict, Union
 from torch_geometric.nn.inits import ones, zeros
 from torch_geometric.typing import OptTensor, EdgeType, NodeType
 

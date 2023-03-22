@@ -1,4 +1,4 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, Union
 
 import torch
 from torch import Tensor
