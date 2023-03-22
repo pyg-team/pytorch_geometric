@@ -131,7 +131,7 @@ if __name__ == "__main__":
         python graph_lottery_ticket.py --dataset Cora --model gcn
         --prune_rate_graph .2649 --prune_rate_model .7379 --task
         link_prediction
-        
+
         python graph_lottery_ticket.py --dataset CiteSeer --model gcn
         --prune_rate_graph .3366 --prune_rate_model .8322 --task
         link_prediction

@@ -24,8 +24,8 @@ test_mask = torch.tensor([False, False, False, False, True, True])
 
 def generate_edge_data(dataset):
     """sample  negative edges and labels"""
-    negative_edges = negative_sampling(dataset.edge_index,
-                                       num_neg_samples=2*dataset.edge_index.shape[1])
+    negative_edges = negative_sampling(
+        dataset.edge_index, num_neg_samples=2 * dataset.edge_index.shape[1])
     edge_labels = [0] * negative_edges.shape[-1] + [
         1
     ] * dataset.edge_index.shape[-1]
@@ -48,6 +48,7 @@ class LinkPredictor(Module):
     def __init__(self, model):
         super().__init__()
         self.model = model
+
     def forward(self, x, edge_index, edge_weight, edges):
         x = self.model(x, edge_index, edge_weight=edge_weight)
         edge_feat_i = x[edges[0]]
