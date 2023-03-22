@@ -300,6 +300,7 @@ class ToHeteroTransformer(Transformer):
         if hasattr(self.module, name):
             submod = getattr(self.module, name)
             is_heterolin = is_linear(submod)
+            is_norm = is_batch_norm(submod) and is_layer_norm(submod)
         else:
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
@@ -310,10 +311,14 @@ class ToHeteroTransformer(Transformer):
                 except TypeError:
                     selected_subsubmod = submod[int(split_name[-1])]
                 is_heterolin = is_linear(selected_subsubmod)
+                is_norm = is_batch_norm(selected_submod) and is_layer_norm(selected_submod)
             else:
                 is_heterolin = False
+                is_norm = False
         if is_heterolin:
             self.add_heterolin_to_graph(node, target, name)
+        elif is_norm:
+            self.add_norm_to_graph(node, target, name)
         else:
             # Add calls to node type-wise or edge type-wise modules.
             self.add_nonlin_to_graph(node, target, name)
@@ -472,6 +477,30 @@ class ToHeteroTransformer(Transformer):
         return args, kwargs
 
     def add_heterolin_to_graph(self, node: Node, target: Any, name: str):
+        kwargs_dict = {}
+        args_dict = {}
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            args, kwargs = self.map_args_kwargs(node, key)
+            args_dict[key] = args[0]
+            kwargs_dict.update(kwargs)
+        if self.is_edge_level(node):
+            out_type = Dict[EdgeType, Tensor]
+        else:
+            out_type = Dict[NodeType, Tensor]
+        out_hetero = self.graph.create_node('call_module', target=f'{target}',
+                                            args=(args_dict, ),
+                                            kwargs=kwargs_dict,
+                                            name=f'{name}__hetero',
+                                            type_expr=out_type)
+        self.graph.inserting_after(out_hetero)
+        # extract tensors from dict
+        for key in self.metadata[int(self.is_edge_level(node))]:
+            out = self.graph.create_node('call_method', target='get',
+                                         args=(out_hetero, key),
+                                         name=f'{name}__{key2str(key)}')
+            self.graph.inserting_after(out)
+
+    def add_norm_to_graph(self, node: Node, target: Any, name: str):
         kwargs_dict = {}
         args_dict = {}
         for key in self.metadata[int(self.is_edge_level(node))]:
