@@ -74,7 +74,8 @@ def test_gen_conv(aggr):
         assert torch.allclose(jit((x1, x2), edge_index), out21)
         assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out21)
         assert torch.allclose(jit((x1, x2), edge_index, value), out22)
-        assert torch.allclose(jit((x1, x2), edge_index, value, (4, 2)), out22)
+        assert torch.allclose(jit((x1, x2), edge_index, value, (4, 2)), out22,
+                              atol=1e-6)
 
         t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))

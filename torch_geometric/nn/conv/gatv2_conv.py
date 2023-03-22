@@ -251,6 +251,7 @@ class GATv2Conv(MessagePassing):
                              size=None)
 
         alpha = self._alpha
+        assert alpha is not None
         self._alpha = None
 
         if self.concat:
