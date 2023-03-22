@@ -364,6 +364,7 @@ class HeteroDictLinear(torch.nn.Module):
 
     def get_key(self, get_type):
         return "_".join(get_type) if isinstance(get_type, tuple) else get_type
+
     def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Linear:
         # returns a Linear layer for type
         return self.lins[self.get_key(get_type)]
