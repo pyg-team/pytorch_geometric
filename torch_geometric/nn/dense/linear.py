@@ -363,9 +363,7 @@ class HeteroDictLinear(torch.nn.Module):
 
         self.reset_parameters()
 
-    def __getitem__(
-            self, get_type: Union[NodeType,
-                                  EdgeType]) -> Linear:
+    def __getitem__(self, get_type: Union[NodeType, EdgeType]) -> Linear:
         # returns a Linear layer for type
         return self.lins[self.types.index(get_type)]
 
