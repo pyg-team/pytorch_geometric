@@ -433,10 +433,12 @@ class GLTSearch:
                 "Model sparsity:",
                 round(current_sparsity[1], 4),
             )
-        results_dict = {"unrewound_test": unrewound_test_score,
-                        "fixed_test": fixed_test_score,
-                        "graph_sparsity": current_sparsity[0],
-                        "model_sparsity": current_sparsity[1]}
+        results_dict = {
+            "unrewound_test": unrewound_test_score,
+            "fixed_test": fixed_test_score,
+            "graph_sparsity": current_sparsity[0],
+            "model_sparsity": current_sparsity[1]
+        }
         return initial_params, self.mask.to_dict(), results_dict
 
     def train(self, ticket: GLTModel,
