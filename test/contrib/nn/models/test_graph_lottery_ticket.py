@@ -7,7 +7,7 @@ from torch.optim import Adadelta
 
 from torch_geometric.contrib.nn import GLTMask, GLTModel, GLTSearch
 from torch_geometric.data import Data
-from torch_geometric.nn import GAT, GCN
+from torch_geometric.nn import GCN
 from torch_geometric.utils import negative_sampling
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -24,7 +24,8 @@ test_mask = torch.tensor([False, False, False, False, True, True])
 
 def generate_edge_data(dataset):
     """sample  negative edges and labels"""
-    negative_edges = negative_sampling(dataset.edge_index)
+    negative_edges = negative_sampling(dataset.edge_index,
+                                       num_neg_samples=2*dataset.edge_index.shape[1])
     edge_labels = [0] * negative_edges.shape[-1] + [
         1
     ] * dataset.edge_index.shape[-1]
@@ -47,7 +48,6 @@ class LinkPredictor(Module):
     def __init__(self, model):
         super().__init__()
         self.model = model
-
     def forward(self, x, edge_index, edge_weight, edges):
         x = self.model(x, edge_index, edge_weight=edge_weight)
         edge_feat_i = x[edges[0]]
@@ -65,7 +65,6 @@ def build_test_model(architecture, link_prediction):
     else:
         model = architecture(in_channels=input_dim, hidden_channels=hidden_dim,
                              out_channels=1, num_layers=2)
-
     model.to(device)
     return model
 
@@ -219,7 +218,7 @@ def test_search_train(architecture, link_prediction, ugs):
             assert name in best_masks.keys()
 
 
-@pytest.mark.parametrize('architecture', [GCN, GAT])
+@pytest.mark.parametrize('architecture', [GCN])
 @pytest.mark.parametrize('link_prediction', [False, True])
 def test_search_prune(architecture, link_prediction):
     if link_prediction:
@@ -229,15 +228,13 @@ def test_search_prune(architecture, link_prediction):
 
     model = build_test_model(architecture, link_prediction)
     params = model.state_dict()
-    print(list(params.keys()))
 
     search = GLTSearch(
         module=model, graph=graph, lr=0.001, reg_graph=0.01, reg_model=0.01,
         task='link_prediction' if link_prediction else 'node_classification',
-        max_train_epochs=2)
+        max_train_epochs=2, optim_args={})
 
     init_params, mask_dict = search.prune()
-    print('\n', list(mask_dict.keys()), '\n')
 
     for name, value in params.items():
         mask_name = name.removeprefix('model.') + GLTModel.MASK

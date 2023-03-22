@@ -3,7 +3,7 @@ import math
 from dataclasses import dataclass, field
 from functools import partial
 from random import randint
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
 
 import torch
 import tqdm
@@ -36,9 +36,10 @@ class GLTModel(Module):
     ORIG = "_orig"
     EDGE_MASK = "adj"
 
-    def __init__(self, module: Module, graph: Data, ignore_keys: set[str]):
+    def __init__(self, module: Module, graph: Data, ignore_keys: Set[str]=None):
         super().__init__()
-
+        if ignore_keys is None:
+            ignore_keys = set()
         self.module = module
         self.graph = graph
         self.ignore_keys = ignore_keys
