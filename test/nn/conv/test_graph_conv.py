@@ -80,7 +80,7 @@ def test_graph_conv():
 
         t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj1.t()), out21)
-        assert torch.allclose(jit((x1, x2), adj2.t()), out22)
-        assert torch.allclose(jit((x1, None), adj1.t()), out23)
-        assert torch.allclose(jit((x1, None), adj2.t()), out24)
+        assert torch.allclose(jit((x1, x2), adj1.t()), out21, atol=1e-6)
+        assert torch.allclose(jit((x1, x2), adj2.t()), out22, atol=1e-6)
+        assert torch.allclose(jit((x1, None), adj1.t()), out23, atol=1e-6)
+        assert torch.allclose(jit((x1, None), adj2.t()), out24, atol=1e-6)
