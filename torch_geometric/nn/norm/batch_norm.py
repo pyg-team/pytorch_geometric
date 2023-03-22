@@ -1,11 +1,11 @@
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.nn.aggr.fused import FusedAggregation
+from torch_geometric.typing import EdgeType, NodeType
 
 
 class BatchNorm(torch.nn.Module):
