@@ -36,28 +36,28 @@ class EdgeUpdater_Collect_{{uid}}(NamedTuple):
 class {{cls_name}}({{parent_cls_name}}):
 
     @torch.jit._overload_method
-    def __check_input__(self, edge_index, size):
+    def _check_input(self, edge_index, size):
         # type: (Tensor, Size) -> List[Optional[int]]
         pass
 
     @torch.jit._overload_method
-    def __check_input__(self, edge_index, size):
+    def _check_input(self, edge_index, size):
         # type: (SparseTensor, Size) -> List[Optional[int]]
         pass
 
 {{check_input}}
 
     @torch.jit._overload_method
-    def __lift__(self, src, edge_index, dim):
+    def _lift(self, src, edge_index, dim):
         # type: (Tensor, Tensor, int) -> Tensor
         pass
 
     @torch.jit._overload_method
-    def __lift__(self, src, edge_index, dim):
+    def _lift(self, src, edge_index, dim):
         # type: (Tensor, SparseTensor, int) -> Tensor
         pass
 
-    def __lift__(self, src, edge_index, dim):
+    def _lift(self, src, edge_index, dim):
         if isinstance(edge_index, Tensor):
             index = edge_index[dim]
             return src.index_select(self.node_dim, index)
@@ -76,16 +76,16 @@ class {{cls_name}}({{parent_cls_name}}):
              'argument `edge_index`.'))
 
     @torch.jit._overload_method
-    def __collect__(self, edge_def, size, kwargs):
+    def _collect(self, edge_def, size, kwargs):
         # type: (Tensor, List[Optional[int]], Propagate_{{uid}}) -> Collect_{{uid}}
         pass
 
     @torch.jit._overload_method
-    def __collect__(self, edge_def, size, kwargs):
+    def _collect(self, edge_def, size, kwargs):
         # type: (SparseTensor, List[Optional[int]], Propagate_{{uid}}) -> Collect_{{uid}}
         pass
 
-    def __collect__(self, edge_def, size, kwargs):
+    def _collect(self, edge_def, size, kwargs):
         init = torch.tensor(0.)
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 {% for arg in user_args %}
@@ -99,19 +99,19 @@ class {{cls_name}}({{parent_cls_name}}):
 {%- if arg[-2:] == '_j' %}
             tmp = data[1]
             if isinstance(tmp, Tensor):
-                self.__set_size__(size, 1, tmp)
+                self._set_size(size, 1, tmp)
             {{arg}} = data[0]
 {%- else %}
             tmp = data[0]
             if isinstance(tmp, Tensor):
-                self.__set_size__(size, 0, tmp)
+                self._set_size(size, 0, tmp)
             {{arg}} = data[1]
 {%- endif %}
         else:
             {{arg}} = data
         if isinstance({{arg}}, Tensor):
-            self.__set_size__(size, {% if arg[-2:] == '_j'%}0{% else %}1{% endif %}, {{arg}})
-            {{arg}} = self.__lift__({{arg}}, edge_def, {% if arg[-2:] == "_j" %}j{% else %}i{% endif %})
+            self._set_size(size, {% if arg[-2:] == '_j'%}0{% else %}1{% endif %}, {{arg}})
+            {{arg}} = self._lift({{arg}}, edge_def, {% if arg[-2:] == "_j" %}j{% else %}i{% endif %})
 {%- endif %}
 {%- endfor %}
 
@@ -155,16 +155,16 @@ class {{cls_name}}({{parent_cls_name}}):
 
 {% if edge_updater_types|length > 0 %}
     @torch.jit._overload_method
-    def __collect_edge__(self, edge_def, size, kwargs):
+    def _collect_edge(self, edge_def, size, kwargs):
         # type: (Tensor, List[Optional[int]], EdgeUpdater_{{uid}}) -> EdgeUpdater_Collect_{{uid}}
         pass
 
     @torch.jit._overload_method
-    def __collect_edge__(self, edge_def, size, kwargs):
+    def _collect_edge(self, edge_def, size, kwargs):
         # type: (SparseTensor, List[Optional[int]], EdgeUpdater_{{uid}}) -> EdgeUpdater_Collect_{{uid}}
         pass
 
-    def __collect_edge__(self, edge_def, size, kwargs):
+    def _collect_edge(self, edge_def, size, kwargs):
         init = torch.tensor(0.)
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
 {% for arg in edge_user_args %}
@@ -178,19 +178,19 @@ class {{cls_name}}({{parent_cls_name}}):
 {%- if arg[-2:] == '_j' %}
             tmp = data[1]
             if isinstance(tmp, Tensor):
-                self.__set_size__(size, 1, tmp)
+                self._set_size(size, 1, tmp)
             {{arg}} = data[0]
 {%- else %}
             tmp = data[0]
             if isinstance(tmp, Tensor):
-                self.__set_size__(size, 0, tmp)
+                self._set_size(size, 0, tmp)
             {{arg}} = data[1]
 {%- endif %}
         else:
             {{arg}} = data
         if isinstance({{arg}}, Tensor):
-            self.__set_size__(size, {% if arg[-2:] == '_j'%}0{% else %}1{% endif %}, {{arg}})
-            {{arg}} = self.__lift__({{arg}}, edge_def, {% if arg[-2:] == "_j" %}j{% else %}i{% endif %})
+            self._set_size(size, {% if arg[-2:] == '_j'%}0{% else %}1{% endif %}, {{arg}})
+            {{arg}} = self._lift({{arg}}, edge_def, {% if arg[-2:] == "_j" %}j{% else %}i{% endif %})
 {%- endif %}
 {%- endfor %}
 
@@ -246,7 +246,7 @@ class {{cls_name}}({{parent_cls_name}}):
         pass
 
     def propagate(self, edge_index, {{ prop_types.keys()|join(', ') }}, size=None):
-        the_size = self.__check_input__(edge_index, size)
+        the_size = self._check_input(edge_index, size)
         in_kwargs = Propagate_{{uid}}({% for k in prop_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
 
         {% if fuse %}
@@ -255,7 +255,7 @@ class {{cls_name}}({{parent_cls_name}}):
             return self.update(out{% for k in update_args %}, {{k}}=in_kwargs.{{k}}{% endfor %})
         {% endif %}
 
-        kwargs = self.__collect__(edge_index, the_size, in_kwargs)
+        kwargs = self._collect(edge_index, the_size, in_kwargs)
         out = self.message({% for k in msg_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})
         out = self.aggregate(out{% for k in aggr_args %}, {{k}}=kwargs.{{k}}{% endfor %})
         return self.update(out{% for k in update_args %}, {{k}}=kwargs.{{k}}{% endfor %})
@@ -272,9 +272,9 @@ class {{cls_name}}({{parent_cls_name}}):
         pass
 
     def edge_updater(self, edge_index{% for k in edge_updater_types.keys() %}, {{k}} {% endfor %}):
-        the_size = self.__check_input__(edge_index, size=None)
+        the_size = self._check_input(edge_index, size=None)
         in_kwargs = EdgeUpdater_{{uid}}({% for k in edge_updater_types.keys() %}{{k}}={{k}}{{ ", " if not loop.last }}{% endfor %})
-        kwargs = self.__collect_edge__(edge_index, the_size, in_kwargs)
+        kwargs = self._collect_edge(edge_index, the_size, in_kwargs)
         return self.edge_update({% for k in edge_update_args %}{{k}}=kwargs.{{k}}{{ ", " if not loop.last }}{% endfor %})
 {% else %}
     def edge_updater(self):
