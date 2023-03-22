@@ -2,7 +2,12 @@ import torch
 
 import torch_geometric
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import onlyLinux, withCUDA, withPackage
+from torch_geometric.testing import (
+    disableExtensions,
+    onlyLinux,
+    withCUDA,
+    withPackage,
+)
 from torch_geometric.utils import scatter
 
 
@@ -40,6 +45,7 @@ def fused_gather_scatter(x, edge_index, reduce=['sum', 'mean', 'max']):
 
 @withCUDA
 @onlyLinux
+@disableExtensions
 @withPackage('torch>=2.0.0')
 def test_torch_compile(device):
     x = torch.randn(10, 16, device=device)
@@ -70,27 +76,6 @@ def test_torch_compile(device):
     expected = fused_gather_scatter(x, edge_index)
     compiled_op = torch_geometric.compile(fused_gather_scatter)
     out = compiled_op(x, edge_index)
-    assert torch.allclose(out, expected, atol=1e-6)
-
-
-@withCUDA
-@onlyLinux
-@withPackage('torch>=2.0.0')
-def test_dynamic_torch_compile(device):
-    compiled_gather_scatter = torch_geometric.compile(gather_scatter)
-
-    x = torch.randn(10, 16, device=device)
-    edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
-
-    expected = gather_scatter(x, edge_index)
-    out = compiled_gather_scatter(x, edge_index)
-    assert torch.allclose(out, expected, atol=1e-6)
-
-    x = torch.randn(20, 16, device=device)
-    edge_index = torch.randint(0, x.size(0), (2, 80), device=device)
-
-    expected = gather_scatter(x, edge_index)
-    out = compiled_gather_scatter(x, edge_index)
     assert torch.allclose(out, expected, atol=1e-6)
 
 

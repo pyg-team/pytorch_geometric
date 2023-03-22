@@ -42,6 +42,11 @@ class HGTConv(MessagePassing):
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         hetero/hgt_dblp.py>`_.
 
+    .. note::
+
+        For a faster alternative, use :class:`FastHGTConv` which does not
+        iterate over individual node and edge types.
+
     Args:
         in_channels (int or Dict[str, int]): Size of each input sample of every
             node type, or :obj:`-1` to derive the size from the first input(s)

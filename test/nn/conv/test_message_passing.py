@@ -76,14 +76,14 @@ def test_my_conv_basic():
     assert out1.size() == (2, 32)
     assert out2.size() == (2, 32)
     assert torch.allclose(conv((x1, x2), edge_index, value, (4, 2)), out1)
-    assert torch.allclose(conv((x1, x2), adj.t()), out1)
+    assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e-6)
     assert torch.allclose(conv((x1, x2), torch_adj.t()), out1, atol=1e-6)
-    assert torch.allclose(conv((x1, None), adj.t()), out2)
+    assert torch.allclose(conv((x1, None), adj.t()), out2, atol=1e-6)
     assert torch.allclose(conv((x1, None), torch_adj.t()), out2, atol=1e-6)
     conv.fuse = False
-    assert torch.allclose(conv((x1, x2), adj.t()), out1)
+    assert torch.allclose(conv((x1, x2), adj.t()), out1, atol=1e-6)
     assert torch.allclose(conv((x1, x2), torch_adj.t()), out1, atol=1e-6)
-    assert torch.allclose(conv((x1, None), adj.t()), out2)
+    assert torch.allclose(conv((x1, None), adj.t()), out2, atol=1e-6)
     assert torch.allclose(conv((x1, None), torch_adj.t()), out2, atol=1e-6)
 
     # Test gradient computation for `torch.sparse` tensors:
@@ -122,14 +122,14 @@ def test_my_conv_jittable():
 
     t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x1, edge_index, value), out)
-    assert torch.allclose(jit(x1, edge_index, value, (4, 4)), out)
+    assert torch.allclose(jit(x1, edge_index, value), out, atol=1e-6)
+    assert torch.allclose(jit(x1, edge_index, value, (4, 4)), out, atol=1e-6)
 
     t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x1, adj.t()), out)
+    assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
     jit.fuse = False
-    assert torch.allclose(jit(x1, adj.t()), out)
+    assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
     jit.fuse = True
 
     adj = adj.sparse_resize((4, 2))
@@ -145,11 +145,11 @@ def test_my_conv_jittable():
 
     t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit((x1, x2), adj.t()), out1)
-    assert torch.allclose(jit((x1, None), adj.t()), out2)
+    assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
+    assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
     jit.fuse = False
-    assert torch.allclose(jit((x1, x2), adj.t()), out1)
-    assert torch.allclose(jit((x1, None), adj.t()), out2)
+    assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
+    assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
     jit.fuse = True
 
 

@@ -3,7 +3,7 @@ import torch
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import GATConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withCUDA
 
 
 def test_gat_conv():
@@ -125,3 +125,13 @@ def test_gat_conv_with_edge_attr():
     assert out.size() == (4, 64)
     with pytest.raises(NotImplementedError):
         assert torch.allclose(conv(x, adj2.t()), out)
+
+
+@withCUDA
+def test_gat_conv_empty_edge_index(device):
+    x = torch.randn(0, 8, device=device)
+    edge_index = torch.empty(2, 0, dtype=torch.long, device=device)
+
+    conv = GATConv(8, 32, heads=2).to(device)
+    out = conv(x, edge_index)
+    assert out.size() == (0, 64)

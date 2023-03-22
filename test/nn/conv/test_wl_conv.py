@@ -1,13 +1,13 @@
 import torch
-import torch.nn.functional as F
 from torch_sparse import SparseTensor
 
 from torch_geometric.nn import WLConv
+from torch_geometric.utils import one_hot
 
 
 def test_wl_conv():
     x1 = torch.tensor([1, 0, 0, 1])
-    x2 = F.one_hot(x1).to(torch.float)
+    x2 = one_hot(x1)
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
     adj1 = SparseTensor.from_edge_index(edge_index)
     adj2 = adj1.to_torch_sparse_csc_tensor()

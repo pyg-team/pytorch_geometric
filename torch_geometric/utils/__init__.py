@@ -30,6 +30,7 @@ from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
                      to_torch_csc_tensor, to_edge_index)
 from .spmm import spmm
 from .unbatch import unbatch, unbatch_edge_index
+from .one_hot import one_hot
 from .normalized_cut import normalized_cut
 from .grid import grid
 from .geodesic import geodesic_distance
@@ -101,6 +102,7 @@ __all__ = [
     'spmm',
     'unbatch',
     'unbatch_edge_index',
+    'one_hot',
     'normalized_cut',
     'grid',
     'geodesic_distance',

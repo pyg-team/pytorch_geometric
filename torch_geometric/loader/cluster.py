@@ -59,11 +59,11 @@ class ClusterData(torch.utils.data.Dataset):
             if log:  # pragma: no cover
                 print('Done!', file=sys.stderr)
 
-        self.data = self.__permute_data__(data, perm, adj)
+        self.data = self._permute_data(data, perm, adj)
         self.partptr = partptr
         self.perm = perm
 
-    def __permute_data__(self, data, node_idx, adj):
+    def _permute_data(self, data, node_idx, adj):
         out = copy.copy(data)
         for key, value in data.items():
             if data.is_node_attr(key):
@@ -138,10 +138,10 @@ class ClusterLoader(torch.utils.data.DataLoader):
     def __init__(self, cluster_data, **kwargs):
         self.cluster_data = cluster_data
 
-        super().__init__(range(len(cluster_data)), collate_fn=self.__collate__,
+        super().__init__(range(len(cluster_data)), collate_fn=self._collate,
                          **kwargs)
 
-    def __collate__(self, batch):
+    def _collate(self, batch):
         if not isinstance(batch, torch.Tensor):
             batch = torch.tensor(batch)
 

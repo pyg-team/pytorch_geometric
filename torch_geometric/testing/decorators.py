@@ -108,3 +108,12 @@ def withCUDA(func: Callable):
         devices.append(torch.device('cuda:0'))
 
     return pytest.mark.parametrize('device', devices)(func)
+
+
+def disableExtensions(func: Callable):
+    r"""A decorator to temporarily disable the usage of the
+    :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` extension
+    packages."""
+    import pytest
+
+    return pytest.mark.usefixtures('disable_extensions')(func)
