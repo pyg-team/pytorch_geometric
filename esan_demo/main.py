@@ -6,13 +6,14 @@ import numpy as np
 import torch
 import torch.optim as optim
 import wandb
+from tqdm import tqdm
 
 from utils import get_data, get_model, SimpleEvaluator, NonBinaryEvaluator
 
 def train(model, device, loader, optimizer, criterion, epoch, fold_idx):
     model.train()
 
-    for step, batch in enumerate(loader):
+    for batch in loader:
         batch = batch.to(device)
         pred = model(batch)
         optimizer.zero_grad()
@@ -106,7 +107,7 @@ def run(args, device, fold_idx, sweep_run_name, sweep_id):
     test_curve = []
 
     results = []
-    for epoch in range(1, args.epochs + 1):
+    for epoch in tqdm(range(1, args.epochs + 1)):
 
         train(model, device, train_loader, optimizer, criterion, epoch=epoch, fold_idx=fold_idx)
 

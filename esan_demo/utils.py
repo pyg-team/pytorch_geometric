@@ -50,9 +50,9 @@ def get_data(args, fold_idx):
         split_idx = dataset.separate_data(args.seed, fold_idx=fold_idx)
 
     elif args.dataset == 'ZINC':
-        dataset = ZINC(root="dataset/" + args.policy, subset=True, split="train")
-        val_dataset = ZINC(root="dataset/" + args.policy, subset=True, split="val")
-        test_dataset = ZINC(root="dataset/" + args.policy, subset=True, split="test")
+        dataset = ZINC(root="dataset/" + args.policy, subset=True, split="train", pre_transform=pre_transform)
+        val_dataset = ZINC(root="dataset/" + args.policy, subset=True, split="val", pre_transform=pre_transform)
+        test_dataset = ZINC(root="dataset/" + args.policy, subset=True, split="test", pre_transform=pre_transform)
 
     elif args.dataset in ['CEXP', 'EXP']:
         dataset = PlanarSATPairsDataset(root="dataset/" + args.policy,
