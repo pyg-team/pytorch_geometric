@@ -158,7 +158,7 @@ class HeteroLayerNorm(torch.nn.Module):
             torch.nn.init.ones_(self.weight)
             torch.nn.init.zeros_(self.bias)
 
-    def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
+    def fused_forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The input features.
@@ -170,6 +170,37 @@ class HeteroLayerNorm(torch.nn.Module):
             out = out * self.weight[type_vec] + self.bias[type_vec]
 
         return out
+
+  def dict_forward(
+        self,
+        x_dict: Dict[Union[NodeType, EdgeType], Tensor],
+    ) -> Dict[Union[NodeType, EdgeType], Tensor]:
+        if not hasattr(self, "types"):
+            self.types = x_dict.keys()
+        if sorted(list(x_dict.keys())) != sorted(self.types):
+            raise ValueError("Dictionary inputs require consistent type names")
+        x = torch.cat([x_dict[key] for key in self.types], dim=0)
+        sizes = [x_dict[key].size(0) for key in self.types]
+        type_vec = torch.arange(len(self.types), device=x.device)
+        size = torch.tensor(sizes, device=x.device)
+        type_vec = type_vec.repeat_interleave(size)
+        outs = self.fused_forward(x, type_vec).split(sizes)
+        return {key: out for key, out in zip(self.types, outs)}
+
+    def forward(
+        self,
+        x: Union[Tensor, Dict[Union[NodeType, EdgeType], Tensor]],
+        type_vec: Optional[Tensor] = None,
+    ) -> Union[Tensor, Dict[Union[NodeType, EdgeType], Tensor]]:
+
+        if isinstance(x, dict):
+            return self.dict_forward(x)
+
+        elif isinstance(x, Tensor) and type_vec is not None:
+            return self.fused_forward(x, type_vec)
+
+        raise ValueError(f"Encountered invalid forward types in "
+                         f"'{self.__class__.__name__}'")
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
