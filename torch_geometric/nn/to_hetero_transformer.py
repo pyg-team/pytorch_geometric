@@ -311,7 +311,8 @@ class ToHeteroTransformer(Transformer):
                 except TypeError:
                     selected_subsubmod = submod[int(split_name[-1])]
                 is_heterolin = is_linear(selected_subsubmod)
-                is_norm = is_batch_norm(selected_submod) and is_layer_norm(selected_submod)
+                is_norm = is_batch_norm(selected_submod) and is_layer_norm(
+                    selected_submod)
             else:
                 is_heterolin = False
                 is_norm = False
