@@ -30,7 +30,7 @@ Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.8.0`), simply run
 Installation via PyPi
 ---------------------
 
-From :pyg:`null` **PyG 2.3** onwards, you can install and use PyG **without any external library** required except for PyTorch.
+From :pyg:`null` **PyG 2.3** onwards, you can install and use :pyg:`PyG` **without any external library** required except for PyTorch.
 For this, simply run
 
 .. code-block:: none
@@ -40,7 +40,7 @@ For this, simply run
 Additional Libraries
 --------------------
 
-If you want to utilize the full set of features from PyG, there exists several additional libraries you may want to install:
+If you want to utilize the full set of features from :pyg:`PyG`, there exists several additional libraries you may want to install:
 
 * `pyg-lib <https://github.com/pyg-team/pyg-lib>`__: Heterogeneous GNN operators and graph sampling routines
 * `torch-scatter <https://github.com/rusty1s/pytorch_scatter>`__: Accelerated and efficient sparse reductions
@@ -49,7 +49,7 @@ If you want to utilize the full set of features from PyG, there exists several a
 * `torch-spline-conv <https://github.com/rusty1s/pytorch_spline_conv>`__: :class:`~torch_geometric.nn.conv.SplineConv` support
 
 These packages come with their own CPU and GPU kernel implementations based on the `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
-For a basic usage of PyG, these dependencies are **fully optional**.
+For a basic usage of :pyg:`PyG`, these dependencies are **fully optional**.
 We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
 
 Installation from Wheels
