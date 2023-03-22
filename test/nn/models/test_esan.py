@@ -12,9 +12,9 @@ def test_dsnetwork():
 
 
 
-class GINConv(torch.nn.Module):
+class tGINConv(torch.nn.Module):
     def __init__(self, in_dim, emb_dim):
-        super(GINConv, self).__init__()
+        super(tGINConv, self).__init__()
         mlp = torch.nn.Sequential(
             torch.nn.Linear(in_dim, emb_dim),
             torch.nn.BatchNorm1d(emb_dim),
@@ -44,7 +44,7 @@ def test_dssnetwork():
     num_tasks = 1
 
     feature_encoder = torch.nn.Identity()
-    GNNConv = GINConv
+    GNNConv = tGINConv
 
     model = DSSnetwork(num_layers, in_dim, emb_dim, num_tasks, feature_encoder, GNNConv)
 
