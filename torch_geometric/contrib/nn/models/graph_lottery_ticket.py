@@ -17,6 +17,12 @@ from torch.optim import Adam, Optimizer
 from torch_geometric.data import Data
 
 
+def _remove_prefix(param_name, prefix):
+    if param_name.startswith(prefix):
+        return param_name[len(prefix):]
+    return param_name
+
+
 class GLTModel(Module):
     r"""Pruning model Wrapper from the `A Unified Lottery Ticket Hypothesis
     for Graph Neural Networks <https://arxiv.org/abs/2102.06790>`_ paper.
@@ -56,7 +62,7 @@ class GLTModel(Module):
 
     def get_masks(self) -> Dict[str, Parameter]:
         return {
-            param_name.removeprefix("module."): param
+            _remove_prefix(param_name, "module."): param
             for param_name, param in self.named_parameters(recurse=True)
             if param_name.endswith(GLTModel.MASK)
         }
