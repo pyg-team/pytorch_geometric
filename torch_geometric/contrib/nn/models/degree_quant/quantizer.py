@@ -12,18 +12,22 @@ from torch.nn import Identity
 
 # This class is used to update the gradient using the quanitzation approach.
 class Quantize(InplaceFunction):
+
+    """
+    A Qauntization Aware Training Class for Computing the Forward and Backward Gradient Steps
+    on the Quantized Integer Tensor.
+    
+    """
     @classmethod
     def forward(
-        cls, ctx, input, max_val, min_val, num_bits, signed, eps, symmetric, ste
+        cls, ctx, input, max_val, min_val, num_bits, signed, eps, symmetric, ste=False
     ):
         output = input.clone()
 
-        # compute qparams
-        qmin, qmax, zero_point, scale = get_qparams(
+        qmin, qmax, zero_point, scale = Quantize.get_qparams(
             max_val, min_val, num_bits, signed, eps, symmetric
         )
 
-        # save stuff for backprop (if STE not enabled)
         ctx.STE = ste
         if not ste:
             ctx.save_for_backward(input)
@@ -59,17 +63,50 @@ class Quantize(InplaceFunction):
 
         return grad_input, None, None, None, None, None, None, None
 
+    @staticmethod
+    def get_qparams(max_val, min_val, num_bits, signed, eps, symmetric):
+        max_val, min_val = float(max_val), float(min_val)
+        min_val = min(0.0, min_val)
+        max_val = max(0.0, max_val)
+
+        qmin = -(2.0 ** (num_bits - 1)) if signed else 0.0
+        qmax = qmin + 2.0 ** num_bits - 1
+
+        if max_val == min_val:
+            scale = 1.0
+            zero_point = 0
+        else:
+
+            if symmetric:
+                scale = 2 * max(abs(min_val), max_val) / (qmax - qmin)
+                zero_point = 0.0 if signed else 128.0
+            else:
+                scale = (max_val - min_val) / float(qmax - qmin)
+                scale = max(scale, eps)
+                zero_point = qmin - round(min_val / scale)
+                zero_point = max(qmin, zero_point)
+                zero_point = min(qmax, zero_point)
+                zero_point = zero_point
+
+        return qmin, qmax, zero_point, scale
+
+
+
+
 
 # The main Quantization Module which is used to change precision to Integer (8-bits or 4-bits)
 class IntegerQuantizer(nn.Module):
-    """Allows for per-tensor integer uniform (symmetric or asymmetric/affine) quantization."""
+    """
+    This Class is used to Quantize an input tensor which supports Quantization aware Training. 
+    Using this, the tensor can be quantized to INT8 precision using the default settings. 
+    """
 
     def __init__(
         self,
-        num_bits: int,
-        signed: bool,
-        use_momentum: bool,
-        use_ste: bool,
+        num_bits: int = 8,
+        signed: bool = True,
+        use_momentum: bool= True,
+        use_ste: bool = False,
         symmetric: bool = False,
         momentum: float = 0.01,
         percentile: Optional[float] = None,
@@ -103,8 +140,24 @@ class IntegerQuantizer(nn.Module):
             self.sample_fn = lambda x: x
         else:
             assert percentile is not None
-            self.sample_fn = lambda x: sample_tensor(sample, x)
+            self.sample_fn = lambda x: IntegerQuantizer.sample_tensor(sample, x)
 
+    
+    @staticmethod
+    def sample_tensor(prop, x):
+        if x.numel() < 1000:
+            return x
+
+        cutoff_prop = 1000 / x.numel()
+        if cutoff_prop > prop:
+            prop = cutoff_prop
+
+        x = x.view(-1)
+        probs = torch.tensor([prop], device=x.device).expand_as(x)
+        out = torch.empty(probs.shape, dtype=torch.bool, device=probs.device)
+        mask = torch.bernoulli(probs, out=out)
+        return x[mask]
+    
     def update_ranges(self, input):
 
         # updating min/max ranges
@@ -144,11 +197,10 @@ class IntegerQuantizer(nn.Module):
             self.ste,
         )
     
-
 class LinearQuantized(nn.Linear):
-    """A quantizable linear layer"""
+    """A quantizable linear layer which uses the Integer Quantized Layer as the Input"""
     def __init__(
-        self, in_features, out_features, layer_quantizers, bias=True
+        self, in_features, out_features, layer_quantizers = IntegerQuantizer, bias=True
     ):
         # create quantization modules for this layer
         self.layer_quant_fns = layer_quantizers
@@ -293,4 +345,11 @@ def make_quantizers(qypte, dq, sign_input, ste, momentum, percentile, sample_pro
             ),
         }
     return layer_quantizers, mp_quantizers
+
+
+
+
+keys = ['inputs', 'weight' , 'features', 'norm',
+       'attention', 'message', 'aggregate', 'update']
+options = ['low', 'high', 'q']
 

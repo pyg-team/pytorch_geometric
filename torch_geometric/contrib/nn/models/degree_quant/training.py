@@ -25,7 +25,7 @@ def cross_validation_with_val_set(
     use_tqdm=True,
     writer=None,
     logger=None,
-    save_path = "model.pt"
+    save_path = "checkpoint.pt"
 ):
 
     val_losses, accs, durations = [], [], []
@@ -104,9 +104,6 @@ def cross_validation_with_val_set(
     state_dict = model.state_dict()
     torch.save(state_dict, save_path)
     return loss_mean, acc_mean, acc_std
-
-
-
 
 # For Graph Dataset 
 def k_fold(dataset, folds):

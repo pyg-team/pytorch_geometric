@@ -11,6 +11,7 @@ class GATConvQuant(MessagePassingQuant):
         self,
         in_channels,
         out_channels,
+        nn=None,
         heads=1,
         concat=True,
         negative_slope=0.2,
@@ -21,7 +22,7 @@ class GATConvQuant(MessagePassingQuant):
         **kwargs,
     ):
         super(GATConvQuant, self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
-
+        self.nn = nn
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
@@ -48,7 +49,7 @@ class GATConvQuant(MessagePassingQuant):
         glorot(self.weight)
         glorot(self.att)
         zeros(self.bias)
-
+        self.nn.reset_parameters()
         # create quantization modules for this layer
         self.layer_quantizers = ModuleDict()
         for key in ["weights","inputs","features","attention","alpha"]:
@@ -111,7 +112,7 @@ class GATConvQuant(MessagePassingQuant):
 
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
-        return aggr_out
+        return self.nn(aggr_out)
 
     def __repr__(self):
         return "{}({}, {}, heads={})".format(
@@ -125,6 +126,7 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
         self,
         in_channels,
         out_channels,
+        nn = None,
         heads=1,
         concat=True,
         negative_slope=0.2,
@@ -137,7 +139,7 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
         super(GATConvMultiQuant, self).__init__(
             aggr="add", mp_quantizers=mp_quantizers, **kwargs
         )
-
+        self.nn = nn
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
@@ -164,7 +166,7 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
         glorot(self.weight)
         glorot(self.att)
         zeros(self.bias)
-
+        self.nn.reset_parameters()
         # create quantization modules for this layer
         self.layer_quantizers = ModuleDict()
         for key in ["weights_low","inputs_low","inputs_high","features_low","features_high","attention_low","alpha_low","alpha_high"]:
@@ -267,7 +269,7 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
 
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
-        return aggr_out
+        return self.nn(aggr_out)
 
     def __repr__(self):
         return "{}({}, {}, heads={})".format(

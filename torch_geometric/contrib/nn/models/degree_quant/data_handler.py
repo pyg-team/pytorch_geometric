@@ -2,7 +2,7 @@ from utils import NormalizedDegree
 from torch_geometric.datasets import Planetoid,TUDataset
 import torch
 from torch_geometric.utils import degree
-
+from quantizer import ProbabilisticHighDegreeMask
 
 
 def get_dataset(path, name, sparse=True, cleaned=False, DQ=None):
