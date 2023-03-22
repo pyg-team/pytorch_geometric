@@ -79,28 +79,6 @@ def test_torch_compile(device):
     assert torch.allclose(out, expected, atol=1e-6)
 
 
-@withCUDA
-@onlyLinux
-@disableExtensions
-@withPackage('torch>=2.0.0')
-def test_dynamic_torch_compile(device):
-    compiled_gather_scatter = torch_geometric.compile(gather_scatter)
-
-    x = torch.randn(10, 16, device=device)
-    edge_index = torch.randint(0, x.size(0), (2, 40), device=device)
-
-    expected = gather_scatter(x, edge_index)
-    out = compiled_gather_scatter(x, edge_index)
-    assert torch.allclose(out, expected, atol=1e-6)
-
-    x = torch.randn(20, 16, device=device)
-    edge_index = torch.randint(0, x.size(0), (2, 80), device=device)
-
-    expected = gather_scatter(x, edge_index)
-    out = compiled_gather_scatter(x, edge_index)
-    assert torch.allclose(out, expected, atol=1e-6)
-
-
 if __name__ == '__main__':
     import argparse
 

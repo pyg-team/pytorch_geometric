@@ -11,9 +11,12 @@ def get_random_edge_index(
     num_dst_nodes: int,
     num_edges: int,
     dtype: Optional[torch.dtype] = None,
+    device: Optional[torch.device] = None,
 ) -> Tensor:
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=dtype)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=dtype)
+    row = torch.randint(num_src_nodes, (num_edges, ), dtype=dtype,
+                        device=device)
+    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=dtype,
+                        device=device)
     return torch.stack([row, col], dim=0)
 
 

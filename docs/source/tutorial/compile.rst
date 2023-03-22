@@ -60,9 +60,11 @@ We have incorporated multiple examples in :obj:`examples/compile` that further s
 #. `Node Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gcn.py>`__ via :class:`~torch_geometric.nn.models.GCN`
 #. `Graph Classification <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/compile/gin.py>`__ via :class:`~torch_geometric.nn.models.GIN`
 
-Note that :meth:`torch.compile` will currently re-compile the model everytime it sees an input with a different shape.
-That currently does not play that nicely with the way :pyg:`PyG` performs mini-batching.
-While we are working with the :pytorch:`PyTorch` team to fix this limitation, a temporary workaround is to utilize the :class:`~torch_geometric.transforms.Pad` transformation to ensure that all inputs are of equal shape.
+Note that :meth:`torch.compile(model, dynamic=True)` does sadly not yet work for :pyg:`PyG` models on :pytorch:`PyTorch 2.0`.
+While static compilation via :meth:`torch.compile(model, dynamic=False)` works fine, it will re-compile the model everytime it sees an input with a different shape.
+That currently does not play that nicely with the way :pyg:`PyG` performs mini-batching, and will hence lead to major slow-downs.
+We are working with the :pytorch:`PyTorch` team to fix this limitation (see `this <https://github.com/pytorch/pytorch/issues/94640>`_ :github:`GitHub` issue).
+A temporary workaround is to utilize the :class:`torch_geometric.transforms.Pad` transformation to ensure that all inputs are of equal shape.
 
 If you notice that :meth:`~torch_geometric.compile` fails for a certain :pyg:`PyG` model, do not hesitate to reach out either on :github:`null` `GitHub <https://github.com/pyg-team/pytorch_geometric/issues>`_ or :slack:`null` `Slack <https://data.pyg.org/slack.html>`_.
 We are very eager to improve :meth:`~torch_geometric.compile` support across the whole :pyg:`PyG` code base.
