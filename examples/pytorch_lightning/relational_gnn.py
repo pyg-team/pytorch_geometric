@@ -1,60 +1,20 @@
-from typing import Dict, List, Optional, Tuple
+import os.path as osp
+from typing import Dict, List, Tuple
 
+import pytorch_lightning as pl
 import torch
 import torch.nn.functional as F
-from pytorch_lightning import LightningDataModule, LightningModule, Trainer
+from pytorch_lightning import LightningModule, Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torch import Tensor
 from torchmetrics import Accuracy
 
 import torch_geometric.transforms as T
-from torch_geometric import seed_everything
 from torch_geometric.data import Batch
+from torch_geometric.data.lightning import LightningNodeData
 from torch_geometric.datasets import OGB_MAG
-from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import Linear, SAGEConv, to_hetero
 from torch_geometric.typing import EdgeType, NodeType
-
-
-class DataModule(LightningDataModule):
-    def __init__(self, root: str):
-        super().__init__()
-        self.root = root
-        self.transform = T.ToUndirected(merge=False)
-
-    def prepare_data(self):
-        OGB_MAG(self.root, preprocess='metapath2vec')
-
-    def setup(self, stage: Optional[str] = None):
-        self.data = OGB_MAG(self.root, preprocess='metapath2vec',
-                            transform=self.transform)[0]
-
-    def metadata(self) -> Tuple[List[NodeType], List[EdgeType]]:
-        node_types = ['paper', 'author', 'institution', 'field_of_study']
-        edge_types = [('author', 'affiliated_with', 'institution'),
-                      ('author', 'writes', 'paper'),
-                      ('paper', 'cites', 'paper'),
-                      ('paper', 'has_topic', 'field_of_study'),
-                      ('institution', 'rev_affiliated_with', 'author'),
-                      ('paper', 'rev_writes', 'author'),
-                      ('paper', 'rev_cites', 'paper'),
-                      ('field_of_study', 'rev_has_topic', 'paper')]
-        return node_types, edge_types
-
-    def dataloader(self, mask: Tensor, shuffle: bool, num_workers: int = 6):
-        return NeighborLoader(self.data, num_neighbors=[10, 10],
-                              input_nodes=('paper', mask), batch_size=1024,
-                              shuffle=shuffle, num_workers=num_workers,
-                              persistent_workers=num_workers > 0)
-
-    def train_dataloader(self):
-        return self.dataloader(self.data['paper'].train_mask, shuffle=True)
-
-    def val_dataloader(self):
-        return self.dataloader(self.data['paper'].val_mask, shuffle=False)
-
-    def test_dataloader(self):
-        return self.dataloader(self.data['paper'].test_mask, shuffle=False)
 
 
 class GNN(torch.nn.Module):
@@ -91,9 +51,9 @@ class RelationalGNN(LightningModule):
         # which distinct parameters are learned for each node and edge type.
         self.model = to_hetero(model, metadata, aggr='sum')
 
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
-        self.test_acc = Accuracy()
+        self.train_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.val_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.test_acc = Accuracy(task='multiclass', num_classes=out_channels)
 
     def forward(
         self,
@@ -101,13 +61,6 @@ class RelationalGNN(LightningModule):
         edge_index_dict: Dict[EdgeType, Tensor],
     ) -> Dict[NodeType, Tensor]:
         return self.model(x_dict, edge_index_dict)
-
-    @torch.no_grad()
-    def setup(self, stage: Optional[str] = None):  # Initialize parameters.
-        data = self.trainer.datamodule
-        loader = data.dataloader(torch.arange(1), shuffle=False, num_workers=0)
-        batch = next(iter(loader))
-        self(batch.x_dict, batch.edge_index_dict)
 
     def common_step(self, batch: Batch) -> Tuple[Tensor, Tensor]:
         batch_size = batch['paper'].batch_size
@@ -119,35 +72,57 @@ class RelationalGNN(LightningModule):
         y_hat, y = self.common_step(batch)
         loss = F.cross_entropy(y_hat, y)
         self.train_acc(y_hat.softmax(dim=-1), y)
-        self.log('train_acc', self.train_acc, prog_bar=True, on_step=True)
+        self.log('train_acc', self.train_acc, prog_bar=True, on_step=False,
+                 on_epoch=True)
         return loss
 
     def validation_step(self, batch: Batch, batch_idx: int):
         y_hat, y = self.common_step(batch)
         self.val_acc(y_hat.softmax(dim=-1), y)
-        self.log('val_acc', self.val_acc, prog_bar=True, on_epoch=True)
+        self.log('val_acc', self.val_acc, prog_bar=True, on_step=False,
+                 on_epoch=True)
 
     def test_step(self, batch: Batch, batch_idx: int):
         y_hat, y = self.common_step(batch)
         self.test_acc(y_hat.softmax(dim=-1), y)
-        self.log('test_acc', self.test_acc, prog_bar=True, on_epoch=True)
+        self.log('test_acc', self.test_acc, prog_bar=True, on_step=False,
+                 on_epoch=True)
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
 def main():
-    seed_everything(42)
-    datamodule = DataModule('../../data/OGB')
-    model = RelationalGNN(datamodule.metadata(), hidden_channels=64,
+    dataset = OGB_MAG(osp.join('data', 'OGB'), preprocess='metapath2vec',
+                      transform=T.ToUndirected(merge=False))
+    data = dataset[0]
+
+    datamodule = LightningNodeData(
+        data,
+        input_train_nodes=('paper', data['paper'].train_mask),
+        input_val_nodes=('paper', data['paper'].val_mask),
+        input_test_nodes=('paper', data['paper'].test_mask),
+        loader='neighbor',
+        num_neighbors=[10, 10],
+        batch_size=1024,
+        num_workers=8,
+    )
+
+    model = RelationalGNN(data.metadata(), hidden_channels=64,
                           out_channels=349, dropout=0.0)
-    checkpoint_callback = ModelCheckpoint(monitor='val_acc', save_top_k=1,
-                                          mode='max')
-    trainer = Trainer(accelerator='gpu', devices=1, max_epochs=20,
-                      callbacks=[checkpoint_callback])
+
+    with torch.no_grad():  # Run a dummy forward pass to initialize lazy model
+        loader = datamodule.train_dataloader()
+        batch = next(iter(loader))
+        model.common_step(batch)
+
+    strategy = pl.strategies.SingleDeviceStrategy('cuda:0')
+    checkpoint = ModelCheckpoint(monitor='val_acc', save_top_k=1, mode='max')
+    trainer = Trainer(strategy=strategy, devices=1, max_epochs=20,
+                      log_every_n_steps=5, callbacks=[checkpoint])
 
     trainer.fit(model, datamodule)
-    trainer.test()
+    trainer.test(ckpt_path='best', datamodule=datamodule)
 
 
 if __name__ == "__main__":

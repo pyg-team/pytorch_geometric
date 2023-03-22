@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import reset
 from torch_geometric.typing import (
     Adj,
     OptTensor,
@@ -13,8 +14,6 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import add_self_loops, remove_self_loops
-
-from ..inits import reset
 
 
 def get_angle(v1: Tensor, v2: Tensor) -> Tensor:

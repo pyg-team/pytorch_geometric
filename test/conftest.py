@@ -4,6 +4,7 @@ import shutil
 
 import pytest
 
+import torch_geometric.typing
 from torch_geometric.data import Dataset
 
 
@@ -27,10 +28,6 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
     if name.lower() in ['bashapes']:
         from torch_geometric.datasets import BAShapes
         return BAShapes(*args, **kwargs)
-    if name.lower() in ['dblp']:
-        from torch_geometric.datasets import DBLP
-        path = osp.join(root, 'DBLP')
-        return DBLP(path, *args, **kwargs)
     if name in ['citationCiteseer', 'illc1850']:
         from torch_geometric.datasets import SuiteSparseMatrixCollection
         path = osp.join(root, 'SuiteSparseMatrixCollection')
@@ -39,8 +36,11 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
         from torch_geometric.datasets import EllipticBitcoinDataset
         path = osp.join(root, 'EllipticBitcoinDataset')
         return EllipticBitcoinDataset(path, *args, **kwargs)
+    if name.lower() in ['hetero']:
+        from torch_geometric.testing import FakeHeteroDataset
+        return FakeHeteroDataset(*args, **kwargs)
 
-    raise NotImplementedError
+    raise ValueError(f"Cannot load dataset with name '{name}'")
 
 
 @pytest.fixture(scope='session')
@@ -49,3 +49,19 @@ def get_dataset():
     yield functools.partial(load_dataset, root)
     if osp.exists(root):
         shutil.rmtree(root)
+
+
+@pytest.fixture
+def disable_extensions():
+    prev_state = {
+        'WITH_PYG_LIB': torch_geometric.typing.WITH_PYG_LIB,
+        'WITH_SAMPLED_OP': torch_geometric.typing.WITH_SAMPLED_OP,
+        'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
+        'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
+        'WITH_TORCH_SPARSE': torch_geometric.typing.WITH_TORCH_SPARSE,
+    }
+    for key in prev_state.keys():
+        setattr(torch_geometric.typing, key, False)
+    yield
+    for key, value in prev_state.items():
+        setattr(torch_geometric.typing, key, value)
