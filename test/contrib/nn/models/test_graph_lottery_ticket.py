@@ -237,7 +237,7 @@ def test_search_prune(architecture, link_prediction):
         max_train_epochs=2)
 
     init_params, mask_dict = search.prune()
-    print('\n', list(mask_dict.keys()),'\n')
+    print('\n', list(mask_dict.keys()), '\n')
 
     for name, value in params.items():
         mask_name = name.removeprefix('model.') + GLTModel.MASK
