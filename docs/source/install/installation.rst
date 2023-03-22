@@ -55,7 +55,7 @@ We recommend to start with a minimal installation, and install additional depend
 Installation from Wheels
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-For ease of installation of these extensions, we provide :obj:`pip` wheels for these packages for all major OS/PyTorch/CUDA combinations, see `here <https://data.pyg.org/whl>`__:
+For ease of installation of these extensions, we provide :obj:`pip` wheels for these packages for all major OS, :pytorch:`PyTorch` and CUDA combinations, see `here <https://data.pyg.org/whl>`__:
 
 .. warning::
    Wheels are currently not available for M1/M2/M3 macs.
