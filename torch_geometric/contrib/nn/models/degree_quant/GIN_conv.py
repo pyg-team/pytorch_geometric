@@ -1,6 +1,6 @@
 import torch
 from torch_geometric.utils import remove_self_loops
-
+from .messagepassing import *
 
 class GINConvQuant(MessagePassingQuant):
     def __init__(self, nn, eps=0, train_eps=False, mp_quantizers=None, **kwargs):

@@ -126,13 +126,6 @@ def k_fold(dataset, folds):
 
     return train_indices, test_indices, val_indices
 
-
-
-
-
-
-
-
 def train(model, optimizer, loader):
     model.train()
 

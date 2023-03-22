@@ -5,7 +5,7 @@ from torch.nn import Parameter, ModuleDict
 import torch.nn.functional as F
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.utils import  add_self_loops, remove_self_loops, softmax
-
+from .messagepassing import *
 class GATConvQuant(MessagePassingQuant):
     def __init__(
         self,

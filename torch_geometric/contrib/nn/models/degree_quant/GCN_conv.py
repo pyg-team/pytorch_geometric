@@ -6,7 +6,7 @@ from torch_scatter import scatter_add
 from torch_geometric.utils import add_remaining_self_loops
 import torch.nn.functional as F
 from torch_geometric.nn.inits import glorot, zeros
-
+from .messagepassing import *
 class GCNConvQuant(MessagePassingQuant):
     def __init__(
         self,
