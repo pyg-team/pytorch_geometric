@@ -224,7 +224,8 @@ def test_search_prune(architecture, link_prediction):
         graph = test_data_node_classification
 
     model = build_test_model(architecture, link_prediction)
-    param_names = [name for name, _ in model.named_parameters()]
+    params = model.state_dict()
+    print(list(params.keys()))
 
     search = GLTSearch(
         module=model, graph=graph, lr=0.001, reg_graph=0.01, reg_model=0.01,
@@ -232,10 +233,10 @@ def test_search_prune(architecture, link_prediction):
         max_train_epochs=2)
 
     init_params, mask_dict = search.prune()
-    print([name for name, _ in model.named_parameters()])
+    print('\n', list(mask_dict.keys()),'\n')
 
-    for name in param_names:
-        assert name + GLTModel.MASK in mask_dict.keys()
-        assert getattr(model, name).shape == mask_dict['module.' + name +
-                                                       GLTModel.MASK].shape
+    for name, value in params.items():
+        mask_name = name.removeprefix('model.') + GLTModel.MASK
+        assert mask_name in mask_dict.keys()
+        assert value.shape == mask_dict[mask_name].shape
         assert 'module.' + name + GLTModel.ORIG in init_params.keys()
