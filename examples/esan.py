@@ -5,15 +5,20 @@ import random
 import numpy as np
 import torch
 import torch.optim as optim
+from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
-from torch_geometric.nn import GraphConv, GINEConv, GCNConv
-from torch_geometric.nn import DSnetwork, DSSnetwork
-from torch_geometric.transforms import subgraph_policy
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import (
+    DSnetwork,
+    DSSnetwork,
+    GCNConv,
+    GINEConv,
+    GraphConv,
+)
+from torch_geometric.transforms import subgraph_policy
 
-from sklearn.model_selection import train_test_split
 
 class SimpleEvaluator():
     def __init__(self, task_type):
@@ -44,15 +49,16 @@ class SimpleEvaluator():
         if self.task_type == 'classification': return self.acc(input_dict)
         return self.mae(input_dict)
 
+
 def separate_data(dataset, seed):
     indices = np.arange(len(dataset))
     labels = dataset.data.y.numpy()
-    train_idx, test_idx, _, _ = train_test_split(indices, labels, test_size=0.1, random_state=seed, shuffle=True, stratify=labels)
+    train_idx, test_idx, _, _ = train_test_split(indices, labels,
+                                                 test_size=0.1,
+                                                 random_state=seed,
+                                                 shuffle=True, stratify=labels)
 
-    return {
-        'train': torch.tensor(train_idx),
-        'test': torch.tensor(test_idx)
-    }
+    return {'train': torch.tensor(train_idx), 'test': torch.tensor(test_idx)}
 
 
 def get_data(args):
@@ -75,14 +81,14 @@ def get_data(args):
     dataset.data.edge_attr = None
     split_idx = separate_data(dataset, args.seed)
 
-    train_loader = DataLoader(
-        dataset[split_idx["train"]],
-        batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers,
-        follow_batch=['subgraph_id'])
-    train_loader_eval = DataLoader(
-        dataset[split_idx["train"]],
-        batch_size=args.batch_size, shuffle=False,
-        num_workers=args.num_workers, follow_batch=['subgraph_id'])
+    train_loader = DataLoader(dataset[split_idx["train"]],
+                              batch_size=args.batch_size, shuffle=True,
+                              num_workers=args.num_workers,
+                              follow_batch=['subgraph_id'])
+    train_loader_eval = DataLoader(dataset[split_idx["train"]],
+                                   batch_size=args.batch_size, shuffle=False,
+                                   num_workers=args.num_workers,
+                                   follow_batch=['subgraph_id'])
     test_loader = DataLoader(
         dataset[split_idx["test"]] if args.dataset != 'ZINC' else test_dataset,
         batch_size=args.batch_size, shuffle=False,
@@ -93,8 +99,10 @@ def get_data(args):
     task_type = 'classification'
     eval_metric = 'acc'
 
-    return train_loader, train_loader_eval, test_loader, (
-        in_dim, out_dim, task_type, eval_metric)
+    return train_loader, train_loader_eval, test_loader, (in_dim, out_dim,
+                                                          task_type,
+                                                          eval_metric)
+
 
 def get_model(args, in_dim, out_dim, device):
     encoder = lambda x: x
@@ -114,12 +122,13 @@ def get_model(args, in_dim, out_dim, device):
         model_name = DSSnetwork
     else:
         raise ValueError('Undefined model type called {}'.format(args.model))
-    
+
     model = model_name(num_layers=args.num_layer, in_dim=in_dim,
-                    emb_dim=args.emb_dim, num_tasks=out_dim,
-                    feature_encoder=encoder, GNNConv=GNNConv).to(device)
+                       emb_dim=args.emb_dim, num_tasks=out_dim,
+                       feature_encoder=encoder, GNNConv=GNNConv).to(device)
 
     return model
+
 
 def train(model, device, loader, optimizer, criterion, epoch):
     model.train()
@@ -175,9 +184,8 @@ def run(args, device):
     model = get_model(args, in_dim, out_dim, device)
 
     optimizer = optim.Adam(model.parameters(), lr=args.learning_rate)
-    scheduler = optim.lr_scheduler.StepLR(optimizer,
-                                            step_size=args.decay_step,
-                                            gamma=args.decay_rate)
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=args.decay_step,
+                                          gamma=args.decay_rate)
 
     if "classification" in task_type:
         criterion = torch.nn.BCEWithLogitsLoss()
@@ -194,7 +202,7 @@ def run(args, device):
         # Only valid_perf is used for TUD
         train_perf = eval(model, device, train_loader_eval, evaluator)
         test_perf = eval(model, device, test_loader, evaluator)
-        
+
         scheduler.step()
 
         train_curve.append(train_perf[eval_metric])
@@ -209,15 +217,17 @@ def main():
         description='GNN baselines with Pytorch Geometrics')
     parser.add_argument('--device', type=int, default=0,
                         help='which gpu to use if any (default: 0)')
-    parser.add_argument('--model', type=str,
-                        help='Type of model {ds, dss}')
-    parser.add_argument('--gnn_type', type=str,
+    parser.add_argument('--model', type=str, help='Type of model {ds, dss}')
+    parser.add_argument(
+        '--gnn_type', type=str,
         help='Type of convolution {graphconv, ginconv, gcnconv}')
     parser.add_argument('--drop_ratio', type=float, default=0.5,
                         help='dropout ratio (default: 0.5)')
-    parser.add_argument('--num_layer', type=int, default=5,
+    parser.add_argument(
+        '--num_layer', type=int, default=5,
         help='number of GNN message passing layers (default: 5)')
-    parser.add_argument('--emb_dim', type=int, default=64,
+    parser.add_argument(
+        '--emb_dim', type=int, default=64,
         help='dimensionality of hidden units in GNNs (default: 64)')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='input batch size for training (default: 32)')
@@ -233,17 +243,20 @@ def main():
                         help='number of workers (default: 0)')
     parser.add_argument('--dataset', type=str, default="MUTAG",
                         help='dataset name (default: MUTAG)')
-    parser.add_argument('--policy', type=str, default="edge_deletion", help=
+    parser.add_argument(
+        '--policy', type=str, default="edge_deletion", help=
         'Subgraph selection policy in {edge_deletion, node_deletion, ego, ego_plus}'
         ' (default: edge_deletion)')
-    parser.add_argument('--num_hops', type=int, default=2,
+    parser.add_argument(
+        '--num_hops', type=int, default=2,
         help='Depth of the ego net if policy is ego (default: 2)')
     parser.add_argument('--seed', type=int, default=0,
                         help='random seed (default: 0)')
 
     args = parser.parse_args()
 
-    device = torch.device("cuda:" +
+    device = torch.device(
+        "cuda:" +
         str(args.device)) if torch.cuda.is_available() else torch.device("cpu")
 
     # Set seed
@@ -255,7 +268,9 @@ def main():
 
     best_test_epoch = np.argmax(test_curve)
     best_train = max(train_curve)
-    print(f'Best Loss = {best_train}, Metric/train = {train_curve[best_test_epoch]}, Metric/test = {test_curve[best_test_epoch]}')
+    print(
+        f'Best Loss = {best_train}, Metric/train = {train_curve[best_test_epoch]}, Metric/test = {test_curve[best_test_epoch]}'
+    )
 
 
 if __name__ == "__main__":
