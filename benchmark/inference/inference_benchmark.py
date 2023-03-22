@@ -1,4 +1,5 @@
 import argparse
+from collections import defaultdict
 from contextlib import nullcontext
 
 import torch
@@ -8,6 +9,8 @@ from benchmark.utils import (
     get_dataset_with_transformation,
     get_model,
     get_split_masks,
+    save_benchmark_data,
+    write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
@@ -38,6 +41,7 @@ def test(y, loader):
 
 
 def run(args: argparse.ArgumentParser):
+    csv_data = defaultdict(list)
 
     # cuda device is not suitable for full batch mode
     device = torch.device(
@@ -98,6 +102,7 @@ def run(args: argparse.ArgumentParser):
                         num_neighbors=[-1],  # layer-wise inference
                         input_nodes=mask,
                         sampler=sampler,
+                        filter_per_worker=args.filter_per_worker,
                         **kwargs,
                     ) if with_loader else None
                     if args.evaluate and not args.full_batch:
@@ -106,6 +111,7 @@ def run(args: argparse.ArgumentParser):
                             num_neighbors=[-1],  # layer-wise inference
                             input_nodes=test_mask,
                             sampler=None,
+                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         )
 
@@ -118,6 +124,7 @@ def run(args: argparse.ArgumentParser):
                             num_neighbors=num_neighbors,
                             input_nodes=mask,
                             sampler=sampler,
+                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         ) if with_loader else None
                         if args.evaluate and not args.full_batch:
@@ -126,6 +133,7 @@ def run(args: argparse.ArgumentParser):
                                 num_neighbors=num_neighbors,
                                 input_nodes=test_mask,
                                 sampler=None,
+                                filter_per_worker=args.filter_per_worker,
                                 **kwargs,
                             )
 
@@ -225,6 +233,14 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
+                        save_benchmark_data(csv_data, batch_size, layers,
+                                            num_neighbors, hidden_channels,
+                                            total_time, model_name,
+                                            dataset_name,
+                                            args.use_sparse_tensor)
+    if args.write_csv:
+        write_to_csv(csv_data)
+
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN inference benchmark')
@@ -257,8 +273,11 @@ if __name__ == '__main__':
         help='Use DataLoader affinitzation.')
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers")
+    add('--filter-per-worker', action='store_true',
+        help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--full-batch', action='store_true', help='Use full batch mode')
     add('--evaluate', action='store_true')
     add('--ckpt_path', type=str, help='Checkpoint path for loading a model')
+    add('--write-csv', action='store_true', help='Write benchmark data to csv')
     run(argparser.parse_args())

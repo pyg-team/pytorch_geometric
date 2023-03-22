@@ -26,9 +26,9 @@ class TransE(KGEModel):
     .. note::
 
         For an example of using the :class:`TransE` model, see
-        `examples/transe_fb15k_237.py
+        `examples/kge_fb15k_237.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        transe_fb15k_237.py>`_.
+        kge_fb15k_237.py>`_.
 
     Args:
         num_nodes (int): The number of nodes/entities in the graph.
@@ -54,6 +54,8 @@ class TransE(KGEModel):
         self.margin = margin
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
 
+        self.reset_parameters()
+
     def reset_parameters(self):
         bound = 6. / math.sqrt(self.hidden_channels)
         torch.nn.init.uniform_(self.node_emb.weight, -bound, bound)
@@ -61,8 +63,13 @@ class TransE(KGEModel):
         F.normalize(self.rel_emb.weight.data, p=self.p_norm, dim=-1,
                     out=self.rel_emb.weight.data)
 
-    def forward(self, head_index: Tensor, rel_type: Tensor,
-                tail_index: Tensor) -> Tensor:
+    def forward(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+    ) -> Tensor:
+
         head = self.node_emb(head_index)
         rel = self.rel_emb(rel_type)
         tail = self.node_emb(tail_index)
@@ -73,8 +80,13 @@ class TransE(KGEModel):
         # Calculate *negative* TransE norm:
         return -((head + rel) - tail).norm(p=self.p_norm, dim=-1)
 
-    def loss(self, head_index: Tensor, rel_type: Tensor,
-             tail_index: Tensor) -> Tensor:
+    def loss(
+        self,
+        head_index: Tensor,
+        rel_type: Tensor,
+        tail_index: Tensor,
+    ) -> Tensor:
+
         pos_score = self(head_index, rel_type, tail_index)
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
 

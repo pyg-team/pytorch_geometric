@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 import torch
 import torch.nn.functional as F
 import torch_scatter
@@ -5,13 +7,14 @@ import torch_scatter
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn.inits import reset
 
-from typing import List, Optional
 
 def subgraph_pool(h_node, batched_data, pool):
     # Represent each subgraph as the pool of its node representations
     num_subgraphs = batched_data.num_subgraphs
-    tmp = torch.cat([torch.zeros(1, device=num_subgraphs.device, dtype=num_subgraphs.dtype),
-                     torch.cumsum(num_subgraphs, dim=0)])
+    tmp = torch.cat([
+        torch.zeros(1, device=num_subgraphs.device, dtype=num_subgraphs.dtype),
+        torch.cumsum(num_subgraphs, dim=0)
+    ])
     graph_offset = tmp[batched_data.batch]
     subgraph_id = batched_data.subgraph_batch + graph_offset
 
@@ -19,7 +22,9 @@ def subgraph_pool(h_node, batched_data, pool):
 
 
 class DSnetwork(torch.nn.Module):
-    def __init__(self, num_layers: int, in_dim: int, emb_dim: int, num_tasks: int, feature_encoder: torch.nn.Module, GNNConv: torch.nn.Module):
+    def __init__(self, num_layers: int, in_dim: int, emb_dim: int,
+                 num_tasks: int, feature_encoder: torch.nn.Module,
+                 GNNConv: torch.nn.Module):
         """
         Initialize a DSSnetwork object.
 
@@ -52,8 +57,7 @@ class DSnetwork(torch.nn.Module):
         self.final_layers = torch.nn.Sequential(
             torch.nn.Linear(in_features=emb_dim, out_features=2 * emb_dim),
             torch.nn.ReLU(),
-            torch.nn.Linear(in_features=2 * emb_dim, out_features=num_tasks)
-        )
+            torch.nn.Linear(in_features=2 * emb_dim, out_features=num_tasks))
 
     def reset_parameters(self):
         reset(self.gnn_list)
@@ -78,18 +82,18 @@ class DSnetwork(torch.nn.Module):
         h_subgraph = subgraph_pool(x, batched_data, global_mean_pool)
 
         # Pool subgraph representations to obtain graph representation
-        h_graph = torch_scatter.scatter(
-            src=h_subgraph,
-            index=batched_data.subgraph_id_batch,
-            dim=0,
-            reduce="mean"
-        )
+        h_graph = torch_scatter.scatter(src=h_subgraph,
+                                        index=batched_data.subgraph_id_batch,
+                                        dim=0, reduce="mean")
 
         # Apply final layers and return output
         return self.final_layers(h_graph)
 
+
 class DSSnetwork(DSnetwork):
-    def __init__(self, num_layers: int, in_dim: int, emb_dim: int, num_tasks: int, feature_encoder: torch.nn.Module, GNNConv: torch.nn.Module):
+    def __init__(self, num_layers: int, in_dim: int, emb_dim: int,
+                 num_tasks: int, feature_encoder: torch.nn.Module,
+                 GNNConv: torch.nn.Module):
         """
         Initialize a DSSnetwork object.
 
@@ -101,21 +105,17 @@ class DSSnetwork(DSnetwork):
         - feature_encoder: node feature encoder module
         - GNNConv: graph neural network convolution module
         """
-        super().__init__(
-            num_layers=num_layers,
-            in_dim=in_dim,
-            emb_dim=emb_dim,
-            num_tasks=num_tasks,
-            feature_encoder=feature_encoder,
-            GNNConv=GNNConv
-            )
-        
+        super().__init__(num_layers=num_layers, in_dim=in_dim, emb_dim=emb_dim,
+                         num_tasks=num_tasks, feature_encoder=feature_encoder,
+                         GNNConv=GNNConv)
+
         gnn_sum_list = []
         bn_sum_list = []
 
         # Initialize GNNs for data sharing module
         for i in range(num_layers):
-            gnn_sum_list.append(GNNConv(emb_dim if i != 0 else in_dim, emb_dim))
+            gnn_sum_list.append(GNNConv(emb_dim if i != 0 else in_dim,
+                                        emb_dim))
             bn_sum_list.append(torch.nn.BatchNorm1d(emb_dim))
         self.gnn_sum_list = torch.nn.ModuleList(gnn_sum_list)
         self.bn_sum_list = torch.nn.ModuleList(bn_sum_list)
@@ -150,23 +150,23 @@ class DSSnetwork(DSnetwork):
             # Compute graph offset and node indices for summing node features across subgraphs
             num_nodes_per_subgraph = batched_data.num_nodes_per_subgraph
             tmp = torch.cat([
-                torch.zeros(1, device=num_nodes_per_subgraph.device, dtype=num_nodes_per_subgraph.dtype),
+                torch.zeros(1, device=num_nodes_per_subgraph.device,
+                            dtype=num_nodes_per_subgraph.dtype),
                 torch.cumsum(num_nodes_per_subgraph, dim=0)
             ])
             graph_offset = tmp[batch]
             node_idx = graph_offset + batched_data.subgraph_n_id
 
             # Sum node features across subgraphs
-            x_sum = torch_scatter.scatter(
-                src=x,
-                index=node_idx,
-                dim=0,
-                reduce="mean"
-            )
+            x_sum = torch_scatter.scatter(src=x, index=node_idx, dim=0,
+                                          reduce="mean")
 
             # Information sharing component
-            h2 = bn_sum(gnn_sum(x_sum, batched_data.orig_edge_index,
-                                batched_data.orig_edge_attr if edge_attr is not None else edge_attr))
+            h2 = bn_sum(
+                gnn_sum(
+                    x_sum, batched_data.orig_edge_index,
+                    batched_data.orig_edge_attr
+                    if edge_attr is not None else edge_attr))
 
             # Apply activation function and update node features for next iteration
             x = F.relu(h1 + h2[node_idx])
@@ -175,12 +175,9 @@ class DSSnetwork(DSnetwork):
         h_subgraph = subgraph_pool(x, batched_data, global_mean_pool)
 
         # Pool subgraph representations to obtain graph representation
-        h_graph = torch_scatter.scatter(
-            src=h_subgraph,
-            index=batched_data.subgraph_id_batch,
-            dim=0,
-            reduce="mean"
-        )
+        h_graph = torch_scatter.scatter(src=h_subgraph,
+                                        index=batched_data.subgraph_id_batch,
+                                        dim=0, reduce="mean")
 
         # Apply final layers and return output
         return self.final_layers(h_graph)

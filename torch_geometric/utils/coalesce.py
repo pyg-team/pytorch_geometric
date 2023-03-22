@@ -5,8 +5,7 @@ from torch import Tensor
 
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort, scatter
-
-from .num_nodes import maybe_num_nodes
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 MISSING = '???'
 
@@ -59,6 +58,12 @@ def coalesce(
 
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is not passed, else
         (:class:`LongTensor`, :obj:`Optional[Tensor]` or :obj:`List[Tensor]]`)
+
+    .. warning::
+
+        From :pyg:`PyG >= 2.3.0` onwards, this function will always return a
+        tuple whenever :obj:`edge_attr` is passed as an argument (even in case
+        it is set to :obj:`None`).
 
     Example:
 

@@ -2,7 +2,7 @@ import glob
 import logging
 import os
 from contextlib import contextmanager
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 import psutil
 import torch
@@ -72,42 +72,43 @@ class WorkerInitWrapper:
 
 
 class AffinityMixin:
+    r"""A context manager to enable CPU affinity for data loader workers
+    (only used when running on CPU devices).
+
+    Affinitization places data loader workers threads on specific CPU cores.
+    In effect, it allows for more efficient local memory allocation and reduces
+    remote memory calls.
+    Every time a process or thread moves from one core to another, registers
+    and caches need to be flushed and reloaded.
+    This can become very costly if it happens often, and our threads may also
+    no longer be close to their data, or be able to share data in a cache.
+
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/advanced/
+    cpu_affinity.html>`__ for the accompanying tutorial.
+
+    .. warning::
+
+        To correctly affinitize compute threads (*i.e.* with OMP), please make
+        sure that you exclude :obj:`loader_cores` from the list of cores
+        available for the main process.
+        This will cause core oversubsription and exacerbate performance.
+
+    .. code-block:: python
+
+        loader = NeigborLoader(data, num_workers=3)
+        with loader.enable_cpu_affinity(loader_cores=[0, 1, 2]):
+            for batch in loader:
+                pass
+    """
     @contextmanager
-    def enable_cpu_affinity(self, loader_cores):
-        r"""A context manager to enable CPU affinity for data loader workers
-        (only used when running on CPU devices).
-
-        Affinitization places data loader workers threads on specific CPU
-        cores. In effect, it allows for more efficient local memory allocation
-        and reduces remote memory calls.
-        Every time a process or thread moves from one core to another,
-        registers and caches need to be flushed and reloaded. This can become
-        very costly if it happens often, and our threads may also no longer be
-        close to their data, or be able to share data in a cache.
-
-        .. warning::
-            If you want to further affinitize compute threads
-            (*i.e.* with OMP), please make sure that you exclude
-            :obj:`loader_cores` from the list of cores available for compute.
-            This will cause core oversubsription and exacerbate performance.
-
-        .. code-block:: python
-
-            loader = NeigborLoader(data, num_workers=3)
-            with loader.enable_cpu_affinity(loader_cores=[0, 1, 2]):
-                for batch in loader:
-                    pass
-
-        This will be gradually extended to increase performance on dual socket
-        CPUs.
+    def enable_cpu_affinity(self, loader_cores: Optional[List[int]] = None):
+        r"""Enables CPU affinity.
 
         Args:
             loader_cores ([int], optional): List of CPU cores to which data
                 loader workers should affinitize to.
-                By default, :obj:`cpu0` is reserved for all auxiliary threads
-                and ops.
-                The :class:`DataLoader` wil affinitize to cores starting at
-                :obj:`cpu0`. (default: :obj:`node0_cores[:num_workers]`)
+                By default, will affinitize to cores starting at :obj:`cpu0`.
+                (default: :obj:`node0_cores[:num_workers]`)
         """
         if not self.num_workers > 0:
             raise ValueError(
