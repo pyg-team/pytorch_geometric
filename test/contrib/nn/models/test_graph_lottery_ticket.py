@@ -33,15 +33,17 @@ def generate_edge_data(dataset):
 
 
 test_data_node_classification = Data(x=x, y=y,
-                                     edge_index=edge_index.t().contiguous(), train_mask=train_mask, val_mask=val_mask, test_mask=test_mask).to(device)
-test_data_link_prediction = Data(x=x,
-                                 edge_index=edge_index.t().contiguous(), train_mask=train_mask, val_mask=val_mask, test_mask=test_mask).to(device)
+                                     edge_index=edge_index.t().contiguous(),
+                                     train_mask=train_mask, val_mask=val_mask,
+                                     test_mask=test_mask).to(device)
+test_data_link_prediction = Data(x=x, edge_index=edge_index.t().contiguous(),
+                                 train_mask=train_mask, val_mask=val_mask,
+                                 test_mask=test_mask).to(device)
 generate_edge_data(test_data_link_prediction)
 
 
 class LinkPredictor(Module):
     """helper model to get dot product interaction on edges"""
-
     def __init__(self, model):
         super().__init__()
         self.model = model
@@ -191,8 +193,10 @@ def test_search_train(architecture, link_prediction, ugs):
         graph = test_data_node_classification
 
     model = build_test_model(architecture, link_prediction)
-    mask_names = [name.removeprefix(
-        'model.') + GLTModel.MASK for name, _ in model.named_parameters()]
+    mask_names = [
+        name.removeprefix('model.') + GLTModel.MASK
+        for name, _ in model.named_parameters()
+    ]
 
     search = GLTSearch(
         module=model, graph=graph, lr=0.001, reg_graph=0.01, reg_model=0.01,
