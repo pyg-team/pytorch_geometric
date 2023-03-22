@@ -300,7 +300,7 @@ class ToHeteroTransformer(Transformer):
         if hasattr(self.module, name):
             submod = getattr(self.module, name)
             is_heterolin = is_linear(submod)
-            is_norm = is_batch_norm(submod) and is_layer_norm(submod)
+            is_norm = is_batch_norm(submod) or is_layer_norm(submod)
         else:
             split_name = name.split('_')
             submod = getattr(self.module, '_'.join(split_name[:-1]))
