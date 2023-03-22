@@ -31,16 +31,13 @@ class DSnetwork(torch.nn.Module):
         - feature_encoder: node feature encoder module
         - GNNConv: graph neural network convolution module
         """
-        super(BaseESANModel, self).__init__()
+        super(DSnetwork, self).__init__()
 
         self.emb_dim = emb_dim
-        self.info_sharing = info_sharing
         self.feature_encoder = feature_encoder
 
         gnn_list = []
-        gnn_sum_list = []
         bn_list = []
-        bn_sum_list = []
 
         # Create num_layers layers of GNNs and batch normalization (BN) layers
         for i in range(num_layers):
@@ -113,6 +110,9 @@ class DSSnetwork(DSnetwork):
             GNNConv=GNNConv
             )
         
+        gnn_sum_list = []
+        bn_sum_list = []
+
         # Initialize GNNs for data sharing module
         for i in range(num_layers):
             gnn_sum_list.append(GNNConv(emb_dim if i != 0 else in_dim, emb_dim))

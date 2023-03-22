@@ -1,53 +1,69 @@
+from itertools import product
 import pytest
 import torch
 
-from torch_geometric.data import Batch
+from torch_geometric.data import Batch, Data
 from torch_geometric.nn.models import DSnetwork, DSSnetwork
-from torch_geometric.nn import GINConv
+from torch_geometric.nn import GraphConv
+from torch_geometric.transforms import subgraph_policy
 
+n_subgraphs = [2,5,10]
+num_tasks = [1,2,3]
 
-
-def test_dsnetwork():
-    pass
-
-
-
-class tGINConv(torch.nn.Module):
-    def __init__(self, in_dim, emb_dim):
-        super(tGINConv, self).__init__()
-        mlp = torch.nn.Sequential(
-            torch.nn.Linear(in_dim, emb_dim),
-            torch.nn.BatchNorm1d(emb_dim),
-            torch.nn.ReLU(),
-            torch.nn.Linear(emb_dim, emb_dim)
-        )
-        self.layer = GINConv(nn=mlp, train_eps=False)
-
-    def forward(self, x, edge_index, edge_attr):
-        return self.layer(x, edge_index)
-
-
-def test_dssnetwork():
+@pytest.mark.parametrize('n_subgraphs, num_tasks',
+                         product(n_subgraphs, num_tasks))
+def test_dsnetwork(n_subgraphs, num_tasks):
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
-    edge_attr = torch.randn(edge_index.size(1), 3)
-    batch = torch.tensor([0, 0, 0, 0])
-    num_nodes_per_subgraph = torch.tensor([2, 2])
 
     # Create a Batch object from the input data
-    batched_data = Batch(x=x, edge_index=edge_index, edge_attr=edge_attr, batch=batch, num_nodes_per_subgraph=num_nodes_per_subgraph)
+    data = Data(x = x, edge_index = edge_index)
+    transform = subgraph_policy('node_deletion', num_hops=1)
+    subgraphs = transform(data)
+
+    ls_subgraphs = [subgraphs] * n_subgraphs
+    batched_data = Batch.from_data_list(ls_subgraphs, follow_batch = ['subgraph_id'])
 
     # Define model hyperparameters
     num_layers = 2
     in_dim = 8
     emb_dim = 16
-    num_tasks = 1
 
-    feature_encoder = torch.nn.Identity()
-    GNNConv = tGINConv
+    feature_encoder = lambda x: x
+    GNNConv = GraphConv
+
+    model = DSnetwork(num_layers, in_dim, emb_dim, num_tasks, feature_encoder, GNNConv)
+
+    output = model(batched_data)
+
+    assert output.shape == (n_subgraphs, num_tasks)
+
+
+
+@pytest.mark.parametrize('n_subgraphs, num_tasks',
+                         product(n_subgraphs, num_tasks))
+def test_dssnetwork(n_subgraphs, num_tasks):
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+
+    # Create a Batch object from the input data
+    data = Data(x = x, edge_index = edge_index)
+    transform = subgraph_policy('node_deletion', num_hops = 1)
+    subgraphs = transform(data)
+
+    ls_subgraphs = [subgraphs] * n_subgraphs
+    batched_data = Batch.from_data_list(ls_subgraphs, follow_batch = ['subgraph_id'])
+
+    # Define model hyperparameters
+    num_layers = 2
+    in_dim = 8
+    emb_dim = 16
+
+    feature_encoder = lambda x: x
+    GNNConv = GraphConv
 
     model = DSSnetwork(num_layers, in_dim, emb_dim, num_tasks, feature_encoder, GNNConv)
 
     output = model(batched_data)
 
-    assert output.shape == (2, 1)
+    assert output.shape == (n_subgraphs, num_tasks)
