@@ -148,7 +148,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def __delattr__(self, key: str):
         delattr(self._global_store, key)
 
-    def __getitem__(self, *args: Tuple[QueryType]) -> Any:
+    def __getitem__(self, *args: QueryType) -> Any:
         # `data[*]` => Link to either `_global_store`, _node_store_dict` or
         # `_edge_store_dict`.
         # If neither is present, we create a new `Storage` object for the given
@@ -171,7 +171,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             raise AttributeError(f"'{key}' is already present as an edge type")
         self._global_store[key] = value
 
-    def __delitem__(self, *args: Tuple[QueryType]):
+    def __delitem__(self, *args: QueryType):
         # `del data[*]` => Link to `_node_store_dict` or `_edge_store_dict`.
         key = self._to_canonical(*args)
         if key in self.edge_types:
@@ -431,7 +431,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
     ###########################################################################
 
-    def _to_canonical(self, *args: Tuple[QueryType]) -> NodeOrEdgeType:
+    def _to_canonical(self, *args: QueryType) -> NodeOrEdgeType:
         # Converts a given `QueryType` to its "canonical type":
         # 1. `relation_type` will get mapped to the unique
         #    `(src_node_type, relation_type, dst_node_type)` tuple.
