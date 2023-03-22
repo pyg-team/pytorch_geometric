@@ -176,7 +176,8 @@ def test_rewind(architecture, link_prediction):
     pruned_model.apply_mask(mask.to_dict())
     pruned_model.rewind({**mask.to_dict(weight_prefix=True), **initial_params})
 
-    for param in (mask.to_dict(weight_prefix=True) | initial_params).values():
+    for param in ({**mask.to_dict(weight_prefix=True),
+                   **initial_params}).values():
         assert not param.requires_grad
         assert param.grad is None
 
@@ -194,7 +195,7 @@ def test_search_train(architecture, link_prediction, ugs):
 
     model = build_test_model(architecture, link_prediction)
     mask_names = [
-        name.removeprefix('model.') + GLTModel.MASK
+        name + GLTModel.MASK
         for name, _ in model.named_parameters()
     ]
 
@@ -238,7 +239,7 @@ def test_search_prune(architecture, link_prediction):
     init_params, mask_dict = search.prune()
 
     for name, value in params.items():
-        mask_name = name.removeprefix('model.') + GLTModel.MASK
+        mask_name = name + GLTModel.MASK
         assert mask_name in mask_dict.keys()
         assert value.shape == mask_dict[mask_name].shape
         assert 'module.' + name + GLTModel.ORIG in init_params.keys()

@@ -314,50 +314,49 @@ class GLTSearch:
     Lottery Ticket Hypothesis for Graph Neural Networks
     <https://arxiv.org/abs/2102.06790>`_ paper.
 
-        This paper presents a unified GNN sparsification (UGS) framework that
-        simultaneously prunes the graph adjacency matrix and the model
-        weights, for accelerating GNN inference on large-scale graphs. This
-        pruning wrapper supports all models that can handle weighted graphs
-        that are differentiable w.r.t. these edge weights, *e.g.*,
-        :class:`~torch_geometric.nn.conv.GCNConv` or
-        :class:`~torch_geometric.nn.conv.GraphConv`.
+    This paper presents a unified GNN sparsification (UGS) framework that
+    simultaneously prunes the graph adjacency matrix and the model weights,
+    for accelerating GNN inference on large-scale graphs. This pruning
+    wrapper supports all models that can handle weighted graphs that are
+    differentiable w.r.t. these edge weights, *e.g.*,
+    :class:`~torch_geometric.nn.conv.GCNConv` or
+    :class:`~torch_geometric.nn.conv.GraphConv`.
 
-        GLTSearch class provides an interface to prune a model to a specified
-        graph/model pruning rate.
+    GLTSearch class provides an interface to prune a model to a specified
+    graph/model pruning rate.
 
-        This methodology is built for both node classification and link
-        prediction, but any other tasks should be easily extensible given the
-        appropriate loss function and data.
+    This methodology is built for both node classification and link
+    prediction, but any other tasks should be easily extensible given the
+    appropriate loss function and data.
 
-        .. note::
-            For examples of using the GLTSearch, see
-            `examples/contrib/graph_lottery_ticket.py
-            <https://github.com/pyg-team/pytorch_geometric/blob/master/
-            examples/contrib/graph_lottery_ticket.py>`_.
+    .. note::
+        For examples of using the GLTSearch, see
+        `examples/contrib/graph_lottery_ticket.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/
+        examples/contrib/graph_lottery_ticket.py>`_.
 
-        Args:
-            module (torch.nn.Module): The GNN module to prune.
-            graph (torch_geometric.data.Data): Graph to perform GLT search
-                over.
-            lr (float): Learning rate for training. Is propagated to masks if
-                individual lr not specified.
-            reg_graph (float): L2 regularization for graph mask.
-            reg_model (float): L2 regularization for model masks.
-            optim_args (dict): Args for internal optimizer.
-            task (str): Specifies to use node or link train loop.
-            lr_mask_model (float, optional):  LR to apply to model mask only.
-            lr_mask_graph Optional[float] LR to apply to graph mask only.
-            optimizer (torch.optim.Optimizer): Optimizer to use for training.
-            prune_rate_model (float): Sparsity level induced in model masks.
-            prune_rate_graph (float): Sparsity level induced in graph mask.
-            max_train_epochs (int): max number of epochs to train.
-            loss_fn (callable): loss function to train with.
-            save_all_masks (bool): toggles saving all masks.
-            seed (int): random seed.
-            verbose (bool): toggles trainer verbosity.
-            ignore_keys (set, optional): Set of keys to ignore when injecting
-                masks into the model.
-        """
+    Args:
+        module (torch.nn.Module): The GNN module to prune.
+        graph (torch_geometric.data.Data): Graph to perform GLT search over.
+        lr (float): Learning rate for training. Is propagated to masks if
+        individual lr not specified.
+        reg_graph (float): L2 regularization for graph mask.
+        reg_model (float): L2 regularization for model masks.
+        optim_args (dict): Args for internal optimizer.
+        task (str): Specifies to use node or link train loop.
+        lr_mask_model (float, optional):  LR to apply to model mask only.
+        lr_mask_graph Optional[float] LR to apply to graph mask only.
+        optimizer (torch.optim.Optimizer): Optimizer to use for training.
+        prune_rate_model (float): Sparsity level induced in model masks.
+        prune_rate_graph (float): Sparsity level induced in graph mask.
+        max_train_epochs (int): max number of epochs to train.
+        loss_fn (callable): loss function to train with.
+        save_all_masks (bool): toggles saving all masks.
+        seed (int): random seed.
+        verbose (bool): toggles trainer verbosity.
+        ignore_keys (set, optional): Set of keys to ignore when injecting
+        masks into the model.
+    """
     module: Module
     graph: Data
     lr: float
