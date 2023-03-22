@@ -29,7 +29,7 @@ class MySAGEConv(torch.nn.Module):
 
 @withCUDA
 @onlyLinux
-@disableExtensions()
+@disableExtensions
 @withPackage('torch>=2.0.0')
 def test_dynamic_torch_compile(device):
     conv = MySAGEConv(64, 64).to(device)
