@@ -399,7 +399,7 @@ class GLTSearch:
             self.module, self.graph,
             torch.device("cuda" if torch.cuda.is_available() else "cpu"))
 
-    def prune(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def prune(self) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, float]]:
         """UGS algorithm. Train model with UGS to train masks and params.
         Disretize masks by pruning rates. Retrain without UGS for final
         performance. """
@@ -413,25 +413,31 @@ class GLTSearch:
                           ignore_keys=self.ignore_keys)
         ticket.apply_mask(self.mask.to_dict())
 
-        test_score, masks = self.train(ticket, True)
-        print("[UNREWOUND] Final test performance:", test_score)
+        unrewound_test_score, masks = self.train(ticket, True)
+        if self.verbose:
+            print("[UNREWOUND] Final test performance:", unrewound_test_score)
         self.mask.load_and_binarize(masks, self.prune_rate_model,
                                     self.prune_rate_graph)
 
         mask_dict = self.mask.to_dict(weight_prefix=True)
         ticket.rewind({**mask_dict, **initial_params})
-        test_score, masks = self.train(ticket, False)
+        fixed_test_score, masks = self.train(ticket, False)
 
-        print("[FIXED MASK] Final test performance:", test_score)
+        if self.verbose:
+            print("[FIXED MASK] Final test performance:", fixed_test_score)
         current_sparsity = self.mask.sparsity()
-        print(
-            "Graph sparsity:",
-            round(current_sparsity[0], 4),
-            "Model sparsity:",
-            round(current_sparsity[1], 4),
-        )
-
-        return initial_params, self.mask.to_dict()
+        if self.verbose:
+            print(
+                "Graph sparsity:",
+                round(current_sparsity[0], 4),
+                "Model sparsity:",
+                round(current_sparsity[1], 4),
+            )
+        results_dict = {"unrewound_test": unrewound_test_score,
+                        "fixed_test": fixed_test_score,
+                        "graph_sparsity": current_sparsity[0],
+                        "model_sparsity": current_sparsity[1]}
+        return initial_params, self.mask.to_dict(), results_dict
 
     def train(self, ticket: GLTModel,
               ugs: bool) -> Tuple[float, Dict[str, Parameter]]:

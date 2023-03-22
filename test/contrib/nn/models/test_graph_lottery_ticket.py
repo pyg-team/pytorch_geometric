@@ -235,7 +235,7 @@ def test_search_prune(architecture, link_prediction):
         task='link_prediction' if link_prediction else 'node_classification',
         max_train_epochs=2, optim_args={})
 
-    init_params, mask_dict = search.prune()
+    init_params, mask_dict, _ = search.prune()
 
     for name, value in params.items():
         mask_name = name + GLTModel.MASK
