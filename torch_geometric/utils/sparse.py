@@ -101,9 +101,8 @@ def to_torch_coo_tensor(
             If set to :obj:`None`, will infer a quadratic sparse matrix based
             on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
         is_coalesced (bool): If set to :obj:`True`, will assume that
-            :obj:`edge_index` is already coalesced to avoid expensive and
-            useless computation within :class:`torch.sparse.coo_tensor`.
-            (default: :obj:`False`)
+            :obj:`edge_index` is already coalesced and avoids expensive
+            computation. (default: :obj:`False`)
 
     :rtype: :class:`torch.sparse.Tensor`
 
@@ -157,9 +156,8 @@ def to_torch_csr_tensor(
             If set to :obj:`None`, will infer a quadratic sparse matrix based
             on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
         is_coalesced (bool): If set to :obj:`True`, will assume that
-            :obj:`edge_index` is already coalesced to avoid expensive and
-            useless computation within :class:`torch.sparse.coo_tensor`.
-            (default: :obj:`False`)
+            :obj:`edge_index` is already coalesced and avoids expensive
+            computation. (default: :obj:`False`)
 
     :rtype: :class:`torch.sparse.Tensor`
 
@@ -198,9 +196,8 @@ def to_torch_csc_tensor(
             If set to :obj:`None`, will infer a quadratic sparse matrix based
             on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
         is_coalesced (bool): If set to :obj:`True`, will assume that
-            :obj:`edge_index` is already coalesced to avoid expensive and
-            useless computation within :class:`torch.sparse.coo_tensor`.
-            (default: :obj:`False`)
+            :obj:`edge_index` is already coalesced and avoids expensive
+            computation. (default: :obj:`False`)
 
     :rtype: :class:`torch.sparse.Tensor`
 
