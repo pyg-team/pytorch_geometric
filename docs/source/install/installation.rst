@@ -1,7 +1,7 @@
 Installation
 ============
 
-:pyg:`PyG` is available for Python 3.7 to Python 3.10.
+:pyg:`PyG` is available for Python 3.7 to Python 3.11.
 
 .. note::
    We do not recommend installation as a root user on your system Python.
@@ -16,7 +16,7 @@ Quick Start
 Installation via Anaconda
 -------------------------
 
-You can now install :pyg:`PyG` via `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS/PyTorch/CUDA combinations 🤗
+You can now install :pyg:`PyG` via `Anaconda <https://anaconda.org/pyg/pyg>`_ for all major OS, :pytorch:`PyTorch` and CUDA combinations 🤗
 If you have not yet installed :pytorch:`PyTorch`, install it via :obj:`conda` as described in its `official documentation <https://pytorch.org/get-started/locally/>`_.
 Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.8.0`), simply run
 
@@ -25,15 +25,37 @@ Given that you have :pytorch:`PyTorch` installed (:obj:`>=1.8.0`), simply run
    conda install pyg -c pyg
 
 .. warning::
-   Conda packages are currently not available for M1/M2/M3 macs.
-   Please install the extension packages `from source <installation.html#installation-from-source>`__.
+   Conda packages are currently not available for Windows and M1/M2/M3 macs.
 
-Installation via Pip Wheels
----------------------------
+Installation via PyPi
+---------------------
 
-We have outsourced a lot of functionality of :pyg:`PyG` to other packages, which needs to be installed in advance.
-These packages come with their own CPU and GPU kernel implementations based on the `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
-We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinations, see `here <https://data.pyg.org/whl>`__:
+From :pyg:`null` **PyG 2.3** onwards, you can install and use :pyg:`PyG` **without any external library** required except for :pytorch:`PyTorch`.
+For this, simply run
+
+.. code-block:: none
+
+   pip install torch_geometric
+
+Additional Libraries
+--------------------
+
+If you want to utilize the full set of features from :pyg:`PyG`, there exists several additional libraries you may want to install:
+
+* `pyg-lib <https://github.com/pyg-team/pyg-lib>`__: Heterogeneous GNN operators and graph sampling routines
+* `torch-scatter <https://github.com/rusty1s/pytorch_scatter>`__: Accelerated and efficient sparse reductions
+* `torch-sparse <https://github.com/rusty1s/pytorch_sparse>`__: :class:`SparseTensor` support, see `here <https://pytorch-geometric.readthedocs.io/en/latest/advanced/sparse_tensor.html>`__
+* `torch-cluster <https://github.com/rusty1s/pytorch_cluster>`__: Graph clustering routines
+* `torch-spline-conv <https://github.com/rusty1s/pytorch_spline_conv>`__: :class:`~torch_geometric.nn.conv.SplineConv` support
+
+These packages come with their own CPU and GPU kernel implementations based on the :pytorch:`null` `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
+For a basic usage of :pyg:`PyG`, these dependencies are **fully optional**.
+We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
+
+Installation from Wheels
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+For ease of installation of these extensions, we provide :obj:`pip` wheels for these packages for all major OS, :pytorch:`PyTorch` and CUDA combinations, see `here <https://data.pyg.org/whl>`__:
 
 .. warning::
    Wheels are currently not available for M1/M2/M3 macs.
@@ -44,59 +66,46 @@ We provide pip wheels for these packages for all major OS/PyTorch/CUDA combinati
    .. code-block:: none
 
       python -c "import torch; print(torch.__version__)"
-      >>> 1.13.0
+      >>> 2.0.0
 
 #. Find the CUDA version :pytorch:`PyTorch` was installed with:
 
    .. code-block:: none
 
       python -c "import torch; print(torch.version.cuda)"
-      >>> 11.6
+      >>> 11.7
 
 #. Install the relevant packages:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
-      pip install torch-geometric
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
+   * :pytorch:`PyTorch` 2.0: :obj:`${TORCH}=2.0.0` and :obj:`${CUDA}=cpu|cu117|cu118`
    * :pytorch:`PyTorch` 1.13: :obj:`${TORCH}=1.13.0` and :obj:`${CUDA}=cpu|cu116|cu117`
-   * :pytorch:`PyTorch` 1.12: :obj:`${TORCH}=1.12.0` and :obj:`${CUDA}=cpu|cu102|cu113|cu116`
 
-   For example, for :pytorch:`PyTorch` 1.13.* and CUDA 11.6, type:
-
-   .. code-block:: none
-
-      pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-1.13.0+cu116.html
-      pip install torch-geometric
-
-   For :pytorch:`PyTorch` 1.12.* and CUDA 11.3, type:
+   For example, for :pytorch:`PyTorch` 2.0.* and CUDA 11.7, type:
 
    .. code-block:: none
 
-     pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-1.12.0+cu113.html
-     pip install torch-geometric
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.0+cu117.html
 
-#. Install additional packages *(optional)*:
-
-   To add additional functionality to :pyg:`PyG`, such as k-NN and radius graph generation or :class:`~torch_geometric.nn.conv.SplineConv` support, run
+   For :pytorch:`PyTorch` 1.13.* and CUDA 11.6, type:
 
    .. code-block:: none
 
-      pip install torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+     pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-1.13.0+cu116.html
 
-   following the same procedure as mentioned above.
-
-**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0, 1.7.1, 1.8.0, 1.8.1, 1.9.0, 1.10.0, 1.10.1, 1.10.2, and 1.11.0 (following the same procedure).
+**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0, 1.7.1, 1.8.0, 1.8.1, 1.9.0, 1.10.0, 1.10.1, 1.10.2, 1.11.0, 1.12.0 and 1.12.1 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
 
 Installation from Source
-------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-In case a specific version is not supported by `our wheels <https://data.pyg.org/whl>`_, you can alternatively install :pyg:`PyG` from source:
+In case a specific version is not supported by `our wheels <https://data.pyg.org/whl>`_, you can alternatively install them from source:
 
 #. Ensure that your CUDA is setup correctly (optional):
 
@@ -136,30 +145,27 @@ In case a specific version is not supported by `our wheels <https://data.pyg.org
       .. code-block:: none
 
          nvcc --version
-         >>> 11.3
+         >>> 11.6
 
    #. Ensure that :pytorch:`PyTorch` and system CUDA versions match:
 
       .. code-block:: none
 
          python -c "import torch; print(torch.version.cuda)"
-         >>> 11.3
+         >>> 11.6
 
          nvcc --version
-         >>> 11.3
+         >>> 11.6
 
 #. Install the relevant packages:
 
    .. code-block:: none
 
-      pip install git+https://github.com/pyg-team/pyg-lib.git
-      pip install torch_scatter torch_sparse torch_geometric
-
-#. Install additional packages *(optional)*:
-
-   .. code-block:: none
-
-      pip install torch_cluster torch_spline_conv
+      pip install --verbose git+https://github.com/pyg-team/pyg-lib.git
+      pip install --verbose torch_scatter
+      pip install --verbose torch_sparse
+      pip install --verbose torch_cluster
+      pip install --verbose torch_spline_conv
 
 In rare cases, CUDA or Python path problems can prevent a successful installation.
 :obj:`pip` may even signal a successful installation, but execution simply crashes with :obj:`Segmentation fault (core dumped)`.

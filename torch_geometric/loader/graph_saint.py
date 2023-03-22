@@ -56,7 +56,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
         assert not data.edge_index.is_cuda
 
         self.num_steps = num_steps
-        self.__batch_size__ = batch_size
+        self._batch_size = batch_size
         self.sample_coverage = sample_coverage
         self.save_dir = save_dir
         self.log = log
@@ -71,34 +71,34 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
 
         self.data = data
 
-        super().__init__(self, batch_size=1, collate_fn=self.__collate__,
+        super().__init__(self, batch_size=1, collate_fn=self._collate,
                          **kwargs)
 
         if self.sample_coverage > 0:
-            path = osp.join(save_dir or '', self.__filename__)
+            path = osp.join(save_dir or '', self._filename)
             if save_dir is not None and osp.exists(path):  # pragma: no cover
                 self.node_norm, self.edge_norm = torch.load(path)
             else:
-                self.node_norm, self.edge_norm = self.__compute_norm__()
+                self.node_norm, self.edge_norm = self._compute_norm()
                 if save_dir is not None:  # pragma: no cover
                     torch.save((self.node_norm, self.edge_norm), path)
 
     @property
-    def __filename__(self):
+    def _filename(self):
         return f'{self.__class__.__name__.lower()}_{self.sample_coverage}.pt'
 
     def __len__(self):
         return self.num_steps
 
-    def __sample_nodes__(self, batch_size):
+    def _sample_nodes(self, batch_size):
         raise NotImplementedError
 
     def __getitem__(self, idx):
-        node_idx = self.__sample_nodes__(self.__batch_size__).unique()
+        node_idx = self._sample_nodes(self._batch_size).unique()
         adj, _ = self.adj.saint_subgraph(node_idx)
         return node_idx, adj
 
-    def __collate__(self, data_list):
+    def _collate(self, data_list):
         assert len(data_list) == 1
         node_idx, adj = data_list[0]
 
@@ -123,7 +123,7 @@ class GraphSAINTSampler(torch.utils.data.DataLoader):
 
         return data
 
-    def __compute_norm__(self):
+    def _compute_norm(self):
         node_count = torch.zeros(self.N, dtype=torch.float)
         edge_count = torch.zeros(self.E, dtype=torch.float)
 
@@ -166,7 +166,7 @@ class GraphSAINTNodeSampler(GraphSAINTSampler):
     r"""The GraphSAINT node sampler class (see
     :class:`~torch_geometric.loader.GraphSAINTSampler`).
     """
-    def __sample_nodes__(self, batch_size):
+    def _sample_nodes(self, batch_size):
         edge_sample = torch.randint(0, self.E, (batch_size, self.batch_size),
                                     dtype=torch.long)
 
@@ -177,7 +177,7 @@ class GraphSAINTEdgeSampler(GraphSAINTSampler):
     r"""The GraphSAINT edge sampler class (see
     :class:`~torch_geometric.loader.GraphSAINTSampler`).
     """
-    def __sample_nodes__(self, batch_size):
+    def _sample_nodes(self, batch_size):
         row, col, _ = self.adj.coo()
 
         deg_in = 1. / self.adj.storage.colcount()
@@ -210,11 +210,11 @@ class GraphSAINTRandomWalkSampler(GraphSAINTSampler):
                          save_dir, log, **kwargs)
 
     @property
-    def __filename__(self):
+    def _filename(self):
         return (f'{self.__class__.__name__.lower()}_{self.walk_length}_'
                 f'{self.sample_coverage}.pt')
 
-    def __sample_nodes__(self, batch_size):
+    def _sample_nodes(self, batch_size):
         start = torch.randint(0, self.N, (batch_size, ), dtype=torch.long)
         node_idx = self.adj.random_walk(start.flatten(), self.walk_length)
         return node_idx.view(-1)
