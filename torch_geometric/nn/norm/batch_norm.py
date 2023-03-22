@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import Optional, Dict
 
 import torch
 from torch import Tensor
 from torch.nn import Parameter
 
+from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.nn.aggr.fused import FusedAggregation
 
 
