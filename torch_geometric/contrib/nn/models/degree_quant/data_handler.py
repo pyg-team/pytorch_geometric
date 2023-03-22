@@ -4,7 +4,7 @@ import torch
 from torch_geometric.utils import degree
 from quantizer import ProbabilisticHighDegreeMask
 
-
+# Function to sample the datset based on the node degree. Uses One hot representation of degree as features for dataset with no features. 
 def get_dataset(path, name, sparse=True, cleaned=False, DQ=None):
     
     if name in ['Cora', 'Citeseer']:
