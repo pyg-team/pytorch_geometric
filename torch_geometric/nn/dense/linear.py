@@ -8,9 +8,8 @@ from torch import Tensor, nn
 from torch.nn.parameter import Parameter
 
 import torch_geometric.typing
-from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.nn import inits
-from torch_geometric.typing import pyg_lib
+from torch_geometric.typing import EdgeType, NodeType, pyg_lib
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
 
