@@ -42,8 +42,6 @@ class GLTModel(Module):
 
         self.module = module
         self.graph = graph
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
         self.ignore_keys = ignore_keys
 
     @property
@@ -198,7 +196,7 @@ class GLTMask:
             torch.ones((graph.edge_index.shape[1] or graph.num_edges),
                        device=device))
         self.weight_mask = {
-            param_name + GLTModel.MASK: INIT_FUNC(torch.ones_like(param))
+            param_name + GLTModel.MASK: INIT_FUNC(torch.ones_like(param, device=device))
             for param_name, param in module.named_parameters() if param_name
         }
 
@@ -459,9 +457,9 @@ class GLTSearch:
                 if ugs:
                     for mask_name, mask in ticket.get_masks().items():
                         if mask_name.startswith("adj"):
-                            loss += self.reg_graph * norm(mask, ord=1)
+                            loss += self.reg_graph * norm(mask.flatten(), ord=1)
                         else:
-                            loss += self.reg_model * norm(mask, ord=1)
+                            loss += self.reg_model * norm(mask.flatten(), ord=1)
 
                 loss.backward()
                 optimizer.step()
