@@ -4,7 +4,6 @@ import os.path as osp
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
