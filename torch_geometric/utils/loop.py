@@ -65,21 +65,22 @@ def remove_self_loops(
                 [3, 4]]))
     """
     size: Optional[Tuple[int, int]] = None
+    layout: Optional[int] = None
 
-    is_sparse = is_torch_sparse_tensor(edge_index)
-    if is_sparse:
+    if is_torch_sparse_tensor(edge_index):
         assert edge_attr is None
+        layout = edge_index.layout
         size = (edge_index.size(0), edge_index.size(1))
         edge_index, edge_attr = to_edge_index(edge_index)
 
     mask = edge_index[0] != edge_index[1]
     edge_index = edge_index[:, mask]
 
-    if is_sparse:
+    if layout is not None:
         assert edge_attr is not None
-        edge_attr = edge_attr[mask]
-        adj = to_torch_coo_tensor(edge_index, edge_attr, size=size)
-        return adj, None
+        adj = to_torch_coo_tensor(edge_index, edge_attr[mask], size,
+                                  is_coalesced=True)
+        return adj.to_sparse(layout=layout), None
 
     if edge_attr is None:
         return edge_index, None
@@ -220,10 +221,12 @@ def add_self_loops(
                 [1, 0, 0, 0, 1]]),
         tensor([0.5000, 0.5000, 0.5000, 1.0000, 0.5000]))
     """
+    layout: Optional[int] = None
     is_sparse = is_torch_sparse_tensor(edge_index)
 
     if is_sparse:
         assert edge_attr is None
+        layout = edge_index.layout
         size = (edge_index.size(0), edge_index.size(1))
         edge_index, edge_attr = to_edge_index(edge_index)
     elif isinstance(num_nodes, (tuple, list)):
@@ -261,7 +264,8 @@ def add_self_loops(
 
     edge_index = torch.cat([edge_index, loop_index], dim=1)
     if is_sparse:
-        return to_torch_coo_tensor(edge_index, edge_attr, size=size), None
+        adj = to_torch_coo_tensor(edge_index, edge_attr, size=size)
+        return adj.to_sparse(layout=layout), None
     return edge_index, edge_attr
 
 
