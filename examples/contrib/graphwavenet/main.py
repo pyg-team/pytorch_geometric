@@ -1,10 +1,12 @@
 import argparse
 import os
 import time
+
 import numpy as np
 import torch
 import util
 from model import Model
+
 """
 An example program for GraphWaveNet
 Code in this example has been adapted
