@@ -9,7 +9,7 @@ from torch_geometric.contrib.nn.conv import (
     SE3Norm,
 )
 from torch_geometric.contrib.utils import Fiber
-from torch_geometric.contrib.utils import get_basis, update_basis_with_fused
+from torch_geometric.contrib.utils import get_basis
 from torch_geometric.data import Data
 from torch_geometric.nn.aggr import MaxAggregation, MeanAggregation
 from torch_geometric.typing import Adj
@@ -18,7 +18,10 @@ from torch_geometric.typing import Adj
 class SE3Transformer(torch.nn.Module):
     r"""The SE(3)-Equivariant Graph Transformer from the
     `"SE(3)-Transformers: 3D Roto-Translation Equivariant Attention Networks"
-    <https://arxiv.org/abs/2006.10503>`_ paper.
+    <https://arxiv.org/abs/2006.10503>`_ paper. Is composed of
+    :class:`~torch_geometric.contrib.nn.conv.SE3Conv` and
+    :class:`~torch_geometric.contrib.nn.conv.SE3GATConv` layers, with optional
+    pooling and MLP layers at the end.
 
     .. note::
 
@@ -26,7 +29,19 @@ class SE3Transformer(torch.nn.Module):
         `examples/contrib/se3transformer_qm9.py`_.
 
     Args:
-        pass
+        num_layers (int): Number of attention layers
+        fiber_in (:class:`torch_geometric.contrib.utils.Fiber`): Input fiber description
+        fiber_hidden (:class:`torch_geometric.contrib.utils.Fiber`): Hidden fiber description
+        fiber_out (:class:`torch_geometric.contrib.utils.Fiber`): Output fiber description
+        num_heads (int): Number of attention heads
+        channels_div (int): Channels division before feeding to the attention layer
+        fiber_edge (:class:`torch_geometric.contrib.utils.Fiber`): Input edge fiber description
+        return_type (int, optional): Return only features of this type
+        pooling (str, optional): Graph pooling before MLP layers. Valid options
+            are 'avg' and 'max'
+        output_dim (int): Output dim if pooling
+        use_layer_norm (bool): Apply layer normalization between MLP layers
+        norm (bool): Apply a normalization between MLP layers
     """
 
     def __init__(

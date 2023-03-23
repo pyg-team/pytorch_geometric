@@ -96,15 +96,82 @@ class SE3ConvUnit(torch.nn.Module):
         tmp = (features @ basis_view).view(num_edges, -1, basis.shape[-1])
         return radial_weights @ tmp
 
-        # if basis is not None:
-        #     basis_view = basis.view(num_edges, in_dim, -1)
-        #     tmp = (features @ basis_view).view(num_edges, -1, basis.shape[-1])
-        #     return radial_weights @ tmp
-        # else:
-        #     return radial_weights @ features
-
 
 class SE3Conv(MessagePassing):
+    r"""The SE(3) Equivariant graph convolutional operator from the
+    `"Tensor field networks: Tensor field networks: Rotation- and
+    translation-equivariant neural networks for 3D point clouds"
+    <https://arxiv.org/abs/1802.08219>`_ paper. This convolution can map an arbitrary
+    input Fiber to an arbitrary output Fiber, while preserving equivariance.
+    Features of different degrees interact together to produce output features.
+
+    .. math::
+        \mathbf{x}^{\prime, \ell}_i =
+        \sum_{j \in \mathcal{N}(i)} \sum_{k \ge 0}
+        \Theta^{\ell,k} (\mathbf{e}_{i,j}) \mathbf{x}_j^k
+
+    Where :math:`\mathbf{x}^{\prime, \ell}` are the output node features of x
+    that are type-:math:`\ell`, and :math:`\mathbf{e}_{i,j}` are the edge features.
+
+    To maintain rotational equivariance, each
+    :math:`\Theta^{\ell,k}()\mathbf{e}_{i,j}` must be a linear combination of
+    equivariant bases so that
+
+    .. math::
+        \Theta^{\ell,k}(\mathbf{e}_{i,j}) =
+        \sum_{J=|k-\ell|}^{k+\ell}
+        \varphi^{\ell,k}_J(e^0_{i,j}) \Theta^{\ell,k}_J(e_{i,j})
+
+    Where $\varphi^{\ell,k}_J$ is a learnable function that takes in the type-0
+    (rotation invariant) edge features (including the edge length) and outputs
+    a real coefficient, and
+
+    .. math::
+        \Theta^{\ell,k}_J(e_{i,j}) =
+        \sum_{-J}^{J}
+        Y_{J,m}(\mathbf{x_j}^\text{pos} - \mathbf{x}_i^{\text{pos}})
+        \mathbf{Q}^{\ell,k}_{J,m}
+
+
+    Here, :math:`\mathbf{Q}^{\ell,k}_{J,m}` is the Clebsch-Gordon matrix of
+    shape :math:`(2\ell + 1) \times (2k + 1)` and
+    :math:`Y_{J,m}` is the :math:`m^{\text{th}}` dimension of the
+    :math:`J^{\text{th}}` spherical harmonic
+    :math:`Y_J : \mathbb{R}^3 \to \mathbb{R}^{2J+1}`.
+
+    If `self_interaction` is True
+
+    .. math::
+        \mathbf{x}^{\prime, \ell}_i =
+        w^{\ell,\ell}x^{\ell}_i +
+        \sum_{j \in \mathcal{N}(i)} \sum_{k \ge 0}
+        \Theta^{\ell,k} (\mathbf{e}_{i,j}) \mathbf{x}_j^k
+
+
+    Note 1:
+        The option is given to not pool the output. This means that the convolution
+        sum over neighbors will not be done, and the returned features will be edge
+        features instead of node features.
+
+    Note 2:
+        Unlike the original paper and implementation, this convolution can handle
+        edge feature of degree greater than 0. Input edge features are concatenated
+        with input source node features before the kernel is applied.
+
+    Args:
+        fiber_in (:class:`torch_geometric.contrib.utils.Fiber`): Fiber
+            describing the input features
+        fiber_out (:class:`torch_geometric.contrib.utils.Fiber`): Fiber
+            describing the output features
+        fiber_edge (:class:`torch_geometric.contrib.utils.Fiber`): Fiber
+            describing the edge features
+        use_layer_norm (bool): Apply layer normalization between MLP layers
+        self_interaction (bool, optional): Apply self-interaction of nodes
+            (default: :obj:`False`)
+        aggregate (bool, optional): If False, returns edge features without
+            aggregation.
+            (default: :obj:`True`)
+    """
     def __init__(
         self,
         fiber_in,
@@ -114,10 +181,6 @@ class SE3Conv(MessagePassing):
         self_interaction: bool = False,
         aggregate: bool = True,
     ):
-        """
-        Params:
-            aggregate - if false return per edge values
-        """
         super().__init__(node_dim=0, aggr="add")
         self.fiber_in = fiber_in
         self.fiber_out = fiber_out
@@ -125,9 +188,7 @@ class SE3Conv(MessagePassing):
         self.self_interaction = self_interaction
         self.aggr = aggregate
 
-        # common_args = dict(edge_dim=fiber_edge[0] + 1, use_layer_norm=use_layer_norm)
         common_args = dict(edge_dim=fiber_edge[0], use_layer_norm=use_layer_norm)
-
 
         self.conv = torch.nn.ModuleDict()
         for (degree_in, channels_in), (degree_out, channels_out) in (
@@ -172,15 +233,22 @@ class SE3Conv(MessagePassing):
                 )
             in_features.append(src_node_features)
 
+        # x^l = out[str(degree_out)]
         for degree_out in self.fiber_out.degrees:
             out_feature = 0
+
+            # \sum_{k \ge 0}
             for degree_in, feature in zip(self.fiber_in.degrees, in_features):
-                dict_key = f"{degree_in},{degree_out}"
+                dict_key = f"{degree_in},{degree_out}" # j,k
                 basis_used = basis.get(dict_key, None)
+
+                # \Omega^{l,k}(e_{i,j}) x^k
                 out_feature += self.conv[dict_key](
                     feature, invariant_edge_feats, basis_used
                 )
+
             if self.aggr:
+                # \sum_{j \in N(i)}
                 out[str(degree_out)] = pyg.utils.scatter(out_feature, dst, reduce="sum")
             else:
                 out[str(degree_out)] = out_feature
@@ -195,7 +263,46 @@ class SE3Conv(MessagePassing):
         return out
 
 class SE3GATConv(MessagePassing):
-    """Multi-headed sparse graph self-attention block with skip connection, linear projection (SE(3)-equivariant)"""
+    r"""SE(3) Equivariant graph attentional operator from the `"SE(3)-Transformers: 3D Roto-Translation Equivariant Attention Networks"
+    <https://arxiv.org/abs/2006.10503>`_ paper)
+
+    .. math::
+        \mathbf{x}^{\prime,\ell}_i = \Theta^{\ell,\ell}_V\mathbf{x}_i^{\ell} +
+        \sum_{j \in \mathcal{N}(i)} \sum_{k \ge 0}
+        \alpha_{i,j} \Theta_V^{\ell,k}(\mathbf{e}_{i,j})\mathbf{x}^k_j
+
+    Where the attention weights :math:`\alpha_{i,j}` are a function of the queries
+    :math:`\mathbf{q}_i` and keys :math:`\mathbf{k}_{i,j}`
+    .. math::
+        \alpha_{i,j} = \frac{\exp( \mathbf{q}_i^{\top} \mathbf{k}_{i,j} )}
+            {\sum_{j' \in \mathcal{N}} \exp( \mathbf{q}_i^{\top} \mathbf{k}_{i,j} )}
+
+    ..math::
+        \mathbf{q}_i = \bigoplus_{\ell \ge 0} \sum_{k \ge 0} \Theta_Q^{\ell, k}x^k_i
+
+    ..math::
+        \mathbf{k}_{i,j} = \bigoplus_{\ell \ge 0} \sum_{k \ge 0} \Theta_K^{\ell, k}(e_{i,j})x^k_j
+
+    Where :math:`\bigoplus` is vector concatenation.
+
+    The parameter matrices :math:`\Theta` are constructed as in :class:`torch_geometric.contrib.utils.SE3Conv`.
+
+
+    Args:
+        fiber_in (:class:`torch_geometric.contrib.utils.Fiber`) Fiber describing the input features
+        fiber_out (:class:`torch_geometric.contrib.utils.Fiber`) Fiber describing the output features
+        fiber_edge (:class:`torch_geometric.contrib.utils.Fiber`) Fiber describing the edge features,
+            including the node distance
+        num_heads (int, optional): Number of attention heads.
+            (default: :obj:`4`)
+        channels_div (int, optional): Divide the channels by this integer for computing values
+            (default :obj:`2`)
+        use_layer_norm (bool, optional): Apply later normalization between MLP layers
+
+    Shapes:
+        - **input:**
+        - **output:**
+    """
 
     def __init__(
         self,
@@ -205,19 +312,7 @@ class SE3GATConv(MessagePassing):
         num_heads: int = 4,
         channels_div: int = 2,
         use_layer_norm: bool = False,
-        max_degree: bool = 4,
-        **kwargs,
     ):
-        """
-        :param fiber_in:         Fiber describing the input features
-        :param fiber_out:        Fiber describing the output features
-        :param fiber_edge:       Fiber describing the edge features (node distances excluded)
-        :param num_heads:        Number of attention heads
-        :param channels_div:     Divide the channels by this integer for computing values
-        :param use_layer_norm:   Apply layer normalization between MLP layers
-        :param max_degree:       Maximum degree used in the bases computation
-        :param fuse_level:       Maximum fuse level to use in TFN convolutions
-        """
         super().__init__(node_dim=0, aggr='add')
         self.num_heads = num_heads
 
@@ -265,8 +360,6 @@ class SE3GATConv(MessagePassing):
         query = self.to_query(node_features)
         key = self.key_query_fiber.to_attention_heads(key, self.num_heads)
         query = self.key_query_fiber.to_attention_heads(query, self.num_heads)
-
-        # z = self.attention(value, key, query, edge_index)
 
         edge_weights = self.edge_updater(edge_index, key=key, query=(query,query))
 
@@ -317,51 +410,6 @@ class SE3GATConv(MessagePassing):
             }
         else:
             raise ValueError("Method must be add/sum or cat/concat")
-
-# class SE3GATConv(MessagePassing):
-#     def __init__(self, num_heads: int, key_fiber: Fiber, value_fiber: Fiber):
-#         """
-#         :param num_heads:     Number of attention heads
-#         :param key_fiber:     Fiber for the keys (and also for the queries)
-#         :param value_fiber:   Fiber for the values
-#         """
-#         super().__init__(node_dim=0, aggr="add")
-#         self.num_heads = num_heads
-#         self.key_fiber = key_fiber
-#         self.value_fiber = value_fiber
-
-#     def forward(
-#         self,
-#         value: Dict[str, Tensor],
-#         key: Dict[str, Tensor],
-#         query: Dict[str, Tensor],
-#         edge_index,
-#     ):
-#         key = self.key_fiber.to_attention_heads(key, self.num_heads)
-#         query = self.key_fiber.to_attention_heads(query, self.num_heads)
-
-#         edge_weights = self.edge_updater(edge_index, key=key, query=(query, query))
-
-#         out = {}
-#         for degree, channels in self.value_fiber:
-#             v = value[str(degree)].view(
-#                 -1, self.num_heads, channels // self.num_heads, _degree_to_dim(degree)
-#             )
-#             agg = self.propagate(edge_index, value=v, edge_weights=edge_weights)
-#             out[str(degree)] = agg.view(
-#                 -1, channels, _degree_to_dim(degree)
-#             )  # merge heads
-
-#         return out
-
-#     def edge_update(self, key, query_j, index, ptr) -> Tensor:
-#         alpha = (query_j * key).sum(-1)
-#         alpha = softmax(alpha, index, ptr)
-#         return alpha.reshape(-1, self.num_heads, 1, 1)
-
-#     def message(self, value, edge_weights):
-#         return edge_weights * value
-
 
 class SE3Linear(torch.nn.Module):
     """
