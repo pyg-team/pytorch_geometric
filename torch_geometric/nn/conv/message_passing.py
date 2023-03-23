@@ -22,14 +22,14 @@ from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
+from torch_geometric.nn.edge_updater import EdgeUpdater
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
     is_sparse,
     is_torch_sparse_tensor,
-    to_edge_index,
+    to_edge_index
 )
-
 from .utils.inspector import Inspector, func_body_repr, func_header_repr
 from .utils.jit import class_from_module_repr
 from .utils.typing import (
@@ -40,6 +40,14 @@ from .utils.typing import (
 )
 
 FUSE_AGGRS = {'add', 'sum', 'mean', 'min', 'max'}
+
+
+def copy_signature(frm, to):
+    def wrapper(*args, **kwargs):
+        return to(*args, **kwargs)
+    wrapper.__signature__ = inspect.signature(frm)
+    wrapper.__name__ = to.__name__
+    return wrapper
 
 
 class MessagePassing(torch.nn.Module):
@@ -105,12 +113,13 @@ class MessagePassing(torch.nn.Module):
     special_args: Set[str] = {
         'edge_index', 'adj_t', 'edge_index_i', 'edge_index_j', 'size',
         'size_i', 'size_j', 'ptr', 'index', 'dim_size',
-        'edge_weight', 'edge_attr', 'edge_type'
+        'edge_weight', 'edge_attr', 'edge_type', 'num_nodes',
     }
 
     def __init__(
         self,
         aggr: Optional[Union[str, List[str], Aggregation]] = "add",
+        edge_updater: EdgeUpdater = None,
         *,
         aggr_kwargs: Optional[Dict[str, Any]] = None,
         flow: str = "source_to_target",
@@ -134,6 +143,11 @@ class MessagePassing(torch.nn.Module):
                 f"Only strings, list, tuples and instances of"
                 f"`torch_geometric.nn.aggr.Aggregation` are "
                 f"valid aggregation schemes (got '{type(aggr)}').")
+
+        self.edge_updater = edge_updater
+        if self.edge_updater is not None and \
+                type(self).edge_update == MessagePassing.edge_update:
+            self.edge_update = copy_signature(frm=self.edge_updater.forward, to=self.edge_update)
 
         self.flow = flow
 
@@ -238,7 +252,7 @@ class MessagePassing(torch.nn.Module):
                 (f'Encountered tensor with size {src.size(self.node_dim)} in '
                  f'dimension {self.node_dim}, but expected size {the_size}.'))
 
-    def __lift__(self, src, index):
+    def _lift(self, src, index):
         try:
             return src.index_select(self.node_dim, index)
         except (IndexError, RuntimeError) as e:
@@ -278,13 +292,9 @@ class MessagePassing(torch.nn.Module):
             out = dict.get(key, None)
             return alt if out is None else out
 
-        if is_torch_sparse_tensor(edge_index):
+        if is_torch_sparse_tensor(edge_index) or isinstance(edge_index, SparseTensor):
             indices, values = to_edge_index(edge_index)
-            num_nodes = max(edge_index.size(0), edge_index.size(1))
 
-            out['ptr'] = None  # TODO Get `rowptr` from CSR representation.
-            out['adj_t'] = edge_index
-            out['edge_index'] = None
             out['edge_index_i'] = get_value(kwargs, 'edge_index_i', indices[0])
             out['edge_index_j'] = get_value(kwargs, 'edge_index_j', indices[1])
             out['edge_weight'] = get_value(kwargs, 'edge_weight', values)
@@ -292,35 +302,36 @@ class MessagePassing(torch.nn.Module):
                                          None if values.dim() == 1 else values)
             out['edge_type'] = get_value(kwargs, 'edge_type', values)
 
+            # TODO This is only needed because of the ptr (to reorder tensors properly)
+            if isinstance(edge_index, SparseTensor):
+                edge_index = SparseTensor(row=out['edge_index_i'],
+                                          col=out['edge_index_j'],
+                                          value=out['edge_weight'],
+                                          sparse_sizes=size)
+                out['adj_t'] = edge_index
+                out['ptr'] = edge_index.storage.rowptr()
+                out['edge_index'] = None
+                indices, values = to_edge_index(edge_index)
+                out['edge_index_i'] = indices[0]
+                out['edge_index_j'] = indices[1]
+                out['edge_weight'] = values
+
         elif isinstance(edge_index, Tensor):
             values = torch.ones(edge_index.size(1), device=edge_index.device)
-            num_nodes = int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
 
-            out['ptr'] = None
-            out['adj_t'] = None
-            out['edge_index'] = edge_index
             out['edge_index_i'] = get_value(kwargs, 'edge_index_i', edge_index[i])
             out['edge_index_j'] = get_value(kwargs, 'edge_index_j', edge_index[j])
             out['edge_weight'] = get_value(kwargs, 'edge_weight', values)
             out['edge_attr'] = get_value(kwargs, 'edge_attr', None)
             out['edge_type'] = get_value(kwargs, 'edge_type', values)
 
-        elif isinstance(edge_index, SparseTensor):
-            num_nodes = max(edge_index.size(0), edge_index.size(1))
-
-            out['ptr'] = edge_index.storage.rowptr()
-            out['adj_t'] = edge_index
-            out['edge_index'] = None
-            out['edge_index_i'] = get_value(kwargs, 'edge_index_i', edge_index.storage.row())
-            out['edge_index_j'] = get_value(kwargs, 'edge_index_j', edge_index.storage.col())
-            out['edge_weight'] = get_value(kwargs, 'edge_weight', edge_index.storage.value())
-            out['edge_attr'] = get_value(kwargs, 'edge_attr', edge_index.storage.value())  # TODO This is an inconsistent behaviour wrt the other types of edge_indexes
-            out['edge_type'] = get_value(kwargs, 'edge_type', edge_index.storage.value())
-
         else:
             raise ValueError(f'edge_index must by of type torch.Tensor, '
                              f'torch.sparse.Tensor, or SparseTensor.')  # TODO Improve
 
+        max_i = out['edge_index_i'].max() if out['edge_index_i'].numel() > 0 else 0
+        max_j = out['edge_index_j'].max() if out['edge_index_j'].numel() > 0 else 0
+        num_nodes = 1 + int(max(max_i, max_j))
         out['num_nodes'] = get_value(kwargs, 'num_nodes', num_nodes)
 
         for arg in args:
@@ -339,7 +350,7 @@ class MessagePassing(torch.nn.Module):
 
                     if isinstance(data, Tensor):
                         self.__set_size__(size, dim, data)
-                        data = self.__lift__(data, out[f'edge_index{arg[-2:]}'])
+                        data = self._lift(data, out[f'edge_index{arg[-2:]}'])
 
                     out[arg] = data
 
@@ -590,7 +601,7 @@ class MessagePassing(torch.nn.Module):
         """
         return inputs
 
-    def edge_update(self) -> Dict:
+    def edge_update(self, **kwargs) -> Dict:
         r"""Computes or updates features for each edge in the graph.
         This function can take any argument as input which was initially passed
         to :meth:`edge_updater`.
@@ -599,7 +610,9 @@ class MessagePassing(torch.nn.Module):
         :obj:`_j` to the variable name, *.e.g.* :obj:`x_i` and :obj:`x_j`.
         TODO
         """
-        return {}
+        if self.edge_updater is None:
+            return {}
+        return self.edge_updater(**kwargs)
 
     def register_propagate_forward_pre_hook(self,
                                             hook: Callable) -> RemovableHandle:
