@@ -39,7 +39,7 @@ class SubgraphData(Data):
 
 
 class SubgraphPolicy(BaseTransform):
-    def __init__(self, subgraph_transform = None):
+    def __init__(self, subgraph_transform=None):
         self.subgraph_transform = subgraph_transform
 
     def graph_to_subgraphs(self, data: Data) -> List[Data]:
