@@ -1,41 +1,31 @@
-import torch
-import numpy as np
 import argparse
 import os
 import time
+
+import numpy as np
+import torch
 import util
 from model import Model
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--device', type=str, default='cpu', help='')
-parser.add_argument('--data',
-                    type=str,
-                    default='data/METR-LA',
+parser.add_argument('--data', type=str, default='data/METR-LA',
                     help='data path')
-parser.add_argument('--adjdata',
-                    type=str,
+parser.add_argument('--adjdata', type=str,
                     default='data/sensor_graph/adj_mx.pkl',
                     help='adj data path')
 parser.add_argument('--in_dim', type=int, default=2, help='inputs dimension')
-parser.add_argument('--num_nodes',
-                    type=int,
-                    default=207,
+parser.add_argument('--num_nodes', type=int, default=207,
                     help='number of nodes')
 parser.add_argument('--batch_size', type=int, default=64, help='batch size')
-parser.add_argument('--learning_rate',
-                    type=float,
-                    default=0.001,
+parser.add_argument('--learning_rate', type=float, default=0.001,
                     help='learning rate')
 parser.add_argument('--dropout', type=float, default=0.3, help='dropout rate')
-parser.add_argument('--weight_decay',
-                    type=float,
-                    default=0.0001,
+parser.add_argument('--weight_decay', type=float, default=0.0001,
                     help='weight decay rate')
 parser.add_argument('--epochs', type=int, default=100, help='')
 parser.add_argument('--print_every', type=int, default=50, help='')
-parser.add_argument('--save',
-                    type=str,
-                    default='data/checkpoint',
+parser.add_argument('--save', type=str, default='data/checkpoint',
                     help='save path')
 
 args = parser.parse_args()
@@ -76,9 +66,9 @@ def main():
             train_rmse.append(metrics[2])
             if iter % args.print_every == 0:
                 log = 'Iter: {:03d}, Train Loss: {:.4f}, Train MAPE: {:.4f}, Train RMSE: {:.4f}'
-                print(log.format(iter, train_loss[-1], train_mape[-1],
-                                 train_rmse[-1]),
-                      flush=True)
+                print(
+                    log.format(iter, train_loss[-1], train_mape[-1],
+                               train_rmse[-1]), flush=True)
         t2 = time.time()
         train_time.append(t2 - t1)
         #validation
@@ -114,9 +104,9 @@ def main():
                        args.save + "/epoch_" + str(i) + ".pth")
 
         log = 'Epoch: {:03d}, Train Loss: {:.4f}, Train MAPE: {:.4f}, Train RMSE: {:.4f}, Valid Loss: {:.4f}, Valid MAPE: {:.4f}, Valid RMSE: {:.4f}, Training Time: {:.4f}/epoch'
-        print(log.format(i, mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss,
-                         mvalid_mape, mvalid_rmse, (t2 - t1)),
-              flush=True)
+        print(
+            log.format(i, mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss,
+                       mvalid_mape, mvalid_rmse, (t2 - t1)), flush=True)
     print("Average Training Time: {:.4f} secs/epoch".format(
         np.mean(train_time)))
     print("Average Inference Time: {:.4f} secs".format(np.mean(val_time)))

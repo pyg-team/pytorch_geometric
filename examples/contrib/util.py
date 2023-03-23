@@ -1,12 +1,12 @@
-import pickle
-import numpy as np
 import os
+import pickle
+
+import numpy as np
 import scipy.sparse as sp
 import torch
 
 
 class DataLoader(object):
-
     def __init__(self, xs, ys, batch_size):
         self.batch_size = batch_size
         self.current_ind = 0
@@ -46,7 +46,6 @@ class StandardScaler():
     """
     Standard the input
     """
-
     def __init__(self, mean, std):
         self.mean = mean
         self.std = std
@@ -87,9 +86,7 @@ def load_adj(pkl_filename):
     return sensor_ids, sensor_id_to_ind, adj_mx
 
 
-def load_dataset(dataset_dir,
-                 batch_size,
-                 valid_batch_size=None,
+def load_dataset(dataset_dir, batch_size, valid_batch_size=None,
                  test_batch_size=None):
     data = {}
     for category in ['train', 'val', 'test']:

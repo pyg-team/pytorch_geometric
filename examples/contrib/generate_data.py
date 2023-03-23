@@ -1,18 +1,19 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+)
 
 import argparse
-import numpy as np
 import os
+
+import numpy as np
 import pandas as pd
 import requests
 
 
-def generate_graph_seq2seq_io_data(df,
-                                   x_offsets,
-                                   y_offsets,
+def generate_graph_seq2seq_io_data(df, x_offsets, y_offsets,
                                    add_time_in_day=True):
 
     num_samples, num_nodes = df.shape
@@ -57,8 +58,7 @@ def generate_train_val_test(args):
         np.concatenate((np.arange(-(seq_length_x - 1), 1, 1), )))
     # Predict the next one hour
     y_offsets = np.sort(np.arange(args.y_start, (seq_length_y + 1), 1))
-    x, y = generate_graph_seq2seq_io_data(df,
-                                          x_offsets=x_offsets,
+    x, y = generate_graph_seq2seq_io_data(df, x_offsets=x_offsets,
                                           y_offsets=y_offsets,
                                           add_time_in_day=True)
 
@@ -87,9 +87,7 @@ def generate_train_val_test(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output_dir",
-                        type=str,
-                        default="data/METR-LA",
+    parser.add_argument("--output_dir", type=str, default="data/METR-LA",
                         help="Output directory.")
     parser.add_argument(
         "--traffic_df_filename",
