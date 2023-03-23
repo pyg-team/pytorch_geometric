@@ -29,14 +29,14 @@ class DSnetwork(torch.nn.Module):
     <https://arxiv.org/abs/2110.02910>` paper.
     :class:`DSnetwork` outputs a graph representation based on the aggregation
     of the subgraph representations.
-    
+
     Both DSS-GNN and DS-GNN model comprise of three components:
     (1) an equivariant feature encoder consisting of H-equivariant layers
     (2) a subgraph readout layer
     (3) a set encoder.
-    
+
         Args:
-        
+
         num_layers(int): number of graph neural network (GNN) layers
         in_dim(int): input node feature dimensionality
         emb_dim(int): hidden node feature dimensionality
