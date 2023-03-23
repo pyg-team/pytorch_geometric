@@ -1,8 +1,10 @@
 import pytest
+
 from torch_geometric.contrib.degree_quant.data_handler import get_dataset
 from torch_geometric.contrib.degree_quant.models import GAT, GCN, GIN
-from torch_geometric.contrib.degree_quant.training import \
-    cross_validation_with_val_set
+from torch_geometric.contrib.degree_quant.training import (
+    cross_validation_with_val_set,
+)
 
 
 @pytest.mark.parametrize('qypte', ['INT4', 'INT8'])
