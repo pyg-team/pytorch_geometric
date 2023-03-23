@@ -10,12 +10,12 @@ from model import Model
 An example program for GraphWaveNet
 Code in this example has been adapted from https://github.com/nnzhan/Graph-WaveNet
 
-Usage: 
+Usage:
 ```
 python main.py
 ```
 
-Help: 
+Help:
 ```
 python main.py --help
 ```

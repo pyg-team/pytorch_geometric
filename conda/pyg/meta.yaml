@@ -1,9 +1,9 @@
 package:
   name: pyg
-  version: 2.2.0
+  version: 2.3.0
 
 source:
-  url: https://files.pythonhosted.org/packages/de/29/dbefbb2b1349638bc9ec5a632d770e8e7fefc2455b8911d675b2ca82d9e1/torch_geometric-2.2.0.tar.gz
+  url: https://files.pythonhosted.org/packages/43/b5/be9795db7756e6c1fa2606c8145ec637552487e72c6428ed0b231f8bcbd3/torch_geometric-2.3.0.tar.gz
 
 requirements:
   host:
@@ -14,9 +14,6 @@ requirements:
     - python {{ environ.get('PYTHON_VERSION') }}
     - {{ environ.get('CONDA_PYTORCH_CONSTRAINT') }}
     - {{ environ.get('CONDA_CUDATOOLKIT_CONSTRAINT') }}
-    - pytorch-scatter
-    - pytorch-sparse
-    - pytorch-cluster
     - psutil
     - tqdm
     - jinja2
@@ -32,9 +29,6 @@ build:
 
 test:
   imports:
-    - torch_scatter
-    - torch_sparse
-    - torch_cluster
     - torch_geometric
     - torch_geometric.nn
     - torch_geometric.data

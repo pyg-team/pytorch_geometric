@@ -11,10 +11,10 @@ from torch_geometric.nn import DenseGCNConv, GCNConv
 
 
 class GraphWaveNet(nn.Module):
-    r""" GraphWaveNet implementation from the 
+    r""" GraphWaveNet implementation from the
     `Graph WaveNet for Deep Spatial-Temporal Graph Modeling
-    <https://arxiv.org/abs/1906.00121>`_ paper. The model takes a list of node embeddings 
-    across several time steps and predicts the output embeddings for the specified 
+    <https://arxiv.org/abs/1906.00121>`_ paper. The model takes a list of node embeddings
+    across several time steps and predicts the output embeddings for the specified
     number of upcoming time steps.
 
     .. note::
@@ -27,8 +27,8 @@ class GraphWaveNet(nn.Module):
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
         out_timesteps (int): The number of time steps for which predictions are generated.
-        dilations (list(int), optional): The set of dilations applied by each temporal convolution 
-            layer. For each dilation :obj:`d`, the temporal convolution captures 
+        dilations (list(int), optional): The set of dilations applied by each temporal convolution
+            layer. For each dilation :obj:`d`, the temporal convolution captures
             information from :obj:`d` time steps prior. (default: :obj:`[1, 2, 1, 2, 1, 2, 1, 2]`)
         adaptive_embeddings (int, optional): The size of the embeddings used to calculate the
             adaptive matrix. (default: :obj:`10`)
@@ -37,7 +37,7 @@ class GraphWaveNet(nn.Module):
         dilation_channels (int, optional): Number of dilation channels (default: :obj:`32`)
         skip_channels (int, optional): Number of skip layer channels (default: :obj:`256`)
         end_channels (int, optional): Size of the final linear layer (default: :obj:`512`)
-    
+
     Shapes:
         - **input:**
           temporal node features :math:`(*, t_{input}, |\mathcal{V}|, F_{in})`,

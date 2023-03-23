@@ -14,15 +14,16 @@ from torch_geometric.typing import (
     SparseTensor,
     torch_sparse,
 )
+from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import add_self_loops as add_self_loops_fn
 from torch_geometric.utils import (
-    add_remaining_self_loops,
     is_torch_sparse_tensor,
     scatter,
     spmm,
     to_edge_index,
 )
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-from torch_geometric.utils.sparse import get_sparse_diag, set_sparse_value
+from torch_geometric.utils.sparse import set_sparse_value
 
 
 @torch.jit._overload
@@ -70,14 +71,8 @@ def gcn_norm(edge_index, edge_weight=None, num_nodes=None, improved=False,
                                       "supported in 'gcn_norm'")
 
         adj_t = edge_index
-
         if add_self_loops:
-            diag = get_sparse_diag(adj_t.size(0), fill_value, adj_t.layout,
-                                   adj_t.dtype, adj_t.device)
-            adj_t = adj_t + diag
-
-        if adj_t.layout == torch.sparse_coo:
-            adj_t = adj_t.coalesce()
+            adj_t, _ = add_self_loops_fn(adj_t, None, fill_value, num_nodes)
 
         edge_index, value = to_edge_index(adj_t)
         col, row = edge_index[0], edge_index[1]
