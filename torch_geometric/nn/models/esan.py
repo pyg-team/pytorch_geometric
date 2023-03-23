@@ -1,9 +1,9 @@
 import torch
 import torch.nn.functional as F
-import torch_scatter
 
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.nn.inits import reset
+from torch_geometric.utils import scatter
 
 
 def subgraph_pool(h_node, batched_data, pool):
@@ -95,9 +95,8 @@ class DSnetwork(torch.nn.Module):
         h_subgraph = subgraph_pool(x, batched_data, global_mean_pool)
 
         # Pool subgraph representations to obtain graph representation
-        h_graph = torch_scatter.scatter(src=h_subgraph,
-                                        index=batched_data.subgraph_id_batch,
-                                        dim=0, reduce="mean")
+        h_graph = scatter(src=h_subgraph, index=batched_data.subgraph_id_batch,
+                          dim=0, reduce="mean")
 
         # Apply final layers and return output
         return self.final_layers(h_graph)
@@ -183,8 +182,7 @@ class DSSnetwork(DSnetwork):
             node_idx = graph_offset + batched_data.subgraph_n_id
 
             # Sum node features across subgraphs
-            x_sum = torch_scatter.scatter(src=x, index=node_idx, dim=0,
-                                          reduce="mean")
+            x_sum = scatter(src=x, index=node_idx, dim=0, reduce="mean")
 
             # Information sharing component
             h2 = bn_sum(
@@ -202,9 +200,8 @@ class DSSnetwork(DSnetwork):
         h_subgraph = subgraph_pool(x, batched_data, global_mean_pool)
 
         # Pool subgraph representations to obtain graph representation
-        h_graph = torch_scatter.scatter(src=h_subgraph,
-                                        index=batched_data.subgraph_id_batch,
-                                        dim=0, reduce="mean")
+        h_graph = scatter(src=h_subgraph, index=batched_data.subgraph_id_batch,
+                          dim=0, reduce="mean")
 
         # Apply final layers and return output
         return self.final_layers(h_graph)
