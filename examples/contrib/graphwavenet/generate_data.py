@@ -123,7 +123,7 @@ if __name__ == "__main__":
             input(
                 f'{args.output_dir} exists. Do you want to overwrite it? (y/n)'
             )).lower().strip()
-        if reply[0] != 'y': 
+        if reply[0] != 'y':
             exit
     else:
         os.makedirs(args.output_dir)
