@@ -19,7 +19,7 @@ from .lazy_loader import LazyLoader
 contrib = LazyLoader('contrib', globals(), 'torch_geometric.contrib')
 graphgym = LazyLoader('graphgym', globals(), 'torch_geometric.graphgym')
 
-__version__ = '2.3.0'
+__version__ = '2.4.0'
 
 __all__ = [
     'seed_everything',

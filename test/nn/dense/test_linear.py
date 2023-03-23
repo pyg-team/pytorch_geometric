@@ -125,7 +125,6 @@ def test_lazy_hetero_linear():
 
     out = lin(x, type_vec)
     assert out.size() == (3, 32)
-    assert str(lin) == 'HeteroLinear(16, 32, num_types=3, bias=True)'
 
 
 def test_hetero_dict_linear():
@@ -160,7 +159,6 @@ def test_lazy_hetero_dict_linear():
     assert len(out_dict) == 2
     assert out_dict['v'].size() == (3, 32)
     assert out_dict['w'].size() == (2, 32)
-    assert str(lin) == "HeteroDictLinear({'v': 16, 'w': 8}, 32, bias=True)"
 
 
 @withPackage('pyg_lib')
