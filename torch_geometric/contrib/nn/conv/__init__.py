@@ -1,1 +1,2 @@
-__all__ = classes = []
+__all__ = classes = ['GraphWaveNet']
+
