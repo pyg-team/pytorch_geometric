@@ -1,4 +1,4 @@
-File structure:
+<!-- File structure:
 - Top level layers in quantized_layers.py (i.e. GINQuant, GCNQuant, LinearQuant etc -- these are exposed in init.py)
 - Each layer subclasses from MessagePassingQuant (baseline, ignoring MultiQuant for now...), present in quantized_layers.py (also exposed in __init__.py)
     - Aggregate function of MPQ should use torch_scatter.scatter with reduce parameter = self.aggr
@@ -33,4 +33,4 @@ utils.py:
             - get_qparams
             - sample_tensor
                 - SAMPLE_CUTOFF add as param with default value 1000
-                    - Understand what this function does
+                    - Understand what this function does -->

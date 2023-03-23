@@ -14,9 +14,27 @@ from gcn_conv import  *
 from gin_conv import *
 
 class GIN(nn.Module):
+
+    """
+
+    Args:
+        in_channels(int): Number of input features 
+        out_channels(int): Number of classes
+        num_layers:(int): Number of GIN layers to use in the model
+        hidden:(int): Hidden dimension for message passing and aggregation
+        dq:(bool): Whether to use Degree Quant 
+        qypte:(str): The Integer precision for Degree Quant 
+        ste:(bool): Whether to use Straight-Through Estimation for the quantization.
+        momentum:(int): Value of the momentum coefficient  
+        percentile:(int): Clips the values at the low and high percentile of the real value distribution
+        sample_prop:(torch.Tensor): Probability of bernoulli mask for each node in the graph
+
+    """
+
     def __init__(
         self,
-        dataset,
+        in_channels,
+        out_channels,
         num_layers:int,
         hidden:int,
         dq:bool,
@@ -28,6 +46,8 @@ class GIN(nn.Module):
     ):
         super(GIN, self).__init__()
 
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.is_dq = dq
         if dq == True:
           gin_layer = GINConvMultiQuant 
@@ -55,7 +75,7 @@ class GIN(nn.Module):
         
         self.conv1 = gin_layer(
             ResettableSequential(
-                Linear(dataset.num_features, hidden),
+                Linear(self.in_channels, hidden),
                 ReLU(),
                 LinearQuantized(hidden, hidden, layer_quantizers=lq),
                 ReLU(),
@@ -81,7 +101,7 @@ class GIN(nn.Module):
             )
 
         self.lin1 = LinearQuantized(hidden, hidden, layer_quantizers=lq_signed)
-        self.lin2 = LinearQuantized(hidden, dataset.num_classes, layer_quantizers=lq)
+        self.lin2 = LinearQuantized(hidden, self.out_channels , layer_quantizers=lq)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -121,9 +141,28 @@ class GIN(nn.Module):
 
 class GCN(nn.Module):
 
+
+    """
+
+    Args:
+        in_channels(int): Number of input features 
+        out_channels(int): Number of classes
+        num_layers:(int): Number of GIN layers to use in the model
+        hidden:(int): Hidden dimension for message passing and aggregation
+        dq:(bool): Whether to use Degree Quant 
+        qypte:(str): The Integer precision for Degree Quant 
+        ste:(bool): Whether to use Straight-Through Estimation for the quantization.
+        momentum:(int): Value of the momentum coefficient  
+        percentile:(int): Clips the values at the low and high percentile of the real value distribution
+        sample_prop:(torch.Tensor): Probability of bernoulli mask for each node in the graph
+
+    """
+
+
     def __init__(
         self,
-        dataset,
+        in_channels,
+        out_channels,
         num_layers,
         hidden,
         dq,
@@ -135,6 +174,8 @@ class GCN(nn.Module):
     ):
         super(GCN, self).__init__()
 
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.is_dq = dq
         if dq == True:
           gcn_layer = GCNConvMultiQuant 
@@ -161,7 +202,7 @@ class GCN(nn.Module):
         )
         
         self.conv1 = gcn_layer(
-                            in_channels = dataset.num_features,
+                            in_channels = self.in_channels,
                             out_channels = hidden,
                             nn= ResettableSequential(Linear(hidden, hidden),
                                                         ReLU(),
@@ -169,10 +210,6 @@ class GCN(nn.Module):
                                                         ReLU(),
                                                         BN(hidden)
                                                     ),
-                            improved=False,
-                            cached=False,
-                            bias=True,
-                            normalize=True,
                             layer_quantizers=lq_signed,
                             mp_quantizers=mq
 
@@ -189,17 +226,13 @@ class GCN(nn.Module):
                                                         ReLU(),
                                                         BN(hidden)
                                                     ),
-                            improved=False,
-                            cached=False,
-                            bias=True,
-                            normalize=True,
                             layer_quantizers=lq_signed,
                             mp_quantizers=mq
                 )
             )
 
         self.lin1 = LinearQuantized(hidden, hidden, layer_quantizers=lq_signed)
-        self.lin2 = LinearQuantized(hidden, dataset.num_classes, layer_quantizers=lq)
+        self.lin2 = LinearQuantized(hidden,  self.out_channels, layer_quantizers=lq)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -230,9 +263,30 @@ class GCN(nn.Module):
 
 class GAT(nn.Module):
 
+    """
+
+    Args:
+        in_channels(int): Number of input features 
+        out_channels(int): Number of classes
+        num_layers:(int): Number of GIN layers to use in the model
+        hidden:(int): Hidden dimension for message passing and aggregation
+        dq:(bool): Whether to use Degree Quant 
+        qypte:(str): The Integer precision for Degree Quant 
+        ste:(bool): Whether to use Straight-Through Estimation for the quantization.
+        momentum:(int): Value of the momentum coefficient  
+        percentile:(int): Clips the values at the low and high percentile of the real value distribution
+        sample_prop:(torch.Tensor): Probability of bernoulli mask for each node in the graph
+
+    """
+
+
+
+
+
     def __init__(
         self,
-        dataset,
+        in_channels,
+        out_channels,
         num_layers,
         hidden,
         dq,
@@ -243,12 +297,13 @@ class GAT(nn.Module):
         sample_prop,
     ):
         super(GAT, self).__init__()
-
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.is_dq = dq
         if dq == True:
           gat_layer = GATConvMultiQuant 
         else:
-          gat_layer = GATConvQuant
+            gat_layer = GATConvQuant
 
         lq, mq = make_quantizers(
             qypte,
@@ -270,7 +325,7 @@ class GAT(nn.Module):
         )
         
         self.conv1 = gat_layer(
-            in_channels = dataset.num_features,
+            in_channels = self.in_channels,
             out_channels = hidden,
             nn= ResettableSequential(
                 Linear(hidden, hidden),
@@ -279,10 +334,6 @@ class GAT(nn.Module):
                 ReLU(),
                 BN(hidden)
             ),
-            improved=False,
-            cached=False,
-            bias=True,
-            normalize=True,
             layer_quantizers=lq_signed,
             mp_quantizers=mq
             )
@@ -299,17 +350,13 @@ class GAT(nn.Module):
                     ReLU(),
                     BN(hidden)
                     ),
-                improved=False,
-                cached=False,
-                bias=True,
-                normalize=True,
                 layer_quantizers=lq_signed,
                 mp_quantizers=mq
                 )
             )
 
         self.lin1 = LinearQuantized(hidden, hidden, layer_quantizers=lq_signed)
-        self.lin2 = LinearQuantized(hidden, dataset.num_classes, layer_quantizers=lq)
+        self.lin2 = LinearQuantized(hidden, self.out_channels, layer_quantizers=lq)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()

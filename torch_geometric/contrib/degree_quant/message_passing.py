@@ -4,7 +4,7 @@ from torch.nn import Module, ModuleDict
 import torch
 from utils import scatter_
 
-
+from torch_scatter import scatter
 
 
 # This layer does not takethe input as any other layer. Derictly appliead
@@ -172,7 +172,17 @@ class MessagePassingQuant(Module):
         return x_j
 
     def aggregate(self, inputs, index, dim_size):  # pragma: no cover
-        return scatter_(self.aggr, inputs, index, self.node_dim, dim_size)
+        
+        return scatter_(inputs, index, self.node_dim, dim_size)
+
+        
+        out = scatter(src = inputs, index = index, dim = self.node_dim, dim_size = dim_size, reduce= self.aggr)
+        if self.aggr == "max":
+            out[out < -10000] = 0
+        elif self.aggr == "min":
+            out[out > 10000] = 0
+        return out 
+
 
     def update(self, inputs):  # pragma: no cover
         return inputs
@@ -380,7 +390,16 @@ class MessagePassingMultiQuant(Module):
         return x_j
 
     def aggregate(self, inputs, index, dim_size):  # pragma: no cover
+        
         return scatter_(self.aggr, inputs, index, self.node_dim, dim_size)
+
+        out = scatter(src = inputs, index = index, dim = self.node_dim, dim_size = dim_size, reduce= self.aggr)
+        if self.aggr == "max":
+            out[out < -10000] = 0
+        elif self.aggr == "min":
+            out[out > 10000] = 0
+        return out 
+
 
     def update(self, inputs):  # pragma: no cover
         return inputs

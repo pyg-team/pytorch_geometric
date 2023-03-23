@@ -129,8 +129,10 @@ class GATConvQuant(MessagePassingQuant):
 
         alpha = self.layer_quantizers["alpha"](alpha)
         alpha = F.leaky_relu(alpha, self.negative_slope)
+        
         alpha = softmax(alpha, edge_index_i, size_i)
-
+        
+       
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
@@ -250,10 +252,6 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
             mask(torch.Tensor): The mask for the graph which is used to protect the nodes in the Degree Quant method
         
         """
-        
-        
-        
-        
         # quantizing input
         if self.training:
             x_q = torch.empty_like(x)
@@ -335,7 +333,12 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
             alpha = self.layer_quantizers["alpha_low"](alpha)
 
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        alpha = softmax(alpha, edge_index_i, size_i)
+
+        if torch.cuda.is_available():
+            alpha = softmax(alpha.cpu(), edge_index_i.cpu()).to(torch.device('cuda'))
+        else: 
+            alpha = softmax(alpha, edge_index_i)
+
 
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)

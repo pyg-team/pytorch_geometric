@@ -1,4 +1,3 @@
-from utils import NormalizedDegree
 from torch_geometric.datasets import Planetoid,TUDataset
 import torch
 from torch_geometric.utils import degree
@@ -6,9 +5,14 @@ import torch_geometric.transforms as T
 from quantizer import ProbabilisticHighDegreeMask
 
 
-# Function to sample the datset based on the node degree. Uses One hot representation of degree as features for dataset with no features. 
 def get_dataset(path, name, sparse=True, cleaned=False, DQ= {"prob_mask_low": 0, "prob_mask_change": 0.1}):
+
+    """
+    Function to sample the datset based on the node degree. 
+    Uses One hot representation of degree as features for dataset with no features. 
     
+    """
+
     if name in ['Cora', 'Citeseer']:
       dataset = Planetoid(path, name)
     else:
@@ -66,3 +70,31 @@ def get_dataset(path, name, sparse=True, cleaned=False, DQ= {"prob_mask_low": 0,
             dataset.transform = T.Compose([dataset.transform, dq_transform])
 
     return dataset
+
+
+    
+class NormalizedDegree(object):
+    
+    """
+    The class computes the degree of each node in the graph and Normalises the degree of the whole graph
+    Parameters
+    ----------
+    mean(float): The mean node degree of the whole graph dataset
+    std(float): The standard deviation of the node degree of the whole graph dataset
+    """
+
+
+    def __init__(self, mean, std):
+
+        self.mean = mean
+        self.std = std
+
+    def __call__(self, data):
+        """
+        Args: 
+            data(torch_geometric.data.data): Dataset to normalise the node degrees 
+        """
+        deg = degree(data.edge_index[0], dtype=torch.float)
+        deg = (deg - self.mean) / self.std
+        data.x = deg.view(-1, 1)
+        return data

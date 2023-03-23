@@ -1,6 +1,6 @@
 from torch import nn 
 
-
+import torch.nn.functional as F
 
 class LinearQuantized(nn.Linear):
     """

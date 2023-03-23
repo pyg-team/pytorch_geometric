@@ -1,5 +1,5 @@
 
-import  torch 
+import torch 
 from torch.autograd.function import InplaceFunction
 from torch import nn
 from typing import Optional
@@ -113,8 +113,8 @@ class IntegerQuantizer(nn.Module):
      Straight through estimation: Uses gradient as the gradient of Identity function.  
      symmetric(bool): Uses the entire range instead the range of the tensor for quantization.
      momentum(float): The value of the momentum to use for updateing the quantization parameters 
-     percentile(float, optional): Percentile 
-     sample(torch.Tensor, optional):
+     percentile(float, optional): Percentile  
+     sample(float, optional): Probability of bernoulli mask for each node in the graph
     
     
     """
@@ -201,6 +201,7 @@ class IntegerQuantizer(nn.Module):
         self.max_val = max_val
 
     def forward(self, input):
+
         if self.training:
             self.update_ranges(input.detach())
 
