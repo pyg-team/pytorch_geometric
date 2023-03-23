@@ -10,18 +10,20 @@ class LinearQuantized(nn.Linear):
     Args:
         in_features: size of each input sample
         out_features: size of each output sample
-        bias: If set to ``False``, the layer will not learn an additive bias. Default: ``True``
+        bias: If set to ``False``, the layer will not learn an additive bias.
+        Default: ``True``
 
 
     Attributes:
         weight: the learnable weights of the module of shape
-            :math:`(\text{out\_features}, \text{in\_features})`. The values are
-            initialized from :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})`, where
-            :math:`k = \frac{1}{\text{in\_features}}`
-        bias:   the learnable bias of the module of shape :math:`(\text{out\_features})`.
+            :math:`(text{out_features}, text{in_features})`. The values are
+            initialized from :math:`mathcal{U}(-sqrt{k}, sqrt{k})`, where
+            :math:`k = frac{1}{text{in_features}}`
+        bias:   the learnable bias of the module of shape
+        :math:`(text{out_features})`.
                 If :attr:`bias` is ``True``, the values are initialized from
-                :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})` where
-                :math:`k = \frac{1}{\text{in\_features}}`
+                :math:`mathcal{U}(-sqrt{k}, sqrt{k})` where
+                :math:`k = frac{1}{text{in_features}}`
 
 
     """

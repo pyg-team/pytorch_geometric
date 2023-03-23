@@ -1,10 +1,10 @@
 import torch
 import torch.nn.functional as F
-from gat_conv import *
-from gcn_conv import *
-from gin_conv import *
+from gat_conv import GATConvMultiQuant, GATConvQuant
+from gcn_conv import GCNConvMultiQuant, GCNConvQuant
+from gin_conv import GINConvMultiQuant, GINConvQuant
 from linear import LinearQuantized
-from message_passing import *
+# from message_passing import MessagePassingMultiQuant
 from quantizer import make_quantizers
 from torch import nn
 from torch.nn import BatchNorm1d as BN
@@ -23,10 +23,13 @@ class GIN(nn.Module):
         hidden:(int): Hidden dimension for message passing and aggregation
         dq:(bool): Whether to use Degree Quant
         qypte:(str): The Integer precision for Degree Quant
-        ste:(bool): Whether to use Straight-Through Estimation for the quantization.
+        ste:(bool): Whether to use Straight-Through Estimation for the
+        quantization.
         momentum:(int): Value of the momentum coefficient
-        percentile:(int): Clips the values at the low and high percentile of the real value distribution
-        sample_prop:(torch.Tensor): Probability of bernoulli mask for each node in the graph
+        percentile:(int): Clips the values at the low and high percentile of
+        the real value distribution
+        sample_prop:(torch.Tensor): Probability of bernoulli mask for each node
+        in the graph
 
     """
     def __init__(
@@ -47,7 +50,7 @@ class GIN(nn.Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.is_dq = dq
-        if dq == True:
+        if dq is True:
             gin_layer = GINConvMultiQuant
         else:
             gin_layer = GINConvQuant
@@ -127,9 +130,10 @@ class GIN(nn.Module):
             x = conv(x, edge_index, mask)
 
         x = global_mean_pool(x, batch)
-        # NOTE: the linear layers from here do not contribute significantly to run-time
-        # Therefore you probably don't want to quantize these as it will likely have
-        # an impact on performance.
+        # NOTE: the linear layers from here do not contribute significantly to
+        # run-time
+        # Therefore you probably don't want to quantize these as it will likely
+        # have an impact on performance.
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
         # NOTE: This is a quantized final layer. You probably don't want to be
@@ -148,10 +152,13 @@ class GCN(nn.Module):
         hidden:(int): Hidden dimension for message passing and aggregation
         dq:(bool): Whether to use Degree Quant
         qypte:(str): The Integer precision for Degree Quant
-        ste:(bool): Whether to use Straight-Through Estimation for the quantization.
+        ste:(bool): Whether to use Straight-Through Estimation for the
+        quantization.
         momentum:(int): Value of the momentum coefficient
-        percentile:(int): Clips the values at the low and high percentile of the real value distribution
-        sample_prop:(torch.Tensor): Probability of bernoulli mask for each node in the graph
+        percentile:(int): Clips the values at the low and high percentile of
+        the real value distribution
+        sample_prop:(torch.Tensor): Probability of bernoulli mask for each node
+        in the graph
 
     """
     def __init__(
@@ -172,7 +179,7 @@ class GCN(nn.Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.is_dq = dq
-        if dq == True:
+        if dq is True:
             gcn_layer = GCNConvMultiQuant
         else:
             gcn_layer = GCNConvQuant
@@ -254,10 +261,13 @@ class GAT(nn.Module):
         hidden:(int): Hidden dimension for message passing and aggregation
         dq:(bool): Whether to use Degree Quant
         qypte:(str): The Integer precision for Degree Quant
-        ste:(bool): Whether to use Straight-Through Estimation for the quantization.
+        ste:(bool): Whether to use Straight-Through Estimation for the
+        quantization.
         momentum:(int): Value of the momentum coefficient
-        percentile:(int): Clips the values at the low and high percentile of the real value distribution
-        sample_prop:(torch.Tensor): Probability of bernoulli mask for each node in the graph
+        percentile:(int): Clips the values at the low and high percentile of
+        the real value distribution
+        sample_prop:(torch.Tensor): Probability of bernoulli mask for each node
+        in the graph
 
     """
     def __init__(
@@ -277,7 +287,7 @@ class GAT(nn.Module):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.is_dq = dq
-        if dq == True:
+        if dq is True:
             gat_layer = GATConvMultiQuant
         else:
             gat_layer = GATConvQuant
@@ -351,7 +361,8 @@ class GAT(nn.Module):
 
 class ResettableSequential(Sequential):
     """
-        A wrapper for Torch sequential to reset the layer parameters without iterating each time.
+        A wrapper for Torch sequential to reset the layer parameters without
+        iterating each time.
 
     """
     def reset_parameters(self):
@@ -362,7 +373,8 @@ class ResettableSequential(Sequential):
 
 def evaluate_prob_mask(data):
     """
-    This model return the probability mask of the input graph using bernoulli random masking of each node.
+    This model return the probability mask of the input graph using bernoulli
+    random masking of each node.
 
     Parameters
     ----------

@@ -1,7 +1,6 @@
 from typing import Optional
 
 import torch
-import torch.nn.functional as F
 from torch import nn
 from torch.autograd.function import InplaceFunction
 from torch.nn import Identity
@@ -13,7 +12,8 @@ from torch_geometric.utils import degree
 # This class is used to update the gradient using the quanitzation approach.
 class Quantize(InplaceFunction):
     """
-    A Qauntization Aware Training Class for Computing the Forward and Backward Gradient Steps
+    A Qauntization Aware Training Class for
+    Computing the Forward and Backward Gradient Steps
     on the Quantized Integer Tensor.
     ctx(IntegerQuantizer): Specific Quantizer used for the given tensor
     input(torch.Tensor): The tensor to be quantized
@@ -97,22 +97,29 @@ class Quantize(InplaceFunction):
         return qmin, qmax, zero_point, scale
 
 
-# The main Quantization Module which is used to change precision to Integer (8-bits or 4-bits)
+# The main Quantization Module which is used to change precision to Integer
+# (8-bits or 4-bits)
 class IntegerQuantizer(nn.Module):
     """
-    This Class is used to Quantize an input tensor which supports Quantization aware Training.
-    Using this, the tensor can be quantized to INT8 precision using the default settings.
+    This Class is used to Quantize an input tensor which supports Quantization
+    aware Training. Using this, the tensor can be quantized to INT8 precision
+    using the default settings.
 
     Args:
      num_bits(str): Used to define the quantization precision INT8/INT4
      signed(bool): Used to allow negative values during quantization
      use_momentum(bool): Uses momentum in the quantization method
-     use_ste(bool):   If True, does not calculate the gradient during the backward step of the optimizer.
-     Straight through estimation: Uses gradient as the gradient of Identity function.
-     symmetric(bool): Uses the entire range instead the range of the tensor for quantization.
-     momentum(float): The value of the momentum to use for updateing the quantization parameters
+     use_ste(bool):   If True, does not calculate the gradient during the
+     backward step of the optimizer.
+     Straight through estimation: Uses gradient as the gradient of Identity
+     function.
+     symmetric(bool): Uses the entire range instead the range of the tensor for
+     quantization.
+     momentum(float): The value of the momentum to use for updateing the
+     quantization parameters
      percentile(float, optional): Percentile
-     sample(float, optional): Probability of bernoulli mask for each node in the graph
+     sample(float, optional): Probability of bernoulli mask for each node in
+     the graph
 
 
     """
@@ -254,7 +261,8 @@ class ProbabilisticHighDegreeMask:
 
 def create_quantizer(qypte, ste, momentum, percentile, signed, sample_prop):
     """
-    Used to create a new quantizer for each trainable tensor in the manchine learning model
+    Used to create a new quantizer for each trainable tensor in the manchine
+    learning model
     """
 
     if qypte == "FP32":
@@ -273,7 +281,8 @@ def create_quantizer(qypte, ste, momentum, percentile, signed, sample_prop):
 def make_quantizers(qypte, dq, sign_input, ste, momentum, percentile,
                     sample_prop):
     """
-    Use this to pass all the quantizer to the GNN layers. the GNN layer will use the needed layers and remove the rest.
+    Use this to pass all the quantizer to the GNN layers. the GNN layer will
+    use the needed layers and remove the rest.
     """
 
     layer_quantizers = {

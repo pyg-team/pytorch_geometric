@@ -1,11 +1,11 @@
 import torch_scatter
 
-from torch_geometric.utils import degree
-
 
 def scatter_(name, src, index, dim=0, dim_size=None):
+
     """
-    Method implemented to mask the minimum and maximum value in the tensor. Allows to use different scatter e
+    Method implemented to mask the minimum and maximum value in the tensor.
+    Allows to use different scatter e
     """
 
     assert name in ["add", "mean", "min", "max"]

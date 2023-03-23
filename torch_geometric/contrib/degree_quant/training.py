@@ -5,12 +5,11 @@ import torch
 import torch.nn.functional as F
 from sklearn.model_selection import StratifiedKFold
 from torch import tensor
-from torch.optim import Adam, AdamW
+from torch.optim import Adam
 from tqdm import tqdm
 
 from torch_geometric.loader import DataLoader
 from torch_geometric.loader import DenseDataLoader as DenseLoader
-from torch_geometric.utils import degree
 
 
 def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
@@ -163,7 +162,7 @@ def inference_timing(model, loader, batch_size):
     """
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    batches = len(loader)
+    # batches = len(loader)
     model.eval()
     batch_time = []
     print(f"Testing inference on {device}")
@@ -172,7 +171,7 @@ def inference_timing(model, loader, batch_size):
     for data in loader:
 
         start = time.time()
-        out = model(data.to(device))
+        model(data.to(device))
 
         torch.cuda.synchronize(device)
 
@@ -182,9 +181,7 @@ def inference_timing(model, loader, batch_size):
     batch_time = np.array(batch_time) / batch_size
     mean = np.mean(batch_time)
     std = np.std(batch_time)
-    print(
-        f'Inference Speed of each batch is {mean} ± {std} seconds for batch size {batch_size}'
-    )
+    print(f'Inference time: {mean}±{std} seconds for batch size {batch_size}')
 
 
 def num_graphs(data):

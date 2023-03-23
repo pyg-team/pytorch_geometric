@@ -10,8 +10,8 @@ from utils import scatter_
 # This layer does not takethe input as any other layer. Derictly appliead
 class MessagePassingQuant(Module):
     """
-    Adapted from the original PyG message Passing class. Additional parameter to pass the quantization functions
-    for each parameter
+    Adapted from the original PyG message Passing class. Additional parameter
+    to pass the quantization functions for each parameter
 
     Args:
     aggr (str or [str] or Aggregation, optional): The aggregation scheme
@@ -33,7 +33,8 @@ class MessagePassingQuant(Module):
     node_dim (int, optional): The axis along which to propagate.
     (default: :obj:`-2`)
 
-    mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer parameter
+    mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for
+    each Message Passing Layer parameter
 
     **kwargs (optional): Additional arguments of
         :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -191,8 +192,9 @@ class MessagePassingQuant(Module):
 
 class MessagePassingMultiQuant(Module):
     """
-    Adapted from the original PyG message Passing class. Updates the message propagation step using the quantized values
-    This class uses the Degree Quant approach to quantize the respective inputs based on the mask.
+    Adapted from the original PyG message Passing class. Updates the message
+    propagation step using the quantized values This class uses the Degree
+    Quant approach to quantize the respective inputs based on the mask.
 
     Args:
     aggr (str or [str] or Aggregation, optional): The aggregation scheme
@@ -214,7 +216,8 @@ class MessagePassingMultiQuant(Module):
     node_dim (int, optional): The axis along which to propagate.
     (default: :obj:`-2`)
 
-    mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer parameter
+    mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for
+    each Message Passing Layer parameter
 
     **kwargs (optional): Additional arguments of
         :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -343,8 +346,10 @@ class MessagePassingMultiQuant(Module):
     def propagate(self, edge_index, mask, size=None, **kwargs):
         """
         Args:
-            edge_index (torch.Tensor or SparseTensor): The tensor which is used to store the graph edges
-            mask (torch.Tensor): The mask for the graph which is used to protect the nodes in the Degree Quant method
+            edge_index (torch.Tensor or SparseTensor): The tensor which is used
+            to store the graph edges
+            mask (torch.Tensor): The mask for the graph which is used to
+            protect the nodes in the Degree Quant method
 
         """
 
