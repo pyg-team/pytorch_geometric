@@ -39,13 +39,13 @@ def test_dense_gcn_conv():
     dense_out = dense_conv(x, adj, mask)
     assert dense_out.size() == (2, 3, channels)
 
-    assert dense_out[1, 2].abs().sum() == 0
-    dense_out = dense_out.view(6, channels)[:-1]
-    assert torch.allclose(sparse_out, dense_out, atol=1e-4)
-
     if is_full_test():
         jit = torch.jit.script(dense_conv)
         assert torch.allclose(jit(x, adj, mask), dense_out)
+
+    assert dense_out[1, 2].abs().sum() == 0
+    dense_out = dense_out.view(6, channels)[:-1]
+    assert torch.allclose(sparse_out, dense_out, atol=1e-4)
 
 
 def test_dense_gcn_conv_with_broadcasting():

@@ -76,7 +76,14 @@ def test_to_torch_coo_tensor():
     ])
     edge_attr = torch.randn(edge_index.size(1), 8)
 
-    adj = to_torch_coo_tensor(edge_index)
+    adj = to_torch_coo_tensor(edge_index, is_coalesced=False)
+    assert adj.is_coalesced()
+    assert adj.size() == (4, 4)
+    assert adj.layout == torch.sparse_coo
+    assert torch.allclose(adj.indices(), edge_index)
+
+    adj = to_torch_coo_tensor(edge_index, is_coalesced=True)
+    assert adj.is_coalesced()
     assert adj.size() == (4, 4)
     assert adj.layout == torch.sparse_coo
     assert torch.allclose(adj.indices(), edge_index)
