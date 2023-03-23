@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from message_passing import *
+from message_passing import MessagePassingMultiQuant, MessagePassingQuant
 from torch.nn import ModuleDict, Parameter
 
 from torch_geometric.nn.inits import glorot, zeros
@@ -11,19 +11,16 @@ class GATConvQuant(MessagePassingQuant):
     """
     A GAT Layer with complete quantization of all the parameters
 
-    Args:
-    in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
-        derive the size from the first input(s) to the forward method.
-        A tuple corresponds to the sizes of source and target
-        dimensionalities.
-    out_channels (int): Size of each output sample.
-    nn(Sequential, optional): A sequential layer to be used on the layer outputs
+    Args: in_channels (int or tuple): Size of each input sample,
+        derive the size from the first input(s) to the forward method. A tuple
+        corresponds to the sizes of source and target dimensionalities.
+    out_channels (int): Size of each output sample. nn(Sequential, optional): A
+    sequential layer to be used on the layer outputs
 
     heads (int, optional): Number of multi-head-attentions.
         (default: :obj:`1`)
     concat (bool, optional): If set to :obj:`False`, the multi-head
-        attentions are averaged instead of concatenated.
-        (default: :obj:`True`)
+        attentions are averaged instead of concatenated. (default: :obj:`True`)
     negative_slope (float, optional): LeakyReLU angle of the negative
         slope. (default: :obj:`0.2`)
     dropout (float, optional): Dropout probability of the normalized
@@ -32,8 +29,9 @@ class GATConvQuant(MessagePassingQuant):
     bias (bool, optional): If set to :obj:`False`, the layer will not learn
         an additive bias. (default: :obj:`True`)
 
-    mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer weight
-    layer_quantizers (dict): A dictionary with the IntegerQuantizer defined for each layer trainable parameter
+    mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for
+    each Message Passing Layer weight layer_quantizers (dict): A dictionary
+    with the IntegerQuantizer defined for each layer trainable parameter
 
     **kwargs (optional): Additional arguments of
         :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -158,22 +156,21 @@ class GATConvQuant(MessagePassingQuant):
 
 class GATConvMultiQuant(MessagePassingMultiQuant):
     """
-    A GAT Layer with Degree Quant approach for quantization of all the layer and message passing parameters
-    It uses low and high masking strategy to quantize the respective quantizable tensors
+    A GAT Layer with Degree Quant approach for quantization of all the layer
+    and message passing parameters It uses low and high masking strategy to
+    quantize the respective quantizable tensors
 
-    Args:
-    in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
-        derive the size from the first input(s) to the forward method.
-        A tuple corresponds to the sizes of source and target
-        dimensionalities.
-    out_channels (int): Size of each output sample.
-    nn(Sequential, optional): A sequential layer to be used on the layer outputs
+    Args: in_channels (int or tuple): Size of each input sample, or :obj:`-1`
+    to
+        derive the size from the first input(s) to the forward method. A tuple
+        corresponds to the sizes of source and target dimensionalities.
+    out_channels (int): Size of each output sample. nn(Sequential, optional): A
+    sequential layer to be used on the layer outputs
 
     heads (int, optional): Number of multi-head-attentions.
         (default: :obj:`1`)
     concat (bool, optional): If set to :obj:`False`, the multi-head
-        attentions are averaged instead of concatenated.
-        (default: :obj:`True`)
+        attentions are averaged instead of concatenated. (default: :obj:`True`)
     negative_slope (float, optional): LeakyReLU angle of the negative
         slope. (default: :obj:`0.2`)
     dropout (float, optional): Dropout probability of the normalized
@@ -182,8 +179,9 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
     bias (bool, optional): If set to :obj:`False`, the layer will not learn
         an additive bias. (default: :obj:`True`)
 
-    mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer weight
-    layer_quantizers (dict): A dictionary with the IntegerQuantizer defined for each layer trainable parameter
+    mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for
+    each Message Passing Layer weight layer_quantizers (dict): A dictionary
+    with the IntegerQuantizer defined for each layer trainable parameter
 
     **kwargs (optional): Additional arguments of
         :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -246,9 +244,10 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
     def forward(self, x, edge_index, mask, size=None):
         """
         Args:
-            x (torch.Tensor): Node Features
-            edge_index (torch.Tensor or SparseTensor): The tensor which is used to store the graph edges
-            mask(torch.Tensor): The mask for the graph which is used to protect the nodes in the Degree Quant method
+            x (torch.Tensor): Node Features edge_index (torch.Tensor or
+            SparseTensor): The tensor which is used to store the graph edges
+            mask(torch.Tensor): The mask for the graph which is used to protect
+            the nodes in the Degree Quant method
 
         """
         # quantizing input
@@ -355,7 +354,8 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
 
-        # We apply the post processing nn head here to the updated output of the layer
+        # We apply the post processing nn head here to the updated output of
+        # the layer
         return self.nn(aggr_out)
 
     def __repr__(self):

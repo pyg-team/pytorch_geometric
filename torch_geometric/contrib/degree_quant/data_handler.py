@@ -11,8 +11,8 @@ def get_dataset(path, name, sparse=True, cleaned=False, DQ={
     "prob_mask_change": 0.1
 }):
     """
-    Function to sample the datset based on the node degree.
-    Uses One hot representation of degree as features for dataset with no features.
+    Function to sample the datset based on the node degree. Uses One hot
+    representation of degree as features for dataset with no features.
 
     """
 
@@ -60,7 +60,6 @@ def get_dataset(path, name, sparse=True, cleaned=False, DQ={
             dataset.transform = T.Compose(
                 [dataset.transform, T.ToDense(num_nodes)])
 
-    # Additional Functionality to Ignore the Mask which allows implementation of Naive Quantizaiton
     if DQ is not None:
         print(f"Generating ProbabilisticHighDegreeMask: {DQ}")
         dq_transform = ProbabilisticHighDegreeMask(
@@ -78,11 +77,10 @@ def get_dataset(path, name, sparse=True, cleaned=False, DQ={
 
 class NormalizedDegree(object):
     """
-    The class computes the degree of each node in the graph and Normalises the degree of the whole graph
-    Parameters
-    ----------
-    mean(float): The mean node degree of the whole graph dataset
-    std(float): The standard deviation of the node degree of the whole graph dataset
+    The class computes the degree of each node in the graph and Normalises the
+    degree of the whole graph Parameters ---------- mean(float): The mean node
+    degree of the whole graph dataset std(float): The standard deviation of the
+    node degree of the whole graph dataset
     """
     def __init__(self, mean, std):
 
@@ -92,7 +90,8 @@ class NormalizedDegree(object):
     def __call__(self, data):
         """
         Args:
-            data(torch_geometric.data.data): Dataset to normalise the node degrees
+            data(torch_geometric.data.data): Dataset to normalise the node
+            degrees
         """
         deg = degree(data.edge_index[0], dtype=torch.float)
         deg = (deg - self.mean) / self.std

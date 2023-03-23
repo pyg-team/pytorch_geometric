@@ -1,6 +1,5 @@
 import torch
-import torch.nn.functional as F
-from message_passing import *
+from message_passing import MessagePassingMultiQuant, MessagePassingQuant
 from torch.nn import ModuleDict, Parameter
 from torch_scatter import scatter_add
 
@@ -16,23 +15,22 @@ class GCNConvQuant(MessagePassingQuant):
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
-        improved (bool, optional): If set to :obj:`True`, the layer computes
-            :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
-            (default: :obj:`False`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
-            the computation of :math:`\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
-            \mathbf{\hat{D}}^{-1/2}` on first execution, and will use the
-            cached version for further executions.
-            This parameter should only be set to :obj:`True` in transductive
-            learning scenarios. (default: :obj:`False`)
+            the computation of :math:`mathbf{hat{D}}^{-1/2} mathbf{hat{A}}
+            mathbf{hat{D}}^{-1/2}` on first execution, and will use the
+            cached version for further executions. This parameter should only
+            be set to :obj:`True` in transductive learning scenarios. (default:
+            :obj:`False`)
         normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
-            (default: :obj:`True`)
+            symmetric normalization coefficients on the fly. (default:
+            :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
 
-        mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer weight
-        layer_quantizers (dict): A dictionary with the IntegerQuantizer defined for each layer trainable parameter
+        mp_quantizers (dict): A dictionary with the IntegerQuantizer defined
+        for each Message Passing Layer weight layer_quantizers (dict): A
+        dictionary with the IntegerQuantizer defined for each layer trainable
+        parameter
 
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`
@@ -146,7 +144,8 @@ class GCNConvQuant(MessagePassingQuant):
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
 
-        # We apply the post processing nn head here to the updated output of the layer
+        # We apply the post processing nn head here to the updated output of
+        # the layer
         return self.nn(aggr_out)
 
     def __repr__(self):
@@ -156,30 +155,33 @@ class GCNConvQuant(MessagePassingQuant):
 
 class GCNConvMultiQuant(MessagePassingMultiQuant):
     """
-    A GCN Layer with Degree Quant approach for quantization of all the layer and message passing parameters
-    It uses low and high masking strategy to quantize the respective quantizable tensors
+    A GCN Layer with Degree Quant approach for quantization of all the layer
+    and message passing parameters It uses low and high masking strategy to
+    quantize the respective quantizable tensors
 
     Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
-        out_channels (int): Size of each output sample.
-        improved (bool, optional): If set to :obj:`True`, the layer computes
-            :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
+        out_channels (int): Size of each output sample. improved (bool,
+        optional): If set to :obj:`True`, the layer computes
+            :math:`mathbf{hat{A}}` as :math:`mathbf{A} + 2mathbf{I}`.
             (default: :obj:`False`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
-            the computation of :math:`\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
-            \mathbf{\hat{D}}^{-1/2}` on first execution, and will use the
-            cached version for further executions.
-            This parameter should only be set to :obj:`True` in transductive
-            learning scenarios. (default: :obj:`False`)
+            the computation of :math:`mathbf{hat{D}}^{-1/2} mathbf{hat{A}}
+            mathbf{hat{D}}^{-1/2}` on first execution, and will use the
+            cached version for further executions. This parameter should only
+            be set to :obj:`True` in transductive learning scenarios. (default:
+            :obj:`False`)
         normalize (bool, optional): Whether to add self-loops and compute
-            symmetric normalization coefficients on the fly.
-            (default: :obj:`True`)
+            symmetric normalization coefficients on the fly. (default:
+            :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
 
-        mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer weight
-        layer_quantizers (dict): A dictionary with the IntegerQuantizer defined for each layer trainable parameter
+        mp_quantizers (dict): A dictionary with the IntegerQuantizer defined
+        for each Message Passing Layer weight
+        layer_quantizers (dict): A dictionary with the IntegerQuantizer
+        defined for each layer trainable parameter
 
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`
@@ -254,9 +256,10 @@ class GCNConvMultiQuant(MessagePassingMultiQuant):
     def forward(self, x, edge_index, mask, edge_weight=None):
         """
         Args:
-            x (torch.Tensor): Node Features
-            edge_index (torch.Tensor or SparseTensor): The tensor which is used to store the graph edges
-            mask (torch.Tensor): The mask for the graph which is used to protect the nodes in the Degree Quant method
+            x (torch.Tensor): Node Features edge_index (torch.Tensor or
+            SparseTensor): The tensor which is used to store the graph edges
+            mask (torch.Tensor): The mask for the graph which is used to
+            protect the nodes in the Degree Quant method
 
         """
 
@@ -312,7 +315,8 @@ class GCNConvMultiQuant(MessagePassingMultiQuant):
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
 
-        # We apply the post processing nn head here to the updated output of the layer
+        # We apply the post processing nn head here to the updated output of
+        # the layer
         return self.nn(aggr_out)
 
     def __repr__(self):

@@ -2,12 +2,11 @@ from data_handler import get_dataset
 from models import GAT, GCN, GIN
 from training import cross_validation_with_val_set
 
-# from gat_conv import GATConvMultiQuant
-# from gcn_conv import GCNConvMultiQuant
+# from gat_conv import GATConvMultiQuant from gcn_conv import GCNConvMultiQuant
 # from gin_conv import GINConvMultiQuant
 
-#Simple Implementation of GIN, GCN and GAT on the MUTAG dataset
-# We convert the FP32 to INT8 in this experiment
+# Simple Implementation of GIN, GCN and GAT on the MUTAG dataset We convert the
+# FP32 to INT8 in this experiment
 
 argsINT8 = {
     "qypte": "INT8",

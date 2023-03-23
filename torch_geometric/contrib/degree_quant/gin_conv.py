@@ -1,5 +1,5 @@
 import torch
-from message_passing import *
+from message_passing import MessagePassingMultiQuant, MessagePassingQuant
 
 from torch_geometric.utils import remove_self_loops
 
@@ -10,12 +10,14 @@ class GINConvQuant(MessagePassingQuant):
 
 
     Args:
-        nn (torch.nn.Module): A neural network defined by :class:`torch.nn.Sequential`.
-        eps (float, optional): To change the importance of the message from original node.
+        nn (torch.nn.Module): A neural network defined by
+        :class:`torch.nn.Sequential`. eps (float, optional): To change the
+        importance of the message from original node.
          (default: :obj:`0.`)
-        train_eps (bool, optional): If set to :obj:`True`, :math:`\epsilon`
+        train_eps (bool, optional): If set to :obj:`True`, :math:`epsilon`
             will be a trainable parameter. (default: :obj:`False`)
-        mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer parameter
+        mp_quantizers (dict): A dictionary with the IntegerQuantizer defined
+        for each Message Passing Layer parameter
 
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -56,17 +58,20 @@ class GINConvQuant(MessagePassingQuant):
 
 class GINConvMultiQuant(MessagePassingMultiQuant):
     """
-    A GCN Layer with Degree Quant approach for quantization of all the layer and message passing parameters
-    It uses low and high masking strategy to quantize the respective quantizable tensors
+    A GCN Layer with Degree Quant approach for quantization of all the layer
+    and message passing parameters It uses low and high masking strategy to
+    quantize the respective quantizable tensors
 
 
     Args:
-        nn (torch.nn.Module): A neural network defined by :class:`torch.nn.Sequential`.
-        eps (float, optional): To change the importance of the message from original node.
+        nn (torch.nn.Module): A neural network defined by
+        :class:`torch.nn.Sequential`. eps (float, optional): To change the
+        importance of the message from original node.
          (default: :obj:`0.`)
-        train_eps (bool, optional): If set to :obj:`True`, :math:`\epsilon`
+        train_eps (bool, optional): If set to :obj:`True`, :math:`epsilon`
             will be a trainable parameter. (default: :obj:`False`)
-        mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer parameter
+        mp_quantizers (dict): A dictionary with the IntegerQuantizer defined
+        for each Message Passing Layer parameter
 
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -92,9 +97,10 @@ class GINConvMultiQuant(MessagePassingMultiQuant):
     def forward(self, x, edge_index, mask):
         """
         Args:
-            x (torch.Tensor): Node Features
-            edge_index (torch.Tensor or SparseTensor): The tensor which is used to store the graph edges
-            mask(torch.Tensor): The mask for the graph which is used to protect the nodes in the Degree Quant method
+            x (torch.Tensor): Node Features edge_index (torch.Tensor or
+            SparseTensor): The tensor which is used to store the graph edges
+            mask(torch.Tensor): The mask for the graph which is used to protect
+            the nodes in the Degree Quant method
 
         """
         x = x.unsqueeze(-1) if x.dim() == 1 else x
@@ -107,7 +113,8 @@ class GINConvMultiQuant(MessagePassingMultiQuant):
 
     def update(self, aggr_out, x):
 
-        # We apply the post processing nn head here to the updated output of the layer
+        # We apply the post processing nn head here to the updated output of
+        # the layer
         return self.nn((1 + self.eps) * x + aggr_out)
 
     def __repr__(self):
