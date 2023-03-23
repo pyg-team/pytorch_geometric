@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn.functional as F
 import torch_scatter
@@ -40,15 +39,9 @@ class DSnetwork(torch.nn.Module):
         eature_encoder(torch.nn.Module): node feature encoder module
         GNNConv(torch.nn.Module): graph neural network convolution module
      """
-    def __init__(
-        self,
-        num_layers: int,
-        in_dim: int,
-        emb_dim: int,
-        num_tasks: int,
-        feature_encoder: torch.nn.Module,
-        GNNConv: torch.nn.Module
-    ):
+    def __init__(self, num_layers: int, in_dim: int, emb_dim: int,
+                 num_tasks: int, feature_encoder: torch.nn.Module,
+                 GNNConv: torch.nn.Module):
         super(DSnetwork, self).__init__()
         self.emb_dim = emb_dim
         self.feature_encoder = feature_encoder
