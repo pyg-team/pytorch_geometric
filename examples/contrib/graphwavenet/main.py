@@ -7,17 +7,16 @@ import torch
 import util
 from model import Model
 
-
 """
 An example program for GraphWaveNet
 Code in this example has been adapted from https://github.com/nnzhan/Graph-WaveNet
 
-Usage: 
+Usage:
 ```
 python main.py
 ```
 
-Help: 
+Help:
 ```
 python main.py --help
 ```
@@ -33,8 +32,7 @@ parser.add_argument('--device', type=str, default='cpu',
                     help='device to run the model on')
 parser.add_argument('--data', type=str, default='store/METR-LA',
                     help='data path')
-parser.add_argument('--adjdata', type=str,
-                    default='store/adj_mx.pkl',
+parser.add_argument('--adjdata', type=str, default='store/adj_mx.pkl',
                     help='adj data path')
 parser.add_argument('--in_dim', type=int, default=2, help='inputs dimension')
 parser.add_argument('--num_nodes', type=int, default=207,
