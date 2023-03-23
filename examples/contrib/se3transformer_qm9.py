@@ -1,10 +1,9 @@
-import os.path as osp
 import argparse
+import os.path as osp
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
 from tqdm import tqdm
 
 import torch_geometric.transforms as T
@@ -86,11 +85,11 @@ def train(
     model.train()
     optimizer = torch.optim.Adam(model.parameters(), lr)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        optimizer, mode="min", factor=0.7, patience=5, min_lr=0.00001
-    )
+        optimizer, mode="min", factor=0.7, patience=5, min_lr=0.00001)
     for epoch in range(epochs):
         lr = scheduler.optimizer.param_groups[0]['lr']
-        loss = train_step(epoch, model, train_loader, optimizer, device, loss_fn)
+        loss = train_step(epoch, model, train_loader, optimizer, device,
+                          loss_fn)
         print(f"Training Loss: {loss / len(train_dataloader)}")
         if epoch > 0 and epoch % 1 == 0:
             eval_accuracy = test(model, val_dataloader, std)
@@ -116,7 +115,8 @@ if __name__ == "__main__":
     PARSER = argparse.ArgumentParser(description="SE(3)-Transformer")
     PARSER.add_argument(
         "--num_degrees",
-        help="Number of degrees to use. Hidden features will have types [0, ..., num_degrees - 1]",
+        help=
+        "Number of degrees to use. Hidden features will have types [0, ..., num_degrees - 1]",
         type=int,
         default=4,
     )
@@ -138,14 +138,12 @@ if __name__ == "__main__":
     fiber_in = Fiber({0: node_feature_dim})
     fiber_edge = Fiber({0: edge_feature_dim})
 
-    transform = T.Compose(
-        [
-            ChooseTarget(target),
-            T.Distance(norm=False),
-            AsFiber(fiber_in, fiber_edge),
-            T.Cartesian(norm=False),
-        ]
-    )
+    transform = T.Compose([
+        ChooseTarget(target),
+        T.Distance(norm=False),
+        AsFiber(fiber_in, fiber_edge),
+        T.Cartesian(norm=False),
+    ])
 
     dataset = QM9(data_path, transform=transform)
 
@@ -180,16 +178,11 @@ if __name__ == "__main__":
     )
 
     model = SE3Transformer(
-        fiber_in=fiber_in,
-        fiber_hidden=Fiber.create(args.num_degrees, args.num_channels),
+        fiber_in=fiber_in, fiber_hidden=Fiber.create(args.num_degrees,
+                                                     args.num_channels),
         fiber_out=Fiber({0: args.num_degrees * args.num_channels}),
-        fiber_edge=fiber_edge,
-        output_dim=1,
-        pooling="max",
-        num_layers=7,
-        num_heads=8,
-        channels_div=2,
-        return_type=0
+        fiber_edge=fiber_edge, output_dim=1, pooling="max", num_layers=7,
+        num_heads=8, channels_div=2, return_type=0
         # **vars(args),
     )
     loss_fn = nn.L1Loss()

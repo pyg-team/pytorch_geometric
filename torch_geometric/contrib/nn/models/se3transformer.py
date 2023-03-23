@@ -3,13 +3,8 @@ from typing import Dict, Literal, Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.contrib.nn.conv import (
-    SE3Conv,
-    SE3GATConv,
-    SE3Norm,
-)
-from torch_geometric.contrib.utils import Fiber
-from torch_geometric.contrib.utils import get_basis
+from torch_geometric.contrib.nn.conv import SE3Conv, SE3GATConv, SE3Norm
+from torch_geometric.contrib.utils import Fiber, get_basis
 from torch_geometric.data import Data
 from torch_geometric.nn.aggr import MaxAggregation, MeanAggregation
 from torch_geometric.typing import Adj
@@ -43,7 +38,6 @@ class SE3Transformer(torch.nn.Module):
         use_layer_norm (bool): Apply layer normalization between MLP layers
         norm (bool): Apply a normalization between MLP layers
     """
-
     def __init__(
         self,
         num_layers: int,
@@ -62,8 +56,8 @@ class SE3Transformer(torch.nn.Module):
         super().__init__()
         self.pooling = pooling
         self.return_type = return_type
-        self.max_degree = max(*fiber_in.degrees, *fiber_hidden.degrees, *fiber_out.degrees)
-
+        self.max_degree = max(*fiber_in.degrees, *fiber_hidden.degrees,
+                              *fiber_out.degrees)
 
         graph_modules = []
         for i in range(num_layers):
@@ -75,12 +69,10 @@ class SE3Transformer(torch.nn.Module):
                     num_heads=num_heads,
                     channels_div=channels_div,
                     use_layer_norm=use_layer_norm,
-                )
-            )
+                ))
             if norm:
                 graph_modules.append(SE3Norm(fiber_hidden))
             fiber_in = fiber_hidden
-
 
         graph_modules.append(
             SE3Conv(
@@ -89,11 +81,9 @@ class SE3Transformer(torch.nn.Module):
                 fiber_edge=fiber_edge,
                 use_layer_norm=use_layer_norm,
                 self_interaction=True,
-            )
-        )
+            ))
         self.graph_modules = Sequential(
-            *graph_modules
-        )  # Use plain module list instead?
+            *graph_modules)  # Use plain module list instead?
         if pooling is not None:
             assert return_type is not None, "return_type must be specified when pooling"
             self.pooling_module = self._get_pooling_module()
@@ -110,14 +100,13 @@ class SE3Transformer(torch.nn.Module):
         if "basis" not in data:
             data.basis = get_basis(relative_pos=data.edge_attr[:, -3:])
 
-        transformed_data = self.graph_modules(
-            data.node_feats, data.edge_feats, data.edge_index, basis=data.basis
-        )
+        transformed_data = self.graph_modules(data.node_feats, data.edge_feats,
+                                              data.edge_index,
+                                              basis=data.basis)
 
         if self.pooling is not None:
-            out = self.pooling_module(
-                transformed_data[str(self.return_type)], index=data.batch, dim=0
-            )
+            out = self.pooling_module(transformed_data[str(self.return_type)],
+                                      index=data.batch, dim=0)
             out = self.mlp(out.squeeze(-1)).squeeze(-1)
             return out
 
@@ -128,14 +117,13 @@ class SE3Transformer(torch.nn.Module):
 
     def _get_pooling_module(self):
         assert self.pooling in ["max", "avg"], f"Unknown pooling: {self.pool}"
-        assert (
-            self.return_type == 0 or self.pooling == "avg"
-        ), "Max pooling on type > 0 features will break equivariance"
+        assert (self.return_type == 0 or self.pooling == "avg"
+                ), "Max pooling on type > 0 features will break equivariance"
         return MaxAggregation() if self.pooling == "max" else MeanAggregation()
+
 
 class Sequential(torch.nn.Sequential):
     """Sequential module with arbitrary forward args and kwargs. Used to pass graph, basis, and edge features."""
-
     def forward(self, input, *args, **kwargs):
         for module in self:
             input = module(input, *args, **kwargs)

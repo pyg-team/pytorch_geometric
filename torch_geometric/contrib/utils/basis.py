@@ -1,19 +1,19 @@
 from functools import lru_cache
 from typing import Dict, List
-import torch
-from torch import Tensor
-from torch_geometric.contrib.utils import Fiber
-import torch.nn.functional as F
 
 import e3nn.o3 as o3
+import torch
+import torch.nn.functional as F
+from torch import Tensor
+
+from torch_geometric.contrib.utils import Fiber
 
 
 @lru_cache(maxsize=None)
 def get_clebsch_gordon(J: int, d_in: int, d_out: int, device) -> Tensor:
     """Get the (cached) Q^{d_out,d_in}_J matrices from equation (8)"""
-    return o3.wigner_3j(J, d_in, d_out, dtype=torch.float64, device=device).permute(
-        2, 1, 0
-    )
+    return o3.wigner_3j(J, d_in, d_out, dtype=torch.float64,
+                        device=device).permute(2, 1, 0)
 
 
 @lru_cache(maxsize=None)
@@ -28,10 +28,12 @@ def get_all_clebsch_gordon(max_degree: int, device) -> List[List[Tensor]]:
     return all_cb
 
 
-def get_spherical_harmonics(relative_pos: Tensor, max_degree: int) -> List[Tensor]:
+def get_spherical_harmonics(relative_pos: Tensor,
+                            max_degree: int) -> List[Tensor]:
     all_degrees = list(range(2 * max_degree + 1))
     sh = o3.spherical_harmonics(all_degrees, relative_pos, normalize=True)
-    return torch.split(sh, [Fiber.degree_to_dim(d) for d in all_degrees], dim=1)
+    return torch.split(sh, [Fiber.degree_to_dim(d) for d in all_degrees],
+                       dim=1)
 
 
 @torch.jit.script
@@ -55,17 +57,18 @@ def get_basis_script(
         for d_out in range(max_degree + 1):
             key = f"{d_in},{d_out}"
             K_Js = []
-            for freq_idx, J in enumerate(range(abs(d_in - d_out), d_in + d_out + 1)):
+            for freq_idx, J in enumerate(
+                    range(abs(d_in - d_out), d_in + d_out + 1)):
                 Q_J = clebsch_gordon[idx][freq_idx]
                 K_Js.append(
                     torch.einsum(
                         "n f, k l f -> n l k",
                         spherical_harmonics[J].float(),
                         Q_J.float(),
-                    )
-                )
+                    ))
 
-            basis[key] = torch.stack(K_Js, 2)  # Stack on second dim so order is n l f k
+            basis[key] = torch.stack(
+                K_Js, 2)  # Stack on second dim so order is n l f k
             idx += 1
 
     return basis
