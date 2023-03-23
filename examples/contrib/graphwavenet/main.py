@@ -98,6 +98,7 @@ def main():
         valid_loss = []
         valid_mape = []
         valid_rmse = []
+        best_epoch = 0
 
         s1 = time.time()
         for iter, (x, y) in enumerate(dataloader['val_loader'].get_iterator()):
@@ -125,6 +126,7 @@ def main():
         if np.argmin(his_loss) == len(his_loss) - 1:
             torch.save(engine.gwnet.state_dict(),
                        args.save + "/epoch_" + str(i) + ".pth")
+            best_epoch = i
 
         log = 'Epoch: {:03d}, Train Loss: {:.4f}, Train MAPE: {:.4f}, ' + \
             'Train RMSE: {:.4f}, Valid Loss: {:.4f}, Valid MAPE: {:.4f}, ' + \
@@ -138,7 +140,7 @@ def main():
 
     # testing
     engine.gwnet.load_state_dict(
-        torch.load(args.save + "_epoch_" + str(i) + ".pth"))
+        torch.load(args.save + "/epoch_" + str(best_epoch) + ".pth"))
     outputs = []
     realy = torch.Tensor(dataloader['y_test']).to(device)
     realy = realy.transpose(1, 3)[:, 0, :, :]
