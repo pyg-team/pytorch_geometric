@@ -1,4 +1,3 @@
-from typing import List, Optional
 
 import torch
 import torch.nn.functional as F
@@ -22,7 +21,7 @@ def subgraph_pool(h_node, batched_data, pool):
 
 
 class DSnetwork(torch.nn.Module):
-     r""" DeepSetsNetwork from `"Equivariant Subgraph Aggregation Networks"
+    r""" DeepSetsNetwork from `"Equivariant Subgraph Aggregation Networks"
     <https://arxiv.org/abs/2110.02910>` paper.
     :class:`DSnetwork` outputs a graph representation based on the aggregation
     of the subgraph representations.
@@ -41,12 +40,16 @@ class DSnetwork(torch.nn.Module):
         eature_encoder(torch.nn.Module): node feature encoder module
         GNNConv(torch.nn.Module): graph neural network convolution module
      """
-    def __init__(self, num_layers: int, in_dim: int, emb_dim: int,
-             num_tasks: int, feature_encoder: torch.nn.Module,
-             GNNConv: torch.nn.Module):
-
+    def __init__(
+        self,
+        num_layers: int,
+        in_dim: int,
+        emb_dim: int,
+        num_tasks: int,
+        feature_encoder: torch.nn.Module,
+        GNNConv: torch.nn.Module
+    ):
         super(DSnetwork, self).__init__()
-
         self.emb_dim = emb_dim
         self.feature_encoder = feature_encoder
 
@@ -77,7 +80,6 @@ class DSnetwork(torch.nn.Module):
         x = batched_data.x
         edge_index = batched_data.edge_index
         edge_attr = batched_data.edge_attr
-        batch = batched_data.batch
 
         # Encode node features
         x = self.feature_encoder(x)
@@ -87,7 +89,8 @@ class DSnetwork(torch.nn.Module):
             h1 = bn(gnn(x, edge_index, edge_attr))
             x = F.relu(h1)
 
-        # Pool node features across subgraphs to obtain subgraph representations
+        # Pool node features across subgraphs to obtain
+        # subgraph representations
         h_subgraph = subgraph_pool(x, batched_data, global_mean_pool)
 
         # Pool subgraph representations to obtain graph representation
@@ -157,7 +160,8 @@ class DSSnetwork(DSnetwork):
             # Apply GNN and batch norm layer
             h1 = bn(gnn(x, edge_index, edge_attr))
 
-            # Compute graph offset and node indices for summing node features across subgraphs
+            # Compute graph offset and node indices
+            # for summing node features across subgraphs
             num_nodes_per_subgraph = batched_data.num_nodes_per_subgraph
             tmp = torch.cat([
                 torch.zeros(1, device=num_nodes_per_subgraph.device,
@@ -178,10 +182,12 @@ class DSSnetwork(DSnetwork):
                     batched_data.orig_edge_attr
                     if edge_attr is not None else edge_attr))
 
-            # Apply activation function and update node features for next iteration
+            # Apply activation function and update node features
+            # for next iteration
             x = F.relu(h1 + h2[node_idx])
 
-        # Pool node features across subgraphs to obtain subgraph representations
+        # Pool node features across subgraphs to
+        # obtain subgraph representations
         h_subgraph = subgraph_pool(x, batched_data, global_mean_pool)
 
         # Pool subgraph representations to obtain graph representation
