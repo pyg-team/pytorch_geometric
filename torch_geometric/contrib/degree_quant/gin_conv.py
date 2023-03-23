@@ -1,5 +1,5 @@
 import torch
-from message_passing import MessagePassingMultiQuant, MessagePassingQuant
+from .message_passing import MessagePassingMultiQuant, MessagePassingQuant
 
 from torch_geometric.utils import remove_self_loops
 

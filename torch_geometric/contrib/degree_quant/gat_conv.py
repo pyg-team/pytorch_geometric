@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from message_passing import MessagePassingMultiQuant, MessagePassingQuant
+from .message_passing import MessagePassingMultiQuant, MessagePassingQuant
 from torch.nn import ModuleDict, Parameter
 
 from torch_geometric.nn.inits import glorot, zeros

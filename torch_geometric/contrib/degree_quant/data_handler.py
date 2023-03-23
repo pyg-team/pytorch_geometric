@@ -1,5 +1,5 @@
 import torch
-from quantizer import ProbabilisticHighDegreeMask
+from .quantizer import ProbabilisticHighDegreeMask
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid, TUDataset

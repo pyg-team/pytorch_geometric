@@ -1,5 +1,5 @@
 import torch
-from message_passing import MessagePassingMultiQuant, MessagePassingQuant
+from .message_passing import MessagePassingMultiQuant, MessagePassingQuant
 from torch.nn import ModuleDict, Parameter
 from torch_scatter import scatter_add
 

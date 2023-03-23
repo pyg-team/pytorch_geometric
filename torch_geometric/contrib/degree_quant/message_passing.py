@@ -4,7 +4,7 @@ from collections import OrderedDict
 import torch
 from torch.nn import Module, ModuleDict
 from torch_scatter import scatter
-from utils import scatter_
+from .utils import scatter_
 
 
 # This layer does not takethe input as any other layer. Derictly appliead
