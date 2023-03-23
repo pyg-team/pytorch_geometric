@@ -232,7 +232,7 @@ class GraphWaveNet(nn.Module):
         x = self.end1(x)
         x = torch.relu(x)
 
-        # Transforming the output to the appropriate number of channels 
+        # Transforming the output to the appropriate number of channels
         # (out_timesteps * self.out_channels)
         x = self.end2(x)
 
