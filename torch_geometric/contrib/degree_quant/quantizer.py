@@ -1,40 +1,38 @@
-
-import torch 
-from torch.autograd.function import InplaceFunction
-from torch import nn
 from typing import Optional
+
+import torch
 import torch.nn.functional as F
-from torch_geometric.utils import degree
-from torch_geometric.data import Batch
+from torch import nn
+from torch.autograd.function import InplaceFunction
 from torch.nn import Identity
+
+from torch_geometric.data import Batch
+from torch_geometric.utils import degree
 
 
 # This class is used to update the gradient using the quanitzation approach.
 class Quantize(InplaceFunction):
-
     """
     A Qauntization Aware Training Class for Computing the Forward and Backward Gradient Steps
     on the Quantized Integer Tensor.
-    ctx(IntegerQuantizer): Specific Quantizer used for the given tensor 
+    ctx(IntegerQuantizer): Specific Quantizer used for the given tensor
     input(torch.Tensor): The tensor to be quantized
-    max_val: Maximum value of the Integer quantization 
+    max_val: Maximum value of the Integer quantization
     min_val: Minimum value of the Integer quantization
     num_bits: The size of the Integer Quantization 8/4 for INT8/INT4
     signed(bool): Whether to use negative range for quantization
-    eps:  Scaling parameter to prevent scaling using 0 
+    eps:  Scaling parameter to prevent scaling using 0
     symmetric: Whether to use the full range for quantization.
     ste:  Whether to use Straight-Through Estimation for the quantization.
 
     """
     @classmethod
-    def forward(
-        cls, ctx, input, max_val, min_val, num_bits, signed, eps, symmetric, ste=False
-    ):
+    def forward(cls, ctx, input, max_val, min_val, num_bits, signed, eps,
+                symmetric, ste=False):
         output = input.clone()
 
         qmin, qmax, zero_point, scale = Quantize.get_qparams(
-            max_val, min_val, num_bits, signed, eps, symmetric
-        )
+            max_val, min_val, num_bits, signed, eps, symmetric)
 
         ctx.STE = ste
         if not ste:
@@ -58,7 +56,7 @@ class Quantize(InplaceFunction):
         if ctx.STE:
             return grad_output, None, None, None, None, None, None, None
 
-        (input,) = ctx.saved_tensors
+        (input, ) = ctx.saved_tensors
 
         mask = input.clone()
         inv_scale = 1.0 / ctx.scale
@@ -77,8 +75,8 @@ class Quantize(InplaceFunction):
         min_val = min(0.0, min_val)
         max_val = max(0.0, max_val)
 
-        qmin = -(2.0 ** (num_bits - 1)) if signed else 0.0
-        qmax = qmin + 2.0 ** num_bits - 1
+        qmin = -(2.0**(num_bits - 1)) if signed else 0.0
+        qmax = qmin + 2.0**num_bits - 1
 
         if max_val == min_val:
             scale = 1.0
@@ -102,28 +100,27 @@ class Quantize(InplaceFunction):
 # The main Quantization Module which is used to change precision to Integer (8-bits or 4-bits)
 class IntegerQuantizer(nn.Module):
     """
-    This Class is used to Quantize an input tensor which supports Quantization aware Training. 
-    Using this, the tensor can be quantized to INT8 precision using the default settings. 
-    
-    Args:
-     num_bits(str): Used to define the quantization precision INT8/INT4 
-     signed(bool): Used to allow negative values during quantization 
-     use_momentum(bool): Uses momentum in the quantization method 
-     use_ste(bool):   If True, does not calculate the gradient during the backward step of the optimizer. 
-     Straight through estimation: Uses gradient as the gradient of Identity function.  
-     symmetric(bool): Uses the entire range instead the range of the tensor for quantization.
-     momentum(float): The value of the momentum to use for updateing the quantization parameters 
-     percentile(float, optional): Percentile  
-     sample(float, optional): Probability of bernoulli mask for each node in the graph
-    
-    
-    """
+    This Class is used to Quantize an input tensor which supports Quantization aware Training.
+    Using this, the tensor can be quantized to INT8 precision using the default settings.
 
+    Args:
+     num_bits(str): Used to define the quantization precision INT8/INT4
+     signed(bool): Used to allow negative values during quantization
+     use_momentum(bool): Uses momentum in the quantization method
+     use_ste(bool):   If True, does not calculate the gradient during the backward step of the optimizer.
+     Straight through estimation: Uses gradient as the gradient of Identity function.
+     symmetric(bool): Uses the entire range instead the range of the tensor for quantization.
+     momentum(float): The value of the momentum to use for updateing the quantization parameters
+     percentile(float, optional): Percentile
+     sample(float, optional): Probability of bernoulli mask for each node in the graph
+
+
+    """
     def __init__(
         self,
         num_bits: int = 8,
         signed: bool = True,
-        use_momentum: bool= True,
+        use_momentum: bool = True,
         use_ste: bool = False,
         symmetric: bool = False,
         momentum: float = 0.01,
@@ -147,8 +144,8 @@ class IntegerQuantizer(nn.Module):
             self.max_fn = torch.max
         else:
             self.min_fn = lambda t: torch.kthvalue(
-                torch.flatten(t), max(1, min(t.numel(), int(t.numel() * percentile)))
-            )[0]
+                torch.flatten(t),
+                max(1, min(t.numel(), int(t.numel() * percentile))))[0]
             self.max_fn = lambda t: torch.kthvalue(
                 torch.flatten(t),
                 min(t.numel(), max(1, int(t.numel() * (1 - percentile)))),
@@ -158,9 +155,9 @@ class IntegerQuantizer(nn.Module):
             self.sample_fn = lambda x: x
         else:
             assert percentile is not None
-            self.sample_fn = lambda x: IntegerQuantizer.sample_tensor(sample, x)
+            self.sample_fn = lambda x: IntegerQuantizer.sample_tensor(
+                sample, x)
 
-    
     @staticmethod
     def sample_tensor(prop, x):
         if x.numel() < 1000:
@@ -175,7 +172,7 @@ class IntegerQuantizer(nn.Module):
         out = torch.empty(probs.shape, dtype=torch.bool, device=probs.device)
         mask = torch.bernoulli(probs, out=out)
         return x[mask]
-    
+
     def update_ranges(self, input):
 
         # updating min/max ranges
@@ -215,19 +212,16 @@ class IntegerQuantizer(nn.Module):
             self.symmetric,
             self.ste,
         )
-     
-# Generates the Mask based on the node degree. 
-class ProbabilisticHighDegreeMask:
 
+
+# Generates the Mask based on the node degree.
+class ProbabilisticHighDegreeMask:
     """
     Args:
-        low_quantise_prob(float): Node protection masking lowest probability 
-        high_quantise_prob(float): Node protection masking highest probability 
-        per_graph(bool): Use the same 
+        low_quantise_prob(float): Node protection masking lowest probability
+        high_quantise_prob(float): Node protection masking highest probability
+        per_graph(bool): Use the same
     """
-
-
-
     def __init__(self, low_quantise_prob, high_quantise_prob, per_graph=True):
         self.low_prob = low_quantise_prob
         self.high_prob = high_quantise_prob
@@ -256,7 +250,6 @@ class ProbabilisticHighDegreeMask:
             return Batch.from_data_list(processed)
         else:
             return self._process_graph(data)
-        
 
 
 def create_quantizer(qypte, ste, momentum, percentile, signed, sample_prop):
@@ -266,112 +259,78 @@ def create_quantizer(qypte, ste, momentum, percentile, signed, sample_prop):
 
     if qypte == "FP32":
         return Identity
-    
-    elif qypte =='INT8':
 
-        return lambda: IntegerQuantizer(8, signed, ste,momentum,percentile,sample_prop)
-    elif qypte =='INT4':
+    elif qypte == 'INT8':
 
-        return lambda: IntegerQuantizer(4, signed, ste,momentum,percentile,sample_prop)
+        return lambda: IntegerQuantizer(8, signed, ste, momentum, percentile,
+                                        sample_prop)
+    elif qypte == 'INT4':
+
+        return lambda: IntegerQuantizer(4, signed, ste, momentum, percentile,
+                                        sample_prop)
 
 
-def make_quantizers(qypte, dq, sign_input, ste, momentum, percentile, sample_prop):
+def make_quantizers(qypte, dq, sign_input, ste, momentum, percentile,
+                    sample_prop):
     """
     Use this to pass all the quantizer to the GNN layers. the GNN layer will use the needed layers and remove the rest.
     """
-    
+
     layer_quantizers = {
-        
-        "inputs": create_quantizer(
-            qypte, ste, momentum, percentile, sign_input, sample_prop
-        ),
-        "inputs_low": create_quantizer(
-            qypte, ste, momentum, percentile, sign_input, sample_prop
-        ),
-        "inputs_high": create_quantizer(
-            "FP32", ste, momentum, percentile, sign_input, sample_prop
-        ),
-
-        "weights": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        "weights_low": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        "weights_high": create_quantizer(
-            "FP32", ste, momentum, percentile, True, sample_prop
-        ),
-
-        "features": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        
-        "features_low": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        
-        "features_high": create_quantizer(
-            "FP32", ste, momentum, percentile, True, sample_prop
-        ),
-         
-        "attention": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        
-        "attention_low": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        
-        "attention_high": create_quantizer(
-            "FP32", ste, momentum, percentile, True, sample_prop
-        ),
-        
-        "alpha": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        
-        "alpha_low": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        
-        "alpha_high": create_quantizer(
-            "FP32", ste, momentum, percentile, True, sample_prop
-        ),
-        
-        "norm_low": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        
+        "inputs":
+        create_quantizer(qypte, ste, momentum, percentile, sign_input,
+                         sample_prop),
+        "inputs_low":
+        create_quantizer(qypte, ste, momentum, percentile, sign_input,
+                         sample_prop),
+        "inputs_high":
+        create_quantizer("FP32", ste, momentum, percentile, sign_input,
+                         sample_prop),
+        "weights":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "weights_low":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "weights_high":
+        create_quantizer("FP32", ste, momentum, percentile, True, sample_prop),
+        "features":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "features_low":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "features_high":
+        create_quantizer("FP32", ste, momentum, percentile, True, sample_prop),
+        "attention":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "attention_low":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "attention_high":
+        create_quantizer("FP32", ste, momentum, percentile, True, sample_prop),
+        "alpha":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "alpha_low":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "alpha_high":
+        create_quantizer("FP32", ste, momentum, percentile, True, sample_prop),
+        "norm_low":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
     }
     mp_quantizers = {
-        "message": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-       
-        "message_low": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        "message_high": create_quantizer(
-            "FP32", ste, momentum, percentile, True, sample_prop
-        ),
-        "update_q": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        "update_low": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        "update_high": create_quantizer(
-            "FP32", ste, momentum, percentile, True, sample_prop
-        ),
-        "aggregate": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        "aggregate_low": create_quantizer(
-            qypte, ste, momentum, percentile, True, sample_prop
-        ),
-        "aggregate_high": create_quantizer(
-            "FP32", ste, momentum, percentile, True, sample_prop
-        )
+        "message":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "message_low":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "message_high":
+        create_quantizer("FP32", ste, momentum, percentile, True, sample_prop),
+        "update_q":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "update_low":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "update_high":
+        create_quantizer("FP32", ste, momentum, percentile, True, sample_prop),
+        "aggregate":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "aggregate_low":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "aggregate_high":
+        create_quantizer("FP32", ste, momentum, percentile, True, sample_prop)
     }
     return layer_quantizers, mp_quantizers
-

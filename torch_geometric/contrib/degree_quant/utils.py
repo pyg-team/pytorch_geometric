@@ -1,4 +1,5 @@
 import torch_scatter
+
 from torch_geometric.utils import degree
 
 
@@ -17,6 +18,3 @@ def scatter_(name, src, index, dim=0, dim_size=None):
     elif name == "min":
         out[out > 10000] = 0
     return out
-
-
-

@@ -1,16 +1,16 @@
 import inspect
 from collections import OrderedDict
-from torch.nn import Module, ModuleDict
-import torch
-from utils import scatter_
 
+import torch
+from torch.nn import Module, ModuleDict
 from torch_scatter import scatter
+from utils import scatter_
 
 
 # This layer does not takethe input as any other layer. Derictly appliead
 class MessagePassingQuant(Module):
     """
-    Adapted from the original PyG message Passing class. Additional parameter to pass the quantization functions 
+    Adapted from the original PyG message Passing class. Additional parameter to pass the quantization functions
     for each parameter
 
     Args:
@@ -25,24 +25,22 @@ class MessagePassingQuant(Module):
         If set to :obj:`None`, the :class:`MessagePassing` instantiation is
         expected to implement its own aggregation logic via
         :meth:`aggregate`. (default: :obj:`"add"`)
-    
+
     flow (str, optional): The flow direction of message passing
         (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
         (default: :obj:`"source_to_target"`)
-    
+
     node_dim (int, optional): The axis along which to propagate.
     (default: :obj:`-2`)
-    
+
     mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer parameter
 
     **kwargs (optional): Additional arguments of
         :class:`torch_geometric.nn.conv.MessagePassing`.
-    
-    """
 
-    def __init__(
-        self, aggr="add", flow="source_to_target", node_dim=0, mp_quantizers=None
-    ):
+    """
+    def __init__(self, aggr="add", flow="source_to_target", node_dim=0,
+                 mp_quantizers=None):
         super(MessagePassingQuant, self).__init__()
 
         self.aggr = aggr
@@ -65,8 +63,14 @@ class MessagePassingQuant(Module):
         self.__update_params__ = OrderedDict(self.__update_params__)
         self.__update_params__.popitem(last=False)
 
-        msg_args = set(self.__msg_params__.keys()) - set(["edge_index","edge_index_i","edge_index_j","size","size_i","size_j"])
-        aggr_args = set(self.__aggr_params__.keys()) -set(["index", "dim_size",])
+        msg_args = set(self.__msg_params__.keys()) - set([
+            "edge_index", "edge_index_i", "edge_index_j", "size", "size_i",
+            "size_j"
+        ])
+        aggr_args = set(self.__aggr_params__.keys()) - set([
+            "index",
+            "dim_size",
+        ])
         update_args = set(self.__update_params__.keys()) - set([])
         self.__args__ = set().union(msg_args, aggr_args, update_args)
 
@@ -75,7 +79,7 @@ class MessagePassingQuant(Module):
 
     def reset_parameters(self):
         self.mp_quantizers = ModuleDict()
-        for key in  ["aggregate", "message", "update_q"]:
+        for key in ["aggregate", "message", "update_q"]:
             self.mp_quantizers[key] = self.mp_quant_fns[key]()
 
     def __set_size__(self, size, index, tensor):
@@ -85,13 +89,10 @@ class MessagePassingQuant(Module):
             size[index] = tensor.size(self.node_dim)
         elif size[index] != tensor.size(self.node_dim):
             raise ValueError(
-                (
-                    f"Encountered node tensor with size "
-                    f"{tensor.size(self.node_dim)} in dimension {self.node_dim}, "
-                    f"but expected size {size[index]}."
-                )
-            )
-            
+                (f"Encountered node tensor with size "
+                 f"{tensor.size(self.node_dim)} in dimension {self.node_dim}, "
+                 f"but expected size {size[index]}."))
+
     def __collect__(self, edge_index, size, kwargs):
         i, j = (0, 1) if self.flow == "target_to_source" else (1, 0)
         ij = {"_i": i, "_j": j}
@@ -161,7 +162,8 @@ class MessagePassingQuant(Module):
         out = self.mp_quantizers["message"](self.message(**msg_kwargs))
 
         aggr_kwargs = self.__distribute__(self.__aggr_params__, kwargs)
-        out = self.mp_quantizers["aggregate"](self.aggregate(out, **aggr_kwargs))
+        out = self.mp_quantizers["aggregate"](self.aggregate(
+            out, **aggr_kwargs))
 
         update_kwargs = self.__distribute__(self.__update_params__, kwargs)
         out = self.mp_quantizers["update_q"](self.update(out, **update_kwargs))
@@ -172,29 +174,25 @@ class MessagePassingQuant(Module):
         return x_j
 
     def aggregate(self, inputs, index, dim_size):  # pragma: no cover
-        
+
         return scatter_(inputs, index, self.node_dim, dim_size)
 
-        
-        out = scatter(src = inputs, index = index, dim = self.node_dim, dim_size = dim_size, reduce= self.aggr)
+        out = scatter(src=inputs, index=index, dim=self.node_dim,
+                      dim_size=dim_size, reduce=self.aggr)
         if self.aggr == "max":
             out[out < -10000] = 0
         elif self.aggr == "min":
             out[out > 10000] = 0
-        return out 
-
+        return out
 
     def update(self, inputs):  # pragma: no cover
         return inputs
 
-    
-    
+
 class MessagePassingMultiQuant(Module):
-    
-    
     """
     Adapted from the original PyG message Passing class. Updates the message propagation step using the quantized values
-    This class uses the Degree Quant approach to quantize the respective inputs based on the mask. 
+    This class uses the Degree Quant approach to quantize the respective inputs based on the mask.
 
     Args:
     aggr (str or [str] or Aggregation, optional): The aggregation scheme
@@ -208,23 +206,20 @@ class MessagePassingMultiQuant(Module):
         If set to :obj:`None`, the :class:`MessagePassing` instantiation is
         expected to implement its own aggregation logic via
         :meth:`aggregate`. (default: :obj:`"add"`)
-    
+
     flow (str, optional): The flow direction of message passing
         (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
         (default: :obj:`"source_to_target"`)
-    
+
     node_dim (int, optional): The axis along which to propagate.
     (default: :obj:`-2`)
-    
+
     mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer parameter
 
     **kwargs (optional): Additional arguments of
         :class:`torch_geometric.nn.conv.MessagePassing`.
-    
+
     """
-
-
-    
     def __init__(
         self,
         aggr="add",
@@ -232,7 +227,7 @@ class MessagePassingMultiQuant(Module):
         node_dim=0,
         mp_quantizers=None,
     ):
-        
+
         super(MessagePassingMultiQuant, self).__init__()
 
         self.aggr = aggr
@@ -255,8 +250,14 @@ class MessagePassingMultiQuant(Module):
         self.__update_params__ = OrderedDict(self.__update_params__)
         self.__update_params__.popitem(last=False)
 
-        msg_args = set(self.__msg_params__.keys()) - set(["edge_index","edge_index_i","edge_index_j","size","size_i","size_j"])
-        aggr_args = set(self.__aggr_params__.keys()) -set(["index", "dim_size",])
+        msg_args = set(self.__msg_params__.keys()) - set([
+            "edge_index", "edge_index_i", "edge_index_j", "size", "size_i",
+            "size_j"
+        ])
+        aggr_args = set(self.__aggr_params__.keys()) - set([
+            "index",
+            "dim_size",
+        ])
         update_args = set(self.__update_params__.keys()) - set([])
 
         self.__args__ = set().union(msg_args, aggr_args, update_args)
@@ -266,7 +267,10 @@ class MessagePassingMultiQuant(Module):
 
     def reset_parameters(self):
         self.mp_quantizers = ModuleDict()
-        for key in ["message_low","message_high","update_low","update_high", "aggregate_low","aggregate_high"]:
+        for key in [
+                "message_low", "message_high", "update_low", "update_high",
+                "aggregate_low", "aggregate_high"
+        ]:
             self.mp_quantizers[key] = self.mp_quant_fns[key]()
 
     def __set_size__(self, size, index, tensor):
@@ -276,12 +280,9 @@ class MessagePassingMultiQuant(Module):
             size[index] = tensor.size(self.node_dim)
         elif size[index] != tensor.size(self.node_dim):
             raise ValueError(
-                (
-                    f"Encountered node tensor with size "
-                    f"{tensor.size(self.node_dim)} in dimension {self.node_dim}, "
-                    f"but expected size {size[index]}."
-                )
-            )
+                (f"Encountered node tensor with size "
+                 f"{tensor.size(self.node_dim)} in dimension {self.node_dim}, "
+                 f"but expected size {size[index]}."))
 
     def __collect__(self, edge_index, size, kwargs):
         i, j = (0, 1) if self.flow == "target_to_source" else (1, 0)
@@ -340,14 +341,13 @@ class MessagePassingMultiQuant(Module):
         return out
 
     def propagate(self, edge_index, mask, size=None, **kwargs):
-
         """
         Args:
             edge_index (torch.Tensor or SparseTensor): The tensor which is used to store the graph edges
             mask (torch.Tensor): The mask for the graph which is used to protect the nodes in the Degree Quant method
-        
+
         """
-        
+
         size = [None, None] if size is None else size
         size = [size, size] if isinstance(size, int) else size
         size = size.tolist() if torch.is_tensor(size) else size
@@ -362,7 +362,8 @@ class MessagePassingMultiQuant(Module):
             edge_mask = torch.index_select(mask, 0, edge_index[0])
             out = torch.empty_like(msg)
             out[edge_mask] = self.mp_quantizers["message_high"](msg[edge_mask])
-            out[~edge_mask] = self.mp_quantizers["message_low"](msg[~edge_mask])
+            out[~edge_mask] = self.mp_quantizers["message_low"](
+                msg[~edge_mask])
         else:
             out = self.mp_quantizers["message_low"](msg)
 
@@ -390,16 +391,16 @@ class MessagePassingMultiQuant(Module):
         return x_j
 
     def aggregate(self, inputs, index, dim_size):  # pragma: no cover
-        
+
         return scatter_(self.aggr, inputs, index, self.node_dim, dim_size)
 
-        out = scatter(src = inputs, index = index, dim = self.node_dim, dim_size = dim_size, reduce= self.aggr)
+        out = scatter(src=inputs, index=index, dim=self.node_dim,
+                      dim_size=dim_size, reduce=self.aggr)
         if self.aggr == "max":
             out[out < -10000] = 0
         elif self.aggr == "min":
             out[out > 10000] = 0
-        return out 
-
+        return out
 
     def update(self, inputs):  # pragma: no cover
         return inputs

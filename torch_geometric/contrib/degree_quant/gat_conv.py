@@ -1,14 +1,13 @@
-
-import torch 
-from torch.nn import Parameter, ModuleDict
+import torch
 import torch.nn.functional as F
-from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.utils import  add_self_loops, remove_self_loops, softmax
 from message_passing import *
+from torch.nn import ModuleDict, Parameter
+
+from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
 
 
 class GATConvQuant(MessagePassingQuant):
-  
     """
     A GAT Layer with complete quantization of all the parameters
 
@@ -32,13 +31,13 @@ class GATConvQuant(MessagePassingQuant):
         sampled neighborhood during training. (default: :obj:`0`)
     bias (bool, optional): If set to :obj:`False`, the layer will not learn
         an additive bias. (default: :obj:`True`)
-    
+
     mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer weight
     layer_quantizers (dict): A dictionary with the IntegerQuantizer defined for each layer trainable parameter
 
     **kwargs (optional): Additional arguments of
         :class:`torch_geometric.nn.conv.MessagePassing`.
-    
+
     """
     def __init__(
         self,
@@ -54,7 +53,8 @@ class GATConvQuant(MessagePassingQuant):
         layer_quantizers=None,
         **kwargs,
     ):
-        super(GATConvQuant, self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
+        super(GATConvQuant,
+              self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
         self.nn = nn
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -63,7 +63,8 @@ class GATConvQuant(MessagePassingQuant):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.weight = Parameter(torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
 
         if bias and concat:
@@ -85,7 +86,7 @@ class GATConvQuant(MessagePassingQuant):
         self.nn.reset_parameters()
 
         self.layer_quantizers = ModuleDict()
-        for key in ["weights","inputs","features","attention","alpha"]:
+        for key in ["weights", "inputs", "features", "attention", "alpha"]:
             self.layer_quantizers[key] = self.layer_quant_fns[key]()
 
     def forward(self, x, edge_index, size=None):
@@ -110,8 +111,10 @@ class GATConvQuant(MessagePassingQuant):
             )
 
             x_q = (
-                None if x[0] is None else self.layer_quantizers["features"](x[0]),
-                None if x[1] is None else self.layer_quantizers["features"](x[1]),
+                None
+                if x[0] is None else self.layer_quantizers["features"](x[0]),
+                None
+                if x[1] is None else self.layer_quantizers["features"](x[1]),
             )
 
         return self.propagate(edge_index, size=size, x=x_q)
@@ -122,17 +125,16 @@ class GATConvQuant(MessagePassingQuant):
         att = self.layer_quantizers["attention"](self.att)
 
         if x_i is None:
-            alpha = (x_j * att[:, :, self.out_channels :]).sum(dim=-1)
+            alpha = (x_j * att[:, :, self.out_channels:]).sum(dim=-1)
         else:
             x_i = x_i.view(-1, self.heads, self.out_channels)
             alpha = (torch.cat([x_i, x_j], dim=-1) * att).sum(dim=-1)
 
         alpha = self.layer_quantizers["alpha"](alpha)
         alpha = F.leaky_relu(alpha, self.negative_slope)
-        
+
         alpha = softmax(alpha, edge_index_i, size_i)
-        
-       
+
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
@@ -149,15 +151,12 @@ class GATConvQuant(MessagePassingQuant):
         return self.nn(aggr_out)
 
     def __repr__(self):
-        return "{}({}, {}, heads={})".format(
-            self.__class__.__name__, self.in_channels, self.out_channels, self.heads
-        )
+        return "{}({}, {}, heads={})".format(self.__class__.__name__,
+                                             self.in_channels,
+                                             self.out_channels, self.heads)
 
-    
-    
+
 class GATConvMultiQuant(MessagePassingMultiQuant):
-    
-    
     """
     A GAT Layer with Degree Quant approach for quantization of all the layer and message passing parameters
     It uses low and high masking strategy to quantize the respective quantizable tensors
@@ -182,20 +181,19 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
         sampled neighborhood during training. (default: :obj:`0`)
     bias (bool, optional): If set to :obj:`False`, the layer will not learn
         an additive bias. (default: :obj:`True`)
-    
+
     mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer weight
     layer_quantizers (dict): A dictionary with the IntegerQuantizer defined for each layer trainable parameter
 
     **kwargs (optional): Additional arguments of
         :class:`torch_geometric.nn.conv.MessagePassing`.
-    
+
     """
-    
     def __init__(
         self,
         in_channels,
         out_channels,
-        nn = None,
+        nn=None,
         heads=1,
         concat=True,
         negative_slope=0.2,
@@ -205,11 +203,9 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
         mp_quantizers=None,
         **kwargs,
     ):
-        
-       
-        super(GATConvMultiQuant, self).__init__(
-            aggr="add", mp_quantizers=mp_quantizers, **kwargs
-        )
+
+        super(GATConvMultiQuant,
+              self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
         self.nn = nn
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -218,7 +214,8 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
         self.negative_slope = negative_slope
         self.dropout = dropout
 
-        self.weight = Parameter(torch.Tensor(in_channels, heads * out_channels))
+        self.weight = Parameter(torch.Tensor(in_channels,
+                                             heads * out_channels))
         self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
 
         if bias and concat:
@@ -240,17 +237,19 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
         self.nn.reset_parameters()
         # create quantization modules for this layer
         self.layer_quantizers = ModuleDict()
-        for key in ["weights_low","inputs_low","inputs_high","features_low","features_high","attention_low","alpha_low","alpha_high"]:
+        for key in [
+                "weights_low", "inputs_low", "inputs_high", "features_low",
+                "features_high", "attention_low", "alpha_low", "alpha_high"
+        ]:
             self.layer_quantizers[key] = self.layer_quant_fns[key]()
 
     def forward(self, x, edge_index, mask, size=None):
-        
         """
         Args:
             x (torch.Tensor): Node Features
             edge_index (torch.Tensor or SparseTensor): The tensor which is used to store the graph edges
             mask(torch.Tensor): The mask for the graph which is used to protect the nodes in the Degree Quant method
-        
+
         """
         # quantizing input
         if self.training:
@@ -274,7 +273,8 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
                 x[mask] = self.layer_quantizers["features_high"](x_tmp[mask])
                 x[~mask] = self.layer_quantizers["features_low"](x_tmp[~mask])
             else:
-                x = self.layer_quantizers["features_low"](torch.matmul(x_q, w_q))
+                x = self.layer_quantizers["features_low"](torch.matmul(
+                    x_q, w_q))
 
             x_q = x
         else:
@@ -286,48 +286,49 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
                 x0_q = None
                 if x[0] is not None:
                     x0_q = torch.empty_like(x[0])
-                    x0_q[mask] = self.layer_quantizers["features_high"](x[0][mask])
-                    x0_q[~mask] = self.layer_quantizers["features_low"](x[0][~mask])
+                    x0_q[mask] = self.layer_quantizers["features_high"](
+                        x[0][mask])
+                    x0_q[~mask] = self.layer_quantizers["features_low"](
+                        x[0][~mask])
 
                 x1_q = None
                 if x[1] is not None:
                     x1_q = torch.empty_like(x[1])
-                    x1_q[mask] = self.layer_quantizers["features_high"](x[1][mask])
-                    x1_q[~mask] = self.layer_quantizers["features_low"](x[1][~mask])
+                    x1_q[mask] = self.layer_quantizers["features_high"](
+                        x[1][mask])
+                    x1_q[~mask] = self.layer_quantizers["features_low"](
+                        x[1][~mask])
 
                 x_q = (x0_q, x1_q)
 
             else:
                 x_q = (
-                    None
-                    if x[0] is None
-                    else self.layer_quantizers["features_low"](x[0]),
-                    None
-                    if x[1] is None
-                    else self.layer_quantizers["features_low"](x[1]),
+                    None if x[0] is None else
+                    self.layer_quantizers["features_low"](x[0]),
+                    None if x[1] is None else
+                    self.layer_quantizers["features_low"](x[1]),
                 )
 
         edge_mask = torch.index_select(mask, 0, edge_index[0])
-        return self.propagate(
-            edge_index, size=size, x=x_q, mask=mask, edge_mask=edge_mask
-        )
+        return self.propagate(edge_index, size=size, x=x_q, mask=mask,
+                              edge_mask=edge_mask)
 
     def message(self, edge_index_i, x_i, x_j, size_i, edge_mask):
         x_j = x_j.view(-1, self.heads, self.out_channels)
         att = self.layer_quantizers["attention_low"](self.att)
 
         if x_i is None:
-            alpha = (x_j * att[:, :, self.out_channels :]).sum(dim=-1)
+            alpha = (x_j * att[:, :, self.out_channels:]).sum(dim=-1)
         else:
             x_i = x_i.view(-1, self.heads, self.out_channels)
             alpha = (torch.cat([x_i, x_j], dim=-1) * att).sum(dim=-1)
 
         if self.training:
             alpha_tmp = torch.empty_like(alpha)
-            alpha_tmp[edge_mask] = self.layer_quantizers["alpha_high"](alpha[edge_mask])
+            alpha_tmp[edge_mask] = self.layer_quantizers["alpha_high"](
+                alpha[edge_mask])
             alpha_tmp[~edge_mask] = self.layer_quantizers["alpha_low"](
-                alpha[~edge_mask]
-            )
+                alpha[~edge_mask])
             alpha = alpha_tmp
         else:
             alpha = self.layer_quantizers["alpha_low"](alpha)
@@ -335,10 +336,10 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
         alpha = F.leaky_relu(alpha, self.negative_slope)
 
         if torch.cuda.is_available():
-            alpha = softmax(alpha.cpu(), edge_index_i.cpu()).to(torch.device('cuda'))
-        else: 
+            alpha = softmax(alpha.cpu(),
+                            edge_index_i.cpu()).to(torch.device('cuda'))
+        else:
             alpha = softmax(alpha, edge_index_i)
-
 
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
@@ -353,13 +354,11 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
 
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
-        
-        # We apply the post processing nn head here to the updated output of the layer 
+
+        # We apply the post processing nn head here to the updated output of the layer
         return self.nn(aggr_out)
 
     def __repr__(self):
-        return "{}({}, {}, heads={})".format(
-            self.__class__.__name__, self.in_channels, self.out_channels, self.heads
-        )
-    
-    
+        return "{}({}, {}, heads={})".format(self.__class__.__name__,
+                                             self.in_channels,
+                                             self.out_channels, self.heads)

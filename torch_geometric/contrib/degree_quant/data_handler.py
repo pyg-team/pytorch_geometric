@@ -1,23 +1,26 @@
-from torch_geometric.datasets import Planetoid,TUDataset
 import torch
-from torch_geometric.utils import degree
-import torch_geometric.transforms as T
 from quantizer import ProbabilisticHighDegreeMask
 
+import torch_geometric.transforms as T
+from torch_geometric.datasets import Planetoid, TUDataset
+from torch_geometric.utils import degree
 
-def get_dataset(path, name, sparse=True, cleaned=False, DQ= {"prob_mask_low": 0, "prob_mask_change": 0.1}):
 
+def get_dataset(path, name, sparse=True, cleaned=False, DQ={
+    "prob_mask_low": 0,
+    "prob_mask_change": 0.1
+}):
     """
-    Function to sample the datset based on the node degree. 
-    Uses One hot representation of degree as features for dataset with no features. 
-    
+    Function to sample the datset based on the node degree.
+    Uses One hot representation of degree as features for dataset with no features.
+
     """
 
     if name in ['Cora', 'Citeseer']:
-      dataset = Planetoid(path, name)
+        dataset = Planetoid(path, name)
     else:
-      dataset = TUDataset(path, name, cleaned=cleaned )
-      dataset.data.edge_attr = None
+        dataset = TUDataset(path, name, cleaned=cleaned)
+        dataset.data.edge_attr = None
 
     if dataset.data.x is None:
         max_degree = 0
@@ -54,14 +57,15 @@ def get_dataset(path, name, sparse=True, cleaned=False, DQ= {"prob_mask_low": 0,
         if dataset.transform is None:
             dataset.transform = T.ToDense(num_nodes)
         else:
-            dataset.transform = T.Compose([dataset.transform, T.ToDense(num_nodes)])
-    
-    # Additional Functionality to Ignore the Mask which allows implementation of Naive Quantizaiton 
+            dataset.transform = T.Compose(
+                [dataset.transform, T.ToDense(num_nodes)])
+
+    # Additional Functionality to Ignore the Mask which allows implementation of Naive Quantizaiton
     if DQ is not None:
         print(f"Generating ProbabilisticHighDegreeMask: {DQ}")
         dq_transform = ProbabilisticHighDegreeMask(
-            DQ["prob_mask_low"], min(DQ["prob_mask_low"] + DQ["prob_mask_change"], 1.0)
-        )
+            DQ["prob_mask_low"],
+            min(DQ["prob_mask_low"] + DQ["prob_mask_change"], 1.0))
         # NOTE: see issue #1 if you are customizing for your own dataset
         # dataset.transform may be None (not the case here)
         if dataset.transform is None:
@@ -72,9 +76,7 @@ def get_dataset(path, name, sparse=True, cleaned=False, DQ= {"prob_mask_low": 0,
     return dataset
 
 
-    
 class NormalizedDegree(object):
-    
     """
     The class computes the degree of each node in the graph and Normalises the degree of the whole graph
     Parameters
@@ -82,8 +84,6 @@ class NormalizedDegree(object):
     mean(float): The mean node degree of the whole graph dataset
     std(float): The standard deviation of the node degree of the whole graph dataset
     """
-
-
     def __init__(self, mean, std):
 
         self.mean = mean
@@ -91,8 +91,8 @@ class NormalizedDegree(object):
 
     def __call__(self, data):
         """
-        Args: 
-            data(torch_geometric.data.data): Dataset to normalise the node degrees 
+        Args:
+            data(torch_geometric.data.data): Dataset to normalise the node degrees
         """
         deg = degree(data.edge_index[0], dtype=torch.float)
         deg = (deg - self.mean) / self.std

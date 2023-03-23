@@ -1,48 +1,46 @@
-import torch 
+import torch
 import torch.nn.functional as F
-
-from linear import LinearQuantized
-from quantizer import make_quantizers
-from torch.nn import Linear, ReLU, BatchNorm1d as BN
-from torch import nn 
-from torch_geometric.nn import global_mean_pool
-from torch.nn import Sequential
-
-from message_passing import *
 from gat_conv import *
-from gcn_conv import  * 
+from gcn_conv import *
 from gin_conv import *
+from linear import LinearQuantized
+from message_passing import *
+from quantizer import make_quantizers
+from torch import nn
+from torch.nn import BatchNorm1d as BN
+from torch.nn import Linear, ReLU, Sequential
+
+from torch_geometric.nn import global_mean_pool
+
 
 class GIN(nn.Module):
-
     """
 
     Args:
-        in_channels(int): Number of input features 
+        in_channels(int): Number of input features
         out_channels(int): Number of classes
         num_layers:(int): Number of GIN layers to use in the model
         hidden:(int): Hidden dimension for message passing and aggregation
-        dq:(bool): Whether to use Degree Quant 
-        qypte:(str): The Integer precision for Degree Quant 
+        dq:(bool): Whether to use Degree Quant
+        qypte:(str): The Integer precision for Degree Quant
         ste:(bool): Whether to use Straight-Through Estimation for the quantization.
-        momentum:(int): Value of the momentum coefficient  
+        momentum:(int): Value of the momentum coefficient
         percentile:(int): Clips the values at the low and high percentile of the real value distribution
         sample_prop:(torch.Tensor): Probability of bernoulli mask for each node in the graph
 
     """
-
     def __init__(
         self,
         in_channels,
         out_channels,
-        num_layers:int,
-        hidden:int,
-        dq:bool,
-        qypte:str,
-        ste:bool,
-        momentum:bool,
-        percentile:int,
-        sample_prop:torch.Tensor,
+        num_layers: int,
+        hidden: int,
+        dq: bool,
+        qypte: str,
+        ste: bool,
+        momentum: bool,
+        percentile: int,
+        sample_prop: torch.Tensor,
     ):
         super(GIN, self).__init__()
 
@@ -50,9 +48,9 @@ class GIN(nn.Module):
         self.out_channels = out_channels
         self.is_dq = dq
         if dq == True:
-          gin_layer = GINConvMultiQuant 
+            gin_layer = GINConvMultiQuant
         else:
-          gin_layer = GINConvQuant
+            gin_layer = GINConvQuant
 
         lq, mq = make_quantizers(
             qypte,
@@ -72,7 +70,7 @@ class GIN(nn.Module):
             percentile=percentile,
             sample_prop=sample_prop,
         )
-        
+
         self.conv1 = gin_layer(
             ResettableSequential(
                 Linear(self.in_channels, hidden),
@@ -89,7 +87,8 @@ class GIN(nn.Module):
             self.convs.append(
                 gin_layer(
                     ResettableSequential(
-                        LinearQuantized(hidden, hidden, layer_quantizers=lq_signed),
+                        LinearQuantized(hidden, hidden,
+                                        layer_quantizers=lq_signed),
                         ReLU(),
                         LinearQuantized(hidden, hidden, layer_quantizers=lq),
                         ReLU(),
@@ -97,11 +96,11 @@ class GIN(nn.Module):
                     ),
                     train_eps=True,
                     mp_quantizers=mq,
-                )
-            )
+                ))
 
         self.lin1 = LinearQuantized(hidden, hidden, layer_quantizers=lq_signed)
-        self.lin2 = LinearQuantized(hidden, self.out_channels , layer_quantizers=lq)
+        self.lin2 = LinearQuantized(hidden, self.out_channels,
+                                    layer_quantizers=lq)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -111,7 +110,7 @@ class GIN(nn.Module):
         self.lin2.reset_parameters()
 
     def forward(self, data):
-        # NOTE: It is possible to use the same mask consistently or generate a 
+        # NOTE: It is possible to use the same mask consistently or generate a
         # new mask per layer. For other experiments we used a per-layer mask
         # We did not observe major differences but we expect the impact will
         # be layer and dataset dependent. Extensive experiments assessing the
@@ -129,7 +128,7 @@ class GIN(nn.Module):
 
         x = global_mean_pool(x, batch)
         # NOTE: the linear layers from here do not contribute significantly to run-time
-        # Therefore you probably don't want to quantize these as it will likely have 
+        # Therefore you probably don't want to quantize these as it will likely have
         # an impact on performance.
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
@@ -140,25 +139,21 @@ class GIN(nn.Module):
 
 
 class GCN(nn.Module):
-
-
     """
 
     Args:
-        in_channels(int): Number of input features 
+        in_channels(int): Number of input features
         out_channels(int): Number of classes
         num_layers:(int): Number of GIN layers to use in the model
         hidden:(int): Hidden dimension for message passing and aggregation
-        dq:(bool): Whether to use Degree Quant 
-        qypte:(str): The Integer precision for Degree Quant 
+        dq:(bool): Whether to use Degree Quant
+        qypte:(str): The Integer precision for Degree Quant
         ste:(bool): Whether to use Straight-Through Estimation for the quantization.
-        momentum:(int): Value of the momentum coefficient  
+        momentum:(int): Value of the momentum coefficient
         percentile:(int): Clips the values at the low and high percentile of the real value distribution
         sample_prop:(torch.Tensor): Probability of bernoulli mask for each node in the graph
 
     """
-
-
     def __init__(
         self,
         in_channels,
@@ -178,9 +173,9 @@ class GCN(nn.Module):
         self.out_channels = out_channels
         self.is_dq = dq
         if dq == True:
-          gcn_layer = GCNConvMultiQuant 
+            gcn_layer = GCNConvMultiQuant
         else:
-          gcn_layer = GCNConvQuant
+            gcn_layer = GCNConvQuant
 
         lq, mq = make_quantizers(
             qypte,
@@ -200,39 +195,27 @@ class GCN(nn.Module):
             percentile=percentile,
             sample_prop=sample_prop,
         )
-        
-        self.conv1 = gcn_layer(
-                            in_channels = self.in_channels,
-                            out_channels = hidden,
-                            nn= ResettableSequential(Linear(hidden, hidden),
-                                                        ReLU(),
-                                                        LinearQuantized(hidden, hidden, layer_quantizers=lq),
-                                                        ReLU(),
-                                                        BN(hidden)
-                                                    ),
-                            layer_quantizers=lq_signed,
-                            mp_quantizers=mq
 
-        )
+        self.conv1 = gcn_layer(
+            in_channels=self.in_channels, out_channels=hidden,
+            nn=ResettableSequential(
+                Linear(hidden, hidden), ReLU(),
+                LinearQuantized(hidden, hidden, layer_quantizers=lq), ReLU(),
+                BN(hidden)), layer_quantizers=lq_signed, mp_quantizers=mq)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(
                 gcn_layer(
-                            in_channels = hidden,
-                            out_channels = hidden,
-                            nn= ResettableSequential(Linear(hidden, hidden),
-                                                        ReLU(),
-                                                        LinearQuantized(hidden, hidden, layer_quantizers=lq),
-                                                        ReLU(),
-                                                        BN(hidden)
-                                                    ),
-                            layer_quantizers=lq_signed,
-                            mp_quantizers=mq
-                )
-            )
+                    in_channels=hidden, out_channels=hidden,
+                    nn=ResettableSequential(
+                        Linear(hidden, hidden), ReLU(),
+                        LinearQuantized(hidden, hidden, layer_quantizers=lq),
+                        ReLU(), BN(hidden)), layer_quantizers=lq_signed,
+                    mp_quantizers=mq))
 
         self.lin1 = LinearQuantized(hidden, hidden, layer_quantizers=lq_signed)
-        self.lin2 = LinearQuantized(hidden,  self.out_channels, layer_quantizers=lq)
+        self.lin2 = LinearQuantized(hidden, self.out_channels,
+                                    layer_quantizers=lq)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -242,7 +225,7 @@ class GCN(nn.Module):
         self.lin2.reset_parameters()
 
     def forward(self, data):
-       
+
         if hasattr(data, "prob_mask") and data.prob_mask is not None:
             mask = evaluate_prob_mask(data)
         else:
@@ -253,36 +236,30 @@ class GCN(nn.Module):
         x = self.conv1(x, edge_index, mask)
         for conv in self.convs:
             x = conv(x, edge_index, mask)
-            
+
         x = global_mean_pool(x, batch)
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.lin2(x)
         return F.log_softmax(x, dim=-1)
-    
+
 
 class GAT(nn.Module):
-
     """
 
     Args:
-        in_channels(int): Number of input features 
+        in_channels(int): Number of input features
         out_channels(int): Number of classes
         num_layers:(int): Number of GIN layers to use in the model
         hidden:(int): Hidden dimension for message passing and aggregation
-        dq:(bool): Whether to use Degree Quant 
-        qypte:(str): The Integer precision for Degree Quant 
+        dq:(bool): Whether to use Degree Quant
+        qypte:(str): The Integer precision for Degree Quant
         ste:(bool): Whether to use Straight-Through Estimation for the quantization.
-        momentum:(int): Value of the momentum coefficient  
+        momentum:(int): Value of the momentum coefficient
         percentile:(int): Clips the values at the low and high percentile of the real value distribution
         sample_prop:(torch.Tensor): Probability of bernoulli mask for each node in the graph
 
     """
-
-
-
-
-
     def __init__(
         self,
         in_channels,
@@ -301,7 +278,7 @@ class GAT(nn.Module):
         self.out_channels = out_channels
         self.is_dq = dq
         if dq == True:
-          gat_layer = GATConvMultiQuant 
+            gat_layer = GATConvMultiQuant
         else:
             gat_layer = GATConvQuant
 
@@ -323,40 +300,27 @@ class GAT(nn.Module):
             percentile=percentile,
             sample_prop=sample_prop,
         )
-        
+
         self.conv1 = gat_layer(
-            in_channels = self.in_channels,
-            out_channels = hidden,
-            nn= ResettableSequential(
-                Linear(hidden, hidden),
-                ReLU(),
-                LinearQuantized(hidden, hidden, layer_quantizers=lq),
-                ReLU(),
-                BN(hidden)
-            ),
-            layer_quantizers=lq_signed,
-            mp_quantizers=mq
-            )
+            in_channels=self.in_channels, out_channels=hidden,
+            nn=ResettableSequential(
+                Linear(hidden, hidden), ReLU(),
+                LinearQuantized(hidden, hidden, layer_quantizers=lq), ReLU(),
+                BN(hidden)), layer_quantizers=lq_signed, mp_quantizers=mq)
         self.convs = torch.nn.ModuleList()
         for i in range(num_layers - 1):
             self.convs.append(
                 gat_layer(
-                in_channels = hidden,
-                out_channels = hidden,
-                nn = ResettableSequential(
-                    Linear(hidden, hidden),
-                    ReLU(),
-                    LinearQuantized(hidden, hidden, layer_quantizers=lq),
-                    ReLU(),
-                    BN(hidden)
-                    ),
-                layer_quantizers=lq_signed,
-                mp_quantizers=mq
-                )
-            )
+                    in_channels=hidden, out_channels=hidden,
+                    nn=ResettableSequential(
+                        Linear(hidden, hidden), ReLU(),
+                        LinearQuantized(hidden, hidden, layer_quantizers=lq),
+                        ReLU(), BN(hidden)), layer_quantizers=lq_signed,
+                    mp_quantizers=mq))
 
         self.lin1 = LinearQuantized(hidden, hidden, layer_quantizers=lq_signed)
-        self.lin2 = LinearQuantized(hidden, self.out_channels, layer_quantizers=lq)
+        self.lin2 = LinearQuantized(hidden, self.out_channels,
+                                    layer_quantizers=lq)
 
     def reset_parameters(self):
         self.conv1.reset_parameters()
@@ -366,7 +330,7 @@ class GAT(nn.Module):
         self.lin2.reset_parameters()
 
     def forward(self, data):
-       
+
         if hasattr(data, "prob_mask") and data.prob_mask is not None:
             mask = evaluate_prob_mask(data)
         else:
@@ -377,20 +341,18 @@ class GAT(nn.Module):
         x = self.conv1(x, edge_index, mask)
         for conv in self.convs:
             x = conv(x, edge_index, mask)
-            
+
         x = global_mean_pool(x, batch)
         x = F.relu(self.lin1(x))
         x = F.dropout(x, p=0.5, training=self.training)
         x = self.lin2(x)
         return F.log_softmax(x, dim=-1)
-    
 
 
 class ResettableSequential(Sequential):
-
     """
         A wrapper for Torch sequential to reset the layer parameters without iterating each time.
-        
+
     """
     def reset_parameters(self):
         for child in self.children():
@@ -401,11 +363,10 @@ class ResettableSequential(Sequential):
 def evaluate_prob_mask(data):
     """
     This model return the probability mask of the input graph using bernoulli random masking of each node.
-    
+
     Parameters
     ----------
-    data: Single graph object from PyG  
+    data: Single graph object from PyG
 
     """
     return torch.bernoulli(data.prob_mask).to(torch.bool)
-

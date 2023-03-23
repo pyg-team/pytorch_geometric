@@ -1,18 +1,18 @@
-from torch import nn 
-
 import torch.nn.functional as F
+from torch import nn
+
 
 class LinearQuantized(nn.Linear):
     """
     A quantizable linear layer
-    
-   
+
+
     Args:
         in_features: size of each input sample
         out_features: size of each output sample
         bias: If set to ``False``, the layer will not learn an additive bias. Default: ``True``
-    
-    
+
+
     Attributes:
         weight: the learnable weights of the module of shape
             :math:`(\text{out\_features}, \text{in\_features})`. The values are
@@ -25,14 +25,7 @@ class LinearQuantized(nn.Linear):
 
 
     """
-    
-    
-    
-    
-    
-    def __init__(
-        self, in_features, out_features, layer_quantizers, bias=True
-    ):
+    def __init__(self, in_features, out_features, layer_quantizers, bias=True):
         # create quantization modules for this layer
         self.layer_quant_fns = layer_quantizers
         super(LinearQuantized, self).__init__(in_features, out_features, bias)
@@ -44,11 +37,10 @@ class LinearQuantized(nn.Linear):
             self.layer_quant[key] = self.layer_quant_fns[key]()
 
     def forward(self, input):
-
         """
-        Args: 
+        Args:
         input (torch.Tensor): The input node features.
-        
+
         """
 
         input_q = self.layer_quant["inputs"](input)

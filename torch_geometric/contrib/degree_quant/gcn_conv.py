@@ -1,17 +1,17 @@
-
-import torch 
-from torch.nn import Parameter, ModuleDict
-from torch_scatter import scatter_add
-from torch_geometric.utils import add_remaining_self_loops
+import torch
 import torch.nn.functional as F
-from torch_geometric.nn.inits import glorot, zeros
 from message_passing import *
+from torch.nn import ModuleDict, Parameter
+from torch_scatter import scatter_add
+
+from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.utils import add_remaining_self_loops
+
 
 class GCNConvQuant(MessagePassingQuant):
-    
     """
     A GCN Layer with complete quantization of all the parameters
-    
+
     Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
@@ -33,12 +33,11 @@ class GCNConvQuant(MessagePassingQuant):
 
         mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer weight
         layer_quantizers (dict): A dictionary with the IntegerQuantizer defined for each layer trainable parameter
-    
+
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`
-    
-    """
 
+    """
     def __init__(
         self,
         in_channels,
@@ -52,8 +51,9 @@ class GCNConvQuant(MessagePassingQuant):
         layer_quantizers=None,
         **kwargs,
     ):
-        super(GCNConvQuant, self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
-        self.nn  = nn
+        super(GCNConvQuant,
+              self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
+        self.nn = nn
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.improved = improved
@@ -78,20 +78,19 @@ class GCNConvQuant(MessagePassingQuant):
         self.nn.reset_parameters()
         # create quantization modules for this layer
         self.layer_quantizers = ModuleDict()
-        for key in ["weights","inputs","features", "norm"]:
+        for key in ["weights", "inputs", "features", "norm"]:
             self.layer_quantizers[key] = self.layer_quant_fns[key]()
 
     @staticmethod
-    def norm(edge_index, num_nodes, edge_weight=None, improved=False, dtype=None):
+    def norm(edge_index, num_nodes, edge_weight=None, improved=False,
+             dtype=None):
         if edge_weight is None:
-            edge_weight = torch.ones(
-                (edge_index.size(1),), dtype=dtype, device=edge_index.device
-            )
+            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
+                                     device=edge_index.device)
 
         fill_value = 1 if not improved else 2
         edge_index, edge_weight = add_remaining_self_loops(
-            edge_index, edge_weight, fill_value, num_nodes
-        )
+            edge_index, edge_weight, fill_value, num_nodes)
 
         row, col = edge_index
         deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
@@ -117,9 +116,7 @@ class GCNConvQuant(MessagePassingQuant):
                     "Cached {} number of edges, but found {}. Please "
                     "disable the caching behavior of this layer by removing "
                     "the `cached=True` argument in its constructor.".format(
-                        self.cached_num_edges, edge_index.size(1)
-                    )
-                )
+                        self.cached_num_edges, edge_index.size(1)))
 
         if not self.cached or self.cached_result is None:
             self.cached_num_edges = edge_index.size(1)
@@ -148,23 +145,16 @@ class GCNConvQuant(MessagePassingQuant):
 
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
-        
-        # We apply the post processing nn head here to the updated output of the layer 
+
+        # We apply the post processing nn head here to the updated output of the layer
         return self.nn(aggr_out)
 
     def __repr__(self):
-        return "{}({}, {})".format(
-            self.__class__.__name__, self.in_channels, self.out_channels
-        )
-
-
-
-
+        return "{}({}, {})".format(self.__class__.__name__, self.in_channels,
+                                   self.out_channels)
 
 
 class GCNConvMultiQuant(MessagePassingMultiQuant):
-    
-    
     """
     A GCN Layer with Degree Quant approach for quantization of all the layer and message passing parameters
     It uses low and high masking strategy to quantize the respective quantizable tensors
@@ -190,12 +180,11 @@ class GCNConvMultiQuant(MessagePassingMultiQuant):
 
         mp_quantizers (dict): A dictionary with the IntegerQuantizer defined for each Message Passing Layer weight
         layer_quantizers (dict): A dictionary with the IntegerQuantizer defined for each layer trainable parameter
-    
+
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`
-    
+
     """
-    
     def __init__(
         self,
         in_channels,
@@ -209,10 +198,9 @@ class GCNConvMultiQuant(MessagePassingMultiQuant):
         mp_quantizers=None,
         **kwargs,
     ):
-        super(GCNConvMultiQuant, self).__init__(
-            aggr="add", mp_quantizers=mp_quantizers, **kwargs
-        )
-        self.nn  = nn
+        super(GCNConvMultiQuant,
+              self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
+        self.nn = nn
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.improved = improved
@@ -239,20 +227,22 @@ class GCNConvMultiQuant(MessagePassingMultiQuant):
         self.nn.reset_parameters()
         # create quantization modules for this layer
         self.layer_quantizers = ModuleDict()
-        for key in ["weights_low","inputs_low","inputs_high","features_low","features_high","norm_low"]:
+        for key in [
+                "weights_low", "inputs_low", "inputs_high", "features_low",
+                "features_high", "norm_low"
+        ]:
             self.layer_quantizers[key] = self.layer_quant_fns[key]()
 
     @staticmethod
-    def norm(edge_index, num_nodes, edge_weight=None, improved=False, dtype=None):
+    def norm(edge_index, num_nodes, edge_weight=None, improved=False,
+             dtype=None):
         if edge_weight is None:
-            edge_weight = torch.ones(
-                (edge_index.size(1),), dtype=dtype, device=edge_index.device
-            )
+            edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
+                                     device=edge_index.device)
 
         fill_value = 1 if not improved else 2
         edge_index, edge_weight = add_remaining_self_loops(
-            edge_index, edge_weight, fill_value, num_nodes
-        )
+            edge_index, edge_weight, fill_value, num_nodes)
 
         row, col = edge_index
         deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
@@ -262,17 +252,14 @@ class GCNConvMultiQuant(MessagePassingMultiQuant):
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
     def forward(self, x, edge_index, mask, edge_weight=None):
-        
         """
         Args:
             x (torch.Tensor): Node Features
             edge_index (torch.Tensor or SparseTensor): The tensor which is used to store the graph edges
             mask (torch.Tensor): The mask for the graph which is used to protect the nodes in the Degree Quant method
-        
+
         """
-        
-        
-        
+
         # quantizing input
         if self.training:
             x_q = torch.empty_like(x)
@@ -297,9 +284,7 @@ class GCNConvMultiQuant(MessagePassingMultiQuant):
                     "Cached {} number of edges, but found {}. Please "
                     "disable the caching behavior of this layer by removing "
                     "the `cached=True` argument in its constructor.".format(
-                        self.cached_num_edges, edge_index.size(1)
-                    )
-                )
+                        self.cached_num_edges, edge_index.size(1)))
 
         if not self.cached or self.cached_result is None:
             self.cached_num_edges = edge_index.size(1)
@@ -327,11 +312,9 @@ class GCNConvMultiQuant(MessagePassingMultiQuant):
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
 
-        # We apply the post processing nn head here to the updated output of the layer 
+        # We apply the post processing nn head here to the updated output of the layer
         return self.nn(aggr_out)
-        
 
     def __repr__(self):
-        return "{}({}, {})".format(
-            self.__class__.__name__, self.in_channels, self.out_channels
-        )
+        return "{}({}, {})".format(self.__class__.__name__, self.in_channels,
+                                   self.out_channels)

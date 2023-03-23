@@ -1,14 +1,14 @@
 import torch
-from torch_geometric.utils import remove_self_loops
 from message_passing import *
 
+from torch_geometric.utils import remove_self_loops
+
+
 class GINConvQuant(MessagePassingQuant):
-
-
     """
     A GIN Layer with complete quantization of all the parameters
-    
-    
+
+
     Args:
         nn (torch.nn.Module): A neural network defined by :class:`torch.nn.Sequential`.
         eps (float, optional): To change the importance of the message from original node.
@@ -19,13 +19,12 @@ class GINConvQuant(MessagePassingQuant):
 
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
-    
-    """
 
-    def __init__(self, nn, eps=0, train_eps=False, mp_quantizers=None, **kwargs):
-        super(GINConvQuant, self).__init__(
-            aggr="add", mp_quantizers=mp_quantizers, **kwargs
-        )
+    """
+    def __init__(self, nn, eps=0, train_eps=False, mp_quantizers=None,
+                 **kwargs):
+        super(GINConvQuant,
+              self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
@@ -54,15 +53,13 @@ class GINConvQuant(MessagePassingQuant):
     def __repr__(self):
         return "{}(nn={})".format(self.__class__.__name__, self.nn)
 
-    
+
 class GINConvMultiQuant(MessagePassingMultiQuant):
-    
-    
     """
     A GCN Layer with Degree Quant approach for quantization of all the layer and message passing parameters
     It uses low and high masking strategy to quantize the respective quantizable tensors
-    
-    
+
+
     Args:
         nn (torch.nn.Module): A neural network defined by :class:`torch.nn.Sequential`.
         eps (float, optional): To change the importance of the message from original node.
@@ -73,13 +70,12 @@ class GINConvMultiQuant(MessagePassingMultiQuant):
 
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
-    
-    """
 
-    def __init__(self, nn, eps=0, train_eps=False, mp_quantizers=None, **kwargs):
-        super(GINConvMultiQuant, self).__init__(
-            aggr="add", mp_quantizers=mp_quantizers, **kwargs
-        )
+    """
+    def __init__(self, nn, eps=0, train_eps=False, mp_quantizers=None,
+                 **kwargs):
+        super(GINConvMultiQuant,
+              self).__init__(aggr="add", mp_quantizers=mp_quantizers, **kwargs)
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
@@ -94,13 +90,12 @@ class GINConvMultiQuant(MessagePassingMultiQuant):
         self.eps.data.fill_(self.initial_eps)
 
     def forward(self, x, edge_index, mask):
-
         """
         Args:
             x (torch.Tensor): Node Features
             edge_index (torch.Tensor or SparseTensor): The tensor which is used to store the graph edges
             mask(torch.Tensor): The mask for the graph which is used to protect the nodes in the Degree Quant method
-        
+
         """
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         edge_index, _ = remove_self_loops(edge_index)
@@ -112,7 +107,7 @@ class GINConvMultiQuant(MessagePassingMultiQuant):
 
     def update(self, aggr_out, x):
 
-        # We apply the post processing nn head here to the updated output of the layer 
+        # We apply the post processing nn head here to the updated output of the layer
         return self.nn((1 + self.eps) * x + aggr_out)
 
     def __repr__(self):
