@@ -88,10 +88,10 @@ def get_data(args):
                                    batch_size=args.batch_size, shuffle=False,
                                    num_workers=args.num_workers,
                                    follow_batch=['subgraph_id'])
-    test_loader = DataLoader(
-        dataset[split_idx["test"]],
-        batch_size=args.batch_size, shuffle=False,
-        num_workers=args.num_workers, follow_batch=['subgraph_id'])
+    test_loader = DataLoader(dataset[split_idx["test"]],
+                             batch_size=args.batch_size, shuffle=False,
+                             num_workers=args.num_workers,
+                             follow_batch=['subgraph_id'])
 
     in_dim = dataset.num_features
     out_dim = 1 if args.dataset != "IMDB-MULTI" else 3
