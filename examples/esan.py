@@ -1,5 +1,4 @@
 import argparse
-import os
 import random
 
 import numpy as np
@@ -90,7 +89,7 @@ def get_data(args):
                                    num_workers=args.num_workers,
                                    follow_batch=['subgraph_id'])
     test_loader = DataLoader(
-        dataset[split_idx["test"]] if args.dataset != 'ZINC' else test_dataset,
+        dataset[split_idx["test"]],
         batch_size=args.batch_size, shuffle=False,
         num_workers=args.num_workers, follow_batch=['subgraph_id'])
 
@@ -105,8 +104,6 @@ def get_data(args):
 
 
 def get_model(args, in_dim, out_dim, device):
-    encoder = lambda x: x
-
     if args.gnn_type == 'graphconv':
         GNNConv = GraphConv
     elif args.gnn_type == 'ginconv':
@@ -125,7 +122,7 @@ def get_model(args, in_dim, out_dim, device):
 
     model = model_name(num_layers=args.num_layer, in_dim=in_dim,
                        emb_dim=args.emb_dim, num_tasks=out_dim,
-                       feature_encoder=encoder, GNNConv=GNNConv).to(device)
+                       feature_encoder=lambda x: x, GNNConv=GNNConv).to(device)
 
     return model
 

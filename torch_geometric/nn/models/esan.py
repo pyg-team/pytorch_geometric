@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 import torch
 import torch.nn.functional as F
 import torch_scatter
@@ -68,7 +66,6 @@ class DSnetwork(torch.nn.Module):
         x = batched_data.x
         edge_index = batched_data.edge_index
         edge_attr = batched_data.edge_attr
-        batch = batched_data.batch
 
         # Encode node features
         x = self.feature_encoder(x)
