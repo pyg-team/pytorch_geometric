@@ -1,6 +1,6 @@
-from data_handler import get_dataset
-from models import GAT, GCN, GIN
-from training import cross_validation_with_val_set
+from .data_handler import get_dataset
+from .models import GAT, GCN, GIN
+from .training import cross_validation_with_val_set
 
 # from gat_conv import GATConvMultiQuant from gcn_conv import GCNConvMultiQuant
 # from gin_conv import GINConvMultiQuant
@@ -19,7 +19,7 @@ argsINT8 = {
 
 modelparams = {
     "folds": 3,
-    "epochs": 200,
+    "epochs": 1,
     "batch_size": 16,
     "lr": 0.0005,
     "lr_decay_factor": 0.5,
@@ -30,6 +30,8 @@ modelparams = {
 }
 
 dataset = get_dataset("./redditbinary/", 'MUTAG', sparse=True)
+
+print(dataset)
 
 GIN_model = GIN(dataset.num_features, dataset.num_classes, num_layers=2,
                 hidden=64, **argsINT8)

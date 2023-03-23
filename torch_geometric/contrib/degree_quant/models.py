@@ -114,11 +114,7 @@ class GIN(nn.Module):
         self.lin2.reset_parameters()
 
     def forward(self, data):
-        # NOTE: It is possible to use the same mask consistently or generate a
-        # new mask per layer. For other experiments we used a per-layer mask
-        # We did not observe major differences but we expect the impact will
-        # be layer and dataset dependent. Extensive experiments assessing the
-        # difference were not run, however, due to the high cost.
+
         if hasattr(data, "prob_mask") and data.prob_mask is not None:
             mask = evaluate_prob_mask(data)
         else:
