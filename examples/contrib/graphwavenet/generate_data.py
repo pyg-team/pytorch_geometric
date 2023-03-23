@@ -16,7 +16,7 @@ import requests
 def generate_graph_seq2seq_io_data(df, x_offsets, y_offsets,
                                    add_time_in_day=True):
 
-    # The individual time steps are aggregated to generate the model input and output
+    # The individual time steps are aggregated to generate the model data
     num_samples, num_nodes = df.shape
     data = np.expand_dims(df.values, axis=-1)
     feature_list = [data]
@@ -45,7 +45,8 @@ def generate_train_val_test(args):
     # If the file is not present, it is downloaded
     filename = args.traffic_df_filename
     if filename == None:
-        url = "https://github.com/Kumbong/CS224W-GraphWavenet/blob/main/data/metr-la.h5?raw=true"
+        url = "https://github.com/Kumbong/CS224W-GraphWavenet" + \
+            "/blob/main/data/metr-la.h5?raw=true"
         filename = 'metr-la.h5'
         f = open(filename, 'wb')
         f.write(requests.get(url).content)

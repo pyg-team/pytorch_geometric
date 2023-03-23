@@ -6,10 +6,10 @@ import numpy as np
 import torch
 import util
 from model import Model
-
 """
 An example program for GraphWaveNet
-Code in this example has been adapted from https://github.com/nnzhan/Graph-WaveNet
+Code in this example has been adapted 
+from https://github.com/nnzhan/Graph-WaveNet
 
 Usage:
 ```
@@ -21,7 +21,8 @@ Help:
 python main.py --help
 ```
 
-Note: Before running this file, run the following command to generate the dataset
+Note: Before running this file, run the following command 
+to generate the dataset
 ```
 python generate_data.py
 ```
@@ -86,7 +87,8 @@ def main():
             train_mape.append(metrics[1])
             train_rmse.append(metrics[2])
             if iter % args.print_every == 0:
-                log = 'Iter: {:03d}, Train Loss: {:.4f}, Train MAPE: {:.4f}, Train RMSE: {:.4f}'
+                log = 'Iter: {:03d}, Train Loss: {:.4f}, Train MAPE: ' + \
+                 '{:.4f}, Train RMSE: {:.4f}'
                 print(
                     log.format(iter, train_loss[-1], train_mape[-1],
                                train_rmse[-1]), flush=True)
@@ -124,7 +126,9 @@ def main():
             torch.save(engine.gwnet.state_dict(),
                        args.save + "/epoch_" + str(i) + ".pth")
 
-        log = 'Epoch: {:03d}, Train Loss: {:.4f}, Train MAPE: {:.4f}, Train RMSE: {:.4f}, Valid Loss: {:.4f}, Valid MAPE: {:.4f}, Valid RMSE: {:.4f}, Training Time: {:.4f}/epoch'
+        log = 'Epoch: {:03d}, Train Loss: {:.4f}, Train MAPE: {:.4f}, ' + \
+        'Train RMSE: {:.4f}, Valid Loss: {:.4f}, Valid MAPE: {:.4f}, ' + \
+        'Valid RMSE: {:.4f}, Training Time: {:.4f}/epoch'
         print(
             log.format(i, mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss,
                        mvalid_mape, mvalid_rmse, (t2 - t1)), flush=True)
@@ -158,13 +162,15 @@ def main():
         pred = scaler.inverse_transform(yhat[:, :, i])
         real = realy[:, :, i]
         metrics = util.metric(pred, real)
-        log = 'Evaluate best model on test data for horizon {:d}, Test MAE: {:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
+        log = 'Evaluate best model on test data for horizon {:d}, Test MAE' + \
+        '{:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
         print(log.format(i + 1, metrics[0], metrics[1], metrics[2]))
         amae.append(metrics[0])
         amape.append(metrics[1])
         armse.append(metrics[2])
 
-    log = 'On average over 12 horizons, Test MAE: {:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
+    log = 'On average over 12 horizons, Test MAE: {:.4f}, Test MAPE: ' + \
+    '{:.4f}, Test RMSE: {:.4f}'
     print(log.format(np.mean(amae), np.mean(amape), np.mean(armse)))
 
 
