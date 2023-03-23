@@ -22,7 +22,6 @@ def subgraph_pool(h_node, batched_data, pool):
 
 
 class DSnetwork(torch.nn.Module):
-
      r""" DeepSetsNetwork from `"Equivariant Subgraph Aggregation Networks"
     <https://arxiv.org/abs/2110.02910>` paper.
     :class:`DSnetwork` outputs a graph representation based on the aggregation
@@ -41,7 +40,7 @@ class DSnetwork(torch.nn.Module):
         num_tasks(int): number of prediction tasks
         eature_encoder(torch.nn.Module): node feature encoder module
         GNNConv(torch.nn.Module): graph neural network convolution module
-        """
+     """
     def __init__(self, num_layers: int, in_dim: int, emb_dim: int,
                  num_tasks: int, feature_encoder: torch.nn.Module,
                  GNNConv: torch.nn.Module):
@@ -100,20 +99,19 @@ class DSnetwork(torch.nn.Module):
         return self.final_layers(h_graph)
 
 
-class DSSnetwork(DSnetwork):
-        """
-        The key additional functionality of DSS-GNN compared to DS-GNN
-        is an additional information-sharing component in the H-equivariant
-        layers in the DSS-GNN model.
+class DSSnetwork(DSnetwork):       
+    r"""The key additional functionality of DSS-GNN compared to DS-GNN
+    is an additional information-sharing component in the H-equivariant
+    layers in the DSS-GNN model.
 
-        Args:
-            num_layers(int): number of graph neural network (GNN) layers
-            in_dim(int): input node feature dimensionality
-            emb_dim(int): hidden node feature dimensionality
-            num_tasks(int): number of prediction tasks
-            eature_encoder(torch.nn.Module): node feature encoder module
-            GNNConv(torch.nn.Module): graph neural network convolution module
-        """
+    Args:
+        num_layers(int): number of graph neural network (GNN) layers
+        in_dim(int): input node feature dimensionality
+        emb_dim(int): hidden node feature dimensionality
+        num_tasks(int): number of prediction tasks
+        eature_encoder(torch.nn.Module): node feature encoder module
+        GNNConv(torch.nn.Module): graph neural network convolution module
+    """
     def __init__(self, num_layers: int, in_dim: int, emb_dim: int,
                  num_tasks: int, feature_encoder: torch.nn.Module,
                  GNNConv: torch.nn.Module):
