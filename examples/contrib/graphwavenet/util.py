@@ -7,6 +7,9 @@ import torch
 
 
 class DataLoader(object):
+    """
+    This class loads the train, val and test data to be fed to the model
+    """
     def __init__(self, xs, ys, batch_size):
         self.batch_size = batch_size
         self.current_ind = 0
@@ -44,7 +47,7 @@ class DataLoader(object):
 
 class StandardScaler():
     """
-    Standard the input
+    Standardize the input
     """
     def __init__(self, mean, std):
         self.mean = mean

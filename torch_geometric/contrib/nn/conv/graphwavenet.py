@@ -11,6 +11,40 @@ from torch_geometric.nn import DenseGCNConv, GCNConv
 
 
 class GraphWaveNet(nn.Module):
+    r""" GraphWaveNet implementation from the 
+    `Graph WaveNet for Deep Spatial-Temporal Graph Modeling
+    <https://arxiv.org/abs/1906.00121>`_ paper. The model takes a list of node embeddings 
+    across several time steps and predicts the output embeddings for the specified 
+    number of upcoming time steps.
+
+    .. note::
+        For examples of the GraphWaveNet layer, see
+        `examples/contrib/graphwavenet/main.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/contrib/graphwavenet/main.py>`_ .
+
+    Args:
+        num_nodes (int): Number of nodes in the input graph.
+        in_channels (int): Size of each input sample.
+        out_channels (int): Size of each output sample.
+        out_timesteps (int): The number of time steps for which predictions are generated.
+        dilations (list(int), optional): The set of dilations applied by each temporal convolution 
+            layer. For each dilation :obj:`d`, the temporal convolution captures 
+            information from :obj:`d` time steps prior. (default: :obj:`[1, 2, 1, 2, 1, 2, 1, 2]`)
+        adaptive_embeddings (int, optional): The size of the embeddings used to calculate the
+            adaptive matrix. (default: :obj:`10`)
+        dropout (float, optional): Dropout probability. (default: :obj:`0.3`)
+        residual_channels (int, optional): Number of residual channels (default: :obj:`32`)
+        dilation_channels (int, optional): Number of dilation channels (default: :obj:`32`)
+        skip_channels (int, optional): Number of skip layer channels (default: :obj:`256`)
+        end_channels (int, optional): Size of the final linear layer (default: :obj:`512`)
+    
+    Shapes:
+        - **input:**
+          temporal node features :math:`(*, t_{input}, |\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:** temporal node features :math:`(*, t_{output}, |\mathcal{V}|, F_{out})`
+    """
     def __init__(self, num_nodes, in_channels, out_channels, out_timesteps,
                  dilations=[1, 2, 1, 2, 1, 2, 1, 2], adptive_embeddings=10,
                  dropout=0.3, residual_channels=32, dilation_channels=32,
@@ -54,9 +88,13 @@ class GraphWaveNet(nn.Module):
                           out_channels=dilation_channels, kernel_size=(1, 2),
                           dilation=d))
 
+            # GCNConv is used for performing graph convolutions over the normal adjacency matrix
             self.gcn.append(
                 GCNConv(in_channels=dilation_channels,
                         out_channels=residual_channels))
+            
+            # Since the adaptive matrix is a softmax output, it represents a dense graph
+            # For fast training and inference, we use a DenseGCNConv layer
             self.gcn_adp.append(
                 DenseGCNConv(in_channels=dilation_channels,
                              out_channels=residual_channels))
@@ -73,10 +111,16 @@ class GraphWaveNet(nn.Module):
                               kernel_size=(1, 1))
 
     def forward(self, x, edge_index, edge_weight=None):
+        r"""
+        The forward pass for the GraphWaveNet
+        """
+        # Shapes:
         # x -> (*, t, num_nodes, in_channels)
         # edge_index -> (2, messages)
         # edge_weight -> (messages)
 
+        # Both batched and unbatched input is supported
+        # In the case of a single batch, the input is broadcast
         is_batched = True
         if len(x.size()) == 3:
             is_batched = False
@@ -87,11 +131,16 @@ class GraphWaveNet(nn.Module):
 
         x = x.transpose(-1, -3)
 
+        # If the dilation steps require a larger number of input time steps,
+        # padding is performed
         if self.total_dilation + 1 > input_timesteps:
             x = F.pad(x, (self.total_dilation - input_timesteps + 1, 0))
 
         x = self.input(x)
 
+        # The adaptive adjacency matrix is the product of 2 learnable embedding matrices
+        # ReLU is used toeliminate weak connections
+        # SoftMax function is applied to normalize the self-adaptive adjacency matrix
         adp = F.softmax(F.relu(torch.mm(self.e1, self.e2)), dim=1)
         edge_index_adp = [[], []]
         edge_weight_adp = []
@@ -111,6 +160,7 @@ class GraphWaveNet(nn.Module):
         for k in range(self.num_dilations):
             residual = x
 
+            # TCN layer
             g1 = self.tcn_a[k](x)
             g1 = torch.tanh(g1)
 
@@ -119,11 +169,14 @@ class GraphWaveNet(nn.Module):
 
             g = g1 * g2
 
+            # The skip connection output is aggregated before the GCN layer
             skip_cur = self.skip[k](g)
 
             if skip_out == None:
                 skip_out = skip_cur
             else:
+                # Since dilation reduces the number of time steps, 
+                # only the required number of latest time steps are considered
                 skip_out = skip_out[..., -skip_cur.size(-1):] + skip_cur
 
             g = g.transpose(-1, -3)
@@ -131,9 +184,14 @@ class GraphWaveNet(nn.Module):
             timesteps = g.size(-3)
             g = g.reshape(reduce(mul, g.size()[:-2]), *g.size()[-2:])
 
-            data = self.batch_timesteps(g, edge_index,
+            # The data for several time steps in batched into a single batch 
+            # This helps speed up the model by passing a single large batch to the GCN
+            data = self.__batch_timesteps__(g, edge_index,
                                         edge_weight).to(g.device)
 
+            # GCN layer
+            # One GCN is for the actual adjacency matrix
+            # The other GCN is for the adaptive matrix
             gcn_out = self.gcn[k](data.x, data.edge_index,
                                   edge_weight=torch.flatten(data.edge_attr))
             gcn_out = gcn_out.reshape(*batch_size, timesteps, -1,
@@ -149,16 +207,22 @@ class GraphWaveNet(nn.Module):
 
             x = x.transpose(-3, -1)
 
+            # The residual connection is fed to the next spatial-temporal layer
             x = x + residual[..., -x.size(-1):]
             x = self.bn[k](x)
 
         skip_out = skip_out[..., -1:]
 
         x = torch.relu(skip_out)
+        
+        # Final linear layer
         x = self.end1(x)
         x = torch.relu(x)
+
+        # Transforming the output to the appropriate number of channels (out_timesteps *self.out_channels)
         x = self.end2(x)
 
+        # The output is reshaped into the expected final shape
         if is_batched:
             x = x.reshape(*batch_size, self.out_timesteps, self.out_channels,
                           self.num_nodes).transpose(-1, -2)
@@ -168,7 +232,10 @@ class GraphWaveNet(nn.Module):
 
         return x
 
-    def batch_timesteps(self, x, edge_index, edge_weight=None):
+    def __batch_timesteps__(self, x, edge_index, edge_weight=None):
+        r"""
+        This method batches the data for several time steps into a single batch
+        """
         edge_index = edge_index.expand(x.size(0), *edge_index.shape)
 
         if edge_weight != None:

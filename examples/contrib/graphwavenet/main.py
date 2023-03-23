@@ -7,12 +7,34 @@ import torch
 import util
 from model import Model
 
+
+"""
+An example program for GraphWaveNet
+Code in this example has been adapted from https://github.com/nnzhan/Graph-WaveNet
+
+Usage: 
+```
+python main.py
+```
+
+Help: 
+```
+python main.py --help
+```
+
+Note: Before running this file, run the following command to generate the dataset
+```
+python generate_data.py
+```
+"""
+
 parser = argparse.ArgumentParser()
-parser.add_argument('--device', type=str, default='cpu', help='')
-parser.add_argument('--data', type=str, default='data/METR-LA',
+parser.add_argument('--device', type=str, default='cpu',
+                    help='device to run the model on')
+parser.add_argument('--data', type=str, default='store/METR-LA',
                     help='data path')
 parser.add_argument('--adjdata', type=str,
-                    default='data/sensor_graph/adj_mx.pkl',
+                    default='store/adj_mx.pkl',
                     help='adj data path')
 parser.add_argument('--in_dim', type=int, default=2, help='inputs dimension')
 parser.add_argument('--num_nodes', type=int, default=207,
@@ -25,7 +47,7 @@ parser.add_argument('--weight_decay', type=float, default=0.0001,
                     help='weight decay rate')
 parser.add_argument('--epochs', type=int, default=100, help='')
 parser.add_argument('--print_every', type=int, default=50, help='')
-parser.add_argument('--save', type=str, default='data/checkpoint',
+parser.add_argument('--save', type=str, default='store/checkpoint',
                     help='save path')
 
 args = parser.parse_args()
@@ -36,6 +58,7 @@ def main():
     _, _, adj_mx = util.load_adj(args.adjdata)
     dataloader = util.load_dataset(args.data, args.batch_size, args.batch_size,
                                    args.batch_size)
+    # Mean / std dev scaling is performed to the model output
     scaler = dataloader['scaler']
 
     engine = Model(scaler, args.num_nodes, args.learning_rate,
@@ -111,7 +134,7 @@ def main():
         np.mean(train_time)))
     print("Average Inference Time: {:.4f} secs".format(np.mean(val_time)))
 
-    #testing
+    # testing
     engine.gwnet.load_state_dict(
         torch.load(args.save + "_epoch_" + str(i) + ".pth"))
     outputs = []
