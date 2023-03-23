@@ -85,6 +85,7 @@ def to_torch_coo_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
     size: Optional[Union[int, Tuple[int, int]]] = None,
+    is_coalesced: bool = False,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
     attributes to a :class:`torch.sparse.Tensor` with layout
@@ -99,6 +100,9 @@ def to_torch_coo_tensor(
             If given as an integer, will create a quadratic sparse matrix.
             If set to :obj:`None`, will infer a quadratic sparse matrix based
             on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
+        is_coalesced (bool): If set to :obj:`True`, will assume that
+            :obj:`edge_index` is already coalesced and thus avoids expensive
+            computation. (default: :obj:`False`)
 
     :rtype: :class:`torch.sparse.Tensor`
 
@@ -123,18 +127,20 @@ def to_torch_coo_tensor(
 
     size = tuple(size) + edge_attr.size()[1:]
 
-    return torch.sparse_coo_tensor(
+    adj = torch.sparse_coo_tensor(
         indices=edge_index,
         values=edge_attr,
         size=size,
         device=edge_index.device,
-    ).coalesce()
+    )
+    return adj._coalesced_(True) if is_coalesced else adj.coalesce()
 
 
 def to_torch_csr_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
     size: Optional[Union[int, Tuple[int, int]]] = None,
+    is_coalesced: bool = False,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
     attributes to a :class:`torch.sparse.Tensor` with layout
@@ -149,6 +155,9 @@ def to_torch_csr_tensor(
             If given as an integer, will create a quadratic sparse matrix.
             If set to :obj:`None`, will infer a quadratic sparse matrix based
             on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
+        is_coalesced (bool): If set to :obj:`True`, will assume that
+            :obj:`edge_index` is already coalesced and thus avoids expensive
+            computation. (default: :obj:`False`)
 
     :rtype: :class:`torch.sparse.Tensor`
 
@@ -163,7 +172,7 @@ def to_torch_csr_tensor(
                size=(4, 4), nnz=6, layout=torch.sparse_csr)
 
     """
-    adj = to_torch_coo_tensor(edge_index, edge_attr, size)
+    adj = to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
     return adj.to_sparse_csr()
 
 
@@ -171,6 +180,7 @@ def to_torch_csc_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
     size: Optional[Union[int, Tuple[int, int]]] = None,
+    is_coalesced: bool = False,
 ) -> Tensor:
     r"""Converts a sparse adjacency matrix defined by edge indices and edge
     attributes to a :class:`torch.sparse.Tensor` with layout
@@ -185,6 +195,9 @@ def to_torch_csc_tensor(
             If given as an integer, will create a quadratic sparse matrix.
             If set to :obj:`None`, will infer a quadratic sparse matrix based
             on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
+        is_coalesced (bool): If set to :obj:`True`, will assume that
+            :obj:`edge_index` is already coalesced and thus avoids expensive
+            computation. (default: :obj:`False`)
 
     :rtype: :class:`torch.sparse.Tensor`
 
@@ -199,7 +212,7 @@ def to_torch_csc_tensor(
                size=(4, 4), nnz=6, layout=torch.sparse_csc)
 
     """
-    adj = to_torch_coo_tensor(edge_index, edge_attr, size)
+    adj = to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
     return adj.to_sparse_csc()
 
 
@@ -241,7 +254,7 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
         row = adj.row_indices().detach()
         return torch.stack([row, col], dim=0).long(), adj.values()
 
-    raise ValueError(f"Expected sparse tensor layout (got '{adj.layout}')")
+    raise ValueError(f"Unexpected sparse tensor layout (got '{adj.layout}')")
 
 
 # Helper functions ############################################################
