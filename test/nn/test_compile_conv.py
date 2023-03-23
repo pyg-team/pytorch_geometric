@@ -28,7 +28,7 @@ class MySAGEConv(torch.nn.Module):
 
 @withCUDA
 @onlyLinux
-@disableExtensions()
+@disableExtensions
 @withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
 def test_compile_conv(device, Conv):

@@ -167,7 +167,7 @@ def test_basic_gnn_inference(get_dataset, jk):
 
 @withCUDA
 @onlyLinux
-@disableExtensions()
+@disableExtensions
 @withPackage('torch>=2.0.0')
 def test_compile(device):
     x = torch.randn(3, 8, device=device)

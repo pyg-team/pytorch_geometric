@@ -31,8 +31,9 @@
 **PyG** *(PyTorch Geometric)* is a library built upon [PyTorch](https://pytorch.org/) to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as *[geometric deep learning](http://geometricdeeplearning.com/)*, from a variety of published papers.
-In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, [multi GPU-support](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/multi_gpu), [`DataPipe` support](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/datapipe.py), distributed graph learning via [Quiver](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/quiver), a large number of common benchmark datasets (based on simple interfaces to create your own), the [GraphGym](https://pytorch-geometric.readthedocs.io/en/latest/advanced/graphgym.html) experiment manager, and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
-[Click here to join our Slack community!][slack-url]
+In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, [multi GPU-support](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/multi_gpu), [`torch.compile`](https://pytorch-geometric.readthedocs.io/en/latest/tutorial/compile.html) support, [`DataPipe`](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/datapipe.py) support, a large number of common benchmark datasets (based on simple interfaces to create your own), the [GraphGym](https://pytorch-geometric.readthedocs.io/en/latest/advanced/graphgym.html) experiment manager, and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
+
+**[Click here to join our Slack community!][slack-url]**
 
 <p align="center">
   <a href="https://medium.com/stanford-cs224w"><img style="max-width=: 941px" src="https://data.pyg.org/img/cs224w_tutorials.png" /></a>
@@ -171,7 +172,7 @@ For a quick start, check out our [examples](https://github.com/pyg-team/pytorch_
 PyG provides a multi-layer framework that enables users to build Graph Neural Network solutions on both low and high levels.
 It comprises of the following components:
 
-* The PyG **engine** utilizes the powerful PyTorch deep learning framework, as well as additions of efficient CUDA libraries for operating on sparse data, *e.g.*, [`pyg-lib`](https://github.com/pyg-team/pyg-lib), [`torch_scatter`](https://github.com/rusty1s/pytorch_scatter), [`torch_sparse`](https://github.com/rusty1s/pytorch_sparse) and [`torch-cluster`](https://github.com/rusty1s/pytorch_cluster).
+* The PyG **engine** utilizes the powerful PyTorch deep learning framework with full [`torch.compile`](https://pytorch-geometric.readthedocs.io/en/latest/tutorial/compile.html) and [TorchScript](https://pytorch-geometric.readthedocs.io/en/latest/advanced/jit.html) support, as well as additions of efficient CPU/CUDA libraries for operating on sparse data, *e.g.*, [`pyg-lib`](https://github.com/pyg-team/pyg-lib).
 * The PyG **storage** handles data processing, transformation and loading pipelines. It is capable of handling and processing large-scale graph datasets, and provides effective solutions for heterogeneous graphs. It further provides a variety of sampling solutions, which enable training of GNNs on large-scale graphs.
 * The PyG **operators** bundle essential functionalities for implementing Graph Neural Networks. PyG supports important GNN building blocks that can be combined and applied to various parts of a GNN model, ensuring rich flexibility of GNN design.
 * Finally, PyG provides an abundant set of GNN **models**, and examples that showcase GNN models on standard graph benchmarks. Thanks to its flexibility, users can easily build and modify custom GNN models to fit their specific needs.
@@ -355,7 +356,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ## Installation
 
-PyG is available for Python 3.7 to Python 3.10.
+PyG is available for Python 3.7 to Python 3.11.
 
 ### Anaconda
 
@@ -367,17 +368,53 @@ Given that you have PyTorch installed (`>=1.8.0`), simply run
 conda install pyg -c pyg
 ```
 
-### Pip Wheels
+### PyPi
 
-We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
+From **PyG 2.3** onwards, you can install and use PyG **without any external library** required except for PyTorch.
+For this, simply run
+
+```
+pip install torch_geometric
+```
+
+### Additional Libraries
+
+If you want to utilize the full set of features from PyG, there exists several additional libraries you may want to install:
+
+* **[`pyg-lib`](https://github.com/pyg-team/pyg-lib)**: Heterogeneous GNN operators and graph sampling routines
+* **[`torch-scatter`](https://github.com/rusty1s/pytorch_scatter)**: Accelerated and efficient sparse reductions
+* **[`torch-sparse`](https://github.com/rusty1s/pytorch_sparse)**: [`SparseTensor`](https://pytorch-geometric.readthedocs.io/en/latest/advanced/sparse_tensor.html) support
+* **[`torch-cluster`](https://github.com/rusty1s/pytorch_cluster)**: Graph clustering routines
+* **[`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)**: [`SplineConv`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.SplineConv.html) support
+
+These packages come with their own CPU and GPU kernel implementations based on the [PyTorch C++/CUDA extension interface](https://github.com/pytorch/extension-cpp).
+For a basic usage of PyG, these dependencies are **fully optional**.
+We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
+
+For ease of installation of these extensions, we provide `pip` wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
+
+#### PyTorch 2.0
+
+To install the binaries for PyTorch 2.0.0, simply run
+
+```
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.0+${CUDA}.html
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu117`, or `cu118` depending on your PyTorch installation.
+
+|             | `cpu` | `cu117` | `cu118` |
+|-------------|-------|---------|---------|
+| **Linux**   | ✅    | ✅      | ✅      |
+| **Windows** | ✅    | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |
 
 #### PyTorch 1.13
 
 To install the binaries for PyTorch 1.13.0, simply run
 
 ```
-pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
-pip install torch_geometric
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu116`, or `cu117` depending on your PyTorch installation.
@@ -388,42 +425,13 @@ where `${CUDA}` should be replaced by either `cpu`, `cu116`, or `cu117` dependin
 | **Windows** | ✅    | ✅      | ✅      |
 | **macOS**   | ✅    |         |         |
 
-For additional but optional functionality, run
-
-```
-pip install torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-1.13.0+${CUDA}.html
-```
-
-#### PyTorch 1.12
-
-To install the binaries for PyTorch 1.12.0, simply run
-
-```
-pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
-pip install torch_geometric
-```
-
-where `${CUDA}` should be replaced by either `cpu`, `cu102`, `cu113`, or `cu116` depending on your PyTorch installation.
-
-|             | `cpu` | `cu102` | `cu113` | `cu116` |
-|-------------|-------|---------|---------|---------|
-| **Linux**   | ✅    | ✅      | ✅      | ✅      |
-| **Windows** | ✅    |         | ✅      | ✅      |
-| **macOS**   | ✅    |         |         |         |
-
-For additional but optional functionality, run
-
-```
-pip install torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-1.12.0+${CUDA}.html
-```
-
-**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, and PyTorch 1.11.0 (following the same procedure).
-For older versions, you might need to explicitly specify the latest supported version number or install via `pip install --no-index` in order to prevent a manual installation from source.
+**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0 and PyTorch 1.12.0/1.12.1 (following the same procedure).
+**For older versions, you might need to explicitly specify the latest supported version number** or install via `pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number [here](https://data.pyg.org/whl).
 
 ### Nightly and Master
 
-In case you want to experiment with the latest PyG features which are not fully released yet, ensure that `pyg_lib`, `torch_scatter` and `torch_sparse` are installed by [following the steps mentioned above](#pip-wheels), and install either the **nightly version** of PyG via
+In case you want to experiment with the latest PyG features which are not fully released yet, either install the **nightly version** of PyG via
 
 ```
 pip install pyg-nightly

@@ -3,16 +3,25 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [2.3.0] - 2023-MM-DD
+## [2.4.0] - 2023-MM-DD
 
 ### Added
 
-- Added `HeteroDictLinear` and an optimized `HGTConv` module ([#6178](https://github.com/pyg-team/pytorch_geometric/pull/6178))
+### Changed
+
+### Removed
+
+## [2.3.0] - 2023-03-23
+
+### Added
+
+- Added a memory-efficient `utils.one_hot` implementation ([#7005](https://github.com/pyg-team/pytorch_geometric/pull/7005))
+- Added `HeteroDictLinear` and an optimized `FastHGTConv` module ([#6178](https://github.com/pyg-team/pytorch_geometric/pull/6178), [#6998](https://github.com/pyg-team/pytorch_geometric/pull/6998))
 - Added the `DenseGATConv` module ([#6928](https://github.com/pyg-team/pytorch_geometric/pull/6928))
 - Added `trim_to_layer` utility function for more efficient `NeighborLoader` use-cases ([#6661](https://github.com/pyg-team/pytorch_geometric/pull/6661))
 - Added the `DistMult` KGE model ([#6958](https://github.com/pyg-team/pytorch_geometric/pull/6958))
 - Added `HeteroData.set_value_dict` functionality ([#6961](https://github.com/pyg-team/pytorch_geometric/pull/6961), [#6974](https://github.com/pyg-team/pytorch_geometric/pull/6974))
-- Added PyTorch >= 2.0 support ([#6934](https://github.com/pyg-team/pytorch_geometric/pull/6934))
+- Added PyTorch >= 2.0 support ([#6934](https://github.com/pyg-team/pytorch_geometric/pull/6934), [#7000](https://github.com/pyg-team/pytorch_geometric/pull/7000))
 - Added PyTorch Lightning >= 2.0 support ([#6929](https://github.com/pyg-team/pytorch_geometric/pull/6929))
 - Added the `ComplEx` KGE model ([#6898](https://github.com/pyg-team/pytorch_geometric/pull/6898))
 - Added option to write benchmark results to csv ([#6888](https://github.com/pyg-team/pytorch_geometric/pull/6888))
@@ -37,7 +46,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added `Pad` transform ([#5940](https://github.com/pyg-team/pytorch_geometric/pull/5940), [#6697](https://github.com/pyg-team/pytorch_geometric/pull/6697), [#6731](https://github.com/pyg-team/pytorch_geometric/pull/6731), [#6758](https://github.com/pyg-team/pytorch_geometric/pull/6758))
 - Added full batch mode to the inference benchmark ([#6631](https://github.com/pyg-team/pytorch_geometric/pull/6631))
 - Added `cat` aggregation type to the `HeteroConv` class so that features can be concatenated during grouping ([#6634](https://github.com/pyg-team/pytorch_geometric/pull/6634))
-- Added `torch.compile` support and benchmark study ([#6610](https://github.com/pyg-team/pytorch_geometric/pull/6610), [#6952](https://github.com/pyg-team/pytorch_geometric/pull/6952), [#6953](https://github.com/pyg-team/pytorch_geometric/pull/6953), [#6980](https://github.com/pyg-team/pytorch_geometric/pull/6980), [#6983](https://github.com/pyg-team/pytorch_geometric/pull/6983), [#6984](https://github.com/pyg-team/pytorch_geometric/pull/6984), [#6985](https://github.com/pyg-team/pytorch_geometric/pull/6985), [#6986](https://github.com/pyg-team/pytorch_geometric/pull/6986), [#6989](https://github.com/pyg-team/pytorch_geometric/pull/6989))
+- Added `torch.compile` support and benchmark study ([#6610](https://github.com/pyg-team/pytorch_geometric/pull/6610), [#6952](https://github.com/pyg-team/pytorch_geometric/pull/6952), [#6953](https://github.com/pyg-team/pytorch_geometric/pull/6953), [#6980](https://github.com/pyg-team/pytorch_geometric/pull/6980), [#6983](https://github.com/pyg-team/pytorch_geometric/pull/6983), [#6984](https://github.com/pyg-team/pytorch_geometric/pull/6984), [#6985](https://github.com/pyg-team/pytorch_geometric/pull/6985), [#6986](https://github.com/pyg-team/pytorch_geometric/pull/6986), [#6989](https://github.com/pyg-team/pytorch_geometric/pull/6989), [#7002](https://github.com/pyg-team/pytorch_geometric/pull/7002))
 - Added the `AntiSymmetricConv` layer ([#6577](https://github.com/pyg-team/pytorch_geometric/pull/6577))
 - Added a mixin for Huggingface model hub integration ([#5930](https://github.com/pyg-team/pytorch_geometric/pull/5930), [#6591](https://github.com/pyg-team/pytorch_geometric/pull/6591))
 - Added support for accelerated GNN layers in `nn.conv.cugraph` via `cugraph-ops` ([#6278](https://github.com/pyg-team/pytorch_geometric/pull/6278), [#6388](https://github.com/pyg-team/pytorch_geometric/pull/6388), [#6412](https://github.com/pyg-team/pytorch_geometric/pull/6412))
@@ -107,6 +116,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Drop internal usage of `__dunder__` names ([#6999](https://github.com/pyg-team/pytorch_geometric/issues/6999))
 - Changed the interface of `sort_edge_index`, `coalesce` and `to_undirected` to only return single `edge_index` information in case the `edge_attr` argument is not specified ([#6875](https://github.com/pyg-team/pytorch_geometric/issues/6875), [#6879](https://github.com/pyg-team/pytorch_geometric/issues/6879), [#6893](https://github.com/pyg-team/pytorch_geometric/issues/6893))
 - Fixed a bug in `to_hetero` when using an uninitialized submodule without implementing `reset_parameters` ([#6863](https://github.com/pyg-team/pytorch_geometric/issues/6790))
 - Fixed a bug in `get_mesh_laplacian` ([#6790](https://github.com/pyg-team/pytorch_geometric/issues/6790))

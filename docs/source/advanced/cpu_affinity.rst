@@ -178,7 +178,7 @@ Training times for each model/dataset combination were obtained by taking a mean
 Then, the affinity means were normalized with respect to the mean baseline measurement.
 This value is denoted on the :math:`y`-axis.
 The labels above each result indicate the end-to-end performance gain from using the discussed configuration.
-Over all model/dataset samples, the average training time is increased by **1.53x** for plain affinity and **1.85x** for the affinity with socket separation.
+Over all model/dataset samples, the average training time is decreased by **1.53x** for plain affinity and **1.85x** for the affinity with socket separation.
 
 .. figure:: ../_figures/training_affinity.png
     :width: 100%
