@@ -128,7 +128,7 @@ def main():
 
         log = 'Epoch: {:03d}, Train Loss: {:.4f}, Train MAPE: {:.4f}, ' + \
             'Train RMSE: {:.4f}, Valid Loss: {:.4f}, Valid MAPE: {:.4f}, ' + \
-                'Valid RMSE: {:.4f}, Training Time: {:.4f}/epoch'
+            'Valid RMSE: {:.4f}, Training Time: {:.4f}/epoch'
         print(
             log.format(i, mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss,
                        mvalid_mape, mvalid_rmse, (t2 - t1)), flush=True)
