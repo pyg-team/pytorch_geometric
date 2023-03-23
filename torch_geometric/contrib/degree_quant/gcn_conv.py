@@ -1,10 +1,11 @@
 import torch
-from .message_passing import MessagePassingMultiQuant, MessagePassingQuant
 from torch.nn import ModuleDict, Parameter
 from torch_scatter import scatter_add
 
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.utils import add_remaining_self_loops
+
+from .message_passing import MessagePassingMultiQuant, MessagePassingQuant
 
 
 class GCNConvQuant(MessagePassingQuant):

@@ -1,16 +1,17 @@
 import torch
 import torch.nn.functional as F
+from torch import nn
+from torch.nn import BatchNorm1d as BN
+from torch.nn import Linear, ReLU, Sequential
+
+from torch_geometric.nn import global_mean_pool
+
 from .gat_conv import GATConvMultiQuant, GATConvQuant
 from .gcn_conv import GCNConvMultiQuant, GCNConvQuant
 from .gin_conv import GINConvMultiQuant, GINConvQuant
 from .linear import LinearQuantized
 # from message_passing import MessagePassingMultiQuant
 from .quantizer import make_quantizers
-from torch import nn
-from torch.nn import BatchNorm1d as BN
-from torch.nn import Linear, ReLU, Sequential
-
-from torch_geometric.nn import global_mean_pool
 
 
 class GIN(nn.Module):

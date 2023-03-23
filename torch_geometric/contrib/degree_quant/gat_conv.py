@@ -1,10 +1,11 @@
 import torch
 import torch.nn.functional as F
-from .message_passing import MessagePassingMultiQuant, MessagePassingQuant
 from torch.nn import ModuleDict, Parameter
 
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
+
+from .message_passing import MessagePassingMultiQuant, MessagePassingQuant
 
 
 class GATConvQuant(MessagePassingQuant):

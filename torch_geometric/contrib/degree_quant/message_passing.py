@@ -4,6 +4,7 @@ from collections import OrderedDict
 import torch
 from torch.nn import Module, ModuleDict
 from torch_scatter import scatter
+
 from .utils import scatter_
 
 
