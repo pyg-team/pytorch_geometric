@@ -20,18 +20,26 @@ def subgraph_pool(h_node, batched_data, pool):
 
 
 class DSnetwork(torch.nn.Module):
-    r""" DeepSetsNetwork from `"Equivariant Subgraph Aggregation Networks"
-    <https://arxiv.org/abs/2110.02910>` paper.
+    r"""DeepSets (DS) Network from the `"Equivariant Subgraph Aggregation
+    Networks" <https://arxiv.org/abs/2110.02910>`_ paper.
     :class:`DSnetwork` outputs a graph representation based on the aggregation
     of the subgraph representations.
 
-    Both DSS-GNN and DS-GNN model comprise of three components:
-        (1) an equivariant feature encoder consisting of H-equivariant layers
-        (2) a subgraph readout layer
-        (3) a set encoder.
+    Both :class:`DSnetwork` and :class:`DSSnetwork` models comprise of
+    three components:
+
+    1. An equivariant feature encoder consisting of H-equivariant layers
+    2. A subgraph readout layer
+    3. A set encoder.
+
+    .. note::
+
+        For an example of using a pretrained DSnetwork variant, see
+        `examples/esan.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        esan.py>`_.
 
     Args:
-
         num_layers(int): number of graph neural network (GNN) layers
         in_dim(int): input node feature dimensionality
         emb_dim(int): hidden node feature dimensionality
@@ -96,9 +104,19 @@ class DSnetwork(torch.nn.Module):
 
 
 class DSSnetwork(DSnetwork):
-    r"""The key additional functionality of DSS-GNN compared to DS-GNN
-    is an additional information-sharing component in the H-equivariant
-    layers in the DSS-GNN model.
+    r"""Deep Sets for Symmetric elements (DSS) Network from the
+    `"Equivariant Subgraph Aggregation Networks"
+    <https://arxiv.org/abs/2110.02910>`_
+    paper. The key additional functionality of :class:`DSSnetwork` compared to
+    :class:`DSnetwork` is an additional information-sharing component in
+    the H-equivariant layers in the DSS-GNN model.
+
+    .. note::
+
+        For an example of using a pretrained DSSnetwork variant, see
+        `examples/esan.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        esan.py>`_.
 
     Args:
         num_layers(int): number of graph neural network (GNN) layers
