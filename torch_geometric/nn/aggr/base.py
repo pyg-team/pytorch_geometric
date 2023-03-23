@@ -106,7 +106,8 @@ class Aggregation(torch.nn.Module):
             dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
         try:
-            return super().__call__(x, index, ptr, dim_size, dim, **kwargs)
+            return super().__call__(x, index, ptr, dim_size=dim_size, dim=dim,
+                                    **kwargs)
         except (IndexError, RuntimeError) as e:
             if index is not None:
                 if index.numel() > 0 and dim_size <= int(index.max()):
@@ -177,6 +178,125 @@ class Aggregation(torch.nn.Module):
             fill_value=fill_value,
             max_num_nodes=max_num_elements,
         )
+
+
+class WeightedAggregation(torch.nn.Module):
+    r"""An abstract base class for implementing custom weighted aggregations.
+
+    In addition to :obj:`Aggregation` it requires :obj:`edge_weight` that
+    provides the edge weights aligned to :obj:`index` or :obj:`ptr`.
+
+    Note that we do not normalized the weights/aggregation, i.e., if the
+    weights do not sum up to one, the result will be scaled accordingly.
+
+    Note that at least one of :obj:`index` or :obj:`ptr` must be defined.
+
+    Shapes:
+        - **input:**
+          node features :math:`(*, |\mathcal{V}|, F_{in})` or edge features
+          :math:`(*, |\mathcal{E}|, F_{in})`,
+          edge_weight :math:`(|\mathcal{E}|)`,
+          index vector :math:`(|\mathcal{E}|)`,
+        - **output:** node features :math:`(*, |\mathcal{V}|, F_{out})`
+    """
+    def forward(self, x: Tensor, edge_weight: Tensor,
+                index: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
+                dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            edge_weight (torch.Tensor): The edge weight tensor.
+            index (torch.Tensor, optional): The indices of elements for
+                applying the aggregation.
+                One of :obj:`index` or :obj:`ptr` must be defined.
+                (default: :obj:`None`)
+            ptr (torch.Tensor, optional): If given, computes the aggregation
+                based on sorted inputs in CSR representation.
+                One of :obj:`index` or :obj:`ptr` must be defined.
+                (default: :obj:`None`)
+            dim_size (int, optional): The size of the output tensor at
+                dimension :obj:`dim` after aggregation. (default: :obj:`None`)
+            dim (int, optional): The dimension in which to aggregate.
+                (default: :obj:`-2`)
+        """
+        pass
+
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
+        pass
+
+    def __call__(self, x: Tensor, edge_weight: Tensor,
+                 index: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
+                 dim_size: Optional[int] = None, dim: int = -2,
+                 **kwargs) -> Tensor:
+
+        if dim >= x.dim() or dim < -x.dim():
+            raise ValueError(f"Encountered invalid dimension '{dim}' of "
+                             f"source tensor with {x.dim()} dimensions")
+
+        if index is None and ptr is None:
+            index = x.new_zeros(x.size(dim), dtype=torch.long)
+
+        if ptr is not None:
+            if dim_size is None:
+                dim_size = ptr.numel() - 1
+            elif dim_size != ptr.numel() - 1:
+                raise ValueError(f"Encountered invalid 'dim_size' (got "
+                                 f"'{dim_size}' but expected "
+                                 f"'{ptr.numel() - 1}')")
+
+        if index is not None and dim_size is None:
+            dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
+
+        try:
+            return super().__call__(x, edge_weight, index, ptr,
+                                    dim_size=dim_size, dim=dim, **kwargs)
+        except (IndexError, RuntimeError) as e:
+            if index is not None:
+                if index.numel() > 0 and dim_size <= int(index.max()):
+                    raise ValueError(f"Encountered invalid 'dim_size' (got "
+                                     f"'{dim_size}' but expected "
+                                     f">= '{int(index.max()) + 1}')")
+            raise e
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
+
+    # Assertions ##############################################################
+
+    def assert_index_present(self, index: Optional[Tensor]):
+        # TODO Currently, not all aggregators support `ptr`. This assert helps
+        # to ensure that we require `index` to be passed to the computation:
+        if index is None:
+            raise NotImplementedError(
+                "Aggregation requires 'index' to be specified")
+
+    def assert_sorted_index(self, index: Optional[Tensor]):
+        if index is not None and not torch.all(index[:-1] <= index[1:]):
+            raise ValueError("Can not perform aggregation since the 'index' "
+                             "tensor is not sorted")
+
+    def assert_two_dimensional_input(self, x: Tensor, dim: int):
+        if x.dim() != 2:
+            raise ValueError(f"Aggregation requires two-dimensional inputs "
+                             f"(got '{x.dim()}')")
+
+        if dim not in [-2, 0]:
+            raise ValueError(f"Aggregation needs to perform aggregation in "
+                             f"first dimension (got '{dim}')")
+
+    # Helper methods ##########################################################
+
+    def reduce(self, x: Tensor, index: Optional[Tensor] = None,
+               ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+               dim: int = -2, reduce: str = 'sum') -> Tensor:
+
+        if ptr is not None:
+            ptr = expand_left(ptr, dim, dims=x.dim())
+            return segment(x, ptr, reduce=reduce)
+
+        assert index is not None
+        return scatter(x, index, dim, dim_size, reduce)
 
 
 ###############################################################################

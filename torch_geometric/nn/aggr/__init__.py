@@ -1,7 +1,8 @@
-from .base import Aggregation
+from .base import Aggregation, WeightedAggregation
 from .multi import MultiAggregation
 from .basic import (
     MeanAggregation,
+    WeightedMeanAggregation,
     SumAggregation,
     MaxAggregation,
     MinAggregation,
@@ -23,12 +24,15 @@ from .attention import AttentionalAggregation
 from .mlp import MLPAggregation
 from .deep_sets import DeepSetsAggregation
 from .set_transformer import SetTransformerAggregation
+from .softmedian import SoftMedianAggregation, WeightedQuantileAggregation
 
 __all__ = classes = [
     'Aggregation',
     'MultiAggregation',
+    'WeightedAggregation',
     'SumAggregation',
     'MeanAggregation',
+    'WeightedMeanAggregation',
     'MaxAggregation',
     'MinAggregation',
     'MulAggregation',
@@ -49,4 +53,6 @@ __all__ = classes = [
     'MLPAggregation',
     'DeepSetsAggregation',
     'SetTransformerAggregation',
+    'SoftMedianAggregation',
+    'WeightedQuantileAggregation',
 ]

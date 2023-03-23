@@ -21,7 +21,11 @@ import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
-from torch_geometric.nn.aggr import Aggregation, MultiAggregation
+from torch_geometric.nn.aggr import (
+    Aggregation,
+    MultiAggregation,
+    WeightedAggregation,
+)
 from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
 from torch_geometric.typing import Adj, Size, SparseTensor
 from torch_geometric.utils import (
@@ -122,7 +126,7 @@ class MessagePassing(torch.nn.Module):
         if aggr is None:
             self.aggr = None
             self.aggr_module = None
-        elif isinstance(aggr, (str, Aggregation)):
+        elif isinstance(aggr, (str, Aggregation, WeightedAggregation)):
             self.aggr = str(aggr)
             self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         elif isinstance(aggr, (tuple, list)):
@@ -571,6 +575,7 @@ class MessagePassing(torch.nn.Module):
 
     def aggregate(self, inputs: Tensor, index: Tensor,
                   ptr: Optional[Tensor] = None,
+                  edge_weight: Optional[Tensor] = None,
                   dim_size: Optional[int] = None) -> Tensor:
         r"""Aggregates messages from neighbors as
         :math:`\bigoplus_{j \in \mathcal{N}(i)}`.
@@ -582,8 +587,12 @@ class MessagePassing(torch.nn.Module):
         :class:`~torch_geometric.nn.aggr.Aggregation` module to reduce messages
         as specified in :meth:`__init__` by the :obj:`aggr` argument.
         """
-        return self.aggr_module(inputs, index, ptr=ptr, dim_size=dim_size,
-                                dim=self.node_dim)
+        if isinstance(self.aggr_module, WeightedAggregation):
+            return self.aggr_module(inputs, edge_weight, index=index, ptr=ptr,
+                                    dim_size=dim_size, dim=self.node_dim)
+        else:
+            return self.aggr_module(inputs, index, ptr=ptr, dim_size=dim_size,
+                                    dim=self.node_dim)
 
     def message_and_aggregate(
         self,

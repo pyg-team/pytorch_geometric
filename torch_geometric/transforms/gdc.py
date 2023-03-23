@@ -455,8 +455,9 @@ class GDC(BaseTransform):
             edge_index = edge_index[:, remaining_edge_idx]
             edge_weight = edge_weight[remaining_edge_idx]
         elif method == 'topk':
-            raise NotImplementedError(
-                'Sparse topk sparsification not implemented')
+            edge_index, edge_weight = sparsify_top_k(edge_index, edge_weight,
+                                                     kwargs['k'],
+                                                     kwargs['dim'])
         else:
             raise ValueError(f"GDC sparsification '{method}' unknown")
 
@@ -601,3 +602,34 @@ def get_calc_ppr():
         return js, vals
 
     return calc_ppr
+
+
+def sparsify_top_k(edge_index: torch.Tensor, edge_weight: torch.Tensor, k: int,
+                   dim: int = 0):
+    r"""Sparsifies a given sparse graph further by choosing the top :obj:`k`
+        edges according to :obj:`edge_weight` along dimension :obj:`dim`.
+
+        Args:
+            edge_index (LongTensor): The edge indices.
+            edge_weight (Tensor): One-dimensional edge weights.
+            k (int): Number of elements to keep.
+            dim (int): Dimension along which to sparsify.
+
+        :rtype: (:class:`LongTensor`, :class:`Tensor`)
+        """
+    count = torch.bincount(edge_index[dim], minlength=0)
+    cumsum = torch.cumsum(count, dim=0) - count
+
+    weights_perm = torch.sort(edge_weight, descending=True).indices
+    index_perm = torch.sort(edge_index[dim][weights_perm], stable=True).indices
+
+    segment_wise_order = torch.ones_like(edge_weight)
+    segment_wise_order[0] = 0
+    segment_wise_order[cumsum[1:]] -= count[:-1]
+    segment_wise_order = segment_wise_order.cumsum(0)
+
+    topk_elements = weights_perm[index_perm[segment_wise_order < k]]
+    topk_index = edge_index[:, topk_elements]
+    topk_weight = edge_weight[topk_elements]
+
+    return topk_index, topk_weight

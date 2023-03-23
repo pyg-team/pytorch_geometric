@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.nn.aggr import Aggregation
+from torch_geometric.nn.aggr import Aggregation, WeightedAggregation
 from torch_geometric.utils import softmax
 
 
@@ -32,6 +32,21 @@ class MeanAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         return self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
+
+
+class WeightedMeanAggregation(WeightedAggregation):
+    r"""An aggregation operator that averages features across a set of elements
+
+    TODO: adapt math
+    .. math::
+        \mathrm{mean}(\mathcal{X}) = \frac{1}{|\mathcal{X}|}
+        \sum_{\mathbf{x}_i \in \mathcal{X}} \mathbf{x}_i.
+    """
+    def forward(self, x: Tensor, edge_weight: Tensor,
+                index: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
+                dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
+        x = edge_weight.view(-1, 1) * x
+        return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
 
 
 class MaxAggregation(Aggregation):
