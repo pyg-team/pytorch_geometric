@@ -42,8 +42,8 @@ class DSnetwork(torch.nn.Module):
         GNNConv(torch.nn.Module): graph neural network convolution module
      """
     def __init__(self, num_layers: int, in_dim: int, emb_dim: int,
-                 num_tasks: int, feature_encoder: torch.nn.Module,
-                 GNNConv: torch.nn.Module):
+             num_tasks: int, feature_encoder: torch.nn.Module,
+             GNNConv: torch.nn.Module):
 
         super(DSnetwork, self).__init__()
 
