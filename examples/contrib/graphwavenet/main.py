@@ -149,7 +149,8 @@ def main():
         testx = torch.Tensor(x).to(device)
         testx = testx.transpose(1, 3)
         with torch.no_grad():
-            preds = engine.gwnet(testx).transpose(1, 3)
+            preds = engine.gwnet(testx, engine.edge_index, engine.edge_weight)
+            preds = preds.transpose(1, 3)
         outputs.append(preds.squeeze())
 
     yhat = torch.cat(outputs, dim=0)
