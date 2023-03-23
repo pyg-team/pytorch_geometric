@@ -14,6 +14,13 @@ class Inspector(object):
     def inspect(self, func: Callable,
                 pop_first: bool = False) -> Dict[str, Any]:
         params = inspect.signature(func).parameters
+        params = filter(
+            lambda x: x[1].kind not in [
+                inspect.Parameter.VAR_KEYWORD,
+                inspect.Parameter.VAR_POSITIONAL,
+            ],
+            params.items()
+        )
         params = OrderedDict(params)
         if pop_first:
             params.popitem(last=False)
