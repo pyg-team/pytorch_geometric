@@ -1,4 +1,4 @@
-from inspect import Signature
+from inspect import Parameter, Signature
 from typing import Iterable, Dict
 
 import torch
@@ -15,7 +15,8 @@ def merge_signatures(srcs):
         assert signature.return_annotation in [dict, Dict]
         parameters.update(signature.parameters)
 
-    return Signature(list(parameters.values()), return_annotation=Dict)
+    parameters = sorted(parameters.values(), key=lambda x: x.default != Parameter.empty)
+    return Signature(parameters, return_annotation=Dict)
 
 
 def copy_signature(signature, to):
