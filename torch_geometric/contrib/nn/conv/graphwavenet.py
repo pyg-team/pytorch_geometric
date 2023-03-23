@@ -92,7 +92,7 @@ class GraphWaveNet(nn.Module):
             self.gcn.append(
                 GCNConv(in_channels=dilation_channels,
                         out_channels=residual_channels))
-            
+
             # Since the adaptive matrix is a softmax output, it represents a dense graph
             # For fast training and inference, we use a DenseGCNConv layer
             self.gcn_adp.append(
@@ -175,7 +175,7 @@ class GraphWaveNet(nn.Module):
             if skip_out == None:
                 skip_out = skip_cur
             else:
-                # Since dilation reduces the number of time steps, 
+                # Since dilation reduces the number of time steps,
                 # only the required number of latest time steps are considered
                 skip_out = skip_out[..., -skip_cur.size(-1):] + skip_cur
 
@@ -184,10 +184,10 @@ class GraphWaveNet(nn.Module):
             timesteps = g.size(-3)
             g = g.reshape(reduce(mul, g.size()[:-2]), *g.size()[-2:])
 
-            # The data for several time steps in batched into a single batch 
+            # The data for several time steps in batched into a single batch
             # This helps speed up the model by passing a single large batch to the GCN
             data = self.__batch_timesteps__(g, edge_index,
-                                        edge_weight).to(g.device)
+                                            edge_weight).to(g.device)
 
             # GCN layer
             # One GCN is for the actual adjacency matrix
@@ -214,7 +214,7 @@ class GraphWaveNet(nn.Module):
         skip_out = skip_out[..., -1:]
 
         x = torch.relu(skip_out)
-        
+
         # Final linear layer
         x = self.end1(x)
         x = torch.relu(x)

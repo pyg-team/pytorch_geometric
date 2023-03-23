@@ -18,7 +18,7 @@ class Model():
         self.edge_index = [[], []]
         self.edge_weight = []
 
-        # The adjacency matrix is converted into an edge_index list 
+        # The adjacency matrix is converted into an edge_index list
         # in accordance with PyG API
         for i in range(num_nodes):
             for j in range(num_nodes):
