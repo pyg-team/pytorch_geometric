@@ -165,13 +165,13 @@ class EdgeDeletionPolicy(SubgraphPolicy):
 
 # EGO and EGO+
 class EgoNetPolicy(SubgraphPolicy):
-            r"""The EGO policy of a specified depth
-            k takes an input graph and generates a set of subgraphs
-            induced by the k-hop neighborhoods of all nodes.
-            Such a subgraph is also called a k-ego-network of a given node.
-            The ESAN model also considers a variant of EGO, denoted by EGO+,
-            that attaches an additional identifying
-            feature to the root node of each subgraph.
+        r"""The EGO policy of a specified depth
+        k takes an input graph and generates a set of subgraphs
+        induced by the k-hop neighborhoods of all nodes.
+        Such a subgraph is also called a k-ego-network of a given node.
+        The ESAN model also considers a variant of EGO, denoted by EGO+,
+        that attaches an additional identifying
+        feature to the root node of each subgraph.
 
         Args:
 
