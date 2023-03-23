@@ -77,7 +77,9 @@ class GraphWaveNet(nn.Module):
         # edge_index -> (2, messages)
         # edge_weight -> (messages)
 
+        is_batched = True
         if len(x.size()) == 3:
+            is_batched = False
             x = torch.unsqueeze(x, dim=0)
 
         batch_size = x.size()[:-3]
@@ -156,7 +158,12 @@ class GraphWaveNet(nn.Module):
         x = self.end1(x)
         x = torch.relu(x)
         x = self.end2(x)
-        x = x.reshape(*batch_size, self.out_timesteps, self.out_channels,
+
+        if is_batched:
+            x = x.reshape(*batch_size, self.out_timesteps, self.out_channels,
+                      self.num_nodes).transpose(-1, -2)
+        else:
+            x = x.reshape(self.out_timesteps, self.out_channels,
                       self.num_nodes).transpose(-1, -2)
 
         return x
