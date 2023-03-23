@@ -254,7 +254,7 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
         row = adj.row_indices().detach()
         return torch.stack([row, col], dim=0).long(), adj.values()
 
-    raise ValueError(f"Expected sparse tensor layout (got '{adj.layout}')")
+    raise ValueError(f"Unexpected sparse tensor layout (got '{adj.layout}')")
 
 
 # Helper functions ############################################################

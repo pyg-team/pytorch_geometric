@@ -10,6 +10,7 @@ from torch_geometric.utils.sparse import (
     is_torch_sparse_tensor,
     to_edge_index,
     to_torch_coo_tensor,
+    to_torch_csr_tensor,
 )
 
 
@@ -78,9 +79,12 @@ def remove_self_loops(
 
     if layout is not None:
         assert edge_attr is not None
-        adj = to_torch_coo_tensor(edge_index, edge_attr[mask], size,
-                                  is_coalesced=True)
-        return adj.to_sparse(layout=layout), None
+        edge_attr = edge_attr[mask]
+        if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
+            return to_torch_coo_tensor(edge_index, edge_attr, size, True), None
+        elif str(layout) == 'torch.sparse_csr':
+            return to_torch_csr_tensor(edge_index, edge_attr, size, True), None
+        raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
 
     if edge_attr is None:
         return edge_index, None
@@ -264,8 +268,11 @@ def add_self_loops(
 
     edge_index = torch.cat([edge_index, loop_index], dim=1)
     if is_sparse:
-        adj = to_torch_coo_tensor(edge_index, edge_attr, size=size)
-        return adj.to_sparse(layout=layout), None
+        if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
+            return to_torch_coo_tensor(edge_index, edge_attr, size), None
+        elif str(layout) == 'torch.sparse_csr':
+            return to_torch_csr_tensor(edge_index, edge_attr, size), None
+        raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
     return edge_index, edge_attr
 
 
