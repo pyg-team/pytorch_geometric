@@ -302,19 +302,22 @@ class MessagePassing(torch.nn.Module):
                                          None if values.dim() == 1 else values)
             out['edge_type'] = get_value(kwargs, 'edge_type', values)
 
+            out['ptr'] = None  # TODO Get `rowptr` from CSR representation.
+            out['edge_index'] = None
+
             # TODO This is only needed because of the ptr (to reorder tensors properly)
             if isinstance(edge_index, SparseTensor):
                 edge_index = SparseTensor(row=out['edge_index_i'],
                                           col=out['edge_index_j'],
                                           value=out['edge_weight'],
-                                          sparse_sizes=size)
+                                          sparse_sizes=size[::-1])  # TODO
                 out['adj_t'] = edge_index
                 out['ptr'] = edge_index.storage.rowptr()
-                out['edge_index'] = None
                 indices, values = to_edge_index(edge_index)
                 out['edge_index_i'] = indices[0]
                 out['edge_index_j'] = indices[1]
                 out['edge_weight'] = values
+
 
         elif isinstance(edge_index, Tensor):
             values = torch.ones(edge_index.size(1), device=edge_index.device)
@@ -324,7 +327,9 @@ class MessagePassing(torch.nn.Module):
             out['edge_weight'] = get_value(kwargs, 'edge_weight', values)
             out['edge_attr'] = get_value(kwargs, 'edge_attr', None)
             out['edge_type'] = get_value(kwargs, 'edge_type', values)
-
+            out['ptr'] = None
+            out['adj_t'] = None
+            out['edge_index'] = edge_index
         else:
             raise ValueError(f'edge_index must by of type torch.Tensor, '
                              f'torch.sparse.Tensor, or SparseTensor.')  # TODO Improve

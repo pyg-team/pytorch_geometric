@@ -55,6 +55,7 @@ class Compose(EdgeUpdater):
             updater_kwargs = inspector.distribute('forward', kwargs)
             updater_ouptut = updater(**updater_kwargs)
             output.update(updater_ouptut)
+            kwargs.update(updater_ouptut)
 
         return output
 
