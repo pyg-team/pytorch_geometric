@@ -1,9 +1,10 @@
 import torch
-from .quantizer import ProbabilisticHighDegreeMask
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid, TUDataset
 from torch_geometric.utils import degree
+
+from .quantizer import ProbabilisticHighDegreeMask
 
 
 def get_dataset(path, name, sparse=True, cleaned=False, DQ={

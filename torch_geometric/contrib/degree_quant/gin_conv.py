@@ -1,7 +1,8 @@
 import torch
-from .message_passing import MessagePassingMultiQuant, MessagePassingQuant
 
 from torch_geometric.utils import remove_self_loops
+
+from .message_passing import MessagePassingMultiQuant, MessagePassingQuant
 
 
 class GINConvQuant(MessagePassingQuant):
