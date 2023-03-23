@@ -9,8 +9,9 @@ from torch_geometric.utils.dropout import filter_adj
 
 
 class SubgraphData(Data):
-    """ A data object describing a collection of subgraphs generated from a given
-  subgraph selection policy. It has several additional (**) properties:
+    """ A data object describing a collection of subgraphs generated 
+    from a given subgraph selection policy. 
+    It has several additional (**) properties:
 
   From Data
   * x
@@ -142,7 +143,8 @@ class EdgeDeletionPolicy(SubgraphPolicy):
             subgraph_edge_index = torch.stack([subgraph_head, subgraph_tail],
                                               dim=0)
 
-            # The subgraph_edge_attr is None case is only required for PyG < 2.3.0. Otherwise to_undirected always returns a tuple
+            # The subgraph_edge_attr is None case is only required for PyG < 2.3.0.
+            # Otherwise to_undirected always returns a tuple
             if subgraph_edge_attr is None:
                 subgraph_edge_index = to_undirected(
                     edge_index=subgraph_edge_index,
