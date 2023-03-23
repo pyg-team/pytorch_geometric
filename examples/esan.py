@@ -45,7 +45,8 @@ class SimpleEvaluator():
         return {'mae': np.average(np.abs(y_true - y_pred))}
 
     def eval(self, input_dict):
-        if self.task_type == 'classification': return self.acc(input_dict)
+        if self.task_type == 'classification':
+            return self.acc(input_dict)
         return self.mae(input_dict)
 
 
@@ -88,10 +89,10 @@ def get_data(args):
                                    batch_size=args.batch_size, shuffle=False,
                                    num_workers=args.num_workers,
                                    follow_batch=['subgraph_id'])
-    test_loader = DataLoader(
-        dataset[split_idx["test"]],
-        batch_size=args.batch_size, shuffle=False,
-        num_workers=args.num_workers, follow_batch=['subgraph_id'])
+    test_loader = DataLoader(dataset[split_idx["test"]],
+                             batch_size=args.batch_size, shuffle=False,
+                             num_workers=args.num_workers,
+                             follow_batch=['subgraph_id'])
 
     in_dim = dataset.num_features
     out_dim = 1 if args.dataset != "IMDB-MULTI" else 3
@@ -246,9 +247,9 @@ def main():
     parser.add_argument('--dataset', type=str, default="MUTAG",
                         help='dataset name (default: MUTAG)')
     parser.add_argument(
-        '--policy', type=str, default="edge_deletion", help=
-        'Subgraph selection policy in {edge_deletion, node_deletion, ego, ego_plus}'
-        ' (default: edge_deletion)')
+        '--policy', type=str, default="edge_deletion",
+        help='Subgraph selection policy in {edge_deletion, node_deletion, '
+        'ego, ego_plus} (default: edge_deletion)')
     parser.add_argument(
         '--num_hops', type=int, default=2,
         help='Depth of the ego net if policy is ego (default: 2)')
@@ -270,9 +271,9 @@ def main():
 
     best_test_epoch = np.argmax(test_curve)
     best_train = max(train_curve)
-    print(
-        f'Best Loss = {best_train}, Metric/train = {train_curve[best_test_epoch]}, Metric/test = {test_curve[best_test_epoch]}'
-    )
+    print(f'Best Loss = {best_train}, '
+          f'Metric/train = {train_curve[best_test_epoch]}, '
+          f'Metric/test = {test_curve[best_test_epoch]}')
 
 
 if __name__ == "__main__":

@@ -31,9 +31,10 @@ def test_dsnetwork(n_subgraphs, num_tasks):
     num_layers = 2
     in_dim = 8
     emb_dim = 16
-
-    feature_encoder = lambda x: x
     GNNConv = GraphConv
+
+    def feature_encoder(x):
+        return x
 
     model = DSnetwork(num_layers, in_dim, emb_dim, num_tasks, feature_encoder,
                       GNNConv)
@@ -62,9 +63,10 @@ def test_dssnetwork(n_subgraphs, num_tasks):
     num_layers = 2
     in_dim = 8
     emb_dim = 16
-
-    feature_encoder = lambda x: x
     GNNConv = GraphConv
+
+    def feature_encoder(x):
+        return x
 
     model = DSSnetwork(num_layers, in_dim, emb_dim, num_tasks, feature_encoder,
                        GNNConv)
