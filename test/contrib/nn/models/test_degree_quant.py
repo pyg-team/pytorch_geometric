@@ -44,14 +44,14 @@ def test_layers(qypte, dataset_name):
     GAT_model = GAT(dataset.num_features, dataset.num_classes, num_layers=2,
                     hidden=64, **argsINT8)
 
-    GIN_metrics = cross_validation_with_val_set(dataset,
-                                                GIN_model, **modelparams)
+    GIN_metrics = cross_validation_with_val_set(dataset, GIN_model,
+                                                **modelparams)
 
-    GCN_metrics = cross_validation_with_val_set(dataset,
-                                                GCN_model, **modelparams)
+    GCN_metrics = cross_validation_with_val_set(dataset, GCN_model,
+                                                **modelparams)
 
-    GAT_metrics = cross_validation_with_val_set(dataset,
-                                                GAT_model, **modelparams)
+    GAT_metrics = cross_validation_with_val_set(dataset, GAT_model,
+                                                **modelparams)
 
     assert len(GIN_metrics) == 3
     assert len(GCN_metrics) == 3
