@@ -154,18 +154,6 @@ class GraphWaveNet(nn.Module):
         # SoftMax function is applied to normalize the self-adaptive adjacency
         # matrix
         adp = F.softmax(F.relu(torch.mm(self.e1, self.e2)), dim=1)
-        edge_index_adp = [[], []]
-        edge_weight_adp = []
-
-        for i in range(self.num_nodes):
-            for j in range(self.num_nodes):
-                if adp[i][j] != 0:
-                    edge_index_adp[0].append(i)
-                    edge_index_adp[1].append(j)
-                    edge_weight_adp.append(adp[i][j])
-
-        edge_index_adp = torch.tensor(edge_index_adp).to(adp.device)
-        edge_weight_adp = torch.tensor(edge_weight_adp).to(adp.device)
 
         skip_out = None
 
