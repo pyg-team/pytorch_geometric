@@ -1,16 +1,15 @@
 import torch
 import torch.optim as optim
-from torch_geometric.contrib.nn.conv.graphwavenet import GraphWaveNet
 import util
+
+from torch_geometric.contrib.nn.conv.graphwavenet import GraphWaveNet
 
 
 class Model():
-
     def __init__(self, scaler, num_nodes, lrate, wdecay, device, adj_mx):
         self.gwnet = GraphWaveNet(num_nodes, 2, 1, 12)
         self.gwnet.to(device)
-        self.optimizer = optim.Adam(self.gwnet.parameters(),
-                                    lr=lrate,
+        self.optimizer = optim.Adam(self.gwnet.parameters(), lr=lrate,
                                     weight_decay=wdecay)
         self.loss = util.masked_mae
         self.scaler = scaler

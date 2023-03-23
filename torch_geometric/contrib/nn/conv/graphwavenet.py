@@ -1,27 +1,20 @@
 from functools import reduce
 from operator import mul
+
 import torch
 from torch import nn
 from torch.nn import functional as F
-from torch_geometric.nn import GCNConv, DenseGCNConv
+
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader
+from torch_geometric.nn import DenseGCNConv, GCNConv
 
 
 class GraphWaveNet(nn.Module):
-
-    def __init__(self,
-                 num_nodes,
-                 in_channels,
-                 out_channels,
-                 out_timesteps,
-                 dilations=[1, 2, 1, 2, 1, 2, 1, 2],
-                 adptive_embeddings=10,
-                 dropout=0.3,
-                 residual_channels=32,
-                 dilation_channels=32,
-                 skip_channels=256,
-                 end_channels=512):
+    def __init__(self, num_nodes, in_channels, out_channels, out_timesteps,
+                 dilations=[1, 2, 1, 2, 1, 2, 1, 2], adptive_embeddings=10,
+                 dropout=0.3, residual_channels=32, dilation_channels=32,
+                 skip_channels=256, end_channels=512):
 
         super(GraphWaveNet, self).__init__()
 
@@ -53,14 +46,12 @@ class GraphWaveNet(nn.Module):
         for d in dilations:
             self.tcn_a.append(
                 nn.Conv2d(in_channels=residual_channels,
-                          out_channels=dilation_channels,
-                          kernel_size=(1, 2),
+                          out_channels=dilation_channels, kernel_size=(1, 2),
                           dilation=d))
 
             self.tcn_b.append(
                 nn.Conv2d(in_channels=residual_channels,
-                          out_channels=dilation_channels,
-                          kernel_size=(1, 2),
+                          out_channels=dilation_channels, kernel_size=(1, 2),
                           dilation=d))
 
             self.gcn.append(
@@ -72,13 +63,11 @@ class GraphWaveNet(nn.Module):
 
             self.skip.append(
                 nn.Conv2d(in_channels=residual_channels,
-                          out_channels=skip_channels,
-                          kernel_size=(1, 1)))
+                          out_channels=skip_channels, kernel_size=(1, 1)))
             self.bn.append(nn.BatchNorm2d(residual_channels))
 
         self.end1 = nn.Conv2d(in_channels=skip_channels,
-                              out_channels=end_channels,
-                              kernel_size=(1, 1))
+                              out_channels=end_channels, kernel_size=(1, 1))
         self.end2 = nn.Conv2d(in_channels=end_channels,
                               out_channels=out_channels * out_timesteps,
                               kernel_size=(1, 1))
@@ -143,8 +132,7 @@ class GraphWaveNet(nn.Module):
             data = self.batch_timesteps(g, edge_index,
                                         edge_weight).to(g.device)
 
-            gcn_out = self.gcn[k](data.x,
-                                  data.edge_index,
+            gcn_out = self.gcn[k](data.x, data.edge_index,
                                   edge_weight=torch.flatten(data.edge_attr))
             gcn_out = gcn_out.reshape(*batch_size, timesteps, -1,
                                       self.gcn[k].out_channels)
