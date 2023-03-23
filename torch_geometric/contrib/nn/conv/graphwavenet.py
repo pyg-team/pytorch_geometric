@@ -11,10 +11,10 @@ from torch_geometric.nn import DenseGCNConv, GCNConv
 
 
 class GraphWaveNet(nn.Module):
-    r""" GraphWaveNet implementation from the 
+    r""" GraphWaveNet implementation from the
     `Graph WaveNet for Deep Spatial-Temporal Graph Modeling
-    <https://arxiv.org/abs/1906.00121>`_ paper. The model takes a list of 
-    node embeddings across several time steps and predicts the output 
+    <https://arxiv.org/abs/1906.00121>`_ paper. The model takes a list of
+    node embeddings across several time steps and predicts the output
     embeddings for the specified number of upcoming time steps.
 
     .. note::
@@ -27,30 +27,30 @@ class GraphWaveNet(nn.Module):
         num_nodes (int): Number of nodes in the input graph.
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        out_timesteps (int): The number of time steps for which predictions 
+        out_timesteps (int): The number of time steps for which predictions
             are generated.
-        dilations (list(int), optional): The set of dilations applied by each 
-            temporal convolution layer. For each dilation :obj:`d`, the 
-            temporal convolution captures information from :obj:`d` time steps 
+        dilations (list(int), optional): The set of dilations applied by each
+            temporal convolution layer. For each dilation :obj:`d`, the
+            temporal convolution captures information from :obj:`d` time steps
             prior. (default: :obj:`[1, 2, 1, 2, 1, 2, 1, 2]`)
-        adaptive_embeddings (int, optional): The size of the embeddings used 
+        adaptive_embeddings (int, optional): The size of the embeddings used
             to calculate the adaptive matrix. (default: :obj:`10`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.3`)
-        residual_channels (int, optional): Number of residual channels 
+        residual_channels (int, optional): Number of residual channels
             (default: :obj:`32`)
-        dilation_channels (int, optional): Number of dilation channels 
+        dilation_channels (int, optional): Number of dilation channels
             (default: :obj:`32`)
-        skip_channels (int, optional): Number of skip layer channels 
+        skip_channels (int, optional): Number of skip layer channels
             (default: :obj:`256`)
-        end_channels (int, optional): Size of the final linear layer 
+        end_channels (int, optional): Size of the final linear layer
             (default: :obj:`512`)
-    
+
     Shapes:
         - **input:**
           temporal node features :math:`(*, t_{input}, |\mathcal{V}|, F_{in})`,
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
-        - **output:** temporal node features :math:`(*, t_{output}, 
+        - **output:** temporal node features :math:`(*, t_{output},
           |\mathcal{V}|, F_{out})`
     """
     def __init__(self, num_nodes, in_channels, out_channels, out_timesteps,
@@ -96,13 +96,13 @@ class GraphWaveNet(nn.Module):
                           out_channels=dilation_channels, kernel_size=(1, 2),
                           dilation=d))
 
-            # GCNConv is used for performing graph convolutions over the 
+            # GCNConv is used for performing graph convolutions over the
             # normal adjacency matrix
             self.gcn.append(
                 GCNConv(in_channels=dilation_channels,
                         out_channels=residual_channels))
 
-            # Since the adaptive matrix is a softmax output, it represents a 
+            # Since the adaptive matrix is a softmax output, it represents a
             # dense graph
             # For fast training and inference, we use a DenseGCNConv layer
             self.gcn_adp.append(
@@ -148,7 +148,7 @@ class GraphWaveNet(nn.Module):
 
         x = self.input(x)
 
-        # The adaptive adjacency matrix is the product of 2 learnable 
+        # The adaptive adjacency matrix is the product of 2 learnable
         # embedding matrices
         # ReLU is used toeliminate weak connections
         # SoftMax function is applied to normalize the self-adaptive adjacency
