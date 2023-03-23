@@ -42,4 +42,4 @@ jobs:
 
       - name: Run GNNExplainer
         run: |
-          python examples/gnn_explainer.py
+          python examples/explain/gnn_explainer.py

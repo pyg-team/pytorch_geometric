@@ -6,9 +6,8 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
-
-from ..inits import glorot, zeros
 
 
 class GMMConv(MessagePassing):

@@ -1,9 +1,9 @@
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.nn.models import LabelPropagation
 from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import one_hot
 
 
 class CorrectAndSmooth(torch.nn.Module):
@@ -97,8 +97,8 @@ class CorrectAndSmooth(torch.nn.Module):
         assert y_true.size(0) == numel
 
         if y_true.dtype == torch.long and y_true.size(0) == y_true.numel():
-            y_true = F.one_hot(y_true.view(-1), y_soft.size(-1))
-            y_true = y_true.to(y_soft.dtype)
+            y_true = one_hot(y_true.view(-1), num_classes=y_soft.size(-1),
+                             dtype=y_soft.dtype)
 
         error = torch.zeros_like(y_soft)
         error[mask] = y_true - y_soft[mask]
@@ -141,8 +141,8 @@ class CorrectAndSmooth(torch.nn.Module):
         assert y_true.size(0) == numel
 
         if y_true.dtype == torch.long and y_true.size(0) == y_true.numel():
-            y_true = F.one_hot(y_true.view(-1), y_soft.size(-1))
-            y_true = y_true.to(y_soft.dtype)
+            y_true = one_hot(y_true.view(-1), num_classes=y_soft.size(-1),
+                             dtype=y_soft.dtype)
 
         y_soft = y_soft.clone()
         y_soft[mask] = y_true

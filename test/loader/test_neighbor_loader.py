@@ -1,7 +1,5 @@
-import os
-import random
+import os.path as osp
 import subprocess
-import sys
 from time import sleep
 
 import numpy as np
@@ -16,16 +14,12 @@ from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
+    get_random_edge_index,
     onlyLinux,
     withPackage,
 )
+from torch_geometric.typing import WITH_PYG_LIB
 from torch_geometric.utils import k_hop_subgraph
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges, dtype=torch.int64):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=dtype)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=dtype)
-    return torch.stack([row, col], dim=0)
 
 
 def is_subset(subedge_index, edge_index, src_idx, dst_idx):
@@ -47,7 +41,7 @@ def test_homo_neighbor_loader_basic(directed, dtype):
     data = Data()
 
     data.x = torch.arange(100)
-    data.edge_index = get_edge_index(100, 100, 500, dtype)
+    data.edge_index = get_random_edge_index(100, 100, 500, dtype)
     data.edge_attr = torch.arange(500)
 
     loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
@@ -58,7 +52,7 @@ def test_homo_neighbor_loader_basic(directed, dtype):
 
     for i, batch in enumerate(loader):
         assert isinstance(batch, Data)
-        assert len(batch) == 7
+        assert len(batch) == 9 if WITH_PYG_LIB else 7
         assert batch.x.size(0) <= 100
         assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.e_id.size() == (batch.num_edges, )
@@ -95,11 +89,14 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
     data['paper'].x = torch.arange(100)
     data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500, dtype)
+    edge_index = get_random_edge_index(100, 100, 500, dtype)
+    data['paper', 'paper'].edge_index = edge_index
     data['paper', 'paper'].edge_attr = torch.arange(500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000, dtype)
+    edge_index = get_random_edge_index(100, 200, 1000, dtype)
+    data['paper', 'author'].edge_index = edge_index
     data['paper', 'author'].edge_attr = torch.arange(500, 1500)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000, dtype)
+    edge_index = get_random_edge_index(200, 100, 1000, dtype)
+    data['author', 'paper'].edge_index = edge_index
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     r1, c1 = data['paper', 'paper'].edge_index
@@ -144,14 +141,14 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
         # Test node type selection:
         assert set(batch.node_types) == {'paper', 'author'}
 
-        assert len(batch['paper']) == 4
+        assert len(batch['paper']) == 5 if WITH_PYG_LIB else 4
         assert batch['paper'].n_id.size() == (batch['paper'].num_nodes, )
         assert batch['paper'].x.size(0) <= 100
         assert batch['paper'].input_id.numel() == batch_size
         assert batch['paper'].batch_size == batch_size
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
 
-        assert len(batch['author']) == 2
+        assert len(batch['author']) == 3 if WITH_PYG_LIB else 2
         assert batch['author'].n_id.size() == (batch['author'].num_nodes, )
         assert batch['author'].x.size(0) <= 200
         assert batch['author'].x.min() >= 100 and batch['author'].x.max() < 300
@@ -161,7 +158,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
                                          ('paper', 'to', 'author'),
                                          ('author', 'to', 'paper')}
 
-        assert len(batch['paper', 'paper']) == 3
+        assert len(batch['paper', 'paper']) == 4 if WITH_PYG_LIB else 3
         num_edges = batch['paper', 'paper'].num_edges
         assert batch['paper', 'paper'].e_id.size() == (num_edges, )
         row, col = batch['paper', 'paper'].edge_index
@@ -183,7 +180,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
             batch['paper'].x,
         )
 
-        assert len(batch['paper', 'author']) == 3
+        assert len(batch['paper', 'author']) == 4 if WITH_PYG_LIB else 3
         num_edges = batch['paper', 'author'].num_edges
         assert batch['paper', 'author'].e_id.size() == (num_edges, )
         row, col = batch['paper', 'author'].edge_index
@@ -205,7 +202,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
             batch['author'].x - 100,
         )
 
-        assert len(batch['author', 'paper']) == 3
+        assert len(batch['author', 'paper']) == 4 if WITH_PYG_LIB else 3
         num_edges = batch['author', 'paper'].num_edges
         assert batch['author', 'paper'].e_id.size() == (num_edges, )
         row, col = batch['author', 'paper'].edge_index
@@ -365,7 +362,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
 
     # COO:
-    edge_index = get_edge_index(100, 100, 500)
+    edge_index = get_random_edge_index(100, 100, 500)
     data['paper', 'to', 'paper'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
     graph_store.put_edge_index(edge_index=coo,
@@ -373,7 +370,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
                                layout='coo', size=(100, 100))
 
     # CSR:
-    edge_index = get_edge_index(100, 200, 1000)
+    edge_index = get_random_edge_index(100, 200, 1000)
     data['paper', 'to', 'author'].edge_index = edge_index
     csr = SparseTensor.from_edge_index(edge_index).csr()[:2]
     graph_store.put_edge_index(edge_index=csr,
@@ -381,7 +378,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
                                layout='csr', size=(100, 200))
 
     # CSC:
-    edge_index = get_edge_index(200, 100, 1000)
+    edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'to', 'paper'].edge_index = edge_index
     csc = SparseTensor(row=edge_index[1], col=edge_index[0]).csr()[-2::-1]
     graph_store.put_edge_index(edge_index=csc,
@@ -389,7 +386,7 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
                                layout='csc', size=(200, 100))
 
     # COO (sorted):
-    edge_index = get_edge_index(200, 200, 100)
+    edge_index = get_random_edge_index(200, 200, 100)
     edge_index = edge_index[:, edge_index[1].argsort()]
     data['author', 'to', 'author'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
@@ -495,7 +492,7 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
 @withPackage('pyg_lib')
 def test_pyg_lib_homo_neighbor_loader():
-    adj = SparseTensor.from_edge_index(get_edge_index(20, 20, 100))
+    adj = SparseTensor.from_edge_index(get_random_edge_index(20, 20, 100))
     colptr, row, _ = adj.csc()
 
     seed = torch.arange(10)
@@ -505,7 +502,7 @@ def test_pyg_lib_homo_neighbor_loader():
     sample = torch.ops.torch_sparse.neighbor_sample
     out2 = sample(colptr, row, seed, [-1, -1], False, True)
 
-    row1, col1, node_id1, edge_id1 = out1
+    row1, col1, node_id1, edge_id1 = out1[:4]
     node_id2, row2, col2, edge_id2 = out2
     assert torch.equal(node_id1, node_id2)
     assert torch.equal(row1, row2)
@@ -515,10 +512,10 @@ def test_pyg_lib_homo_neighbor_loader():
 
 @withPackage('pyg_lib')
 def test_pyg_lib_hetero_neighbor_loader():
-    adj1 = SparseTensor.from_edge_index(get_edge_index(20, 10, 50))
+    adj1 = SparseTensor.from_edge_index(get_random_edge_index(20, 10, 50))
     colptr1, row1, _ = adj1.csc()
 
-    adj2 = SparseTensor.from_edge_index(get_edge_index(10, 20, 50))
+    adj2 = SparseTensor.from_edge_index(get_random_edge_index(10, 20, 50))
     colptr2, row2, _ = adj2.csc()
 
     node_types = ['paper', 'author']
@@ -545,7 +542,7 @@ def test_pyg_lib_hetero_neighbor_loader():
     out2 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, 2, False, True)
 
-    row1_dict, col1_dict, node_id1_dict, edge_id1_dict = out1
+    row1_dict, col1_dict, node_id1_dict, edge_id1_dict = out1[:4]
     node_id2_dict, row2_dict, col2_dict, edge_id2_dict = out2
     assert len(node_id1_dict) == len(node_id2_dict)
     for key in node_id1_dict.keys():
@@ -562,14 +559,14 @@ def test_pyg_lib_hetero_neighbor_loader():
 
 
 @onlyLinux
-def test_memmap_neighbor_loader():
-    path = os.path.join('/', 'tmp', f'{random.randrange(sys.maxsize)}.npy')
+def test_memmap_neighbor_loader(tmp_path):
+    path = osp.join(tmp_path, 'x.npy')
     x = np.memmap(path, dtype=np.float32, mode='w+', shape=(100, 32))
     x[:] = np.random.randn(100, 32)
 
     data = Data()
     data.x = np.memmap(path, dtype=np.float32, mode='r', shape=(100, 32))
-    data.edge_index = get_edge_index(100, 100, 500)
+    data.edge_index = get_random_edge_index(100, 100, 500)
 
     assert str(data) == 'Data(x=[100, 32], edge_index=[2, 500])'
     assert data.num_nodes == 100
@@ -580,8 +577,6 @@ def test_memmap_neighbor_loader():
     assert batch.num_nodes <= 100
     assert isinstance(batch.x, torch.Tensor)
     assert batch.x.size() == (batch.num_nodes, 32)
-
-    os.remove(path)
 
 
 @onlyLinux
@@ -612,3 +607,64 @@ def test_cpu_affinity_neighbor_loader(num_workers, loader_cores):
             assert out == list(range(0, num_workers))
         else:
             assert out == loader_cores
+
+
+@withPackage('pyg_lib')
+def test_homo_neighbor_loader_sampled_info():
+    edge_index = torch.tensor([
+        [2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+        [0, 1, 2, 3, 2, 3, 7, 7, 7, 7],
+    ])
+
+    data = Data(edge_index=edge_index, num_nodes=14)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[1, 2, 4],
+        batch_size=2,
+        shuffle=False,
+    )
+    batch = next(iter(loader))
+
+    assert batch.num_sampled_nodes == [2, 2, 3, 4]
+    assert batch.num_sampled_edges == [2, 4, 4]
+
+
+@withPackage('pyg_lib')
+def test_hetero_neighbor_loader_sampled_info():
+    edge_index = torch.tensor([
+        [2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+        [0, 1, 2, 3, 2, 3, 7, 7, 7, 7],
+    ])
+
+    data = HeteroData()
+    data['paper'].num_nodes = data['author'].num_nodes = 14
+    data['paper', 'paper'].edge_index = edge_index
+    data['paper', 'author'].edge_index = edge_index
+    data['author', 'paper'].edge_index = edge_index
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[1, 2, 4],
+        batch_size=2,
+        input_nodes='paper',
+        shuffle=False,
+    )
+    batch = next(iter(loader))
+
+    expected_num_sampled_nodes = {
+        'paper': [2, 2, 3, 4],
+        'author': [0, 2, 3, 4],
+    }
+    expected_num_sampled_edges = {
+        ('paper', 'to', 'paper'): [2, 4, 4],
+        ('paper', 'to', 'author'): [0, 4, 4],
+        ('author', 'to', 'paper'): [2, 4, 4],
+    }
+
+    for node_type in batch.node_types:
+        assert (batch[node_type].num_sampled_nodes ==
+                expected_num_sampled_nodes[node_type])
+    for edge_type in batch.edge_types:
+        assert (batch[edge_type].num_sampled_edges ==
+                expected_num_sampled_edges[edge_type])

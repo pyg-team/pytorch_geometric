@@ -4,9 +4,8 @@ import torch
 from torch import Tensor
 from torch.nn import Module
 
+from torch_geometric.nn.inits import reset
 from torch_geometric.utils import negative_sampling
-
-from ..inits import reset
 
 EPS = 1e-15
 MAX_LOGSTD = 10

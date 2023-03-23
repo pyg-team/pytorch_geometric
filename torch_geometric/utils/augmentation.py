@@ -4,8 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.utils import scatter
-
-from .num_nodes import maybe_num_nodes
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def shuffle_node(x: Tensor, batch: Optional[Tensor] = None,

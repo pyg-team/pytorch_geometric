@@ -1,5 +1,5 @@
 import warnings
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -10,13 +10,17 @@ WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
 try:
     import pyg_lib  # noqa
     WITH_PYG_LIB = True
-    WITH_INDEX_SORT = WITH_PYG_LIB and hasattr(pyg_lib.ops, 'index_sort')
+    WITH_GMM = WITH_PT2 and hasattr(pyg_lib.ops, 'grouped_matmul')
+    WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
+    WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
                       f"Disabling its usage. Stacktrace: {e}")
     pyg_lib = object
     WITH_PYG_LIB = False
+    WITH_GMM = False
+    WITH_SAMPLED_OP = False
     WITH_INDEX_SORT = False
 
 try:
@@ -122,6 +126,9 @@ OptPairTensor = Tuple[Tensor, Optional[Tensor]]
 PairOptTensor = Tuple[Optional[Tensor], Optional[Tensor]]
 Size = Optional[Tuple[int, int]]
 NoneType = Optional[Tensor]
+
+MaybeHeteroNodeTensor = Union[Tensor, Dict[NodeType, Tensor]]
+MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 
 # Types for sampling ##########################################################
 

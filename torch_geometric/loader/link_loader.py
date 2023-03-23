@@ -1,6 +1,7 @@
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
@@ -129,10 +130,8 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         if neg_sampling_ratio is not None and neg_sampling_ratio != 0.0:
             # TODO: Deprecation warning.
@@ -176,7 +175,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         iterator = range(edge_label_index.size(1))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
-    def collate_fn(self, index: List[int]) -> Any:
+    def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
         input_data: EdgeSamplerInput = self.input_data[index]
 
@@ -238,14 +237,11 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                 if 'n_id' not in data[key]:
                     data[key].n_id = node
 
-            if out.edge is not None:
-                for key, edge in out.edge.items():
-                    if 'e_id' not in data[key]:
-                        data[key].e_id = edge
+            for key, edge in (out.edge or {}).items():
+                if 'e_id' not in data[key]:
+                    data[key].e_id = edge
 
-            if out.batch is not None:
-                for key, batch in out.batch.items():
-                    data[key].batch = batch
+            data.set_value_dict('batch', out.batch)
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]
