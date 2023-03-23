@@ -161,10 +161,10 @@ class GraphWaveNet(nn.Module):
 
         if is_batched:
             x = x.reshape(*batch_size, self.out_timesteps, self.out_channels,
-                      self.num_nodes).transpose(-1, -2)
+                          self.num_nodes).transpose(-1, -2)
         else:
             x = x.reshape(self.out_timesteps, self.out_channels,
-                      self.num_nodes).transpose(-1, -2)
+                          self.num_nodes).transpose(-1, -2)
 
         return x
 
