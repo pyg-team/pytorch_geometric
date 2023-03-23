@@ -9,10 +9,10 @@ from torch_geometric.utils.sparse import index2ptr
 
 try:  # pragma: no cover
     from pylibcugraphops.pytorch import (
-        StaticCSC,
-        StaticHeteroCSC,
         SampledCSC,
         SampledHeteroCSC,
+        StaticCSC,
+        StaticHeteroCSC,
     )
     HAS_PYLIBCUGRAPHOPS = True
 except ImportError:
