@@ -90,12 +90,10 @@ def main():
             if iter % args.print_every == 0:
                 log = 'Iter: {:03d}, Train Loss: {:.4f}, Train MAPE: ' + \
                  '{:.4f}, Train RMSE: {:.4f}'
-                print(
-                    log.format(iter, train_loss[-1], train_mape[-1],
-                               train_rmse[-1]), flush=True)
+                print(log.format(iter, train_loss[-1], train_mape[-1],
+                                 train_rmse[-1]), flush=True)
         t2 = time.time()
         train_time.append(t2 - t1)
-        #validation
         valid_loss = []
         valid_mape = []
         valid_rmse = []
@@ -130,9 +128,8 @@ def main():
         log = 'Epoch: {:03d}, Train Loss: {:.4f}, Train MAPE: {:.4f}, ' + \
         'Train RMSE: {:.4f}, Valid Loss: {:.4f}, Valid MAPE: {:.4f}, ' + \
         'Valid RMSE: {:.4f}, Training Time: {:.4f}/epoch'
-        print(
-            log.format(i, mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss,
-                       mvalid_mape, mvalid_rmse, (t2 - t1)), flush=True)
+        print(log.format(i, mtrain_loss, mtrain_mape, mtrain_rmse, mvalid_loss,
+                         mvalid_mape, mvalid_rmse, (t2 - t1)), flush=True)
     print("Average Training Time: {:.4f} secs/epoch".format(
         np.mean(train_time)))
     print("Average Inference Time: {:.4f} secs".format(np.mean(val_time)))
@@ -164,14 +161,14 @@ def main():
         real = realy[:, :, i]
         metrics = util.metric(pred, real)
         log = 'Evaluate best model on test data for horizon {:d}, Test MAE' + \
-        '{:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
+            '{:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
         print(log.format(i + 1, metrics[0], metrics[1], metrics[2]))
         amae.append(metrics[0])
         amape.append(metrics[1])
         armse.append(metrics[2])
 
     log = 'On average over 12 horizons, Test MAE: {:.4f}, Test MAPE: ' + \
-    '{:.4f}, Test RMSE: {:.4f}'
+        '{:.4f}, Test RMSE: {:.4f}'
     print(log.format(np.mean(amae), np.mean(amape), np.mean(armse)))
 
 

@@ -184,7 +184,7 @@ class GraphWaveNet(nn.Module):
             # The skip connection output is aggregated before the GCN layer
             skip_cur = self.skip[k](g)
 
-            if skip_out == None:
+            if skip_out is None:
                 skip_out = skip_cur
             else:
                 # Since dilation reduces the number of time steps,
@@ -252,7 +252,7 @@ class GraphWaveNet(nn.Module):
         """
         edge_index = edge_index.expand(x.size(0), *edge_index.shape)
 
-        if edge_weight != None:
+        if edge_weight is not None:
             edge_weight = edge_weight.expand(x.size(0), *edge_weight.shape)
 
         dataset = [

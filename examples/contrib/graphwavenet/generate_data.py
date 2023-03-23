@@ -44,7 +44,7 @@ def generate_train_val_test(args):
 
     # If the file is not present, it is downloaded
     filename = args.traffic_df_filename
-    if filename == None:
+    if filename is None:
         url = "https://github.com/Kumbong/CS224W-GraphWavenet" + \
             "/blob/main/data/metr-la.h5?raw=true"
         filename = 'metr-la.h5'
@@ -123,7 +123,8 @@ if __name__ == "__main__":
             input(
                 f'{args.output_dir} exists. Do you want to overwrite it? (y/n)'
             )).lower().strip()
-        if reply[0] != 'y': exit
+        if reply[0] != 'y': 
+            exit
     else:
         os.makedirs(args.output_dir)
     generate_train_val_test(args)
