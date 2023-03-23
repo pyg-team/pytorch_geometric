@@ -6,9 +6,10 @@ import numpy as np
 import torch
 import util
 from model import Model
+
 """
 An example program for GraphWaveNet
-Code in this example has been adapted 
+Code in this example has been adapted
 from https://github.com/nnzhan/Graph-WaveNet
 
 Usage:
@@ -21,7 +22,7 @@ Help:
 python main.py --help
 ```
 
-Note: Before running this file, run the following command 
+Note: Before running this file, run the following command
 to generate the dataset
 ```
 python generate_data.py
