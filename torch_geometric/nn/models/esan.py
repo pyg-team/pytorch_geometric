@@ -99,7 +99,7 @@ class DSnetwork(torch.nn.Module):
         return self.final_layers(h_graph)
 
 
-class DSSnetwork(DSnetwork):       
+class DSSnetwork(DSnetwork):
     r"""The key additional functionality of DSS-GNN compared to DS-GNN
     is an additional information-sharing component in the H-equivariant
     layers in the DSS-GNN model.
