@@ -1,10 +1,13 @@
 import argparse
 import os
 import time
+
 import numpy as np
 import torch
 import util
 from model import Model
+
+parser = argparse.ArgumentParser()
 """
 An example program for GraphWaveNet
 Code in this example has been adapted
@@ -27,7 +30,6 @@ python generate_data.py
 ```
 """
 
-parser = argparse.ArgumentParser()
 parser.add_argument('--device', type=str, default='cpu',
                     help='device to run the model on')
 parser.add_argument('--data', type=str, default='store/METR-LA',
