@@ -9,8 +9,8 @@ from torch_geometric.utils.dropout import filter_adj
 
 
 class SubgraphData(Data):
-    """ A data object describing a collection of subgraphs generated 
-    from a given subgraph selection policy. 
+    """ A data object describing a collection of subgraphs generated
+    from a given subgraph selection policy.
     It has several additional (**) properties:
 
   From Data
