@@ -1,5 +1,7 @@
 import copy
 import math
+import sys
+import warnings
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
@@ -44,6 +46,12 @@ class NeighborSampler(BaseSampler):
         is_sorted: bool = False,
         share_memory: bool = False,
     ):
+        if not torch_geometric.typing.WITH_PYG_LIB and sys.platform == 'linux':
+            warnings.warn("Using '{self.__class__.__name__}' without a "
+                          "'pyg-lib' installation is deprecated and will be "
+                          "removed soon. Please install 'pyg-lib' for "
+                          "accelerated neighborhood sampling")
+
         self.data_type = DataType.from_data(data)
 
         if self.data_type == DataType.homogeneous:

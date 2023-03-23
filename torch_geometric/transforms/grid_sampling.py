@@ -2,14 +2,13 @@ import re
 from typing import List, Optional, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 
 import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import scatter
+from torch_geometric.utils import one_hot, scatter
 
 
 @functional_transform('grid_sampling')
@@ -53,8 +52,7 @@ class GridSampling(BaseTransform):
 
             if torch.is_tensor(item) and item.size(0) == num_nodes:
                 if key == 'y':
-                    item = F.one_hot(item)
-                    item = scatter(item, c, dim=0, reduce='sum')
+                    item = scatter(one_hot(item), c, dim=0, reduce='sum')
                     data[key] = item.argmax(dim=-1)
                 elif key == 'batch':
                     data[key] = item[perm]

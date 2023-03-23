@@ -3,9 +3,8 @@ from typing import Callable, List, Optional
 import torch
 
 from torch_geometric.data import download_url
+from torch_geometric.datasets.icews import EventDataset
 from torch_geometric.io import read_txt_array
-
-from .icews import EventDataset
 
 
 class GDELT(EventDataset):

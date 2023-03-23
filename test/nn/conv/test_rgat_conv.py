@@ -40,7 +40,8 @@ def test_rgat_conv_jittable():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     edge_attr = torch.randn((4, 8))
-    adj = SparseTensor(row=row, col=col, value=edge_attr, sparse_sizes=(4, 4))
+    adj1 = SparseTensor(row=row, col=col, value=edge_attr, sparse_sizes=(4, 4))
+    adj2 = adj1.to_torch_sparse_coo_tensor()
     edge_type = torch.tensor([0, 2, 1, 2])
 
     conv = RGATConv(8, 20, num_relations=4, num_bases=4, mod='additive',
@@ -50,7 +51,10 @@ def test_rgat_conv_jittable():
 
     out = conv(x, edge_index, edge_type, edge_attr)
     assert out.size() == (4, 40)
-    assert torch.allclose(conv(x, adj.t(), edge_type), out)
+    assert torch.allclose(conv(x, adj1.t(), edge_type), out)
+    # t() expects a tensor with <= 2 sparse and 0 dense dimensions
+    adj2_t = adj2.transpose(0, 1).coalesce()
+    assert torch.allclose(conv(x, adj2_t, edge_type), out)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, OptTensor, Size, NoneType) -> Tensor'

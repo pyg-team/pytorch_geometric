@@ -75,8 +75,8 @@
 
 <script>
   var torchList = [
+    ['torch-2.0.0', 'PyTorch 2.0.*'],
     ['torch-1.13.0', 'PyTorch 1.13.*'],
-    ['torch-1.12.0', 'PyTorch 1.12.*'],
   ];
 
   var osList = [
@@ -86,15 +86,14 @@
   ];
 
   var packageList = [
-    ['conda', 'Conda'],
     ['pip', 'Pip'],
+    ['conda', 'Conda'],
   ];
 
   var cudaList = [
-    ['cu102', '10.2'],
-    ['cu113', '11.3'],
     ['cu116', '11.6'],
     ['cu117', '11.7'],
+    ['cu118', '11.8'],
     ['cpu', 'CPU'],
   ];
 
@@ -113,24 +112,16 @@
       $("#command pre").text('# macOS binaries do not support CUDA');
     }
 
-    else if (torch == "torch-1.12.0" && cuda == "cu102" && os == "windows") {
-      $("#command pre").text('# PyTorch 1.12.* Windows binaries do not support CUDA 10.2');
+    else if (torch == "torch-1.13.0" && cuda == "cu118") {
+      $("#command pre").text('# PyTorch 1.13.* binaries do not support CUDA 11.8');
     }
 
-    else if (torch == "torch-1.12.0" && cuda == "cu117") {
-      $("#command pre").text('# PyTorch 1.12.* binaries do not support CUDA 11.7');
+    else if (torch == "torch-2.0.0" && cuda == "cu116") {
+      $("#command pre").text('# PyTorch 1.13.* binaries do not support CUDA 11.6');
     }
 
-    else if (torch == "torch-1.13.0" && cuda == "cu102") {
-      $("#command pre").text('# PyTorch 1.13.* binaries do not support CUDA 10.2');
-    }
-
-    else if (torch == "torch-1.13.0" && cuda == "cu113") {
-      $("#command pre").text('# PyTorch 1.13.* binaries do not support CUDA 11.3');
-    }
-
-    else if (torch == "torch-1.13.0" && os == "windows" && package == "conda") {
-      $("#command pre").text('# PyTorch 1.13.* Windows binaries not available for conda yet');
+    else if (os == "windows" && package == "conda") {
+      $("#command pre").text('# Windows binaries not available for conda yet');
     }
 
     else if (package == "conda") {
@@ -138,11 +129,11 @@
     }
 
     else if (os == "windows") {
-      $("#command pre").text(`pip install torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+      $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
 
     else {
-      $("#command pre").text(`pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv torch_geometric -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+      $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
   }
 
@@ -155,7 +146,7 @@
 
   $("#torch").children().get(0).click();
   $("#linux").click();
-  $("#conda").click();
+  $("#pip").click();
   $("#cpu").click();
 
 </script>

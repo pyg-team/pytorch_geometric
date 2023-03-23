@@ -3,8 +3,7 @@ from torch import Tensor
 
 from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import coalesce, degree
-
-from .to_dense_adj import to_dense_adj
+from torch_geometric.utils.to_dense_adj import to_dense_adj
 
 
 def assortativity(edge_index: Adj) -> float:
