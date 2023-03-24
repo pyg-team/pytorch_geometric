@@ -288,45 +288,47 @@ class MessagePassing(torch.nn.Module):
         i, j = (1, 0) if self.flow == 'source_to_target' else (0, 1)
         out = {}
 
-        def get_value(dict, key, alt):
-            out = dict.get(key, None)
-            return alt if out is None else out
+        def get_and_sort(key, alt=None, order=None):
+            out = kwargs.get(key, None)
+            if out is None:
+                out = alt
+            if torch.is_tensor(out) and order is not None:
+                out = out[order]
+            return out
 
         if is_torch_sparse_tensor(edge_index) or isinstance(edge_index, SparseTensor):
             indices, values = to_edge_index(edge_index)
 
-            out['edge_index_i'] = get_value(kwargs, 'edge_index_i', indices[0])
-            out['edge_index_j'] = get_value(kwargs, 'edge_index_j', indices[1])
-            out['edge_weight'] = get_value(kwargs, 'edge_weight', values)
-            out['edge_attr'] = get_value(kwargs, 'edge_attr',
-                                         None if values.dim() == 1 else values)
-            out['edge_type'] = get_value(kwargs, 'edge_type', values)
+            edge_index_i = get_and_sort('edge_index_i', indices[0])
+            edge_index_j = get_and_sort('edge_index_j', indices[1])
+            perm = torch.argsort(edge_index_i * size[1] + edge_index_j)
 
-            out['ptr'] = None  # TODO Get `rowptr` from CSR representation.
+            out['edge_index_i'] = edge_index_i[perm]
+            out['edge_index_j'] = edge_index_j[perm]
+            out['edge_weight'] = get_and_sort('edge_weight', values, perm)
+            out['edge_type'] = get_and_sort('edge_type', values, perm)
+            out['edge_attr'] = get_and_sort('edge_attr',
+                                            None if values.dim() == 1 else values,
+                                            perm)
+
+            out['ptr'] = torch.ops.torch_sparse.ind2ptr(out['edge_index_i'], size[0])
             out['edge_index'] = None
 
-            # TODO This is only needed because of the ptr (to reorder tensors properly)
-            if isinstance(edge_index, SparseTensor):
-                edge_index = SparseTensor(row=out['edge_index_i'],
-                                          col=out['edge_index_j'],
-                                          value=out['edge_weight'],
-                                          sparse_sizes=size[::-1])  # TODO
-                out['adj_t'] = edge_index
-                out['ptr'] = edge_index.storage.rowptr()
-                indices, values = to_edge_index(edge_index)
-                out['edge_index_i'] = indices[0]
-                out['edge_index_j'] = indices[1]
-                out['edge_weight'] = values
-
+            # TODO add adj_t with edge_weight, edge_type or edge_attr, and making sure that,
+            # at most one of them is passed to kwargs
+            # edge_index = SparseTensor(row=out['edge_index_i'],
+            #                           col=out['edge_index_j'],
+            #                           value=out['edge_weight'],
+            #                           sparse_sizes=size[::-1])  # TODO
 
         elif isinstance(edge_index, Tensor):
             values = torch.ones(edge_index.size(1), device=edge_index.device)
 
-            out['edge_index_i'] = get_value(kwargs, 'edge_index_i', edge_index[i])
-            out['edge_index_j'] = get_value(kwargs, 'edge_index_j', edge_index[j])
-            out['edge_weight'] = get_value(kwargs, 'edge_weight', values)
-            out['edge_attr'] = get_value(kwargs, 'edge_attr', None)
-            out['edge_type'] = get_value(kwargs, 'edge_type', values)
+            out['edge_index_i'] = get_and_sort('edge_index_i', edge_index[i])
+            out['edge_index_j'] = get_and_sort('edge_index_j', edge_index[j])
+            out['edge_weight'] = get_and_sort('edge_weight', values)
+            out['edge_attr'] = get_and_sort('edge_attr', None)
+            out['edge_type'] = get_and_sort('edge_type', values)
             out['ptr'] = None
             out['adj_t'] = None
             out['edge_index'] = edge_index
@@ -337,7 +339,7 @@ class MessagePassing(torch.nn.Module):
         max_i = out['edge_index_i'].max() if out['edge_index_i'].numel() > 0 else 0
         max_j = out['edge_index_j'].max() if out['edge_index_j'].numel() > 0 else 0
         num_nodes = 1 + int(max(max_i, max_j))
-        out['num_nodes'] = get_value(kwargs, 'num_nodes', num_nodes)
+        out['num_nodes'] = get_and_sort('num_nodes', num_nodes)
 
         for arg in args:
             if arg not in self.special_args:
