@@ -121,7 +121,7 @@ def construct_edge_index(
         else:
             edge_index = edge_index.clone()
         if use_e_attrs:
-            if isinstance(list(edge_attr_dict.keys())[0], EdgeType)
+            if isinstance(list(edge_attr_dict.keys())[0], EdgeType):
                 edge_attr_i = edge_attr_dict[edge_type].expand(edge_index.size(1), -1)
             else:
                 # Param dicts dont like tuple keys
