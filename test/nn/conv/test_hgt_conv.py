@@ -188,11 +188,11 @@ def test_FastHGT():
     for og_param, my_param in zip(og_net.parameters(), fast_net.parameters()):
         try:
             my_param.data = torch.ones_like(my_param.data)
-        except: # noqa
+        except:  # noqa
             pass
         try:
             og_param.data = torch.ones_like(og_param.data)
-        except: # noqa
+        except:  # noqa
             pass
 
     edge_index_dict = data.collect('edge_index')
