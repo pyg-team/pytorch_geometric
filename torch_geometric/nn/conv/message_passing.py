@@ -301,7 +301,7 @@ class MessagePassing(torch.nn.Module):
 
             edge_index_i = get_and_sort('edge_index_i', indices[0])
             edge_index_j = get_and_sort('edge_index_j', indices[1])
-            perm = torch.argsort(edge_index_i * size[1] + edge_index_j)
+            perm = torch.argsort(edge_index_i * size[0] + edge_index_j)
 
             out['edge_index_i'] = edge_index_i[perm]
             out['edge_index_j'] = edge_index_j[perm]
@@ -311,7 +311,7 @@ class MessagePassing(torch.nn.Module):
                                             None if values.dim() == 1 else values,
                                             perm)
 
-            out['ptr'] = torch.ops.torch_sparse.ind2ptr(out['edge_index_i'], size[0])
+            out['ptr'] = torch.ops.torch_sparse.ind2ptr(out['edge_index_i'], size[1])
             out['edge_index'] = None
 
             # TODO add adj_t with edge_weight, edge_type or edge_attr, and making sure that,
