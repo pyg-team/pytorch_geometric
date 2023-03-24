@@ -93,7 +93,6 @@ def sort_edge_index(
 
 
 def construct_edge_index(
-    self,
     edge_index_dict: Dict[EdgeType, Adj],
     src_offset: Dict[EdgeType, int],
     dst_offset: [NodeType, int],

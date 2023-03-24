@@ -178,14 +178,12 @@ def test_hgt_conv_out_of_place():
 def test_FastHGT():
     seed_everything(42)
     data = HeteroData()
-    data['v0'].x = torch.randn(5, 4).cuda()
-    data['v1'].x = torch.randn(5, 4).cuda()
+    data['v0'].x = torch.randn(5, 4)
+    data['v1'].x = torch.randn(5, 4)
     data[('v0', 'e1', 'v0')].edge_index = torch.randint(high=5,
-                                                        size=(2, 10)).cuda()
-    seed_everything(420)
-    fast_net = FastHGTConv(4, 2, data.metadata()).to('cuda')
-    seed_everything(420)
-    og_net = HGTConv(4, 2, data.metadata()).to('cuda')
+                                                        size=(2, 10))
+    fast_net = FastHGTConv(4, 2, data.metadata())
+    og_net = HGTConv(4, 2, data.metadata())
     x_dict = data.collect('x')
     # make params match
     for og_param, my_param in zip(og_net.parameters(), fast_net.parameters()):
