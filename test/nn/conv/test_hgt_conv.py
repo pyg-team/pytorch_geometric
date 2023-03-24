@@ -1,11 +1,12 @@
 import torch
 from torch_sparse import SparseTensor
 
+from torch_geometric import seed_everything
 from torch_geometric.data import HeteroData
-from torch_geometric.nn import HGTConv, FastHGTConv
+from torch_geometric.nn import FastHGTConv, HGTConv
 from torch_geometric.profile import benchmark
 from torch_geometric.utils import coalesce
-from torch_geometric import seed_everything
+
 
 
 def test_hgt_conv_same_dimensions():
@@ -180,7 +181,8 @@ def test_FastHGT():
     data = HeteroData()
     data['v0'].x = torch.randn(5, 4).cuda()
     data['v1'].x = torch.randn(5, 4).cuda()
-    data[('v0','e1','v0')].edge_index = torch.randint(high=5, size=(2,10)).cuda()
+    data[('v0', 'e1', 'v0')].edge_index = torch.randint(high=5,
+                                                        size=(2, 10)).cuda()
     seed_everything(420)
     fast_net = FastHGTConv(4, 2, data.metadata()).to('cuda')
     seed_everything(420)
@@ -188,14 +190,14 @@ def test_FastHGT():
     x_dict = data.collect('x')
     # make params match
     for og_param, my_param in zip(og_net.parameters(), fast_net.parameters()):
-      try:
-        my_param.data = torch.ones_like(my_param.data)
-      except:
-        pass
-      try:
-        og_param.data = torch.ones_like(og_param.data)
-      except:
-        pass
+        try:
+            my_param.data = torch.ones_like(my_param.data)
+        except:
+            pass
+        try:
+            og_param.data = torch.ones_like(og_param.data)
+        except:
+            pass
 
     edge_index_dict = data.collect('edge_index')
     our_o = list(fast_net(x_dict, edge_index_dict).values())[0]
