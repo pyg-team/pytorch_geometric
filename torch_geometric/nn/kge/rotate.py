@@ -1,14 +1,15 @@
+import math
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Embedding
-import math
 
 from torch_geometric.nn.kge import KGEModel
 
 
 class RotatE(KGEModel):
-    r"""The RotatE model from the `"RotatE: Knowledge Graph Embedding by 
+    r"""The RotatE model from the `"RotatE: Knowledge Graph Embedding by
     Relational Rotation in Complex Space" <https://arxiv.org/abs/
     1902.10197>`_ paper.
 
@@ -33,7 +34,6 @@ class RotatE(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to
             the embedding matrices will be sparse. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         num_nodes: int,
