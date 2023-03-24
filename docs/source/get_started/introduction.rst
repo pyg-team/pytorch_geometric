@@ -392,7 +392,7 @@ Now let's implement a two-layer GCN:
             return F.log_softmax(x, dim=1)
 
 The constructor defines two :class:`~torch_geometric.nn.conv.GCNConv` layers which get called in the forward pass of our network.
-Note that the non-linearity is not integrated in the :obj:`conv` calls and hence needs to be applied afterwards (something which is consistent accross all operators in :pyg:`PyG`).
+Note that the non-linearity is not integrated in the :obj:`conv` calls and hence needs to be applied afterwards (something which is consistent across all operators in :pyg:`PyG`).
 Here, we chose to use ReLU as our intermediate non-linearity and finally output a softmax distribution over the number of classes.
 Let's train this model on the training nodes for 200 epochs:
 
