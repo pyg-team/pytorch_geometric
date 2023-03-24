@@ -106,7 +106,7 @@ def construct_edge_index(
         edge_attrs: List[Tensor] = []
         use_e_attrs = True
     else:
-        use_e_attrs = True
+        use_e_attrs = False
 
     for edge_type in self.edge_types:
         _, _, dst_type = edge_type
