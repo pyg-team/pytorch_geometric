@@ -8,7 +8,6 @@ from torch_geometric.profile import benchmark
 from torch_geometric.utils import coalesce
 
 
-
 def test_hgt_conv_same_dimensions():
     x_dict = {
         'author': torch.randn(4, 16),
