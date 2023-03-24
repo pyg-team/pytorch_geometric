@@ -58,13 +58,14 @@ class RootedSubgraphData(Data):
                 dim = self.__cat_dim__(key, value)
                 data[key] = value.index_select(dim, self.e_id)
 
+        # EGO+ (Prepends features to nodes, differentiating root node)
         if add_node_features:
             ids = torch.arange(2).repeat(self.n_id.size(0), 1)
             ids[self.n_sub_batch == self.n_id] = torch.tensor([1, 0])
 
             if hasattr(data, 'x'):
                 x = data.x
-                data.x = torch.cat([x, ids.to(x.device, x.dtype)], dim=-1)
+                data.x = torch.cat([ids.to(x.device, x.dtype), x], dim=-1)
             else:
                 data.x = ids
 

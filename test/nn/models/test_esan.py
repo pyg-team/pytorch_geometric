@@ -10,17 +10,18 @@ from torch_geometric.transforms import subgraph_policy
 
 n_subgraphs = [2, 5, 10]
 num_tasks = [1, 2, 3]
+policies = ['node_deletion', 'edge_deletion', 'ego', 'ego_plus']
 
 
-@pytest.mark.parametrize('n_subgraphs, num_tasks',
-                         product(n_subgraphs, num_tasks))
-def test_dsnetwork(n_subgraphs, num_tasks):
+@pytest.mark.parametrize('n_subgraphs, num_tasks, policy',
+                         product(n_subgraphs, num_tasks, policies))
+def test_dsnetwork(n_subgraphs, num_tasks, policy):
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
     # Create a Batch object from the input data
     data = Data(x=x, edge_index=edge_index)
-    transform = subgraph_policy('node_deletion', num_hops=1)
+    transform = subgraph_policy(policy, num_hops=1)
     subgraphs = transform(data)
 
     ls_subgraphs = [subgraphs] * n_subgraphs
@@ -29,7 +30,7 @@ def test_dsnetwork(n_subgraphs, num_tasks):
 
     # Define model hyperparameters
     num_layers = 2
-    in_dim = 8
+    in_dim = 8 if policy != 'ego_plus' else 10
     emb_dim = 16
     GNNConv = GraphConv
 
@@ -44,15 +45,15 @@ def test_dsnetwork(n_subgraphs, num_tasks):
     assert output.shape == (n_subgraphs, num_tasks)
 
 
-@pytest.mark.parametrize('n_subgraphs, num_tasks',
-                         product(n_subgraphs, num_tasks))
-def test_dssnetwork(n_subgraphs, num_tasks):
+@pytest.mark.parametrize('n_subgraphs, num_tasks, policy',
+                         product(n_subgraphs, num_tasks, policies))
+def test_dssnetwork(n_subgraphs, num_tasks, policy):
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
     # Create a Batch object from the input data
     data = Data(x=x, edge_index=edge_index)
-    transform = subgraph_policy('node_deletion', num_hops=1)
+    transform = subgraph_policy(policy, num_hops=1)
     subgraphs = transform(data)
 
     ls_subgraphs = [subgraphs] * n_subgraphs
@@ -61,7 +62,7 @@ def test_dssnetwork(n_subgraphs, num_tasks):
 
     # Define model hyperparameters
     num_layers = 2
-    in_dim = 8
+    in_dim = 8 if policy != 'ego_plus' else 10
     emb_dim = 16
     GNNConv = GraphConv
 
