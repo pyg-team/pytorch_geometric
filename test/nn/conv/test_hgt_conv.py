@@ -7,6 +7,7 @@ from torch_geometric.profile import benchmark
 from torch_geometric.utils import coalesce
 from torch_geometric import seed_everything
 
+
 def test_hgt_conv_same_dimensions():
     x_dict = {
         'author': torch.randn(4, 16),
@@ -174,8 +175,6 @@ def test_hgt_conv_out_of_place():
     assert x_dict['paper'].size() == (6, 32)
 
 
-
-
 def test_FastHGT():
     seed_everything(42)
     data = HeteroData()
@@ -202,7 +201,6 @@ def test_FastHGT():
     our_o = list(fast_net(x_dict, edge_index_dict).values())[0]
     og_o = list(og_net(x_dict, edge_index_dict).values())[0]
     assert torch.allclose(our_o, og_o, atol=3e-3)
-
 
 
 if __name__ == '__main__':
