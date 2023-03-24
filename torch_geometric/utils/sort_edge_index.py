@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.typing import OptTensor, EdgeType, SparseTensor, Adj
+from torch_geometric.typing import Adj, EdgeType, OptTensor, SparseTensor
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
