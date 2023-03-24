@@ -114,7 +114,7 @@ def construct_edge_index(
     else:
         use_e_attrs = False
 
-    for edge_type in self.edge_types:
+    for edge_type in edge_index_dict.keys():
         _, _, dst_type = edge_type
 
         edge_index = edge_index_dict[edge_type]
