@@ -97,7 +97,7 @@ def construct_edge_index(
     src_offset: Dict[EdgeType, int],
     dst_offset: [NodeType, int],
     edge_attr_dict: Dict[Union[EdgeType, str], Tensor] = None,
-) -> Tuple[Adj, Tensor]:
+) -> Tuple[Adj, OptTensor]:
     """Constructs a tensor of edge indices by concatenating edge indices
     for each edge type. The edge indices are increased by the offset of the
     source and destination nodes."""
