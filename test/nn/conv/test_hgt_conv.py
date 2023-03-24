@@ -180,8 +180,7 @@ def test_FastHGT():
     data = HeteroData()
     data['v0'].x = torch.randn(5, 4)
     data['v1'].x = torch.randn(5, 4)
-    data[('v0', 'e1', 'v0')].edge_index = torch.randint(high=5,
-                                                        size=(2, 10))
+    data[('v0', 'e1', 'v0')].edge_index = torch.randint(high=5, size=(2, 10))
     fast_net = FastHGTConv(4, 2, data.metadata())
     og_net = HGTConv(4, 2, data.metadata())
     x_dict = data.collect('x')
