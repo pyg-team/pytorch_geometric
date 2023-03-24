@@ -71,6 +71,8 @@ def main():
     his_loss = []
     val_time = []
     train_time = []
+    best_epoch = 0
+
     for i in range(1, args.epochs + 1):
         train_loss = []
         train_mape = []
@@ -98,7 +100,6 @@ def main():
         valid_loss = []
         valid_mape = []
         valid_rmse = []
-        best_epoch = 0
 
         s1 = time.time()
         for iter, (x, y) in enumerate(dataloader['val_loader'].get_iterator()):
@@ -147,7 +148,6 @@ def main():
 
     for iter, (x, y) in enumerate(dataloader['test_loader'].get_iterator()):
         testx = torch.Tensor(x).to(device)
-        testx = testx.transpose(1, 3)
         with torch.no_grad():
             preds = engine.gwnet(testx, engine.edge_index, engine.edge_weight)
             preds = preds.transpose(1, 3)
