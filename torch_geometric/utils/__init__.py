@@ -64,7 +64,7 @@ __all__ = [
     'mask_feature',
     'add_random_edge',
     'sort_edge_index',
-    'construct_edge_index'
+    'construct_edge_index',
     'coalesce',
     'is_undirected',
     'to_undirected',
