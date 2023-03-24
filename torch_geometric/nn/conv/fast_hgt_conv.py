@@ -18,7 +18,7 @@ from torch_geometric.typing import (
     NodeType,
     SparseTensor,
 )
-from torch_geometric.utils import softmax, construct_edge_index
+from torch_geometric.utils import construct_edge_index, softmax
 
 
 class FastHGTConv(MessagePassing):
@@ -213,8 +213,9 @@ class FastHGTConv(MessagePassing):
         q, dst_offset = self._cat(q_dict)
         k, v, src_offset = self._construct_src_node_feat(k_dict, v_dict)
 
-        edge_index, edge_attr = construct_edge_index(
-            edge_index_dict, src_offset, dst_offset, edge_attr_dict=self.p_rel)
+        edge_index, edge_attr = construct_edge_index(edge_index_dict,
+                                                     src_offset, dst_offset,
+                                                     edge_attr_dict=self.p_rel)
 
         out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
                              size=None)
