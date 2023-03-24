@@ -177,7 +177,7 @@ class MessagePassingQuant(Module):
 
     def aggregate(self, inputs, index, dim_size):  # pragma: no cover
 
-        return scatter_(inputs, index, self.node_dim, dim_size)
+        return scatter_(self.aggr, inputs, index, self.node_dim, dim_size)
 
         out = scatter(src=inputs, index=index, dim=self.node_dim,
                       dim_size=dim_size, reduce=self.aggr)

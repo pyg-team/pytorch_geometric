@@ -132,7 +132,7 @@ class GATConvQuant(MessagePassingQuant):
         alpha = self.layer_quantizers["alpha"](alpha)
         alpha = F.leaky_relu(alpha, self.negative_slope)
 
-        alpha = softmax(alpha, edge_index_i, size_i)
+        alpha = softmax(alpha, edge_index_i)
 
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)
@@ -252,23 +252,25 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
 
         """
         # quantizing input
+        # if torch.cuda.is_available():
+        #     device = torch.device('cuda')
+        # else:
+        #     device = torch.device('cpu')
         if self.training:
             x_q = torch.empty_like(x)
             x_q[mask] = self.layer_quantizers["inputs_high"](x[mask])
             x_q[~mask] = self.layer_quantizers["inputs_low"](x[~mask])
         else:
             x_q = self.layer_quantizers["inputs_low"](x)
-
         # quantizing layer weights
         w_q = self.layer_quantizers["weights_low"](self.weight)
 
         if size is None and torch.is_tensor(x_q):
             edge_index, _ = remove_self_loops(edge_index)
             edge_index, _ = add_self_loops(edge_index, num_nodes=x_q.size(0))
-
         if torch.is_tensor(x_q):
             if self.training:
-                x = torch.empty((x_q.shape[0], w_q.shape[1])).to(x_q.device)
+                x = torch.empty((x_q.shape[0], w_q.shape[1]))
                 x_tmp = torch.matmul(x_q, w_q)
                 x[mask] = self.layer_quantizers["features_high"](x_tmp[mask])
                 x[~mask] = self.layer_quantizers["features_low"](x_tmp[~mask])
@@ -335,11 +337,10 @@ class GATConvMultiQuant(MessagePassingMultiQuant):
 
         alpha = F.leaky_relu(alpha, self.negative_slope)
 
-        if torch.cuda.is_available():
-            alpha = softmax(alpha.cpu(),
-                            edge_index_i.cpu()).to(torch.device('cuda'))
-        else:
-            alpha = softmax(alpha, edge_index_i)
+        # if torch.cuda.is_available():
+        #     alpha = softmax(alpha, edge_index_i)
+        # else:
+        alpha = softmax(alpha, edge_index_i)
 
         # Sample attention coefficients stochastically.
         alpha = F.dropout(alpha, p=self.dropout, training=self.training)

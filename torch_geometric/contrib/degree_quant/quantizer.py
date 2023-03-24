@@ -278,8 +278,8 @@ def create_quantizer(qypte, ste, momentum, percentile, signed, sample_prop):
                                         sample_prop)
 
 
-def make_quantizers(qypte, dq, sign_input, ste, momentum, percentile,
-                    sample_prop):
+def make_quantizers(qypte='INT8', dq=True, sign_input=True, ste=False,
+                    momentum=1, percentile=0.01, sample_prop=None):
     """
     Use this to pass all the quantizer to the GNN layers. the GNN layer will
     use the needed layers and remove the rest.
@@ -320,6 +320,8 @@ def make_quantizers(qypte, dq, sign_input, ste, momentum, percentile,
         "alpha_high":
         create_quantizer("FP32", ste, momentum, percentile, True, sample_prop),
         "norm_low":
+        create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
+        "norm":
         create_quantizer(qypte, ste, momentum, percentile, True, sample_prop),
     }
     mp_quantizers = {

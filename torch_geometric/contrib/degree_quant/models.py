@@ -33,19 +33,9 @@ class GIN(nn.Module):
         in the graph
 
     """
-    def __init__(
-        self,
-        in_channels,
-        out_channels,
-        num_layers: int,
-        hidden: int,
-        dq: bool,
-        qypte: str,
-        ste: bool,
-        momentum: bool,
-        percentile: int,
-        sample_prop: torch.Tensor,
-    ):
+    def __init__(self, in_channels, out_channels, num_layers: int, hidden: int,
+                 dq: bool, qypte: str, ste: bool, momentum: bool,
+                 percentile: int, sample_prop: torch.Tensor, *args):
         super(GIN, self).__init__()
 
         self.in_channels = in_channels
@@ -158,19 +148,8 @@ class GCN(nn.Module):
         in the graph
 
     """
-    def __init__(
-        self,
-        in_channels,
-        out_channels,
-        num_layers,
-        hidden,
-        dq,
-        qypte,
-        ste,
-        momentum,
-        percentile,
-        sample_prop,
-    ):
+    def __init__(self, in_channels, out_channels, num_layers, hidden, dq,
+                 qypte, ste, momentum, percentile, sample_prop, *args):
         super(GCN, self).__init__()
 
         self.in_channels = in_channels
@@ -267,19 +246,8 @@ class GAT(nn.Module):
         in the graph
 
     """
-    def __init__(
-        self,
-        in_channels,
-        out_channels,
-        num_layers,
-        hidden,
-        dq,
-        qypte,
-        ste,
-        momentum,
-        percentile,
-        sample_prop,
-    ):
+    def __init__(self, in_channels, out_channels, num_layers, hidden, dq,
+                 qypte, ste, momentum, percentile, sample_prop, *args):
         super(GAT, self).__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
