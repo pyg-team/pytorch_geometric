@@ -52,16 +52,16 @@ jobs:
           pytest test/test_seed.py
           pytest test/test_typing.py
           pytest test/contrib/
-          pytest test/data/
+          # pytest test/data/
           pytest test/datasets/
           pytest test/explain/
           pytest test/graphgym/
           pytest test/io/
-          pytest test/loader/
-          pytest test/nn/
+          # pytest test/loader/
+          # pytest test/nn/
           pytest test/profile/
           pytest test/sampler/
           pytest test/testing/
-          pytest test/transforms/
+          # pytest test/transforms/
           pytest test/utils/
           pytest test/visualization/

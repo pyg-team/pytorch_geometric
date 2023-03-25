@@ -1,8 +1,8 @@
 import torch
-from torch_sparse import SparseTensor
 
 import torch_geometric.typing
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import (
     dense_to_sparse,
     is_sparse,
@@ -57,16 +57,20 @@ def test_is_torch_sparse_tensor():
     x = torch.randn(5, 5)
 
     assert not is_torch_sparse_tensor(x)
-    assert not is_torch_sparse_tensor(SparseTensor.from_dense(x))
     assert is_torch_sparse_tensor(x.to_sparse())
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert not is_torch_sparse_tensor(SparseTensor.from_dense(x))
 
 
 def test_is_sparse():
     x = torch.randn(5, 5)
 
     assert not is_sparse(x)
-    assert is_sparse(SparseTensor.from_dense(x))
     assert is_sparse(x.to_sparse())
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert is_sparse(SparseTensor.from_dense(x))
 
 
 def test_to_torch_coo_tensor():

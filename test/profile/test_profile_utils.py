@@ -1,6 +1,5 @@
 import torch
 from torch.nn import Linear
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.profile import (
@@ -15,7 +14,8 @@ from torch_geometric.profile.utils import (
     byte_to_megabyte,
     medibyte_to_megabyte,
 )
-from torch_geometric.testing import onlyCUDA
+from torch_geometric.testing import onlyCUDA, withPackage
+from torch_geometric.typing import SparseTensor
 
 
 def test_count_parameters():
@@ -28,6 +28,15 @@ def test_get_model_size():
 
 
 def test_get_data_size():
+    x = torch.randn(10, 128)
+    data = Data(x=x, y=x)
+
+    data_size = get_data_size(data)
+    assert data_size == 10 * 128 * 4
+
+
+@withPackage('torch_sparse')
+def test_get_data_size_with_sparse_tensor():
     x = torch.randn(10, 128)
     row, col = torch.randint(0, 10, (2, 100), dtype=torch.long)
     adj_t = SparseTensor(row=row, col=col, value=None, sparse_sizes=(10, 10))
