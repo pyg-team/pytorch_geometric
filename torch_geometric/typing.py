@@ -41,16 +41,49 @@ except (ImportError, OSError) as e:
     if isinstance(e, OSError):
         warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
                       f"Disabling its usage. Stacktrace: {e}")
-    torch_sparse = object
     WITH_TORCH_SPARSE = False
 
     class SparseTensor:
-        def __init__(self, *args, **kwargs):
+        def __init__(
+            self,
+            row: Optional[torch.Tensor] = None,
+            rowptr: Optional[torch.Tensor] = None,
+            col: Optional[torch.Tensor] = None,
+            value: Optional[torch.Tensor] = None,
+            sparse_sizes: Optional[Tuple[Optional[int], Optional[int]]] = None,
+            is_sorted: bool = False,
+            trust_data: bool = False,
+        ):
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         @classmethod
-        def from_edge_index(cls, *args, **kwargs) -> 'SparseTensor':
+        def from_edge_index(
+            self,
+            edge_index: torch.Tensor,
+            edge_attr: Optional[torch.Tensor] = None,
+            sparse_sizes: Optional[Tuple[Optional[int], Optional[int]]] = None,
+            is_sorted: bool = False,
+            trust_data: bool = False,
+        ) -> 'SparseTensor':
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def size(self, dim: int) -> int:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def is_cuda(self) -> bool:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def to_torch_sparse_csr_tensor(
+            self,
+            dtype: Optional[torch.dtype] = None,
+        ) -> torch.Tensor:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+    class torch_sparse:
+        @staticmethod
+        def matmul(src: SparseTensor, other: Tensor,
+                   reduce: str = "sum") -> Tensor:
+            raise ImportError("'matmul' requires 'torch-sparse'")
 
 
 # Types for accessing data ####################################################
