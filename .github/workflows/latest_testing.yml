@@ -8,7 +8,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  prev_pytest:
+  latest_pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -46,22 +46,22 @@ jobs:
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pytest test_debug.py
-          pytest test_experimental.py
-          pytest test_home.py
-          pytest test_seed.py
-          pytest test_typing.py
-          pytest contrib/
-          pytest data/
-          pytest datasets/
-          pytest explain/
-          pytest graphgym/
-          pytest io/
-          pytest loader/
-          pytest nn/
-          pytest profile/
-          pytest sampler/
-          pytest testing/
-          pytest transforms/
-          pytest utils/
-          pytest visualization/
+          pytest test/test_debug.py
+          pytest test/test_experimental.py
+          pytest test/test_home.py
+          pytest test/test_seed.py
+          pytest test/test_typing.py
+          pytest test/contrib/
+          pytest test/data/
+          pytest test/datasets/
+          pytest test/explain/
+          pytest test/graphgym/
+          pytest test/io/
+          pytest test/loader/
+          pytest test/nn/
+          pytest test/profile/
+          pytest test/sampler/
+          pytest test/testing/
+          pytest test/transforms/
+          pytest test/utils/
+          pytest test/visualization/
