@@ -18,7 +18,7 @@ def test_spmm_basic(device, reduce):
     src = torch.randn(5, 4, device=device)
     other = torch.randn(4, 8, device=device)
 
-    out1 = (src @ other) / (4. if reduce == 'mean' else 1.)
+    out1 = (src @ other) / (src.size(1) if reduce == 'mean' else 1)
     out2 = spmm(src.to_sparse_csr(), other, reduce=reduce)
     assert out1.size() == (5, 8)
     assert torch.allclose(out1, out2, atol=1e-6)
@@ -32,6 +32,9 @@ def test_spmm_basic(device, reduce):
     out2 = spmm(src.to_sparse_csr(), other, reduce=reduce)
     assert out1.size() == (5, 8)
     assert torch.allclose(out1, out2, atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
+        assert torch.allclose(out2, out3, atol=1e-6)
 
 
 @withCUDA
