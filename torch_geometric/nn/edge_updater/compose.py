@@ -65,6 +65,10 @@ class Compose(EdgeUpdater):
             value = copy_signature(signature=self._signature, to=value)
         return value
 
+    def __repr__(self):
+        upd_names = ', '.join([x.__repr__() for x in self.updaters])
+        return f'{self.__class__.__name__}([{upd_names}])'
+
 
 if __name__ == '__main__':  # TODO REMOVE
     from torch_geometric.nn.edge_updater import Fill, GCNNorm
