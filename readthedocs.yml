@@ -8,7 +8,8 @@ python:
    system_packages: true
    install:
       - requirements: docs/requirements.txt
-      - method: setuptools
+      # Equivalent to 'pip install .'
+      - method: pip
         path: .
 
 formats: []
