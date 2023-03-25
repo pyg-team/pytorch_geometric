@@ -261,15 +261,12 @@ class MyEdgeConv(MessagePassing):
         super().__init__(aggr='add')
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
-        # edge_updater_type: (x: Tensor)
-        edge_attr = self.edge_updater(edge_index, x=x)
-
         # propagate_type: (edge_attr: Tensor)
-        return self.propagate(edge_index, edge_attr=edge_attr,
+        return self.propagate(edge_index, x=x,
                               size=(x.size(0), x.size(0)))
 
-    def edge_update(self, x_j: Tensor, x_i: Tensor) -> Tensor:
-        return x_j - x_i
+    def edge_update(self, x_j: Tensor, x_i: Tensor) -> dict:
+        return {'edge_attr': x_j - x_i}
 
     def message(self, edge_attr: Tensor) -> Tensor:
         return edge_attr
