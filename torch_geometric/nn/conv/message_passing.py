@@ -436,6 +436,23 @@ class MessagePassing(torch.nn.Module):
             coll_dict = self.__collect__(self.__fused_user_args__, edge_index,
                                          size, kwargs)
 
+            if len(out) > 0:  # edge_updater has changed the matrix
+                keys = ['edge_weight', 'edge_attr', 'edge_type']
+                exists = [x in kwargs for x in keys]
+                assert sum(exists) > 0
+                if sum(exists) == 0:
+                    key_value = 'edge_weight'
+                else:
+                    key_value = keys[exists.index(True)]
+
+                edge_index = SparseTensor(
+                    row=coll_dict['edge_index_i'],
+                    col=coll_dict['edge_index_j'],
+                    value=coll_dict[key_value],
+                    sparse_sizes=coll_dict['size'][::-1]
+                )
+                coll_dict['adj_t'] = edge_index
+
             msg_aggr_kwargs = self.inspector.distribute(
                 'message_and_aggregate', coll_dict)
             for hook in self._message_and_aggregate_forward_pre_hooks.values():
