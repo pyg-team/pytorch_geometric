@@ -17,9 +17,10 @@ class RotatE(KGEModel):
     from head to tail such that:
 
     .. math::
-        - \mathbf{e}_t = \mathbf{e}_h \circ \mathbf{e}_r
+        \mathbf{e}_t = \mathbf{e}_h \circ \mathbf{e}_r
 
     Resulting in the scoring function:
+
     .. math::
         d(h, r, t) = - {\| \mathbf{e}_h \circ \mathbf{e}_r - \mathbf{e}_t \|}_p
 
