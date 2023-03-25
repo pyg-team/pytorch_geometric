@@ -1,6 +1,7 @@
+import pytest
 import torch
 
-import torch_geometric
+import torch_geometric.typing
 from torch_geometric.profile import benchmark
 from torch_geometric.utils import softmax
 
@@ -12,12 +13,17 @@ def test_softmax():
 
     out = softmax(src, index)
     assert out.tolist() == [0.5, 0.5, 1, 1]
-    assert softmax(src, None, ptr).tolist() == out.tolist()
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert softmax(src, None, ptr).tolist() == out.tolist()
+    else:
+        with pytest.raises(ImportError):
+            softmax(src, None, ptr)
 
     src = src.view(-1, 1)
     out = softmax(src, index)
     assert out.tolist() == [[0.5], [0.5], [1], [1]]
-    assert softmax(src, None, ptr).tolist() == out.tolist()
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert softmax(src, None, ptr).tolist() == out.tolist()
 
     jit = torch.jit.script(softmax)
     assert torch.allclose(jit(src, index), out)
@@ -46,19 +52,23 @@ def test_softmax_dim():
 
     src = torch.randn(4)
     assert torch.allclose(softmax(src, index, dim=0), src.softmax(dim=0))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
 
     src = torch.randn(4, 16)
     assert torch.allclose(softmax(src, index, dim=0), src.softmax(dim=0))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=0), src.softmax(dim=0))
 
     src = torch.randn(4, 4)
     assert torch.allclose(softmax(src, index, dim=-1), src.softmax(dim=-1))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=-1), src.softmax(dim=-1))
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=-1), src.softmax(-1))
 
     src = torch.randn(4, 4, 16)
     assert torch.allclose(softmax(src, index, dim=1), src.softmax(dim=1))
-    assert torch.allclose(softmax(src, ptr=ptr, dim=1), src.softmax(dim=1))
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        assert torch.allclose(softmax(src, ptr=ptr, dim=1), src.softmax(dim=1))
 
 
 if __name__ == '__main__':
