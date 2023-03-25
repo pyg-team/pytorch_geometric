@@ -17,7 +17,7 @@ class RotatE(KGEModel):
     from head to tail such that:
 
     .. math::
-        - \mathbf{e}_t = \mathbf{e}_h \circ \mathbf{e}_r     
+        - \mathbf{e}_t = \mathbf{e}_h \circ \mathbf{e}_r
 
     Resulting in the scoring function:
     .. math::
@@ -38,7 +38,6 @@ class RotatE(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to
             the embedding matrices will be sparse. (default: :obj:`False`)
     """
-
     def __init__(
         self,
         num_nodes: int,
