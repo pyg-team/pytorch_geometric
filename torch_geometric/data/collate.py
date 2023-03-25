@@ -142,7 +142,8 @@ def _collate(
         if torch.utils.data.get_worker_info() is not None:
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
-            storage = elem.storage()._new_shared(numel)
+            storage = elem._typed_storage()._new_shared(
+                numel, device=elem.device)
             shape = list(elem.size())
             if cat_dim is None or elem.dim() == 0:
                 shape = [len(values)] + shape
