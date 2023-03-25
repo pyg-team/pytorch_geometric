@@ -14,8 +14,12 @@ class RotatE(KGEModel):
     1902.10197>`_ paper.
 
     :class:`RotatE` models relations as a rotation in complex space
-    from head to tail. The scoring function is thus:
+    from head to tail such that:
 
+    .. math::
+        - \mathbf{e}_t = \mathbf{e}_h \circ \mathbf{e}_r     
+
+    Resulting in the scoring function:
     .. math::
         d(h, r, t) = - {\| \mathbf{e}_h \circ \mathbf{e}_r - \mathbf{e}_t \|}_p
 
@@ -34,6 +38,7 @@ class RotatE(KGEModel):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to
             the embedding matrices will be sparse. (default: :obj:`False`)
     """
+
     def __init__(
         self,
         num_nodes: int,
@@ -43,7 +48,7 @@ class RotatE(KGEModel):
         sparse: bool = False,
     ):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
-        self.margin = margin
+        self.register_buffer('margin', torch.Tensor([margin]))
         self.node_emb_im = Embedding(num_nodes, hidden_channels, sparse=sparse)
         self.reset_parameters()
 
@@ -70,7 +75,7 @@ class RotatE(KGEModel):
         re_score = (rel_re * head_re - rel_im * head_im) - tail_re
         im_score = (rel_re * head_im + rel_im * head_re) - tail_im
         complex_score = torch.stack([re_score, im_score], dim=2)
-        score = torch.norm(complex_score, dim=(1, 2))
+        score = torch.linalg.vector_norm(complex_score, dim=(1, 2))
 
         return self.margin - score
 
