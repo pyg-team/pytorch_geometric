@@ -90,6 +90,7 @@ class ClusterGCNConv(MessagePassing):
             if is_sparse_tensor:
                 edge_index = to_torch_coo_tensor(edge_index.flip(0),
                                                  edge_weight, size=num_nodes)
+                edge_weight = None
 
         elif isinstance(edge_index, SparseTensor):
             if self.add_self_loops:
@@ -101,6 +102,7 @@ class ClusterGCNConv(MessagePassing):
             edge_weight = deg_inv[col]
             edge_weight[row == col] += self.diag_lambda * deg_inv
             edge_index = edge_index.set_value(edge_weight, layout='coo')
+            edge_weight = None
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,

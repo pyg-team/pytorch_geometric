@@ -106,6 +106,7 @@ class PDNConv(MessagePassing):
                 edge_index = gcn_norm(edge_index, None, x.size(self.node_dim),
                                       False, self.add_self_loops, self.flow,
                                       x.dtype)
+                edge_attr = edge_index.storage.value()
 
         x = self.lin(x)
 
