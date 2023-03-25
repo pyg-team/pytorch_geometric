@@ -67,6 +67,9 @@ except (ImportError, OSError) as e:
         ) -> 'SparseTensor':
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
+        def size(self, dim: int) -> int:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
         def is_cuda(self) -> bool:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
