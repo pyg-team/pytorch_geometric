@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import SparseTensor
+from torch_geometric.utils import coalesce
 
 
 def dense_to_sparse(adj: Tensor) -> Tuple[Tensor, Tensor]:
@@ -122,18 +123,21 @@ def to_torch_coo_tensor(
     if not isinstance(size, (tuple, list)):
         size = (size, size)
 
+    if not is_coalesced:
+        edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
+
     if edge_attr is None:
         edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
-
-    size = tuple(size) + edge_attr.size()[1:]
 
     adj = torch.sparse_coo_tensor(
         indices=edge_index,
         values=edge_attr,
-        size=size,
+        size=tuple(size) + edge_attr.size()[1:],
         device=edge_index.device,
     )
-    return adj._coalesced_(True) if is_coalesced else adj.coalesce()
+    adj = adj._coalesced_(True)
+
+    return adj
 
 
 def to_torch_csr_tensor(
@@ -212,8 +216,27 @@ def to_torch_csc_tensor(
                size=(4, 4), nnz=6, layout=torch.sparse_csc)
 
     """
-    adj = to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
-    return adj.to_sparse_csc()
+    if size is None:
+        size = int(edge_index.max()) + 1
+    if not isinstance(size, (tuple, list)):
+        size = (size, size)
+
+    if not is_coalesced:
+        edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size),
+                                         sort_by_row=False)
+
+    if edge_attr is None:
+        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
+
+    adj = torch.sparse_csc_tensor(
+        ccol_indices=index2ptr(edge_index[1], size[1]),
+        row_indices=edge_index[0],
+        values=edge_attr,
+        size=tuple(size) + edge_attr.size()[1:],
+        device=edge_index.device,
+    )
+
+    return adj
 
 
 def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
