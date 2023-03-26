@@ -116,17 +116,17 @@ class GraphWaveNet(nn.Module):
     def forward(self, x, edge_index, edge_weight=None):
         r"""
         The forward pass for the GraphWaveNet
-        
+
         Args:
             x (torch.Tensor): The temporal node features of shape
                 :math:`(*, t_{input}, |\mathcal{V}|, F_{in})`
-            edge_index (torch.Tensor): The edge indices 
+            edge_index (torch.Tensor): The edge indices
                 of shape :math:`(2, |\mathcal{E}|)`
-            edge_weight (torch.Tensor, optional): The edge weights 
+            edge_weight (torch.Tensor, optional): The edge weights
                 shape of :math:`(|\mathcal{E}|)` (default: :obj:`None`)
 
         Return types:
-            * **x** (*torch.Tensor*): Predicted temporal node features of shape 
+            * **x** (*torch.Tensor*): Predicted temporal node features of shape
               :math:`(*, t_{output}, |\mathcal{V}|, F_{out})`
         """
 
