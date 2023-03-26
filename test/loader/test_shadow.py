@@ -1,8 +1,8 @@
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.loader import ShaDowKHopSampler
+from torch_geometric.typing import SparseTensor
 
 
 def test_shadow_k_hop_sampler():

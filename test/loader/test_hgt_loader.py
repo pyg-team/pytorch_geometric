@@ -1,11 +1,11 @@
 import numpy as np
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
 from torch_geometric.testing import get_random_edge_index
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import k_hop_subgraph
 
 

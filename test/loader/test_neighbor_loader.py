@@ -5,7 +5,6 @@ from time import sleep
 import numpy as np
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
 import torch_geometric.typing
 from torch_geometric.data import Data, HeteroData
@@ -18,7 +17,7 @@ from torch_geometric.testing import (
     onlyLinux,
     withPackage,
 )
-from torch_geometric.typing import WITH_PYG_LIB
+from torch_geometric.typing import WITH_PYG_LIB, SparseTensor
 from torch_geometric.utils import k_hop_subgraph
 
 

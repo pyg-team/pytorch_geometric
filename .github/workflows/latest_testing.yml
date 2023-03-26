@@ -57,7 +57,7 @@ jobs:
           pytest test/explain/
           pytest test/graphgym/
           pytest test/io/
-          # pytest test/loader/
+          pytest test/loader/
           # pytest test/nn/
           pytest test/profile/
           pytest test/sampler/

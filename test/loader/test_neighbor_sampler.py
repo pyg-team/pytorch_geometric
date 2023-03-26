@@ -1,9 +1,9 @@
 import numpy as np
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn.conv import GATConv, SAGEConv
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import erdos_renyi_graph
 
 
