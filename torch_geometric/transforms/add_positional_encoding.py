@@ -125,7 +125,8 @@ class AddRandomWalkPE(BaseTransform):
         value = data.edge_weight
         if value is None:
             value = torch.ones(data.num_edges, device=row.device)
-        value = 1.0 / scatter(value, row, dim_size=N, reduce='sum')[row]
+        value = scatter(value, row, dim_size=N, reduce='sum').clamp(min=1)[row]
+        value = 1.0 / value
 
         adj = to_torch_csr_tensor(data.edge_index, value, size=data.size())
 
