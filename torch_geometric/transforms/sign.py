@@ -3,8 +3,7 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import scatter, to_edge_index, to_torch_csc_tensor
+from torch_geometric.utils import scatter, to_torch_csc_tensor
 
 
 @functional_transform('sign')
