@@ -1,6 +1,7 @@
 import torch
 
 import torch_geometric.typing
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import (
@@ -195,3 +196,25 @@ def test_to_edge_index():
         edge_index, edge_attr = jit(adj)
         assert edge_index.tolist() == [[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]]
         assert edge_attr.tolist() == [1., 1., 1., 1., 1., 1.]
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    args = parser.parse_args()
+
+    num_nodes, num_edges = 10_000, 200_000
+    edge_index = torch.randint(num_nodes, (2, num_edges), device=args.device)
+
+    benchmark(
+        funcs=[
+            SparseTensor.from_edge_index, to_torch_coo_tensor,
+            to_torch_csr_tensor, to_torch_csc_tensor
+        ],
+        func_names=['SparseTensor', 'To COO', 'To CSR', 'To CSC'],
+        args=(edge_index, None, (num_nodes, num_nodes)),
+        num_steps=50 if args.device == 'cpu' else 500,
+        num_warmups=10 if args.device == 'cpu' else 100,
+    )
