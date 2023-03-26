@@ -62,6 +62,6 @@ jobs:
           pytest test/profile/
           pytest test/sampler/
           pytest test/testing/
-          # pytest test/transforms/
+          pytest test/transforms/
           pytest test/utils/
           pytest test/visualization/
