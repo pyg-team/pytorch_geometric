@@ -52,7 +52,7 @@ jobs:
           pytest test/test_seed.py
           pytest test/test_typing.py
           pytest test/contrib/
-          # pytest test/data/
+          pytest test/data/
           pytest test/datasets/
           pytest test/explain/
           pytest test/graphgym/
