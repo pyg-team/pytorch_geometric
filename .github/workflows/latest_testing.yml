@@ -1,0 +1,67 @@
+name: Testing PyTorch nightly
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+
+  latest_pytest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 40
+
+      # Skip workflow if only certain files have been changed.
+      - name: Get changed files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            benchmark/**
+            conda/**
+            docker/**
+            docs/**
+            examples/**
+            graphgym/**
+            CHANGELOG.md
+
+      - name: Setup packages
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        uses: ./.github/actions/setup
+        with:
+          torch-version: nightly
+          full_install: false
+
+      - name: Install main package
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        run: |
+          pip install -e .[full,test]
+
+      - name: Run tests
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        run: |
+          pytest test/test_debug.py
+          pytest test/test_experimental.py
+          pytest test/test_home.py
+          pytest test/test_seed.py
+          pytest test/test_typing.py
+          pytest test/contrib/
+          # pytest test/data/
+          pytest test/datasets/
+          pytest test/explain/
+          pytest test/graphgym/
+          pytest test/io/
+          # pytest test/loader/
+          # pytest test/nn/
+          pytest test/profile/
+          pytest test/sampler/
+          pytest test/testing/
+          # pytest test/transforms/
+          pytest test/utils/
+          pytest test/visualization/
