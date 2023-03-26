@@ -45,13 +45,6 @@ class GraphWaveNet(nn.Module):
         end_channels (int, optional): Size of the final linear layer
             (default: :obj:`512`)
 
-    Shapes:
-        - **input:**
-          temporal node features :math:`(*, t_{input}, |\mathcal{V}|, F_{in})`,
-          edge indices :math:`(2, |\mathcal{E}|)`,
-          edge weights :math:`(|\mathcal{E}|)` *(optional)*
-        - **output:** temporal node features :math:`(*, t_{output},
-          |\mathcal{V}|, F_{out})`
     """
     def __init__(self, num_nodes, in_channels, out_channels, out_timesteps,
                  dilations=[1, 2, 1, 2, 1, 2, 1, 2], adptive_embeddings=10,
