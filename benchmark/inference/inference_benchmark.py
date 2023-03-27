@@ -10,8 +10,8 @@ from benchmark.utils import (
     get_model,
     get_split_masks,
     save_benchmark_data,
-    write_to_csv,
     test,
+    write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
@@ -204,9 +204,8 @@ def run(args: argparse.ArgumentParser):
                                     )
                                     if args.evaluate:
                                         test_acc = test(
-                                            model, test_loader, device,
-                                            hetero, progress_bar=True
-                                        )
+                                            model, test_loader, device, hetero,
+                                            progress_bar=True)
                                         print(f'Mini Batch Test Accuracy: \
                                             {test_acc:.4f}')
 

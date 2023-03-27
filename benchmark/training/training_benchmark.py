@@ -14,8 +14,8 @@ from benchmark.utils import (
     get_model,
     get_split_masks,
     save_benchmark_data,
-    write_to_csv,
     test,
+    write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv

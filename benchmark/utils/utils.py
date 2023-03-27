@@ -5,16 +5,16 @@ from datetime import datetime
 import pandas as pd
 import torch
 from ogb.nodeproppred import PygNodePropPredDataset
+from tqdm import tqdm
 
 import torch_geometric.transforms as T
+from torch_geometric.data import HeteroData
 from torch_geometric.datasets import OGB_MAG, Reddit
 from torch_geometric.nn import GAT, GCN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.utils import index_to_mask
 
 from .hetero_gat import HeteroGAT
 from .hetero_sage import HeteroGraphSAGE
-from torch_geometric.data import HeteroData
-from tqdm import tqdm
 
 try:
     from torch.autograd.profiler import emit_itt
@@ -154,7 +154,8 @@ def write_to_csv(csv_data, training=False):
 
 
 @torch.no_grad()
-def test(model, loader, device, hetero, progress_bar=True, desc="Evaluation") -> None:
+def test(model, loader, device, hetero, progress_bar=True,
+         desc="Evaluation") -> None:
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     total_examples = total_correct = 0
