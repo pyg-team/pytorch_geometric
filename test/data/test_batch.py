@@ -166,6 +166,48 @@ def test_batch_with_sparse_tensor():
     assert data_list[2].adj.coo()[1].tolist() == [1, 0, 2, 1, 3, 2]
 
 
+def test_batch_with_torch_coo_tensor():
+    x = torch.tensor([[1.0], [2.0], [3.0]]).to_sparse_coo()
+    data1 = Data(x=x)
+
+    x = torch.tensor([[1.0], [2.0]]).to_sparse_coo()
+    data2 = Data(x=x)
+
+    x = torch.tensor([[1.0], [2.0], [3.0], [4.0]]).to_sparse_coo()
+    data3 = Data(x=x)
+
+    batch = Batch.from_data_list([data1])
+    assert str(batch) == ('DataBatch(x=[3, 1], batch=[3], ptr=[2])')
+    assert batch.num_graphs == len(batch) == 1
+    assert batch.x.to_dense().tolist() == [[1], [2], [3]]
+    assert batch.batch.tolist() == [0, 0, 0]
+    assert batch.ptr.tolist() == [0, 3]
+
+    batch = Batch.from_data_list([data1, data2, data3])
+
+    assert str(batch) == ('DataBatch(x=[9, 1], batch=[9], ptr=[4])')
+    assert batch.num_graphs == len(batch) == 3
+    assert batch.x.to_dense().view(-1).tolist() == [1, 2, 3, 1, 2, 1, 2, 3, 4]
+    assert batch.batch.tolist() == [0, 0, 0, 1, 1, 2, 2, 2, 2]
+    assert batch.ptr.tolist() == [0, 3, 5, 9]
+
+    assert str(batch[0]) == ("Data(x=[3, 1])")
+    assert str(batch[1]) == ("Data(x=[2, 1])")
+    assert str(batch[2]) == ("Data(x=[4, 1])")
+
+    data_list = batch.to_data_list()
+    assert len(data_list) == 3
+
+    assert len(data_list[0]) == 1
+    assert data_list[0].x.to_dense().tolist() == [[1], [2], [3]]
+
+    assert len(data_list[1]) == 1
+    assert data_list[1].x.to_dense().tolist() == [[1], [2]]
+
+    assert len(data_list[2]) == 1
+    assert data_list[2].x.to_dense().tolist() == [[1], [2], [3], [4]]
+
+
 def test_batching_with_new_dimension():
     torch_geometric.set_debug(True)
 
