@@ -180,7 +180,9 @@ def test_FastHGT():
     data = HeteroData()
     data['v0'].x = torch.randn(5, 4)
     data['v1'].x = torch.randn(5, 4)
+    data['v2'].x = torch.randn(5, 4)
     data[('v0', 'e1', 'v0')].edge_index = torch.randint(high=5, size=(2, 10))
+    data[('v0', 'e2', 'v1')].edge_index = torch.randint(high=5, size=(2, 10))
     fast_net = FastHGTConv(4, 2, data.metadata())
     og_net = HGTConv(4, 2, data.metadata())
     x_dict = data.collect('x')
@@ -194,6 +196,8 @@ def test_FastHGT():
     our_o = fast_net(x_dict, edge_index_dict)
     og_o = og_net(x_dict, edge_index_dict)
     for node_type in data.node_types:
+        if og_o[node_type] == None and our_o[node_type] == None:
+            continue
         assert torch.allclose(
             our_o[node_type], og_o[node_type],
             atol=3e-3), "features for " + node_type + " differ by = " + str(
