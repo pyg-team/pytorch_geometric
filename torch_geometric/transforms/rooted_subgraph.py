@@ -7,7 +7,7 @@ from torch import Tensor
 
 from torch_geometric.data import Data
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.typing import SparseTensor
+from torch_geometric.utils import to_torch_csc_tensor
 
 
 class RootedSubgraphData(Data):
@@ -116,11 +116,7 @@ class RootedEgoNets(RootedSubgraph):
         data: Data,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
 
-        adj_t = SparseTensor.from_edge_index(
-            data.edge_index,
-            sparse_sizes=(data.num_nodes, data.num_nodes),
-        ).t()
-
+        adj_t = to_torch_csc_tensor(data.edge_index, size=data.size()).t()
         n_mask = torch.eye(data.num_nodes, device=data.edge_index.device)
         for _ in range(self.num_hops):
             n_mask += adj_t @ n_mask

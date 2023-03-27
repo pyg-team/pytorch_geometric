@@ -3,11 +3,11 @@ import copy
 import pytest
 import torch
 import torch.multiprocessing as mp
-import torch_sparse
 
 import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.storage import AttrType
+from torch_geometric.testing import withPackage
 
 
 def test_data():
@@ -392,12 +392,10 @@ def test_basic_feature_store():
 # Graph Store #################################################################
 
 
+@withPackage('torch_sparse')
 def test_basic_graph_store():
     r"""Test the core graph store API."""
     data = Data()
-
-    edge_index = torch.LongTensor([[0, 1], [1, 2]])
-    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1])
 
     def assert_equal_tensor_tuple(expected, actual):
         assert len(expected) == len(actual)
@@ -406,9 +404,9 @@ def test_basic_graph_store():
 
     # We put all three tensor types: COO, CSR, and CSC, and we get them back
     # to confirm that `GraphStore` works as intended.
-    coo = adj.coo()[:-1]
-    csr = adj.csr()[:-1]
-    csc = adj.csc()[-2::-1]  # (row, colptr)
+    coo = (torch.tensor([0, 1]), torch.tensor([1, 2]))
+    csr = (torch.tensor([0, 1, 2, 2]), torch.tensor([1, 2]))
+    csc = (torch.tensor([0, 1]), torch.tensor([0, 0, 1, 2]))
 
     # Put:
     data.put_edge_index(coo, layout='coo', size=(3, 3))
