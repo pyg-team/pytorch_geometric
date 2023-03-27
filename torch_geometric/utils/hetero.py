@@ -1,4 +1,4 @@
-from typing import List, Set, Dict, Tuple
+from typing import List, Set, Dict, Tuple, Union
 
 import torch
 from torch import Tensor

@@ -16,7 +16,6 @@ from torch_geometric.typing import (
     EdgeType,
     Metadata,
     NodeType,
-    SparseTensor,
 )
 from torch_geometric.utils import construct_bipartite_edge_index, softmax
 
