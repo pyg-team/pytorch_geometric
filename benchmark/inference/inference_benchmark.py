@@ -204,8 +204,12 @@ def run(args: argparse.ArgumentParser):
                                     )
                                     if args.evaluate:
                                         test_acc = test(
-                                            model, test_loader, device, hetero,
-                                            progress_bar=True, )
+                                            model,
+                                            test_loader,
+                                            device,
+                                            hetero,
+                                            progress_bar=True,
+                                        )
                                         print(f'Mini Batch Test Accuracy: \
                                             {test_acc:.4f}')
 
