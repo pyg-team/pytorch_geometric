@@ -21,7 +21,7 @@ def test_attentional_aggregation():
     out = aggr(x, index)
     assert out.size() == (3, channels)
 
-    if not torch_geometric.typing.WITH_TORCH_SPARSE:
+    if not torch_geometric.typing.WITH_TORCH_SCATTER:
         with pytest.raises(ImportError, match="'segment' requires"):
             aggr(x, ptr=ptr)
     else:
