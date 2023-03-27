@@ -152,8 +152,9 @@ class FastHGTConv(MessagePassing):
         kqv_dict = self.kqv_lin(x_dict)
         for key, val in kqv_dict.items():
             k_dict[key] = val[:, :self.out_channels].reshape(-1, H, D)
-            q_dict[key] = val[:, self.out_channels:2 * self.out_channels].reshape(
-                -1, H, D)
+            q_dict[key] = val[:,
+                              self.out_channels:2 * self.out_channels].reshape(
+                                  -1, H, D)
             v_dict[key] = val[:, 2 * self.out_channels:].reshape(-1, H, D)
 
         q, dst_offset = self._cat(q_dict)
