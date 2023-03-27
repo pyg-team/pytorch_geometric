@@ -5,12 +5,13 @@ import torch
 import torch.optim as optim
 
 from torch_geometric.datasets import FB15k_237
-from torch_geometric.nn import ComplEx, DistMult, TransE
+from torch_geometric.nn import ComplEx, DistMult, RotatE, TransE
 
 model_map = {
     'transe': TransE,
     'complex': ComplEx,
     'distmult': DistMult,
+    'rotate': RotatE,
 }
 
 parser = argparse.ArgumentParser()
@@ -25,11 +26,11 @@ train_data = FB15k_237(path, split='train')[0].to(device)
 val_data = FB15k_237(path, split='val')[0].to(device)
 test_data = FB15k_237(path, split='test')[0].to(device)
 
-model = model_map[args.model](
-    num_nodes=train_data.num_nodes,
-    num_relations=train_data.num_edge_types,
-    hidden_channels=50,
-).to(device)
+model_arg_map = {'rotate': {'margin': 9.0}}
+model = model_map[args.model](num_nodes=train_data.num_nodes,
+                              num_relations=train_data.num_edge_types,
+                              hidden_channels=50,
+                              **model_arg_map.get(args.model, {})).to(device)
 
 loader = model.loader(
     head_index=train_data.edge_index[0],
@@ -43,6 +44,7 @@ optimizer_map = {
     'transe': optim.Adam(model.parameters(), lr=0.01),
     'complex': optim.Adagrad(model.parameters(), lr=0.001, weight_decay=1e-6),
     'distmult': optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-6),
+    'rotate': optim.Adam(model.parameters(), lr=1e-3),
 }
 optimizer = optimizer_map[args.model]
 
