@@ -15,4 +15,4 @@ def test_construct_bipartite_edge_index():
         ('paper', 'written_by', 'author'): edge_index.flip([0]),
     }
     combined_e_idxs = construct_bipartite_edge_index(edge_index_dict, {'author':0, 'paper':4}, {'author':0, 'paper':4})
-    assert combined_e_idxs.size() == (2, 20), "combined_e_idxs.size()=" str(combined_e_idxs.size())
+    assert combined_e_idxs.size() == (2, 20), "combined_e_idxs.size()=" + str(combined_e_idxs.size())
