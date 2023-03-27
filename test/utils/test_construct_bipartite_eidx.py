@@ -1,4 +1,4 @@
-import torch_geometric
+from torch_geometric.utils import construct_bipartite_edge_index
 from torch_geometric.testing import get_random_edge_index
 import pytest
 import torch
