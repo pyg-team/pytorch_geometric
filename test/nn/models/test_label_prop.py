@@ -1,7 +1,7 @@
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.models import LabelPropagation
+from torch_geometric.typing import SparseTensor
 
 
 def test_label_prop():
