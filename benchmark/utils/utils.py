@@ -5,8 +5,10 @@ from datetime import datetime
 import pandas as pd
 import torch
 from ogb.nodeproppred import PygNodePropPredDataset
+from tqdm import tqdm
 
 import torch_geometric.transforms as T
+from torch_geometric.data import HeteroData
 from torch_geometric.datasets import OGB_MAG, Reddit
 from torch_geometric.nn import GAT, GCN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.utils import index_to_mask
@@ -70,7 +72,11 @@ def get_dataset_with_transformation(name, root, use_sparse_tensor=False,
         data.y = data.y.squeeze()
 
     if bf16:
-        data.x = data.x.to(torch.bfloat16)
+        if isinstance(data, HeteroData):
+            for node_type in data.node_types:
+                data[node_type].x = data[node_type].x.to(torch.bfloat16)
+        else:
+            data.x = data.x.to(torch.bfloat16)
 
     return data, dataset.num_classes, transform
 
@@ -145,3 +151,40 @@ def write_to_csv(csv_data, training=False):
     with_header = not osp.exists(csv_path)
     df = pd.DataFrame(csv_data)
     df.to_csv(csv_path, mode='a', index_label='TEST_ID', header=with_header)
+
+
+@torch.no_grad()
+def test(model, loader, device, hetero, progress_bar=True,
+         desc="Evaluation") -> None:
+    if progress_bar:
+        loader = tqdm(loader, desc=desc)
+    total_examples = total_correct = 0
+    if hetero:
+        for batch in loader:
+            batch = batch.to(device)
+            if len(batch.adj_t_dict) > 0:
+                edge_index_dict = batch.adj_t_dict
+            else:
+                edge_index_dict = batch.edge_index_dict
+            out = model(batch.x_dict, edge_index_dict)
+            batch_size = batch['paper'].batch_size
+            out = out['paper'][:batch_size]
+            pred = out.argmax(dim=-1)
+
+            total_examples += batch_size
+            total_correct += int((pred == batch['paper'].y[:batch_size]).sum())
+    else:
+        for batch in loader:
+            batch = batch.to(device)
+            if hasattr(batch, 'adj_t'):
+                edge_index = batch.adj_t
+            else:
+                edge_index = batch.edge_index
+            out = model(batch.x, edge_index)
+            batch_size = batch.batch_size
+            out = out[:batch_size]
+            pred = out.argmax(dim=-1)
+
+            total_examples += batch_size
+            total_correct += int((pred == batch.y[:batch_size]).sum())
+    return total_correct / total_examples
