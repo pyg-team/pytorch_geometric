@@ -65,7 +65,7 @@ jobs:
           pytest test/nn/dense
           pytest test/nn/functional
           pytest test/nn/kge
-          # pytest test/nn/models
+          pytest test/nn/models
           pytest test/nn/norm
           pytest test/nn/pool
           pytest test/nn/unpool
