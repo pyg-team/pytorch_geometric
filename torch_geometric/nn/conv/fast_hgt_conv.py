@@ -176,7 +176,6 @@ class FastHGTConv(MessagePassing):
         # Transform output node embeddings:
         a_dict = self.out_lin({k: F.gelu(v) for k, v in out_dict.items()})
 
-
         # Iterate over node types:
         for node_type, out in out_dict.items():
             if out is None:
