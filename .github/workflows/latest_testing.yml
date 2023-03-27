@@ -60,15 +60,15 @@ jobs:
           pytest test/transforms/
           pytest test/utils/
           pytest test/visualization/
-          # pytest nn/aggr
-          # pytest nn/conv
-          pytest nn/dense
-          pytest nn/functional
-          pytest nn/kge
-          # pytest nn/models
-          pytest nn/norm
-          # pytest nn/pool
-          pytest nn/unpool
+          # pytest test/nn/aggr
+          # pytest test/nn/conv
+          pytest test/nn/dense
+          pytest test/nn/functional
+          pytest test/nn/kge
+          # pytest test/nn/models
+          pytest test/nn/norm
+          # pytest test/nn/pool
+          pytest test/nn/unpool
           pytest test/nn/test_compile_basic.py test/nn/test_compile_conv.py test/nn/test_compile_dynamic.py test/nn/test_data_parallel.py test/nn/test_encoding.py test/nn/test_inits.py test/nn/test_model_hub.py
           # pytest test/nn/test_model_summary.py
           pytest test/nn/test_module_dict.py test/nn/test_parameter_dict.py test/nn/test_reshape.py test/nn/test_resolver.py
