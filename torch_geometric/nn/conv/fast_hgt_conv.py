@@ -11,12 +11,7 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import HeteroDictLinear, HeteroLinear
 from torch_geometric.nn.inits import ones
 from torch_geometric.nn.parameter_dict import ParameterDict
-from torch_geometric.typing import (
-    Adj,
-    EdgeType,
-    Metadata,
-    NodeType,
-)
+from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType
 from torch_geometric.utils import construct_bipartite_edge_index, softmax
 
 
