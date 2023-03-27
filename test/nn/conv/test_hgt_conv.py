@@ -196,7 +196,7 @@ def test_FastHGT():
     our_o = fast_net(x_dict, edge_index_dict)
     og_o = og_net(x_dict, edge_index_dict)
     for node_type in data.node_types:
-        if og_o[node_type] == None and our_o[node_type] == None:
+        if og_o[node_type] is None and our_o[node_type] is None:
             continue
         assert torch.allclose(
             our_o[node_type], og_o[node_type],
