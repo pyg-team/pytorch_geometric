@@ -201,7 +201,9 @@ def test_FastHGT():
         assert torch.allclose(
             our_o[node_type], og_o[node_type],
             atol=3e-3), "features for " + node_type + " differ by = " + str(
-                our_o[node_type] - og_o[node_type]) + "\nfast_hgt_out_dict=" + str(our_o) + "\noriginal_hgt_out_dict=" + str(og_o)
+                our_o[node_type] -
+                og_o[node_type]) + "\nfast_hgt_out_dict=" + str(
+                    our_o) + "\noriginal_hgt_out_dict=" + str(og_o)
 
 
 if __name__ == '__main__':
