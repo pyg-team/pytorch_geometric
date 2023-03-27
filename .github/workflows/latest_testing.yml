@@ -67,7 +67,7 @@ jobs:
           pytest test/nn/kge
           # pytest test/nn/models
           pytest test/nn/norm
-          # pytest test/nn/pool
+          pytest test/nn/pool
           pytest test/nn/unpool
           pytest test/nn/test_compile_basic.py test/nn/test_compile_conv.py test/nn/test_compile_dynamic.py test/nn/test_data_parallel.py test/nn/test_encoding.py test/nn/test_inits.py test/nn/test_model_hub.py
           # pytest test/nn/test_model_summary.py
