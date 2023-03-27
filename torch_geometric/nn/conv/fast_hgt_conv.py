@@ -48,7 +48,8 @@ class FastHGTConv(MessagePassing):
         self.edge_types = metadata[1]
         self.src_types = [edge_type[0] for edge_type in self.edge_types]
 
-        self.kqv_lin = HeteroDictLinear(self.in_channels, self.out_channels * 3)
+        self.kqv_lin = HeteroDictLinear(self.in_channels,
+                                        self.out_channels * 3)
 
         self.out_lin = HeteroDictLinear(self.out_channels, self.out_channels,
                                         types=self.node_types)
@@ -158,15 +159,15 @@ class FastHGTConv(MessagePassing):
         k_dict, q_dict, v_dict = {}, {}, {}
         for key, val in kqv_dict.items():
             k_dict[key] = val[:self.out_channels].view(-1, H, D)
-            q_dict[key] = val[self.out_channels:2 * self.out_channels].view(-1, H, D)
+            q_dict[key] = val[self.out_channels:2 * self.out_channels].view(
+                -1, H, D)
             v_dict[key] = val[2 * self.out_channels:].view(-1, H, D)
 
         q, dst_offset = self._cat(q_dict)
         k, v, src_offset = self._construct_src_node_feat(k_dict, v_dict)
 
-        edge_index, edge_attr = construct_bipartite_edge_index(edge_index_dict,
-                                                     src_offset, dst_offset,
-                                                     edge_attr_dict=self.p_rel)
+        edge_index, edge_attr = construct_bipartite_edge_index(
+            edge_index_dict, src_offset, dst_offset, edge_attr_dict=self.p_rel)
 
         out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
                              size=None)

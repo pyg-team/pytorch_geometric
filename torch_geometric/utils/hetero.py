@@ -3,7 +3,6 @@ from typing import List, Set
 import torch
 from torch import Tensor
 
-
 from torch_geometric.typing import (
     Adj,
     EdgeType,
@@ -121,4 +120,3 @@ def construct_bipartite_edge_index(
                                   value=edge_attr if use_e_attrs else None)
 
     return edge_index, edge_attr
-

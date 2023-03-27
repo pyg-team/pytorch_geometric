@@ -194,8 +194,6 @@ def test_FastHGT():
     og_o = og_net(x_dict, edge_index_dict)
     for node_type in data.node_types:
         assert torch.allclose(our_o[node_type], og_o[node_type], atol=3e-3)
-        
-    
 
 
 if __name__ == '__main__':
