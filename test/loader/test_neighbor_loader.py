@@ -545,8 +545,6 @@ def test_pyg_lib_and_torch_sparse_hetero_equality():
     adj = to_torch_csc_tensor(edge_index, size=(10, 20))
     colptr2, row2 = adj.ccol_indices(), adj.row_indices()
 
-    return
-
     node_types = ['paper', 'author']
     edge_types = [('paper', 'to', 'author'), ('author', 'to', 'paper')]
     colptr_dict = {
