@@ -17,7 +17,7 @@ def test_construct_bipartite_edge_index():
         ('author', 'writes', 'paper'): edge_index,
         ('paper', 'written_by', 'author'): edge_index.flip([0]),
     }
-    combined_e_idxs = construct_bipartite_edge_index(edge_index_dict, {
+    combined_e_idxs, _ = construct_bipartite_edge_index(edge_index_dict, {
         ('author', 'writes', 'paper'): 0,
         ('paper', 'written_by', 'author'): 4
     }, {
