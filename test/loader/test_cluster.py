@@ -10,7 +10,7 @@ try:
     col = torch.tensor([0])
     torch.ops.torch_sparse.partition(rowptr, col, None, 1, True)
     with_metis = True
-except RuntimeError:
+except (AttributeError, RuntimeError):
     with_metis = False
 
 
