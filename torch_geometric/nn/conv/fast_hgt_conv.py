@@ -155,7 +155,6 @@ class FastHGTConv(MessagePassing):
 
         # Compute K, Q, V over node types:
         kqv_dict = self.kqv_lin(x_dict)
-        k_dict, q_dict, v_dict = {}, {}, {}
         for key, val in kqv_dict.items():
             k_dict[key] = val[:self.out_channels].view(-1, H, D)
             q_dict[key] = val[self.out_channels:2 * self.out_channels].view(
