@@ -166,19 +166,15 @@ class FastHGTConv(MessagePassing):
 
         # Reconstruct output node embeddings dict:
         for node_type, start_offset in dst_offset.items():
-            if node_type in self.dst_node_types:
-                end_offset = start_offset + q_dict[node_type].size(0)
-                out_dict[node_type] = out[start_offset:end_offset]
-            else:
-                # to match original HGTConv implementation
-                out_dict[node_type] = None
+            end_offset = start_offset + q_dict[node_type].size(0)
+            out_dict[node_type] = out[start_offset:end_offset]
 
         # Transform output node embeddings:
         a_dict = self.out_lin({k: F.gelu(v) if v is not None else v for k, v in out_dict.items()})
 
         # Iterate over node types:
         for node_type, out in out_dict.items():
-            if out is None:
+            if out is None or node_type is not in self.dst_node_types:
                 out_dict[node_type] = None
                 continue
             else:
