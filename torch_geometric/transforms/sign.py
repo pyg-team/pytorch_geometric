@@ -3,7 +3,7 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.typing import SparseTensor
+from torch_geometric.utils import scatter, to_torch_csc_tensor
 
 
 @functional_transform('sign')
@@ -37,13 +37,18 @@ class SIGN(BaseTransform):
     def __call__(self, data: Data) -> Data:
         assert data.edge_index is not None
         row, col = data.edge_index
-        adj_t = SparseTensor(row=col, col=row,
-                             sparse_sizes=(data.num_nodes, data.num_nodes))
+        N = data.num_nodes
 
-        deg = adj_t.sum(dim=1).to(torch.float)
-        deg_inv_sqrt = deg.pow(-0.5)
-        deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
-        adj_t = deg_inv_sqrt.view(-1, 1) * adj_t * deg_inv_sqrt.view(1, -1)
+        edge_weight = data.edge_weight
+        if edge_weight is None:
+            edge_weight = torch.ones(data.num_edges, device=row.device)
+
+        deg = scatter(edge_weight, col, dim_size=N, reduce='sum')
+        deg_inv_sqrt = deg.pow_(-0.5)
+        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
+        edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+        adj = to_torch_csc_tensor(data.edge_index, edge_weight, size=(N, N))
+        adj_t = adj.t()
 
         assert data.x is not None
         xs = [data.x]
