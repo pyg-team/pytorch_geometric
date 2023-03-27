@@ -143,7 +143,7 @@ class ASAPooling(torch.nn.Module):
         A = to_torch_csr_tensor(edge_index, edge_weight, size=(N, N))
         S = to_torch_coo_tensor(edge_index, score, size=(N, N))
         S = S.index_select(1, perm).to_sparse_csr()
-        A = S.t() @ (A @ S)
+        A = S.t().to_sparse_csr() @ (A @ S)
 
         edge_index, edge_weight = to_edge_index(A)
 
