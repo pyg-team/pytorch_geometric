@@ -37,9 +37,9 @@ class FastHGTConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
-
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
+        self.dst_node_types = list(set(metadata[1][0]))
         self.src_types = [edge_type[0] for edge_type in self.edge_types]
 
         self.kqv_lin = HeteroDictLinear(self.in_channels,
@@ -145,8 +145,7 @@ class FastHGTConv(MessagePassing):
         """
         H, D = self.heads, self.out_channels // self.heads
 
-        k_dict, q_dict, v_dict = {}, {}, {}
-        out_dict = defaultdict(list)
+        k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
 
         # Compute K, Q, V over node types:
         kqv_dict = self.kqv_lin(x_dict)
@@ -172,6 +171,7 @@ class FastHGTConv(MessagePassing):
 
         # Transform output node embeddings:
         a_dict = self.out_lin({k: F.gelu(v) for k, v in out_dict.items()})
+
 
         # Iterate over node types:
         for node_type, out in out_dict.items():
