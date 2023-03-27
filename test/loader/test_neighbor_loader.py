@@ -375,49 +375,36 @@ def test_custom_neighbor_loader():
     edge_index = get_random_edge_index(100, 100, 500)
     data['paper', 'to', 'paper'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
-    graph_store.put_edge_index(
-        edge_index=coo,
-        edge_type=('paper', 'to', 'paper'),
-        layout='coo',
-        size=(100, 100),
-    )
+    graph_store.put_edge_index(edge_index=coo,
+                               edge_type=('paper', 'to', 'paper'),
+                               layout='coo', size=(100, 100))
 
     # CSR:
     edge_index = get_random_edge_index(100, 200, 1000)
     data['paper', 'to', 'author'].edge_index = edge_index
     adj = to_torch_csr_tensor(edge_index, size=(100, 200))
     csr = (adj.crow_indices(), adj.col_indices())
-    graph_store.put_edge_index(
-        edge_index=csr,
-        edge_type=('paper', 'to', 'author'),
-        layout='csr',
-        size=(100, 200),
-    )
+    graph_store.put_edge_index(edge_index=csr,
+                               edge_type=('paper', 'to', 'author'),
+                               layout='csr', size=(100, 200))
 
     # CSC:
     edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'to', 'paper'].edge_index = edge_index
     adj = to_torch_csc_tensor(edge_index, size=(200, 100))
     csc = (adj.row_indices(), adj.ccol_indices())
-    graph_store.put_edge_index(
-        edge_index=csc,
-        edge_type=('author', 'to', 'paper'),
-        layout='csc',
-        size=(200, 100),
-    )
+    graph_store.put_edge_index(edge_index=csc,
+                               edge_type=('author', 'to', 'paper'),
+                               layout='csc', size=(200, 100))
 
     # COO (sorted):
     edge_index = get_random_edge_index(200, 200, 100)
     edge_index = edge_index[:, edge_index[1].argsort()]
     data['author', 'to', 'author'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
-    graph_store.put_edge_index(
-        edge_index=coo,
-        edge_type=('author', 'to', 'author'),
-        layout='coo',
-        size=(200, 200),
-        is_sorted=True,
-    )
+    graph_store.put_edge_index(edge_index=coo,
+                               edge_type=('author', 'to', 'author'),
+                               layout='coo', size=(200, 200), is_sorted=True)
 
     # Construct neighbor loaders:
     loader1 = NeighborLoader(data, batch_size=20,
@@ -516,7 +503,7 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
 @withPackage('torch_sparse')
 def test_pyg_lib_and_torch_sparse_homo_equality():
     edge_index = get_random_edge_index(20, 20, 100)
-    adj = to_torch_csc_tensor(edge_index, size=(20, 10))
+    adj = to_torch_csc_tensor(edge_index, size=(20, 20))
     colptr, row = adj.ccol_indices(), adj.row_indices()
 
     seed = torch.arange(10)
