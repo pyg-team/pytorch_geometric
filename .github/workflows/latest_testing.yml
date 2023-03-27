@@ -60,7 +60,7 @@ jobs:
           pytest test/transforms/
           pytest test/utils/
           pytest test/visualization/
-          # pytest test/nn/aggr
+          pytest test/nn/aggr
           # pytest test/nn/conv
           pytest test/nn/dense
           pytest test/nn/functional
