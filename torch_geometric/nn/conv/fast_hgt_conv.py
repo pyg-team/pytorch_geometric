@@ -127,7 +127,7 @@ class FastHGTConv(MessagePassing):
 
         type_vec = torch.cat(type_list, dim=0)
         k = self.k_rel(torch.cat(ks, dim=0), type_vec).view(-1, H, D)
-        v = self.k_rel(torch.cat(vs, dim=0), type_vec).view(-1, H, D)
+        v = self.v_rel(torch.cat(vs, dim=0), type_vec).view(-1, H, D)
 
         return k, v, offset
 

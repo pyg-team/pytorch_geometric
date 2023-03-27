@@ -10,6 +10,7 @@ from benchmark.utils import (
     get_model,
     get_split_masks,
     save_benchmark_data,
+    test,
     write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
@@ -31,13 +32,6 @@ def full_batch_inference(model, data):
     else:
         edge_index = data.edge_index
     return model(data.x, edge_index)
-
-
-def test(y, loader):
-    y_hat = y.argmax(dim=-1)
-    y = loader.data.y.to(y_hat.device)
-    mask = loader.data.test_mask
-    return int((y_hat[mask] == y[mask]).sum()) / int(mask.sum())
 
 
 def run(args: argparse.ArgumentParser):
@@ -209,10 +203,11 @@ def run(args: argparse.ArgumentParser):
                                         progress_bar=True,
                                     )
                                     if args.evaluate:
-                                        test_acc = model.test(
-                                            y,
+                                        test_acc = test(
+                                            model,
                                             test_loader,
                                             device,
+                                            hetero,
                                             progress_bar=True,
                                         )
                                         print(f'Mini Batch Test Accuracy: \

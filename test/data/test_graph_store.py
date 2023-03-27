@@ -1,9 +1,13 @@
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
 from torch_geometric.testing import MyGraphStore, get_random_edge_index
+from torch_geometric.utils import (
+    to_torch_coo_tensor,
+    to_torch_csc_tensor,
+    to_torch_csr_tensor,
+)
 
 
 def test_graph_store():
@@ -39,9 +43,13 @@ def test_graph_store():
 def test_graph_store_conversion():
     graph_store = MyGraphStore()
 
-    coo = (row, col) = get_random_edge_index(100, 100, 300)
-    adj = SparseTensor(row=row, col=col, sparse_sizes=(100, 100))
-    csr, csc = adj.csr()[:2], adj.csc()[:2][::-1]
+    edge_index = get_random_edge_index(100, 100, 300)
+    adj = to_torch_coo_tensor(edge_index, size=(100, 100))
+    coo = (adj.indices()[0], adj.indices()[1])
+    adj = to_torch_csr_tensor(edge_index, size=(100, 100))
+    csr = (adj.crow_indices(), adj.col_indices())
+    adj = to_torch_csc_tensor(edge_index, size=(100, 100))
+    csc = (adj.row_indices(), adj.ccol_indices())
 
     graph_store.put_edge_index(coo, ('v', '1', 'v'), 'coo', size=(100, 100))
     graph_store.put_edge_index(csr, ('v', '2', 'v'), 'csr', size=(100, 100))

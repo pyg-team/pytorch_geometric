@@ -1,11 +1,11 @@
 import numpy as np
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import get_random_edge_index
+from torch_geometric.testing import get_random_edge_index, withPackage
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import k_hop_subgraph
 
 
@@ -17,6 +17,7 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
     return int(mask.sum()) == mask.numel()
 
 
+@withPackage('torch_sparse')
 def test_hgt_loader():
     torch.manual_seed(12345)
 
@@ -131,6 +132,7 @@ def test_hgt_loader():
         assert torch.cat([row, col]).unique().numel() >= 59
 
 
+@withPackage('torch_sparse')
 def test_hgt_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
