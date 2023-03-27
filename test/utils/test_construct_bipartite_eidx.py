@@ -3,6 +3,9 @@ from torch_geometric.testing import get_random_edge_index
 import pytest
 import torch
 
+import torch_geometric
+
+
 def test_construct_bipartite_edge_index():
     x_dict = {
         'author': torch.randn(4, 16),
@@ -14,5 +17,12 @@ def test_construct_bipartite_edge_index():
         ('author', 'writes', 'paper'): edge_index,
         ('paper', 'written_by', 'author'): edge_index.flip([0]),
     }
-    combined_e_idxs = construct_bipartite_edge_index(edge_index_dict, {'author':0, 'paper':4}, {'author':0, 'paper':4})
-    assert combined_e_idxs.size() == (2, 20), "combined_e_idxs.size()=" + str(combined_e_idxs.size())
+    combined_e_idxs = construct_bipartite_edge_index(edge_index_dict, {
+        'author': 0,
+        'paper': 4
+    }, {
+        'author': 0,
+        'paper': 4
+    })
+    assert combined_e_idxs.size() == (
+        2, 20), "combined_e_idxs.size()=" + str(combined_e_idxs.size())
