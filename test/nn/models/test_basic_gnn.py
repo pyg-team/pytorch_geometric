@@ -15,8 +15,8 @@ from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
     onlyLinux,
+    onlyNeighborSampler,
     withCUDA,
-    withNeighborSampler,
     withPackage,
 )
 
@@ -146,7 +146,7 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-@withNeighborSampler
+@onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
     dataset = get_dataset(name='Cora')
