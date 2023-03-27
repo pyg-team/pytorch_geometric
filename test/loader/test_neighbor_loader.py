@@ -14,16 +14,15 @@ from torch_geometric.testing import (
     MyGraphStore,
     get_random_edge_index,
     onlyLinux,
+    onlyNeighborSampler,
     withPackage,
 )
-from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
+from torch_geometric.typing import WITH_PYG_LIB
 from torch_geometric.utils import (
     k_hop_subgraph,
     to_torch_csc_tensor,
     to_torch_csr_tensor,
 )
-
-WITH_SAMPLER = WITH_PYG_LIB or WITH_TORCH_SPARSE
 
 
 def is_subset(subedge_index, edge_index, src_idx, dst_idx):
@@ -34,7 +33,7 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
     return int(mask.sum()) == mask.numel()
 
 
-@pytest.mark.skipif(not WITH_SAMPLER, reason="No neighbor sampler installed")
+@onlyNeighborSampler
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 def test_homo_neighbor_loader_basic(directed, dtype):
@@ -81,7 +80,7 @@ def test_homo_neighbor_loader_basic(directed, dtype):
         )
 
 
-@pytest.mark.skipif(not WITH_SAMPLER, reason="No neighbor sampler installed")
+@onlyNeighborSampler
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 def test_hetero_neighbor_loader_basic(directed, dtype):
@@ -240,7 +239,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
         assert torch.cat([row, col]).unique().numel() == n_id.numel()
 
 
-@pytest.mark.skipif(not WITH_SAMPLER, reason="No neighbor sampler installed")
+@onlyNeighborSampler
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 def test_homo_neighbor_loader_on_cora(get_dataset, directed):
     dataset = get_dataset(name='Cora')
@@ -284,7 +283,7 @@ def test_homo_neighbor_loader_on_cora(get_dataset, directed):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@pytest.mark.skipif(not WITH_SAMPLER, reason="No neighbor sampler installed")
+@onlyNeighborSampler
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 def test_hetero_neighbor_loader_on_cora(get_dataset, directed):
     dataset = get_dataset(name='Cora')
@@ -356,7 +355,7 @@ def test_temporal_hetero_neighbor_loader_on_cora(get_dataset):
         assert torch.all(mask)
 
 
-@pytest.mark.skipif(not WITH_SAMPLER, reason="No neighbor sampler installed")
+@onlyNeighborSampler
 def test_custom_neighbor_loader():
     # Initialize feature store, graph store, and reference:
     feature_store = MyFeatureStore()
@@ -587,7 +586,7 @@ def test_pyg_lib_and_torch_sparse_hetero_neighbor_loader_equality():
 
 
 @onlyLinux
-@pytest.mark.skipif(not WITH_SAMPLER, reason="No neighbor sampler installed")
+@onlyNeighborSampler
 def test_memmap_neighbor_loader(tmp_path):
     path = osp.join(tmp_path, 'x.npy')
     x = np.memmap(path, dtype=np.float32, mode='w+', shape=(100, 32))
@@ -609,7 +608,7 @@ def test_memmap_neighbor_loader(tmp_path):
 
 
 @onlyLinux
-@pytest.mark.skipif(not WITH_SAMPLER, reason="No neighbor sampler installed")
+@onlyNeighborSampler
 @pytest.mark.parametrize('loader_cores', [None, [1]])
 def test_cpu_affinity_neighbor_loader(loader_cores):
     data = Data(x=torch.randn(1, 1))

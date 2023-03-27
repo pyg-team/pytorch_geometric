@@ -3,12 +3,10 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader, ZipLoader
-from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
-
-WITH_SAMPLER = WITH_PYG_LIB or WITH_TORCH_SPARSE
+from torch_geometric.testing import onlyNeighborSampler
 
 
-@pytest.mark.skipif(not WITH_SAMPLER, reason="No neighbor sampler installed")
+@onlyNeighborSampler
 @pytest.mark.parametrize('filter_per_worker', [True, False])
 def test_zip_loader(filter_per_worker):
     x = torch.arange(100)
