@@ -455,3 +455,90 @@ def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
         edge_weight = from_dlpack(df['weights'].to_dlpack())
 
     return edge_index, edge_weight
+
+
+def to_dgl(
+    data: Union["torch_geometric.data.Data", "torch_geometric.data.HeteroData"]
+) -> Any:
+    r"""Converts a :class:`torch_geometric.data.Data` or
+    :class:`torch_geometric.data.HeteroData` instance to a :obj:`dgl` graph
+    object.
+
+    Args:
+        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
+            The data object.
+    """
+    import dgl
+
+    from torch_geometric.data import Data, HeteroData
+
+    if isinstance(data, Data):
+        g = dgl.graph((data.edge_index[0], data.edge_index[1]))
+        for attr in data.node_attrs():
+            g.ndata[attr] = getattr(data, attr)
+        for attr in data.edge_attrs():
+            if attr == "edge_index":
+                continue
+            g.edata[attr] = getattr(data, attr)
+
+    elif isinstance(data, HeteroData):
+        data_dict = {}
+        for edge_type, edges in zip(data.edge_types, data.edge_stores):
+            data_dict[edge_type] = (edges["edge_index"][0],
+                                    edges["edge_index"][1])
+
+        g = dgl.heterograph(data_dict)
+
+        for node_type, node_store in zip(data.node_types, data.node_stores):
+            for attr, value in node_store.items():
+                g.nodes[node_type].data[attr] = value
+        for edge_type, edge_store in zip(data.edge_types, data.edge_stores):
+            for attr, value in edge_store.items():
+                if attr == "edge_index":
+                    continue
+                g.edges[edge_type].data[attr] = value
+
+    else:
+        raise ValueError("Data type not supported")
+    return g
+
+
+def from_dgl(
+    g: Any,
+) -> Union["torch_geometric.data.Data", "torch_geometric.data.HeteroData"]:
+    r"""Converts a :obj:`dgl` graph object to a
+    :class:`torch_geometric.data.Data` or
+    :class:`torch_geometric.data.HeteroData` instance.
+
+    Args:
+        g (dgl.DGLGraph): The :obj:`dgl` graph object.
+    """
+
+    import dgl
+
+    from torch_geometric.data import Data, HeteroData
+
+    if isinstance(g, dgl.DGLGraph):
+        if g.is_homogeneous:
+            data = Data()
+            for attr, value in g.ndata.items():
+                setattr(data, attr, value)
+            for attr, value in g.edata.items():
+                setattr(data, attr, value)
+
+            u, v = g.edges()
+            data.edge_index = torch.stack([u, v])
+        else:
+            node_data_dict = {}
+            for ntype in g.ntypes:
+                node_data_dict[ntype] = g.nodes[ntype].data
+            data = HeteroData(node_data_dict)
+
+            for canonical in g.canonical_etypes:
+                u, v = g.edges(form="uv", etype=canonical)
+                data[canonical].edge_index = torch.stack([u, v])
+                for attr, value in g.edge_attr_schemes(canonical).items():
+                    data[canonical].edge_attr[attr] = value
+    else:
+        raise ValueError("Data type not supported")
+    return data
