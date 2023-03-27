@@ -99,6 +99,12 @@ def trim_to_layer(
 
     # adj matrix as SparseTensor
     if isinstance(edge_index, SparseTensor):
+        if edge_index.storage._rowptr is None:
+            A = edge_index.csr()
+            (edge_index.storage._rowptr, 
+            edge_index.storage._col, 
+            edge_index.storage._value) = A
+
         new_num_rows = edge_index.storage._sparse_sizes[0] - \
                 num_sampled_nodes_per_hop[-layer]
         sparse_sizes = (new_num_rows, new_num_rows)  # n_rows == n_cols
