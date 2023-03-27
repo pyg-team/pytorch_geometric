@@ -1,7 +1,7 @@
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from torch import Tensor, arange, long, sparse_coo
+from torch import Tensor
 
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage
