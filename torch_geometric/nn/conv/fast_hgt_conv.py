@@ -106,8 +106,8 @@ class FastHGTConv(MessagePassing):
         for edge_type in self.edge_types:
             src, _, _ = edge_type
 
-            ks.append(k_dict[src].view(-1, D))
-            vs.append(v_dict[src].view(-1, D))
+            ks.append(k_dict[src].reshape(-1, D))
+            vs.append(v_dict[src].reshape(-1, D))
 
             N = k_dict[src].size(0)
             for _ in range(H):
@@ -151,10 +151,10 @@ class FastHGTConv(MessagePassing):
         # Compute K, Q, V over node types:
         kqv_dict = self.kqv_lin(x_dict)
         for key, val in kqv_dict.items():
-            k_dict[key] = val[:, :self.out_channels].reshape(-1, H, D)
-            q_dict[key] = val[:, self.out_channels:2 * self.out_channels].reshape(
+            k_dict[key] = val[:, :self.out_channels].view(-1, H, D)
+            q_dict[key] = val[:, self.out_channels:2 * self.out_channels].view(
                 -1, H, D)
-            v_dict[key] = val[:, 2 * self.out_channels:].reshape(-1, H, D)
+            v_dict[key] = val[:, 2 * self.out_channels:].view(-1, H, D)
 
         q, dst_offset = self._cat(q_dict)
         k, v, src_offset = self._construct_src_node_feat(k_dict, v_dict)
