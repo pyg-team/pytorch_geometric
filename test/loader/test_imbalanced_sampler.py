@@ -9,6 +9,7 @@ from torch_geometric.loader import (
     ImbalancedSampler,
     NeighborLoader,
 )
+from torch_geometric.testing import onlyNeighborSampler
 
 
 def test_dataloader_with_imbalanced_sampler():
@@ -62,6 +63,7 @@ def test_in_memory_dataset_imbalanced_sampler():
     assert prob.min() > 0.4 and prob.max() < 0.6
 
 
+@onlyNeighborSampler
 def test_neighbor_loader_with_imbalanced_sampler():
     zeros = torch.zeros(10, dtype=torch.long)
     ones = torch.ones(90, dtype=torch.long)

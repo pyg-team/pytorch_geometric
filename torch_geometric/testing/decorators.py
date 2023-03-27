@@ -7,6 +7,7 @@ from typing import Callable
 import torch
 from packaging.requirements import Requirement
 
+from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
 
 
@@ -65,6 +66,16 @@ def onlyGraphviz(func: Callable) -> Callable:
     return pytest.mark.skipif(
         not has_graphviz(),
         reason="Graphviz not installed",
+    )(func)
+
+
+def onlyNeighborSampler(func: Callable):
+    r"""A decorator to skip tests if no neighborhood sampler package is
+    installed."""
+    import pytest
+    return pytest.mark.skipif(
+        not WITH_PYG_LIB and not WITH_TORCH_SPARSE,
+        reason="No neighbor sampler installed",
     )(func)
 
 

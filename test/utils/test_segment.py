@@ -1,11 +1,12 @@
 import pytest
 import torch
 
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.utils import segment
 
 
 @withCUDA
+@withPackage('torch_scatter')
 @pytest.mark.parametrize('reduce', ['sum', 'mean', 'min', 'max'])
 def test_segment(device, reduce):
     src = torch.randn(20, 16, device=device)
