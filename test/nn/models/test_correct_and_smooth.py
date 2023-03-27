@@ -1,5 +1,6 @@
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn.models import CorrectAndSmooth
 from torch_geometric.typing import SparseTensor
 
@@ -8,7 +9,6 @@ def test_correct_and_smooth():
     y_soft = torch.tensor([0.1, 0.5, 0.4]).repeat(6, 1)
     y_true = torch.tensor([1, 0, 0, 2, 1, 1])
     edge_index = torch.tensor([[0, 1, 1, 2, 4, 5], [1, 0, 2, 1, 5, 4]])
-    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(6, 6)).t()
     mask = torch.randint(0, 2, (6, ), dtype=torch.bool)
 
     model = CorrectAndSmooth(
@@ -25,11 +25,16 @@ def test_correct_and_smooth():
 
     out = model.correct(y_soft, y_true[mask], mask, edge_index)
     assert out.size() == (6, 3)
-    assert torch.allclose(out, model.correct(y_soft, y_true[mask], mask, adj))
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(6, 6))
+        assert torch.allclose(
+            out, model.correct(y_soft, y_true[mask], mask, adj.t()))
 
     out = model.smooth(y_soft, y_true[mask], mask, edge_index)
     assert out.size() == (6, 3)
-    assert torch.allclose(out, model.smooth(y_soft, y_true[mask], mask, adj))
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert torch.allclose(
+            out, model.smooth(y_soft, y_true[mask], mask, adj.t()))
 
     # Test without autoscale:
     model = CorrectAndSmooth(
@@ -41,4 +46,6 @@ def test_correct_and_smooth():
     )
     out = model.correct(y_soft, y_true[mask], mask, edge_index)
     assert out.size() == (6, 3)
-    assert torch.allclose(out, model.correct(y_soft, y_true[mask], mask, adj))
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert torch.allclose(
+            out, model.correct(y_soft, y_true[mask], mask, adj.t()))
