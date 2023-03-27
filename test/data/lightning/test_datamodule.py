@@ -177,6 +177,7 @@ class LinearNodeModule(LightningModule):
 
 @onlyCUDA
 @onlyFullTest
+@withPackage('pyg_lib')
 @withPackage('pytorch_lightning>=2.0.0')
 @withPackage('torchmetrics>=0.11.0')
 @pytest.mark.parametrize('loader', ['full', 'neighbor'])
@@ -275,6 +276,7 @@ class LinearHeteroNodeModule(LightningModule):
 
 @onlyCUDA
 @onlyFullTest
+@withPackage('pyg_lib')
 @withPackage('pytorch_lightning>=2.0.0')
 @withPackage('torchmetrics>=0.11.0')
 def test_lightning_hetero_node_data(get_dataset):
@@ -324,6 +326,7 @@ def test_lightning_data_custom_sampler():
 
 @onlyCUDA
 @onlyFullTest
+@withPackage('pyg_lib')
 @withPackage('pytorch_lightning')
 def test_lightning_hetero_link_data():
     torch.manual_seed(12345)
@@ -383,6 +386,7 @@ def test_lightning_hetero_link_data():
         assert 'edge_label_time' in batch['author', 'paper']
 
 
+@withPackage('pyg_lib')
 @withPackage('pytorch_lightning')
 def test_lightning_hetero_link_data_custom_store():
     torch.manual_seed(12345)
@@ -419,6 +423,7 @@ def test_lightning_hetero_link_data_custom_store():
     assert 'edge_label_index' in batch['author', 'paper']
 
 
+@withPackage('pyg_lib')
 @withPackage('pytorch_lightning')
 def test_eval_loader_kwargs(get_dataset):
     data = get_dataset(name='Cora')[0]
