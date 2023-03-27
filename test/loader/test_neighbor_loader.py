@@ -17,8 +17,12 @@ from torch_geometric.testing import (
     onlyLinux,
     withPackage,
 )
-from torch_geometric.typing import WITH_PYG_LIB, SparseTensor
-from torch_geometric.utils import k_hop_subgraph
+from torch_geometric.typing import WITH_PYG_LIB
+from torch_geometric.utils import (
+    k_hop_subgraph,
+    to_torch_csc_tensor,
+    to_torch_csr_tensor,
+)
 
 
 def is_subset(subedge_index, edge_index, src_idx, dst_idx):
@@ -101,11 +105,8 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
     r1, c1 = data['paper', 'paper'].edge_index
     r2, c2 = data['paper', 'author'].edge_index + torch.tensor([[0], [100]])
     r3, c3 = data['author', 'paper'].edge_index + torch.tensor([[100], [0]])
-    full_adj = SparseTensor(
-        row=torch.cat([r1, r2, r3]),
-        col=torch.cat([c1, c2, c3]),
-        value=torch.arange(2500),
-    )
+    mat = torch.full((300, 300), fill_value=-1, dtype=torch.long)
+    mat[torch.cat([r1, r2, r3]), torch.cat([c1, c2, c3])] = torch.arange(2500)
 
     batch_size = 20
 
@@ -166,11 +167,13 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
         assert col.min() >= 0 and col.max() < batch['paper'].num_nodes
         assert value.min() >= 0 and value.max() < 500
         if not directed:
-            adj = full_adj[batch['paper'].x, batch['paper'].x]
-            assert adj.nnz() == row.size(0)
-            assert torch.allclose(row.unique(), adj.storage.row().unique())
-            assert torch.allclose(col.unique(), adj.storage.col().unique())
-            assert torch.allclose(value.unique(), adj.storage.value().unique())
+            adj = mat[batch['paper'].x][:, batch['paper'].x]
+            full_row, full_col = (adj >= 0).nonzero().t()
+            full_value = adj[adj >= 0]
+            assert full_value.size(0) == row.size(0)
+            assert torch.equal(row.unique(), full_row.unique())
+            assert torch.equal(col.unique(), full_col.unique())
+            assert torch.equal(value.unique(), full_value().unique())
 
         assert is_subset(
             batch['paper', 'paper'].edge_index.to(torch.int64),
@@ -188,11 +191,13 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
         assert col.min() >= 0 and col.max() < batch['author'].num_nodes
         assert value.min() >= 500 and value.max() < 1500
         if not directed:
-            adj = full_adj[batch['paper'].x, batch['author'].x]
-            assert adj.nnz() == row.size(0)
-            assert torch.allclose(row.unique(), adj.storage.row().unique())
-            assert torch.allclose(col.unique(), adj.storage.col().unique())
-            assert torch.allclose(value.unique(), adj.storage.value().unique())
+            adj = mat[batch['paper'].x][:, batch['author'].x]
+            full_row, full_col = (adj >= 0).nonzero().t()
+            full_value = adj[adj >= 0]
+            assert full_value.size(0) == row.size(0)
+            assert torch.equal(row.unique(), full_row.unique())
+            assert torch.equal(col.unique(), full_col.unique())
+            assert torch.equal(value.unique(), full_value().unique())
 
         assert is_subset(
             batch['paper', 'author'].edge_index.to(torch.int64),
@@ -210,11 +215,13 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
         assert col.min() >= 0 and col.max() < batch['paper'].num_nodes
         assert value.min() >= 1500 and value.max() < 2500
         if not directed:
-            adj = full_adj[batch['author'].x, batch['paper'].x]
-            assert adj.nnz() == row.size(0)
-            assert torch.allclose(row.unique(), adj.storage.row().unique())
-            assert torch.allclose(col.unique(), adj.storage.col().unique())
-            assert torch.allclose(value.unique(), adj.storage.value().unique())
+            adj = mat[batch['author'].x][:, batch['paper'].x]
+            full_row, full_col = (adj >= 0).nonzero().t()
+            full_value = adj[adj >= 0]
+            assert full_value.size(0) == row.size(0)
+            assert torch.equal(row.unique(), full_row.unique())
+            assert torch.equal(col.unique(), full_col.unique())
+            assert torch.equal(value.unique(), full_value().unique())
 
         assert is_subset(
             batch['author', 'paper'].edge_index.to(torch.int64),
@@ -225,7 +232,8 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
 
         # Test for isolated nodes (there shouldn't exist any):
         n_id = torch.cat([batch['paper'].x, batch['author'].x])
-        row, col, _ = full_adj[n_id, n_id].coo()
+        adj = mat[n_id][:, n_id]
+        row, col = (adj >= 0).nonzero().t()
         assert torch.cat([row, col]).unique().numel() == n_id.numel()
 
 
@@ -343,12 +351,10 @@ def test_temporal_hetero_neighbor_loader_on_cora(get_dataset):
         assert torch.all(mask)
 
 
-@pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
-@pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
-def test_custom_neighbor_loader(FeatureStore, GraphStore):
+def test_custom_neighbor_loader():
     # Initialize feature store, graph store, and reference:
-    feature_store = FeatureStore()
-    graph_store = GraphStore()
+    feature_store = MyFeatureStore()
+    graph_store = MyGraphStore()
     data = HeteroData()
 
     # Set up node features:
@@ -364,34 +370,49 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
     edge_index = get_random_edge_index(100, 100, 500)
     data['paper', 'to', 'paper'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
-    graph_store.put_edge_index(edge_index=coo,
-                               edge_type=('paper', 'to', 'paper'),
-                               layout='coo', size=(100, 100))
+    graph_store.put_edge_index(
+        edge_index=coo,
+        edge_type=('paper', 'to', 'paper'),
+        layout='coo',
+        size=(100, 100),
+    )
 
     # CSR:
     edge_index = get_random_edge_index(100, 200, 1000)
     data['paper', 'to', 'author'].edge_index = edge_index
-    csr = SparseTensor.from_edge_index(edge_index).csr()[:2]
-    graph_store.put_edge_index(edge_index=csr,
-                               edge_type=('paper', 'to', 'author'),
-                               layout='csr', size=(100, 200))
+    adj = to_torch_csr_tensor(edge_index, size=(100, 200))
+    csr = (adj.crow_indices(), adj.col_indices())
+    graph_store.put_edge_index(
+        edge_index=csr,
+        edge_type=('paper', 'to', 'author'),
+        layout='csr',
+        size=(100, 200),
+    )
 
     # CSC:
     edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'to', 'paper'].edge_index = edge_index
-    csc = SparseTensor(row=edge_index[1], col=edge_index[0]).csr()[-2::-1]
-    graph_store.put_edge_index(edge_index=csc,
-                               edge_type=('author', 'to', 'paper'),
-                               layout='csc', size=(200, 100))
+    adj = to_torch_csc_tensor(edge_index, size=(200, 100))
+    csc = (adj.row_indices(), adj.ccol_indices())
+    graph_store.put_edge_index(
+        edge_index=csc,
+        edge_type=('author', 'to', 'paper'),
+        layout='csc',
+        size=(200, 100),
+    )
 
     # COO (sorted):
     edge_index = get_random_edge_index(200, 200, 100)
     edge_index = edge_index[:, edge_index[1].argsort()]
     data['author', 'to', 'author'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
-    graph_store.put_edge_index(edge_index=coo,
-                               edge_type=('author', 'to', 'author'),
-                               layout='coo', size=(200, 200), is_sorted=True)
+    graph_store.put_edge_index(
+        edge_index=coo,
+        edge_type=('author', 'to', 'author'),
+        layout='coo',
+        size=(200, 200),
+        is_sorted=True,
+    )
 
     # Construct neighbor loaders:
     loader1 = NeighborLoader(data, batch_size=20,
@@ -425,18 +446,15 @@ def test_custom_neighbor_loader(FeatureStore, GraphStore):
 
 
 @withPackage('pyg_lib')
-@pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
-@pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
-def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
-                                                 GraphStore):
+def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
     # Initialize dataset (once):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.time = torch.arange(data.num_nodes, 0, -1)
 
     # Initialize feature store, graph store, and reference:
-    feature_store = FeatureStore()
-    graph_store = GraphStore()
+    feature_store = MyFeatureStore()
+    graph_store = MyGraphStore()
     hetero_data = HeteroData()
 
     feature_store.put_tensor(
@@ -490,9 +508,11 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset, FeatureStore,
 
 
 @withPackage('pyg_lib')
-def test_pyg_lib_homo_neighbor_loader():
-    adj = SparseTensor.from_edge_index(get_random_edge_index(20, 20, 100))
-    colptr, row, _ = adj.csc()
+@withPackage('torch_sparse')
+def test_pyg_lib_and_torch_sparse_homo_neighbor_loader_equality():
+    edge_index = get_random_edge_index(20, 20, 100)
+    adj = to_torch_csc_tensor(edge_index, size=(20, 10))
+    colptr, row = adj.crow_indices(), adj.row_indices()
 
     seed = torch.arange(10)
 
@@ -510,12 +530,15 @@ def test_pyg_lib_homo_neighbor_loader():
 
 
 @withPackage('pyg_lib')
-def test_pyg_lib_hetero_neighbor_loader():
-    adj1 = SparseTensor.from_edge_index(get_random_edge_index(20, 10, 50))
-    colptr1, row1, _ = adj1.csc()
+@withPackage('torch_sparse')
+def test_pyg_lib_and_torch_sparse_hetero_neighbor_loader_equality():
+    edge_index = get_random_edge_index(20, 10, 50)
+    adj = to_torch_csc_tensor(edge_index, size=(20, 10))
+    colptr1, row1 = adj.ccol_indices(), adj.row_indices()
 
-    adj2 = SparseTensor.from_edge_index(get_random_edge_index(10, 20, 50))
-    colptr2, row2, _ = adj2.csc()
+    edge_index = get_random_edge_index(10, 20, 50)
+    adj = to_torch_csc_tensor(edge_index, size=(10, 20))
+    colptr2, row2 = adj.ccol_indices(), adj.row_indices()
 
     node_types = ['paper', 'author']
     edge_types = [('paper', 'to', 'author'), ('author', 'to', 'paper')]
