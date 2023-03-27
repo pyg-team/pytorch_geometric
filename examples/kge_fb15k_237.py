@@ -27,10 +27,12 @@ val_data = FB15k_237(path, split='val')[0].to(device)
 test_data = FB15k_237(path, split='test')[0].to(device)
 
 model_arg_map = {'rotate': {'margin': 9.0}}
-model = model_map[args.model](num_nodes=train_data.num_nodes,
-                              num_relations=train_data.num_edge_types,
-                              hidden_channels=50,
-                              **model_arg_map.get(args.model, {})).to(device)
+model = model_map[args.model](
+    num_nodes=train_data.num_nodes,
+    num_relations=train_data.num_edge_types,
+    hidden_channels=50,
+    **model_arg_map.get(args.model, {}),
+).to(device)
 
 loader = model.loader(
     head_index=train_data.edge_index[0],

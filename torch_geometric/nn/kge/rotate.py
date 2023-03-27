@@ -14,12 +14,12 @@ class RotatE(KGEModel):
     1902.10197>`_ paper.
 
     :class:`RotatE` models relations as a rotation in complex space
-    from head to tail such that:
+    from head to tail such that
 
     .. math::
-        \mathbf{e}_t = \mathbf{e}_h \circ \mathbf{e}_r
+        \mathbf{e}_t = \mathbf{e}_h \circ \mathbf{e}_r,
 
-    Resulting in the scoring function:
+    resulting in the scoring function
 
     .. math::
         d(h, r, t) = - {\| \mathbf{e}_h \circ \mathbf{e}_r - \mathbf{e}_t \|}_p
@@ -48,8 +48,10 @@ class RotatE(KGEModel):
         sparse: bool = False,
     ):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
-        self.register_buffer('margin', torch.Tensor([margin]))
+
+        self.margin = margin
         self.node_emb_im = Embedding(num_nodes, hidden_channels, sparse=sparse)
+
         self.reset_parameters()
 
     def reset_parameters(self):
