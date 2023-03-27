@@ -39,7 +39,7 @@ class FastHGTConv(MessagePassing):
         self.heads = heads
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
-        self.dst_node_types = list(set(metadata[1][0]))
+        self.dst_node_types = list(set(metadata[1][1]))
         self.src_types = [edge_type[0] for edge_type in self.edge_types]
 
         self.kqv_lin = HeteroDictLinear(self.in_channels,
@@ -177,7 +177,7 @@ class FastHGTConv(MessagePassing):
 
         # Iterate over node types:
         for node_type, out in out_dict.items():
-            if out is None or not (node_type in self.dst_node_types):
+            if out is None or node_type not in self.dst_node_types:
                 out_dict[node_type] = None
                 continue
             else:
