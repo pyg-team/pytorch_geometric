@@ -31,8 +31,17 @@ runs:
           setup.py
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
+      if: ${{ inputs.torch-version != 'nightly' }}
       run: |
         pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        python -c "import torch; print('PyTorch:', torch.__version__)"
+        python -c "import torch; print('CUDA:', torch.version.cuda)"
+      shell: bash
+
+    - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
+      if: ${{ inputs.torch-version == 'nightly' }}
+      run: |
+        pip install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
         python -c "import torch; print('PyTorch:', torch.__version__)"
         python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash

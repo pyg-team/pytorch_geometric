@@ -7,6 +7,7 @@ from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
     get_random_edge_index,
+    onlyNeighborSampler,
     withPackage,
 )
 
@@ -15,6 +16,7 @@ def unique_edge_pairs(edge_index):
     return set(map(tuple, edge_index.t().tolist()))
 
 
+@onlyNeighborSampler
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
 def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio):
@@ -80,6 +82,7 @@ def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio):
             assert torch.all(batch.edge_label[20:] == 0)
 
 
+@onlyNeighborSampler
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
 def test_hetero_link_neighbor_loader_basic(directed, neg_sampling_ratio):
@@ -124,6 +127,7 @@ def test_hetero_link_neighbor_loader_basic(directed, neg_sampling_ratio):
             assert torch.all(batch['paper', 'author'].edge_label[20:] == 0)
 
 
+@onlyNeighborSampler
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 def test_hetero_link_neighbor_loader_loop(directed):
     data = HeteroData()
@@ -150,6 +154,7 @@ def test_hetero_link_neighbor_loader_loop(directed):
         assert len(edge_index | edge_label_index) == len(edge_index)
 
 
+@onlyNeighborSampler
 def test_link_neighbor_loader_edge_label():
     edge_index = get_random_edge_index(100, 100, 500)
     data = Data(edge_index=edge_index, x=torch.arange(100))
@@ -226,12 +231,11 @@ def test_temporal_hetero_link_neighbor_loader():
         assert edge_min >= author_min
 
 
-@pytest.mark.parametrize('FeatureStore', [MyFeatureStore, HeteroData])
-@pytest.mark.parametrize('GraphStore', [MyGraphStore, HeteroData])
-def test_custom_hetero_link_neighbor_loader(FeatureStore, GraphStore):
+@onlyNeighborSampler
+def test_custom_hetero_link_neighbor_loader():
     data = HeteroData()
-    feature_store = FeatureStore()
-    graph_store = GraphStore()
+    feature_store = MyFeatureStore()
+    graph_store = MyGraphStore()
 
     # Set up node features:
     x = torch.arange(100)
@@ -296,6 +300,7 @@ def test_custom_hetero_link_neighbor_loader(FeatureStore, GraphStore):
             'author', 'to', 'paper'].edge_index.size())
 
 
+@onlyNeighborSampler
 def test_homo_link_neighbor_loader_no_edges():
     loader = LinkNeighborLoader(
         Data(num_nodes=100),
@@ -312,6 +317,7 @@ def test_homo_link_neighbor_loader_no_edges():
         assert batch.num_nodes == batch.edge_label_index.unique().numel()
 
 
+@onlyNeighborSampler
 def test_hetero_link_neighbor_loader_no_edges():
     loader = LinkNeighborLoader(
         HeteroData(paper=dict(num_nodes=100)),

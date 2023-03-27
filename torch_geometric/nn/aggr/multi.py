@@ -182,7 +182,7 @@ class MultiAggregation(Aggregation):
 
         if hasattr(self, 'multihead_attn'):
             x = torch.stack(
-                [head(x) for x, head in zip(inputs, self.lin_heads)],
+                [head(inputs[i]) for i, head in enumerate(self.lin_heads)],
                 dim=0,
             )
             attn_out, _ = self.multihead_attn(x, x, x)
