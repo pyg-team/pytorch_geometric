@@ -185,7 +185,7 @@ def test_FastHGT():
     og_net = HGTConv(4, 2, data.metadata())
     x_dict = data.collect('x')
     # make params match
-   for my_param in fast_net.parameters():
+    for my_param in fast_net.parameters():
         my_param.data = torch.ones_like(my_param.data)
     for og_param in og_net.parameters():
         og_param.data = torch.ones_like(og_param.data)
