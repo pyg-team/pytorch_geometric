@@ -186,19 +186,16 @@ def test_FastHGT():
     x_dict = data.collect('x')
     # make params match
     for og_param, my_param in zip(og_net.parameters(), fast_net.parameters()):
-        try:
-            my_param.data = torch.ones_like(my_param.data)
-        except:  # noqa
-            pass
-        try:
-            og_param.data = torch.ones_like(og_param.data)
-        except:  # noqa
-            pass
+        my_param.data = torch.ones_like(my_param.data)
+        og_param.data = torch.ones_like(og_param.data)
 
     edge_index_dict = data.collect('edge_index')
-    our_o = list(fast_net(x_dict, edge_index_dict).values())[0]
-    og_o = list(og_net(x_dict, edge_index_dict).values())[0]
-    assert torch.allclose(our_o, og_o, atol=3e-3)
+    our_o = fast_net(x_dict, edge_index_dict)
+    og_o = og_net(x_dict, edge_index_dict)
+    for node_type in data.node_types:
+        assert torch.allclose(our_o[node_type], og_o[node_type], atol=3e-3)
+        
+    
 
 
 if __name__ == '__main__':
