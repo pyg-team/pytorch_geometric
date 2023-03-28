@@ -32,4 +32,4 @@ def test_agnn_conv(requires_grad):
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(Tensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj1.t()), out, atol=1e-6)
+        assert torch.allclose(jit(x, adj2.t()), out, atol=1e-6)
