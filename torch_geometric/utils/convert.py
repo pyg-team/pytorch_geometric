@@ -475,7 +475,7 @@ def to_dgl(
     if isinstance(data, Data):
         g = dgl.graph((data.edge_index[0], data.edge_index[1]))
         for attr in data.node_attrs():
-            g.ndata[attr] = getattr(data, attr)
+            g.ndata[attr] = data.get(attr)
         for attr in data.edge_attrs():
             if attr == "edge_index":
                 continue
