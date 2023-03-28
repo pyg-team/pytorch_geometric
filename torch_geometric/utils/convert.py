@@ -496,7 +496,12 @@ def to_dgl(
     from torch_geometric.data import Data, HeteroData
 
     if isinstance(data, Data):
-        g = dgl.graph((data.edge_index[0], data.edge_index[1]))
+        if data.edge_index is not None:
+            row, col = data.edge_index
+        else:
+            row, col, _ = data.adj_t.t().coo()
+        g = dgl.graph((row, col))
+
         for attr in data.node_attrs():
             g.ndata[attr] = data.get(attr)
         for attr in data.edge_attrs():
@@ -507,8 +512,11 @@ def to_dgl(
     elif isinstance(data, HeteroData):
         data_dict = {}
         for edge_type, edges in zip(data.edge_types, data.edge_stores):
-            data_dict[edge_type] = (edges["edge_index"][0],
-                                    edges["edge_index"][1])
+            if edges.get("edge_index") is not None:
+                row, col = edges["edge_index"]
+            else:
+                row, col, _ = edges["adj_t"].t().coo()
+            data_dict[edge_type] = (row, col)
 
         g = dgl.heterograph(data_dict)
 
