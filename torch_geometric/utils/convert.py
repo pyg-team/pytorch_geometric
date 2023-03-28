@@ -467,6 +467,29 @@ def to_dgl(
     Args:
         data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
             The data object.
+
+    Example:
+
+        >>> edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
+        >>> x = torch.ones(5, 3)
+        >>> y = torch.tensor([1, 1, 1, 1, 1, 0], dtype=torch.float)
+        >>> data = Data(x=x, edge_index=edge_index, edge_attr=y)
+        >>> g = to_dgl(data)
+        >>> g
+        Graph(num_nodes=5, num_edges=6,
+            ndata_schemes={'x': Scheme(shape=(3,), dtype=torch.float32)}
+            edata_schemes={'edge_attr': Scheme(shape=(), dtype=torch.float32)})
+
+        >>> data = HeteroData()
+        >>> data['paper'].x = torch.ones(5, 128)
+        >>> data['authors'].x = torch.ones(5, 128)
+        >>> data['authors', 'cites', 'paper'].edge_index = torch.tensor(
+        ...                    [[0, 1, 2, 3, 4],[0, 1, 2, 3, 4]])
+        >>> g = to_dgl(data)
+        >>> g
+        Graph(num_nodes={'authors': 5, 'paper': 5},
+            num_edges={('authors', 'cites', 'paper'): 5},
+            metagraph=[('authors', 'paper', 'cites')])
     """
     import dgl
 
@@ -512,6 +535,29 @@ def from_dgl(
 
     Args:
         g (dgl.DGLGraph): The :obj:`dgl` graph object.
+
+    Example:
+
+        >>> g = dgl.graph(([0, 0, 1, 5], [1, 2, 2, 0]))
+        >>> g.ndata['x'] = torch.ones(g.num_nodes(), 3)
+        >>> g.edata['w'] = torch.ones(g.num_edges(), dtype=torch.int32)
+        >>> data = from_dgl(g)
+        >>> data
+        Data(x=[6, 3], w=[4], edge_index=[2, 4])
+
+        >>> g = dgl.heterograph({
+        >>> g = dgl.heterograph({
+        ...     ('author', 'writes', 'paper'): ([0, 1, 1, 2, 3, 3, 4],
+        ...                                     [0, 0, 1, 1, 1, 2, 2])})
+        >>> g.nodes['author'].data['x'] = torch.ones(5, 128)
+        >>> g.nodes['paper'].data['x'] = torch.ones(3, 128)
+        >>> data = from_dgl(g)
+        >>> data
+        HeteroData(
+        author={ x=[5, 128] },
+        paper={ x=[3, 128] },
+        (author, writes, paper)={ edge_index=[2, 7] }
+        )
     """
 
     import dgl
