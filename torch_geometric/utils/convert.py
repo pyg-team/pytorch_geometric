@@ -479,7 +479,7 @@ def to_dgl(
         for attr in data.edge_attrs():
             if attr == "edge_index":
                 continue
-            g.edata[attr] = getattr(data, attr)
+            g.edata[attr] = data.get(attr)
 
     elif isinstance(data, HeteroData):
         data_dict = {}
