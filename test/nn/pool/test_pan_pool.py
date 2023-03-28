@@ -1,9 +1,10 @@
 import torch
 
 from torch_geometric.nn import PANConv, PANPooling
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 
 
+@withPackage('torch_sparse')
 def test_pan_pooling():
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3],
                                [1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2]])

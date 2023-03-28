@@ -1,8 +1,8 @@
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import ClusterGCNConv
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
 
 
 def test_cluster_gcn_conv():

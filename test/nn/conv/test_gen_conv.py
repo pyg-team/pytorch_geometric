@@ -1,9 +1,9 @@
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import GENConv
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
 
 
 @pytest.mark.parametrize('aggr', [

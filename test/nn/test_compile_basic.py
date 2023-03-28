@@ -4,6 +4,7 @@ import torch_geometric
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
+    onlyFullTest,
     onlyLinux,
     withCUDA,
     withPackage,
@@ -45,6 +46,7 @@ def fused_gather_scatter(x, edge_index, reduce=['sum', 'mean', 'max']):
 
 @withCUDA
 @onlyLinux
+@onlyFullTest
 @disableExtensions
 @withPackage('torch>=2.0.0')
 def test_torch_compile(device):
