@@ -5,6 +5,7 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.transforms import ToUndirected
 
 
 class HeterophilousGraphDataset(InMemoryDataset):
@@ -117,6 +118,8 @@ class HeterophilousGraphDataset(InMemoryDataset):
 
         data = Data(x=x, y=y, edge_index=edge_index, train_mask=train_mask,
                     val_mask=val_mask, test_mask=test_mask)
+
+        data = ToUndirected()(data)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
