@@ -130,13 +130,13 @@ def filter_hetero_data(
 ) -> HeteroData:
     # Filters a heterogeneous data object to only hold nodes in `node` and
     # edges in `edge` for each node and edge type, respectively:
-    out = copy.copy(data)
+    out = data.node_type_subgraph(node_dict.keys())
 
-    for node_type in data.node_types:
+    for node_type in out.node_types:
         filter_node_store_(data[node_type], out[node_type],
                            node_dict[node_type])
 
-    for edge_type in data.edge_types:
+    for edge_type in out.edge_types:
         filter_edge_store_(
             data[edge_type],
             out[edge_type],

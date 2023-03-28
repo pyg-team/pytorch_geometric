@@ -181,3 +181,32 @@ def test_hgt_loader_on_cora(get_dataset):
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
+
+
+@withPackage('torch_sparse')
+def test_hgt_loader_disconnected():
+    torch.manual_seed(12345)
+    data = HeteroData()
+
+    data['paper'].x = torch.arange(100)
+    data['author'].x = torch.arange(100, 300)
+
+    # enforce two disconnected clusters of papers, only the first cluster is connected to authors
+    data['paper', 'paper'].edge_index = torch.cat([
+        get_random_edge_index(50, 50, 250),
+        get_random_edge_index(50, 50, 250) + 50,
+    ], dim=1)
+    data['paper', 'paper'].edge_attr = torch.arange(500)
+    data['paper', 'author'].edge_index = get_random_edge_index(50, 200, 1000)
+    data['paper', 'author'].edge_attr = torch.arange(500, 1500)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 50, 1000)
+    data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
+
+    loader = HGTLoader(data, num_samples=[5] * 4, batch_size=1, input_nodes='paper')
+
+    for batch in loader:
+        assert isinstance(batch, HeteroData)
+
+        # Test node and types:
+        assert set(batch.node_types) == {'paper', 'author'} or set(batch.node_types) == {'paper'}
+        assert set(batch.edge_types) == set(data.edge_types)
