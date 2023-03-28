@@ -1,9 +1,9 @@
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import GATConv
 from torch_geometric.testing import is_full_test, withCUDA
+from torch_geometric.typing import SparseTensor
 
 
 def test_gat_conv():

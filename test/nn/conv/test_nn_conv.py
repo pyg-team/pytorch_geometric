@@ -2,10 +2,10 @@ import torch
 from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import NNConv
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
 
 
 def test_nn_conv():

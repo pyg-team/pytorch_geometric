@@ -1,10 +1,10 @@
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric import seed_everything
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import FastHGTConv, HGTConv
 from torch_geometric.profile import benchmark
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import coalesce
 
 

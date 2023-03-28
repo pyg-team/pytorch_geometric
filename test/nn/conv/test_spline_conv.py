@@ -1,10 +1,10 @@
 import warnings
 
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import SplineConv
 from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.typing import SparseTensor
 
 
 @withPackage('torch_spline_conv')

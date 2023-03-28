@@ -7,6 +7,7 @@ from torch_geometric.nn import GCNConv, SAGEConv
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
+    onlyFullTest,
     onlyLinux,
     withCUDA,
     withPackage,
@@ -28,6 +29,7 @@ class MySAGEConv(torch.nn.Module):
 
 @withCUDA
 @onlyLinux
+@onlyFullTest
 @disableExtensions
 @withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
