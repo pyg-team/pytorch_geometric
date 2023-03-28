@@ -62,6 +62,7 @@ jobs:
           pytest test/utils/
           pytest test/visualization/
           pytest test/nn/aggr
+          pytest test/nn/conv/test_message_passing.py
           # pytest test/nn/conv
           pytest test/nn/dense
           pytest test/nn/functional
@@ -70,6 +71,4 @@ jobs:
           pytest test/nn/norm
           pytest test/nn/pool
           pytest test/nn/unpool
-          pytest test/nn/test_compile_basic.py test/nn/test_compile_conv.py test/nn/test_compile_dynamic.py test/nn/test_data_parallel.py test/nn/test_encoding.py test/nn/test_inits.py test/nn/test_model_hub.py test/nn/test_model_summary.py test/nn/test_module_dict.py test/nn/test_parameter_dict.py test/nn/test_reshape.py test/nn/test_resolver.py
-          # pytest test/nn/test_sequential.py
-          pytest test/nn/test_to_fixed_size_transformer.py test/nn/test_to_hetero_module.py test/nn/test_to_hetero_transformer.py test/nn/test_to_hetero_with_bases_transformer.py
+          pytest test/nn/test_compile_basic.py test/nn/test_compile_conv.py test/nn/test_compile_dynamic.py test/nn/test_data_parallel.py test/nn/test_encoding.py test/nn/test_inits.py test/nn/test_model_hub.py test/nn/test_model_summary.py test/nn/test_module_dict.py test/nn/test_parameter_dict.py test/nn/test_reshape.py test/nn/test_resolver.py test/nn/test_sequential.py test/nn/test_to_fixed_size_transformer.py test/nn/test_to_hetero_module.py test/nn/test_to_hetero_transformer.py test/nn/test_to_hetero_with_bases_transformer.py
