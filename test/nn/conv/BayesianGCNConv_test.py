@@ -4,12 +4,11 @@ import torch
 
 from torch_geometric.nn.conv.BayesianGCNConv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
-from torch_geometric.typing import SparseTensor
+from torch_sparse import SparseTensor
 
 
 def test_bayesian_conv_norm():
     x = torch.randn(4, 16)
-    x_0 = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     row, col = edge_index
     value = torch.rand(row.size(0))
