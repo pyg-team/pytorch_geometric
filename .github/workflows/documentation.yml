@@ -28,6 +28,7 @@ jobs:
             docker/**
             examples/**
             graphgym/**
+            README.md
             CHANGELOG.md
 
       - name: Setup packages

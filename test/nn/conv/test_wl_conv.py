@@ -1,7 +1,7 @@
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import WLConv
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import one_hot
 
 

@@ -73,6 +73,19 @@ except (ImportError, OSError) as e:
         def is_cuda(self) -> bool:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
+        def has_value(self) -> bool:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def fill_value(self, fill_value: float,
+                       dtype: Optional[torch.dtype] = None) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def coo(self) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def csr(self) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
         def to_torch_sparse_csr_tensor(
             self,
             dtype: Optional[torch.dtype] = None,
@@ -84,6 +97,19 @@ except (ImportError, OSError) as e:
         def matmul(src: SparseTensor, other: Tensor,
                    reduce: str = "sum") -> Tensor:
             raise ImportError("'matmul' requires 'torch-sparse'")
+
+        @staticmethod
+        def sum(src: SparseTensor, dim: Optional[int] = None) -> Tensor:
+            raise ImportError("'sum' requires 'torch-sparse'")
+
+        @staticmethod
+        def mul(src: SparseTensor, other: Tensor) -> SparseTensor:
+            raise ImportError("'mul' requires 'torch-sparse'")
+
+        @staticmethod
+        def fill_diag(src: SparseTensor, fill_value: float,
+                      k: int = 0) -> SparseTensor:
+            raise ImportError("'fill_diag' requires 'torch-sparse'")
 
 
 # Types for accessing data ####################################################

@@ -27,6 +27,8 @@ def sanitize(type_repr: str):
     type_repr = type_repr.replace('typing.', '')
     type_repr = type_repr.replace('torch_sparse.tensor.', '')
     type_repr = type_repr.replace('Adj', 'Union[Tensor, SparseTensor]')
+    type_repr = type_repr.replace('torch_geometric.SparseTensor',
+                                  'SparseTensor')
 
     # Replace `Union[..., NoneType]` by `Optional[...]`.
     sexp = pp.nestedExpr(opener='[', closer=']')
