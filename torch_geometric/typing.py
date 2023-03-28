@@ -73,6 +73,12 @@ except (ImportError, OSError) as e:
         def is_cuda(self) -> bool:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
+        def coo(self) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def csr(self) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
         def to_torch_sparse_csr_tensor(
             self,
             dtype: Optional[torch.dtype] = None,
