@@ -2,7 +2,6 @@ import copy
 
 import torch
 
-
 from torch_geometric.nn.conv.BayesianGCNConv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
 
@@ -19,7 +18,7 @@ def test_bayesian_conv_norm():
     assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
     out1, kl_out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
-    
+
     # Implementation with sparse tensor uncomment it to test on another support
     # out_1_adj1, kl_adj1 = conv(x, adj1)
     # assert torch.allclose(out1.mean(), out_1_adj1.mean(), atol=0.1)
