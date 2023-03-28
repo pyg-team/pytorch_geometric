@@ -1,6 +1,7 @@
 import inspect
 import os
 import os.path as osp
+import random
 import re
 from collections import OrderedDict
 from inspect import Parameter
@@ -15,7 +16,6 @@ from typing import (
     Union,
     get_type_hints,
 )
-from uuid import uuid1
 
 import torch
 from torch import Tensor
@@ -869,7 +869,7 @@ class MessagePassing(torch.nn.Module):
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 
-        uid = uuid1().hex[:12]
+        uid = '%06x' % random.randrange(16**6)
         cls_name = f'{self.__class__.__name__}Jittable_{uid}'
         jit_module_repr = template.render(
             uid=uid,
