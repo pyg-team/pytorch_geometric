@@ -63,7 +63,8 @@ def test_gcn_conv_with_decomposed_layers():
     # posterior_mu_init = 0
     # posterior_rho_init = -3.0
     # The KL divergence should be the same for both convs
-    assert torch.allclose(torch.abs(out1.mean()),torch.abs(out2.mean()), atol=1)
+    assert torch.allclose(torch.abs(out1.mean()), torch.abs(out2.mean()),
+                          atol=1)
     assert torch.allclose(torch.var(out1), torch.var(out2), atol=1)
     assert torch.allclose(kl_out1, kl_out2, atol=1e-6)
 
@@ -87,13 +88,15 @@ def test_gcn_conv():
     out1, kl_out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
     out_1_adj1, kl_adj1 = conv(x, adj1)
-    assert torch.allclose(torch.abs(out1.mean()),torch.abs(out_1_adj1.mean()), atol=1)
+    assert torch.allclose(torch.abs(out1.mean()), torch.abs(out_1_adj1.mean()),
+                          atol=1)
     assert torch.allclose(torch.var(out1), torch.var(out_1_adj1), atol=1)
     assert torch.allclose(kl_out1, kl_adj1, atol=1e-6)
     out2, kl_out2 = conv(x, edge_index, value)
     assert out2.size() == (4, 32)
     out_2_adj2, kl_adj2 = conv(x, adj2)
-    assert torch.allclose(torch.abs(out2.mean()), torch.abs(out_2_adj2.mean()), atol=1)
+    assert torch.allclose(torch.abs(out2.mean()), torch.abs(out_2_adj2.mean()),
+                          atol=1)
     assert torch.allclose(torch.var(out2), torch.var(out_2_adj2), atol=1)
     assert torch.allclose(kl_out2, kl_adj2, atol=1e-6)
 
@@ -111,6 +114,7 @@ def test_gcn_conv():
     conv.cached = True
     out_f1, kl_f1 = conv(x, edge_index)
     for i in range(len(out1.tolist())):
-        assert torch.allclose(torch.abs(out_f1[i].mean()), torch.abs(out1[i].mean()), atol=1)
+        assert torch.allclose(torch.abs(out_f1[i].mean()),
+                              torch.abs(out1[i].mean()), atol=1)
         assert torch.allclose(torch.var(out_f1[i]), torch.var(out1[i]), atol=1)
     assert torch.allclose(kl_f1, kl_out1, atol=1e-6)
