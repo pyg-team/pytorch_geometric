@@ -54,9 +54,9 @@ def test_gcn_conv():
     assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        conv(x, adj1.t())
+        conv(x, adj3.t())
         assert conv._cached_adj_t is not None
-        assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
+        assert torch.allclose(conv(x, adj3.t()), out1, atol=1e-6)
 
 
 def test_gcn_conv_with_decomposed_layers():

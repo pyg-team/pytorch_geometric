@@ -32,7 +32,7 @@ def test_gatv2_conv():
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(Tensor, SparseTensor, OptTensor, NoneType) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj1.t()), out, atol=1e-6)
+        assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
 
     # Test `return_attention_weights`.
     result = conv(x1, edge_index, return_attention_weights=True)
@@ -92,7 +92,7 @@ def test_gatv2_conv():
 
         t = '(OptPairTensor, SparseTensor, OptTensor, NoneType) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), adj1.t()), out, atol=1e-6)
+        assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)
 
 
 def test_gatv2_conv_with_edge_attr():

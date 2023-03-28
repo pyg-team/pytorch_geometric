@@ -27,7 +27,7 @@ def test_gmm_conv(separate_gaussians):
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
-        assert torch.allclose(conv(x1, adj1.t()), out)
+        assert torch.allclose(conv(x1, adj2.t()), out)
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
