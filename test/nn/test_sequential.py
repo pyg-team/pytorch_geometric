@@ -3,7 +3,6 @@ from collections import OrderedDict
 import torch
 import torch.fx
 from torch.nn import Dropout, Linear, ReLU
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import (
     GCNConv,
@@ -12,6 +11,7 @@ from torch_geometric.nn import (
     Sequential,
     global_mean_pool,
 )
+from torch_geometric.typing import SparseTensor
 
 
 def test_sequential():

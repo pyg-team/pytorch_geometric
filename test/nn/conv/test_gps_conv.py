@@ -1,8 +1,8 @@
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import GPSConv, SAGEConv
+from torch_geometric.typing import SparseTensor
 
 
 @pytest.mark.parametrize('norm', [None, 'batch_norm', 'layer_norm'])
