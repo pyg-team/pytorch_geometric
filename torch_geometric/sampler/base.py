@@ -127,9 +127,9 @@ class SamplerOutput(CastMixin):
             for each sampled node. Can be present in case of disjoint subgraph
             sampling per seed node. (default: :obj:`None`)
         num_sampled_nodes (List[int], optional): The number of sampled nodes
-            per layer. (default: :obj:`None`)
+            per hop. (default: :obj:`None`)
         num_sampled_edges (List[int], optional): The number of sampled edges
-            per layer. (default: :obj:`None`)
+            per hop. (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """

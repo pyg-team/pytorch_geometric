@@ -5,7 +5,6 @@ import pickle
 from typing import Callable, List, Optional
 
 import torch
-import torch.nn.functional as F
 
 from torch_geometric.data import (
     Data,
@@ -14,7 +13,7 @@ from torch_geometric.data import (
     extract_tar,
     extract_zip,
 )
-from torch_geometric.utils import to_undirected
+from torch_geometric.utils import one_hot, to_undirected
 
 
 class GEDDataset(InMemoryDataset):
@@ -201,8 +200,7 @@ class GEDDataset(InMemoryDataset):
                     x = torch.zeros(data.num_nodes, dtype=torch.long)
                     for node, info in G.nodes(data=True):
                         x[int(node)] = self.types.index(info['type'])
-                    data.x = F.one_hot(x, num_classes=len(self.types)).to(
-                        torch.float)
+                    data.x = one_hot(x, num_classes=len(self.types))
 
                 if self.pre_filter is not None and not self.pre_filter(data):
                     continue

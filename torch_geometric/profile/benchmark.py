@@ -4,6 +4,8 @@ from typing import Any, Callable, List, Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.utils import is_torch_sparse_tensor
+
 
 def benchmark(
     funcs: List[Callable],
@@ -51,8 +53,8 @@ def benchmark(
         for i in range(num_warmups + num_steps):
             args = [
                 arg.detach().requires_grad_(backward)
-                if isinstance(arg, Tensor) and arg.is_floating_point() else arg
-                for arg in args
+                if isinstance(arg, Tensor) and arg.is_floating_point()
+                and not is_torch_sparse_tensor(arg) else arg for arg in args
             ]
 
             if torch.cuda.is_available():

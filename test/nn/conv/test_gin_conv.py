@@ -2,10 +2,10 @@ import torch
 from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import GINConv, GINEConv
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
 
 
 def test_gin_conv():
@@ -14,7 +14,7 @@ def test_gin_conv():
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
     row, col = edge_index
     adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
-    adj2 = adj.to_torch_sparse_coo_tensor()
+    adj2 = adj.to_torch_sparse_csc_tensor()
 
     nn = Seq(Lin(16, 32), ReLU(), Lin(32, 32))
     conv = GINConv(nn, train_eps=True)
@@ -41,7 +41,7 @@ def test_gin_conv():
         assert jit(x1, adj.t()).tolist() == out.tolist()
 
     adj = adj.sparse_resize((4, 2))
-    adj2 = adj.to_torch_sparse_coo_tensor()
+    adj2 = adj.to_torch_sparse_csc_tensor()
     out1 = conv((x1, x2), edge_index)
     out2 = conv((x1, None), edge_index, (4, 2))
     assert out1.size() == (2, 32)

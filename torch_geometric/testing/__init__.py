@@ -5,11 +5,14 @@ from .decorators import (
     onlyPython,
     onlyCUDA,
     onlyGraphviz,
+    onlyNeighborSampler,
     withPackage,
     withCUDA,
+    disableExtensions,
 )
 from .feature_store import MyFeatureStore
 from .graph_store import MyGraphStore
+from .data import FakeHeteroDataset, get_random_edge_index
 
 __all__ = [
     'is_full_test',
@@ -18,8 +21,12 @@ __all__ = [
     'onlyPython',
     'onlyCUDA',
     'onlyGraphviz',
+    'onlyNeighborSampler',
     'withPackage',
     'withCUDA',
+    'disableExtensions',
     'MyFeatureStore',
     'MyGraphStore',
+    'get_random_edge_index',
+    'FakeHeteroDataset',
 ]

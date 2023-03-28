@@ -1,5 +1,3 @@
-from itertools import product
-
 import pytest
 import torch
 
@@ -7,10 +5,9 @@ from torch_geometric.nn import MLP
 from torch_geometric.testing import is_full_test
 
 
-@pytest.mark.parametrize(
-    'norm, act_first, plain_last',
-    product(['batch_norm', None], [False, True], [False, True]),
-)
+@pytest.mark.parametrize('norm', ['batch_norm', None])
+@pytest.mark.parametrize('act_first', [False, True])
+@pytest.mark.parametrize('plain_last', [False, True])
 def test_mlp(norm, act_first, plain_last):
     x = torch.randn(4, 16)
 

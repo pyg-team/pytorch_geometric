@@ -1,19 +1,19 @@
 import copy
-from itertools import product
 
 import pytest
 import torch
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
-from torch_geometric.nn import HeteroLinear, Linear
+from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.testing import is_full_test, withPackage
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
 
 
-@pytest.mark.parametrize('weight,bias', product(weight_inits, bias_inits))
+@pytest.mark.parametrize('weight', weight_inits)
+@pytest.mark.parametrize('bias', bias_inits)
 def test_linear(weight, bias):
     x = torch.randn(3, 4, 16)
     lin = Linear(16, 32, weight_initializer=weight, bias_initializer=bias)
@@ -21,7 +21,8 @@ def test_linear(weight, bias):
     assert lin(x).size() == (3, 4, 32)
 
 
-@pytest.mark.parametrize('weight,bias', product(weight_inits, bias_inits))
+@pytest.mark.parametrize('weight', weight_inits)
+@pytest.mark.parametrize('bias', bias_inits)
 def test_lazy_linear(weight, bias):
     x = torch.randn(3, 4, 16)
     lin = Linear(-1, 32, weight_initializer=weight, bias_initializer=bias)
@@ -30,7 +31,8 @@ def test_lazy_linear(weight, bias):
     assert str(lin) == 'Linear(16, 32, bias=True)'
 
 
-@pytest.mark.parametrize('dim1,dim2', product([-1, 16], [-1, 16]))
+@pytest.mark.parametrize('dim1', [-1, 16])
+@pytest.mark.parametrize('dim2', [-1, 16])
 def test_load_lazy_linear(dim1, dim2):
     lin1 = Linear(dim1, 32)
     lin2 = Linear(dim1, 32)
@@ -112,6 +114,51 @@ def test_hetero_linear():
     if is_full_test():
         jit = torch.jit.script(lin)
         assert torch.allclose(jit(x, type_vec), out)
+
+
+def test_lazy_hetero_linear():
+    x = torch.randn(3, 16)
+    type_vec = torch.tensor([0, 1, 2])
+
+    lin = HeteroLinear(-1, 32, num_types=3)
+    assert str(lin) == 'HeteroLinear(-1, 32, num_types=3, bias=True)'
+
+    out = lin(x, type_vec)
+    assert out.size() == (3, 32)
+
+
+def test_hetero_dict_linear():
+    x_dict = {'v': torch.randn(3, 16), 'w': torch.randn(2, 8)}
+
+    lin = HeteroDictLinear({'v': 16, 'w': 8}, 32)
+    assert str(lin) == "HeteroDictLinear({'v': 16, 'w': 8}, 32, bias=True)"
+
+    out_dict = lin(x_dict)
+    assert len(out_dict) == 2
+    assert out_dict['v'].size() == (3, 32)
+    assert out_dict['w'].size() == (2, 32)
+
+    x_dict = {'v': torch.randn(3, 16), 'w': torch.randn(2, 16)}
+
+    lin = HeteroDictLinear(16, 32, types=['v', 'w'])
+    assert str(lin) == "HeteroDictLinear({'v': 16, 'w': 16}, 32, bias=True)"
+
+    out_dict = lin(x_dict)
+    assert len(out_dict) == 2
+    assert out_dict['v'].size() == (3, 32)
+    assert out_dict['w'].size() == (2, 32)
+
+
+def test_lazy_hetero_dict_linear():
+    x_dict = {'v': torch.randn(3, 16), 'w': torch.randn(2, 8)}
+
+    lin = HeteroDictLinear(-1, 32, types=['v', 'w'])
+    assert str(lin) == "HeteroDictLinear({'v': -1, 'w': -1}, 32, bias=True)"
+
+    out_dict = lin(x_dict)
+    assert len(out_dict) == 2
+    assert out_dict['v'].size() == (3, 32)
+    assert out_dict['w'].size() == (2, 32)
 
 
 @withPackage('pyg_lib')

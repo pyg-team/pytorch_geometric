@@ -24,12 +24,12 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-import torch
 from torch import Tensor
 
 from torch_geometric.typing import EdgeTensorType, EdgeType, OptTensor
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.mixin import CastMixin
+from torch_geometric.utils.sparse import index2ptr, ptr2index
 
 # The output of converting between two types in the GraphStore is a Tuple of
 # dictionaries: row, col, and perm. The dictionaries are keyed by the edge
@@ -262,40 +262,34 @@ class GraphStore:
         store: bool = False,
     ) -> Tuple[Tensor, Tensor, OptTensor]:
 
-        ind2ptr = torch._convert_indices_from_coo_to_csr
-
-        def ptr2ind(ptr: Tensor) -> Tensor:
-            ind = torch.arange(ptr.numel() - 1, device=ptr.device)
-            return ind.repeat_interleave(ptr[1:] - ptr[:-1])
-
         (row, col), perm = self.get_edge_index(attr), None
 
         if layout == EdgeLayout.COO:  # COO output requested:
             if attr.layout == EdgeLayout.CSR:  # CSR->COO
-                row = ptr2ind(row)
+                row = ptr2index(row)
             elif attr.layout == EdgeLayout.CSC:  # CSC->COO
-                col = ptr2ind(col)
+                col = ptr2index(col)
 
         elif layout == EdgeLayout.CSR:  # CSR output requested:
             if attr.layout == EdgeLayout.CSC:  # CSC->COO
-                col = ptr2ind(col)
+                col = ptr2index(col)
 
             if attr.layout != EdgeLayout.CSR:  # COO->CSR
                 num_rows = attr.size[0] if attr.size else int(row.max()) + 1
                 row, perm = index_sort(row, max_value=num_rows)
                 col = col[perm]
-                row = ind2ptr(row, num_rows)
+                row = index2ptr(row, num_rows)
 
         else:  # CSC output requested:
             if attr.layout == EdgeLayout.CSR:  # CSR->COO
-                row = ptr2ind(row)
+                row = ptr2index(row)
 
             if attr.layout != EdgeLayout.CSC:  # COO->CSC
                 num_cols = attr.size[1] if attr.size else int(col.max()) + 1
                 if not attr.is_sorted:  # Not sorted by destination.
                     col, perm = index_sort(col, max_value=num_cols)
                     row = row[perm]
-                col = ind2ptr(col, num_cols)
+                col = index2ptr(col, num_cols)
 
         if attr.layout != layout and store:
             attr = copy.copy(attr)

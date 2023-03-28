@@ -7,8 +7,7 @@ from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
 
 import torch_geometric
-
-from .num_nodes import maybe_num_nodes
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def to_scipy_sparse_matrix(

@@ -128,7 +128,7 @@ class RandomLinkSplit(BaseTransform):
         if isinstance(data, HeteroData):
             if edge_types is None:
                 raise ValueError(
-                    "The 'RandomLinkSplit' transform expects 'edge_types' to"
+                    "The 'RandomLinkSplit' transform expects 'edge_types' to "
                     "be specified when operating on 'HeteroData' objects")
 
             if not isinstance(edge_types, list):

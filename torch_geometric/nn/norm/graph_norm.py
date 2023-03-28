@@ -3,9 +3,8 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+from torch_geometric.nn.inits import ones, zeros
 from torch_geometric.utils import scatter
-
-from ..inits import ones, zeros
 
 
 class GraphNorm(torch.nn.Module):

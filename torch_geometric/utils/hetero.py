@@ -3,8 +3,7 @@ from typing import List, Set
 import torch
 
 from torch_geometric.typing import EdgeType, NodeType
-
-from .num_nodes import maybe_num_nodes_dict
+from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
 
 
 def group_hetero_graph(edge_index_dict, num_nodes_dict=None):

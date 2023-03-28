@@ -3,10 +3,9 @@ from torch import Tensor
 from torch.nn import Parameter as Param
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import uniform
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
 from torch_geometric.utils import spmm
-
-from ..inits import uniform
 
 
 class GatedGraphConv(MessagePassing):

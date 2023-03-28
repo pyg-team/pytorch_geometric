@@ -1,13 +1,12 @@
 from typing import Callable, Optional
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
-from torch_geometric.utils import spmm
+from torch_geometric.utils import one_hot, spmm
 
 
 class LabelPropagation(MessagePassing):
@@ -62,7 +61,7 @@ class LabelPropagation(MessagePassing):
                 (default: :obj:`None`)
         """
         if y.dtype == torch.long and y.size(0) == y.numel():
-            y = F.one_hot(y.view(-1)).to(torch.float)
+            y = one_hot(y.view(-1))
 
         out = y
         if mask is not None:

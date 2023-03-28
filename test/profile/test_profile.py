@@ -1,4 +1,5 @@
 import os.path
+import warnings
 
 import torch
 import torch.nn.functional as F
@@ -36,6 +37,8 @@ def test_timeit(device):
 @onlyCUDA
 @withPackage('pytorch_memlab')
 def test_profileit(get_dataset):
+    warnings.filterwarnings('ignore', '.*arguments of DataFrame.drop.*')
+
     dataset = get_dataset(name='Cora')
     data = dataset[0].cuda()
     model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,

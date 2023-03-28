@@ -237,14 +237,11 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                 if 'n_id' not in data[key]:
                     data[key].n_id = node
 
-            if out.edge is not None:
-                for key, edge in out.edge.items():
-                    if 'e_id' not in data[key]:
-                        data[key].e_id = edge
+            for key, edge in (out.edge or {}).items():
+                if 'e_id' not in data[key]:
+                    data[key].e_id = edge
 
-            if out.batch is not None:
-                for key, batch in out.batch.items():
-                    data[key].batch = batch
+            data.set_value_dict('batch', out.batch)
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]

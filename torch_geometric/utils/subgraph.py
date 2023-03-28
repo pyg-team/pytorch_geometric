@@ -4,9 +4,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor, PairTensor
-
-from .mask import index_to_mask
-from .num_nodes import maybe_num_nodes
+from torch_geometric.utils.mask import index_to_mask
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def get_num_hops(model: torch.nn.Module) -> int:

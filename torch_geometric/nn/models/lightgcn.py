@@ -28,7 +28,7 @@ class LightGCN(torch.nn.Module):
         \mathbf{x}^{(l+1)}_i = \sum_{j \in \mathcal{N}(i)}
         \frac{1}{\sqrt{\deg(i)\deg(j)}}\mathbf{x}^{(l)}_j.
 
-    Two prediction heads and trainign objectives are provided:
+    Two prediction heads and training objectives are provided:
     **link prediction** (via
     :meth:`~torch_geometric.nn.models.LightGCN.link_pred_loss` and
     :meth:`~torch_geometric.nn.models.LightGCN.predict_link`) and

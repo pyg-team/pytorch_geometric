@@ -7,18 +7,13 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import DataLoader
+from torch_geometric.testing import get_random_edge_index
 
 with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]
 
 if sys.platform == 'darwin':
     multiprocessing.set_start_method('spawn')
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
 
 
 @pytest.mark.parametrize('num_workers', num_workers_list)
@@ -145,9 +140,9 @@ def test_heterogeneous_dataloader(num_workers):
     data = HeteroData()
     data['p'].x = torch.randn(100, 128)
     data['a'].x = torch.randn(200, 128)
-    data['p', 'a'].edge_index = get_edge_index(100, 200, 500)
+    data['p', 'a'].edge_index = get_random_edge_index(100, 200, 500)
     data['p'].edge_attr = torch.randn(500, 32)
-    data['a', 'p'].edge_index = get_edge_index(200, 100, 400)
+    data['a', 'p'].edge_index = get_random_edge_index(200, 100, 400)
     data['a', 'p'].edge_attr = torch.randn(400, 32)
 
     loader = DataLoader([data, data, data, data], batch_size=2, shuffle=False,
