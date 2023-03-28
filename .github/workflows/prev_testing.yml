@@ -29,6 +29,7 @@ jobs:
             docs/**
             examples/**
             graphgym/**
+            README.md
             CHANGELOG.md
 
       - name: Setup packages
