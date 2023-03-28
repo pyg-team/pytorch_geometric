@@ -65,7 +65,7 @@ def test_dna_conv_sparse_tensor(channels, num_layers):
     assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj3 = SparseTensor.from_edge_index(edge_index, size=(4, 4))
+        adj3 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
         adj4 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
         assert torch.allclose(conv(x, adj3.t()), out1, atol=1e-6)
         assert torch.allclose(conv(x, adj4.t()), out2, atol=1e-6)

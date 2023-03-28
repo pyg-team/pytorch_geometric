@@ -21,7 +21,7 @@ def test_cg_conv(batch_norm):
     assert out.size() == (4, 8)
     assert torch.allclose(conv(x1, adj1.t()), out)
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj2 = SparseTensor.from_edge_index(sparse_sizes=(4, 4))
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
         assert torch.allclose(conv(x1, adj2.t()), out)
 
     if is_full_test():
@@ -43,7 +43,7 @@ def test_cg_conv(batch_norm):
     assert out.size() == (2, 16)
     assert torch.allclose(conv((x1, x2), adj1.t()), out, atol=1e-6)
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj2 = SparseTensor.from_edge_index(sparse_sizes=(4, 2))
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 2))
         assert torch.allclose(conv((x1, x2), adj2.t()), out, atol=1e-6)
 
     if is_full_test():
