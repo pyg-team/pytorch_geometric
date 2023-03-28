@@ -378,6 +378,8 @@ For this, simply run
 pip install torch_geometric
 ```
 
+PyG 2.3 requires that at least PyTorch 1.12 is installed.
+
 ### Additional Libraries
 
 If you want to utilize the full set of features from PyG, there exists several additional libraries you may want to install:
