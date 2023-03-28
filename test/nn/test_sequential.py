@@ -4,6 +4,7 @@ import torch
 import torch.fx
 from torch.nn import Dropout, Linear, ReLU
 
+import torch_geometric.typing
 from torch_geometric.nn import (
     GCNConv,
     JumpingKnowledge,
@@ -67,7 +68,6 @@ def test_sequential():
 def test_sequential_jittable():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
-    adj_t = SparseTensor(row=edge_index[0], col=edge_index[1]).t()
 
     model = Sequential('x: Tensor, edge_index: Tensor', [
         (GCNConv(16, 64).jittable(), 'x, edge_index -> x'),
@@ -78,14 +78,17 @@ def test_sequential_jittable():
     ])
     torch.jit.script(model)(x, edge_index)
 
-    model = Sequential('x: Tensor, edge_index: SparseTensor', [
-        (GCNConv(16, 64).jittable(), 'x, edge_index -> x'),
-        ReLU(inplace=True),
-        (GCNConv(64, 64).jittable(), 'x, edge_index -> x'),
-        ReLU(inplace=True),
-        Linear(64, 7),
-    ])
-    torch.jit.script(model)(x, adj_t)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj_t = SparseTensor.from_edge_index(edge_index).t()
+
+        model = Sequential('x: Tensor, edge_index: SparseTensor', [
+            (GCNConv(16, 64).jittable(), 'x, edge_index -> x'),
+            ReLU(inplace=True),
+            (GCNConv(64, 64).jittable(), 'x, edge_index -> x'),
+            ReLU(inplace=True),
+            Linear(64, 7),
+        ])
+        torch.jit.script(model)(x, adj_t)
 
 
 def symbolic_trace(module):
