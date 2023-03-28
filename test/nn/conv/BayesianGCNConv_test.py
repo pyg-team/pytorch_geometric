@@ -1,31 +1,35 @@
 import copy
 
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv.BayesianGCNConv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
-from torch_geometric.utils import to_torch_coo_tensor
+from torch_geometric.typing import SparseTensor
 
 
 def test_bayesian_conv_norm():
     x = torch.randn(4, 16)
-    edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
+    x_0 = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     row, col = edge_index
+    value = torch.rand(row.size(0))
+    adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+    adj1 = adj2.set_value(None)
     conv = BayesianGCNConv(16, 32)
+    assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
     out1, kl_out1 = conv(x, edge_index)
-    conv.flow = "target_to_source"
-    out2, kl_out2 = conv(x, edge_index.flip(0))
-    # Reminder when declared, the default values for bayesian conv is
-    # prior_mean=0, prior_variance=1
-    # posterior_mu_init = 0
-    # posterior_rho_init = -3.0
-    # The outputs of the Bayesian conv layer should have a mean close to 0
-    # The variance should not exceed 1
-    # The KL divergence should be the same for both convs
-    assert torch.allclose(out1.mean(), out2.mean(), atol=0.1)
-    assert torch.allclose(torch.var(out1), torch.var(out2), atol=1)
-    assert torch.allclose(kl_out1, kl_out2, atol=1e-6)
+    assert out1.size() == (4, 32)
+    out_1_adj1, kl_adj1 = conv(x, adj1)
+    assert torch.allclose(out1.mean(), out_1_adj1.mean(), atol=0.1)
+    assert torch.allclose(torch.var(out1), torch.var(out_1_adj1), atol=1)
+    assert torch.allclose(kl_out1, kl_adj1, atol=1e-6)
+
+    out2, kl2 = conv(x, edge_index, value)
+    out2_adj2, kl_adj2 =  conv(x, adj2)
+    assert torch.allclose(out2.mean(), out2_adj2.mean(), atol=0.1)
+    assert torch.allclose(torch.var(out2), torch.var(out2_adj2), atol=1)
+    assert torch.allclose(kl2, kl_adj2, atol=1e-6)
+
 
 
 def test_static_bayesian_conv():
