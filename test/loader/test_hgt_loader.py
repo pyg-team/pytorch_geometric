@@ -202,11 +202,13 @@ def test_hgt_loader_disconnected():
     data['author', 'paper'].edge_index = get_random_edge_index(200, 50, 1000)
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
-    loader = HGTLoader(data, num_samples=[5] * 4, batch_size=1, input_nodes='paper')
+    loader = HGTLoader(data, num_samples=[5] * 4, batch_size=1,
+                       input_nodes='paper')
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
 
         # Test node and types:
-        assert set(batch.node_types) == {'paper', 'author'} or set(batch.node_types) == {'paper'}
+        assert set(batch.node_types) == {'paper', 'author'} or set(
+            batch.node_types) == {'paper'}
         assert set(batch.edge_types) == set(data.edge_types)
