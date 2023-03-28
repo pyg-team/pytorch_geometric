@@ -1,8 +1,9 @@
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import HANConv
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import coalesce
+from torch_geometric.utils import coalesce, to_torch_csc_tensor
 
 
 def test_han_conv():
@@ -21,15 +22,12 @@ def test_han_conv():
     }
 
     adj_t_dict1 = {}
-    adj_t_dict2 = {}
     for edge_type, edge_index in edge_index_dict.items():
         src_type, _, dst_type = edge_type
-        adj_t_dict1[edge_type] = SparseTensor(
-            row=edge_index[0], col=edge_index[1],
-            sparse_sizes=(x_dict[src_type].size(0),
-                          x_dict[dst_type].size(0))).t()
-        adj_t_dict2[edge_type] = adj_t_dict1[
-            edge_type].to_torch_sparse_csr_tensor()
+        adj_t_dict1[edge_type] = to_torch_csc_tensor(
+            edge_index,
+            size=(x_dict[src_type].size(0), x_dict[dst_type].size(0)),
+        ).t()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
     in_channels = {'author': 16, 'paper': 12, 'term': 3}
@@ -49,10 +47,17 @@ def test_han_conv():
     for key in out_dict1.keys():
         assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
 
-    out_dict3 = conv(x_dict, adj_t_dict2)
-    assert len(out_dict1) == len(out_dict3)
-    for key in out_dict3.keys():
-        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj_t_dict2 = {}
+        for edge_type, edge_index in edge_index_dict.items():
+            adj_t_dict2[edge_type] = SparseTensor.from_edge_index(
+                edge_index,
+                sparse_sizes=adj_t_dict1[edge_type].size()[::-1],
+            ).t()
+        out_dict3 = conv(x_dict, adj_t_dict2)
+        assert len(out_dict1) == len(out_dict3)
+        for key in out_dict3.keys():
+            assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
     # Test non-zero dropout:
     conv = HANConv(in_channels, 16, metadata, heads=2, dropout=0.1)
@@ -76,15 +81,12 @@ def test_han_conv_lazy():
     }
 
     adj_t_dict1 = {}
-    adj_t_dict2 = {}
     for edge_type, edge_index in edge_index_dict.items():
         src_type, _, dst_type = edge_type
-        adj_t_dict1[edge_type] = SparseTensor(
-            row=edge_index[0], col=edge_index[1],
-            sparse_sizes=(x_dict[src_type].size(0),
-                          x_dict[dst_type].size(0))).t()
-        adj_t_dict2[edge_type] = adj_t_dict1[
-            edge_type].to_torch_sparse_csr_tensor()
+        adj_t_dict1[edge_type] = to_torch_csc_tensor(
+            edge_index,
+            size=(x_dict[src_type].size(0), x_dict[dst_type].size(0)),
+        ).t()
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
     conv = HANConv(-1, 16, metadata, heads=2)
@@ -99,10 +101,17 @@ def test_han_conv_lazy():
     for key in out_dict1.keys():
         assert torch.allclose(out_dict1[key], out_dict2[key], atol=1e-6)
 
-    out_dict3 = conv(x_dict, adj_t_dict2)
-    assert len(out_dict1) == len(out_dict3)
-    for key in out_dict1.keys():
-        assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj_t_dict2 = {}
+        for edge_type, edge_index in edge_index_dict.items():
+            adj_t_dict2[edge_type] = SparseTensor.from_edge_index(
+                edge_index,
+                sparse_sizes=adj_t_dict1[edge_type].size()[::-1],
+            ).t()
+        out_dict3 = conv(x_dict, adj_t_dict2)
+        assert len(out_dict1) == len(out_dict3)
+        for key in out_dict1.keys():
+            assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
 
 def test_han_conv_empty_tensor():
