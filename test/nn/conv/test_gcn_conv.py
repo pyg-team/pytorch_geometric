@@ -2,11 +2,11 @@ import copy
 
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import GCNConv
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor
 
 

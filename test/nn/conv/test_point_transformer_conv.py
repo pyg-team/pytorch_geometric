@@ -1,9 +1,9 @@
 import torch
 from torch.nn import Linear, ReLU, Sequential
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import PointTransformerConv
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
 
 
 def test_point_transformer_conv():

@@ -5,10 +5,15 @@ import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import MessagePassing, aggr
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    Size,
+    SparseTensor,
+)
 from torch_geometric.utils import scatter, spmm
 
 
