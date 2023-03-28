@@ -45,8 +45,10 @@ def gcn():
     edge_index = torch.randint(100, size=(2, 20))
     adj_t: Optional[SparseTensor] = None
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj_t = SparseTensor.from_edge_index(edge_index,
-                                             sparse_sizes=(100, 100)).t()
+        adj_t = SparseTensor.from_edge_index(
+            edge_index,
+            sparse_sizes=(100, 100),
+        ).t()
     return dict(model=model, x=x, edge_index=edge_index, adj_t=adj_t)
 
 
