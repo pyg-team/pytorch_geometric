@@ -525,7 +525,7 @@ def to_dgl(
                 g.nodes[node_type].data[attr] = value
         for edge_type, edge_store in zip(data.edge_types, data.edge_stores):
             for attr, value in edge_store.items():
-                if attr == "edge_index":
+                if attr in ["edge_index", "adj_t"]:
                     continue
                 g.edges[edge_type].data[attr] = value
 
