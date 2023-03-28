@@ -1,10 +1,10 @@
 import copy
 
 import torch
+from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv.BayesianGCNConv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
-from torch_sparse import SparseTensor
 
 
 def test_bayesian_conv_norm():
