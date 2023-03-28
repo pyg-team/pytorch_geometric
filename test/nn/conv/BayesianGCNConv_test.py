@@ -25,11 +25,10 @@ def test_bayesian_conv_norm():
     assert torch.allclose(kl_out1, kl_adj1, atol=1e-6)
 
     out2, kl2 = conv(x, edge_index, value)
-    out2_adj2, kl_adj2 =  conv(x, adj2)
+    out2_adj2, kl_adj2 = conv(x, adj2)
     assert torch.allclose(out2.mean(), out2_adj2.mean(), atol=0.1)
     assert torch.allclose(torch.var(out2), torch.var(out2_adj2), atol=1)
     assert torch.allclose(kl2, kl_adj2, atol=1e-6)
-
 
 
 def test_static_bayesian_conv():
