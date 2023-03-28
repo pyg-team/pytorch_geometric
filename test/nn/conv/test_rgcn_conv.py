@@ -1,9 +1,9 @@
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn import FastRGCNConv, RGCNConv
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
 
 classes = [RGCNConv, FastRGCNConv]
 confs = [(None, None), (2, None), (None, 2)]
