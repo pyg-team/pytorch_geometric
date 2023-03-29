@@ -5,7 +5,7 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
-from torch_geometric.transforms import ToUndirected
+from torch_geometric.utils import to_undirected
 
 
 class HeterophilousGraphDataset(InMemoryDataset):
