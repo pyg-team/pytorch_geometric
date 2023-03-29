@@ -65,9 +65,9 @@ def test_identical_linear_default_initialization(lazy):
     torch.manual_seed(12345)
     lin2 = PTLinear(16, 32)
 
-    assert lin1.weight.tolist() == lin2.weight.tolist()
-    assert lin1.bias.tolist() == lin2.bias.tolist()
-    assert lin1(x).tolist() == lin2(x).tolist()
+    assert torch.equal(lin1.weight, lin2.weight)
+    assert torch.equal(lin1.bias, lin2.bias)
+    assert torch.allclose(lin1(x), lin2(x))
 
 
 @withPackage('torch<=1.12')

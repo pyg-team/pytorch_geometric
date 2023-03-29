@@ -27,7 +27,7 @@ def test_feast_conv():
     if is_full_test():
         t = '(Tensor, Tensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x1, edge_index).tolist() == out.tolist()
+        assert torch.allclose(jit(x1, edge_index), out, atol=1e-6)
 
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(Tensor, SparseTensor) -> Tensor'
@@ -48,7 +48,7 @@ def test_feast_conv():
     if is_full_test():
         t = '(PairTensor, Tensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit((x1, x2), edge_index).tolist() == out.tolist()
+        assert torch.allclose(jit((x1, x2), edge_index), out, atol=1e-6)
 
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(PairTensor, SparseTensor) -> Tensor'

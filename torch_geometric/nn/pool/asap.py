@@ -145,7 +145,10 @@ class ASAPooling(torch.nn.Module):
         S = S.index_select(1, perm).to_sparse_csr()
         A = S.t().to_sparse_csr() @ (A @ S)
 
-        edge_index, edge_weight = to_edge_index(A)
+        if edge_weight is None:
+            edge_index, _ = to_edge_index(A)
+        else:
+            edge_index, edge_weight = to_edge_index(A)
 
         if self.add_self_loops:
             edge_index, edge_weight = add_remaining_self_loops(

@@ -266,15 +266,15 @@ def test_copy():
     conv2 = copy.copy(conv)
 
     assert conv != conv2
-    assert conv.lin_l.weight.tolist() == conv2.lin_l.weight.tolist()
-    assert conv.lin_r.weight.tolist() == conv2.lin_r.weight.tolist()
+    assert torch.equal(conv.lin_l.weight, conv2.lin_l.weight)
+    assert torch.equal(conv.lin_r.weight, conv2.lin_r.weight)
     assert conv.lin_l.weight.data_ptr == conv2.lin_l.weight.data_ptr
     assert conv.lin_r.weight.data_ptr == conv2.lin_r.weight.data_ptr
 
     conv = copy.deepcopy(conv)
     assert conv != conv2
-    assert conv.lin_l.weight.tolist() == conv2.lin_l.weight.tolist()
-    assert conv.lin_r.weight.tolist() == conv2.lin_r.weight.tolist()
+    assert torch.equal(conv.lin_l.weight, conv2.lin_l.weight)
+    assert torch.equal(conv.lin_r.weight, conv2.lin_r.weight)
     assert conv.lin_l.weight.data_ptr != conv2.lin_l.weight.data_ptr
     assert conv.lin_r.weight.data_ptr != conv2.lin_r.weight.data_ptr
 
