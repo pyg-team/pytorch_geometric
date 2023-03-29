@@ -24,7 +24,7 @@ def test_diff_group_norm():
 
     if is_full_test():
         jit = torch.jit.script(norm)
-        assert torch.alllclose(jit(x), out)
+        assert torch.allclose(jit(x), out)
 
 
 def test_group_distance_ratio():

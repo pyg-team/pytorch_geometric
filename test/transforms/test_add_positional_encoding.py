@@ -3,6 +3,7 @@ import copy
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import onlyLinux
 from torch_geometric.transforms import (
     AddLaplacianEigenvectorPE,
     AddRandomWalkPE,
@@ -52,6 +53,7 @@ def test_add_laplacian_eigenvector_pe():
     assert torch.allclose(pe_cluster_2, pe_cluster_2.mean())
 
 
+@onlyLinux  # TODO  (matthias) Investigate CSR @ CSR support on Windows.
 def test_add_random_walk_pe():
     x = torch.randn(6, 4)
     edge_index = torch.tensor([[0, 1, 0, 4, 1, 4, 2, 3, 3, 5],
