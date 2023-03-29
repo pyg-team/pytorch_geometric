@@ -503,7 +503,6 @@ def test_from_dgl_graph():
 
 @withPackage('dgl')
 def test_to_dgl_graph():
-    import dgl
     edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
     x = torch.ones(5, 3)
     y = torch.tensor([1, 1, 1, 1, 1, 0], dtype=torch.float)
@@ -520,8 +519,6 @@ def test_to_dgl_graph():
 
 @withPackage('dgl')
 def test_to_dgl_heterograph():
-    import dgl
-
     from torch_geometric.data import HeteroData
 
     data = HeteroData()
@@ -562,8 +559,6 @@ def test_from_dgl_heterograph():
 
 @withPackage('dgl')
 def test_to_dgl_sparse():
-    import dgl
-
     from torch_geometric.transforms import ToSparseTensor
     edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
     x = torch.ones(5, 3)
