@@ -47,14 +47,14 @@ runs:
       shell: bash
 
     - name: Install extension packages
-      if: ${{ inputs.full_install == 'true' }}
+      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
         pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
         pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
 
     - name: Install pyg-lib  # pyg-lib is currently only available on Linux.
-      if: ${{ inputs.full_install == 'true' && runner.os == 'Linux' }}
+      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' && runner.os == 'Linux' }}
       run: |
         pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
