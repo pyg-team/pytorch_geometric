@@ -3,7 +3,8 @@ from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
-from torch.nn import HeteroDictLinear, Linear, MultiheadAttention
+from torch.nn import Linear, MultiheadAttention
+from torch_geometric.nn.dense import HeteroDictLinear
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.aggr.fused import FusedAggregation
