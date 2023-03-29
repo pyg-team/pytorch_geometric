@@ -117,6 +117,8 @@ __all__ = [
     'from_trimesh',
     'to_cugraph',
     'from_cugraph',
+    'to_dgl',
+    'from_dgl',
     'from_smiles',
     'to_smiles',
     'erdos_renyi_graph',
@@ -130,8 +132,6 @@ __all__ = [
     'get_embeddings',
     'trim_to_layer',
     'train_test_split_edges',
-    'to_dgl',
-    'from_dgl',
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
