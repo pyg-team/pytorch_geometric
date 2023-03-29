@@ -28,7 +28,7 @@ runs:
         check-latest: true
         cache: pip
         cache-dependency-path: |
-          setup.py
+          pyproject.toml
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version != 'nightly' }}
