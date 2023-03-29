@@ -27,7 +27,7 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
 
         if HAS_PYLIBCUGRAPHOPS is False:
             raise ModuleNotFoundError(f"'{self.__class__.__name__}' requires "
-                                      f"'pylibcugraphops'")
+                                      f"'pylibcugraphops>=23.04'")
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
