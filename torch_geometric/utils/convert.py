@@ -458,7 +458,7 @@ def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
 
 
 def to_dgl(
-    data: Union["torch_geometric.data.Data", "torch_geometric.data.HeteroData"]
+    data: Union['torch_geometric.data.Data', 'torch_geometric.data.HeteroData']
 ) -> Any:
     r"""Converts a :class:`torch_geometric.data.Data` or
     :class:`torch_geometric.data.HeteroData` instance to a :obj:`dgl` graph
@@ -471,25 +471,25 @@ def to_dgl(
     Example:
 
         >>> edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
-        >>> x = torch.ones(5, 3)
-        >>> y = torch.tensor([1, 1, 1, 1, 1, 0], dtype=torch.float)
+        >>> x = torch.randn(5, 3)
+        >>> edge_attr = torch.randn(6, 2)
         >>> data = Data(x=x, edge_index=edge_index, edge_attr=y)
         >>> g = to_dgl(data)
         >>> g
         Graph(num_nodes=5, num_edges=6,
-            ndata_schemes={'x': Scheme(shape=(3,), dtype=torch.float32)}
-            edata_schemes={'edge_attr': Scheme(shape=(), dtype=torch.float32)})
+            ndata_schemes={'x': Scheme(shape=(3,))}
+            edata_schemes={'edge_attr': Scheme(shape=(2, ))})
 
         >>> data = HeteroData()
-        >>> data['paper'].x = torch.ones(5, 128)
-        >>> data['authors'].x = torch.ones(5, 128)
-        >>> data['authors', 'cites', 'paper'].edge_index = torch.tensor(
-        ...                    [[0, 1, 2, 3, 4],[0, 1, 2, 3, 4]])
+        >>> data['paper'].x = torch.randn(5, 3)
+        >>> data['author'].x = torch.ones(5, 3)
+        >>> edge_index = torch.tensor([[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]])
+        >>> data['author', 'cites', 'paper'].edge_index = edge_index
         >>> g = to_dgl(data)
         >>> g
-        Graph(num_nodes={'authors': 5, 'paper': 5},
-            num_edges={('authors', 'cites', 'paper'): 5},
-            metagraph=[('authors', 'paper', 'cites')])
+        Graph(num_nodes={'author': 5, 'paper': 5},
+            num_edges={('author', 'cites', 'paper'): 5},
+            metagraph=[('author', 'paper', 'cites')])
     """
     import dgl
 
@@ -500,43 +500,48 @@ def to_dgl(
             row, col = data.edge_index
         else:
             row, col, _ = data.adj_t.t().coo()
+
         g = dgl.graph((row, col))
 
         for attr in data.node_attrs():
-            g.ndata[attr] = data.get(attr)
+            g.ndata[attr] = data[attr]
         for attr in data.edge_attrs():
-            if attr == "edge_index":
+            if attr in ['edge_index', 'adj_t']:
                 continue
-            g.edata[attr] = data.get(attr)
+            g.edata[attr] = data[attr]
 
-    elif isinstance(data, HeteroData):
+        return g
+
+    if isinstance(data, HeteroData):
         data_dict = {}
-        for edge_type, edges in zip(data.edge_types, data.edge_stores):
-            if edges.get("edge_index") is not None:
-                row, col = edges["edge_index"]
+        for edge_type, store in data.edge_items():
+            if store.get('edge_index') is not None:
+                row, col = store.edge_index
             else:
-                row, col, _ = edges["adj_t"].t().coo()
+                row, col, _ = store['adj_t'].t().coo()
+
             data_dict[edge_type] = (row, col)
 
         g = dgl.heterograph(data_dict)
 
-        for node_type, node_store in zip(data.node_types, data.node_stores):
-            for attr, value in node_store.items():
+        for node_type, store in data.node_items():
+            for attr, value in store.items():
                 g.nodes[node_type].data[attr] = value
-        for edge_type, edge_store in zip(data.edge_types, data.edge_stores):
-            for attr, value in edge_store.items():
-                if attr in ["edge_index", "adj_t"]:
+
+        for edge_type, store in data.edge_items():
+            for attr, value in store.items():
+                if attr in ['edge_index', 'adj_t']:
                     continue
                 g.edges[edge_type].data[attr] = value
 
-    else:
-        raise ValueError("Data type not supported")
-    return g
+        return g
+
+    raise ValueError(f"Invalid data type (got '{type(data)}')")
 
 
 def from_dgl(
     g: Any,
-) -> Union["torch_geometric.data.Data", "torch_geometric.data.HeteroData"]:
+) -> Union['torch_geometric.data.Data', 'torch_geometric.data.HeteroData']:
     r"""Converts a :obj:`dgl` graph object to a
     :class:`torch_geometric.data.Data` or
     :class:`torch_geometric.data.HeteroData` instance.
@@ -547,52 +552,54 @@ def from_dgl(
     Example:
 
         >>> g = dgl.graph(([0, 0, 1, 5], [1, 2, 2, 0]))
-        >>> g.ndata['x'] = torch.ones(g.num_nodes(), 3)
-        >>> g.edata['w'] = torch.ones(g.num_edges(), dtype=torch.int32)
+        >>> g.ndata['x'] = torch.randn(g.num_nodes(), 3)
+        >>> g.edata['edge_attr'] = torch.randn(g.num_edges(), 2)
         >>> data = from_dgl(g)
         >>> data
-        Data(x=[6, 3], w=[4], edge_index=[2, 4])
+        Data(x=[6, 3], edge_attr=[4, 2], edge_index=[2, 4])
 
         >>> g = dgl.heterograph({
         >>> g = dgl.heterograph({
         ...     ('author', 'writes', 'paper'): ([0, 1, 1, 2, 3, 3, 4],
         ...                                     [0, 0, 1, 1, 1, 2, 2])})
-        >>> g.nodes['author'].data['x'] = torch.ones(5, 128)
-        >>> g.nodes['paper'].data['x'] = torch.ones(3, 128)
+        >>> g.nodes['author'].data['x'] = torch.randn(5, 3)
+        >>> g.nodes['paper'].data['x'] = torch.randn(5, 3)
         >>> data = from_dgl(g)
         >>> data
         HeteroData(
-        author={ x=[5, 128] },
-        paper={ x=[3, 128] },
+        author={ x=[5, 3] },
+        paper={ x=[3, 3] },
         (author, writes, paper)={ edge_index=[2, 7] }
         )
     """
-
     import dgl
 
     from torch_geometric.data import Data, HeteroData
 
-    if isinstance(g, dgl.DGLGraph):
-        if g.is_homogeneous:
-            data = Data()
-            for attr, value in g.ndata.items():
-                setattr(data, attr, value)
-            for attr, value in g.edata.items():
-                setattr(data, attr, value)
+    if not isinstance(g, dgl.DGLGraph):
+        raise ValueError(f"Invalid data type (got '{type(g)}')")
 
-            u, v = g.edges()
-            data.edge_index = torch.stack([u, v])
-        else:
-            node_data_dict = {}
-            for ntype in g.ntypes:
-                node_data_dict[ntype] = g.nodes[ntype].data
-            data = HeteroData(node_data_dict)
+    if g.is_homogeneous:
+        data = Data()
+        data.edge_index = torch.stack(g.edges(), dim=0)
 
-            for canonical in g.canonical_etypes:
-                u, v = g.edges(form="uv", etype=canonical)
-                data[canonical].edge_index = torch.stack([u, v])
-                for attr, value in g.edge_attr_schemes(canonical).items():
-                    data[canonical].edge_attr[attr] = value
-    else:
-        raise ValueError("Data type not supported")
+        for attr, value in g.ndata.items():
+            data[attr] = value
+        for attr, value in g.edata.items():
+            data[attr] = value
+
+        return data
+
+    data = HeteroData()
+
+    for node_type in g.ntypes:
+        for attr, value in g.nodes[node_type].data.items():
+            data[node_type][attr] = value
+
+    for edge_type in g.canonical_etypes:
+        row, col = g.edges(form="uv", etype=edge_type)
+        data[edge_type].edge_index = torch.stack([row, col], dim=0)
+        for attr, value in g.edge_attr_schemes(edge_type).items():
+            data[edge_type][attr] = value
+
     return data
