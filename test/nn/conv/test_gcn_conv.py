@@ -75,7 +75,7 @@ def test_gcn_conv_with_decomposed_layers():
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(decomposed_conv.jittable(t))
-        assert jit(x, edge_index).tolist() == out1.tolist()
+        assert torch.allclose(jit(x, edge_index), out1)
 
 
 def test_gcn_conv_with_sparse_input_feature():

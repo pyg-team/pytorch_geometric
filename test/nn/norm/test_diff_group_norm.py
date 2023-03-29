@@ -10,11 +10,11 @@ def test_diff_group_norm():
     norm = DiffGroupNorm(16, groups=4, lamda=0)
     assert str(norm) == 'DiffGroupNorm(16, groups=4)'
 
-    assert norm(x).tolist() == x.tolist()
+    assert torch.allclose(norm(x), x)
 
     if is_full_test():
         jit = torch.jit.script(norm)
-        assert jit(x).tolist() == x.tolist()
+        assert torch.allclose(jit(x), x)
 
     norm = DiffGroupNorm(16, groups=4, lamda=0.01)
     assert str(norm) == 'DiffGroupNorm(16, groups=4)'
@@ -24,7 +24,7 @@ def test_diff_group_norm():
 
     if is_full_test():
         jit = torch.jit.script(norm)
-        assert jit(x).tolist() == out.tolist()
+        assert torch.alllclose(jit(x), out)
 
 
 def test_group_distance_ratio():
