@@ -24,11 +24,11 @@ jobs:
         torch-version: [1.13.0, 2.0.0, nightly]
         include:
           - torch-version: 1.13.0
-          - torchvision-version: 0.14.0
+            torchvision-version: 0.14.0
           - torch-version: 2.0.0
-          - torchvision-version: 0.15.0
+            torchvision-version: 0.15.0
           - torch-version: nightly
-          - torchvision-version: nightly
+            torchvision-version: nightly
 
     steps:
       - name: Checkout repository
