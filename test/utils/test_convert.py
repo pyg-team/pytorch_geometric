@@ -6,6 +6,7 @@ from torch_geometric.data import Data
 from torch_geometric.testing import withPackage
 from torch_geometric.utils import (
     from_cugraph,
+    from_dgl,
     from_networkit,
     from_networkx,
     from_scipy_sparse_matrix,
@@ -13,6 +14,7 @@ from torch_geometric.utils import (
     sort_edge_index,
     subgraph,
     to_cugraph,
+    to_dgl,
     to_networkit,
     to_networkx,
     to_scipy_sparse_matrix,
@@ -481,3 +483,96 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
         assert torch.allclose(edge_weight, cu_edge_weight.cpu())
     else:
         assert cu_edge_weight is None
+
+
+@withPackage('dgl')
+def test_from_dgl_graph():
+    import dgl
+    g = dgl.graph(([0, 0, 1, 5], [1, 2, 2, 0]))
+    g.ndata['x'] = torch.ones(g.num_nodes(), 3)
+    g.edata['w'] = torch.ones(g.num_edges(), dtype=torch.int32)
+    data = from_dgl(g)
+
+    assert torch.equal(data.w,  g.edata["w"])
+    assert torch.equal(data.x,  g.ndata["x"])
+    data_row, data_col = data.edge_index
+    g_row, g_col = g.edges()
+    assert torch.equal(data_row, g_row)
+    assert torch.equal(data_col, g_col)
+
+
+@withPackage('dgl')
+def test_to_dgl_graph():
+    import dgl
+    edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
+    x = torch.ones(5, 3)
+    y = torch.tensor([1, 1, 1, 1, 1, 0], dtype=torch.float)
+    data = Data(x=x, edge_index=edge_index, edge_attr=y)
+    g = to_dgl(data)
+
+    assert torch.equal(data.edge_attr,  g.edata["edge_attr"])
+    assert torch.equal(data.x,  g.ndata["x"])
+    data_row, data_col = data.edge_index
+    g_row, g_col = g.edges()
+    assert torch.equal(data_row, g_row)
+    assert torch.equal(data_col, g_col)
+
+
+@withPackage('dgl')
+def test_to_dgl_heterograph():
+    import dgl
+
+    from torch_geometric.data import HeteroData
+
+    data = HeteroData()
+    data['paper'].x = torch.ones(5, 3)
+    data['authors'].x = torch.ones(5, 3)
+    data['authors', 'cites', 'paper'].edge_attr = torch.ones(5, 1)
+    data['authors', 'cites', 'paper'].edge_index = torch.tensor(
+                    [[0, 1, 2, 3, 4],[0, 1, 2, 3, 4]])
+    g = to_dgl(data)
+    assert data.num_edges == g.num_edges(('authors', 'cites', 'paper'))
+    assert data.num_nodes == g.num_nodes("authors") + g.num_nodes("paper")
+    assert torch.equal(data["paper"].x, g.nodes["paper"].data["x"])
+    assert torch.equal(data["authors"].x, g.nodes["authors"].data["x"])
+
+    data_row, data_col = data.edge_stores[0]["edge_index"]
+    g_row, g_col = g.edges()
+    assert torch.equal(data_row, g_row)
+    assert torch.equal(data_col, g_col)
+    assert torch.equal(g.edata["edge_attr"], data['authors', 'cites', 'paper'].edge_attr)
+
+
+@withPackage('dgl')
+def test_from_dgl_heterograph():
+    import dgl
+    g = dgl.heterograph({
+    ('author', 'writes', 'paper'): ([0, 1, 1, 2, 3, 3, 4], [0, 0, 1, 1, 1, 2, 2])})
+    g.nodes['author'].data['x'] = torch.ones(5, 3)
+    g.nodes['paper'].data['x'] = torch.ones(3, 3)
+    data = from_dgl(g)
+    assert data.num_edges == g.num_edges(('author', 'writes', 'paper'))
+    assert data.num_nodes == g.num_nodes("author") + g.num_nodes("paper")
+    assert torch.equal(data["paper"].x, g.nodes["paper"].data["x"])
+    assert torch.equal(data["author"].x, g.nodes["author"].data["x"])
+
+@withPackage('dgl')
+def test_to_dgl_sparse():
+    import dgl
+
+    from torch_geometric.transforms import ToSparseTensor
+    edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
+    x = torch.ones(5, 3)
+    y = torch.tensor([1, 1, 1, 1, 1, 0], dtype=torch.float)
+    data = Data(x=x, edge_index=edge_index, edge_attr=y)
+    data = ToSparseTensor()(data)
+    g = to_dgl(data)
+
+    assert torch.equal(data.edge_attr,  g.edata["edge_attr"])
+    assert torch.equal(data.x,  g.ndata["x"])
+    data_row, data_col, _ = data.adj_t.t().coo()
+    g_row, g_col = g.edges()
+    assert torch.equal(data_row, g_row)
+    assert torch.equal(data_col, g_col)
+
+
