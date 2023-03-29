@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.testing import get_random_edge_index
-from torch_geometric.utils import construct_bipartite_edge_index
+from torch_geometric.utils.hetero import construct_bipartite_edge_index
 
 
 def test_construct_bipartite_edge_index():
