@@ -29,7 +29,7 @@ repos:
         args: [-d, '{extends: default, rules: {line-length: disable, document-start: disable, truthy: {level: error}, braces: {max-spaces-inside: 1}}}']
 
   - repo: https://github.com/regebro/pyroma
-    rev: "4.1"
+    rev: "4.2"
     hooks:
       - id: pyroma
         name: Check packaging
