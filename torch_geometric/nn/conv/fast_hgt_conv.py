@@ -1,9 +1,7 @@
 import math
-from collections import defaultdict
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
@@ -11,14 +9,9 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import HeteroDictLinear, HeteroLinear
 from torch_geometric.nn.inits import ones
 from torch_geometric.nn.parameter_dict import ParameterDict
-from torch_geometric.typing import (
-    Adj,
-    EdgeType,
-    Metadata,
-    NodeType,
-    SparseTensor,
-)
+from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType
 from torch_geometric.utils import softmax
+from torch_geometric.utils.hetero import construct_bipartite_edge_index
 
 
 class FastHGTConv(MessagePassing):
@@ -43,14 +36,13 @@ class FastHGTConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
-
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
+        self.dst_node_types = list(set(metadata[1][1]))
         self.src_types = [edge_type[0] for edge_type in self.edge_types]
 
-        self.k_lin = HeteroDictLinear(self.in_channels, self.out_channels)
-        self.q_lin = HeteroDictLinear(self.in_channels, self.out_channels)
-        self.v_lin = HeteroDictLinear(self.in_channels, self.out_channels)
+        self.kqv_lin = HeteroDictLinear(self.in_channels,
+                                        self.out_channels * 3)
 
         self.out_lin = HeteroDictLinear(self.out_channels, self.out_channels,
                                         types=self.node_types)
@@ -77,9 +69,7 @@ class FastHGTConv(MessagePassing):
 
     def reset_parameters(self):
         super().reset_parameters()
-        self.k_lin.reset_parameters()
-        self.q_lin.reset_parameters()
-        self.v_lin.reset_parameters()
+        self.kqv_lin.reset_parameters()
         self.out_lin.reset_parameters()
         self.k_rel.reset_parameters()
         self.v_rel.reset_parameters()
@@ -115,8 +105,8 @@ class FastHGTConv(MessagePassing):
         for edge_type in self.edge_types:
             src, _, _ = edge_type
 
-            ks.append(k_dict[src].view(-1, D))
-            vs.append(v_dict[src].view(-1, D))
+            ks.append(k_dict[src].reshape(-1, D))
+            vs.append(v_dict[src].reshape(-1, D))
 
             N = k_dict[src].size(0)
             for _ in range(H):
@@ -130,49 +120,6 @@ class FastHGTConv(MessagePassing):
         v = self.v_rel(torch.cat(vs, dim=0), type_vec).view(-1, H, D)
 
         return k, v, offset
-
-    def _construct_edge_index(
-        self,
-        edge_index_dict: Dict[EdgeType, Adj],
-        src_offset: Dict[EdgeType, int],
-        dst_offset: [NodeType, int],
-    ) -> Tuple[Adj, Tensor]:
-        """Constructs a tensor of edge indices by concatenating edge indices
-        for each edge type. The edge indices are increased by the offset of the
-        source and destination nodes."""
-        edge_indices: List[Tensor] = []
-        ps: List[Tensor] = []
-
-        for edge_type in self.edge_types:
-            _, _, dst_type = edge_type
-
-            edge_index = edge_index_dict[edge_type]
-
-            # (TODO) Add support for SparseTensor w/o converting.
-            is_sparse = isinstance(edge_index, SparseTensor)
-            if is_sparse:  # Convert to COO
-                dst, src, _ = edge_index.coo()
-                edge_index = torch.stack([src, dst], dim=0)
-            else:
-                edge_index = edge_index.clone()
-
-            p = self.p_rel['__'.join(edge_type)].expand(edge_index.size(1), -1)
-            ps.append(p)
-
-            # Add offset to edge indices:
-            edge_index[0] += src_offset[edge_type]
-            edge_index[1] += dst_offset[dst_type]
-            edge_indices.append(edge_index)
-
-        # Concatenate all edges and edge tensors:
-        p = torch.cat(ps, dim=0)
-        edge_index = torch.cat(edge_indices, dim=1)
-
-        if is_sparse:
-            edge_index = SparseTensor(row=edge_index[1], col=edge_index[0],
-                                      value=p)
-
-        return edge_index, p
 
     def forward(
         self,
@@ -195,26 +142,24 @@ class FastHGTConv(MessagePassing):
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
-        H, D = self.heads, self.out_channels // self.heads
+        F = self.out_channels
+        H = self.heads
+        D = F // H
 
-        k_dict, q_dict, v_dict = {}, {}, {}
-        out_dict = defaultdict(list)
+        k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
 
         # Compute K, Q, V over node types:
-        k_dict = self.k_lin(x_dict)
-        k_dict = {k: v.view(-1, H, D) for k, v in k_dict.items()}
-
-        q_dict = self.q_lin(x_dict)
-        q_dict = {k: v.view(-1, H, D) for k, v in q_dict.items()}
-
-        v_dict = self.v_lin(x_dict)
-        v_dict = {k: v.view(-1, H, D) for k, v in v_dict.items()}
+        kqv_dict = self.kqv_lin(x_dict)
+        for key, val in kqv_dict.items():
+            k_dict[key] = val[:, :F].view(-1, H, D)
+            q_dict[key] = val[:, F:2 * F].view(-1, H, D)
+            v_dict[key] = val[:, 2 * F:].view(-1, H, D)
 
         q, dst_offset = self._cat(q_dict)
         k, v, src_offset = self._construct_src_node_feat(k_dict, v_dict)
 
-        edge_index, edge_attr = self._construct_edge_index(
-            edge_index_dict, src_offset, dst_offset)
+        edge_index, edge_attr = construct_bipartite_edge_index(
+            edge_index_dict, src_offset, dst_offset, edge_attr_dict=self.p_rel)
 
         out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
                              size=None)
@@ -225,11 +170,14 @@ class FastHGTConv(MessagePassing):
             out_dict[node_type] = out[start_offset:end_offset]
 
         # Transform output node embeddings:
-        a_dict = self.out_lin({k: F.gelu(v) for k, v in out_dict.items()})
+        a_dict = self.out_lin({
+            k: torch.nn.functional.gelu(v) if v is not None else v
+            for k, v in out_dict.items()
+        })
 
         # Iterate over node types:
         for node_type, out in out_dict.items():
-            if out is None:
+            if out is None or node_type not in self.dst_node_types:
                 out_dict[node_type] = None
                 continue
             else:
