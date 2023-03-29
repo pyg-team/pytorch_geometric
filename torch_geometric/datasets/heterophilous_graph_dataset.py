@@ -119,7 +119,7 @@ class HeterophilousGraphDataset(InMemoryDataset):
         data = Data(x=x, y=y, edge_index=edge_index, train_mask=train_mask,
                     val_mask=val_mask, test_mask=test_mask)
 
-        data = ToUndirected()(data)
+        data.edge_index = to_undirected(data.edge_index)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
