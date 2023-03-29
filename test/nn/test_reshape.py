@@ -10,4 +10,4 @@ def test_reshape():
     assert str(op) == 'Reshape(5, 2, 4)'
 
     assert op(x).size() == (5, 2, 4)
-    assert op(x).view(10, 4).tolist() == x.tolist()
+    assert torch.equal(op(x).view(10, 4), x)
