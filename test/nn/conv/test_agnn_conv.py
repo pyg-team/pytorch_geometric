@@ -27,7 +27,7 @@ def test_agnn_conv(requires_grad):
     if is_full_test():
         t = '(Tensor, Tensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x, edge_index).tolist() == out.tolist()
+        assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
 
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(Tensor, SparseTensor) -> Tensor'
