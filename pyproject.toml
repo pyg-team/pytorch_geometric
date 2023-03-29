@@ -1,3 +1,7 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
 [project]
 name="torch_geometric"
 version="2.4.0"
@@ -25,8 +29,65 @@ classifiers=[
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3 :: Only",
 ]
+dependencies=[
+    "tqdm",
+    "numpy",
+    "scipy",
+    "jinja2",
+    "requests",
+    "pyparsing",
+    "scikit-learn",
+    "psutil>=5.8.0",
+]
 
-dynamic=["dependencies", "optional-dependencies"]
+[project.optional-dependencies]
+graphgym=[
+    "yacs",
+    "hydra-core",
+    "protobuf<4.21",
+    "pytorch-lightning",
+]
+modelhub=[
+    "huggingface_hub"
+]
+benchmark=[
+    "protobuf<4.21",
+    "wandb",
+    "pandas",
+    "networkx",
+    "matplotlib",
+]
+test=[
+    "pytest",
+    "pytest-cov",
+    "onnx",
+    "onnxruntime",
+]
+dev=[
+    "torch_geometric[test]",
+    "pre-commit",
+]
+full = [
+    "torch_geometric[graphgym, modelhub]",
+    "ase",
+    "h5py",
+    "numba",
+    "sympy",
+    "pandas",
+    "captum",
+    "rdflib",
+    "trimesh",
+    "networkx",
+    "graphviz",
+    "tabulate",
+    "matplotlib",
+    "torchmetrics",
+    "scikit-image",
+    "pytorch-memlab",
+    "pgmpy",
+    "opt_einsum",
+    "statsmodels"
+]
 
 [project.urls]
 homepage="https://pyg.org"

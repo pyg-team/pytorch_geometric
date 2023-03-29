@@ -2,7 +2,6 @@ import os
 import os.path as osp
 from datetime import datetime
 
-import pandas as pd
 import torch
 from ogb.nodeproppred import PygNodePropPredDataset
 from tqdm import tqdm
@@ -143,6 +142,7 @@ def save_benchmark_data(csv_data, batch_size, layers, num_neighbors,
 
 
 def write_to_csv(csv_data, training=False):
+    import pandas as pd
     results_path = osp.join(osp.dirname(osp.realpath(__file__)), '../results/')
     os.makedirs(results_path, exist_ok=True)
 

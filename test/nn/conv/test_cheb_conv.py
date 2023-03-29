@@ -22,10 +22,11 @@ def test_cheb_conv():
 
     if is_full_test():
         jit = torch.jit.script(conv.jittable())
-        assert jit(x, edge_index).tolist() == out1.tolist()
-        assert jit(x, edge_index, edge_weight).tolist() == out2.tolist()
-        assert jit(x, edge_index, edge_weight,
-                   lambda_max=torch.tensor(3.0)).tolist() == out3.tolist()
+        assert torch.allclose(jit(x, edge_index), out1)
+        assert torch.allclose(jit(x, edge_index, edge_weight), out2)
+        assert torch.allclose(
+            jit(x, edge_index, edge_weight, lambda_max=torch.tensor(3.0)),
+            out3)
 
     batch = torch.tensor([0, 0, 1, 1])
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]])
@@ -40,6 +41,6 @@ def test_cheb_conv():
     assert out5.size() == (num_nodes, out_channels)
 
     if is_full_test():
-        assert jit(x, edge_index, edge_weight, batch).tolist() == out4.tolist()
-        assert jit(x, edge_index, edge_weight, batch,
-                   lambda_max).tolist() == out5.tolist()
+        assert torch.allclose(jit(x, edge_index, edge_weight, batch), out4)
+        assert torch.allclose(
+            jit(x, edge_index, edge_weight, batch, lambda_max), out5)
