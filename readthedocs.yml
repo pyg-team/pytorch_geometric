@@ -8,7 +8,6 @@ python:
    system_packages: true
    install:
       - requirements: docs/requirements.txt
-      # Equivalent to 'pip install .'
       - method: pip
         path: .
 

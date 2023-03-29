@@ -18,7 +18,7 @@ keywords=[
     "graph-neural-networks",
     "graph-convolutional-networks",
 ]
-classifiers = [
+classifiers=[
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
@@ -29,7 +29,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3 :: Only",
 ]
-dependencies = [
+dependencies=[
     "tqdm",
     "numpy",
     "scipy",
@@ -41,29 +41,29 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-graphgym = [
+graphgym=[
     "yacs",
     "hydra-core",
     "protobuf<4.21",
     "pytorch-lightning",
 ]
-modelhub = [
+modelhub=[
     "huggingface_hub"
 ]
-benchmark = [
+benchmark=[
     "protobuf<4.21",
     "wandb",
     "pandas",
     "networkx",
     "matplotlib",
 ]
-test = [
+test=[
     "pytest",
     "pytest-cov",
     "onnx",
     "onnxruntime",
 ]
-dev = [
+dev=[
     "torch_geometric[test]",
     "pre-commit",
 ]

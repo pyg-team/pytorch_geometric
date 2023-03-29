@@ -1,6 +1,3 @@
-ci:
-  autofix_prs: true
-  autoupdate_commit_msg: '[pre-commit.ci] pre-commit suggestions'
   autoupdate_schedule: quarterly
 
 repos:
@@ -29,7 +26,7 @@ repos:
         args: [-d, '{extends: default, rules: {line-length: disable, document-start: disable, truthy: {level: error}, braces: {max-spaces-inside: 1}}}']
 
   - repo: https://github.com/regebro/pyroma
-    rev: "4.2"
+    rev: "4.1"
     hooks:
       - id: pyroma
         name: Check packaging

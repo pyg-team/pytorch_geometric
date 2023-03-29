@@ -35,11 +35,7 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
         with:
-          python-version: 3.8
           full_install: false
-          cache: pip
-          cache-dependency-path: |
-            pyproject.toml
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
