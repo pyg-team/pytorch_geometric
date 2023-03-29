@@ -12,7 +12,7 @@ from torch_geometric.utils import (
     spmm,
     to_edge_index,
 )
-from torch_geometric.utils.sparse import get_sparse_diag, set_sparse_value
+from torch_geometric.utils.sparse import set_sparse_value
 
 
 class ClusterGCNConv(MessagePassing):
@@ -71,6 +71,7 @@ class ClusterGCNConv(MessagePassing):
         self.lin_root.reset_parameters()
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        num_nodes = x.size(self.node_dim)
         edge_weight: OptTensor = None
 
         if isinstance(edge_index, SparseTensor):
@@ -94,13 +95,7 @@ class ClusterGCNConv(MessagePassing):
                                           "supported in 'gcn_norm'")
 
             if self.add_self_loops:
-                diag = get_sparse_diag(edge_index.size(0), 1.0,
-                                       edge_index.layout, edge_index.dtype,
-                                       edge_index.device)
-                edge_index = edge_index + diag
-
-            if edge_index.layout == torch.sparse_coo:
-                edge_index = edge_index.coalesce()
+                edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)
 
             col_and_row, value = to_edge_index(edge_index)
             col, row = col_and_row[0], col_and_row[1]
@@ -112,7 +107,6 @@ class ClusterGCNConv(MessagePassing):
             edge_index = set_sparse_value(edge_index, edge_weight)
 
         else:
-            num_nodes = x.size(self.node_dim)
             if self.add_self_loops:
                 edge_index, _ = remove_self_loops(edge_index)
                 edge_index, _ = add_self_loops(edge_index, num_nodes=num_nodes)

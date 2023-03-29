@@ -3,7 +3,25 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [2.3.0] - 2023-MM-DD
+## [2.4.0] - 2023-MM-DD
+
+### Added
+
+- Added `to_dgl` and `from_dgl` conversion functions ([#7053](https://github.com/pyg-team/pytorch_geometric/pull/7053))
+- Added support for `torch.jit.script` within `MessagePassing` layers without `torch_sparse` being installed ([#7061](https://github.com/pyg-team/pytorch_geometric/pull/7061), [#7062](https://github.com/pyg-team/pytorch_geometric/pull/7062))
+- Added unbatching logic for `torch.sparse` tensors ([#7037](https://github.com/pyg-team/pytorch_geometric/pull/7037))
+- Added the `RotatE` KGE model ([#7026](https://github.com/pyg-team/pytorch_geometric/pull/7026))
+
+### Changed
+
+- Edges in `HeterophilousGraphDataset` are now undirected by default ([#7065](https://github.com/pyg-team/pytorch_geometric/pull/7065))
+- Fixed a bug in `FastHGTConv` that computed values via parameters used to compute the keys ([#7050](https://github.com/pyg-team/pytorch_geometric/pull/7050))
+- Accelerated sparse tensor conversion routines ([#7042](https://github.com/pyg-team/pytorch_geometric/pull/7042), [#7043](https://github.com/pyg-team/pytorch_geometric/pull/7043))
+- Change `torch_sparse.SparseTensor` logic to utilize `torch.sparse_csr` instead ([#7041](https://github.com/pyg-team/pytorch_geometric/pull/7041))
+
+### Removed
+
+## [2.3.0] - 2023-03-23
 
 ### Added
 

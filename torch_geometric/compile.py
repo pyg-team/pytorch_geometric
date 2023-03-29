@@ -76,7 +76,8 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
     for key in prev_state.keys():
         setattr(torch_geometric.typing, key, False)
 
-    # Temporarily adjust the logging level of `torch.compile`:
+    # Adjust the logging level of `torch.compile`:
+    # TODO (matthias) Disable only temporarily
     prev_log_level = {
         'torch._dynamo': logging.getLogger('torch._dynamo').level,
         'torch._inductor': logging.getLogger('torch._inductor').level,
@@ -90,9 +91,5 @@ def compile(model: Optional[Callable] = None, *args, **kwargs) -> Callable:
 
     # Finally, run `torch.compile` to create an optimized version:
     out = torch.compile(model, *args, **kwargs)
-
-    # Restore the previous state:
-    for key, value in prev_log_level.items():
-        logging.getLogger(key).setLevel(value)
 
     return out

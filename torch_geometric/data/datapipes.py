@@ -1,5 +1,5 @@
 import copy
-from typing import Any, Callable, Optional, Sequence
+from typing import Any, Callable, Iterator, Optional, Sequence
 
 import torch
 
@@ -45,7 +45,7 @@ class SMILESParser(IterDataPipe):
         self.smiles_key = smiles_key
         self.target_key = target_key
 
-    def __iter__(self) -> Any:
+    def __iter__(self) -> Iterator:
         for d in self.dp:
             if isinstance(d, str):
                 data = from_smiles(d)
@@ -76,7 +76,7 @@ class DatasetAdapter(IterDataPipe):
     def apply_sharding(self, num_shards: int, shard_idx: int):
         self.range = range(shard_idx, len(self), num_shards)
 
-    def __iter__(self) -> Any:
+    def __iter__(self) -> Iterator:
         for i in self.range:
             yield self.dataset[i]
 
@@ -93,7 +93,7 @@ def functional_transform(name: str) -> Callable:
                 self.dp = dp
                 self.fn = cls(*args, **kwargs)
 
-            def __iter__(self) -> Any:
+            def __iter__(self) -> Iterator:
                 for data in self.dp:
                     yield self.fn(copy.copy(data))
 

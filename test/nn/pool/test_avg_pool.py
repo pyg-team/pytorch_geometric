@@ -67,4 +67,4 @@ def test_avg_pool_neighbor_x():
         [10, 11],
         [10, 11],
     ]
-    assert data.edge_index.tolist() == edge_index.tolist()
+    assert torch.equal(data.edge_index, edge_index)

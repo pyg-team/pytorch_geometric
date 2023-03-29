@@ -1,4 +1,4 @@
-name: Documentation
+name: Testing PyTorch nightly
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -8,7 +8,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  make_html:
+  latest_pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,6 +26,7 @@ jobs:
             benchmark/**
             conda/**
             docker/**
+            docs/**
             examples/**
             graphgym/**
             README.md
@@ -35,19 +36,14 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
         with:
-          python-version: 3.8
-          full_install: false
-          cache: pip
-          cache-dependency-path: |
-            pyproject.toml
+          torch-version: nightly
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
-          pip install -e .
+          pip install -e .[full,test]
 
-      - name: Build documentation
+      - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          cd docs && make clean && make html SPHINXOPTS="-W"  # Fail on warning.
+          pytest

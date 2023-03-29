@@ -2,9 +2,10 @@ import copy
 
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.testing import withPackage
+from torch_geometric.typing import SparseTensor
 
 
 class MyTestDataset(InMemoryDataset):
@@ -117,6 +118,7 @@ def test_to_datapipe():
     assert torch.equal(dataset[1].edge_index, list(dp)[1].edge_index)
 
 
+@withPackage('torch_sparse')
 def test_in_memory_sparse_tensor_dataset():
     x = torch.randn(11, 16)
     adj = SparseTensor(
@@ -279,7 +281,8 @@ def test_lists_of_tensors_in_memory_dataset():
     assert dataset[3].xs[1].size() == (16, 4)
 
 
-def test_lists_of_SparseTensors():
+@withPackage('torch_sparse')
+def test_lists_of_sparse_tensors():
     e1 = torch.tensor([[4, 1, 3, 2, 2, 3], [1, 3, 2, 3, 3, 2]])
     e2 = torch.tensor([[0, 1, 4, 7, 2, 9], [7, 2, 2, 1, 4, 7]])
     e3 = torch.tensor([[3, 5, 1, 2, 3, 3], [5, 0, 2, 1, 3, 7]])

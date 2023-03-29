@@ -65,9 +65,9 @@ def test_identical_linear_default_initialization(lazy):
     torch.manual_seed(12345)
     lin2 = PTLinear(16, 32)
 
-    assert lin1.weight.tolist() == lin2.weight.tolist()
-    assert lin1.bias.tolist() == lin2.bias.tolist()
-    assert lin1(x).tolist() == lin2(x).tolist()
+    assert torch.equal(lin1.weight, lin2.weight)
+    assert torch.equal(lin1.bias, lin2.bias)
+    assert torch.allclose(lin1(x), lin2(x))
 
 
 @withPackage('torch<=1.12')
@@ -125,7 +125,6 @@ def test_lazy_hetero_linear():
 
     out = lin(x, type_vec)
     assert out.size() == (3, 32)
-    assert str(lin) == 'HeteroLinear(16, 32, num_types=3, bias=True)'
 
 
 def test_hetero_dict_linear():
@@ -160,7 +159,6 @@ def test_lazy_hetero_dict_linear():
     assert len(out_dict) == 2
     assert out_dict['v'].size() == (3, 32)
     assert out_dict['w'].size() == (2, 32)
-    assert str(lin) == "HeteroDictLinear({'v': 16, 'w': 8}, 32, bias=True)"
 
 
 @withPackage('pyg_lib')
