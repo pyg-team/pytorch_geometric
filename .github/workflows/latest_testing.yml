@@ -47,28 +47,4 @@ jobs:
       - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pytest test/test_debug.py test/test_experimental.py test/test_home.py test/test_seed.py test/test_typing.py
-          pytest test/contrib/
-          pytest test/data/
-          pytest test/datasets/
-          pytest test/explain/
-          pytest test/graphgym/
-          pytest test/io/
-          pytest test/loader/
-          pytest test/profile/
-          pytest test/sampler/
-          pytest test/testing/
-          pytest test/transforms/
-          pytest test/utils/
-          pytest test/visualization/
-          pytest test/nn/aggr
-          pytest test/nn/conv/test_message_passing.py
-          # pytest test/nn/conv
-          pytest test/nn/dense
-          pytest test/nn/functional
-          pytest test/nn/kge
-          pytest test/nn/models
-          pytest test/nn/norm
-          pytest test/nn/pool
-          pytest test/nn/unpool
-          pytest test/nn/test_compile_basic.py test/nn/test_compile_conv.py test/nn/test_compile_dynamic.py test/nn/test_data_parallel.py test/nn/test_encoding.py test/nn/test_inits.py test/nn/test_model_hub.py test/nn/test_model_summary.py test/nn/test_module_dict.py test/nn/test_parameter_dict.py test/nn/test_reshape.py test/nn/test_resolver.py test/nn/test_sequential.py test/nn/test_to_fixed_size_transformer.py test/nn/test_to_hetero_module.py test/nn/test_to_hetero_transformer.py test/nn/test_to_hetero_with_bases_transformer.py
+          pytest

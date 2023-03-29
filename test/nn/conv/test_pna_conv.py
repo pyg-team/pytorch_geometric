@@ -5,7 +5,7 @@ import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader, NeighborLoader
 from torch_geometric.nn import PNAConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, onlyNeighborSampler
 from torch_geometric.typing import SparseTensor
 
 aggregators = ['sum', 'mean', 'min', 'max', 'var', 'std']
@@ -43,7 +43,8 @@ def test_pna_conv(divide_input):
         assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
-def test_pna_conv_get_degree_histogram():
+@onlyNeighborSampler
+def test_pna_conv_get_degree_histogram_neighbor_loader():
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 2, 3], [1, 2, 3, 2, 0, 0, 0]])
     data = Data(num_nodes=5, edge_index=edge_index)
     loader = NeighborLoader(
@@ -56,6 +57,8 @@ def test_pna_conv_get_degree_histogram():
     deg_hist = PNAConv.get_degree_histogram(loader)
     assert torch.equal(deg_hist, torch.tensor([1, 2, 1, 1]))
 
+
+def test_pna_conv_get_degree_histogram_dataloader():
     edge_index_1 = torch.tensor([[0, 0, 0, 1, 1, 2, 3], [1, 2, 3, 2, 0, 0, 0]])
     edge_index_2 = torch.tensor([[1, 1, 2, 2, 0, 3, 3], [2, 3, 3, 1, 1, 0, 2]])
     edge_index_3 = torch.tensor([[1, 3, 2, 0, 0, 4, 2], [2, 0, 4, 1, 1, 0, 3]])

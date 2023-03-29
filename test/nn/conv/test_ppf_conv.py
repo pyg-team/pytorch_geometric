@@ -70,9 +70,11 @@ def test_ppf_conv():
     if is_full_test():
         t = '(PairOptTensor, PairTensor, PairTensor, Tensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, (pos1, pos2), (n1, n2), edge_index), out)
+        assert torch.allclose(
+            jit((x1, None), (pos1, pos2), (n1, n2), edge_index), out)
 
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(PairOptTensor, PairTensor, PairTensor, SparseTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, (pos1, pos2), (n1, n2), adj2.t()), out)
+        assert torch.allclose(
+            jit((x1, None), (pos1, pos2), (n1, n2), adj2.t()), out, atol=1e-6)

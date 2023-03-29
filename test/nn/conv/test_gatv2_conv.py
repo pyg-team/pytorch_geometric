@@ -90,6 +90,7 @@ def test_gatv2_conv():
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit((x1, x2), edge_index), out)
 
+    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(OptPairTensor, SparseTensor, OptTensor, NoneType) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)
