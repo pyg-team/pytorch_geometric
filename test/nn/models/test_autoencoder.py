@@ -13,11 +13,12 @@ def test_gae():
 
     x = torch.Tensor([[1, -1], [1, 2], [2, 1]])
     z = model.encode(x)
-    assert z.tolist() == x.tolist()
+    assert torch.allclose(z, x)
 
     adj = model.decoder.forward_all(z)
-    assert adj.tolist() == torch.sigmoid(
-        torch.Tensor([[+2, -1, +1], [-1, +5, +4], [+1, +4, +5]])).tolist()
+    assert torch.allclose(
+        adj,
+        torch.Tensor([[+2, -1, +1], [-1, +5, +4], [+1, +4, +5]]).sigmoid())
 
     edge_index = torch.tensor([[0, 1], [1, 2]])
     value = model.decode(z, edge_index)

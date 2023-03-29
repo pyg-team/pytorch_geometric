@@ -46,10 +46,10 @@ except (ImportError, OSError) as e:
     class SparseTensor:
         def __init__(
             self,
-            row: Optional[torch.Tensor] = None,
-            rowptr: Optional[torch.Tensor] = None,
-            col: Optional[torch.Tensor] = None,
-            value: Optional[torch.Tensor] = None,
+            row: Optional[Tensor] = None,
+            rowptr: Optional[Tensor] = None,
+            col: Optional[Tensor] = None,
+            value: Optional[Tensor] = None,
             sparse_sizes: Optional[Tuple[Optional[int], Optional[int]]] = None,
             is_sorted: bool = False,
             trust_data: bool = False,
@@ -59,8 +59,8 @@ except (ImportError, OSError) as e:
         @classmethod
         def from_edge_index(
             self,
-            edge_index: torch.Tensor,
-            edge_attr: Optional[torch.Tensor] = None,
+            edge_index: Tensor,
+            edge_attr: Optional[Tensor] = None,
             sparse_sizes: Optional[Tuple[Optional[int], Optional[int]]] = None,
             is_sorted: bool = False,
             trust_data: bool = False,
@@ -76,6 +76,10 @@ except (ImportError, OSError) as e:
         def has_value(self) -> bool:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
+        def set_value(self, value: Optional[Tensor],
+                      layout: Optional[str] = None) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
         def fill_value(self, fill_value: float,
                        dtype: Optional[torch.dtype] = None) -> 'SparseTensor':
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
@@ -89,7 +93,7 @@ except (ImportError, OSError) as e:
         def to_torch_sparse_csr_tensor(
             self,
             dtype: Optional[torch.dtype] = None,
-        ) -> torch.Tensor:
+        ) -> Tensor:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
     class torch_sparse:
@@ -107,9 +111,19 @@ except (ImportError, OSError) as e:
             raise ImportError("'mul' requires 'torch-sparse'")
 
         @staticmethod
+        def set_diag(src: SparseTensor, values: Optional[Tensor] = None,
+                     k: int = 0) -> SparseTensor:
+            raise ImportError("'set_diag' requires 'torch-sparse'")
+
+        @staticmethod
         def fill_diag(src: SparseTensor, fill_value: float,
                       k: int = 0) -> SparseTensor:
             raise ImportError("'fill_diag' requires 'torch-sparse'")
+
+        @staticmethod
+        def masked_select_nnz(src: SparseTensor, mask: Tensor,
+                              layout: Optional[str] = None) -> SparseTensor:
+            raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
 
 
 # Types for accessing data ####################################################
