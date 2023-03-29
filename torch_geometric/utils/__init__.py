@@ -131,7 +131,7 @@ __all__ = [
     'trim_to_layer',
     'train_test_split_edges',
     'to_dgl',
-    'from_dgl'
+    'from_dgl',
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
