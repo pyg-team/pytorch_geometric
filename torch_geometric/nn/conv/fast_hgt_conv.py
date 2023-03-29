@@ -2,7 +2,6 @@ import math
 from typing import Dict, List, Optional, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
@@ -143,17 +142,18 @@ class FastHGTConv(MessagePassing):
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
-        H, D = self.heads, self.out_channels // self.heads
+        F = self.out_channels
+        H = self.heads
+        D = F // H
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
 
         # Compute K, Q, V over node types:
         kqv_dict = self.kqv_lin(x_dict)
         for key, val in kqv_dict.items():
-            k_dict[key] = val[:, :self.out_channels].view(-1, H, D)
-            q_dict[key] = val[:, self.out_channels:2 * self.out_channels].view(
-                -1, H, D)
-            v_dict[key] = val[:, 2 * self.out_channels:].view(-1, H, D)
+            k_dict[key] = val[:, :F].view(-1, H, D)
+            q_dict[key] = val[:, F:2 * F].view(-1, H, D)
+            v_dict[key] = val[:, 2 * F:].view(-1, H, D)
 
         q, dst_offset = self._cat(q_dict)
         k, v, src_offset = self._construct_src_node_feat(k_dict, v_dict)
@@ -171,7 +171,7 @@ class FastHGTConv(MessagePassing):
 
         # Transform output node embeddings:
         a_dict = self.out_lin({
-            k: F.gelu(v) if v is not None else v
+            k: torch.nn.functional.gelu(v) if v is not None else v
             for k, v in out_dict.items()
         })
 

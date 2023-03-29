@@ -1,6 +1,5 @@
 import torch
 
-from torch_geometric import seed_everything
 from torch_geometric.data import HeteroData
 from torch_geometric.nn import FastHGTConv, HGTConv
 from torch_geometric.profile import benchmark
@@ -175,35 +174,37 @@ def test_hgt_conv_out_of_place():
     assert x_dict['paper'].size() == (6, 32)
 
 
-def test_FastHGT():
-    seed_everything(42)
-    data = HeteroData()
-    data['v0'].x = torch.randn(5, 4)
-    data['v1'].x = torch.randn(5, 4)
-    data['v2'].x = torch.randn(5, 4)
-    data[('v0', 'e1', 'v0')].edge_index = torch.randint(high=5, size=(2, 10))
-    data[('v0', 'e2', 'v1')].edge_index = torch.randint(high=5, size=(2, 10))
-    fast_net = FastHGTConv(4, 2, data.metadata())
-    og_net = HGTConv(4, 2, data.metadata())
-    x_dict = data.collect('x')
-    # make params match
-    for my_param in fast_net.parameters():
-        my_param.data = torch.ones_like(my_param.data)
-    for og_param in og_net.parameters():
-        og_param.data = torch.ones_like(og_param.data)
+def test_fast_hgt_conv():
+    x_dict = {
+        'v0': torch.randn(5, 4),
+        'v1': torch.randn(5, 4),
+        'v2': torch.randn(5, 4),
+    }
 
-    edge_index_dict = data.collect('edge_index')
-    our_o = fast_net(x_dict, edge_index_dict)
-    og_o = og_net(x_dict, edge_index_dict)
-    for node_type in data.node_types:
-        if og_o[node_type] is None and our_o[node_type] is None:
+    edge_index_dict = {
+        ('v0', 'e1', 'v0'): torch.randint(0, 5, size=(2, 10)),
+        ('v0', 'e2', 'v1'): torch.randint(0, 5, size=(2, 10)),
+    }
+
+    metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
+    conv1 = HGTConv(4, 2, metadata)
+    conv2 = FastHGTConv(4, 2, metadata)
+
+    # Make parameters match:
+    for my_param in conv1.parameters():
+        my_param.data.fill_(1)
+    for og_param in conv2.parameters():
+        og_param.data.fill_(1)
+
+    out_dict1 = conv1(x_dict, edge_index_dict)
+    out_dict2 = conv2(x_dict, edge_index_dict)
+
+    assert len(out_dict1) == len(out_dict2)
+    for key, out1 in out_dict1.items():
+        out2 = out_dict2[key]
+        if out1 is None and out2 is None:
             continue
-        assert torch.allclose(
-            our_o[node_type], og_o[node_type],
-            atol=3e-3), "features for " + node_type + " differ by = " + str(
-                our_o[node_type] -
-                og_o[node_type]) + "\nfast_hgt_out_dict=" + str(
-                    our_o) + "\noriginal_hgt_out_dict=" + str(og_o)
+        assert torch.allclose(out1, out2)
 
 
 if __name__ == '__main__':
