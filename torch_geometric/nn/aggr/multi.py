@@ -114,7 +114,11 @@ class MultiAggregation(Aggregation):
                 )
 
             elif mode == 'attn':
-                self.lin_heads =  HeteroDictLinear({str(i):channels for i, channels in enumerate(self.in_channels)}, self.out_channels)
+                self.lin_heads = HeteroDictLinear(
+                    {
+                        str(i): channels
+                        for i, channels in enumerate(self.in_channels)
+                    }, self.out_channels)
                 num_heads = mode_kwargs.pop('num_heads', 1)
                 self.multihead_attn = MultiheadAttention(
                     self.out_channels,
@@ -178,7 +182,9 @@ class MultiAggregation(Aggregation):
             return self.lin(torch.cat(inputs, dim=-1))
 
         if hasattr(self, 'multihead_attn'):
-            x = torch.stack(self.lin_heads({str(i):inputs[i] for i in range(len(inputs))}), dim=0)
+            x = torch.stack(
+                self.lin_heads({str(i): inputs[i]
+                                for i in range(len(inputs))}), dim=0)
             attn_out, _ = self.multihead_attn(x, x, x)
             return torch.mean(attn_out, dim=0)
 
