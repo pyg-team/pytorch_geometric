@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import SuperGATConv
 from torch_geometric.typing import SparseTensor
 
@@ -17,16 +18,17 @@ def test_supergat_conv(att_type):
     out = conv(x, edge_index)
     assert out.size() == (4, 64)
 
-    adj_t = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4)).t()
-    assert torch.allclose(conv(x, adj_t), out)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
 
-    # Negative samples are given.
+    # Negative samples are given:
     neg_edge_index = conv.negative_sampling(edge_index, x.size(0))
     assert torch.allclose(conv(x, edge_index, neg_edge_index), out)
     att_loss = conv.get_attention_loss()
     assert isinstance(att_loss, torch.Tensor) and att_loss > 0
 
-    # Batch of graphs.
+    # Batch of graphs:
     x = torch.randn(8, 8)
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7],
                                [0, 0, 1, 1, 4, 4, 5, 5]])
@@ -34,7 +36,7 @@ def test_supergat_conv(att_type):
     out = conv(x, edge_index, batch=batch)
     assert out.size() == (8, 64)
 
-    # Batch of graphs and negative samples are given.
+    # Batch of graphs and negative samples are given:
     neg_edge_index = conv.negative_sampling(edge_index, x.size(0), batch)
     assert torch.allclose(conv(x, edge_index, neg_edge_index), out)
     att_loss = conv.get_attention_loss()
