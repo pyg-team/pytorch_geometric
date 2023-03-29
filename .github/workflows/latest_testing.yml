@@ -37,7 +37,6 @@ jobs:
         uses: ./.github/actions/setup
         with:
           torch-version: nightly
-          full_install: false
 
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'

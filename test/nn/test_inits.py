@@ -36,26 +36,26 @@ def test_inits():
 
     nn = Lin(16, 16)
     uniform(size=4, value=nn.weight)
-    assert min(nn.weight.tolist()[0]) >= -0.5
-    assert max(nn.weight.tolist()[0]) <= 0.5
+    assert nn.weight[0].min() >= -0.5
+    assert nn.weight[0].max() <= 0.5
 
     glorot(nn.weight)
-    assert min(nn.weight.tolist()[0]) >= -1.25
-    assert max(nn.weight.tolist()[0]) <= 1.25
+    assert nn.weight[0].min() >= -1.25
+    assert nn.weight[0].max() <= 1.25
 
     glorot_orthogonal(nn.weight, scale=1.0)
-    assert min(nn.weight.tolist()[0]) >= -1.25
-    assert max(nn.weight.tolist()[0]) <= 1.25
+    assert nn.weight[0].min() >= -1.25
+    assert nn.weight[0].max() <= 1.25
 
 
 def test_reset():
     nn = Lin(16, 16)
     w = nn.weight.clone()
     reset(nn)
-    assert not nn.weight.tolist() == w.tolist()
+    assert not torch.allclose(nn.weight, w)
 
     nn = Seq(Lin(16, 16), ReLU(), Lin(16, 16))
     w_1, w_2 = nn[0].weight.clone(), nn[2].weight.clone()
     reset(nn)
-    assert not nn[0].weight.tolist() == w_1.tolist()
-    assert not nn[2].weight.tolist() == w_2.tolist()
+    assert not torch.allclose(nn[0].weight, w_1)
+    assert not torch.allclose(nn[2].weight, w_2)

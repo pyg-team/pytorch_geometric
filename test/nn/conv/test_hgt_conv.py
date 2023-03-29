@@ -2,7 +2,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.data import HeteroData
-from torch_geometric.nn import HGTConv
+from torch_geometric.nn import FastHGTConv, HGTConv
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import get_random_edge_index
 from torch_geometric.typing import SparseTensor
@@ -176,6 +176,39 @@ def test_hgt_conv_out_of_place():
 
     assert x_dict['author'].size() == (4, 16)
     assert x_dict['paper'].size() == (6, 32)
+
+
+def test_fast_hgt_conv():
+    x_dict = {
+        'v0': torch.randn(5, 4),
+        'v1': torch.randn(5, 4),
+        'v2': torch.randn(5, 4),
+    }
+
+    edge_index_dict = {
+        ('v0', 'e1', 'v0'): torch.randint(0, 5, size=(2, 10)),
+        ('v0', 'e2', 'v1'): torch.randint(0, 5, size=(2, 10)),
+    }
+
+    metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
+    conv1 = HGTConv(4, 2, metadata)
+    conv2 = FastHGTConv(4, 2, metadata)
+
+    # Make parameters match:
+    for my_param in conv1.parameters():
+        my_param.data.fill_(1)
+    for og_param in conv2.parameters():
+        og_param.data.fill_(1)
+
+    out_dict1 = conv1(x_dict, edge_index_dict)
+    out_dict2 = conv2(x_dict, edge_index_dict)
+
+    assert len(out_dict1) == len(out_dict2)
+    for key, out1 in out_dict1.items():
+        out2 = out_dict2[key]
+        if out1 is None and out2 is None:
+            continue
+        assert torch.allclose(out1, out2)
 
 
 if __name__ == '__main__':

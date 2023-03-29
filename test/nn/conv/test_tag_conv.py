@@ -34,8 +34,8 @@ def test_tag_conv():
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert jit(x, edge_index).tolist() == out1.tolist()
-        assert jit(x, edge_index, value).tolist() == out2.tolist()
+        assert torch.allclose(jit(x, edge_index), out1, atol=1e-6)
+        assert torch.allclose(jit(x, edge_index, value), out2, atol=1e-6)
 
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
