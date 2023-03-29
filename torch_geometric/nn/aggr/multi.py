@@ -139,8 +139,7 @@ class MultiAggregation(Aggregation):
         if self.mode == 'proj':
             self.lin.reset_parameters()
         if self.mode == 'attn':
-            for lin in self.lin_heads:
-                lin.reset_parameters()
+            self.lin_heads.reset_parameters()
             self.multihead_attn._reset_parameters()
 
     def get_out_channels(self, in_channels: int) -> int:
