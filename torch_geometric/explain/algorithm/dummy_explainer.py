@@ -11,7 +11,8 @@ from torch_geometric.typing import EdgeType, NodeType
 
 
 class DummyExplainer(ExplainerAlgorithm):
-    r"""A dummy explainer for testing purposes."""
+    r"""A dummy explainer that returns random explanations (useful for testing
+    purposes)."""
     def forward(
         self,
         model: torch.nn.Module,
@@ -20,28 +21,12 @@ class DummyExplainer(ExplainerAlgorithm):
         edge_attr: Optional[Union[Tensor, Dict[EdgeType, Tensor]]] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
-        r"""Returns random explanations based on the shape of the inputs.
-
-        Args:
-            model (torch.nn.Module): The model to explain.
-            x (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The input
-                node features of a homogeneous or heterogeneous graph.
-            edge_index (Union[torch.Tensor, Dict[NodeType, torch.Tensor]]): The
-                input edge indices of a homogeneous or heterogeneous graph.
-            edge_attr (Union[torch.Tensor, Dict[EdgeType, torch.Tensor]],
-                optional): The inputs edge attributes of a homogeneous or
-                heterogeneous graph. (default: :obj:`None`)
-
-        Returns:
-            Union[Explanation, HeteroExplanation]: A random explanation based
-                on the shape of the inputs.
-        """
         assert isinstance(x, (Tensor, dict))
 
         node_mask_type = self.explainer_config.node_mask_type
         edge_mask_type = self.explainer_config.edge_mask_type
 
-        if isinstance(x, Tensor):
+        if isinstance(x, Tensor):  # Homogeneous graph.
             assert isinstance(edge_index, Tensor)
 
             node_mask = None
@@ -57,7 +42,7 @@ class DummyExplainer(ExplainerAlgorithm):
                 edge_mask = torch.rand(edge_index.size(1), device=x.device)
 
             return Explanation(node_mask=node_mask, edge_mask=edge_mask)
-        else:
+        else:  # isinstance(x, dict):  # Heterogeneous graph.
             assert isinstance(edge_index, dict)
 
             node_dict = defaultdict(dict)

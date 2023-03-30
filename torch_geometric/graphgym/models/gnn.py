@@ -70,7 +70,6 @@ class GNNStackStage(nn.Module):
             self.add_module('layer{}'.format(i), layer)
 
     def forward(self, batch):
-        """"""
         for i, layer in enumerate(self.children()):
             x = batch.x
             batch = layer(batch)
@@ -116,7 +115,6 @@ class FeatureEncoder(nn.Module):
                                      has_bias=False, cfg=cfg))
 
     def forward(self, batch):
-        """"""
         for module in self.children():
             batch = module(batch)
         return batch
@@ -151,7 +149,6 @@ class GNN(nn.Module):
         self.apply(init_weights)
 
     def forward(self, batch):
-        """"""
         for module in self.children():
             batch = module(batch)
         return batch

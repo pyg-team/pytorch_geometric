@@ -30,9 +30,8 @@ class AQSOL(InMemoryDataset):
     the :class:`~torch_geometric.datasets.ZINC` dataset.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
             (default: :obj:`"train"`)
@@ -49,21 +48,22 @@ class AQSOL(InMemoryDataset):
             value, indicating whether the data object should be included in
             the final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 9,833
-              - ~17.6
-              - ~35.8
-              - 1
-              - 1
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 9,833
+          - ~17.6
+          - ~35.8
+          - 1
+          - 1
     """
     url = 'https://www.dropbox.com/s/lzu9lmukwov12kt/aqsol_graph_raw.zip?dl=1'
 

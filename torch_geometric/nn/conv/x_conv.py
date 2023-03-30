@@ -10,8 +10,7 @@ from torch.nn import Linear as L
 from torch.nn import Sequential as S
 
 from torch_geometric.nn import Reshape
-
-from ..inits import reset
+from torch_geometric.nn.inits import reset
 
 try:
     from torch_cluster import knn_graph
@@ -124,12 +123,13 @@ class XConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset(self.mlp1)
         reset(self.mlp2)
         reset(self.conv)
 
     def forward(self, x: Tensor, pos: Tensor, batch: Optional[Tensor] = None):
-        """"""
+        r"""Runs the forward pass of the module."""
         pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
         (N, D), K = pos.size(), self.kernel_size
 

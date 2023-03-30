@@ -5,7 +5,7 @@ from torch_geometric.transforms import SamplePoints
 
 
 def test_sample_points():
-    assert SamplePoints(1024).__repr__() == 'SamplePoints(1024)'
+    assert str(SamplePoints(1024)) == 'SamplePoints(1024)'
 
     pos = torch.Tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]])
     face = torch.tensor([[0, 1], [1, 2], [2, 3]])

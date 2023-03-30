@@ -16,7 +16,7 @@ class Flickr(InMemoryDataset):
     containing descriptions and common properties of images.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -26,19 +26,20 @@ class Flickr(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 89,250
-              - 899,756
-              - 500
-              - 7
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 89,250
+          - 899,756
+          - 500
+          - 7
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 

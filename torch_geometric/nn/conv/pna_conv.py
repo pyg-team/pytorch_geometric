@@ -3,15 +3,15 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import torch
 from torch import Tensor
 from torch.nn import ModuleList, Sequential
+from torch.utils.data import DataLoader
 
 from torch_geometric.nn.aggr import DegreeScalerAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import reset
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import degree
-
-from ..inits import reset
 
 
 class PNAConv(MessagePassing):
@@ -53,15 +53,15 @@ class PNAConv(MessagePassing):
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
-        aggregators (list of str): Set of aggregation function identifiers,
+        aggregators (List[str]): Set of aggregation function identifiers,
             namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"var"` and :obj:`"std"`.
-        scalers (list of str): Set of scaling function identifiers, namely
+        scalers (List[str]): Set of scaling function identifiers, namely
             :obj:`"identity"`, :obj:`"amplification"`,
             :obj:`"attenuation"`, :obj:`"linear"` and
             :obj:`"inverse_linear"`.
-        deg (Tensor): Histogram of in-degrees of nodes in the training set,
-            used by scalers to normalize.
+        deg (torch.Tensor): Histogram of in-degrees of nodes in the training
+            set, used by scalers to normalize.
         edge_dim (int, optional): Edge feature dimensionality (in case
             there are any). (default :obj:`None`)
         towers (int, optional): Number of towers (default: :obj:`1`).
@@ -71,12 +71,12 @@ class PNAConv(MessagePassing):
             aggregation (default: :obj:`1`).
         divide_input (bool, optional): Whether the input features should
             be split between towers or not (default: :obj:`False`).
-        act (str or Callable, optional): Pre- and post-layer activation
+        act (str or callable, optional): Pre- and post-layer activation
             function to use. (default: :obj:`"relu"`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
-        train_norm (bool, optional) Whether normalization parameters
+        train_norm (bool, optional): Whether normalization parameters
             are trainable. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
@@ -146,6 +146,7 @@ class PNAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if self.edge_dim is not None:
             self.edge_encoder.reset_parameters()
         for nn in self.pre_nns:
@@ -156,7 +157,7 @@ class PNAConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
-        """"""
+
         if self.divide_input:
             x = x.view(-1, self.towers, self.F_in)
         else:
@@ -192,17 +193,19 @@ class PNAConv(MessagePassing):
                 f'edge_dim={self.edge_dim})')
 
     @staticmethod
-    def get_degree_histogram(loader) -> Tensor:
-        max_degree = 0
+    def get_degree_histogram(loader: DataLoader) -> Tensor:
+        r"""Returns the degree histogram to be used as input for the :obj:`deg`
+        argument in :class:`PNAConv`."""
+        deg_histogram = torch.zeros(1, dtype=torch.long)
         for data in loader:
             d = degree(data.edge_index[1], num_nodes=data.num_nodes,
                        dtype=torch.long)
-            max_degree = max(max_degree, int(d.max()))
-        # Compute the in-degree histogram tensor
-        deg_histogram = torch.zeros(max_degree + 1, dtype=torch.long)
-        for data in loader:
-            d = degree(data.edge_index[1], num_nodes=data.num_nodes,
-                       dtype=torch.long)
-            deg_histogram += torch.bincount(d, minlength=deg_histogram.numel())
+            d_bincount = torch.bincount(d, minlength=deg_histogram.numel())
+            if d_bincount.size(0) > deg_histogram.size(0):
+                d_bincount[:deg_histogram.size(0)] += deg_histogram
+                deg_histogram = d_bincount
+            else:
+                assert d_bincount.size(0) == deg_histogram.size(0)
+                deg_histogram += d_bincount
 
         return deg_histogram

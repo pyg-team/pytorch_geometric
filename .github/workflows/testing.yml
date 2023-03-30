@@ -1,4 +1,4 @@
-name: Testing
+name: Testing PyTorch 2.0
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -29,6 +29,7 @@ jobs:
             docs/**
             examples/**
             graphgym/**
+            README.md
             CHANGELOG.md
 
       - name: Setup packages

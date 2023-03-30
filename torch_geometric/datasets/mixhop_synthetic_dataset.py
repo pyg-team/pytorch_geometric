@@ -19,7 +19,7 @@ class MixHopSyntheticDataset(InMemoryDataset):
     distribution, which are distinct for each class.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         homophily (float): The degree of homophily (one of :obj:`0.0`,
             :obj:`0.1`, ..., :obj:`0.9`).
         transform (callable, optional): A function/transform that takes in an

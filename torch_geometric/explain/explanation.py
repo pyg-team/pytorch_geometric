@@ -58,7 +58,7 @@ class ExplanationMixin:
                     f"Expected an 'edge_mask' with one dimension (got "
                     f"{store.edge_mask.dim()} dimensions)", raise_on_error)
 
-            if store.edge_mask.size(0) not in {store.num_edges}:
+            if store.edge_mask.size(0) != store.num_edges:
                 status = False
                 warn_or_raise(
                     f"Expected an 'edge_mask' with {store.num_edges} edges "
@@ -133,7 +133,7 @@ class ExplanationMixin:
 
 
 class Explanation(Data, ExplanationMixin):
-    r"""Holds all the obtained explanations of a homogenous graph.
+    r"""Holds all the obtained explanations of a homogeneous graph.
 
     The explanation object is a :obj:`~torch_geometric.data.Data` object and
     can hold node attributions and edge attributions.
@@ -250,7 +250,7 @@ class Explanation(Data, ExplanationMixin):
             kind='barh',
             figsize=(10, 7),
             title=title,
-            xlabel='Feature label',
+            ylabel='Feature label',
             xlim=[0, float(feat_importance.max()) + 0.3],
             legend=False,
         )
@@ -290,8 +290,8 @@ class Explanation(Data, ExplanationMixin):
 class HeteroExplanation(HeteroData, ExplanationMixin):
     r"""Holds all the obtained explanations of a heterogeneous graph.
 
-    The explanation object is a :obj:`~torch_geometric.hetero_data.HeteroData`
-    and can hold node-attributions, edge-attributions and feature-attributions.
+    The explanation object is a :obj:`~torch_geometric.data.HeteroData` object
+    and can hold node attributions and edge attributions.
     It can also hold the original graph if needed.
     """
     def validate(self, raise_on_error: bool = True) -> bool:

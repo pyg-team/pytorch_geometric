@@ -5,7 +5,7 @@ from torch_geometric.transforms import Delaunay
 
 
 def test_delaunay():
-    assert Delaunay().__repr__() == 'Delaunay()'
+    assert str(Delaunay()) == 'Delaunay()'
 
     pos = torch.tensor([[-1, -1], [-1, 1], [1, 1], [1, -1]], dtype=torch.float)
     data = Data(pos=pos)

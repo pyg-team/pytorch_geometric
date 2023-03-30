@@ -1,5 +1,6 @@
 import copy
 import warnings
+from abc import ABC
 from collections.abc import Mapping, Sequence
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
@@ -11,17 +12,17 @@ from torch_geometric.data.dataset import Dataset, IndexType
 from torch_geometric.data.separate import separate
 
 
-class InMemoryDataset(Dataset):
+class InMemoryDataset(Dataset, ABC):
     r"""Dataset base class for creating graph datasets which easily fit
     into CPU memory.
     Inherits from :class:`torch_geometric.data.Dataset`.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html#creating-in-memory-datasets>`__ for the accompanying
     tutorial.
 
     Args:
-        root (string, optional): Root directory where the dataset should be
-            saved. (default: :obj:`None`)
+        root (str, optional): Root directory where the dataset should be saved.
+            (optional: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -130,17 +131,37 @@ class InMemoryDataset(Dataset):
 
     @property
     def data(self) -> Any:
-        warnings.warn("It is not recommended to directly access the internal "
-                      "storage format `data` of an 'InMemoryDataset'. If you "
-                      "are absolutely certain what you are doing, access the "
-                      "internal storage via `InMemoryDataset._data` instead. "
-                      "Alternatively, you can access stacked individual "
-                      "attributes of every graph via `dataset.{attr_name}`.")
+        msg1 = ("It is not recommended to directly access the internal "
+                "storage format `data` of an 'InMemoryDataset'.")
+        msg2 = ("The given 'InMemoryDataset' only references a subset of "
+                "examples of the full dataset, but 'data' will contain "
+                "information of the full dataset.")
+        msg3 = ("The data of the dataset is already cached, so any "
+                "modifications to `data` will not be reflected when accessing "
+                "its elements. Clearing the cache now by removing all "
+                "elements in `dataset._data_list`.")
+        msg4 = ("If you are absolutely certain what you are doing, access the "
+                "internal storage via `InMemoryDataset._data` instead to "
+                "suppress this warning. Alternatively, you can access stacked "
+                "individual attributes of every graph via "
+                "`dataset.{attr_name}`.")
+
+        msg = msg1
+        if self._indices is not None:
+            msg += f' {msg2}'
+        if self._data_list is not None:
+            msg += f' {msg3}'
+            self._data_list = None
+        msg += f' {msg4}'
+
+        warnings.warn(msg)
+
         return self._data
 
     @data.setter
     def data(self, value: Any):
         self._data = value
+        self._data_list = None
 
     def __getattr__(self, key: str) -> Any:
         data = self.__dict__.get('_data')

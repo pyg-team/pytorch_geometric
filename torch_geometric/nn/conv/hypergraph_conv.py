@@ -4,12 +4,11 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.utils import softmax
+from torch_geometric.utils import scatter, softmax
 
 
 class HypergraphConv(MessagePassing):
@@ -102,6 +101,7 @@ class HypergraphConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         if self.use_attention:
             glorot(self.att)
@@ -110,18 +110,19 @@ class HypergraphConv(MessagePassing):
     def forward(self, x: Tensor, hyperedge_index: Tensor,
                 hyperedge_weight: Optional[Tensor] = None,
                 hyperedge_attr: Optional[Tensor] = None) -> Tensor:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
-            x (Tensor): Node feature matrix
+            x (torch.Tensor): Node feature matrix
                 :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
-            hyperedge_index (LongTensor): The hyperedge indices, *i.e.*
+            hyperedge_index (torch.Tensor): The hyperedge indices, *i.e.*
                 the sparse incidence matrix
                 :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}` mapping from
                 nodes to edges.
-            hyperedge_weight (Tensor, optional): Hyperedge weights
+            hyperedge_weight (torch.Tensor, optional): Hyperedge weights
                 :math:`\mathbf{W} \in \mathbb{R}^M`. (default: :obj:`None`)
-            hyperedge_attr (Tensor, optional): Hyperedge feature matrix in
-                :math:`\mathbb{R}^{M \times F}`.
+            hyperedge_attr (torch.Tensor, optional): Hyperedge feature matrix
+                in :math:`\mathbb{R}^{M \times F}`.
                 These features only need to get passed in case
                 :obj:`use_attention=True`. (default: :obj:`None`)
         """
@@ -148,13 +149,13 @@ class HypergraphConv(MessagePassing):
             alpha = softmax(alpha, hyperedge_index[0], num_nodes=x.size(0))
             alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
-        D = scatter_add(hyperedge_weight[hyperedge_index[1]],
-                        hyperedge_index[0], dim=0, dim_size=num_nodes)
+        D = scatter(hyperedge_weight[hyperedge_index[1]], hyperedge_index[0],
+                    dim=0, dim_size=num_nodes, reduce='sum')
         D = 1.0 / D
         D[D == float("inf")] = 0
 
-        B = scatter_add(x.new_ones(hyperedge_index.size(1)),
-                        hyperedge_index[1], dim=0, dim_size=num_edges)
+        B = scatter(x.new_ones(hyperedge_index.size(1)), hyperedge_index[1],
+                    dim=0, dim_size=num_edges, reduce='sum')
         B = 1.0 / B
         B[B == float("inf")] = 0
 

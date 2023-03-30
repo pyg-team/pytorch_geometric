@@ -153,10 +153,10 @@ RUN CPATH=/usr/local/cuda/include:$CPATH \
 
 RUN pip install scipy
 
-RUN pip install --no-index torch-scatter -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
- && pip install --no-index torch-sparse -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
- && pip install --no-index torch-cluster -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
- && pip install --no-index torch-spline-conv -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
+RUN pip install --no-index torch_scatter -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
+ && pip install --no-index torch_sparse -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
+ && pip install --no-index torch_cluster -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
+ && pip install --no-index torch_spline_conv -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
  && pip install torch-geometric
 
 # Set the default command to python3.

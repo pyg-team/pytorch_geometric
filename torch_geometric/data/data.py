@@ -37,7 +37,7 @@ from torch_geometric.typing import (
     OptTensor,
     SparseTensor,
 )
-from torch_geometric.utils import mask_select, subgraph
+from torch_geometric.utils import select, subgraph
 
 
 class BaseData(object):
@@ -160,10 +160,10 @@ class BaseData(object):
             in case node-level attributes are present, *e.g.*, :obj:`data.x`.
             In some cases, however, a graph may only be given without any
             node-level attributes.
-            PyG then *guesses* the number of nodes according to
+            :pyg:`PyG` then *guesses* the number of nodes according to
             :obj:`edge_index.max().item() + 1`.
             However, in case there exists isolated nodes, this number does not
-            have to be correct which can result in unexpected behaviour.
+            have to be correct which can result in unexpected behavior.
             Thus, we recommend to set the number of nodes in your data object
             explicitly via :obj:`data.num_nodes = ...`.
             You will be given a warning that requests you to do so.
@@ -363,10 +363,10 @@ class Data(BaseData, FeatureStore, GraphStore):
     r"""A data object describing a homogeneous graph.
     The data object can hold node-level, link-level and graph-level attributes.
     In general, :class:`~torch_geometric.data.Data` tries to mimic the
-    behaviour of a regular Python dictionary.
+    behavior of a regular Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/get_started/
     introduction.html#data-handling-of-graphs>`__ for the accompanying
     tutorial.
 
@@ -392,15 +392,15 @@ class Data(BaseData, FeatureStore, GraphStore):
         data = data.to('cuda:0', non_blocking=True)
 
     Args:
-        x (Tensor, optional): Node feature matrix with shape :obj:`[num_nodes,
-            num_node_features]`. (default: :obj:`None`)
+        x (torch.Tensor, optional): Node feature matrix with shape
+            :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
         edge_index (LongTensor, optional): Graph connectivity in COO format
             with shape :obj:`[2, num_edges]`. (default: :obj:`None`)
-        edge_attr (Tensor, optional): Edge feature matrix with shape
+        edge_attr (torch.Tensor, optional): Edge feature matrix with shape
             :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
-        y (Tensor, optional): Graph-level or node-level ground-truth labels
-            with arbitrary shape. (default: :obj:`None`)
-        pos (Tensor, optional): Node position matrix with shape
+        y (torch.Tensor, optional): Graph-level or node-level ground-truth
+            labels with arbitrary shape. (default: :obj:`None`)
+        pos (torch.Tensor, optional): Node position matrix with shape
             :obj:`[num_nodes, num_dimensions]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
     """
@@ -589,14 +589,15 @@ class Data(BaseData, FeatureStore, GraphStore):
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-        out = subgraph(subset, self.edge_index, relabel_nodes=True,
-                       num_nodes=self.num_nodes, return_edge_mask=True)
-        edge_index, _, edge_mask = out
-
         if subset.dtype == torch.bool:
             num_nodes = int(subset.sum())
         else:
             num_nodes = subset.size(0)
+            subset = torch.unique(subset, sorted=True)
+
+        out = subgraph(subset, self.edge_index, relabel_nodes=True,
+                       num_nodes=self.num_nodes, return_edge_mask=True)
+        edge_index, _, edge_mask = out
 
         data = copy.copy(self)
 
@@ -607,13 +608,10 @@ class Data(BaseData, FeatureStore, GraphStore):
                 data.num_nodes = num_nodes
             elif self.is_node_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
-                if subset.dtype == torch.bool:
-                    data[key] = mask_select(value, cat_dim, subset)
-                else:
-                    data[key] = value.index_select(cat_dim, subset)
+                data[key] = select(value, subset, dim=cat_dim)
             elif self.is_edge_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
-                data[key] = mask_select(value, cat_dim, edge_mask)
+                data[key] = select(value, edge_mask, dim=cat_dim)
 
         return data
 
@@ -631,10 +629,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         for key, value in self:
             if self.is_edge_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
-                if subset.dtype == torch.bool:
-                    data[key] = mask_select(value, cat_dim, subset)
-                else:
-                    data[key] = value.index_select(cat_dim, subset)
+                data[key] = select(value, subset, dim=cat_dim)
 
         return data
 
@@ -658,10 +653,10 @@ class Data(BaseData, FeatureStore, GraphStore):
         be reconstructed without any need to pass in additional arguments.
 
         Args:
-            node_type (Tensor, optional): A node-level vector denoting the type
-                of each node. (default: :obj:`None`)
-            edge_type (Tensor, optional): An edge-level vector denoting the
-                type of each edge. (default: :obj:`None`)
+            node_type (torch.Tensor, optional): A node-level vector denoting
+                the type of each node. (default: :obj:`None`)
+            edge_type (torch.Tensor, optional): An edge-level vector denoting
+                the type of each edge. (default: :obj:`None`)
             node_type_names (List[str], optional): The names of node types.
                 (default: :obj:`None`)
             edge_type_names (List[Tuple[str, str, str]], optional): The names
@@ -725,7 +720,8 @@ class Data(BaseData, FeatureStore, GraphStore):
                 if attr in {'node_type', 'edge_type', 'ptr'}:
                     continue
                 elif isinstance(value, Tensor) and self.is_node_attr(attr):
-                    data[key][attr] = value[node_ids[i]]
+                    cat_dim = self.__cat_dim__(attr, value)
+                    data[key][attr] = value.index_select(cat_dim, node_ids[i])
 
             if len(data[key]) == 0:
                 data[key].num_nodes = node_ids[i].size(0)
@@ -741,7 +737,8 @@ class Data(BaseData, FeatureStore, GraphStore):
                     edge_index[1] = index_map[edge_index[1]]
                     data[key].edge_index = edge_index
                 elif isinstance(value, Tensor) and self.is_edge_attr(attr):
-                    data[key][attr] = value[edge_ids[i]]
+                    cat_dim = self.__cat_dim__(attr, value)
+                    data[key][attr] = value.index_select(cat_dim, edge_ids[i])
 
         # Add global attributes.
         exclude_keys = set(data.keys) | {

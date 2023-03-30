@@ -3,9 +3,9 @@ import os.path as osp
 
 import numpy as np
 import torch
-from torch_scatter import scatter_add
 
 from torch_geometric.data import Data, Dataset
+from torch_geometric.utils import index_sort, scatter
 
 
 class TrackingData(Data):
@@ -22,7 +22,7 @@ class TrackMLParticleTrackingDataset(Dataset):
     reconstruct particle tracks from 3D points left in the silicon detectors.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -71,8 +71,8 @@ class TrackMLParticleTrackingDataset(Dataset):
         hit_id = torch.from_numpy(cell['hit_id'].values).to(torch.long).sub_(1)
         value = torch.from_numpy(cell['value'].values).to(torch.float)
         ones = torch.ones(hit_id.size(0))
-        num_cells = scatter_add(ones, hit_id, dim_size=pos.size(0)).div_(10.)
-        value = scatter_add(value, hit_id, dim_size=pos.size(0))
+        num_cells = scatter(ones, hit_id, 0, pos.size(0), 'sum').div_(10.)
+        value = scatter(value, hit_id, 0, pos.size(0), 'sum')
         x = torch.stack([num_cells, value], dim=-1)
 
         # Get ground-truth hit assignments.
@@ -85,7 +85,7 @@ class TrackMLParticleTrackingDataset(Dataset):
         weight = torch.from_numpy(y['weight'].values).to(torch.float)
 
         # Sort.
-        perm = (particle_id * hit_id.size(0) + hit_id).argsort()
+        _, perm = index_sort(particle_id * hit_id.size(0) + hit_id)
         hit_id = hit_id[perm]
         particle_id = particle_id[perm]
         weight = weight[perm]

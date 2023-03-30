@@ -3,10 +3,11 @@ import copy
 import pytest
 import torch
 import torch.multiprocessing as mp
-import torch_sparse
 
 import torch_geometric
 from torch_geometric.data import Data
+from torch_geometric.data.storage import AttrType
+from torch_geometric.testing import withPackage
 
 
 def test_data():
@@ -62,7 +63,7 @@ def test_data():
     assert clone.edge_index.data_ptr() != data.edge_index.data_ptr()
     assert clone.edge_index.tolist() == data.edge_index.tolist()
 
-    # Test `data.to_heterogenous()`:
+    # Test `data.to_heterogeneous()`:
     out = data.to_heterogeneous()
     assert torch.allclose(data.x, out['0'].x)
     assert torch.allclose(data.edge_index, out['0', '0'].edge_index)
@@ -138,6 +139,35 @@ def test_data():
     torch_geometric.set_debug(False)
 
 
+def test_data_attr_cache():
+    x = torch.randn(3, 16)
+    edge_index = torch.tensor([[0, 0, 1, 1, 2], [1, 1, 0, 2, 1]])
+    edge_attr = torch.randn(5, 4)
+    y = torch.tensor([0])
+
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
+
+    assert data.is_node_attr('x')
+    assert 'x' in data._store._cached_attr[AttrType.NODE]
+    assert 'x' not in data._store._cached_attr[AttrType.EDGE]
+    assert 'x' not in data._store._cached_attr[AttrType.OTHER]
+
+    assert not data.is_node_attr('edge_index')
+    assert 'edge_index' not in data._store._cached_attr[AttrType.NODE]
+    assert 'edge_index' in data._store._cached_attr[AttrType.EDGE]
+    assert 'edge_index' not in data._store._cached_attr[AttrType.OTHER]
+
+    assert data.is_edge_attr('edge_attr')
+    assert 'edge_attr' not in data._store._cached_attr[AttrType.NODE]
+    assert 'edge_attr' in data._store._cached_attr[AttrType.EDGE]
+    assert 'edge_attr' not in data._store._cached_attr[AttrType.OTHER]
+
+    assert not data.is_edge_attr('y')
+    assert 'y' not in data._store._cached_attr[AttrType.NODE]
+    assert 'y' not in data._store._cached_attr[AttrType.EDGE]
+    assert 'y' in data._store._cached_attr[AttrType.OTHER]
+
+
 def test_to_heterogeneous_empty_edge_index():
     data = Data(
         x=torch.randn(5, 10),
@@ -178,6 +208,15 @@ def test_data_subgraph():
     assert torch.equal(out.edge_weight, edge_weight[torch.arange(2, 6)])
     assert out.num_nodes == 3
 
+    # test for unordered selection
+    out = data.subgraph(torch.tensor([3, 1, 2]))
+    assert len(out) == 5
+    assert torch.equal(out.x, torch.arange(1, 4))
+    assert torch.equal(out.y, data.y)
+    assert out.edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert torch.equal(out.edge_weight, edge_weight[torch.arange(2, 6)])
+    assert out.num_nodes == 3
+
     out = data.subgraph(torch.tensor([False, False, False, True, True]))
     assert len(out) == 5
     assert torch.equal(out.x, torch.arange(3, 5))
@@ -202,6 +241,22 @@ def test_data_subgraph():
     assert torch.equal(out.y, data.y)
     assert out.edge_index.tolist() == [[1, 1, 2], [0, 2, 1]]
     assert torch.equal(out.edge_weight, edge_weight[torch.tensor([1, 2, 3])])
+
+
+def test_data_subgraph_with_list_field():
+    x = torch.arange(5)
+    y = list(range(5))
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3, 3, 4],
+                               [1, 0, 2, 1, 3, 2, 4, 3]])
+    data = Data(x=x, y=y, edge_index=edge_index)
+
+    out = data.subgraph(torch.tensor([1, 2, 3]))
+    assert len(out) == 3
+    assert out.x.tolist() == out.y == [1, 2, 3]
+
+    out = data.subgraph(torch.tensor([False, True, True, True, False]))
+    assert len(out) == 3
+    assert out.x.tolist() == out.y == [1, 2, 3]
 
 
 def test_copy_data():
@@ -337,12 +392,10 @@ def test_basic_feature_store():
 # Graph Store #################################################################
 
 
+@withPackage('torch_sparse')
 def test_basic_graph_store():
     r"""Test the core graph store API."""
     data = Data()
-
-    edge_index = torch.LongTensor([[0, 1], [1, 2]])
-    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1])
 
     def assert_equal_tensor_tuple(expected, actual):
         assert len(expected) == len(actual)
@@ -351,9 +404,9 @@ def test_basic_graph_store():
 
     # We put all three tensor types: COO, CSR, and CSC, and we get them back
     # to confirm that `GraphStore` works as intended.
-    coo = adj.coo()[:-1]
-    csr = adj.csr()[:-1]
-    csc = adj.csc()[-2::-1]  # (row, colptr)
+    coo = (torch.tensor([0, 1]), torch.tensor([1, 2]))
+    csr = (torch.tensor([0, 1, 2, 2]), torch.tensor([1, 2]))
+    csc = (torch.tensor([0, 1]), torch.tensor([0, 0, 1, 2]))
 
     # Put:
     data.put_edge_index(coo, layout='coo', size=(3, 3))

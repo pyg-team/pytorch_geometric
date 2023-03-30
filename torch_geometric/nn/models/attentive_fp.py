@@ -6,10 +6,9 @@ from torch import Tensor
 from torch.nn import GRUCell, Linear, Parameter
 
 from torch_geometric.nn import GATConv, MessagePassing, global_add_pool
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import softmax
-
-from ..inits import glorot, zeros
 
 
 class GATEConv(MessagePassing):
@@ -122,7 +121,8 @@ class AttentiveFP(torch.nn.Module):
 
         self.reset_parameters()
 
-    def reset_parameters(self) -> None:
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.lin1.reset_parameters()
         self.gate_conv.reset_parameters()
         self.gru.reset_parameters()

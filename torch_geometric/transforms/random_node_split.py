@@ -18,7 +18,7 @@ class RandomNodeSplit(BaseTransform):
     (functional name: :obj:`random_node_split`).
 
     Args:
-        split (string): The type of dataset split (:obj:`"train_rest"`,
+        split (str, optional): The type of dataset split (:obj:`"train_rest"`,
             :obj:`"test_rest"`, :obj:`"random"`).
             If set to :obj:`"train_rest"`, all nodes except those in the
             validation and test sets will be used for training (as in the

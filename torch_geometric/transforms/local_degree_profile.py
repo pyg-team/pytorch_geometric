@@ -1,5 +1,4 @@
 import torch
-from torch_scatter import scatter_max, scatter_mean, scatter_min, scatter_std
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -21,26 +20,21 @@ class LocalDegreeProfile(BaseTransform):
     to the node features, where :math:`DN(i) = \{ \deg(j) \mid j \in
     \mathcal{N}(i) \}`.
     """
+    def __init__(self):
+        from torch_geometric.nn.aggr.fused import FusedAggregation
+        self.aggr = FusedAggregation(['min', 'max', 'mean', 'std'])
+
     def __call__(self, data: Data) -> Data:
         row, col = data.edge_index
         N = data.num_nodes
 
-        deg = degree(row, N, dtype=torch.float)
-        deg_col = deg[col]
-
-        min_deg, _ = scatter_min(deg_col, row, dim_size=N)
-        min_deg[min_deg > 10000] = 0
-        max_deg, _ = scatter_max(deg_col, row, dim_size=N)
-        max_deg[max_deg < -10000] = 0
-        mean_deg = scatter_mean(deg_col, row, dim_size=N)
-        std_deg = scatter_std(deg_col, row, dim_size=N)
-
-        x = torch.stack([deg, min_deg, max_deg, mean_deg, std_deg], dim=1)
+        deg = degree(row, N, dtype=torch.float).view(-1, 1)
+        xs = [deg] + self.aggr(deg[col], row, dim_size=N)
 
         if data.x is not None:
             data.x = data.x.view(-1, 1) if data.x.dim() == 1 else data.x
-            data.x = torch.cat([data.x, x], dim=-1)
+            data.x = torch.cat([data.x] + xs, dim=-1)
         else:
-            data.x = x
+            data.x = torch.cat(xs, dim=-1)
 
         return data

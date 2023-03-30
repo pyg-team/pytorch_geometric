@@ -3,12 +3,11 @@ from torch import Tensor
 from torch.nn import BatchNorm1d, Embedding, Linear, ModuleList, Sequential
 
 from torch_geometric.nn import radius_graph
+from torch_geometric.nn.inits import reset
 from torch_geometric.nn.models.dimenet import triplets
 from torch_geometric.nn.models.schnet import ShiftedSoftplus
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import scatter
-
-from ..inits import reset
 
 
 class GaussianFilter(torch.nn.Module):
@@ -19,6 +18,7 @@ class GaussianFilter(torch.nn.Module):
         self.register_buffer('offset', offset)
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         pass
 
     def forward(self, dist: Tensor) -> Tensor:
@@ -130,7 +130,7 @@ class GNNFF(torch.nn.Module):
         hidden_node_channels (int): Hidden node embedding size.
         hidden_edge_channels (int): Hidden edge embedding size.
         num_layers (int): Number of message passing blocks.
-        cutoff (float): Cutoff distance for interatomic
+        cutoff (float, optional): Cutoff distance for interatomic
             interactions. (default: :obj:`5.0`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
             collect for each node within the :attr:`cutoff` distance.

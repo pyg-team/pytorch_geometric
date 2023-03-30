@@ -38,7 +38,6 @@ class ExampleConv1(MessagePassing):
         zeros(self.bias)
 
     def forward(self, batch):
-        """"""
         x, edge_index = batch.x, batch.edge_index
         x = torch.matmul(x, self.weight)
 
@@ -81,7 +80,6 @@ class ExampleConv2Layer(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x, edge_index):
-        """"""
         x = torch.matmul(x, self.weight)
 
         return self.propagate(edge_index, x=x)

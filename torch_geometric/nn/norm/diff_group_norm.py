@@ -63,11 +63,15 @@ class DiffGroupNorm(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.lin.reset_parameters()
         self.norm.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+        """
         F, G = self.in_channels, self.groups
 
         s = self.lin(x).softmax(dim=-1)  # [N, G]

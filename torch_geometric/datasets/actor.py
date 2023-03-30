@@ -19,7 +19,7 @@ class Actor(InMemoryDataset):
     actor's Wikipedia.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -28,6 +28,21 @@ class Actor(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 7,600
+          - 30,019
+          - 932
+          - 5
     """
 
     url = 'https://raw.githubusercontent.com/graphdml-uiuc-jlu/geom-gcn/master'

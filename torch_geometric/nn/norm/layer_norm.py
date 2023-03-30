@@ -2,17 +2,15 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter
 
+from torch_geometric.nn.inits import ones, zeros
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import degree
-
-from ..inits import ones, zeros
+from torch_geometric.utils import degree, scatter
 
 
 class LayerNorm(torch.nn.Module):
     r"""Applies layer normalization over each individual example in a batch
-    of node features as described in the `"Layer Normalization"
+    of features as described in the `"Layer Normalization"
     <https://arxiv.org/abs/1607.06450>`_ paper
 
     .. math::
@@ -31,13 +29,18 @@ class LayerNorm(torch.nn.Module):
             learnable affine parameters :math:`\gamma` and :math:`\beta`.
             (default: :obj:`True`)
         mode (str, optinal): The normalization mode to use for layer
-            normalization. (:obj:`"graph"` or :obj:`"node"`). If :obj:`"graph"`
+            normalization (:obj:`"graph"` or :obj:`"node"`). If :obj:`"graph"`
             is used, each graph will be considered as an element to be
             normalized. If `"node"` is used, each node will be considered as
             an element to be normalized. (default: :obj:`"graph"`)
     """
-    def __init__(self, in_channels: int, eps: float = 1e-5,
-                 affine: bool = True, mode: str = 'graph'):
+    def __init__(
+        self,
+        in_channels: int,
+        eps: float = 1e-5,
+        affine: bool = True,
+        mode: str = 'graph',
+    ):
         super().__init__()
 
         self.in_channels = in_channels
@@ -55,11 +58,18 @@ class LayerNorm(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         ones(self.weight)
         zeros(self.bias)
 
     def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
-        """"""
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example. (default: :obj:`None`)
+        """
         if self.mode == 'graph':
             if batch is None:
                 x = x - x.mean()
@@ -72,12 +82,12 @@ class LayerNorm(torch.nn.Module):
                 norm = norm.mul_(x.size(-1)).view(-1, 1)
 
                 mean = scatter(x, batch, dim=0, dim_size=batch_size,
-                               reduce='add').sum(dim=-1, keepdim=True) / norm
+                               reduce='sum').sum(dim=-1, keepdim=True) / norm
 
                 x = x - mean.index_select(0, batch)
 
                 var = scatter(x * x, batch, dim=0, dim_size=batch_size,
-                              reduce='add').sum(dim=-1, keepdim=True)
+                              reduce='sum').sum(dim=-1, keepdim=True)
                 var = var / norm
 
                 out = x / (var + self.eps).sqrt().index_select(0, batch)
@@ -96,3 +106,71 @@ class LayerNorm(torch.nn.Module):
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'affine={self.affine}, mode={self.mode})')
+
+
+class HeteroLayerNorm(torch.nn.Module):
+    r"""Applies layer normalization over each individual example in a batch
+    of heterogeneous features as described in the `"Layer Normalization"
+    <https://arxiv.org/abs/1607.06450>`_ paper.
+    Compared to :class:`LayerNorm`, :class:`HeteroLayerNorm` applies
+    normalization individually for each node or edge type.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        num_types (int): The number of types.
+        eps (float, optional): A value added to the denominator for numerical
+            stability. (default: :obj:`1e-5`)
+        affine (bool, optional): If set to :obj:`True`, this module has
+            learnable affine parameters :math:`\gamma` and :math:`\beta`.
+            (default: :obj:`True`)
+        mode (str, optinal): The normalization mode to use for layer
+            normalization (:obj:`"node"`). If `"node"` is used, each node will
+            be considered as an element to be normalized.
+            (default: :obj:`"node"`)
+    """
+    def __init__(
+        self,
+        in_channels: int,
+        num_types: int,
+        eps: float = 1e-5,
+        affine: bool = True,
+        mode: str = 'node',
+    ):
+        super().__init__()
+
+        self.in_channels = in_channels
+        self.num_types = num_types
+        self.eps = eps
+        self.affine = affine
+
+        if affine:
+            self.weight = Parameter(torch.Tensor(num_types, in_channels))
+            self.bias = Parameter(torch.Tensor(num_types, in_channels))
+        else:
+            self.register_parameter('weight', None)
+            self.register_parameter('bias', None)
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
+        if self.affine:
+            torch.nn.init.ones_(self.weight)
+            torch.nn.init.zeros_(self.bias)
+
+    def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
+        r"""
+        Args:
+            x (torch.Tensor): The input features.
+            type_vec (torch.Tensor): A vector that maps each entry to a type.
+        """
+        out = F.layer_norm(x, (self.in_channels, ), None, None, self.eps)
+
+        if self.affine:
+            out = out * self.weight[type_vec] + self.bias[type_vec]
+
+        return out
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'num_types={self.num_types})')

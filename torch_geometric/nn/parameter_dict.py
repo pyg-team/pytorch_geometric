@@ -29,10 +29,10 @@ class ParameterDict(torch.nn.ParameterDict):
     def __getitem__(self, key: str) -> Parameter:
         return super().__getitem__(self.to_internal_key(key))
 
-    def __setitem__(self, key: str, parameter: Parameter) -> None:
+    def __setitem__(self, key: str, parameter: Parameter):
         return super().__setitem__(self.to_internal_key(key), parameter)
 
-    def __delitem__(self, key: str) -> None:
+    def __delitem__(self, key: str):
         return super().__delitem__(self.to_internal_key(key))
 
     def __contains__(self, key: str) -> bool:

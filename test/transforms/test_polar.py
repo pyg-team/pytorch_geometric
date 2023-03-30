@@ -7,7 +7,7 @@ from torch_geometric.transforms import Polar
 
 
 def test_polar():
-    assert Polar().__repr__() == 'Polar(norm=True, max_value=None)'
+    assert str(Polar()) == 'Polar(norm=True, max_value=None)'
 
     pos = torch.Tensor([[0, 0], [1, 0]])
     edge_index = torch.tensor([[0, 1], [1, 0]])

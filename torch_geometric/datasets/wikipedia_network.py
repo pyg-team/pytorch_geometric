@@ -17,8 +17,8 @@ class WikipediaNetwork(InMemoryDataset):
     The task is to predict the average daily traffic of the web page.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"chameleon"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"chameleon"`,
             :obj:`"crocodile"`, :obj:`"squirrel"`).
         geom_gcn_preprocess (bool): If set to :obj:`True`, will load the
             pre-processed data as introduced in the `"Geom-GCN: Geometric

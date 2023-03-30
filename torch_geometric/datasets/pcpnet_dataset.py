@@ -22,14 +22,14 @@ class PCPNetDataset(InMemoryDataset):
     features.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        category (string): The training set category (one of :obj:`"NoNoise"`,
+        root (str): Root directory where the dataset should be saved.
+        category (str): The training set category (one of :obj:`"NoNoise"`,
             :obj:`"Noisy"`, :obj:`"VarDensity"`, :obj:`"NoisyAndVarDensity"`
             for :obj:`split="train"` or :obj:`split="val"`,
             or one of :obj:`"All"`, :obj:`"LowNoise"`, :obj:`"MedNoise"`,
             :obj:`"HighNoise", :obj:`"VarDensityStriped",
             :obj:`"VarDensityGradient"` for :obj:`split="test"`).
-        split (string): If :obj:`"train"`, loads the training dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         transform (callable, optional): A function/transform that takes in an

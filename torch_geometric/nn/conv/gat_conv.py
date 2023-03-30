@@ -4,15 +4,26 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, set_diag
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import NoneType  # noqa
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
-from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
-
-from ..inits import glorot, zeros
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    Size,
+    SparseTensor,
+    torch_sparse,
+)
+from torch_geometric.utils import (
+    add_self_loops,
+    is_torch_sparse_tensor,
+    remove_self_loops,
+    softmax,
+)
+from torch_geometric.utils.sparse import set_sparse_value
 
 
 class GATConv(MessagePassing):
@@ -70,8 +81,9 @@ class GATConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         edge_dim (int, optional): Edge feature dimensionality (in case
             there are any). (default: :obj:`None`)
-        fill_value (float or Tensor or str, optional): The way to generate
-            edge features of self-loops (in case :obj:`edge_dim != None`).
+        fill_value (float or torch.Tensor or str, optional): The way to
+            generate edge features of self-loops (in case
+            :obj:`edge_dim != None`).
             If given as :obj:`float` or :class:`torch.Tensor`, edge features of
             self-loops will be directly given by :obj:`fill_value`.
             If given as :obj:`str`, edge features of self-loops are computed by
@@ -159,6 +171,7 @@ class GATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_src.reset_parameters()
         self.lin_dst.reset_parameters()
         if self.lin_edge is not None:
@@ -175,7 +188,8 @@ class GATConv(MessagePassing):
         # type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, OptPairTensor], Tensor, OptTensor, Size, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Union[Tensor, OptPairTensor], SparseTensor, OptTensor, Size, bool) -> Tuple[Tensor, SparseTensor]  # noqa
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
@@ -227,7 +241,7 @@ class GATConv(MessagePassing):
                     num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 if self.edge_dim is None:
-                    edge_index = set_diag(edge_index)
+                    edge_index = torch_sparse.set_diag(edge_index)
                 else:
                     raise NotImplementedError(
                         "The usage of 'edge_attr' and 'add_self_loops' "
@@ -250,7 +264,12 @@ class GATConv(MessagePassing):
 
         if isinstance(return_attention_weights, bool):
             if isinstance(edge_index, Tensor):
-                return out, (edge_index, alpha)
+                if is_torch_sparse_tensor(edge_index):
+                    # TODO TorchScript requires to return a tuple
+                    adj = set_sparse_value(edge_index, alpha)
+                    return out, (adj, alpha)
+                else:
+                    return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
         else:
@@ -262,7 +281,8 @@ class GATConv(MessagePassing):
         # Given edge-level attention coefficients for source and target nodes,
         # we simply need to sum them up to "emulate" concatenation:
         alpha = alpha_j if alpha_i is None else alpha_j + alpha_i
-
+        if index.numel() == 0:
+            return alpha
         if edge_attr is not None and self.lin_edge is not None:
             if edge_attr.dim() == 1:
                 edge_attr = edge_attr.view(-1, 1)

@@ -4,6 +4,7 @@ from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import is_torch_sparse_tensor, to_torch_csc_tensor
 
 
 @functional_transform('feature_propagation')
@@ -21,9 +22,7 @@ class FeaturePropagation(BaseTransform):
 
     where missing node features are inferred by known features via propagation.
 
-    Example:
-
-    .. code-block::
+    .. code-block:: python
 
         from torch_geometric.transforms import FeaturePropagation
 
@@ -42,8 +41,6 @@ class FeaturePropagation(BaseTransform):
         self.num_iterations = num_iterations
 
     def __call__(self, data: Data) -> Data:
-        from torch_sparse import SparseTensor
-
         assert 'edge_index' in data or 'adj_t' in data
         assert data.x.size() == self.missing_mask.size()
 
@@ -55,14 +52,13 @@ class FeaturePropagation(BaseTransform):
             if 'edge_weight' in data:
                 edge_weight = data.edge_weight
             edge_index = data.edge_index
-            adj_t = SparseTensor(row=edge_index[1], col=edge_index[0],
-                                 value=edge_weight,
-                                 sparse_sizes=data.size()[::-1],
-                                 is_sorted=False, trust_data=True)
+            adj_t = to_torch_csc_tensor(edge_index, edge_weight,
+                                        size=data.size()).t()
+            adj_t, _ = gcn_norm(adj_t, add_self_loops=False)
+        elif is_torch_sparse_tensor(data.adj_t):
+            adj_t, _ = gcn_norm(data.adj_t, add_self_loops=False)
         else:
-            adj_t = data.adj_t
-
-        adj_t = gcn_norm(adj_t, add_self_loops=False)
+            adj_t = gcn_norm(data.adj_t, add_self_loops=False)
 
         x = data.x.clone()
         x[missing_mask] = 0.

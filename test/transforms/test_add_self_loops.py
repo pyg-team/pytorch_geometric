@@ -5,11 +5,13 @@ from torch_geometric.transforms import AddSelfLoops
 
 
 def test_add_self_loops():
-    assert AddSelfLoops().__repr__() == 'AddSelfLoops()'
+    assert str(AddSelfLoops()) == 'AddSelfLoops()'
 
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     edge_weight = torch.tensor([1, 2, 3, 4])
     edge_attr = torch.tensor([[1, 2], [3, 4], [5, 6], [7, 8]])
+
+    assert len(AddSelfLoops()(Data())) == 0
 
     data = Data(edge_index=edge_index, num_nodes=3)
     data = AddSelfLoops()(data)

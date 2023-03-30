@@ -4,9 +4,8 @@ import torch
 from torch import Tensor
 from torch.nn import Module
 
+from torch_geometric.nn.inits import reset
 from torch_geometric.utils import negative_sampling
-
-from ..inits import reset
 
 EPS = 1e-15
 MAX_LOGSTD = 10
@@ -27,7 +26,7 @@ class InnerProductDecoder(torch.nn.Module):
         the given node-pairs :obj:`edge_index`.
 
         Args:
-            z (Tensor): The latent space :math:`\mathbf{Z}`.
+            z (torch.Tensor): The latent space :math:`\mathbf{Z}`.
             sigmoid (bool, optional): If set to :obj:`False`, does not apply
                 the logistic sigmoid function to the output.
                 (default: :obj:`True`)
@@ -40,7 +39,7 @@ class InnerProductDecoder(torch.nn.Module):
         adjacency matrix.
 
         Args:
-            z (Tensor): The latent space :math:`\mathbf{Z}`.
+            z (torch.Tensor): The latent space :math:`\mathbf{Z}`.
             sigmoid (bool, optional): If set to :obj:`False`, does not apply
                 the logistic sigmoid function to the output.
                 (default: :obj:`True`)
@@ -55,9 +54,9 @@ class GAE(torch.nn.Module):
     paper based on user-defined encoder and decoder models.
 
     Args:
-        encoder (Module): The encoder module.
-        decoder (Module, optional): The decoder module. If set to :obj:`None`,
-            will default to the
+        encoder (torch.nn.Module): The encoder module.
+        decoder (torch.nn.Module, optional): The decoder module. If set to
+            :obj:`None`, will default to the
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
@@ -68,8 +67,13 @@ class GAE(torch.nn.Module):
         GAE.reset_parameters(self)
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset(self.encoder)
         reset(self.decoder)
+
+    def forward(self, *args, **kwargs) -> Tensor:  # pragma: no cover
+        r"""Alias for :meth:`encode`."""
+        return self.encoder(*args, **kwargs)
 
     def encode(self, *args, **kwargs) -> Tensor:
         r"""Runs the encoder and computes node-wise latent variables."""
@@ -86,13 +90,12 @@ class GAE(torch.nn.Module):
         sampled edges.
 
         Args:
-            z (Tensor): The latent space :math:`\mathbf{Z}`.
-            pos_edge_index (LongTensor): The positive edges to train against.
-            neg_edge_index (LongTensor, optional): The negative edges to train
-                against. If not given, uses negative sampling to calculate
-                negative edges. (default: :obj:`None`)
+            z (torch.Tensor): The latent space :math:`\mathbf{Z}`.
+            pos_edge_index (torch.Tensor): The positive edges to train against.
+            neg_edge_index (torch.Tensor, optional): The negative edges to
+                train against. If not given, uses negative sampling to
+                calculate negative edges. (default: :obj:`None`)
         """
-
         pos_loss = -torch.log(
             self.decoder(z, pos_edge_index, sigmoid=True) + EPS).mean()
 
@@ -112,10 +115,10 @@ class GAE(torch.nn.Module):
         scores.
 
         Args:
-            z (Tensor): The latent space :math:`\mathbf{Z}`.
-            pos_edge_index (LongTensor): The positive edges to evaluate
+            z (torch.Tensor): The latent space :math:`\mathbf{Z}`.
+            pos_edge_index (torch.Tensor): The positive edges to evaluate
                 against.
-            neg_edge_index (LongTensor): The negative edges to evaluate
+            neg_edge_index (torch.Tensor): The negative edges to evaluate
                 against.
         """
         from sklearn.metrics import average_precision_score, roc_auc_score
@@ -139,10 +142,10 @@ class VGAE(GAE):
     paper.
 
     Args:
-        encoder (Module): The encoder module to compute :math:`\mu` and
-            :math:`\log\sigma^2`.
-        decoder (Module, optional): The decoder module. If set to :obj:`None`,
-            will default to the
+        encoder (torch.nn.Module): The encoder module to compute :math:`\mu`
+            and :math:`\log\sigma^2`.
+        decoder (torch.nn.Module, optional): The decoder module. If set to
+            :obj:`None`, will default to the
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
@@ -168,12 +171,12 @@ class VGAE(GAE):
         and :obj:`logstd`, or based on latent variables from last encoding.
 
         Args:
-            mu (Tensor, optional): The latent space for :math:`\mu`. If set to
-                :obj:`None`, uses the last computation of :math:`mu`.
+            mu (torch.Tensor, optional): The latent space for :math:`\mu`. If
+                set to :obj:`None`, uses the last computation of :math:`\mu`.
                 (default: :obj:`None`)
-            logstd (Tensor, optional): The latent space for
+            logstd (torch.Tensor, optional): The latent space for
                 :math:`\log\sigma`.  If set to :obj:`None`, uses the last
-                computation of :math:`\log\sigma^2`.(default: :obj:`None`)
+                computation of :math:`\log\sigma^2`. (default: :obj:`None`)
         """
         mu = self.__mu__ if mu is None else mu
         logstd = self.__logstd__ if logstd is None else logstd.clamp(
@@ -188,10 +191,10 @@ class ARGA(GAE):
     <https://arxiv.org/abs/1802.04407>`_ paper.
 
     Args:
-        encoder (Module): The encoder module.
-        discriminator (Module): The discriminator module.
-        decoder (Module, optional): The decoder module. If set to :obj:`None`,
-            will default to the
+        encoder (torch.nn.Module): The encoder module.
+        discriminator (torch.nn.Module): The discriminator module.
+        decoder (torch.nn.Module, optional): The decoder module. If set to
+            :obj:`None`, will default to the
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """
@@ -213,7 +216,7 @@ class ARGA(GAE):
         r"""Computes the regularization loss of the encoder.
 
         Args:
-            z (Tensor): The latent space :math:`\mathbf{Z}`.
+            z (torch.Tensor): The latent space :math:`\mathbf{Z}`.
         """
         real = torch.sigmoid(self.discriminator(z))
         real_loss = -torch.log(real + EPS).mean()
@@ -223,7 +226,7 @@ class ARGA(GAE):
         r"""Computes the loss of the discriminator.
 
         Args:
-            z (Tensor): The latent space :math:`\mathbf{Z}`.
+            z (torch.Tensor): The latent space :math:`\mathbf{Z}`.
         """
         real = torch.sigmoid(self.discriminator(torch.randn_like(z)))
         fake = torch.sigmoid(self.discriminator(z.detach()))
@@ -238,11 +241,11 @@ class ARGVA(ARGA):
     <https://arxiv.org/abs/1802.04407>`_ paper.
 
     Args:
-        encoder (Module): The encoder module to compute :math:`\mu` and
-            :math:`\log\sigma^2`.
-        discriminator (Module): The discriminator module.
-        decoder (Module, optional): The decoder module. If set to :obj:`None`,
-            will default to the
+        encoder (torch.nn.Module): The encoder module to compute :math:`\mu`
+            and :math:`\log\sigma^2`.
+        discriminator (torch.nn.Module): The discriminator module.
+        decoder (torch.nn.Module, optional): The decoder module. If set to
+            :obj:`None`, will default to the
             :class:`torch_geometric.nn.models.InnerProductDecoder`.
             (default: :obj:`None`)
     """

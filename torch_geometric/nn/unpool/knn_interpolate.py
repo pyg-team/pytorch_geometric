@@ -1,8 +1,8 @@
 import torch
-from torch_scatter import scatter_add
 
 from torch_geometric.nn import knn
 from torch_geometric.typing import OptTensor
+from torch_geometric.utils import scatter
 
 
 def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
@@ -23,23 +23,23 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
     to :math:`y`.
 
     Args:
-        x (Tensor): Node feature matrix
+        x (torch.Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
-        pos_x (Tensor): Node position matrix
+        pos_x (torch.Tensor): Node position matrix
             :math:`\in \mathbb{R}^{N \times d}`.
-        pos_y (Tensor): Upsampled node position matrix
+        pos_y (torch.Tensor): Upsampled node position matrix
             :math:`\in \mathbb{R}^{M \times d}`.
-        batch_x (LongTensor, optional): Batch vector
+        batch_x (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b_x} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
             each node from :math:`\mathbf{X}` to a specific example.
             (default: :obj:`None`)
-        batch_y (LongTensor, optional): Batch vector
+        batch_y (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b_y} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
             each node from :math:`\mathbf{Y}` to a specific example.
             (default: :obj:`None`)
         k (int, optional): Number of neighbors. (default: :obj:`3`)
-        num_workers (int): Number of workers to use for computation. Has no
-            effect in case :obj:`batch_x` or :obj:`batch_y` is not
+        num_workers (int, optional): Number of workers to use for computation.
+            Has no effect in case :obj:`batch_x` or :obj:`batch_y` is not
             :obj:`None`, or the input lies on the GPU. (default: :obj:`1`)
     """
 
@@ -51,7 +51,7 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
         squared_distance = (diff * diff).sum(dim=-1, keepdim=True)
         weights = 1.0 / torch.clamp(squared_distance, min=1e-16)
 
-    y = scatter_add(x[x_idx] * weights, y_idx, dim=0, dim_size=pos_y.size(0))
-    y = y / scatter_add(weights, y_idx, dim=0, dim_size=pos_y.size(0))
+    y = scatter(x[x_idx] * weights, y_idx, 0, pos_y.size(0), reduce='sum')
+    y = y / scatter(weights, y_idx, 0, pos_y.size(0), reduce='sum')
 
     return y

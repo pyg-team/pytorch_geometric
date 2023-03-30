@@ -1,13 +1,12 @@
 import torch
 from torch import Tensor
 from torch.nn import Linear, Parameter, ReLU, Sequential, Sigmoid
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptTensor
-
-from ..inits import glorot, zeros
+from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.utils import spmm
 
 
 class PDNConv(MessagePassing):
@@ -76,6 +75,7 @@ class PDNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.lin.weight)
         glorot(self.mlp[0].weight)
         glorot(self.mlp[2].weight)
@@ -85,7 +85,6 @@ class PDNConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
-        """"""
 
         if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()
@@ -121,7 +120,7 @@ class PDNConv(MessagePassing):
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '

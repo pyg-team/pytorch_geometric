@@ -1,9 +1,11 @@
 from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
+from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
     filter_custom_store,
     filter_data,
@@ -20,7 +22,7 @@ from torch_geometric.sampler import (
 from torch_geometric.typing import InputEdges, OptTensor
 
 
-class LinkLoader(torch.utils.data.DataLoader):
+class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
     r"""A data loader that performs mini-batch sampling from link information,
     using a generic :class:`~torch_geometric.sampler.BaseSampler`
     implementation that defines a
@@ -89,10 +91,10 @@ class LinkLoader(torch.utils.data.DataLoader):
             negative edges to the number of positive edges.
             Deprecated in favor of the :obj:`neg_sampling` argument.
             (default: :obj:`None`).
-        transform (Callable, optional): A function/transform that takes in
+        transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
-        transform_sampler_output (Callable, optional): A function/transform
+        transform_sampler_output (callable, optional): A function/transform
             that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
             returns a transformed version. (default: :obj:`None`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
@@ -104,6 +106,9 @@ class LinkLoader(torch.utils.data.DataLoader):
             (2) it may slown down data loading,
             (3) it requires operating on CPU tensors.
             (default: :obj:`False`)
+        custom_cls (HeteroData, optional): A custom
+            :class:`~torch_geometric.data.HeteroData` class to return for
+            mini-batches in case of remote backends. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -120,13 +125,13 @@ class LinkLoader(torch.utils.data.DataLoader):
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: bool = False,
+        custom_cls: Optional[HeteroData] = None,
+        input_id: OptTensor = None,
         **kwargs,
     ):
         # Remove for PyTorch Lightning:
-        if 'dataset' in kwargs:
-            del kwargs['dataset']
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
 
         if neg_sampling_ratio is not None and neg_sampling_ratio != 0.0:
             # TODO: Deprecation warning.
@@ -142,6 +147,7 @@ class LinkLoader(torch.utils.data.DataLoader):
         self.transform = transform
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
+        self.custom_cls = custom_cls
 
         if (self.neg_sampling is not None and self.neg_sampling.is_binary()
                 and edge_label is not None and edge_label.min() == 0):
@@ -158,7 +164,7 @@ class LinkLoader(torch.utils.data.DataLoader):
                              "negative samples.")
 
         self.input_data = EdgeSamplerInput(
-            input_id=None,
+            input_id=input_id,
             row=edge_label_index[0].clone(),
             col=edge_label_index[1].clone(),
             label=edge_label,
@@ -169,7 +175,7 @@ class LinkLoader(torch.utils.data.DataLoader):
         iterator = range(edge_label_index.size(1))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
-    def collate_fn(self, index: List[int]) -> Any:
+    def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
         input_data: EdgeSamplerInput = self.input_data[index]
 
@@ -196,6 +202,11 @@ class LinkLoader(torch.utils.data.DataLoader):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
                                self.link_sampler.edge_permutation)
 
+            if 'n_id' not in data:
+                data.n_id = out.node
+            if out.edge is not None and 'e_id' not in data:
+                data.e_id = out.edge
+
             data.batch = out.batch
             data.input_id = out.metadata[0]
 
@@ -220,10 +231,17 @@ class LinkLoader(torch.utils.data.DataLoader):
                                           self.link_sampler.edge_permutation)
             else:  # Tuple[FeatureStore, GraphStore]
                 data = filter_custom_store(*self.data, out.node, out.row,
-                                           out.col, out.edge)
+                                           out.col, out.edge, self.custom_cls)
 
-            for key, batch in (out.batch or {}).items():
-                data[key].batch = batch
+            for key, node in out.node.items():
+                if 'n_id' not in data[key]:
+                    data[key].n_id = node
+
+            for key, edge in (out.edge or {}).items():
+                if 'e_id' not in data[key]:
+                    data[key].e_id = edge
+
+            data.set_value_dict('batch', out.batch)
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]

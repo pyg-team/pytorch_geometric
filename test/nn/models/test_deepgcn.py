@@ -18,7 +18,7 @@ def test_deepgcn(block_tuple, ckpt_grad):
     norm = LayerNorm(8)
     act = ReLU()
     layer = DeepGCNLayer(conv, norm, act, block=block, ckpt_grad=ckpt_grad)
-    assert layer.__repr__() == f'DeepGCNLayer(block={block})'
+    assert str(layer) == f'DeepGCNLayer(block={block})'
 
     out = layer(x, edge_index)
     assert out.size() == (3, 8 * expansion)

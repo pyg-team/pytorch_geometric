@@ -4,8 +4,6 @@ import sys
 from typing import Callable, List, Optional
 
 import torch
-import torch.nn.functional as F
-from torch_scatter import scatter
 from tqdm import tqdm
 
 from torch_geometric.data import (
@@ -14,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.utils import one_hot, scatter
 
 HAR2EV = 27.211386246
 KCALMOL2EV = 0.04336414
@@ -96,8 +95,14 @@ class QM9(InMemoryDataset):
     | 18     | :math:`C`                        | Rotational constant                                                               | :math:`\textrm{GHz}`                        |
     +--------+----------------------------------+-----------------------------------------------------------------------------------+---------------------------------------------+
 
+    .. note::
+
+        We also provide a pre-processed version of the dataset in case
+        :class:`rdkit` is not installed. The pre-processed version matches with
+        the manually processed version as outlined in :meth:`process`.
+
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -111,21 +116,22 @@ class QM9(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 130,831
-              - ~18.0
-              - ~37.3
-              - 11
-              - 19
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 130,831
+          - ~18.0
+          - ~37.3
+          - 11
+          - 19
     """  # noqa: E501
 
     raw_url = ('https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/'
@@ -264,8 +270,7 @@ class QM9(InMemoryDataset):
 
             edge_index = torch.tensor([row, col], dtype=torch.long)
             edge_type = torch.tensor(edge_type, dtype=torch.long)
-            edge_attr = F.one_hot(edge_type,
-                                  num_classes=len(bonds)).to(torch.float)
+            edge_attr = one_hot(edge_type, num_classes=len(bonds))
 
             perm = (edge_index[0] * N + edge_index[1]).argsort()
             edge_index = edge_index[:, perm]
@@ -274,12 +279,12 @@ class QM9(InMemoryDataset):
 
             row, col = edge_index
             hs = (z == 1).to(torch.float)
-            num_hs = scatter(hs[row], col, dim_size=N).tolist()
+            num_hs = scatter(hs[row], col, dim_size=N, reduce='sum').tolist()
 
-            x1 = F.one_hot(torch.tensor(type_idx), num_classes=len(types))
+            x1 = one_hot(torch.tensor(type_idx), num_classes=len(types))
             x2 = torch.tensor([atomic_number, aromatic, sp, sp2, sp3, num_hs],
                               dtype=torch.float).t().contiguous()
-            x = torch.cat([x1.to(torch.float), x2], dim=-1)
+            x = torch.cat([x1, x2], dim=-1)
 
             y = target[i].unsqueeze(0)
             name = mol.GetProp('_Name')

@@ -2,10 +2,10 @@ from typing import Callable, List, Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.inits import reset
+from torch_geometric.utils import scatter
 
 
 class ResNetPotential(torch.nn.Module):
@@ -175,7 +175,7 @@ class EquilibriumAggregation(Aggregation):
                                iterations=self.grad_iter)
 
         if dim_size > index_size:
-            zero = torch.zeros(dim_size - index_size, *y.size()[1:])
+            zero = y.new_zeros(dim_size - index_size, *y.size()[1:])
             y = torch.cat([y, zero])
 
         return y

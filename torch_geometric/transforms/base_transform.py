@@ -6,10 +6,12 @@ class BaseTransform(ABC):
     r"""An abstract base class for writing transforms.
 
     Transforms are a general way to modify and customize
-    :class:`~torch_geometric.data.Data` objects, either by implicitly passing
-    them as an argument to a :class:`~torch_geometric.data.Dataset`, or by
-    applying them explicitly to individual :class:`~torch_geometric.data.Data`
-    objects.
+    :class:`~torch_geometric.data.Data` or
+    :class:`~torch_geometric.data.HeteroData` objects, either by implicitly
+    passing them as an argument to a :class:`~torch_geometric.data.Dataset`, or
+    by applying them explicitly to individual
+    :class:`~torch_geometric.data.Data` or
+    :class:`~torch_geometric.data.HeteroData` objects:
 
     .. code-block:: python
 

@@ -5,12 +5,12 @@ import torch.nn.functional as F
 from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
-from torch_scatter import scatter_mean
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCNConv, GINConv, SAGPooling, global_max_pool
+from torch_geometric.utils import scatter
 
 
 class HandleNodeAttention(object):
@@ -59,7 +59,7 @@ class Net(torch.nn.Module):
 
         attn_loss = F.kl_div(torch.log(score + 1e-14), data.attn[perm],
                              reduction='none')
-        attn_loss = scatter_mean(attn_loss, batch)
+        attn_loss = scatter(attn_loss, batch, reduce='mean')
 
         return x, attn_loss, ratio
 

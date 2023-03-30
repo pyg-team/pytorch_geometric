@@ -21,7 +21,7 @@ class S3DIS(InMemoryDataset):
     buildings with 12 semantic elements (and one clutter class).
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         test_area (int, optional): Which area to use for testing (1-6).
             (default: :obj:`6`)
         train (bool, optional): If :obj:`True`, loads the training dataset,

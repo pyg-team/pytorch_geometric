@@ -121,67 +121,70 @@ class FusedAggregation(Aggregation):
         # Determine which reduction to use for each aggregator:
         # An entry of `None` means that this operator re-uses intermediate
         # outputs from other aggregators.
-        self.reduce_ops: List[Optional[str]] = []
+        reduce_ops: List[Optional[str]] = []
         # Determine which `(Aggregator, index)` to use as intermediate output:
-        self.lookup_ops: List[Optional[Tuple[str, int]]] = []
+        lookup_ops: List[Optional[Tuple[str, int]]] = []
 
         for name in self.aggr_names:
             if name == 'MeanAggregation':
                 # Directly use output of `SumAggregation`:
                 if 'SumAggregation' in self.aggr_index:
-                    self.reduce_ops.append(None)
-                    self.lookup_ops.append((
+                    reduce_ops.append(None)
+                    lookup_ops.append((
                         'SumAggregation',
                         self.aggr_index['SumAggregation'],
                     ))
                 else:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append(None)
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append(None)
 
             elif name == 'VarAggregation':
                 if 'MeanAggregation' in self.aggr_index:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append((
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append((
                         'MeanAggregation',
                         self.aggr_index['MeanAggregation'],
                     ))
                 elif 'SumAggregation' in self.aggr_index:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append((
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append((
                         'SumAggregation',
                         self.aggr_index['SumAggregation'],
                     ))
                 else:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append(None)
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append(None)
 
             elif name == 'StdAggregation':
                 # Directly use output of `VarAggregation`:
                 if 'VarAggregation' in self.aggr_index:
-                    self.reduce_ops.append(None)
-                    self.lookup_ops.append((
+                    reduce_ops.append(None)
+                    lookup_ops.append((
                         'VarAggregation',
                         self.aggr_index['VarAggregation'],
                     ))
                 elif 'MeanAggregation' in self.aggr_index:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append((
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append((
                         'MeanAggregation',
                         self.aggr_index['MeanAggregation'],
                     ))
                 elif 'SumAggregation' in self.aggr_index:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append((
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append((
                         'SumAggregation',
                         self.aggr_index['SumAggregation'],
                     ))
                 else:
-                    self.reduce_ops.append(self.REDUCE[name])
-                    self.lookup_ops.append(None)
+                    reduce_ops.append(self.REDUCE[name])
+                    lookup_ops.append(None)
 
             else:
-                self.reduce_ops.append(self.REDUCE[name])
-                self.lookup_ops.append(None)
+                reduce_ops.append(self.REDUCE[name])
+                lookup_ops.append(None)
+
+        self.reduce_ops: List[Optional[str]] = reduce_ops
+        self.lookup_ops: List[Optional[Tuple[str, int]]] = lookup_ops
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,

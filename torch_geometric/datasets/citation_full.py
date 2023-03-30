@@ -12,11 +12,12 @@ class CitationFull(InMemoryDataset):
     `"Deep Gaussian Embedding of Graphs: Unsupervised Inductive Learning via
     Ranking" <https://arxiv.org/abs/1707.03815>`_ paper.
     Nodes represent documents and edges represent citation links.
-    Datasets include `citeseer`, `cora`, `cora_ml`, `dblp`, `pubmed`.
+    Datasets include :obj:`"Cora"`, :obj:`"Cora_ML"`, :obj:`"CiteSeer"`,
+    :obj:`"DBLP"`, :obj:`"PubMed"`.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Cora"`, :obj:`"Cora_ML"`
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Cora"`, :obj:`"Cora_ML"`
             :obj:`"CiteSeer"`, :obj:`"DBLP"`, :obj:`"PubMed"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -27,41 +28,42 @@ class CitationFull(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - Cora
-              - 19,793
-              - 126,842
-              - 8,710
-              - 70
-            * - Cora_ML
-              - 2,995
-              - 16,316
-              - 2,879
-              - 7
-            * - CiteSeer
-              - 4,230
-              - 10,674
-              - 602
-              - 6
-            * - DBLP
-              - 17,716
-              - 105,734
-              - 1,639
-              - 4
-            * - PubMed
-              - 19,717
-              - 88,648
-              - 500
-              - 3
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Cora
+          - 19,793
+          - 126,842
+          - 8,710
+          - 70
+        * - Cora_ML
+          - 2,995
+          - 16,316
+          - 2,879
+          - 7
+        * - CiteSeer
+          - 4,230
+          - 10,674
+          - 602
+          - 6
+        * - DBLP
+          - 17,716
+          - 105,734
+          - 1,639
+          - 4
+        * - PubMed
+          - 19,717
+          - 88,648
+          - 500
+          - 3
     """
 
     url = 'https://github.com/abojchevski/graph2gauss/raw/master/data/{}.npz'
@@ -104,22 +106,23 @@ class CitationFull(InMemoryDataset):
 
 
 class CoraFull(CitationFull):
-    r"""Alias for :class:`torch_geometric.datasets.CitationFull` with
-    :obj:`name="cora"`.
+    r"""Alias for :class:`~torch_geometric.datasets.CitationFull` with
+    :obj:`name="Cora"`.
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 19,793
-              - 126,842
-              - 8,710
-              - 70
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 19,793
+          - 126,842
+          - 8,710
+          - 70
     """
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):

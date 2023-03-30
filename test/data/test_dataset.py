@@ -1,13 +1,16 @@
+import copy
+
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
-from torch_geometric.data import Data, Dataset, HeteroData, InMemoryDataset
+from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.testing import withPackage
+from torch_geometric.typing import SparseTensor
 
 
 class MyTestDataset(InMemoryDataset):
-    def __init__(self, data_list):
-        super().__init__('/tmp/MyTestDataset')
+    def __init__(self, data_list, transform=None):
+        super().__init__('/tmp/MyTestDataset', transform=transform)
         self.data, self.slices = self.collate(data_list)
 
 
@@ -54,6 +57,50 @@ def test_in_memory_dataset():
     assert torch.equal(dataset[1:].x, x2)
 
 
+def test_in_memory_num_classes():
+    dataset = MyTestDataset([Data(), Data()])
+    assert dataset.num_classes == 0
+
+    dataset = MyTestDataset([Data(y=0), Data(y=1)])
+    assert dataset.num_classes == 2
+
+    dataset = MyTestDataset([Data(y=1.5), Data(y=2.5), Data(y=3.5)])
+    assert dataset.num_classes == 3
+
+    dataset = MyTestDataset([
+        Data(y=torch.tensor([[0, 1, 0, 1]])),
+        Data(y=torch.tensor([[1, 0, 0, 0]])),
+        Data(y=torch.tensor([[0, 0, 1, 0]])),
+    ])
+    assert dataset.num_classes == 4
+
+    # Test when `__getitem__` returns a tuple of data objects.
+    def transform(data):
+        copied_data = copy.copy(data)
+        copied_data.y += 1
+        return data, copied_data, 'foo'
+
+    dataset = MyTestDataset([Data(y=0), Data(y=1)], transform=transform)
+    assert dataset.num_classes == 3
+
+
+def test_in_memory_dataset_copy():
+    data_list = [Data(x=torch.randn(5, 16)) for _ in range(4)]
+    dataset = MyTestDataset(data_list)
+
+    copied_dataset = dataset.copy()
+    assert id(copied_dataset) != id(dataset)
+
+    assert len(copied_dataset) == len(dataset) == 4
+    for copied_data, data in zip(copied_dataset, dataset):
+        assert torch.equal(copied_data.x, data.x)
+
+    copied_dataset = dataset.copy([1, 2])
+    assert len(copied_dataset) == 2
+    assert torch.equal(copied_dataset[0].x, data_list[1].x)
+    assert torch.equal(copied_dataset[1].x, data_list[2].x)
+
+
 def test_to_datapipe():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -71,6 +118,7 @@ def test_to_datapipe():
     assert torch.equal(dataset[1].edge_index, list(dp)[1].edge_index)
 
 
+@withPackage('torch_sparse')
 def test_in_memory_sparse_tensor_dataset():
     x = torch.randn(11, 16)
     adj = SparseTensor(
@@ -147,8 +195,8 @@ def test_hetero_in_memory_dataset():
         'paper', 'paper'].edge_index.tolist())
 
 
-def test_override_behaviour():
-    class DS(Dataset):
+def test_override_behavior():
+    class DS1(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -166,7 +214,7 @@ def test_override_behaviour():
         def process(self):
             pass
 
-    class DS2(Dataset):
+    class DS2(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -181,7 +229,7 @@ def test_override_behaviour():
         def process(self):
             pass
 
-    class DS3(Dataset):
+    class DS3(InMemoryDataset):
         def __init__(self):
             self.enter_download = False
             self.enter_process = False
@@ -193,7 +241,10 @@ def test_override_behaviour():
         def _process(self):
             self.enter_process = True
 
-    ds = DS()
+    class DS4(DS1):
+        pass
+
+    ds = DS1()
     assert ds.enter_download
     assert ds.enter_process
 
@@ -204,6 +255,10 @@ def test_override_behaviour():
     ds = DS3()
     assert not ds.enter_download
     assert not ds.enter_process
+
+    ds = DS4()
+    assert ds.enter_download
+    assert ds.enter_process
 
 
 def test_lists_of_tensors_in_memory_dataset():
@@ -226,7 +281,8 @@ def test_lists_of_tensors_in_memory_dataset():
     assert dataset[3].xs[1].size() == (16, 4)
 
 
-def test_lists_of_SparseTensors():
+@withPackage('torch_sparse')
+def test_lists_of_sparse_tensors():
     e1 = torch.tensor([[4, 1, 3, 2, 2, 3], [1, 3, 2, 3, 3, 2]])
     e2 = torch.tensor([[0, 1, 4, 7, 2, 9], [7, 2, 2, 1, 4, 7]])
     e3 = torch.tensor([[3, 5, 1, 2, 3, 3], [5, 0, 2, 1, 3, 7]])

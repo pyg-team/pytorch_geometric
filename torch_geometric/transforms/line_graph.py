@@ -1,10 +1,9 @@
 import torch
-from torch_scatter import scatter_add
 
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import coalesce, remove_self_loops
+from torch_geometric.utils import coalesce, remove_self_loops, scatter
 
 
 @functional_transform('line_graph')
@@ -38,17 +37,14 @@ class LineGraph(BaseTransform):
     def __call__(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index, edge_attr = data.edge_index, data.edge_attr
-        if edge_attr is None:
-            edge_index = coalesce(edge_index, num_nodes=N)
-        else:
-            edge_index, edge_attr = coalesce(edge_index, edge_attr, N)
+        edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes=N)
         row, col = edge_index
 
         if self.force_directed or data.is_directed():
             i = torch.arange(row.size(0), dtype=torch.long, device=row.device)
 
-            count = scatter_add(torch.ones_like(row), row, dim=0,
-                                dim_size=data.num_nodes)
+            count = scatter(torch.ones_like(row), row, dim=0,
+                            dim_size=data.num_nodes, reduce='sum')
             cumsum = torch.cat([count.new_zeros(1), count.cumsum(0)], dim=0)
 
             cols = [
@@ -79,8 +75,8 @@ class LineGraph(BaseTransform):
             )
 
             # Compute new edge indices according to `i`.
-            count = scatter_add(torch.ones_like(row), row, dim=0,
-                                dim_size=data.num_nodes)
+            count = scatter(torch.ones_like(row), row, dim=0,
+                            dim_size=data.num_nodes, reduce='sum')
             joints = torch.split(i, count.tolist())
 
             def generate_grid(x):
@@ -95,7 +91,7 @@ class LineGraph(BaseTransform):
             joints = coalesce(joints, num_nodes=N)
 
             if edge_attr is not None:
-                data.x = scatter_add(edge_attr, i, dim=0, dim_size=N)
+                data.x = scatter(edge_attr, i, dim=0, dim_size=N, reduce='sum')
             data.edge_index = joints
             data.num_nodes = edge_index.size(1) // 2
 
