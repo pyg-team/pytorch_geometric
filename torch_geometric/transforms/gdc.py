@@ -691,7 +691,8 @@ def get_calc_heat():
                     if neighbour not in solution[v]:
                         solution[v][neighbour] = 0.
                     solution[v][neighbour] += residuals[v][neighbour]
-                mass = (t * total_residual / (float(j) + 1.)) / out_degree[v]
+                mass = (t * total_residual / (float(j) + 1.)
+                        ) / out_degree[v] if out_degree[v] != 0 else 0
                 # For neighbours of v
                 for u in indices[indptr[v]:indptr[v + 1]]:
                     next_residuals[u][v] = mass
