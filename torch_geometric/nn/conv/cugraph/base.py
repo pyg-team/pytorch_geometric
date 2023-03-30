@@ -8,6 +8,7 @@ from torch_geometric.utils import index_sort
 from torch_geometric.utils.sparse import index2ptr
 
 try:  # pragma: no cover
+    LEGACY_MODE = False
     from pylibcugraphops.pytorch import (
         SampledCSC,
         SampledHeteroCSC,
@@ -15,7 +16,6 @@ try:  # pragma: no cover
         StaticHeteroCSC,
     )
     HAS_PYLIBCUGRAPHOPS = True
-    LEGACY_MODE = False
 except ImportError:
     HAS_PYLIBCUGRAPHOPS = False
     try:  # pragma: no cover
