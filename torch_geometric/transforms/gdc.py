@@ -85,6 +85,7 @@ class GDC(BaseTransform):
     ):
 
         self.__calc_ppr__ = get_calc_ppr()
+        self.__calc_heat__ = get_calc_heat()
 
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
@@ -295,56 +296,63 @@ class GDC(BaseTransform):
                      criterion (:obj:`edge_weight >= eps * out_degree`).
                      Recommended default: :obj:`1e-4`.
 
+                2. :obj:`"heat"`: Use heat kernel diffusion
+                   Additionally expects the parameters:
+
+                   - **t** (*float*) - Time of diffusion. Commonly lies in
+                     :obj:`[2, 10]`.
+
+                   - **eps** (*float*) - Threshold for the heat kernel
+                     calculation stopping criterion.
+                     Recommended default: :obj:`1e-5`.
+
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
+        if method != 'ppr' and method != 'heat':
+            raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
+        if normalization == 'sym':
+            # Calculate original degrees.
+            _, col = edge_index
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
+
+        edge_index_np = edge_index.cpu().numpy()
+        # Assumes sorted and coalesced edge indices:
+        indptr = index2ptr(edge_index[0], num_nodes).cpu().numpy()
+        out_degree = indptr[1:] - indptr[:-1]
+
         if method == 'ppr':
-            if normalization == 'sym':
-                # Calculate original degrees.
-                _, col = edge_index
-                deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
-
-            edge_index_np = edge_index.cpu().numpy()
-
-            # Assumes sorted and coalesced edge indices:
-            indptr = index2ptr(edge_index[0], num_nodes).cpu().numpy()
-            out_degree = indptr[1:] - indptr[:-1]
-
             neighbors, neighbor_weights = self.__calc_ppr__(
                 indptr, edge_index_np[1], out_degree, kwargs['alpha'],
                 kwargs['eps'])
-            ppr_normalization = 'col' if normalization == 'col' else 'row'
-            edge_index, edge_weight = self.__neighbors_to_graph__(
-                neighbors, neighbor_weights, ppr_normalization,
-                device=edge_index.device)
-            edge_index = edge_index.to(torch.long)
-
-            if normalization == 'sym':
-                # We can change the normalization from row-normalized to
-                # symmetric by multiplying the resulting matrix with D^{1/2}
-                # from the left and D^{-1/2} from the right.
-                # Since we use the original degrees for this it will be like
-                # we had used symmetric normalization from the beginning
-                # (except for errors due to approximation).
-                row, col = edge_index
-                deg_inv = deg.sqrt()
-                deg_inv_sqrt = deg.pow(-0.5)
-                deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
-                edge_weight = deg_inv[row] * edge_weight * deg_inv_sqrt[col]
-            elif normalization in ['col', 'row']:
-                pass
-            else:
-                raise ValueError(
-                    f"Transition matrix normalization '{normalization}' not "
-                    f"implemented for non-exact GDC computation")
-
         elif method == 'heat':
-            raise NotImplementedError(
-                ('Currently no fast heat kernel is implemented. You are '
-                 'welcome to create one yourself, e.g., based on '
-                 '"Kloster and Gleich: Heat kernel based community detection '
-                 '(KDD 2014)."'))
+            neighbors, neighbor_weights = self.__calc_heat__(
+                indptr, edge_index_np[1], out_degree, kwargs['t'],
+                kwargs['eps'])
+
+        diffusion_normalization = 'col' if normalization == 'col' else 'row'
+        edge_index, edge_weight = self.__neighbors_to_graph__(
+            neighbors, neighbor_weights, diffusion_normalization,
+            device=edge_index.device)
+        edge_index = edge_index.to(torch.long)
+
+        if normalization == 'sym':
+            # We can change the normalization from row-normalized to
+            # symmetric by multiplying the resulting matrix with D^{1/2}
+            # from the left and D^{-1/2} from the right.
+            # Since we use the original degrees for this it will be like
+            # we had used symmetric normalization from the beginning
+            # (except for errors due to approximation).
+            row, col = edge_index
+            deg_inv = deg.sqrt()
+            deg_inv_sqrt = deg.pow(-0.5)
+            deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
+            edge_weight = deg_inv[row] * edge_weight * deg_inv_sqrt[col]
+        elif normalization in ['col', 'row']:
+            pass
         else:
-            raise ValueError(f"Approximate GDC diffusion '{method}' unknown")
+            raise ValueError(
+                f"Transition matrix normalization '{normalization}' not "
+                f"implemented for non-exact GDC computation")
 
         return edge_index, edge_weight
 
@@ -601,3 +609,103 @@ def get_calc_ppr():
         return js, vals
 
     return calc_ppr
+
+
+def get_calc_heat():
+    import math
+
+    import numba
+    from numba.core import types
+    from numba.typed import Dict
+
+    @numba.jit(nopython=True)
+    def calc_heat(
+        indptr: np.ndarray, indices: np.ndarray, out_degree: np.ndarray,
+        t: int, eps: float
+    ) -> Tuple[List[List[int]], List[List[float]]]:  # pragma: no cover
+        r"""Calculate the heat kernel diffusion vector for all nodes using a
+        variant of the Kloster-Gleich algorithm (see Kloster and Gleich: Heat
+        kernel based community detection (KDD 2014).)
+
+        Args:
+            indptr (np.ndarray): Index pointer for the sparse matrix
+                (CSR-format).
+            indices (np.ndarray): Indices of the sparse matrix entries
+                (CSR-format).
+            out_degree (np.ndarray): Out-degree of each node.
+            t (int): Time of diffusion.
+            eps (float): Threshold for heat kernel calculation stopping
+                criterion.
+
+        :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
+        """
+
+        num_nodes = len(out_degree)
+
+        # Compute N
+        N = 1
+        for N in range(t - 1, math.ceil(2 * t * math.log(1 / eps)) + 1):
+            bound = ((N + 2) * t**(N + 1)) / ((N + 2 - t) * math.gamma(N + 2))
+            if bound < (eps / 2):
+                break
+
+        # Precompute psis
+        psis = [0.] * (N + 1)
+        psis[N] = 1.
+        for i in range(N - 1, -1, -1):
+            psis[i] = psis[i + 1] * t / (float(i + 1.)) + 1.
+
+        # Initialize two dictionaries - one for storing the actual solution
+        # and one for storing residuals during the procedure
+
+        # First key is node, second key is its neighbour, the value is the
+        # neighbours contribution
+        solution: List[Dict[int, float]] = [
+            Dict.empty(key_type=types.int64, value_type=types.float64)
+            for _ in range(num_nodes)
+        ]
+        # First key is vertex v, second key is a vertex u and the value is the
+        # residual "flowing" from u to v.
+        residuals: List[Dict[int, float]] = []
+        next_residuals: List[Dict[int, float]] = [
+            Dict.empty(key_type=types.int64, value_type=types.float64)
+            for _ in range(num_nodes)
+        ]
+
+        for j in range(N):
+            residuals = next_residuals
+            next_residuals = [
+                Dict.empty(key_type=types.int64, value_type=types.float64)
+                for _ in range(num_nodes)
+            ]
+            for v in range(num_nodes):
+                total_residual = sum(list(residuals[v].values()))
+                if j == 0:
+                    total_residual += 1. / num_nodes
+                threshold = math.exp(t) * eps * out_degree[v]
+                threshold = threshold / (N * psis[j]) / 2.
+                if total_residual < threshold:
+                    continue
+                # Add residual to solution
+                for neighbour in residuals[v]:
+                    if neighbour not in solution[v]:
+                        solution[v][neighbour] = 0.
+                    solution[v][neighbour] += residuals[v][neighbour]
+                mass = (t * total_residual / (float(j) + 1.)
+                        ) / out_degree[v] if out_degree[v] != 0 else 0
+                # For neighbours of v
+                for u in indices[indptr[v]:indptr[v + 1]]:
+                    next_residuals[u][v] = mass
+        # For verification purposes, x as defined in the original paper can be
+        # obtained as
+        # x = [
+        #     sum(list(residuals.values())) + 1. / num_nodes
+        #     for residuals in solution
+        # ]
+        neighbours = [list(solution[node].keys()) for node in range(num_nodes)]
+        neighbour_weights = [
+            list(solution[node].values()) for node in range(num_nodes)
+        ]
+        return neighbours, neighbour_weights
+
+    return calc_heat
