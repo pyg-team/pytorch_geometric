@@ -369,8 +369,8 @@ class HeteroDictLinear(torch.nn.Module):
 
     def forward(
         self,
-        x_dict: Dict[Any, Tensor],
-    ) -> Dict[Any, Tensor]:
+        x_dict: Dict[str, Tensor],
+    ) -> Dict[str, Tensor]:
         r"""
         Args:
             x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
@@ -387,7 +387,7 @@ class HeteroDictLinear(torch.nn.Module):
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
             return {key: out for key, out in zip(x_dict.keys(), outs)}
 
-        return {key: self.lins[key](x) for key, x in x_dict.items()}
+        return {key: lin(x_dict[key]) for key, lin in self.lins.items()}
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):

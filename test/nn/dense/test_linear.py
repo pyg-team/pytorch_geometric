@@ -148,6 +148,10 @@ def test_hetero_dict_linear():
     assert out_dict['v'].size() == (3, 32)
     assert out_dict['w'].size() == (2, 32)
 
+    if is_full_test():
+        jit = torch.jit.script(lin)
+        assert len(jit(x_dict)) == 2
+
 
 def test_lazy_hetero_dict_linear():
     x_dict = {'v': torch.randn(3, 16), 'w': torch.randn(2, 8)}
