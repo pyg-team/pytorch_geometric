@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  sdist:
+  build:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
 
@@ -33,14 +33,22 @@ jobs:
       - name: Customize build version
         run: |
           sed -i "s/$VERSION/$VERSION.dev$TODAY/" torch_geometric/__init__.py
-          sed -i 's/name="torch_geometric"/name="pyg-nightly"/' pyproject.toml
+          sed -i '0,/name="torch_geometric"/s//name="pyg-nightly"/' pyproject.toml
           sed -i "s/version=\"$VERSION\"/version=\"$VERSION.dev$TODAY\"/" pyproject.toml
 
-      - name: Build package
-        run: python -m build
+      - name: Print file
+        run: |
+          cat pyproject.toml
+          echo "======================="
+          cat torch_geometric/__init__.py
 
-      - name: Publish package
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Build package
+        run: |
+          pip install --upgrade build
+          python -m build
+
+      # - name: Publish package
+      #   uses: pypa/gh-action-pypi-publish@release/v1
+      #   with:
+      #     user: __token__
+      #     password: ${{ secrets.PYPI_API_TOKEN }}

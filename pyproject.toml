@@ -1,6 +1,6 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
+requires=["flit_core >=3.2,<4"]
+build-backend="flit_core.buildapi"
 
 [project]
 name="torch_geometric"
@@ -94,6 +94,9 @@ homepage="https://pyg.org"
 documentation="https://pytorch-geometric.readthedocs.io"
 repository="https://github.com/pyg-team/pytorch_geometric.git"
 changelog="https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md"
+
+[tool.flit.module]
+name="torch_geometric"
 
 [tool.yapf]
 based_on_style = "pep8"
