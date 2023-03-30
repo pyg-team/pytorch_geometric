@@ -189,13 +189,15 @@ def test_hgt_loader_disconnected():
     data = HeteroData()
 
     data['paper'].x = torch.arange(10)
-    data['author'].x = torch.arange(10, 3)
+    data['author'].x = torch.arange(10, 20)
 
     # Paper is disconnected from author
     data['paper', 'paper'].edge_index = get_random_edge_index(10, 10, 15)
     data['paper', 'paper'].edge_attr = torch.arange(15)
+    data['author', 'author'].edge_index = get_random_edge_index(10, 10, 15)
 
-    loader = HGTLoader(data, num_samples=2, batch_size=2, input_nodes='paper')
+    loader = HGTLoader(data, num_samples=[2], batch_size=2,
+                       input_nodes='paper')
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
