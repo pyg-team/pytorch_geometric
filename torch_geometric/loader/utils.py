@@ -132,8 +132,8 @@ def filter_hetero_data(
     # edges in `edge` for each node and edge type, respectively:
     out = data.node_type_subgraph(node_dict.keys())
     # edge_dict may be emtpy if graph has no edges
-    # or if none of the edges types are reachable from seed nodes. 
-    if edge_dict: 
+    # or if none of the edges types are reachable from seed nodes.
+    if edge_dict:
         out = out.edge_type_subgraph(edge_dict.keys())
 
     for node_type in out.node_types:
