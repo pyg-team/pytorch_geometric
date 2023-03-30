@@ -33,29 +33,16 @@ jobs:
       - name: Customize build version
         run: |
           sed -i "s/$VERSION/$VERSION.dev$TODAY/" torch_geometric/__init__.py
-          sed -i '0,/name="torch_geometric"/s//name="pyg-nightly"/' pyproject.toml
+          sed -i '0,/name="torch_geometric"/s//name="pyg-nightly"/' pyproject.toml # Only change first occurence
           sed -i "s/version=\"$VERSION\"/version=\"$VERSION.dev$TODAY\"/" pyproject.toml
-
-      - name: Print file
-        run: |
-          cat pyproject.toml
-          echo "======================="
-          cat torch_geometric/__init__.py
 
       - name: Build package
         run: |
           pip install --upgrade build
           python -m build
 
-      - name: Install
-        run: |
-          pip install dist/pyg-nightly-2.4.0.dev20230330.tar.gz
-          pip install torch==2.0.0 --extra-index-url https://download.pytorch.org/whl/cpu
-          pip install pytest
-          pytest
-
-      # - name: Publish package
-      #   uses: pypa/gh-action-pypi-publish@release/v1
-      #   with:
-      #     user: __token__
-      #     password: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
