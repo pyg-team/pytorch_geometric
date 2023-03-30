@@ -45,5 +45,10 @@ def test_multi_aggr(multi_aggr_tuple):
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
 
-    jit = torch.jit.script(aggr)
-    assert torch.allclose(out, jit(x, index))
+    if aggr_kwargs['mode'] == 'attn' and torch_geometric.typing.WITH_GMM:
+        # See: https://github.com/pytorch/pytorch/pull/97960
+        with pytest.raises(RuntimeError, match="Unknown builtin op"):
+            jit = torch.jit.script(aggr)
+    else:
+        jit = torch.jit.script(aggr)
+        assert torch.allclose(out, jit(x, index))
