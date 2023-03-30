@@ -8,26 +8,8 @@ from torch_geometric.explain import HeteroExplanation
 from torch_geometric.explain.config import MaskType
 
 
-@pytest.fixture
-def data():
-    data = HeteroData()
-    data['paper'].x = torch.randn(8, 16)
-    data['author'].x = torch.randn(10, 8)
-    data['paper', 'paper'].edge_index = torch.tensor([
-        [0, 0, 0, 1, 1, 1, 2, 2, 2, 3],
-        [4, 5, 6, 4, 5, 6, 4, 5, 6, 7],
-    ])
-    data['paper', 'paper'].edge_attr = torch.randn(10, 16)
-    data['paper', 'author'].edge_index = torch.tensor([
-        [0, 0, 0, 1, 1, 1, 2, 2, 2, 3],
-        [4, 5, 6, 4, 5, 6, 4, 5, 6, 7],
-    ])
-    data['paper', 'author'].edge_attr = torch.randn(10, 8)
-    return data
-
-
 def create_random_explanation(
-    data: HeteroData,
+    hetero_data: HeteroData,
     node_mask_type: Optional[Union[MaskType, str]] = None,
     edge_mask_type: Optional[Union[MaskType, str]] = None,
 ):
@@ -39,19 +21,19 @@ def create_random_explanation(
     out = HeteroExplanation()
 
     for key in ['paper', 'author']:
-        out[key].x = data[key].x
+        out[key].x = hetero_data[key].x
         if node_mask_type == MaskType.object:
-            out[key].node_mask = torch.rand(data[key].num_nodes, 1)
+            out[key].node_mask = torch.rand(hetero_data[key].num_nodes, 1)
         elif node_mask_type == MaskType.common_attributes:
-            out[key].node_mask = torch.rand(1, data[key].num_features)
+            out[key].node_mask = torch.rand(1, hetero_data[key].num_features)
         elif node_mask_type == MaskType.attributes:
-            out[key].node_mask = torch.rand_like(data[key].x)
+            out[key].node_mask = torch.rand_like(hetero_data[key].x)
 
     for key in [('paper', 'paper'), ('paper', 'author')]:
-        out[key].edge_index = data[key].edge_index
-        out[key].edge_attr = data[key].edge_attr
+        out[key].edge_index = hetero_data[key].edge_index
+        out[key].edge_attr = hetero_data[key].edge_attr
         if edge_mask_type == MaskType.object:
-            out[key].edge_mask = torch.rand(data[key].num_edges)
+            out[key].edge_mask = torch.rand(hetero_data[key].num_edges)
 
     return out
 
@@ -59,7 +41,7 @@ def create_random_explanation(
 @pytest.mark.parametrize('node_mask_type',
                          [None, 'object', 'common_attributes', 'attributes'])
 @pytest.mark.parametrize('edge_mask_type', [None, 'object'])
-def test_available_explanations(data, node_mask_type, edge_mask_type):
+def test_available_explanations(hetero_data, node_mask_type, edge_mask_type):
     expected = []
     if node_mask_type:
         expected.append('node_mask')
@@ -67,7 +49,7 @@ def test_available_explanations(data, node_mask_type, edge_mask_type):
         expected.append('edge_mask')
 
     explanation = create_random_explanation(
-        data,
+        hetero_data,
         node_mask_type=node_mask_type,
         edge_mask_type=edge_mask_type,
     )
@@ -75,27 +57,27 @@ def test_available_explanations(data, node_mask_type, edge_mask_type):
     assert set(explanation.available_explanations) == set(expected)
 
 
-def test_validate_explanation(data):
-    explanation = create_random_explanation(data)
+def test_validate_explanation(hetero_data):
+    explanation = create_random_explanation(hetero_data)
     explanation.validate(raise_on_error=True)
 
     with pytest.raises(ValueError, match="with 8 nodes"):
-        explanation = create_random_explanation(data)
+        explanation = create_random_explanation(hetero_data)
         explanation['paper'].node_mask = torch.rand(5, 5)
         explanation.validate(raise_on_error=True)
 
     with pytest.raises(ValueError, match="with 5 features"):
-        explanation = create_random_explanation(data, 'attributes')
+        explanation = create_random_explanation(hetero_data, 'attributes')
         explanation['paper'].x = torch.randn(8, 5)
         explanation.validate(raise_on_error=True)
 
     with pytest.raises(ValueError, match="with 10 edges"):
-        explanation = create_random_explanation(data)
+        explanation = create_random_explanation(hetero_data)
         explanation['paper', 'paper'].edge_mask = torch.randn(5)
         explanation.validate(raise_on_error=True)
 
 
-def test_node_mask(data):
+def test_node_mask():
     explanation = HeteroExplanation()
     explanation['paper'].node_mask = torch.tensor([[1.], [0.], [1.], [1.]])
     explanation['author'].node_mask = torch.tensor([[1.], [0.], [1.], [1.]])
@@ -110,7 +92,7 @@ def test_node_mask(data):
     assert out['author'].node_mask.size() == (1, 1)
 
 
-def test_edge_mask(data):
+def test_edge_mask():
     explanation = HeteroExplanation()
     explanation['paper'].num_nodes = 4
     explanation['author'].num_nodes = 4

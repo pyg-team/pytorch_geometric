@@ -1,8 +1,3 @@
-import os.path as osp
-import random
-import shutil
-import sys
-
 import torch
 
 from torch_geometric.datasets.icews import EventDataset
@@ -43,9 +38,8 @@ class MyTestEventDataset(EventDataset):
         torch.save(self.collate(data_list), self.processed_paths[0])
 
 
-def test_re_net():
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-    dataset = MyTestEventDataset(root, seq_len=4)
+def test_re_net(tmp_path):
+    dataset = MyTestEventDataset(tmp_path, seq_len=4)
     loader = DataLoader(dataset, 2, follow_batch=['h_sub', 'h_obj'])
 
     model = RENet(dataset.num_nodes, dataset.num_rels, hidden_channels=16,
@@ -69,5 +63,3 @@ def test_re_net():
             assert torch.allclose(log_prob_sub_jit, log_prob_sub)
         model.test(log_prob_obj, data.obj)
         model.test(log_prob_sub, data.sub)
-
-    shutil.rmtree(root)

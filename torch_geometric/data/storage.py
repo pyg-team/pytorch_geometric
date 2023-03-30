@@ -1,8 +1,9 @@
 import copy
 import warnings
 import weakref
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 from collections.abc import Mapping, MutableMapping, Sequence
+from enum import Enum
 from typing import (
     Any,
     Callable,
@@ -11,6 +12,7 @@ from typing import (
     List,
     NamedTuple,
     Optional,
+    Set,
     Tuple,
     Union,
 )
@@ -27,7 +29,14 @@ from torch_geometric.utils import (
     is_undirected,
 )
 
-N_KEYS = {'x', 'feat', 'pos', 'batch'}
+N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id'}
+E_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type', 'e_id'}
+
+
+class AttrType(Enum):
+    NODE = 'NODE'
+    EDGE = 'EDGE'
+    OTHER = 'OTHER'
 
 
 class BaseStorage(MutableMapping):
@@ -54,6 +63,10 @@ class BaseStorage(MutableMapping):
     def _key(self) -> Any:
         return None
 
+    def _pop_cache(self, key: str):
+        for cache in getattr(self, '_cached_attr', {}).values():
+            cache.discard(key)
+
     def __len__(self) -> int:
         return len(self._mapping)
 
@@ -76,18 +89,21 @@ class BaseStorage(MutableMapping):
         elif key[:1] == '_':
             self.__dict__[key] = value
         else:
+            self._pop_cache(key)
             self[key] = value
 
     def __delattr__(self, key: str):
         if key[:1] == '_':
             del self.__dict__[key]
         else:
+            self._pop_cache(key)
             del self[key]
 
     def __getitem__(self, key: str) -> Any:
         return self._mapping[key]
 
     def __setitem__(self, key: str, value: Any):
+        self._pop_cache(key)
         if value is None and key in self._mapping:
             del self._mapping[key]
         elif value is not None:
@@ -95,6 +111,7 @@ class BaseStorage(MutableMapping):
 
     def __delitem__(self, key: str):
         if key in self._mapping:
+            self._pop_cache(key)
             del self._mapping[key]
 
     def __iter__(self) -> Iterable:
@@ -204,13 +221,13 @@ class BaseStorage(MutableMapping):
         return self.apply(lambda x: x.cpu(), *args)
 
     def cuda(self, device: Optional[Union[int, str]] = None, *args: List[str],
-             non_blocking: bool = False):
+             non_blocking: bool = False):  # pragma: no cover
         r"""Copies attributes to CUDA memory, either for all attributes or only
         the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
                           *args)
 
-    def pin_memory(self, *args: List[str]):
+    def pin_memory(self, *args: List[str]):  # pragma: no cover
         r"""Copies attributes to pinned memory, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.pin_memory(), *args)
@@ -272,8 +289,11 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items():
-            if (isinstance(value, (Tensor, np.ndarray))
-                    and (key in N_KEYS or 'node' in key)):
+            if isinstance(value, (Tensor, np.ndarray)) and key in N_KEYS:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.shape[cat_dim]
+        for key, value in self.items():
+            if isinstance(value, (Tensor, np.ndarray)) and 'node' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
         if 'adj' in self and isinstance(self.adj, SparseTensor):
@@ -311,12 +331,34 @@ class NodeStorage(BaseStorage):
         return self.num_node_features
 
     def is_node_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
+        if key in self._cached_attr[AttrType.NODE]:
+            return True
+        if key in self._cached_attr[AttrType.OTHER]:
+            return False
+
         value = self[key]
-        cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_nodes:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
+            self._cached_attr[AttrType.OTHER].add(key)
             return False
-        if value.ndim == 0 or value.shape[cat_dim] != self.num_nodes:
+
+        if value.ndim == 0:
+            self._cached_attr[AttrType.OTHER].add(key)
             return False
+
+        cat_dim = self._parent().__cat_dim__(key, value, self)
+        if value.shape[cat_dim] != self.num_nodes:
+            self._cached_attr[AttrType.OTHER].add(key)
+            return False
+
+        self._cached_attr[AttrType.NODE].add(key)
         return True
 
     def is_edge_attr(self, key: str) -> bool:
@@ -363,6 +405,12 @@ class EdgeStorage(BaseStorage):
     @property
     def num_edges(self) -> int:
         # We sequentially access attributes that reveal the number of edges.
+        if 'num_edges' in self:
+            return self['num_edges']
+        for key, value in self.items():
+            if isinstance(value, (Tensor, np.ndarray)) and key in E_KEYS:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.shape[cat_dim]
         for key, value in self.items():
             if isinstance(value, (Tensor, np.ndarray)) and 'edge' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
@@ -400,12 +448,34 @@ class EdgeStorage(BaseStorage):
         return False
 
     def is_edge_attr(self, key: str) -> bool:
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
+
+        if key in self._cached_attr[AttrType.EDGE]:
+            return True
+        if key in self._cached_attr[AttrType.OTHER]:
+            return False
+
         value = self[key]
-        cat_dim = self._parent().__cat_dim__(key, value, self)
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_edges:
+            self._cached_attr[AttrType.EDGE].add(key)
+            return True
+
         if not isinstance(value, (Tensor, np.ndarray)):
+            self._cached_attr[AttrType.OTHER].add(key)
             return False
-        if value.ndim == 0 or value.shape[cat_dim] != self.num_edges:
+
+        if value.ndim == 0:
+            self._cached_attr[AttrType.OTHER].add(key)
             return False
+
+        cat_dim = self._parent().__cat_dim__(key, value, self)
+        if value.shape[cat_dim] != self.num_edges:
+            self._cached_attr[AttrType.OTHER].add(key)
+            return False
+
+        self._cached_attr[AttrType.EDGE].add(key)
         return True
 
     def edge_attrs(self) -> List[str]:
@@ -493,30 +563,96 @@ class GlobalStorage(NodeStorage, EdgeStorage):
         return size if dim is None else size[dim]
 
     def is_node_attr(self, key: str) -> bool:
-        value = self[key]
-        cat_dim = self._parent().__cat_dim__(key, value, self)
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
 
-        num_nodes, num_edges = self.num_nodes, self.num_edges
-        if not isinstance(value, (Tensor, np.ndarray)):
-            return False
-        if value.ndim == 0 or value.shape[cat_dim] != num_nodes:
-            return False
-        if num_nodes != num_edges:
+        if key in self._cached_attr[AttrType.NODE]:
             return True
-        return 'edge' not in key
+        if key in self._cached_attr[AttrType.EDGE]:
+            return False
+        if key in self._cached_attr[AttrType.OTHER]:
+            return False
+
+        value = self[key]
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_nodes:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
+        if not isinstance(value, (Tensor, np.ndarray)):
+            self._cached_attr[AttrType.OTHER].add(key)
+            return False
+
+        if value.ndim == 0:
+            self._cached_attr[AttrType.OTHER].add(key)
+            return False
+
+        cat_dim = self._parent().__cat_dim__(key, value, self)
+        num_nodes, num_edges = self.num_nodes, self.num_edges
+
+        if value.shape[cat_dim] != num_nodes:
+            if value.shape[cat_dim] == num_edges:
+                self._cached_attr[AttrType.EDGE].add(key)
+            else:
+                self._cached_attr[AttrType.OTHER].add(key)
+            return False
+
+        if num_nodes != num_edges:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+
+        if 'edge' not in key:
+            self._cached_attr[AttrType.NODE].add(key)
+            return True
+        else:
+            self._cached_attr[AttrType.EDGE].add(key)
+            return False
 
     def is_edge_attr(self, key: str) -> bool:
-        value = self[key]
-        cat_dim = self._parent().__cat_dim__(key, value, self)
+        if '_cached_attr' not in self.__dict__:
+            self._cached_attr: Dict[AttrType, Set[str]] = defaultdict(set)
 
-        num_nodes, num_edges = self.num_nodes, self.num_edges
-        if not isinstance(value, (Tensor, np.ndarray)):
-            return False
-        if value.ndim == 0 or value.shape[cat_dim] != num_edges:
-            return False
-        if num_nodes != num_edges:
+        if key in self._cached_attr[AttrType.EDGE]:
             return True
-        return 'edge' in key
+        if key in self._cached_attr[AttrType.NODE]:
+            return False
+        if key in self._cached_attr[AttrType.OTHER]:
+            return False
+
+        value = self[key]
+
+        if isinstance(value, (list, tuple)) and len(value) == self.num_edges:
+            self._cached_attr[AttrType.EDGE].add(key)
+            return True
+
+        if not isinstance(value, (Tensor, np.ndarray)):
+            self._cached_attr[AttrType.OTHER].add(key)
+            return False
+
+        if value.ndim == 0:
+            self._cached_attr[AttrType.OTHER].add(key)
+            return False
+
+        cat_dim = self._parent().__cat_dim__(key, value, self)
+        num_nodes, num_edges = self.num_nodes, self.num_edges
+
+        if value.shape[cat_dim] != num_edges:
+            if value.shape[cat_dim] == num_nodes:
+                self._cached_attr[AttrType.NODE].add(key)
+            else:
+                self._cached_attr[AttrType.OTHER].add(key)
+            return False
+
+        if num_edges != num_nodes:
+            self._cached_attr[AttrType.EDGE].add(key)
+            return True
+
+        if 'edge' in key:
+            self._cached_attr[AttrType.EDGE].add(key)
+            return True
+        else:
+            self._cached_attr[AttrType.NODE].add(key)
+            return False
 
 
 def recursive_apply_(data: Any, func: Callable):

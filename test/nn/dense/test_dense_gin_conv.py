@@ -13,7 +13,7 @@ def test_dense_gin_conv():
     sparse_conv = GINConv(nn)
     dense_conv = DenseGINConv(nn)
     dense_conv = DenseGINConv(nn, train_eps=True)
-    assert dense_conv.__repr__() == (
+    assert str(dense_conv) == (
         'DenseGINConv(nn=Sequential(\n'
         '  (0): Linear(in_features=16, out_features=16, bias=True)\n'
         '  (1): ReLU()\n'

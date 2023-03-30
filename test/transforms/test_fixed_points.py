@@ -7,7 +7,7 @@ from torch_geometric.transforms import FixedPoints
 
 
 def test_fixed_points():
-    assert FixedPoints(1024).__repr__() == 'FixedPoints(1024, replace=True)'
+    assert str(FixedPoints(1024)) == 'FixedPoints(1024, replace=True)'
 
     data = Data(
         pos=torch.randn(100, 3),

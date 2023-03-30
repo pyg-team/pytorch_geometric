@@ -6,7 +6,6 @@ import torch.nn.functional as F
 from torchmetrics import Accuracy
 
 import torch_geometric.transforms as T
-from torch_geometric import seed_everything
 from torch_geometric.data.lightning import LightningDataset
 from torch_geometric.datasets import TUDataset
 from torch_geometric.nn import GIN, MLP, global_add_pool
@@ -23,9 +22,9 @@ class Model(pl.LightningModule):
         self.classifier = MLP([hidden_channels, hidden_channels, out_channels],
                               norm="batch_norm", dropout=dropout)
 
-        self.train_acc = Accuracy()
-        self.val_acc = Accuracy()
-        self.test_acc = Accuracy()
+        self.train_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.val_acc = Accuracy(task='multiclass', num_classes=out_channels)
+        self.test_acc = Accuracy(task='multiclass', num_classes=out_channels)
 
     def forward(self, x, edge_index, batch):
         x = self.gnn(x, edge_index)
@@ -38,28 +37,26 @@ class Model(pl.LightningModule):
         loss = F.cross_entropy(y_hat, data.y)
         self.train_acc(y_hat.softmax(dim=-1), data.y)
         self.log('train_acc', self.train_acc, prog_bar=True, on_step=False,
-                 on_epoch=True, batch_size=y_hat.size(0))
+                 on_epoch=True)
         return loss
 
     def validation_step(self, data, batch_idx):
         y_hat = self(data.x, data.edge_index, data.batch)
         self.val_acc(y_hat.softmax(dim=-1), data.y)
         self.log('val_acc', self.val_acc, prog_bar=True, on_step=False,
-                 on_epoch=True, batch_size=y_hat.size(0))
+                 on_epoch=True)
 
     def test_step(self, data, batch_idx):
         y_hat = self(data.x, data.edge_index, data.batch)
         self.test_acc(y_hat.softmax(dim=-1), data.y)
         self.log('test_acc', self.test_acc, prog_bar=True, on_step=False,
-                 on_epoch=True, batch_size=y_hat.size(0))
+                 on_epoch=True)
 
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.01)
 
 
-def main():
-    seed_everything(42)
-
+if __name__ == '__main__':
     root = osp.join('data', 'TUDataset')
     dataset = TUDataset(root, 'IMDB-BINARY', pre_transform=T.OneHotDegree(135))
 
@@ -74,16 +71,11 @@ def main():
     model = Model(dataset.num_node_features, dataset.num_classes)
 
     devices = torch.cuda.device_count()
-    strategy = pl.strategies.DDPSpawnStrategy(find_unused_parameters=False)
+    strategy = pl.strategies.DDPStrategy(accelerator='gpu')
     checkpoint = pl.callbacks.ModelCheckpoint(monitor='val_acc', save_top_k=1,
                                               mode='max')
-    trainer = pl.Trainer(strategy=strategy, accelerator='gpu', devices=devices,
-                         max_epochs=50, log_every_n_steps=5,
-                         callbacks=[checkpoint])
+    trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=50,
+                         log_every_n_steps=5, callbacks=[checkpoint])
 
     trainer.fit(model, datamodule)
     trainer.test(ckpt_path='best', datamodule=datamodule)
-
-
-if __name__ == '__main__':
-    main()

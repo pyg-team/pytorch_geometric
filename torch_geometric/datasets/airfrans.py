@@ -47,8 +47,8 @@ class AirfRANS(InMemoryDataset):
         :obj:`torch_geometric.transforms.RadiusGraph` transform.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        task (string): The task to study (:obj:`"full"`, :obj:`"scarce"`,
+        root (str): Root directory where the dataset should be saved.
+        task (str): The task to study (:obj:`"full"`, :obj:`"scarce"`,
             :obj:`"reynolds"`, :obj:`"aoa"`) that defines the utilized training
             and test splits.
         train (bool, optional): If :obj:`True`, loads the training dataset,
@@ -66,21 +66,22 @@ class AirfRANS(InMemoryDataset):
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 1,000
-              - ~180,000
-              - 0
-              - 5
-              - 4
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 1,000
+          - ~180,000
+          - 0
+          - 5
+          - 4
     """
     url = 'https://data.isir.upmc.fr/extrality/pytorch_geometric/AirfRANS.zip'
     tasks = ['full', 'scarce', 'reynolds', 'aoa']

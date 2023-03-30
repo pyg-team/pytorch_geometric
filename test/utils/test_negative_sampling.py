@@ -69,6 +69,10 @@ def test_negative_sampling():
     assert neg_edge_index.size(1) == edge_index.size(1)
     assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
 
+    neg_edge_index = negative_sampling(edge_index, method='dense')
+    assert neg_edge_index.size(1) == edge_index.size(1)
+    assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
+
     neg_edge_index = negative_sampling(edge_index, num_neg_samples=2)
     assert neg_edge_index.size(1) == 2
     assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)

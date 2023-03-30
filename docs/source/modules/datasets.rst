@@ -7,14 +7,13 @@ Benchmark Datasets
 .. currentmodule:: torch_geometric.datasets
 
 .. autosummary::
-    :nosignatures:
-    {% for cls in torch_geometric.datasets.classes %}
-      {{ cls }}
-    {% endfor %}
+   :nosignatures:
+   :toctree: ../generated
+   :template: autosummary/only_class.rst
 
-.. automodule:: torch_geometric.datasets
-    :members:
-    :exclude-members: download, process, processed_file_names, raw_file_names, num_classes, get
+   {% for name in torch_geometric.datasets.classes %}
+     {{ name }}
+   {% endfor %}
 
 Graph Generators
 ----------------
@@ -23,12 +22,12 @@ Graph Generators
 
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.datasets.graph_generator.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
+   :template: autosummary/only_class.rst
 
-.. automodule:: torch_geometric.datasets.graph_generator
-    :members:
+   {% for name in torch_geometric.datasets.graph_generator.classes %}
+     {{ name }}
+   {% endfor %}
 
 Motif Generators
 ----------------
@@ -37,9 +36,9 @@ Motif Generators
 
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.datasets.motif_generator.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
+   :template: autosummary/only_class.rst
 
-.. automodule:: torch_geometric.datasets.motif_generator
-    :members:
+   {% for name in torch_geometric.datasets.motif_generator.classes %}
+     {{ name }}
+   {% endfor %}

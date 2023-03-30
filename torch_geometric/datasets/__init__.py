@@ -49,6 +49,7 @@ from .freebase import FB15k_237
 from .wikics import WikiCS
 from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
+from .heterophilous_graph_dataset import HeterophilousGraphDataset
 from .actor import Actor
 from .ogb_mag import OGB_MAG
 from .dblp import DBLP
@@ -81,7 +82,9 @@ from .hydro_net import HydroNet
 from .explainer_dataset import ExplainerDataset
 from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
+from .ba_multi_shapes import BAMultiShapesDataset
 from .airfrans import AirfRANS
+from .taobao import Taobao
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -140,6 +143,7 @@ __all__ = [
     'WikiCS',
     'WebKB',
     'WikipediaNetwork',
+    'HeterophilousGraphDataset',
     'Actor',
     'OGB_MAG',
     'DBLP',
@@ -172,7 +176,9 @@ __all__ = [
     'ExplainerDataset',
     'InfectionDataset',
     'BA2MotifDataset',
+    'BAMultiShapesDataset',
     'AirfRANS',
+    'Taobao',
 ]
 
 classes = __all__

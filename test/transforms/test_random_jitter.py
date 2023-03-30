@@ -5,7 +5,7 @@ from torch_geometric.transforms import RandomJitter
 
 
 def test_random_jitter():
-    assert RandomJitter(0.1).__repr__() == 'RandomJitter(0.1)'
+    assert str(RandomJitter(0.1)) == 'RandomJitter(0.1)'
 
     pos = torch.Tensor([[0, 0], [0, 0], [0, 0], [0, 0]])
 

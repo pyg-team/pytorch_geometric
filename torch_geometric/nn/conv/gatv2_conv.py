@@ -4,13 +4,24 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, set_diag
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.typing import Adj, OptTensor, PairTensor
-from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
+from torch_geometric.typing import (
+    Adj,
+    OptTensor,
+    PairTensor,
+    SparseTensor,
+    torch_sparse,
+)
+from torch_geometric.utils import (
+    add_self_loops,
+    is_torch_sparse_tensor,
+    remove_self_loops,
+    softmax,
+)
+from torch_geometric.utils.sparse import set_sparse_value
 
 
 class GATv2Conv(MessagePassing):
@@ -73,8 +84,9 @@ class GATv2Conv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         edge_dim (int, optional): Edge feature dimensionality (in case
             there are any). (default: :obj:`None`)
-        fill_value (float or Tensor or str, optional): The way to generate
-            edge features of self-loops (in case :obj:`edge_dim != None`).
+        fill_value (float or torch.Tensor or str, optional): The way to
+            generate edge features of self-loops
+            (in case :obj:`edge_dim != None`).
             If given as :obj:`float` or :class:`torch.Tensor`, edge features of
             self-loops will be directly given by :obj:`fill_value`.
             If given as :obj:`str`, edge features of self-loops are computed by
@@ -171,6 +183,7 @@ class GATv2Conv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_l.reset_parameters()
         self.lin_r.reset_parameters()
         if self.lin_edge is not None:
@@ -185,7 +198,8 @@ class GATv2Conv(MessagePassing):
         # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, NoneType) -> Tensor  # noqa
         # type: (Union[Tensor, PairTensor], Tensor, OptTensor, bool) -> Tuple[Tensor, Tuple[Tensor, Tensor]]  # noqa
         # type: (Union[Tensor, PairTensor], SparseTensor, OptTensor, bool) -> Tuple[Tensor, SparseTensor]  # noqa
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
@@ -225,7 +239,7 @@ class GATv2Conv(MessagePassing):
                     num_nodes=num_nodes)
             elif isinstance(edge_index, SparseTensor):
                 if self.edge_dim is None:
-                    edge_index = set_diag(edge_index)
+                    edge_index = torch_sparse.set_diag(edge_index)
                 else:
                     raise NotImplementedError(
                         "The usage of 'edge_attr' and 'add_self_loops' "
@@ -237,6 +251,7 @@ class GATv2Conv(MessagePassing):
                              size=None)
 
         alpha = self._alpha
+        assert alpha is not None
         self._alpha = None
 
         if self.concat:
@@ -248,9 +263,13 @@ class GATv2Conv(MessagePassing):
             out = out + self.bias
 
         if isinstance(return_attention_weights, bool):
-            assert alpha is not None
             if isinstance(edge_index, Tensor):
-                return out, (edge_index, alpha)
+                if is_torch_sparse_tensor(edge_index):
+                    # TODO TorchScript requires to return a tuple
+                    adj = set_sparse_value(edge_index, alpha)
+                    return out, (adj, alpha)
+                else:
+                    return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
         else:

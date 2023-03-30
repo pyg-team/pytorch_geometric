@@ -17,8 +17,8 @@ class Amazon(InMemoryDataset):
     map goods to their respective product category.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"Computers"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"Computers"`,
             :obj:`"Photo"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -29,26 +29,27 @@ class Amazon(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - Computers
-              - 13,752
-              - 491,722
-              - 767
-              - 10
-            * - Photo
-              - 7,650
-              - 238,162
-              - 745
-              - 8
+    .. list-table::
+        :widths: 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - Computers
+          - 13,752
+          - 491,722
+          - 767
+          - 10
+        * - Photo
+          - 7,650
+          - 238,162
+          - 745
+          - 8
     """
 
     url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'

@@ -1,18 +1,19 @@
 import pytest
 import torch
-from torch_sparse import SparseTensor
 
-from torch_geometric.testing import MyGraphStore
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return row, col
+from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
+from torch_geometric.testing import MyGraphStore, get_random_edge_index
+from torch_geometric.utils import (
+    to_torch_coo_tensor,
+    to_torch_csc_tensor,
+    to_torch_csr_tensor,
+)
 
 
 def test_graph_store():
     graph_store = MyGraphStore()
+
+    assert str(graph_store) == 'MyGraphStore()'
 
     coo = torch.tensor([0, 1]), torch.tensor([1, 2])
     csr = torch.tensor([0, 1, 2]), torch.tensor([1, 2])
@@ -31,6 +32,10 @@ def test_graph_store():
 
     assert len(graph_store.get_all_edge_attrs()) == 3
 
+    del graph_store['edge_type', 'coo']
+    with pytest.raises(KeyError):
+        graph_store['edge_type', 'coo']
+
     with pytest.raises(KeyError):
         graph_store['edge_type_2', 'coo']
 
@@ -38,9 +43,13 @@ def test_graph_store():
 def test_graph_store_conversion():
     graph_store = MyGraphStore()
 
-    coo = (row, col) = get_edge_index(100, 100, 300)
-    adj = SparseTensor(row=row, col=col, sparse_sizes=(100, 100))
-    csr, csc = adj.csr()[:2], adj.csc()[:2][::-1]
+    edge_index = get_random_edge_index(100, 100, 300)
+    adj = to_torch_coo_tensor(edge_index, size=(100, 100))
+    coo = (adj.indices()[0], adj.indices()[1])
+    adj = to_torch_csr_tensor(edge_index, size=(100, 100))
+    csr = (adj.crow_indices(), adj.col_indices())
+    adj = to_torch_csc_tensor(edge_index, size=(100, 100))
+    csc = (adj.row_indices(), adj.ccol_indices())
 
     graph_store.put_edge_index(coo, ('v', '1', 'v'), 'coo', size=(100, 100))
     graph_store.put_edge_index(csr, ('v', '2', 'v'), 'csr', size=(100, 100))
@@ -73,3 +82,17 @@ def test_graph_store_conversion():
     out = graph_store.coo([('v', '1', 'v')])
     assert torch.equal(list(out[0].values())[0], coo[0])
     assert torch.equal(list(out[1].values())[0], coo[1])
+
+    # Ensure that 'store' parameter works as intended:
+    key = EdgeAttr(edge_type=('v', '1', 'v'), layout=EdgeLayout.CSR,
+                   is_sorted=False, size=(100, 100))
+    with pytest.raises(KeyError):
+        graph_store[key]
+
+    out = graph_store.csr([('v', '1', 'v')], store=True)
+    assert torch.equal(list(out[0].values())[0], csr[0])
+    assert torch.equal(list(out[1].values())[0].sort()[0], csr[1].sort()[0])
+
+    out = graph_store[key]
+    assert torch.equal(out[0], csr[0])
+    assert torch.equal(out[1].sort()[0], csr[1].sort()[0])

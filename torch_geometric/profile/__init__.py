@@ -6,6 +6,7 @@ from .utils import get_data_size
 from .utils import get_cpu_memory_from_gc
 from .utils import get_gpu_memory_from_gc
 from .utils import get_gpu_memory_from_nvidia_smi
+from .benchmark import benchmark
 
 __all__ = [
     'profileit',
@@ -20,6 +21,7 @@ __all__ = [
     'get_cpu_memory_from_gc',
     'get_gpu_memory_from_gc',
     'get_gpu_memory_from_nvidia_smi',
+    'benchmark',
 ]
 
 classes = __all__

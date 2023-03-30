@@ -4,6 +4,7 @@ from typing import Optional  # noqa
 import torch
 from torch import Tensor
 
+import torch_geometric
 from torch_geometric.typing import SparseTensor  # noqa
 
 
@@ -23,6 +24,8 @@ def maybe_num_nodes(edge_index, num_nodes=None):
     if num_nodes is not None:
         return num_nodes
     elif isinstance(edge_index, Tensor):
+        if torch_geometric.utils.is_torch_sparse_tensor(edge_index):
+            return max(edge_index.size(0), edge_index.size(1))
         return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
     else:
         return max(edge_index.size(0), edge_index.size(1))

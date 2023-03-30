@@ -6,8 +6,7 @@ from torch.nn import Linear
 
 
 class DenseGraphConv(torch.nn.Module):
-    r"""See :class:`torch_geometric.nn.conv.GraphConv`.
-    """
+    r"""See :class:`torch_geometric.nn.conv.GraphConv`."""
     def __init__(
         self,
         in_channels: int,
@@ -28,6 +27,7 @@ class DenseGraphConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.lin_rel.reset_parameters()
         self.lin_root.reset_parameters()
 
@@ -35,15 +35,15 @@ class DenseGraphConv(torch.nn.Module):
                 mask: Optional[Tensor] = None) -> Tensor:
         r"""
         Args:
-            x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
-                \times N \times F}`, with batch-size :math:`B`, (maximum)
-                number of nodes :math:`N` for each graph, and feature
-                dimension :math:`F`.
-            adj (Tensor): Adjacency tensor :math:`\mathbf{A} \in \mathbb{R}^{B
-                \times N \times N}`. The adjacency tensor is broadcastable in
-                the batch dimension, resulting in a shared adjacency matrix for
-                the complete batch.
-            mask (BoolTensor, optional): Mask matrix
+            x (torch.Tensor): Node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+                each graph, and feature dimension :math:`F`.
+            adj (torch.Tensor): Adjacency tensor
+                :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
+                The adjacency tensor is broadcastable in the batch dimension,
+                resulting in a shared adjacency matrix for the complete batch.
+            mask (torch.Tensor, optional): Mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
                 the valid nodes for each graph. (default: :obj:`None`)
         """

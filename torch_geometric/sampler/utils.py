@@ -7,6 +7,8 @@ from torch import Tensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.typing import NodeType, OptTensor
+from torch_geometric.utils import index_sort
+from torch_geometric.utils.sparse import index2ptr
 
 # Edge Layout Conversion ######################################################
 
@@ -17,7 +19,7 @@ def sort_csc(
     src_node_time: OptTensor = None,
 ) -> Tuple[Tensor, Tensor, Tensor]:
     if src_node_time is None:
-        col, perm = col.sort()
+        col, perm = index_sort(col)
         return row[perm], col, perm
     else:
         # We use `np.lexsort` to sort based on multiple keys.
@@ -69,8 +71,7 @@ def to_csc(
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time)
 
-        colptr = torch._convert_indices_from_coo_to_csr(
-            col, data.size(1), out_int32=col.dtype == torch.int32)
+        colptr = index2ptr(col, data.size(1))
 
     else:
         row = torch.empty(0, dtype=torch.long, device=device)

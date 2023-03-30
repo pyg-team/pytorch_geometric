@@ -32,12 +32,12 @@ def to_nested_tensor(
             (default: :obj:`None`)
     """
     if ptr is not None:
-        sizes = ptr[1:] - ptr[:-1]
-        sizes: List[int] = sizes.tolist()
+        offsets = ptr[1:] - ptr[:-1]
+        sizes: List[int] = offsets.tolist()
         xs = list(torch.split(x, sizes, dim=0))
     elif batch is not None:
-        sizes = scatter(torch.ones_like(batch), batch, dim_size=batch_size)
-        sizes: List[int] = sizes.tolist()
+        offsets = scatter(torch.ones_like(batch), batch, dim_size=batch_size)
+        sizes: List[int] = offsets.tolist()
         xs = list(torch.split(x, sizes, dim=0))
     else:
         xs = [x]

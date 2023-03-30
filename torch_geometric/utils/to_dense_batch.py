@@ -2,7 +2,8 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_add
+
+from torch_geometric.utils import scatter
 
 
 def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
@@ -94,8 +95,8 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
     if batch_size is None:
         batch_size = int(batch.max()) + 1
 
-    num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0,
-                            dim_size=batch_size)
+    num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0,
+                        dim_size=batch_size, reduce='sum')
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
 
     filter_nodes = False

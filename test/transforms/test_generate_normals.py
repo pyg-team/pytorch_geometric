@@ -5,7 +5,8 @@ from torch_geometric.transforms import GenerateMeshNormals
 
 
 def test_generate_normals():
-    assert GenerateMeshNormals().__repr__() == 'GenerateMeshNormals()'
+    transform = GenerateMeshNormals()
+    assert str(transform) == 'GenerateMeshNormals()'
 
     pos = torch.Tensor([
         [0, 0, 0],
@@ -21,7 +22,7 @@ def test_generate_normals():
         [2, 3, 4, 5],
     ])
 
-    data = GenerateMeshNormals()(Data(pos=pos, face=face))
+    data = transform(Data(pos=pos, face=face))
     assert len(data) == 3
     assert data.pos.tolist() == pos.tolist()
     assert data.face.tolist() == face.tolist()

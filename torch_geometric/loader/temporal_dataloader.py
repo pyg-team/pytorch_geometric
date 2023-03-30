@@ -18,10 +18,11 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`.
     """
     def __init__(self, data: TemporalData, batch_size: int = 1, **kwargs):
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
-        if 'shuffle' in kwargs:
-            del kwargs['shuffle']
+        # Remove for PyTorch Lightning:
+        kwargs.pop('dataset', None)
+        kwargs.pop('collate_fn', None)
+
+        kwargs.pop('shuffle', None)
 
         self.data = data
         self.events_per_batch = batch_size

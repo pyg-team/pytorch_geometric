@@ -22,7 +22,7 @@ class DynamicFAUST(InMemoryDataset):
         face area.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         subjects (list, optional): List of subjects to include in the
             dataset. Can include the subjects :obj:`"50002"`, :obj:`"50004"`,
             :obj:`"50007"`, :obj:`"50009"`, :obj:`"50020"`, :obj:`"50021"`,

@@ -39,11 +39,11 @@ class UPFD(InMemoryDataset):
         upfd.py>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the graph set (:obj:`"politifact"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the graph set (:obj:`"politifact"`,
             :obj:`"gossipcop"`).
-        feature (string): The node feature type (:obj:`"profile"`,
-            :obj:`"spacy"`, :obj:`"bert"`, :obj:`"content"`).
+        feature (str): The node feature type (:obj:`"profile"`, :obj:`"spacy"`,
+            :obj:`"bert"`, :obj:`"content"`).
             If set to :obj:`"profile"`, the 10-dimensional node feature
             is composed of ten Twitter user profile attributes.
             If set to :obj:`"spacy"`, the 300-dimensional node feature is
@@ -56,8 +56,7 @@ class UPFD(InMemoryDataset):
             If set to :obj:`"content"`, the 310-dimensional node feature is
             composed of a 300-dimensional "spacy" vector plus a
             10-dimensional "profile" vector.
-        split (string, optional): If :obj:`"train"`, loads the training
-            dataset.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset.
             (default: :obj:`"train"`)

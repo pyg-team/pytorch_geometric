@@ -11,7 +11,7 @@ def test_set_transformer_aggregation():
     aggr = SetTransformerAggregation(16, num_seed_points=2, heads=2)
     aggr.reset_parameters()
     assert str(aggr) == ('SetTransformerAggregation(16, num_seed_points=2, '
-                         'heads=2, layer_norm=False)')
+                         'heads=2, layer_norm=False, dropout=0.0)')
 
     out = aggr(x, index)
     assert out.size() == (3, 2 * 16)

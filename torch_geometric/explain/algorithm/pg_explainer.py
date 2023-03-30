@@ -15,7 +15,7 @@ from torch_geometric.explain.config import (
 )
 from torch_geometric.nn import Linear
 from torch_geometric.nn.inits import reset
-from torch_geometric.utils import get_message_passing_embeddings
+from torch_geometric.utils import get_embeddings
 
 
 class PGExplainer(ExplainerAlgorithm):
@@ -75,31 +75,8 @@ class PGExplainer(ExplainerAlgorithm):
         self.optimizer = torch.optim.Adam(self.mlp.parameters(), lr=lr)
         self._curr_epoch = -1
 
-    def supports(self) -> bool:
-        explanation_type = self.explainer_config.explanation_type
-        if explanation_type != ExplanationType.phenomenon:
-            logging.error(f"'{self.__class__.__name__}' only supports "
-                          f"phenomenon explanations "
-                          f"got (`explanation_type={explanation_type.value}`)")
-            return False
-
-        task_level = self.model_config.task_level
-        if task_level not in {ModelTaskLevel.node, ModelTaskLevel.graph}:
-            logging.error(f"'{self.__class__.__name__}' only supports "
-                          f"node-level or graph-level explanations "
-                          f"got (`task_level={task_level.value}`)")
-            return False
-
-        node_mask_type = self.explainer_config.node_mask_type
-        if node_mask_type is not None:
-            logging.error(f"'{self.__class__.__name__}' does not support "
-                          f"explaining input node features "
-                          f"got (`node_mask_type={node_mask_type.value}`)")
-            return False
-
-        return True
-
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset(self.mlp)
 
     def train(
@@ -143,7 +120,7 @@ class PGExplainer(ExplainerAlgorithm):
                 raise ValueError(f"Only scalars are supported for the 'index' "
                                  f"argument in '{self.__class__.__name__}'")
 
-        z = get_message_passing_embeddings(model, x, edge_index, **kwargs)[-1]
+        z = get_embeddings(model, x, edge_index, **kwargs)[-1]
 
         self.optimizer.zero_grad()
         temperature = self._get_temperature(epoch)
@@ -208,7 +185,7 @@ class PGExplainer(ExplainerAlgorithm):
             _, hard_edge_mask = self._get_hard_masks(model, index, edge_index,
                                                      num_nodes=x.size(0))
 
-        z = get_message_passing_embeddings(model, x, edge_index, **kwargs)[-1]
+        z = get_embeddings(model, x, edge_index, **kwargs)[-1]
 
         inputs = self._get_inputs(z, edge_index, index)
         logits = self.mlp(inputs).view(-1)
@@ -217,6 +194,30 @@ class PGExplainer(ExplainerAlgorithm):
                                             apply_sigmoid=True)
 
         return Explanation(edge_mask=edge_mask)
+
+    def supports(self) -> bool:
+        explanation_type = self.explainer_config.explanation_type
+        if explanation_type != ExplanationType.phenomenon:
+            logging.error(f"'{self.__class__.__name__}' only supports "
+                          f"phenomenon explanations "
+                          f"got (`explanation_type={explanation_type.value}`)")
+            return False
+
+        task_level = self.model_config.task_level
+        if task_level not in {ModelTaskLevel.node, ModelTaskLevel.graph}:
+            logging.error(f"'{self.__class__.__name__}' only supports "
+                          f"node-level or graph-level explanations "
+                          f"got (`task_level={task_level.value}`)")
+            return False
+
+        node_mask_type = self.explainer_config.node_mask_type
+        if node_mask_type is not None:
+            logging.error(f"'{self.__class__.__name__}' does not support "
+                          f"explaining input node features "
+                          f"got (`node_mask_type={node_mask_type.value}`)")
+            return False
+
+        return True
 
     ###########################################################################
 

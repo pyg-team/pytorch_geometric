@@ -3,6 +3,7 @@ import torch
 
 from torch_geometric.nn.aggr.fused import FusedAggregation
 from torch_geometric.nn.resolver import aggregation_resolver
+from torch_geometric.profile import benchmark
 
 
 @pytest.mark.parametrize('aggrs', [
@@ -43,81 +44,35 @@ def test_fused_aggregation(aggrs):
 
 if __name__ == '__main__':
     import argparse
-    import time
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
 
-    num_nodes, num_edges, num_feats = 1000, 50000, 64
-
-    num_warmups, num_steps = 500, 1000
-    if args.device == 'cpu':
-        num_warmups, num_steps = num_warmups // 10, num_steps // 10
+    num_nodes, num_edges = 1_000, 50_000
+    x = torch.randn(num_edges, 64, device=args.device)
+    index = torch.randint(num_nodes, (num_edges, ), device=args.device)
 
     aggrs = ['sum', 'mean', 'max', 'std']
     print(f'Aggregators: {", ".join(aggrs)}')
-    print('=========================')
+
     aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
-    fused_aggr = FusedAggregation(aggrs)
+    fused_aggregation = FusedAggregation(aggrs)
 
-    index = torch.randint(num_nodes, (num_edges, ), device=args.device)
-    out_grad = torch.randn(num_nodes,
-                           len(aggrs) * num_feats, device=args.device)
+    def naive_aggr(x, index, dim_size):
+        outs = [aggr(x, index, dim_size=dim_size) for aggr in aggrs]
+        return torch.cat(outs, dim=-1)
 
-    t_forward = t_backward = 0
-    for i in range(num_warmups + num_steps):
-        x = torch.randn(num_edges, num_feats, device=args.device)
-        if args.backward:
-            x.requires_grad_(True)
+    def fused_aggr(x, index, dim_size):
+        outs = fused_aggregation(x, index, dim_size=dim_size)
+        return torch.cat(outs, dim=-1)
 
-        torch.cuda.synchronize()
-        t_start = time.perf_counter()
-
-        outs = [aggr(x, index, dim_size=num_nodes) for aggr in aggrs]
-        out = torch.cat(outs, dim=-1)
-
-        torch.cuda.synchronize()
-        if i >= num_warmups:
-            t_forward += time.perf_counter() - t_start
-
-        if args.backward:
-            t_start = time.perf_counter()
-            out.backward(out_grad)
-
-            torch.cuda.synchronize()
-            if i >= num_warmups:
-                t_backward += time.perf_counter() - t_start
-
-    print(f'Vanilla forward:  {t_forward:.4f}s')
-    if args.backward:
-        print(f'Vanilla backward: {t_backward:.4f}s')
-    print('=========================')
-
-    t_forward = t_backward = 0
-    for i in range(num_warmups + num_steps):
-        x = torch.randn(num_edges, num_feats, device=args.device)
-        if args.backward:
-            x.requires_grad_(True)
-
-        torch.cuda.synchronize()
-        t_start = time.perf_counter()
-
-        out = torch.cat(fused_aggr(x, index, dim_size=num_nodes), dim=-1)
-
-        torch.cuda.synchronize()
-        if i >= num_warmups:
-            t_forward += time.perf_counter() - t_start
-
-        if args.backward:
-            t_start = time.perf_counter()
-            out.backward(out_grad)
-
-            torch.cuda.synchronize()
-            if i >= num_warmups:
-                t_backward += time.perf_counter() - t_start
-
-    print(f'Fused forward:    {t_forward:.4f}s')
-    if args.backward:
-        print(f'Fused backward:   {t_backward:.4f}s')
+    benchmark(
+        funcs=[naive_aggr, fused_aggr],
+        func_names=['Naive', 'Fused'],
+        args=(x, index, num_nodes),
+        num_steps=100 if args.device == 'cpu' else 1000,
+        num_warmups=50 if args.device == 'cpu' else 500,
+        backward=args.backward,
+    )

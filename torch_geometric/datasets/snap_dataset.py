@@ -129,7 +129,7 @@ def read_soc(files: List[str], name: str) -> List[Data]:
                              skiprows=skiprows, dtype=np.int64)
     edge_index = torch.from_numpy(edge_index.values).t()
     num_nodes = edge_index.max().item() + 1
-    edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
+    edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
@@ -147,7 +147,7 @@ def read_wiki(files: List[str], name: str) -> List[Data]:
 
     edge_index = idx_assoc[edge_index]
     num_nodes = edge_index.max().item() + 1
-    edge_index, _ = coalesce(edge_index, None, num_nodes, num_nodes)
+    edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
     return [Data(edge_index=edge_index, num_nodes=num_nodes)]
 
@@ -157,8 +157,8 @@ class SNAPDataset(InMemoryDataset):
     <https://snap.stanford.edu/data>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset.
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.

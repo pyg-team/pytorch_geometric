@@ -6,6 +6,7 @@ from torch.utils.data.dataloader import default_collate
 
 from torch_geometric.data import Batch, Dataset
 from torch_geometric.data.data import BaseData
+from torch_geometric.data.datapipes import DatasetAdapter
 
 
 class Collater:
@@ -35,7 +36,8 @@ class Collater:
 
         raise TypeError(f'DataLoader found invalid type: {type(elem)}')
 
-    def collate(self, batch):  # Deprecated...
+    def collate(self, batch):  # pragma: no cover
+        # TODO Deprecated, remove soon.
         return self(batch)
 
 
@@ -60,16 +62,15 @@ class DataLoader(torch.utils.data.DataLoader):
     """
     def __init__(
         self,
-        dataset: Union[Dataset, Sequence[BaseData]],
+        dataset: Union[Dataset, Sequence[BaseData], DatasetAdapter],
         batch_size: int = 1,
         shuffle: bool = False,
         follow_batch: Optional[List[str]] = None,
         exclude_keys: Optional[List[str]] = None,
         **kwargs,
     ):
-
-        if 'collate_fn' in kwargs:
-            del kwargs['collate_fn']
+        # Remove for PyTorch Lightning:
+        kwargs.pop('collate_fn', None)
 
         # Save for PyTorch Lightning < 1.6:
         self.follow_batch = follow_batch

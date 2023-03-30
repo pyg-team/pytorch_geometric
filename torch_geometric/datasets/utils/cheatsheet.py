@@ -12,7 +12,8 @@ def paper_link(cls: str) -> str:
 
 def get_stats_table(cls: str) -> str:
     cls = importlib.import_module('torch_geometric.datasets').__dict__[cls]
-    match = re.search('Stats:\n.*$', inspect.getdoc(cls), flags=re.DOTALL)
+    match = re.search(r'\*\*STATS:\*\*\n.*$', inspect.getdoc(cls),
+                      flags=re.DOTALL)
     return '' if match is None else match.group()
 
 
@@ -27,6 +28,9 @@ def get_stat(cls: str, name: str, child: Optional[str] = None,
 
     stats_table = get_stats_table(cls)
 
+    if len(stats_table) > 0:
+        stats_table = '\n'.join(stats_table.split('\n')[2:])
+
     match = re.search(f'^.*- {name}', stats_table, flags=re.DOTALL)
     if match is None:
         return default
@@ -34,6 +38,7 @@ def get_stat(cls: str, name: str, child: Optional[str] = None,
     column = match.group().count(' -')
 
     if child is not None:
+        child = child.replace('(', r'\(').replace(')', r'\)')
         match = re.search(f'[*] - {child}\n.*$', stats_table, flags=re.DOTALL)
         stats_row = match.group()
     else:

@@ -12,9 +12,10 @@ def test_to_dense():
     pos = torch.randn((num_nodes, 3))
     y = torch.randint(0, 4, (num_nodes, ), dtype=torch.long)
 
-    assert ToDense().__repr__() == 'ToDense()'
+    transform = ToDense()
+    assert str(transform) == 'ToDense()'
     data = Data(x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr, y=y)
-    data = ToDense()(data)
+    data = transform(data)
     assert len(data) == 5
     assert data.x.tolist() == x.tolist()
     assert data.pos.tolist() == pos.tolist()
@@ -28,9 +29,10 @@ def test_to_dense():
     ]
     assert data.mask.tolist() == [1, 1, 1, 1]
 
-    assert ToDense(num_nodes=5).__repr__() == 'ToDense(num_nodes=5)'
+    transform = ToDense(num_nodes=5)
+    assert str(transform) == 'ToDense(num_nodes=5)'
     data = Data(x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr, y=y)
-    data = ToDense(num_nodes=5)(data)
+    data = transform(data)
     assert len(data) == 5
     assert data.x.size() == (5, 4)
     assert data.x[:4].tolist() == x.tolist()

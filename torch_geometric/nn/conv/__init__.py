@@ -1,12 +1,15 @@
 from .message_passing import MessagePassing
+from .simple_conv import SimpleConv
 from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
 from .sage_conv import SAGEConv
+from .cugraph.sage_conv import CuGraphSAGEConv
 from .graph_conv import GraphConv
 from .gravnet_conv import GravNetConv
 from .gated_graph_conv import GatedGraphConv
 from .res_gated_graph_conv import ResGatedGraphConv
 from .gat_conv import GATConv
+from .cugraph.gat_conv import CuGraphGATConv
 from .fused_gat_conv import FusedGATConv
 from .gatv2_conv import GATv2Conv
 from .transformer_conv import TransformerConv
@@ -18,13 +21,14 @@ from .sg_conv import SGConv
 from .appnp import APPNP
 from .mf_conv import MFConv
 from .rgcn_conv import RGCNConv, FastRGCNConv
+from .cugraph.rgcn_conv import CuGraphRGCNConv
 from .rgat_conv import RGATConv
 from .signed_conv import SignedConv
 from .dna_conv import DNAConv
-from .point_conv import PointNetConv, PointConv
+from .point_conv import PointNetConv
 from .gmm_conv import GMMConv
 from .spline_conv import SplineConv
-from .nn_conv import NNConv, ECConv
+from .nn_conv import NNConv
 from .cg_conv import CGConv
 from .edge_conv import EdgeConv, DynamicEdgeConv
 from .x_conv import XConv
@@ -47,6 +51,7 @@ from .eg_conv import EGConv
 from .pdn_conv import PDNConv
 from .general_conv import GeneralConv
 from .hgt_conv import HGTConv
+from .fast_hgt_conv import FastHGTConv
 from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
 from .han_conv import HANConv
@@ -54,17 +59,21 @@ from .lg_conv import LGConv
 from .ssg_conv import SSGConv
 from .point_gnn_conv import PointGNNConv
 from .gps_conv import GPSConv
+from .antisymmetric_conv import AntiSymmetricConv
 
 __all__ = [
     'MessagePassing',
+    'SimpleConv',
     'GCNConv',
     'ChebConv',
     'SAGEConv',
+    'CuGraphSAGEConv',
     'GraphConv',
     'GravNetConv',
     'GatedGraphConv',
     'ResGatedGraphConv',
     'GATConv',
+    'CuGraphGATConv',
     'FusedGATConv',
     'GATv2Conv',
     'TransformerConv',
@@ -79,15 +88,14 @@ __all__ = [
     'MFConv',
     'RGCNConv',
     'FastRGCNConv',
+    'CuGraphRGCNConv',
     'RGATConv',
     'SignedConv',
     'DNAConv',
     'PointNetConv',
-    'PointConv',
     'GMMConv',
     'SplineConv',
     'NNConv',
-    'ECConv',
     'CGConv',
     'EdgeConv',
     'DynamicEdgeConv',
@@ -111,12 +119,17 @@ __all__ = [
     'PDNConv',
     'GeneralConv',
     'HGTConv',
+    'FastHGTConv',
     'HEATConv',
     'HeteroConv',
     'HANConv',
     'LGConv',
     'PointGNNConv',
     'GPSConv',
+    'AntiSymmetricConv',
 ]
 
 classes = __all__
+
+ECConv = NNConv
+PointConv = PointNetConv

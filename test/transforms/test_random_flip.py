@@ -5,7 +5,7 @@ from torch_geometric.transforms import RandomFlip
 
 
 def test_random_flip():
-    assert RandomFlip(axis=0).__repr__() == 'RandomFlip(axis=0, p=0.5)'
+    assert str(RandomFlip(axis=0)) == 'RandomFlip(axis=0, p=0.5)'
 
     pos = torch.Tensor([[-1, 1], [-3, 0], [2, -1]])
 

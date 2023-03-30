@@ -20,8 +20,8 @@ class PascalPF(InMemoryDataset):
     per example over 20 categories.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        category (string): The category of the images (one of
+        root (str): Root directory where the dataset should be saved.
+        category (str): The category of the images (one of
             :obj:`"Aeroplane"`, :obj:`"Bicycle"`, :obj:`"Bird"`,
             :obj:`"Boat"`, :obj:`"Bottle"`, :obj:`"Bus"`, :obj:`"Car"`,
             :obj:`"Cat"`, :obj:`"Chair"`, :obj:`"Diningtable"`, :obj:`"Dog"`,

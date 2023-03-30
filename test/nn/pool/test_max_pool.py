@@ -67,4 +67,4 @@ def test_max_pool_neighbor_x():
         [11, 12],
         [11, 12],
     ]
-    assert data.edge_index.tolist() == edge_index.tolist()
+    assert torch.equal(data.edge_index, edge_index)

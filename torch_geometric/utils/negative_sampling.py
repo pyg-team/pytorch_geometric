@@ -6,8 +6,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.utils import coalesce, degree, remove_self_loops
-
-from .num_nodes import maybe_num_nodes
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def negative_sampling(edge_index: Tensor,
@@ -28,8 +27,8 @@ def negative_sampling(edge_index: Tensor,
             samples to return.
             If set to :obj:`None`, will try to return a negative edge for every
             positive edge. (default: :obj:`None`)
-        method (string, optional): The method to use for negative sampling,
-            *i.e.*, :obj:`"sparse"` or :obj:`"dense"`.
+        method (str, optional): The method to use for negative sampling,
+            *i.e.* :obj:`"sparse"` or :obj:`"dense"`.
             This is a memory/runtime trade-off.
             :obj:`"sparse"` will work on any graph of any size, while
             :obj:`"dense"` can perform faster true-negative checks.
@@ -128,8 +127,8 @@ def batched_negative_sampling(
         num_neg_samples (int, optional): The number of negative samples to
             return. If set to :obj:`None`, will try to return a negative edge
             for every positive edge. (default: :obj:`None`)
-        method (string, optional): The method to use for negative sampling,
-            *i.e.*, :obj:`"sparse"` or :obj:`"dense"`.
+        method (str, optional): The method to use for negative sampling,
+            *i.e.* :obj:`"sparse"` or :obj:`"dense"`.
             This is a memory/runtime trade-off.
             :obj:`"sparse"` will work on any graph of any size, while
             :obj:`"dense"` can perform faster true-negative checks.
@@ -250,12 +249,14 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
 
 
 def structured_negative_sampling_feasible(
-        edge_index: Tensor, num_nodes: Optional[int] = None,
-        contains_neg_self_loops: bool = True) -> bool:
+    edge_index: Tensor,
+    num_nodes: Optional[int] = None,
+    contains_neg_self_loops: bool = True,
+) -> bool:
     r"""Returns :obj:`True` if
     :meth:`~torch_geometric.utils.structured_negative_sampling` is feasible
     on the graph given by :obj:`edge_index`.
-    :obj:`~torch_geometric.utils.structured_negative_sampling` is infeasible
+    :meth:`~torch_geometric.utils.structured_negative_sampling` is infeasible
     if atleast one node is connected to all other nodes.
 
     Args:

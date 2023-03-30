@@ -14,16 +14,22 @@ def house():
     return edge_index, label
 
 
-@deprecated("use 'datasets.graph_generator.BAGraph' in combination with "
-            "'datasets.ExplainerDataset' instead")
+@deprecated("use 'datasets.ExplainerDataset' in combination with "
+            "'datasets.graph_generator.BAGraph' instead")
 class BAShapes(InMemoryDataset):
     r"""The BA-Shapes dataset from the `"GNNExplainer: Generating Explanations
-    for Graph Neural Networks" <https://arxiv.org/pdf/1903.03894.pdf>`_ paper,
+    for Graph Neural Networks" <https://arxiv.org/abs/1903.03894>`__ paper,
     containing a Barabasi-Albert (BA) graph with 300 nodes and a set of 80
     "house"-structured graphs connected to it.
 
+    .. warning::
+
+        :class:`BAShapes` is deprecated and will be removed in a future
+        release. Use :class:`ExplainerDataset` in combination with
+        :class:`torch_geometric.datasets.graph_generator.BAGraph` instead.
+
     Args:
-        connection_distribution (string, optional): Specifies how the houses
+        connection_distribution (str, optional): Specifies how the houses
             and the BA graph get connected. Valid inputs are :obj:`"random"`
             (random BA graph nodes are selected for connection to the houses),
             and :obj:`"uniform"` (uniformly distributed BA graph nodes are

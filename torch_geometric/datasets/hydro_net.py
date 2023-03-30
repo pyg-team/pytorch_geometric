@@ -35,8 +35,8 @@ class HydroNet(InMemoryDataset):
     provides atomic coordinates and total energy in kcal/mol for the cluster.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string, optional): Name of the subset of the full dataset to use:
+        root (str): Root directory where the dataset should be saved.
+        name (str, optional): Name of the subset of the full dataset to use:
             :obj:`"small"` uses 500k graphs sampled from the :obj:`"medium"`
             dataset, :obj:`"medium"` uses 2.7m graphs with maximum size of 75
             nodes.

@@ -2,10 +2,9 @@ from typing import Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_mean
 
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
-from torch_geometric.utils import degree
+from torch_geometric.utils import degree, scatter
 
 
 def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
@@ -95,16 +94,16 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             return float(out.mean())
         else:
             dim_size = int(batch.max()) + 1
-            return scatter_mean(out, batch[col], dim=0, dim_size=dim_size)
+            return scatter(out, batch[col], 0, dim_size, reduce='mean')
 
     elif method == 'node':
         out = torch.zeros(row.size(0), device=row.device)
         out[y[row] == y[col]] = 1.
-        out = scatter_mean(out, col, 0, dim_size=y.size(0))
+        out = scatter(out, col, 0, dim_size=y.size(0), reduce='mean')
         if batch is None:
             return float(out.mean())
         else:
-            return scatter_mean(out, batch, dim=0)
+            return scatter(out, batch, dim=0, reduce='mean')
 
     elif method == 'edge_insensitive':
         assert y.dim() == 1

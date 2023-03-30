@@ -1,14 +1,38 @@
+import copy
 import math
 from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.typing import EdgeType, NodeType, OptTensor
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
+from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
+
+
+class DataType(Enum):
+    r"""The data type a sampler is operating on."""
+    homogeneous = 'homogeneous'
+    heterogeneous = 'heterogeneous'
+    remote = 'remote'
+
+    @classmethod
+    def from_data(cls, data: Any):
+        if isinstance(data, Data):
+            return cls.homogeneous
+        elif isinstance(data, HeteroData):
+            return cls.heterogeneous
+        elif (isinstance(data, (list, tuple)) and len(data) == 2
+              and isinstance(data[0], FeatureStore)
+              and isinstance(data[1], GraphStore)):
+            return cls.remote
+
+        raise ValueError(f"Expected a 'Data', 'HeteroData', or a tuple of "
+                         f"'FeatureStore' and 'GraphStore' "
+                         f"(got '{type(data)}')")
 
 
 @dataclass
@@ -102,6 +126,10 @@ class SamplerOutput(CastMixin):
         batch (torch.Tensor, optional): The vector to identify the seed node
             for each sampled node. Can be present in case of disjoint subgraph
             sampling per seed node. (default: :obj:`None`)
+        num_sampled_nodes (List[int], optional): The number of sampled nodes
+            per hop. (default: :obj:`None`)
+        num_sampled_edges (List[int], optional): The number of sampled edges
+            per hop. (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
@@ -110,6 +138,8 @@ class SamplerOutput(CastMixin):
     col: Tensor
     edge: OptTensor
     batch: OptTensor = None
+    num_sampled_nodes: Optional[List[int]] = None
+    num_sampled_edges: Optional[List[int]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
@@ -141,6 +171,12 @@ class HeteroSamplerOutput(CastMixin):
             seed node for each sampled node for each node type. Can be present
             in case of disjoint subgraph sampling per seed node.
             (default: :obj:`None`)
+        num_sampled_nodes (Dict[str, List[int]], optional): The number of
+            sampled nodes for each node type and each layer.
+            (default: :obj:`None`)
+        num_sampled_edges (Dict[EdgeType, List[int]], optional): The number of
+            sampled edges for each edge type and each layer.
+            (default: :obj:`None`)
         metadata: (Any, optional): Additional metadata information.
             (default: :obj:`None`)
     """
@@ -149,9 +185,145 @@ class HeteroSamplerOutput(CastMixin):
     col: Dict[EdgeType, Tensor]
     edge: Optional[Dict[EdgeType, Tensor]]
     batch: Optional[Dict[NodeType, Tensor]] = None
+    num_sampled_nodes: Optional[Dict[NodeType, List[int]]] = None
+    num_sampled_edges: Optional[Dict[EdgeType, List[int]]] = None
     # TODO(manan): refine this further; it does not currently define a proper
     # API for the expected output of a sampler.
     metadata: Optional[Any] = None
+
+
+@dataclass(frozen=True)
+class NumNeighbors:
+    r"""The number of neighbors to sample in a homogeneous or heterogeneous
+    graph. In heterogeneous graphs, may also take in a dictionary denoting
+    the amount of neighbors to sample for individual edge types.
+
+    Args:
+        values (List[int] or Dict[Tuple[str, str, str], List[int]]): The
+            number of neighbors to sample.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
+            In heterogeneous graphs, may also take in a dictionary denoting
+            the amount of neighbors to sample for individual edge types.
+        default (List[int], optional): The default number of neighbors for edge
+            types not specified in :obj:`values`. (default: :obj:`None`)
+    """
+    values: Union[List[int], Dict[EdgeTypeStr, List[int]]]
+    default: Optional[List[int]] = None
+
+    def __init__(
+        self,
+        values: Union[List[int], Dict[EdgeType, List[int]]],
+        default: Optional[List[int]] = None,
+    ):
+        if isinstance(values, (tuple, list)) and default is not None:
+            raise ValueError(f"'default' must be set to 'None' in case a "
+                             f"single list is given as the number of "
+                             f"neighbors (got '{type(default)})'")
+
+        if isinstance(values, dict):
+            values = {EdgeTypeStr(key): value for key, value in values.items()}
+
+        # Write to `__dict__` since dataclass is annotated with `frozen=True`:
+        self.__dict__['values'] = values
+        self.__dict__['default'] = default
+
+    def _get_values(
+        self,
+        edge_types: Optional[List[EdgeType]] = None,
+        mapped: bool = False,
+    ) -> Union[List[int], Dict[Union[EdgeType, EdgeTypeStr], List[int]]]:
+
+        if edge_types is not None:
+            if isinstance(self.values, (tuple, list)):
+                default = self.values
+            elif isinstance(self.values, dict):
+                default = self.default
+            else:
+                assert False
+
+            out = {}
+            for edge_type in edge_types:
+                edge_type_str = EdgeTypeStr(edge_type)
+                if edge_type_str in self.values:
+                    out[edge_type_str if mapped else edge_type] = (
+                        self.values[edge_type_str])
+                else:
+                    if default is None:
+                        raise ValueError(f"Missing number of neighbors for "
+                                         f"edge type '{edge_type}'")
+                    out[edge_type_str if mapped else edge_type] = default
+
+        elif isinstance(self.values, dict) and not mapped:
+            out = {key.to_tuple(): value for key, value in self.values.items()}
+
+        else:
+            out = copy.copy(self.values)
+
+        if isinstance(out, dict):
+            num_hops = set(len(v) for v in out.values())
+            if len(num_hops) > 1:
+                raise ValueError(f"Number of hops must be the same across all "
+                                 f"edge types (got {len(num_hops)} different "
+                                 f"number of hops)")
+
+        return out
+
+    def get_values(
+        self,
+        edge_types: Optional[List[EdgeType]] = None,
+    ) -> Union[List[int], Dict[EdgeType, List[int]]]:
+        r"""Returns the number of neighbors.
+
+        Args:
+            edge_types (List[Tuple[str, str, str]], optional): The edge types
+                to generate the number of neighbors for. (default: :obj:`None`)
+        """
+        if '_values' in self.__dict__:
+            return self.__dict__['_values']
+
+        values = self._get_values(edge_types, mapped=False)
+
+        self.__dict__['_values'] = values
+        return values
+
+    def get_mapped_values(
+        self,
+        edge_types: Optional[List[EdgeType]] = None,
+    ) -> Union[List[int], Dict[str, List[int]]]:
+        r"""Returns the number of neighbors.
+        For heterogeneous graphs, a dictionary is returned in which edge type
+        tuples are converted to strings.
+
+        Args:
+            edge_types (List[Tuple[str, str, str]], optional): The edge types
+                to generate the number of neighbors for. (default: :obj:`None`)
+        """
+        if '_mapped_values' in self.__dict__:
+            return self.__dict__['_mapped_values']
+
+        values = self._get_values(edge_types, mapped=True)
+
+        self.__dict__['_mapped_values'] = values
+        return values
+
+    @property
+    def num_hops(self) -> int:
+        r"""Returns the number of hops."""
+        if '_num_hops' in self.__dict__:
+            return self.__dict__['_num_hops']
+
+        if isinstance(self.values, (tuple, list)):
+            num_hops = max(len(self.values), len(self.default or []))
+        else:  # isinstance(self.values, dict):
+            num_hops = max([0] + [len(v) for v in self.values.values()])
+            num_hops = max(num_hops, len(self.default or []))
+
+        self.__dict__['_num_hops'] = num_hops
+        return num_hops
+
+    def __len__(self) -> int:
+        r"""Returns the number of hops."""
+        return self.num_hops
 
 
 class NegativeSamplingMode(Enum):

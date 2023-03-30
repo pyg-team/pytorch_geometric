@@ -2,9 +2,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import reset
 from torch_geometric.typing import Adj
-
-from ..inits import reset
 
 
 class PointGNNConv(MessagePassing):
@@ -65,12 +64,12 @@ class PointGNNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.mlp_h)
         reset(self.mlp_f)
         reset(self.mlp_g)
 
     def forward(self, x: Tensor, pos: Tensor, edge_index: Adj) -> Tensor:
-        """"""
         # propagate_type: (x: Tensor, pos: Tensor)
         out = self.propagate(edge_index, x=x, pos=pos, size=None)
         out = self.mlp_g(out)

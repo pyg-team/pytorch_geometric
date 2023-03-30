@@ -6,7 +6,8 @@ from typing import Optional
 import torch
 import torch.utils.data
 
-from torch_geometric.typing import SparseTensor
+from torch_geometric.typing import SparseTensor, torch_sparse
+from torch_geometric.utils import narrow, select
 
 
 class ClusterData(torch.utils.data.Dataset):
@@ -24,9 +25,8 @@ class ClusterData(torch.utils.data.Dataset):
         recursive (bool, optional): If set to :obj:`True`, will use multilevel
             recursive bisection instead of multilevel k-way partitioning.
             (default: :obj:`False`)
-        save_dir (string, optional): If set, will save the partitioned data to
-            the :obj:`save_dir` directory for faster re-use.
-            (default: :obj:`None`)
+        save_dir (str, optional): If set, will save the partitioned data to the
+            :obj:`save_dir` directory for faster re-use. (default: :obj:`None`)
         log (bool, optional): If set to :obj:`False`, will not log any
             progress. (default: :obj:`True`)
     """
@@ -59,15 +59,16 @@ class ClusterData(torch.utils.data.Dataset):
             if log:  # pragma: no cover
                 print('Done!', file=sys.stderr)
 
-        self.data = self.__permute_data__(data, perm, adj)
+        self.data = self._permute_data(data, perm, adj)
         self.partptr = partptr
         self.perm = perm
 
-    def __permute_data__(self, data, node_idx, adj):
+    def _permute_data(self, data, node_idx, adj):
         out = copy.copy(data)
         for key, value in data.items():
             if data.is_node_attr(key):
-                out[key] = value[node_idx]
+                cat_dim = data.__cat_dim__(key, value)
+                out[key] = select(value, node_idx, dim=cat_dim)
 
         out.edge_index = None
         out.adj = adj
@@ -81,21 +82,21 @@ class ClusterData(torch.utils.data.Dataset):
         start = int(self.partptr[idx])
         length = int(self.partptr[idx + 1]) - start
 
-        N, E = self.data.num_nodes, self.data.num_edges
         data = copy.copy(self.data)
-        del data.num_nodes
         adj, data.adj = data.adj, None
 
         adj = adj.narrow(0, start, length).narrow(1, start, length)
         edge_idx = adj.storage.value()
 
-        for key, item in data:
-            if isinstance(item, torch.Tensor) and item.size(0) == N:
-                data[key] = item.narrow(0, start, length)
-            elif isinstance(item, torch.Tensor) and item.size(0) == E:
-                data[key] = item[edge_idx]
-            else:
-                data[key] = item
+        for key, value in data:
+            if key == 'num_nodes':
+                data.num_nodes = length
+            elif self.data.is_node_attr(key):
+                cat_dim = self.data.__cat_dim__(key, value)
+                data[key] = narrow(value, cat_dim, start, length)
+            elif self.data.is_edge_attr(key):
+                cat_dim = self.data.__cat_dim__(key, value)
+                data[key] = select(value, edge_idx, dim=cat_dim)
 
         row, col, _ = adj.coo()
         data.edge_index = torch.stack([row, col], dim=0)
@@ -137,36 +138,35 @@ class ClusterLoader(torch.utils.data.DataLoader):
     def __init__(self, cluster_data, **kwargs):
         self.cluster_data = cluster_data
 
-        super().__init__(range(len(cluster_data)), collate_fn=self.__collate__,
+        super().__init__(range(len(cluster_data)), collate_fn=self._collate,
                          **kwargs)
 
-    def __collate__(self, batch):
-        from torch_sparse import cat
-
+    def _collate(self, batch):
         if not isinstance(batch, torch.Tensor):
             batch = torch.tensor(batch)
-
-        N = self.cluster_data.data.num_nodes
-        E = self.cluster_data.data.num_edges
 
         start = self.cluster_data.partptr[batch].tolist()
         end = self.cluster_data.partptr[batch + 1].tolist()
         node_idx = torch.cat([torch.arange(s, e) for s, e in zip(start, end)])
 
         data = copy.copy(self.cluster_data.data)
-        del data.num_nodes
+
         adj, data.adj = self.cluster_data.data.adj, None
-        adj = cat([adj.narrow(0, s, e - s) for s, e in zip(start, end)], dim=0)
+        adj = torch_sparse.cat(
+            [adj.narrow(0, s, e - s) for s, e in zip(start, end)], dim=0)
         adj = adj.index_select(1, node_idx)
         row, col, edge_idx = adj.coo()
-        data.edge_index = torch.stack([row, col], dim=0)
 
-        for key, item in data:
-            if isinstance(item, torch.Tensor) and item.size(0) == N:
-                data[key] = item[node_idx]
-            elif isinstance(item, torch.Tensor) and item.size(0) == E:
-                data[key] = item[edge_idx]
-            else:
-                data[key] = item
+        for key, value in data:
+            if key == 'num_nodes':
+                data.num_nodes = node_idx.numel()
+            elif self.cluster_data.data.is_node_attr(key):
+                cat_dim = self.cluster_data.data.__cat_dim__(key, value)
+                data[key] = select(value, node_idx, dim=cat_dim)
+            elif self.cluster_data.data.is_edge_attr(key):
+                cat_dim = self.cluster_data.data.__cat_dim__(key, value)
+                data[key] = select(value, edge_idx, dim=cat_dim)
+
+        data.edge_index = torch.stack([row, col], dim=0)
 
         return data

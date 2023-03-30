@@ -59,12 +59,12 @@ def test_normalization_resolver(norm_tuple):
 
 
 @pytest.mark.parametrize('scheduler_args', [
-    ("constant_with_warmup", LambdaLR),
-    ("linear_with_warmup", LambdaLR),
-    ("cosine_with_warmup", LambdaLR),
-    ("cosine_with_warmup_restarts", LambdaLR),
-    ("polynomial_with_warmup", LambdaLR),
-    ("constant", ConstantLR),
+    ('constant_with_warmup', LambdaLR),
+    ('linear_with_warmup', LambdaLR),
+    ('cosine_with_warmup', LambdaLR),
+    ('cosine_with_warmup_restarts', LambdaLR),
+    ('polynomial_with_warmup', LambdaLR),
+    ('constant', ConstantLR),
     ('ReduceLROnPlateau', ReduceLROnPlateau),
 ])
 def test_lr_scheduler_resolver(scheduler_args):

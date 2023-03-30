@@ -5,7 +5,7 @@ from torch_geometric.transforms import Cartesian
 
 
 def test_cartesian():
-    assert Cartesian().__repr__() == 'Cartesian(norm=True, max_value=None)'
+    assert str(Cartesian()) == 'Cartesian(norm=True, max_value=None)'
 
     pos = torch.Tensor([[-1, 0], [0, 0], [2, 0]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])

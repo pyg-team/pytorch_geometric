@@ -37,9 +37,9 @@ class ExplainerDataset(InMemoryDataset):
     .. note::
 
         For an example of using :class:`ExplainerDataset`, see
-        `examples/gnn_explainer_ba_shapes.py
+        `examples/explain/gnn_explainer_ba_shapes.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        gnn_explainer_ba_shapes.py>`_.
+        /explain/gnn_explainer_ba_shapes.py>`_.
 
     Args:
         graph_generator (GraphGenerator or str): The graph generator to be

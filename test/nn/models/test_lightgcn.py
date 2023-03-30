@@ -1,17 +1,12 @@
-from itertools import product
-
 import pytest
 import torch
 
 from torch_geometric.nn.models import LightGCN
 
-emb_dims = [32, 64]
-lambda_reg = [0, 1e-4]
-alpha = [None, 0.25, torch.tensor([0.4, 0.3, 0.2])]
 
-
-@pytest.mark.parametrize('embedding_dim,lambda_reg,alpha',
-                         product(emb_dims, lambda_reg, alpha))
+@pytest.mark.parametrize('embedding_dim', [32, 64])
+@pytest.mark.parametrize('lambda_reg', [0, 1e-4])
+@pytest.mark.parametrize('alpha', [0, .25, torch.tensor([0.4, 0.3, 0.2])])
 def test_lightgcn_ranking(embedding_dim, lambda_reg, alpha):
     N = 500
     edge_index = torch.randint(0, N, (2, 400), dtype=torch.int64)
@@ -38,7 +33,8 @@ def test_lightgcn_ranking(embedding_dim, lambda_reg, alpha):
     assert out.min() >= 250 and out.max() < 500
 
 
-@pytest.mark.parametrize('embedding_dim,alpha', product(emb_dims, alpha))
+@pytest.mark.parametrize('embedding_dim', [32, 64])
+@pytest.mark.parametrize('alpha', [0, .25, torch.tensor([0.4, 0.3, 0.2])])
 def test_lightgcn_link_prediction(embedding_dim, alpha):
     N = 500
     edge_index = torch.randint(0, N, (2, 400), dtype=torch.int64)

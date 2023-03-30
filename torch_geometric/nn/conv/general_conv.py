@@ -30,7 +30,7 @@ class GeneralConv(MessagePassing):
         out_channels (int): Size of each output sample.
         in_edge_channels (int, optional): Size of each input edge.
             (default: :obj:`None`)
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         skip_linear (bool, optional): Whether apply linear function in skip
@@ -131,6 +131,7 @@ class GeneralConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_msg.reset_parameters()
         if hasattr(self.lin_self, 'reset_parameters'):
             self.lin_self.reset_parameters()
@@ -141,7 +142,7 @@ class GeneralConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: Tensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
         x_self = x[1]
