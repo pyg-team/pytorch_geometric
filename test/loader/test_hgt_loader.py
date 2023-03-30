@@ -188,19 +188,12 @@ def test_hgt_loader_disconnected():
     torch.manual_seed(12345)
     data = HeteroData()
 
-    data['paper'].x = torch.arange(100)
-    data['author'].x = torch.arange(100, 300)
+    data['paper'].x = torch.arange(10)
+    data['author'].x = torch.arange(10, 3)
 
-    # enforce two disconnected clusters of papers, only the first cluster is connected to authors
-    data['paper', 'paper'].edge_index = torch.cat([
-        get_random_edge_index(50, 50, 250),
-        get_random_edge_index(50, 50, 250) + 50,
-    ], dim=1)
-    data['paper', 'paper'].edge_attr = torch.arange(500)
-    data['paper', 'author'].edge_index = get_random_edge_index(50, 200, 1000)
-    data['paper', 'author'].edge_attr = torch.arange(500, 1500)
-    data['author', 'paper'].edge_index = get_random_edge_index(200, 50, 1000)
-    data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
+    # Paper is disconnected from author
+    data['paper', 'paper'].edge_index = get_random_edge_index(10, 10, 15)
+    data['paper', 'paper'].edge_attr = torch.arange(15)
 
     loader = HGTLoader(data, num_samples=[5] * 4, batch_size=1,
                        input_nodes='paper')
