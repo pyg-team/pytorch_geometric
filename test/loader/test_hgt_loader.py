@@ -202,6 +202,5 @@ def test_hgt_loader_disconnected():
         assert isinstance(batch, HeteroData)
 
         # Test node and types:
-        assert set(batch.node_types) == {'paper', 'author'} or set(
-            batch.node_types) == {'paper'}
+        assert set(batch.node_types) == {'paper'}
         assert set(batch.edge_types) == set(data.edge_types)
