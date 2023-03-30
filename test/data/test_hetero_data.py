@@ -2,11 +2,10 @@ import copy
 
 import pytest
 import torch
-import torch_sparse
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
-from torch_geometric.testing import get_random_edge_index
+from torch_geometric.testing import get_random_edge_index, withPackage
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
@@ -562,12 +561,9 @@ def test_basic_feature_store():
 # Graph Store #################################################################
 
 
+@withPackage('torch_sparse')
 def test_basic_graph_store():
     data = HeteroData()
-
-    edge_index = torch.LongTensor([[0, 1], [1, 2]])
-    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1],
-                                    sparse_sizes=(3, 3))
 
     def assert_equal_tensor_tuple(expected, actual):
         assert len(expected) == len(actual)
@@ -576,9 +572,9 @@ def test_basic_graph_store():
 
     # We put all three tensor types: COO, CSR, and CSC, and we get them back
     # to confirm that `GraphStore` works as intended.
-    coo = adj.coo()[:-1]
-    csr = adj.csr()[:-1]
-    csc = adj.csc()[-2::-1]  # (row, colptr)
+    coo = (torch.tensor([0, 1]), torch.tensor([1, 2]))
+    csr = (torch.tensor([0, 1, 2, 2]), torch.tensor([1, 2]))
+    csc = (torch.tensor([0, 1]), torch.tensor([0, 0, 1, 2]))
 
     # Put:
     data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'),

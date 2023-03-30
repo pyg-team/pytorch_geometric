@@ -4,8 +4,8 @@ import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear, ReLU, Sequential
-from torch_sparse import SparseTensor
 
+import torch_geometric.typing
 from torch_geometric.nn import (
     GINEConv,
     MessagePassing,
@@ -13,6 +13,7 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero_with_bases,
 )
+from torch_geometric.typing import SparseTensor
 
 
 class Net1(torch.nn.Module):
@@ -258,10 +259,11 @@ def test_to_hetero_with_bases_and_rgcn_equal_output():
         edge_index[:, edge_type == 2] - torch.tensor([[6], [0]]),
     }
 
-    adj_t_dict = {
-        key: SparseTensor.from_edge_index(edge_index).t()
-        for key, edge_index in edge_index_dict.items()
-    }
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj_t_dict = {
+            key: SparseTensor.from_edge_index(edge_index).t()
+            for key, edge_index in edge_index_dict.items()
+        }
 
     metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
     model = to_hetero_with_bases(RGCN(16, 32), metadata, num_bases=num_bases,
@@ -279,9 +281,10 @@ def test_to_hetero_with_bases_and_rgcn_equal_output():
     out2 = torch.cat([out2['paper'], out2['author']], dim=0)
     assert torch.allclose(out1, out2, atol=1e-6)
 
-    out3 = model(x_dict, adj_t_dict)
-    out3 = torch.cat([out3['paper'], out3['author']], dim=0)
-    assert torch.allclose(out1, out3, atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        out3 = model(x_dict, adj_t_dict)
+        out3 = torch.cat([out3['paper'], out3['author']], dim=0)
+        assert torch.allclose(out1, out3, atol=1e-6)
 
 
 def test_to_hetero_with_bases_validate():

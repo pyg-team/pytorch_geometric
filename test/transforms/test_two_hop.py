@@ -1,9 +1,11 @@
 import torch
 
 from torch_geometric.data import Data
+from torch_geometric.testing import onlyLinux
 from torch_geometric.transforms import TwoHop
 
 
+@onlyLinux  # TODO  (matthias) Investigate CSR @ CSR support on Windows.
 def test_two_hop():
     transform = TwoHop()
     assert str(transform) == 'TwoHop()'
