@@ -47,6 +47,12 @@ jobs:
           pip install --upgrade build
           python -m build
 
+      - name: Install
+        run: |
+          pip install dist/pyg-nightly-2.4.0.dev20230330.tar.gz
+          pip install pytest
+          pytest
+
       # - name: Publish package
       #   uses: pypa/gh-action-pypi-publish@release/v1
       #   with:
