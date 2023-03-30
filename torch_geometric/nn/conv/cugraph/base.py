@@ -15,8 +15,19 @@ try:  # pragma: no cover
         StaticHeteroCSC,
     )
     HAS_PYLIBCUGRAPHOPS = True
+    LEGACY_MODE = False
 except ImportError:
     HAS_PYLIBCUGRAPHOPS = False
+    try:  # pragma: no cover
+        from pylibcugraphops import (
+            make_fg_csr,
+            make_fg_csr_hg,
+            make_mfg_csr,
+            make_mfg_csr_hg,
+        )
+        LEGACY_MODE = True
+    except ImportError:
+        pass
 
 
 class CuGraphModule(torch.nn.Module):  # pragma: no cover
@@ -25,9 +36,9 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
     def __init__(self):
         super().__init__()
 
-        if HAS_PYLIBCUGRAPHOPS is False:
+        if not HAS_PYLIBCUGRAPHOPS and not LEGACY_MODE:
             raise ModuleNotFoundError(f"'{self.__class__.__name__}' requires "
-                                      f"'pylibcugraphops>=23.04'")
+                                      f"'pylibcugraphops>=23.02'")
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
@@ -99,7 +110,15 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
             if max_num_neighbors is None:
                 max_num_neighbors = int((colptr[1:] - colptr[:-1]).max())
 
+            if LEGACY_MODE:
+                dst_nodes = torch.arange(colptr.numel() - 1, device=row.device)
+                return make_mfg_csr(dst_nodes, colptr, row, max_num_neighbors,
+                                    num_src_nodes)
+
             return SampledCSC(colptr, row, max_num_neighbors, num_src_nodes)
+
+        if LEGACY_MODE:
+            return make_fg_csr(colptr, row)
 
         return StaticCSC(colptr, row)
 
@@ -139,8 +158,22 @@ class CuGraphModule(torch.nn.Module):  # pragma: no cover
             if max_num_neighbors is None:
                 max_num_neighbors = int((colptr[1:] - colptr[:-1]).max())
 
+            if LEGACY_MODE:
+                dst_nodes = torch.arange(colptr.numel() - 1, device=row.device)
+                return make_mfg_csr_hg(dst_nodes, colptr, row,
+                                       max_num_neighbors, num_src_nodes,
+                                       n_node_types=0,
+                                       n_edge_types=num_edge_types,
+                                       out_node_types=None, in_node_types=None,
+                                       edge_types=edge_type)
+
             return SampledHeteroCSC(colptr, row, edge_type, max_num_neighbors,
                                     num_src_nodes, num_edge_types)
+
+        if LEGACY_MODE:
+            return make_fg_csr_hg(colptr, row, n_node_types=0,
+                                  n_edge_types=num_edge_types, node_types=None,
+                                  edge_types=edge_type)
 
         return StaticHeteroCSC(colptr, row, edge_type, num_edge_types)
 

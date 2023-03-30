@@ -7,7 +7,7 @@ from torch_geometric.testing import onlyCUDA, withPackage
 
 
 @onlyCUDA
-@withPackage('pylibcugraphops>=23.04')
+@withPackage('pylibcugraphops>=23.02')
 @pytest.mark.parametrize('aggr', ['add', 'sum', 'mean'])
 @pytest.mark.parametrize('bias', [True, False])
 @pytest.mark.parametrize('bipartite', [True, False])
