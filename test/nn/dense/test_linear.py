@@ -5,6 +5,7 @@ import torch
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
+import torch_geometric.typing
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.testing import withPackage
 
@@ -150,8 +151,13 @@ def test_hetero_dict_linear(bias):
     assert out_dict['v'].size() == (3, 32)
     assert out_dict['w'].size() == (2, 32)
 
-    jit = torch.jit.script(lin)
-    assert len(jit(x_dict)) == 2
+    if torch_geometric.typing.WITH_GMM:
+        # See: https://github.com/pytorch/pytorch/pull/97960
+        with pytest.raises(RuntimeError, match="Unknown builtin op"):
+            jit = torch.jit.script(lin)
+    else:
+        jit = torch.jit.script(lin)
+        assert len(jit(x_dict)) == 2
 
 
 def test_lazy_hetero_dict_linear():
