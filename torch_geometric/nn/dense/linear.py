@@ -376,8 +376,8 @@ class HeteroDictLinear(torch.nn.Module):
 
     def forward(
         self,
-        x_dict: Dict[Any, Tensor],
-    ) -> Dict[Any, Tensor]:
+        x_dict: Dict[str, Tensor],
+    ) -> Dict[str, Tensor]:
         r"""
         Args:
             x_dict (Dict[Any, torch.Tensor]): A dictionary holding input

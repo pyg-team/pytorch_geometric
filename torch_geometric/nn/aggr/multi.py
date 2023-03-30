@@ -7,6 +7,7 @@ from torch.nn import Linear, MultiheadAttention
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.aggr.fused import FusedAggregation
+from torch_geometric.nn.dense import HeteroDictLinear
 from torch_geometric.nn.resolver import aggregation_resolver
 
 
@@ -114,10 +115,8 @@ class MultiAggregation(Aggregation):
                 )
 
             elif mode == 'attn':
-                self.lin_heads = torch.nn.ModuleList([
-                    Linear(channels, self.out_channels)
-                    for channels in self.in_channels
-                ])
+                channels = {str(k): v for k, v, in enumerate(self.in_channels)}
+                self.lin_heads = HeteroDictLinear(channels, self.out_channels)
                 num_heads = mode_kwargs.pop('num_heads', 1)
                 self.multihead_attn = MultiheadAttention(
                     self.out_channels,
@@ -137,8 +136,7 @@ class MultiAggregation(Aggregation):
         if self.mode == 'proj':
             self.lin.reset_parameters()
         if self.mode == 'attn':
-            for lin in self.lin_heads:
-                lin.reset_parameters()
+            self.lin_heads.reset_parameters()
             self.multihead_attn._reset_parameters()
 
     def get_out_channels(self, in_channels: int) -> int:
@@ -181,10 +179,10 @@ class MultiAggregation(Aggregation):
             return self.lin(torch.cat(inputs, dim=-1))
 
         if hasattr(self, 'multihead_attn'):
-            x = torch.stack(
-                [head(inputs[i]) for i, head in enumerate(self.lin_heads)],
-                dim=0,
-            )
+            x_dict = {str(k): v for k, v, in enumerate(inputs)}
+            x_dict = self.lin_heads(x_dict)
+            xs = [x_dict[str(key)] for key in range(len(inputs))]
+            x = torch.stack(xs, dim=0)
             attn_out, _ = self.multihead_attn(x, x, x)
             return torch.mean(attn_out, dim=0)
 
