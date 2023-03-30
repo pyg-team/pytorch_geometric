@@ -77,6 +77,7 @@ from .sbm_dataset import StochasticBlockModelDataset
 from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
 from .elliptic import EllipticBitcoinDataset
+from .elliptic_temporal import EllipticBitcoinTemporalDataset
 from .dgraph import DGraphFin
 from .hydro_net import HydroNet
 from .explainer_dataset import ExplainerDataset
@@ -171,6 +172,7 @@ __all__ = [
     'RandomPartitionGraphDataset',
     'LINKXDataset',
     'EllipticBitcoinDataset',
+    'EllipticBitcoinTemporalDataset',
     'DGraphFin',
     'HydroNet',
     'ExplainerDataset',
