@@ -127,11 +127,13 @@ def test_lazy_hetero_linear():
     assert out.size() == (3, 32)
 
 
-def test_hetero_dict_linear():
+@pytest.mark.parametrize('bias', [True, False])
+def test_hetero_dict_linear(bias):
     x_dict = {'v': torch.randn(3, 16), 'w': torch.randn(2, 8)}
 
-    lin = HeteroDictLinear({'v': 16, 'w': 8}, 32)
-    assert str(lin) == "HeteroDictLinear({'v': 16, 'w': 8}, 32, bias=True)"
+    lin = HeteroDictLinear({'v': 16, 'w': 8}, 32, bias=bias)
+    assert str(lin) == (f"HeteroDictLinear({{'v': 16, 'w': 8}}, 32, "
+                        f"bias={bias})")
 
     out_dict = lin(x_dict)
     assert len(out_dict) == 2
@@ -140,8 +142,9 @@ def test_hetero_dict_linear():
 
     x_dict = {'v': torch.randn(3, 16), 'w': torch.randn(2, 16)}
 
-    lin = HeteroDictLinear(16, 32, types=['v', 'w'])
-    assert str(lin) == "HeteroDictLinear({'v': 16, 'w': 16}, 32, bias=True)"
+    lin = HeteroDictLinear(16, 32, types=['v', 'w'], bias=bias)
+    assert str(lin) == (f"HeteroDictLinear({{'v': 16, 'w': 16}}, 32, "
+                        f"bias={bias})")
 
     out_dict = lin(x_dict)
     assert len(out_dict) == 2
