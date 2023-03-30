@@ -52,8 +52,6 @@ class EllipticBitcoinTemporalDataset(EllipticBitcoinDataset):
           - 165
           - 2
     """
-    url = 'https://data.pyg.org/datasets/elliptic'
-
     def __init__(
         self,
         root: str,
