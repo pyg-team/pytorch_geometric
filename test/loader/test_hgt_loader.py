@@ -195,7 +195,7 @@ def test_hgt_loader_disconnected():
     data['paper', 'paper'].edge_index = get_random_edge_index(10, 10, 15)
     data['paper', 'paper'].edge_attr = torch.arange(15)
 
-    loader = HGTLoader(data, num_samples=[5] * 4, batch_size=1,
+    loader = HGTLoader(data, num_samples=2, batch_size=2,
                        input_nodes='paper')
 
     for batch in loader:
