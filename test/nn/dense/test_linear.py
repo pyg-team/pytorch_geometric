@@ -6,7 +6,7 @@ from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
-from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.testing import withPackage
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
@@ -111,9 +111,8 @@ def test_hetero_linear():
     out = lin(x, type_vec)
     assert out.size() == (3, 32)
 
-    if is_full_test():
-        jit = torch.jit.script(lin)
-        assert torch.allclose(jit(x, type_vec), out)
+    jit = torch.jit.script(lin)
+    assert torch.allclose(jit(x, type_vec), out)
 
 
 def test_lazy_hetero_linear():
@@ -151,9 +150,8 @@ def test_hetero_dict_linear(bias):
     assert out_dict['v'].size() == (3, 32)
     assert out_dict['w'].size() == (2, 32)
 
-    if is_full_test():
-        jit = torch.jit.script(lin)
-        assert len(jit(x_dict)) == 2
+    jit = torch.jit.script(lin)
+    assert len(jit(x_dict)) == 2
 
 
 def test_lazy_hetero_dict_linear():
