@@ -5,9 +5,15 @@ from torch import Tensor
 from torch.nn import Linear
 
 from torch_geometric.nn.conv.cugraph import CuGraphModule
+from torch_geometric.nn.conv.cugraph.base import LEGACY_MODE
 
 try:
-    from pylibcugraphops.torch.autograd import agg_concat_n2n as SAGEConvAgg
+    if LEGACY_MODE:
+        from pylibcugraphops.torch.autograd import \
+            agg_concat_n2n as SAGEConvAgg
+    else:
+        from pylibcugraphops.pytorch.operators import \
+            agg_concat_n2n as SAGEConvAgg
 except ImportError:
     pass
 
