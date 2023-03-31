@@ -4,7 +4,6 @@ from torch_geometric.typing import *
 
 import torch
 from torch import Tensor
-from torch_geometric.typing import SparseTensor, torch_sparse
 from torch_geometric.nn.conv.message_passing import *
 from {{module}} import *
 
@@ -63,11 +62,10 @@ class {{cls_name}}({{parent_cls_name}}):
             return src.index_select(self.node_dim, index)
 
         elif isinstance(edge_index, SparseTensor):
+            row, col, _ = edge_index.coo()
             if dim == 0:
-                col = edge_index.storage.col()
                 return src.index_select(self.node_dim, col)
             elif dim == 1:
-                row = edge_index.storage.row()
                 return src.index_select(self.node_dim, row)
 
         raise ValueError(
@@ -126,20 +124,20 @@ class {{cls_name}}({{parent_cls_name}}):
             edge_index_j = edge_def[j]
         elif isinstance(edge_def, SparseTensor):
             adj_t = edge_def
-            edge_index_i = edge_def.storage.row()
-            edge_index_j = edge_def.storage.col()
-            ptr = edge_def.storage.rowptr()
+            edge_index_i, edge_index_j, value = edge_def.coo()
+            ptr, _, _ = edge_def.csr()
+
             {% if 'edge_weight' in collect_types.keys() %}
             if edge_weight is None:
-                edge_weight = edge_def.storage.value()
+                edge_weight = value
             {% endif %}
             {% if 'edge_attr' in collect_types.keys() %}
             if edge_attr is None:
-                edge_attr = edge_def.storage.value()
+                edge_attr = value
             {% endif %}
             {% if 'edge_type' in collect_types.keys() %}
             if edge_type is None:
-                edge_type = edge_def.storage.value()
+                edge_type = value
             {% endif %}
 
         {% if collect_types.get('edge_weight', 'Optional')[:8] != 'Optional' %}assert edge_weight is not None{% endif %}
@@ -205,20 +203,20 @@ class {{cls_name}}({{parent_cls_name}}):
             edge_index_j = edge_def[j]
         elif isinstance(edge_def, SparseTensor):
             adj_t = edge_def
-            edge_index_i = edge_def.storage.row()
-            edge_index_j = edge_def.storage.col()
-            ptr = edge_def.storage.rowptr()
+            edge_index_i, edge_index_j, value = edge_def.coo()
+            ptr, _, _ = edge_def.csr()
+
             {% if 'edge_weight' in edge_collect_types.keys() %}
             if edge_weight is None:
-                edge_weight = edge_def.storage.value()
+                edge_weight = value
             {% endif %}
             {% if 'edge_attr' in edge_collect_types.keys() %}
             if edge_attr is None:
-                edge_attr = edge_def.storage.value()
+                edge_attr = value
             {% endif %}
             {% if 'edge_type' in edge_collect_types.keys() %}
             if edge_type is None:
-                edge_type = edge_def.storage.value()
+                edge_type = value
             {% endif %}
 
         {% if edge_collect_types.get('edge_weight', 'Optional')[:8] != 'Optional' %}assert edge_weight is not None{% endif %}

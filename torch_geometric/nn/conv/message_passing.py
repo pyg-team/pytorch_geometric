@@ -1,6 +1,7 @@
 import inspect
 import os
 import os.path as osp
+import random
 import re
 from collections import OrderedDict
 from inspect import Parameter
@@ -15,7 +16,6 @@ from typing import (
     Union,
     get_type_hints,
 )
-from uuid import uuid1
 
 import torch
 from torch import Tensor
@@ -302,11 +302,10 @@ class MessagePassing(torch.nn.Module):
                 raise e
 
         elif isinstance(edge_index, SparseTensor):
+            row, col, _ = edge_index.coo()
             if dim == 0:
-                col = edge_index.storage.col()
                 return src.index_select(self.node_dim, col)
             elif dim == 1:
-                row = edge_index.storage.row()
                 return src.index_select(self.node_dim, row)
 
         raise ValueError(
@@ -359,17 +358,20 @@ class MessagePassing(torch.nn.Module):
             out['ptr'] = None
 
         elif isinstance(edge_index, SparseTensor):
+            row, col, value = edge_index.coo()
+            rowptr, _, _ = edge_index.csr()
+
             out['adj_t'] = edge_index
             out['edge_index'] = None
-            out['edge_index_i'] = edge_index.storage.row()
-            out['edge_index_j'] = edge_index.storage.col()
-            out['ptr'] = edge_index.storage.rowptr()
+            out['edge_index_i'] = row
+            out['edge_index_j'] = col
+            out['ptr'] = rowptr
             if out.get('edge_weight', None) is None:
-                out['edge_weight'] = edge_index.storage.value()
+                out['edge_weight'] = value
             if out.get('edge_attr', None) is None:
-                out['edge_attr'] = edge_index.storage.value()
+                out['edge_attr'] = value
             if out.get('edge_type', None) is None:
-                out['edge_type'] = edge_index.storage.value()
+                out['edge_type'] = value
 
         out['index'] = out['edge_index_i']
         out['size'] = size
@@ -867,7 +869,7 @@ class MessagePassing(torch.nn.Module):
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 
-        uid = uuid1().hex[:6]
+        uid = '%06x' % random.randrange(16**6)
         cls_name = f'{self.__class__.__name__}Jittable_{uid}'
         jit_module_repr = template.render(
             uid=uid,

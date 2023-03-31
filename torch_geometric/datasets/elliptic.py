@@ -1,5 +1,5 @@
 import os
-from typing import Callable, List, Optional
+from typing import Any, Callable, List, Optional, Tuple
 
 import torch
 
@@ -78,31 +78,42 @@ class EllipticBitcoinDataset(InMemoryDataset):
             extract_zip(path, self.raw_dir)
             os.remove(path)
 
+    def _process_df(self, feat_df: Any, edge_df: Any,
+                    class_df: Any) -> Tuple[Any, Any, Any]:
+        return feat_df, edge_df, class_df
+
     def process(self):
         import pandas as pd
 
-        df_features = pd.read_csv(self.raw_paths[0], header=None)
-        df_edges = pd.read_csv(self.raw_paths[1])
-        df_classes = pd.read_csv(self.raw_paths[2])
+        feat_df = pd.read_csv(self.raw_paths[0], header=None)
+        edge_df = pd.read_csv(self.raw_paths[1])
+        class_df = pd.read_csv(self.raw_paths[2])
 
         columns = {0: 'txId', 1: 'time_step'}
-        df_features = df_features.rename(columns=columns)
-        x = torch.from_numpy(df_features.loc[:, 2:].values).to(torch.float)
+        feat_df = feat_df.rename(columns=columns)
+
+        feat_df, edge_df, class_df = self._process_df(
+            feat_df,
+            edge_df,
+            class_df,
+        )
+
+        x = torch.from_numpy(feat_df.loc[:, 2:].values).to(torch.float)
 
         # There exists 3 different classes in the dataset:
         # 0=licit,  1=illicit, 2=unknown
         mapping = {'unknown': 2, '1': 1, '2': 0}
-        df_classes['class'] = df_classes['class'].map(mapping)
-        y = torch.from_numpy(df_classes['class'].values)
+        class_df['class'] = class_df['class'].map(mapping)
+        y = torch.from_numpy(class_df['class'].values)
 
-        mapping = {idx: i for i, idx in enumerate(df_features['txId'].values)}
-        df_edges['txId1'] = df_edges['txId1'].map(mapping)
-        df_edges['txId2'] = df_edges['txId2'].map(mapping)
-        edge_index = torch.from_numpy(df_edges.values).t().contiguous()
+        mapping = {idx: i for i, idx in enumerate(feat_df['txId'].values)}
+        edge_df['txId1'] = edge_df['txId1'].map(mapping)
+        edge_df['txId2'] = edge_df['txId2'].map(mapping)
+        edge_index = torch.from_numpy(edge_df.values).t().contiguous()
 
         # Timestamp based split:
         # train_mask: 1 - 34 time_step, test_mask: 35-49 time_step
-        time_step = torch.from_numpy(df_features['time_step'].values)
+        time_step = torch.from_numpy(feat_df['time_step'].values)
         train_mask = (time_step < 35) & (y != 2)
         test_mask = (time_step >= 35) & (y != 2)
 

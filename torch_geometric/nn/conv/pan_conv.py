@@ -61,8 +61,11 @@ class PANConv(MessagePassing):
         self.lin.reset_parameters()
         self.weight.data.fill_(0.5)
 
-    def forward(self, x: Tensor,
-                edge_index: Adj) -> Tuple[Tensor, SparseTensor]:
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+    ) -> Tuple[Tensor, SparseTensor]:
 
         adj_t: Optional[SparseTensor] = None
         if isinstance(edge_index, Tensor):

@@ -2,10 +2,11 @@ import pytest
 import scipy.sparse
 import torch
 
-from torch_geometric.data import Data
+from torch_geometric.data import Data, HeteroData
 from torch_geometric.testing import withPackage
 from torch_geometric.utils import (
     from_cugraph,
+    from_dgl,
     from_networkit,
     from_networkx,
     from_scipy_sparse_matrix,
@@ -13,6 +14,7 @@ from torch_geometric.utils import (
     sort_edge_index,
     subgraph,
     to_cugraph,
+    to_dgl,
     to_networkit,
     to_networkx,
     to_scipy_sparse_matrix,
@@ -481,3 +483,97 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
         assert torch.allclose(edge_weight, cu_edge_weight.cpu())
     else:
         assert cu_edge_weight is None
+
+
+@withPackage('dgl')
+def test_to_dgl_graph():
+    x = torch.randn(5, 3)
+    edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
+    edge_attr = torch.randn(edge_index.size(1), 2)
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+
+    g = to_dgl(data)
+
+    assert torch.equal(data.x, g.ndata['x'])
+    row, col = g.edges()
+    assert torch.equal(row, edge_index[0])
+    assert torch.equal(col, edge_index[1])
+    assert torch.equal(data.edge_attr, g.edata['edge_attr'])
+
+
+@withPackage('dgl')
+def test_to_dgl_hetero_graph():
+    data = HeteroData()
+    data['v1'].x = torch.randn(4, 3)
+    data['v2'].x = torch.randn(4, 3)
+    data['v1', 'v2'].edge_index = torch.tensor([[0, 1, 2, 3], [0, 1, 2, 3]])
+    data['v1', 'v2'].edge_attr = torch.randn(4, 2)
+
+    g = to_dgl(data)
+
+    assert data['v1', 'v2'].num_edges == g.num_edges(('v1', 'to', 'v2'))
+    assert data['v1'].num_nodes == g.num_nodes('v1')
+    assert data['v2'].num_nodes == g.num_nodes('v2')
+    assert torch.equal(data['v1'].x, g.nodes['v1'].data['x'])
+    assert torch.equal(data['v2'].x, g.nodes['v2'].data['x'])
+    row, col = g.edges()
+    assert torch.equal(row, data['v1', 'v2'].edge_index[0])
+    assert torch.equal(col, data['v1', 'v2'].edge_index[1])
+    assert torch.equal(g.edata['edge_attr'], data['v1', 'v2'].edge_attr)
+
+
+@withPackage('dgl')
+@withPackage('torch_sparse')
+def test_to_dgl_sparse():
+    from torch_geometric.transforms import ToSparseTensor
+    x = torch.randn(5, 3)
+    edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
+    edge_attr = torch.randn(edge_index.size(1), 2)
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    data = ToSparseTensor()(data)
+
+    g = to_dgl(data)
+
+    assert torch.equal(data.x, g.ndata["x"])
+    pyg_row, pyg_col, _ = data.adj_t.t().coo()
+    dgl_row, dgl_col = g.edges()
+    assert torch.equal(pyg_row, dgl_row)
+    assert torch.equal(pyg_col, dgl_col)
+    assert torch.equal(data.edge_attr, g.edata['edge_attr'])
+
+
+@withPackage('dgl')
+def test_from_dgl_graph():
+    import dgl
+    g = dgl.graph(([0, 0, 1, 5], [1, 2, 2, 0]))
+    g.ndata['x'] = torch.randn(g.num_nodes(), 3)
+    g.edata['edge_attr'] = torch.randn(g.num_edges())
+
+    data = from_dgl(g)
+
+    assert torch.equal(data.x, g.ndata['x'])
+    row, col = g.edges()
+    assert torch.equal(data.edge_index[0], row)
+    assert torch.equal(data.edge_index[1], col)
+    assert torch.equal(data.edge_attr, g.edata['edge_attr'])
+
+
+@withPackage('dgl')
+def test_from_dgl_hetero_graph():
+    import dgl
+    g = dgl.heterograph({
+        ('v1', 'to', 'v2'): (
+            [0, 1, 1, 2, 3, 3, 4],
+            [0, 0, 1, 1, 1, 2, 2],
+        )
+    })
+    g.nodes['v1'].data['x'] = torch.randn(5, 3)
+    g.nodes['v2'].data['x'] = torch.randn(3, 3)
+
+    data = from_dgl(g)
+
+    assert data['v1', 'v2'].num_edges == g.num_edges(('v1', 'to', 'v2'))
+    assert data['v1'].num_nodes == g.num_nodes('v1')
+    assert data['v2'].num_nodes == g.num_nodes('v2')
+    assert torch.equal(data['v1'].x, g.nodes['v1'].data['x'])
+    assert torch.equal(data['v2'].x, g.nodes['v2'].data['x'])

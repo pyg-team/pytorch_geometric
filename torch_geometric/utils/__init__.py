@@ -39,6 +39,7 @@ from .convert import to_networkx, from_networkx
 from .convert import to_networkit, from_networkit
 from .convert import to_trimesh, from_trimesh
 from .convert import to_cugraph, from_cugraph
+from .convert import to_dgl, from_dgl
 from .smiles import from_smiles, to_smiles
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
@@ -116,6 +117,8 @@ __all__ = [
     'from_trimesh',
     'to_cugraph',
     'from_cugraph',
+    'to_dgl',
+    'from_dgl',
     'from_smiles',
     'to_smiles',
     'erdos_renyi_graph',

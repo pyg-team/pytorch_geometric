@@ -5,8 +5,12 @@ from torch import Tensor
 
 from torch_geometric.nn import GCNConv, TopKPooling
 from torch_geometric.nn.resolver import activation_resolver
-from torch_geometric.typing import OptTensor, PairTensor, SparseTensor
-from torch_geometric.utils import add_self_loops, remove_self_loops
+from torch_geometric.typing import OptTensor, PairTensor
+from torch_geometric.utils import (
+    add_self_loops,
+    remove_self_loops,
+    to_torch_csr_tensor,
+)
 from torch_geometric.utils.repeat import repeat
 
 
@@ -127,11 +131,10 @@ class GraphUNet(torch.nn.Module):
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
                                                  num_nodes=num_nodes)
-        adj = SparseTensor.from_edge_index(edge_index, edge_weight,
-                                           sparse_sizes=(num_nodes, num_nodes))
-        adj = adj @ adj
-        row, col, edge_weight = adj.coo()
-        edge_index = torch.stack([row, col], dim=0)
+        adj = to_torch_csr_tensor(edge_index, edge_weight,
+                                  size=(num_nodes, num_nodes))
+        adj = (adj @ adj).to_sparse_coo()
+        edge_index, edge_weight = adj.indices(), adj.values()
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         return edge_index, edge_weight
 
