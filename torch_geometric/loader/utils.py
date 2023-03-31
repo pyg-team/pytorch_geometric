@@ -17,9 +17,11 @@ from torch_geometric.data import (
 )
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import (
+    EdgeType,
     FeatureTensorType,
     InputEdges,
     InputNodes,
+    NodeType,
     OptTensor,
     SparseTensor,
 )
@@ -122,32 +124,40 @@ def filter_data(data: Data, node: Tensor, row: Tensor, col: Tensor,
 
 def filter_hetero_data(
     data: HeteroData,
-    node_dict: Dict[str, Tensor],
-    row_dict: Dict[str, Tensor],
-    col_dict: Dict[str, Tensor],
-    edge_dict: Dict[str, Tensor],
-    perm_dict: Optional[Dict[str, OptTensor]] = None,
+    node_dict: Dict[NodeType, Tensor],
+    row_dict: Dict[EdgeType, Tensor],
+    col_dict: Dict[EdgeType, Tensor],
+    edge_dict: Dict[EdgeType, Tensor],
+    perm_dict: Optional[Dict[EdgeType, OptTensor]] = None,
 ) -> HeteroData:
     # Filters a heterogeneous data object to only hold nodes in `node` and
     # edges in `edge` for each node and edge type, respectively:
-    out = data.node_type_subgraph(node_dict.keys())
-    # edge_dict may be emtpy if graph has no edges
-    # or if none of the edges types are reachable from seed nodes.
-    if edge_dict:
-        out = out.edge_type_subgraph(edge_dict.keys())
+    out = copy.copy(data)
 
     for node_type in out.node_types:
+        # Handle the case of disconneted graph sampling:
+        if node_type not in node_dict:
+            node_dict[node_type] = torch.empty(0, dtype=torch.long)
+
         filter_node_store_(data[node_type], out[node_type],
                            node_dict[node_type])
 
     for edge_type in out.edge_types:
+        # Handle the case of disconneted graph sampling:
+        if edge_type not in row_dict:
+            row_dict[edge_type] = torch.empty(0, dtype=torch.long)
+        if edge_type not in col_dict:
+            col_dict[edge_type] = torch.empty(0, dtype=torch.long)
+        if edge_type not in edge_dict:
+            edge_dict[edge_type] = torch.empty(0, dtype=torch.long)
+
         filter_edge_store_(
             data[edge_type],
             out[edge_type],
             row_dict[edge_type],
             col_dict[edge_type],
             edge_dict[edge_type],
-            perm_dict[edge_type] if perm_dict else None,
+            perm_dict.get(edge_type, None) if perm_dict else None,
         )
 
     return out

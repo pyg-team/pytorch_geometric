@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- Fixed crash of heterogeneous data loaders if node types are missing ([#7060](https://github.com/pyg-team/pytorch_geometric/pull/7060))
+- Fixed crash of heterogeneous data loaders if node or edge types are missing ([#7060](https://github.com/pyg-team/pytorch_geometric/pull/7060), [#7087](https://github.com/pyg-team/pytorch_geometric/pull/7087))
 - Accelerated attention-based `MultiAggregation` ([#7077](https://github.com/pyg-team/pytorch_geometric/pull/7077))
 - Edges in `HeterophilousGraphDataset` are now undirected by default ([#7065](https://github.com/pyg-team/pytorch_geometric/pull/7065))
 - Fixed a bug in `FastHGTConv` that computed values via parameters used to compute the keys ([#7050](https://github.com/pyg-team/pytorch_geometric/pull/7050))
