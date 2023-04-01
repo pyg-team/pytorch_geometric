@@ -20,24 +20,18 @@ def test_compose():
     assert data.pos.tolist() == [[-2, 0], [0, 0], [2, 0]]
     assert data.edge_index.size() == (2, 7)
 
+
 def test_compose_filters():
-    filter = T.ComposeFilters([
-        lambda d: d.num_nodes > 2,
-        lambda d: d.num_edges > 2
-    ])
+    filter = T.ComposeFilters(
+        [lambda d: d.num_nodes > 2, lambda d: d.num_edges > 2])
 
     data = [
-        Data(
-            x=torch.tensor([[0.], [1.], [2.]])
-        ),
-        Data(
-            x=torch.tensor([[0.], [1.]]),
-            edge_index=torch.tensor([[0, 0, 1], [0, 1, 1]])
-        ),
-        Data(
-            x=torch.tensor([[0.], [1.], [2.]]),
-            edge_index=torch.tensor([[0, 0, 1], [0, 1, 1]])
-        ),
+        Data(x=torch.tensor([[0.], [1.], [2.]])),
+        Data(x=torch.tensor([[0.], [1.]]), edge_index=torch.tensor([[0, 0, 1],
+                                                                    [0, 1,
+                                                                     1]])),
+        Data(x=torch.tensor([[0.], [1.], [2.]]),
+             edge_index=torch.tensor([[0, 0, 1], [0, 1, 1]])),
     ]
 
     mask = filter(data[0])
