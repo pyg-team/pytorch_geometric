@@ -27,7 +27,7 @@ class Compose(BaseTransform):
     def __repr__(self) -> str:
         args = [f'  {transform}' for transform in self.transforms]
         return '{}([\n{}\n])'.format(self.__class__.__name__, ',\n'.join(args))
-    
+
 
 class ComposeFilters():
     """Composes several filters together.
