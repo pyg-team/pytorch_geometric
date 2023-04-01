@@ -41,7 +41,7 @@ def test_compose_filters():
     ]
 
     mask = filter(data[0])
-    assert mask == False
+    assert mask is False
 
     mask = filter(data)
     assert mask == [False, False, True]
