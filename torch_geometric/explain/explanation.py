@@ -371,12 +371,12 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
 
         node_mask_dict = self.node_mask_dict
         node_types = list(node_mask_dict.keys())
-        if node_mask_dict is None:
+        if not node_mask_dict:
             raise ValueError(f"The attribute 'node_mask' is not available "
                              f"in '{self.__class__.__name__}' "
                              f"(got {self.available_explanations})")
         if node_mask_dict[node_types[0]].dim() != 2 or node_mask_dict[
-                node_types[1]].size(1) <= 1:
+                node_types[0]].size(1) <= 1:
             raise ValueError(f"Cannot compute feature importance for "
                              f"object-level 'node_mask' "
                              f"(got shape {node_mask_dict.size()})")
