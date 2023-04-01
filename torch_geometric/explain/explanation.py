@@ -343,3 +343,101 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
                     out[edge_type][key] = value[edge_mask]
 
         return out.subgraph(node_mask_dict)
+
+    def visualize_feature_importance(
+        self,
+        path: Optional[str] = None,
+        feat_labels: Optional[Dict[NodeType, List[str]]] = None,
+        top_k: Optional[int] = None,
+    ):
+        r"""Creates a bar plot of the node features importance by summing up
+        :attr:`self.node_mask` across all nodes.
+
+        Args:
+            path (str, optional): The path to where the plot is saved.
+                If set to :obj:`None`, will visualize the plot on-the-fly.
+                (default: :obj:`None`)
+            feat_labels (Dict[NodeType, List[str]], optional): Optional labels
+                for features. For each node type, a list of feature
+                labels must be provided. If not provided, the feature labels
+                will be set to integers in the range :obj:`[0, num_features]`.
+                Further internally the `node_type` is added as a prefix for the
+                feature labels. (default :obj:`None`)
+            top_k (int, optional): Top k features to plot. If :obj:`None`
+                plots all features. (default: :obj:`None`)
+        """
+        import matplotlib.pyplot as plt
+        import pandas as pd
+
+        node_mask_dict = self.node_mask_dict
+        node_types = list(node_mask_dict.keys())
+        if node_mask_dict is None:
+            raise ValueError(f"The attribute 'node_mask' is not available "
+                             f"in '{self.__class__.__name__}' "
+                             f"(got {self.available_explanations})")
+        if node_mask_dict[node_types[0]].dim() != 2 or node_mask_dict[
+                node_types[1]].size(1) <= 1:
+            raise ValueError(f"Cannot compute feature importance for "
+                             f"object-level 'node_mask' "
+                             f"(got shape {node_mask_dict.size()})")
+
+        if feat_labels is not None and len(feat_labels) != len(node_types):
+            raise ValueError(
+                f"The '{self.__class__.__name__}' object holds "
+                f"{len(node_types)} node types, but "
+                f"only {len(feat_labels)} labels were passed."
+                "Either pass no labels or one label list for each node type.")
+
+        if feat_labels is None:
+            feat_labels = {}
+            for node_type in node_types:
+                feat_labels[node_type] = range(
+                    node_mask_dict[node_type].size(1))
+
+        for node_type in node_types:
+            if len(feat_labels[node_type]) != node_mask_dict[node_type].size(
+                    1):
+                raise ValueError(
+                    f"The '{self.__class__.__name__}' object holds "
+                    f"{node_mask_dict[node_type].size(1)} features "
+                    f"for node type '{node_type}', but "
+                    f"{len(feat_labels[node_type])} labels were passed.")
+
+        dfs = []
+        for node_type in node_types:
+            index = [
+                f"{node_type}#{label}" for label in feat_labels[node_type]
+            ]
+            feat_importance = node_mask_dict[node_type].sum(
+                dim=0).cpu().numpy()
+            dfs.append(
+                pd.DataFrame({'feat_importance': feat_importance},
+                             index=index))
+        df = pd.concat(dfs)
+        df = df.sort_values("feat_importance", ascending=False)
+        df = df.round(decimals=3)
+
+        if top_k is not None:
+            df = df.head(top_k)
+            title = f"Feature importance for top {len(df)} features"
+        else:
+            title = f"Feature importance for {len(df)} features"
+
+        xlim = [0, float(df['feat_importance'].max()) + 0.3]
+        ax = df.plot(
+            kind='barh',
+            figsize=(10, 7),
+            title=title,
+            ylabel='Feature label',
+            xlim=xlim,
+            legend=False,
+        )
+        plt.gca().invert_yaxis()
+        ax.bar_label(container=ax.containers[0], label_type='edge')
+
+        if path is not None:
+            plt.savefig(path)
+        else:
+            plt.show()
+
+        plt.close()
