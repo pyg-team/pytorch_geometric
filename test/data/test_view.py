@@ -5,12 +5,14 @@ from torch_geometric.data.view import (
     ValuesView,
 )
 
+
 class M:
     def keys(self):
         return [1, 2, 3]
 
     def __getitem__(self, x):
         return x * 2
+
 
 def test_mapping_view():
     assert M().keys() == [1, 2, 3]
@@ -20,10 +22,12 @@ def test_mapping_view():
     assert mview._keys() == [1, 2, 3]
     assert mview.__len__() == 3
 
+
 def test_keys_view():
     kview = KeysView(mapping=M())
     for i, val in enumerate(kview.__iter__()):
         assert i + 1 == val
+
 
 def test_values_view():
     vview = ValuesView(mapping=M())
