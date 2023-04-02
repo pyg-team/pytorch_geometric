@@ -418,6 +418,8 @@ class EdgeStorage(BaseStorage):
         for value in self.values('adj', 'adj_t'):
             if isinstance(value, SparseTensor):
                 return value.nnz()
+            elif isinstance(value, Tensor) and (value.is_sparse or value.is_sparse_csr):
+                return value._nnz()
         return 0
 
     @property
