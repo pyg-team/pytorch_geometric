@@ -2,7 +2,7 @@ from typing import List, Optional
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor
+from torch_geometric.typing import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
