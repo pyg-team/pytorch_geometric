@@ -26,6 +26,7 @@ from torch_geometric.typing import EdgeType, NodeType, SparseTensor
 from torch_geometric.utils import (
     coalesce,
     contains_isolated_nodes,
+    is_torch_sparse_tensor,
     is_undirected,
 )
 
@@ -418,6 +419,8 @@ class EdgeStorage(BaseStorage):
         for value in self.values('adj', 'adj_t'):
             if isinstance(value, SparseTensor):
                 return value.nnz()
+            elif is_torch_sparse_tensor(value):
+                return value._nnz()
         return 0
 
     @property
