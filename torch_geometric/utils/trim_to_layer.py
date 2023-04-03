@@ -16,8 +16,7 @@ if WITH_TORCH_SPARSE:
     from torch_sparse import SparseStorage
 
 
-def resize_adj_t(src: SparseTensor,
-                 new_num_rows: int,
+def resize_adj_t(src: SparseTensor, new_num_rows: int,
                  active_nodes_num: None) -> SparseTensor:
     r"""It resizes a bidimensional :obj:`src` SparseTensor
     along both dimensions and it returns a squared SparseTensor.
@@ -40,21 +39,12 @@ def resize_adj_t(src: SparseTensor,
         rowptr, col, value = src.csr()
 
     # rowptr
-    rowptr = torch.narrow(
-        src.storage._rowptr,
-        0,
-        start,
-        new_num_rows + 1
-    ).clone()
+    rowptr = torch.narrow(src.storage._rowptr, 0, start,
+                          new_num_rows + 1).clone()
     rowptr[(active_nodes_num + 1):] = rowptr[active_nodes_num]
 
     # col and value
-    col = torch.narrow(
-        src.storage._col,
-        0,
-        start,
-        rowptr[-1]
-    )
+    col = torch.narrow(src.storage._col, 0, start, rowptr[-1])
     value = torch.narrow(
         src.storage._value,
         0,
@@ -67,12 +57,10 @@ def resize_adj_t(src: SparseTensor,
         if src.storage._csr2csc is not None else None
 
     # update storage and edge_index
-    storage = SparseStorage(row=None, rowptr=rowptr, col=col,
-                            value=value,
+    storage = SparseStorage(row=None, rowptr=rowptr, col=col, value=value,
                             sparse_sizes=(new_num_rows, new_num_rows),
-                            rowcount=None, colptr=None,
-                            colcount=None, csr2csc=csr2csc,
-                            csc2csr=None, is_sorted=True,
+                            rowcount=None, colptr=None, colcount=None,
+                            csr2csc=csr2csc, csc2csr=None, is_sorted=True,
                             trust_data=False)
     return src.from_storage(storage)
 
@@ -138,7 +126,7 @@ def trim_to_layer(
                 for k, v in edge_attr.items()
             }
         return x, edge_index, edge_attr
-    
+
     # this point should be reached by homogeneous case only,
     # hetero is handled above
     # for homogeneous case, support for the SparseTensor case
@@ -178,11 +166,8 @@ def trim_to_layer(
         active_nodes_num = new_num_rows - \
             num_sampled_nodes_per_hop[-(layer + 1)]
 
-        edge_index = resize_adj_t(
-            edge_index,
-            new_num_rows=new_num_rows,
-            active_nodes_num=active_nodes_num
-        )
+        edge_index = resize_adj_t(edge_index, new_num_rows=new_num_rows,
+                                  active_nodes_num=active_nodes_num)
         return x, edge_index, edge_attr
     raise NotImplementedError  # end of trim_to_layer
 
