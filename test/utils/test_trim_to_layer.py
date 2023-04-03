@@ -2,12 +2,12 @@ from typing import List, Optional
 
 import torch
 from torch import Tensor
-from torch_geometric.typing import SparseTensor
 
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv
 from torch_geometric.testing import withPackage
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import resize_adj_t, trim_to_layer
 
 
