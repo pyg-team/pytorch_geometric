@@ -4,12 +4,12 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import (
+    WITH_TORCH_SPARSE,
     EdgeType,
     MaybeHeteroEdgeTensor,
     MaybeHeteroNodeTensor,
     NodeType,
     SparseTensor,
-    WITH_TORCH_SPARSE
 )
 
 if WITH_TORCH_SPARSE:
