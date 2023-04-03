@@ -31,7 +31,7 @@ def test_compose_filters():
     data1 = Data(x=torch.arange(3))
     assert not filter_fn(data1)
 
-    data2 = Data(x=torch.tensor(2), edge_index=torch.tensor([
+    data2 = Data(x=torch.arange(2), edge_index=torch.tensor([
         [0, 0, 1],
         [0, 1, 1],
     ]))
