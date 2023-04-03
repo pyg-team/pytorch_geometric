@@ -22,20 +22,26 @@ def test_compose():
 
 
 def test_compose_filters():
-    filter = T.ComposeFilters(
-        [lambda d: d.num_nodes > 2, lambda d: d.num_edges > 2])
+    filter_fn = T.ComposeFilters([
+        lambda d: d.num_nodes > 2,
+        lambda d: d.num_edges > 2,
+    ])
+    assert str(filter_fn)[:16] == 'ComposeFilters(['
 
-    data = [
-        Data(x=torch.tensor([[0.], [1.], [2.]])),
-        Data(x=torch.tensor([[0.], [1.]]), edge_index=torch.tensor([[0, 0, 1],
-                                                                    [0, 1,
-                                                                     1]])),
-        Data(x=torch.tensor([[0.], [1.], [2.]]),
-             edge_index=torch.tensor([[0, 0, 1], [0, 1, 1]])),
-    ]
+    data1 = Data(x=torch.arange(3))
+    assert not filter_fn(data1)
 
-    mask = filter(data[0])
-    assert mask is False
+    data2 = Data(x=torch.tensor(2), edge_index=torch.tensor([
+        [0, 0, 1],
+        [0, 1, 1],
+    ]))
+    assert not filter_fn(data2)
 
-    mask = filter(data)
-    assert mask == [False, False, True]
+    data3 = Data(x=torch.arange(3), edge_index=torch.tensor([
+        [0, 0, 1],
+        [0, 1, 1],
+    ]))
+    assert filter_fn(data3)
+
+    # Test tuple of data objects:
+    assert filter_fn((data1, data2, data3)) is False

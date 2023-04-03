@@ -5,7 +5,7 @@ from torch_geometric.transforms import BaseTransform
 
 
 class Compose(BaseTransform):
-    """Composes several transforms together.
+    r"""Composes several transforms together.
 
     Args:
         transforms (List[Callable]): List of transforms to compose.
@@ -29,8 +29,8 @@ class Compose(BaseTransform):
         return '{}([\n{}\n])'.format(self.__class__.__name__, ',\n'.join(args))
 
 
-class ComposeFilters():
-    """Composes several filters together.
+class ComposeFilters:
+    r"""Composes several filters together.
 
     Args:
         filters (List[Callable]): List of filters to compose.
@@ -42,13 +42,14 @@ class ComposeFilters():
         self,
         data: Union[Data, HeteroData],
     ) -> bool:
-        if isinstance(data, (list, tuple)):
-            return type(data)([self(d) for d in data])
-        for filter in self.filters:
-            if not filter(data):
+        for filter_fn in self.filters:
+            if isinstance(data, (list, tuple)):
+                if not all([filter_fn(d) for d in data]):
+                    return False
+            elif not filter_fn(data):
                 return False
         return True
 
     def __repr__(self) -> str:
-        args = [f'  {filter}' for filter in self.filters]
+        args = [f'  {filter_fn}' for filter_fn in self.filters]
         return '{}([\n{}\n])'.format(self.__class__.__name__, ',\n'.join(args))
