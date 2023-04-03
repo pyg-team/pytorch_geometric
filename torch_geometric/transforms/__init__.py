@@ -1,7 +1,7 @@
 # flake8: noqa
 
 from .base_transform import BaseTransform
-from .compose import Compose
+from .compose import Compose, ComposeFilters
 from .to_device import ToDevice
 from .to_sparse_tensor import ToSparseTensor
 from .constant import Constant
@@ -62,6 +62,7 @@ from .grid_sampling import GridSampling
 general_transforms = [
     'BaseTransform',
     'Compose',
+    'ComposeFilters',
     'ToDevice',
     'ToSparseTensor',
     'Constant',
