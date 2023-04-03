@@ -2,14 +2,18 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseStorage, SparseTensor
 
 from torch_geometric.typing import (
     EdgeType,
     MaybeHeteroEdgeTensor,
     MaybeHeteroNodeTensor,
     NodeType,
+    SparseTensor,
+    WITH_TORCH_SPARSE
 )
+
+if WITH_TORCH_SPARSE:
+    from torch_sparse import SparseStorage
 
 
 def resize_adj_t(src: SparseTensor,
@@ -162,7 +166,7 @@ def trim_to_layer(
         return x, edge_index, edge_attr
 
     # adj matrix as SparseTensor
-    if isinstance(edge_index, SparseTensor):
+    if isinstance(edge_index, SparseTensor) and WITH_TORCH_SPARSE:
         if edge_index.storage._rowptr is None:
             edge_index.storage._rowptr,\
                 edge_index.storage._col,\

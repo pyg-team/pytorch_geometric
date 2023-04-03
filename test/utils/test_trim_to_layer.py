@@ -11,6 +11,7 @@ from torch_geometric.testing import withPackage
 from torch_geometric.utils import trim_to_layer, resize_adj_t
 
 
+@withPackage('torch_sparse')
 def test_resize_adj_t():
     # edge_index represents the adj_transpose matrix
     # of a graph (modelling here the graph of a batch)
@@ -94,6 +95,7 @@ def test_trim_to_layer_basic():
     assert torch.equal(edge_weight, torch.arange(1))
 
 
+@withPackage('torch_sparse')
 def test_trim_to_layer_SparseTensor_basic():
     x = torch.arange(4)
     edge_index = torch.tensor([[0, 1, 2], [1, 2, 3]])

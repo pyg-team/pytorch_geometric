@@ -131,6 +131,7 @@ __all__ = [
     'tree_decomposition',
     'get_embeddings',
     'trim_to_layer',
+    'resize_adj_t',
     'train_test_split_edges',
 ]
 
