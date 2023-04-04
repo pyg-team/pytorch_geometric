@@ -1,6 +1,6 @@
 import warnings
 from collections import defaultdict
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 import torch
 from torch import Tensor
