@@ -512,7 +512,7 @@ class Data(BaseData, FeatureStore, GraphStore):
     def to_namedtuple(self) -> NamedTuple:
         return self._store.to_namedtuple()
 
-    def update(self, data: 'Data') -> 'Data':
+    def update(self, data: Union['Data', Dict[str, Any]]) -> 'Data':
         for key, value in data.items():
             self[key] = value
         return self
