@@ -92,9 +92,12 @@ def construct_bipartite_edge_index(
 
         # TODO Add support for SparseTensor w/o converting.
         is_sparse = isinstance(edge_index, SparseTensor)
+        is_native_sparse = isinstance(edge_index, Tensor) and 'sparse' in str(edge_index.layout)
         if is_sparse:
             col, row, _ = edge_index.coo()
             edge_index = torch.stack([row, col], dim=0)
+        elif is_native_sparse:
+            edge_index = torch.tensor(edge_index.to_sparse_coo().indices())
         else:
             edge_index = edge_index.clone()
 
