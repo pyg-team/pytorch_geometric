@@ -98,7 +98,8 @@ def construct_bipartite_edge_index(
             col, row, _ = edge_index.coo()
             edge_index = torch.stack([row, col], dim=0)
         elif is_native_sparse:
-            edge_index = torch.tensor(edge_index.to_sparse_coo().indices()).flip(0)
+            edge_index = torch.tensor(
+                edge_index.to_sparse_coo().indices()).flip(0)
         else:
             edge_index = edge_index.clone()
 
