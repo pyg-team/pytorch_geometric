@@ -208,7 +208,7 @@ def from_networkx(
     for i, e in enumerate(G.edges):
         edge_index[i, 0], edge_index[i, 1] = e
     edge_index = edge_index.t().contiguous()
-    
+
     data = defaultdict(list)
 
     if G.number_of_nodes() > 0:
