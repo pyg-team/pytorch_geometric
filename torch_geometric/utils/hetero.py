@@ -77,7 +77,7 @@ def construct_bipartite_edge_index(
             :class:`torch_sparse.SparseTensor`.
         src_offset_dict (Dict[Tuple[str, str, str], int]): A dictionary of
             offsets to apply to the source node type for each edge type.
-        src_offset_dict (Dict[str, int]): A dictionary of offsets to apply for
+        dst_offset_dict (Dict[str, int]): A dictionary of offsets to apply for
             destination node types.
         edge_attr_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
             dictionary holding edge features for each individual edge type.
