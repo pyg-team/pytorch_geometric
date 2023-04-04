@@ -98,8 +98,8 @@ def construct_bipartite_edge_index(
         else:
             edge_index = edge_index.clone()
 
-        edge_index[0] += src_offset
-        edge_index[1] += dst_offset
+        edge_index[0] = src_offset + edge_index[0]
+        edge_index[1] = dst_offset + edge_index[1]
         edge_indices.append(edge_index)
 
         if edge_attr_dict is not None:
