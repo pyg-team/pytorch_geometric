@@ -1,3 +1,4 @@
+from copy import deepcopy
 from collections import defaultdict
 from typing import Any, Iterable, List, Optional, Tuple, Union
 
@@ -205,6 +206,7 @@ def from_networkx(
     # convert node labels to integers WITHOUT re-calling the constructor
     N = G.number_of_nodes()
     mapping = dict(zip(G.nodes(), range(N)))
+    G = deepcopy(G)
     G = nx.relabel.relabel_nodes(G, mapping, copy=False)
     G = G.to_directed() if not nx.is_directed(G) else G
 
