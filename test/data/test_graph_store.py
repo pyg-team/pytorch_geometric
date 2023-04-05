@@ -8,9 +8,11 @@ from torch_geometric.utils import (
     to_torch_csc_tensor,
     to_torch_csr_tensor,
 )
+
 DEVICES = [torch.device('cpu')]
 if torch.cuda.is_available():
     DEVICES.append(torch.device('cuda'))
+
 
 @pytest.mark.parametrize('device', DEVICES)
 def test_graph_store(device):
@@ -20,7 +22,8 @@ def test_graph_store(device):
 
     coo = torch.tensor([0, 1]).to(device), torch.tensor([1, 2]).to(device)
     csr = torch.tensor([0, 1, 2]).to(device), torch.tensor([1, 2]).to(device)
-    csc = torch.tensor([0, 1]).to(device), torch.tensor([0, 0, 1, 2]).to(device)
+    csc = torch.tensor([0, 1]).to(device), torch.tensor([0, 0, 1,
+                                                         2]).to(device)
 
     graph_store['edge_type', 'coo'] = coo
     graph_store['edge_type', 'csr'] = csr

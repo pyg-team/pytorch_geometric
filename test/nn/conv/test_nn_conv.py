@@ -1,5 +1,5 @@
-import torch
 import pytest
+import torch
 from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
@@ -9,9 +9,11 @@ from torch_geometric.nn import NNConv
 from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor
+
 DEVICES = [torch.device('cpu')]
 if torch.cuda.is_available():
     DEVICES.append(torch.device('cuda'))
+
 
 @pytest.mark.parametrize('device', DEVICES)
 def test_nn_conv(device):
