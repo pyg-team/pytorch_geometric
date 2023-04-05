@@ -1,5 +1,5 @@
-from copy import deepcopy
 from collections import defaultdict
+from copy import deepcopy
 from typing import Any, Iterable, List, Optional, Tuple, Union
 
 import scipy.sparse
