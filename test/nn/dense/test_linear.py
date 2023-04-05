@@ -9,24 +9,29 @@ import torch_geometric.typing
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.testing import withPackage
 
+DEVICES = [torch.device('cpu')]
+if torch.cuda.is_available():
+    DEVICES.append(torch.device('cuda'))
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
 
 
 @pytest.mark.parametrize('weight', weight_inits)
 @pytest.mark.parametrize('bias', bias_inits)
-def test_linear(weight, bias):
-    x = torch.randn(3, 4, 16)
-    lin = Linear(16, 32, weight_initializer=weight, bias_initializer=bias)
+@pytest.mark.parametrize('device', DEVICES)
+def test_linear(weight, bias, device):
+    x = torch.randn(3, 4, 16).to(device)
+    lin = Linear(16, 32, weight_initializer=weight, bias_initializer=bias).to(device)
     assert str(lin) == 'Linear(16, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
 
 
 @pytest.mark.parametrize('weight', weight_inits)
 @pytest.mark.parametrize('bias', bias_inits)
-def test_lazy_linear(weight, bias):
-    x = torch.randn(3, 4, 16)
-    lin = Linear(-1, 32, weight_initializer=weight, bias_initializer=bias)
+@pytest.mark.parametrize('device', DEVICES)
+def test_lazy_linear(weight, bias, device):
+    x = torch.randn(3, 4, 16).to(device)
+    lin = Linear(-1, 32, weight_initializer=weight, bias_initializer=bias).to(device)
     assert str(lin) == 'Linear(-1, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
     assert str(lin) == 'Linear(16, 32, bias=True)'
@@ -34,9 +39,10 @@ def test_lazy_linear(weight, bias):
 
 @pytest.mark.parametrize('dim1', [-1, 16])
 @pytest.mark.parametrize('dim2', [-1, 16])
-def test_load_lazy_linear(dim1, dim2):
-    lin1 = Linear(dim1, 32)
-    lin2 = Linear(dim1, 32)
+@pytest.mark.parametrize('device', DEVICES)
+def test_load_lazy_linear(dim1, dim2, device):
+    lin1 = Linear(dim1, 32).to(device)
+    lin2 = Linear(dim1, 32).to(device)
     lin2.load_state_dict(lin1.state_dict())
 
     if dim1 != -1:
@@ -56,15 +62,16 @@ def test_load_lazy_linear(dim1, dim2):
 
 
 @pytest.mark.parametrize('lazy', [True, False])
-def test_identical_linear_default_initialization(lazy):
-    x = torch.randn(3, 4, 16)
+@pytest.mark.parametrize('device', DEVICES)
+def test_identical_linear_default_initialization(lazy, device):
+    x = torch.randn(3, 4, 16).to(device)
 
     torch.manual_seed(12345)
-    lin1 = Linear(-1 if lazy else 16, 32)
+    lin1 = Linear(-1 if lazy else 16, 32).to(device)
     lin1(x)
 
     torch.manual_seed(12345)
-    lin2 = PTLinear(16, 32)
+    lin2 = PTLinear(16, 32).to(device)
 
     assert torch.equal(lin1.weight, lin2.weight)
     assert torch.equal(lin1.bias, lin2.bias)
@@ -79,10 +86,11 @@ def test_copy_unintialized_parameter():
 
 
 @pytest.mark.parametrize('lazy', [True, False])
-def test_copy_linear(lazy):
-    lin = Linear(-1 if lazy else 16, 32)
+@pytest.mark.parametrize('device', DEVICES)
+def test_copy_linear(lazy, device):
+    lin = Linear(-1 if lazy else 16, 32).to(device)
 
-    copied_lin = copy.copy(lin)
+    copied_lin = copy.copy(lin).to(device)
     assert id(copied_lin) != id(lin)
     assert id(copied_lin.weight) == id(lin.weight)
     if not isinstance(copied_lin.weight, UninitializedParameter):
@@ -90,7 +98,7 @@ def test_copy_linear(lazy):
     assert id(copied_lin.bias) == id(lin.bias)
     assert copied_lin.bias.data_ptr() == lin.bias.data_ptr()
 
-    copied_lin = copy.deepcopy(lin)
+    copied_lin = copy.deepcopy(lin).to(device)
     assert id(copied_lin) != id(lin)
     assert id(copied_lin.weight) != id(lin.weight)
     if not isinstance(copied_lin.weight, UninitializedParameter):
@@ -102,11 +110,12 @@ def test_copy_linear(lazy):
         assert torch.allclose(copied_lin.bias, lin.bias)
 
 
-def test_hetero_linear():
-    x = torch.randn(3, 16)
-    type_vec = torch.tensor([0, 1, 2])
+@pytest.mark.parametrize('device', DEVICES)
+def test_hetero_linear(device):
+    x = torch.randn(3, 16).to(device)
+    type_vec = torch.tensor([0, 1, 2]).to(device)
 
-    lin = HeteroLinear(16, 32, num_types=3)
+    lin = HeteroLinear(16, 32, num_types=3).to(device)
     assert str(lin) == 'HeteroLinear(16, 32, num_types=3, bias=True)'
 
     out = lin(x, type_vec)
@@ -116,11 +125,12 @@ def test_hetero_linear():
     assert torch.allclose(jit(x, type_vec), out)
 
 
-def test_lazy_hetero_linear():
-    x = torch.randn(3, 16)
-    type_vec = torch.tensor([0, 1, 2])
+@pytest.mark.parametrize('device', DEVICES)
+def test_lazy_hetero_linear(device):
+    x = torch.randn(3, 16).to(device)
+    type_vec = torch.tensor([0, 1, 2]).to(device)
 
-    lin = HeteroLinear(-1, 32, num_types=3)
+    lin = HeteroLinear(-1, 32, num_types=3).to(device)
     assert str(lin) == 'HeteroLinear(-1, 32, num_types=3, bias=True)'
 
     out = lin(x, type_vec)
@@ -128,10 +138,11 @@ def test_lazy_hetero_linear():
 
 
 @pytest.mark.parametrize('bias', [True, False])
-def test_hetero_dict_linear(bias):
-    x_dict = {'v': torch.randn(3, 16), 'w': torch.randn(2, 8)}
+@pytest.mark.parametrize('device', DEVICES)
+def test_hetero_dict_linear(bias, device):
+    x_dict = {'v': torch.randn(3, 16).to(device), 'w': torch.randn(2, 8).to(device)}
 
-    lin = HeteroDictLinear({'v': 16, 'w': 8}, 32, bias=bias)
+    lin = HeteroDictLinear({'v': 16, 'w': 8}, 32, bias=bias).to(device)
     assert str(lin) == (f"HeteroDictLinear({{'v': 16, 'w': 8}}, 32, "
                         f"bias={bias})")
 
@@ -140,9 +151,7 @@ def test_hetero_dict_linear(bias):
     assert out_dict['v'].size() == (3, 32)
     assert out_dict['w'].size() == (2, 32)
 
-    x_dict = {'v': torch.randn(3, 16), 'w': torch.randn(2, 16)}
-
-    lin = HeteroDictLinear(16, 32, types=['v', 'w'], bias=bias)
+    lin = HeteroDictLinear(16, 32, types=['v', 'w'], bias=bias).to(device)
     assert str(lin) == (f"HeteroDictLinear({{'v': 16, 'w': 16}}, 32, "
                         f"bias={bias})")
 
@@ -160,10 +169,11 @@ def test_hetero_dict_linear(bias):
         assert len(jit(x_dict)) == 2
 
 
-def test_lazy_hetero_dict_linear():
-    x_dict = {'v': torch.randn(3, 16), 'w': torch.randn(2, 8)}
+@pytest.mark.parametrize('device', DEVICES)
+def test_lazy_hetero_dict_linear(device):
+    x_dict = {'v': torch.randn(3, 16).to(device), 'w': torch.randn(2, 8).to(device)}
 
-    lin = HeteroDictLinear(-1, 32, types=['v', 'w'])
+    lin = HeteroDictLinear(-1, 32, types=['v', 'w']).to(device)
     assert str(lin) == "HeteroDictLinear({'v': -1, 'w': -1}, 32, bias=True)"
 
     out_dict = lin(x_dict)
@@ -177,10 +187,11 @@ def test_lazy_hetero_dict_linear():
     torch.tensor([0, 0, 1, 1, 2, 2]),
     torch.tensor([0, 1, 2, 0, 1, 2]),
 ])
-def test_hetero_linear_sort(type_vec):
-    x = torch.randn(type_vec.numel(), 16)
+@pytest.mark.parametrize('device', DEVICES)
+def test_hetero_linear_sort(type_vec, device):
+    x = torch.randn(type_vec.numel(), 16).to(device)
 
-    lin = HeteroLinear(16, 32, num_types=3)
+    lin = HeteroLinear(16, 32, num_types=3).to(device)
     out = lin(x, type_vec)
 
     for i in range(type_vec.numel()):
