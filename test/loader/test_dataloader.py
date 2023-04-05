@@ -39,10 +39,10 @@ def test_dataloader(num_workers, device):
     assert len(loader) == 2
 
     for batch in loader:
-        assert device in str(batch.x.device)
-        assert device in str(batch.edge_index.device)
-        assert device in str(batch.y.device)
-        assert device in str(batch.z.device)
+        assert batch.x.device == device
+        assert batch.edge_index.device == device
+        assert batch.y.device == device
+        assert batch.z.device == device
         assert batch.num_graphs == len(batch) == 2
         assert batch.batch.tolist() == [0, 0, 0, 1, 1, 1]
         assert batch.ptr.tolist() == [0, 3, 6]

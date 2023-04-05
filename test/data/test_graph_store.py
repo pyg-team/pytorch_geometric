@@ -43,7 +43,8 @@ def test_graph_store(device):
         graph_store['edge_type_2', 'coo']
 
 
-def test_graph_store_conversion():
+@pytest.mark.parametrize('device', DEVICES)
+def test_graph_store_conversion(device):
     graph_store = MyGraphStore()
 
     edge_index = get_random_edge_index(100, 100, 300).to(device)
