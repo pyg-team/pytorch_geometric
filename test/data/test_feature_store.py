@@ -6,6 +6,7 @@ import torch
 from torch_geometric.data import TensorAttr
 from torch_geometric.data.feature_store import AttrView, _field_status
 from torch_geometric.testing import MyFeatureStore
+
 DEVICES = [torch.device('cpu')]
 if torch.cuda.is_available():
     DEVICES.append(torch.device('cuda'))
@@ -40,7 +41,8 @@ def test_feature_store(device):
     store.put_tensor(tensor, attr)
     assert torch.equal(store.get_tensor(attr), tensor)
     assert torch.equal(
-        store.get_tensor(group_name, attr_name, index=torch.tensor([0, 2])).to(device),
+        store.get_tensor(group_name, attr_name,
+                         index=torch.tensor([0, 2])).to(device),
         tensor[torch.tensor([0, 2])],
     )
 
