@@ -205,7 +205,7 @@ def from_networkx(
     # convert node labels to integers WITHOUT re-calling the constructor
     N = G.number_of_nodes() + first_label
     mapping = dict(zip(G.nodes(), range(first_label, N)))
-    G = nx.relabel.relabel_nodes(G, mapping)
+    G = nx.relabel.relabel_nodes(G, mapping, copy=False)
     G = G.to_directed() if not nx.is_directed(G) else G
 
     if isinstance(G, (nx.MultiGraph, nx.MultiDiGraph)):
