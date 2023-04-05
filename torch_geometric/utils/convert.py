@@ -202,7 +202,6 @@ def from_networkx(
 
     from torch_geometric.data import Data
 
-    G = nx.convert_node_labels_to_integers(G)
     G = G.to_directed() if not nx.is_directed(G) else G
 
     if isinstance(G, (nx.MultiGraph, nx.MultiDiGraph)):
