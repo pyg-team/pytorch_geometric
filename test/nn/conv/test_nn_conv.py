@@ -11,7 +11,6 @@ from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor
 
 
-@pytest.mark.parametrize('device', DEVICES)
 @withCUDA
 def test_nn_conv(device):
     x1 = torch.randn(4, 8).to(device)
