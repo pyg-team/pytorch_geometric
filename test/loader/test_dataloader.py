@@ -9,7 +9,6 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import DataLoader
 from torch_geometric.testing import get_random_edge_index, withCUDA
 
-
 with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]
 

@@ -7,8 +7,7 @@ from torch.nn.parameter import UninitializedParameter
 
 import torch_geometric.typing
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
-from torch_geometric.testing import withPackage, withCUDA
-
+from torch_geometric.testing import withCUDA, withPackage
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
