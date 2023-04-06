@@ -16,8 +16,10 @@ loader = DataListLoader(dataset, batch_size=1024, shuffle=True)
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = NNConv(dataset.num_features, 32)
-        self.conv2 = NNConv(32, 64)
+        nn1 = Seq(Lin(-1, 32), ReLU(), Lin(-1, dataset.num_features * 32))
+        self.conv1 = NNConv(dataset.num_features, 32, nn=nn1)
+        nn2 = Seq(Lin(-1, 64), ReLU(), Lin(-1, 32*64))
+        self.conv2 = NNConv(32, 64, nn=nn2)
         self.lin1 = torch.nn.Linear(64, 128)
         self.lin2 = torch.nn.Linear(128, dataset.num_classes)
 
