@@ -6,11 +6,7 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataListLoader
-from torch_geometric.nn import (
-    DataParallel,
-    FeaStConv,
-    global_mean_pool,
-)
+from torch_geometric.nn import DataParallel, FeaStConv, global_mean_pool
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data', 'MNIST')
 dataset = MNISTSuperpixels(path, transform=T.Cartesian()).shuffle()
