@@ -2,12 +2,15 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import ReLU, Sequential
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataListLoader
-from torch_geometric.nn import DataParallel, Linear, NNConv, global_mean_pool
+from torch_geometric.nn import (
+    DataParallel,
+    FeaStConv,
+    global_mean_pool,
+)
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data', 'MNIST')
 dataset = MNISTSuperpixels(path, transform=T.Cartesian()).shuffle()
@@ -17,11 +20,8 @@ loader = DataListLoader(dataset, batch_size=1024, shuffle=True)
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        nn1 = Sequential(Linear(-1, 32), ReLU(),
-                         Linear(-1, dataset.num_features * 32))
-        self.conv1 = NNConv(dataset.num_features, 32, nn=nn1)
-        nn2 = Sequential(Linear(-1, 64), ReLU(), Linear(-1, 32 * 64))
-        self.conv2 = NNConv(32, 64, nn=nn2)
+        self.conv1 = FeaStConv(dataset.num_features, 32)
+        self.conv2 = FeaStConv(32, 64)
         self.lin1 = torch.nn.Linear(64, 128)
         self.lin2 = torch.nn.Linear(128, dataset.num_classes)
 
@@ -29,9 +29,9 @@ class Net(torch.nn.Module):
         print(f'Inside model - num graphs: {data.num_graphs}, '
               f'device: {data.batch.device}')
 
-        x, edge_index, edge_attr = data.x, data.edge_index, data.edge_attr
-        x = F.elu(self.conv1(x, edge_index, edge_attr))
-        x = F.elu(self.conv2(x, edge_index, edge_attr))
+        x, edge_index = data.x, data.edge_index
+        x = F.elu(self.conv1(x, edge_index))
+        x = F.elu(self.conv2(x, edge_index))
         x = global_mean_pool(x, data.batch)
         x = F.elu(self.lin1(x))
         return F.log_softmax(self.lin2(x), dim=1)
