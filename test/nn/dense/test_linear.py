@@ -19,7 +19,8 @@ bias_inits = ['zeros', None]
 @withCUDA
 def test_linear(weight, bias, device):
     x = torch.randn(3, 4, 16).to(device)
-    lin = Linear(16, 32, weight_initializer=weight, bias_initializer=bias).to(device)
+    lin = Linear(16, 32, weight_initializer=weight,
+                 bias_initializer=bias).to(device)
     assert str(lin) == 'Linear(16, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
 
@@ -29,7 +30,8 @@ def test_linear(weight, bias, device):
 @withCUDA
 def test_lazy_linear(weight, bias, device):
     x = torch.randn(3, 4, 16).to(device)
-    lin = Linear(-1, 32, weight_initializer=weight, bias_initializer=bias).to(device)
+    lin = Linear(-1, 32, weight_initializer=weight,
+                 bias_initializer=bias).to(device)
     assert str(lin) == 'Linear(-1, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
     assert str(lin) == 'Linear(16, 32, bias=True)'
@@ -138,7 +140,10 @@ def test_lazy_hetero_linear(device):
 @pytest.mark.parametrize('bias', [True, False])
 @withCUDA
 def test_hetero_dict_linear(bias, device):
-    x_dict = {'v': torch.randn(3, 16).to(device), 'w': torch.randn(2, 8).to(device)}
+    x_dict = {
+        'v': torch.randn(3, 16).to(device),
+        'w': torch.randn(2, 8).to(device)
+    }
 
     lin = HeteroDictLinear({'v': 16, 'w': 8}, 32, bias=bias).to(device)
     assert str(lin) == (f"HeteroDictLinear({{'v': 16, 'w': 8}}, 32, "
@@ -149,7 +154,10 @@ def test_hetero_dict_linear(bias, device):
     assert out_dict['v'].size() == (3, 32)
     assert out_dict['w'].size() == (2, 32)
 
-    x_dict = {'v': torch.randn(3, 16).to(device), 'w': torch.randn(2, 16).to(device)}
+    x_dict = {
+        'v': torch.randn(3, 16).to(device),
+        'w': torch.randn(2, 16).to(device)
+    }
 
     lin = HeteroDictLinear(16, 32, types=['v', 'w'], bias=bias).to(device)
     assert str(lin) == (f"HeteroDictLinear({{'v': 16, 'w': 16}}, 32, "
@@ -171,7 +179,10 @@ def test_hetero_dict_linear(bias, device):
 
 @withCUDA
 def test_lazy_hetero_dict_linear(device):
-    x_dict = {'v': torch.randn(3, 16).to(device), 'w': torch.randn(2, 8).to(device)}
+    x_dict = {
+        'v': torch.randn(3, 16).to(device),
+        'w': torch.randn(2, 8).to(device)
+    }
 
     lin = HeteroDictLinear(-1, 32, types=['v', 'w']).to(device)
     assert str(lin) == "HeteroDictLinear({'v': -1, 'w': -1}, 32, bias=True)"
