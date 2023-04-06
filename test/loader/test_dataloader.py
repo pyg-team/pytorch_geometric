@@ -7,11 +7,9 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import DataLoader
-from torch_geometric.testing import get_random_edge_index
+from torch_geometric.testing import get_random_edge_index, withCUDA
 
-DEVICES = [torch.device('cpu')]
-if torch.cuda.is_available():
-    DEVICES.append(torch.device('cuda'))
+
 with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]
 
@@ -20,7 +18,7 @@ if sys.platform == 'darwin':
 
 
 @pytest.mark.parametrize('num_workers', num_workers_list)
-@pytest.mark.parametrize('device', DEVICES)
+@withCUDA
 def test_dataloader(num_workers, device):
     x = torch.Tensor([[1], [1], [1]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])

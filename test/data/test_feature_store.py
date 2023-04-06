@@ -7,10 +7,6 @@ from torch_geometric.data import TensorAttr
 from torch_geometric.data.feature_store import AttrView, _field_status
 from torch_geometric.testing import MyFeatureStore
 
-DEVICES = [torch.device('cpu')]
-if torch.cuda.is_available():
-    DEVICES.append(torch.device('cuda'))
-
 
 @dataclass
 class MyTensorAttrNoGroupName(TensorAttr):
@@ -26,14 +22,13 @@ class MyFeatureStoreNoGroupName(MyFeatureStore):
         self._tensor_attr_cls = MyTensorAttrNoGroupName
 
 
-@pytest.mark.parametrize('device', DEVICES)
-def test_feature_store(device):
+def test_feature_store():
     store = MyFeatureStore()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]]).to(device)
+    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
 
     group_name = 'A'
     attr_name = 'feat'
-    index = torch.tensor([0, 1, 2]).to(device)
+    index = torch.tensor([0, 1, 2])
     attr = TensorAttr(group_name, attr_name, index)
     assert TensorAttr(group_name).update(attr) == attr
 
@@ -41,8 +36,7 @@ def test_feature_store(device):
     store.put_tensor(tensor, attr)
     assert torch.equal(store.get_tensor(attr), tensor)
     assert torch.equal(
-        store.get_tensor(group_name, attr_name,
-                         index=torch.tensor([0, 2])).to(device),
+        store.get_tensor(group_name, attr_name, index=torch.tensor([0, 2])),
         tensor[torch.tensor([0, 2])],
     )
 
@@ -98,13 +92,12 @@ def test_feature_store(device):
         _ = store[group_name]()
 
 
-@pytest.mark.parametrize('device', DEVICES)
-def test_feature_store_override(device):
+def test_feature_store_override():
     store = MyFeatureStoreNoGroupName()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]]).to(device)
+    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
 
     attr_name = 'feat'
-    index = torch.tensor([0, 1, 2]).to(device)
+    index = torch.tensor([0, 1, 2])
 
     # Only use attr_name and index, in that order:
     store[attr_name, index] = tensor

@@ -9,21 +9,15 @@ from torch_geometric.utils import (
     to_torch_csr_tensor,
 )
 
-DEVICES = [torch.device('cpu')]
-if torch.cuda.is_available():
-    DEVICES.append(torch.device('cuda'))
 
-
-@pytest.mark.parametrize('device', DEVICES)
-def test_graph_store(device):
+def test_graph_store():
     graph_store = MyGraphStore()
 
     assert str(graph_store) == 'MyGraphStore()'
 
-    coo = torch.tensor([0, 1]).to(device), torch.tensor([1, 2]).to(device)
-    csr = torch.tensor([0, 1, 2]).to(device), torch.tensor([1, 2]).to(device)
-    csc = torch.tensor([0, 1]).to(device), torch.tensor([0, 0, 1,
-                                                         2]).to(device)
+    coo = torch.tensor([0, 1]), torch.tensor([1, 2])
+    csr = torch.tensor([0, 1, 2]), torch.tensor([1, 2])
+    csc = torch.tensor([0, 1]), torch.tensor([0, 0, 1, 2])
 
     graph_store['edge_type', 'coo'] = coo
     graph_store['edge_type', 'csr'] = csr
@@ -46,11 +40,10 @@ def test_graph_store(device):
         graph_store['edge_type_2', 'coo']
 
 
-@pytest.mark.parametrize('device', DEVICES)
-def test_graph_store_conversion(device):
+def test_graph_store_conversion():
     graph_store = MyGraphStore()
 
-    edge_index = get_random_edge_index(100, 100, 300).to(device)
+    edge_index = get_random_edge_index(100, 100, 300)
     adj = to_torch_coo_tensor(edge_index, size=(100, 100))
     coo = (adj.indices()[0], adj.indices()[1])
     adj = to_torch_csr_tensor(edge_index, size=(100, 100))

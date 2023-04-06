@@ -3,7 +3,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import FastRGCNConv, RGCNConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withCUDA
 from torch_geometric.typing import WITH_PT2, SparseTensor
 
 DEVICES = [torch.device('cpu')]
@@ -20,7 +20,7 @@ confs = [(None, None), (2, None), (None, 2)]
 
 
 @pytest.mark.parametrize('conf', confs)
-@pytest.mark.parametrize('device', DEVICES)
+@withCUDA
 def test_rgcn_conv_equality(conf, device):
     num_bases, num_blocks = conf
 
@@ -54,7 +54,7 @@ def test_rgcn_conv_equality(conf, device):
 
 @pytest.mark.parametrize('cls', classes)
 @pytest.mark.parametrize('conf', confs)
-@pytest.mark.parametrize('device', DEVICES)
+@withCUDA
 def test_rgcn_conv(cls, conf, device):
     num_bases, num_blocks = conf
 

@@ -6,16 +6,13 @@ from torch.nn import Sequential as Seq
 
 import torch_geometric.typing
 from torch_geometric.nn import NNConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withCUDA
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor
 
-DEVICES = [torch.device('cpu')]
-if torch.cuda.is_available():
-    DEVICES.append(torch.device('cuda'))
-
 
 @pytest.mark.parametrize('device', DEVICES)
+@withCUDA
 def test_nn_conv(device):
     x1 = torch.randn(4, 8).to(device)
     x2 = torch.randn(2, 16).to(device)
