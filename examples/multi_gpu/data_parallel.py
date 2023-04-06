@@ -2,7 +2,7 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from torch.nn import ReLU
+from torch.nn import ReLU, Sequential
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
@@ -11,7 +11,6 @@ from torch_geometric.nn import (
     DataParallel,
     Linear,
     NNConv,
-    Sequential,
     global_mean_pool,
 )
 
