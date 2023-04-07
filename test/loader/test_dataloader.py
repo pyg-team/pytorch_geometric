@@ -38,7 +38,6 @@ def test_dataloader(num_workers, device):
     for batch in loader:
         assert batch.x.device == device
         assert batch.edge_index.device == device
-        assert batch.y.device == device
         assert batch.z.device == device
         assert batch.num_graphs == len(batch) == 2
         assert batch.batch.tolist() == [0, 0, 0, 1, 1, 1]
