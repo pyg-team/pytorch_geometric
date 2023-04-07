@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.inits import ones, zeros
+from torch_geometric.typing import OptTensor
 from torch_geometric.utils import scatter
 
 
@@ -44,22 +45,26 @@ class GraphNorm(torch.nn.Module):
         zeros(self.bias)
         ones(self.mean_scale)
 
-    def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
+    def forward(self, x: Tensor, batch: OptTensor = None,
+                dim_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example. (default: :obj:`None`)
+            dim_size (int, optional): The number of examples :math:`B` in case
+                :obj:`batch` is given. (default: :obj:`None`)
         """
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.long)
 
-        batch_size = int(batch.max()) + 1
+        if dim_size is None:
+            dim_size = int(batch.max()) + 1
 
-        mean = scatter(x, batch, 0, batch_size, reduce='mean')
+        mean = scatter(x, batch, 0, dim_size, reduce='mean')
         out = x - mean.index_select(0, batch) * self.mean_scale
-        var = scatter(out.pow(2), batch, 0, batch_size, reduce='mean')
+        var = scatter(out.pow(2), batch, 0, dim_size, reduce='mean')
         std = (var + self.eps).sqrt().index_select(0, batch)
         return self.weight * out / std + self.bias
 
