@@ -41,8 +41,7 @@ class Encoder(nn.Module):
     def forward(self, batch):
         x, edge_index = batch.x, batch.edge_index
         for i, conv in enumerate(self.convs):
-            x_target = batch.x[:size[1]]  # Target nodes are always placed first.
-            x = conv(x, edge_index)
+            x = conv((x, x_target), edge_index)
             x = self.activations[i](x)
         return x
 

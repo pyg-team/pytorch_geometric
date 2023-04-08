@@ -58,12 +58,6 @@ class GAT(torch.nn.Module):
             skip.reset_parameters()
 
     def forward(self, x, adjs):
-        # `train_loader` computes the k-hop neighborhood of a batch of nodes,
-        # and returns, for each layer, a bipartite graph object, holding the
-        # bipartite edges `edge_index`, the index `e_id` of the original edges,
-        # and the size/shape `size` of the bipartite graph.
-        # Target nodes are also included in the source nodes so that one can
-        # easily apply skip-connections or add self-loops.
         for i, (edge_index, _, size) in enumerate(adjs):
             x_target = x[:size[1]]  # Target nodes are always placed first.
             x = self.convs[i]((x, x_target), edge_index)
@@ -83,13 +77,13 @@ class GAT(torch.nn.Module):
         total_edges = 0
         for i in range(self.num_layers):
             xs = []
-            for batch_size, n_id, adj in subgraph_loader:
-                edge_index, _, size = adj.to(device)
+            for batch in subgraph_loader:
+                edge_index = batch.edge_index
                 total_edges += edge_index.size(1)
+                n_id = batch.n_id[batch.batch_size]
                 x = x_all[n_id].to(device)
-                x_target = x[:size[1]]
-                x = self.convs[i]((x, x_target), edge_index)
-                x = x + self.skips[i](x_target)
+                x = self.convs[i](x, edge_index)
+                x = x + self.skips[i](x)
 
                 if i != self.num_layers - 1:
                     x = F.elu(x)
@@ -120,18 +114,18 @@ def train(epoch):
     pbar.set_description(f'Epoch {epoch:02d}')
 
     total_loss = total_correct = 0
-    for batch_size, n_id, adjs in train_loader:
-        # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
-        adjs = [adj.to(device) for adj in adjs]
-
+    for batch in train_loader:
         optimizer.zero_grad()
-        out = model(x[n_id], adjs)
-        loss = F.nll_loss(out, y[n_id[:batch_size]])
+        out = model(batch)
+        batch_size = batch.batch_size
+        o = out[:batch_size]
+        y_true = y[batch.n_id[:batch_size]]
+        loss = F.nll_loss(out, y_true)
         loss.backward()
         optimizer.step()
 
         total_loss += float(loss)
-        total_correct += int(out.argmax(dim=-1).eq(y[n_id[:batch_size]]).sum())
+        total_correct += int(o.argmax(dim=-1).eq(y_true).sum())
         pbar.update(batch_size)
 
     pbar.close()

@@ -62,7 +62,8 @@ class SAGE(torch.nn.Module):
             for batch in subgraph_loader:
                 edge_index = batch.edge_index
                 total_edges += edge_index.size(1)
-                x = x_all[batch.n_id[batch.batch_size]].to(device)
+                n_id = batch.n_id[batch.batch_size]
+                x = x_all[n_id].to(device)
                 x = self.convs[i](x, edge_index)
                 if i != self.num_layers - 1:
                     x = F.relu(x)
@@ -94,6 +95,7 @@ def train(epoch):
     for batch in train_loader:
         optimizer.zero_grad()
         out = model(batch)
+        batch_size = batch.batch_size
         o = out[:batch_size]
         y_true = y[batch.n_id[:batch_size]]
         loss = F.nll_loss(o, y_true)
