@@ -7,23 +7,22 @@ import torch.nn.functional as F
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from tqdm import tqdm
 
-from torch_geometric.loader import NeighborSampler
+from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-products')
-data = dataset[0]
-
+data = dataset[0].to(device)
 train_idx = split_idx['train']
-train_loader = NeighborSampler(data.edge_index, node_idx=train_idx,
-                               sizes=[15, 10, 5], batch_size=1024,
+train_loader = NeighborLoader(data, input_nodes=train_idx,
+                               num_neighbors=[15, 10, 5], batch_size=1024,
                                shuffle=True, num_workers=12)
-subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
+subgraph_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[-1],
                                   batch_size=4096, shuffle=False,
                                   num_workers=12)
-
 
 class SAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers):
@@ -41,16 +40,10 @@ class SAGE(torch.nn.Module):
         for conv in self.convs:
             conv.reset_parameters()
 
-    def forward(self, x, adjs):
-        # `train_loader` computes the k-hop neighborhood of a batch of nodes,
-        # and returns, for each layer, a bipartite graph object, holding the
-        # bipartite edges `edge_index`, the index `e_id` of the original edges,
-        # and the size/shape `size` of the bipartite graph.
-        # Target nodes are also included in the source nodes so that one can
-        # easily apply skip-connections or add self-loops.
-        for i, (edge_index, _, size) in enumerate(adjs):
-            x_target = x[:size[1]]  # Target nodes are always placed first.
-            x = self.convs[i]((x, x_target), edge_index)
+    def forward(self, batch):
+        x, edge_index = batch.x, batch.edge_index
+        for i, conv in enumerate(self.convs):
+            x = conv(x, edge_index)
             if i != self.num_layers - 1:
                 x = F.relu(x)
                 x = F.dropout(x, p=0.5, training=self.training)
@@ -66,12 +59,11 @@ class SAGE(torch.nn.Module):
         total_edges = 0
         for i in range(self.num_layers):
             xs = []
-            for batch_size, n_id, adj in subgraph_loader:
-                edge_index, _, size = adj.to(device)
+            for batch in subgraph_loader:
+                edge_index = batch.edge_index
                 total_edges += edge_index.size(1)
-                x = x_all[n_id].to(device)
-                x_target = x[:size[1]]
-                x = self.convs[i]((x, x_target), edge_index)
+                x = x_all[batch.n_id[batch.batch_size]].to(device)
+                x = self.convs[i](x, edge_index)
                 if i != self.num_layers - 1:
                     x = F.relu(x)
                 xs.append(x.cpu())
@@ -85,12 +77,11 @@ class SAGE(torch.nn.Module):
         return x_all
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = SAGE(dataset.num_features, 256, dataset.num_classes, num_layers=3)
 model = model.to(device)
 
-x = data.x.to(device)
-y = data.y.squeeze().to(device)
+x = data.x
+y = data.y.squeeze()
 
 
 def train(epoch):
@@ -100,18 +91,17 @@ def train(epoch):
     pbar.set_description(f'Epoch {epoch:02d}')
 
     total_loss = total_correct = 0
-    for batch_size, n_id, adjs in train_loader:
-        # `adjs` holds a list of `(edge_index, e_id, size)` tuples.
-        adjs = [adj.to(device) for adj in adjs]
-
+    for batch in train_loader:
         optimizer.zero_grad()
-        out = model(x[n_id], adjs)
-        loss = F.nll_loss(out, y[n_id[:batch_size]])
+        out = model(batch)
+        o = out[:batch_size]
+        y_true = y[batch.n_id[:batch_size]]
+        loss = F.nll_loss(o, y_true)
         loss.backward()
         optimizer.step()
 
         total_loss += float(loss)
-        total_correct += int(out.argmax(dim=-1).eq(y[n_id[:batch_size]]).sum())
+        total_correct += int(o.argmax(dim=-1).eq(y_true).sum())
         pbar.update(batch_size)
 
     pbar.close()

@@ -8,7 +8,7 @@ from ogb.nodeproppred import Evaluator, PygNodePropPredDataset
 from torch.nn import Linear as Lin
 from tqdm import tqdm
 
-from torch_geometric.loader import NeighborSampler
+from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GATConv
 
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
@@ -18,10 +18,11 @@ evaluator = Evaluator(name='ogbn-products')
 data = dataset[0]
 
 train_idx = split_idx['train']
-train_loader = NeighborSampler(data.edge_index, node_idx=train_idx,
-                               sizes=[10, 10, 10], batch_size=512,
+
+train_loader = NeighborLoader(data, input_nodes=train_idx,
+                               num_neighbors=[10, 10, 10], batch_size=512,
                                shuffle=True, num_workers=12)
-subgraph_loader = NeighborSampler(data.edge_index, node_idx=None, sizes=[-1],
+subgraph_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[-1],
                                   batch_size=1024, shuffle=False,
                                   num_workers=12)
 
