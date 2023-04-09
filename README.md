@@ -394,7 +394,7 @@ These packages come with their own CPU and GPU kernel implementations based on t
 For a basic usage of PyG, these dependencies are **fully optional**.
 We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
 
-For ease of installation of these extensions, we provide `pip` wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl). ([ROCm build](#rocm-build-wheels))
+For ease of installation of these extensions, we provide `pip` wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
 #### PyTorch 2.0
 
@@ -446,11 +446,10 @@ or install PyG **from master** via
 pip install git+https://github.com/pyg-team/pytorch_geometric.git
 ```
 
-### ROCm build wheels
+### ROCm Wheels
 
-This is an external repo, and you need to make issues [here](https://github.com/Looong01/pyg-rocm-build/issues) if you have any questions about this.
-
-https://github.com/Looong01/pyg-rocm-build
+The external [`pyg-rocm-build` repository](https://github.com/Looong01/pyg-rocm-build) provides wheels and detailed instructions on how to install PyG for ROCm.
+If you have any questions about it, please open an issue [here](https://github.com/Looong01/pyg-rocm-build/issues).
 
 ## Cite
 
