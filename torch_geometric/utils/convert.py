@@ -204,11 +204,11 @@ def from_networkx(
 
     G = G.to_directed() if not nx.is_directed(G) else G
 
-    edges = []
     mapping = dict(zip(G.nodes(), range(G.number_of_nodes())))
-    for src, dst in G.edges():
-        edges.append([mapping[src], mapping[dst]])
-    edge_index = torch.tensor(edges, dtype=torch.long).t().contiguous()
+    edge_index = torch.empty((2, G.number_of_edges()), dtype=torch.long)
+    for i, (src, dst) in enumerate(G.edges()):
+        edge_index[0, i] = mapping[src]
+        edge_index[1, i] = mapping[dst]
 
     data = defaultdict(list)
 
