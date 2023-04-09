@@ -390,7 +390,7 @@ If you want to utilize the full set of features from PyG, there exists several a
 * **[`torch-cluster`](https://github.com/rusty1s/pytorch_cluster)**: Graph clustering routines
 * **[`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)**: [`SplineConv`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.SplineConv.html) support
 
-These packages come with their own CPU and GPU kernel implementations based on the [PyTorch C++/CUDA/hip(ROCm) extension interface](https://github.com/pytorch/extension-cpp). 
+These packages come with their own CPU and GPU kernel implementations based on the [PyTorch C++/CUDA/hip(ROCm) extension interface](https://github.com/pytorch/extension-cpp).
 For a basic usage of PyG, these dependencies are **fully optional**.
 We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
 
@@ -449,7 +449,7 @@ pip install git+https://github.com/pyg-team/pytorch_geometric.git
 ### ROCm build wheels
 
 This is an external repo, and you need to make issues [here](https://github.com/Looong01/pyg-rocm-build/issues) if you have any questions about this.
-  
+
 https://github.com/Looong01/pyg-rocm-build
 
 ## Cite
