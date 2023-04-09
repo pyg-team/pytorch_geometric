@@ -4,36 +4,30 @@ import torch
 import torch_geometric.typing
 from torch_geometric.nn import FastRGCNConv, RGCNConv
 from torch_geometric.testing import is_full_test, withCUDA
-from torch_geometric.typing import WITH_PT2, SparseTensor
+from torch_geometric.typing import SparseTensor
 
-DEVICES = [torch.device('cpu')]
-if torch.cuda.is_available():
-    DEVICES.append(torch.device('cuda'))
-    import os
-    os.environ['NVIDIA_TF32_OVERRIDE'] = '0'
-    torch.backends.cuda.matmul.allow_tf32 = False
-    minor_vers = str(torch.__version__).split('.')[1]
-    if WITH_PT2 or minor_vers >= 12:  # This only exists after 1.12
-        torch.set_float32_matmul_precision('highest')  # Enforce FP32
 classes = [RGCNConv, FastRGCNConv]
 confs = [(None, None), (2, None), (None, 2)]
 
 
-@pytest.mark.parametrize('conf', confs)
 @withCUDA
+@pytest.mark.parametrize('conf', confs)
 def test_rgcn_conv_equality(conf, device):
     num_bases, num_blocks = conf
 
-    x1 = torch.randn(4, 4).to(device)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [0, 0, 1, 0, 1,
-                                                    1]]).to(device)
-    edge_type = torch.tensor([0, 1, 1, 0, 0, 1]).to(device)
+    x1 = torch.randn(4, 4, device=device).to(device)
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3],
+        [0, 0, 1, 0, 1, 1],
+    ], device=device)
+    edge_type = torch.tensor([0, 1, 1, 0, 0, 1], device=device)
 
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3, 0, 1, 1, 2, 2, 3],
         [0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1],
-    ]).to(device)
-    edge_type = torch.tensor([0, 1, 1, 0, 0, 1, 2, 3, 3, 2, 2, 3]).to(device)
+    ], device=device)
+    edge_type = torch.tensor([0, 1, 1, 0, 0, 1, 2, 3, 3, 2, 2, 3],
+                             device=device)
 
     torch.manual_seed(12345)
     conv1 = RGCNConv(4, 32, 4, num_bases, num_blocks, aggr='sum').to(device)
@@ -52,19 +46,21 @@ def test_rgcn_conv_equality(conf, device):
         assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@withCUDA
 @pytest.mark.parametrize('cls', classes)
 @pytest.mark.parametrize('conf', confs)
-@withCUDA
 def test_rgcn_conv(cls, conf, device):
     num_bases, num_blocks = conf
 
-    x1 = torch.randn(4, 4).to(device)
-    x2 = torch.randn(2, 16).to(device)
-    idx1 = torch.arange(4).to(device)
-    idx2 = torch.arange(2).to(device)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [0, 0, 1, 0, 1,
-                                                    1]]).to(device)
-    edge_type = torch.tensor([0, 1, 1, 0, 0, 1]).to(device)
+    x1 = torch.randn(4, 4, device=device)
+    x2 = torch.randn(2, 16, device=device)
+    idx1 = torch.arange(4, device=device)
+    idx2 = torch.arange(2, device=device)
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3],
+        [0, 0, 1, 0, 1, 1],
+    ], device=device)
+    edge_type = torch.tensor([0, 1, 1, 0, 0, 1], device=device)
 
     conv = cls(4, 32, 2, num_bases, num_blocks, aggr='sum').to(device)
     assert str(conv) == f'{cls.__name__}(4, 32, num_relations=2)'
