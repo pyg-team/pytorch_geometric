@@ -3,32 +3,38 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import FastRGCNConv, RGCNConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withCUDA
 from torch_geometric.typing import SparseTensor
 
 classes = [RGCNConv, FastRGCNConv]
 confs = [(None, None), (2, None), (None, 2)]
 
 
+@withCUDA
 @pytest.mark.parametrize('conf', confs)
-def test_rgcn_conv_equality(conf):
+def test_rgcn_conv_equality(conf, device):
     num_bases, num_blocks = conf
 
-    x1 = torch.randn(4, 4)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [0, 0, 1, 0, 1, 1]])
-    edge_type = torch.tensor([0, 1, 1, 0, 0, 1])
+    x1 = torch.randn(4, 4, device=device)
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3],
+        [0, 0, 1, 0, 1, 1],
+    ], device=device)
+    edge_type = torch.tensor([0, 1, 1, 0, 0, 1], device=device)
 
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3, 0, 1, 1, 2, 2, 3],
         [0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1],
-    ])
-    edge_type = torch.tensor([0, 1, 1, 0, 0, 1, 2, 3, 3, 2, 2, 3])
+    ], device=device)
+    edge_type = torch.tensor([0, 1, 1, 0, 0, 1, 2, 3, 3, 2, 2, 3],
+                             device=device)
 
     torch.manual_seed(12345)
-    conv1 = RGCNConv(4, 32, 4, num_bases, num_blocks, aggr='sum')
+    conv1 = RGCNConv(4, 32, 4, num_bases, num_blocks, aggr='sum').to(device)
 
     torch.manual_seed(12345)
-    conv2 = FastRGCNConv(4, 32, 4, num_bases, num_blocks, aggr='sum')
+    conv2 = FastRGCNConv(4, 32, 4, num_bases, num_blocks,
+                         aggr='sum').to(device)
 
     out1 = conv1(x1, edge_index, edge_type)
     out2 = conv2(x1, edge_index, edge_type)
@@ -40,19 +46,23 @@ def test_rgcn_conv_equality(conf):
         assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@withCUDA
 @pytest.mark.parametrize('cls', classes)
 @pytest.mark.parametrize('conf', confs)
-def test_rgcn_conv(cls, conf):
+def test_rgcn_conv(cls, conf, device):
     num_bases, num_blocks = conf
 
-    x1 = torch.randn(4, 4)
-    x2 = torch.randn(2, 16)
-    idx1 = torch.arange(4)
-    idx2 = torch.arange(2)
-    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [0, 0, 1, 0, 1, 1]])
-    edge_type = torch.tensor([0, 1, 1, 0, 0, 1])
+    x1 = torch.randn(4, 4, device=device)
+    x2 = torch.randn(2, 16, device=device)
+    idx1 = torch.arange(4, device=device)
+    idx2 = torch.arange(2, device=device)
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3],
+        [0, 0, 1, 0, 1, 1],
+    ], device=device)
+    edge_type = torch.tensor([0, 1, 1, 0, 0, 1], device=device)
 
-    conv = cls(4, 32, 2, num_bases, num_blocks, aggr='sum')
+    conv = cls(4, 32, 2, num_bases, num_blocks, aggr='sum').to(device)
     assert str(conv) == f'{cls.__name__}(4, 32, num_relations=2)'
 
     out1 = conv(x1, edge_index, edge_type)
@@ -87,7 +97,7 @@ def test_rgcn_conv(cls, conf):
             assert torch.allclose(jit(None, adj.t()), out2, atol=1e-6)
 
     # Test bipartite message passing:
-    conv = cls((4, 16), 32, 2, num_bases, num_blocks, aggr='sum')
+    conv = cls((4, 16), 32, 2, num_bases, num_blocks, aggr='sum').to(device)
     assert str(conv) == f'{cls.__name__}((4, 16), 32, num_relations=2)'
 
     out1 = conv((x1, x2), edge_index, edge_type)
