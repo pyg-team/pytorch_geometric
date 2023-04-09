@@ -65,15 +65,15 @@ class LayerNorm(torch.nn.Module):
         zeros(self.bias)
 
     def forward(self, x: Tensor, batch: OptTensor = None,
-                dim_size: Optional[int] = None) -> Tensor:
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example. (default: :obj:`None`)
-            dim_size (int, optional): The number of examples :math:`B` in case
-                :obj:`batch` is given. (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         if self.mode == 'graph':
             if batch is None:
@@ -81,18 +81,18 @@ class LayerNorm(torch.nn.Module):
                 out = x / (x.std(unbiased=False) + self.eps)
 
             else:
-                if dim_size is None:
-                    dim_size = int(batch.max()) + 1
+                if batch_size is None:
+                    batch_size = int(batch.max()) + 1
 
-                norm = degree(batch, dim_size, dtype=x.dtype).clamp_(min=1)
+                norm = degree(batch, batch_size, dtype=x.dtype).clamp_(min=1)
                 norm = norm.mul_(x.size(-1)).view(-1, 1)
 
-                mean = scatter(x, batch, dim=0, dim_size=dim_size,
+                mean = scatter(x, batch, dim=0, dim_size=batch_size,
                                reduce='sum').sum(dim=-1, keepdim=True) / norm
 
                 x = x - mean.index_select(0, batch)
 
-                var = scatter(x * x, batch, dim=0, dim_size=dim_size,
+                var = scatter(x * x, batch, dim=0, dim_size=batch_size,
                               reduce='sum').sum(dim=-1, keepdim=True)
                 var = var / norm
 

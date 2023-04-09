@@ -53,15 +53,15 @@ class InstanceNorm(_InstanceNorm):
         super().reset_parameters()
 
     def forward(self, x: Tensor, batch: OptTensor = None,
-                dim_size: Optional[int] = None) -> Tensor:
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example. (default: :obj:`None`)
-            dim_size (int, optional): The number of examples :math:`B` in case
-                :obj:`batch` is given. (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         if batch is None:
             out = F.instance_norm(
@@ -70,22 +70,23 @@ class InstanceNorm(_InstanceNorm):
                 or not self.track_running_stats, self.momentum, self.eps)
             return out.squeeze(0).t()
 
-        if dim_size is None:
-            dim_size = int(batch.max()) + 1
+        if batch_size is None:
+            batch_size = int(batch.max()) + 1
 
         mean = var = unbiased_var = x  # Dummies.
 
         if self.training or not self.track_running_stats:
-            norm = degree(batch, dim_size, dtype=x.dtype).clamp_(min=1)
+            norm = degree(batch, batch_size, dtype=x.dtype).clamp_(min=1)
             norm = norm.view(-1, 1)
             unbiased_norm = (norm - 1).clamp_(min=1)
 
-            mean = scatter(x, batch, dim=0, dim_size=dim_size,
+            mean = scatter(x, batch, dim=0, dim_size=batch_size,
                            reduce='sum') / norm
 
             x = x - mean.index_select(0, batch)
 
-            var = scatter(x * x, batch, dim=0, dim_size=dim_size, reduce='sum')
+            var = scatter(x * x, batch, dim=0, dim_size=batch_size,
+                          reduce='sum')
             unbiased_var = var / unbiased_norm
             var = var / norm
 
@@ -99,9 +100,9 @@ class InstanceNorm(_InstanceNorm):
                 ) * self.running_var + momentum * unbiased_var.mean(0)
         else:
             if self.running_mean is not None:
-                mean = self.running_mean.view(1, -1).expand(dim_size, -1)
+                mean = self.running_mean.view(1, -1).expand(batch_size, -1)
             if self.running_var is not None:
-                var = self.running_var.view(1, -1).expand(dim_size, -1)
+                var = self.running_var.view(1, -1).expand(batch_size, -1)
 
             x = x - mean.index_select(0, batch)
 

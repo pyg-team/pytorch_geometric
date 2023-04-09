@@ -21,21 +21,21 @@ class GraphSizeNorm(nn.Module):
         super().__init__()
 
     def forward(self, x: Tensor, batch: OptTensor = None,
-                dim_size: Optional[int] = None) -> Tensor:
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example. (default: :obj:`None`)
-            dim_size (int, optional): The number of examples :math:`B` in case
-                :obj:`batch` is given. (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         if batch is None:
             batch = torch.zeros(x.size(0), dtype=torch.long, device=x.device)
+            batch_size = 1
 
-        inv_sqrt_deg = degree(batch, num_nodes=dim_size,
-                              dtype=x.dtype).pow(-0.5)
+        inv_sqrt_deg = degree(batch, batch_size, dtype=x.dtype).pow(-0.5)
         return x * inv_sqrt_deg.index_select(0, batch).view(-1, 1)
 
     def __repr__(self) -> str:

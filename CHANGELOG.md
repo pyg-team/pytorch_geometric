@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- Added optional argument `dim_size` for `LayerNorm`, `GraphNorm`, `InstanceNorm`, `GraphSizeNorm` and `PairNorm` ([#7135](https://github.com/pyg-team/pytorch_geometric/pull/7135))
+- Added an optional `batch_size` argument to `LayerNorm`, `GraphNorm`, `InstanceNorm`, `GraphSizeNorm` and `PairNorm` ([#7135](https://github.com/pyg-team/pytorch_geometric/pull/7135))
 - Added support for `Data.num_edges` for native `torch.sparse.Tensor` adjacency matrices ([#7104](https://github.com/pyg-team/pytorch_geometric/pull/7104))
 - Fixed crash of heterogeneous data loaders if node or edge types are missing ([#7060](https://github.com/pyg-team/pytorch_geometric/pull/7060), [#7087](https://github.com/pyg-team/pytorch_geometric/pull/7087))
 - Accelerated attention-based `MultiAggregation` ([#7077](https://github.com/pyg-team/pytorch_geometric/pull/7077))
