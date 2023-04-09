@@ -50,7 +50,7 @@ If you want to utilize the full set of features from :pyg:`PyG`, there exists se
 * `torch-cluster <https://github.com/rusty1s/pytorch_cluster>`__: Graph clustering routines
 * `torch-spline-conv <https://github.com/rusty1s/pytorch_spline_conv>`__: :class:`~torch_geometric.nn.conv.SplineConv` support
 
-These packages come with their own CPU and GPU kernel implementations based on the :pytorch:`null` `PyTorch C++/CUDA extension interface <https://github.com/pytorch/extension-cpp/>`_.
+These packages come with their own CPU and GPU kernel implementations based on the :pytorch:`null` `PyTorch C++/CUDA/hip(ROCm) extension interface <https://github.com/pytorch/extension-cpp/>`_.
 For a basic usage of :pyg:`PyG`, these dependencies are **fully optional**.
 We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
 
@@ -103,6 +103,9 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 **Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0, 1.7.1, 1.8.0, 1.8.1, 1.9.0, 1.10.0, 1.10.1, 1.10.2, 1.11.0, 1.12.0 and 1.12.1 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
+
+**ROCm:** The external `pyg-rocm-build repository <https://github.com/Looong01/pyg-rocm-build>`__ provides wheels and detailed instructions on how to install :pyg:`PyG` for ROCm.
+If you have any questions about it, please open an issue `here <https://github.com/Looong01/pyg-rocm-build/issues>`__.
 
 Installation from Source
 ~~~~~~~~~~~~~~~~~~~~~~~~
