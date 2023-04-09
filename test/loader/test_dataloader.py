@@ -7,7 +7,7 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import DataLoader
-from torch_geometric.testing import get_random_edge_index
+from torch_geometric.testing import get_random_edge_index, withCUDA
 
 with_mp = sys.platform not in ['win32']
 num_workers_list = [0, 2] if with_mp else [0]
@@ -16,8 +16,12 @@ if sys.platform == 'darwin':
     multiprocessing.set_start_method('spawn')
 
 
+@withCUDA
 @pytest.mark.parametrize('num_workers', num_workers_list)
-def test_dataloader(num_workers):
+def test_dataloader(num_workers, device):
+    if num_workers > 0 and device != torch.device('cpu'):
+        return
+
     x = torch.Tensor([[1], [1], [1]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     face = torch.tensor([[0], [1], [2]])
@@ -25,9 +29,9 @@ def test_dataloader(num_workers):
     z = torch.tensor(0.)
     name = 'data'
 
-    data = Data(x=x, edge_index=edge_index, y=y, z=z, name=name)
-    assert str(data) == (
-        "Data(x=[3, 1], edge_index=[2, 4], y=2.0, z=0.0, name='data')")
+    data = Data(x=x, edge_index=edge_index, y=y, z=z, name=name).to(device)
+    assert str(data) == ("Data(x=[3, 1], edge_index=[2, 4], y=2.0, z=0.0, "
+                         "name='data')")
     data.face = face
 
     loader = DataLoader([data, data, data, data], batch_size=2, shuffle=False,
@@ -35,6 +39,9 @@ def test_dataloader(num_workers):
     assert len(loader) == 2
 
     for batch in loader:
+        assert batch.x.device == device
+        assert batch.edge_index.device == device
+        assert batch.z.device == device
         assert batch.num_graphs == len(batch) == 2
         assert batch.batch.tolist() == [0, 0, 0, 1, 1, 1]
         assert batch.ptr.tolist() == [0, 3, 6]

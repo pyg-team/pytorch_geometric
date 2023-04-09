@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 from torch import Tensor
 
@@ -36,13 +38,16 @@ class PairNorm(torch.nn.Module):
         self.scale_individually = scale_individually
         self.eps = eps
 
-    def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
+    def forward(self, x: Tensor, batch: OptTensor = None,
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example. (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         scale = self.scale
 
@@ -55,13 +60,13 @@ class PairNorm(torch.nn.Module):
                 return scale * x / (self.eps + x.norm(2, -1, keepdim=True))
 
         else:
-            mean = scatter(x, batch, dim=0, reduce='mean')
+            mean = scatter(x, batch, dim=0, dim_size=batch_size, reduce='mean')
             x = x - mean.index_select(0, batch)
 
             if not self.scale_individually:
                 return scale * x / torch.sqrt(self.eps + scatter(
                     x.pow(2).sum(-1, keepdim=True), batch, dim=0,
-                    reduce='mean').index_select(0, batch))
+                    dim_size=batch_size, reduce='mean').index_select(0, batch))
             else:
                 return scale * x / (self.eps + x.norm(2, -1, keepdim=True))
 

@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.modules.instancenorm import _InstanceNorm
@@ -50,13 +52,16 @@ class InstanceNorm(_InstanceNorm):
         r"""Resets all learnable parameters of the module."""
         super().reset_parameters()
 
-    def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
+    def forward(self, x: Tensor, batch: OptTensor = None,
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example. (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         if batch is None:
             out = F.instance_norm(
@@ -65,7 +70,8 @@ class InstanceNorm(_InstanceNorm):
                 or not self.track_running_stats, self.momentum, self.eps)
             return out.squeeze(0).t()
 
-        batch_size = int(batch.max()) + 1
+        if batch_size is None:
+            batch_size = int(batch.max()) + 1
 
         mean = var = unbiased_var = x  # Dummies.
 
