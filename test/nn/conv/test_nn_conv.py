@@ -12,13 +12,13 @@ from torch_geometric.utils import to_torch_coo_tensor
 
 @withCUDA
 def test_nn_conv(device):
-    x1 = torch.randn(4, 8).to(device)
-    x2 = torch.randn(2, 16).to(device)
-    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]]).to(device)
-    value = torch.rand(edge_index.size(1), 3).to(device)
+    x1 = torch.randn(4, 8, device=device)
+    x2 = torch.randn(2, 16, device=device)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]], device=device)
+    value = torch.rand(edge_index.size(1), 3, device=device)
     adj1 = to_torch_coo_tensor(edge_index, value, size=(4, 4))
 
-    nn = Seq(Lin(3, 32), ReLU(), Lin(32, 8 * 32)).to(device)
+    nn = Seq(Lin(3, 32), ReLU(), Lin(32, 8 * 32))
     conv = NNConv(8, 32, nn=nn).to(device)
     assert str(conv) == (
         'NNConv(8, 32, aggr=add, nn=Sequential(\n'

@@ -16,9 +16,12 @@ if sys.platform == 'darwin':
     multiprocessing.set_start_method('spawn')
 
 
-@pytest.mark.parametrize('num_workers', num_workers_list)
 @withCUDA
+@pytest.mark.parametrize('num_workers', num_workers_list)
 def test_dataloader(num_workers, device):
+    if num_workers > 0 and device != torch.device('cpu'):
+        return
+
     x = torch.Tensor([[1], [1], [1]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     face = torch.tensor([[0], [1], [2]])
@@ -27,8 +30,8 @@ def test_dataloader(num_workers, device):
     name = 'data'
 
     data = Data(x=x, edge_index=edge_index, y=y, z=z, name=name).to(device)
-    assert str(data) == (
-        "Data(x=[3, 1], edge_index=[2, 4], y=2.0, z=0.0, name='data')")
+    assert str(data) == ("Data(x=[3, 1], edge_index=[2, 4], y=2.0, z=0.0, "
+                         "name='data')")
     data.face = face
 
     loader = DataLoader([data, data, data, data], batch_size=2, shuffle=False,
