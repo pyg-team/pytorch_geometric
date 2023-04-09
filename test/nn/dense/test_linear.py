@@ -71,8 +71,8 @@ def test_identical_linear_default_initialization(lazy):
     torch.manual_seed(12345)
     lin2 = PTLinear(16, 32)
 
-    assert torch.allclose(lin1.weight, lin2.weight, atol=1e-2)
-    assert torch.allclose(lin1.bias, lin2.bias, atol=1e-2)
+    assert torch.equal(lin1.weight, lin2.weight)
+    assert torch.equal(lin1.bias, lin2.bias)
     assert torch.allclose(lin1(x), lin2(x))
 
 
@@ -153,8 +153,8 @@ def test_hetero_dict_linear(bias, device):
     assert out_dict['w'].size() == (2, 32)
 
     x_dict = {
-        'v': torch.randn(3, 16).to(device),
-        'w': torch.randn(2, 16).to(device)
+        'v': torch.randn(3, 16, device=device),
+        'w': torch.randn(2, 16, device=device),
     }
 
     lin = HeteroDictLinear(16, 32, types=['v', 'w'], bias=bias).to(device)
