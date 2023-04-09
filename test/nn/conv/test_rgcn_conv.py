@@ -15,7 +15,7 @@ confs = [(None, None), (2, None), (None, 2)]
 def test_rgcn_conv_equality(conf, device):
     num_bases, num_blocks = conf
 
-    x1 = torch.randn(4, 4, device=device).to(device)
+    x1 = torch.randn(4, 4, device=device)
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3],
         [0, 0, 1, 0, 1, 1],
