@@ -1,41 +1,31 @@
-from torch_geometric.data.view import (
-    ItemsView,
-    KeysView,
-    MappingView,
-    ValuesView,
-)
+from torch_geometric.data.storage import BaseStorage
 
 
-class M:
-    def keys(self):
-        return [1, 2, 3]
+def test_views():
+    storage = BaseStorage(x=1, y=2, z=3)
 
-    def __getitem__(self, x):
-        return x * 2
+    assert str(storage.keys()) == "KeysView({'x': 1, 'y': 2, 'z': 3})"
+    assert len(storage.keys()) == 3
+    assert list(storage.keys()) == ['x', 'y', 'z']
 
+    assert str(storage.values()) == "ValuesView({'x': 1, 'y': 2, 'z': 3})"
+    assert len(storage.values()) == 3
+    assert list(storage.values()) == [1, 2, 3]
 
-def test_mapping_view():
-    assert M().keys() == [1, 2, 3]
-    d = dict(M())
-    assert d == {1: 2, 2: 4, 3: 6}
-    mview = MappingView(mapping=M())
-    assert mview._keys() == [1, 2, 3]
-    assert mview.__len__() == 3
+    assert str(storage.items()) == "ItemsView({'x': 1, 'y': 2, 'z': 3})"
+    assert len(storage.items()) == 3
+    assert list(storage.items()) == [('x', 1), ('y', 2), ('z', 3)]
 
+    args = ['x', 'z', 'foo']
 
-def test_keys_view():
-    kview = KeysView(mapping=M())
-    for i, val in enumerate(kview.__iter__()):
-        assert i + 1 == val
+    assert str(storage.keys(*args)) == "KeysView({'x': 1, 'z': 3})"
+    assert len(storage.keys(*args)) == 2
+    assert list(storage.keys(*args)) == ['x', 'z']
 
+    assert str(storage.values(*args)) == "ValuesView({'x': 1, 'z': 3})"
+    assert len(storage.values(*args)) == 2
+    assert list(storage.values(*args)) == [1, 3]
 
-def test_values_view():
-    vview = ValuesView(mapping=M())
-    for i, val in enumerate(vview.__iter__()):
-        assert 2 * (i + 1) == val
-
-
-def test_items_view():
-    iview = ItemsView(mapping=M())
-    for i, val in enumerate(iview.__iter__()):
-        assert val == (i + 1, 2 * i + 2)
+    assert str(storage.items(*args)) == "ItemsView({'x': 1, 'z': 3})"
+    assert len(storage.items(*args)) == 2
+    assert list(storage.items(*args)) == [('x', 1), ('z', 3)]
