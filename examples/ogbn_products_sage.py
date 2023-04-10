@@ -63,7 +63,7 @@ class SAGE(torch.nn.Module):
                 total_edges += edge_index.size(1)
                 n_id = batch.n_id[batch_size]
                 x = x_all[n_id].to(device)
-                x = self.convs[i]((x, x_target), edge_index)
+                x = self.convs[i](x, edge_index)
                 if i != self.num_layers - 1:
                     x = F.relu(x)
                 xs.append(x.cpu())

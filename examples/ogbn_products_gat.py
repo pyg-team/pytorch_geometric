@@ -58,11 +58,10 @@ class GAT(torch.nn.Module):
             skip.reset_parameters()
 
     def forward(self, batch):
-        x, edge_index, batch_size = batch.x, batch.edge_index, batch.batch_size
-        x_target = x[:batch_size]  # Target nodes are always placed first.
+        og_x, edge_index, batch_size = batch.x, batch.edge_index, batch.batch_size
         for i, conv in enumerate(self.convs):
-            x = conv((x, x_target), edge_index)
-            x = x + self.skips[i](x_target)
+            x = conv(og_x, edge_index)
+            x = x + self.skips[i](og_x)
             if i != self.num_layers - 1:
                 x = F.elu(x)
                 x = F.dropout(x, p=0.5, training=self.training)
@@ -82,10 +81,9 @@ class GAT(torch.nn.Module):
                 edge_index, batch_size = batch.edge_index, batch.batch_size
                 total_edges += edge_index.size(1)
                 n_id = batch.n_id[batch_size]
-                x_target = x[:batch_size]
-                x = x_all[n_id].to(device)
-                x = self.convs[i]((x, x_target), edge_index)
-                x = x + self.skips[i](x)
+                og_x = x_all[n_id].to(device)
+                x = self.convs[i](og_x, edge_index)
+                x = x + self.skips[i](og_x)
 
                 if i != self.num_layers - 1:
                     x = F.elu(x)
