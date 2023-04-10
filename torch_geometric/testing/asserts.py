@@ -84,7 +84,10 @@ def assert_module(
 
     for layout in (test_sparse_layouts or []):
         # TODO Add support for values.
-        if layout == 'torch_sparse' and WITH_TORCH_SPARSE:
+        if layout == 'torch_sparse':
+            if not WITH_TORCH_SPARSE:
+                continue
+
             adj = SparseTensor.from_edge_index(
                 edge_index,
                 sparse_sizes=sparse_size,
