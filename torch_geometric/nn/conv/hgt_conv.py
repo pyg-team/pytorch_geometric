@@ -18,13 +18,18 @@ class HGTConv(MessagePassing):
     r"""The Heterogeneous Graph Transformer (HGT) operator from the
     `"Heterogeneous Graph Transformer" <https://arxiv.org/abs/2003.01332>`_
     paper.
+
     .. note::
+
         For an example of using HGT, see `examples/hetero/hgt_dblp.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         hetero/hgt_dblp.py>`_.
+
     .. note::
+
         For a faster alternative, use :class:`FastHGTConv` which does not
         iterate over individual node and edge types.
+
     Args:
         in_channels (int or Dict[str, int]): Size of each input sample of every
             node type, or :obj:`-1` to derive the size from the first input(s)
