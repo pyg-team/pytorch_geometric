@@ -58,8 +58,9 @@ class GAT(torch.nn.Module):
             skip.reset_parameters()
 
     def forward(self, batch):
-        og_x, edge_index, batch_size = batch.x, batch.edge_index, batch.batch_size
+        x, edge_index, batch_size = batch.x, batch.edge_index, batch.batch_size
         for i, conv in enumerate(self.convs):
+            og_x = x
             x = conv(og_x, edge_index)
             x = x + self.skips[i](og_x)
             if i != self.num_layers - 1:
