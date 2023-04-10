@@ -15,7 +15,7 @@ root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-products')
-data = dataset[0]
+data = dataset[0].to(device)
 
 train_idx = split_idx['train']
 
@@ -105,8 +105,8 @@ model = GAT(dataset.num_features, 128, dataset.num_classes, num_layers=3,
             heads=4)
 model = model.to(device)
 
-x = data.x.to(device)
-y = data.y.squeeze().to(device)
+x = data.x
+y = data.y.squeeze()
 
 
 def train(epoch):
