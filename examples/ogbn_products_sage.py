@@ -18,10 +18,11 @@ evaluator = Evaluator(name='ogbn-products')
 data = dataset[0].to(device)
 train_idx = split_idx['train']
 train_loader = NeighborLoader(data, input_nodes=train_idx,
-                               num_neighbors=[15, 10, 5], batch_size=1024,
-                               shuffle=True)
+                              num_neighbors=[15, 10,
+                                             5], batch_size=1024, shuffle=True)
 subgraph_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[-1],
-                                  batch_size=4096, shuffle=False)
+                                 batch_size=4096, shuffle=False)
+
 
 class SAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers):

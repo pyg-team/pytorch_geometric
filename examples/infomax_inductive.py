@@ -14,11 +14,11 @@ dataset = Reddit(path)
 data = dataset[0]
 data.to(device)
 train_loader = NeighborLoader(data, input_nodes=None,
-                               num_neighbors=[10, 10, 25], batch_size=256,
-                               shuffle=True)
-test_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[10, 10, 25],
-                                  batch_size=256, shuffle=False)
-
+                              num_neighbors=[10, 10,
+                                             25], batch_size=256, shuffle=True)
+test_loader = NeighborLoader(data, input_nodes=None,
+                             num_neighbors=[10, 10,
+                                            25], batch_size=256, shuffle=False)
 
 
 class Encoder(nn.Module):
