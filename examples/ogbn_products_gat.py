@@ -22,10 +22,9 @@ train_idx = split_idx['train']
 
 train_loader = NeighborLoader(data, input_nodes=train_idx,
                                num_neighbors=[10, 10, 10], batch_size=512,
-                               shuffle=True, num_workers=12)
+                               shuffle=True)
 subgraph_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[-1],
-                                  batch_size=1024, shuffle=False,
-                                  num_workers=12)
+                                  batch_size=1024, shuffle=False)
 
 
 class GAT(torch.nn.Module):
