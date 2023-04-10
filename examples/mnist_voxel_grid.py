@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import FeaStConvConv, max_pool, max_pool_x, voxel_grid
+from torch_geometric.nn import FeaStConv, max_pool, max_pool_x, voxel_grid
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
