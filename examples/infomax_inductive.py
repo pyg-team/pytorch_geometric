@@ -47,7 +47,7 @@ class Encoder(nn.Module):
 
 
 def corruption(batch):
-    batch.x = batch.x[torch.randperm(x.size(0))]
+    batch.x = batch.x[torch.randperm(batch.x.size(0))]
     return batch
 
 
