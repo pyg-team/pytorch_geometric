@@ -11,6 +11,7 @@ from tqdm import tqdm
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GATConv
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root)
 split_idx = dataset.get_idx_split()
@@ -100,7 +101,6 @@ class GAT(torch.nn.Module):
         return x_all
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GAT(dataset.num_features, 128, dataset.num_classes, num_layers=3,
             heads=4)
 model = model.to(device)
