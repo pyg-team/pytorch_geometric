@@ -8,7 +8,8 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import resize_adj_t, trim_to_layer
+from torch_geometric.utils import trim_to_layer
+from torch_geometric.utils.trim_to_layer import resize_adj_t
 
 
 @withPackage('torch_sparse')

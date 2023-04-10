@@ -48,7 +48,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
                                 structured_negative_sampling_feasible)
 from .tree_decomposition import tree_decomposition
 from .embedding import get_embeddings
-from .trim_to_layer import trim_to_layer, resize_adj_t
+from .trim_to_layer import trim_to_layer
 from .train_test_split_edges import train_test_split_edges
 
 __all__ = [
@@ -131,7 +131,6 @@ __all__ = [
     'tree_decomposition',
     'get_embeddings',
     'trim_to_layer',
-    'resize_adj_t',
     'train_test_split_edges',
 ]
 
