@@ -35,13 +35,17 @@ except (ImportError, OSError) as e:
 
 try:
     import torch_sparse  # noqa
-    from torch_sparse import SparseTensor
+    from torch_sparse import SparseStorage, SparseTensor
     WITH_TORCH_SPARSE = True
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
         warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_SPARSE = False
+
+    class SparseStorage:
+        def __init__(*args, **kwargs):
+            raise ImportError("'SparseStorage' requires 'torch-sparse'")
 
     class SparseTensor:
         def __init__(
