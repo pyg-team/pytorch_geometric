@@ -57,10 +57,10 @@ class GAT(torch.nn.Module):
         for skip in self.skips:
             skip.reset_parameters()
 
-    def forward(self, x, adjs):
+    def forward(self, batch):
         x, edge_index = batch.x, batch.edge_index
+        x_target = x[:batch.batch_size]  # Target nodes are always placed first.
         for i, conv in enumerate(self.convs):
-            x_target = x[:batch.batch_size]  # Target nodes are always placed first.
             x = conv((x, x_target), edge_index)
             x = x + self.skips[i](x_target)
             if i != self.num_layers - 1:
