@@ -3,142 +3,126 @@ from typing import List, Optional
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import trim_to_layer
-from torch_geometric.utils.trim_to_layer import resize_adj_t
+from torch_geometric.utils.trim_to_layer import trim_sparse_tensor
 
 
 @withPackage('torch_sparse')
-def test_resize_adj_t():
-    # edge_index represents the adj_transpose matrix
-    # of a graph (modelling here the graph of a batch)
-    # explored in BFS starting from node 0
-    # which we consider the target node (as if original
-    # BS was set to 1 and the graph was build for the
-    # application of a 2-layer GNN so 2-hop-neighborhood)
-    # The function resize_adj_t is not involved
-    # in layer 0, so we test only layer 1
+def test_trim_sparse_tensor():
     edge_index = torch.tensor([[0, 0, 1, 2], [1, 2, 3, 4]])
-    edge_index = SparseTensor.from_edge_index(edge_index=edge_index,
-                                              sparse_sizes=[5, 5])
+    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=[5, 5])
 
-    num_sampled_nodes_per_hop = [2, 2]
-    layer = 1
+    adj = trim_sparse_tensor(adj, num_nodes=3, num_seed_nodes=1)
 
-    new_num_rows = edge_index.storage._sparse_sizes[0] - \
-        num_sampled_nodes_per_hop[-layer]
-
-    active_nodes_num = new_num_rows - \
-        num_sampled_nodes_per_hop[-(layer + 1)]
-
-    edge_index = resize_adj_t(edge_index, new_num_rows=new_num_rows,
-                              active_nodes_num=active_nodes_num)
-    assert torch.equal(edge_index.to_dense(),
-                       torch.tensor([[0, 1, 1], [0, 0, 0], [0, 0, 0]]))
+    row, col, _ = adj.coo()
+    assert row.tolist() == [0, 0]
+    assert col.tolist() == [1, 2]
 
 
 def test_trim_to_layer_basic():
-    x = torch.arange(4)
-    edge_index = torch.tensor([[0, 1, 2], [1, 2, 3]])
-    edge_weight = torch.arange(3)
+    x0 = torch.arange(4)
+    edge_index0 = torch.tensor([[1, 2, 3], [0, 1, 2]])
+    edge_weight0 = torch.arange(3)
 
     num_sampled_nodes_per_hop = [1, 1, 1]
     num_sampled_edges_per_hop = [1, 1, 1]
 
-    x, edge_index, edge_weight = trim_to_layer(
+    x1, edge_index1, edge_weight1 = trim_to_layer(
         layer=0,
         num_sampled_nodes_per_hop=num_sampled_nodes_per_hop,
         num_sampled_edges_per_hop=num_sampled_edges_per_hop,
-        x=x,
-        edge_index=edge_index,
-        edge_attr=edge_weight,
+        x=x0,
+        edge_index=edge_index0,
+        edge_attr=edge_weight0,
     )
-    assert torch.equal(x, torch.arange(4))
-    assert edge_index.tolist() == [[0, 1, 2], [1, 2, 3]]
-    assert torch.equal(edge_weight, torch.arange(3))
+    assert torch.equal(x1, torch.arange(4))
+    assert edge_index1.tolist() == [[1, 2, 3], [0, 1, 2]]
+    assert torch.equal(edge_weight1, torch.arange(3))
 
-    x, edge_index, edge_weight = trim_to_layer(
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj0 = SparseTensor.from_edge_index(edge_index0, edge_weight0, (4, 4))
+        x1, adj_t1, _ = trim_to_layer(
+            layer=0,
+            num_sampled_nodes_per_hop=num_sampled_nodes_per_hop,
+            num_sampled_edges_per_hop=num_sampled_edges_per_hop,
+            x=x0,
+            edge_index=adj0.t(),
+            edge_attr=edge_weight0,
+        )
+        adj1 = adj_t1.t()
+        assert adj1.sizes() == [4, 4]
+
+        row, col, value = adj1.coo()
+        assert torch.equal(x1, torch.arange(4))
+        assert row.tolist() == [1, 2, 3]
+        assert col.tolist() == [0, 1, 2]
+        assert torch.equal(value, torch.arange(3))
+
+    x2, edge_index2, edge_weight2 = trim_to_layer(
         layer=1,
         num_sampled_nodes_per_hop=num_sampled_nodes_per_hop,
         num_sampled_edges_per_hop=num_sampled_edges_per_hop,
-        x=x,
-        edge_index=edge_index,
-        edge_attr=edge_weight,
+        x=x1,
+        edge_index=edge_index1,
+        edge_attr=edge_weight1,
     )
-    assert torch.equal(x, torch.arange(3))
-    assert edge_index.tolist() == [[0, 1], [1, 2]]
-    assert torch.equal(edge_weight, torch.arange(2))
+    assert torch.equal(x2, torch.arange(3))
+    assert edge_index2.tolist() == [[1, 2], [0, 1]]
+    assert torch.equal(edge_weight2, torch.arange(2))
 
-    x, edge_index, edge_weight = trim_to_layer(
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj1 = SparseTensor.from_edge_index(edge_index1, edge_weight1, (4, 4))
+        x2, adj_t2, _ = trim_to_layer(
+            layer=1,
+            num_sampled_nodes_per_hop=num_sampled_nodes_per_hop,
+            num_sampled_edges_per_hop=num_sampled_edges_per_hop,
+            x=x1,
+            edge_index=adj1.t(),
+        )
+        adj2 = adj_t2.t()
+        assert adj2.sizes() == [3, 3]
+
+        row, col, value = adj2.coo()
+        assert torch.equal(x2, torch.arange(3))
+        assert row.tolist() == [1, 2]
+        assert col.tolist() == [0, 1]
+        assert torch.equal(value, torch.arange(2))
+
+    x3, edge_index3, edge_weight3 = trim_to_layer(
         layer=2,
         num_sampled_nodes_per_hop=num_sampled_nodes_per_hop,
         num_sampled_edges_per_hop=num_sampled_edges_per_hop,
-        x=x,
-        edge_index=edge_index,
-        edge_attr=edge_weight,
+        x=x2,
+        edge_index=edge_index2,
+        edge_attr=edge_weight2,
     )
-    assert torch.equal(x, torch.arange(2))
-    assert edge_index.tolist() == [[0], [1]]
-    assert torch.equal(edge_weight, torch.arange(1))
+    assert torch.equal(x3, torch.arange(2))
+    assert edge_index3.tolist() == [[1], [0]]
+    assert torch.equal(edge_weight3, torch.arange(1))
 
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index2, edge_weight2, (3, 3))
+        x3, adj_t3, _ = trim_to_layer(
+            layer=2,
+            num_sampled_nodes_per_hop=num_sampled_nodes_per_hop,
+            num_sampled_edges_per_hop=num_sampled_edges_per_hop,
+            x=x2,
+            edge_index=adj2.t(),
+        )
+        adj3 = adj_t3.t()
+        assert adj3.sizes() == [2, 2]
 
-@withPackage('torch_sparse')
-def test_trim_to_layer_SparseTensor_basic():
-    x = torch.arange(4)
-    edge_index = torch.tensor([[0, 1, 2], [1, 2, 3]])
-    edge_index = SparseTensor.from_edge_index(edge_index=edge_index,
-                                              sparse_sizes=[4, 4])
-    edge_weight = torch.arange(3)
-
-    num_sampled_nodes_per_hop = [1, 1, 1]
-    num_sampled_edges_per_hop = [1, 1, 1]
-
-    x, edge_index, edge_weight = trim_to_layer(
-        layer=0,
-        num_sampled_nodes_per_hop=num_sampled_nodes_per_hop,
-        num_sampled_edges_per_hop=num_sampled_edges_per_hop,
-        x=x,
-        edge_index=edge_index,
-        edge_attr=edge_weight,
-    )
-    assert torch.equal(x, torch.arange(4))
-    assert torch.equal(
-        edge_index.to_dense(),
-        torch.tensor([[0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.],
-                      [0., 0., 0., 0.]]))
-    assert torch.equal(edge_weight, torch.arange(3))
-
-    x, edge_index, edge_weight = trim_to_layer(
-        layer=1,
-        num_sampled_nodes_per_hop=num_sampled_nodes_per_hop,
-        num_sampled_edges_per_hop=num_sampled_edges_per_hop,
-        x=x,
-        edge_index=edge_index,
-        edge_attr=edge_weight,
-    )
-
-    assert torch.equal(x, torch.arange(3))
-    assert torch.equal(
-        edge_index.to_dense(),
-        torch.tensor([[0., 1., 0.], [0., 0., 1.], [0., 0., 0.]]))
-    assert torch.equal(edge_weight, torch.arange(2))
-
-    x, edge_index, edge_weight = trim_to_layer(
-        layer=2,
-        num_sampled_nodes_per_hop=num_sampled_nodes_per_hop,
-        num_sampled_edges_per_hop=num_sampled_edges_per_hop,
-        x=x,
-        edge_index=edge_index,
-        edge_attr=edge_weight,
-    )
-    assert torch.equal(x, torch.arange(2))
-    assert torch.equal(edge_index.to_dense(), torch.tensor([[0., 1.], [0.,
-                                                                       0.]]))
-    assert torch.equal(edge_weight, torch.arange(1))
+        row, col, value = adj3.coo()
+        assert torch.equal(x3, torch.arange(2))
+        assert row.tolist() == [1]
+        assert col.tolist() == [0]
+        assert torch.equal(value, torch.arange(1))
 
 
 def test_trim_to_layer_hetero():

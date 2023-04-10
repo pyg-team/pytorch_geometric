@@ -4,65 +4,13 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import (
-    WITH_TORCH_SPARSE,
     EdgeType,
     MaybeHeteroEdgeTensor,
     MaybeHeteroNodeTensor,
     NodeType,
+    SparseStorage,
     SparseTensor,
 )
-
-if WITH_TORCH_SPARSE:
-    from torch_sparse import SparseStorage
-
-
-def resize_adj_t(src: SparseTensor, new_num_rows: int,
-                 active_nodes_num: None) -> SparseTensor:
-    r"""It resizes a bidimensional :obj:`src` SparseTensor
-    along both dimensions and it returns a squared SparseTensor.
-    Resizing always starts from position 0,0 as it is
-    assumed that src is an adj_t matrix obtained via
-    BFS traversing of a graph batch, BFS starting from
-    the nodes that have been initially selected (target nodes)
-    for the graph batch formation
-    Args:
-        src (SparseTensor): SparseTensor to be manipulated
-        new_num_rows (int): last position to include in the output
-        active_nodes_num (int): number of nodes we want to compute
-        representation for
-    """
-    if len(src.storage._sparse_sizes) != 2:
-        raise NotImplementedError
-
-    start = 0
-    if src.storage._rowptr is None:
-        rowptr, col, value = src.csr()
-
-    # rowptr
-    rowptr = torch.narrow(src.storage._rowptr, 0, start,
-                          new_num_rows + 1).clone()
-    rowptr[(active_nodes_num + 1):] = rowptr[active_nodes_num]
-
-    # col and value
-    col = torch.narrow(src.storage._col, 0, start, rowptr[-1])
-    value = torch.narrow(
-        src.storage._value,
-        0,
-        start,
-        rowptr[-1])\
-        if src.storage._value is not None else None
-
-    # indices for conversion to csc
-    csr2csc = src.storage._csr2csc[src.storage._csr2csc < len(col)] \
-        if src.storage._csr2csc is not None else None
-
-    # update storage and edge_index
-    storage = SparseStorage(row=None, rowptr=rowptr, col=col, value=value,
-                            sparse_sizes=(new_num_rows, new_num_rows),
-                            rowcount=None, colptr=None, colcount=None,
-                            csr2csc=csr2csc, csc2csr=None, is_sorted=True,
-                            trust_data=False)
-    return src.from_storage(storage)
 
 
 def trim_to_layer(
@@ -99,6 +47,7 @@ def trim_to_layer(
     if layer <= 0:
         return x, edge_index, edge_attr
 
+    # TODO Support `SparseTensor` for heterogeneous graphs.
     if isinstance(num_sampled_edges_per_hop, dict):
         x = {
             k: v.narrow(
@@ -127,12 +76,6 @@ def trim_to_layer(
             }
         return x, edge_index, edge_attr
 
-    # this point should be reached by homogeneous case only,
-    # hetero is handled above
-    # for homogeneous case, support for the SparseTensor case
-    # (from torch_sparse) is provided
-    # whether or not edge_index is Tensor or SparseTensor
-    # x and edge_attr should be treated in same way
     x = x.narrow(
         dim=0,
         start=0,
@@ -144,7 +87,6 @@ def trim_to_layer(
             start=0,
             length=edge_attr.size(0) - num_sampled_edges_per_hop[-layer],
         )
-    # adj matrix as Tensor
     if isinstance(edge_index, Tensor):
         edge_index = edge_index.narrow(
             dim=1,
@@ -153,23 +95,14 @@ def trim_to_layer(
         )
         return x, edge_index, edge_attr
 
-    # adj matrix as SparseTensor
-    if isinstance(edge_index, SparseTensor) and WITH_TORCH_SPARSE:
-        if edge_index.storage._rowptr is None:
-            edge_index.storage._rowptr,\
-                edge_index.storage._col,\
-                edge_index.storage._value = edge_index.csr()
+    elif isinstance(edge_index, SparseTensor):
+        num_nodes = edge_index.size(0) - num_sampled_nodes_per_hop[-layer]
+        num_seed_nodes = num_nodes - num_sampled_nodes_per_hop[-(layer + 1)]
+        edge_index = trim_sparse_tensor(edge_index, num_nodes, num_seed_nodes)
 
-        new_num_rows = edge_index.storage._sparse_sizes[0] \
-            - num_sampled_nodes_per_hop[-layer]
-
-        active_nodes_num = new_num_rows - \
-            num_sampled_nodes_per_hop[-(layer + 1)]
-
-        edge_index = resize_adj_t(edge_index, new_num_rows=new_num_rows,
-                                  active_nodes_num=active_nodes_num)
         return x, edge_index, edge_attr
-    raise NotImplementedError  # end of trim_to_layer
+
+    raise NotImplementedError
 
 
 class TrimToLayer(torch.nn.Module):
@@ -203,3 +136,51 @@ class TrimToLayer(torch.nn.Module):
             edge_index,
             edge_attr,
         )
+
+
+# Helper functions ############################################################
+
+
+def trim_sparse_tensor(src: SparseTensor, num_nodes: int,
+                       num_seed_nodes: None) -> SparseTensor:
+    r"""Trims a :class:`SparseTensor` along both dimensions to only contain
+    the upper :obj:`num_nodes` in both dimensions.
+
+    It is assumed that :class:`SparseTensor` is obtained from BFS traversing,
+    starting from the nodes that have been initially selected.
+
+    Args:
+        src (SparseTensor): The sparse tensor.
+        num_nodes (int): The number of first nodes to keep.
+        num_seed_nodes (int): The number of seed nodes to compute
+            representations.
+    """
+    rowptr, col, value = src.csr()
+
+    rowptr = torch.narrow(rowptr, 0, 0, num_nodes + 1).clone()
+    rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
+
+    col = torch.narrow(col, 0, 0, rowptr[-1])
+
+    if value is not None:
+        value = torch.narrow(value, 0, 0, rowptr[-1])
+
+    csr2csc = src.storage._csr2csc
+    if csr2csc is not None:
+        csr2csc = csr2csc[csr2csc < len(col)]
+
+    storage = SparseStorage(
+        row=None,
+        rowptr=rowptr,
+        col=col,
+        value=value,
+        sparse_sizes=(num_nodes, num_nodes),
+        rowcount=None,
+        colptr=None,
+        colcount=None,
+        csr2csc=csr2csc,
+        csc2csr=None,
+        is_sorted=True,
+        trust_data=True,
+    )
+    return src.from_storage(storage)
