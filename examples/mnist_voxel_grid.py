@@ -20,9 +20,9 @@ d = train_dataset
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = FeaStConvConv(d.num_features, 32)
-        self.conv2 = FeaStConvConv(32, 64)
-        self.conv3 = FeaStConvConv(64, 64)
+        self.conv1 = FeaStConv(d.num_features, 32)
+        self.conv2 = FeaStConv(32, 64)
+        self.conv3 = FeaStConv(64, 64)
         self.fc1 = torch.nn.Linear(4 * 64, 128)
         self.fc2 = torch.nn.Linear(128, d.num_classes)
 
