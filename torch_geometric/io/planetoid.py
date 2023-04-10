@@ -103,7 +103,7 @@ def read_file(folder, prefix, name):
         return out
 
     out = out.todense() if hasattr(out, 'todense') else out
-    out = torch.Tensor(out)
+    out = torch.from_numpy(out).to(torch.float)
     return out
 
 
