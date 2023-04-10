@@ -41,9 +41,8 @@ class SAGE(torch.nn.Module):
 
     def forward(self, batch):
         x, edge_index, batch_size = batch.x, batch.edge_index, batch.batch_size
-        x_target = x[:batch_size]  # Target nodes are always placed first.
         for i, conv in enumerate(self.convs):
-            x = conv((x, x_target), edge_index)
+            x = conv(x, edge_index)
             if i != self.num_layers - 1:
                 x = F.relu(x)
                 x = F.dropout(x, p=0.5, training=self.training)
