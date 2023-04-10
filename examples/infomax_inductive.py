@@ -41,7 +41,7 @@ class Encoder(nn.Module):
     def forward(self, batch):
         x, edge_index = batch.x, batch.edge_index
         for i, conv in enumerate(self.convs):
-            x = conv((x, x_target), edge_index)
+            x = conv(x, edge_index)
             x = self.activations[i](x)
         return x
 
