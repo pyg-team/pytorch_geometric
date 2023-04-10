@@ -47,8 +47,8 @@ class Encoder(nn.Module):
 
 
 def corruption(batch):
-    x, edge_index = batch.x, batch.edge_index
-    return x[torch.randperm(x.size(0))], edge_index
+    batch.x = batch.x[torch.randperm(x.size(0))]
+    return batch
 
 
 model = DeepGraphInfomax(
