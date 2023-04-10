@@ -120,7 +120,7 @@ def train(epoch):
         batch_size = batch.batch_size
         o = out[:batch_size]
         y_true = y[batch.n_id[:batch_size]]
-        loss = F.nll_loss(out, y_true)
+        loss = F.nll_loss(o, y_true)
         loss.backward()
         optimizer.step()
 
