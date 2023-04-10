@@ -41,9 +41,10 @@ class SAGE(torch.nn.Module):
             conv.reset_parameters()
 
     def forward(self, batch):
-        x, edge_index = batch.x, batch.edge_index
+        x, edge_index, batch_size = batch.x, batch.edge_index, batch.batch_size
+        x_target = x[:batch_size]  # Target nodes are always placed first.
         for i, conv in enumerate(self.convs):
-            x = conv(x, edge_index)
+            x = conv((x, x_target), edge_index)
             if i != self.num_layers - 1:
                 x = F.relu(x)
                 x = F.dropout(x, p=0.5, training=self.training)
@@ -60,11 +61,11 @@ class SAGE(torch.nn.Module):
         for i in range(self.num_layers):
             xs = []
             for batch in subgraph_loader:
-                edge_index = batch.edge_index
+                edge_index, batch_size = batch.edge_index, batch.batch_size
                 total_edges += edge_index.size(1)
-                n_id = batch.n_id[batch.batch_size]
+                n_id = batch.n_id[batch_size]
                 x = x_all[n_id].to(device)
-                x = self.convs[i](x, edge_index)
+                x = self.convs[i]((x, x_target), edge_index)
                 if i != self.num_layers - 1:
                     x = F.relu(x)
                 xs.append(x.cpu())
