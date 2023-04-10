@@ -205,7 +205,7 @@ class HGTConv(MessagePassing):
 
         # Iterate over node types:
         for node_type, out in out_dict.items():
-            if out is None or node_type not in self.dst_node_types:
+            if node_type not in self.dst_node_types:
                 out_dict[node_type] = None
                 continue
             else:
