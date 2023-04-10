@@ -58,9 +58,10 @@ class GAT(torch.nn.Module):
             skip.reset_parameters()
 
     def forward(self, x, adjs):
-        for i, (edge_index, _, size) in enumerate(adjs):
-            x_target = x[:size[1]]  # Target nodes are always placed first.
-            x = self.convs[i]((x, x_target), edge_index)
+        x, edge_index = batch.x, batch.edge_index
+        for i, conv in enumerate(self.convs):
+            x_target = x[:batch.batch_size]  # Target nodes are always placed first.
+            x = conv((x, x_target), edge_index)
             x = x + self.skips[i](x_target)
             if i != self.num_layers - 1:
                 x = F.elu(x)
@@ -80,10 +81,11 @@ class GAT(torch.nn.Module):
             for batch in subgraph_loader:
                 edge_index = batch.edge_index
                 total_edges += edge_index.size(1)
+                x_target = x[:batch.batch_size]
                 n_id = batch.n_id[batch.batch_size]
                 x = x_all[n_id].to(device)
-                x = self.convs[i](x, edge_index)
-                x = x + self.skips[i](x)
+                x = self.convs[i]((x, x_target), edge_index)
+                x = x + self.skips[i](x_target)
 
                 if i != self.num_layers - 1:
                     x = F.elu(x)
