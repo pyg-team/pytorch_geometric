@@ -5,20 +5,21 @@ from torch.nn import Sequential as Seq
 
 import torch_geometric.typing
 from torch_geometric.nn import NNConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withCUDA
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor
 
 
-def test_nn_conv():
-    x1 = torch.randn(4, 8)
-    x2 = torch.randn(2, 16)
-    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    value = torch.rand(edge_index.size(1), 3)
+@withCUDA
+def test_nn_conv(device):
+    x1 = torch.randn(4, 8, device=device)
+    x2 = torch.randn(2, 16, device=device)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]], device=device)
+    value = torch.rand(edge_index.size(1), 3, device=device)
     adj1 = to_torch_coo_tensor(edge_index, value, size=(4, 4))
 
     nn = Seq(Lin(3, 32), ReLU(), Lin(32, 8 * 32))
-    conv = NNConv(8, 32, nn=nn)
+    conv = NNConv(8, 32, nn=nn).to(device)
     assert str(conv) == (
         'NNConv(8, 32, aggr=add, nn=Sequential(\n'
         '  (0): Linear(in_features=3, out_features=32, bias=True)\n'
@@ -49,7 +50,7 @@ def test_nn_conv():
     # Test bipartite message passing:
     adj1 = to_torch_coo_tensor(edge_index, value, size=(4, 2))
 
-    conv = NNConv((8, 16), 32, nn=nn)
+    conv = NNConv((8, 16), 32, nn=nn).to(device)
     assert str(conv) == (
         'NNConv((8, 16), 32, aggr=add, nn=Sequential(\n'
         '  (0): Linear(in_features=3, out_features=32, bias=True)\n'
