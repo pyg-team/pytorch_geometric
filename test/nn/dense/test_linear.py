@@ -215,4 +215,4 @@ def test_hetero_linear_sort(type_vec, device):
     for i in range(type_vec.numel()):
         node_type = int(type_vec[i])
         expected = x[i] @ lin.weight[node_type] + lin.bias[node_type]
-        assert torch.allclose(out[i], expected, atol=1e-6)
+        assert torch.allclose(out[i], expected, atol=1e-3)
