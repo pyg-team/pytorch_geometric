@@ -9,13 +9,13 @@ from torch_geometric.nn.models import LightGCN
 @pytest.mark.parametrize('lambda_reg', [0, 1e-4])
 @pytest.mark.parametrize('alpha', [0, .25, torch.tensor([0.4, 0.3, 0.2])])
 def test_lightgcn_ranking(embedding_dim, with_edge_weight, lambda_reg, alpha):
-    N = 500
-    E = 400
-    edge_index = torch.randint(0, N, (2, E), dtype=torch.int64)
-    edge_weight = torch.rand(E) if with_edge_weight else None
-    edge_label_index = torch.randint(0, N, (2, 100), dtype=torch.int64)
+    num_nodes = 500
+    num_edges = 400
+    edge_index = torch.randint(0, num_nodes, (2, num_edges))
+    edge_weight = torch.rand(num_edges) if with_edge_weight else None
+    edge_label_index = torch.randint(0, num_nodes, (2, 100))
 
-    model = LightGCN(N, embedding_dim, num_layers=2, alpha=alpha)
+    model = LightGCN(num_nodes, embedding_dim, num_layers=2, alpha=alpha)
     assert str(model) == f'LightGCN(500, {embedding_dim}, num_layers=2)'
 
     pred = model(edge_index, edge_label_index, edge_weight)
@@ -40,14 +40,14 @@ def test_lightgcn_ranking(embedding_dim, with_edge_weight, lambda_reg, alpha):
 @pytest.mark.parametrize('with_edge_weight', [False, True])
 @pytest.mark.parametrize('alpha', [0, .25, torch.tensor([0.4, 0.3, 0.2])])
 def test_lightgcn_link_prediction(embedding_dim, with_edge_weight, alpha):
-    N = 500
-    E = 400
-    edge_index = torch.randint(0, N, (2, E), dtype=torch.int64)
-    edge_weight = torch.rand(E) if with_edge_weight else None
-    edge_label_index = torch.randint(0, N, (2, 100), dtype=torch.int64)
+    num_nodes = 500
+    num_edges = 400
+    edge_index = torch.randint(0, num_nodes, (2, num_edges))
+    edge_weight = torch.rand(num_edges) if with_edge_weight else None
+    edge_label_index = torch.randint(0, num_nodes, (2, 100))
     edge_label = torch.randint(0, 2, (edge_label_index.size(1), ))
 
-    model = LightGCN(N, embedding_dim, num_layers=2, alpha=alpha)
+    model = LightGCN(num_nodes, embedding_dim, num_layers=2, alpha=alpha)
     assert str(model) == f'LightGCN(500, {embedding_dim}, num_layers=2)'
 
     pred = model(edge_index, edge_label_index, edge_weight)
