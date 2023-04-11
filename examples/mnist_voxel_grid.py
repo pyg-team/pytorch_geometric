@@ -7,20 +7,6 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import SplineConv, max_pool, max_pool_x, voxel_grid
-if 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-try:
-    model = Net().to(device)
-except ImportError:
-    print("This test requires 'SplineConv' which requires 'torch-spline-conv'")
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
-transform = T.Cartesian(cat=False)
-train_dataset = MNISTSuperpixels(path, True, transform=transform)
-test_dataset = MNISTSuperpixels(path, False, transform=transform)
-train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=64)
-d = train_dataset
 
 
 class Net(torch.nn.Module):
@@ -55,6 +41,21 @@ class Net(torch.nn.Module):
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
         return F.log_softmax(x, dim=1)
+
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+try:
+    model = Net().to(device)
+except ImportError:
+    print("This example requires 'SplineConv' which requires 'torch-spline-conv'")
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
+transform = T.Cartesian(cat=False)
+train_dataset = MNISTSuperpixels(path, True, transform=transform)
+test_dataset = MNISTSuperpixels(path, False, transform=transform)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=64)
+d = train_dataset
 
 
 def train(epoch):
