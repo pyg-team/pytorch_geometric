@@ -409,6 +409,38 @@ def test_hetero_batch():
     assert torch.allclose(out2[e2].edge_attr, data2[e2].edge_attr)
 
 
+def test_hetero_batch_with_different_types():
+    # test with different node types
+    data1 = HeteroData()
+    data1['p'].x = torch.randn(100, 128)
+
+    data2 = HeteroData()
+    data2['a'].x = torch.randn(100, 128)
+
+    batch = Batch.from_data_list([data1, data2])
+
+    assert batch.num_graphs == len(batch) == 2
+    assert batch.num_nodes == 200
+    assert batch.node_types == ['p', 'a']
+
+    # test with different edge types
+    e1 = ('p', 'a')
+    data1 = HeteroData()
+    data1['p'].x = torch.randn(100, 128)
+
+    data2 = HeteroData()
+    data2['p'].x = torch.randn(50, 128)
+    data2['a'].x = torch.randn(100, 128)
+    data2[e1].edge_index = get_random_edge_index(100, 50, 200)
+
+    batch = Batch.from_data_list([data1, data2])
+
+    assert batch.num_graphs == len(batch) == 2
+    assert batch.num_nodes == 250
+    assert batch.node_types == ['p', 'a']
+    assert batch.edge_types == [('p', 'to', 'a')]
+
+
 def test_pair_data_batching():
     class PairData(Data):
         def __inc__(self, key, value, *args, **kwargs):
@@ -482,11 +514,11 @@ def test_nested_follow_batch():
 
     # assert _batch
     assert batch.xs_batch[0].tolist() == \
-           [0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
+        [0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
     assert batch.xs_batch[1].tolist() == \
-           [0] * 11 + [1] * 14 + [2] * 15 + [3] * 16
+        [0] * 11 + [1] * 14 + [2] * 15 + [3] * 16
     assert batch.xs_batch[2].tolist() == \
-           [0] * 1 + [1] * 3 + [2] * 2 + [3] * 1
+        [0] * 1 + [1] * 3 + [2] * 2 + [3] * 1
 
     assert batch.a_batch['aa'].tolist() == \
-           [0] * 11 + [1] * 2 + [2] * 4 + [3] * 8
+        [0] * 11 + [1] * 2 + [2] * 4 + [3] * 8
