@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Continuously adding `torch.sparse` support to PyG ([#7155](https://github.com/pyg-team/pytorch_geometric/pull/7155))
+- Added edge weight support to `LightGCN` ([#7157](https://github.com/pyg-team/pytorch_geometric/pull/7157))
 - Added `SparseTensor` support to`trim_to_layer` function ([#7089](https://github.com/pyg-team/pytorch_geometric/pull/7089))
 - Added instructions for ROCm build wheels ([#7143](https://github.com/pyg-team/pytorch_geometric/pull/7143))
 - Added a `ComposeFilters` class to compose `pre_filter` functions in `Dataset` ([#7097](https://github.com/pyg-team/pytorch_geometric/pull/7097))
