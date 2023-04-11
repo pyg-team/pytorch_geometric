@@ -175,7 +175,7 @@ def _collate(
         if is_torch_sparse:
             value = torch_sparse.cat(values, dim=cat_dim)
         else:
-            value = torch.sparse.cat(values, dim=cat_dim)
+            value = torch.cat(values, dim=cat_dim)
         return value, slices, None
 
     elif isinstance(elem, (int, float)):
