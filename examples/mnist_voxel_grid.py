@@ -9,7 +9,7 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn import SplineConv, max_pool, max_pool_x, voxel_grid
 
 try:
-    SplineConv(4, 4)
+    SplineConv(4, 4, dim=2, kernel_size=5)
 except ImportError:
     print(
         "This example requires 'SplineConv' which requires 'torch-spline-conv'"
