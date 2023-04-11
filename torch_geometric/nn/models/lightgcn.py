@@ -7,7 +7,8 @@ from torch.nn import Embedding, ModuleList
 from torch.nn.modules.loss import _Loss
 
 from torch_geometric.nn.conv import LGConv
-from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.utils import is_sparse, to_edge_index
 
 
 class LightGCN(torch.nn.Module):
@@ -122,8 +123,8 @@ class LightGCN(torch.nn.Module):
                 :obj:`edge_index`. (default: :obj:`None`)
         """
         if edge_label_index is None:
-            if isinstance(edge_index, SparseTensor):
-                edge_label_index = torch.stack(edge_index.coo()[:2], dim=0)
+            if is_sparse(edge_index):
+                edge_label_index, _ = to_edge_index(edge_index)
             else:
                 edge_label_index = edge_index
 
