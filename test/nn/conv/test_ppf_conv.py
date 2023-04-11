@@ -57,8 +57,8 @@ def test_ppf_conv():
     assert out.size() == (2, 32)
     assert torch.allclose(conv((x1, None), (pos1, pos2), (n1, n2), edge_index),
                           out, atol=1e-3)
-    assert torch.allclose(conv(x1, (pos1, pos2), (n1, n2), adj1.t()),
-                          out, atol=1e-3)
+    assert torch.allclose(conv(x1, (pos1, pos2), (n1, n2), adj1.t()), out,
+                          atol=1e-3)
     assert torch.allclose(conv((x1, None), (pos1, pos2), (n1, n2), adj1.t()),
                           out, atol=1e-3)
 
