@@ -6,8 +6,14 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import FeaStConv, max_pool, max_pool_x, voxel_grid
-
+from torch_geometric.nn import SplineConv, max_pool, max_pool_x, voxel_grid
+if 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+try:
+    model = Net().to(device)
+except ImportError:
+    print("This test requires 'SplineConv' which requires 'torch-spline-conv'")
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
 train_dataset = MNISTSuperpixels(path, True, transform=transform)
@@ -20,26 +26,26 @@ d = train_dataset
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv1 = FeaStConv(d.num_features, 32)
-        self.conv2 = FeaStConv(32, 64)
-        self.conv3 = FeaStConv(64, 64)
+        self.conv1 = SplineConv(d.num_features, 32, dim=2, kernel_size=5)
+        self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
+        self.conv3 = SplineConv(64, 64, dim=2, kernel_size=5)
         self.fc1 = torch.nn.Linear(4 * 64, 128)
         self.fc2 = torch.nn.Linear(128, d.num_classes)
 
     def forward(self, data):
-        data.x = F.elu(self.conv1(data.x, data.edge_index))
+        data.x = F.elu(self.conv1(data.x, data.edge_index, data.edge_attr))
         cluster = voxel_grid(data.pos, batch=data.batch, size=5, start=0,
                              end=28)
         data.edge_attr = None
         data = max_pool(cluster, data, transform=transform)
 
-        data.x = F.elu(self.conv2(data.x, data.edge_index))
+        data.x = F.elu(self.conv2(data.x, data.edge_index, data.edge_attr))
         cluster = voxel_grid(data.pos, batch=data.batch, size=7, start=0,
                              end=28)
         data.edge_attr = None
         data = max_pool(cluster, data, transform=transform)
 
-        data.x = F.elu(self.conv3(data.x, data.edge_index))
+        data.x = F.elu(self.conv3(data.x, data.edge_index, data.edge_attr))
         cluster = voxel_grid(data.pos, batch=data.batch, size=14, start=0,
                              end=27.99)
         x, _ = max_pool_x(cluster, data.x, data.batch, size=4)
@@ -49,11 +55,6 @@ class Net(torch.nn.Module):
         x = F.dropout(x, training=self.training)
         x = self.fc2(x)
         return F.log_softmax(x, dim=1)
-
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
 def train(epoch):
