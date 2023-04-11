@@ -124,7 +124,7 @@ class LightGCN(torch.nn.Module):
         """
         if edge_label_index is None:
             if is_sparse(edge_index):
-                edge_label_index = to_edge_index(edge_index)[0]
+                edge_label_index, _ = to_edge_index(edge_index)
             else:
                 edge_label_index = edge_index
 
