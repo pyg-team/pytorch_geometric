@@ -50,6 +50,8 @@ except ImportError:
     print(
         "This example requires 'SplineConv' which requires 'torch-spline-conv'"
     )
+    quit()
+
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
