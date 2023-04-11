@@ -47,7 +47,9 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 try:
     model = Net().to(device)
 except ImportError:
-    print("This example requires 'SplineConv' which requires 'torch-spline-conv'")
+    print(
+        "This example requires 'SplineConv' which requires 'torch-spline-conv'"
+    )
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
