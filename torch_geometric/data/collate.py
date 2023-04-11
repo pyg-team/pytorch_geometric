@@ -34,9 +34,6 @@ def collate(
     else:
         out = cls()
 
-    # Create empty stores:
-    out.stores_as(data_list[0])
-
     follow_batch = set(follow_batch or [])
     exclude_keys = set(exclude_keys or [])
 
@@ -44,6 +41,8 @@ def collate(
     # i.e. `key_to_store_list = { key: [store_1, store_2, ...], ... }`:
     key_to_stores = defaultdict(list)
     for data in data_list:
+        # Create empty stores and merge them
+        out.stores_as(data)
         for store in data.stores:
             key_to_stores[store._key].append(store)
 
