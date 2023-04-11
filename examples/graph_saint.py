@@ -8,7 +8,12 @@ from torch_geometric.datasets import Flickr
 from torch_geometric.loader import GraphSAINTRandomWalkSampler
 from torch_geometric.nn import GraphConv
 from torch_geometric.utils import degree
-
+from torch_geometric.typing import WITH_TORCH_SPARSE
+if not WITH_TORCH_SPARSE:
+    print(
+        "This example requires 'torch-sparse'"
+    )
+    quit()
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
 dataset = Flickr(path)
 data = dataset[0]

@@ -15,7 +15,12 @@ from torch_geometric.nn import (
     max_pool_x,
 )
 from torch_geometric.utils import normalized_cut
-
+from torch_geometric.typing import WITH_TORCH_CLUSTER
+if not WITH_TORCH_CLUSTER:
+    print(
+        "This example requires 'torch-cluster'"
+    )
+    quit()
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)
 train_dataset = MNISTSuperpixels(path, True, transform=transform)

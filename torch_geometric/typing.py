@@ -43,6 +43,15 @@ except (ImportError, OSError) as e:
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_SPARSE = False
 
+try:
+    import torch_cluster  # noqa
+    WITH_TORCH_CLUSTER = True
+except (ImportError, OSError) as e:
+    if isinstance(e, OSError):
+        warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
+                      f"Disabling its usage. Stacktrace: {e}")
+    WITH_TORCH_CLUSTER = False
+
     class SparseStorage:
         def __init__(*args, **kwargs):
             raise ImportError("'SparseStorage' requires 'torch-sparse'")

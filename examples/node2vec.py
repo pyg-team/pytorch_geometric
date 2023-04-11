@@ -7,7 +7,12 @@ from sklearn.manifold import TSNE
 
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import Node2Vec
-
+from torch_geometric.typing import WITH_TORCH_CLUSTER
+if not WITH_TORCH_CLUSTER:
+    print(
+        "This example requires 'torch-cluster'"
+    )
+    quit()
 
 def main():
     dataset = 'Cora'
