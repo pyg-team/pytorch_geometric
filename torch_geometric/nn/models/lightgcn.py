@@ -88,19 +88,27 @@ class LightGCN(torch.nn.Module):
         for conv in self.convs:
             conv.reset_parameters()
 
-    def get_embedding(self, edge_index: Adj) -> Tensor:
+    def get_embedding(
+        self,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
         r"""Returns the embedding of nodes in the graph."""
         x = self.embedding.weight
         out = x * self.alpha[0]
 
         for i in range(self.num_layers):
-            x = self.convs[i](x, edge_index)
+            x = self.convs[i](x, edge_index, edge_weight)
             out = out + x * self.alpha[i + 1]
 
         return out
 
-    def forward(self, edge_index: Adj,
-                edge_label_index: OptTensor = None) -> Tensor:
+    def forward(
+        self,
+        edge_index: Adj,
+        edge_label_index: OptTensor = None,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
         r"""Computes rankings for pairs of nodes.
 
         Args:
@@ -110,6 +118,8 @@ class LightGCN(torch.nn.Module):
                 the node pairs for which to compute rankings or probabilities.
                 If :obj:`edge_label_index` is set to :obj:`None`, all edges in
                 :obj:`edge_index` will be used instead. (default: :obj:`None`)
+            edge_weight (torch.Tensor, optional): The weight of each edge in
+                :obj:`edge_index`. (default: :obj:`None`)
         """
         if edge_label_index is None:
             if isinstance(edge_index, SparseTensor):
@@ -117,25 +127,36 @@ class LightGCN(torch.nn.Module):
             else:
                 edge_label_index = edge_index
 
-        out = self.get_embedding(edge_index)
+        out = self.get_embedding(edge_index, edge_weight)
 
         out_src = out[edge_label_index[0]]
         out_dst = out[edge_label_index[1]]
         return (out_src * out_dst).sum(dim=-1)
 
-    def predict_link(self, edge_index: Adj, edge_label_index: OptTensor = None,
-                     prob: bool = False) -> Tensor:
+    def predict_link(
+        self,
+        edge_index: Adj,
+        edge_label_index: OptTensor = None,
+        edge_weight: OptTensor = None,
+        prob: bool = False,
+    ) -> Tensor:
         r"""Predict links between nodes specified in :obj:`edge_label_index`.
 
         Args:
             prob (bool, optional): Whether probabilities should be returned.
                 (default: :obj:`False`)
         """
-        pred = self(edge_index, edge_label_index).sigmoid()
+        pred = self(edge_index, edge_label_index, edge_weight).sigmoid()
         return pred if prob else pred.round()
 
-    def recommend(self, edge_index: Adj, src_index: OptTensor = None,
-                  dst_index: OptTensor = None, k: int = 1) -> Tensor:
+    def recommend(
+        self,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+        src_index: OptTensor = None,
+        dst_index: OptTensor = None,
+        k: int = 1,
+    ) -> Tensor:
         r"""Get top-:math:`k` recommendations for nodes in :obj:`src_index`.
 
         Args:
@@ -149,7 +170,7 @@ class LightGCN(torch.nn.Module):
                 (default: :obj:`None`)
             k (int, optional): Number of recommendations. (default: :obj:`1`)
         """
-        out_src = out_dst = self.get_embedding(edge_index)
+        out_src = out_dst = self.get_embedding(edge_index, edge_weight)
 
         if src_index is not None:
             out_src = out_src[src_index]
