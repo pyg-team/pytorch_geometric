@@ -42,7 +42,7 @@ def test_lightgcn_ranking(embedding_dim, with_edge_weight, lambda_reg, alpha):
 def test_lightgcn_link_prediction(embedding_dim, with_edge_weight, alpha):
     N = 500
     E = 400
-    edge_index = torch.randint(0, N, (2, 400), dtype=torch.int64)
+    edge_index = torch.randint(0, N, (2, E), dtype=torch.int64)
     edge_weight = torch.rand(E) if with_edge_weight else None
     edge_label_index = torch.randint(0, N, (2, 100), dtype=torch.int64)
     edge_label = torch.randint(0, 2, (edge_label_index.size(1), ))
