@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- Fix `Batch.from_data_list` only store node/edge types presented in first element of `data_list` for `HeteroData` ([#7156](https://github.com/pyg-team/pytorch_geometric/pull/7156))
+- Fix `Batch.from_data_list` only store node/edge types that are presented in first element of `data_list` for `HeteroData` ([#7156](https://github.com/pyg-team/pytorch_geometric/pull/7156))
 - Optimized `from_networkx` memory footprint by reducing unnecessary copies ([#7119](https://github.com/pyg-team/pytorch_geometric/pull/7119))
 - Added an optional `batch_size` argument to `LayerNorm`, `GraphNorm`, `InstanceNorm`, `GraphSizeNorm` and `PairNorm` ([#7135](https://github.com/pyg-team/pytorch_geometric/pull/7135))
 - Improved code coverage ([#7093](https://github.com/pyg-team/pytorch_geometric/pull/7093))
