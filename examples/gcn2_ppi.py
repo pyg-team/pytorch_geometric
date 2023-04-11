@@ -10,10 +10,9 @@ from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCN2Conv
 from torch_geometric.typing import WITH_TORCH_SPARSE
+
 if not WITH_TORCH_SPARSE:
-    print(
-        "This example requires 'torch-sparse'"
-    )
+    print("This example requires 'torch-sparse'")
     quit()
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'GCN2_PPI')
 pre_transform = T.Compose([T.GCNNorm(), T.ToSparseTensor()])
