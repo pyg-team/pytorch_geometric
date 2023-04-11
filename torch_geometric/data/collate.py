@@ -122,7 +122,7 @@ def _collate(
 
     elem = values[0]
     is_vanilla_tensor = isinstance(elem, Tensor) and 'sparse' not in str(
-        edge_index.layout)
+        elem.layout)
     is_torch_native_sparse = isinstance(elem, Tensor) and 'sparse' in str(
         elem.layout)
     is_torch_sparse = isinstance(elem, SparseTensor)
