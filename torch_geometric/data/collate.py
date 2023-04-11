@@ -121,8 +121,10 @@ def _collate(
 ) -> Tuple[Any, Any, Any]:
 
     elem = values[0]
-
-    if isinstance(elem, Tensor):
+    is_vanilla_tensor = isinstance(elem, Tensor) and 'sparse' not in str(edge_index.layout)
+    is_torch_native_sparse = isinstance(edge_index, Tensor) and 'sparse' in str(edge_index.layout)
+    is_torch_sparse = isinstance(elem, SparseTensor)
+    if is_vanilla_tensor:
         # Concatenate a list of `torch.Tensor` along the `cat_dim`.
         # NOTE: We need to take care of incrementing elements appropriately.
         key = str(key)
@@ -160,7 +162,7 @@ def _collate(
         value = torch.cat(values, dim=cat_dim or 0, out=out)
         return value, slices, incs
 
-    elif isinstance(elem, SparseTensor) and increment:
+    elif (is_torch_native_sparse or is_torch_sparse) and increment:
         # Concatenate a list of `SparseTensor` along the `cat_dim`.
         # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
         key = str(key)
@@ -168,7 +170,10 @@ def _collate(
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
         slices = cumsum(repeats)
-        value = torch_sparse.cat(values, dim=cat_dim)
+        if is_torch_sparse:
+            value = torch_sparse.cat(values, dim=cat_dim)
+        else:
+            value = torch.sparse.cat(values, dim=cat_dim)
         return value, slices, None
 
     elif isinstance(elem, (int, float)):
