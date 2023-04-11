@@ -3,6 +3,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.loader import ClusterData, ClusterLoader
+from torch_geometric.testing import onlyFullTest
 from torch_geometric.utils import to_dense_adj
 
 try:
@@ -100,3 +101,18 @@ def test_cluster_gcn():
         [0, 0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1, 1],
     ]
+
+
+@onlyFullTest
+@pytest.mark.skipif(not with_metis, reason='Not compiled with METIS support')
+def test_cluster_gcn_correctness(get_dataset):
+    dataset = get_dataset('Cora')
+    data = dataset[0].clone()
+    data.n_id = torch.arange(data.num_nodes)
+    cluster_data = ClusterData(data, num_parts=10)
+    loader = ClusterLoader(cluster_data, batch_size=3, shuffle=False)
+
+    for batch1 in loader:
+        batch2 = data.subgraph(batch1.n_id)
+        assert batch1.num_nodes == batch2.num_nodes
+        assert batch1.num_edges == batch2.num_edges
