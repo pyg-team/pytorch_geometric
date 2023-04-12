@@ -178,31 +178,22 @@ def test_hgt_conv_out_of_place():
     assert x_dict['paper'].size() == (6, 32)
 
 
-def test_hgt_conv_missing_dst():
+def test_hgt_conv_missing_dst_node_type():
     data = HeteroData()
     data['author'].x = torch.randn(4, 16)
     data['paper'].x = torch.randn(6, 32)
     data['university'].x = torch.randn(10, 32)
 
-    edge_index = coalesce(get_random_edge_index(4, 6, num_edges=20))
-    uni_2_author_e_idx = coalesce(get_random_edge_index(10, 4, num_edges=10))
-
-    data['author', 'paper'].edge_index = edge_index
-    data['paper', 'author'].edge_index = edge_index.flip([0])
-    data['university', 'author'].edge_index = uni_2_author_e_idx
+    data['author', 'paper'].edge_index = get_random_edge_index(4, 6, 20)
+    data['paper', 'author'].edge_index = get_random_edge_index(6, 4, 20)
+    data['university', 'author'].edge_index = get_random_edge_index(10, 4, 10)
 
     conv = HGTConv(-1, 64, data.metadata(), heads=1)
 
-    x_dict, edge_index_dict = data.x_dict, data.edge_index_dict
-    assert x_dict['author'].size() == (4, 16)
-    assert x_dict['paper'].size() == (6, 32)
-    assert x_dict['university'].size() == (10, 32)
-
-    o_dict = conv(x_dict, edge_index_dict)
-
-    assert o_dict['author'].size() == (4, 64)
-    assert o_dict['paper'].size() == (6, 64)
-    assert o_dict['university'] is None
+    out_dict = conv(data.x_dict, data.edge_index_dict)
+    assert out_dict['author'].size() == (4, 64)
+    assert out_dict['paper'].size() == (6, 64)
+    assert out_dict['university'] is None
 
 
 if __name__ == '__main__':
