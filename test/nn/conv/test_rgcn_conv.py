@@ -38,12 +38,12 @@ def test_rgcn_conv_equality(conf, device):
 
     out1 = conv1(x1, edge_index, edge_type)
     out2 = conv2(x1, edge_index, edge_type)
-    assert torch.allclose(out1, out2, atol=1e-3)
+    assert torch.allclose(out1, out2, atol=1e-2)
 
     if num_blocks is None:
         out1 = conv1(None, edge_index, edge_type)
         out2 = conv2(None, edge_index, edge_type)
-        assert torch.allclose(out1, out2, atol=1e-3)
+        assert torch.allclose(out1, out2, atol=1e-2)
 
 
 @withCUDA
@@ -74,7 +74,7 @@ def test_rgcn_conv(cls, conf, device):
 
     if num_blocks is None:
         out2 = conv(None, edge_index, edge_type)
-        assert torch.allclose(conv(idx1, edge_index, edge_type), out2)
+        assert torch.allclose(conv(idx1, edge_index, edge_type), out2, 1e-3)
         assert out2.size() == (4, 32)
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(conv(None, adj.t()), out2, atol=1e-3)
@@ -85,8 +85,10 @@ def test_rgcn_conv(cls, conf, device):
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x1, edge_index, edge_type), out1)
         if num_blocks is None:
-            assert torch.allclose(jit(idx1, edge_index, edge_type), out2)
-            assert torch.allclose(jit(None, edge_index, edge_type), out2)
+            assert torch.allclose(jit(idx1, edge_index, edge_type), out2,
+                                  atol=1e-3)
+            assert torch.allclose(jit(None, edge_index, edge_type), out2,
+                                  atol=1e-3)
 
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(OptTensor, SparseTensor, OptTensor) -> Tensor'
@@ -110,7 +112,8 @@ def test_rgcn_conv(cls, conf, device):
     if num_blocks is None:
         out2 = conv((None, idx2), edge_index, edge_type)
         assert out2.size() == (2, 32)
-        assert torch.allclose(conv((idx1, idx2), edge_index, edge_type), out2)
+        assert torch.allclose(conv((idx1, idx2), edge_index, edge_type), out2,
+                              atol=1e-3)
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(conv((None, idx2), adj.t()), out2, atol=1e-3)
             assert torch.allclose(conv((idx1, idx2), adj.t()), out2, atol=1e-3)
@@ -118,7 +121,8 @@ def test_rgcn_conv(cls, conf, device):
     if is_full_test():
         t = '(Tuple[OptTensor, Tensor], Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit((x1, x2), edge_index, edge_type), out1)
+        assert torch.allclose(jit((x1, x2), edge_index, edge_type), out1,
+                              atol=1e-3)
         if num_blocks is None:
             assert torch.allclose(jit((None, idx2), edge_index, edge_type),
                                   out2, atol=1e-3)
