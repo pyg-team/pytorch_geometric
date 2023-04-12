@@ -10,8 +10,7 @@ from torch_geometric.nn import Node2Vec
 from torch_geometric.typing import WITH_TORCH_CLUSTER
 
 if not WITH_TORCH_CLUSTER:
-    print("This example requires 'torch-cluster'")
-    quit()
+    quit("This example requires 'torch-cluster'")
 
 
 def main():

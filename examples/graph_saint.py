@@ -11,8 +11,8 @@ from torch_geometric.typing import WITH_TORCH_SPARSE
 from torch_geometric.utils import degree
 
 if not WITH_TORCH_SPARSE:
-    print("This example requires 'torch-sparse'")
-    quit()
+    quit("This example requires 'torch-sparse'")
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Flickr')
 dataset = Flickr(path)
 data = dataset[0]

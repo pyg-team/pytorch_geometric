@@ -15,8 +15,7 @@ from torch_geometric.nn import EGConv, global_mean_pool
 from torch_geometric.typing import WITH_TORCH_SPARSE
 
 if not WITH_TORCH_SPARSE:
-    print("This example requires 'torch-sparse'")
-    quit()
+    quit("This example requires 'torch-sparse'")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--use_multi_aggregators', action='store_true',

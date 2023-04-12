@@ -34,6 +34,15 @@ except (ImportError, OSError) as e:
     WITH_TORCH_SCATTER = False
 
 try:
+    import torch_cluster  # noqa
+    WITH_TORCH_CLUSTER = True
+except (ImportError, OSError) as e:
+    if isinstance(e, OSError):
+        warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
+                      f"Disabling its usage. Stacktrace: {e}")
+    WITH_TORCH_CLUSTER = False
+
+try:
     import torch_sparse  # noqa
     from torch_sparse import SparseStorage, SparseTensor
     WITH_TORCH_SPARSE = True
@@ -42,15 +51,6 @@ except (ImportError, OSError) as e:
         warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_SPARSE = False
-
-try:
-    import torch_cluster  # noqa
-    WITH_TORCH_CLUSTER = True
-except (ImportError, OSError) as e:
-    if isinstance(e, OSError):
-        warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
-                      f"Disabling its usage. Stacktrace: {e}")
-    WITH_TORCH_CLUSTER = False
 
     class SparseStorage:
         def __init__(*args, **kwargs):
