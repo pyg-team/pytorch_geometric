@@ -178,6 +178,24 @@ def test_hgt_conv_out_of_place():
     assert x_dict['paper'].size() == (6, 32)
 
 
+def test_hgt_conv_missing_dst_node_type():
+    data = HeteroData()
+    data['author'].x = torch.randn(4, 16)
+    data['paper'].x = torch.randn(6, 32)
+    data['university'].x = torch.randn(10, 32)
+
+    data['author', 'paper'].edge_index = get_random_edge_index(4, 6, 20)
+    data['paper', 'author'].edge_index = get_random_edge_index(6, 4, 20)
+    data['university', 'author'].edge_index = get_random_edge_index(10, 4, 10)
+
+    conv = HGTConv(-1, 64, data.metadata(), heads=1)
+
+    out_dict = conv(data.x_dict, data.edge_index_dict)
+    assert out_dict['author'].size() == (4, 64)
+    assert out_dict['paper'].size() == (6, 64)
+    assert out_dict['university'] is None
+
+
 if __name__ == '__main__':
     import argparse
 

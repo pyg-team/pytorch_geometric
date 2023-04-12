@@ -5,6 +5,7 @@ from torch import Tensor
 from torch.nn import ParameterDict
 
 from torch_geometric.typing import Adj, EdgeType, NodeType, SparseTensor
+from torch_geometric.utils import is_sparse, to_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
 
 
@@ -83,7 +84,7 @@ def construct_bipartite_edge_index(
             dictionary holding edge features for each individual edge type.
             (default: :obj:`None`)
     """
-    is_sparse = False
+    is_sparse_tensor = False
     edge_indices: List[Tensor] = []
     edge_attrs: List[Tensor] = []
     for edge_type, src_offset in src_offset_dict.items():
@@ -91,15 +92,10 @@ def construct_bipartite_edge_index(
         dst_offset = dst_offset_dict[edge_type[-1]]
 
         # TODO Add support for SparseTensor w/o converting.
-        is_sparse = isinstance(edge_index, SparseTensor)
-        is_native_sparse = isinstance(edge_index, Tensor) and 'sparse' in str(
-            edge_index.layout)
-        if is_sparse:
-            col, row, _ = edge_index.coo()
-            edge_index = torch.stack([row, col], dim=0)
-        elif is_native_sparse:
-            edge_index = torch.tensor(
-                edge_index.to_sparse_coo().indices()).flip(0)
+        is_sparse_tensor = isinstance(edge_index, SparseTensor)
+        if is_sparse(edge_index):
+            edge_index, _ = to_edge_index(edge_index)
+            edge_index = edge_index.flip([0])
         else:
             edge_index = edge_index.clone()
 
@@ -122,7 +118,7 @@ def construct_bipartite_edge_index(
     if edge_attr_dict is not None:
         edge_attr = torch.cat(edge_attrs, dim=0)
 
-    if is_sparse:
+    if is_sparse_tensor:
         # TODO Add support for `SparseTensor.sparse_sizes()`.
         edge_index = SparseTensor(
             row=edge_index[1],
