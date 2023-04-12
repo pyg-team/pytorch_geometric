@@ -177,6 +177,7 @@ def test_hgt_conv_out_of_place():
     assert x_dict['author'].size() == (4, 16)
     assert x_dict['paper'].size() == (6, 32)
 
+
 def test_hgt_conv_missing_dst():
     data = HeteroData()
     data['author'].x = torch.randn(4, 16)
@@ -189,7 +190,6 @@ def test_hgt_conv_missing_dst():
     data['author', 'paper'].edge_index = edge_index
     data['paper', 'author'].edge_index = edge_index.flip([0])
     data['university', 'author'].edge_index = uni_2_author_e_idx
-    
 
     conv = HGTConv(-1, 64, data.metadata(), heads=1)
 
