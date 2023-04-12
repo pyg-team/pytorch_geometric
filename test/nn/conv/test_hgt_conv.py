@@ -200,8 +200,8 @@ def test_hgt_conv_missing_dst():
 
     o_dict = conv(x_dict, edge_index_dict)
 
-    assert o_dict['author'].size() == (4, 16)
-    assert o_dict['paper'].size() == (6, 32)
+    assert o_dict['author'].size() == (4, 64)
+    assert o_dict['paper'].size() == (6, 64)
     assert o_dict['university'] is None
 
 
