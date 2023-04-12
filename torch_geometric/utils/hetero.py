@@ -77,7 +77,7 @@ def construct_bipartite_edge_index(
             :class:`torch_sparse.SparseTensor`.
         src_offset_dict (Dict[Tuple[str, str, str], int]): A dictionary of
             offsets to apply to the source node type for each edge type.
-        src_offset_dict (Dict[str, int]): A dictionary of offsets to apply for
+        dst_offset_dict (Dict[str, int]): A dictionary of offsets to apply for
             destination node types.
         edge_attr_dict (Dict[Tuple[str, str, str], torch.Tensor]): A
             dictionary holding edge features for each individual edge type.
@@ -92,9 +92,14 @@ def construct_bipartite_edge_index(
 
         # TODO Add support for SparseTensor w/o converting.
         is_sparse = isinstance(edge_index, SparseTensor)
+        is_native_sparse = isinstance(edge_index, Tensor) and 'sparse' in str(
+            edge_index.layout)
         if is_sparse:
             col, row, _ = edge_index.coo()
             edge_index = torch.stack([row, col], dim=0)
+        elif is_native_sparse:
+            edge_index = torch.tensor(
+                edge_index.to_sparse_coo().indices()).flip(0)
         else:
             edge_index = edge_index.clone()
 

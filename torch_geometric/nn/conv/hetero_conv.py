@@ -1,15 +1,30 @@
 import warnings
 from collections import defaultdict
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import torch
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.conv.hgt_conv import group
 from torch_geometric.nn.module_dict import ModuleDict
 from torch_geometric.typing import Adj, EdgeType, NodeType
 from torch_geometric.utils.hetero import check_add_self_loops
+
+
+def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
+    if len(xs) == 0:
+        return None
+    elif aggr is None:
+        return torch.stack(xs, dim=1)
+    elif len(xs) == 1:
+        return xs[0]
+    elif aggr == "cat":
+        return torch.cat(xs, dim=-1)
+    else:
+        out = torch.stack(xs, dim=0)
+        out = getattr(torch, aggr)(out, dim=0)
+        out = out[0] if isinstance(out, tuple) else out
+        return out
 
 
 class HeteroConv(torch.nn.Module):
