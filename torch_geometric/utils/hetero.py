@@ -95,6 +95,7 @@ def construct_bipartite_edge_index(
         is_sparse_tensor = isinstance(edge_index, SparseTensor)
         if is_sparse(edge_index):
             edge_index, _ = to_edge_index(edge_index)
+            edge_index = edge_index.flip([0])
         else:
             edge_index = edge_index.clone()
 
