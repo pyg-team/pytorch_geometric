@@ -7,10 +7,12 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataListLoader
 from torch_geometric.nn import DataParallel, global_mean_pool
+
 if WITH_TORCH_SPLINE_CONV:
     from torch_geometric.nn import SplineConv
 else:
     from torch_geometric.nn import FeaStConv
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data', 'MNIST')
 dataset = MNISTSuperpixels(path, transform=T.Cartesian()).shuffle()
 loader = DataListLoader(dataset, batch_size=1024, shuffle=True)
@@ -20,7 +22,8 @@ class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
         if WITH_TORCH_SPLINE_CONV:
-            self.conv1 = SplineConv(dataset.num_features, 32, dim=2, kernel_size=5)
+            self.conv1 = SplineConv(dataset.num_features, 32, dim=2,
+                                    kernel_size=5)
             self.conv2 = SplineConv(32, 64, dim=2, kernel_size=5)
         else:
             self.conv1 = FeaStConv(dataset.num_features, 32)

@@ -47,8 +47,9 @@ try:
     WITH_TORCH_SPLINE_CONV = True
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
-        warnings.warn(f"An issue occurred while importing 'torch-spline-conv'. "
-                      f"Disabling its usage. Stacktrace: {e}")
+        warnings.warn(
+            f"An issue occurred while importing 'torch-spline-conv'. "
+            f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_SPLINE_CONV = False
 
 try:

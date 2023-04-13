@@ -8,6 +8,7 @@ from torch_geometric.datasets import MNISTSuperpixels
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import SplineConv, max_pool, max_pool_x, voxel_grid
 from torch_geometric.typing import WITH_TORCH_SPLINE_CONV
+
 if not WITH_TORCH_SPLINE_CONV:
     print(
         "This example requires 'SplineConv' which requires 'torch-spline-conv'"
