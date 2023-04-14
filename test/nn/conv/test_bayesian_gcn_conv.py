@@ -2,7 +2,7 @@ import copy
 
 import torch
 
-from torch_geometric.nn.conv.BayesianGCNConv import BayesianGCNConv
+from torch_geometric.nn.conv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
 
 
@@ -15,7 +15,7 @@ def test_bayesian_conv_norm():
     # adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
     # adj1 = adj2.set_value(None)
     conv = BayesianGCNConv(16, 32)
-    assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
+    assert conv.__repr__() == "BayesianGCNConv(16, 32)"
     out1, kl_out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
 
@@ -41,9 +41,11 @@ def test_static_bayesian_conv():
 
 
 def test_gcn_conv_with_sparse_input_feature():
-    x = torch.sparse_coo_tensor(indices=torch.tensor([[0, 0], [0, 1]]),
-                                values=torch.tensor([1., 1.]),
-                                size=torch.Size([4, 16]))
+    x = torch.sparse_coo_tensor(
+        indices=torch.tensor([[0, 0], [0, 1]]),
+        values=torch.tensor([1.0, 1.0]),
+        size=torch.Size([4, 16]),
+    )
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     conv = BayesianGCNConv(16, 32)
     out, kl = conv(x, edge_index)
@@ -69,7 +71,7 @@ def test_gcn_conv_with_decomposed_layers():
     assert torch.allclose(kl_out1, kl_out2, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        t = "(Tensor, Tensor, OptTensor) -> Tensor"
         jit = torch.jit.script(decomposed_conv.jittable(t))
         assert jit(x, edge_index).tolist() == out1.tolist()
 
@@ -84,7 +86,7 @@ def test_gcn_conv():
     adj2 = torch.randint(0, 4, (2, 6))
 
     conv = BayesianGCNConv(16, 32)
-    assert conv.__repr__() == 'BayesianGCNConv(16, 32)'
+    assert conv.__repr__() == "BayesianGCNConv(16, 32)"
     out1, kl_out1 = conv(x, edge_index)
     assert out1.size() == (4, 32)
     out_1_adj1, kl_adj1 = conv(x, adj1)
@@ -101,12 +103,12 @@ def test_gcn_conv():
     assert torch.allclose(kl_out2, kl_adj2, atol=1e-6)
 
     if is_full_test():
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        t = "(Tensor, Tensor, OptTensor) -> Tensor"
         jit = torch.jit.script(conv.jittable(t))
         assert jit(x, edge_index).tolist() == out1.tolist()
         assert jit(x, edge_index, value).tolist() == out2.tolist()
 
-        t = '(Tensor, Tensor, OptTensor) -> Tensor'
+        t = "(Tensor, Tensor, OptTensor) -> Tensor"
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x, adj1.t()), out1, atol=1e-6)
         assert torch.allclose(jit(x, adj2.t()), out2, atol=1e-6)
