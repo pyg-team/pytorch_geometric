@@ -20,32 +20,27 @@ class BayesianGCNConv(MessagePassing):
     We first proceed wth linear transformation:
 
     .. math::
-        `\mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}`
+        \mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}
 
-    where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
-    Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
-    an unconstrained parameter :math:`\rho`
-    for :math:`\sigma = log(1+exp(\rho))`
-    to avoid non-negative variance.
-    :math:`\mathbf{b}` denotes the bias which is based
-    on the same structure as the weights
+    where :math:`\mathbf{W}^{T}` denotes the weights with a
+    fully factorized Gaussian distributions represented by :math:`\mu` and
+    :math:`\sigma`, with an unconstrained parameter :math:`\rho`
+    for :math:`\sigma = log(1+exp(\rho))` to avoid non-negative variance.
+    :math:`\mathbf{b}` denotes the bias which is based on the same structure
+    as the weights.
     CAUTION: the weights and :obj:`edge_weight` are different parameters,
-    since the :obj:`edge_weight`
-    are initialized to one, they are not considered as a Parameter.
-    NOTE : the weights and bias are initialized with
-    a Gaussian distribution of mean equal to
-    (default: :obj:`0.0`) and a standard deviation of (default: :obj:`0.1`)
+    since the :obj:`edge_weight` are initialized to one,
+    they are not considered as a Parameter.
+    NOTE: the weights and bias are initialized with a Gaussian distribution
+    of mean equal to :obj:`0.0` and a standard deviation of :obj:`1.0`.
 
-
-    Then propagate the message through the
-    graph with a graph convolution operator
-    from the `"Semi-supervised
-    Classification with Graph Convolutional Networks"
-    <https://arxiv.org/abs/1609.02907>`_ paper
+    Then propagate the message through the graph with a graph convolution
+    operator from the `"Semi-supervised Classification with Graph
+    Convolutional Networks" <https://arxiv.org/abs/1609.02907>`_ paper
 
     .. math::
-        `\mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
-        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta}`,
+        \mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
+        \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta},
 
     where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
     adjacency matrix with inserted self-loops and
@@ -56,9 +51,9 @@ class BayesianGCNConv(MessagePassing):
     Its node-wise formulation is given by:
 
     .. math::
-        `\mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
+        \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
         \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
-        \hat{d}_i}} \mathbf{x}_j`
+        \hat{d}_i}} \mathbf{x}_j
 
     with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
     :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
@@ -184,7 +179,7 @@ class BayesianGCNConv(MessagePassing):
         self._cached_adj_t = None
 
     def kl_div(self, mu_q, sigma_q, mu_p, sigma_p):
-        """
+        r"""
         Calculates kl divergence between two gaussians (Q || P)
         Parameters:
              * mu_q: torch.Tensor -> mu parameter of distribution Q
@@ -265,10 +260,9 @@ class BayesianGCNConv(MessagePassing):
 
         if self.mu_bias is not None:
             kl = kl_weight + kl_bias
-            return out, kl
         else:
             kl = kl_weight
-            return out, kl
+        return out, kl
 
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
