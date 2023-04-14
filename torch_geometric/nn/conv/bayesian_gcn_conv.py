@@ -14,56 +14,57 @@ from torch_geometric.utils import spmm
 class BayesianGCNConv(MessagePassing):
     r"""The Bayesian graph convolutional operator
     inspired from the `"Improving model calibration with
-   accuracy versus uncertainty optimization"
-   <https://arxiv.org/abs/2012.07923>`_ paper
-   We first proceed wth linear transformation:
+    accuracy versus uncertainty optimization"
+    <https://arxiv.org/abs/2012.07923>`_ paper
 
-   .. math::
-      `\mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}`
+    We first proceed wth linear transformation:
 
-   where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
-   Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
-   an unconstrained parameter :math:`\rho`
-   for :math:`\sigma = log(1+exp(\rho))`
-   to avoid non-negative variance.
-   :math:`\mathbf{b}` denotes the bias which is based
-   on the same structure as the weights
-   CAUTION: the weights and :obj:`edge_weight` are different parameters,
-   since the :obj:`edge_weight`
-   are initialized to one, they are not considered as a Parameter.
-   NOTE : the weights and bias are initialized with
-   a Gaussian distribution of mean equal to
-   (default: :obj:`0.0`) and a standard deviation of (default: :obj:`0.1`)
+    .. math::
+        `\mathbf{X}^{\prime} = \mathbf{X} \mathbf{W}^{T} +  \mathbf{b}`
+
+    where :math:`\mathbf{W}^{T}` denotes the weights with a fully factorized
+    Gaussian distributions represented by :math:`\mu` and :math:`\sigma`, with
+    an unconstrained parameter :math:`\rho`
+    for :math:`\sigma = log(1+exp(\rho))`
+    to avoid non-negative variance.
+    :math:`\mathbf{b}` denotes the bias which is based
+    on the same structure as the weights
+    CAUTION: the weights and :obj:`edge_weight` are different parameters,
+    since the :obj:`edge_weight`
+    are initialized to one, they are not considered as a Parameter.
+    NOTE : the weights and bias are initialized with
+    a Gaussian distribution of mean equal to
+    (default: :obj:`0.0`) and a standard deviation of (default: :obj:`0.1`)
 
 
-   Then propagate the message through the
-   graph with a graph convolution operator
-   from the `"Semi-supervised
-   Classification with Graph Convolutional Networks"
-   <https://arxiv.org/abs/1609.02907>`_ paper
+    Then propagate the message through the
+    graph with a graph convolution operator
+    from the `"Semi-supervised
+    Classification with Graph Convolutional Networks"
+    <https://arxiv.org/abs/1609.02907>`_ paper
 
-   .. math::
+    .. math::
         `\mathbf{X}^{\prime} = \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
         \mathbf{\hat{D}}^{-1/2} \mathbf{X} \mathbf{\Theta}`,
 
-   where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
-   adjacency matrix with inserted self-loops and
-   :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
-   The adjacency matrix can include other values than :obj:`1` representing
-   edge weights via the optional :obj:`edge_weight` tensor.
+    where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
+    adjacency matrix with inserted self-loops and
+    :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
+    The adjacency matrix can include other values than :obj:`1` representing
+    edge weights via the optional :obj:`edge_weight` tensor.
 
-   Its node-wise formulation is given by:
+    Its node-wise formulation is given by:
 
-   .. math::
+    .. math::
         `\mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
         \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
         \hat{d}_i}} \mathbf{x}_j`
 
-   with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
-   :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
-   node :obj:`i` (default: :obj:`1.0`)
+    with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
+    :math:`e_{j,i}` denotes the edge weight from source node :obj:`j` to target
+    node :obj:`i` (default: :obj:`1.0`)
 
-   Args:
+    Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
@@ -88,35 +89,42 @@ class BayesianGCNConv(MessagePassing):
         normalize (bool, optional): Whether to add self-loops and compute
             symmetric normalization coefficients on the fly.
             (default: :obj:`True`)
-        bias (bool, optional): If set to :obj:`False`,
-        the layer will not learn
+        bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
-   Shapes:
-        - **input:**
-          node features :math:`(|\mathcal{V}|, F_{in})`,
-          edge indices :math:`(2, |\mathcal{E}|)`,
-          edge weights :math:`(|\mathcal{E}|)` *(optional)*
-        - **output:**
-          node features :math:`(|\mathcal{V}|, F_{out})`,
-          Kullback-Leibler divergence for weights and bias (optional):
-          math : `(\mathrm{KL}[q_{\theta}(w)||p(w)])`
-          with variational parameters math:`(\theta = (\mu, \rho))`
-          to make an approximation
-          of the variational posterior
-          math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
-   """
+    Shapes:
+         - **input:**
+           node features :math:`(|\mathcal{V}|, F_{in})`,
+           edge indices :math:`(2, |\mathcal{E}|)`,
+           edge weights :math:`(|\mathcal{E}|)` *(optional)*
+         - **output:**
+           node features :math:`(|\mathcal{V}|, F_{out})`,
+           Kullback-Leibler divergence for weights and bias (optional):
+           math : `(\mathrm{KL}[q_{\theta}(w)||p(w)])`
+           with variational parameters math:`(\theta = (\mu, \rho))`
+           to make an approximation
+           of the variational posterior
+           math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
+    """
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, in_channels: int, out_channels: int, prior_mean=0,
-                 prior_variance=1, posterior_mu_init=0,
-                 posterior_rho_init=-3.0, cached: bool = False,
-                 normalize: bool = False, bias: bool = True, **kwargs):
-
-        kwargs.setdefault('aggr', 'add')
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        prior_mean=0,
+        prior_variance=1,
+        posterior_mu_init=0,
+        posterior_rho_init=-3.0,
+        cached: bool = False,
+        normalize: bool = False,
+        bias: bool = True,
+        **kwargs,
+    ):
+        kwargs.setdefault("aggr", "add")
         super().__init__(**kwargs)
 
         self.in_channels = in_channels
@@ -131,31 +139,33 @@ class BayesianGCNConv(MessagePassing):
         self.mu_weight = Parameter(torch.Tensor(out_channels, in_channels))
         self.rho_weight = Parameter(torch.Tensor(out_channels, in_channels))
 
-        self.register_buffer('eps_weight',
+        self.register_buffer("eps_weight",
                              torch.Tensor(out_channels, in_channels),
                              persistent=False)
-        self.register_buffer('prior_weight_mu',
+        self.register_buffer("prior_weight_mu",
                              torch.Tensor(out_channels, in_channels),
                              persistent=False)
-        self.register_buffer('prior_weight_sigma',
-                             torch.Tensor(out_channels, in_channels),
-                             persistent=False)
+        self.register_buffer(
+            "prior_weight_sigma",
+            torch.Tensor(out_channels, in_channels),
+            persistent=False,
+        )
 
         if bias:
             self.mu_bias = Parameter(torch.Tensor(out_channels))
             self.rho_bias = Parameter(torch.Tensor(out_channels))
-            self.register_buffer('eps_bias', torch.Tensor(out_channels),
+            self.register_buffer("eps_bias", torch.Tensor(out_channels),
                                  persistent=False)
-            self.register_buffer('prior_bias_mu', torch.Tensor(out_channels),
+            self.register_buffer("prior_bias_mu", torch.Tensor(out_channels),
                                  persistent=False)
-            self.register_buffer('prior_bias_sigma',
+            self.register_buffer("prior_bias_sigma",
                                  torch.Tensor(out_channels), persistent=False)
         else:
-            self.register_buffer('prior_bias_mu', None, persistent=False)
-            self.register_buffer('prior_bias_sigma', None, persistent=False)
-            self.register_parameter('mu_bias', None)
-            self.register_parameter('rho_bias', None)
-            self.register_buffer('eps_bias', None, persistent=False)
+            self.register_buffer("prior_bias_mu", None, persistent=False)
+            self.register_buffer("prior_bias_sigma", None, persistent=False)
+            self.register_parameter("mu_bias", None)
+            self.register_parameter("rho_bias", None)
+            self.register_buffer("eps_bias", None, persistent=False)
 
         self.reset_parameters()
 
@@ -183,9 +193,8 @@ class BayesianGCNConv(MessagePassing):
              * sigma_p: float -> sigma parameter of distribution P
         returns torch.Tensor of shape 0
         """
-        kl = torch.log(sigma_p) - torch.log(
-            sigma_q) + (sigma_q**2 + (mu_q - mu_p)**2) / (2 *
-                                                          (sigma_p**2)) - 0.5
+        kl = (torch.log(sigma_p) - torch.log(sigma_q) +
+              (sigma_q**2 + (mu_q - mu_p)**2) / (2 * (sigma_p**2)) - 0.5)
         return kl.mean()
 
     def kl_loss(self):
@@ -205,8 +214,8 @@ class BayesianGCNConv(MessagePassing):
 
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
 
-        weight = self.mu_weight + \
-            (sigma_weight * self.eps_weight.data.normal_())
+        weight = self.mu_weight + (sigma_weight *
+                                   self.eps_weight.data.normal_())
 
         kl_weight = self.kl_div(self.mu_weight, sigma_weight,
                                 self.prior_weight_mu, self.prior_weight_sigma)
@@ -234,8 +243,8 @@ class BayesianGCNConv(MessagePassing):
                     edge_index = cache
 
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
-        weight = self.mu_weight + \
-            (sigma_weight * self.eps_weight.data.normal_())
+        weight = self.mu_weight + (sigma_weight *
+                                   self.eps_weight.data.normal_())
 
         kl_weight = self.kl_div(self.mu_weight, sigma_weight,
                                 self.prior_weight_mu, self.prior_weight_sigma)
