@@ -13,11 +13,13 @@ from torch_geometric.nn import (
     max_pool,
     max_pool_x,
 )
-from torch_geometric.typing import WITH_TORCH_SPLINE_CONV, WITH_TORCH_CLUSTER
+from torch_geometric.typing import WITH_TORCH_CLUSTER, WITH_TORCH_SPLINE_CONV
 from torch_geometric.utils import normalized_cut
 
 if not WITH_TORCH_SPLINE_CONV:
-    quit("This example requires 'SplineConv' which requires 'torch-spline-conv'")
+    quit(
+        "This example requires 'SplineConv' which requires 'torch-spline-conv'"
+    )
 
 if not WITH_TORCH_CLUSTER:
     quit("This example requires 'torch-cluster'")
