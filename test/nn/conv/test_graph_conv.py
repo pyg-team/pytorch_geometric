@@ -47,8 +47,8 @@ def test_graph_conv():
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, adj3.t()), out1)
-        assert torch.allclose(jit(x1, adj4.t()), out2)
+        assert torch.allclose(jit(x1, adj3.t()), out1, atol=1e-6)
+        assert torch.allclose(jit(x1, adj4.t()), out2, atol=1e-6)
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))

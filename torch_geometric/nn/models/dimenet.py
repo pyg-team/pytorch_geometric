@@ -631,6 +631,7 @@ class DimeNet(torch.nn.Module):
         # Use the same random seed as the official DimeNet` implementation.
         random_state = np.random.RandomState(seed=42)
         perm = torch.from_numpy(random_state.permutation(np.arange(130831)))
+        perm = perm.long()
         train_idx = perm[:110000]
         val_idx = perm[110000:120000]
         test_idx = perm[120000:]
@@ -905,6 +906,7 @@ class DimeNetPlusPlus(DimeNet):
 
         random_state = np.random.RandomState(seed=42)
         perm = torch.from_numpy(random_state.permutation(np.arange(130831)))
+        perm = perm.long()
         train_idx = perm[:110000]
         val_idx = perm[110000:120000]
         test_idx = perm[120000:]

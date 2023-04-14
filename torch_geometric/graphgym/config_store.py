@@ -352,6 +352,7 @@ def fill_config_store():
     for cls_name in set(transforms.__all__) - set([
             'BaseTransform',
             'Compose',
+            'ComposeFilters',
             'LinearTransformation',
             'AddMetaPaths',  # TODO
     ]):
