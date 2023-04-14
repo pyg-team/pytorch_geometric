@@ -5,8 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [2.4.0] - 2023-MM-DD
 
-=======
+### Added
 
+- Added `BayesianGCNConv` for prospetive Bayesian Graph Neural Network implementation ([#6596](https://github.com/pyg-team/pytorch_geometric/pull/6596))
 - Extending `torch.sparse` support ([#7155](https://github.com/pyg-team/pytorch_geometric/pull/7155))
 - Added edge weight support to `LightGCN` ([#7157](https://github.com/pyg-team/pytorch_geometric/pull/7157))
 - Added `SparseTensor` support to`trim_to_layer` function ([#7089](https://github.com/pyg-team/pytorch_geometric/pull/7089))
@@ -66,12 +67,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added a `RemoveDuplicatedEdges` transform ([#6709](https://github.com/pyg-team/pytorch_geometric/pull/6709))
 - Added TorchScript support to the `LINKX` model ([#6712](https://github.com/pyg-team/pytorch_geometric/pull/6712))
 - Added `torch.jit` examples for `example/film.py` and `example/gcn.py`([#6602](https://github.com/pyg-team/pytorch_geometric/pull/6692))
-
-- Added `Pad` transform ([#5940](https://github.com/pyg-team/pytorch_geometric/pull/5940), [#6697](https://github.com/pyg-team/pytorch_geometric/pull/6697), [#6731](https://github.com/pyg-team/pytorch_geometric/pull/6731))
-=======
 - Added `Pad` transform ([#5940](https://github.com/pyg-team/pytorch_geometric/pull/5940), [#6697](https://github.com/pyg-team/pytorch_geometric/pull/6697), [#6731](https://github.com/pyg-team/pytorch_geometric/pull/6731), [#6758](https://github.com/pyg-team/pytorch_geometric/pull/6758))
-
-- Added `BayesianGCNConv` for prospetive Bayesian Graph Neural Network implementation ([#6596](https://github.com/pyg-team/pytorch_geometric/pull/6596))
 - Added full batch mode to the inference benchmark ([#6631](https://github.com/pyg-team/pytorch_geometric/pull/6631))
 - Added `cat` aggregation type to the `HeteroConv` class so that features can be concatenated during grouping ([#6634](https://github.com/pyg-team/pytorch_geometric/pull/6634))
 - Added `torch.compile` support and benchmark study ([#6610](https://github.com/pyg-team/pytorch_geometric/pull/6610), [#6952](https://github.com/pyg-team/pytorch_geometric/pull/6952), [#6953](https://github.com/pyg-team/pytorch_geometric/pull/6953), [#6980](https://github.com/pyg-team/pytorch_geometric/pull/6980), [#6983](https://github.com/pyg-team/pytorch_geometric/pull/6983), [#6984](https://github.com/pyg-team/pytorch_geometric/pull/6984), [#6985](https://github.com/pyg-team/pytorch_geometric/pull/6985), [#6986](https://github.com/pyg-team/pytorch_geometric/pull/6986), [#6989](https://github.com/pyg-team/pytorch_geometric/pull/6989), [#7002](https://github.com/pyg-team/pytorch_geometric/pull/7002))
