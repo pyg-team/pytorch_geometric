@@ -2,7 +2,7 @@ Compiled Graph Neural Networks
 ==============================
 
 :meth:`torch.compile` is the latest method to speed up your :pytorch:`PyTorch` code in :obj:`torch >= 2.0.0`!
-:meth:`torch.compile` makes PyTorch code run faster by JIT-compiling it into opimized kernels, all while required minimal code changes.
+:meth:`torch.compile` makes PyTorch code run faster by JIT-compiling it into optimized kernels, all while required minimal code changes.
 
 Under the hood, :meth:`torch.compile` captures :pytorch:`PyTorch` programs via :obj:`TorchDynamo`, canonicalizes over 2,000 :pytorch:`PyTorch` operators via :obj:`PrimTorch`, and finally generates fast code out of it across multiple accelerators and backends via the deep learning compiler :obj:`TorchInductor`.
 
