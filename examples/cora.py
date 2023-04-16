@@ -9,9 +9,7 @@ from torch_geometric.nn import SplineConv
 from torch_geometric.typing import WITH_TORCH_SPLINE_CONV
 
 if not WITH_TORCH_SPLINE_CONV:
-    quit(
-        "This example requires 'SplineConv' which requires 'torch-spline-conv'"
-    )
+    quit("This example requires 'torch-spline-conv'")
 
 dataset = 'Cora'
 transform = T.Compose([
