@@ -333,7 +333,7 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         node_mask_dict: Dict[NodeType, Tensor],
         edge_mask_dict: Dict[EdgeType, Tensor],
     ) -> 'HeteroExplanation':
-        out = copy.deepcopy(self)
+        out = copy.copy(self)
 
         for edge_type, edge_mask in edge_mask_dict.items():
             for key, value in self[edge_type].items():
