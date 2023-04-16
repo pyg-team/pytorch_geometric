@@ -384,7 +384,7 @@ class HeteroDictLinear(torch.nn.Module):
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
             return {key: out for key, out in zip(x_dict.keys(), outs)}
 
-        return {key: lin(x_dict[key]) for key, lin in self.lins.items()}
+        return {key: self.lins[key](x_dict[key]) for key in x_dict.keys()}
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):
