@@ -16,12 +16,13 @@ dataset = PygNodePropPredDataset('ogbn-products', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-products')
 data = dataset[0].to(device)
+
 train_idx = split_idx['train']
 train_loader = NeighborLoader(data, input_nodes=train_idx,
-                              num_neighbors=[15, 10,
-                                             5], batch_size=1024, shuffle=True)
+                              num_neighbors=[15, 10, 5], batch_size=1024,
+                              shuffle=True, num_workers=12)
 subgraph_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[-1],
-                                 batch_size=4096, shuffle=False)
+                                 batch_size=4096, num_workers=12)
 
 
 class SAGE(torch.nn.Module):
@@ -40,12 +41,11 @@ class SAGE(torch.nn.Module):
         for conv in self.convs:
             conv.reset_parameters()
 
-    def forward(self, batch):
-        x, edge_index, batch_size = batch.x, batch.edge_index, batch.batch_size
+    def forward(self, x, edge_index):
         for i, conv in enumerate(self.convs):
             x = conv(x, edge_index)
             if i != self.num_layers - 1:
-                x = F.relu(x)
+                x = x.relu()
                 x = F.dropout(x, p=0.5, training=self.training)
         return x.log_softmax(dim=-1)
 
@@ -56,20 +56,16 @@ class SAGE(torch.nn.Module):
         # Compute representations of nodes layer by layer, using *all*
         # available edges. This leads to faster computation in contrast to
         # immediately computing the final representations of each batch.
-        total_edges = 0
         for i in range(self.num_layers):
             xs = []
             for batch in subgraph_loader:
-                edge_index, batch_size = batch.edge_index, batch.batch_size
-                total_edges += edge_index.size(1)
-                n_id = batch.n_id[batch_size]
-                x = x_all[n_id].to(device)
-                x = self.convs[i](x, edge_index)
+                x = x_all[batch.n_id].to(device)
+                x = self.convs[i](batch.x, batch.edge_index)
                 if i != self.num_layers - 1:
-                    x = F.relu(x)
+                    x = x.relu()
                 xs.append(x.cpu())
 
-                pbar.update(batch_size)
+                pbar.update(batch.batch_size)
 
             x_all = torch.cat(xs, dim=0)
 
@@ -81,9 +77,6 @@ class SAGE(torch.nn.Module):
 model = SAGE(dataset.num_features, 256, dataset.num_classes, num_layers=3)
 model = model.to(device)
 
-x = data.x
-y = data.y.squeeze()
-
 
 def train(epoch):
     model.train()
@@ -94,17 +87,15 @@ def train(epoch):
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        out = model(batch)
-        batch_size = batch.batch_size
-        o = out[:batch_size]
-        y_true = y[batch.n_id[:batch_size]]
-        loss = F.nll_loss(o, y_true)
+        out = model(batch)[:batch.batch_size]
+        y = batch.y[:batch.batch_size].squeeze()
+        loss = F.nll_loss(out, y)
         loss.backward()
         optimizer.step()
 
         total_loss += float(loss)
-        total_correct += int(o.argmax(dim=-1).eq(y_true).sum())
-        pbar.update(batch_size)
+        total_correct += int(out.argmax(dim=-1).eq(y).sum())
+        pbar.update(batch.batch_size)
 
     pbar.close()
 
@@ -118,9 +109,9 @@ def train(epoch):
 def test():
     model.eval()
 
-    out = model.inference(x)
+    out = model.inference(data.x)
 
-    y_true = y.cpu().unsqueeze(-1)
+    y_true = data.y.unsqueeze(-1)
     y_pred = out.argmax(dim=-1, keepdim=True)
 
     train_acc = evaluator.eval({
