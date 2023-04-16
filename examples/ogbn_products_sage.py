@@ -87,7 +87,7 @@ def train(epoch):
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        out = model(batch)[:batch.batch_size]
+        out = model(batch.x, batch.edge_index)[:batch.batch_size]
         y = batch.y[:batch.batch_size].squeeze()
         loss = F.nll_loss(out, y)
         loss.backward()
