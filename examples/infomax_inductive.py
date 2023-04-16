@@ -11,14 +11,12 @@ from torch_geometric.nn import DeepGraphInfomax, SAGEConv
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Reddit')
 dataset = Reddit(path)
-data = dataset[0]
-data.to(device)
-train_loader = NeighborLoader(data, input_nodes=None,
-                              num_neighbors=[10, 10,
-                                             25], batch_size=256, shuffle=True)
-test_loader = NeighborLoader(data, input_nodes=None,
-                             num_neighbors=[10, 10,
-                                            25], batch_size=256, shuffle=False)
+data = dataset[0].to(device, 'x', 'edge_index')
+
+train_loader = NeighborLoader(data, num_neighbors=[10, 10, 25], batch_size=256,
+                              shuffle=True, num_workers=12)
+test_loader = NeighborLoader(data, num_neighbors=[10, 10, 25], batch_size=256,
+                             num_workers=12)
 
 
 class Encoder(nn.Module):
@@ -37,17 +35,15 @@ class Encoder(nn.Module):
             nn.PReLU(hidden_channels)
         ])
 
-    def forward(self, batch):
-        x, edge_index = batch.x, batch.edge_index
+    def forward(self, x, edge_index, batch_size):
         for i, conv in enumerate(self.convs):
             x = conv(x, edge_index)
             x = self.activations[i](x)
-        return x
+        return x[:batch_size]
 
 
-def corruption(batch):
-    batch.x = batch.x[torch.randperm(batch.x.size(0))]
-    return batch
+def corruption(x, edge_index, batch_size):
+    return x[torch.randperm(x.size(0))], edge_index, batch_size
 
 
 model = DeepGraphInfomax(
@@ -58,8 +54,6 @@ model = DeepGraphInfomax(
 model = model.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
-x, y = data.x, data.y
-
 
 def train(epoch):
     model.train()
@@ -67,7 +61,8 @@ def train(epoch):
     total_loss = total_examples = 0
     for batch in tqdm(train_loader, desc=f'Epoch {epoch:02d}'):
         optimizer.zero_grad()
-        pos_z, neg_z, summary = model(batch)
+        pos_z, neg_z, summary = model(batch.x, batch.edge_index,
+                                      batch.batch_size)
         loss = model.loss(pos_z, neg_z, summary)
         loss.backward()
         optimizer.step()
@@ -82,12 +77,13 @@ def test():
     model.eval()
 
     zs = []
-    for i, batch in enumerate(test_loader):
-        zs.append(model(batch)[0])
+    for batch in tqdm(test_loader, desc='Evaluating'):
+        pos_z, _, _ = model(batch.x, batch.edge_index, batch.batch_size)
+        zs.append(pos_z.cpu())
     z = torch.cat(zs, dim=0)
     train_val_mask = data.train_mask | data.val_mask
-    acc = model.test(z[train_val_mask], y[train_val_mask], z[data.test_mask],
-                     y[data.test_mask], max_iter=10000)
+    acc = model.test(z[train_val_mask], data.y[train_val_mask],
+                     z[data.test_mask], data.y[data.test_mask], max_iter=10000)
     return acc
 
 
