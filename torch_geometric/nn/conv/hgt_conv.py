@@ -72,7 +72,6 @@ class HGTConv(MessagePassing):
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
 
-        self.src_types = [key[0] for key in self.edge_types]
         self.dst_node_types = set([key[-1] for key in self.edge_types])
 
         self.kqv_lin = HeteroDictLinear(self.in_channels,
