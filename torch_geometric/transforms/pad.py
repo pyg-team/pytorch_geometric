@@ -259,9 +259,13 @@ class Pad(BaseTransform):
             use for node features. (default: :obj:`0.0`)
         edge_pad_value (int or float or Padding, optional): The fill value to
             use for edge features. (default: :obj:`0.0`)
-            The :obj:`edge_index` tensor is padded with with the index of the
-            first padded node (which represents a set of self-loops on the
-            padded node). (default: :obj:`0.0`)
+            The :obj:`edge_index` tensor is handled separately and its values
+            shouldn't be specified in :obj:`edge_pad_value`. In case
+            of :obj:`all_padding_self_loops` set to :obj:`False`, it's padded
+            with values representing multiple self-loops on the first padding
+            node. In the opposite case, it's padded with values representing
+            a single self-loop on every padding node and a set of edges between
+            the first and second padding node. (default: :obj:`0.0`)
         mask_pad_value (bool, optional): The fill value to use for
             :obj:`train_mask`, :obj:`val_mask` and :obj:`test_mask` attributes
             (default: :obj:`False`).
@@ -273,6 +277,14 @@ class Pad(BaseTransform):
             (default: :obj:`False`)
         exclude_keys ([str], optional): Keys to be removed
             from the input data object. (default: :obj:`None`)
+        all_padding_self_loops (bool, optional): If set to :obj:`True`,
+            transform makes sure there is exactly one self-loop on every
+            padding node. If the :obj:`max_num_edges` limit does not allow for
+            that, an exception is raised. If there are more edges requested
+            than the number of possible self-loops on padding nodes, multiple
+            edges between the first and second padding nodes are created. An
+            exception is raised when there is only one padding node and it's
+            not possible to add such edges. (default: :obj:`False`)
     """
     def __init__(
         self,
@@ -283,6 +295,7 @@ class Pad(BaseTransform):
         mask_pad_value: bool = False,
         add_pad_mask: bool = False,
         exclude_keys: Optional[List[str]] = None,
+        all_padding_self_loops: bool = False,
     ):
         self.max_num_nodes = self._NumNodes(max_num_nodes)
         self.max_num_edges = self._NumEdges(max_num_edges, self.max_num_nodes)
@@ -302,6 +315,7 @@ class Pad(BaseTransform):
 
         self.add_pad_mask = add_pad_mask
         self.exclude_keys = set(exclude_keys or [])
+        self.all_padding_self_loops = all_padding_self_loops
 
     class _IntOrDict(ABC):
         def __init__(self, value):
@@ -411,7 +425,12 @@ class Pad(BaseTransform):
             for store in data.stores:
                 for key in self.exclude_keys:
                     del store[key]
-                self.__pad_edge_store(store, data.__cat_dim__, data.num_nodes)
+                self.__validate_num_edges(data.num_edges,
+                                          self.max_num_edges.get_value())
+                self.__validate_num_nodes(data.num_nodes,
+                                          self.max_num_nodes.get_value())
+                self.__pad_edge_store(store, data.__cat_dim__, data.num_nodes,
+                                      self.max_num_nodes.get_value())
                 self.__pad_node_store(store, data.__cat_dim__)
             data.num_nodes = self.max_num_nodes.get_value()
         else:
@@ -422,15 +441,25 @@ class Pad(BaseTransform):
                 self.edge_pad,
                 (UniformPadding, AttrNamePadding, EdgeTypePadding))
 
+            # Validate number of nodes before padding edges to avoid possible
+            # errors when padding edges with incorrect values and give a clear
+            # error message.
+            for node_type, store in data.node_items():
+                self.__validate_num_nodes(
+                    store.num_nodes, self.max_num_nodes.get_value(node_type))
+
             for edge_type, store in data.edge_items():
                 for key in self.exclude_keys:
                     del store[key]
 
                 src_node_type, _, dst_node_type = edge_type
-                self.__pad_edge_store(store, data.__cat_dim__,
-                                      (data[src_node_type].num_nodes,
-                                       data[dst_node_type].num_nodes),
-                                      edge_type)
+                self.__validate_num_edges(
+                    store.num_edges, self.max_num_edges.get_value(edge_type))
+                self.__pad_edge_store(
+                    store, data.__cat_dim__, (data[src_node_type].num_nodes,
+                                              data[dst_node_type].num_nodes),
+                    (self.max_num_nodes.get_value(src_node_type),
+                     self.max_num_nodes.get_value(dst_node_type)), edge_type)
 
             for node_type, store in data.node_items():
                 for key in self.exclude_keys:
@@ -441,6 +470,20 @@ class Pad(BaseTransform):
 
         return data
 
+    @staticmethod
+    def __validate_num_edges(before: int, after: int) -> None:
+        assert after >= before, \
+            f'The number of edges after padding ({after}) cannot ' \
+            f'be lower than the number of edges in the data object ' \
+            f'({before}).'
+
+    @staticmethod
+    def __validate_num_nodes(before: int, after: int) -> None:
+        assert after >= before, \
+            f'The number of nodes after padding ({after}) cannot ' \
+            f'be lower than the number of nodes in the data object ' \
+            f'({before}).'
+
     def __pad_node_store(self, store: NodeStorage, get_dim_fn: Callable,
                          node_type: Optional[str] = None):
 
@@ -450,10 +493,6 @@ class Pad(BaseTransform):
             return
 
         num_target_nodes = self.max_num_nodes.get_value(node_type)
-        assert num_target_nodes >= store.num_nodes, \
-            f'The number of nodes after padding ({num_target_nodes}) cannot ' \
-            f'be lower than the number of nodes in the data object ' \
-            f'({store.num_nodes}).'
         num_pad_nodes = num_target_nodes - store.num_nodes
 
         if self.add_pad_mask:
@@ -469,7 +508,8 @@ class Pad(BaseTransform):
                                                     pad_value)
 
     def __pad_edge_store(self, store: EdgeStorage, get_dim_fn: Callable,
-                         num_nodes: Union[int, Tuple[int, int]],
+                         num_nodes_before: Union[int, Tuple[int, int]],
+                         num_nodes_after: Union[int, Tuple[int, int]],
                          edge_type: Optional[str] = None):
         attrs_to_pad = set(
             attr for attr in store.keys()
@@ -477,10 +517,6 @@ class Pad(BaseTransform):
         if not attrs_to_pad:
             return
         num_target_edges = self.max_num_edges.get_value(edge_type)
-        assert num_target_edges >= store.num_edges, \
-            f'The number of edges after padding ({num_target_edges}) cannot ' \
-            f'be lower than the number of edges in the data object ' \
-            f'({store.num_edges}).'
         num_pad_edges = num_target_edges - store.num_edges
 
         if self.add_pad_mask:
@@ -488,17 +524,26 @@ class Pad(BaseTransform):
             pad_edge_mask[store.num_edges:] = False
             store.pad_edge_mask = pad_edge_mask
 
-        if isinstance(num_nodes, tuple):
-            src_pad_value, dst_pad_value = num_nodes
-        else:
-            src_pad_value = dst_pad_value = num_nodes
+        is_hetero_data = isinstance(num_nodes_before, tuple)
 
         for attr_name in attrs_to_pad:
             attr = store[attr_name]
             dim = get_dim_fn(attr_name, attr)
             if attr_name == 'edge_index':
-                store[attr_name] = self._pad_edge_index(
-                    attr, num_pad_edges, src_pad_value, dst_pad_value)
+                if not store.is_bipartite():
+                    if is_hetero_data:
+                        num_nodes_before = num_nodes_before[0]
+                        num_nodes_after = num_nodes_after[0]
+                    store[attr_name] = self._pad_edge_index_same_node_types(
+                        attr, num_pad_edges, num_nodes_before, num_nodes_after,
+                        self.all_padding_self_loops)
+                else:
+                    src_num_nodes_before, dst_num_nodes_before = \
+                        num_nodes_before
+                    store[attr_name] = \
+                        self._pad_edge_index_different_node_types(
+                        attr, num_pad_edges, src_num_nodes_before,
+                        dst_num_nodes_before)
             else:
                 pad_value = self.__get_edge_padding(attr_name, edge_type)
                 store[attr_name] = self._pad_tensor_dim(
@@ -515,15 +560,81 @@ class Pad(BaseTransform):
         return F.pad(input, pads, 'constant', pad_value)
 
     @staticmethod
-    def _pad_edge_index(input: torch.Tensor, length: int, src_pad_value: float,
-                        dst_pad_value: float) -> torch.Tensor:
-        r"""Pads the edges :obj:`edge_index` feature with values specified
-        separately for src and dst nodes.
+    def _pad_edge_index_same_node_types(
+        input: torch.Tensor,
+        num_edges_to_add: int,
+        num_nodes_before: int,
+        num_nodes_after: int,
+        all_padding_self_loops: bool,
+    ) -> torch.Tensor:
+        r"""Pads the edges :obj:`edge_index` feature.
+        If :obj:`all_padding_self_loops` is set to :obj:`False`, the new values
+        represent self-loops on the first padding node. If
+        :obj:`all_padding_self_loops` is set to :obj:`True`, the new values
+        represent all the possible self-loops on the padding nodes (an
+        exception is raised if there are not enough padding edges) and
+        possible multiple edges between the first and second padding nodes (if
+        all the self-loops were created and there are padding edges left).
+
+        The method supports :class:`~torch_geometric.data.Data` objects and
+        edge stores of :class:`~torch_geometric.data.HeteroData` objects
+        representing edges between nodes of the same type.
         """
-        pads = [0, length, 0, 0]
-        padded = F.pad(input, pads, 'constant', src_pad_value)
-        if src_pad_value != dst_pad_value:
-            padded[1, input.shape[1]:] = dst_pad_value
+        if not all_padding_self_loops:
+            if num_edges_to_add > 0:
+                pads = [0, num_edges_to_add, 0, 0]
+                input = F.pad(input, pads, 'constant', num_nodes_before)
+            return input
+
+        num_padding_nodes = num_nodes_after - num_nodes_before
+        if num_padding_nodes > num_edges_to_add:
+            raise ValueError(
+                f'In order to create a self-loop for every padding node, '
+                f'the transform would need to create {num_padding_nodes} '
+                f'self-loops but edge limits allow for adding only '
+                f'{num_edges_to_add} edges.')
+
+        # Create a single self-loop for every padding node.
+        num_self_loops = num_padding_nodes
+        loop_nodes = torch.arange(num_nodes_before,
+                                  num_nodes_before + num_self_loops)
+        pad_tensor = torch.stack([loop_nodes, loop_nodes])
+        input = torch.cat([input, pad_tensor], dim=1)
+        num_edges_to_add -= num_self_loops
+
+        if num_edges_to_add == 0:
+            return input
+
+        # There are some edges left to be created, create multiple edges
+        # between the first and second padding nodes.
+        if num_nodes_after - num_nodes_before < 2:
+            raise ValueError(
+                f'In order to create padding edges between two padding nodes, '
+                f'the number of padding nodes must be at least 2, and it is '
+                f'{num_nodes_after - num_nodes_before}.')
+        edges_src = torch.full((num_edges_to_add, ), num_nodes_before)
+        edges_dst = torch.full((num_edges_to_add, ), num_nodes_before + 1)
+        pad_tensor = torch.stack([edges_src, edges_dst])
+        input = torch.cat([input, pad_tensor], dim=1)
+        return input
+
+    @staticmethod
+    def _pad_edge_index_different_node_types(
+        input: torch.Tensor,
+        num_edges_to_add: int,
+        src_num_nodes_before: int,
+        dst_num_nodes_before: int,
+    ) -> torch.Tensor:
+        r"""Pads the edges :obj:`edge_index` feature. New values represent
+        edges only between padding nodes. Supports edge stores of
+        :class:`~torch_geometric.data.HeteroData` objects representing edges
+        between nodes of different types.
+        """
+        if num_edges_to_add > 0:
+            pads = [0, num_edges_to_add, 0, 0]
+            padded = F.pad(input, pads, 'constant', src_num_nodes_before)
+            if src_num_nodes_before != dst_num_nodes_before:
+                padded[1, input.shape[1]:] = dst_num_nodes_before
         return padded
 
     def __repr__(self) -> str:
