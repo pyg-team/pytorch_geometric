@@ -29,11 +29,13 @@ class ClusterData(torch.utils.data.Dataset):
             :obj:`save_dir` directory for faster re-use. (default: :obj:`None`)
         log (bool, optional): If set to :obj:`False`, will not log any
             progress. (default: :obj:`True`)
-        inter_cluster_edges (bool, optional): If set to :obj:`True`, will record
-            inter-cluster edge connection info. (default: :obj:`False`)
+        inter_cluster_edges (bool, optional): If set to :obj:`True`,
+            will record inter-cluster edge connection
+            info. (default: :obj:`False`)
     """
     def __init__(self, data, num_parts: int, recursive: bool = False,
-                 save_dir: Optional[str] = None, log: bool = True, inter_cluster_edges: bool = False):
+                 save_dir: Optional[str] = None, log: bool = True,
+                 inter_cluster_edges: bool = False):
 
         assert data.edge_index is not None
 

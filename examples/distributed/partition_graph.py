@@ -1,19 +1,21 @@
+import argparse
 import os
 import os.path as osp
-import argparse
-import torch
 import pickle
-from torch_geometric.loader import ClusterData
+
+import torch
 from ogb.nodeproppred import PygNodePropPredDataset
 
-def partition_dataset(ogbn_dataset: str,
-                      root_dir: str,
-                      num_partitions: int):
+from torch_geometric.loader import ClusterData
+
+
+def partition_dataset(ogbn_dataset: str, root_dir: str, num_partitions: int):
     save_dir = root_dir + "/partition"
     dataset = PygNodePropPredDataset(ogbn_dataset, root_dir)
     data = dataset[0]
 
-    cluster_data = ClusterData(data, num_parts=num_partitions, log=True, inter_cluster_edges=True)
+    cluster_data = ClusterData(data, num_parts=num_partitions, log=True,
+                               inter_cluster_edges=True)
 
     node_partition_book = torch.zeros(data.num_nodes, dtype=torch.long)
     edge_partition_book = torch.zeros(data.num_edges, dtype=torch.long)
@@ -38,25 +40,29 @@ def partition_dataset(ogbn_dataset: str,
         edge_partition_book[edge_ids] = pid
 
         # save edge feature partition
-        if cluster_data[pid].edge_attr != None:
-            edge_feature_subdir = os.path.join(save_dir, f'part{pid}', 'edge_feat')
+        if cluster_data[pid].edge_attr is not None:
+            edge_feature_subdir = os.path.join(save_dir, f'part{pid}',
+                                               'edge_feat')
             if not os.path.exists(edge_feature_subdir):
                 os.makedirs(edge_feature_subdir)
-            torch.save(cluster_data[pid].edge_attr, os.path.join(edge_feature_subdir, 'feats.pt'))
+            torch.save(cluster_data[pid].edge_attr,
+                       os.path.join(edge_feature_subdir, 'feats.pt'))
 
         # save node feature partition
         node_feature_subdir = os.path.join(save_dir, f'part{pid}', 'node_feat')
         if not os.path.exists(node_feature_subdir):
             os.makedirs(node_feature_subdir)
-        if cluster_data[pid].x != None:
-            torch.save(cluster_data[pid].x, os.path.join(node_feature_subdir, 'feats.pt'))
+        if cluster_data[pid].x is not None:
+            torch.save(cluster_data[pid].x,
+                       os.path.join(node_feature_subdir, 'feats.pt'))
 
         node_partition_book[perm[start_pos:end_pos]] = pid
-        torch.save(perm[start_pos:end_pos], os.path.join(node_feature_subdir, 'ids.pt'))
+        torch.save(perm[start_pos:end_pos],
+                   os.path.join(node_feature_subdir, 'ids.pt'))
 
     # save node/edge partition book
-    torch.save(edge_partition_book, save_dir+"/edge_pb.pt")
-    torch.save(node_partition_book, save_dir+"/node_pb.pt")
+    torch.save(edge_partition_book, save_dir + "/edge_pb.pt")
+    torch.save(node_partition_book, save_dir + "/node_pb.pt")
 
     # save meta info for graph partitions
     meta = {
@@ -68,8 +74,10 @@ def partition_dataset(ogbn_dataset: str,
     with open(os.path.join(save_dir, 'META'), 'wb') as outfile:
         pickle.dump(meta, outfile, pickle.HIGHEST_PROTOCOL)
 
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Arguments for ClusterData Partitioning.")
+    parser = argparse.ArgumentParser(
+        description="Arguments for ClusterData Partitioning.")
     parser.add_argument(
         "--dataset",
         type=str,
@@ -80,7 +88,7 @@ if __name__ == '__main__':
         "--root_dir",
         type=str,
         default='./data/products',
-        help="The root directory (relative path) of input dataset and output partitions.",
+        help="The root directory of input dataset and output partitions.",
     )
     parser.add_argument(
         "--num_partitions",
@@ -89,6 +97,7 @@ if __name__ == '__main__':
         help="Number of partitions",
     )
     args = parser.parse_args()
-    partition_dataset(ogbn_dataset=args.dataset,
-                      root_dir=osp.join(osp.dirname(osp.realpath(__file__)), args.root_dir),
-                      num_partitions=args.num_partitions)
+    partition_dataset(
+        ogbn_dataset=args.dataset,
+        root_dir=osp.join(osp.dirname(osp.realpath(__file__)),
+                          args.root_dir), num_partitions=args.num_partitions)
