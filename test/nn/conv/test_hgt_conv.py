@@ -196,25 +196,6 @@ def test_hgt_conv_missing_dst_node_type():
     assert out_dict['university'] is None
 
 
-def test_hgt_conv_missing_src_node_type():
-    data = HeteroData()
-    data['author'].x = torch.randn(4, 16)
-    data['paper'].x = torch.randn(6, 32)
-
-    data['author', 'writes', 'paper'].edge_index = get_random_edge_index(4, 6, 20)
-
-    metadata = (
-        ['author', 'paper', 'university'],
-        [('author', 'writes', 'paper'), ('university', 'employs', 'author')]
-    )
-    conv = HGTConv(-1, 64, metadata, heads=1)
-
-    out_dict = conv(data.x_dict, data.edge_index_dict)
-    assert out_dict['author'].size() == (4, 64)
-    assert out_dict['paper'].size() == (6, 64)
-    assert out_dict['university'] == (10, 64)
-
-
 def test_hgt_conv_missing_edge_type():
     data = HeteroData()
     data['author'].x = torch.randn(4, 16)

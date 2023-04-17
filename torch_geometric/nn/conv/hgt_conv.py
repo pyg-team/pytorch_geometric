@@ -71,7 +71,7 @@ class HGTConv(MessagePassing):
         self.heads = heads
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
-        self.edge_types_map = {edge_type:i for i,edge_type in enumerate(metadata[1])}
+        self.edge_types_map = {edge_type: i for i, edge_type in enumerate(metadata[1])}
 
         self.dst_node_types = set([key[-1] for key in self.edge_types])
 
@@ -125,7 +125,7 @@ class HGTConv(MessagePassing):
         self,
         k_dict: Dict[str, Tensor],
         v_dict: Dict[str, Tensor],
-        edge_type_dict: Dict[EdgeType, Adj] 
+        edge_index_dict: Dict[EdgeType, Adj]
     ) -> Tuple[Tensor, Tensor, Dict[EdgeType, int]]:
         """Constructs the source node representations."""
         cumsum = 0
@@ -136,8 +136,8 @@ class HGTConv(MessagePassing):
         vs: List[Tensor] = []
         type_list: List[int] = []
         offset: Dict[EdgeType] = {}
-        for edge_type in edge_type_dict.keys():
-            src, _ , _ = edge_type
+        for edge_type in edge_index_dict.keys():
+            src = edge_type[0]
 
             ks.append(k_dict[src].reshape(-1, D))
             vs.append(v_dict[src].reshape(-1, D))
