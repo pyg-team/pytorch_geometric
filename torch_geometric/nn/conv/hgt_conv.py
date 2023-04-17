@@ -71,7 +71,10 @@ class HGTConv(MessagePassing):
         self.heads = heads
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
-        self.edge_types_map = {edge_type: i for i, edge_type in enumerate(metadata[1])}
+        self.edge_types_map = {
+            edge_type: i
+            for i, edge_type in enumerate(metadata[1])
+        }
 
         self.dst_node_types = set([key[-1] for key in self.edge_types])
 
@@ -122,9 +125,7 @@ class HGTConv(MessagePassing):
         return torch.cat(outs, dim=0), offset
 
     def _construct_src_node_feat(
-        self,
-        k_dict: Dict[str, Tensor],
-        v_dict: Dict[str, Tensor],
+        self, k_dict: Dict[str, Tensor], v_dict: Dict[str, Tensor],
         edge_index_dict: Dict[EdgeType, Adj]
     ) -> Tuple[Tensor, Tensor, Dict[EdgeType, int]]:
         """Constructs the source node representations."""
@@ -144,10 +145,11 @@ class HGTConv(MessagePassing):
 
             N = k_dict[src].size(0)
             start_index = self.edge_types_map[edge_type] * H
-            end_index = start_index+H
-            type_vec = torch.arange(start_index, end_index, dtype=torch.long).repeat(N)
+            end_index = start_index + H
+            type_vec = torch.arange(start_index, end_index,
+                                    dtype=torch.long).repeat(N)
             type_list.append(type_vec)
-            
+
             offset[edge_type] = cumsum
             cumsum += N
 
@@ -192,7 +194,8 @@ class HGTConv(MessagePassing):
             v_dict[key] = val[:, 2 * F:].view(-1, H, D)
 
         q, dst_offset = self._cat(q_dict)
-        k, v, src_offset = self._construct_src_node_feat(k_dict, v_dict, edge_index_dict)
+        k, v, src_offset = self._construct_src_node_feat(
+            k_dict, v_dict, edge_index_dict)
 
         edge_index, edge_attr = construct_bipartite_edge_index(
             edge_index_dict, src_offset, dst_offset, edge_attr_dict=self.p_rel)
