@@ -36,6 +36,15 @@ def test_add_self_loops():
                                        [8, 10], [5, 6]]
 
 
+def test_add_self_loops_adds_existing_ones():
+    edge_index = torch.tensor([[0, 1, 2, 2], [1, 0, 2, 1]])
+    data = Data(edge_index=edge_index, num_nodes=3)
+    data = AddSelfLoops()(data)
+    assert data.edge_index.tolist() == [[0, 1, 2, 2, 0, 1, 2],
+                                        [1, 0, 2, 1, 0, 1, 2]]
+    assert data.num_nodes == 3
+
+
 def test_hetero_add_self_loops():
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
