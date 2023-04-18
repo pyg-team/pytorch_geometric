@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Added graph mode sampling option with bidirectional sampling support ([#7199](https://github.com/pyg-team/pytorch_geometric/pull/7199))
+- Added subgraph type sampling option with bidirectional edge support ([#7199](https://github.com/pyg-team/pytorch_geometric/pull/7199), [#7200](https://github.com/pyg-team/pytorch_geometric/pull/7200))
 - Added support for `"any"`-reductions in `scatter` ([#7198](https://github.com/pyg-team/pytorch_geometric/pull/7198))
 - Added manual sampling interface to `NodeLoader` and `LinkLoader` ([#7197](https://github.com/pyg-team/pytorch_geometric/pull/7197))
 - Extending `torch.sparse` support ([#7155](https://github.com/pyg-team/pytorch_geometric/pull/7155))
