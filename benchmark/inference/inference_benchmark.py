@@ -1,4 +1,5 @@
 import argparse
+import warnings
 from collections import defaultdict
 from contextlib import nullcontext
 
@@ -36,6 +37,10 @@ def full_batch_inference(model, data):
 
 def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
+
+    if args.write_csv == 'prof' and not args.profile:
+        warnings.warn("Cannot write profile data to CSV because profiling is "
+                      "disabled")
 
     # cuda device is not suitable for full batch mode
     device = torch.device(
@@ -170,7 +175,8 @@ def run(args: argparse.ArgumentParser):
                         else:
                             cpu_affinity = nullcontext()
                         profile = torch_profile(
-                        ) if args.profile else nullcontext()
+                            args.export_chrome_trace, csv_data,
+                            args.write_csv) if args.profile else nullcontext()
                         itt = emit_itt(
                         ) if args.vtune_profile else nullcontext()
 
@@ -213,7 +219,7 @@ def run(args: argparse.ArgumentParser):
                                         print(f'Mini Batch Test Accuracy: \
                                             {test_acc:.4f}')
 
-                        if args.profile:
+                        if args.profile and args.export_chrome_trace:
                             rename_profile_file(model_name, dataset_name,
                                                 str(batch_size), str(layers),
                                                 str(hidden_channels),
@@ -228,13 +234,26 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
-                        save_benchmark_data(csv_data, batch_size, layers,
-                                            num_neighbors, hidden_channels,
-                                            total_time, model_name,
-                                            dataset_name,
-                                            args.use_sparse_tensor)
+                        num_records = 1
+                        if args.write_csv == 'prof':
+                            # For profiling with PyTorch, we save the top-5
+                            # most time consuming operations. Therefore, the
+                            # same data should be entered for each of them.
+                            num_records = 5
+                        for _ in range(num_records):
+                            save_benchmark_data(
+                                csv_data,
+                                batch_size,
+                                layers,
+                                num_neighbors,
+                                hidden_channels,
+                                total_time,
+                                model_name,
+                                dataset_name,
+                                args.use_sparse_tensor,
+                            )
     if args.write_csv:
-        write_to_csv(csv_data)
+        write_to_csv(csv_data, args.write_csv)
 
 
 if __name__ == '__main__':
@@ -274,5 +293,8 @@ if __name__ == '__main__':
     add('--full-batch', action='store_true', help='Use full batch mode')
     add('--evaluate', action='store_true')
     add('--ckpt_path', type=str, help='Checkpoint path for loading a model')
-    add('--write-csv', action='store_true', help='Write benchmark data to csv')
+    add('--write-csv', choices=[None, 'bench', 'prof'], default=None,
+        help='Write benchmark or PyTorch profile data to CSV')
+    add('--export-chrome-trace', default=True, type=bool,
+        help='Export chrome trace file. Works only with PyTorch profiler')
     run(argparser.parse_args())
