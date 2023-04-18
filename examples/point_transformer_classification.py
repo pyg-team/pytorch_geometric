@@ -3,13 +3,17 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from torch.nn import Linear as Lin
-from torch_cluster import fps, knn_graph
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, PointTransformerConv, global_mean_pool, knn
 from torch_geometric.utils import scatter
+from torch_geometric.typing import WITH_TORCH_CLUSTER
+if WITH_TORCH_CLUSTER:
+    from torch_cluster import fps, knn_graph
+else:
+    quit("This example requires 'torch-cluster'")
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data/ModelNet10')
 pre_transform, transform = T.NormalizeScale(), T.SamplePoints(1024)
