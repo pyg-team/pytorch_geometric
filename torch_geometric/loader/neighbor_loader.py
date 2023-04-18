@@ -133,8 +133,8 @@ class NeighborLoader(NodeLoader):
             representations for the sampled seed nodes.
             If set to :obj:`"bidirectional"`, sampled edges are converted to
             bidirectional edges.
-            If set to :obj:`"induced_subgraph"`, the returned subgraph contains
-            the induced subgraph of all sampled nodes.
+            If set to :obj:`"induced"`, the returned subgraph contains the
+            induced subgraph of all sampled nodes.
             (default: :obj:`"directional"`)
         disjoint (bool, optional): If set to :obj: `True`, each seed node will
             create its own disjoint subgraph.
