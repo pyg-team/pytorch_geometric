@@ -2,6 +2,7 @@ import copy
 import math
 import warnings
 from abc import ABC
+from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
@@ -37,11 +38,11 @@ class DataType(Enum):
                          f"(got '{type(data)}')")
 
 
-class GraphMode(Enum):
-    r"""The graph mode of the returned subgraph."""
+class SubgraphType(Enum):
+    r"""The type of the returned subgraph."""
     directional = 'directional'
     bidirectional = 'bidirectional'
-    induced_subgraph = 'induced_subgraph'
+    induced = 'induced'
 
 
 @dataclass
@@ -209,7 +210,7 @@ class HeteroSamplerOutput(CastMixin):
     node: Dict[NodeType, Tensor]
     row: Dict[EdgeType, Tensor]
     col: Dict[EdgeType, Tensor]
-    edge: Optional[Dict[EdgeType, Tensor]]
+    edge: Dict[EdgeType, OptTensor]
     batch: Optional[Dict[NodeType, Tensor]] = None
     num_sampled_nodes: Optional[Dict[NodeType, List[int]]] = None
     num_sampled_edges: Optional[Dict[EdgeType, List[int]]] = None
@@ -223,7 +224,9 @@ class HeteroSamplerOutput(CastMixin):
         out = copy.copy(self)
         out.row = copy.copy(self.row)
         out.col = copy.copy(self.col)
+        out.edge = copy.copy(self.edge)
 
+        src_dst_dict = defaultdict(list)
         edge_types = self.row.keys()
         edge_types = [k for k in edge_types if not k[1].startswith('rev_')]
         for edge_type in edge_types:
@@ -237,6 +240,8 @@ class HeteroSamplerOutput(CastMixin):
                     rev_row=self.row[edge_type],
                     rev_col=self.col[edge_type],
                 )
+                out.edge[edge_type] = None
+
             elif rev_edge_type in self.row:
                 out.row[edge_type], out.col[edge_type], _ = to_bidirectional(
                     row=self.row[edge_type],
@@ -244,14 +249,34 @@ class HeteroSamplerOutput(CastMixin):
                     rev_row=self.row[rev_edge_type],
                     rev_col=self.col[rev_edge_type],
                 )
+                out.edge[edge_type] = None
                 out.row[rev_edge_type] = out.col[edge_type]
                 out.col[rev_edge_type] = out.row[edge_type]
-            else:
-                warnings.warn(f"Cannot convert to bidirectional graph since "
-                              f"the edge type {edge_type} does not seem to "
-                              f"have a reverse edge type")
+                out.edge[rev_edge_type] = None
 
-        out.edge = None
+            else:  # Find the reverse edge type (if it is unique):
+                if len(src_dst_dict) == 0:  # Create mapping lazily.
+                    for key in self.row.keys():
+                        v1, _, v2 = key
+                        src_dst_dict[(v1, v2)].append(key)
+
+                if len(src_dst_dict[(dst, src)]) == 1:
+                    rev_edge_type = src_dst_dict[(dst, src)][0]
+                    row, col, _ = to_bidirectional(
+                        row=self.row[edge_type],
+                        col=self.col[edge_type],
+                        rev_row=self.row[rev_edge_type],
+                        rev_col=self.col[rev_edge_type],
+                    )
+                    out.row[edge_type] = row
+                    out.col[edge_type] = col
+                    out.edge[edge_type] = None
+
+                else:
+                    warnings.warn(f"Cannot convert to bidirectional graph "
+                                  f"since the edge type {edge_type} does not "
+                                  f"seem to have a reverse edge type")
+
         out.num_sampled_edges = None
 
         return out

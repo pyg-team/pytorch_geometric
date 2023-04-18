@@ -103,7 +103,7 @@ def test_heterogeneous_to_bidirectional():
             ('v2', 'rev_to', 'v1'): edge_index2[1],
             ('v1', 'to', 'v1'): edge_index3[1],
         },
-        edge=None,
+        edge={},
     ).to_bidirectional()
 
     assert torch.equal(

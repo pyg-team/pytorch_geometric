@@ -19,9 +19,11 @@ from torch_geometric.testing import (
 )
 from torch_geometric.typing import WITH_PYG_LIB
 from torch_geometric.utils import (
-    k_hop_subgraph,
+    is_undirected,
+    sort_edge_index,
     to_torch_csc_tensor,
     to_torch_csr_tensor,
+    to_undirected,
 )
 
 
@@ -34,10 +36,10 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 @pytest.mark.parametrize('filter_per_worker', [True, False])
-def test_homo_neighbor_loader_basic(directed, dtype, filter_per_worker):
+def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
     if dtype != torch.int64 and not WITH_PYG_LIB:
         return
 
@@ -53,7 +55,7 @@ def test_homo_neighbor_loader_basic(directed, dtype, filter_per_worker):
         data,
         num_neighbors=[5] * 2,
         batch_size=20,
-        directed=directed,
+        subgraph_type=subgraph_type,
         filter_per_worker=filter_per_worker,
     )
 
@@ -66,34 +68,35 @@ def test_homo_neighbor_loader_basic(directed, dtype, filter_per_worker):
 
     for i, batch in enumerate(loader):
         assert isinstance(batch, Data)
-        assert len(batch) == 9 if WITH_PYG_LIB else 7
         assert batch.x.size(0) <= 100
         assert batch.n_id.size() == (batch.num_nodes, )
-        assert batch.e_id.size() == (batch.num_edges, )
         assert batch.input_id.numel() == batch.batch_size == 20
         assert batch.x.min() >= 0 and batch.x.max() < 100
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
-        assert batch.edge_attr.min() >= 0
-        assert batch.edge_attr.max() < 500
 
         # Input nodes are always sampled first:
         assert torch.equal(
             batch.x[:batch.batch_size],
             torch.arange(i * batch.batch_size, (i + 1) * batch.batch_size))
 
-        assert is_subset(
-            batch.edge_index.to(torch.int64),
-            data.edge_index.to(torch.int64),
-            batch.x,
-            batch.x,
-        )
+        if subgraph_type == 'directional':
+            assert batch.e_id.size() == (batch.num_edges, )
+            assert batch.edge_attr.min() >= 0
+            assert batch.edge_attr.max() < 500
+
+            assert is_subset(
+                batch.edge_index.to(torch.int64),
+                data.edge_index.to(torch.int64),
+                batch.x,
+                batch.x,
+            )
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-def test_hetero_neighbor_loader_basic(directed, dtype):
+def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
     if dtype != torch.int64 and not WITH_PYG_LIB:
         return
 
@@ -117,8 +120,6 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
     r1, c1 = data['paper', 'paper'].edge_index
     r2, c2 = data['paper', 'author'].edge_index + torch.tensor([[0], [100]])
     r3, c3 = data['author', 'paper'].edge_index + torch.tensor([[100], [0]])
-    mat = torch.full((300, 300), fill_value=-1, dtype=torch.long)
-    mat[torch.cat([r1, r2, r3]), torch.cat([c1, c2, c3])] = torch.arange(2500)
 
     batch_size = 20
 
@@ -132,7 +133,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
             },
             input_nodes='paper',
             batch_size=batch_size,
-            directed=directed,
+            subgraph_type=subgraph_type,
         )
         next(iter(loader))
 
@@ -141,7 +142,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
         num_neighbors=[10] * 2,
         input_nodes='paper',
         batch_size=batch_size,
-        directed=directed,
+        subgraph_type=subgraph_type,
     )
 
     assert str(loader) == 'NeighborLoader()'
@@ -170,110 +171,103 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
                                          ('paper', 'to', 'author'),
                                          ('author', 'to', 'paper')}
 
-        assert len(batch['paper', 'paper']) == 4 if WITH_PYG_LIB else 3
-        num_edges = batch['paper', 'paper'].num_edges
-        assert batch['paper', 'paper'].e_id.size() == (num_edges, )
         row, col = batch['paper', 'paper'].edge_index
-        value = batch['paper', 'paper'].edge_attr
         assert row.min() >= 0 and row.max() < batch['paper'].num_nodes
         assert col.min() >= 0 and col.max() < batch['paper'].num_nodes
-        assert value.min() >= 0 and value.max() < 500
-        if not directed:
-            adj = mat[batch['paper'].x][:, batch['paper'].x]
-            full_row, full_col = (adj >= 0).nonzero().t()
-            full_value = adj[adj >= 0]
-            assert full_value.size(0) == row.size(0)
-            assert torch.equal(row.unique(), full_row.unique())
-            assert torch.equal(col.unique(), full_col.unique())
-            assert torch.equal(value.unique(), full_value().unique())
 
-        assert is_subset(
-            batch['paper', 'paper'].edge_index.to(torch.int64),
-            data['paper', 'paper'].edge_index.to(torch.int64),
-            batch['paper'].x,
-            batch['paper'].x,
-        )
+        if subgraph_type != 'bidirectional':
+            assert batch['paper', 'paper'].e_id.size() == (row.numel(), )
+            value = batch['paper', 'paper'].edge_attr
+            assert value.min() >= 0 and value.max() < 500
 
-        assert len(batch['paper', 'author']) == 4 if WITH_PYG_LIB else 3
-        num_edges = batch['paper', 'author'].num_edges
-        assert batch['paper', 'author'].e_id.size() == (num_edges, )
+            assert is_subset(
+                batch['paper', 'paper'].edge_index.to(torch.int64),
+                data['paper', 'paper'].edge_index.to(torch.int64),
+                batch['paper'].x,
+                batch['paper'].x,
+            )
+        elif subgraph_type != 'directional':
+            assert 'e_id' not in batch['paper', 'paper']
+            assert 'edge_attr' not in batch['paper', 'paper']
+
+            assert is_undirected(batch['paper', 'paper'].edge_index)
+
         row, col = batch['paper', 'author'].edge_index
-        value = batch['paper', 'author'].edge_attr
         assert row.min() >= 0 and row.max() < batch['paper'].num_nodes
         assert col.min() >= 0 and col.max() < batch['author'].num_nodes
-        assert value.min() >= 500 and value.max() < 1500
-        if not directed:
-            adj = mat[batch['paper'].x][:, batch['author'].x]
-            full_row, full_col = (adj >= 0).nonzero().t()
-            full_value = adj[adj >= 0]
-            assert full_value.size(0) == row.size(0)
-            assert torch.equal(row.unique(), full_row.unique())
-            assert torch.equal(col.unique(), full_col.unique())
-            assert torch.equal(value.unique(), full_value().unique())
 
-        assert is_subset(
-            batch['paper', 'author'].edge_index.to(torch.int64),
-            data['paper', 'author'].edge_index.to(torch.int64),
-            batch['paper'].x,
-            batch['author'].x - 100,
-        )
+        if subgraph_type != 'bidirectional':
+            assert batch['paper', 'author'].e_id.size() == (row.numel(), )
+            value = batch['paper', 'author'].edge_attr
+            assert value.min() >= 500 and value.max() < 1500
 
-        assert len(batch['author', 'paper']) == 4 if WITH_PYG_LIB else 3
-        num_edges = batch['author', 'paper'].num_edges
-        assert batch['author', 'paper'].e_id.size() == (num_edges, )
+            assert is_subset(
+                batch['paper', 'author'].edge_index.to(torch.int64),
+                data['paper', 'author'].edge_index.to(torch.int64),
+                batch['paper'].x,
+                batch['author'].x - 100,
+            )
+        elif subgraph_type != 'directional':
+            assert 'e_id' not in batch['paper', 'author']
+            assert 'edge_attr' not in batch['paper', 'author']
+
+            assert torch.equal(
+                batch['paper', 'author'].edge_index,
+                sort_edge_index(batch['author', 'paper'].edge_index.flip([0])),
+            )
+
         row, col = batch['author', 'paper'].edge_index
-        value = batch['author', 'paper'].edge_attr
         assert row.min() >= 0 and row.max() < batch['author'].num_nodes
         assert col.min() >= 0 and col.max() < batch['paper'].num_nodes
-        assert value.min() >= 1500 and value.max() < 2500
-        if not directed:
-            adj = mat[batch['author'].x][:, batch['paper'].x]
-            full_row, full_col = (adj >= 0).nonzero().t()
-            full_value = adj[adj >= 0]
-            assert full_value.size(0) == row.size(0)
-            assert torch.equal(row.unique(), full_row.unique())
-            assert torch.equal(col.unique(), full_col.unique())
-            assert torch.equal(value.unique(), full_value().unique())
 
-        assert is_subset(
-            batch['author', 'paper'].edge_index.to(torch.int64),
-            data['author', 'paper'].edge_index.to(torch.int64),
-            batch['author'].x - 100,
-            batch['paper'].x,
-        )
+        if subgraph_type != 'bidirectional':
+            assert batch['author', 'paper'].e_id.size() == (row.numel(), )
+            value = batch['author', 'paper'].edge_attr
+            assert value.min() >= 1500 and value.max() < 2500
+
+            assert is_subset(
+                batch['author', 'paper'].edge_index.to(torch.int64),
+                data['author', 'paper'].edge_index.to(torch.int64),
+                batch['author'].x - 100,
+                batch['paper'].x,
+            )
+        elif subgraph_type != 'directional':
+            assert 'e_id' not in batch['author', 'paper']
+            assert 'edge_attr' not in batch['author', 'paper']
+
+            assert torch.equal(
+                batch['author', 'paper'].edge_index,
+                sort_edge_index(batch['paper', 'author'].edge_index.flip([0])),
+            )
 
         # Test for isolated nodes (there shouldn't exist any):
-        n_id = torch.cat([batch['paper'].x, batch['author'].x])
-        adj = mat[n_id][:, n_id]
-        row, col = (adj >= 0).nonzero().t()
-        assert torch.cat([row, col]).unique().numel() == n_id.numel()
+        assert not batch.has_isolated_nodes()
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_homo_neighbor_loader_on_cora(get_dataset, directed):
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
-    data.n_id = torch.arange(data.num_nodes)
-    data.edge_weight = torch.rand(data.num_edges)
+
+    mask = data.edge_index[0] < data.edge_index[1]
+    edge_index = data.edge_index[:, mask]
+    edge_weight = torch.rand(edge_index.size(1))
+    data.edge_index, data.edge_weight = to_undirected(edge_index, edge_weight)
 
     split_idx = torch.arange(5, 8)
 
-    loader = NeighborLoader(data, num_neighbors=[-1, -1],
-                            batch_size=split_idx.numel(),
-                            input_nodes=split_idx, directed=directed)
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1, -1],
+        batch_size=split_idx.numel(),
+        input_nodes=split_idx,
+        subgraph_type=subgraph_type,
+    )
     assert len(loader) == 1
 
     batch = next(iter(loader))
     batch_size = batch.batch_size
-
-    if not directed:
-        n_id, _, _, e_mask = k_hop_subgraph(split_idx, num_hops=2,
-                                            edge_index=data.edge_index,
-                                            num_nodes=data.num_nodes)
-
-        assert n_id.sort()[0].tolist() == batch.n_id.sort()[0].tolist()
-        assert batch.num_edges == int(e_mask.sum())
 
     class GNN(torch.nn.Module):
         def __init__(self, in_channels, hidden_channels, out_channels):
@@ -283,7 +277,7 @@ def test_homo_neighbor_loader_on_cora(get_dataset, directed):
 
         def forward(self, x, edge_index, edge_weight):
             x = self.conv1(x, edge_index, edge_weight).relu()
-            x = self.conv2(x, edge_index, edge_weight).relu()
+            x = self.conv2(x, edge_index, edge_weight)
             return x
 
     model = GNN(dataset.num_features, 16, dataset.num_classes)
@@ -294,37 +288,28 @@ def test_homo_neighbor_loader_on_cora(get_dataset, directed):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_hetero_neighbor_loader_on_cora(get_dataset, directed):
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
-    data.edge_weight = torch.rand(data.num_edges)
 
     hetero_data = HeteroData()
     hetero_data['paper'].x = data.x
-    hetero_data['paper'].n_id = torch.arange(data.num_nodes)
     hetero_data['paper', 'paper'].edge_index = data.edge_index
-    hetero_data['paper', 'paper'].edge_weight = data.edge_weight
 
     split_idx = torch.arange(5, 8)
 
-    loader = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
-                            batch_size=split_idx.numel(),
-                            input_nodes=('paper', split_idx),
-                            directed=directed)
+    loader = NeighborLoader(
+        hetero_data,
+        num_neighbors=[-1, -1],
+        batch_size=split_idx.numel(),
+        input_nodes=('paper', split_idx),
+        subgraph_type=subgraph_type,
+    )
     assert len(loader) == 1
 
     hetero_batch = next(iter(loader))
     batch_size = hetero_batch['paper'].batch_size
-
-    if not directed:
-        n_id, _, _, e_mask = k_hop_subgraph(split_idx, num_hops=2,
-                                            edge_index=data.edge_index,
-                                            num_nodes=data.num_nodes)
-
-        n_id = n_id.sort()[0]
-        assert n_id.tolist() == hetero_batch['paper'].n_id.sort()[0].tolist()
-        assert hetero_batch['paper', 'paper'].num_edges == int(e_mask.sum())
 
     class GNN(torch.nn.Module):
         def __init__(self, in_channels, hidden_channels, out_channels):
@@ -332,17 +317,17 @@ def test_hetero_neighbor_loader_on_cora(get_dataset, directed):
             self.conv1 = GraphConv(in_channels, hidden_channels)
             self.conv2 = GraphConv(hidden_channels, out_channels)
 
-        def forward(self, x, edge_index, edge_weight):
-            x = self.conv1(x, edge_index, edge_weight).relu()
-            x = self.conv2(x, edge_index, edge_weight).relu()
+        def forward(self, x, edge_index):
+            x = self.conv1(x, edge_index).relu()
+            x = self.conv2(x, edge_index)
             return x
 
     model = GNN(dataset.num_features, 16, dataset.num_classes)
     hetero_model = to_hetero(model, hetero_data.metadata())
 
-    out1 = model(data.x, data.edge_index, data.edge_weight)[split_idx]
-    out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
-                        hetero_batch.edge_weight_dict)['paper'][:batch_size]
+    out1 = model(data.x, data.edge_index)[split_idx]
+    out2 = hetero_model(hetero_batch.x_dict,
+                        hetero_batch.edge_index_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
