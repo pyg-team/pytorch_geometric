@@ -36,7 +36,8 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 @onlyNeighborSampler
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-def test_homo_neighbor_loader_basic(directed, dtype):
+@pytest.mark.parametrize('filter_per_worker', [True, False])
+def test_homo_neighbor_loader_basic(directed, dtype, filter_per_worker):
     if dtype != torch.int64 and not WITH_PYG_LIB:
         return
 
@@ -48,11 +49,20 @@ def test_homo_neighbor_loader_basic(directed, dtype):
     data.edge_index = get_random_edge_index(100, 100, 500, dtype)
     data.edge_attr = torch.arange(500)
 
-    loader = NeighborLoader(data, num_neighbors=[5] * 2, batch_size=20,
-                            directed=directed)
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[5] * 2,
+        batch_size=20,
+        directed=directed,
+        filter_per_worker=filter_per_worker,
+    )
 
     assert str(loader) == 'NeighborLoader()'
     assert len(loader) == 5
+
+    batch = loader([0])
+    assert isinstance(batch, Data)
+    assert batch.n_id[:1].tolist() == [0]
 
     for i, batch in enumerate(loader):
         assert isinstance(batch, Data)

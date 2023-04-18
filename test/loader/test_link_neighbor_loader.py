@@ -19,7 +19,9 @@ def unique_edge_pairs(edge_index):
 @onlyNeighborSampler
 @pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
-def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio):
+@pytest.mark.parametrize('filter_per_worker', [True, False])
+def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio,
+                                         filter_per_worker):
     pos_edge_index = get_random_edge_index(100, 50, 500)
     neg_edge_index = get_random_edge_index(100, 50, 500)
     neg_edge_index[1, :] += 50
@@ -42,10 +44,16 @@ def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio):
         directed=directed,
         neg_sampling_ratio=neg_sampling_ratio,
         shuffle=True,
+        filter_per_worker=filter_per_worker,
     )
 
     assert str(loader) == 'LinkNeighborLoader()'
     assert len(loader) == 1000 / 20
+
+    batch = loader([0])
+    assert isinstance(batch, Data)
+    assert int(edge_label_index[0, 0]) in batch.n_id.tolist()
+    assert int(edge_label_index[1, 0]) in batch.n_id.tolist()
 
     for batch in loader:
         assert isinstance(batch, Data)
