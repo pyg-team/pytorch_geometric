@@ -253,7 +253,7 @@ def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
 
     mask = data.edge_index[0] < data.edge_index[1]
     edge_index = data.edge_index[:, mask]
-    edge_weight = (torch.rand(data.num_edges) > 0).float()
+    edge_weight = torch.rand(edge_index.size(1))
     data.edge_index, data.edge_weight = to_undirected(edge_index, edge_weight)
 
     split_idx = torch.arange(5, 8)

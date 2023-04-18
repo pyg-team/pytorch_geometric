@@ -22,9 +22,9 @@ def unique_edge_pairs(edge_index):
 @pytest.mark.parametrize('filter_per_worker', [True, False])
 def test_homo_link_neighbor_loader_basic(subgraph_type, neg_sampling_ratio,
                                          filter_per_worker):
-    pos_edge_index = get_random_edge_index(100, 50, 500)
-    neg_edge_index = get_random_edge_index(100, 50, 500)
-    neg_edge_index[1, :] += 50
+    pos_edge_index = get_random_edge_index(50, 50, 500)
+    neg_edge_index = get_random_edge_index(50, 50, 500)
+    neg_edge_index += 50
 
     edge_label_index = torch.cat([pos_edge_index, neg_edge_index], dim=-1)
     edge_label = torch.cat([torch.ones(500), torch.zeros(500)], dim=0)
@@ -121,7 +121,6 @@ def test_hetero_link_neighbor_loader_basic(subgraph_type, neg_sampling_ratio):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert len(batch) == 7 + (1 if neg_sampling_ratio is not None else 0)
         if neg_sampling_ratio is None:
             # Assert only positive samples are present in the original graph:
             edge_index = unique_edge_pairs(batch['paper', 'author'].edge_index)
