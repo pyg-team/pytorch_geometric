@@ -86,7 +86,8 @@ full = [
     "pytorch-memlab",
     "pgmpy",
     "opt_einsum",
-    "statsmodels"
+    "statsmodels",
+    "rdkit",
 ]
 
 [project.urls]

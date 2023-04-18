@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Allow missing node types in `HeteroDictLinear` ([#7185](https://github.com/pyg-team/pytorch_geometric/pull/7185))
 - Optimized `from_networkx` memory footprint by reducing unnecessary copies ([#7119](https://github.com/pyg-team/pytorch_geometric/pull/7119))
 - Added an optional `batch_size` argument to `LayerNorm`, `GraphNorm`, `InstanceNorm`, `GraphSizeNorm` and `PairNorm` ([#7135](https://github.com/pyg-team/pytorch_geometric/pull/7135))
-- Improved code coverage ([#7093](https://github.com/pyg-team/pytorch_geometric/pull/7093))
+- Improved code coverage ([#7093](https://github.com/pyg-team/pytorch_geometric/pull/7093), [#7195](https://github.com/pyg-team/pytorch_geometric/pull/7195))
 - Fix `numpy` incompatiblity when reading files for `Planetoid` datasets ([#7141](https://github.com/pyg-team/pytorch_geometric/pull/7141))
 - Added support for `Data.num_edges` for native `torch.sparse.Tensor` adjacency matrices ([#7104](https://github.com/pyg-team/pytorch_geometric/pull/7104))
 - Fixed crash of heterogeneous data loaders if node or edge types are missing ([#7060](https://github.com/pyg-team/pytorch_geometric/pull/7060), [#7087](https://github.com/pyg-team/pytorch_geometric/pull/7087))
