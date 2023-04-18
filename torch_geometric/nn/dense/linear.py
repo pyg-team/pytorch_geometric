@@ -383,6 +383,8 @@ class HeteroDictLinear(torch.nn.Module):
             x_dict (Dict[Any, torch.Tensor]): A dictionary holding input
                 features for each individual type.
         """
+        out_dict = {}
+
         if torch_geometric.typing.WITH_GMM:
             xs = [x_dict[key] for key in x_dict.keys()]
             weights = [
@@ -395,14 +397,16 @@ class HeteroDictLinear(torch.nn.Module):
                 ]
             else:
                 biases = None
-
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
-            return {key: out for key, out in zip(x_dict.keys(), outs)}
+            for key, out in zip(self.lins.keys(), outs):
+                if key in x_dict:
+                    out_dict[key] = out
+        else:
+            for key, lin in self.lins.items():
+                if key in x_dict:
+                    out_dict[key] = lin(x_dict[key])
 
-        return {
-            key: self.lins[self.get_key(key)](x)
-            for key, x in x_dict.items()
-        }
+        return out_dict
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):

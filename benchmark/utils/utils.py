@@ -141,16 +141,22 @@ def save_benchmark_data(csv_data, batch_size, layers, num_neighbors,
     csv_data['SPARSE'].append(use_sparse_tensor)
 
 
-def write_to_csv(csv_data, training=False):
+def write_to_csv(csv_data, write_csv='bench', training=False):
     import pandas as pd
     results_path = osp.join(osp.dirname(osp.realpath(__file__)), '../results/')
     os.makedirs(results_path, exist_ok=True)
 
     name = 'training' if training else 'inference'
-    csv_path = osp.join(results_path, f'TOTAL_{name}_benchmark.csv')
+    if write_csv == 'bench':
+        csv_file_name = f'TOTAL_{name}_benchmark.csv'
+    else:
+        csv_file_name = f'TOTAL_prof_{name}_benchmark.csv'
+    csv_path = osp.join(results_path, csv_file_name)
+    index_label = 'TEST_ID' if write_csv == 'bench' else 'ID'
+
     with_header = not osp.exists(csv_path)
     df = pd.DataFrame(csv_data)
-    df.to_csv(csv_path, mode='a', index_label='TEST_ID', header=with_header)
+    df.to_csv(csv_path, mode='a', index_label=index_label, header=with_header)
 
 
 @torch.no_grad()
