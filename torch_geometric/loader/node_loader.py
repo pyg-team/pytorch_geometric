@@ -110,6 +110,16 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         iterator = range(input_nodes.size(0))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
+    def __call__(
+        self,
+        index: Union[Tensor, List[int]],
+    ) -> Union[Data, HeteroData]:
+        r"""Samples a subgraph from a batch of input nodes."""
+        out = self.collate_fn(index)
+        if not self.filter_per_worker:
+            out = self.filter_fn(out)
+        return out
+
     def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
         r"""Samples a subgraph from a batch of input nodes."""
         input_data: NodeSamplerInput = self.input_data[index]
