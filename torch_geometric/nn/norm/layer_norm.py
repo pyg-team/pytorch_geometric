@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -62,13 +64,16 @@ class LayerNorm(torch.nn.Module):
         ones(self.weight)
         zeros(self.bias)
 
-    def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
+    def forward(self, x: Tensor, batch: OptTensor = None,
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example. (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         if self.mode == 'graph':
             if batch is None:
@@ -76,7 +81,8 @@ class LayerNorm(torch.nn.Module):
                 out = x / (x.std(unbiased=False) + self.eps)
 
             else:
-                batch_size = int(batch.max()) + 1
+                if batch_size is None:
+                    batch_size = int(batch.max()) + 1
 
                 norm = degree(batch, batch_size, dtype=x.dtype).clamp_(min=1)
                 norm = norm.mul_(x.size(-1)).view(-1, 1)
