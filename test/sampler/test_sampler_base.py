@@ -1,6 +1,13 @@
 import pytest
+import torch
 
-from torch_geometric.sampler.base import NumNeighbors
+from torch_geometric.sampler.base import (
+    HeteroSamplerOutput,
+    NumNeighbors,
+    SamplerOutput,
+)
+from torch_geometric.testing import get_random_edge_index
+from torch_geometric.utils import is_undirected
 
 
 def test_homogeneous_num_neighbors():
@@ -61,3 +68,51 @@ def test_heterogeneous_num_neighbors_empty_dict():
     assert values == {'A__to__B': [25, 10], 'B__to__A': [25, 10]}
 
     assert num_neighbors.num_hops == 2
+
+
+def test_homogeneous_to_bidirectional():
+    edge_index = get_random_edge_index(10, 10, num_edges=20)
+
+    obj = SamplerOutput(
+        node=torch.arange(10),
+        row=edge_index[0],
+        col=edge_index[0],
+        edge=torch.arange(edge_index.size(1)),
+    ).to_bidirectional()
+
+    assert is_undirected(torch.stack([obj.row, obj.col], dim=0))
+
+
+def test_heterogeneous_to_bidirectional():
+    edge_index1 = get_random_edge_index(10, 5, num_edges=20)
+    edge_index2 = get_random_edge_index(5, 10, num_edges=20)
+    edge_index3 = get_random_edge_index(10, 10, num_edges=20)
+
+    obj = HeteroSamplerOutput(
+        node={
+            'v1': torch.arange(10),
+            'v2': torch.arange(5)
+        },
+        row={
+            ('v1', 'to', 'v2'): edge_index1[0],
+            ('v2', 'rev_to', 'v1'): edge_index2[0],
+            ('v1', 'to', 'v1'): edge_index3[0],
+        },
+        col={
+            ('v1', 'to', 'v2'): edge_index1[1],
+            ('v2', 'rev_to', 'v1'): edge_index2[1],
+            ('v1', 'to', 'v1'): edge_index3[1],
+        },
+        edge=None,
+    ).to_bidirectional()
+
+    assert torch.equal(
+        obj.row['v1', 'to', 'v2'].sort().values,
+        obj.col['v2', 'rev_to', 'v1'].sort().values,
+    )
+    assert torch.equal(
+        obj.col['v1', 'to', 'v2'].sort().values,
+        obj.row['v2', 'rev_to', 'v1'].sort().values,
+    )
+    assert is_undirected(
+        torch.stack([obj.row['v1', 'to', 'v1'], obj.col['v1', 'to', 'v1']], 0))
