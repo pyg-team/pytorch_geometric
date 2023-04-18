@@ -240,7 +240,8 @@ class HeteroSamplerOutput(CastMixin):
                     rev_row=self.row[edge_type],
                     rev_col=self.col[edge_type],
                 )
-                out.edge[edge_type] = None
+                if out.edge is not None:
+                    out.edge[edge_type] = None
 
             elif rev_edge_type in self.row:
                 out.row[edge_type], out.col[edge_type], _ = to_bidirectional(
@@ -249,10 +250,11 @@ class HeteroSamplerOutput(CastMixin):
                     rev_row=self.row[rev_edge_type],
                     rev_col=self.col[rev_edge_type],
                 )
-                out.edge[edge_type] = None
                 out.row[rev_edge_type] = out.col[edge_type]
                 out.col[rev_edge_type] = out.row[edge_type]
-                out.edge[rev_edge_type] = None
+                if out.edge is not None:
+                    out.edge[edge_type] = None
+                    out.edge[rev_edge_type] = None
 
             else:  # Find the reverse edge type (if it is unique):
                 if len(src_dst_dict) == 0:  # Create mapping lazily.
@@ -270,7 +272,8 @@ class HeteroSamplerOutput(CastMixin):
                     )
                     out.row[edge_type] = row
                     out.col[edge_type] = col
-                    out.edge[edge_type] = None
+                    if out.edge is not None:
+                        out.edge[edge_type] = None
 
                 else:
                     warnings.warn(f"Cannot convert to bidirectional graph "
