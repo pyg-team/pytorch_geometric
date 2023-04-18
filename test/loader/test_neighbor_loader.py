@@ -20,7 +20,6 @@ from torch_geometric.testing import (
 from torch_geometric.typing import WITH_PYG_LIB
 from torch_geometric.utils import (
     is_undirected,
-    k_hop_subgraph,
     sort_edge_index,
     to_torch_csc_tensor,
     to_torch_csr_tensor,
