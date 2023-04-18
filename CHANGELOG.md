@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added support for `"any"`-reductions in `scatter` ([#7198](https://github.com/pyg-team/pytorch_geometric/pull/7198))
 - Added manual sampling interface to `NodeLoader` and `LinkLoader` ([#7197](https://github.com/pyg-team/pytorch_geometric/pull/7197))
 - Extending `torch.sparse` support ([#7155](https://github.com/pyg-team/pytorch_geometric/pull/7155))
 - Added edge weight support to `LightGCN` ([#7157](https://github.com/pyg-team/pytorch_geometric/pull/7157))

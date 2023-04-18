@@ -50,7 +50,7 @@ def coalesce(
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         reduce (str, optional): The reduce operation to use for merging edge
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
-            :obj:`"mul"`). (default: :obj:`"add"`)
+            :obj:`"mul"`, :obj:`"any"`). (default: :obj:`"add"`)
         is_sorted (bool, optional): If set to :obj:`True`, will expect
             :obj:`edge_index` to be already sorted row-wise.
         sort_by_row (bool, optional): If set to :obj:`False`, will sort

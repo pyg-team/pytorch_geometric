@@ -15,11 +15,6 @@ if has_pytorch112:  # pragma: no cover
 
     warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
-    def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
-        size = [1] * ref.dim()
-        size[dim] = -1
-        return src.view(size).expand_as(ref)
-
     def scatter(src: Tensor, index: Tensor, dim: int = 0,
                 dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
         r"""Reduces all values from the :obj:`src` tensor at the indices
@@ -39,8 +34,8 @@ if has_pytorch112:  # pragma: no cover
                 minimal-sized output tensor according to
                 :obj:`index.max() + 1`. (default: :obj:`None`)
             reduce (str, optional): The reduce operation (:obj:`"sum"`,
-                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
-                (default: :obj:`"sum"`)
+                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`,
+                :obj:`"any"`). (default: :obj:`"sum"`)
         """
         if index.dim() != 1:
             raise ValueError(f"The `index` argument must be one-dimensional "
@@ -67,6 +62,11 @@ if has_pytorch112:  # pragma: no cover
 
         size = list(src.size())
         size[dim] = dim_size
+
+        # For "any" reduction, we use regular `scatter_`:
+        if reduce == 'any':
+            index = broadcast(index, src, dim)
+            return src.new_zeros(size).scatter_(dim, index, src)
 
         # For "sum" and "mean" reduction, we make use of `scatter_add_`:
         if reduce == 'sum' or reduce == 'add':
@@ -145,7 +145,25 @@ else:  # pragma: no cover
                 :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
                 (default: :obj:`"sum"`)
         """
+        if reduce == 'any':
+            dim = src.dim() + dim if dim < 0 else dim
+
+            if dim_size is None:
+                dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
+
+            size = list(src.size())
+            size[dim] = dim_size
+
+            index = broadcast(index, src, dim)
+            return src.new_zeros(size).scatter_(dim, index, src)
+
         if not torch_geometric.typing.WITH_TORCH_SCATTER:
             raise ImportError("'scatter' requires the 'torch-scatter' package")
         return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                      reduce=reduce)
+
+
+def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
+    size = [1] * ref.dim()
+    size[dim] = -1
+    return src.view(size).expand_as(ref)
