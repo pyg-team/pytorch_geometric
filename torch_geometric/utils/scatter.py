@@ -121,7 +121,7 @@ if has_pytorch112:  # pragma: no cover
 
         raise ValueError(f"Encountered invalid `reduce` argument '{reduce}'")
 
-else:
+else:  # pragma: no cover
 
     def scatter(src: Tensor, index: Tensor, dim: int = 0,
                 dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
