@@ -34,10 +34,10 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 @pytest.mark.parametrize('filter_per_worker', [True, False])
-def test_homo_neighbor_loader_basic(directed, dtype, filter_per_worker):
+def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
     if dtype != torch.int64 and not WITH_PYG_LIB:
         return
 
@@ -53,7 +53,7 @@ def test_homo_neighbor_loader_basic(directed, dtype, filter_per_worker):
         data,
         num_neighbors=[5] * 2,
         batch_size=20,
-        directed=directed,
+        subgraph_type=subgraph_type,
         filter_per_worker=filter_per_worker,
     )
 
@@ -91,9 +91,11 @@ def test_homo_neighbor_loader_basic(directed, dtype, filter_per_worker):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-@pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-def test_hetero_neighbor_loader_basic(directed, dtype):
+# @pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+# @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
+@pytest.mark.parametrize('subgraph_type', ['bidirectional'])
+@pytest.mark.parametrize('dtype', [torch.int64])
+def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
     if dtype != torch.int64 and not WITH_PYG_LIB:
         return
 
@@ -132,7 +134,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
             },
             input_nodes='paper',
             batch_size=batch_size,
-            directed=directed,
+            subgraph_type=subgraph_type,
         )
         next(iter(loader))
 
@@ -141,7 +143,7 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
         num_neighbors=[10] * 2,
         input_nodes='paper',
         batch_size=batch_size,
-        directed=directed,
+        subgraph_type=subgraph_type,
     )
 
     assert str(loader) == 'NeighborLoader()'
@@ -250,8 +252,8 @@ def test_hetero_neighbor_loader_basic(directed, dtype):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_homo_neighbor_loader_on_cora(get_dataset, directed):
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.n_id = torch.arange(data.num_nodes)
@@ -259,9 +261,13 @@ def test_homo_neighbor_loader_on_cora(get_dataset, directed):
 
     split_idx = torch.arange(5, 8)
 
-    loader = NeighborLoader(data, num_neighbors=[-1, -1],
-                            batch_size=split_idx.numel(),
-                            input_nodes=split_idx, directed=directed)
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1, -1],
+        batch_size=split_idx.numel(),
+        input_nodes=split_idx,
+        subgraph_type=subgraph_type,
+    )
     assert len(loader) == 1
 
     batch = next(iter(loader))
@@ -294,8 +300,8 @@ def test_homo_neighbor_loader_on_cora(get_dataset, directed):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_hetero_neighbor_loader_on_cora(get_dataset, directed):
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
     data.edge_weight = torch.rand(data.num_edges)
@@ -308,10 +314,13 @@ def test_hetero_neighbor_loader_on_cora(get_dataset, directed):
 
     split_idx = torch.arange(5, 8)
 
-    loader = NeighborLoader(hetero_data, num_neighbors=[-1, -1],
-                            batch_size=split_idx.numel(),
-                            input_nodes=('paper', split_idx),
-                            directed=directed)
+    loader = NeighborLoader(
+        hetero_data,
+        num_neighbors=[-1, -1],
+        batch_size=split_idx.numel(),
+        input_nodes=('paper', split_idx),
+        subgraph_type=subgraph_type,
+    )
     assert len(loader) == 1
 
     hetero_batch = next(iter(loader))

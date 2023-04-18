@@ -17,10 +17,10 @@ def unique_edge_pairs(edge_index):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
 @pytest.mark.parametrize('filter_per_worker', [True, False])
-def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio,
+def test_homo_link_neighbor_loader_basic(subgraph_type, neg_sampling_ratio,
                                          filter_per_worker):
     pos_edge_index = get_random_edge_index(100, 50, 500)
     neg_edge_index = get_random_edge_index(100, 50, 500)
@@ -41,7 +41,7 @@ def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio,
         batch_size=20,
         edge_label_index=edge_label_index,
         edge_label=edge_label if neg_sampling_ratio is None else None,
-        directed=directed,
+        subgraph_type=subgraph_type,
         neg_sampling_ratio=neg_sampling_ratio,
         shuffle=True,
         filter_per_worker=filter_per_worker,
@@ -91,9 +91,9 @@ def test_homo_link_neighbor_loader_basic(directed, neg_sampling_ratio,
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
-def test_hetero_link_neighbor_loader_basic(directed, neg_sampling_ratio):
+def test_hetero_link_neighbor_loader_basic(subgraph_type, neg_sampling_ratio):
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -111,7 +111,7 @@ def test_hetero_link_neighbor_loader_basic(directed, neg_sampling_ratio):
         num_neighbors=[-1] * 2,
         edge_label_index=('paper', 'author'),
         batch_size=20,
-        directed=directed,
+        subgraph_type=subgraph_type,
         neg_sampling_ratio=neg_sampling_ratio,
         shuffle=True,
     )
@@ -136,8 +136,8 @@ def test_hetero_link_neighbor_loader_basic(directed, neg_sampling_ratio):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('directed', [True])  # TODO re-enable undirected mode
-def test_hetero_link_neighbor_loader_loop(directed):
+@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+def test_hetero_link_neighbor_loader_loop(subgraph_type):
     data = HeteroData()
 
     data['paper'].x = torch.arange(100)
@@ -147,9 +147,13 @@ def test_hetero_link_neighbor_loader_loop(directed):
     data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 1000)
     data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 1000)
 
-    loader = LinkNeighborLoader(data, num_neighbors=[-1] * 2,
-                                edge_label_index=('paper', 'paper'),
-                                batch_size=20, directed=directed)
+    loader = LinkNeighborLoader(
+        data,
+        num_neighbors=[-1] * 2,
+        edge_label_index=('paper', 'paper'),
+        batch_size=20,
+        subgraph_type=subgraph_type,
+    )
 
     for batch in loader:
         assert batch['paper'].x.size(0) <= 100
@@ -279,7 +283,6 @@ def test_custom_hetero_link_neighbor_loader():
         num_neighbors=[-1] * 2,
         edge_label_index=('paper', 'to', 'author'),
         batch_size=20,
-        directed=True,
     )
 
     loader2 = LinkNeighborLoader(
@@ -287,7 +290,6 @@ def test_custom_hetero_link_neighbor_loader():
         num_neighbors=[-1] * 2,
         edge_label_index=('paper', 'to', 'author'),
         batch_size=20,
-        directed=True,
     )
 
     assert str(loader1) == str(loader2)
@@ -377,7 +379,6 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
         edge_label_index=data.edge_label_index,
         edge_label_time=edge_label_time,
         time_attr=time_attr,
-        directed=True,
         disjoint=disjoint,
         neg_sampling=dict(mode='triplet', amount=amount),
         shuffle=True,
@@ -472,7 +473,6 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
         edge_label_index=index,
         edge_label_time=edge_label_time,
         time_attr=time_attr,
-        directed=True,
         disjoint=disjoint,
         neg_sampling=dict(mode='triplet', amount=amount, weight=weight),
         shuffle=True,
