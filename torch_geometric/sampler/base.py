@@ -224,6 +224,7 @@ class HeteroSamplerOutput(CastMixin):
         out = copy.copy(self)
         out.row = copy.copy(self.row)
         out.col = copy.copy(self.col)
+        out.edge = copy.copy(self.edge)
 
         src_dst_dict = defaultdict(list)
         edge_types = self.row.keys()
@@ -255,9 +256,9 @@ class HeteroSamplerOutput(CastMixin):
 
             else:  # Find the reverse edge type (if it is unique):
                 if len(src_dst_dict) == 0:  # Create mapping lazily.
-                    for edge_type in self.row.keys():
-                        src, _, dst = edge_type
-                        src_dst_dict[(src, dst)].append(edge_type)
+                    for key in self.row.keys():
+                        v1, _, v2 = key
+                        src_dst_dict[(v1, v2)].append(key)
 
                 if len(src_dst_dict[(dst, src)]) == 1:
                     rev_edge_type = src_dst_dict[(dst, src)][0]
