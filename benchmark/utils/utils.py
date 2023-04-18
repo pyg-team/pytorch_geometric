@@ -147,8 +147,10 @@ def write_to_csv(csv_data, write_csv='bench', training=False):
     os.makedirs(results_path, exist_ok=True)
 
     name = 'training' if training else 'inference'
-    csv_file_name = f'TOTAL_{name}_benchmark.csv' if write_csv == 'bench' \
-                    else f'TOTAL_prof_{name}_benchmark.csv'
+    if write_csv == 'bench':
+        csv_file_name = f'TOTAL_{name}_benchmark.csv'
+    else:
+        csv_file_name = f'TOTAL_prof_{name}_benchmark.csv'
     csv_path = osp.join(results_path, csv_file_name)
     index_label = 'TEST_ID' if write_csv == 'bench' else 'ID'
 

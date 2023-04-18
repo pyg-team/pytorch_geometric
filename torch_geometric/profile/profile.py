@@ -214,8 +214,10 @@ def trace_handler(p):
 
 
 def print_time_total(p):
-    profile_sort = 'self_cuda_time_total' if torch.cuda.is_available(
-    ) else 'self_cpu_time_total'
+    if torch.cuda.is_available():
+        profile_sort = 'self_cuda_time_total'
+    else:
+        profile_sort = 'self_cpu_time_total'
     output = p.key_averages().table(sort_by=profile_sort)
     print(output)
 
@@ -232,12 +234,16 @@ def rename_profile_file(*args):
 @contextmanager
 def torch_profile(export_chrome_trace=True, csv_data=None, write_csv=None):
     use_cuda = torch.cuda.is_available()
+
     activities = [ProfilerActivity.CPU]
     if use_cuda:
         activities.append(ProfilerActivity.CUDA)
 
-    p_trace_handler = trace_handler if export_chrome_trace \
-        else print_time_total
+    if export_chrome_trace:
+        p_trace_handler = trace_handler
+    else:
+        p_trace_handler = print_time_total
+
     p = profile(activities=activities, on_trace_ready=p_trace_handler)
 
     with p:
@@ -245,19 +251,22 @@ def torch_profile(export_chrome_trace=True, csv_data=None, write_csv=None):
         p.step()
 
     if csv_data is not None and write_csv == 'prof':
-        profile_sort = 'self_cuda_time_total' if use_cuda \
-            else 'self_cpu_time_total'
+        if use_cuda:
+            profile_sort = 'self_cuda_time_total'
+        else:
+            profile_sort = 'self_cpu_time_total'
         events = EventList(
-            sorted(p.key_averages(),
-                   key=lambda evt: getattr(evt, profile_sort), reverse=True),
-            use_cuda=use_cuda)
+            sorted(
+                p.key_averages(),
+                key=lambda evt: getattr(evt, profile_sort),
+                reverse=True,
+            ), use_cuda=use_cuda)
 
         save_profile_data(csv_data, events, use_cuda)
 
 
 def format_prof_time(time):
-    # The profile time is in micro seconds, so it needs to be formatted
-    # appropriately
+    # Profile time is in micro seconds, so format it appropriately:
     return round(time / 1e6, 3)
 
 
@@ -268,8 +277,7 @@ def save_profile_data(csv_data, events, use_cuda):
     sum_self_cuda_time_total = sum(
         [event.self_cuda_time_total for event in events]) if use_cuda else 0
 
-    # Save top 5 most time consuming ops
-    for e in events[:5]:
+    for e in events[:5]:  # Save top 5 most time consuming operations:
         csv_data['NAME'].append(e.key)
         csv_data['SELF CPU %'].append(
             round(e.self_cpu_time_total * 100.0 / sum_self_cpu_time_total, 3))
