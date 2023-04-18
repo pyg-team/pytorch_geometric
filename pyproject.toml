@@ -167,3 +167,6 @@ exclude_lines = [
     "torch.cuda.is_available",
     "WITH_PT2",
 ]
+
+[tool.flake8]
+ignore = ["F811", "W503", "W504"]
