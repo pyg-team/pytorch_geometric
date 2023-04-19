@@ -34,7 +34,8 @@ def benchmark(
     Args:
         funcs ([Callable]): The list of functions to benchmark.
         args ((Any, ) or [(Any, )]): The arguments to pass to the functions.
-            Can be a list of arguments in case the function headers differ.
+            Can be a list of arguments for each function in :obj:`funcs` in
+            case their headers differ.
         num_steps (int): The number of steps to run the benchmark.
         func_names ([str], optional): The names of the functions. If not given,
             will try to infer the name from the function itself.
