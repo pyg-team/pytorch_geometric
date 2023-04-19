@@ -79,14 +79,11 @@ def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
 
 def optimizer_resolver(query: Union[Any, str], *args, **kwargs):
     base_cls = Optimizer
-    base_cls_repr = 'Optimizer'
     optimizers = [
         optimizer for optimizer in vars(torch.optim).values()
         if isinstance(optimizer, type) and issubclass(optimizer, base_cls)
     ]
-    optimizer_dict = {}
-    return resolver(optimizers, optimizer_dict, query, base_cls, base_cls_repr,
-                    *args, **kwargs)
+    return resolver(optimizers, {}, query, base_cls, None, *args, **kwargs)
 
 
 # Learning Rate Scheduler Resolver ############################################
