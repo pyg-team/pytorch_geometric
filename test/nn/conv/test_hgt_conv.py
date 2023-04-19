@@ -200,12 +200,13 @@ def test_hgt_conv_missing_input_node_type():
     data = HeteroData()
     data['author'].x = torch.randn(4, 16)
     data['paper'].x = torch.randn(6, 32)
-    data['author', 'writes', 'paper'].edge_index = get_random_edge_index(4, 6, 20)
+    data['author', 'writes',
+         'paper'].edge_index = get_random_edge_index(4, 6, 20)
 
-    metadata = (
-        ['author', 'paper', 'university'],
-        [('author', 'writes', 'paper'), ('university', 'employs', 'author'), ('author', 'works at', 'university')]
-    )
+    metadata = (['author', 'paper',
+                 'university'], [('author', 'writes', 'paper'),
+                                 ('university', 'employs', 'author'),
+                                 ('author', 'works at', 'university')])
     conv = HGTConv(-1, 64, metadata, heads=1)
 
     out_dict = conv(data.x_dict, data.edge_index_dict)
