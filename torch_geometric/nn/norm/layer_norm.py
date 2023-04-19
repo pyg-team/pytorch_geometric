@@ -191,7 +191,8 @@ class HeteroLayerNorm(torch.nn.Module):
 
         if self.affine:
             # TODO Revisit this logic completely as it performs worse than just
-            # operating on a dictionary of tensors.
+            # operating on a dictionary of tensors
+            # (especially the `type_vec` code path)
             if type_ptr is not None:
                 h = torch.empty_like(out)
                 for i, (s, e) in enumerate(zip(type_ptr[:-1], type_ptr[1:])):
