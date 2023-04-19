@@ -206,7 +206,8 @@ class HGTConv(MessagePassing):
         # Reconstruct output node embeddings dict:
         for node_type, start_offset in dst_offset.items():
             end_offset = start_offset + q_dict[node_type].size(0)
-            out_dict[node_type] = out[start_offset:end_offset]
+            if node_type in self.dst_node_types:
+                out_dict[node_type] = out[start_offset:end_offset]
 
         # Transform output node embeddings:
         a_dict = self.out_lin({
@@ -216,11 +217,7 @@ class HGTConv(MessagePassing):
 
         # Iterate over node types:
         for node_type, out in out_dict.items():
-            if node_type not in self.dst_node_types:
-                out_dict[node_type] = None
-                continue
-            else:
-                out = a_dict[node_type]
+            out = a_dict[node_type]
 
             if out.size(-1) == x_dict[node_type].size(-1):
                 alpha = self.skip[node_type].sigmoid()
