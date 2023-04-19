@@ -1,5 +1,5 @@
 import time
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -7,9 +7,22 @@ from torch import Tensor
 from torch_geometric.utils import is_torch_sparse_tensor
 
 
+def require_grad(x: Any, requires_grad: bool = True) -> Any:
+    if (isinstance(x, Tensor) and x.is_floating_point()
+            and not is_torch_sparse_tensor(x)):
+        return x.detach().requires_grad_(requires_grad)
+    elif isinstance(x, list):
+        return [require_grad(v, requires_grad) for v in x]
+    elif isinstance(x, tuple):
+        return tuple(require_grad(v, requires_grad) for v in x)
+    elif isinstance(x, dict):
+        return {k: require_grad(v, requires_grad) for k, v in x.items()}
+    return x
+
+
 def benchmark(
     funcs: List[Callable],
-    args: Tuple[Any],
+    args: Union[Tuple[Any], List[Tuple[Any]]],
     num_steps: int,
     func_names: Optional[List[str]] = None,
     num_warmups: int = 10,
@@ -20,7 +33,9 @@ def benchmark(
 
     Args:
         funcs ([Callable]): The list of functions to benchmark.
-        args ((Any, )): The arguments to pass to the functions.
+        args ((Any, ) or [(Any, )]): The arguments to pass to the functions.
+            Can be a list of arguments for each function in :obj:`funcs` in
+            case their headers differ.
         num_steps (int): The number of steps to run the benchmark.
         func_names ([str], optional): The names of the functions. If not given,
             will try to infer the name from the function itself.
@@ -47,15 +62,14 @@ def benchmark(
         raise ValueError(f"Length of 'funcs' (got {len(funcs)}) and "
                          f"'func_names' (got {len(func_names)}) must be equal")
 
+    # Zero-copy `args` for each function (if necessary):
+    args_list = [args] * len(funcs) if isinstance(args, tuple) else args
+
     ts: List[List[str]] = []
-    for func, name in zip(funcs, func_names):
+    for func, args, name in zip(funcs, args_list, func_names):
         t_forward = t_backward = 0
         for i in range(num_warmups + num_steps):
-            args = [
-                arg.detach().requires_grad_(backward)
-                if isinstance(arg, Tensor) and arg.is_floating_point()
-                and not is_torch_sparse_tensor(arg) else arg for arg in args
-            ]
+            args = require_grad(args, backward)
 
             if torch.cuda.is_available():
                 torch.cuda.synchronize()
@@ -69,6 +83,9 @@ def benchmark(
                 t_forward += time.perf_counter() - t_start
 
             if backward:
+                if isinstance(out, dict):  # TODO Generalize this logic.
+                    out = torch.cat(list(out.values()), dim=0)
+
                 out_grad = torch.randn_like(out)
                 t_start = time.perf_counter()
 
