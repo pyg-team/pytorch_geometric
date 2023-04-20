@@ -291,7 +291,7 @@ if __name__ == '__main__':
             func_names_to_test += ['DGL']
         benchmark(
             funcs=funcs_to_test,
-            func_names=_func_names_to_test,
+            func_names=func_names_to_test,
             args=[
                 (xs, weights),
                 (x, ptr, weight),
