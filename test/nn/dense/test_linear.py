@@ -1,13 +1,18 @@
 import copy
+import warnings
+from typing import List
 
 import pytest
 import torch
+from torch import Tensor
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
 import torch_geometric.typing
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.typing import pyg_lib
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
@@ -216,3 +221,77 @@ def test_hetero_linear_sort(type_vec, device):
         node_type = int(type_vec[i])
         expected = x[i] @ lin.weight[node_type] + lin.bias[node_type]
         assert torch.allclose(out[i], expected, atol=1e-3)
+
+
+if __name__ == '__main__':
+    import argparse
+
+    import dgl
+
+    warnings.filterwarnings('ignore', '.*API of nested tensors.*')
+    warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--backward', action='store_true')
+    args = parser.parse_args()
+
+    torch.manual_seed(12345)
+
+    def get_xs(mean: float, std: float, num_types: int,
+               channels: int) -> List[Tensor]:
+        num_nodes_list = torch.normal(
+            mean=torch.tensor([mean] * num_types, dtype=torch.float),
+            std=torch.tensor([std] * num_types, dtype=torch.float),
+        ).round().to(torch.long).tolist()
+
+        return [
+            torch.randn(num_nodes, channels, device=args.device)
+            for num_nodes in num_nodes_list
+        ]
+
+    def sequential(xs: List[Tensor], weights: List[Tensor]) -> List[Tensor]:
+        return [x @ weight for x, weight in zip(xs, weights)]
+
+    def nested(xs: List[Tensor], weights: List[Tensor]) -> List[Tensor]:
+        x = torch.nested.nested_tensor(xs)
+        weight = torch.nested.nested_tensor(weights)
+        return list(torch.matmul(x, weight).unbind(0))
+
+    def grouped(x: Tensor, ptr: Tensor, weight: Tensor) -> Tensor:
+        return pyg_lib.ops.segment_matmul(x, ptr, weight)
+
+    def padded(x: Tensor, weight: Tensor) -> Tensor:
+        return torch.matmul(x, weight)
+
+    def dgl_mm(x: Tensor, count: Tensor, weight: Tensor) -> Tensor:
+        return dgl.ops.segment_mm(x, weight, count)
+
+    num_nodes, channels = 1_000_000, 64
+
+    for num_types in [3, 5, 10, 50, 100, 200, 500, 1000]:
+        print(f'Number of types: {num_types}')
+        mean = num_nodes // num_types
+        std = mean // 4
+
+        xs = get_xs(mean, std, num_types, channels)
+        count = torch.tensor([x.size(0) for x in xs])
+        ptr = torch.tensor([0] + [x.size(0) for x in xs]).cumsum(0)
+        x = torch.cat(xs, dim=0)
+        padded_x = torch.nested.nested_tensor(xs).to_padded_tensor(padding=0.0)
+        weight = torch.randn(num_types, channels, channels, device=args.device)
+        weights = list(weight.unbind(0))
+
+        benchmark(
+            funcs=[sequential, grouped, padded, dgl_mm],
+            func_names=['Sequential', 'Grouped', 'Padded', 'DGL'],
+            args=[
+                (xs, weights),
+                (x, ptr, weight),
+                (padded_x, weight),
+                (x, count, weight),
+            ],
+            num_steps=50 if args.device == 'cpu' else 500,
+            num_warmups=10 if args.device == 'cpu' else 100,
+            backward=args.backward,
+        )

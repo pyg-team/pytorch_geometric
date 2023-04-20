@@ -258,8 +258,12 @@ class BPRLoss(_Loss):
         super().__init__(None, None, "sum", **kwargs)
         self.lambda_reg = lambda_reg
 
-    def forward(self, positives: Tensor, negatives: Tensor,
-                parameters: Tensor = None) -> Tensor:
+    def forward(
+        self,
+        positives: Tensor,
+        negatives: Tensor,
+        parameters: OptTensor = None,
+    ) -> Tensor:
         r"""Compute the mean Bayesian Personalized Ranking (BPR) loss.
 
         .. note::
@@ -277,9 +281,9 @@ class BPRLoss(_Loss):
         """
         n_pairs = positives.size(0)
         log_prob = F.logsigmoid(positives - negatives).mean()
-        regularization = 0
 
-        if self.lambda_reg != 0:
+        regularization = 0
+        if self.lambda_reg != 0 and parameters is not None:
             regularization = self.lambda_reg * parameters.norm(p=2).pow(2)
 
-        return (-log_prob + regularization) / n_pairs
+        return -log_prob + regularization / n_pairs
