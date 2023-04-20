@@ -83,7 +83,11 @@ def benchmark(
                 t_forward += time.perf_counter() - t_start
 
             if backward:
-                if isinstance(out, dict):  # TODO Generalize this logic.
+                # TODO Generalize this logic. This is also a bit unfair as the
+                # concatenation leads to incorrectly measured backward speeds.
+                if isinstance(out, (tuple, list)):
+                    out = torch.cat(out, dim=0)
+                elif isinstance(out, dict):
                     out = torch.cat(list(out.values()), dim=0)
 
                 out_grad = torch.randn_like(out)
