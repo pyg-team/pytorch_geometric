@@ -10,8 +10,7 @@ from torch.nn import Linear as L
 from torch.nn import Sequential as S
 
 from torch_geometric.nn import Reshape
-
-from ..inits import reset
+from torch_geometric.nn.inits import reset
 
 try:
     from torch_cluster import knn_graph

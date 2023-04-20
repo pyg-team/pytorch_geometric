@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import MultiAggregation
 
 
@@ -36,7 +37,18 @@ def test_multi_aggr(multi_aggr_tuple):
                          f"], mode={aggr_kwargs['mode']})")
 
     out = aggr(x, index)
-    assert torch.allclose(out, aggr(x, ptr=ptr))
     assert out.size() == (4, expand * x.size(1))
 
-    # TODO test JIT support
+    if not torch_geometric.typing.WITH_TORCH_SCATTER:
+        with pytest.raises(ImportError, match="'segment' requires"):
+            aggr(x, ptr=ptr)
+    else:
+        assert torch.allclose(out, aggr(x, ptr=ptr))
+
+    if aggr_kwargs['mode'] == 'attn' and torch_geometric.typing.WITH_GMM:
+        # See: https://github.com/pytorch/pytorch/pull/97960
+        with pytest.raises(RuntimeError, match="Unknown builtin op"):
+            jit = torch.jit.script(aggr)
+    else:
+        jit = torch.jit.script(aggr)
+        assert torch.allclose(out, jit(x, index))

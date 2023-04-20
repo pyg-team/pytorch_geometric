@@ -84,7 +84,7 @@ def run(rank, world_size: int, dataset_name: str, root: str):
     for epoch in range(1, 51):
         model.train()
 
-        total_loss = 0
+        total_loss = torch.zeros(2).to(rank)
         for data in train_loader:
             data = data.to(rank)
             optimizer.zero_grad()
@@ -92,10 +92,11 @@ def run(rank, world_size: int, dataset_name: str, root: str):
             loss = criterion(logits, data.y.to(torch.float))
             loss.backward()
             optimizer.step()
-            total_loss += float(loss) * logits.size(0)
-        loss = total_loss / len(train_loader.dataset)
+            total_loss[0] += float(loss) * logits.size(0)
+            total_loss[1] += data.num_graphs
 
-        dist.barrier()
+        dist.all_reduce(total_loss, op=dist.ReduceOp.SUM)
+        loss = float(total_loss[0] / total_loss[1])
 
         if rank == 0:  # We evaluate on a single GPU for now.
             model.eval()

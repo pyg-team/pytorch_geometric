@@ -4,7 +4,7 @@ import sys
 import urllib
 from typing import Optional
 
-from .makedirs import makedirs
+from torch_geometric.data.makedirs import makedirs
 
 
 def download_url(url: str, folder: str, log: bool = True,

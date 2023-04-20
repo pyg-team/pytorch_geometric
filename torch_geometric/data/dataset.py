@@ -11,7 +11,7 @@ import numpy as np
 import torch.utils.data
 from torch import Tensor
 
-from torch_geometric.data import Data
+from torch_geometric.data.data import BaseData
 from torch_geometric.data.makedirs import makedirs
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
@@ -66,7 +66,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get(self, idx: int) -> Data:
+    def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
         raise NotImplementedError
 
@@ -152,7 +152,13 @@ class Dataset(torch.utils.data.Dataset, ABC):
     @property
     def num_classes(self) -> int:
         r"""Returns the number of classes in the dataset."""
-        y = torch.cat([data.y for data in self], dim=0)
+        # We iterate over the dataset and collect all labels to determine the
+        # maximum number of classes. Importantly, in rare cases, `__getitem__`
+        # may produce a tuple of data objects (e.g., when used in combination
+        # with `RandomLinkSplit`, so we take care of this case here as well:
+        data_list = _get_flattened_data_list([data for data in self])
+        y = torch.cat([data.y for data in data_list if 'y' in data], dim=0)
+
         # Do not fill cache for `InMemoryDataset`:
         if hasattr(self, '_data_list') and self._data_list is not None:
             self._data_list = self.len() * [None]
@@ -238,7 +244,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
     def __getitem__(
         self,
         idx: Union[int, np.integer, IndexType],
-    ) -> Union['Dataset', Data]:
+    ) -> Union['Dataset', BaseData]:
         r"""In case :obj:`idx` is of type integer, will return the data object
         at index :obj:`idx` (and transforms it in case :obj:`transform` is
         present).
@@ -376,3 +382,15 @@ def _repr(obj: Any) -> str:
     if obj is None:
         return 'None'
     return re.sub('(<.*?)\\s.*(>)', r'\1\2', str(obj))
+
+
+def _get_flattened_data_list(data_list: List[Any]) -> List[BaseData]:
+    outs: List[BaseData] = []
+    for data in data_list:
+        if isinstance(data, BaseData):
+            outs.append(data)
+        elif isinstance(data, (tuple, list)):
+            outs.extend(_get_flattened_data_list(data))
+        elif isinstance(data, dict):
+            outs.extend(_get_flattened_data_list(data.values()))
+    return outs

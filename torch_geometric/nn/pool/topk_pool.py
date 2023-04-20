@@ -4,10 +4,9 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
+from torch_geometric.nn.inits import uniform
 from torch_geometric.utils import scatter, softmax
-
-from ...utils.num_nodes import maybe_num_nodes
-from ..inits import uniform
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def topk(

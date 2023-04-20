@@ -11,11 +11,10 @@ from torch import Tensor
 
 from torch_geometric.deprecation import deprecated
 from torch_geometric.typing import OptTensor
-
-from .degree import degree
-from .num_nodes import maybe_num_nodes
-from .sort_edge_index import sort_edge_index
-from .subgraph import subgraph
+from torch_geometric.utils.degree import degree
+from torch_geometric.utils.num_nodes import maybe_num_nodes
+from torch_geometric.utils.sort_edge_index import sort_edge_index
+from torch_geometric.utils.subgraph import subgraph
 
 
 def filter_adj(row: Tensor, col: Tensor, edge_attr: OptTensor,

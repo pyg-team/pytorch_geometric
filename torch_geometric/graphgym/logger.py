@@ -325,7 +325,7 @@ class LoggerCallback(Callback):
         outputs: Optional[Dict[str, Any]],
         batch: Any,
         batch_idx: int,
-        dataloader_idx: int,
+        dataloader_idx: int = 0,
     ):
         stats = self._get_stats(self._val_epoch_start_time, outputs, trainer)
         self.val_logger.update_stats(**stats)
@@ -337,7 +337,7 @@ class LoggerCallback(Callback):
         outputs: Optional[Dict[str, Any]],
         batch: Any,
         batch_idx: int,
-        dataloader_idx: int,
+        dataloader_idx: int = 0,
     ):
         stats = self._get_stats(self._test_epoch_start_time, outputs, trainer)
         self.test_logger.update_stats(**stats)

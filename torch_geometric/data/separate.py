@@ -6,6 +6,7 @@ from torch import Tensor
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage
 from torch_geometric.typing import SparseTensor
+from torch_geometric.utils import narrow
 
 
 def separate(cls, batch: BaseData, idx: int, slice_dict: Any,
@@ -62,7 +63,7 @@ def _separate(
         key = str(key)
         cat_dim = batch.__cat_dim__(key, value, store)
         start, end = int(slices[idx]), int(slices[idx + 1])
-        value = value.narrow(cat_dim or 0, start, end - start)
+        value = narrow(value, cat_dim or 0, start, end - start)
         value = value.squeeze(0) if cat_dim is None else value
         if decrement and (incs.dim() > 1 or int(incs[idx]) != 0):
             value = value - incs[idx].to(value.device)

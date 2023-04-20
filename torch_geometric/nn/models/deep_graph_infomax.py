@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 from torch.nn import Module, Parameter
 
-from ..inits import reset, uniform
+from torch_geometric.nn.inits import reset, uniform
 
 EPS = 1e-15
 

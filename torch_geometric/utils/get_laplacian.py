@@ -5,8 +5,7 @@ from torch import Tensor
 
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import add_self_loops, remove_self_loops, scatter
-
-from .num_nodes import maybe_num_nodes
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def get_laplacian(

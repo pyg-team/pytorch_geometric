@@ -8,11 +8,10 @@ from torch.utils.data import DataLoader
 from torch_geometric.nn.aggr import DegreeScalerAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import reset
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import degree
-
-from ..inits import reset
 
 
 class PNAConv(MessagePassing):

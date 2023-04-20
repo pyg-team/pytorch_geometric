@@ -35,7 +35,6 @@ class ToHeteroLinear(torch.nn.Module):
         else:
             raise ValueError(f"Expected 'Linear' module (got '{type(module)}'")
 
-        # TODO: Need to handle `in_channels=-1` case.
         # TODO We currently assume that `x` is sorted according to `type`.
         self.hetero_module = HeteroLinear(
             in_channels,

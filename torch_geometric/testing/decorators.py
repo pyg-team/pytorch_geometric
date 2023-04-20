@@ -7,6 +7,7 @@ from typing import Callable
 import torch
 from packaging.requirements import Requirement
 
+from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
 
 
@@ -68,6 +69,16 @@ def onlyGraphviz(func: Callable) -> Callable:
     )(func)
 
 
+def onlyNeighborSampler(func: Callable):
+    r"""A decorator to skip tests if no neighborhood sampler package is
+    installed."""
+    import pytest
+    return pytest.mark.skipif(
+        not WITH_PYG_LIB and not WITH_TORCH_SPARSE,
+        reason="No neighbor sampler installed",
+    )(func)
+
+
 def withPackage(*args) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification."""
@@ -108,3 +119,12 @@ def withCUDA(func: Callable):
         devices.append(torch.device('cuda:0'))
 
     return pytest.mark.parametrize('device', devices)(func)
+
+
+def disableExtensions(func: Callable):
+    r"""A decorator to temporarily disable the usage of the
+    :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` extension
+    packages."""
+    import pytest
+
+    return pytest.mark.usefixtures('disable_extensions')(func)

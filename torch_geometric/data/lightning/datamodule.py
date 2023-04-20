@@ -53,30 +53,6 @@ class LightningDataModule(PLLightningDataModule):
 
         self.kwargs = kwargs
 
-    def prepare_data(self):
-        try:
-            from pytorch_lightning.strategies import (
-                DDPSpawnStrategy,
-                SingleDeviceStrategy,
-            )
-            strategy = self.trainer.strategy
-        except ImportError:
-            # PyTorch Lightning < 1.6 backward compatibility:
-            from pytorch_lightning.plugins import (
-                DDPSpawnPlugin,
-                SingleDevicePlugin,
-            )
-            DDPSpawnStrategy = DDPSpawnPlugin
-            SingleDeviceStrategy = SingleDevicePlugin
-            strategy = self.trainer.training_type_plugin
-
-        if not isinstance(strategy, (SingleDeviceStrategy, DDPSpawnStrategy)):
-            raise NotImplementedError(
-                f"'{self.__class__.__name__}' currently only supports "
-                f"'{SingleDeviceStrategy.__name__}' and "
-                f"'{DDPSpawnStrategy.__name__}' training strategies of "
-                f"'pytorch_lightning' (got '{strategy.__class__.__name__}')")
-
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({kwargs_repr(**self.kwargs)})'
 
@@ -123,7 +99,7 @@ class LightningData(LightningDataModule):
         if loader == 'full' and kwargs.get('batch_sampler') is not None:
             warnings.warn("'batch_sampler' option is not supported for "
                           "loader='full'")
-            kwargs.pop('sampler', None)
+            kwargs.pop('batch_sampler', None)
 
         super().__init__(has_val, has_test, **kwargs)
 
@@ -239,7 +215,7 @@ class LightningDataset(LightningDataModule):
 
         Currently only the
         :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
-        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        :class:`pytorch_lightning.strategies.DDPStrategy` training
         strategies of :lightning:`null` `PyTorch Lightning
         <https://pytorch-lightning.readthedocs.io/en/latest/guides/
         speed.html>`__ are supported in order to correctly share data across
@@ -319,7 +295,8 @@ class LightningDataset(LightningDataModule):
     def __repr__(self) -> str:
         kwargs = kwargs_repr(train_dataset=self.train_dataset,
                              val_dataset=self.val_dataset,
-                             test_dataset=self.test_dataset, **self.kwargs)
+                             test_dataset=self.test_dataset,
+                             pred_dataset=self.pred_dataset, **self.kwargs)
         return f'{self.__class__.__name__}({kwargs})'
 
 
@@ -337,7 +314,7 @@ class LightningNodeData(LightningData):
 
         Currently only the
         :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
-        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        :class:`pytorch_lightning.strategies.DDPStrategy` training
         strategies of :lightning:`null` `PyTorch Lightning
         <https://pytorch-lightning.readthedocs.io/en/latest/guides/
         speed.html>`__ are supported in order to correctly share data across
@@ -530,7 +507,7 @@ class LightningLinkData(LightningData):
 
         Currently only the
         :class:`pytorch_lightning.strategies.SingleDeviceStrategy` and
-        :class:`pytorch_lightning.strategies.DDPSpawnStrategy` training
+        :class:`pytorch_lightning.strategies.DDPStrategy` training
         strategies of :lightning:`null` `PyTorch Lightning
         <https://pytorch-lightning.readthedocs.io/en/latest/guides/
         speed.html>`__ are supported in order to correctly share data across

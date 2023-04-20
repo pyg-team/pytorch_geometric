@@ -1,18 +1,12 @@
 import numpy as np
 import torch
-from torch_sparse import SparseTensor
 
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import onlyFullTest, withPackage
+from torch_geometric.testing import get_random_edge_index, withPackage
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import k_hop_subgraph
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
 
 
 def is_subset(subedge_index, edge_index, src_idx, dst_idx):
@@ -23,6 +17,7 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
     return int(mask.sum()) == mask.numel()
 
 
+@withPackage('torch_sparse')
 def test_hgt_loader():
     torch.manual_seed(12345)
 
@@ -31,11 +26,11 @@ def test_hgt_loader():
     data['paper'].x = torch.arange(100)
     data['author'].x = torch.arange(100, 300)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 500)
+    data['paper', 'paper'].edge_index = get_random_edge_index(100, 100, 500)
     data['paper', 'paper'].edge_attr = torch.arange(500)
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 1000)
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 1000)
     data['paper', 'author'].edge_attr = torch.arange(500, 1500)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'paper'].edge_attr = torch.arange(1500, 2500)
 
     r1, c1 = data['paper', 'paper'].edge_index
@@ -137,6 +132,7 @@ def test_hgt_loader():
         assert torch.cat([row, col]).unique().numel() >= 59
 
 
+@withPackage('torch_sparse')
 def test_hgt_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
@@ -187,12 +183,31 @@ def test_hgt_loader_on_cora(get_dataset):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@onlyFullTest
-@withPackage('torch_sparse>=0.6.15')
-def test_hgt_loader_on_dblp(get_dataset):
-    data = get_dataset(name='DBLP')[0]
-    loader = HGTLoader(data, num_samples=[10, 10],
-                       input_nodes=('author', data['author'].train_mask))
+@withPackage('torch_sparse')
+def test_hgt_loader_disconnected():
+    data = HeteroData()
+
+    data['paper'].x = torch.randn(10, 16)
+    data['author'].x = torch.randn(10, 16)
+
+    # Paper nodes are disconnected from author nodes:
+    data['paper', 'paper'].edge_index = get_random_edge_index(10, 10, 15)
+    data['paper', 'paper'].edge_attr = torch.randn(15, 8)
+    data['author', 'author'].edge_index = get_random_edge_index(10, 10, 15)
+    data['author', 'author'].edge_attr = torch.randn(15, 8)
+
+    loader = HGTLoader(data, num_samples=[2], batch_size=2,
+                       input_nodes='paper')
 
     for batch in loader:
+        assert isinstance(batch, HeteroData)
+
+        # Test node and edge types:
+        assert set(batch.node_types) == set(data.node_types)
         assert set(batch.edge_types) == set(data.edge_types)
+
+        assert batch['author'].num_nodes == 0
+        assert batch['author'].x.size() == (0, 16)
+        assert batch['author', 'author'].num_edges == 0
+        assert batch['author', 'author'].edge_index.size() == (2, 0)
+        assert batch['author', 'author'].edge_attr.size() == (0, 8)

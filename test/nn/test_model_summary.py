@@ -1,11 +1,14 @@
+from typing import Optional
+
 import pytest
 import torch
 from torch import Tensor, nn
-from torch_sparse import SparseTensor
 
+import torch_geometric.typing
 from torch_geometric.nn import Linear, SAGEConv, summary, to_hetero
 from torch_geometric.nn.models import GCN
 from torch_geometric.testing import withPackage
+from torch_geometric.typing import SparseTensor
 
 
 class GraphSAGE(torch.nn.Module):
@@ -40,8 +43,13 @@ def gcn():
     model = GCN(32, 16, num_layers=2, out_channels=32)
     x = torch.randn(100, 32)
     edge_index = torch.randint(100, size=(2, 20))
-    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(100, 100))
-    return dict(model=model, x=x, edge_index=edge_index, adj_t=adj.t())
+    adj_t: Optional[SparseTensor] = None
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj_t = SparseTensor.from_edge_index(
+            edge_index,
+            sparse_sizes=(100, 100),
+        ).t()
+    return dict(model=model, x=x, edge_index=edge_index, adj_t=adj_t)
 
 
 @withPackage('tabulate')
@@ -61,6 +69,7 @@ def test_summary_basic(gcn):
 
 
 @withPackage('tabulate')
+@withPackage('torch_sparse')
 def test_summary_with_sparse_tensor(gcn):
     expected = """
 +---------------------+-----------------------+----------------+----------+

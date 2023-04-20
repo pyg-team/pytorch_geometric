@@ -1,18 +1,17 @@
 from typing import Callable, Optional
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.typing import Adj, OptTensor, SparseTensor
-from torch_geometric.utils import spmm
+from torch_geometric.utils import one_hot, spmm
 
 
 class LabelPropagation(MessagePassing):
-    r"""The label propagation operator from the `"Learning from Labeled and
-    Unlabeled Data with Label Propagation"
+    r"""The label propagation operator, firstly introduced in the
+    `"Learning from Labeled and Unlabeled Data with Label Propagation"
     <http://mlg.eng.cam.ac.uk/zoubin/papers/CMU-CALD-02-107.pdf>`_ paper
 
     .. math::
@@ -20,6 +19,9 @@ class LabelPropagation(MessagePassing):
         \mathbf{D}^{-1/2} \mathbf{Y} + (1 - \alpha) \mathbf{Y},
 
     where unlabeled data is inferred by labeled data via propagation.
+    This concrete implementation here is derived from the `"Combining Label
+    Propagation And Simple Models Out-performs Graph Neural Networks"
+    <https://arxiv.org/abs/2010.13993>`_ paper.
 
     .. note::
 
@@ -62,7 +64,7 @@ class LabelPropagation(MessagePassing):
                 (default: :obj:`None`)
         """
         if y.dtype == torch.long and y.size(0) == y.numel():
-            y = F.one_hot(y.view(-1)).to(torch.float)
+            y = one_hot(y.view(-1))
 
         out = y
         if mask is not None:

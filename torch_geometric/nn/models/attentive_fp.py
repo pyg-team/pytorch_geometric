@@ -6,10 +6,9 @@ from torch import Tensor
 from torch.nn import GRUCell, Linear, Parameter
 
 from torch_geometric.nn import GATConv, MessagePassing, global_add_pool
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import softmax
-
-from ..inits import glorot, zeros
 
 
 class GATEConv(MessagePassing):

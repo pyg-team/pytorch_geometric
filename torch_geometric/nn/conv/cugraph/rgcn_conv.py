@@ -5,12 +5,16 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.conv.cugraph import CuGraphModule
+from torch_geometric.nn.conv.cugraph.base import LEGACY_MODE
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.typing import OptTensor
 
 try:
-    from pylibcugraphops.torch.autograd import \
-        agg_hg_basis_n2n_post as RGCNConvAgg
+    if LEGACY_MODE:
+        from pylibcugraphops.torch.autograd import \
+            agg_hg_basis_n2n_post as RGCNConvAgg
+    else:
+        from pylibcugraphops.pytorch.operators import \
+            agg_hg_basis_n2n_post as RGCNConvAgg
 except ImportError:
     pass
 
@@ -71,8 +75,8 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
 
     def forward(
         self,
-        x: OptTensor,
-        csc: Tuple[Tensor, Tensor],
+        x: Tensor,
+        csc: Tuple[Tensor, Tensor, int],
         edge_type: Tensor,
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
@@ -91,11 +95,8 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
                 on-the-fly, leading to slightly worse performance.
                 (default: :obj:`None`)
         """
-        if x is None:
-            x = torch.eye(self.in_channels, device=edge_type.device)
-
-        graph = self.get_typed_cugraph(x.size(0), csc, edge_type,
-                                       self.num_relations, max_num_neighbors)
+        graph = self.get_typed_cugraph(csc, edge_type, self.num_relations,
+                                       max_num_neighbors)
 
         out = RGCNConvAgg(x, self.comp, graph, concat_own=self.root_weight,
                           norm_by_out_degree=bool(self.aggr == 'mean'))
