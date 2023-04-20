@@ -7,6 +7,7 @@ from torch_geometric.nn.pool import (
     maximal_independent_set_cluster,
 )
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import WITH_TORCH_SPARSE
 
 
 def test_maximal_independent_set_cluster():
@@ -57,33 +58,24 @@ def test_kmis_pooling(scorer, score_passthrough, score_heuristic, aggr_x):
     in_channels = 16
     x = torch.rand(num_nodes, in_channels)
 
-    pool1 = KMISPooling(in_channels, k=0, scorer=scorer,
-                        score_heuristic=score_heuristic,
-                        score_passthrough=score_passthrough, aggr_x=aggr_x)
-    out1 = pool1(x, index)
-    assert out1[0].shape == x.shape
-    assert out1[1].equal(index)
+    if WITH_TORCH_SPARSE:
+        pool1 = KMISPooling(in_channels, k=0, scorer=scorer,
+                            score_heuristic=score_heuristic,
+                            score_passthrough=score_passthrough, aggr_x=aggr_x)
+        out1 = pool1(x, index)
+        assert out1[0].shape == x.shape
+        assert out1[1].equal(index)
 
-    pool2 = KMISPooling(in_channels, k=1, scorer=scorer,
-                        score_heuristic=score_heuristic,
-                        score_passthrough=score_passthrough, aggr_x=aggr_x)
-    out2 = pool2(x, index)
-    assert out2[0].size(0) == 2
-    assert out2[1].shape == (2, 2)
+        pool2 = KMISPooling(in_channels, k=1, scorer=scorer,
+                            score_heuristic=score_heuristic,
+                            score_passthrough=score_passthrough, aggr_x=aggr_x)
+        out2 = pool2(x, index)
+        assert out2[0].size(0) == 2
+        assert out2[1].shape == (2, 2)
 
-    pool3 = KMISPooling(in_channels, k=2, scorer=scorer,
-                        score_heuristic=score_heuristic,
-                        score_passthrough=score_passthrough, aggr_x=aggr_x)
-    out3 = pool3(x, index)
-    assert out3[0].size(0) == 1
-    assert out3[1].shape == (2, 0)
-
-    # if is_full_test():
-    #     jit1 = torch.jit.script(pool1)
-    #     assert torch.allclose(jit1(x, index)[0], out1[0])
-    #
-    #     jit2 = torch.jit.script(pool2)
-    #     assert torch.allclose(jit2(x, index)[0], out2[0])
-    #
-    #     jit3 = torch.jit.script(pool3)
-    #     assert torch.allclose(jit3(x, index)[0], out3[0])
+        pool3 = KMISPooling(in_channels, k=2, scorer=scorer,
+                            score_heuristic=score_heuristic,
+                            score_passthrough=score_passthrough, aggr_x=aggr_x)
+        out3 = pool3(x, index)
+        assert out3[0].size(0) == 1
+        assert out3[1].shape == (2, 0)
