@@ -84,7 +84,7 @@ def benchmark(
 
             if backward:
                 # TODO Generalize this logic. This is also a bit unfair as the
-                # concatenation leads to incorrect backward timing speeds.
+                # concatenation leads to incorrectly measured backward speeds.
                 if isinstance(out, (tuple, list)):
                     out = torch.cat(out, dim=0)
                 elif isinstance(out, dict):
