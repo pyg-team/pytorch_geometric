@@ -87,10 +87,8 @@ class HGTConv(MessagePassing):
         dim = out_channels // heads
         num_types = heads * len(self.edge_types)
 
-        self.k_rel = HeteroLinear(dim, dim, num_types, is_sorted=False,
-                                  bias=False)
-        self.v_rel = HeteroLinear(dim, dim, num_types, is_sorted=False,
-                                  bias=False)
+        self.k_rel = HeteroLinear(dim, dim, num_types, bias=False, sorted=True)
+        self.v_rel = HeteroLinear(dim, dim, num_types, bias=False, sorted=True)
 
         self.skip = ParameterDict({
             node_type: Parameter(torch.Tensor(1))
@@ -131,32 +129,35 @@ class HGTConv(MessagePassing):
         """Constructs the source node representations."""
         cumsum = 0
         H, D = self.heads, self.out_channels // self.heads
-
+        
         # Flatten into a single tensor with shape [num_edge_types * heads, D]:
         ks: List[Tensor] = []
         vs: List[Tensor] = []
-        type_list: List[int] = []
+        type_list = []
         offset: Dict[EdgeType] = {}
         for edge_type in edge_index_dict.keys():
             src = edge_type[0]
-
-            ks.append(k_dict[src].reshape(-1, D))
-            vs.append(v_dict[src].reshape(-1, D))
-
             N = k_dict[src].size(0)
+            offset[edge_type] = cumsum
+            cumsum += N
+            
+            # construct type_vec for curr edge_type with shape [H, D]
             start_index = self.edge_types_map[edge_type] * H
             end_index = start_index + H
             type_vec = torch.arange(start_index, end_index,
-                                    dtype=torch.long).repeat(N)
+                                    dtype=torch.long).view(-1,1).repeat(1,N)
+            
             type_list.append(type_vec)
+            ks.append(k_dict[src])
+            vs.append(v_dict[src])
+        
+        ks = torch.cat(ks, dim=0).transpose(0,1).reshape(-1,D)
+        vs = torch.cat(vs, dim=0).transpose(0,1).reshape(-1,D)
+        type_vec = torch.cat(type_list, dim=1).flatten()
 
-            offset[edge_type] = cumsum
-            cumsum += N
-
-        type_vec = torch.cat(type_list, dim=0)
-        k = self.k_rel(torch.cat(ks, dim=0), type_vec).view(-1, H, D)
-        v = self.v_rel(torch.cat(vs, dim=0), type_vec).view(-1, H, D)
-
+        k = self.k_rel(ks, type_vec).view(H,-1,D).transpose(0,1)
+        v = self.v_rel(vs, type_vec).view(H,-1,D).transpose(0,1)
+        
         return k, v, offset
 
     def forward(
@@ -189,9 +190,10 @@ class HGTConv(MessagePassing):
         # Compute K, Q, V over node types:
         kqv_dict = self.kqv_lin(x_dict)
         for key, val in kqv_dict.items():
-            k_dict[key] = val[:, :F].view(-1, H, D)
-            q_dict[key] = val[:, F:2 * F].view(-1, H, D)
-            v_dict[key] = val[:, 2 * F:].view(-1, H, D)
+            k, q, v = torch.tensor_split(val, 3, dim=1)
+            k_dict[key] = k.view(-1,H,D)
+            q_dict[key] = q.view(-1,H,D)
+            v_dict[key] = v.view(-1,H,D)
 
         q, dst_offset = self._cat(q_dict)
         k, v, src_offset = self._construct_src_node_feat(
