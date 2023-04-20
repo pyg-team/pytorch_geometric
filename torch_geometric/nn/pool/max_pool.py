@@ -35,7 +35,7 @@ def max_pool_x(
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
             node to a specific example.
         batch_size (int, optional): The number of examples :math:`B`.
-                Automatically calculated if not given. (default: :obj:`None`)
+            Automatically calculated if not given. (default: :obj:`None`)
         size (int, optional): The maximum number of clusters in a single
             example. This property is useful to obtain a batch-wise dense
             representation, *e.g.* for applying FC layers, but should only be
