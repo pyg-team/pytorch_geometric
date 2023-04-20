@@ -225,8 +225,11 @@ def test_hetero_linear_sort(type_vec, device):
 
 if __name__ == '__main__':
     import argparse
-
-    import dgl
+    try:
+        import dgl
+        WITH_DLG = True
+    except: # noqa
+        WITH_DGL = False
 
     warnings.filterwarnings('ignore', '.*API of nested tensors.*')
     warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
@@ -281,10 +284,14 @@ if __name__ == '__main__':
         padded_x = torch.nested.nested_tensor(xs).to_padded_tensor(padding=0.0)
         weight = torch.randn(num_types, channels, channels, device=args.device)
         weights = list(weight.unbind(0))
-
+        funcs_to_test = [sequential, grouped, padded]
+        func_names_to_test = ['Sequential', 'Grouped', 'Padded']
+        if WITH_DGL:
+            funcs_to_test += [dgl_mm]
+            func_names_to_test += ['DGL']
         benchmark(
-            funcs=[sequential, grouped, padded, dgl_mm],
-            func_names=['Sequential', 'Grouped', 'Padded', 'DGL'],
+            funcs=funcs_to_test,
+            func_names=_func_names_to_test,
             args=[
                 (xs, weights),
                 (x, ptr, weight),
