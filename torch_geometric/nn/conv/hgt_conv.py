@@ -87,8 +87,8 @@ class HGTConv(MessagePassing):
         dim = out_channels // heads
         num_types = heads * len(self.edge_types)
 
-        self.k_rel = HeteroLinear(dim, dim, num_types, bias=False, sorted=True)
-        self.v_rel = HeteroLinear(dim, dim, num_types, bias=False, sorted=True)
+        self.k_rel = HeteroLinear(dim, dim, num_types, bias=False, is_sorted=True)
+        self.v_rel = HeteroLinear(dim, dim, num_types, bias=False, is_sorted=True)
 
         self.skip = ParameterDict({
             node_type: Parameter(torch.Tensor(1))
