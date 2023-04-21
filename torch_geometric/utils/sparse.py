@@ -82,6 +82,20 @@ def is_sparse(src: Any) -> bool:
     return is_torch_sparse_tensor(src) or isinstance(src, SparseTensor)
 
 
+def to_torch_sparse_tensor(edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    size: Optional[Union[int, Tuple[int, int]]] = None,
+    is_coalesced: bool = False,
+    layout: torch.layout = torch.sparse_coo,
+):
+    if layout == torch.sparse_coo:
+        return to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
+    if layout == torch.sparse_csr:
+        return to_torch_csr_tensor(edge_index, edge_attr, size, is_coalesced)
+    if layout == torch.sparse_csc:
+        return to_torch_csc_tensor(edge_index, edge_attr, size, is_coalesced)
+
+
 def to_torch_coo_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,

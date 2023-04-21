@@ -9,7 +9,7 @@ import torch_geometric.typing
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
 from torch_geometric.typing import SparseTensor, torch_sparse
-from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
+from torch_geometric.utils import is_sparse, is_torch_sparse_tensor, to_edge_index, 
 
 def collate(
     cls,
@@ -168,7 +168,11 @@ def _collate(
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
         slices = cumsum(repeats)
-        value = torch_sparse.cat(values, dim=cat_dim)
+        if is_sparse_tensor(elem):
+            # (TODO) Replace w/ torch.cat once working upstream
+            value = to_torch_sparse_tensor(torch.cat([to_edge_index(value) for value in values], dim=cat_dim), layout=values[0].layout)
+        else:
+            value = torch_sparse.cat(values, dim=cat_dim)
         return value, slices, None
 
     elif isinstance(elem, (int, float)):
@@ -273,3 +277,4 @@ def get_incs(key, values: List[Any], data_list: List[BaseData],
     else:
         repeats = torch.tensor(repeats)
     return cumsum(repeats[:-1])
+
