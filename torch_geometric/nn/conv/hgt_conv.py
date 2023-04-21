@@ -145,8 +145,9 @@ class HGTConv(MessagePassing):
             cumsum += N
 
             # construct type_vec for curr edge_type with shape [H, D]
-            edge_type_offset = self.edge_types_map[edge_type] 
-            type_vec = torch.arange(H,dtype=torch.long).view(-1, 1).repeat(1, N) *num_edge_types + edge_type_offset
+            edge_type_offset = self.edge_types_map[edge_type]
+            type_vec = torch.arange(H, dtype=torch.long).view(-1, 1).repeat(
+                1, N) * num_edge_types + edge_type_offset
 
             type_list.append(type_vec)
             ks.append(k_dict[src])
