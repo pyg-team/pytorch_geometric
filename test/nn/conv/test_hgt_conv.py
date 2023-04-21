@@ -203,6 +203,8 @@ def test_hgt_conv_missing_input_node_type():
     data['author', 'writes',
          'paper'].edge_index = get_random_edge_index(4, 6, 20)
 
+    # Some nodes from metadata are missing in data.
+    # This might happen while using NeighborLoader.
     metadata = (['author', 'paper',
                  'university'], [('author', 'writes', 'paper')])
     conv = HGTConv(-1, 64, metadata, heads=1)
