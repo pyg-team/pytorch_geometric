@@ -170,7 +170,7 @@ def _collate(
         slices = cumsum(repeats)
         if is_torch_sparse_tensor(elem):
             # (TODO) Replace w/ torch.cat once working upstream
-            value = to_torch_sparse_tensor(torch.cat([to_edge_index(value) for value in values], dim=cat_dim), layout=values[0].layout)
+            value = to_torch_sparse_tensor(torch.cat([to_edge_index(value)[0] for value in values], dim=cat_dim), layout=values[0].layout)
         else:
             value = torch_sparse.cat(values, dim=cat_dim)
         return value, slices, None
