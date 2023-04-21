@@ -230,7 +230,7 @@ def test_hgt_conv_missing_edge_type():
     out_dict = conv(data.x_dict, data.edge_index_dict)
     assert out_dict['author'].size() == (4, 64)
     assert out_dict['paper'].size() == (6, 64)
-    assert 'university' not  in out_dict
+    assert 'university' not in out_dict
 
 
 if __name__ == '__main__':
