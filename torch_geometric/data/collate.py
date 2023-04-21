@@ -168,7 +168,7 @@ def _collate(
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
         slices = cumsum(repeats)
-        if is_sparse_tensor(elem):
+        if is_torch_sparse_tensor(elem):
             # (TODO) Replace w/ torch.cat once working upstream
             value = to_torch_sparse_tensor(torch.cat([to_edge_index(value) for value in values], dim=cat_dim), layout=values[0].layout)
         else:
