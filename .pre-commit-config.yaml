@@ -53,3 +53,4 @@ repos:
     hooks:
       - id: flake8
         name: Check PEP8
+        additional_dependencies: [Flake8-pyproject]
