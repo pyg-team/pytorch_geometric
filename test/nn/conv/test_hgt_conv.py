@@ -204,9 +204,7 @@ def test_hgt_conv_missing_input_node_type():
          'paper'].edge_index = get_random_edge_index(4, 6, 20)
 
     metadata = (['author', 'paper',
-                 'university'], [('author', 'writes', 'paper'),
-                                 ('university', 'employs', 'author'),
-                                 ('author', 'works at', 'university')])
+                 'university'], [('author', 'writes', 'paper')])
     conv = HGTConv(-1, 64, metadata, heads=1)
 
     out_dict = conv(data.x_dict, data.edge_index_dict)
