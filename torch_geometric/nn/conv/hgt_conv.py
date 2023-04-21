@@ -128,12 +128,13 @@ class HGTConv(MessagePassing):
     ) -> Tuple[Tensor, Tensor, Dict[EdgeType, int]]:
         """Constructs the source node representations."""
         cumsum = 0
+        num_edge_types = len(self.edge_types)
         H, D = self.heads, self.out_channels // self.heads
         
         # Flatten into a single tensor with shape [num_edge_types * heads, D]:
         ks: List[Tensor] = []
         vs: List[Tensor] = []
-        type_list = []
+        type_list: List[Tensor] = []
         offset: Dict[EdgeType] = {}
         for edge_type in edge_index_dict.keys():
             src = edge_type[0]
@@ -142,10 +143,8 @@ class HGTConv(MessagePassing):
             cumsum += N
             
             # construct type_vec for curr edge_type with shape [H, D]
-            start_index = self.edge_types_map[edge_type] * H
-            end_index = start_index + H
-            type_vec = torch.arange(start_index, end_index,
-                                    dtype=torch.long).view(-1,1).repeat(1,N)
+            edge_type_offset = self.edge_types_map[edge_type] 
+            type_vec = torch.arange(H,dtype=torch.long).view(-1,1).repeat(1,N) *num_edge_types + edge_type_offset
             
             type_list.append(type_vec)
             ks.append(k_dict[src])
