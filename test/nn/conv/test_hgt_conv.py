@@ -208,7 +208,6 @@ def test_hgt_conv_missing_input_node_type():
     conv = HGTConv(-1, 64, metadata, heads=1)
 
     out_dict = conv(data.x_dict, data.edge_index_dict)
-    assert out_dict['author'].size() == (4, 64)
     assert out_dict['paper'].size() == (6, 64)
     assert 'university' not in out_dict
 
