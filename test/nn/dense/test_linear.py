@@ -284,20 +284,20 @@ if __name__ == '__main__':
         padded_x = torch.nested.nested_tensor(xs).to_padded_tensor(padding=0.0)
         weight = torch.randn(num_types, channels, channels, device=args.device)
         weights = list(weight.unbind(0))
-        funcs_to_test = [sequential, grouped, padded]
-        func_names_to_test = ['Sequential', 'Grouped', 'Padded']
+
+        funcs = [sequential, grouped, padded]
+        func_names = ['Sequential', 'Grouped', 'Padded']
+        args_list = [(xs, weights), (x, ptr, weight), (padded_x, weight)]
+
         if WITH_DGL:
-            funcs_to_test += [dgl_mm]
-            func_names_to_test += ['DGL']
+            funcs.append(dgl_mm)
+            func_names.append('DGL')
+            args_list.append((x, count, weight))
+
         benchmark(
-            funcs=funcs_to_test,
-            func_names=func_names_to_test,
-            args=[
-                (xs, weights),
-                (x, ptr, weight),
-                (padded_x, weight),
-                (x, count, weight),
-            ],
+            funcs=funcs,
+            func_names=func_names,
+            args=args_list,
             num_steps=50 if args.device == 'cpu' else 500,
             num_warmups=10 if args.device == 'cpu' else 100,
             backward=args.backward,
