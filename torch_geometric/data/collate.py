@@ -9,7 +9,7 @@ import torch_geometric.typing
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
 from torch_geometric.typing import SparseTensor, torch_sparse
-from torch_geometric.utils import is_sparse, is_torch_sparse_tensor, to_edge_index, 
+from torch_geometric.utils import is_sparse, is_torch_sparse_tensor, to_edge_index, to_torch_sparse_tensor
 
 def collate(
     cls,
