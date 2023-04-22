@@ -7,11 +7,11 @@ from torch import Tensor
 from torch.nn import Identity
 
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import NoneType
 from torch_geometric.nn.resolver import (
     activation_resolver,
     normalization_resolver,
 )
+from torch_geometric.typing import NoneType
 
 
 class MLP(torch.nn.Module):
