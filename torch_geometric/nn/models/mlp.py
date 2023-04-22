@@ -11,8 +11,6 @@ from torch_geometric.nn.resolver import (
     activation_resolver,
     normalization_resolver,
 )
-from torch_geometric.typing import NoneType
-
 
 class MLP(torch.nn.Module):
     r"""A Multi-Layer Perception (MLP) model.
