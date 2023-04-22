@@ -207,7 +207,7 @@ class Explanation(Data, ExplanationMixin):
             path (str, optional): The path to where the plot is saved.
                 If set to :obj:`None`, will visualize the plot on-the-fly.
                 (default: :obj:`None`)
-            feat_labels (List[str], optional): Optional labels for features.
+            feat_labels (List[str], optional): The labels of features.
                 (default :obj:`None`)
             top_k (int, optional): Top k features to plot. If :obj:`None`
                 plots all features. (default: :obj:`None`)
@@ -322,12 +322,8 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
             path (str, optional): The path to where the plot is saved.
                 If set to :obj:`None`, will visualize the plot on-the-fly.
                 (default: :obj:`None`)
-            feat_labels (Dict[NodeType, List[str]], optional): Optional labels
-                for features. For each node type, a list of feature
-                labels must be provided. If not provided, the feature labels
-                will be set to integers in the range :obj:`[0, num_features]`.
-                Further internally the `node_type` is added as a prefix for the
-                feature labels. (default :obj:`None`)
+            feat_labels (Dict[NodeType, List[str]], optional): The labels of
+                features for each node type. (default :obj:`None`)
             top_k (int, optional): Top k features to plot. If :obj:`None`
                 plots all features. (default: :obj:`None`)
         """
