@@ -7,6 +7,7 @@ from torch import Tensor
 from torch.nn import Identity
 
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.typing import NoneType
 from torch_geometric.nn.resolver import (
     activation_resolver,
     normalization_resolver,
@@ -187,15 +188,20 @@ class MLP(torch.nn.Module):
     def forward(
         self,
         x: Tensor,
-        return_emb: bool = False,
+        return_emb: NoneType = None,
     ) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
             return_emb (bool, optional): If set to :obj:`True`, will
-                additionally return the embeddings before execution of to the
+                additionally return the embeddings before execution of the
                 final output layer. (default: :obj:`False`)
         """
+        # `return_emb` is annotated here as `NoneType` to be compatible with
+        # TorchScript, which does not support different return types based on
+        # the value of an input argument.
+        emb: Optional[Tensor] = None
+
         for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
             x = lin(x)
             if self.act is not None and self.act_first:
@@ -204,13 +210,14 @@ class MLP(torch.nn.Module):
             if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout[i], training=self.training)
-            emb = x
+            if isinstance(return_emb, bool) and return_emb is True:
+                emb = x
 
         if self.plain_last:
             x = self.lins[-1](x)
             x = F.dropout(x, p=self.dropout[-1], training=self.training)
 
-        return (x, emb) if return_emb else x
+        return (x, emb) if isinstance(return_emb, bool) else x
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({str(self.channel_list)[1:-1]})'
