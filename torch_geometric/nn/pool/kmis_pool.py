@@ -282,8 +282,7 @@ class KMISPooling(Module):
         if self.aggr_x is None:
             x = x[mis]
         elif isinstance(self.aggr_x, str):
-            x = scatter(x, cluster, dim=0, dim_size=mis.sum(),
-                        reduce=self.aggr_x)
+            x = scatter(x, cluster, dim=0, dim_size=c, reduce=self.aggr_x)
         else:
             x = self.aggr_x(x, cluster, dim_size=c)
 
