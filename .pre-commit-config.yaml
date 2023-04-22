@@ -22,7 +22,7 @@ repos:
           )$
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.29.0
+    rev: v1.30.0
     hooks:
       - id: yamllint
         name: Lint yaml
@@ -53,3 +53,4 @@ repos:
     hooks:
       - id: flake8
         name: Check PEP8
+        additional_dependencies: [Flake8-pyproject]

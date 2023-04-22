@@ -416,8 +416,7 @@ def test_pair_data_batching():
                 return self.x_s.size(0)
             if key == 'edge_index_t':
                 return self.x_t.size(0)
-            else:
-                return super().__inc__(key, value, *args, **kwargs)
+            return super().__inc__(key, value, *args, **kwargs)
 
     x_s = torch.randn(5, 16)
     edge_index_s = torch.tensor([

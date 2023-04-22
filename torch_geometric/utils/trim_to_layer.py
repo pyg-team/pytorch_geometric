@@ -8,6 +8,8 @@ from torch_geometric.typing import (
     MaybeHeteroEdgeTensor,
     MaybeHeteroNodeTensor,
     NodeType,
+    SparseStorage,
+    SparseTensor,
 )
 
 
@@ -45,6 +47,7 @@ def trim_to_layer(
     if layer <= 0:
         return x, edge_index, edge_attr
 
+    # TODO Support `SparseTensor` for heterogeneous graphs.
     if isinstance(num_sampled_edges_per_hop, dict):
         x = {
             k: v.narrow(
@@ -78,18 +81,28 @@ def trim_to_layer(
         start=0,
         length=x.size(0) - num_sampled_nodes_per_hop[-layer],
     )
-    edge_index = edge_index.narrow(
-        dim=1,
-        start=0,
-        length=edge_index.size(1) - num_sampled_edges_per_hop[-layer],
-    )
     if edge_attr is not None:
         edge_attr = edge_attr.narrow(
             dim=0,
             start=0,
             length=edge_attr.size(0) - num_sampled_edges_per_hop[-layer],
         )
-    return x, edge_index, edge_attr
+    if isinstance(edge_index, Tensor):
+        edge_index = edge_index.narrow(
+            dim=1,
+            start=0,
+            length=edge_index.size(1) - num_sampled_edges_per_hop[-layer],
+        )
+        return x, edge_index, edge_attr
+
+    elif isinstance(edge_index, SparseTensor):
+        num_nodes = edge_index.size(0) - num_sampled_nodes_per_hop[-layer]
+        num_seed_nodes = num_nodes - num_sampled_nodes_per_hop[-(layer + 1)]
+        edge_index = trim_sparse_tensor(edge_index, num_nodes, num_seed_nodes)
+
+        return x, edge_index, edge_attr
+
+    raise NotImplementedError
 
 
 class TrimToLayer(torch.nn.Module):
@@ -99,7 +112,7 @@ class TrimToLayer(torch.nn.Module):
         num_sampled_nodes_per_hop: Optional[List[int]],
         num_sampled_edges_per_hop: Optional[List[int]],
         x: Tensor,
-        edge_index: Tensor,
+        edge_index: Union[Tensor, SparseTensor],
         edge_attr: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
 
@@ -123,3 +136,51 @@ class TrimToLayer(torch.nn.Module):
             edge_index,
             edge_attr,
         )
+
+
+# Helper functions ############################################################
+
+
+def trim_sparse_tensor(src: SparseTensor, num_nodes: int,
+                       num_seed_nodes: None) -> SparseTensor:
+    r"""Trims a :class:`SparseTensor` along both dimensions to only contain
+    the upper :obj:`num_nodes` in both dimensions.
+
+    It is assumed that :class:`SparseTensor` is obtained from BFS traversing,
+    starting from the nodes that have been initially selected.
+
+    Args:
+        src (SparseTensor): The sparse tensor.
+        num_nodes (int): The number of first nodes to keep.
+        num_seed_nodes (int): The number of seed nodes to compute
+            representations.
+    """
+    rowptr, col, value = src.csr()
+
+    rowptr = torch.narrow(rowptr, 0, 0, num_nodes + 1).clone()
+    rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
+
+    col = torch.narrow(col, 0, 0, rowptr[-1])
+
+    if value is not None:
+        value = torch.narrow(value, 0, 0, rowptr[-1])
+
+    csr2csc = src.storage._csr2csc
+    if csr2csc is not None:
+        csr2csc = csr2csc[csr2csc < len(col)]
+
+    storage = SparseStorage(
+        row=None,
+        rowptr=rowptr,
+        col=col,
+        value=value,
+        sparse_sizes=(num_nodes, num_nodes),
+        rowcount=None,
+        colptr=None,
+        colcount=None,
+        csr2csc=csr2csc,
+        csc2csr=None,
+        is_sorted=True,
+        trust_data=True,
+    )
+    return src.from_storage(storage)

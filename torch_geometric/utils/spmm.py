@@ -121,8 +121,9 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         else:
             assert src.layout == torch.sparse_coo
             src = src.coalesce()
-            deg = scatter(torch.ones_like(src.values()), src.indices(), dim=0,
-                          dim_size=src.size(0), reduce='sum')
+            deg = scatter(torch.ones_like(src.values()),
+                          src.indices()[0], dim=0, dim_size=src.size(0),
+                          reduce='sum')
 
         return torch.sparse.mm(src, other) / deg.view(-1, 1).clamp_(min=1)
 
