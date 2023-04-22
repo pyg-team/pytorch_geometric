@@ -122,10 +122,17 @@ def test_edge_mask():
 @withPackage('matplotlib')
 @pytest.mark.parametrize('top_k', [2, None])
 @pytest.mark.parametrize('node_mask_type', [None, 'attributes'])
-def test_visualize_feature_importance(top_k, node_mask_type, tmp_path,
-                                      hetero_data):
-    explanation = create_random_explanation(hetero_data,
-                                            node_mask_type=node_mask_type)
+def test_visualize_feature_importance(
+    top_k,
+    node_mask_type,
+    tmp_path,
+    hetero_data,
+):
+    explanation = create_random_explanation(
+        hetero_data,
+        node_mask_type=node_mask_type,
+    )
+
     path = osp.join(tmp_path, 'feature_importance.png')
 
     if node_mask_type is None:
