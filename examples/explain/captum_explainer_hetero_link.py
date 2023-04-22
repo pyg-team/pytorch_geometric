@@ -113,7 +113,6 @@ explanation = explainer(
     index=index,
     edge_label_index=data['user', 'movie'].edge_label_index,
 )
-print(explanation)
 print(f'Generated explanations in {explanation.available_explanations}')
 
 path = 'feature_importance.png'
