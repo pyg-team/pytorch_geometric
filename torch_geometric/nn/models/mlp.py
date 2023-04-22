@@ -188,7 +188,7 @@ class MLP(torch.nn.Module):
     def forward(
         self,
         x: Tensor,
-        return_emb: NoneType = None,
+        return_emb: bool = False,
     ) -> Tensor:
         r"""
         Args:
@@ -211,7 +211,7 @@ class MLP(torch.nn.Module):
             x = self.lins[-1](x)
             x = F.dropout(x, p=self.dropout[-1], training=self.training)
 
-        return (x, emb) if isinstance(return_emb, bool) else x
+        return (x, emb) if return_emb else x
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({str(self.channel_list)[1:-1]})'
