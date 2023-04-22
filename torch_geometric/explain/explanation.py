@@ -201,7 +201,7 @@ class Explanation(Data, ExplanationMixin):
         top_k: Optional[int] = None,
     ):
         r"""Creates a bar plot of the node feature importances by summing up
-        :attr:`self.node_mask` across all nodes.
+        the node mask across all nodes.
 
         Args:
             path (str, optional): The path to where the plot is saved.
@@ -316,7 +316,7 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         top_k: Optional[int] = None,
     ):
         r"""Creates a bar plot of the node feature importances by summing up
-        :attr:`self.node_mask` across all nodes for each node type.
+        node masks across all nodes for each node type.
 
         Args:
             path (str, optional): The path to where the plot is saved.

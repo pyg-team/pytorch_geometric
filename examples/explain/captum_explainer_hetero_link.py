@@ -75,21 +75,17 @@ class Model(torch.nn.Module):
 
 
 model = Model(hidden_channels=32).to(device)
-
-# Due to lazy initialization, we need to run one model step so the number
-# of parameters can be inferred:
-with torch.no_grad():
-    model.encoder(data.x_dict, data.edge_index_dict)
-
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 for epoch in range(1, 10):
     model.train()
     optimizer.zero_grad()
-    pred = model(data.x_dict, data.edge_index_dict,
-                 data['user', 'movie'].edge_label_index)
-    target = data['user', 'movie'].edge_label
-    loss = F.mse_loss(pred, target)
+    pred = model(
+        data.x_dict,
+        data.edge_index_dict,
+        data['user', 'movie'].edge_label_index,
+    )
+    loss = F.mse_loss(pred, data['user', 'movie'].edge_label)
     loss.backward()
     optimizer.step()
 
@@ -110,10 +106,14 @@ explainer = Explainer(
     ),
 )
 
-explain_index = torch.tensor([2, 10])
+index = torch.tensor([2, 10])  # Explain edge labels with index 2 and 10.
 explanation = explainer(
-    data.x_dict, data.edge_index_dict, index=explain_index,
-    edge_label_index=data['user', 'movie'].edge_label_index)
+    data.x_dict,
+    data.edge_index_dict,
+    index=index,
+    edge_label_index=data['user', 'movie'].edge_label_index,
+)
+print(explanation)
 print(f'Generated explanations in {explanation.available_explanations}')
 
 path = 'feature_importance.png'
