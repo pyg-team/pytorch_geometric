@@ -12,6 +12,7 @@ from torch_geometric.nn.resolver import (
     normalization_resolver,
 )
 
+
 class MLP(torch.nn.Module):
     r"""A Multi-Layer Perception (MLP) model.
     There exists two ways to instantiate an :class:`MLP`:
