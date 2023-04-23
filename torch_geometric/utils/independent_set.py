@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 
 from torch_geometric.typing import Adj, OptTensor, SparseTensor, Tensor
@@ -5,6 +7,7 @@ from torch_geometric.utils import scatter
 
 
 def maximal_independent_set(edge_index: Adj, k: int = 1,
+                            num_nodes: Optional[int] = None,
                             perm: OptTensor = None) -> Tensor:
     r"""Returns a Maximal :math:`k`-Independent Set of a graph, i.e., a set of
     nodes (as a :class:`ByteTensor`) such that none of them are :math:`k`-hop
@@ -35,7 +38,10 @@ def maximal_independent_set(edge_index: Adj, k: int = 1,
     else:
         row, col = edge_index[0], edge_index[1]
         device = row.device
-        n = edge_index.max().item() + 1
+        n = num_nodes
+
+        if n is None:
+            n = edge_index.max().item() + 1
 
     # TODO: Use scatter's `out` and `include_self` arguments,
     #       when available, instead of adding self-loops
@@ -54,7 +60,7 @@ def maximal_independent_set(edge_index: Adj, k: int = 1,
 
     while not mask.all():
         for _ in range(k):
-            min_rank = scatter(min_rank[row], col, dim_size=n, reduce='min')
+            min_rank = scatter(min_rank[col], row, dim_size=n, reduce='min')
 
         mis = mis | torch.eq(rank, min_rank)
         mask = mis.clone().byte()

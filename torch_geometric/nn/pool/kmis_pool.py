@@ -7,6 +7,7 @@ from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.dense import Linear
 from torch_geometric.typing import (
     Adj,
+    Optional,
     OptTensor,
     PairTensor,
     SparseTensor,
@@ -18,6 +19,7 @@ Scorer = Callable[[Tensor, Adj, OptTensor, OptTensor], Tensor]
 
 
 def maximal_independent_set_cluster(edge_index: Adj, k: int = 1,
+                                    num_nodes: Optional[int] = None,
                                     perm: OptTensor = None) -> PairTensor:
     r"""Computes the Maximal :math:`k`-Independent Set (:math:`k`-MIS)
     clustering of a graph, as defined in `"Generalizing Downsampling from
@@ -39,7 +41,8 @@ def maximal_independent_set_cluster(edge_index: Adj, k: int = 1,
 
     :rtype: (:class:`ByteTensor`, :class:`LongTensor`)
     """
-    mis = maximal_independent_set(edge_index=edge_index, k=k, perm=perm)
+    mis = maximal_independent_set(edge_index=edge_index, k=k,
+                                  num_nodes=num_nodes, perm=perm)
     n, device = mis.size(0), mis.device
 
     if isinstance(edge_index, SparseTensor):
@@ -261,7 +264,7 @@ class KMISPooling(Module):
         updated_score = self._apply_heuristic(score, adj)
         perm = torch.argsort(updated_score.view(-1), 0, descending=True)
 
-        mis, cluster = maximal_independent_set_cluster(adj, self.k, perm)
+        mis, cluster = maximal_independent_set_cluster(adj, self.k, perm=perm)
 
         row, col, val = adj.coo()
         c = mis.sum()
