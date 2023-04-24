@@ -132,7 +132,7 @@ class Summary:
             for field in Stats.__dataclass_fields__:
                 row = [field] + [
                     f'{getattr(s, field):.1f}'
-                    for _, s in self.num_nodes_per_type.items()
+                    for s in self.num_nodes_per_type.values()
                 ]
                 content.append(row)
             body += "\nNumber of nodes per node type:\n"
@@ -140,12 +140,15 @@ class Summary:
 
         if self.num_edges_per_type is not None:
             content = [['']]
-            content[0] += [f"({', '.join(edge_type)})" for edge_type in self.num_edges_per_type.keys()]
+            content[0] += [
+                f"({', '.join(edge_type)})"
+                for edge_type in self.num_edges_per_type.keys()
+            ]
 
             for field in Stats.__dataclass_fields__:
                 row = [field] + [
                     f'{getattr(s, field):.1f}'
-                    for _, s in self.num_edges_per_type.items()
+                    for s in self.num_edges_per_type.values()
                 ]
                 content.append(row)
             body += "\nNumber of edges per edge type:\n"
