@@ -607,16 +607,17 @@ def get_calc_ppr():
 def sparsify_top_k(edge_index: torch.Tensor, edge_weight: torch.Tensor, k: int,
                    dim: int = 0):
     r"""Sparsifies a given sparse graph further by choosing the top :obj:`k`
-        edges according to :obj:`edge_weight` along dimension :obj:`dim`.
+    edges according to :obj:`edge_weight` along dimension :obj:`dim`.
 
-        Args:
-            edge_index (LongTensor): The edge indices.
-            edge_weight (Tensor): One-dimensional edge weights.
-            k (int): Number of elements to keep.
-            dim (int): Dimension along which to sparsify.
+    Args:
+        edge_index (LongTensor): The edge indices.
+        edge_weight (Tensor): The one-dimensional edge weights.
+        k (int): Number of elements to keep per node.
+        dim (int, optional): The dimension along which to sparsify. (default:
+            :obj:`0`)
 
-        :rtype: (:class:`LongTensor`, :class:`Tensor`)
-        """
+    :rtype: (:class:`LongTensor`, :class:`Tensor`)
+    """
     count = torch.bincount(edge_index[dim], minlength=0)
     cumsum = torch.cumsum(count, dim=0) - count
 

@@ -66,7 +66,7 @@ def normalization_resolver(query: Union[Any, str], *args, **kwargs):
 
 def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
     import torch_geometric.nn.aggr as aggr
-    base_cls = aggr.Aggregation  # TODO: consider weighted aggregations
+    base_cls = aggr.Aggregation
     aggrs = [
         aggr for aggr in vars(aggr).values()
         if isinstance(aggr, type) and issubclass(aggr, base_cls)

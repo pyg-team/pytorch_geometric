@@ -32,6 +32,7 @@ def test_activation_resolver():
     (torch_geometric.nn.aggr.StdAggregation, 'std'),
     (torch_geometric.nn.aggr.SoftmaxAggregation, 'softmax'),
     (torch_geometric.nn.aggr.PowerMeanAggregation, 'powermean'),
+    (torch_geometric.nn.aggr.WeightedMeanAggregation, 'weighted_mean'),
 ])
 def test_aggregation_resolver(aggr_tuple):
     aggr_module, aggr_repr = aggr_tuple
