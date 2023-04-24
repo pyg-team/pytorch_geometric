@@ -11,6 +11,7 @@ from torch_geometric.nn import (
     StdAggregation,
     SumAggregation,
     VarAggregation,
+    WeightedMeanAggregation,
 )
 
 
@@ -29,6 +30,21 @@ def test_validate():
 
     with pytest.raises(ValueError, match="invalid 'dim_size'"):
         aggr(x, index, dim_size=2)
+
+
+def test_weighted_validate():
+    x = torch.randn(6, 16)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+
+    aggr = WeightedMeanAggregation()
+
+    with pytest.raises(ValueError, match="needs to be one-dimensional"):
+        weight = torch.rand(6, 2)
+        aggr(x, weight, index)
+
+    with pytest.raises(ValueError, match="that the size of the inputs align"):
+        weight = torch.rand(4)
+        aggr(x, weight, index)
 
 
 @pytest.mark.parametrize('Aggregation', [
@@ -56,6 +72,21 @@ def test_basic_aggregation(Aggregation):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
+
+
+@pytest.mark.parametrize('Aggregation', [WeightedMeanAggregation])
+def test_weighted_aggregation(Aggregation):
+    x = torch.randn(6, 16)
+    weight = torch.rand(6)
+    index = torch.tensor([0, 0, 1, 1, 1, 2])
+    ptr = torch.tensor([0, 2, 5, 6])
+
+    aggr = Aggregation()
+    assert str(aggr) == f'{Aggregation.__name__}()'
+
+    out = aggr(x, weight, index)
+    # assert out.size() == (3, x.size(1))
+    # assert torch.allclose(out, aggr(x, weight, ptr=ptr))
 
 
 def test_var_aggregation():

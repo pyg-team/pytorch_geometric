@@ -35,18 +35,17 @@ class MeanAggregation(Aggregation):
 
 
 class WeightedMeanAggregation(WeightedAggregation):
-    r"""An aggregation operator that averages features across a set of elements
+    r"""An aggregation operator that computes the weighted average of features
+    across a set of elements
 
-    TODO: adapt math
     .. math::
-        \mathrm{mean}(\mathcal{X}) = \frac{1}{|\mathcal{X}|}
-        \sum_{\mathbf{x}_i \in \mathcal{X}} \mathbf{x}_i.
+        \mathrm{mean}(\mathcal{X}, \mathbf{w}) = \frac{1}{|\mathcal{X}|}
+        \sum_{\mathbf{x}_i \in \mathcal{X}} w_i \mathbf{x}_i.
     """
-    def forward(self, x: Tensor, edge_weight: Tensor,
+    def forward(self, x: Tensor, weight: Tensor,
                 index: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
-        x = edge_weight.view(-1, 1) * x
-        return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
+        return self.reduce(x, weight, index, ptr, dim_size, dim, reduce='sum')
 
 
 class MaxAggregation(Aggregation):
