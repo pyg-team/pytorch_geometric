@@ -14,6 +14,7 @@ from torch_geometric.typing import (
     SparseTensor,
     torch_sparse,
 )
+from torch_geometric.utils import is_sparse, to_edge_index
 
 
 class FiLMConv(MessagePassing):
@@ -88,16 +89,29 @@ class FiLMConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        self.lins = ModuleList()
-        self.films = ModuleList()
-        for _ in range(num_relations):
-            self.lins.append(Linear(in_channels[0], out_channels, bias=False))
+        # self.lins = ModuleList()
+        # self.films = ModuleList()
+        if self.num_relations > 1:
+            self.lins = HeteroLinear(in_channels[0], out_channels, num_types=num_relations, is_sorted=True, bias=False)
             if nn is None:
-                film = Linear(in_channels[1], 2 * out_channels)
+                self.films = HeteroLinear(in_channels[1], 2* out_channels, num_types=num_relations, is_sorted=True, bias=False)
             else:
-                film = copy.deepcopy(nn)
-            self.films.append(film)
-
+                self.films = ModuleList()
+                for _ in range(num_relations):
+                    self.films.append(copy.deepcopy(nn))
+        else:
+            self.lins = (Linear(in_channels[0], out_channels, bias=False))
+            if nn is None:
+                self.films = Linear(in_channels[1], 2 * out_channels)
+            else:
+                self.films = copy.deepcopy(nn)
+        # for _ in range(num_relations):
+        #     self.lins.append(Linear(in_channels[0], out_channels, bias=False))
+        #     if nn is None:
+        #         film = Linear(in_channels[1], 2 * out_channels)
+        #     else:
+        #         film = copy.deepcopy(nn)
+        #     self.films.append(film)
         self.lin_skip = Linear(in_channels[1], self.out_channels, bias=False)
         if nn is None:
             self.film_skip = Linear(in_channels[1], 2 * self.out_channels,
@@ -128,25 +142,40 @@ class FiLMConv(MessagePassing):
 
         # propagate_type: (x: Tensor, beta: Tensor, gamma: Tensor)
         if self.num_relations <= 1:
-            beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
-            out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
+            beta, gamma = self.films(x[1]).split(self.out_channels, dim=-1)
+            out = out + self.propagate(edge_index, x=self.lins(x[0]),
                                        beta=beta, gamma=gamma, size=None)
         else:
-            for i, (lin, film) in enumerate(zip(self.lins, self.films)):
-                beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
-                if isinstance(edge_index, SparseTensor):
-                    edge_type = edge_index.storage.value()
-                    assert edge_type is not None
-                    mask = edge_type == i
-                    adj_t = torch_sparse.masked_select_nnz(
-                        edge_index, mask, layout='coo')
-                    out = out + self.propagate(adj_t, x=lin(x[0]), beta=beta,
-                                               gamma=gamma, size=None)
-                else:
-                    assert edge_type is not None
-                    mask = edge_type == i
-                    out = out + self.propagate(edge_index[:, mask], x=lin(
-                        x[0]), beta=beta, gamma=gamma, size=None)
+            if is_sparse(edge_index):
+                print("Warning: sparse edge representations are not recommended for FastFiLMConv")
+                edge_index = to_edge_index(edge_index)[0]
+            for relation_type_i in range(self.num_relations):
+                # make film xs list
+                # make make propogate xs list
+
+            # cat and apply linears
+            # propogate
+
+        # if self.num_relations <= 1:
+        #     beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
+        #     out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
+        #                                beta=beta, gamma=gamma, size=None)
+        # else:
+        #     for i, (lin, film) in enumerate(zip(self.lins, self.films)):
+        #         beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
+        #         if isinstance(edge_index, SparseTensor):
+        #             edge_type = edge_index.storage.value()
+        #             assert edge_type is not None
+        #             mask = edge_type == i
+        #             adj_t = torch_sparse.masked_select_nnz(
+        #                 edge_index, mask, layout='coo')
+        #             out = out + self.propagate(adj_t, x=lin(x[0]), beta=beta,
+        #                                        gamma=gamma, size=None)
+        #         else:
+        #             assert edge_type is not None
+        #             mask = edge_type == i
+        #             out = out + self.propagate(edge_index[:, mask], x=lin(
+        #                 x[0]), beta=beta, gamma=gamma, size=None)
 
         return out
 
