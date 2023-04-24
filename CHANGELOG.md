@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `WeightedAggregation` base class and implementations ([#7025](https://github.com/pyg-team/pytorch_geometric/pull/7025))
+- Added `sparsify_top_k` support in `transforms.GDC` ([#7025](https://github.com/pyg-team/pytorch_geometric/pull/7025))
 - Added an example for heterogeneous GNN explanation via `CaptumExplainer` ([#7096](https://github.com/pyg-team/pytorch_geometric/pull/7096))
 - Added `visualize_feature_importance` functionality to `HeteroExplanation` ([#7096](https://github.com/pyg-team/pytorch_geometric/pull/7096))
 - Added a `AddRemainingSelfLoops` transform ([#7192](https://github.com/pyg-team/pytorch_geometric/pull/7192))
