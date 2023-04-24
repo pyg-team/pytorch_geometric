@@ -12,7 +12,6 @@ class WeightedQuantileAggregation(WeightedAggregation):
     :math:`q`-th quantile of a set :math:`\mathcal{X}` with positive weights
     :math:`\mathbb{w}`. That is, for every feature :math:`d`, it computes
 
-    TODO: update with weights
     .. math::
         {\mathrm{Q}_q(\mathcal{X})}_d = \begin{cases}
             x_{\pi_i,d} & i = q \cdot n, \\
@@ -135,7 +134,6 @@ class SoftMedianAggregation(WeightedAggregation):
     described in the `"Robustness of Graph Neural Networks at Scale"
     <https://arxiv.org/abs/2110.14038>`_ paper
 
-    TODO: change math
     .. math::
         \mathrm{softmax}(\mathcal{X}|t) = \sum_{\mathbf{x}_i\in\mathcal{X}}
         \frac{\exp(t\cdot\mathbf{x}_i)}{\sum_{\mathbf{x}_j\in\mathcal{X}}
