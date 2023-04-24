@@ -85,7 +85,7 @@ class FiLMConv(MessagePassing):
         self.out_channels = out_channels
         self.num_relations = max(num_relations, 1)
         self.act = act
-
+        self.nn_is_none = nn is None
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
@@ -93,7 +93,7 @@ class FiLMConv(MessagePassing):
         # self.films = ModuleList()
         if self.num_relations > 1:
             self.lins = HeteroLinear(in_channels[0], out_channels, num_types=num_relations, is_sorted=True, bias=False)
-            if nn is None:
+            if self.nn_is_none:
                 self.films = HeteroLinear(in_channels[1], 2* out_channels, num_types=num_relations, is_sorted=True, bias=False)
             else:
                 self.films = ModuleList()
@@ -101,7 +101,7 @@ class FiLMConv(MessagePassing):
                     self.films.append(copy.deepcopy(nn))
         else:
             self.lins = (Linear(in_channels[0], out_channels, bias=False))
-            if nn is None:
+            if self.nn_is_none:
                 self.films = Linear(in_channels[1], 2 * out_channels)
             else:
                 self.films = copy.deepcopy(nn)
@@ -113,7 +113,7 @@ class FiLMConv(MessagePassing):
         #         film = copy.deepcopy(nn)
         #     self.films.append(film)
         self.lin_skip = Linear(in_channels[1], self.out_channels, bias=False)
-        if nn is None:
+        if self.nn_is_none:
             self.film_skip = Linear(in_channels[1], 2 * self.out_channels,
                                     bias=False)
         else:
@@ -146,15 +146,31 @@ class FiLMConv(MessagePassing):
             out = out + self.propagate(edge_index, x=self.lins(x[0]),
                                        beta=beta, gamma=gamma, size=None)
         else:
+            # (TODO) add support for sparse tensors without conversion
             if is_sparse(edge_index):
-                print("Warning: sparse edge representations are not recommended for FastFiLMConv")
+                print("Warning: sparse edge representations are not supported for FastFiLMConv yet.\
+                       This incurs an additional conversion each forward pass.")
                 edge_index = to_edge_index(edge_index)[0]
-            for relation_type_i in range(self.num_relations):
+            film_xs = []
+            propogate_xs = []
+            type_list = []
+            for e_type_i in range(self.num_relations):
+                edge_mask = edge_type == e_type_i
+                masked_src_idxs = edge_index[0, :]
+                N = masked_src_idxs.numel()
+                type_list.append(torch.full((N, ), count, dtype=torch.long))
                 # make film xs list
+                film_x = x[1][masked_src_idxs, :]
+                film_xs.append(film_x)
                 # make make propogate xs list
-
+                propogate_x = x[0][masked_src_idxs, :]
+                propogate_xs.append(propogate_x)
+            type_vec = torch.cat(type_list)
             # cat and apply linears
+            beta, gamma = self.films(torch.cat(film_xs), type_vec).split(self.out_channels, dim=-1)
+            propogate_x = self.lins(torch.cat(propogate_xs), type_vec)
             # propogate
+            out += self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None)
 
         # if self.num_relations <= 1:
         #     beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
