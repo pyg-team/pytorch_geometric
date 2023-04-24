@@ -17,58 +17,8 @@ from torch_geometric.typing import (
 from torch_geometric.utils import is_sparse, to_edge_index
 
 
-class FiLMConv(MessagePassing):
-    r"""The FiLM graph convolutional operator from the
-    `"GNN-FiLM: Graph Neural Networks with Feature-wise Linear Modulation"
-    <https://arxiv.org/abs/1906.12192>`_ paper
-
-    .. math::
-        \mathbf{x}^{\prime}_i = \sum_{r \in \mathcal{R}}
-        \sum_{j \in \mathcal{N}(i)} \sigma \left(
-        \boldsymbol{\gamma}_{r,i} \odot \mathbf{W}_r \mathbf{x}_j +
-        \boldsymbol{\beta}_{r,i} \right)
-
-    where :math:`\boldsymbol{\beta}_{r,i}, \boldsymbol{\gamma}_{r,i} =
-    g(\mathbf{x}_i)` with :math:`g` being a single linear layer by default.
-    Self-loops are automatically added to the input graph and represented as
-    its own relation type.
-
-    .. note::
-
-        For an example of using FiLM, see `examples/gcn.py
-        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        film.py>`_.
-
-    Args:
-        in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
-            derive the size from the first input(s) to the forward method.
-            A tuple corresponds to the sizes of source and target
-            dimensionalities.
-        out_channels (int): Size of each output sample.
-        num_relations (int, optional): Number of relations. (default: :obj:`1`)
-        nn (torch.nn.Module, optional): The neural network :math:`g` that
-            maps node features :obj:`x_i` of shape
-            :obj:`[-1, in_channels]` to shape :obj:`[-1, 2 * out_channels]`.
-            If set to :obj:`None`, :math:`g` will be implemented as a single
-            linear layer. (default: :obj:`None`)
-        act (callable, optional): Activation function :math:`\sigma`.
-            (default: :meth:`torch.nn.ReLU()`)
-        aggr (str, optional): The aggregation scheme to use
-            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
-            (default: :obj:`"mean"`)
-        **kwargs (optional): Additional arguments of
-            :class:`torch_geometric.nn.conv.MessagePassing`.
-
-    Shapes:
-        - **input:**
-          node features :math:`(|\mathcal{V}|, F_{in})` or
-          :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
-          if bipartite,
-          edge indices :math:`(2, |\mathcal{E}|)`,
-          edge types :math:`(|\mathcal{E}|)`
-        - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
-          :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
-    """
+class FastFiLMConv(MessagePassing):
+    r"""See :class:`FiLMConv`."""
     def __init__(
             self,
             in_channels: Union[int, Tuple[int, int]],
