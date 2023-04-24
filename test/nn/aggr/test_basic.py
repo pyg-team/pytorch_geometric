@@ -74,19 +74,25 @@ def test_basic_aggregation(Aggregation):
         assert torch.allclose(out, aggr(x, ptr=ptr))
 
 
-@pytest.mark.parametrize('Aggregation', [WeightedMeanAggregation])
-def test_weighted_aggregation(Aggregation):
+def test_weighted_mean_aggregation():
     x = torch.randn(6, 16)
     weight = torch.rand(6)
     index = torch.tensor([0, 0, 1, 1, 1, 2])
     ptr = torch.tensor([0, 2, 5, 6])
 
-    aggr = Aggregation()
-    assert str(aggr) == f'{Aggregation.__name__}()'
+    expected = torch.cat([
+        (x[0:2] * weight[0:2].view(-1, 1)).sum(dim=0, keepdim=True),
+        (x[2:5] * weight[2:5].view(-1, 1)).sum(dim=0, keepdim=True),
+        (x[5:6] * weight[5:6].view(-1, 1)).sum(dim=0, keepdim=True),
+    ], dim=0)
+
+    aggr = WeightedMeanAggregation()
+    assert str(aggr) == 'WeightedMeanAggregation()'
 
     out = aggr(x, weight, index)
-    # assert out.size() == (3, x.size(1))
-    # assert torch.allclose(out, aggr(x, weight, ptr=ptr))
+    assert out.size() == (3, x.size(1))
+    assert torch.allclose(out, expected)
+    assert torch.allclose(out, aggr(x, weight, ptr=ptr))
 
 
 def test_var_aggregation():
