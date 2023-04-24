@@ -90,7 +90,8 @@ PyG uses [GitHub Actions](https://github.com/pyg-team/pytorch_geometric/actions)
 
 Everytime you send a Pull Request, your commit will be built and checked against the PyG guidelines:
 
-1. Ensure that your code is formatted correctly by testing against the styleguide of [`flake8`](https://github.com/PyCQA/flake8):
+1. Ensure that your code is formatted correctly by testing against the styleguide of [`flake8`](https://github.com/PyCQA/flake8).
+   We use the [`Flake8-pyproject`](https://pypi.org/project/Flake8-pyproject/) plugin for configuration:
 
    ```bash
    flake8 .

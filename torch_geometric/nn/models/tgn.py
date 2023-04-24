@@ -61,6 +61,10 @@ class TGNMemory(torch.nn.Module):
 
         self.reset_parameters()
 
+    @property
+    def device(self) -> torch.device:
+        return self.time_enc.lin.weight.device
+
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         if hasattr(self.msg_s_module, 'reset_parameters'):
@@ -109,8 +113,8 @@ class TGNMemory(torch.nn.Module):
             self._update_memory(n_id)
 
     def _reset_message_store(self):
-        i = self.memory.new_empty((0, ), dtype=torch.long)
-        msg = self.memory.new_empty((0, self.raw_msg_dim))
+        i = self.memory.new_empty((0, ), device=self.device, dtype=torch.long)
+        msg = self.memory.new_empty((0, self.raw_msg_dim), device=self.device)
         # Message store format: (src, dst, t, msg)
         self.msg_s_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}
         self.msg_d_store = {j: (i, i, i, msg) for j in range(self.num_nodes)}

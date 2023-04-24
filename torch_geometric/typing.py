@@ -34,23 +34,109 @@ except (ImportError, OSError) as e:
     WITH_TORCH_SCATTER = False
 
 try:
+    import torch_cluster  # noqa
+    WITH_TORCH_CLUSTER = True
+except (ImportError, OSError) as e:
+    if isinstance(e, OSError):
+        warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
+                      f"Disabling its usage. Stacktrace: {e}")
+    WITH_TORCH_CLUSTER = False
+
+try:
     import torch_sparse  # noqa
-    from torch_sparse import SparseTensor
+    from torch_sparse import SparseStorage, SparseTensor
     WITH_TORCH_SPARSE = True
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
         warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
                       f"Disabling its usage. Stacktrace: {e}")
-    torch_sparse = object
     WITH_TORCH_SPARSE = False
 
+    class SparseStorage:
+        def __init__(*args, **kwargs):
+            raise ImportError("'SparseStorage' requires 'torch-sparse'")
+
     class SparseTensor:
-        def __init__(self, *args, **kwargs):
+        def __init__(
+            self,
+            row: Optional[Tensor] = None,
+            rowptr: Optional[Tensor] = None,
+            col: Optional[Tensor] = None,
+            value: Optional[Tensor] = None,
+            sparse_sizes: Optional[Tuple[Optional[int], Optional[int]]] = None,
+            is_sorted: bool = False,
+            trust_data: bool = False,
+        ):
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         @classmethod
-        def from_edge_index(cls, *args, **kwargs) -> 'SparseTensor':
+        def from_edge_index(
+            self,
+            edge_index: Tensor,
+            edge_attr: Optional[Tensor] = None,
+            sparse_sizes: Optional[Tuple[Optional[int], Optional[int]]] = None,
+            is_sorted: bool = False,
+            trust_data: bool = False,
+        ) -> 'SparseTensor':
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def size(self, dim: int) -> int:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def is_cuda(self) -> bool:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def has_value(self) -> bool:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def set_value(self, value: Optional[Tensor],
+                      layout: Optional[str] = None) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def fill_value(self, fill_value: float,
+                       dtype: Optional[torch.dtype] = None) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def coo(self) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def csr(self) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def to_torch_sparse_csr_tensor(
+            self,
+            dtype: Optional[torch.dtype] = None,
+        ) -> Tensor:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+    class torch_sparse:
+        @staticmethod
+        def matmul(src: SparseTensor, other: Tensor,
+                   reduce: str = "sum") -> Tensor:
+            raise ImportError("'matmul' requires 'torch-sparse'")
+
+        @staticmethod
+        def sum(src: SparseTensor, dim: Optional[int] = None) -> Tensor:
+            raise ImportError("'sum' requires 'torch-sparse'")
+
+        @staticmethod
+        def mul(src: SparseTensor, other: Tensor) -> SparseTensor:
+            raise ImportError("'mul' requires 'torch-sparse'")
+
+        @staticmethod
+        def set_diag(src: SparseTensor, values: Optional[Tensor] = None,
+                     k: int = 0) -> SparseTensor:
+            raise ImportError("'set_diag' requires 'torch-sparse'")
+
+        @staticmethod
+        def fill_diag(src: SparseTensor, fill_value: float,
+                      k: int = 0) -> SparseTensor:
+            raise ImportError("'fill_diag' requires 'torch-sparse'")
+
+        @staticmethod
+        def masked_select_nnz(src: SparseTensor, mask: Tensor,
+                              layout: Optional[str] = None) -> SparseTensor:
+            raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
 
 
 # Types for accessing data ####################################################

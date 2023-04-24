@@ -99,7 +99,7 @@ class LightningData(LightningDataModule):
         if loader == 'full' and kwargs.get('batch_sampler') is not None:
             warnings.warn("'batch_sampler' option is not supported for "
                           "loader='full'")
-            kwargs.pop('sampler', None)
+            kwargs.pop('batch_sampler', None)
 
         super().__init__(has_val, has_test, **kwargs)
 

@@ -304,6 +304,7 @@ New Benchmarks and Strong Simple Methods](https://arxiv.org/abs/2110.14446) (Neu
 * **[TransE](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.TransE.html)** from Bordes *et al.*: [Translating Embeddings for Modeling Multi-Relational Data](https://proceedings.neurips.cc/paper/2013/file/1cecc7a77928ca8133fa24680a88d2f9-Paper.pdf) (NIPS 2013) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)]
 * **[ComplEx](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.ComplEx.html)** from Trouillon *et al.*: [Complex Embeddings for Simple Link Prediction](https://arxiv.org/abs/1606.06357) (ICML 2016) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)]
 * **[DistMult](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.DistMult.html)** from Yang *et al.*: [Embedding Entities and Relations for Learning and Inference in Knowledge Bases](https://arxiv.org/abs/1412.6575) (ICLR 2015) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)]
+* **[RotatE](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.kge.RotatE.html)** from Sun *et al.*: [RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space](https://arxiv.org/abs/1902.10197) (ICLR 2019) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/kge_fb15k_237.py)]
 </details>
 
 **GNN operators and utilities:**
@@ -377,6 +378,8 @@ For this, simply run
 pip install torch_geometric
 ```
 
+PyG 2.3 requires that at least PyTorch 1.12 is installed.
+
 ### Additional Libraries
 
 If you want to utilize the full set of features from PyG, there exists several additional libraries you may want to install:
@@ -387,7 +390,7 @@ If you want to utilize the full set of features from PyG, there exists several a
 * **[`torch-cluster`](https://github.com/rusty1s/pytorch_cluster)**: Graph clustering routines
 * **[`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)**: [`SplineConv`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.SplineConv.html) support
 
-These packages come with their own CPU and GPU kernel implementations based on the [PyTorch C++/CUDA extension interface](https://github.com/pytorch/extension-cpp).
+These packages come with their own CPU and GPU kernel implementations based on the [PyTorch C++/CUDA/hip(ROCm) extension interface](https://github.com/pytorch/extension-cpp).
 For a basic usage of PyG, these dependencies are **fully optional**.
 We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
 
@@ -442,6 +445,11 @@ or install PyG **from master** via
 ```
 pip install git+https://github.com/pyg-team/pytorch_geometric.git
 ```
+
+### ROCm Wheels
+
+The external [`pyg-rocm-build` repository](https://github.com/Looong01/pyg-rocm-build) provides wheels and detailed instructions on how to install PyG for ROCm.
+If you have any questions about it, please open an issue [here](https://github.com/Looong01/pyg-rocm-build/issues).
 
 ## Cite
 

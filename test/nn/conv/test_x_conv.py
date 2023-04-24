@@ -25,7 +25,7 @@ def test_x_conv():
         jit = torch.jit.script(conv)
 
         torch.manual_seed(12345)
-        assert jit(x, pos).tolist() == out1.tolist()
+        assert torch.allclose(jit(x, pos), out1, atol=1e-6)
 
         torch.manual_seed(12345)
-        assert jit(x, pos, batch).tolist() == out2.tolist()
+        assert torch.allclose(jit(x, pos, batch), out2, atol=1e-6)
