@@ -90,14 +90,19 @@ class FiLMConv(MessagePassing):
 
         self.lins = ModuleList()
         self.films = ModuleList()
-        for _ in range(num_relations):
-            self.lins.append(Linear(in_channels[0], out_channels, bias=False))
-            if nn is None:
-                film = Linear(in_channels[1], 2 * out_channels)
-            else:
-                film = copy.deepcopy(nn)
-            self.films.append(film)
-
+        self.lins = HeteroLinear(in_channels[0], out_channels, num_types=num_relations, is_sorted=True, bias=False)
+        if nn is None:
+            self.films = HeteroLinear(in_channels[1], 2* out_channels, num_types=num_relations, is_sorted=True, bias=False)
+        else:
+            for _ in range(num_relations):
+                self.films.append(copy.deepcopy(nn))
+        # for _ in range(num_relations):
+        #     self.lins.append(Linear(in_channels[0], out_channels, bias=False))
+        #     if nn is None:
+        #         film = Linear(in_channels[1], 2 * out_channels)
+        #     else:
+        #         film = copy.deepcopy(nn)
+        #     self.films.append(film)
         self.lin_skip = Linear(in_channels[1], self.out_channels, bias=False)
         if nn is None:
             self.film_skip = Linear(in_channels[1], 2 * self.out_channels,
