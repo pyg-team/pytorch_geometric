@@ -41,8 +41,8 @@ class Summary:
     num_graphs: int
     num_nodes: Stats
     num_edges: Stats
-    num_nodes_per_type: Optional[Dict[str, Stats]] = None,
-    num_edges_per_type: Optional[Dict[str, Stats]] = None,
+    num_nodes_per_type: Optional[Dict[str, Stats]] = None
+    num_edges_per_type: Optional[Dict[str, Stats]] = None
 
     @classmethod
     def from_dataset(
