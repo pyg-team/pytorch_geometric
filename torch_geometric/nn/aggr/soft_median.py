@@ -39,7 +39,7 @@ class WeightedQuantileAggregation(WeightedAggregation):
         self.q = q
         self.fill_value = fill_value
 
-    def forward(self, x: Tensor, edge_weight: Tensor,
+    def forward(self, x: Tensor, weight: Tensor,
                 index: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
 
@@ -49,7 +49,7 @@ class WeightedQuantileAggregation(WeightedAggregation):
         assert index is not None  # Required for TorchScript.
 
         # To ensure non-negative edge_weights
-        edge_weight = torch.clamp_min(edge_weight, 0)
+        edge_weight = torch.clamp_min(weight, 0)
 
         count = torch.bincount(index, minlength=dim_size or 0)
         cumsum = torch.cumsum(count, dim=0) - count
@@ -100,8 +100,11 @@ class WeightedQuantileAggregation(WeightedAggregation):
 
         return cumweight * quantile
 
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}(q={self._q})'
 
-class WeightedMedian(WeightedQuantileAggregation):
+
+class WeightedMedianAggregation(WeightedQuantileAggregation):
     r"""An aggregation operator that returns the feature-wise weighted median
     of a set. That is, for every feature :math:`d`, it computes
 
@@ -156,7 +159,7 @@ class SoftMedianAggregation(WeightedAggregation):
         self.T = T
         self.p = p
 
-        self.dimwise_median = WeightedMedian()
+        self.dimwise_median = WeightedMedianAggregation()
 
     def forward(self, x: Tensor, edge_weight: Tensor,
                 index: Optional[Tensor] = None, ptr: Optional[Tensor] = None,

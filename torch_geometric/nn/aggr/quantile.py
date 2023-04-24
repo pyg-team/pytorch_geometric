@@ -122,7 +122,7 @@ class QuantileAggregation(Aggregation):
         return out
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(q={self._q})')
+        return f'{self.__class__.__name__}(q={self._q})'
 
 
 class MedianAggregation(QuantileAggregation):
