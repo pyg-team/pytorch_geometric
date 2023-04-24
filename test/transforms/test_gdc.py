@@ -97,9 +97,9 @@ def test_sparsify_top_k():
     edge_index = torch.tensor([[0, 1, 1, 1, 2, 2], [1, 0, 1, 2, 0, 1]])
     edge_weight = torch.tensor([1, 1, 0, 2, 1, 2], dtype=torch.float)
 
-    # out = sparsify_top_k(edge_index, edge_weight, k=1)
-    # assert out[0].tolist() == [[0, 1, 2], [1, 2, 1]]
-    # assert out[1].tolist() == [1, 2, 2]
+    out = sparsify_top_k(edge_index, edge_weight, k=1)
+    assert out[0].tolist() == [[0, 1, 2], [1, 2, 1]]
+    assert out[1].tolist() == [1, 2, 2]
 
     out = sparsify_top_k(edge_index, edge_weight, k=2)
     assert out[0].tolist() == [[0, 1, 1, 2, 2], [1, 2, 0, 1, 0]]
