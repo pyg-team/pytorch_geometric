@@ -58,6 +58,18 @@ def test_scatter_backward(reduce, device):
     assert src.grad is not None
 
 
+@withCUDA
+def test_scatter_any(device):
+    src = torch.randn(6, 4, device=device)
+    index = torch.tensor([0, 0, 1, 1, 2, 2], device=device)
+
+    out = scatter(src, index, dim=0, reduce='any')
+
+    for i in range(3):
+        for j in range(4):
+            assert float(out[i, j]) in src[2 * i:2 * i + 2, j].tolist()
+
+
 if __name__ == '__main__':
     # Insights on GPU:
     # ================

@@ -194,9 +194,14 @@ class MLP(torch.nn.Module):
         Args:
             x (torch.Tensor): The source tensor.
             return_emb (bool, optional): If set to :obj:`True`, will
-                additionally return the embeddings before execution of to the
+                additionally return the embeddings before execution of the
                 final output layer. (default: :obj:`False`)
         """
+        # `return_emb` is annotated here as `NoneType` to be compatible with
+        # TorchScript, which does not support different return types based on
+        # the value of an input argument.
+        emb: Optional[Tensor] = None
+
         for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
             x = lin(x)
             if self.act is not None and self.act_first:
@@ -205,7 +210,8 @@ class MLP(torch.nn.Module):
             if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout[i], training=self.training)
-            emb = x
+            if isinstance(return_emb, bool) and return_emb is True:
+                emb = x
 
         if self.plain_last:
             x = self.lins[-1](x)
