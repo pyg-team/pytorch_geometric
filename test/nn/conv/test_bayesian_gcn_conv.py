@@ -2,34 +2,64 @@ import copy
 
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn.conv import BayesianGCNConv
+from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
+from torch_geometric.utils import to_torch_coo_tensor, to_torch_csc_tensor
 
 
 def test_bayesian_conv_norm():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
-    # row, col = edge_index
-    # value = torch.rand(row.size(0))
-    # from torch_geometric.typing import SparseTensor
-    # adj2 = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
-    # adj1 = adj2.set_value(None)
+    
+    value = torch.rand(edge_index.size(1))
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
+    adj2 = to_torch_csc_tensor(edge_index, value, size=(4, 4))
     conv = BayesianGCNConv(16, 32)
     assert conv.__repr__() == "BayesianGCNConv(16, 32)"
     out1, kl_out1 = conv(x, edge_index)
+    out1_adj, kl1_adj = conv(x, adj1.t())
     assert out1.size() == (4, 32)
-
+    
+    assert torch.allclose(out1_adj.mean(), out1.mean(), atol=1.0)
+    assert torch.allclose(torch.var(out1), torch.var(out1_adj), atol=1)
+    assert torch.allclose(kl_out1, kl_adj1, atol=1e-6)
+    
+    
+    out2, kl_out2 = conv(x, edge_index, value)
+    out2_adj, kl2_adj = conv(x, adj2.t())
+    assert out2.size() == (4, 32)
+    
+    assert torch.allclose(out2_adj.mean(), out2.mean(), atol=1.0)
+    assert torch.allclose(torch.var(out2), torch.var(out2_adj), atol=1)
+    assert torch.allclose(kl_out2, kl2_adj, atol=1e-6)
+        
     # Implementation with sparse tensor uncomment it to test on another support
-    # out_1_adj1, kl_adj1 = conv(x, adj1)
-    # assert torch.allclose(out1.mean(), out_1_adj1.mean(), atol=0.1)
-    # assert torch.allclose(torch.var(out1), torch.var(out_1_adj1), atol=1)
-    # assert torch.allclose(kl_out1, kl_adj1, atol=1e-6)
-
-    # out2, kl2 = conv(x, edge_index, value)
-    # out2_adj2, kl_adj2 = conv(x, adj2)
-    # assert torch.allclose(out2.mean(), out2_adj2.mean(), atol=0.1)
-    # assert torch.allclose(torch.var(out2), torch.var(out2_adj2), atol=1)
-    # assert torch.allclose(kl2, kl_adj2, atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj3 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        adj4 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
+        out3, kl3 = conv(x, adj3.t())
+        out4, kl4 = conv(x, adj4.t())
+        assert torch.allclose(out3.mean(), out1.mean(), atol=1.0)
+        assert torch.allclose(out4.mean(), out2.mean(), atol=1.0)
+        assert torch.allclose(torch.var(out1), torch.var(out3), atol=1)
+        assert torch.allclose(torch.var(out4), torch.var(out2), atol=1)
+        assert torch.allclose(kl3, kl_out1, atol=1e-6)
+        assert torch.allclose(kl2, kl_out2, atol=1e-6)
+        
+    conv.cached = True
+    out1_prime, kl_prime = conv(x, edge_index)
+    out1_prime2, kl_prime2 = conv(x, adj1.t())
+    assert conv._cached_edge_index is not None
+    assert torch.allclose(out_1_prime.mean(), out1.mean(), atol=1.0)
+    assert torch.allclose(out1_prime2.mean(), out1.mean(), atol=1.0)
+    
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        out1_prime3, kl_prime3 = conv(x, adj3.t())
+        assert conv._cached_adj_t is not None
+        assert torch.allclose(out1_prime3.mean(), out1.mean(), atol=1.0)
 
 
 def test_static_bayesian_conv():
@@ -74,8 +104,19 @@ def test_gcn_conv_with_decomposed_layers():
         t = "(Tensor, Tensor, OptTensor) -> Tensor"
         jit = torch.jit.script(decomposed_conv.jittable(t))
         assert jit(x, edge_index).tolist() == out1.tolist()
+        
+def test_gcn_conv_norm():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0], [1, 2, 3]])
+    row, col = edge_index
 
-
+    conv = BayesianGCNConv(16, 32, flow="source_to_target")
+    out1, kl1 = conv(x, edge_index)
+    conv.flow = "target_to_source"
+    out2, kl2 = conv(x, edge_index.flip(0))
+    assert torch.allclose(out1, out2, atol=1.0)
+    assert torch.allclose(kl1, kl2, atol=1e-6)
+    
 def test_gcn_conv():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
@@ -120,3 +161,18 @@ def test_gcn_conv():
                               torch.abs(out1[i].mean()), atol=1)
         assert torch.allclose(torch.var(out_f1[i]), torch.var(out1[i]), atol=1)
     assert torch.allclose(kl_f1, kl_out1, atol=1e-6)
+    
+@pytest.mark.parametrize('requires_grad', [False, True])
+@pytest.mark.parametrize('layout', [torch.sparse_coo, torch.sparse_csr])
+def test_gcn_norm_gradient(requires_grad, layout):
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+    edge_weight = torch.ones(edge_index.size(1), requires_grad=requires_grad)
+    adj = to_torch_coo_tensor(edge_index, edge_weight)
+    if layout == torch.sparse_csr:
+        adj = adj.to_sparse_csr()
+
+    # TODO Sparse CSR tensor does not yet inherit `requires_grad` from `value`.
+    if layout == torch.sparse_csr:
+        assert not gcn_norm(adj)[0].requires_grad
+    else:
+        assert adj.requires_grad == gcn_norm(adj)[0].requires_grad
