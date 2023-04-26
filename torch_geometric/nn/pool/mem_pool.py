@@ -78,10 +78,14 @@ class MemPooling(torch.nn.Module):
         loss = KLDivLoss(reduction='batchmean', log_target=False)
         return loss(S.clamp(EPS).log(), P.clamp(EPS))
 
-    def forward(self, x: Tensor, batch: Optional[Tensor] = None,
-                mask: Optional[Tensor] = None,
-                max_num_nodes: Optional[int] = None,
-                batch_size: Optional[int] = None, ) -> Tuple[Tensor, Tensor]:
+    def forward(
+        self,
+        x: Tensor,
+        batch: Optional[Tensor] = None,
+        mask: Optional[Tensor] = None,
+        max_num_nodes: Optional[int] = None,
+        batch_size: Optional[int] = None,
+    ) -> Tuple[Tensor, Tensor]:
         r"""
         Args:
             x (torch.Tensor): The node feature tensor of shape
