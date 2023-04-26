@@ -45,6 +45,7 @@ from .pan_conv import PANConv
 from .wl_conv import WLConv
 from .wl_conv_continuous import WLConvContinuous
 from .film_conv import FiLMConv
+from .fast_film_conv import FastFiLMConv
 from .supergat_conv import SuperGATConv
 from .fa_conv import FAConv
 from .eg_conv import EGConv
@@ -112,6 +113,7 @@ __all__ = [
     'WLConv',
     'WLConvContinuous',
     'FiLMConv',
+    'FastFiLMConv',
     'SuperGATConv',
     'FAConv',
     'EGConv',

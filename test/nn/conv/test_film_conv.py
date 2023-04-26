@@ -1,7 +1,7 @@
 import torch
 
 import torch_geometric.typing
-from torch_geometric.nn import FiLMConv
+from torch_geometric.nn import FiLMConv, FastFiLMConv
 from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 
@@ -32,10 +32,14 @@ def test_film_conv():
         assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
 
     conv = FiLMConv(4, 32, num_relations=2)
+    fast_conv = FastFiLMConv(4, 32, num_relations=2)
     assert str(conv) == 'FiLMConv(4, 32, num_relations=2)'
+    assert str(fast_conv) == 'FastFiLMConv(4, 32, num_relations=2)'
     out = conv(x1, edge_index, edge_type)
+    fast_out = fast_conv(x1, edge_index, edge_type)
     assert out.size() == (4, 32)
-
+    assert fast_out.size() == (4, 32)
+    assert torch.allclose(out, fast_out)
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, edge_type, (4, 4))
         assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
