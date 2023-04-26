@@ -108,10 +108,12 @@ class FastFiLMConv(MessagePassing):
             film_xs = []
             propogate_xs = []
             type_list = []
+            count = 0
             for e_type_i in range(self.num_relations):
                 edge_mask = edge_type == e_type_i
                 masked_src_idxs = edge_index[0, :]
                 N = masked_src_idxs.numel()
+                count += N
                 type_list.append(full((N, ), count, dtype=torch.long))
                 # make film xs list
                 film_x = x[1][masked_src_idxs, :]
