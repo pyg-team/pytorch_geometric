@@ -131,7 +131,7 @@ class MFConv(MessagePassing):
         # apply lin_r
         print("x_r.shape=",x_r.shape)
         print("type_vec_r.shape=",type_vec_r.shape)
-        r = self.lin_l(x_r, type_vec_r)
+        r = self.lin_r(x_r, type_vec_r)
 
         out.index_copy_(self.node_dim, idx, r)
         # for i, (lin_l, lin_r) in enumerate(zip(self.lins_l, self.lins_r)):
