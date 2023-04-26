@@ -1,7 +1,7 @@
 import copy
 from typing import Callable, Optional, Tuple, Union
 
-from torch import Tensor
+from torch import Tensor, full
 from torch.nn import ModuleList, ReLU
 
 from torch_geometric.nn.conv import MessagePassing
@@ -112,7 +112,7 @@ class FastFiLMConv(MessagePassing):
                 edge_mask = edge_type == e_type_i
                 masked_src_idxs = edge_index[0, :]
                 N = masked_src_idxs.numel()
-                type_list.append(torch.full((N, ), count, dtype=torch.long))
+                type_list.append(full((N, ), count, dtype=torch.long))
                 # make film xs list
                 film_x = x[1][masked_src_idxs, :]
                 film_xs.append(film_x)
