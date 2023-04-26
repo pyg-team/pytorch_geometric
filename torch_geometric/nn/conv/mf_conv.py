@@ -116,7 +116,7 @@ class MFConv(MessagePassing):
         count = 0
         for i in range(self.max_degree+1):
             idx_i = (deg == i).nonzero().view(-1)
-            r_idx_sel = r.index_select(self.node_dim, idx_i)
+            r_idx_sel = x_r.index_select(self.node_dim, idx_i)
             N = r_idx_sel.size(0)
             r_sel_list.append(r_idx_sel)
             idx_list.append(idx + count)
@@ -131,7 +131,7 @@ class MFConv(MessagePassing):
         # apply lin_r
         print("x_r.shape=",x_r.shape)
         print("type_vec_r.shape=",type_vec_r.shape)
-        r = self.lin_r(x_r, type_vec_r)
+        r += self.lin_r(x_r, type_vec_r)
 
         out.index_copy_(self.node_dim, idx, r)
         # for i, (lin_l, lin_r) in enumerate(zip(self.lins_l, self.lins_r)):
