@@ -1,3 +1,4 @@
+import os.path as osp
 from typing import Optional, Union
 
 import pytest
@@ -6,6 +7,7 @@ import torch
 from torch_geometric.data import HeteroData
 from torch_geometric.explain import HeteroExplanation
 from torch_geometric.explain.config import MaskType
+from torch_geometric.testing import withPackage
 
 
 def create_random_explanation(
@@ -115,3 +117,27 @@ def test_edge_mask():
     assert out['paper', 'author'].edge_mask.size() == (1, )
     assert torch.equal(out['paper', 'author'].edge_index,
                        torch.tensor([[1], [1]]))
+
+
+@withPackage('matplotlib')
+@pytest.mark.parametrize('top_k', [2, None])
+@pytest.mark.parametrize('node_mask_type', [None, 'attributes'])
+def test_visualize_feature_importance(
+    top_k,
+    node_mask_type,
+    tmp_path,
+    hetero_data,
+):
+    explanation = create_random_explanation(
+        hetero_data,
+        node_mask_type=node_mask_type,
+    )
+
+    path = osp.join(tmp_path, 'feature_importance.png')
+
+    if node_mask_type is None:
+        with pytest.raises(ValueError, match="node_mask' is not"):
+            explanation.visualize_feature_importance(path, top_k=top_k)
+    else:
+        explanation.visualize_feature_importance(path, top_k=top_k)
+        assert osp.exists(path)

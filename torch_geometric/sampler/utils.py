@@ -7,7 +7,7 @@ from torch import Tensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.typing import NodeType, OptTensor
-from torch_geometric.utils import index_sort
+from torch_geometric.utils import coalesce, index_sort
 from torch_geometric.utils.sparse import index2ptr
 
 # Edge Layout Conversion ######################################################
@@ -110,6 +110,32 @@ def to_hetero_csc(
         colptr_dict[edge_type], row_dict[edge_type], perm_dict[edge_type] = out
 
     return colptr_dict, row_dict, perm_dict
+
+
+def to_bidirectional(
+    row: Tensor,
+    col: Tensor,
+    rev_row: Tensor,
+    rev_col: Tensor,
+    edge_id: OptTensor = None,
+    rev_edge_id: OptTensor = None,
+) -> Tuple[Tensor, Tensor, OptTensor]:
+
+    assert row.numel() == col.numel()
+    assert rev_row.numel() == rev_col.numel()
+
+    edge_index = row.new_empty(2, row.numel() + rev_row.numel())
+    edge_index[0, :row.numel()] = row
+    edge_index[1, :row.numel()] = col
+    edge_index[0, row.numel():] = rev_col
+    edge_index[1, row.numel():] = rev_row
+
+    if edge_id is not None:
+        edge_id = torch.cat([edge_id, rev_edge_id], dim=0)
+
+    (row, col), edge_id = coalesce(edge_index, edge_id, reduce='any')
+
+    return row, col, edge_id
 
 
 ###############################################################################

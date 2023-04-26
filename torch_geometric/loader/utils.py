@@ -70,7 +70,7 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
 
 
 def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
-                       col: Tensor, index: Tensor, perm: OptTensor = None):
+                       col: Tensor, index: OptTensor, perm: OptTensor = None):
     # Filters a edge storage object to only hold the edges in `index`,
     # which represents the new graph as denoted by `(row, col)`:
     for key, value in store.items():
@@ -84,8 +84,11 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             col = col.to(value.device())
             edge_attr = value.storage.value()
             if edge_attr is not None:
-                index = index.to(edge_attr.device)
-                edge_attr = index_select(edge_attr, index, dim=0)
+                if index is not None:
+                    index = index.to(edge_attr.device)
+                    edge_attr = index_select(edge_attr, index, dim=0)
+                else:
+                    edge_attr = None
             sparse_sizes = out_store.size()[::-1]
             # TODO Currently, we set `is_sorted=False`, see:
             # https://github.com/pyg-team/pytorch_geometric/issues/4346
@@ -94,6 +97,10 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                                            is_sorted=False, trust_data=True)
 
         elif store.is_edge_attr(key):
+            if index is None:
+                out_store[key] = None
+                continue
+
             dim = store._parent().__cat_dim__(key, value, store)
             if isinstance(value, Tensor):
                 index = index.to(value.device)
@@ -114,7 +121,7 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
 
 
 def filter_data(data: Data, node: Tensor, row: Tensor, col: Tensor,
-                edge: Tensor, perm: OptTensor = None) -> Data:
+                edge: OptTensor, perm: OptTensor = None) -> Data:
     # Filters a data object to only hold nodes in `node` and edges in `edge`:
     out = copy.copy(data)
     filter_node_store_(data._store, out._store, node)
@@ -127,7 +134,7 @@ def filter_hetero_data(
     node_dict: Dict[NodeType, Tensor],
     row_dict: Dict[EdgeType, Tensor],
     col_dict: Dict[EdgeType, Tensor],
-    edge_dict: Dict[EdgeType, Tensor],
+    edge_dict: Dict[EdgeType, OptTensor],
     perm_dict: Optional[Dict[EdgeType, OptTensor]] = None,
 ) -> HeteroData:
     # Filters a heterogeneous data object to only hold nodes in `node` and
@@ -169,7 +176,7 @@ def filter_custom_store(
     node_dict: Dict[str, Tensor],
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
-    edge_dict: Dict[str, Tensor],
+    edge_dict: Dict[str, OptTensor],
     custom_cls: Optional[HeteroData] = None,
 ) -> HeteroData:
     r"""Constructs a `HeteroData` object from a feature store that only holds
