@@ -23,10 +23,17 @@ def test_avg_pool_x():
     out, _ = avg_pool_x(cluster, x, batch, size=2)
     assert out.tolist() == [[3, 4], [5, 6], [10, 11], [0, 0]]
 
+    batch_size = int(batch.max().item()) + 1
+    out2, _ = avg_pool_x(cluster, x, batch, batch_size=batch_size, size=2)
+    assert torch.equal(out, out2)
+
     if is_full_test():
         jit = torch.jit.script(avg_pool_x)
         out, _ = jit(cluster, x, batch, size=2)
         assert out.tolist() == [[3, 4], [5, 6], [10, 11], [0, 0]]
+
+        out2, _ = jit(cluster, x, batch, batch_size=batch_size, size=2)
+        assert torch.equal(out, out2)
 
 
 def test_avg_pool():

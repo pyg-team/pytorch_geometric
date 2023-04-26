@@ -200,21 +200,18 @@ class Explanation(Data, ExplanationMixin):
         feat_labels: Optional[List[str]] = None,
         top_k: Optional[int] = None,
     ):
-        r"""Creates a bar plot of the node features importance by summing up
-        :attr:`self.node_mask` across all nodes.
+        r"""Creates a bar plot of the node feature importances by summing up
+        the node mask across all nodes.
 
         Args:
             path (str, optional): The path to where the plot is saved.
                 If set to :obj:`None`, will visualize the plot on-the-fly.
                 (default: :obj:`None`)
-            feat_labels (List[str], optional): Optional labels for features.
+            feat_labels (List[str], optional): The labels of features.
                 (default :obj:`None`)
             top_k (int, optional): Top k features to plot. If :obj:`None`
                 plots all features. (default: :obj:`None`)
         """
-        import matplotlib.pyplot as plt
-        import pandas as pd
-
         node_mask = self.get('node_mask')
         if node_mask is None:
             raise ValueError(f"The attribute 'node_mask' is not available "
@@ -225,44 +222,12 @@ class Explanation(Data, ExplanationMixin):
                              f"object-level 'node_mask' "
                              f"(got shape {node_mask.size()})")
 
-        feat_importance = node_mask.sum(dim=0).cpu().numpy()
-
         if feat_labels is None:
-            feat_labels = range(feat_importance.shape[0])
+            feat_labels = range(node_mask.size(1))
 
-        if len(feat_labels) != feat_importance.shape[0]:
-            raise ValueError(f"The '{self.__class__.__name__}' object holds "
-                             f"{feat_importance.numel()} features, but "
-                             f"only {len(feat_labels)} were passed")
+        score = node_mask.sum(dim=0)
 
-        df = pd.DataFrame({'feat_importance': feat_importance},
-                          index=feat_labels)
-        df = df.sort_values("feat_importance", ascending=False)
-        df = df.round(decimals=3)
-
-        if top_k is not None:
-            df = df.head(top_k)
-            title = f"Feature importance for top {len(df)} features"
-        else:
-            title = f"Feature importance for {len(df)} features"
-
-        ax = df.plot(
-            kind='barh',
-            figsize=(10, 7),
-            title=title,
-            ylabel='Feature label',
-            xlim=[0, float(feat_importance.max()) + 0.3],
-            legend=False,
-        )
-        plt.gca().invert_yaxis()
-        ax.bar_label(container=ax.containers[0], label_type='edge')
-
-        if path is not None:
-            plt.savefig(path)
-        else:
-            plt.show()
-
-        plt.close()
+        return _visualize_score(score, feat_labels, path, top_k)
 
     def visualize_graph(self, path: Optional[str] = None,
                         backend: Optional[str] = None):
@@ -343,3 +308,93 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
                     out[edge_type][key] = value[edge_mask]
 
         return out.subgraph(node_mask_dict)
+
+    def visualize_feature_importance(
+        self,
+        path: Optional[str] = None,
+        feat_labels: Optional[Dict[NodeType, List[str]]] = None,
+        top_k: Optional[int] = None,
+    ):
+        r"""Creates a bar plot of the node feature importances by summing up
+        node masks across all nodes for each node type.
+
+        Args:
+            path (str, optional): The path to where the plot is saved.
+                If set to :obj:`None`, will visualize the plot on-the-fly.
+                (default: :obj:`None`)
+            feat_labels (Dict[NodeType, List[str]], optional): The labels of
+                features for each node type. (default :obj:`None`)
+            top_k (int, optional): Top k features to plot. If :obj:`None`
+                plots all features. (default: :obj:`None`)
+        """
+        node_mask_dict = self.node_mask_dict
+        if len(node_mask_dict) == 0:
+            raise ValueError(f"The attribute 'node_mask' is not available "
+                             f"in '{self.__class__.__name__}' "
+                             f"(got {self.available_explanations})")
+        for node_mask in node_mask_dict.values():
+            if node_mask.dim() != 2 or node_mask.size(1) <= 1:
+                raise ValueError(f"Cannot compute feature importance for "
+                                 f"object-level 'node_mask' "
+                                 f"(got shape {node_mask_dict.size()})")
+
+        if feat_labels is None:
+            feat_labels = {}
+            for node_type, node_mask in node_mask_dict.items():
+                feat_labels[node_type] = range(node_mask.size(1))
+
+        score = torch.cat(
+            [node_mask.sum(dim=0) for node_mask in node_mask_dict.values()],
+            dim=0)
+
+        all_feat_labels = []
+        for node_type in node_mask_dict.keys():
+            all_feat_labels += [
+                f'{node_type}#{label}' for label in feat_labels[node_type]
+            ]
+
+        return _visualize_score(score, all_feat_labels, path, top_k)
+
+
+def _visualize_score(
+    score: torch.Tensor,
+    labels: List[str],
+    path: Optional[str] = None,
+    top_k: Optional[int] = None,
+):
+    import matplotlib.pyplot as plt
+    import pandas as pd
+
+    if len(labels) != score.numel():
+        raise ValueError(f"The number of labels (got {len(labels)}) must "
+                         f"match the number of scores (got {score.numel()})")
+
+    score = score.cpu().numpy()
+
+    df = pd.DataFrame({'score': score}, index=labels)
+    df = df.sort_values('score', ascending=False)
+    df = df.round(decimals=3)
+
+    if top_k is not None:
+        df = df.head(top_k)
+        title = f"Feature importance for top {len(df)} features"
+    else:
+        title = f"Feature importance for {len(df)} features"
+
+    ax = df.plot(
+        kind='barh',
+        figsize=(10, 7),
+        title=title,
+        ylabel='Feature label',
+        xlim=[0, float(df['score'].max()) + 0.3],
+        legend=False,
+    )
+    plt.gca().invert_yaxis()
+    ax.bar_label(container=ax.containers[0], label_type='edge')
+
+    if path is not None:
+        plt.savefig(path)
+    else:
+        plt.show()
+
+    plt.close()
