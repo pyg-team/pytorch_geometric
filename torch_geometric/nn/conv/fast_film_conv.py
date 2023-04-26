@@ -5,7 +5,7 @@ from torch import Tensor
 from torch.nn import ModuleList, ReLU
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.dense.linear import Linear, HeteroLinear
 from torch_geometric.nn.inits import reset
 from torch_geometric.typing import (
     Adj,
