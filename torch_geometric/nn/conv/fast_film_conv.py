@@ -73,9 +73,13 @@ class FastFiLMConv(MessagePassing):
 
     def reset_parameters(self):
         super().reset_parameters()
-        for lin, film in zip(self.lins, self.films):
-            lin.reset_parameters()
-            reset(film)
+        self.lins.reset_parameters()
+        if self.nn_is_none:
+            self.films.reset_parameters()
+        else:
+            for f in self.films:
+                reset(f)
+        self.film_skip.reset_parameters()
         self.lin_skip.reset_parameters()
         reset(self.film_skip)
 
