@@ -126,7 +126,7 @@ class MFConv(MessagePassing):
         x_r = torch.cat(r_sel_list, dim=0)
         type_vec_r = torch.cat(type_list_r, dim=0)
         idx = torch.cat(idx_list, dim=0)
-        print("idx_list.shape=", idx_list.shape)
+        print("idx.shape=", idx.shape)
         # apply lin_r
         r += self.lin_r(x_r, type_vec_r)
 
