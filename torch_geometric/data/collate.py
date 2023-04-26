@@ -171,9 +171,9 @@ def _collate(
         if is_torch_sparse_tensor(elem):
             # (TODO) Replace w/ torch.cat once working upstream
             sparse_sizes: List[int] = [0, 0]            
-            sparse_sizes[0] += value.sparse_size(0)
-            sparse_sizes[1] = max(sparse_sizes[1], value.sparse_size(1))
             for value in values:
+                sparse_sizes[0] += value.sparse_size(0)
+                sparse_sizes[1] = max(sparse_sizes[1], value.sparse_size(1))
                 e_idxs_to_cat.append(to_edge_index(value)[0])
             print("e_idxs_to_cat.size()=",[e.size() for e in e_idxs_to_cat])
             value = to_torch_sparse_tensor(torch.cat(e_idxs_to_cat, dim=1), size=sparse_sizes, layout=values[0].layout)
