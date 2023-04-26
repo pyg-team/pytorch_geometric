@@ -114,6 +114,7 @@ class MFConv(MessagePassing):
         # idx select loop for r
         r_sel_list, type_list_r, idx_list = [], [], []
         count = 0
+        print()
         for i in range(self.max_degree+1):
             idx_i = (deg == i).nonzero().view(-1)
             r_idx_sel = r.index_select(self.node_dim, idx_i)
@@ -123,6 +124,8 @@ class MFConv(MessagePassing):
             count += N
             type_list_r.append(torch.full((N, ), i, dtype=torch.long))
         x_r = torch.cat(r_sel_list, dim=0)
+        print("type_list_r=", type_list_r)
+        print("self.max_degree+1=",self.max_degree+1)
         type_vec_r = torch.cat(type_list_r, dim=0)
         idx = torch.cat(idx_list, dim=0)
         # apply lin_r
