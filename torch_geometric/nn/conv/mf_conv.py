@@ -123,7 +123,7 @@ class MFConv(MessagePassing):
             print('N=',N)
             r_idx_sel = x_r.index_select(self.node_dim, idx_i)
             r_sel_list.append(r_idx_sel)
-            idx_list.append(idx + count)
+            idx_list.append(idx_i + count)
             count += N
             type_list_r.append(torch.full((N, ), i, dtype=torch.long))
         x_r = torch.cat(r_sel_list, dim=0)
