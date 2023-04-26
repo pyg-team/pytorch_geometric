@@ -79,7 +79,9 @@ class MemPooling(torch.nn.Module):
         return loss(S.clamp(EPS).log(), P.clamp(EPS))
 
     def forward(self, x: Tensor, batch: Optional[Tensor] = None,
-                mask: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
+                mask: Optional[Tensor] = None,
+                max_num_nodes: Optional[int] = None,
+                batch_size: Optional[int] = None) -> Tuple[Tensor, Tensor]:
         r"""
         Args:
             x (torch.Tensor): The node feature tensor of shape
@@ -97,9 +99,15 @@ class MemPooling(torch.nn.Module):
                 node features of shape
                 :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`.
                 (default: :obj:`None`)
+            max_num_nodes (int, optional): The size of the :math:`B` node
+                dimension. Automatically calculated if not given.
+                (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         if x.dim() <= 2:
-            x, mask = to_dense_batch(x, batch)
+            x, mask = to_dense_batch(x, batch, max_num_nodes=max_num_nodes,
+                                     batch_size=batch_size)
         elif mask is None:
             mask = x.new_ones((x.size(0), x.size(1)), dtype=torch.bool)
 
