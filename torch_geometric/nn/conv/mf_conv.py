@@ -118,7 +118,7 @@ class MFConv(MessagePassing):
         for i in range(self.max_degree+1):
             idx_i = (deg == i).nonzero().view(-1)
             r_idx_sel = r.index_select(self.node_dim, idx_i)
-            N = h_idx_sel.size(0)
+            N = r_idx_sel.size(0)
             r_sel_list.append(r_idx_sel)
             idx_list.append(idx + count)
             count += N
