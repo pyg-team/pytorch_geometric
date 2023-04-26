@@ -173,6 +173,7 @@ def _collate(
             e_idxs_to_cat = [to_edge_index(value)[0] for value in values]
             print("e_idxs_to_cat.size()=",[e.size() for e in e_idxs_to_cat])
             value = to_torch_sparse_tensor(torch.cat(e_idxs_to_cat, dim=1), layout=values[0].layout)
+            print("value.size()=",value.size())
         else:
             value = torch_sparse.cat(values, dim=cat_dim)
         return value, slices, None
