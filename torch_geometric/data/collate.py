@@ -170,7 +170,8 @@ def _collate(
         slices = cumsum(repeats)
         if is_torch_sparse_tensor(elem):
             # (TODO) Replace w/ torch.cat once working upstream
-            sparse_sizes: List[int] = [0, 0]            
+            sparse_sizes: List[int] = [0, 0]     
+            e_idxs_to_cat = []       
             for value in values:
                 sparse_sizes[0] += value.size(0)
                 sparse_sizes[1] = max(sparse_sizes[1], value.size(1))
