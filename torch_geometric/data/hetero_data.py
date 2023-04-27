@@ -132,7 +132,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         out = cls()
         for key, value in mapping.items():
             if key == '_global_store':
-                out.__gobal_store = BaseStorage(_parent=out, **value)
+                out.__dict__['_global_store'] = BaseStorage(
+                    _parent=out, **value)
             elif isinstance(key, str):
                 out._node_store_dict[key] = NodeStorage(
                     _parent=out, _key=key, **value)
