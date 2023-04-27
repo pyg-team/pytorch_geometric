@@ -125,6 +125,23 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             else:
                 setattr(self, key, value)
 
+    @classmethod
+    def from_dict(cls, mapping: Dict[str, Any]) -> 'HeteroData':
+        r"""Creates a :class:`~torch_geometric.data.HeteroData` object from a
+        Python dictionary."""
+        out = cls()
+        for key, value in mapping.items():
+            if key == '_global_store':
+                out.__dict__['_global_store'] = BaseStorage(
+                    _parent=out, **value)
+            elif isinstance(key, str):
+                out._node_store_dict[key] = NodeStorage(
+                    _parent=out, _key=key, **value)
+            else:
+                out._edge_store_dict[key] = EdgeStorage(
+                    _parent=out, _key=key, **value)
+        return out
+
     def __getattr__(self, key: str) -> Any:
         # `data.*_dict` => Link to node and edge stores.
         # `data.*` => Link to the `_global_store`.
@@ -258,11 +275,12 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         return list(self._edge_store_dict.items())
 
     def to_dict(self) -> Dict[str, Any]:
-        out = self._global_store.to_dict()
+        out_dict: Dict[str, Any] = {}
+        out_dict['_global_store'] = self._global_store.to_dict()
         for key, store in chain(self._node_store_dict.items(),
                                 self._edge_store_dict.items()):
-            out[key] = store.to_dict()
-        return out
+            out_dict[key] = store.to_dict()
+        return out_dict
 
     def to_namedtuple(self) -> NamedTuple:
         field_names = list(self._global_store.keys())
