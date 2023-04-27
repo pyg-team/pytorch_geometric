@@ -21,6 +21,8 @@
 
 /torch_geometric/datasets/ @wsad1
 
+/torch_geometric/graphgym/ @JiaxuanYou @rusty1s
+
 /test @wsad1
 
 /docs @rusty1s
