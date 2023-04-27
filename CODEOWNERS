@@ -19,10 +19,12 @@
 
 /torch_geometric/utils/ @wsad1
 
+/torch_geometric/datasets/ @wsad1
+
 /test @wsad1
 
 /docs @rusty1s
 
 /graphgym @rusty1s
 
-/examples @rustys1s
+/examples @wsad1
