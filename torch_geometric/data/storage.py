@@ -191,6 +191,8 @@ class BaseStorage(MutableMapping):
 
     def to_dict(self) -> Dict[str, Any]:
         r"""Returns a dictionary of stored key/value pairs."""
+        print("MAPPING")
+        print(self._mapping)
         return copy.copy(self._mapping)
 
     def to_namedtuple(self) -> NamedTuple:

@@ -10,8 +10,22 @@ from torch_geometric.typing import SparseTensor
 
 class MyTestDataset(InMemoryDataset):
     def __init__(self, data_list, transform=None):
-        super().__init__('/tmp/MyTestDataset', transform=transform)
+        super().__init__(None, transform=transform)
         self.data, self.slices = self.collate(data_list)
+
+
+class MyStoredTestDataset(InMemoryDataset):
+    def __init__(self, root, data_list, transform=None):
+        self.data_list = data_list
+        super().__init__(root, transform=transform)
+        self.load(self.processed_paths[0], data_cls=data_list[0].__class__)
+
+    @property
+    def processed_file_names(self) -> str:
+        return 'data.pt'
+
+    def process(self):
+        self.save(self.data_list, self.processed_paths[0])
 
 
 def test_in_memory_dataset():
@@ -55,6 +69,21 @@ def test_in_memory_dataset():
         [1, 0, 2, 1, 11, 10, 12, 11],
     ]
     assert torch.equal(dataset[1:].x, x2)
+
+
+def test_stored_in_memory_dataset(tmp_path):
+    print(tmp_path)
+    x1 = torch.Tensor([[1], [1], [1]])
+    x2 = torch.Tensor([[2], [2], [2], [2]])
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    data1 = Data(edge_index=edge_index, num_nodes=3, test_int=1, test_str='1')
+    data2 = Data(edge_index=edge_index, num_nodes=4, test_int=2, test_str='2')
+
+    dataset = MyStoredTestDataset(tmp_path, [data1, data2])
+    print(dataset)
+    print(dataset[0])
+    pass
 
 
 def test_in_memory_num_classes():
