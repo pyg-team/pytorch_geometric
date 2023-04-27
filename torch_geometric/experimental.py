@@ -1,6 +1,8 @@
+import functools
+import inspect
 from typing import List, Optional, Union
 
-__experimental_flag__ = {}
+__experimental_flag__ = {'disable_dynamic_shapes': False}
 
 Options = Optional[Union[str, List[str]]]
 
@@ -77,3 +79,59 @@ class set_experimental_mode:
     def __exit__(self, *args):
         for option, value in self.previous_state.items():
             __experimental_flag__[option] = value
+
+
+def disable_dynamic_shapes(required_args: Union[list, tuple]):
+
+    if not required_args:
+        raise ValueError('required_args list cannot be empty')
+
+    def decorator(func):
+        func_spec = inspect.getfullargspec(func)
+
+        required_args_pos = {}
+
+        for arg_name in required_args:
+            if arg_name not in func_spec.args:
+                raise ValueError(
+                    f'function {func} does not take a {arg_name} argument')
+            required_args_pos[arg_name] = func_spec.args.index(arg_name)
+
+        num_args = len(func_spec.args)
+        num_default_args = 0 if func_spec.defaults is None else len(
+            func_spec.defaults)
+        num_positional_args = num_args - num_default_args
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            dynamic_shapes_disabled = is_experimental_mode_enabled(
+                "disable_dynamic_shapes")
+            if dynamic_shapes_disabled:
+                num_passed_args = len(args)
+
+                def validate_param(param_name, value):
+                    if value is None:
+                        raise ValueError(
+                            "Dynamic shapes disabled. Mandatory parameter "
+                            f"`{param_name}` cannot be None.")
+
+                for param_name in required_args:
+                    value = None
+                    index = required_args_pos[param_name]
+                    if index < num_passed_args:
+                        value = args[index]
+                    elif param_name in kwargs:
+                        value = kwargs[param_name]
+                    elif num_default_args:
+                        defaults_index = index - num_positional_args
+
+                        if defaults_index < num_default_args:
+                            value = func_spec.defaults[defaults_index]
+
+                    validate_param(param_name, value)
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator

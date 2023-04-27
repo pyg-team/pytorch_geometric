@@ -4,6 +4,7 @@ import pytest
 import torch
 from torch import Tensor
 
+from torch_geometric.experimental import set_experimental_mode
 from torch_geometric.testing import onlyFullTest
 from torch_geometric.utils import to_dense_batch
 
@@ -52,6 +53,35 @@ def test_to_dense_batch(fill):
 
     out, mask = to_dense_batch(x, batch, batch_size=4, fill_value=fill)
     assert out.size() == (4, 3, 2)
+
+    with set_experimental_mode(True, "disable_dynamic_shapes"):
+        with pytest.raises(ValueError):
+            out, mask = to_dense_batch(x, batch, max_num_nodes=6,
+                                       fill_value=fill)
+        with pytest.raises(ValueError):
+            out, mask = to_dense_batch(x, batch, batch_size=4, fill_value=fill)
+        with pytest.raises(ValueError):
+            out, mask = to_dense_batch(x)
+
+        out, mask = to_dense_batch(x, batch_size=1, max_num_nodes=6,
+                                   fill_value=fill)
+        assert out.size() == (1, 6, 2)
+        assert out.tolist() == [[[1, 2], [3, 4], [5, 6], [7, 8], [9, 10],
+                                 [11, 12]]]
+        assert mask.tolist() == [[1, 1, 1, 1, 1, 1]]
+
+        out, mask = to_dense_batch(x, batch, batch_size=3, max_num_nodes=10,
+                                   fill_value=fill)
+        assert out.size() == (3, 10, 2)
+        assert torch.equal(
+            out[0, :3], torch.Tensor([[1.0, 2.0], [3.0, 4.0], [item, item]]))
+        assert torch.equal(
+            out[1, :3], torch.Tensor([[5.0, 6.0], [item, item], [item, item]]))
+        assert torch.equal(
+            out[2, :3], torch.Tensor([[7.0, 8.0], [9.0, 10.0], [11.0, 12.0]]))
+        assert mask.tolist() == [[1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+                                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                 [1, 1, 1, 0, 0, 0, 0, 0, 0, 0]]
 
 
 @onlyFullTest
