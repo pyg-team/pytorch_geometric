@@ -10,7 +10,7 @@ except (ImportError, ModuleNotFoundError, AttributeError):
     GraphModule, Graph, Node = 'GraphModule', 'Graph', 'Node'
 
 
-class Transformer(object):
+class Transformer:
     r"""A :class:`Transformer` executes an FX graph node-by-node, applies
     transformations to each node, and produces a new :class:`torch.nn.Module`.
     It exposes a :func:`transform` method that returns the transformed
