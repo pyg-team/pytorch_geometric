@@ -23,10 +23,10 @@
 
 /torch_geometric/graphgym/ @JiaxuanYou @rusty1s
 
-/test @wsad1
+/test/ @wsad1
 
-/docs @rusty1s
+/docs/ @rusty1s
 
-/graphgym @JiaxuanYou @rusty1s
+/graphgym/ @JiaxuanYou @rusty1s
 
-/examples @wsad1
+/examples/ @wsad1
