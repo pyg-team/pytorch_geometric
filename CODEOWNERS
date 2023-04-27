@@ -11,9 +11,9 @@
 
 /torch_geometric/data/ @mananshah99
 
-/torch_geometric/loader/ @mananshah99
+/torch_geometric/loader/ @mananshah99 @pyg-team/intel-team
 
-/torch_geometric/sampler/ @mananshah99
+/torch_geometric/sampler/ @mananshah99 @pyg-team/intel-team
 
 /torch_geometric/transforms/ @wsad1
 
