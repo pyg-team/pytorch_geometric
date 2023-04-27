@@ -21,12 +21,12 @@
 
 /torch_geometric/datasets/ @wsad1
 
-/torch_geometric/graphgym/ @JiaxuanYou @rusty1s
+/torch_geometric/graphgym/ @JiaxuanYou
 
 /test/ @wsad1
 
 /docs/ @rusty1s
 
-/graphgym/ @JiaxuanYou @rusty1s
+/graphgym/ @JiaxuanYou
 
 /examples/ @wsad1
