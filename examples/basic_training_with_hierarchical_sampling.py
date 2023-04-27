@@ -1,7 +1,9 @@
 import os.path as osp
+
 import torch
 import torch.nn.functional as F
 from tqdm import tqdm
+
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models.basic_gnn import GraphSAGE
@@ -19,7 +21,8 @@ train_loader = NeighborLoader(data, input_nodes=data.train_mask,
                               num_neighbors=[25, 10], shuffle=True, **kwargs)
 
 
-def train(model, loader, optimizer, device, progress_bar=True, desc="", trim=False):
+def train(model, loader, optimizer, device, progress_bar=True, desc="",
+          trim=False):
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     model.train()
@@ -33,7 +36,7 @@ def train(model, loader, optimizer, device, progress_bar=True, desc="", trim=Fal
         if not trim:
             out = model(batch.x, edge_index)
         else:
-            out = model( 
+            out = model(
                 batch.x,
                 edge_index,
                 num_sampled_nodes_per_hop=batch.num_sampled_nodes,
