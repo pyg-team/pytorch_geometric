@@ -82,7 +82,8 @@ def is_sparse(src: Any) -> bool:
     return is_torch_sparse_tensor(src) or isinstance(src, SparseTensor)
 
 
-def to_torch_sparse_tensor(edge_index: Tensor,
+def to_torch_sparse_tensor(
+    edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
     size: Optional[Union[int, Tuple[int, int]]] = None,
     is_coalesced: bool = False,
