@@ -72,18 +72,28 @@ def test_in_memory_dataset():
 
 
 def test_stored_in_memory_dataset(tmp_path):
-    print(tmp_path)
     x1 = torch.Tensor([[1], [1], [1]])
     x2 = torch.Tensor([[2], [2], [2], [2]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
-    data1 = Data(edge_index=edge_index, num_nodes=3, test_int=1, test_str='1')
-    data2 = Data(edge_index=edge_index, num_nodes=4, test_int=2, test_str='2')
+    data1 = Data(x1, edge_index, num_nodes=3, test_int=1, test_str='1')
+    data2 = Data(x2, edge_index, num_nodes=4, test_int=2, test_str='2')
 
     dataset = MyStoredTestDataset(tmp_path, [data1, data2])
-    print(dataset)
-    print(dataset[0])
-    pass
+    assert dataset._data.num_nodes == 7
+    assert dataset._data._num_nodes == [3, 4]
+
+    assert torch.equal(dataset[0].x, x1)
+    assert torch.equal(dataset[0].edge_index, edge_index)
+    assert dataset[0].num_nodes == 3
+    assert torch.equal(dataset[0].test_int, torch.tensor([1]))
+    assert dataset[0].test_str == '1'
+
+    assert torch.equal(dataset[1].x, x2)
+    assert torch.equal(dataset[1].edge_index, edge_index)
+    assert dataset[1].num_nodes == 4
+    assert torch.equal(dataset[1].test_int, torch.tensor([2]))
+    assert dataset[1].test_str == '2'
 
 
 def test_in_memory_num_classes():

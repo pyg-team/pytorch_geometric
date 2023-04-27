@@ -108,24 +108,13 @@ class InMemoryDataset(Dataset, ABC):
     @classmethod
     def save(cls, data_list: List[Data], path: str):
         r"""Saves a list of data objects to the file path :obj:`path`."""
-        print(data_list)
         data, slices = cls.collate(data_list)
-        print('save----------')
-        print(data)
-        print(data.num_nodes)
-        print(data._num_nodes)
-        data_dict = data.to_dict()
-        print(data_dict)
-        # data_dict = data
-        torch.save((data_dict, slices), path)
+        torch.save((data.to_dict(), slices), path)
 
     def load(self, path: str, data_cls: Type[BaseData] = Data):
         r"""Loads the dataset from the file path :obj:`path`."""
-        print(path)
         data, self.slices = torch.load(path)
-        print('load----------')
-        print(data)
-        if isinstance(data, dict):  # Backwards compatibility.
+        if isinstance(data, dict):  # Backward compatibility.
             data = data_cls.from_dict(data)
         self.data = data
 
