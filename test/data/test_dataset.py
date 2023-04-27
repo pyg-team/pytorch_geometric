@@ -96,6 +96,29 @@ def test_stored_in_memory_dataset(tmp_path):
     assert dataset[1].test_str == '2'
 
 
+def test_stored_hetero_in_memory_dataset(tmp_path):
+    x1 = torch.Tensor([[1], [1], [1]])
+    x2 = torch.Tensor([[2], [2], [2], [2]])
+
+    data1 = HeteroData()
+    data1['paper'].x = x1
+    data1['paper'].num_nodes = 3
+
+    data2 = HeteroData()
+    data2['paper'].x = x2
+    data2['paper'].num_nodes = 4
+
+    dataset = MyStoredTestDataset(tmp_path, [data1, data2])
+    assert dataset._data['paper'].num_nodes == 7
+    assert dataset._data['paper']._num_nodes == [3, 4]
+
+    assert torch.equal(dataset[0]['paper'].x, x1)
+    assert dataset[0]['paper'].num_nodes == 3
+
+    assert torch.equal(dataset[1]['paper'].x, x2)
+    assert dataset[1]['paper'].num_nodes == 4
+
+
 def test_in_memory_num_classes():
     dataset = MyTestDataset([Data(), Data()])
     assert dataset.num_classes == 0
