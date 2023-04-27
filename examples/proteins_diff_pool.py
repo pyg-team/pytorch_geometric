@@ -12,7 +12,7 @@ from torch_geometric.nn import DenseSAGEConv, dense_diff_pool
 max_nodes = 150
 
 
-class MyFilter(object):
+class MyFilter:
     def __call__(self, data):
         return data.num_nodes <= max_nodes
 

@@ -14,14 +14,14 @@ target = 0
 dim = 64
 
 
-class MyTransform(object):
+class MyTransform:
     def __call__(self, data):
         # Specify target.
         data.y = data.y[:, target]
         return data
 
 
-class Complete(object):
+class Complete:
     def __call__(self, data):
         device = data.edge_index.device
 

@@ -40,7 +40,7 @@ from torch_geometric.typing import (
 from torch_geometric.utils import select, subgraph
 
 
-class BaseData(object):
+class BaseData:
     def __getattr__(self, key: str) -> Any:
         raise NotImplementedError
 
