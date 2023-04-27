@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added an example for heterogeneous GNN explanation via `CaptumExplainer` ([#7096](https://github.com/pyg-team/pytorch_geometric/pull/7096))
+- Added `visualize_feature_importance` functionality to `HeteroExplanation` ([#7096](https://github.com/pyg-team/pytorch_geometric/pull/7096))
+- Added a `AddRemainingSelfLoops` transform ([#7192](https://github.com/pyg-team/pytorch_geometric/pull/7192))
+- Added `optimizer_resolver` ([#7209](https://github.com/pyg-team/pytorch_geometric/pull/7209))
+- Added `type_ptr` argument to `HeteroLayerNorm` ([#7208](https://github.com/pyg-team/pytorch_geometric/pull/7208))
 - Added an option to benchmark scripts to write PyTorch profiler results to CSV ([#7114](https://github.com/pyg-team/pytorch_geometric/pull/7114))
 - Added subgraph type sampling option with bidirectional edge support ([#7199](https://github.com/pyg-team/pytorch_geometric/pull/7199), [#7200](https://github.com/pyg-team/pytorch_geometric/pull/7200))
 - Added support for `"any"`-reductions in `scatter` ([#7198](https://github.com/pyg-team/pytorch_geometric/pull/7198))
@@ -21,9 +26,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added support for `torch.jit.script` within `MessagePassing` layers without `torch_sparse` being installed ([#7061](https://github.com/pyg-team/pytorch_geometric/pull/7061), [#7062](https://github.com/pyg-team/pytorch_geometric/pull/7062))
 - Added unbatching logic for `torch.sparse` tensors ([#7037](https://github.com/pyg-team/pytorch_geometric/pull/7037))
 - Added the `RotatE` KGE model ([#7026](https://github.com/pyg-team/pytorch_geometric/pull/7026))
+- Added an example to do graph partition using ClusterData class ([#7191](https://github.com/pyg-team/pytorch_geometric/pull/7191))
 
 ### Changed
 
+- Fixed `HGTConv` utility function `_construct_src_node_feat` ([#7194](https://github.com/pyg-team/pytorch_geometric/pull/7194))
+- Extend dataset summary to create stats for each node/edge type ([#7203](https://github.com/pyg-team/pytorch_geometric/pull/7203))
+- Added an optional `batch_size` argument to `avg_pool_x` and `max_pool_x` ([#7216](https://github.com/pyg-team/pytorch_geometric/pull/7216))
 - Fixed `subgraph` on unordered inputs ([#7187](https://github.com/pyg-team/pytorch_geometric/pull/7187))
 - Allow missing node types in `HeteroDictLinear` ([#7185](https://github.com/pyg-team/pytorch_geometric/pull/7185))
 - Optimized `from_networkx` memory footprint by reducing unnecessary copies ([#7119](https://github.com/pyg-team/pytorch_geometric/pull/7119))
