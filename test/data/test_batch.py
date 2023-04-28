@@ -497,9 +497,6 @@ def test_nested_follow_batch():
     torch.sparse_csc,
 ])
 def test_torch_sparse_batch(layout):
-    if layout != torch.sparse_coo:
-        return
-
     x_dense = torch.randn(3, 4)
     x = x_dense.to_sparse(layout=layout)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -516,6 +513,6 @@ def test_torch_sparse_batch(layout):
 
     assert batch.adj.size() == (6, 6)
     assert batch.adj.layout == layout
-    out = to_edge_index(batch.adj)
+    out = to_edge_index(batch.adj.to_sparse(layout=torch.sparse_csr))
     assert torch.equal(out[0], torch.cat([edge_index, edge_index + 3], 1))
     assert torch.equal(out[1], torch.cat([edge_attr, edge_attr], 0))
