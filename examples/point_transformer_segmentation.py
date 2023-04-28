@@ -9,8 +9,9 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, knn_interpolate
-from torch_geometric.utils import scatter
 from torch_geometric.typing import WITH_TORCH_CLUSTER
+from torch_geometric.utils import scatter
+
 if WITH_TORCH_CLUSTER:
     from torch_cluster import knn_graph
 else:

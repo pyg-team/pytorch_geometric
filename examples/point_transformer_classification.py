@@ -8,8 +8,9 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, PointTransformerConv, global_mean_pool, knn
-from torch_geometric.utils import scatter
 from torch_geometric.typing import WITH_TORCH_CLUSTER
+from torch_geometric.utils import scatter
+
 if WITH_TORCH_CLUSTER:
     from torch_cluster import fps, knn_graph
 else:
