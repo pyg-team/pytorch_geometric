@@ -82,21 +82,6 @@ def is_sparse(src: Any) -> bool:
     return is_torch_sparse_tensor(src) or isinstance(src, SparseTensor)
 
 
-def to_torch_sparse_tensor(
-    edge_index: Tensor,
-    edge_attr: Optional[Tensor] = None,
-    size: Optional[Union[int, Tuple[int, int]]] = None,
-    is_coalesced: bool = False,
-    layout: torch.layout = torch.sparse_coo,
-):
-    if layout == torch.sparse_coo:
-        return to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
-    if layout == torch.sparse_csr:
-        return to_torch_csr_tensor(edge_index, edge_attr, size, is_coalesced)
-    if layout == torch.sparse_csc:
-        return to_torch_csc_tensor(edge_index, edge_attr, size, is_coalesced)
-
-
 def to_torch_coo_tensor(
     edge_index: Tensor,
     edge_attr: Optional[Tensor] = None,
@@ -252,6 +237,44 @@ def to_torch_csc_tensor(
     )
 
     return adj
+
+
+def to_torch_sparse_tensor(
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor] = None,
+    size: Optional[Union[int, Tuple[int, int]]] = None,
+    is_coalesced: bool = False,
+    layout: torch.layout = torch.sparse_coo,
+):
+    r"""Converts a sparse adjacency matrix defined by edge indices and edge
+    attributes to a :class:`torch.sparse.Tensor` with custom :obj:`layout`.
+    See :meth:`~torch_geometric.utils.to_edge_index` for the reverse operation.
+
+    Args:
+        edge_index (LongTensor): The edge indices.
+        edge_attr (Tensor, optional): The edge attributes.
+            (default: :obj:`None`)
+        size (int or (int, int), optional): The size of the sparse matrix.
+            If given as an integer, will create a quadratic sparse matrix.
+            If set to :obj:`None`, will infer a quadratic sparse matrix based
+            on :obj:`edge_index.max() + 1`. (default: :obj:`None`)
+        is_coalesced (bool): If set to :obj:`True`, will assume that
+            :obj:`edge_index` is already coalesced and thus avoids expensive
+            computation. (default: :obj:`False`)
+        layout (torch.layout, optional): The layout of the output sparse tensor
+            (:obj:`torch.sparse_coo`, :obj:`torch.sparse_csr`,
+            :obj:`torch.sparse_csc`). (default: :obj:`torch.sparse_coo`)
+
+    :rtype: :class:`torch.sparse.Tensor`
+    """
+    if layout == torch.sparse_coo:
+        return to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
+    if layout == torch.sparse_csr:
+        return to_torch_csr_tensor(edge_index, edge_attr, size, is_coalesced)
+    if layout == torch.sparse_csc:
+        return to_torch_csc_tensor(edge_index, edge_attr, size, is_coalesced)
+
+    raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
 
 
 def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
