@@ -37,7 +37,7 @@ from torch_geometric.typing import (
     OptTensor,
     SparseTensor,
 )
-from torch_geometric.utils import select, subgraph
+from torch_geometric.utils import is_sparse, select, subgraph
 
 
 class BaseData:
@@ -518,7 +518,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         return self
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if isinstance(value, SparseTensor) and 'adj' in key:
+        if is_sparse(value) and 'adj' in key:
             return (0, 1)
         elif 'index' in key or key == 'face':
             return -1
