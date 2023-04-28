@@ -18,6 +18,7 @@ from .one_hot_degree import OneHotDegree
 from .target_indegree import TargetIndegree
 from .local_degree_profile import LocalDegreeProfile
 from .add_self_loops import AddSelfLoops
+from .add_remaining_self_loops import AddRemainingSelfLoops
 from .remove_isolated_nodes import RemoveIsolatedNodes
 from .remove_duplicated_edges import RemoveDuplicatedEdges
 from .knn_graph import KNNGraph
@@ -82,6 +83,7 @@ graph_transforms = [
     'TargetIndegree',
     'LocalDegreeProfile',
     'AddSelfLoops',
+    'AddRemainingSelfLoops',
     'RemoveIsolatedNodes',
     'RemoveDuplicatedEdges',
     'KNNGraph',
