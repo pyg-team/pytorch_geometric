@@ -21,7 +21,7 @@ def segmatmul_hueristic(inputs, ptr, others):
     svm_weights = torch.tensor([0.57924704, -0.44073655, -0.03550547,  0.10200546])
     bias = 0.13244696
     x = (x - scale_mean) / scale_scale
-    return x.dot(svm_weights) + bias >= 0
+    return x.dot(svm_weights) >= bias
 
 
 
