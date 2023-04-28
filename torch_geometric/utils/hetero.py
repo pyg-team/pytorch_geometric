@@ -9,6 +9,22 @@ from torch_geometric.utils import is_sparse, to_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
 
 
+def segmatmul_hueristic(inputs, ptr, others):
+    num_types = len(ptr) - 1
+    max_num_nodes_per_types = (ptr[1:] - ptr[:-1]).max()
+    in_feat = inputs.size(1)
+    out_feat = others.size(-1)
+    # this hueristic was learned with sklearn
+    x = torch.tensor([num_types, max_num_nodes_per_types, in_feat, out_feat])
+    scale_mean = torch.tensor([122.01095072, 26372.92185167, 123.51020408, 62.82329517])
+    scale_scale = torch.tensor([161.2639038, 41044.08468319, 162.60556098, 82.06795333])
+    svm_weights = torch.tensor([0.57924704, -0.44073655, -0.03550547,  0.10200546])
+    bias = 0.13244696
+    x = (x - scale_mean) / scale_scale
+    return x.dot(svm_weights) + bias >= 0
+
+
+
 def group_hetero_graph(edge_index_dict, num_nodes_dict=None):
     num_nodes_dict = maybe_num_nodes_dict(edge_index_dict, num_nodes_dict)
 
