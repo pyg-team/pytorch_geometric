@@ -491,6 +491,7 @@ def test_nested_follow_batch():
            [0] * 11 + [1] * 2 + [2] * 4 + [3] * 8
 
 
+@withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('layout', [
     torch.sparse_coo,
     torch.sparse_csr,
