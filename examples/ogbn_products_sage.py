@@ -66,7 +66,7 @@ class SAGE(torch.nn.Module):
                 xs.append(x.cpu())
 
                 pbar.update(batch.batch_size)
-            del x_all # free up mem, otherwise can run out of hostmem on small machines
+            del x_all  # free up mem, otherwise can run out of hostmem on small machines
             x_all = torch.cat(xs, dim=0)
 
         pbar.close()
