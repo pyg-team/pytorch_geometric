@@ -15,14 +15,25 @@ root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-products')
-data = dataset[0].to(device)
+data = dataset[0].to(device, 'x', 'y')
 
-train_idx = split_idx['train']
-train_loader = NeighborLoader(data, input_nodes=train_idx,
-                              num_neighbors=[15, 10, 5], batch_size=1024,
-                              shuffle=True, num_workers=12)
-subgraph_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[-1],
-                                 batch_size=4096, num_workers=12)
+train_loader = NeighborLoader(
+    data,
+    input_nodes=split_idx['train'],
+    num_neighbors=[15, 10, 5],
+    batch_size=1024,
+    shuffle=True,
+    num_workers=12,
+    persistent_workers=True,
+)
+subgraph_loader = NeighborLoader(
+    data,
+    input_nodes=None,
+    num_neighbors=[-1],
+    batch_size=4096,
+    num_workers=12,
+    persistent_workers=True,
+)
 
 
 class SAGE(torch.nn.Module):
@@ -47,7 +58,7 @@ class SAGE(torch.nn.Module):
             if i != self.num_layers - 1:
                 x = x.relu()
                 x = F.dropout(x, p=0.5, training=self.training)
-        return x.log_softmax(dim=-1)
+        return x
 
     def inference(self, x_all):
         pbar = tqdm(total=x_all.size(0) * self.num_layers)
@@ -60,13 +71,14 @@ class SAGE(torch.nn.Module):
             xs = []
             for batch in subgraph_loader:
                 x = x_all[batch.n_id].to(device)
-                x = self.convs[i](x, batch.edge_index)
+                edge_index = batch.edge_index.to(device)
+                x = self.convs[i](x, edge_index)[:batch.batch_size]
                 if i != self.num_layers - 1:
                     x = x.relu()
                 xs.append(x.cpu())
 
                 pbar.update(batch.batch_size)
-            del x_all  # free up mem, otherwise can run out of hostmem on small machines
+
             x_all = torch.cat(xs, dim=0)
 
         pbar.close()
@@ -81,15 +93,15 @@ model = model.to(device)
 def train(epoch):
     model.train()
 
-    pbar = tqdm(total=train_idx.size(0))
+    pbar = tqdm(total=split_idx['train'].size(0))
     pbar.set_description(f'Epoch {epoch:02d}')
 
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        out = model(batch.x, batch.edge_index)[:batch.batch_size]
+        out = model(batch.x, batch.edge_index.to(device))[:batch.batch_size]
         y = batch.y[:batch.batch_size].squeeze()
-        loss = F.nll_loss(out, y)
+        loss = F.cross_entropy(out, y)
         loss.backward()
         optimizer.step()
 
@@ -100,7 +112,7 @@ def train(epoch):
     pbar.close()
 
     loss = total_loss / len(train_loader)
-    approx_acc = total_correct / train_idx.size(0)
+    approx_acc = total_correct / split_idx['train'].size(0)
 
     return loss, approx_acc
 
@@ -111,7 +123,7 @@ def test():
 
     out = model.inference(data.x)
 
-    y_true = data.y.unsqueeze(-1)
+    y_true = data.y.cpu()
     y_pred = out.argmax(dim=-1, keepdim=True)
 
     train_acc = evaluator.eval({
@@ -132,9 +144,7 @@ def test():
 
 test_accs = []
 for run in range(1, 11):
-    print('')
-    print(f'Run {run:02d}:')
-    print('')
+    print(f'\nRun {run:02d}:\n')
 
     model.reset_parameters()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.003)
