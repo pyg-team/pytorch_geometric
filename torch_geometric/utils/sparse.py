@@ -1,4 +1,4 @@
-from typing import Any, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -379,3 +379,42 @@ def ptr2index(ptr: Tensor) -> Tensor:
 def index2ptr(index: Tensor, size: int) -> Tensor:
     return torch._convert_indices_from_coo_to_csr(
         index, size, out_int32=index.dtype == torch.int32)
+
+
+def cat(tensors: List[Tensor], dim: Union[int, Tuple[int, int]]) -> Tensor:
+    # TODO (matthias) We can make this more efficient by directly operating on
+    # the individual sparse tensor layouts.
+    assert dim in {0, 1, (0, 1)}
+
+    size = [0, 0]
+    edge_indices = []
+    edge_attrs = []
+    for tensor in tensors:
+        assert is_torch_sparse_tensor(tensor)
+        edge_index, edge_attr = to_edge_index(tensor)
+        edge_index = edge_index.clone()
+
+        if dim == 0:
+            edge_index[0] += size[0]
+            size[0] += tensor.size(0)
+            size[1] = max(size[1], tensor.size(1))
+        elif dim == 1:
+            edge_index[1] += size[1]
+            size[0] = max(size[0], tensor.size(0))
+            size[1] += tensor.size(1)
+        else:
+            edge_index[0] += size[0]
+            edge_index[1] += size[1]
+            size[0] += tensor.size(0)
+            size[1] += tensor.size(1)
+
+        edge_indices.append(edge_index)
+        edge_attrs.append(edge_attr)
+
+    return to_torch_sparse_tensor(
+        edge_index=torch.cat(edge_indices, dim=1),
+        edge_attr=torch.cat(edge_attrs, dim=0),
+        size=size,
+        is_coalesced=dim == (0, 1),
+        layout=tensors[0].layout,
+    )

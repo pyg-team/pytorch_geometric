@@ -15,6 +15,7 @@ from torch_geometric.utils import (
     to_edge_index,
     to_torch_sparse_tensor,
 )
+from torch_geometric.utils.sparse import cat
 
 
 def collate(
@@ -175,18 +176,7 @@ def _collate(
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
         slices = cumsum(repeats)
         if is_torch_sparse_tensor(elem):
-            # (TODO) Replace w/ torch.cat once working upstream
-            sparse_sizes: List[int] = [0, 0]
-            e_idxs_to_cat = []
-            for value in values:
-                sparse_sizes[0] += value.size(0)
-                sparse_sizes[1] = max(sparse_sizes[1], value.size(1))
-                e_idxs_to_cat.append(to_edge_index(value)[0])
-            print("e_idxs_to_cat.size()=", [e.size() for e in e_idxs_to_cat])
-            value = to_torch_sparse_tensor(torch.cat(e_idxs_to_cat,
-                                                     dim=1), size=sparse_sizes,
-                                           layout=values[0].layout)
-            print("value.size()=", value.size())
+            value = cat(values, dim=cat_dim)
         else:
             value = torch_sparse.cat(values, dim=cat_dim)
         return value, slices, None
