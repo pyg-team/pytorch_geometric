@@ -160,9 +160,7 @@ def test():
 
 test_accs = []
 for run in range(1, 11):
-    print('')
-    print(f'Run {run:02d}:')
-    print('')
+    print(f'\nRun {run:02d}:\n')
 
     model.reset_parameters()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
