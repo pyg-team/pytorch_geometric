@@ -243,7 +243,8 @@ class HeteroLinear(torch.nn.Module):
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
-        if torch_geometric.typing.WITH_PYG_LIB and (self.use_segmm is None or self.use_segmm):
+        if torch_geometric.typing.WITH_PYG_LIB and (self.use_segmm is None
+                                                    or self.use_segmm):
             assert self.weight is not None
 
             perm: Optional[Tensor] = None
@@ -254,7 +255,8 @@ class HeteroLinear(torch.nn.Module):
 
             type_vec_ptr = index2ptr(type_vec, self.num_types)
             if self.use_segmm is None:
-                self.use_segmm = segmatmul_hueristic(x, type_vec_ptr, self.weight)
+                self.use_segmm = segmatmul_hueristic(x, type_vec_ptr,
+                                                     self.weight)
             out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:
                 out += self.bias[type_vec]

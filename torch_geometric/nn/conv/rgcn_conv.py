@@ -15,7 +15,13 @@ from torch_geometric.typing import (
     pyg_lib,
     torch_sparse,
 )
-from torch_geometric.utils import index_sort, one_hot, scatter, spmm, segmatmul_hueristic
+from torch_geometric.utils import (
+    index_sort,
+    one_hot,
+    scatter,
+    segmatmul_hueristic,
+    spmm,
+)
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -230,8 +236,9 @@ class RGCNConv(MessagePassing):
 
         else:  # No regularization/Basis-decomposition ========================
             if (torch_geometric.typing.WITH_PYG_LIB and self.num_bases is None
-                    and x_l.is_floating_point()
-                    and isinstance(edge_index, Tensor)) and (self.use_segmm is None or self.use_segmm):
+                    and x_l.is_floating_point() and isinstance(
+                        edge_index, Tensor)) and (self.use_segmm is None
+                                                  or self.use_segmm):
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = index_sort(
@@ -239,7 +246,8 @@ class RGCNConv(MessagePassing):
                         edge_index = edge_index[:, perm]
                 edge_type_ptr = index2ptr(edge_type, self.num_relations)
                 if self.use_segmm is None:
-                    self.use_segmm = segmatmul_hueristic(x_l, edge_type, self.weight)
+                    self.use_segmm = segmatmul_hueristic(
+                        x_l, edge_type, self.weight)
                 out = self.propagate(edge_index, x=x_l,
                                      edge_type_ptr=edge_type_ptr, size=size)
             else:
