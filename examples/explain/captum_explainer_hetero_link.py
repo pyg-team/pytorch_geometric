@@ -1,4 +1,3 @@
-import argparse
 import os.path as osp
 
 import torch
@@ -7,12 +6,8 @@ from torch.nn import Linear
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import MovieLens
+from torch_geometric.explain import CaptumExplainer, Explainer
 from torch_geometric.nn import SAGEConv, to_hetero
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--use_weighted_loss', action='store_true',
-                    help='Whether to use weighted MSE loss.')
-args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -26,29 +21,18 @@ del data['user'].num_nodes
 
 # Add a reverse ('movie', 'rev_rates', 'user') relation for message passing:
 data = T.ToUndirected()(data)
+data['user', 'movie'].edge_label = data['user',
+                                        'movie'].edge_label.to(torch.float)
 del data['movie', 'rev_rates', 'user'].edge_label  # Remove "reverse" label.
 
 # Perform a link-level split into training, validation, and test edges:
-train_data, val_data, test_data = T.RandomLinkSplit(
+data, _, _ = T.RandomLinkSplit(
     num_val=0.1,
     num_test=0.1,
     neg_sampling_ratio=0.0,
     edge_types=[('user', 'rates', 'movie')],
     rev_edge_types=[('movie', 'rev_rates', 'user')],
 )(data)
-
-# We have an unbalanced dataset with many labels for rating 3 and 4, and very
-# few for 0 and 1. Therefore we use a weighted MSE loss.
-if args.use_weighted_loss:
-    weight = torch.bincount(train_data['user', 'movie'].edge_label)
-    weight = weight.max() / weight
-else:
-    weight = None
-
-
-def weighted_mse_loss(pred, target, weight=None):
-    weight = 1. if weight is None else weight[target].to(pred.dtype)
-    return (weight * (pred - target.to(pred.dtype)).pow(2)).mean()
 
 
 class GNNEncoder(torch.nn.Module):
@@ -93,34 +77,44 @@ class Model(torch.nn.Module):
 model = Model(hidden_channels=32).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-
-def train():
+for epoch in range(1, 10):
     model.train()
     optimizer.zero_grad()
-    pred = model(train_data.x_dict, train_data.edge_index_dict,
-                 train_data['user', 'movie'].edge_label_index)
-    target = train_data['user', 'movie'].edge_label
-    loss = weighted_mse_loss(pred, target, weight)
+    pred = model(
+        data.x_dict,
+        data.edge_index_dict,
+        data['user', 'movie'].edge_label_index,
+    )
+    loss = F.mse_loss(pred, data['user', 'movie'].edge_label)
     loss.backward()
     optimizer.step()
-    return float(loss)
 
+explainer = Explainer(
+    model=model,
+    algorithm=CaptumExplainer('IntegratedGradients'),
+    explanation_type='model',
+    model_config=dict(
+        mode='regression',
+        task_level='edge',
+        return_type='raw',
+    ),
+    node_mask_type='attributes',
+    edge_mask_type='object',
+    threshold_config=dict(
+        threshold_type='topk',
+        value=200,
+    ),
+)
 
-@torch.no_grad()
-def test(data):
-    model.eval()
-    pred = model(data.x_dict, data.edge_index_dict,
-                 data['user', 'movie'].edge_label_index)
-    pred = pred.clamp(min=0, max=5)
-    target = data['user', 'movie'].edge_label.float()
-    rmse = F.mse_loss(pred, target).sqrt()
-    return float(rmse)
+index = torch.tensor([2, 10])  # Explain edge labels with index 2 and 10.
+explanation = explainer(
+    data.x_dict,
+    data.edge_index_dict,
+    index=index,
+    edge_label_index=data['user', 'movie'].edge_label_index,
+)
+print(f'Generated explanations in {explanation.available_explanations}')
 
-
-for epoch in range(1, 301):
-    loss = train()
-    train_rmse = test(train_data)
-    val_rmse = test(val_data)
-    test_rmse = test(test_data)
-    print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_rmse:.4f}, '
-          f'Val: {val_rmse:.4f}, Test: {test_rmse:.4f}')
+path = 'feature_importance.png'
+explanation.visualize_feature_importance(path, top_k=10)
+print(f"Feature importance plot has been saved to '{path}'")

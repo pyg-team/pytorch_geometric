@@ -43,6 +43,16 @@ except (ImportError, OSError) as e:
     WITH_TORCH_CLUSTER = False
 
 try:
+    import torch_spline_conv  # noqa
+    WITH_TORCH_SPLINE_CONV = True
+except (ImportError, OSError) as e:
+    if isinstance(e, OSError):
+        warnings.warn(
+            f"An issue occurred while importing 'torch-spline-conv'. "
+            f"Disabling its usage. Stacktrace: {e}")
+    WITH_TORCH_SPLINE_CONV = False
+
+try:
     import torch_sparse  # noqa
     from torch_sparse import SparseStorage, SparseTensor
     WITH_TORCH_SPARSE = True
