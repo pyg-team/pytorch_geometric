@@ -72,7 +72,8 @@ class SAGE(torch.nn.Module):
             for batch in subgraph_loader:
                 x = x_all[batch.n_id].to(device)
                 edge_index = batch.edge_index.to(device)
-                x = self.convs[i](x, edge_index)[:batch.batch_size]
+                x = self.convs[i](x, edge_index)
+                x = x[:batch.batch_size]
                 if i != self.num_layers - 1:
                     x = x.relu()
                 xs.append(x.cpu())

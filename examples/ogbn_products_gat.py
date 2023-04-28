@@ -16,15 +16,25 @@ root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root)
 split_idx = dataset.get_idx_split()
 evaluator = Evaluator(name='ogbn-products')
-data = dataset[0].to(device)
+data = dataset[0].to(device, 'x', 'y')
 
-train_idx = split_idx['train']
-
-train_loader = NeighborLoader(data, input_nodes=train_idx,
-                              num_neighbors=[10, 10,
-                                             10], batch_size=512, shuffle=True)
-subgraph_loader = NeighborLoader(data, input_nodes=None, num_neighbors=[-1],
-                                 batch_size=1024, shuffle=False)
+train_loader = NeighborLoader(
+    data,
+    input_nodes=split_idx['train'],
+    num_neighbors=[10, 10, 5],
+    batch_size=512,
+    shuffle=True,
+    num_workers=12,
+    persistent_workers=True,
+)
+subgraph_loader = NeighborLoader(
+    data,
+    input_nodes=None,
+    num_neighbors=[-1],
+    batch_size=2048,
+    num_workers=12,
+    persistent_workers=True,
+)
 
 
 class GAT(torch.nn.Module):
@@ -57,16 +67,13 @@ class GAT(torch.nn.Module):
         for skip in self.skips:
             skip.reset_parameters()
 
-    def forward(self, batch):
-        x, edge_index, batch_size = batch.x, batch.edge_index, batch.batch_size
-        for i, conv in enumerate(self.convs):
-            og_x = x
-            x = conv(og_x, edge_index)
-            x = x + self.skips[i](og_x)
+    def forward(self, x, edge_index):
+        for i, (conv, skip) in enumerate(zip(self.convs, self.skips)):
+            x = conv(x, edge_index) + skip(x)
             if i != self.num_layers - 1:
                 x = F.elu(x)
                 x = F.dropout(x, p=0.5, training=self.training)
-        return x.log_softmax(dim=-1)
+        return x
 
     def inference(self, x_all):
         pbar = tqdm(total=x_all.size(0) * self.num_layers)
@@ -75,22 +82,18 @@ class GAT(torch.nn.Module):
         # Compute representations of nodes layer by layer, using *all*
         # available edges. This leads to faster computation in contrast to
         # immediately computing the final representations of each batch.
-        total_edges = 0
         for i in range(self.num_layers):
             xs = []
             for batch in subgraph_loader:
-                edge_index, batch_size = batch.edge_index, batch.batch_size
-                total_edges += edge_index.size(1)
-                n_id = batch.n_id[batch_size]
-                og_x = x_all[n_id].to(device)
-                x = self.convs[i](og_x, edge_index)
-                x = x + self.skips[i](og_x)
-
+                x = x_all[batch.n_id].to(device)
+                edge_index = batch.edge_index.to(device)
+                x = self.convs[i](x, edge_index) + self.skips[i](x)
+                x = x[:batch.batch_size]
                 if i != self.num_layers - 1:
                     x = F.elu(x)
                 xs.append(x.cpu())
 
-                pbar.update(batch_size)
+                pbar.update(batch.batch_size)
 
             x_all = torch.cat(xs, dim=0)
 
@@ -100,38 +103,32 @@ class GAT(torch.nn.Module):
 
 
 model = GAT(dataset.num_features, 128, dataset.num_classes, num_layers=3,
-            heads=4)
-model = model.to(device)
-
-x = data.x
-y = data.y.squeeze()
+            heads=4).to(device)
 
 
 def train(epoch):
     model.train()
 
-    pbar = tqdm(total=train_idx.size(0))
+    pbar = tqdm(total=split_idx['train'].size(0))
     pbar.set_description(f'Epoch {epoch:02d}')
 
     total_loss = total_correct = 0
     for batch in train_loader:
         optimizer.zero_grad()
-        out = model(batch)
-        batch_size = batch.batch_size
-        o = out[:batch_size]
-        y_true = y[batch.n_id[:batch_size]]
-        loss = F.nll_loss(o, y_true)
+        out = model(batch.x, batch.edge_index.to(device))[:batch.batch_size]
+        y = batch.y[:batch.batch_size].squeeze()
+        loss = F.cross_entropy(out, y)
         loss.backward()
         optimizer.step()
 
         total_loss += float(loss)
-        total_correct += int(o.argmax(dim=-1).eq(y_true).sum())
-        pbar.update(batch_size)
+        total_correct += int(out.argmax(dim=-1).eq(y).sum())
+        pbar.update(batch.batch_size)
 
     pbar.close()
 
     loss = total_loss / len(train_loader)
-    approx_acc = total_correct / train_idx.size(0)
+    approx_acc = total_correct / split_idx['train'].size(0)
 
     return loss, approx_acc
 
@@ -140,9 +137,9 @@ def train(epoch):
 def test():
     model.eval()
 
-    out = model.inference(x)
+    out = model.inference(data.x)
 
-    y_true = y.cpu().unsqueeze(-1)
+    y_true = data.y.cpu()
     y_pred = out.argmax(dim=-1, keepdim=True)
 
     train_acc = evaluator.eval({
