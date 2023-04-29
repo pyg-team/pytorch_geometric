@@ -31,7 +31,7 @@ class PoolingOutput(CastMixin):
 class Pooling(torch.nn.Module):
     r"""A base class for pooling layers based on the
     `"Understanding Pooling in Graph Neural Networks"
-    <https://arxiv.org/abs/1905.05178>`_ paper.
+    <https://arxiv.org/abs/2110.05292>`_ paper.
 
     :class:`Pooling` decomposes a pooling layer into three components:
 
@@ -64,6 +64,7 @@ class Pooling(torch.nn.Module):
         edge_index: torch.Tensor,
         edge_attr: Optional[torch.Tensor] = None,
         batch: Optional[torch.Tensor] = None,
+        **kwargs: Optional[dict],
     ) -> PoolingOutput:
         r"""
         Args:
@@ -75,10 +76,15 @@ class Pooling(torch.nn.Module):
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each node to a specific graph. (default: :obj:`None`)
         """
-        cluster, num_clusters = self.select(x, edge_index, edge_attr, batch)
-        x = self.reduce(x, cluster, dim_size=num_clusters)
+
+        select_kwargs = self.select.inspector.distribute('forward', kwargs)
+        cluster, num_clusters = self.select(x, edge_index, edge_attr, batch,
+                                            **select_kwargs)
+        reduce_kwargs = self.reduce.inspector.distribute('forward', kwargs)
+        x = self.reduce(x, cluster, dim_size=num_clusters, **reduce_kwargs)
+        connect_kwargs = self.connect.inspector.distribute('forward', kwargs)
         edge_index, edge_attr = self.connect(cluster, edge_index, edge_attr,
-                                             batch)
+                                             batch, **connect_kwargs)
 
         if batch is not None:
             batch = (torch.arange(num_clusters, device=x.device)).scatter_(

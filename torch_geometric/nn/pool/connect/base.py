@@ -3,6 +3,8 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.nn.conv.utils.inspector import Inspector
+
 
 class Connect(torch.nn.Module):
     r"""An abstract base class implementing custom edge connection operators.
@@ -12,6 +14,13 @@ class Connect(torch.nn.Module):
     nodes in the two supernodes.
     The operator also computes new coarsened edge features (if present).
     """
+    def __init__(self):
+        super().__init__()
+        self.inspector = Inspector(self)
+        self.inspector.inspect(self.forward)
+        for pop_arg in ['cluster', 'edge_index', 'edge_attr', 'batch']:
+            self.inspector.params['forward'].pop(pop_arg, None)
+
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         pass

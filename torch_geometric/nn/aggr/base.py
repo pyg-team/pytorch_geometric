@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.nn.conv.utils.inspector import Inspector
 from torch_geometric.utils import scatter, segment, to_dense_batch
 
 
@@ -58,6 +59,13 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
           node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
+    def __init__(self):
+        super().__init__()
+        self.inspector = Inspector(self)
+        self.inspector.inspect(self.forward)
+        for pop_arg in ['x', 'index', 'ptr', 'dim_size', 'dim']:
+            self.inspector.params['forward'].pop(pop_arg, None)
+
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:

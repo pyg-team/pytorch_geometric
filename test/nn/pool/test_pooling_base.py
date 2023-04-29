@@ -15,8 +15,18 @@ class DummySelect(Select):
         return batch, int(batch.max()) + 1
 
 
+class DummySelect2(Select):
+    """Dummy select with an additional attn parameter."""
+    def forward(self, x, edge_index, edge_attr, batch, attn=None):
+        # Pool into a single node for each graph.
+        assert attn is not None
+        if batch is None:
+            return edge_index.new_zeros(x.size(0), dtype=torch.long), 1
+        return batch, int(batch.max()) + 1
+
+
 class DummyConnect(Connect):
-    def forward(self, x, edge_index, edge_attr, batch):
+    def forward(self, cluster, edge_index, edge_attr, batch):
         # Return empty graph connection:
         if edge_attr is not None:
             edge_attr = edge_attr.new_empty((0, ) + edge_attr.size()[1:])
@@ -50,3 +60,15 @@ def test_pooling():
     assert out.edge_index.size() == (2, 0)
     assert out.edge_attr.size() == (0, 4)
     assert out.batch.tolist() == [0, 1]
+
+
+def test_pooling_kwargs():
+    pool = Pooling(DummySelect2(), MaxAggregation(), DummyConnect())
+    x = torch.randn(10, 8)
+    edge_index = torch.empty((2, 0), dtype=torch.long)
+    out = pool(x, edge_index, attn='dummy')
+    assert isinstance(out, PoolingOutput)
+    assert torch.allclose(out.x, x.max(dim=0, keepdim=True)[0])
+    assert out.edge_index.size() == (2, 0)
+    assert out.edge_attr is None
+    assert out.batch is None

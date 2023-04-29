@@ -3,6 +3,8 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.nn.conv.utils.inspector import Inspector
+
 
 class Select(torch.nn.Module):
     r"""An abstract base class implementing custom node selections that map the
@@ -13,6 +15,13 @@ class Select(torch.nn.Module):
     to one of :math:`C` super nodes.
     In addition, :class:`Select` returns the number of super nodes.
     """
+    def __init__(self):
+        super().__init__()
+        self.inspector = Inspector(self)
+        self.inspector.inspect(self.forward)
+        for pop_arg in ['x', 'edge_index', 'edge_attr', 'batch']:
+            self.inspector.params['forward'].pop(pop_arg, None)
+
     def reset_parameters(self):
         pass
 
@@ -26,12 +35,6 @@ class Select(torch.nn.Module):
         r"""
         Args:
             x (torch.Tensor): The input node features.
-            edge_index (torch.Tensor): The edge indices.
-            edge_attr (torch.Tensor, optional): The edge features.
-                (default: :obj:`None`)
-            batch (torch.Tensor, optional): The batch vector
-                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
-                each node to a specific graph. (default: :obj:`None`)
         """
         raise NotImplementedError
 
