@@ -5,6 +5,7 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.inits import uniform
+from torch_geometric.nn.pool.select import TopKSelect
 from torch_geometric.utils import scatter, softmax
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -163,6 +164,7 @@ class TopKPooling(torch.nn.Module):
         self.in_channels = in_channels
         self.ratio = ratio
         self.min_score = min_score
+        self.select = TopKSelect(self.ratio, self.min_score)
         self.multiplier = multiplier
         self.nonlinearity = nonlinearity
 
