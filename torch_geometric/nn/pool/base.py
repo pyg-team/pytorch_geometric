@@ -80,15 +80,21 @@ class Pooling(torch.nn.Module):
         select_kwargs = self.select.inspector.distribute('forward', kwargs)
         cluster, num_clusters = self.select(x, edge_index, edge_attr, batch,
                                             **select_kwargs)
+        # Some nodes might not be part of any
+        # cluster.
+        dropped_nodes_mask = cluster == -1
+
         reduce_kwargs = self.reduce.inspector.distribute('forward', kwargs)
-        x = self.reduce(x, cluster, dim_size=num_clusters, **reduce_kwargs)
+        x = self.reduce(x[~dropped_nodes_mask], cluster[~dropped_nodes_mask],
+                        dim_size=num_clusters, **reduce_kwargs)
         connect_kwargs = self.connect.inspector.distribute('forward', kwargs)
         edge_index, edge_attr = self.connect(cluster, edge_index, edge_attr,
                                              batch, **connect_kwargs)
 
         if batch is not None:
+            batch = batch[~dropped_nodes_mask]
             batch = (torch.arange(num_clusters, device=x.device)).scatter_(
-                0, cluster, batch)
+                0, cluster[~dropped_nodes_mask], batch)
 
         return PoolingOutput(x, edge_index, edge_attr, batch)
 
