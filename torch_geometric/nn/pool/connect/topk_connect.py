@@ -34,6 +34,6 @@ class TopKConnect(Connect):
     def __init__(self):
         super().__init__()
 
-    def forward(cluster, edge_index, num_nodes, edge_attr, batch):
+    def forward(self, cluster, edge_index, num_nodes, edge_attr, batch):
         perm = (cluster != -1).nonzero(as_tuple=False).view(-1)
         return filter_adj(edge_index, edge_attr, perm, num_nodes)

@@ -6,6 +6,8 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.inits import uniform
+from torch_geometric.nn.pool.base import Pooling
+from torch_geometric.nn.pool.connect import TopKConnect
 from torch_geometric.nn.pool.select import TopKSelect
 from torch_geometric.utils import scatter, softmax
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -16,9 +18,12 @@ class TopkAgg(Aggregation):
         super().__init__()
         self.multiplier = multiplier
 
-    def forward(self, x: Tensor, index: Tensor, dim_size: int, score: Tensor):
+    def forward(self, x: Tensor, index: Optional[Tensor],
+                ptr: Optional[Tensor], dim_size: Optional[int], dim: int,
+                score: Tensor):
         x = x * score.view(-1, 1)
         x = self.multiplier * x if self.multiplier != 1 else x
+        return x
 
 
 def topk(
@@ -106,7 +111,7 @@ def filter_adj(
     return torch.stack([row, col], dim=0), edge_attr
 
 
-class TopKPooling(torch.nn.Module):
+class TopKPooling(Pooling):
     r""":math:`\mathrm{top}_k` pooling operator from the `"Graph U-Nets"
     <https://arxiv.org/abs/1905.05178>`_, `"Towards Sparse
     Hierarchical Graph Classifiers" <https://arxiv.org/abs/1811.01287>`_
@@ -167,21 +172,20 @@ class TopKPooling(torch.nn.Module):
         multiplier: float = 1.,
         nonlinearity: Union[str, Callable] = 'tanh',
     ):
-        super().__init__()
-
         if isinstance(nonlinearity, str):
             nonlinearity = getattr(torch, nonlinearity)
+
+        select = TopKSelect(min_score, ratio)
+        reduce = TopkAgg(multiplier=multiplier)
+        connect = TopKConnect()
+        super().__init__(select, reduce, connect)
 
         self.in_channels = in_channels
         self.ratio = ratio
         self.min_score = min_score
-        self.select = TopKSelect(self.ratio, self.min_score)
-        self.reduce = TopkAgg(multiplier=multiplier)
         self.multiplier = multiplier
         self.nonlinearity = nonlinearity
-
         self.weight = Parameter(torch.Tensor(1, in_channels))
-
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -220,16 +224,18 @@ class TopKPooling(torch.nn.Module):
             score = self.nonlinearity(score / self.weight.norm(p=2, dim=-1))
         else:
             score = softmax(score, batch)
+        pooling_out = super().forward(x, edge_index, edge_attr, batch,
+                                      score=score)
 
-        perm = topk(score, self.ratio, batch, self.min_score)
-        x = x[perm] * score[perm].view(-1, 1)
-        x = self.multiplier * x if self.multiplier != 1 else x
-
-        batch = batch[perm]
-        edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
-                                           num_nodes=score.size(0))
-
-        return x, edge_index, edge_attr, batch, perm, score[perm]
+        perm = (pooling_out.cluster != -1).nonzero(as_tuple=False).view(-1)
+        return (
+            pooling_out.x,
+            pooling_out.edge_index,
+            pooling_out.edge_attr,
+            pooling_out.batch,
+            perm,
+            score[perm],
+        )
 
     def __repr__(self) -> str:
         if self.min_score is None:

@@ -71,10 +71,11 @@ def topk(
 
 class TopKSelect(Select):
     def __init__(self, min_score, ratio):
+        super().__init__()
         self.min_score = min_score
         self.ratio = ratio
 
-    def forward(self, x, batch, score):
+    def forward(self, x, edge_index, edge_attr, batch, score):
         perm = topk(score, self.ratio, batch, self.min_score)
 
         num_clusters = perm.numel()
