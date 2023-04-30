@@ -75,6 +75,9 @@ class Pooling(torch.nn.Module):
             batch (torch.Tensor, optional): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each node to a specific graph. (default: :obj:`None`)
+            **kwargs (optional): Additional arguments passed to the
+                :meth:`forward` methods of :obj:`select`, :obj:`reduce` and
+                :obj:`connect`.
         """
 
         select_kwargs = self.select.inspector.distribute('forward', kwargs)
