@@ -26,7 +26,7 @@ class DummySelect2(Select):
 
 
 class DummyConnect(Connect):
-    def forward(self, cluster, edge_index, edge_attr, batch):
+    def forward(self, cluster, edge_index, num_nodes, edge_attr, batch):
         # Return empty graph connection:
         if edge_attr is not None:
             edge_attr = edge_attr.new_empty((0, ) + edge_attr.size()[1:])

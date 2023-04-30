@@ -31,7 +31,7 @@ class Connect(torch.nn.Module):
         self,
         cluster: Tensor,
         edge_index: Tensor,
-        num_nodes: Optional[int],
+        num_nodes: int,
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Optional[Tensor]]:
@@ -39,6 +39,7 @@ class Connect(torch.nn.Module):
         Args:
             cluster (torch.Tensor): The mapping from nodes to supernodes.
             edge_index (torch.Tensor): The edge indices.
+            num_nodes (int): The number of nodes in the input graph.
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
             batch (torch.Tensor, optional): The batch vector

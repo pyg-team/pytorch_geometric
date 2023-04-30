@@ -79,7 +79,9 @@ class Pooling(torch.nn.Module):
                 :meth:`forward` methods of :obj:`select`, :obj:`reduce` and
                 :obj:`connect`.
         """
+        num_nodes = x.size(0)
 
+        # SELECT: Map nodes to supernodes.
         select_kwargs = self.select.inspector.distribute('forward', kwargs)
         cluster, num_clusters = self.select(x, edge_index, edge_attr, batch,
                                             **select_kwargs)
@@ -90,12 +92,16 @@ class Pooling(torch.nn.Module):
             if isinstance(value, Tensor) and value.size(0) == x.size(0):
                 kwargs[key] = value[~dropped_nodes_mask]
 
+        # REDUCE: Compute new node features.
         reduce_kwargs = self.reduce.inspector.distribute('forward', kwargs)
         x = self.reduce(x[~dropped_nodes_mask], cluster[~dropped_nodes_mask],
                         dim_size=num_clusters, **reduce_kwargs)
+
+        # CONNECT: Compute new edge indices.
         connect_kwargs = self.connect.inspector.distribute('forward', kwargs)
-        edge_index, edge_attr = self.connect(cluster, edge_index, edge_attr,
-                                             batch, **connect_kwargs)
+        edge_index, edge_attr = self.connect(cluster, edge_index, num_nodes,
+                                             edge_attr, batch,
+                                             **connect_kwargs)
 
         if batch is not None:
             batch = batch[~dropped_nodes_mask]
