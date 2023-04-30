@@ -86,6 +86,9 @@ class Pooling(torch.nn.Module):
         # Some nodes might not be part of any
         # cluster.
         dropped_nodes_mask = cluster == -1
+        for key, value in kwargs.items():
+            if isinstance(value, Tensor) and value.size(0) == x.size(0):
+                kwargs[key] = value[~dropped_nodes_mask]
 
         reduce_kwargs = self.reduce.inspector.distribute('forward', kwargs)
         x = self.reduce(x[~dropped_nodes_mask], cluster[~dropped_nodes_mask],
