@@ -18,7 +18,9 @@ class Connect(torch.nn.Module):
         super().__init__()
         self.inspector = Inspector(self)
         self.inspector.inspect(self.forward)
-        for pop_arg in ['cluster', 'edge_index', 'edge_attr', 'batch']:
+        for pop_arg in [
+                'cluster', 'edge_index', 'edge_attr', 'batch', 'num_nodes'
+        ]:
             self.inspector.params['forward'].pop(pop_arg, None)
 
     def reset_parameters(self):
@@ -29,6 +31,7 @@ class Connect(torch.nn.Module):
         self,
         cluster: Tensor,
         edge_index: Tensor,
+        num_nodes: Optional[int],
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Optional[Tensor]]:

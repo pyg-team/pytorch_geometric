@@ -4,10 +4,21 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.inits import uniform
 from torch_geometric.nn.pool.select import TopKSelect
 from torch_geometric.utils import scatter, softmax
 from torch_geometric.utils.num_nodes import maybe_num_nodes
+
+
+class TopkAgg(Aggregation):
+    def __init__(self, multiplier: float = 1.):
+        super().__init__()
+        self.multiplier = multiplier
+
+    def forward(self, x: Tensor, index: Tensor, dim_size: int, score: Tensor):
+        x = x * score.view(-1, 1)
+        x = self.multiplier * x if self.multiplier != 1 else x
 
 
 def topk(
@@ -165,6 +176,7 @@ class TopKPooling(torch.nn.Module):
         self.ratio = ratio
         self.min_score = min_score
         self.select = TopKSelect(self.ratio, self.min_score)
+        self.reduce = TopkAgg(multiplier=multiplier)
         self.multiplier = multiplier
         self.nonlinearity = nonlinearity
 
