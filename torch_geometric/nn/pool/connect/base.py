@@ -18,7 +18,9 @@ class Connect(torch.nn.Module):
         super().__init__()
         self.inspector = Inspector(self)
         self.inspector.inspect(self.forward)
-        for pop_arg in ['cluster', 'edge_index', 'edge_attr', 'batch']:
+        for pop_arg in [
+                'cluster', 'edge_index', 'edge_attr', 'batch', 'num_nodes'
+        ]:
             self.inspector.params['forward'].pop(pop_arg, None)
 
     def reset_parameters(self):
@@ -29,6 +31,7 @@ class Connect(torch.nn.Module):
         self,
         cluster: Tensor,
         edge_index: Tensor,
+        num_nodes: int,
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Optional[Tensor]]:
@@ -36,6 +39,7 @@ class Connect(torch.nn.Module):
         Args:
             cluster (torch.Tensor): The mapping from nodes to supernodes.
             edge_index (torch.Tensor): The edge indices.
+            num_nodes (int): The number of nodes in the input graph.
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
             batch (torch.Tensor, optional): The batch vector
