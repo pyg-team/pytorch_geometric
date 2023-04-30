@@ -18,12 +18,14 @@ class PoolingOutput(CastMixin):
     Args:
         x (torch.Tensor): The pooled node features.
         edge_index (torch.Tensor): The coarsened edge indices.
+        cluster (torch.Tensor, optional): The mapping from nodes to supernodes.
         edge_attr (torch.Tensor, optional): The edge features of the coarsened
             graph. (default: :obj:`None`)
         batch (torch.Tensor, optional): The batch vector of the pooled nodes.
     """
     x: Tensor
     edge_index: Tensor
+    cluster: Tensor
     edge_attr: Optional[Tensor] = None
     batch: Optional[Tensor] = None
 
@@ -95,7 +97,8 @@ class Pooling(torch.nn.Module):
         # REDUCE: Compute new node features.
         reduce_kwargs = self.reduce.inspector.distribute('forward', kwargs)
         x = self.reduce(x[~dropped_nodes_mask], cluster[~dropped_nodes_mask],
-                        dim_size=num_clusters, **reduce_kwargs)
+                        ptr=None, dim_size=num_clusters, dim=0,
+                        **reduce_kwargs)
 
         # CONNECT: Compute new edge indices.
         connect_kwargs = self.connect.inspector.distribute('forward', kwargs)
@@ -108,7 +111,7 @@ class Pooling(torch.nn.Module):
             batch = (torch.arange(num_clusters, device=x.device)).scatter_(
                 0, cluster[~dropped_nodes_mask], batch)
 
-        return PoolingOutput(x, edge_index, edge_attr, batch)
+        return PoolingOutput(x, edge_index, cluster, edge_attr, batch)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(\n'
