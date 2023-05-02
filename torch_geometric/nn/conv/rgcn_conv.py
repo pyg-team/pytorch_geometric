@@ -15,7 +15,8 @@ from torch_geometric.typing import (
     pyg_lib,
     torch_sparse,
 )
-from torch_geometric.utils import index_sort, one_hot, scatter, spmm, segmatmul_hueristic
+from torch_geometric.utils import index_sort, one_hot, scatter, spmm
+from torch_geometric.utils.hetero import segmatmul_hueristic
 from torch_geometric.utils.sparse import index2ptr
 
 
