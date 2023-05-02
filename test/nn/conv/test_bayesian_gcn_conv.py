@@ -1,10 +1,10 @@
 import torch_geometric.typing
 from torch_geometric.nn.conv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
+
 # from torch_geometric.typing import SparseTensor
 # from torch_geometric.utils import to_torch_coo_tensor, to_torch_csc_tensor
 # from torch_geometric.utils import to_torch_csc_tensor
-
 
 # def test_bayesian_conv_norm():
 #     x = torch.randn(4, 16)
