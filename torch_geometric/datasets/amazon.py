@@ -28,8 +28,6 @@ class Amazon(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        to_undirected (bool, optional): Whether the original graph is
-            converted to an undirected one. (default: :obj:`True`)
 
     **STATS:**
 
@@ -62,10 +60,8 @@ class Amazon(InMemoryDataset):
         name: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        to_undirected: bool = True,
     ):
         self.name = name.lower()
-        self.to_undirected = to_undirected
         assert self.name in ['computers', 'photo']
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -90,7 +86,7 @@ class Amazon(InMemoryDataset):
         download_url(self.url + self.raw_file_names, self.raw_dir)
 
     def process(self):
-        data = read_npz(self.raw_paths[0], to_undirected=self.to_undirected)
+        data = read_npz(self.raw_paths[0], to_undirected=True)
         data = data if self.pre_transform is None else self.pre_transform(data)
         data, slices = self.collate([data])
         torch.save((data, slices), self.processed_paths[0])

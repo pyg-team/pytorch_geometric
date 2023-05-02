@@ -27,8 +27,6 @@ class Coauthor(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        to_undirected (bool, optional): Whether the original graph is
-            converted to an undirected one. (default: :obj:`True`)
 
     **STATS:**
 
@@ -61,11 +59,9 @@ class Coauthor(InMemoryDataset):
         name: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        to_undirected: bool = True,
     ):
         assert name.lower() in ['cs', 'physics']
         self.name = 'CS' if name.lower() == 'cs' else 'Physics'
-        self.to_undirected = to_undirected
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
@@ -89,7 +85,7 @@ class Coauthor(InMemoryDataset):
         download_url(self.url + self.raw_file_names, self.raw_dir)
 
     def process(self):
-        data = read_npz(self.raw_paths[0], to_undirected=self.to_undirected)
+        data = read_npz(self.raw_paths[0], to_undirected=True)
         data = data if self.pre_transform is None else self.pre_transform(data)
         data, slices = self.collate([data])
         torch.save((data, slices), self.processed_paths[0])
