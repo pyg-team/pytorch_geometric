@@ -274,7 +274,7 @@ class HeteroLinear(torch.nn.Module):
             out = x.new_empty(x.size(0), self.out_channels)
             for i in range(self.num_types):
                 mask = type_vec == i
-                out[mask] = F.linear(x[mask], self.weight[i])
+                out[mask] = F.linear(x[mask], self.weight[i].T)
         return out
 
     @torch.no_grad()
