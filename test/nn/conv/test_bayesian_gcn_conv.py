@@ -49,14 +49,12 @@
 #        assert conv._cached_adj_t is not None
 #        assert torch.allclose(out1_prime3.mean(), out1.mean(), atol=1.0)
 
-
 # def test_static_bayesian_conv():
 #     x = torch.randn(3, 4, 16)
 #     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 #     conv = BayesianGCNConv(16, 32)
 #     out, kl = conv(x, edge_index)
 #     assert out.size() == (3, 4, 32)
-
 
 # def test_gcn_conv_with_sparse_input_feature():
 #     x = torch.sparse_coo_tensor(
@@ -68,7 +66,6 @@
 #     conv = BayesianGCNConv(16, 32)
 #     out, kl = conv(x, edge_index)
 #     assert out.size() == (4, 32)
-
 
 # def test_gcn_conv_with_decomposed_layers():
 #     x = torch.randn(4, 16)
@@ -92,7 +89,6 @@
 #         t = "(Tensor, Tensor, OptTensor) -> Tensor"
 #         jit = torch.jit.script(decomposed_conv.jittable(t))
 #         assert jit(x, edge_index).tolist() == out1.tolist()
-
 
 # def test_gcn_conv_norm():
 #     x = torch.randn(4, 16)
