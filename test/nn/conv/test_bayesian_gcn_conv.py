@@ -119,7 +119,7 @@ def test_gcn_conv_norm():
     assert torch.allclose(kl1, kl2, atol=1e-6)
 
 
-def test_gcn_conv():
+def test_bayesian_conv():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     row, col = edge_index
