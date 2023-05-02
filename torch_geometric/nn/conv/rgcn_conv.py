@@ -190,9 +190,6 @@ class RGCNConv(MessagePassing):
         """
         # Convert input features to a pair of node features or node indices.
         x_l: OptTensor = None
-        if x.size(0) == 1:
-            # for single vector inference don't use segmm
-            self.use_segmm = False
         if isinstance(x, tuple):
             x_l = x[0]
         else:
@@ -205,7 +202,6 @@ class RGCNConv(MessagePassing):
             x_r = x[1]
 
         size = (x_l.size(0), x_r.size(0))
-
         if isinstance(edge_index, SparseTensor):
             edge_type = edge_index.storage.value()
         assert edge_type is not None
