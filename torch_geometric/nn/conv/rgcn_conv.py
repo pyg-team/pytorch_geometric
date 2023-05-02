@@ -190,6 +190,9 @@ class RGCNConv(MessagePassing):
         """
         # Convert input features to a pair of node features or node indices.
         x_l: OptTensor = None
+        if x.size(0) == 1:
+            # for single vector inference don't use segmm
+            self.use_segmm = False
         if isinstance(x, tuple):
             x_l = x[0]
         else:

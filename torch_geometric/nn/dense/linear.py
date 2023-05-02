@@ -244,6 +244,10 @@ class HeteroLinear(torch.nn.Module):
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
+        if x.size(0) == 1:
+            # for single vector inference don't use segmm
+            self.use_segmm = False
+
         if torch_geometric.typing.WITH_PYG_LIB and (self.use_segmm is None
                                                     or self.use_segmm):
             assert self.weight is not None
