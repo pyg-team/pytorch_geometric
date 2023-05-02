@@ -1,4 +1,5 @@
 import torch
+
 # import torch_geometric.typing
 from torch_geometric.nn.conv import BayesianGCNConv
 from torch_geometric.testing import is_full_test
