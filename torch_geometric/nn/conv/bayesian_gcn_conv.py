@@ -192,7 +192,7 @@ class BayesianGCNConv(MessagePassing):
               (sigma_q**2 + (mu_q - mu_p)**2) / (2 * (sigma_p**2)) - 0.5)
         return kl.mean()
 
-    def kl_loss(self):
+    def kl_loss(self) -> Tensor:
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
         kl = self.kl_div(self.mu_weight, sigma_weight, self.prior_weight_mu,
                          self.prior_weight_sigma)
