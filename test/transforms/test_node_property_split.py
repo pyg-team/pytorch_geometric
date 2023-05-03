@@ -23,11 +23,11 @@ def test_node_property_split(property_name):
 
     node_ids = []
     for name, ratio in zip([
-            'in_train_mask',
-            'in_val_mask',
-            'in_test_mask',
-            'out_val_mask',
-            'out_test_mask',
+            'id_train_mask',
+            'id_val_mask',
+            'id_test_mask',
+            'ood_val_mask',
+            'ood_test_mask',
     ], ratios):
         assert data[name].dtype == torch.bool
         assert data[name].size() == (100, )
