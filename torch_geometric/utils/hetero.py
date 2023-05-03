@@ -24,7 +24,7 @@ def segmatmul_hueristic(inputs, ptr, others):
         [2.43877659e+00, 1.67583047e+00, -5.20527282e-04, 3.43925501e-01])
     bias = 1.20236999
     x = (x - scale_mean) / scale_scale
-    return x.dot(svm_weights) >= bias
+    return int(x.dot(svm_weights) >= bias)
 
 
 def group_hetero_graph(edge_index_dict, num_nodes_dict=None):
