@@ -13,6 +13,7 @@ from torch.nn import (
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import reset
 from torch_geometric.nn.norm import MessageNorm
 from torch_geometric.typing import (
     Adj,
@@ -22,8 +23,6 @@ from torch_geometric.typing import (
     SparseTensor,
 )
 from torch_geometric.utils import is_torch_sparse_tensor, to_edge_index
-
-from ..inits import reset
 
 
 class MLP(Sequential):

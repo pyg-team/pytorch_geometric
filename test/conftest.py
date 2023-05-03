@@ -4,6 +4,7 @@ import shutil
 
 import pytest
 
+import torch_geometric.typing
 from torch_geometric.data import Dataset
 
 
@@ -48,3 +49,19 @@ def get_dataset():
     yield functools.partial(load_dataset, root)
     if osp.exists(root):
         shutil.rmtree(root)
+
+
+@pytest.fixture
+def disable_extensions():
+    prev_state = {
+        'WITH_PYG_LIB': torch_geometric.typing.WITH_PYG_LIB,
+        'WITH_SAMPLED_OP': torch_geometric.typing.WITH_SAMPLED_OP,
+        'WITH_INDEX_SORT': torch_geometric.typing.WITH_INDEX_SORT,
+        'WITH_TORCH_SCATTER': torch_geometric.typing.WITH_TORCH_SCATTER,
+        'WITH_TORCH_SPARSE': torch_geometric.typing.WITH_TORCH_SPARSE,
+    }
+    for key in prev_state.keys():
+        setattr(torch_geometric.typing, key, False)
+    yield
+    for key, value in prev_state.items():
+        setattr(torch_geometric.typing, key, value)

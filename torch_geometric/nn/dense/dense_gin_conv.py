@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 from torch.nn import Module
 
-from ..inits import reset
+from torch_geometric.nn.inits import reset
 
 
 class DenseGINConv(torch.nn.Module):

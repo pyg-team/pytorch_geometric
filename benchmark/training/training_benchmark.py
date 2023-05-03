@@ -1,5 +1,6 @@
 import argparse
 import ast
+import warnings
 from collections import defaultdict
 from contextlib import nullcontext
 
@@ -13,6 +14,7 @@ from benchmark.utils import (
     get_model,
     get_split_masks,
     save_benchmark_data,
+    test,
     write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
@@ -26,7 +28,8 @@ supported_sets = {
 }
 
 
-def train_homo(model, loader, optimizer, device, progress_bar=True, desc=""):
+def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
+               trim=False):
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
@@ -36,7 +39,15 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc=""):
             edge_index = batch.adj_t
         else:
             edge_index = batch.edge_index
-        out = model(batch.x, edge_index)
+        if not trim:
+            out = model(batch.x, edge_index)
+        else:
+            out = model(
+                batch.x,
+                edge_index,
+                num_sampled_nodes_per_hop=batch.num_sampled_nodes,
+                num_sampled_edges_per_hop=batch.num_sampled_edges,
+            )
         batch_size = batch.batch_size
         out = out[:batch_size]
         target = batch.y[:batch_size]
@@ -45,7 +56,11 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc=""):
         optimizer.step()
 
 
-def train_hetero(model, loader, optimizer, device, progress_bar=True, desc=""):
+def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
+                 trim=False):
+    if trim:
+        warnings.warn("Trimming not yet implemented for heterogeneous graphs")
+
     if progress_bar:
         loader = tqdm(loader, desc=desc)
     for batch in loader:
@@ -64,44 +79,12 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc=""):
         optimizer.step()
 
 
-@torch.no_grad()
-def test(model, loader, device, hetero, progress_bar=True, desc="") -> None:
-    if progress_bar:
-        loader = tqdm(loader, desc=desc)
-    total_examples = total_correct = 0
-    if hetero:
-        for batch in loader:
-            batch = batch.to(device)
-            if len(batch.adj_t_dict) > 0:
-                edge_index_dict = batch.adj_t_dict
-            else:
-                edge_index_dict = batch.edge_index_dict
-            out = model(batch.x_dict, edge_index_dict)
-            batch_size = batch['paper'].batch_size
-            out = out['paper'][:batch_size]
-            pred = out.argmax(dim=-1)
-
-            total_examples += batch_size
-            total_correct += int((pred == batch['paper'].y[:batch_size]).sum())
-    else:
-        for batch in loader:
-            batch = batch.to(device)
-            if hasattr(batch, 'adj_t'):
-                edge_index = batch.adj_t
-            else:
-                edge_index = batch.edge_index
-            out = model(batch.x, edge_index)
-            batch_size = batch.batch_size
-            out = out[:batch_size]
-            pred = out.argmax(dim=-1)
-
-            total_examples += batch_size
-            total_correct += int((pred == batch.y[:batch_size]).sum())
-    return total_correct / total_examples
-
-
 def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
+
+    if args.write_csv == 'prof' and not args.profile:
+        warnings.warn("Cannot write profile data to CSV because profiling is "
+                      "disabled")
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # If we use a custom number of steps, then we need to use RandomSampler,
@@ -224,17 +207,28 @@ def run(args: argparse.ArgumentParser):
 
                         with amp, cpu_affinity:
                             for _ in range(args.warmup):
-                                train(model, subgraph_loader, optimizer,
-                                      device, progress_bar=progress_bar,
-                                      desc="Warmup")
+                                train(
+                                    model,
+                                    subgraph_loader,
+                                    optimizer,
+                                    device,
+                                    progress_bar=progress_bar,
+                                    desc="Warmup",
+                                    trim=args.trim,
+                                )
                             with timeit(avg_time_divisor=args.num_epochs) as t:
                                 # becomes a no-op if vtune_profile == False
                                 with emit_itt(args.vtune_profile):
                                     for epoch in range(args.num_epochs):
-                                        train(model, subgraph_loader,
-                                              optimizer, device,
-                                              progress_bar=progress_bar,
-                                              desc=f"Epoch={epoch}")
+                                        train(
+                                            model,
+                                            subgraph_loader,
+                                            optimizer,
+                                            device,
+                                            progress_bar=progress_bar,
+                                            desc=f"Epoch={epoch}",
+                                            trim=args.trim,
+                                        )
                                         if args.evaluate:
                                             # In evaluate, throughput and
                                             # latency are not accurate.
@@ -252,15 +246,19 @@ def run(args: argparse.ArgumentParser):
                                 print(f'Test Accuracy: {test_acc:.4f}')
 
                             if args.profile:
-                                with torch_profile():
+                                profile = torch_profile(
+                                    args.export_chrome_trace, csv_data,
+                                    args.write_csv)
+                                with profile:
                                     train(model, subgraph_loader, optimizer,
                                           device, progress_bar=progress_bar,
                                           desc="Profile training")
-                                rename_profile_file(model_name, dataset_name,
-                                                    str(batch_size),
-                                                    str(layers),
-                                                    str(hidden_channels),
-                                                    str(num_neighbors))
+                                if args.export_chrome_trace:
+                                    rename_profile_file(
+                                        model_name, dataset_name,
+                                        str(batch_size), str(layers),
+                                        str(hidden_channels),
+                                        str(num_neighbors))
 
                         total_time = t.duration
                         if args.num_steps != -1:
@@ -272,13 +270,26 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
-                        save_benchmark_data(csv_data, batch_size, layers,
-                                            num_neighbors, hidden_channels,
-                                            total_time, model_name,
-                                            dataset_name,
-                                            args.use_sparse_tensor)
+                        num_records = 1
+                        if args.write_csv == 'prof':
+                            # For profiling with PyTorch, we save the top-5
+                            # most time consuming operations. Therefore, the
+                            # same data should be entered for each of them.
+                            num_records = 5
+                        for _ in range(num_records):
+                            save_benchmark_data(
+                                csv_data,
+                                batch_size,
+                                layers,
+                                num_neighbors,
+                                hidden_channels,
+                                total_time,
+                                model_name,
+                                dataset_name,
+                                args.use_sparse_tensor,
+                            )
     if args.write_csv:
-        write_to_csv(csv_data, training=True)
+        write_to_csv(csv_data, args.write_csv, training=True)
 
 
 if __name__ == '__main__':
@@ -319,7 +330,11 @@ if __name__ == '__main__':
         help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
-    add('--write-csv', action='store_true', help='Write benchmark data to csv')
+    add('--write-csv', choices=[None, 'bench', 'prof'], default=None,
+        help='Write benchmark or PyTorch profile data to CSV')
+    add('--export-chrome-trace', default=True, type=bool,
+        help='Export chrome trace file. Works only with PyTorch profiler')
+    add('--trim', action='store_true', help="Use `trim_to_layer` optimization")
     args = argparser.parse_args()
 
     run(args)

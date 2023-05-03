@@ -7,14 +7,13 @@ from torch import Tensor
 from torch.nn import Dropout, Linear, Sequential
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import reset
 from torch_geometric.nn.resolver import (
     activation_resolver,
     normalization_resolver,
 )
 from torch_geometric.typing import Adj
 from torch_geometric.utils import to_dense_batch
-
-from ..inits import reset
 
 
 class GPSConv(torch.nn.Module):

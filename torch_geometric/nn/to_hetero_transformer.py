@@ -401,7 +401,11 @@ class ToHeteroTransformer(Transformer):
                         self.find_by_name(f'{value.name}__{key2str(key[-1])}'),
                     )
                 else:
-                    raise NotImplementedError
+                    raise ValueError(f"Cannot generate a graph node '{node}' "
+                                     f"for type '{key}' since it does not "
+                                     f"exist. Please make sure that all "
+                                     f"node types get updated during message "
+                                     f"passing.")
             elif isinstance(value, dict):
                 return {k: _recurse(v) for k, v in value.items()}
             elif isinstance(value, list):

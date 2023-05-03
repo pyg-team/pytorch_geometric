@@ -6,8 +6,10 @@ from torch_geometric.loader import (
     GraphSAINTNodeSampler,
     GraphSAINTRandomWalkSampler,
 )
+from torch_geometric.testing import withPackage
 
 
+@withPackage('torch_sparse')
 def test_graph_saint():
     adj = torch.tensor([
         [+1, +2, +3, +0, +4, +0],

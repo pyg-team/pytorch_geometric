@@ -1,13 +1,13 @@
 from typing import Optional, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 from torch.nn import Parameter as Param
 
 import torch_geometric.typing
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import (
     Adj,
     OptTensor,
@@ -15,10 +15,8 @@ from torch_geometric.typing import (
     pyg_lib,
     torch_sparse,
 )
-from torch_geometric.utils import index_sort, scatter, spmm
+from torch_geometric.utils import index_sort, one_hot, scatter, spmm
 from torch_geometric.utils.sparse import index2ptr
-
-from ..inits import glorot, zeros
 
 
 @torch.jit._overload
@@ -352,7 +350,7 @@ class FastRGCNConv(RGCNConv):
 
         # Compute normalization in separation for each `edge_type`.
         if self.aggr == 'mean':
-            norm = F.one_hot(edge_type, self.num_relations).to(torch.float)
+            norm = one_hot(edge_type, self.num_relations, dtype=inputs.dtype)
             norm = scatter(norm, index, dim=0, dim_size=dim_size)[index]
             norm = torch.gather(norm, 1, edge_type.view(-1, 1))
             norm = 1. / norm.clamp_(1.)
