@@ -53,13 +53,11 @@ class NodePropertySplit(BaseTransform):
     .. code-block::
 
         from torch_geometric.transforms import NodePropertySplit
-        from torch_geometric.datasets import graph_generator
+        from torch_geometric.datasets.graph_generator import ERGraph
 
-        num_nodes = 1000
-        edge_prob = 0.4
-        data = graph_generator.ERGraph(num_nodes, edge_prob)()
+        data = ERGraph(num_nodes=1000, edge_prob=0.4)()
 
-        property_name = "popularity"
+        property_name = 'popularity'
         part_ratios = [0.3, 0.1, 0.1, 0.3, 0.2]
         tranaform = NodePropertySplit(property_name, part_ratios)
 
@@ -97,9 +95,8 @@ class NodePropertySplit(BaseTransform):
         split_masks = self.mask_nodes_by_property(property_values,
                                                   self.part_ratios,
                                                   self.random_seed)
-
-        for store in data.node_stores:
-            store.split_masks = split_masks
+        for key, value in split_masks.items():
+            data[key] = value
 
         return data
 
@@ -158,9 +155,9 @@ class NodePropertySplit(BaseTransform):
         parts. It sorts the nodes in the ascending order of their property
         values, splits them into 5 non-intersecting parts, and creates 5
         associated node mask arrays, 3 of which are for the ID nodes:
-        :obj:`"in_train_mask"`, :obj:`"in_valid_mask"`,
+        :obj:`"in_train_mask"`, :obj:`"in_val_mask"`,
         :obj:`"in_test_mask"`, and the remaining 2 — for the OOD nodes:
-        :obj:`"out_valid_mask"`, :obj:`"out_test_mask"`.
+        :obj:`"out_val_mask"`, :obj:`"out_test_mask"`.
 
         It returns a python dict storing the mask names as keys
         and the corresponding node mask arrays as values.
@@ -212,9 +209,9 @@ class NodePropertySplit(BaseTransform):
         node_split = np.split(node_indices_ordered, sections)[:-1]
         mask_names = [
             "in_train_mask",
-            "in_valid_mask",
+            "in_val_mask",
             "in_test_mask",
-            "out_valid_mask",
+            "out_val_mask",
             "out_test_mask",
         ]
         split_masks = {}
@@ -227,7 +224,7 @@ class NodePropertySplit(BaseTransform):
         return split_masks
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(property_name={self.property_name})"
+        return f"{self.__class__.__name__}({self.property_name})"
 
 
 _property_name_to_compute_fn = {

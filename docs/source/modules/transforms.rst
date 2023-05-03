@@ -27,7 +27,7 @@ General Transforms
 .. autosummary::
    :nosignatures:
    :toctree: ../generated
-   :template: autosummary/inherited_class.rst
+   :template: autosummary/only_class.rst
 
    {% for name in torch_geometric.transforms.general_transforms %}
      {{ name }}
