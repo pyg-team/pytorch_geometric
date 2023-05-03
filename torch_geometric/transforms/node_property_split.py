@@ -1,6 +1,5 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
-import numpy as np
 import torch
 from torch import Tensor
 
@@ -47,7 +46,7 @@ class NodePropertySplit(BaseTransform):
 
     Example:
 
-    .. code-block::
+    .. code-block:: python
 
         from torch_geometric.transforms import NodePropertySplit
         from torch_geometric.datasets.graph_generator import ERGraph
