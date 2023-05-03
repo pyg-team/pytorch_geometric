@@ -127,7 +127,7 @@ class RGCNConv(MessagePassing):
         self.num_bases = num_bases
         self.num_blocks = num_blocks
         self.is_sorted = is_sorted
-        self.use_segmm = -1
+        self.use_segmm: int = -1
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
         self.in_channels_l = in_channels[0]

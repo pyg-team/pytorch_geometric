@@ -216,7 +216,7 @@ class HeteroLinear(torch.nn.Module):
         self.num_types = num_types
         self.is_sorted = is_sorted
         self.kwargs = kwargs
-        self.use_segmm = -1
+        self.use_segmm: int = -1
         self.lins = None
         if self.in_channels == -1:
             self.weight = nn.parameter.UninitializedParameter()
