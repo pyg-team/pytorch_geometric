@@ -60,9 +60,9 @@ def learn_sklearn_hueristic():
                                     o[mask] = lin(x[mask])
                             loop_times[key] = ((time.time() - since) / 50.0)
                             print("Avg time for for-loop=", loop_times[key])
-                        except:
+                        except: # noqa
                             continue
-    except:
+    except: # noqa
         pass
     import numpy as np
     X = np.zeros((len(loop_times), 4))
@@ -84,10 +84,14 @@ def learn_sklearn_hueristic():
     print("svm weights=", svm.coef_)
     print("svm bias=", svm.intercept_)
     # results on A100:
-    # scaler mean= [  125.11603189 12133.21523472   163.81222321    32.43755536]
-    # scaler scale= [  163.34480422 27572.94543809   177.6426489     56.82103934]
-    # svm weights= [[ 2.43877659e+00  1.67583047e+00 -5.20527282e-04  3.43925501e-01]]
-    # svm bias= [1.20236999]
+    # scaler mean= 
+    #     [  125.11603189 12133.21523472   163.81222321    32.43755536]
+    # scaler scale=
+    #     [  163.34480422 27572.94543809   177.6426489     56.82103934]
+    # svm weights=
+    #     [[ 2.43877659e+00  1.67583047e+00 -5.20527282e-04  3.43925501e-01]]
+    # svm bias=
+    #     [1.20236999]
 
 
 def segmatmul_hueristic(inputs, ptr, others):
