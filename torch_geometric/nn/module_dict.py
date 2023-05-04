@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Mapping, Optional, Tuple, Union
+from typing import Iterable, Mapping, Optional, Tuple, Union
 
 import torch
 from torch.nn import Module
