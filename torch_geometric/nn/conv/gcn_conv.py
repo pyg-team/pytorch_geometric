@@ -124,7 +124,7 @@ class GCNConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
-        \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
+        \mathcal{N}(i) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
         \hat{d}_i}} \mathbf{x}_j
 
     with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
