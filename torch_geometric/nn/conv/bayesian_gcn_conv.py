@@ -52,7 +52,7 @@ class BayesianGCNConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
-        \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
+        \mathcal{N}(i) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
         \hat{d}_i}} \mathbf{x}_j
 
     with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
@@ -96,12 +96,11 @@ class BayesianGCNConv(MessagePassing):
            edge weights :math:`(|\mathcal{E}|)` *(optional)*
          - **output:**
            node features :math:`(|\mathcal{V}|, F_{out})`,
-           Kullback-Leibler divergence for weights and bias (optional):
-           math : `(\mathrm{KL}[q_{\theta}(w)||p(w)])`
-           with variational parameters math:`(\theta = (\mu, \rho))`
-           to make an approximation
-           of the variational posterior
-           math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))`
+           Kullback-Leibler divergence for weights and bias
+           :math:`(\mathrm{KL}[q_{\theta}(w)||p(w)])`
+           with variational parameters :math:`(\theta = (\mu, \rho))`
+           to make an approximation of the variational posterior
+           :math:`(q(\theta)=\mathcal{N}(\mu, log(1+e^{\rho})))` *(optional)*
     """
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
@@ -110,10 +109,10 @@ class BayesianGCNConv(MessagePassing):
         self,
         in_channels: int,
         out_channels: int,
-        prior_mean=0,
-        prior_variance=1,
-        posterior_mu_init=0,
-        posterior_rho_init=-3.0,
+        prior_mean: float = 0.0,
+        prior_variance: float = 1.0,
+        posterior_mu_init: float = 0.0,
+        posterior_rho_init: float = -3.0,
         cached: bool = False,
         normalize: bool = False,
         bias: bool = True,
@@ -178,16 +177,23 @@ class BayesianGCNConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-    def kl_div(self, mu_q: Tensor, sigma_q: Tensor, mu_p: float,
-               sigma_p: float) -> Tensor:
+    def kl_div(
+        self,
+        mu_q: Tensor,
+        sigma_q: Tensor,
+        mu_p: Tensor,
+        sigma_p: Tensor,
+    ) -> Tensor:
         r"""
-        Calculates kl divergence between two gaussians (Q || P)
-        Parameters:
-             * mu_q: torch.Tensor -> mu parameter of distribution Q
-             * sigma_q: torch.Tensor -> sigma parameter of distribution Q
-             * mu_p: float -> mu parameter of distribution P
-             * sigma_p: float -> sigma parameter of distribution P
-        returns torch.Tensor of shape 0
+        Calculates kl divergence between two gaussians (:math:`Q || P`).
+
+        Args:
+            mu_q (Tensor): :math:`\mu` parameter of distribution :math:`Q`.
+            sigma_q (Tensor): :math:`\sigma` parameter of
+                distribution :math:`Q`.
+            mu_p (Tensor): :math:`\mu` parameter of distribution :math:`P`.
+            sigma_p (Tensor): :math:`\sigma` parameter of
+                distribution :math:`P`.
         """
         kl = (torch.log(sigma_p) - torch.log(sigma_q) +
               (sigma_q**2 + (mu_q - mu_p)**2) / (2 * (sigma_p**2)) - 0.5)
@@ -204,7 +210,11 @@ class BayesianGCNConv(MessagePassing):
         return kl
 
     def forward(
-            self, x: Tensor, edge_index: Adj, edge_weight: OptTensor = None
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+        return_kl_divergence: bool = False,
     ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
         """"""
 
@@ -263,7 +273,11 @@ class BayesianGCNConv(MessagePassing):
             kl = kl_weight + kl_bias
         else:
             kl = kl_weight
-        return out, kl
+
+        if return_kl_divergence:
+            return out, kl
+        else:
+            return out
 
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
         return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
