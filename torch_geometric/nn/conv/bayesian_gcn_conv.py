@@ -72,15 +72,14 @@ class BayesianGCNConv(MessagePassing):
         posterior_rho_init (float): Init trainable rho parameter representing
             the sigma of the approximate posterior through softplus function
             (default: :obj:`0.0`)
-        improved (bool, optional): If set to :obj:`True`, the layer computes
-            :math:`\mathbf{\hat{A}}` as :math:`\mathbf{A} + 2\mathbf{I}`.
-            (default: :obj:`False`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
             the computation of :math:`\mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
             \mathbf{\hat{D}}^{-1/2}` on first execution, and will use the
             cached version for further executions.
             This parameter should only be set to :obj:`True` in transductive
             learning scenarios. (default: :obj:`False`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
         normalize (bool, optional): Whether to add self-loops and compute
             symmetric normalization coefficients on the fly.
             (default: :obj:`True`)
@@ -114,7 +113,8 @@ class BayesianGCNConv(MessagePassing):
         posterior_mu_init: float = 0.0,
         posterior_rho_init: float = -3.0,
         cached: bool = False,
-        normalize: bool = False,
+        add_self_loops: bool = True,
+        normalize: bool = True,
         bias: bool = True,
         **kwargs,
     ):
@@ -128,6 +128,7 @@ class BayesianGCNConv(MessagePassing):
         self.posterior_mu_init = posterior_mu_init
         self.posterior_rho_init = posterior_rho_init
         self.cached = cached
+        self.add_self_loops = add_self_loops
         self.normalize = normalize
 
         self.mu_weight = Parameter(torch.Tensor(out_channels, in_channels))
@@ -217,7 +218,6 @@ class BayesianGCNConv(MessagePassing):
         return_kl_divergence: bool = False,
     ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
         """"""
-
         sigma_weight = torch.log1p(torch.exp(self.rho_weight))
 
         weight = self.mu_weight + (sigma_weight *
@@ -231,20 +231,21 @@ class BayesianGCNConv(MessagePassing):
                 cache = self._cached_edge_index
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
-                        edge_index, edge_weight, x.size(self.node_dim),
-                        x.dtype)
+                        edge_index, edge_weight, x.size(self.node_dim), False,
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
                     edge_index, edge_weight = cache[0], cache[1]
 
-        elif isinstance(edge_index, SparseTensor):
-            cache = self._cached_adj_t
-            if cache is None:
-                edge_index = gcn_norm(  # yapf: disable
-                    edge_index, edge_weight, x.size(self.node_dim), x.dtype)
-                if self.cached:
-                    self._cached_adj_t = edge_index
+            elif isinstance(edge_index, SparseTensor):
+                cache = self._cached_adj_t
+                if cache is None:
+                    edge_index = gcn_norm(  # yapf: disable
+                        edge_index, edge_weight, x.size(self.node_dim), False,
+                        self.add_self_loops, self.flow, dtype=x.dtype)
+                    if self.cached:
+                        self._cached_adj_t = edge_index
                 else:
                     edge_index = cache
 
@@ -266,6 +267,7 @@ class BayesianGCNConv(MessagePassing):
 
         x = F.linear(x, weight, bias)
 
+        # propagate_type: (x: Tensor, edge_weight: OptTensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=None)
 
