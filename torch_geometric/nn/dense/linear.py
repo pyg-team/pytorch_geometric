@@ -274,6 +274,8 @@ class HeteroLinear(torch.nn.Module):
             for i in range(self.num_types):
                 mask = type_vec == i
                 out[mask] = F.linear(x[mask], self.weight[i].T)
+            if self.bias is not None:
+                out += self.bias[type_vec]
         return out
 
     @torch.no_grad()
