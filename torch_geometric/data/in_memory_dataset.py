@@ -2,12 +2,24 @@ import copy
 import warnings
 from abc import ABC
 from collections.abc import Mapping, Sequence
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
+import torch
 from torch import Tensor
 
 from torch_geometric.data import Batch, Data
 from torch_geometric.data.collate import collate
+from torch_geometric.data.data import BaseData
 from torch_geometric.data.dataset import Dataset, IndexType
 from torch_geometric.data.separate import separate
 
@@ -92,6 +104,19 @@ class InMemoryDataset(Dataset, ABC):
         self._data_list[idx] = copy.copy(data)
 
         return data
+
+    @classmethod
+    def save(cls, data_list: List[BaseData], path: str):
+        r"""Saves a list of data objects to the file path :obj:`path`."""
+        data, slices = cls.collate(data_list)
+        torch.save((data.to_dict(), slices), path)
+
+    def load(self, path: str, data_cls: Type[BaseData] = Data):
+        r"""Loads the dataset from the file path :obj:`path`."""
+        data, self.slices = torch.load(path)
+        if isinstance(data, dict):  # Backward compatibility.
+            data = data_cls.from_dict(data)
+        self.data = data
 
     @staticmethod
     def collate(

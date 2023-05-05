@@ -90,6 +90,20 @@ def test_init_hetero_data():
     assert len(data.edge_items()) == 3
 
 
+def test_hetero_data_to_from_dict():
+    data = HeteroData()
+    data.global_id = '1'
+    data['v1'].x = torch.randn(5, 16)
+    data['v2'].y = torch.randn(4, 16)
+    data['v1', 'v2'].edge_index = torch.tensor([[0, 1, 2, 3], [0, 1, 2, 3]])
+
+    out = HeteroData.from_dict(data.to_dict())
+    assert out.global_id == data.global_id
+    assert torch.equal(out['v1'].x, data['v1'].x)
+    assert torch.equal(out['v2'].y, data['v2'].y)
+    assert torch.equal(out['v1', 'v2'].edge_index, data['v1', 'v2'].edge_index)
+
+
 def test_hetero_data_functions():
     data = HeteroData()
     data['paper'].x = x_paper

@@ -8,6 +8,7 @@ from torch_geometric.nn.resolver import (
     aggregation_resolver,
     lr_scheduler_resolver,
     normalization_resolver,
+    optimizer_resolver,
 )
 
 
@@ -56,6 +57,22 @@ def test_normalization_resolver(norm_tuple):
                       norm_module)
     assert isinstance(normalization_resolver(norm_repr, *norm_args),
                       norm_module)
+
+
+def test_optimizer_resolver():
+    params = [torch.nn.Parameter(torch.Tensor(1))]
+
+    assert isinstance(optimizer_resolver(torch.optim.SGD(params, lr=0.01)),
+                      torch.optim.SGD)
+    assert isinstance(optimizer_resolver(torch.optim.Adam(params)),
+                      torch.optim.Adam)
+    assert isinstance(optimizer_resolver(torch.optim.Rprop(params)),
+                      torch.optim.Rprop)
+
+    assert isinstance(optimizer_resolver('sgd', params, lr=0.01),
+                      torch.optim.SGD)
+    assert isinstance(optimizer_resolver('adam', params), torch.optim.Adam)
+    assert isinstance(optimizer_resolver('rprop', params), torch.optim.Rprop)
 
 
 @pytest.mark.parametrize('scheduler_args', [
