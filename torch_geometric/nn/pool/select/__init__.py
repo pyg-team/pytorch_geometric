@@ -1,5 +1,3 @@
-from .base import Select
+from .base import Select, SelectOutput
 
-__all__ = [
-    'Select',
-]
+__all__ = ['Select', 'SelectOutput']

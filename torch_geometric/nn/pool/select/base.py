@@ -8,7 +8,8 @@ from torch import Tensor
 @dataclass
 class SelectOutput:
     """
-    Output of the :meth:`Select.forward` method.
+    Output of the :meth:`Select.forward` method. Contains
+    a mapping from nodes to clusters, and the number of clusters.
     Args:
         node_index (Tensor): The indices of the selected nodes.
         cluster_index (Tensor): The indices of the clusters each node is

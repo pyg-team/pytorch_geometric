@@ -3,6 +3,8 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.nn.pool.select import SelectOutput
+
 
 class Connect(torch.nn.Module):
     r"""An abstract base class implementing custom edge connection operators.
@@ -18,14 +20,15 @@ class Connect(torch.nn.Module):
 
     def forward(
         self,
-        cluster: Tensor,
+        cluster: SelectOutput,
         edge_index: Tensor,
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Optional[Tensor]]:
         r"""
         Args:
-            cluster (torch.Tensor): The mapping from nodes to supernodes.
+            cluster (SelectOutput): The output of `Select`, with a mapping from
+                nodes to clusters.
             edge_index (torch.Tensor): The edge indices.
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
