@@ -5,11 +5,10 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.inits import uniform
-from torch_geometric.nn.pool.select.base import SelectOutput
+from torch_geometric.nn.pool.connect import Connect
+from torch_geometric.nn.pool.select import Select, SelectOutput
 from torch_geometric.utils import scatter, softmax
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-
-from .select import Select
 
 
 class TopkSelect(Select):
@@ -25,7 +24,30 @@ class TopkSelect(Select):
         weight = torch.ones_like(perm, dtype=torch.float)
         return SelectOutput(node_index=perm,
                             cluster_index=torch.arange(num_clusters),
-                            num_clusters=num_clusters, weight=weight)
+                            num_clusters=num_clusters, num_nodes=x.size(0),
+                            weight=weight)
+
+
+class TopkReduce(torch.nn.Module):
+    def __init__(self, multiplier: float = 1.):
+        super().__init__()
+        self.multiplier = multiplier
+
+    def forward(self, x: Tensor, perm: Tensor, weight: Tensor) -> Tensor:
+        x = x[perm] * weight[perm].view(-1, 1)
+        x = self.multiplier * x if self.multiplier != 1 else x
+        return x
+
+
+class TopkConnect(Connect):
+    def forward(
+            cluster: SelectOutput, edge_index: Tensor,
+            edge_attr: Optional[Tensor]) -> Tuple[Tensor, Optional[Tensor]]:
+        return filter_adj(
+            edge_index,
+            edge_attr,
+            cluster.node_index,
+        )
 
 
 def topk(
@@ -185,6 +207,7 @@ class TopKPooling(torch.nn.Module):
         self.multiplier = multiplier
         self.nonlinearity = nonlinearity
         self.select = TopkSelect(ratio, min_score)
+        self.reduce = TopkReduce(multiplier)
         self.weight = Parameter(torch.Tensor(1, in_channels))
 
         self.reset_parameters()
@@ -228,10 +251,10 @@ class TopKPooling(torch.nn.Module):
 
         select_output = self.select(score, batch)
         perm = select_output.node_index
-        x = x[perm] * score[perm].view(-1, 1)
-        x = self.multiplier * x if self.multiplier != 1 else x
 
+        x = self.reduce(x, perm, score)
         batch = batch[perm]
+
         edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
                                            num_nodes=score.size(0))
 
