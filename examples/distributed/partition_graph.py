@@ -15,7 +15,8 @@ def partition_dataset(ogbn_dataset: str, root_dir: str, num_partitions: int):
     dataset = PygNodePropPredDataset(ogbn_dataset, root_dir)
     data = dataset[0]
 
-    partitioner = PartitionerBase(output_dir=save_dir, num_parts=num_partitions, data=data)
+    partitioner = PartitionerBase(output_dir=save_dir,
+                                  num_parts=num_partitions, data=data)
     partitioner.partition()
 
 
