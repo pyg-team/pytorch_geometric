@@ -29,13 +29,18 @@ class ClusterData(torch.utils.data.Dataset):
             :obj:`save_dir` directory for faster re-use. (default: :obj:`None`)
         log (bool, optional): If set to :obj:`False`, will not log any
             progress. (default: :obj:`True`)
+        inter_cluster_edges (bool, optional): If set to :obj:`True`,
+            will record inter-cluster edge connection
+            info. (default: :obj:`False`)
     """
     def __init__(self, data, num_parts: int, recursive: bool = False,
-                 save_dir: Optional[str] = None, log: bool = True):
+                 save_dir: Optional[str] = None, log: bool = True,
+                 inter_cluster_edges: bool = False):
 
         assert data.edge_index is not None
 
         self.num_parts = num_parts
+        self.keep_inter_connections = inter_cluster_edges
 
         recursive_str = '_recursive' if recursive else ''
         filename = f'partition_{num_parts}{recursive_str}.pt'
@@ -85,7 +90,10 @@ class ClusterData(torch.utils.data.Dataset):
         data = copy.copy(self.data)
         adj, data.adj = data.adj, None
 
-        adj = adj.narrow(0, start, length).narrow(1, start, length)
+        if self.keep_inter_connections:
+            adj = adj.narrow(0, start, length)
+        else:
+            adj = adj.narrow(0, start, length).narrow(1, start, length)
         edge_idx = adj.storage.value()
 
         for key, value in data:
