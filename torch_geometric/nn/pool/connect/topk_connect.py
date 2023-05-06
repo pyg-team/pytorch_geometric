@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.pool.select import SelectOutput
-from torch_geometric.utils import maybe_num_nodes
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 from .base import Connect
 
