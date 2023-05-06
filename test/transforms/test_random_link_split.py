@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.testing import get_random_edge_index
+from torch_geometric.testing import get_random_edge_index, onlyFullTest
 from torch_geometric.transforms import RandomLinkSplit
 from torch_geometric.utils import is_undirected, to_undirected
 
@@ -288,3 +288,32 @@ def test_random_link_split_non_contiguous():
     train_data, val_data, test_data = transform(data)
     assert train_data['p', 'p'].num_edges == 60
     assert train_data['p', 'p'].edge_index.is_contiguous()
+
+
+@onlyFullTest
+def test_random_link_split_on_dataset(get_dataset):
+    dataset = get_dataset(name='MUTAG')
+
+    dataset.transform = RandomLinkSplit(
+        num_val=0.1,
+        num_test=0.1,
+        disjoint_train_ratio=0.3,
+        add_negative_train_samples=False,
+    )
+
+    train_dataset, val_dataset, test_dataset = zip(*dataset)
+    assert len(train_dataset) == len(dataset)
+    assert len(val_dataset) == len(dataset)
+    assert len(test_dataset) == len(dataset)
+
+    assert isinstance(train_dataset[0], Data)
+    assert train_dataset[0].edge_label.min() == 1.0
+    assert train_dataset[0].edge_label.max() == 1.0
+
+    assert isinstance(val_dataset[0], Data)
+    assert val_dataset[0].edge_label.min() == 0.0
+    assert val_dataset[0].edge_label.max() == 1.0
+
+    assert isinstance(test_dataset[0], Data)
+    assert test_dataset[0].edge_label.min() == 0.0
+    assert test_dataset[0].edge_label.max() == 1.0

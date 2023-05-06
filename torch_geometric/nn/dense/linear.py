@@ -387,7 +387,7 @@ class HeteroDictLinear(torch.nn.Module):
                     biases.append(lin.bias)
             biases = None if biases[0] is None else biases
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
-            for key, out in zip(self.lins.keys(), outs):
+            for key, out in zip(x_dict.keys(), outs):
                 if key in x_dict:
                     out_dict[key] = out
         else:

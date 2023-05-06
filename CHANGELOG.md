@@ -7,6 +7,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added an example for heterogeneous GNN explanation via `CaptumExplainer` ([#7096](https://github.com/pyg-team/pytorch_geometric/pull/7096))
+- Added `visualize_feature_importance` functionality to `HeteroExplanation` ([#7096](https://github.com/pyg-team/pytorch_geometric/pull/7096))
+- Added a `AddRemainingSelfLoops` transform ([#7192](https://github.com/pyg-team/pytorch_geometric/pull/7192))
+- Added `optimizer_resolver` ([#7209](https://github.com/pyg-team/pytorch_geometric/pull/7209))
+- Added `type_ptr` argument to `HeteroLayerNorm` ([#7208](https://github.com/pyg-team/pytorch_geometric/pull/7208))
+- Added an option to benchmark scripts to write PyTorch profiler results to CSV ([#7114](https://github.com/pyg-team/pytorch_geometric/pull/7114))
+- Added subgraph type sampling option with bidirectional edge support ([#7199](https://github.com/pyg-team/pytorch_geometric/pull/7199), [#7200](https://github.com/pyg-team/pytorch_geometric/pull/7200))
+- Added support for `"any"`-reductions in `scatter` ([#7198](https://github.com/pyg-team/pytorch_geometric/pull/7198))
+- Added manual sampling interface to `NodeLoader` and `LinkLoader` ([#7197](https://github.com/pyg-team/pytorch_geometric/pull/7197))
 - Extending `torch.sparse` support ([#7155](https://github.com/pyg-team/pytorch_geometric/pull/7155))
 - Added edge weight support to `LightGCN` ([#7157](https://github.com/pyg-team/pytorch_geometric/pull/7157))
 - Added `SparseTensor` support to`trim_to_layer` function ([#7089](https://github.com/pyg-team/pytorch_geometric/pull/7089))
@@ -21,11 +30,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Fixed `HGTConv` utility function `_construct_src_node_feat` ([#7194](https://github.com/pyg-team/pytorch_geometric/pull/7194))
+- Extend dataset summary to create stats for each node/edge type ([#7203](https://github.com/pyg-team/pytorch_geometric/pull/7203))
+- Added an optional `batch_size` argument to `avg_pool_x` and `max_pool_x` ([#7216](https://github.com/pyg-team/pytorch_geometric/pull/7216))
 - Fixed `subgraph` on unordered inputs ([#7187](https://github.com/pyg-team/pytorch_geometric/pull/7187))
 - Allow missing node types in `HeteroDictLinear` ([#7185](https://github.com/pyg-team/pytorch_geometric/pull/7185))
 - Optimized `from_networkx` memory footprint by reducing unnecessary copies ([#7119](https://github.com/pyg-team/pytorch_geometric/pull/7119))
 - Added an optional `batch_size` argument to `LayerNorm`, `GraphNorm`, `InstanceNorm`, `GraphSizeNorm` and `PairNorm` ([#7135](https://github.com/pyg-team/pytorch_geometric/pull/7135))
-- Improved code coverage ([#7093](https://github.com/pyg-team/pytorch_geometric/pull/7093))
+- Improved code coverage ([#7093](https://github.com/pyg-team/pytorch_geometric/pull/7093), [#7195](https://github.com/pyg-team/pytorch_geometric/pull/7195))
 - Fix `numpy` incompatiblity when reading files for `Planetoid` datasets ([#7141](https://github.com/pyg-team/pytorch_geometric/pull/7141))
 - Added support for `Data.num_edges` for native `torch.sparse.Tensor` adjacency matrices ([#7104](https://github.com/pyg-team/pytorch_geometric/pull/7104))
 - Fixed crash of heterogeneous data loaders if node or edge types are missing ([#7060](https://github.com/pyg-team/pytorch_geometric/pull/7060), [#7087](https://github.com/pyg-team/pytorch_geometric/pull/7087))
@@ -34,6 +46,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed a bug in `FastHGTConv` that computed values via parameters used to compute the keys ([#7050](https://github.com/pyg-team/pytorch_geometric/pull/7050))
 - Accelerated sparse tensor conversion routines ([#7042](https://github.com/pyg-team/pytorch_geometric/pull/7042), [#7043](https://github.com/pyg-team/pytorch_geometric/pull/7043))
 - Change `torch_sparse.SparseTensor` logic to utilize `torch.sparse_csr` instead ([#7041](https://github.com/pyg-team/pytorch_geometric/pull/7041))
+- Added an optional `batch_size` and `max_num_nodes` arguments to `MemPooling` layer ([#7239](https://github.com/pyg-team/pytorch_geometric/pull/7239))
 
 ### Removed
 
