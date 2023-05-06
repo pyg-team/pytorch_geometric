@@ -240,6 +240,33 @@ NoneType = Optional[Tensor]
 MaybeHeteroNodeTensor = Union[Tensor, Dict[NodeType, Tensor]]
 MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 
+# Types for partition data ####################################################
+
+# class GraphPartitionData(NamedTuple):
+#     r""" Data and indexing info of a graph partition.
+#     """
+#     # edge index (rows, cols)
+#     edge_index: Tuple[torch.Tensor, torch.Tensor]
+#     # edge ids tensor corresponding to `edge_index`
+#     eids: torch.Tensor
+
+# class FeaturePartitionData(NamedTuple):
+#     r""" Data and indexing info of a node/edge feature partition.
+#     """
+#     # node/edge feature tensor
+#     feats: torch.Tensor
+#     # node/edge ids tensor corresponding to `feats`
+#     ids: torch.Tensor
+
+# HeteroGraphPartitionData = Dict[EdgeType, GraphPartitionData]
+# HeteroFeaturePartitionData = Dict[Union[NodeType, EdgeType],
+#                                   FeaturePartitionData]
+
+# Types for partition book ####################################################
+
+HeteroNodePartitionDict = Dict[NodeType, Tensor]
+HeteroEdgePartitionDict = Dict[EdgeType, Tensor]
+
 # Types for sampling ##########################################################
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
