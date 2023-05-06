@@ -20,7 +20,11 @@ from torch_geometric.nn.aggr import MaxAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.pool import knn_graph
 from torch_geometric.nn.pool.decimation import decimation_indices
+from torch_geometric.typing import WITH_TORCH_CLUSTER
 from torch_geometric.utils import softmax
+
+if not WITH_TORCH_CLUSTER:
+    quit("This example requires 'torch-cluster'")
 
 # Default activation and batch norm parameters used by RandLA-Net:
 lrelu02_kwargs = {'negative_slope': 0.2}

@@ -13,7 +13,7 @@ from torch_geometric.nn import GCNConv, GINConv, SAGPooling, global_max_pool
 from torch_geometric.utils import scatter
 
 
-class HandleNodeAttention(object):
+class HandleNodeAttention:
     def __call__(self, data):
         data.attn = torch.softmax(data.x, dim=0).flatten()
         data.x = None

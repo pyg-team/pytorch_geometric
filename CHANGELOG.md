@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added support for tuples as keys in `ModuleDict`/`ParameterDict` ([#7294](https://github.com/pyg-team/pytorch_geometric/pull/7294))
+- Added `NodePropertySplit` transform for creating node-level splits using structural node properties ([#6894](https://github.com/pyg-team/pytorch_geometric/pull/6894))
+- Added an option to preserve directed graphs in `CitationFull` datasets ([#7275](https://github.com/pyg-team/pytorch_geometric/pull/7275))
+- Added support for `torch.sparse.Tensor` in `DataLoader` ([#7252](https://github.com/pyg-team/pytorch_geometric/pull/7252))
+- Added `save` and `load` methods to `InMemoryDataset` ([#7250](https://github.com/pyg-team/pytorch_geometric/pull/7250))
 - Added an example for heterogeneous GNN explanation via `CaptumExplainer` ([#7096](https://github.com/pyg-team/pytorch_geometric/pull/7096))
 - Added `visualize_feature_importance` functionality to `HeteroExplanation` ([#7096](https://github.com/pyg-team/pytorch_geometric/pull/7096))
 - Added a `AddRemainingSelfLoops` transform ([#7192](https://github.com/pyg-team/pytorch_geometric/pull/7192))
@@ -30,6 +35,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Updated examples to use `NeighborLoader` instead of `NeighborSampler` ([#7152](https://github.com/pyg-team/pytorch_geometric/pull/7152))
 - Fixed `HGTConv` utility function `_construct_src_node_feat` ([#7194](https://github.com/pyg-team/pytorch_geometric/pull/7194))
 - Extend dataset summary to create stats for each node/edge type ([#7203](https://github.com/pyg-team/pytorch_geometric/pull/7203))
 - Added an optional `batch_size` argument to `avg_pool_x` and `max_pool_x` ([#7216](https://github.com/pyg-team/pytorch_geometric/pull/7216))

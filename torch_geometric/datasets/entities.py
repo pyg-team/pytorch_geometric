@@ -204,7 +204,7 @@ class Entities(InMemoryDataset):
         return f'{self.name.upper()}{self.__class__.__name__}()'
 
 
-class hide_stdout(object):
+class hide_stdout:
     def __enter__(self):
         self.level = logging.getLogger().level
         logging.getLogger().setLevel(logging.ERROR)
