@@ -1,6 +1,8 @@
 import torch
 
-from torch_geometric.nn.pool.topk_pool import TopKPooling, filter_adj, topk
+from torch_geometric.nn.pool.connect.topk_connect import filter_adj
+from torch_geometric.nn.pool.select.topk_select import topk
+from torch_geometric.nn.pool.topk_pool import TopKPooling
 from torch_geometric.testing import is_full_test
 
 

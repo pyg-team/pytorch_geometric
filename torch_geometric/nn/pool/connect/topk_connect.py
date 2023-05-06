@@ -11,7 +11,7 @@ from .base import Connect
 
 class TopkConnect(Connect):
     def forward(
-            cluster: SelectOutput, edge_index: Tensor,
+            self, cluster: SelectOutput, edge_index: Tensor,
             edge_attr: Optional[Tensor]) -> Tuple[Tensor, Optional[Tensor]]:
         return filter_adj(
             edge_index,
