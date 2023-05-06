@@ -12,6 +12,7 @@ class SelectOutput:
     a mapping from nodes to clusters, and the number of clusters.
     Args:
         node_index (Tensor): The indices of the selected nodes.
+        num_nodes (int): The number of nodes in the input graph.
         cluster_index (Tensor): The indices of the clusters each node is
             assigned to. Same shape as :obj:`node_index`.
         num_clusters (int): The number of clusters.
@@ -20,6 +21,7 @@ class SelectOutput:
             Same shape as :obj:`node_index`. (default: :obj:`None`).
     """
     node_index: Tensor
+    num_nodes: int
     cluster_index: Tensor
     num_clusters: int
     weight: Optional[Tensor] = None
