@@ -5,8 +5,27 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.inits import uniform
+from torch_geometric.nn.pool.select.base import SelectOutput
 from torch_geometric.utils import scatter, softmax
 from torch_geometric.utils.num_nodes import maybe_num_nodes
+
+from .select import Select
+
+
+class TopkSelect(Select):
+    def __init__(self, ratio: Optional[float],
+                 min_score: Optional[float] = None, tol: float = 1e-7):
+        super().__init__()
+        self.ratio = ratio
+        self.min_score = min_score
+
+    def forward(self, x: Tensor, batch: Tensor) -> SelectOutput:
+        perm = topk(x, self.ratio, batch, self.min_score)
+        num_clusters = perm.size(0)
+        weight = torch.ones_like(perm, dtype=torch.float)
+        return SelectOutput(node_index=perm,
+                            cluster_index=torch.arange(num_clusters),
+                            num_clusters=num_clusters, weight=weight)
 
 
 def topk(
@@ -165,7 +184,7 @@ class TopKPooling(torch.nn.Module):
         self.min_score = min_score
         self.multiplier = multiplier
         self.nonlinearity = nonlinearity
-
+        self.select = TopkSelect(ratio, min_score)
         self.weight = Parameter(torch.Tensor(1, in_channels))
 
         self.reset_parameters()
@@ -207,7 +226,8 @@ class TopKPooling(torch.nn.Module):
         else:
             score = softmax(score, batch)
 
-        perm = topk(score, self.ratio, batch, self.min_score)
+        select_output = self.select(score, batch)
+        perm = select_output.node_index
         x = x[perm] * score[perm].view(-1, 1)
         x = self.multiplier * x if self.multiplier != 1 else x
 
