@@ -1,7 +1,27 @@
-from typing import Optional, Tuple
+from dataclasses import dataclass
+from typing import Optional
 
 import torch
 from torch import Tensor
+
+
+@dataclass
+class SelectOutput:
+    """
+    Output of the :meth:`Select.forward` method.
+    Args:
+        node_index (Tensor): The indices of the selected nodes.
+        cluster_index (Tensor): The indices of the clusters each node is
+            assigned to. Same shape as :obj:`node_index`.
+        num_clusters (int): The number of clusters.
+        weight (Tensor, optional): A weight Tensor with values in range
+            `[0, 1]`, denoting assignment weight of a node to a cluster.
+            Same shape as :obj:`node_index`. (default: :obj:`None`).
+    """
+    node_index: Tensor
+    cluster_index: Tensor
+    num_clusters: int
+    weight: Optional[Tensor] = None
 
 
 class Select(torch.nn.Module):
@@ -22,7 +42,7 @@ class Select(torch.nn.Module):
         edge_index: Tensor,
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
-    ) -> Tuple[Tensor, int]:
+    ) -> SelectOutput:
         r"""
         Args:
             x (torch.Tensor): The input node features.
