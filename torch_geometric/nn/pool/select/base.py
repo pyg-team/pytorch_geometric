@@ -14,7 +14,7 @@ class SelectOutput(CastMixin):
 
     Args:
         node_index (torch.Tensor): The indices of the selected nodes.
-        num_clusters (int): The number of nodes.
+        num_nodes (int): The number of nodes.
         cluster_index (torch.Tensor): The indices of the clusters each node in
             :obj:`node_index` is assigned to.
         num_clusters (int): The number of clusters.
