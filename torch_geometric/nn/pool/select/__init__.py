@@ -1,8 +1,8 @@
 from .base import Select, SelectOutput
-from .topk_select import TopkSelect
+from .topk import SelectTopK
 
 __all__ = [
     'Select',
     'SelectOutput',
-    'TopkSelect',
+    'SelectTopK',
 ]

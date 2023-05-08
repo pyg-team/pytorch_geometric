@@ -5,7 +5,7 @@ from torch import Tensor
 
 from torch_geometric.nn import GraphConv
 from torch_geometric.nn.pool.connect.topk_connect import filter_adj
-from torch_geometric.nn.pool.select.topk_select import topk
+from torch_geometric.nn.pool.select.topk import topk
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import softmax
 

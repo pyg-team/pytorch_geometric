@@ -8,6 +8,7 @@ from torch_geometric.utils import scatter
 from .base import Select, SelectOutput
 
 
+# TODO (matthias) Benchmark and document this method.
 def topk(
     x: Tensor,
     ratio: Optional[Union[float, int]],
@@ -21,8 +22,9 @@ def topk(
         scores_min = scores_max.clamp(max=min_score)
 
         perm = (x > scores_min).nonzero().view(-1)
+        return perm
 
-    elif ratio is not None:
+    if ratio is not None:
         num_nodes = scatter(batch.new_ones(x.size(0)), batch, reduce='sum')
         batch_size, max_num_nodes = num_nodes.size(0), int(num_nodes.max())
 
@@ -62,26 +64,37 @@ def topk(
             ], dim=0)
 
         perm = perm[index]
+        return perm
 
-    else:
-        raise ValueError("At least one of 'min_score' and 'ratio' parameters "
-                         "must be specified")
-
-    return perm
+    raise ValueError("At least one of the 'ratio' and 'min_score' parameters "
+                     "must be specified")
 
 
-class TopkSelect(Select):
-    def __init__(self, ratio: Optional[float],
-                 min_score: Optional[float] = None, tol: float = 1e-7):
+class SelectTopK(Select):
+    # TODO (matthias) Add documentation.
+    # TODO (matthias) Add separate `SelectTopK` tests.
+    def __init__(
+        self,
+        ratio: Optional[float] = None,
+        min_score: Optional[float] = None,
+        tol: float = 1e-7,
+    ):
         super().__init__()
+
+        if ratio is None and min_score is None:
+            raise ValueError(f"At least one of the 'ratio' and 'min_score' "
+                             f"parameters must be specified in "
+                             f"'{self.__class__.__name__}'")
+
         self.ratio = ratio
         self.min_score = min_score
 
     def forward(self, x: Tensor, batch: Tensor) -> SelectOutput:
         perm = topk(x, self.ratio, batch, self.min_score)
         num_clusters = perm.size(0)
-        weight = torch.ones_like(perm, dtype=torch.float)
-        return SelectOutput(node_index=perm,
-                            cluster_index=torch.arange(num_clusters),
-                            num_clusters=num_clusters, num_nodes=x.size(0),
-                            weight=weight)
+        return SelectOutput(
+            node_index=perm,
+            num_nodes=x.size(0),
+            cluster_index=torch.arange(num_clusters, device=x.device),
+            num_clusters=perm.size(0),
+        )

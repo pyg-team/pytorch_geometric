@@ -6,7 +6,7 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.inits import uniform
 from torch_geometric.nn.pool.connect import TopkConnect
-from torch_geometric.nn.pool.select import TopkSelect
+from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.utils import softmax
 
 
@@ -92,7 +92,7 @@ class TopKPooling(torch.nn.Module):
         self.min_score = min_score
         self.multiplier = multiplier
         self.nonlinearity = nonlinearity
-        self.select = TopkSelect(ratio, min_score)
+        self.select = SelectTopK(ratio, min_score)
         self.reduce = TopkReduce(multiplier)
         self.connect = TopkConnect()
         self.weight = Parameter(torch.Tensor(1, in_channels))
