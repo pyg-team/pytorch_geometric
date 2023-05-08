@@ -905,6 +905,9 @@ class Data(BaseData, FeatureStore, GraphStore):
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        if edge_attr.size is None:
+            edge_attr.size = self.size()  # Modify in-place.
+
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
             row, col = self.edge_index
             return row, col

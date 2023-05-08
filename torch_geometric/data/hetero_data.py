@@ -968,6 +968,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
         r"""Gets an edge index from edge storage, in the specified layout."""
         store = self[edge_attr.edge_type]
+
+        if edge_attr.size is None:
+            edge_attr.size = store.size()  # Modify in-place.
+
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in store:
             row, col = store.edge_index
             return row, col
