@@ -23,16 +23,16 @@ def test_activation_resolver():
 
 
 @pytest.mark.parametrize('aggr_tuple', [
-    (torch_geometric.nn.aggr.MeanAggregation, 'mean'),
-    (torch_geometric.nn.aggr.SumAggregation, 'sum'),
-    (torch_geometric.nn.aggr.SumAggregation, 'add'),
-    (torch_geometric.nn.aggr.MaxAggregation, 'max'),
-    (torch_geometric.nn.aggr.MinAggregation, 'min'),
-    (torch_geometric.nn.aggr.MulAggregation, 'mul'),
-    (torch_geometric.nn.aggr.VarAggregation, 'var'),
-    (torch_geometric.nn.aggr.StdAggregation, 'std'),
-    (torch_geometric.nn.aggr.SoftmaxAggregation, 'softmax'),
-    (torch_geometric.nn.aggr.PowerMeanAggregation, 'powermean'),
+    (torch_geometric.nn.MeanAggregation, 'mean'),
+    (torch_geometric.nn.SumAggregation, 'sum'),
+    (torch_geometric.nn.SumAggregation, 'add'),
+    (torch_geometric.nn.MaxAggregation, 'max'),
+    (torch_geometric.nn.MinAggregation, 'min'),
+    (torch_geometric.nn.MulAggregation, 'mul'),
+    (torch_geometric.nn.VarAggregation, 'var'),
+    (torch_geometric.nn.StdAggregation, 'std'),
+    (torch_geometric.nn.SoftmaxAggregation, 'softmax'),
+    (torch_geometric.nn.PowerMeanAggregation, 'powermean'),
 ])
 def test_aggregation_resolver(aggr_tuple):
     aggr_module, aggr_repr = aggr_tuple
@@ -40,16 +40,28 @@ def test_aggregation_resolver(aggr_tuple):
     assert isinstance(aggregation_resolver(aggr_repr), aggr_module)
 
 
+def test_multi_aggregation_resolver():
+    aggr = aggregation_resolver(None)
+    assert aggr is None
+
+    aggr = aggregation_resolver(['sum', 'mean', None])
+    assert isinstance(aggr, torch_geometric.nn.MultiAggregation)
+    assert len(aggr.aggrs) == 3
+    assert isinstance(aggr.aggrs[0], torch_geometric.nn.SumAggregation)
+    assert isinstance(aggr.aggrs[1], torch_geometric.nn.MeanAggregation)
+    assert aggr.aggrs[2] is None
+
+
 @pytest.mark.parametrize('norm_tuple', [
-    (torch_geometric.nn.norm.BatchNorm, 'batch', (16, )),
-    (torch_geometric.nn.norm.BatchNorm, 'batch_norm', (16, )),
-    (torch_geometric.nn.norm.InstanceNorm, 'instance_norm', (16, )),
-    (torch_geometric.nn.norm.LayerNorm, 'layer_norm', (16, )),
-    (torch_geometric.nn.norm.GraphNorm, 'graph_norm', (16, )),
-    (torch_geometric.nn.norm.GraphSizeNorm, 'graphsize_norm', ()),
-    (torch_geometric.nn.norm.PairNorm, 'pair_norm', ()),
-    (torch_geometric.nn.norm.MessageNorm, 'message_norm', ()),
-    (torch_geometric.nn.norm.DiffGroupNorm, 'diffgroup_norm', (16, 4)),
+    (torch_geometric.nn.BatchNorm, 'batch', (16, )),
+    (torch_geometric.nn.BatchNorm, 'batch_norm', (16, )),
+    (torch_geometric.nn.InstanceNorm, 'instance_norm', (16, )),
+    (torch_geometric.nn.LayerNorm, 'layer_norm', (16, )),
+    (torch_geometric.nn.GraphNorm, 'graph_norm', (16, )),
+    (torch_geometric.nn.GraphSizeNorm, 'graphsize_norm', ()),
+    (torch_geometric.nn.PairNorm, 'pair_norm', ()),
+    (torch_geometric.nn.MessageNorm, 'message_norm', ()),
+    (torch_geometric.nn.DiffGroupNorm, 'diffgroup_norm', (16, 4)),
 ])
 def test_normalization_resolver(norm_tuple):
     norm_module, norm_repr, norm_args = norm_tuple
