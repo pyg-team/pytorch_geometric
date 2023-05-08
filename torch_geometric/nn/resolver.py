@@ -63,6 +63,9 @@ def normalization_resolver(query: Union[Any, str], *args, **kwargs):
 
 def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
     import torch_geometric.nn.aggr as aggr
+    if isinstance(query, (list, tuple)):
+        return aggr.MultiAggregation(query, *args, **kwargs)
+
     base_cls = aggr.Aggregation
     aggrs = [
         aggr for aggr in vars(aggr).values()
