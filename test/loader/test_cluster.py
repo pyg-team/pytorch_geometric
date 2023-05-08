@@ -104,7 +104,7 @@ def test_cluster_gcn():
 
 
 @pytest.mark.skipif(not with_metis, reason='Not compiled with METIS support')
-def test_cluster_inter_cluster_edges():
+def test_keep_inter_cluster_edges():
     adj = torch.tensor([
         [1, 1, 1, 0, 1, 0],
         [1, 1, 0, 1, 0, 1],
@@ -121,7 +121,7 @@ def test_cluster_inter_cluster_edges():
     data.num_nodes = 6
 
     cluster_data = ClusterData(data, num_parts=2, log=False,
-                               inter_cluster_edges=True)
+                               keep_inter_cluster_edges=True)
 
     data = cluster_data[0]
     assert data.edge_index.tolist() == [[0, 0, 0, 0, 1, 1, 1, 2, 2, 2],
