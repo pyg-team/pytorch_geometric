@@ -14,6 +14,7 @@ class SelectOutput(CastMixin):
 
     Args:
         node_index (torch.Tensor): The indices of the selected nodes.
+        num_nodes (int): The number of nodes.
         cluster_index (torch.Tensor): The indices of the clusters each node in
             :obj:`node_index` is assigned to.
         num_clusters (int): The number of clusters.
@@ -21,6 +22,7 @@ class SelectOutput(CastMixin):
             of the assignment of a node to its cluster. (default: :obj:`None`)
     """
     node_index: Tensor
+    num_nodes: int
     cluster_index: Tensor
     num_clusters: int
     weight: Optional[Tensor] = None
@@ -28,6 +30,7 @@ class SelectOutput(CastMixin):
     def __init__(
         self,
         node_index: Tensor,
+        num_nodes: int,
         cluster_index: Tensor,
         num_clusters: int,
         weight: Optional[Tensor] = None,
@@ -55,6 +58,7 @@ class SelectOutput(CastMixin):
                              f"values (got {weight.numel()} values)")
 
         self.node_index = node_index
+        self.num_nodes = num_nodes
         self.cluster_index = cluster_index
         self.num_clusters = num_clusters
         self.weight = weight
