@@ -90,11 +90,11 @@ class SelectTopK(Select):
         self.min_score = min_score
 
     def forward(self, x: Tensor, batch: Tensor) -> SelectOutput:
-        perm = topk(x, self.ratio, batch, self.min_score)
-        num_clusters = perm.size(0)
+        node_index = topk(x, self.ratio, batch, self.min_score)
+
         return SelectOutput(
-            node_index=perm,
+            node_index=node_index,
             num_nodes=x.size(0),
-            cluster_index=torch.arange(num_clusters, device=x.device),
-            num_clusters=perm.size(0),
+            cluster_index=torch.arange(node_index.size(0), device=x.device),
+            num_clusters=node_index.size(0),
         )

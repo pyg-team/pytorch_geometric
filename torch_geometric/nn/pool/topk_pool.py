@@ -5,20 +5,32 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.inits import uniform
-from torch_geometric.nn.pool.connect import TopkConnect
 from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.utils import softmax
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
-class TopkReduce(torch.nn.Module):
-    def __init__(self, multiplier: float = 1.):
-        super().__init__()
-        self.multiplier = multiplier
+def filter_adj(
+    edge_index: Tensor,
+    edge_attr: Optional[Tensor],
+    perm: Tensor,
+    num_nodes: Optional[int] = None,
+) -> Tuple[Tensor, Optional[Tensor]]:
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    def forward(self, x: Tensor, perm: Tensor, weight: Tensor) -> Tensor:
-        x = x[perm] * weight[perm].view(-1, 1)
-        x = self.multiplier * x if self.multiplier != 1 else x
-        return x
+    mask = perm.new_full((num_nodes, ), -1)
+    i = torch.arange(perm.size(0), dtype=torch.long, device=perm.device)
+    mask[perm] = i
+
+    row, col = edge_index[0], edge_index[1]
+    row, col = mask[row], mask[col]
+    mask = (row >= 0) & (col >= 0)
+    row, col = row[mask], col[mask]
+
+    if edge_attr is not None:
+        edge_attr = edge_attr[mask]
+
+    return torch.stack([row, col], dim=0), edge_attr
 
 
 class TopKPooling(torch.nn.Module):
@@ -93,8 +105,6 @@ class TopKPooling(torch.nn.Module):
         self.multiplier = multiplier
         self.nonlinearity = nonlinearity
         self.select = SelectTopK(ratio, min_score)
-        self.reduce = TopkReduce(multiplier)
-        self.connect = TopkConnect()
         self.weight = Parameter(torch.Tensor(1, in_channels))
 
         self.reset_parameters()
@@ -137,13 +147,14 @@ class TopKPooling(torch.nn.Module):
             score = softmax(score, batch)
 
         select_output = self.select(score, batch)
+
         perm = select_output.node_index
+        x = x[perm] * score[perm].view(-1, 1)
+        x = self.multiplier * x if self.multiplier != 1 else x
 
-        x = self.reduce(x, perm, score)
         batch = batch[perm]
-
-        edge_index, edge_attr = self.connect(select_output, edge_index,
-                                             edge_attr)
+        edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
+                                           num_nodes=score.size(0))
 
         return x, edge_index, edge_attr, batch, perm, score[perm]
 
