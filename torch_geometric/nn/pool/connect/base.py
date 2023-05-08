@@ -50,9 +50,9 @@ class ConnectOutput(CastMixin):
 
 
 class Connect(torch.nn.Module):
-    r"""An abstract base class implementing custom edge connection operators as
-    described in the `"Understanding Pooling in Graph Neural Networks"
-    <https://arxiv.org/abs/1905.05178>`_ paper.
+    r"""An abstract base class for implementing custom edge connection
+    operators as described in the `"Understanding Pooling in Graph Neural
+    Networks" <https://arxiv.org/abs/1905.05178>`_ paper.
 
     Specifically, :class:`Connect` determines for each pair of supernodes the
     presence or abscene of an edge based on the existing edges between the
@@ -73,8 +73,7 @@ class Connect(torch.nn.Module):
     ) -> Tuple[Tensor, Optional[Tensor]]:
         r"""
         Args:
-            cluster (SelectOutput): The output of `Select`, with a mapping from
-                nodes to clusters.
+            select_output (SelectOutput): The output of :class:`Select`.
             edge_index (torch.Tensor): The edge indices.
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
