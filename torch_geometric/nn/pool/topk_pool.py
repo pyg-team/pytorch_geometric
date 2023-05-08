@@ -2,11 +2,8 @@ from typing import Callable, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch.nn import Parameter
 
-from torch_geometric.nn.inits import uniform
 from torch_geometric.nn.pool.select import SelectTopK
-from torch_geometric.utils import softmax
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
@@ -96,22 +93,18 @@ class TopKPooling(torch.nn.Module):
     ):
         super().__init__()
 
-        if isinstance(nonlinearity, str):
-            nonlinearity = getattr(torch, nonlinearity)
-
         self.in_channels = in_channels
         self.ratio = ratio
         self.min_score = min_score
         self.multiplier = multiplier
-        self.nonlinearity = nonlinearity
-        self.select = SelectTopK(ratio, min_score)
-        self.weight = Parameter(torch.Tensor(1, in_channels))
+
+        self.select = SelectTopK(in_channels, ratio, min_score, nonlinearity)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        uniform(self.in_channels, self.weight)
+        self.select.reset_parameters()
 
     def forward(
         self,
@@ -138,25 +131,17 @@ class TopKPooling(torch.nn.Module):
             batch = edge_index.new_zeros(x.size(0))
 
         attn = x if attn is None else attn
-        attn = attn.unsqueeze(-1) if attn.dim() == 1 else attn
-        score = (attn * self.weight).sum(dim=-1)
-
-        if self.min_score is None:
-            score = self.nonlinearity(score / self.weight.norm(p=2, dim=-1))
-        else:
-            score = softmax(score, batch)
-
-        select_output = self.select(score, batch)
+        select_output = self.select(attn, batch)
 
         perm = select_output.node_index
-        x = x[perm] * score[perm].view(-1, 1)
+        x = x[perm] * select_output.weight.view(-1, 1)
         x = self.multiplier * x if self.multiplier != 1 else x
 
         batch = batch[perm]
         edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
-                                           num_nodes=score.size(0))
+                                           num_nodes=select_output.num_nodes)
 
-        return x, edge_index, edge_attr, batch, perm, score[perm]
+        return x, edge_index, edge_attr, batch, perm, select_output.weight
 
     def __repr__(self) -> str:
         if self.min_score is None:

@@ -1,9 +1,11 @@
-from typing import Optional, Union
+from typing import Callable, Optional, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import scatter
+from torch_geometric.nn.inits import uniform
+from torch_geometric.nn.resolver import activation_resolver
+from torch_geometric.utils import scatter, softmax
 
 from .base import Select, SelectOutput
 
@@ -72,12 +74,12 @@ def topk(
 
 class SelectTopK(Select):
     # TODO (matthias) Add documentation.
-    # TODO (matthias) Add separate `SelectTopK` tests.
     def __init__(
         self,
-        ratio: Optional[float] = None,
+        in_channels: int,
+        ratio: Union[int, float] = 0.5,
         min_score: Optional[float] = None,
-        tol: float = 1e-7,
+        act: Union[str, Callable] = 'tanh',
     ):
         super().__init__()
 
@@ -86,15 +88,48 @@ class SelectTopK(Select):
                              f"parameters must be specified in "
                              f"'{self.__class__.__name__}'")
 
+        self.in_channels = in_channels
         self.ratio = ratio
         self.min_score = min_score
+        self.act = activation_resolver(act)
 
-    def forward(self, x: Tensor, batch: Tensor) -> SelectOutput:
-        node_index = topk(x, self.ratio, batch, self.min_score)
+        self.weight = torch.nn.Parameter(torch.Tensor(1, in_channels))
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        uniform(self.in_channels, self.weight)
+
+    def forward(
+        self,
+        x: Tensor,
+        batch: Optional[Tensor] = None,
+    ) -> SelectOutput:
+        """"""
+        if batch is None:
+            batch = x.new_zeros(x.size(0), dtype=torch.long)
+
+        x.view(-1, 1) if x.dim() == 1 else x
+        score = (x * self.weight).sum(dim=-1)
+
+        if self.min_score is None:
+            score = self.act(score / self.weight.norm(p=2, dim=-1))
+        else:
+            score = softmax(score, batch)
+
+        node_index = topk(score, self.ratio, batch, self.min_score)
 
         return SelectOutput(
             node_index=node_index,
             num_nodes=x.size(0),
             cluster_index=torch.arange(node_index.size(0), device=x.device),
             num_clusters=node_index.size(0),
+            weight=score[node_index],
         )
+
+    def __repr__(self) -> str:
+        if self.min_score is None:
+            arg = f'ratio={self.ratio}'
+        else:
+            arg = f'min_score={self.min_score}'
+        return f'{self.__class__.__name__}({self.in_channels}, {arg})'
