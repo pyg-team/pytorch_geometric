@@ -30,7 +30,7 @@ def maybe_num_nodes(edge_index, num_nodes=None):
             # This formulation avoids a non-traceable if-check for an
             # empty edge_index
             index_with_dummy_entry = torch.concat(
-                [edge_index.reshape(-1), -torch.ones((1,))])
+                [edge_index.reshape(-1), -torch.ones((1, ))])
             # Converting to a Size returns a traceable tensor instead of
             # an int if required by the tracer
             return torch.Size(index_with_dummy_entry.max().reshape(1) + 1)[0]
