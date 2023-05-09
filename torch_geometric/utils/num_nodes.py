@@ -26,7 +26,16 @@ def maybe_num_nodes(edge_index, num_nodes=None):
     elif isinstance(edge_index, Tensor):
         if torch_geometric.utils.is_torch_sparse_tensor(edge_index):
             return max(edge_index.size(0), edge_index.size(1))
-        return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
+        if torch.jit.is_tracing():
+            # This formulation avoids a non-traceable if-check for an
+            # empty edge_index
+            index_with_dummy_entry = torch.concat(
+                [edge_index.reshape(-1), -torch.ones((1,))])
+            # Converting to a Size returns a traceable tensor instead of
+            # an int if required by the tracer
+            return torch.Size(index_with_dummy_entry.max().reshape(1) + 1)[0]
+        else:
+            return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
     else:
         return max(edge_index.size(0), edge_index.size(1))
 
