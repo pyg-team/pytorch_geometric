@@ -316,7 +316,11 @@ class FusedAggregation(Aggregation):
                 assert mean is not None
                 var = (pow_sum / count) - (mean * mean)
 
-            outs[i] = var.clamp(min=1e-5).sqrt()
+            if index.numel() == 0 and dim_size is not None:
+                outs[i] = var.sqrt()
+            else:
+                # Only clamp var if there are edges for message passing
+                outs[i] = var.clamp(min=1e-5).sqrt()
 
         #######################################################################
 

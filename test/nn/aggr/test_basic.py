@@ -74,6 +74,15 @@ def test_var_aggregation():
     assert torch.allclose(out, expected, atol=1e-6)
 
 
+def test_std_aggregation_empty():
+    x = torch.tensor([]).reshape(0, 6)
+    index = torch.tensor([])
+    std_aggr = StdAggregation()
+    out = std_aggr(x, index, dim_size=10)
+    assert out.shape == (10, 6)
+    assert (out != 0).sum().item() == 0
+
+
 @pytest.mark.parametrize('Aggregation', [
     SoftmaxAggregation,
     PowerMeanAggregation,

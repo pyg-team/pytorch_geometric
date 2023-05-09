@@ -42,6 +42,17 @@ def test_fused_aggregation(aggrs):
     assert torch.allclose(x.grad, y.grad)
 
 
+def test_fused_std_empty():
+    aggrs = ['mean', 'var', 'std']
+    aggrs = [aggregation_resolver(aggr) for aggr in aggrs]
+    x = torch.tensor([]).reshape(0, 6)
+    index = torch.tensor([])
+    aggr = FusedAggregation(aggrs)
+    out = torch.cat(aggr(x, index, dim_size=10), dim=-1)
+    assert out.shape == (10, 6 * 3)
+    assert (out != 0).sum().item() == 0
+
+
 if __name__ == '__main__':
     import argparse
 
