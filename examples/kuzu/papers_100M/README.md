@@ -21,5 +21,5 @@ pip install pandas kuzu tqdm
 ## Train a model
 
 Run `train.py`.
-The script will train a GNN model on the dataset. 
+The script will train a GNN model on the dataset.
 The model is a 3-layer GraphSAGE model ported from [https://github.com/mengyangniu/ogbn-papers100m-sage/](https://github.com/mengyangniu/ogbn-papers100m-sage/).
