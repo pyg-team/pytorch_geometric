@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Fixed `add_self_loops` tracing a constant number of nodes with `torch.jit.trace` ([#7330](https://github.com/pyg-team/pytorch_geometric/pull/7330))
 - Added `keep_inter_cluster_edges` option to `ClusterData` to support inter-subgraph edge connections when doing graph partitioning ([#7326](https://github.com/pyg-team/pytorch_geometric/pull/7326))
 - Unify graph pooling framework ([#7308](https://github.com/pyg-team/pytorch_geometric/pull/7308))
 - Added support for tuples as keys in `ModuleDict`/`ParameterDict` ([#7294](https://github.com/pyg-team/pytorch_geometric/pull/7294))
