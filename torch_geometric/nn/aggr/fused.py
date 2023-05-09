@@ -319,7 +319,7 @@ class FusedAggregation(Aggregation):
             if index.numel() == 0 and dim_size is not None:
                 outs[i] = var.sqrt()
             else:
-                # Only clamp var if there are edges for message passing
+                # Only clamp var if there are edges for aggregation
                 outs[i] = var.clamp(min=1e-5).sqrt()
 
         #######################################################################

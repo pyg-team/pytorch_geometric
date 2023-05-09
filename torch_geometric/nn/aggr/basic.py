@@ -133,7 +133,7 @@ class StdAggregation(Aggregation):
         var = self.var_aggr(x, index, ptr, dim_size, dim)
         if index.numel() == 0 and dim_size is not None:
             return var.sqrt()
-        # Only clamp var if there are edges for message passing
+        # Only clamp var if there are edges for aggregation
         return var.clamp(min=1e-5).sqrt()
 
 
