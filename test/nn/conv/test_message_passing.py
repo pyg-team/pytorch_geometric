@@ -606,3 +606,51 @@ def test_message_passing_int32_edge_index():
     conv.register_aggregate_forward_pre_hook(cast_index_hook)
 
     assert conv(x, edge_index, edge_weight).size() == (4, 32)
+
+
+class MyConvWithSelfLoops(MessagePassing):
+    def __init__(self, aggr: str = 'add'):
+        super().__init__(aggr=aggr)
+
+    def forward(self, x: Tensor, edge_index: torch.Tensor) -> Tensor:
+        edge_index, _ = torch_geometric.utils.add_self_loops(edge_index)
+
+        # propagate_type: (x: Tensor)
+        return self.propagate(edge_index, x=x, size=None)
+
+    def message(self, x_j: Tensor) -> Tensor:
+        return x_j
+
+
+@pytest.mark.parametrize('forward_num_nodes', [4, 8, 2, 0])
+def test_my_conv_with_self_loops_traceable(forward_num_nodes):
+    """
+    torch.jit.trace a MessagePassing layer which adds self loops and test it
+    with different input sizes: more nodes, less nodes and no nodes.
+    All three cases are tested because all previously gave wrong results
+    or raised an error, for different reasons, all caused by a constant
+    number of nodes being traced in add_self_loops().
+    """
+    trace_num_nodes = 4
+    trace_x = torch.randn(trace_num_nodes, 16)
+    trace_edge_index = torch.stack([
+        torch.arange(0, trace_num_nodes - 1),
+        torch.arange(1, trace_num_nodes)
+    ])
+    forward_x = torch.randn(forward_num_nodes, 16)
+    forward_edge_index = (torch.stack([
+        torch.arange(0, forward_num_nodes - 1),
+        torch.arange(1, forward_num_nodes)
+    ]) if forward_num_nodes > 0 else torch.zeros((2, 0), dtype=torch.long))
+
+    conv = MyConvWithSelfLoops()
+
+    traced_conv = torch.jit.trace(conv, ((trace_x, trace_edge_index)))
+    scripted_conv = torch.jit.script(conv.jittable())
+
+    out = conv.forward(forward_x, forward_edge_index)
+    out_traced = traced_conv.forward(forward_x, forward_edge_index)
+    out_scripted = scripted_conv.forward(forward_x, forward_edge_index)
+
+    assert (torch.allclose(out, out_traced))
+    assert (torch.allclose(out, out_scripted))
