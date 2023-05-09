@@ -33,7 +33,7 @@ class GNNNodeHead(nn.Module):
         if 'split' not in batch:
             return x, y
 
-        mask = f'{batch.split}_mask'
+        mask = batch[f'{batch.split}_mask']
         return x[mask], y[mask] if y is not None else None
 
     def forward(self, batch):
