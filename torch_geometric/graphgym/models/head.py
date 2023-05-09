@@ -27,9 +27,14 @@ class GNNNodeHead(nn.Module):
                              has_act=False, has_bias=True, cfg=cfg))
 
     def _apply_index(self, batch):
-        mask = '{}_mask'.format(batch.split)
-        return batch.x[batch[mask]], \
-            batch.y[batch[mask]]
+        x = batch.x
+        y = batch.y if 'y' in batch else None
+
+        if 'split' not in batch:
+            return x, y
+
+        mask = batch[f'{batch.split}_mask']
+        return x[mask], y[mask] if y is not None else None
 
     def forward(self, batch):
         batch = self.layer_post_mp(batch)
