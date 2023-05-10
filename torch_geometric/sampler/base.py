@@ -167,7 +167,7 @@ class SamplerOutput(CastMixin):
             edge_id=self.edge,
             rev_edge_id=self.edge,
         )
-        out.num_sampled_edges = None
+        out.num_sampled_nodes = out.num_sampled_edges = None
 
         return out
 
@@ -280,7 +280,7 @@ class HeteroSamplerOutput(CastMixin):
                                   f"since the edge type {edge_type} does not "
                                   f"seem to have a reverse edge type")
 
-        out.num_sampled_edges = None
+        out.num_sampled_nodes = out.num_sampled_edges = None
 
         return out
 
