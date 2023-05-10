@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Fixed `add_self_loops` tracing a constant number of nodes with `torch.jit.trace` ([#7330](https://github.com/pyg-team/pytorch_geometric/pull/7330))
+- Fixed tracing of `add_self_loops` for a dynamic number of nodes ([#7330](https://github.com/pyg-team/pytorch_geometric/pull/7330))
 - Added an optional `add_pad_mask` argument to the `Pad` transform ([#7339](https://github.com/pyg-team/pytorch_geometric/pull/7339))
 - Added `keep_inter_cluster_edges` option to `ClusterData` to support inter-subgraph edge connections when doing graph partitioning ([#7326](https://github.com/pyg-team/pytorch_geometric/pull/7326))
 - Unify graph pooling framework ([#7308](https://github.com/pyg-team/pytorch_geometric/pull/7308))
