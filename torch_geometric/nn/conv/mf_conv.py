@@ -121,7 +121,6 @@ class MFConv(MessagePassing):
                 N = idx_i.numel()
                 if N == 0:
                     continue
-                print('N=',N)
                 r_idx_sel = x_l.index_select(self.node_dim, idx_i)
                 r_sel_list.append(r_idx_sel)
                 idx_list.append(idx_i + count)
@@ -129,9 +128,7 @@ class MFConv(MessagePassing):
                 type_list_r.append(torch.full((N, ), i, dtype=torch.long))
             x_r = torch.cat(r_sel_list, dim=0)
             type_vec_r = torch.cat(type_list_r, dim=0)
-            print("idx_list.shape=", [i.shape for i in idx_list])
             idx = torch.cat(idx_list, dim=0)
-            print("idx.shape=", idx.shape)
             # apply lin_r
             r += self.lin_r(x_r, type_vec_r)
 
