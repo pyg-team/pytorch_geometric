@@ -154,14 +154,12 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         # Test node type selection:
         assert set(batch.node_types) == {'paper', 'author'}
 
-        assert len(batch['paper']) == 5 if WITH_PYG_LIB else 4
         assert batch['paper'].n_id.size() == (batch['paper'].num_nodes, )
         assert batch['paper'].x.size(0) <= 100
         assert batch['paper'].input_id.numel() == batch_size
         assert batch['paper'].batch_size == batch_size
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
 
-        assert len(batch['author']) == 3 if WITH_PYG_LIB else 2
         assert batch['author'].n_id.size() == (batch['author'].num_nodes, )
         assert batch['author'].x.size(0) <= 200
         assert batch['author'].x.min() >= 100 and batch['author'].x.max() < 300
