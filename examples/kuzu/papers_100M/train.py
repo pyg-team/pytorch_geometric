@@ -1,13 +1,13 @@
 import multiprocessing as mp
 import os.path as osp
 
+import kuzu
 import pandas as pd
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
 
-import kuzu
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import MLP, BatchNorm, SAGEConv
 

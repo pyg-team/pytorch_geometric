@@ -2,10 +2,9 @@ from multiprocessing import cpu_count
 from os import path
 from zipfile import ZipFile
 
+import kuzu
 import numpy as np
 from tqdm import tqdm
-
-import kuzu
 
 with ZipFile("papers100M-bin.zip", 'r') as papers100M_zip:
     print('Extracting papers100M-bin.zip...')
