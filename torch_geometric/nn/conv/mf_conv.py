@@ -3,6 +3,7 @@ from typing import Tuple, Union
 import torch
 from torch import Tensor
 from torch.nn import ModuleList
+
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import HeteroLinear
 from torch_geometric.typing import Adj, OptPairTensor, Size, SparseTensor
@@ -54,8 +55,12 @@ class MFConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        self.lin_l = HeteroLinear(in_channels[0], out_channels, num_types=max_degree+1, is_sorted=True, bias=bias)
-        self.lin_r = HeteroLinear(in_channels[1], out_channels, num_types=max_degree+1, is_sorted=True, bias=False)
+        self.lin_l = HeteroLinear(in_channels[0], out_channels,
+                                  num_types=max_degree + 1, is_sorted=True,
+                                  bias=bias)
+        self.lin_r = HeteroLinear(in_channels[1], out_channels,
+                                  num_types=max_degree + 1, is_sorted=True,
+                                  bias=False)
 
         self.reset_parameters()
 
@@ -89,7 +94,7 @@ class MFConv(MessagePassing):
 
         # idx select loop for l
         h_sel_list, type_list_l, idx_list = [], [], []
-        for i in range(self.max_degree+1):
+        for i in range(self.max_degree + 1):
             idx_i = (deg == i).nonzero().view(-1)
             h_idx_sel = h.index_select(self.node_dim, idx_i)
             idx_list.append(idx_i)
@@ -105,11 +110,11 @@ class MFConv(MessagePassing):
 
         # idx select loop for r
         if x_r is not None:
-            r_sel_list, type_list_r  = [], []
+            r_sel_list, type_list_r = [], []
             count = 0
-            for i in range(self.max_degree+1):
+            for i in range(self.max_degree + 1):
                 idx_i = idx_list[i]
-                
+
                 N = idx_i.numel()
                 if N == 0:
                     continue
@@ -120,7 +125,7 @@ class MFConv(MessagePassing):
                 type_list_r.append(torch.full((N, ), i, dtype=torch.long))
             x_r = torch.cat(r_sel_list, dim=0)
             type_vec_r = torch.cat(type_list_r, dim=0)
-            
+
             # apply lin_r
             r += self.lin_r(x_r, type_vec_r)
 
