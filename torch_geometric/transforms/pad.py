@@ -457,7 +457,8 @@ class Pad(BaseTransform):
         num_pad_nodes = num_target_nodes - store.num_nodes
 
         if self.add_pad_mask:
-            pad_node_mask = torch.arange(num_target_nodes) < store.num_nodes
+            pad_node_mask = torch.ones(num_target_nodes, dtype=torch.bool)
+            pad_node_mask[store.num_nodes:] = False
             store.pad_node_mask = pad_node_mask
 
         for attr_name in attrs_to_pad:
@@ -483,7 +484,8 @@ class Pad(BaseTransform):
         num_pad_edges = num_target_edges - store.num_edges
 
         if self.add_pad_mask:
-            pad_edge_mask = torch.arange(num_target_edges) < store.num_edges
+            pad_edge_mask = torch.ones(num_target_edges, dtype=torch.bool)
+            pad_edge_mask[store.num_edges:] = False
             store.pad_edge_mask = pad_edge_mask
 
         if isinstance(num_nodes, tuple):
