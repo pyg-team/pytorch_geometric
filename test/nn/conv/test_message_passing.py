@@ -15,7 +15,12 @@ from torch_geometric.typing import (
     Size,
     SparseTensor,
 )
-from torch_geometric.utils import scatter, spmm, to_torch_csc_tensor
+from torch_geometric.utils import (
+    add_self_loops,
+    scatter,
+    spmm,
+    to_torch_csc_tensor,
+)
 
 
 class MyConv(MessagePassing):
@@ -51,6 +56,17 @@ class MyConv(MessagePassing):
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
         return spmm(adj_t, x[0], reduce=self.aggr)
+
+
+class MyConvWithSelfLoops(MessagePassing):
+    def __init__(self, aggr: str = 'add'):
+        super().__init__(aggr=aggr)
+
+    def forward(self, x: Tensor, edge_index: torch.Tensor) -> Tensor:
+        edge_index, _ = add_self_loops(edge_index)
+
+        # propagate_type: (x: Tensor)
+        return self.propagate(edge_index, x=x, size=None)
 
 
 def test_my_conv_basic():
@@ -606,3 +622,31 @@ def test_message_passing_int32_edge_index():
     conv.register_aggregate_forward_pre_hook(cast_index_hook)
 
     assert conv(x, edge_index, edge_weight).size() == (4, 32)
+
+
+@pytest.mark.parametrize('num_nodes', [4, 8, 2, 0])
+def test_traceable_my_conv_with_self_loops(num_nodes):
+    # `torch.jit.trace` a `MessagePassing` layer that adds self loops and test
+    # it across different input sizes.
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
+
+    conv = MyConvWithSelfLoops()
+    traced_conv = torch.jit.trace(conv, ((x, edge_index)))
+    scripted_conv = torch.jit.script(conv.jittable())
+
+    x = torch.randn(num_nodes, 16)
+    if num_nodes > 0:
+        edge_index = torch.stack([
+            torch.arange(0, num_nodes - 1),
+            torch.arange(1, num_nodes),
+        ], dim=0)
+    else:
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+
+    out = conv(x, edge_index)
+    traced_out = traced_conv(x, edge_index)
+    scripted_out = scripted_conv(x, edge_index)
+
+    assert torch.allclose(out, traced_out)
+    assert torch.allclose(out, scripted_out)
