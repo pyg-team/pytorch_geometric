@@ -124,7 +124,7 @@ class MFConv(MessagePassing):
                 N = idx_i.numel()
                 if N == 0:
                     continue
-                r_idx_sel = x_l.index_select(self.node_dim, idx_i)
+                r_idx_sel = x_r.index_select(self.node_dim, idx_i)
                 r_sel_list.append(r_idx_sel)
                 idx_list.append(idx_i + count)
                 count += N
