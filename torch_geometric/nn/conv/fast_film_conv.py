@@ -89,9 +89,11 @@ class FastFiLMConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
-
+        print("entered fastfilmforward")
         beta, gamma = self.film_skip(x[1]).split(self.out_channels, dim=-1)
+        print("finished film_skip")
         out = gamma * self.lin_skip(x[1]) + beta
+        print("finished lin_skip")
         if self.act is not None:
             out = self.act(out)
 
@@ -110,6 +112,7 @@ class FastFiLMConv(MessagePassing):
             propogate_xs = []
             type_list = []
             count = 0
+            print("about to for-loop")
             for e_type_i in range(self.num_relations):
                 edge_mask = edge_type == e_type_i
                 masked_src_idxs = edge_index[0, :]
@@ -124,9 +127,12 @@ class FastFiLMConv(MessagePassing):
                 propogate_xs.append(propogate_x)
             type_vec = torch.cat(type_list)
             # cat and apply linears
+            print("about to films")
             beta, gamma = self.films(torch.cat(film_xs), type_vec).split(self.out_channels, dim=-1)
+            print("about to lins")
             propogate_x = self.lins(torch.cat(propogate_xs), type_vec)
             # propogate
+            print("about to prop")
             out += self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None)
 
         # if self.num_relations <= 1:
