@@ -134,14 +134,17 @@ class TopKPooling(torch.nn.Module):
         select_output = self.select(attn, batch)
 
         perm = select_output.node_index
-        x = x[perm] * select_output.weight.view(-1, 1)
+        score = select_output.weight
+        assert score is not None
+
+        x = x[perm] * score.view(-1, 1)
         x = self.multiplier * x if self.multiplier != 1 else x
 
         batch = batch[perm]
         edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
                                            num_nodes=select_output.num_nodes)
 
-        return x, edge_index, edge_attr, batch, perm, select_output.weight
+        return x, edge_index, edge_attr, batch, perm, score
 
     def __repr__(self) -> str:
         if self.min_score is None:

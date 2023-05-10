@@ -4,11 +4,10 @@ from typing import Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.utils.mixin import CastMixin
 
-
+@torch.jit.script
 @dataclass(init=False)
-class SelectOutput(CastMixin):
+class SelectOutput:
     r"""The output of the :class:`Select` method, which holds an assignment
     from selected nodes to their respective cluster(s).
 
