@@ -637,9 +637,10 @@ def test_traceable_my_conv_with_self_loops(num_nodes):
 
     x = torch.randn(num_nodes, 16)
     if num_nodes > 0:
-        edge_index = torch.stack(
-            [torch.arange(0, num_nodes - 1),
-             torch.arange(1, num_nodes)], dim=0)
+        edge_index = torch.stack([
+            torch.arange(0, num_nodes - 1),
+            torch.arange(1, num_nodes),
+        ], dim=0)
     else:
         edge_index = torch.empty((2, 0), dtype=torch.long)
 
