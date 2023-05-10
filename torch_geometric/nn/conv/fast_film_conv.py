@@ -116,11 +116,12 @@ class FastFiLMConv(MessagePassing):
             for e_type_i in range(self.num_relations):
                 edge_mask = edge_type == e_type_i
                 masked_src_idxs = edge_index[0, edge_mask]
+                masked_dst_idx = edge_index[0, edge_mask]
                 N = masked_src_idxs.numel()
                 count += N
                 type_list.append(torch.full((N, ), count, dtype=torch.long))
                 # make film xs list
-                film_x = x[1][masked_src_idxs, :]
+                film_x = x[1][masked_dst_idxs, :]
                 film_xs.append(film_x)
                 # make make propogate xs list
                 propogate_x = x[0][masked_src_idxs, :]
@@ -130,6 +131,9 @@ class FastFiLMConv(MessagePassing):
             print("catting")
             film_x = torch.cat(film_xs)
             print("about to films")
+            print("film_x.size()=", film_x.size())
+            print("type_vec.size()=", type_vec.size())
+            print("out_channels=", self.out_channels)
             beta, gamma = self.films(film_x, type_vec).split(self.out_channels, dim=-1)
             print("about to lins")
             propogate_x = self.lins(torch.cat(propogate_xs), type_vec)
