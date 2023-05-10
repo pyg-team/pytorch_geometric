@@ -112,27 +112,28 @@ class MFConv(MessagePassing):
         r = self.lin_l(x_l, type_vec_l)
 
         # idx select loop for r
-        r_sel_list, type_list_r, idx_list = [], [], []
-        count = 0
-        for i in range(self.max_degree+1):
-            idx_i = (deg == i).nonzero().view(-1)
-            
-            N = idx_i.numel()
-            if N == 0:
-                continue
-            print('N=',N)
-            r_idx_sel = x_r.index_select(self.node_dim, idx_i)
-            r_sel_list.append(r_idx_sel)
-            idx_list.append(idx_i + count)
-            count += N
-            type_list_r.append(torch.full((N, ), i, dtype=torch.long))
-        x_r = torch.cat(r_sel_list, dim=0)
-        type_vec_r = torch.cat(type_list_r, dim=0)
-        print("idx_list.shape=", [i.shape for i in idx_list])
-        idx = torch.cat(idx_list, dim=0)
-        print("idx.shape=", idx.shape)
-        # apply lin_r
-        r += self.lin_r(x_r, type_vec_r)
+        if x_r is not None:
+            r_sel_list, type_list_r, idx_list = [], [], []
+            count = 0
+            for i in range(self.max_degree+1):
+                idx_i = (deg == i).nonzero().view(-1)
+                
+                N = idx_i.numel()
+                if N == 0:
+                    continue
+                print('N=',N)
+                r_idx_sel = x_l.index_select(self.node_dim, idx_i)
+                r_sel_list.append(r_idx_sel)
+                idx_list.append(idx_i + count)
+                count += N
+                type_list_r.append(torch.full((N, ), i, dtype=torch.long))
+            x_r = torch.cat(r_sel_list, dim=0)
+            type_vec_r = torch.cat(type_list_r, dim=0)
+            print("idx_list.shape=", [i.shape for i in idx_list])
+            idx = torch.cat(idx_list, dim=0)
+            print("idx.shape=", idx.shape)
+            # apply lin_r
+            r += self.lin_r(x_r, type_vec_r)
 
         out.index_copy_(self.node_dim, idx, r)
         # for i, (lin_l, lin_r) in enumerate(zip(self.lins_l, self.lins_r)):
