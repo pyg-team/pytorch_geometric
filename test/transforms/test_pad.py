@@ -56,19 +56,22 @@ def _generate_heterodata_edges(
             yield edge_type, attr
 
 
-def _check_homo_data_nodes(original: Data, padded: Data,
-                           max_num_nodes: Union[int, Dict[NodeType, int]],
-                           node_pad_value: Optional[Padding] = None,
-                           is_mask_available: Optional[bool] = None,
-                           exclude_keys: Optional[List[str]] = None):
+def _check_homo_data_nodes(
+    original: Data,
+    padded: Data,
+    max_num_nodes: Union[int, Dict[NodeType, int]],
+    node_pad_value: Optional[Padding] = None,
+    is_mask_available: bool = False,
+    exclude_keys: Optional[List[str]] = None,
+):
     assert padded.num_nodes == max_num_nodes
 
     compare_pad_start_idx = original.num_nodes
 
     if is_mask_available:
-        assert padded.nodes_mask.shape[0] == padded.num_nodes
-        assert torch.all(padded.nodes_mask[:compare_pad_start_idx])
-        assert not torch.any(padded.nodes_mask[compare_pad_start_idx:])
+        assert padded.pad_node_mask.numel() == padded.num_nodes
+        assert torch.all(padded.pad_node_mask[:compare_pad_start_idx])
+        assert not torch.any(padded.pad_node_mask[compare_pad_start_idx:])
 
     for attr in _generate_homodata_node_attrs(original):
         if attr in exclude_keys:
@@ -94,11 +97,14 @@ def _check_homo_data_nodes(original: Data, padded: Data,
                            padded[attr][:compare_pad_start_idx])
 
 
-def _check_homo_data_edges(original: Data, padded: Data,
-                           max_num_edges: Optional[int] = None,
-                           edge_pad_value: Optional[Padding] = None,
-                           is_mask_available: Optional[bool] = None,
-                           exclude_keys: Optional[List[str]] = None):
+def _check_homo_data_edges(
+    original: Data,
+    padded: Data,
+    max_num_edges: Optional[int] = None,
+    edge_pad_value: Optional[Padding] = None,
+    is_mask_available: bool = False,
+    exclude_keys: Optional[List[str]] = None,
+):
     # Check edge index attribute.
     if max_num_edges is None:
         max_num_edges = padded.num_nodes**2
@@ -118,9 +124,9 @@ def _check_homo_data_edges(original: Data, padded: Data,
                        padded.edge_index[:, :compare_pad_start_idx])
 
     if is_mask_available:
-        assert padded.edges_mask.shape[0] == padded.num_edges
-        assert torch.all(padded.edges_mask[:compare_pad_start_idx])
-        assert not torch.any(padded.edges_mask[compare_pad_start_idx:])
+        assert padded.pad_edge_mask.numel() == padded.num_edges
+        assert torch.all(padded.pad_edge_mask[:compare_pad_start_idx])
+        assert not torch.any(padded.pad_edge_mask[compare_pad_start_idx:])
 
     # Check other attributes.
     for attr in _generate_homodata_edge_attrs(original):
@@ -149,14 +155,17 @@ def _check_homo_data_edges(original: Data, padded: Data,
                            padded[attr][:compare_pad_start_idx, :])
 
 
-def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
-                             max_num_nodes: Union[int, Dict[NodeType, int]],
-                             node_pad_value: Optional[Padding] = None,
-                             is_mask_available: Optional[bool] = None,
-                             exclude_keys: Optional[List[str]] = None):
+def _check_hetero_data_nodes(
+    original: HeteroData,
+    padded: HeteroData,
+    max_num_nodes: Union[int, Dict[NodeType, int]],
+    node_pad_value: Optional[Padding] = None,
+    is_mask_available: bool = False,
+    exclude_keys: Optional[List[str]] = None,
+):
     if is_mask_available:
-        for _, store in padded.node_items():
-            assert 'nodes_mask' in store.keys()
+        for store in padded.node_stores:
+            assert 'pad_node_mask' in store
 
     expected_nodes = max_num_nodes
 
@@ -173,8 +182,8 @@ def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
         compare_pad_start_idx = original[node_type].num_nodes
         padded_tensor = padded[node_type][attr]
 
-        if attr == 'nodes_mask':
-            assert padded_tensor.shape[0] == padded[node_type].num_nodes
+        if attr == 'pad_node_mask':
+            assert padded_tensor.numel() == padded[node_type].num_nodes
             assert torch.all(padded_tensor[:compare_pad_start_idx])
             assert not torch.any(padded_tensor[compare_pad_start_idx:])
             continue
@@ -198,16 +207,17 @@ def _check_hetero_data_nodes(original: HeteroData, padded: HeteroData,
                            padded_tensor[:compare_pad_start_idx])
 
 
-def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
-                             max_num_edges: Optional[Union[int,
-                                                           Dict[EdgeType,
-                                                                int]]] = None,
-                             edge_pad_value: Optional[Padding] = None,
-                             is_mask_available: Optional[bool] = None,
-                             exclude_keys: Optional[List[str]] = None):
+def _check_hetero_data_edges(
+    original: HeteroData,
+    padded: HeteroData,
+    max_num_edges: Optional[Union[int, Dict[EdgeType, int]]] = None,
+    edge_pad_value: Optional[Padding] = None,
+    is_mask_available: bool = False,
+    exclude_keys: Optional[List[str]] = None,
+):
     if is_mask_available:
-        for _, store in padded.edge_items():
-            assert 'edges_mask' in store.keys()
+        for store in padded.edge_stores:
+            assert 'pad_edge_mask' in store
 
     for edge_type, attr in _generate_heterodata_edges(padded):
         if attr in exclude_keys:
@@ -222,8 +232,8 @@ def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
         compare_pad_start_idx = original[edge_type].num_edges
         padded_tensor = padded[edge_type][attr]
 
-        if attr == 'edges_mask':
-            assert padded_tensor.shape[0] == padded[edge_type].num_edges
+        if attr == 'pad_edge_mask':
+            assert padded_tensor.numel() == padded[edge_type].num_edges
             assert torch.all(padded_tensor[:compare_pad_start_idx])
             assert not torch.any(padded_tensor[compare_pad_start_idx:])
             continue
@@ -272,15 +282,16 @@ def _check_hetero_data_edges(original: HeteroData, padded: HeteroData,
                                padded_tensor[:compare_pad_start_idx, :])
 
 
-def _check_data(original: Union[Data, HeteroData], padded: Union[Data,
-                                                                 HeteroData],
-                max_num_nodes: Union[int, Dict[NodeType, int]],
-                max_num_edges: Optional[Union[int, Dict[EdgeType,
-                                                        int]]] = None,
-                node_pad_value: Optional[Union[Padding, int, float]] = None,
-                edge_pad_value: Optional[Union[Padding, int, float]] = None,
-                is_mask_available: Optional[bool] = None,
-                exclude_keys: Optional[List[str]] = None):
+def _check_data(
+    original: Union[Data, HeteroData],
+    padded: Union[Data, HeteroData],
+    max_num_nodes: Union[int, Dict[NodeType, int]],
+    max_num_edges: Optional[Union[int, Dict[EdgeType, int]]] = None,
+    node_pad_value: Optional[Union[Padding, int, float]] = None,
+    edge_pad_value: Optional[Union[Padding, int, float]] = None,
+    is_mask_available: bool = False,
+    exclude_keys: Optional[List[str]] = None,
+):
 
     if not isinstance(node_pad_value, Padding) and node_pad_value is not None:
         node_pad_value = UniformPadding(node_pad_value)
@@ -316,45 +327,42 @@ def test_pad_repr():
 
 @pytest.mark.parametrize('data', [fake_data(), fake_hetero_data()])
 @pytest.mark.parametrize('num_nodes', [32, 64])
-@pytest.mark.parametrize('add_masks_to_data', [True, False])
-def test_pad_auto_edges(data, num_nodes, add_masks_to_data):
+@pytest.mark.parametrize('add_pad_mask', [True, False])
+def test_pad_auto_edges(data, num_nodes, add_pad_mask):
     original = data
     data = deepcopy(data)
-    transform = Pad(max_num_nodes=num_nodes,
-                    add_masks_to_data=add_masks_to_data)
+    transform = Pad(max_num_nodes=num_nodes, add_pad_mask=add_pad_mask)
 
     padded = transform(data)
-    _check_data(original, padded, num_nodes,
-                is_mask_available=add_masks_to_data)
+    _check_data(original, padded, num_nodes, is_mask_available=add_pad_mask)
 
 
 @pytest.mark.parametrize('num_nodes', [32, 64])
 @pytest.mark.parametrize('num_edges', [300, 411])
-@pytest.mark.parametrize('add_masks_to_data', [True, False])
-def test_pad_data_explicit_edges(num_nodes, num_edges, add_masks_to_data):
+@pytest.mark.parametrize('add_pad_mask', [True, False])
+def test_pad_data_explicit_edges(num_nodes, num_edges, add_pad_mask):
     data = fake_data()
     original = deepcopy(data)
     transform = Pad(max_num_nodes=num_nodes, max_num_edges=num_edges,
-                    add_masks_to_data=add_masks_to_data)
+                    add_pad_mask=add_pad_mask)
 
     padded = transform(data)
     _check_data(original, padded, num_nodes, num_edges,
-                is_mask_available=add_masks_to_data)
+                is_mask_available=add_pad_mask)
 
 
 @pytest.mark.parametrize('num_nodes', [32, {'v0': 64, 'v1': 36}])
 @pytest.mark.parametrize('num_edges', [300, {('v0', 'e0', 'v1'): 397}])
-@pytest.mark.parametrize('add_masks_to_data', [True, False])
-def test_pad_heterodata_explicit_edges(num_nodes, num_edges,
-                                       add_masks_to_data):
+@pytest.mark.parametrize('add_pad_mask', [True, False])
+def test_pad_heterodata_explicit_edges(num_nodes, num_edges, add_pad_mask):
     data = fake_hetero_data()
     original = deepcopy(data)
     transform = Pad(max_num_nodes=num_nodes, max_num_edges=num_edges,
-                    add_masks_to_data=add_masks_to_data)
+                    add_pad_mask=add_pad_mask)
 
     padded = transform(data)
     _check_data(original, padded, num_nodes, num_edges,
-                is_mask_available=add_masks_to_data)
+                is_mask_available=add_pad_mask)
 
 
 @pytest.mark.parametrize('node_pad_value', [10, AttrNamePadding({'x': 3.0})])
@@ -401,20 +409,22 @@ def test_pad_heterodata_pad_values(node_pad_value, edge_pad_value):
 
 
 @pytest.mark.parametrize('data', [fake_data(), fake_hetero_data()])
-@pytest.mark.parametrize('add_masks_to_data', [True, False])
-@pytest.mark.parametrize('exclude_keys',
-                         [['y'], ['edge_attr'], ['y', 'edge_attr']])
-def test_pad_data_exclude_keys(data, add_masks_to_data, exclude_keys):
+@pytest.mark.parametrize('add_pad_mask', [True, False])
+@pytest.mark.parametrize('exclude_keys', [
+    ['y'],
+    ['edge_attr'],
+    ['y', 'edge_attr'],
+])
+def test_pad_data_exclude_keys(data, add_pad_mask, exclude_keys):
     original = data
     data = deepcopy(data)
     num_nodes = 32
-    transform = Pad(max_num_nodes=num_nodes,
-                    add_masks_to_data=add_masks_to_data,
+    transform = Pad(max_num_nodes=num_nodes, add_pad_mask=add_pad_mask,
                     exclude_keys=exclude_keys)
 
     padded = transform(data)
-    _check_data(original, padded, num_nodes,
-                is_mask_available=add_masks_to_data, exclude_keys=exclude_keys)
+    _check_data(original, padded, num_nodes, is_mask_available=add_pad_mask,
+                exclude_keys=exclude_keys)
 
 
 @pytest.mark.parametrize('data', [fake_data(), fake_hetero_data(node_types=1)])
