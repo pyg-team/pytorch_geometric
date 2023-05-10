@@ -8,7 +8,6 @@ from torch_geometric.typing import SparseTensor
 
 
 def test_mf_conv():
-    seed_everything(42)
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
