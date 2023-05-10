@@ -5,11 +5,11 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.pool.select import SelectOutput
-from torch_geometric.utils.mixin import CastMixin
 
 
+@torch.jit.script
 @dataclass(init=False)
-class ConnectOutput(CastMixin):
+class ConnectOutput:
     r"""The output of the :class:`Connect` method, which holds the coarsened
     graph structure, and optional pooled edge features and batch vectors.
 

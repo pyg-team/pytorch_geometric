@@ -1,3 +1,3 @@
-https://download.pytorch.org/whl/cpu/torch-1.9.0%2Bcpu-cp38-cp38-linux_x86_64.whl
+https://download.pytorch.org/whl/cpu/torch-1.13.0%2Bcpu-cp38-cp38-linux_x86_64.whl
 numpy>=1.19.5
 git+https://github.com/pyg-team/pyg_sphinx_theme.git

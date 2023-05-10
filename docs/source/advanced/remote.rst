@@ -108,7 +108,7 @@ An example usage of the interface is shown below:
     assert torch.equal(col, edge_index[1])
 
 Common implementations of the :class:`~torch_geometric.data.GraphStore` are graph databases, *e.g.*, :obj:`Neo4j`, :obj:`TigerGraph`, :obj:`ArangoDB`, :obj:`Kùzu` are all viable performant options.
-We provide an example of using :pyg:`PyG` in combination with the :obj:`Kùzu` database `here <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/kuzu>__`.
+We provide an example of using :pyg:`PyG` in combination with the :obj:`Kùzu` database `here <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/kuzu>`__.
 
 A graph sampler is tightly coupled to the given :class:`~torch_geometric.data.GraphStore`, and operates on the :class:`~torch_geometric.data.GraphStore` to produce sampled subgraphs from input nodes.
 Different sampling algorithms are implemented behind the :class:`torch_geometric.sampler.BaseSampler` interface.
