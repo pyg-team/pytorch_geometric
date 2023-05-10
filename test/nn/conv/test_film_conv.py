@@ -7,11 +7,12 @@ from torch_geometric.typing import SparseTensor
 
 
 def test_film_conv():
+    print("test begun...")
     x1 = torch.randn(4, 4)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [0, 0, 1, 0, 1, 1]])
     edge_type = torch.tensor([0, 1, 1, 0, 0, 1])
-
+    print("filmconv defined...")
     conv = FiLMConv(4, 32)
     assert str(conv) == 'FiLMConv(4, 32, num_relations=1)'
     out = conv(x1, edge_index)
@@ -32,10 +33,13 @@ def test_film_conv():
         assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
 
     conv = FiLMConv(4, 32, num_relations=2)
+    print("fast filmconv defined")
     fast_conv = FastFiLMConv(4, 32, num_relations=2)
     assert str(conv) == 'FiLMConv(4, 32, num_relations=2)'
     assert str(fast_conv) == 'FastFiLMConv(4, 32, num_relations=2)'
+    print("calling conv...")
     out = conv(x1, edge_index, edge_type)
+    print("calling fast film conv")
     fast_out = fast_conv(x1, edge_index, edge_type)
     assert out.size() == (4, 32)
     assert fast_out.size() == (4, 32)
