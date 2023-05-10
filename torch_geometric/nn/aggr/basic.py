@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 
 import torch
@@ -131,10 +132,8 @@ class StdAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         var = self.var_aggr(x, index, ptr, dim_size, dim)
-        if (index is None or index.numel() == 0) and dim_size is not None:
-            return var.sqrt()
-        # Only clamp var if there are edges for aggregation
-        return var.clamp(min=1e-5).sqrt()
+        # Allow "undefined" gradient at `sqrt(0.0)`:
+        return (var + 1e-5).sqrt() - math.sqrt(1e-5)
 
 
 class SoftmaxAggregation(Aggregation):

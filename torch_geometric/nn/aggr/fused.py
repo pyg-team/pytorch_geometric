@@ -1,3 +1,4 @@
+import math
 from typing import Dict, List, Optional, Tuple, Union
 
 from torch import Tensor
@@ -316,11 +317,7 @@ class FusedAggregation(Aggregation):
                 assert mean is not None
                 var = (pow_sum / count) - (mean * mean)
 
-            if (index is None or index.numel() == 0) and dim_size is not None:
-                outs[i] = var.sqrt()
-            else:
-                # Only clamp var if there are edges for aggregation
-                outs[i] = var.clamp(min=1e-5).sqrt()
+            outs[i] = (var + 1e-5).sqrt() - math.sqrt(1e-5)
 
         #######################################################################
 
