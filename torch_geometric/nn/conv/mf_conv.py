@@ -118,7 +118,7 @@ class MFConv(MessagePassing):
 
         # idx select loop for r
         if x_r is not None:
-            r_sel_list, type_list_r,  = [], [], []
+            r_sel_list, type_list_r  = [], []
             count = 0
             for i in range(self.max_degree+1):
                 idx_i = idx_list[i]
