@@ -133,7 +133,9 @@ class FastFiLMConv(MessagePassing):
             print("film_x.size()=", film_x.size())
             print("type_vec.size()=", type_vec.size())
             print("out_channels=", self.out_channels)
-            beta, gamma = self.films(film_x, type_vec).split(self.out_channels, dim=-1)
+            film_o = self.films(film_x, type_vec)
+            print("splitting film_o")
+            beta, gamma = film_o.split(self.out_channels, dim=-1)
             print("about to lins")
             propogate_x = self.lins(torch.cat(propogate_xs), type_vec)
             # propogate
