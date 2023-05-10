@@ -127,8 +127,10 @@ class FastFiLMConv(MessagePassing):
                 propogate_xs.append(propogate_x)
             type_vec = torch.cat(type_list)
             # cat and apply linears
+            print("catting")
+            film_x = torch.cat(film_xs)
             print("about to films")
-            beta, gamma = self.films(torch.cat(film_xs), type_vec).split(self.out_channels, dim=-1)
+            beta, gamma = self.films(film_x, type_vec).split(self.out_channels, dim=-1)
             print("about to lins")
             propogate_x = self.lins(torch.cat(propogate_xs), type_vec)
             # propogate
