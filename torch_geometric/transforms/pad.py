@@ -265,6 +265,17 @@ class Pad(BaseTransform):
         mask_pad_value (bool, optional): The fill value to use for
             :obj:`train_mask`, :obj:`val_mask` and :obj:`test_mask` attributes
             (default: :obj:`False`).
+        add_masks_to_data (bool, optional): If set to :obj:`True`, masks object
+            are attached to data object. They represents two levels of
+            padding:
+
+            - :obj:`nodes_mask`  - node level mask
+            - :obj:`edges_mask`  - edge level mask
+
+            Mask objects indicates which elements in the data are real
+            (represented by :obj:`True` value) and which were added as a
+            padding (represented by :obj:`False` value).
+            (default: :obj:`False`)
         exclude_keys ([str], optional): Keys to be removed
             from the input data object. (default: :obj:`None`)
     """
@@ -275,6 +286,7 @@ class Pad(BaseTransform):
         node_pad_value: Union[int, float, Padding] = 0.0,
         edge_pad_value: Union[int, float, Padding] = 0.0,
         mask_pad_value: bool = False,
+        add_masks_to_data: Optional[bool] = False,
         exclude_keys: Optional[List[str]] = None,
     ):
         self.max_num_nodes = self._NumNodes(max_num_nodes)
@@ -292,6 +304,8 @@ class Pad(BaseTransform):
             key: mask_pad_value
             for key in ['train_mask', 'val_mask', 'test_mask']
         }
+
+        self.add_masks_to_data = add_masks_to_data
 
         self.exclude_keys = set(exclude_keys or [])
 
@@ -448,6 +462,10 @@ class Pad(BaseTransform):
             f'({store.num_nodes}).'
         num_pad_nodes = num_target_nodes - store.num_nodes
 
+        if self.add_masks_to_data:
+            nodes_mask = torch.arange(num_target_nodes) < store.num_nodes
+            setattr(store, 'nodes_mask', nodes_mask)
+
         for attr_name in attrs_to_pad:
             attr = store[attr_name]
             pad_value = self.__get_node_padding(attr_name, node_type)
@@ -469,6 +487,10 @@ class Pad(BaseTransform):
             f'be lower than the number of edges in the data object ' \
             f'({store.num_edges}).'
         num_pad_edges = num_target_edges - store.num_edges
+
+        if self.add_masks_to_data:
+            edges_mask = torch.arange(num_target_edges) < store.num_edges
+            setattr(store, 'edges_mask', edges_mask)
 
         if isinstance(num_nodes, tuple):
             src_pad_value, dst_pad_value = num_nodes
