@@ -115,8 +115,7 @@ class FastFiLMConv(MessagePassing):
             print("about to for-loop")
             for e_type_i in range(self.num_relations):
                 edge_mask = edge_type == e_type_i
-                masked_src_idxs = edge_index[0, edge_mask]
-                masked_dst_idx = edge_index[0, edge_mask]
+                masked_src_idxs, masked_dst_idxs = edge_index[:, edge_mask]
                 N = masked_src_idxs.numel()
                 count += N
                 type_list.append(torch.full((N, ), count, dtype=torch.long))
