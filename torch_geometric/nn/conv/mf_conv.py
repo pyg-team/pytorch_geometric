@@ -111,7 +111,7 @@ class MFConv(MessagePassing):
         # apply lin_l
         print("x_l.shape=",x_l.shape)
         print("type_vec_l.shape=",type_vec_l.shape)
-        print("lin_l=", lin_l)
+        print("lin_l=", self.lin_l)
         r = self.lin_l(x_l, type_vec_l)
 
         # idx select loop for r
