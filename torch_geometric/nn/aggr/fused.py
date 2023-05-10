@@ -317,7 +317,11 @@ class FusedAggregation(Aggregation):
                 assert mean is not None
                 var = (pow_sum / count) - (mean * mean)
 
-            outs[i] = (var + 1e-5).sqrt() - math.sqrt(1e-5)
+            # Allow "undefined" gradient at `sqrt(0.0)`:
+            out = var.clamp(min=1e-5).sqrt()
+            out = out.masked_fill(out <= math.sqrt(1e-5), 0.0)
+
+            outs[i] = out
 
         #######################################################################
 
