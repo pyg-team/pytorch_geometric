@@ -109,6 +109,8 @@ class MFConv(MessagePassing):
         type_vec_l = torch.cat(type_list_l, dim=0)
 
         # apply lin_l
+        print("x_l.shape=",x_l.shape)
+        print("type_vec_l.shape=",type_vec_l.shape)
         r = self.lin_l(x_l, type_vec_l)
 
         # idx select loop for r
