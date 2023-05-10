@@ -133,6 +133,7 @@ class FastFiLMConv(MessagePassing):
             print("film_x.size()=", film_x.size())
             print("type_vec.size()=", type_vec.size())
             print("out_channels=", self.out_channels)
+            print("self.films=", self.films)
             film_o = self.films(film_x, type_vec)
             print("splitting film_o")
             beta, gamma = film_o.split(self.out_channels, dim=-1)
