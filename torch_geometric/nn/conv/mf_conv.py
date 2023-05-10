@@ -102,6 +102,7 @@ class MFConv(MessagePassing):
         for i in range(self.max_degree+1):
             idx_i = (deg == i).nonzero().view(-1)
             h_idx_sel = h.index_select(self.node_dim, idx_i)
+            idx_list.append(idx_i)
             N = h_idx_sel.size(0)
             h_sel_list.append(h_idx_sel)
             type_list_l.append(torch.full((N, ), i, dtype=torch.long))
