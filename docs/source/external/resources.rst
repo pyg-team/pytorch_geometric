@@ -38,3 +38,5 @@ External Resources
 * Amitoz Azad: **Primal-Dual Algorithm for Total Variation Processing on Graphs** [`Jupyter <https://nbviewer.jupyter.org/github/aGIToz/Graph_Signal_Processing/tree/main>`__]
 
 * Manan Goel: **Recommending Amazon Products using Graph Neural Networks in** :pyg:`null` **PyTorch Geometric** [:wandb:`null` `W&B Report <https://wandb.ai/manan-goel/gnn-recommender/reports/Recommending-Amazon-Products-using-Graph-Neural-Networks-in-PyTorch-Geometric--VmlldzozMTA3MzYw>`__]
+
+* Kùzu: **Remote Backend for** :pyg:`null` **PyTorch Geometric** [:colab:`null` `Colab <https://colab.research.google.com/drive/12fOSqPm1HQTz_m9caRW7E_92vaeD9xq6>`__]

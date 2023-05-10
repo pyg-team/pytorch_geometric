@@ -35,7 +35,7 @@ def set_printing():
     logging.basicConfig(**logging_cfg)
 
 
-class Logger(object):
+class Logger:
     def __init__(self, name='train', task_type=None):
         self.name = name
         self.task_type = task_type
