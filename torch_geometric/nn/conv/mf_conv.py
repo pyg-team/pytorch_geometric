@@ -54,16 +54,6 @@ class MFConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        # self.lins_l = ModuleList([
-        #     Linear(in_channels[0], out_channels, bias=bias)
-        #     for _ in range(max_degree + 1)
-        # ])
-
-        # self.lins_r = ModuleList([
-        #     Linear(in_channels[1], out_channels, bias=False)
-        #     for _ in range(max_degree + 1)
-        # ])
-
         self.lin_l = HeteroLinear(in_channels[0], out_channels, num_types=max_degree+1, is_sorted=True, bias=bias)
         self.lin_r = HeteroLinear(in_channels[1], out_channels, num_types=max_degree+1, is_sorted=True, bias=False)
 
@@ -111,9 +101,6 @@ class MFConv(MessagePassing):
         idx = torch.cat(idx_list, dim=0)
 
         # apply lin_l
-        print("x_l.shape=",x_l.shape)
-        print("type_vec_l.shape=",type_vec_l.shape)
-        print("lin_l=", self.lin_l)
         r = self.lin_l(x_l, type_vec_l)
 
         # idx select loop for r
@@ -138,15 +125,6 @@ class MFConv(MessagePassing):
             r += self.lin_r(x_r, type_vec_r)
 
         out.index_copy_(self.node_dim, idx, r)
-        # for i, (lin_l, lin_r) in enumerate(zip(self.lins_l, self.lins_r)):
-        #     idx = (deg == i).nonzero().view(-1)
-        #     r = lin_l(h.index_select(self.node_dim, idx))
-
-        #     if x_r is not None:
-        #         r = r + lin_r(x_r.index_select(self.node_dim, idx))
-
-        #     out.index_copy_(self.node_dim, idx, r)
-
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
