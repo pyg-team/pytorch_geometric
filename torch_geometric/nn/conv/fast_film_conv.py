@@ -41,8 +41,6 @@ class FastFiLMConv(MessagePassing):
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        # self.lins = ModuleList()
-        # self.films = ModuleList()
         if self.num_relations > 1:
             self.lins = HeteroLinear(in_channels[0], out_channels, num_types=num_relations, is_sorted=True, bias=False)
             if self.nn_is_none:
@@ -57,13 +55,7 @@ class FastFiLMConv(MessagePassing):
                 self.films = Linear(in_channels[1], 2 * out_channels)
             else:
                 self.films = copy.deepcopy(nn)
-        # for _ in range(num_relations):
-        #     self.lins.append(Linear(in_channels[0], out_channels, bias=False))
-        #     if nn is None:
-        #         film = Linear(in_channels[1], 2 * out_channels)
-        #     else:
-        #         film = copy.deepcopy(nn)
-        #     self.films.append(film)
+
         self.lin_skip = Linear(in_channels[1], self.out_channels, bias=False)
         if self.nn_is_none:
             self.film_skip = Linear(in_channels[1], 2 * self.out_channels,
@@ -89,6 +81,8 @@ class FastFiLMConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
+        # need to clone edge_index before incrementing it
+        edge_index = edge_index.clone()
         beta, gamma = self.film_skip(x[1]).split(self.out_channels, dim=-1)
         out = gamma * self.lin_skip(x[1]) + beta
         if self.act is not None:
@@ -125,27 +119,6 @@ class FastFiLMConv(MessagePassing):
 
             # propogate
             out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
-
-        # if self.num_relations <= 1:
-        #     beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
-        #     out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
-        #                                beta=beta, gamma=gamma, size=None)
-        # else:
-        #     for i, (lin, film) in enumerate(zip(self.lins, self.films)):
-        #         beta, gamma = film(x[1]).split(self.out_channels, dim=-1)
-        #         if isinstance(edge_index, SparseTensor):
-        #             edge_type = edge_index.storage.value()
-        #             assert edge_type is not None
-        #             mask = edge_type == i
-        #             adj_t = torch_sparse.masked_select_nnz(
-        #                 edge_index, mask, layout='coo')
-        #             out = out + self.propagate(adj_t, x=lin(x[0]), beta=beta,
-        #                                        gamma=gamma, size=None)
-        #         else:
-        #             assert edge_type is not None
-        #             mask = edge_type == i
-        #             out = out + self.propagate(edge_index[:, mask], x=lin(
-        #                 x[0]), beta=beta, gamma=gamma, size=None)
 
         return out
 
