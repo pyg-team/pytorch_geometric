@@ -130,6 +130,7 @@ class FastFiLMConv(MessagePassing):
             for i, o in enumerate(split_prop_o):
                 print("inside fast filmconv out.sum()=", out.sum())
                 print("inside fast filmconv lin_x.sum()=", lin_xs[i].sum())
+                print("inside fast filmconv lin.weight.sum()=", self.lins.weight[i].sum())
                 out += o
             print("inside fast filmconv out.sum()=", out.sum())
             print("*"*5)
