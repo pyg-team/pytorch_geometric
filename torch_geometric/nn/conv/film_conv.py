@@ -147,8 +147,8 @@ class FiLMConv(MessagePassing):
                     mask = edge_type == i
                     print("inside reg filmconv out.sum()=", out.sum())
                     lin_x = lin(x[0])
-                    print("inside reg filmconv lin.weight.sum()=", lin.weight.sum())
                     print("inside reg filmconv linx.sum()=", lin_x.sum())
+                    print("inside reg filmconv lin.weight.sum()=", lin.weight.sum())
                     out = out + self.propagate(edge_index[:, mask], x=lin_x, beta=beta, gamma=gamma, size=None)
             print("inside reg filmconv out.sum()=", out.sum())
             print("*"*5)
