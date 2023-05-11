@@ -1,12 +1,12 @@
 import copy
 from typing import Callable, Optional, Tuple, Union
 
-from torch import Tensor
 import torch
+from torch import Tensor
 from torch.nn import ModuleList, ReLU
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense.linear import Linear, HeteroLinear
+from torch_geometric.nn.dense.linear import HeteroLinear, Linear
 from torch_geometric.nn.inits import reset
 from torch_geometric.typing import (
     Adj,
@@ -42,9 +42,13 @@ class FastFiLMConv(MessagePassing):
             in_channels = (in_channels, in_channels)
 
         if self.num_relations > 1:
-            self.lins = HeteroLinear(in_channels[0], out_channels, num_types=num_relations, is_sorted=True, bias=False)
+            self.lins = HeteroLinear(in_channels[0], out_channels,
+                                     num_types=num_relations, is_sorted=True,
+                                     bias=False)
             if self.nn_is_none:
-                self.films = HeteroLinear(in_channels[1], 2* out_channels, num_types=num_relations, is_sorted=True)
+                self.films = HeteroLinear(in_channels[1], 2 * out_channels,
+                                          num_types=num_relations,
+                                          is_sorted=True)
             else:
                 self.films = ModuleList()
                 for _ in range(num_relations):
@@ -95,8 +99,10 @@ class FastFiLMConv(MessagePassing):
         else:
             # (TODO) add support for sparse tensors without conversion
             if is_sparse(edge_index):
-                print("Warning: sparse edge representations are not supported for FastFiLMConv yet.\
-                       This incurs an additional conversion each forward pass.")
+                print(
+                    "Warning: sparse edge representations are not supported for FastFiLMConv yet.\
+                       This incurs an additional conversion each forward pass."
+                )
                 edge_index = to_edge_index(edge_index)[0]
             film_xs, propogate_xs, type_list_films, type_list_lins = [], [], [], []
             prop_count, film_count = 0, 0
@@ -106,19 +112,28 @@ class FastFiLMConv(MessagePassing):
                 film_xs.append(film_x)
                 prop_x = x[0]
                 propogate_xs.append(prop_x)
-                type_list_films.append(torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
-                type_list_lins.append(torch.full((prop_x.size(0), ), e_type_i, dtype=torch.long))
+                type_list_films.append(
+                    torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
+                type_list_lins.append(
+                    torch.full((prop_x.size(0), ), e_type_i, dtype=torch.long))
                 mask = edge_type == e_type_i
                 edge_index[0, mask] += prop_count
                 edge_index[1, mask] += film_count
                 prop_count += prop_x.size(0)
                 film_count += film_x.size(0)
             # cat and apply linears
-            beta, gamma = self.films(torch.cat(film_xs), torch.cat(type_list_films)).split(self.out_channels, dim=-1)
-            propogate_x = self.lins(torch.cat(propogate_xs), torch.cat(type_list_lins))
+            beta, gamma = self.films(torch.cat(film_xs),
+                                     torch.cat(type_list_films)).split(
+                                         self.out_channels, dim=-1)
+            propogate_x = self.lins(torch.cat(propogate_xs),
+                                    torch.cat(type_list_lins))
 
             # propogate
-            out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
+            out += sum(
+                self.propagate(
+                    edge_index, x=propogate_x, beta=beta, gamma=gamma,
+                    size=None).split(
+                        int(propogate_x.size(0) / self.num_relations), dim=0))
 
         return out
 
