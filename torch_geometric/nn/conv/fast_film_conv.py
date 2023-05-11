@@ -109,9 +109,9 @@ class FastFiLMConv(MessagePassing):
             prop_count, film_count = 0, 0
             # duplicate xs and increment edge indices accordingly
             for e_type_i in range(self.num_relations):
-                film_x = x[1]
+                film_x = x[1].clone()
                 film_xs.append(film_x)
-                prop_x = x[0]
+                prop_x = x[0].clone()
                 propogate_xs.append(prop_x)
                 type_list_films.append(torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
                 type_list_lins.append(torch.full((prop_x.size(0), ), e_type_i, dtype=torch.long))
@@ -125,15 +125,6 @@ class FastFiLMConv(MessagePassing):
             propogate_x = self.lins(torch.cat(propogate_xs), torch.cat(type_list_lins))
 
             # propogate
-            # betas = beta.split(int(propogate_x.size(0)/self.num_relations), dim=0)
-            # gammas = gamma.split(int(propogate_x.size(0)/self.num_relations), dim=0)
-            # propogate_xs = propogate_x.split(int(propogate_x.size(0)/self.num_relations), dim=0)
-            # for e_type_i in range(self.num_relations):
-            #     mask = edge_type == e_type_i
-            #     print("inside fast filmconv out.sum()=", out.sum())
-            #     out += self.propagate(edge_index[:, mask], x=propogate_xs[e_type_i], beta=betas[e_type_i], gamma=gammas[e_type_i], size=None)
-            # print("inside fast filmconv out.sum()=", out.sum())
-            # print("*"*5)
             split_prop_o = self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0)
             for o in split_prop_o:
                 print("inside fast filmconv out.sum()=", out.sum())
