@@ -134,8 +134,12 @@ class FastFiLMConv(MessagePassing):
             #     out += self.propagate(edge_index[:, mask], x=propogate_xs[e_type_i], beta=betas[e_type_i], gamma=gammas[e_type_i], size=None)
             # print("inside fast filmconv out.sum()=", out.sum())
             # print("*"*5)
-            out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
-
+            split_prop_o = self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0)
+            for o in split_prop_o:
+                print("inside fast filmconv out.sum()=", out.sum())
+                out += o
+            print("inside fast filmconv out.sum()=", out.sum())
+            print("*"*5)
         # if self.num_relations <= 1:
         #     beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
         #     out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
