@@ -11,7 +11,7 @@ import torch_geometric.typing
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
-from torch_geometric.utils.hetero import segmatmul_hueristic
+from torch_geometric.utils.hetero import segmatmul_heuristic
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -259,7 +259,7 @@ class HeteroLinear(torch.nn.Module):
 
             type_vec_ptr = index2ptr(type_vec, self.num_types)
             if self.use_segmm == -1:
-                self.use_segmm = segmatmul_hueristic(x, type_vec_ptr,
+                self.use_segmm = segmatmul_heuristic(x, type_vec_ptr,
                                                      self.weight)
             out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:
