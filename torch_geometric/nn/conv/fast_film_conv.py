@@ -145,6 +145,7 @@ class FastFiLMConv(MessagePassing):
             print("edge_index.size()=", edge_index.size())
             print("beta.size()=", beta.size())
             print("gamma.size()=", gamma.size())
+            print("edge_type=", edge_type)
             prop_out = self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None)
             print("prop_out.size()=", prop_out.size())
             out += prop_out
