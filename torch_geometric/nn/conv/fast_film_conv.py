@@ -122,9 +122,12 @@ class FastFiLMConv(MessagePassing):
                 prop_count += prop_x.size(0)
                 film_count += film_x.size(0)
             # cat and apply linears
-            beta, gamma = self.films(torch.cat(film_xs),
-                                     torch.cat(type_list_films)).split(
-                                         self.out_channels, dim=-1)
+            if self.nn_is_none:
+                beta, gamma = self.films(torch.cat(film_xs),
+                                         torch.cat(type_list_films)).split(
+                                             self.out_channels, dim=-1)
+            else:
+                beta, gamma = torch.cat([self.films[i](film_x) for i, film_x in enumerate(film_xs)]).split(self.out_channels, dim=-1)
             propogate_x = self.lins(torch.cat(propogate_xs),
                                     torch.cat(type_list_lins))
 
