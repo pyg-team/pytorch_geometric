@@ -125,6 +125,7 @@ class FastFiLMConv(MessagePassing):
             propogate_x = self.lins(torch.cat(propogate_xs), torch.cat(type_list_lins))
 
             # propogate
+            # just for debugging
             lin_xs = propogate_x.split(int(propogate_x.size(0)/self.num_relations), dim=0)
             split_prop_o = self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0)
             for i, o in enumerate(split_prop_o):
@@ -134,6 +135,9 @@ class FastFiLMConv(MessagePassing):
                 out += o
             print("inside fast filmconv out.sum()=", out.sum())
             print("*"*5)
+            # end soln
+            # out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
+
         # if self.num_relations <= 1:
         #     beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
         #     out = out + self.propagate(edge_index, x=self.lins[0](x[0]),
