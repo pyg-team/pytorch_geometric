@@ -16,7 +16,7 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import index_sort, one_hot, scatter, spmm
-from torch_geometric.utils.hetero import segmatmul_hueristic
+from torch_geometric.utils.hetero import segmatmul_heuristic
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -240,7 +240,7 @@ class RGCNConv(MessagePassing):
                         edge_index = edge_index[:, perm]
                 edge_type_ptr = index2ptr(edge_type, self.num_relations)
                 if self.use_segmm == -1:
-                    self.use_segmm = segmatmul_hueristic(
+                    self.use_segmm = segmatmul_heuristic(
                         x_l, edge_type, self.weight)
                 out = self.propagate(edge_index, x=x_l,
                                      edge_type_ptr=edge_type_ptr, size=size)
