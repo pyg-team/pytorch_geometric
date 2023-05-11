@@ -93,7 +93,7 @@ class FastFiLMConv(MessagePassing):
         out = gamma * self.lin_skip(x[1]) + beta
         if self.act is not None:
             out = self.act(out)
-
+        print("inside fast filmconv after skip, out.sum()=", out.sum())
         # propagate_type: (x: Tensor, beta: Tensor, gamma: Tensor)
         if self.num_relations <= 1:
             beta, gamma = self.films(x[1]).split(self.out_channels, dim=-1)
@@ -129,11 +129,10 @@ class FastFiLMConv(MessagePassing):
             lin_xs = propogate_x.split(int(propogate_x.size(0)/self.num_relations), dim=0)
             split_prop_o = self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0)
             for i, o in enumerate(split_prop_o):
-                print("inside fast filmconv out.sum()=", out.sum())
                 print("inside fast filmconv lin_x.sum()=", lin_xs[i].sum())
                 print("inside fast filmconv lin.weight.sum()=", self.lins.weight[i].sum())
                 out += o
-            print("inside fast filmconv out.sum()=", out.sum())
+                print("inside fast filmconv out.sum()=", out.sum())
             print("*"*5)
             # end soln
             # out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
