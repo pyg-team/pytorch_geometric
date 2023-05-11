@@ -134,6 +134,7 @@ class FastFiLMConv(MessagePassing):
             gammas = gamma.split(int(propogate_x.size(0)/self.num_relations), dim=0)
             propogate_xs = propogate_x.split(int(propogate_x.size(0)/self.num_relations), dim=0)
             for e_type_i in range(self.num_relations):
+                mask = edge_type == e_type_i
                 out += self.propagate(edge_index[:, mask], x=propogate_xs[e_type_i], beta=betas[e_type_i], gamma=gammas[e_type_i], size=None)
             #out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
 
