@@ -136,6 +136,8 @@ def to_torch_coo_tensor(
         device=edge_index.device,
     )
     adj = adj._coalesced_(True)
+    print(adj)
+    print(adj.is_coalesced())
 
     return adj
 

@@ -15,6 +15,10 @@ from torch.utils.data.distributed import DistributedSampler
 import torch_geometric.transforms as T
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINEConv, global_mean_pool
+from torch_geometric.typing import WITH_TORCH_SPARSE
+
+if not WITH_TORCH_SPARSE:
+    quit("This example requires 'torch-sparse'")
 
 
 class GIN(torch.nn.Module):
@@ -60,8 +64,9 @@ def run(rank, world_size: int, dataset_name: str, root: str):
     os.environ['MASTER_PORT'] = '12355'
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
+    print(root)
     dataset = Dataset(dataset_name, root,
-                      pre_transform=T.ToSparseTensor(attr='edge_attr'))
+                      transform=T.ToSparseTensor(attr='edge_attr'))
     split_idx = dataset.get_idx_split()
     evaluator = Evaluator(dataset_name)
 
@@ -88,6 +93,7 @@ def run(rank, world_size: int, dataset_name: str, root: str):
         for data in train_loader:
             data = data.to(rank)
             optimizer.zero_grad()
+            print(data.adj_t)
             logits = model(data.x, data.adj_t, data.batch)
             loss = criterion(logits, data.y.to(torch.float))
             loss.backward()
@@ -136,8 +142,7 @@ if __name__ == '__main__':
     root = '../../data/OGB'
 
     # Download and process the dataset on main process.
-    Dataset(dataset_name, root,
-            pre_transform=T.ToSparseTensor(attr='edge_attr'))
+    Dataset(dataset_name, root, transform=T.ToSparseTensor(attr='edge_attr'))
 
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
