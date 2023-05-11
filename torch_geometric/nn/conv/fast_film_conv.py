@@ -106,7 +106,7 @@ class FastFiLMConv(MessagePassing):
                 print("Warning: sparse edge representations are not supported for FastFiLMConv yet.\
                        This incurs an additional conversion each forward pass.")
                 edge_index = to_edge_index(edge_index)[0]
-            film_xs, propogate_x, type_list_films, type_list_lins = [], [], [], []
+            film_xs, propogate_xs, type_list_films, type_list_lins = [], [], [], []
             prop_count, film_count = 0, 0
             # duplicate xs and increment edge indices accordingly
             for e_type_i in range(self.num_relations):
