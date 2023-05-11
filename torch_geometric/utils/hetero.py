@@ -9,7 +9,7 @@ from torch_geometric.utils import is_sparse, to_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
 
 
-def learn_sklearn_hueristic():
+def learn_sklearn_heuristic():
     import os
     import time
 
@@ -99,7 +99,7 @@ def segmatmul_heuristic(inputs, ptr, others):
     max_num_nodes_per_types = (ptr[1:] - ptr[:-1]).max()
     in_feat = inputs.size(1)
     out_feat = others.size(-1)
-    # this hueristic was learned with learn_sklearn_hueristic on an A100
+    # this heuristic was learned with learn_sklearn_heuristic on an A100
     x = torch.tensor([num_types, max_num_nodes_per_types, in_feat, out_feat])
     scale_mean = torch.tensor(
         [125.11603189, 12133.21523472, 163.81222321, 32.43755536])
