@@ -46,7 +46,7 @@ class FastFiLMConv(MessagePassing):
         if self.num_relations > 1:
             self.lins = HeteroLinear(in_channels[0], out_channels, num_types=num_relations, is_sorted=True, bias=False)
             if self.nn_is_none:
-                self.films = HeteroLinear(in_channels[1], 2* out_channels, num_types=num_relations, is_sorted=True, bias=True)
+                self.films = HeteroLinear(in_channels[1], 2* out_channels, num_types=num_relations, is_sorted=True)
             else:
                 self.films = ModuleList()
                 for _ in range(num_relations):
