@@ -37,13 +37,13 @@ if has_pytorch112:  # pragma: no cover
                 :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`,
                 :obj:`"any"`). (default: :obj:`"sum"`)
         """
-        if index.dim() != 1:
+        if isinstance(index, Tensor) and index.dim() != 1:
             raise ValueError(f"The `index` argument must be one-dimensional "
                              f"(got {index.dim()} dimensions)")
 
         dim = src.dim() + dim if dim < 0 else dim
 
-        if dim < 0 or dim >= src.dim():
+        if isinstance(src, Tensor) and (dim < 0 or dim >= src.dim()):
             raise ValueError(f"The `dim` argument must lay between 0 and "
                              f"{src.dim() - 1} (got {dim})")
 
@@ -60,8 +60,7 @@ if has_pytorch112:  # pragma: no cover
         # indices, but is therefore way slower in its backward implementation.
         # More insights can be found in `test/utils/test_scatter.py`.
 
-        size = list(src.size())
-        size[dim] = dim_size
+        size = src.size()[:dim] + (dim_size, ) + src.size()[dim + 1:]
 
         # For "any" reduction, we use regular `scatter_`:
         if reduce == 'any':
@@ -151,8 +150,7 @@ else:  # pragma: no cover
             if dim_size is None:
                 dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
-            size = list(src.size())
-            size[dim] = dim_size
+            size = src.size()[:dim] + (dim_size, ) + src.size()[dim + 1:]
 
             index = broadcast(index, src, dim)
             return src.new_zeros(size).scatter_(dim, index, src)
@@ -164,6 +162,5 @@ else:  # pragma: no cover
 
 
 def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
-    size = [1] * ref.dim()
-    size[dim] = -1
+    size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
     return src.view(size).expand_as(ref)
