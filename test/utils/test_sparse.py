@@ -1,3 +1,5 @@
+import os.path as osp
+
 import torch
 
 import torch_geometric.typing
@@ -177,6 +179,22 @@ def test_to_torch_csc_tensor():
                               edge_index)
         assert torch.allclose(adj.to_sparse_coo().coalesce().values(),
                               edge_attr)
+
+
+def test_to_torch_coo_tensor_save_load(tmp_path):
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3],
+        [1, 0, 2, 1, 3, 2],
+    ])
+    adj = to_torch_coo_tensor(edge_index, is_coalesced=False)
+    assert adj.is_coalesced()
+
+    path = osp.join(tmp_path, 'adj.t')
+    torch.save(adj, path)
+    adj = torch.load(path)
+
+    # This is obviously a bug in PyTorch. Wait for a fix...
+    assert not adj.is_coalesced()
 
 
 def test_to_edge_index():

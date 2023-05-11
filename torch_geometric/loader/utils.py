@@ -7,6 +7,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.data import (
     Data,
     FeatureStore,
@@ -41,7 +42,11 @@ def index_select(value: FeatureTensorType, index: Tensor,
             size = list(value.shape)
             size[dim] = index.numel()
             numel = math.prod(size)
-            storage = value.storage()._new_shared(numel)
+            if torch_geometric.typing.WITH_PT2:
+                storage = value.untyped_storage()._new_shared(
+                    numel * value.element_size())
+            else:
+                storage = value.storage()._new_shared(numel)
             out = value.new(storage).view(size)
 
         return torch.index_select(value, dim, index, out=out)

@@ -265,6 +265,12 @@ class Pad(BaseTransform):
         mask_pad_value (bool, optional): The fill value to use for
             :obj:`train_mask`, :obj:`val_mask` and :obj:`test_mask` attributes
             (default: :obj:`False`).
+        add_pad_mask (bool, optional): If set to :obj:`True`, will attach
+            node-level :obj:`pad_node_mask` and edge-level :obj:`pad_edge_mask`
+            attributes to the output which indicates which elements in the data
+            are real (represented by :obj:`True`) and which were added as a
+            result of padding (represented by :obj:`False`).
+            (default: :obj:`False`)
         exclude_keys ([str], optional): Keys to be removed
             from the input data object. (default: :obj:`None`)
     """
@@ -275,6 +281,7 @@ class Pad(BaseTransform):
         node_pad_value: Union[int, float, Padding] = 0.0,
         edge_pad_value: Union[int, float, Padding] = 0.0,
         mask_pad_value: bool = False,
+        add_pad_mask: bool = False,
         exclude_keys: Optional[List[str]] = None,
     ):
         self.max_num_nodes = self._NumNodes(max_num_nodes)
@@ -293,6 +300,7 @@ class Pad(BaseTransform):
             for key in ['train_mask', 'val_mask', 'test_mask']
         }
 
+        self.add_pad_mask = add_pad_mask
         self.exclude_keys = set(exclude_keys or [])
 
     class _IntOrDict(ABC):
@@ -448,6 +456,11 @@ class Pad(BaseTransform):
             f'({store.num_nodes}).'
         num_pad_nodes = num_target_nodes - store.num_nodes
 
+        if self.add_pad_mask:
+            pad_node_mask = torch.ones(num_target_nodes, dtype=torch.bool)
+            pad_node_mask[store.num_nodes:] = False
+            store.pad_node_mask = pad_node_mask
+
         for attr_name in attrs_to_pad:
             attr = store[attr_name]
             pad_value = self.__get_node_padding(attr_name, node_type)
@@ -469,6 +482,11 @@ class Pad(BaseTransform):
             f'be lower than the number of edges in the data object ' \
             f'({store.num_edges}).'
         num_pad_edges = num_target_edges - store.num_edges
+
+        if self.add_pad_mask:
+            pad_edge_mask = torch.ones(num_target_edges, dtype=torch.bool)
+            pad_edge_mask[store.num_edges:] = False
+            store.pad_edge_mask = pad_edge_mask
 
         if isinstance(num_nodes, tuple):
             src_pad_value, dst_pad_value = num_nodes

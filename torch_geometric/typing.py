@@ -43,6 +43,16 @@ except (ImportError, OSError) as e:
     WITH_TORCH_CLUSTER = False
 
 try:
+    import torch_spline_conv  # noqa
+    WITH_TORCH_SPLINE_CONV = True
+except (ImportError, OSError) as e:
+    if isinstance(e, OSError):
+        warnings.warn(
+            f"An issue occurred while importing 'torch-spline-conv'. "
+            f"Disabling its usage. Stacktrace: {e}")
+    WITH_TORCH_SPLINE_CONV = False
+
+try:
     import torch_sparse  # noqa
     from torch_sparse import SparseStorage, SparseTensor
     WITH_TORCH_SPARSE = True
@@ -53,7 +63,21 @@ except (ImportError, OSError) as e:
     WITH_TORCH_SPARSE = False
 
     class SparseStorage:
-        def __init__(*args, **kwargs):
+        def __init__(
+            self,
+            row: Optional[Tensor] = None,
+            rowptr: Optional[Tensor] = None,
+            col: Optional[Tensor] = None,
+            value: Optional[Tensor] = None,
+            sparse_sizes: Optional[Tuple[Optional[int], Optional[int]]] = None,
+            rowcount: Optional[Tensor] = None,
+            colptr: Optional[Tensor] = None,
+            colcount: Optional[Tensor] = None,
+            csr2csc: Optional[Tensor] = None,
+            csc2csr: Optional[Tensor] = None,
+            is_sorted: bool = False,
+            trust_data: bool = False,
+        ):
             raise ImportError("'SparseStorage' requires 'torch-sparse'")
 
     class SparseTensor:
