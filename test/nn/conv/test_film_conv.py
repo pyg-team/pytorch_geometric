@@ -1,12 +1,14 @@
 import torch
 
 import torch_geometric.typing
+from torch_geometric import seed_everything
 from torch_geometric.nn import FiLMConv, FastFiLMConv
 from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 
 
 def test_film_conv():
+    seed_everything(42)
     x1 = torch.randn(4, 4)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [0, 0, 1, 0, 1, 1]])
@@ -29,8 +31,9 @@ def test_film_conv():
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
-
+    seed_everything(42)
     conv = FiLMConv(4, 32, num_relations=2)
+    seed_everything(42)
     fast_conv = FastFiLMConv(4, 32, num_relations=2)
     assert str(conv) == 'FiLMConv(4, 32, num_relations=2)'
     assert str(fast_conv) == 'FastFiLMConv(4, 32, num_relations=2)'
