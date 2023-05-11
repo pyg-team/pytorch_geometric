@@ -140,7 +140,11 @@ class FastFiLMConv(MessagePassing):
             propogate_x = self.lins(torch.cat(propogate_xs), type_vec)
             # propogate
             print("about to prop")
-            out += self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None)
+            print("out.size()=", out.size())
+            print("propogate_x.size()=", propogate_x.size())
+            prop_out = self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None)
+            print("prop_out.size()=", prop_out.size())
+            out += prop_out
 
         # if self.num_relations <= 1:
         #     beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
