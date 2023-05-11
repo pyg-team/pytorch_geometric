@@ -94,7 +94,7 @@ def learn_sklearn_hueristic():
     #     [1.20236999]
 
 
-def segmatmul_hueristic(inputs, ptr, others):
+def segmatmul_heuristic(inputs, ptr, others):
     num_types = len(ptr) - 1
     max_num_nodes_per_types = (ptr[1:] - ptr[:-1]).max()
     in_feat = inputs.size(1)
