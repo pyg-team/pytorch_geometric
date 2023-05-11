@@ -37,9 +37,9 @@ def test_film_conv():
     fast_conv = FastFiLMConv(4, 32, num_relations=2)
     assert str(conv) == 'FiLMConv(4, 32, num_relations=2)'
     assert str(fast_conv) == 'FastFiLMConv(4, 32, num_relations=2)'
-    for reg_param, fast_param in zip(conv.parameters(), fast_conv.parameters()):
-        reg_param.data = torch.ones_like(reg_param.data)
-        fast_param.data = torch.ones_like(fast_param.data)
+    # for reg_param, fast_param in zip(conv.parameters(), fast_conv.parameters()):
+    #     reg_param.data = torch.ones_like(reg_param.data)
+    #     fast_param.data = torch.ones_like(fast_param.data)
     out = conv(x1, edge_index, edge_type)
     fast_out = fast_conv(x1, edge_index, edge_type)
     assert out.size() == (4, 32)
