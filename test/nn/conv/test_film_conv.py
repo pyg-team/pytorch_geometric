@@ -43,7 +43,7 @@ def test_film_conv():
     fast_out = fast_conv(x1, edge_index, edge_type)
     assert out.size() == (4, 32)
     assert fast_out.size() == (4, 32)
-    assert torch.allclose(out, fast_out)
+    assert torch.allclose(out, fast_out), "max abs diff = " + str((out - fast_out).abs().max())
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, edge_type, (4, 4))
         assert torch.allclose(conv(x1, adj.t()), out, atol=1e-6)
