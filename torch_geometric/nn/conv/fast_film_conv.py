@@ -89,11 +89,8 @@ class FastFiLMConv(MessagePassing):
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
-        print("entered fastfilmforward")
         beta, gamma = self.film_skip(x[1]).split(self.out_channels, dim=-1)
-        print("finished film_skip")
         out = gamma * self.lin_skip(x[1]) + beta
-        print("finished lin_skip")
         if self.act is not None:
             out = self.act(out)
 
@@ -111,7 +108,6 @@ class FastFiLMConv(MessagePassing):
             film_xs = []
             propogate_xs = []
             type_list_films, type_list_lins = [], []
-            print("about to for-loop")
             for e_type_i in range(self.num_relations):
                 # make film xs list
                 film_x = x[1]
@@ -121,22 +117,11 @@ class FastFiLMConv(MessagePassing):
                 propogate_xs.append(prop_x)
                 type_list_films.append(torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
                 type_list_lins.append(torch.full((prop_x.size(0), ), e_type_i, dtype=torch.long))
-            type_vec_films = torch.cat(type_list_films)
-            type_vec_lins = torch.cat(type_list_lins)
             # cat and apply linears
-            beta, gamma = self.films(torch.cat(film_xs), type_vec_films).split(self.out_channels, dim=-1)
-            propogate_x = self.lins(torch.cat(propogate_xs), type_vec_lins)
+            beta, gamma = self.films(torch.cat(film_xs), torch.cat(type_list_films)).split(self.out_channels, dim=-1)
+            propogate_x = self.lins(torch.cat(propogate_xs), torch.cat(type_list_lins))
             # propogate
-            print("about to prop")
-            print("out.size()=", out.size())
-            print("propogate_x.size()=", propogate_x.size())
-            print("edge_index.size()=", edge_index.size())
-            print("beta.size()=", beta.size())
-            print("gamma.size()=", gamma.size())
-            print("edge_type=", edge_type)
-            prop_out = sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
-            print("prop_out.size()=", prop_out.size())
-            out += prop_out
+            out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
 
         # if self.num_relations <= 1:
         #     beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
