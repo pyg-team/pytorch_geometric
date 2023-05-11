@@ -125,7 +125,6 @@ class FiLMConv(MessagePassing):
         out = gamma * self.lin_skip(x[1]) + beta
         if self.act is not None:
             out = self.act(out)
-        print("inside reg filmconv out.sum()=", out.sum())
 
         # propagate_type: (x: Tensor, beta: Tensor, gamma: Tensor)
         if self.num_relations <= 1:
@@ -149,6 +148,7 @@ class FiLMConv(MessagePassing):
                     print("inside reg filmconv out.sum()=", out.sum())
                     out = out + self.propagate(edge_index[:, mask], x=lin(
                         x[0]), beta=beta, gamma=gamma, size=None)
+            print("inside reg filmconv out.sum()=", out.sum())
             print("*"*5)
         return out
 

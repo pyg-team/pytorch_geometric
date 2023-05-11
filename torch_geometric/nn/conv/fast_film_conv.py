@@ -93,7 +93,6 @@ class FastFiLMConv(MessagePassing):
         out = gamma * self.lin_skip(x[1]) + beta
         if self.act is not None:
             out = self.act(out)
-        print("inside reg filmconv out.sum()=", out.sum())
 
         # propagate_type: (x: Tensor, beta: Tensor, gamma: Tensor)
         if self.num_relations <= 1:
@@ -133,6 +132,7 @@ class FastFiLMConv(MessagePassing):
                 mask = edge_type == e_type_i
                 print("inside fast filmconv out.sum()=", out.sum())
                 out += self.propagate(edge_index[:, mask], x=propogate_xs[e_type_i], beta=betas[e_type_i], gamma=gammas[e_type_i], size=None)
+            print("inside fast filmconv out.sum()=", out.sum())
             print("*"*5)
             #out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
 
