@@ -113,31 +113,26 @@ class FastFiLMConv(MessagePassing):
             type_list = []
             print("about to for-loop")
             for e_type_i in range(self.num_relations):
-                edge_mask = edge_type == e_type_i
-                masked_src_idxs, masked_dst_idxs = edge_index[:, edge_mask]
-                N = masked_src_idxs.numel()
-                type_list.append(torch.full((N, ), e_type_i, dtype=torch.long))
                 # make film xs list
-                film_x = x[1][masked_dst_idxs, :]
+                film_x = x[1]
                 film_xs.append(film_x)
-                # make make propogate xs list
-                propogate_x = x[0][masked_src_idxs, :]
-                propogate_xs.append(propogate_x)
-            type_vec = torch.cat(type_list)
+                # make make propogate xs  = x[0]list
+                prop_x = x[0]
+                propogate_xs.append(prop_x)
+                type_list_films.append(torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
+                type_list_lins.append(torch.full((prop_x.size(0), ), e_type_i, dtype=torch.long))
+            type_vec_films = torch.cat(type_list_films)
+            type_vec_lins = torch.cat(type_list_lins)
             # cat and apply linears
-            print("catting")
-            film_x = torch.cat(film_xs)
             print("about to films")
             print("film_x.size()=", film_x.size())
             print("type_vec.size()=", type_vec.size())
             print("out_channels=", self.out_channels)
             print("self.films=", self.films)
             print("type_vec=", type_vec)
-            film_o = self.films(film_x, type_vec)
-            print("splitting film_o")
-            beta, gamma = film_o.split(self.out_channels, dim=-1)
+            beta, gamma = self.films(torch.cat(film_xs), type_vec_films).split(self.out_channels, dim=-1)
             print("about to lins")
-            propogate_x = self.lins(torch.cat(propogate_xs), type_vec)
+            propogate_x = self.lins(torch.cat(propogate_xs), type_vec_lins)
             # propogate
             print("about to prop")
             print("out.size()=", out.size())
