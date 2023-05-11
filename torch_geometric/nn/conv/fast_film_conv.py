@@ -110,7 +110,7 @@ class FastFiLMConv(MessagePassing):
                 edge_index = to_edge_index(edge_index)[0]
             film_xs = []
             propogate_xs = []
-            type_list = []
+            type_list_films, type_list_lins = [], []
             print("about to for-loop")
             for e_type_i in range(self.num_relations):
                 # make film xs list
