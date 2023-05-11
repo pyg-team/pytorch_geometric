@@ -46,7 +46,7 @@ class FastFiLMConv(MessagePassing):
         if self.num_relations > 1:
             self.lins = HeteroLinear(in_channels[0], out_channels, num_types=num_relations, is_sorted=True, bias=False)
             if self.nn_is_none:
-                self.films = HeteroLinear(in_channels[1], 2* out_channels, num_types=num_relations, is_sorted=True, bias=False)
+                self.films = HeteroLinear(in_channels[1], 2* out_channels, num_types=num_relations, is_sorted=True, bias=True)
             else:
                 self.films = ModuleList()
                 for _ in range(num_relations):
@@ -116,23 +116,23 @@ class FastFiLMConv(MessagePassing):
                 propogate_xs.append(prop_x)
                 type_list_films.append(torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
                 type_list_lins.append(torch.full((prop_x.size(0), ), e_type_i, dtype=torch.long))
-                mask = edge_type == e_type_i
-                edge_index[0, mask] += prop_count
-                edge_index[1, mask] += film_count
-                prop_count += prop_x.size(0)
-                film_count += film_x.size(0)
+                # mask = edge_type == e_type_i
+                # edge_index[0, mask] += prop_count
+                # edge_index[1, mask] += film_count
+                # prop_count += prop_x.size(0)
+                # film_count += film_x.size(0)
             # cat and apply linears
             beta, gamma = self.films(torch.cat(film_xs), torch.cat(type_list_films)).split(self.out_channels, dim=-1)
             propogate_x = self.lins(torch.cat(propogate_xs), torch.cat(type_list_lins))
 
             # propogate
-            # betas = beta.split(int(propogate_x.size(0)/self.num_relations), dim=0)
-            # gammas = gamma.split(int(propogate_x.size(0)/self.num_relations), dim=0)
-            # propogate_xs = propogate_x.split(int(propogate_x.size(0)/self.num_relations), dim=0)
-            # for e_type_i in range(self.num_relations):
-            #     mask = edge_type == e_type_i
-            #     out += self.propagate(edge_index[:, mask], x=propogate_xs[e_type_i], beta=betas[e_type_i], gamma=gammas[e_type_i], size=None)
-            out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
+            betas = beta.split(int(propogate_x.size(0)/self.num_relations), dim=0)
+            gammas = gamma.split(int(propogate_x.size(0)/self.num_relations), dim=0)
+            propogate_xs = propogate_x.split(int(propogate_x.size(0)/self.num_relations), dim=0)
+            for e_type_i in range(self.num_relations):
+                mask = edge_type == e_type_i
+                out += self.propagate(edge_index[:, mask], x=propogate_xs[e_type_i], beta=betas[e_type_i], gamma=gammas[e_type_i], size=None)
+            #out += sum(self.propagate(edge_index, x=propogate_x, beta=beta, gamma=gamma, size=None).split(int(propogate_x.size(0)/self.num_relations), dim=0))
 
         # if self.num_relations <= 1:
         #     beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
