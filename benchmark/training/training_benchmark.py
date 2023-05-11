@@ -82,6 +82,10 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
 def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
 
+    if args.write_csv == 'prof' and not args.profile:
+        warnings.warn("Cannot write profile data to CSV because profiling is "
+                      "disabled")
+
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # If we use a custom number of steps, then we need to use RandomSampler,
     # which already does shuffle.
@@ -242,15 +246,19 @@ def run(args: argparse.ArgumentParser):
                                 print(f'Test Accuracy: {test_acc:.4f}')
 
                             if args.profile:
-                                with torch_profile():
+                                profile = torch_profile(
+                                    args.export_chrome_trace, csv_data,
+                                    args.write_csv)
+                                with profile:
                                     train(model, subgraph_loader, optimizer,
                                           device, progress_bar=progress_bar,
                                           desc="Profile training")
-                                rename_profile_file(model_name, dataset_name,
-                                                    str(batch_size),
-                                                    str(layers),
-                                                    str(hidden_channels),
-                                                    str(num_neighbors))
+                                if args.export_chrome_trace:
+                                    rename_profile_file(
+                                        model_name, dataset_name,
+                                        str(batch_size), str(layers),
+                                        str(hidden_channels),
+                                        str(num_neighbors))
 
                         total_time = t.duration
                         if args.num_steps != -1:
@@ -262,13 +270,26 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
-                        save_benchmark_data(csv_data, batch_size, layers,
-                                            num_neighbors, hidden_channels,
-                                            total_time, model_name,
-                                            dataset_name,
-                                            args.use_sparse_tensor)
+                        num_records = 1
+                        if args.write_csv == 'prof':
+                            # For profiling with PyTorch, we save the top-5
+                            # most time consuming operations. Therefore, the
+                            # same data should be entered for each of them.
+                            num_records = 5
+                        for _ in range(num_records):
+                            save_benchmark_data(
+                                csv_data,
+                                batch_size,
+                                layers,
+                                num_neighbors,
+                                hidden_channels,
+                                total_time,
+                                model_name,
+                                dataset_name,
+                                args.use_sparse_tensor,
+                            )
     if args.write_csv:
-        write_to_csv(csv_data, training=True)
+        write_to_csv(csv_data, args.write_csv, training=True)
 
 
 if __name__ == '__main__':
@@ -309,7 +330,10 @@ if __name__ == '__main__':
         help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
-    add('--write-csv', action='store_true', help='Write benchmark data to csv')
+    add('--write-csv', choices=[None, 'bench', 'prof'], default=None,
+        help='Write benchmark or PyTorch profile data to CSV')
+    add('--export-chrome-trace', default=True, type=bool,
+        help='Export chrome trace file. Works only with PyTorch profiler')
     add('--trim', action='store_true', help="Use `trim_to_layer` optimization")
     args = argparser.parse_args()
 

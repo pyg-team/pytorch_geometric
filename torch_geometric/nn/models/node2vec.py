@@ -5,15 +5,10 @@ from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 
+from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_CLUSTER
 from torch_geometric.utils import sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import index2ptr
-
-try:
-    import torch_cluster  # noqa
-    random_walk = torch.ops.torch_cluster.random_walk
-except ImportError:
-    random_walk = None
 
 
 class Node2Vec(torch.nn.Module):
@@ -63,8 +58,18 @@ class Node2Vec(torch.nn.Module):
     ):
         super().__init__()
 
-        if random_walk is None:
-            raise ImportError('`Node2Vec` requires `torch-cluster`.')
+        if WITH_PYG_LIB and p == 1.0 and q == 1.0:
+            self.random_walk_fn = torch.ops.pyg.random_walk
+        elif WITH_TORCH_CLUSTER:
+            self.random_walk_fn = torch.ops.torch_cluster.random_walk
+        else:
+            if p == 1.0 and q == 1.0:
+                raise ImportError(f"'{self.__class__.__name__}' "
+                                  f"requires either the 'pyg-lib' or "
+                                  f"'torch-cluster' package")
+            else:
+                raise ImportError(f"'{self.__class__.__name__}' "
+                                  f"requires the 'torch-cluster' package")
 
         self.num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
@@ -103,8 +108,8 @@ class Node2Vec(torch.nn.Module):
     @torch.jit.export
     def pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
-        rw = random_walk(self.rowptr, self.col, batch, self.walk_length,
-                         self.p, self.q)
+        rw = self.random_walk_fn(self.rowptr, self.col, batch,
+                                 self.walk_length, self.p, self.q)
         if not isinstance(rw, Tensor):
             rw = rw[0]
 

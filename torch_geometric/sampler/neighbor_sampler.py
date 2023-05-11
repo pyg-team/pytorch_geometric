@@ -24,7 +24,7 @@ from torch_geometric.sampler import (
     NodeSamplerInput,
     SamplerOutput,
 )
-from torch_geometric.sampler.base import DataType, NumNeighbors
+from torch_geometric.sampler.base import DataType, NumNeighbors, SubgraphType
 from torch_geometric.sampler.utils import remap_keys, to_csc, to_hetero_csc
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
@@ -38,14 +38,22 @@ class NeighborSampler(BaseSampler):
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
         num_neighbors: NumNeighborsType,
+        subgraph_type: Union[SubgraphType, str] = 'directional',
         replace: bool = False,
-        directed: bool = True,
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
         is_sorted: bool = False,
         share_memory: bool = False,
+        # Deprecated:
+        directed: bool = True,
     ):
+        if not directed:
+            subgraph_type = SubgraphType.induced
+            warnings.warn(f"The usage of the 'directed' argument in "
+                          f"'{self.__class__.__name__}' is deprecated. Use "
+                          f"`subgraph_type='induced'` instead.")
+
         if not torch_geometric.typing.WITH_PYG_LIB and sys.platform == 'linux':
             warnings.warn("Using '{self.__class__.__name__}' without a "
                           "'pyg-lib' installation is deprecated and will be "
@@ -138,7 +146,7 @@ class NeighborSampler(BaseSampler):
 
         self.num_neighbors = num_neighbors
         self.replace = replace
-        self.directed = directed
+        self.subgraph_type = SubgraphType(subgraph_type)
         self.disjoint = disjoint
         self.temporal_strategy = temporal_strategy
 
@@ -171,7 +179,10 @@ class NeighborSampler(BaseSampler):
         self,
         inputs: NodeSamplerInput,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        return node_sample(inputs, self._sample)
+        out = node_sample(inputs, self._sample)
+        if self.subgraph_type == SubgraphType.bidirectional:
+            out = out.to_bidirectional()
+        return out
 
     # Edge-based sampling #####################################################
 
@@ -179,8 +190,11 @@ class NeighborSampler(BaseSampler):
         self, inputs: EdgeSamplerInput,
         neg_sampling: Optional[NegativeSampling] = None
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        return edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
-                           self.node_time, neg_sampling)
+        out = edge_sample(inputs, self._sample, self.num_nodes, self.disjoint,
+                          self.node_time, neg_sampling)
+        if self.subgraph_type == SubgraphType.bidirectional:
+            out = out.to_bidirectional()
+        return out
 
     # Other Utilities #########################################################
 
@@ -197,7 +211,7 @@ class NeighborSampler(BaseSampler):
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         r"""Implements neighbor sampling by calling either :obj:`pyg-lib` (if
-        installed) or :obj:`torch-sparse` sampling routines."""
+        installed) or :obj:`torch-sparse` (if installed) sampling routines."""
         if isinstance(seed, dict):  # Heterogeneous sampling:
             if torch_geometric.typing.WITH_PYG_LIB:
                 # TODO (matthias) `return_edge_id` if edge features present
@@ -217,7 +231,7 @@ class NeighborSampler(BaseSampler):
                     seed_time,
                     True,  # csc
                     self.replace,
-                    self.directed,
+                    self.subgraph_type != SubgraphType.induced,
                     self.disjoint,
                     self.temporal_strategy,
                     True,  # return_edge_id
@@ -250,7 +264,7 @@ class NeighborSampler(BaseSampler):
                     self.num_neighbors.get_mapped_values(self.edge_types),
                     self.num_neighbors.num_hops,
                     self.replace,
-                    self.directed,
+                    self.subgraph_type != SubgraphType.induced,
                 )
                 node, row, col, edge, batch = out + (None, )
                 num_sampled_nodes = num_sampled_edges = None
@@ -288,7 +302,7 @@ class NeighborSampler(BaseSampler):
                     seed_time,
                     True,  # csc
                     self.replace,
-                    self.directed,
+                    self.subgraph_type != SubgraphType.induced,
                     self.disjoint,
                     self.temporal_strategy,
                     True,  # return_edge_id
@@ -316,7 +330,7 @@ class NeighborSampler(BaseSampler):
                     seed,  # seed
                     self.num_neighbors.get_mapped_values(),
                     self.replace,
-                    self.directed,
+                    self.subgraph_type != SubgraphType.induced,
                 )
                 node, row, col, edge, batch = out + (None, )
                 num_sampled_nodes = num_sampled_edges = None

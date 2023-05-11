@@ -220,7 +220,7 @@ class TimeEncoder(torch.nn.Module):
         return self.lin(t.view(-1, 1)).cos()
 
 
-class LastNeighborLoader(object):
+class LastNeighborLoader:
     def __init__(self, num_nodes: int, size: int, device=None):
         self.size = size
 

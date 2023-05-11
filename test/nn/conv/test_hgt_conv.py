@@ -2,7 +2,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.data import HeteroData
-from torch_geometric.nn import FastHGTConv, HGTConv
+from torch_geometric.nn import HGTConv
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import get_random_edge_index
 from torch_geometric.typing import SparseTensor
@@ -178,37 +178,60 @@ def test_hgt_conv_out_of_place():
     assert x_dict['paper'].size() == (6, 32)
 
 
-def test_fast_hgt_conv():
-    x_dict = {
-        'v0': torch.randn(5, 4),
-        'v1': torch.randn(5, 4),
-        'v2': torch.randn(5, 4),
-    }
+def test_hgt_conv_missing_dst_node_type():
+    data = HeteroData()
+    data['author'].x = torch.randn(4, 16)
+    data['paper'].x = torch.randn(6, 32)
+    data['university'].x = torch.randn(10, 32)
 
-    edge_index_dict = {
-        ('v0', 'e1', 'v0'): torch.randint(0, 5, size=(2, 10)),
-        ('v0', 'e2', 'v1'): torch.randint(0, 5, size=(2, 10)),
-    }
+    data['author', 'paper'].edge_index = get_random_edge_index(4, 6, 20)
+    data['paper', 'author'].edge_index = get_random_edge_index(6, 4, 20)
+    data['university', 'author'].edge_index = get_random_edge_index(10, 4, 10)
 
-    metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
-    conv1 = HGTConv(4, 2, metadata)
-    conv2 = FastHGTConv(4, 2, metadata)
+    conv = HGTConv(-1, 64, data.metadata(), heads=1)
 
-    # Make parameters match:
-    for my_param in conv1.parameters():
-        my_param.data.fill_(1)
-    for og_param in conv2.parameters():
-        og_param.data.fill_(1)
+    out_dict = conv(data.x_dict, data.edge_index_dict)
+    assert out_dict['author'].size() == (4, 64)
+    assert out_dict['paper'].size() == (6, 64)
+    assert 'university' not in out_dict
 
-    out_dict1 = conv1(x_dict, edge_index_dict)
-    out_dict2 = conv2(x_dict, edge_index_dict)
 
-    assert len(out_dict1) == len(out_dict2)
-    for key, out1 in out_dict1.items():
-        out2 = out_dict2[key]
-        if out1 is None and out2 is None:
-            continue
-        assert torch.allclose(out1, out2)
+def test_hgt_conv_missing_input_node_type():
+    data = HeteroData()
+    data['author'].x = torch.randn(4, 16)
+    data['paper'].x = torch.randn(6, 32)
+    data['author', 'writes',
+         'paper'].edge_index = get_random_edge_index(4, 6, 20)
+
+    # Some nodes from metadata are missing in data.
+    # This might happen while using NeighborLoader.
+    metadata = (['author', 'paper',
+                 'university'], [('author', 'writes', 'paper')])
+    conv = HGTConv(-1, 64, metadata, heads=1)
+
+    out_dict = conv(data.x_dict, data.edge_index_dict)
+    assert out_dict['paper'].size() == (6, 64)
+    assert 'university' not in out_dict
+
+
+def test_hgt_conv_missing_edge_type():
+    data = HeteroData()
+    data['author'].x = torch.randn(4, 16)
+    data['paper'].x = torch.randn(6, 32)
+    data['university'].x = torch.randn(10, 32)
+
+    data['author', 'writes',
+         'paper'].edge_index = get_random_edge_index(4, 6, 20)
+
+    metadata = (['author', 'paper',
+                 'university'], [('author', 'writes', 'paper'),
+                                 ('university', 'employs', 'author')])
+    conv = HGTConv(-1, 64, metadata, heads=1)
+
+    out_dict = conv(data.x_dict, data.edge_index_dict)
+    assert out_dict['author'].size() == (4, 64)
+    assert out_dict['paper'].size() == (6, 64)
+    assert 'university' not in out_dict
 
 
 if __name__ == '__main__':
