@@ -41,6 +41,9 @@ def test_film_conv():
     fast_out = fast_conv(x1, edge_index, edge_type)
     assert out.size() == (4, 32)
     assert fast_out.size() == (4, 32)
+    for reg_param, fast_param in zip(conv.parameters(), fast_conv.parameters()):
+        reg_param.data = torch.ones_like(reg_param.data)
+        fast_param.data = torch.ones_like(fast_param.data)
     assert torch.allclose(out, fast_out), "max abs diff = " + str((out - fast_out).abs().max())
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, edge_type, (4, 4))
@@ -95,3 +98,4 @@ def test_film_conv():
         t = '(PairTensor, SparseTensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit((x1, x2), adj.t()), out, atol=1e-6)
+
