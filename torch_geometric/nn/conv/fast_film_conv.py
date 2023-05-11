@@ -81,7 +81,6 @@ class FastFiLMConv(MessagePassing):
         else:
             for f in self.films:
                 reset(f)
-        self.film_skip.reset_parameters()
         self.lin_skip.reset_parameters()
         reset(self.film_skip)
 
