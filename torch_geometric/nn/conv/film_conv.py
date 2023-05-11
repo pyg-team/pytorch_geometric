@@ -146,8 +146,9 @@ class FiLMConv(MessagePassing):
                     assert edge_type is not None
                     mask = edge_type == i
                     print("inside reg filmconv out.sum()=", out.sum())
-                    out = out + self.propagate(edge_index[:, mask], x=lin(
-                        x[0]), beta=beta, gamma=gamma, size=None)
+                    lin_x = lin(x[0])
+                    print("inside reg filmconv linx.sum()=", lin_x.sum())
+                    out = out + self.propagate(edge_index[:, mask], x=lin_x, beta=beta, gamma=gamma, size=None)
             print("inside reg filmconv out.sum()=", out.sum())
             print("*"*5)
         return out
