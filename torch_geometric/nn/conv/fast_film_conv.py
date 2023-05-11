@@ -120,10 +120,11 @@ class FastFiLMConv(MessagePassing):
                 propogate_xs.append(prop_x)
                 type_list_films.append(torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
                 type_list_lins.append(torch.full((prop_x.size(0), ), e_type_i, dtype=torch.long))
-                edge_index[0, edge_type == e_type_i] += prop_count
-                edge_index[1, edge_type == e_type_i] += film_count
+                mask = edge_type == e_type_i
+                edge_index[0, mask] += prop_count
+                edge_index[1, mask] += film_count
                 prop_count += prop_x.size(0)
-                film_count ++ film_x.size(0)
+                film_count += film_x.size(0)
             # cat and apply linears
             beta, gamma = self.films(torch.cat(film_xs), torch.cat(type_list_films)).split(self.out_channels, dim=-1)
             propogate_x = self.lins(torch.cat(propogate_xs), torch.cat(type_list_lins))
