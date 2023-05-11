@@ -19,7 +19,8 @@ from torch_geometric.utils import is_sparse, to_edge_index
 
 
 class FastFiLMConv(MessagePassing):
-    r"""See :class:`FiLMConv`."""
+    r"""See :class:`FiLMConv`.
+    Main difference is parrallelizing linear layers at the cost of more memory usage """
     def __init__(
             self,
             in_channels: Union[int, Tuple[int, int]],
@@ -108,6 +109,7 @@ class FastFiLMConv(MessagePassing):
             film_xs = []
             propogate_xs = []
             type_list_films, type_list_lins = [], []
+            count = 0
             for e_type_i in range(self.num_relations):
                 # make film xs list
                 film_x = x[1]
@@ -117,6 +119,8 @@ class FastFiLMConv(MessagePassing):
                 propogate_xs.append(prop_x)
                 type_list_films.append(torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
                 type_list_lins.append(torch.full((prop_x.size(0), ), e_type_i, dtype=torch.long))
+                edge_index[:, edge_type == i] += count
+                count += prop_x.size(0)
             # cat and apply linears
             beta, gamma = self.films(torch.cat(film_xs), torch.cat(type_list_films)).split(self.out_channels, dim=-1)
             propogate_x = self.lins(torch.cat(propogate_xs), torch.cat(type_list_lins))
