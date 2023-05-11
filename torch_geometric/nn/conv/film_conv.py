@@ -125,7 +125,6 @@ class FiLMConv(MessagePassing):
         out = gamma * self.lin_skip(x[1]) + beta
         if self.act is not None:
             out = self.act(out)
-        print("inside reg filmconv after skip, out.sum()=", out.sum())
         # propagate_type: (x: Tensor, beta: Tensor, gamma: Tensor)
         if self.num_relations <= 1:
             beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
@@ -146,11 +145,7 @@ class FiLMConv(MessagePassing):
                     assert edge_type is not None
                     mask = edge_type == i
                     lin_x = lin(x[0])
-                    print("inside reg filmconv linx.sum()=", lin_x.sum())
-                    print("inside reg filmconv lin.weight.sum()=", lin.weight.sum())
                     out = out + self.propagate(edge_index[:, mask], x=lin_x, beta=beta, gamma=gamma, size=None)
-                    print("inside reg filmconv out.sum()=", out.sum())
-            print("*"*5)
         return out
 
     def message(self, x_j: Tensor, beta_i: Tensor, gamma_i: Tensor) -> Tensor:
