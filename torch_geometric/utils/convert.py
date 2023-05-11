@@ -236,6 +236,8 @@ def from_networkx(
             data[str(key)].append(value)
 
     for key, value in G.graph.items():
+        if key == 'node_default' or key == 'edge_default':
+            continue  # Do not load default attributes.
         key = f'graph_{key}' if key in node_attrs else key
         data[str(key)] = value
 
