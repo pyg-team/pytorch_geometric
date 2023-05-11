@@ -162,5 +162,5 @@ else:  # pragma: no cover
 
 
 def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
-    size = ((1, ) * (dim - 1)) + (-1, ) + ((1, ) * (ref.dim() - dim))
+    size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
     return src.view(size).expand_as(ref)
