@@ -1,5 +1,5 @@
 import copy
-from typing import Dict, List, Optional, Union
+from typing import Dict, Optional, Union, List
 
 import torch
 from torch import Tensor
@@ -343,3 +343,77 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
                     out[edge_type][key] = value[edge_mask]
 
         return out.subgraph(node_mask_dict)
+
+
+class LogicExplanation():
+    r"""Holds a single logic explanation, represented by a string."""
+    def __init__(self, explanation: str) -> None:
+        r"""
+        Args:
+            explanation (str): Input explanation
+        """
+        self.explanation = explanation
+
+    def cwa(self):
+        r"""Takes a formula written with open world assumption and
+        converts to closed one, i.e, remove every negated
+        literal assuming that missing literals are by default negated"""
+        ret = []
+        for clause in self.explanation.split("|"):
+            tmp = "("
+            for f in clause.split("&"):
+                if "~" not in f:
+                    if tmp != "(":
+                        tmp += " & "
+                    tmp += f.strip().replace(")", "")
+            tmp += ")"
+            ret.sort(key=lambda x: len(x))
+            ret.append(tmp)
+        return " | ".join(ret)
+
+    def __repr__(self) -> str:
+        return self.explanation
+
+
+class LogicExplanations():
+    r"""Holds a list of logic explanations, one for each class"""
+    def __init__(self, explanations: Optional[List[str]] = None) -> None:
+        r"""
+        Args:
+            explanations (List[str]): List of logic explanations,
+                one for each class such that :obj:`explanations[i]`
+                corresponds to the explanation of class :obj:`i`.
+                (default: :obj:`None`)
+        """
+        self.explanations = [] if explanations is None else explanations
+
+    def add_explanation(self, explanation: Union[str, LogicExplanation]
+                        ) -> None:
+        r"""Add the explanation of a new class to the list of explanations.
+
+        Args:
+            explanation (Union[str, LogicExplanation]): The explanation of
+            a new class to add to the collection
+        """
+        if not isinstance(explanation, LogicExplanation):
+            explanation = LogicExplanation(explanation)
+        self.explanations.append(explanation)
+
+    def get_formulas(self, cwa: Optional[bool] = False) -> List[str]:
+        r"""Return the string corresponding to the formulas of each class.
+
+        Args:
+            cwa (bool, optional): If :obj:`True`, the formluas are
+                rewritten in closed world assumption, otherway the raw formula
+                is returned. (default: :obj:`False`)
+        rtype: :class:`List[str]`
+        """
+        if cwa:
+            return [e.cwa() for e in self.explanations]
+        else:
+            return [e.explanation for e in self.explanations]
+
+    def __eq__(self, other):
+        if isinstance(other, LogicExplanations):
+            return self.explanations == other.explanations
+        return False
