@@ -270,6 +270,8 @@ class HeteroLinear(torch.nn.Module):
             out = x.new_empty(x.size(0), self.out_channels)
             for i in range(self.num_types):
                 mask = type_vec == i
+                if mask.numel() == 0:
+                    continue
                 out[mask] = F.linear(x[mask], self.weight[i].T)
             if self.bias is not None:
                 out += self.bias[type_vec]
