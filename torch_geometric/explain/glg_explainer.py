@@ -748,7 +748,7 @@ class _EntropyLinear(torch.nn.Module):
         self.in_features = in_features
         self.out_features = out_features
         self.n_classes = n_classes
-        self.temperature = temperature
+        self.temp = temperature
         self.alpha = None
         self.remove_attention = remove_attention
         self.weight = torch.nn.Parameter(
@@ -778,8 +778,8 @@ class _EntropyLinear(torch.nn.Module):
 
         # compute concept-awareness scores
         gamma = self.weight.norm(dim=1, p=1)
-        self.alpha = torch.exp(gamma/self.temperature) \
-            / torch.sum(torch.exp(gamma/self.temperature), dim=1, keepdim=True)
+        self.alpha = torch.exp(gamma / self.temp) \
+            / torch.sum(torch.exp(gamma / self.temp), dim=1, keepdim=True)
 
         # weight the input concepts by awareness scores
         self.alpha_norm = self.alpha / self.alpha.max(dim=1)[0].unsqueeze(1)
@@ -822,10 +822,10 @@ class _ELEN(torch.nn.Module):
                 remove_attention=no_attn
             ),
             torch.nn.LeakyReLU(),
-            torch.nn.Linear(hidden_dim, int(hidden_dim/2)),
+            torch.nn.Linear(hidden_dim, int(hidden_dim / 2)),
             torch.nn.LeakyReLU(),
             torch.nn.Linear(
-                int(hidden_dim/2),
+                int(hidden_dim / 2),
                 1 if n_classes == 2 else n_classes
             ),
         ])

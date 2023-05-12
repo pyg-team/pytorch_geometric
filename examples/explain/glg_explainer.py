@@ -141,7 +141,7 @@ class LEEmbedder(torch.nn.Module):
             self.convs = torch.nn.ModuleList([
                 GATv2Conv(
                     num_features if i == 0 else num_gnn_hidden,
-                    int(num_gnn_hidden/4),
+                    int(num_gnn_hidden / 4),
                     heads=4
                 ) for i in range(num_layers)
             ])
@@ -205,13 +205,13 @@ def elbow_method(weights, index_stopped=None, min_num_include=7, backup=None):
     ) / min_num_include
 
     stop = np.mean(sorted_weights) if backup is None else backup
-    for i in range(len(sorted_weights)-2):
+    for i in range(len(sorted_weights) - 2):
         if i < min_num_include:
             continue
-        if sorted_weights[i-1] - sorted_weights[i] > 0.0:
-            if (sorted_weights[i-1] - sorted_weights[i] >=
-                    40 * (sorted_weights[0] - sorted_weights[i-2]) / 100
-                    + (sorted_weights[0] - sorted_weights[i-2])):
+        if sorted_weights[i - 1] - sorted_weights[i] > 0.0:
+            if (sorted_weights[i - 1] - sorted_weights[i] >=
+                    40 * (sorted_weights[0] - sorted_weights[i - 2]) / 100
+                    + (sorted_weights[0] - sorted_weights[i - 2])):
                 stop = sorted_weights[i]
                 if index_stopped is not None:
                     index_stopped.append(stop)
