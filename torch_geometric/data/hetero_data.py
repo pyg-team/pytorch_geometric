@@ -249,22 +249,22 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
     @property
     def node_types(self) -> List[NodeType]:
         r"""Returns a list of all node types of the graph."""
-        return list(self._node_store_dict.keys())
+        return list(k for k in self._node_store_dict.keys() if k!='num_nodes')
 
     @property
     def node_stores(self) -> List[NodeStorage]:
         r"""Returns a list of all node storages of the graph."""
-        return list(self._node_store_dict.values())
+        return list(v for k,v in self._node_store_dict.items() if k!='num_nodes')
 
     @property
     def edge_types(self) -> List[EdgeType]:
         r"""Returns a list of all edge types of the graph."""
-        return list(self._edge_store_dict.keys())
+        return list(k for k in self._edge_store_dict.keys() if k!='num_edges')
 
     @property
     def edge_stores(self) -> List[EdgeStorage]:
         r"""Returns a list of all edge storages of the graph."""
-        return list(self._edge_store_dict.values())
+        return list(v for k,v in self._edge_store_dict.items() if k!='num_edges')
 
     def node_items(self) -> List[Tuple[NodeType, NodeStorage]]:
         r"""Returns a list of node type and node storage pairs."""
