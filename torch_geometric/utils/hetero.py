@@ -94,11 +94,11 @@ def learn_sklearn_heuristic():
     #     [1.20236999]
 
 
-def segmatmul_heuristic(inputs, ptr, others):
-    num_types = len(ptr) - 1
-    max_num_nodes_per_types = (ptr[1:] - ptr[:-1]).max()
+def segmatmul_heuristic(inputs: Tensor, type_ptr, weight: Tensor):
+    num_types = len(type_ptr) - 1
+    max_num_nodes_per_types = (type_ptr[1:] - type_ptr[:-1]).max()
     in_feat = inputs.size(1)
-    out_feat = others.size(-1)
+    out_feat = weight.size(-1)
     # this heuristic was learned with learn_sklearn_heuristic on an A100
     x = torch.tensor([num_types, max_num_nodes_per_types, in_feat, out_feat])
     scale_mean = torch.tensor(
