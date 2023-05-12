@@ -27,8 +27,6 @@ from typing import Union, List
 import networkx as nx
 import numpy as np
 
-torch.set_num_threads(4)  # TODO: remove
-
 log_models = True
 data_path = "./local_explanations/BAMultiShapes"
 output_path = "./output"
