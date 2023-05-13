@@ -9,6 +9,7 @@ Dataset Cheatsheet
 
 Homogeneous Datasets
 --------------------
+
 .. list-table::
     :widths: 50 10 10 10 10 10
     :header-rows: 1
@@ -38,6 +39,7 @@ Homogeneous Datasets
 
 Heterogeneous Datasets
 ----------------------
+
 .. list-table::
     :widths: 50 30 10 10
     :header-rows: 1
@@ -58,6 +60,7 @@ Heterogeneous Datasets
 
 Synthetic Datasets
 ------------------
+
 .. list-table::
     :widths: 50 10 10 10 10 10
     :header-rows: 1
