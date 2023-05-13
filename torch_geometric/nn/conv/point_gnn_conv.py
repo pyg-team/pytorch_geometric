@@ -2,9 +2,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import reset
 from torch_geometric.typing import Adj
-
-from ..inits import reset
 
 
 class PointGNNConv(MessagePassing):

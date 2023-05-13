@@ -3,12 +3,11 @@ from torch import Tensor
 from torch.nn import BatchNorm1d, Embedding, Linear, ModuleList, Sequential
 
 from torch_geometric.nn import radius_graph
+from torch_geometric.nn.inits import reset
 from torch_geometric.nn.models.dimenet import triplets
 from torch_geometric.nn.models.schnet import ShiftedSoftplus
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import scatter
-
-from ..inits import reset
 
 
 class GaussianFilter(torch.nn.Module):

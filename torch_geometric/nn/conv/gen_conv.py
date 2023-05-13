@@ -13,6 +13,7 @@ from torch.nn import (
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import reset
 from torch_geometric.nn.norm import MessageNorm
 from torch_geometric.typing import (
     Adj,
@@ -21,8 +22,7 @@ from torch_geometric.typing import (
     Size,
     SparseTensor,
 )
-
-from ..inits import reset
+from torch_geometric.utils import is_torch_sparse_tensor, to_edge_index
 
 
 class MLP(Sequential):
@@ -213,6 +213,10 @@ class GENConv(MessagePassing):
 
         if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()
+        elif is_torch_sparse_tensor(edge_index):
+            _, value = to_edge_index(edge_index)
+            if value.dim() > 1 or not value.all():
+                edge_attr = value
 
         if edge_attr is not None and hasattr(self, 'lin_edge'):
             edge_attr = self.lin_edge(edge_attr)

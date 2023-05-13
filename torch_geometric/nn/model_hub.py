@@ -121,8 +121,13 @@ class PyGModelHubMixin(ModelHubMixin):
         # ModelHubMixin.save_pretrained
         kwargs.pop('config', None)
 
-        ModelHubMixin.save_pretrained(self, save_directory, config,
-                                      push_to_hub, repo_id=repo_id, **kwargs)
+        super().save_pretrained(
+            save_directory=save_directory,
+            config=config,
+            push_to_hub=push_to_hub,
+            repo_id=repo_id,
+            **kwargs,
+        )
         model_card = self.construct_model_card(self.model_name,
                                                self.dataset_name)
         if push_to_hub:
@@ -138,7 +143,7 @@ class PyGModelHubMixin(ModelHubMixin):
         proxies,
         resume_download,
         local_files_only,
-        use_auth_token,
+        token,
         dataset_name="",
         model_name="",
         map_location="cpu",
@@ -158,7 +163,7 @@ class PyGModelHubMixin(ModelHubMixin):
                 force_download=force_download,
                 proxies=proxies,
                 resume_download=resume_download,
-                use_auth_token=use_auth_token,
+                token=token,
                 local_files_only=local_files_only,
             )
 
@@ -229,11 +234,11 @@ class PyGModelHubMixin(ModelHubMixin):
         """
         return super().from_pretrained(
             pretrained_model_name_or_path,
-            force_download,
-            resume_download,
-            proxies,
-            token,
-            cache_dir,
-            local_files_only,
+            force_download=force_download,
+            resume_download=resume_download,
+            proxies=proxies,
+            use_auth_token=token,
+            cache_dir=cache_dir,
+            local_files_only=local_files_only,
             **model_kwargs,
         )

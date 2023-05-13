@@ -47,7 +47,7 @@ def run(args: argparse.ArgumentParser):
                         data, num_neighbors=num_neighbors,
                         input_nodes=train_idx, batch_size=batch_size,
                         shuffle=True, num_workers=args.num_workers,
-                        filter_per_worker=args.filter)
+                        filter_per_worker=args.filter_per_worker)
                     cpu_affinity = train_loader.enable_cpu_affinity(
                         args.loader_cores
                     ) if args.cpu_affinity else nullcontext()
@@ -71,12 +71,15 @@ def run(args: argparse.ArgumentParser):
         if eval_batch_sizes is not None:
             print('Evaluation sampling with all neighbors')
             for batch_size in eval_batch_sizes:
-                subgraph_loader = NeighborLoader(data, num_neighbors=[-1],
-                                                 input_nodes=eval_idx,
-                                                 batch_size=batch_size,
-                                                 shuffle=False,
-                                                 num_workers=args.num_workers,
-                                                 filter_per_worker=args.filter)
+                subgraph_loader = NeighborLoader(
+                    data,
+                    num_neighbors=[-1],
+                    input_nodes=eval_idx,
+                    batch_size=batch_size,
+                    shuffle=False,
+                    num_workers=args.num_workers,
+                    filter_per_worker=args.filter_per_worker,
+                )
                 cpu_affinity = subgraph_loader.enable_cpu_affinity(
                     args.loader_cores) if args.cpu_affinity else nullcontext()
                 runtimes = []
@@ -120,7 +123,7 @@ if __name__ == '__main__':
         help="Number of iterations for each test setting.")
     add('--profile', default=False, action='store_true',
         help="Run torch.profiler.")
-    add('--filter', default=False, action='store_true',
+    add('--filter-per-worker', default=False, action='store_true',
         help="Use filter per worker.")
     add('--cpu-affinity', default=False, action='store_true',
         help="Use DataLoader affinitzation.")

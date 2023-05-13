@@ -44,7 +44,7 @@ def set_cfg(cfg):
     cfg.accelerator = 'auto'
 
     # number of devices: eg. for 2 GPU set cfg.devices=2
-    cfg.devices = None
+    cfg.devices = 1
 
     # Output directory
     cfg.out_dir = 'results'
@@ -515,7 +515,7 @@ def get_fname(fname):
     Args:
         fname (str): Filename for the yaml format configuration file
     """
-    fname = fname.split('/')[-1]
+    fname = os.path.basename(fname)
     if fname.endswith('.yaml'):
         fname = fname[:-5]
     elif fname.endswith('.yml'):

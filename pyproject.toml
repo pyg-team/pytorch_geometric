@@ -1,11 +1,15 @@
+[build-system]
+requires=["flit_core >=3.2,<4"]
+build-backend="flit_core.buildapi"
+
 [project]
 name="torch_geometric"
-version="2.3.0"
-readme="README.md"
+version="2.4.0"
 authors=[
     {name="Matthias Fey", email="matthias@pyg.org"},
 ]
 description="Graph Neural Network Library for PyTorch"
+readme="README.md"
 requires-python=">=3.7"
 keywords=[
     "deep-learning",
@@ -22,16 +26,78 @@ classifiers=[
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3 :: Only",
 ]
+dependencies=[
+    "tqdm",
+    "numpy",
+    "scipy",
+    "jinja2",
+    "requests",
+    "pyparsing",
+    "scikit-learn",
+    "psutil>=5.8.0",
+]
 
-dynamic=["dependencies", "optional-dependencies"]
+[project.optional-dependencies]
+graphgym=[
+    "yacs",
+    "hydra-core",
+    "protobuf<4.21",
+    "pytorch-lightning",
+]
+modelhub=[
+    "huggingface_hub"
+]
+benchmark=[
+    "protobuf<4.21",
+    "wandb",
+    "pandas",
+    "networkx",
+    "matplotlib",
+]
+test=[
+    "pytest",
+    "pytest-cov",
+    "onnx",
+    "onnxruntime",
+]
+dev=[
+    "torch_geometric[test]",
+    "pre-commit",
+]
+full = [
+    "torch_geometric[graphgym, modelhub]",
+    "ase",
+    "h5py",
+    "numba",
+    "sympy",
+    "pandas",
+    "captum",
+    "rdflib",
+    "trimesh",
+    "networkx",
+    "graphviz",
+    "tabulate",
+    "matplotlib",
+    "torchmetrics",
+    "scikit-image",
+    "pytorch-memlab",
+    "pgmpy",
+    "opt_einsum",
+    "statsmodels",
+    "rdkit",
+]
 
 [project.urls]
 homepage="https://pyg.org"
 documentation="https://pytorch-geometric.readthedocs.io"
 repository="https://github.com/pyg-team/pytorch_geometric.git"
 changelog="https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md"
+
+[tool.flit.module]
+name="torch_geometric"
 
 [tool.yapf]
 based_on_style = "pep8"
@@ -55,9 +121,13 @@ filterwarnings = [
     "ignore:The PyTorch API of nested tensors is in prototype stage:UserWarning",
     "ignore:scatter_reduce():UserWarning",
     "ignore:Sparse CSR tensor support is in beta state:UserWarning",
+    "ignore:Sparse CSC tensor support is in beta state:UserWarning",
+    "ignore:torch.distributed._sharded_tensor will be deprecated:DeprecationWarning",
     # Filter `captum` warnings:
     "ignore:Setting backward hooks on ReLU activations:UserWarning",
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
+    # Filter `pytorch_lightning` warnings:
+    "ignore:GPU available but not used:UserWarning",
 ]
 
 [tool.pylint.messages_control]
@@ -97,3 +167,6 @@ exclude_lines = [
     "torch.cuda.is_available",
     "WITH_PT2",
 ]
+
+[tool.flake8]
+ignore = ["F811", "W503", "W504"]

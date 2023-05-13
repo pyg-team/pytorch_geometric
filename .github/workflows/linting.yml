@@ -17,6 +17,8 @@ jobs:
 
       - name: Setup packages
         uses: ./.github/actions/setup
+        with:
+          full_install: false
 
       - name: Install pyright
         run: |
@@ -37,11 +39,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4.3.0
         with:
-          python-version: 3.7
-          check-latest: true
-          cache: pip
-          cache-dependency-path: |
-            setup.py
+          python-version: 3.8
 
       - name: Install dependencies
         run: pip install pylint
@@ -60,11 +58,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4.3.0
         with:
-          python-version: 3.7
-          check-latest: true
-          cache: pip
-          cache-dependency-path: |
-            setup.py
+          python-version: 3.8
 
       - name: Install dependencies
         run: pip install mypy

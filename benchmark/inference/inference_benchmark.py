@@ -1,4 +1,6 @@
 import argparse
+import warnings
+from collections import defaultdict
 from contextlib import nullcontext
 
 import torch
@@ -8,6 +10,9 @@ from benchmark.utils import (
     get_dataset_with_transformation,
     get_model,
     get_split_masks,
+    save_benchmark_data,
+    test,
+    write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
@@ -30,14 +35,12 @@ def full_batch_inference(model, data):
     return model(data.x, edge_index)
 
 
-def test(y, loader):
-    y_hat = y.argmax(dim=-1)
-    y = loader.data.y.to(y_hat.device)
-    mask = loader.data.test_mask
-    return int((y_hat[mask] == y[mask]).sum()) / int(mask.sum())
-
-
 def run(args: argparse.ArgumentParser):
+    csv_data = defaultdict(list)
+
+    if args.write_csv == 'prof' and not args.profile:
+        warnings.warn("Cannot write profile data to CSV because profiling is "
+                      "disabled")
 
     # cuda device is not suitable for full batch mode
     device = torch.device(
@@ -98,6 +101,7 @@ def run(args: argparse.ArgumentParser):
                         num_neighbors=[-1],  # layer-wise inference
                         input_nodes=mask,
                         sampler=sampler,
+                        filter_per_worker=args.filter_per_worker,
                         **kwargs,
                     ) if with_loader else None
                     if args.evaluate and not args.full_batch:
@@ -106,6 +110,7 @@ def run(args: argparse.ArgumentParser):
                             num_neighbors=[-1],  # layer-wise inference
                             input_nodes=test_mask,
                             sampler=None,
+                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         )
 
@@ -118,6 +123,7 @@ def run(args: argparse.ArgumentParser):
                             num_neighbors=num_neighbors,
                             input_nodes=mask,
                             sampler=sampler,
+                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         ) if with_loader else None
                         if args.evaluate and not args.full_batch:
@@ -126,6 +132,7 @@ def run(args: argparse.ArgumentParser):
                                 num_neighbors=num_neighbors,
                                 input_nodes=test_mask,
                                 sampler=None,
+                                filter_per_worker=args.filter_per_worker,
                                 **kwargs,
                             )
 
@@ -168,7 +175,8 @@ def run(args: argparse.ArgumentParser):
                         else:
                             cpu_affinity = nullcontext()
                         profile = torch_profile(
-                        ) if args.profile else nullcontext()
+                            args.export_chrome_trace, csv_data,
+                            args.write_csv) if args.profile else nullcontext()
                         itt = emit_itt(
                         ) if args.vtune_profile else nullcontext()
 
@@ -201,16 +209,17 @@ def run(args: argparse.ArgumentParser):
                                         progress_bar=True,
                                     )
                                     if args.evaluate:
-                                        test_acc = model.test(
-                                            y,
+                                        test_acc = test(
+                                            model,
                                             test_loader,
                                             device,
+                                            hetero,
                                             progress_bar=True,
                                         )
                                         print(f'Mini Batch Test Accuracy: \
                                             {test_acc:.4f}')
 
-                        if args.profile:
+                        if args.profile and args.export_chrome_trace:
                             rename_profile_file(model_name, dataset_name,
                                                 str(batch_size), str(layers),
                                                 str(hidden_channels),
@@ -224,6 +233,27 @@ def run(args: argparse.ArgumentParser):
                         latency = total_time / total_num_samples * 1000
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
+
+                        num_records = 1
+                        if args.write_csv == 'prof':
+                            # For profiling with PyTorch, we save the top-5
+                            # most time consuming operations. Therefore, the
+                            # same data should be entered for each of them.
+                            num_records = 5
+                        for _ in range(num_records):
+                            save_benchmark_data(
+                                csv_data,
+                                batch_size,
+                                layers,
+                                num_neighbors,
+                                hidden_channels,
+                                total_time,
+                                model_name,
+                                dataset_name,
+                                args.use_sparse_tensor,
+                            )
+    if args.write_csv:
+        write_to_csv(csv_data, args.write_csv)
 
 
 if __name__ == '__main__':
@@ -257,8 +287,14 @@ if __name__ == '__main__':
         help='Use DataLoader affinitzation.')
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers")
+    add('--filter-per-worker', action='store_true',
+        help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--full-batch', action='store_true', help='Use full batch mode')
     add('--evaluate', action='store_true')
     add('--ckpt_path', type=str, help='Checkpoint path for loading a model')
+    add('--write-csv', choices=[None, 'bench', 'prof'], default=None,
+        help='Write benchmark or PyTorch profile data to CSV')
+    add('--export-chrome-trace', default=True, type=bool,
+        help='Export chrome trace file. Works only with PyTorch profiler')
     run(argparser.parse_args())

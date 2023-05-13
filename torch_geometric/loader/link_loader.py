@@ -175,8 +175,18 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         iterator = range(edge_label_index.size(1))
         super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
 
+    def __call__(
+        self,
+        index: Union[Tensor, List[int]],
+    ) -> Union[Data, HeteroData]:
+        r"""Samples a subgraph from a batch of input edges."""
+        out = self.collate_fn(index)
+        if not self.filter_per_worker:
+            out = self.filter_fn(out)
+        return out
+
     def collate_fn(self, index: Union[Tensor, List[int]]) -> Any:
-        r"""Samples a subgraph from a batch of input nodes."""
+        r"""Samples a subgraph from a batch of input edges."""
         input_data: EdgeSamplerInput = self.input_data[index]
 
         out = self.link_sampler.sample_from_edges(
@@ -237,14 +247,11 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                 if 'n_id' not in data[key]:
                     data[key].n_id = node
 
-            if out.edge is not None:
-                for key, edge in out.edge.items():
-                    if 'e_id' not in data[key]:
-                        data[key].e_id = edge
+            for key, edge in (out.edge or {}).items():
+                if 'e_id' not in data[key]:
+                    data[key].e_id = edge
 
-            if out.batch is not None:
-                for key, batch in out.batch.items():
-                    data[key].batch = batch
+            data.set_value_dict('batch', out.batch)
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]

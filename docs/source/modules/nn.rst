@@ -135,8 +135,11 @@ For combining via attention, we need to additionally specify the :obj:`in_channe
 
 .. code-block:: python
 
-   multi_aggr = aggr.MultiAggregation(['mean', 'std'], in_channels=64,
-                                      out_channels=64, num_heads=4))
+   multi_aggr = aggr.MultiAggregation(
+       aggrs=['mean', 'std'],
+       mode='attn',
+       mode_kwargs=dict(in_channels=64, out_channels=64, num_heads=4),
+   )
 
 If aggregations are given as a list, they will be automatically resolved to a :class:`~torch_geometric.nn.aggr.MultiAggregation`, *e.g.*, :obj:`aggr=['mean', 'std', 'median']`.
 

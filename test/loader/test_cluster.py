@@ -3,6 +3,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.loader import ClusterData, ClusterLoader
+from torch_geometric.testing import onlyFullTest
 from torch_geometric.utils import to_dense_adj
 
 try:
@@ -10,7 +11,7 @@ try:
     col = torch.tensor([0])
     torch.ops.torch_sparse.partition(rowptr, col, None, 1, True)
     with_metis = True
-except RuntimeError:
+except (AttributeError, RuntimeError):
     with_metis = False
 
 
@@ -100,3 +101,49 @@ def test_cluster_gcn():
         [0, 0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1, 1],
     ]
+
+
+@pytest.mark.skipif(not with_metis, reason='Not compiled with METIS support')
+def test_keep_inter_cluster_edges():
+    adj = torch.tensor([
+        [1, 1, 1, 0, 1, 0],
+        [1, 1, 0, 1, 0, 1],
+        [1, 0, 1, 0, 1, 0],
+        [0, 1, 0, 1, 0, 1],
+        [1, 0, 1, 0, 1, 0],
+        [0, 1, 0, 1, 0, 1],
+    ])
+
+    x = torch.Tensor([[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
+    edge_index = adj.nonzero(as_tuple=False).t()
+    edge_attr = torch.arange(edge_index.size(1))
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    data.num_nodes = 6
+
+    cluster_data = ClusterData(data, num_parts=2, log=False,
+                               keep_inter_cluster_edges=True)
+
+    data = cluster_data[0]
+    assert data.edge_index.tolist() == [[0, 0, 0, 0, 1, 1, 1, 2, 2, 2],
+                                        [0, 1, 2, 3, 0, 1, 2, 0, 1, 2]]
+    assert data.edge_attr.tolist() == [0, 2, 3, 1, 8, 9, 10, 14, 15, 16]
+
+    data = cluster_data[1]
+    assert data.edge_index.tolist() == [[0, 0, 0, 0, 1, 1, 1, 2, 2, 2],
+                                        [0, 3, 4, 5, 3, 4, 5, 3, 4, 5]]
+    assert data.edge_attr.tolist() == [4, 5, 6, 7, 11, 12, 13, 17, 18, 19]
+
+
+@onlyFullTest
+@pytest.mark.skipif(not with_metis, reason='Not compiled with METIS support')
+def test_cluster_gcn_correctness(get_dataset):
+    dataset = get_dataset('Cora')
+    data = dataset[0].clone()
+    data.n_id = torch.arange(data.num_nodes)
+    cluster_data = ClusterData(data, num_parts=10)
+    loader = ClusterLoader(cluster_data, batch_size=3, shuffle=False)
+
+    for batch1 in loader:
+        batch2 = data.subgraph(batch1.n_id)
+        assert batch1.num_nodes == batch2.num_nodes
+        assert batch1.num_edges == batch2.num_edges

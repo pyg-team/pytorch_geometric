@@ -94,7 +94,7 @@ class RENet(torch.nn.Module):
         of a :class:`torch_geometric.datasets.icews.EventDataset` with
         :math:`k` denoting the sequence length :obj:`seq_len`.
         """
-        class PreTransform(object):
+        class PreTransform:
             def __init__(self, seq_len: int):
                 self.seq_len = seq_len
                 self.inc = 5000

@@ -37,10 +37,7 @@ class LineGraph(BaseTransform):
     def __call__(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index, edge_attr = data.edge_index, data.edge_attr
-        if edge_attr is None:
-            edge_index = coalesce(edge_index, num_nodes=N)
-        else:
-            edge_index, edge_attr = coalesce(edge_index, edge_attr, N)
+        edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes=N)
         row, col = edge_index
 
         if self.force_directed or data.is_directed():

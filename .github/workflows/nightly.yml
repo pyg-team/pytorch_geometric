@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  sdist:
+  build:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ubuntu-latest
 
@@ -18,11 +18,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4.3.0
         with:
-          python-version: 3.7
-          check-latest: true
-          cache: pip
-          cache-dependency-path: |
-            setup.py
+          python-version: 3.8
 
       - name: Set version
         run: echo "VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" torch_geometric/__init__.py)" >> ${GITHUB_ENV}
@@ -32,14 +28,14 @@ jobs:
 
       - name: Customize build version
         run: |
-          sed -i "s/name='torch_geometric'/name='pyg-nightly'/" setup.py
-          sed -i "s/$VERSION/$VERSION.dev$TODAY/" setup.py
           sed -i "s/$VERSION/$VERSION.dev$TODAY/" torch_geometric/__init__.py
-          sed -i 's/name="torch_geometric"/name="pyg-nightly"/' pyproject.toml
+          sed -i '0,/name="torch_geometric"/s//name="pyg-nightly"/' pyproject.toml # Only change first occurence
           sed -i "s/version=\"$VERSION\"/version=\"$VERSION.dev$TODAY\"/" pyproject.toml
 
       - name: Build package
-        run: python setup.py sdist
+        run: |
+          pip install --upgrade build
+          python -m build
 
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@release/v1

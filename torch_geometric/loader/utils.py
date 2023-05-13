@@ -7,6 +7,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.data import (
     Data,
     FeatureStore,
@@ -17,9 +18,11 @@ from torch_geometric.data import (
 )
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
 from torch_geometric.typing import (
+    EdgeType,
     FeatureTensorType,
     InputEdges,
     InputNodes,
+    NodeType,
     OptTensor,
     SparseTensor,
 )
@@ -39,7 +42,11 @@ def index_select(value: FeatureTensorType, index: Tensor,
             size = list(value.shape)
             size[dim] = index.numel()
             numel = math.prod(size)
-            storage = value.storage()._new_shared(numel)
+            if torch_geometric.typing.WITH_PT2:
+                storage = value.untyped_storage()._new_shared(
+                    numel * value.element_size())
+            else:
+                storage = value.storage()._new_shared(numel)
             out = value.new(storage).view(size)
 
         return torch.index_select(value, dim, index, out=out)
@@ -68,7 +75,7 @@ def filter_node_store_(store: NodeStorage, out_store: NodeStorage,
 
 
 def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
-                       col: Tensor, index: Tensor, perm: OptTensor = None):
+                       col: Tensor, index: OptTensor, perm: OptTensor = None):
     # Filters a edge storage object to only hold the edges in `index`,
     # which represents the new graph as denoted by `(row, col)`:
     for key, value in store.items():
@@ -82,8 +89,11 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
             col = col.to(value.device())
             edge_attr = value.storage.value()
             if edge_attr is not None:
-                index = index.to(edge_attr.device)
-                edge_attr = index_select(edge_attr, index, dim=0)
+                if index is not None:
+                    index = index.to(edge_attr.device)
+                    edge_attr = index_select(edge_attr, index, dim=0)
+                else:
+                    edge_attr = None
             sparse_sizes = out_store.size()[::-1]
             # TODO Currently, we set `is_sorted=False`, see:
             # https://github.com/pyg-team/pytorch_geometric/issues/4346
@@ -92,6 +102,10 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
                                            is_sorted=False, trust_data=True)
 
         elif store.is_edge_attr(key):
+            if index is None:
+                out_store[key] = None
+                continue
+
             dim = store._parent().__cat_dim__(key, value, store)
             if isinstance(value, Tensor):
                 index = index.to(value.device)
@@ -112,7 +126,7 @@ def filter_edge_store_(store: EdgeStorage, out_store: EdgeStorage, row: Tensor,
 
 
 def filter_data(data: Data, node: Tensor, row: Tensor, col: Tensor,
-                edge: Tensor, perm: OptTensor = None) -> Data:
+                edge: OptTensor, perm: OptTensor = None) -> Data:
     # Filters a data object to only hold nodes in `node` and edges in `edge`:
     out = copy.copy(data)
     filter_node_store_(data._store, out._store, node)
@@ -122,28 +136,40 @@ def filter_data(data: Data, node: Tensor, row: Tensor, col: Tensor,
 
 def filter_hetero_data(
     data: HeteroData,
-    node_dict: Dict[str, Tensor],
-    row_dict: Dict[str, Tensor],
-    col_dict: Dict[str, Tensor],
-    edge_dict: Dict[str, Tensor],
-    perm_dict: Optional[Dict[str, OptTensor]] = None,
+    node_dict: Dict[NodeType, Tensor],
+    row_dict: Dict[EdgeType, Tensor],
+    col_dict: Dict[EdgeType, Tensor],
+    edge_dict: Dict[EdgeType, OptTensor],
+    perm_dict: Optional[Dict[EdgeType, OptTensor]] = None,
 ) -> HeteroData:
     # Filters a heterogeneous data object to only hold nodes in `node` and
     # edges in `edge` for each node and edge type, respectively:
     out = copy.copy(data)
 
-    for node_type in data.node_types:
+    for node_type in out.node_types:
+        # Handle the case of disconneted graph sampling:
+        if node_type not in node_dict:
+            node_dict[node_type] = torch.empty(0, dtype=torch.long)
+
         filter_node_store_(data[node_type], out[node_type],
                            node_dict[node_type])
 
-    for edge_type in data.edge_types:
+    for edge_type in out.edge_types:
+        # Handle the case of disconneted graph sampling:
+        if edge_type not in row_dict:
+            row_dict[edge_type] = torch.empty(0, dtype=torch.long)
+        if edge_type not in col_dict:
+            col_dict[edge_type] = torch.empty(0, dtype=torch.long)
+        if edge_type not in edge_dict:
+            edge_dict[edge_type] = torch.empty(0, dtype=torch.long)
+
         filter_edge_store_(
             data[edge_type],
             out[edge_type],
             row_dict[edge_type],
             col_dict[edge_type],
             edge_dict[edge_type],
-            perm_dict[edge_type] if perm_dict else None,
+            perm_dict.get(edge_type, None) if perm_dict else None,
         )
 
     return out
@@ -155,7 +181,7 @@ def filter_custom_store(
     node_dict: Dict[str, Tensor],
     row_dict: Dict[str, Tensor],
     col_dict: Dict[str, Tensor],
-    edge_dict: Dict[str, Tensor],
+    edge_dict: Dict[str, OptTensor],
     custom_cls: Optional[HeteroData] = None,
 ) -> HeteroData:
     r"""Constructs a `HeteroData` object from a feature store that only holds

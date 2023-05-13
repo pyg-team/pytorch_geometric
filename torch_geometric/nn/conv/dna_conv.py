@@ -8,9 +8,8 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.inits import kaiming_uniform, uniform
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
-
-from ..inits import kaiming_uniform, uniform
 
 
 class Linear(torch.nn.Module):

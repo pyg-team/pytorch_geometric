@@ -2,10 +2,10 @@ import copy
 
 import pytest
 import torch
-import torch_sparse
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
+from torch_geometric.testing import get_random_edge_index, withPackage
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
@@ -23,12 +23,6 @@ edge_index_paper_conference = torch.stack(
 
 edge_attr_paper_paper = torch.randn(edge_index_paper_paper.size(1), 8)
 edge_attr_author_paper = torch.randn(edge_index_author_paper.size(1), 8)
-
-
-def get_edge_index(num_src_nodes, num_dst_nodes, num_edges):
-    row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.long)
-    col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.long)
-    return torch.stack([row, col], dim=0)
 
 
 def test_init_hetero_data():
@@ -96,6 +90,20 @@ def test_init_hetero_data():
     assert len(data.edge_items()) == 3
 
 
+def test_hetero_data_to_from_dict():
+    data = HeteroData()
+    data.global_id = '1'
+    data['v1'].x = torch.randn(5, 16)
+    data['v2'].y = torch.randn(4, 16)
+    data['v1', 'v2'].edge_index = torch.tensor([[0, 1, 2, 3], [0, 1, 2, 3]])
+
+    out = HeteroData.from_dict(data.to_dict())
+    assert out.global_id == data.global_id
+    assert torch.equal(out['v1'].x, data['v1'].x)
+    assert torch.equal(out['v2'].y, data['v2'].y)
+    assert torch.equal(out['v1', 'v2'].edge_index, data['v1', 'v2'].edge_index)
+
+
 def test_hetero_data_functions():
     data = HeteroData()
     data['paper'].x = x_paper
@@ -148,6 +156,18 @@ def test_hetero_data_functions():
     assert len(data.to_namedtuple()) == 5
     assert data.to_namedtuple().y == 0
     assert len(data.to_namedtuple().paper) == 1
+
+
+def test_hetero_data_set_value_dict():
+    data = HeteroData()
+    data.set_value_dict('x', {
+        'paper': torch.randn(4, 16),
+        'author': torch.randn(8, 32),
+    })
+    assert data.node_types == ['paper', 'author']
+    assert data.edge_types == []
+    assert data['paper'].x.size() == (4, 16)
+    assert data['author'].x.size() == (8, 32)
 
 
 def test_hetero_data_rename():
@@ -333,15 +353,15 @@ def test_to_homogeneous_and_vice_versa():
     data['paper'].y = torch.randint(0, 10, (100, ))
     data['author'].x = torch.randn(200, 128)
 
-    data['paper', 'paper'].edge_index = get_edge_index(100, 100, 250)
+    data['paper', 'paper'].edge_index = get_random_edge_index(100, 100, 250)
     data['paper', 'paper'].edge_weight = torch.randn(250, )
     data['paper', 'paper'].edge_attr = torch.randn(250, 64)
 
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 500)
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 500)
     data['paper', 'author'].edge_weight = torch.randn(500, )
     data['paper', 'author'].edge_attr = torch.randn(500, 64)
 
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 1000)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 1000)
     data['author', 'paper'].edge_weight = torch.randn(1000, )
     data['author', 'paper'].edge_attr = torch.randn(1000, 64)
 
@@ -555,12 +575,9 @@ def test_basic_feature_store():
 # Graph Store #################################################################
 
 
+@withPackage('torch_sparse')
 def test_basic_graph_store():
     data = HeteroData()
-
-    edge_index = torch.LongTensor([[0, 1], [1, 2]])
-    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1],
-                                    sparse_sizes=(3, 3))
 
     def assert_equal_tensor_tuple(expected, actual):
         assert len(expected) == len(actual)
@@ -569,9 +586,9 @@ def test_basic_graph_store():
 
     # We put all three tensor types: COO, CSR, and CSC, and we get them back
     # to confirm that `GraphStore` works as intended.
-    coo = adj.coo()[:-1]
-    csr = adj.csr()[:-1]
-    csc = adj.csc()[-2::-1]  # (row, colptr)
+    coo = (torch.tensor([0, 1]), torch.tensor([1, 2]))
+    csr = (torch.tensor([0, 1, 2, 2]), torch.tensor([1, 2]))
+    csc = (torch.tensor([0, 1]), torch.tensor([0, 0, 1, 2]))
 
     # Put:
     data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'),
@@ -600,8 +617,8 @@ def test_data_generate_ids():
     data['paper'].x = torch.randn(100, 128)
     data['author'].x = torch.randn(200, 128)
 
-    data['paper', 'author'].edge_index = get_edge_index(100, 200, 300)
-    data['author', 'paper'].edge_index = get_edge_index(200, 100, 400)
+    data['paper', 'author'].edge_index = get_random_edge_index(100, 200, 300)
+    data['author', 'paper'].edge_index = get_random_edge_index(200, 100, 400)
     assert len(data) == 2
 
     data.generate_ids()

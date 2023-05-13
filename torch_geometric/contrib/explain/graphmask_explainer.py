@@ -315,15 +315,15 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         for param in module.parameters():
             param.requires_grad = False
 
-    def __set_flags__(self, model):
+    def _set_flags(self, model):
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 module.explain_message = explain_message.__get__(
                     module, MessagePassing)
                 module.explain = True
 
-    def __inject_messages__(self, model: torch.nn.Module, message_scale,
-                            message_replacement, set=False):
+    def _inject_messages(self, model: torch.nn.Module, message_scale,
+                         message_replacement, set=False):
         i = 0
         for module in model.modules():
             if isinstance(module, MessagePassing):
@@ -345,7 +345,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                              "'integer' or set to 'None' instead.")
 
         self.freeze_model(model)
-        self.__set_flags__(model)
+        self._set_flags(model)
 
         input_dims, output_dims = [], []
         for module in model.modules():
@@ -406,7 +406,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     gates.append(sampling_weights)
                     total_penalty += penalty
 
-                self.__inject_messages__(model, gates, self.baselines)
+                self._inject_messages(model, gates, self.baselines)
 
                 self.lambda_op = torch.tensor(self.init_lambda,
                                               requires_grad=True)
@@ -425,7 +425,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     if index is not None:
                         y_hat, y = y_hat[index], y[index]
 
-                self.__inject_messages__(model, gates, self.baselines, True)
+                self._inject_messages(model, gates, self.baselines, True)
 
                 loss = self._loss(y_hat, y, total_penalty)
 
@@ -456,7 +456,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                              "'integer' or set to 'None' instead.")
 
         self.freeze_model(model)
-        self.__set_flags__(model)
+        self._set_flags(model)
 
         with torch.no_grad():
             latest_source_embeddings, latest_messages = [], []

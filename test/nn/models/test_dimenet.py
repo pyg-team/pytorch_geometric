@@ -8,7 +8,7 @@ from torch_geometric.nn.models.dimenet import (
     Envelope,
     ResidualLayer,
 )
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 
 
 def test_dimenet_modules():
@@ -25,6 +25,7 @@ def test_dimenet_modules():
     assert rl(x).size() == (128, 128)  # Isotonic layer.
 
 
+@withPackage('torch_sparse')  # TODO `triplet` requires `SparseTensor` for now.
 @pytest.mark.parametrize('Model', [DimeNet, DimeNetPlusPlus])
 def test_dimenet(Model):
     z = torch.randint(1, 10, (20, ))

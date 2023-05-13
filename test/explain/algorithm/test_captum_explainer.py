@@ -15,6 +15,25 @@ from torch_geometric.explain.config import (
 from torch_geometric.nn import GCNConv, global_add_pool
 from torch_geometric.testing import withPackage
 
+methods = [
+    'Saliency',
+    'InputXGradient',
+    'Deconvolution',
+    'ShapleyValueSampling',
+    'IntegratedGradients',
+    'GuidedBackprop',
+]
+
+unsupported_methods = [
+    'FeatureAblation',
+    'Occlusion',
+    'DeepLift',
+    'DeepLiftShap',
+    'GradientShap',
+    'KernelShap',
+    'Lime',
+]
+
 
 class GCN(torch.nn.Module):
     def __init__(self, model_config: ModelConfig):
@@ -78,19 +97,35 @@ def check_explanation(
 
 
 @withPackage('captum')
+@pytest.mark.parametrize('method', unsupported_methods)
+def test_unsupported_methods(method):
+    model_config = ModelConfig(mode='regression', task_level='node')
+
+    with pytest.raises(ValueError, match="does not support attribution"):
+        Explainer(
+            GCN(model_config),
+            algorithm=CaptumExplainer(method),
+            explanation_type='model',
+            edge_mask_type='object',
+            node_mask_type='attributes',
+            model_config=model_config,
+        )
+
+
+@withPackage('captum')
+@pytest.mark.parametrize('method', methods)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
 @pytest.mark.parametrize('index', [1, torch.arange(2)])
 def test_captum_explainer_multiclass_classification(
+    method,
     data,
     node_mask_type,
     edge_mask_type,
     task_level,
     index,
 ):
-    import captum
-
     if node_mask_type is None and edge_mask_type is None:
         return
 
@@ -103,11 +138,9 @@ def test_captum_explainer_multiclass_classification(
         return_type='probs',
     )
 
-    model = GCN(model_config)
-
     explainer = Explainer(
-        model,
-        algorithm=CaptumExplainer(captum.attr.IntegratedGradients),
+        GCN(model_config),
+        algorithm=CaptumExplainer(method),
         explanation_type='model',
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
@@ -125,26 +158,26 @@ def test_captum_explainer_multiclass_classification(
 
 
 @withPackage('captum')
+@pytest.mark.parametrize('method', methods)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
 @pytest.mark.parametrize('index', [1, torch.arange(2)])
-def test_captum_hetero_data(node_mask_type, edge_mask_type, index, hetero_data,
-                            hetero_model):
+def test_captum_hetero_data(method, node_mask_type, edge_mask_type, index,
+                            hetero_data, hetero_model):
+
+    if method == 'ShapleyValueSampling':
+        # This currently takes too long to test and is already covered by
+        # by the homogeneous graph test case.
+        return
 
     if node_mask_type is None or edge_mask_type is None:
         return
 
-    model_config = ModelConfig(
-        mode='regression',
-        task_level='node',
-        return_type='raw',
-    )
-
-    model = hetero_model(hetero_data.metadata())
+    model_config = ModelConfig(mode='regression', task_level='node')
 
     explainer = Explainer(
-        model,
-        algorithm=CaptumExplainer('IntegratedGradients'),
+        hetero_model(hetero_data.metadata()),
+        algorithm=CaptumExplainer(method),
         edge_mask_type=edge_mask_type,
         node_mask_type=node_mask_type,
         model_config=model_config,
