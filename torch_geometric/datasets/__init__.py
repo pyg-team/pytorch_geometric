@@ -93,7 +93,7 @@ from .ba_shapes import BAShapes
 
 import torch_geometric.datasets.utils  # noqa
 
-homo_grapgs = [
+homo_datasets = [
     'KarateClub',
     'TUDataset',
     'GNNBenchmarkDataset',
@@ -168,7 +168,7 @@ homo_grapgs = [
     'JODIEDataset',
 ]
 
-hetero_graphs = [
+hetero_datasets = [
     'DBP15K',
     'AMiner',
     'OGB_MAG',
@@ -179,7 +179,7 @@ hetero_graphs = [
     'HGBDataset',
     'Taobao',
 ]
-synthetic_graphs = [
+synthetic_datasets = [
     'FakeDataset',
     'FakeHeteroDataset',
     'StochasticBlockModelDataset',
@@ -192,5 +192,4 @@ synthetic_graphs = [
     'BAShapes',
 ]
 
-__all__ = homo_grapgs + hetero_graphs + synthetic_graphs
-classes = __all__
+__all__ = homo_datasets + hetero_datasets + synthetic_datasets
