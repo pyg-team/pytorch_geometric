@@ -4,7 +4,6 @@ from .karate import KarateClub
 from .tu_dataset import TUDataset
 from .gnn_benchmark_dataset import GNNBenchmarkDataset
 from .planetoid import Planetoid
-from .fake import FakeDataset, FakeHeteroDataset
 from .nell import NELL
 from .citation_full import CitationFull, CoraFull
 from .coauthor import Coauthor
@@ -40,12 +39,10 @@ from .bitcoin_otc import BitcoinOTC
 from .icews import ICEWS18
 from .gdelt import GDELT
 from .willow_object_class import WILLOWObjectClass
-from .dbp15k import DBP15K
 from .pascal import PascalVOCKeypoints
 from .pascal_pf import PascalPF
 from .snap_dataset import SNAPDataset
 from .suite_sparse import SuiteSparseMatrixCollection
-from .aminer import AMiner
 from .word_net import WordNet18, WordNet18RR
 from .freebase import FB15k_237
 from .wikics import WikiCS
@@ -53,14 +50,6 @@ from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
 from .heterophilous_graph_dataset import HeterophilousGraphDataset
 from .actor import Actor
-from .ogb_mag import OGB_MAG
-from .dblp import DBLP
-from .movie_lens import MovieLens
-from .imdb import IMDB
-from .last_fm import LastFM
-from .hgb_dataset import HGBDataset
-from .jodie import JODIEDataset
-from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .upfd import UPFD
 from .github import GitHub
 from .facebook import FacebookPagePage
@@ -69,25 +58,38 @@ from .deezer_europe import DeezerEurope
 from .gemsec import GemsecDeezer
 from .twitch import Twitch
 from .airports import Airports
-from .ba_shapes import BAShapes
 from .lrgb import LRGBDataset
 from .malnet_tiny import MalNetTiny
 from .omdb import OMDB
 from .polblogs import PolBlogs
 from .email_eu_core import EmailEUCore
-from .sbm_dataset import StochasticBlockModelDataset
-from .sbm_dataset import RandomPartitionGraphDataset
 from .linkx_dataset import LINKXDataset
 from .elliptic import EllipticBitcoinDataset
 from .elliptic_temporal import EllipticBitcoinTemporalDataset
 from .dgraph import DGraphFin
 from .hydro_net import HydroNet
+from .airfrans import AirfRANS
+from .jodie import JODIEDataset
+
+from .dbp15k import DBP15K
+from .aminer import AMiner
+from .ogb_mag import OGB_MAG
+from .dblp import DBLP
+from .movie_lens import MovieLens
+from .imdb import IMDB
+from .last_fm import LastFM
+from .hgb_dataset import HGBDataset
+from .taobao import Taobao
+
+from .fake import FakeDataset, FakeHeteroDataset
+from .sbm_dataset import StochasticBlockModelDataset
+from .sbm_dataset import RandomPartitionGraphDataset
+from .mixhop_synthetic_dataset import MixHopSyntheticDataset
 from .explainer_dataset import ExplainerDataset
 from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
-from .airfrans import AirfRANS
-from .taobao import Taobao
+from .ba_shapes import BAShapes
 
 import torch_geometric.datasets.utils  # noqa
 
@@ -152,7 +154,6 @@ homo_grapgs = [
     'GemsecDeezer',
     'Twitch',
     'Airports',
-    'BAShapes',
     'LRGBDataset',
     'MalNetTiny',
     'OMDB',
@@ -164,31 +165,31 @@ homo_grapgs = [
     'DGraphFin',
     'HydroNet',
     'AirfRANS',
-    'DGraphFin',
     'JODIEDataset',
 ]
 
 hetero_graphs = [
-    'DBLP',
-    'AMiner',
     'DBP15K',
-    'LastFM',
-    'HGBDataset',
+    'AMiner',
     'OGB_MAG',
+    'DBLP',
     'MovieLens',
     'IMDB',
+    'LastFM',
+    'HGBDataset',
     'Taobao',
 ]
 synthetic_graphs = [
     'FakeDataset',
     'FakeHeteroDataset',
-    'MixHopSyntheticDataset',
     'StochasticBlockModelDataset',
     'RandomPartitionGraphDataset',
+    'MixHopSyntheticDataset',
     'ExplainerDataset',
     'InfectionDataset',
     'BA2MotifDataset',
     'BAMultiShapesDataset',
+    'BAShapes',
 ]
 
 __all__ = homo_grapgs + hetero_graphs + synthetic_graphs
