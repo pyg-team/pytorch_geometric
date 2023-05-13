@@ -73,7 +73,42 @@ def topk(
 
 
 class SelectTopK(Select):
-    # TODO (matthias) Add documentation.
+    r"""Selects k nodes with highest projection scores.
+
+    If :obj:`min_score` :math:`\tilde{\alpha}` is :obj:`None`, computes:
+
+        .. math::
+            \mathbf{y} &= \frac{\mathbf{X}\mathbf{p}}{\| \mathbf{p} \|}
+
+            \mathbf{i} &= \mathrm{top}_k(\mathbf{y})
+
+    If :obj:`min_score` :math:`\tilde{\alpha}` is a value in :obj:`[0, 1]`,
+    computes:
+
+        .. math::
+            \mathbf{y} &= \mathrm{softmax}(\mathbf{X}\mathbf{p})
+
+            \mathbf{i} &= \mathbf{y}_i > \tilde{\alpha}
+
+    where :math:`\mathbf{p}` is the learnable projection vector.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        ratio (float or int): Graph pooling ratio, which is used to compute
+            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
+            of :math:`k` itself, depending on whether the type of :obj:`ratio`
+            is :obj:`float` or :obj:`int`.
+            This value is ignored if :obj:`min_score` is not :obj:`None`.
+            (default: :obj:`0.5`)
+        min_score (float, optional): Minimal node score :math:`\tilde{\alpha}`
+            which is used to compute indices of pooled nodes
+            :math:`\mathbf{i} = \mathbf{y}_i > \tilde{\alpha}`.
+            When this value is not :obj:`None`, the :obj:`ratio` argument is
+            ignored. (default: :obj:`None`)
+        act (str or callable, optional): The non-linearity to used to compute
+            the projection score when :obj:`min_score` is :obj:`None`.
+            (default: :obj:`"tanh"`)
+    """
     def __init__(
         self,
         in_channels: int,
