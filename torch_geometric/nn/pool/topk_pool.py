@@ -3,10 +3,12 @@ from typing import Callable, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric.nn.pool.connect import FilterEdges
 from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
+# TODO(jinu): Remove this.
 def filter_adj(
     edge_index: Tensor,
     edge_attr: Optional[Tensor],
@@ -99,6 +101,7 @@ class TopKPooling(torch.nn.Module):
         self.multiplier = multiplier
 
         self.select = SelectTopK(in_channels, ratio, min_score, nonlinearity)
+        self.connect = FilterEdges()
 
         self.reset_parameters()
 
@@ -140,9 +143,11 @@ class TopKPooling(torch.nn.Module):
         x = x[perm] * score.view(-1, 1)
         x = self.multiplier * x if self.multiplier != 1 else x
 
-        batch = batch[perm]
-        edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
-                                           num_nodes=select_output.num_nodes)
+        connect_output = self.connect(select_output, edge_index, edge_attr,
+                                      batch)
+        edge_index = connect_output.edge_index
+        edge_attr = connect_output.edge_attr
+        batch = connect_output.batch
 
         return x, edge_index, edge_attr, batch, perm, score
 
