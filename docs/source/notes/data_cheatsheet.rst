@@ -1,5 +1,8 @@
 :orphan:
 
+Dataset Cheatsheet
+==================
+
 .. note::
 
     This dataset statistics table is a **work in progress**.
