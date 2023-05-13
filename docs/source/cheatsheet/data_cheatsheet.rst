@@ -50,10 +50,10 @@ Heterogeneous Datasets
       - #classes/#tasks
 {% for cls in torch_geometric.datasets.hetero_datasets %}
     * - :class:`~torch_geometric.datasets.{{ cls }}` {% if torch_geometric.datasets.utils.paper_link(cls) %}(`Paper <{{ torch_geometric.datasets.utils.paper_link(cls) }}>`__){% endif %}
+      -
+      -
+      -
     {% for child in torch_geometric.datasets.utils.get_children(cls) %}
-      -
-      -
-      -
     * - └─ **{{torch_geometric.datasets.utils.get_type(child)}} Type**: {{ child }}
       - {{ torch_geometric.datasets.utils.get_stat(cls, '#nodes/#edges', child, default='') }}
       - {{ torch_geometric.datasets.utils.get_stat(cls, '#features', child, default='') }}
