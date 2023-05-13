@@ -39,7 +39,7 @@ class FilterEdges(Connect):
     .. math::
             \mathbf{A}^{\prime} &= \mathbf{A}_{\mathbf{i},\mathbf{i}}
 
-    Where :math:`\mathbf{i}` is nodes that are retained.
+    Where :math:`\mathbf{i}` are retained nodes.
     """
     def forward(
         self,
