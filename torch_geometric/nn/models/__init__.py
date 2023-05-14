@@ -1,4 +1,5 @@
 from .mlp import MLP
+from .pmlp import PMLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
 from .jumping_knowledge import JumpingKnowledge
 from .meta import MetaLayer
@@ -26,6 +27,7 @@ from .gnnff import GNNFF
 
 __all__ = classes = [
     'MLP',
+    'PMLP',
     'GCN',
     'GraphSAGE',
     'GIN',
