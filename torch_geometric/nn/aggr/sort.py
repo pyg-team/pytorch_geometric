@@ -22,11 +22,13 @@ class SortAggregation(Aggregation):
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+                dim: int = -2,
+                max_num_elements: Optional[int] = None) -> Tensor:
 
         fill_value = x.min().item() - 1
         batch_x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
-                                         fill_value=fill_value)
+                                         fill_value=fill_value,
+                                         max_num_elements=max_num_elements)
         B, N, D = batch_x.size()
 
         _, perm = batch_x[:, :, -1].sort(dim=-1, descending=True)
