@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -7,7 +7,8 @@ from torch_geometric.utils import scatter
 
 
 def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
-                   fill_value: float = 0., max_num_nodes: Optional[int] = None,
+                   fill_value: Union[float, Tensor] = 0.,
+                   max_num_nodes: Optional[int] = None,
                    batch_size: Optional[int] = None) -> Tuple[Tensor, Tensor]:
     r"""Given a sparse batch of node features
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}` (with
@@ -112,7 +113,18 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
         x, idx = x[mask], idx[mask]
 
     size = [batch_size * max_num_nodes] + list(x.size())[1:]
-    out = x.new_full(size, fill_value)
+
+    if isinstance(fill_value, torch.Tensor):
+        if fill_value.dim() == 0 or fill_value.numel() == 1:
+            out = fill_value.float().repeat(*size)
+        else:
+            raise ValueError(
+                "Argument `fill value` must be a scalar or a single element "
+                "tensor.")
+    else:
+        out = x.new_full(size, fill_value)
+
+    print(out)
     out[idx] = x
     out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 
