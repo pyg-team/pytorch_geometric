@@ -40,7 +40,8 @@ class TopKPooling(torch.nn.Module):
     If :obj:`min_score` :math:`\tilde{\alpha}` is :obj:`None`, computes:
 
         .. math::
-            \mathbf{y} &= \frac{\mathbf{X}\mathbf{p}}{\| \mathbf{p} \|}
+            \mathbf{y} &= \sigma \left( \frac{\mathbf{X}\mathbf{p}}{\|
+            \mathbf{p} \|} \right)
 
             \mathbf{i} &= \mathrm{top}_k(\mathbf{y})
 
@@ -66,7 +67,7 @@ class TopKPooling(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        ratio (float or int): Graph pooling ratio, which is used to compute
+        ratio (float or int): The graph pooling ratio, which is used to compute
             :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
             of :math:`k` itself, depending on whether the type of :obj:`ratio`
             is :obj:`float` or :obj:`int`.
@@ -80,8 +81,8 @@ class TopKPooling(torch.nn.Module):
         multiplier (float, optional): Coefficient by which features gets
             multiplied after pooling. This can be useful for large graphs and
             when :obj:`min_score` is used. (default: :obj:`1`)
-        nonlinearity (str or callable, optional): The non-linearity to use.
-            (default: :obj:`"tanh"`)
+        nonlinearity (str or callable, optional): The non-linearity
+            :math:`\sigma`. (default: :obj:`"tanh"`)
     """
     def __init__(
         self,
