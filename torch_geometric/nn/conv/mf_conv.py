@@ -96,11 +96,11 @@ class MFConv(MessagePassing):
         h_sel_list, type_list, idx_list = [], [], []
         for i in range(self.max_degree + 1):
             idx_i = (deg == i).nonzero().view(-1)
+            idx_list.append(idx_i)
             N = idx_i.numel()
             if N == 0:
                 continue
             h_idx_sel = h.index_select(self.node_dim, idx_i)
-            idx_list.append(idx_i)
             h_sel_list.append(h_idx_sel)
             type_list.append(torch.full((N, ), i, dtype=torch.long))
         x_l = torch.cat(h_sel_list, dim=0)
