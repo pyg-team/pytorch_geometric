@@ -93,28 +93,29 @@ class MFConv(MessagePassing):
         out = h.new_empty(list(h.size())[:-1] + [self.out_channels])
 
         # idx select loop for l
-        h_sel_list, type_list_l, idx_list = [], [], []
+        h_sel_list, type_list, idx_list = [], [], []
         for i in range(self.max_degree + 1):
             idx_i = (deg == i).nonzero().view(-1)
+            N = idx_i.numel()
+            if N == 0:
+                continue
             h_idx_sel = h.index_select(self.node_dim, idx_i)
             idx_list.append(idx_i)
-            N = h_idx_sel.size(0)
             h_sel_list.append(h_idx_sel)
-            type_list_l.append(torch.full((N, ), i, dtype=torch.long))
+            type_list.append(torch.full((N, ), i, dtype=torch.long))
         x_l = torch.cat(h_sel_list, dim=0)
-        type_vec_l = torch.cat(type_list_l, dim=0)
-        idx = torch.cat(idx_list, dim=0)
+        type_vec = torch.cat(type_list, dim=0)
+        original_idx = torch.cat(idx_list, dim=0)
 
         # apply lin_l
-        r = self.lin_l(x_l, type_vec_l)
+        r = self.lin_l(x_l, type_vec)
 
         # idx select loop for r
         if x_r is not None:
-            r_sel_list, type_list_r = [], []
+            r_sel_list = []
             count = 0
             for i in range(self.max_degree + 1):
                 idx_i = idx_list[i]
-
                 N = idx_i.numel()
                 if N == 0:
                     continue
@@ -122,14 +123,12 @@ class MFConv(MessagePassing):
                 r_sel_list.append(r_idx_sel)
                 idx_list.append(idx_i + count)
                 count += N
-                type_list_r.append(torch.full((N, ), i, dtype=torch.long))
             x_r = torch.cat(r_sel_list, dim=0)
-            type_vec_r = torch.cat(type_list_r, dim=0)
 
             # apply lin_r
-            r += self.lin_r(x_r, type_vec_r)
+            r += self.lin_r(x_r, type_vec)
 
-        out.index_copy_(self.node_dim, idx, r)
+        out.index_copy_(self.node_dim, original_idx, r)
         return out
 
     def message(self, x_j: Tensor) -> Tensor:
