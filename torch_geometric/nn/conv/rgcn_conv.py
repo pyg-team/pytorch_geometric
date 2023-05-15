@@ -16,6 +16,7 @@ from torch_geometric.typing import (
     torch_sparse,
 )
 from torch_geometric.utils import index_sort, one_hot, scatter, spmm
+from torch_geometric.utils.hetero import segmatmul_heuristic
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -126,7 +127,7 @@ class RGCNConv(MessagePassing):
         self.num_bases = num_bases
         self.num_blocks = num_blocks
         self.is_sorted = is_sorted
-
+        self.use_segmm: int = -1
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
         self.in_channels_l = in_channels[0]
@@ -201,7 +202,6 @@ class RGCNConv(MessagePassing):
             x_r = x[1]
 
         size = (x_l.size(0), x_r.size(0))
-
         if isinstance(edge_index, SparseTensor):
             edge_type = edge_index.storage.value()
         assert edge_type is not None
@@ -230,14 +230,18 @@ class RGCNConv(MessagePassing):
 
         else:  # No regularization/Basis-decomposition ========================
             if (torch_geometric.typing.WITH_PYG_LIB and self.num_bases is None
-                    and x_l.is_floating_point()
-                    and isinstance(edge_index, Tensor)):
+                    and x_l.is_floating_point() and isinstance(
+                        edge_index, Tensor)) and (self.use_segmm == -1
+                                                  or bool(self.use_segmm)):
                 if not self.is_sorted:
                     if (edge_type[1:] < edge_type[:-1]).any():
                         edge_type, perm = index_sort(
                             edge_type, max_value=self.num_relations)
                         edge_index = edge_index[:, perm]
                 edge_type_ptr = index2ptr(edge_type, self.num_relations)
+                if self.use_segmm == -1:
+                    self.use_segmm = segmatmul_heuristic(
+                        x_l, edge_type_ptr, self.weight)
                 out = self.propagate(edge_index, x=x_l,
                                      edge_type_ptr=edge_type_ptr, size=size)
             else:
