@@ -73,7 +73,46 @@ def topk(
 
 
 class SelectTopK(Select):
-    # TODO (matthias) Add documentation.
+    r"""Selects the top-:math:`k` nodes with highest projection scores from the
+    `"Graph U-Nets" <https://arxiv.org/abs/1905.05178>`_, `"Towards Sparse
+    Hierarchical Graph Classifiers" <https://arxiv.org/abs/1811.01287>`_
+    and `"Understanding Attention and Generalization in Graph Neural
+    Networks" <https://arxiv.org/abs/1905.02850>`_ papers.
+
+    If :obj:`min_score` :math:`\tilde{\alpha}` is :obj:`None`, computes:
+
+        .. math::
+            \mathbf{y} &= \sigma \left( \frac{\mathbf{X}\mathbf{p}}{\|
+            \mathbf{p} \|} \right)
+
+            \mathbf{i} &= \mathrm{top}_k(\mathbf{y})
+
+    If :obj:`min_score` :math:`\tilde{\alpha}` is a value in :obj:`[0, 1]`,
+    computes:
+
+        .. math::
+            \mathbf{y} &= \mathrm{softmax}(\mathbf{X}\mathbf{p})
+
+            \mathbf{i} &= \mathbf{y}_i > \tilde{\alpha}
+
+    where :math:`\mathbf{p}` is the learnable projection vector.
+
+    Args:
+        in_channels (int): Size of each input sample.
+        ratio (float or int): The graph pooling ratio, which is used to compute
+            :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
+            of :math:`k` itself, depending on whether the type of :obj:`ratio`
+            is :obj:`float` or :obj:`int`.
+            This value is ignored if :obj:`min_score` is not :obj:`None`.
+            (default: :obj:`0.5`)
+        min_score (float, optional): Minimal node score :math:`\tilde{\alpha}`
+            which is used to compute indices of pooled nodes
+            :math:`\mathbf{i} = \mathbf{y}_i > \tilde{\alpha}`.
+            When this value is not :obj:`None`, the :obj:`ratio` argument is
+            ignored. (default: :obj:`None`)
+        act (str or callable, optional): The non-linearity :math:`\sigma`.
+            (default: :obj:`"tanh"`)
+    """
     def __init__(
         self,
         in_channels: int,
