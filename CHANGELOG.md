@@ -62,7 +62,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added an optional `batch_size` and `max_num_nodes` arguments to `MemPooling` layer ([#7239](https://github.com/pyg-team/pytorch_geometric/pull/7239))
 - Added an optional `max_num_elements` argument to `SortAggregation` layer ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
 - Added the possibility to pass the `fill_value` argument as `torch.tensor` to the `utils.to_dense_batch` function. ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
-
+- Remove converting `fill_value` to Python float in SortAggregation forward. Pass `fill_value` as `torch.tensor` to the `utils.to_dense_batch` function. ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
 ### Removed
 
 - Replaced `FastHGTConv` with `HGTConv` ([#7117](https://github.com/pyg-team/pytorch_geometric/pull/7117))
