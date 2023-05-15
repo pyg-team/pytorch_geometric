@@ -11,6 +11,7 @@ import torch_geometric.typing
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort
+from torch_geometric.utils.hetero import segmatmul_heuristic
 from torch_geometric.utils.sparse import index2ptr
 
 
@@ -215,40 +216,26 @@ class HeteroLinear(torch.nn.Module):
         self.num_types = num_types
         self.is_sorted = is_sorted
         self.kwargs = kwargs
-
-        if torch_geometric.typing.WITH_PYG_LIB:
-            self.lins = None
-            if self.in_channels == -1:
-                self.weight = nn.parameter.UninitializedParameter()
-                self._hook = self.register_forward_pre_hook(
-                    self.initialize_parameters)
-            else:
-                self.weight = torch.nn.Parameter(
-                    torch.Tensor(num_types, in_channels, out_channels))
-            if kwargs.get('bias', True):
-                self.bias = Parameter(torch.Tensor(num_types, out_channels))
-            else:
-                self.register_parameter('bias', None)
+        self.use_segmm: int = -1
+        if self.in_channels == -1:
+            self.weight = nn.parameter.UninitializedParameter()
+            self._hook = self.register_forward_pre_hook(
+                self.initialize_parameters)
         else:
-            self.lins = torch.nn.ModuleList([
-                Linear(in_channels, out_channels, **kwargs)
-                for _ in range(num_types)
-            ])
-            self.register_parameter('weight', None)
+            self.weight = torch.nn.Parameter(
+                torch.Tensor(num_types, in_channels, out_channels))
+        if kwargs.get('bias', True):
+            self.bias = Parameter(torch.Tensor(num_types, out_channels))
+        else:
             self.register_parameter('bias', None)
-
         self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
-        if torch_geometric.typing.WITH_PYG_LIB:
-            reset_weight_(self.weight, self.in_channels,
-                          self.kwargs.get('weight_initializer', None))
-            reset_weight_(self.bias, self.in_channels,
-                          self.kwargs.get('bias_initializer', None))
-        else:
-            for lin in self.lins:
-                lin.reset_parameters()
+        reset_weight_(self.weight, self.in_channels,
+                      self.kwargs.get('weight_initializer', None))
+        reset_weight_(self.bias, self.in_channels,
+                      self.kwargs.get('bias_initializer', None))
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""
@@ -256,7 +243,9 @@ class HeteroLinear(torch.nn.Module):
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
-        if torch_geometric.typing.WITH_PYG_LIB:
+
+        if torch_geometric.typing.WITH_PYG_LIB and (self.use_segmm == -1
+                                                    or bool(self.use_segmm)):
             assert self.weight is not None
 
             perm: Optional[Tensor] = None
@@ -266,6 +255,9 @@ class HeteroLinear(torch.nn.Module):
                     x = x[perm]
 
             type_vec_ptr = index2ptr(type_vec, self.num_types)
+            if self.use_segmm == -1:
+                self.use_segmm = segmatmul_heuristic(x, type_vec_ptr,
+                                                     self.weight)
             out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
             if self.bias is not None:
                 out += self.bias[type_vec]
@@ -275,11 +267,14 @@ class HeteroLinear(torch.nn.Module):
                 out_unsorted[perm] = out
                 out = out_unsorted
         else:
-            assert self.lins is not None
             out = x.new_empty(x.size(0), self.out_channels)
-            for i, lin in enumerate(self.lins):
+            for i in range(self.num_types):
                 mask = type_vec == i
-                out[mask] = lin(x[mask])
+                if mask.numel() == 0:
+                    continue
+                out[mask] = F.linear(x[mask], self.weight[i].T)
+            if self.bias is not None:
+                out += self.bias[type_vec]
         return out
 
     @torch.no_grad()
