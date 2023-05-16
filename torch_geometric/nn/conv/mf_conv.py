@@ -93,7 +93,7 @@ class MFConv(MessagePassing):
         out = h.new_empty(list(h.size())[:-1] + [self.out_channels])
 
         # idx select loop for l
-        h_sel_list, type_list, idx_list = [], [], []
+        h_sel_list, type_list, r_sel_list = [], [], []
         for i in range(self.max_degree + 1):
             idx_i = (deg == i).nonzero().view(-1)
             N = idx_i.numel()
