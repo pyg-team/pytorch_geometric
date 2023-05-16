@@ -854,7 +854,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             if key in {'ptr'}:
                 continue
             values = [store[key] for store in self.node_stores]
-            # for feature tensors such as 'x', pad them if they are not the same shape
+            # for feature tensors such as 'x',
+            # pad them if they are not the same shape
             if len(values[0].size()) > 1:
                 max_dim = max([i.size(-1) for i in values])
                 for i, value in enumerate(values):
