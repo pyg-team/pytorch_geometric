@@ -47,7 +47,7 @@ def test_select_topk(min_score):
         assert str(pool) == 'SelectTopK(16, min_score=2.0)'
 
     out = pool(x, batch)
-    assert isinstance(out, SelectOutput)
+    assert isinstance(out, SelectOutput.__original_fn)
 
     assert out.num_nodes == 6
     assert out.num_clusters <= out.num_nodes
