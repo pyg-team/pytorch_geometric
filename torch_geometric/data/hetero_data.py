@@ -800,7 +800,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         def fill_dummy_(stores: List[BaseStorage],
                         keys: Optional[List[str]] = None):
             sizes_dict = get_sizes(stores)
-            
+
             if keys is not None:
                 sizes_dict = {
                     key: sizes
