@@ -93,12 +93,15 @@ class MFConv(MessagePassing):
         out = h.new_empty(list(h.size())[:-1] + [self.out_channels])
 
         # idx select loop for l
-        h_sel_list, type_list, r_sel_list = [], [], []
+        h_sel_list, type_list, r_sel_list, idx_list = [], [], [], []
+        count = 0
         for i in range(self.max_degree + 1):
             idx_i = (deg == i).nonzero().view(-1)
             N = idx_i.numel()
             if N == 0:
                 continue
+            idx_list.append(idx_i + count)
+            count += N
             h_idx_sel = h.index_select(self.node_dim, idx_i)
             if x_r is not None:
                 r_idx_sel = x_r.index_select(self.node_dim, idx_i)
