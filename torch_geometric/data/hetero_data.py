@@ -828,12 +828,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         def _consistent_size(stores: List[BaseStorage]) -> List[str]:
             sizes_dict = get_sizes(stores)
-            # pad x feature tensor
-            max_dim = max(sizes_dict.values()['x'])
-            if data[n_type].x.size(-1) < max_dim:
-              data[n_type].x = torch.cat((data[n_type].x, torch.zeros((data[n_type].x.size(0),max_dim - data[n_type].x.size(-1)))), dim=-1)
             return [
-                (key if)for key, sizes in sizes_dict.items()
+                key for key, sizes in sizes_dict.items()
                 if len(sizes) == len(stores)
             ]
 
@@ -861,7 +857,6 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             # for feature tensors such as 'x', pad them if they are not the same shape
             if len(values[0].size()) > 1:
                 max_dim = max([i.size(-1) for i in values])
-                print('max_dim=',max_dim)
                 for i, value in enumerate(values):
                     if value.size(-1) < max_dim:
                         values[i] = torch.cat((value, torch.zeros(value.size(0),max_dim - value.size(-1))), dim=-1)
