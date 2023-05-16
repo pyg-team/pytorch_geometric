@@ -96,11 +96,13 @@ class MFConv(MessagePassing):
         h_sel_list, type_list, idx_list = [], [], []
         for i in range(self.max_degree + 1):
             idx_i = (deg == i).nonzero().view(-1)
-            idx_list.append(idx_i)
             N = idx_i.numel()
             if N == 0:
                 continue
             h_idx_sel = h.index_select(self.node_dim, idx_i)
+            if x_r is not None:
+                r_idx_sel = x_r.index_select(self.node_dim, idx_i)
+                r_sel_list.append(r_idx_sel)
             h_sel_list.append(h_idx_sel)
             type_list.append(torch.full((N, ), i, dtype=torch.long))
         x_l = torch.cat(h_sel_list, dim=0)
@@ -109,24 +111,10 @@ class MFConv(MessagePassing):
 
         # apply lin_l
         r = self.lin_l(x_l, type_vec)
-
-        # idx select loop for r
+        # apply lin_r
         if x_r is not None:
-            r_sel_list = []
-            count = 0
-            for i in range(self.max_degree + 1):
-                idx_i = idx_list[i]
-                N = idx_i.numel()
-                if N == 0:
-                    continue
-                r_idx_sel = x_r.index_select(self.node_dim, idx_i)
-                r_sel_list.append(r_idx_sel)
-                idx_list.append(idx_i + count)
-                count += N
-            x_r = torch.cat(r_sel_list, dim=0)
-
-            # apply lin_r
-            r += self.lin_r(x_r, type_vec)
+            x_r_sel = torch.cat(r_sel_list, dim=0)
+            r += self.lin_r(x_r_sel, type_vec)
 
         out.index_copy_(self.node_dim, original_idx, r)
         return out
