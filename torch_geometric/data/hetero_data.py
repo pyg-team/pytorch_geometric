@@ -859,7 +859,10 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 max_dim = max([i.size(-1) for i in values])
                 for i, value in enumerate(values):
                     if value.size(-1) < max_dim:
-                        values[i] = torch.cat((value, torch.zeros(value.size(0),max_dim - value.size(-1))), dim=-1)
+                        values[i] = torch.cat(
+                            (value,
+                             torch.zeros(value.size(0),
+                                         max_dim - value.size(-1))), dim=-1)
             dim = self.__cat_dim__(key, values[0], self.node_stores[0])
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
