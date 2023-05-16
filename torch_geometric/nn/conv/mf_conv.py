@@ -100,7 +100,7 @@ class MFConv(MessagePassing):
             N = idx_i.numel()
             if N == 0:
                 continue
-            idx_list.append(idx_i + count)
+            idx_list.append(idx_i)
             count += N
             h_idx_sel = h.index_select(self.node_dim, idx_i)
             if x_r is not None:
