@@ -106,11 +106,11 @@ class FastFiLMConv(MessagePassing):
                 edge_index = to_edge_index(edge_index)[0]
             film_xs, propogate_xs, type_list_films, type_list_lins = [], [], [], []
             prop_count, film_count = 0, 0
+            film_x = x[1]
+            prop_x = x[0]
             # duplicate xs and increment edge indices accordingly
             for e_type_i in range(self.num_relations):
-                film_x = x[1]
                 film_xs.append(film_x)
-                prop_x = x[0]
                 propogate_xs.append(prop_x)
                 type_list_films.append(
                     torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
