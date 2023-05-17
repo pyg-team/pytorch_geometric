@@ -109,18 +109,20 @@ class FastFiLMConv(MessagePassing):
             film_x = x[1]
             prop_x = x[0]
             # duplicate xs and increment edge indices accordingly
+            propogate_x = prop_x.repeat(len(self.num_relations))
+            film_x = film_x.repeat(len(self.num_relations))
+            film_x_n_nodes = film_x.size(0)
+            prop_x_n_nodes = prop_x.size(0)
+            range_vec = torch.arange(len(self.num_relations)
+            type_vec_films = torch.repeat_interleave(range_vec), film_x_n_nodes)
+            type_vec_lins = torch.repeat_interleave(range_vec), prop_x_n_nodes)
+            
             for e_type_i in range(self.num_relations):
-                film_xs.append(film_x)
-                propogate_xs.append(prop_x)
-                type_list_films.append(
-                    torch.full((film_x.size(0), ), e_type_i, dtype=torch.long))
-                type_list_lins.append(
-                    torch.full((prop_x.size(0), ), e_type_i, dtype=torch.long))
                 mask = edge_type == e_type_i
                 edge_index[0, mask] += prop_count
                 edge_index[1, mask] += film_count
-                prop_count += prop_x.size(0)
-                film_count += film_x.size(0)
+                prop_count += prop_x_n_nodes
+                film_count += film_x_n_nodes
             # cat and apply linears
             if self.nn_is_none:
                 beta, gamma = self.films(torch.cat(film_xs),
