@@ -11,7 +11,7 @@ class PrefetchLoader:
     :class:`torch.utils.data.DataLoader` from host memory to device memory.
 
     Args:
-        loader (torch.utils.DataLoader): A data loader object.
+        loader (torch.utils.data.DataLoader): The data loader.
         device (torch.device, optional): The device to load the data to.
             (default: :obj:`None`)
     """
