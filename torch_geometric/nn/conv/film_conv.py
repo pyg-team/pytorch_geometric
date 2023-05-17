@@ -125,6 +125,7 @@ class FiLMConv(MessagePassing):
         out = gamma * self.lin_skip(x[1]) + beta
         if self.act is not None:
             out = self.act(out)
+
         # propagate_type: (x: Tensor, beta: Tensor, gamma: Tensor)
         if self.num_relations <= 1:
             beta, gamma = self.films[0](x[1]).split(self.out_channels, dim=-1)
@@ -141,7 +142,6 @@ class FiLMConv(MessagePassing):
                         edge_index, mask, layout='coo')
                     out = out + self.propagate(adj_t, x=lin(x[0]), beta=beta,
                                                gamma=gamma, size=None)
-
                 else:
                     assert edge_type is not None
                     mask = edge_type == i
