@@ -144,9 +144,9 @@ class FiLMConv(MessagePassing):
                 else:
                     assert edge_type is not None
                     mask = edge_type == i
-                    out = out + self.propagate(edge_index[:, mask], x=lin(x[0]),
-                                               beta=beta, gamma=gamma,
-                                               size=None)
+                    out = out + self.propagate(edge_index[:, mask], x=lin(
+                        x[0]), beta=beta, gamma=gamma, size=None)
+
         return out
 
     def message(self, x_j: Tensor, beta_i: Tensor, gamma_i: Tensor) -> Tensor:
