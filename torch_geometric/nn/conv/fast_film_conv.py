@@ -12,8 +12,6 @@ from torch_geometric.typing import (
     Adj,
     OptTensor,
     PairTensor,
-    SparseTensor,
-    torch_sparse,
 )
 from torch_geometric.utils import index_sort, is_sparse, to_edge_index
 from torch_geometric.utils.sparse import index2ptr
@@ -21,8 +19,10 @@ from torch_geometric.utils.sparse import index2ptr
 
 class FastFiLMConv(MessagePassing):
     r"""See :class:`FiLMConv`.
-    Main difference is parrallelizing linear layers at the cost of more memory usage.
-    edge_index should be sorted by edge_type for optimal performance"""
+    Main difference is parrallelizing linear layers
+    at the cost of more memory usage.
+    For optimal performance,
+    edge_index should be sorted by edge_type."""
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -104,17 +104,16 @@ class FastFiLMConv(MessagePassing):
             # (TODO) add support for sparse tensors without conversion
             if is_sparse(edge_index):
                 print(
-                    "Warning: sparse edge representations are not supported for FastFiLMConv yet.\
+                    "Warning: sparse edge representations are not supported \
+                       for FastFiLMConv yet.\
                        This incurs an additional conversion each forward pass."
                 )
                 edge_index = to_edge_index(edge_index)[0]
-            film_xs, propogate_xs, type_list_films, type_list_lins = [], [], [], []
-            prop_count, film_count = 0, 0
             film_x = x[1]
             prop_x = x[0]
             # duplicate xs and increment edge indices accordingly
             propogate_x = prop_x.repeat((self.num_relations, 1))
-            range_vec = torch.arange(self.num_relations)
+            range_vec = torch.arange(self.num_relations).to(edge_index.device)
             prop_x_n_nodes = prop_x.size(0)
             film_x_n_nodes = film_x.size(0)
             type_vec_lins = torch.repeat_interleave(range_vec, prop_x_n_nodes)
@@ -133,12 +132,6 @@ class FastFiLMConv(MessagePassing):
                 range_vec, num_ea_e_type)
             edge_index[1, :] += film_x_n_nodes * torch.repeat_interleave(
                 range_vec, num_ea_e_type)
-            #             for e_type_i in range(self.num_relations):
-            #                 mask = edge_type == e_type_i
-            #                 edge_index[0, mask] += prop_count
-            #                 edge_index[1, mask] += film_count
-            #                 prop_count += prop_x_n_nodes
-            #                 film_count += film_x_n_nodes
             # apply linears
             if self.nn_is_none:
                 beta, gamma = self.films(film_x, type_vec_films).split(
