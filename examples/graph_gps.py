@@ -1,7 +1,8 @@
 import os.path as osp
 
 import torch
-from torch.nn import Embedding, Linear, ModuleList, ReLU, Sequential, BatchNorm1d
+from torch.nn import Embedding, Linear, ModuleList, ReLU, Sequential,\
+    BatchNorm1d
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 import torch_geometric.transforms as T
@@ -61,10 +62,11 @@ class GPS(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GPS(channels=64, pe_dim=8, num_layers=10).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
-scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20, min_lr=0.00001)
+scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20,
+                              min_lr=0.00001)
 
 
-def train(epoch):
+def train():
     model.train()
 
     total_loss = 0
