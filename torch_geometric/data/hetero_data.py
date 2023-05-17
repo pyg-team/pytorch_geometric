@@ -828,10 +828,20 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         def _consistent_size(stores: List[BaseStorage]) -> List[str]:
             sizes_dict = get_sizes(stores)
-            return [
-                key for key, sizes in sizes_dict.items()
-                if len(sizes) == len(stores)
-            ]
+            keys = []
+            for key, sizes in sizes_dict.items():
+                # The attribute needs to exist in all types:
+                if len(sizes) != len(stores):
+                    continue
+                # The attributes needs to have the same number of dimensions:
+                lengths = set([len(size) for size in sizes])
+                if len(lengths) != 1:
+                    continue
+                # The attributes needs to have the same size in all dimensions:
+                if len(sizes[0]) != 1 and len(set(sizes)) != 1:
+                    continue
+                keys.append(key)
+            return keys
 
         if dummy_values:
             self = copy.copy(self)
