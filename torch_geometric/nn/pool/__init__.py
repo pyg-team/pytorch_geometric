@@ -1,6 +1,7 @@
 from typing import Optional
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.typing import OptTensor
 
 from .asap import ASAPooling
@@ -21,8 +22,13 @@ except ImportError:
     torch_cluster = None
 
 
-def fps(x: Tensor, batch: OptTensor = None, ratio: float = 0.5,
-        random_start: bool = True, batch_size: Optional[int] = None) -> Tensor:
+def fps(
+    x: Tensor,
+    batch: OptTensor = None,
+    ratio: float = 0.5,
+    random_start: bool = True,
+    batch_size: Optional[int] = None,
+) -> Tensor:
     r"""A sampling algorithm from the `"PointNet++: Deep Hierarchical Feature
     Learning on Point Sets in a Metric Space"
     <https://arxiv.org/abs/1706.02413>`_ paper, which iteratively samples the
@@ -51,12 +57,21 @@ def fps(x: Tensor, batch: OptTensor = None, ratio: float = 0.5,
 
     :rtype: :class:`torch.Tensor`
     """
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.fps(x, batch, ratio, random_start)
     return torch_cluster.fps(x, batch, ratio, random_start, batch_size)
 
 
-def knn(x: Tensor, y: Tensor, k: int, batch_x: OptTensor = None,
-        batch_y: OptTensor = None, cosine: bool = False, num_workers: int = 1,
-        batch_size: Optional[int] = None) -> Tensor:
+def knn(
+    x: Tensor,
+    y: Tensor,
+    k: int,
+    batch_x: OptTensor = None,
+    batch_y: OptTensor = None,
+    cosine: bool = False,
+    num_workers: int = 1,
+    batch_size: Optional[int] = None,
+) -> Tensor:
     r"""Finds for each element in :obj:`y` the :obj:`k` nearest points in
     :obj:`x`.
 
@@ -94,14 +109,23 @@ def knn(x: Tensor, y: Tensor, k: int, batch_x: OptTensor = None,
 
     :rtype: :class:`torch.Tensor`
     """
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine,
+                                 num_workers)
     return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers,
                              batch_size)
 
 
-def knn_graph(x: Tensor, k: int, batch: OptTensor = None, loop: bool = False,
-              flow: str = 'source_to_target', cosine: bool = False,
-              num_workers: int = 1,
-              batch_size: Optional[int] = None) -> Tensor:
+def knn_graph(
+    x: Tensor,
+    k: int,
+    batch: OptTensor = None,
+    loop: bool = False,
+    flow: str = 'source_to_target',
+    cosine: bool = False,
+    num_workers: int = 1,
+    batch_size: Optional[int] = None,
+) -> Tensor:
     r"""Computes graph edges to the nearest :obj:`k` points.
 
     .. code-block:: python
@@ -136,6 +160,9 @@ def knn_graph(x: Tensor, k: int, batch: OptTensor = None, loop: bool = False,
 
     :rtype: :class:`torch.Tensor`
     """
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
+                                       num_workers)
     return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
                                    num_workers, batch_size)
 
@@ -187,14 +214,23 @@ def radius(
 
     :rtype: :class:`torch.Tensor`
     """
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.radius(x, y, r, batch_x, batch_y,
+                                    max_num_neighbors, num_workers)
     return torch_cluster.radius(x, y, r, batch_x, batch_y, max_num_neighbors,
                                 num_workers, batch_size)
 
 
-def radius_graph(x: Tensor, r: float, batch: OptTensor = None,
-                 loop: bool = False, max_num_neighbors: int = 32,
-                 flow: str = 'source_to_target', num_workers: int = 1,
-                 batch_size: Optional[int] = None) -> Tensor:
+def radius_graph(
+    x: Tensor,
+    r: float,
+    batch: OptTensor = None,
+    loop: bool = False,
+    max_num_neighbors: int = 32,
+    flow: str = 'source_to_target',
+    num_workers: int = 1,
+    batch_size: Optional[int] = None,
+) -> Tensor:
     r"""Computes graph edges to all points within a given distance.
 
     .. code-block:: python
@@ -228,12 +264,19 @@ def radius_graph(x: Tensor, r: float, batch: OptTensor = None,
 
     :rtype: :class:`torch.Tensor`
     """
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
+                                          flow, num_workers)
     return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
                                       flow, num_workers, batch_size)
 
 
-def nearest(x: Tensor, y: Tensor, batch_x: OptTensor = None,
-            batch_y: OptTensor = None) -> Tensor:
+def nearest(
+    x: Tensor,
+    y: Tensor,
+    batch_x: OptTensor = None,
+    batch_y: OptTensor = None,
+) -> Tensor:
     r"""Finds for each element in :obj:`y` the :obj:`k` nearest point in
     :obj:`x`.
 
