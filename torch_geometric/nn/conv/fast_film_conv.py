@@ -133,7 +133,7 @@ class FastFiLMConv(MessagePassing):
                 beta, gamma = torch.cat([
                     self.films[i](film_x) for i, film_x in enumerate(film_xs)
                 ]).split(self.out_channels, dim=-1)
-            propogate_x = self.lins(prop_x, type_vec_lins)
+            propogate_x = self.lins(propogate_x, type_vec_lins)
 
             # propogate
             out += sum(
