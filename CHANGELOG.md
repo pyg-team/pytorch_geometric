@@ -41,6 +41,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Added an optional `max_num_elements` argument to `SortAggregation` ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
+- Added the option to pass `fill_value` as a `torch.tensor` to `utils.to_dense_batch` ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
 - Fixed a bug in which inputs where modified in-place in `to_hetero_with_bases` ([#7363](https://github.com/pyg-team/pytorch_geometric/pull/7363))
 - Do not load `node_default` and `edge_default` attributes in `from_networkx` ([#7348](https://github.com/pyg-team/pytorch_geometric/pull/7348))
 - Updated examples to use `NeighborLoader` instead of `NeighborSampler` ([#7152](https://github.com/pyg-team/pytorch_geometric/pull/7152))
