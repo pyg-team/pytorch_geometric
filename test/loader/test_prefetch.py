@@ -1,7 +1,6 @@
 import torch
 
-from torch_geometric.loader import NeighborLoader
-from torch_geometric.loader.prefetch import PrefetchLoader
+from torch_geometric.loader import NeighborLoader, PrefetchLoader
 from torch_geometric.nn import GraphSAGE
 from torch_geometric.testing import withCUDA
 
@@ -26,7 +25,7 @@ if __name__ == '__main__':
     from tqdm import tqdm
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--num_workers', type=int, default=8)
+    parser.add_argument('--num_workers', type=int, default=0)
     args = parser.parse_args()
 
     data = PygNodePropPredDataset('ogbn-products', root='/tmp/ogb')[0]
@@ -44,6 +43,7 @@ if __name__ == '__main__':
         num_neighbors=[10, 10],
         num_workers=args.num_workers,
         filter_per_worker=True,
+        persistent_workers=args.num_workers > 0,
     )
 
     print('Forward pass without prefetching...')
