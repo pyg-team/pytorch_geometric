@@ -109,8 +109,9 @@ class LightGCN(torch.nn.Module):
         edge_index: Adj,
         edge_label_index: OptTensor = None,
         edge_weight: OptTensor = None,
-    ) -> Tensor:
-        r"""Computes rankings for pairs of nodes.
+    ) -> tuple[Tensor, Tensor]:
+        r"""Computes rankings for pairs of nodes,
+        also return involved nodes indices.
 
         Args:
             edge_index (torch.Tensor or SparseTensor): Edge tensor specifying
@@ -132,7 +133,11 @@ class LightGCN(torch.nn.Module):
 
         out_src = out[edge_label_index[0]]
         out_dst = out[edge_label_index[1]]
-        return (out_src * out_dst).sum(dim=-1)
+
+        src, _ = edge_label_index[0].chunk(2)
+        nodes_indices = torch.cat([src, edge_label_index[1]])
+
+        return (out_src * out_dst).sum(dim=-1), nodes_indices
 
     def predict_link(
         self,
@@ -147,7 +152,7 @@ class LightGCN(torch.nn.Module):
             prob (bool, optional): Whether probabilities should be returned.
                 (default: :obj:`False`)
         """
-        pred = self(edge_index, edge_label_index, edge_weight).sigmoid()
+        pred = self(edge_index, edge_label_index, edge_weight)[0].sigmoid()
         return pred if prob else pred.round()
 
     def recommend(
@@ -202,7 +207,8 @@ class LightGCN(torch.nn.Module):
         return loss_fn(pred, edge_label.to(pred.dtype))
 
     def recommendation_loss(self, pos_edge_rank: Tensor, neg_edge_rank: Tensor,
-                            lambda_reg: float = 1e-4, **kwargs) -> Tensor:
+                            nodes_indices: Tensor, lambda_reg: float = 1e-4,
+                            **kwargs) -> Tensor:
         r"""Computes the model loss for a ranking objective via the Bayesian
         Personalized Ranking (BPR) loss.
 
@@ -215,6 +221,8 @@ class LightGCN(torch.nn.Module):
         Args:
             pos_edge_rank (torch.Tensor): Positive edge rankings.
             neg_edge_rank (torch.Tensor): Negative edge rankings.
+            nodes_indices (torch.Tensor): The indices of all nodes involved
+            in the Positive and Negative edges.
             lambda_reg (int, optional): The :math:`L_2` regularization strength
                 of the Bayesian Personalized Ranking (BPR) loss.
                 (default: :obj:`1e-4`)
@@ -223,7 +231,8 @@ class LightGCN(torch.nn.Module):
                 function.
         """
         loss_fn = BPRLoss(lambda_reg, **kwargs)
-        return loss_fn(pos_edge_rank, neg_edge_rank, self.embedding.weight)
+        return loss_fn(pos_edge_rank, neg_edge_rank,
+                       self.embedding.weight[nodes_indices])
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.num_nodes}, '
@@ -282,4 +291,4 @@ class BPRLoss(_Loss):
         if self.lambda_reg != 0:
             regularization = self.lambda_reg * parameters.norm(p=2).pow(2)
 
-        return (-log_prob + regularization) / n_pairs
+        return -log_prob + regularization / n_pairs
