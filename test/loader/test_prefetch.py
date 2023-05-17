@@ -1,24 +1,22 @@
 import torch
 
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.loader.prefetch import GPUPrefetcher
+from torch_geometric.loader.prefetch import PrefetchLoader
 from torch_geometric.nn import GraphSAGE
-from torch_geometric.testing import onlyCUDA
+from torch_geometric.testing import withCUDA
 
 
-@onlyCUDA
-def test_gpu_prefetcher():
+@withCUDA
+def test_prefetch_loader(device):
     data = [torch.randn(5, 5) for _ in range(10)]
 
-    loader = GPUPrefetcher(data, device='cuda')
-    assert str(loader).startswith('GPUPrefetcher')
+    loader = PrefetchLoader(data, device=device)
+    assert str(loader).startswith('PrefetchLoader')
     assert len(loader) == 10
 
     for i, batch in enumerate(loader):
-        assert batch.is_cuda
+        assert batch.device == device
         assert torch.equal(batch.cpu(), data[i])
-        assert loader.idx > 0
-    assert loader.idx == 0
 
 
 if __name__ == '__main__':
@@ -55,6 +53,6 @@ if __name__ == '__main__':
             model(batch.x, batch.edge_index)
 
     print('Forward pass with prefetching...')
-    for batch in tqdm(GPUPrefetcher(loader, device='cuda')):
+    for batch in tqdm(PrefetchLoader(loader)):
         with torch.no_grad():
             model(batch.x, batch.edge_index)
