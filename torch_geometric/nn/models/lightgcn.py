@@ -7,7 +7,7 @@ from torch.nn import Embedding, ModuleList
 from torch.nn.modules.loss import _Loss
 
 from torch_geometric.nn.conv import LGConv
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 from torch_geometric.utils import is_sparse, to_edge_index
 
 
@@ -109,7 +109,7 @@ class LightGCN(torch.nn.Module):
         edge_index: Adj,
         edge_label_index: OptTensor = None,
         edge_weight: OptTensor = None,
-    ) -> tuple[Tensor, Tensor]:
+    ) -> PairTensor:
         r"""Computes rankings for pairs of nodes,
         also return involved nodes indices.
 
