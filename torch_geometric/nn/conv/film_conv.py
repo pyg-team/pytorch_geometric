@@ -144,8 +144,7 @@ class FiLMConv(MessagePassing):
                 else:
                     assert edge_type is not None
                     mask = edge_type == i
-                    lin_x = lin(x[0])
-                    out = out + self.propagate(edge_index[:, mask], x=lin_x,
+                    out = out + self.propagate(edge_index[:, mask], x=lin(x[0]),
                                                beta=beta, gamma=gamma,
                                                size=None)
         return out
