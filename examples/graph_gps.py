@@ -48,7 +48,7 @@ class GPS(torch.nn.Module):
 
         self.mlp = Sequential(Linear(channels, channels // 2), ReLU(),
                               Linear(channels // 2, channels // 4), ReLU(),
-                              Linear(channels // 4, 1))
+                              Linear(channels // 4, 1), )
 
     def forward(self, x, pe, edge_index, edge_attr, batch):
         x_pe = self.pe_norm(pe)
