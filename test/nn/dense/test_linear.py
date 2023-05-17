@@ -126,7 +126,7 @@ def test_hetero_linear(device):
 
     jit = torch.jit.script(lin)
     assert torch.allclose(jit(x, type_vec), out,
-                          atol=1e-3 if 'cuda' in device else 1e-6)
+                          atol=1e-3 if 'cuda' in str(device) else 1e-6)
 
 
 @withCUDA
