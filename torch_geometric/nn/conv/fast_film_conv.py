@@ -31,7 +31,7 @@ class FastFiLMConv(MessagePassing):
         nn: Optional[Callable] = None,
         act: Optional[Callable] = ReLU(),
         aggr: str = 'mean',
-        is_sorted: bool = True,
+        is_sorted: bool = False,
         **kwargs,
     ):
         super().__init__(aggr=aggr, **kwargs)
