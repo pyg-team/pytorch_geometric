@@ -116,8 +116,8 @@ class FastFiLMConv(MessagePassing):
             type_vec_lins = torch.repeat_interleave(range_vec, prop_x_n_nodes)
             if not self.nn_is_none:
                 film_x = film_x.repeat(self.num_relations)
-                type_vec_films = torch.repeat_interleave(range_vec, film_x_n_nodes)
-
+                type_vec_films = torch.repeat_interleave(
+                    range_vec, film_x_n_nodes)
 
             for e_type_i in range(self.num_relations):
                 mask = edge_type == e_type_i
@@ -127,9 +127,8 @@ class FastFiLMConv(MessagePassing):
                 film_count += film_x_n_nodes
             # cat and apply linears
             if self.nn_is_none:
-                beta, gamma = self.films(film_x,
-                                         type_vec_films).split(
-                                             self.out_channels, dim=-1)
+                beta, gamma = self.films(film_x, type_vec_films).split(
+                    self.out_channels, dim=-1)
             else:
                 beta, gamma = torch.cat([
                     self.films[i](film_x) for i, film_x in enumerate(film_xs)
