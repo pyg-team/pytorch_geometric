@@ -109,8 +109,8 @@ class FastFiLMConv(MessagePassing):
             film_x = x[1]
             prop_x = x[0]
             # duplicate xs and increment edge indices accordingly
-            propogate_x = prop_x.repeat(self.num_relations)
-            range_vec = torch.arange(self.num_relations)
+            propogate_x = prop_x.repeat((self.num_relations, 1))
+            range_vec = torch.arange((self.num_relations, 1))
             prop_x_n_nodes = prop_x.size(0)
             film_x_n_nodes = film_x.size(0)
             type_vec_lins = torch.repeat_interleave(range_vec, prop_x_n_nodes)
