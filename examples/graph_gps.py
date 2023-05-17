@@ -1,7 +1,15 @@
 import os.path as osp
 
 import torch
-from torch.nn import Embedding, Linear, ModuleList, ReLU, Sequential
+from torch.nn import (
+    BatchNorm1d,
+    Embedding,
+    Linear,
+    ModuleList,
+    ReLU,
+    Sequential,
+)
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ZINC
@@ -20,11 +28,12 @@ test_loader = DataLoader(test_dataset, batch_size=64)
 
 
 class GPS(torch.nn.Module):
-    def __init__(self, channels: int, num_layers: int):
+    def __init__(self, channels: int, pe_dim: int, num_layers: int):
         super().__init__()
 
-        self.node_emb = Embedding(21, channels)
-        self.pe_lin = Linear(20, channels)
+        self.node_emb = Embedding(28, channels - pe_dim)
+        self.pe_lin = Linear(20, pe_dim)
+        self.pe_norm = BatchNorm1d(20)
         self.edge_emb = Embedding(4, channels)
 
         self.convs = ModuleList()
@@ -37,24 +46,33 @@ class GPS(torch.nn.Module):
             conv = GPSConv(channels, GINEConv(nn), heads=4, attn_dropout=0.5)
             self.convs.append(conv)
 
-        self.lin = Linear(channels, 1)
+        self.mlp = Sequential(
+            Linear(channels, channels // 2),
+            ReLU(),
+            Linear(channels // 2, channels // 4),
+            ReLU(),
+            Linear(channels // 4, 1),
+        )
 
     def forward(self, x, pe, edge_index, edge_attr, batch):
-        x = self.node_emb(x.squeeze(-1)) + self.pe_lin(pe)
+        x_pe = self.pe_norm(pe)
+        x = torch.cat((self.node_emb(x.squeeze(-1)), self.pe_lin(x_pe)), 1)
         edge_attr = self.edge_emb(edge_attr)
 
         for conv in self.convs:
             x = conv(x, edge_index, batch, edge_attr=edge_attr)
         x = global_add_pool(x, batch)
-        return self.lin(x)
+        return self.mlp(x)
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = GPS(channels=64, num_layers=10).to(device)
+model = GPS(channels=64, pe_dim=8, num_layers=10).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
+scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20,
+                              min_lr=0.00001)
 
 
-def train(epoch):
+def train():
     model.train()
 
     total_loss = 0
@@ -87,5 +105,6 @@ for epoch in range(1, 101):
     loss = train(epoch)
     val_mae = test(val_loader)
     test_mae = test(test_loader)
+    scheduler.step(val_mae)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_mae:.4f}, '
           f'Test: {test_mae:.4f}')
