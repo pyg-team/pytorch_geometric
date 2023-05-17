@@ -192,6 +192,7 @@ def radius(
         assign_index = radius(x, y, 1.5, batch_x, batch_y)
         batch_size (int, optional): The number of examples :math:`B`.
             Automatically calculated if not given. (default: :obj:`None`)
+
     Args:
         x (torch.Tensor): Node feature matrix
             :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
