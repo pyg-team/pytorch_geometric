@@ -489,6 +489,22 @@ def test_to_homogeneous_and_vice_versa():
     assert out['author'].num_nodes == 200
 
 
+def test_to_homogeneous_padding():
+    data = HeteroData()
+    data['paper'].x = torch.randn(100, 128)
+    data['author'].x = torch.randn(50, 64)
+
+    out = data.to_homogeneous()
+    assert len(out) == 2
+    assert out.node_type.size() == (150, )
+    assert out.node_type[:100].abs().sum() == 0
+    assert out.node_type[100:].sub(1).abs().sum() == 0
+    assert out.x.size() == (150, 128)
+    assert torch.equal(out.x[:100], data['paper'].x)
+    assert torch.equal(out.x[100:, :64], data['author'].x)
+    assert out.x[100:, 64:].abs().sum() == 0
+
+
 def test_hetero_data_to_canonical():
     data = HeteroData()
     assert isinstance(data['user', 'product'], EdgeStorage)
