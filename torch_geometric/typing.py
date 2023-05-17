@@ -36,6 +36,7 @@ except (ImportError, OSError) as e:
 try:
     import torch_cluster  # noqa
     WITH_TORCH_CLUSTER = True
+    WITH_TORCH_CLUSTER_BATCH_SIZE = 'batch_size' in torch_cluster.knn.__doc__
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
         warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
