@@ -828,10 +828,20 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
 
         def _consistent_size(stores: List[BaseStorage]) -> List[str]:
             sizes_dict = get_sizes(stores)
-            return [
-                key for key, sizes in sizes_dict.items()
-                if len(sizes) == len(stores) and len(set(sizes)) == 1
-            ]
+            keys = []
+            for key, sizes in sizes_dict.items():
+                # The attribute needs to exist in all types:
+                if len(sizes) != len(stores):
+                    continue
+                # The attributes needs to have the same number of dimensions:
+                lengths = set([len(size) for size in sizes])
+                if len(lengths) != 1:
+                    continue
+                # The attributes needs to have the same size in all dimensions:
+                if len(sizes[0]) != 1 and len(set(sizes)) != 1:
+                    continue
+                keys.append(key)
+            return keys
 
         if dummy_values:
             self = copy.copy(self)
@@ -855,6 +865,17 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 continue
             values = [store[key] for store in self.node_stores]
             dim = self.__cat_dim__(key, values[0], self.node_stores[0])
+            dim = values[0].dim() + dim if dim < 0 else dim
+            # For two-dimensional features, we allow arbitrary shapes and pad
+            # them with zeros if necessary in case their size doesn't match:
+            if values[0].dim() == 2 and dim == 0:
+                _max = max([value.size(-1) for value in values])
+                for i, v in enumerate(values):
+                    if v.size(-1) < _max:
+                        values[i] = torch.cat(
+                            [v, v.new_zeros(v.size(0), _max - v.size(-1))],
+                            dim=-1,
+                        )
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
 
