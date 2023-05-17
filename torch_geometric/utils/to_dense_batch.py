@@ -6,10 +6,25 @@ from torch import Tensor
 from torch_geometric.utils import scatter
 
 
-def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
-                   fill_value: Union[float, Tensor] = 0.,
-                   max_num_nodes: Optional[int] = None,
-                   batch_size: Optional[int] = None) -> Tuple[Tensor, Tensor]:
+@torch.jit._overload
+def to_dense_batch(x, batch, fill_value, max_num_nodes, batch_size):  # noqa
+    # type: (Tensor, Optional[Tensor], Optional[float], Optional[int], Optional[int]) -> Tuple[Tensor, Tensor]  # noqa
+    pass
+
+
+@torch.jit._overload
+def to_dense_batch(x, batch, fill_value, max_num_nodes, batch_size):  # noqa
+    # type: (Tensor, Optional[Tensor], Tensor, Optional[int], Optional[int]) -> Tuple[Tensor, Tensor]  # noqa
+    pass
+
+
+def to_dense_batch(  # noqa
+    x: Tensor,
+    batch: Optional[Tensor] = None,
+    fill_value: Union[Optional[float], Tensor] = None,
+    max_num_nodes: Optional[int] = None,
+    batch_size: Optional[int] = None,
+) -> Tuple[Tensor, Tensor]:
     r"""Given a sparse batch of node features
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}` (with
     :math:`N_i` indicating the number of nodes in graph :math:`i`), creates a
@@ -26,8 +41,8 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
         batch (LongTensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
             node to a specific example. Must be ordered. (default: :obj:`None`)
-        fill_value (float, optional): The value for invalid entries in the
-            resulting dense output tensor. (default: :obj:`0`)
+        fill_value (float or torch.Tensor, optional): The value for invalid
+            entries in the resulting dense output tensor. (default: :obj:`0`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
         batch_size (int, optional) The batch size. (default: :obj:`None`)
@@ -86,6 +101,8 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
                 [ True, False, False, False],
                 [ True,  True,  True, False]])
     """
+    fill_value = 0.0 if fill_value is None else fill_value
+
     if batch is None and max_num_nodes is None:
         mask = torch.ones(1, x.size(0), dtype=torch.bool, device=x.device)
         return x.unsqueeze(0), mask
@@ -113,18 +130,8 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
         x, idx = x[mask], idx[mask]
 
     size = [batch_size * max_num_nodes] + list(x.size())[1:]
+    out = x.new_full(size, fill_value)
 
-    if isinstance(fill_value, torch.Tensor):
-        if fill_value.dim() == 0 or fill_value.numel() == 1:
-            out = fill_value.float().repeat(*size)
-        else:
-            raise ValueError(
-                "Argument `fill value` must be a scalar or a single element "
-                "tensor.")
-    else:
-        out = x.new_full(size, fill_value)
-
-    print(out)
     out[idx] = x
     out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 

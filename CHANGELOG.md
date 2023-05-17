@@ -40,6 +40,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Added an optional `max_num_elements` argument to `SortAggregation` ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
+- Added the option to pass `fill_value` as a `torch.tensor` to `utils.to_dense_batch` ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
 - Fixed a bug in which inputs where modified in-place in `to_hetero_with_bases` ([#7363](https://github.com/pyg-team/pytorch_geometric/pull/7363))
 - Do not load `node_default` and `edge_default` attributes in `from_networkx` ([#7348](https://github.com/pyg-team/pytorch_geometric/pull/7348))
 - Updated examples to use `NeighborLoader` instead of `NeighborSampler` ([#7152](https://github.com/pyg-team/pytorch_geometric/pull/7152))
@@ -60,9 +62,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Accelerated sparse tensor conversion routines ([#7042](https://github.com/pyg-team/pytorch_geometric/pull/7042), [#7043](https://github.com/pyg-team/pytorch_geometric/pull/7043))
 - Change `torch_sparse.SparseTensor` logic to utilize `torch.sparse_csr` instead ([#7041](https://github.com/pyg-team/pytorch_geometric/pull/7041))
 - Added an optional `batch_size` and `max_num_nodes` arguments to `MemPooling` layer ([#7239](https://github.com/pyg-team/pytorch_geometric/pull/7239))
-- Added an optional `max_num_elements` argument to `SortAggregation` layer ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
-- Added the possibility to pass the `fill_value` argument as `torch.tensor` to the `utils.to_dense_batch` function. ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
-- Remove converting `fill_value` to Python float in SortAggregation forward. Pass `fill_value` as `torch.tensor` to the `utils.to_dense_batch` function. ([#7367](https://github.com/pyg-team/pytorch_geometric/pull/7367))
+
 ### Removed
 
 - Replaced `FastHGTConv` with `HGTConv` ([#7117](https://github.com/pyg-team/pytorch_geometric/pull/7117))

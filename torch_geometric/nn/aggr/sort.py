@@ -20,10 +20,15 @@ class SortAggregation(Aggregation):
         super().__init__()
         self.k = k
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2,
-                max_num_elements: Optional[int] = None) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        max_num_elements: Optional[int] = None,
+    ) -> Tensor:
 
         fill_value = x.min() - 1
         batch_x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
