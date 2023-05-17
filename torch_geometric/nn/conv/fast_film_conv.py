@@ -15,12 +15,14 @@ from torch_geometric.typing import (
     SparseTensor,
     torch_sparse,
 )
-from torch_geometric.utils import is_sparse, to_edge_index
+from torch_geometric.utils import is_sparse, to_edge_index, index_sort
+from torch_geometric.utils.sparse import index2ptr 
 
 
 class FastFiLMConv(MessagePassing):
     r"""See :class:`FiLMConv`.
-    Main difference is parrallelizing linear layers at the cost of more memory usage """
+    Main difference is parrallelizing linear layers at the cost of more memory usage.
+    edge_index should be sorted by edge_type for optimal performance"""
     def __init__(
             self,
             in_channels: Union[int, Tuple[int, int]],
@@ -29,6 +31,7 @@ class FastFiLMConv(MessagePassing):
             nn: Optional[Callable] = None,
             act: Optional[Callable] = ReLU(),
             aggr: str = 'mean',
+            is_sorted: bool = True,
             **kwargs,
     ):
         super().__init__(aggr=aggr, **kwargs)
@@ -38,6 +41,7 @@ class FastFiLMConv(MessagePassing):
         self.num_relations = max(num_relations, 1)
         self.act = act
         self.nn_is_none = nn is None
+        self.is_sorted = is_sorted
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
@@ -118,14 +122,22 @@ class FastFiLMConv(MessagePassing):
                 film_x = film_x.repeat((self.num_relations, 1))
                 type_vec_films = torch.repeat_interleave(
                     range_vec, film_x_n_nodes)
-
-            for e_type_i in range(self.num_relations):
-                mask = edge_type == e_type_i
-                edge_index[0, mask] += prop_count
-                edge_index[1, mask] += film_count
-                prop_count += prop_x_n_nodes
-                film_count += film_x_n_nodes
-            # cat and apply linears
+            if not self.is_sorted:
+                if (edge_type[1:] < edge_type[:-1]).any():
+                    edge_type, perm = index_sort(
+                        edge_type, max_value=self.num_relations)
+                    edge_index = edge_index[:, perm]
+            edge_type_ptr = index2ptr(edge_type, self.num_relations)
+            num_ea_e_type = edge_type_ptr[1:] - edge_type_ptr[:-1]
+            edge_index[0, :] += prop_x_n_nodes * torch.repeat_interleave(range_vec, num_ea_e_type)
+            edge_index[1, :] += film_x_n_nodes * torch.repeat_interleave(range_vec, num_ea_e_type)
+#             for e_type_i in range(self.num_relations):
+#                 mask = edge_type == e_type_i
+#                 edge_index[0, mask] += prop_count
+#                 edge_index[1, mask] += film_count
+#                 prop_count += prop_x_n_nodes
+#                 film_count += film_x_n_nodes
+            # apply linears
             if self.nn_is_none:
                 beta, gamma = self.films(film_x, type_vec_films).split(
                     self.out_channels, dim=-1)
