@@ -131,7 +131,6 @@ def to_dense_batch(  # noqa
 
     size = [batch_size * max_num_nodes] + list(x.size())[1:]
     out = x.new_full(size, fill_value)
-
     out[idx] = x
     out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 

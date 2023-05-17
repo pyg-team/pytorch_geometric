@@ -161,7 +161,7 @@ class Aggregation(torch.nn.Module):
         ptr: Optional[Tensor] = None,
         dim_size: Optional[int] = None,
         dim: int = -2,
-        fill_value: Union[float, Tensor] = 0.,
+        fill_value: Union[Optional[float], Tensor] = None,
         max_num_elements: Optional[int] = None,
     ) -> Tuple[Tensor, Tensor]:
 
