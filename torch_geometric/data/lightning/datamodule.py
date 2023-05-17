@@ -13,6 +13,7 @@ from torch_geometric.data import (
     HeteroData,
 )
 from torch_geometric.loader import DataLoader, LinkLoader, NodeLoader
+from torch_geometric.loader.prefetch import GPUPrefetcher
 from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes, OptTensor
 
@@ -443,7 +444,7 @@ class LightningNodeData(LightningData):
 
         assert node_sampler is not None
 
-        return NodeLoader(
+        loader = NodeLoader(
             self.data,
             node_sampler=node_sampler,
             input_nodes=input_nodes,
@@ -451,6 +452,9 @@ class LightningNodeData(LightningData):
             input_id=input_id,
             **kwargs,
         )
+        print("GPU-PREFETCHING YEAH")
+        loader = GPUPrefetcher(loader, device='cuda')
+        return loader
 
     def train_dataloader(self) -> DataLoader:
         return self.dataloader(
