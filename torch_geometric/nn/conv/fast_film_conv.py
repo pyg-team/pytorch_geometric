@@ -116,7 +116,7 @@ class FastFiLMConv(MessagePassing):
             range_vec = torch.arange(len(self.num_relations)
             type_vec_films = torch.repeat_interleave(range_vec), film_x_n_nodes)
             type_vec_lins = torch.repeat_interleave(range_vec), prop_x_n_nodes)
-            
+
             for e_type_i in range(self.num_relations):
                 mask = edge_type == e_type_i
                 edge_index[0, mask] += prop_count
