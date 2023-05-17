@@ -175,7 +175,7 @@ class HeteroBatchNorm(torch.nn.Module):
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
         if not self.training and self.track_running_stats:
-            mean, var = self.running_mean, self.running_Var
+            mean, var = self.running_mean, self.running_var
         else:
             with torch.no_grad():
                 mean, var = self.mean_var(x, type_vec, dim_size=self.num_types)

@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.nn import Node2Vec
@@ -5,12 +6,21 @@ from torch_geometric.testing import is_full_test, withCUDA, withPackage
 
 
 @withCUDA
+@withPackage('pyg_lib')
 @withPackage('torch_cluster')
-def test_node2vec(device):
+@pytest.mark.parametrize('p', [1.0])
+@pytest.mark.parametrize('q', [1.0, 0.5])
+def test_node2vec(device, p, q):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
-    model = Node2Vec(edge_index, embedding_dim=16, walk_length=2,
-                     context_size=2).to(device)
+    model = Node2Vec(
+        edge_index,
+        embedding_dim=16,
+        walk_length=2,
+        context_size=2,
+        p=p,
+        q=q,
+    ).to(device)
     assert str(model) == 'Node2Vec(3, 16)'
 
     assert model(torch.arange(3, device=device)).size() == (3, 16)

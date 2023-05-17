@@ -1,8 +1,14 @@
 import os.path as osp
 
 import torch
-from torch.nn import Embedding, Linear, ModuleList, ReLU, Sequential,\
-    BatchNorm1d
+from torch.nn import (
+    BatchNorm1d,
+    Embedding,
+    Linear,
+    ModuleList,
+    ReLU,
+    Sequential,
+)
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 import torch_geometric.transforms as T
@@ -40,13 +46,9 @@ class GPS(torch.nn.Module):
             conv = GPSConv(channels, GINEConv(nn), heads=4, attn_dropout=0.5)
             self.convs.append(conv)
 
-        self.mlp = Sequential(
-            Linear(channels, channels // 2),
-            ReLU(),
-            Linear(channels // 2, channels // 4),
-            ReLU(),
-            Linear(channels // 4, 1)
-        )
+        self.mlp = Sequential(Linear(channels, channels // 2), ReLU(),
+                              Linear(channels // 2, channels // 4), ReLU(),
+                              Linear(channels // 4, 1))
 
     def forward(self, x, pe, edge_index, edge_attr, batch):
         x_pe = self.pe_norm(pe)
