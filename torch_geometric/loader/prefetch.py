@@ -44,8 +44,7 @@ class GPUPrefetcher:
             return {k: self.non_blocking_transfer(v) for k, v in batch.items()}
 
         with torch.cuda.stream(self.load_stream):
-            if not batch.is_pinned():
-                batch = batch.pin_memory()
+            batch = batch.pin_memory()
             return batch.to(self.device, non_blocking=True)
 
     def load_loop(self):
