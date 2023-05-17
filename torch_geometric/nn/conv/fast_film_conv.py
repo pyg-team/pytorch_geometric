@@ -8,11 +8,7 @@ from torch.nn import ModuleList, ReLU
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import HeteroLinear, Linear
 from torch_geometric.nn.inits import reset
-from torch_geometric.typing import (
-    Adj,
-    OptTensor,
-    PairTensor,
-)
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 from torch_geometric.utils import index_sort, is_sparse, to_edge_index
 from torch_geometric.utils.sparse import index2ptr
 
@@ -103,11 +99,10 @@ class FastFiLMConv(MessagePassing):
         else:
             # (TODO) add support for sparse tensors without conversion
             if is_sparse(edge_index):
-                print(
-                    "Warning: sparse edge representations are not supported \
+                print("Warning: sparse edge representations are not supported \
                        for FastFiLMConv yet.\
                        This incurs an additional conversion each forward pass."
-                )
+                      )
                 edge_index = to_edge_index(edge_index)[0]
             film_x = x[1]
             prop_x = x[0]
