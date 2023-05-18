@@ -34,7 +34,7 @@ The :class:`~torch_geometric.explain.Explainer` generates an :class:`~torch_geom
 
 .. note::
 
-   You can read more about the :class:`torch_geometric.explain` package in this [blog post](https://medium.com/@pytorch_geometric/graph-machine-learning-explainability-with-pyg-ff13cffc23c2).
+   You can read more about the :class:`torch_geometric.explain` package in this `blog post <https://medium.com/@pytorch_geometric/graph-machine-learning-explainability-with-pyg-ff13cffc23c2>`__.
 
 Examples
 --------

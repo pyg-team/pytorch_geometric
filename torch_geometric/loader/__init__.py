@@ -18,6 +18,7 @@ from .temporal_dataloader import TemporalDataLoader
 from .neighbor_sampler import NeighborSampler
 from .imbalanced_sampler import ImbalancedSampler
 from .dynamic_batch_sampler import DynamicBatchSampler
+from .prefetch import PrefetchLoader
 from .mixin import AffinityMixin
 
 __all__ = classes = [
@@ -42,6 +43,7 @@ __all__ = classes = [
     'NeighborSampler',
     'ImbalancedSampler',
     'DynamicBatchSampler',
+    'PrefetchLoader',
     'AffinityMixin',
 ]
 
