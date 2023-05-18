@@ -5,7 +5,7 @@ import torch
 from torch import Tensor
 
 
-@torch.jit.script_if_tracing
+@torch.jit.script
 @dataclass(init=False)
 class SelectOutput:
     r"""The output of the :class:`Select` method, which holds an assignment
