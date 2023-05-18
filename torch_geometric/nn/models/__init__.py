@@ -1,5 +1,4 @@
 from .mlp import MLP
-from .pmlp import PMLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
 from .jumping_knowledge import JumpingKnowledge
 from .meta import MetaLayer
@@ -24,10 +23,10 @@ from .lightgcn import LightGCN
 from .mask_label import MaskLabel
 from .rev_gnn import GroupAddRev
 from .gnnff import GNNFF
+from .pmlp import PMLP
 
 __all__ = classes = [
     'MLP',
-    'PMLP',
     'GCN',
     'GraphSAGE',
     'GIN',
@@ -64,4 +63,5 @@ __all__ = classes = [
     'MaskLabel',
     'GroupAddRev',
     'GNNFF',
+    'PMLP',
 ]
