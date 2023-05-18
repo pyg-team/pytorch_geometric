@@ -23,7 +23,7 @@ class PMLP(torch.nn.Module):
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.`)
         bias (bool, optional): If set to :obj:`False`, the module
-            will not learn additive biases.
+            will not learn additive biases. (default: :obj:`True`)
     """
     def __init__(
         self,
