@@ -1,0 +1,20 @@
+nodes:
+  - 0.0.0.0
+  - 1.1.1.1
+ports: [22,22]
+python_bins:
+  - /path/to/python
+  - /path/to/python # path to python with GLT's env
+usernames:
+  - root
+  - root
+dataset: ogbn-products
+in_channel: 100
+out_channel: 47
+node_ranks: [0, 1]
+dst_paths:
+  - /path/to/gl_torch
+  - /path/to/gl_torch
+visible_devices:
+  - 0,1,2,3
+  - 4,5,6,7
