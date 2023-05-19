@@ -6,12 +6,11 @@ python_bins:
   - /path/to/python
   - /path/to/python # path to python with GLT's env
 usernames:
-  - root
-  - root
+  - your_username_for_node_0
+  - your_username_for_node_1
 dataset: ogbn-products
 in_channel: 100
 out_channel: 47
-node_ranks: [0, 1]
 dst_paths:
   - /path/to/gl_torch
   - /path/to/gl_torch

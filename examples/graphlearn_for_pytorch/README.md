@@ -15,19 +15,12 @@ they are also compatible with PyTorch and there are complete documentations
 and usage examples available.
 
 
-- [Installation](#installation)
-  - [Requirements](#requirements)
-  - [Pip Wheels](#pip-wheels)
-- [Examples](#examples)
-  - [Accelarating PyG model training on a single GPU.](#accelarating-pyg-model-training-on-a-single-gpu)
-  - [Distributed training](#distributed-training)
-
 ## Installation
 
 ### Requirements
-- cuda
+- cuda>=11.4
 - python>=3.6
-- torch(PyTorch)
+- torch(PyTorch)>=1.13
 - torch_geometric, torch_scatter, torch_sparse. Please refer to [PyG](https://github.com/pyg-team/pytorch_geometric) for installation.
 ### Pip Wheels
 
@@ -38,55 +31,34 @@ pip install graphlearn-torch
 
 ## Examples
 
-### Accelarating PyG model training on a single GPU.
+### Accelarating PyG on a single node.
+**Single-GPU:**
 
-First, let's take PyG's [GraphSAGE on OGBN-Products](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_sage.py)
-as an example. To benefit from the acceleration of model training by using GLT, you only need to replace PyG's `torch_geometric.loader.NeighborLoader`
-by the `graphlearn_torch.loader.NeighborLoader`
-.
-
-```python
-import torch
-import graphlearn_torch as glt
-import os.path as osp
-
-from ogb.nodeproppred import PygNodePropPredDataset
-
-# PyG's original code preparing the ogbn-products dataset
-root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
-dataset = PygNodePropPredDataset('ogbn-products', root)
-split_idx = dataset.get_idx_split()
-data = dataset[0]
-
-# Enable GLT acceleration on PyG requires only replacing
-# PyG's NeighborSampler with the following code.
-glt_dataset = glt.data.Dataset()
-glt_dataset.build(edge_index=data.edge_index,
-                  feature_data=data.x,
-                  sort_func=glt.data.sort_by_in_degree,
-                  split_ratio=0.2,
-                  label=data.y,
-                  device=0)
-train_loader = glt.loader.NeighborLoader(glt_dataset,
-                                         [15, 10, 5],
-                                         split_idx['train'],
-                                         batch_size=1024,
-                                         shuffle=True,
-                                         drop_last=True,
-                                         as_pyg_v1=True)
-```
+Let's take PyG's [GraphSAGE on OGBN-Products](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/ogbn_products_sage.py)
+as an example. To benefit from the acceleration by using GLT, you only need to replace PyG's `torch_geometric.loader.NeighborLoader`
+by the `graphlearn_torch.loader.NeighborLoader`, which is .
 
 The complete example can be found in the GLT example [`train_sage_ogbn_products.py`](https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/train_sage_ogbn_products.py).
+
+**Multi-GPU**
+
+The multi-GPU example further leverages GLT's ability of using [`UnifiedTensor`](https://github.com/alibaba/graphlearn-for-pytorch/blob/main/docs/tutorial/basic_object.md?plain=1#L97-L112) to cache hot feature data in multi-GPU memories, and
+introducing [`DeviceGroup`](https://github.com/alibaba/graphlearn-for-pytorch/blob/main/docs/tutorial/basic_object.md?plain=1#L142-L162) in GLT significantly expands the cache capacity of
+feature data in GPU and make full utilization of the NVLink bandwidth.
+
+The example can be found in the GLT example [`train_sage_ogbn_papers100m.py`](https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/multi_gpu/train_sage_ogbn_papers100m.py).
 
 ### Distributed training
 
 Generally speaking, for distributed training, steps can be as follows:
 
-1. Load the graphs and features from partitions.
+1. Setup distributed environment and do partitioning on the dataset.
 
-2. Create the distributed neighbor loader based on the dataset above.
+2. Load the graphs and features from partitions.
 
-3. Define a PyTorch DDP model and run.
+3. Create the distributed neighbor loader based on the dataset above.
+
+4. Define a PyTorch DDP model and run.
 
 For distributed training, we have implemented multi-processing asynchronous sampling,
 pin memory buffer, hot feature cache, and applied fast networking

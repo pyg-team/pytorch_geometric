@@ -38,7 +38,7 @@ if __name__ == "__main__":
   dataset = config['dataset']
   ip_list, port_list, username_list = config['nodes'], config['ports'], config['usernames']
   dst_path_list = config['dst_paths']
-  node_ranks = config['node_ranks']
+  node_ranks = list(range(len(ip_list)))
   num_nodes = len(node_ranks)
   visible_devices = config['visible_devices']
   python_bins = config['python_bins']
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     ssh = paramiko.SSHClient()
     ssh._transport = trans
 
-    to_dist_dir = 'cd '+dst+'/examples/distributed/ '
+    to_dist_dir = 'cd '+dst+'/examples/graphlearn_for_pytorch/distributed/ '
     exec_example = "tmux new -d 'CUDA_VISIBLE_DEVICES="+device+" "+pythonbin+" dist_train_sage_supervised.py --dataset="+dataset+" --dataset_root_dir="+dataset_path+dataset+" --in_channel="+in_channel+" --out_channel="+out_channel+" --node_rank="+str(noderk)+" --num_dataset_partitions="+str(num_nodes)+" --num_nodes="+str(num_nodes)+" --num_training_procs="+str(num_cores)+" --master_addr="+args.master_addr+" --training_pg_master_port="+args.master_port+" --train_loader_master_port="+str(int(args.master_port)+1)+" --test_loader_master_port="+str(int(args.master_port)+2)+" --batch_size="+str(args.batch_size)+" --epochs="+str(args.epochs)
 
     print(to_dist_dir + ' && '+ exec_example + " '")
