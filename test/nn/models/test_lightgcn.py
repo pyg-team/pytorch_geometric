@@ -18,11 +18,15 @@ def test_lightgcn_ranking(embedding_dim, with_edge_weight, lambda_reg, alpha):
     model = LightGCN(num_nodes, embedding_dim, num_layers=2, alpha=alpha)
     assert str(model) == f'LightGCN(500, {embedding_dim}, num_layers=2)'
 
-    pred, nodes_indices = model(edge_index, edge_label_index, edge_weight)
+    pred = model(edge_index, edge_label_index, edge_weight)
     assert pred.size() == (100, )
 
-    loss = model.recommendation_loss(pred[:50], pred[50:], nodes_indices,
-                                     lambda_reg)
+    loss = model.recommendation_loss(
+        pos_edge_rank=pred[:50],
+        neg_edge_rank=pred[50:],
+        node_id=edge_index.unique(),
+        lambda_reg=lambda_reg,
+    )
     assert loss.dim() == 0 and loss > 0
 
     out = model.recommend(edge_index, edge_weight, k=2)
@@ -51,7 +55,7 @@ def test_lightgcn_link_prediction(embedding_dim, with_edge_weight, alpha):
     model = LightGCN(num_nodes, embedding_dim, num_layers=2, alpha=alpha)
     assert str(model) == f'LightGCN(500, {embedding_dim}, num_layers=2)'
 
-    pred, _ = model(edge_index, edge_label_index, edge_weight)
+    pred = model(edge_index, edge_label_index, edge_weight)
     assert pred.size() == (100, )
 
     loss = model.link_pred_loss(pred, edge_label)
