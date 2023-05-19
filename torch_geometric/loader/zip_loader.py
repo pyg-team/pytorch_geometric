@@ -1,4 +1,4 @@
-from typing import Any, Iterator, List, Tuple, Union
+from typing import Any, Iterator, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -15,14 +15,17 @@ class ZipLoader(torch.utils.data.DataLoader):
     Args:
         loaders (List[NodeLoader] or List[LinkLoader]): The loader instances.
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
-            the returning data in each worker's subprocess rather than in the
-            main process.
-            Setting this to :obj:`True` for in-memory datasets is generally not
-            recommended:
-            (1) it may result in too many open file handles,
-            (2) it may slown down data loading,
-            (3) it requires operating on CPU tensors.
-            (default: :obj:`False`)
+            the returned data in each worker's subprocess.
+            If set to :obj:`False`, will filter the returned data in the main
+            process.
+            If set to :obj:`None`, will automatically infer the decision based
+            on whether data partially lives on the GPU
+            (:obj:`filter_per_worker=True`) or entirely on the CPU
+            (:obj:`filter_per_worker=False`).
+            There exists different trade-offs for setting this option.
+            Specifically, setting this option to :obj:`True` for in-memory
+            datasets will move all features to shared memory, which may result
+            in too many open file handles. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -30,9 +33,11 @@ class ZipLoader(torch.utils.data.DataLoader):
     def __init__(
         self,
         loaders: Union[List[NodeLoader], List[LinkLoader]],
-        filter_per_worker: bool = False,
+        filter_per_worker: Optional[bool] = None,
         **kwargs,
     ):
+        # TODO handle `filter_per_worker=None`.
+
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
