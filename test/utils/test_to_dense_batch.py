@@ -57,12 +57,16 @@ def test_to_dense_batch(fill):
 @onlyFullTest
 def test_to_dense_batch_jit():
     @torch.jit.script
-    def to_dense_batch_jit(x: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
-        return to_dense_batch(x, batch)
+    def to_dense_batch_jit(
+        x: Tensor,
+        batch: Tensor,
+        fill_value: Tensor,
+    ) -> Tuple[Tensor, Tensor]:
+        return to_dense_batch(x, batch, fill_value=fill_value)
 
     x = torch.randn(6, 2)
     batch = torch.tensor([0, 0, 1, 2, 2, 2])
 
-    out, mask = to_dense_batch_jit(x, batch)
+    out, mask = to_dense_batch_jit(x, batch, fill_value=torch.tensor(0.0))
     assert out.size() == (3, 3, 2)
     assert mask.size() == (3, 3)

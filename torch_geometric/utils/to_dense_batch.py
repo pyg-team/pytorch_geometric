@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -6,22 +6,10 @@ from torch import Tensor
 from torch_geometric.utils import scatter
 
 
-@torch.jit._overload
-def to_dense_batch(x, batch, fill_value, max_num_nodes, batch_size):  # noqa
-    # type: (Tensor, Optional[Tensor], Optional[float], Optional[int], Optional[int]) -> Tuple[Tensor, Tensor]  # noqa
-    pass
-
-
-@torch.jit._overload
-def to_dense_batch(x, batch, fill_value, max_num_nodes, batch_size):  # noqa
-    # type: (Tensor, Optional[Tensor], Tensor, Optional[int], Optional[int]) -> Tuple[Tensor, Tensor]  # noqa
-    pass
-
-
-def to_dense_batch(  # noqa
+def to_dense_batch(
     x: Tensor,
     batch: Optional[Tensor] = None,
-    fill_value: Union[Optional[float], Tensor] = None,
+    fill_value: float = 0.0,
     max_num_nodes: Optional[int] = None,
     batch_size: Optional[int] = None,
 ) -> Tuple[Tensor, Tensor]:
@@ -41,8 +29,8 @@ def to_dense_batch(  # noqa
         batch (LongTensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
             node to a specific example. Must be ordered. (default: :obj:`None`)
-        fill_value (float or torch.Tensor, optional): The value for invalid
-            entries in the resulting dense output tensor. (default: :obj:`0`)
+        fill_value (float, optional): The value for invalid entries in the
+            resulting dense output tensor. (default: :obj:`0`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
         batch_size (int, optional) The batch size. (default: :obj:`None`)

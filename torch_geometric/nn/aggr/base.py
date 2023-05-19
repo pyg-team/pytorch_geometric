@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -161,7 +161,7 @@ class Aggregation(torch.nn.Module):
         ptr: Optional[Tensor] = None,
         dim_size: Optional[int] = None,
         dim: int = -2,
-        fill_value: Union[Optional[float], Tensor] = None,
+        fill_value: float = 0.0,
         max_num_elements: Optional[int] = None,
     ) -> Tuple[Tensor, Tensor]:
 
