@@ -7,7 +7,7 @@ from torch.nn import Embedding, ModuleList
 from torch.nn.modules.loss import _Loss
 
 from torch_geometric.nn.conv import LGConv
-from torch_geometric.typing import Adj, OptTensor, PairTensor
+from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import is_sparse, to_edge_index
 
 
@@ -287,11 +287,11 @@ class BPRLoss(_Loss):
                 should be used for :math:`L_2` regularization
                 (default: :obj:`None`).
         """
-        n_pairs = positives.size(0)
         log_prob = F.logsigmoid(positives - negatives).mean()
-        regularization = 0
 
+        regularization = 0
         if self.lambda_reg != 0:
             regularization = self.lambda_reg * parameters.norm(p=2).pow(2)
+            regularization = regularization / positives.size(0)
 
-        return -log_prob + (regularization / n_pairs)
+        return -log_prob + regularization
