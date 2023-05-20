@@ -44,7 +44,6 @@ class MovieLens100K(InMemoryDataset):
     url = 'https://files.grouplens.org/datasets/movielens/ml-100k.zip'
 
     def __init__(self, root: str, split: str = "train",
-
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, transform, pre_transform)
