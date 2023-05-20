@@ -1,5 +1,6 @@
 from typing import Callable
 
+import numpy as np
 import torch
 
 import torch_geometric.graphgym.register as register
@@ -209,27 +210,19 @@ def set_dataset_info(dataset):
 
     # get dim_in and dim_out
     try:
-        cfg.share.dim_in = dataset._data.x.shape[1]
+        cfg.share.dim_in = dataset.num_node_features
     except Exception:
         cfg.share.dim_in = 1
     try:
         if cfg.dataset.task_type == 'classification':
-            cfg.share.dim_out = torch.unique(dataset._data.y).shape[0]
+            cfg.share.dim_out = dataset.num_classes
         else:
-            cfg.share.dim_out = dataset._data.y.shape[1]
+            cfg.share.dim_out = dataset.len()
     except Exception:
         cfg.share.dim_out = 1
 
-    # count number of dataset splits
-    cfg.share.num_splits = 1
-    for key in dataset._data.keys:
-        if 'val' in key:
-            cfg.share.num_splits += 1
-            break
-    for key in dataset._data.keys:
-        if 'test' in key:
-            cfg.share.num_splits += 1
-            break
+    # count number of dataset splits.
+    cfg.share.num_splits = len(cfg.dataset.split)
 
 
 def create_dataset():
@@ -303,6 +296,7 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
 
     else:
         raise NotImplementedError("%s sampler is not implemented!" % sampler)
+
     return loader_train
 
 
@@ -314,32 +308,45 @@ def create_loader():
 
     """
     dataset = create_dataset()
-    # train loader
-    if cfg.dataset.task == 'graph':
-        id = dataset.data['train_graph_index']
-        loaders = [
-            get_loader(dataset[id], cfg.train.sampler, cfg.train.batch_size,
-                       shuffle=True)
-        ]
-        delattr(dataset.data, 'train_graph_index')
-    else:
-        loaders = [
-            get_loader(dataset, cfg.train.sampler, cfg.train.batch_size,
-                       shuffle=True)
-        ]
 
-    # val and test loaders
-    for i in range(cfg.share.num_splits - 1):
+    # Create empty list of loaders
+    loaders = []
+
+    # Creat list of split names
+    split_names = ['train_graph_index', 'val_graph_index', 'test_graph_index']
+
+    # Shuffle sataset
+    if cfg.dataset.split_mode == "random":
+        dataset.shuffle()
+
+    # Split indexes according to porportions in `cfg.dataset.split`
+    ratios = np.array(cfg.dataset.split)
+    split_indexs = (ratios.cumsum() * dataset.len()).astype(int)
+    splits = np.split(range(dataset.len()), split_indexs)
+    splits.pop()  # Remove last split which is empty.
+
+    # For every split build and append loader
+    for i, split in enumerate(splits):
+        if i == 0:
+            sampler = cfg.train.sampler
+            shuffle = True
+        else:
+            sampler = cfg.val.sampler
+            shuffle = False
+
         if cfg.dataset.task == 'graph':
-            split_names = ['val_graph_index', 'test_graph_index']
-            id = dataset.data[split_names[i]]
+            try:
+                id = dataset.data[split_names[i]]
+                delattr(dataset.data, split_names[i])
+            except AttributeError:
+                id = split
+
             loaders.append(
-                get_loader(dataset[id], cfg.val.sampler, cfg.train.batch_size,
-                           shuffle=False))
-            delattr(dataset.data, split_names[i])
+                get_loader(dataset[id], sampler, cfg.train.batch_size,
+                           shuffle=shuffle))
         else:
             loaders.append(
-                get_loader(dataset, cfg.val.sampler, cfg.train.batch_size,
-                           shuffle=False))
+                get_loader(dataset, sampler, cfg.train.batch_size,
+                           shuffle=shuffle))
 
     return loaders
