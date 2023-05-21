@@ -597,7 +597,7 @@ def test_cpu_affinity_neighbor_loader(loader_cores):
 
     out = []
     with loader.enable_cpu_affinity(loader_cores):
-        iterator = loader._get_iterator().iterator
+        iterator = loader._get_iterator()
         workers = iterator._workers
         for worker in workers:
             sleep(1)  # Gives time for worker to initialize.
