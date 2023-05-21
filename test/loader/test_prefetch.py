@@ -42,7 +42,6 @@ if __name__ == '__main__':
         batch_size=1024,
         num_neighbors=[10, 10],
         num_workers=args.num_workers,
-        filter_per_worker=True,
         persistent_workers=args.num_workers > 0,
     )
 
