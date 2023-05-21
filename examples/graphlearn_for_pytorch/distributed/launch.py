@@ -23,7 +23,7 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser('Run DistRandomSampler benchmarks.')
   parser.add_argument('--config', type=str, default='dist_train_sage_sup_config.yml',
     help='paths to configuration file for benchmarks')
-  parser.add_argument('--epochs', type=int, default=1,
+  parser.add_argument('--epochs', type=int, default=10,
     help='repeat epochs for sampling')
   parser.add_argument('--batch_size', type=int, default=2048,
     help='batch size for sampling')

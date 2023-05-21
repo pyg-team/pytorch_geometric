@@ -71,7 +71,7 @@ def run_training_proc(local_proc_rank: int, num_nodes: int, node_rank: int,
 
   # Initialize training process group of PyTorch.
   torch.distributed.init_process_group(
-    backend='nccl',
+    backend='nccl', # or choose 'gloo' if 'nccl' is not supported.
     rank=current_ctx.rank,
     world_size=current_ctx.world_size,
     init_method='tcp://{}:{}'.format(master_addr, training_pg_master_port)
@@ -244,6 +244,7 @@ if __name__ == '__main__':
   )
   args = parser.parse_args()
 
+  # Record configuration information for debugging
   f = open('dist_sage_sup.txt', 'a+')
   f.write('--- Distributed training example of supervised SAGE ---\n')
   f.write(f'* dataset: {args.dataset}\n')
