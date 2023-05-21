@@ -11,6 +11,7 @@ from torch_geometric.loader.utils import (
     filter_data,
     filter_hetero_data,
     get_input_nodes,
+    infer_filter_per_worker,
 )
 from torch_geometric.sampler import (
     BaseSampler,
@@ -89,7 +90,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         input_id: OptTensor = None,
         **kwargs,
     ):
-        # TODO handle `filter_per_worker=None`.
+        if filter_per_worker is None:
+            filter_per_worker = infer_filter_per_worker(data)
 
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
