@@ -25,7 +25,7 @@ RATING_HEADERS = ["userId", "movieId", "rating", "timestamp"]
 class MovieLens100K(InMemoryDataset):
     r"""The MovieLens 100K heterogeneous rating dataset, assembled by GroupLens
     Research from the `MovieLens web site <https://movielens.org>`__,
-    consisting of movies (1,700 nodes) and users (1,000 nodes) with 100K
+    consisting of movies (1,682 nodes) and users (943 nodes) with 100K
     ratings between them.
     User ratings for movies are available as ground truth labels.
     Features of users and movies are encoded according to the `"Inductive
@@ -42,6 +42,29 @@ class MovieLens100K(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
+
+    **STATS:**
+
+    .. list-table::
+        :widths: 20 10 10 10
+        :header-rows: 1
+
+        * - Node/Edge Type
+          - #nodes/#edges
+          - #features
+          - #tasks
+        * - Movie
+          - 1,682
+          - 18
+          -
+        * - User
+          - 943
+          - 24
+          -
+        * - User-Movie
+          - 80,000
+          - 1
+          - 1
     """
 
     url = 'https://files.grouplens.org/datasets/movielens/ml-100k.zip'
@@ -122,13 +145,18 @@ class MovieLens100K(InMemoryDataset):
 
         src = [user_mapping[idx] for idx in df['userId']]
         dst = [movie_mapping[idx] for idx in df['movieId']]
-        data['user', 'rates', 'movie'].edge_index = torch.tensor([src, dst])
+        edge_index = torch.tensor([src, dst])
+        data['user', 'rates', 'movie'].edge_index = edge_index
 
         rating = torch.from_numpy(df['rating'].values).to(torch.float)
         data['user', 'rates', 'movie'].rating = rating
 
         time = torch.from_numpy(df['timestamp'].values)
         data['user', 'rates', 'movie'].time = time
+
+        data['movie', 'rated_by', 'user'].edge_index = edge_index.flip([0])
+        data['movie', 'rated_by', 'user'].rating = rating
+        data['movie', 'rated_by', 'user'].time = time
 
         # Process rating data for testing:
         df = pd.read_csv(
