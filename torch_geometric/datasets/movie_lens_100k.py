@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import shutil
 from typing import Callable, List, Optional
 
 import torch
@@ -17,20 +18,22 @@ MOVIE_HEADERS = [
     "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir", "Horror",
     "Musical", "Mystery", "Romance", "Sci-Fi", "Thriller", "War", "Western"
 ]
+USER_HEADERS = ["userId", "age", "gender", "occupation", "zipCode"]
+RATING_HEADERS = ["userId", "movieId", "rating", "timestamp"]
 
 
 class MovieLens100K(InMemoryDataset):
     r"""The MovieLens 100K heterogeneous rating dataset, assembled by GroupLens
-    Research from the `MovieLens web site <https://movielens.org>`_, consisting
-    of entities of type :obj:`"movie"` (1700 nodes) and :obj:`"user"`
-    (1000 nodes). User ratings for movies are available as ground truth labels
-    for the edges between the users and the movies
-    :obj:`("user", "rates", "movie")`.
+    Research from the `MovieLens web site <https://movielens.org>`__,
+    consisting of movies (1,700 nodes) and users (1,000 nodes) with 100K
+    ratings between them.
+    User ratings for movies are available as ground truth labels.
+    Features of users and movies are encoded according to the `"Inductive
+    Matrix Completion Based on Graph Neural Networks"
+    <https://arxiv.org/abs/1904.12058>`__ paper.
 
     Args:
         root (str): Root directory where the dataset should be saved.
-        split (str, optional): If :obj:`"train"`, loads the training dataset.
-            If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
@@ -43,58 +46,63 @@ class MovieLens100K(InMemoryDataset):
 
     url = 'https://files.grouplens.org/datasets/movielens/ml-100k.zip'
 
-    def __init__(self, root: str, split: str = "train",
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
-
-        if split not in {'train', 'test'}:
-            raise ValueError(f"Invalid 'split' argument (got {split})")
-
-        path = self.processed_paths[['train', 'test'].index(split)]
-        self.data, self.slices = torch.load(path)
+        self.load(self.processed_paths[0], data_cls=HeteroData)
 
     @property
     def raw_file_names(self) -> List[str]:
-        return [
-            osp.join('ml-100k', 'u.item'),
-            osp.join('ml-100k', 'u.user'),
-            osp.join('ml-100k', 'u1.base'),
-            osp.join('ml-100k', 'u1.test'),
-        ]
+        return ['u.item', 'u.user', 'u1.base', 'u1.test']
 
     @property
-    def processed_file_names(self) -> List[str]:
-        return ['train_data.pt', 'test_data.pt']
+    def processed_file_names(self) -> str:
+        return 'data.pt'
 
     def download(self):
-        path = download_url(self.url, self.raw_dir)
-        extract_zip(path, self.raw_dir)
+        path = download_url(self.url, self.root)
+        extract_zip(path, self.root)
         os.remove(path)
+        folder = osp.join(self.root, 'ml-100k')
+        shutil.rmtree(self.raw_dir)
+        os.rename(folder, self.raw_dir)
 
     def process(self):
         import pandas as pd
 
-        # Process movie data
-        df = pd.read_csv(self.raw_paths[0], sep="|", header=None,
-                         names=MOVIE_HEADERS, index_col='movieId',
-                         encoding="ISO-8859-1")
+        data = HeteroData()
+
+        # Process movie data:
+        df = pd.read_csv(
+            self.raw_paths[0],
+            sep='|',
+            header=None,
+            names=MOVIE_HEADERS,
+            index_col='movieId',
+            encoding='ISO-8859-1',
+        )
         movie_mapping = {idx: i for i, idx in enumerate(df.index)}
 
-        genre_headers = MOVIE_HEADERS[6:]
-        movie_features = df[genre_headers].values
-        movie_features = torch.from_numpy(movie_features).to(torch.float)
+        x = df[MOVIE_HEADERS[6:]].values
+        data['movie'].x = torch.from_numpy(x).to(torch.float)
 
-        # Process user data
+        # Process user data:
         df = pd.read_csv(
-            self.raw_paths[1], sep="|", header=None,
-            names=["userId", "age", "gender", "occupation",
-                   "zipCode"], index_col='userId', encoding="ISO-8859-1")
+            self.raw_paths[1],
+            sep='|',
+            header=None,
+            names=USER_HEADERS,
+            index_col='userId',
+            encoding='ISO-8859-1',
+        )
         user_mapping = {idx: i for i, idx in enumerate(df.index)}
 
-        max_age = df["age"].values.max()
-        age = df["age"].values / max_age
-        age = torch.from_numpy(age).to(torch.float).unsqueeze(dim=1)
+        age = df['age'].values / df['age'].values.max()
+        age = torch.from_numpy(age).to(torch.float).view(-1, 1)
 
         gender = df['gender'].str.get_dummies().values
         gender = torch.from_numpy(gender).to(torch.float)
@@ -102,32 +110,43 @@ class MovieLens100K(InMemoryDataset):
         occupation = df['occupation'].str.get_dummies().values
         occupation = torch.from_numpy(occupation).to(torch.float)
 
-        user_features = torch.cat([age, gender, occupation], dim=-1)
+        data['user'].x = torch.cat([age, gender, occupation], dim=-1)
 
-        data_list = []
+        # Process rating data for training:
+        df = pd.read_csv(
+            self.raw_paths[2],
+            sep='\t',
+            header=None,
+            names=RATING_HEADERS,
+        )
 
-        for path in self.raw_paths[-2:]:
-            data = HeteroData()
-            data['movie'].x = movie_features
-            data['user'].x = user_features
+        src = [user_mapping[idx] for idx in df['userId']]
+        dst = [movie_mapping[idx] for idx in df['movieId']]
+        data['user', 'rates', 'movie'].edge_index = torch.tensor([src, dst])
 
-            # Process user ratings data
-            df = pd.read_csv(
-                path, sep="\t", header=None,
-                names=['userId', 'movieId', 'rating', 'timestamp'])
+        rating = torch.from_numpy(df['rating'].values).to(torch.float)
+        data['user', 'rates', 'movie'].rating = rating
 
-            src = [user_mapping[idx] for idx in df['userId']]
-            dst = [movie_mapping[idx] for idx in df['movieId']]
-            edge_index = torch.tensor([src, dst])
+        time = torch.from_numpy(df['timestamp'].values)
+        data['user', 'rates', 'movie'].time = time
 
-            rating = torch.from_numpy(df['rating'].values).to(torch.long)
-            data['user', 'rates', 'movie'].edge_index = edge_index
-            data['user', 'rates', 'movie'].edge_label = rating
+        # Process rating data for testing:
+        df = pd.read_csv(
+            self.raw_paths[3],
+            sep='\t',
+            header=None,
+            names=RATING_HEADERS,
+        )
 
-            if self.pre_transform is not None:
-                data = self.pre_transform(data)
+        src = [user_mapping[idx] for idx in df['userId']]
+        dst = [movie_mapping[idx] for idx in df['movieId']]
+        edge_label_index = torch.tensor([src, dst])
+        data['user', 'rates', 'movie'].edge_label_index = edge_label_index
 
-            data_list.append(data)
+        edge_label = torch.from_numpy(df['rating'].values).to(torch.float)
+        data['user', 'rates', 'movie'].edge_label = edge_label
 
-        for data, path in zip(data_list, self.processed_paths):
-            torch.save(self.collate([data]), path)
+        if self.pre_transform is not None:
+            data = self.pre_transform(data)
+
+        self.save([data], self.processed_paths[0])
