@@ -6,6 +6,7 @@ from torch import Tensor
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import LinkLoader, NodeLoader
 from torch_geometric.loader.base import DataLoaderIterator
+from torch_geometric.loader.utils import infer_filter_per_worker
 
 
 class ZipLoader(torch.utils.data.DataLoader):
@@ -36,7 +37,8 @@ class ZipLoader(torch.utils.data.DataLoader):
         filter_per_worker: Optional[bool] = None,
         **kwargs,
     ):
-        # TODO handle `filter_per_worker=None`.
+        if filter_per_worker is None:
+            filter_per_worker = infer_filter_per_worker(loaders[0].data)
 
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
