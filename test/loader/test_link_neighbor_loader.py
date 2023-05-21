@@ -19,7 +19,7 @@ def unique_edge_pairs(edge_index):
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
-@pytest.mark.parametrize('filter_per_worker', [True, False])
+@pytest.mark.parametrize('filter_per_worker', [None, True, False])
 def test_homo_link_neighbor_loader_basic(subgraph_type, neg_sampling_ratio,
                                          filter_per_worker):
     pos_edge_index = get_random_edge_index(50, 50, 500)
