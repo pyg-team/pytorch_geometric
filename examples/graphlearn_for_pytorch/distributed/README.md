@@ -1,6 +1,6 @@
 # Distributed (multi nodes) examples.
 
-This example shows how to leverage [GraphLearn-for-PyTorch(GLT)](https://github.com/alibaba/graphlearn-for-pytorch) to train PyG models in distributed scenarios. The dataset in this example is `ogbn-products` from the [Open Graph Benchmark](https://ogb.stanford.edu/) and you can also train on `ogbn-papers100M` with minor modifications of the configuration file.
+This example shows how to leverage [GraphLearn-for-PyTorch(GLT)](https://github.com/alibaba/graphlearn-for-pytorch) to train PyG models in distributed scenarios with GPUs. The dataset in this example is `ogbn-products` from the [Open Graph Benchmark](https://ogb.stanford.edu/) and you can also train on `ogbn-papers100M` with minor modifications of the configuration file.
 
 To run this distributed example, you can choose to direct run the example or use our [script](launch.py) following the guidance below.
 
@@ -72,7 +72,7 @@ An example template for configure file is in the yaml format. e.g.
 nodes:
   - 0.0.0.0
   - 1.1.1.1
-# ssh IP ports for each node.
+# ssh ports for each node.
 ports: [22, 22]
 # username for remote IPs.
 usernames:
