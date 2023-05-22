@@ -32,7 +32,7 @@ class SortAggregation(Aggregation):
 
         fill_value = x.min() - 1
         batch_x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
-                                         fill_value=fill_value,
+                                         fill_value=fill_value.item(),
                                          max_num_elements=max_num_elements)
         B, N, D = batch_x.size()
 
