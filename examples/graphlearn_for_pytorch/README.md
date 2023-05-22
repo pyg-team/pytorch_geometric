@@ -6,7 +6,7 @@ power of GPUs to accelerate graph sampling and utilizes UVA to reduce the
 conversion and copying of features of vertices and edges. For large-scale graphs,
 it supports distributed training on multiple GPUs or multiple machines through
 fast distributed sampling and feature lookup. Additionally, it provides flexible
-deployment for distributed training to meet different requirements. 
+deployment for distributed training to meet different requirements.
 
 Most of the APIs of GLT are compatible with PyG,
 so you only need to modify a few lines of PyG's code to get the
