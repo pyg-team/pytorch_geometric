@@ -78,6 +78,11 @@ class QuantileAggregation(Aggregation):
         count = torch.bincount(index, minlength=dim_size or 0)
         cumsum = torch.cumsum(count, dim=0) - count
 
+        if dim_size is not None:
+            cumsum = torch.where(
+                cumsum >= torch.tensor(x.shape[dim], dtype=cumsum.dtype),
+                torch.tensor(x.shape[dim], dtype=cumsum.dtype) - 1, cumsum)
+
         q_point = self.q * (count - 1) + cumsum
         q_point = q_point.t().reshape(-1)
 
