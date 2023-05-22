@@ -38,7 +38,7 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-@pytest.mark.parametrize('filter_per_worker', [True, False])
+@pytest.mark.parametrize('filter_per_worker', [None, True, False])
 def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
     if dtype != torch.int64 and not WITH_PYG_LIB:
         return
@@ -597,7 +597,7 @@ def test_cpu_affinity_neighbor_loader(loader_cores):
 
     out = []
     with loader.enable_cpu_affinity(loader_cores):
-        iterator = loader._get_iterator().iterator
+        iterator = loader._get_iterator()
         workers = iterator._workers
         for worker in workers:
             sleep(1)  # Gives time for worker to initialize.
