@@ -1,6 +1,6 @@
 import functools
 import math
-from dataclasses import dataclass, field
+from dataclasses import field
 from functools import partial
 from random import randint
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
@@ -43,17 +43,13 @@ class GLTModel(Module):
     EDGE_MASK = "adj"
 
     def __init__(self, module: Module, graph: Data,
-                 ignore_keys: Set[str] = None):
+                 ignore_keys: Optional[Set[str]] = None):
         super().__init__()
         if ignore_keys is None:
             ignore_keys = set()
         self.module = module
         self.graph = graph
         self.ignore_keys = ignore_keys
-
-    @property
-    def model(self) -> Module:
-        return self.module
 
     def get_params(self) -> List[Parameter]:
         return [
@@ -198,6 +194,7 @@ class GLTMask:
     torch_geometric.data.Data): Graph to make adjacency mask for. device (
     torch.device): Torch device to place masks on.
     """
+
     def __init__(self, module: Module, graph: Data,
                  device: torch.device) -> None:
         self.graph_mask = INIT_FUNC(
@@ -314,7 +311,7 @@ def score_node_classification(targets, preds, val_mask, test_mask):
     return val_score, test_score
 
 
-@dataclass
+
 class GLTSearch:
     r"""The Unified Graph Lottery Ticket search algorithm from the `A Unified
     Lottery Ticket Hypothesis for Graph Neural Networks
@@ -363,41 +360,49 @@ class GLTSearch:
         ignore_keys (set, optional): Set of keys to ignore when injecting
         masks into the model.
     """
-    module: Module
-    graph: Data
-    lr: float
-    reg_graph: float
-    reg_model: float
-    task: str
-    optim_args: Dict[str, Any] = field(default_factory=lambda: {})
-    lr_mask_model: Optional[float] = None
-    lr_mask_graph: Optional[float] = None
-    optimizer: Type[Optimizer] = Adam
-    prune_rate_model: float = 0.2
-    prune_rate_graph: float = 0.05
-    max_train_epochs: int = 200
-    loss_fn: Callable = cross_entropy
-    save_all_masks: bool = False
-    seed: int = field(default_factory=lambda: randint(1, 9999))
-    verbose: bool = False
-    ignore_keys: set = field(default_factory=lambda: set())
+    __match_args__ = ('module', 'graph', 'lr', 'reg_graph', 'reg_model', 'task', 'optim_args', 'lr_mask_model', 'lr_mask_graph', 'optimizer',
+                      'prune_rate_model', 'prune_rate_graph', 'max_train_epochs', 'loss_fn', 'save_all_masks', 'seed', 'verbose', 'ignore_keys')
 
-    def __post_init__(self):
-        """fixes internal hyperparams and generates GLTMask from
-        :obj:`GLTMask` from model """
+    def __init__(self, module: Module, device: torch.device, graph: Data, lr: float, reg_graph: float, reg_model: float, task: str, optim_args: Dict[str, Any] = {}, lr_mask_model: Optional[float] = None, lr_mask_graph: Optional[float] = None, optimizer: Type[Optimizer] = Adam, prune_rate_model: float = 0.2, prune_rate_graph: float = 0.05, max_train_epochs: int = 200, loss_fn: Callable = cross_entropy, save_all_masks: bool = False, seed: Optional[int] = None, verbose: bool = False, ignore_keys: Optional[set] = None) -> None:
+        if seed is None:
+            seed = randint(1, 9999)
+        if ignore_keys is None:
+            ignore_keys = set()
+        self.module = module
+        self.graph = graph
+        self.lr = lr
+        self.reg_graph = reg_graph
+        self.reg_model = reg_model
+        self.task = task
+        self.optim_args = optim_args
+        self.lr_mask_model = lr_mask_model
+        self.lr_mask_graph = lr_mask_graph
+        self.optimizer = optimizer
+        self.prune_rate_model = prune_rate_model
+        self.prune_rate_graph = prune_rate_graph
+        self.max_train_epochs = max_train_epochs
+        self.loss_fn = loss_fn
+        self.save_all_masks = save_all_masks
+        self.seed = seed
+        self.verbose = verbose
+        self.ignore_keys = ignore_keys
+        'fixes internal hyperparams and generates GLTMask from\n        :obj:`GLTMask` from model '
         torch.manual_seed(self.seed)
-
         if not self.lr_mask_graph:
             self.lr_mask_graph = self.lr
-
         if not self.lr_mask_model:
             self.lr_mask_model = self.lr
+        self.optim_args = {'lr': self.lr, **self.optim_args}
+        self.mask = GLTMask(self.module, self.graph, device)
 
-        self.optim_args = {"lr": self.lr, **self.optim_args}
+    def __repr__(self):
+        cls = type(self).__name__
+        return f'{cls}(module={self.module!r}, graph={self.graph!r}, lr={self.lr!r}, reg_graph={self.reg_graph!r}, reg_model={self.reg_model!r}, task={self.task!r}, optim_args={self.optim_args!r}, lr_mask_model={self.lr_mask_model!r}, lr_mask_graph={self.lr_mask_graph!r}, optimizer={self.optimizer!r}, prune_rate_model={self.prune_rate_model!r}, prune_rate_graph={self.prune_rate_graph!r}, max_train_epochs={self.max_train_epochs!r}, loss_fn={self.loss_fn!r}, save_all_masks={self.save_all_masks!r}, seed={self.seed!r}, verbose={self.verbose!r}, ignore_keys={self.ignore_keys!r})'
 
-        self.mask = GLTMask(
-            self.module, self.graph,
-            torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    def __eq__(self, other):
+        if not isinstance(other, GLTSearch):
+            return NotImplemented
+        return (self.module, self.graph, self.lr, self.reg_graph, self.reg_model, self.task, self.optim_args, self.lr_mask_model, self.lr_mask_graph, self.optimizer, self.prune_rate_model, self.prune_rate_graph, self.max_train_epochs, self.loss_fn, self.save_all_masks, self.seed, self.verbose, self.ignore_keys) == (other.module, other.graph, other.lr, other.reg_graph, other.reg_model, other.task, other.optim_args, other.lr_mask_model, other.lr_mask_graph, other.optimizer, other.prune_rate_model, other.prune_rate_graph, other.max_train_epochs, other.loss_fn, other.save_all_masks, other.seed, other.verbose, other.ignore_keys)
 
     def prune(self) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, float]]:
         """UGS algorithm. Train model with UGS to train masks and params.

@@ -185,7 +185,7 @@ if __name__ == "__main__":
     else:
         loss_fn = F.cross_entropy
 
-    trainer = GLTSearch(task=args.task, module=gnn, graph=data, lr=8e-3,
+    trainer = GLTSearch(task=args.task, module=gnn, device=device, graph=data, lr=8e-3,
                         reg_graph=args.reg_graph, reg_model=args.reg_model,
                         prune_rate_graph=args.prune_rate_graph,
                         prune_rate_model=args.prune_rate_model,
@@ -193,4 +193,4 @@ if __name__ == "__main__":
                                     8e-5}, seed=1234, verbose=args.verbose,
                         max_train_epochs=200, loss_fn=loss_fn)
 
-    initial_params, mask_dict = trainer.prune()
+    initial_params, mask_dict, result_dict = trainer.prune()
