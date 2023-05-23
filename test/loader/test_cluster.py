@@ -5,6 +5,7 @@ import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.loader import ClusterData, ClusterLoader
 from torch_geometric.testing import onlyFullTest
+from torch_geometric.utils import sort_edge_index
 
 try:
     rowptr = torch.tensor([0, 1])
@@ -46,14 +47,18 @@ def test_cluster_gcn():
     assert out.num_nodes == 3
     assert out.n_id.size() == (3, )
     assert out.x.size() == (3, 2)
-    assert out.num_edges == data.subgraph(out.n_id).num_edges
+    assert torch.equal(out.x, data.subgraph(out.n_id).x)
+    assert torch.equal(out.edge_index, data.subgraph(out.n_id).edge_index)
+    assert torch.equal(out.edge_attr, data.subgraph(out.n_id).edge_attr)
 
     out = cluster_data[1]
     out.validate()
     assert out.num_nodes == 3
     assert out.n_id.size() == (3, )
     assert out.x.size() == (3, 2)
-    assert out.num_edges == data.subgraph(out.n_id).num_edges
+    assert torch.equal(out.x, data.subgraph(out.n_id).x)
+    assert torch.equal(out.edge_index, data.subgraph(out.n_id).edge_index)
+    assert torch.equal(out.edge_attr, data.subgraph(out.n_id).edge_attr)
 
     loader = ClusterLoader(cluster_data, batch_size=1)
     iterator = iter(loader)
@@ -63,21 +68,28 @@ def test_cluster_gcn():
     assert out.num_nodes == 3
     assert out.n_id.size() == (3, )
     assert out.x.size() == (3, 2)
-    assert out.num_edges == data.subgraph(out.n_id).num_edges
+    assert torch.equal(out.x, data.subgraph(out.n_id).x)
+    assert torch.equal(out.edge_index, data.subgraph(out.n_id).edge_index)
+    assert torch.equal(out.edge_attr, data.subgraph(out.n_id).edge_attr)
 
     out = next(iterator)
     out.validate()
     assert out.num_nodes == 3
     assert out.n_id.size() == (3, )
     assert out.x.size() == (3, 2)
-    assert out.num_edges == data.subgraph(out.n_id).num_edges
+    assert torch.equal(out.x, data.subgraph(out.n_id).x)
+    assert torch.equal(out.edge_index, data.subgraph(out.n_id).edge_index)
+    assert torch.equal(out.edge_attr, data.subgraph(out.n_id).edge_attr)
 
     loader = ClusterLoader(cluster_data, batch_size=2, shuffle=False)
     out = next(iter(loader))
     assert out.num_nodes == 6
     assert out.n_id.size() == (6, )
     assert out.x.size() == (6, 2)
-    assert out.num_edges == data.subgraph(out.n_id).num_edges
+    assert torch.equal(out.x, data.subgraph(out.n_id).x)
+    assert torch.equal(out.edge_index,
+                       sort_edge_index(data.subgraph(out.n_id).edge_index))
+    assert torch.equal(out.edge_attr, data.subgraph(out.n_id).edge_attr)
 
 
 @pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
