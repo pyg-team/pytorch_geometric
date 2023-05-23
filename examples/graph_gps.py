@@ -102,7 +102,7 @@ def test(loader):
 
 
 for epoch in range(1, 101):
-    loss = train(epoch)
+    loss = train()
     val_mae = test(val_loader)
     test_mae = test(test_loader)
     scheduler.step(val_mae)

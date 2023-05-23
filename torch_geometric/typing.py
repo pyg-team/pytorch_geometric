@@ -105,6 +105,11 @@ except (ImportError, OSError) as e:
         ) -> 'SparseTensor':
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
+        @classmethod
+        def from_dense(self, mat: Tensor,
+                       has_value: bool = True) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
         def size(self, dim: int) -> int:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 

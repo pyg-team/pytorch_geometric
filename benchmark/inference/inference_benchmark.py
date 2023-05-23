@@ -101,7 +101,6 @@ def run(args: argparse.ArgumentParser):
                         num_neighbors=[-1],  # layer-wise inference
                         input_nodes=mask,
                         sampler=sampler,
-                        filter_per_worker=args.filter_per_worker,
                         **kwargs,
                     ) if with_loader else None
                     if args.evaluate and not args.full_batch:
@@ -110,7 +109,6 @@ def run(args: argparse.ArgumentParser):
                             num_neighbors=[-1],  # layer-wise inference
                             input_nodes=test_mask,
                             sampler=None,
-                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         )
 
@@ -123,7 +121,6 @@ def run(args: argparse.ArgumentParser):
                             num_neighbors=num_neighbors,
                             input_nodes=mask,
                             sampler=sampler,
-                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         ) if with_loader else None
                         if args.evaluate and not args.full_batch:
@@ -132,7 +129,6 @@ def run(args: argparse.ArgumentParser):
                                 num_neighbors=num_neighbors,
                                 input_nodes=test_mask,
                                 sampler=None,
-                                filter_per_worker=args.filter_per_worker,
                                 **kwargs,
                             )
 
@@ -287,8 +283,6 @@ if __name__ == '__main__':
         help='Use DataLoader affinitzation.')
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers")
-    add('--filter-per-worker', action='store_true',
-        help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--full-batch', action='store_true', help='Use full batch mode')
     add('--evaluate', action='store_true')
