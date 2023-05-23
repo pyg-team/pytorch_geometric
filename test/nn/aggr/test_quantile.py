@@ -7,9 +7,9 @@ from torch_geometric.nn import MedianAggregation, QuantileAggregation
 @pytest.mark.parametrize('q', [0., .1, .2, .3, .4, .5, .6, .7, .8, .9, 1.])
 @pytest.mark.parametrize('interpolation', QuantileAggregation.interpolations)
 @pytest.mark.parametrize('dim', [0, 1])
-@pytest.mark.parametrize('use_dim_size', [True, False])
+@pytest.mark.parametrize('dim_size', [None, 15])
 @pytest.mark.parametrize('fill_value', [0.0, 10.0])
-def test_quantile_aggregation(q, interpolation, dim, use_dim_size, fill_value):
+def test_quantile_aggregation(q, interpolation, dim, dim_size, fill_value):
     x = torch.tensor([
         [0.0, 1.0, 2.0],
         [3.0, 4.0, 5.0],
@@ -28,22 +28,14 @@ def test_quantile_aggregation(q, interpolation, dim, use_dim_size, fill_value):
                                fill_value=fill_value)
     assert str(aggr) == f"QuantileAggregation(q={q})"
 
-    dim_size = None
-    if use_dim_size:
-        dim_size = x.size(dim)
-
     out = aggr(x, index, dim=dim, dim_size=dim_size)
     expected = x.quantile(q, dim, interpolation=interpolation, keepdim=True)
 
-    out_quantile = torch.index_select(out, dim,
-                                      torch.tensor(0, dtype=torch.long))
-    assert torch.allclose(out_quantile, expected)
+    assert torch.allclose(out.narrow(dim, 0, 1), expected)
 
-    if use_dim_size:
-        out_fill_value = torch.index_select(
-            out, dim, torch.tensor(range(1, dim_size), dtype=torch.long))
-        assert torch.allclose(out_fill_value,
-                              torch.tensor([fill_value], dtype=out.dtype))
+    if out.size(0) > index.max() + 1:
+        padding = out.narrow(dim, 1, out.size(dim) - 1)
+        assert torch.allclose(padding, torch.tensor(fill_value))
 
 
 def test_median_aggregation():
