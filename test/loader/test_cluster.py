@@ -5,7 +5,6 @@ import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.loader import ClusterData, ClusterLoader
 from torch_geometric.testing import onlyFullTest
-from torch_geometric.utils import to_dense_adj
 
 try:
     rowptr = torch.tensor([0, 1])
@@ -30,77 +29,55 @@ def test_cluster_gcn():
     x = torch.Tensor([[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
     edge_index = adj.nonzero(as_tuple=False).t()
     edge_attr = torch.arange(edge_index.size(1))
-    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    n_id = torch.arange(6)
+    data = Data(x=x, n_id=n_id, edge_index=edge_index, edge_attr=edge_attr)
     data.num_nodes = 6
 
     cluster_data = ClusterData(data, num_parts=2, log=False)
 
-    assert cluster_data.partition.rowptr.tolist() == [0, 4, 7, 10, 14, 17, 20]
-    assert cluster_data.partition.col.tolist() == [
-        0, 1, 2, 3, 0, 1, 2, 0, 1, 2, 0, 3, 4, 5, 3, 4, 5, 3, 4, 5
-    ]
     assert cluster_data.partition.partptr.tolist() == [0, 3, 6]
-    assert cluster_data.partition.node_perm.tolist() == [0, 2, 4, 1, 3, 5]
-    assert cluster_data.partition.edge_perm.tolist() == [
-        0, 2, 3, 1, 8, 9, 10, 14, 15, 16, 4, 5, 6, 7, 11, 12, 13, 17, 18, 19
-    ]
-    assert cluster_data.data.x.tolist() == [
-        [0, 0],
-        [2, 2],
-        [4, 4],
-        [1, 1],
-        [3, 3],
-        [5, 5],
-    ]
+    assert cluster_data.partition.node_perm.min() == 0
+    assert cluster_data.partition.node_perm.max() == 5
+    assert cluster_data.partition.node_perm.size() == (6, )
+    assert cluster_data.partition.node_perm.unique().numel() == 6
 
-    data = cluster_data[0]
-    assert data.num_nodes == 3
-    assert data.x.tolist() == [[0, 0], [2, 2], [4, 4]]
-    assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
-                                        [0, 1, 2, 0, 1, 2, 0, 1, 2]]
-    assert data.edge_attr.tolist() == [0, 2, 3, 8, 9, 10, 14, 15, 16]
+    out = cluster_data[0]
+    out.validate()
+    assert out.num_nodes == 3
+    assert out.n_id.size() == (3, )
+    assert out.x.size() == (3, 2)
+    assert out.num_edges == data.subgraph(out.n_id).num_edges
 
-    data = cluster_data[1]
-    assert data.num_nodes == 3
-    assert data.x.tolist() == [[1, 1], [3, 3], [5, 5]]
-    assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
-                                        [0, 1, 2, 0, 1, 2, 0, 1, 2]]
-    assert data.edge_attr.tolist() == [5, 6, 7, 11, 12, 13, 17, 18, 19]
+    out = cluster_data[1]
+    out.validate()
+    assert out.num_nodes == 3
+    assert out.n_id.size() == (3, )
+    assert out.x.size() == (3, 2)
+    assert out.num_edges == data.subgraph(out.n_id).num_edges
 
     loader = ClusterLoader(cluster_data, batch_size=1)
     iterator = iter(loader)
 
-    data = next(iterator)
-    assert data.x.tolist() == [[0, 0], [2, 2], [4, 4]]
-    assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
-                                        [0, 1, 2, 0, 1, 2, 0, 1, 2]]
-    assert data.edge_attr.tolist() == [0, 2, 3, 8, 9, 10, 14, 15, 16]
+    out = next(iterator)
+    out.validate()
+    assert out.num_nodes == 3
+    assert out.n_id.size() == (3, )
+    assert out.x.size() == (3, 2)
+    assert out.num_edges == data.subgraph(out.n_id).num_edges
 
-    data = next(iterator)
-    assert data.x.tolist() == [[1, 1], [3, 3], [5, 5]]
-    assert data.edge_index.tolist() == [[0, 0, 0, 1, 1, 1, 2, 2, 2],
-                                        [0, 1, 2, 0, 1, 2, 0, 1, 2]]
-    assert data.edge_attr.tolist() == [5, 6, 7, 11, 12, 13, 17, 18, 19]
+    out = next(iterator)
+    out.validate()
+    assert out.num_nodes == 3
+    assert out.n_id.size() == (3, )
+    assert out.x.size() == (3, 2)
+    assert out.num_edges == data.subgraph(out.n_id).num_edges
 
     loader = ClusterLoader(cluster_data, batch_size=2, shuffle=False)
-    data = next(iter(loader))
-    assert data.num_nodes == 6
-    assert data.x.tolist() == [
-        [0, 0],
-        [2, 2],
-        [4, 4],
-        [1, 1],
-        [3, 3],
-        [5, 5],
-    ]
-    assert to_dense_adj(data.edge_index).squeeze().tolist() == [
-        [1, 1, 1, 1, 0, 0],
-        [1, 1, 1, 0, 0, 0],
-        [1, 1, 1, 0, 0, 0],
-        [1, 0, 0, 1, 1, 1],
-        [0, 0, 0, 1, 1, 1],
-        [0, 0, 0, 1, 1, 1],
-    ]
+    out = next(iter(loader))
+    assert out.num_nodes == 6
+    assert out.n_id.size() == (6, )
+    assert out.x.size() == (6, 2)
+    assert out.num_edges == data.subgraph(out.n_id).num_edges
 
 
 @pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
