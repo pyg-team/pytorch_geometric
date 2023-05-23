@@ -162,7 +162,7 @@ if __name__ == '__main__':
     data = PygNodePropPredDataset('ogbn-products', root='/tmp/ogb')[0]
 
     loader = ClusterLoader(
-        ClusterData(data, num_parts=15_000),
+        ClusterData(data, num_parts=15_000, save_dir='/tmp/ogb'),
         batch_size=32,
         shuffle=True,
         num_workers=args.num_workers,
