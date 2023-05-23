@@ -4,6 +4,7 @@
 import torch
 from pynndescent import NNDescent
 
+
 def approx_nn(x, y, k, batch_x=None, batch_y=None):
     if batch_x is None:
         batch_x = x.new_zeros(x.size(0), dtype=torch.long)
@@ -37,10 +38,11 @@ def approx_nn(x, y, k, batch_x=None, batch_y=None):
     dist = torch.from_numpy(dist).to(x.dtype)
     col = torch.from_numpy(col).to(torch.long)
     row = torch.arange(col.size(0), dtype=torch.long).view(-1, 1).repeat(1, k)
-    mask = ~ torch.isinf(dist).view(-1)
+    mask = ~torch.isinf(dist).view(-1)
     row, col = row.view(-1)[mask], col.view(-1)[mask]
 
     return torch.stack([row, col], dim=0)
+
 
 def approx_knn_graph(x, k, batch=None, loop=False, flow='source_to_target'):
     assert flow in ['source_to_target', 'target_to_source']
