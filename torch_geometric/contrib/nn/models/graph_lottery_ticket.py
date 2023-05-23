@@ -1,6 +1,5 @@
 import functools
 import math
-from dataclasses import field
 from functools import partial
 from random import randint
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
@@ -194,6 +193,7 @@ class GLTMask:
     torch_geometric.data.Data): Graph to make adjacency mask for. device (
     torch.device): Torch device to place masks on.
     """
+
     def __init__(self, module: Module, graph: Data,
                  device: torch.device) -> None:
         self.graph_mask = INIT_FUNC(
