@@ -11,8 +11,9 @@ from torch_geometric.typing import (
     OptTensor,
     Size,
     SparseTensor,
+    torch_sparse,
 )
-from torch_geometric.utils import spmm
+from torch_geometric.utils import add_self_loops, spmm
 
 
 class SimpleConv(MessagePassing):
@@ -34,7 +35,7 @@ class SimpleConv(MessagePassing):
             that automatically resolves to it). (default: :obj:`"sum"`)
         combine_root (str, optional): Specifies whether or how to combine the
             central node representation (one of :obj:`"sum"`, :obj:`"cat"`,
-            :obj:`None`). (default: :obj:`None`)
+            :obj:`"self_loop"`, :obj:`None`). (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -53,7 +54,7 @@ class SimpleConv(MessagePassing):
         combine_root: Optional[str] = None,
         **kwargs,
     ):
-        if combine_root not in ['sum', 'cat', None]:
+        if combine_root not in ['sum', 'cat', 'self_loop', None]:
             raise ValueError(f"Received invalid value for 'combine_root' "
                              f"(got '{combine_root}')")
 
@@ -62,6 +63,19 @@ class SimpleConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_weight: OptTensor = None, size: Size = None) -> Tensor:
+
+        if self.combine_root is not None:
+            if self.combine_root == 'self_loop':
+                if not isinstance(x, Tensor) or (size is not None
+                                                 and size[0] != size[1]):
+                    raise ValueError("Cannot use `combine_root='self_loop'` "
+                                     "for bipartite message passing")
+                if isinstance(edge_index, Tensor):
+                    edge_index, edge_weight = add_self_loops(
+                        edge_index, edge_weight, num_nodes=x.size(0))
+                elif isinstance(edge_index, SparseTensor):
+                    edge_index = torch_sparse.set_diag(edge_index)
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 

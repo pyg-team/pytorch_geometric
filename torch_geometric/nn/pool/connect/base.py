@@ -7,7 +7,7 @@ from torch import Tensor
 from torch_geometric.nn.pool.select import SelectOutput
 
 
-@torch.jit.script_if_tracing
+@torch.jit.script
 @dataclass(init=False)
 class ConnectOutput:
     r"""The output of the :class:`Connect` method, which holds the coarsened

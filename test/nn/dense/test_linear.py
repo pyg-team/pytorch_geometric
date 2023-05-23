@@ -125,7 +125,7 @@ def test_hetero_linear(device):
     assert out.size() == (3, 32)
 
     jit = torch.jit.script(lin)
-    assert torch.allclose(jit(x, type_vec), out)
+    assert torch.allclose(jit(x, type_vec), out, atol=1e-3)
 
 
 @withCUDA

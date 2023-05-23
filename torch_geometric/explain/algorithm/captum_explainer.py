@@ -150,7 +150,7 @@ class CaptumExplainer(ExplainerAlgorithm):
             metadata = None
             captum_model = CaptumModel(model, mask_type, index)
 
-        self.attribution_method = self.attribution_method(captum_model)
+        attribution_method = self.attribution_method(captum_model)
 
         # In captum, the target is the index for which
         # the attribution is computed.
@@ -159,7 +159,7 @@ class CaptumExplainer(ExplainerAlgorithm):
         else:
             target = target[index]
 
-        attributions = self.attribution_method.attribute(
+        attributions = attribution_method.attribute(
             inputs=inputs,
             target=target,
             additional_forward_args=add_forward_args,

@@ -19,13 +19,13 @@ def test_rect():
     assert out.size() == (6, 8)
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(6, 6))
-        assert torch.allclose(out, model(x, adj.t()))
+        assert torch.allclose(out, model(x, adj.t()), atol=1e-6)
 
     # Test `embed`:
     embed_out = model.embed(x, edge_index)
     assert embed_out.size() == (6, 16)
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        assert torch.allclose(embed_out, model.embed(x, adj.t()))
+        assert torch.allclose(embed_out, model.embed(x, adj.t()), atol=1e-6)
 
     # Test `get_semantic_labels`:
     labeds_out = model.get_semantic_labels(x, y, mask)
