@@ -3,8 +3,12 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import coalesce, remove_self_loops
+from torch_geometric.utils import (
+    coalesce,
+    remove_self_loops,
+    to_edge_index,
+    to_torch_csr_tensor,
+)
 
 
 @functional_transform('two_hop')
@@ -15,11 +19,8 @@ class TwoHop(BaseTransform):
         edge_index, edge_attr = data.edge_index, data.edge_attr
         N = data.num_nodes
 
-        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(N, N))
-
-        adj = adj @ adj
-        row, col, _ = adj.coo()
-        edge_index2 = torch.stack([row, col], dim=0)
+        adj = to_torch_csr_tensor(edge_index, size=(N, N))
+        edge_index2, _ = to_edge_index(adj @ adj)
         edge_index2, _ = remove_self_loops(edge_index2)
 
         edge_index = torch.cat([edge_index, edge_index2], dim=1)

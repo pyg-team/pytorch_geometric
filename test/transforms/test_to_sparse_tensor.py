@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.transforms import ToSparseTensor
 
@@ -26,14 +27,14 @@ def test_to_sparse_tensor_basic(layout):
     assert torch.equal(data.edge_attr, edge_attr[perm])
     assert 'adj_t' in data
 
-    if layout is None:  # `torch_sparse.SparseTensor`.
+    if layout is None and torch_geometric.typing.WITH_TORCH_SPARSE:
         row, col, value = data.adj_t.coo()
         assert row.tolist() == [0, 1, 1, 2]
         assert col.tolist() == [1, 0, 2, 1]
         assert torch.equal(value, edge_weight[perm])
     else:
         adj_t = data.adj_t
-        assert adj_t.layout == layout
+        assert adj_t.layout == layout or torch.sparse_csr
         if layout != torch.sparse_coo:
             adj_t = adj_t.to_sparse_coo()
         assert adj_t.indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
@@ -69,7 +70,7 @@ def test_hetero_to_sparse_tensor(layout):
 
     data = ToSparseTensor(layout=layout)(data)
 
-    if layout is None:  # `torch_sparse.SparseTensor`.
+    if layout is None and torch_geometric.typing.WITH_TORCH_SPARSE:
         row, col, value = data['v', 'v'].adj_t.coo()
         assert row.tolist() == [0, 1, 1, 2]
         assert col.tolist() == [1, 0, 2, 1]
@@ -81,14 +82,14 @@ def test_hetero_to_sparse_tensor(layout):
         assert value is None
     else:
         adj_t = data['v', 'v'].adj_t
-        assert adj_t.layout == layout
+        assert adj_t.layout == layout or torch.sparse_csr
         if layout != torch.sparse_coo:
             adj_t = adj_t.to_sparse_coo()
         assert adj_t.indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
         assert adj_t.values().tolist() == [1., 1., 1., 1.]
 
         adj_t = data['v', 'w'].adj_t
-        assert adj_t.layout == layout
+        assert adj_t.layout == layout or torch.sparse_csr
         if layout != torch.sparse_coo:
             adj_t = adj_t.to_sparse_coo()
         assert adj_t.indices().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]

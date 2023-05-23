@@ -5,9 +5,12 @@ from typing import Any, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
 from torch_geometric.typing import SparseTensor, torch_sparse
+from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
+from torch_geometric.utils.sparse import cat
 
 
 def collate(
@@ -121,7 +124,7 @@ def _collate(
 
     elem = values[0]
 
-    if isinstance(elem, Tensor):
+    if isinstance(elem, Tensor) and not is_sparse(elem):
         # Concatenate a list of `torch.Tensor` along the `cat_dim`.
         # NOTE: We need to take care of incrementing elements appropriately.
         key = str(key)
@@ -142,7 +145,11 @@ def _collate(
         if torch.utils.data.get_worker_info() is not None:
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
-            storage = elem.storage()._new_shared(numel)
+            if torch_geometric.typing.WITH_PT2:
+                storage = elem.untyped_storage()._new_shared(
+                    numel * elem.element_size(), device=elem.device)
+            else:
+                storage = elem.storage()._new_shared(numel, device=elem.device)
             shape = list(elem.size())
             if cat_dim is None or elem.dim() == 0:
                 shape = [len(values)] + shape
@@ -155,7 +162,7 @@ def _collate(
         value = torch.cat(values, dim=cat_dim or 0, out=out)
         return value, slices, incs
 
-    elif isinstance(elem, SparseTensor) and increment:
+    elif is_sparse(elem) and increment:
         # Concatenate a list of `SparseTensor` along the `cat_dim`.
         # NOTE: `cat_dim` may return a tuple to allow for diagonal stacking.
         key = str(key)
@@ -163,7 +170,10 @@ def _collate(
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
         slices = cumsum(repeats)
-        value = torch_sparse.cat(values, dim=cat_dim)
+        if is_torch_sparse_tensor(elem):
+            value = cat(values, dim=cat_dim)
+        else:
+            value = torch_sparse.cat(values, dim=cat_dim)
         return value, slices, None
 
     elif isinstance(elem, (int, float)):

@@ -50,7 +50,7 @@ def coalesce(
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         reduce (str, optional): The reduce operation to use for merging edge
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
-            :obj:`"mul"`). (default: :obj:`"add"`)
+            :obj:`"mul"`, :obj:`"any"`). (default: :obj:`"add"`)
         is_sorted (bool, optional): If set to :obj:`True`, will expect
             :obj:`edge_index` to be already sorted row-wise.
         sort_by_row (bool, optional): If set to :obj:`False`, will sort
@@ -117,7 +117,7 @@ def coalesce(
     edge_index = edge_index[:, mask]
 
     dim_size: Optional[int] = None
-    if isinstance(edge_attr, (Tensor, list, tuple)):
+    if isinstance(edge_attr, (Tensor, list, tuple)) and len(edge_attr) > 0:
         dim_size = edge_index.size(1)
         idx = torch.arange(0, nnz, device=edge_index.device)
         idx.sub_(mask.logical_not_().cumsum(dim=0))
@@ -128,6 +128,8 @@ def coalesce(
         edge_attr = scatter(edge_attr, idx, 0, dim_size, reduce)
         return edge_index, edge_attr
     if isinstance(edge_attr, (list, tuple)):
+        if len(edge_attr) == 0:
+            return edge_index, edge_attr
         edge_attr = [scatter(e, idx, 0, dim_size, reduce) for e in edge_attr]
         return edge_index, edge_attr
 

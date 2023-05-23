@@ -2,11 +2,10 @@ import copy
 
 import pytest
 import torch
-import torch_sparse
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
-from torch_geometric.testing import get_random_edge_index
+from torch_geometric.testing import get_random_edge_index, withPackage
 
 x_paper = torch.randn(10, 16)
 x_author = torch.randn(5, 32)
@@ -89,6 +88,20 @@ def test_init_hetero_data():
     assert len(data.edge_types) == 3
     assert len(data.edge_stores) == 3
     assert len(data.edge_items()) == 3
+
+
+def test_hetero_data_to_from_dict():
+    data = HeteroData()
+    data.global_id = '1'
+    data['v1'].x = torch.randn(5, 16)
+    data['v2'].y = torch.randn(4, 16)
+    data['v1', 'v2'].edge_index = torch.tensor([[0, 1, 2, 3], [0, 1, 2, 3]])
+
+    out = HeteroData.from_dict(data.to_dict())
+    assert out.global_id == data.global_id
+    assert torch.equal(out['v1'].x, data['v1'].x)
+    assert torch.equal(out['v2'].y, data['v2'].y)
+    assert torch.equal(out['v1', 'v2'].edge_index, data['v1', 'v2'].edge_index)
 
 
 def test_hetero_data_functions():
@@ -476,6 +489,22 @@ def test_to_homogeneous_and_vice_versa():
     assert out['author'].num_nodes == 200
 
 
+def test_to_homogeneous_padding():
+    data = HeteroData()
+    data['paper'].x = torch.randn(100, 128)
+    data['author'].x = torch.randn(50, 64)
+
+    out = data.to_homogeneous()
+    assert len(out) == 2
+    assert out.node_type.size() == (150, )
+    assert out.node_type[:100].abs().sum() == 0
+    assert out.node_type[100:].sub(1).abs().sum() == 0
+    assert out.x.size() == (150, 128)
+    assert torch.equal(out.x[:100], data['paper'].x)
+    assert torch.equal(out.x[100:, :64], data['author'].x)
+    assert out.x[100:, 64:].abs().sum() == 0
+
+
 def test_hetero_data_to_canonical():
     data = HeteroData()
     assert isinstance(data['user', 'product'], EdgeStorage)
@@ -562,12 +591,9 @@ def test_basic_feature_store():
 # Graph Store #################################################################
 
 
+@withPackage('torch_sparse')
 def test_basic_graph_store():
     data = HeteroData()
-
-    edge_index = torch.LongTensor([[0, 1], [1, 2]])
-    adj = torch_sparse.SparseTensor(row=edge_index[0], col=edge_index[1],
-                                    sparse_sizes=(3, 3))
 
     def assert_equal_tensor_tuple(expected, actual):
         assert len(expected) == len(actual)
@@ -576,9 +602,9 @@ def test_basic_graph_store():
 
     # We put all three tensor types: COO, CSR, and CSC, and we get them back
     # to confirm that `GraphStore` works as intended.
-    coo = adj.coo()[:-1]
-    csr = adj.csr()[:-1]
-    csc = adj.csc()[-2::-1]  # (row, colptr)
+    coo = (torch.tensor([0, 1]), torch.tensor([1, 2]))
+    csr = (torch.tensor([0, 1, 2, 2]), torch.tensor([1, 2]))
+    csc = (torch.tensor([0, 1]), torch.tensor([0, 0, 1, 2]))
 
     # Put:
     data.put_edge_index(coo, layout='coo', edge_type=('a', 'to', 'b'),

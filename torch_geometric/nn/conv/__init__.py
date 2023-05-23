@@ -51,7 +51,6 @@ from .eg_conv import EGConv
 from .pdn_conv import PDNConv
 from .general_conv import GeneralConv
 from .hgt_conv import HGTConv
-from .fast_hgt_conv import FastHGTConv
 from .heat_conv import HEATConv
 from .hetero_conv import HeteroConv
 from .han_conv import HANConv
@@ -119,7 +118,6 @@ __all__ = [
     'PDNConv',
     'GeneralConv',
     'HGTConv',
-    'FastHGTConv',
     'HEATConv',
     'HeteroConv',
     'HANConv',

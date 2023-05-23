@@ -4,7 +4,8 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.nn.pool.topk_pool import filter_adj, topk
+from torch_geometric.nn.pool.select.topk import topk
+from torch_geometric.nn.pool.topk_pool import filter_adj
 from torch_geometric.typing import OptTensor, SparseTensor
 from torch_geometric.utils import scatter, softmax
 

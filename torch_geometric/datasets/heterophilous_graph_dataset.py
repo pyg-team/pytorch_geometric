@@ -5,6 +5,7 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import to_undirected
 
 
 class HeterophilousGraphDataset(InMemoryDataset):
@@ -111,6 +112,7 @@ class HeterophilousGraphDataset(InMemoryDataset):
         x = torch.from_numpy(raw['node_features'])
         y = torch.from_numpy(raw['node_labels'])
         edge_index = torch.from_numpy(raw['edges']).t().contiguous()
+        edge_index = to_undirected(edge_index, num_nodes=x.size(0))
         train_mask = torch.from_numpy(raw['train_masks']).t().contiguous()
         val_mask = torch.from_numpy(raw['val_masks']).t().contiguous()
         test_mask = torch.from_numpy(raw['test_masks']).t().contiguous()

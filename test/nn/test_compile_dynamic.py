@@ -1,6 +1,5 @@
 import random
 
-import pytest
 import torch
 from torch import Tensor
 
@@ -8,6 +7,7 @@ import torch_geometric
 from torch_geometric.testing import (
     disableExtensions,
     get_random_edge_index,
+    onlyFullTest,
     onlyLinux,
     withCUDA,
     withPackage,
@@ -29,23 +29,23 @@ class MySAGEConv(torch.nn.Module):
 
 @withCUDA
 @onlyLinux
+@onlyFullTest
 @disableExtensions
-@withPackage('torch>=2.0.0')
+@withPackage('torch>2.0.0')
 def test_dynamic_torch_compile(device):
     conv = MySAGEConv(64, 64).to(device)
     conv = torch_geometric.compile(conv, dynamic=True)
 
     optimizer = torch.optim.Adam(conv.parameters(), lr=0.01)
 
-    with pytest.raises(RuntimeError):
-        for _ in range(10):
-            N = random.randrange(100, 500)
-            E = random.randrange(200, 1000)
+    for _ in range(10):
+        N = random.randrange(100, 500)
+        E = random.randrange(200, 1000)
 
-            x = torch.randn(N, 64, device=device)
-            edge_index = get_random_edge_index(N, N, E, device=device)
+        x = torch.randn(N, 64, device=device)
+        edge_index = get_random_edge_index(N, N, E, device=device)
 
-            optimizer.zero_grad()
-            expected = conv(x, edge_index)
-            expected.mean().backward()
-            optimizer.step()
+        optimizer.zero_grad()
+        expected = conv(x, edge_index)
+        expected.mean().backward()
+        optimizer.step()
