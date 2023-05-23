@@ -50,7 +50,8 @@ def trim_to_layer(
     # TODO Support `SparseTensor` for heterogeneous graphs.
     if isinstance(num_sampled_edges_per_hop, dict):
         x = {
-            k: v.narrow(
+            k:
+            v.narrow(
                 dim=0,
                 start=0,
                 length=v.size(0) - num_sampled_nodes_per_hop[k][-layer],
@@ -58,7 +59,8 @@ def trim_to_layer(
             for k, v in x.items()
         }
         edge_index = {
-            k: v.narrow(
+            k:
+            v.narrow(
                 dim=1,
                 start=0,
                 length=v.size(1) - num_sampled_edges_per_hop[k][-layer],
@@ -67,7 +69,8 @@ def trim_to_layer(
         }
         if edge_attr is not None:
             edge_attr = {
-                k: v.narrow(
+                k:
+                v.narrow(
                     dim=0,
                     start=0,
                     length=v.size(0) - num_sampled_edges_per_hop[k][-layer],

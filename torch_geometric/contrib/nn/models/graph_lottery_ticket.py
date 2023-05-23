@@ -193,7 +193,6 @@ class GLTMask:
     torch_geometric.data.Data): Graph to make adjacency mask for. device (
     torch.device): Torch device to place masks on.
     """
-
     def __init__(self, module: Module, graph: Data,
                  device: torch.device) -> None:
         self.graph_mask = INIT_FUNC(
@@ -411,31 +410,13 @@ class GLTSearch:
         cls = type(self).__name__
         return f'{cls}(module={self.module!r}, graph={self.graph!r}, lr={self.lr!r}, reg_graph={self.reg_graph!r}, reg_model={self.reg_model!r}, task={self.task!r}, optim_args={self.optim_args!r}, lr_mask_model={self.lr_mask_model!r}, lr_mask_graph={self.lr_mask_graph!r}, optimizer={self.optimizer!r}, prune_rate_model={self.prune_rate_model!r}, prune_rate_graph={self.prune_rate_graph!r}, max_train_epochs={self.max_train_epochs!r}, loss_fn={self.loss_fn!r}, save_all_masks={self.save_all_masks!r}, seed={self.seed!r}, verbose={self.verbose!r}, ignore_keys={self.ignore_keys!r})'
 
-    def __eq__(self, other):
-        if not isinstance(other, GLTSearch):
-            return NotImplemented
-        return (self.module, self.graph, self.lr, self.reg_graph,
-                self.reg_model, self.task, self.optim_args, self.lr_mask_model,
-                self.lr_mask_graph, self.optimizer, self.prune_rate_model,
-                self.prune_rate_graph, self.max_train_epochs, self.loss_fn,
-                self.save_all_masks, self.seed, self.verbose,
-                self.ignore_keys) == (other.module, other.graph, other.lr,
-                                      other.reg_graph, other.reg_model,
-                                      other.task, other.optim_args,
-                                      other.lr_mask_model, other.lr_mask_graph,
-                                      other.optimizer, other.prune_rate_model,
-                                      other.prune_rate_graph,
-                                      other.max_train_epochs, other.loss_fn,
-                                      other.save_all_masks, other.seed,
-                                      other.verbose, other.ignore_keys)
-
     def prune(self) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, float]]:
         """UGS algorithm. Train model with UGS to train masks and params.
         Disretize masks by pruning rates. Retrain without UGS for final
         performance. """
         initial_params = {
-            "module." + k + GLTModel.ORIG if k.rpartition(".")[-1]
-            not in self.ignore_keys else "module." + k: v.detach().clone()
+            "module." + k + GLTModel.ORIG if k.rpartition(".")[-1] not in self.ignore_keys else "module." + k:
+            v.detach().clone()
             for k, v in self.module.state_dict().items()
         }
 

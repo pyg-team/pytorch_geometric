@@ -166,8 +166,8 @@ def test_rewind(architecture, link_prediction):
 
     model = build_test_model(architecture, link_prediction)
     initial_params = {
-        "module." + k + GLTModel.ORIG if k.rpartition(".")[-1] else "module." +
-        k: v.detach().clone()
+        "module." + k + GLTModel.ORIG if k.rpartition(".")[-1] else "module." + k:
+        v.detach().clone()
         for k, v in model.state_dict().items()
     }
     pruned_model = GLTModel(model, graph, ignore_keys=set())
@@ -199,8 +199,8 @@ def test_search_train(architecture, link_prediction, ugs):
     mask_names = [name + GLTModel.MASK for name, _ in model.named_parameters()]
 
     search = GLTSearch(
-        module=model, device=torch.device(device), graph=graph, lr=0.001, reg_graph=0.01, reg_model=0.01,
-        optim_args={
+        module=model, device=torch.device(device), graph=graph, lr=0.001,
+        reg_graph=0.01, reg_model=0.01, optim_args={
             'weight_decay': 8e-5,
             'rho': 0.8
         },
@@ -231,7 +231,8 @@ def test_search_prune(architecture, link_prediction):
     params = model.state_dict()
 
     search = GLTSearch(
-        module=model, device=torch.device(device), graph=graph, lr=0.001, reg_graph=0.01, reg_model=0.01,
+        module=model, device=torch.device(device), graph=graph, lr=0.001,
+        reg_graph=0.01, reg_model=0.01,
         task='link_prediction' if link_prediction else 'node_classification',
         max_train_epochs=2, optim_args={})
 
