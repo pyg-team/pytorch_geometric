@@ -147,3 +147,26 @@ def test_cluster_gcn_correctness(get_dataset):
         batch2 = data.subgraph(batch1.n_id)
         assert batch1.num_nodes == batch2.num_nodes
         assert batch1.num_edges == batch2.num_edges
+
+
+if __name__ == '__main__':
+    import argparse
+
+    from ogb.nodeproppred import PygNodePropPredDataset
+    from tqdm import tqdm
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--num_workers', type=int, default=0)
+    args = parser.parse_args()
+
+    data = PygNodePropPredDataset('ogbn-products', root='/tmp/ogb')[0]
+
+    loader = ClusterLoader(
+        ClusterData(data, num_parts=15_000, save_dir='/tmp/ogb/ogbn_products'),
+        batch_size=32,
+        shuffle=True,
+        num_workers=args.num_workers,
+    )
+
+    for batch in tqdm(loader):
+        pass
