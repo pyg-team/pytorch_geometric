@@ -194,7 +194,6 @@ class GLTMask:
     torch_geometric.data.Data): Graph to make adjacency mask for. device (
     torch.device): Torch device to place masks on.
     """
-
     def __init__(self, module: Module, graph: Data,
                  device: torch.device) -> None:
         self.graph_mask = INIT_FUNC(
@@ -311,7 +310,6 @@ def score_node_classification(targets, preds, val_mask, test_mask):
     return val_score, test_score
 
 
-
 class GLTSearch:
     r"""The Unified Graph Lottery Ticket search algorithm from the `A Unified
     Lottery Ticket Hypothesis for Graph Neural Networks
@@ -360,10 +358,24 @@ class GLTSearch:
         ignore_keys (set, optional): Set of keys to ignore when injecting
         masks into the model.
     """
-    __match_args__ = ('module', 'graph', 'lr', 'reg_graph', 'reg_model', 'task', 'optim_args', 'lr_mask_model', 'lr_mask_graph', 'optimizer',
-                      'prune_rate_model', 'prune_rate_graph', 'max_train_epochs', 'loss_fn', 'save_all_masks', 'seed', 'verbose', 'ignore_keys')
+    __match_args__ = ('module', 'graph', 'lr', 'reg_graph', 'reg_model',
+                      'task', 'optim_args', 'lr_mask_model', 'lr_mask_graph',
+                      'optimizer', 'prune_rate_model', 'prune_rate_graph',
+                      'max_train_epochs', 'loss_fn', 'save_all_masks', 'seed',
+                      'verbose', 'ignore_keys')
 
-    def __init__(self, module: Module, device: torch.device, graph: Data, lr: float, reg_graph: float, reg_model: float, task: str, optim_args: Dict[str, Any] = {}, lr_mask_model: Optional[float] = None, lr_mask_graph: Optional[float] = None, optimizer: Type[Optimizer] = Adam, prune_rate_model: float = 0.2, prune_rate_graph: float = 0.05, max_train_epochs: int = 200, loss_fn: Callable = cross_entropy, save_all_masks: bool = False, seed: Optional[int] = None, verbose: bool = False, ignore_keys: Optional[set] = None) -> None:
+    def __init__(self, module: Module, device: torch.device, graph: Data,
+                 lr: float, reg_graph: float, reg_model: float, task: str,
+                 optim_args: Dict[str, Any] = {},
+                 lr_mask_model: Optional[float] = None,
+                 lr_mask_graph: Optional[float] = None,
+                 optimizer: Type[Optimizer] = Adam,
+                 prune_rate_model: float = 0.2, prune_rate_graph: float = 0.05,
+                 max_train_epochs: int = 200,
+                 loss_fn: Callable = cross_entropy,
+                 save_all_masks: bool = False, seed: Optional[int] = None,
+                 verbose: bool = False,
+                 ignore_keys: Optional[set] = None) -> None:
         if seed is None:
             seed = randint(1, 9999)
         if ignore_keys is None:
@@ -402,7 +414,20 @@ class GLTSearch:
     def __eq__(self, other):
         if not isinstance(other, GLTSearch):
             return NotImplemented
-        return (self.module, self.graph, self.lr, self.reg_graph, self.reg_model, self.task, self.optim_args, self.lr_mask_model, self.lr_mask_graph, self.optimizer, self.prune_rate_model, self.prune_rate_graph, self.max_train_epochs, self.loss_fn, self.save_all_masks, self.seed, self.verbose, self.ignore_keys) == (other.module, other.graph, other.lr, other.reg_graph, other.reg_model, other.task, other.optim_args, other.lr_mask_model, other.lr_mask_graph, other.optimizer, other.prune_rate_model, other.prune_rate_graph, other.max_train_epochs, other.loss_fn, other.save_all_masks, other.seed, other.verbose, other.ignore_keys)
+        return (self.module, self.graph, self.lr, self.reg_graph,
+                self.reg_model, self.task, self.optim_args, self.lr_mask_model,
+                self.lr_mask_graph, self.optimizer, self.prune_rate_model,
+                self.prune_rate_graph, self.max_train_epochs, self.loss_fn,
+                self.save_all_masks, self.seed, self.verbose,
+                self.ignore_keys) == (other.module, other.graph, other.lr,
+                                      other.reg_graph, other.reg_model,
+                                      other.task, other.optim_args,
+                                      other.lr_mask_model, other.lr_mask_graph,
+                                      other.optimizer, other.prune_rate_model,
+                                      other.prune_rate_graph,
+                                      other.max_train_epochs, other.loss_fn,
+                                      other.save_all_masks, other.seed,
+                                      other.verbose, other.ignore_keys)
 
     def prune(self) -> Tuple[Dict[str, Any], Dict[str, Any], Dict[str, float]]:
         """UGS algorithm. Train model with UGS to train masks and params.

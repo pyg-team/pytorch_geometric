@@ -185,8 +185,9 @@ if __name__ == "__main__":
     else:
         loss_fn = F.cross_entropy
 
-    trainer = GLTSearch(task=args.task, module=gnn, device=device, graph=data, lr=8e-3,
-                        reg_graph=args.reg_graph, reg_model=args.reg_model,
+    trainer = GLTSearch(task=args.task, module=gnn, device=device, graph=data,
+                        lr=8e-3, reg_graph=args.reg_graph,
+                        reg_model=args.reg_model,
                         prune_rate_graph=args.prune_rate_graph,
                         prune_rate_model=args.prune_rate_model,
                         optim_args={"weight_decay":
