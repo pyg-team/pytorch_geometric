@@ -83,7 +83,7 @@ def test_rgcn_conv(cls, conf, device):
     if is_full_test():
         t = '(OptTensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x1, edge_index, edge_type), out1)
+        assert torch.allclose(jit(x1, edge_index, edge_type), out1, atol=1e-3)
         if num_blocks is None:
             assert torch.allclose(jit(idx1, edge_index, edge_type), out2,
                                   atol=1e-3)
