@@ -78,6 +78,11 @@ class QuantileAggregation(Aggregation):
         count = torch.bincount(index, minlength=dim_size or 0)
         cumsum = torch.cumsum(count, dim=0) - count
 
+        # In case there exists dangling indices (`dim_size > index.max()`), we
+        # need to clamp them to prevent out-of-bound issues:
+        if dim_size is not None:
+            cumsum = cumsum.clamp(max=x.size(dim) - 1)
+
         q_point = self.q * (count - 1) + cumsum
         q_point = q_point.t().reshape(-1)
 
