@@ -34,8 +34,15 @@ def test_cluster_gcn():
 
     cluster_data = ClusterData(data, num_parts=2, log=False)
 
-    assert cluster_data.partptr.tolist() == [0, 3, 6]
-    assert cluster_data.perm.tolist() == [0, 2, 4, 1, 3, 5]
+    assert cluster_data.partition.rowptr.tolist() == [0, 4, 7, 10, 14, 17, 20]
+    assert cluster_data.partition.col.tolist() == [
+        0, 1, 2, 3, 0, 1, 2, 0, 1, 2, 0, 3, 4, 5, 3, 4, 5, 3, 4, 5
+    ]
+    assert cluster_data.partition.partptr.tolist() == [0, 3, 6]
+    assert cluster_data.partition.node_perm.tolist() == [0, 2, 4, 1, 3, 5]
+    assert cluster_data.partition.edge_perm.tolist() == [
+        0, 2, 3, 1, 8, 9, 10, 14, 15, 16, 4, 5, 6, 7, 11, 12, 13, 17, 18, 19
+    ]
     assert cluster_data.data.x.tolist() == [
         [0, 0],
         [2, 2],
@@ -43,14 +50,6 @@ def test_cluster_gcn():
         [1, 1],
         [3, 3],
         [5, 5],
-    ]
-    assert cluster_data.data.adj.to_dense().tolist() == [
-        [0, 2, 3, 1, 0, 0],
-        [8, 9, 10, 0, 0, 0],
-        [14, 15, 16, 0, 0, 0],
-        [4, 0, 0, 5, 6, 7],
-        [0, 0, 0, 11, 12, 13],
-        [0, 0, 0, 17, 18, 19],
     ]
 
     data = cluster_data[0]
