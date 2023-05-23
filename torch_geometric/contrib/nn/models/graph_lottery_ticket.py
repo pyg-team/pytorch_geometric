@@ -193,7 +193,6 @@ class GLTMask:
     torch_geometric.data.Data): Graph to make adjacency mask for. device (
     torch.device): Torch device to place masks on.
     """
-
     def __init__(self, module: Module, graph: Data,
                  device: torch.device) -> None:
         self.graph_mask = INIT_FUNC(
