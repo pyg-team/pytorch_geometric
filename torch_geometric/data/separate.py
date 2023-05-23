@@ -84,10 +84,9 @@ def _separate(
     elif isinstance(value, Mapping):
         # Recursively separate elements of dictionaries.
         return {
-            key:
-            _separate(key, elem, idx, slices[key],
-                      incs[key] if decrement else None, batch, store,
-                      decrement)
+            key: _separate(key, elem, idx, slices[key],
+                           incs[key] if decrement else None, batch, store,
+                           decrement)
             for key, elem in value.items()
         }
 

@@ -166,8 +166,8 @@ def test_rewind(architecture, link_prediction):
 
     model = build_test_model(architecture, link_prediction)
     initial_params = {
-        "module." + k + GLTModel.ORIG if k.rpartition(".")[-1] else "module." + k:
-        v.detach().clone()
+        "module." + k + GLTModel.ORIG if k.rpartition(".")[-1] else "module." +
+        k: v.detach().clone()
         for k, v in model.state_dict().items()
     }
     pruned_model = GLTModel(model, graph, ignore_keys=set())

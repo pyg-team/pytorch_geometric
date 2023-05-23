@@ -415,8 +415,8 @@ class GLTSearch:
         Disretize masks by pruning rates. Retrain without UGS for final
         performance. """
         initial_params = {
-            "module." + k + GLTModel.ORIG if k.rpartition(".")[-1] not in self.ignore_keys else "module." + k:
-            v.detach().clone()
+            "module." + k + GLTModel.ORIG if k.rpartition(".")[-1]
+            not in self.ignore_keys else "module." + k: v.detach().clone()
             for k, v in self.module.state_dict().items()
         }
 
