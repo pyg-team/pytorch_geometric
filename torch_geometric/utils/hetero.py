@@ -193,13 +193,13 @@ def groupmatmul_heuristic(inputs: List[Tensor], weights: List[Tensor]):
     num_types = len(inputs)
     max_num_nodes_per_types = max([i.size(0) for i in inputs])
     max_in_feat = max([i.size(0) for i in inputs])
-    out_feat = max([i.size(-1) for i in weights])
+    max_out_feat = max([i.size(-1) for i in weights])
     # this heuristic was learned with learn_sklearn_heuristic_heterodictlinear on an A100
     x = torch.tensor([
         int(num_types),
         int(max_num_nodes_per_types),
-        int(in_feat),
-        int(out_feat)
+        int(max_in_feat),
+        int(max_out_feat)
     ])
     scale_mean = torch.tensor(
         [121.30260223, 26110.33457249, 173.58513011, 34.07434944])
