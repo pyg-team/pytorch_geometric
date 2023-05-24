@@ -68,7 +68,7 @@ class ToSparseTensor(BaseTransform):
         self.fill_cache = fill_cache
         self.layout = layout
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

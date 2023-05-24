@@ -13,7 +13,7 @@ from torch_geometric.transforms import BaseTransform
 class RemoveIsolatedNodes(BaseTransform):
     r"""Removes isolated nodes from the graph
     (functional name: :obj:`remove_isolated_nodes`)."""
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

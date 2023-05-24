@@ -34,7 +34,7 @@ class SIGN(BaseTransform):
     def __init__(self, K: int):
         self.K = K
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         assert data.edge_index is not None
         row, col = data.edge_index
         N = data.num_nodes
