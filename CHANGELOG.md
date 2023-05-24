@@ -45,6 +45,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Set `output_size` in the `repeat_interleave` operation in `QuantileAggregation` ([#7426](https://github.com/pyg-team/pytorch_geometric/pull/7426))
 - Re-factored `ClusterLoader` to integrate `pyg-lib` METIS routine ([#7416](https://github.com/pyg-team/pytorch_geometric/pull/7416))
 - Fixed an index-out-of-range bug in `QuantileAggregation` when `dim_size` is passed ([#7407](https://github.com/pyg-team/pytorch_geometric/pull/7407))
 - The `filter_per_worker` option will not get automatically inferred by default based on the device of the underlying data ([#7399](https://github.com/pyg-team/pytorch_geometric/pull/7399))
@@ -73,7 +74,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added an optional `batch_size` and `max_num_nodes` arguments to `MemPooling` layer ([#7239](https://github.com/pyg-team/pytorch_geometric/pull/7239))
 - Fixed training issues of the GraphGPS example ([#7377](https://github.com/pyg-team/pytorch_geometric/pull/7377))
 - Allowed `CaptumExplainer` to be called multiple times in a row ([#7391](https://github.com/pyg-team/pytorch_geometric/pull/7391))
-- Set output size in the `repeat_interleave` operation in `QuantileAggregation` operation ([#7426](https://github.com/pyg-team/pytorch_geometric/pull/7391))
 
 ### Removed
 
