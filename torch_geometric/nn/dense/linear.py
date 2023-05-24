@@ -322,7 +322,7 @@ class HeteroDictLinear(torch.nn.Module):
         **kwargs,
     ):
         super().__init__()
-
+        self.use_gmm: int = -1
         if isinstance(in_channels, dict):
             self.types = list(in_channels.keys())
 
@@ -373,13 +373,16 @@ class HeteroDictLinear(torch.nn.Module):
         """
         out_dict = {}
 
-        if torch_geometric.typing.WITH_GMM:
+        if torch_geometric.typing.WITH_GMM and (self.use_segmm == -1
+                                                    or bool(self.use_segmm)):
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:
                     xs.append(x_dict[key])
                     weights.append(lin.weight.t())
                     biases.append(lin.bias)
+                if self.use_segmm == -1:
+                    self.use_segmm = groupmatmul_heuristic(xs, weights)
             biases = None if biases[0] is None else biases
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
             for key, out in zip(x_dict.keys(), outs):
