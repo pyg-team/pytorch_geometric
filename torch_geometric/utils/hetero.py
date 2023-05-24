@@ -1,5 +1,6 @@
 from typing import Dict, List, Optional, Set, Tuple
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch.nn import ParameterDict
@@ -7,51 +8,59 @@ from torch.nn import ParameterDict
 from torch_geometric.typing import Adj, EdgeType, NodeType, SparseTensor
 from torch_geometric.utils import is_sparse, to_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
-import numpy as np
+
 
 def learn_sklearn_heuristic_heterodictlinear():
-    from torch_geometric.nn.dense import Linear, HeteroDictLinear
-    import time
     import os
+    import time
+
+    from torch_geometric.nn.dense import HeteroDictLinear, Linear
     os.environ['NVIDIA_TF32_OVERRIDE'] = '0'
     fused_times = {}
     loop_times = {}
     try:
-      for num_nodes_per_type in [10**2,10**3,10**4,10**5]:
-        for out_feats in [2, 4,8,16,32,64,128,256]:
-          for n_feats in [4,8,16,32,64,128,256,512]:
-            for num_types in [4, 8, 16, 32, 64, 128, 256, 512]:
-              try:
-                if n_feats < out_feats:
-                  continue
-                print("benchmarking", num_types,"types w/", num_nodes_per_type, "nodes per type and", n_feats, "input features and", out_feats, "outuput feats")
-                x_dict = {'v'+str(i):torch.randn((num_nodes_per_type, n_feats)).cuda() for i in range(num_types)}
-                lin = Linear(n_feats, out_feats).cuda()
-                heterolin = HeteroDictLinear(n_feats, out_feats, list(x_dict.keys())).cuda()
-                for i in range(60):
-                    if i==10:
-                        since=time.time()
-                    heterolin(x_dict)
-                key = (num_types, num_nodes_per_type, n_feats, out_feats)
-                fused_times[key] = ((time.time()-since)/50.0)
-                print("Avg time for dict based=", fused_times[key])
-                for i in range(60):
-                    if i==10:
-                        since=time.time()
-                    o = {}
-                    for j in range(num_types):
-                        node_type = 'v'+str(j)
-                        o[node_type] = lin(x_dict[node_type])
-                loop_times[key] = ((time.time()-since)/50.0)
-                print("Avg time for for-loop=", loop_times[key])
-              except:
-                continue
+        for num_nodes_per_type in [10**2, 10**3, 10**4, 10**5]:
+            for out_feats in [2, 4, 8, 16, 32, 64, 128, 256]:
+                for n_feats in [4, 8, 16, 32, 64, 128, 256, 512]:
+                    for num_types in [4, 8, 16, 32, 64, 128, 256, 512]:
+                        try:
+                            if n_feats < out_feats:
+                                continue
+                            print("benchmarking", num_types, "types w/",
+                                  num_nodes_per_type, "nodes per type and",
+                                  n_feats, "input features and", out_feats,
+                                  "outuput feats")
+                            x_dict = {
+                                'v' + str(i): torch.randn(
+                                    (num_nodes_per_type, n_feats)).cuda()
+                                for i in range(num_types)
+                            }
+                            lin = Linear(n_feats, out_feats).cuda()
+                            heterolin = HeteroDictLinear(
+                                n_feats, out_feats,
+                                list(x_dict.keys())).cuda()
+                            for i in range(60):
+                                if i == 10:
+                                    since = time.time()
+                                heterolin(x_dict)
+                            key = (num_types, num_nodes_per_type, n_feats,
+                                   out_feats)
+                            fused_times[key] = ((time.time() - since) / 50.0)
+                            print("Avg time for dict based=", fused_times[key])
+                            for i in range(60):
+                                if i == 10:
+                                    since = time.time()
+                                o = {}
+                                for j in range(num_types):
+                                    node_type = 'v' + str(j)
+                                    o[node_type] = lin(x_dict[node_type])
+                            loop_times[key] = ((time.time() - since) / 50.0)
+                            print("Avg time for for-loop=", loop_times[key])
+                        except:
+                            continue
     except:
-      print("Loop Times:", loop_times)
-      print("Dict Times:", fused_times)
-
-
-
+        print("Loop Times:", loop_times)
+        print("Dict Times:", fused_times)
 
     print("Loop Times:", loop_times)
     print("Dict Times:", fused_times)
@@ -59,9 +68,9 @@ def learn_sklearn_heuristic_heterodictlinear():
     X = np.zeros((len(loop_times), 4))
     y = np.zeros(len(loop_times))
     for i, key in enumerate(loop_times.keys()):
-      X[i, :] = key
-      loop_time, fused_time = loop_times[key], fused_times[key]
-      y[i] = int(fused_time <= loop_time)
+        X[i, :] = key
+        loop_time, fused_time = loop_times[key], fused_times[key]
+        y[i] = int(fused_time <= loop_time)
     from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import StandardScaler
     from sklearn.svm import LinearSVC
@@ -80,6 +89,7 @@ def learn_sklearn_heuristic_heterodictlinear():
     # scaler scale= [  160.97847149 40880.58833801   177.85751054    57.91751964]
     # svm weights= [[0.23544514 0.05888962 0.43131615 0.1394449 ]]
     # svm bias= [-0.34540366]
+
 
 def learn_sklearn_heuristic_heterolinear():
     import os
@@ -204,8 +214,7 @@ def groupmatmul_heuristic(inputs: List[Tensor], weights: List[Tensor]):
         [121.30260223, 26110.33457249, 173.58513011, 34.07434944])
     scale_scale = np.array(
         [160.97847149, 40880.58833801, 177.85751054, 57.91751964])
-    svm_weights = np.array(
-        [20.23544514, 0.05888962, 0.43131615, 0.1394449])
+    svm_weights = np.array([20.23544514, 0.05888962, 0.43131615, 0.1394449])
     bias = -0.34540366
     x = (x - scale_mean) / scale_scale
     return int(x.dot(svm_weights) >= bias)
