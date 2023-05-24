@@ -7,6 +7,7 @@ from torch.nn import ParameterDict
 from torch_geometric.typing import Adj, EdgeType, NodeType, SparseTensor
 from torch_geometric.utils import is_sparse, to_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
+import numpy as np
 
 def learn_sklearn_heuristic_heterodictlinear():
     from torch_geometric.nn.dense import Linear, HeteroDictLinear
@@ -55,7 +56,6 @@ def learn_sklearn_heuristic_heterodictlinear():
     print("Loop Times:", loop_times)
     print("Dict Times:", fused_times)
 
-    import numpy as np
     X = np.zeros((len(loop_times), 4))
     y = np.zeros(len(loop_times))
     for i, key in enumerate(loop_times.keys()):
@@ -136,7 +136,6 @@ def learn_sklearn_heuristic_heterolinear():
                             continue
     except:  # noqa
         pass
-    import numpy as np
     X = np.zeros((len(loop_times), 4))
     y = np.zeros(len(loop_times))
     for i, key in enumerate(loop_times.keys()):
@@ -172,17 +171,17 @@ def segmatmul_heuristic(inputs: Tensor, type_ptr, weight: Tensor):
     in_feat = inputs.size(1)
     out_feat = weight.size(-1)
     # this heuristic was learned with learn_sklearn_heuristic_heterolinear on an A100
-    x = torch.tensor([
+    x = np.array([
         int(num_types),
         int(max_num_nodes_per_types),
         int(in_feat),
         int(out_feat)
     ])
-    scale_mean = torch.tensor(
+    scale_mean = np.array(
         [125.11603189, 12133.21523472, 163.81222321, 32.43755536])
-    scale_scale = torch.tensor(
+    scale_scale = np.array(
         [163.34480422, 27572.94543809, 177.6426489, 56.82103934])
-    svm_weights = torch.tensor(
+    svm_weights = np.array(
         [2.43877659e+00, 1.67583047e+00, -5.20527282e-04, 3.43925501e-01])
     bias = 1.20236999
     x = (x - scale_mean) / scale_scale
@@ -195,17 +194,17 @@ def groupmatmul_heuristic(inputs: List[Tensor], weights: List[Tensor]):
     max_in_feat = max([i.size(0) for i in inputs])
     max_out_feat = max([i.size(-1) for i in weights])
     # this heuristic was learned with learn_sklearn_heuristic_heterodictlinear on an A100
-    x = torch.tensor([
+    x = np.array([
         int(num_types),
         int(max_num_nodes_per_types),
         int(max_in_feat),
         int(max_out_feat)
     ])
-    scale_mean = torch.tensor(
+    scale_mean = np.array(
         [121.30260223, 26110.33457249, 173.58513011, 34.07434944])
-    scale_scale = torch.tensor(
+    scale_scale = np.array(
         [160.97847149, 40880.58833801, 177.85751054, 57.91751964])
-    svm_weights = torch.tensor(
+    svm_weights = np.array(
         [20.23544514, 0.05888962, 0.43131615, 0.1394449])
     bias = -0.34540366
     x = (x - scale_mean) / scale_scale
