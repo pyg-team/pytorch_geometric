@@ -36,6 +36,14 @@ def test_cluster_gcn():
 
     cluster_data = ClusterData(data, num_parts=2, log=False)
 
+    partition = cluster_data._partition(
+        edge_index, cluster=torch.tensor([0, 1, 0, 1, 0, 1]))
+    assert partition.partptr.tolist() == [0, 3, 6]
+    assert partition.node_perm.tolist() == [0, 2, 4, 1, 3, 5]
+    assert partition.edge_perm.tolist() == [
+        0, 2, 3, 1, 8, 9, 10, 14, 15, 16, 4, 5, 6, 7, 11, 12, 13, 17, 18, 19
+    ]
+
     assert cluster_data.partition.partptr.tolist() == [0, 3, 6]
     assert torch.equal(
         cluster_data.partition.node_perm.sort()[0],

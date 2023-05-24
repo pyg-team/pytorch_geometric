@@ -70,7 +70,8 @@ class ClusterData(torch.utils.data.Dataset):
             if log:  # pragma: no cover
                 print('Computing METIS partitioning...', file=sys.stderr)
 
-            self.partition = self._partition(data.edge_index, data.num_nodes)
+            cluster = self._metis(data.edge_index, data.num_nodes)
+            self.partition = self._partition(data.edge_index, cluster)
 
             if save_dir is not None:
                 torch.save(self.partition, path)
@@ -80,10 +81,8 @@ class ClusterData(torch.utils.data.Dataset):
 
         self.data = self._permute_data(data, self.partition)
 
-    def _partition(self, edge_index: Tensor, num_nodes: int) -> Partition:
-        # Calculates the partitioning by calling the METIS routine, computes
-        # node-level and edge-level permutations and permutes the edge
-        # connectivity accordingly:
+    def _metis(self, edge_index: Tensor, num_nodes: int) -> Tensor:
+        # Computes a node-level partition assignment vector via METIS.
 
         # Calculate CSR representation:
         row, col = sort_edge_index(edge_index, num_nodes=num_nodes)
@@ -91,42 +90,47 @@ class ClusterData(torch.utils.data.Dataset):
 
         # Compute METIS partitioning:
         if torch_geometric.typing.WITH_METIS:
-            cluster = pyg_lib.partition.metis(
+            return pyg_lib.partition.metis(
                 rowptr.cpu(),
                 col.cpu(),
                 self.num_parts,
                 recursive=self.recursive,
-            )
-        elif torch_geometric.typing.WITH_TORCH_SPARSE:
-            cluster = torch.ops.torch_sparse.partition(
+            ).to(edge_index.device)
+
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            return torch.ops.torch_sparse.partition(
                 rowptr.cpu(),
                 col.cpu(),
                 None,
                 self.num_parts,
                 self.recursive,
-            )
-        else:
-            raise ImportError(f"'{self.__class__.__name__}' requires either "
-                              f"'pyg-lib' or 'torch-sparse'")
+            ).to(edge_index.device)
+
+        raise ImportError(f"'{self.__class__.__name__}' requires either "
+                          f"'pyg-lib' or 'torch-sparse'")
+
+    def _partition(self, edge_index: Tensor, cluster: Tensor) -> Partition:
+        # Computes node-level and edge-level permutations and permutes the edge
+        # connectivity accordingly:
 
         # Sort `cluster` and compute boundaries `partptr`:
-        cluster = cluster.to(edge_index.device)
         cluster, node_perm = index_sort(cluster, max_value=self.num_parts)
         partptr = index2ptr(cluster, size=self.num_parts)
 
         # Permute `edge_index` based on node permutation:
         edge_perm = torch.arange(edge_index.size(1), device=edge_index.device)
         arange = torch.empty_like(node_perm)
-        arange[node_perm] = torch.arange(num_nodes, device=edge_index.device)
+        arange[node_perm] = torch.arange(cluster.numel(),
+                                         device=cluster.device)
         edge_index = arange[edge_index]
 
         # Compute final CSR representation:
         (row, col), edge_perm = sort_edge_index(
             edge_index,
             edge_attr=edge_perm,
-            num_nodes=num_nodes,
+            num_nodes=cluster.numel(),
         )
-        rowptr = index2ptr(row, size=num_nodes)
+        rowptr = index2ptr(row, size=cluster.numel())
 
         return Partition(rowptr, col, partptr, node_perm, edge_perm)
 
