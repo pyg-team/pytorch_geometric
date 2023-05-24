@@ -129,9 +129,8 @@ def trim_x(
         num_sampled_nodes_per_hop = num_sampled_nodes_per_hop[1]
     if isinstance(x, Tuple):
         return (x[0],
-                torch.narrow(
-                    x[1], 0, 0,
-                    x[1].shape[0] - num_sampled_nodes_per_hop[-layer]))
+                torch.narrow(x[1], 0, 0, x[1].shape[0] -
+                             num_sampled_nodes_per_hop[-layer]))
     return x.narrow(
         dim=0,
         start=0,
