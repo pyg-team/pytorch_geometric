@@ -40,7 +40,7 @@ class FeaturePropagation(BaseTransform):
         self.missing_mask = missing_mask
         self.num_iterations = num_iterations
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         assert 'edge_index' in data or 'adj_t' in data
         assert data.x.size() == self.missing_mask.size()
 

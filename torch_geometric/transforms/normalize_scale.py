@@ -11,7 +11,7 @@ class NormalizeScale(BaseTransform):
     def __init__(self):
         self.center = Center()
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         data = self.center(data)
 
         scale = (1 / data.pos.abs().max()) * 0.999999
