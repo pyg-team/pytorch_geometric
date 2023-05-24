@@ -2,10 +2,11 @@
 # nearest neighbors. We can call it approx-knn.
 
 import torch
-from pynndescent import NNDescent
 
 
 def approx_nn(x, y, k, batch_x=None, batch_y=None):
+    from pynndescent import NNDescent
+
     if batch_x is None:
         batch_x = x.new_zeros(x.size(0), dtype=torch.long)
 
