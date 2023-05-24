@@ -35,7 +35,6 @@ def run(args: argparse.ArgumentParser):
             neighbor_sizes = (args.homo_neighbor_sizes
                               if args.homo_neighbor_sizes else None)
 
-        subgr_type = args.subgraph_type
         data = dataset[0].to(args.device)
         average_times = []
         profile = torch_profile() if args.profile else nullcontext()
@@ -51,7 +50,7 @@ def run(args: argparse.ArgumentParser):
                         batch_size=batch_size,
                         shuffle=True,
                         num_workers=args.num_workers,
-                        subgraph_type=subgr_type,
+                        subgraph_type=args.subgraph_type,
                     )
                     cpu_affinity = train_loader.enable_cpu_affinity(
                         args.loader_cores
@@ -83,7 +82,6 @@ def run(args: argparse.ArgumentParser):
                     batch_size=batch_size,
                     shuffle=False,
                     num_workers=args.num_workers,
-                    subgraph_type=subgr_type,
                 )
                 cpu_affinity = subgraph_loader.enable_cpu_affinity(
                     args.loader_cores) if args.cpu_affinity else nullcontext()
@@ -132,6 +130,6 @@ if __name__ == '__main__':
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
-    add('--subgraph-type', default='directional',
-        help="directional or bidirectional sampling")
+    add('--subgraph-type', type=str, default='directional',
+        help="The type of the returned subgraph (directional, bidirectional)")
     run(parser.parse_args())
