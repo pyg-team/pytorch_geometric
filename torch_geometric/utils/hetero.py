@@ -196,9 +196,9 @@ def groupmatmul_heuristic(inputs: List[Tensor], weights: List[Tensor]):
     # this heuristic was learned with learn_sklearn_heuristic_heterodictlinear on an A100
     x = np.array([
         int(num_types),
-        int(max_num_nodes_per_types),
-        int(max_in_feat),
-        int(max_out_feat)
+        int(num_nodes_per_types),
+        int(in_feat),
+        int(out_feat)
     ])
     scale_mean = np.array(
         [121.30260223, 26110.33457249, 173.58513011, 34.07434944])
