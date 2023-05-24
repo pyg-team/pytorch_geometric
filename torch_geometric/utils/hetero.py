@@ -8,10 +8,7 @@ from torch.nn import ParameterDict
 from torch_geometric.typing import Adj, EdgeType, NodeType, SparseTensor
 from torch_geometric.utils import is_sparse, to_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
-<<<<<<< HEAD
-=======
 
->>>>>>> 94e3f486edb72ce8a407d05bbca868763282cada
 
 def learn_sklearn_heuristic_heterodictlinear():
     import os
