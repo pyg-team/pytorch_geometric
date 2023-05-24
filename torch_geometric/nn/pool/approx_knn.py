@@ -32,7 +32,8 @@ def approx_nn(x, y, k, batch_x=None, batch_y=None):
     y = torch.cat([y, 2 * y.size(1) * batch_y.view(-1, 1).to(y.dtype)], dim=-1)
 
     # Default metric is euclidean
-    # More can be found in the documentation here - https://pynndescent.readthedocs.io/en/latest/
+    # More can be found in the
+    # documentation here - https://pynndescent.readthedocs.io/en/latest/
     index = NNDescent(x.detach().numpy())
     col, dist = index.query(y.detach().cpu(), k=k)
     dist = torch.from_numpy(dist).to(x.dtype)
