@@ -13,6 +13,7 @@ try:
     WITH_GMM = WITH_PT2 and hasattr(pyg_lib.ops, 'grouped_matmul')
     WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
     WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
+    WITH_METIS = hasattr(pyg_lib, 'partition')
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
@@ -22,6 +23,7 @@ except (ImportError, OSError) as e:
     WITH_GMM = False
     WITH_SAMPLED_OP = False
     WITH_INDEX_SORT = False
+    WITH_METIS = False
 
 try:
     import torch_scatter  # noqa
