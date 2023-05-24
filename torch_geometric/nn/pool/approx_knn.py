@@ -2,9 +2,11 @@
 # nearest neighbors. We can call it approx-knn.
 
 import torch
+from torch import Tensor
 
 
-def approx_nn(x, y, k, batch_x=None, batch_y=None):
+def approx_nn(x: Tensor, y: Tensor, k: int, batch_x: Tensor = None,
+              batch_y: Tensor = None) -> Tensor:
     from pynndescent import NNDescent
 
     if batch_x is None:
@@ -46,7 +48,9 @@ def approx_nn(x, y, k, batch_x=None, batch_y=None):
     return torch.stack([row, col], dim=0)
 
 
-def approx_knn_graph(x, k, batch=None, loop=False, flow='source_to_target'):
+def approx_knn_graph(x: Tensor, k: int, batch: Tensor = None,
+                     loop: bool = False,
+                     flow: str = 'source_to_target') -> Tensor:
     assert flow in ['source_to_target', 'target_to_source']
     row, col = approx_nn(x, x, k if loop else k + 1, batch, batch)
     row, col = (col, row) if flow == 'source_to_target' else (row, col)
