@@ -115,7 +115,9 @@ class QuantileAggregation(Aggregation):
                 quantile = 0.5 * l_quant + 0.5 * r_quant
 
         # If the number of elements is zero, fill with pre-defined value:
-        mask = (count == 0).repeat_interleave(self.q.numel()).view(shape)
+        repeats = self.q.numel()
+        mask = (count == 0).repeat_interleave(
+            repeats, output_size=repeats * count.numel()).view(shape)
         out = quantile.masked_fill(mask, self.fill_value)
 
         if self.q.numel() > 1:
