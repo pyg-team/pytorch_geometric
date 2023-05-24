@@ -119,7 +119,7 @@ def segmatmul_heuristic(inputs: Tensor, type_ptr, weight: Tensor):
 
 
 def groupmatmul_heuristic(inputs: List[Tensor]):
-    return len(inputs) < 8
+    return len(inputs) < 20
 
 
 def group_hetero_graph(edge_index_dict, num_nodes_dict=None):
