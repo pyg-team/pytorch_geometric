@@ -12,6 +12,7 @@ import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.typing import pyg_lib
 from torch_geometric.utils import index_sort, narrow, select, sort_edge_index
+from torch_geometric.utils.map import map_index
 from torch_geometric.utils.sparse import index2ptr, ptr2index
 
 
@@ -241,24 +242,25 @@ class ClusterLoader(torch.utils.data.DataLoader):
         # connectivity. This is done by slicing the corresponding source and
         # destination indices for each partition and adjusting their indices to
         # start from zero:
-        rows, cols, cumsum = [], [], 0
+        rows, cols, nodes, cumsum = [], [], [], 0
         for i in range(batch.numel()):
+            nodes.append(torch.arange(node_start[i], node_end[i]))
             rowptr = global_rowptr[node_start[i]:node_end[i] + 1]
             rowptr = rowptr - edge_start[i]
             row = ptr2index(rowptr) + cumsum
             col = global_col[edge_start[i]:edge_end[i]]
-            col = col - node_start[i] + cumsum
             rows.append(row)
             cols.append(col)
             cumsum += rowptr.numel() - 1
 
+        node = torch.cat(nodes, dim=0)
         row = torch.cat(rows, dim=0)
         col = torch.cat(cols, dim=0)
 
-        # Mask out any edge that does not connect nodes within the same batch:
-        edge_mask = (col >= 0) & (col < cumsum)
+        # Map `col` vector to valid entries and remove any entries that do not
+        # connect two nodes within the same mini-batch:
+        col, edge_mask = map_index(col, node)
         row = row[edge_mask]
-        col = col[edge_mask]
 
         out = copy.copy(self.cluster_data.data)
 
