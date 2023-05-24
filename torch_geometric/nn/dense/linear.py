@@ -381,8 +381,8 @@ class HeteroDictLinear(torch.nn.Module):
                     xs.append(x_dict[key])
                     weights.append(lin.weight.t())
                     biases.append(lin.bias)
-                if self.use_segmm == -1:
-                    self.use_segmm = groupmatmul_heuristic(xs, weights)
+                if self.use_gmm == -1:
+                    self.use_gmm = groupmatmul_heuristic(xs, weights)
             biases = None if biases[0] is None else biases
             outs = pyg_lib.ops.grouped_matmul(xs, weights, biases)
             for key, out in zip(x_dict.keys(), outs):
