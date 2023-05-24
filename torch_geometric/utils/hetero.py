@@ -193,7 +193,7 @@ def groupmatmul_heuristic(inputs: List[Tensor], weights: List[Tensor]):
     num_types = len(inputs)
     max_num_nodes_per_types = max([i.size(0) for i in inputs])
     max_in_feat = max([i.size(0) for i in inputs])
-    out_feat = weight.size(-1)
+    out_feat = max([i.size(-1) for i in weights])
     # this heuristic was learned with learn_sklearn_heuristic_heterodictlinear on an A100
     x = torch.tensor([
         int(num_types),
