@@ -119,6 +119,9 @@ def segmatmul_heuristic(inputs: Tensor, type_ptr, weight: Tensor):
 
 
 def groupmatmul_heuristic(inputs: List[Tensor]):
+    # costs too much time to measure:
+    # max_num_nodes_per_types, max_in_feat, max_out_feat
+    # which we use for segmatmul heuristic
     return len(inputs) < 20
 
 
