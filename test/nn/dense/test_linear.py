@@ -8,7 +8,6 @@ from torch import Tensor
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
-import torch_geometric.typing
 from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withPackage
