@@ -33,11 +33,11 @@ CUDA_VISIBLE_DEVICES=0,1 python dist_train_sage_supervised.py \
 CUDA_VISIBLE_DEVICES=2,3 python dist_train_sage_supervised.py \
   --num_nodes=2 --node_rank=1 --master_addr=localhost \
   --dataset=ogbn-products --dataset_root_dir=../../../data/ogbn-products \
-  --in_channel=100 --out_channel=47 
+  --in_channel=100 --out_channel=47
 ```
 
 **Note:**
-1. You should change master_addr to the ip of node#0 
+1. You should change master_addr to the ip of node#0
 2. Since there is randomness in the step of partitioning, please ensure all nodes are using the same data when running `dist_train_sage_supervised.py`.
 
 
