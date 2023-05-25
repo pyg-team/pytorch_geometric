@@ -12,13 +12,12 @@ For GLT-specific APIs, they are also compatible with PyTorch and there are compl
 ## Installation
 
 ### Requirements
-- cuda>=11.4
 - python>=3.6
-- torch(PyTorch)>=1.13
+- torch(PyTorch)>=1.12
 ### Pip Wheels
 
 ```
-# glibc>=2.14, torch>=1.13
+# glibc>=2.14, torch>=1.12
 pip install graphlearn-torch
 ```
 

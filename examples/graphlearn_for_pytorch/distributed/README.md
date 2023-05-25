@@ -56,11 +56,14 @@ SSHFS: https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-moun
 Ceph: https://docs.ceph.com/en/latest/install/
 
 ### Step 1: Prepare and partition data
-Here we use ogbn_products and partition it into 2 partitions.
+Here if we use ogbn-products and partition it into 2 partitions.
 ```
 python partition_ogbn_dataset.py --dataset=ogbn-products --root_dir=../../../data/ogbn-products --num_partitions=2
 ```
-
+And for ogbn-papers100M, we can set
+```
+python partition_ogbn_dataset.py --dataset=ogbn-papers100M --root_dir=../../../data/ogbn-papers100M --num_partitions=2
+``` 
 ### Step 2: Set up the configure file
 An example template for configure file is in the yaml format. e.g.
 `dist_train_sage_sup_config.yml`.
@@ -84,7 +87,7 @@ python_bins:
   - /path/to/python
   - /path/to/python
 
-# dataset name, e.g. ogbn-products.
+# dataset name, e.g. ogbn-products, ogbn-papers100M.
 # Note: make sure the name of dataset_root_dir the same as the dataset name.
 dataset: ogbn-products
 
@@ -118,7 +121,7 @@ Here `master_addr` is for the master address for RPC initialization, and `master
 
 Optional parameters which you can append after the command above includes:
 ```
---epochs: repeat epochs for sampling, (default=1)
+--epochs: repeat epochs for sampling, (default=10)
 --batch_size: batch size for sampling, (default=2048)
 ```
 

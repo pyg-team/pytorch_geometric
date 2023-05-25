@@ -108,7 +108,7 @@ def run_training_proc(
             out = model(
                 batch.x,
                 batch.edge_index)[:batch.batch_size].log_softmax(dim=-1)
-            loss = F.nll_loss(out, batch.y[:batch.batch_size])
+            loss = F.nll_loss(out, batch.y[:batch.batch_size].to(torch.int64))
             loss.backward()
             optimizer.step()
         end = time.time()
