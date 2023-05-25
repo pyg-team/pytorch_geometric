@@ -1,10 +1,13 @@
+from typing import Union
+
 import torch
 
 from torch_geometric.typing import EdgeType, NodeType
 
 
-def igmc_node_label(batch: dict[NodeType], edge_index: dict[EdgeType],
-                    num_sampled_edges: int):
+def igmc_node_label(batch: Union[NodeType, dict[NodeType]],
+                    edge_index: Union[EdgeType,
+                                      dict[EdgeType]], num_sampled_edges: int):
 
     if isinstance(edge_index, torch.Tensor):
 
