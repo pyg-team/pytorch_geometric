@@ -63,7 +63,7 @@ python partition_ogbn_dataset.py --dataset=ogbn-products --root_dir=../../../dat
 And for ogbn-papers100M, we can set
 ```
 python partition_ogbn_dataset.py --dataset=ogbn-papers100M --root_dir=../../../data/ogbn-papers100M --num_partitions=2
-``` 
+```
 ### Step 2: Set up the configure file
 An example template for configure file is in the yaml format. e.g.
 `dist_train_sage_sup_config.yml`.
