@@ -322,6 +322,7 @@ class HeteroDictLinear(torch.nn.Module):
         **kwargs,
     ):
         super().__init__()
+
         if isinstance(in_channels, dict):
             self.types = list(in_channels.keys())
 
