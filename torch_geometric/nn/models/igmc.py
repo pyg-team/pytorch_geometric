@@ -2,23 +2,21 @@ from typing import Union
 
 import torch
 
-from torch_geometric.typing import EdgeType, NodeType
+from torch_geometric.data import Data, HeteroData
 
 
-def igmc_node_label(batch: Union[NodeType, dict[NodeType]],
-                    edge_index: Union[EdgeType,
-                                      dict[EdgeType]], num_sampled_edges: int):
+def igmc_node_label(batch: Union[Data, HeteroData], num_sampled_edges: int):
 
-    if isinstance(edge_index, torch.Tensor):
+    if isinstance(batch, Data):
 
-        label_list = [float('inf')] * len(batch)
+        label_list = [float('inf')] * len(batch.batch)
         for i in range(2):
             for j in range(num_sampled_edges):
                 label_list[(i * num_sampled_edges) + j] = i
 
-        for i in range(len(edge_index[0])):
-            v = edge_index[0][i]
-            u = edge_index[1][i]
+        for i in range(len(batch.edge_index[0])):
+            v = batch.edge_index[0][i]
+            u = batch.edge_index[1][i]
             if v > u:
                 label_list[v] = min(label_list[u] + 2, label_list[v])
 
