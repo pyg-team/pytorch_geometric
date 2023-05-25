@@ -372,7 +372,7 @@ class HeteroDictLinear(torch.nn.Module):
         """
         out_dict = {}
 
-        if torch_geometric.typing.WITH_GMM and len(inputs) >= 10:
+        if torch_geometric.typing.WITH_GMM and len(x_dict) >= 10:
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:
@@ -385,8 +385,8 @@ class HeteroDictLinear(torch.nn.Module):
                 if key in x_dict:
                     out_dict[key] = out
         else:
-            for key, x in x_dict.items():
-                out_dict[key] = self.lins[key](x)
+            for key in x_dict.keys():
+                out_dict[key] = self.lins[key](x_dict[key])
 
         return out_dict
 
