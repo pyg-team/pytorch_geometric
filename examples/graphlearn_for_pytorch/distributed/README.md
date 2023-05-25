@@ -19,7 +19,10 @@ Here we use ogbn_products and partition it into 2 partitions.
 ```
 python partition_ogbn_dataset.py --dataset=ogbn-products --root_dir=../../../data/ogbn-products --num_partitions=2
 ```
-
+And for ogbn-papers100M, we can set
+```
+python partition_ogbn_dataset.py --dataset=ogbn-papers100M --root_dir=../../../data/ogbn-papers100M --num_partitions=2
+```
 ### Step 2: Run the example of distributed training
 2 nodes each with 2 GPUs
 ```
@@ -35,7 +38,12 @@ CUDA_VISIBLE_DEVICES=2,3 python dist_train_sage_supervised.py \
   --dataset=ogbn-products --dataset_root_dir=../../../data/ogbn-products \
   --in_channel=100 --out_channel=47
 ```
-
+For ogbn-papers100M, we set 
+```
+--dataset=ogbn-papers100M \
+--dataset_root_dir=../../../data/ogbn-papers100M \
+--in_channel=128 --out_channel=172
+```
 **Note:**
 1. You should change master_addr to the ip of node#0
 2. Since there is randomness in the step of partitioning, please ensure all nodes are using the same data when running `dist_train_sage_supervised.py`.
