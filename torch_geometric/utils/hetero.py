@@ -122,7 +122,7 @@ def groupmatmul_heuristic(inputs: List[Tensor]):
     # costs too much time to measure:
     # max_num_nodes_per_types, max_in_feat, max_out_feat
     # which we use for segmatmul heuristic
-    return len(inputs) >= 20
+    return len(inputs) >= 10
 
 
 def group_hetero_graph(edge_index_dict, num_nodes_dict=None):
