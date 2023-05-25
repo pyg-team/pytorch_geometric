@@ -118,13 +118,6 @@ def segmatmul_heuristic(inputs: Tensor, type_ptr, weight: Tensor):
     return int(x.dot(svm_weights) >= bias)
 
 
-def groupmatmul_heuristic(inputs: List[Tensor]):
-    # costs too much time to measure:
-    # max_num_nodes_per_types, max_in_feat, max_out_feat
-    # which we use for segmatmul heuristic
-    return len(inputs) >= 10
-
-
 def group_hetero_graph(edge_index_dict, num_nodes_dict=None):
     num_nodes_dict = maybe_num_nodes_dict(edge_index_dict, num_nodes_dict)
 
