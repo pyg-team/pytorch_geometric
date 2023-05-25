@@ -1,4 +1,3 @@
-import yaml
 import argparse
 
 import click
