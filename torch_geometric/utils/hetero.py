@@ -1,6 +1,5 @@
 from typing import Dict, List, Optional, Set, Tuple
 
-import numpy as np
 import torch
 from torch import Tensor
 from torch.nn import ParameterDict
@@ -10,7 +9,7 @@ from torch_geometric.utils import is_sparse, to_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes_dict
 
 
-def learn_sklearn_heuristic_heterolinear():
+def learn_sklearn_heuristic():
     import os
     import time
 
@@ -100,7 +99,7 @@ def segmatmul_heuristic(inputs: Tensor, type_ptr, weight: Tensor):
     max_num_nodes_per_types = (type_ptr[1:] - type_ptr[:-1]).max()
     in_feat = inputs.size(1)
     out_feat = weight.size(-1)
-    # this heuristic was learned with learn_sklearn_heuristic_heterolinear on an A100
+    # this heuristic was learned with learn_sklearn_heuristic on an A100
     x = torch.tensor([
         int(num_types),
         int(max_num_nodes_per_types),
