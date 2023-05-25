@@ -180,13 +180,8 @@ def test_hetero_dict_linear_jit():
 
     lin = HeteroDictLinear({'v': 16, 'w': 8}, 32)
 
-    if torch_geometric.typing.WITH_GMM:
-        # See: https://github.com/pytorch/pytorch/pull/97960
-        with pytest.raises(RuntimeError, match="Unknown builtin op"):
-            jit = torch.jit.script(lin)
-    else:
-        jit = torch.jit.script(lin)
-        assert len(jit(x_dict)) == 2
+    jit = torch.jit.script(lin)
+    assert len(jit(x_dict)) == 2
 
 
 @withCUDA
