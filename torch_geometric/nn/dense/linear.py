@@ -385,8 +385,9 @@ class HeteroDictLinear(torch.nn.Module):
                 if key in x_dict:
                     out_dict[key] = out
         else:
-            for key in x_dict.keys():
-                out_dict[key] = self.lins[key](x_dict[key])
+            for key, lin in self.lins.items():
+                if key in x_dict:
+                    out_dict[key] = lin(x_dict[key])
 
         return out_dict
 
