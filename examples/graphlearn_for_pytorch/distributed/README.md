@@ -38,7 +38,7 @@ CUDA_VISIBLE_DEVICES=2,3 python dist_train_sage_supervised.py \
   --dataset=ogbn-products --dataset_root_dir=../../../data/ogbn-products \
   --in_channel=100 --out_channel=47
 ```
-For ogbn-papers100M, we set 
+For ogbn-papers100M, we set
 ```
 --dataset=ogbn-papers100M \
 --dataset_root_dir=../../../data/ogbn-papers100M \
