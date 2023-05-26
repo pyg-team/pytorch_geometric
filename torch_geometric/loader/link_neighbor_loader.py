@@ -209,11 +209,13 @@ class LinkNeighborLoader(LinkLoader):
     ):
         if (edge_label_time is not None) != (time_attr is not None):
             raise ValueError(
-                f"Received conflicting 'edge_label_time' and 'time_attr' "
-                f"arguments: 'edge_label_time' is "
+                "Received conflicting 'edge_label_time' and 'time_attr' "
+                "arguments: 'edge_label_time' is "
                 f"{'set' if edge_label_time is not None else 'not set'} "
-                f"while 'input_time' is "
-                f"{'set' if time_attr is not None else 'not set'}.")
+                "while 'time_attr' is "
+                f"{'set' if time_attr is not None else 'not set'}."
+                "Both arguments must be provided for temporal sampling."
+            )
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
