@@ -40,7 +40,7 @@ def igmc_node_label(batch: Union[Data, HeteroData], num_sampled_edges: int,
             label_list = [float('inf')] * len(batch[node_type].batch)
             prev = 0
 
-            for index, i in batch[node_type].batch:
+            for index, i in enumerate(batch[node_type].batch):
 
                 if i < prev:
                     igmc_id += 2
