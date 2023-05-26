@@ -214,8 +214,7 @@ class LinkNeighborLoader(LinkLoader):
                 f"{'set' if edge_label_time is not None else 'not set'} "
                 "while 'time_attr' is "
                 f"{'set' if time_attr is not None else 'not set'}."
-                "Both arguments must be provided for temporal sampling."
-            )
+                "Both arguments must be provided for temporal sampling.")
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
