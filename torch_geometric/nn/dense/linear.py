@@ -373,7 +373,10 @@ class HeteroDictLinear(torch.nn.Module):
         """
         out_dict = {}
 
-        if torch_geometric.typing.WITH_GMM and not torch.jit.is_scripting():
+        # Only apply fused kernel for more than 10 types, otherwise default
+        # back to sequential computation (which is faster for these cases).
+        if (torch_geometric.typing.WITH_GMM and not torch.jit.is_scripting()
+                and len(x_dict) >= 10):
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:
