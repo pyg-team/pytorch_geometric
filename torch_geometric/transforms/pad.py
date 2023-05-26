@@ -399,7 +399,7 @@ class Pad(BaseTransform):
             edge_type: Optional[EdgeType] = None) -> Union[int, float]:
         return self.edge_pad.get_value(edge_type, attr_name)
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

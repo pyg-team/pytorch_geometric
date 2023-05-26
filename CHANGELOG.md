@@ -45,6 +45,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- All transforms are now immutable, i.e., they perform a shallow-copy of the data and therefore do not longer modify data in-place ([#7429](https://github.com/pyg-team/pytorch_geometric/pull/7429))
+- Set `output_size` in the `repeat_interleave` operation in `QuantileAggregation` ([#7426](https://github.com/pyg-team/pytorch_geometric/pull/7426))
+- Fixed gradient computation of edge weights in `utils.spmm` ([#7428](https://github.com/pyg-team/pytorch_geometric/pull/7428))
+- Re-factored `ClusterLoader` to integrate `pyg-lib` METIS routine ([#7416](https://github.com/pyg-team/pytorch_geometric/pull/7416))
 - Fixed an index-out-of-range bug in `QuantileAggregation` when `dim_size` is passed ([#7407](https://github.com/pyg-team/pytorch_geometric/pull/7407))
 - The `filter_per_worker` option will not get automatically inferred by default based on the device of the underlying data ([#7399](https://github.com/pyg-team/pytorch_geometric/pull/7399))
 - Fixed a bug in `LightGCN.recommendation_loss()` to only use the embeddings of the nodes involved in the current mini-batch ([#7384](https://github.com/pyg-team/pytorch_geometric/pull/7384))

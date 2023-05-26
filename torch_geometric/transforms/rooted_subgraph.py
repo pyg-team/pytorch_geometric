@@ -92,7 +92,7 @@ class RootedSubgraph(BaseTransform, ABC):
 
         return sub_edge_index, n_id, e_id, n_sub_batch, e_sub_batch
 
-    def __call__(self, data: Data) -> RootedSubgraphData:
+    def forward(self, data: Data) -> RootedSubgraphData:
         out = self.extract(data)
         d = RootedSubgraphData.from_dict(data.to_dict())
         d.sub_edge_index, d.n_id, d.e_id, d.n_sub_batch, d.e_sub_batch = out

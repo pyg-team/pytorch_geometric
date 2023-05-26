@@ -58,7 +58,7 @@ def global_mean_pool(x: Tensor, batch: Optional[Tensor],
 
     if batch is None:
         return x.mean(dim=dim, keepdim=x.dim() <= 2)
-    return scatter(x, batch, dim=-2, dim_size=size, reduce='mean')
+    return scatter(x, batch, dim=dim, dim_size=size, reduce='mean')
 
 
 def global_max_pool(x: Tensor, batch: Optional[Tensor],

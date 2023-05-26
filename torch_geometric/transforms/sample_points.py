@@ -27,7 +27,7 @@ class SamplePoints(BaseTransform):
         self.remove_faces = remove_faces
         self.include_normals = include_normals
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         pos, face = data.pos, data.face
         assert pos.size(1) == 3 and face.size(0) == 3
 

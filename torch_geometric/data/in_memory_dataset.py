@@ -85,6 +85,7 @@ class InMemoryDataset(Dataset, ABC):
         return 0
 
     def get(self, idx: int) -> Data:
+        # TODO (matthias) Avoid unnecessary copy here.
         if self.len() == 1:
             return copy.copy(self._data)
 
