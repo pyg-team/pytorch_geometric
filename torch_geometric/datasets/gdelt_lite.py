@@ -1,8 +1,10 @@
 import os
-import torch
-import torch_geometric
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+import torch
+
+import torch_geometric
 
 
 class GDELTLite(torch_geometric.data.InMemoryDataset):
@@ -75,15 +77,15 @@ class GDELTLite(torch_geometric.data.InMemoryDataset):
     @property
     def processed_file_names(self) -> list[str]:
         import datetime
+
         # FIXME: replace with data.pt
         return "data.pt"
 
     def download(self):
         for filename in self.raw_file_names:
             print(filename)
-            torch_geometric.data.download_url(
-                f"{self.url}/{filename}", self.raw_dir
-            )
+            torch_geometric.data.download_url(f"{self.url}/{filename}",
+                                              self.raw_dir)
 
     def process(self):
         # code adapted from:
@@ -104,8 +106,7 @@ class GDELTLite(torch_geometric.data.InMemoryDataset):
                 "time": df.time.values[select],
                 "int_roll": df.int_roll.values[select],
                 "ext_roll": df.ext_roll.values[select],
-            }
-        )
+            })
 
         # create edge features
         # FIXME: replace processed with raw
