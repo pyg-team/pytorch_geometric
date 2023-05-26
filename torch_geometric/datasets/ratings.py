@@ -1,12 +1,12 @@
 import os.path as osp
 from typing import Callable, Optional
 
-import numpy as np
-import torch
-import scipy.sparse as sp
 import h5py
+import numpy as np
+import scipy.sparse as sp
+import torch
 
-from torch_geometric.data import InMemoryDataset, download_url, HeteroData
+from torch_geometric.data import HeteroData, InMemoryDataset, download_url
 
 
 class Ratings(InMemoryDataset):
@@ -76,11 +76,7 @@ class Ratings(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
     ):
         self.name = name.lower().replace('-', '_')
-        assert self.name in [
-            'flixster',
-            'douban',
-            'yahoo_music'
-        ]
+        assert self.name in ['flixster', 'douban', 'yahoo_music']
 
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
@@ -102,7 +98,8 @@ class Ratings(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        download_url(f'{self.url}/{self.name}/training_test_dataset.mat', self.raw_dir)
+        download_url(f'{self.url}/{self.name}/training_test_dataset.mat',
+                     self.raw_dir)
 
     @staticmethod
     def load_matlab_file(path_file, name_field):
@@ -151,11 +148,14 @@ class Ratings(InMemoryDataset):
         num_val = int(np.ceil(num_train * 0.2))
         num_train = num_train - num_val
 
-        train_pairs_nonzero = np.array([[u, v] for u, v in
-                                        zip(np.where(training)[0], np.where(training)[1])])
+        train_pairs_nonzero = np.array(
+            [[u, v]
+             for u, v in zip(np.where(training)[0],
+                             np.where(training)[1])])
         train_rating = M[np.where(training)]
-        test_pairs_nonzero = np.array([[u, v] for u, v in
-                                       zip(np.where(test)[0], np.where(test)[1])])
+        test_pairs_nonzero = np.array(
+            [[u, v] for u, v in zip(np.where(test)[0],
+                                    np.where(test)[1])])
         test_rating = M[np.where(test)]
 
         rand_idx = list(range(len(train_pairs_nonzero)))
@@ -163,7 +163,8 @@ class Ratings(InMemoryDataset):
         train_pairs_nonzero = train_pairs_nonzero[rand_idx]
         train_rating = train_rating[rand_idx]
 
-        all_pairs_nonzero = np.concatenate([train_pairs_nonzero, test_pairs_nonzero], axis=0)
+        all_pairs_nonzero = np.concatenate(
+            [train_pairs_nonzero, test_pairs_nonzero], axis=0)
         rating = np.concatenate([train_rating, test_rating], axis=0)
 
         train_mask = torch.zeros(len(all_pairs_nonzero), dtype=bool)
@@ -175,7 +176,9 @@ class Ratings(InMemoryDataset):
         test_mask[num_train + num_val:] = True
 
         row, col = all_pairs_nonzero.transpose()
-        data['user', 'item'].edge_index = torch.stack([torch.from_numpy(row), torch.from_numpy(col)], dim=0)
+        data['user', 'item'].edge_index = torch.stack(
+            [torch.from_numpy(row),
+             torch.from_numpy(col)], dim=0)
         data['user', 'item'].edge_label = torch.from_numpy(rating)
         data['user', 'item'].edge_train_mask = train_mask
         data['user', 'item'].edge_val_mask = val_mask
