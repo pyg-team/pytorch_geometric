@@ -40,8 +40,8 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
 
         self.lin = Linear(hidden_channels, out_channels)
 
-    def forward(self, x_dict, edge_index_dict, num_sampled_edges_dict=None,
-                num_sampled_nodes_dict=None):
+    def forward(self, x_dict, edge_index_dict, num_sampled_edges_dict,
+                num_sampled_nodes_dict):
 
         for i, conv in enumerate(self.convs):
             x_dict, edge_index_dict, _ = trim_to_layer(
