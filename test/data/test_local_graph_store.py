@@ -1,8 +1,8 @@
 import torch
 
 from torch_geometric.data.graph_store import EdgeAttr
-from torch_geometric.testing import get_random_edge_index
 from torch_geometric.data.local_graph_store import LocalGraphStore
+from torch_geometric.testing import get_random_edge_index
 
 
 def test_local_graph_store():
