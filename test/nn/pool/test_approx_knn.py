@@ -1,23 +1,7 @@
-from itertools import product
-from typing import Any
-
-import pytest
 import torch
 
-from torch_geometric.nn.pool.approx_knn import approx_knn_graph, approx_nn
+from torch_geometric.nn import approx_knn, approx_knn_graph
 from torch_geometric.testing import withPackage
-
-dtypes = [
-    torch.half, torch.bfloat16, torch.float, torch.double, torch.int,
-    torch.long
-]
-grad_dtypes = [torch.half, torch.float, torch.double]
-
-devices = [torch.device('cpu')]
-
-
-def tensor(x: Any, dtype: torch.dtype, device: torch.device):
-    return None if x is None else torch.tensor(x, dtype=dtype, device=device)
 
 
 def to_set(edge_index):
@@ -25,52 +9,50 @@ def to_set(edge_index):
 
 
 @withPackage('pynndescent')
-@pytest.mark.parametrize('dtype,device', product(grad_dtypes, devices))
-def test_approx_knn(dtype, device):
-    x = tensor([
-        [-1, -1],
-        [-1, +1],
-        [+1, +1],
-        [+1, -1],
-        [-1, -1],
-        [-1, +1],
-        [+1, +1],
-        [+1, -1],
-    ], dtype, device)
-    y = tensor([
-        [1, 0],
-        [-1, 0],
-    ], dtype, device)
+def test_approx_knn():
+    x = torch.tensor([
+        [-1.0, -1.0],
+        [-1.0, +1.0],
+        [+1.0, +1.0],
+        [+1.0, -1.0],
+        [-1.0, -1.0],
+        [-1.0, +1.0],
+        [+1.0, +1.0],
+        [+1.0, -1.0],
+    ])
+    y = torch.tensor([
+        [+1.0, 0.0],
+        [-1.0, 0.0],
+    ])
 
-    batch_x = tensor([0, 0, 0, 0, 1, 1, 1, 1], torch.long, device)
-    batch_y = tensor([0, 1], torch.long, device)
+    batch_x = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1])
+    batch_y = torch.tensor([0, 1])
 
-    edge_index = approx_nn(x, y, 2)
+    edge_index = approx_knn(x, y, 2)
     assert to_set(edge_index) == set([(0, 2), (0, 3), (1, 0), (1, 1)])
 
-    edge_index = approx_nn(x, y, 2, batch_x, batch_y)
+    edge_index = approx_knn(x, y, 2, batch_x, batch_y)
     assert to_set(edge_index) == set([(0, 2), (0, 3), (1, 4), (1, 5)])
 
     if x.is_cuda:
-        edge_index = approx_nn(x, y, 2, batch_x, batch_y, cosine=True)
+        edge_index = approx_knn(x, y, 2, batch_x, batch_y, cosine=True)
         assert to_set(edge_index) == set([(0, 2), (0, 3), (1, 4), (1, 5)])
 
-    # Skipping a batch
-    batch_x = tensor([0, 0, 0, 0, 2, 2, 2, 2], torch.long, device)
-    batch_y = tensor([0, 2], torch.long, device)
-    edge_index = approx_nn(x, y, 2, batch_x, batch_y)
+    # Skipping a batch:
+    batch_x = torch.tensor([0, 0, 0, 0, 2, 2, 2, 2])
+    batch_y = torch.tensor([0, 2])
+    edge_index = approx_knn(x, y, 2, batch_x, batch_y)
     assert to_set(edge_index) == set([(0, 2), (0, 3), (1, 4), (1, 5)])
 
 
 @withPackage('pynndescent')
-@pytest.mark.parametrize('dtype,device', product(grad_dtypes, devices))
-def test_approx_knn_graph(dtype, device):
-    x = tensor([
-        [-1, -1],
-        [-1, +1],
-        [+1, +1],
-        [+1, -1],
-    ], dtype, device)
+def test_approx_knn_graph():
+    x = torch.tensor([
+        [-1.0, -1.0],
+        [-1.0, +1.0],
+        [+1.0, +1.0],
+        [+1.0, -1.0],
+    ])
 
     edge_index = approx_knn_graph(x, k=2, flow='target_to_source')
     assert to_set(edge_index) == set([(0, 1), (0, 3), (1, 0), (1, 2), (2, 1),

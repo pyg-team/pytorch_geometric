@@ -1,12 +1,14 @@
-# This file has code to create a KNN graph with approximate
-# nearest neighbors. We can call it approx-knn.
-
 import torch
 from torch import Tensor
 
 
-def approx_nn(x: Tensor, y: Tensor, k: int, batch_x: Tensor = None,
-              batch_y: Tensor = None) -> Tensor:
+def approx_knn(
+    x: Tensor,
+    y: Tensor,
+    k: int,
+    batch_x: Tensor = None,
+    batch_y: Tensor = None,
+) -> Tensor:
     from pynndescent import NNDescent
 
     if batch_x is None:
@@ -34,8 +36,6 @@ def approx_nn(x: Tensor, y: Tensor, k: int, batch_x: Tensor = None,
     x = torch.cat([x, 2 * x.size(1) * batch_x.view(-1, 1).to(x.dtype)], dim=-1)
     y = torch.cat([y, 2 * y.size(1) * batch_y.view(-1, 1).to(y.dtype)], dim=-1)
 
-    # More can be found about pynndescent in the
-    # documentation here - https://pynndescent.readthedocs.io/en/latest/
     index = NNDescent(x.detach().numpy())
     col, dist = index.query(y.detach().cpu(), k=k)
     dist = torch.from_numpy(dist).to(x.dtype)
@@ -47,11 +47,15 @@ def approx_nn(x: Tensor, y: Tensor, k: int, batch_x: Tensor = None,
     return torch.stack([row, col], dim=0)
 
 
-def approx_knn_graph(x: Tensor, k: int, batch: Tensor = None,
-                     loop: bool = False,
-                     flow: str = 'source_to_target') -> Tensor:
+def approx_knn_graph(
+    x: Tensor,
+    k: int,
+    batch: Tensor = None,
+    loop: bool = False,
+    flow: str = 'source_to_target',
+) -> Tensor:
     assert flow in ['source_to_target', 'target_to_source']
-    row, col = approx_nn(x, x, k if loop else k + 1, batch, batch)
+    row, col = approx_knn(x, x, k if loop else k + 1, batch, batch)
     row, col = (col, row) if flow == 'source_to_target' else (row, col)
     if not loop:
         mask = row != col
