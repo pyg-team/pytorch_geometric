@@ -156,8 +156,6 @@ class PyGModelHubMixin(ModelHubMixin):
         if os.path.isdir(model_id):
             model_file = os.path.join(model_id, MODEL_WEIGHTS_NAME)
         else:
-            from huggingface_hub import hf_hub_download
-
             model_file = hf_hub_download(
                 repo_id=model_id,
                 filename=MODEL_WEIGHTS_NAME,
