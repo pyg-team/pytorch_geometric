@@ -279,6 +279,7 @@ Unlike simple stacking of GNN layers, these models could involve pre-processing,
 * **[Deep Graph Infomax](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.DeepGraphInfomax.html)** from Veličković *et al.*: [Deep Graph Infomax](https://arxiv.org/abs/1809.10341) (ICLR 2019) [[**Example1**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/infomax_transductive.py), [**Example2**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/infomax_inductive.py)]
 * **Deep Multiplex Graph Infomax** from Park *et al.*: [Unsupervised Attributed Multiplex Network Embedding](https://arxiv.org/abs/1911.06750) (AAAI 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/dmgi_unsup.py)]
 * **[Masked Label Prediction](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.MaskLabel.html)** from Shi *et al.*: [Masked Label Prediction: Unified Message Passing Model for Semi-Supervised Classification](https://arxiv.org/abs/2009.03509) (CoRR 2020) [[**Example**](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/unimp_arxiv.py)]
+* **[PMLP](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.PMLP.html)** from Yang *et al.*: [Graph Neural Networks are Inherently Good Generalizers: Insights by Bridging GNNs and MLPs](https://arxiv.org/abs/2212.09034) (ICLR 2023)
 
 <details>
 <summary><b>Expand to see all implemented GNN models...</b></summary>

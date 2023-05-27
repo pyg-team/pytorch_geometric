@@ -6,9 +6,13 @@ from torch import Tensor
 from torch_geometric.utils import scatter
 
 
-def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
-                   fill_value: float = 0., max_num_nodes: Optional[int] = None,
-                   batch_size: Optional[int] = None) -> Tuple[Tensor, Tensor]:
+def to_dense_batch(
+    x: Tensor,
+    batch: Optional[Tensor] = None,
+    fill_value: float = 0.0,
+    max_num_nodes: Optional[int] = None,
+    batch_size: Optional[int] = None,
+) -> Tuple[Tensor, Tensor]:
     r"""Given a sparse batch of node features
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}` (with
     :math:`N_i` indicating the number of nodes in graph :math:`i`), creates a
@@ -85,6 +89,8 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
                 [ True, False, False, False],
                 [ True,  True,  True, False]])
     """
+    fill_value = 0.0 if fill_value is None else fill_value
+
     if batch is None and max_num_nodes is None:
         mask = torch.ones(1, x.size(0), dtype=torch.bool, device=x.device)
         return x.unsqueeze(0), mask

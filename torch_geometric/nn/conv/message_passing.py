@@ -21,7 +21,7 @@ import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
-from torch_geometric.nn.aggr import Aggregation, MultiAggregation
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv.utils.inspector import (
     Inspector,
     func_body_repr,
@@ -130,18 +130,12 @@ class MessagePassing(torch.nn.Module):
 
         if aggr is None:
             self.aggr = None
-            self.aggr_module = None
         elif isinstance(aggr, (str, Aggregation)):
             self.aggr = str(aggr)
-            self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         elif isinstance(aggr, (tuple, list)):
             self.aggr = [str(x) for x in aggr]
-            self.aggr_module = MultiAggregation(aggr, **(aggr_kwargs or {}))
-        else:
-            raise ValueError(
-                f"Only strings, list, tuples and instances of"
-                f"`torch_geometric.nn.aggr.Aggregation` are "
-                f"valid aggregation schemes (got '{type(aggr)}').")
+
+        self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
 
         self.flow = flow
 

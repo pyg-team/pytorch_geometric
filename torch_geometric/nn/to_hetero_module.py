@@ -3,6 +3,7 @@ import warnings
 from typing import Dict, List, Optional, Union
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 
 import torch_geometric
@@ -54,7 +55,8 @@ class ToHeteroLinear(torch.nn.Module):
 
         if not torch_geometric.typing.WITH_PYG_LIB:
             return {
-                key: self.hetero_module.lins[i](x_dict[key])
+                key: F.linear(x_dict[key], self.hetero_module.weight[i].T) +
+                self.hetero_module.bias[i]
                 for i, key in enumerate(self.types)
             }
 

@@ -16,8 +16,8 @@ The following article discusses readily available tools and environment settings
 .. note::
     Overall, CPU affinity can be a useful tool for improving the performance and predictability of certain types of applications, but one configuration does not necessarily fit all cases: it is important to carefully consider whether CPU affinity is appropriate for your use case, and to test and measure the impact of any changes you make.
 
-Using CPU affinity and :attr:`filter_per_worker`
-------------------------------------------------
+Using CPU affinity
+------------------
 
 Each :pyg:`PyG` workload can be parallelized using the :pytorch:`PyTorch` iterator class :class:`MultiProcessingDataLoaderIter`, which is automatically enabled in case :obj:`num_workers > 0` is passed to a :class:`torch.utils.data.DataLoader`.
 Under the hood, it creates :obj:`num_workers` many sub-processes that will run in parallel to the main process.
@@ -39,7 +39,6 @@ The recommended number of workers to start with lies between :obj:`[2, 4]`, and 
     loader = NeigborLoader(
         data,
         num_workers=3,
-        filter_per_worker=True,
         ...,
     )
 
@@ -47,14 +46,11 @@ The recommended number of workers to start with lies between :obj:`[2, 4]`, and 
         for batch in loader:
             pass
 
-It is generally adivisable to use :obj:`filter_per_worker=True` when enabling multi-process dataloaders.
+It is generally adivisable to use :obj:`filter_per_worker=True` for any multi-process CPU workloads (:obj:`True` by default).
 The workers then prepare each mini-batch: first by sampling the node indices using pre-defined a sampler, and secondly filtering node and edge features according to sampled nodes and edges.
 The filtering function selects node feature vectors from the complete input :class:`~torch_geometric.data.Data` tensor loaded into DRAM.
-This is a memory-expensive call which takes a significant time of each :class:`~torch.utisl.data.DataLoader` iteration.
-By default :attr:`filter_per_worker` is set to :attr:`False`, which causes that this execution is sent back to the main process.
-However, this can cause performance issues, because the main process will not be able to process all requests efficiently, especially with larger number of workers.
 When :attr:`filter_per_worker` is set to :attr:`True`, each worker's subprocess performs the filtering within it's CPU resource.
-This, main process resources are relieved and can be secured only for GNN computation.
+Hence, main process resources are relieved and can be secured only for GNN computation.
 
 Binding processes to physical cores
 -----------------------------------
@@ -133,7 +129,7 @@ The general guidelines for achieving the best performance with CPU affinity can 
 #. Enable multi-process data loaders by setting :attr:`num_workers > 0`.
    A good estimate for :obj:`num_workers` lies in the range :obj:`[2, 4]`.
    However, for more complex datasets you might want to experiment with larger number of workers.
-   Enable :pyg:`PyG` data loaders with :obj:`filter_per_worker=True` and use the :meth:`~torch_geometric.loader.AffinityMixin.enable_cpu_affinity` feature to affinitize :class:`~torch.utils.data.DataLoader` cores.
+   Use the :meth:`~torch_geometric.loader.AffinityMixin.enable_cpu_affinity` feature to affinitize :class:`~torch.utils.data.DataLoader` cores.
 #. Bind execution to physical cores.
    Alternatively, hyperthreading can be disabled completely at a system-level.
 #. Separate the cores used for main process from the data loader workers' cores by using :obj:`numactl`, :obj:`KMP_AFFINITY` of the :obj:`libiomp5` library, or :obj:`GOMP_CPU_AFFINITY` of the :obj:`libgomp` library.
@@ -165,14 +161,14 @@ Three different affinity configurations are presented:
 
 .. code-block:: console
 
-   LD_PRELOAD=(path)/libjemalloc.so (path)/libiomp5.so MALLOC_CONF=oversize_threshold:1,background_thread:true,metadata_thp:auto OMP_NUM_THREADS=(N-num_workers) KMP_AFFINITY=granularity=fine,compact,1,0 KMP_BLOCKTIME=0 numactl -C <num_workers-(N-1)> --localalloc python training_benchmark.py --cpu-affinity --filter_per_worker --num-workers …
+   LD_PRELOAD=(path)/libjemalloc.so (path)/libiomp5.so MALLOC_CONF=oversize_threshold:1,background_thread:true,metadata_thp:auto OMP_NUM_THREADS=(N-num_workers) KMP_AFFINITY=granularity=fine,compact,1,0 KMP_BLOCKTIME=0 numactl -C <num_workers-(N-1)> --localalloc python training_benchmark.py --cpu-affinity --num-workers …
 
 
 * **Aff+SocketSep** - data loader process on first socket, main process on second socket, 60 threads:
 
 .. code-block:: console
 
-   LD_PRELOAD=(path)/libjemalloc.so (path)/libiomp5.so MALLOC_CONF=oversize_threshold:1,background_thread:true,metadata_thp:auto OMP_NUM_THREADS=(N-M) KMP_AFFINITY=granularity=fine,compact,1,0 KMP_BLOCKTIME=0 numactl -C <M-(N-1)> -m 1 python training_benchmark.py --cpu-affinity --filter_per_worker --num-workers ...
+   LD_PRELOAD=(path)/libjemalloc.so (path)/libiomp5.so MALLOC_CONF=oversize_threshold:1,background_thread:true,metadata_thp:auto OMP_NUM_THREADS=(N-M) KMP_AFFINITY=granularity=fine,compact,1,0 KMP_BLOCKTIME=0 numactl -C <M-(N-1)> -m 1 python training_benchmark.py --cpu-affinity --num-workers ...
 
 Training times for each model/dataset combination were obtained by taking a mean of results at a variable number of dataloader workers: :obj:`[0, 2, 4, 8, 16]` for the baseline and :obj:`[2, 4, 8, 16]` workers for each affinity configuration.
 Then, the affinity means were normalized with respect to the mean baseline measurement.

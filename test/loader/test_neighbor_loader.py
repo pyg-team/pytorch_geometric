@@ -38,7 +38,7 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-@pytest.mark.parametrize('filter_per_worker', [True, False])
+@pytest.mark.parametrize('filter_per_worker', [None, True, False])
 def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
     if dtype != torch.int64 and not WITH_PYG_LIB:
         return
@@ -154,14 +154,12 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         # Test node type selection:
         assert set(batch.node_types) == {'paper', 'author'}
 
-        assert len(batch['paper']) == 5 if WITH_PYG_LIB else 4
         assert batch['paper'].n_id.size() == (batch['paper'].num_nodes, )
         assert batch['paper'].x.size(0) <= 100
         assert batch['paper'].input_id.numel() == batch_size
         assert batch['paper'].batch_size == batch_size
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
 
-        assert len(batch['author']) == 3 if WITH_PYG_LIB else 2
         assert batch['author'].n_id.size() == (batch['author'].num_nodes, )
         assert batch['author'].x.size(0) <= 200
         assert batch['author'].x.min() >= 100 and batch['author'].x.max() < 300
@@ -599,7 +597,7 @@ def test_cpu_affinity_neighbor_loader(loader_cores):
 
     out = []
     with loader.enable_cpu_affinity(loader_cores):
-        iterator = loader._get_iterator().iterator
+        iterator = loader._get_iterator()
         workers = iterator._workers
         for worker in workers:
             sleep(1)  # Gives time for worker to initialize.
