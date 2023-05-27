@@ -974,15 +974,12 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
         out = '{ ' + ', '.join(lines) + ' }'
     elif isinstance(value, Mapping):
         lines = [size_repr(k, v, indent + 2) for k, v in value.items()]
-        out = '{\n' + ',\n'.join(lines) + '\n' + pad + '}'
+        out = '{\n' + ',\n'.join(lines) + ',\n' + pad + '}'
     else:
         out = str(value)
 
     key = str(key).replace("'", '')
-    if isinstance(value, BaseStorage):
-        return f'{pad}\033[1m{key}\033[0m={out}'
-    else:
-        return f'{pad}{key}={out}'
+    return f'{pad}{key}={out}'
 
 
 def warn_or_raise(msg: str, raise_on_error: bool = True):
