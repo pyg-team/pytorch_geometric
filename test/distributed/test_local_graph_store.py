@@ -1,6 +1,5 @@
 import torch
 
-from torch_geometric.data.graph_store import EdgeAttr
 from torch_geometric.distributed import LocalGraphStore
 from torch_geometric.testing import get_random_edge_index
 
