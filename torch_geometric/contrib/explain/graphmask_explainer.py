@@ -327,10 +327,16 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     module.message_scale = None
                     module.message_replacement = None
 
-    def train_explainer(self, model: torch.nn.Module, x: Tensor,
-                        edge_index: Tensor, *, target: Tensor,
-                        index: Optional[Union[int, Tensor]] = None, **kwargs):
-
+    def train_explainer(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ):
         if (not isinstance(index, Tensor) and not isinstance(index, int)
                 and index is not None):
             raise ValueError("'index' parameter can only be a 'Tensor', "
