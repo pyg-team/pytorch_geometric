@@ -10,7 +10,7 @@ def to_set(edge_index):
     return set([(i, j) for i, j in edge_index.t().tolist()])
 
 
-@onlyFullTest  # JIT compile makes this test to slow :(
+@onlyFullTest  # JIT compile makes this test too slow :(
 @withPackage('pynndescent')
 def test_approx_knn():
     warnings.filterwarnings('ignore', '.*find n_neighbors.*')
@@ -40,7 +40,7 @@ def test_approx_knn():
     assert to_set(edge_index) == set([(0, 2), (0, 3), (1, 4), (1, 5)])
 
 
-@onlyFullTest  # JIT compile makes this test to slow :(
+@onlyFullTest  # JIT compile makes this test too slow :(
 @withPackage('pynndescent')
 def test_approx_knn_graph():
     warnings.filterwarnings('ignore', '.*find n_neighbors.*')
