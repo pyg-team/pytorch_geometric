@@ -132,7 +132,7 @@ def trim_adj(
     if layer <= 0:
         return edge_index
 
-    if isinstance(edge_index, torch.Tensor):
+    if isinstance(edge_index, Tensor):
         return edge_index.narrow(
             dim=1,
             start=0,
