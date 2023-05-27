@@ -23,7 +23,8 @@ class PyGModelHubMixin(ModelHubMixin):
     .. code-block:: python
 
        from torch_geometric.datasets import Planetoid
-       from torch_geometric.nn import Node2Vec, PyGModelHubMixin
+       from torch_geometric.nn import Node2Vec
+       from torch_geometric.nn.model_hub import PyGModelHubMixin
 
        # Define your class with the mixin:
        class N2V(Node2Vec, PyGModelHubMixin):
