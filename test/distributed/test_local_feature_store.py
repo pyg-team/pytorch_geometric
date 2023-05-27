@@ -1,7 +1,8 @@
 import pytest
 import torch
 
-from torch_geometric.distributed import LocalFeatureStore, TensorAttr
+from torch_geometric.data import TensorAttr
+from torch_geometric.distributed import LocalFeatureStore
 
 
 def test_local_feature_store_by_graph_name_and_attr_name():
