@@ -36,6 +36,7 @@ from .pcpnet_dataset import PCPNetDataset
 from .s3dis import S3DIS
 from .geometry import GeometricShapes
 from .bitcoin_otc import BitcoinOTC
+from .gdelt_lite import GDELTLite
 from .icews import ICEWS18
 from .gdelt import GDELT
 from .willow_object_class import WILLOWObjectClass
@@ -133,6 +134,7 @@ homo_datasets = [
     'S3DIS',
     'GeometricShapes',
     'BitcoinOTC',
+    'GDELTLite',
     'ICEWS18',
     'GDELT',
     'WILLOWObjectClass',
