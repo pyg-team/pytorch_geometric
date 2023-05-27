@@ -9,7 +9,7 @@ from torch_geometric.data import HeteroData, InMemoryDataset, download_url
 
 class IGMCDataset(InMemoryDataset):
     r"""The user-item heterogeneous rating datasets :obj:`"Douban"`,
-    obj:`"Flixster"` and obj:`"Yahoo-Music"` from the `"Inductive Matrix
+    :obj:`"Flixster"` and :obj:`"Yahoo-Music"` from the `"Inductive Matrix
     Completion Based on Graph Neural Networks"
     <https://arxiv.org/abs/1904.12058>`_ paper.
 
