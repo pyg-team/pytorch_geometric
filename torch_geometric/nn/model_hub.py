@@ -4,13 +4,19 @@ from typing import Any, Dict, Optional, Union
 
 import torch
 
+try:
+    from huggingface_hub import ModelHubMixin, hf_hub_download
+except ImportError:
+    ModelHubMixin = object
+    hf_hub_download = None
+
 CONFIG_NAME = 'config.json'
 MODEL_HUB_ORGANIZATION = "pytorch_geometric"
 MODEL_WEIGHTS_NAME = 'model.pth'
 TAGS = ['graph-machine-learning']
 
 
-class PyGModelHubMixin:
+class PyGModelHubMixin(ModelHubMixin):
     r"""A mixin for saving and loading models to the
     `Huggingface Model Hub <https://huggingface.co/docs/hub/index>`_.
 
@@ -62,6 +68,8 @@ class PyGModelHubMixin:
         model_kwargs (Dict[str, Any]): The arguments to initialise the model.
     """
     def __init__(self, model_name: str, dataset_name: str, model_kwargs: Dict):
+        ModelHubMixin.__init__(self)
+
         # Huggingface Hub API only accepts saving the config as a dict.
         # If the model is instantiated with non-native python types
         # such as torch Tensors (node2vec being an example), we have to remove
@@ -107,8 +115,6 @@ class PyGModelHubMixin:
             **kwargs: Additional keyword arguments passed to
                 :meth:`huggingface_hub.ModelHubMixin.save_pretrained`.
         """
-        from huggingface_hub import ModelHubMixin
-
         config = self.model_config
         # due to way huggingface hub handles the loading/saving of models,
         # the model config can end up in one of the items in the kwargs
@@ -116,7 +122,7 @@ class PyGModelHubMixin:
         # ModelHubMixin.save_pretrained
         kwargs.pop('config', None)
 
-        ModelHubMixin().save_pretrained(
+        super().save_pretrained(
             save_directory=save_directory,
             config=config,
             push_to_hub=push_to_hub,
@@ -139,9 +145,9 @@ class PyGModelHubMixin:
         resume_download,
         local_files_only,
         token,
-        dataset_name="",
-        model_name="",
-        map_location="cpu",
+        dataset_name='',
+        model_name='',
+        map_location='cpu',
         strict=False,
         **model_kwargs,
     ):
@@ -229,9 +235,7 @@ class PyGModelHubMixin:
             **model_kwargs: Additional keyword arguments passed to the
                 model during initialization.
         """
-        from huggingface_hub import ModelHubMixin
-
-        return ModelHubMixin().from_pretrained(
+        return super().from_pretrained(
             pretrained_model_name_or_path,
             force_download=force_download,
             resume_download=resume_download,

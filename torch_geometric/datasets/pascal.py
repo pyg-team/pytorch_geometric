@@ -52,9 +52,9 @@ class PascalVOCKeypoints(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
-        device (torch.device, optional): The device to use for processing the
-            raw data. If set to :obj:`None`, will utilize GPU-processing if
-            available. (default: :obj:`None`)
+        device (str or torch.device, optional): The device to use for
+            processing the raw data. If set to :obj:`None`, will utilize
+            GPU-processing if available. (default: :obj:`None`)
     """
     image_url = ('http://host.robots.ox.ac.uk/pascal/VOC/voc2011/'
                  'VOCtrainval_25-May-2011.tar')
@@ -81,7 +81,7 @@ class PascalVOCKeypoints(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
-        device: Optional[torch.device] = None,
+        device: Optional[str] = None,
     ):
         if device is None:
             device = 'cuda' if torch.cuda.is_available() else 'cpu'
