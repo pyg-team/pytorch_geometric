@@ -1,35 +1,38 @@
 import os
+from typing import Callable, List, Optional
 
-import numpy as np
-import pandas as pd
 import torch
 
-import torch_geometric
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
-class GDELTLite(torch_geometric.data.InMemoryDataset):
-    r"""The Global Database of Events, Language, and Tone (GDELT) dataset used
-    in `"TGL: A General Framework for Temporal GNN Training on Billion-Scale
-    Graphs" <http://arxiv.org/abs/2203.14883>`_, consisting of
-    events collected from 2016 to 2020.
+class GDELTLite(InMemoryDataset):
+    r"""The (reduced) version of the Global Database of Events, Language, and
+    Tone (GDELT) dataset used in the `"Do We Really Need Complicated Model
+    Architectures for Temporal Networks?" <http://arxiv.org/abs/2302.11636>`_
+    paper, consisting of events collected from 2016 to 2020.
 
-    Each node (actor) has:
-    - 413-dimensional multi-hot feature vector that represents CAMEO codes attached to the corresponding actor to server
+    Each node (actor) holds a 413-dimensional multi-hot feature vector that
+    represents CAMEO codes attached to the corresponding actor to server.
 
-    Each edge (event) has:
-    - timestamp
-    - 186-dimensional multi-hot vector representing CAME codes attached to the corresponding event to server
+    Each edge (event) holds a timestamp and a 186-dimensional multi-hot vector
+    representing CAMEO codes attached to the corresponding event to server.
 
-    Tasks:
-    - link prediction task is to predict whether there will be an event between two actors at a timestamp (for GraphMixer)
-    - TODO: node classification task is to predict countries where the actors were located when the events happened (from TGL paper)
-
-    splits:
-    - training: before 2019
-    - validation: 2019
-    - testing: 2020
-
-    GDELT 8,831   1,912,909 0.1 413 186 Yes Yes Yes
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        transform (callable, optional): A function/transform that takes in an
+            :obj:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
 
     **STATS:**
 
@@ -37,97 +40,54 @@ class GDELTLite(torch_geometric.data.InMemoryDataset):
         :widths: 20 10 10 10
         :header-rows: 1
 
-        * - Node/Edge Type
-          - #nodes/#edges
+        * - Name
+          - #nodes
+          - #edges
           - #features
           - #classes
         * - Actor
           - 8,831
+          - 1,912,909
           - 413
           -
-        * - Event
-          - 1,912,909
-          - 186
-          -
     """
+    url = 'https://data.pyg.org/datasets/gdelt_lite.zip'
 
-    # TODO: Upload subsampled dataset somewhere to avoid downloading the whole dataset (41GB)
-    url = "https://s3.us-west-2.amazonaws.com/dgl-data/dataset/tgl/GDELT"
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
+        super().__init__(root, transform, pre_transform)
         self.load(self.processed_paths[0])
 
     @property
-    def raw_dir(self) -> str:
-        return os.path.join(self.root, "GDELTLite", "raw")
+    def raw_file_names(self) -> List[str]:
+        return ['node_features.pt', 'edges.csv', 'edge_features.pt']
 
     @property
-    def raw_file_names(self) -> list[str]:
-        return [
-            "node_features.pt",
-            "edges.csv",
-            "edge_features.pt",
-        ]
-
-    @property
-    def processed_dir(self) -> str:
-        return os.path.join(self.root, "GDELTLite", "processed")
-
-    @property
-    def processed_file_names(self) -> list[str]:
-        import datetime
-
-        # FIXME: replace with data.pt
-        return "data.pt"
+    def processed_file_names(self) -> str:
+        return 'data.pt'
 
     def download(self):
-        for filename in self.raw_file_names:
-            print(filename)
-            torch_geometric.data.download_url(f"{self.url}/{filename}",
-                                              self.raw_dir)
+        path = download_url(self.url, self.raw_dir)
+        extract_zip(path, self.raw_dir)
+        os.unlink(path)
 
     def process(self):
-        # code adapted from:
-        # https://github.com/CongWeilin/GraphMixer/blob/bbdd9923706a02d0619dfd00ef7880911f003a65/DATA/GDELT_lite/gen_dataset.py
-        # FIXME: replace processed with raw
-        # df = pd.read_csv(f"{self.raw_dir}/edges.csv")
-        df = pd.read_csv(f"{self.processed_dir}/edges.csv")
+        import pandas as pd
 
-        # GDELTLite is 1/100 of the original GDELT
-        select = np.arange(0, len(df), 100)
+        x = torch.load(self.raw_paths[0])
+        df = pd.read_csv(self.raw_paths[1])
+        edge_attr = torch.load(self.raw_paths[2])
 
-        # edges
-        new_df = pd.DataFrame(
-            data={
-                "Unnamed: 0": np.arange(len(select)),
-                "src": df.src.values[select],
-                "dst": df.dst.values[select],
-                "time": df.time.values[select],
-                "int_roll": df.int_roll.values[select],
-                "ext_roll": df.ext_roll.values[select],
-            })
+        row = torch.from_numpy(df['src'].values)
+        col = torch.from_numpy(df['dst'].values)
+        edge_index = torch.stack([row, col], dim=0)
+        time = torch.from_numpy(df['time'].values).to(torch.long)
 
-        # create edge features
-        # FIXME: replace processed with raw
-        # edge_attr = torch.load(f"{self.raw_dir}/edge_features.pt")
-        edge_attr = torch.load(f"{self.processed_dir}/edge_features.pt")
-        edge_attr = edge_attr[select]
-        print(edge_attr.shape)
+        data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, time=time)
+        data = data if self.pre_transform is None else self.pre_transform(data)
 
-        # create node features
-        # FIXME: replace processed with raw
-        # x = torch.load(f"{self.raw_dir}/node_features.pt")
-        x = torch.load(f"{self.processed_dir}/node_features.pt")
-
-        edge_index = torch.LongTensor(new_df[["src", "dst"]].T.values)
-        edge_timestamp = torch.LongTensor(new_df.time.values)
-        data = torch_geometric.data.Data(
-            x=x,  # [num_nodes, 413]
-            edge_index=edge_index,  # [2, num_edges]
-            edge_attr=edge_attr,  # [num_edges, 186]
-            edge_label=edge_attr,  # [num_edges, 186]
-            edge_label_index=edge_index,  # [2, num_edges]
-            time=edge_timestamp,  # [num_edges,]
-        )
         self.save([data], self.processed_paths[0])
