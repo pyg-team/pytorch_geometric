@@ -9,7 +9,7 @@ from torch_geometric.data import HeteroData, InMemoryDataset, download_url
 
 class IGMCDataset(InMemoryDataset):
     r"""The user-item heterogeneous rating datasets :obj:`"Douban"`,
-    obj:``"Flixster"` and obj:`"Yahoo-Music"` from the `"Inductive Matrix
+    obj:`"Flixster"` and obj:`"Yahoo-Music"` from the `"Inductive Matrix
     Completion Based on Graph Neural Networks"
     <https://arxiv.org/abs/1904.12058>`_ paper.
 
@@ -29,33 +29,6 @@ class IGMCDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-
-    **STATS:**
-
-    .. list-table::
-        :widths: 10 10 10 10 10 10
-        :header-rows: 1
-
-        * - Name
-          - #nodes
-          - #edges
-          - #features
-          - #ratings
-        * - Douban
-          - 6,000
-          - 123,202
-          - 3,000
-          - 5
-        * - Flixster
-          - 6,000
-          - 23,556
-          - 3,000
-          - 10
-        * - Yahoo-Music
-          - 6,000
-          - 4,802
-          - 3,000
-          - 1,000
     """
     url = 'https://github.com/muhanzhang/IGMC/raw/master/raw_data'
 
