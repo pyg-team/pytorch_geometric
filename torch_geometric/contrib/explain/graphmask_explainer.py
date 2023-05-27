@@ -52,7 +52,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
     .. note::
         For an example of using :class:`GraphMaskExplainer`,
-        see `examples/explain/contrib/graphmask_explainer.py
+        see `examples/contrib/graphmask_explainer.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         /contrib/graphmask_explainer.py>`_.
 
