@@ -157,14 +157,12 @@ def trim_sparse_tensor(src: SparseTensor, num_nodes: Union[int, tuple],
 
     Args:
         src (SparseTensor): The sparse tensor.
-        num_nodes (int or tuple): The number of first nodes to keep.
+        num_nodes (int): The number of first nodes to keep.
         num_seed_nodes (int): The number of seed nodes to compute
             representations.
     """
     rowptr, col, value = src.csr()
-    rowptr = torch.narrow(
-        rowptr, 0, 0, num_nodes[0] +
-        1 if isinstance(num_nodes, tuple) else num_nodes + 1).clone()
+    rowptr = torch.narrow(rowptr, 0, 0, num_nodes + 1).clone()
     rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
 
     col = torch.narrow(col, 0, 0, rowptr[-1])
@@ -175,14 +173,13 @@ def trim_sparse_tensor(src: SparseTensor, num_nodes: Union[int, tuple],
     csr2csc = src.storage._csr2csc
     if csr2csc is not None:
         csr2csc = csr2csc[csr2csc < len(col)]
-    sparse_sizes = (num_nodes,
-                    num_nodes) if isinstance(num_nodes, int) else num_nodes
+
     storage = SparseStorage(
         row=None,
         rowptr=rowptr,
         col=col,
         value=value,
-        sparse_sizes=sparse_sizes,
+        sparse_sizes=[num_nodes, num_nodes],
         rowcount=None,
         colptr=None,
         colcount=None,
