@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added the 'LocalGraphStore' implementation ([#7451](https://github.com/pyg-team/pytorch_geometric/pull/7451)) and its test code of 'test_local_graph_store.py' under test folder.  
 - Added a sparse `cross_entropy` implementation ([#7447](https://github.com/pyg-team/pytorch_geometric/pull/7447))
 - Added the `MovieLens-100K` heterogeneous dataset ([#7398](https://github.com/pyg-team/pytorch_geometric/pull/7398))
 - Added the `PMLP` model ([#7370](https://github.com/pyg-team/pytorch_geometric/pull/7370))
