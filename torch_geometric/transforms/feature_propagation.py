@@ -1,8 +1,8 @@
 from torch import Tensor
 
+import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
-from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import is_torch_sparse_tensor, to_torch_csc_tensor
 
@@ -43,6 +43,7 @@ class FeaturePropagation(BaseTransform):
     def forward(self, data: Data) -> Data:
         assert 'edge_index' in data or 'adj_t' in data
         assert data.x.size() == self.missing_mask.size()
+        gcn_norm = torch_geometric.nn.conv.gcn_conv.gcn_norm
 
         missing_mask = self.missing_mask.to(data.x.device)
         known_mask = ~missing_mask

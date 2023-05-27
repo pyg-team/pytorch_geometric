@@ -15,6 +15,7 @@ from .pan_pool import PANPooling
 from .sag_pool import SAGPooling
 from .topk_pool import TopKPooling
 from .voxel_grid import voxel_grid
+from .approx_knn import approx_knn, approx_knn_graph
 
 try:
     import torch_cluster
@@ -328,6 +329,8 @@ __all__ = [
     'fps',
     'knn',
     'knn_graph',
+    'approx_knn',
+    'approx_knn_graph',
     'radius',
     'radius_graph',
     'nearest',

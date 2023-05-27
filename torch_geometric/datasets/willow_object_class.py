@@ -40,13 +40,15 @@ class WILLOWObjectClass(InMemoryDataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        device (str or torch.device, optional): The device to use for
+            processing the raw data. If set to :obj:`None`, will utilize
+            GPU-processing if available. (default: :obj:`None`)
     """
     url = ('http://www.di.ens.fr/willow/research/graphlearning/'
            'WILLOW-ObjectClass_dataset.zip')
 
     categories = ['face', 'motorbike', 'car', 'duck', 'winebottle']
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
     batch_size = 32
 
     def __init__(
@@ -56,9 +58,14 @@ class WILLOWObjectClass(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
+        device: Optional[str] = None,
     ):
+        if device is None:
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
         assert category.lower() in self.categories
         self.category = category
+        self.device = device
         super().__init__(root, transform, pre_transform, pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
