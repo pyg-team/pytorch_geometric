@@ -3,9 +3,8 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.contrib.explain import GraphMaskExplainer
 from torch_geometric.datasets import Planetoid
-from torch_geometric.explain import Explainer
+from torch_geometric.explain import Explainer, GraphMaskExplainer
 from torch_geometric.nn import GATConv, GCNConv
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -43,7 +42,7 @@ for epoch in range(1, 201):
 
 explainer = Explainer(
     model=model,
-    algorithm=GraphMaskExplainer(2, epochs=5, layer_type='GCN'),
+    algorithm=GraphMaskExplainer(2, epochs=5),
     explanation_type='model',
     node_mask_type='attributes',
     edge_mask_type='object',
@@ -87,7 +86,7 @@ for epoch in range(1, 201):
 
 explainer = Explainer(
     model=model,
-    algorithm=GraphMaskExplainer(2, epochs=5, layer_type='GAT'),
+    algorithm=GraphMaskExplainer(2, epochs=5),
     explanation_type='model',
     node_mask_type='attributes',
     edge_mask_type='object',
