@@ -81,6 +81,7 @@ full = [
     "graphviz",
     "tabulate",
     "matplotlib",
+    "pynndescent",
     "torchmetrics",
     "scikit-image",
     "pytorch-memlab",
