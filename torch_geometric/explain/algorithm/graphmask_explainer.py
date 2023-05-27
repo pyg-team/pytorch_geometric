@@ -55,7 +55,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         see `examples/explain/graphmask_explainer_example.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         /explain/graphmask_explainer_example.py>`_.
-        
+
     Args:
         num_layers (int): The number of layers to use.
         epochs (int, optional): The number of epochs to train.
