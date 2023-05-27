@@ -1,8 +1,7 @@
-import pytest
 import torch
 
-from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
-from torch_geometric.testing import MyGraphStore, get_random_edge_index
+from torch_geometric.data.graph_store import EdgeAttr
+from torch_geometric.testing import get_random_edge_index
 from torch_geometric.data.local_graph_store import LocalGraphStore
 
 
