@@ -54,7 +54,7 @@ def trim_to_layer(
             for k, v in x.items()
         }
         edge_index = {
-            k: trim_adj(v, layer, num_sampled_nodes_per_hop[k[2]],
+            k: trim_adj(v, layer, num_sampled_nodes_per_hop[k[-1]],
                         num_sampled_edges_per_hop[k])
             for k, v in edge_index.items()
         }
