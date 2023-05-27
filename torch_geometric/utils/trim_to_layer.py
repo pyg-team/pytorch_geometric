@@ -17,10 +17,10 @@ def trim_to_layer(
     layer: int,
     num_sampled_nodes_per_hop: Union[List[int], Dict[NodeType, List[int]]],
     num_sampled_edges_per_hop: Union[List[int], Dict[EdgeType, List[int]]],
-    x: Union[MaybeHeteroNodeTensor],
-    edge_index: Union[MaybeHeteroEdgeTensor],
+    x: MaybeHeteroNodeTensor,
+    edge_index: MaybeHeteroEdgeTensor,
     edge_attr: Optional[MaybeHeteroEdgeTensor] = None,
-) -> Tuple[MaybeHeteroEdgeTensor, MaybeHeteroNodeTensor,
+) -> Tuple[MaybeHeteroNodeTensor, MaybeHeteroEdgeTensor,
            Optional[MaybeHeteroEdgeTensor]]:
     r"""Trims the :obj:`edge_index` representation, node features :obj:`x` and
     edge features :obj:`edge_attr` to a minimal-sized representation for the
