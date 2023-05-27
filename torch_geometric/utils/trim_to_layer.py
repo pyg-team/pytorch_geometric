@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import (
+    Adj,
     EdgeType,
     MaybeHeteroEdgeTensor,
     MaybeHeteroNodeTensor,
@@ -49,7 +50,7 @@ def trim_to_layer(
 
     if isinstance(num_sampled_edges_per_hop, dict):
         x = {
-            k: trim_x(v, layer, num_sampled_nodes_per_hop[k])
+            k: trim_feat(v, layer, num_sampled_nodes_per_hop[k])
             for k, v in x.items()
         }
         edge_index = {
@@ -59,29 +60,19 @@ def trim_to_layer(
         }
         if edge_attr is not None:
             edge_attr = {
-                k: v.narrow(
-                    dim=0,
-                    start=0,
-                    length=v.size(0) - num_sampled_edges_per_hop[k][-layer],
-                )
+                k: trim_feat(v, layer, num_sampled_edges_per_hop[k])
                 for k, v in edge_attr.items()
             }
         return x, edge_index, edge_attr
 
-    x = trim_x(x, layer, num_sampled_nodes_per_hop)
+    x = trim_feat(x, layer, num_sampled_nodes_per_hop)
+    edge_index = trim_adj(edge_index, layer, num_sampled_nodes_per_hop,
+                          num_sampled_edges_per_hop)
 
     if edge_attr is not None:
-        edge_attr = edge_attr.narrow(
-            dim=0,
-            start=0,
-            length=edge_attr.size(0) - num_sampled_edges_per_hop[-layer],
-        )
-    if isinstance(edge_index, Tensor) or isinstance(edge_index, SparseTensor):
-        edge_index = trim_adj(edge_index, layer, num_sampled_nodes_per_hop,
-                              num_sampled_edges_per_hop)
-        return x, edge_index, edge_attr
+        edge_attr = trim_feat(edge_attr, layer, num_sampled_edges_per_hop)
 
-    raise NotImplementedError
+    return x, edge_index, edge_attr
 
 
 class TrimToLayer(torch.nn.Module):
@@ -91,7 +82,7 @@ class TrimToLayer(torch.nn.Module):
         num_sampled_nodes_per_hop: Optional[List[int]],
         num_sampled_edges_per_hop: Optional[List[int]],
         x: Tensor,
-        edge_index: Union[Tensor, SparseTensor],
+        edge_index: Adj,
         edge_attr: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
 
@@ -120,28 +111,23 @@ class TrimToLayer(torch.nn.Module):
 # Helper functions ############################################################
 
 
-def trim_x(
-        x: Union[MaybeHeteroNodeTensor], layer: int,
-        num_sampled_nodes_per_hop: List[int]) -> Union[MaybeHeteroNodeTensor]:
+def trim_feat(x: Tensor, layer: int, num_samples_per_hop: List[int]) -> Tensor:
     if layer <= 0:
         return x
-    if isinstance(num_sampled_nodes_per_hop, tuple):
-        num_sampled_nodes_per_hop = num_sampled_nodes_per_hop[1]
-    if isinstance(x, Tuple):
-        return (x[0],
-                torch.narrow(x[1], 0, 0, x[1].shape[0] -
-                             num_sampled_nodes_per_hop[-layer]))
+
     return x.narrow(
         dim=0,
         start=0,
-        length=x.size(0) - num_sampled_nodes_per_hop[-layer],
+        length=x.size(0) - num_samples_per_hop[-layer],
     )
 
 
 def trim_adj(
-        edge_index: Union[MaybeHeteroEdgeTensor], layer: int,
-        num_sampled_nodes_per_hop: List[int],
-        num_sampled_edges_per_hop: List[int]) -> Union[MaybeHeteroEdgeTensor]:
+    edge_index: Adj,
+    layer: int,
+    num_sampled_nodes_per_hop: List[int],
+    num_sampled_edges_per_hop: List[int],
+) -> Adj:
 
     if layer <= 0:
         return edge_index
@@ -154,19 +140,11 @@ def trim_adj(
         )
 
     elif isinstance(edge_index, SparseTensor):
-        if not isinstance(num_sampled_nodes_per_hop, tuple):
-            num_nodes = edge_index.size(0) - num_sampled_nodes_per_hop[-layer]
-            num_seed_nodes = num_nodes - num_sampled_nodes_per_hop[-(layer +
-                                                                     1)]
-        else:
-            num_nodes = (edge_index.size(0) -
-                         num_sampled_nodes_per_hop[1][-layer],
-                         edge_index.size(1) -
-                         num_sampled_nodes_per_hop[0][-layer])
-
-            num_seed_nodes = num_nodes[0] - num_sampled_nodes_per_hop[1][-(
-                layer + 1)]
+        num_nodes = edge_index.size(0) - num_sampled_nodes_per_hop[-layer]
+        num_seed_nodes = num_nodes - num_sampled_nodes_per_hop[-(layer + 1)]
         return trim_sparse_tensor(edge_index, num_nodes, num_seed_nodes)
+
+    raise ValueError(f"Unsupported 'edge_index' type '{type(edge_index)}'")
 
 
 def trim_sparse_tensor(src: SparseTensor, num_nodes: Union[int, tuple],
