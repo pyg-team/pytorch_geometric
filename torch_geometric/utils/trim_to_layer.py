@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import (
+    Adj,
     EdgeType,
     MaybeHeteroEdgeTensor,
     MaybeHeteroNodeTensor,
@@ -17,10 +18,10 @@ def trim_to_layer(
     layer: int,
     num_sampled_nodes_per_hop: Union[List[int], Dict[NodeType, List[int]]],
     num_sampled_edges_per_hop: Union[List[int], Dict[EdgeType, List[int]]],
-    x: Union[MaybeHeteroNodeTensor],
-    edge_index: Union[MaybeHeteroEdgeTensor],
+    x: MaybeHeteroNodeTensor,
+    edge_index: MaybeHeteroEdgeTensor,
     edge_attr: Optional[MaybeHeteroEdgeTensor] = None,
-) -> Tuple[MaybeHeteroEdgeTensor, MaybeHeteroNodeTensor,
+) -> Tuple[MaybeHeteroNodeTensor, MaybeHeteroEdgeTensor,
            Optional[MaybeHeteroEdgeTensor]]:
     r"""Trims the :obj:`edge_index` representation, node features :obj:`x` and
     edge features :obj:`edge_attr` to a minimal-sized representation for the
@@ -47,62 +48,31 @@ def trim_to_layer(
     if layer <= 0:
         return x, edge_index, edge_attr
 
-    # TODO Support `SparseTensor` for heterogeneous graphs.
     if isinstance(num_sampled_edges_per_hop, dict):
         x = {
-            k: v.narrow(
-                dim=0,
-                start=0,
-                length=v.size(0) - num_sampled_nodes_per_hop[k][-layer],
-            )
+            k: trim_feat(v, layer, num_sampled_nodes_per_hop[k])
             for k, v in x.items()
         }
         edge_index = {
-            k: v.narrow(
-                dim=1,
-                start=0,
-                length=v.size(1) - num_sampled_edges_per_hop[k][-layer],
-            )
+            k: trim_adj(v, layer, num_sampled_nodes_per_hop[k[-1]],
+                        num_sampled_edges_per_hop[k])
             for k, v in edge_index.items()
         }
         if edge_attr is not None:
             edge_attr = {
-                k: v.narrow(
-                    dim=0,
-                    start=0,
-                    length=v.size(0) - num_sampled_edges_per_hop[k][-layer],
-                )
+                k: trim_feat(v, layer, num_sampled_edges_per_hop[k])
                 for k, v in edge_attr.items()
             }
         return x, edge_index, edge_attr
 
-    x = x.narrow(
-        dim=0,
-        start=0,
-        length=x.size(0) - num_sampled_nodes_per_hop[-layer],
-    )
+    x = trim_feat(x, layer, num_sampled_nodes_per_hop)
+    edge_index = trim_adj(edge_index, layer, num_sampled_nodes_per_hop,
+                          num_sampled_edges_per_hop)
+
     if edge_attr is not None:
-        edge_attr = edge_attr.narrow(
-            dim=0,
-            start=0,
-            length=edge_attr.size(0) - num_sampled_edges_per_hop[-layer],
-        )
-    if isinstance(edge_index, Tensor):
-        edge_index = edge_index.narrow(
-            dim=1,
-            start=0,
-            length=edge_index.size(1) - num_sampled_edges_per_hop[-layer],
-        )
-        return x, edge_index, edge_attr
+        edge_attr = trim_feat(edge_attr, layer, num_sampled_edges_per_hop)
 
-    elif isinstance(edge_index, SparseTensor):
-        num_nodes = edge_index.size(0) - num_sampled_nodes_per_hop[-layer]
-        num_seed_nodes = num_nodes - num_sampled_nodes_per_hop[-(layer + 1)]
-        edge_index = trim_sparse_tensor(edge_index, num_nodes, num_seed_nodes)
-
-        return x, edge_index, edge_attr
-
-    raise NotImplementedError
+    return x, edge_index, edge_attr
 
 
 class TrimToLayer(torch.nn.Module):
@@ -112,7 +82,7 @@ class TrimToLayer(torch.nn.Module):
         num_sampled_nodes_per_hop: Optional[List[int]],
         num_sampled_edges_per_hop: Optional[List[int]],
         x: Tensor,
-        edge_index: Union[Tensor, SparseTensor],
+        edge_index: Adj,
         edge_attr: Optional[Tensor] = None,
     ) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
 
@@ -139,6 +109,42 @@ class TrimToLayer(torch.nn.Module):
 
 
 # Helper functions ############################################################
+
+
+def trim_feat(x: Tensor, layer: int, num_samples_per_hop: List[int]) -> Tensor:
+    if layer <= 0:
+        return x
+
+    return x.narrow(
+        dim=0,
+        start=0,
+        length=x.size(0) - num_samples_per_hop[-layer],
+    )
+
+
+def trim_adj(
+    edge_index: Adj,
+    layer: int,
+    num_sampled_nodes_per_hop: List[int],
+    num_sampled_edges_per_hop: List[int],
+) -> Adj:
+
+    if layer <= 0:
+        return edge_index
+
+    if isinstance(edge_index, Tensor):
+        return edge_index.narrow(
+            dim=1,
+            start=0,
+            length=edge_index.size(1) - num_sampled_edges_per_hop[-layer],
+        )
+
+    elif isinstance(edge_index, SparseTensor):
+        num_nodes = edge_index.size(0) - num_sampled_nodes_per_hop[-layer]
+        num_seed_nodes = num_nodes - num_sampled_nodes_per_hop[-(layer + 1)]
+        return trim_sparse_tensor(edge_index, num_nodes, num_seed_nodes)
+
+    raise ValueError(f"Unsupported 'edge_index' type '{type(edge_index)}'")
 
 
 def trim_sparse_tensor(src: SparseTensor, num_nodes: int,
