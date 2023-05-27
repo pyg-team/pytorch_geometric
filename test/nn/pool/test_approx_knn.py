@@ -5,13 +5,14 @@ import torch
 from torch_cluster.testing import devices, grad_dtypes, tensor
 
 from torch_geometric.nn.pool.approx_knn import approx_knn_graph, approx_nn
+from torch_geometric.testing import withPackage
 
 
 def to_set(edge_index):
     return set([(i, j) for i, j in edge_index.t().tolist()])
 
 
-# @withPackage('pynndescent')
+@withPackage('pynndescent')
 @pytest.mark.parametrize('dtype,device', product(grad_dtypes, devices))
 def test_approx_knn(dtype, device):
     x = tensor([
@@ -49,7 +50,7 @@ def test_approx_knn(dtype, device):
     assert to_set(edge_index) == set([(0, 2), (0, 3), (1, 4), (1, 5)])
 
 
-# @withPackage('pynndescent')
+@withPackage('pynndescent')
 @pytest.mark.parametrize('dtype,device', product(grad_dtypes, devices))
 def test_approx_knn_graph(dtype, device):
     x = tensor([
