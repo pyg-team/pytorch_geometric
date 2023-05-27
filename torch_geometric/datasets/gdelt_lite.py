@@ -37,16 +37,14 @@ class GDELTLite(InMemoryDataset):
     **STATS:**
 
     .. list-table::
-        :widths: 20 10 10 10
+        :widths: 10 10 10 10
         :header-rows: 1
 
-        * - Name
-          - #nodes
+        * - #nodes
           - #edges
           - #features
           - #classes
-        * - Actor
-          - 8,831
+        * - 8,831
           - 1,912,909
           - 413
           -
