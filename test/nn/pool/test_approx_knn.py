@@ -1,11 +1,23 @@
 from itertools import product
+from typing import Any
 
 import pytest
 import torch
-from torch_cluster.testing import devices, grad_dtypes, tensor
 
 from torch_geometric.nn.pool.approx_knn import approx_knn_graph, approx_nn
 from torch_geometric.testing import withPackage
+
+dtypes = [
+    torch.half, torch.bfloat16, torch.float, torch.double, torch.int,
+    torch.long
+]
+grad_dtypes = [torch.half, torch.float, torch.double]
+
+devices = [torch.device('cpu')]
+
+
+def tensor(x: Any, dtype: torch.dtype, device: torch.device):
+    return None if x is None else torch.tensor(x, dtype=dtype, device=device)
 
 
 def to_set(edge_index):
