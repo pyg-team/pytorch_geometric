@@ -6,6 +6,7 @@ from torch import Tensor
 from torch_geometric.data import FeatureStore, TensorAttr
 from torch_geometric.typing import FeatureTensorType
 
+
 class LocalFeatureStore(FeatureStore):
     r"""This class implements the :class:`torch_geometric.data.FeatureStore`
     interface to act as a local feature store for distributed training.
@@ -26,7 +27,8 @@ class LocalFeatureStore(FeatureStore):
     def key(attr: TensorAttr) -> str:
         return (attr.group_name, attr.attr_name)
 
-    def set_global_ids(self, global_ids: Tensor, group_name: str, attr_name: str):
+    def set_global_ids(self, global_ids: Tensor, group_name: str,
+                       attr_name: str):
         key_name = (group_name, attr_name)
         self.global_idx[key_name] = global_ids
 
@@ -40,24 +42,26 @@ class LocalFeatureStore(FeatureStore):
         global_ids = self.global_idx.get(key_name)
         max_id = torch.max(global_ids).item()
         id2idx = torch.zeros(max_id + 1, dtype=torch.int64)
-        id2idx[global_ids] = torch.arange(global_ids.size(0), dtype=torch.int64)
+        id2idx[global_ids] = torch.arange(global_ids.size(0),
+                                          dtype=torch.int64)
 
         self.id2index[key_name] = id2idx
 
     def get_id2index(self, group_name: str, attr_name: str) -> Tensor:
         key_name = (group_name, attr_name)
         return self.id2index.get(key_name)
-    
-    def set_global_ids_plus_id2index(self, global_ids: Tensor, group_name: str, attr_name: str):
+
+    def set_global_ids_plus_id2index(self, global_ids: Tensor, group_name: str,
+                                     attr_name: str):
         key_name = (group_name, attr_name)
         self.global_idx[key_name] = global_ids
 
         max_id = torch.max(global_ids).item()
         id2idx = torch.zeros(max_id + 1, dtype=torch.int64)
-        id2idx[global_ids] = torch.arange(global_ids.size(0), dtype=torch.int64)
+        id2idx[global_ids] = torch.arange(global_ids.size(0),
+                                          dtype=torch.int64)
 
         self.id2index[key_name] = id2idx
-
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
         index = attr.index
@@ -72,7 +76,8 @@ class LocalFeatureStore(FeatureStore):
         return True
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
-        index, tensor = self.store.get(LocalFeatureStore.key(attr), (None, None))
+        index, tensor = self.store.get(LocalFeatureStore.key(attr),
+                                       (None, None))
         if tensor is None:
             return None
 
