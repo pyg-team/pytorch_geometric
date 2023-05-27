@@ -147,7 +147,7 @@ def trim_adj(
     raise ValueError(f"Unsupported 'edge_index' type '{type(edge_index)}'")
 
 
-def trim_sparse_tensor(src: SparseTensor, num_nodes: Union[int, tuple],
+def trim_sparse_tensor(src: SparseTensor, num_nodes: int,
                        num_seed_nodes: None) -> SparseTensor:
     r"""Trims a :class:`SparseTensor` along both dimensions to only contain
     the upper :obj:`num_nodes` in both dimensions.
@@ -162,6 +162,7 @@ def trim_sparse_tensor(src: SparseTensor, num_nodes: Union[int, tuple],
             representations.
     """
     rowptr, col, value = src.csr()
+
     rowptr = torch.narrow(rowptr, 0, 0, num_nodes + 1).clone()
     rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
 
@@ -179,7 +180,7 @@ def trim_sparse_tensor(src: SparseTensor, num_nodes: Union[int, tuple],
         rowptr=rowptr,
         col=col,
         value=value,
-        sparse_sizes=[num_nodes, num_nodes],
+        sparse_sizes=(num_nodes, num_nodes),
         rowcount=None,
         colptr=None,
         colcount=None,
