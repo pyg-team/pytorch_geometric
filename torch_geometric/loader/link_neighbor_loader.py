@@ -209,8 +209,8 @@ class LinkNeighborLoader(LinkLoader):
     ):
         if (edge_label_time is not None) != (time_attr is not None):
             raise ValueError(
-                "Received conflicting 'edge_label_time' and 'time_attr' "
-                "arguments: 'edge_label_time' is "
+                f"Received conflicting 'edge_label_time' and 'time_attr' "
+                f"arguments: 'edge_label_time' is "
                 f"{'set' if edge_label_time is not None else 'not set'} "
                 "while 'time_attr' is "
                 f"{'set' if time_attr is not None else 'not set'}."
