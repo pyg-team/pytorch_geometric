@@ -52,9 +52,9 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
     .. note::
         For an example of using :class:`GraphMaskExplainer`,
-        see `examples/explain/graphmask_explainer_example.py
+        see `examples/explain/contrib/graphmask_explainer.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
-        /explain/graphmask_explainer_example.py>`_.
+        /contrib/graphmask_explainer.py>`_.
 
     Args:
         num_layers (int): The number of layers to use.
@@ -331,8 +331,8 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                         edge_index: Tensor, *, target: Tensor,
                         index: Optional[Union[int, Tensor]] = None, **kwargs):
 
-        if not isinstance(index, Tensor) and not isinstance(
-                index, int) and index is not None:
+        if (not isinstance(index, Tensor) and not isinstance(index, int)
+                and index is not None):
             raise ValueError("'index' parameter can only be a 'Tensor', "
                              "'integer' or set to 'None' instead.")
 
@@ -424,7 +424,8 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 h = x * self.node_feat_mask.sigmoid()
                 y_hat, y = model(x=h, edge_index=edge_index, **kwargs), target
 
-                if self.model_config.task_level == ModelTaskLevel.node or self.model_config.task_level == ModelTaskLevel.edge:
+                if (self.model_config.task_level == ModelTaskLevel.node or
+                        self.model_config.task_level == ModelTaskLevel.edge):
                     if index is not None:
                         y_hat, y = y_hat[index], y[index]
 
@@ -450,11 +451,15 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             if self.log:
                 pbar.close()
 
-    def explain(self, model: torch.nn.Module, *,
-                index: Optional[Union[int, Tensor]] = None) -> Tensor:
+    def explain(
+        self,
+        model: torch.nn.Module,
+        *,
+        index: Optional[Union[int, Tensor]] = None,
+    ) -> Tensor:
 
-        if not isinstance(index, Tensor) and not isinstance(
-                index, int) and index is not None:
+        if (not isinstance(index, Tensor) and not isinstance(index, int)
+                and index is not None):
             raise ValueError("'index' parameter can only be a 'Tensor', "
                              "'integer' or set to 'None' instead.")
 
