@@ -1,11 +1,20 @@
 import multiprocessing as mp
+from typing import Optional
 
 import numpy as np
 import torch
+from torch import Tensor
 
 
-def geodesic_distance(pos, face, src=None, dest=None, norm=True,
-                      max_distance=None, num_workers=0):
+def geodesic_distance(
+    pos: Tensor,
+    face: Tensor,
+    src: Optional[Tensor] = None,
+    dest: Optional[Tensor] = None,
+    norm: bool = True,
+    max_distance: Optional[float] = None,
+    num_workers: int = 0,
+) -> Tensor:
     r"""Computes (normalized) geodesic distances of a mesh given by :obj:`pos`
     and :obj:`face`. If :obj:`src` and :obj:`dest` are given, this method only
     computes the geodesic distances for the respective source and target
@@ -34,7 +43,22 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
             :obj:`-1` means that the available amount of CPU cores is used.
             (default: :obj:`0`)
 
-    :rtype: Tensor
+    :rtype: :class:`Tensor`
+
+    Example:
+
+        >>> pos = torch.Tensor([[0, 0, 0],
+        ...                     [2, 0, 0],
+        ...                     [0, 2, 0],
+        ...                     [2, 2, 0]])
+        >>> face = torch.tensor([[0, 0],
+        ...                      [1, 2],
+        ...                      [3, 3]])
+        >>> geodesic_distance(pos, face)
+        [[0, 1, 1, 1.4142135623730951],
+        [1, 0, 1.4142135623730951, 1],
+        [1, 1.4142135623730951, 0, 1],
+        [1.4142135623730951, 1, 1, 0]]
     """
     import gdist
 

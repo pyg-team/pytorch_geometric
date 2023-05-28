@@ -5,7 +5,7 @@ from torch_geometric.transforms import OneHotDegree
 
 
 def test_one_hot_degree():
-    assert OneHotDegree(max_degree=3).__repr__() == 'OneHotDegree(3)'
+    assert str(OneHotDegree(max_degree=3)) == 'OneHotDegree(3)'
 
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     x = torch.Tensor([1, 1, 1, 1])

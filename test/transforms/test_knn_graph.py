@@ -7,7 +7,7 @@ from torch_geometric.transforms import KNNGraph
 
 @withPackage('torch_cluster')
 def test_knn_graph():
-    assert KNNGraph().__repr__() == 'KNNGraph(k=6)'
+    assert str(KNNGraph()) == 'KNNGraph(k=6)'
 
     pos = torch.Tensor([[0, 0], [1, 0], [2, 0], [0, 1], [-2, 0], [0, -2]])
 

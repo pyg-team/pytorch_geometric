@@ -18,7 +18,7 @@ class ToUndirected(BaseTransform):
     edge types.
 
     Args:
-        reduce (string, optional): The reduce operation to use for merging edge
+        reduce (str, optional): The reduce operation to use for merging edge
             features (:obj:`"add"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"mul"`). (default: :obj:`"add"`)
         merge (bool, optional): If set to :obj:`False`, will create reverse
@@ -34,7 +34,10 @@ class ToUndirected(BaseTransform):
         self.reduce = reduce
         self.merge = merge
 
-    def __call__(self, data: Union[Data, HeteroData]):
+    def forward(
+        self,
+        data: Union[Data, HeteroData],
+    ) -> Union[Data, HeteroData]:
         for store in data.edge_stores:
             if 'edge_index' not in store:
                 continue
@@ -74,6 +77,3 @@ class ToUndirected(BaseTransform):
                     store[key] = value
 
         return data
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'

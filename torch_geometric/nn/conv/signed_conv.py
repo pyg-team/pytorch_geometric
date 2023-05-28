@@ -2,11 +2,11 @@ from typing import Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, PairTensor
+from torch_geometric.typing import Adj, PairTensor, SparseTensor
+from torch_geometric.utils import spmm
 
 
 class SignedConv(MessagePassing):
@@ -87,6 +87,7 @@ class SignedConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin_pos_l.reset_parameters()
         self.lin_pos_r.reset_parameters()
         self.lin_neg_l.reset_parameters()
@@ -94,7 +95,6 @@ class SignedConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], pos_edge_index: Adj,
                 neg_edge_index: Adj):
-        """"""
 
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
@@ -104,11 +104,11 @@ class SignedConv(MessagePassing):
 
             out_pos = self.propagate(pos_edge_index, x=x, size=None)
             out_pos = self.lin_pos_l(out_pos)
-            out_pos += self.lin_pos_r(x[1])
+            out_pos = out_pos + self.lin_pos_r(x[1])
 
             out_neg = self.propagate(neg_edge_index, x=x, size=None)
             out_neg = self.lin_neg_l(out_neg)
-            out_neg += self.lin_neg_r(x[1])
+            out_neg = out_neg + self.lin_neg_r(x[1])
 
             return torch.cat([out_pos, out_neg], dim=-1)
 
@@ -121,7 +121,7 @@ class SignedConv(MessagePassing):
                                       x=(x[0][..., F_in:], x[1][..., F_in:]))
             out_pos = torch.cat([out_pos1, out_pos2], dim=-1)
             out_pos = self.lin_pos_l(out_pos)
-            out_pos += self.lin_pos_r(x[1][..., :F_in])
+            out_pos = out_pos + self.lin_pos_r(x[1][..., :F_in])
 
             out_neg1 = self.propagate(pos_edge_index, size=None,
                                       x=(x[0][..., F_in:], x[1][..., F_in:]))
@@ -129,7 +129,7 @@ class SignedConv(MessagePassing):
                                       x=(x[0][..., :F_in], x[1][..., :F_in]))
             out_neg = torch.cat([out_neg1, out_neg2], dim=-1)
             out_neg = self.lin_neg_l(out_neg)
-            out_neg += self.lin_neg_r(x[1][..., F_in:])
+            out_neg = out_neg + self.lin_neg_r(x[1][..., F_in:])
 
             return torch.cat([out_pos, out_neg], dim=-1)
 
@@ -138,8 +138,9 @@ class SignedConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: PairTensor) -> Tensor:
-        adj_t = adj_t.set_value(None)
-        return matmul(adj_t, x[0], reduce=self.aggr)
+        if isinstance(adj_t, SparseTensor):
+            adj_t = adj_t.set_value(None, layout=None)
+        return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

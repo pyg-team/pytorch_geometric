@@ -6,9 +6,8 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
-
-from ..inits import glorot, zeros
 
 
 class GMMConv(MessagePassing):
@@ -50,7 +49,7 @@ class GMMConv(MessagePassing):
         separate_gaussians (bool, optional): If set to :obj:`True`, will
             learn separate GMMs for every pair of input and output channel,
             inspired by traditional CNNs. (default: :obj:`False`)
-        aggr (string, optional): The aggregation operator to use
+        aggr (str, optional): The aggregation operator to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
@@ -119,6 +118,7 @@ class GMMConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if not isinstance(self.g, torch.nn.UninitializedParameter):
             glorot(self.g)
             glorot(self.mu)
@@ -129,7 +129,7 @@ class GMMConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None):
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -144,10 +144,10 @@ class GMMConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None and self.root is not None:
-            out += self.root(x_r)
+            out = out + self.root(x_r)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 

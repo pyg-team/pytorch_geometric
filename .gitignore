@@ -1,5 +1,6 @@
 __pycache__/
 .pytest_cache/
+.DS_Store
 data/
 build/
 dist/
@@ -22,6 +23,10 @@ coverage.xml
 .venv
 *.out
 *.pt
+*.onnx
+examples/**/*.png
+examples/**/*.pdf
+benchmark/results/
 
 !torch_geometric/data/
 !test/data/

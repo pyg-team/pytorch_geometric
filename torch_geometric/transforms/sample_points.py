@@ -1,13 +1,14 @@
 import torch
 
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 
 
 @functional_transform('sample_points')
 class SamplePoints(BaseTransform):
-    r"""Uniformly samples :obj:`num` points on the mesh faces according to
-    their face area (functional name: :obj:`sample_points`).
+    r"""Uniformly samples a fixed number of points on the mesh faces according
+    to their face area (functional name: :obj:`sample_points`).
 
     Args:
         num (int): The number of points to sample.
@@ -16,12 +17,17 @@ class SamplePoints(BaseTransform):
         include_normals (bool, optional): If set to :obj:`True`, then compute
             normals for each sampled point. (default: :obj:`False`)
     """
-    def __init__(self, num, remove_faces=True, include_normals=False):
+    def __init__(
+        self,
+        num: int,
+        remove_faces: bool = True,
+        include_normals: bool = False,
+    ):
         self.num = num
         self.remove_faces = remove_faces
         self.include_normals = include_normals
 
-    def __call__(self, data):
+    def forward(self, data: Data) -> Data:
         pos, face = data.pos, data.face
         assert pos.size(1) == 3 and face.size(0) == 3
 

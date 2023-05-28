@@ -1,13 +1,12 @@
 import torch
 from torch import Tensor
 from torch.nn import Linear, Parameter, ReLU, Sequential, Sigmoid
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptTensor
-
-from ..inits import glorot, zeros
+from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.utils import spmm
 
 
 class PDNConv(MessagePassing):
@@ -16,7 +15,7 @@ class PDNConv(MessagePassing):
     <https://arxiv.org/pdf/2010.12878.pdf>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(v) \cup
+        \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i) \cup
         \{i\}}f_{\Theta}(\textbf{e}_{(j,i)}) \cdot f_{\Omega}(\mathbf{x}_{j})
 
     where :math:`z_{i,j}` denotes the edge feature vector from source node
@@ -76,6 +75,7 @@ class PDNConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.lin.weight)
         glorot(self.mlp[0].weight)
         glorot(self.mlp[2].weight)
@@ -85,7 +85,6 @@ class PDNConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
-        """"""
 
         if isinstance(edge_index, SparseTensor):
             edge_attr = edge_index.storage.value()
@@ -100,10 +99,12 @@ class PDNConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 edge_index, edge_attr = gcn_norm(edge_index, edge_attr,
                                                  x.size(self.node_dim), False,
-                                                 self.add_self_loops)
+                                                 self.add_self_loops,
+                                                 self.flow, x.dtype)
             elif isinstance(edge_index, SparseTensor):
                 edge_index = gcn_norm(edge_index, None, x.size(self.node_dim),
-                                      False, self.add_self_loops)
+                                      False, self.add_self_loops, self.flow,
+                                      x.dtype)
 
         x = self.lin(x)
 
@@ -111,7 +112,7 @@ class PDNConv(MessagePassing):
         out = self.propagate(edge_index, x=x, edge_weight=edge_attr, size=None)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
@@ -119,7 +120,7 @@ class PDNConv(MessagePassing):
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '

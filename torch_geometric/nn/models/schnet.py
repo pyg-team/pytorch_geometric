@@ -2,19 +2,21 @@ import os
 import os.path as osp
 import warnings
 from math import pi as PI
-from typing import Optional
+from typing import Callable, Dict, Optional, Tuple
 
 import numpy as np
 import torch
 import torch.nn.functional as F
+from torch import Tensor
 from torch.nn import Embedding, Linear, ModuleList, Sequential
-from torch_scatter import scatter
 
 from torch_geometric.data import Dataset, download_url, extract_zip
 from torch_geometric.data.makedirs import makedirs
-from torch_geometric.nn import MessagePassing, radius_graph
+from torch_geometric.nn import MessagePassing, SumAggregation, radius_graph
+from torch_geometric.nn.resolver import aggregation_resolver as aggr_resolver
+from torch_geometric.typing import OptTensor
 
-qm9_target_dict = {
+qm9_target_dict: Dict[int, str] = {
     0: 'dipole_moment',
     1: 'isotropic_polarizability',
     2: 'homo',
@@ -59,13 +61,20 @@ class SchNet(torch.nn.Module):
             (default: :obj:`6`)
         num_gaussians (int, optional): The number of gaussians :math:`\mu`.
             (default: :obj:`50`)
+        interaction_graph (callable, optional): The function used to compute
+            the pairwise interaction graph and interatomic distances. If set to
+            :obj:`None`, will construct a graph based on :obj:`cutoff` and
+            :obj:`max_num_neighbors` properties.
+            If provided, this method takes in :obj:`pos` and :obj:`batch`
+            tensors and should return :obj:`(edge_index, edge_weight)` tensors.
+            (default :obj:`None`)
         cutoff (float, optional): Cutoff distance for interatomic interactions.
             (default: :obj:`10.0`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
             collect for each node within the :attr:`cutoff` distance.
             (default: :obj:`32`)
-        readout (string, optional): Whether to apply :obj:`"add"` or
-            :obj:`"mean"` global aggregation. (default: :obj:`"add"`)
+        readout (str, optional): Whether to apply :obj:`"add"` or :obj:`"mean"`
+            global aggregation. (default: :obj:`"add"`)
         dipole (bool, optional): If set to :obj:`True`, will use the magnitude
             of the dipole moment to make the final prediction, *e.g.*, for
             target 0 of :class:`torch_geometric.datasets.QM9`.
@@ -81,33 +90,51 @@ class SchNet(torch.nn.Module):
 
     url = 'http://www.quantum-machine.org/datasets/trained_schnet_models.zip'
 
-    def __init__(self, hidden_channels: int = 128, num_filters: int = 128,
-                 num_interactions: int = 6, num_gaussians: int = 50,
-                 cutoff: float = 10.0, max_num_neighbors: int = 32,
-                 readout: str = 'add', dipole: bool = False,
-                 mean: Optional[float] = None, std: Optional[float] = None,
-                 atomref: Optional[torch.Tensor] = None):
+    def __init__(
+        self,
+        hidden_channels: int = 128,
+        num_filters: int = 128,
+        num_interactions: int = 6,
+        num_gaussians: int = 50,
+        cutoff: float = 10.0,
+        interaction_graph: Optional[Callable] = None,
+        max_num_neighbors: int = 32,
+        readout: str = 'add',
+        dipole: bool = False,
+        mean: Optional[float] = None,
+        std: Optional[float] = None,
+        atomref: OptTensor = None,
+    ):
         super().__init__()
-
-        import ase
 
         self.hidden_channels = hidden_channels
         self.num_filters = num_filters
         self.num_interactions = num_interactions
         self.num_gaussians = num_gaussians
         self.cutoff = cutoff
-        self.max_num_neighbors = max_num_neighbors
-        self.readout = readout
         self.dipole = dipole
-        self.readout = 'add' if self.dipole else self.readout
+        self.sum_aggr = SumAggregation()
+        self.readout = aggr_resolver('sum' if self.dipole else readout)
         self.mean = mean
         self.std = std
         self.scale = None
 
-        atomic_mass = torch.from_numpy(ase.data.atomic_masses)
-        self.register_buffer('atomic_mass', atomic_mass)
+        if self.dipole:
+            import ase
 
-        self.embedding = Embedding(100, hidden_channels)
+            atomic_mass = torch.from_numpy(ase.data.atomic_masses)
+            self.register_buffer('atomic_mass', atomic_mass)
+
+        # Support z == 0 for padding atoms so that their embedding vectors
+        # are zeroed and do not receive any gradients.
+        self.embedding = Embedding(100, hidden_channels, padding_idx=0)
+
+        if interaction_graph is not None:
+            self.interaction_graph = interaction_graph
+        else:
+            self.interaction_graph = RadiusInteractionGraph(
+                cutoff, max_num_neighbors)
+
         self.distance_expansion = GaussianSmearing(0.0, cutoff, num_gaussians)
 
         self.interactions = ModuleList()
@@ -129,6 +156,7 @@ class SchNet(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
         for interaction in self.interactions:
             interaction.reset_parameters()
@@ -140,11 +168,19 @@ class SchNet(torch.nn.Module):
             self.atomref.weight.data.copy_(self.initial_atomref)
 
     @staticmethod
-    def from_qm9_pretrained(root: str, dataset: Dataset, target: int):
+    def from_qm9_pretrained(
+        root: str,
+        dataset: Dataset,
+        target: int,
+    ) -> Tuple['SchNet', Dataset, Dataset, Dataset]:  # pragma: no cover
+        r"""Returns a pre-trained :class:`SchNet` model on the
+        :class:`~torch_geometric.datasets.QM9` dataset, trained on the
+        specified target :obj:`target`."""
         import ase
         import schnetpack as spk  # noqa
 
         assert target >= 0 and target <= 12
+        is_dipole = target == 0
 
         units = [1] * 12
         units[0] = ase.units.Debye
@@ -182,9 +218,15 @@ class SchNet(torch.nn.Module):
             warnings.simplefilter('ignore')
             state = torch.load(path, map_location='cpu')
 
-        net = SchNet(hidden_channels=128, num_filters=128, num_interactions=6,
-                     num_gaussians=50, cutoff=10.0,
-                     atomref=dataset.atomref(target))
+        net = SchNet(
+            hidden_channels=128,
+            num_filters=128,
+            num_interactions=6,
+            num_gaussians=50,
+            cutoff=10.0,
+            dipole=is_dipole,
+            atomref=dataset.atomref(target),
+        )
 
         net.embedding.weight = state.representation.embedding.weight
 
@@ -220,21 +262,26 @@ class SchNet(torch.nn.Module):
         else:
             net.atomref = None
 
-        net.scale = 1. / units[target]
+        net.scale = 1.0 / units[target]
 
         return net, (dataset[train_idx], dataset[val_idx], dataset[test_idx])
 
-    def forward(self, z, pos, batch=None):
-        """"""
-        assert z.dim() == 1 and z.dtype == torch.long
+    def forward(self, z: Tensor, pos: Tensor,
+                batch: OptTensor = None) -> Tensor:
+        r"""
+        Args:
+            z (torch.Tensor): Atomic number of each atom with shape
+                :obj:`[num_atoms]`.
+            pos (torch.Tensor): Coordinates of each atom with shape
+                :obj:`[num_atoms, 3]`.
+            batch (torch.Tensor, optional): Batch indices assigning each atom
+                to a separate molecule with shape :obj:`[num_atoms]`.
+                (default: :obj:`None`)
+        """
         batch = torch.zeros_like(z) if batch is None else batch
 
         h = self.embedding(z)
-
-        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
-                                  max_num_neighbors=self.max_num_neighbors)
-        row, col = edge_index
-        edge_weight = (pos[row] - pos[col]).norm(dim=-1)
+        edge_index, edge_weight = self.interaction_graph(pos, batch)
         edge_attr = self.distance_expansion(edge_weight)
 
         for interaction in self.interactions:
@@ -247,7 +294,8 @@ class SchNet(torch.nn.Module):
         if self.dipole:
             # Get center of mass.
             mass = self.atomic_mass[z].view(-1, 1)
-            c = scatter(mass * pos, batch, dim=0) / scatter(mass, batch, dim=0)
+            M = self.sum_aggr(mass, batch, dim=0)
+            c = self.sum_aggr(mass * pos, batch, dim=0) / M
             h = h * (pos - c.index_select(0, batch))
 
         if not self.dipole and self.mean is not None and self.std is not None:
@@ -256,7 +304,7 @@ class SchNet(torch.nn.Module):
         if not self.dipole and self.atomref is not None:
             h = h + self.atomref(z)
 
-        out = scatter(h, batch, dim=0, reduce=self.readout)
+        out = self.readout(h, batch, dim=0)
 
         if self.dipole:
             out = torch.norm(out, dim=-1, keepdim=True)
@@ -266,7 +314,7 @@ class SchNet(torch.nn.Module):
 
         return out
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (f'{self.__class__.__name__}('
                 f'hidden_channels={self.hidden_channels}, '
                 f'num_filters={self.num_filters}, '
@@ -275,8 +323,42 @@ class SchNet(torch.nn.Module):
                 f'cutoff={self.cutoff})')
 
 
+class RadiusInteractionGraph(torch.nn.Module):
+    r"""Creates edges based on atom positions :obj:`pos` to all points within
+    the cutoff distance.
+
+    Args:
+        cutoff (float, optional): Cutoff distance for interatomic interactions.
+            (default: :obj:`10.0`)
+        max_num_neighbors (int, optional): The maximum number of neighbors to
+            collect for each node within the :attr:`cutoff` distance with the
+            default interaction graph method.
+            (default: :obj:`32`)
+    """
+    def __init__(self, cutoff: float = 10.0, max_num_neighbors: int = 32):
+        super().__init__()
+        self.cutoff = cutoff
+        self.max_num_neighbors = max_num_neighbors
+
+    def forward(self, pos: Tensor, batch: Tensor) -> Tuple[Tensor, Tensor]:
+        r"""
+        Args:
+            pos (Tensor): Coordinates of each atom.
+            batch (LongTensor, optional): Batch indices assigning each atom to
+                a separate molecule.
+
+        :rtype: (:class:`LongTensor`, :class:`Tensor`)
+        """
+        edge_index = radius_graph(pos, r=self.cutoff, batch=batch,
+                                  max_num_neighbors=self.max_num_neighbors)
+        row, col = edge_index
+        edge_weight = (pos[row] - pos[col]).norm(dim=-1)
+        return edge_index, edge_weight
+
+
 class InteractionBlock(torch.nn.Module):
-    def __init__(self, hidden_channels, num_gaussians, num_filters, cutoff):
+    def __init__(self, hidden_channels: int, num_gaussians: int,
+                 num_filters: int, cutoff: float):
         super().__init__()
         self.mlp = Sequential(
             Linear(num_gaussians, num_filters),
@@ -299,7 +381,8 @@ class InteractionBlock(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.lin.weight)
         self.lin.bias.data.fill_(0)
 
-    def forward(self, x, edge_index, edge_weight, edge_attr):
+    def forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
+                edge_attr: Tensor) -> Tensor:
         x = self.conv(x, edge_index, edge_weight, edge_attr)
         x = self.act(x)
         x = self.lin(x)
@@ -307,7 +390,14 @@ class InteractionBlock(torch.nn.Module):
 
 
 class CFConv(MessagePassing):
-    def __init__(self, in_channels, out_channels, num_filters, nn, cutoff):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        num_filters: int,
+        nn: Sequential,
+        cutoff: float,
+    ):
         super().__init__(aggr='add')
         self.lin1 = Linear(in_channels, num_filters, bias=False)
         self.lin2 = Linear(num_filters, out_channels)
@@ -321,7 +411,8 @@ class CFConv(MessagePassing):
         torch.nn.init.xavier_uniform_(self.lin2.weight)
         self.lin2.bias.data.fill_(0)
 
-    def forward(self, x, edge_index, edge_weight, edge_attr):
+    def forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor,
+                edge_attr: Tensor) -> Tensor:
         C = 0.5 * (torch.cos(edge_weight * PI / self.cutoff) + 1.0)
         W = self.nn(edge_attr) * C.view(-1, 1)
 
@@ -330,18 +421,23 @@ class CFConv(MessagePassing):
         x = self.lin2(x)
         return x
 
-    def message(self, x_j, W):
+    def message(self, x_j: Tensor, W: Tensor) -> Tensor:
         return x_j * W
 
 
 class GaussianSmearing(torch.nn.Module):
-    def __init__(self, start=0.0, stop=5.0, num_gaussians=50):
+    def __init__(
+        self,
+        start: float = 0.0,
+        stop: float = 5.0,
+        num_gaussians: int = 50,
+    ):
         super().__init__()
         offset = torch.linspace(start, stop, num_gaussians)
         self.coeff = -0.5 / (offset[1] - offset[0]).item()**2
         self.register_buffer('offset', offset)
 
-    def forward(self, dist):
+    def forward(self, dist: Tensor) -> Tensor:
         dist = dist.view(-1, 1) - self.offset.view(1, -1)
         return torch.exp(self.coeff * torch.pow(dist, 2))
 
@@ -351,5 +447,5 @@ class ShiftedSoftplus(torch.nn.Module):
         super().__init__()
         self.shift = torch.log(torch.tensor(2.0)).item()
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         return F.softplus(x) - self.shift

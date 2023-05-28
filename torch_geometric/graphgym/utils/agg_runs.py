@@ -59,15 +59,18 @@ def agg_dict_list(dict_list):
 
 
 def name_to_dict(run):
-    cols = run.split('-')[1:]
+    run = run.split('-', 1)[-1]
+    cols = run.split('=')
     keys, vals = [], []
-    for col in cols:
+    keys.append(cols[0])
+    for col in cols[1:-1]:
         try:
-            key, val = col.split('=')
+            val, key = col.rsplit('-', 1)
         except Exception:
             print(col)
         keys.append(key)
         vals.append(string_to_python(val))
+    vals.append(cols[-1])
     return dict(zip(keys, vals))
 
 

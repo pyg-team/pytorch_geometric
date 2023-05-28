@@ -1,9 +1,9 @@
 package:
   name: pytorch-geometric
-  version: 2.0.5
+  version: 2.3.0
 
 source:
-  path: ../..
+  url: https://files.pythonhosted.org/packages/43/b5/be9795db7756e6c1fa2606c8145ec637552487e72c6428ed0b231f8bcbd3/torch_geometric-2.3.0.tar.gz
 
 requirements:
   host:
@@ -14,9 +14,7 @@ requirements:
     - python {{ environ.get('PYTHON_VERSION') }}
     - {{ environ.get('CONDA_PYTORCH_CONSTRAINT') }}
     - {{ environ.get('CONDA_CUDATOOLKIT_CONSTRAINT') }}
-    - pytorch-scatter
-    - pytorch-sparse
-    - pytorch-cluster
+    - psutil
     - tqdm
     - jinja2
     - pyparsing
@@ -31,10 +29,6 @@ build:
 
 test:
   imports:
-    - torch_scatter
-    - torch_sparse
-    - torch_cluster
-    - torch_spline_conv
     - torch_geometric
     - torch_geometric.nn
     - torch_geometric.data

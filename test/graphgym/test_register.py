@@ -16,7 +16,7 @@ def test_register():
         'relu', 'selu', 'prelu', 'elu', 'lrelu_01', 'lrelu_025', 'lrelu_05',
         'identity'
     ]
-    assert str(register.act_dict['relu']) == 'ReLU()'
+    assert str(register.act_dict['relu']()) == 'ReLU()'
 
     register.register_act('lrelu_03', torch.nn.LeakyReLU(0.3))
     assert len(register.act_dict) == 9

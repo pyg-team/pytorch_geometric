@@ -1,17 +1,15 @@
 import math
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptTensor
-
-from ..inits import kaiming_uniform, uniform
+from torch_geometric.nn.inits import kaiming_uniform, uniform
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
 
 
 class Linear(torch.nn.Module):
@@ -53,7 +51,7 @@ class Linear(torch.nn.Module):
             out = torch.matmul(src, self.weight.squeeze(0))
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
@@ -230,7 +228,7 @@ class DNAConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F)`
     """
 
-    _cached_edge_index: Optional[Tuple[Tensor, Tensor]]
+    _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
     def __init__(self, channels: int, heads: int = 1, groups: int = 1,
@@ -253,18 +251,19 @@ class DNAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.multi_head.reset_parameters()
         self._cached_edge_index = None
         self._cached_adj_t = None
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        r"""
-        Args:
-            x: The input node features of shape :obj:`[num_nodes, num_layers,
-                channels]`.
-        """
+        r"""Runs the forward pass of the module.
 
+        Args:
+            x (torch.Tensor): The input node features of shape
+                :obj:`[num_nodes, num_layers, channels]`.
+        """
         if x.dim() != 3:
             raise ValueError('Feature shape must be [num_nodes, num_layers, '
                              'channels].')
@@ -275,7 +274,7 @@ class DNAConv(MessagePassing):
                 if cache is None:
                     edge_index, edge_weight = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_edge_index = (edge_index, edge_weight)
                 else:
@@ -286,7 +285,7 @@ class DNAConv(MessagePassing):
                 if cache is None:
                     edge_index = gcn_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
-                        self.add_self_loops, dtype=x.dtype)
+                        self.add_self_loops, self.flow, dtype=x.dtype)
                     if self.cached:
                         self._cached_adj_t = edge_index
                 else:

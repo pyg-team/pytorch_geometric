@@ -5,13 +5,19 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_tu_data
 
 
 class TUDataset(InMemoryDataset):
-    r"""A variety of graph kernel benchmark datasets, *.e.g.* "IMDB-BINARY",
-    "REDDIT-BINARY" or "PROTEINS", collected from the `TU Dortmund University
+    r"""A variety of graph kernel benchmark datasets, *.e.g.*,
+    :obj:`"IMDB-BINARY"`, :obj:`"REDDIT-BINARY"` or :obj:`"PROTEINS"`,
+    collected from the `TU Dortmund University
     <https://chrsmrrs.github.io/datasets>`_.
     In addition, this dataset wrapper provides `cleaned dataset versions
     <https://github.com/nd7141/graph_datasets>`_ as motivated by the
@@ -24,12 +30,12 @@ class TUDataset(InMemoryDataset):
         You can then either make use of the argument :obj:`use_node_attr`
         to load additional continuous node attributes (if present) or provide
         synthetic node features using transforms such as
-        like :class:`torch_geometric.transforms.Constant` or
+        :class:`torch_geometric.transforms.Constant` or
         :class:`torch_geometric.transforms.OneHotDegree`.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The `name
+        root (str): Root directory where the dataset should be saved.
+        name (str): The `name
             <https://chrsmrrs.github.io/datasets/docs/datasets/>`_ of the
             dataset.
         transform (callable, optional): A function/transform that takes in an
@@ -53,59 +59,60 @@ class TUDataset(InMemoryDataset):
         cleaned (bool, optional): If :obj:`True`, the dataset will
             contain only non-isomorphic graphs. (default: :obj:`False`)
 
-    Stats:
-        .. list-table::
-            :widths: 20 10 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - Name
-              - #graphs
-              - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - MUTAG
-              - 188
-              - ~17.9
-              - ~39.6
-              - 7
-              - 2
-            * - ENZYMES
-              - 600
-              - ~32.6
-              - ~124.3
-              - 3
-              - 6
-            * - PROTEINS
-              - 1,113
-              - ~39.1
-              - ~145.6
-              - 3
-              - 2
-            * - COLLAB
-              - 5,000
-              - ~74.5
-              - ~4914.4
-              - 0
-              - 3
-            * - IMDB-BINARY
-              - 1,000
-              - ~19.8
-              - ~193.1
-              - 0
-              - 2
-            * - REDDIT-BINARY
-              - 2,000
-              - ~429.6
-              - ~995.5
-              - 0
-              - 2
-            * - ...
-              -
-              -
-              -
-              -
-              -
+    .. list-table::
+        :widths: 20 10 10 10 10 10
+        :header-rows: 1
+
+        * - Name
+          - #graphs
+          - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - MUTAG
+          - 188
+          - ~17.9
+          - ~39.6
+          - 7
+          - 2
+        * - ENZYMES
+          - 600
+          - ~32.6
+          - ~124.3
+          - 3
+          - 6
+        * - PROTEINS
+          - 1,113
+          - ~39.1
+          - ~145.6
+          - 3
+          - 2
+        * - COLLAB
+          - 5,000
+          - ~74.5
+          - ~4914.4
+          - 0
+          - 3
+        * - IMDB-BINARY
+          - 1,000
+          - ~19.8
+          - ~193.1
+          - 0
+          - 2
+        * - REDDIT-BINARY
+          - 2,000
+          - ~429.6
+          - ~995.5
+          - 0
+          - 2
+        * - ...
+          -
+          -
+          -
+          -
+          -
     """
 
     url = 'https://www.chrsmrrs.com/graphkerneldatasets'
@@ -123,20 +130,21 @@ class TUDataset(InMemoryDataset):
         super().__init__(root, transform, pre_transform, pre_filter)
 
         out = torch.load(self.processed_paths[0])
-        if not isinstance(out, tuple) and len(out) != 3:
+        if not isinstance(out, tuple) or len(out) != 3:
             raise RuntimeError(
                 "The 'data' object was created by an older version of PyG. "
                 "If this error occurred while loading an already existing "
                 "dataset, remove the 'processed/' directory in the dataset's "
                 "root folder and try again.")
-        self.data, self.slices, self.sizes = out
+        data, self.slices, self.sizes = out
+        self.data = Data.from_dict(data) if isinstance(data, dict) else data
 
-        if self.data.x is not None and not use_node_attr:
+        if self._data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
-            self.data.x = self.data.x[:, num_node_attributes:]
-        if self.data.edge_attr is not None and not use_edge_attr:
-            num_edge_attributes = self.num_edge_attributes
-            self.data.edge_attr = self.data.edge_attr[:, num_edge_attributes:]
+            self._data.x = self._data.x[:, num_node_attributes:]
+        if self._data.edge_attr is not None and not use_edge_attr:
+            num_edge_attrs = self.num_edge_attributes
+            self._data.edge_attr = self._data.edge_attr[:, num_edge_attrs:]
 
     @property
     def raw_dir(self) -> str:
@@ -197,7 +205,8 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        torch.save((self.data, self.slices, sizes), self.processed_paths[0])
+        torch.save((self._data.to_dict(), self.slices, sizes),
+                   self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'

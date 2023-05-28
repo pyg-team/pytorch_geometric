@@ -1,12 +1,16 @@
-from typing import Any, Dict, List, Optional, Union
+import warnings
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import BatchNorm1d, Identity
+from torch.nn import Identity
 
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.nn.resolver import activation_resolver
+from torch_geometric.nn.resolver import (
+    activation_resolver,
+    normalization_resolver,
+)
 from torch_geometric.typing import NoneType
 
 
@@ -44,27 +48,28 @@ class MLP(torch.nn.Module):
             Will override :attr:`channel_list`. (default: :obj:`None`)
         num_layers (int, optional): The number of layers.
             Will override :attr:`channel_list`. (default: :obj:`None`)
-        dropout (float, optional): Dropout probability of each hidden
-            embedding. (default: :obj:`0.`)
+        dropout (float or List[float], optional): Dropout probability of each
+            hidden embedding. If a list is provided, sets the dropout value per
+            layer. (default: :obj:`0.`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
-        batch_norm (bool, optional): If set to :obj:`False`, will not make use
-            of batch normalization. (default: :obj:`True`)
         act_first (bool, optional): If set to :obj:`True`, activation is
             applied before normalization. (default: :obj:`False`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective activation function defined by :obj:`act`.
             (default: :obj:`None`)
-        batch_norm_kwargs (Dict[str, Any], optional): Arguments passed to
-            :class:`torch.nn.BatchNorm1d` in case :obj:`batch_norm == True`.
+        norm (str or Callable, optional): The normalization function to
+            use. (default: :obj:`"batch_norm"`)
+        norm_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
         plain_last (bool, optional): If set to :obj:`False`, will apply
             non-linearity, batch normalization and dropout to the last layer as
             well. (default: :obj:`True`)
-        bias (bool, optional): If set to :obj:`False`, the module will not
-            learn additive biases. (default: :obj:`True`)
-        relu_first (bool, optional): Deprecated in favor of :obj:`act_first`.
-            (default: :obj:`False`)
+        bias (bool or List[bool], optional): If set to :obj:`False`, the module
+            will not learn additive biases. If a list is provided, sets the
+            bias per layer. (default: :obj:`True`)
+        **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
     def __init__(
         self,
@@ -74,26 +79,40 @@ class MLP(torch.nn.Module):
         hidden_channels: Optional[int] = None,
         out_channels: Optional[int] = None,
         num_layers: Optional[int] = None,
-        dropout: float = 0.,
-        act: str = "relu",
-        batch_norm: bool = True,
+        dropout: Union[float, List[float]] = 0.,
+        act: Union[str, Callable, None] = "relu",
         act_first: bool = False,
         act_kwargs: Optional[Dict[str, Any]] = None,
-        batch_norm_kwargs: Optional[Dict[str, Any]] = None,
+        norm: Union[str, Callable, None] = "batch_norm",
+        norm_kwargs: Optional[Dict[str, Any]] = None,
         plain_last: bool = True,
-        bias: bool = True,
-        relu_first: bool = False,
+        bias: Union[bool, List[bool]] = True,
+        **kwargs,
     ):
         super().__init__()
 
-        act_first = act_first or relu_first  # Backward compatibility.
-        batch_norm_kwargs = batch_norm_kwargs or {}
+        # Backward compatibility:
+        act_first = act_first or kwargs.get("relu_first", False)
+        batch_norm = kwargs.get("batch_norm", None)
+        if batch_norm is not None and isinstance(batch_norm, bool):
+            warnings.warn("Argument `batch_norm` is deprecated, "
+                          "please use `norm` to specify normalization layer.")
+            norm = 'batch_norm' if batch_norm else None
+            batch_norm_kwargs = kwargs.get("batch_norm_kwargs", None)
+            norm_kwargs = batch_norm_kwargs or {}
 
         if isinstance(channel_list, int):
             in_channels = channel_list
 
         if in_channels is not None:
-            assert num_layers >= 1
+            if num_layers is None:
+                raise ValueError("Argument `num_layers` must be given")
+            if num_layers > 1 and hidden_channels is None:
+                raise ValueError(f"Argument `hidden_channels` must be given "
+                                 f"for `num_layers={num_layers}`")
+            if out_channels is None:
+                raise ValueError("Argument `out_channels` must be given")
+
             channel_list = [hidden_channels] * (num_layers - 1)
             channel_list = [in_channels] + channel_list + [out_channels]
 
@@ -101,24 +120,45 @@ class MLP(torch.nn.Module):
         assert len(channel_list) >= 2
         self.channel_list = channel_list
 
-        self.dropout = dropout
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.act_first = act_first
         self.plain_last = plain_last
 
+        if isinstance(dropout, float):
+            dropout = [dropout] * (len(channel_list) - 1)
+            if plain_last:
+                dropout[-1] = 0.
+        if len(dropout) != len(channel_list) - 1:
+            raise ValueError(
+                f"Number of dropout values provided ({len(dropout)} does not "
+                f"match the number of layers specified "
+                f"({len(channel_list)-1})")
+        self.dropout = dropout
+
+        if isinstance(bias, bool):
+            bias = [bias] * (len(channel_list) - 1)
+        if len(bias) != len(channel_list) - 1:
+            raise ValueError(
+                f"Number of bias values provided ({len(bias)}) does not match "
+                f"the number of layers specified ({len(channel_list)-1})")
+
         self.lins = torch.nn.ModuleList()
-        iterator = zip(channel_list[:-1], channel_list[1:])
-        for in_channels, out_channels in iterator:
-            self.lins.append(Linear(in_channels, out_channels, bias=bias))
+        iterator = zip(channel_list[:-1], channel_list[1:], bias)
+        for in_channels, out_channels, _bias in iterator:
+            self.lins.append(Linear(in_channels, out_channels, bias=_bias))
 
         self.norms = torch.nn.ModuleList()
         iterator = channel_list[1:-1] if plain_last else channel_list[1:]
         for hidden_channels in iterator:
-            if batch_norm:
-                norm = BatchNorm1d(hidden_channels, **batch_norm_kwargs)
+            if norm is not None:
+                norm_layer = normalization_resolver(
+                    norm,
+                    hidden_channels,
+                    **(norm_kwargs or {}),
+                )
             else:
-                norm = Identity()
-            self.norms.append(norm)
+                norm_layer = Identity()
+            self.norms.append(norm_layer)
 
         self.reset_parameters()
 
@@ -138,26 +178,44 @@ class MLP(torch.nn.Module):
         return len(self.channel_list) - 1
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for lin in self.lins:
             lin.reset_parameters()
         for norm in self.norms:
             if hasattr(norm, 'reset_parameters'):
                 norm.reset_parameters()
 
-    def forward(self, x: Tensor, return_emb: NoneType = None) -> Tensor:
-        """"""
-        for lin, norm in zip(self.lins, self.norms):
+    def forward(
+        self,
+        x: Tensor,
+        return_emb: NoneType = None,
+    ) -> Tensor:
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            return_emb (bool, optional): If set to :obj:`True`, will
+                additionally return the embeddings before execution of the
+                final output layer. (default: :obj:`False`)
+        """
+        # `return_emb` is annotated here as `NoneType` to be compatible with
+        # TorchScript, which does not support different return types based on
+        # the value of an input argument.
+        emb: Optional[Tensor] = None
+
+        for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
             x = lin(x)
             if self.act is not None and self.act_first:
                 x = self.act(x)
             x = norm(x)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
-            x = F.dropout(x, p=self.dropout, training=self.training)
-            emb = x
+            x = F.dropout(x, p=self.dropout[i], training=self.training)
+            if isinstance(return_emb, bool) and return_emb is True:
+                emb = x
 
         if self.plain_last:
             x = self.lins[-1](x)
+            x = F.dropout(x, p=self.dropout[-1], training=self.training)
 
         return (x, emb) if isinstance(return_emb, bool) else x
 

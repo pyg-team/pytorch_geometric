@@ -8,19 +8,18 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import OptTensor
+from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
 from torch_geometric.utils import (
     add_self_loops,
     batched_negative_sampling,
-    dropout_adj,
+    dropout_edge,
     is_undirected,
     negative_sampling,
     remove_self_loops,
     softmax,
     to_undirected,
 )
-
-from ..inits import glorot, zeros
 
 
 class SuperGATConv(MessagePassing):
@@ -103,7 +102,7 @@ class SuperGATConv(MessagePassing):
             self-loops to the input graph. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        attention_type (string, optional): Type of attention to use.
+        attention_type (str, optional): Type of attention to use
             (:obj:`'MX'`, :obj:`'SD'`). (default: :obj:`'MX'`)
         neg_sample_ratio (float, optional): The ratio of the number of sampled
             negative edges to the number of positive edges.
@@ -172,25 +171,30 @@ class SuperGATConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         glorot(self.att_l)
         glorot(self.att_r)
         zeros(self.bias)
 
-    def forward(self, x: Tensor, edge_index: Tensor,
+    def forward(self, x: Tensor, edge_index: Adj,
                 neg_edge_index: OptTensor = None,
                 batch: OptTensor = None) -> Tensor:
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
-            neg_edge_index (Tensor, optional): The negative edges to train
-                against. If not given, uses negative sampling to calculate
-                negative edges. (default: :obj:`None`)
+            neg_edge_index (torch.Tensor, optional): The negative edges to
+                train against. If not given, uses negative sampling to
+                calculate negative edges. (default: :obj:`None`)
         """
         N, H, C = x.size(0), self.heads, self.out_channels
 
         if self.add_self_loops:
-            edge_index, _ = remove_self_loops(edge_index)
-            edge_index, _ = add_self_loops(edge_index, num_nodes=N)
+            if isinstance(edge_index, SparseTensor):
+                edge_index = torch_sparse.fill_diag(edge_index, 1.)
+            else:
+                edge_index, _ = remove_self_loops(edge_index)
+                edge_index, _ = add_self_loops(edge_index, num_nodes=N)
 
         x = self.lin(x).view(-1, H, C)
 
@@ -198,6 +202,9 @@ class SuperGATConv(MessagePassing):
         out = self.propagate(edge_index, x=x, size=None)
 
         if self.training:
+            if isinstance(edge_index, SparseTensor):
+                col, row, _ = edge_index.coo()
+                edge_index = torch.stack([row, col], dim=0)
             pos_edge_index = self.positive_sampling(edge_index)
 
             pos_att = self.get_attention(
@@ -229,7 +236,7 @@ class SuperGATConv(MessagePassing):
             out = out.mean(dim=1)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
@@ -259,9 +266,9 @@ class SuperGATConv(MessagePassing):
         return neg_edge_index
 
     def positive_sampling(self, edge_index: Tensor) -> Tensor:
-        pos_edge_index, _ = dropout_adj(edge_index,
-                                        p=1. - self.edge_sample_ratio,
-                                        training=self.training)
+        pos_edge_index, _ = dropout_edge(edge_index,
+                                         p=1. - self.edge_sample_ratio,
+                                         training=self.training)
         return pos_edge_index
 
     def get_attention(self, edge_index_i: Tensor, x_i: Tensor, x_j: Tensor,
@@ -286,7 +293,7 @@ class SuperGATConv(MessagePassing):
         return alpha
 
     def get_attention_loss(self) -> Tensor:
-        r"""Compute the self-supervised graph attention loss."""
+        r"""Computes the self-supervised graph attention loss."""
         if not self.training:
             return torch.tensor([0], device=self.lin.weight.device)
 

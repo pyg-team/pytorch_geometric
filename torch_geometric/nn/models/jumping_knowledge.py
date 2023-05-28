@@ -31,7 +31,7 @@ class JumpingKnowledge(torch.nn.Module):
     LSTM (:obj:`"lstm"`).
 
     Args:
-        mode (string): The aggregation scheme to use
+        mode (str): The aggregation scheme to use
             (:obj:`"cat"`, :obj:`"max"` or :obj:`"lstm"`).
         channels (int, optional): The number of channels per representation.
             Needs to be only set for LSTM-style aggregation.
@@ -51,23 +51,28 @@ class JumpingKnowledge(torch.nn.Module):
             self.lstm = LSTM(channels, (num_layers * channels) // 2,
                              bidirectional=True, batch_first=True)
             self.att = Linear(2 * ((num_layers * channels) // 2), 1)
+            self.channels = channels
+            self.num_layers = num_layers
         else:
             self.lstm = None
             self.att = None
+            self.channels = None
+            self.num_layers = None
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         if self.lstm is not None:
             self.lstm.reset_parameters()
         if self.att is not None:
             self.att.reset_parameters()
 
     def forward(self, xs: List[Tensor]) -> Tensor:
-        r"""Aggregates representations across different layers.
-
+        r"""
         Args:
-            xs (List[Tensor]): List containing layer-wise representations.
+            xs (List[torch.Tensor]): List containing the layer-wise
+                representations.
         """
         if self.mode == 'cat':
             return torch.cat(xs, dim=-1)
@@ -82,4 +87,7 @@ class JumpingKnowledge(torch.nn.Module):
             return (x * alpha.unsqueeze(-1)).sum(dim=1)
 
     def __repr__(self) -> str:
+        if self.mode == 'lstm':
+            return (f'{self.__class__.__name__}({self.mode}, '
+                    f'channels={self.channels}, layers={self.num_layers})')
         return f'{self.__class__.__name__}({self.mode})'

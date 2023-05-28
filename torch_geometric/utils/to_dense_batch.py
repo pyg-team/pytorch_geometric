@@ -2,12 +2,17 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_add
+
+from torch_geometric.utils import scatter
 
 
-def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
-                   fill_value: float = 0., max_num_nodes: Optional[int] = None,
-                   batch_size: Optional[int] = None) -> Tuple[Tensor, Tensor]:
+def to_dense_batch(
+    x: Tensor,
+    batch: Optional[Tensor] = None,
+    fill_value: float = 0.0,
+    max_num_nodes: Optional[int] = None,
+    batch_size: Optional[int] = None,
+) -> Tuple[Tensor, Tensor]:
     r"""Given a sparse batch of node features
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}` (with
     :math:`N_i` indicating the number of nodes in graph :math:`i`), creates a
@@ -31,7 +36,61 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
         batch_size (int, optional) The batch size. (default: :obj:`None`)
 
     :rtype: (:class:`Tensor`, :class:`BoolTensor`)
+
+    Examples:
+
+        >>> x = torch.arange(12).view(6, 2)
+        >>> x
+        tensor([[ 0,  1],
+                [ 2,  3],
+                [ 4,  5],
+                [ 6,  7],
+                [ 8,  9],
+                [10, 11]])
+
+        >>> out, mask = to_dense_batch(x)
+        >>> mask
+        tensor([[True, True, True, True, True, True]])
+
+        >>> batch = torch.tensor([0, 0, 1, 2, 2, 2])
+        >>> out, mask = to_dense_batch(x, batch)
+        >>> out
+        tensor([[[ 0,  1],
+                [ 2,  3],
+                [ 0,  0]],
+                [[ 4,  5],
+                [ 0,  0],
+                [ 0,  0]],
+                [[ 6,  7],
+                [ 8,  9],
+                [10, 11]]])
+        >>> mask
+        tensor([[ True,  True, False],
+                [ True, False, False],
+                [ True,  True,  True]])
+
+        >>> out, mask = to_dense_batch(x, batch, max_num_nodes=4)
+        >>> out
+        tensor([[[ 0,  1],
+                [ 2,  3],
+                [ 0,  0],
+                [ 0,  0]],
+                [[ 4,  5],
+                [ 0,  0],
+                [ 0,  0],
+                [ 0,  0]],
+                [[ 6,  7],
+                [ 8,  9],
+                [10, 11],
+                [ 0,  0]]])
+
+        >>> mask
+        tensor([[ True,  True, False, False],
+                [ True, False, False, False],
+                [ True,  True,  True, False]])
     """
+    fill_value = 0.0 if fill_value is None else fill_value
+
     if batch is None and max_num_nodes is None:
         mask = torch.ones(1, x.size(0), dtype=torch.bool, device=x.device)
         return x.unsqueeze(0), mask
@@ -42,15 +101,21 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
     if batch_size is None:
         batch_size = int(batch.max()) + 1
 
-    num_nodes = scatter_add(batch.new_ones(x.size(0)), batch, dim=0,
-                            dim_size=batch_size)
+    num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0,
+                        dim_size=batch_size, reduce='sum')
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
 
+    filter_nodes = False
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
+    elif num_nodes.max() > max_num_nodes:
+        filter_nodes = True
 
-    idx = torch.arange(batch.size(0), dtype=torch.long, device=x.device)
-    idx = (idx - cum_nodes[batch]) + (batch * max_num_nodes)
+    tmp = torch.arange(batch.size(0), device=x.device) - cum_nodes[batch]
+    idx = tmp + (batch * max_num_nodes)
+    if filter_nodes:
+        mask = tmp < max_num_nodes
+        x, idx = x[mask], idx[mask]
 
     size = [batch_size * max_num_nodes] + list(x.size())[1:]
     out = x.new_full(size, fill_value)

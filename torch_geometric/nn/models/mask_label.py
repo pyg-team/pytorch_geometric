@@ -3,9 +3,9 @@ from torch import Tensor
 
 
 class MaskLabel(torch.nn.Module):
-    r"""The label embedding and masking layer from the `"Masked Label Prediction:
-    Unified Message Passing Model for Semi-Supervised Classification"
-    <https://arxiv.org/abs/2009.03509>`_ paper.
+    r"""The label embedding and masking layer from the `"Masked Label
+    Prediction: Unified Message Passing Model for Semi-Supervised
+    Classification" <https://arxiv.org/abs/2009.03509>`_ paper.
 
     Here, node labels :obj:`y` are merged to the initial node features :obj:`x`
     for a subset of their nodes according to :obj:`mask`.
@@ -39,6 +39,7 @@ class MaskLabel(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.emb.reset_parameters()
 
     def forward(self, x: Tensor, y: Tensor, mask: Tensor) -> Tensor:
@@ -59,7 +60,7 @@ class MaskLabel(torch.nn.Module):
 
         Args:
             mask (torch.Tensor): The mask to re-mask.
-            ratio (float): The ratio of entries to remove.
+            ratio (float): The ratio of entries to keep.
         """
         n = int(mask.sum())
         out = mask.clone()

@@ -2,11 +2,9 @@ from typing import Union
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_mean
-from torch_sparse import SparseTensor
 
-from torch_geometric.typing import Adj, OptTensor
-from torch_geometric.utils import degree
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.utils import degree, scatter
 
 
 def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
@@ -63,6 +61,23 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             either :obj:`"edge"` (first formula), :obj:`"node"` (second
             formula) or :obj:`"edge_insensitive"` (third formula).
             (default: :obj:`"edge"`)
+
+    Examples:
+
+        >>> edge_index = torch.tensor([[0, 1, 2, 3],
+        ...                            [1, 2, 0, 4]])
+        >>> y = torch.tensor([0, 0, 0, 0, 1])
+        >>> # Edge homophily ratio
+        >>> homophily(edge_index, y, method='edge')
+        0.75
+
+        >>> # Node homophily ratio
+        >>> homophily(edge_index, y, method='node')
+        0.6000000238418579
+
+        >>> # Class insensitive edge homophily ratio
+        >>> homophily(edge_index, y, method='edge_insensitive')
+        0.19999998807907104
     """
     assert method in {'edge', 'node', 'edge_insensitive'}
     y = y.squeeze(-1) if y.dim() > 1 else y
@@ -79,16 +94,16 @@ def homophily(edge_index: Adj, y: Tensor, batch: OptTensor = None,
             return float(out.mean())
         else:
             dim_size = int(batch.max()) + 1
-            return scatter_mean(out, batch[col], dim=0, dim_size=dim_size)
+            return scatter(out, batch[col], 0, dim_size, reduce='mean')
 
     elif method == 'node':
         out = torch.zeros(row.size(0), device=row.device)
         out[y[row] == y[col]] = 1.
-        out = scatter_mean(out, col, 0, dim_size=y.size(0))
+        out = scatter(out, col, 0, dim_size=y.size(0), reduce='mean')
         if batch is None:
             return float(out.mean())
         else:
-            return scatter_mean(out, batch, dim=0)
+            return scatter(out, batch, dim=0, reduce='mean')
 
     elif method == 'edge_insensitive':
         assert y.dim() == 1

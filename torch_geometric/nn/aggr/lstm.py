@@ -8,13 +8,11 @@ from torch_geometric.nn.aggr import Aggregation
 
 class LSTMAggregation(Aggregation):
     r"""Performs LSTM-style aggregation in which the elements to aggregate are
-    interpreted as a sequence.
+    interpreted as a sequence, as described in the `"Inductive Representation
+    Learning on Large Graphs" <https://arxiv.org/abs/1706.02216>`_ paper.
 
-    .. warn::
-        :class:`LSTMAggregation` is not permutation-invariant.
-
-    .. note::
-        :class:`LSTMAggregation` requires sorted indices.
+    .. warning::
+        :class:`LSTMAggregation` is not a permutation-invariant operator.
 
     Args:
         in_channels (int): Size of each input sample.
@@ -31,7 +29,7 @@ class LSTMAggregation(Aggregation):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim)

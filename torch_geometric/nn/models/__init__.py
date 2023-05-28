@@ -1,6 +1,7 @@
 from .mlp import MLP
-from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA
+from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
 from .jumping_knowledge import JumpingKnowledge
+from .meta import MetaLayer
 from .node2vec import Node2Vec
 from .deep_graph_infomax import DeepGraphInfomax
 from .autoencoder import InnerProductDecoder, GAE, VGAE, ARGA, ARGVA
@@ -9,8 +10,7 @@ from .re_net import RENet
 from .graph_unet import GraphUNet
 from .schnet import SchNet
 from .dimenet import DimeNet, DimeNetPlusPlus
-from .explainer import Explainer, to_captum
-from .gnn_explainer import GNNExplainer
+from .captum import to_captum_model, to_captum_input, captum_output_to_dicts
 from .metapath2vec import MetaPath2Vec
 from .deepgcn import DeepGCNLayer
 from .tgn import TGNMemory
@@ -22,15 +22,19 @@ from .linkx import LINKX
 from .lightgcn import LightGCN
 from .mask_label import MaskLabel
 from .rev_gnn import GroupAddRev
+from .gnnff import GNNFF
+from .pmlp import PMLP
 
-__all__ = [
+__all__ = classes = [
     'MLP',
     'GCN',
     'GraphSAGE',
     'GIN',
     'GAT',
     'PNA',
+    'EdgeCNN',
     'JumpingKnowledge',
+    'MetaLayer',
     'Node2Vec',
     'DeepGraphInfomax',
     'InnerProductDecoder',
@@ -44,9 +48,9 @@ __all__ = [
     'SchNet',
     'DimeNet',
     'DimeNetPlusPlus',
-    'Explainer',
-    'to_captum',
-    'GNNExplainer',
+    'to_captum_model',
+    'to_captum_input',
+    'captum_output_to_dicts',
     'MetaPath2Vec',
     'DeepGCNLayer',
     'TGNMemory',
@@ -58,6 +62,6 @@ __all__ = [
     'LightGCN',
     'MaskLabel',
     'GroupAddRev',
+    'GNNFF',
+    'PMLP',
 ]
-
-classes = __all__

@@ -72,7 +72,7 @@ class GeneralLayer(nn.Module):
     General wrapper for layers
 
     Args:
-        name (string): Name of the layer in registered :obj:`layer_dict`
+        name (str): Name of the layer in registered :obj:`layer_dict`
         dim_in (int): Input dimension
         dim_out (int): Output dimension
         has_act (bool): Whether has activation after the layer
@@ -96,7 +96,7 @@ class GeneralLayer(nn.Module):
                 nn.Dropout(p=layer_config.dropout,
                            inplace=layer_config.mem_inplace))
         if layer_config.has_act:
-            layer_wrapper.append(register.act_dict[layer_config.act])
+            layer_wrapper.append(register.act_dict[layer_config.act]())
         self.post_layer = nn.Sequential(*layer_wrapper)
 
     def forward(self, batch):
@@ -117,7 +117,7 @@ class GeneralMultiLayer(nn.Module):
     General wrapper for a stack of multiple layers
 
     Args:
-        name (string): Name of the layer in registered :obj:`layer_dict`
+        name (str): Name of the layer in registered :obj:`layer_dict`
         num_layers (int): Number of layers in the stack
         dim_in (int): Input dimension
         dim_out (int): Output dimension

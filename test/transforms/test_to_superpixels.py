@@ -1,7 +1,4 @@
 import os.path as osp
-import random
-import shutil
-import sys
 
 import torch
 
@@ -17,8 +14,8 @@ resources = [
 ]
 
 
-@withPackage('torchvision')
-def test_to_superpixels():
+@withPackage('torchvision', 'skimage')
+def test_to_superpixels(tmp_path):
     import torchvision.transforms as T
     from torchvision.datasets.mnist import (
         MNIST,
@@ -26,16 +23,14 @@ def test_to_superpixels():
         read_label_file,
     )
 
-    root = osp.join('/', 'tmp', str(random.randrange(sys.maxsize)))
-
-    raw_folder = osp.join(root, 'MNIST', 'raw')
-    processed_folder = osp.join(root, 'MNIST', 'processed')
+    raw_folder = osp.join(tmp_path, 'MNIST', 'raw')
+    processed_folder = osp.join(tmp_path, 'MNIST', 'processed')
 
     makedirs(raw_folder)
     makedirs(processed_folder)
     for resource in resources:
         path = download_url(resource, raw_folder)
-        extract_gz(path, osp.join(root, raw_folder))
+        extract_gz(path, osp.join(tmp_path, raw_folder))
 
     test_set = (
         read_image_file(osp.join(raw_folder, 't10k-images-idx3-ubyte')),
@@ -45,7 +40,7 @@ def test_to_superpixels():
     torch.save(test_set, osp.join(processed_folder, 'training.pt'))
     torch.save(test_set, osp.join(processed_folder, 'test.pt'))
 
-    dataset = MNIST(root, download=False)
+    dataset = MNIST(tmp_path, download=False)
 
     dataset.transform = T.Compose([T.ToTensor(), ToSLIC()])
 
@@ -57,13 +52,13 @@ def test_to_superpixels():
     assert y == 7
 
     loader = DataLoader(dataset, batch_size=2, shuffle=False)
-    for data, y in loader:
-        assert len(data) == 4
-        assert data.pos.dim() == 2 and data.pos.size(1) == 2
-        assert data.x.dim() == 2 and data.x.size(1) == 1
-        assert data.batch.dim() == 1
-        assert data.ptr.dim() == 1
-        assert data.pos.size(0) == data.x.size(0) == data.batch.size(0)
+    for batch, y in loader:
+        assert batch.num_graphs == len(batch) == 2
+        assert batch.pos.dim() == 2 and batch.pos.size(1) == 2
+        assert batch.x.dim() == 2 and batch.x.size(1) == 1
+        assert batch.batch.dim() == 1
+        assert batch.ptr.dim() == 1
+        assert batch.pos.size(0) == batch.x.size(0) == batch.batch.size(0)
         assert y.tolist() == [7, 2]
         break
 
@@ -81,16 +76,14 @@ def test_to_superpixels():
     assert y == 7
 
     loader = DataLoader(dataset, batch_size=2, shuffle=False)
-    for data, y in loader:
-        assert len(data) == 6
-        assert data.pos.dim() == 2 and data.pos.size(1) == 2
-        assert data.x.dim() == 2 and data.x.size(1) == 1
-        assert data.batch.dim() == 1
-        assert data.ptr.dim() == 1
-        assert data.pos.size(0) == data.x.size(0) == data.batch.size(0)
-        assert data.seg.size() == (2, 28, 28)
-        assert data.img.size() == (2, 1, 28, 28)
+    for batch, y in loader:
+        assert batch.num_graphs == len(batch) == 2
+        assert batch.pos.dim() == 2 and batch.pos.size(1) == 2
+        assert batch.x.dim() == 2 and batch.x.size(1) == 1
+        assert batch.batch.dim() == 1
+        assert batch.ptr.dim() == 1
+        assert batch.pos.size(0) == batch.x.size(0) == batch.batch.size(0)
+        assert batch.seg.size() == (2, 28, 28)
+        assert batch.img.size() == (2, 1, 28, 28)
         assert y.tolist() == [7, 2]
         break
-
-    shutil.rmtree(root)

@@ -1,12 +1,21 @@
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
 import torch
 from scipy.linalg import expm
-from torch_scatter import scatter_add
-from torch_sparse import coalesce
+from torch import Tensor
 
+from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import add_self_loops, is_undirected, to_dense_adj
+from torch_geometric.utils import (
+    add_self_loops,
+    coalesce,
+    is_undirected,
+    scatter,
+    to_dense_adj,
+)
+from torch_geometric.utils.sparse import index2ptr
 
 
 @functional_transform('gdc')
@@ -64,11 +73,16 @@ class GDC(BaseTransform):
 
     :rtype: :class:`torch_geometric.data.Data`
     """
-    def __init__(self, self_loop_weight=1, normalization_in='sym',
-                 normalization_out='col',
-                 diffusion_kwargs=dict(method='ppr', alpha=0.15),
-                 sparsification_kwargs=dict(method='threshold',
-                                            avg_degree=64), exact=True):
+    def __init__(
+        self,
+        self_loop_weight: float = 1.,
+        normalization_in: str = 'sym',
+        normalization_out: str = 'col',
+        diffusion_kwargs: Dict[str, Any] = dict(method='ppr', alpha=0.15),
+        sparsification_kwargs: Dict[str, Any] = dict(method='threshold',
+                                                     avg_degree=64),
+        exact: bool = True,
+    ):
 
         self.__calc_ppr__ = get_calc_ppr()
 
@@ -83,7 +97,7 @@ class GDC(BaseTransform):
             assert exact or self_loop_weight == 1
 
     @torch.no_grad()
-    def __call__(self, data):
+    def forward(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index = data.edge_index
         if data.edge_attr is None:
@@ -99,7 +113,7 @@ class GDC(BaseTransform):
                 edge_index, edge_weight, fill_value=self.self_loop_weight,
                 num_nodes=N)
 
-        edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
+        edge_index, edge_weight = coalesce(edge_index, edge_weight, N)
 
         if self.exact:
             edge_index, edge_weight = self.transition_matrix(
@@ -115,7 +129,7 @@ class GDC(BaseTransform):
             edge_index, edge_weight = self.sparsify_sparse(
                 edge_index, edge_weight, N, **self.sparsification_kwargs)
 
-        edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
+        edge_index, edge_weight = coalesce(edge_index, edge_weight, N)
         edge_index, edge_weight = self.transition_matrix(
             edge_index, edge_weight, N, self.normalization_out)
 
@@ -124,8 +138,13 @@ class GDC(BaseTransform):
 
         return data
 
-    def transition_matrix(self, edge_index, edge_weight, num_nodes,
-                          normalization):
+    def transition_matrix(
+        self,
+        edge_index: Tensor,
+        edge_weight: Tensor,
+        num_nodes: int,
+        normalization: str,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Calculate the approximate, sparse diffusion on a given sparse
         matrix.
 
@@ -148,19 +167,19 @@ class GDC(BaseTransform):
         """
         if normalization == 'sym':
             row, col = edge_index
-            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
             deg_inv_sqrt = deg.pow(-0.5)
             deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
             edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
         elif normalization == 'col':
             _, col = edge_index
-            deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
             deg_inv = 1. / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[col]
         elif normalization == 'row':
             row, _ = edge_index
-            deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+            deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
             deg_inv = 1. / deg
             deg_inv[deg_inv == float('inf')] = 0
             edge_weight = edge_weight * deg_inv[row]
@@ -172,8 +191,14 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def diffusion_matrix_exact(self, edge_index, edge_weight, num_nodes,
-                               method, **kwargs):
+    def diffusion_matrix_exact(
+        self,
+        edge_index: Tensor,
+        edge_weight: Tensor,
+        num_nodes: int,
+        method: str,
+        **kwargs,
+    ) -> Tensor:
         r"""Calculate the (dense) diffusion on a given sparse graph.
         Note that these exact variants are not scalable. They densify the
         adjacency matrix and calculate either its inverse or its matrix
@@ -239,8 +264,15 @@ class GDC(BaseTransform):
 
         return diff_matrix
 
-    def diffusion_matrix_approx(self, edge_index, edge_weight, num_nodes,
-                                normalization, method, **kwargs):
+    def diffusion_matrix_approx(
+        self,
+        edge_index: Tensor,
+        edge_weight: Tensor,
+        num_nodes: int,
+        normalization: str,
+        method: str,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Calculate the approximate, sparse diffusion on a given sparse
         graph.
 
@@ -269,14 +301,13 @@ class GDC(BaseTransform):
             if normalization == 'sym':
                 # Calculate original degrees.
                 _, col = edge_index
-                deg = scatter_add(edge_weight, col, dim=0, dim_size=num_nodes)
+                deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
             edge_index_np = edge_index.cpu().numpy()
-            # Assumes coalesced edge_index.
-            _, indptr, out_degree = np.unique(edge_index_np[0],
-                                              return_index=True,
-                                              return_counts=True)
-            indptr = np.append(indptr, len(edge_index_np[0]))
+
+            # Assumes sorted and coalesced edge indices:
+            indptr = index2ptr(edge_index[0], num_nodes).cpu().numpy()
+            out_degree = indptr[1:] - indptr[:-1]
 
             neighbors, neighbor_weights = self.__calc_ppr__(
                 indptr, edge_index_np[1], out_degree, kwargs['alpha'],
@@ -317,7 +348,12 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def sparsify_dense(self, matrix, method, **kwargs):
+    def sparsify_dense(
+        self,
+        matrix: Tensor,
+        method: str,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Sparsifies the given dense matrix.
 
         Args:
@@ -381,8 +417,14 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def sparsify_sparse(self, edge_index, edge_weight, num_nodes, method,
-                        **kwargs):
+    def sparsify_sparse(
+        self,
+        edge_index: Tensor,
+        edge_weight: Tensor,
+        num_nodes: int,
+        method: str,
+        **kwargs,
+    ) -> Tuple[Tensor, Tensor]:
         r"""Sparsifies a given sparse graph further.
 
         Args:
@@ -420,7 +462,7 @@ class GDC(BaseTransform):
 
         return edge_index, edge_weight
 
-    def __expm__(self, matrix, symmetric):
+    def __expm__(self, matrix: Tensor, symmetric: bool) -> Tensor:
         r"""Calculates matrix exponential.
 
         Args:
@@ -437,7 +479,12 @@ class GDC(BaseTransform):
             diff_mat = torch.Tensor(diff_mat_np).to(matrix.device)
         return diff_mat
 
-    def __calculate_eps__(self, matrix, num_nodes, avg_degree):
+    def __calculate_eps__(
+        self,
+        matrix: Tensor,
+        num_nodes: int,
+        avg_degree: int,
+    ) -> float:
         r"""Calculates threshold necessary to achieve a given average degree.
 
         Args:
@@ -455,8 +502,13 @@ class GDC(BaseTransform):
         right = sorted_edges[avg_degree * num_nodes]
         return (left + right) / 2.0
 
-    def __neighbors_to_graph__(self, neighbors, neighbor_weights,
-                               normalization='row', device='cpu'):
+    def __neighbors_to_graph__(
+        self,
+        neighbors: List[List[int]],
+        neighbor_weights: List[List[float]],
+        normalization: str = 'row',
+        device: torch.device = 'cpu',
+    ) -> Tuple[Tensor, Tensor]:
         r"""Combine a list of neighbors and neighbor weights to create a sparse
         graph.
 
@@ -491,7 +543,13 @@ def get_calc_ppr():
     import numba
 
     @numba.jit(nopython=True, parallel=True)
-    def calc_ppr(indptr, indices, out_degree, alpha, eps):
+    def calc_ppr(
+        indptr: np.ndarray,
+        indices: np.ndarray,
+        out_degree: np.ndarray,
+        alpha: float,
+        eps: float,
+    ) -> Tuple[List[List[int]], List[List[float]]]:
         r"""Calculate the personalized PageRank vector for all nodes
         using a variant of the Andersen algorithm
         (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)

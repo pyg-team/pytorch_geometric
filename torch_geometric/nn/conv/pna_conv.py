@@ -1,16 +1,17 @@
-from typing import Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import torch
 from torch import Tensor
-from torch.nn import ModuleList, ReLU, Sequential
-from torch_scatter import scatter
+from torch.nn import ModuleList, Sequential
+from torch.utils.data import DataLoader
 
+from torch_geometric.nn.aggr import DegreeScalerAggregation
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import reset
+from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import degree
-
-from ..inits import reset
 
 
 class PNAConv(MessagePassing):
@@ -52,15 +53,15 @@ class PNAConv(MessagePassing):
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
             the size from the first input(s) to the forward method.
         out_channels (int): Size of each output sample.
-        aggregators (list of str): Set of aggregation function identifiers,
+        aggregators (List[str]): Set of aggregation function identifiers,
             namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
             :obj:`"var"` and :obj:`"std"`.
-        scalers (list of str): Set of scaling function identifiers, namely
+        scalers (List[str]): Set of scaling function identifiers, namely
             :obj:`"identity"`, :obj:`"amplification"`,
             :obj:`"attenuation"`, :obj:`"linear"` and
             :obj:`"inverse_linear"`.
-        deg (Tensor): Histogram of in-degrees of nodes in the training set,
-            used by scalers to normalize.
+        deg (torch.Tensor): Histogram of in-degrees of nodes in the training
+            set, used by scalers to normalize.
         edge_dim (int, optional): Edge feature dimensionality (in case
             there are any). (default :obj:`None`)
         towers (int, optional): Number of towers (default: :obj:`1`).
@@ -70,6 +71,13 @@ class PNAConv(MessagePassing):
             aggregation (default: :obj:`1`).
         divide_input (bool, optional): Whether the input features should
             be split between towers or not (default: :obj:`False`).
+        act (str or callable, optional): Pre- and post-layer activation
+            function to use. (default: :obj:`"relu"`)
+        act_kwargs (Dict[str, Any], optional): Arguments passed to the
+            respective activation function defined by :obj:`act`.
+            (default: :obj:`None`)
+        train_norm (bool, optional): Whether normalization parameters
+            are trainable. (default: :obj:`False`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
@@ -80,14 +88,26 @@ class PNAConv(MessagePassing):
           edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-    def __init__(self, in_channels: int, out_channels: int,
-                 aggregators: List[str], scalers: List[str], deg: Tensor,
-                 edge_dim: Optional[int] = None, towers: int = 1,
-                 pre_layers: int = 1, post_layers: int = 1,
-                 divide_input: bool = False, **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        aggregators: List[str],
+        scalers: List[str],
+        deg: Tensor,
+        edge_dim: Optional[int] = None,
+        towers: int = 1,
+        pre_layers: int = 1,
+        post_layers: int = 1,
+        divide_input: bool = False,
+        act: Union[str, Callable, None] = "relu",
+        act_kwargs: Optional[Dict[str, Any]] = None,
+        train_norm: bool = False,
+        **kwargs,
+    ):
 
-        kwargs.setdefault('aggr', None)
-        super().__init__(node_dim=0, **kwargs)
+        aggr = DegreeScalerAggregation(aggregators, scalers, deg, train_norm)
+        super().__init__(aggr=aggr, node_dim=0, **kwargs)
 
         if divide_input:
             assert in_channels % towers == 0
@@ -95,23 +115,12 @@ class PNAConv(MessagePassing):
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.aggregators = aggregators
-        self.scalers = scalers
         self.edge_dim = edge_dim
         self.towers = towers
         self.divide_input = divide_input
 
         self.F_in = in_channels // towers if divide_input else in_channels
         self.F_out = self.out_channels // towers
-
-        deg = deg.to(torch.float)
-        num_nodes = int(deg.sum())
-        bin_degrees = torch.arange(deg.numel())
-        self.avg_deg: Dict[str, float] = {
-            'lin': float((bin_degrees * deg).sum()) / num_nodes,
-            'log': float(((bin_degrees + 1).log() * deg).sum()) / num_nodes,
-            'exp': float((bin_degrees.exp() * deg).sum()) / num_nodes,
-        }
 
         if self.edge_dim is not None:
             self.edge_encoder = Linear(edge_dim, self.F_in)
@@ -121,14 +130,14 @@ class PNAConv(MessagePassing):
         for _ in range(towers):
             modules = [Linear((3 if edge_dim else 2) * self.F_in, self.F_in)]
             for _ in range(pre_layers - 1):
-                modules += [ReLU()]
+                modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_in, self.F_in)]
             self.pre_nns.append(Sequential(*modules))
 
             in_channels = (len(aggregators) * len(scalers) + 1) * self.F_in
             modules = [Linear(in_channels, self.F_out)]
             for _ in range(post_layers - 1):
-                modules += [ReLU()]
+                modules += [activation_resolver(act, **(act_kwargs or {}))]
                 modules += [Linear(self.F_out, self.F_out)]
             self.post_nns.append(Sequential(*modules))
 
@@ -137,6 +146,7 @@ class PNAConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if self.edge_dim is not None:
             self.edge_encoder.reset_parameters()
         for nn in self.pre_nns:
@@ -147,7 +157,6 @@ class PNAConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
-        """"""
 
         if self.divide_input:
             x = x.view(-1, self.towers, self.F_in)
@@ -178,52 +187,25 @@ class PNAConv(MessagePassing):
         hs = [nn(h[:, i]) for i, nn in enumerate(self.pre_nns)]
         return torch.stack(hs, dim=1)
 
-    def aggregate(self, inputs: Tensor, index: Tensor,
-                  dim_size: Optional[int] = None) -> Tensor:
-
-        outs = []
-        for aggregator in self.aggregators:
-            if aggregator == 'sum':
-                out = scatter(inputs, index, 0, None, dim_size, reduce='sum')
-            elif aggregator == 'mean':
-                out = scatter(inputs, index, 0, None, dim_size, reduce='mean')
-            elif aggregator == 'min':
-                out = scatter(inputs, index, 0, None, dim_size, reduce='min')
-            elif aggregator == 'max':
-                out = scatter(inputs, index, 0, None, dim_size, reduce='max')
-            elif aggregator == 'var' or aggregator == 'std':
-                mean = scatter(inputs, index, 0, None, dim_size, reduce='mean')
-                mean_squares = scatter(inputs * inputs, index, 0, None,
-                                       dim_size, reduce='mean')
-                out = mean_squares - mean * mean
-                if aggregator == 'std':
-                    out = torch.sqrt(torch.relu(out) + 1e-5)
-            else:
-                raise ValueError(f'Unknown aggregator "{aggregator}".')
-            outs.append(out)
-        out = torch.cat(outs, dim=-1)
-
-        deg = degree(index, dim_size, dtype=inputs.dtype)
-        deg = deg.clamp_(1).view(-1, 1, 1)
-
-        outs = []
-        for scaler in self.scalers:
-            if scaler == 'identity':
-                pass
-            elif scaler == 'amplification':
-                out = out * (torch.log(deg + 1) / self.avg_deg['log'])
-            elif scaler == 'attenuation':
-                out = out * (self.avg_deg['log'] / torch.log(deg + 1))
-            elif scaler == 'linear':
-                out = out * (deg / self.avg_deg['lin'])
-            elif scaler == 'inverse_linear':
-                out = out * (self.avg_deg['lin'] / deg)
-            else:
-                raise ValueError(f'Unknown scaler "{scaler}".')
-            outs.append(out)
-        return torch.cat(outs, dim=-1)
-
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, towers={self.towers}, '
                 f'edge_dim={self.edge_dim})')
+
+    @staticmethod
+    def get_degree_histogram(loader: DataLoader) -> Tensor:
+        r"""Returns the degree histogram to be used as input for the :obj:`deg`
+        argument in :class:`PNAConv`."""
+        deg_histogram = torch.zeros(1, dtype=torch.long)
+        for data in loader:
+            d = degree(data.edge_index[1], num_nodes=data.num_nodes,
+                       dtype=torch.long)
+            d_bincount = torch.bincount(d, minlength=deg_histogram.numel())
+            if d_bincount.size(0) > deg_histogram.size(0):
+                d_bincount[:deg_histogram.size(0)] += deg_histogram
+                deg_histogram = d_bincount
+            else:
+                assert d_bincount.size(0) == deg_histogram.size(0)
+                deg_histogram += d_bincount
+
+        return deg_histogram

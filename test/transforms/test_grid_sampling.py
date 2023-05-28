@@ -7,7 +7,7 @@ from torch_geometric.transforms import GridSampling
 
 @withPackage('torch_cluster')
 def test_grid_sampling():
-    assert GridSampling(5).__repr__() == 'GridSampling(size=5)'
+    assert str(GridSampling(5)) == 'GridSampling(size=5)'
 
     pos = torch.Tensor([[0, 2], [3, 2], [3, 2], [2, 8], [2, 6]])
     y = torch.tensor([0, 1, 1, 2, 2])

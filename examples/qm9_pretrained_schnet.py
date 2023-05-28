@@ -1,10 +1,17 @@
+import argparse
 import os.path as osp
 
 import torch
+from tqdm import tqdm
 
 from torch_geometric.datasets import QM9
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import SchNet
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--cutoff', type=float, default=10.0,
+                    help='Cutoff distance for interatomic interactions')
+args = parser.parse_args()
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
 dataset = QM9(path)
@@ -19,7 +26,7 @@ for target in range(12):
     loader = DataLoader(test_dataset, batch_size=256)
 
     maes = []
-    for data in loader:
+    for data in tqdm(loader):
         data = data.to(device)
         with torch.no_grad():
             pred = model(data.z, data.pos, data.batch)

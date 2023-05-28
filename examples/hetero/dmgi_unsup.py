@@ -20,7 +20,7 @@ metapaths = [
     [('movie', 'actor'), ('actor', 'movie')],  # MAM
     [('movie', 'director'), ('director', 'movie')],  # MDM
 ]
-data = T.AddMetaPaths(metapaths, drop_orig_edges=True)(dataset[0])
+data = T.AddMetaPaths(metapaths, drop_orig_edge_types=True)(dataset[0])
 
 
 class DMGI(torch.nn.Module):

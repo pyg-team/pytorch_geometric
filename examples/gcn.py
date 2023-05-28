@@ -65,7 +65,7 @@ optimizer = torch.optim.Adam([
 def train():
     model.train()
     optimizer.zero_grad()
-    out = model(data.x, data.edge_index, data.edge_weight)
+    out = model(data.x, data.edge_index, data.edge_attr)
     loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
     loss.backward()
     optimizer.step()
@@ -75,7 +75,7 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    pred = model(data.x, data.edge_index, data.edge_weight).argmax(dim=-1)
+    pred = model(data.x, data.edge_index, data.edge_attr).argmax(dim=-1)
 
     accs = []
     for mask in [data.train_mask, data.val_mask, data.test_mask]:

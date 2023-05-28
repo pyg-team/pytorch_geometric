@@ -1,4 +1,5 @@
 import os.path as osp
+import sys
 
 import matplotlib.pyplot as plt
 import torch
@@ -15,11 +16,21 @@ def main():
     data = dataset[0]
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model = Node2Vec(data.edge_index, embedding_dim=128, walk_length=20,
-                     context_size=10, walks_per_node=10,
-                     num_negative_samples=1, p=1, q=1, sparse=True).to(device)
+    model = Node2Vec(
+        data.edge_index,
+        embedding_dim=128,
+        walk_length=20,
+        context_size=10,
+        walks_per_node=10,
+        num_negative_samples=1,
+        p=1,
+        q=1,
+        sparse=True,
+    ).to(device)
 
-    loader = model.loader(batch_size=128, shuffle=True, num_workers=4)
+    num_workers = 0 if sys.platform.startswith('win') else 4
+    loader = model.loader(batch_size=128, shuffle=True,
+                          num_workers=num_workers)
     optimizer = torch.optim.SparseAdam(list(model.parameters()), lr=0.01)
 
     def train():
@@ -45,7 +56,7 @@ def main():
     for epoch in range(1, 101):
         loss = train()
         acc = test()
-        print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Acc: {acc:.4f}')
+        print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Acc: {acc:.4f}')
 
     @torch.no_grad()
     def plot_points(colors):

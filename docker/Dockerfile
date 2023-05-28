@@ -1,5 +1,12 @@
 FROM ubuntu:18.04
 
+# metainformation
+LABEL org.opencontainers.image.version = "2.1.0"
+LABEL org.opencontainers.image.authors = "Matthias Fey"
+LABEL org.opencontainers.image.source = "https://github.com/pyg-team/pytorch_geometric"
+LABEL org.opencontainers.image.licenses = "MIT"
+LABEL org.opencontainers.image.base.name="docker.io/library/ubuntu:18.04"
+
 RUN apt-get update && apt-get install -y apt-transport-https ca-certificates && \
     rm -rf /var/lib/apt/lists/*
 
@@ -146,10 +153,10 @@ RUN CPATH=/usr/local/cuda/include:$CPATH \
 
 RUN pip install scipy
 
-RUN pip install --no-index torch-scatter -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
- && pip install --no-index torch-sparse -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
- && pip install --no-index torch-cluster -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
- && pip install --no-index torch-spline-conv -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
+RUN pip install --no-index torch_scatter -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
+ && pip install --no-index torch_sparse -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
+ && pip install --no-index torch_cluster -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
+ && pip install --no-index torch_spline_conv -f https://data.pyg.org/whl/torch-1.4.0+cu101.html \
  && pip install torch-geometric
 
 # Set the default command to python3.
