@@ -23,7 +23,6 @@ class IntegerFeatureEncoder(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.encoder.weight.data)
 
     def forward(self, batch):
-        """"""
         # Encode just the first dimension if more exist
         batch.x = self.encoder(batch.x[:, 0])
 
@@ -52,7 +51,6 @@ class AtomEncoder(torch.nn.Module):
             self.atom_embedding_list.append(emb)
 
     def forward(self, batch):
-        """"""
         encoded_features = 0
         for i in range(batch.x.shape[1]):
             encoded_features += self.atom_embedding_list[i](batch.x[:, i])
@@ -82,7 +80,6 @@ class BondEncoder(torch.nn.Module):
             self.bond_embedding_list.append(emb)
 
     def forward(self, batch):
-        """"""
         bond_embedding = 0
         for i in range(batch.edge_attr.shape[1]):
             edge_attr = batch.edge_attr

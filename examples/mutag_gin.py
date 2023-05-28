@@ -45,7 +45,7 @@ class Net(torch.nn.Module):
             in_channels = hidden_channels
 
         self.mlp = MLP([hidden_channels, hidden_channels, out_channels],
-                       batch_norm=False, dropout=0.5)
+                       norm=None, dropout=0.5)
 
     def forward(self, x, edge_index, batch):
         for conv in self.convs:

@@ -1,17 +1,14 @@
+from typing import Optional, Tuple
+
 import torch
+from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
-from torch_sparse import SparseTensor
 
+from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_CLUSTER
+from torch_geometric.utils import sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-
-try:
-    import torch_cluster  # noqa
-    random_walk = torch.ops.torch_cluster.random_walk
-except ImportError:
-    random_walk = None
-
-EPS = 1e-15
+from torch_geometric.utils.sparse import index2ptr
 
 
 class Node2Vec(torch.nn.Module):
@@ -28,7 +25,7 @@ class Node2Vec(torch.nn.Module):
         node2vec.py>`_.
 
     Args:
-        edge_index (LongTensor): The edge indices.
+        edge_index (torch.Tensor): The edge indices.
         embedding_dim (int): The size of each embedding vector.
         walk_length (int): The walk length.
         context_size (int): The actual context size which is considered for
@@ -46,19 +43,40 @@ class Node2Vec(torch.nn.Module):
         sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to the
             weight matrix will be sparse. (default: :obj:`False`)
     """
-    def __init__(self, edge_index, embedding_dim, walk_length, context_size,
-                 walks_per_node=1, p=1, q=1, num_negative_samples=1,
-                 num_nodes=None, sparse=False):
+    def __init__(
+        self,
+        edge_index: Tensor,
+        embedding_dim: int,
+        walk_length: int,
+        context_size: int,
+        walks_per_node: int = 1,
+        p: float = 1.0,
+        q: float = 1.0,
+        num_negative_samples: int = 1,
+        num_nodes: Optional[int] = None,
+        sparse: bool = False,
+    ):
         super().__init__()
 
-        if random_walk is None:
-            raise ImportError('`Node2Vec` requires `torch-cluster`.')
+        if WITH_PYG_LIB and p == 1.0 and q == 1.0:
+            self.random_walk_fn = torch.ops.pyg.random_walk
+        elif WITH_TORCH_CLUSTER:
+            self.random_walk_fn = torch.ops.torch_cluster.random_walk
+        else:
+            if p == 1.0 and q == 1.0:
+                raise ImportError(f"'{self.__class__.__name__}' "
+                                  f"requires either the 'pyg-lib' or "
+                                  f"'torch-cluster' package")
+            else:
+                raise ImportError(f"'{self.__class__.__name__}' "
+                                  f"requires the 'torch-cluster' package")
 
-        N = maybe_num_nodes(edge_index, num_nodes)
-        row, col = edge_index
-        self.adj = SparseTensor(row=row, col=col, sparse_sizes=(N, N))
-        self.adj = self.adj.to('cpu')
+        self.num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
+        row, col = sort_edge_index(edge_index, num_nodes=self.num_nodes).cpu()
+        self.rowptr, self.col = index2ptr(row, self.num_nodes), col
+
+        self.EPS = 1e-15
         assert walk_length >= context_size
 
         self.embedding_dim = embedding_dim
@@ -69,27 +87,30 @@ class Node2Vec(torch.nn.Module):
         self.q = q
         self.num_negative_samples = num_negative_samples
 
-        self.embedding = Embedding(N, embedding_dim, sparse=sparse)
+        self.embedding = Embedding(self.num_nodes, embedding_dim,
+                                   sparse=sparse)
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
 
-    def forward(self, batch=None):
+    def forward(self, batch: Optional[Tensor] = None) -> Tensor:
         """Returns the embeddings for the nodes in :obj:`batch`."""
         emb = self.embedding.weight
         return emb if batch is None else emb.index_select(0, batch)
 
-    def loader(self, **kwargs):
-        return DataLoader(range(self.adj.sparse_size(0)),
-                          collate_fn=self.sample, **kwargs)
+    def loader(self, **kwargs) -> DataLoader:
+        return DataLoader(range(self.num_nodes), collate_fn=self.sample,
+                          **kwargs)
 
-    def pos_sample(self, batch):
+    @torch.jit.export
+    def pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
-        rowptr, col, _ = self.adj.csr()
-        rw = random_walk(rowptr, col, batch, self.walk_length, self.p, self.q)
-        if not isinstance(rw, torch.Tensor):
+        rw = self.random_walk_fn(self.rowptr, self.col, batch,
+                                 self.walk_length, self.p, self.q)
+        if not isinstance(rw, Tensor):
             rw = rw[0]
 
         walks = []
@@ -98,11 +119,11 @@ class Node2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
-    def neg_sample(self, batch):
+    @torch.jit.export
+    def neg_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node * self.num_negative_samples)
 
-        rw = torch.randint(self.adj.sparse_size(0),
-                           (batch.size(0), self.walk_length))
+        rw = torch.randint(self.num_nodes, (batch.size(0), self.walk_length))
         rw = torch.cat([batch.view(-1, 1), rw], dim=-1)
 
         walks = []
@@ -111,12 +132,14 @@ class Node2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
-    def sample(self, batch):
-        if not isinstance(batch, torch.Tensor):
+    @torch.jit.export
+    def sample(self, batch: Tensor) -> Tuple[Tensor, Tensor]:
+        if not isinstance(batch, Tensor):
             batch = torch.tensor(batch)
         return self.pos_sample(batch), self.neg_sample(batch)
 
-    def loss(self, pos_rw, neg_rw):
+    @torch.jit.export
+    def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
 
         # Positive loss.
@@ -128,7 +151,7 @@ class Node2Vec(torch.nn.Module):
                                                     self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
-        pos_loss = -torch.log(torch.sigmoid(out) + EPS).mean()
+        pos_loss = -torch.log(torch.sigmoid(out) + self.EPS).mean()
 
         # Negative loss.
         start, rest = neg_rw[:, 0], neg_rw[:, 1:].contiguous()
@@ -139,12 +162,21 @@ class Node2Vec(torch.nn.Module):
                                                     self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
-        neg_loss = -torch.log(1 - torch.sigmoid(out) + EPS).mean()
+        neg_loss = -torch.log(1 - torch.sigmoid(out) + self.EPS).mean()
 
         return pos_loss + neg_loss
 
-    def test(self, train_z, train_y, test_z, test_y, solver='lbfgs',
-             multi_class='auto', *args, **kwargs):
+    def test(
+        self,
+        train_z: Tensor,
+        train_y: Tensor,
+        test_z: Tensor,
+        test_y: Tensor,
+        solver: str = 'lbfgs',
+        multi_class: str = 'auto',
+        *args,
+        **kwargs,
+    ) -> float:
         r"""Evaluates latent space quality via a logistic regression downstream
         task."""
         from sklearn.linear_model import LogisticRegression

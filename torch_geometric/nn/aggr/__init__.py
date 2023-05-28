@@ -3,7 +3,6 @@ from .multi import MultiAggregation
 from .basic import (
     MeanAggregation,
     SumAggregation,
-    AddAggregation,
     MaxAggregation,
     MinAggregation,
     MulAggregation,
@@ -12,15 +11,24 @@ from .basic import (
     SoftmaxAggregation,
     PowerMeanAggregation,
 )
+from .quantile import MedianAggregation, QuantileAggregation
 from .lstm import LSTMAggregation
+from .gru import GRUAggregation
 from .set2set import Set2Set
+from .scaler import DegreeScalerAggregation
+from .equilibrium import EquilibriumAggregation
+from .sort import SortAggregation
+from .gmt import GraphMultisetTransformer
+from .attention import AttentionalAggregation
+from .mlp import MLPAggregation
+from .deep_sets import DeepSetsAggregation
+from .set_transformer import SetTransformerAggregation
 
 __all__ = classes = [
     'Aggregation',
     'MultiAggregation',
-    'MeanAggregation',
     'SumAggregation',
-    'AddAggregation',
+    'MeanAggregation',
     'MaxAggregation',
     'MinAggregation',
     'MulAggregation',
@@ -28,6 +36,17 @@ __all__ = classes = [
     'StdAggregation',
     'SoftmaxAggregation',
     'PowerMeanAggregation',
+    'MedianAggregation',
+    'QuantileAggregation',
     'LSTMAggregation',
+    'GRUAggregation',
     'Set2Set',
+    'DegreeScalerAggregation',
+    'SortAggregation',
+    'GraphMultisetTransformer',
+    'AttentionalAggregation',
+    'EquilibriumAggregation',
+    'MLPAggregation',
+    'DeepSetsAggregation',
+    'SetTransformerAggregation',
 ]

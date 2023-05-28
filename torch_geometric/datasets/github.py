@@ -10,12 +10,12 @@ class GitHub(InMemoryDataset):
     r"""The GitHub Web and ML Developers dataset introduced in the
     `"Multi-scale Attributed Node Embedding"
     <https://arxiv.org/abs/1909.13021>`_ paper.
-    Nodes represent developers on GitHub and edges are mutual follower
-    relationships.
+    Nodes represent developers on :obj:`github:`GitHub` and edges are mutual
+    follower relationships.
     It contains 37,300 nodes, 578,006 edges, 128 node features and 2 classes.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -24,8 +24,22 @@ class GitHub(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-    """
 
+    **STATS:**
+
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 37,700
+          - 578,006
+          - 0
+          - 2
+    """
     url = 'https://graphmining.ai/datasets/ptg/github.npz'
 
     def __init__(self, root: str, transform: Optional[Callable] = None,

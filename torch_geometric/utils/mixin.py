@@ -1,3 +1,6 @@
+from typing import Iterator
+
+
 class CastMixin:
     @classmethod
     def cast(cls, *args, **kwargs):  # TODO Can we apply this recursively?
@@ -7,8 +10,11 @@ class CastMixin:
                 return None
             if isinstance(elem, CastMixin):
                 return elem
-            if isinstance(elem, (tuple, list)):
+            if isinstance(elem, tuple):
                 return cls(*elem)
             if isinstance(elem, dict):
                 return cls(**elem)
         return cls(*args, **kwargs)
+
+    def __iter__(self) -> Iterator:
+        return iter(self.__dict__.values())

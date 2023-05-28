@@ -1,27 +1,40 @@
 import copy
-from collections.abc import Mapping
-from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
+import warnings
+from abc import ABC
+from collections.abc import Mapping, Sequence
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 import torch
 from torch import Tensor
 
-from torch_geometric.data import Data
+from torch_geometric.data import Batch, Data
 from torch_geometric.data.collate import collate
+from torch_geometric.data.data import BaseData
 from torch_geometric.data.dataset import Dataset, IndexType
 from torch_geometric.data.separate import separate
 
 
-class InMemoryDataset(Dataset):
+class InMemoryDataset(Dataset, ABC):
     r"""Dataset base class for creating graph datasets which easily fit
     into CPU memory.
     Inherits from :class:`torch_geometric.data.Dataset`.
-    See `here <https://pytorch-geometric.readthedocs.io/en/latest/notes/
+    See `here <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/
     create_dataset.html#creating-in-memory-datasets>`__ for the accompanying
     tutorial.
 
     Args:
-        root (string, optional): Root directory where the dataset should be
-            saved. (default: :obj:`None`)
+        root (str, optional): Root directory where the dataset should be saved.
+            (optional: :obj:`None`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -34,6 +47,8 @@ class InMemoryDataset(Dataset):
             :obj:`torch_geometric.data.Data` object and returns a boolean
             value, indicating whether the data object should be included in the
             final dataset. (default: :obj:`None`)
+        log (bool, optional): Whether to print any console output while
+            downloading and processing the dataset. (default: :obj:`True`)
     """
     @property
     def raw_file_names(self) -> Union[str, List[str], Tuple]:
@@ -43,27 +58,24 @@ class InMemoryDataset(Dataset):
     def processed_file_names(self) -> Union[str, List[str], Tuple]:
         raise NotImplementedError
 
-    def __init__(self, root: Optional[str] = None,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 pre_filter: Optional[Callable] = None):
-        super().__init__(root, transform, pre_transform, pre_filter)
-        self.data = None
+    def __init__(
+        self,
+        root: Optional[str] = None,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        pre_filter: Optional[Callable] = None,
+        log: bool = True,
+    ):
+        super().__init__(root, transform, pre_transform, pre_filter, log)
+        self._data = None
         self.slices = None
         self._data_list: Optional[List[Data]] = None
 
     @property
     def num_classes(self) -> int:
-        r"""Returns the number of classes in the dataset."""
-        y = self.data.y
-        if y is None:
-            return 0
-        elif y.numel() == y.size(0) and not torch.is_floating_point(y):
-            return int(self.data.y.max()) + 1
-        elif y.numel() == y.size(0) and torch.is_floating_point(y):
-            return torch.unique(y).numel()
-        else:
-            return self.data.y.size(-1)
+        if self.transform is None:
+            return self._infer_num_classes(self._data.y)
+        return super().num_classes
 
     def len(self) -> int:
         if self.slices is None:
@@ -73,8 +85,9 @@ class InMemoryDataset(Dataset):
         return 0
 
     def get(self, idx: int) -> Data:
+        # TODO (matthias) Avoid unnecessary copy here.
         if self.len() == 1:
-            return copy.copy(self.data)
+            return copy.copy(self._data)
 
         if not hasattr(self, '_data_list') or self._data_list is None:
             self._data_list = self.len() * [None]
@@ -82,8 +95,8 @@ class InMemoryDataset(Dataset):
             return copy.copy(self._data_list[idx])
 
         data = separate(
-            cls=self.data.__class__,
-            batch=self.data,
+            cls=self._data.__class__,
+            batch=self._data,
             idx=idx,
             slice_dict=self.slices,
             decrement=False,
@@ -92,6 +105,19 @@ class InMemoryDataset(Dataset):
         self._data_list[idx] = copy.copy(data)
 
         return data
+
+    @classmethod
+    def save(cls, data_list: List[BaseData], path: str):
+        r"""Saves a list of data objects to the file path :obj:`path`."""
+        data, slices = cls.collate(data_list)
+        torch.save((data.to_dict(), slices), path)
+
+    def load(self, path: str, data_cls: Type[BaseData] = Data):
+        r"""Loads the dataset from the file path :obj:`path`."""
+        data, self.slices = torch.load(path)
+        if isinstance(data, dict):  # Backward compatibility.
+            data = data_cls.from_dict(data)
+        self.data = data
 
     @staticmethod
     def collate(
@@ -129,11 +155,60 @@ class InMemoryDataset(Dataset):
         dataset.data, dataset.slices = self.collate(data_list)
         return dataset
 
+    @property
+    def data(self) -> Any:
+        msg1 = ("It is not recommended to directly access the internal "
+                "storage format `data` of an 'InMemoryDataset'.")
+        msg2 = ("The given 'InMemoryDataset' only references a subset of "
+                "examples of the full dataset, but 'data' will contain "
+                "information of the full dataset.")
+        msg3 = ("The data of the dataset is already cached, so any "
+                "modifications to `data` will not be reflected when accessing "
+                "its elements. Clearing the cache now by removing all "
+                "elements in `dataset._data_list`.")
+        msg4 = ("If you are absolutely certain what you are doing, access the "
+                "internal storage via `InMemoryDataset._data` instead to "
+                "suppress this warning. Alternatively, you can access stacked "
+                "individual attributes of every graph via "
+                "`dataset.{attr_name}`.")
 
-def nested_iter(mapping: Mapping) -> Iterable:
-    for key, value in mapping.items():
-        if isinstance(value, Mapping):
+        msg = msg1
+        if self._indices is not None:
+            msg += f' {msg2}'
+        if self._data_list is not None:
+            msg += f' {msg3}'
+            self._data_list = None
+        msg += f' {msg4}'
+
+        warnings.warn(msg)
+
+        return self._data
+
+    @data.setter
+    def data(self, value: Any):
+        self._data = value
+        self._data_list = None
+
+    def __getattr__(self, key: str) -> Any:
+        data = self.__dict__.get('_data')
+        if isinstance(data, Data) and key in data:
+            if self._indices is None and data.__inc__(key, data[key]) == 0:
+                return data[key]
+            else:
+                data_list = [self.get(i) for i in self.indices()]
+                return Batch.from_data_list(data_list)[key]
+
+        raise AttributeError(f"'{self.__class__.__name__}' object has no "
+                             f"attribute '{key}'")
+
+
+def nested_iter(node: Union[Mapping, Sequence]) -> Iterable:
+    if isinstance(node, Mapping):
+        for key, value in node.items():
             for inner_key, inner_value in nested_iter(value):
                 yield inner_key, inner_value
-        else:
-            yield key, value
+    elif isinstance(node, Sequence):
+        for i, inner_value in enumerate(node):
+            yield i, inner_value
+    else:
+        yield None, node

@@ -3,13 +3,17 @@ import os.path as osp
 import torch
 import torch.nn.functional as F
 from pointnet2_classification import GlobalSAModule, SAModule
-from torch_scatter import scatter
 from torchmetrics.functional import jaccard_index
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, knn_interpolate
+from torch_geometric.typing import WITH_TORCH_CLUSTER
+from torch_geometric.utils import scatter
+
+if not WITH_TORCH_CLUSTER:
+    quit("This example requires 'torch-cluster'")
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
@@ -57,8 +61,7 @@ class Net(torch.nn.Module):
         self.fp2_module = FPModule(3, MLP([256 + 128, 256, 128]))
         self.fp1_module = FPModule(3, MLP([128 + 3, 128, 128, 128]))
 
-        self.mlp = MLP([128, 128, 128, num_classes], dropout=0.5,
-                       batch_norm=False)
+        self.mlp = MLP([128, 128, 128, num_classes], dropout=0.5, norm=None)
 
         self.lin1 = torch.nn.Linear(128, 128)
         self.lin2 = torch.nn.Linear(128, 128)

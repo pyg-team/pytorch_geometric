@@ -5,7 +5,7 @@ from torch_geometric.transforms import RandomShear
 
 
 def test_random_shear():
-    assert RandomShear(0.1).__repr__() == 'RandomShear(0.1)'
+    assert str(RandomShear(0.1)) == 'RandomShear(0.1)'
 
     pos = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
 

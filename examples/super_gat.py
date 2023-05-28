@@ -50,11 +50,12 @@ def train(data):
     optimizer.step()
 
 
+@torch.no_grad()
 def test(data):
     model.eval()
-    logits, accs = model(data.x, data.edge_index)[0], []
+    out, accs = model(data.x, data.edge_index)[0], []
     for _, mask in data('train_mask', 'val_mask', 'test_mask'):
-        pred = logits[mask].max(1)[1]
+        pred = out[mask].argmax(1)
         acc = pred.eq(data.y[mask]).sum().item() / mask.sum().item()
         accs.append(acc)
     return accs

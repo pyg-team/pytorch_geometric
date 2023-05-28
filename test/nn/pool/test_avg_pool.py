@@ -2,6 +2,7 @@ import torch
 
 from torch_geometric.data import Batch
 from torch_geometric.nn import avg_pool, avg_pool_neighbor_x, avg_pool_x
+from torch_geometric.testing import is_full_test
 
 
 def test_avg_pool_x():
@@ -13,8 +14,26 @@ def test_avg_pool_x():
     assert out[0].tolist() == [[3, 4], [5, 6], [10, 11]]
     assert out[1].tolist() == [0, 0, 1]
 
+    if is_full_test():
+        jit = torch.jit.script(avg_pool_x)
+        out = jit(cluster, x, batch)
+        assert out[0].tolist() == [[3, 4], [5, 6], [10, 11]]
+        assert out[1].tolist() == [0, 0, 1]
+
     out, _ = avg_pool_x(cluster, x, batch, size=2)
     assert out.tolist() == [[3, 4], [5, 6], [10, 11], [0, 0]]
+
+    batch_size = int(batch.max().item()) + 1
+    out2, _ = avg_pool_x(cluster, x, batch, batch_size=batch_size, size=2)
+    assert torch.equal(out, out2)
+
+    if is_full_test():
+        jit = torch.jit.script(avg_pool_x)
+        out, _ = jit(cluster, x, batch, size=2)
+        assert out.tolist() == [[3, 4], [5, 6], [10, 11], [0, 0]]
+
+        out2, _ = jit(cluster, x, batch, batch_size=batch_size, size=2)
+        assert torch.equal(out, out2)
 
 
 def test_avg_pool():
@@ -55,4 +74,4 @@ def test_avg_pool_neighbor_x():
         [10, 11],
         [10, 11],
     ]
-    assert data.edge_index.tolist() == edge_index.tolist()
+    assert torch.equal(data.edge_index, edge_index)

@@ -2,22 +2,18 @@ import os.path as osp
 
 import torch
 import torch.nn.functional as F
-from point_transformer_classification import (
-    MLP,
-    TransformerBlock,
-    TransitionDown,
-)
-from torch.nn import Linear as Lin
-from torch.nn import ReLU
-from torch.nn import Sequential as Seq
-from torch_cluster import knn_graph
-from torch_scatter import scatter
+from point_transformer_classification import TransformerBlock, TransitionDown
 from torchmetrics.functional import jaccard_index
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.unpool import knn_interpolate
+from torch_geometric.nn import MLP, knn_graph, knn_interpolate
+from torch_geometric.typing import WITH_TORCH_CLUSTER
+from torch_geometric.utils import scatter
+
+if not WITH_TORCH_CLUSTER:
+    quit("This example requires 'torch-cluster'")
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
@@ -43,8 +39,8 @@ class TransitionUp(torch.nn.Module):
     '''
     def __init__(self, in_channels, out_channels):
         super().__init__()
-        self.mlp_sub = MLP([in_channels, out_channels])
-        self.mlp = MLP([out_channels, out_channels])
+        self.mlp_sub = MLP([in_channels, out_channels], plain_last=False)
+        self.mlp = MLP([out_channels, out_channels], plain_last=False)
 
     def forward(self, x, x_sub, pos, pos_sub, batch=None, batch_sub=None):
         # transform low-res features and reduce the number of features
@@ -68,7 +64,7 @@ class Net(torch.nn.Module):
         in_channels = max(in_channels, 1)
 
         # first block
-        self.mlp_input = MLP([in_channels, dim_model[0]])
+        self.mlp_input = MLP([in_channels, dim_model[0]], plain_last=False)
 
         self.transformer_input = TransformerBlock(
             in_channels=dim_model[0],
@@ -102,7 +98,8 @@ class Net(torch.nn.Module):
                                  out_channels=dim_model[i]))
 
         # summit layers
-        self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], batch_norm=False)
+        self.mlp_summit = MLP([dim_model[-1], dim_model[-1]], norm=None,
+                              plain_last=False)
 
         self.transformer_summit = TransformerBlock(
             in_channels=dim_model[-1],
@@ -110,8 +107,7 @@ class Net(torch.nn.Module):
         )
 
         # class score computation
-        self.mlp_output = Seq(Lin(dim_model[0], 64), ReLU(), Lin(64, 64),
-                              ReLU(), Lin(64, out_channels))
+        self.mlp_output = MLP([dim_model[0], 64, out_channels], norm=None)
 
     def forward(self, x, pos, batch=None):
 

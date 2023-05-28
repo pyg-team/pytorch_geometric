@@ -1,8 +1,10 @@
+import warnings
 from typing import Optional
 
+import torch
 from torch.utils.data import DataLoader
 
-from torch_geometric.data.lightning_datamodule import LightningDataModule
+from torch_geometric.data.lightning.datamodule import LightningDataModule
 from torch_geometric.graphgym import create_loader
 from torch_geometric.graphgym.checkpoint import get_ckpt_dir
 from torch_geometric.graphgym.config import cfg
@@ -30,6 +32,8 @@ class GraphGymDataModule(LightningDataModule):
 
 def train(model: GraphGymModule, datamodule, logger: bool = True,
           trainer_config: Optional[dict] = None):
+    warnings.filterwarnings('ignore', '.*use `CSVLogger` as the default.*')
+
     callbacks = []
     if logger:
         callbacks.append(LoggerCallback())
@@ -44,6 +48,8 @@ def train(model: GraphGymModule, datamodule, logger: bool = True,
         callbacks=callbacks,
         default_root_dir=cfg.out_dir,
         max_epochs=cfg.optim.max_epoch,
+        accelerator=cfg.accelerator,
+        devices='auto' if not torch.cuda.is_available() else cfg.devices,
     )
 
     trainer.fit(model, datamodule=datamodule)

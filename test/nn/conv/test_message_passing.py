@@ -5,12 +5,22 @@ import pytest
 import torch
 from torch import Tensor
 from torch.nn import Linear
-from torch_scatter import scatter
-from torch_sparse import SparseTensor
-from torch_sparse.matmul import spmm
 
-from torch_geometric.nn import MessagePassing
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
+import torch_geometric.typing
+from torch_geometric.nn import MessagePassing, aggr
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    Size,
+    SparseTensor,
+)
+from torch_geometric.utils import (
+    add_self_loops,
+    scatter,
+    spmm,
+    to_torch_csc_tensor,
+)
 
 
 class MyConv(MessagePassing):
@@ -48,80 +58,133 @@ class MyConv(MessagePassing):
         return spmm(adj_t, x[0], reduce=self.aggr)
 
 
-def test_my_conv():
+class MyConvWithSelfLoops(MessagePassing):
+    def __init__(self, aggr: str = 'add'):
+        super().__init__(aggr=aggr)
+
+    def forward(self, x: Tensor, edge_index: torch.Tensor) -> Tensor:
+        edge_index, _ = add_self_loops(edge_index)
+
+        # propagate_type: (x: Tensor)
+        return self.propagate(edge_index, x=x, size=None)
+
+
+def test_my_conv_basic():
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    row, col = edge_index
-    value = torch.randn(row.size(0))
-    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+    value = torch.randn(edge_index.size(1))
+    adj1 = to_torch_csc_tensor(edge_index, value, size=(4, 4))
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
 
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
     assert out.size() == (4, 32)
-    assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
-    assert conv(x1, adj.t()).tolist() == out.tolist()
+    assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out, atol=1e-6)
+    assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
     conv.fuse = False
-    assert conv(x1, adj.t()).tolist() == out.tolist()
+    assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
     conv.fuse = True
 
-    adj = adj.sparse_resize((4, 2))
+    # Bipartite message passing:
+    adj1 = to_torch_csc_tensor(edge_index, value, size=(4, 2))
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, value, (4, 2))
+
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
     out2 = conv((x1, None), edge_index, value, (4, 2))
     assert out1.size() == (2, 32)
     assert out2.size() == (2, 32)
-    assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
-    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv((x1, x2), edge_index, value, (4, 2)), out1)
+    assert torch.allclose(conv((x1, x2), adj1.t()), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, None), adj1.t()), out2, atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert torch.allclose(conv((x1, x2), adj2.t()), out1, atol=1e-6)
+        assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
     conv.fuse = False
-    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv((x1, x2), adj1.t()), out1, atol=1e-6)
+    assert torch.allclose(conv((x1, None), adj1.t()), out2, atol=1e-6)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert torch.allclose(conv((x1, x2), adj2.t()), out1, atol=1e-6)
+        assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
+
+    # Test gradient computation for `torch.sparse` tensors:
     conv.fuse = True
+    torch_adj_t = adj1.t().requires_grad_()
+    out = conv((x1, x2), torch_adj_t)
+    out.sum().backward()
+    assert torch_adj_t.grad is not None
+
+
+def test_my_conv_out_of_bounds():
+    x = torch.randn(3, 8)
+    value = torch.randn(4)
+
+    conv = MyConv(8, 32)
+
+    with pytest.raises(IndexError, match="valid indices"):
+        edge_index = torch.tensor([[-1, 1, 2, 2], [0, 0, 1, 1]])
+        conv(x, edge_index, value)
+
+    with pytest.raises(IndexError, match="valid indices"):
+        edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+        conv(x, edge_index, value)
 
 
 def test_my_conv_jittable():
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    row, col = edge_index
-    value = torch.randn(row.size(0))
-    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+    value = torch.randn(edge_index.size(1))
 
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
 
+    conv.jittable()  # Should succeed.
+    torch.jit.script(conv.jittable())  # Should succeed.
+
     t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, edge_index, value).tolist() == out.tolist()
-    assert jit(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
+    assert torch.allclose(jit(x1, edge_index, value), out, atol=1e-6)
+    assert torch.allclose(jit(x1, edge_index, value, (4, 4)), out, atol=1e-6)
 
-    t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit(x1, adj.t()).tolist() == out.tolist()
-    jit.fuse = False
-    assert jit(x1, adj.t()).tolist() == out.tolist()
-    jit.fuse = True
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, value, (4, 4))
 
-    adj = adj.sparse_resize((4, 2))
+        t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
+        jit.fuse = False
+        assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
+        jit.fuse = True
+
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
     out2 = conv((x1, None), edge_index, value, (4, 2))
 
     t = '(OptPairTensor, Tensor, OptTensor, Size) -> Tensor'
     jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), edge_index, value).tolist() == out1.tolist()
-    assert jit((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
-    assert jit((x1, None), edge_index, value, (4, 2)).tolist() == out2.tolist()
+    assert torch.allclose(jit((x1, x2), edge_index, value), out1)
+    assert torch.allclose(jit((x1, x2), edge_index, value, (4, 2)), out1)
+    assert torch.allclose(jit((x1, None), edge_index, value, (4, 2)), out2)
 
-    t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
-    jit.fuse = False
-    assert jit((x1, x2), adj.t()).tolist() == out1.tolist()
-    assert jit((x1, None), adj.t()).tolist() == out2.tolist()
-    jit.fuse = True
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, value, (4, 2))
+
+        t = '(OptPairTensor, SparseTensor, OptTensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
+        assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
+        jit.fuse = False
+        assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
+        assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
+        jit.fuse = True
 
 
 @pytest.mark.parametrize('aggr', ['add', 'sum', 'mean', 'min', 'max', 'mul'])
@@ -139,56 +202,66 @@ def test_my_static_graph_conv():
     x1 = torch.randn(3, 4, 8)
     x2 = torch.randn(3, 2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    row, col = edge_index
-    value = torch.randn(row.size(0))
-    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+    value = torch.randn(edge_index.size(1))
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, value, (4, 4))
 
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
     assert out.size() == (3, 4, 32)
-    assert conv(x1, edge_index, value, (4, 4)).tolist() == out.tolist()
-    assert conv(x1, adj.t()).tolist() == out.tolist()
+    assert torch.allclose(conv(x1, edge_index, value, (4, 4)), out)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert torch.allclose(conv(x1, adj.t()), out)
 
-    adj = adj.sparse_resize((4, 2))
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, value, (4, 2))
+
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
-    assert out1.size() == (3, 2, 32)
-    assert conv((x1, x2), edge_index, value, (4, 2)).tolist() == out1.tolist()
-    assert conv((x1, x2), adj.t()).tolist() == out1.tolist()
     out2 = conv((x1, None), edge_index, value, (4, 2))
+    assert out1.size() == (3, 2, 32)
     assert out2.size() == (3, 2, 32)
-    assert conv((x1, None), adj.t()).tolist() == out2.tolist()
+    assert torch.allclose(conv((x1, x2), edge_index, value, (4, 2)), out1)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert torch.allclose(conv((x1, x2), adj.t()), out1)
+        assert torch.allclose(conv((x1, None), adj.t()), out2)
 
 
 class MyMultipleAggrConv(MessagePassing):
-    def __init__(self):
-        super().__init__(aggr=['add', 'mean', 'max'])
+    def __init__(self, **kwargs):
+        super().__init__(aggr=['add', 'mean', 'max'], **kwargs)
 
     def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
         # propagate_type: (x: Tensor)
         return self.propagate(edge_index, x=x, size=None)
 
 
-def test_my_multiple_aggr_conv():
+@pytest.mark.parametrize('multi_aggr_tuple', [
+    (dict(mode='cat'), 3),
+    (dict(mode='proj', mode_kwargs=dict(in_channels=16, out_channels=16)), 1)
+])
+def test_my_multiple_aggr_conv(multi_aggr_tuple):
+    # The 'cat' combine mode will expand the output dimensions by
+    # the number of aggregators which is 3 here, while the 'proj'
+    # mode keeps output dimensions unchanged.
+    aggr_kwargs, expand = multi_aggr_tuple
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    row, col = edge_index
-    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
 
-    conv = MyMultipleAggrConv()
+    conv = MyMultipleAggrConv(aggr_kwargs=aggr_kwargs)
     out = conv(x, edge_index)
-    assert out.size() == (4, 48)
-    assert not torch.allclose(out[:, 0:16], out[:, 16:32])
-    assert not torch.allclose(out[:, 0:16], out[:, 32:48])
-    assert not torch.allclose(out[:, 16:32], out[:, 32:48])
-    assert torch.allclose(conv(x, adj.t()), out)
+    assert out.size() == (4, 16 * expand)
+    assert torch.allclose(conv(x, adj1.t()), out)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert torch.allclose(conv(x, adj2.t()), out)
 
 
 def test_my_multiple_aggr_conv_jittable():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    row, col = edge_index
-    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = MyMultipleAggrConv()
     out = conv(x, edge_index)
@@ -197,9 +270,11 @@ def test_my_multiple_aggr_conv_jittable():
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit(x, edge_index), out)
 
-    t = '(Tensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        t = '(Tensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t()), out)
 
 
 def test_copy():
@@ -207,15 +282,15 @@ def test_copy():
     conv2 = copy.copy(conv)
 
     assert conv != conv2
-    assert conv.lin_l.weight.tolist() == conv2.lin_l.weight.tolist()
-    assert conv.lin_r.weight.tolist() == conv2.lin_r.weight.tolist()
+    assert torch.equal(conv.lin_l.weight, conv2.lin_l.weight)
+    assert torch.equal(conv.lin_r.weight, conv2.lin_r.weight)
     assert conv.lin_l.weight.data_ptr == conv2.lin_l.weight.data_ptr
     assert conv.lin_r.weight.data_ptr == conv2.lin_r.weight.data_ptr
 
     conv = copy.deepcopy(conv)
     assert conv != conv2
-    assert conv.lin_l.weight.tolist() == conv2.lin_l.weight.tolist()
-    assert conv.lin_r.weight.tolist() == conv2.lin_r.weight.tolist()
+    assert torch.equal(conv.lin_l.weight, conv2.lin_l.weight)
+    assert torch.equal(conv.lin_r.weight, conv2.lin_r.weight)
     assert conv.lin_l.weight.data_ptr != conv2.lin_l.weight.data_ptr
     assert conv.lin_r.weight.data_ptr != conv2.lin_r.weight.data_ptr
 
@@ -242,23 +317,25 @@ class MyEdgeConv(MessagePassing):
 def test_my_edge_conv():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    row, col = edge_index
-    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
-    expected = scatter(x[row] - x[col], col, dim=0, dim_size=4, reduce='add')
+    row, col = edge_index
+    expected = scatter(x[row] - x[col], col, dim=0, dim_size=4, reduce='sum')
 
     conv = MyEdgeConv()
     out = conv(x, edge_index)
     assert out.size() == (4, 16)
     assert torch.allclose(out, expected)
-    assert torch.allclose(conv(x, adj.t()), out)
+    assert torch.allclose(conv(x, adj1.t()), out)
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert torch.allclose(conv(x, adj2.t()), out)
 
 
 def test_my_edge_conv_jittable():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    row, col = edge_index
-    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
 
     conv = MyEdgeConv()
     out = conv(x, edge_index)
@@ -267,9 +344,11 @@ def test_my_edge_conv_jittable():
     jit = torch.jit.script(conv.jittable(t))
     assert torch.allclose(jit(x, edge_index), out)
 
-    t = '(Tensor, SparseTensor) -> Tensor'
-    jit = torch.jit.script(conv.jittable(t))
-    assert torch.allclose(jit(x, adj.t()), out)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        t = '(Tensor, SparseTensor) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj.t()), out)
 
 
 num_pre_hook_calls = 0
@@ -281,9 +360,8 @@ def test_message_passing_hooks():
 
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    row, col = edge_index
-    value = torch.randn(row.size(0))
-    adj = SparseTensor(row=row, col=col, value=value, sparse_sizes=(4, 4))
+    value = torch.randn(edge_index.size(1))
+    adj = to_torch_csc_tensor(edge_index, value, size=(4, 4))
 
     def pre_hook(module, inputs):
         assert module == conv
@@ -403,18 +481,22 @@ class MyDefaultArgConv(MessagePassing):
 def test_my_default_arg_conv():
     x = torch.randn(4, 1)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
-    row, col = edge_index
-    adj = SparseTensor(row=row, col=col, sparse_sizes=(4, 4))
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
     conv = MyDefaultArgConv()
     assert conv(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
-    assert conv(x, adj.t()).view(-1).tolist() == [0, 0, 0, 0]
+    assert conv(x, adj1.t()).view(-1).tolist() == [0, 0, 0, 0]
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert conv(x, adj2.t()).view(-1).tolist() == [0, 0, 0, 0]
 
 
 def test_my_default_arg_conv_jittable():
     conv = MyDefaultArgConv()
 
-    with pytest.raises(RuntimeError):  # This should not succeed in JIT mode.
+    # This should not succeed in JIT mode.
+    with pytest.raises((RuntimeError, AttributeError)):
         torch.jit.script(conv.jittable())
 
 
@@ -431,7 +513,7 @@ class MyMultipleOutputConv(MessagePassing):
 
     def aggregate(self, inputs: Tuple[Tensor, Tensor],
                   index: Tensor) -> Tuple[Tensor, Tensor]:
-        return (scatter(inputs[0], index, dim=0, reduce='add'),
+        return (scatter(inputs[0], index, dim=0, reduce='sum'),
                 scatter(inputs[0], index, dim=0, reduce='mean'))
 
     def update(self, inputs: Tuple[Tensor, Tensor]) -> Tuple[Tensor, Tensor]:
@@ -487,3 +569,84 @@ def test_explain_message():
     conv._edge_mask = torch.tensor([0, 0, 0, 0], dtype=torch.float)
     conv._apply_sigmoid = False
     assert conv(x, edge_index).abs().sum() == 0.
+
+
+class MyAggregatorConv(MessagePassing):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def forward(self, x: Tensor, edge_index: Adj) -> Tensor:
+        # propagate_type: (x: TEnsor)
+        return self.propagate(edge_index, x=x, size=None)
+
+
+@pytest.mark.parametrize('aggr_module', [
+    aggr.MeanAggregation(),
+    aggr.SumAggregation(),
+    aggr.MaxAggregation(),
+    aggr.SoftmaxAggregation(),
+    aggr.PowerMeanAggregation(),
+    aggr.MultiAggregation(['mean', 'max'])
+])
+def test_message_passing_with_aggr_module(aggr_module):
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    row, col = edge_index
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
+
+    conv = MyAggregatorConv(aggr=aggr_module)
+    assert isinstance(conv.aggr_module, aggr.Aggregation)
+    out = conv(x, edge_index)
+    assert out.size(0) == 4 and out.size(1) in {8, 16}
+    assert torch.allclose(conv(x, adj1.t()), out)
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
+        assert torch.allclose(conv(x, adj2.t()), out)
+
+
+def test_message_passing_int32_edge_index():
+    # Check that we can dispatch an int32 edge_index up to aggregation
+    x = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]], dtype=torch.int32)
+    edge_weight = torch.randn(edge_index.shape[1])
+
+    # Use a hook to promote the edge_index to long to workaround PyTorch CPU
+    # backend restriction to int64 for the index.
+    def cast_index_hook(module, inputs):
+        input_dict = inputs[-1]
+        input_dict['index'] = input_dict['index'].long()
+        return (input_dict, )
+
+    conv = MyConv(8, 32)
+    conv.register_aggregate_forward_pre_hook(cast_index_hook)
+
+    assert conv(x, edge_index, edge_weight).size() == (4, 32)
+
+
+@pytest.mark.parametrize('num_nodes', [4, 8, 2, 0])
+def test_traceable_my_conv_with_self_loops(num_nodes):
+    # `torch.jit.trace` a `MessagePassing` layer that adds self loops and test
+    # it across different input sizes.
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
+
+    conv = MyConvWithSelfLoops()
+    traced_conv = torch.jit.trace(conv, ((x, edge_index)))
+    scripted_conv = torch.jit.script(conv.jittable())
+
+    x = torch.randn(num_nodes, 16)
+    if num_nodes > 0:
+        edge_index = torch.stack([
+            torch.arange(0, num_nodes - 1),
+            torch.arange(1, num_nodes),
+        ], dim=0)
+    else:
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+
+    out = conv(x, edge_index)
+    traced_out = traced_conv(x, edge_index)
+    scripted_out = scripted_conv(x, edge_index)
+
+    assert torch.allclose(out, traced_out)
+    assert torch.allclose(out, scripted_out)

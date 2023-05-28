@@ -3,11 +3,11 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 from torch.nn import Parameter
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj
+from torch_geometric.typing import Adj, SparseTensor
+from torch_geometric.utils import is_torch_sparse_tensor, spmm
 
 
 class PANConv(MessagePassing):
@@ -57,20 +57,35 @@ class PANConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         self.weight.data.fill_(0.5)
 
-    def forward(self, x: Tensor,
-                edge_index: Adj) -> Tuple[Tensor, SparseTensor]:
-        """"""
+    def forward(
+        self,
+        x: Tensor,
+        edge_index: Adj,
+    ) -> Tuple[Tensor, SparseTensor]:
 
         adj_t: Optional[SparseTensor] = None
         if isinstance(edge_index, Tensor):
-            adj_t = SparseTensor(row=edge_index[1], col=edge_index[0],
-                                 sparse_sizes=(x.size(0), x.size(0)))
+            if is_torch_sparse_tensor(edge_index):
+                # TODO Handle PyTorch sparse tensor directly.
+                if edge_index.layout == torch.sparse_coo:
+                    adj_t = SparseTensor.from_torch_sparse_coo_tensor(
+                        edge_index)
+                elif edge_index.layout == torch.sparse_csr:
+                    adj_t = SparseTensor.from_torch_sparse_csr_tensor(
+                        edge_index)
+                else:
+                    raise ValueError(f"Unexpected sparse tensor layout "
+                                     f"(got '{edge_index.layout}')")
+            else:
+                adj_t = SparseTensor(row=edge_index[1], col=edge_index[0],
+                                     sparse_sizes=(x.size(0), x.size(0)))
+
         elif isinstance(edge_index, SparseTensor):
             adj_t = edge_index.set_value(None)
-        assert adj_t is not None
 
         adj_t = self.panentropy(adj_t, dtype=x.dtype)
 
@@ -87,10 +102,13 @@ class PANConv(MessagePassing):
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     def panentropy(self, adj_t: SparseTensor,
                    dtype: Optional[int] = None) -> SparseTensor:
+
+        if not adj_t.has_value():
+            adj_t = adj_t.fill_value(1.0)
 
         tmp = SparseTensor.eye(adj_t.size(0), adj_t.size(1), has_value=True,
                                dtype=dtype, device=adj_t.device())

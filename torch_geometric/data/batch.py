@@ -49,7 +49,7 @@ class DynamicInheritance(type):
         return super(DynamicInheritance, new_cls).__call__(*args, **kwargs)
 
 
-class DynamicInheritanceGetter(object):
+class DynamicInheritanceGetter:
     def __call__(self, cls, base_cls):
         return cls(_base_cls=base_cls)
 
@@ -180,6 +180,9 @@ class Batch(metaclass=DynamicInheritance):
             return int(self.batch.max()) + 1
         else:
             raise ValueError("Can not infer the number of graphs")
+
+    def __len__(self) -> int:
+        return self.num_graphs
 
     def __reduce__(self):
         state = self.__dict__.copy()

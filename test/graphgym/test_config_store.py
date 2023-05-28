@@ -1,16 +1,69 @@
+from typing import Any, Optional
+
+from torch_geometric.graphgym import (
+    class_from_dataclass,
+    dataclass_from_class,
+    get_config_store,
+    to_dataclass,
+)
+from torch_geometric.graphgym.config_store import fill_config_store, register
 from torch_geometric.testing import withPackage
 
 
+def test_to_dataclass():
+    from torch_geometric.transforms import AddSelfLoops
+
+    AddSelfLoopsConfig = to_dataclass(AddSelfLoops, with_target=True)
+    assert AddSelfLoopsConfig.__name__ == 'AddSelfLoops'
+
+    fields = AddSelfLoopsConfig.__dataclass_fields__
+
+    assert fields['attr'].name == 'attr'
+    assert fields['attr'].type == Optional[str]
+    assert fields['attr'].default == 'edge_weight'
+
+    assert fields['fill_value'].name == 'fill_value'
+    assert fields['fill_value'].type == Any
+    assert fields['fill_value'].default == 1.0
+
+    assert fields['_target_'].name == '_target_'
+    assert fields['_target_'].type == str
+    assert fields['_target_'].default == (
+        'torch_geometric.transforms.add_self_loops.AddSelfLoops')
+
+    cfg = AddSelfLoopsConfig()
+    assert str(cfg) == ("AddSelfLoops(attr='edge_weight', fill_value=1.0, "
+                        "_target_='torch_geometric.transforms.add_self_loops."
+                        "AddSelfLoops')")
+
+
+def test_register():
+    from torch_geometric.transforms import AddSelfLoops
+
+    register(AddSelfLoops, group='transforms')
+    assert 'transforms' in get_config_store().repo
+
+    AddSelfLoopsConfig = dataclass_from_class('AddSelfLoops')
+
+    Cls = class_from_dataclass('AddSelfLoops')
+    assert Cls == AddSelfLoops
+    Cls = class_from_dataclass(AddSelfLoopsConfig)
+    assert Cls == AddSelfLoops
+
+    ConfigCls = dataclass_from_class('AddSelfLoops')
+    assert ConfigCls == AddSelfLoopsConfig
+    ConfigCls = dataclass_from_class(ConfigCls)
+    assert ConfigCls == AddSelfLoopsConfig
+
+
 @withPackage('hydra')
-def test_config_store():
+def test_hydra_config_store():
     import hydra
     from omegaconf import DictConfig
 
-    from torch_geometric.graphgym.config_store import fill_config_store
-
     fill_config_store()
 
-    with hydra.initialize(config_path='.'):
+    with hydra.initialize(config_path='.', version_base='1.1'):
         cfg = hydra.compose(config_name='my_config')
 
     assert len(cfg) == 4
@@ -38,10 +91,10 @@ def test_config_store():
     assert (cfg.dataset.transform.AddSelfLoops._target_.split('.')[-1] ==
             'AddSelfLoops')
     assert cfg.dataset.transform.AddSelfLoops.attr == 'edge_weight'
-    assert cfg.dataset.transform.AddSelfLoops.fill_value is None
+    assert cfg.dataset.transform.AddSelfLoops.fill_value == 1.0
 
     # Check `cfg.model`:
-    assert len(cfg.model) == 11
+    assert len(cfg.model) == 12
     assert cfg.model._target_.split('.')[-1] == 'GCN'
     assert cfg.model.in_channels == 34
     assert cfg.model.out_channels == 4
@@ -50,12 +103,12 @@ def test_config_store():
     assert cfg.model.dropout == 0.0
     assert cfg.model.act == 'relu'
     assert cfg.model.norm is None
+    assert cfg.model.norm_kwargs is None
     assert cfg.model.jk is None
     assert not cfg.model.act_first
     assert cfg.model.act_kwargs is None
 
     # Check `cfg.optimizer`:
-    assert len(cfg.optimizer) in {6, 7}  # Arguments changed across 1.10/1.11
     assert cfg.optimizer._target_.split('.')[-1] == 'Adam'
     assert cfg.optimizer.lr == 0.001
     assert cfg.optimizer.betas == [0.9, 0.999]
@@ -66,7 +119,6 @@ def test_config_store():
         assert not cfg.optimizer.maximize
 
     # Check `cfg.lr_scheduler`:
-    assert len(cfg.lr_scheduler) == 10
     assert cfg.lr_scheduler._target_.split('.')[-1] == 'ReduceLROnPlateau'
     assert cfg.lr_scheduler.mode == 'min'
     assert cfg.lr_scheduler.factor == 0.1

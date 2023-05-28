@@ -1,5 +1,10 @@
+import pytest
+
+
 def test_ba_shapes(get_dataset):
-    dataset = get_dataset(name='BAShapes')
+    with pytest.warns(UserWarning, match="is deprecated"):
+        dataset = get_dataset(name='BAShapes')
+
     assert str(dataset) == 'BAShapes()'
     assert len(dataset) == 1
     assert dataset.num_features == 10

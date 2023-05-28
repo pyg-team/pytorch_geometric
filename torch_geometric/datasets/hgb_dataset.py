@@ -28,8 +28,8 @@ class HGBDataset(InMemoryDataset):
         `HGB leaderboard <https://www.biendata.xyz/hgb/>`_.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (one of :obj:`"ACM"`,
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (one of :obj:`"ACM"`,
             :obj:`"DBLP"`, :obj:`"Freebase"`, :obj:`"IMDB"`)
         transform (callable, optional): A function/transform that takes in an
             :class:`torch_geometric.data.HeteroData` object and returns a
@@ -181,6 +181,11 @@ class HGBDataset(InMemoryDataset):
                 data[n_type].train_mask[n_id] = True
             for y in test_ys:
                 n_id, n_type = mapping_dict[int(y[0])], n_types[int(y[2])]
+                if data[n_type].y.dim() > 1:  # multi-label
+                    for v in y[3].split(','):
+                        data[n_type].y[n_id, int(v)] = 1
+                else:
+                    data[n_type].y[n_id] = int(y[3])
                 data[n_type].test_mask[n_id] = True
 
         else:  # Link prediction:

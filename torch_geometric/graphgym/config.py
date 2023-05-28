@@ -17,8 +17,7 @@ try:  # Define global config object
 except ImportError:
     cfg = None
     warnings.warn("Could not define global config object. Please install "
-                  "'yacs' for using the GraphGym experiment manager via "
-                  "'pip install yacs'.")
+                  "'yacs' via 'pip install yacs' in order to use GraphGym")
 
 
 def set_cfg(cfg):
@@ -41,8 +40,11 @@ def set_cfg(cfg):
     # Set print destination: stdout / file / both
     cfg.print = 'both'
 
-    # Select device: 'cpu', 'cuda:0', 'auto'
-    cfg.device = 'auto'
+    # Select device: 'cpu', 'cuda', 'auto'
+    cfg.accelerator = 'auto'
+
+    # number of devices: eg. for 2 GPU set cfg.devices=2
+    cfg.devices = 1
 
     # Output directory
     cfg.out_dir = 'results'
@@ -480,7 +482,6 @@ def dump_cfg(cfg):
 
     Args:
         cfg (CfgNode): Configuration node
-
     """
     makedirs(cfg.out_dir)
     cfg_file = os.path.join(cfg.out_dir, cfg.cfg_dest)
@@ -495,7 +496,6 @@ def load_cfg(cfg, args):
     Args:
         cfg (CfgNode): Configuration node
         args (ArgumentParser): Command argument parser
-
     """
     cfg.merge_from_file(args.cfg_file)
     cfg.merge_from_list(args.opts)
@@ -513,9 +513,9 @@ def get_fname(fname):
     Extract filename from file name path
 
     Args:
-        fname (string): Filename for the yaml format configuration file
+        fname (str): Filename for the yaml format configuration file
     """
-    fname = fname.split('/')[-1]
+    fname = os.path.basename(fname)
     if fname.endswith('.yaml'):
         fname = fname[:-5]
     elif fname.endswith('.yml'):
@@ -528,9 +528,8 @@ def set_out_dir(out_dir, fname):
     Create the directory for full experiment run
 
     Args:
-        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
-        fname (string): Filename for the yaml format configuration file
-
+        out_dir (str): Directory for output, specified in :obj:`cfg.out_dir`
+        fname (str): Filename for the yaml format configuration file
     """
     fname = get_fname(fname)
     cfg.out_dir = os.path.join(out_dir, fname)
@@ -546,9 +545,7 @@ def set_run_dir(out_dir):
     Create the directory for each random seed experiment run
 
     Args:
-        out_dir (string): Directory for output, specified in :obj:`cfg.out_dir`
-        fname (string): Filename for the yaml format configuration file
-
+        out_dir (str): Directory for output, specified in :obj:`cfg.out_dir`
     """
     cfg.run_dir = os.path.join(out_dir, str(cfg.seed))
     # Make output directory

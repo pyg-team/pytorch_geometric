@@ -40,7 +40,7 @@ class Set2Set(Aggregation):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None, *,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
@@ -57,7 +57,7 @@ class Set2Set(Aggregation):
             q = q.view(dim_size, self.in_channels)
             e = (x * q[index]).sum(dim=-1, keepdim=True)
             a = softmax(e, index, ptr, dim_size, dim)
-            r = self.reduce(a * x, index, ptr, dim_size, dim, reduce='add')
+            r = self.reduce(a * x, index, ptr, dim_size, dim, reduce='sum')
             q_star = torch.cat([q, r], dim=-1)
 
         return q_star

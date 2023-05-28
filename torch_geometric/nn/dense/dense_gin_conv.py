@@ -1,14 +1,20 @@
-import torch
+from typing import Optional
 
-from ..inits import reset
+import torch
+from torch import Tensor
+from torch.nn import Module
+
+from torch_geometric.nn.inits import reset
 
 
 class DenseGINConv(torch.nn.Module):
-    r"""See :class:`torch_geometric.nn.conv.GINConv`.
-
-    :rtype: :class:`Tensor`
-    """
-    def __init__(self, nn, eps=0, train_eps=False):
+    r"""See :class:`torch_geometric.nn.conv.GINConv`."""
+    def __init__(
+        self,
+        nn: Module,
+        eps: float = 0.0,
+        train_eps: bool = False,
+    ):
         super().__init__()
 
         self.nn = nn
@@ -20,21 +26,23 @@ class DenseGINConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
-    def forward(self, x, adj, mask=None, add_loop=True):
+    def forward(self, x: Tensor, adj: Tensor, mask: Optional[Tensor] = None,
+                add_loop: bool = True) -> Tensor:
         r"""
         Args:
-            x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
-                \times N \times F}`, with batch-size :math:`B`, (maximum)
-                number of nodes :math:`N` for each graph, and feature
-                dimension :math:`F`.
-            adj (Tensor): Adjacency tensor :math:`\mathbf{A} \in \mathbb{R}^{B
-                \times N \times N}`. The adjacency tensor is broadcastable in
-                the batch dimension, resulting in a shared adjacency matrix for
-                the complete batch.
-            mask (BoolTensor, optional): Mask matrix
+            x (torch.Tensor): Node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+                each graph, and feature dimension :math:`F`.
+            adj (torch.Tensor): Adjacency tensor
+                :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
+                The adjacency tensor is broadcastable in the batch dimension,
+                resulting in a shared adjacency matrix for the complete batch.
+            mask (torch.Tensor, optional): Mask matrix
                 :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
                 the valid nodes for each graph. (default: :obj:`None`)
             add_loop (bool, optional): If set to :obj:`False`, the layer will

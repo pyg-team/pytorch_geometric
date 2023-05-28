@@ -1,11 +1,19 @@
+from typing import Optional, Tuple
+
 import torch
+from torch import Tensor
 
-EPS = 1e-15
 
-
-def dense_mincut_pool(x, adj, s, mask=None):
-    r"""The MinCUt pooling operator from the `"Mincut Pooling in Graph Neural
-    Networks" <https://arxiv.org/abs/1907.00481>`_ paper
+def dense_mincut_pool(
+    x: Tensor,
+    adj: Tensor,
+    s: Tensor,
+    mask: Optional[Tensor] = None,
+    temp: float = 1.0,
+) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
+    r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
+    Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
+    paper
 
     .. math::
         \mathbf{X}^{\prime} &= {\mathrm{softmax}(\mathbf{S})}^{\top} \cdot
@@ -17,7 +25,7 @@ def dense_mincut_pool(x, adj, s, mask=None):
     based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
     \times N \times C}`.
     Returns the pooled node feature matrix, the coarsened and symmetrically
-    normalized adjacency matrix and two auxiliary objectives: (1) The minCUT
+    normalized adjacency matrix and two auxiliary objectives: (1) The MinCut
     loss
 
     .. math::
@@ -34,22 +42,25 @@ def dense_mincut_pool(x, adj, s, mask=None):
         \right\|}_F.
 
     Args:
-        x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
-            \times N \times F}` with batch-size :math:`B`, (maximum)
-            number of nodes :math:`N` for each graph, and feature dimension
-            :math:`F`.
-        adj (Tensor): Symmetrically normalized adjacency tensor
+        x (torch.Tensor): Node feature tensor
+            :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+            batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+            each graph, and feature dimension :math:`F`.
+        adj (torch.Tensor): Adjacency tensor
             :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
-        s (Tensor): Assignment tensor :math:`\mathbf{S} \in \mathbb{R}^{B
-            \times N \times C}` with number of clusters :math:`C`. The softmax
-            does not have to be applied beforehand, since it is executed
-            within this method.
-        mask (BoolTensor, optional): Mask matrix
+        s (torch.Tensor): Assignment tensor
+            :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}`
+            with number of clusters :math:`C`.
+            The softmax does not have to be applied before-hand, since it is
+            executed within this method.
+        mask (torch.Tensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
+        temp (float, optional): Temperature parameter for softmax function.
+            (default: :obj:`1.0`)
 
-    :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
-        :class:`Tensor`)
+    :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`,
+        :class:`torch.Tensor`, :class:`torch.Tensor`)
     """
 
     x = x.unsqueeze(0) if x.dim() == 2 else x
@@ -58,7 +69,7 @@ def dense_mincut_pool(x, adj, s, mask=None):
 
     (batch_size, num_nodes, _), k = x.size(), s.size(-1)
 
-    s = torch.softmax(s, dim=-1)
+    s = torch.softmax(s / temp if temp != 1.0 else s, dim=-1)
 
     if mask is not None:
         mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)
@@ -67,7 +78,7 @@ def dense_mincut_pool(x, adj, s, mask=None):
     out = torch.matmul(s.transpose(1, 2), x)
     out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
 
-    # MinCUT regularization.
+    # MinCut regularization.
     mincut_num = _rank3_trace(out_adj)
     d_flat = torch.einsum('ijk->ij', adj)
     d = _rank3_diag(d_flat)
@@ -84,6 +95,8 @@ def dense_mincut_pool(x, adj, s, mask=None):
         i_s / torch.norm(i_s), dim=(-1, -2))
     ortho_loss = torch.mean(ortho_loss)
 
+    EPS = 1e-15
+
     # Fix and normalize coarsened adjacency matrix.
     ind = torch.arange(k, device=out_adj.device)
     out_adj[:, ind, ind] = 0
@@ -94,11 +107,12 @@ def dense_mincut_pool(x, adj, s, mask=None):
     return out, out_adj, mincut_loss, ortho_loss
 
 
-def _rank3_trace(x):
+def _rank3_trace(x: Tensor) -> Tensor:
     return torch.einsum('ijj->i', x)
 
 
-def _rank3_diag(x):
+def _rank3_diag(x: Tensor) -> Tensor:
     eye = torch.eye(x.size(1)).type_as(x)
-    out = eye * x.unsqueeze(2).expand(*x.size(), x.size(1))
+    out = eye * x.unsqueeze(2).expand(x.size(0), x.size(1), x.size(1))
+
     return out

@@ -2,13 +2,18 @@ from typing import Callable, Optional, Union
 
 import torch
 from torch import Tensor
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
-
-from ..inits import reset
+from torch_geometric.nn.inits import reset
+from torch_geometric.typing import (
+    Adj,
+    OptPairTensor,
+    OptTensor,
+    Size,
+    SparseTensor,
+)
+from torch_geometric.utils import spmm
 
 
 class GINConv(MessagePassing):
@@ -61,12 +66,13 @@ class GINConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.nn)
         self.eps.data.fill_(self.initial_eps)
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -75,7 +81,7 @@ class GINConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None:
-            out += (1 + self.eps) * x_r
+            out = out + (1 + self.eps) * x_r
 
         return self.nn(out)
 
@@ -84,8 +90,9 @@ class GINConv(MessagePassing):
 
     def message_and_aggregate(self, adj_t: SparseTensor,
                               x: OptPairTensor) -> Tensor:
-        adj_t = adj_t.set_value(None, layout=None)
-        return matmul(adj_t, x[0], reduce=self.aggr)
+        if isinstance(adj_t, SparseTensor):
+            adj_t = adj_t.set_value(None, layout=None)
+        return spmm(adj_t, x[0], reduce=self.aggr)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(nn={self.nn})'
@@ -130,8 +137,9 @@ class GINEConv(MessagePassing):
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V}_t|, F_{out})` if bipartite
     """
-    def __init__(self, nn: Callable, eps: float = 0., train_eps: bool = False,
-                 edge_dim: Optional[int] = None, **kwargs):
+    def __init__(self, nn: torch.nn.Module, eps: float = 0.,
+                 train_eps: bool = False, edge_dim: Optional[int] = None,
+                 **kwargs):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
         self.nn = nn
@@ -141,11 +149,16 @@ class GINEConv(MessagePassing):
         else:
             self.register_buffer('eps', torch.Tensor([eps]))
         if edge_dim is not None:
-            if hasattr(self.nn[0], 'in_features'):
-                in_channels = self.nn[0].in_features
+            if isinstance(self.nn, torch.nn.Sequential):
+                nn = self.nn[0]
+            if hasattr(nn, 'in_features'):
+                in_channels = nn.in_features
+            elif hasattr(nn, 'in_channels'):
+                in_channels = nn.in_channels
             else:
-                in_channels = self.nn[0].in_channels
+                raise ValueError("Could not infer input channels from `nn`.")
             self.lin = Linear(edge_dim, in_channels)
+
         else:
             self.lin = None
         self.reset_parameters()
@@ -158,7 +171,7 @@ class GINEConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -167,7 +180,7 @@ class GINEConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None:
-            out += (1 + self.eps) * x_r
+            out = out + (1 + self.eps) * x_r
 
         return self.nn(out)
 

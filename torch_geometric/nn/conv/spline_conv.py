@@ -7,14 +7,13 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import uniform, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils.repeat import repeat
 
-from ..inits import uniform, zeros
-
 try:
     from torch_spline_conv import spline_basis, spline_weighting
-except ImportError:
+except (ImportError, OSError):  # Fail gracefully on GLIBC errors
     spline_basis = None
     spline_weighting = None
 
@@ -49,7 +48,7 @@ class SplineConv(MessagePassing):
             operator will use a closed B-spline basis in this dimension.
             (default :obj:`True`)
         degree (int, optional): B-spline basis degrees. (default: :obj:`1`)
-        aggr (string, optional): The aggregation operator to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
@@ -116,6 +115,7 @@ class SplineConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if not isinstance(self.weight, nn.UninitializedParameter):
             size = self.weight.size(0) * self.weight.size(1)
             uniform(size, self.weight)
@@ -125,7 +125,7 @@ class SplineConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 
@@ -139,10 +139,10 @@ class SplineConv(MessagePassing):
 
         x_r = x[1]
         if x_r is not None and self.root_weight:
-            out += self.lin(x_r)
+            out = out + self.lin(x_r)
 
         if self.bias is not None:
-            out += self.bias
+            out = out + self.bias
 
         return out
 
