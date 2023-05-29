@@ -21,9 +21,12 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 init_wandb(name=f'Dir-Sage-{args.dataset}', lr=args.lr, epochs=args.epochs,
            hidden_channels=args.hidden_channels, device=device)
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'WikipediaNetwork')
-dataset = WikipediaNetwork(root=path, name=args.dataset, transform=T.NormalizeFeatures())
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
+                'WikipediaNetwork')
+dataset = WikipediaNetwork(root=path, name=args.dataset,
+                           transform=T.NormalizeFeatures())
 data = dataset[0]
+
 
 class DirSage(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, alpha=0.5):
@@ -36,10 +39,16 @@ class DirSage(torch.nn.Module):
         x = self.conv2(x, edge_index)
         return x
 
-model = DirSage(dataset.num_features, args.hidden_channels, dataset.num_classes, alpha=1)
+
+model = DirSage(dataset.num_features, args.hidden_channels,
+                dataset.num_classes, alpha=1)
 model, data = model.to(device), data.to(device)
-data.train_mask, data.val_mask, data.test_mask = data.train_mask[:, 0], data.val_mask[:, 0], data.test_mask[:, 0]
-optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)  
+data.train_mask, data.val_mask, data.test_mask = data.train_mask[:,
+                                                                 0], data.val_mask[:,
+                                                                                   0], data.test_mask[:,
+                                                                                                      0]
+optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+
 
 def train():
     model.train()
