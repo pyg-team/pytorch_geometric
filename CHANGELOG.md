@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added the `Dir-GNN` model for directed graphs ([#7458](https://github.com/pyg-team/pytorch_geometric/pull/7458))
 - Added hierarichial heterogeneous GraphSAGE example on OGB-MAG ([#7425](https://github.com/pyg-team/pytorch_geometric/pull/7425))
 - Added a `LocalGraphStore` implementation for distributed training ([#7451](https://github.com/pyg-team/pytorch_geometric/pull/7451))
 - Added the `GDELTLite` dataset ([#7442](https://github.com/pyg-team/pytorch_geometric/pull/7442))
