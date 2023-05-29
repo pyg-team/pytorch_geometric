@@ -94,3 +94,168 @@ class TemporalEncoding(torch.nn.Module):
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.out_channels})'
+
+
+class _MLPMixer(torch.nn.Module):
+    def __init__(self, in_channels: int, out_channels: int) -> None:
+        super().__init__()
+        # H_token
+        self.layer_norm_token = torch.nn.LayerNorm((in_channels, ))
+        self.lin_token_1 = torch.nn.Linear(in_channels, in_channels)
+        self.gelu_token = torch.nn.GELU()
+        self.lin_token_2 = torch.nn.Linear(in_channels, in_channels)
+
+        # H_channel
+        self.layer_norm_channel = torch.nn.LayerNorm((in_channels, ))
+        self.lin_channel_1 = torch.nn.Linear(in_channels, in_channels)
+        self.gelu_channel = torch.nn.GELU()
+        self.lin_channel_2 = torch.nn.Linear(in_channels, in_channels)
+
+        # MLP head
+        self.lin_head = torch.nn.Linear(in_channels, out_channels)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # TODO: check again. some tensors needs transposing
+        # x: [num_edges, num_features+d]
+        # H_token
+        h = self.layer_norm_token(x)
+        h = self.lin_token_1(h)
+        h = self.gelu_token(h)
+        h_token = self.lin_token_2(h) + x
+
+        # H_channel
+        h = self.layer_norm_channel(h_token)
+        h = self.lin_channel_1(h)
+        h = self.gelu_channel(h)
+        h_channel = self.lin_channel_2(h) + h_token
+
+        # global pooling
+        t = torch.mean(h_channel, dim=1)
+
+        # MLP head
+        return self.lin_head(t)
+
+    def __repr__(self) -> str:
+        return (f"{self.__class__.__name__}("
+                f"in_channels={self.in_channels}, "
+                f"out_channels={self.out_channels})")
+
+
+class LinkEncoding(torch.nn.Module):
+    r"""The link-encoding function from the `"Do We Really Need Complicated
+    Model Architectures for Temporal Networks?"
+    <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
+    :class:`LinkEncoding` is composed of two components. The first component is
+    :class:`TemporalEncoding` that maps each edge timestamp to a
+    ``time_channels`` dimensional vector.
+    The second component, 1-layer MLP-mixer, maps the encoded timestamp feature
+    concatenated with its corresponding link feature to a ``out_channels``
+    dimensional vector.
+
+    Args:
+        K (int): The number of most recent teomporal links to use to construct
+            an intermediate feature representation for each node. If the number
+            of teomporal links that their node has is less than :math:`K`, the
+            intermediate feature matrix will be zero-padded.
+        num_edge_features (int): The number of edge features.
+        time_channels (int): dims to encode each timestamp into with
+            :class:`TemporalEncoding`.
+        out_channels (int): Size of each output sample.
+
+    Example:
+        # The GraphMixer paper uses the following args for GDELTLite dataset
+        link_encoder = LinkEncoding(
+            K=30,
+            num_edge_features=186,
+            hidden_channels=100,
+            out_channels=100,
+            time_channels=100,
+        )
+    """
+    def __init__(
+        self,
+        K: int,  # TODO: check ref impl for validation
+        num_edge_features: int,
+        hidden_channels: int,
+        out_channels: int,
+        time_channels: int,
+    ) -> None:
+        super().__init__()
+        self.K = K
+        self.num_edge_features = num_edge_features
+        self.hidden_channels = hidden_channels
+        self.out_channels = out_channels
+        self.time_channels = time_channels
+
+        # teomporal encoder
+        self.temporal_encoder = TemporalEncoding(time_channels)
+        self.temporal_encoder_head = torch.nn.Linear(
+            time_channels + num_edge_features,
+            hidden_channels,
+        )
+
+        # information summariser
+        self.mlp_mixer = _MLPMixer(
+            in_channels=hidden_channels,
+            out_channels=out_channels,
+        )
+
+    def forward(
+        self,
+        edge_attr: torch.Tensor,
+        edge_time: torch.Tensor,
+        num_nodes: int,
+    ) -> torch.Tensor:
+        """
+        Args:
+            edge_attr (torch.Tensor): ``[num_edges, num_edge_features]``
+            edge_time (torch.Tensor): ``[num_edges,]``
+            num_nodes (int): The number of nodes in the mini-batch.
+
+        Returns:
+            A tensor of size ``[num_nodes, out_channels]``.
+        """
+        # input:  [num_edges,]
+        # output: [num_edges, time_channels]
+        time_info = self.temporal_encoder(edge_time)
+
+        # input:  [num_edges, time_channels], [num_edges, num_edge_features]
+        # output: [num_edges, time_channels+num_edge_features]
+        edge_attr_with_time = torch.cat((time_info, edge_attr), dim=1)
+
+        # TODO: this linear only resides in their code not in the paper
+        # input:  [num_edges, time_channels+num_edge_features]
+        # output: [num_edges, hidden_channels]
+        edge_attr_with_time = self.temporal_encoder_head(edge_attr_with_time)
+
+        # we stack all the outputs into a big matrix and zero-pad to
+        # the fixed length K denoted as T2(t0). -> [1, K, hidden_channels] ???
+        # The node with more zer-padded dimensions has less temporal linked
+        # neighbors
+
+        # input:  [num_edges, hidden_channels]
+        # output: [num_nodes*K, hidden_channels]
+        x = torch.zeros((num_nodes * self.K, edge_attr_with_time.size(1)))
+        x[...] = x[...] + edge_attr_with_time  # FIXME: needs some index
+
+        # input:  [num_nodes*K, hidden_channels]
+        # output: [K, hidden_channels], ..., [K, hidden_channels]
+        x = torch.split(x, self.K)
+
+        # input:  [K, hidden_channels], ..., [K, hidden_channels]
+        # output: [num_nodes, K, hidden_channels]
+        x = torch.stack(x)
+
+        # input:  [num_nodes, K, hidden_channels]
+        # output: [num_nodes, out_channels]
+        out = self.mlp_mixer(edge_attr_with_time)
+
+        return out
+
+    def __repr__(self):
+        return (f"{self.__class__.__name__}("
+                f"K={self.K}, "
+                f"num_edge_features={self.num_edge_features}, "
+                f"hidden_channels={self.hidden_channels}, "
+                f"out_channels={self.out_channels}, "
+                f"time_channels={self.time_channels})")
