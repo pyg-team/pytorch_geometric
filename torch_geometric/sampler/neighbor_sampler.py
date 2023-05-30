@@ -55,10 +55,10 @@ class NeighborSampler(BaseSampler):
                           f"`subgraph_type='induced'` instead.")
 
         if not torch_geometric.typing.WITH_PYG_LIB and sys.platform == 'linux':
-            warnings.warn("Using '{self.__class__.__name__}' without a "
-                          "'pyg-lib' installation is deprecated and will be "
-                          "removed soon. Please install 'pyg-lib' for "
-                          "accelerated neighborhood sampling")
+            warnings.warn(f"Using '{self.__class__.__name__}' without a "
+                          f"'pyg-lib' installation is deprecated and will be "
+                          f"removed soon. Please install 'pyg-lib' for "
+                          f"accelerated neighborhood sampling")
 
         self.data_type = DataType.from_data(data)
 
