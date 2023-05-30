@@ -9,6 +9,7 @@ import torch
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
+from torch_geometric.sampler.base import SubgraphType
 from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
@@ -36,11 +37,12 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+@pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 @pytest.mark.parametrize('filter_per_worker', [None, True, False])
 def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
-    if dtype != torch.int64 and not WITH_PYG_LIB:
+    if (dtype != torch.int64
+            and (not WITH_PYG_LIB or subgraph_type == SubgraphType.induced)):
         return
 
     torch.manual_seed(12345)
@@ -80,7 +82,7 @@ def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
             batch.x[:batch.batch_size],
             torch.arange(i * batch.batch_size, (i + 1) * batch.batch_size))
 
-        if subgraph_type == 'directional':
+        if subgraph_type != SubgraphType.bidirectional:
             assert batch.e_id.size() == (batch.num_edges, )
             assert batch.edge_attr.min() >= 0
             assert batch.edge_attr.max() < 500
@@ -94,10 +96,11 @@ def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+@pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
-    if dtype != torch.int64 and not WITH_PYG_LIB:
+    if (dtype != torch.int64
+            and (not WITH_PYG_LIB or subgraph_type == SubgraphType.induced)):
         return
 
     torch.manual_seed(12345)
@@ -173,7 +176,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert row.min() >= 0 and row.max() < batch['paper'].num_nodes
         assert col.min() >= 0 and col.max() < batch['paper'].num_nodes
 
-        if subgraph_type != 'bidirectional':
+        if subgraph_type != SubgraphType.bidirectional:
             assert batch['paper', 'paper'].e_id.size() == (row.numel(), )
             value = batch['paper', 'paper'].edge_attr
             assert value.min() >= 0 and value.max() < 500
@@ -184,7 +187,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
                 batch['paper'].x,
                 batch['paper'].x,
             )
-        elif subgraph_type != 'directional':
+        elif subgraph_type != SubgraphType.directional:
             assert 'e_id' not in batch['paper', 'paper']
             assert 'edge_attr' not in batch['paper', 'paper']
 
@@ -194,7 +197,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert row.min() >= 0 and row.max() < batch['paper'].num_nodes
         assert col.min() >= 0 and col.max() < batch['author'].num_nodes
 
-        if subgraph_type != 'bidirectional':
+        if subgraph_type != SubgraphType.bidirectional:
             assert batch['paper', 'author'].e_id.size() == (row.numel(), )
             value = batch['paper', 'author'].edge_attr
             assert value.min() >= 500 and value.max() < 1500
@@ -205,7 +208,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
                 batch['paper'].x,
                 batch['author'].x - 100,
             )
-        elif subgraph_type != 'directional':
+        elif subgraph_type != SubgraphType.directional:
             assert 'e_id' not in batch['paper', 'author']
             assert 'edge_attr' not in batch['paper', 'author']
 
@@ -218,7 +221,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert row.min() >= 0 and row.max() < batch['author'].num_nodes
         assert col.min() >= 0 and col.max() < batch['paper'].num_nodes
 
-        if subgraph_type != 'bidirectional':
+        if subgraph_type != SubgraphType.bidirectional:
             assert batch['author', 'paper'].e_id.size() == (row.numel(), )
             value = batch['author', 'paper'].edge_attr
             assert value.min() >= 1500 and value.max() < 2500
@@ -229,7 +232,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
                 batch['author'].x - 100,
                 batch['paper'].x,
             )
-        elif subgraph_type != 'directional':
+        elif subgraph_type != SubgraphType.directional:
             assert 'e_id' not in batch['author', 'paper']
             assert 'edge_attr' not in batch['author', 'paper']
 
@@ -243,7 +246,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+@pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
@@ -286,7 +289,7 @@ def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+@pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
     dataset = get_dataset(name='Cora')
     data = dataset[0]
