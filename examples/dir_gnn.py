@@ -7,13 +7,15 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import WikipediaNetwork
 from torch_geometric.logging import init_wandb, log
-from torch_geometric.nn import DirSageConv
+from torch_geometric.nn import DirGCNConv, DirSageConv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='chameleon')
-parser.add_argument('--hidden_channels', type=int, default=16)
+parser.add_argument('--hidden_channels', type=int, default=128)
 parser.add_argument('--lr', type=float, default=0.01)
-parser.add_argument('--epochs', type=int, default=200)
+parser.add_argument('--epochs', type=int, default=1000)
+parser.add_argument('--alpha', type=float, default=1)
+parser.add_argument('--conv', type=str, default="dir-gcn")
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
@@ -27,12 +29,19 @@ dataset = WikipediaNetwork(root=path, name=args.dataset,
                            transform=T.NormalizeFeatures())
 data = dataset[0]
 
+if args.conv == "dir-gcn":
+    Conv = DirGCNConv
+elif args.conv == "dir-sage":
+    Conv = DirSageConv
+else:
+    raise NotImplementedError()
 
-class DirSage(torch.nn.Module):
+
+class DirGNN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, alpha=0.5):
         super().__init__()
-        self.conv1 = DirSageConv(in_channels, hidden_channels, alpha=alpha)
-        self.conv2 = DirSageConv(hidden_channels, out_channels, alpha=alpha)
+        self.conv1 = Conv(in_channels, hidden_channels, alpha=alpha)
+        self.conv2 = Conv(hidden_channels, out_channels, alpha=alpha)
 
     def forward(self, x, edge_index):
         x = self.conv1(x, edge_index).relu()
@@ -40,13 +49,12 @@ class DirSage(torch.nn.Module):
         return x
 
 
-model = DirSage(dataset.num_features, args.hidden_channels,
-                dataset.num_classes, alpha=1)
+model = DirGNN(dataset.num_features, args.hidden_channels, dataset.num_classes,
+               alpha=args.alpha)
 model, data = model.to(device), data.to(device)
-data.train_mask, data.val_mask, data.test_mask = data.train_mask[:,
-                                                                 0], data.val_mask[:,
-                                                                                   0], data.test_mask[:,
-                                                                                                      0]
+data.train_mask, data.val_mask, data.test_mask = (data.train_mask[:, 0],
+                                                  data.val_mask[:, 0],
+                                                  data.test_mask[:, 0])
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
 
