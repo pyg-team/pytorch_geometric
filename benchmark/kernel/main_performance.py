@@ -8,6 +8,7 @@ from gin import GIN
 from graph_sage import GraphSAGE
 from train_eval import eval_acc, inference_run, train
 
+import torch_geometric
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -32,6 +33,7 @@ parser.add_argument('--goal_accuracy', type=int, default=1,
 parser.add_argument('--inference', action='store_true')
 parser.add_argument('--profile', action='store_true')
 parser.add_argument('--bf16', action='store_true')
+parser.add_argument('--compile', action='store_true')
 args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -104,6 +106,14 @@ def run_train():
                 rename_profile_file(model_name, dataset_name, str(num_layers),
                                     str(hidden), 'train')
 
+            if args.compile:
+                print("Using torch.compile")
+                compiled_model = torch_geometric.compile(model)
+                eval_acc(compiled_model, val_loader)
+                eval_acc(compiled_model, val_loader)
+                with timeit():
+                    eval_acc(compiled_model, val_loader)
+
 
 @torch.no_grad()
 def run_inference():
@@ -131,6 +141,14 @@ def run_inference():
                     rename_profile_file(model_name, dataset_name,
                                         str(num_layers), str(hidden),
                                         'inference')
+
+                if args.compile:
+                    print("Using torch.compile")
+                    compiled_model = torch_geometric.compile(model)
+                    inference_run(compiled_model, test_loader, args.bf16)
+                    inference_run(compiled_model, test_loader, args.bf16)
+                    with timeit():
+                        inference_run(compiled_model, test_loader, args.bf16)
 
 
 if not args.inference:
