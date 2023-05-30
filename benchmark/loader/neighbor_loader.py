@@ -50,6 +50,7 @@ def run(args: argparse.ArgumentParser):
                         batch_size=batch_size,
                         shuffle=True,
                         num_workers=args.num_workers,
+                        subgraph_type=args.subgraph_type,
                     )
                     cpu_affinity = train_loader.enable_cpu_affinity(
                         args.loader_cores
@@ -129,4 +130,6 @@ if __name__ == '__main__':
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
+    add('--subgraph-type', type=str, default='directional',
+        help="The type of the returned subgraph (directional, bidirectional)")
     run(parser.parse_args())

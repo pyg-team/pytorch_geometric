@@ -24,10 +24,10 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
     """Matrix product of sparse matrix with dense matrix.
 
     Args:
-        src (Tensor or torch_sparse.SparseTensor): The input sparse matrix,
-            either a :pyg:`PyG` :class:`torch_sparse.SparseTensor` or a
+        src (torch.Tensor or torch_sparse.SparseTensor): The input sparse
+            matrix, either a :pyg:`PyG` :class:`torch_sparse.SparseTensor` or a
             :pytorch:`PyTorch` :class:`torch.sparse.Tensor`.
-        other (Tensor): The input dense matrix.
+        other (torch.Tensor): The input dense matrix.
         reduce (str, optional): The reduce operation to use
             (:obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`).
             (default: :obj:`"sum"`)
@@ -41,7 +41,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
 
     if isinstance(src, SparseTensor):
         if (torch_geometric.typing.WITH_PT2 and other.dim() == 2
-                and not src.is_cuda()):
+                and not src.is_cuda() and not src.requires_grad()):
             # Use optimized PyTorch `torch.sparse.mm` path:
             csr = src.to_torch_sparse_csr_tensor()
             return torch.sparse.mm(csr, other, reduce)

@@ -36,6 +36,7 @@ from .pcpnet_dataset import PCPNetDataset
 from .s3dis import S3DIS
 from .geometry import GeometricShapes
 from .bitcoin_otc import BitcoinOTC
+from .gdelt_lite import GDELTLite
 from .icews import ICEWS18
 from .gdelt import GDELT
 from .willow_object_class import WILLOWObjectClass
@@ -81,6 +82,7 @@ from .imdb import IMDB
 from .last_fm import LastFM
 from .hgb_dataset import HGBDataset
 from .taobao import Taobao
+from .igmc_dataset import IGMCDataset
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
@@ -132,6 +134,7 @@ homo_datasets = [
     'S3DIS',
     'GeometricShapes',
     'BitcoinOTC',
+    'GDELTLite',
     'ICEWS18',
     'GDELT',
     'WILLOWObjectClass',
@@ -180,6 +183,7 @@ hetero_datasets = [
     'LastFM',
     'HGBDataset',
     'Taobao',
+    'IGMCDataset',
 ]
 synthetic_datasets = [
     'FakeDataset',

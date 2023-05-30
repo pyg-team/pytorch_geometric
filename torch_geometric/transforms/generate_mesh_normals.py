@@ -11,7 +11,7 @@ from torch_geometric.utils import scatter
 class GenerateMeshNormals(BaseTransform):
     r"""Generate normal vectors for each mesh node based on neighboring
     faces (functional name: :obj:`generate_mesh_normals`)."""
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         assert 'face' in data
         pos, face = data.pos, data.face
 
