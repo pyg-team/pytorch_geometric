@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the `GDELTLite` dataset ([#7442](https://github.com/pyg-team/pytorch_geometric/pull/7442))
 - Added the `approx_knn` function for approximated nearest neighbor search ([#7421](https://github.com/pyg-team/pytorch_geometric/pull/7421))
 - Added the `IGMCDataset` ([#7441](https://github.com/pyg-team/pytorch_geometric/pull/7441))
-- Added a sparse `cross_entropy` implementation ([#7447](https://github.com/pyg-team/pytorch_geometric/pull/7447))
+- Added a sparse `cross_entropy` implementation ([#7447](https://github.com/pyg-team/pytorch_geometric/pull/7447), [#7466](https://github.com/pyg-team/pytorch_geometric/pull/7466))
 - Added the `MovieLens-100K` heterogeneous dataset ([#7398](https://github.com/pyg-team/pytorch_geometric/pull/7398))
 - Added the `PMLP` model ([#7370](https://github.com/pyg-team/pytorch_geometric/pull/7370))
 - Added padding capabilities to `HeteroData.to_homogeneous()` in case feature dimensionalities do not match ([#7374](https://github.com/pyg-team/pytorch_geometric/pull/7374))
