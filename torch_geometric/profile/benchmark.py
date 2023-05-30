@@ -5,6 +5,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.utils import is_torch_sparse_tensor
+from torch_geometric.data import Data
 
 
 def require_grad(x: Any, requires_grad: bool = True) -> Any:
@@ -63,7 +64,7 @@ def benchmark(
                          f"'func_names' (got {len(func_names)}) must be equal")
 
     # Zero-copy `args` for each function (if necessary):
-    args_list = [args] * len(funcs) if isinstance(args, tuple) else args
+    args_list = [args] * len(funcs) if isinstance(args, tuple) or isinstance(args, Data) else args
 
     ts: List[List[str]] = []
     for func, args, name in zip(funcs, args_list, func_names):
@@ -75,7 +76,10 @@ def benchmark(
                 torch.cuda.synchronize()
             t_start = time.perf_counter()
 
-            out = func(*args)
+            if isinstance(args, tuple):
+                out = func(*args)
+            else:
+                out = func(args)
 
             if torch.cuda.is_available():
                 torch.cuda.synchronize()

@@ -5,7 +5,8 @@ import torch.nn.functional as F
 from torch import tensor
 from torch.optim import Adam
 
-from torch_geometric.profile import timeit, torch_profile
+import torch_geometric
+from torch_geometric.profile import benchmark, timeit, torch_profile
 from torch_geometric.utils import index_to_mask
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -36,7 +37,7 @@ def random_planetoid_splits(data, num_classes):
 
 
 def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-              profiling, permute_masks=None, logger=None):
+              profiling, use_compile, permute_masks=None, logger=None):
     val_losses, accs, durations = [], [], []
     for run in range(runs):
         data = dataset[0]
@@ -96,9 +97,20 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         with torch_profile():
             train(model, optimizer, data)
 
+    if use_compile:
+        compiled_model = torch_geometric.compile(model)
+        benchmark(
+            funcs=[model, compiled_model],
+            func_names=['Vanilla', 'Compiled'],
+            args=data,
+            num_steps=30 if device == torch.device('cpu') else 50,
+            num_warmups=5 if device == torch.device('cpu') else 10,
+            backward=True,
+        )
+
 
 @torch.no_grad()
-def run_inference(dataset, model, epochs, profiling, bf16, permute_masks=None,
+def run_inference(dataset, model, epochs, profiling, bf16, use_compile, permute_masks=None,
                   logger=None):
     data = dataset[0]
     if permute_masks is not None:
@@ -126,14 +138,24 @@ def run_inference(dataset, model, epochs, profiling, bf16, permute_masks=None,
             with torch_profile():
                 inference(model, data)
 
+        if use_compile:
+            compiled_model = torch_geometric.compile(model)
+            benchmark(
+                funcs=[model, compiled_model],
+                func_names=['Vanilla', 'Compiled'],
+                args=data,
+                num_steps=50 if device == torch.device('cpu') else 500,
+                num_warmups=10 if device == torch.device('cpu') else 100,
+                backward=False,
+            )
 
 def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-        inference, profiling, bf16, permute_masks=None, logger=None):
+        inference, profiling, bf16, use_compile, permute_masks=None, logger=None):
     if not inference:
         run_train(dataset, model, runs, epochs, lr, weight_decay,
-                  early_stopping, profiling, permute_masks, logger)
+                  early_stopping, profiling, use_compile, permute_masks, logger)
     else:
-        run_inference(dataset, model, epochs, profiling, bf16, permute_masks,
+        run_inference(dataset, model, epochs, profiling, bf16, use_compile, permute_masks,
                       logger)
 
 
