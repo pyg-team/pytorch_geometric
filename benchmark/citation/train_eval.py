@@ -6,7 +6,7 @@ from torch import tensor
 from torch.optim import Adam
 
 import torch_geometric
-from torch_geometric.profile import benchmark, timeit, torch_profile
+from torch_geometric.profile import timeit, torch_profile
 from torch_geometric.utils import index_to_mask
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -98,16 +98,12 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
             train(model, optimizer, data)
 
     if use_compile:
+        print("Using torch.compile")
         compiled_model = torch_geometric.compile(model)
-        benchmark(
-            funcs=[model, compiled_model],
-            func_names=['Vanilla', 'Compiled'],
-            args=data,
-            num_steps=30 if device == torch.device('cpu') else 50,
-            num_warmups=5 if device == torch.device('cpu') else 10,
-            backward=True,
-        )
-
+        train(compiled_model, optimizer, data)
+        train(compiled_model, optimizer, data)
+        with timeit():
+            train(compiled_model, optimizer, data)
 
 @torch.no_grad()
 def run_inference(dataset, model, epochs, profiling, bf16, use_compile, permute_masks=None,
@@ -139,15 +135,12 @@ def run_inference(dataset, model, epochs, profiling, bf16, use_compile, permute_
                 inference(model, data)
 
         if use_compile:
+            print("Using torch.compile")
             compiled_model = torch_geometric.compile(model)
-            benchmark(
-                funcs=[model, compiled_model],
-                func_names=['Vanilla', 'Compiled'],
-                args=data,
-                num_steps=50 if device == torch.device('cpu') else 500,
-                num_warmups=10 if device == torch.device('cpu') else 100,
-                backward=False,
-            )
+            inference(compiled_model, data)
+            inference(compiled_model, data)
+            with timeit():
+                inference(compiled_model, data)
 
 def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         inference, profiling, bf16, use_compile, permute_masks=None, logger=None):
