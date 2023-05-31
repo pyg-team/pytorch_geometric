@@ -47,7 +47,7 @@ class MyFeatureStore(FeatureStore):
         return tensor[idx]
 
     def _remove_tensor(self, attr: TensorAttr) -> bool:
-        return self._feat.pop(self.key(attr), None) is not None
+        return self.store.pop(self.key(attr), None) is not None
 
     def _get_tensor_size(self, attr: TensorAttr) -> Tuple[int, ...]:
         return self._get_tensor(attr).size()
