@@ -14,7 +14,12 @@ from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.loader import RandomNodeLoader
 from torch_geometric.nn import GroupAddRev, SAGEConv
-from torch_geometric.utils import index_to_mask, to_torch_sparse_tensor
+from torch_geometric.typing import WITH_TORCH_SCATTER
+if WITH_TORCH_SCATTER:
+    from torch_geometric.typing import SparseTensor
+else:
+    from torch_geometric.utils import to_torch_sparse_tensor
+from torch_geometric.utils import index_to_mask
 
 
 class GNNBlock(torch.nn.Module):
@@ -120,7 +125,10 @@ def train(epoch):
         optimizer.zero_grad()
 
         # Memory-efficient aggregations:
-        adj_t = to_torch_sparse_tensor(data.edge_index,
+        if WITH_TORCH_SCATTER:
+            adj_t = SparseTensor.from_edge_index(data.edge_index).t()
+        else:
+            adj_t = to_torch_sparse_tensor(data.edge_index,
                                        layout=torch.sparse_csc)
         out = model(data.x, adj_t)[data.train_mask]
         loss = F.cross_entropy(out, data.y[data.train_mask].view(-1))
@@ -150,7 +158,10 @@ def test(epoch):
         data = data.to(device)
 
         # Memory-efficient aggregations
-        adj_t = to_torch_sparse_tensor(data.edge_index,
+        if WITH_TORCH_SCATTER:
+            adj_t = SparseTensor.from_edge_index(data.edge_index).t()
+        else:
+            adj_t = to_torch_sparse_tensor(data.edge_index,
                                        layout=torch.sparse_csc)
         out = model(data.x, adj_t).argmax(dim=-1, keepdim=True)
 
