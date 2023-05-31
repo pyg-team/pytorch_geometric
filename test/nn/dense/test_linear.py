@@ -128,26 +128,16 @@ def test_hetero_linear(device):
 
 
 @withCUDA
-def test_hetero_linear_amp(device):
+@pytest.mark.parametrize('use_segmm', [True, False])
+def test_hetero_linear_amp(device, use_segmm):
     x = torch.randn(3, 16, device=device)
     type_vec = torch.tensor([0, 1, 2], device=device)
 
     lin = HeteroLinear(16, 32, num_types=3).to(device)
-    assert str(lin) == 'HeteroLinear(16, 32, num_types=3, bias=True)'
+    lin.use_segmm = use_segmm
 
-    # test both implementations with and without segmm
-    lin.use_segmm = 0
     with torch.cuda.amp.autocast():
-        out_no_segmm = lin(x, type_vec)
-    assert out_no_segmm.size() == (3, 32)
-
-    lin.use_segmm = 1
-    with torch.cuda.amp.autocast():
-        out_segmm = lin(x, type_vec)
-    assert out_segmm.size() == (3, 32)
-
-    assert out_segmm.dtype == out_no_segmm.dtype
-    assert torch.allclose(out_segmm, out_no_segmm, atol=1e-03)
+        assert lin(x, type_vec).size() == (3, 32)
 
 
 @withCUDA

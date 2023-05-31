@@ -243,9 +243,8 @@ class HeteroLinear(torch.nn.Module):
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
-
-        if torch_geometric.typing.WITH_PYG_LIB and (self.use_segmm == -1
-                                                    or bool(self.use_segmm)):
+        if (torch_geometric.typing.WITH_PYG_LIB
+                and (self.use_segmm == -1 or bool(self.use_segmm))):
             assert self.weight is not None
 
             perm: Optional[Tensor] = None
@@ -272,9 +271,9 @@ class HeteroLinear(torch.nn.Module):
                 mask = type_vec == i
                 if mask.numel() == 0:
                     continue
-                out_tmp = F.linear(x[mask], self.weight[i].T)
-                out[mask] = out_tmp.to(
-                    out.dtype)  # dtype may have changed with mixed precision
+                subset_out = F.linear(x[mask], self.weight[i].T)
+                # The data type may have changed with mixed precision:
+                out[mask] = subset_out.to(out.dtype)
 
             if self.bias is not None:
                 out += self.bias[type_vec]
