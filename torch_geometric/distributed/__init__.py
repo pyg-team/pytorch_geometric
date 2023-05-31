@@ -1,7 +1,7 @@
-from .local_graph_store import LocalGraphStore
 from .local_feature_store import LocalFeatureStore
+from .local_graph_store import LocalGraphStore
 
 __all__ = classes = [
-    'LocalGraphStore',
     'LocalFeatureStore',
+    'LocalGraphStore',
 ]
