@@ -198,6 +198,12 @@ class HeteroLinear(torch.nn.Module):
             :obj:`type_vec` is sorted. This avoids internal re-sorting of the
             data and can improve runtime and memory efficiency.
             (default: :obj:`False`)
+        use_segmm (bool, optional): If set to :obj:`True` and pyg-lib is
+            installed, this module will use the fused :obj:`segment_matmul`
+            kernel to parallelize the linear transformation across types. If
+            set to :obj:`False`, :obj:`segment_matmul` will not be used. If
+            left as :obj:`None` and pyg-lib is installed, the module will
+            determine heuristically whether to use :obj:`segment_matmul`.
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.Linear`.
 
@@ -208,7 +214,7 @@ class HeteroLinear(torch.nn.Module):
         - **output:** features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
-                 is_sorted: bool = False, **kwargs):
+                 is_sorted: bool = False, use_segmm: Optional[bool] = None, **kwargs):
         super().__init__()
 
         self.in_channels = in_channels
@@ -216,7 +222,9 @@ class HeteroLinear(torch.nn.Module):
         self.num_types = num_types
         self.is_sorted = is_sorted
         self.kwargs = kwargs
-        self.use_segmm: int = -1
+
+        self.use_segmm: int = int(use_segmm) if use_segmm is not None else -1
+
         if self.in_channels == -1:
             self.weight = nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
