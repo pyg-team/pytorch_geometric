@@ -6,8 +6,8 @@ from torch import Tensor
 from torch.nn import GRUCell, Linear
 
 from torch_geometric.nn.inits import zeros
-from torch_geometric.utils import scatter
 from torch_geometric.typing import WITH_TORCH_SCATTER
+from torch_geometric.utils import scatter
 
 TGNMessageStoreType = Dict[int, Tuple[Tensor, Tensor, Tensor, Tensor]]
 
@@ -201,15 +201,22 @@ class LastAggregator(torch.nn.Module):
         else:
             num_idx = index.numel()
             if num_idx == 0:
-                argmax= torch.zeros(dim_size, dtype=t.dtype, device=t.device)
+                argmax = torch.zeros(dim_size, dtype=t.dtype, device=t.device)
             else:
-                scatter_max_out = torch.zeros(dim_size, device=t.device, dtype=t.dtype).scatter_reduce_(dim=0, index=index, src=t, reduce="amax")
-                argwhere_idx = torch.argwhere(t == scatter_max_out[index]).reshape(-1)
+                scatter_max_out = torch.zeros(dim_size, device=t.device,
+                                              dtype=t.dtype).scatter_reduce_(
+                                                  dim=0, index=index, src=t,
+                                                  reduce="amax")
+                argwhere_idx = torch.argwhere(
+                    t == scatter_max_out[index]).reshape(-1)
                 if dim_size <= argwhere_idx.numel():
                     argmax = argwhere_idx[:dim_size]
                 else:
-                    argmax = torch.cat((argwhere_idx,torch.full((dim_size-argwhere_idx.numel(),), num_idx, device=t.device, dtype=t.dtype)))
-        
+                    argmax = torch.cat(
+                        (argwhere_idx,
+                         torch.full((dim_size - argwhere_idx.numel(), ),
+                                    num_idx, device=t.device, dtype=t.dtype)))
+
         out = msg.new_zeros((dim_size, msg.size(-1)))
         mask = argmax < msg.size(0)  # Filter items with at least one entry.
         out[mask] = msg[argmax[mask]]
