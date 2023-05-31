@@ -105,9 +105,10 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         with timeit():
             train(compiled_model, optimizer, data)
 
+
 @torch.no_grad()
-def run_inference(dataset, model, epochs, profiling, bf16, use_compile, permute_masks=None,
-                  logger=None):
+def run_inference(dataset, model, epochs, profiling, bf16, use_compile,
+                  permute_masks=None, logger=None):
     data = dataset[0]
     if permute_masks is not None:
         data = permute_masks(data, dataset.num_classes)
@@ -142,14 +143,17 @@ def run_inference(dataset, model, epochs, profiling, bf16, use_compile, permute_
             with timeit():
                 inference(compiled_model, data)
 
+
 def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-        inference, profiling, bf16, use_compile, permute_masks=None, logger=None):
+        inference, profiling, bf16, use_compile, permute_masks=None,
+        logger=None):
     if not inference:
         run_train(dataset, model, runs, epochs, lr, weight_decay,
-                  early_stopping, profiling, use_compile, permute_masks, logger)
+                  early_stopping, profiling, use_compile, permute_masks,
+                  logger)
     else:
-        run_inference(dataset, model, epochs, profiling, bf16, use_compile, permute_masks,
-                      logger)
+        run_inference(dataset, model, epochs, profiling, bf16, use_compile,
+                      permute_masks, logger)
 
 
 def train(model, optimizer, data):
