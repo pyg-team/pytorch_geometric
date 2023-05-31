@@ -214,7 +214,8 @@ class HeteroLinear(torch.nn.Module):
         - **output:** features :math:`(*, F_{out})`
     """
     def __init__(self, in_channels: int, out_channels: int, num_types: int,
-                 is_sorted: bool = False, use_segmm: Optional[bool] = None, **kwargs):
+                 is_sorted: bool = False, use_segmm: Optional[bool] = None,
+                 **kwargs):
         super().__init__()
 
         self.in_channels = in_channels
