@@ -3,6 +3,8 @@ from typing import Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.utils import scatter
+
 
 class SparseCrossEntropy(torch.autograd.Function):
     # We implement our own custom autograd function for this to avoid the
@@ -26,8 +28,9 @@ class SparseCrossEntropy(torch.autograd.Function):
 
         grad_out = grad_out / inputs.size(0)
 
-        grad_logsumexp = inputs.new_zeros(inputs.size(0)).index_add_(
-            0, edge_label_index[0], grad_out.expand(edge_label_index.size(1)))
+        grad_logsumexp = scatter(grad_out.expand(edge_label_index.size(1)),
+                                 edge_label_index[0], dim=0,
+                                 dim_size=inputs.size(0), reduce='sum')
 
         # Gradient computation of `logsumexp`: `grad * (self - result).exp()`
         grad_input = (inputs - logsumexp.view(-1, 1))
