@@ -128,6 +128,19 @@ def test_hetero_linear(device):
 
 
 @withCUDA
+@pytest.mark.parametrize('use_segmm', [True, False])
+def test_hetero_linear_amp(device, use_segmm):
+    x = torch.randn(3, 16, device=device)
+    type_vec = torch.tensor([0, 1, 2], device=device)
+
+    lin = HeteroLinear(16, 32, num_types=3).to(device)
+    lin.use_segmm = use_segmm
+
+    with torch.cuda.amp.autocast():
+        assert lin(x, type_vec).size() == (3, 32)
+
+
+@withCUDA
 def test_lazy_hetero_linear(device):
     x = torch.randn(3, 16, device=device)
     type_vec = torch.tensor([0, 1, 2], device=device)
