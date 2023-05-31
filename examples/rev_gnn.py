@@ -120,7 +120,8 @@ def train(epoch):
         optimizer.zero_grad()
 
         # Memory-efficient aggregations:
-        adj_t = to_torch_sparse_tensor(data.edge_index, layout=torch.sparse_csc)
+        adj_t = to_torch_sparse_tensor(data.edge_index,
+                                       layout=torch.sparse_csc)
         out = model(data.x, adj_t)[data.train_mask]
         loss = F.cross_entropy(out, data.y[data.train_mask].view(-1))
         loss.backward()
@@ -149,7 +150,8 @@ def test(epoch):
         data = data.to(device)
 
         # Memory-efficient aggregations
-        adj_t = to_torch_sparse_tensor(data.edge_index, layout=torch.sparse_csc)
+        adj_t = to_torch_sparse_tensor(data.edge_index,
+                                       layout=torch.sparse_csc)
         out = model(data.x, adj_t).argmax(dim=-1, keepdim=True)
 
         for split in ['train', 'valid', 'test']:
