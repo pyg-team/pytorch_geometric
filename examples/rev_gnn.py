@@ -80,7 +80,7 @@ class RevGNN(torch.nn.Module):
 
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
 
-transform = T.compose([T.AddSelfLoops(), T.ToSparseTensor()])
+transform = T.Compose([T.AddSelfLoops(), T.ToSparseTensor()])
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root, transform=transform)
 evaluator = Evaluator(name='ogbn-products')
