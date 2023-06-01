@@ -15,6 +15,8 @@ def run_train(train_dataset, test_dataset, model, epochs, batch_size,
               use_compile, lr, lr_decay_factor, lr_decay_step_size,
               weight_decay):
     model = model.to(device)
+    if use_compile:
+        model = torch_geometric.compile(model)
     optimizer = Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
 
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
@@ -41,19 +43,13 @@ def run_train(train_dataset, test_dataset, model, epochs, batch_size,
             for param_group in optimizer.param_groups:
                 param_group['lr'] = lr_decay_factor * param_group['lr']
 
-    if use_compile:
-        print("Using torch.compile")
-        compiled_model = torch_geometric.compile(model)
-        test(compiled_model, test_loader, device)
-        test(compiled_model, test_loader, device)
-        with timeit():
-            test(compiled_model, test_loader, device)
-
 
 @torch.no_grad()
 def run_inference(test_dataset, model, epochs, batch_size, profiling, bf16,
                   use_compile):
     model = model.to(device)
+    if use_compile:
+        model = torch_geometric.compile(model)
     test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
 
     if torch.cuda.is_available():
@@ -73,14 +69,6 @@ def run_inference(test_dataset, model, epochs, batch_size, profiling, bf16,
         if profiling:
             with torch_profile():
                 inference(model, test_loader, device, bf16)
-
-        if use_compile:
-            print("Using torch.compile")
-            compiled_model = torch_geometric.compile(model)
-            inference(compiled_model, test_loader, device, bf16)
-            inference(compiled_model, test_loader, device, bf16)
-            with timeit():
-                inference(compiled_model, test_loader, device, bf16)
 
 
 def run(train_dataset, test_dataset, model, epochs, batch_size, lr,

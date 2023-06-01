@@ -39,6 +39,9 @@ def random_planetoid_splits(data, num_classes):
 def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
               profiling, use_compile, permute_masks=None, logger=None):
     val_losses, accs, durations = [], [], []
+    if use_compile:
+        model = torch_geometric.compile(model)
+
     for run in range(runs):
         data = dataset[0]
         if permute_masks is not None:
@@ -97,14 +100,6 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
         with torch_profile():
             train(model, optimizer, data)
 
-    if use_compile:
-        print("Using torch.compile")
-        compiled_model = torch_geometric.compile(model)
-        train(compiled_model, optimizer, data)
-        train(compiled_model, optimizer, data)
-        with timeit():
-            train(compiled_model, optimizer, data)
-
 
 @torch.no_grad()
 def run_inference(dataset, model, epochs, profiling, bf16, use_compile,
@@ -115,6 +110,8 @@ def run_inference(dataset, model, epochs, profiling, bf16, use_compile,
     data = data.to(device)
 
     model.to(device).reset_parameters()
+    if use_compile:
+        model = torch_geometric.compile(model)
 
     if torch.cuda.is_available():
         amp = torch.cuda.amp.autocast(enabled=False)
@@ -134,14 +131,6 @@ def run_inference(dataset, model, epochs, profiling, bf16, use_compile,
         if profiling:
             with torch_profile():
                 inference(model, data)
-
-        if use_compile:
-            print("Using torch.compile")
-            compiled_model = torch_geometric.compile(model)
-            inference(compiled_model, data)
-            inference(compiled_model, data)
-            with timeit():
-                inference(compiled_model, data)
 
 
 def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,

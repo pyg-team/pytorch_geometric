@@ -79,7 +79,8 @@ def run_train():
 
             model = Model(dataset, num_layers, hidden).to(device)
             optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-
+            if args.compile:
+                model = torch_geometric.compile(model)
             loss_list = []
             acc_list = []
             for epoch in range(1, args.epochs + 1):
@@ -106,14 +107,6 @@ def run_train():
                 rename_profile_file(model_name, dataset_name, str(num_layers),
                                     str(hidden), 'train')
 
-            if args.compile:
-                print("Using torch.compile")
-                compiled_model = torch_geometric.compile(model)
-                eval_acc(compiled_model, val_loader)
-                eval_acc(compiled_model, val_loader)
-                with timeit():
-                    eval_acc(compiled_model, val_loader)
-
 
 @torch.no_grad()
 def run_inference():
@@ -126,7 +119,8 @@ def run_inference():
             print(f'{dataset_name} - {model_name}- {num_layers} - {hidden}')
 
             model = Model(dataset, num_layers, hidden).to(device)
-
+            if args.compile:
+                model = torch_geometric.compile(model)
             with amp:
                 for epoch in range(1, args.epochs + 1):
                     if epoch == args.epochs:
@@ -141,14 +135,6 @@ def run_inference():
                     rename_profile_file(model_name, dataset_name,
                                         str(num_layers), str(hidden),
                                         'inference')
-
-                if args.compile:
-                    print("Using torch.compile")
-                    compiled_model = torch_geometric.compile(model)
-                    inference_run(compiled_model, test_loader, args.bf16)
-                    inference_run(compiled_model, test_loader, args.bf16)
-                    with timeit():
-                        inference_run(compiled_model, test_loader, args.bf16)
 
 
 if not args.inference:
