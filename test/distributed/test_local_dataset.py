@@ -6,10 +6,11 @@ from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
-<<<<<<< HEAD
-from torch_geometric.nn import Linear, HGTConv
 
+<<<<<<< HEAD
 from torch_geometric.distributed import LocalDataset
+from torch_geometric.nn import HGTConv, Linear
+
 =======
 from torch_geometric.distributed import Data, LocalDataset
 from torch_geometric.nn import HGTConv, Linear
