@@ -6,9 +6,8 @@ from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
-from torch_geometric.nn import Linear, HGTConv
-
 from torch_geometric.distributed import LocalDataset
+
 
 def test_local_dataset():
 
