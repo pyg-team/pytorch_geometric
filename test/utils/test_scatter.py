@@ -77,7 +77,7 @@ def test_scatter_argmax(device):
     index = torch.tensor([0, 0, 1, 1, 2, 2], device=device)
 
     argmax = scatter_argmax(src, index, dim_size=6)
-    assert argmax == torch.tensor([6, 1, 6, 3, 6, 5]).to(device)
+    assert (argmax == torch.tensor([6, 1, 6, 3, 6, 5]).to(device)).all()
 
 
 if __name__ == '__main__':
