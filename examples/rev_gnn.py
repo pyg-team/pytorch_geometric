@@ -81,12 +81,12 @@ class RevGNN(torch.nn.Module):
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-transform = T.Compose(
-    [T.AddSelfLoops(),
-     T.ToDevice(device),
+dataset_transform = T.AddSelfLoops()
+dataloader_transform = T.Compose(
+    [T.ToDevice(device),
      T.ToSparseTensor()])
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
-dataset = PygNodePropPredDataset('ogbn-products', root, transform=transform)
+dataset = PygNodePropPredDataset('ogbn-products', root, transform=dataset_transform)
 evaluator = Evaluator(name='ogbn-products')
 
 data = dataset[0]
@@ -95,10 +95,10 @@ for split in ['train', 'valid', 'test']:
     data[f'{split}_mask'] = index_to_mask(split_idx[split], data.y.shape[0])
 
 train_loader = RandomNodeLoader(data, num_parts=10, shuffle=True,
-                                num_workers=5)
+                                num_workers=5, transform=dataloader_transform)
 # Increase the num_parts of the test loader if you cannot fit
 # the full batch graph into your GPU:
-test_loader = RandomNodeLoader(data, num_parts=1, num_workers=5)
+test_loader = RandomNodeLoader(data, num_parts=1, num_workers=5, transform=dataloader_transform)
 
 model = RevGNN(
     in_channels=dataset.num_features,
