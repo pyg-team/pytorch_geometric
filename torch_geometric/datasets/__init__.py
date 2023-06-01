@@ -83,6 +83,7 @@ from .last_fm import LastFM
 from .hgb_dataset import HGBDataset
 from .taobao import Taobao
 from .igmc_dataset import IGMCDataset
+from .amazon_book import AmazonBook
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
@@ -184,6 +185,7 @@ hetero_datasets = [
     'HGBDataset',
     'Taobao',
     'IGMCDataset',
+    'AmazonBook',
 ]
 synthetic_datasets = [
     'FakeDataset',
