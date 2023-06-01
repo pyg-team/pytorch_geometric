@@ -43,7 +43,7 @@ NeighborLoader prepares needed meta-data structure for HGAM by default.
 It can be accessed from batch object returned by NeighborLoader for both homogenous and heterogenous data.
 
 
-Homogenous data example:
+* Homogenous data example:
 
 .. code-block:: python
 
@@ -71,7 +71,7 @@ Homogenous data example:
     >>> [520, 2036, 2885] # Number of sampled edges per iteration/layer
 
 
-Heterogeneous data example:
+* Heterogeneous data example:
 
 .. code-block:: python
 
@@ -149,10 +149,9 @@ Heterogeneous data example:
 
 Returned by NeighborLoader :obj:`num_sampled_nodes` and :obj:`num_sampled_edges` fields can be used by :obj:`trim_to_layer` utils function.
 
-Example of using :obj:`trim_to_layer` feature:
-Basic Training Example: leveraging new metadata returned by neighbor loader 
 
-The neighbor loader returns the metadata useful for the HGAM trimming action. 
+* Basic training example leveraging new metadata returned by  :class:`~torch_geometric.loader.NeighborLoader`
+The  :class:`~torch_geometric.loader.NeighborLoader` returns the metadata (:obj:`num_sampled_nodes` and :obj:`num_sampled_edges`) useful for the HGAM trimming action. 
 To train with HGAM is just enough to pass those metadata to any of the native :pyg:`PyG` models (which extend from BasicGNN class), to activate the HGAM computation reduction:
 
 
