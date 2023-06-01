@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch import tensor
 from torch.optim import Adam
 
+import torch_geometric
 from torch_geometric.profile import timeit, torch_profile
 from torch_geometric.utils import index_to_mask
 
@@ -36,8 +37,11 @@ def random_planetoid_splits(data, num_classes):
 
 
 def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-              profiling, permute_masks=None, logger=None):
+              profiling, use_compile, permute_masks=None, logger=None):
     val_losses, accs, durations = [], [], []
+    if use_compile:
+        model = torch_geometric.compile(model)
+
     for run in range(runs):
         data = dataset[0]
         if permute_masks is not None:
@@ -98,14 +102,16 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
 
 
 @torch.no_grad()
-def run_inference(dataset, model, epochs, profiling, bf16, permute_masks=None,
-                  logger=None):
+def run_inference(dataset, model, epochs, profiling, bf16, use_compile,
+                  permute_masks=None, logger=None):
     data = dataset[0]
     if permute_masks is not None:
         data = permute_masks(data, dataset.num_classes)
     data = data.to(device)
 
     model.to(device).reset_parameters()
+    if use_compile:
+        model = torch_geometric.compile(model)
 
     if torch.cuda.is_available():
         amp = torch.cuda.amp.autocast(enabled=False)
@@ -128,13 +134,15 @@ def run_inference(dataset, model, epochs, profiling, bf16, permute_masks=None,
 
 
 def run(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
-        inference, profiling, bf16, permute_masks=None, logger=None):
+        inference, profiling, bf16, use_compile, permute_masks=None,
+        logger=None):
     if not inference:
         run_train(dataset, model, runs, epochs, lr, weight_decay,
-                  early_stopping, profiling, permute_masks, logger)
+                  early_stopping, profiling, use_compile, permute_masks,
+                  logger)
     else:
-        run_inference(dataset, model, epochs, profiling, bf16, permute_masks,
-                      logger)
+        run_inference(dataset, model, epochs, profiling, bf16, use_compile,
+                      permute_masks, logger)
 
 
 def train(model, optimizer, data):
