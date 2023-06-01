@@ -181,7 +181,7 @@ def scatter_argmax(src: Tensor, index:Tensor, dim_size: int) -> Tensor:
                                               dim=0, index=index, src=src,
                                               reduce="amax")
             argwhere_idx = torch.argwhere(
-                t == scatter_max_out[index]).reshape(-1)
+                src == scatter_max_out[index]).reshape(-1)
             if dim_size <= argwhere_idx.numel():
                 argmax = argwhere_idx[:dim_size]
             else:
