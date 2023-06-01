@@ -19,7 +19,6 @@ def test_local_dataset():
     dataset = FakeHeteroDataset()
     data = dataset[0]
 
-    print(data)
     # init edge_index and node_features.
     edge_dict, feature_dict, edge_ids_dict, node_ids_dict, y_dict = {}, {}, {}, {}, {}
     for etype in data.edge_types:
@@ -32,8 +31,6 @@ def test_local_dataset():
         if hasattr(data[ntype], 'y'):
             y_dict[ntype] = data[ntype].y
  
-    print(y_dict)
-
     # define local_dataset and init_graph() and init_node_features()
     pyg_dataset = LocalDataset()
     pyg_dataset.init_graph(
@@ -76,4 +73,3 @@ def test_local_dataset():
 
     assert torch.equal(y_dict['paper'], pyg_dataset.get_node_label('paper'))
 
-test_local_dataset()
