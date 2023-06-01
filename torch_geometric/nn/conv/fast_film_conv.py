@@ -138,11 +138,11 @@ class FastFiLMConv(MessagePassing):
             propogate_x = self.lins(propogate_x, type_vec_lins)
 
             # propogate
-            out += sum(
+            out += torch.sum(torch.stack(
                 self.propagate(
                     edge_index, x=propogate_x, beta=beta, gamma=gamma,
                     size=None).split(
-                        int(propogate_x.size(0) / self.num_relations), dim=0))
+                        int(propogate_x.size(0) / self.num_relations), dim=0)), dim=0)
 
         return out
 
