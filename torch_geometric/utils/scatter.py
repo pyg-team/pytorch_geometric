@@ -189,5 +189,5 @@ def scatter_argmax(src: Tensor, index: Tensor, dim_size: int) -> Tensor:
                 argmax = torch.cat(
                     (argwhere_idx,
                      torch.full((dim_size - argwhere_idx.numel(), ), num_idx,
-                                device=t.device, dtype=t.dtype)))
+                                device=src.device, dtype=src.dtype)))
     return argmax
