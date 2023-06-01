@@ -79,8 +79,8 @@ class RevGNN(torch.nn.Module):
 
 
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
-
-transform = T.Compose([T.AddSelfLoops(), T.ToSparseTensor()])
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+transform = T.Compose([T.AddSelfLoops(), T.ToDevice(device), T.ToSparseTensor()])
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root, transform=transform)
 evaluator = Evaluator(name='ogbn-products')
@@ -96,7 +96,6 @@ train_loader = RandomNodeLoader(data, num_parts=10, shuffle=True,
 # the full batch graph into your GPU:
 test_loader = RandomNodeLoader(data, num_parts=1, num_workers=5)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = RevGNN(
     in_channels=dataset.num_features,
     hidden_channels=160,
@@ -116,7 +115,6 @@ def train(epoch):
 
     total_loss = total_examples = 0
     for data in train_loader:
-        data = data.to(device)
         optimizer.zero_grad()
 
         # Memory-efficient aggregations:
@@ -145,7 +143,6 @@ def test(epoch):
     pbar.set_description(f'Evaluating epoch: {epoch:03d}')
 
     for data in test_loader:
-        data = data.to(device)
 
         # Memory-efficient aggregations
         out = model(data.x, data.adj_t).argmax(dim=-1, keepdim=True)
