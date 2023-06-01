@@ -5,7 +5,8 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.typing import torch_scatter, WITH_TORCH_SCATTER
+from torch_geometric.typing import WITH_TORCH_SCATTER, torch_scatter
+
 if WITH_TORCH_SCATTER:
     from torch_scatter import scatter_max
 
@@ -168,7 +169,7 @@ def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
     return src.view(size).expand_as(ref)
 
 
-def scatter_argmax(src: Tensor, index:Tensor, dim_size: int) -> Tensor:
+def scatter_argmax(src: Tensor, index: Tensor, dim_size: int) -> Tensor:
     if WITH_TORCH_SCATTER:
         _, argmax = scatter_max(src, index, dim=0, dim_size=dim_size)
     else:
@@ -187,6 +188,6 @@ def scatter_argmax(src: Tensor, index:Tensor, dim_size: int) -> Tensor:
             else:
                 argmax = torch.cat(
                     (argwhere_idx,
-                     torch.full((dim_size - argwhere_idx.numel(), ),
-                                num_idx, device=t.device, dtype=t.dtype)))
+                     torch.full((dim_size - argwhere_idx.numel(), ), num_idx,
+                                device=t.device, dtype=t.dtype)))
     return argmax
