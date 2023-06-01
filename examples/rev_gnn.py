@@ -14,13 +14,6 @@ from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.loader import RandomNodeLoader
 from torch_geometric.nn import GroupAddRev, SAGEConv
-from torch_geometric.typing import WITH_TORCH_SCATTER
-
-if WITH_TORCH_SCATTER:
-    from torch_geometric.typing import SparseTensor
-else:
-    from torch_geometric.utils import to_torch_sparse_tensor
-
 from torch_geometric.utils import index_to_mask
 
 
@@ -87,7 +80,7 @@ class RevGNN(torch.nn.Module):
 
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
 
-transform = T.AddSelfLoops()
+transform = T.compose([T.AddSelfLoops(), T.ToSparseTensor()])
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root, transform=transform)
 evaluator = Evaluator(name='ogbn-products')
@@ -127,12 +120,7 @@ def train(epoch):
         optimizer.zero_grad()
 
         # Memory-efficient aggregations:
-        if WITH_TORCH_SCATTER:
-            adj_t = SparseTensor.from_edge_index(data.edge_index).t()
-        else:
-            adj_t = to_torch_sparse_tensor(data.edge_index,
-                                           layout=torch.sparse_csc)
-        out = model(data.x, adj_t)[data.train_mask]
+        out = model(data.x, data.adj_t)[data.train_mask]
         loss = F.cross_entropy(out, data.y[data.train_mask].view(-1))
         loss.backward()
         optimizer.step()
@@ -160,12 +148,7 @@ def test(epoch):
         data = data.to(device)
 
         # Memory-efficient aggregations
-        if WITH_TORCH_SCATTER:
-            adj_t = SparseTensor.from_edge_index(data.edge_index).t()
-        else:
-            adj_t = to_torch_sparse_tensor(data.edge_index,
-                                           layout=torch.sparse_csc)
-        out = model(data.x, adj_t).argmax(dim=-1, keepdim=True)
+        out = model(data.x, data.adj_t).argmax(dim=-1, keepdim=True)
 
         for split in ['train', 'valid', 'test']:
             mask = data[f'{split}_mask']
