@@ -1,6 +1,6 @@
 import copy
 
-from .scatter import scatter
+from .scatter import scatter, scatter_argmax
 from .segment import segment
 from .sort import index_sort
 from .degree import degree
@@ -54,6 +54,7 @@ from .train_test_split_edges import train_test_split_edges
 
 __all__ = [
     'scatter',
+    'scatter_argmax',
     'segment',
     'index_sort',
     'degree',

@@ -2,8 +2,8 @@ import pytest
 import torch
 
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA, withPackage
-from torch_geometric.utils import scatter
+from torch_geometric.testing import withCUDA, withPackage, disableExtensions
+from torch_geometric.utils import scatter, scatter_argmax
 
 
 def test_scatter_validate():
@@ -69,6 +69,14 @@ def test_scatter_any(device):
         for j in range(4):
             assert float(out[i, j]) in src[2 * i:2 * i + 2, j].tolist()
 
+@withCUDA
+@disableExtensions
+def test_scatter_argmax(device):
+    src = torch.arange(6, device=device)
+    index = torch.tensor([0, 0, 1, 1, 2, 2], device=device)
+
+    argmax = scatter_argmax(src, index, dim_size=6)
+    assert argmax == torch.tensor([6, 1, 6, 3, 6, 5]).to(device)
 
 if __name__ == '__main__':
     # Insights on GPU:
