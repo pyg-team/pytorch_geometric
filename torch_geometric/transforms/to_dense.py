@@ -20,7 +20,7 @@ class ToDense(BaseTransform):
     def __init__(self, num_nodes: Optional[int] = None):
         self.num_nodes = num_nodes
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         assert data.edge_index is not None
 
         orig_num_nodes = data.num_nodes

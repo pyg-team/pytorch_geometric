@@ -214,8 +214,6 @@ def test_hetero_data_subgraph():
         'conf': torch.randperm(x_conference.size(0))[:2],
     }
 
-    subset_sorted = {key: torch.sort(idx)[0] for key, idx in subset.items()}
-
     out = data.subgraph(subset)
     out.validate(raise_on_error=True)
 
@@ -224,7 +222,7 @@ def test_hetero_data_subgraph():
 
     for key in out.node_types:
         assert len(out[key]) == len(data[key])
-        assert torch.allclose(out[key].x, data[key].x[subset_sorted[key]])
+        assert torch.allclose(out[key].x, data[key].x[subset[key]])
         assert out[key].num_nodes == subset[key].size(0)
         if key == 'paper':
             assert out['paper'].name == 'paper'
@@ -235,8 +233,8 @@ def test_hetero_data_subgraph():
     for key in out.node_types:
         node_mask[key] = torch.zeros((data[key].num_nodes, ), dtype=torch.bool)
         node_map[key] = torch.zeros((data[key].num_nodes, ), dtype=torch.long)
-        node_mask[key][subset_sorted[key]] = True
-        node_map[key][subset_sorted[key]] = torch.arange(subset[key].size(0))
+        node_mask[key][subset[key]] = True
+        node_map[key][subset[key]] = torch.arange(subset[key].size(0))
 
     edge_mask = {}  # for each edge type a mask of edges in the subgraph
     subgraph_edge_index = {

@@ -243,9 +243,8 @@ class HeteroLinear(torch.nn.Module):
             x (torch.Tensor): The input features.
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
-
-        if torch_geometric.typing.WITH_PYG_LIB and (self.use_segmm == -1
-                                                    or bool(self.use_segmm)):
+        if (torch_geometric.typing.WITH_PYG_LIB
+                and (self.use_segmm == -1 or bool(self.use_segmm))):
             assert self.weight is not None
 
             perm: Optional[Tensor] = None
@@ -272,7 +271,10 @@ class HeteroLinear(torch.nn.Module):
                 mask = type_vec == i
                 if mask.numel() == 0:
                     continue
-                out[mask] = F.linear(x[mask], self.weight[i].T)
+                subset_out = F.linear(x[mask], self.weight[i].T)
+                # The data type may have changed with mixed precision:
+                out[mask] = subset_out.to(out.dtype)
+
             if self.bias is not None:
                 out += self.bias[type_vec]
         return out
@@ -373,7 +375,10 @@ class HeteroDictLinear(torch.nn.Module):
         """
         out_dict = {}
 
-        if torch_geometric.typing.WITH_GMM:
+        # Only apply fused kernel for more than 10 types, otherwise default
+        # back to sequential computation (which is faster for these cases).
+        if (torch_geometric.typing.WITH_GMM and not torch.jit.is_scripting()
+                and len(x_dict) >= 10):
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:
