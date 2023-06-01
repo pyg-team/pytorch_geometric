@@ -94,11 +94,10 @@ for split in ['train', 'valid', 'test']:
     data[f'{split}_mask'] = index_to_mask(split_idx[split], data.y.shape[0])
 
 train_loader = RandomNodeLoader(data, num_parts=10, shuffle=True,
-                                num_workers=5, transform=dataloader_transform)
+                                num_workers=5)
 # Increase the num_parts of the test loader if you cannot fit
 # the full batch graph into your GPU:
-test_loader = RandomNodeLoader(data, num_parts=1, num_workers=5,
-                               transform=dataloader_transform)
+test_loader = RandomNodeLoader(data, num_parts=1, num_workers=5)
 
 model = RevGNN(
     in_channels=dataset.num_features,
@@ -119,6 +118,7 @@ def train(epoch):
 
     total_loss = total_examples = 0
     for data in train_loader:
+        data = dataloader_transform(data)
         optimizer.zero_grad()
 
         # Memory-efficient aggregations:
@@ -147,7 +147,7 @@ def test(epoch):
     pbar.set_description(f'Evaluating epoch: {epoch:03d}')
 
     for data in test_loader:
-
+        data = dataloader_transform(data)
         # Memory-efficient aggregations
         out = model(data.x, data.adj_t).argmax(dim=-1, keepdim=True)
 
