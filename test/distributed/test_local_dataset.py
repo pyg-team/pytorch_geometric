@@ -6,37 +6,48 @@ from tqdm import tqdm
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
+from torch_geometric.nn import Linear, HGTConv
+
 from torch_geometric.distributed import LocalDataset
+
+from torch_geometric.data import HeteroData
+from torch_geometric.testing import get_random_edge_index,FakeHeteroDataset
 
 
 def test_local_dataset():
 
-    path = osp.join(osp.dirname(osp.realpath(__file__)), './ogbn-mags')
-    transform = T.ToUndirected(merge=True)
-    dataset = OGB_MAG(path, preprocess='metapath2vec', transform=transform)
+    dataset = FakeHeteroDataset()
     data = dataset[0]
-  
+
+    print(data)
     # init edge_index and node_features.
-    edge_dict, feature_dict, edge_ids_dict, node_ids_dict = {}, {}, {}, {}
+    edge_dict, feature_dict, edge_ids_dict, node_ids_dict, y_dict = {}, {}, {}, {}, {}
     for etype in data.edge_types:
-      edge_dict[etype] = data[etype]['edge_index']
-      edge_ids_dict[etype] = torch.tensor([1, 2, 3, 5, 7, 4])
+        edge_dict[etype] = data[etype]['edge_index']
+        edge_ids_dict[etype] = torch.tensor([1, 2, 3, 5, 7, 4])
     
     for ntype in data.node_types:
-      feature_dict[ntype] = data[ntype].x.clone(memory_format=torch.contiguous_format)
-      node_ids_dict[ntype] = torch.tensor([1, 2, 3, 5, 8, 4])
-  
+        feature_dict[ntype] = data[ntype].x.clone(memory_format=torch.contiguous_format)
+        node_ids_dict[ntype] = torch.tensor([1, 2, 3, 5, 8, 4])
+        if hasattr(data[ntype], 'y'):
+            y_dict[ntype] = data[ntype].y
+ 
+    print(y_dict)
+
     # define local_dataset and init_graph() and init_node_features()
     pyg_dataset = LocalDataset()
     pyg_dataset.init_graph(
-      edge_index=edge_dict,
-      edge_ids=edge_ids_dict
+        edge_index=edge_dict,
+        edge_ids=edge_ids_dict
     )
     pyg_dataset.init_node_features(
-      node_feature_data=feature_dict,
-      ids= node_ids_dict
+        node_feature_data=feature_dict,
+        ids= node_ids_dict
     )
 
+    pyg_dataset.init_node_labels(
+        node_label_data=y_dict
+    )
     # get the graph and node_features from the graphstore/featurestore in LocalDataset
     edge_attrs=pyg_dataset.graph.get_all_edge_attrs()
 
@@ -63,4 +74,6 @@ def test_local_dataset():
     assert (node_feat==feature_dict)
     assert (node_ids==node_ids_dict)
 
+    assert torch.equal(y_dict['paper'], pyg_dataset.get_node_label('paper'))
 
+test_local_dataset()
