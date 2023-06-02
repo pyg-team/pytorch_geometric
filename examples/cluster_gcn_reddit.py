@@ -15,7 +15,8 @@ cluster_data = ClusterData(data, num_parts=1500, recursive=False,
 train_loader = ClusterLoader(cluster_data, batch_size=20, shuffle=True,
                              num_workers=12)
 
-subgraph_loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1024, shuffle=False, num_workers=12)
+subgraph_loader = NeighborLoader(data, num_neighbors=[-1], batch_size=1024,
+                                 shuffle=False, num_workers=12)
 
 
 class Net(torch.nn.Module):
