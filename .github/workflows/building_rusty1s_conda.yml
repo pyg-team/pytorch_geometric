@@ -11,8 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-18.04, macos-10.15, windows-2019]
-        # We have troube building for Python 3.11 due to version conflicts.
-        python-version: ['3.7', '3.8', '3.9', '3.10']  # '3.11'
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
         torch-version: [1.12.0, 1.13.0, 2.0.0]
         cuda-version: ['cpu', 'cu102', 'cu113', 'cu116', 'cu117', 'cu118']
         exclude:
