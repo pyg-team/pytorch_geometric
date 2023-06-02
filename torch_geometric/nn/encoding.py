@@ -96,44 +96,61 @@ class TemporalEncoding(torch.nn.Module):
         return f'{self.__class__.__name__}({self.out_channels})'
 
 
+# TODO: Generalize the module when needed
 class _MLPMixer(torch.nn.Module):
-    def __init__(self, in_channels: int, out_channels: int) -> None:
+    """1-layer MLP-mixer for GraphMixer.
+
+    Args:
+        num_tokens (int): The number of tokens (patches) in each sample.
+        in_channels (int): Input channels.
+        out_channels (int): Output channels.
+    """
+    def __init__(self, num_tokens: int, in_channels: int,
+                 out_channels: int) -> None:
         super().__init__()
-        # H_token
-        self.layer_norm_token = torch.nn.LayerNorm((in_channels, ))
-        self.lin_token_1 = torch.nn.Linear(in_channels, in_channels)
-        self.gelu_token = torch.nn.GELU()
-        self.lin_token_2 = torch.nn.Linear(in_channels, in_channels)
+        # token mixing
+        self.token_layer_norm = torch.nn.LayerNorm((in_channels, ))
+        self.token_lin_1 = torch.nn.Linear(num_tokens, num_tokens)
+        self.token_lin_2 = torch.nn.Linear(num_tokens, num_tokens)
 
-        # H_channel
-        self.layer_norm_channel = torch.nn.LayerNorm((in_channels, ))
-        self.lin_channel_1 = torch.nn.Linear(in_channels, in_channels)
-        self.gelu_channel = torch.nn.GELU()
-        self.lin_channel_2 = torch.nn.Linear(in_channels, in_channels)
+        # channel mixing
+        self.channel_layer_norm = torch.nn.LayerNorm((in_channels, ))
+        self.channel_lin_1 = torch.nn.Linear(in_channels, in_channels)
+        self.channel_lin_2 = torch.nn.Linear(in_channels, in_channels)
 
-        # MLP head
-        self.lin_head = torch.nn.Linear(in_channels, out_channels)
+        # head
+        self.head_layer_norm = torch.nn.LayerNorm((in_channels, ))
+        self.head_lin = torch.nn.Linear(in_channels, out_channels)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # TODO: check again. some tensors needs transposing
-        # x: [num_edges, num_features+d]
-        # H_token
-        h = self.layer_norm_token(x)
-        h = self.lin_token_1(h)
-        h = self.gelu_token(h)
-        h_token = self.lin_token_2(h) + x
+        # input:  [N, num_tokens, in_channels]
+        # output: [N, out_channels]
 
-        # H_channel
-        h = self.layer_norm_channel(h_token)
-        h = self.lin_channel_1(h)
-        h = self.gelu_channel(h)
-        h_channel = self.lin_channel_2(h) + h_token
+        # token mixing
+        h = self.token_layer_norm(x).mT  # [N, in_channels, num_tokens]
+        h = self.token_lin_1(h)  # [N, in_channels, num_tokens]
+        h = torch.nn.functional.gelu(h)  # [N, in_channels, num_tokens]
+        h = torch.nn.functional.dropout(h, training=self.training)
+        h = self.token_lin_2(h)  # [N, in_channels, num_tokens]
+        h = torch.nn.functional.dropout(h, training=self.training)
+        h_token = h.mT + x  # [N, num_tokens, in_channels]
+
+        # channel mixing
+        h = self.channel_layer_norm(h_token)  # [N, num_tokens, in_channels]
+        h = self.channel_lin_1(h)  # [N, num_tokens, in_channels]
+        h = torch.nn.functional.gelu(h)  # [N, num_tokens, in_channels]
+        h = torch.nn.functional.dropout(h, training=self.training)
+        h = self.channel_lin_2(h)  # [N, num_tokens, in_channels]
+        h = torch.nn.functional.dropout(h, training=self.training)
+        h_channel = h + h_token  # [N, num_tokens, in_channels]
+
+        h_channel = self.head_layer_norm(h_channel)
 
         # global pooling
-        t = torch.mean(h_channel, dim=1)
+        t = torch.mean(h_channel, dim=1)  # [N, in_channels]
 
         # MLP head
-        return self.lin_head(t)
+        return self.head_lin(t)  # [N, out_channels]
 
     def __repr__(self) -> str:
         return (f"{self.__class__.__name__}("
@@ -163,14 +180,16 @@ class LinkEncoding(torch.nn.Module):
         out_channels (int): Size of each output sample.
 
     Example:
-        # The GraphMixer paper uses the following args for GDELTLite dataset
-        link_encoder = LinkEncoding(
-            K=30,
-            num_edge_features=186,
-            hidden_channels=100,
-            out_channels=100,
-            time_channels=100,
-        )
+
+        >>> # GraphMixer paper uses the following args for GDELTLite dataset
+        >>> link_encoder = LinkEncoding(
+        ...     K=30,
+        ...     num_edge_features=186,
+        ...     hidden_channels=100,
+        ...     out_channels=100,
+        ...     time_channels=100,
+        ... )
+
     """
     def __init__(
         self,
@@ -196,6 +215,7 @@ class LinkEncoding(torch.nn.Module):
 
         # information summariser
         self.mlp_mixer = _MLPMixer(
+            num_tokens=K,
             in_channels=hidden_channels,
             out_channels=out_channels,
         )
