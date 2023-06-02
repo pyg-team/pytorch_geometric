@@ -181,11 +181,6 @@ class BaseStorage(MutableMapping):
         r"""Applies the function :obj:`func`, either to all attributes or only
         the ones given in :obj:`*args`."""
         for key, value in list(self.items(*args)):
-            if key == 'n_id':
-                self['n_id_cpu'] = value
-            if key == 'seed_time':
-                self['seed_time_cpu'] = value
-
             self[key] = recursive_apply(value, func)
         return self
 
