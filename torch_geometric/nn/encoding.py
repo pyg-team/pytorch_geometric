@@ -237,7 +237,8 @@ class LinkEncoding(torch.nn.Module):
             edge_time (torch.Tensor): ``[N,]``
 
         Returns:
-            A tensor of size ``[N, out_channels]``.
+            A tensor of size ``[N/K, out_channels]`` where ``N/K`` denotes
+            the number of nodes in the mini-batch.
         """
         time_info = self.temporal_encoder(edge_time)
         edge_attr_with_time = torch.cat((time_info, edge_attr), dim=1)
