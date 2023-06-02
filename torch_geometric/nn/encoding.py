@@ -239,11 +239,11 @@ class LinkEncoding(torch.nn.Module):
         Returns:
             A tensor of size ``[N, out_channels]``.
         """
-        time_info = self.temporal_encoder(edge_time)  # [N, time_channels]
-        edge_attr_with_time = torch.cat((time_info, edge_attr), dim=1)  # [N, time_channels + num_edge_features]
-        edge_attr_with_time = self.temporal_encoder_head(edge_attr_with_time)  # [N, hidden_channels]
-        edge_attr_with_time = edge_attr_with_time.view(-1, self.K, self.hidden_channels)  # [N/K, K, hidden_channels]
-        return self.mlp_mixer(edge_attr_with_time)  # [N, out_channels]
+        time_info = self.temporal_encoder(edge_time)
+        edge_attr_with_time = torch.cat((time_info, edge_attr), dim=1)
+        edge_attr_with_time = self.temporal_encoder_head(
+            edge_attr_with_time).view(-1, self.K, self.hidden_channels)
+        return self.mlp_mixer(edge_attr_with_time)
 
     def __repr__(self):
         return (f"{self.__class__.__name__}("
