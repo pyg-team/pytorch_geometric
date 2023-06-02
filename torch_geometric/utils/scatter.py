@@ -5,10 +5,7 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.typing import WITH_TORCH_SCATTER, torch_scatter
-
-if WITH_TORCH_SCATTER:
-    from torch_scatter import scatter_max
+from torch_geometric.typing import torch_scatter
 
 major, minor, _ = torch.__version__.split('.', maxsplit=2)
 major, minor = int(major), int(minor)
@@ -169,25 +166,28 @@ def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
     return src.view(size).expand_as(ref)
 
 
-def scatter_argmax(src: Tensor, index: Tensor, dim_size: int) -> Tensor:
-    if WITH_TORCH_SCATTER:
-        _, argmax = scatter_max(src, index, dim=0, dim_size=dim_size)
-    else:
-        num_idx = index.numel()
-        if num_idx == 0:
-            argmax = torch.zeros(dim_size, dtype=src.dtype, device=src.device)
-        else:
-            scatter_max_out = torch.zeros(dim_size, device=src.device,
-                                          dtype=src.dtype).scatter_reduce_(
-                                              dim=0, index=index, src=src,
-                                              reduce="amax")
-            argwhere_idx = torch.argwhere(
-                src == scatter_max_out[index]).reshape(-1)
-            if dim_size <= argwhere_idx.numel():
-                argmax = argwhere_idx[:dim_size]
-            else:
-                argmax = torch.cat(
-                    (argwhere_idx,
-                     torch.full((dim_size - argwhere_idx.numel(), ), num_idx,
-                                device=src.device, dtype=src.dtype)))
-    return argmax
+def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
+                   dim_size: Optional[int] = None) -> Tensor:
+
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
+        return out[1]
+
+    # Only implemented under certain conditions for now :(
+    assert dim == 0
+    assert src.dim() == 1 and index.dim() == 1
+
+    if dim_size is None:
+        dim_size = index.max() + 1 if index.numel() > 0 else 0
+
+    # Add a small noise to resolve duplicate max values.
+    src = src.detach().to(torch.float)
+    src = src + torch.randn_like(src).mul_(1e-3)
+
+    res = src.new_empty(dim_size)
+    res.scatter_reduce_(0, index, src, reduce='max', include_self=False)
+
+    out = index.new_full((dim_size, ), fill_value=dim_size - 1)
+    out[index.unique()] = torch.argwhere(src == res[index]).view(-1)
+
+    return out

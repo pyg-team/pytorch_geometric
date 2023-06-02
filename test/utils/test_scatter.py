@@ -3,7 +3,8 @@ import torch
 
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import disableExtensions, withCUDA, withPackage
-from torch_geometric.utils import scatter, scatter_argmax
+from torch_geometric.utils import scatter
+from torch_geometric.utils.scatter import scatter_argmax
 
 
 def test_scatter_validate():
@@ -73,11 +74,11 @@ def test_scatter_any(device):
 @withCUDA
 @disableExtensions
 def test_scatter_argmax(device):
-    src = torch.arange(6, device=device)
-    index = torch.tensor([0, 0, 1, 1, 2, 2], device=device)
+    src = torch.arange(5, device=device)
+    index = torch.tensor([0, 0, 2, 2, 3], device=device)
 
     argmax = scatter_argmax(src, index, dim_size=6)
-    assert (argmax == torch.tensor([1, 3, 5, 6, 6, 6]).to(device)).all()
+    assert argmax.tolist() == [1, 5, 3, 4, 5, 5]
 
 
 if __name__ == '__main__':
