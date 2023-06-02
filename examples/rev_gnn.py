@@ -81,11 +81,10 @@ class RevGNN(torch.nn.Module):
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-dataset_transform = T.AddSelfLoops()
-dataloader_transform = T.Compose([T.ToDevice(device), T.ToSparseTensor()])
+transform = T.Compose([T.ToDevice(device), T.ToSparseTensor()])
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
 dataset = PygNodePropPredDataset('ogbn-products', root,
-                                 transform=dataset_transform)
+                                 transform=T.AddSelfLoops())
 evaluator = Evaluator(name='ogbn-products')
 
 data = dataset[0]
@@ -118,10 +117,10 @@ def train(epoch):
 
     total_loss = total_examples = 0
     for data in train_loader:
-        data = dataloader_transform(data)
         optimizer.zero_grad()
 
         # Memory-efficient aggregations:
+        data = transform(data)
         out = model(data.x, data.adj_t)[data.train_mask]
         loss = F.cross_entropy(out, data.y[data.train_mask].view(-1))
         loss.backward()
@@ -147,8 +146,8 @@ def test(epoch):
     pbar.set_description(f'Evaluating epoch: {epoch:03d}')
 
     for data in test_loader:
-        data = dataloader_transform(data)
         # Memory-efficient aggregations
+        data = transform(data)
         out = model(data.x, data.adj_t).argmax(dim=-1, keepdim=True)
 
         for split in ['train', 'valid', 'test']:
