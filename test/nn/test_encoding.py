@@ -31,9 +31,10 @@ def test_link_encoding(device):
     num_nodes = 3
     num_edges = 6
     num_edge_features = 10
-    edge_attr = torch.rand((num_edges, num_edge_features))
-    node_batch = torch.randint(low=0, high=num_nodes, size=(num_edges, ))
-    edge_time = torch.rand(num_edges)
+    edge_attr = torch.rand((num_edges, num_edge_features), device=device)
+    node_batch = torch.randint(low=0, high=num_nodes, size=(num_edges, ),
+                               device=device)
+    edge_time = torch.rand(num_edges, device=device)
 
     K = 3
     hidden_channels = 7
@@ -53,7 +54,5 @@ def test_link_encoding(device):
                             f'out_channels={out_channels}, '
                             f'time_channels={time_channels})')
 
-    edge_attr = torch.rand((num_edges, num_edge_features), device=device)
-    edge_time = torch.rand((num_edges, ), device=device)
     out = encoder(edge_attr, edge_time, node_batch, num_nodes)
     assert out.size() == (num_nodes, out_channels)
