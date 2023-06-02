@@ -114,35 +114,42 @@ class _MLPMixer(torch.nn.Module):
         super().__init__()
         # token mixing
         self.token_layer_norm = torch.nn.LayerNorm((in_channels, ))
-        self.token_lin_1 = torch.nn.Linear(num_tokens, num_tokens)
-        self.token_lin_2 = torch.nn.Linear(num_tokens, num_tokens)
+        self.token_lin_1 = torch.nn.Linear(num_tokens, num_tokens // 2)
+        self.token_lin_2 = torch.nn.Linear(num_tokens // 2, num_tokens)
 
         # channel mixing
         self.channel_layer_norm = torch.nn.LayerNorm((in_channels, ))
-        self.channel_lin_1 = torch.nn.Linear(in_channels, in_channels)
-        self.channel_lin_2 = torch.nn.Linear(in_channels, in_channels)
+        self.channel_lin_1 = torch.nn.Linear(in_channels, 4 * in_channels)
+        self.channel_lin_2 = torch.nn.Linear(4 * in_channels, in_channels)
 
         # head
         self.head_layer_norm = torch.nn.LayerNorm((in_channels, ))
         self.head_lin = torch.nn.Linear(in_channels, out_channels)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            x (torch.Tensor): Tensor of size ``[N, num_tokens, in_channels]``
+
+        Returns:
+            Tensor of size ``[N, out_channels]``
+        """
         # token mixing
         h = self.token_layer_norm(x).mT
         h = self.token_lin_1(h)
         h = torch.nn.functional.gelu(h)
-        h = torch.nn.functional.dropout(h, training=self.training)
+        h = torch.nn.functional.dropout(h, p=0.5, training=self.training)
         h = self.token_lin_2(h)
-        h = torch.nn.functional.dropout(h, training=self.training)
+        h = torch.nn.functional.dropout(h, p=0.5, training=self.training)
         h_token = h.mT + x
 
         # channel mixing
         h = self.channel_layer_norm(h_token)
         h = self.channel_lin_1(h)
         h = torch.nn.functional.gelu(h)
-        h = torch.nn.functional.dropout(h, training=self.training)
+        h = torch.nn.functional.dropout(h, p=0.5, training=self.training)
         h = self.channel_lin_2(h)
-        h = torch.nn.functional.dropout(h, training=self.training)
+        h = torch.nn.functional.dropout(h, p=0.5, training=self.training)
         h_channel = h + h_token
 
         # head
@@ -164,15 +171,13 @@ class LinkEncoding(torch.nn.Module):
     :class:`LinkEncoding` is composed of two components. The first component is
     :class:`TemporalEncoding` that maps each edge timestamp to a
     ``time_channels`` dimensional vector.
-    The second component, 1-layer MLP-mixer, maps the encoded timestamp feature
-    concatenated with its corresponding link feature to a ``out_channels``
-    dimensional vector.
+    The second component, 1-layer MLP-mixer, maps each encoded timestamp
+    feature concatenated with its corresponding link feature to a
+    ``out_channels`` dimensional vector.
 
     Args:
         K (int): The number of most recent teomporal links to use to construct
-            an intermediate feature representation for each node. If the number
-            of teomporal links that their node has is less than :math:`K`, the
-            intermediate feature matrix will be zero-padded.
+            an intermediate feature representation for each node.
         num_edge_features (int): The number of edge features used to construct
             a linear layer encoding the output of :class:`TemporalEncoding`
             concatenated with ``edge_attr``.
@@ -234,10 +239,11 @@ class LinkEncoding(torch.nn.Module):
         Returns:
             A tensor of size ``[N, out_channels]``.
         """
-        time_info = self.temporal_encoder(edge_time)
-        edge_attr_with_time = torch.cat((time_info, edge_attr), dim=1)
-        edge_attr_with_time = self.temporal_encoder_head(edge_attr_with_time)
-        return self.mlp_mixer(edge_attr_with_time)
+        time_info = self.temporal_encoder(edge_time)  # [N, time_channels]
+        edge_attr_with_time = torch.cat((time_info, edge_attr), dim=1)  # [N, time_channels + num_edge_features]
+        edge_attr_with_time = self.temporal_encoder_head(edge_attr_with_time)  # [N, hidden_channels]
+        edge_attr_with_time = edge_attr_with_time.view(-1, self.K, self.hidden_channels)  # [N/K, K, hidden_channels]
+        return self.mlp_mixer(edge_attr_with_time)  # [N, out_channels]
 
     def __repr__(self):
         return (f"{self.__class__.__name__}("
