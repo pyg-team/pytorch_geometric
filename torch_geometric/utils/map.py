@@ -57,7 +57,7 @@ def map_index(
     # operation by creating a helper vector to perform the mapping.
     # NOTE This will potentially consumes a large chunk of memory
     # (max_index=10 million => ~75MB), so we cap it at a reasonable size:
-    THRESHOLD = 40_000_000 if src.is_cuda else 20_000_000
+    THRESHOLD = 40_000_000 if src.is_cuda else 10_000_000
     if max_index <= THRESHOLD:
         if inclusive:
             assoc = src.new_empty(max_index + 1)
@@ -128,7 +128,12 @@ def map_index(
                             left_on='left_ser', right_index=True, sort=True)
 
         if inclusive:
-            out = from_dlpack(result['right_ser'].to_dlpack())
+            try:
+                out = from_dlpack(result['right_ser'].to_dlpack())
+            except ValueError:
+                raise ValueError("Found invalid entries in 'src' that do not "
+                                 "have a corresponding entry in 'index'. Set "
+                                 "`inclusive=False` to ignore these entries.")
         else:
             out = from_dlpack(result['right_ser'].fillna(-1).to_dlpack())
 

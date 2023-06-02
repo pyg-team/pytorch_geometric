@@ -38,19 +38,40 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=str, default='cuda')
     args = parser.parse_args()
 
-    src = torch.randint(0, 50_000_000, (100_000, ), device=args.device)
-    index = src.unique()[:50_000]
+    src = torch.randint(0, 100_000_000, (100_000, ), device=args.device)
+    index = src.unique()
 
-    def trivial_map(src, index):
-        mask = src.new_full((src.max() + 1, ), -1)
-        mask[index] = torch.arange(index.numel(), device=index.device)
+    def trivial_map(src, index, max_index, inclusive):
+        if max_index is None:
+            max_index = max(src.max(), index.max())
 
-        return mask[src], None
+        if inclusive:
+            assoc = src.new_empty(max_index + 1)
+        else:
+            assoc = src.new_full((max_index + 1, ), -1)
+        assoc[index] = torch.arange(index.numel(), device=index.device)
+        out = assoc[src]
 
+        if inclusive:
+            return out, None
+        else:
+            mask = out != -1
+            return out[mask], mask
+
+    print('Inclusive:')
     benchmark(
-        funcs=[map_index, trivial_map],
-        func_names=['map_index', 'trivial'],
-        args=(src, index),
-        num_steps=100 if args.device == 'cpu' else 100,
-        num_warmups=50 if args.device == 'cpu' else 50,
+        funcs=[trivial_map, map_index],
+        func_names=['trivial', 'map_index'],
+        args=(src, index, None, True),
+        num_steps=100,
+        num_warmups=50,
+    )
+
+    print('Exclusive:')
+    benchmark(
+        funcs=[trivial_map, map_index],
+        func_names=['trivial', 'map_index'],
+        args=(src, index[:50_000], None, False),
+        num_steps=100,
+        num_warmups=50,
     )
