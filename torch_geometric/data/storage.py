@@ -180,7 +180,7 @@ class BaseStorage(MutableMapping):
     def apply(self, func: Callable, *args: List[str]):
         r"""Applies the function :obj:`func`, either to all attributes or only
         the ones given in :obj:`*args`."""
-        for key, value in list(self.items(*args)):
+        for key, value in self.items(*args):
             self[key] = recursive_apply(value, func)
         return self
 
