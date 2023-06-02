@@ -4,7 +4,7 @@ from torch.nn import ModuleList
 from tqdm import tqdm
 
 from torch_geometric.datasets import Reddit
-from torch_geometric.loader import ClusterData, ClusterLoader, NeighborSampler
+from torch_geometric.loader import ClusterData, ClusterLoader, NeighborLoader
 from torch_geometric.nn import SAGEConv
 
 dataset = Reddit('../data/Reddit')
