@@ -164,3 +164,28 @@ else:  # pragma: no cover
 def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
     size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
     return src.view(size).expand_as(ref)
+
+
+def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
+                   dim_size: Optional[int] = None) -> Tensor:
+
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
+        return out[1]
+
+    # Only implemented under certain conditions for now :(
+    assert dim == 0
+    assert src.dim() == 1 and index.dim() == 1
+
+    if dim_size is None:
+        dim_size = index.max() + 1 if index.numel() > 0 else 0
+
+    res = src.new_empty(dim_size)
+    res.scatter_reduce_(0, index, src.detach(), reduce='max',
+                        include_self=False)
+
+    out = index.new_full((dim_size, ), fill_value=dim_size - 1)
+    nonzero = (src == res[index]).nonzero().view(-1)
+    out[index[nonzero]] = nonzero
+
+    return out
