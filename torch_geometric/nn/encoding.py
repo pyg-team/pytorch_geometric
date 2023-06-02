@@ -192,7 +192,7 @@ class LinkEncoding(torch.nn.Module):
     """
     def __init__(
         self,
-        K: int,  # TODO: check ref impl for validation
+        K: int,
         num_edge_features: int,
         hidden_channels: int,
         out_channels: int,
@@ -229,47 +229,30 @@ class LinkEncoding(torch.nn.Module):
         Args:
             edge_attr (torch.Tensor): ``[num_edges, num_edge_features]``
             edge_time (torch.Tensor): ``[num_edges,]``
-            num_nodes (int): The number of nodes in the mini-batch.
 
         Returns:
             A tensor of size ``[num_nodes, out_channels]``.
         """
-        # input:  [num_edges,]
-        # output: [num_edges, time_channels]
-        time_info = self.temporal_encoder(edge_time)
-
-        # input:  [num_edges, time_channels], [num_edges, num_edge_features]
-        # output: [num_edges, time_channels+num_edge_features]
-        edge_attr_with_time = torch.cat((time_info, edge_attr), dim=1)
-
-        # TODO: this linear only resides in their code not in the paper
-        # input:  [num_edges, time_channels+num_edge_features]
-        # output: [num_edges, hidden_channels]
-        edge_attr_with_time = self.temporal_encoder_head(edge_attr_with_time)
+        time_info = self.temporal_encoder(
+            edge_time)  # [num_edges, time_channels]
+        edge_attr_with_time = torch.cat(
+            (time_info, edge_attr),
+            dim=1)  # [num_edges, time_channels+num_edge_features]
+        edge_attr_with_time = self.temporal_encoder_head(
+            edge_attr_with_time)  # [num_edges, hidden_channels]
 
         # we stack all the outputs into a big matrix and zero-pad to
         # the fixed length K denoted as T2(t0). -> [1, K, hidden_channels] ???
         # The node with more zer-padded dimensions has less temporal linked
         # neighbors
-
-        # input:  [num_edges, hidden_channels]
-        # output: [num_nodes*K, hidden_channels]
-        x = torch.zeros((num_nodes * self.K, edge_attr_with_time.size(1)))
+        x = torch.zeros(
+            (num_nodes * self.K,
+             edge_attr_with_time.size(1)))  # [num_nodes*K, hidden_channels]
         x[...] = x[...] + edge_attr_with_time  # FIXME: needs some index
-
-        # input:  [num_nodes*K, hidden_channels]
-        # output: [K, hidden_channels], ..., [K, hidden_channels]
-        x = torch.split(x, self.K)
-
-        # input:  [K, hidden_channels], ..., [K, hidden_channels]
-        # output: [num_nodes, K, hidden_channels]
-        x = torch.stack(x)
-
-        # input:  [num_nodes, K, hidden_channels]
-        # output: [num_nodes, out_channels]
-        out = self.mlp_mixer(edge_attr_with_time)
-
-        return out
+        x = torch.split(
+            x, self.K)  # [K, hidden_channels], ..., [K, hidden_channels]
+        x = torch.stack(x)  # [num_nodes, K, hidden_channels]
+        return self.mlp_mixer(edge_attr_with_time)  # [num_nodes, out_channels]
 
     def __repr__(self):
         return (f"{self.__class__.__name__}("
