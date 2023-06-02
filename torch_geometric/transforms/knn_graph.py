@@ -1,4 +1,5 @@
 import torch
+
 import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -54,7 +55,8 @@ class KNNGraph(BaseTransform):
 
         data.pos = data.pos.to(device)  # Move the pos tensor to the device
         if batch is not None:
-            data.batch = batch.to(device)  # Move the batch tensor to the device
+            data.batch = batch.to(
+                device)  # Move the batch tensor to the device
 
         edge_index = torch_geometric.nn.knn_graph(
             data.pos,
