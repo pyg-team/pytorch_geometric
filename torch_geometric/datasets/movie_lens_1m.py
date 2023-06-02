@@ -20,8 +20,8 @@ RATING_HEADERS = ['userId', 'movieId', 'rating', 'timestamp']
 class MovieLens1M(InMemoryDataset):
     r"""The MovieLens 1M heterogeneous rating dataset, assembled by GroupLens
     Research from the `MovieLens web site <https://movielens.org>`__,
-    consisting of movies (3,883 nodes) and users (6,040 nodes) with 1M
-    ratings between them.
+    consisting of movies (3,883 nodes) and users (6,040 nodes) with
+    approximately 1 million ratings between them.
     User ratings for movies are available as ground truth labels.
     Features of users and movies are encoded according to the `"Inductive
     Matrix Completion Based on Graph Neural Networks"
@@ -61,11 +61,14 @@ class MovieLens1M(InMemoryDataset):
           - 1
           - 1
     """
-
     url = 'https://files.grouplens.org/datasets/movielens/ml-1m.zip'
 
-    def __init__(self, root: str, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         super().__init__(root, transform, pre_transform)
         self.load(self.processed_paths[0], data_cls=HeteroData)
 
@@ -91,9 +94,15 @@ class MovieLens1M(InMemoryDataset):
         data = HeteroData()
 
         # Process movie data:
-        df = pd.read_csv(self.raw_paths[0], sep="::", header=None,
-                         index_col='movieId', names=MOVIE_HEADERS,
-                         encoding="ISO-8859-1", engine="python")
+        df = pd.read_csv(
+            self.raw_paths[0],
+            sep='::',
+            header=None,
+            index_col='movieId',
+            names=MOVIE_HEADERS,
+            encoding='ISO-8859-1',
+            engine='python',
+        )
         movie_mapping = {idx: i for i, idx in enumerate(df.index)}
 
         genres = df['genres'].str.get_dummies('|').values
@@ -104,15 +113,14 @@ class MovieLens1M(InMemoryDataset):
         # Process user data:
         df = pd.read_csv(
             self.raw_paths[1],
-            sep="::",
+            sep='::',
             header=None,
-            index_col="userId",
+            index_col='userId',
             names=USER_HEADERS,
-            dtype="str",
-            encoding="ISO-8859-1",
-            engine="python",
+            dtype='str',
+            encoding='ISO-8859-1',
+            engine='python',
         )
-
         user_mapping = {idx: i for i, idx in enumerate(df.index)}
 
         age = df['age'].str.get_dummies().values
@@ -124,12 +132,17 @@ class MovieLens1M(InMemoryDataset):
         occupation = df['occupation'].str.get_dummies().values
         occupation = torch.from_numpy(occupation).to(torch.float)
 
-        data["user"].x = torch.cat([age, gender, occupation], dim=-1)
+        data['user'].x = torch.cat([age, gender, occupation], dim=-1)
 
         # Process rating data:
-        df = pd.read_csv(self.raw_paths[2], sep="::", header=None,
-                         names=RATING_HEADERS, encoding="ISO-8859-1",
-                         engine="python")
+        df = pd.read_csv(
+            self.raw_paths[2],
+            sep='::',
+            header=None,
+            names=RATING_HEADERS,
+            encoding='ISO-8859-1',
+            engine='python',
+        )
 
         src = [user_mapping[idx] for idx in df['userId']]
         dst = [movie_mapping[idx] for idx in df['movieId']]
