@@ -4,15 +4,19 @@ import torch
 import torch.nn.functional as F
 from torch.optim import Adam
 
+import torch_geometric
 from torch_geometric.loader import DataLoader
 from torch_geometric.profile import timeit, torch_profile
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
-def run_train(train_dataset, test_dataset, model, epochs, batch_size, lr,
-              lr_decay_factor, lr_decay_step_size, weight_decay):
+def run_train(train_dataset, test_dataset, model, epochs, batch_size,
+              use_compile, lr, lr_decay_factor, lr_decay_step_size,
+              weight_decay):
     model = model.to(device)
+    if use_compile:
+        model = torch_geometric.compile(model)
     optimizer = Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
 
     train_loader = DataLoader(train_dataset, batch_size, shuffle=True)
@@ -41,8 +45,11 @@ def run_train(train_dataset, test_dataset, model, epochs, batch_size, lr,
 
 
 @torch.no_grad()
-def run_inference(test_dataset, model, epochs, batch_size, profiling, bf16):
+def run_inference(test_dataset, model, epochs, batch_size, profiling, bf16,
+                  use_compile):
     model = model.to(device)
+    if use_compile:
+        model = torch_geometric.compile(model)
     test_loader = DataLoader(test_dataset, batch_size, shuffle=False)
 
     if torch.cuda.is_available():
@@ -66,12 +73,14 @@ def run_inference(test_dataset, model, epochs, batch_size, profiling, bf16):
 
 def run(train_dataset, test_dataset, model, epochs, batch_size, lr,
         lr_decay_factor, lr_decay_step_size, weight_decay, inference,
-        profiling, bf16):
+        profiling, bf16, use_compile):
     if not inference:
-        run_train(train_dataset, test_dataset, model, epochs, batch_size, lr,
-                  lr_decay_factor, lr_decay_step_size, weight_decay)
+        run_train(train_dataset, test_dataset, model, epochs, batch_size,
+                  use_compile, lr, lr_decay_factor, lr_decay_step_size,
+                  weight_decay)
     else:
-        run_inference(test_dataset, model, epochs, batch_size, profiling, bf16)
+        run_inference(test_dataset, model, epochs, batch_size, profiling, bf16,
+                      use_compile)
 
 
 def train(model, optimizer, train_loader, device):
