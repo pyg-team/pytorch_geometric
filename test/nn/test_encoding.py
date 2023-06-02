@@ -28,27 +28,32 @@ def test_temporal_encoding(device):
 
 @withCUDA
 def test_link_encoding(device):
-    num_edges_per_node = 3
-    num_edge_features = 5
+    num_nodes = 3
+    num_edges = 6
+    num_edge_features = 10
+    edge_attr = torch.rand((num_edges, num_edge_features))
+    node_batch = torch.randint(low=0, high=num_nodes, size=(num_edges, ))
+    edge_time = torch.rand(num_edges)
+
+    K = 3
     hidden_channels = 7
     out_channels = 11
     time_channels = 13
 
     encoder = LinkEncoding(
-        K=num_edges_per_node,
+        K=K,
         num_edge_features=num_edge_features,
         hidden_channels=hidden_channels,
         out_channels=out_channels,
         time_channels=time_channels,
     ).to(device)
-    assert str(encoder) == (f'LinkEncoding(K={num_edges_per_node}, '
+    assert str(encoder) == (f'LinkEncoding(K={K}, '
                             f'num_edge_features={num_edge_features}, '
                             f'hidden_channels={hidden_channels}, '
                             f'out_channels={out_channels}, '
                             f'time_channels={time_channels})')
 
-    num_nodes = 17
-    num_edges = num_nodes * num_edges_per_node
     edge_attr = torch.rand((num_edges, num_edge_features), device=device)
     edge_time = torch.rand((num_edges, ), device=device)
-    assert encoder(edge_attr, edge_time).size() == (num_nodes, out_channels)
+    out = encoder(edge_attr, edge_time, node_batch, num_nodes)
+    assert out.size() == (num_nodes, out_channels)

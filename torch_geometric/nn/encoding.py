@@ -1,7 +1,10 @@
 import math
+from typing import Optional
 
 import torch
 from torch import Tensor
+
+from torch_geometric.utils import index_sort, to_dense_batch
 
 
 class PositionalEncoding(torch.nn.Module):
@@ -126,7 +129,7 @@ class _MLPMixer(torch.nn.Module):
         self.head_layer_norm = torch.nn.LayerNorm((in_channels, ))
         self.head_lin = torch.nn.Linear(in_channels, out_channels)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: Tensor) -> Tensor:
         """
         Args:
             x (torch.Tensor): Tensor of size ``[N, num_tokens, in_channels]``
@@ -228,23 +231,39 @@ class LinkEncoding(torch.nn.Module):
 
     def forward(
         self,
-        edge_attr: torch.Tensor,
-        edge_time: torch.Tensor,
-    ) -> torch.Tensor:
+        edge_attr: Tensor,
+        edge_time: Tensor,
+        node_batch: Tensor,
+        num_nodes: Optional[int] = None,
+    ) -> Tensor:
         """
         Args:
-            edge_attr (torch.Tensor): ``[N, num_edge_features]``
-            edge_time (torch.Tensor): ``[N,]``
+            edge_attr (torch.Tensor): ``[num_edges, num_edge_features]``
+            edge_time (torch.Tensor): ``[num_edges,]``
+            num_batch (torch.Tensor): ``[num_edges,]``
+            num_nodes (int, optional): The number of nodes in the mini-batch.
+                If not provided, it will use ``num_batch.max()+1``.
 
         Returns:
-            A tensor of size ``[N/K, out_channels]`` where ``N/K`` denotes
-            the number of nodes in the mini-batch.
+            A tensor of size ``[num_nodes, out_channels]``
         """
+        if num_nodes is None:
+            num_nodes = node_batch.max() + 1
+
         time_info = self.temporal_encoder(edge_time)
-        edge_attr_with_time = torch.cat((time_info, edge_attr), dim=1)
-        edge_attr_with_time = self.temporal_encoder_head(
-            edge_attr_with_time).view(-1, self.K, self.hidden_channels)
-        return self.mlp_mixer(edge_attr_with_time)
+        edge_attr_time = torch.cat((time_info, edge_attr), dim=1)
+        edge_attr_time = self.temporal_encoder_head(edge_attr_time)
+
+        # zero-pad each node's edges:
+        # [num_edges, hidden_channels] -> [num_nodes*K, hidden_channels]
+        node_batch, indices = index_sort(node_batch)
+        edge_attr_time, _ = to_dense_batch(
+            edge_attr_time[indices],
+            node_batch,
+            max_num_nodes=self.K,
+        )
+        return self.mlp_mixer(
+            edge_attr_time.view(num_nodes, self.K, self.hidden_channels))
 
     def __repr__(self):
         return (f"{self.__class__.__name__}("
