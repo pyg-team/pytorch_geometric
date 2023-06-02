@@ -105,8 +105,12 @@ class _MLPMixer(torch.nn.Module):
         in_channels (int): Input channels.
         out_channels (int): Output channels.
     """
-    def __init__(self, num_tokens: int, in_channels: int,
-                 out_channels: int) -> None:
+    def __init__(
+        self,
+        num_tokens: int,
+        in_channels: int,
+        out_channels: int,
+    ) -> None:
         super().__init__()
         # token mixing
         self.token_layer_norm = torch.nn.LayerNorm((in_channels, ))
@@ -123,37 +127,32 @@ class _MLPMixer(torch.nn.Module):
         self.head_lin = torch.nn.Linear(in_channels, out_channels)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # input:  [N, num_tokens, in_channels]
-        # output: [N, out_channels]
-
         # token mixing
-        h = self.token_layer_norm(x).mT  # [N, in_channels, num_tokens]
-        h = self.token_lin_1(h)  # [N, in_channels, num_tokens]
-        h = torch.nn.functional.gelu(h)  # [N, in_channels, num_tokens]
+        h = self.token_layer_norm(x).mT
+        h = self.token_lin_1(h)
+        h = torch.nn.functional.gelu(h)
         h = torch.nn.functional.dropout(h, training=self.training)
-        h = self.token_lin_2(h)  # [N, in_channels, num_tokens]
+        h = self.token_lin_2(h)
         h = torch.nn.functional.dropout(h, training=self.training)
-        h_token = h.mT + x  # [N, num_tokens, in_channels]
+        h_token = h.mT + x
 
         # channel mixing
-        h = self.channel_layer_norm(h_token)  # [N, num_tokens, in_channels]
-        h = self.channel_lin_1(h)  # [N, num_tokens, in_channels]
-        h = torch.nn.functional.gelu(h)  # [N, num_tokens, in_channels]
+        h = self.channel_layer_norm(h_token)
+        h = self.channel_lin_1(h)
+        h = torch.nn.functional.gelu(h)
         h = torch.nn.functional.dropout(h, training=self.training)
-        h = self.channel_lin_2(h)  # [N, num_tokens, in_channels]
+        h = self.channel_lin_2(h)
         h = torch.nn.functional.dropout(h, training=self.training)
-        h_channel = h + h_token  # [N, num_tokens, in_channels]
+        h_channel = h + h_token
 
+        # head
         h_channel = self.head_layer_norm(h_channel)
-
-        # global pooling
-        t = torch.mean(h_channel, dim=1)  # [N, in_channels]
-
-        # MLP head
-        return self.head_lin(t)  # [N, out_channels]
+        t = torch.mean(h_channel, dim=1)
+        return self.head_lin(t)
 
     def __repr__(self) -> str:
         return (f"{self.__class__.__name__}("
+                f"num_tokens={self.num_tokens}, "
                 f"in_channels={self.in_channels}, "
                 f"out_channels={self.out_channels})")
 
