@@ -75,10 +75,10 @@ def test_scatter_any(device):
 @disableExtensions
 def test_scatter_argmax(device):
     src = torch.arange(5, device=device)
-    index = torch.tensor([0, 0, 2, 2, 3], device=device)
+    index = torch.tensor([2, 2, 0, 0, 3], device=device)
 
     argmax = scatter_argmax(src, index, dim_size=6)
-    assert argmax.tolist() == [1, 5, 3, 4, 5, 5]
+    assert argmax.tolist() == [3, 5, 1, 4, 5, 5]
 
 
 if __name__ == '__main__':

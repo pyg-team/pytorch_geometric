@@ -180,14 +180,12 @@ def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
     if dim_size is None:
         dim_size = index.max() + 1 if index.numel() > 0 else 0
 
-    # Add a small noise to resolve duplicate max values.
-    src = src.detach().to(torch.float)
-    src = src + torch.randn_like(src).mul_(1e-3)
-
     res = src.new_empty(dim_size)
-    res.scatter_reduce_(0, index, src, reduce='max', include_self=False)
+    res.scatter_reduce_(0, index, src.detach(), reduce='max',
+                        include_self=False)
 
     out = index.new_full((dim_size, ), fill_value=dim_size - 1)
-    out[index.unique()] = torch.argwhere(src == res[index]).view(-1)
+    nonzero = (src == res[index]).nonzero().view(-1)
+    out[index[nonzero]] = nonzero
 
     return out
