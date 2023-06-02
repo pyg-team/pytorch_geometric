@@ -78,6 +78,7 @@ from .ogb_mag import OGB_MAG
 from .dblp import DBLP
 from .movie_lens import MovieLens
 from .movie_lens_100k import MovieLens100K
+from .movie_lens_1m import MovieLens1M
 from .imdb import IMDB
 from .last_fm import LastFM
 from .hgb_dataset import HGBDataset
@@ -180,6 +181,7 @@ hetero_datasets = [
     'DBLP',
     'MovieLens',
     'MovieLens100K',
+    'MovieLens1M',
     'IMDB',
     'LastFM',
     'HGBDataset',
