@@ -17,7 +17,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import ZINC
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINEConv, GPSConv, global_add_pool
-from torch_geometric.nn.conv.gps_conv import FastAttention
+from torch_geometric.nn.conv.gps_conv import PerformerAttention
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ZINC-PE')
 transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
@@ -92,7 +92,7 @@ class RedrawProjection(torch.nn.Module):
         if self.num_last_redraw >= self.redraw_interval:
             fast_attentions = [
                 module for module in self.model.modules()
-                if isinstance(module, FastAttention)
+                if isinstance(module, PerformerAttention)
             ]
             for fast_attention in fast_attentions:
                 fast_attention.redraw_projection_matrix()

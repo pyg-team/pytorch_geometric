@@ -54,8 +54,8 @@ class GPSConv(torch.nn.Module):
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
-        attn_type (str): Global attention type, :obj:`softmax` or
-            :obj:`performer`. (default: :obj:`softmax`)
+        attn_type (str): Global attention type, :obj:`multihead` or
+            :obj:`performer`. (default: :obj:`multihead`)
         attn_kwargs (Dict[str, Any], optional): Arguments passed to the
             attention layer. (default: :obj:`None`)
     """
@@ -69,7 +69,7 @@ class GPSConv(torch.nn.Module):
         act_kwargs: Optional[Dict[str, Any]] = None,
         norm: Optional[str] = 'batch_norm',
         norm_kwargs: Optional[Dict[str, Any]] = None,
-        attn_type: str = 'softmax',
+        attn_type: str = 'multihead',
         attn_kwargs: Optional[Dict[str, Any]] = None,
     ):
         super().__init__()
@@ -81,7 +81,7 @@ class GPSConv(torch.nn.Module):
         self.attn_type = attn_type
 
         attn_kwargs = attn_kwargs or {}
-        if attn_type == 'softmax':
+        if attn_type == 'multihead':
             self.attn = torch.nn.MultiheadAttention(
                 channels,
                 heads,
@@ -246,7 +246,17 @@ def generalized_kernel(x: Tensor, mat: Tensor,
     return out
 
 
-class FastAttention(torch.nn.Module):
+class PerformerFastAttention(torch.nn.Module):
+    r"""The fast attention that uses a projection matrix
+    from the `"Rethinking Attention with Performers"
+    <https://arxiv.org/abs/2009.14794>`_ paper.
+
+    Args:
+        num_cols (int): Projection matrix number of columns.
+        kernel (Callable, optional): Kernels for generalized attention.
+            If not specified, softmax kernel will be used.
+            (default: :obj:`None`)
+    """
     def __init__(self, num_cols: int, kernel: Optional[Callable] = None):
         super().__init__()
         num_rows = int(num_cols * math.log(num_cols))
@@ -257,12 +267,6 @@ class FastAttention(torch.nn.Module):
         projection_matrix = orthogonal_matrix(self.num_rows, self.num_cols)
         self.register_buffer('projection_matrix', projection_matrix)
         self.kernel = kernel
-
-    @torch.no_grad()
-    def redraw_projection_matrix(self):
-        projection_matrix = orthogonal_matrix(self.num_rows, self.num_cols)
-        self.projection_matrix.copy_(projection_matrix)
-        del projection_matrix
 
     def forward(self, q: Tensor, k: Tensor, v: Tensor) -> Tensor:
         if self.kernel:
@@ -276,10 +280,36 @@ class FastAttention(torch.nn.Module):
 
 
 class PerformerAttention(torch.nn.Module):
-    def __init__(self, channels: int, heads: int,
-                 head_channels: Optional[int] = 64,
-                 kernel: Optional[Callable] = None, dropout: float = 0.0,
-                 qkv_bias: bool = False, attn_out_bias: bool = True):
+    r"""The linear scaled attention mechanism from the
+    `"Rethinking Attention with Performers"
+    <https://arxiv.org/abs/2009.14794>`_ paper.
+
+    Args:
+        channels (int): Size of each input sample.
+        heads (int, optional): Number of parallel attention heads.
+        head_channels (int, optional): Size of each attention head.
+            (default: :obj:`64.`)
+        kernel (Callable, optional): Kernels for generalized attention.
+            If not specified, softmax kernel will be used.
+            (default: :obj:`None`)
+        qkv_bias (bool, optional): If specified, add bias to query, key
+            and value in the self attention. (default: :obj:`False`)
+        attn_out_bias (bool, optional): If specified, add bias to the
+            attention output. (default: :obj:`True`)
+        dropout (float, optional): Dropout probability of the final
+            attention output. (default: :obj:`0.0`)
+
+    """
+    def __init__(
+        self,
+        channels: int,
+        heads: int,
+        head_channels: int = 64,
+        kernel: Optional[Callable] = None,
+        qkv_bias: bool = False,
+        attn_out_bias: bool = True,
+        dropout: float = 0.0,
+    ):
         super().__init__()
         assert channels % heads == 0
         if head_channels is None:
@@ -287,7 +317,7 @@ class PerformerAttention(torch.nn.Module):
 
         self.heads = heads
         self.head_channels = head_channels
-        self.fast_attn = FastAttention(head_channels, kernel)
+        self.fast_attn = PerformerFastAttention(head_channels, kernel)
 
         inner_channels = head_channels * heads
         self.q = torch.nn.Linear(channels, inner_channels, bias=qkv_bias)
@@ -314,9 +344,17 @@ class PerformerAttention(torch.nn.Module):
         out = self.dropout(out)
         return out
 
+    @torch.no_grad()
+    def redraw_projection_matrix(self):
+        num_rows = self.fast_attn.num_rows
+        num_cols = self.fast_attn.num_cols
+        projection_matrix = orthogonal_matrix(num_rows, num_cols)
+        self.fast_attn.projection_matrix.copy_(projection_matrix)
+        del projection_matrix
+
     def _reset_parameters(self):
         self.q.reset_parameters()
         self.k.reset_parameters()
         self.v.reset_parameters()
         self.attn_out.reset_parameters()
-        self.fast_attn.redraw_projection_matrix()
+        self.redraw_projection_matrix()

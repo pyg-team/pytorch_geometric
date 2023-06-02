@@ -17,7 +17,7 @@ def test_gps_conv(norm):
     conv = GPSConv(16, conv=SAGEConv(16, 16), heads=4, norm=norm)
     conv.reset_parameters()
     assert str(conv) == ('GPSConv(16, conv=SAGEConv(16, 16, aggr=mean), '
-                         'heads=4, attn_type=softmax)')
+                         'heads=4, attn_type=multihead)')
 
     out = conv(x, edge_index)
     assert out.size() == (4, 16)
