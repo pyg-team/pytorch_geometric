@@ -54,7 +54,8 @@ class NeighborSampler(BaseSampler):
                           f"'{self.__class__.__name__}' is deprecated. Use "
                           f"`subgraph_type='induced'` instead.")
 
-        if not torch_geometric.typing.WITH_PYG_LIB and sys.platform == 'linux':
+        if (not torch_geometric.typing.WITH_PYG_LIB and sys.platform == 'linux'
+                and subgraph_type != SubgraphType.induced):
             warnings.warn(f"Using '{self.__class__.__name__}' without a "
                           f"'pyg-lib' installation is deprecated and will be "
                           f"removed soon. Please install 'pyg-lib' for "
@@ -213,7 +214,9 @@ class NeighborSampler(BaseSampler):
         r"""Implements neighbor sampling by calling either :obj:`pyg-lib` (if
         installed) or :obj:`torch-sparse` (if installed) sampling routines."""
         if isinstance(seed, dict):  # Heterogeneous sampling:
-            if torch_geometric.typing.WITH_PYG_LIB:
+            # TODO Support induced subgraph sampling in `pyg-lib`.
+            if (torch_geometric.typing.WITH_PYG_LIB
+                    and self.subgraph_type != SubgraphType.induced):
                 # TODO (matthias) `return_edge_id` if edge features present
                 # TODO (matthias) Ideally, `seed` inherits dtype from `colptr`
                 colptrs = list(self.colptr_dict.values())
@@ -290,7 +293,9 @@ class NeighborSampler(BaseSampler):
             )
 
         else:  # Homogeneous sampling:
-            if torch_geometric.typing.WITH_PYG_LIB:
+            # TODO Support induced subgraph sampling in `pyg-lib`.
+            if (torch_geometric.typing.WITH_PYG_LIB
+                    and self.subgraph_type != SubgraphType.induced):
                 # TODO (matthias) `return_edge_id` if edge features present
                 # TODO (matthias) Ideally, `seed` inherits dtype from `colptr`
                 out = torch.ops.pyg.neighbor_sample(

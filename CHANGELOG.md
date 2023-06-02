@@ -9,11 +9,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Added Performer to `GPSConv` ([#7465](https://github.com/pyg-team/pytorch_geometric/pull/7465))
 - Added hierarichial heterogeneous GraphSAGE example on OGB-MAG ([#7425](https://github.com/pyg-team/pytorch_geometric/pull/7425))
-- Added a `LocalGraphStore` implementation for distributed training ([#7451](https://github.com/pyg-team/pytorch_geometric/pull/7451))
+- Added the `torch_geometric.distributed` package ([#7451](https://github.com/pyg-team/pytorch_geometric/pull/7451), [#7452](https://github.com/pyg-team/pytorch_geometric/pull/7452))
 - Added the `GDELTLite` dataset ([#7442](https://github.com/pyg-team/pytorch_geometric/pull/7442))
 - Added the `approx_knn` function for approximated nearest neighbor search ([#7421](https://github.com/pyg-team/pytorch_geometric/pull/7421))
 - Added the `IGMCDataset` ([#7441](https://github.com/pyg-team/pytorch_geometric/pull/7441))
-- Added a sparse `cross_entropy` implementation ([#7447](https://github.com/pyg-team/pytorch_geometric/pull/7447))
+- Added a sparse `cross_entropy` implementation ([#7447](https://github.com/pyg-team/pytorch_geometric/pull/7447), [#7466](https://github.com/pyg-team/pytorch_geometric/pull/7466))
 - Added the `MovieLens-100K` heterogeneous dataset ([#7398](https://github.com/pyg-team/pytorch_geometric/pull/7398))
 - Added the `PMLP` model ([#7370](https://github.com/pyg-team/pytorch_geometric/pull/7370))
 - Added padding capabilities to `HeteroData.to_homogeneous()` in case feature dimensionalities do not match ([#7374](https://github.com/pyg-team/pytorch_geometric/pull/7374))
@@ -52,6 +52,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Move the `scaler` tensor in `GeneralConv` to the correct device ([#7484](https://github.com/pyg-team/pytorch_geometric/pull/7484))
+- Fixed `HeteroLinear` bug when used via mixed precision ([#7473](https://github.com/pyg-team/pytorch_geometric/pull/7473))
 - All transforms are now immutable, i.e., they perform a shallow-copy of the data and therefore do not longer modify data in-place ([#7429](https://github.com/pyg-team/pytorch_geometric/pull/7429))
 - Set `output_size` in the `repeat_interleave` operation in `QuantileAggregation` ([#7426](https://github.com/pyg-team/pytorch_geometric/pull/7426))
 - Fixed gradient computation of edge weights in `utils.spmm` ([#7428](https://github.com/pyg-team/pytorch_geometric/pull/7428))

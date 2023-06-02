@@ -8,8 +8,7 @@ from torch_geometric.typing import EdgeTensorType
 
 class LocalGraphStore(GraphStore):
     r"""This class implements the :class:`torch_geometric.data.GraphStore`
-    interface to act as a local graph store for distributed training.
-    """
+    interface to act as a local graph store for distributed training."""
     def __init__(self):
         super().__init__()
         self._edge_index: Dict[Tuple, EdgeTensorType] = {}
@@ -26,7 +25,7 @@ class LocalGraphStore(GraphStore):
 
     def get_edge_id(self, *args, **kwargs) -> Optional[EdgeTensorType]:
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
-        return self._edge_id[self.key(edge_attr)]
+        return self._edge_id.get(self.key(edge_attr))
 
     def remove_edge_id(self, *args, **kwargs) -> bool:
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
