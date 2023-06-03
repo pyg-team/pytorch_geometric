@@ -28,7 +28,7 @@ class PointPairFeatures(BaseTransform):
     def __init__(self, cat: bool = True):
         self.cat = cat
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         ppf_func = torch_geometric.nn.conv.ppf_conv.point_pair_features
 
         assert data.edge_index is not None

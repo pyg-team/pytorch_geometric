@@ -44,10 +44,14 @@ def run(args: argparse.ArgumentParser):
                 print(f'Training sampling with {num_neighbors} neighbors')
                 for batch_size in args.batch_sizes:
                     train_loader = NeighborLoader(
-                        data, num_neighbors=num_neighbors,
-                        input_nodes=train_idx, batch_size=batch_size,
-                        shuffle=True, num_workers=args.num_workers,
-                        filter_per_worker=args.filter_per_worker)
+                        data,
+                        num_neighbors=num_neighbors,
+                        input_nodes=train_idx,
+                        batch_size=batch_size,
+                        shuffle=True,
+                        num_workers=args.num_workers,
+                        subgraph_type=args.subgraph_type,
+                    )
                     cpu_affinity = train_loader.enable_cpu_affinity(
                         args.loader_cores
                     ) if args.cpu_affinity else nullcontext()
@@ -78,7 +82,6 @@ def run(args: argparse.ArgumentParser):
                     batch_size=batch_size,
                     shuffle=False,
                     num_workers=args.num_workers,
-                    filter_per_worker=args.filter_per_worker,
                 )
                 cpu_affinity = subgraph_loader.enable_cpu_affinity(
                     args.loader_cores) if args.cpu_affinity else nullcontext()
@@ -123,10 +126,10 @@ if __name__ == '__main__':
         help="Number of iterations for each test setting.")
     add('--profile', default=False, action='store_true',
         help="Run torch.profiler.")
-    add('--filter-per-worker', default=False, action='store_true',
-        help="Use filter per worker.")
     add('--cpu-affinity', default=False, action='store_true',
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
+    add('--subgraph-type', type=str, default='directional',
+        help="The type of the returned subgraph (directional, bidirectional)")
     run(parser.parse_args())

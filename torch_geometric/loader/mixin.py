@@ -141,6 +141,7 @@ class AffinityMixin:
             if numa_info and len(numa_info[0]) > self.num_workers:
                 # Take one thread per each node 0 core:
                 node0_cores = [cpus[0] for core_id, cpus in numa_info[0]]
+                node0_cores.sort()
             else:
                 node0_cores = list(range(psutil.cpu_count(logical=False)))
 

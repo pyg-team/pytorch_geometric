@@ -21,7 +21,12 @@ def test_lightgcn_ranking(embedding_dim, with_edge_weight, lambda_reg, alpha):
     pred = model(edge_index, edge_label_index, edge_weight)
     assert pred.size() == (100, )
 
-    loss = model.recommendation_loss(pred[:50], pred[50:], lambda_reg)
+    loss = model.recommendation_loss(
+        pos_edge_rank=pred[:50],
+        neg_edge_rank=pred[50:],
+        node_id=edge_index.unique(),
+        lambda_reg=lambda_reg,
+    )
     assert loss.dim() == 0 and loss > 0
 
     out = model.recommend(edge_index, edge_weight, k=2)

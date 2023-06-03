@@ -51,7 +51,6 @@ class GraphMaskExplainer(ExplainerAlgorithm):
     the predictions made by a GNN.
 
     .. note::
-
         For an example of using :class:`GraphMaskExplainer`,
         see `examples/contrib/graphmask_explainer.py
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
@@ -71,8 +70,6 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             between :obj:`0` and `1`. (default: :obj:`0.55`)
         allowance (float, optional): A float value between :obj:`0` and
             :obj:`1` denotes tolerance level. (default: :obj:`0.03`)
-        layer_type (str, optional): The type of GNN layer being used in the GNN
-            model. (default: :obj:`GCN`)
         log (bool, optional): If set to :obj:`False`, will not log any
             learning progress. (default: :obj:`True`)
         **kwargs (optional): Additional hyper-parameters to override default
@@ -95,13 +92,11 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         lambda_optimizer_lr: int = 1e-2,
         init_lambda: int = 0.55,
         allowance: int = 0.03,
-        layer_type: str = 'GCN',
         allow_multiple_explanations: bool = False,
         log: bool = True,
         **kwargs,
     ):
         super().__init__()
-        assert layer_type in ['GCN', 'GAT', 'FastRGCN']
         assert 0 <= penalty_scaling <= 10
         assert 0 <= init_lambda <= 1
         assert 0 <= allowance <= 1
@@ -111,7 +106,6 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         self.lambda_optimizer_lr = lambda_optimizer_lr
         self.penalty_scaling = penalty_scaling
         self.allowance = allowance
-        self.layer_type = layer_type
         self.allow_multiple_explanations = allow_multiple_explanations
         self.epochs = epochs
         self.lr = lr
@@ -177,8 +171,6 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         return clipped_s, penalty
 
     def set_masks(self, i_dim, j_dim, h_dim, x, device):
-        if self.layer_type == 'GCN' or self.layer_type == 'GAT':
-            i_dim = j_dim
         (num_nodes, num_feat), std = x.size(), 0.1
         self.feat_mask_type = self.explainer_config.node_mask_type
 
@@ -335,12 +327,18 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     module.message_scale = None
                     module.message_replacement = None
 
-    def train_explainer(self, model: torch.nn.Module, x: Tensor,
-                        edge_index: Tensor, *, target: Tensor,
-                        index: Optional[Union[int, Tensor]] = None, **kwargs):
-
-        if not isinstance(index, Tensor) and not isinstance(index, int) \
-                and index is not None:
+    def train_explainer(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ):
+        if (not isinstance(index, Tensor) and not isinstance(index, int)
+                and index is not None):
             raise ValueError("'index' parameter can only be a 'Tensor', "
                              "'integer' or set to 'None' instead.")
 
@@ -393,7 +391,19 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 for i in range(self.num_layers):
                     output = self.full_biases[i]
                     for j in range(len(gate_input)):
-                        partial = self.gates[i * 4][j](gate_input[j][i])
+                        try:
+                            partial = self.gates[i * 4][j](gate_input[j][i])
+                        except Exception:
+                            try:
+                                self.set_masks(output_dims, output_dims,
+                                               output_dims, x, x.device)
+                                partial = self.gates[i * 4][j](
+                                    gate_input[j][i])
+                            except Exception:
+                                self.set_masks(input_dims, input_dims,
+                                               output_dims, x, x.device)
+                                partial = self.gates[i * 4][j](
+                                    gate_input[j][i])
                         result = self.gates[(i * 4) + 1][j](partial)
                         output = output + result
                     relu_output = self.gates[(i * 4) + 2](output /
@@ -420,8 +430,8 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 h = x * self.node_feat_mask.sigmoid()
                 y_hat, y = model(x=h, edge_index=edge_index, **kwargs), target
 
-                if self.model_config.task_level == ModelTaskLevel.node \
-                        or self.model_config.task_level == ModelTaskLevel.edge:
+                if (self.model_config.task_level == ModelTaskLevel.node or
+                        self.model_config.task_level == ModelTaskLevel.edge):
                     if index is not None:
                         y_hat, y = y_hat[index], y[index]
 
@@ -447,11 +457,15 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             if self.log:
                 pbar.close()
 
-    def explain(self, model: torch.nn.Module, *,
-                index: Optional[Union[int, Tensor]] = None) -> Tensor:
+    def explain(
+        self,
+        model: torch.nn.Module,
+        *,
+        index: Optional[Union[int, Tensor]] = None,
+    ) -> Tensor:
 
-        if not isinstance(index, Tensor) and not isinstance(index, int) \
-                and index is not None:
+        if (not isinstance(index, Tensor) and not isinstance(index, int)
+                and index is not None):
             raise ValueError("'index' parameter can only be a 'Tensor', "
                              "'integer' or set to 'None' instead.")
 
@@ -490,8 +504,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 if i == 0:
                     edge_weight = sampling_weights
                 else:
-                    if (edge_weight.size(-1) != sampling_weights.size(-1)
-                            and self.layer_type == 'GAT'):
+                    if edge_weight.size(-1) != sampling_weights.size(-1):
                         sampling_weights = F.pad(
                             input=sampling_weights,
                             pad=(0, edge_weight.size(-1) -
@@ -508,6 +521,3 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         edge_mask = torch.mean(edge_mask, 0)
 
         return edge_mask
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}()'
