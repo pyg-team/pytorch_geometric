@@ -1,12 +1,11 @@
 import torch
 
-from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import (
     NodeEncoding,
     PositionalEncoding,
     TemporalEncoding,
 )
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import onlyNeighborSampler, withCUDA
 
 
 @withCUDA
@@ -28,7 +27,9 @@ def test_temporal_encoding(device):
 
 
 @withCUDA
+@onlyNeighborSampler
 def test_node_encoding(get_dataset, device):
+    from torch_geometric.loader import NeighborLoader
     dataset = get_dataset(name='Cora')
     data = dataset[0]
     loader = NeighborLoader(

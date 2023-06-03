@@ -103,17 +103,17 @@ class NodeEncoding(torch.nn.Module):
     Model Architectures for Temporal Networks?"
     <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
     :class:`NodeEncoding` captures the node identity and node feature
-        information via neighbor mean-pooling
+    information via neighbor mean-pooling
 
     """
-    def forward(self, data):
+    def forward(self, data) -> Tensor:
         """
-
         Args:
             data: batch of nodes from NeighborLoader
 
         Returns:
-
+            torch.Tensor of the root nodes updated with mean
+                pooling of neighbor features
         """
         x, edge_index, batch_size = data.x, data.edge_index, data.batch_size
         root_nodes = x[:, batch_size]
