@@ -1,19 +1,16 @@
 import os.path as osp
 
 import torch
-from ogb.nodeproppred import PygNodePropPredDataset
 
-from torch_geometric.datasets import OGB_MAG
+from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.distributed.partition.partitioner import Partitioner
 from torch_geometric.typing import EdgeTypeStr
 
 
 def test_partition_homo_graph():
-    ogbn_dataset = "ogbn-products"
-    root_dir = "./data/products"
     num_partitions = 2
-    save_dir = root_dir + "/partition"
-    dataset = PygNodePropPredDataset(ogbn_dataset, root_dir)
+    save_dir = osp.join('./homo', 'partition')
+    dataset = FakeDataset()
     data = dataset[0]
 
     partitioner = Partitioner(output_dir=save_dir, num_parts=num_partitions,
@@ -62,11 +59,9 @@ def test_partition_homo_graph():
 
 
 def test_partition_hetero_graph():
-    ogbn_dataset = "ogbn-mags"
-    root_dir = "./data/mags"
     num_partitions = 2
-    save_dir = root_dir + "/partition"
-    dataset = OGB_MAG(root=ogbn_dataset, preprocess='metapath2vec')
+    save_dir = osp.join('./hetero', 'partition')
+    dataset = FakeHeteroDataset()
     data = dataset[0]
 
     partitioner = Partitioner(output_dir=save_dir, num_parts=num_partitions,
