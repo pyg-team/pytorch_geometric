@@ -1,5 +1,4 @@
 import math
-from typing import Optional
 
 import torch
 from torch import Tensor
@@ -187,6 +186,10 @@ class LinkEncoding(torch.nn.Module):
         time_channels (int): dims to encode each timestamp into with
             :class:`TemporalEncoding`.
         out_channels (int): Size of each output sample.
+        is_sorted (bool, optional): If set to :obj:`True`, assumes that
+            :obj:`edge_index` is sorted by column. This avoids internal
+            re-sorting of the data and can improve runtime and memory
+            efficiency. (default: :obj:`False`)
 
     Example:
 
@@ -207,6 +210,7 @@ class LinkEncoding(torch.nn.Module):
         hidden_channels: int,
         out_channels: int,
         time_channels: int,
+        is_sorted: bool = False,
     ) -> None:
         super().__init__()
         self.K = K
@@ -214,6 +218,7 @@ class LinkEncoding(torch.nn.Module):
         self.hidden_channels = hidden_channels
         self.out_channels = out_channels
         self.time_channels = time_channels
+        self.is_sorted = is_sorted
 
         # teomporal encoder
         self.temporal_encoder = TemporalEncoding(time_channels)
@@ -233,37 +238,35 @@ class LinkEncoding(torch.nn.Module):
         self,
         edge_attr: Tensor,
         edge_time: Tensor,
-        node_batch: Tensor,
-        num_nodes: Optional[int] = None,
+        edge_index: Tensor,
     ) -> Tensor:
         """
         Args:
             edge_attr (torch.Tensor): ``[num_edges, in_channels]``
             edge_time (torch.Tensor): ``[num_edges,]``
-            num_batch (torch.Tensor): ``[num_edges,]``
-            num_nodes (int, optional): The number of nodes in the mini-batch.
-                If not provided, it will use ``num_batch.max()+1``.
+            edge_index (torch.Tensor): ``[2, num_edges]``
 
         Returns:
             A tensor of size ``[num_nodes, out_channels]``
         """
-        if num_nodes is None:
-            num_nodes = node_batch.max() + 1
-
         time_info = self.temporal_encoder(edge_time)
         edge_attr_time = torch.cat((time_info, edge_attr), dim=1)
         edge_attr_time = self.temporal_encoder_head(edge_attr_time)
 
+        # `to_dense_batch` assumes sorted inputs
+        if not self.is_sorted:
+            edge_index[1], indices = index_sort(edge_index[1])
+            edge_attr_time = edge_attr_time[indices]
+
         # zero-pad each node's edges:
         # [num_edges, hidden_channels] -> [num_nodes*K, hidden_channels]
-        node_batch, indices = index_sort(node_batch)
         edge_attr_time, _ = to_dense_batch(
-            edge_attr_time[indices],
-            node_batch,
+            edge_attr_time,
+            edge_index[1],
             max_num_nodes=self.K,
         )
         return self.mlp_mixer(
-            edge_attr_time.view(num_nodes, self.K, self.hidden_channels))
+            edge_attr_time.view(-1, self.K, self.hidden_channels))
 
     def __repr__(self):
         return (f"{self.__class__.__name__}("
