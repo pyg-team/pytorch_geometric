@@ -106,17 +106,6 @@ class NodeEncoding(torch.nn.Module):
         information via neighbor mean-pooling
 
     """
-    def __init__(
-        self,
-        structure_time_gap: int,
-        structure_hops: int,
-    ):
-        super().__init__()
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        pass
-
     def forward(self, data):
         """
 
@@ -127,7 +116,7 @@ class NodeEncoding(torch.nn.Module):
 
         """
         x, edge_index, batch_size = data.x, data.edge_index, data.batch_size
-        root_nodes = x[:batch_size]
+        root_nodes = x[:, batch_size]
 
         output_feats = torch.zeros((len(root_nodes), x.size(1)))
 
@@ -135,8 +124,8 @@ class NodeEncoding(torch.nn.Module):
 
         embeddings = scatter(root_nodes[row], col, dim=0,
                              dim_size=data.num_nodes, reduce='mean')
-        output_feats[:batch_size] = embeddings
-        return data
+        output_feats[:, batch_size] = embeddings
+        return output_feats
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}'
