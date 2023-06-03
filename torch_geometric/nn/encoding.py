@@ -181,7 +181,7 @@ class LinkEncoding(torch.nn.Module):
     Args:
         K (int): The number of most recent teomporal links to use to construct
             an intermediate feature representation for each node.
-        num_edge_features (int): The number of edge features used to construct
+        in_channels (int): The number of edge features used to construct
             a linear layer encoding the output of :class:`TemporalEncoding`
             concatenated with ``edge_attr``.
         time_channels (int): dims to encode each timestamp into with
@@ -193,7 +193,7 @@ class LinkEncoding(torch.nn.Module):
         >>> # GraphMixer paper uses the following args for GDELTLite dataset
         >>> link_encoder = LinkEncoding(
         ...     K=30,
-        ...     num_edge_features=186,
+        ...     in_channels=186,
         ...     hidden_channels=100,
         ...     out_channels=100,
         ...     time_channels=100,
@@ -203,14 +203,14 @@ class LinkEncoding(torch.nn.Module):
     def __init__(
         self,
         K: int,
-        num_edge_features: int,
+        in_channels: int,
         hidden_channels: int,
         out_channels: int,
         time_channels: int,
     ) -> None:
         super().__init__()
         self.K = K
-        self.num_edge_features = num_edge_features
+        self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.out_channels = out_channels
         self.time_channels = time_channels
@@ -218,7 +218,7 @@ class LinkEncoding(torch.nn.Module):
         # teomporal encoder
         self.temporal_encoder = TemporalEncoding(time_channels)
         self.temporal_encoder_head = torch.nn.Linear(
-            time_channels + num_edge_features,
+            time_channels + in_channels,
             hidden_channels,
         )
 
@@ -238,7 +238,7 @@ class LinkEncoding(torch.nn.Module):
     ) -> Tensor:
         """
         Args:
-            edge_attr (torch.Tensor): ``[num_edges, num_edge_features]``
+            edge_attr (torch.Tensor): ``[num_edges, in_channels]``
             edge_time (torch.Tensor): ``[num_edges,]``
             num_batch (torch.Tensor): ``[num_edges,]``
             num_nodes (int, optional): The number of nodes in the mini-batch.
@@ -268,7 +268,7 @@ class LinkEncoding(torch.nn.Module):
     def __repr__(self):
         return (f"{self.__class__.__name__}("
                 f"K={self.K}, "
-                f"num_edge_features={self.num_edge_features}, "
+                f"in_channels={self.in_channels}, "
                 f"hidden_channels={self.hidden_channels}, "
                 f"out_channels={self.out_channels}, "
                 f"time_channels={self.time_channels})")
