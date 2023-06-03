@@ -211,7 +211,8 @@ class Partitioner():
                         edge_type=edge_name, layout='coo',
                         size=(src_num, dst_num))
                     graph_store.put_edge_id(type_edge_id, edge_type=edge_name,
-                                            layout='coo')
+                                            layout='coo',
+                                            size=(src_num, dst_num))
                     # save edge feature partition
                     if cluster_data[pid].edge_attr is not None:
                         print(f"save edge feature for edge type: {edge_name}")
@@ -291,7 +292,8 @@ class Partitioner():
                     edge_type=None, layout='coo', size=(node_num, node_num))
                 graph_store.put_edge_id(part_edge_ids,
                                         edge_type=self.edge_types,
-                                        layout='coo')
+                                        layout='coo',
+                                        size=(node_num, node_num))
                 sub_dir = prepare_directory(self.output_dir, f'part_{pid}')
                 torch.save(graph_store, os.path.join(sub_dir, 'graph.pt'))
 
