@@ -128,11 +128,11 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         if self.model_config.task_level == ModelTaskLevel.node:
             hard_node_mask, hard_edge_mask = self._get_hard_masks(
                 model, index, edge_index, num_nodes=x.size(0))
-        self.train_explainer(model, x, edge_index, target=target, index=index,
-                             **kwargs)
+        self._train_explainer(model, x, edge_index, target=target, index=index,
+                              **kwargs)
         node_mask = self._post_process_mask(self.node_feat_mask,
                                             hard_node_mask, apply_sigmoid=True)
-        edge_mask = self.explain(model, index=index)
+        edge_mask = self._explain(model, index=index)
         edge_mask = edge_mask[:edge_index.size(1)]
 
         return Explanation(node_mask=node_mask, edge_mask=edge_mask)
@@ -140,7 +140,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
     def supports(self) -> bool:
         return True
 
-    def hard_concrete(
+    def _hard_concrete(
         self,
         input_element: Tensor,
         summarize_penalty: bool = True,
@@ -181,7 +181,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         return clipped_s, penalty
 
-    def set_masks(
+    def _set_masks(
         self,
         i_dim: List[int],
         j_dim: List[int],
@@ -245,7 +245,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         for parameter in self.parameters():
             parameter.requires_grad = False
 
-    def enable_layer(self, layer: int):
+    def _enable_layer(self, layer: int):
         r"""Enables the input layer's edge mask."""
         for d in range(layer * 4, (layer * 4) + 4):
             for parameter in self.gates[d].parameters():
@@ -323,7 +323,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         return loss
 
-    def freeze_model(self, module: torch.nn.Module):
+    def _freeze_model(self, module: torch.nn.Module):
         r"""Freezes the parameters of the original GNN model by disabling
         their gradients."""
         for param in module.parameters():
@@ -358,7 +358,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     module.message_scale = None
                     module.message_replacement = None
 
-    def train_explainer(
+    def _train_explainer(
         self,
         model: torch.nn.Module,
         x: Tensor,
@@ -369,7 +369,6 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         **kwargs,
     ):
         r"""Trains the underlying explainer model.
-        Needs to be called before being able to make predictions.
 
         Args:
             model (torch.nn.Module): The model to explain.
@@ -387,7 +386,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             raise ValueError("'index' parameter can only be a 'Tensor', "
                              "'integer' or set to 'None' instead.")
 
-        self.freeze_model(model)
+        self._freeze_model(model)
         self._set_flags(model)
 
         input_dims, output_dims = [], []
@@ -396,7 +395,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 input_dims.append(module.in_channels)
                 output_dims.append(module.out_channels)
 
-        self.set_masks(input_dims, output_dims, output_dims, x)
+        self._set_masks(input_dims, output_dims, output_dims, x)
 
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
@@ -415,7 +414,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     pbar.set_description(
                         f'Train explainer for graph {index} with layer '
                         f'{layer}')
-            self.enable_layer(layer)
+            self._enable_layer(layer)
             for epoch in range(self.epochs):
                 with torch.no_grad():
                     model(x, edge_index, **kwargs)
@@ -440,13 +439,13 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                             partial = self.gates[i * 4][j](gate_input[j][i])
                         except Exception:
                             try:
-                                self.set_masks(output_dims, output_dims,
-                                               output_dims, x)
+                                self._set_masks(output_dims, output_dims,
+                                                output_dims, x)
                                 partial = self.gates[i * 4][j](
                                     gate_input[j][i])
                             except Exception:
-                                self.set_masks(input_dims, input_dims,
-                                               output_dims, x)
+                                self._set_masks(input_dims, input_dims,
+                                                output_dims, x)
                                 partial = self.gates[i * 4][j](
                                     gate_input[j][i])
                         result = self.gates[(i * 4) + 1][j](partial)
@@ -456,7 +455,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     sampling_weights = self.gates[(i * 4) +
                                                   3](relu_output).squeeze(
                                                       dim=-1)
-                    sampling_weights, penalty = self.hard_concrete(
+                    sampling_weights, penalty = self._hard_concrete(
                         sampling_weights)
                     gates.append(sampling_weights)
                     total_penalty += penalty
@@ -502,14 +501,13 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             if self.log:
                 pbar.close()
 
-    def explain(
+    def _explain(
         self,
         model: torch.nn.Module,
         *,
         index: Optional[Union[int, Tensor]] = None,
     ) -> Tensor:
         r"""Generates explanations for the original GNN model.
-        Needs to be called after training of the explainer model is done.
 
         Args:
             model (torch.nn.Module): The model to explain.
@@ -522,7 +520,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             raise ValueError("'index' parameter can only be a 'Tensor', "
                              "'integer' or set to 'None' instead.")
 
-        self.freeze_model(model)
+        self._freeze_model(model)
         self._set_flags(model)
 
         with torch.no_grad():
@@ -552,7 +550,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
                 sampling_weights = self.gates[(i * 4) +
                                               3](relu_output).squeeze(dim=-1)
-                sampling_weights, _ = self.hard_concrete(
+                sampling_weights, _ = self._hard_concrete(
                     sampling_weights, training=False)
                 if i == 0:
                     edge_weight = sampling_weights
