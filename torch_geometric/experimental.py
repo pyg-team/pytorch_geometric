@@ -2,7 +2,15 @@ import functools
 import inspect
 from typing import Any, Callable, Dict, List, Optional, Union
 
-__experimental_flag__ = {'disable_dynamic_shapes': False}
+import torch
+
+# TODO (matthias) This file currently requires manual imports to let
+# TorchScript work on decorated functions. Not totally sure why :(
+from torch_geometric.utils import *  # noqa
+
+__experimental_flag__: Dict[str, bool] = {
+    'disable_dynamic_shapes': False,
+}
 
 Options = Optional[Union[str, List[str]]]
 
@@ -19,6 +27,8 @@ def is_experimental_mode_enabled(options: Options = None) -> bool:
     r"""Returns :obj:`True` if the experimental mode is enabled. See
     :class:`torch_geometric.experimental_mode` for a list of (optional)
     options."""
+    if torch.jit.is_scripting() or torch.jit.is_tracing():
+        return False
     options = get_options(options)
     return all([__experimental_flag__[option] for option in options])
 
