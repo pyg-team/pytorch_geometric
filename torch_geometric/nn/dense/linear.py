@@ -259,7 +259,7 @@ class HeteroLinear(torch.nn.Module):
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
         if (torch_geometric.typing.WITH_PYG_LIB
-                and (self.use_segmm is None or self.use_segmm)):
+                and (self.use_segmm is None or bool(self.use_segmm))):
             assert self.weight is not None
 
             perm: Optional[Tensor] = None
