@@ -7,6 +7,7 @@ from torch.nn import GRUCell, Linear
 
 from torch_geometric.nn.inits import zeros
 from torch_geometric.utils import scatter
+from torch_geometric.utils.scatter import scatter_argmax
 
 TGNMessageStoreType = Dict[int, Tuple[Tensor, Tensor, Tensor, Tensor]]
 
@@ -194,8 +195,7 @@ class IdentityMessage(torch.nn.Module):
 
 class LastAggregator(torch.nn.Module):
     def forward(self, msg: Tensor, index: Tensor, t: Tensor, dim_size: int):
-        from torch_scatter import scatter_max
-        _, argmax = scatter_max(t, index, dim=0, dim_size=dim_size)
+        argmax = scatter_argmax(t, index, dim=0, dim_size=dim_size)
         out = msg.new_zeros((dim_size, msg.size(-1)))
         mask = argmax < msg.size(0)  # Filter items with at least one entry.
         out[mask] = msg[argmax[mask]]

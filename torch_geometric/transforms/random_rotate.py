@@ -30,7 +30,7 @@ class RandomRotate(BaseTransform):
         self.degrees = degrees
         self.axis = axis
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         degree = math.pi * random.uniform(*self.degrees) / 180.0
         sin, cos = math.sin(degree), math.cos(degree)
 

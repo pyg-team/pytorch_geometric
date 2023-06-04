@@ -589,12 +589,6 @@ class Data(BaseData, FeatureStore, GraphStore):
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-        if subset.dtype == torch.bool:
-            num_nodes = int(subset.sum())
-        else:
-            num_nodes = subset.size(0)
-            subset = torch.unique(subset, sorted=True)
-
         out = subgraph(subset, self.edge_index, relabel_nodes=True,
                        num_nodes=self.num_nodes, return_edge_mask=True)
         edge_index, _, edge_mask = out
@@ -605,7 +599,10 @@ class Data(BaseData, FeatureStore, GraphStore):
             if key == 'edge_index':
                 data.edge_index = edge_index
             elif key == 'num_nodes':
-                data.num_nodes = num_nodes
+                if subset.dtype == torch.bool:
+                    data.num_nodes = int(subset.sum())
+                else:
+                    data.num_nodes = subset.size(0)
             elif self.is_node_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
                 data[key] = select(value, subset, dim=cat_dim)
@@ -977,15 +974,12 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
         out = '{ ' + ', '.join(lines) + ' }'
     elif isinstance(value, Mapping):
         lines = [size_repr(k, v, indent + 2) for k, v in value.items()]
-        out = '{\n' + ',\n'.join(lines) + '\n' + pad + '}'
+        out = '{\n' + ',\n'.join(lines) + ',\n' + pad + '}'
     else:
         out = str(value)
 
     key = str(key).replace("'", '')
-    if isinstance(value, BaseStorage):
-        return f'{pad}\033[1m{key}\033[0m={out}'
-    else:
-        return f'{pad}{key}={out}'
+    return f'{pad}{key}={out}'
 
 
 def warn_or_raise(msg: str, raise_on_error: bool = True):

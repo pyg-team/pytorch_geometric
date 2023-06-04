@@ -97,7 +97,7 @@ class GDC(BaseTransform):
             assert exact or self_loop_weight == 1
 
     @torch.no_grad()
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index = data.edge_index
         if data.edge_attr is None:

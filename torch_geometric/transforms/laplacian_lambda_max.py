@@ -40,7 +40,7 @@ class LaplacianLambdaMax(BaseTransform):
         self.normalization = normalization
         self.is_undirected = is_undirected
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         edge_weight = data.edge_attr
         if edge_weight is not None and edge_weight.numel() != data.num_edges:
             edge_weight = None
