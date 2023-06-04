@@ -93,9 +93,6 @@ class ClusterData(torch.utils.data.Dataset):
         cluster: Optional[Tensor] = None
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            print("USE TORCH_SPARSE")
-            print(rowptr)
-            print(col)
             try:
                 cluster = torch.ops.torch_sparse.partition(
                     rowptr.cpu(),
@@ -105,13 +102,9 @@ class ClusterData(torch.utils.data.Dataset):
                     self.recursive,
                 ).to(edge_index.device)
             except (AttributeError, RuntimeError):
-                print("ERROR")
                 pass
 
         if cluster is None and torch_geometric.typing.WITH_METIS:
-            print("USE PYG LIB")
-            print(rowptr)
-            print(col)
             cluster = pyg_lib.partition.metis(
                 rowptr.cpu(),
                 col.cpu(),
