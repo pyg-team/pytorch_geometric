@@ -8,10 +8,8 @@ from torch_geometric.nn.models.tgn import (
     LastAggregator,
     LastNeighborLoader,
 )
-from torch_geometric.testing import withPackage
 
 
-@withPackage('torch_scatter')  # TODO Requires `scatter_argmax` for now.
 def test_tgn():
     memory_dim = 16
     time_dim = 16
