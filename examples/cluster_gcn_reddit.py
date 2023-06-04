@@ -52,7 +52,7 @@ class Net(torch.nn.Module):
                     x = F.relu(x)
                 xs.append(x.cpu())
 
-                pbar.update(batch_size)
+                pbar.update(batch.batch_size)
 
             x_all = torch.cat(xs, dim=0)
 
