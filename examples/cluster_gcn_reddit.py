@@ -46,8 +46,7 @@ class Net(torch.nn.Module):
             for batch in subgraph_loader:
                 edge_index = batch.edge_index.to(device)
                 x = x_all[batch.n_id].to(device)
-                batch_size = batch.batch_size
-                x_target = x[:batch_size]
+                x_target = x[:batch.batch_size]
                 x = conv((x, x_target), edge_index)
                 if i != len(self.convs) - 1:
                     x = F.relu(x)
