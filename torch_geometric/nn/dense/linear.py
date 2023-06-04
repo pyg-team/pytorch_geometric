@@ -229,7 +229,7 @@ class HeteroLinear(torch.nn.Module):
         self.out_channels = out_channels
         self.num_types = num_types
         self.is_sorted = is_sorted
-        self.use_segmm = use_segmm
+        self.use_segmm: int = -1 if use_segmm is None else int(use_segmm)
         self.kwargs = kwargs
 
         if self.in_channels == -1:
@@ -259,7 +259,7 @@ class HeteroLinear(torch.nn.Module):
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
         if (torch_geometric.typing.WITH_PYG_LIB
-                and (self.use_segmm is None or bool(self.use_segmm))):
+                and (self.use_segmm == -1 or bool(self.use_segmm))):
             assert self.weight is not None
 
             perm: Optional[Tensor] = None
@@ -269,7 +269,7 @@ class HeteroLinear(torch.nn.Module):
                     x = x[perm]
 
             type_vec_ptr = index2ptr(type_vec, self.num_types)
-            if self.use_segmm is None:
+            if self.use_segmm == -1:
                 self.use_segmm = segmatmul_heuristic(x, type_vec_ptr,
                                                      self.weight)
             out = pyg_lib.ops.segment_matmul(x, type_vec_ptr, self.weight)
