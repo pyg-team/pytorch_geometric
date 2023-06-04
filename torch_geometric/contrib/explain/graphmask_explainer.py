@@ -141,11 +141,10 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         return True
 
     def hard_concrete(self, input_element: Tensor,
-                      summarize_penalty: bool = True,
-                      beta: float = 1 / 3, gamma: float = -0.2,
-                      zeta: float = 1.2, loc_bias: int = 2, min_val: int = 0,
-                      max_val: int = 1, training: bool = True
-                      ) -> Union[Tensor, Tensor]:
+                      summarize_penalty: bool = True, beta: float = 1 / 3,
+                      gamma: float = -0.2, zeta: float = 1.2,
+                      loc_bias: int = 2, min_val: int = 0, max_val: int = 1,
+                      training: bool = True) -> Union[Tensor, Tensor]:
         r"""Helps set the edge mask while sampling its values from the
         hard-concrete distribution."""
         input_element = input_element + loc_bias
