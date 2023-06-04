@@ -181,7 +181,7 @@ def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
         dim_size = index.max() + 1 if index.numel() > 0 else 0
 
     res = src.new_empty(dim_size)
-    res.scatter_reduce_(0, index, src.detach(), reduce='max',
+    res.scatter_reduce_(0, index, src.detach(), reduce='amax',
                         include_self=False)
 
     out = index.new_full((dim_size, ), fill_value=dim_size - 1)
