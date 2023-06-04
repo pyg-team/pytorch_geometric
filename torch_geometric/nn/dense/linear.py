@@ -404,10 +404,10 @@ class HeteroDictLinear(torch.nn.Module):
         if self.use_segmm is None:
             use_segmm = len(x_dict) >= 10
         else:
-            self.use_segmm = use_segmm
+            use_segmm = self.use_segmm
 
         if (torch_geometric.typing.WITH_GMM and not torch.jit.is_scripting()
-                and self.use_segmm):
+                and use_segmm):
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:
