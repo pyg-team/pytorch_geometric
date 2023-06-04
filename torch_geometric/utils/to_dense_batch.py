@@ -10,7 +10,7 @@ from torch_geometric.experimental import (
 from torch_geometric.utils import scatter
 
 
-@disable_dynamic_shapes(required_args=["batch_size", "max_num_nodes"])
+@disable_dynamic_shapes(required_args=['batch_size', 'max_num_nodes'])
 def to_dense_batch(
     x: Tensor,
     batch: Optional[Tensor] = None,
@@ -112,7 +112,7 @@ def to_dense_batch(
 
     filter_nodes = False
     dynamic_shapes_disabled = is_experimental_mode_enabled(
-        "disable_dynamic_shapes")
+        'disable_dynamic_shapes')
 
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())

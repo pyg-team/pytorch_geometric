@@ -1,6 +1,6 @@
 import functools
 import inspect
-from typing import List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 __experimental_flag__ = {'disable_dynamic_shapes': False}
 
@@ -81,54 +81,43 @@ class set_experimental_mode:
             __experimental_flag__[option] = value
 
 
-def disable_dynamic_shapes(required_args: Union[list, tuple]):
+def disable_dynamic_shapes(required_args: List[str]) -> Callable:
+    r"""A decorator that disables the usage of dynamic shapes for the given
+    arguments, i.e., it will raise an error in case :obj:`required_args` are
+    not passed and needs to be automatically inferred."""
+    def decorator(func: Callable) -> Callable:
+        spec = inspect.getfullargspec(func)
 
-    if not required_args:
-        raise ValueError('required_args list cannot be empty')
-
-    def decorator(func):
-        func_spec = inspect.getfullargspec(func)
-
-        required_args_pos = {}
-
+        required_args_pos: Dict[str, int] = {}
         for arg_name in required_args:
-            if arg_name not in func_spec.args:
-                raise ValueError(
-                    f'function {func} does not take a {arg_name} argument')
-            required_args_pos[arg_name] = func_spec.args.index(arg_name)
+            if arg_name not in spec.args:
+                raise ValueError(f"The function '{func}' does not have a "
+                                 f"'{arg_name}' argument")
+            required_args_pos[arg_name] = spec.args.index(arg_name)
 
-        num_args = len(func_spec.args)
-        num_default_args = 0 if func_spec.defaults is None else len(
-            func_spec.defaults)
+        num_args = len(spec.args)
+        num_default_args = 0 if spec.defaults is None else len(spec.defaults)
         num_positional_args = num_args - num_default_args
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
-            dynamic_shapes_disabled = is_experimental_mode_enabled(
-                "disable_dynamic_shapes")
-            if dynamic_shapes_disabled:
-                num_passed_args = len(args)
+            if not is_experimental_mode_enabled('disable_dynamic_shapes'):
+                return func(*args, **kwargs)
 
-                def validate_param(param_name, value):
-                    if value is None:
-                        raise ValueError(
-                            "Dynamic shapes disabled. Mandatory parameter "
-                            f"`{param_name}` cannot be None.")
+            for required_arg in required_args:
+                index = required_args_pos[required_arg]
 
-                for param_name in required_args:
-                    value = None
-                    index = required_args_pos[param_name]
-                    if index < num_passed_args:
-                        value = args[index]
-                    elif param_name in kwargs:
-                        value = kwargs[param_name]
-                    elif num_default_args:
-                        defaults_index = index - num_positional_args
+                value: Optional[Any] = None
+                if index < len(args):
+                    value = args[index]
+                elif required_arg in kwargs:
+                    value = kwargs[required_arg]
+                elif num_default_args > 0:
+                    value = spec.defaults[index - num_positional_args]
 
-                        if defaults_index < num_default_args:
-                            value = func_spec.defaults[defaults_index]
-
-                    validate_param(param_name, value)
+                if value is None:
+                    raise ValueError(f"Dynamic shapes disabled. Argument "
+                                     f"'{required_arg}' needs to be set")
 
             return func(*args, **kwargs)
 
