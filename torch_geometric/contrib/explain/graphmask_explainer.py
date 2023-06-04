@@ -1,11 +1,11 @@
 import math
-from typing import Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch import Tensor, sigmoid
-from torch.nn import LayerNorm, Linear, Parameter, ReLU, Sequential, init
+from torch import Tensor
+from torch.nn import LayerNorm, Linear, Parameter, ReLU, Sequential
 from tqdm import tqdm
 
 from torch_geometric.explain import Explanation
@@ -19,7 +19,7 @@ from torch_geometric.explain.config import (
 from torch_geometric.nn import MessagePassing
 
 
-def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor):
+def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
     norm = Sequential(LayerNorm(out.size(-1)).to(out.device), ReLU())
     basis_messages = norm(out)
 
@@ -140,25 +140,32 @@ class GraphMaskExplainer(ExplainerAlgorithm):
     def supports(self) -> bool:
         return True
 
-    def hard_concrete(self, input_element: Tensor,
-                      summarize_penalty: bool = True, beta: float = 1 / 3,
-                      gamma: float = -0.2, zeta: float = 1.2,
-                      loc_bias: int = 2, min_val: int = 0, max_val: int = 1,
-                      training: bool = True) -> Union[Tensor, Tensor]:
-        r"""Helps set the edge mask while sampling its values from the
+    def hard_concrete(
+        self,
+        input_element: Tensor,
+        summarize_penalty: bool = True,
+        beta: float = 1 / 3,
+        gamma: float = -0.2,
+        zeta: float = 1.2,
+        loc_bias: int = 2,
+        min_val: int = 0,
+        max_val: int = 1,
+        training: bool = True,
+    ) -> Tuple[Tensor, Tensor]:
+        r"""Helps to set the edge mask while sampling its values from the
         hard-concrete distribution."""
         input_element = input_element + loc_bias
 
         if training:
             u = torch.empty_like(input_element).uniform_(1e-6, 1.0 - 1e-6)
 
-            s = sigmoid(
+            s = torch.sigmoid(
                 (torch.log(u) - torch.log(1 - u) + input_element) / beta)
 
-            penalty = sigmoid(input_element -
-                              beta * np.math.log(-gamma / zeta))
+            penalty = torch.sigmoid(input_element -
+                                    beta * np.math.log(-gamma / zeta))
         else:
-            s = sigmoid(input_element)
+            s = torch.sigmoid(input_element)
             penalty = torch.zeros_like(input_element)
 
         if summarize_penalty:
@@ -174,8 +181,14 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         return clipped_s, penalty
 
-    def set_masks(self, i_dim: list, j_dim: list, h_dim: list, x: Tensor):
-        r"""Sets the edge as well as node masks."""
+    def set_masks(
+        self,
+        i_dim: List[int],
+        j_dim: List[int],
+        h_dim: List[int],
+        x: Tensor,
+    ):
+        r"""Sets the node masks and edge masks."""
         (num_nodes, num_feat), std, device = x.size(), 0.1, x.device
         self.feat_mask_type = self.explainer_config.node_mask_type
 
@@ -240,7 +253,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         self.full_biases[layer].requires_grad = True
         self.baselines[layer].requires_grad = True
 
-    def reset_parameters(self, input_dims: list, h_dim: int):
+    def reset_parameters(self, input_dims: List[int], h_dim: List[int]):
         r"""Resets all learnable parameters of the module."""
         fan_in = sum(input_dims)
 
@@ -248,9 +261,9 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         a = math.sqrt(3.0) * std
 
         for transform in self.transforms:
-            init._no_grad_uniform_(transform.weight, -a, a)
+            torch.nn.init._no_grad_uniform_(transform.weight, -a, a)
 
-        init.zeros_(self.full_bias)
+        torch.nn.init.zeros_(self.full_bias)
 
         for layer_norm in self.layer_norms:
             layer_norm.reset_parameters()
@@ -317,7 +330,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             param.requires_grad = False
 
     def _set_flags(self, model: torch.nn.Module):
-        r"""Initializes the underlying exxplainer model's parameters for each
+        r"""Initializes the underlying explainer model's parameters for each
         layer of the original GNN model."""
         for module in model.modules():
             if isinstance(module, MessagePassing):
@@ -325,9 +338,13 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     module, MessagePassing)
                 module.explain = True
 
-    def _inject_messages(self, model: torch.nn.Module, message_scale: list,
-                         message_replacement: torch.nn.ParameterList,
-                         set: bool = False):
+    def _inject_messages(
+        self,
+        model: torch.nn.Module,
+        message_scale: List[Tensor],
+        message_replacement: torch.nn.ParameterList,
+        set: bool = False,
+    ):
         r"""Injects the computed messages into each layer of the original GNN
         model."""
         i = 0
@@ -341,9 +358,16 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     module.message_scale = None
                     module.message_replacement = None
 
-    def train_explainer(self, model: torch.nn.Module, x: Tensor,
-                        edge_index: Tensor, *, target: Tensor,
-                        index: Optional[Union[int, Tensor]] = None, **kwargs):
+    def train_explainer(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        target: Tensor,
+        index: Optional[Union[int, Tensor]] = None,
+        **kwargs,
+    ):
         r"""Trains the underlying explainer model.
         Needs to be called before being able to make predictions.
 
@@ -358,7 +382,6 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             **kwargs (optional): Additional keyword arguments passed to
                 :obj:`model`.
         """
-
         if (not isinstance(index, Tensor) and not isinstance(index, int)
                 and index is not None):
             raise ValueError("'index' parameter can only be a 'Tensor', "
@@ -479,10 +502,14 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             if self.log:
                 pbar.close()
 
-    def explain(self, model: torch.nn.Module, *,
-                index: Optional[Union[int, Tensor]] = None) -> Tensor:
-        r"""Generate explanations for the original GNN model.
-        Needs to be called after training of the underlying model is done.
+    def explain(
+        self,
+        model: torch.nn.Module,
+        *,
+        index: Optional[Union[int, Tensor]] = None,
+    ) -> Tensor:
+        r"""Generates explanations for the original GNN model.
+        Needs to be called after training of the explainer model is done.
 
         Args:
             model (torch.nn.Module): The model to explain.
