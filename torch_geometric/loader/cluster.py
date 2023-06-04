@@ -108,7 +108,7 @@ class ClusterData(torch.utils.data.Dataset):
                 print("ERROR")
                 pass
 
-        if torch_geometric.typing.WITH_METIS:
+        if cluster is None and torch_geometric.typing.WITH_METIS:
             print("USE PYG LIB")
             print(rowptr)
             print(col)
