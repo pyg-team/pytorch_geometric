@@ -90,25 +90,33 @@ class ClusterData(torch.utils.data.Dataset):
         rowptr = index2ptr(row, size=num_nodes)
 
         # Compute METIS partitioning:
-        if torch_geometric.typing.WITH_METIS:
-            return pyg_lib.partition.metis(
+        cluster: Optional[Tensor] = None
+
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            try:
+                cluster = torch.ops.torch_sparse.partition(
+                    rowptr.cpu(),
+                    col.cpu(),
+                    None,
+                    self.num_parts,
+                    self.recursive,
+                ).to(edge_index.device)
+            except (AttributeError, RuntimeError):
+                pass
+
+        if cluster is None and torch_geometric.typing.WITH_METIS:
+            cluster = pyg_lib.partition.metis(
                 rowptr.cpu(),
                 col.cpu(),
                 self.num_parts,
                 recursive=self.recursive,
             ).to(edge_index.device)
 
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            return torch.ops.torch_sparse.partition(
-                rowptr.cpu(),
-                col.cpu(),
-                None,
-                self.num_parts,
-                self.recursive,
-            ).to(edge_index.device)
+        if cluster is None:
+            raise ImportError(f"'{self.__class__.__name__}' requires either "
+                              f"'pyg-lib' or 'torch-sparse'")
 
-        raise ImportError(f"'{self.__class__.__name__}' requires either "
-                          f"'pyg-lib' or 'torch-sparse'")
+        return cluster
 
     def _partition(self, edge_index: Tensor, cluster: Tensor) -> Partition:
         # Computes node-level and edge-level permutations and permutes the edge
