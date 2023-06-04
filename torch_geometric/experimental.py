@@ -1,6 +1,8 @@
-from typing import List, Optional, Union
+import functools
+import inspect
+from typing import Any, Callable, Dict, List, Optional, Union
 
-__experimental_flag__ = {}
+__experimental_flag__ = {'disable_dynamic_shapes': False}
 
 Options = Optional[Union[str, List[str]]]
 
@@ -77,3 +79,48 @@ class set_experimental_mode:
     def __exit__(self, *args):
         for option, value in self.previous_state.items():
             __experimental_flag__[option] = value
+
+
+def disable_dynamic_shapes(required_args: List[str]) -> Callable:
+    r"""A decorator that disables the usage of dynamic shapes for the given
+    arguments, i.e., it will raise an error in case :obj:`required_args` are
+    not passed and needs to be automatically inferred."""
+    def decorator(func: Callable) -> Callable:
+        spec = inspect.getfullargspec(func)
+
+        required_args_pos: Dict[str, int] = {}
+        for arg_name in required_args:
+            if arg_name not in spec.args:
+                raise ValueError(f"The function '{func}' does not have a "
+                                 f"'{arg_name}' argument")
+            required_args_pos[arg_name] = spec.args.index(arg_name)
+
+        num_args = len(spec.args)
+        num_default_args = 0 if spec.defaults is None else len(spec.defaults)
+        num_positional_args = num_args - num_default_args
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            if not is_experimental_mode_enabled('disable_dynamic_shapes'):
+                return func(*args, **kwargs)
+
+            for required_arg in required_args:
+                index = required_args_pos[required_arg]
+
+                value: Optional[Any] = None
+                if index < len(args):
+                    value = args[index]
+                elif required_arg in kwargs:
+                    value = kwargs[required_arg]
+                elif num_default_args > 0:
+                    value = spec.defaults[index - num_positional_args]
+
+                if value is None:
+                    raise ValueError(f"Dynamic shapes disabled. Argument "
+                                     f"'{required_arg}' needs to be set")
+
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
