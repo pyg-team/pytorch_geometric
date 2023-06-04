@@ -91,6 +91,7 @@ class ClusterData(torch.utils.data.Dataset):
 
         # Compute METIS partitioning:
         cluster: Optional[Tensor] = None
+
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             try:
                 cluster = torch.ops.torch_sparse.partition(
@@ -114,6 +115,8 @@ class ClusterData(torch.utils.data.Dataset):
         if cluster is None:
             raise ImportError(f"'{self.__class__.__name__}' requires either "
                               f"'pyg-lib' or 'torch-sparse'")
+
+        return cluster
 
     def _partition(self, edge_index: Tensor, cluster: Tensor) -> Partition:
         # Computes node-level and edge-level permutations and permutes the edge

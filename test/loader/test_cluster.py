@@ -19,8 +19,6 @@ def test_cluster_gcn():
         [1, 0, 1, 0, 1, 0],
         [0, 1, 0, 1, 0, 1],
     ])
-    print('test_cluster_gcn 1')
-    print(torch_geometric.typing.WITH_METIS)
 
     x = torch.Tensor([[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
     edge_index = adj.nonzero(as_tuple=False).t()
@@ -115,8 +113,6 @@ def test_keep_inter_cluster_edges():
         [1, 0, 1, 0, 1, 0],
         [0, 1, 0, 1, 0, 1],
     ])
-    print('test_cluster_gcn 2')
-    print(torch_geometric.typing.WITH_METIS)
 
     x = torch.Tensor([[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
     edge_index = adj.nonzero(as_tuple=False).t()
@@ -146,8 +142,6 @@ def test_keep_inter_cluster_edges():
 @pytest.mark.skipif(not torch_geometric.typing.WITH_METIS,
                     reason='Not compiled with METIS support')
 def test_cluster_gcn_correctness(get_dataset):
-    print('test_cluster_gcn 3')
-    print(torch_geometric.typing.WITH_METIS)
     dataset = get_dataset('Cora')
     data = dataset[0].clone()
     data.n_id = torch.arange(data.num_nodes)
