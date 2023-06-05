@@ -146,6 +146,7 @@ class HeteroConv(torch.nn.Module):
                                    value_dict.get(dst, None))
 
             conv = self.convs[str_edge_type]
+
             if src == dst:
                 out = conv(x_dict[src], edge_index, *args, **kwargs)
             else:
