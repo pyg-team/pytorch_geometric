@@ -183,7 +183,7 @@ def trim_sparse_tensor(src: SparseTensor, size: Tuple[int, int],
     rowptr = torch.narrow(rowptr, 0, 0, size[0] + 1).clone()
     rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
 
-    col = torch.narrow(col, 0, 0, int(rowptr[-1]))
+    col = torch.narrow(col, 0, 0, rowptr[-1])
 
     if value is not None:
         value = torch.narrow(value, 0, 0, rowptr[-1])
