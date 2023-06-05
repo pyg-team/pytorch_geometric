@@ -7,7 +7,7 @@ from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.module_dict import ModuleDict
-from torch_geometric.typing import Adj, EdgeType, NodeType
+from torch_geometric.typing import Adj, EdgeType, NodeType, SparseTensor
 from torch_geometric.utils.hetero import check_add_self_loops
 
 
@@ -146,8 +146,10 @@ class HeteroConv(torch.nn.Module):
                                    value_dict.get(dst, None))
 
             conv = self.convs[str_edge_type]
-
-            if src == dst:
+            if isinstance(edge_index,
+                          SparseTensor) and edge_index.numel() == 0:
+                out = x_dict[dst]
+            elif src == dst:
                 out = conv(x_dict[src], edge_index, *args, **kwargs)
             else:
                 out = conv((x_dict[src], x_dict[dst]), edge_index, *args,

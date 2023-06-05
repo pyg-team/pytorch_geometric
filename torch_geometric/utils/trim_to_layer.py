@@ -54,8 +54,14 @@ def trim_to_layer(
             for k, v in x.items()
         }
         edge_index = {
-            k: trim_adj(v, layer, num_sampled_nodes_per_hop[k[-1]],
-                        num_sampled_edges_per_hop[k])
+            k: trim_adj(
+                v,
+                layer,
+                num_sampled_nodes_per_hop[k[-1]]
+                if k[0] == k[-1] else  # src != dst
+                (num_sampled_nodes_per_hop[k[0]],
+                 num_sampled_nodes_per_hop[k[-1]]),
+                num_sampled_edges_per_hop[k])
             for k, v in edge_index.items()
         }
         if edge_attr is not None:
@@ -140,14 +146,28 @@ def trim_adj(
         )
 
     elif isinstance(edge_index, SparseTensor):
-        num_nodes = edge_index.size(0) - num_sampled_nodes_per_hop[-layer]
-        num_seed_nodes = num_nodes - num_sampled_nodes_per_hop[-(layer + 1)]
+        if isinstance(num_sampled_nodes_per_hop, tuple):
+            num_nodes = (edge_index.size(0) -
+                         num_sampled_nodes_per_hop[1][-layer],
+                         edge_index.size(1) -
+                         num_sampled_nodes_per_hop[0][-layer])
+
+            num_seed_nodes = num_nodes[0] - num_sampled_nodes_per_hop[1][-(
+                layer + 1)]
+        else:
+            num_nodes = (edge_index.size(0) -
+                         num_sampled_nodes_per_hop[-layer],
+                         edge_index.size(0) -
+                         num_sampled_nodes_per_hop[-layer])
+            num_seed_nodes = num_nodes[0] - num_sampled_nodes_per_hop[-(layer +
+                                                                        1)]
+
         return trim_sparse_tensor(edge_index, num_nodes, num_seed_nodes)
 
     raise ValueError(f"Unsupported 'edge_index' type '{type(edge_index)}'")
 
 
-def trim_sparse_tensor(src: SparseTensor, num_nodes: int,
+def trim_sparse_tensor(src: SparseTensor, num_nodes: tuple,
                        num_seed_nodes: None) -> SparseTensor:
     r"""Trims a :class:`SparseTensor` along both dimensions to only contain
     the upper :obj:`num_nodes` in both dimensions.
@@ -157,13 +177,13 @@ def trim_sparse_tensor(src: SparseTensor, num_nodes: int,
 
     Args:
         src (SparseTensor): The sparse tensor.
-        num_nodes (int): The number of first nodes to keep.
+        num_nodes (tuple): The number of first nodes to keep.
         num_seed_nodes (int): The number of seed nodes to compute
             representations.
     """
     rowptr, col, value = src.csr()
 
-    rowptr = torch.narrow(rowptr, 0, 0, num_nodes + 1).clone()
+    rowptr = torch.narrow(rowptr, 0, 0, num_nodes[0] + 1).clone()
     rowptr[num_seed_nodes + 1:] = rowptr[num_seed_nodes]
 
     col = torch.narrow(col, 0, 0, rowptr[-1])
@@ -180,7 +200,7 @@ def trim_sparse_tensor(src: SparseTensor, num_nodes: int,
         rowptr=rowptr,
         col=col,
         value=value,
-        sparse_sizes=(num_nodes, num_nodes),
+        sparse_sizes=num_nodes,
         rowcount=None,
         colptr=None,
         colcount=None,
