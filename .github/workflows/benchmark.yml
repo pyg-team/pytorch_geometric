@@ -49,11 +49,12 @@ jobs:
         GIT_AUTHOR_NAME: ${{ github.actor }}
         GIT_AUTHOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
 
-    - name: Pull asv results
-      # TODO: `.asv/results/` could be stored in another repo or S3 to lightweight the repo
-      run: |
-        git checkout results && git checkout master
-        git checkout results .asv/results
+    # TODO: Enable pulling results
+    # - name: Pull asv results
+    #   # TODO: `.asv/results/` could be stored in another repo or S3 to lightweight the repo
+    #   run: |
+    #     git checkout results && git checkout master
+    #     git checkout results .asv/results
 
     - name: Run benchmarks on pull request
       # Run only a small set of benchmarks for sanity check.
@@ -61,7 +62,7 @@ jobs:
       # Give 10min for other steps. GitHub Actions allow 360 at the maximum.
       timeout-minutes: 350
       run: |
-        asv continuous -f 1.1 upstream/main HEAD
+        asv continuous -f 1.1 master HEAD
       env:
         ASV_RUN_OPTIONS: "--skip-existing-successful --parallel -v -e"
 
