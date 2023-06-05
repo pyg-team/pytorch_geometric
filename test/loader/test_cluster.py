@@ -7,16 +7,9 @@ from torch_geometric.loader import ClusterData, ClusterLoader
 from torch_geometric.testing import onlyFullTest
 from torch_geometric.utils import sort_edge_index
 
-try:
-    rowptr = torch.tensor([0, 1])
-    col = torch.tensor([0])
-    torch.ops.torch_sparse.partition(rowptr, col, None, 1, True)
-    WITH_METIS = True
-except (AttributeError, RuntimeError):
-    WITH_METIS = False or torch_geometric.typing.WITH_METIS
 
-
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@pytest.mark.skipif(not torch_geometric.typing.WITH_METIS,
+                    reason='Not compiled with METIS support')
 def test_cluster_gcn():
     adj = torch.tensor([
         [1, 1, 1, 0, 1, 0],
@@ -109,7 +102,8 @@ def test_cluster_gcn():
     assert torch.equal(out.edge_attr, tmp[1])
 
 
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@pytest.mark.skipif(not torch_geometric.typing.WITH_METIS,
+                    reason='Not compiled with METIS support')
 def test_keep_inter_cluster_edges():
     adj = torch.tensor([
         [1, 1, 1, 0, 1, 0],
@@ -145,7 +139,8 @@ def test_keep_inter_cluster_edges():
 
 
 @onlyFullTest
-@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+@pytest.mark.skipif(not torch_geometric.typing.WITH_METIS,
+                    reason='Not compiled with METIS support')
 def test_cluster_gcn_correctness(get_dataset):
     dataset = get_dataset('Cora')
     data = dataset[0].clone()

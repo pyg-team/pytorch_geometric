@@ -985,6 +985,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Gets an edge index from edge storage, in the specified layout."""
         store = self[edge_attr.edge_type]
 
+        edge_attrs = getattr(self, '_edge_attrs', {})
+        if (edge_attr.edge_type, edge_attr.layout) in edge_attrs:
+            edge_attr = edge_attrs[(edge_attr.edge_type, edge_attr.layout)]
         if edge_attr.size is None:
             edge_attr.size = store.size()  # Modify in-place.
 
