@@ -130,6 +130,8 @@ def test_hetero_linear(device):
 @withCUDA
 @pytest.mark.parametrize('use_segmm', [True, False])
 def test_hetero_linear_amp(device, use_segmm):
+    warnings.filterwarnings('ignore', '.*but CUDA is not available.*')
+
     x = torch.randn(3, 16, device=device)
     type_vec = torch.tensor([0, 1, 2], device=device)
 
