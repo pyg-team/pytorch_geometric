@@ -1,0 +1,80 @@
+name: Benchmark
+
+on:
+  push:
+    branches:
+      - master
+      - akihironitta/bench  # FIXME
+  pull_request:
+    branches:
+      - master
+      - akihironitta/bench  # FIXME
+  # TODO(akihironitta): Run benchmarks regularly
+  # schedule:
+  #   - cron: '0 0,8,16 * * *'
+
+# Note: Do not run benchmarks in parallel to avoid losing results due to conflicts
+concurrency:
+  group: benchmark
+  cancel-in-progress: false
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: '0'
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        python -m pip install -U pip
+        python -m pip install asv
+        asv machine --machine "github" --yes
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "$GIT_AUTHOR_NAME"
+        git config --global user.email "$GIT_AUTHOR_EMAIL"
+      env:
+        GIT_AUTHOR_NAME: ${{ github.actor }}
+        GIT_AUTHOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
+
+    - name: Pull asv results
+      # TODO: `.asv/results/` could be stored in another repo or S3 to lightweight the repo
+      run: |
+        git checkout results && git checkout master
+        git checkout results .asv/results
+
+    - name: Run benchmarks on pull request
+      # Run only a small set of benchmarks for sanity check.
+      # if: github.event_name == 'pull_request'  # FIXME
+      # Give 10min for other steps. GitHub Actions allow 360 at the maximum.
+      timeout-minutes: 350
+      run: |
+        asv continuous -f 1.1 upstream/main HEAD
+      env:
+        ASV_RUN_OPTIONS: "--skip-existing-successful --parallel -v -e"
+
+    # TODO: Enable uploading results and gh-pages
+    # - name: Push results and gh-pages if not on PR
+    #   if: always() && github.event_name != 'pull_request'
+    #   run: |
+    #     # Push new page to `gh-pages` branch
+    #     asv publish
+    #     git fetch origin gh-pages:gh-pages
+    #     asv gh-pages
+    #     # Push new results to `results` branch
+    #     mv .asv/results new_results
+    #     git checkout $GIT_BRANCH_RESULTS
+    #     rm -rf .asv/results
+    #     mv new_results .asv/results
+    #     git add .asv/results
+    #     git commit -m "Add results from $(git rev-parse --short $GITHUB_SHA)" && git push origin $GIT_BRANCH_RESULTS || echo "No new results to push :)"
+    #   env:
+    #     GIT_BRANCH_RESULTS: results
