@@ -134,13 +134,15 @@ class GNNExplainer(ExplainerAlgorithm):
                 if self.node_mask.grad is None:
                     raise ValueError("Could not compute gradients for node "
                                      "features. Please make sure that node "
-                                     "features are used inside the model.")
+                                     "features are used inside the model or "
+                                     "disable it via `node_mask_type=None`.")
                 self.hard_node_mask = self.node_mask.grad != 0.0
             if i == 0 and self.edge_mask is not None:
                 if self.edge_mask.grad is None:
                     raise ValueError("Could not compute gradients for edges. "
                                      "Please make sure that edges are used "
-                                     "via message passing inside the model.")
+                                     "via message passing inside the model or "
+                                     "disable it via `edge_mask_type=None`.")
                 self.hard_edge_mask = self.edge_mask.grad != 0.0
 
     def _initialize_masks(self, x: Tensor, edge_index: Tensor):
