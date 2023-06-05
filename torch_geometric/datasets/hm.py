@@ -16,7 +16,8 @@ class HM(InMemoryDataset):
     Args:
         root (str): Root directory where the dataset should be saved.
         use_all_tables_as_node_types (bool, optional): If set to :obj:`True`,
-        will keep the transaction table as node type. (default: :obj:`False`)
+            will use the transaction table as a distinct node type.
+            (default: :obj:`False`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
