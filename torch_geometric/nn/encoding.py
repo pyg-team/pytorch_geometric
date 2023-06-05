@@ -3,8 +3,6 @@ import math
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import scatter
-
 
 class PositionalEncoding(torch.nn.Module):
     r"""The positional encoding scheme from the `"Attention Is All You Need"
@@ -96,36 +94,3 @@ class TemporalEncoding(torch.nn.Module):
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.out_channels})'
-
-
-class NodeEncoding(torch.nn.Module):
-    r"""The node-encoding function from the `"Do We Really Need Complicated
-    Model Architectures for Temporal Networks?"
-    <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
-    :class:`NodeEncoding` captures the node identity and node feature
-    information via neighbor mean-pooling
-
-    """
-    def forward(self, data) -> Tensor:
-        """
-        Args:
-            data: batch of nodes from NeighborLoader
-
-        Returns:
-            torch.Tensor of the root nodes updated with mean
-                pooling of neighbor features
-        """
-        x, edge_index, batch_size = data.x, data.edge_index, data.batch_size
-        root_nodes = x[:, batch_size]
-
-        output_feats = torch.zeros((len(root_nodes), x.size(1)))
-
-        row, col = edge_index
-
-        embeddings = scatter(root_nodes[row], col, dim=0,
-                             dim_size=data.num_nodes, reduce='mean')
-        output_feats[:, batch_size] = embeddings
-        return output_feats
-
-    def __repr__(self) -> str:
-        return f'{self.__class__.__name__}'
