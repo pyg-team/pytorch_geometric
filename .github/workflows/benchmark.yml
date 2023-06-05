@@ -18,6 +18,10 @@ concurrency:
   group: benchmark
   cancel-in-progress: false
 
+defaults:
+  run:
+    working-directory: benchmarks
+
 jobs:
   benchmark:
     runs-on: ubuntu-latest
