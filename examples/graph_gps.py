@@ -30,8 +30,9 @@ val_loader = DataLoader(val_dataset, batch_size=64)
 test_loader = DataLoader(test_dataset, batch_size=64)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--attn_type', default='softmax',
-                    help="Global attention type such as softmax or performer.")
+parser.add_argument(
+    '--attn_type', default='multihead',
+    help="Global attention type such as multihead or performer.")
 args = parser.parse_args()
 
 
