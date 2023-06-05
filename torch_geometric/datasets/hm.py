@@ -7,7 +7,7 @@ from torch_geometric.data import HeteroData, InMemoryDataset
 
 class HM(InMemoryDataset):
     r"""The heterogeneous H&M dataset from the `Kaggle H&M Personalized Fashion
-    Recomendations
+    Recommendations
     <https://www.kaggle.com/competitions/h-and-m-personalized-fashion-recommendations>`_
     challenge.
     The task is to develop product recommendations based on data from previous
