@@ -44,13 +44,6 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
                 num_sampled_nodes_dict):
 
         for i, conv in enumerate(self.convs):
-            print('-before----------------')
-            for key, x in x_dict.items():
-                print(key, x.shape)
-            for key, edge_index in edge_index_dict.items():
-                print(key, edge_index.sizes(), edge_index.nnz())
-                print(edge_index)
-                print(edge_index.csr())
             x_dict, edge_index_dict, _ = trim_to_layer(
                 layer=i,
                 num_sampled_nodes_per_hop=num_sampled_nodes_dict,
@@ -58,13 +51,6 @@ class HierarchicalHeteroGraphSage(torch.nn.Module):
                 x=x_dict,
                 edge_index=edge_index_dict,
             )
-            print('-after----------------')
-            for key, x in x_dict.items():
-                print(key, x.shape)
-            for key, edge_index in edge_index_dict.items():
-                print(key, edge_index.sizes(), edge_index.nnz())
-                print(edge_index)
-                print(edge_index.csr())
 
             x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
