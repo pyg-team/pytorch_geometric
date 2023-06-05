@@ -12,12 +12,14 @@ batch = torch.tensor([0, 0, 1, 1])
 adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
 
+@pytest.mark.parametrize('attn_type', ['multihead', 'performer'])
 @pytest.mark.parametrize('norm', [None, 'batch_norm', 'layer_norm'])
-def test_gps_conv(norm):
-    conv = GPSConv(16, conv=SAGEConv(16, 16), heads=4, norm=norm)
+def test_gps_conv(norm, attn_type):
+    conv = GPSConv(16, conv=SAGEConv(16, 16), heads=4, norm=norm,
+                   attn_type=attn_type)
     conv.reset_parameters()
-    assert str(conv) == ('GPSConv(16, conv=SAGEConv(16, 16, aggr=mean), '
-                         'heads=4, attn_type=multihead)')
+    assert str(conv) == (f'GPSConv(16, conv=SAGEConv(16, 16, aggr=mean), '
+                         f'heads=4, attn_type={attn_type})')
 
     out = conv(x, edge_index)
     assert out.size() == (4, 16)
@@ -33,14 +35,3 @@ def test_gps_conv(norm):
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         assert torch.allclose(conv(x, adj2.t(), batch), out, atol=1e-6)
-
-
-def test_gps_performer():
-    conv = GPSConv(16, conv=SAGEConv(16, 16), heads=4, attn_type='performer',
-                   attn_kwargs={'kernel': torch.nn.ReLU()})
-    conv.reset_parameters()
-    assert str(conv) == ('GPSConv(16, conv=SAGEConv(16, 16, aggr=mean), '
-                         'heads=4, attn_type=performer)')
-    out = conv(x, edge_index)
-    assert out.size() == (4, 16)
-    assert torch.allclose(conv(x, adj1.t()), out, atol=1e-6)

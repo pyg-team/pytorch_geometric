@@ -17,7 +17,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import ZINC
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINEConv, GPSConv, global_add_pool
-from torch_geometric.nn.conv.gps_conv import PerformerAttention
+from torch_geometric.nn.attention import PerformerAttention
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ZINC-PE')
 transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
