@@ -118,7 +118,7 @@ class EdgeSamplerInput(CastMixin):
             self.row[index],
             self.col[index],
             self.label[index] if self.label is not None else None,
-            ,
+            time,
             self.input_type,
         )
 
