@@ -126,7 +126,8 @@ class LocalDataset(object):
         #Initialize the node labels.
         if node_label_data is not None:
     	    self.node_labels = squeeze(convert_to_tensor(node_label_data))
-     
+    
+    
     
     
 def create_features(feature_data, ids, partition_idx, attr_name):
