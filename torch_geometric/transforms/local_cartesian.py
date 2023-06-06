@@ -1,7 +1,9 @@
 import torch
+
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+
 
 @functional_transform('local_cartesian')
 class LocalCartesian(BaseTransform):
@@ -34,7 +36,8 @@ class LocalCartesian(BaseTransform):
 
         for i in range(row.size(0)):
             cart_abs = cart[i].abs()
-            max_value.index_copy_(0, col, torch.maximum(max_value[col], cart_abs))
+            max_value.index_copy_(0, col,
+                                  torch.maximum(max_value[col], cart_abs))
 
         max_value = torch.max(max_value)
 
@@ -42,7 +45,8 @@ class LocalCartesian(BaseTransform):
             norm_range_min, norm_range_max = self.norm_range
             norm_factor = 2 * max_value
             norm_factor[norm_factor == 0] = 1  # Avoid division by zero
-            cart.div_(norm_factor).mul_(norm_range_max - norm_range_min).add_(norm_range_min)  # In-place normalization
+            cart.div_(norm_factor).mul_(norm_range_max - norm_range_min).add_(
+                norm_range_min)  # In-place normalization
         else:
             cart = cart
 
