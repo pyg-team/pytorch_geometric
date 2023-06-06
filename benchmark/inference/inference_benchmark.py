@@ -14,6 +14,7 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
+import torch_geometric
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -163,6 +164,8 @@ def run(args: argparse.ArgumentParser):
                             state_dict = torch.load(args.ckpt_path)
                             model.load_state_dict(state_dict)
                         model.eval()
+                        if args.compile:
+                            model = torch_geometric.compile(model)
 
                         # Define context manager parameters:
                         if args.cpu_affinity and with_loader:
@@ -185,7 +188,7 @@ def run(args: argparse.ArgumentParser):
                                     full_batch_inference(model, data)
                                 else:
                                     model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
+                                                    args.compile, progress_bar=True)
                             if args.warmup > 0:
                                 time.reset()
                             with itt, profile:
@@ -202,6 +205,7 @@ def run(args: argparse.ArgumentParser):
                                     y = model.inference(
                                         subgraph_loader,
                                         device,
+                                        args.compile,
                                         progress_bar=True,
                                     )
                                     if args.evaluate:
@@ -291,4 +295,5 @@ if __name__ == '__main__':
         help='Write benchmark or PyTorch profile data to CSV')
     add('--export-chrome-trace', default=True, type=bool,
         help='Export chrome trace file. Works only with PyTorch profiler')
+    add('--compile', action='store_true')
     run(argparser.parse_args())

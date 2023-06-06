@@ -17,6 +17,7 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
+import torch_geometric
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -196,6 +197,8 @@ def run(args: argparse.ArgumentParser):
 
                         progress_bar = False if args.no_progress_bar else True
                         train = train_hetero if hetero else train_homo
+                        if args.compile:
+                            model = torch_geometric.compile(model, dynamic=True)
 
                         # Define context manager parameters:
                         cpu_affinity = subgraph_loader.enable_cpu_affinity(
@@ -330,6 +333,7 @@ if __name__ == '__main__':
     add('--export-chrome-trace', default=True, type=bool,
         help='Export chrome trace file. Works only with PyTorch profiler')
     add('--trim', action='store_true', help="Use `trim_to_layer` optimization")
+    add('--compile', action='store_true')
     args = argparser.parse_args()
 
     run(args)
