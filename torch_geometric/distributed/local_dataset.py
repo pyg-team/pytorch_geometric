@@ -126,56 +126,7 @@ class LocalDataset(object):
         #Initialize the node labels.
         if node_label_data is not None:
     	    self.node_labels = squeeze(convert_to_tensor(node_label_data))
-    
-    def get_graph(self, etype: Optional[EdgeType] = None):
-        if isinstance(self.graph, Graph):
-            return self.graph
-        if isinstance(self.graph, dict):
-            assert etype is not None
-            return self.graph.get(etype, None)
-        return None
-
-    def get_node_types(self):
-        if isinstance(self.graph, dict):
-            if not hasattr(self, '_node_types'):
-                ntypes = set()
-                for etype in self.graph.keys():
-                    ntypes.add(etype[0])
-                    ntypes.add(etype[2])
-                self._node_types = list(ntypes)
-            return self._node_types
-        return None
-    
-    def get_edge_types(self):
-        if isinstance(self.graph, dict):
-            if not hasattr(self, '_edge_types'):
-                self._edge_types = list(self.graph.keys())
-            return self._edge_types
-        return None
-    
-    def get_node_feature(self, ntype: Optional[NodeType] = None):
-        if isinstance(self.node_features, Feature):
-            return self.node_features
-        if isinstance(self.node_features, dict):
-            assert ntype is not None
-            return self.node_features.get(ntype, None)
-        return None
-    
-    def get_edge_feature(self, etype: Optional[EdgeType] = None):
-        if isinstance(self.edge_features, Feature):
-            return self.edge_features
-        if isinstance(self.edge_features, dict):
-            assert etype is not None
-            return self.edge_features.get(etype, None)
-        return None
-    
-    def get_node_label(self, ntype: Optional[NodeType] = None):
-        if isinstance(self.node_labels, torch.Tensor):
-            return self.node_labels
-        if isinstance(self.node_labels, dict):
-            assert ntype is not None
-            return self.node_labels.get(ntype, None)
-        return None
+     
     
     
 def create_features(feature_data, ids, partition_idx, attr_name):
