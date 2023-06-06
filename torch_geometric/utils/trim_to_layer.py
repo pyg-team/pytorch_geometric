@@ -164,7 +164,7 @@ def trim_adj(
 
 
 def trim_sparse_tensor(src: SparseTensor, size: Tuple[int, int],
-                       num_seed_nodes: None) -> SparseTensor:
+                       num_seed_nodes: int) -> SparseTensor:
     r"""Trims a :class:`SparseTensor` along both dimensions to only contain
     the upper :obj:`num_nodes` in both dimensions.
 

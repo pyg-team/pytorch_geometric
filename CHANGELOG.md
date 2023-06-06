@@ -59,6 +59,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Fixed empty edge indices handling in `SparseTensor` ([#7519](https://github.com/pyg-team/pytorch_geometric/pull/7519))
 - Move the `scaler` tensor in `GeneralConv` to the correct device ([#7484](https://github.com/pyg-team/pytorch_geometric/pull/7484))
 - Fixed `HeteroLinear` bug when used via mixed precision ([#7473](https://github.com/pyg-team/pytorch_geometric/pull/7473))
 - All transforms are now immutable, i.e., they perform a shallow-copy of the data and therefore do not longer modify data in-place ([#7429](https://github.com/pyg-team/pytorch_geometric/pull/7429))
