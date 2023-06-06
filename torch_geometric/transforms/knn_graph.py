@@ -1,5 +1,3 @@
-import torch
-
 import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
@@ -51,15 +49,11 @@ class KNNGraph(BaseTransform):
         data.edge_attr = None
         batch = data.batch if 'batch' in data else None
 
-        device = data.pos.device  # Get the device of the input tensor
-
-        data.pos = data.pos.to(device)  # Move the pos tensor to the device
-        if batch is not None:
-            data.batch = batch.to(
-                device)  # Move the batch tensor to the device
+        if data.pos.is_cuda:
+            print('Warning: The input data is on CUDA. Transferring to CPU for knn_graph computation.')
 
         edge_index = torch_geometric.nn.knn_graph(
-            data.pos,
+            data.pos.cpu(),  # Transfer data to CPU if it's on CUDA
             self.k,
             batch,
             loop=self.loop,
