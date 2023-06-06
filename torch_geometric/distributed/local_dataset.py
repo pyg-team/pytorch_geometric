@@ -128,7 +128,13 @@ class LocalDataset(object):
     	    self.node_labels = squeeze(convert_to_tensor(node_label_data))
     
     
-    
+    def get_node_label(self, ntype: Optional[NodeType] = None):
+        if isinstance(self.node_labels, torch.Tensor):
+            return self.node_labels
+        if isinstance(self.node_labels, dict):
+            assert ntype is not None
+            return self.node_labels.get(ntype, None)
+        return None
     
 def create_features(feature_data, ids, partition_idx, attr_name):
     # Initialize the node/edge feature by FeatureStore.
