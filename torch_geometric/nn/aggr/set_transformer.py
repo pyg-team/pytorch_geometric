@@ -73,11 +73,18 @@ class SetTransformerAggregation(Aggregation):
         for decoder in self.decoders:
             decoder.reset_parameters()
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        max_num_elements: Optional[int] = None,
+    ) -> Tensor:
 
-        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim)
+        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim,
+                                      max_num_elements=max_num_elements)
 
         for encoder in self.encoders:
             x = encoder(x, mask)
