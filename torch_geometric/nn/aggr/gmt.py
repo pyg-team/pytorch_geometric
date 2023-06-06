@@ -67,9 +67,11 @@ class GraphMultisetTransformer(Aggregation):
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+                dim: int = -2,
+                max_num_elements: Optional[int] = None) -> Tensor:
 
-        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim)
+        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim,
+                                      max_num_elements=max_num_elements)
 
         x = self.pma1(x, mask)
 
