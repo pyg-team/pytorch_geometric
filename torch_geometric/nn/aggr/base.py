@@ -58,9 +58,15 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
           node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        max_num_elements: Optional[int] = None,
+    ) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
@@ -76,6 +82,8 @@ class Aggregation(torch.nn.Module):
                 dimension :obj:`dim` after aggregation. (default: :obj:`None`)
             dim (int, optional): The dimension in which to aggregate.
                 (default: :obj:`-2`)
+            max_num_elements: (int, optional): The maximum number of elements
+                within a single aggregation group. (default: :obj:`None`)
         """
         pass
 

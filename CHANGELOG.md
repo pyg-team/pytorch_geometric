@@ -56,9 +56,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added support for `torch.jit.script` within `MessagePassing` layers without `torch_sparse` being installed ([#7061](https://github.com/pyg-team/pytorch_geometric/pull/7061), [#7062](https://github.com/pyg-team/pytorch_geometric/pull/7062))
 - Added unbatching logic for `torch.sparse` tensors ([#7037](https://github.com/pyg-team/pytorch_geometric/pull/7037))
 - Added the `RotatE` KGE model ([#7026](https://github.com/pyg-team/pytorch_geometric/pull/7026))
-- Added `max_num_elements` parameter to the forward method of `GraphMultisetTransformer`, `GRUAggregation`, `LSTMAggregation`, `SetTransformerAggregation` layers. [#7529](https://github.com/pyg-team/pytorch_geometric/pull/7529)
 ### Changed
 
+- Added a `max_num_elements` parameter to the forward method of `GraphMultisetTransformer`, `GRUAggregation`, `LSTMAggregation` and `SetTransformerAggregation` ([#7529](https://github.com/pyg-team/pytorch_geometric/pull/7529))
 - Fixed empty edge indices handling in `SparseTensor` ([#7519](https://github.com/pyg-team/pytorch_geometric/pull/7519))
 - Move the `scaler` tensor in `GeneralConv` to the correct device ([#7484](https://github.com/pyg-team/pytorch_geometric/pull/7484))
 - Fixed `HeteroLinear` bug when used via mixed precision ([#7473](https://github.com/pyg-team/pytorch_geometric/pull/7473))
