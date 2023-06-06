@@ -5,6 +5,7 @@ from contextlib import nullcontext
 
 import torch
 
+import torch_geometric
 from benchmark.utils import (
     emit_itt,
     get_dataset_with_transformation,
@@ -14,7 +15,6 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
-import torch_geometric
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -188,7 +188,8 @@ def run(args: argparse.ArgumentParser):
                                     full_batch_inference(model, data)
                                 else:
                                     model.inference(subgraph_loader, device,
-                                                    args.compile, progress_bar=True)
+                                                    args.compile,
+                                                    progress_bar=True)
                             if args.warmup > 0:
                                 time.reset()
                             with itt, profile:

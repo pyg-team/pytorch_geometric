@@ -287,7 +287,8 @@ class BasicGNN(torch.nn.Module):
         x_all = loader.data.x.cpu()
         loader.data.n_id = torch.arange(x_all.size(0))
         if use_compile:
-            self.inference_per_layer = torch_geometric.compile(self.inference_per_layer, dynamic=True)
+            self.inference_per_layer = torch_geometric.compile(
+                self.inference_per_layer, dynamic=True)
 
         for i in range(self.num_layers):
             xs: List[Tensor] = []
