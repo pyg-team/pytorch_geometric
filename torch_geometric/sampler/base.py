@@ -67,11 +67,18 @@ class NodeSamplerInput(CastMixin):
     def __getitem__(self, index: Union[Tensor, Any]) -> 'NodeSamplerInput':
         if not isinstance(index, Tensor):
             index = torch.tensor(index, dtype=torch.long)
-
+        if self.time is None:
+            time = None
+        else:
+            if isinstance(self.time, tuple):
+                # for case where self.time = ('paper', tensor)
+                time = self.time[-1][index]
+            else:
+                time = self.time[index]
         return NodeSamplerInput(
             self.input_id[index] if self.input_id is not None else index,
             self.node[index],
-            self.time[index] if self.time is not None else None,
+            time,
             self.input_type,
         )
 
