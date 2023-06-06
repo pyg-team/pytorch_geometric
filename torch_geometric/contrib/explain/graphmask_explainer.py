@@ -1,11 +1,11 @@
 import math
-from typing import Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch import Tensor, sigmoid
-from torch.nn import LayerNorm, Linear, Parameter, ReLU, Sequential, init
+from torch import Tensor
+from torch.nn import LayerNorm, Linear, Parameter, ReLU, Sequential
 from tqdm import tqdm
 
 from torch_geometric.explain import Explanation
@@ -19,7 +19,7 @@ from torch_geometric.explain.config import (
 from torch_geometric.nn import MessagePassing
 
 
-def explain_message(self, out, x_i, x_j):
+def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
     norm = Sequential(LayerNorm(out.size(-1)).to(out.device), ReLU())
     basis_messages = norm(out)
 
@@ -128,11 +128,11 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         if self.model_config.task_level == ModelTaskLevel.node:
             hard_node_mask, hard_edge_mask = self._get_hard_masks(
                 model, index, edge_index, num_nodes=x.size(0))
-        self.train_explainer(model, x, edge_index, target=target, index=index,
-                             **kwargs)
+        self._train_explainer(model, x, edge_index, target=target, index=index,
+                              **kwargs)
         node_mask = self._post_process_mask(self.node_feat_mask,
                                             hard_node_mask, apply_sigmoid=True)
-        edge_mask = self.explain(model, index=index)
+        edge_mask = self._explain(model, index=index)
         edge_mask = edge_mask[:edge_index.size(1)]
 
         return Explanation(node_mask=node_mask, edge_mask=edge_mask)
@@ -140,21 +140,32 @@ class GraphMaskExplainer(ExplainerAlgorithm):
     def supports(self) -> bool:
         return True
 
-    def hard_concrete(self, input_element, summarize_penalty=True, beta=1 / 3,
-                      gamma=-0.2, zeta=1.2, loc_bias=2, min_val=0, max_val=1,
-                      training=True) -> Union[Tensor, Tensor]:
+    def _hard_concrete(
+        self,
+        input_element: Tensor,
+        summarize_penalty: bool = True,
+        beta: float = 1 / 3,
+        gamma: float = -0.2,
+        zeta: float = 1.2,
+        loc_bias: int = 2,
+        min_val: int = 0,
+        max_val: int = 1,
+        training: bool = True,
+    ) -> Tuple[Tensor, Tensor]:
+        r"""Helps to set the edge mask while sampling its values from the
+        hard-concrete distribution."""
         input_element = input_element + loc_bias
 
         if training:
             u = torch.empty_like(input_element).uniform_(1e-6, 1.0 - 1e-6)
 
-            s = sigmoid(
+            s = torch.sigmoid(
                 (torch.log(u) - torch.log(1 - u) + input_element) / beta)
 
-            penalty = sigmoid(input_element -
-                              beta * np.math.log(-gamma / zeta))
+            penalty = torch.sigmoid(input_element -
+                                    beta * np.math.log(-gamma / zeta))
         else:
-            s = sigmoid(input_element)
+            s = torch.sigmoid(input_element)
             penalty = torch.zeros_like(input_element)
 
         if summarize_penalty:
@@ -170,8 +181,15 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         return clipped_s, penalty
 
-    def set_masks(self, i_dim, j_dim, h_dim, x, device):
-        (num_nodes, num_feat), std = x.size(), 0.1
+    def _set_masks(
+        self,
+        i_dim: List[int],
+        j_dim: List[int],
+        h_dim: List[int],
+        x: Tensor,
+    ):
+        r"""Sets the node masks and edge masks."""
+        (num_nodes, num_feat), std, device = x.size(), 0.1, x.device
         self.feat_mask_type = self.explainer_config.node_mask_type
 
         if self.feat_mask_type == MaskType.attributes:
@@ -227,23 +245,25 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         for parameter in self.parameters():
             parameter.requires_grad = False
 
-    def enable_layer(self, layer):
+    def _enable_layer(self, layer: int):
+        r"""Enables the input layer's edge mask."""
         for d in range(layer * 4, (layer * 4) + 4):
             for parameter in self.gates[d].parameters():
                 parameter.requires_grad = True
         self.full_biases[layer].requires_grad = True
         self.baselines[layer].requires_grad = True
 
-    def reset_parameters(self, input_dims, h_dim):
+    def reset_parameters(self, input_dims: List[int], h_dim: List[int]):
+        r"""Resets all learnable parameters of the module."""
         fan_in = sum(input_dims)
 
         std = math.sqrt(2.0 / float(fan_in + h_dim))
         a = math.sqrt(3.0) * std
 
         for transform in self.transforms:
-            init._no_grad_uniform_(transform.weight, -a, a)
+            torch.nn.init._no_grad_uniform_(transform.weight, -a, a)
 
-        init.zeros_(self.full_bias)
+        torch.nn.init.zeros_(self.full_bias)
 
         for layer_norm in self.layer_norms:
             layer_norm.reset_parameters()
@@ -279,7 +299,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         return loss_fn(y_hat, y)
 
-    def _loss(self, y_hat: Tensor, y: Tensor, penalty) -> Tensor:
+    def _loss(self, y_hat: Tensor, y: Tensor, penalty: float) -> Tensor:
         if self.model_config.mode == ModelMode.binary_classification:
             loss = self._loss_binary_classification(y_hat, y)
         elif self.model_config.mode == ModelMode.multiclass_classification:
@@ -303,19 +323,30 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         return loss
 
-    def freeze_model(self, module):
+    def _freeze_model(self, module: torch.nn.Module):
+        r"""Freezes the parameters of the original GNN model by disabling
+        their gradients."""
         for param in module.parameters():
             param.requires_grad = False
 
-    def _set_flags(self, model):
+    def _set_flags(self, model: torch.nn.Module):
+        r"""Initializes the underlying explainer model's parameters for each
+        layer of the original GNN model."""
         for module in model.modules():
             if isinstance(module, MessagePassing):
                 module.explain_message = explain_message.__get__(
                     module, MessagePassing)
                 module.explain = True
 
-    def _inject_messages(self, model: torch.nn.Module, message_scale,
-                         message_replacement, set=False):
+    def _inject_messages(
+        self,
+        model: torch.nn.Module,
+        message_scale: List[Tensor],
+        message_replacement: torch.nn.ParameterList,
+        set: bool = False,
+    ):
+        r"""Injects the computed messages into each layer of the original GNN
+        model."""
         i = 0
         for module in model.modules():
             if isinstance(module, MessagePassing):
@@ -327,7 +358,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     module.message_scale = None
                     module.message_replacement = None
 
-    def train_explainer(
+    def _train_explainer(
         self,
         model: torch.nn.Module,
         x: Tensor,
@@ -337,12 +368,25 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ):
+        r"""Trains the underlying explainer model.
+
+        Args:
+            model (torch.nn.Module): The model to explain.
+            x (torch.Tensor): The input node features.
+            edge_index (torch.Tensor): The input edge indices.
+            target (torch.Tensor): The target of the model.
+            index (int or torch.Tensor, optional): The index of the model
+                output to explain. Needs to be a single index.
+                (default: :obj:`None`)
+            **kwargs (optional): Additional keyword arguments passed to
+                :obj:`model`.
+        """
         if (not isinstance(index, Tensor) and not isinstance(index, int)
                 and index is not None):
             raise ValueError("'index' parameter can only be a 'Tensor', "
                              "'integer' or set to 'None' instead.")
 
-        self.freeze_model(model)
+        self._freeze_model(model)
         self._set_flags(model)
 
         input_dims, output_dims = [], []
@@ -351,7 +395,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 input_dims.append(module.in_channels)
                 output_dims.append(module.out_channels)
 
-        self.set_masks(input_dims, output_dims, output_dims, x, x.device)
+        self._set_masks(input_dims, output_dims, output_dims, x)
 
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 
@@ -370,7 +414,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     pbar.set_description(
                         f'Train explainer for graph {index} with layer '
                         f'{layer}')
-            self.enable_layer(layer)
+            self._enable_layer(layer)
             for epoch in range(self.epochs):
                 with torch.no_grad():
                     model(x, edge_index, **kwargs)
@@ -395,13 +439,13 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                             partial = self.gates[i * 4][j](gate_input[j][i])
                         except Exception:
                             try:
-                                self.set_masks(output_dims, output_dims,
-                                               output_dims, x, x.device)
+                                self._set_masks(output_dims, output_dims,
+                                                output_dims, x)
                                 partial = self.gates[i * 4][j](
                                     gate_input[j][i])
                             except Exception:
-                                self.set_masks(input_dims, input_dims,
-                                               output_dims, x, x.device)
+                                self._set_masks(input_dims, input_dims,
+                                                output_dims, x)
                                 partial = self.gates[i * 4][j](
                                     gate_input[j][i])
                         result = self.gates[(i * 4) + 1][j](partial)
@@ -411,7 +455,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                     sampling_weights = self.gates[(i * 4) +
                                                   3](relu_output).squeeze(
                                                       dim=-1)
-                    sampling_weights, penalty = self.hard_concrete(
+                    sampling_weights, penalty = self._hard_concrete(
                         sampling_weights)
                     gates.append(sampling_weights)
                     total_penalty += penalty
@@ -457,19 +501,26 @@ class GraphMaskExplainer(ExplainerAlgorithm):
             if self.log:
                 pbar.close()
 
-    def explain(
+    def _explain(
         self,
         model: torch.nn.Module,
         *,
         index: Optional[Union[int, Tensor]] = None,
     ) -> Tensor:
+        r"""Generates explanations for the original GNN model.
 
+        Args:
+            model (torch.nn.Module): The model to explain.
+            index (int or torch.Tensor, optional): The index of the model
+                output to explain. Needs to be a single index.
+                (default: :obj:`None`).
+        """
         if (not isinstance(index, Tensor) and not isinstance(index, int)
                 and index is not None):
             raise ValueError("'index' parameter can only be a 'Tensor', "
                              "'integer' or set to 'None' instead.")
 
-        self.freeze_model(model)
+        self._freeze_model(model)
         self._set_flags(model)
 
         with torch.no_grad():
@@ -499,7 +550,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 relu_output = self.gates[(i * 4) + 2](output / len(gate_input))
                 sampling_weights = self.gates[(i * 4) +
                                               3](relu_output).squeeze(dim=-1)
-                sampling_weights, _ = self.hard_concrete(
+                sampling_weights, _ = self._hard_concrete(
                     sampling_weights, training=False)
                 if i == 0:
                     edge_weight = sampling_weights

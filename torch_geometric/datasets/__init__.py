@@ -78,12 +78,14 @@ from .ogb_mag import OGB_MAG
 from .dblp import DBLP
 from .movie_lens import MovieLens
 from .movie_lens_100k import MovieLens100K
+from .movie_lens_1m import MovieLens1M
 from .imdb import IMDB
 from .last_fm import LastFM
 from .hgb_dataset import HGBDataset
 from .taobao import Taobao
 from .igmc_dataset import IGMCDataset
 from .amazon_book import AmazonBook
+from .hm import HM
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
@@ -180,12 +182,14 @@ hetero_datasets = [
     'DBLP',
     'MovieLens',
     'MovieLens100K',
+    'MovieLens1M',
     'IMDB',
     'LastFM',
     'HGBDataset',
     'Taobao',
     'IGMCDataset',
     'AmazonBook',
+    'HM',
 ]
 synthetic_datasets = [
     'FakeDataset',

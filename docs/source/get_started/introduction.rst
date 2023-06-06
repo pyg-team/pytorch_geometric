@@ -3,7 +3,7 @@ Introduction by Example
 
 We shortly introduce the fundamental concepts of :pyg:`PyG` through self-contained examples.
 
-For an introduction to Graph Machine Learning, we refer the interested reader to the :stanford:`null` `Stanford CS22W: Machine Learning with Graphs <https://www.youtube.com/watch?v=JAB_plj2rbA>`__ lectures.
+For an introduction to Graph Machine Learning, we refer the interested reader to the :stanford:`null` `Stanford CS224W: Machine Learning with Graphs <https://www.youtube.com/watch?v=JAB_plj2rbA>`__ lectures.
 For an interactive introduction to :pyg:`PyG`, we recommend our carefully curated :colab:`null` `Google Colab <colabs.html>`__ notebooks.
 
 At its core, :pyg:`PyG` provides the following main features:
