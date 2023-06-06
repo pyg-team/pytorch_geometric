@@ -18,15 +18,21 @@ class LocalDataset(object):
     def __init__(self, graph: Union[Graph, Dict[EdgeType, Graph]] = None,
                  node_features: Union[Feature, Dict[NodeType, Feature]] = None,
                  edge_features: Union[Feature, Dict[EdgeType, Feature]] = None,
-                 node_labels: Union[TensorDataType, Dict[NodeType, TensorDataType]] = None):
+                 node_labels: Union[TensorDataType,
+                                    Dict[NodeType, TensorDataType]] = None):
         self.graph = graph
         self.node_features = node_features
         self.edge_features = edge_features
         self.node_labels = squeeze(convert_to_tensor(node_labels))
 
-    def init_graph(self, edge_index: Union[TensorDataType, Dict[EdgeType, TensorDataType]] = None,
-                        edge_ids: Union[TensorDataType, Dict[EdgeType, TensorDataType]] = None,
-                        layout: Union[str, Dict[EdgeType, str]] = 'COO', directed: bool = False):
+    def init_graph(self, edge_index: Union[TensorDataType,
+                                           Dict[EdgeType,
+                                                TensorDataType]] = None,
+                   edge_ids: Union[TensorDataType,
+                                   Dict[EdgeType, TensorDataType]] = None,
+                   layout: Union[str,
+                                 Dict[EdgeType,
+                                      str]] = 'COO', directed: bool = False):
         r""" Initialize the graph data storage and build the Graph.
 
         Args:
@@ -67,11 +73,14 @@ class LocalDataset(object):
                                            edge_type=None, layout='coo',
                                            size=(node_num, node_num))
                 graph_store.put_edge_id(edge_id=edge_ids, edge_type=None,
-                                        layout='coo', size=(node_num, node_num))
+                                        layout='coo',
+                                        size=(node_num, node_num))
                 self.graph = graph_store
 
     def init_node_features(
-            self, node_feature_data: Union[TensorDataType, Dict[NodeType, TensorDataType]] = None,
+            self, node_feature_data: Union[TensorDataType,
+                                           Dict[NodeType,
+                                                TensorDataType]] = None,
             ids: Union[TensorDataType, Dict[EdgeType, TensorDataType]] = None,
             partition_idx: int = 1, dtype: Optional[torch.dtype] = None):
         r""" Initialize the node feature data storage.
@@ -87,7 +96,9 @@ class LocalDataset(object):
                 partition_idx, "node_feat")
 
     def init_edge_features(
-            self, edge_feature_data: Union[TensorDataType, Dict[EdgeType, TensorDataType]] = None,
+            self, edge_feature_data: Union[TensorDataType,
+                                           Dict[EdgeType,
+                                                TensorDataType]] = None,
             ids: Union[TensorDataType, Dict[EdgeType, TensorDataType]] = None,
             partition_idx: int = 1, dtype: Optional[torch.dtype] = None):
         r""" Initialize the edge feature data by LocalFeatureStore.
@@ -103,12 +114,13 @@ class LocalDataset(object):
                 convert_to_tensor(ids), partition_idx, "edge_feat")
 
     def init_node_labels(self,
-        node_label_data: Union[TensorDataType, Dict[NodeType, TensorDataType]] = None):
+                         node_label_data: Union[TensorDataType,
+                                                Dict[NodeType,
+                                                     TensorDataType]] = None):
         #Initialize the node labels.
         if node_label_data is not None:
-    	    self.node_labels = squeeze(convert_to_tensor(node_label_data))
-    
-    
+            self.node_labels = squeeze(convert_to_tensor(node_label_data))
+
     def get_node_label(self, ntype: Optional[NodeType] = None):
         if isinstance(self.node_labels, torch.Tensor):
             return self.node_labels
@@ -116,7 +128,6 @@ class LocalDataset(object):
             assert ntype is not None
             return self.node_labels.get(ntype, None)
         return None
-    
 
 
 def create_features(feature_data, ids, partition_idx, attr_name):
