@@ -50,7 +50,9 @@ class KNNGraph(BaseTransform):
         batch = data.batch if 'batch' in data else None
 
         if data.pos.is_cuda:
-            print('Warning: The input data is on CUDA. Transferring to CPU for knn_graph computation.')
+            print(
+                'Warning: The input data is on CUDA. Transferring to CPU for knn_graph computation.'
+            )
 
         edge_index = torch_geometric.nn.knn_graph(
             data.pos.cpu(),  # Transfer data to CPU if it's on CUDA
