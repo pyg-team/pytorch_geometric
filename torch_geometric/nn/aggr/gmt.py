@@ -3,6 +3,7 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.aggr.utils import (
     PoolingByMultiheadAttention,
@@ -65,11 +66,19 @@ class GraphMultisetTransformer(Aggregation):
             encoder.reset_parameters()
         self.pma2.reset_parameters()
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        max_num_elements: Optional[int] = None,
+    ) -> Tensor:
 
-        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim)
+        x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim,
+                                      max_num_elements=max_num_elements)
 
         x = self.pma1(x, mask)
 

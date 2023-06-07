@@ -18,7 +18,7 @@ from torch_geometric.testing import (
     onlyNeighborSampler,
     withPackage,
 )
-from torch_geometric.typing import WITH_PYG_LIB
+from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.utils import (
     is_undirected,
     sort_edge_index,
@@ -41,6 +41,8 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 @pytest.mark.parametrize('filter_per_worker', [None, True, False])
 def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
+    if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
+        return
     if (dtype != torch.int64
             and (not WITH_PYG_LIB or subgraph_type == SubgraphType.induced)):
         return
@@ -99,6 +101,8 @@ def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
 @pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
+    if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
+        return
     if (dtype != torch.int64
             and (not WITH_PYG_LIB or subgraph_type == SubgraphType.induced)):
         return
@@ -248,6 +252,8 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
+    if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
+        return
     dataset = get_dataset(name='Cora')
     data = dataset[0]
 
@@ -291,6 +297,8 @@ def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
+    if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
+        return
     dataset = get_dataset(name='Cora')
     data = dataset[0]
 

@@ -40,6 +40,9 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         raise ValueError(f"`reduce` argument '{reduce}' not supported")
 
     if isinstance(src, SparseTensor):
+        if src.nnz() == 0:
+            return other.new_zeros(src.size(0), other.size(1))
+
         if (torch_geometric.typing.WITH_PT2 and other.dim() == 2
                 and not src.is_cuda() and not src.requires_grad()):
             # Use optimized PyTorch `torch.sparse.mm` path:
