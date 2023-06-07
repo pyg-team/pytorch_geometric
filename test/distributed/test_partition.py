@@ -4,9 +4,11 @@ import torch
 
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 from torch_geometric.distributed.partition.partitioner import Partitioner
+from torch_geometric.testing import withPackage
 from torch_geometric.typing import EdgeTypeStr
 
 
+@withPackage('pyg_lib')
 def test_partition_homo_graph():
     num_partitions = 2
     save_dir = osp.join('./homo', 'partition')
@@ -58,6 +60,7 @@ def test_partition_homo_graph():
     assert torch.allclose(data.x[node_id2], node_feat2)
 
 
+@withPackage('pyg_lib')
 def test_partition_hetero_graph():
     num_partitions = 2
     save_dir = osp.join('./hetero', 'partition')
