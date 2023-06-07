@@ -50,7 +50,7 @@ class KNNGraph(BaseTransform):
         batch = data.batch if 'batch' in data else None
 
         edge_index = torch_geometric.nn.knn_graph(
-            data.pos,  # Transfer data to CPU if it's on CUDA
+            data.pos,
             self.k,
             batch,
             loop=self.loop,
