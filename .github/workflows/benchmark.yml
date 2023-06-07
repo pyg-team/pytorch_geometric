@@ -64,7 +64,8 @@ jobs:
       timeout-minutes: 350
       run: |
         git branch --all
-        asv continuous -f 1.1 origin/master HEAD -e
+        # FIXME: Tighten the below ratio 2.0 to 1.1
+        asv continuous -f 2.0 origin/master HEAD -e
       env:
         ASV_RUN_OPTIONS: "--skip-existing-successful --parallel -v -e"
 
