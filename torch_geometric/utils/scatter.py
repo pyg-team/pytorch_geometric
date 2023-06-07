@@ -144,6 +144,11 @@ else:  # pragma: no cover
                 :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
                 (default: :obj:`"sum"`)
         """
+        # [DO NOT MERGE] Imitate regression in scatter
+        import time
+
+        time.sleep(0.7)
+
         if reduce == 'any':
             dim = src.dim() + dim if dim < 0 else dim
 
