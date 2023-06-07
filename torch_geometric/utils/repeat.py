@@ -1,34 +1,36 @@
 import itertools
 import numbers
+from typing import Any
 
 import torch
+from torch import Tensor
 
 
-def repeat(src, length):
+def repeat(src: Any, length: int) -> Any:
     if src is None:
         return None
 
-    if torch.is_tensor(src):
+    if isinstance(src, Tensor):
         if src.numel() == 1:
             return src.repeat(length)
 
-        current_length = src.size(0)
+        if src.numel() > length:
+            return src[:length]
 
-        if current_length > length:
-            return src[:length]
-        if current_length < length:
-            last_element = src[-1].unsqueeze(0)
-            padding_length = length - current_length
-            padding = last_element.repeat(padding_length)
-            src = torch.cat((src, padding))
-    elif isinstance(src, numbers.Number):
+        if src.numel() < length:
+            last_elem = src[-1].unsqueeze(0)
+            padding = last_elem.repeat(length - src.numel())
+            return torch.cat([src, padding])
+
+        return src
+
+    if isinstance(src, numbers.Number):
         return list(itertools.repeat(src, length))
-    else:
-        current_length = len(src)
-        if (current_length > length):
-            return src[:length]
-        if (current_length < length):
-            return src + list(
-                itertools.repeat(src[-1], length - current_length))
+
+    if (len(src) > length):
+        return src[:length]
+
+    if (len(src) < length):
+        return src + list(itertools.repeat(src[-1], length - len(src)))
 
     return src

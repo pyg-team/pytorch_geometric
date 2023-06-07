@@ -44,26 +44,28 @@ def voxel_grid(
         raise ImportError('`voxel_grid` requires `torch-cluster`.')
 
     pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
-    _, dim = pos.size()
+    dim = pos.size(1)
 
     if batch is None:
-        batch = torch.zeros(pos.shape[0], dtype=torch.long, device=pos.device)
+        batch = pos.new_zeros(pos.size(0), dtype=torch.long)
 
-    pos = torch.cat([pos, batch.unsqueeze(-1).type_as(pos)], dim=-1)
+    pos = torch.cat([pos, batch.view(-1, 1).to(pos.dtype)], dim=-1)
 
-    size = torch.tensor(size, dtype=pos.dtype, device=pos.device)
+    if not isinstance(size, Tensor):
+        size = torch.tensor(size, dtype=pos.dtype, device=pos.device)
     size = repeat(size, dim)
-    size = torch.cat((size, torch.ones(1, dtype=pos.dtype, device=pos.device)))
-
-    if end is not None:
-        end = torch.tensor(end, dtype=pos.dtype, device=pos.device)
-        end = repeat(end, dim)
-        end = torch.cat((end, batch.max().unsqueeze(0)))
+    size = torch.cat([size, size.new_ones(1)])  # Add additional batch dim.
 
     if start is not None:
-        start = torch.tensor(start, dtype=pos.dtype, device=pos.device)
+        if not isinstance(start, Tensor):
+            start = torch.tensor(start, dtype=pos.dtype, device=pos.device)
         start = repeat(start, dim)
-        start = torch.cat(
-            (start, torch.zeros(1, dtype=pos.dtype, device=pos.device)))
+        start = torch.cat([start, start.new_zeros(1)])
+
+    if end is not None:
+        if not isinstance(end, Tensor):
+            end = torch.tensor(end, dtype=pos.dtype, device=pos.device)
+        end = repeat(end, dim)
+        end = torch.cat([end, batch.max().unsqueeze(0)])
 
     return grid_cluster(pos, size, start, end)
