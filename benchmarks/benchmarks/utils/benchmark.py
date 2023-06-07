@@ -8,11 +8,8 @@ from torch_geometric.utils import is_torch_sparse_tensor
 
 
 def require_grad(x: Any, requires_grad: bool = True) -> Any:
-    if (
-        isinstance(x, Tensor)
-        and x.is_floating_point()
-        and not is_torch_sparse_tensor(x)
-    ):
+    if (isinstance(x, Tensor) and x.is_floating_point()
+            and not is_torch_sparse_tensor(x)):
         return x.detach().requires_grad_(requires_grad)
     elif isinstance(x, list):
         return [require_grad(v, requires_grad) for v in x]
@@ -51,23 +48,19 @@ def benchmark(
     # from tabulate import tabulate
 
     if num_steps <= 0:
-        raise ValueError(
-            f"'num_steps' must be a positive integer " f"(got {num_steps})"
-        )
+        raise ValueError(f"'num_steps' must be a positive integer "
+                         f"(got {num_steps})")
 
     if num_warmups <= 0:
-        raise ValueError(
-            f"'num_warmups' must be a positive integer " f"(got {num_warmups})"
-        )
+        raise ValueError(f"'num_warmups' must be a positive integer "
+                         f"(got {num_warmups})")
 
     if func_names is None:
         func_names = [get_func_name(func) for func in funcs]
 
     if len(funcs) != len(func_names):
-        raise ValueError(
-            f"Length of 'funcs' (got {len(funcs)}) and "
-            f"'func_names' (got {len(func_names)}) must be equal"
-        )
+        raise ValueError(f"Length of 'funcs' (got {len(funcs)}) and "
+                         f"'func_names' (got {len(func_names)}) must be equal")
 
     # Zero-copy `args` for each function (if necessary):
     args_list = [args] * len(funcs) if isinstance(args, tuple) else args

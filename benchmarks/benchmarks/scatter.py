@@ -16,9 +16,9 @@
 #   * Prefer `scatter_reduce_` implementation without gradients
 #   * Prefer `torch_sparse` implementation with gradients
 import torch
-from torch_geometric.utils import scatter
-
 from benchmarks.utils.benchmark import benchmark
+
+from torch_geometric.utils import scatter
 
 WITH_TORCH_SCATTER = True
 try:
@@ -40,7 +40,8 @@ def pytorch_scatter(x, index, dim_size, reduce):
 
 
 def own_scatter(x, index, dim_size, reduce):
-    return torch_scatter.scatter(x, index, dim=0, dim_size=dim_size, reduce=reduce)
+    return torch_scatter.scatter(x, index, dim=0, dim_size=dim_size,
+                                 reduce=reduce)
 
 
 def optimized_scatter(x, index, dim_size, reduce):
@@ -56,7 +57,7 @@ class ScatterSum:
         device = "cuda" if torch.cuda.is_available() else "cpu"
         num_nodes, num_edges = 1_000, 50_000
         x = torch.randn(num_edges, 64, device=device)
-        index = torch.randint(num_nodes, (num_edges,), device=device)
+        index = torch.randint(num_nodes, (num_edges, ), device=device)
         ts = benchmark(
             funcs=[pytorch_scatter, own_scatter, optimized_scatter],
             func_names=["PyTorch", "torch_scatter", "Optimized"],
@@ -85,7 +86,7 @@ class ScatterMean:
         device = "cuda" if torch.cuda.is_available() else "cpu"
         num_nodes, num_edges = 1_000, 50_000
         x = torch.randn(num_edges, 64, device=device)
-        index = torch.randint(num_nodes, (num_edges,), device=device)
+        index = torch.randint(num_nodes, (num_edges, ), device=device)
         ts = benchmark(
             funcs=[pytorch_scatter, own_scatter, optimized_scatter],
             func_names=["PyTorch", "torch_scatter", "Optimized"],
@@ -114,7 +115,7 @@ class ScatterMin:
         device = "cuda" if torch.cuda.is_available() else "cpu"
         num_nodes, num_edges = 1_000, 50_000
         x = torch.randn(num_edges, 64, device=device)
-        index = torch.randint(num_nodes, (num_edges,), device=device)
+        index = torch.randint(num_nodes, (num_edges, ), device=device)
         ts = benchmark(
             funcs=[pytorch_scatter, own_scatter, optimized_scatter],
             func_names=["PyTorch", "torch_scatter", "Optimized"],
@@ -143,7 +144,7 @@ class ScatterMax:
         device = "cuda" if torch.cuda.is_available() else "cpu"
         num_nodes, num_edges = 1_000, 50_000
         x = torch.randn(num_edges, 64, device=device)
-        index = torch.randint(num_nodes, (num_edges,), device=device)
+        index = torch.randint(num_nodes, (num_edges, ), device=device)
         ts = benchmark(
             funcs=[pytorch_scatter, own_scatter, optimized_scatter],
             func_names=["PyTorch", "torch_scatter", "Optimized"],
@@ -172,7 +173,7 @@ class ScatterMul:
         device = "cuda" if torch.cuda.is_available() else "cpu"
         num_nodes, num_edges = 1_000, 50_000
         x = torch.randn(num_edges, 64, device=device)
-        index = torch.randint(num_nodes, (num_edges,), device=device)
+        index = torch.randint(num_nodes, (num_edges, ), device=device)
         ts = benchmark(
             funcs=[pytorch_scatter, own_scatter, optimized_scatter],
             func_names=["PyTorch", "torch_scatter", "Optimized"],
