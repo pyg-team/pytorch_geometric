@@ -56,13 +56,14 @@ jobs:
     #     git checkout results && git checkout master
     #     git checkout results .asv/results
 
-    - name: Run benchmarks on pull request
+    - name: Compare with master on pull request
       # Run only a small set of benchmarks for sanity check.
       # if: github.event_name == 'pull_request'  # FIXME
       # Give 10min for other steps. GitHub Actions allow 360 at the maximum.
       timeout-minutes: 350
       run: |
-        asv continuous -f 1.1 master HEAD
+        git branch --all
+        asv continuous -f 1.1 origin/master HEAD -e
       env:
         ASV_RUN_OPTIONS: "--skip-existing-successful --parallel -v -e"
 
