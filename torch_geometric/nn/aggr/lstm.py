@@ -3,6 +3,7 @@ from typing import Optional
 from torch import Tensor
 from torch.nn import LSTM
 
+from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.nn.aggr import Aggregation
 
 
@@ -29,6 +30,7 @@ class LSTMAggregation(Aggregation):
     def reset_parameters(self):
         self.lstm.reset_parameters()
 
+    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
     def forward(
         self,
         x: Tensor,
