@@ -1,11 +1,13 @@
 name: benchmark
 
 channels:
+  - pyg
+  - pytorch
   - conda-forge
 
 dependencies:
-  - python=3.11
+  - python=3.10
   - pip
-  - pip:
-    - flit_core>=3.2,<4
-    - torch==2.0.1 --index-url https://download.pytorch.org/whl/cu118
+  - pytorch
+  - pyg
+  - pytorch-scatter

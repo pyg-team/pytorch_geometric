@@ -1,15 +1,3 @@
-import torch
-from torch_geometric.utils import scatter
-
-from benchmarks.utils.benchmark import benchmark
-
-WITH_TORCH_SCATTER = True
-try:
-    import torch_scatter
-except ImportError:
-    WITH_TORCH_SCATTER = False
-
-
 # Insights on GPU:
 # ================
 # * "sum": Prefer `scatter_add_` implementation
@@ -27,6 +15,16 @@ except ImportError:
 # * "mul" (probably not worth branching for this):
 #   * Prefer `scatter_reduce_` implementation without gradients
 #   * Prefer `torch_sparse` implementation with gradients
+import torch
+from torch_geometric.utils import scatter
+
+from benchmarks.utils.benchmark import benchmark
+
+WITH_TORCH_SCATTER = True
+try:
+    import torch_scatter
+except ImportError:
+    WITH_TORCH_SCATTER = False
 
 
 def pytorch_scatter(x, index, dim_size, reduce):
@@ -49,8 +47,8 @@ def optimized_scatter(x, index, dim_size, reduce):
     return scatter(x, index, dim=0, dim_size=dim_size, reduce=reduce)
 
 
-class Scatter:
-    def setup(self, n):
+class ScatterSum:
+    def setup(self, _):
         if not WITH_TORCH_SCATTER:
             raise NotImplementedError
 
@@ -78,6 +76,117 @@ class Scatter:
         return ts[2][1]
 
 
-if __name__ == "__main__":
-    bench = Scatter()
-    print(bench.setup_cache())
+class ScatterMean:
+    def setup(self, _):
+        if not WITH_TORCH_SCATTER:
+            raise NotImplementedError
+
+    def setup_cache(self):
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        num_nodes, num_edges = 1_000, 50_000
+        x = torch.randn(num_edges, 64, device=device)
+        index = torch.randint(num_nodes, (num_edges,), device=device)
+        ts = benchmark(
+            funcs=[pytorch_scatter, own_scatter, optimized_scatter],
+            func_names=["PyTorch", "torch_scatter", "Optimized"],
+            args=(x, index, num_nodes, "sum"),
+            num_steps=100 if device == "cpu" else 1000,
+            num_warmups=50 if device == "cpu" else 500,
+        )
+        return ts
+
+    def track_pytorch_scatter(self, ts):
+        return ts[0][1]
+
+    def track_own_scatter(self, ts):
+        return ts[1][1]
+
+    def track_optimized_scatter(self, ts):
+        return ts[2][1]
+
+
+class ScatterMin:
+    def setup(self, _):
+        if not WITH_TORCH_SCATTER:
+            raise NotImplementedError
+
+    def setup_cache(self):
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        num_nodes, num_edges = 1_000, 50_000
+        x = torch.randn(num_edges, 64, device=device)
+        index = torch.randint(num_nodes, (num_edges,), device=device)
+        ts = benchmark(
+            funcs=[pytorch_scatter, own_scatter, optimized_scatter],
+            func_names=["PyTorch", "torch_scatter", "Optimized"],
+            args=(x, index, num_nodes, "sum"),
+            num_steps=100 if device == "cpu" else 1000,
+            num_warmups=50 if device == "cpu" else 500,
+        )
+        return ts
+
+    def track_pytorch_scatter(self, ts):
+        return ts[0][1]
+
+    def track_own_scatter(self, ts):
+        return ts[1][1]
+
+    def track_optimized_scatter(self, ts):
+        return ts[2][1]
+
+
+class ScatterMax:
+    def setup(self, _):
+        if not WITH_TORCH_SCATTER:
+            raise NotImplementedError
+
+    def setup_cache(self):
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        num_nodes, num_edges = 1_000, 50_000
+        x = torch.randn(num_edges, 64, device=device)
+        index = torch.randint(num_nodes, (num_edges,), device=device)
+        ts = benchmark(
+            funcs=[pytorch_scatter, own_scatter, optimized_scatter],
+            func_names=["PyTorch", "torch_scatter", "Optimized"],
+            args=(x, index, num_nodes, "sum"),
+            num_steps=100 if device == "cpu" else 1000,
+            num_warmups=50 if device == "cpu" else 500,
+        )
+        return ts
+
+    def track_pytorch_scatter(self, ts):
+        return ts[0][1]
+
+    def track_own_scatter(self, ts):
+        return ts[1][1]
+
+    def track_optimized_scatter(self, ts):
+        return ts[2][1]
+
+
+class ScatterMul:
+    def setup(self, _):
+        if not WITH_TORCH_SCATTER:
+            raise NotImplementedError
+
+    def setup_cache(self):
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        num_nodes, num_edges = 1_000, 50_000
+        x = torch.randn(num_edges, 64, device=device)
+        index = torch.randint(num_nodes, (num_edges,), device=device)
+        ts = benchmark(
+            funcs=[pytorch_scatter, own_scatter, optimized_scatter],
+            func_names=["PyTorch", "torch_scatter", "Optimized"],
+            args=(x, index, num_nodes, "sum"),
+            num_steps=100 if device == "cpu" else 1000,
+            num_warmups=50 if device == "cpu" else 500,
+        )
+        return ts
+
+    def track_pytorch_scatter(self, ts):
+        return ts[0][1]
+
+    def track_own_scatter(self, ts):
+        return ts[1][1]
+
+    def track_optimized_scatter(self, ts):
+        return ts[2][1]
