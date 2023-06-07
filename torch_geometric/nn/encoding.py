@@ -147,18 +147,22 @@ class _MLPMixer(torch.nn.Module):
         h = self.token_layer_norm(x).mT
         h = self.token_lin_1(h)
         h = torch.nn.functional.gelu(h)
-        h = torch.nn.functional.dropout(h, p=self.dropout, training=self.training)
+        h = torch.nn.functional.dropout(h, p=self.dropout,
+                                        training=self.training)
         h = self.token_lin_2(h)
-        h = torch.nn.functional.dropout(h, p=self.dropout, training=self.training)
+        h = torch.nn.functional.dropout(h, p=self.dropout,
+                                        training=self.training)
         h_token = h.mT + x
 
         # channel mixing
         h = self.channel_layer_norm(h_token)
         h = self.channel_lin_1(h)
         h = torch.nn.functional.gelu(h)
-        h = torch.nn.functional.dropout(h, p=self.dropout, training=self.training)
+        h = torch.nn.functional.dropout(h, p=self.dropout,
+                                        training=self.training)
         h = self.channel_lin_2(h)
-        h = torch.nn.functional.dropout(h, p=self.dropout, training=self.training)
+        h = torch.nn.functional.dropout(h, p=self.dropout,
+                                        training=self.training)
         h_channel = h + h_token
 
         # head
@@ -198,7 +202,7 @@ class LinkEncoding(torch.nn.Module):
             :obj:`edge_index` is sorted by column. This avoids internal
             re-sorting of the data and can improve runtime and memory
             efficiency. (default: :obj:`False`)
-        dropout (float, optional): 
+        dropout (float, optional):
 
     Example:
 
