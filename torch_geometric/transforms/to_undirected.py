@@ -38,6 +38,7 @@ class ToUndirected(BaseTransform):
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
+        data = data.clone()
         for store in data.edge_stores:
             if 'edge_index' not in store:
                 continue
