@@ -13,10 +13,11 @@ on:
   # schedule:
   #   - cron: '0 0,8,16 * * *'
 
+# TODO: Uncomment below
 # Note: Do not run benchmarks in parallel to avoid losing results due to conflicts
-concurrency:
-  group: benchmark
-  cancel-in-progress: false
+# concurrency:
+#   group: benchmark
+#   cancel-in-progress: false
 
 defaults:
   run:
