@@ -242,9 +242,11 @@ class LinkEncoding(torch.nn.Module):
     ) -> Tensor:
         """
         Args:
-            edge_attr (torch.Tensor): ``[num_edges, in_channels]``
-            edge_time (torch.Tensor): ``[num_edges,]``
-            edge_index (torch.Tensor): ``[2, num_edges]``
+            edge_attr (torch.Tensor): ``[num_edges, in_channels]``.
+            edge_time (torch.Tensor): ``[num_edges,]``. The value of
+                ``edge_time`` is in the order of millions depending on your
+                dataset as described in section D of the paper.
+            edge_index (torch.Tensor): ``[2, num_edges]``.
 
         Returns:
             A tensor of size ``[num_nodes, out_channels]``
