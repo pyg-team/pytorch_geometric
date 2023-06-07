@@ -106,14 +106,21 @@ class _MLPMixer(torch.nn.Module):
         num_tokens (int): The number of tokens (patches) in each sample.
         in_channels (int): Input channels.
         out_channels (int): Output channels.
+        dropout (float, optional):
     """
     def __init__(
         self,
         num_tokens: int,
         in_channels: int,
         out_channels: int,
+        dropout: float,
     ) -> None:
         super().__init__()
+        self.num_tokens = num_tokens
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.dropout = dropout
+
         # token mixing
         self.token_layer_norm = torch.nn.LayerNorm((in_channels, ))
         self.token_lin_1 = torch.nn.Linear(num_tokens, num_tokens // 2)
@@ -140,18 +147,18 @@ class _MLPMixer(torch.nn.Module):
         h = self.token_layer_norm(x).mT
         h = self.token_lin_1(h)
         h = torch.nn.functional.gelu(h)
-        h = torch.nn.functional.dropout(h, p=0.5, training=self.training)
+        h = torch.nn.functional.dropout(h, p=self.dropout, training=self.training)
         h = self.token_lin_2(h)
-        h = torch.nn.functional.dropout(h, p=0.5, training=self.training)
+        h = torch.nn.functional.dropout(h, p=self.dropout, training=self.training)
         h_token = h.mT + x
 
         # channel mixing
         h = self.channel_layer_norm(h_token)
         h = self.channel_lin_1(h)
         h = torch.nn.functional.gelu(h)
-        h = torch.nn.functional.dropout(h, p=0.5, training=self.training)
+        h = torch.nn.functional.dropout(h, p=self.dropout, training=self.training)
         h = self.channel_lin_2(h)
-        h = torch.nn.functional.dropout(h, p=0.5, training=self.training)
+        h = torch.nn.functional.dropout(h, p=self.dropout, training=self.training)
         h_channel = h + h_token
 
         # head
@@ -163,7 +170,8 @@ class _MLPMixer(torch.nn.Module):
         return (f"{self.__class__.__name__}("
                 f"num_tokens={self.num_tokens}, "
                 f"in_channels={self.in_channels}, "
-                f"out_channels={self.out_channels})")
+                f"out_channels={self.out_channels}, "
+                f"dropout={self.dropout})")
 
 
 class LinkEncoding(torch.nn.Module):
@@ -190,6 +198,7 @@ class LinkEncoding(torch.nn.Module):
             :obj:`edge_index` is sorted by column. This avoids internal
             re-sorting of the data and can improve runtime and memory
             efficiency. (default: :obj:`False`)
+        dropout (float, optional): 
 
     Example:
 
@@ -211,6 +220,7 @@ class LinkEncoding(torch.nn.Module):
         out_channels: int,
         time_channels: int,
         is_sorted: bool = False,
+        dropout: float = 0.5,
     ) -> None:
         super().__init__()
         self.K = K
@@ -219,6 +229,7 @@ class LinkEncoding(torch.nn.Module):
         self.out_channels = out_channels
         self.time_channels = time_channels
         self.is_sorted = is_sorted
+        self.dropout = dropout
 
         # teomporal encoder
         self.temporal_encoder = TemporalEncoding(time_channels)
@@ -232,6 +243,7 @@ class LinkEncoding(torch.nn.Module):
             num_tokens=K,
             in_channels=hidden_channels,
             out_channels=out_channels,
+            dropout=dropout,
         )
 
     def forward(
