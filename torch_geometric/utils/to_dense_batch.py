@@ -94,7 +94,6 @@ def to_dense_batch(
                 [ True, False, False, False],
                 [ True,  True,  True, False]])
     """
-    fill_value = 0.0 if fill_value is None else fill_value
 
     if batch is None and max_num_nodes is None:
         mask = torch.ones(1, x.size(0), dtype=torch.bool, device=x.device)
@@ -126,7 +125,7 @@ def to_dense_batch(
         x, idx = x[mask], idx[mask]
 
     size = [batch_size * max_num_nodes] + list(x.size())[1:]
-    out = x.new_full(size, fill_value)
+    out = torch.as_tensor(fill_value).repeat(size)
     out[idx] = x
     out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 
