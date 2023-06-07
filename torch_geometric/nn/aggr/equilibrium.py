@@ -146,9 +146,8 @@ class EquilibriumAggregation(Aggregation):
         reset(self.optimizer)
         reset(self.potential)
 
-    def init_output(self, index: Optional[Tensor] = None) -> Tensor:
-        index_size = 1 if index is None else int(index.max().item() + 1)
-        return torch.zeros(index_size, self.output_dim, requires_grad=True,
+    def init_output(self, dim_size: int) -> Tensor:
+        return torch.zeros(dim_size, self.output_dim, requires_grad=True,
                            device=self.lamb.device).float()
 
     def reg(self, y: Tensor) -> Tensor:
@@ -163,20 +162,11 @@ class EquilibriumAggregation(Aggregation):
 
         self.assert_index_present(index)
 
-        index_size = 1 if index is None else index.max() + 1
-        dim_size = index_size if dim_size is None else dim_size
-
-        if dim_size < index_size:
-            raise ValueError("`dim_size` is less than `index` "
-                             "implied size")
+        dim_size = int(index.max()) + 1 if dim_size is None else dim_size
 
         with torch.enable_grad():
-            y = self.optimizer(x, self.init_output(index), index, self.energy,
-                               iterations=self.grad_iter)
-
-        if dim_size > index_size:
-            zero = y.new_zeros(dim_size - index_size, *y.size()[1:])
-            y = torch.cat([y, zero])
+            y = self.optimizer(x, self.init_output(dim_size), index,
+                               self.energy, iterations=self.grad_iter)
 
         return y
 
