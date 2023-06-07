@@ -3,9 +3,14 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.experimental import (
+    disable_dynamic_shapes,
+    is_experimental_mode_enabled,
+)
 from torch_geometric.utils import scatter
 
 
+@disable_dynamic_shapes(required_args=['batch_size', 'max_num_nodes'])
 def to_dense_batch(
     x: Tensor,
     batch: Optional[Tensor] = None,
@@ -106,9 +111,12 @@ def to_dense_batch(
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
 
     filter_nodes = False
+    dynamic_shapes_disabled = is_experimental_mode_enabled(
+        'disable_dynamic_shapes')
+
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
-    elif num_nodes.max() > max_num_nodes:
+    elif not dynamic_shapes_disabled and num_nodes.max() > max_num_nodes:
         filter_nodes = True
 
     tmp = torch.arange(batch.size(0), device=x.device) - cum_nodes[batch]

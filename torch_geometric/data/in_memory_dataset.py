@@ -35,18 +35,23 @@ class InMemoryDataset(Dataset, ABC):
     Args:
         root (str, optional): Root directory where the dataset should be saved.
             (optional: :obj:`None`)
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
-            version. The data object will be transformed before every access.
+        transform (callable, optional): A function/transform that takes in a
+            :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` object and returns a
+            transformed version.
+            The data object will be transformed before every access.
             (default: :obj:`None`)
         pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
-            transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
+            a :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` object and returns a
+            transformed version.
+            The data object will be transformed before being saved to disk.
+            (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in a
+            :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` object and returns a
+            boolean value, indicating whether the data object should be
+            included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
     """
@@ -69,7 +74,7 @@ class InMemoryDataset(Dataset, ABC):
         super().__init__(root, transform, pre_transform, pre_filter, log)
         self._data = None
         self.slices = None
-        self._data_list: Optional[List[Data]] = None
+        self._data_list: Optional[List[BaseData]] = None
 
     @property
     def num_classes(self) -> int:
@@ -84,7 +89,7 @@ class InMemoryDataset(Dataset, ABC):
             return len(value) - 1
         return 0
 
-    def get(self, idx: int) -> Data:
+    def get(self, idx: int) -> BaseData:
         # TODO (matthias) Avoid unnecessary copy here.
         if self.len() == 1:
             return copy.copy(self._data)
@@ -121,10 +126,11 @@ class InMemoryDataset(Dataset, ABC):
 
     @staticmethod
     def collate(
-            data_list: List[Data]) -> Tuple[Data, Optional[Dict[str, Tensor]]]:
-        r"""Collates a Python list of :obj:`torch_geometric.data.Data` objects
-        to the internal storage format of
-        :class:`~torch_geometric.data.InMemoryDataset`."""
+        data_list: List[BaseData],
+    ) -> Tuple[BaseData, Optional[Dict[str, Tensor]]]:
+        r"""Collates a Python list of :class:`~torch_geometric.data.Data` or
+        :class:`~torch_geometric.data.HeteroData` objects to the internal
+        storage format of :class:`~torch_geometric.data.InMemoryDataset`."""
         if len(data_list) == 1:
             return data_list[0], None
 
