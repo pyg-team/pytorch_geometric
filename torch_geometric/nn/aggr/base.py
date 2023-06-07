@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.utils import scatter, segment, to_dense_batch
 
 
@@ -58,6 +59,7 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
           node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
+    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
     def forward(
         self,
         x: Tensor,
@@ -91,6 +93,7 @@ class Aggregation(torch.nn.Module):
         r"""Resets all learnable parameters of the module."""
         pass
 
+    @disable_dynamic_shapes(required_args=['dim_size'])
     def __call__(self, x: Tensor, index: Optional[Tensor] = None,
                  ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                  dim: int = -2, **kwargs) -> Tensor:
