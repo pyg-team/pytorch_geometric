@@ -3,6 +3,7 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.aggr.utils import (
     PoolingByMultiheadAttention,
@@ -73,6 +74,7 @@ class SetTransformerAggregation(Aggregation):
         for decoder in self.decoders:
             decoder.reset_parameters()
 
+    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
     def forward(
         self,
         x: Tensor,
