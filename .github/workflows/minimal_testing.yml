@@ -1,4 +1,4 @@
-name: Testing PyTorch 2.0 (minimal dependencies)
+name: Testing minimal PyTorch 2.0
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -8,7 +8,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  pytest:
+  minimal_pytest:
     runs-on: ubuntu-latest
 
     steps:
