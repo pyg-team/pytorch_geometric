@@ -59,7 +59,6 @@ class Aggregation(torch.nn.Module):
         - **output:** graph features :math:`(*, |\mathcal{G}|, F_{out})` or
           node features :math:`(*, |\mathcal{V}|, F_{out})`
     """
-    @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
     def forward(
         self,
         x: Tensor,

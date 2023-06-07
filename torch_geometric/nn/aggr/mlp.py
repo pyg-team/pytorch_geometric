@@ -2,7 +2,6 @@ from typing import Optional
 
 from torch import Tensor
 
-from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.nn.aggr import Aggregation
 
 
@@ -23,7 +22,6 @@ class MLPAggregation(Aggregation):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.models.MLP`.
     """
-    @disable_dynamic_shapes(required_args=['max_num_elements'])
     def __init__(self, in_channels: int, out_channels: int,
                  max_num_elements: int, **kwargs):
         super().__init__()
