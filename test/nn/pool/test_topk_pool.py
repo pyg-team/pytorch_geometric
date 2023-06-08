@@ -64,8 +64,8 @@ if __name__ == '__main__':
     seed_everything(12345)
     for x_dim in [2**i for i in range(1,16)]:
         print(f'Number of nodes: {x_dim}')
-        x = torch.randn((x_dim,), dtype=torch.float, device=device, requires_grad=True)
-        batch = x.new_zeros(x.size(0), dtype=torch.long, requires_grad=True)
+        x = torch.randn((x_dim,), dtype=torch.float, device=device)
+        batch = x.new_zeros(x.size(0), dtype=torch.long)
         ratio = .5
         funcs = [topk]
         func_names = ['topk']
