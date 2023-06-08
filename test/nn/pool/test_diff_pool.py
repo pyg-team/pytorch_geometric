@@ -1,5 +1,5 @@
 from torch_geometric.nn.dense import dense_diff_pool
-
+import torch
 def test_dense_diff_pooling():
     B, N, F, C = 2, 32, 8, 4
     x = torch.randn((B,N,F,), dtype=torch.float, device='cuda')
