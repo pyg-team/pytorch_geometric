@@ -4,7 +4,6 @@ from torch_geometric.nn.pool import TopKPooling
 from torch_geometric.nn.pool.topk_pool import filter_adj
 from torch_geometric.testing import is_full_test
 
-
 def test_filter_adj():
     edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 3, 3],
                                [1, 3, 0, 2, 1, 3, 0, 2]])
@@ -57,3 +56,24 @@ def test_topk_pooling():
 
         jit3 = torch.jit.script(pool3)
         assert torch.allclose(jit3(x, edge_index)[0], out3[0])
+if __name__ == '__main__':
+    from torch_geometric.profile import benchmark
+    from torch_geometric import seed_everything
+    from torch_geometric.nn.pool.select.topk import topk
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    seed_everything(12345)
+    for x_dim in [2**i for i in range(1,16)]:
+        x = torch.randn((x_dim,), dtype=torch.float, device=device)
+        batch = x.new_zeros(x.size(0), dtype=torch.long)
+        funcs = [topk]
+        func_names = ['topk']
+        args_list = [(x, batch)]
+        benchmark(
+            funcs=funcs,
+            func_names=func_names,
+            args=args_list,
+            num_steps=50 if device == 'cpu' else 500,
+            num_warmups=10 if device == 'cpu' else 100,
+            backward=True,
+        )
+
