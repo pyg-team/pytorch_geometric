@@ -7,7 +7,7 @@ import torch.nn.functional as F
 import torch_geometric.transforms as T
 from torch_geometric.datasets import WikipediaNetwork
 from torch_geometric.logging import init_wandb, log
-from torch_geometric.nn import DirGCNConv, DirSageConv
+from torch_geometric.nn import DirGNNConv, GCNConv, SAGEConv
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='chameleon')
@@ -30,9 +30,9 @@ dataset = WikipediaNetwork(root=path, name=args.dataset,
 data = dataset[0]
 
 if args.conv == "dir-gcn":
-    Conv = DirGCNConv
+    Conv = GCNConv
 elif args.conv == "dir-sage":
-    Conv = DirSageConv
+    Conv = SAGEConv
 else:
     raise NotImplementedError()
 
@@ -41,7 +41,10 @@ class DirGNN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, alpha=0.5):
         super().__init__()
         self.conv1 = Conv(in_channels, hidden_channels, alpha=alpha)
+        self.conv1 = DirGNNConv(self.conv1, alpha, root_weight=False)
+
         self.conv2 = Conv(hidden_channels, out_channels, alpha=alpha)
+        self.conv2 = DirGNNConv(self.conv2, alpha, root_weight=False)
 
     def forward(self, x, edge_index):
         x = self.conv1(x, edge_index).relu()
