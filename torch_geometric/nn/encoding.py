@@ -1,4 +1,5 @@
 import math
+from typing import Optional
 
 import torch
 from torch import Tensor
@@ -255,6 +256,7 @@ class LinkEncoding(torch.nn.Module):
         edge_attr: Tensor,
         edge_time: Tensor,
         edge_index: Tensor,
+        num_nodes: Optional[int] = None,
     ) -> Tensor:
         """
         Args:
@@ -263,6 +265,7 @@ class LinkEncoding(torch.nn.Module):
                 ``edge_time`` is in the order of millions depending on your
                 dataset as described in section D of the paper.
             edge_index (torch.Tensor): ``[2, num_edges]``.
+            num_nodes (int, optional): Number of nodes in the mini-batch.
 
         Returns:
             A tensor of size ``[num_nodes, out_channels]``
@@ -276,15 +279,19 @@ class LinkEncoding(torch.nn.Module):
             edge_index[1], indices = index_sort(edge_index[1])
             edge_attr_time = edge_attr_time[indices]
 
+        if num_nodes is None:
+            num_nodes = int(edge_index[1].max()) + 1
+
         # zero-pad each node's edges:
         # [num_edges, hidden_channels] -> [num_nodes*K, hidden_channels]
         edge_attr_time, _ = to_dense_batch(
             edge_attr_time,
             edge_index[1],
             max_num_nodes=self.K,
+            batch_size=num_nodes,
         )
         return self.mlp_mixer(
-            edge_attr_time.view(-1, self.K, self.hidden_channels))
+            edge_attr_time.view(num_nodes, self.K, self.hidden_channels))
 
     def __repr__(self):
         return (f"{self.__class__.__name__}("
@@ -292,4 +299,5 @@ class LinkEncoding(torch.nn.Module):
                 f"in_channels={self.in_channels}, "
                 f"hidden_channels={self.hidden_channels}, "
                 f"out_channels={self.out_channels}, "
-                f"time_channels={self.time_channels})")
+                f"time_channels={self.time_channels}, "
+                f"dropout={self.dropout})")
