@@ -65,9 +65,10 @@ if __name__ == '__main__':
     for x_dim in [2**i for i in range(1,16)]:
         x = torch.randn((x_dim,), dtype=torch.float, device=device)
         batch = x.new_zeros(x.size(0), dtype=torch.long)
+        ratio = .5
         funcs = [topk]
         func_names = ['topk']
-        args_list = [(x, batch)]
+        args_list = [(x, ratio, batch)]
         benchmark(
             funcs=funcs,
             func_names=func_names,
