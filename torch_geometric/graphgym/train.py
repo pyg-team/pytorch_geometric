@@ -38,7 +38,9 @@ def train(model: GraphGymModule, datamodule, logger: bool = True,
     if logger:
         callbacks.append(LoggerCallback())
     if cfg.train.enable_ckpt:
-        ckpt_cbk = pl.callbacks.ModelCheckpoint(dirpath=get_ckpt_dir())
+        ckpt_cbk = pl.callbacks.ModelCheckpoint(
+            dirpath=get_ckpt_dir(), every_n_epochs=cfg.train.ckpt_period,
+            save_top_k=1 if cfg.train.ckpt_clean else -1)
         callbacks.append(ckpt_cbk)
 
     if cfg.accelerator == 'cuda' and cfg.devices == 1:

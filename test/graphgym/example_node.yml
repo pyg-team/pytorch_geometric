@@ -12,7 +12,7 @@ dataset:
 train:
   batch_size: 128
   eval_period: 2
-  ckpt_period: 100
+  ckpt_period: 2
   enable_ckpt: false
   skip_train_eval: true
   sampler: full_batch
