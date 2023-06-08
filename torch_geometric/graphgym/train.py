@@ -1,12 +1,12 @@
+import os.path as osp
 import warnings
 from typing import Optional
 
-import torch
 from torch.utils.data import DataLoader
 
 from torch_geometric.data.lightning.datamodule import LightningDataModule
 from torch_geometric.graphgym import create_loader
-from torch_geometric.graphgym.checkpoint import get_ckpt_dir
+from torch_geometric.graphgym.checkpoint import get_ckpt_dir, get_ckpt_path
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.graphgym.imports import pl
 from torch_geometric.graphgym.logger import LoggerCallback
@@ -37,10 +37,25 @@ def train(model: GraphGymModule, datamodule, logger: bool = True,
     callbacks = []
     if logger:
         callbacks.append(LoggerCallback())
+
+    save_last = False
+    if cfg.train.auto_resume:
+        if cfg.train.epoch_resume < 0:
+            ckpt_path = 'last'
+            save_last = True
+        else:
+            ckpt_path = get_ckpt_path(cfg.train.epoch_resume)
+            if not osp.exists(ckpt_path):
+                raise ValueError(
+                    f"Can't find checkpoint of epoch {cfg.train.epoch_resume}")
+    else:
+        ckpt_path = None
+
     if cfg.train.enable_ckpt:
         ckpt_cbk = pl.callbacks.ModelCheckpoint(
             dirpath=get_ckpt_dir(), every_n_epochs=cfg.train.ckpt_period,
-            save_top_k=1 if cfg.train.ckpt_clean else -1)
+            save_top_k=1 if cfg.train.ckpt_clean else -1, filename='{epoch}',
+            auto_insert_metric_name=False, save_last=save_last)
         callbacks.append(ckpt_cbk)
 
     if cfg.accelerator == 'cuda' and cfg.devices == 1:
@@ -62,5 +77,5 @@ def train(model: GraphGymModule, datamodule, logger: bool = True,
         strategy=strategy,
     )
 
-    trainer.fit(model, datamodule=datamodule)
+    trainer.fit(model, datamodule=datamodule, ckpt_path=ckpt_path)
     trainer.test(model, datamodule=datamodule)
