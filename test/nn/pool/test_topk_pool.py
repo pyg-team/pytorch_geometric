@@ -62,7 +62,7 @@ if __name__ == '__main__':
     from torch_geometric.nn.pool.select.topk import topk
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     seed_everything(12345)
-    for x_dim in [2**i for i in range(1,16)]:
+    for x_dim in [2**i for i in range(1,19)]:
         print(f'Number of nodes: {x_dim}')
         x = torch.randn((x_dim,), dtype=torch.float, device=device)
         batch = x.new_zeros(x.size(0), dtype=torch.long)
