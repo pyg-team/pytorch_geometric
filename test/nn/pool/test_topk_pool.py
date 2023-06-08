@@ -75,6 +75,6 @@ if __name__ == '__main__':
             args=args_list,
             num_steps=50 if device == 'cpu' else 500,
             num_warmups=10 if device == 'cpu' else 100,
-            backward=True,
+            backward=False,
         )
 
