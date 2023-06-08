@@ -262,7 +262,7 @@ class BasicGNN(torch.nn.Module):
             pbar = tqdm(total=len(self.convs) * len(loader))
             pbar.set_description('Inference')
 
-        x_all = loader.data.x.cpu()
+        x_all = loader.data.x
         loader.data.n_id = torch.arange(x_all.size(0))
 
         for i in range(self.num_layers):
@@ -275,7 +275,7 @@ class BasicGNN(torch.nn.Module):
                     edge_index = batch.edge_index.to(device)
                 x = self.convs[i](x, edge_index)[:batch.batch_size]
                 if i == self.num_layers - 1 and self.jk_mode is None:
-                    xs.append(x.cpu())
+                    xs.append(x)
                     if progress_bar:
                         pbar.update(1)
                     continue
@@ -287,7 +287,7 @@ class BasicGNN(torch.nn.Module):
                     x = self.act(x)
                 if i == self.num_layers - 1 and hasattr(self, 'lin'):
                     x = self.lin(x)
-                xs.append(x.cpu())
+                xs.append(x)
                 if progress_bar:
                     pbar.update(1)
             x_all = torch.cat(xs, dim=0)
