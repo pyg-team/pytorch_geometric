@@ -100,10 +100,10 @@ def benchmark(
                 if i >= num_warmups:
                     t_backward += time.perf_counter() - t_start
 
-        ts.append([name, f'{t_forward:.4f}s'])
+        ts.append([name, f'{t_forward/float(num_steps):.4f}s'])
         if backward:
-            ts[-1].append(f'{t_backward:.4f}s')
-            ts[-1].append(f'{t_forward + t_backward:.4f}s')
+            ts[-1].append(f'{t_backward/float(num_steps):.4f}s')
+            ts[-1].append(f'{(t_forward + t_backward)/float(num_steps):.4f}s')
 
     header = ['Name', 'Forward']
     if backward:
