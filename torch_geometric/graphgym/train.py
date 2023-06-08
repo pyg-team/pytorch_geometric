@@ -41,6 +41,11 @@ def train(model: GraphGymModule, datamodule, logger: bool = True,
         ckpt_cbk = pl.callbacks.ModelCheckpoint(dirpath=get_ckpt_dir())
         callbacks.append(ckpt_cbk)
 
+    if cfg.accelerator == 'cuda' and cfg.devices == 1:
+        strategy = pl.strategies.SingleDeviceStrategy(f'cuda:{cfg.device}')
+    else:
+        strategy = 'auto'
+
     trainer_config = trainer_config or {}
     trainer = pl.Trainer(
         **trainer_config,
@@ -49,7 +54,8 @@ def train(model: GraphGymModule, datamodule, logger: bool = True,
         default_root_dir=cfg.out_dir,
         max_epochs=cfg.optim.max_epoch,
         accelerator=cfg.accelerator,
-        devices='auto' if not torch.cuda.is_available() else cfg.devices,
+        devices=cfg.devices,
+        strategy=strategy,
     )
 
     trainer.fit(model, datamodule=datamodule)

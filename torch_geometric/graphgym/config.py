@@ -43,6 +43,9 @@ def set_cfg(cfg):
     # Select device: 'cpu', 'cuda', 'auto'
     cfg.accelerator = 'auto'
 
+    # CUDA device ID
+    cfg.device = 0
+
     # number of devices: eg. for 2 GPU set cfg.devices=2
     cfg.devices = 1
 
