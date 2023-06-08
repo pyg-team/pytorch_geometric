@@ -107,7 +107,7 @@ class _MLPMixer(torch.nn.Module):
         num_tokens (int): The number of tokens (patches) in each sample.
         in_channels (int): Input channels.
         out_channels (int): Output channels.
-        dropout (float, optional):
+        dropout (float, optional): Dropout probability. (default: :obj:`0.5`)
     """
     def __init__(
         self,
@@ -203,7 +203,7 @@ class LinkEncoding(torch.nn.Module):
             :obj:`edge_index` is sorted by column. This avoids internal
             re-sorting of the data and can improve runtime and memory
             efficiency. (default: :obj:`False`)
-        dropout (float, optional):
+        dropout (float, optional): Dropout probability. (default: :obj:`0.5`)
 
     Example:
 
