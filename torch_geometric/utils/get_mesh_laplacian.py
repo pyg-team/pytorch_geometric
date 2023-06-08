@@ -98,7 +98,7 @@ def get_mesh_laplacian(
 
         if normalization == 'sym':
             area_deg_inv_sqrt = area_deg.pow_(-0.5)
-            area_deg_inv_sqrt[area_deg_inv_sqrt == float('inf')] = 0.0,
+            area_deg_inv_sqrt[area_deg_inv_sqrt == float('inf')] = 0.0
             edge_weight = (area_deg_inv_sqrt[edge_index[0]] * edge_weight *
                            area_deg_inv_sqrt[edge_index[1]])
         elif normalization == 'rw':
