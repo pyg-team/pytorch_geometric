@@ -152,7 +152,7 @@ def test_to_hetero_with_bases():
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (100, 32)
     assert out['author'].size() == (100, 32)
-    assert sum(p.numel() for p in model.parameters()) == 6076
+    assert sum(p.numel() for p in model.parameters()) == 5948
 
     model = Net3()
     in_channels = {'x': 16, 'edge_attr': 8}
@@ -164,7 +164,7 @@ def test_to_hetero_with_bases():
     assert out['author'].size() == (100, 32)
 
     model = Net4()
-    in_channels = {'x': 16}
+    in_channels = {'x0': 16}
     model = to_hetero_with_bases(model, metadata, num_bases=4,
                                  in_channels=in_channels, debug=False)
     out = model(x_dict, edge_index_dict)

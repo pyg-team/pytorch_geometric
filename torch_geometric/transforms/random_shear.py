@@ -29,7 +29,7 @@ class RandomShear(BaseTransform):
     def __init__(self, shear: Union[float, int]):
         self.shear = abs(shear)
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         dim = data.pos.size(-1)
 
         matrix = data.pos.new_empty(dim, dim).uniform_(-self.shear, self.shear)
