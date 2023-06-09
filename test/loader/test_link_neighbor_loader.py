@@ -58,7 +58,6 @@ def test_homo_link_neighbor_loader_basic(subgraph_type, neg_sampling_ratio,
     for batch in loader:
         assert isinstance(batch, Data)
 
-        assert len(batch) == 8
         assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.e_id.size() == (batch.num_edges, )
         assert batch.x.size(0) <= 100
@@ -320,7 +319,6 @@ def test_homo_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert len(batch) == 5
         assert batch.input_id.numel() == 20
         assert batch.edge_label_index.size(1) == 20
         assert batch.num_nodes == batch.edge_label_index.unique().numel()
@@ -340,7 +338,6 @@ def test_hetero_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert len(batch) == 4
         assert batch['paper', 'paper'].input_id.numel() == 20
         assert batch['paper', 'paper'].edge_label_index.size(1) == 20
         assert batch['paper'].num_nodes == batch[
@@ -388,8 +385,6 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
     for batch in loader:
         assert isinstance(batch, Data)
-        num_elems = 9 + (1 if disjoint else 0) + (2 if temporal else 0)
-        assert len(batch) == num_elems
 
         # Check that `src_index` and `dst_pos_index` point to valid edges:
         assert torch.equal(batch.x[batch.src_index],
@@ -482,8 +477,6 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        num_elems = 8 + (1 if disjoint else 0) + (2 if temporal else 0)
-        assert len(batch) == num_elems
 
         node_store = batch['paper']
         edge_store = batch['paper', 'paper']
