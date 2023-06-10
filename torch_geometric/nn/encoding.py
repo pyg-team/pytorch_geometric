@@ -3,8 +3,8 @@ import math
 import torch
 from torch import Tensor
 
-from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils import index_sort, to_dense_batch
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 class PositionalEncoding(torch.nn.Module):
