@@ -186,10 +186,10 @@ class LinkEncoding(torch.nn.Module):
     <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
     :class:`LinkEncoding` is composed of two components. The first component is
     :class:`TemporalEncoding` that maps each edge timestamp to a
-    :args:`time_channels` dimensional vector.
+    :obj:`time_channels` dimensional vector.
     The second component a 1-layer MLP that maps each encoded timestamp
     feature concatenated with its corresponding link feature to a
-    :args:`out_channels` dimensional vector.
+    :obj:`out_channels` dimensional vector.
 
     Args:
         K (int): The number of most recent teomporal links to use to construct
