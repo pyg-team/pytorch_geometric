@@ -2,9 +2,9 @@ import math
 
 import torch
 from torch import Tensor
+from troch_geometric.utils.num_nodes import maybe_num_nodes
 
 from torch_geometric.utils import index_sort, to_dense_batch
-from troch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 class PositionalEncoding(torch.nn.Module):
@@ -203,7 +203,7 @@ class LinkEncoding(torch.nn.Module):
             efficiency. (default: :obj:`False`)
         dropout (float, optional): Dropout probability of the MLP layer.
             (default: :obj:`0.5`)
- 
+
     """
     def __init__(
         self,
@@ -275,7 +275,7 @@ class LinkEncoding(torch.nn.Module):
             edge_attr_time,
             edge_index[1],
             max_num_nodes=self.K,
-            batch_size = num_nodes,
+            batch_size=num_nodes,
         )
         return self.mlp_mixer(
             edge_attr_time.view(-1, self.K, self.hidden_channels))
