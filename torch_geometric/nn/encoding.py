@@ -2,8 +2,8 @@ import math
 
 import torch
 from torch import Tensor
-from troch_geometric.utils.num_nodes import maybe_num_nodes
 
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils import index_sort, to_dense_batch
 
 
