@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.utils import index_sort, to_dense_batch
+from troch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 class PositionalEncoding(torch.nn.Module):
@@ -184,37 +185,25 @@ class LinkEncoding(torch.nn.Module):
     <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
     :class:`LinkEncoding` is composed of two components. The first component is
     :class:`TemporalEncoding` that maps each edge timestamp to a
-    ``time_channels`` dimensional vector.
-    The second component, 1-layer MLP-mixer, maps each encoded timestamp
+    :args:`time_channels` dimensional vector.
+    The second component a 1-layer MLP that maps each encoded timestamp
     feature concatenated with its corresponding link feature to a
-    ``out_channels`` dimensional vector.
+    :args:`out_channels` dimensional vector.
 
     Args:
         K (int): The number of most recent teomporal links to use to construct
             an intermediate feature representation for each node.
-        in_channels (int): The number of edge features used to construct
-            a linear layer encoding the output of :class:`TemporalEncoding`
-            concatenated with ``edge_attr``.
-        time_channels (int): dims to encode each timestamp into with
-            :class:`TemporalEncoding`.
+        in_channels (int): Edge feature dimensionality.
+        hidden_channels (int): Size of each hidden sample.
+        time_channels (int): Size of encoded timestamp using :class:`TemporalEncoding`.
         out_channels (int): Size of each output sample.
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column. This avoids internal
             re-sorting of the data and can improve runtime and memory
             efficiency. (default: :obj:`False`)
-        dropout (float, optional):
-
-    Example:
-
-        >>> # GraphMixer paper uses the following args for GDELTLite dataset
-        >>> link_encoder = LinkEncoding(
-        ...     K=30,
-        ...     in_channels=186,
-        ...     hidden_channels=100,
-        ...     out_channels=100,
-        ...     time_channels=100,
-        ... )
-
+        dropout (float, optional): Dropout probability of the MLP layer.
+            (default: :obj:`0.5`)
+ 
     """
     def __init__(
         self,
@@ -255,18 +244,22 @@ class LinkEncoding(torch.nn.Module):
         edge_attr: Tensor,
         edge_time: Tensor,
         edge_index: Tensor,
+        num_nodes: Optional[int] = None,
     ) -> Tensor:
         """
         Args:
-            edge_attr (torch.Tensor): ``[num_edges, in_channels]``.
-            edge_time (torch.Tensor): ``[num_edges,]``. The value of
-                ``edge_time`` is in the order of millions depending on your
-                dataset as described in section D of the paper.
-            edge_index (torch.Tensor): ``[2, num_edges]``.
+            edge_attr (torch.Tensor): The edge features of shape
+                :obj:`[num_edges, in_channels]`.
+            edge_time (torch.Tensor): The time tensor of shape
+                :obj:`[num_edges]`. This can be in the order of millions.
+            edge_index (torch.Tensor): The edge indicies.
+            num_nodes (int, optional): The number of nodes in the graph.
+                (default: :obj:`None`)
 
         Returns:
-            A tensor of size ``[num_nodes, out_channels]``
+            A node embedding tensor of shape :obj:`[num_nodes, out_channels]`.
         """
+        num_nodes = maybe_num_nodes(edge_index, num_nodes)
         time_info = self.temporal_encoder(edge_time)
         edge_attr_time = torch.cat((time_info, edge_attr), dim=1)
         edge_attr_time = self.temporal_encoder_head(edge_attr_time)
@@ -282,6 +275,7 @@ class LinkEncoding(torch.nn.Module):
             edge_attr_time,
             edge_index[1],
             max_num_nodes=self.K,
+            batch_size = num_nodes,
         )
         return self.mlp_mixer(
             edge_attr_time.view(-1, self.K, self.hidden_channels))
