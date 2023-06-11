@@ -32,7 +32,7 @@ test_loader = DataLoader(test_dataset, batch_size=64)
 parser = argparse.ArgumentParser()
 parser.add_argument(
     '--attn_type', default='multihead',
-    help="Global attention type such as multihead or performer.")
+    help="Global attention type such as 'multihead' or 'performer'.")
 args = parser.parse_args()
 
 
@@ -79,13 +79,12 @@ class GPS(torch.nn.Module):
         return self.mlp(x)
 
 
-class RedrawProjection(torch.nn.Module):
+class RedrawProjection:
     def __init__(self, model: torch.nn.Module,
                  redraw_interval: Optional[int] = None):
-        super().__init__()
         self.model = model
         self.redraw_interval = redraw_interval
-        self.register_buffer('num_last_redraw', torch.tensor(0))
+        self.num_last_redraw = 0
 
     def redraw_projections(self):
         if not self.model.training or self.redraw_interval is None:
@@ -97,7 +96,7 @@ class RedrawProjection(torch.nn.Module):
             ]
             for fast_attention in fast_attentions:
                 fast_attention.redraw_projection_matrix()
-            self.num_last_redraw.zero_()
+            self.num_last_redraw = 0
             return
         self.num_last_redraw += 1
 
