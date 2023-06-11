@@ -287,4 +287,5 @@ class LinkEncoding(torch.nn.Module):
                 f"in_channels={self.in_channels}, "
                 f"hidden_channels={self.hidden_channels}, "
                 f"out_channels={self.out_channels}, "
-                f"time_channels={self.time_channels})")
+                f"time_channels={self.time_channels}, "
+                f"dropout={self.dropout})")

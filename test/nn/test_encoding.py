@@ -40,6 +40,7 @@ def test_link_encoding(device):
     hidden_channels = 7
     out_channels = 11
     time_channels = 13
+    dropout = 0.5
 
     encoder = LinkEncoding(
         K=K,
@@ -52,7 +53,8 @@ def test_link_encoding(device):
                             f'in_channels={num_edge_features}, '
                             f'hidden_channels={hidden_channels}, '
                             f'out_channels={out_channels}, '
-                            f'time_channels={time_channels})')
+                            f'time_channels={time_channels}, '
+                            f'dropout={dropout})')
 
     out = encoder(edge_attr, edge_time, edge_index)
     assert out.size() == (num_nodes, out_channels)
