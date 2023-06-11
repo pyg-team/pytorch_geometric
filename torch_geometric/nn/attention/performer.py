@@ -70,7 +70,8 @@ class PerformerProjection(torch.nn.Module):
     r"""The fast attention that uses a projection matrix
     from the `"Rethinking Attention with Performers"
     <https://arxiv.org/abs/2009.14794>`_ paper. This class
-    projects Q and K matrices with specified kernel.
+    projects :math:`\mathbf{Q}` and :math:`\mathbf{K}` matrices
+    with specified kernel.
 
     Args:
         num_cols (int): Projection matrix number of columns.
@@ -147,17 +148,17 @@ class PerformerAttention(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x: Tensor, mask: Optional[Tensor] = None) -> Tensor:
-    r"""
+        r"""
 
-    Args:
-        x (torch.Tensor): Node feature tensor
-             :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
-             batch-size :math:`B`, (maximum) number of nodes :math:`N` for
-             each graph, and feature dimension :math:`F`.
-        mask (torch.Tensor): Mask matrix
-             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
-             the valid nodes for each graph.  (default: :obj:`None`)
-  
+        Args:
+            x (torch.Tensor): Node feature tensor
+                :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+                batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+                each graph, and feature dimension :math:`F`.
+            mask (torch.Tensor, optional): Mask matrix
+                :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
+                the valid nodes for each graph. (default: :obj:`None`)
+
     """
         B, N, *_ = x.shape
         q, k, v = self.q(x), self.k(x), self.v(x)
