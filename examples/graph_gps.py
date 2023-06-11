@@ -79,13 +79,13 @@ class GPS(torch.nn.Module):
         return self.mlp(x)
 
 
-class RedrawProjection:
+class RedrawProjection(torch.nn.Module):
     def __init__(self, model: torch.nn.Module,
                  redraw_interval: Optional[int] = None):
         super().__init__()
         self.model = model
         self.redraw_interval = redraw_interval
-        self.num_last_redraw = 0
+        self.register_buffer('num_last_redraw', torch.tensor(0))
 
     def redraw_projections(self):
         if not self.model.training or self.redraw_interval is None:
@@ -97,7 +97,7 @@ class RedrawProjection:
             ]
             for fast_attention in fast_attentions:
                 fast_attention.redraw_projection_matrix()
-            self.num_last_redraw = 0
+            self.num_last_redraw.zero_()
             return
         self.num_last_redraw += 1
 
