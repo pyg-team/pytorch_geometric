@@ -69,15 +69,16 @@ def generalized_kernel(x: Tensor, mat: Tensor,
 class PerformerProjection(torch.nn.Module):
     r"""The fast attention that uses a projection matrix
     from the `"Rethinking Attention with Performers"
-    <https://arxiv.org/abs/2009.14794>`_ paper.
+    <https://arxiv.org/abs/2009.14794>`_ paper. This class
+    projects Q and K matrices with specified kernel.
 
     Args:
         num_cols (int): Projection matrix number of columns.
         kernel (Callable, optional): Kernels for generalized attention.
-            If not specified, softmax kernel will be used.
-            (default: :obj:`None`)
+            If not specified, `ReLU` kernel will be used.
+            (default: :obj:`torch.nn.ReLU()`)
     """
-    def __init__(self, num_cols: int, kernel: Optional[Callable] = None):
+    def __init__(self, num_cols: int, kernel: Callable = torch.nn.ReLU()):
         super().__init__()
         num_rows = int(num_cols * math.log(num_cols))
         self.num_rows = num_rows
@@ -134,6 +135,7 @@ class PerformerAttention(torch.nn.Module):
 
         self.heads = heads
         self.head_channels = head_channels
+        self.kernel = kernel
         self.fast_attn = PerformerProjection(head_channels, kernel)
 
         inner_channels = head_channels * heads
@@ -145,24 +147,26 @@ class PerformerAttention(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x: Tensor, mask: Optional[Tensor]) -> Tensor:
-        b, n, *_ = x.shape
+        B, N, *_ = x.shape
         q, k, v = self.q(x), self.k(x), self.v(x)
         # Reshape and permute q, k and v to proper shape
-        # (b, n, num_heads * head_channels) to (b, num_heads, n, head_channels)
+        # (B, N, num_heads * head_channels) to (b, num_heads, n, head_channels)
         q, k, v = map(
-            lambda t: t.reshape(b, n, self.heads, self.head_channels).permute(
+            lambda t: t.reshape(B, N, self.heads, self.head_channels).permute(
                 0, 2, 1, 3), (q, k, v))
         if mask is not None:
             mask = mask[:, None, :, None]
             v.masked_fill_(~mask, 0.)
         out = self.fast_attn(q, k, v)
-        out = out.permute(0, 2, 1, 3).reshape(b, n, -1)
+        out = out.permute(0, 2, 1, 3).reshape(B, N, -1)
         out = self.attn_out(out)
         out = self.dropout(out)
         return out
 
     @torch.no_grad()
     def redraw_projection_matrix(self):
+        r"""As described in the paper, periodically redraw
+        examples to improve overall approximation of attention."""
         num_rows = self.fast_attn.num_rows
         num_cols = self.fast_attn.num_cols
         projection_matrix = orthogonal_matrix(num_rows, num_cols)
@@ -175,3 +179,9 @@ class PerformerAttention(torch.nn.Module):
         self.v.reset_parameters()
         self.attn_out.reset_parameters()
         self.redraw_projection_matrix()
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}('
+                f'heads={self.heads}, '
+                f'head_channels={self.head_channels} '
+                f'kernel={self.kernel})')
