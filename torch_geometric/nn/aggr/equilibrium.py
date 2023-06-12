@@ -26,7 +26,8 @@ class ResNetPotential(torch.nn.Module):
             for layer_size in num_layers + [out_channels]
         ])
 
-    def forward(self, x: Tensor, y: Tensor, index: Optional[Tensor]) -> Tensor:
+    def forward(self, x: Tensor, y: Tensor, index: Optional[Tensor],
+                dim_size: Optional[int] = None) -> Tensor:
         if index is None:
             inp = torch.cat([x, y.expand(x.size(0), -1)], dim=1)
         else:
@@ -40,8 +41,10 @@ class ResNetPotential(torch.nn.Module):
         if index is None:
             return h.mean()
 
-        size = int(index.max().item() + 1)
-        return scatter(h, index, dim=0, dim_size=size, reduce='mean').sum()
+        if dim_size is None:
+            dim_size = int(index.max().item() + 1)
+
+        return scatter(h, index, 0, dim_size, reduce='mean').sum()
 
 
 class MomentumOptimizer(torch.nn.Module):
@@ -86,13 +89,14 @@ class MomentumOptimizer(torch.nn.Module):
         x: Tensor,
         y: Tensor,
         index: Optional[Tensor],
+        dim_size: Optional[int],
         func: Callable[[Tensor, Tensor, Optional[Tensor]], Tensor],
         iterations: int = 5,
     ) -> Tuple[Tensor, float]:
 
         momentum_buffer = torch.zeros_like(y)
         for _ in range(iterations):
-            val = func(x, y, index)
+            val = func(x, y, index, dim_size)
             grad = torch.autograd.grad(val, y, create_graph=True,
                                        retain_graph=True)[0]
             delta = self.learning_rate * grad
@@ -153,8 +157,9 @@ class EquilibriumAggregation(Aggregation):
     def reg(self, y: Tensor) -> Tensor:
         return self.softplus(self.lamb) * y.square().sum(dim=-1).mean()
 
-    def energy(self, x: Tensor, y: Tensor, index: Optional[Tensor]):
-        return self.potential(x, y, index) + self.reg(y)
+    def energy(self, x: Tensor, y: Tensor, index: Optional[Tensor],
+               dim_size: Optional[int] = None):
+        return self.potential(x, y, index, dim_size) + self.reg(y)
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
@@ -165,7 +170,7 @@ class EquilibriumAggregation(Aggregation):
         dim_size = int(index.max()) + 1 if dim_size is None else dim_size
 
         with torch.enable_grad():
-            y = self.optimizer(x, self.init_output(dim_size), index,
+            y = self.optimizer(x, self.init_output(dim_size), index, dim_size,
                                self.energy, iterations=self.grad_iter)
 
         return y
