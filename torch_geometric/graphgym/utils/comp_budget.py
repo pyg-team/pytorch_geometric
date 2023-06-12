@@ -16,7 +16,7 @@ def params_count(model):
 
 
 def get_stats():
-    model = create_model(to_device=False, dim_in=1, dim_out=1)
+    model = create_model(dim_in=1, dim_out=1)
     return params_count(model)
 
 

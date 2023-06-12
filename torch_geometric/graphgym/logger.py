@@ -170,6 +170,9 @@ class Logger:
         raise NotImplementedError
 
     def write_epoch(self, cur_epoch):
+        if self._size_current == 0:
+            return
+
         basic_stats = self.basic()
 
         # Try to load customized metrics

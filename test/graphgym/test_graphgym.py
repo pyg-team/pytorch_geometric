@@ -95,8 +95,7 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
     cfg.params = params_count(model)
     assert cfg.params == 23883
 
-    train(model, datamodule, logger=True,
-          trainer_config={"enable_progress_bar": False})
+    train(model, datamodule, logger=True)
 
     assert osp.isdir(get_ckpt_dir()) is cfg.train.enable_ckpt
 
