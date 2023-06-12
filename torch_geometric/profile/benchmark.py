@@ -99,7 +99,8 @@ def benchmark(
                 if isinstance(out, (tuple, list)):
                     out = torch.cat([i for i in out if i.numel() >= 0], dim=0)
                 elif isinstance(out, dict):
-                    out = torch.cat([[i for i in out.values() if i.numel() >= 0]], dim=0)
+                    out = torch.cat(
+                        [[i for i in out.values() if i.numel() >= 0]], dim=0)
 
                 out_grad = torch.randn_like(out)
                 t_start = time.perf_counter()
