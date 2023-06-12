@@ -1,8 +1,11 @@
+from itertools import product
+
 import pytest
 import torch
 
 from torch_geometric.nn.pool.select import SelectOutput, SelectTopK
 from torch_geometric.nn.pool.select.topk import topk
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import is_full_test
 
 
@@ -55,3 +58,34 @@ def test_select_topk(min_score):
     assert out.node_index.max() < out.num_nodes
     assert out.cluster_index.min() == 0
     assert out.cluster_index.max() == out.num_clusters - 1
+
+
+if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    args = parser.parse_args()
+
+    BS = [2**i for i in range(6, 8)]
+    NS = [2**i for i in range(8, 16)]
+
+    funcs = []
+    func_names = []
+    args_list = []
+    for B, N in product(BS, NS):
+        x = torch.randn(N, device=args.device)
+        batch = torch.randint(0, B, (N, ), device=args.device).sort()[0]
+
+        funcs.append(topk)
+        func_names.append(f'B={B}, N={N}')
+        args_list.append((x, 0.5, batch))
+
+    benchmark(
+        funcs=funcs,
+        func_names=func_names,
+        args=args_list,
+        num_steps=50 if args.device == 'cpu' else 500,
+        num_warmups=10 if args.device == 'cpu' else 100,
+        progress_bar=True,
+    )
