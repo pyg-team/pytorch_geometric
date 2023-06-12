@@ -2,12 +2,10 @@ from typing import Dict, Optional, Union
 
 import torch
 
-from torch_geometric.distributed.local_feature_store import \
-    LocalFeatureStore as Feature
-from torch_geometric.distributed.local_graph_store import \
-    LocalGraphStore as Graph
+from torch_geometric.distributed import LocalFeatureStore as Feature
+from torch_geometric.distributed import LocalGraphStore as Graph
 from torch_geometric.typing import EdgeType, FeatureTensorType, NodeType
-from torch_geometric.utils import convert_to_tensor, squeeze
+from torch_geometric.utils.tensor import convert_to_tensor, squeeze
 
 
 class LocalDataset:
