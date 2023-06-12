@@ -241,10 +241,13 @@ class BasicGNN(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def inference(self, loader: NeighborLoader,
-                  device: Optional[torch.device] = None,
-                  embedding_device: Optional[torch.device] = 'cpu',
-                  progress_bar: bool = False) -> Tensor:
+    def inference(
+        self,
+        loader: NeighborLoader,
+        device: Optional[Union[str, torch.device]] = None,
+        embedding_device: Union[str, torch.device] = 'cpu',
+        progress_bar: bool = False,
+    ) -> Tensor:
         r"""Performs layer-wise inference on large-graphs using a
         :class:`~torch_geometric.loader.NeighborLoader`, where
         :class:`~torch_geometric.loader.NeighborLoader` should sample the
@@ -252,6 +255,19 @@ class BasicGNN(torch.nn.Module):
         This is an efficient way to compute the output embeddings for all
         nodes in the graph.
         Only applicable in case :obj:`jk=None` or `jk='last'`.
+
+        Args:
+            loader (torch_geometric.loader.NeighborLoader): A neighbor loader
+                object that generates full 1-hop subgraphs, *i.e.*,
+                :obj:`loader.num_neighbors = [-1]`.
+            device (torch.device, optional): The device to run the GNN on.
+                (default: :obj:`None`)
+            embedding_device (torch.device, optional): The device to store
+                intermediate embeddings on. If intermediate embeddings fit on
+                GPU, this option helps to avoid unnecessary device transfers.
+                (default: :obj:`"cpu"`)
+            progress_bar (bool, optional): If set to :obj:`True`, will print a
+                progress bar during computation. (default: :obj:`False`)
         """
         assert self.jk_mode is None or self.jk_mode == 'last'
         assert isinstance(loader, NeighborLoader)
