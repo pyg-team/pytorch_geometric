@@ -7,7 +7,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Added an example PMLP on Cora dataset ([7543] (https://github.com/pyg-team/pytorch_geometric/pull/7543))
 - Enabled `LinkNeighborLoader` to return number of sampled nodes and edges per hop ([#7516](https://github.com/pyg-team/pytorch_geometric/pull/7516))
 - Added the `HM` personalized fashion recommendation dataset ([#7515](https://github.com/pyg-team/pytorch_geometric/pull/7515))
 - Added the `GraphMixer` model ([#7501](https://github.com/pyg-team/pytorch_geometric/pull/7501))
@@ -23,7 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the `IGMCDataset` ([#7441](https://github.com/pyg-team/pytorch_geometric/pull/7441))
 - Added a sparse `cross_entropy` implementation ([#7447](https://github.com/pyg-team/pytorch_geometric/pull/7447), [#7466](https://github.com/pyg-team/pytorch_geometric/pull/7466))
 - Added the `MovieLens-100K` heterogeneous dataset ([#7398](https://github.com/pyg-team/pytorch_geometric/pull/7398))
-- Added the `PMLP` model ([#7370](https://github.com/pyg-team/pytorch_geometric/pull/7370))
+- Added the `PMLP` model and an example ([#7370](https://github.com/pyg-team/pytorch_geometric/pull/7370), [#7543](https://github.com/pyg-team/pytorch_geometric/pull/7543))
 - Added padding capabilities to `HeteroData.to_homogeneous()` in case feature dimensionalities do not match ([#7374](https://github.com/pyg-team/pytorch_geometric/pull/7374))
 - Added an optional `batch_size` argument to `fps`, `knn`, `knn_graph`, `radius` and `radius_graph` ([#7368](https://github.com/pyg-team/pytorch_geometric/pull/7368))
 - Added `PrefetchLoader` capabilities ([#7376](https://github.com/pyg-team/pytorch_geometric/pull/7376), [#7378](https://github.com/pyg-team/pytorch_geometric/pull/7378), [#7383](https://github.com/pyg-team/pytorch_geometric/pull/7383))

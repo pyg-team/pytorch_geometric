@@ -22,6 +22,8 @@ class PMLP(torch.nn.Module):
         num_layers (int): The number of layers.
         dropout (float, optional): Dropout probability of each hidden
             embedding. (default: :obj:`0.`)
+        norm (bool, optional): If set to :obj:`False`, will not apply batch
+            normalization. (default: :obj:`True`)
         bias (bool, optional): If set to :obj:`False`, the module
             will not learn additive biases. (default: :obj:`True`)
     """
@@ -32,6 +34,7 @@ class PMLP(torch.nn.Module):
         out_channels: int,
         num_layers: int,
         dropout: float = 0.,
+        norm: bool = True,
         bias: bool = True,
     ):
         super().__init__()
@@ -50,8 +53,13 @@ class PMLP(torch.nn.Module):
             self.lins.append(lin)
         self.lins.append(Linear(hidden_channels, out_channels, self.bias))
 
-        self.norm = torch.nn.BatchNorm1d(hidden_channels, affine=False,
-                                         track_running_stats=False)
+        self.norm = None
+        if norm:
+            self.norm = torch.nn.BatchNorm1d(
+                hidden_channels,
+                affine=False,
+                track_running_stats=False,
+            )
 
         self.conv = SimpleConv(aggr='mean', combine_root='self_loop')
 
@@ -81,7 +89,8 @@ class PMLP(torch.nn.Module):
             if self.bias:
                 x = x + self.lins[i].bias
             if i != self.num_layers - 1:
-                x = self.norm(x)
+                if self.norm is not None:
+                    x = self.norm(x)
                 x = x.relu()
                 x = F.dropout(x, p=self.dropout, training=self.training)
 
