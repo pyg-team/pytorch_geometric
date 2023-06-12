@@ -128,15 +128,15 @@ class HypergraphConv(MessagePassing):
                 in :math:`\mathbb{R}^{M \times F}`.
                 These features only need to get passed in case
                 :obj:`use_attention=True`. (default: :obj:`None`)
-            num_edges (int, optional) : Number of edges. (default: :obj:`None`)
+            num_edges (int, optional) : The number of edges :math:`M`.
+                (default: :obj:`None`)
         """
         num_nodes = x.size(0)
 
         if num_edges is None:
+            num_edges = 0
             if hyperedge_index.numel() > 0:
                 num_edges = int(hyperedge_index[1].max()) + 1
-            else:
-                num_edges = 0
 
         if hyperedge_weight is None:
             hyperedge_weight = x.new_ones(num_edges)
