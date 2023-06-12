@@ -1,4 +1,6 @@
+import argparse
 import os.path as osp
+from typing import Any, Dict, Optional
 
 import torch
 from torch.nn import (
@@ -15,6 +17,7 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import ZINC
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINEConv, GPSConv, global_add_pool
+from torch_geometric.nn.attention import PerformerAttention
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ZINC-PE')
 transform = T.AddRandomWalkPE(walk_length=20, attr_name='pe')
@@ -26,9 +29,16 @@ train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=64)
 test_loader = DataLoader(test_dataset, batch_size=64)
 
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    '--attn_type', default='multihead',
+    help="Global attention type such as 'multihead' or 'performer'.")
+args = parser.parse_args()
+
 
 class GPS(torch.nn.Module):
-    def __init__(self, channels: int, pe_dim: int, num_layers: int):
+    def __init__(self, channels: int, pe_dim: int, num_layers: int,
+                 attn_type: str, attn_kwargs: Dict[str, Any]):
         super().__init__()
 
         self.node_emb = Embedding(28, channels - pe_dim)
@@ -43,7 +53,8 @@ class GPS(torch.nn.Module):
                 ReLU(),
                 Linear(channels, channels),
             )
-            conv = GPSConv(channels, GINEConv(nn), heads=4, attn_dropout=0.5)
+            conv = GPSConv(channels, GINEConv(nn), heads=4,
+                           attn_type=attn_type, attn_kwargs=attn_kwargs)
             self.convs.append(conv)
 
         self.mlp = Sequential(
@@ -53,6 +64,9 @@ class GPS(torch.nn.Module):
             ReLU(),
             Linear(channels // 4, 1),
         )
+        self.redraw_projection = RedrawProjection(
+            self.convs,
+            redraw_interval=1000 if attn_type == 'performer' else None)
 
     def forward(self, x, pe, edge_index, edge_attr, batch):
         x_pe = self.pe_norm(pe)
@@ -65,8 +79,32 @@ class GPS(torch.nn.Module):
         return self.mlp(x)
 
 
+class RedrawProjection:
+    def __init__(self, model: torch.nn.Module,
+                 redraw_interval: Optional[int] = None):
+        self.model = model
+        self.redraw_interval = redraw_interval
+        self.num_last_redraw = 0
+
+    def redraw_projections(self):
+        if not self.model.training or self.redraw_interval is None:
+            return
+        if self.num_last_redraw >= self.redraw_interval:
+            fast_attentions = [
+                module for module in self.model.modules()
+                if isinstance(module, PerformerAttention)
+            ]
+            for fast_attention in fast_attentions:
+                fast_attention.redraw_projection_matrix()
+            self.num_last_redraw = 0
+            return
+        self.num_last_redraw += 1
+
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = GPS(channels=64, pe_dim=8, num_layers=10).to(device)
+attn_kwargs = {'dropout': 0.5}
+model = GPS(channels=64, pe_dim=8, num_layers=10, attn_type=args.attn_type,
+            attn_kwargs=attn_kwargs).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=20,
                               min_lr=0.00001)
@@ -79,6 +117,7 @@ def train():
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
+        model.redraw_projection.redraw_projections()
         out = model(data.x, data.pe, data.edge_index, data.edge_attr,
                     data.batch)
         loss = (out.squeeze() - data.y).abs().mean()
