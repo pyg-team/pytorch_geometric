@@ -1,3 +1,4 @@
+import warnings
 from typing import Optional
 from torch import Tensor
 
@@ -161,6 +162,11 @@ def knn_graph(
 
     :rtype: :class:`torch.Tensor`
     """
+    if batch is not None and x.device != batch.device:
+        warnings.warn("Input tensor 'x' and 'batch' are on different devices "
+                      "in 'knn_graph'. Performing blocking device transfer")
+        batch = batch.to(x.device)
+
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
         return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
                                        num_workers)
@@ -264,6 +270,11 @@ def radius_graph(
 
     :rtype: :class:`torch.Tensor`
     """
+    if batch is not None and x.device != batch.device:
+        warnings.warn("Input tensor 'x' and 'batch' are on different devices "
+                      "in 'radius_graph'. Performing blocking device transfer")
+        batch = batch.to(x.device)
+
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
         return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
                                           flow, num_workers)
