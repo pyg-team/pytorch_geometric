@@ -1,6 +1,6 @@
 import copy
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -15,7 +15,7 @@ class LocalTensorAttr(TensorAttr):
     r"""Tensor attribute for storing features without :obj:`index`."""
     def __init__(
         self,
-        group_name: Optional[str] = _field_status.UNSET,
+        group_name: Optional[Union[NodeType, EdgeType]] = _field_status.UNSET,
         attr_name: Optional[str] = _field_status.UNSET,
         index=None,
     ):
@@ -28,35 +28,38 @@ class LocalFeatureStore(FeatureStore):
     def __init__(self):
         super().__init__(tensor_attr_cls=LocalTensorAttr)
 
-        self._feat: Dict[Tuple[str, str], Tensor] = {}
+        self._feat: Dict[Tuple[Union[NodeType, EdgeType], str], Tensor] = {}
 
         # Save the global node/edge IDs:
-        self._global_id: Dict[Tuple[str, str], Tensor] = {}
+        self._global_id: Dict[Union[NodeType, EdgeType], Tensor] = {}
 
         # Save the mapping from global node/edge IDs to indices in `_feat`:
-        self._global_id_to_index: Dict[Tuple[str, str], Tensor] = {}
+        self._global_id_to_index: Dict[Union[NodeType, EdgeType], Tensor] = {}
 
     @staticmethod
     def key(attr: TensorAttr) -> Tuple[str, str]:
         return (attr.group_name, attr.attr_name)
 
-    def put_global_id(self, global_id: Tensor, *args, **kwargs) -> bool:
-        attr = self._tensor_attr_cls.cast(*args, **kwargs)
-        self._global_id[self.key(attr)] = global_id
-        self._set_global_id_to_index(attr)
+    def put_global_id(
+        self,
+        global_id: Tensor,
+        group_name: Union[NodeType, EdgeType],
+    ) -> bool:
+        self._global_id[group_name] = global_id
+        self._set_global_id_to_index(group_name)
         return True
 
-    def get_global_id(self, *args, **kwargs) -> Optional[Tensor]:
-        attr = self._tensor_attr_cls.cast(*args, **kwargs)
-        return self._global_id.get(self.key(attr))
+    def get_global_id(
+        self,
+        group_name: Union[NodeType, EdgeType],
+    ) -> Optional[Tensor]:
+        return self._global_id.get(group_name)
 
-    def remove_global_id(self, *args, **kwargs) -> bool:
-        attr = self._tensor_attr_cls.cast(*args, **kwargs)
-        return self._global_id.pop(self.key(attr), None) is not None
+    def remove_global_id(self, group_name: Union[NodeType, EdgeType]) -> bool:
+        return self._global_id.pop(group_name) is not None
 
-    def _set_global_id_to_index(self, *args, **kwargs):
-        attr = self._tensor_attr_cls.cast(*args, **kwargs)
-        global_id = self.get_global_id(attr)
+    def _set_global_id_to_index(self, group_name: Union[NodeType, EdgeType]):
+        global_id = self.get_global_id(group_name)
 
         if global_id is None:
             return
@@ -65,7 +68,7 @@ class LocalFeatureStore(FeatureStore):
         global_id_to_index = global_id.new_full((int(global_id.max()) + 1, ),
                                                 fill_value=-1)
         global_id_to_index[global_id] = torch.arange(global_id.numel())
-        self._global_id_to_index[self.key(attr)] = global_id_to_index
+        self._global_id_to_index[group_name] = global_id_to_index
 
     def _put_tensor(self, tensor: Tensor, attr: TensorAttr) -> bool:
         assert attr.index is None
@@ -92,7 +95,7 @@ class LocalFeatureStore(FeatureStore):
         assert attr.index is not None
 
         attr = copy.copy(attr)
-        attr.index = self._global_id_to_index[self.key(attr)][attr.index]
+        attr.index = self._global_id_to_index[attr.group_name][attr.index]
 
         return self.get_tensor(attr)
 
