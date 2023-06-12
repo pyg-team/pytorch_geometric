@@ -1,3 +1,4 @@
+import math
 from typing import Dict, List, Optional, Tuple, Union
 
 from torch import Tensor
@@ -316,7 +317,11 @@ class FusedAggregation(Aggregation):
                 assert mean is not None
                 var = (pow_sum / count) - (mean * mean)
 
-            outs[i] = var.clamp(min=1e-5).sqrt()
+            # Allow "undefined" gradient at `sqrt(0.0)`:
+            out = var.clamp(min=1e-5).sqrt()
+            out = out.masked_fill(out <= math.sqrt(1e-5), 0.0)
+
+            outs[i] = out
 
         #######################################################################
 

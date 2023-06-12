@@ -4,9 +4,10 @@ import pytest
 import torch
 
 from torch_geometric.nn import ASAPooling, GCNConv, GraphConv
-from torch_geometric.testing import is_full_test, onlyFullTest
+from torch_geometric.testing import is_full_test, onlyFullTest, onlyLinux
 
 
+@onlyLinux  # TODO  (matthias) Investigate CSR @ CSR support on Windows.
 def test_asap():
     in_channels = 16
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3],

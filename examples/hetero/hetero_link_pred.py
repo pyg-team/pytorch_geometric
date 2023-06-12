@@ -91,12 +91,6 @@ class Model(torch.nn.Module):
 
 
 model = Model(hidden_channels=32).to(device)
-
-# Due to lazy initialization, we need to run one model step so the number
-# of parameters can be inferred:
-with torch.no_grad():
-    model.encoder(train_data.x_dict, train_data.edge_index_dict)
-
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 

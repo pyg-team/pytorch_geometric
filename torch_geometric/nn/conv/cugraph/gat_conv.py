@@ -5,10 +5,14 @@ from torch import Tensor
 from torch.nn import Linear, Parameter
 
 from torch_geometric.nn.conv.cugraph import CuGraphModule
+from torch_geometric.nn.conv.cugraph.base import LEGACY_MODE
 from torch_geometric.nn.inits import zeros
 
 try:
-    from pylibcugraphops.torch.autograd import mha_gat_n2n as GATConvAgg
+    if LEGACY_MODE:
+        from pylibcugraphops.torch.autograd import mha_gat_n2n as GATConvAgg
+    else:
+        from pylibcugraphops.pytorch.operators import mha_gat_n2n as GATConvAgg
 except ImportError:
     pass
 
@@ -67,8 +71,13 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         graph = self.get_cugraph(csc, max_num_neighbors)
 
         x = self.lin(x)
-        out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
-                         self.negative_slope, False, self.concat)
+
+        if LEGACY_MODE:
+            out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
+                             self.negative_slope, False, self.concat)
+        else:
+            out = GATConvAgg(x, self.att, graph, self.heads, 'LeakyReLU',
+                             self.negative_slope, self.concat)
 
         if self.bias is not None:
             out = out + self.bias

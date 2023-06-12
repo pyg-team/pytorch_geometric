@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import HeteroData, InMemoryDataset
+from torch_geometric.utils import coalesce as coalesce_fn
 
 
 def get_random_edge_index(
@@ -12,12 +13,18 @@ def get_random_edge_index(
     num_edges: int,
     dtype: Optional[torch.dtype] = None,
     device: Optional[torch.device] = None,
+    coalesce: bool = False,
 ) -> Tensor:
     row = torch.randint(num_src_nodes, (num_edges, ), dtype=dtype,
                         device=device)
     col = torch.randint(num_dst_nodes, (num_edges, ), dtype=dtype,
                         device=device)
-    return torch.stack([row, col], dim=0)
+    edge_index = torch.stack([row, col], dim=0)
+
+    if coalesce:
+        edge_index = coalesce_fn(edge_index)
+
+    return edge_index
 
 
 class FakeHeteroDataset(InMemoryDataset):

@@ -37,10 +37,10 @@ from torch_geometric.typing import (
     OptTensor,
     SparseTensor,
 )
-from torch_geometric.utils import select, subgraph
+from torch_geometric.utils import is_sparse, select, subgraph
 
 
-class BaseData(object):
+class BaseData:
     def __getattr__(self, key: str) -> Any:
         raise NotImplementedError
 
@@ -512,13 +512,13 @@ class Data(BaseData, FeatureStore, GraphStore):
     def to_namedtuple(self) -> NamedTuple:
         return self._store.to_namedtuple()
 
-    def update(self, data: 'Data') -> 'Data':
+    def update(self, data: Union['Data', Dict[str, Any]]) -> 'Data':
         for key, value in data.items():
             self[key] = value
         return self
 
     def __cat_dim__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        if isinstance(value, SparseTensor) and 'adj' in key:
+        if is_sparse(value) and 'adj' in key:
             return (0, 1)
         elif 'index' in key or key == 'face':
             return -1
@@ -589,12 +589,6 @@ class Data(BaseData, FeatureStore, GraphStore):
         Args:
             subset (LongTensor or BoolTensor): The nodes to keep.
         """
-        if subset.dtype == torch.bool:
-            num_nodes = int(subset.sum())
-        else:
-            num_nodes = subset.size(0)
-            subset = torch.unique(subset, sorted=True)
-
         out = subgraph(subset, self.edge_index, relabel_nodes=True,
                        num_nodes=self.num_nodes, return_edge_mask=True)
         edge_index, _, edge_mask = out
@@ -605,7 +599,10 @@ class Data(BaseData, FeatureStore, GraphStore):
             if key == 'edge_index':
                 data.edge_index = edge_index
             elif key == 'num_nodes':
-                data.num_nodes = num_nodes
+                if subset.dtype == torch.bool:
+                    data.num_nodes = int(subset.sum())
+                else:
+                    data.num_nodes = subset.size(0)
             elif self.is_node_attr(key):
                 cat_dim = self.__cat_dim__(key, value)
                 data[key] = select(value, subset, dim=cat_dim)
@@ -905,6 +902,9 @@ class Data(BaseData, FeatureStore, GraphStore):
         return True
 
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        if edge_attr.size is None:
+            edge_attr.size = self.size()  # Modify in-place.
+
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
             row, col = self.edge_index
             return row, col
@@ -974,15 +974,12 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
         out = '{ ' + ', '.join(lines) + ' }'
     elif isinstance(value, Mapping):
         lines = [size_repr(k, v, indent + 2) for k, v in value.items()]
-        out = '{\n' + ',\n'.join(lines) + '\n' + pad + '}'
+        out = '{\n' + ',\n'.join(lines) + ',\n' + pad + '}'
     else:
         out = str(value)
 
     key = str(key).replace("'", '')
-    if isinstance(value, BaseStorage):
-        return f'{pad}\033[1m{key}\033[0m={out}'
-    else:
-        return f'{pad}{key}={out}'
+    return f'{pad}{key}={out}'
 
 
 def warn_or_raise(msg: str, raise_on_error: bool = True):

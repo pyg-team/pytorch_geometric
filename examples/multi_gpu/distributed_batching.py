@@ -15,6 +15,10 @@ from torch.utils.data.distributed import DistributedSampler
 import torch_geometric.transforms as T
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINEConv, global_mean_pool
+from torch_geometric.typing import WITH_TORCH_SPARSE
+
+if not WITH_TORCH_SPARSE:
+    quit("This example requires 'torch-sparse'")
 
 
 class GIN(torch.nn.Module):

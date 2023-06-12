@@ -5,6 +5,7 @@ from contextlib import ContextDecorator, contextmanager
 from typing import Any, List, NamedTuple, Tuple
 
 import torch
+from torch.autograd.profiler import EventList
 from torch.profiler import ProfilerActivity, profile
 
 from torch_geometric.profile.utils import (
@@ -206,15 +207,19 @@ def read_from_memlab(line_profiler: Any) -> List[float]:  # pragma: no cover
 
 
 def trace_handler(p):
+    print_time_total(p)
+    profile_dir = str(pathlib.Path.cwd()) + '/'
+    timeline_file = profile_dir + 'timeline' + '.json'
+    p.export_chrome_trace(timeline_file)
+
+
+def print_time_total(p):
     if torch.cuda.is_available():
         profile_sort = 'self_cuda_time_total'
     else:
         profile_sort = 'self_cpu_time_total'
     output = p.key_averages().table(sort_by=profile_sort)
     print(output)
-    profile_dir = str(pathlib.Path.cwd()) + '/'
-    timeline_file = profile_dir + 'timeline' + '.json'
-    p.export_chrome_trace(timeline_file)
 
 
 def rename_profile_file(*args):
@@ -227,11 +232,66 @@ def rename_profile_file(*args):
 
 
 @contextmanager
-def torch_profile():
+def torch_profile(export_chrome_trace=True, csv_data=None, write_csv=None):
+    use_cuda = torch.cuda.is_available()
+
     activities = [ProfilerActivity.CPU]
-    if torch.cuda.is_available():
+    if use_cuda:
         activities.append(ProfilerActivity.CUDA)
 
-    with profile(activities=activities, on_trace_ready=trace_handler) as p:
+    if export_chrome_trace:
+        p_trace_handler = trace_handler
+    else:
+        p_trace_handler = print_time_total
+
+    p = profile(activities=activities, on_trace_ready=p_trace_handler)
+
+    with p:
         yield
         p.step()
+
+    if csv_data is not None and write_csv == 'prof':
+        if use_cuda:
+            profile_sort = 'self_cuda_time_total'
+        else:
+            profile_sort = 'self_cpu_time_total'
+        events = EventList(
+            sorted(
+                p.key_averages(),
+                key=lambda evt: getattr(evt, profile_sort),
+                reverse=True,
+            ), use_cuda=use_cuda)
+
+        save_profile_data(csv_data, events, use_cuda)
+
+
+def format_prof_time(time):
+    # Profile time is in micro seconds, so format it appropriately:
+    return round(time / 1e6, 3)
+
+
+def save_profile_data(csv_data, events, use_cuda):
+    sum_self_cpu_time_total = sum(
+        [event.self_cpu_time_total for event in events])
+    sum_cpu_time_total = sum([event.self_cpu_time_total for event in events])
+    sum_self_cuda_time_total = sum(
+        [event.self_cuda_time_total for event in events]) if use_cuda else 0
+
+    for e in events[:5]:  # Save top 5 most time consuming operations:
+        csv_data['NAME'].append(e.key)
+        csv_data['SELF CPU %'].append(
+            round(e.self_cpu_time_total * 100.0 / sum_self_cpu_time_total, 3))
+        csv_data['SELF CPU'].append(format_prof_time(e.self_cpu_time_total))
+        csv_data['CPU TOTAL %'].append(
+            round(e.cpu_time_total * 100.0 / sum_cpu_time_total, 3))
+        csv_data['CPU TOTAL'].append(format_prof_time(e.cpu_time_total))
+        csv_data['CPU TIME AVG'].append(format_prof_time(e.cpu_time_total))
+        if use_cuda:
+            csv_data['SELF CUDA %'].append(e.self_cuda_time_total * 100.0 /
+                                           sum_self_cuda_time_total)
+            csv_data['SELF CUDA'].append(
+                format_prof_time(e.self_cuda_time_total))
+            csv_data['CUDA TOTAL'].append(format_prof_time(e.cpu_time_total))
+            csv_data['CUDA TIME AVG'].append(format_prof_time(
+                e.cpu_time_total))
+        csv_data['# OF CALLS'].append(e.count)

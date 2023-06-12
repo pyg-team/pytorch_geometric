@@ -26,10 +26,10 @@ class LinearTransformation(BaseTransform):
             f'Transformation matrix should be square (got {matrix.size()})')
 
         # Store the matrix as its transpose.
-        # We do this to enable post-multiplication in `__call__`.
+        # We do this to enable post-multiplication in `forward`.
         self.matrix = matrix.t()
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

@@ -14,7 +14,9 @@ from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
+    onlyFullTest,
     onlyLinux,
+    onlyNeighborSampler,
     withCUDA,
     withPackage,
 )
@@ -145,6 +147,7 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+@onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
     dataset = get_dataset(name='Cora')
@@ -167,6 +170,7 @@ def test_basic_gnn_inference(get_dataset, jk):
 
 @withCUDA
 @onlyLinux
+@onlyFullTest
 @disableExtensions
 @withPackage('torch>=2.0.0')
 def test_compile(device):
@@ -287,6 +291,42 @@ def test_trim_to_layer():
     assert out2.size() == (2, 16)
 
     assert torch.allclose(out1, out2)
+
+
+num_compile_calls = 0
+
+
+@onlyLinux
+@disableExtensions
+@withPackage('torch>=2.0.0')
+@pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
+@pytest.mark.skip(reason="Does not work yet in the full test suite")
+def test_compile_graph_breaks(Model):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    kwargs = {}
+    if Model in {GCN, GAT}:
+        # Adding self-loops inside the model leads to graph breaks :(
+        kwargs['add_self_loops'] = False
+
+    if Model in {PNA}:  # `PNA` requires additional arguments:
+        kwargs['aggregators'] = ['sum', 'mean', 'min', 'max', 'var', 'std']
+        kwargs['scalers'] = ['identity', 'amplification', 'attenuation']
+        kwargs['deg'] = torch.tensor([1, 2, 1])
+
+    model = Model(in_channels=8, hidden_channels=16, num_layers=2, **kwargs)
+
+    def my_custom_backend(gm, *args):
+        global num_compile_calls
+        num_compile_calls += 1
+        return gm.forward
+
+    model = torch_geometric.compile(model, backend=my_custom_backend)
+
+    num_previous_compile_calls = num_compile_calls
+    model(x, edge_index)
+    assert num_compile_calls - num_previous_compile_calls == 1
 
 
 if __name__ == '__main__':

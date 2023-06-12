@@ -53,9 +53,13 @@ class Coauthor(InMemoryDataset):
 
     url = 'https://github.com/shchur/gnn-benchmark/raw/master/data/npz/'
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         assert name.lower() in ['cs', 'physics']
         self.name = 'CS' if name.lower() == 'cs' else 'Physics'
         super().__init__(root, transform, pre_transform)
@@ -81,7 +85,7 @@ class Coauthor(InMemoryDataset):
         download_url(self.url + self.raw_file_names, self.raw_dir)
 
     def process(self):
-        data = read_npz(self.raw_paths[0])
+        data = read_npz(self.raw_paths[0], to_undirected=True)
         data = data if self.pre_transform is None else self.pre_transform(data)
         data, slices = self.collate([data])
         torch.save((data, slices), self.processed_paths[0])
