@@ -46,10 +46,10 @@ def benchmark(
             (default: :obj:`10`)
         backward (bool, optional): If set to :obj:`True`, will benchmark both
             forward and backward passes. (default: :obj:`False`)
-        per_step (bool, optional): If set to :obj:`True`, will return runtimes
+        per_step (bool, optional): If set to :obj:`True`, will report runtimes
             per step. (default: :obj:`False`)
         progress_bar (bool, optional): If set to :obj:`True`, will print a
-            progress bar during benchkaring. (default: :obj:`False`)
+            progress bar during benchmarking. (default: :obj:`False`)
     """
     from tabulate import tabulate
 
