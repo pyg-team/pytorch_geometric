@@ -46,7 +46,8 @@ if __name__ == '__main__':
     args_list = []
     for B, N, F, C in product(BS, NS, FS, CS):
         x = torch.randn(B, N, F, device=args.device, req_grad=True)
-        adj = torch.randint(0, 2, (B, N, N), dtype=x.dtype, device=args.device, reg_grad=True)
+        adj = torch.randint(0, 2, (B, N, N), dtype=x.dtype, device=args.device,
+                            reg_grad=True)
         s = torch.randn(B, N, C, device=args.device, req_grad=True)
 
         funcs.append(dense_diff_pool)
