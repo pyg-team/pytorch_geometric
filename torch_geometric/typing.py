@@ -255,12 +255,3 @@ MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
 InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
-
-# Node-types are denoted by a single string
-NodeType = str
-
-# Edge-types are denotes by a triplet of strings.
-EdgeType = Tuple[str, str, str]
-
-# A representation of tensor data
-TensorDataType = Union[torch.Tensor, np.ndarray]

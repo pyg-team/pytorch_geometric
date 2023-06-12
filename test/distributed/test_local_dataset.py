@@ -1,24 +1,19 @@
-import os.path as osp
-
 import torch
-import torch.nn.functional as F
-from tqdm import tqdm
 
-import torch_geometric.transforms as T
-from torch_geometric.data import HeteroData
-from torch_geometric.datasets import OGB_MAG
 from torch_geometric.distributed import LocalDataset
-from torch_geometric.nn import HGTConv, Linear
-from torch_geometric.testing import FakeHeteroDataset, get_random_edge_index
+from torch_geometric.testing import FakeHeteroDataset
 
 
 def test_local_dataset():
-
     dataset = FakeHeteroDataset()
     data = dataset[0]
 
     # init edge_index and node_features.
-    edge_dict, feature_dict, edge_ids_dict, node_ids_dict, y_dict = {}, {}, {}, {}, {}
+    edge_dict = {}
+    feature_dict = {}
+    edge_ids_dict = {}
+    node_ids_dict = {}
+    y_dict = {}
     for etype in data.edge_types:
         edge_dict[etype] = data[etype]['edge_index']
         edge_ids_dict[etype] = torch.tensor([1, 2, 3, 5, 7, 4])
@@ -37,7 +32,8 @@ def test_local_dataset():
                                    ids=node_ids_dict)
 
     pyg_dataset.init_node_labels(node_label_data=y_dict)
-    # get the graph and node_features from the graphstore/featurestore in LocalDataset
+    # get the graph and node_features from the graphstore/featurestore in
+    # LocalDataset
     edge_attrs = pyg_dataset.graph.get_all_edge_attrs()
 
     edge_index = {}
@@ -46,14 +42,13 @@ def test_local_dataset():
         edge_index[item.edge_type] = pyg_dataset.graph.get_edge_index(item)
         edge_ids[item.edge_type] = pyg_dataset.graph.get_edge_id(item)
 
-    #verify the edge_index and edge_ids
+    # Verify the edge_index and edge_ids
     assert (edge_index == edge_dict)
     assert (edge_ids == edge_ids_dict)
 
     tensor_attrs = pyg_dataset.node_features.get_all_tensor_attrs()
     node_feat = {}
     node_ids = {}
-    node_id2index = {}
     for item in tensor_attrs:
         node_feat[item.attr_name] = pyg_dataset.node_features.get_tensor(
             item.group_name, item.attr_name)
