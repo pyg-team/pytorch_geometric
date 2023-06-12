@@ -54,12 +54,7 @@ if __name__ == '__main__':
         func_names.append(f'B={B}, N={N}, F={F}, C={C}')
         args_list.append((x, adj, s))
 
-    benchmark(
-        funcs=funcs,
-        func_names=func_names,
-        args=args_list,
-        num_steps=50 if args.device == 'cpu' else 500,
-        num_warmups=10 if args.device == 'cpu' else 100,
-        progress_bar=True,
-        backward=True
-    )
+    benchmark(funcs=funcs, func_names=func_names, args=args_list,
+              num_steps=50 if args.device == 'cpu' else 500,
+              num_warmups=10 if args.device == 'cpu' else 100,
+              progress_bar=True, backward=True)
