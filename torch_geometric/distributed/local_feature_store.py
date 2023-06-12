@@ -113,6 +113,7 @@ class LocalFeatureStore(FeatureStore):
         node_id: Tensor,
         x: Optional[Tensor] = None,
         y: Optional[Tensor] = None,
+        edge_id: Optional[Tensor] = None,
         edge_attr: Optional[Tensor] = None,
     ) -> 'LocalFeatureStore':
         r"""Creates a local feature store from homogeneous :pyg:`PyG` tensors.
@@ -122,6 +123,8 @@ class LocalFeatureStore(FeatureStore):
             x (torch.Tensor, optional): The node features.
                 (default: :obj:`None`)
             y (torch.Tensor, optional): The node labels. (default: :obj:`None`)
+            edge_id (torch.Tensor, optional): The global identifier for every
+                local edge. (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
         """
@@ -131,8 +134,14 @@ class LocalFeatureStore(FeatureStore):
             feat_store.put_tensor(x, group_name=None, attr_name='x')
         if y is not None:
             feat_store.put_tensor(y, group_name=None, attr_name='y')
+        if edge_id is not None:
+            feat_store.put_global_id(edge_id, group_name=(None, None))
         if edge_attr is not None:
-            feat_store.put_tensor(edge_attr, group_name=None, attr_name='y')
+            if edge_id is None:
+                raise ValueError("'edge_id' needs to be present in case "
+                                 "'edge_attr' is passed")
+            feat_store.put_tensor(edge_attr, group_name=(None, None),
+                                  attr_name='edge_attr')
         return feat_store
 
     @classmethod
@@ -141,6 +150,7 @@ class LocalFeatureStore(FeatureStore):
         node_id_dict: Dict[NodeType, Tensor],
         x_dict: Optional[Dict[NodeType, Tensor]] = None,
         y_dict: Optional[Dict[NodeType, Tensor]] = None,
+        edge_id_dict: Optional[Dict[EdgeType, Tensor]] = None,
         edge_attr_dict: Optional[Dict[EdgeType, Tensor]] = None,
     ) -> 'LocalFeatureStore':
         r"""Creates a local graph store from heterogeneous :pyg:`PyG` tensors.
@@ -152,6 +162,9 @@ class LocalFeatureStore(FeatureStore):
                 of node types. (default: :obj:`None`)
             y_dict (Dict[NodeType, torch.Tensor], optional): The node labels of
                 node types. (default: :obj:`None`)
+            edge_id_dict (Dict[EdgeType, torch.Tensor], optional): The global
+                identifier for every local edge of edge types.
+                (default: :obj:`None`)
             edge_attr_dict (Dict[EdgeType, torch.Tensor], optional): The edge
                 features of edge types. (default: :obj:`None`)
         """
@@ -165,8 +178,14 @@ class LocalFeatureStore(FeatureStore):
         if y_dict is not None:
             for node_type, y in y_dict.items():
                 feat_store.put_tensor(y, group_name=node_type, attr_name='y')
+        if edge_id_dict is not None:
+            for edge_type, edge_id in edge_id_dict.items():
+                feat_store.put_global_id(edge_id, group_name=edge_type)
         if edge_attr_dict is not None:
             for edge_type, edge_attr in edge_attr_dict.items():
+                if edge_id_dict is None or edge_type not in edge_id_dict:
+                    raise ValueError("'edge_id' needs to be present in case "
+                                     "'edge_attr' is passed")
                 feat_store.put_tensor(edge_attr, group_name=edge_type,
                                       attr_name='edge_attr')
 
