@@ -98,14 +98,18 @@ def benchmark(
                 # concatenation leads to incorrectly measured backward speeds.
                 if isinstance(out, (tuple, list)):
                     try:
-                        out = torch.cat([i for i in out if i.numel() > 0 and i.dim() > 0], dim=0)
+                        out = torch.cat(
+                            [i for i in out if i.numel() > 0 and i.dim() > 0],
+                            dim=0)
                     except:
                         # if dimensions dont match
                         out = out[0]
                 elif isinstance(out, dict):
                     try:
-                        out = torch.cat(
-                            [[i for i in out.values() if i.numel() > 0 and i.dim() > 0]], dim=0)
+                        out = torch.cat([[
+                            i for i in out.values()
+                            if i.numel() > 0 and i.dim() > 0
+                        ]], dim=0)
                     except:
                         out = out[0]
 
