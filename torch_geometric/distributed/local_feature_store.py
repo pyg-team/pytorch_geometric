@@ -108,7 +108,7 @@ class LocalFeatureStore(FeatureStore):
     # Initialization ##########################################################
 
     @classmethod
-    def from_homogeneous_graph(
+    def from_data(
         cls,
         node_id: Tensor,
         x: Optional[Tensor] = None,
@@ -145,7 +145,7 @@ class LocalFeatureStore(FeatureStore):
         return feat_store
 
     @classmethod
-    def from_heterogeneous_graph(
+    def from_hetero_data(
         cls,
         node_id_dict: Dict[NodeType, Tensor],
         x_dict: Optional[Dict[NodeType, Tensor]] = None,

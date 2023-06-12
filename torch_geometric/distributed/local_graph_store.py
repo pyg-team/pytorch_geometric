@@ -51,7 +51,7 @@ class LocalGraphStore(GraphStore):
     # Initialization ##########################################################
 
     @classmethod
-    def from_homogeneous_graph(
+    def from_data(
         cls,
         edge_id: Tensor,
         edge_index: Tensor,
@@ -76,7 +76,7 @@ class LocalGraphStore(GraphStore):
         return graph_store
 
     @classmethod
-    def from_heterogeneous_graph(
+    def from_hetero_data(
         cls,
         edge_id_dict: Dict[EdgeType, Tensor],
         edge_index_dict: Dict[EdgeType, Tensor],

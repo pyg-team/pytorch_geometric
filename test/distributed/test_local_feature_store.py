@@ -64,8 +64,7 @@ def test_homogeneous_feature_store():
     edge_id = torch.randperm(12)
     edge_attr = torch.randn(12, 16)
 
-    store = LocalFeatureStore.from_homogeneous_graph(node_id, x, y, edge_id,
-                                                     edge_attr)
+    store = LocalFeatureStore.from_data(node_id, x, y, edge_id, edge_attr)
 
     assert len(store.get_all_tensor_attrs()) == 3
     attrs = store.get_all_tensor_attrs()
@@ -96,7 +95,7 @@ def test_heterogeneous_feature_store():
     edge_id_dict = {edge_type: torch.randperm(12)}
     edge_attr_dict = {edge_type: torch.randn(12, 16)}
 
-    store = LocalFeatureStore.from_heterogeneous_graph(
+    store = LocalFeatureStore.from_hetero_data(
         node_id_dict,
         x_dict,
         y_dict,
