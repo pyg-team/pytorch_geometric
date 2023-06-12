@@ -61,4 +61,5 @@ if __name__ == '__main__':
         num_steps=50 if args.device == 'cpu' else 500,
         num_warmups=10 if args.device == 'cpu' else 100,
         progress_bar=True,
+        backward=True
     )
