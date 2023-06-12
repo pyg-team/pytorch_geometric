@@ -75,7 +75,7 @@ if __name__ == '__main__':
     args_list = []
     for B, N in product(BS, NS):
         x = torch.randn(N, device=args.device, requires_grad=True)
-        batch = torch.randint(0, B, (N, ), device=args.device,
+        batch = torch.randint(0, B, (N, ), device=args.device, dtype=x.dtype,
                               requires_grad=True).sort()[0]
 
         funcs.append(topk)
