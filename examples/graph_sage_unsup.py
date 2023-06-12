@@ -26,7 +26,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GraphSAGE(data.num_node_features, hidden_channels=64,
                   num_layers=2).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-x, edge_index = data.x.to(device), data.edge_index.to(device)
+data.x, data.edge_index = data.x.to(device), data.edge_index.to(device)
 
 
 def train():
