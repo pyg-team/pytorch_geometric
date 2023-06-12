@@ -113,7 +113,7 @@ def benchmark(
                     except:
                         out = out[0]
 
-                out_grad = torch.randn_like(out.astype(torch.float))
+                out_grad = torch.randn_like(out.to(torch.float))
                 t_start = time.perf_counter()
 
                 out.backward(out_grad)
