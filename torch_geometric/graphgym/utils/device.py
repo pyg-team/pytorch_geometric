@@ -15,6 +15,12 @@ def get_gpu_memory_map():
         '--format=csv,nounits,noheader'
     ], encoding='utf-8')
     gpu_memory = np.array([int(x) for x in result.strip().split('\n')])
+
+    cuda_visible_devices = os.getenv("CUDA_VISIBLE_DEVICES")
+    if cuda_visible_devices:
+        cuda_visible_devices = list(map(int, cuda_visible_devices.split(",")))
+        gpu_memory = gpu_memory[cuda_visible_devices]
+
     return gpu_memory
 
 
