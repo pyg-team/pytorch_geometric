@@ -4,6 +4,7 @@ import pytest
 import torch
 from torch import Tensor
 
+from torch_geometric.experimental import set_experimental_mode
 from torch_geometric.testing import onlyFullTest
 from torch_geometric.utils import to_dense_batch
 
@@ -52,6 +53,27 @@ def test_to_dense_batch(fill):
 
     out, mask = to_dense_batch(x, batch, batch_size=4, fill_value=fill)
     assert out.size() == (4, 3, 2)
+
+
+def test_to_dense_batch_disable_dynamic_shapes():
+    x = torch.Tensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
+    batch = torch.tensor([0, 0, 1, 2, 2, 2])
+
+    with set_experimental_mode(True, 'disable_dynamic_shapes'):
+        with pytest.raises(ValueError, match="'batch_size' needs to be set"):
+            out, mask = to_dense_batch(x, batch, max_num_nodes=6)
+        with pytest.raises(ValueError, match="'max_num_nodes' needs to be"):
+            out, mask = to_dense_batch(x, batch, batch_size=4)
+        with pytest.raises(ValueError, match="'batch_size' needs to be set"):
+            out, mask = to_dense_batch(x)
+
+        out, mask = to_dense_batch(x, batch_size=1, max_num_nodes=6)
+        assert out.size() == (1, 6, 2)
+        assert mask.size() == (1, 6)
+
+        out, mask = to_dense_batch(x, batch, batch_size=3, max_num_nodes=10)
+        assert out.size() == (3, 10, 2)
+        assert mask.size() == (3, 10)
 
 
 @onlyFullTest
