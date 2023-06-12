@@ -112,8 +112,9 @@ def benchmark(
                         ]], dim=0)
                     except:
                         out = out[0]
-
-                out_grad = torch.randn_like(out.to(torch.float))
+                out = out.to(torch.float)
+                out_grad = torch.randn_like(out)
+                out.requires_grad = True
                 t_start = time.perf_counter()
 
                 out.backward(out_grad)
