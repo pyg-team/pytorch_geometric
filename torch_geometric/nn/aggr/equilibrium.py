@@ -41,8 +41,10 @@ class ResNetPotential(torch.nn.Module):
         if index is None:
             return h.mean()
 
-        size = int(index.max().item() + 1) if dim_size is None else dim_size
-        return scatter(h, index, dim=0, dim_size=size, reduce='mean').sum()
+        if dim_size is None:
+            dim_size = int(index.max().item() + 1)
+
+        return scatter(h, index, 0, dim_size, reduce='mean').sum()
 
 
 class MomentumOptimizer(torch.nn.Module):
