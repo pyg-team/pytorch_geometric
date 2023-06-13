@@ -101,7 +101,7 @@ class PANPooling(torch.nn.Module):
         x = self.multiplier * x if self.multiplier != 1 else x
 
         edge_index = torch.stack([col, row], dim=0)
-        edge_index, edge_weight = filter_adj(edge_index, edge_weight, node_index=perm, cluster_index=torch.arange(perm.size(0), dtype=torch.long, device=perm.device)
+        edge_index, edge_weight = filter_adj(edge_index, edge_weight, node_index=perm, cluster_index=torch.arange(perm.size(0), dtype=torch.long, device=perm.device),
                                              num_nodes=score.size(0))
         assert edge_weight is not None
 
