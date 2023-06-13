@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
 
     BS = [2**i for i in range(4, 8)]
@@ -45,16 +46,20 @@ if __name__ == '__main__':
     func_names = []
     args_list = []
     for B, N, F, C in product(BS, NS, FS, CS):
-        x = torch.randn(B, N, F, device=args.device, requires_grad=True)
-        adj = torch.randint(0, 2, (B, N, N), dtype=x.dtype, device=args.device,
-                            requires_grad=True)
-        s = torch.randn(B, N, C, device=args.device, requires_grad=True)
+        x = torch.randn(B, N, F, device=args.device)
+        adj = torch.randint(0, 2, (B, N, N), dtype=x.dtype, device=args.device)
+        s = torch.randn(B, N, C, device=args.device)
 
         funcs.append(dense_diff_pool)
         func_names.append(f'B={B}, N={N}, F={F}, C={C}')
         args_list.append((x, adj, s))
 
-    benchmark(funcs=funcs, func_names=func_names, args=args_list,
-              num_steps=50 if args.device == 'cpu' else 500,
-              num_warmups=10 if args.device == 'cpu' else 100,
-              progress_bar=True, backward=True)
+    benchmark(
+        funcs=funcs,
+        func_names=func_names,
+        args=args_list,
+        num_steps=50 if args.device == 'cpu' else 500,
+        num_warmups=10 if args.device == 'cpu' else 100,
+        backward=args.backward,
+        progress_bar=True,
+    )

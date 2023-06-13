@@ -74,7 +74,7 @@ if __name__ == '__main__':
     func_names = []
     args_list = []
     for B, N in product(BS, NS):
-        x = torch.randn(N, device=args.device, requires_grad=True)
+        x = torch.randn(N, device=args.device)
         batch = torch.randint(0, B, (N, ), device=args.device).sort()[0]
 
         funcs.append(topk)
@@ -88,5 +88,4 @@ if __name__ == '__main__':
         num_steps=50 if args.device == 'cpu' else 500,
         num_warmups=10 if args.device == 'cpu' else 100,
         progress_bar=True,
-        backward=True,
     )
