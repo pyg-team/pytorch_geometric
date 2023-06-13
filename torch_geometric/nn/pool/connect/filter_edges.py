@@ -13,11 +13,12 @@ def filter_adj(
     edge_index: Tensor,
     edge_attr: Optional[Tensor],
     node_index: Tensor,
-    cluster_index: Tensor,
+    cluster_index: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
 ) -> Tuple[Tensor, Optional[Tensor]]:
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
-
+    if cluster_index is None:
+        cluster_index=torch.arange(node_index.size(0), dtype=torch.long, device=node_index.device)
     mask = node_index.new_full((num_nodes, ), -1)
     mask[node_index] = cluster_index
 
