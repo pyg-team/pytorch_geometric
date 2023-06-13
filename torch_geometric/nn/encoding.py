@@ -203,7 +203,7 @@ class LinkEncoding(torch.nn.Module):
             re-sorting of the data and can improve runtime and memory
             efficiency. (default: :obj:`False`)
         dropout (float, optional): Dropout probability of the MLP layer.
-            (default: :obj:`0.5`)
+            (default: :obj:`0.0`)
 
     """
     def __init__(
@@ -214,7 +214,7 @@ class LinkEncoding(torch.nn.Module):
         out_channels: int,
         time_channels: int,
         is_sorted: bool = False,
-        dropout: float = 0.5,
+        dropout: float = 0.0,
     ) -> None:
         super().__init__()
         self.K = K
