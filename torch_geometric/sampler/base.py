@@ -94,7 +94,7 @@ class NodeSamplerInput(CastMixin):
         )
 
 
-@dataclass
+@dataclass(init=False)
 class EdgeSamplerInput(CastMixin):
     r"""The sampling input of
     :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
