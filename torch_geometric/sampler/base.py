@@ -45,7 +45,7 @@ class SubgraphType(Enum):
     induced = 'induced'
 
 
-@dataclass
+@dataclass(init=False)
 class NodeSamplerInput(CastMixin):
     r"""The sampling input of
     :meth:`~torch_geometric.sampler.BaseSampler.sample_from_nodes`.
@@ -63,6 +63,24 @@ class NodeSamplerInput(CastMixin):
     node: Tensor
     time: OptTensor = None
     input_type: Optional[NodeType] = None
+
+    def __init__(
+        self,
+        input_id: OptTensor,
+        node: Tensor,
+        time: OptTensor = None,
+        input_type: Optional[NodeType] = None,
+    ):
+        if input_id is not None:
+            input_id = input_id.cpu()
+        node = node.cpu()
+        if time is not None:
+            time = time.cpu()
+
+        self.input_id = input_id
+        self.node = node
+        self.time = time
+        self.input_type = input_type
 
     def __getitem__(self, index: Union[Tensor, Any]) -> 'NodeSamplerInput':
         if not isinstance(index, Tensor):
@@ -101,6 +119,31 @@ class EdgeSamplerInput(CastMixin):
     label: OptTensor = None
     time: OptTensor = None
     input_type: Optional[EdgeType] = None
+
+    def __init__(
+        self,
+        input_id: OptTensor,
+        row: Tensor,
+        col: Tensor,
+        label: OptTensor = None,
+        time: OptTensor = None,
+        input_type: Optional[EdgeType] = None,
+    ):
+        if input_id is not None:
+            input_id = input_id.cpu()
+        row = row.clone().cpu()
+        col = col.clone().cpu()
+        if label is not None:
+            label = label.cpu()
+        if time is not None:
+            time = time.cpu()
+
+        self.input_id = input_id
+        self.row = row
+        self.col = col
+        self.label = label
+        self.time = time
+        self.input_type = input_type
 
     def __getitem__(self, index: Union[Tensor, Any]) -> 'EdgeSamplerInput':
         if not isinstance(index, Tensor):
