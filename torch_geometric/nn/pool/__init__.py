@@ -17,6 +17,7 @@ from .sag_pool import SAGPooling
 from .topk_pool import TopKPooling
 from .voxel_grid import voxel_grid
 from .approx_knn import approx_knn, approx_knn_graph
+from .gm_pool import GMPooling
 
 try:
     import torch_cluster
@@ -329,6 +330,7 @@ __all__ = [
     'ASAPooling',
     'PANPooling',
     'MemPooling',
+    'GMPooling',
     'max_pool',
     'avg_pool',
     'max_pool_x',
