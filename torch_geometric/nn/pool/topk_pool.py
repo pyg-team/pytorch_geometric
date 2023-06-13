@@ -8,30 +8,6 @@ from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
-# TODO(jinu): Remove this.
-def filter_adj(
-    edge_index: Tensor,
-    edge_attr: Optional[Tensor],
-    perm: Tensor,
-    num_nodes: Optional[int] = None,
-) -> Tuple[Tensor, Optional[Tensor]]:
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
-
-    mask = perm.new_full((num_nodes, ), -1)
-    i = torch.arange(perm.size(0), dtype=torch.long, device=perm.device)
-    mask[perm] = i
-
-    row, col = edge_index[0], edge_index[1]
-    row, col = mask[row], mask[col]
-    mask = (row >= 0) & (col >= 0)
-    row, col = row[mask], col[mask]
-
-    if edge_attr is not None:
-        edge_attr = edge_attr[mask]
-
-    return torch.stack([row, col], dim=0), edge_attr
-
-
 class TopKPooling(torch.nn.Module):
     r""":math:`\mathrm{top}_k` pooling operator from the `"Graph U-Nets"
     <https://arxiv.org/abs/1905.05178>`_, `"Towards Sparse
