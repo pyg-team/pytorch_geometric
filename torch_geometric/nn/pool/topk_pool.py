@@ -5,7 +5,6 @@ from torch import Tensor
 
 from torch_geometric.nn.pool.connect import FilterEdges
 from torch_geometric.nn.pool.select import SelectTopK
-from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 class TopKPooling(torch.nn.Module):
