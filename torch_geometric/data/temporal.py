@@ -212,6 +212,10 @@ class TemporalData(BaseData):
         r"""Alias for :meth:`~torch_geometric.data.TemporalData.num_events`."""
         return self.num_events
 
+    @property
+    def edge_index(self) -> Any:
+        return self['edge_index'] if 'edge_index' in self._store else None
+
     def size(
         self, dim: Optional[int] = None
     ) -> Union[Tuple[Optional[int], Optional[int]], Optional[int]]:
