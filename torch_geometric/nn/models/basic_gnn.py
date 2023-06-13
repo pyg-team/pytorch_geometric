@@ -241,9 +241,13 @@ class BasicGNN(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def inference(self, loader: NeighborLoader,
-                  device: Optional[torch.device] = None,
-                  progress_bar: bool = False) -> Tensor:
+    def inference(
+        self,
+        loader: NeighborLoader,
+        device: Optional[Union[str, torch.device]] = None,
+        embedding_device: Union[str, torch.device] = 'cpu',
+        progress_bar: bool = False,
+    ) -> Tensor:
         r"""Performs layer-wise inference on large-graphs using a
         :class:`~torch_geometric.loader.NeighborLoader`, where
         :class:`~torch_geometric.loader.NeighborLoader` should sample the
@@ -251,6 +255,19 @@ class BasicGNN(torch.nn.Module):
         This is an efficient way to compute the output embeddings for all
         nodes in the graph.
         Only applicable in case :obj:`jk=None` or `jk='last'`.
+
+        Args:
+            loader (torch_geometric.loader.NeighborLoader): A neighbor loader
+                object that generates full 1-hop subgraphs, *i.e.*,
+                :obj:`loader.num_neighbors = [-1]`.
+            device (torch.device, optional): The device to run the GNN on.
+                (default: :obj:`None`)
+            embedding_device (torch.device, optional): The device to store
+                intermediate embeddings on. If intermediate embeddings fit on
+                GPU, this option helps to avoid unnecessary device transfers.
+                (default: :obj:`"cpu"`)
+            progress_bar (bool, optional): If set to :obj:`True`, will print a
+                progress bar during computation. (default: :obj:`False`)
         """
         assert self.jk_mode is None or self.jk_mode == 'last'
         assert isinstance(loader, NeighborLoader)
@@ -262,7 +279,7 @@ class BasicGNN(torch.nn.Module):
             pbar = tqdm(total=len(self.convs) * len(loader))
             pbar.set_description('Inference')
 
-        x_all = loader.data.x.cpu()
+        x_all = loader.data.x.to(embedding_device)
         loader.data.n_id = torch.arange(x_all.size(0))
 
         for i in range(self.num_layers):
@@ -275,7 +292,7 @@ class BasicGNN(torch.nn.Module):
                     edge_index = batch.edge_index.to(device)
                 x = self.convs[i](x, edge_index)[:batch.batch_size]
                 if i == self.num_layers - 1 and self.jk_mode is None:
-                    xs.append(x.cpu())
+                    xs.append(x.to(embedding_device))
                     if progress_bar:
                         pbar.update(1)
                     continue
@@ -287,7 +304,7 @@ class BasicGNN(torch.nn.Module):
                     x = self.act(x)
                 if i == self.num_layers - 1 and hasattr(self, 'lin'):
                     x = self.lin(x)
-                xs.append(x.cpu())
+                xs.append(x.to(embedding_device))
                 if progress_bar:
                     pbar.update(1)
             x_all = torch.cat(xs, dim=0)
