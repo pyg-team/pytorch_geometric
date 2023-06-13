@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Allow GPU tensors as input to `NodeLoader` and `LinkLoader` ([#7572](https://github.com/pyg-team/pytorch_geometric/pull/7572))
 - Added an `embedding_device` option to allow for GPU inference in `BasicGNN` ([#7548](https://github.com/pyg-team/pytorch_geometric/pull/7548))
 - Added `Performer` to `GPSConv` and remove `attn_dropout` argument from `GPSConv` ([#7465](https://github.com/pyg-team/pytorch_geometric/pull/7465))
 - Enabled `LinkNeighborLoader` to return number of sampled nodes and edges per hop ([#7516](https://github.com/pyg-team/pytorch_geometric/pull/7516))
