@@ -202,16 +202,12 @@ class GMPooling(torch.nn.Module):
             batch)
 
         # Compute centroids
-        centroids = scatter(
-            emb[clusters >= 0],
-            clusters[clusters >= 0], dim=0
-            )
+        centroids = scatter(emb[clusters >= 0], clusters[clusters >= 0], dim=0)
         centroids = F.normalize(centroids)
-        centroids_batch = torch.zeros(
-            centroids.shape[0],
-            dtype=torch.long,
-            device=centroids.device
-            ).scatter(0, clusters[clusters >= 0], batch[clusters >= 0])
+        centroids_batch = torch.zeros(centroids.shape[0], dtype=torch.long,
+                                      device=centroids.device).scatter(
+                                          0, clusters[clusters >= 0],
+                                          batch[clusters >= 0])
         idxs = torch.argsort(centroids_batch)
         centroids, centroids_batch = centroids[idxs], centroids_batch[idxs]
 
@@ -233,13 +229,12 @@ class GMPooling(torch.nn.Module):
         return outputs
 
     def __repr__(self) -> str:
-        return (
-            f'{self.__class__.__name__}({self.r}, {self.min_size},'
-            f'build_bipartite_graph = {self.build_bipartite_graph}, '
-            f'build_super_graph = {self.build_super_graph}, '
-            f'bipartite_k = {self.bipartite_k}, '
-            f'super_k = {self.super_k}, '
-            f'momentum = {self.momentum})')
+        return (f'{self.__class__.__name__}({self.r}, {self.min_size},'
+                f'build_bipartite_graph = {self.build_bipartite_graph}, '
+                f'build_super_graph = {self.build_super_graph}, '
+                f'bipartite_k = {self.bipartite_k}, '
+                f'super_k = {self.super_k}, '
+                f'momentum = {self.momentum})')
 
 
 class DynamicGraphConstruction(nn.Module):
