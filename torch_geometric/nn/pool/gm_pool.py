@@ -6,7 +6,8 @@ import torch.nn.functional as F
 from scipy.sparse.csgraph import connected_components
 from sklearn.mixture import GaussianMixture
 import numpy as np
-from torch_geometric.utils import to_scipy_sparse_matrix, from_scipy_sparse_matrix
+from torch_cluster import knn
+from torch_geometric.utils import to_scipy_sparse_matrix, from_scipy_sparse_matrix, scatter
 
 def argsort(batch: Tensor) -> Tuple[Tensor, Tensor]:
     idx = torch.argsort(batch)
@@ -15,22 +16,59 @@ def argsort(batch: Tensor) -> Tuple[Tensor, Tensor]:
     
 @torch.no_grad()
 def build_knn_graph(
-    src_emb: Tenfor,
-    dst_emb: Tenfor,
-    src_batch: Tenfor,
-    dst_batch: Tenfor,
+    src_emb: Tensor,
+    dst_emb: Tensor,
+    src_batch: Tensor,
+    dst_batch: Tensor,
     k: int
-) -> Tenfor:
-    src_idx, src_inverse = self.argsort(src_batch)
-    dst_idx, dst_inverse = self.argsort(dst_batch)
+) -> Tensor:
+    src_idx, src_inverse = argsort(src_batch)
+    dst_idx, dst_inverse = argsort(dst_batch)
     graph = knn(dst_emb[dst_idx], src_emb[src_idx], k, dst_batch[dst_idx], src_batch[src_idx])
     return torch.stack([src_inverse[graph[0]], dst_inverse[graph[1]]], dim = 0)
 
 class GMPooling(torch.nn.Module):
+    r"""The Gaussion Mixture Pooling implementation from
+    `"PHierarchical Graph Neural Networks for Particle Track Reconstruction"
+    <https://arxiv.org/abs/2303.01640>`_ paper.
     
+    In short, GMPooling pools the graph by computing the edge scores defined
+    as :math:`\tanh^{-1}(x_i\cdot x_j)`, where :math:`x_i` are normalized node 
+    embeddings. Assuming that there are intra-cluster and inter-cluster edges,
+    we fit a Gaussian Mixture Model of 2 components.The score cut is solved by
+    finding the score where the difference in log likelihood of the two 
+    components exceeds a hyperparameter :obj:`r` that is used to tune the
+    granularity of the pooling. Finally, the connected components that have 
+    more than :obj:`min_size` are regarded as the pooled nodes, which are 
+    called "supernodes" in the paper.
+    
+    GMPooling takes in node embeddings, graph edges, and batch indices and 
+    returns pooled embeddings (supernodes) and their batch indices. Optionally, 
+    GMPooling can also return bipartite graph in between the original nodes and 
+    the newly created supernodes, together with edge weights that ensure the 
+    differentiability of the method, and the super graph on the supernodes and
+    their edge weights.
+
+    Args:
+        r (int): Resolution which controls the granularity of the pooling.
+        min_size (int): Minimum size for a connected component to be kept as 
+            supernode. Any component smaller than this will be treated as noise.
+        build_bipartite_graph (bool, optional): Whether to build bipartite 
+            graph or not. When set to :obj:`True`, edges and edge weights are
+            returned. (default: :obj:`False`)
+        build_super_graph (bool, optional): Whether to build super graph or not.
+            When set to :obj:`True`, edges and edge weights are returned. 
+            (default: :obj:`False`)
+        bipartite_k (int, optional): The connectivity of the bipartite graph being
+            built. (default: :obj:`5`)
+        super_k (int, optional): The connectivity of the super graph being built.
+            (default: :obj:`5`)
+        momentum (float, optional): The momentum of the exponential moving average
+            used to track score cut. (default: :obj:`0.95`)
+    """
     def __init__(
         self,
-        resolution: float,
+        r: float,
         min_size: int,
         build_bipartite_graph: Optional[bool] = False,
         build_super_graph: Optional[bool] = False,
@@ -39,7 +77,7 @@ class GMPooling(torch.nn.Module):
         momentum: Optional[float] = 0.95
     ):
         super().__init__()
-        self.resolution = resolution
+        self.r = r
         self.min_size = min_size
         self.build_bipartite_graph = build_bipartite_graph
         self.build_super_graph = build_super_graph
@@ -59,6 +97,9 @@ class GMPooling(torch.nn.Module):
         mean: float, 
         var: float
     ) -> Tuple[float, float, float]:
+        """
+        find the coefficients of the quadratic equation that defines score cut  
+        """
         sigma = np.sqrt(var)
         a = -0.5/sigma**2
         b = mean/sigma**2
@@ -71,27 +112,36 @@ class GMPooling(torch.nn.Module):
         b: float,
         c: float
     ) -> float:
+        """
+        solve the quadratic equation
+        """
         if b**2 > 4*a*c:
             return torch.as_tensor((-b + np.sqrt(b**2 - 4*a*c))/(2*a), dtype = torch.float)
         else:
             return torch.as_tensor(-b/(2*a), dtype = torch.float)
 
     def _determine_cut(self) -> float:
+        """
+        extract the parameters of Gaussians and solve for score cut. Always pick the greater solution.
+        """
         a1, b1, c1 = self._get_quadratic_coeff(self.model.weights_[0].item(), self.model.means_[0].item(), self.model.covariances_[0].item())
         a2, b2, c2 = self._get_quadratic_coeff(self.model.weights_[1].item(), self.model.means_[1].item(), self.model.covariances_[1].item())
         if self.model.means_[0][0] > self.model.means_[1][0]:
-            return self._solve_quadratic_eq(a1-a2, b1-b2, c1-c2-self.resolution)
+            return self._solve_quadratic_eq(a1-a2, b1-b2, c1-c2-self.r)
         else:
-            return self._solve_quadratic_eq(a2-a1, b2-b1, c2-c1-self.resolution)
+            return self._solve_quadratic_eq(a2-a1, b2-b1, c2-c1-self.r)
     
     def _get_clusters(
         self, 
         labels: Tensor, 
         batch: Tensor
     ) -> Tensor:
+        """
+        filter out noises, i.e. components smaller than min_size.
+        """
         _, inverse, counts = labels.unique(return_inverse = True, return_counts = True)
         noise_mask = counts[inverse] < self.min_size
-        is_noise = ~scatter_add(~noise_mask, batch, dim = 0)
+        is_noise = ~scatter(~noise_mask, batch, dim = 0, reduce = "any")
         labels[is_noise[batch]] = batch[is_noise[batch]] + labels.max() + 1
         noise_mask[is_noise[batch]] = False
         labels[~noise_mask] = labels[~noise_mask].unique(return_inverse = True)[1]
@@ -100,26 +150,38 @@ class GMPooling(torch.nn.Module):
     
     def forward(
         self, 
-        emb: Tensor, 
+        emb: Tensor,
+        edges: Tensor,
         batch: Tensor
     ) -> Tuple[Tensor, Tensor, Optional[Tensor], Optional[Tensor], Optional[Tensor], Optional[Tensor]]:
-        
+        """
+        Args:
+            emb (Tensor): The node embeddings.
+            edges (Tensor): The edge list of the graph.
+            batch (Tensor): The batch indices.
+        Returns
+            centroids (Tensor): The embeddings of the pooled nodes (supernodes)
+            centroids_batch (Tensor): The batch indices of the pooled nodes (supernodes)
+            bipartite_graph (Optional, Tensor): The edge list of the bipartite graph built.
+            bipartite_edge_weights (Optional, Tensor): The edge list of the bipartite graph built.
+            super_graph (Optional, Tensor): The edge list of the super graph built.
+            super_edge_weights (Optional, Tensor): The edge list of the super graph built.
+        """
+        # Normalize embeddings and remove self cycles
         emb = F.normalize(emb)
-        edges = build_knn_graph(emb, emb, batch, batch, self.k)
         edges = edges[:, edges[0] != edges[1]]
         
+        # Compute likelihoods which is defined as atanh of cosine similarities
         likelihood = (1-1e-6)*torch.einsum('ij,ij->i', emb[edges[0]], emb[edges[1]])
         likelihood = torch.atanh(likelihood)
             
-        # GMM edge cutting
-        inputs = likelihood.unsqueeze(1).cpu().detach().numpy()
-        if inputs.size() > 10000:
-            inputs = np.random.choice(inputs, 10000, replace = False)
-        self.model.fit(inputs)
-        cut = self.determine_cut()
-        
-        # Moving Average
+        # GMM edge cutting and compute moving average of score cut
         if self.training:
+            inputs = likelihood.cpu().detach().numpy()
+            if inputs.size > 10000:
+                inputs = np.random.choice(inputs, 10000, replace = False)
+            self.model.fit(inputs.reshape(-1, 1))
+            cut = self._determine_cut()
             self.score_cut = self.momentum*self.score_cut + (1-self.momentum)*cut
        
         # Connected Components
@@ -128,12 +190,13 @@ class GMPooling(torch.nn.Module):
         clusters = self._get_clusters(torch.as_tensor(labels, dtype = torch.long, device = emb.device), batch)
         
         # Compute centroids
-        centroids = scatter_add(emb[clusters >= 0], clusters[clusters >= 0], dim = 0)
+        centroids = scatter(emb[clusters >= 0], clusters[clusters >= 0], dim = 0)
         centroids = F.normalize(centroids)
         centroids_batch = torch.zeros(centroids.shape[0], dtype = torch.long, device = centroids.device)\
                                     .scatter(0, clusters[clusters >= 0], batch[clusters >= 0])
         idxs = torch.argsort(centroids_batch)
         centroids, centroids_batch = centroids[idxs], centroids_batch[idxs]
+        
         
         outputs = [centroids, centroids_batch]
         
@@ -149,7 +212,7 @@ class GMPooling(torch.nn.Module):
     
     def __repr__(self) -> str:
         return (
-            f'{self.__class__.__name__}({self.resolution}, {self.min_size}, build_bipartite_graph = {self.build_bipartite_graph}, '
+            f'{self.__class__.__name__}({self.r}, {self.min_size}, build_bipartite_graph = {self.build_bipartite_graph}, '
             f'build_super_graph = {self.build_super_graph}, '
             f'{f"bipartite_k = {self.bipartite_k}, " if self.build_bipartite_graph else ""}'
             f'{f"super_k = {self.super_k}, " if self.build_super_graph else ""}'
@@ -164,7 +227,14 @@ class DynamicGraphConstruction(nn.Module):
         weighting_function: Callable
     ):
         """
-        weighting function is used to turn dot products into weights
+        Dynamic Graph Construction process. The knn graph is built and the edge are weighted
+        by the value of weighting_function of cosine similarities. BatchNorm is used to 
+        normalize the cosine similarities to ensure variance of the weights. The edge weights 
+        are normalized to ensure that the mean of the weights is one.
+        Args:
+            k (int): the connectivity of the graph built
+            sym (bool): to symmetrize the graph or not
+            weighting_function (Callable): a function used to weight edges 
         """
         super().__init__()
         
@@ -180,10 +250,20 @@ class DynamicGraphConstruction(nn.Module):
         src_batch: Tensor, 
         dst_batch: Tensor
     ) -> Tuple[Tensor, Tensor]:
+        """
+        Args:
+            src_emb (Tensor): The source node embeddings.
+            dst_emb (Tensor): The destination node embeddings.
+            src_batch (Tensor): The source batch indices.
+            dst_batch (Tensor): The destination batch indices.
+        Returns
+            graph (Tensor): The KNN graph built.
+            edge_weights (Tensor): The edge weights computed.
+        """
         # Construct the Graph           
-        graph = self.knn_search(src_emb, dst_emb, src_batch, dst_batch, self.k)
+        graph = build_knn_graph(src_emb, dst_emb, src_batch, dst_batch, self.k)
         if self.sym:
-            graph = to_scipy_sparse_matrix(edges)
+            graph = to_scipy_sparse_matrix(graph)
             graph, _ = from_scipy_sparse_matrix(graph + graph.T)
         
         # Compute bipartite attention
