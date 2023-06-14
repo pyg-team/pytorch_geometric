@@ -18,7 +18,7 @@ def test_trim_sparse_tensor():
     edge_index = torch.tensor([[0, 0, 1, 2], [1, 2, 3, 4]])
     adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=[5, 5])
 
-    adj = trim_sparse_tensor(adj, num_nodes=3, num_seed_nodes=1)
+    adj = trim_sparse_tensor(adj, size=(3, 3), num_seed_nodes=1)
 
     row, col, _ = adj.coo()
     assert row.tolist() == [0, 0]

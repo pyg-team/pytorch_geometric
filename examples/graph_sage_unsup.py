@@ -23,10 +23,15 @@ train_loader = LinkNeighborLoader(
 )
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = GraphSAGE(data.num_node_features, hidden_channels=64,
-                  num_layers=2).to(device)
+data = data.to(device, 'x', 'edge_index')
+
+model = GraphSAGE(
+    data.num_node_features,
+    hidden_channels=64,
+    num_layers=2,
+).to(device)
+
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
-x, edge_index = data.x.to(device), data.edge_index.to(device)
 
 
 def train():
@@ -51,7 +56,7 @@ def train():
 @torch.no_grad()
 def test():
     model.eval()
-    out = model(data.x.to(device), data.edge_index.to(device)).cpu()
+    out = model(data.x, data.edge_index).cpu()
 
     clf = LogisticRegression()
     clf.fit(out[data.train_mask], data.y[data.train_mask])

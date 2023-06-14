@@ -27,6 +27,8 @@ def benchmark(
     func_names: Optional[List[str]] = None,
     num_warmups: int = 10,
     backward: bool = False,
+    per_step: bool = False,
+    progress_bar: bool = False,
 ):
     r"""Benchmark a list of functions :obj:`funcs` that receive the same set
     of arguments :obj:`args`.
@@ -44,6 +46,10 @@ def benchmark(
             (default: :obj:`10`)
         backward (bool, optional): If set to :obj:`True`, will benchmark both
             forward and backward passes. (default: :obj:`False`)
+        per_step (bool, optional): If set to :obj:`True`, will report runtimes
+            per step. (default: :obj:`False`)
+        progress_bar (bool, optional): If set to :obj:`True`, will print a
+            progress bar during benchmarking. (default: :obj:`False`)
     """
     from tabulate import tabulate
 
@@ -65,8 +71,13 @@ def benchmark(
     # Zero-copy `args` for each function (if necessary):
     args_list = [args] * len(funcs) if isinstance(args, tuple) else args
 
+    iterator = zip(funcs, args_list, func_names)
+    if progress_bar:
+        from tqdm import tqdm
+        iterator = tqdm(iterator, total=len(funcs))
+
     ts: List[List[str]] = []
-    for func, args, name in zip(funcs, args_list, func_names):
+    for func, args, name in iterator:
         t_forward = t_backward = 0
         for i in range(num_warmups + num_steps):
             args = require_grad(args, backward)
@@ -83,12 +94,11 @@ def benchmark(
                 t_forward += time.perf_counter() - t_start
 
             if backward:
-                # TODO Generalize this logic. This is also a bit unfair as the
-                # concatenation leads to incorrectly measured backward speeds.
                 if isinstance(out, (tuple, list)):
-                    out = torch.cat(out, dim=0)
+                    out = sum(o.sum() for o in out if isinstance(o, Tensor))
                 elif isinstance(out, dict):
-                    out = torch.cat(list(out.values()), dim=0)
+                    out = out.values()
+                    out = sum(o.sum() for o in out if isinstance(o, Tensor))
 
                 out_grad = torch.randn_like(out)
                 t_start = time.perf_counter()
@@ -100,10 +110,17 @@ def benchmark(
                 if i >= num_warmups:
                     t_backward += time.perf_counter() - t_start
 
-        ts.append([name, f'{t_forward:.4f}s'])
+        if per_step:
+            ts.append([name, f'{t_forward/num_steps:.6f}s'])
+        else:
+            ts.append([name, f'{t_forward:.4f}s'])
         if backward:
-            ts[-1].append(f'{t_backward:.4f}s')
-            ts[-1].append(f'{t_forward + t_backward:.4f}s')
+            if per_step:
+                ts[-1].append(f'{t_backward/num_steps:.6f}s')
+                ts[-1].append(f'{(t_forward + t_backward)/num_steps:.6f}s')
+            else:
+                ts[-1].append(f'{t_backward:.4f}s')
+                ts[-1].append(f'{t_forward + t_backward:.4f}s')
 
     header = ['Name', 'Forward']
     if backward:

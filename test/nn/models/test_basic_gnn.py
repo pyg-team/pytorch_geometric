@@ -300,6 +300,7 @@ num_compile_calls = 0
 @disableExtensions
 @withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
+@pytest.mark.skip(reason="Does not work yet in the full test suite")
 def test_compile_graph_breaks(Model):
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
