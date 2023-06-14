@@ -4,6 +4,7 @@ from .utils import get_model
 from .utils import get_split_masks
 from .utils import save_benchmark_data, write_to_csv
 from .utils import test
+from .utils import xpu_profiler
 
 __all__ = [
     'emit_itt',
@@ -14,4 +15,5 @@ __all__ = [
     'save_benchmark_data',
     'write_to_csv',
     'test',
+    'xpu_profiler',
 ]
