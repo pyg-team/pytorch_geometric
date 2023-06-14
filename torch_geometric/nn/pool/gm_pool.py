@@ -6,7 +6,6 @@ import torch.nn.functional as F
 from scipy.sparse.csgraph import connected_components
 from sklearn.mixture import GaussianMixture
 from torch import Tensor, nn
-from torch_cluster import knn
 
 from torch_geometric.utils import (
     from_scipy_sparse_matrix,
@@ -18,6 +17,7 @@ try:
     from torch_cluster import knn
 except ImportError:
     knn = None
+
 
 def argsort(batch: Tensor) -> Tuple[Tensor, Tensor]:
     idx = torch.argsort(batch)
@@ -51,28 +51,29 @@ class GMPooling(torch.nn.Module):
     called "supernodes" in the paper.
 
     GMPooling takes in node embeddings, graph edges, and batch indices and
-    returns pooled embeddings (supernodes) and their batch indices. Optionally,
-    GMPooling can also return bipartite graph in between the original nodes and
-    the newly created supernodes, together with edge weights that ensure the
-    differentiability of the method, and the super graph on the supernodes and
-    their edge weights.
+    returns pooled embeddings (supernodes) and their batch indices.
+    Optionally, GMPooling can also return bipartite graph in between the
+    original nodes and the newly created supernodes, together with edge
+    weights that ensure the differentiability of the method, and the super
+    graph on the supernodes and their edge weights.
 
     Args:
         r (int): Resolution which controls the granularity of the pooling.
         min_size (int): Minimum size for a connected component to be kept as
-            supernode. Any component smaller than this will be treated as noise.
+            supernode. Any component smaller than this will be treated as
+            noise.
         build_bipartite_graph (bool, optional): Whether to build bipartite
             graph or not. When set to :obj:`True`, edges and edge weights are
             returned. (default: :obj:`False`)
-        build_super_graph (bool, optional): Whether to build super graph or not.
-            When set to :obj:`True`, edges and edge weights are returned.
+        build_super_graph (bool, optional): Whether to build super graph or
+            not. When set to :obj:`True`, edges and edge weights are returned.
             (default: :obj:`False`)
-        bipartite_k (int, optional): The connectivity of the bipartite graph being
+        bipartite_k (int, optional): The connectivity of the bipartite graph
+            being built. (default: :obj:`5`)
+        super_k (int, optional): The connectivity of the super graph being
             built. (default: :obj:`5`)
-        super_k (int, optional): The connectivity of the super graph being built.
-            (default: :obj:`5`)
-        momentum (float, optional): The momentum of the exponential moving average
-            used to track score cut. (default: :obj:`0.95`)
+        momentum (float, optional): The momentum of the exponential moving
+            average used to track score cut. (default: :obj:`0.95`)
     """
     def __init__(self, r: float, min_size: int,
                  build_bipartite_graph: Optional[bool] = False,
@@ -120,7 +121,8 @@ class GMPooling(torch.nn.Module):
 
     def _determine_cut(self) -> float:
         """
-        extract the parameters of Gaussians and solve for score cut. Always pick the greater solution.
+        extract the parameters of Gaussians and solve for score cut. Always
+        pick the greater solution.
         """
         a1, b1, c1 = self._get_quadratic_coeff(
             self.model.weights_[0].item(), self.model.means_[0].item(),
@@ -158,12 +160,18 @@ class GMPooling(torch.nn.Module):
             edges (Tensor): The edge list of the graph.
             batch (Tensor): The batch indices.
         Returns
-            centroids (Tensor): The embeddings of the pooled nodes (supernodes)
-            centroids_batch (Tensor): The batch indices of the pooled nodes (supernodes)
-            bipartite_graph (Optional, Tensor): The edge list of the bipartite graph built.
-            bipartite_edge_weights (Optional, Tensor): The edge weights of the bipartite graph built.
-            super_graph (Optional, Tensor): The edge list of the super graph built.
-            super_edge_weights (Optional, Tensor): The edge weights of the super graph built.
+            centroids (Tensor): The embeddings of the pooled nodes
+                (supernodes)
+            centroids_batch (Tensor): The batch indices of the pooled nodes
+                (supernodes)
+            bipartite_graph (Optional, Tensor): The edge list of the bipartite
+                graph built.
+            bipartite_edge_weights (Optional, Tensor): The edge weights of
+                the bipartite graph built.
+            super_graph (Optional, Tensor): The edge list of the super graph
+                built.
+            super_edge_weights (Optional, Tensor): The edge weights of the
+                super graph built.
         """
         # Normalize embeddings and remove self cycles
         emb = F.normalize(emb)
@@ -194,10 +202,16 @@ class GMPooling(torch.nn.Module):
             batch)
 
         # Compute centroids
-        centroids = scatter(emb[clusters >= 0], clusters[clusters >= 0], dim=0)
+        centroids = scatter(
+            emb[clusters >= 0],
+            clusters[clusters >= 0], dim=0
+            )
         centroids = F.normalize(centroids)
-        centroids_batch = torch.zeros(centroids.shape[0], dtype = torch.long, device = centroids.device)\
-                                    .scatter(0, clusters[clusters >= 0], batch[clusters >= 0])
+        centroids_batch = torch.zeros(
+            centroids.shape[0],
+            dtype=torch.long,
+            device=centroids.device
+            ).scatter(0, clusters[clusters >= 0], batch[clusters >= 0])
         idxs = torch.argsort(centroids_batch)
         centroids, centroids_batch = centroids[idxs], centroids_batch[idxs]
 
@@ -220,20 +234,22 @@ class GMPooling(torch.nn.Module):
 
     def __repr__(self) -> str:
         return (
-            f'{self.__class__.__name__}({self.r}, {self.min_size}, build_bipartite_graph = {self.build_bipartite_graph}, '
+            f'{self.__class__.__name__}({self.r}, {self.min_size},'
+            f'build_bipartite_graph = {self.build_bipartite_graph}, '
             f'build_super_graph = {self.build_super_graph}, '
-            f'{f"bipartite_k = {self.bipartite_k}, " if self.build_bipartite_graph else ""}'
-            f'{f"super_k = {self.super_k}, " if self.build_super_graph else ""}'
+            f'bipartite_k = {self.bipartite_k}, '
+            f'super_k = {self.super_k}, '
             f'momentum = {self.momentum})')
 
 
 class DynamicGraphConstruction(nn.Module):
     def __init__(self, k: int, sym: bool, weighting_function: Callable):
         """
-        Dynamic Graph Construction process. The knn graph is built and the edge are weighted
-        by the value of weighting_function of cosine similarities. BatchNorm is used to
-        normalize the cosine similarities to ensure variance of the weights. The edge weights
-        are normalized to ensure that the mean of the weights is one.
+        Dynamic Graph Construction process. The knn graph is built and the
+        edge are weighted by the value of weighting_function of cosine
+        similarities. BatchNorm is used to normalize the cosine similarities
+        to ensure variance of the weights. The edge weights are normalized
+        to ensure that the mean of the weights is one.
         Args:
             k (int): the connectivity of the graph built
             sym (bool): to symmetrize the graph or not
