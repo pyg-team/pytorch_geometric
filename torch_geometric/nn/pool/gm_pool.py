@@ -1,4 +1,4 @@
-from typing import Callable, List, NamedTuple, Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 import torch
 from torch import nn, Tensor
@@ -8,6 +8,10 @@ from sklearn.mixture import GaussianMixture
 import numpy as np
 from torch_cluster import knn
 from torch_geometric.utils import to_scipy_sparse_matrix, from_scipy_sparse_matrix, scatter
+try:
+    from torch_cluster import knn
+except ImportError:
+    knn = None
 
 def argsort(batch: Tensor) -> Tuple[Tensor, Tensor]:
     idx = torch.argsort(batch)
