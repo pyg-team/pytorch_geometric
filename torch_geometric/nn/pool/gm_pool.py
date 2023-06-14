@@ -267,9 +267,12 @@ class DynamicGraphConstruction(nn.Module):
             graph, _ = from_scipy_sparse_matrix(graph + graph.T)
         
         # Compute bipartite attention
-        likelihood = torch.einsum('ij,ij->i', src_emb[graph[0]], dst_emb[graph[1]]) 
-        edge_weights_logits = self.weight_normalization(likelihood.unsqueeze(1)).squeeze() # regularize to ensure variance of weights
-        edge_weights = self.weighting_function(edge_weights_logits)
+        edge_weights = torch.einsum('ij,ij->i', src_emb[graph[0]], dst_emb[graph[1]]) 
+        # Normalize to ensure variance of weights
+        if len(edge_weights) > 1:
+            edge_weights = self.weight_normalization(edge_weights.unsqueeze(1)).squeeze() 
+            
+        edge_weights = self.weighting_function(edge_weights)
     
         edge_weights = edge_weights/edge_weights.mean()
         edge_weights = edge_weights
