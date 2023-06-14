@@ -16,7 +16,7 @@ import torch.nn.functional as F
 
 class GLGExplainer(torch.nn.Module):
     r"""Implementation of GLGExplainer `"Global Explainability of GNNs via
-    Logic Combination of Learned Concepts" 
+    Logic Combination of Learned Concepts"
     <https://openreview.net/forum?id=OTbRTIY4YS>`_
 
     Importantly, the :class:`GLGExplainer` needs to be trained via
