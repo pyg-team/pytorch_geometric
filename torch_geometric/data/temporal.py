@@ -213,8 +213,14 @@ class TemporalData(BaseData):
         return self.num_events
 
     @property
-    def edge_index(self) -> Any:
-        return self['edge_index'] if 'edge_index' in self._store else None
+    def edge_index(self) -> Tensor:
+        r"""Returns the edge indices of the graph."""
+        if 'edge_index' in self:
+            return self._store['edge_index']
+        if self.src is not None and self.dst is not None:
+            return torch.stack([self.src, self.dst], dim=0)
+        raise ValueError(f"{self.__class__.__name__} does not contain "
+                         f"'edge_index' information")
 
     def size(
         self, dim: Optional[int] = None
