@@ -163,9 +163,9 @@ class GMPooling(torch.nn.Module):
             centroids (Tensor): The embeddings of the pooled nodes (supernodes)
             centroids_batch (Tensor): The batch indices of the pooled nodes (supernodes)
             bipartite_graph (Optional, Tensor): The edge list of the bipartite graph built.
-            bipartite_edge_weights (Optional, Tensor): The edge list of the bipartite graph built.
+            bipartite_edge_weights (Optional, Tensor): The edge weights of the bipartite graph built.
             super_graph (Optional, Tensor): The edge list of the super graph built.
-            super_edge_weights (Optional, Tensor): The edge list of the super graph built.
+            super_edge_weights (Optional, Tensor): The edge weights of the super graph built.
         """
         # Normalize embeddings and remove self cycles
         emb = F.normalize(emb)
