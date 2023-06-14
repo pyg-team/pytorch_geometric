@@ -19,6 +19,7 @@ try:
 except ImportError:
     knn = None
 
+
 def argsort(batch: Tensor) -> Tuple[Tensor, Tensor]:
     idx = torch.argsort(batch)
     inverse = torch.arange(idx.shape[0], device=idx.device)[idx]
