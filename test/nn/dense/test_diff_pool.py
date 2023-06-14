@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
 
     BS = [2**i for i in range(4, 8)]
@@ -59,5 +60,6 @@ if __name__ == '__main__':
         args=args_list,
         num_steps=50 if args.device == 'cpu' else 500,
         num_warmups=10 if args.device == 'cpu' else 100,
+        backward=args.backward,
         progress_bar=True,
     )

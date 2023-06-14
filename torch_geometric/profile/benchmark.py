@@ -94,12 +94,11 @@ def benchmark(
                 t_forward += time.perf_counter() - t_start
 
             if backward:
-                # TODO Generalize this logic. This is also a bit unfair as the
-                # concatenation leads to incorrectly measured backward speeds.
                 if isinstance(out, (tuple, list)):
-                    out = torch.cat(out, dim=0)
+                    out = sum(o.sum() for o in out if isinstance(o, Tensor))
                 elif isinstance(out, dict):
-                    out = torch.cat(list(out.values()), dim=0)
+                    out = out.values()
+                    out = sum(o.sum() for o in out if isinstance(o, Tensor))
 
                 out_grad = torch.randn_like(out)
                 t_start = time.perf_counter()
