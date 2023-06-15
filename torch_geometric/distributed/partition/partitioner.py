@@ -298,16 +298,16 @@ class Partitioner():
 
                 edge_partition_mapping[part_edge_ids] = pid
                 # save edge feature partition
-                store_single_feature(sub_dir, group_name=f'part_{pid}',
-                                     attr_name=self.edge_types,
+                store_single_feature(sub_dir, group_name=(None, None),
+                                     attr_name='edge_attr',
                                      feature=cluster_data[pid].edge_attr,
                                      global_id=part_edge_ids, index=None,
                                      type='edge')
 
                 # save node feature partition
                 node_ids = perm[start_pos:end_pos]
-                store_single_feature(sub_dir, group_name=f'part_{pid}',
-                                     attr_name=self.node_types,
+                store_single_feature(sub_dir, group_name=None,
+                                     attr_name='x',
                                      feature=cluster_data[pid].x,
                                      global_id=node_ids, index=None,
                                      type='node')
