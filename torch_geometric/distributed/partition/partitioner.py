@@ -57,29 +57,6 @@ def record_mapping(output_dir: str, mapping: torch.Tensor, type: str,
     torch.save(mapping, fpath)
 
 
-def save_feature_tensor(feature_store: LocalFeatureStore, group_name: str,
-                        attr_name: str, index: torch.Tensor,
-                        feature: torch.Tensor, global_id: torch.tensor):
-    assert (feature.shape[0] == global_id.shape[0])
-    feature_store.put_tensor(feature, group_name=group_name,
-                             attr_name=attr_name, index=index)
-    feature_store.put_global_id(global_id, group_name=group_name,
-                                attr_name=attr_name)
-
-
-def store_single_feature(output_dir: str, group_name: str, attr_name: str,
-                         feature: torch.Tensor, global_id: torch.Tensor,
-                         index: torch.Tensor, type: str):
-    if feature is not None:
-        assert type in ['node', 'edge']
-        print(f"save {type} feature")
-        feature_store = LocalFeatureStore()
-        save_feature_tensor(feature_store, group_name=group_name,
-                            attr_name=attr_name, index=index, feature=feature,
-                            global_id=global_id)
-        torch.save(feature_store, os.path.join(output_dir, f'{type}_feats.pt'))
-
-
 class Partitioner():
     r""" partition graphs and features for homo/hetero graphs.
     Partitioned data output will be structured like this:
@@ -92,12 +69,10 @@ class Partitioner():
       |-- edge_map.pt
       |-- part0/
           |-- graph.pt
-          |-- node_feats.pt
-          |-- edge_feats.pt
+          |-- features.pt
       |-- part1/
           |-- graph.pt
-          |-- node_feats.pt
-          |-- edge_feats.pt
+          |-- features.pt
 
     * hetero graph
 
@@ -111,12 +86,10 @@ class Partitioner():
           |-- etype2.pt
       |-- part0/
           |-- graph.pt
-          |-- node_feats.pt
-          |-- edge_feats.pt
+          |-- features.pt
       |-- part1/
           |-- graph.pt
-          |-- node_feats.pt
-          |-- edge_feats.pt
+          |-- features.pt
 
     """
     def __init__(self, output_dir: str, num_parts: int,
@@ -188,7 +161,8 @@ class Partitioner():
                 edge_type = cluster_data[pid].edge_type
                 node_type = cluster_data[pid].node_type
                 graph_store = LocalGraphStore()
-                edge_feature_store = LocalFeatureStore()
+                edge_attr_dict = {}
+                edge_id_dict = {}
                 for etype_id in range(edge_type_num):
                     edge_name = input_data._edge_type_names[etype_id]
                     mask = (edge_type == etype_id)
@@ -217,24 +191,19 @@ class Partitioner():
                     if cluster_data[pid].edge_attr is not None:
                         print(f"save edge feature for edge type: {edge_name}")
                         type_edge_feat = cluster_data[pid].edge_attr[mask, :]
-                        save_feature_tensor(edge_feature_store,
-                                            group_name=f'part_{pid}',
-                                            attr_name=edge_name, index=None,
-                                            feature=type_edge_feat,
-                                            global_id=type_edge_id)
+                        edge_attr_dict[edge_name] = type_edge_feat
+                        edge_id_dict[edge_name] = type_edge_id
 
                 sub_dir = prepare_directory(self.output_dir, f'part_{pid}')
                 torch.save(graph_store, os.path.join(sub_dir, 'graph.pt'))
-                if len(edge_feature_store.get_all_tensor_attrs()) > 0:
-                    torch.save(edge_feature_store,
-                               os.path.join(sub_dir, 'edge_feats.pt'))
 
                 # save node feature partition
                 print(f"save node feature for part: {pid}")
                 node_ids = perm[start_pos:end_pos]
                 node_partition_mapping[node_ids] = pid
+                node_feat_dict = {}
+                node_id_dict = {}
                 if cluster_data[pid].x is not None:
-                    node_feature_store = LocalFeatureStore()
                     for ntype_id in range(node_type_num):
                         node_name = input_data._node_type_names[ntype_id]
                         mask = (node_type == ntype_id)
@@ -242,13 +211,13 @@ class Partitioner():
                         type_node_id = type_node_id - node_offset.get(
                             node_name)
                         type_node_feat = cluster_data[pid].x[mask, :]
-                        save_feature_tensor(node_feature_store,
-                                            group_name=f'part_{pid}',
-                                            attr_name=node_name, index=None,
-                                            feature=type_node_feat,
-                                            global_id=type_node_id)
-                    torch.save(node_feature_store,
-                               os.path.join(sub_dir, 'node_feats.pt'))
+                        node_feat_dict[node_name] = type_node_feat
+                        node_id_dict[node_name] = type_node_id
+
+                feature_store = LocalFeatureStore.from_hetero_data(
+                    node_id_dict, x_dict=node_feat_dict,
+                    edge_id_dict=edge_id_dict, edge_attr_dict=edge_attr_dict)
+                torch.save(feature_store, os.path.join(sub_dir, 'features.pt'))
 
             # save node partition mapping
             print("save node partition mapping")
@@ -285,8 +254,8 @@ class Partitioner():
                 edge_num = cluster_data[pid].num_edges
                 part_edge_ids = eids[eid_offset:eid_offset + edge_num]
                 eid_offset = eid_offset + edge_num
-                graph_store = LocalGraphStore()
                 node_num = input_data.num_nodes
+                graph_store = LocalGraphStore()
                 graph_store.put_edge_index(
                     edge_index=(global_row_ids, global_col_ids),
                     edge_type=None, layout='coo', size=(node_num, node_num))
@@ -298,21 +267,13 @@ class Partitioner():
                 torch.save(graph_store, os.path.join(sub_dir, 'graph.pt'))
 
                 edge_partition_mapping[part_edge_ids] = pid
-                # save edge feature partition
-                store_single_feature(sub_dir, group_name=f'part_{pid}',
-                                     attr_name=self.edge_types,
-                                     feature=cluster_data[pid].edge_attr,
-                                     global_id=part_edge_ids, index=None,
-                                     type='edge')
-
-                # save node feature partition
                 node_ids = perm[start_pos:end_pos]
-                store_single_feature(sub_dir, group_name=f'part_{pid}',
-                                     attr_name=self.node_types,
-                                     feature=cluster_data[pid].x,
-                                     global_id=node_ids, index=None,
-                                     type='node')
-
+                # save node/edge feature partition
+                feature_store = LocalFeatureStore.from_data(
+                    node_id=node_ids, x=cluster_data[pid].x,
+                    edge_id=part_edge_ids,
+                    edge_attr=cluster_data[pid].edge_attr)
+                torch.save(feature_store, os.path.join(sub_dir, 'features.pt'))
                 node_partition_mapping[node_ids] = pid
 
             # save node/edge partition mapping info

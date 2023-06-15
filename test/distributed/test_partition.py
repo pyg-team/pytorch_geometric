@@ -50,11 +50,11 @@ def test_partition_homo_graph():
     feature_store1 = torch.load(node_feat_path1)
     node_attrs1 = feature_store1.get_all_tensor_attrs()
     node_feat1 = feature_store1.get_tensor(node_attrs1[0])
-    node_id1 = feature_store1.get_global_id(node_attrs1[0])
+    node_id1 = feature_store1.get_global_id(node_attrs1[0].group_name)
     feature_store2 = torch.load(node_feat_path2)
     node_attrs2 = feature_store2.get_all_tensor_attrs()
     node_feat2 = feature_store2.get_tensor(node_attrs2[0])
-    node_id2 = feature_store2.get_global_id(node_attrs2[0])
+    node_id2 = feature_store2.get_global_id(node_attrs2[0].group_name)
     assert node_feat1.size(0) + node_feat2.size(0) == data.num_nodes
     assert torch.allclose(data.x[node_id1], node_feat1)
     assert torch.allclose(data.x[node_id2], node_feat2)
