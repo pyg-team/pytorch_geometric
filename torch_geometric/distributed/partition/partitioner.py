@@ -63,8 +63,7 @@ def save_feature_tensor(feature_store: LocalFeatureStore, group_name: str,
     assert (feature.shape[0] == global_id.shape[0])
     feature_store.put_tensor(feature, group_name=group_name,
                              attr_name=attr_name, index=index)
-    feature_store.put_global_id(global_id, group_name=group_name,
-                                attr_name=attr_name)
+    feature_store.put_global_id(global_id, group_name=group_name)
 
 
 def store_single_feature(output_dir: str, group_name: str, attr_name: str,
@@ -218,8 +217,8 @@ class Partitioner():
                         print(f"save edge feature for edge type: {edge_name}")
                         type_edge_feat = cluster_data[pid].edge_attr[mask, :]
                         save_feature_tensor(edge_feature_store,
-                                            group_name=f'part_{pid}',
-                                            attr_name=edge_name, index=None,
+                                            group_name=edge_name,
+                                            attr_name="edge_attr", index=None,
                                             feature=type_edge_feat,
                                             global_id=type_edge_id)
 
@@ -243,8 +242,8 @@ class Partitioner():
                             node_name)
                         type_node_feat = cluster_data[pid].x[mask, :]
                         save_feature_tensor(node_feature_store,
-                                            group_name=f'part_{pid}',
-                                            attr_name=node_name, index=None,
+                                            group_name=node_name,
+                                            attr_name='x', index=None,
                                             feature=type_node_feat,
                                             global_id=type_node_id)
                     torch.save(node_feature_store,
@@ -299,16 +298,16 @@ class Partitioner():
 
                 edge_partition_mapping[part_edge_ids] = pid
                 # save edge feature partition
-                store_single_feature(sub_dir, group_name=f'part_{pid}',
-                                     attr_name=self.edge_types,
+                store_single_feature(sub_dir, group_name=(None, None),
+                                     attr_name='edge_attr',
                                      feature=cluster_data[pid].edge_attr,
                                      global_id=part_edge_ids, index=None,
                                      type='edge')
 
                 # save node feature partition
                 node_ids = perm[start_pos:end_pos]
-                store_single_feature(sub_dir, group_name=f'part_{pid}',
-                                     attr_name=self.node_types,
+                store_single_feature(sub_dir, group_name=None,
+                                     attr_name='x',
                                      feature=cluster_data[pid].x,
                                      global_id=node_ids, index=None,
                                      type='node')
