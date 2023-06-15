@@ -6,7 +6,6 @@ import torch.nn.functional as F
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import WikipediaNetwork
-from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import DirGNNConv, GCNConv, SAGEConv
 
 parser = argparse.ArgumentParser()
@@ -15,35 +14,38 @@ parser.add_argument('--hidden_channels', type=int, default=128)
 parser.add_argument('--lr', type=float, default=0.01)
 parser.add_argument('--epochs', type=int, default=1000)
 parser.add_argument('--alpha', type=float, default=1)
-parser.add_argument('--conv', type=str, default="dir-gcn")
-parser.add_argument('--wandb', action='store_true', help='Track experiment')
+parser.add_argument('--conv', type=str, default='gcn')
 args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-init_wandb(name=f'Dir-Sage-{args.dataset}', lr=args.lr, epochs=args.epochs,
-           hidden_channels=args.hidden_channels, device=device)
 
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
-                'WikipediaNetwork')
-dataset = WikipediaNetwork(root=path, name=args.dataset,
-                           transform=T.NormalizeFeatures())
-data = dataset[0]
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Wikipedia')
+dataset = WikipediaNetwork(
+    root=path,
+    name=args.dataset,
+    transform=T.NormalizeFeatures(),
+)
 
-if args.conv == "dir-gcn":
+data = dataset[0].to(device)
+data.train_mask = data.train_mask[:, 0]
+data.val_mask = data.val_mask[:, 0]
+data.test_mask = data.test_mask[:, 0]
+
+if args.conv == 'gcn':
     Conv = GCNConv
-elif args.conv == "dir-sage":
+elif args.conv == 'sage':
     Conv = SAGEConv
 else:
-    raise NotImplementedError()
+    raise NotImplementedError
 
 
 class DirGNN(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, alpha=0.5):
+    def __init__(self, in_channels, hidden_channels, out_channels, alpha):
         super().__init__()
-        self.conv1 = Conv(in_channels, hidden_channels, alpha=alpha)
+        self.conv1 = Conv(in_channels, hidden_channels)
         self.conv1 = DirGNNConv(self.conv1, alpha, root_weight=False)
 
-        self.conv2 = Conv(hidden_channels, out_channels, alpha=alpha)
+        self.conv2 = Conv(hidden_channels, out_channels)
         self.conv2 = DirGNNConv(self.conv2, alpha, root_weight=False)
 
     def forward(self, x, edge_index):
@@ -52,12 +54,13 @@ class DirGNN(torch.nn.Module):
         return x
 
 
-model = DirGNN(dataset.num_features, args.hidden_channels, dataset.num_classes,
-               alpha=args.alpha)
-model, data = model.to(device), data.to(device)
-data.train_mask, data.val_mask, data.test_mask = (data.train_mask[:, 0],
-                                                  data.val_mask[:, 0],
-                                                  data.test_mask[:, 0])
+model = DirGNN(
+    dataset.num_features,
+    args.hidden_channels,
+    dataset.num_classes,
+    alpha=args.alpha,
+).to(device)
+
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
 
@@ -89,4 +92,6 @@ for epoch in range(1, args.epochs + 1):
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
-    log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
+
+    print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
+          f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
