@@ -306,8 +306,7 @@ class Partitioner():
 
                 # save node feature partition
                 node_ids = perm[start_pos:end_pos]
-                store_single_feature(sub_dir, group_name=None,
-                                     attr_name='x',
+                store_single_feature(sub_dir, group_name=None, attr_name='x',
                                      feature=cluster_data[pid].x,
                                      global_id=node_ids, index=None,
                                      type='node')
