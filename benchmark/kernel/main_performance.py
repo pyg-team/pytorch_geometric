@@ -8,6 +8,7 @@ from gin import GIN
 from graph_sage import GraphSAGE
 from train_eval import eval_acc, inference_run, train
 
+import torch_geometric
 from torch_geometric import seed_everything
 from torch_geometric.loader import DataLoader
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -32,6 +33,7 @@ parser.add_argument('--goal_accuracy', type=int, default=1,
 parser.add_argument('--inference', action='store_true')
 parser.add_argument('--profile', action='store_true')
 parser.add_argument('--bf16', action='store_true')
+parser.add_argument('--compile', action='store_true')
 args = parser.parse_args()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -77,7 +79,8 @@ def run_train():
 
             model = Model(dataset, num_layers, hidden).to(device)
             optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-
+            if args.compile:
+                model = torch_geometric.compile(model)
             loss_list = []
             acc_list = []
             for epoch in range(1, args.epochs + 1):
@@ -116,7 +119,8 @@ def run_inference():
             print(f'{dataset_name} - {model_name}- {num_layers} - {hidden}')
 
             model = Model(dataset, num_layers, hidden).to(device)
-
+            if args.compile:
+                model = torch_geometric.compile(model)
             with amp:
                 for epoch in range(1, args.epochs + 1):
                     if epoch == args.epochs:

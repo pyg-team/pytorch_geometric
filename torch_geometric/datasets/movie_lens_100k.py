@@ -66,7 +66,6 @@ class MovieLens100K(InMemoryDataset):
           - 1
           - 1
     """
-
     url = 'https://files.grouplens.org/datasets/movielens/ml-100k.zip'
 
     def __init__(
@@ -148,7 +147,7 @@ class MovieLens100K(InMemoryDataset):
         edge_index = torch.tensor([src, dst])
         data['user', 'rates', 'movie'].edge_index = edge_index
 
-        rating = torch.from_numpy(df['rating'].values).to(torch.float)
+        rating = torch.from_numpy(df['rating'].values).to(torch.long)
         data['user', 'rates', 'movie'].rating = rating
 
         time = torch.from_numpy(df['timestamp'].values)

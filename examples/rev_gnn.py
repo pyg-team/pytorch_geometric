@@ -14,7 +14,6 @@ from tqdm import tqdm
 import torch_geometric.transforms as T
 from torch_geometric.loader import RandomNodeLoader
 from torch_geometric.nn import GroupAddRev, SAGEConv
-from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import index_to_mask
 
 
@@ -81,9 +80,11 @@ class RevGNN(torch.nn.Module):
 
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
 
-transform = T.AddSelfLoops()
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+transform = T.Compose([T.ToDevice(device), T.ToSparseTensor()])
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'products')
-dataset = PygNodePropPredDataset('ogbn-products', root, transform=transform)
+dataset = PygNodePropPredDataset('ogbn-products', root,
+                                 transform=T.AddSelfLoops())
 evaluator = Evaluator(name='ogbn-products')
 
 data = dataset[0]
@@ -97,7 +98,6 @@ train_loader = RandomNodeLoader(data, num_parts=10, shuffle=True,
 # the full batch graph into your GPU:
 test_loader = RandomNodeLoader(data, num_parts=1, num_workers=5)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = RevGNN(
     in_channels=dataset.num_features,
     hidden_channels=160,
@@ -117,12 +117,11 @@ def train(epoch):
 
     total_loss = total_examples = 0
     for data in train_loader:
-        data = data.to(device)
         optimizer.zero_grad()
 
         # Memory-efficient aggregations:
-        adj_t = SparseTensor.from_edge_index(data.edge_index).t()
-        out = model(data.x, adj_t)[data.train_mask]
+        data = transform(data)
+        out = model(data.x, data.adj_t)[data.train_mask]
         loss = F.cross_entropy(out, data.y[data.train_mask].view(-1))
         loss.backward()
         optimizer.step()
@@ -147,11 +146,9 @@ def test(epoch):
     pbar.set_description(f'Evaluating epoch: {epoch:03d}')
 
     for data in test_loader:
-        data = data.to(device)
-
         # Memory-efficient aggregations
-        adj_t = SparseTensor.from_edge_index(data.edge_index).t()
-        out = model(data.x, adj_t).argmax(dim=-1, keepdim=True)
+        data = transform(data)
+        out = model(data.x, data.adj_t).argmax(dim=-1, keepdim=True)
 
         for split in ['train', 'valid', 'test']:
             mask = data[f'{split}_mask']
