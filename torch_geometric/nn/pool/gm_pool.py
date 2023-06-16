@@ -50,12 +50,12 @@ class GMPooling(torch.nn.Module):
 
     In short, GMPooling pools a graph by computing edge scores and solving for
     the optimal score cut. The edge scores are defined as :math:`\tanh^{-1}
-    (x_i\cdot x_j)`, where :math:`x_i` are normalized node embeddings. 
+    (x_i\cdot x_j)`, where :math:`x_i` are normalized node embeddings.
     Assuming that there are intra-cluster and inter-cluster edges, we fit a
     Gaussian Mixture Model of 2 components. The score cut is solved by finding
-    the score where the difference in log likelihood of the two components 
+    the score where the difference in log likelihood of the two components
     exceeds a hyperparameter :obj:`r` that is used to control the granularity
-    of the pooling. Finally, the connected components that have more than 
+    of the pooling. Finally, the connected components that have more than
     :obj:`min_size` nodes are regarded as the pooled nodes, which are called
     "supernodes" in the paper.
 
