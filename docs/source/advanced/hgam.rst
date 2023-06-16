@@ -10,7 +10,7 @@ This is achieved in practice by trimming the adjacency matrix and the various fe
 The trimming applied by HGAM is possible as the nodes of the subgraph built via sampling are ordered according to a BFS (Breadth First Search) strategy, meaning that the adjacency matrix rows and columns refer to an node ordering that starts with the seed nodes (in any order) followed by the 1-hop neighbors of the first seed node, followed by the 1-hop sampled neighbors of the second seed node and so on.
 After the 1-hop neighbors have been all listed, then the 1-hop neighbors of the first 1-hop neighbors of the first seed node will be added, and so on with the same logic for all required depths, according to the number of layers of the GNN.
 
-To support this trimming and implement it effectively, the neighbor loader implemntation in :pyg:`Pyg` and in :pyg_lib:`pyg-lib` has been modified in such a way that returns a set of metadata on the sampled graph that help the trimming procedure.
+To support this trimming and implement it effectively, the neighbor loader implemntation in :pyg:`Pyg` and in :pyg-lib:`pyg-lib` has been modified in such a way that returns a set of metadata on the sampled graph that help the trimming procedure.
 HGAM is currently an option that :pyg:`PyG` users are free to switch on, or leave it off (current default).
 
 .. note::
