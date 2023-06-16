@@ -1,8 +1,8 @@
-Hierarchical Graph Adjacency Matrix (HGAM) 
+Hierarchical Graph Adjacency Matrix (HGAM)
 ==========================================
 
 HGAM it is a technique available to :pyg:`PyG` (as detailed in the paper… <place holder for the link to the paper on the Arxiv>) users which progressively trims the adjacency matrix of the graph of the batch being fed into a GNN. It works seamlessly across several models, basically reducing the amount of compute necessary to generate the representations for the seed node of the given batch.
-The seed nodes are indeed the nodes selected initially by the dataloader, and for which the sampling procedure builds a subgraph starting from those seed nodes. 
+The seed nodes are indeed the nodes selected initially by the dataloader, and for which the sampling procedure builds a subgraph starting from those seed nodes.
 The batch graph thus obtained is typically fed as it is into the GNN training process, which would naively run message passing at all depths and build representations at all depths for all nodes included in the initial batch graph.
 
 Crucially, HGAM recognizes that all this computation is not necessary to generate the final representations for the seed nodes (which are the real target of the batch computation); HGAM allows for every layer of the GNN to compute only the representations of the nodes that are necessary for that layer, leading to a reduction of the computation and a speed up of the training process that grows with the depth of the GNN being considered.
@@ -13,15 +13,15 @@ After the 1-hop neighbors have been all listed, then the 1-hop neighbors of the 
 To support this trimming and implement it effectively, the neighbor loader implemntation in :pyg:`Pyg` and in :pyg_lib:`pyg-lib` has been modified in such a way that returns a set of metadata on the sampled graph that help the trimming procedure.
 HGAM is currently an option that :pyg:`PyG` users are free to switch on, or leave it off (current default).
 
-.. note::   
+.. note::
     To sum up, Hierarchical Graph Adjacency Matrix(HGAM) is special data structure that enables efficient message passing computation.
     HGAM feature is implemented in :pyg:`PyG` and can be used by utilizing  :class:`~torch_geometric.loader.NeighborLoader` and special `trim_to_layer <https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/utils/trim_to_layer.py>`__ utils functionalities.
 
 
-How the BFS batch ordering allows to trim efficiently the adj matrix 
+How the BFS batch ordering allows to trim efficiently the adj matrix
 --------------------------------------------------------------------
 
-BFS ordering of nodes in a batch allows for incremental trimming (reduction) of the adjacency matrix that describe the batch subgraph. 
+BFS ordering of nodes in a batch allows for incremental trimming (reduction) of the adjacency matrix that describe the batch subgraph.
 This progressive trimming is done in a computational convenient manner thanks to the BFS ordering, that causes the nodes more distant from the seed nodes to be appear farther away in the list of ordered nodes.
 Thus creating an adjacency matrix that can be reduced by simply dropping rows and columns corresponding to the nodes that are no longer needed as the computation goes to the next GNN layer.
 
@@ -29,11 +29,11 @@ Thus creating an adjacency matrix that can be reduced by simply dropping rows an
 New metadata retuned by pyg-lib neighbor sampler to support HGAM
 -----------------------------------------------------------------
 
-The new version of neighbor loader returns additional metadata, such as how many new nodes and new edges have been added to the graph representing the batch at each layer during the batch graph creation process done by the neighbor loader. 
+The new version of neighbor loader returns additional metadata, such as how many new nodes and new edges have been added to the graph representing the batch at each layer during the batch graph creation process done by the neighbor loader.
 This information allows for fast manipulation of the adjacency matrix, which in turns lead to great computation reduction.
-The NeighborLoader prepares needed meta-data structure for HGAM by default. It can be accessed from the batch object returned by NeighborLoader for both homogenous and heterogenous data. 
-Dedicated HGAM fields, :obj:`num_sampled_nodes`` and :obj:`num_sampled_edges`, store number of sampled nodes/edges per particular hop. 
-These metadata are not typically directly used by the PYG user, but are needed for the HGAM algorithm to work. 
+The NeighborLoader prepares needed meta-data structure for HGAM by default. It can be accessed from the batch object returned by NeighborLoader for both homogenous and heterogenous data.
+Dedicated HGAM fields, :obj:`num_sampled_nodes`` and :obj:`num_sampled_edges`, store number of sampled nodes/edges per particular hop.
+These metadata are not typically directly used by the PYG user, but are needed for the HGAM algorithm to work.
 
 
 HGAM usage
@@ -147,7 +147,7 @@ Here below some examples of how to use the NeighborLoader along with a fully fun
 
 The returned by NeighborLoader :obj:`num_sampled_nodes` and :obj:`num_sampled_edges` fields can be used by :obj:`trim_to_layer` utils function.
 The class :class:`~torch_geometric.utils.trim_to_layer.TrimToLayer` can be used as a layer that trims the adjacency matrix as needed using the function :obj:`trim_to_layer`.
-Please see below how this can be done. 
+Please see below how this can be done.
 
 .. code-block::  python
 
@@ -175,20 +175,20 @@ Please see below how this can be done.
     loader = NeighborLoader(data, input_nodes=data.train_mask, num_neighbors=[10, 5, 5], shuffle=True, **kwargs)
 
     class myGCN(torch.nn.Module):
-        def __init__(self, 
+        def __init__(self,
                 in_channels: int,
                 hidden_channels: int,
                 out_channels: int,
                 num_layers: int = 3
                 ):
-            
+
             super().__init__()
             self.in_channels = in_channels
             self.hidden_channels = hidden_channels
             self.out_channels = out_channels
             self.num_layers = num_layers
 
-            self.convs = ModuleList() 
+            self.convs = ModuleList()
             self.convs.append(GCNconv(in_channels, hidden_channels))
             for _ in range(num_layers-1):
                 self.convs.append(GCNconv(hidden_channels, hidden_channels))
@@ -197,7 +197,7 @@ Please see below how this can be done.
             self._trim = TrimToLayer()
 
         def forward(self, x: Tensor, edge_index: Adj,
-            *, edge_weight: Tensor = None, 
+            *, edge_weight: Tensor = None,
             edge_attr: Tensor = None,
             num_sampled_nodes_per_hop: Optional[List[int]] = None,
             num_sampled_edges_per_hop: Optional[List[int]] = None) -> Tensor:
@@ -216,7 +216,7 @@ Please see below how this can be done.
 
             x = self.Lin(x)
             return x
-        
+
     def train(trim=False):
         for batch in tqdm(loader):
             optimizer.zero_grad()
@@ -239,7 +239,7 @@ Please see below how this can be done.
             optimizer.step()
 
     model = myGCN(dataset.num_features, hidden_channels=32, out_channels=dataset.num_classes)
-    model, data = model.to(device), data.to(device) 
+    model, data = model.to(device), data.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
     train(trim=True)
@@ -249,4 +249,4 @@ Additional References:
 ----------------------
 
 - :pyg:`Pyg`  `documentation <https://pytorch-geometric.readthedocs.io/en/latest/>`__
-- <place holder for the link to the HGAM paper on the Arxiv> 
+- <place holder for the link to the HGAM paper on the Arxiv>
