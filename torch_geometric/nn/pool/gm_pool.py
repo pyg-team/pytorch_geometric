@@ -52,22 +52,23 @@ def build_knn_graph(src_emb: Tensor, dst_emb: Tensor, src_batch: Tensor,
 
 class GMPooling(torch.nn.Module):
     r"""The Gaussion Mixture Pooling implementation from
-    `"PHierarchical Graph Neural Networks for Particle Track Reconstruction"
+    `"Hierarchical Graph Neural Networks for Particle Track Reconstruction"
     <https://arxiv.org/abs/2303.01640>`_ paper.
 
-    In short, GMPooling pools the graph by computing the edge scores defined
-    as :math:`\tanh^{-1}(x_i\cdot x_j)`, where :math:`x_i` are normalized node
-    embeddings. Assuming that there are intra-cluster and inter-cluster edges,
-    we fit a Gaussian Mixture Model of 2 components.The score cut is solved by
-    finding the score where the difference in log likelihood of the two
-    components exceeds a hyperparameter :obj:`r` that is used to tune the
-    granularity of the pooling. Finally, the connected components that have
-    more than :obj:`min_size` are regarded as the pooled nodes, which are
-    called "supernodes" in the paper.
+    In short, GMPooling pools a graph by computing edge scores and solving for
+    the optimal score cut. The edge scores are defined as :math:`\tanh^{-1}
+    (x_i\cdot x_j)`, where :math:`x_i` are normalized node embeddings. 
+    Assuming that there are intra-cluster and inter-cluster edges, we fit a
+    Gaussian Mixture Model of 2 components. The score cut is solved by finding
+    the score where the difference in log likelihood of the two components 
+    exceeds a hyperparameter :obj:`r` that is used to control the granularity
+    of the pooling. Finally, the connected components that have more than 
+    :obj:`min_size` nodes are regarded as the pooled nodes, which are called
+    "supernodes" in the paper.
 
     GMPooling takes in node embeddings, graph edges, and batch indices and
     returns pooled embeddings (supernodes) and their batch indices.
-    Optionally, GMPooling can also return bipartite graph in between the
+    Optionally, GMPooling can also return bipartite graph than connects the
     original nodes and the newly created supernodes, together with edge
     weights that ensure the differentiability of the method, and the super
     graph on the supernodes and their edge weights.
