@@ -269,55 +269,40 @@ class Partitioner:
             edge_offset = 0
             for pid in range(self.num_parts):
                 logging.info(f'Saving graph partition {pid}')
+                path = osp.join(self.root, f'part_{pid}')
+                os.makedirs(path, exist_ok=True)
 
                 part_data = cluster_data[pid]
                 start, end = int(partptr[pid]), int(partptr[pid + 1])
 
-                local_row = part_data.edge_index[0]
-                local_col = part_data.edge_index[1]
-
-                global_row = node_perm[local_row + start]
-                global_col = node_perm[local_col]
-
                 num_edges = part_data.num_edges
-                global_edge_id = edge_perm[edge_offset:edge_offset + num_edges]
+                edge_id = edge_perm[edge_offset:edge_offset + num_edges]
+                edge_map[edge_id] = pid
                 edge_offset = edge_offset + num_edges
 
-                graph_store = LocalGraphStore()
-                graph_store.put_edge_index(
-                    edge_index=(global_row, global_col),
-                    edge_type=None,
-                    layout='coo',
-                    size=(data.num_nodes, data.num_nodes),
-                )
-                graph_store.put_edge_id(
-                    global_edge_id,
-                    edge_type=self.edge_types,
-                    layout='coo',
-                    size=(data.num_nodes, data.num_nodes),
-                )
+                node_id = node_perm[start:end]
+                node_map[node_id] = pid
 
-                path = osp.join(self.root, f'part_{pid}')
-                os.makedirs(path, exist_ok=True)
-                torch.save(graph_store, osp.join(path, 'graph.pt'))
+                torch.save(
+                    {
+                        'edge_id': edge_id,
+                        'row': part_data.edge_index[0],
+                        'col': part_data.edge_index[1],
+                        'size': (data.num_nodes, data.num_nodes),
+                    }, osp.join(path, 'graph.pt'))
 
-                edge_map[global_edge_id] = pid
-                # save edge feature partition
-                store_single_feature(path, group_name=(None, None),
-                                     attr_name='edge_attr',
-                                     feature=part_data.edge_attr,
-                                     global_id=global_edge_id, index=None,
-                                     type='edge')
+                torch.save(
+                    {
+                        'global_id': node_id,
+                        'feats': dict(x=part_data.x),
+                    }, osp.join(path, 'node_feats.pt'))
 
-                # save node feature partition
-                node_ids = node_perm[start:end]
-                store_single_feature(path, group_name=None, attr_name='x',
-                                     feature=part_data.x, global_id=node_ids,
-                                     index=None, type='node')
+                torch.save(
+                    {
+                        'global_id': edge_id,
+                        'feats': dict(edge_attr=part_data.edge_attr),
+                    }, osp.join(path, 'edge_feats.pt'))
 
-                node_map[node_ids] = pid
-
-            # save node/edge partition mapping info
             logging.info('Saving partition mapping info')
-            record_mapping(self.root, node_map, 'node', self.node_types)
-            record_mapping(self.root, edge_map, 'edge', self.edge_types)
+            torch.save(node_map, osp.join(self.root, 'node_map.pt'))
+            torch.save(edge_map, osp.join(self.root, 'edge_map.pt'))
