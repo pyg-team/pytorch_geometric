@@ -6,10 +6,11 @@ import torch.nn.functional as F
 from scipy.sparse.csgraph import connected_components
 from sklearn.mixture import GaussianMixture
 from torch import Tensor, nn
+
 from torch_geometric.utils import (
     scatter,
+    to_scipy_sparse_matrix,
     to_undirected,
-    to_scipy_sparse_matrix
 )
 
 try:
@@ -33,21 +34,14 @@ def argsort(batch: Tensor) -> Tuple[Tensor, Tensor]:
 def build_knn_graph(src_emb: Tensor, dst_emb: Tensor, src_batch: Tensor,
                     dst_batch: Tensor, k: int) -> Tensor:
     if knn is None:
-            raise ImportError("torch_cluster is required by GMPooling.")
-            
+        raise ImportError("torch_cluster is required by GMPooling.")
+
     src_idx, src_inverse = argsort(src_batch)
     dst_idx, dst_inverse = argsort(dst_batch)
-    edge_index = knn(
-        dst_emb[dst_idx],
-        src_emb[src_idx],
-        k,
-        dst_batch[dst_idx],
-        src_batch[src_idx]
-    )
+    edge_index = knn(dst_emb[dst_idx], src_emb[src_idx], k, dst_batch[dst_idx],
+                     src_batch[src_idx])
     return torch.stack(
-        [src_inverse[edge_index[0]], dst_inverse[edge_index[1]]],
-        dim=0
-    )
+        [src_inverse[edge_index[0]], dst_inverse[edge_index[1]]], dim=0)
 
 
 class GMPooling(torch.nn.Module):
@@ -81,7 +75,7 @@ class GMPooling(torch.nn.Module):
         build_bipartite_graph (bool): Whether to build bipartite
             graph or not. When set to :obj:`True`, edges and edge weights are
             returned.
-        build_super_graph (bool): Whether to build super graph or not. When 
+        build_super_graph (bool): Whether to build super graph or not. When
             set to :obj:`True`, edges and edge weights are returned.
         bipartite_k (int, optional): The connectivity of the bipartite graph
             being built. (default: :obj:`5`)
@@ -92,13 +86,12 @@ class GMPooling(torch.nn.Module):
     """
     def __init__(self, r: float, min_size: int, build_bipartite_graph: bool,
                  build_super_graph: bool, bipartite_k: Optional[int] = 5,
-                 super_k: Optional[int] = 5, 
-                 momentum: Optional[float] = 0.95):
+                 super_k: Optional[int] = 5, momentum: Optional[float] = 0.95):
         super().__init__()
-        
+
         if GaussianMixture is None:
             raise ImportError("sklearn is required by GMPooling.")
-        
+
         self.r = r
         self.min_size = min_size
         self.build_bipartite_graph = build_bipartite_graph
@@ -214,14 +207,10 @@ class GMPooling(torch.nn.Module):
         # Connected Components
         mask = likelihood >= self.score_cut.to(likelihood.device)
         _, labels = connected_components(
-            to_scipy_sparse_matrix(
-                edge_index[:, mask],
-                num_nodes=batch.shape[0]
-            ),
-            directed=False)
+            to_scipy_sparse_matrix(edge_index[:, mask],
+                                   num_nodes=batch.shape[0]), directed=False)
         clusters = self._get_clusters(
-            torch.as_tensor(labels, dtype=torch.long, device=x.device),
-            batch)
+            torch.as_tensor(labels, dtype=torch.long, device=x.device), batch)
 
         # Compute centroids
         centroids = scatter(x[clusters >= 0], clusters[clusters >= 0], dim=0)
@@ -292,13 +281,8 @@ class DynamicGraphConstruction(nn.Module):
             edge_weights (Tensor): The edge weights computed.
         """
         # Construct the Graph
-        edge_index = build_knn_graph(
-            src_x,
-            dst_x,
-            src_batch,
-            dst_batch,
-            self.k
-        )
+        edge_index = build_knn_graph(src_x, dst_x, src_batch, dst_batch,
+                                     self.k)
         if self.sym:
             edge_index = to_undirected(edge_index)
             edge_index = edge_index[:, edge_index[0] != edge_index[1]]
