@@ -4,7 +4,6 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from scipy.sparse.csgraph import connected_components
-from sklearn.mixture import GaussianMixture
 from torch import Tensor, nn
 
 from torch_geometric.utils import (
