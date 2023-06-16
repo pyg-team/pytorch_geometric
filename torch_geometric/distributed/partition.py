@@ -1,5 +1,7 @@
 import json
+import logging
 import os
+import os.path as osp
 from typing import List, Optional, Union
 
 import torch
@@ -12,48 +14,20 @@ from torch_geometric.loader import ClusterData
 from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
 
 
-def prepare_directory(root_path: str, child_path: Optional[str] = None):
-    dir_path = root_path
-    if child_path is not None:
-        dir_path = os.path.join(root_path, child_path)
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
-    return dir_path
-
-
-def record_meta_info(
-    output_dir: str,
-    num_parts: int,
-    is_hetero: bool = False,
-    node_types: Optional[List[NodeType]] = None,
-    edge_types: Optional[List[EdgeType]] = None,
-):
-    r""" Save partitioning meta info into the output directory.
-    """
-    meta = {
-        'num_parts': num_parts,
-        'hetero_graph': is_hetero,
-        'node_types': node_types,
-        'edge_types': edge_types
-    }
-    meta_file = os.path.join(output_dir, 'META.json')
-    with open(meta_file, "w") as outfile:
-        json.dump(meta, outfile, sort_keys=True, indent=4)
-
-
-def record_mapping(output_dir: str, mapping: torch.Tensor, type: str,
+def record_mapping(root: str, mapping: torch.Tensor, type: str,
                    type_name: Optional[Union[NodeType, EdgeType]] = None):
     r""" Save a partition book of graph nodes/edges to record which
     partition they belong to.
     """
     assert type in ["node", "edge"]
-    fpath = os.path.join(output_dir, f'{type}_map.pt')
+    fpath = osp.join(root, f'{type}_map.pt')
     if type_name is not None:
-        sub_dir = prepare_directory(output_dir, f'{type}_map')
+        path = osp.join(root, f'{type}_map')
+        os.makedirs(path, exist_ok=True)
         if type == 'node':
-            fpath = os.path.join(sub_dir, f'{type_name}.pt')
+            fpath = osp.join(path, f'{type_name}.pt')
         else:
-            fpath = os.path.join(sub_dir, f'{EdgeTypeStr(type_name)}.pt')
+            fpath = osp.join(path, f'{EdgeTypeStr(type_name)}.pt')
     torch.save(mapping, fpath)
 
 
@@ -66,135 +40,158 @@ def save_feature_tensor(feature_store: LocalFeatureStore, group_name: str,
     feature_store.put_global_id(global_id, group_name=group_name)
 
 
-def store_single_feature(output_dir: str, group_name: str, attr_name: str,
+def store_single_feature(root: str, group_name: str, attr_name: str,
                          feature: torch.Tensor, global_id: torch.Tensor,
                          index: torch.Tensor, type: str):
     if feature is not None:
         assert type in ['node', 'edge']
-        print(f"save {type} feature")
+        logging.info(f"save {type} feature")
         feature_store = LocalFeatureStore()
         save_feature_tensor(feature_store, group_name=group_name,
                             attr_name=attr_name, index=index, feature=feature,
                             global_id=global_id)
-        torch.save(feature_store, os.path.join(output_dir, f'{type}_feats.pt'))
+        torch.save(feature_store, osp.join(root, f'{type}_feats.pt'))
 
 
-class Partitioner():
-    r""" partition graphs and features for homo/hetero graphs.
+class Partitioner:
+    r"""Partition the graph structure and its features of a
+    :class:`~torch_geometric.data.Data` or
+    :class:`~torch_geometric.data.HeteroData` object.
     Partitioned data output will be structured like this:
 
-    * homo graph
+    **Homogeneous graphs:**
 
-      output_dir/
-      |-- META.json
-      |-- node_map.pt
-      |-- edge_map.pt
-      |-- part0/
-          |-- graph.pt
-          |-- node_feats.pt
-          |-- edge_feats.pt
-      |-- part1/
-          |-- graph.pt
-          |-- node_feats.pt
-          |-- edge_feats.pt
+    .. code-block::
 
-    * hetero graph
+        root/
+        |-- META.json
+        |-- node_map.pt
+        |-- edge_map.pt
+        |-- part0/
+            |-- graph.pt
+            |-- node_feats.pt
+            |-- edge_feats.pt
+        |-- part1/
+            |-- graph.pt
+            |-- node_feats.pt
+            |-- edge_feats.pt
 
-      output_dir/
-      |-- META.json
-      |-- node_map/
-          |-- ntype1.pt
-          |-- ntype2.pt
-      |-- edge_map/
-          |-- etype1.pt
-          |-- etype2.pt
-      |-- part0/
-          |-- graph.pt
-          |-- node_feats.pt
-          |-- edge_feats.pt
-      |-- part1/
-          |-- graph.pt
-          |-- node_feats.pt
-          |-- edge_feats.pt
+    **Heterogeneous graphs:**
 
+    .. code-block::
+
+        root/
+        |-- META.json
+        |-- node_map/
+            |-- ntype1.pt
+            |-- ntype2.pt
+        |-- edge_map/
+            |-- etype1.pt
+            |-- etype2.pt
+        |-- part0/
+            |-- graph.pt
+            |-- node_feats.pt
+            |-- edge_feats.pt
+        |-- part1/
+            |-- graph.pt
+            |-- node_feats.pt
+            |-- edge_feats.pt
+
+    Args:
+        data (Data or HeteroData): The data object.
+        num_parts (int): The number of partitions.
+        root (str): Root directory where the partitioned dataset should be
+            saved.
     """
-    def __init__(self, output_dir: str, num_parts: int,
-                 data: Union[Data, HeteroData],
-                 device: torch.device = torch.device('cpu')):
+    def __init__(
+        self,
+        data: Union[Data, HeteroData],
+        num_parts: int,
+        root: str,
+    ):
+        assert num_parts > 1
 
-        self.output_dir = prepare_directory(output_dir)
-
-        self.num_parts = num_parts
-        assert self.num_parts > 1
         self.data = data
-        self.is_hetero = False
-        if isinstance(data, HeteroData):
-            self.is_hetero = True
-            self.node_types = data.node_types
-            self.edge_types = data.edge_types
-        else:
-            self.node_types = None
-            self.edge_types = None
-        self.device = device
+        self.num_parts = num_parts
+        self.root = root
+
+    @property
+    def is_hetero(self) -> bool:
+        return isinstance(self.data, HeteroData)
+
+    @property
+    def node_types(self) -> List[NodeType]:
+        return self.data.node_types if self.is_hetero else None
+
+    @property
+    def edge_types(self) -> List[EdgeType]:
+        return self.data.edge_types if self.is_hetero else None
 
     def generate_partition(self):
-        r""" Partition graph and feature data into different parts.
-    """
-        # save meta info for partition.
-        print("save metadata for partition info")
-        record_meta_info(self.output_dir, self.num_parts, self.is_hetero,
-                         self.node_types, self.edge_types)
+        r"""Generates the partition."""
+        os.makedirs(self.root, exist_ok=True)
 
-        input_data = self.data
-        if self.is_hetero:
-            input_data = self.data.to_homogeneous()
-        cluster_data = ClusterData(input_data, num_parts=self.num_parts,
-                                   log=True, keep_inter_cluster_edges=True)
-        assert cluster_data.partition is not None
-        perm = cluster_data.partition.node_perm
+        logging.info('Saving metadata')
+        meta = {
+            'num_parts': self.num_parts,
+            'is_hetero': self.is_hetero,
+            'node_types': self.node_types,
+            'edge_types': self.node_types,
+        }
+        with open(osp.join(self.root, 'META.json'), 'w') as f:
+            json.dump(meta, f)
+
+        data = self.data.to_homogeneous() if self.is_hetero else self.data
+        cluster_data = ClusterData(
+            data,
+            num_parts=self.num_parts,
+            log=True,
+            keep_inter_cluster_edges=True,
+        )
+
+        node_perm = cluster_data.partition.node_perm
         partptr = cluster_data.partition.partptr
-        eids = cluster_data.partition.edge_perm
-        node_partition_mapping = torch.arange(input_data.num_nodes,
-                                              dtype=torch.int64)
-        edge_partition_mapping = torch.arange(input_data.num_edges,
-                                              dtype=torch.int64)
+        edge_perm = cluster_data.partition.edge_perm
+
+        node_map = torch.empty(data.num_nodes, dtype=torch.int64)
+        edge_map = torch.empty(data.num_edges, dtype=torch.int64)
 
         if self.is_hetero:
-            edge_type_num = len(input_data._edge_type_names)
-            node_type_num = len(input_data._node_type_names)
+            edge_type_num = len(data._edge_type_names)
+            node_type_num = len(data._node_type_names)
             eid_offset = 0
             edge_offset = {}
             nid_offset = 0
             node_offset = {}
-            for node_name in input_data._node_type_names:
+            for node_name in data._node_type_names:
                 node_offset[node_name] = nid_offset
                 nid_offset = nid_offset + self.data.num_nodes_dict[node_name]
-            for edge_name in input_data._edge_type_names:
+            for edge_name in data._edge_type_names:
                 edge_offset[edge_name] = eid_offset
                 eid_offset = eid_offset + self.data.num_edges_dict[edge_name]
 
             edge_start = 0
             for pid in range(self.num_parts):
                 # save graph partition
-                print(f"save graph partition for part: {pid}")
+                logging.info(f"save graph partition for part: {pid}")
                 edge_index = cluster_data[pid].edge_index
                 start_pos = int(partptr[pid])
                 end_pos = int(partptr[pid + 1])
                 edge_length = cluster_data[pid].num_edges
-                part_edge_ids = eids[edge_start:edge_start + edge_length]
-                edge_partition_mapping[part_edge_ids] = pid
+                part_edge_ids = edge_perm[edge_start:edge_start + edge_length]
+                edge_map[part_edge_ids] = pid
                 edge_start = edge_start + edge_length
                 edge_type = cluster_data[pid].edge_type
                 node_type = cluster_data[pid].node_type
                 graph_store = LocalGraphStore()
                 edge_feature_store = LocalFeatureStore()
                 for etype_id in range(edge_type_num):
-                    edge_name = input_data._edge_type_names[etype_id]
+                    edge_name = data._edge_type_names[etype_id]
                     mask = (edge_type == etype_id)
                     local_row_ids = torch.masked_select(edge_index[0], mask)
                     local_col_ids = torch.masked_select(edge_index[1], mask)
-                    global_row_ids = perm[local_row_ids + start_pos]
-                    global_col_ids = perm[local_col_ids]
+                    global_row_ids = node_perm[local_row_ids + start_pos]
+                    global_col_ids = node_perm[local_col_ids]
                     assert len(edge_name) == 3
                     src_name = edge_name[0]
                     dst_name = edge_name[2]
@@ -214,7 +211,8 @@ class Partitioner():
                                             size=(src_num, dst_num))
                     # save edge feature partition
                     if cluster_data[pid].edge_attr is not None:
-                        print(f"save edge feature for edge type: {edge_name}")
+                        logging.info(
+                            f"save edge feature for edge type: {edge_name}")
                         type_edge_feat = cluster_data[pid].edge_attr[mask, :]
                         save_feature_tensor(edge_feature_store,
                                             group_name=edge_name,
@@ -222,20 +220,21 @@ class Partitioner():
                                             feature=type_edge_feat,
                                             global_id=type_edge_id)
 
-                sub_dir = prepare_directory(self.output_dir, f'part_{pid}')
-                torch.save(graph_store, os.path.join(sub_dir, 'graph.pt'))
+                path = osp.join(self.root, f'part_{pid}')
+                os.makedirs(path, exist_ok=True)
+                torch.save(graph_store, osp.join(path, 'graph.pt'))
                 if len(edge_feature_store.get_all_tensor_attrs()) > 0:
                     torch.save(edge_feature_store,
-                               os.path.join(sub_dir, 'edge_feats.pt'))
+                               osp.join(path, 'edge_feats.pt'))
 
                 # save node feature partition
-                print(f"save node feature for part: {pid}")
-                node_ids = perm[start_pos:end_pos]
-                node_partition_mapping[node_ids] = pid
+                logging.info(f"save node feature for part: {pid}")
+                node_ids = node_perm[start_pos:end_pos]
+                node_map[node_ids] = pid
                 if cluster_data[pid].x is not None:
                     node_feature_store = LocalFeatureStore()
                     for ntype_id in range(node_type_num):
-                        node_name = input_data._node_type_names[ntype_id]
+                        node_name = data._node_type_names[ntype_id]
                         mask = (node_type == ntype_id)
                         type_node_id = torch.masked_select(node_ids, mask)
                         type_node_id = type_node_id - node_offset.get(
@@ -247,75 +246,78 @@ class Partitioner():
                                             feature=type_node_feat,
                                             global_id=type_node_id)
                     torch.save(node_feature_store,
-                               os.path.join(sub_dir, 'node_feats.pt'))
+                               osp.join(path, 'node_feats.pt'))
 
             # save node partition mapping
-            print("save node partition mapping")
+            logging.info("save node partition mapping")
             for ntype_id in range(node_type_num):
-                node_name = input_data._node_type_names[ntype_id]
-                mask = (input_data.node_type == ntype_id)
-                type_node_map = torch.masked_select(node_partition_mapping,
-                                                    mask)
-                record_mapping(self.output_dir, type_node_map, 'node',
-                               node_name)
+                node_name = data._node_type_names[ntype_id]
+                mask = (data.node_type == ntype_id)
+                type_node_map = torch.masked_select(node_map, mask)
+                record_mapping(self.root, type_node_map, 'node', node_name)
 
             # save edge partition mapping
-            print("save edge partition mapping")
+            logging.info("save edge partition mapping")
             for etype_id in range(edge_type_num):
-                edge_name = input_data._edge_type_names[etype_id]
-                mask = (input_data.edge_type == etype_id)
-                type_edge_map = torch.masked_select(edge_partition_mapping,
-                                                    mask)
-                record_mapping(self.output_dir, type_edge_map, 'edge',
-                               edge_name)
+                edge_name = data._edge_type_names[etype_id]
+                mask = (data.edge_type == etype_id)
+                type_edge_map = torch.masked_select(edge_map, mask)
+                record_mapping(self.root, type_edge_map, 'edge', edge_name)
 
-        else:  # homo graph
-            eid_offset = 0
+        else:  # `if not self.is_hetero:`
+
+            edge_offset = 0
             for pid in range(self.num_parts):
-                # save graph partition
-                print(f"save graph partition for part: {pid}")
-                edge_index = cluster_data[pid].edge_index
-                start_pos = int(partptr[pid])
-                end_pos = int(partptr[pid + 1])
-                local_row_ids = edge_index[0]
-                local_col_ids = edge_index[1]
-                global_row_ids = perm[local_row_ids + start_pos]
-                global_col_ids = perm[local_col_ids]
-                edge_num = cluster_data[pid].num_edges
-                part_edge_ids = eids[eid_offset:eid_offset + edge_num]
-                eid_offset = eid_offset + edge_num
-                graph_store = LocalGraphStore()
-                node_num = input_data.num_nodes
-                graph_store.put_edge_index(
-                    edge_index=(global_row_ids, global_col_ids),
-                    edge_type=None, layout='coo', size=(node_num, node_num))
-                graph_store.put_edge_id(part_edge_ids,
-                                        edge_type=self.edge_types,
-                                        layout='coo',
-                                        size=(node_num, node_num))
-                sub_dir = prepare_directory(self.output_dir, f'part_{pid}')
-                torch.save(graph_store, os.path.join(sub_dir, 'graph.pt'))
+                logging.info(f'Saving graph partition {pid}')
 
-                edge_partition_mapping[part_edge_ids] = pid
+                part_data = cluster_data[pid]
+                start, end = int(partptr[pid]), int(partptr[pid + 1])
+
+                local_row = part_data.edge_index[0]
+                local_col = part_data.edge_index[1]
+
+                global_row = node_perm[local_row + start]
+                global_col = node_perm[local_col]
+
+                num_edges = part_data.num_edges
+                global_edge_id = edge_perm[edge_offset:edge_offset + num_edges]
+                edge_offset = edge_offset + num_edges
+
+                graph_store = LocalGraphStore()
+                graph_store.put_edge_index(
+                    edge_index=(global_row, global_col),
+                    edge_type=None,
+                    layout='coo',
+                    size=(data.num_nodes, data.num_nodes),
+                )
+                graph_store.put_edge_id(
+                    global_edge_id,
+                    edge_type=self.edge_types,
+                    layout='coo',
+                    size=(data.num_nodes, data.num_nodes),
+                )
+
+                path = osp.join(self.root, f'part_{pid}')
+                os.makedirs(path, exist_ok=True)
+                torch.save(graph_store, osp.join(path, 'graph.pt'))
+
+                edge_map[global_edge_id] = pid
                 # save edge feature partition
-                store_single_feature(sub_dir, group_name=(None, None),
+                store_single_feature(path, group_name=(None, None),
                                      attr_name='edge_attr',
-                                     feature=cluster_data[pid].edge_attr,
-                                     global_id=part_edge_ids, index=None,
+                                     feature=part_data.edge_attr,
+                                     global_id=global_edge_id, index=None,
                                      type='edge')
 
                 # save node feature partition
-                node_ids = perm[start_pos:end_pos]
-                store_single_feature(sub_dir, group_name=None, attr_name='x',
-                                     feature=cluster_data[pid].x,
-                                     global_id=node_ids, index=None,
-                                     type='node')
+                node_ids = node_perm[start:end]
+                store_single_feature(path, group_name=None, attr_name='x',
+                                     feature=part_data.x, global_id=node_ids,
+                                     index=None, type='node')
 
-                node_partition_mapping[node_ids] = pid
+                node_map[node_ids] = pid
 
             # save node/edge partition mapping info
-            print("save partition mapping info for nodes/edges")
-            record_mapping(self.output_dir, node_partition_mapping, 'node',
-                           self.node_types)
-            record_mapping(self.output_dir, edge_partition_mapping, 'edge',
-                           self.edge_types)
+            logging.info('Saving partition mapping info')
+            record_mapping(self.root, node_map, 'node', self.node_types)
+            record_mapping(self.root, edge_map, 'edge', self.edge_types)

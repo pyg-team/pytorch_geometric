@@ -9,35 +9,32 @@ from torch_geometric.typing import EdgeTypeStr
 
 
 @withPackage('pyg_lib')
-def test_partition_homo_graph():
-    num_partitions = 2
-    save_dir = osp.join('./homo', 'partition')
-    dataset = FakeDataset()
-    data = dataset[0]
+def test_partition_data(tmp_path):
+    data = FakeDataset()[0]
+    num_parts = 2
 
-    partitioner = Partitioner(output_dir=save_dir, num_parts=num_partitions,
-                              data=data)
+    partitioner = Partitioner(data, num_parts, tmp_path)
     partitioner.generate_partition()
 
-    node_map_path = osp.join(save_dir, 'node_map.pt')
+    node_map_path = osp.join(tmp_path, 'node_map.pt')
     assert osp.exists(node_map_path)
     node_map = torch.load(node_map_path)
     assert node_map.size(0) == data.num_nodes
 
-    edge_map_path = osp.join(save_dir, 'edge_map.pt')
+    edge_map_path = osp.join(tmp_path, 'edge_map.pt')
     assert osp.exists(edge_map_path)
     edge_map = torch.load(edge_map_path)
     assert edge_map.size(0) == data.num_edges
 
-    meta_path = osp.join(save_dir, 'META.json')
+    meta_path = osp.join(tmp_path, 'META.json')
     assert osp.exists(meta_path)
 
-    graph_store_path1 = osp.join(save_dir, 'part_0', 'graph.pt')
-    graph_store_path2 = osp.join(save_dir, 'part_1', 'graph.pt')
+    graph_store_path1 = osp.join(tmp_path, 'part_0', 'graph.pt')
+    graph_store_path2 = osp.join(tmp_path, 'part_1', 'graph.pt')
     assert osp.exists(graph_store_path1)
     assert osp.exists(graph_store_path2)
-    node_feat_path1 = osp.join(save_dir, 'part_0', 'node_feats.pt')
-    node_feat_path2 = osp.join(save_dir, 'part_1', 'node_feats.pt')
+    node_feat_path1 = osp.join(tmp_path, 'part_0', 'node_feats.pt')
+    node_feat_path2 = osp.join(tmp_path, 'part_1', 'node_feats.pt')
     assert osp.exists(node_feat_path1)
     assert osp.exists(node_feat_path2)
     graph_store1 = torch.load(graph_store_path1)
@@ -61,35 +58,32 @@ def test_partition_homo_graph():
 
 
 @withPackage('pyg_lib')
-def test_partition_hetero_graph():
-    num_partitions = 2
-    save_dir = osp.join('./hetero', 'partition')
-    dataset = FakeHeteroDataset()
-    data = dataset[0]
+def test_partition_hetero_data(tmp_path):
+    data = FakeHeteroDataset()[0]
+    num_parts = 2
 
-    partitioner = Partitioner(output_dir=save_dir, num_parts=num_partitions,
-                              data=data)
+    partitioner = Partitioner(data, num_parts, tmp_path)
     partitioner.generate_partition()
 
-    meta_path = osp.join(save_dir, 'META.json')
+    meta_path = osp.join(tmp_path, 'META.json')
     assert osp.exists(meta_path)
 
     for k, v in data.num_edges_dict.items():
         assert len(k) == 3
         edge_name = EdgeTypeStr(k)
-        edge_map_path = osp.join(save_dir, 'edge_map', f'{edge_name}.pt')
+        edge_map_path = osp.join(tmp_path, 'edge_map', f'{edge_name}.pt')
         assert osp.exists(edge_map_path)
         type_edge_map = torch.load(edge_map_path)
         assert type_edge_map.size(0) == v
 
     for k, v in data.num_nodes_dict.items():
-        node_map_path = osp.join(save_dir, 'node_map', f'{k}.pt')
+        node_map_path = osp.join(tmp_path, 'node_map', f'{k}.pt')
         assert osp.exists(node_map_path)
         type_node_map = torch.load(node_map_path)
         assert type_node_map.size(0) == v
 
-    for pid in range(num_partitions):
-        graph_store_path = osp.join(save_dir, f'part_{pid}', 'graph.pt')
+    for pid in range(num_parts):
+        graph_store_path = osp.join(tmp_path, f'part_{pid}', 'graph.pt')
         assert osp.exists(graph_store_path)
-        node_feat_path = osp.join(save_dir, f'part_{pid}', 'node_feats.pt')
+        node_feat_path = osp.join(tmp_path, f'part_{pid}', 'node_feats.pt')
         assert osp.exists(node_feat_path)
