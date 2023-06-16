@@ -116,7 +116,7 @@ class RandomLinkSplit(BaseTransform):
         self.edge_types = edge_types
         self.rev_edge_types = rev_edge_types
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

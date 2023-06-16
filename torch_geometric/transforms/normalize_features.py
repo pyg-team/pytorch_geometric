@@ -17,7 +17,7 @@ class NormalizeFeatures(BaseTransform):
     def __init__(self, attrs: List[str] = ["x"]):
         self.attrs = attrs
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

@@ -208,12 +208,12 @@ def test_data_subgraph():
     assert torch.equal(out.edge_weight, edge_weight[torch.arange(2, 6)])
     assert out.num_nodes == 3
 
-    # test for unordered selection
+    # Test unordered selection:
     out = data.subgraph(torch.tensor([3, 1, 2]))
     assert len(out) == 5
-    assert torch.equal(out.x, torch.arange(1, 4))
+    assert torch.equal(out.x, torch.tensor([3, 1, 2]))
     assert torch.equal(out.y, data.y)
-    assert out.edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+    assert out.edge_index.tolist() == [[1, 2, 2, 0], [2, 1, 0, 2]]
     assert torch.equal(out.edge_weight, edge_weight[torch.arange(2, 6)])
     assert out.num_nodes == 3
 

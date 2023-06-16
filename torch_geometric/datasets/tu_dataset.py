@@ -5,7 +5,12 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import InMemoryDataset, download_url, extract_zip
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.io import read_tu_data
 
 
@@ -131,7 +136,8 @@ class TUDataset(InMemoryDataset):
                 "If this error occurred while loading an already existing "
                 "dataset, remove the 'processed/' directory in the dataset's "
                 "root folder and try again.")
-        self.data, self.slices, self.sizes = out
+        data, self.slices, self.sizes = out
+        self.data = Data.from_dict(data) if isinstance(data, dict) else data
 
         if self._data.x is not None and not use_node_attr:
             num_node_attributes = self.num_node_attributes
@@ -199,7 +205,8 @@ class TUDataset(InMemoryDataset):
             self.data, self.slices = self.collate(data_list)
             self._data_list = None  # Reset cache.
 
-        torch.save((self._data, self.slices, sizes), self.processed_paths[0])
+        torch.save((self._data.to_dict(), self.slices, sizes),
+                   self.processed_paths[0])
 
     def __repr__(self) -> str:
         return f'{self.name}({len(self)})'

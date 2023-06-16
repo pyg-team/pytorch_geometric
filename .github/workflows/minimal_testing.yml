@@ -1,4 +1,4 @@
-name: Minimal Installation
+name: Testing minimal PyTorch 2.0
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -8,7 +8,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  import:
+  minimal_pytest:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,11 +41,9 @@ jobs:
       - name: Install main package
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          pip install -e .
+          pip install -e .[test]
 
-      - name: Test imports
+      - name: Run tests
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          python -c "import torch_geometric"
-          python -c "import torch_geometric.contrib"
-          python -c "import torch_geometric.graphgym"
+          pytest

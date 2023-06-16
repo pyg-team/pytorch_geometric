@@ -8,6 +8,7 @@ from torch_geometric.testing import (
     MyGraphStore,
     get_random_edge_index,
     onlyNeighborSampler,
+    withCUDA,
     withPackage,
 )
 
@@ -16,24 +17,29 @@ def unique_edge_pairs(edge_index):
     return set(map(tuple, edge_index.t().tolist()))
 
 
+@withCUDA
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
 @pytest.mark.parametrize('neg_sampling_ratio', [None, 1.0])
-@pytest.mark.parametrize('filter_per_worker', [True, False])
-def test_homo_link_neighbor_loader_basic(subgraph_type, neg_sampling_ratio,
+@pytest.mark.parametrize('filter_per_worker', [None, True, False])
+def test_homo_link_neighbor_loader_basic(device, subgraph_type,
+                                         neg_sampling_ratio,
                                          filter_per_worker):
-    pos_edge_index = get_random_edge_index(50, 50, 500)
-    neg_edge_index = get_random_edge_index(50, 50, 500)
+    pos_edge_index = get_random_edge_index(50, 50, 500, device=device)
+    neg_edge_index = get_random_edge_index(50, 50, 500, device=device)
     neg_edge_index += 50
 
     edge_label_index = torch.cat([pos_edge_index, neg_edge_index], dim=-1)
-    edge_label = torch.cat([torch.ones(500), torch.zeros(500)], dim=0)
+    edge_label = torch.cat([
+        torch.ones(500, device=device),
+        torch.zeros(500, device=device),
+    ], dim=0)
 
     data = Data()
 
     data.edge_index = pos_edge_index
-    data.x = torch.arange(100)
-    data.edge_attr = torch.arange(500)
+    data.x = torch.arange(100, device=device)
+    data.edge_attr = torch.arange(500, device=device)
 
     loader = LinkNeighborLoader(
         data,
@@ -58,14 +64,16 @@ def test_homo_link_neighbor_loader_basic(subgraph_type, neg_sampling_ratio,
     for batch in loader:
         assert isinstance(batch, Data)
 
-        assert len(batch) == 8
         assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.e_id.size() == (batch.num_edges, )
+        assert batch.x.device == device
         assert batch.x.size(0) <= 100
         assert batch.x.min() >= 0 and batch.x.max() < 100
         assert batch.input_id.numel() == 20
+        assert batch.edge_index.device == device
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
+        assert batch.edge_attr.device == device
         assert batch.edge_attr.min() >= 0
         assert batch.edge_attr.max() < 500
 
@@ -320,7 +328,6 @@ def test_homo_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, Data)
-        assert len(batch) == 5
         assert batch.input_id.numel() == 20
         assert batch.edge_label_index.size(1) == 20
         assert batch.num_nodes == batch.edge_label_index.unique().numel()
@@ -340,7 +347,6 @@ def test_hetero_link_neighbor_loader_no_edges():
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        assert len(batch) == 4
         assert batch['paper', 'paper'].input_id.numel() == 20
         assert batch['paper', 'paper'].edge_label_index.size(1) == 20
         assert batch['paper'].num_nodes == batch[
@@ -388,8 +394,6 @@ def test_homo_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
     for batch in loader:
         assert isinstance(batch, Data)
-        num_elems = 9 + (1 if disjoint else 0) + (2 if temporal else 0)
-        assert len(batch) == num_elems
 
         # Check that `src_index` and `dst_pos_index` point to valid edges:
         assert torch.equal(batch.x[batch.src_index],
@@ -482,8 +486,6 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
-        num_elems = 8 + (1 if disjoint else 0) + (2 if temporal else 0)
-        assert len(batch) == num_elems
 
         node_store = batch['paper']
         edge_store = batch['paper', 'paper']

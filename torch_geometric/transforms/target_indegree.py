@@ -33,7 +33,7 @@ class TargetIndegree(BaseTransform):
         self.max = max_value
         self.cat = cat
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         col, pseudo = data.edge_index[1], data.edge_attr
 
         deg = degree(col, data.num_nodes)

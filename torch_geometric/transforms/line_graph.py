@@ -34,7 +34,7 @@ class LineGraph(BaseTransform):
     def __init__(self, force_directed: bool = False):
         self.force_directed = force_directed
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index, edge_attr = data.edge_index, data.edge_attr
         edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes=N)

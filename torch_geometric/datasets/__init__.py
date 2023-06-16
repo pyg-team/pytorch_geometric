@@ -36,6 +36,7 @@ from .pcpnet_dataset import PCPNetDataset
 from .s3dis import S3DIS
 from .geometry import GeometricShapes
 from .bitcoin_otc import BitcoinOTC
+from .gdelt_lite import GDELTLite
 from .icews import ICEWS18
 from .gdelt import GDELT
 from .willow_object_class import WILLOWObjectClass
@@ -76,10 +77,15 @@ from .aminer import AMiner
 from .ogb_mag import OGB_MAG
 from .dblp import DBLP
 from .movie_lens import MovieLens
+from .movie_lens_100k import MovieLens100K
+from .movie_lens_1m import MovieLens1M
 from .imdb import IMDB
 from .last_fm import LastFM
 from .hgb_dataset import HGBDataset
 from .taobao import Taobao
+from .igmc_dataset import IGMCDataset
+from .amazon_book import AmazonBook
+from .hm import HM
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
@@ -131,6 +137,7 @@ homo_datasets = [
     'S3DIS',
     'GeometricShapes',
     'BitcoinOTC',
+    'GDELTLite',
     'ICEWS18',
     'GDELT',
     'WILLOWObjectClass',
@@ -174,10 +181,15 @@ hetero_datasets = [
     'OGB_MAG',
     'DBLP',
     'MovieLens',
+    'MovieLens100K',
+    'MovieLens1M',
     'IMDB',
     'LastFM',
     'HGBDataset',
     'Taobao',
+    'IGMCDataset',
+    'AmazonBook',
+    'HM',
 ]
 synthetic_datasets = [
     'FakeDataset',
