@@ -3,7 +3,7 @@ import os.path as osp
 import torch
 
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
-from torch_geometric.distributed.partition.partitioner import Partitioner
+from torch_geometric.distributed import Partitioner
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import EdgeTypeStr
 
