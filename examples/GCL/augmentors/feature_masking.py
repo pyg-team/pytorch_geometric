@@ -1,5 +1,6 @@
 import torch
-from GCL.augmentors.augmentor import Graph, Augmentor
+from GCL.augmentors.augmentor import Augmentor, Graph
+
 
 class FeatureMasking(Augmentor):
     def __init__(self, pf: float):
@@ -10,7 +11,8 @@ class FeatureMasking(Augmentor):
         x, edge_index, edge_weights = g.unfold()
 
         device = x.device
-        drop_mask = torch.empty((x.size(1),), dtype=torch.float32).uniform_(0, 1) < self.pf
+        drop_mask = torch.empty(
+            (x.size(1), ), dtype=torch.float32).uniform_(0, 1) < self.pf
         drop_mask = drop_mask.to(device)
         x = x.clone()
         x[:, drop_mask] = 0

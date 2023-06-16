@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import torch
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple, NamedTuple, List
+from typing import List, NamedTuple, Optional, Tuple
+
+import torch
 from torch_sparse import SparseTensor
 
 
@@ -13,7 +14,9 @@ class Graph(NamedTuple):
 
     edge_weights: Optional[torch.FloatTensor]
 
-    def unfold(self) -> Tuple[torch.FloatTensor, SparseTensor, Optional[torch.FloatTensor]]:
+    def unfold(
+        self
+    ) -> Tuple[torch.FloatTensor, SparseTensor, Optional[torch.FloatTensor]]:
         return self.x, self.adj_t, self.edge_weights
 
 
@@ -27,11 +30,11 @@ class Augmentor(ABC):
         raise NotImplementedError(f"GraphAug.augment should be implemented.")
 
     def __call__(
-            self, x: torch.FloatTensor,
-            edge_index: SparseTensor, edge_weight: Optional[torch.FloatTensor] = None
+        self, x: torch.FloatTensor, edge_index: SparseTensor,
+        edge_weight: Optional[torch.FloatTensor] = None
     ) -> Tuple[torch.FloatTensor, SparseTensor, Optional[torch.Tensor]]:
         return self.augment(Graph(x, edge_index, edge_weight)).unfold()
-    
+
     # def __call__(
     #         self, x: torch.FloatTensor,
     #         edge_index: torch.LongTensor, edge_weight: Optional[torch.FloatTensor] = None

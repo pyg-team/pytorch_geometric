@@ -1,4 +1,4 @@
-from GCL.augmentors.augmentor import Graph, Augmentor
+from GCL.augmentors.augmentor import Augmentor, Graph
 
 
 class Identity(Augmentor):

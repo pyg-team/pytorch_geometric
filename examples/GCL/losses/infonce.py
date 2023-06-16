@@ -1,11 +1,14 @@
 import torch
 import torch.nn.functional as F
+
 from .losses import Loss
+
 
 def _similarity(h1: torch.Tensor, h2: torch.Tensor):
     h1 = F.normalize(h1)
     h2 = F.normalize(h2)
     return h1 @ h2.t()
+
 
 class InfoNCE(Loss):
     def __init__(self, tau):
@@ -19,4 +22,3 @@ class InfoNCE(Loss):
         loss = log_prob * pos_mask
         loss = loss.sum(dim=1) / pos_mask.sum(dim=1)
         return -loss.mean()
-

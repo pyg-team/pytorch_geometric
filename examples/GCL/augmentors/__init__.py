@@ -5,17 +5,9 @@ from .edge_removing import EdgeRemoving
 from .node_dropping import NodeDropping
 from .feature_masking import FeatureMasking
 
-
 __all__ = [
-    'Graph',
-    'Augmentor',
-    'Compose',
-    'RandomChoice',
-    'EdgeRemoving',
-    'FeatureMasking',
-    'Identity',
-    'NodeDropping',
-    'RWSampling'
+    'Graph', 'Augmentor', 'Compose', 'RandomChoice', 'EdgeRemoving',
+    'FeatureMasking', 'Identity', 'NodeDropping', 'RWSampling'
 ]
 
 classes = __all__
