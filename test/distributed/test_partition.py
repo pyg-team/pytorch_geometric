@@ -85,3 +85,5 @@ def test_partition_hetero_data(tmp_path):
         assert osp.exists(graph_path)
         node_feats_path = osp.join(tmp_path, f'part_{pid}', 'node_feats.pt')
         assert osp.exists(node_feats_path)
+        edge_feats_path = osp.join(tmp_path, f'part_{pid}', 'edge_feats.pt')
+        assert osp.exists(edge_feats_path)
