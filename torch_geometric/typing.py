@@ -190,14 +190,6 @@ DEFAULT_REL = 'to'
 EDGE_TYPE_STR_SPLIT = '__'
 
 
-def as_str(type: Union[NodeType, EdgeType]) -> str:
-    if isinstance(type, NodeType):
-        return type
-    elif isinstance(type, (list, tuple)) and len(type) == 3:
-        return EDGE_TYPE_STR_SPLIT.join(type)
-    return ''
-
-
 class EdgeTypeStr(str):
     r"""A helper class to construct serializable edge types by merging an edge
     type tuple into a single string."""

@@ -9,7 +9,7 @@ from torch_geometric.data.hetero_data import HeteroData
 from torch_geometric.distributed.local_feature_store import LocalFeatureStore
 from torch_geometric.distributed.local_graph_store import LocalGraphStore
 from torch_geometric.loader import ClusterData
-from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType, as_str
+from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
 
 
 def prepare_directory(root_path: str, child_path: Optional[str] = None):
@@ -51,7 +51,7 @@ def record_mapping(output_dir: str, mapping: torch.Tensor, type: str,
     if type_name is not None:
         sub_dir = prepare_directory(output_dir, f'{type}_map')
         if type == 'node':
-            fpath = os.path.join(sub_dir, f'{as_str(type_name)}.pt')
+            fpath = os.path.join(sub_dir, f'{type_name}.pt')
         else:
             fpath = os.path.join(sub_dir, f'{EdgeTypeStr(type_name)}.pt')
     torch.save(mapping, fpath)
