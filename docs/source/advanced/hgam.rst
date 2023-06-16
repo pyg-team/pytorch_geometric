@@ -1,7 +1,7 @@
 Hierarchical Graph Adjacency Matrix (HGAM) 
 ==========================================
 
-HGAM it is a technique available to :pyg:`PyG` users which progressively trims the adjacency matrix of the graph of the batch being fed into a GNN. It works seamlessly across several models, basically reducing the amount of compute necessary to generate the representations for the seed node of the given batch.
+HGAM it is a technique available to :pyg:`PyG` (as detailed in the paper… <place holder for the link to the paper on the Arxiv>) users which progressively trims the adjacency matrix of the graph of the batch being fed into a GNN. It works seamlessly across several models, basically reducing the amount of compute necessary to generate the representations for the seed node of the given batch.
 The seed nodes are indeed the nodes selected initially by the dataloader, and for which the sampling procedure builds a subgraph starting from those seed nodes. 
 The batch graph thus obtained is typically fed as it is into the GNN training process, which would naively run message passing at all depths and build representations at all depths for all nodes included in the initial batch graph.
 
@@ -244,3 +244,9 @@ Please see below how this can be done.
 
     train(trim=True)
 
+
+Additional References:
+----------------------
+
+- :pyg:`Pyg`  `documentation <https://pytorch-geometric.readthedocs.io/en/latest/>`__
+- <place holder for the link to the HGAM paper on the Arxiv> 
