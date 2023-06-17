@@ -12,11 +12,12 @@ from torch_geometric.utils import to_torch_csc_tensor
     ('mean', None),
     ('sum', 'sum'),
     (['mean', 'max'], 'cat'),
+    ('mean', 'self_loop'),
 ])
 def test_simple_conv(aggr, combine_root):
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 8)
-    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 1, 1]])
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
     conv = SimpleConv(aggr, combine_root)
@@ -46,13 +47,15 @@ def test_simple_conv(aggr, combine_root):
         assert torch.allclose(jit(x1, adj2.t()), out)
 
     # Test bipartite message passing:
-    adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
+    if combine_root != 'self_loop':
+        adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
 
-    out = conv((x1, x2), edge_index)
-    assert out.size() == (2, output_size)
-    assert torch.allclose(conv((x1, x2), edge_index, size=(4, 2)), out)
-    assert torch.allclose(conv((x1, x2), adj1.t()), out)
+        out = conv((x1, x2), edge_index)
+        assert out.size() == (2, output_size)
+        assert torch.allclose(conv((x1, x2), edge_index, size=(4, 2)), out)
+        assert torch.allclose(conv((x1, x2), adj1.t()), out)
 
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 2))
-        assert torch.allclose(conv((x1, x2), adj2.t()), out)
+        if torch_geometric.typing.WITH_TORCH_SPARSE:
+            adj2 = SparseTensor.from_edge_index(edge_index,
+                                                sparse_sizes=(4, 2))
+            assert torch.allclose(conv((x1, x2), adj2.t()), out)

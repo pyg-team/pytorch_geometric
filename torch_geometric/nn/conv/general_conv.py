@@ -122,8 +122,8 @@ class GeneralConv(MessagePassing):
                 self.att_msg = Parameter(
                     torch.Tensor(1, self.heads, self.out_channels))
             elif self.attention_type == 'dot_product':
-                self.scaler = torch.sqrt(
-                    torch.tensor(out_channels, dtype=torch.float))
+                scaler = torch.tensor(out_channels, dtype=torch.float).sqrt()
+                self.register_buffer('scaler', scaler)
             else:
                 raise ValueError(
                     f"Attention type '{self.attention_type}' not supported")

@@ -5,31 +5,6 @@ from torch import Tensor
 
 from torch_geometric.nn.pool.connect import FilterEdges
 from torch_geometric.nn.pool.select import SelectTopK
-from torch_geometric.utils.num_nodes import maybe_num_nodes
-
-
-# TODO(jinu): Remove this.
-def filter_adj(
-    edge_index: Tensor,
-    edge_attr: Optional[Tensor],
-    perm: Tensor,
-    num_nodes: Optional[int] = None,
-) -> Tuple[Tensor, Optional[Tensor]]:
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
-
-    mask = perm.new_full((num_nodes, ), -1)
-    i = torch.arange(perm.size(0), dtype=torch.long, device=perm.device)
-    mask[perm] = i
-
-    row, col = edge_index[0], edge_index[1]
-    row, col = mask[row], mask[col]
-    mask = (row >= 0) & (col >= 0)
-    row, col = row[mask], col[mask]
-
-    if edge_attr is not None:
-        edge_attr = edge_attr[mask]
-
-    return torch.stack([row, col], dim=0), edge_attr
 
 
 class TopKPooling(torch.nn.Module):
@@ -42,7 +17,8 @@ class TopKPooling(torch.nn.Module):
     If :obj:`min_score` :math:`\tilde{\alpha}` is :obj:`None`, computes:
 
         .. math::
-            \mathbf{y} &= \frac{\mathbf{X}\mathbf{p}}{\| \mathbf{p} \|}
+            \mathbf{y} &= \sigma \left( \frac{\mathbf{X}\mathbf{p}}{\|
+            \mathbf{p} \|} \right)
 
             \mathbf{i} &= \mathrm{top}_k(\mathbf{y})
 
@@ -68,7 +44,7 @@ class TopKPooling(torch.nn.Module):
 
     Args:
         in_channels (int): Size of each input sample.
-        ratio (float or int): Graph pooling ratio, which is used to compute
+        ratio (float or int): The graph pooling ratio, which is used to compute
             :math:`k = \lceil \mathrm{ratio} \cdot N \rceil`, or the value
             of :math:`k` itself, depending on whether the type of :obj:`ratio`
             is :obj:`float` or :obj:`int`.
@@ -82,8 +58,8 @@ class TopKPooling(torch.nn.Module):
         multiplier (float, optional): Coefficient by which features gets
             multiplied after pooling. This can be useful for large graphs and
             when :obj:`min_score` is used. (default: :obj:`1`)
-        nonlinearity (str or callable, optional): The non-linearity to use.
-            (default: :obj:`"tanh"`)
+        nonlinearity (str or callable, optional): The non-linearity
+            :math:`\sigma`. (default: :obj:`"tanh"`)
     """
     def __init__(
         self,

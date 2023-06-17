@@ -393,10 +393,7 @@ class LinearAlign(torch.nn.Module):
     def forward(
         self, x_dict: Dict[Union[NodeType, EdgeType], Tensor]
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
-
-        for key, x in x_dict.items():
-            x_dict[key] = self.lins[key2str(key)](x)
-        return x_dict
+        return {key: self.lins[key2str(key)](x) for key, x in x_dict.items()}
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(num_relations={len(self.lins)}, '

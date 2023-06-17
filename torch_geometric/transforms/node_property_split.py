@@ -81,8 +81,7 @@ class NodePropertySplit(BaseTransform):
         self.ratios = ratios
         self.ascending = ascending
 
-    def __call__(self, data: Data) -> Data:
-
+    def forward(self, data: Data) -> Data:
         G = to_networkx(data, to_undirected=True, remove_self_loops=True)
         property_values = self.compute_fn(G, self.ascending)
         mask_dict = self._mask_nodes_by_property(property_values, self.ratios)
