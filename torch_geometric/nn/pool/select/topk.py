@@ -148,7 +148,7 @@ class SelectTopK(Select):
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.long)
 
-        x.view(-1, 1) if x.dim() == 1 else x
+        x = x.view(-1, 1) if x.dim() == 1 else x
         score = (x * self.weight).sum(dim=-1)
 
         if self.min_score is None:
