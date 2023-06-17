@@ -46,7 +46,7 @@ The recommended number of workers to start with lies between :obj:`[2, 4]`, and 
         for batch in loader:
             pass
 
-It is generally adivisable to use :obj:`filter_per_worker=True` for any multi-process CPU workloads (:obj:`True` by default).
+It is generally advisable to use :obj:`filter_per_worker=True` for any multi-process CPU workloads (:obj:`True` by default).
 The workers then prepare each mini-batch: first by sampling the node indices using pre-defined a sampler, and secondly filtering node and edge features according to sampled nodes and edges.
 The filtering function selects node feature vectors from the complete input :class:`~torch_geometric.data.Data` tensor loaded into DRAM.
 When :attr:`filter_per_worker` is set to :attr:`True`, each worker's subprocess performs the filtering within it's CPU resource.
