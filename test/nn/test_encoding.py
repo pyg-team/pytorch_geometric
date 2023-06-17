@@ -5,6 +5,7 @@ from torch_geometric.nn import (
     PositionalEncoding,
     TemporalEncoding,
 )
+from torch_geometric.nn.encoding import get_latest_k_edge_attrs
 from torch_geometric.testing import withCUDA
 
 
@@ -48,6 +49,7 @@ def test_link_encoding(device):
         hidden_channels=hidden_channels,
         out_channels=out_channels,
         time_channels=time_channels,
+        dropout=dropout,
     ).to(device)
     assert str(encoder) == (f'LinkEncoding(K={K}, '
                             f'in_channels={num_edge_features}, '
@@ -58,3 +60,24 @@ def test_link_encoding(device):
 
     out = encoder(edge_attr, edge_time, edge_index)
     assert out.size() == (num_nodes, out_channels)
+
+
+def test_latest_k_edge_attr():
+    num_nodes = 3
+    edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 0], [0, 1, 0, 1, 0, 1, 2]])
+    edge_time = torch.tensor([3, 1, 2, 3, 1, 2, 3])
+    edge_attr = torch.tensor([1, -1, 3, 4, -1, 6, 7]).view(-1, 1)
+
+    k = 2
+    latest_k_edge_attrs = get_latest_k_edge_attrs(k, edge_index, edge_time,
+                                                  edge_attr, num_nodes)
+    expected_output = torch.tensor([[[1], [3]], [[4], [6]], [[7], [0]]])
+    assert latest_k_edge_attrs.shape == (3, 2, 1)
+    assert latest_k_edge_attrs.equal(expected_output)
+
+    k = 1
+    latest_k_edge_attrs = get_latest_k_edge_attrs(k, edge_index, edge_time,
+                                                  edge_attr, num_nodes)
+    expected_output = torch.tensor([[[1]], [[4]], [[7]]])
+    assert latest_k_edge_attrs.shape == (3, 1, 1)
+    assert latest_k_edge_attrs.equal(expected_output)
