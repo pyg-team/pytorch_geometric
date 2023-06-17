@@ -1,10 +1,11 @@
 import math
 from typing import Optional
 
+import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import index_sort, to_dense_batch
+from torch_geometric.utils import to_dense_batch
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
@@ -66,8 +67,8 @@ class TemporalEncoding(torch.nn.Module):
     r"""The time-encoding function from the `"Do We Really Need Complicated
     Model Architectures for Temporal Networks?"
     <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
-    :class:`TemporalEncoding` first maps each entry to a vector with
-    monotonically exponentially decreasing values, and then uses the cosine
+    It first maps each entry to a vector with
+    exponentially decreasing values, and then uses the cosine
     function to project all values to range :math:`[-1, 1]`
 
     .. math::
@@ -180,6 +181,40 @@ class _MLPMixer(torch.nn.Module):
                 f"dropout={self.dropout})")
 
 
+def get_latest_k_edge_attrs(K: int, edge_index: Tensor, edge_time: Tensor,
+                            edge_attr: Tensor, num_nodes: int) -> Tensor:
+    r"""Returns the latest :obj:`K` incoming edge attributes by
+    :obj:`edge_time` for each node. The shape
+    of the output tensor is :obj:`[num_nodes, K, edge_attr_dim]`.
+    Nodes with fewer than :obj:`K` incoming edges are zero-padded.
+    Args:
+        K (int): The number of edges to keep for each node.
+        edge_index (LongTensor): The edge indices.
+        edge_time (Tensor): The edge timestamps.
+        edge_attr (Tensor): The edge attributes.
+        num_nodes (int): The number of nodes in the graph.
+    :rtype: :class:`Tensor`
+    """
+    assert (edge_time >= 0).all()
+    _, col = edge_index
+    perm = np.lexsort(
+        [-edge_time.detach().cpu().numpy(),
+         col.detach().cpu().numpy()])
+    perm = torch.from_numpy(perm).to(edge_index.device)
+    col = col[perm]
+    edge_attr = edge_attr[perm]
+
+    # zero-pad each node's edges:
+    # [num_edges, hidden_channels] -> [num_nodes*K, hidden_channels]
+    edge_attr, _ = to_dense_batch(
+        edge_attr,
+        col,
+        max_num_nodes=K,
+        batch_size=num_nodes,
+    )
+    return edge_attr
+
+
 class LinkEncoding(torch.nn.Module):
     r"""The link-encoding function from the `"Do We Really Need Complicated
     Model Architectures for Temporal Networks?"
@@ -196,10 +231,13 @@ class LinkEncoding(torch.nn.Module):
             an intermediate feature representation for each node.
         in_channels (int): Edge feature dimensionality.
         hidden_channels (int): Size of each hidden sample.
-        time_channels (int): Size of encoded timestamp using :class:`TemporalEncoding`.
+        time_channels (int): Size of encoded timestamp using
+            :class:`TemporalEncoding`.
         out_channels (int): Size of each output sample.
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
-            :obj:`edge_index` is sorted by column. This avoids internal
+            :obj:`edge_index` is sorted by column and the
+            rows are sorted according to :obj:`edge_time`
+            within individual neighborhoods. This avoids internal
             re-sorting of the data and can improve runtime and memory
             efficiency. (default: :obj:`False`)
         dropout (float, optional): Dropout probability of the MLP layer.
@@ -265,19 +303,11 @@ class LinkEncoding(torch.nn.Module):
         edge_attr_time = torch.cat((time_info, edge_attr), dim=1)
         edge_attr_time = self.temporal_encoder_head(edge_attr_time)
 
-        # `to_dense_batch` assumes sorted inputs
         if not self.is_sorted:
-            edge_index[1], indices = index_sort(edge_index[1])
-            edge_attr_time = edge_attr_time[indices]
+            edge_attr_time = get_latest_k_edge_attrs(self.K, edge_index,
+                                                     edge_time, edge_attr_time,
+                                                     num_nodes)
 
-        # zero-pad each node's edges:
-        # [num_edges, hidden_channels] -> [num_nodes*K, hidden_channels]
-        edge_attr_time, _ = to_dense_batch(
-            edge_attr_time,
-            edge_index[1],
-            max_num_nodes=self.K,
-            batch_size=num_nodes,
-        )
         return self.mlp_mixer(
             edge_attr_time.view(-1, self.K, self.hidden_channels))
 
