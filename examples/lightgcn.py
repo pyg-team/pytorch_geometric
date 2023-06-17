@@ -19,28 +19,23 @@ def prepare_data(device):
     num_itm = data['book'].num_nodes
 
     # Group pos_items list for each user in train set
-    edges = data['user', 'book'].edge_index.clone()
+    edges = data['user', 'book'].edge_index
     edges[1] = edges[1] + num_usr
-    # train_u_p_list = [edges[:, edges[0, :] == usr][1, :]
-    #                   for usr in range(data['user'].num_nodes)]
     edge_index = torch.cat([edges, torch.flip(edges, [0])], 1)
 
     test_edge_index = data['user', 'book'].edge_label_index
 
-    return num_usr, num_itm, edge_index, test_edge_index  # train_u_p_list,
+    return num_usr, num_itm, edge_index, test_edge_index
 
 
-# Random sampling tuple in form of user : pos_item : neg_item
-def batch_uniform_sampling(num_usr, num_itm, batch_size,
-                           edge_index):  # pos_lists):
+def batch_uniform_sampling(num_usr, num_itm, batch_size, edge_index):
     # Randomly sample users to prevent high activate user dominate the trand
     users = random.choices(range(num_usr), k=batch_size)
 
     # for each sampled user, randomly sample a pos_item and a neg_item
     u_p_n = []
     for user in users:
-        # pos_list = pos_lists[user]
-        pos_list = edge_index[:, edge_index[0, :] == 99][1]
+        pos_list = edge_index[:, edge_index[0, :] == user][1]
         if len(pos_list) == 0:
             continue
         pos_item = random.choice(pos_list.tolist())
@@ -53,19 +48,19 @@ def batch_uniform_sampling(num_usr, num_itm, batch_size,
     return u_p_n[0], u_p_n[1], u_p_n[2]
 
 
-def train(model, optimizer, num_usr, num_itm, edge_index,
-          batch_size):  # train_u_p_list,
+def train(model, optimizer, num_usr, num_itm, edge_index, batch_size):
     '''
     Mini-batch training procedure
     '''
     n_batches = (edge_index.shape[1] // (2 * batch_size)) + 1
+    n_batches = n_batches // 10
     avg_loss = 0
     model.train()
     for batch_idx in range(n_batches):
         optimizer.zero_grad()
         users, pos_items, neg_items = \
             batch_uniform_sampling(num_usr, num_itm, batch_size,
-                                   edge_index)  # train_u_p_list)
+                                   edge_index)
         batch_edge_labels = torch.stack(
             (torch.cat([users, users]), torch.cat([pos_items, neg_items])))
         rankings = model(edge_index, batch_edge_labels)
@@ -101,11 +96,9 @@ def test(model, num_usr, edge_index, test_edge_index, test_batch_size, k=20):
             exc_itm = []
             ground_truth = []
             for key, u in enumerate(batch_users):
-                # items = [idx - num_usr for idx in
-                #          edge_index[:, edge_index[0, :] == u][1].tolist()]
+                # exclude users, items indices
                 items = edge_index[:, edge_index[0, :] == u][1] - num_usr
                 exc_usr.extend([key] * len(items))
-                # exc_itm.extend(items)
                 exc_itm.extend(items.tolist())
                 # ground truth for batch users
                 truth = test_edge_index[:, test_edge_index[0, :] ==
@@ -115,7 +108,7 @@ def test(model, num_usr, edge_index, test_edge_index, test_batch_size, k=20):
             pred[exc_usr, exc_itm] = -(1 << 10)
             top_index = pred.topk(k, dim=-1).indices
 
-            # test one batch based on u_pred_truth, store batch result
+            # sum precision and recall of each user in the batch
             skip = 0
             for usr in range(len(batch_users)):
                 if len(ground_truth[usr]) != 0:
@@ -127,8 +120,7 @@ def test(model, num_usr, edge_index, test_edge_index, test_batch_size, k=20):
                     recall += hit / len(ground_truth[usr])
                 else:
                     skip += 1
-            # print('batch precision: ', precision, ', recall: ', recall)
-
+    # return average precision and recall cross all the users
     return precision / (len(users) - skip), recall / (len(users) - skip)
 
 
@@ -139,28 +131,31 @@ def timer(epoch, message):
 
 def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    num_usr, num_itm, edge_index, test_edge_index = prepare_data(
-        device)  # train_u_p_list,
+    num_usr, num_itm, edge_index, test_edge_index = prepare_data(device)
     model = LightGCN(num_nodes=num_usr + num_itm, embedding_dim=60,
                      num_layers=3).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
     print(f"Start training at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    avg_precision, avg_recall = test(model, num_usr, edge_index,
+                                     test_edge_index, test_batch_size=10000,
+                                     k=20)
+    timer(
+        -1, 'avg_precision: ' + str(avg_precision) + ' | avg_recall: ' +
+        str(avg_recall))
+
     for epoch in range(50):
-        # timer(epoch, 'start training')
         avg_bpr_loss = train(model, optimizer, num_usr, num_itm, edge_index,
-                             batch_size=2048)  # train_u_p_list,
-        timer(epoch, 'avg_bpr: ' + str(avg_bpr_loss.item()))
+                             batch_size=2048)
+        timer(epoch, 'avg_bpr_loss: ' + str(avg_bpr_loss.item()))
         if epoch % 1 == 0:
-            # timer(epoch, 'start validation')
             avg_precision, avg_recall = test(model, num_usr, edge_index,
                                              test_edge_index,
-                                             test_batch_size=2000, k=20)
+                                             test_batch_size=20000, k=20)
             timer(
                 epoch, 'avg_precision: ' + str(avg_precision) +
                 ' | avg_recall: ' + str(avg_recall))
 
 
 if __name__ == "__main__":
-    print('!!!!!run my test')
     main()
