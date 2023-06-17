@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Tuple
+from typing import Optional
 
 import torch
 from torch import Tensor
@@ -70,7 +70,7 @@ class Connect(torch.nn.Module):
         edge_index: Tensor,
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
-    ) -> Tuple[Tensor, Optional[Tensor]]:
+    ) -> ConnectOutput:
         r"""
         Args:
             select_output (SelectOutput): The output of :class:`Select`.
