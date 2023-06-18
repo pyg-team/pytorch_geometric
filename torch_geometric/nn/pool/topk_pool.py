@@ -5,6 +5,7 @@ from torch import Tensor
 
 from torch_geometric.nn.pool.connect import FilterEdges
 from torch_geometric.nn.pool.select import SelectTopK
+from torch_geometric.typing import OptTensor
 
 
 class TopKPooling(torch.nn.Module):
@@ -92,7 +93,7 @@ class TopKPooling(torch.nn.Module):
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
         attn: Optional[Tensor] = None,
-    ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor, Tensor]:
+    ) -> Tuple[Tensor, Tensor, OptTensor, OptTensor, Tensor, Tensor]:
         r"""
         Args:
             x (torch.Tensor): The node feature matrix.
