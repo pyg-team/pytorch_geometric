@@ -258,3 +258,14 @@ MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
 InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
+
+# A representation of tensor data
+TensorDataType = Union[torch.Tensor, np.ndarray]
+
+def as_str(type: Union[NodeType, EdgeType]) -> str:
+    if isinstance(type, NodeType):
+        return type
+    elif isinstance(type, (list, tuple)) and len(type) == 3:
+        return EDGE_TYPE_STR_SPLIT.join(type)
+    return ''
+
