@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Enabled different attention modes in `HypergraphConv` via the `attention_mode` argument ([#7601](https://github.com/pyg-team/pytorch_geometric/pull/7601))
 - Added the `FilterEdges` graph coarsening operator ([#7361](https://github.com/pyg-team/pytorch_geometric/pull/7361))
 - Added the `DirGNN` model for learning on directed graphs ([#7458](https://github.com/pyg-team/pytorch_geometric/pull/7458))
 - Allow GPU tensors as input to `NodeLoader` and `LinkLoader` ([#7572](https://github.com/pyg-team/pytorch_geometric/pull/7572))
