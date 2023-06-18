@@ -165,8 +165,9 @@ def main():
     config = {
         "embedding_dim": 64,
         "n_layers": 3,
-        "LR": 0.001,
-        "BATCH_SIZE": 2048,
+        "lr": 0.001,
+        "batch_size": 2048,
+        "n_epochs": 50
     }
 
     # init data, model, optimizer
@@ -175,14 +176,14 @@ def main():
     model = LightGCN(num_nodes=num_usr + num_itm,
                      embedding_dim=config["embedding_dim"],
                      num_layers=config["n_layers"]).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=config["LR"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=config["lr"])
 
     # train - val loop
     best_recall = 0.0
     print(f"Start training at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    for epoch in range(35):
+    for epoch in range(config["n_epochs"]):
         train_bpr_loss = train(model, optimizer, num_usr, num_itm, edge_index,
-                               batch_size=config["BATCH_SIZE"])
+                               batch_size=config["batch_size"])
         timer(epoch, 'train_bpr_loss: ' + str(train_bpr_loss.item()))
 
         val_precision, val_recall = test(model, num_usr, edge_index, val_set,
