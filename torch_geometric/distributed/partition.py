@@ -94,7 +94,7 @@ class Partitioner:
             'num_parts': self.num_parts,
             'is_hetero': self.is_hetero,
             'node_types': self.node_types,
-            'edge_types': self.node_types,
+            'edge_types': self.edge_types,
         }
         with open(osp.join(self.root, 'META.json'), 'w') as f:
             json.dump(meta, f)
@@ -174,7 +174,7 @@ class Partitioner:
                     edge_attr = None
                     if 'edge_attr' in part_data:
                         edge_attr = part_data.edge_attr[mask]
-                    out[node_type] = {
+                    out[edge_type] = {
                         'global_id': edge_id[mask],
                         'feats': dict(edge_attr=edge_attr),
                     }
