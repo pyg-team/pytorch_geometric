@@ -3,36 +3,45 @@ import random
 from datetime import datetime
 
 import torch
+from torch.utils.data import random_split
 
 from torch_geometric.datasets import AmazonBook
 from torch_geometric.nn import LightGCN
 
 
-def prepare_data(device):
+def prepare_data(device, path):
     # Load AmazonBook dataset
-    dataset = 'AmazonBook'
-    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
     dataset = AmazonBook(path)
     data = dataset[0].to(device)
 
     num_usr = data['user'].num_nodes
     num_itm = data['book'].num_nodes
 
-    # Group pos_items list for each user in train set
+    # edge_index from train set
     edges = data['user', 'book'].edge_index
     edges[1] = edges[1] + num_usr
     edge_index = torch.cat([edges, torch.flip(edges, [0])], 1)
 
-    test_edge_index = data['user', 'book'].edge_label_index
+    # Prepare val and test set
+    test_edges = data['user', 'book'].edge_label_index
+    val_set, test_set = random_split(test_edges.T, [0.3, 0.7])
+    val_set = val_set[:].T
+    test_set = test_set[:].T
+    val_set = [
+        val_set[:, val_set[0, :] == usr][1, :] for usr in range(num_usr)
+    ]
+    test_set = [
+        test_set[:, test_set[0, :] == usr][1, :] for usr in range(num_usr)
+    ]
 
-    return num_usr, num_itm, edge_index, test_edge_index
+    return num_usr, num_itm, edge_index, val_set, test_set
 
 
 def batch_uniform_sampling(num_usr, num_itm, batch_size, edge_index):
-    # Randomly sample users to prevent high activate user dominate the trand
+    # Randomly sample users to prevent active users dominate the trand
     users = random.choices(range(num_usr), k=batch_size)
 
-    # for each sampled user, randomly sample a pos_item and a neg_item
+    # For each sampled user, randomly sample a pos_item and a neg_item
     u_p_n = []
     for user in users:
         pos_list = edge_index[:, edge_index[0, :] == user][1]
@@ -49,11 +58,10 @@ def batch_uniform_sampling(num_usr, num_itm, batch_size, edge_index):
 
 
 def train(model, optimizer, num_usr, num_itm, edge_index, batch_size):
-    '''
+    """
     Mini-batch training procedure
-    '''
+    """
     n_batches = (edge_index.shape[1] // (2 * batch_size)) + 1
-    n_batches = n_batches // 10
     avg_loss = 0
     model.train()
     for batch_idx in range(n_batches):
@@ -73,11 +81,10 @@ def train(model, optimizer, num_usr, num_itm, edge_index, batch_size):
     return avg_loss / n_batches
 
 
-def test(model, num_usr, edge_index, test_edge_index, test_batch_size, k=20):
-    '''
+def test(model, num_usr, edge_index, truth_list, test_batch_size, k=20):
+    """
     Test procedure
-    '''
-    n_batches = 0
+    """
     users = list(range(num_usr))
     model.eval()
     precision = 0.0
@@ -86,7 +93,7 @@ def test(model, num_usr, edge_index, test_edge_index, test_batch_size, k=20):
     with torch.no_grad():
         embeds = model.get_embedding(edge_index)
         for i in range(0, len(users), test_batch_size):
-            n_batches += 1
+            # Raw prediction for batch users
             batch_users = users[i:i + test_batch_size]
             src = embeds[batch_users]
             dst = embeds[num_usr:]
@@ -101,10 +108,10 @@ def test(model, num_usr, edge_index, test_edge_index, test_batch_size, k=20):
                 exc_usr.extend([key] * len(items))
                 exc_itm.extend(items.tolist())
                 # ground truth for batch users
-                truth = test_edge_index[:, test_edge_index[0, :] ==
-                                        u][1].tolist()
+                truth = truth_list[u].tolist()
                 ground_truth.append(truth)
 
+            # TopK
             pred[exc_usr, exc_itm] = -(1 << 10)
             top_index = pred.topk(k, dim=-1).indices
 
@@ -129,32 +136,85 @@ def timer(epoch, message):
     print(f'{now} EPOCH[{epoch + 1}/{50}] {message}')
 
 
+def save_model(path, model, optimizer, precision, recall, epoch=None,
+               hyperparams=None):
+    """
+    Save a trained model to disk.
+    """
+    now = datetime.now()
+    dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+
+    torch.save(
+        {
+            'timestamp': dt_string,
+            'epoch': epoch + 1,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'precision': precision,
+            'recall': recall,
+            'hyperparams': hyperparams
+        }, path)
+
+    print(f"{path} saved at {dt_string}")
+
+
 def main():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    num_usr, num_itm, edge_index, test_edge_index = prepare_data(device)
-    model = LightGCN(num_nodes=num_usr + num_itm, embedding_dim=60,
-                     num_layers=3).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    dataset = 'AmazonBook'
+    path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
+    config = {
+        "embedding_dim": 64,
+        "n_layers": 3,
+        "LR": 0.001,
+        "BATCH_SIZE": 2048,
+    }
 
+    # init data, model, optimizer
+    num_usr, num_itm, edge_index, val_set, test_set = prepare_data(
+        device, path)
+    model = LightGCN(num_nodes=num_usr + num_itm,
+                     embedding_dim=config["embedding_dim"],
+                     num_layers=config["n_layers"]).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=config["LR"])
+
+    # train - val loop
+    best_recall = 0.0
     print(f"Start training at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    avg_precision, avg_recall = test(model, num_usr, edge_index,
-                                     test_edge_index, test_batch_size=10000,
-                                     k=20)
-    timer(
-        -1, 'avg_precision: ' + str(avg_precision) + ' | avg_recall: ' +
-        str(avg_recall))
+    for epoch in range(35):
+        train_bpr_loss = train(model, optimizer, num_usr, num_itm, edge_index,
+                               batch_size=config["BATCH_SIZE"])
+        timer(epoch, 'train_bpr_loss: ' + str(train_bpr_loss.item()))
 
-    for epoch in range(50):
-        avg_bpr_loss = train(model, optimizer, num_usr, num_itm, edge_index,
-                             batch_size=2048)
-        timer(epoch, 'avg_bpr_loss: ' + str(avg_bpr_loss.item()))
-        if epoch % 1 == 0:
-            avg_precision, avg_recall = test(model, num_usr, edge_index,
-                                             test_edge_index,
-                                             test_batch_size=20000, k=20)
-            timer(
-                epoch, 'avg_precision: ' + str(avg_precision) +
-                ' | avg_recall: ' + str(avg_recall))
+        val_precision, val_recall = test(model, num_usr, edge_index, val_set,
+                                         test_batch_size=20000, k=20)
+        timer(
+            epoch, 'val_precision: ' + str(val_precision) + ' | val_recall: ' +
+            str(val_recall))
+        # save best model
+        if val_recall > best_recall:
+            best_recall = val_recall
+            save_model(path + "/LightGCN_best.pt", model, optimizer,
+                       val_precision, val_recall, epoch=epoch,
+                       hyperparams=config)
+
+    # load and test best model
+    best_model = torch.load(path + "/LightGCN_best.pt")
+    best_epoch = best_model['epoch']
+    best_val_precision = best_model['precision']
+    best_val_recall = best_model['recall']
+
+    test_model = LightGCN(num_nodes=num_usr + num_itm,
+                          embedding_dim=config["embedding_dim"],
+                          num_layers=config["n_layers"]).to(device)
+    test_model.load_state_dict(best_model['model_state_dict'])
+
+    precision, recall = test(model, num_usr, edge_index, test_set,
+                             test_batch_size=20000, k=20)
+    print(f"Best epoch ({best_epoch}): "
+          f"Val Precision@20: {best_val_precision:>7f}"
+          f" | Recall@20: {best_val_recall:>7f}")
+    print(f"Model performance: Test Precision@20: {precision:>7f}"
+          f" | Recall@20: {recall:>7f}")
 
 
 if __name__ == "__main__":
