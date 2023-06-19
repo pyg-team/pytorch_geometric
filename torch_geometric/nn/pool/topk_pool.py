@@ -5,6 +5,7 @@ from torch import Tensor
 
 from torch_geometric.nn.pool.connect import FilterEdges
 from torch_geometric.nn.pool.select import SelectTopK
+from torch_geometric.typing import OptTensor
 
 
 class TopKPooling(torch.nn.Module):
@@ -92,7 +93,7 @@ class TopKPooling(torch.nn.Module):
         edge_attr: Optional[Tensor] = None,
         batch: Optional[Tensor] = None,
         attn: Optional[Tensor] = None,
-    ) -> Tuple[Tensor, Tensor, Optional[Tensor], Tensor, Tensor, Tensor]:
+    ) -> Tuple[Tensor, Tensor, OptTensor, OptTensor, Tensor, Tensor]:
         r"""
         Args:
             x (torch.Tensor): The node feature matrix.
@@ -110,22 +111,19 @@ class TopKPooling(torch.nn.Module):
             batch = edge_index.new_zeros(x.size(0))
 
         attn = x if attn is None else attn
-        select_output = self.select(attn, batch)
+        select_out = self.select(attn, batch)
 
-        perm = select_output.node_index
-        score = select_output.weight
+        perm = select_out.node_index
+        score = select_out.weight
         assert score is not None
 
         x = x[perm] * score.view(-1, 1)
         x = self.multiplier * x if self.multiplier != 1 else x
 
-        connect_output = self.connect(select_output, edge_index, edge_attr,
-                                      batch)
-        edge_index = connect_output.edge_index
-        edge_attr = connect_output.edge_attr
-        batch = connect_output.batch
+        connect_out = self.connect(select_out, edge_index, edge_attr, batch)
 
-        return x, edge_index, edge_attr, batch, perm, score
+        return (x, connect_out.edge_index, connect_out.edge_attr,
+                connect_out.batch, perm, score)
 
     def __repr__(self) -> str:
         if self.min_score is None:

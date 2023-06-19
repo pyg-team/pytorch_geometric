@@ -4,10 +4,9 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.inits import uniform
+from torch_geometric.nn.pool.select import Select, SelectOutput
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.utils import scatter, softmax
-
-from .base import Select, SelectOutput
 
 
 # TODO (matthias) Benchmark and document this method.
