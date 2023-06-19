@@ -97,7 +97,7 @@ class _MLPMixer(torch.nn.Module):
             x (torch.Tensor): Tensor of size :obj:`[N, num_tokens, in_channels]`
 
         Returns:
-            Tensor of size ``[N, out_channels]``
+            Tensor of size :obj:`[N, out_channels]`.
         """
         # token mixing
         h = self.token_layer_norm(x).mT
