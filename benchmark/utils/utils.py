@@ -196,7 +196,9 @@ def test(model, loader, device, hetero, progress_bar=True,
 
 
 @contextmanager
-def xpu_profiler():
+def xpu_profiler(export_chrome_trace=True):
     with torch.autograd.profiler_legacy.profile(use_xpu=True) as profile:
         yield
     print(profile.key_averages().table(sort_by='self_xpu_time_total'))
+    if export_chrome_trace:
+        profile.export_chrome_trace('timeline.json')

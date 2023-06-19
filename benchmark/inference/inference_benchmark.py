@@ -191,8 +191,8 @@ def run(args: argparse.ArgumentParser):
                                 args.loader_cores)
                         else:
                             cpu_affinity = nullcontext()
-                        if args.profile and device == 'xpu':
-                            profile = xpu_profiler()
+                        if args.profile and args.device == 'xpu':
+                            profile = xpu_profiler(args.export_chrome_trace)
                         elif args.profile:
                             profile = torch_profile(args.export_chrome_trace,
                                 csv_data, args.write_csv)
