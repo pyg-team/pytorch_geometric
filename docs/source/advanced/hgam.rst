@@ -18,7 +18,7 @@ The trimming applied by HGAM is possible as the nodes of the subgraph built via 
 The BFS ordering of nodes in a mini-batch allows for incremental trimming (reduction) of the adjacency matrix of the subgraph.
 This progressive trimming is done in a computational convenient manner thanks to the BFS ordering, that causes the nodes more distant from the seed nodes to be appear farther away in the list of ordered nodes.
 
-To support this trimming and implement it effectively, the :class:`~torch_geometric.loaderl.NeighborLoader` implementation in :pyg:`PyG` and in :pyg-lib:`pyg-lib` additionally return the number of nodes and edges sampled in hop.
+To support this trimming and implement it effectively, the :class:`~torch_geometric.loaderl.NeighborLoader` implementation in :pyg:`PyG` and in :pyg:`pyg-lib` additionally return the number of nodes and edges sampled in hop.
 This information allows for fast manipulation of the adjacency matrix, which in turns lead to great computation reduction.
 The :class:`~torch_geometric.loader.NeighborLoader` prepares this metadata via the dedicated attributes :obj:`num_sampled_nodes` and :obj:`num_sampled_edges`.
 It can be accessed from the :class:`~torch_geometric.data.Batch` object returned for both homogeneous and heterogeneous graphs.
