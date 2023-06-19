@@ -223,7 +223,7 @@ class LinkEncoder(torch.nn.Module):
             hidden_channels,
         )
 
-        # temporal information summariser
+        # MLP that summarises temporal embedding.
         self.mlp_mixer = _MLPMixer(
             num_tokens=K,
             in_channels=hidden_channels,
