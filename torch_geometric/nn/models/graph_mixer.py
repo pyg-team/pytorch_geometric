@@ -65,7 +65,7 @@ class _MLPMixer(torch.nn.Module):
         dropout (float, optional): The dropout probability. (default: :obj:`0`)
     """
     def __init__(self, num_tokens: int, in_channels: int, out_channels: int,
-                 dropout: float = 0) -> None:
+                 dropout: float = 0):
         super().__init__()
         self.num_tokens = num_tokens
         self.in_channels = in_channels
