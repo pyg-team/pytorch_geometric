@@ -45,6 +45,12 @@ class HypergraphConv(MessagePassing):
         out_channels (int): Size of each output sample.
         use_attention (bool, optional): If set to :obj:`True`, attention
             will be added to this layer. (default: :obj:`False`)
+        attention_mode (str, optional): The mode on how to compute attention.
+            If set to :obj:`"node"`, will compute attention scores of nodes
+            within all nodes belonging to the same hyperedge.
+            If set to :obj:`"edge"`, will compute attention scores of nodes
+            across all edges holding this node belongs to.
+            (default: :obj:`"node"`)
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
         concat (bool, optional): If set to :obj:`False`, the multi-head
@@ -68,15 +74,28 @@ class HypergraphConv(MessagePassing):
           hyperedge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-    def __init__(self, in_channels, out_channels, use_attention=False, heads=1,
-                 concat=True, negative_slope=0.2, dropout=0, bias=True,
-                 **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        use_attention: bool = False,
+        attention_mode: str = 'node',
+        heads: int = 1,
+        concat: bool = True,
+        negative_slope: float = 0.2,
+        dropout: float = 0,
+        bias: bool = True,
+        **kwargs,
+    ):
         kwargs.setdefault('aggr', 'add')
         super().__init__(flow='source_to_target', node_dim=0, **kwargs)
+
+        assert attention_mode in ['node', 'edge']
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.use_attention = use_attention
+        self.attention_mode = attention_mode
 
         if self.use_attention:
             self.heads = heads
@@ -154,7 +173,10 @@ class HypergraphConv(MessagePassing):
             x_j = hyperedge_attr[hyperedge_index[1]]
             alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
             alpha = F.leaky_relu(alpha, self.negative_slope)
-            alpha = softmax(alpha, hyperedge_index[0], num_nodes=x.size(0))
+            if self.attention_mode == 'node':
+                alpha = softmax(alpha, hyperedge_index[1], num_nodes=x.size(0))
+            else:
+                alpha = softmax(alpha, hyperedge_index[0], num_nodes=x.size(0))
             alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
         D = scatter(hyperedge_weight[hyperedge_index[1]], hyperedge_index[0],
