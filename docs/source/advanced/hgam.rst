@@ -1,43 +1,34 @@
-Hierarchical Graph Adjacency Matrix (HGAM)
-==========================================
+Hierarchical Neighborhood Sampling
+==================================
 
-HGAM it is a technique available to :pyg:`PyG` (as detailed in the paper… <place holder for the link to the paper on the Arxiv>) users which progressively trims the adjacency matrix of the graph of the batch being fed into a GNN. It works seamlessly across several models, basically reducing the amount of compute necessary to generate the representations for the seed node of the given batch.
-The seed nodes are indeed the nodes selected initially by the dataloader, and for which the sampling procedure builds a subgraph starting from those seed nodes.
-The batch graph thus obtained is typically fed as it is into the GNN training process, which would naively run message passing at all depths and build representations at all depths for all nodes included in the initial batch graph.
+One of the design principles of :pyg:`PyG` is that models and data loading routines should be exchangeable to allow for flexible GNN and data loading experimentation.
+As such, models can usually be written in a data loading agnostic fashion, independent of whether one applies full-batch or mini-batch training strategies via, *e.g.*, :class:`~torch_geometric.loader.DataLoader`, :class:`~torch_geometric.loader.NeighborLoader` or :class:`~torch_geometric.loader.ClusterLoader`.
+However, in some scenarios, this flexibility comes at the cost of performance, as the model cannot exploit special characteristics of the underyling data routine.
+One such limitation is that a GNN trained with the :class:`~torch_geometric.loader.NeighborLoader` routine iteratively builds representations for *all* nodes at *all* depths of the network, although nodes sampled in later hops do not contribute to the node representations of seed nodes in later GNN layers anymore, thus performing useless computation.
 
-Crucially, HGAM recognizes that all this computation is not necessary to generate the final representations for the seed nodes (which are the real target of the batch computation); HGAM allows for every layer of the GNN to compute only the representations of the nodes that are necessary for that layer, leading to a reduction of the computation and a speed up of the training process that grows with the depth of the GNN being considered.
-This is achieved in practice by trimming the adjacency matrix and the various features matrix as the computation proceeds throughout the GNN layers, in line with the fact that in order to compute the representation for the seed nodes (also called target nodes), from which the batch subgraph was build via sampling methods, the depth of the relevant neighborhood shrinks as we proceed through the layers of the GNN.
-The trimming applied by HGAM is possible as the nodes of the subgraph built via sampling are ordered according to a BFS (Breadth First Search) strategy, meaning that the adjacency matrix rows and columns refer to an node ordering that starts with the seed nodes (in any order) followed by the 1-hop neighbors of the first seed node, followed by the 1-hop sampled neighbors of the second seed node and so on.
-After the 1-hop neighbors have been all listed, then the 1-hop neighbors of the first 1-hop neighbors of the first seed node will be added, and so on with the same logic for all required depths, according to the number of layers of the GNN.
+*Hierarchical Neighborhood Sampling* or *Hierarchical Graph Adjacency Matrix (HGAM)* is a technique available in :pyg:`PyG` to eliminate this overhead and speeds up training and inference in mini-batch GNNs.
+Its main idea is to progressively trim the adjacency matrix of the returned subgraph before inputting it to each GNN layer.
+It works seamlessly across several models, basically reducing the amount of compute necessary to generate the representations for the seed node of the given mini-batch.
 
-To support this trimming and implement it effectively, the neighbor loader implemntation in :pyg:`Pyg` and in :pyg-lib:`pyg-lib` has been modified in such a way that returns a set of metadata on the sampled graph that help the trimming procedure.
+Crucially, HGAM recognizes that the computation of the final node representations is only necessary for the seed nodes (which are the real target of the batch computation).
+Thus, HGAM allows for every layer of the GNN to compute only the representations of the nodes that are necessary for that layer, leading to a reduction of the computation and a speed up of the training process that grows with the depth of the GNN being considered.
+In practice, this is achieved **trimming the adjacency matrix** and the various **features matrices** as the computation proceeds throughout the GNN layers.
+This is in line with the fact that in order to compute the representation for the seed/target nodes (from which the batch subgraph was build via sampling methods), the depth of the relevant neighborhood shrinks as we proceed through the layers of the GNN.
+The trimming applied by HGAM is possible as the nodes of the subgraph built via sampling are ordered according to a *Breadth First Search (BFS)* strategy, meaning that the rows and columns of the adjacency matrix refer to a node ordering that starts with the seed nodes (in any order) followed by the 1-hop neighbors of the first seed node, followed by the 1-hop sampled neighbors of the second seed node and so on.
+The BFS ordering of nodes in a mini-batch allows for incremental trimming (reduction) of the adjacency matrix of the subgraph.
+This progressive trimming is done in a computational convenient manner thanks to the BFS ordering, that causes the nodes more distant from the seed nodes to be appear farther away in the list of ordered nodes.
+
+To support this trimming and implement it effectively, the :class:`~torch_geometric.loaderl.NeighborLoader` implementation in :pyg:`PyG` and in :pyg-lib:`pyg-lib` additionally return the number of nodes and edges sampled in hop.
+This information allows for fast manipulation of the adjacency matrix, which in turns lead to great computation reduction.
+The :class:`~torch_geometric.loader.NeighborLoader` prepares this metadata via the dedicated attributes :obj:`num_sampled_nodes` and :obj:`num_sampled_edges`.
+It can be accessed from the :class:`~torch_geometric.data.Batch` object returned for both homogenous and heterogeneous graphs.
+
+To sum up, HGAM is special data structure that enables efficient message passing computation in :class:`~torch_geometric.loader.NeighborLoader` scenarios.
+HGAM is implemented in :pyg:`PyG` and can be utilized via the special `:meth:`~torch_geometric.utils.trim_to_layer` functionality.
 HGAM is currently an option that :pyg:`PyG` users are free to switch on, or leave it off (current default).
 
-.. note::
-    To sum up, Hierarchical Graph Adjacency Matrix(HGAM) is special data structure that enables efficient message passing computation.
-    HGAM feature is implemented in :pyg:`PyG` and can be used by utilizing  :class:`~torch_geometric.loader.NeighborLoader` and special `trim_to_layer <https://github.com/pyg-team/pytorch_geometric/blob/master/torch_geometric/utils/trim_to_layer.py>`__ utils functionalities.
-
-
-How the BFS batch ordering allows to trim efficiently the adj matrix
---------------------------------------------------------------------
-
-BFS ordering of nodes in a batch allows for incremental trimming (reduction) of the adjacency matrix that describe the batch subgraph.
-This progressive trimming is done in a computational convenient manner thanks to the BFS ordering, that causes the nodes more distant from the seed nodes to be appear farther away in the list of ordered nodes.
-Thus creating an adjacency matrix that can be reduced by simply dropping rows and columns corresponding to the nodes that are no longer needed as the computation goes to the next GNN layer.
-
-
-New metadata retuned by pyg-lib neighbor sampler to support HGAM
------------------------------------------------------------------
-
-The new version of neighbor loader returns additional metadata, such as how many new nodes and new edges have been added to the graph representing the batch at each layer during the batch graph creation process done by the neighbor loader.
-This information allows for fast manipulation of the adjacency matrix, which in turns lead to great computation reduction.
-The NeighborLoader prepares needed meta-data structure for HGAM by default. It can be accessed from the batch object returned by NeighborLoader for both homogenous and heterogenous data.
-Dedicated HGAM fields, :obj:`num_sampled_nodes`` and :obj:`num_sampled_edges`, store number of sampled nodes/edges per particular hop.
-These metadata are not typically directly used by the PYG user, but are needed for the HGAM algorithm to work.
-
-
-HGAM usage
-----------
+Usage
+-----
 
 Here below some examples of how to use the NeighborLoader along with a fully functional example of HGAM utilization are provided.
 
@@ -243,10 +234,3 @@ Please see below how this can be done.
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
     train(trim=True)
-
-
-Additional References:
-----------------------
-
-- :pyg:`Pyg`  `documentation <https://pytorch-geometric.readthedocs.io/en/latest/>`__
-- <place holder for the link to the HGAM paper on the Arxiv>
