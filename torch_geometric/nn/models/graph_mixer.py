@@ -62,14 +62,14 @@ class _MLPMixer(torch.nn.Module):
         num_tokens (int): The number of tokens (patches) in each sample.
         in_channels (int): Input channels.
         out_channels (int): Output channels.
-        dropout (float, optional):
+        dropout (float, optional): The dropout probability. (default: :obj:`0`)
     """
     def __init__(
         self,
         num_tokens: int,
         in_channels: int,
         out_channels: int,
-        dropout: float,
+        dropout: float = 0
     ) -> None:
         super().__init__()
         self.num_tokens = num_tokens
