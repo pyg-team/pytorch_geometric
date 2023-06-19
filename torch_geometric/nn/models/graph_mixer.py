@@ -94,7 +94,7 @@ class _MLPMixer(torch.nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         """
         Args:
-            x (torch.Tensor): Tensor of size ``[N, num_tokens, in_channels]``
+            x (torch.Tensor): Tensor of size :obj:`[N, num_tokens, in_channels]`
 
         Returns:
             Tensor of size ``[N, out_channels]``
