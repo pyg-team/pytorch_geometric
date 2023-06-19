@@ -43,6 +43,12 @@ class LightGCN(torch.nn.Module):
         by :obj:`edge_index` while rankings or link probabilities are computed
         according to the edges specified by :obj:`edge_label_index`.
 
+    .. note::
+
+        For an example of using :class:`LightGCN`, see `examples/lightgcn.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        lightgcn.py>`_.
+
     Args:
         num_nodes (int): The number of nodes in the graph.
         embedding_dim (int): The dimensionality of node embeddings.
