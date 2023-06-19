@@ -201,7 +201,7 @@ class LinkEncoder(torch.nn.Module):
         time_channels: int,
         is_sorted: bool = False,
         dropout: float = 0.0,
-    ) -> None:
+    ):
         super().__init__()
         self.K = K
         self.in_channels = in_channels
