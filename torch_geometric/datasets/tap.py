@@ -1,6 +1,13 @@
+from typing import Callable, Optional, Tuple, Union
+
 import torch
-from torch_geometric.data import Data, DataLoader, InMemoryDataset, download_url
-from typing import Union, Tuple, Callable, Optional
+
+from torch_geometric.data import (
+    Data,
+    DataLoader,
+    InMemoryDataset,
+    download_url,
+)
 
 
 def read_npz(path):
@@ -18,9 +25,11 @@ def parse_npz(f):
     edge_attr_dir = torch.from_numpy(f['edge_attr_dir']).to(torch.float)
     edge_attr_ang = torch.from_numpy(f['edge_attr_ang']).to(torch.float)
     severity_labels = torch.from_numpy(f['severity_8labels']).to(torch.long)
-    edge_index = torch.from_numpy(f['edge_index']).to(torch.long).t().contiguous()
-    return Data(x=x, y=occur_labels, severity_labels=severity_labels, edge_index=edge_index,
-                edge_attr=edge_attr, edge_attr_dir=edge_attr_dir, edge_attr_ang=edge_attr_ang,
+    edge_index = torch.from_numpy(f['edge_index']).to(
+        torch.long).t().contiguous()
+    return Data(x=x, y=occur_labels, severity_labels=severity_labels,
+                edge_index=edge_index, edge_attr=edge_attr,
+                edge_attr_dir=edge_attr_dir, edge_attr_ang=edge_attr_ang,
                 coords=coords, cnt_labels=cnt_labels, crash_time=crash_time)
 
 
@@ -48,6 +57,7 @@ class TRAVELDataset(InMemoryDataset):
             being saved to disk. (default: :obj:`None`)
     """
     url = 'https://github.com/baixianghuang/travel/raw/main/TAP-city/{}.npz'
+
     # url = 'https://github.com/baixianghuang/travel/raw/main/TAP-state/{}.npz'
 
     def __init__(self, root: str, name: str,
