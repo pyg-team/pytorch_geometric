@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor, PairTensor
+from torch_geometric.utils import remove_single_hyperedge
 from torch_geometric.utils.mask import index_to_mask
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -324,3 +325,80 @@ def k_hop_subgraph(
         edge_index = node_idx[edge_index]
 
     return subset, edge_index, inv, edge_mask
+
+
+def hyper_subgraph(
+    subset: Union[Tensor, List[int]],
+    edge_index: Tensor,
+    edge_attr: OptTensor = None,
+    relabel_nodes: bool = False,
+    num_nodes: Optional[int] = None,
+    return_edge_mask: bool = False,
+) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
+    r"""Returns the induced subgraph of the hyper graph of`
+        :obj:`(edge_index, edge_attr) containing the nodes in :obj:`subset`.
+
+        Args:
+            subset (LongTensor, BoolTensor or [int]): The nodes to keep.
+            edge_index (LongTensor): The edge indices.
+            edge_attr (Tensor, optional): Edge weights or multi-dimensional
+                edge features. (default: :obj:`None`)
+            relabel_nodes (bool, optional): If set to :obj:`True`, the
+                resulting :obj:`edge_index` will be relabeled to hold
+                consecutive indices
+                starting from zero. (default: :obj:`False`)
+            num_nodes (int, optional): The number of nodes, *i.e.*
+                :obj:`max_val + 1` of :attr:`edge_index`.
+                (default: :obj:`None`)
+            return_edge_mask (bool, optional): If set to :obj:`True`, will
+                return the edge mask to filter out additional edge features.
+                (default: :obj:`False`)
+
+        :rtype: (:class:`LongTensor`, :class:`Tensor`)
+
+        Examples:
+
+            >>> edge_index = torch.tensor([[0, 1, 2, 1, 2, 3, 0, 2, 3],
+            ...                            [0, 0, 0, 1, 1, 1, 2, 2, 2]])
+            >>> edge_attr = torch.tensor([3, 2, 6])
+            >>> subset = torch.tensor([0, 3])
+            >>> subgraph(subset, edge_index, edge_attr)
+            (tensor([[0, 3],
+                    [2, 2]]),
+            tensor([ 6.]))
+
+            >>> subgraph(subset, edge_index, edge_attr, return_edge_mask=True)
+            (tensor([[0, 3],
+                    [2, 2]]),
+            tensor([ 6.]))
+            tensor([False, False, False, False, False, False,
+            True,  False, True]))
+        """
+
+    device = edge_index.device
+
+    if isinstance(subset, (list, tuple)):
+        subset = torch.tensor(subset, dtype=torch.long, device=device)
+
+    if subset.dtype != torch.bool:
+        num_nodes = maybe_num_nodes(edge_index, num_nodes)
+        node_mask = index_to_mask(subset, size=num_nodes)
+    else:
+        num_nodes = subset.size(0)
+        node_mask = subset
+
+    edge_mask = node_mask[edge_index[0]]
+    edge_mask, edge_index = remove_single_hyperedge(edge_mask, edge_index)
+    edge_attr = edge_attr[
+        edge_index[1].unique()] if edge_attr is not None else None
+
+    if relabel_nodes:
+        node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
+                               device=device)
+        node_idx[subset] = torch.arange(node_mask.sum().item(), device=device)
+        edge_index = node_idx[edge_index]
+
+    if return_edge_mask:
+        return edge_index, edge_attr, edge_mask
+    else:
+        return edge_index, edge_attr

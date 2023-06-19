@@ -15,7 +15,7 @@ from .loop import (contains_self_loops, remove_self_loops,
                    add_remaining_self_loops, get_self_loop_attr)
 from .isolated import contains_isolated_nodes, remove_isolated_nodes
 from .subgraph import (get_num_hops, subgraph, k_hop_subgraph,
-                       bipartite_subgraph)
+                       bipartite_subgraph, hyper_subgraph)
 from .homophily import homophily
 from .assortativity import assortativity
 from .get_laplacian import get_laplacian
@@ -51,6 +51,7 @@ from .tree_decomposition import tree_decomposition
 from .embedding import get_embeddings
 from .trim_to_layer import trim_to_layer
 from .train_test_split_edges import train_test_split_edges
+from .remove_single_hyperedge import remove_single_hyperedge
 
 __all__ = [
     'scatter',
@@ -81,6 +82,7 @@ __all__ = [
     'subgraph',
     'bipartite_subgraph',
     'k_hop_subgraph',
+    'hyper_subgraph',
     'homophily',
     'assortativity',
     'get_laplacian',
@@ -134,6 +136,7 @@ __all__ = [
     'get_embeddings',
     'trim_to_layer',
     'train_test_split_edges',
+    'remove_single_hyperedge',
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
