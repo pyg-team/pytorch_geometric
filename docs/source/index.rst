@@ -40,11 +40,11 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
 
    advanced/batching
    advanced/sparse_tensor
+   advanced/hgam
    advanced/jit
    advanced/remote
    advanced/graphgym
    advanced/cpu_affinity
-   advanced/hgam
 
 .. toctree::
    :maxdepth: 1
