@@ -2,6 +2,7 @@ from typing import Optional
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.nn import TemporalEncoding
@@ -89,7 +90,8 @@ class _MLPMixer(torch.nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         """
         Args:
-            x (torch.Tensor): Tensor of size :obj:`[N, num_tokens, in_channels]`
+            x (torch.Tensor): Features tensor of size
+                :obj:`[N, num_tokens, in_channels]`.
 
         Returns:
             Tensor of size :obj:`[N, out_channels]`.
@@ -97,23 +99,19 @@ class _MLPMixer(torch.nn.Module):
         # token mixing
         h = self.token_layer_norm(x).mT
         h = self.token_lin_1(h)
-        h = torch.nn.functional.gelu(h)
-        h = torch.nn.functional.dropout(h, p=self.dropout,
-                                        training=self.training)
+        h = F.gelu(h)
+        h = F.dropout(h, p=self.dropout, training=self.training)
         h = self.token_lin_2(h)
-        h = torch.nn.functional.dropout(h, p=self.dropout,
-                                        training=self.training)
+        h = F.dropout(h, p=self.dropout, training=self.training)
         h_token = h.mT + x
 
         # channel mixing
         h = self.channel_layer_norm(h_token)
         h = self.channel_lin_1(h)
-        h = torch.nn.functional.gelu(h)
-        h = torch.nn.functional.dropout(h, p=self.dropout,
-                                        training=self.training)
+        h = F.gelu(h)
+        h = F.dropout(h, p=self.dropout, training=self.training)
         h = self.channel_lin_2(h)
-        h = torch.nn.functional.dropout(h, p=self.dropout,
-                                        training=self.training)
+        h = F.dropout(h, p=self.dropout, training=self.training)
         h_channel = h + h_token
 
         # head
