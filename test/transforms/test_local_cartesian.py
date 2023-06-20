@@ -5,7 +5,7 @@ from torch_geometric.transforms import LocalCartesian
 
 
 def test_local_cartesian():
-    transform = LocalCartesian(interval=[0, 1])
+    transform = LocalCartesian()
     assert str(transform) == 'LocalCartesian()'
 
     pos = torch.Tensor([[-1, 0], [0, 0], [2, 0]])
@@ -14,7 +14,6 @@ def test_local_cartesian():
     data = Data(edge_index=edge_index, pos=pos)
 
     data = transform(data)
-
     assert len(data) == 3
     assert data.pos.tolist() == pos.tolist()
     assert data.edge_index.tolist() == edge_index.tolist()
