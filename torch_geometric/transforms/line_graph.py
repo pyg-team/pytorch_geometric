@@ -33,7 +33,8 @@ class LineGraph(BaseTransform):
         interval ((float, float), optional): A tuple specifying the lower and
             upper bound for normalization. (default: :obj:`(0.0, 1.0)`)
     """
-    def __init__(self, force_directed: bool = False, interval: Tuple[float, float] = (0.0, 1.0)):
+    def __init__(self, force_directed: bool = False,
+                 interval: Tuple[float, float] = (0.0, 1.0)):
         self.force_directed = force_directed
         self.interval = interval
 
