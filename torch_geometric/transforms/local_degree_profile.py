@@ -19,10 +19,15 @@ class LocalDegreeProfile(BaseTransform):
 
     to the node features, where :math:`DN(i) = \{ \deg(j) \mid j \in
     \mathcal{N}(i) \}`.
+
+    Args:
+        interval ((float, float), optional): A tuple specifying the lower and
+            upper bound for normalization. (default: :obj:`(0.0, 1.0)`)
     """
-    def __init__(self):
+    def __init__(self, interval: Tuple[float, float] = (0.0, 1.0)):
         from torch_geometric.nn.aggr.fused import FusedAggregation
         self.aggr = FusedAggregation(['min', 'max', 'mean', 'std'])
+        self.interval = interval
 
     def forward(self, data: Data) -> Data:
         row, col = data.edge_index
@@ -33,7 +38,11 @@ class LocalDegreeProfile(BaseTransform):
 
         if data.x is not None:
             data.x = data.x.view(-1, 1) if data.x.dim() == 1 else data.x
+
+            length = self.interval[1] - self.interval[0]
+            center = (self.interval[0] + self.interval[1]) / 2
             data.x = torch.cat([data.x] + xs, dim=-1)
+            data.x = length * data.x / data.x.max(dim=0)[0] + center
         else:
             data.x = torch.cat(xs, dim=-1)
 
