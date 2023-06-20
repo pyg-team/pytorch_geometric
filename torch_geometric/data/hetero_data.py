@@ -784,7 +784,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             sizes_dict = defaultdict(list)
             for store in stores:
                 for key, value in store.items():
-                    if key in ['edge_index', 'adj', 'adj_t']:
+                    if key in [
+                            'edge_index', 'edge_label_index', 'adj', 'adj_t'
+                    ]:
                         continue
                     if isinstance(value, Tensor):
                         dim = self.__cat_dim__(key, value, store)
@@ -885,6 +887,16 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             dim = self.__cat_dim__(key, values[0], self.edge_stores[0])
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
+
+        if len(self.edge_label_index_dict) > 0:
+            edge_label_index_dict = self.edge_label_index_dict
+            for edge_type, edge_label_index in edge_label_index_dict.items():
+                edge_label_index = edge_label_index.clone()
+                edge_label_index[0] += node_slices[edge_type[0]][0]
+                edge_label_index[1] += node_slices[edge_type[-1]][0]
+                edge_label_index_dict[edge_type] = edge_label_index
+            data.edge_label_index = torch.cat(
+                list(edge_label_index_dict.values()), dim=-1)
 
         if add_node_type:
             sizes = [offset[1] - offset[0] for offset in node_slices.values()]

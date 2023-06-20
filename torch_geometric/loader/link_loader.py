@@ -172,8 +172,8 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
 
         self.input_data = EdgeSamplerInput(
             input_id=input_id,
-            row=edge_label_index[0].clone(),
-            col=edge_label_index[1].clone(),
+            row=edge_label_index[0],
+            col=edge_label_index[1],
             label=edge_label,
             time=edge_label_time,
             input_type=input_type,
