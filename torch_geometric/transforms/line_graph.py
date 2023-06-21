@@ -30,13 +30,9 @@ class LineGraph(BaseTransform):
     Args:
         force_directed (bool, optional): If set to :obj:`True`, the graph will
             be always treated as a directed graph. (default: :obj:`False`)
-        interval ((float, float), optional): A tuple specifying the lower and
-            upper bound for normalization. (default: :obj:`(0.0, 1.0)`)
     """
-    def __init__(self, force_directed: bool = False,
-                 interval: Tuple[float, float] = (0.0, 1.0)):
+    def __init__(self, force_directed: bool = False):
         self.force_directed = force_directed
-        self.interval = interval
 
     def forward(self, data: Data) -> Data:
         N = data.num_nodes
@@ -95,10 +91,7 @@ class LineGraph(BaseTransform):
             joints = coalesce(joints, num_nodes=N)
 
             if edge_attr is not None:
-                length = self.interval[1] - self.interval[0]
-                center = (self.interval[0] + self.interval[1]) / 2
                 data.x = scatter(edge_attr, i, dim=0, dim_size=N, reduce='sum')
-                data.x = length * data.x / data.x.max() + center
 
             data.edge_index = joints
             data.num_nodes = edge_index.size(1) // 2
