@@ -62,14 +62,14 @@ def test_latest_k_edge_attr():
 
     k = 2
     out = get_latest_k_edge_attr(k, edge_index, edge_attr, edge_time,
-                                 num_nodes=3, is_sorted=False)
+                                 num_nodes=3)
     expected = torch.tensor([[[1], [3]], [[4], [6]], [[7], [0]]])
     assert out.size() == (3, 2, 1)
     assert torch.equal(out, expected)
 
     k = 1
     out = get_latest_k_edge_attr(k, edge_index, edge_attr, edge_time,
-                                 num_nodes=3, is_sorted=False)
+                                 num_nodes=3)
     expected = torch.tensor([[[1]], [[4]], [[7]]])
     assert out.size() == (3, 1, 1)
     assert torch.equal(out, expected)

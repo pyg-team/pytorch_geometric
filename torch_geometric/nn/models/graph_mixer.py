@@ -137,7 +137,7 @@ def get_latest_k_edge_attr(
     edge_attr: Tensor,
     edge_time: Tensor,
     num_nodes: int,
-    is_sorted: bool,
+    is_sorted: bool = False,
 ) -> Tensor:
     r"""Returns the latest :obj:`k` incoming edge attributes by
     :obj:`edge_time` for each node.
