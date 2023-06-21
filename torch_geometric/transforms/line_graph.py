@@ -92,7 +92,6 @@ class LineGraph(BaseTransform):
 
             if edge_attr is not None:
                 data.x = scatter(edge_attr, i, dim=0, dim_size=N, reduce='sum')
-
             data.edge_index = joints
             data.num_nodes = edge_index.size(1) // 2
 
