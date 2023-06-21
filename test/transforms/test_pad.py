@@ -7,7 +7,7 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
-from torch_geometric.transforms import Pad
+from torch_geometric.transforms import AddRemainingSelfLoops, Pad
 from torch_geometric.transforms.pad import (
     AttrNamePadding,
     EdgeTypePadding,
@@ -113,12 +113,12 @@ def _check_homo_data_edges(
     assert padded.edge_index.shape[1] == max_num_edges
 
     compare_pad_start_idx = original.num_edges
-    expected_node = original.num_nodes
 
     # Check values in padded area.
-    assert all(
-        padded.edge_index[0, i] == padded.edge_index[1, i] == expected_node
-        for i in range(compare_pad_start_idx, max_num_edges))
+    assert all(padded.edge_index[0, i] == padded.edge_index[1, i]
+               for i in range(compare_pad_start_idx, max_num_edges))
+    assert all(original.num_nodes <= padded.edge_index[0, i] < padded.num_nodes
+               for i in range(compare_pad_start_idx, max_num_edges))
     # Check values in non-padded area.
     assert torch.equal(original.edge_index,
                        padded.edge_index[:, :compare_pad_start_idx])
@@ -255,12 +255,12 @@ def _check_hetero_data_edges(
             # Check padded area values.
             src_nodes = original[edge_type[0]].num_nodes
             assert all(
-                i == src_nodes
+                src_nodes <= i < padded[edge_type[0]].num_nodes
                 for i in torch.flatten(padded_tensor[0,
                                                      compare_pad_start_idx:]))
             dst_nodes = original[edge_type[2]].num_nodes
             assert all(
-                i == dst_nodes
+                dst_nodes <= i < padded[edge_type[2]].num_nodes
                 for i in torch.flatten(padded_tensor[1,
                                                      compare_pad_start_idx:]))
 
@@ -602,3 +602,104 @@ def test_edge_padding_invalid():
 
     with pytest.raises(ValueError, match="got 4"):
         EdgeTypePadding({('v1', 'e2', 'v1', 'v2'): 10.0})
+
+
+def test_all_padding_self_loops_too_few_edges():
+    data = fake_data()
+    pad = Pad(data.num_nodes + 2, data.num_edges + 1,
+              all_padding_self_loops=True)
+    with pytest.raises(ValueError, match="would need to create 2 self-loops"):
+        pad(data)
+
+
+def test_all_padding_self_loops_too_few_nodes():
+    data = fake_data()
+    pad = Pad(data.num_nodes + 1, data.num_edges + 5,
+              all_padding_self_loops=True)
+    with pytest.raises(ValueError,
+                       match="the number of padding nodes must be at least 2"):
+        pad(data)
+
+    # Make sure the exception is not raised without the
+    # `all_padding_self_loops` option.
+    pad = Pad(data.num_nodes + 1, data.num_edges + 5)
+    pad(data)
+
+
+def _validate_edge_index_all_padding_self_loops(
+    edge_index: torch.Tensor,
+    num_nodes_before: int,
+    num_nodes_after: int,
+    num_edges_before: int,
+    num_edges_after: int,
+) -> None:
+    padding_edges = []
+    for edge_idx in range(num_edges_before, num_edges_after):
+        padding_edges.append(
+            (int(edge_index[0][edge_idx]), int(edge_index[1][edge_idx])))
+    padding_loops = [e for e in padding_edges if e[0] == e[1]]
+    # Check if there are no duplicates in padding self-loops.
+    assert len(set(padding_loops)) == len(padding_loops)
+
+    # Check if there is a padding self-loop for every padding vertex.
+    expected_self_loops = \
+        [(v, v) for v in range(num_nodes_before, num_nodes_after)]
+    assert set(padding_loops) == set(expected_self_loops)
+
+    # Check if padding edges that are not self-loops are all representing an
+    # edge between the first and second padding nodes.
+    padding_edges_not_loops = [e for e in padding_edges if e[0] != e[1]]
+    if padding_edges_not_loops:
+        expected_padding_edges = [(num_nodes_before, num_nodes_before + 1)]
+        assert set(padding_edges_not_loops) == set(expected_padding_edges)
+
+
+def test_all_padding_self_loops_data():
+    data = fake_data()
+    original = deepcopy(data)
+    pad = Pad(100, 400, all_padding_self_loops=True)
+    padded = pad(data)
+
+    _validate_edge_index_all_padding_self_loops(padded.edge_index,
+                                                original.num_nodes,
+                                                padded.num_nodes,
+                                                original.num_edges,
+                                                padded.num_edges)
+
+
+def test_all_padding_self_loops_hetero_data():
+    data = fake_hetero_data()
+    data_before = deepcopy(data)
+    pad = Pad(100, 400, all_padding_self_loops=True)
+    padded = pad(data)
+
+    for src_node_type, edge_type, dst_node_type in data_before.edge_types:
+        # Self-loops require the same src and dst node type.
+        if src_node_type != dst_node_type:
+            continue
+        node_type = src_node_type
+
+        node_store_before = data_before[node_type]
+        node_store_after = padded[node_type]
+        edge_store_before = data_before[node_type, edge_type, node_type]
+        edge_store_after = padded[node_type, edge_type, node_type]
+
+        _validate_edge_index_all_padding_self_loops(
+            edge_store_after.edge_index, node_store_before.num_nodes,
+            node_store_after.num_nodes, edge_store_before.num_edges,
+            edge_store_after.num_edges)
+
+
+def test_add_remaining_self_loops_doesnt_break_padded_data():
+    data = fake_data()
+    with_loops = AddRemainingSelfLoops()(data)
+    padded = Pad(100, 420, all_padding_self_loops=True)(with_loops)
+    original = deepcopy(padded)
+
+    # Make sure that padding edges are generated in such a way that adding
+    # remainig self-loops doesn't change tensor shapes, since all the
+    # self-loops were already added.
+    after_add_loops_again = AddRemainingSelfLoops()(padded)
+    assert after_add_loops_again.num_nodes == original.num_nodes
+    assert after_add_loops_again.num_edges == original.num_edges
+    assert after_add_loops_again.edge_index.shape == original.edge_index.shape

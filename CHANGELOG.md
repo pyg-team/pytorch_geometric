@@ -68,6 +68,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Added an optional `all_padding_self_loops` argument to `Pad` transform ([#7227](https://github.com/pyg-team/pytorch_geometric/pull/7227))
 - Added a `num_edges` parameter to the forward method of `HypergraphConv` ([#7560](https://github.com/pyg-team/pytorch_geometric/pull/7560))
 - Fixed `get_mesh_laplacian` for `normalization="sym"` ([#7544](https://github.com/pyg-team/pytorch_geometric/pull/7544))
 - Use `dim_size` to initialize output size of the `EquilibriumAggregation` layer ([#7530](https://github.com/pyg-team/pytorch_geometric/pull/7530))
