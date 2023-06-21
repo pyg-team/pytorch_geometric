@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import torch
 
@@ -10,27 +10,31 @@ from torch_geometric.transforms import BaseTransform
 @functional_transform('cartesian')
 class Cartesian(BaseTransform):
     r"""Saves the relative Cartesian coordinates of linked nodes in its edge
-    attributes (functional name: :obj:`cartesian`).
+    attributes (functional name: :obj:`cartesian`). Each coordinate gets
+    globally normalized to a specified interval (:math:`[0, 1]` by default).
 
     Args:
         norm (bool, optional): If set to :obj:`False`, the output will not be
-            normalized to the interval :math:`{[0, 1]}^D`.
-            (default: :obj:`True`)
+            normalized. (default: :obj:`True`)
         max_value (float, optional): If set and :obj:`norm=True`, normalization
             will be performed based on this value instead of the maximum value
             found in the data. (default: :obj:`None`)
         cat (bool, optional): If set to :obj:`False`, all existing edge
             attributes will be replaced. (default: :obj:`True`)
+        interval ((float, float), optional): A tuple specifying the lower and
+            upper bound for normalization. (default: :obj:`(0.0, 1.0)`)
     """
     def __init__(
-        self,
-        norm: bool = True,
-        max_value: Optional[float] = None,
-        cat: bool = True,
+            self,
+            norm: bool = True,
+            max_value: Optional[float] = None,
+            cat: bool = True,
+            interval: Tuple[float, float] = (0.0, 1.0),
     ):
         self.norm = norm
         self.max = max_value
         self.cat = cat
+        self.interval = interval
 
     def forward(self, data: Data) -> Data:
         (row, col), pos, pseudo = data.edge_index, data.pos, data.edge_attr
@@ -40,7 +44,10 @@ class Cartesian(BaseTransform):
 
         if self.norm and cart.numel() > 0:
             max_value = cart.abs().max() if self.max is None else self.max
-            cart = cart / (2 * max_value) + 0.5
+
+            length = self.interval[1] - self.interval[0]
+            center = (self.interval[0] + self.interval[1]) / 2
+            cart = length * cart / (2 * max_value) + center
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
