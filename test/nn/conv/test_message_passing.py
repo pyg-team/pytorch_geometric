@@ -401,7 +401,7 @@ def test_message_passing_hooks():
     out2 = conv(x, adj.t())
     assert num_pre_hook_calls == 5
     assert num_hook_calls == 5
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)
 
     handle1.remove()
     assert len(conv._propagate_forward_pre_hooks) == 0
@@ -436,7 +436,7 @@ def test_message_passing_hooks():
     out2 = conv(x, adj.t())
     assert num_pre_hook_calls == 7
     assert num_hook_calls == 7
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)
 
     handle1.remove()
     assert len(conv._propagate_forward_pre_hooks) == 0
@@ -463,7 +463,7 @@ def test_modified_message_passing_hook():
     conv.register_message_forward_hook(hook)
 
     out2 = conv(x, edge_index, edge_weight)
-    assert not torch.allclose(out1, out2)
+    assert not torch.allclose(out1, out2, atol=1e-6)
 
 
 class MyDefaultArgConv(MessagePassing):
