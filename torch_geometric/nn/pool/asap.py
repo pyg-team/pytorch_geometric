@@ -136,7 +136,7 @@ class ASAPooling(torch.nn.Module):
 
         # Cluster selection.
         fitness = self.gnn_score(x, edge_index).sigmoid().view(-1)
-        perm = self.select(fitness, batch)
+        perm = self.select(fitness, batch).node_index
         x = x[perm] * fitness[perm].view(-1, 1)
         batch = batch[perm]
 

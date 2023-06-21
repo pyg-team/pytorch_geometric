@@ -96,7 +96,7 @@ class PANPooling(torch.nn.Module):
             score = self.nonlinearity(score)
         else:
             score = softmax(score, batch)
-        perm = self.select(score, batch)
+        perm = self.select(score, batch).node_index
         x = x[perm] * score[perm].view(-1, 1)
         x = self.multiplier * x if self.multiplier != 1 else x
 
