@@ -22,7 +22,7 @@ class MoleculeNet(InMemoryDataset):
         root (str): Root directory where the dataset should be saved.
         name (str): The name of the dataset (:obj:`"ESOL"`, :obj:`"FreeSolv"`,
             :obj:`"Lipo"`, :obj:`"PCBA"`, :obj:`"MUV"`, :obj:`"HIV"`,
-            :obj:`"BACE"`, :obj:`"BBPB"`, :obj:`"Tox21"`, :obj:`"ToxCast"`,
+            :obj:`"BACE"`, :obj:`"BBBP"`, :obj:`"Tox21"`, :obj:`"ToxCast"`,
             :obj:`"SIDER"`, :obj:`"ClinTox"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
@@ -91,7 +91,7 @@ class MoleculeNet(InMemoryDataset):
           - ~73.7
           - 9
           - 1
-        * - BBPB
+        * - BBBP
           - 2,050
           - ~23.9
           - ~51.6
@@ -136,7 +136,7 @@ class MoleculeNet(InMemoryDataset):
                 slice(0, 17)],
         'hiv': ['HIV', 'HIV.csv', 'HIV', 0, -1],
         'bace': ['BACE', 'bace.csv', 'bace', 0, 2],
-        'bbbp': ['BBPB', 'BBBP.csv', 'BBBP', -1, -2],
+        'bbbp': ['BBBP', 'BBBP.csv', 'BBBP', -1, -2],
         'tox21': ['Tox21', 'tox21.csv.gz', 'tox21', -1,
                   slice(0, 12)],
         'toxcast':

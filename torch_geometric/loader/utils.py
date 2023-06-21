@@ -1,7 +1,8 @@
 import copy
+import logging
 import math
 from collections.abc import Sequence
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -327,3 +328,12 @@ def get_edge_label_index(
             return edge_type, _get_edge_index(edge_type)
 
         return edge_type, edge_label_index
+
+
+def infer_filter_per_worker(data: Any) -> bool:
+    out = True
+    if isinstance(data, (Data, HeteroData)) and data.is_cuda:
+        out = False
+    logging.debug(f"Inferred 'filter_per_worker={out}' option for feature "
+                  f"fetching routines of the data loader")
+    return out

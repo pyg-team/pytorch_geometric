@@ -30,7 +30,7 @@ class RandomScale(BaseTransform):
         assert isinstance(scales, (tuple, list)) and len(scales) == 2
         self.scales = scales
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         scale = random.uniform(*self.scales)
         data.pos = data.pos * scale
         return data

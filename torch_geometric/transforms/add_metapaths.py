@@ -129,7 +129,7 @@ class AddMetaPaths(BaseTransform):
         self.max_sample = max_sample
         self.weighted = weighted
 
-    def __call__(self, data: HeteroData) -> HeteroData:
+    def forward(self, data: HeteroData) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
         data.metapath_dict = {}
 
@@ -244,7 +244,7 @@ class AddRandomMetaPaths(BaseTransform):
         assert len(walks_per_node) == len(metapaths)
         self.walks_per_node = walks_per_node
 
-    def __call__(self, data: HeteroData) -> HeteroData:
+    def forward(self, data: HeteroData) -> HeteroData:
         edge_types = data.edge_types  # save original edge types
         data.metapath_dict = {}
 

@@ -11,24 +11,24 @@ MISSING = '???'
 
 
 @torch.jit._overload
-def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):
+def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
     # type: (Tensor, str, Optional[int], bool) -> Tensor  # noqa
     pass
 
 
 @torch.jit._overload
-def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):
+def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
     # type: (Tensor, Optional[Tensor], Optional[int], bool) -> Tuple[Tensor, Optional[Tensor]]  # noqa
     pass
 
 
 @torch.jit._overload
-def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):
+def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
     # type: (Tensor, List[Tensor], Optional[int], bool) -> Tuple[Tensor, List[Tensor]]  # noqa
     pass
 
 
-def sort_edge_index(
+def sort_edge_index(  # noqa
     edge_index: Tensor,
     edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,

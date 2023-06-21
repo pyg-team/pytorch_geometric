@@ -11,16 +11,14 @@ from torch_geometric.nn import DenseSAGEConv, dense_diff_pool
 
 max_nodes = 150
 
-
-class MyFilter:
-    def __call__(self, data):
-        return data.num_nodes <= max_nodes
-
-
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
                 'PROTEINS_dense')
-dataset = TUDataset(path, name='PROTEINS', transform=T.ToDense(max_nodes),
-                    pre_filter=MyFilter())
+dataset = TUDataset(
+    path,
+    name='PROTEINS',
+    transform=T.ToDense(max_nodes),
+    pre_filter=lambda data: data.num_nodes <= max_nodes,
+)
 dataset = dataset.shuffle()
 n = (len(dataset) + 9) // 10
 test_dataset = dataset[:n]

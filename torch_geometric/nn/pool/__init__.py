@@ -1,5 +1,8 @@
+import warnings
+from typing import Optional
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.typing import OptTensor
 
 from .asap import ASAPooling
@@ -13,6 +16,7 @@ from .pan_pool import PANPooling
 from .sag_pool import SAGPooling
 from .topk_pool import TopKPooling
 from .voxel_grid import voxel_grid
+from .approx_knn import approx_knn, approx_knn_graph
 
 try:
     import torch_cluster
@@ -20,8 +24,13 @@ except ImportError:
     torch_cluster = None
 
 
-def fps(x: Tensor, batch: OptTensor = None, ratio: float = 0.5,
-        random_start: bool = True) -> Tensor:
+def fps(
+    x: Tensor,
+    batch: OptTensor = None,
+    ratio: float = 0.5,
+    random_start: bool = True,
+    batch_size: Optional[int] = None,
+) -> Tensor:
     r"""A sampling algorithm from the `"PointNet++: Deep Hierarchical Feature
     Learning on Point Sets in a Metric Space"
     <https://arxiv.org/abs/1706.02413>`_ paper, which iteratively samples the
@@ -45,15 +54,26 @@ def fps(x: Tensor, batch: OptTensor = None, ratio: float = 0.5,
         ratio (float, optional): Sampling ratio. (default: :obj:`0.5`)
         random_start (bool, optional): If set to :obj:`False`, use the first
             node in :math:`\mathbf{X}` as starting node. (default: obj:`True`)
+        batch_size (int, optional): The number of examples :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
     """
-    return torch_cluster.fps(x, batch, ratio, random_start)
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.fps(x, batch, ratio, random_start)
+    return torch_cluster.fps(x, batch, ratio, random_start, batch_size)
 
 
-def knn(x: Tensor, y: Tensor, k: int, batch_x: OptTensor = None,
-        batch_y: OptTensor = None, cosine: bool = False,
-        num_workers: int = 1) -> Tensor:
+def knn(
+    x: Tensor,
+    y: Tensor,
+    k: int,
+    batch_x: OptTensor = None,
+    batch_y: OptTensor = None,
+    cosine: bool = False,
+    num_workers: int = 1,
+    batch_size: Optional[int] = None,
+) -> Tensor:
     r"""Finds for each element in :obj:`y` the :obj:`k` nearest points in
     :obj:`x`.
 
@@ -86,15 +106,28 @@ def knn(x: Tensor, y: Tensor, k: int, batch_x: OptTensor = None,
         num_workers (int, optional): Number of workers to use for computation.
             Has no effect in case :obj:`batch_x` or :obj:`batch_y` is not
             :obj:`None`, or the input lies on the GPU. (default: :obj:`1`)
+        batch_size (int, optional): The number of examples :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
     """
-    return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers)
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine,
+                                 num_workers)
+    return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers,
+                             batch_size)
 
 
-def knn_graph(x: Tensor, k: int, batch: OptTensor = None, loop: bool = False,
-              flow: str = 'source_to_target', cosine: bool = False,
-              num_workers: int = 1) -> Tensor:
+def knn_graph(
+    x: Tensor,
+    k: int,
+    batch: OptTensor = None,
+    loop: bool = False,
+    flow: str = 'source_to_target',
+    cosine: bool = False,
+    num_workers: int = 1,
+    batch_size: Optional[int] = None,
+) -> Tensor:
     r"""Computes graph edges to the nearest :obj:`k` points.
 
     .. code-block:: python
@@ -124,16 +157,33 @@ def knn_graph(x: Tensor, k: int, batch: OptTensor = None, loop: bool = False,
         num_workers (int, optional): Number of workers to use for computation.
             Has no effect in case :obj:`batch` is not :obj:`None`, or the input
             lies on the GPU. (default: :obj:`1`)
+        batch_size (int, optional): The number of examples :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
     """
+    if batch is not None and x.device != batch.device:
+        warnings.warn("Input tensor 'x' and 'batch' are on different devices "
+                      "in 'knn_graph'. Performing blocking device transfer")
+        batch = batch.to(x.device)
+
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
+                                       num_workers)
     return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
-                                   num_workers)
+                                   num_workers, batch_size)
 
 
-def radius(x: Tensor, y: Tensor, r: float, batch_x: OptTensor = None,
-           batch_y: OptTensor = None, max_num_neighbors: int = 32,
-           num_workers: int = 1) -> Tensor:
+def radius(
+    x: Tensor,
+    y: Tensor,
+    r: float,
+    batch_x: OptTensor = None,
+    batch_y: OptTensor = None,
+    max_num_neighbors: int = 32,
+    num_workers: int = 1,
+    batch_size: Optional[int] = None,
+) -> Tensor:
     r"""Finds for each element in :obj:`y` all points in :obj:`x` within
     distance :obj:`r`.
 
@@ -165,17 +215,28 @@ def radius(x: Tensor, y: Tensor, r: float, batch_x: OptTensor = None,
         num_workers (int, optional): Number of workers to use for computation.
             Has no effect in case :obj:`batch_x` or :obj:`batch_y` is not
             :obj:`None`, or the input lies on the GPU. (default: :obj:`1`)
+        batch_size (int, optional): The number of examples :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
     """
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.radius(x, y, r, batch_x, batch_y,
+                                    max_num_neighbors, num_workers)
     return torch_cluster.radius(x, y, r, batch_x, batch_y, max_num_neighbors,
-                                num_workers)
+                                num_workers, batch_size)
 
 
-def radius_graph(x: Tensor, r: float, batch: OptTensor = None,
-                 loop: bool = False, max_num_neighbors: int = 32,
-                 flow: str = 'source_to_target',
-                 num_workers: int = 1) -> Tensor:
+def radius_graph(
+    x: Tensor,
+    r: float,
+    batch: OptTensor = None,
+    loop: bool = False,
+    max_num_neighbors: int = 32,
+    flow: str = 'source_to_target',
+    num_workers: int = 1,
+    batch_size: Optional[int] = None,
+) -> Tensor:
     r"""Computes graph edges to all points within a given distance.
 
     .. code-block:: python
@@ -204,15 +265,29 @@ def radius_graph(x: Tensor, r: float, batch: OptTensor = None,
         num_workers (int, optional): Number of workers to use for computation.
             Has no effect in case :obj:`batch` is not :obj:`None`, or the input
             lies on the GPU. (default: :obj:`1`)
+        batch_size (int, optional): The number of examples :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
     """
+    if batch is not None and x.device != batch.device:
+        warnings.warn("Input tensor 'x' and 'batch' are on different devices "
+                      "in 'radius_graph'. Performing blocking device transfer")
+        batch = batch.to(x.device)
+
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+        return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
+                                          flow, num_workers)
     return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
-                                      flow, num_workers)
+                                      flow, num_workers, batch_size)
 
 
-def nearest(x: Tensor, y: Tensor, batch_x: OptTensor = None,
-            batch_y: OptTensor = None) -> Tensor:
+def nearest(
+    x: Tensor,
+    y: Tensor,
+    batch_x: OptTensor = None,
+    batch_y: OptTensor = None,
+) -> Tensor:
     r"""Finds for each element in :obj:`y` the :obj:`k` nearest point in
     :obj:`x`.
 
@@ -265,6 +340,8 @@ __all__ = [
     'fps',
     'knn',
     'knn_graph',
+    'approx_knn',
+    'approx_knn_graph',
     'radius',
     'radius_graph',
     'nearest',

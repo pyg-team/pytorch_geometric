@@ -21,12 +21,12 @@ def test_inits():
     assert x.max() <= 0.5
 
     glorot(x)
-    assert x.min() >= -2.0
-    assert x.max() <= 2.0
+    assert x.min() >= -1.1
+    assert x.max() <= 1.1
 
     glorot_orthogonal(x, scale=1.0)
-    assert x.min() >= -2.0
-    assert x.max() <= 2.0
+    assert x.min() >= -2.5
+    assert x.max() <= 2.5
 
     zeros(x)
     assert x.tolist() == [[0, 0, 0, 0]]
@@ -40,12 +40,12 @@ def test_inits():
     assert nn.weight[0].max() <= 0.5
 
     glorot(nn.weight)
-    assert nn.weight[0].min() >= -1.25
-    assert nn.weight[0].max() <= 1.25
+    assert nn.weight[0].min() >= -0.45
+    assert nn.weight[0].max() <= 0.45
 
     glorot_orthogonal(nn.weight, scale=1.0)
-    assert nn.weight[0].min() >= -1.25
-    assert nn.weight[0].max() <= 1.25
+    assert nn.weight[0].min() >= -2.5
+    assert nn.weight[0].max() <= 2.5
 
 
 def test_reset():

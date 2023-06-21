@@ -1,3 +1,4 @@
+import copy
 import os.path as osp
 
 import torch
@@ -14,6 +15,7 @@ from torch_geometric.utils import scatter
 
 class HandleNodeAttention:
     def __call__(self, data):
+        data = copy.copy(data)
         data.attn = torch.softmax(data.x[:, 0], dim=0)
         data.x = data.x[:, 1:]
         return data

@@ -21,6 +21,10 @@ def has_stats(cls: str) -> bool:
     return len(get_stats_table(cls)) > 0
 
 
+def get_type(cls: str) -> str:
+    return 'Edge' if '-' in cls else 'Node'
+
+
 def get_stat(cls: str, name: str, child: Optional[str] = None,
              default: Any = None) -> str:
     if child is None and len(get_children(cls)) > 0:

@@ -32,7 +32,7 @@ class AddRemainingSelfLoops(BaseTransform):
         self.attr = attr
         self.fill_value = fill_value
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
