@@ -7,7 +7,6 @@ from torch import Tensor
 from torch.nn import Linear, ModuleList
 from tqdm import tqdm
 
-import torch_geometric
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.conv import (
     EdgeConv,
@@ -242,30 +241,37 @@ class BasicGNN(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def inference_per_layer(self, batch, x_all, device, i):
-        x = x_all[batch.n_id].to(device)
-        if hasattr(batch, 'adj_t'):
-            edge_index = batch.adj_t.to(device)
-        else:
-            edge_index = batch.edge_index.to(device)
-        x = self.convs[i](x, edge_index)[:batch.batch_size]
-        if i == self.num_layers - 1 and self.jk_mode is None:
+    def inference_per_layer(
+        self,
+        layer: int,
+        x: Tensor,
+        edge_index: Adj,
+        batch_size: int,
+    ) -> Tensor:
+
+        x = self.convs[layer](x, edge_index)[:batch_size]
+
+        if layer == self.num_layers - 1 and self.jk_mode is None:
             return x
+
         if self.act is not None and self.act_first:
             x = self.act(x)
         if self.norms is not None:
-            x = self.norms[i](x)
+            x = self.norms[layer](x)
         if self.act is not None and not self.act_first:
             x = self.act(x)
-        if i == self.num_layers - 1 and hasattr(self, 'lin'):
+        if layer == self.num_layers - 1 and hasattr(self, 'lin'):
             x = self.lin(x)
+
         return x
 
     @torch.no_grad()
-    def inference(self, loader: NeighborLoader,
-                  device: Optional[torch.device] = None,
-                  use_compile: bool = False,
-                  progress_bar: bool = False) -> Tensor:
+    def inference(
+        self,
+        loader: NeighborLoader,
+        device: Optional[torch.device] = None,
+        progress_bar: bool = False,
+    ) -> Tensor:
         r"""Performs layer-wise inference on large-graphs using a
         :class:`~torch_geometric.loader.NeighborLoader`, where
         :class:`~torch_geometric.loader.NeighborLoader` should sample the
@@ -285,22 +291,27 @@ class BasicGNN(torch.nn.Module):
             pbar.set_description('Inference')
 
         x_all = loader.data.x.cpu()
-        loader.data.n_id = torch.arange(x_all.size(0))
-        if use_compile:
-            self.inference_per_layer = torch_geometric.compile(
-                self.inference_per_layer, dynamic=True)
 
         for i in range(self.num_layers):
             xs: List[Tensor] = []
             for batch in loader:
-                x = self.inference_per_layer(batch, x_all, device, i)
+                x = x_all[batch.n_id].to(device)
+                batch_size = batch.batch_size
+                if hasattr(batch, 'adj_t'):
+                    edge_index = batch.adj_t.to(device)
+                else:
+                    edge_index = batch.edge_index.to(device)
+
+                x = self.inference_per_layer(i, x, edge_index, batch_size)
                 xs.append(x.cpu())
+
                 if progress_bar:
                     pbar.update(1)
+
             x_all = torch.cat(xs, dim=0)
+
         if progress_bar:
             pbar.close()
-        del loader.data.n_id
 
         return x_all
 

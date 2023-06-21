@@ -8,7 +8,6 @@ import torch
 import torch.nn.functional as F
 from tqdm import tqdm
 
-import torch_geometric
 from benchmark.utils import (
     emit_itt,
     get_dataset,
@@ -18,6 +17,7 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
+from torch_geometric import compile
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -192,14 +192,15 @@ def run(args: argparse.ArgumentParser):
                             metadata=data.metadata() if hetero else None)
                         model = model.to(device)
                         model.train()
+
+                        if args.compile:
+                            model = compile(model, dynamic=True)
+
                         optimizer = torch.optim.Adam(model.parameters(),
                                                      lr=0.001)
 
                         progress_bar = False if args.no_progress_bar else True
                         train = train_hetero if hetero else train_homo
-                        if args.compile:
-                            model = torch_geometric.compile(
-                                model, dynamic=True)
 
                         # Define context manager parameters:
                         cpu_affinity = subgraph_loader.enable_cpu_affinity(

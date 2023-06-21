@@ -5,7 +5,6 @@ from contextlib import nullcontext
 
 import torch
 
-import torch_geometric
 from benchmark.utils import (
     emit_itt,
     get_dataset_with_transformation,
@@ -164,8 +163,6 @@ def run(args: argparse.ArgumentParser):
                             state_dict = torch.load(args.ckpt_path)
                             model.load_state_dict(state_dict)
                         model.eval()
-                        if args.compile:
-                            model = torch_geometric.compile(model)
 
                         # Define context manager parameters:
                         if args.cpu_affinity and with_loader:
@@ -188,7 +185,6 @@ def run(args: argparse.ArgumentParser):
                                     full_batch_inference(model, data)
                                 else:
                                     model.inference(subgraph_loader, device,
-                                                    args.compile,
                                                     progress_bar=True)
                             if args.warmup > 0:
                                 time.reset()
@@ -206,7 +202,6 @@ def run(args: argparse.ArgumentParser):
                                     y = model.inference(
                                         subgraph_loader,
                                         device,
-                                        args.compile,
                                         progress_bar=True,
                                     )
                                     if args.evaluate:
@@ -296,5 +291,4 @@ if __name__ == '__main__':
         help='Write benchmark or PyTorch profile data to CSV')
     add('--export-chrome-trace', default=True, type=bool,
         help='Export chrome trace file. Works only with PyTorch profiler')
-    add('--compile', action='store_true')
     run(argparser.parse_args())
