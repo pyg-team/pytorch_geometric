@@ -270,6 +270,7 @@ class BasicGNN(torch.nn.Module):
         self,
         loader: NeighborLoader,
         device: Optional[torch.device] = None,
+        embedding_device: Union[str, torch.device] = 'cpu',
         progress_bar: bool = False,
     ) -> Tensor:
         r"""Performs layer-wise inference on large-graphs using a
@@ -279,6 +280,19 @@ class BasicGNN(torch.nn.Module):
         This is an efficient way to compute the output embeddings for all
         nodes in the graph.
         Only applicable in case :obj:`jk=None` or `jk='last'`.
+
+        Args:
+            loader (torch_geometric.loader.NeighborLoader): A neighbor loader
+                object that generates full 1-hop subgraphs, *i.e.*,
+                :obj:`loader.num_neighbors = [-1]`.
+            device (torch.device, optional): The device to run the GNN on.
+                (default: :obj:`None`)
+            embedding_device (torch.device, optional): The device to store
+                intermediate embeddings on. If intermediate embeddings fit on
+                GPU, this option helps to avoid unnecessary device transfers.
+                (default: :obj:`"cpu"`)
+            progress_bar (bool, optional): If set to :obj:`True`, will print a
+                progress bar during computation. (default: :obj:`False`)
         """
         assert self.jk_mode is None or self.jk_mode == 'last'
         assert isinstance(loader, NeighborLoader)
@@ -290,8 +304,8 @@ class BasicGNN(torch.nn.Module):
             pbar = tqdm(total=len(self.convs) * len(loader))
             pbar.set_description('Inference')
 
-        x_all = loader.data.x.cpu()
-
+        x_all = loader.data.x.to(embedding_device)
+        
         for i in range(self.num_layers):
             xs: List[Tensor] = []
             for batch in loader:
@@ -303,7 +317,7 @@ class BasicGNN(torch.nn.Module):
                     edge_index = batch.edge_index.to(device)
 
                 x = self.inference_per_layer(i, x, edge_index, batch_size)
-                xs.append(x.cpu())
+                xs.append(x.to(embedding_device))
 
                 if progress_bar:
                     pbar.update(1)
