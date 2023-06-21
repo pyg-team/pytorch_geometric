@@ -131,8 +131,7 @@ class SAGPooling(torch.nn.Module):
             score = self.nonlinearity(score)
         else:
             score = softmax(score, batch)
-
-        perm = topk(score, self.ratio, batch, self.min_score)
+        perm = self.select(score, batch)
         x = x[perm] * score[perm].view(-1, 1)
         x = self.multiplier * x if self.multiplier != 1 else x
 
