@@ -305,7 +305,7 @@ class BasicGNN(torch.nn.Module):
             pbar.set_description('Inference')
 
         x_all = loader.data.x.to(embedding_device)
-        
+
         for i in range(self.num_layers):
             xs: List[Tensor] = []
             for batch in loader:
