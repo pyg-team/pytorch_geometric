@@ -1,0 +1,36 @@
+dataset:
+  edge_encoder: false
+  edge_encoder_name: Bond
+  format: PyG
+  name: Cora
+  node_encoder: false
+  node_encoder_name: Atom
+  task: node
+  task_type: classification
+gnn:
+  act: prelu
+  agg: mean
+  batchnorm: false
+  dim_inner: 64
+  dropout: 0.1
+  layer_type: gcnconv
+  layers_mp: 6
+  layers_post_mp: 1
+  layers_pre_mp: 1
+  normalize_adj: false
+  stage_type: skipconcat
+model:
+  edge_decoding: dot
+  graph_pooling: add
+  loss_fun: cross_entropy
+  type: gnn
+optim:
+  base_lr: 0.01
+  max_epoch: 200
+  optimizer: adam
+out_dir: results/example_node_grid_example
+train:
+  batch_size: 128
+  ckpt_period: 100
+  eval_period: 1
+  sampler: full_batch
