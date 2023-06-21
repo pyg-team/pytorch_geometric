@@ -29,7 +29,7 @@ class Cartesian(BaseTransform):
             norm: bool = True,
             max_value: Optional[float] = None,
             cat: bool = True,
-            interval: Tuple[float, float] = (0.0, 0.1),
+            interval: Tuple[float, float] = (0.0, 1.0),
     ):
         self.norm = norm
         self.max = max_value
