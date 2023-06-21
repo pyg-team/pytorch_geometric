@@ -1,13 +1,11 @@
-from typing import Optional
-
 import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import Tensor
+from torch.nn import LayerNorm, Linear
 
 from torch_geometric.nn import TemporalEncoding
 from torch_geometric.utils import scatter, to_dense_batch
-from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 class NodeEncoder(torch.nn.Module):
@@ -28,6 +26,9 @@ class NodeEncoder(torch.nn.Module):
     def __init__(self, time_window: int):
         super().__init__()
         self.time_window = time_window
+
+    def reset_parameters(self):
+        pass
 
     def forward(
         self,
@@ -55,130 +56,126 @@ class NodeEncoder(torch.nn.Module):
         return f'{self.__class__.__name__}(time_window={self.time_window})'
 
 
-# TODO: Generalize the module when needed
 class _MLPMixer(torch.nn.Module):
-    """1-layer MLP-mixer for GraphMixer.
+    r"""The MLP-Mixer module.
 
     Args:
-        num_tokens (int): The number of tokens (patches) in each sample.
+        num_tokens (int): Number of tokens/patches in each sample.
         in_channels (int): Input channels.
         out_channels (int): Output channels.
-        dropout (float, optional): The dropout probability. (default: :obj:`0`)
+        dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
     """
-    def __init__(self, num_tokens: int, in_channels: int, out_channels: int,
-                 dropout: float = 0):
+    def __init__(
+        self,
+        num_tokens: int,
+        in_channels: int,
+        out_channels: int,
+        dropout: float = 0.0,
+    ):
         super().__init__()
-        self.num_tokens = num_tokens
-        self.in_channels = in_channels
-        self.out_channels = out_channels
+
         self.dropout = dropout
 
-        # token mixing
-        self.token_layer_norm = torch.nn.LayerNorm((in_channels, ))
-        self.token_lin_1 = torch.nn.Linear(num_tokens, num_tokens // 2)
-        self.token_lin_2 = torch.nn.Linear(num_tokens // 2, num_tokens)
+        self.token_norm = LayerNorm(in_channels)
+        self.token_lin1 = Linear(num_tokens, num_tokens // 2)
+        self.token_lin2 = Linear(num_tokens // 2, num_tokens)
 
-        # channel mixing
-        self.channel_layer_norm = torch.nn.LayerNorm((in_channels, ))
-        self.channel_lin_1 = torch.nn.Linear(in_channels, 4 * in_channels)
-        self.channel_lin_2 = torch.nn.Linear(4 * in_channels, in_channels)
+        self.channel_norm = LayerNorm(in_channels)
+        self.channel_lin1 = Linear(in_channels, 4 * in_channels)
+        self.channel_lin2 = Linear(4 * in_channels, in_channels)
 
-        # head
-        self.head_layer_norm = torch.nn.LayerNorm((in_channels, ))
-        self.head_lin = torch.nn.Linear(in_channels, out_channels)
+        self.head_norm = LayerNorm(in_channels)
+        self.head_lin = Linear(in_channels, out_channels)
+
+    def reset_parameters(self):
+        self.token_norm.reset_parameters()
+        self.token_lin1.reset_parameters()
+        self.token_lin2.reset_parameters()
+        self.channel_norm.reset_parameters()
+        self.channel_lin1.reset_parameters()
+        self.channel_lin2.reset_parameters()
+        self.head_norm.reset_parameters()
+        self.head_lin.reset_parameters()
 
     def forward(self, x: Tensor) -> Tensor:
-        """
+        r"""
         Args:
-            x (torch.Tensor): Features tensor of size
-                :obj:`[N, num_tokens, in_channels]`.
+            x (torch.Tensor): Tensor of size
+                :obj:`[*, num_tokens, in_channels]`.
 
         Returns:
-            Tensor of size :obj:`[N, out_channels]`.
+            Tensor of size :obj:`[*, out_channels]`.
         """
-        # token mixing
-        h = self.token_layer_norm(x).mT
-        h = self.token_lin_1(h)
+        # Token mixing:
+        h = self.token_norm(x).mT
+        h = self.token_lin1(h)
         h = F.gelu(h)
         h = F.dropout(h, p=self.dropout, training=self.training)
-        h = self.token_lin_2(h)
+        h = self.token_lin2(h)
         h = F.dropout(h, p=self.dropout, training=self.training)
         h_token = h.mT + x
 
-        # channel mixing
-        h = self.channel_layer_norm(h_token)
-        h = self.channel_lin_1(h)
+        # Channel mixing:
+        h = self.channel_norm(h_token)
+        h = self.channel_lin1(h)
         h = F.gelu(h)
         h = F.dropout(h, p=self.dropout, training=self.training)
-        h = self.channel_lin_2(h)
+        h = self.channel_lin2(h)
         h = F.dropout(h, p=self.dropout, training=self.training)
         h_channel = h + h_token
 
-        # head
-        h_channel = self.head_layer_norm(h_channel)
-        t = torch.mean(h_channel, dim=1)
-        return self.head_lin(t)
-
-    def __repr__(self) -> str:
-        return (f"{self.__class__.__name__}("
-                f"num_tokens={self.num_tokens}, "
-                f"in_channels={self.in_channels}, "
-                f"out_channels={self.out_channels}, "
-                f"dropout={self.dropout})")
+        # Head:
+        out = self.head_norm(h_channel)
+        out = out.mean(dim=1)
+        out = self.head_lin(out)
+        return out
 
 
-def get_latest_k_edge_attrs(K: int, edge_index: Tensor, edge_time: Tensor,
-                            edge_attr: Tensor, num_nodes: int) -> Tensor:
-    r"""Returns the latest :obj:`K` incoming edge attributes by
-    :obj:`edge_time` for each node. The shape
-    of the output tensor is :obj:`[num_nodes, K, edge_attr_dim]`.
-    Nodes with fewer than :obj:`K` incoming edges are zero-padded.
-    Args:
-        K (int): The number of edges to keep for each node.
-        edge_index (LongTensor): The edge indices.
-        edge_time (Tensor): The edge timestamps.
-        edge_attr (Tensor): The edge attributes.
-        num_nodes (int): The number of nodes in the graph.
-    :rtype: :class:`Tensor`
-    """
-    assert (edge_time >= 0).all()
+def get_latest_k_edge_attr(
+    k: int,
+    edge_index: Tensor,
+    edge_attr: Tensor,
+    edge_time: Tensor,
+    num_nodes: int,
+    is_sorted: bool = False,
+) -> Tensor:
+    r"""Returns the latest :obj:`k` incoming edge attributes by
+    :obj:`edge_time` for each node.
+    The shape of the output tensor is :obj:`[num_nodes, k, edge_attr_dim]`.
+    Nodes with fewer than :obj:`k` incoming edges are zero-padded."""
     _, col = edge_index
-    perm = np.lexsort(
-        [-edge_time.detach().cpu().numpy(),
-         col.detach().cpu().numpy()])
-    perm = torch.from_numpy(perm).to(edge_index.device)
-    col = col[perm]
-    edge_attr = edge_attr[perm]
 
-    # zero-pad each node's edges:
-    # [num_edges, hidden_channels] -> [num_nodes*K, hidden_channels]
-    edge_attr, _ = to_dense_batch(
+    if not is_sorted:
+        perm = np.lexsort([
+            -edge_time.detach().cpu().numpy(),
+            col.detach().cpu().numpy(),
+        ])
+        perm = torch.from_numpy(perm).to(edge_index.device)
+        col = col[perm]
+        edge_attr = edge_attr[perm]
+
+    return to_dense_batch(
         edge_attr,
         col,
-        max_num_nodes=K,
+        max_num_nodes=k,
         batch_size=num_nodes,
-    )
-    return edge_attr
+    )[0]
 
 
 class LinkEncoder(torch.nn.Module):
-    r"""The link-encoding function from the `"Do We Really Need Complicated
+    r"""The link encoder module from the `"Do We Really Need Complicated
     Model Architectures for Temporal Networks?"
     <https://openreview.net/forum?id=ayPPc0SyLv1>`_ paper.
-    It is composed of two components. The first component is
-    :class:`TemporalEncoding` that maps each edge timestamp to a
-    :obj:`time_channels` dimensional vector.
-    The second component a 1-layer MLP that maps each encoded timestamp
-    feature concatenated with its corresponding link feature to a
-    :obj:`out_channels` dimensional vector.
+    It is composed of two components: (1) :class:`TemporalEncoding` maps each
+    edge timestamp to a :obj:`time_channels`-dimensional vector; (2) an MLP
+    that groups and maps the :math:`k`-latest encoded timestamps and edge
+    features to a :obj:`out_channels`-dimensional representation.
 
     Args:
-        K (int): The number of most recent teomporal links to use to construct
-            an intermediate feature representation for each node.
-        in_channels (int): Edge feature dimensionality.
+        k (int): The number of most recent temporal links to use.
+        in_channels (int): The edge feature dimensionality.
         hidden_channels (int): Size of each hidden sample.
-        time_channels (int): Size of encoded timestamp using
-            :class:`TemporalEncoding`.
+        time_channels (int): Size of encoded timestamp.
         out_channels (int): Size of each output sample.
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column and the
@@ -188,11 +185,10 @@ class LinkEncoder(torch.nn.Module):
             efficiency. (default: :obj:`False`)
         dropout (float, optional): Dropout probability of the MLP layer.
             (default: :obj:`0.0`)
-
     """
     def __init__(
         self,
-        K: int,
+        k: int,
         in_channels: int,
         hidden_channels: int,
         out_channels: int,
@@ -201,7 +197,8 @@ class LinkEncoder(torch.nn.Module):
         dropout: float = 0.0,
     ):
         super().__init__()
-        self.K = K
+
+        self.k = k
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.out_channels = out_channels
@@ -209,59 +206,67 @@ class LinkEncoder(torch.nn.Module):
         self.is_sorted = is_sorted
         self.dropout = dropout
 
-        # teomporal encoder
         self.temporal_encoder = TemporalEncoding(time_channels)
-        self.temporal_encoder_head = torch.nn.Linear(
-            time_channels + in_channels,
-            hidden_channels,
-        )
+        self.temporal_head = Linear(time_channels + in_channels,
+                                    hidden_channels)
 
-        # MLP that summarises temporal embedding.
-        self.mlp_mixer = _MLPMixer(
-            num_tokens=K,
+        self.mlp_mixer = _MLPMixer(  # MLP that summarizes temporal embeddings:
+            num_tokens=k,
             in_channels=hidden_channels,
             out_channels=out_channels,
             dropout=dropout,
         )
 
+    def reset_parameters(self):
+        self.temporal_encoder.reset_parameters()
+        self.temporal_head.reset_parameters()
+        self.mlp_mixer.reset_parameters()
+
     def forward(
         self,
+        edge_index: Tensor,
         edge_attr: Tensor,
         edge_time: Tensor,
-        edge_index: Tensor,
-        num_nodes: Optional[int] = None,
+        seed_time: Tensor,
     ) -> Tensor:
-        """
+        r"""
         Args:
+            edge_index (torch.Tensor): The edge indices.
             edge_attr (torch.Tensor): The edge features of shape
                 :obj:`[num_edges, in_channels]`.
             edge_time (torch.Tensor): The time tensor of shape
                 :obj:`[num_edges]`. This can be in the order of millions.
-            edge_index (torch.Tensor): The edge indicies.
-            num_nodes (int, optional): The number of nodes in the graph.
-                (default: :obj:`None`)
+            seed_time (torch.Tensor): The seed time :math:`t_0` for every
+                destination node.
 
         Returns:
             A node embedding tensor of shape :obj:`[num_nodes, out_channels]`.
         """
-        num_nodes = maybe_num_nodes(edge_index, num_nodes)
-        time_info = self.temporal_encoder(edge_time)
-        edge_attr_time = torch.cat((time_info, edge_attr), dim=1)
-        edge_attr_time = self.temporal_encoder_head(edge_attr_time)
+        mask = edge_time <= seed_time[edge_index[1]]
 
-        if not self.is_sorted:
-            edge_attr_time = get_latest_k_edge_attrs(self.K, edge_index,
-                                                     edge_time, edge_attr_time,
-                                                     num_nodes)
+        edge_index = edge_index[:, mask]
+        edge_attr = edge_attr[mask]
+        edge_time = edge_time[mask]
 
-        return self.mlp_mixer(
-            edge_attr_time.view(-1, self.K, self.hidden_channels))
+        time_enc = self.temporal_encoder(seed_time[edge_index[1]] - edge_time)
+        edge_attr = torch.cat([time_enc, edge_attr], dim=-1)
+        edge_attr = self.temporal_head(edge_attr)
 
-    def __repr__(self):
-        return (f"{self.__class__.__name__}("
-                f"K={self.K}, "
-                f"in_channels={self.in_channels}, "
-                f"hidden_channels={self.hidden_channels}, "
-                f"out_channels={self.out_channels}, "
-                f"time_channels={self.time_channels}, "
-                f"dropout={self.dropout})")
+        edge_attr = get_latest_k_edge_attr(
+            k=self.k,
+            edge_index=edge_index,
+            edge_attr=edge_attr,
+            edge_time=edge_time,
+            num_nodes=seed_time.size(0),
+            is_sorted=self.is_sorted,
+        )
+
+        return self.mlp_mixer(edge_attr)
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}(k={self.k}, '
+                f'in_channels={self.in_channels}, '
+                f'hidden_channels={self.hidden_channels}, '
+                f'out_channels={self.out_channels}, '
+                f'time_channels={self.time_channels}, '
+                f'dropout={self.dropout})')

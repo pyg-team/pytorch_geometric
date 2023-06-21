@@ -3,7 +3,7 @@ import torch
 from torch_geometric.nn.models.graph_mixer import (
     LinkEncoder,
     NodeEncoder,
-    get_latest_k_edge_attrs,
+    get_latest_k_edge_attr,
 )
 
 
@@ -14,6 +14,7 @@ def test_node_encoder():
     seed_time = torch.tensor([2, 2, 2, 2])
 
     encoder = NodeEncoder(time_window=2)
+    encoder.reset_parameters()
     assert str(encoder) == 'NodeEncoder(time_window=2)'
 
     out = encoder(x, edge_index, edge_time, seed_time)
@@ -30,55 +31,45 @@ def test_node_encoder():
     assert torch.allclose(out, expected)
 
 
-def test_link_encoding():
+def test_link_encoder():
     num_nodes = 3
     num_edges = 6
-    num_edge_features = 10
-    edge_attr = torch.rand((num_edges, num_edge_features))
+    edge_attr = torch.rand((num_edges, 10))
     edge_index = torch.randint(low=0, high=num_nodes, size=(2, num_edges))
     edge_time = torch.rand(num_edges)
-
-    K = 3
-    hidden_channels = 7
-    out_channels = 11
-    time_channels = 13
-    dropout = 0.5
+    seed_time = torch.ones(num_nodes)
 
     encoder = LinkEncoder(
-        K=K,
-        in_channels=num_edge_features,
-        hidden_channels=hidden_channels,
-        out_channels=out_channels,
-        time_channels=time_channels,
-        dropout=dropout,
+        k=3,
+        in_channels=edge_attr.size(1),
+        hidden_channels=7,
+        out_channels=11,
+        time_channels=13,
     )
-    assert str(encoder) == (f'LinkEncoder(K={K}, '
-                            f'in_channels={num_edge_features}, '
-                            f'hidden_channels={hidden_channels}, '
-                            f'out_channels={out_channels}, '
-                            f'time_channels={time_channels}, '
-                            f'dropout={dropout})')
+    encoder.reset_parameters()
+    assert str(encoder) == ('LinkEncoder(k=3, in_channels=10, '
+                            'hidden_channels=7, out_channels=11, '
+                            'time_channels=13, dropout=0.0)')
 
-    out = encoder(edge_attr, edge_time, edge_index)
-    assert out.size() == (num_nodes, out_channels)
+    out = encoder(edge_index, edge_attr, edge_time, seed_time)
+    assert out.size() == (num_nodes, 11)
 
 
 def test_latest_k_edge_attr():
-    num_nodes = 3
     edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 0], [0, 1, 0, 1, 0, 1, 2]])
     edge_time = torch.tensor([3, 1, 2, 3, 1, 2, 3])
     edge_attr = torch.tensor([1, -1, 3, 4, -1, 6, 7]).view(-1, 1)
 
     k = 2
-    latest_k_edge_attrs = get_latest_k_edge_attrs(k, edge_index, edge_time,
-                                                  edge_attr, num_nodes)
-    expected_output = torch.tensor([[[1], [3]], [[4], [6]], [[7], [0]]])
-    assert latest_k_edge_attrs.shape == (3, 2, 1)
-    assert latest_k_edge_attrs.equal(expected_output)
+    out = get_latest_k_edge_attr(k, edge_index, edge_attr, edge_time,
+                                 num_nodes=3)
+    expected = torch.tensor([[[1], [3]], [[4], [6]], [[7], [0]]])
+    assert out.size() == (3, 2, 1)
+    assert torch.equal(out, expected)
 
     k = 1
-    latest_k_edge_attrs = get_latest_k_edge_attrs(k, edge_index, edge_time,
-                                                  edge_attr, num_nodes)
-    expected_output = torch.tensor([[[1]], [[4]], [[7]]])
-    assert latest_k_edge_attrs.shape == (3, 1, 1)
-    assert latest_k_edge_attrs.equal(expected_output)
+    out = get_latest_k_edge_attr(k, edge_index, edge_attr, edge_time,
+                                 num_nodes=3)
+    expected = torch.tensor([[[1]], [[4]], [[7]]])
+    assert out.size() == (3, 1, 1)
+    assert torch.equal(out, expected)
