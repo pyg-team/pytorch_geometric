@@ -139,6 +139,8 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
+        # Save for PyTorch Lightning:
+        self.edge_label_index = edge_label_index
 
         if neg_sampling_ratio is not None and neg_sampling_ratio != 0.0:
             # TODO: Deprecation warning.
