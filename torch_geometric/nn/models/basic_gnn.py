@@ -269,7 +269,7 @@ class BasicGNN(torch.nn.Module):
     def inference(
         self,
         loader: NeighborLoader,
-        device: Optional[torch.device] = None,
+        device: Optional[Union[str, torch.device]] = None,
         embedding_device: Union[str, torch.device] = 'cpu',
         progress_bar: bool = False,
     ) -> Tensor:
@@ -305,7 +305,7 @@ class BasicGNN(torch.nn.Module):
             pbar.set_description('Inference')
 
         x_all = loader.data.x.to(embedding_device)
-        
+
         for i in range(self.num_layers):
             xs: List[Tensor] = []
             for batch in loader:
