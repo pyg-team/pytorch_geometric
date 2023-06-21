@@ -4,8 +4,8 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.nn.pool.connect.filter_edges import filter_adj
-from torch_geometric.nn.pool.select.topk import topk
+from torch_geometric.nn.pool.connect import FilterEdges
+from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.typing import OptTensor, SparseTensor
 from torch_geometric.utils import scatter, softmax
 
@@ -59,7 +59,8 @@ class PANPooling(torch.nn.Module):
 
         self.p = Parameter(torch.Tensor(in_channels))
         self.beta = Parameter(torch.Tensor(2))
-
+        self.select = SelectTopK(in_channels, ratio, min_score, nonlinearity)
+        self.connect = FilterEdges()
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -101,8 +102,12 @@ class PANPooling(torch.nn.Module):
         x = self.multiplier * x if self.multiplier != 1 else x
 
         edge_index = torch.stack([col, row], dim=0)
-        edge_index, edge_weight = filter_adj(edge_index, edge_weight, perm,
-                                             num_nodes=score.size(0))
+        select_output = self.select(x, batch)
+        connect_output = self.connect(select_output, edge_index, edge_weight,
+                                      batch)
+        edge_index = connect_output.edge_index
+        edge_weight = connect_output.edge_attr
+        batch = connect_output.batch
         assert edge_weight is not None
 
         return x, edge_index, edge_weight, batch[perm], perm, score[perm]

@@ -7,7 +7,7 @@ from torch import Tensor
 from torch.nn import Linear
 
 from torch_geometric.nn import LEConv
-from torch_geometric.nn.pool.select.topk import topk
+from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.utils import (
     add_remaining_self_loops,
     remove_self_loops,
@@ -68,6 +68,7 @@ class ASAPooling(torch.nn.Module):
                                          **kwargs)
         else:
             self.gnn_intra_cluster = None
+        self.select = SelectTopK(in_channels, ratio, None, 'tanh')
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -135,7 +136,7 @@ class ASAPooling(torch.nn.Module):
 
         # Cluster selection.
         fitness = self.gnn_score(x, edge_index).sigmoid().view(-1)
-        perm = topk(fitness, self.ratio, batch)
+        perm = self.select(fitness, batch)
         x = x[perm] * fitness[perm].view(-1, 1)
         batch = batch[perm]
 

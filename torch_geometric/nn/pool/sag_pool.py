@@ -4,8 +4,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn import GraphConv
-from torch_geometric.nn.pool.connect.filter_edges import filter_adj
-from torch_geometric.nn.pool.select.topk import topk
+from torch_geometric.nn.pool.connect import FilterEdges
+from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import softmax
 
@@ -91,7 +91,8 @@ class SAGPooling(torch.nn.Module):
         self.min_score = min_score
         self.multiplier = multiplier
         self.nonlinearity = nonlinearity
-
+        self.select = SelectTopK(in_channels, ratio, min_score, nonlinearity)
+        self.connect = FilterEdges()
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -136,8 +137,12 @@ class SAGPooling(torch.nn.Module):
         x = self.multiplier * x if self.multiplier != 1 else x
 
         batch = batch[perm]
-        edge_index, edge_attr = filter_adj(edge_index, edge_attr, perm,
-                                           num_nodes=score.size(0))
+        select_output = self.select(x, batch)
+        connect_output = self.connect(select_output, edge_index, edge_attr,
+                                      batch)
+        edge_index = connect_output.edge_index
+        edge_attr = connect_output.edge_attr
+        batch = connect_output.batch
 
         return x, edge_index, edge_attr, batch, perm, score[perm]
 
