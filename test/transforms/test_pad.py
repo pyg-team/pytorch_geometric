@@ -29,13 +29,13 @@ def fake_hetero_data(node_types=2, edge_types=5) -> HeteroData:
 
 
 def _generate_homodata_node_attrs(data: Data) -> Generator[str, None, None]:
-    for attr in data.keys:
+    for attr in data.keys():
         if data.is_node_attr(attr):
             yield attr
 
 
 def _generate_homodata_edge_attrs(data: Data) -> Generator[str, None, None]:
-    for attr in data.keys:
+    for attr in data.keys():
         if data.is_edge_attr(attr):
             yield attr
 

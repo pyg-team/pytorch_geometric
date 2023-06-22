@@ -30,7 +30,7 @@ def test_data():
     assert data.get('y', 2) == 2
     assert data.get('y', None) is None
 
-    assert sorted(data.keys) == ['edge_index', 'x']
+    assert sorted(data.keys()) == ['edge_index', 'x']
     assert len(data) == 2
     assert 'x' in data and 'edge_index' in data and 'pos' not in data
 
@@ -81,7 +81,7 @@ def test_data():
 
     dictionary = {'x': data.x, 'edge_index': data.edge_index}
     data = Data.from_dict(dictionary)
-    assert sorted(data.keys) == ['edge_index', 'x']
+    assert sorted(data.keys()) == ['edge_index', 'x']
 
     assert not data.has_isolated_nodes()
     assert not data.has_self_loops()
