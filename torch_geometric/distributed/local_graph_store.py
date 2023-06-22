@@ -6,7 +6,12 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, GraphStore
-from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType, as_str
+from torch_geometric.typing import (
+    EdgeTensorType,
+    EdgeType,
+    EdgeTypeStr,
+    NodeType,
+)
 
 
 class LocalGraphStore(GraphStore):
@@ -75,12 +80,7 @@ class LocalGraphStore(GraphStore):
 
         graph_store = cls()
         graph_store.put_edge_index(edge_index, **attr)
-
-        edge_attrs1 = graph_store.get_all_edge_attrs()
-
         graph_store.put_edge_id(edge_id, **attr)
-
-        edge_attrs2 = graph_store.get_all_edge_attrs()
         return graph_store
 
     @classmethod
@@ -137,8 +137,8 @@ class LocalGraphStore(GraphStore):
         else:
             raise ValueError("not found graph files")
 
-        if meta['is_hetero'] == False:
-            #homo
+        if not meta['is_hetero']:
+            # homo
             node_pb = torch.load(os.path.join(root_dir, 'node_map.pt'))
             edge_pb = torch.load(os.path.join(root_dir, 'edge_map.pt'))
 
@@ -152,18 +152,18 @@ class LocalGraphStore(GraphStore):
                     edge_pb)
 
         else:
-            #hetero
+            # hetero
             node_pb_dict = {}
             node_pb_dir = os.path.join(root_dir, 'node_map')
             for ntype in meta['node_types']:
                 node_pb_dict[ntype] = torch.load(
-                    os.path.join(node_pb_dir, f'{as_str(ntype)}.pt'))
+                    os.path.join(node_pb_dir, f'{ntype}.pt'))
 
             edge_pb_dict = {}
             edge_pb_dir = os.path.join(root_dir, 'edge_map')
             for etype in meta['edge_types']:
                 edge_pb_dict[tuple(etype)] = torch.load(
-                    os.path.join(edge_pb_dir, f'{as_str(etype)}.pt'))
+                    os.path.join(edge_pb_dir, f'{EdgeTypeStr(etype)}.pt'))
 
             # convert partition data into dict.
             edge_id_dict, edge_index_dict, num_nodes_dict = {}, {}, {}

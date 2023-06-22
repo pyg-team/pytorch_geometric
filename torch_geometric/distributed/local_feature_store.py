@@ -9,7 +9,7 @@ from torch import Tensor
 
 from torch_geometric.data import FeatureStore, TensorAttr
 from torch_geometric.data.feature_store import _field_status
-from torch_geometric.typing import EdgeType, NodeType, as_str
+from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
 
 
 @dataclass
@@ -97,7 +97,6 @@ class LocalFeatureStore(FeatureStore):
         assert attr.index is not None
 
         attr = copy.copy(attr)
-
         attr.index = self._global_id_to_index[attr.group_name][attr.index]
 
         return self.get_tensor(attr)
@@ -221,7 +220,7 @@ class LocalFeatureStore(FeatureStore):
         else:
             edge_feat = None
 
-        if meta['is_hetero'] == False:
+        if not meta['is_hetero']:
             # homo
             node_pb = torch.load(os.path.join(root_dir, 'node_map.pt'))
             edge_pb = torch.load(os.path.join(root_dir, 'edge_map.pt'))
@@ -244,21 +243,22 @@ class LocalFeatureStore(FeatureStore):
                     edge_features, node_pb, edge_pb)
 
         else:
-            #hetero
+            # hetero
             node_pb_dict = {}
             node_pb_dir = os.path.join(root_dir, 'node_map')
             for ntype in meta['node_types']:
                 node_pb_dict[ntype] = torch.load(
-                    os.path.join(node_pb_dir, f'{as_str(ntype)}.pt'))
+                    os.path.join(node_pb_dir, f'{ntype}.pt'))
 
             edge_pb_dict = {}
             edge_pb_dir = os.path.join(root_dir, 'edge_map')
             for etype in meta['edge_types']:
                 edge_pb_dict[tuple(etype)] = torch.load(
-                    os.path.join(edge_pb_dir, f'{as_str(etype)}.pt'))
+                    os.path.join(edge_pb_dir, f'{EdgeTypeStr(etype)}.pt'))
 
             # convert partition data into dict.
-            edge_id_dict, edge_index_dict, num_nodes_dict, edge_attr_dict = {}, {}, {}, {}
+            edge_id_dict = {}
+            edge_attr_dict = {}
 
             node_id_dict, x_dict = {}, {}
             for ntype in meta['node_types']:
