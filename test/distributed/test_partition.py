@@ -1,5 +1,6 @@
 import os.path as osp
 
+import pytest
 import torch
 
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
@@ -8,11 +9,20 @@ from torch_geometric.distributed import (
     LocalGraphStore,
     Partitioner,
 )
-from torch_geometric.testing import withPackage
 from torch_geometric.typing import EdgeTypeStr
 
+try:
+    # TODO Using `pyg-lib` metis partitioning leads to some weird bugs in the
+    # CI. As such, we require `torch-sparse` for these tests for now.
+    rowptr = torch.tensor([0, 1])
+    col = torch.tensor([0])
+    torch.ops.torch_sparse.partition(rowptr, col, None, 1, True)
+    WITH_METIS = True
+except (AttributeError, RuntimeError):
+    WITH_METIS = False
 
-@withPackage('pyg_lib')
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
 def test_partition_data(tmp_path):
     data = FakeDataset()[0]
     num_parts = 2
@@ -59,7 +69,7 @@ def test_partition_data(tmp_path):
                        node_feats1['feats']['x'])
 
 
-@withPackage('pyg_lib')
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
 def test_partition_hetero_data(tmp_path):
     data = FakeHeteroDataset()[0]
     num_parts = 2
@@ -93,6 +103,7 @@ def test_partition_hetero_data(tmp_path):
         assert osp.exists(edge_feats_path)
 
 
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
 def test_from_partition_data(tmp_path):
     data = FakeDataset()[0]
     num_parts = 2
@@ -140,6 +151,7 @@ def test_from_partition_data(tmp_path):
     assert torch.allclose(data.x[node_id2], node_feat2)
 
 
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
 def test_from_partition_hetero_data(tmp_path):
     data = FakeHeteroDataset()[0]
     num_parts = 2
