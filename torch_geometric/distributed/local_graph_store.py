@@ -1,5 +1,7 @@
 from typing import Dict, List, Optional, Tuple
-
+import os, json
+from torch_geometric.typing import as_str
+import torch
 from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, GraphStore
@@ -72,7 +74,12 @@ class LocalGraphStore(GraphStore):
 
         graph_store = cls()
         graph_store.put_edge_index(edge_index, **attr)
+
+        edge_attrs1 = graph_store.get_all_edge_attrs()
+
         graph_store.put_edge_id(edge_id, **attr)
+        
+        edge_attrs2 = graph_store.get_all_edge_attrs()
         return graph_store
 
     @classmethod
@@ -108,3 +115,70 @@ class LocalGraphStore(GraphStore):
             graph_store.put_edge_index(edge_index, **attr)
             graph_store.put_edge_id(edge_id, **attr)
         return graph_store
+
+
+    @classmethod
+    def from_partition(
+        self,
+        root_dir: str,
+        partition_idx: int
+    ) -> Tuple[Dict, int, int,
+        'LocalGraphStore',
+        torch.Tensor,
+        torch.Tensor]:
+    
+        # load the partition from partition .pt files 
+        with open(os.path.join(root_dir, 'META.json'), 'rb') as infile:
+            meta = json.load(infile)
+        num_partitions = meta['num_parts']
+        assert partition_idx >= 0
+        assert partition_idx < num_partitions
+        partition_dir = os.path.join(root_dir, f'part_{partition_idx}')
+        assert os.path.exists(partition_dir)
+        graph_dir = os.path.join(partition_dir, 'graph.pt')
+
+        if os.path.exists(graph_dir):
+            graph_data = torch.load(graph_dir)
+        else:
+             raise ValueError("not found graph files")
+
+        if meta['is_hetero']==False:
+            #homo
+            node_pb = torch.load(os.path.join(root_dir, 'node_map.pt')) 
+            edge_pb = torch.load(os.path.join(root_dir, 'edge_map.pt')) 
+            
+            # initialize graph
+            edge_index = torch.tensor([graph_data['row'].tolist(), graph_data['col'].tolist()])
+            graph_store = self.from_data(graph_data['edge_id'], edge_index, num_nodes=graph_data['size'][0])
+            
+            return (meta, num_partitions, partition_idx, graph_store, node_pb, edge_pb)
+            
+        else:
+            #hetero
+            node_pb_dict = {}
+            node_pb_dir = os.path.join(root_dir, 'node_map')
+            for ntype in meta['node_types']:
+                node_pb_dict[ntype] = torch.load(
+                    os.path.join(node_pb_dir, f'{as_str(ntype)}.pt')) 
+
+            edge_pb_dict = {}
+            edge_pb_dir = os.path.join(root_dir, 'edge_map')
+            for etype in meta['edge_types']:
+                edge_pb_dict[tuple(etype)] = torch.load(
+                    os.path.join(edge_pb_dir, f'{as_str(etype)}.pt')) 
+
+
+            # convert partition data into dict.
+            edge_id_dict, edge_index_dict, num_nodes_dict = {}, {}, {}
+            for etype in meta['edge_types']:
+                edge_id_dict[tuple(etype)] = graph_data[tuple(etype)]['edge_id']
+                edge_index_dict[tuple(etype)] = torch.tensor([graph_data[tuple(etype)]['row'].tolist(), graph_data[tuple(etype)]['col'].tolist()])
+                num_nodes_dict[etype[0]] =  graph_data[tuple(etype)]['size'][0]
+                num_nodes_dict[etype[2]] =  graph_data[tuple(etype)]['size'][1]
+
+            # initialize graph
+            graph_store = self.from_hetero_data(edge_id_dict, edge_index_dict, num_nodes_dict)
+
+            return (meta, num_partitions, partition_idx, graph_store, node_pb_dict, edge_pb_dict)
+
+
