@@ -9,7 +9,7 @@ from torch import Tensor
 
 from torch_geometric.data import FeatureStore, TensorAttr
 from torch_geometric.data.feature_store import _field_status
-from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
+from torch_geometric.typing import EdgeType, NodeType
 
 
 @dataclass

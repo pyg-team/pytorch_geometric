@@ -1,5 +1,4 @@
 import json
-import os
 import os.path as osp
 from typing import Dict, List, Optional, Tuple
 
@@ -7,12 +6,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, GraphStore
-from torch_geometric.typing import (
-    EdgeTensorType,
-    EdgeType,
-    EdgeTypeStr,
-    NodeType,
-)
+from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 
 
 class LocalGraphStore(GraphStore):
