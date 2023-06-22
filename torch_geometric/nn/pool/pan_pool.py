@@ -7,7 +7,7 @@ from torch.nn import Parameter
 from torch_geometric.nn.pool.connect import FilterEdges
 from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.typing import OptTensor, SparseTensor
-from torch_geometric.utils import scatter, softmax
+from torch_geometric.utils import scatter
 
 
 class PANPooling(torch.nn.Module):
