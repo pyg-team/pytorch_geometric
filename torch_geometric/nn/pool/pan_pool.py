@@ -48,25 +48,23 @@ class PANPooling(torch.nn.Module):
     ):
         super().__init__()
 
-        if isinstance(nonlinearity, str):
-            nonlinearity = getattr(torch, nonlinearity)
-
         self.in_channels = in_channels
         self.ratio = ratio
         self.min_score = min_score
         self.multiplier = multiplier
-        self.nonlinearity = nonlinearity
 
         self.p = Parameter(torch.Tensor(in_channels))
         self.beta = Parameter(torch.Tensor(2))
-        self.select = SelectTopK(in_channels, ratio, min_score, nonlinearity)
+        self.select = SelectTopK(1, ratio, min_score, nonlinearity)
         self.connect = FilterEdges()
+
         self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
         self.p.data.fill_(1)
         self.beta.data.fill_(0.5)
+        self.select.reset_parameters()
 
     def forward(
         self,
@@ -92,24 +90,20 @@ class PANPooling(torch.nn.Module):
         score2 = scatter(edge_weight, col, 0, dim_size=x.size(0), reduce='sum')
         score = self.beta[0] * score1 + self.beta[1] * score2
 
-        if self.min_score is None:
-            score = self.nonlinearity(score)
-        else:
-            score = softmax(score, batch)
-        perm = self.select(score, batch).node_index
-        x = x[perm] * score[perm].view(-1, 1)
+        select_out = self.select(score, batch)
+
+        perm = select_out.node_index
+        score = select_out.weight
+        assert score is not None
+
+        x = x[perm] * score.view(-1, 1)
         x = self.multiplier * x if self.multiplier != 1 else x
 
         edge_index = torch.stack([col, row], dim=0)
-        select_output = self.select(x, batch)
-        connect_output = self.connect(select_output, edge_index, edge_weight,
-                                      batch)
-        edge_index = connect_output.edge_index
-        edge_weight = connect_output.edge_attr
-        batch = connect_output.batch
-        assert edge_weight is not None
+        connect_out = self.connect(select_out, edge_index, edge_weight, batch)
 
-        return x, edge_index, edge_weight, batch[perm], perm, score[perm]
+        return (x, connect_out.edge_index, connect_out.edge_attr,
+                connect_out.batch, perm, score)
 
     def __repr__(self) -> str:
         if self.min_score is None:

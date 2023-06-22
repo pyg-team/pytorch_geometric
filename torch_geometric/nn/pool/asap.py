@@ -68,7 +68,9 @@ class ASAPooling(torch.nn.Module):
                                          **kwargs)
         else:
             self.gnn_intra_cluster = None
-        self.select = SelectTopK(in_channels, ratio, None, 'tanh')
+
+        self.select = SelectTopK(1, ratio)
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -78,6 +80,7 @@ class ASAPooling(torch.nn.Module):
         self.gnn_score.reset_parameters()
         if self.gnn_intra_cluster is not None:
             self.gnn_intra_cluster.reset_parameters()
+        self.select.reset_parameters()
 
     def forward(
         self,
