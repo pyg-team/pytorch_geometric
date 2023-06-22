@@ -1,5 +1,6 @@
 import json
 import os
+import os.path as osp
 from typing import Dict, List, Optional, Tuple
 
 import torch
@@ -118,68 +119,28 @@ class LocalGraphStore(GraphStore):
         return graph_store
 
     @classmethod
-    def from_partition(
-        self, root_dir: str, partition_idx: int
-    ) -> Tuple[Dict, int, int, 'LocalGraphStore', torch.Tensor, torch.Tensor]:
+    def from_partition(cls, root: str, pid: int) -> 'LocalGraphStore':
+        with open(osp.join(root, 'META.json'), 'r') as f:
+            meta = json.load(f)
 
-        # load the partition from partition .pt files
-        with open(os.path.join(root_dir, 'META.json'), 'rb') as infile:
-            meta = json.load(infile)
-        num_partitions = meta['num_parts']
-        assert partition_idx >= 0
-        assert partition_idx < num_partitions
-        partition_dir = os.path.join(root_dir, f'part_{partition_idx}')
-        assert os.path.exists(partition_dir)
-        graph_dir = os.path.join(partition_dir, 'graph.pt')
+        part_dir = osp.join(root, f'part_{pid}')
+        assert osp.exists(part_dir)
 
-        if os.path.exists(graph_dir):
-            graph_data = torch.load(graph_dir)
-        else:
-            raise ValueError("not found graph files")
+        graph_data = torch.load(osp.join(part_dir, 'graph.pt'))
+
+        graph_store = cls()
 
         if not meta['is_hetero']:
-            # homo
-            node_pb = torch.load(os.path.join(root_dir, 'node_map.pt'))
-            edge_pb = torch.load(os.path.join(root_dir, 'edge_map.pt'))
+            attr = dict(edge_type=None, layout='coo', size=graph_data['size'])
+            graph_store.put_edge_index((graph_data['row'], graph_data['col']),
+                                       **attr)
+            graph_store.put_edge_id(graph_data['edge_id'], **attr)
 
-            # initialize graph
-            edge_index = torch.tensor(
-                [graph_data['row'].tolist(), graph_data['col'].tolist()])
-            graph_store = self.from_data(graph_data['edge_id'], edge_index,
-                                         num_nodes=graph_data['size'][0])
+        if meta['is_hetero']:
+            for edge_type, data in graph_data.items():
+                attr = dict(edge_type=edge_type, layout='coo',
+                            size=data['size'])
+                graph_store.put_edge_index((data['row'], data['col']), **attr)
+                graph_store.put_edge_id(data['edge_id'], **attr)
 
-            return (meta, num_partitions, partition_idx, graph_store, node_pb,
-                    edge_pb)
-
-        else:
-            # hetero
-            node_pb_dict = {}
-            node_pb_dir = os.path.join(root_dir, 'node_map')
-            for ntype in meta['node_types']:
-                node_pb_dict[ntype] = torch.load(
-                    os.path.join(node_pb_dir, f'{ntype}.pt'))
-
-            edge_pb_dict = {}
-            edge_pb_dir = os.path.join(root_dir, 'edge_map')
-            for etype in meta['edge_types']:
-                edge_pb_dict[tuple(etype)] = torch.load(
-                    os.path.join(edge_pb_dir, f'{EdgeTypeStr(etype)}.pt'))
-
-            # convert partition data into dict.
-            edge_id_dict, edge_index_dict, num_nodes_dict = {}, {}, {}
-            for etype in meta['edge_types']:
-                edge_id_dict[tuple(etype)] = graph_data[tuple(
-                    etype)]['edge_id']
-                edge_index_dict[tuple(etype)] = torch.tensor([
-                    graph_data[tuple(etype)]['row'].tolist(),
-                    graph_data[tuple(etype)]['col'].tolist()
-                ])
-                num_nodes_dict[etype[0]] = graph_data[tuple(etype)]['size'][0]
-                num_nodes_dict[etype[2]] = graph_data[tuple(etype)]['size'][1]
-
-            # initialize graph
-            graph_store = self.from_hetero_data(edge_id_dict, edge_index_dict,
-                                                num_nodes_dict)
-
-            return (meta, num_partitions, partition_idx, graph_store,
-                    node_pb_dict, edge_pb_dict)
+        return graph_store
