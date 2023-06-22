@@ -15,7 +15,7 @@ class ExplanationMixin:
     @property
     def available_explanations(self) -> List[str]:
         """Returns the available explanation masks."""
-        return [key for key in self.keys if key.endswith('_mask')]
+        return [key for key in self.keys() if key.endswith('_mask')]
 
     def validate_masks(self, raise_on_error: bool = True) -> bool:
         r"""Validates the correctness of the :class:`Explanation` masks."""

@@ -32,8 +32,8 @@ def test_temporal_data():
     del data.edge_index
     assert data.edge_index.tolist() == [[0, 1, 2], [3, 4, 5]]
 
-    assert sorted(data.keys) == ['dst', 'msg', 'src', 't', 'y']
-    assert sorted(data.to_dict().keys()) == sorted(data.keys)
+    assert sorted(data.keys()) == ['dst', 'msg', 'src', 't', 'y']
+    assert sorted(data.to_dict().keys()) == sorted(data.keys())
 
     data_tuple = data.to_namedtuple()
     assert len(data_tuple) == 5
