@@ -127,7 +127,6 @@ class BaseData:
 
     ###########################################################################
 
-    @property
     def keys(self) -> List[str]:
         r"""Returns a list of all graph attribute names."""
         out = []
@@ -137,12 +136,12 @@ class BaseData:
 
     def __len__(self) -> int:
         r"""Returns the number of graph attributes."""
-        return len(self.keys)
+        return len(self.keys())
 
     def __contains__(self, key: str) -> bool:
         r"""Returns :obj:`True` if the attribute :obj:`key` is present in the
         data."""
-        return key in self.keys
+        return key in self.keys()
 
     def __getstate__(self) -> Dict[str, Any]:
         return self.__dict__
@@ -738,7 +737,7 @@ class Data(BaseData, FeatureStore, GraphStore):
                     data[key][attr] = value.index_select(cat_dim, edge_ids[i])
 
         # Add global attributes.
-        exclude_keys = set(data.keys) | {
+        exclude_keys = set(data.keys()) | {
             'node_type', 'edge_type', 'edge_index', 'num_nodes', 'ptr'
         }
         for attr, value in self.items():
