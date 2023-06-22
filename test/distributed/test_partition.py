@@ -4,7 +4,11 @@ import pytest
 import torch
 
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
-from torch_geometric.distributed import Partitioner
+from torch_geometric.distributed import (
+    LocalFeatureStore,
+    LocalGraphStore,
+    Partitioner,
+)
 from torch_geometric.typing import EdgeTypeStr
 
 try:
@@ -97,3 +101,66 @@ def test_partition_hetero_data(tmp_path):
         assert osp.exists(node_feats_path)
         edge_feats_path = osp.join(tmp_path, f'part_{pid}', 'edge_feats.pt')
         assert osp.exists(edge_feats_path)
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_from_partition_data(tmp_path):
+    data = FakeDataset()[0]
+    num_parts = 2
+
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    graph_store1 = LocalGraphStore.from_partition(tmp_path, pid=0)
+    graph_store2 = LocalGraphStore.from_partition(tmp_path, pid=1)
+
+    attr1 = graph_store1.get_all_edge_attrs()[0]
+    (row1, col1) = graph_store1.get_edge_index(attr1)
+    attr2 = graph_store2.get_all_edge_attrs()[0]
+    (row2, col2) = graph_store2.get_edge_index(attr2)
+    assert row1.size(0) + row2.size(0) == data.num_edges
+
+    feat_store1 = LocalFeatureStore.from_partition(tmp_path, pid=0)
+    feat_store2 = LocalFeatureStore.from_partition(tmp_path, pid=1)
+
+    node_attr1 = feat_store1.get_all_tensor_attrs()[0]
+    assert node_attr1.attr_name == 'x'
+    x1 = feat_store1.get_tensor(node_attr1)
+    id1 = feat_store1.get_global_id(node_attr1.group_name)
+
+    node_attr2 = feat_store2.get_all_tensor_attrs()[0]
+    assert node_attr2.attr_name == 'x'
+    x2 = feat_store2.get_tensor(node_attr2)
+    id2 = feat_store2.get_global_id(node_attr2.group_name)
+
+    assert x1.size(0) + x2.size(0) == data.num_nodes
+    assert torch.allclose(data.x[id1], x1)
+    assert torch.allclose(data.x[id2], x2)
+
+
+@pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
+def test_from_partition_hetero_data(tmp_path):
+    data = FakeHeteroDataset()[0]
+    num_parts = 2
+
+    partitioner = Partitioner(data, num_parts, tmp_path)
+    partitioner.generate_partition()
+
+    graph_store1 = LocalGraphStore.from_partition(tmp_path, pid=0)
+    graph_store2 = LocalGraphStore.from_partition(tmp_path, pid=1)
+
+    attrs1 = graph_store1.get_all_edge_attrs()
+    attrs2 = graph_store2.get_all_edge_attrs()
+    assert len(data.edge_types) == len(attrs1) == len(attrs2)
+
+    node_types = set()
+    for attr in attrs1:
+        node_types.add(attr.edge_type[0])
+        node_types.add(attr.edge_type[2])
+    assert node_types == set(data.node_types)
+
+    node_types = set()
+    for attr in attrs2:
+        node_types.add(attr.edge_type[0])
+        node_types.add(attr.edge_type[2])
+    assert node_types == set(data.node_types)
