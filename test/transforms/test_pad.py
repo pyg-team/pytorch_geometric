@@ -75,10 +75,10 @@ def _check_homo_data_nodes(
 
     for attr in _generate_homodata_node_attrs(original):
         if attr in exclude_keys:
-            assert attr not in padded.keys
+            assert attr not in padded.keys()
             continue
 
-        assert attr in padded.keys
+        assert attr in padded.keys()
 
         if not isinstance(padded[attr], torch.Tensor):
             continue
@@ -133,10 +133,10 @@ def _check_homo_data_edges(
         if attr == 'edge_index':
             continue
         if attr in exclude_keys:
-            assert attr not in padded.keys
+            assert attr not in padded.keys()
             continue
 
-        assert attr in padded.keys
+        assert attr in padded.keys()
 
         if not isinstance(padded[attr], torch.Tensor):
             continue
@@ -474,7 +474,7 @@ def test_pad_data_non_tensor_attr():
 
     exclude_transform = Pad(max_num_nodes=101, exclude_keys=('batch_size', ))
     padded = exclude_transform(data)
-    assert 'batch_size' not in padded.keys
+    assert 'batch_size' not in padded.keys()
 
 
 @pytest.mark.parametrize('mask_pad_value', [True, False])
