@@ -106,54 +106,55 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
-
-    num_nodes, num_edges = 1_000, 50_000
-    x = torch.randn(num_edges, 64, device=args.device)
-    index = torch.randint(num_nodes, (num_edges, ), device=args.device)
-    from torch_geometric.typing import WITH_TORCH_SCATTER
-    if WITH_TORCH_SCATTER:
-        import torch_scatter
-
-    def pytorch_index_add(x, index, dim_size, reduce):
-        assert reduce == 'sum'
-        out = x.new_zeros((dim_size, x.size(-1)))
-        return out.index_add_(0, index, x)
-
-    def pytorch_scatter(x, index, dim_size, reduce):
-        if reduce == 'min' or reduce == 'max':
-            reduce = f'a{aggr}'  # `amin` or `amax`
-        elif reduce == 'mul':
-            reduce = 'prod'
-        out = x.new_zeros((dim_size, x.size(-1)))
-        include_self = reduce in ['sum', 'mean']
-        index = index.view(-1, 1).expand(-1, x.size(-1))
-        out.scatter_reduce_(0, index, x, reduce, include_self=include_self)
-        return out
-
-    def own_scatter(x, index, dim_size, reduce):
-        return torch_scatter.scatter(x, index, dim=0, dim_size=num_nodes,
-                                     reduce=reduce)
-
-    def optimized_scatter(x, index, dim_size, reduce):
-        return scatter(x, index, dim=0, dim_size=dim_size, reduce=reduce)
-
-    aggrs = ['sum', 'mean', 'min', 'max', 'mul']
-    for aggr in aggrs:
-        print(f'Aggregator: {aggr}')
-        funcs = [pytorch_scatter, optimized_scatter]
-        func_names = ['PyTorch Scatter', 'Optimized PyG Scatter']
+    for num_nodes in [1000, 2000, 4000, 8000, 16000]
+        num_edges = num_nodes * 50
+        print("Benchmarking w/ (num_nodes, num_edges) =", (num_nodes, num_edges))
+        x = torch.randn(num_edges, 64, device=args.device)
+        index = torch.randint(num_nodes, (num_edges, ), device=args.device)
+        from torch_geometric.typing import WITH_TORCH_SCATTER
         if WITH_TORCH_SCATTER:
-            funcs.append(own_scatter)
-            func_names.append('torch_scatter')
-        if aggr == 'sum':
-            funcs = [pytorch_index_add] + funcs
-            func_names = ['PyTorch Index Add'] + func_names
+            import torch_scatter
 
-        benchmark(
-            funcs=funcs,
-            func_names=func_names,
-            args=(x, index, num_nodes, aggr),
-            num_steps=100 if args.device == 'cpu' else 1000,
-            num_warmups=50 if args.device == 'cpu' else 500,
-            backward=args.backward,
-        )
+        def pytorch_index_add(x, index, dim_size, reduce):
+            assert reduce == 'sum'
+            out = x.new_zeros((dim_size, x.size(-1)))
+            return out.index_add_(0, index, x)
+
+        def pytorch_scatter(x, index, dim_size, reduce):
+            if reduce == 'min' or reduce == 'max':
+                reduce = f'a{aggr}'  # `amin` or `amax`
+            elif reduce == 'mul':
+                reduce = 'prod'
+            out = x.new_zeros((dim_size, x.size(-1)))
+            include_self = reduce in ['sum', 'mean']
+            index = index.view(-1, 1).expand(-1, x.size(-1))
+            out.scatter_reduce_(0, index, x, reduce, include_self=include_self)
+            return out
+
+        def own_scatter(x, index, dim_size, reduce):
+            return torch_scatter.scatter(x, index, dim=0, dim_size=num_nodes,
+                                         reduce=reduce)
+
+        def optimized_scatter(x, index, dim_size, reduce):
+            return scatter(x, index, dim=0, dim_size=dim_size, reduce=reduce)
+
+        aggrs = ['sum', 'mean', 'min', 'max', 'mul']
+        for aggr in aggrs:
+            print(f'Aggregator: {aggr}')
+            funcs = [pytorch_scatter, optimized_scatter]
+            func_names = ['PyTorch Scatter', 'Optimized PyG Scatter']
+            if WITH_TORCH_SCATTER:
+                funcs.append(own_scatter)
+                func_names.append('torch_scatter')
+            if aggr == 'sum':
+                funcs = [pytorch_index_add] + funcs
+                func_names = ['PyTorch Index Add'] + func_names
+
+            benchmark(
+                funcs=funcs,
+                func_names=func_names,
+                args=(x, index, num_nodes, aggr),
+                num_steps=100 if args.device == 'cpu' else 1000,
+                num_warmups=50 if args.device == 'cpu' else 500,
+                backward=args.backward,
+            )
