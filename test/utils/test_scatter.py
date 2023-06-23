@@ -112,6 +112,10 @@ if __name__ == '__main__':
     x = torch.randn(num_edges, 64, device=args.device)
     index = torch.randint(num_nodes, (num_edges, ), device=args.device)
 
+    def pytorch_index_add(x, index, dim_size, reduce):
+        assert reduce == 'sum'
+        return x.new_zeros(dim_size).index_add_(0, index, x)
+
     def pytorch_scatter(x, index, dim_size, reduce):
         if reduce == 'min' or reduce == 'max':
             reduce = f'a{aggr}'  # `amin` or `amax`
@@ -133,6 +137,8 @@ if __name__ == '__main__':
     aggrs = ['sum', 'mean', 'min', 'max', 'mul']
     for aggr in aggrs:
         print(f'Aggregator: {aggr}')
+        if aggr == 'sum'
+
         benchmark(
             funcs=[pytorch_scatter, own_scatter, optimized_scatter],
             func_names=['PyTorch', 'torch_scatter', 'Optimized'],
