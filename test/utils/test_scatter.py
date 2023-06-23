@@ -146,7 +146,7 @@ if __name__ == '__main__':
             func_names.append('torch_scatter')
         if aggr == 'sum':
             funcs = [pytorch_index_add] + funcs
-            func_names = ['PyTorch Index Add'] + funcs
+            func_names = ['PyTorch Index Add'] + func_names
 
         benchmark(
             funcs=funcs,
