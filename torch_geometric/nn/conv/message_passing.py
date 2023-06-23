@@ -184,22 +184,32 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks = OrderedDict()
         self._edge_update_forward_hooks = OrderedDict()
 
-
         # Init NVTX Ranges for this op
-        if os.environ.get('NVIDIA_NVTX_RANGES', "0") == "1" and torch.cuda.is_available():
+        if os.environ.get('NVIDIA_NVTX_RANGES',
+                          "0") == "1" and torch.cuda.is_available():
             self._nvtx_handles = dict()
+
             def get_hooks_for(func_name):
                 def nvtx_pre_hook(module, inputs):
-                    self._nvtx_handles[func_name] = torch.cuda.nvtx.range_start(f"[MessagePassing] {func_name} for {self}")
+                    self._nvtx_handles[
+                        func_name] = torch.cuda.nvtx.range_start(
+                            f"[MessagePassing] {func_name} for {self}")
                     return inputs
+
                 def nvtx_hook(module, inputs, output):
                     torch.cuda.nvtx.range_end(self._nvtx_handles[func_name])
                     return output
+
                 return nvtx_pre_hook, nvtx_hook
 
-            for func_name in ["propagate", "message", "aggregate", "message_and_aggregate", "edge_update"]:
+            for func_name in [
+                    "propagate", "message", "aggregate",
+                    "message_and_aggregate", "edge_update"
+            ]:
                 nvtx_pre_hook, nvtx_hook = get_hooks_for(func_name)
-                getattr(self, f"register_{func_name}_forward_pre_hook")(nvtx_pre_hook)
+                getattr(
+                    self,
+                    f"register_{func_name}_forward_pre_hook")(nvtx_pre_hook)
                 getattr(self, f"register_{func_name}_forward_hook")(nvtx_hook)
 
     def reset_parameters(self):

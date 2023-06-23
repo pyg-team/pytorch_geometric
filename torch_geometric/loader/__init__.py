@@ -25,6 +25,7 @@ import os
 import torch
 import inspect
 
+
 def hook_nvtx_collate_fn(class_to_hook):
     original_init = class_to_hook.__init__
 
@@ -38,16 +39,22 @@ def hook_nvtx_collate_fn(class_to_hook):
         if hasattr(self, "collate_fn_hooked"):
             return
         original_collate_fn = self.collate_fn
+
         def hooked_collate_fn(*args, **kwargs):
-            nvtx_handle = torch.cuda.nvtx.range_start(f"[{class_to_hook.__name__}]] collate_fn for {self}")
+            nvtx_handle = torch.cuda.nvtx.range_start(
+                f"[{class_to_hook.__name__}]] collate_fn for {self}")
             ret = original_collate_fn(*args, **kwargs)
             torch.cuda.nvtx.range_end(nvtx_handle)
             return ret
+
         self.collate_fn = hooked_collate_fn
         self.collate_fn_hooked = True
+
     class_to_hook.__init__ = post_hooked_init
 
-if os.environ.get('NVIDIA_NVTX_RANGES', "0") == "1" and torch.cuda.is_available():
+
+if os.environ.get('NVIDIA_NVTX_RANGES',
+                  "0") == "1" and torch.cuda.is_available():
     syms = list(locals().keys())
     for sym in syms:
         cl = locals()[sym]

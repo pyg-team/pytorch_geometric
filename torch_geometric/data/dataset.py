@@ -259,8 +259,10 @@ class Dataset(torch.utils.data.Dataset, ABC):
         bool, will return a subset of the dataset at the specified indices."""
 
         # We can't hook __getitem__ item as it is a special method https://docs.python.org/3/reference/datamodel.html#special-lookup
-        if os.environ.get('NVIDIA_NVTX_RANGES', "0") == "1" and torch.cuda.is_available():
-            nvtx_handle = torch.cuda.nvtx.range_start(f"[Dataset] __getitem for {self}")
+        if os.environ.get('NVIDIA_NVTX_RANGES',
+                          "0") == "1" and torch.cuda.is_available():
+            nvtx_handle = torch.cuda.nvtx.range_start(
+                f"[Dataset] __getitem for {self}")
 
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
@@ -271,7 +273,8 @@ class Dataset(torch.utils.data.Dataset, ABC):
         else:
             data = self.index_select(idx)
 
-        if os.environ.get('NVIDIA_NVTX_RANGES', "0") == "1" and torch.cuda.is_available():
+        if os.environ.get('NVIDIA_NVTX_RANGES',
+                          "0") == "1" and torch.cuda.is_available():
             torch.cuda.nvtx.range_end(nvtx_handle)
 
         return data
