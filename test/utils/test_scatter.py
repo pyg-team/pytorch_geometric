@@ -113,6 +113,7 @@ if __name__ == '__main__':
         print("Benchmarking w/ (num_nodes, num_edges) =", (num_nodes, num_edges))
         x = torch.randn(num_edges, 64, device=args.device)
         index = torch.randint(num_nodes, (num_edges, ), device=args.device)
+
         from torch_geometric.typing import WITH_TORCH_SCATTER
         if WITH_TORCH_SCATTER:
             import torch_scatter
