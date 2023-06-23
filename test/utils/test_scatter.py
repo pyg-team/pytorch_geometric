@@ -6,7 +6,6 @@ from torch_geometric.testing import disableExtensions, withCUDA, withPackage
 from torch_geometric.utils import scatter
 from torch_geometric.utils.scatter import scatter_argmax
 
-
 def test_scatter_validate():
     src = torch.randn(100, 32)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
@@ -101,7 +100,7 @@ if __name__ == '__main__':
     #   * Prefer `torch_sparse` implementation with gradients
     import argparse
 
-    import torch_scatter
+
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
@@ -111,6 +110,9 @@ if __name__ == '__main__':
     num_nodes, num_edges = 1_000, 50_000
     x = torch.randn(num_edges, 64, device=args.device)
     index = torch.randint(num_nodes, (num_edges, ), device=args.device)
+    from torch_geometric import WITH_TORCH_SCATTER
+    if WITH_TORCH_SCATTER:
+        import torch_scatter
 
     def pytorch_index_add(x, index, dim_size, reduce):
         assert reduce == 'sum'
@@ -137,8 +139,11 @@ if __name__ == '__main__':
     aggrs = ['sum', 'mean', 'min', 'max', 'mul']
     for aggr in aggrs:
         print(f'Aggregator: {aggr}')
-        funcs = [pytorch_scatter, own_scatter, optimized_scatter]
-        func_names = ['PyTorch Scatter', 'torch_scatter', 'Optimized']
+        funcs = [pytorch_scatter, optimized_scatter]
+        func_names = ['PyTorch Scatter', 'Optimized PyG Scatter']
+        if WITH_TORCH_SCATTER:
+            funcs.append(own_scatter)
+            func_names.append('torch_scatter')
         if aggr == 'sum':
             funcs = [pytorch_index_add] + funcs
             func_names = ['PyTorch Index Add'] + funcs
