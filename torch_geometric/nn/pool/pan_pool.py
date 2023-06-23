@@ -71,7 +71,7 @@ class PANPooling(torch.nn.Module):
         x: Tensor,
         M: SparseTensor,
         batch: OptTensor = None,
-    ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor, Tensor]:
+    ) -> Tuple[Tensor, Tensor, Tensor, OptTensor, Tensor, Tensor]:
         r"""
         Args:
             x (torch.Tensor): The node feature matrix.
@@ -101,9 +101,11 @@ class PANPooling(torch.nn.Module):
 
         edge_index = torch.stack([col, row], dim=0)
         connect_out = self.connect(select_out, edge_index, edge_weight, batch)
+        edge_weight = connect_out.edge_attr
+        assert edge_weight is not None
 
-        return (x, connect_out.edge_index, connect_out.edge_attr,
-                connect_out.batch, perm, score)
+        return (x, connect_out.edge_index, edge_weight, connect_out.batch,
+                perm, score)
 
     def __repr__(self) -> str:
         if self.min_score is None:
