@@ -115,11 +115,6 @@ if __name__ == '__main__':
         if WITH_TORCH_SCATTER:
             import torch_scatter
 
-        def pytorch_index_add(x, index, dim_size, reduce):
-            assert reduce == 'sum'
-            out = x.new_zeros((dim_size, x.size(-1)))
-            return out.index_add_(0, index, x)
-
         def pytorch_scatter(x, index, dim_size, reduce):
             if reduce == 'min' or reduce == 'max':
                 reduce = f'a{aggr}'  # `amin` or `amax`
@@ -146,9 +141,6 @@ if __name__ == '__main__':
             if WITH_TORCH_SCATTER:
                 funcs.append(own_scatter)
                 func_names.append('torch_scatter')
-            if aggr == 'sum':
-                funcs = [pytorch_index_add] + funcs
-                func_names = ['PyTorch Index Add'] + func_names
 
             benchmark(
                 funcs=funcs,
