@@ -106,7 +106,7 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
-    for num_nodes in [1000, 2000, 4000, 8000, 16000]
+    for num_nodes in [1000, 2000, 4000, 8000, 16000]:
         num_edges = num_nodes * 50
         print("Benchmarking w/ (num_nodes, num_edges) =", (num_nodes, num_edges))
         x = torch.randn(num_edges, 64, device=args.device)
