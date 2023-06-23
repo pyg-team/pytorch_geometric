@@ -262,7 +262,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
         if os.environ.get('NVIDIA_NVTX_RANGES',
                           "0") == "1" and torch.cuda.is_available():
             nvtx_handle = torch.cuda.nvtx.range_start(
-                f"[Dataset] __getitem for {self}")
+                f"[Dataset] __getitem__ for {self}")
 
         if (isinstance(idx, (int, np.integer))
                 or (isinstance(idx, Tensor) and idx.dim() == 0)
