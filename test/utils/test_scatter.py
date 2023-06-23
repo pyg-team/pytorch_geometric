@@ -137,11 +137,15 @@ if __name__ == '__main__':
     aggrs = ['sum', 'mean', 'min', 'max', 'mul']
     for aggr in aggrs:
         print(f'Aggregator: {aggr}')
-        if aggr == 'sum'
+        funcs = [pytorch_scatter, own_scatter, optimized_scatter]
+        func_names = ['PyTorch Scatter', 'torch_scatter', 'Optimized']
+        if aggr == 'sum':
+            funcs = [pytorch_index_add] + funcs
+            func_names = ['PyTorch Index Add'] + funcs
 
         benchmark(
-            funcs=[pytorch_scatter, own_scatter, optimized_scatter],
-            func_names=['PyTorch', 'torch_scatter', 'Optimized'],
+            funcs=funcs,
+            func_names=func_names,
             args=(x, index, num_nodes, aggr),
             num_steps=100 if args.device == 'cpu' else 1000,
             num_warmups=50 if args.device == 'cpu' else 500,
