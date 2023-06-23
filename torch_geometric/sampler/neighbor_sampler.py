@@ -3,6 +3,7 @@ import math
 import sys
 import warnings
 from typing import Callable, Dict, List, Optional, Tuple, Union
+import os
 
 import torch
 from torch import Tensor
@@ -150,6 +151,19 @@ class NeighborSampler(BaseSampler):
         self.subgraph_type = SubgraphType(subgraph_type)
         self.disjoint = disjoint
         self.temporal_strategy = temporal_strategy
+
+        # Init NVTX Ranges for this class
+        if os.environ.get('NVIDIA_NVTX_RANGES', "0") == "1" and torch.cuda.is_available():
+            def hook_func_with_nvtx(func_name):
+                func = getattr(self, func_name)
+                def hooked_func(**kwargs):
+                    nvtx_handle = torch.cuda.nvtx.range_start(f"[Sampler] {func_name} for {self}")
+                    ret = func(**kwargs)
+                    torch.cuda.nvtx.range_end(nvtx_handle)
+                    return ret
+                setattr(self, func_name, hooked_func)
+            for func_name in ["sample_from_nodes", "sample_from_edges"]:
+                hook_func_with_nvtx(func_name)
 
     @property
     def num_neighbors(self) -> NumNeighbors:
