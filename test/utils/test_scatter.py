@@ -137,7 +137,7 @@ if __name__ == '__main__':
         if args.aggr == 'all':
             aggrs = ['sum', 'mean', 'min', 'max', 'mul']
         else:
-            aggrs = args.aggrs.split(',')
+            aggrs = args.aggr.split(',')
         for aggr in aggrs:
             print(f'Aggregator: {aggr}')
             funcs = [pytorch_scatter, optimized_scatter]
