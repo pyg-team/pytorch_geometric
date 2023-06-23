@@ -203,6 +203,13 @@ class GCNConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
 
+        if isinstance(x, (tuple, list)):
+            raise ValueError(f"'{self.__class__.__name__}' received a tuple "
+                             f"of node features as input while this layer "
+                             f"does not support bipartite message passing. "
+                             f"Please try other layers such as 'SAGEConv' or "
+                             f"'GraphConv' instead")
+
         if self.normalize:
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
