@@ -105,7 +105,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
+    parser.add_argument('--aggr', type=str, default='all', help="Specify a specific aggr to benchmark or multiple seperated by commas")
     args = parser.parse_args()
+
     for num_nodes in [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000]:
         num_edges = num_nodes * 50
         print("Benchmarking w/ (num_nodes, num_edges) =", (num_nodes, num_edges))
@@ -132,8 +134,10 @@ if __name__ == '__main__':
 
         def optimized_scatter(x, index, dim_size, reduce):
             return scatter(x, index, dim=0, dim_size=dim_size, reduce=reduce)
-
-        aggrs = ['sum', 'mean', 'min', 'max', 'mul']
+        if args.aggr == 'all':
+            aggrs = ['sum', 'mean', 'min', 'max', 'mul']
+        else:
+            aggrs = args.aggrs.split(',')
         for aggr in aggrs:
             print(f'Aggregator: {aggr}')
             funcs = [pytorch_scatter, optimized_scatter]
