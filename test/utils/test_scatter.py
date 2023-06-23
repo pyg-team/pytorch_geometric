@@ -83,7 +83,7 @@ def test_scatter_argmax(device):
 if __name__ == '__main__':
     # Insights on GPU:
     # ================
-    # * "sum": Prefer `scatter_add_` implementation
+    # * "sum": Prefer `index_add_` implementation
     # * "mean": Prefer manual implementation via `scatter_add_` + `count`
     # * "min"/"max":
     #   * Prefer `scatter_reduce_` implementation without gradients
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     #
     # Insights on CPU:
     # ================
-    # * "sum": Prefer `scatter_add_` implementation
+    # * "sum": Prefer `index_add_` implementation
     # * "mean": Prefer manual implementation via `scatter_add_` + `count`
     # * "min"/"max": Prefer `scatter_reduce_` implementation
     # * "mul" (probably not worth branching for this):
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     num_nodes, num_edges = 1_000, 50_000
     x = torch.randn(num_edges, 64, device=args.device)
     index = torch.randint(num_nodes, (num_edges, ), device=args.device)
-    from torch_geometric import WITH_TORCH_SCATTER
+    from torch_geometric.typing import WITH_TORCH_SCATTER
     if WITH_TORCH_SCATTER:
         import torch_scatter
 
