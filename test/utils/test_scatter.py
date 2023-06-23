@@ -116,7 +116,8 @@ if __name__ == '__main__':
 
     def pytorch_index_add(x, index, dim_size, reduce):
         assert reduce == 'sum'
-        return x.new_zeros(dim_size).index_add_(0, index, x)
+        out = x.new_zeros((dim_size, x.size(-1)))
+        return out.index_add_(0, index, x)
 
     def pytorch_scatter(x, index, dim_size, reduce):
         if reduce == 'min' or reduce == 'max':
