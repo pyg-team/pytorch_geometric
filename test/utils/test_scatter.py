@@ -6,6 +6,7 @@ from torch_geometric.testing import disableExtensions, withCUDA, withPackage
 from torch_geometric.utils import scatter
 from torch_geometric.utils.scatter import scatter_argmax
 
+
 def test_scatter_validate():
     src = torch.randn(100, 32)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
@@ -100,17 +101,18 @@ if __name__ == '__main__':
     #   * Prefer `torch_sparse` implementation with gradients
     import argparse
 
-
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
-    parser.add_argument('--aggr', type=str, default='all', help="Specify a specific aggr to benchmark or multiple seperated by commas")
+    parser.add_argument(
+        '--aggr', type=str, default='all', help=
+        "Specify a specific aggr to benchmark or multiple seperated by commas")
     args = parser.parse_args()
 
     for num_nodes in [1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000]:
         num_edges = num_nodes * 50
-        print("Benchmarking w/ (num_nodes, num_edges) =", (num_nodes, num_edges))
+        print("Benchmarking w/ (num_nodes, num_edges) =",
+              (num_nodes, num_edges))
         x = torch.randn(num_edges, 64, device=args.device)
         index = torch.randint(num_nodes, (num_edges, ), device=args.device)
 
@@ -135,6 +137,7 @@ if __name__ == '__main__':
 
         def optimized_scatter(x, index, dim_size, reduce):
             return scatter(x, index, dim=0, dim_size=dim_size, reduce=reduce)
+
         if args.aggr == 'all':
             aggrs = ['sum', 'mean', 'min', 'max', 'mul']
         else:
