@@ -67,10 +67,10 @@ if has_pytorch112:  # pragma: no cover
             index = broadcast(index, src, dim)
             return src.new_zeros(size).scatter_(dim, index, src)
 
-        # For "sum" and "mean" reduction, we make use of `index_add_`
-        # since its faster than `scatter_add_`:
+        # For "sum" and "mean" reduction, we make use of `scatter_add_`:
         if reduce == 'sum' or reduce == 'add':
-            return src.new_zeros(size).index_add_(dim, index, src)
+            index = broadcast(index, src, dim)
+            return src.new_zeros(size).scatter_add_(dim, index, src)
 
         if reduce == 'mean':
             count = src.new_zeros(dim_size)
