@@ -20,11 +20,10 @@ def test_tgn():
     msg = torch.randn(10, 16)
     data = TemporalData(src=src, dst=dst, t=t, msg=msg)
 
-    loader = TemporalDataLoader(data, batch_size=5)
+    loader = TemporalDataLoader(data, batch_size=5, neighbor_loader_size=3)
 
-    neighbor_loader = LastNeighborLoader(data.num_nodes, size=3)
-    assert neighbor_loader.cur_e_id == 0
-    assert neighbor_loader.e_id.size() == (data.num_nodes, 3)
+    assert loader.neighbor_loader.cur_e_id == 0
+    assert loader.neighbor_loader.e_id.size() == (data.num_nodes, 3)
 
     memory = TGNMemory(
         num_nodes=data.num_nodes,
@@ -45,7 +44,7 @@ def test_tgn():
             assert batch.n_id.size(0) == 4
             assert batch.edge_index.numel() == 0
             assert batch.e_id.numel() == 0
-            assert z.size() == (n_id.size(0), memory_dim)
+            assert z.size() == (batch.n_id.size(0), memory_dim)
             assert torch.sum(last_update) == 0
         else:
             assert batch.n_id.size(0) == 5
