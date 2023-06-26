@@ -36,8 +36,6 @@ data = dataset[0]
 # expensive memory transfer costs for mini-batches:
 data = data.to(device)
 
-# Ensure to only sample actual destination nodes as negatives.
-min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
 train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 

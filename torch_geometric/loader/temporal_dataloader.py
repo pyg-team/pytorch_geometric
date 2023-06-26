@@ -27,6 +27,8 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         self.data = data
         self.events_per_batch = batch_size
         self.device = device
+        # Ensure to only sample actual destination nodes as negatives.
+        self.min_dst_idx, self.max_dst_idx = int(self.data.dst.min()), int(self.data.dst.max())
         self.neighbor_loader = LastNeighborLoader(data.num_nodes, size=neighbor_loader_size, device=self.device)
         
         # Helper vector to map global node indices to local ones.
@@ -46,7 +48,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         batch = self.data[arange[0]:arange[0] + self.events_per_batch].to(self.device)
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
         # Sample negative destination nodes.
-        neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
+        neg_dst = torch.randint(self.min_dst_idx, self.max_dst_idx + 1, (src.size(0), ),
                                 dtype=torch.long, device=self.device)
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
         n_id, edge_index, e_id = self.neighbor_loader(n_id)
