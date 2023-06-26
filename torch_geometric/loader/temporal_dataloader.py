@@ -19,8 +19,8 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`.
     """
     def __init__(self, data: TemporalData, batch_size: int = 1,
-                 device: Union[torch.device,
-                               str] = 'cpu', negative_sampling=False, neighbor_loader_size=10, **kwargs):
+                 device: Union[torch.device, str] = 'cpu',
+                 negative_sampling=False, neighbor_loader_size=10, **kwargs):
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
