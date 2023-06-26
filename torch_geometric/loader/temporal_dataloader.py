@@ -19,8 +19,8 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`.
     """
     def __init__(self, data: TemporalData, batch_size: int = 1,
-                 device: Union[torch.device,
-                               str] = 'cpu', negative_sampling=False, embedding_dim=100, time_dim=100,
+                 device: Union[torch.device, str] = 'cpu',
+                 negative_sampling=False, embedding_dim=100, time_dim=100,
                  memory_dim=100, neighbor_loader_size=10, **kwargs):
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
@@ -60,9 +60,10 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         list_to_make_n_ids = [batch.src, pos_dst]
         if self.negative_sampling:
             # Sample negative destination nodes.
-            batch.neg_dst = torch.randint(self.min_dst_idx, self.max_dst_idx + 1,
-                                    (src.size(0), ), dtype=torch.long,
-                                    device=self.device)
+            batch.neg_dst = torch.randint(self.min_dst_idx,
+                                          self.max_dst_idx + 1,
+                                          (src.size(0), ), dtype=torch.long,
+                                          device=self.device)
             list_to_make_n_ids += [batch.neg_dst]
         n_id = torch.cat(list_to_make_n_ids).unique()
         n_id, edge_index, e_id = self.neighbor_loader(n_id)
