@@ -296,11 +296,17 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items():
-            if isinstance(value, (Tensor, np.ndarray)) and key in N_KEYS:
+            if isinstance(value, Tensor) and key in N_KEYS:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.size(cat_dim)
+            if isinstance(value, np.ndarray) and key in N_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
         for key, value in self.items():
-            if isinstance(value, (Tensor, np.ndarray)) and 'node' in key:
+            if isinstance(value, Tensor) and 'node' in key:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.size(cat_dim)
+            if isinstance(value, np.ndarray) and 'node' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
         if 'adj' in self and isinstance(self.adj, SparseTensor):
