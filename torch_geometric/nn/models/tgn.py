@@ -5,10 +5,10 @@ import torch
 from torch import Tensor
 from torch.nn import GRUCell, Linear
 
+from torch_geometric.data import Batch
 from torch_geometric.nn.inits import zeros
 from torch_geometric.utils import scatter
 from torch_geometric.utils.scatter import scatter_argmax
-from torch_geometric.data import Batch
 
 TGNMessageStoreType = Dict[int, Tuple[Tensor, Tensor, Tensor, Tensor]]
 

@@ -45,6 +45,7 @@ train_loader = TemporalDataLoader(train_data, batch_size=200, device=device)
 val_loader = TemporalDataLoader(val_data, batch_size=200, device=device)
 test_loader = TemporalDataLoader(test_data, batch_size=200, device=device)
 
+
 class GraphAttentionEmbedding(torch.nn.Module):
     def __init__(self, in_channels, out_channels, msg_dim, time_enc):
         super().__init__()
