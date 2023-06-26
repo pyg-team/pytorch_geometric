@@ -39,9 +39,9 @@ data = data.to(device)
 train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
-train_loader = TemporalDataLoader(train_data, batch_size=200, device=device)
-val_loader = TemporalDataLoader(val_data, batch_size=200, device=device)
-test_loader = TemporalDataLoader(test_data, batch_size=200, device=device)
+train_loader = TemporalDataLoader(train_data, batch_size=200, negative_sampling=True, device=device)
+val_loader = TemporalDataLoader(val_data, batch_size=200, negative_sampling=True, device=device)
+test_loader = TemporalDataLoader(test_data, batch_size=200, negative_sampling=True, device=device)
 
 
 class GraphAttentionEmbedding(torch.nn.Module):

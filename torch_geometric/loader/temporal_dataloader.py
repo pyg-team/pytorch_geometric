@@ -20,7 +20,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
     """
     def __init__(self, data: TemporalData, batch_size: int = 1,
                  device: Union[torch.device,
-                               str] = 'cpu', embedding_dim=100, time_dim=100,
+                               str] = 'cpu', negative_sampling=False, embedding_dim=100, time_dim=100,
                  memory_dim=100, neighbor_loader_size=10, **kwargs):
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
@@ -31,9 +31,11 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         self.data = data
         self.events_per_batch = batch_size
         self.device = device
-        # Ensure to only sample actual destination nodes as negatives.
-        self.min_dst_idx, self.max_dst_idx = int(self.data.dst.min()), int(
-            self.data.dst.max())
+        self.negative_sampling = negative_sampling
+        if self.negative_sampling:
+            # Ensure to only sample actual destination nodes as negatives.
+            self.min_dst_idx, self.max_dst_idx = int(self.data.dst.min()), int(
+                self.data.dst.max())
         self.neighbor_loader = LastNeighborLoader(data.num_nodes,
                                                   size=neighbor_loader_size,
                                                   device=self.device)
@@ -55,11 +57,14 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         batch = self.data[arange[0]:arange[0] + self.events_per_batch].to(
             self.device)
         src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
-        # Sample negative destination nodes.
-        neg_dst = torch.randint(self.min_dst_idx, self.max_dst_idx + 1,
-                                (src.size(0), ), dtype=torch.long,
-                                device=self.device)
-        n_id = torch.cat([src, pos_dst, neg_dst]).unique()
+        list_to_make_n_ids = [batch.src, pos_dst]
+        if self.negative_sampling:
+            # Sample negative destination nodes.
+            batch.neg_dst = torch.randint(self.min_dst_idx, self.max_dst_idx + 1,
+                                    (src.size(0), ), dtype=torch.long,
+                                    device=self.device)
+            list_to_make_n_ids += [batch.neg_dst]
+        n_id = torch.cat(list_to_make_n_ids).unique()
         n_id, edge_index, e_id = self.neighbor_loader(n_id)
         self.assoc[n_id] = torch.arange(n_id.size(0), device=self.device)
         batch.assoc, batch.n_id, batch.edge_index, batch.e_id = self.assoc, n_id, edge_index, e_id
