@@ -955,6 +955,8 @@ def size_repr(key: Any, value: Any, indent: int = 0) -> str:
     pad = ' ' * indent
     if isinstance(value, Tensor) and value.dim() == 0:
         out = value.item()
+    elif isinstance(value, Tensor) and value.is_nested:
+        out = str(list(value.to_padded_tensor(padding=0.0).size()))
     elif isinstance(value, Tensor):
         out = str(list(value.size()))
     elif isinstance(value, np.ndarray):

@@ -14,7 +14,7 @@ class NodePropertySplit(BaseTransform):
     r"""Creates a node-level split with distributional shift based on a given
     node property, as proposed in the `"Evaluating Robustness and Uncertainty
     of Graph Models Under Structural Distributional Shifts"
-    <https://arxiv.org/abs/2302.13875v1>`__ paper
+    <https://arxiv.org/abs/2302.13875>`__ paper
     (functional name: :obj:`node_property_split`).
 
     It splits the nodes in a given graph into five non-intersecting parts
