@@ -41,12 +41,9 @@ min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
 train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
-train_loader = TemporalDataLoader(train_data, batch_size=200)
-val_loader = TemporalDataLoader(val_data, batch_size=200)
-test_loader = TemporalDataLoader(test_data, batch_size=200)
-
-neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
-
+train_loader = TemporalDataLoader(train_data, batch_size=200, device=device)
+val_loader = TemporalDataLoader(val_data, batch_size=200, device=device)
+test_loader = TemporalDataLoader(test_data, batch_size=200, device=device)
 
 class GraphAttentionEmbedding(torch.nn.Module):
     def __init__(self, in_channels, out_channels, msg_dim, time_enc):
@@ -101,9 +98,6 @@ optimizer = torch.optim.Adam(
     | set(link_pred.parameters()), lr=0.0001)
 criterion = torch.nn.BCEWithLogitsLoss()
 
-# Helper vector to map global node indices to local ones.
-assoc = torch.empty(data.num_nodes, dtype=torch.long, device=device)
-
 
 def train():
     memory.train()
@@ -111,28 +105,16 @@ def train():
     link_pred.train()
 
     memory.reset_state()  # Start with a fresh memory.
-    neighbor_loader.reset_state()  # Start with an empty graph.
 
     total_loss = 0
     for batch in train_loader:
-        batch = batch.to(device)
         optimizer.zero_grad()
 
-        src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
-
-        # Sample negative destination nodes.
-        neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
-                                dtype=torch.long, device=device)
-
-        n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        n_id, edge_index, e_id = neighbor_loader(n_id)
-        assoc[n_id] = torch.arange(n_id.size(0), device=device)
-
         # Get updated memory of all nodes involved in the computation.
-        z, last_update = memory(n_id)
+        z, last_update = memory(batch.n_id)
         z = gnn(z, last_update, edge_index, data.t[e_id].to(device),
                 data.msg[e_id].to(device))
-
+        assoc = batch.assoc
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
 
@@ -140,8 +122,7 @@ def train():
         loss += criterion(neg_out, torch.zeros_like(neg_out))
 
         # Update memory and neighbor loader with ground-truth state.
-        memory.update_state(src, pos_dst, t, msg)
-        neighbor_loader.insert(src, pos_dst)
+        memory.update_state(batch)
 
         loss.backward()
         optimizer.step()
@@ -161,20 +142,10 @@ def test(loader):
 
     aps, aucs = [], []
     for batch in loader:
-        batch = batch.to(device)
-        src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
-
-        neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
-                                dtype=torch.long, device=device)
-
-        n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        n_id, edge_index, e_id = neighbor_loader(n_id)
-        assoc[n_id] = torch.arange(n_id.size(0), device=device)
-
-        z, last_update = memory(n_id)
+        z, last_update = memory(batch.n_id)
         z = gnn(z, last_update, edge_index, data.t[e_id].to(device),
                 data.msg[e_id].to(device))
-
+        assoc = batch.assoc
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
 
@@ -186,9 +157,7 @@ def test(loader):
         aps.append(average_precision_score(y_true, y_pred))
         aucs.append(roc_auc_score(y_true, y_pred))
 
-        memory.update_state(src, pos_dst, t, msg)
-        neighbor_loader.insert(src, pos_dst)
-
+        memory.update_state(batch)
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
 

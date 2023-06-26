@@ -8,6 +8,7 @@ from torch.nn import GRUCell, Linear
 from torch_geometric.nn.inits import zeros
 from torch_geometric.utils import scatter
 from torch_geometric.utils.scatter import scatter_argmax
+from torch_geometric.data import Batch
 
 TGNMessageStoreType = Dict[int, Tuple[Tensor, Tensor, Tensor, Tensor]]
 
@@ -98,11 +99,11 @@ class TGNMemory(torch.nn.Module):
 
         return memory, last_update
 
-    def update_state(self, src: Tensor, dst: Tensor, t: Tensor,
-                     raw_msg: Tensor):
+    def update_state(self, batch: Batch):
         """Updates the memory with newly encountered interactions
         :obj:`(src, dst, t, raw_msg)`."""
         n_id = torch.cat([src, dst]).unique()
+        src, pos_dst, t, msg = batch.src, batch.pos_dst, batch.t, batch.msg
 
         if self.training:
             self._update_memory(n_id)
