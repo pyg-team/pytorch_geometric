@@ -1,6 +1,6 @@
 import torch
 
-from torch_geometric.data import TemporalData
+from torch_geometric.data import Batch, TemporalData
 from torch_geometric.loader import TemporalDataLoader
 from torch_geometric.nn import TGNMemory
 from torch_geometric.nn.models.tgn import (
@@ -8,7 +8,6 @@ from torch_geometric.nn.models.tgn import (
     LastAggregator,
     LastNeighborLoader,
 )
-from torch_geometric.data import Batch
 
 
 def test_tgn():
@@ -64,7 +63,8 @@ def test_tgn():
     assert z.size() == (data.num_nodes, memory_dim)
     assert torch.equal(last_update, torch.tensor([4, 6, 8, 9, 9]))
 
-    batch = Batch(src=torch.tensor([3, 4]), pos_dst=torch.tensor([4, 3]), t=torch.tensor([10, 10]), msg=torch.randn(2, 16))
+    batch = Batch(src=torch.tensor([3, 4]), pos_dst=torch.tensor([4, 3]),
+                  t=torch.tensor([10, 10]), msg=torch.randn(2, 16))
     memory.update_state(batch)
     post_z, post_last_update = memory(all_n_id)
     assert torch.allclose(z[0:3], post_z[0:3])
