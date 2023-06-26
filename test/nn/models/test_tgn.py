@@ -50,7 +50,7 @@ def test_tgn():
             assert batch.n_id.size(0) == 5
             assert batch.edge_index.numel() == 12
             assert batch.e_id.numel() == 6
-            assert z.size() == (n_id.size(0), memory_dim)
+            assert z.size() == (batch.n_id.size(0), memory_dim)
             assert torch.equal(last_update, torch.tensor([4, 3, 3, 4, 0]))
 
     # Test TGNMemory inference:
