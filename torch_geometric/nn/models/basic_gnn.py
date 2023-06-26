@@ -241,6 +241,31 @@ class BasicGNN(torch.nn.Module):
         return x
 
     @torch.no_grad()
+    def inference_per_layer(
+        self,
+        layer: int,
+        x: Tensor,
+        edge_index: Adj,
+        batch_size: int,
+    ) -> Tensor:
+
+        x = self.convs[layer](x, edge_index)[:batch_size]
+
+        if layer == self.num_layers - 1 and self.jk_mode is None:
+            return x
+
+        if self.act is not None and self.act_first:
+            x = self.act(x)
+        if self.norms is not None:
+            x = self.norms[layer](x)
+        if self.act is not None and not self.act_first:
+            x = self.act(x)
+        if layer == self.num_layers - 1 and hasattr(self, 'lin'):
+            x = self.lin(x)
+
+        return x
+
+    @torch.no_grad()
     def inference(
         self,
         loader: NeighborLoader,
@@ -280,37 +305,27 @@ class BasicGNN(torch.nn.Module):
             pbar.set_description('Inference')
 
         x_all = loader.data.x.to(embedding_device)
-        loader.data.n_id = torch.arange(x_all.size(0))
 
         for i in range(self.num_layers):
             xs: List[Tensor] = []
             for batch in loader:
                 x = x_all[batch.n_id].to(device)
+                batch_size = batch.batch_size
                 if hasattr(batch, 'adj_t'):
                     edge_index = batch.adj_t.to(device)
                 else:
                     edge_index = batch.edge_index.to(device)
-                x = self.convs[i](x, edge_index)[:batch.batch_size]
-                if i == self.num_layers - 1 and self.jk_mode is None:
-                    xs.append(x.to(embedding_device))
-                    if progress_bar:
-                        pbar.update(1)
-                    continue
-                if self.act is not None and self.act_first:
-                    x = self.act(x)
-                if self.norms is not None:
-                    x = self.norms[i](x)
-                if self.act is not None and not self.act_first:
-                    x = self.act(x)
-                if i == self.num_layers - 1 and hasattr(self, 'lin'):
-                    x = self.lin(x)
+
+                x = self.inference_per_layer(i, x, edge_index, batch_size)
                 xs.append(x.to(embedding_device))
+
                 if progress_bar:
                     pbar.update(1)
+
             x_all = torch.cat(xs, dim=0)
+
         if progress_bar:
             pbar.close()
-        del loader.data.n_id
 
         return x_all
 

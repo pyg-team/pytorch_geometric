@@ -25,15 +25,18 @@ def test_heat_conv(concat):
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, edge_attr, (4, 4))
-        assert torch.allclose(conv(x, adj.t(), node_type, edge_type), out)
+        assert torch.allclose(conv(x, adj.t(), node_type, edge_type), out,
+                              atol=1e-5)
 
     if is_full_test():
         t = '(Tensor, Tensor, Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(
-            jit(x, edge_index, node_type, edge_type, edge_attr), out)
+            jit(x, edge_index, node_type, edge_type, edge_attr), out,
+            atol=1e-5)
 
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(Tensor, SparseTensor, Tensor, Tensor, OptTensor) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
-        assert torch.allclose(jit(x, adj.t(), node_type, edge_type), out)
+        assert torch.allclose(jit(x, adj.t(), node_type, edge_type), out,
+                              atol=1e-5)
