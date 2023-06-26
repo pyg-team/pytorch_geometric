@@ -8,6 +8,7 @@ from torch_geometric.nn.models.tgn import (
     LastAggregator,
     LastNeighborLoader,
 )
+from torch_geometric.data import Batch
 
 
 def test_tgn():
@@ -41,19 +42,18 @@ def test_tgn():
     for i, batch in enumerate(loader):
         n_id = torch.cat([batch.src, batch.dst]).unique()
         n_id, edge_index, e_id = neighbor_loader(n_id)
-        z, last_update = memory(n_id)
-        memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
-        neighbor_loader.insert(batch.src, batch.dst)
+        z, last_update = memory(batch.n_id)
+        memory.update_state(batch)
         if i == 0:
-            assert n_id.size(0) == 4
-            assert edge_index.numel() == 0
-            assert e_id.numel() == 0
+            assert batch.n_id.size(0) == 4
+            assert batch.edge_index.numel() == 0
+            assert batch.e_id.numel() == 0
             assert z.size() == (n_id.size(0), memory_dim)
             assert torch.sum(last_update) == 0
         else:
-            assert n_id.size(0) == 5
-            assert edge_index.numel() == 12
-            assert e_id.numel() == 6
+            assert batch.n_id.size(0) == 5
+            assert batch.edge_index.numel() == 12
+            assert batch.e_id.numel() == 6
             assert z.size() == (n_id.size(0), memory_dim)
             assert torch.equal(last_update, torch.tensor([4, 3, 3, 4, 0]))
 
@@ -64,11 +64,8 @@ def test_tgn():
     assert z.size() == (data.num_nodes, memory_dim)
     assert torch.equal(last_update, torch.tensor([4, 6, 8, 9, 9]))
 
-    post_src = torch.tensor([3, 4])
-    post_dst = torch.tensor([4, 3])
-    post_t = torch.tensor([10, 10])
-    post_msg = torch.randn(2, 16)
-    memory.update_state(post_src, post_dst, post_t, post_msg)
+    batch = Batch(src=torch.tensor([3, 4]), pos_dst=torch.tensor([4, 3]), t=torch.tensor([10, 10]), msg=torch.randn(2, 16))
+    memory.update_state(batch)
     post_z, post_last_update = memory(all_n_id)
     assert torch.allclose(z[0:3], post_z[0:3])
     assert torch.equal(post_last_update, torch.tensor([4, 6, 8, 10, 10]))

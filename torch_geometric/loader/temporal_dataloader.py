@@ -60,6 +60,6 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         n_id = torch.cat([src, pos_dst, neg_dst]).unique()
         n_id, edge_index, e_id = self.neighbor_loader(n_id)
         self.assoc[n_id] = torch.arange(n_id.size(0), device=self.device)
-        batch.assoc, batch.n_id = self.assoc, n_id
+        batch.assoc, batch.n_id, batch.edge_index, batch.e_id = self.assoc, n_id, edge_index, e_id
         self.neighbor_loader.insert(src, pos_dst)
         return batch
