@@ -1,3 +1,4 @@
+import copy
 from typing import Callable, Tuple
 
 import torch
@@ -49,10 +50,18 @@ class DeepGraphInfomax(torch.nn.Module):
         """Returns the latent space for the input arguments, their
         corruptions and their summary representation."""
         pos_z = self.encoder(*args, **kwargs)
+
         cor = self.corruption(*args, **kwargs)
         cor = cor if isinstance(cor, tuple) else (cor, )
-        neg_z = self.encoder(*cor)
+        cor_args = cor[:len(args)]
+        cor_kwargs = copy.copy(kwargs)
+        for key, value in zip(kwargs.keys(), cor[len(args):]):
+            cor_kwargs[key] = value
+
+        neg_z = self.encoder(*cor_args, **cor_kwargs)
+
         summary = self.summary(pos_z, *args, **kwargs)
+
         return pos_z, neg_z, summary
 
     def discriminate(self, z: Tensor, summary: Tensor,
