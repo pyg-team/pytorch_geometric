@@ -219,7 +219,7 @@ class BaseData:
 
         Args:
             sort_by_row (bool, optional): If set to :obj:`False`, will sort
-                :obj:`edge_index` by column-wise order/by destination node.
+                :obj:`edge_index` in column-wise order/by destination node.
                 (default: :obj:`True`)
         """
         out = copy.copy(self)
