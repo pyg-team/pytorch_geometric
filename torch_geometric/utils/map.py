@@ -40,6 +40,12 @@ def map_index(
 
         >>> map_index(src, index)
         (tensor([1, 2, 2, 0]), tensor([True, True, False, True, True]))
+    
+    Note:
+        If src is a cuda tensor, consider using RMM for significant speed boosts:
+        import rmm
+        rmm.reinitialize(pool_allocator=True)\n \
+        torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)"
     """
     if src.is_floating_point():
         raise ValueError(f"Expected 'src' to be an index (got '{src.dtype}')")
@@ -78,14 +84,6 @@ def map_index(
         try:
             import cudf
             WITH_CUDF = True
-            warnings.warn(
-                "Using GPU-based 'cudf' processing within 'map_index' "
-                "Consider using RMM for significant speed boosts. "
-                "Add the following to the beginning of your PyG script: "
-                "import rmm\n \
-                          rmm.reinitialize(pool_allocator=True)\n \
-                          torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)"
-            )
         except ImportError:
             import pandas as pd
             warnings.warn("Using CPU-based processing within 'map_index' "
