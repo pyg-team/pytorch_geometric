@@ -5,15 +5,6 @@ import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack
 
-try:
-    import cudf
-    WITH_CUDF = True
-    import rmm
-    rmm.reinitialize(pool_allocator=True)
-    torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)
-except ImportError:
-    WITH_CUDF = False
-
 
 def map_index(
     src: Tensor,
@@ -82,13 +73,25 @@ def map_index(
             mask = out != -1
             return out[mask], mask
 
-    if not WITH_CUDF:
-        import pandas as pd
-        if src.is_cuda:
+    WITH_CUDF = False
+    if src.is_cuda:
+        try:
+            import cudf
+            WITH_CUDF = True
+            warnings.warn("Using GPU-based 'cudf' processing within 'map_index' "
+                          "Consider using RMM for significant speed boosts. "
+                          "Add the following to the beginning of your PyG script: "
+                          "import rmm\n \
+                          rmm.reinitialize(pool_allocator=True)\n \
+                          torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)")
+        except ImportError:
+            import pandas as pd
             warnings.warn("Using CPU-based processing within 'map_index' "
                           "which may cause slowdowns and device "
                           "synchronization. Consider installing 'cudf' to "
                           "accelerate computation")
+    else:
+        import pandas as pd
 
     if not WITH_CUDF:
         left_ser = pd.Series(src.cpu().numpy(), name='left_ser')
