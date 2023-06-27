@@ -5,7 +5,6 @@ import torch
 from torch import Tensor
 
 
-# @torch.jit.script
 @dataclass(init=False)
 class SelectOutput:
     r"""The output of the :class:`Select` method, which holds an assignment
@@ -61,6 +60,12 @@ class SelectOutput:
         self.cluster_index = cluster_index
         self.num_clusters = num_clusters
         self.weight = weight
+
+
+try:
+    SelectOutput = torch.jit.script(SelectOutput)
+except OSError:
+    pass
 
 
 class Select(torch.nn.Module):

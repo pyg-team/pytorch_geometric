@@ -7,7 +7,6 @@ from torch import Tensor
 from torch_geometric.nn.pool.select import SelectOutput
 
 
-# @torch.jit.script
 @dataclass(init=False)
 class ConnectOutput:
     r"""The output of the :class:`Connect` method, which holds the coarsened
@@ -47,6 +46,12 @@ class ConnectOutput:
         self.edge_index = edge_index
         self.edge_attr = edge_attr
         self.batch = batch
+
+
+try:
+    ConnectOutput = torch.jit.script(ConnectOutput)
+except OSError:
+    pass
 
 
 class Connect(torch.nn.Module):

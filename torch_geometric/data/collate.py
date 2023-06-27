@@ -150,6 +150,7 @@ def _collate(
 
             return value, slices, incs
 
+        out = None
         if torch.utils.data.get_worker_info() is not None:
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
@@ -164,8 +165,6 @@ def _collate(
             else:
                 shape[cat_dim] = int(slices[-1])
             out = elem.new(storage).resize_(*shape)
-        else:
-            out = None
 
         value = torch.cat(values, dim=cat_dim or 0, out=out)
 
