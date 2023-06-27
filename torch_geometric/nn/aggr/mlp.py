@@ -18,7 +18,7 @@ class MLPAggregation(Aggregation):
         :class:`~torch_geometric.nn.conv.MessagePassing`, ensure that
         :obj:`edge_index` is sorted by destination nodes, either by manually
         sorting edge indices via :meth:`~torch_geometric.utils.sort_edge_index`
-        or by calling :meth:`~torch_geometric.data.Data.sort`.
+        or by calling :meth:`torch_geometric.data.Data.sort`.
 
     .. warning::
 
