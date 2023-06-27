@@ -3,7 +3,6 @@ import os.path as osp
 import numpy as np
 import pytest
 import torch
-from torch.nested import nested_tensor
 
 import torch_geometric
 from torch_geometric.data import Batch, Data, HeteroData
@@ -521,6 +520,8 @@ def test_torch_sparse_batch(layout):
 
 
 def test_torch_nested_batch():
+    from torch.nested import nested_tensor
+
     class MyData(Data):
         def __inc__(self, key, value, *args, **kwargs) -> int:
             return 2
