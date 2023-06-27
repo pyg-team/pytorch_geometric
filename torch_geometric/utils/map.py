@@ -78,12 +78,14 @@ def map_index(
         try:
             import cudf
             WITH_CUDF = True
-            warnings.warn("Using GPU-based 'cudf' processing within 'map_index' "
-                          "Consider using RMM for significant speed boosts. "
-                          "Add the following to the beginning of your PyG script: "
-                          "import rmm\n \
+            warnings.warn(
+                "Using GPU-based 'cudf' processing within 'map_index' "
+                "Consider using RMM for significant speed boosts. "
+                "Add the following to the beginning of your PyG script: "
+                "import rmm\n \
                           rmm.reinitialize(pool_allocator=True)\n \
-                          torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)")
+                          torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)"
+            )
         except ImportError:
             import pandas as pd
             warnings.warn("Using CPU-based processing within 'map_index' "
