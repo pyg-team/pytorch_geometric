@@ -88,7 +88,6 @@ def sort_edge_index(  # noqa
     if isinstance(edge_attr, Tensor):
         return edge_index, edge_attr[perm]
     if isinstance(edge_attr, (list, tuple)):
-        print('perm', perm)
         return edge_index, [e[perm] for e in edge_attr]
 
     return edge_index
