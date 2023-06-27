@@ -207,18 +207,19 @@ class BaseData:
 
         Args:
             sort_by_row (bool, optional): If set to :obj:`False`, will require
-                column-wise order/by destination node of :obj:`edge_index`.
-                (default: :obj:`True`)
+                column-wise order/by destination node order of
+                :obj:`edge_index`. (default: :obj:`True`)
         """
         return all(
             [store.is_sorted(sort_by_row) for store in self.edge_stores])
 
     def sort(self, sort_by_row: bool = True) -> 'Data':
-        r"""Sorts edge indices :obj:`edge_index`.
+        r"""Sorts edge indices :obj:`edge_index` and their corresponding edge
+        features.
 
         Args:
             sort_by_row (bool, optional): If set to :obj:`False`, will sort
-                :obj:`edge_index` column-wise order/by destination node.
+                :obj:`edge_index` in column-wise order/by destination node.
                 (default: :obj:`True`)
         """
         out = copy.copy(self)
