@@ -140,7 +140,11 @@ class Aggregation(torch.nn.Module):
     def assert_sorted_index(self, index: Optional[Tensor]):
         if index is not None and not torch.all(index[:-1] <= index[1:]):
             raise ValueError("Can not perform aggregation since the 'index' "
-                             "tensor is not sorted")
+                             "tensor is not sorted. Specifically, if you use "
+                             "this aggregation as part of 'MessagePassing`, "
+                             "ensure that 'edge_index' is sorted by "
+                             "destination nodes, e.g., by calling "
+                             "`data.sort(sort_by_row=False)`")
 
     def assert_two_dimensional_input(self, x: Tensor, dim: int):
         if x.dim() != 2:
