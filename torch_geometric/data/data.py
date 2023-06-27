@@ -194,11 +194,6 @@ class BaseData:
         r"""Returns all edge-level tensor attribute names."""
         return list(set(chain(*[s.edge_attrs() for s in self.edge_stores])))
 
-    def is_coalesced(self) -> bool:
-        r"""Returns :obj:`True` if edge indices :obj:`edge_index` are sorted
-        and do not contain duplicate entries."""
-        return all([store.is_coalesced() for store in self.edge_stores])
-
     def generate_ids(self):
         r"""Generates and sets :obj:`n_id` and :obj:`e_id` attributes to assign
         each node and edge to a continuously ascending and unique ID."""
@@ -207,12 +202,42 @@ class BaseData:
         for store in self.edge_stores:
             store.e_id = torch.arange(store.num_edges)
 
-    def coalesce(self):
+    def is_sorted(self, sort_by_row: bool = True) -> bool:
+        r"""Returns :obj:`True` if edge indices :obj:`edge_index` are sorted.
+
+        Args:
+            sort_by_row (bool, optional): If set to :obj:`False`, will require
+                column-wise order/by destination node of :obj:`edge_index`.
+                (default: :obj:`True`)
+        """
+        return all(
+            [store.is_sorted(sort_by_row) for store in self.edge_stores])
+
+    def sort(self, sort_by_row: bool = True) -> 'Data':
+        r"""Sorts edge indices :obj:`edge_index`.
+
+        Args:
+            sort_by_row (bool, optional): If set to :obj:`False`, will sort
+                :obj:`edge_index` column-wise order/by destination node.
+                (default: :obj:`True`)
+        """
+        out = copy.copy(self)
+        for store in out.edge_stores:
+            store.sort(sort_by_row)
+        return out
+
+    def is_coalesced(self) -> bool:
+        r"""Returns :obj:`True` if edge indices :obj:`edge_index` are sorted
+        and do not contain duplicate entries."""
+        return all([store.is_coalesced() for store in self.edge_stores])
+
+    def coalesce(self) -> 'Data':
         r"""Sorts and removes duplicated entries from edge indices
         :obj:`edge_index`."""
-        for store in self.edge_stores:
+        out = copy.copy(self)
+        for store in out.edge_stores:
             store.coalesce()
-        return self
+        return out
 
     def has_isolated_nodes(self) -> bool:
         r"""Returns :obj:`True` if the graph contains isolated nodes."""

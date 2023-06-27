@@ -14,6 +14,15 @@ class SortAggregation(Aggregation):
     where node features are sorted in descending order based on their last
     feature channel. The first :math:`k` nodes form the output of the layer.
 
+    .. note::
+
+        :class:`SortAggregation` requires sorted indices :obj:`index` as input.
+        Specifically, if you use this aggregation as part of
+        :class:`~torch_geometric.nn.conv.MessagePassing`, ensure that
+        :obj:`edge_index` is sorted by destination nodes, either by manually
+        sorting edge indices via :meth:`~torch_geometric.utils.sort_edge_index`
+        or by calling :meth:`~torch_geometric.data.Data.sort`.
+
     Args:
         k (int): The number of nodes to hold for each graph.
     """

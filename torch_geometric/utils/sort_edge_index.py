@@ -45,7 +45,8 @@ def sort_edge_index(  # noqa
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         sort_by_row (bool, optional): If set to :obj:`False`, will sort
-            :obj:`edge_index` column-wise.
+            :obj:`edge_index` column-wise/by destination node.
+            (default: :obj:`True`)
 
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is not passed, else
         (:class:`LongTensor`, :obj:`Optional[Tensor]` or :obj:`List[Tensor]]`)
