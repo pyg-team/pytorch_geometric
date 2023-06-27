@@ -14,6 +14,7 @@ try:
 except ImportError:
     WITH_CUDF = False
 
+
 def map_index(
     src: Tensor,
     index: Tensor,
@@ -88,7 +89,6 @@ def map_index(
                           "which may cause slowdowns and device "
                           "synchronization. Consider installing 'cudf' to "
                           "accelerate computation")
-
 
     if not WITH_CUDF:
         left_ser = pd.Series(src.cpu().numpy(), name='left_ser')
