@@ -4,6 +4,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack
+
 try:
     import cudf
     WITH_CUDF = True
@@ -88,7 +89,7 @@ def map_index(
                           "which may cause slowdowns and device "
                           "synchronization. Consider installing 'cudf' to "
                           "accelerate computation")
-        
+
 
     if not WITH_CUDF:
         left_ser = pd.Series(src.cpu().numpy(), name='left_ser')
