@@ -7,7 +7,8 @@ from torch import Tensor
 
 WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
 
-torch.sparse_csc = 'MISSING'
+if not hasattr(torch, 'sparse_csc'):
+    torch.sparse_csc = 'MISSING'
 
 try:
     import pyg_lib  # noqa
