@@ -142,6 +142,14 @@ def _collate(
         else:
             incs = None
 
+        if getattr(elem, 'is_nested', False):
+            tensors = []
+            for nested_tensor in values:
+                tensors.extend(nested_tensor.unbind())
+            value = torch.nested.nested_tensor(tensors)
+
+            return value, slices, incs
+
         if torch.utils.data.get_worker_info() is not None:
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
@@ -159,13 +167,7 @@ def _collate(
         else:
             out = None
 
-        if elem.is_nested:
-            tensors = []
-            for nested_tensor in values:
-                tensors.extend(nested_tensor.unbind())
-            value = torch.nested.nested_tensor(tensors)
-        else:
-            value = torch.cat(values, dim=cat_dim or 0, out=out)
+        value = torch.cat(values, dim=cat_dim or 0, out=out)
 
         return value, slices, incs
 

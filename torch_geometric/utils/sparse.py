@@ -3,6 +3,7 @@ from typing import Any, List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import coalesce
 
@@ -66,7 +67,8 @@ def is_torch_sparse_tensor(src: Any) -> bool:
             return True
         if src.layout == torch.sparse_csr:
             return True
-        if src.layout == torch.sparse_csc:
+        if (torch_geometric.typing.WITH_PT112
+                and src.layout == torch.sparse_csc):
             return True
     return False
 
@@ -271,7 +273,7 @@ def to_torch_sparse_tensor(
         return to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
     if layout == torch.sparse_csr:
         return to_torch_csr_tensor(edge_index, edge_attr, size, is_coalesced)
-    if layout == torch.sparse_csc:
+    if torch_geometric.typing.WITH_PT112 and layout == torch.sparse_csc:
         return to_torch_csc_tensor(edge_index, edge_attr, size, is_coalesced)
 
     raise ValueError(f"Unexpected sparse tensor layout (got '{layout}')")
@@ -310,7 +312,7 @@ def to_edge_index(adj: Union[Tensor, SparseTensor]) -> Tuple[Tensor, Tensor]:
         col = adj.col_indices().detach()
         return torch.stack([row, col], dim=0).long(), adj.values()
 
-    if adj.layout == torch.sparse_csc:
+    if torch_geometric.typing.WITH_PT112 and adj.layout == torch.sparse_csc:
         col = ptr2index(adj.ccol_indices().detach())
         row = adj.row_indices().detach()
         return torch.stack([row, col], dim=0).long(), adj.values()
