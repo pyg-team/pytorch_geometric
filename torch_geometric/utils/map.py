@@ -81,7 +81,6 @@ def map_index(
             mask = out != -1
             return out[mask], mask
 
-    if not (src.is_cuda and WITH_CUDF):
     if not WITH_CUDF:
         import pandas as pd
         if src.is_cuda:
