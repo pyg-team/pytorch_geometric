@@ -157,7 +157,7 @@ def mask_feature(
 
 def add_random_edge(
     edge_index,
-    p: float,
+    p: float = 0.5,
     force_undirected: bool = False,
     num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
     training: bool = True,
@@ -170,6 +170,7 @@ def add_random_edge(
     Args:
         edge_index (LongTensor): The edge indices.
         p (float): Ratio of added edges to the existing edges.
+            (default: :obj:`0.5`)
         force_undirected (bool, optional): If set to :obj:`True`,
             added edges will be undirected.
             (default: :obj:`False`)

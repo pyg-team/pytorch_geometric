@@ -96,8 +96,7 @@ def test_add_random_edge():
     seed_everything(7)
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5], [2, 3, 1, 4, 2, 1]])
     with pytest.raises(RuntimeError, match="not supported for bipartite"):
-        add_random_edge(edge_index, p=0.5, force_undirected=True,
-                        num_nodes=(6, 5))
+        add_random_edge(edge_index, force_undirected=True, num_nodes=(6, 5))
     out = add_random_edge(edge_index, p=0.5, num_nodes=(6, 5))
     assert out[0].tolist() == [[0, 1, 2, 3, 4, 5, 2, 0, 2],
                                [2, 3, 1, 4, 2, 1, 0, 4, 2]]
