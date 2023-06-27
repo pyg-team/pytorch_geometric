@@ -8,7 +8,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  prev_pytest:
+  oldest_pytest:
     runs-on: ubuntu-latest
 
     steps:
