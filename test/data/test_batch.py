@@ -3,6 +3,7 @@ import os.path as osp
 import numpy as np
 import pytest
 import torch
+from torch.nested import nested_tensor
 
 import torch_geometric
 from torch_geometric.data import Batch, Data, HeteroData
@@ -517,3 +518,19 @@ def test_torch_sparse_batch(layout):
     out = to_edge_index(batch.adj.to_sparse(layout=torch.sparse_csr))
     assert torch.equal(out[0], torch.cat([edge_index, edge_index + 3], 1))
     assert torch.equal(out[1], torch.cat([edge_attr, edge_attr], 0))
+
+
+def test_torch_nested_batch():
+    x1 = nested_tensor([torch.randn(3), torch.randn(4)])
+    data1 = Data(x=x1)
+    assert str(data1) == 'Data(x=[2, 4])'
+
+    x2 = nested_tensor([torch.randn(3), torch.randn(4), torch.randn(5)])
+    data2 = Data(x=x2)
+    assert str(data2) == 'Data(x=[3, 5])'
+
+    batch = Batch.from_data_list([data1, data2])
+    assert str(batch) == 'DataBatch(x=[5, 5], batch=[5], ptr=[3])'
+
+    x = nested_tensor(list(x1.unbind() + x2.unbind())).to_padded_tensor(0.0)
+    assert torch.equal(batch.x.to_padded_tensor(0.0), x)

@@ -159,7 +159,14 @@ def _collate(
         else:
             out = None
 
-        value = torch.cat(values, dim=cat_dim or 0, out=out)
+        if elem.is_nested:
+            tensors = []
+            for nested_tensor in values:
+                tensors.extend(nested_tensor.unbind())
+            value = torch.nested.nested_tensor(tensors)
+        else:
+            value = torch.cat(values, dim=cat_dim or 0, out=out)
+
         return value, slices, incs
 
     elif is_sparse(elem) and increment:
