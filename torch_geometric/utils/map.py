@@ -40,7 +40,7 @@ def map_index(
 
         >>> map_index(src, index)
         (tensor([1, 2, 2, 0]), tensor([True, True, False, True, True]))
-    
+
     Note:
         If src is a cuda tensor, consider using RMM for significant speed boosts:
         import rmm
