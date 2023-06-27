@@ -361,7 +361,7 @@ def set_sparse_value(adj: Tensor, value: Tensor) -> Tensor:
             device=value.device,
         )
 
-    if adj.layout == torch.sparse_csc:
+    if torch_geometric.typing.WITH_PT112 and adj.layout == torch.sparse_csc:
         return torch.sparse_csc_tensor(
             ccol_indices=adj.ccol_indices(),
             row_indices=adj.row_indices(),
