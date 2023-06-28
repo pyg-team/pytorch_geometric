@@ -521,16 +521,23 @@ def test_torch_sparse_batch(layout):
 
 
 def test_torch_nested_batch():
+    class MyData(Data):
+        def __inc__(self, key, value, *args, **kwargs) -> int:
+            return 2
+
     x1 = nested_tensor([torch.randn(3), torch.randn(4)])
-    data1 = Data(x=x1)
-    assert str(data1) == 'Data(x=[2, 4])'
+    data1 = MyData(x=x1)
+    assert str(data1) == 'MyData(x=[2, 4])'
 
     x2 = nested_tensor([torch.randn(3), torch.randn(4), torch.randn(5)])
-    data2 = Data(x=x2)
-    assert str(data2) == 'Data(x=[3, 5])'
+    data2 = MyData(x=x2)
+    assert str(data2) == 'MyData(x=[3, 5])'
 
     batch = Batch.from_data_list([data1, data2])
-    assert str(batch) == 'DataBatch(x=[5, 5], batch=[5], ptr=[3])'
+    assert str(batch) == 'MyDataBatch(x=[5, 5], batch=[5], ptr=[3])'
 
-    x = nested_tensor(list(x1.unbind() + x2.unbind())).to_padded_tensor(0.0)
-    assert torch.equal(batch.x.to_padded_tensor(0.0), x)
+    expected = nested_tensor(list(x1.unbind() + (x2 + 2).unbind()))
+    assert torch.equal(
+        batch.x.to_padded_tensor(0.0),
+        expected.to_padded_tensor(0.0),
+    )

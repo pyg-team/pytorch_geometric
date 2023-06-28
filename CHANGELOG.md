@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Added `torch.nested_tensor` support in `Data` and `Batch` ([#7643](https://github.com/pyg-team/pytorch_geometric/pull/7643))
+- Added `Data.sort()` and `HeteroData.sort()` functionalities ([#7649](https://github.com/pyg-team/pytorch_geometric/pull/7649))
+- Added `torch.nested_tensor` support in `Data` and `Batch` ([#7643](https://github.com/pyg-team/pytorch_geometric/pull/7643), [#7647](https://github.com/pyg-team/pytorch_geometric/pull/7647))
 - Added `interval` argument to `Cartesian` and `LocalCartesian` transformations ([#7533](https://github.com/pyg-team/pytorch_geometric/pull/7533), [#7614](https://github.com/pyg-team/pytorch_geometric/pull/7614))
 - Added a `LightGCN` example on the `AmazonBook` dataset ([7603](https://github.com/pyg-team/pytorch_geometric/pull/7603))
 - Added a tutorial on hierarchical neighborhood sampling ([#7594](https://github.com/pyg-team/pytorch_geometric/pull/7594))
@@ -69,6 +70,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Changed `add_random_edge` to only add true negative edges ([#7654](https://github.com/pyg-team/pytorch_geometric/pull/7654))
+- Allowed the usage of `BasicGNN` models in `DeepGraphInfomax` ([#7648](https://github.com/pyg-team/pytorch_geometric/pull/7648))
 - Breaking Change: Made `Data.keys` a method rather than a property ([#7629](https://github.com/pyg-team/pytorch_geometric/pull/7629))
 - Added a `num_edges` parameter to the forward method of `HypergraphConv` ([#7560](https://github.com/pyg-team/pytorch_geometric/pull/7560))
 - Fixed `get_mesh_laplacian` for `normalization="sym"` ([#7544](https://github.com/pyg-team/pytorch_geometric/pull/7544))

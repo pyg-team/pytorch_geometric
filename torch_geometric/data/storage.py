@@ -28,6 +28,7 @@ from torch_geometric.utils import (
     contains_isolated_nodes,
     is_torch_sparse_tensor,
     is_undirected,
+    sort_edge_index,
 )
 
 N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id'}
@@ -496,6 +497,23 @@ class EdgeStorage(BaseStorage):
     def edge_attrs(self) -> List[str]:
         return [key for key in self.keys() if self.is_edge_attr(key)]
 
+    def is_sorted(self, sort_by_row: bool = True) -> bool:
+        if 'edge_index' in self:
+            index = self.edge_index[0] if sort_by_row else self.edge_index[1]
+            return bool(torch.all(index[:-1] <= index[1:]))
+        return True
+
+    def sort(self, sort_by_row: bool = True) -> 'EdgeStorage':
+        if 'edge_index' in self:
+            edge_attrs = self.edge_attrs()
+            edge_attrs.remove('edge_index')
+            edge_feats = [self[edge_attr] for edge_attr in edge_attrs]
+            self.edge_index, edge_feats = sort_edge_index(
+                self.edge_index, edge_feats, sort_by_row=sort_by_row)
+            for key, edge_feat in zip(edge_attrs, edge_feats):
+                self[key] = edge_feat
+        return self
+
     def is_coalesced(self) -> bool:
         for value in self.values('adj', 'adj_t'):
             return value.is_coalesced()
@@ -510,7 +528,7 @@ class EdgeStorage(BaseStorage):
 
         return True
 
-    def coalesce(self, reduce: str = 'sum'):
+    def coalesce(self, reduce: str = 'sum') -> 'EdgeStorage':
         for key, value in self.items('adj', 'adj_t'):
             self[key] = value.coalesce(reduce)
 
