@@ -353,6 +353,7 @@ def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@onlyOnline
 @withPackage('pyg_lib')
 def test_temporal_hetero_neighbor_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
@@ -458,6 +459,7 @@ def test_custom_neighbor_loader():
             'author', 'to', 'author'].edge_index.size())
 
 
+@onlyOnline
 @withPackage('pyg_lib')
 def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
     # Initialize dataset (once):

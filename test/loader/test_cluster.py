@@ -3,7 +3,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.loader import ClusterData, ClusterLoader
-from torch_geometric.testing import onlyFullTest
+from torch_geometric.testing import onlyFullTest, onlyOnline
 from torch_geometric.utils import sort_edge_index
 
 try:
@@ -145,6 +145,7 @@ def test_keep_inter_cluster_edges():
     assert data.edge_index.size(1) == data.edge_attr.size(0)
 
 
+@onlyOnline
 @onlyFullTest
 @pytest.mark.skipif(not WITH_METIS, reason='Not compiled with METIS support')
 def test_cluster_gcn_correctness(get_dataset):

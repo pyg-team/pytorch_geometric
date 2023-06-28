@@ -19,6 +19,7 @@ from torch_geometric.testing import (
     get_random_edge_index,
     onlyCUDA,
     onlyFullTest,
+    onlyOnline,
     withPackage,
 )
 
@@ -73,6 +74,7 @@ class LinearGraphModule(LightningModule):
 
 
 @onlyCUDA
+@onlyOnline
 @onlyFullTest
 @withPackage('pytorch_lightning>=2.0.0')
 @withPackage('torchmetrics>=0.11.0')
@@ -176,6 +178,7 @@ class LinearNodeModule(LightningModule):
 
 
 @onlyCUDA
+@onlyOnline
 @onlyFullTest
 @withPackage('pyg_lib')
 @withPackage('pytorch_lightning>=2.0.0')
@@ -423,6 +426,7 @@ def test_lightning_hetero_link_data_custom_store():
     assert 'edge_label_index' in batch['author', 'paper']
 
 
+@onlyOnline
 @withPackage('pyg_lib')
 @withPackage('pytorch_lightning')
 def test_eval_loader_kwargs(get_dataset):
