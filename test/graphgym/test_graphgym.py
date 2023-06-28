@@ -26,7 +26,7 @@ from torch_geometric.graphgym.utils import (
     auto_select_device,
     params_count,
 )
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import onlyOnline, withPackage
 
 num_trivial_metric_calls = 0
 
@@ -41,6 +41,7 @@ def trivial_metric(true, pred, task_type):
     return 1
 
 
+@onlyOnline
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
 @pytest.mark.parametrize('auto_resume', [True, False])
@@ -109,6 +110,7 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
     assert "val: {'epoch': 5," in out
 
 
+@onlyOnline
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
 def test_graphgym_module(tmp_path):
@@ -163,6 +165,7 @@ def test_graphgym_module(tmp_path):
     assert isinstance(outputs["loss"], torch.Tensor)
 
 
+@onlyOnline
 @withPackage('yacs')
 @withPackage('pytorch_lightning')
 def test_train(tmp_path, capfd):

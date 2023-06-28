@@ -178,8 +178,30 @@ def to_torch_csr_tensor(
                size=(4, 4), nnz=6, layout=torch.sparse_csr)
 
     """
-    adj = to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
-    return adj.to_sparse_csr()
+    # TODO Recheck
+    # adj = to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
+    # return adj.to_sparse_csr()
+
+    if size is None:
+        size = int(edge_index.max()) + 1
+    if not isinstance(size, (tuple, list)):
+        size = (size, size)
+
+    if not is_coalesced:
+        edge_index, edge_attr = coalesce(edge_index, edge_attr, max(size))
+
+    if edge_attr is None:
+        edge_attr = torch.ones(edge_index.size(1), device=edge_index.device)
+
+    adj = torch.sparse_csr_tensor(
+        crow_indices=index2ptr(edge_index[0], size[0]),
+        col_indices=edge_index[1],
+        values=edge_attr,
+        size=tuple(size) + edge_attr.size()[1:],
+        device=edge_index.device,
+    )
+
+    return adj
 
 
 def to_torch_csc_tensor(
@@ -218,6 +240,10 @@ def to_torch_csc_tensor(
                size=(4, 4), nnz=6, layout=torch.sparse_csc)
 
     """
+    if not torch_geometric.typing.WITH_PT112:
+        return torch_geometric.typing.MockTorchCSCTensor(
+            edge_index, edge_attr, size)
+
     if size is None:
         size = int(edge_index.max()) + 1
     if not isinstance(size, (tuple, list)):

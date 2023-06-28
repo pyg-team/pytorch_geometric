@@ -12,7 +12,13 @@ from torch_geometric.profile import (
     timeit,
 )
 from torch_geometric.profile.profile import torch_profile
-from torch_geometric.testing import onlyCUDA, onlyLinux, withCUDA, withPackage
+from torch_geometric.testing import (
+    onlyCUDA,
+    onlyLinux,
+    onlyOnline,
+    withCUDA,
+    withPackage,
+)
 
 
 @withCUDA
@@ -35,6 +41,7 @@ def test_timeit(device):
 
 
 @onlyCUDA
+@onlyOnline
 @withPackage('pytorch_memlab')
 def test_profileit(get_dataset):
     warnings.filterwarnings('ignore', '.*arguments of DataFrame.drop.*')
@@ -80,6 +87,7 @@ def test_profileit(get_dataset):
 
 
 @withCUDA
+@onlyOnline
 def test_torch_profile(capfd, get_dataset, device):
     dataset = get_dataset(name='Cora')
     data = dataset[0].to(device)

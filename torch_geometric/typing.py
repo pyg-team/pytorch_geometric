@@ -182,6 +182,27 @@ except (ImportError, OSError) as e:
             raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
 
 
+class MockTorchCSCTensor:
+    def __init__(
+        self,
+        edge_index: Tensor,
+        edge_attr: Optional[Tensor] = None,
+        size: Optional[Union[int, Tuple[int, int]]] = None,
+    ):
+        self.edge_index = edge_index
+        self.edge_attr = edge_attr
+        self.size = size
+
+    def t(self) -> Tensor:  # Only support accessing its transpose:
+        from torch_geometric.utils import to_torch_csr_tensor
+        size = self.size
+        return to_torch_csr_tensor(
+            self.edge_index.flip([0]),
+            self.edge_attr,
+            size[::-1] if isinstance(size, (tuple, list)) else size,
+        )
+
+
 # Types for accessing data ####################################################
 
 # Node-types are denoted by a single string, e.g.: `data['paper']`:

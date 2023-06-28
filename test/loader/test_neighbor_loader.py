@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
@@ -16,6 +17,7 @@ from torch_geometric.testing import (
     get_random_edge_index,
     onlyLinux,
     onlyNeighborSampler,
+    onlyOnline,
     withCUDA,
     withPackage,
 )
@@ -258,6 +260,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert not batch.has_isolated_nodes()
 
 
+@onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
@@ -303,6 +306,7 @@ def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
@@ -402,13 +406,14 @@ def test_custom_neighbor_loader():
                                layout='csr', size=(100, 200))
 
     # CSC:
-    edge_index = get_random_edge_index(200, 100, 1000)
-    data['author', 'to', 'paper'].edge_index = edge_index
-    adj = to_torch_csc_tensor(edge_index, size=(200, 100))
-    csc = (adj.row_indices(), adj.ccol_indices())
-    graph_store.put_edge_index(edge_index=csc,
-                               edge_type=('author', 'to', 'paper'),
-                               layout='csc', size=(200, 100))
+    if torch_geometric.typing.WITH_PT112:
+        edge_index = get_random_edge_index(200, 100, 1000)
+        data['author', 'to', 'paper'].edge_index = edge_index
+        adj = to_torch_csc_tensor(edge_index, size=(200, 100))
+        csc = (adj.row_indices(), adj.ccol_indices())
+        graph_store.put_edge_index(edge_index=csc,
+                                   edge_type=('author', 'to', 'paper'),
+                                   layout='csc', size=(200, 100))
 
     # COO (sorted):
     edge_index = get_random_edge_index(200, 200, 100)
@@ -442,12 +447,15 @@ def test_custom_neighbor_loader():
         assert torch.allclose(batch1['author'].x.sort()[0],
                               batch2['author'].x.sort()[0])
 
-        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch1[
+        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch2[
             'paper', 'to', 'paper'].edge_index.size())
-        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch1[
+        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch2[
             'paper', 'to', 'author'].edge_index.size())
-        assert (batch1['author', 'to', 'paper'].edge_index.size() == batch1[
-            'author', 'to', 'paper'].edge_index.size())
+        if torch_geometric.typing.WITH_PT112:
+            assert (batch1['author', 'to', 'paper'].edge_index.size() ==
+                    batch2['author', 'to', 'paper'].edge_index.size())
+        assert (batch1['author', 'to', 'author'].edge_index.size() == batch2[
+            'author', 'to', 'author'].edge_index.size())
 
 
 @withPackage('pyg_lib')

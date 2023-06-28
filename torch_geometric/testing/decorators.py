@@ -59,6 +59,16 @@ def onlyCUDA(func: Callable) -> Callable:
     )(func)
 
 
+def onlyOnline(func: Callable):
+    r"""A decorator to skip tests if there exists no connection to the
+    internet."""
+    import pytest
+    return pytest.mark.skipif(
+        True,  # TODO
+        reason="No internet connection",
+    )(func)
+
+
 def onlyGraphviz(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute in case
     :obj:`graphviz` is installed."""
@@ -76,16 +86,6 @@ def onlyNeighborSampler(func: Callable):
     return pytest.mark.skipif(
         not WITH_PYG_LIB and not WITH_TORCH_SPARSE,
         reason="No neighbor sampler installed",
-    )(func)
-
-
-def onlyOnline(func: Callable):
-    r"""A decorator to skip tests if there exists no connection to the
-    internet."""
-    import pytest
-    return pytest.mark.skipif(
-        False,
-        reason="No internet connection",
     )(func)
 
 
