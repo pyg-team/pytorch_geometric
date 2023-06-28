@@ -159,7 +159,7 @@ class NeighborSampler(BaseSampler):
             def hook_func_with_nvtx(func_name):
                 func = getattr(self, func_name)
 
-                def hooked_func(**kwargs):
+                def hooked_func(*args, **kwargs):
                     nvtx_handle = torch.cuda.nvtx.range_start(
                         f"[Sampler] {func_name} for {self}")
                     ret = func(**kwargs)
