@@ -146,6 +146,7 @@ visible_devices:
 ```
 pip install paramiko
 pip install click
+apt install tmux
 python launch.py --config=dist_train_sage_sup_config.yml --master_addr=0.0.0.0 --master_port=11234
 ```
 Here `master_addr` is for the master address for RPC initialization, and `master_port` is for PyTorch's process group initialization across training processes.
