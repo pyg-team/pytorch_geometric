@@ -10,7 +10,7 @@ WITH_PT111 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 11
 WITH_PT112 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 12
 
 if not hasattr(torch, 'sparse_csc'):
-    torch.sparse_csc = torch.sparse_csr
+    torch.sparse_csc = -1
 
 try:
     import pyg_lib  # noqa

@@ -79,6 +79,16 @@ def onlyNeighborSampler(func: Callable):
     )(func)
 
 
+def onlyOnline(func: Callable):
+    r"""A decorator to skip tests if there exists no connection to the
+    internet."""
+    import pytest
+    return pytest.mark.skipif(
+        False,
+        reason="No internet connection",
+    )(func)
+
+
 def withPackage(*args) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification."""
