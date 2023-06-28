@@ -42,7 +42,8 @@ def map_index(
         (tensor([1, 2, 2, 0]), tensor([True, True, False, True, True]))
 
     Note:
-        If src is a cuda tensor, consider using RMM for significant speed boosts:
+        If src is a cuda tensor, consider using RMM for significant speed boosts.
+        Proceed with caution as RMM may conflict with other allocators or fragment.
         import rmm
         rmm.reinitialize(pool_allocator=True)\n \
         torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)"
