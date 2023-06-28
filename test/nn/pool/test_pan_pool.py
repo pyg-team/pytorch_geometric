@@ -1,5 +1,6 @@
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import PANConv, PANPooling
 from torch_geometric.testing import is_full_test, withPackage
 
@@ -24,7 +25,7 @@ def test_pan_pooling():
     assert perm.size() == (2, )
     assert score.size() == (2, )
 
-    if is_full_test():
+    if torch_geometric.typing.WITH_PT112 and is_full_test():
         jit = torch.jit.script(pool)
         out = jit(x, M)
         assert torch.allclose(h, out[0])

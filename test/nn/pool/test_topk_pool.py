@@ -1,5 +1,6 @@
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn.pool import TopKPooling
 from torch_geometric.nn.pool.connect.filter_edges import filter_adj
 from torch_geometric.testing import is_full_test
@@ -48,7 +49,7 @@ def test_topk_pooling():
     assert out3[0].size() == (2, in_channels)
     assert out3[1].size() == (2, 2)
 
-    if is_full_test():
+    if torch_geometric.typing.WITH_PT112 and is_full_test():
         jit1 = torch.jit.script(pool1)
         assert torch.allclose(jit1(x, edge_index)[0], out1[0])
 
