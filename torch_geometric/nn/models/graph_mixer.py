@@ -6,6 +6,7 @@ from torch.nn import LayerNorm, Linear
 
 from torch_geometric.nn import TemporalEncoding
 from torch_geometric.utils import scatter, to_dense_batch
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 class NodeEncoder(torch.nn.Module):
@@ -257,7 +258,7 @@ class LinkEncoder(torch.nn.Module):
             edge_index=edge_index,
             edge_attr=edge_attr,
             edge_time=edge_time,
-            num_nodes=seed_time.size(0),
+            num_nodes=maybe_num_nodes(edge_index),
             is_sorted=self.is_sorted,
         )
 
