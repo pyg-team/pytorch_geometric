@@ -64,7 +64,7 @@ class SelectOutput:
         self.weight = weight
 
 
-if torch_geometric.typing.WITH_PT112:
+if torch_geometric.typing.WITH_PT113:
     SelectOutput = torch.jit.script(SelectOutput)
 
 

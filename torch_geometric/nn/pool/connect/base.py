@@ -49,7 +49,7 @@ class ConnectOutput:
         self.batch = batch
 
 
-if torch_geometric.typing.WITH_PT112:
+if torch_geometric.typing.WITH_PT113:
     ConnectOutput = torch.jit.script(ConnectOutput)
 
 
