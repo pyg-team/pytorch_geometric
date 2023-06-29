@@ -43,7 +43,7 @@ def map_index(
 
     .. note::
 
-        If src is a cuda tensor, consider using RMM for significant speed boosts.
+        If inputs are on GPU, consider using RMM for significant speed boosts.
         Proceed with caution as RMM may conflict with other allocators or fragment.
 
     .. code-block:: python
