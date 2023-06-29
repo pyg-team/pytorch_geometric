@@ -142,30 +142,33 @@ def _collate(
         else:
             incs = None
 
+        if getattr(elem, 'is_nested', False):
+            tensors = []
+            for nested_tensor in values:
+                tensors.extend(nested_tensor.unbind())
+            value = torch.nested.nested_tensor(tensors)
+
+            return value, slices, incs
+
+        out = None
         if torch.utils.data.get_worker_info() is not None:
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
             if torch_geometric.typing.WITH_PT2:
                 storage = elem.untyped_storage()._new_shared(
                     numel * elem.element_size(), device=elem.device)
-            else:
+            elif torch_geometric.typing.WITH_PT112:
                 storage = elem.storage()._new_shared(numel, device=elem.device)
+            else:
+                storage = elem.storage()._new_shared(numel)
             shape = list(elem.size())
             if cat_dim is None or elem.dim() == 0:
                 shape = [len(values)] + shape
             else:
                 shape[cat_dim] = int(slices[-1])
             out = elem.new(storage).resize_(*shape)
-        else:
-            out = None
 
-        if elem.is_nested:
-            tensors = []
-            for nested_tensor in values:
-                tensors.extend(nested_tensor.unbind())
-            value = torch.nested.nested_tensor(tensors)
-        else:
-            value = torch.cat(values, dim=cat_dim or 0, out=out)
+        value = torch.cat(values, dim=cat_dim or 0, out=out)
 
         return value, slices, incs
 

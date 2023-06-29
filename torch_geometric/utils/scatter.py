@@ -7,11 +7,7 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.typing import torch_scatter
 
-major, minor, _ = torch.__version__.split('.', maxsplit=2)
-major, minor = int(major), int(minor)
-has_pytorch112 = major > 1 or (major == 1 and minor >= 12)
-
-if has_pytorch112:  # pragma: no cover
+if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
     warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
 
@@ -180,9 +176,15 @@ def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
     if dim_size is None:
         dim_size = index.max() + 1 if index.numel() > 0 else 0
 
-    res = src.new_empty(dim_size)
-    res.scatter_reduce_(0, index, src.detach(), reduce='amax',
-                        include_self=False)
+    if torch_geometric.typing.WITH_PT112:
+        res = src.new_empty(dim_size)
+        res.scatter_reduce_(0, index, src.detach(), reduce='amax',
+                            include_self=False)
+    elif torch_geometric.typing.WITH_PT111:
+        res = torch.scatter_reduce(src.detach(), 0, index, reduce='amax',
+                                   output_size=dim_size)
+    else:
+        raise ValueError("'scatter_argmax' requires PyTorch >= 1.11")
 
     out = index.new_full((dim_size, ), fill_value=dim_size - 1)
     nonzero = (src == res[index]).nonzero().view(-1)
