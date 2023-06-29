@@ -178,10 +178,6 @@ def to_torch_csr_tensor(
                size=(4, 4), nnz=6, layout=torch.sparse_csr)
 
     """
-    # TODO Recheck
-    # adj = to_torch_coo_tensor(edge_index, edge_attr, size, is_coalesced)
-    # return adj.to_sparse_csr()
-
     if size is None:
         size = int(edge_index.max()) + 1
     if not isinstance(size, (tuple, list)):
