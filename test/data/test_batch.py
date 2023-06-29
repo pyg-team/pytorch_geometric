@@ -519,7 +519,7 @@ def test_torch_sparse_batch(layout):
     assert torch.equal(out[1], torch.cat([edge_attr, edge_attr], 0))
 
 
-@withPackage('torch>=1.12.0')
+@withPackage('torch>=1.13.0')
 def test_torch_nested_batch():
     from torch.nested import nested_tensor
 
