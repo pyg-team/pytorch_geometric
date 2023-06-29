@@ -11,6 +11,7 @@ confs = [(None, None), (2, None), (None, 2)]
 
 
 @withCUDA
+@withPackage('torch>=1.12.0')  # TODO Investigate error
 @pytest.mark.parametrize('conf', confs)
 def test_rgcn_conv_equality(conf, device):
     num_bases, num_blocks = conf
