@@ -62,9 +62,21 @@ def onlyCUDA(func: Callable) -> Callable:
 def onlyOnline(func: Callable):
     r"""A decorator to skip tests if there exists no connection to the
     internet."""
+    import http.client as httplib
+
     import pytest
+
+    has_connection = True
+    connection = httplib.HTTPSConnection('8.8.8.8', timeout=5)
+    try:
+        connection.request('HEAD', '/')
+    except Exception:
+        has_connection = False
+    finally:
+        connection.close()
+
     return pytest.mark.skipif(
-        True,  # TODO
+        not has_connection,
         reason="No internet connection",
     )(func)
 
