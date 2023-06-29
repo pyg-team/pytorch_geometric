@@ -448,14 +448,14 @@ def test_custom_neighbor_loader():
         assert torch.allclose(batch1['author'].x.sort()[0],
                               batch2['author'].x.sort()[0])
 
-        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch2[
+        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch1[
             'paper', 'to', 'paper'].edge_index.size())
-        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch2[
+        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch1[
             'paper', 'to', 'author'].edge_index.size())
         if torch_geometric.typing.WITH_PT112:
             assert (batch1['author', 'to', 'paper'].edge_index.size() ==
-                    batch2['author', 'to', 'paper'].edge_index.size())
-        assert (batch1['author', 'to', 'author'].edge_index.size() == batch2[
+                    batch1['author', 'to', 'paper'].edge_index.size())
+        assert (batch1['author', 'to', 'author'].edge_index.size() == batch1[
             'author', 'to', 'author'].edge_index.size())
 
 
