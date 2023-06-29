@@ -49,7 +49,7 @@ def map_index(
     .. code-block:: python
 
         import rmm
-        rmm.reinitialize(pool_allocator=True)\n \
+        rmm.reinitialize(pool_allocator=True)
         torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)"
 
     """
