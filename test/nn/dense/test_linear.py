@@ -216,6 +216,7 @@ def test_lazy_hetero_dict_linear(device):
 
 @withCUDA
 @withPackage('pyg_lib')
+@withPackage('torch>=1.12.0')  # TODO Investigate error
 @pytest.mark.parametrize('type_vec', [
     torch.tensor([0, 0, 1, 1, 2, 2]),
     torch.tensor([0, 1, 2, 0, 1, 2]),

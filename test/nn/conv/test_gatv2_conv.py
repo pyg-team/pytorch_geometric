@@ -42,10 +42,12 @@ def test_gatv2_conv():
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
     assert conv._alpha is None
 
-    result = conv(x1, adj1.t(), return_attention_weights=True)
-    assert torch.allclose(result[0], out, atol=1e-6)
-    assert result[1][0].size() == torch.Size([4, 4, 2])
-    assert result[1][0]._nnz() == 7
+    if torch_geometric.typing.WITH_PT113:
+        # PyTorch < 1.13 does not support multi-dimensional CSR values :(
+        result = conv(x1, adj1.t(), return_attention_weights=True)
+        assert torch.allclose(result[0], out, atol=1e-6)
+        assert result[1][0].size() == torch.Size([4, 4, 2])
+        assert result[1][0]._nnz() == 7
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         result = conv(x1, adj2.t(), return_attention_weights=True)

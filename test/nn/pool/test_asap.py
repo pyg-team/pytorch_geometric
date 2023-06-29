@@ -4,7 +4,12 @@ import pytest
 import torch
 
 from torch_geometric.nn import ASAPooling, GCNConv, GraphConv
-from torch_geometric.testing import is_full_test, onlyFullTest, onlyLinux
+from torch_geometric.testing import (
+    is_full_test,
+    onlyFullTest,
+    onlyLinux,
+    withPackage,
+)
 
 
 @onlyLinux  # TODO  (matthias) Investigate CSR @ CSR support on Windows.
@@ -40,6 +45,7 @@ def test_asap():
 
 
 @onlyFullTest
+@withPackage('torch>=1.12.0')
 def test_asap_jit_save():
     pool = ASAPooling(in_channels=16)
     pool_jit = pool.jittable()

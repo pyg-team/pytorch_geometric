@@ -6,15 +6,15 @@ from torch_geometric.nn import GPSConv, SAGEConv
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
-x = torch.randn(4, 16)
-edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]])
-batch = torch.tensor([0, 0, 1, 1])
-adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
-
 
 @pytest.mark.parametrize('attn_type', ['multihead', 'performer'])
 @pytest.mark.parametrize('norm', [None, 'batch_norm', 'layer_norm'])
 def test_gps_conv(norm, attn_type):
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]])
+    batch = torch.tensor([0, 0, 1, 1])
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
+
     conv = GPSConv(16, conv=SAGEConv(16, 16), heads=4, norm=norm,
                    attn_type=attn_type)
     conv.reset_parameters()
