@@ -50,7 +50,7 @@ def map_index(
 
         import rmm
         rmm.reinitialize(pool_allocator=True)
-        torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)"
+        torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)
 
     """
     if src.is_floating_point():
