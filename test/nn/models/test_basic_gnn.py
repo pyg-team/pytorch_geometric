@@ -17,6 +17,7 @@ from torch_geometric.testing import (
     onlyFullTest,
     onlyLinux,
     onlyNeighborSampler,
+    onlyOnline,
     withCUDA,
     withPackage,
 )
@@ -147,6 +148,7 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+@onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
@@ -215,6 +217,7 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
 
+@withPackage('torch>=1.12.0')
 @withPackage('onnx', 'onnxruntime')
 def test_onnx(tmp_path, capfd):
     import onnx

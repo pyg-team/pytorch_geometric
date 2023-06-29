@@ -2,7 +2,11 @@ import pytest
 import torch
 
 from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
-from torch_geometric.testing import MyGraphStore, get_random_edge_index
+from torch_geometric.testing import (
+    MyGraphStore,
+    get_random_edge_index,
+    withPackage,
+)
 from torch_geometric.utils import (
     to_torch_coo_tensor,
     to_torch_csc_tensor,
@@ -40,6 +44,7 @@ def test_graph_store():
         graph_store['edge_type_2', 'coo']
 
 
+@withPackage('torch>=1.12.0')
 def test_graph_store_conversion():
     graph_store = MyGraphStore()
 
