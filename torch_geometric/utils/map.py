@@ -41,7 +41,7 @@ def map_index(
         >>> map_index(src, index)
         (tensor([1, 2, 2, 0]), tensor([True, True, False, True, True]))
 
-    Note:
+    .. note::
 
         If src is a cuda tensor, consider using RMM for significant speed boosts.
         Proceed with caution as RMM may conflict with other allocators or fragment.
