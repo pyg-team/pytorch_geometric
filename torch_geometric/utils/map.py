@@ -46,7 +46,7 @@ def map_index(
         If src is a cuda tensor, consider using RMM for significant speed boosts.
         Proceed with caution as RMM may conflict with other allocators or fragment.
 
-    .. code-block::
+    .. code-block:: python
 
         import rmm
         rmm.reinitialize(pool_allocator=True)\n \
