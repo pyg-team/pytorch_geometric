@@ -1,6 +1,6 @@
 # Using GraphLearn-for-PyTorch(GLT) for Distributed Acceleration for PyG
 
-**[GraphLearn-for-PyTorch(GLT)](https://github.com/alibaba/graphlearn-for-pytorch)** is a graph learning library for PyTorch that makes distributed GNN training easy and efficient. 
+**[GraphLearn-for-PyTorch(GLT)](https://github.com/alibaba/graphlearn-for-pytorch)** is a graph learning library for PyTorch that makes distributed GNN training easy and efficient.
 GLT leverages GPUs to accelerate graph sampling and utilizes UVA and GPU cache to reduce the data conversion and transferring costs during graph sampling and model training.
 Most of the APIs of GLT are compatible with PyG, so PyG users only need to modify a few lines of their PyG code to train the model with GLT.
 
