@@ -44,7 +44,7 @@ def map_index(
     .. note::
 
         If inputs are on GPU, consider using RMM for significant speed boosts.
-        Proceed with caution as RMM may conflict with other allocators or fragment.
+        Proceed with caution as RMM may conflict with other allocators or fragments.
 
     .. code-block:: python
 
