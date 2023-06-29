@@ -217,6 +217,7 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
 
+@withPackage('torch>=1.12.0')
 @withPackage('onnx', 'onnxruntime')
 def test_onnx(tmp_path, capfd):
     import onnx

@@ -157,8 +157,10 @@ def _collate(
             if torch_geometric.typing.WITH_PT2:
                 storage = elem.untyped_storage()._new_shared(
                     numel * elem.element_size(), device=elem.device)
-            else:
+            elif torch_geometric.typing.WITH_PT112:
                 storage = elem.storage()._new_shared(numel, device=elem.device)
+            else:
+                storage = elem.storage()._new_shared(numel)
             shape = list(elem.size())
             if cat_dim is None or elem.dim() == 0:
                 shape = [len(values)] + shape
