@@ -43,15 +43,16 @@ def map_index(
 
     .. note::
 
-        If inputs are on GPU, consider using RMM for significant speed boosts.
-        Proceed with caution as RMM may conflict with other allocators or fragments.
+        If inputs are on GPU and :obj:`cudf` is available, consider using RMM
+        for significant speed boosts.
+        Proceed with caution as RMM may conflict with other allocators or
+        fragments.
 
-    .. code-block:: python
+        .. code-block:: python
 
-        import rmm
-        rmm.reinitialize(pool_allocator=True)
-        torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)
-
+            import rmm
+            rmm.reinitialize(pool_allocator=True)
+            torch.cuda.memory.change_current_allocator(rmm.rmm_torch_allocator)
     """
     if src.is_floating_point():
         raise ValueError(f"Expected 'src' to be an index (got '{src.dtype}')")
