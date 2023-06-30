@@ -114,7 +114,7 @@ def run_training_proc(
         end = time.time()
         f.write(f'-- [Trainer {current_ctx.rank}] Epoch: {epoch:03d}, '
                 f'Loss: {loss:.4f}, Epoch Time: {end - start}\n')
-        # torch.cuda.empty_cache() # empty cache when GPU memory's insufficient.
+        # torch.cuda.empty_cache() # empty cache when GPU memory's insufficient
         torch.cuda.synchronize()
         torch.distributed.barrier()
         # Test accuracy.
@@ -233,7 +233,8 @@ if __name__ == '__main__':
     f.write(f'* batch size: {args.batch_size}\n')
     f.write(f'* master addr: {args.master_addr}\n')
     f.write(
-        f'* training process group master port: {args.training_pg_master_port}\n'
+        f'* training process group master port: '
+        f'{args.training_pg_master_port}\n'
     )
     f.write(
         f'* training loader master port: {args.train_loader_master_port}\n')
