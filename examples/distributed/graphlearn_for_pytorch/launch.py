@@ -54,7 +54,8 @@ if __name__ == "__main__":
         ssh = paramiko.SSHClient()
         ssh._transport = trans
 
-        to_dist_dir = 'cd ' + dst + '/examples/graphlearn_for_pytorch/distributed/ '
+        to_dist_dir = 'cd ' + dst + \
+            '/examples/graphlearn_for_pytorch/distributed/ '
         exec_example = "tmux new -d 'CUDA_VISIBLE_DEVICES=" + device + " " + \
             pythonbin + " dist_train_sage_supervised.py --dataset=" + \
             dataset + " --dataset_root_dir=" + dataset_path + dataset + \

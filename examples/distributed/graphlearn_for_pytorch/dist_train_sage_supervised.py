@@ -113,16 +113,17 @@ def run_training_proc(
             optimizer.step()
         end = time.time()
         f.write(
-            f'-- [Trainer {current_ctx.rank}] Epoch: {epoch:03d}, Loss: {loss:.4f}, Epoch Time: {end - start}\n'
+            f'-- [Trainer {current_ctx.rank}] Epoch: {epoch:03d}, '
+            f'Loss: {loss:.4f}, Epoch Time: {end - start}\n'
         )
-        # torch.cuda.empty_cache() # empty cache when GPU memory is not efficient.
+        # torch.cuda.empty_cache() # empty cache when GPU memory's insufficient.
         torch.cuda.synchronize()
         torch.distributed.barrier()
         # Test accuracy.
         if epoch == 0 or epoch > (epochs // 2):
             test_acc = test(model, test_loader, dataset_name)
             f.write(
-                f'-- [Trainer {current_ctx.rank}] Test Accuracy: {test_acc:.4f}\n'
+                f'-- [Trainer {current_ctx.rank}] Test Acc: {test_acc:.4f}\n'
             )
             torch.cuda.synchronize()
             torch.distributed.barrier()
@@ -195,22 +196,28 @@ if __name__ == '__main__':
         "--training_pg_master_port",
         type=int,
         default=11111,
-        help=
-        "The port used for PyTorch's process group initialization across training processes.",
+        help='''
+            The port used for PyTorch's process group initialization across
+            training processes.
+            ''',
     )
     parser.add_argument(
         "--train_loader_master_port",
         type=int,
         default=11112,
-        help=
-        "The port used for RPC initialization across all sampling workers of training loader.",
+        help='''
+            The port used for RPC initialization across all sampling workers of
+            training loader.
+            ''',
     )
     parser.add_argument(
         "--test_loader_master_port",
         type=int,
         default=11113,
-        help=
-        "The port used for RPC initialization across all sampling workers of testing loader.",
+        help='''
+            The port used for RPC initialization across all sampling workers of
+            testing loader.
+            ''',
     )
     args = parser.parse_args()
 

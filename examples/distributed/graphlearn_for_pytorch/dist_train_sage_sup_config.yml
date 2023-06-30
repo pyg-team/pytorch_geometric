@@ -1,10 +1,10 @@
 nodes:
   - 0.0.0.0
   - 1.1.1.1
-ports: [22,22]
+ports: [22, 22]
 python_bins:
   - /path/to/python
-  - /path/to/python # path to python with GLT's env
+  - /path/to/python  # path to python with GLT's env
 usernames:
   - your_username_for_node_0
   - your_username_for_node_1

@@ -78,8 +78,10 @@ if __name__ == '__main__':
         "--root_dir",
         type=str,
         default='../../../data/ogbn-products',
-        help=
-        "The root directory (relative path) of input dataset and output partitions.",
+        help='''
+            The root directory (relative path) of input dataset and output 
+            partitions.
+            ''',
     )
     parser.add_argument(
         "--num_partitions",
