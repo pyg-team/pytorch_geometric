@@ -232,10 +232,8 @@ if __name__ == '__main__':
     f.write(f'* epochs: {args.epochs}\n')
     f.write(f'* batch size: {args.batch_size}\n')
     f.write(f'* master addr: {args.master_addr}\n')
-    f.write(
-        f'* training process group master port: '
-        f'{args.training_pg_master_port}\n'
-    )
+    f.write(f'* training process group master port: '
+            f'{args.training_pg_master_port}\n')
     f.write(
         f'* training loader master port: {args.train_loader_master_port}\n')
     f.write(f'* testing loader master port: {args.test_loader_master_port}\n')
