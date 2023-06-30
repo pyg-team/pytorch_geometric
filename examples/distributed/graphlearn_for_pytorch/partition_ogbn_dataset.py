@@ -79,7 +79,7 @@ if __name__ == '__main__':
         type=str,
         default='../../../data/ogbn-products',
         help='''
-            The root directory (relative path) of input dataset and output 
+            The root directory (relative path) of input dataset and output
             partitions.
             ''',
     )

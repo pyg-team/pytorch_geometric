@@ -112,10 +112,8 @@ def run_training_proc(
             loss.backward()
             optimizer.step()
         end = time.time()
-        f.write(
-            f'-- [Trainer {current_ctx.rank}] Epoch: {epoch:03d}, '
-            f'Loss: {loss:.4f}, Epoch Time: {end - start}\n'
-        )
+        f.write(f'-- [Trainer {current_ctx.rank}] Epoch: {epoch:03d}, '
+                f'Loss: {loss:.4f}, Epoch Time: {end - start}\n')
         # torch.cuda.empty_cache() # empty cache when GPU memory's insufficient.
         torch.cuda.synchronize()
         torch.distributed.barrier()
@@ -123,8 +121,7 @@ def run_training_proc(
         if epoch == 0 or epoch > (epochs // 2):
             test_acc = test(model, test_loader, dataset_name)
             f.write(
-                f'-- [Trainer {current_ctx.rank}] Test Acc: {test_acc:.4f}\n'
-            )
+                f'-- [Trainer {current_ctx.rank}] Test Acc: {test_acc:.4f}\n')
             torch.cuda.synchronize()
             torch.distributed.barrier()
 
