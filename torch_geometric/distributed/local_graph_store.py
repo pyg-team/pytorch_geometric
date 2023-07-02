@@ -64,8 +64,8 @@ class LocalGraphStore(GraphStore):
 
     # starting the partition info related to graph
 
-    def set_num_partition(self, num_partition: int) -> bool:
-        self.num_partition = num_partition
+    def set_num_partitions(self, num_partitions: int) -> bool:
+        self.num_partitions = num_partitions
         return True
 
     def set_partition_idx(self, partition_idx: int) -> bool:
