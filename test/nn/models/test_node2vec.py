@@ -6,8 +6,7 @@ from torch_geometric.testing import is_full_test, withCUDA, withPackage
 
 
 @withCUDA
-@withPackage('pyg_lib')
-@withPackage('torch_cluster')
+@withPackage('pyg_lib|torch_cluster')
 @pytest.mark.parametrize('p', [1.0])
 @pytest.mark.parametrize('q', [1.0, 0.5])
 def test_node2vec(device, p, q):

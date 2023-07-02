@@ -42,8 +42,7 @@ def trivial_metric(true, pred, task_type):
 
 
 @onlyOnline
-@withPackage('yacs')
-@withPackage('pytorch_lightning')
+@withPackage('yacs', 'pytorch_lightning')
 @pytest.mark.parametrize('auto_resume', [True, False])
 @pytest.mark.parametrize('skip_train_eval', [True, False])
 @pytest.mark.parametrize('use_trivial_metric', [True, False])
@@ -111,8 +110,7 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
 
 
 @onlyOnline
-@withPackage('yacs')
-@withPackage('pytorch_lightning')
+@withPackage('yacs', 'pytorch_lightning')
 def test_graphgym_module(tmp_path):
     import pytorch_lightning as pl
 
@@ -166,8 +164,7 @@ def test_graphgym_module(tmp_path):
 
 
 @onlyOnline
-@withPackage('yacs')
-@withPackage('pytorch_lightning')
+@withPackage('yacs', 'pytorch_lightning')
 def test_train(tmp_path, capfd):
     warnings.filterwarnings('ignore', ".*does not have many workers.*")
 

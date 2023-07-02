@@ -522,8 +522,7 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
         assert torch.equal(batch1['paper'].time, batch2['paper'].time)
 
 
-@withPackage('pyg_lib')
-@withPackage('torch_sparse')
+@withPackage('pyg_lib', 'torch_sparse')
 def test_pyg_lib_and_torch_sparse_homo_equality():
     edge_index = get_random_edge_index(20, 20, 100)
     adj = to_torch_csr_tensor(edge_index.flip([0]), size=(20, 20))
@@ -544,8 +543,7 @@ def test_pyg_lib_and_torch_sparse_homo_equality():
     assert torch.equal(edge_id1, edge_id2)
 
 
-@withPackage('pyg_lib')
-@withPackage('torch_sparse')
+@withPackage('pyg_lib', 'torch_sparse')
 def test_pyg_lib_and_torch_sparse_hetero_equality():
     edge_index = get_random_edge_index(20, 10, 50)
     adj = to_torch_csr_tensor(edge_index.flip([0]), size=(10, 20))
