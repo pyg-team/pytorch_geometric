@@ -15,7 +15,7 @@ def test_node2vec(device, p, q):
     kwargs = dict(embedding_dim=16, walk_length=2, context_size=2, p=p, q=q)
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER and q != 1.0:
-        with pytest.raises(ImportError, match="requires 'torch-cluster'"):
+        with pytest.raises(ImportError, match="requires the 'torch-cluster'"):
             model = Node2Vec(edge_index, **kwargs)
         return
 
