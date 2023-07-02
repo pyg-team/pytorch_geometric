@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import sys
 import warnings
 
 import pytest
@@ -188,6 +189,10 @@ def test_compile(device):
 
 
 def test_packaging():
+    if (not torch_geometric.typing.WITH_PT113 and sys.version_info.major == 3
+            and sys.version_info.minor >= 10):
+        return  # Unsupported Python version
+
     warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
 
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)

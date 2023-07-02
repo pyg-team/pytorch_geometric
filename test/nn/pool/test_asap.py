@@ -29,7 +29,7 @@ def test_asap():
         assert out[0].size() == (num_nodes // 2, in_channels)
         assert out[1].size() == (2, 2)
 
-        if torch_geometric.typing.WITH_PT112 and is_full_test():
+        if torch_geometric.typing.WITH_PT113 and is_full_test():
             torch.jit.script(pool.jittable())
 
         pool = ASAPooling(in_channels, ratio=0.5, GNN=GNN, add_self_loops=True)
@@ -46,7 +46,7 @@ def test_asap():
 
 
 @onlyFullTest
-@withPackage('torch>=1.12.0')
+@withPackage('torch>=1.13.0')
 def test_asap_jit_save():
     pool = ASAPooling(in_channels=16)
     pool_jit = pool.jittable()
