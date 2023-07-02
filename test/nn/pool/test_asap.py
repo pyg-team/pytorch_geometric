@@ -46,7 +46,7 @@ def test_asap():
 
 
 @onlyFullTest
-@withPackage('torch>=1.12.0')
+@withPackage('torch>=1.13.0')
 def test_asap_jit_save():
     pool = ASAPooling(in_channels=16)
     pool_jit = pool.jittable()

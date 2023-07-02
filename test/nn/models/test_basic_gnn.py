@@ -189,7 +189,7 @@ def test_compile(device):
 
 
 def test_packaging():
-    if (not torch_geometric.tying.WITH_PT113 and sys.version_info.major == 3
+    if (not torch_geometric.typing.WITH_PT113 and sys.version_info.major == 3
             and sys.version_info.minor >= 10):
         return  # Unsupported Python version
 
