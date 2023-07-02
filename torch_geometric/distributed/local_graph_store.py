@@ -25,7 +25,6 @@ class LocalGraphStore(GraphStore):
         self.edge_pb: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]] = None
         self.meta: Optional[Dict] = None
 
-
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:
         return (attr.edge_type, attr.layout.value)
@@ -59,9 +58,6 @@ class LocalGraphStore(GraphStore):
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
         return [self._edge_attr[key] for key in self._edge_index.keys()]
 
-
-
-
     # starting the partition info related to graph
 
     def set_num_partitions(self, num_partitions: int) -> bool:
@@ -72,11 +68,15 @@ class LocalGraphStore(GraphStore):
         self.partition_idx = partition_idx
         return True
 
-    def set_node_pb(self, node_pb: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]) -> bool:
+    def set_node_pb(
+            self, node_pb: Union[torch.Tensor, Dict[NodeType,
+                                                    torch.Tensor]]) -> bool:
         self.node_pb = node_pb
         return True
 
-    def set_edge_pb(self, edge_pb: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]) -> bool:
+    def set_edge_pb(
+            self, edge_pb: Union[torch.Tensor, Dict[NodeType,
+                                                    torch.Tensor]]) -> bool:
         self.edge_pb = edge_pb
         return True
 
@@ -85,23 +85,20 @@ class LocalGraphStore(GraphStore):
         return True
 
     def get_partition_ids_from_nids(self, ids: torch.Tensor,
-                            ntype: Optional[NodeType]=None):
+                                    ntype: Optional[NodeType] = None):
         # Get the local partition ids of node ids with a specific node type.
-        if(self.meta["is_hetero"]):
+        if (self.meta["is_hetero"]):
             assert ntype is not None
             return self.node_pb[ntype][ids]
         return self.node_pb[ids]
 
     def get_partition_ids_from_eids(self, eids: torch.Tensor,
-                            etype: Optional[EdgeType]=None):
+                                    etype: Optional[EdgeType] = None):
         # Get the partition ids of edge ids with a specific edge type.
-        if(self.meta["is_hetero"]):
+        if (self.meta["is_hetero"]):
             assert etype is not None
             return self.edge_pb[etype][eids]
         return self.edge_pb[eids]
-
-
-
 
     # Initialization ##########################################################
 
