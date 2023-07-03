@@ -24,6 +24,96 @@ except ImportError:
     torch_cluster = None
 
 
+class KNNFaiss:
+    r"""A :math:`k`-NN structure for fast querying of nearest neighbors based
+    on FAISS.
+
+    Args:
+        rhs_emb (torch.Tensor, optional): The data points.
+            (default: :obj:`None`)
+        scoring_func (str): inner_prod or neg_l2dist
+            (default: :obj:`inner_prod`)
+        device (torch.device, optional): The device to use. If set to
+            :obj:`None`, will default to CPU. (default: :obj:`None`)
+        **kwargs: Additional arguments to construct a :class:`faiss.Index`.
+    """
+    def __init__(
+        self,
+        rhs_emb: Optional[Tensor] = None,
+        scoring_func: str = 'inner_prod',
+        device: Optional[torch.device] = None,
+        **kwargs,
+    ):
+        assert scoring_func in ['inner_prod', 'neg_l2dist']
+        self.index: Optional[faiss.Index] = None
+        self.scoring_func = scoring_func
+        # Number of rhs embeddings indexed.
+        self.num_elems: int = 0
+        self.device = device or torch.device('cpu')
+        self.kwargs = kwargs
+
+        if rhs_emb is not None:
+            self.add(rhs_emb)
+
+    def _create_index(self, channels: int) -> faiss.Index:
+        if self.scoring_func == 'neg_l2dist':
+            # Number of connections per node:
+            M = self.kwargs.get('M', 64)
+            index = faiss.IndexHNSWFlat(channels, M)
+            # Number of level during construction:
+            index.hnsw.efConstruction = self.kwargs.get('efConstruction', 64)
+            # Number of level during search:
+            index.hnsw.efSearch = self.kwargs.get('efSearch', 32)
+            return index
+        elif self.scoring_func == 'inner_prod':
+            return faiss.index_factory(
+                channels,
+                'Flat',
+                faiss.METRIC_INNER_PRODUCT,
+            )
+        else:
+            raise ValueError(
+                f'scoring func of name {self.scoring_func} not supported')
+
+    def add(self, rhs_emb: Tensor):
+        assert rhs_emb.ndim == 2
+
+        rhs_emb = rhs_emb.detach().to(self.device)
+
+        if self.index is None:
+            self.index = self._create_index(rhs_emb.shape[1])
+
+            if str(self.device) != 'cpu':
+                self.index = faiss.index_cpu_to_gpu(
+                    faiss.StandardGpuResources(),
+                    self.device.index,
+                    self.index,
+                )
+
+        self.index.add(rhs_emb)
+        self.num_elems += rhs_emb.size(0)
+
+    def search(
+        self,
+        lhs_emb: Tensor,
+        k: int,
+        exclude_rhs_index: Optional[Tensor] = None,
+        exclude_lhs_batch: Optional[Tensor] = None,
+    ) -> Tuple[Tensor, Tensor]:
+        if self.index is None:
+            raise RuntimeError(f"'{self.__class__.__name__}' is not yet "
+                               f"initialized. Please call `add(...)` first")
+        if not (exclude_rhs_index is None and exclude_lhs_batch is None):
+            raise ValueError('Excluded search is not supported. '
+                             'exclude_rhs_index and exclude_lhs_batch need '
+                             'to be set to None.')
+
+        lhs_emb = lhs_emb.detach().to(self.device)
+
+        out, index = self.index.search(lhs_emb, k)
+        return out, index
+
+
 def fps(
     x: Tensor,
     batch: OptTensor = None,
@@ -111,11 +201,25 @@ def knn(
 
     :rtype: :class:`torch.Tensor`
     """
-    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
-        return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine,
-                                 num_workers)
-    return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers,
-                             batch_size)
+    if torch_geometric.typing.WITH_TORCH_CLUSTER:
+        if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+            return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine,
+                                     num_workers)
+        return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers,
+                                 batch_size)
+    else:
+        knn_module = KNNFaiss()
+        if batch_x is not None:
+            knn_module.add(x)
+        else:
+            # implement later
+
+        if batch_y is not None:
+            knn_module.search(y, k)
+        else:
+            # implement later
+
+
 
 
 def knn_graph(
@@ -166,12 +270,15 @@ def knn_graph(
         warnings.warn("Input tensor 'x' and 'batch' are on different devices "
                       "in 'knn_graph'. Performing blocking device transfer")
         batch = batch.to(x.device)
-
-    if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+    if torch_geometric.typing.WITH_TORCH_CLUSTER:
+        if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
+            return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
+                                           num_workers)
         return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
-                                       num_workers)
-    return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
-                                   num_workers, batch_size)
+                                       num_workers, batch_size)
+    else:
+        knn_module = KNNFaiss()
+
 
 
 def radius(
