@@ -94,9 +94,10 @@ class RECT_L(torch.nn.Module):
         edge_index_type = typing.split(',')[1].strip()
 
         class EdgeIndexJittable(torch.nn.Module):
-            def __init__(self, child):
+            def __init__(self, child: RECT_L):
                 super().__init__()
-                self.child = child
+                self.child = copy.deepcopy(child)
+                self.child.conv = self.child.conv.jittable()
 
             def reset_parameters(self):
                 self.child.reset_parameters()
@@ -116,9 +117,10 @@ class RECT_L(torch.nn.Module):
                 return self.child.get_semantic_labels(x, y, mask)
 
         class SparseTensorJittable(torch.nn.Module):
-            def __init__(self, child):
+            def __init__(self, child: RECT_L):
                 super().__init__()
-                self.child = child
+                self.child = copy.deepcopy(child)
+                self.child.conv = self.child.conv.jittable()
 
             def reset_parameters(self):
                 self.child.reset_parameters()
@@ -143,8 +145,6 @@ class RECT_L(torch.nn.Module):
             jittable_module = SparseTensorJittable(self)
         else:
             raise ValueError(f"Could not parse types '{typing}'")
-
-        jittable_module.child.conv = copy.deepcopy(self.conv).jittable()
 
         return jittable_module
 
