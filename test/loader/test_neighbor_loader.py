@@ -6,7 +6,6 @@ import numpy as np
 import pytest
 import torch
 
-import torch_geometric.typing
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
@@ -25,7 +24,6 @@ from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.utils import (
     is_undirected,
     sort_edge_index,
-    to_torch_csc_tensor,
     to_torch_csr_tensor,
     to_undirected,
 )
