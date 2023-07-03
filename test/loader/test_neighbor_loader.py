@@ -438,25 +438,20 @@ def test_custom_neighbor_loader():
     assert len(loader1) == len(loader2)
 
     for batch1, batch2 in zip(loader1, loader2):
-        # loader2 explicitly adds `num_nodes` to the batch
+        # `loader2` explicitly adds `num_nodes` to the batch:
         assert len(batch1) + 1 == len(batch2)
         assert batch1['paper'].batch_size == batch2['paper'].batch_size
 
-        # Mapped indices of neighbors may be differently sorted:
-        assert torch.allclose(batch1['paper'].x.sort()[0],
-                              batch2['paper'].x.sort()[0])
-        assert torch.allclose(batch1['author'].x.sort()[0],
-                              batch2['author'].x.sort()[0])
+        # Mapped indices of neighbors may be differently sorted ...
+        for node_type in data.node_types:
+            assert torch.allclose(
+                batch1[node_type].x.sort()[0],
+                batch2[node_type].x.sort()[0],
+            )
 
-        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch1[
-            'paper', 'to', 'paper'].edge_index.size())
-        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch1[
-            'paper', 'to', 'author'].edge_index.size())
-        if torch_geometric.typing.WITH_PT112:
-            assert (batch1['author', 'to', 'paper'].edge_index.size() ==
-                    batch1['author', 'to', 'paper'].edge_index.size())
-        assert (batch1['author', 'to', 'author'].edge_index.size() == batch1[
-            'author', 'to', 'author'].edge_index.size())
+        # ... and should sample the exact same number of edges:
+        for edge_type in data.edge_types:
+            assert batch1[edge_type].num_edges == batch2[edge_type].num_edges
 
 
 @onlyOnline
