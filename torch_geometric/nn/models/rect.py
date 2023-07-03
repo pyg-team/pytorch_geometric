@@ -144,8 +144,7 @@ class RECT_L(torch.nn.Module):
         else:
             raise ValueError(f"Could not parse types '{typing}'")
 
-        if self.conv.jittable is not None:
-            jittable_module.conv = copy.deepcopy(self.conv).jittable()
+        jittable_module.child.conv = copy.deepcopy(self.conv).jittable()
 
         return jittable_module
 
