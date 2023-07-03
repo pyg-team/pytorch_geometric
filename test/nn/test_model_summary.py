@@ -68,8 +68,7 @@ def test_summary_basic(gcn):
     assert summary(gcn['model'], gcn['x'], gcn['edge_index']) == expected[1:-1]
 
 
-@withPackage('tabulate')
-@withPackage('torch_sparse')
+@withPackage('tabulate', 'torch_sparse')
 def test_summary_with_sparse_tensor(gcn):
     expected = """
 +---------------------+-----------------------+----------------+----------+

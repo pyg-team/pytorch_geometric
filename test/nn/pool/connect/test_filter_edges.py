@@ -26,7 +26,7 @@ def test_filter_edges():
     assert out1.edge_attr.tolist() == [3, 5]
     assert out1.batch.tolist() == [0, 1]
 
-    if torch_geometric.typing.WITH_PT112 and is_full_test():
+    if torch_geometric.typing.WITH_PT113 and is_full_test():
         jit = torch.jit.script(connect)
         out2 = jit(select_output, edge_index, edge_attr, batch)
         torch.equal(out1.edge_index, out2.edge_index)

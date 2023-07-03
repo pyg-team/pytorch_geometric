@@ -105,6 +105,9 @@ def withPackage(*args) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification."""
     def is_installed(package: str) -> bool:
+        if '|' in package:
+            return any(is_installed(p) for p in package.split('|'))
+
         req = Requirement(package)
         if find_spec(req.name) is None:
             return False

@@ -232,14 +232,14 @@ def add_self_loops(
         assert edge_attr is None
         layout = edge_index.layout
         size = (edge_index.size(0), edge_index.size(1))
+        N = min(size)
         edge_index, edge_attr = to_edge_index(edge_index)
     elif isinstance(num_nodes, (tuple, list)):
         size = (num_nodes[0], num_nodes[1])
+        N = min(size)
     else:
         N = maybe_num_nodes(edge_index, num_nodes)
         size = (N, N)
-
-    N = min(size)
 
     loop_index = torch.arange(0, N, dtype=torch.long, device=edge_index.device)
     loop_index = loop_index.unsqueeze(0).repeat(2, 1)
