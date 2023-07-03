@@ -449,7 +449,7 @@ def test_custom_neighbor_loader():
                 batch2[node_type].x.sort()[0],
             )
 
-        # ... and should sample the exact same number of edges:
+        # ... but should sample the exact same number of edges:
         for edge_type in data.edge_types:
             assert batch1[edge_type].num_edges == batch2[edge_type].num_edges
 
