@@ -139,6 +139,8 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
+        # Save for PyTorch Lightning:
+        self.edge_label_index = edge_label_index
 
         if neg_sampling_ratio is not None and neg_sampling_ratio != 0.0:
             # TODO: Deprecation warning.
@@ -172,8 +174,8 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
 
         self.input_data = EdgeSamplerInput(
             input_id=input_id,
-            row=edge_label_index[0].clone(),
-            col=edge_label_index[1].clone(),
+            row=edge_label_index[0],
+            col=edge_label_index[1],
             label=edge_label,
             time=edge_label_time,
             input_type=input_type,

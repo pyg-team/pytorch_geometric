@@ -241,9 +241,38 @@ class BasicGNN(torch.nn.Module):
         return x
 
     @torch.no_grad()
-    def inference(self, loader: NeighborLoader,
-                  device: Optional[torch.device] = None,
-                  progress_bar: bool = False) -> Tensor:
+    def inference_per_layer(
+        self,
+        layer: int,
+        x: Tensor,
+        edge_index: Adj,
+        batch_size: int,
+    ) -> Tensor:
+
+        x = self.convs[layer](x, edge_index)[:batch_size]
+
+        if layer == self.num_layers - 1 and self.jk_mode is None:
+            return x
+
+        if self.act is not None and self.act_first:
+            x = self.act(x)
+        if self.norms is not None:
+            x = self.norms[layer](x)
+        if self.act is not None and not self.act_first:
+            x = self.act(x)
+        if layer == self.num_layers - 1 and hasattr(self, 'lin'):
+            x = self.lin(x)
+
+        return x
+
+    @torch.no_grad()
+    def inference(
+        self,
+        loader: NeighborLoader,
+        device: Optional[Union[str, torch.device]] = None,
+        embedding_device: Union[str, torch.device] = 'cpu',
+        progress_bar: bool = False,
+    ) -> Tensor:
         r"""Performs layer-wise inference on large-graphs using a
         :class:`~torch_geometric.loader.NeighborLoader`, where
         :class:`~torch_geometric.loader.NeighborLoader` should sample the
@@ -251,6 +280,19 @@ class BasicGNN(torch.nn.Module):
         This is an efficient way to compute the output embeddings for all
         nodes in the graph.
         Only applicable in case :obj:`jk=None` or `jk='last'`.
+
+        Args:
+            loader (torch_geometric.loader.NeighborLoader): A neighbor loader
+                object that generates full 1-hop subgraphs, *i.e.*,
+                :obj:`loader.num_neighbors = [-1]`.
+            device (torch.device, optional): The device to run the GNN on.
+                (default: :obj:`None`)
+            embedding_device (torch.device, optional): The device to store
+                intermediate embeddings on. If intermediate embeddings fit on
+                GPU, this option helps to avoid unnecessary device transfers.
+                (default: :obj:`"cpu"`)
+            progress_bar (bool, optional): If set to :obj:`True`, will print a
+                progress bar during computation. (default: :obj:`False`)
         """
         assert self.jk_mode is None or self.jk_mode == 'last'
         assert isinstance(loader, NeighborLoader)
@@ -262,38 +304,28 @@ class BasicGNN(torch.nn.Module):
             pbar = tqdm(total=len(self.convs) * len(loader))
             pbar.set_description('Inference')
 
-        x_all = loader.data.x.cpu()
-        loader.data.n_id = torch.arange(x_all.size(0))
+        x_all = loader.data.x.to(embedding_device)
 
         for i in range(self.num_layers):
             xs: List[Tensor] = []
             for batch in loader:
                 x = x_all[batch.n_id].to(device)
+                batch_size = batch.batch_size
                 if hasattr(batch, 'adj_t'):
                     edge_index = batch.adj_t.to(device)
                 else:
                     edge_index = batch.edge_index.to(device)
-                x = self.convs[i](x, edge_index)[:batch.batch_size]
-                if i == self.num_layers - 1 and self.jk_mode is None:
-                    xs.append(x.cpu())
-                    if progress_bar:
-                        pbar.update(1)
-                    continue
-                if self.act is not None and self.act_first:
-                    x = self.act(x)
-                if self.norms is not None:
-                    x = self.norms[i](x)
-                if self.act is not None and not self.act_first:
-                    x = self.act(x)
-                if i == self.num_layers - 1 and hasattr(self, 'lin'):
-                    x = self.lin(x)
-                xs.append(x.cpu())
+
+                x = self.inference_per_layer(i, x, edge_index, batch_size)
+                xs.append(x.to(embedding_device))
+
                 if progress_bar:
                     pbar.update(1)
+
             x_all = torch.cat(xs, dim=0)
+
         if progress_bar:
             pbar.close()
-        del loader.data.n_id
 
         return x_all
 

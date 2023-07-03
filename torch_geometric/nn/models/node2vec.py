@@ -123,7 +123,8 @@ class Node2Vec(torch.nn.Module):
     def neg_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node * self.num_negative_samples)
 
-        rw = torch.randint(self.num_nodes, (batch.size(0), self.walk_length))
+        rw = torch.randint(self.num_nodes, (batch.size(0), self.walk_length),
+                           dtype=batch.dtype, device=batch.device)
         rw = torch.cat([batch.view(-1, 1), rw], dim=-1)
 
         walks = []

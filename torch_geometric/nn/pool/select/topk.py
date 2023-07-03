@@ -4,10 +4,9 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.inits import uniform
+from torch_geometric.nn.pool.select import Select, SelectOutput
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.utils import scatter, softmax
-
-from .base import Select, SelectOutput
 
 
 # TODO (matthias) Benchmark and document this method.
@@ -148,7 +147,7 @@ class SelectTopK(Select):
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.long)
 
-        x.view(-1, 1) if x.dim() == 1 else x
+        x = x.view(-1, 1) if x.dim() == 1 else x
         score = (x * self.weight).sum(dim=-1)
 
         if self.min_score is None:

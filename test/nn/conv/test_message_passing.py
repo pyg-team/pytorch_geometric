@@ -115,11 +115,12 @@ def test_my_conv_basic():
         assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
 
     # Test gradient computation for `torch.sparse` tensors:
-    conv.fuse = True
-    torch_adj_t = adj1.t().requires_grad_()
-    out = conv((x1, x2), torch_adj_t)
-    out.sum().backward()
-    assert torch_adj_t.grad is not None
+    if torch_geometric.typing.WITH_PT112:
+        conv.fuse = True
+        torch_adj_t = adj1.t().requires_grad_()
+        out = conv((x1, x2), torch_adj_t)
+        out.sum().backward()
+        assert torch_adj_t.grad is not None
 
 
 def test_my_conv_out_of_bounds():
@@ -401,7 +402,7 @@ def test_message_passing_hooks():
     out2 = conv(x, adj.t())
     assert num_pre_hook_calls == 5
     assert num_hook_calls == 5
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)
 
     handle1.remove()
     assert len(conv._propagate_forward_pre_hooks) == 0
@@ -436,7 +437,7 @@ def test_message_passing_hooks():
     out2 = conv(x, adj.t())
     assert num_pre_hook_calls == 7
     assert num_hook_calls == 7
-    assert torch.allclose(out1, out2)
+    assert torch.allclose(out1, out2, atol=1e-6)
 
     handle1.remove()
     assert len(conv._propagate_forward_pre_hooks) == 0
@@ -463,7 +464,7 @@ def test_modified_message_passing_hook():
     conv.register_message_forward_hook(hook)
 
     out2 = conv(x, edge_index, edge_weight)
-    assert not torch.allclose(out1, out2)
+    assert not torch.allclose(out1, out2, atol=1e-6)
 
 
 class MyDefaultArgConv(MessagePassing):
