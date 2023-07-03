@@ -1,5 +1,3 @@
-import copy
-
 import torch
 
 import torch_geometric.typing
@@ -35,14 +33,14 @@ def test_rect():
 
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(copy.deepcopy(model).jittable(t))
+        jit = torch.jit.script(model.jittable(t))
         assert torch.allclose(jit(x, edge_index), out)
         assert torch.allclose(embed_out, jit.embed(x, edge_index))
         assert torch.allclose(labeds_out, jit.get_semantic_labels(x, y, mask))
 
     if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
         t = '(Tensor, SparseTensor, OptTensor) -> Tensor'
-        jit = torch.jit.script(copy.deepcopy(model).jittable(t))
+        jit = torch.jit.script(model.jittable(t))
         assert torch.allclose(jit(x, adj.t()), out)
         assert torch.allclose(embed_out, jit.embed(x, adj.t()))
         assert torch.allclose(labeds_out, jit.get_semantic_labels(x, y, mask))

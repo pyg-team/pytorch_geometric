@@ -1,3 +1,5 @@
+import copy
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -136,7 +138,7 @@ class RECT_L(torch.nn.Module):
                 return self.child.get_semantic_labels(x, y, mask)
 
         if self.conv.jittable is not None:
-            self.conv = self.conv.jittable()
+            self.conv = copy.deepcopy(self.conv).jittable()
 
         if 'Tensor' == edge_index_type:
             jittable_module = EdgeIndexJittable(self)
