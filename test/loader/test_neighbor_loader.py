@@ -390,7 +390,8 @@ def test_custom_neighbor_loader():
     feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
 
     # COO:
-    edge_index = get_random_edge_index(100, 100, 500)
+    edge_index = get_random_edge_index(100, 100, 500, coalesce=True)
+    edge_index = edge_index[:, torch.randperm(edge_index.size(1))]
     data['paper', 'to', 'paper'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
     graph_store.put_edge_index(edge_index=coo,
@@ -398,7 +399,7 @@ def test_custom_neighbor_loader():
                                layout='coo', size=(100, 100))
 
     # CSR:
-    edge_index = get_random_edge_index(100, 200, 1000)
+    edge_index = get_random_edge_index(100, 200, 1000, coalesce=True)
     data['paper', 'to', 'author'].edge_index = edge_index
     adj = to_torch_csr_tensor(edge_index, size=(100, 200))
     csr = (adj.crow_indices(), adj.col_indices())
@@ -407,17 +408,16 @@ def test_custom_neighbor_loader():
                                layout='csr', size=(100, 200))
 
     # CSC:
-    if torch_geometric.typing.WITH_PT112:
-        edge_index = get_random_edge_index(200, 100, 1000)
-        data['author', 'to', 'paper'].edge_index = edge_index
-        adj = to_torch_csc_tensor(edge_index, size=(200, 100))
-        csc = (adj.row_indices(), adj.ccol_indices())
-        graph_store.put_edge_index(edge_index=csc,
-                                   edge_type=('author', 'to', 'paper'),
-                                   layout='csc', size=(200, 100))
+    edge_index = get_random_edge_index(200, 100, 1000, coalesce=True)
+    data['author', 'to', 'paper'].edge_index = edge_index
+    adj = to_torch_csr_tensor(edge_index.flip([0]), size=(100, 200))
+    csc = (adj.col_indices(), adj.crow_indices())
+    graph_store.put_edge_index(edge_index=csc,
+                               edge_type=('author', 'to', 'paper'),
+                               layout='csc', size=(200, 100))
 
     # COO (sorted):
-    edge_index = get_random_edge_index(200, 200, 100)
+    edge_index = get_random_edge_index(200, 200, 100, coalesce=True)
     edge_index = edge_index[:, edge_index[1].argsort()]
     data['author', 'to', 'author'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
