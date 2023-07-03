@@ -137,15 +137,15 @@ class RECT_L(torch.nn.Module):
                                     mask: Tensor) -> Tensor:
                 return self.child.get_semantic_labels(x, y, mask)
 
-        if self.conv.jittable is not None:
-            self.conv = copy.deepcopy(self.conv).jittable()
-
         if 'Tensor' == edge_index_type:
             jittable_module = EdgeIndexJittable(self)
         elif 'SparseTensor' == edge_index_type:
             jittable_module = SparseTensorJittable(self)
         else:
             raise ValueError(f"Could not parse types '{typing}'")
+
+        if self.conv.jittable is not None:
+            jittable_module.conv = copy.deepcopy(self.conv).jittable()
 
         return jittable_module
 
