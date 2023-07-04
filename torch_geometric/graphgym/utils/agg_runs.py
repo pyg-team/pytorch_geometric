@@ -131,7 +131,7 @@ def agg_runs(dir, metric_best='auto'):
                         results_best[split] = [stats_best]
                     else:
                         results_best[split] += [stats_best]
-    results = {k: v for k, v in results.items() if v is not None}  # rm None
+    results = {k: v for k, v in results.items() if v is not None}
     results_best = {k: v for k, v in results_best.items() if v is not None}
     for key in results:
         for i in range(len(results[key])):
