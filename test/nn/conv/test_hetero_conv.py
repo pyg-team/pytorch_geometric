@@ -29,12 +29,10 @@ def test_hetero_conv(aggr):
 
     conv = HeteroConv(
         {
-            ('paper', 'to', 'paper'):
-            GCNConv(-1, 64),
-            ('author', 'to', 'paper'):
-            SAGEConv((-1, -1), 64),
-            ('paper', 'to', 'author'):
-            GATConv((-1, -1), 64, edge_dim=3, add_self_loops=False),
+            ('paper', 'to', 'paper'): GCNConv(-1, 64),
+            ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
+            ('paper', 'to', 'author'): GATConv(
+                (-1, -1), 64, edge_dim=3, add_self_loops=False),
         }, aggr=aggr)
 
     assert len(list(conv.parameters())) > 0
@@ -111,12 +109,10 @@ def test_hetero_conv_with_dot_syntax_node_types():
     data['src.paper', 'src.paper'].edge_weight = torch.rand(200)
 
     conv = HeteroConv({
-        ('src.paper', 'to', 'src.paper'):
-        GCNConv(-1, 64),
-        ('author', 'to', 'src.paper'):
-        SAGEConv((-1, -1), 64),
-        ('src.paper', 'to', 'author'):
-        GATConv((-1, -1), 64, add_self_loops=False),
+        ('src.paper', 'to', 'src.paper'): GCNConv(-1, 64),
+        ('author', 'to', 'src.paper'): SAGEConv((-1, -1), 64),
+        ('src.paper', 'to', 'author'): GATConv((-1, -1), 64,
+                                               add_self_loops=False),
     })
 
     assert len(list(conv.parameters())) > 0

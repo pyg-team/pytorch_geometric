@@ -103,16 +103,11 @@ class LRGBDataset(InMemoryDataset):
     ]
 
     urls = {
-        'pascalvoc-sp':
-        'https://www.dropbox.com/s/8x722ai272wqwl4/pascalvocsp.zip?dl=1',
-        'coco-sp':
-        'https://www.dropbox.com/s/r6ihg1f4pmyjjy0/cocosp.zip?dl=1',
-        'pcqm-contact':
-        'https://www.dropbox.com/s/qdag867u6h6i60y/pcqmcontact.zip?dl=1',
-        'peptides-func':
-        'https://www.dropbox.com/s/ycsq37q8sxs1ou8/peptidesfunc.zip?dl=1',
-        'peptides-struct':
-        'https://www.dropbox.com/s/zgv4z8fcpmknhs8/peptidesstruct.zip?dl=1'
+        'pascalvoc-sp': 'https://www.dropbox.com/s/8x722ai272wqwl4/pascalvocsp.zip?dl=1',
+        'coco-sp': 'https://www.dropbox.com/s/r6ihg1f4pmyjjy0/cocosp.zip?dl=1',
+        'pcqm-contact': 'https://www.dropbox.com/s/qdag867u6h6i60y/pcqmcontact.zip?dl=1',
+        'peptides-func': 'https://www.dropbox.com/s/ycsq37q8sxs1ou8/peptidesfunc.zip?dl=1',
+        'peptides-struct': 'https://www.dropbox.com/s/zgv4z8fcpmknhs8/peptidesstruct.zip?dl=1'
     }
 
     dwnld_file_name = {
