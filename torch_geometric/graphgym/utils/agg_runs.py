@@ -135,7 +135,7 @@ def agg_runs(dir, metric_best='auto'):
     results_best = {
         k: v
         for k, v in results_best.items() if v is not None
-    }  # rm None
+    }
     for key in results:
         for i in range(len(results[key])):
             results[key][i] = agg_dict_list(results[key][i])
