@@ -5,8 +5,7 @@ import torch
 import torch_geometric
 
 x_map = {
-    'atomic_num':
-    list(range(0, 119)),
+    'atomic_num': list(range(0, 119)),
     'chirality': [
         'CHI_UNSPECIFIED',
         'CHI_TETRAHEDRAL_CW',
@@ -18,14 +17,10 @@ x_map = {
         'CHI_TRIGONALBIPYRAMIDAL',
         'CHI_OCTAHEDRAL',
     ],
-    'degree':
-    list(range(0, 11)),
-    'formal_charge':
-    list(range(-5, 7)),
-    'num_hs':
-    list(range(0, 9)),
-    'num_radical_electrons':
-    list(range(0, 5)),
+    'degree': list(range(0, 11)),
+    'formal_charge': list(range(-5, 7)),
+    'num_hs': list(range(0, 9)),
+    'num_radical_electrons': list(range(0, 5)),
     'hybridization': [
         'UNSPECIFIED',
         'S',

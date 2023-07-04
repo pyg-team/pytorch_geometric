@@ -60,12 +60,9 @@ class LINKXDataset(InMemoryDataset):
             'data.mat': f'{github_url}/genius.mat'
         },
         'wiki': {
-            'wiki_views2M.pt':
-            f'{gdrive_url}id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP',
-            'wiki_edges2M.pt':
-            f'{gdrive_url}id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u',
-            'wiki_features2M.pt':
-            f'{gdrive_url}id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK'
+            'wiki_views2M.pt': f'{gdrive_url}id=1p5DlVHrnFgYm3VsNIzahSsvCD424AyvP',
+            'wiki_edges2M.pt': f'{gdrive_url}id=14X7FlkjrlUgmnsYtPwdh-gGuFla4yb5u',
+            'wiki_features2M.pt': f'{gdrive_url}id=1ySNspxbK-snNoAZM7oxiWGvOnTRdSyEK'
         }
     }
 

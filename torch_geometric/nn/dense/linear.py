@@ -377,8 +377,7 @@ class HeteroDictLinear(torch.nn.Module):
         self.kwargs = kwargs
 
         self.lins = torch.nn.ModuleDict({
-            key:
-            Linear(channels, self.out_channels, **kwargs)
+            key: Linear(channels, self.out_channels, **kwargs)
             for key, channels in self.in_channels.items()
         })
 

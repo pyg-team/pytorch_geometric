@@ -390,10 +390,9 @@ def test_pad_data_pad_values(node_pad_value, edge_pad_value):
 @pytest.mark.parametrize('edge_pad_value', [
     UniformPadding(13),
     EdgeTypePadding({
-        ('v0', 'e0', 'v1'):
-        UniformPadding(13),
-        ('v1', 'e0', 'v0'):
-        AttrNamePadding({'edge_attr': UniformPadding(-1.0)})
+        ('v0', 'e0', 'v1'): UniformPadding(13),
+        ('v1', 'e0', 'v0'): AttrNamePadding(
+            {'edge_attr': UniformPadding(-1.0)})
     })
 ])
 def test_pad_heterodata_pad_values(node_pad_value, edge_pad_value):

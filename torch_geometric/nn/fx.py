@@ -193,8 +193,7 @@ class Transformer:
             ])
         elif isinstance(module, ModuleDict):
             return ModuleDict({
-                key:
-                self._init_submodule(submodule, f'{target}.{key}')
+                key: self._init_submodule(submodule, f'{target}.{key}')
                 for key, submodule in module.items()
             })
         else:
