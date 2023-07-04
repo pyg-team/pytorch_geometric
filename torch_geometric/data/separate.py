@@ -85,9 +85,16 @@ def _separate(
         # Recursively separate elements of dictionaries.
         return {
             key:
-            _separate(key, elem, idx, slices[key],
-                      incs[key] if decrement else None, batch, store,
-                      decrement,)
+            _separate(
+                key,
+                elem,
+                idx,
+                slices[key],
+                incs[key] if decrement else None,
+                batch,
+                store,
+                decrement,
+            )
             for key, elem in value.items()
         }
 
