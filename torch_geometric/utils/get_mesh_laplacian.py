@@ -2,9 +2,7 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-
-from torch_geometric.utils import add_self_loops, scatter, to_undirected
-
+from torch_geometric.utils import to_undirected, add_self_loops
 
 def get_mesh_laplacian(
     pos: Tensor,
@@ -52,58 +50,60 @@ def get_mesh_laplacian(
     assert pos.size(1) == 3 and face.size(0) == 3
 
     num_nodes = pos.shape[0]
+    batch_size = pos.shape[0] // 3
 
     def get_cots(left, centre, right):
         left_pos, central_pos, right_pos = pos[left], pos[centre], pos[right]
         left_vec = left_pos - central_pos
         right_vec = right_pos - central_pos
-        dot = torch.einsum('ij, ij -> i', left_vec, right_vec)
+        dot = torch.einsum('bij, bij -> bi', left_vec, right_vec)
         cross = torch.norm(torch.cross(left_vec, right_vec, dim=1), dim=1)
         cot = dot / cross  # cot = cos / sin
         return cot / 2.0  # by definition
 
-    # For each triangle face, get all three cotangents:
-    cot_021 = get_cots(face[0], face[2], face[1])
-    cot_102 = get_cots(face[1], face[0], face[2])
-    cot_012 = get_cots(face[0], face[1], face[2])
-    cot_weight = torch.cat([cot_021, cot_102, cot_012])
+    cot_021 = get_cots(face[:, 0], face[:, 2], face[:, 1])
+    cot_102 = get_cots(face[:, 1], face[:, 0], face[:, 2])
+    cot_012 = get_cots(face[:, 0], face[:, 1], face[:, 2])
+    cot_weight = torch.cat([cot_021, cot_102, cot_012], dim=0)
 
-    # Face to edge:
-    cot_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
+    cot_index = torch.cat([face[:, :2], face[:, 1:], face[:, ::2]], dim=1)
     cot_index, cot_weight = to_undirected(cot_index, cot_weight)
 
-    # Compute the diagonal part:
-    cot_deg = scatter(cot_weight, cot_index[0], 0, num_nodes, reduce='sum')
+    cot_deg = torch.zeros((num_nodes * batch_size), dtype=cot_weight.dtype, device=cot_weight.device)
+    scatter.add_(cot_weight, cot_index[0], out=cot_deg, dim_size=num_nodes * batch_size, reduce='sum')
+
     edge_index, _ = add_self_loops(cot_index, num_nodes=num_nodes)
+
     edge_weight = torch.cat([cot_weight, -cot_deg], dim=0)
 
     if normalization is not None:
-
         def get_areas(left, centre, right):
-            central_pos = pos[centre]
-            left_vec = pos[left] - central_pos
-            right_vec = pos[right] - central_pos
+            central_pos = pos[left, centre]
+            left_vec = pos[left, left] - central_pos
+            right_vec = pos[left, right] - central_pos
             cross = torch.norm(torch.cross(left_vec, right_vec, dim=1), dim=1)
             area = cross / 6.0  # one-third of a triangle's area is cross / 6.0
             return area / 2.0  # since each corresponding area is counted twice
 
-        # Like before, but here we only need the diagonal (the mass matrix):
-        area_021 = get_areas(face[0], face[2], face[1])
-        area_102 = get_areas(face[1], face[0], face[2])
-        area_012 = get_areas(face[0], face[1], face[2])
-        area_weight = torch.cat([area_021, area_102, area_012])
-        area_index = torch.cat([face[:2], face[1:], face[::2]], dim=1)
+        area_021 = get_areas(face[:, 0], face[:, 2], face[:, 1])
+        area_102 = get_areas(face[:, 1], face[:, 0], face[:, 2])
+        area_012 = get_areas(face[:, 0], face[:, 1], face[:, 2])
+        area_weight = torch.cat([area_021, area_102, area_012], dim=0)
+
+        area_index = torch.cat([face[:, :2], face[:, 1:], face[:, ::2]], dim=1)
         area_index, area_weight = to_undirected(area_index, area_weight)
-        area_deg = scatter(area_weight, area_index[0], 0, num_nodes, 'sum')
+
+        area_deg = torch.zeros((num_nodes * batch_size), dtype=area_weight.dtype, device=area_weight.device)
+        scatter.add_(area_weight, area_index[0], out=area_deg, dim_size=num_nodes * batch_size, reduce='sum')
 
         if normalization == 'sym':
             area_deg_inv_sqrt = area_deg.pow_(-0.5)
             area_deg_inv_sqrt[area_deg_inv_sqrt == float('inf')] = 0.0
-            edge_weight = (area_deg_inv_sqrt[edge_index[0]] * edge_weight *
-                           area_deg_inv_sqrt[edge_index[1]])
+            edge_weight.mul_(area_deg_inv_sqrt[edge_index[0]])
+            edge_weight.mul_(area_deg_inv_sqrt[edge_index[1]])
         elif normalization == 'rw':
             area_deg_inv = 1.0 / area_deg
             area_deg_inv[area_deg_inv == float('inf')] = 0.0
-            edge_weight = area_deg_inv[edge_index[0]] * edge_weight
+            edge_weight.mul_(area_deg_inv[edge_index[0]])
 
     return edge_index, edge_weight
