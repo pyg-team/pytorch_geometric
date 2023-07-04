@@ -104,6 +104,7 @@ name="torch_geometric"
 based_on_style = "pep8"
 split_before_named_assigns = false
 blank_line_before_nested_class_or_def = false
+allow_split_before_dict_value = false
 
 [tool.pyright]
 include = ["torch_geometric/utils/*"]
