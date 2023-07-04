@@ -161,15 +161,20 @@ class GCNConv(MessagePassing):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, in_channels: int, out_channels: int,
-                 improved: bool = False, cached: bool = False,
-                 add_self_loops: bool = True, normalize: bool = True,
-                 bias: bool = True, **kwargs):
-
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        improved: bool = False,
+        cached: bool = False,
+        add_self_loops: bool = True,
+        normalize: bool = True,
+        bias: bool = True,
+        **kwargs,
+    ):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
