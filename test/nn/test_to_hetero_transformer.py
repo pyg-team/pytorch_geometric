@@ -174,12 +174,12 @@ def test_to_hetero_basic():
         'author': torch.randn(100, 16),
     }
     edge_index_dict = {
-        ('paper', 'cites', 'paper'): torch.randint(100, (2, 200),
-                                                   dtype=torch.long),
-        ('paper', 'written_by', 'author'): torch.randint(
-            100, (2, 200), dtype=torch.long),
-        ('author', 'writes', 'paper'): torch.randint(100, (2, 200),
-                                                     dtype=torch.long),
+        ('paper', 'cites', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
     }
     edge_attr_dict = {
         ('paper', 'cites', 'paper'): torch.randn(200, 8),
@@ -334,12 +334,12 @@ def test_to_hetero_with_basic_model():
         'author': torch.randn(100, 16),
     }
     edge_index_dict = {
-        ('paper', 'cites', 'paper'): torch.randint(100, (2, 200),
-                                                   dtype=torch.long),
-        ('paper', 'written_by', 'author'): torch.randint(
-            100, (2, 200), dtype=torch.long),
-        ('author', 'writes', 'paper'): torch.randint(100, (2, 200),
-                                                     dtype=torch.long),
+        ('paper', 'cites', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
     }
 
     metadata = list(x_dict.keys()), list(edge_index_dict.keys())
@@ -406,11 +406,12 @@ def test_to_hetero_and_rgcn_equal_output():
         'author': x[6:],
     }
     edge_index_dict = {
-        ('paper', '_', 'paper'): edge_index[:, edge_type == 0],
-        ('paper', '_', 'author'): edge_index[:, edge_type == 1] -
-        torch.tensor([[0], [6]]),
-        ('author', '_', 'paper'): edge_index[:, edge_type == 2] -
-        torch.tensor([[6], [0]]),
+        ('paper', '_', 'paper'):
+        edge_index[:, edge_type == 0],
+        ('paper', '_', 'author'):
+        edge_index[:, edge_type == 1] - torch.tensor([[0], [6]]),
+        ('author', '_', 'paper'):
+        edge_index[:, edge_type == 2] - torch.tensor([[6], [0]]),
     }
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
@@ -461,10 +462,10 @@ def test_graph_level_to_hetero():
         'author': torch.randn(100, 16),
     }
     edge_index_dict = {
-        ('paper', 'written_by', 'author'): torch.randint(
-            100, (2, 200), dtype=torch.long),
-        ('author', 'writes', 'paper'): torch.randint(100, (2, 200),
-                                                     dtype=torch.long),
+        ('paper', 'written_by', 'author'):
+        torch.randint(100, (2, 200), dtype=torch.long),
+        ('author', 'writes', 'paper'):
+        torch.randint(100, (2, 200), dtype=torch.long),
     }
     batch_dict = {
         'paper': torch.zeros(100, dtype=torch.long),

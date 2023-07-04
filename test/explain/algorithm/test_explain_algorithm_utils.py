@@ -12,15 +12,21 @@ class HeteroModel(torch.nn.Module):
         super().__init__()
 
         self.conv1 = HeteroConv({
-            ('paper', 'to', 'paper'): GCNConv(-1, 32),
-            ('author', 'to', 'paper'): SAGEConv((-1, -1), 32),
-            ('paper', 'to', 'author'): SAGEConv((-1, -1), 32),
+            ('paper', 'to', 'paper'):
+            GCNConv(-1, 32),
+            ('author', 'to', 'paper'):
+            SAGEConv((-1, -1), 32),
+            ('paper', 'to', 'author'):
+            SAGEConv((-1, -1), 32),
         })
 
         self.conv2 = HeteroConv({
-            ('paper', 'to', 'paper'): GCNConv(-1, 32),
-            ('author', 'to', 'paper'): SAGEConv((-1, -1), 32),
-            ('paper', 'to', 'author'): SAGEConv((-1, -1), 32),
+            ('paper', 'to', 'paper'):
+            GCNConv(-1, 32),
+            ('author', 'to', 'paper'):
+            SAGEConv((-1, -1), 32),
+            ('paper', 'to', 'author'):
+            SAGEConv((-1, -1), 32),
         })
 
 

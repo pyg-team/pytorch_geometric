@@ -7,10 +7,10 @@ from torch_geometric.testing import withCUDA
 @withCUDA
 def test_metapath2vec(device):
     edge_index_dict = {
-        ('author', 'writes', 'paper'): torch.tensor(
-            [[0, 1, 1, 2], [0, 0, 1, 1]], device=device),
-        ('paper', 'written_by', 'author'): torch.tensor(
-            [[0, 0, 1, 1], [0, 1, 1, 2]], device=device)
+        ('author', 'writes', 'paper'):
+        torch.tensor([[0, 1, 1, 2], [0, 0, 1, 1]], device=device),
+        ('paper', 'written_by', 'author'):
+        torch.tensor([[0, 0, 1, 1], [0, 1, 1, 2]], device=device)
     }
 
     metapath = [

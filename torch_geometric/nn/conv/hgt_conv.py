@@ -210,7 +210,8 @@ class HGTConv(MessagePassing):
 
         # Transform output node embeddings:
         a_dict = self.out_lin({
-            k: torch.nn.functional.gelu(v) if v is not None else v
+            k:
+            torch.nn.functional.gelu(v) if v is not None else v
             for k, v in out_dict.items()
         })
 

@@ -192,8 +192,8 @@ def _layer_trace(
                             events, lambda e: e.name):
                         event_group = list(event_group)
                         current_tree[name][event_name] = {
-                            None: _build_measure_tuple(event_group,
-                                                       len(event_group))
+                            None:
+                            _build_measure_tuple(event_group, len(event_group))
                         }
                 else:
                     current_tree[name][None] = _build_measure_tuple(
