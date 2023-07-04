@@ -87,7 +87,7 @@ def _separate(
             key:
             _separate(key, elem, idx, slices[key],
                       incs[key] if decrement else None, batch, store,
-                      decrement)
+                      decrement,)
             for key, elem in value.items()
         }
 
