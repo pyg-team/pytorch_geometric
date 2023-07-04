@@ -2,7 +2,9 @@ from typing import Optional, Tuple
 
 import torch
 from torch import Tensor
-from torch_geometric.utils import to_undirected, add_self_loops
+
+from torch_geometric.utils import add_self_loops, to_undirected
+
 
 def get_mesh_laplacian(
     pos: Tensor,
@@ -69,14 +71,17 @@ def get_mesh_laplacian(
     cot_index = torch.cat([face[:, :2], face[:, 1:], face[:, ::2]], dim=1)
     cot_index, cot_weight = to_undirected(cot_index, cot_weight)
 
-    cot_deg = torch.zeros((num_nodes * batch_size), dtype=cot_weight.dtype, device=cot_weight.device)
-    scatter.add_(cot_weight, cot_index[0], out=cot_deg, dim_size=num_nodes * batch_size, reduce='sum')
+    cot_deg = torch.zeros((num_nodes * batch_size), dtype=cot_weight.dtype,
+                          device=cot_weight.device)
+    scatter.add_(cot_weight, cot_index[0], out=cot_deg,
+                 dim_size=num_nodes * batch_size, reduce='sum')
 
     edge_index, _ = add_self_loops(cot_index, num_nodes=num_nodes)
 
     edge_weight = torch.cat([cot_weight, -cot_deg], dim=0)
 
     if normalization is not None:
+
         def get_areas(left, centre, right):
             central_pos = pos[left, centre]
             left_vec = pos[left, left] - central_pos
@@ -93,8 +98,11 @@ def get_mesh_laplacian(
         area_index = torch.cat([face[:, :2], face[:, 1:], face[:, ::2]], dim=1)
         area_index, area_weight = to_undirected(area_index, area_weight)
 
-        area_deg = torch.zeros((num_nodes * batch_size), dtype=area_weight.dtype, device=area_weight.device)
-        scatter.add_(area_weight, area_index[0], out=area_deg, dim_size=num_nodes * batch_size, reduce='sum')
+        area_deg = torch.zeros((num_nodes * batch_size),
+                               dtype=area_weight.dtype,
+                               device=area_weight.device)
+        scatter.add_(area_weight, area_index[0], out=area_deg,
+                     dim_size=num_nodes * batch_size, reduce='sum')
 
         if normalization == 'sym':
             area_deg_inv_sqrt = area_deg.pow_(-0.5)
