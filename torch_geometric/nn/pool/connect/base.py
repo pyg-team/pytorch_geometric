@@ -4,10 +4,10 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.nn.pool.select import SelectOutput
 
 
-@torch.jit.script
 @dataclass(init=False)
 class ConnectOutput:
     r"""The output of the :class:`Connect` method, which holds the coarsened
@@ -47,6 +47,10 @@ class ConnectOutput:
         self.edge_index = edge_index
         self.edge_attr = edge_attr
         self.batch = batch
+
+
+if torch_geometric.typing.WITH_PT113:
+    ConnectOutput = torch.jit.script(ConnectOutput)
 
 
 class Connect(torch.nn.Module):

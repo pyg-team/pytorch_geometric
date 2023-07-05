@@ -17,6 +17,7 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
+from torch_geometric import compile
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
 from torch_geometric.profile import rename_profile_file, timeit, torch_profile
@@ -191,6 +192,10 @@ def run(args: argparse.ArgumentParser):
                             metadata=data.metadata() if hetero else None)
                         model = model.to(device)
                         model.train()
+
+                        if args.compile:
+                            model = compile(model, dynamic=True)
+
                         optimizer = torch.optim.Adam(model.parameters(),
                                                      lr=0.001)
 
@@ -330,6 +335,7 @@ if __name__ == '__main__':
     add('--export-chrome-trace', default=True, type=bool,
         help='Export chrome trace file. Works only with PyTorch profiler')
     add('--trim', action='store_true', help="Use `trim_to_layer` optimization")
+    add('--compile', action='store_true')
     args = argparser.parse_args()
 
     run(args)

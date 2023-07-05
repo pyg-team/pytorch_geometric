@@ -117,7 +117,8 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         if src.layout == torch.sparse_csr:
             ptr = src.crow_indices()
             deg = ptr[1:] - ptr[:-1]
-        elif src.layout == torch.sparse_csc:
+        elif (torch_geometric.typing.WITH_PT112
+              and src.layout == torch.sparse_csc):
             assert src.layout == torch.sparse_csc
             deg = scatter(torch.ones_like(src.values()), src.row_indices(),
                           dim=0, dim_size=src.size(0), reduce='sum')

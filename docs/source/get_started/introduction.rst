@@ -86,7 +86,7 @@ Besides holding a number of node-level, edge-level or graph-level attributes, :c
 
 .. code-block:: python
 
-    print(data.keys)
+    print(data.keys())
     >>> ['x', 'edge_index']
 
     print(data['x'])

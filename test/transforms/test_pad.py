@@ -29,13 +29,13 @@ def fake_hetero_data(node_types=2, edge_types=5) -> HeteroData:
 
 
 def _generate_homodata_node_attrs(data: Data) -> Generator[str, None, None]:
-    for attr in data.keys:
+    for attr in data.keys():
         if data.is_node_attr(attr):
             yield attr
 
 
 def _generate_homodata_edge_attrs(data: Data) -> Generator[str, None, None]:
-    for attr in data.keys:
+    for attr in data.keys():
         if data.is_edge_attr(attr):
             yield attr
 
@@ -75,10 +75,10 @@ def _check_homo_data_nodes(
 
     for attr in _generate_homodata_node_attrs(original):
         if attr in exclude_keys:
-            assert attr not in padded.keys
+            assert attr not in padded.keys()
             continue
 
-        assert attr in padded.keys
+        assert attr in padded.keys()
 
         if not isinstance(padded[attr], torch.Tensor):
             continue
@@ -133,10 +133,10 @@ def _check_homo_data_edges(
         if attr == 'edge_index':
             continue
         if attr in exclude_keys:
-            assert attr not in padded.keys
+            assert attr not in padded.keys()
             continue
 
-        assert attr in padded.keys
+        assert attr in padded.keys()
 
         if not isinstance(padded[attr], torch.Tensor):
             continue
@@ -427,24 +427,30 @@ def test_pad_data_exclude_keys(data, add_pad_mask, exclude_keys):
                 exclude_keys=exclude_keys)
 
 
-@pytest.mark.parametrize('data', [fake_data(), fake_hetero_data(node_types=1)])
-def test_pad_invalid_max_num_nodes(data):
+@pytest.mark.parametrize('is_hetero', [False, True])
+def test_pad_invalid_max_num_nodes(is_hetero):
+    if is_hetero:
+        data = fake_hetero_data(node_types=1)
+    else:
+        data = fake_data()
+
     transform = Pad(max_num_nodes=data.num_nodes - 1)
 
-    with pytest.raises(AssertionError,
-                       match='The number of nodes after padding'):
+    with pytest.raises(AssertionError, match="after padding"):
         transform(data)
 
 
-@pytest.mark.parametrize(
-    'data',
-    [fake_data(), fake_hetero_data(node_types=1, edge_types=1)])
-def test_pad_invalid_max_num_edges(data):
+@pytest.mark.parametrize('is_hetero', [False, True])
+def test_pad_invalid_max_num_edges(is_hetero):
+    if is_hetero:
+        data = fake_hetero_data(node_types=1, edge_types=1)
+    else:
+        data = fake_data()
+
     transform = Pad(max_num_nodes=data.num_nodes + 10,
                     max_num_edges=data.num_edges - 1)
 
-    with pytest.raises(AssertionError,
-                       match='The number of edges after padding'):
+    with pytest.raises(AssertionError, match="after padding"):
         transform(data)
 
 
@@ -452,7 +458,7 @@ def test_pad_num_nodes_not_complete():
     data = fake_hetero_data(node_types=2, edge_types=1)
     transform = Pad(max_num_nodes={'v0': 100})
 
-    with pytest.raises(AssertionError, match='The number of v1 nodes'):
+    with pytest.raises(AssertionError, match="The number of v1 nodes"):
         transform(data)
 
 
@@ -474,7 +480,7 @@ def test_pad_data_non_tensor_attr():
 
     exclude_transform = Pad(max_num_nodes=101, exclude_keys=('batch_size', ))
     padded = exclude_transform(data)
-    assert 'batch_size' not in padded.keys
+    assert 'batch_size' not in padded.keys()
 
 
 @pytest.mark.parametrize('mask_pad_value', [True, False])

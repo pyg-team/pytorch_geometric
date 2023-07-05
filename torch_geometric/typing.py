@@ -6,6 +6,12 @@ import torch
 from torch import Tensor
 
 WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
+WITH_PT111 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 11
+WITH_PT112 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 12
+WITH_PT113 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 13
+
+if not hasattr(torch, 'sparse_csc'):
+    torch.sparse_csc = -1
 
 try:
     import pyg_lib  # noqa
@@ -175,6 +181,27 @@ except (ImportError, OSError) as e:
         def masked_select_nnz(src: SparseTensor, mask: Tensor,
                               layout: Optional[str] = None) -> SparseTensor:
             raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
+
+
+class MockTorchCSCTensor:
+    def __init__(
+        self,
+        edge_index: Tensor,
+        edge_attr: Optional[Tensor] = None,
+        size: Optional[Union[int, Tuple[int, int]]] = None,
+    ):
+        self.edge_index = edge_index
+        self.edge_attr = edge_attr
+        self.size = size
+
+    def t(self) -> Tensor:  # Only support accessing its transpose:
+        from torch_geometric.utils import to_torch_csr_tensor
+        size = self.size
+        return to_torch_csr_tensor(
+            self.edge_index.flip([0]),
+            self.edge_attr,
+            size[::-1] if isinstance(size, (tuple, list)) else size,
+        )
 
 
 # Types for accessing data ####################################################

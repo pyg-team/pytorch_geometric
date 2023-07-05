@@ -1,5 +1,8 @@
+import json
+import os.path as osp
 from typing import Dict, List, Optional, Tuple
 
+import torch
 from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, GraphStore
@@ -107,4 +110,31 @@ class LocalGraphStore(GraphStore):
             edge_id = edge_id_dict[edge_type]
             graph_store.put_edge_index(edge_index, **attr)
             graph_store.put_edge_id(edge_id, **attr)
+        return graph_store
+
+    @classmethod
+    def from_partition(cls, root: str, pid: int) -> 'LocalGraphStore':
+        with open(osp.join(root, 'META.json'), 'r') as f:
+            meta = json.load(f)
+
+        part_dir = osp.join(root, f'part_{pid}')
+        assert osp.exists(part_dir)
+
+        graph_data = torch.load(osp.join(part_dir, 'graph.pt'))
+
+        graph_store = cls()
+
+        if not meta['is_hetero']:
+            attr = dict(edge_type=None, layout='coo', size=graph_data['size'])
+            graph_store.put_edge_index((graph_data['row'], graph_data['col']),
+                                       **attr)
+            graph_store.put_edge_id(graph_data['edge_id'], **attr)
+
+        if meta['is_hetero']:
+            for edge_type, data in graph_data.items():
+                attr = dict(edge_type=edge_type, layout='coo',
+                            size=data['size'])
+                graph_store.put_edge_index((data['row'], data['col']), **attr)
+                graph_store.put_edge_id(data['edge_id'], **attr)
+
         return graph_store

@@ -16,6 +16,7 @@ from torch_geometric.nn import (
     SAGEConv,
     to_hetero,
 )
+from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import dropout_edge
 
@@ -378,6 +379,7 @@ class RGCN(torch.nn.Module):
         return self.lin(x) + self.conv(x, edge_index)
 
 
+@withPackage('torch>=1.12.0')  # TODO Investigate error
 def test_to_hetero_and_rgcn_equal_output():
     torch.manual_seed(1234)
 

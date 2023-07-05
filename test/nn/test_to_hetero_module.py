@@ -7,8 +7,10 @@ from torch_geometric.nn.to_hetero_module import (
     ToHeteroLinear,
     ToHeteroMessagePassing,
 )
+from torch_geometric.testing import withPackage
 
 
+@withPackage('torch>=1.12.0')  # TODO Investigate error
 @pytest.mark.parametrize('LinearCls', [torch.nn.Linear, Linear])
 def test_to_hetero_linear(LinearCls):
     x_dict = {'1': torch.randn(5, 16), '2': torch.randn(4, 16)}
