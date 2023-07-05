@@ -403,8 +403,7 @@ def test_from_trimesh():
     assert data.face.t().contiguous().tolist() == faces
 
 
-@withPackage('cudf')
-@withPackage('cugraph')
+@withPackage('cudf', 'cugraph')
 @pytest.mark.parametrize('edge_weight', [None, torch.rand(4)])
 @pytest.mark.parametrize('relabel_nodes', [True, False])
 @pytest.mark.parametrize('directed', [True, False])
@@ -443,8 +442,7 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
         assert torch.allclose(edge_weight, cu_edge_weight.cpu())
 
 
-@withPackage('cudf')
-@withPackage('cugraph')
+@withPackage('cudf', 'cugraph')
 @pytest.mark.parametrize('edge_weight', [None, torch.randn(4)])
 @pytest.mark.parametrize('directed', [True, False])
 @pytest.mark.parametrize('relabel_nodes', [True, False])
@@ -522,8 +520,7 @@ def test_to_dgl_hetero_graph():
     assert torch.equal(g.edata['edge_attr'], data['v1', 'v2'].edge_attr)
 
 
-@withPackage('dgl')
-@withPackage('torch_sparse')
+@withPackage('dgl', 'torch_sparse')
 def test_to_dgl_sparse():
     from torch_geometric.transforms import ToSparseTensor
     x = torch.randn(5, 3)

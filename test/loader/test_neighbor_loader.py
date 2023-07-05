@@ -16,6 +16,7 @@ from torch_geometric.testing import (
     get_random_edge_index,
     onlyLinux,
     onlyNeighborSampler,
+    onlyOnline,
     withCUDA,
     withPackage,
 )
@@ -23,7 +24,6 @@ from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.utils import (
     is_undirected,
     sort_edge_index,
-    to_torch_csc_tensor,
     to_torch_csr_tensor,
     to_undirected,
 )
@@ -258,6 +258,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert not batch.has_isolated_nodes()
 
 
+@onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
@@ -303,6 +304,7 @@ def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
@@ -349,6 +351,7 @@ def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@onlyOnline
 @withPackage('pyg_lib')
 def test_temporal_hetero_neighbor_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
@@ -385,7 +388,8 @@ def test_custom_neighbor_loader():
     feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
 
     # COO:
-    edge_index = get_random_edge_index(100, 100, 500)
+    edge_index = get_random_edge_index(100, 100, 500, coalesce=True)
+    edge_index = edge_index[:, torch.randperm(edge_index.size(1))]
     data['paper', 'to', 'paper'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
     graph_store.put_edge_index(edge_index=coo,
@@ -393,7 +397,7 @@ def test_custom_neighbor_loader():
                                layout='coo', size=(100, 100))
 
     # CSR:
-    edge_index = get_random_edge_index(100, 200, 1000)
+    edge_index = get_random_edge_index(100, 200, 1000, coalesce=True)
     data['paper', 'to', 'author'].edge_index = edge_index
     adj = to_torch_csr_tensor(edge_index, size=(100, 200))
     csr = (adj.crow_indices(), adj.col_indices())
@@ -402,16 +406,16 @@ def test_custom_neighbor_loader():
                                layout='csr', size=(100, 200))
 
     # CSC:
-    edge_index = get_random_edge_index(200, 100, 1000)
+    edge_index = get_random_edge_index(200, 100, 1000, coalesce=True)
     data['author', 'to', 'paper'].edge_index = edge_index
-    adj = to_torch_csc_tensor(edge_index, size=(200, 100))
-    csc = (adj.row_indices(), adj.ccol_indices())
+    adj = to_torch_csr_tensor(edge_index.flip([0]), size=(100, 200))
+    csc = (adj.col_indices(), adj.crow_indices())
     graph_store.put_edge_index(edge_index=csc,
                                edge_type=('author', 'to', 'paper'),
                                layout='csc', size=(200, 100))
 
     # COO (sorted):
-    edge_index = get_random_edge_index(200, 200, 100)
+    edge_index = get_random_edge_index(200, 200, 100, coalesce=True)
     edge_index = edge_index[:, edge_index[1].argsort()]
     data['author', 'to', 'author'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
@@ -432,24 +436,23 @@ def test_custom_neighbor_loader():
     assert len(loader1) == len(loader2)
 
     for batch1, batch2 in zip(loader1, loader2):
-        # loader2 explicitly adds `num_nodes` to the batch
+        # `loader2` explicitly adds `num_nodes` to the batch:
         assert len(batch1) + 1 == len(batch2)
         assert batch1['paper'].batch_size == batch2['paper'].batch_size
 
-        # Mapped indices of neighbors may be differently sorted:
-        assert torch.allclose(batch1['paper'].x.sort()[0],
-                              batch2['paper'].x.sort()[0])
-        assert torch.allclose(batch1['author'].x.sort()[0],
-                              batch2['author'].x.sort()[0])
+        # Mapped indices of neighbors may be differently sorted ...
+        for node_type in data.node_types:
+            assert torch.allclose(
+                batch1[node_type].x.sort()[0],
+                batch2[node_type].x.sort()[0],
+            )
 
-        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch1[
-            'paper', 'to', 'paper'].edge_index.size())
-        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch1[
-            'paper', 'to', 'author'].edge_index.size())
-        assert (batch1['author', 'to', 'paper'].edge_index.size() == batch1[
-            'author', 'to', 'paper'].edge_index.size())
+        # ... but should sample the exact same number of edges:
+        for edge_type in data.edge_types:
+            assert batch1[edge_type].num_edges == batch2[edge_type].num_edges
 
 
+@onlyOnline
 @withPackage('pyg_lib')
 def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
     # Initialize dataset (once):
@@ -512,12 +515,11 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
         assert torch.equal(batch1['paper'].time, batch2['paper'].time)
 
 
-@withPackage('pyg_lib')
-@withPackage('torch_sparse')
+@withPackage('pyg_lib', 'torch_sparse')
 def test_pyg_lib_and_torch_sparse_homo_equality():
     edge_index = get_random_edge_index(20, 20, 100)
-    adj = to_torch_csc_tensor(edge_index, size=(20, 20))
-    colptr, row = adj.ccol_indices(), adj.row_indices()
+    adj = to_torch_csr_tensor(edge_index.flip([0]), size=(20, 20))
+    colptr, row = adj.crow_indices(), adj.col_indices()
 
     seed = torch.arange(10)
 
@@ -534,16 +536,15 @@ def test_pyg_lib_and_torch_sparse_homo_equality():
     assert torch.equal(edge_id1, edge_id2)
 
 
-@withPackage('pyg_lib')
-@withPackage('torch_sparse')
+@withPackage('pyg_lib', 'torch_sparse')
 def test_pyg_lib_and_torch_sparse_hetero_equality():
     edge_index = get_random_edge_index(20, 10, 50)
-    adj = to_torch_csc_tensor(edge_index, size=(20, 10))
-    colptr1, row1 = adj.ccol_indices(), adj.row_indices()
+    adj = to_torch_csr_tensor(edge_index.flip([0]), size=(10, 20))
+    colptr1, row1 = adj.crow_indices(), adj.col_indices()
 
     edge_index = get_random_edge_index(10, 20, 50)
-    adj = to_torch_csc_tensor(edge_index, size=(10, 20))
-    colptr2, row2 = adj.ccol_indices(), adj.row_indices()
+    adj = to_torch_csr_tensor(edge_index.flip([0]), size=(20, 10))
+    colptr2, row2 = adj.crow_indices(), adj.col_indices()
 
     node_types = ['paper', 'author']
     edge_types = [('paper', 'to', 'author'), ('author', 'to', 'paper')]

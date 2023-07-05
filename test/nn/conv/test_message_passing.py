@@ -115,11 +115,12 @@ def test_my_conv_basic():
         assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
 
     # Test gradient computation for `torch.sparse` tensors:
-    conv.fuse = True
-    torch_adj_t = adj1.t().requires_grad_()
-    out = conv((x1, x2), torch_adj_t)
-    out.sum().backward()
-    assert torch_adj_t.grad is not None
+    if torch_geometric.typing.WITH_PT112:
+        conv.fuse = True
+        torch_adj_t = adj1.t().requires_grad_()
+        out = conv((x1, x2), torch_adj_t)
+        out.sum().backward()
+        assert torch_adj_t.grad is not None
 
 
 def test_my_conv_out_of_bounds():

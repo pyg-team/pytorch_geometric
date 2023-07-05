@@ -25,6 +25,7 @@ def test_dimenet_modules():
     assert rl(x).size() == (128, 128)  # Isotonic layer.
 
 
+@withPackage('sympy')
 @withPackage('torch_sparse')  # TODO `triplet` requires `SparseTensor` for now.
 @pytest.mark.parametrize('Model', [DimeNet, DimeNetPlusPlus])
 def test_dimenet(Model):

@@ -84,9 +84,17 @@ def _separate(
     elif isinstance(value, Mapping):
         # Recursively separate elements of dictionaries.
         return {
-            key: _separate(key, elem, idx, slices[key],
-                           incs[key] if decrement else None, batch, store,
-                           decrement)
+            key:
+            _separate(
+                key,
+                elem,
+                idx,
+                slices=slices[key],
+                incs=incs[key] if decrement else None,
+                batch=batch,
+                store=store,
+                decrement=decrement,
+            )
             for key, elem in value.items()
         }
 
@@ -102,9 +110,16 @@ def _separate(
           and isinstance(slices, Sequence)):
         # Recursively separate elements of lists of Tensors/SparseTensors.
         return [
-            _separate(key, elem, idx, slices[i],
-                      incs[i] if decrement else None, batch, store, decrement)
-            for i, elem in enumerate(value)
+            _separate(
+                key,
+                elem,
+                idx,
+                slices=slices[i],
+                incs=incs[i] if decrement else None,
+                batch=batch,
+                store=store,
+                decrement=decrement,
+            ) for i, elem in enumerate(value)
         ]
 
     else:

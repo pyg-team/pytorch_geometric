@@ -528,5 +528,5 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
         if temporal:
             for i in range(batch_size):
-                assert (node_store.time[node_store.batch == i].max() <=
-                        node_store.seed_time[i])
+                assert (node_store.time[node_store.batch == i].max()
+                        <= node_store.seed_time[i])
