@@ -4,7 +4,7 @@ from torch_geometric.data import Data
 from torch_geometric.transforms import GenerateMeshNormals
 
 
-def test_generate_normals():
+def test_generate_mesh_normals():
     transform = GenerateMeshNormals()
     assert str(transform) == 'GenerateMeshNormals()'
 

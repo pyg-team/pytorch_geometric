@@ -308,9 +308,9 @@ class PGMExplainer(ExplainerAlgorithm):
             pred_perturb = model(x_perturb, edge_index, **kwargs)
             softmax_pred_perturb = torch.softmax(pred_perturb, dim=1)
             sample_bool = np.ones(shape=(len(neighbors), ))
-            sample_bool[(
-                (softmax_pred_perturb[neighbors, target] + self.pred_threshold)
-                >= softmax_pred[neighbors, target]).cpu()] = 0
+            sample_bool[((softmax_pred_perturb[neighbors, target] +
+                          self.pred_threshold)
+                         >= softmax_pred[neighbors, target]).cpu()] = 0
 
             samples.append(seeds)
             pred_samples.append(sample_bool)

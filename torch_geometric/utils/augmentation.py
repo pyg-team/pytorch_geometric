@@ -3,12 +3,14 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import scatter
-from torch_geometric.utils.num_nodes import maybe_num_nodes
+from torch_geometric.utils import negative_sampling, scatter
 
 
-def shuffle_node(x: Tensor, batch: Optional[Tensor] = None,
-                 training: bool = True) -> Tuple[Tensor, Tensor]:
+def shuffle_node(
+    x: Tensor,
+    batch: Optional[Tensor] = None,
+    training: bool = True,
+) -> Tuple[Tensor, Tensor]:
     r"""Randomly shuffle the feature matrix :obj:`x` along the
     first dimmension.
 
@@ -67,9 +69,13 @@ def shuffle_node(x: Tensor, batch: Optional[Tensor] = None,
     return x[perm], perm
 
 
-def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
-                 fill_value: float = 0.,
-                 training: bool = True) -> Tuple[Tensor, Tensor]:
+def mask_feature(
+    x: Tensor,
+    p: float = 0.5,
+    mode: str = 'col',
+    fill_value: float = 0.,
+    training: bool = True,
+) -> Tuple[Tensor, Tensor]:
     r"""Randomly masks feature from the feature matrix
     :obj:`x` with probability :obj:`p` using samples from
     a Bernoulli distribution.
@@ -149,9 +155,13 @@ def mask_feature(x: Tensor, p: float = 0.5, mode: str = 'col',
     return x, mask
 
 
-def add_random_edge(edge_index, p: float, force_undirected: bool = False,
-                    num_nodes: Optional[Union[Tuple[int], int]] = None,
-                    training: bool = True) -> Tuple[Tensor, Tensor]:
+def add_random_edge(
+    edge_index,
+    p: float = 0.5,
+    force_undirected: bool = False,
+    num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+    training: bool = True,
+) -> Tuple[Tensor, Tensor]:
     r"""Randomly adds edges to :obj:`edge_index`.
 
     The method returns (1) the retained :obj:`edge_index`, (2) the added
@@ -160,6 +170,7 @@ def add_random_edge(edge_index, p: float, force_undirected: bool = False,
     Args:
         edge_index (LongTensor): The edge indices.
         p (float): Ratio of added edges to the existing edges.
+            (default: :obj:`0.5`)
         force_undirected (bool, optional): If set to :obj:`True`,
             added edges will be undirected.
             (default: :obj:`False`)
@@ -208,30 +219,24 @@ def add_random_edge(edge_index, p: float, force_undirected: bool = False,
                 [1, 3, 2]])
     """
     if p < 0. or p > 1.:
-        raise ValueError(f'Ratio of added edges has to be between 0 and 1 '
-                         f'(got {p}')
+        raise ValueError(f"Ratio of added edges has to be between 0 and 1 "
+                         f"(got '{p}')")
     if force_undirected and isinstance(num_nodes, (tuple, list)):
-        raise RuntimeError('`force_undirected` is not supported for'
-                           ' heterogeneous graphs')
+        raise RuntimeError("'force_undirected' is not supported for "
+                           "bipartite graphs")
 
     device = edge_index.device
     if not training or p == 0.0:
         edge_index_to_add = torch.tensor([[], []], device=device)
         return edge_index, edge_index_to_add
 
-    if not isinstance(num_nodes, (tuple, list)):
-        num_nodes = (num_nodes, num_nodes)
-    num_src_nodes = maybe_num_nodes(edge_index, num_nodes[0])
-    num_dst_nodes = maybe_num_nodes(edge_index, num_nodes[1])
+    edge_index_to_add = negative_sampling(
+        edge_index=edge_index,
+        num_nodes=num_nodes,
+        num_neg_samples=round(edge_index.size(1) * p),
+        force_undirected=force_undirected,
+    )
 
-    num_edges_to_add = round(edge_index.size(1) * p)
-    row = torch.randint(0, num_src_nodes, size=(num_edges_to_add, ))
-    col = torch.randint(0, num_dst_nodes, size=(num_edges_to_add, ))
-
-    if force_undirected:
-        mask = row < col
-        row, col = row[mask], col[mask]
-        row, col = torch.cat([row, col]), torch.cat([col, row])
-    edge_index_to_add = torch.stack([row, col], dim=0).to(device)
     edge_index = torch.cat([edge_index, edge_index_to_add], dim=1)
+
     return edge_index, edge_index_to_add

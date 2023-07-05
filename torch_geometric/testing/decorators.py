@@ -59,6 +59,28 @@ def onlyCUDA(func: Callable) -> Callable:
     )(func)
 
 
+def onlyOnline(func: Callable):
+    r"""A decorator to skip tests if there exists no connection to the
+    internet."""
+    import http.client as httplib
+
+    import pytest
+
+    has_connection = True
+    connection = httplib.HTTPSConnection('8.8.8.8', timeout=5)
+    try:
+        connection.request('HEAD', '/')
+    except Exception:
+        has_connection = False
+    finally:
+        connection.close()
+
+    return pytest.mark.skipif(
+        not has_connection,
+        reason="No internet connection",
+    )(func)
+
+
 def onlyGraphviz(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute in case
     :obj:`graphviz` is installed."""
@@ -83,6 +105,9 @@ def withPackage(*args) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification."""
     def is_installed(package: str) -> bool:
+        if '|' in package:
+            return any(is_installed(p) for p in package.split('|'))
+
         req = Requirement(package)
         if find_spec(req.name) is None:
             return False
