@@ -9,10 +9,10 @@ def remove_single_hyperedge(edge_mask, edge_index):
 
     for i in range(edge_index.size(dim=1)):
         if edge_index[1][i] not in single_hyperedge:
-            if edge_mask[i] is True:
+            if edge_mask[i]:
                 _edge_index[0].append(edge_index[0][i])
                 _edge_index[1].append(edge_index[1][i])
-        elif edge_mask[i] is True:
+        elif edge_mask[i]:
             edge_mask[i] = False
 
     return edge_mask, torch.tensor(_edge_index)

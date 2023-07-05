@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor, PairTensor
-from torch_geometric.utils import remove_single_hyperedge
+from torch_geometric.utils import hyperedge
 from torch_geometric.utils.mask import index_to_mask
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -388,7 +388,8 @@ def hyper_subgraph(
         node_mask = subset
 
     edge_mask = node_mask[edge_index[0]]
-    edge_mask, edge_index = remove_single_hyperedge(edge_mask, edge_index)
+    edge_mask, edge_index = hyperedge.remove_single_hyperedge(
+        edge_mask, edge_index)
     edge_attr = edge_attr[
         edge_index[1].unique()] if edge_attr is not None else None
 
@@ -396,7 +397,9 @@ def hyper_subgraph(
         node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
                                device=device)
         node_idx[subset] = torch.arange(node_mask.sum().item(), device=device)
-        edge_index = node_idx[edge_index]
+        edge_index = torch.cat(
+            [node_idx[edge_index[0]].unsqueeze(0), edge_index[1].unsqueeze(0)],
+            0)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
