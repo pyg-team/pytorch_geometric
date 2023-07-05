@@ -250,12 +250,12 @@ if __name__ == '__main__':
         'author': torch.randn(num_nodes, 64, device=args.device),
     }
     edge_index_dict = {
-        ('paper', 'to', 'paper'): torch.randint(num_nodes, (2, num_edges),
-                                                device=args.device),
-        ('author', 'to', 'paper'): torch.randint(num_nodes, (2, num_edges),
-                                                 device=args.device),
-        ('paper', 'to', 'author'): torch.randint(num_nodes, (2, num_edges),
-                                                 device=args.device),
+        ('paper', 'to', 'paper'):
+        torch.randint(num_nodes, (2, num_edges), device=args.device),
+        ('author', 'to', 'paper'):
+        torch.randint(num_nodes, (2, num_edges), device=args.device),
+        ('paper', 'to', 'author'):
+        torch.randint(num_nodes, (2, num_edges), device=args.device),
     }
 
     conv = HGTConv(

@@ -30,7 +30,8 @@ def learn_sklearn_heuristic():
                                   n_feats, "input features and", out_feats,
                                   "outuput feats")
                             x_dict = {
-                                'v' + str(i): torch.randn(
+                                'v' + str(i):
+                                torch.randn(
                                     (num_nodes_per_type, n_feats)).cuda()
                                 for i in range(num_types)
                             }

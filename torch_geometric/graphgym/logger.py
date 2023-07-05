@@ -132,10 +132,12 @@ class Logger:
 
         true, pred = torch.cat(self._true), torch.cat(self._pred)
         return {
-            'mae': float(round(mean_absolute_error(true, pred), cfg.round)),
-            'mse': float(round(mean_squared_error(true, pred), cfg.round)),
-            'rmse': float(
-                round(math.sqrt(mean_squared_error(true, pred)), cfg.round))
+            'mae':
+            float(round(mean_absolute_error(true, pred), cfg.round)),
+            'mse':
+            float(round(mean_squared_error(true, pred), cfg.round)),
+            'rmse':
+            float(round(math.sqrt(mean_squared_error(true, pred)), cfg.round))
         }
 
     def time_iter(self):
