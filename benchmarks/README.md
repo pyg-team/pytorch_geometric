@@ -7,3 +7,4 @@
 
 ## TODO
 - **measure performance ratio**: This increases benchmark time as it requires benchmarking pure PyTorch implementation.
+- **clean up**: Reuse code across benchmarks
