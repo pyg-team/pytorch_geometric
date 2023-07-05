@@ -4,17 +4,13 @@ from torch.utils.benchmark import Timer
 import torch_geometric
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import (
-    dense_to_sparse,
-    is_sparse,
-    is_torch_sparse_tensor,
     scatter,
     softmax,
-    spmm,
-    to_edge_index,
     to_torch_coo_tensor,
     to_torch_csc_tensor,
     to_torch_csr_tensor,
 )
+from torch_geometric.utils.map import map_index
 
 WITH_TORCH_SCATTER = True
 try:
@@ -215,9 +211,6 @@ def trivial_map(src, index, max_index, inclusive):
     else:
         mask = out != -1
         return out[mask], mask
-
-
-from torch_geometric.utils.map import map_index
 
 
 class Map:
