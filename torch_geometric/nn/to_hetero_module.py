@@ -55,7 +55,8 @@ class ToHeteroLinear(torch.nn.Module):
 
         if not torch_geometric.typing.WITH_PYG_LIB:
             return {
-                key: F.linear(x_dict[key], self.hetero_module.weight[i].T) +
+                key:
+                F.linear(x_dict[key], self.hetero_module.weight[i].t()) +
                 self.hetero_module.bias[i]
                 for i, key in enumerate(self.types)
             }

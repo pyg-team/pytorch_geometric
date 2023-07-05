@@ -1,3 +1,5 @@
+import copy
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -92,9 +94,10 @@ class RECT_L(torch.nn.Module):
         edge_index_type = typing.split(',')[1].strip()
 
         class EdgeIndexJittable(torch.nn.Module):
-            def __init__(self, child):
+            def __init__(self, child: RECT_L):
                 super().__init__()
-                self.child = child
+                self.child = copy.deepcopy(child)
+                self.child.conv = self.child.conv.jittable()
 
             def reset_parameters(self):
                 self.child.reset_parameters()
@@ -114,9 +117,10 @@ class RECT_L(torch.nn.Module):
                 return self.child.get_semantic_labels(x, y, mask)
 
         class SparseTensorJittable(torch.nn.Module):
-            def __init__(self, child):
+            def __init__(self, child: RECT_L):
                 super().__init__()
-                self.child = child
+                self.child = copy.deepcopy(child)
+                self.child.conv = self.child.conv.jittable()
 
             def reset_parameters(self):
                 self.child.reset_parameters()
@@ -134,9 +138,6 @@ class RECT_L(torch.nn.Module):
             def get_semantic_labels(self, x: Tensor, y: Tensor,
                                     mask: Tensor) -> Tensor:
                 return self.child.get_semantic_labels(x, y, mask)
-
-        if self.conv.jittable is not None:
-            self.conv = self.conv.jittable()
 
         if 'Tensor' == edge_index_type:
             jittable_module = EdgeIndexJittable(self)

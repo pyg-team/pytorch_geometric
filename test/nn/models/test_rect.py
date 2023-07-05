@@ -12,7 +12,7 @@ def test_rect():
     edge_index = torch.tensor([[0, 1, 1, 2, 4, 5], [1, 0, 2, 1, 5, 4]])
     mask = torch.randint(0, 2, (6, ), dtype=torch.bool)
 
-    model = RECT_L(8, 16, normalize=False)
+    model = RECT_L(8, 16)
     assert str(model) == 'RECT_L(8, 16)'
 
     out = model(x, edge_index)
