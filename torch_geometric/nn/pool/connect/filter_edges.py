@@ -53,8 +53,8 @@ class FilterEdges(Connect):
         batch: Optional[Tensor] = None,
     ) -> ConnectOutput:
 
-        if (not torch.jit.is_scripting() and select_output.num_clusters !=
-                select_output.cluster_index.size(0)):
+        if (not torch.jit.is_scripting() and select_output.num_clusters
+                != select_output.cluster_index.size(0)):
             raise ValueError(f"'{self.__class__.__name__}' requires each "
                              f"cluster to contain only one node")
 
