@@ -1,8 +1,11 @@
 from typing import Optional, Tuple
+
 import torch
+
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+
 
 @functional_transform('distance')
 class Distance(BaseTransform):
@@ -21,11 +24,11 @@ class Distance(BaseTransform):
             upper bound for normalization. (default: :obj:`(0.0, 1.0)`)
     """
     def __init__(
-        self,
-        norm: bool = True,
-        max_value: Optional[float] = None,
-        cat: bool = True,
-        interval: Tuple[float, float] = (0.0, 1.0),
+            self,
+            norm: bool = True,
+            max_value: Optional[float] = None,
+            cat: bool = True,
+            interval: Tuple[float, float] = (0.0, 1.0),
     ):
         self.norm = norm
         self.max = max_value
@@ -53,7 +56,5 @@ class Distance(BaseTransform):
         return data
 
     def __repr__(self) -> str:
-        return (
-            f'{self.__class__.__name__}(norm={self.norm}, '
-            f'max_value={self.max}, interval={self.interval})'
-        )
+        return (f'{self.__class__.__name__}(norm={self.norm}, '
+                f'max_value={self.max}, interval={self.interval})')
