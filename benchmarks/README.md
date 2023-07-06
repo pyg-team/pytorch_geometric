@@ -6,16 +6,14 @@
 - **skip benchmarks**: Raising `NotImplementedError` in `setup()` to skip benchmarks is too slow. Instead just remove parameters from `params` to skip where possible.
 
 ```sh
-pip install git+https://github.com/airspeed-velocity/asv.git@b041c20
+pip install git+https://github.com/akihironitta/asv.git@bugfix/mamba-deadlock
 ```
 
 ```sh
-asv run \
--e -v \
--m codespace-v100 \
---launch-method spawn \
---skip-existing-successful \
--b Softmax.track_fwd \
+export ASV_OPTION='-e -v -m codespace-v100 --launch-method spawn --skip-existing-successful'
+asv run $ASV_OPTION \
+--bench Softmax.track_fwd \
+--steps 3 \
 2.3.0..master
 ```
 
