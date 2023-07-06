@@ -131,7 +131,7 @@ class SelectTopK(Select):
         self.min_score = min_score
         self.act = activation_resolver(act)
 
-        self.weight = torch.nn.Parameter(torch.Tensor(1, in_channels))
+        self.weight = torch.nn.Parameter(torch.empty(1, in_channels))
 
         self.reset_parameters()
 

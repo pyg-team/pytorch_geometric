@@ -36,7 +36,7 @@ class DeepGraphInfomax(torch.nn.Module):
         self.summary = summary
         self.corruption = corruption
 
-        self.weight = Parameter(torch.Tensor(hidden_channels, hidden_channels))
+        self.weight = Parameter(torch.empty(hidden_channels, hidden_channels))
 
         self.reset_parameters()
 
