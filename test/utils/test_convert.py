@@ -32,7 +32,7 @@ def test_to_scipy_sparse_matrix():
     assert adj.col.tolist() == edge_index[1].tolist()
     assert adj.data.tolist() == [1, 1, 1]
 
-    edge_attr = torch.Tensor([1, 2, 3])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0])
     adj = to_scipy_sparse_matrix(edge_index, edge_attr)
     assert isinstance(adj, scipy.sparse.coo_matrix) is True
     assert adj.shape == (2, 2)
@@ -54,25 +54,25 @@ def test_from_scipy_sparse_matrix():
 def test_to_networkx():
     import networkx as nx
 
-    x = torch.Tensor([[1, 2], [3, 4]])
-    pos = torch.Tensor([[0, 0], [1, 1]])
+    x = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
+    pos = torch.tensor([[0.0, 0.0], [1.0, 1.0]])
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
-    edge_attr = torch.Tensor([1, 2, 3])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0])
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for remove_self_loops in [True, False]:
         G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'],
                         remove_self_loops=remove_self_loops)
 
-        assert G.nodes[0]['x'] == [1, 2]
-        assert G.nodes[1]['x'] == [3, 4]
-        assert G.nodes[0]['pos'] == [0, 0]
-        assert G.nodes[1]['pos'] == [1, 1]
+        assert G.nodes[0]['x'] == [1.0, 2.0]
+        assert G.nodes[1]['x'] == [3.0, 4.0]
+        assert G.nodes[0]['pos'] == [0.0, 0.0]
+        assert G.nodes[1]['pos'] == [1.0, 1.0]
 
         if remove_self_loops:
-            assert nx.to_numpy_array(G).tolist() == [[0, 1], [2, 0]]
+            assert nx.to_numpy_array(G).tolist() == [[0.0, 1.0], [2.0, 0.0]]
         else:
-            assert nx.to_numpy_array(G).tolist() == [[3, 1], [2, 0]]
+            assert nx.to_numpy_array(G).tolist() == [[3.0, 1.0], [2.0, 0.0]]
 
 
 @withPackage('networkx')
