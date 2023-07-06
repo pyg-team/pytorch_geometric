@@ -1,7 +1,10 @@
-import torch_geometric
-from torch_geometric.data import Data
+from typing import Union
+
+import torch
+from torch_geometric.data import Batch, Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_sparse import spmm
 
 
 @functional_transform('gcn_norm')
@@ -19,20 +22,27 @@ class GCNNorm(BaseTransform):
     def __init__(self, add_self_loops: bool = True):
         self.add_self_loops = add_self_loops
 
-    def forward(self, data: Data) -> Data:
+    def forward(self, data: Union[Data, Batch]) -> Union[Data, Batch]:
         gcn_norm = torch_geometric.nn.conv.gcn_conv.gcn_norm
         assert 'edge_index' in data or 'adj_t' in data
 
-        if 'edge_index' in data:
-            data.edge_index, data.edge_weight = gcn_norm(
-                data.edge_index, data.edge_weight, data.num_nodes,
-                add_self_loops=self.add_self_loops)
+        if isinstance(data, Batch):
+            raise NotImplementedError("Batch processing with sparse tensors is not supported.")
         else:
-            data.adj_t = gcn_norm(data.adj_t,
-                                  add_self_loops=self.add_self_loops)
+            if 'edge_index' in data:
+                data.edge_index, data.edge_weight = gcn_norm(
+                    data.edge_index, data.edge_weight, data.num_nodes,
+                    add_self_loops=self.add_self_loops)
+            else:
+                adj_t = data.adj_t
+                row, col, value = adj_t.coo()
+                row, col, value = gcn_norm(row, col, value, data.num_nodes,
+                                           add_self_loops=self.add_self_loops)
+                adj_t = adj_t.__class__(torch.stack([row, col]), value,
+                                        adj_t.size(), adj_t.is_sorted())
+                data.adj_t = adj_t
 
         return data
-
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}('
                 f'add_self_loops={self.add_self_loops})')
