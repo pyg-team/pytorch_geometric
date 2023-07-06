@@ -13,4 +13,5 @@ dependencies:
   - pytorch
   - pytorch-cuda=11.8
   - pytorch-scatter
+  - pytorch-sparse
   - pandas
