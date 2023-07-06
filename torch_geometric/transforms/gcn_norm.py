@@ -1,10 +1,11 @@
 from typing import Union
 
 import torch
+from torch_sparse import spmm
+
 from torch_geometric.data import Batch, Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_sparse import spmm
 
 
 @functional_transform('gcn_norm')
@@ -27,7 +28,8 @@ class GCNNorm(BaseTransform):
         assert 'edge_index' in data or 'adj_t' in data
 
         if isinstance(data, Batch):
-            raise NotImplementedError("Batch processing with sparse tensors is not supported.")
+            raise NotImplementedError(
+                "Batch processing with sparse tensors is not supported.")
         else:
             if 'edge_index' in data:
                 data.edge_index, data.edge_weight = gcn_norm(
@@ -43,6 +45,7 @@ class GCNNorm(BaseTransform):
                 data.adj_t = adj_t
 
         return data
+
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}('
                 f'add_self_loops={self.add_self_loops})')
