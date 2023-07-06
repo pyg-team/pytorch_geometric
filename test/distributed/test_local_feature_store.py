@@ -26,7 +26,7 @@ def test_local_feature_store_global_id():
 
     out = store.get_tensor_from_global_id(group_name='paper', attr_name='feat',
                                           index=torch.tensor([3, 8, 4]))
-    assert torch.equal(out, feat[torch.tensor([3.0, 8.0, 4.0])])
+    assert torch.equal(out, feat[torch.tensor([3, 8, 4])])
 
 
 def test_local_feature_store_utils():

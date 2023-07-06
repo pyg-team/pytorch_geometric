@@ -27,9 +27,9 @@ def test_dense_gat_conv(heads, concat):
     x = torch.cat([x, x.new_zeros(1, channels)], dim=0).view(2, 3, channels)
     adj = torch.tensor([
         [
-            [0.0, 1.0, 1.0],
+            [0.0, 1.0, 0.0],
             [1.0, 0.0, 1.0],
-            [1.0, 1.0, 0.0],
+            [0.0, 1.0, 0.0],
         ],
         [
             [0.0, 1.0, 0.0],
