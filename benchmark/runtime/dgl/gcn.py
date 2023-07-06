@@ -10,8 +10,8 @@ class GCNConv(torch.nn.Module):
     def __init__(self, g, in_channels, out_channels):
         super().__init__()
         self.g = g
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
-        self.bias = Parameter(torch.Tensor(out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
+        self.bias = Parameter(torch.empty(out_channels))
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -49,8 +49,8 @@ class GCNSPMVConv(torch.nn.Module):
     def __init__(self, g, in_channels, out_channels):
         super().__init__()
         self.g = g
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
-        self.bias = Parameter(torch.Tensor(out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
+        self.bias = Parameter(torch.empty(out_channels))
         self.reset_parameters()
 
     def reset_parameters(self):

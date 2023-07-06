@@ -57,7 +57,7 @@ class TAGConv(MessagePassing):
         ])
 
         if bias:
-            self.bias = torch.nn.Parameter(torch.Tensor(out_channels))
+            self.bias = torch.nn.Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

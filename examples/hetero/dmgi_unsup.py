@@ -29,7 +29,7 @@ class DMGI(torch.nn.Module):
         self.convs = torch.nn.ModuleList(
             [GCNConv(in_channels, out_channels) for _ in range(num_relations)])
         self.M = torch.nn.Bilinear(out_channels, out_channels, 1)
-        self.Z = torch.nn.Parameter(torch.Tensor(num_nodes, out_channels))
+        self.Z = torch.nn.Parameter(torch.empty(num_nodes, out_channels))
         self.reset_parameters()
 
     def reset_parameters(self):
