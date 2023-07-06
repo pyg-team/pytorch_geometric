@@ -117,7 +117,8 @@ def train():
         z = gnn(z, last_update, batch.edge_index,
                 data.t[batch.e_id].to(device), data.msg[batch.e_id].to(device))
         assoc = batch.assoc
-        pos_out = link_pred(z[assoc[batch.src]], z[assoc[batch.pos_dst]])
+        pos_dst = batch.dst
+        pos_out = link_pred(z[assoc[batch.src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[batch.src]], z[assoc[batch.neg_dst]])
 
         loss = criterion(pos_out, torch.ones_like(pos_out))
@@ -148,7 +149,8 @@ def test(loader):
         z = gnn(z, last_update, batch.edge_index,
                 data.t[batch.e_id].to(device), data.msg[batch.e_id].to(device))
         assoc = batch.assoc
-        pos_out = link_pred(z[assoc[batch.src]], z[assoc[batch.pos_dst]])
+        pos_dst = batch.dst
+        pos_out = link_pred(z[assoc[batch.src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[batch.src]], z[assoc[batch.neg_dst]])
 
         y_pred = torch.cat([pos_out, neg_out], dim=0).sigmoid().cpu()
