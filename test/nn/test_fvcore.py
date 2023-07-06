@@ -1,32 +1,7 @@
 import torch
 
-from torch_geometric.nn import GraphSAGE, Linear, SAGEConv
+from torch_geometric.nn import GraphSAGE
 from torch_geometric.testing import get_random_edge_index, withPackage
-
-
-class MyModel(torch.nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super().__init__()
-        self.lin1 = torch.nn.Linear(in_channels, out_channels)
-        self.lin2 = torch.nn.Linear(in_channels, out_channels)
-        self.lin3 = torch.nn.Linear(2 * out_channels, out_channels)
-
-    def forward(self, x, edge_index):
-        return self.lin3(torch.cat([self.lin1(x), self.lin2(x)], dim=-1))
-
-
-class MySAGEConv(torch.nn.Module):
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-    ):
-        super().__init__()
-
-        self.lin_l = Linear(in_channels, out_channels)
-
-    def forward(self, x, edge_index):
-        return self.lin_l(x)
 
 
 @withPackage('fvcore')
