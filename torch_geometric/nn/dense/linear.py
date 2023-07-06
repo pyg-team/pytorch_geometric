@@ -54,36 +54,25 @@ def reset_bias_(bias: Optional[Tensor], in_channels: int,
     return bias
 
 
+class Linear2(torch.nn.Module):
+    def __init__(self, in_features: int, out_features: int, bias: bool = True,
+                 device=None, dtype=None) -> None:
+        factory_kwargs = {'device': device, 'dtype': dtype}
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.weight = Parameter(
+            torch.empty((out_features, in_features), **factory_kwargs))
+        if bias:
+            self.bias = Parameter(torch.empty(out_features, **factory_kwargs))
+        else:
+            self.register_parameter('bias', None)
+
+    def forward(self, input: Tensor) -> Tensor:
+        return F.linear(input, self.weight, self.bias)
+
+
 class Linear(torch.nn.Module):
-    r"""Applies a linear tranformation to the incoming data
-
-    .. math::
-        \mathbf{x}^{\prime} = \mathbf{x} \mathbf{W}^{\top} + \mathbf{b}
-
-    similar to :class:`torch.nn.Linear`.
-    It supports lazy initialization and customizable weight and bias
-    initialization.
-
-    Args:
-        in_channels (int): Size of each input sample. Will be initialized
-            lazily in case it is given as :obj:`-1`.
-        out_channels (int): Size of each output sample.
-        bias (bool, optional): If set to :obj:`False`, the layer will not learn
-            an additive bias. (default: :obj:`True`)
-        weight_initializer (str, optional): The initializer for the weight
-            matrix (:obj:`"glorot"`, :obj:`"uniform"`, :obj:`"kaiming_uniform"`
-            or :obj:`None`).
-            If set to :obj:`None`, will match default weight initialization of
-            :class:`torch.nn.Linear`. (default: :obj:`None`)
-        bias_initializer (str, optional): The initializer for the bias vector
-            (:obj:`"zeros"` or :obj:`None`).
-            If set to :obj:`None`, will match default bias initialization of
-            :class:`torch.nn.Linear`. (default: :obj:`None`)
-
-    Shapes:
-        - **input:** features :math:`(*, F_{in})`
-        - **output:** features :math:`(*, F_{out})`
-    """
     def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
                  weight_initializer: Optional[str] = None,
                  bias_initializer: Optional[str] = None):
@@ -143,12 +132,12 @@ class Linear(torch.nn.Module):
 
     def _save_to_state_dict(self, destination, prefix, keep_vars):
         if (is_uninitialized_parameter(self.weight)
-                or torch.onnx.is_in_onnx_export()):
+                or torch.onnx.is_in_onnx_export() or keep_vars):
             destination[prefix + 'weight'] = self.weight
         else:
             destination[prefix + 'weight'] = self.weight.detach()
         if self.bias is not None:
-            if torch.onnx.is_in_onnx_export():
+            if torch.onnx.is_in_onnx_export() or keep_vars:
                 destination[prefix + 'bias'] = self.bias
             else:
                 destination[prefix + 'bias'] = self.bias.detach()
