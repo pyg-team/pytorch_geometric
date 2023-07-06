@@ -475,8 +475,8 @@ class GDC(BaseTransform):
             e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
         else:
-            diff_mat_np = expm(matrix.cpu().numpy())
-            diff_mat = torch.from_numpy(diff_mat_np).to(matrix.device)
+            diff_mat = torch.from_numpy(expm(matrix.cpu().numpy()))
+            diff_mat = diff_mat.to(matrix.device, matrix.dtype)
         return diff_mat
 
     def __calculate_eps__(
@@ -524,7 +524,7 @@ class GDC(BaseTransform):
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
         edge_weight = torch.from_numpy(np.concatenate(neighbor_weights))
-        edge_weight = edge_weight.to(device)
+        edge_weight = edge_weight.to(device, torch.get_default_dtype())
         i = np.repeat(np.arange(len(neighbors)),
                       np.fromiter(map(len, neighbors), dtype=int))
         j = np.concatenate(neighbors)
