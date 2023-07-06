@@ -150,21 +150,21 @@ class GATConv(MessagePassing):
                                   weight_initializer='glorot')
 
         # The learnable parameters to compute attention coefficients:
-        self.att_src = Parameter(torch.Tensor(1, heads, out_channels))
-        self.att_dst = Parameter(torch.Tensor(1, heads, out_channels))
+        self.att_src = Parameter(torch.empty(1, heads, out_channels))
+        self.att_dst = Parameter(torch.empty(1, heads, out_channels))
 
         if edge_dim is not None:
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
                                    weight_initializer='glorot')
-            self.att_edge = Parameter(torch.Tensor(1, heads, out_channels))
+            self.att_edge = Parameter(torch.empty(1, heads, out_channels))
         else:
             self.lin_edge = None
             self.register_parameter('att_edge', None)
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(heads * out_channels))
+            self.bias = Parameter(torch.empty(heads * out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

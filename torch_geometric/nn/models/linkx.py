@@ -17,9 +17,9 @@ class SparseLinear(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

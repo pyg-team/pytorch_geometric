@@ -21,13 +21,13 @@ class GeneralConvLayer(MessagePassing):
         self.cached = cached
         self.normalize = cfg.gnn.normalize_adj
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
         if cfg.gnn.self_msg == 'concat':
-            self.weight_self = Parameter(
-                torch.Tensor(in_channels, out_channels))
+            self.weight_self = Parameter(torch.empty(in_channels,
+                                                     out_channels))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -137,7 +137,7 @@ class GeneralEdgeConvLayer(MessagePassing):
             self.linear_self = nn.Linear(in_channels, out_channels, bias=False)
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

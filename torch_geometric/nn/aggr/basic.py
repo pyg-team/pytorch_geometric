@@ -185,7 +185,7 @@ class SoftmaxAggregation(Aggregation):
         self.semi_grad = semi_grad
         self.channels = channels
 
-        self.t = Parameter(torch.Tensor(channels)) if learn else t
+        self.t = Parameter(torch.empty(channels)) if learn else t
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -251,7 +251,7 @@ class PowerMeanAggregation(Aggregation):
         self.learn = learn
         self.channels = channels
 
-        self.p = Parameter(torch.Tensor(channels)) if learn else p
+        self.p = Parameter(torch.empty(channels)) if learn else p
         self.reset_parameters()
 
     def reset_parameters(self):
