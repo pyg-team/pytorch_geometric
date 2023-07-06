@@ -26,4 +26,4 @@ def test_generate_mesh_normals():
     assert len(data) == 3
     assert data.pos.tolist() == pos.tolist()
     assert data.face.tolist() == face.tolist()
-    assert data.norm.tolist() == [[0., 0.0, -1.0]] * 6
+    assert data.norm.tolist() == [[0.0, 0.0, -1.0]] * 6
