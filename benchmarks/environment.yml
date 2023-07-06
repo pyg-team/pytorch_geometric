@@ -1,13 +1,16 @@
+# TODO: Install cudf https://docs.rapids.ai/install
 name: benchmark
 
 channels:
   - pyg
   - pytorch
+  - nvidia
   - conda-forge
 
 dependencies:
   - python=3.10
   - pip
   - pytorch
-  - pyg
+  - pytorch-cuda=11.8
   - pytorch-scatter
+  - pandas
