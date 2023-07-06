@@ -63,7 +63,7 @@ class Scatter:
         f, reduce, (num_nodes, num_edges), device = params
 
         if f is own_scatter and not WITH_TORCH_SCATTER:
-            raise NotImplementedError
+            raise NotImplementedError("torch-scatter not found", WITH_TORCH_SCATTER)
 
         if f is pytorch_index_add and reduce != "sum":
             raise NotImplementedError
@@ -217,9 +217,11 @@ class Map:
     param_names = ["f", "device"]
     params = [
         [trivial_map, map_index],
-        ["cpu"],  # TODO: Enable "cuda" if cudf is installed
+        ["cpu"],
     ]
     unit = "us"
+    # TODO: Don't skip "cuda" if cudf is installed
+    # TODO: Skip "cpu" if pandas not installed
 
     def setup(self, *params):
         f, device = params
