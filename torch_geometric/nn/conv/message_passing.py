@@ -217,7 +217,7 @@ class MessagePassing(torch.nn.Module):
             if edge_index.dim() != 2:
                 raise ValueError(f"Expected 'edge_index' to be two-dimensional"
                                  f" (got {edge_index.dim()} dimensions)")
-            if edge_index.size(0) != 2:
+            if not torch.jit.is_tracing() and edge_index.size(0) != 2:
                 raise ValueError(f"Expected 'edge_index' to have size '2' in "
                                  f"the first dimension (got "
                                  f"'{edge_index.size(0)}')")
