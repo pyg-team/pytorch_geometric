@@ -114,7 +114,7 @@ def train():
 
         # Get updated memory of all nodes involved in the computation.
         z, last_update = memory(batch.n_id)
-        z = gnn(z, last_update, edge_index, data.t[e_id].to(device),
+        z = gnn(z, last_update, batch.edge_index, data.t[e_id].to(device),
                 data.msg[e_id].to(device))
         assoc = batch.assoc
         pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
