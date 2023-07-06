@@ -134,30 +134,30 @@ class RGCNConv(MessagePassing):
 
         if num_bases is not None:
             self.weight = Parameter(
-                torch.Tensor(num_bases, in_channels[0], out_channels))
-            self.comp = Parameter(torch.Tensor(num_relations, num_bases))
+                torch.empty(num_bases, in_channels[0], out_channels))
+            self.comp = Parameter(torch.empty(num_relations, num_bases))
 
         elif num_blocks is not None:
             assert (in_channels[0] % num_blocks == 0
                     and out_channels % num_blocks == 0)
             self.weight = Parameter(
-                torch.Tensor(num_relations, num_blocks,
-                             in_channels[0] // num_blocks,
-                             out_channels // num_blocks))
+                torch.empty(num_relations, num_blocks,
+                            in_channels[0] // num_blocks,
+                            out_channels // num_blocks))
             self.register_parameter('comp', None)
 
         else:
             self.weight = Parameter(
-                torch.Tensor(num_relations, in_channels[0], out_channels))
+                torch.empty(num_relations, in_channels[0], out_channels))
             self.register_parameter('comp', None)
 
         if root_weight:
-            self.root = Param(torch.Tensor(in_channels[1], out_channels))
+            self.root = Param(torch.empty(in_channels[1], out_channels))
         else:
             self.register_parameter('root', None)
 
         if bias:
-            self.bias = Param(torch.Tensor(out_channels))
+            self.bias = Param(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

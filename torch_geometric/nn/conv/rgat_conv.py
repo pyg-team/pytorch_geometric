@@ -239,17 +239,15 @@ class RGATConv(MessagePassing):
         # The learnable parameters to compute both attention logits and
         # attention coefficients:
         self.q = Parameter(
-            torch.Tensor(self.heads * self.out_channels,
-                         self.heads * self.dim))
+            torch.empty(self.heads * self.out_channels, self.heads * self.dim))
         self.k = Parameter(
-            torch.Tensor(self.heads * self.out_channels,
-                         self.heads * self.dim))
+            torch.empty(self.heads * self.out_channels, self.heads * self.dim))
 
         if bias and concat:
             self.bias = Parameter(
-                torch.Tensor(self.heads * self.dim * self.out_channels))
+                torch.empty(self.heads * self.dim * self.out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(self.dim * self.out_channels))
+            self.bias = Parameter(torch.empty(self.dim * self.out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -258,18 +256,18 @@ class RGATConv(MessagePassing):
                                    self.heads * self.out_channels, bias=False,
                                    weight_initializer='glorot')
             self.e = Parameter(
-                torch.Tensor(self.heads * self.out_channels,
-                             self.heads * self.dim))
+                torch.empty(self.heads * self.out_channels,
+                            self.heads * self.dim))
         else:
             self.lin_edge = None
             self.register_parameter('e', None)
 
         if num_bases is not None:
             self.att = Parameter(
-                torch.Tensor(self.num_relations, self.num_bases))
+                torch.empty(self.num_relations, self.num_bases))
             self.basis = Parameter(
-                torch.Tensor(self.num_bases, self.in_channels,
-                             self.heads * self.out_channels))
+                torch.empty(self.num_bases, self.in_channels,
+                            self.heads * self.out_channels))
         elif num_blocks is not None:
             assert (
                 self.in_channels % self.num_blocks == 0
@@ -277,20 +275,20 @@ class RGATConv(MessagePassing):
                     "both 'in_channels' and 'heads * out_channels' must be "
                     "multiple of 'num_blocks' used")
             self.weight = Parameter(
-                torch.Tensor(self.num_relations, self.num_blocks,
-                             self.in_channels // self.num_blocks,
-                             (self.heads * self.out_channels) //
-                             self.num_blocks))
+                torch.empty(self.num_relations, self.num_blocks,
+                            self.in_channels // self.num_blocks,
+                            (self.heads * self.out_channels) //
+                            self.num_blocks))
         else:
             self.weight = Parameter(
-                torch.Tensor(self.num_relations, self.in_channels,
-                             self.heads * self.out_channels))
+                torch.empty(self.num_relations, self.in_channels,
+                            self.heads * self.out_channels))
 
         self.w = Parameter(torch.ones(self.out_channels))
-        self.l1 = Parameter(torch.Tensor(1, self.out_channels))
-        self.b1 = Parameter(torch.Tensor(1, self.out_channels))
-        self.l2 = Parameter(torch.Tensor(self.out_channels, self.out_channels))
-        self.b2 = Parameter(torch.Tensor(1, self.out_channels))
+        self.l1 = Parameter(torch.empty(1, self.out_channels))
+        self.b1 = Parameter(torch.empty(1, self.out_channels))
+        self.l2 = Parameter(torch.empty(self.out_channels, self.out_channels))
+        self.b2 = Parameter(torch.empty(1, self.out_channels))
 
         self._alpha = None
 
