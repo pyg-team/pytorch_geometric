@@ -49,8 +49,8 @@ def run(args: argparse.ArgumentParser):
         except ImportError:
             raise RuntimeError('XPU device requires IPEX to be installed')
 
-    if ((args.device == 'cuda' and not torch.cuda.is_available()) or
-        (args.device == 'xpu' and not torch.xpu.is_available())):
+    if ((args.device == 'cuda' and not torch.cuda.is_available())
+            or (args.device == 'xpu' and not torch.xpu.is_available())):
         raise RuntimeError(f'{args.device.upper()} is not available')
 
     if args.device == 'cuda' and args.full_batch:
@@ -195,7 +195,7 @@ def run(args: argparse.ArgumentParser):
                             profile = xpu_profiler(args.export_chrome_trace)
                         elif args.profile:
                             profile = torch_profile(args.export_chrome_trace,
-                                csv_data, args.write_csv)
+                                                    csv_data, args.write_csv)
                         else:
                             profile = nullcontext()
                         itt = emit_itt(

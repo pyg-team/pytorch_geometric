@@ -19,6 +19,7 @@ from .hetero_sage import HeteroGraphSAGE
 try:
     from torch.autograd.profiler import emit_itt
 except ImportError:
+
     @contextmanager
     def emit_itt(*args, **kwargs):
         yield
