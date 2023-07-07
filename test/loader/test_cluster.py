@@ -28,7 +28,14 @@ def test_cluster_gcn():
         [0, 1, 0, 1, 0, 1],
     ])
 
-    x = torch.Tensor([[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
+    x = torch.tensor([
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [2.0, 2.0],
+        [3.0, 3.0],
+        [4.0, 4.0],
+        [5.0, 5.0],
+    ])
     edge_index = adj.nonzero(as_tuple=False).t()
     edge_attr = torch.arange(edge_index.size(1))
     n_id = torch.arange(6)
@@ -121,7 +128,14 @@ def test_keep_inter_cluster_edges():
         [0, 1, 0, 1, 0, 1],
     ])
 
-    x = torch.Tensor([[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
+    x = torch.tensor([
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [2.0, 2.0],
+        [3.0, 3.0],
+        [4.0, 4.0],
+        [5.0, 5.0],
+    ])
     edge_index = adj.nonzero(as_tuple=False).t()
     edge_attr = torch.arange(edge_index.size(1))
     data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)

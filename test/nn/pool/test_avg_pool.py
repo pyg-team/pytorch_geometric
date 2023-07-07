@@ -7,7 +7,14 @@ from torch_geometric.testing import is_full_test
 
 def test_avg_pool_x():
     cluster = torch.tensor([0, 1, 0, 1, 2, 2])
-    x = torch.Tensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
+    x = torch.tensor([
+        [1.0, 2.0],
+        [3.0, 4.0],
+        [5.0, 6.0],
+        [7.0, 8.0],
+        [9.0, 10.0],
+        [11.0, 12.0],
+    ])
     batch = torch.tensor([0, 0, 0, 0, 1, 1])
 
     out = avg_pool_x(cluster, x, batch)
@@ -38,11 +45,25 @@ def test_avg_pool_x():
 
 def test_avg_pool():
     cluster = torch.tensor([0, 1, 0, 1, 2, 2])
-    x = torch.Tensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
-    pos = torch.Tensor([[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
+    x = torch.tensor([
+        [1.0, 2.0],
+        [3.0, 4.0],
+        [5.0, 6.0],
+        [7.0, 8.0],
+        [9.0, 10.0],
+        [11.0, 12.0],
+    ])
+    pos = torch.tensor([
+        [0.0, 0.0],
+        [1.0, 1.0],
+        [2.0, 2.0],
+        [3.0, 3.0],
+        [4.0, 4.0],
+        [5.0, 5.0],
+    ])
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 5],
                                [1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2, 5, 4]])
-    edge_attr = torch.Tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    edge_attr = torch.ones(edge_index.size(1))
     batch = torch.tensor([0, 0, 0, 0, 1, 1])
 
     data = Batch(x=x, pos=pos, edge_index=edge_index, edge_attr=edge_attr,
@@ -58,7 +79,14 @@ def test_avg_pool():
 
 
 def test_avg_pool_neighbor_x():
-    x = torch.Tensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
+    x = torch.tensor([
+        [1.0, 2.0],
+        [3.0, 4.0],
+        [5.0, 6.0],
+        [7.0, 8.0],
+        [9.0, 10.0],
+        [11.0, 12.0],
+    ])
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 5],
                                [1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2, 5, 4]])
     batch = torch.tensor([0, 0, 0, 0, 1, 1])
