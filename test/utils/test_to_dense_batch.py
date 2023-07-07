@@ -11,14 +11,21 @@ from torch_geometric.utils import to_dense_batch
 
 @pytest.mark.parametrize('fill', [70.0, torch.tensor(49.0)])
 def test_to_dense_batch(fill):
-    x = torch.Tensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
+    x = torch.tensor([
+        [1.0, 2.0],
+        [3.0, 4.0],
+        [5.0, 6.0],
+        [7.0, 8.0],
+        [9.0, 10.0],
+        [11.0, 12.0],
+    ])
     batch = torch.tensor([0, 0, 1, 2, 2, 2])
 
     item = fill.item() if isinstance(fill, Tensor) else fill
-    expected = torch.Tensor([
-        [[1, 2], [3, 4], [item, item]],
-        [[5, 6], [item, item], [item, item]],
-        [[7, 8], [9, 10], [11, 12]],
+    expected = torch.tensor([
+        [[1.0, 2.0], [3.0, 4.0], [item, item]],
+        [[5.0, 6.0], [item, item], [item, item]],
+        [[7.0, 8.0], [9.0, 10.0], [11.0, 12.0]],
     ])
 
     out, mask = to_dense_batch(x, batch, fill_value=fill)
@@ -56,7 +63,14 @@ def test_to_dense_batch(fill):
 
 
 def test_to_dense_batch_disable_dynamic_shapes():
-    x = torch.Tensor([[1, 2], [3, 4], [5, 6], [7, 8], [9, 10], [11, 12]])
+    x = torch.tensor([
+        [1.0, 2.0],
+        [3.0, 4.0],
+        [5.0, 6.0],
+        [7.0, 8.0],
+        [9.0, 10.0],
+        [11.0, 12.0],
+    ])
     batch = torch.tensor([0, 0, 1, 2, 2, 2])
 
     with set_experimental_mode(True, 'disable_dynamic_shapes'):
