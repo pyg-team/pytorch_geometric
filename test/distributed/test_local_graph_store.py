@@ -1,18 +1,16 @@
-import torch
 import logging
+
+import torch
+
 from torch_geometric.distributed import LocalGraphStore
 from torch_geometric.testing import get_random_edge_index
 
 
 def setup_logging():
     logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s [%(levelname)s] %(message)s",
-        handlers=[
-            logging.FileHandler("test.log"),
-            logging.StreamHandler()
-        ]
-    )
+        level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s",
+        handlers=[logging.FileHandler("test.log"),
+                  logging.StreamHandler()])
 
 
 def test_local_graph_store():
