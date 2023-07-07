@@ -43,7 +43,12 @@ class UniMP(torch.nn.Module):
         return self.convs[-1](x, edge_index)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 data = dataset[0].to(device)
 data.y = data.y.view(-1)
 model = UniMP(dataset.num_features, dataset.num_classes, hidden_channels=64,

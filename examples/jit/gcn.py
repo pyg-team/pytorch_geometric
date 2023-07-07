@@ -8,7 +8,12 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 path = osp.join(osp.dirname(osp.realpath(__file__)), 'data', 'Planetoid')
 dataset = Planetoid(path, 'Cora', transform=T.NormalizeFeatures())
 data = dataset[0]

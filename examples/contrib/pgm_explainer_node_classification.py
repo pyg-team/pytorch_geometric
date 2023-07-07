@@ -34,7 +34,12 @@ class Net(torch.nn.Module):
 
 
 if __name__ == "__main__":
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        device = torch.device('mps')
+    else:
+        device = torch.device('cpu')
     model = Net().to(device)
     data = data.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,

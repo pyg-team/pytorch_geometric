@@ -47,7 +47,12 @@ class Net(torch.nn.Module):
         return x.log_softmax(dim=-1)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = Net(hidden_channels=64, num_layers=64, alpha=0.1, theta=0.5,
             shared_weights=True, dropout=0.6).to(device)
 data = data.to(device)

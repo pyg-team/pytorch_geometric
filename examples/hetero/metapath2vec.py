@@ -18,7 +18,12 @@ metapath = [
     ('paper', 'written_by', 'author'),
 ]
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = MetaPath2Vec(data.edge_index_dict, embedding_dim=128,
                      metapath=metapath, walk_length=50, context_size=7,
                      walks_per_node=5, num_negative_samples=5,

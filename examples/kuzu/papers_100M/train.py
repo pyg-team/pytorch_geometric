@@ -17,7 +17,12 @@ LOADER_BATCH_SIZE = 1024
 print('Batch size:', LOADER_BATCH_SIZE)
 print('Number of epochs:', NUM_EPOCHS)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 print('Using device:', device)
 
 # Load the train set:

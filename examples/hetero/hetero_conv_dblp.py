@@ -37,7 +37,12 @@ class HeteroGNN(torch.nn.Module):
 
 model = HeteroGNN(data.metadata(), hidden_channels=64, out_channels=4,
                   num_layers=2)
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 data, model = data.to(device), model.to(device)
 
 with torch.no_grad():  # Initialize lazy modules.

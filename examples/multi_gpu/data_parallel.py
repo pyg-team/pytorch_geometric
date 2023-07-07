@@ -53,7 +53,12 @@ class Net(torch.nn.Module):
 model = Net()
 print(f"Let's use {torch.cuda.device_count()} GPUs!")
 model = DataParallel(model)
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda:0')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = model.to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 

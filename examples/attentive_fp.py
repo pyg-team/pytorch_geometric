@@ -107,7 +107,12 @@ train_loader = DataLoader(train_dataset, batch_size=200, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=200)
 test_loader = DataLoader(test_dataset, batch_size=200)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = AttentiveFP(in_channels=39, hidden_channels=200, out_channels=1,
                     edge_dim=10, num_layers=2, num_timesteps=2,
                     dropout=0.2).to(device)

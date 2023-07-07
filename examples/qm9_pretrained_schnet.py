@@ -16,7 +16,12 @@ args = parser.parse_args()
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'QM9')
 dataset = QM9(path)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 
 for target in range(12):
     model, datasets = SchNet.from_qm9_pretrained(path, dataset, target)

@@ -65,7 +65,12 @@ class Net(torch.nn.Module):
         return h.log_softmax(dim=-1)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = Net(args.model, train_dataset.num_features, 128,
             train_dataset.num_classes, concat=True).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=0.01)

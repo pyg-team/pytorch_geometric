@@ -81,7 +81,12 @@ class Net(torch.nn.Module):
         return self.mlp(x)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = Net(hidden_channels=236, num_layers=4, num_heads=4,
             num_bases=4).to(device)
 

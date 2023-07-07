@@ -22,7 +22,12 @@ data = dataset[0]
 idx = torch.arange(data.num_nodes)
 train_idx, test_idx = train_test_split(idx, train_size=0.8, stratify=data.y)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 data = data.to(device)
 model = GCN(data.num_node_features, hidden_channels=20, num_layers=3,
             out_channels=dataset.num_classes).to(device)

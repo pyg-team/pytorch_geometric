@@ -101,7 +101,12 @@ class RedrawProjection:
         self.num_last_redraw += 1
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 attn_kwargs = {'dropout': 0.5}
 model = GPS(channels=64, pe_dim=8, num_layers=10, attn_type=args.attn_type,
             attn_kwargs=attn_kwargs).to(device)

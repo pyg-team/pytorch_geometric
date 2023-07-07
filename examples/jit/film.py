@@ -45,7 +45,12 @@ class FiLM(torch.nn.Module):
         return x
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = FiLM(train_dataset.num_features, 320, train_dataset.num_classes,
              num_layers=4, dropout=0.1)
 model = torch.jit.script(model).to(device)

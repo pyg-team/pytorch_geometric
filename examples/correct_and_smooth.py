@@ -17,7 +17,12 @@ evaluator = Evaluator(name='ogbn-products')
 split_idx = dataset.get_idx_split()
 data = dataset[0]
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = MLP([dataset.num_features, 200, 200, dataset.num_classes], dropout=0.5,
             norm="batch_norm", act_first=True).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)

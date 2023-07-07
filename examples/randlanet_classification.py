@@ -210,7 +210,12 @@ if __name__ == '__main__':
     train_loader = DataLoader(train_dataset, 32, shuffle=True, num_workers=6)
     test_loader = DataLoader(test_dataset, 32, shuffle=False, num_workers=6)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        device = torch.device('mps')
+    else:
+        device = torch.device('cpu')
     model = Net(3, train_dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=20,

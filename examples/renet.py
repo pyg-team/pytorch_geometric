@@ -25,7 +25,12 @@ test_loader = DataLoader(test_dataset, batch_size=1024, shuffle=False,
                          follow_batch=['h_sub', 'h_obj'], num_workers=6)
 
 # Initialize model and optimizer.
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = RENet(
     train_dataset.num_nodes,
     train_dataset.num_rels,

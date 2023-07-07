@@ -21,7 +21,12 @@ dataset = QM9(path)
 idx = torch.tensor([0, 1, 2, 3, 4, 5, 6, 12, 13, 14, 15, 11])
 dataset.data.y = dataset.data.y[:, idx]
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 
 for target in range(12):
     # Skip target \delta\epsilon, since it can be computed via

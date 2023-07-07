@@ -48,7 +48,12 @@ def main():
     val_loader = DataLoader(val_dataset, batch_size=64, pin_memory=True)
     test_loader = DataLoader(test_dataset, batch_size=64, pin_memory=True)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        device = torch.device('mps')
+    else:
+        device = torch.device('cpu')
     model = Model(dataset.num_node_features, dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
     metrics = {'acc': ignite.metrics.Accuracy()}

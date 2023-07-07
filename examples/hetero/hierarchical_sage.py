@@ -11,7 +11,13 @@ from torch_geometric.nn import HeteroConv, Linear, SAGEConv
 from torch_geometric.utils import trim_to_layer
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--device', type=str, default='cuda')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+parser.add_argument('--device', type=str, default=device)
 parser.add_argument('--use-sparse-tensor', action='store_true')
 args = parser.parse_args()
 

@@ -180,7 +180,12 @@ class DGCNN(torch.nn.Module):
         return self.mlp(x)
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 model = DGCNN(hidden_channels=32, num_layers=3).to(device)
 optimizer = torch.optim.Adam(params=model.parameters(), lr=0.0001)
 criterion = BCEWithLogitsLoss()
