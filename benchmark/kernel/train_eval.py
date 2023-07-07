@@ -43,7 +43,8 @@ def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
-        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        elif hasattr(torch.backends,
+                     'mps') and torch.backends.mps.is_available():
             torch.mps.synchronize()
 
         t_start = time.perf_counter()
@@ -69,7 +70,8 @@ def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
-        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        elif hasattr(torch.backends,
+                     'mps') and torch.backends.mps.is_available():
             torch.mps.synchronize()
 
         t_end = time.perf_counter()

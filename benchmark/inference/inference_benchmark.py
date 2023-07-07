@@ -45,7 +45,8 @@ def run(args: argparse.ArgumentParser):
     # cuda device is not suitable for full batch mode
     if torch.cuda.is_available() and not args.full_batch:
         device = torch.device('cuda')
-    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available() and not args.full_batch:
+    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available(
+    ) and not args.full_batch:
         device = torch.device('mps')
     else:
         device = torch.device('cpu')
