@@ -72,6 +72,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Renamed `dest` argument to `dst` in `utils.geodesic_distance` ([#7708](https://github.com/pyg-team/pytorch_geometric/pull/7708))
 - Changed `add_random_edge` to only add true negative edges ([#7654](https://github.com/pyg-team/pytorch_geometric/pull/7654))
 - Allowed the usage of `BasicGNN` models in `DeepGraphInfomax` ([#7648](https://github.com/pyg-team/pytorch_geometric/pull/7648))
 - Breaking Change: Made `Data.keys` a method rather than a property ([#7629](https://github.com/pyg-team/pytorch_geometric/pull/7629))
