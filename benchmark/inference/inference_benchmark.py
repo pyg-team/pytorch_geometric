@@ -43,8 +43,12 @@ def run(args: argparse.ArgumentParser):
                       "disabled")
 
     # cuda device is not suitable for full batch mode
-    device = torch.device(
-        'cuda' if not args.full_batch and torch.cuda.is_available() else 'cpu')
+    if torch.cuda.is_available() and not args.full_batch:
+        device = torch.device('cuda')
+    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available() and not args.full_batch:
+        device = torch.device('mps')
+    else:
+        device = torch.device('cpu')
 
     print('BENCHMARK STARTS')
     for dataset_name in args.datasets:
