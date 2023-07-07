@@ -18,9 +18,9 @@ def test_internal_external_key_conversion():
 
 def test_dot_syntax_keys():
     parameter_dict = {
-        'param1': torch.nn.Parameter(torch.Tensor(16, 16)),
-        'model.param2': torch.nn.Parameter(torch.Tensor(8, 8)),
-        'model.sub_model.param3': torch.nn.Parameter(torch.Tensor(4, 4)),
+        'param1': torch.nn.Parameter(torch.randn(16, 16)),
+        'model.param2': torch.nn.Parameter(torch.randn(8, 8)),
+        'model.sub_model.param3': torch.nn.Parameter(torch.randn(4, 4)),
     }
     parameter_dict = ParameterDict(parameter_dict)
 
@@ -38,8 +38,8 @@ def test_dot_syntax_keys():
 
 def test_tuple_keys():
     parameter_dict = {
-        ('a', 'b'): torch.nn.Parameter(torch.Tensor(16, 16)),
-        ('a.b', 'c'): torch.nn.Parameter(torch.Tensor(8, 8)),
+        ('a', 'b'): torch.nn.Parameter(torch.randn(16, 16)),
+        ('a.b', 'c'): torch.nn.Parameter(torch.randn(8, 8)),
     }
     parameter_dict = ParameterDict(parameter_dict)
 

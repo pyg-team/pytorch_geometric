@@ -9,19 +9,19 @@ from torch_geometric.testing import is_full_test
 def test_filter_adj():
     edge_index = torch.tensor([[0, 0, 1, 1, 2, 2, 3, 3],
                                [1, 3, 0, 2, 1, 3, 0, 2]])
-    edge_attr = torch.Tensor([1, 2, 3, 4, 5, 6, 7, 8])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0])
     perm = torch.tensor([2, 3])
 
     out = filter_adj(edge_index, edge_attr, perm)
     assert out[0].tolist() == [[0, 1], [1, 0]]
-    assert out[1].tolist() == [6, 8]
+    assert out[1].tolist() == [6.0, 8.0]
 
     if is_full_test():
         jit = torch.jit.script(filter_adj)
 
         out = jit(edge_index, edge_attr, perm)
         assert out[0].tolist() == [[0, 1], [1, 0]]
-        assert out[1].tolist() == [6, 8]
+        assert out[1].tolist() == [6.0, 8.0]
 
 
 def test_topk_pooling():
