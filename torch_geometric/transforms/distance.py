@@ -45,8 +45,7 @@ class Distance(BaseTransform):
             max_value = dist.max() if self.max is None else self.max
 
             length = self.interval[1] - self.interval[0]
-            center = (self.interval[0] + self.interval[1]) / 2
-            dist = length * (dist / max_value) + center
+            dist = length * (dist / max_value) + self.interval[0]
 
         if pseudo is not None and self.cat:
             pseudo = pseudo.view(-1, 1) if pseudo.dim() == 1 else pseudo
