@@ -9,6 +9,10 @@ from torch_geometric.data import EdgeAttr, GraphStore
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 
 
+#class PartitionInfo(obj):
+
+
+
 class LocalGraphStore(GraphStore):
     r"""This class implements the :class:`torch_geometric.data.GraphStore`
     interface to act as a local graph store for distributed training."""
@@ -18,16 +22,59 @@ class LocalGraphStore(GraphStore):
         self._edge_attr: Dict[Tuple, EdgeAttr] = {}
         self._edge_id: Dict[Tuple, Tensor] = {}
 
-        # for partition info related to graph
         self.num_partitions: int = 1
         self.partition_idx: int = 0
         self.node_pb: Union[torch.Tensor, Dict[NodeType, torch.Tensor]] = None
+        r""" node_partition_book:  mapping between node ids and partition idx """
         self.edge_pb: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]] = None
-        self.meta: Optional[Dict] = None
+        r""" edge_partition_book:  mapping between edge ids and partition idx """
+        self.meta: Optional[Dict[Any, Any]] = None
+        r""" meta information related to partition and graph store info """
+
 
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:
         return (attr.edge_type, attr.layout.value)
+
+    def set_num_partitions(self, num_partitions: int) -> bool:
+        self.num_partitions = num_partitions
+        return True
+
+    def set_partition_idx(self, partition_idx: int) -> bool:
+        self.partition_idx = partition_idx
+        return True
+
+    def set_node_pb(self, node_pb: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]) -> bool:
+        self.node_pb = node_pb
+        return True
+
+    def set_edge_pb(self, edge_pb: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]) -> bool:
+        self.edge_pb = edge_pb
+        return True
+
+    def set_partition_meta(self, partition_meta: Dict) -> bool:
+        self.meta = partition_meta
+        return True
+
+    def get_partition_ids_from_nids(self, ids: torch.Tensor,
+                            node_type: Optional[NodeType]=None):
+        # Get the local partition ids of node ids with a specific node type.
+        if self.meta["is_hetero"]:
+            assert node_type is not None
+            return self.node_pb[node_type][ids]
+        return self.node_pb[ids]
+
+    def get_partition_ids_from_eids(self, eids: torch.Tensor,
+                            edge_type: Optional[EdgeType]=None):
+        r""" Get the partition ids of edge ids with a specific edge type."""
+        if self.meta["is_hetero"]:
+            assert edge_type is not None
+            return self.edge_pb[edge_type][eids]
+        return self.edge_pb[eids]
+
+
+
+    # starting for graph ..
 
     def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool:
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
@@ -57,48 +104,6 @@ class LocalGraphStore(GraphStore):
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
         return [self._edge_attr[key] for key in self._edge_index.keys()]
-
-    # starting the partition info related to graph
-
-    def set_num_partitions(self, num_partitions: int) -> bool:
-        self.num_partitions = num_partitions
-        return True
-
-    def set_partition_idx(self, partition_idx: int) -> bool:
-        self.partition_idx = partition_idx
-        return True
-
-    def set_node_pb(
-            self, node_pb: Union[torch.Tensor, Dict[NodeType,
-                                                    torch.Tensor]]) -> bool:
-        self.node_pb = node_pb
-        return True
-
-    def set_edge_pb(
-            self, edge_pb: Union[torch.Tensor, Dict[NodeType,
-                                                    torch.Tensor]]) -> bool:
-        self.edge_pb = edge_pb
-        return True
-
-    def set_partition_meta(self, partition_meta: Dict) -> bool:
-        self.meta = partition_meta
-        return True
-
-    def get_partition_ids_from_nids(self, ids: torch.Tensor,
-                                    ntype: Optional[NodeType] = None):
-        # Get the local partition ids of node ids with a specific node type.
-        if (self.meta["is_hetero"]):
-            assert ntype is not None
-            return self.node_pb[ntype][ids]
-        return self.node_pb[ids]
-
-    def get_partition_ids_from_eids(self, eids: torch.Tensor,
-                                    etype: Optional[EdgeType] = None):
-        # Get the partition ids of edge ids with a specific edge type.
-        if (self.meta["is_hetero"]):
-            assert etype is not None
-            return self.edge_pb[etype][eids]
-        return self.edge_pb[eids]
 
     # Initialization ##########################################################
 
