@@ -63,10 +63,10 @@ class FeaStConv(MessagePassing):
                           weight_initializer='uniform')
         self.u = Linear(in_channels, heads, bias=False,
                         weight_initializer='uniform')
-        self.c = Parameter(torch.Tensor(heads))
+        self.c = Parameter(torch.empty(heads))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

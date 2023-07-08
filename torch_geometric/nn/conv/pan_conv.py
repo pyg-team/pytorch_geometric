@@ -52,7 +52,7 @@ class PANConv(MessagePassing):
         self.filter_size = filter_size
 
         self.lin = Linear(in_channels, out_channels)
-        self.weight = Parameter(torch.Tensor(filter_size + 1))
+        self.weight = Parameter(torch.empty(filter_size + 1))
 
         self.reset_parameters()
 

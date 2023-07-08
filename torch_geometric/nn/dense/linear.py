@@ -94,14 +94,14 @@ class Linear(torch.nn.Module):
         self.bias_initializer = bias_initializer
 
         if in_channels > 0:
-            self.weight = Parameter(torch.Tensor(out_channels, in_channels))
+            self.weight = Parameter(torch.empty(out_channels, in_channels))
         else:
             self.weight = nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
                 self.initialize_parameters)
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -143,12 +143,12 @@ class Linear(torch.nn.Module):
 
     def _save_to_state_dict(self, destination, prefix, keep_vars):
         if (is_uninitialized_parameter(self.weight)
-                or torch.onnx.is_in_onnx_export()):
+                or torch.onnx.is_in_onnx_export() or keep_vars):
             destination[prefix + 'weight'] = self.weight
         else:
             destination[prefix + 'weight'] = self.weight.detach()
         if self.bias is not None:
-            if torch.onnx.is_in_onnx_export():
+            if torch.onnx.is_in_onnx_export() or keep_vars:
                 destination[prefix + 'bias'] = self.bias
             else:
                 destination[prefix + 'bias'] = self.bias.detach()
@@ -238,9 +238,9 @@ class HeteroLinear(torch.nn.Module):
                 self.initialize_parameters)
         else:
             self.weight = torch.nn.Parameter(
-                torch.Tensor(num_types, in_channels, out_channels))
+                torch.empty(num_types, in_channels, out_channels))
         if kwargs.get('bias', True):
-            self.bias = Parameter(torch.Tensor(num_types, out_channels))
+            self.bias = Parameter(torch.empty(num_types, out_channels))
         else:
             self.register_parameter('bias', None)
         self.reset_parameters()

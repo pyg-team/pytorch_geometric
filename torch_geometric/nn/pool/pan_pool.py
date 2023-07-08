@@ -53,8 +53,8 @@ class PANPooling(torch.nn.Module):
         self.min_score = min_score
         self.multiplier = multiplier
 
-        self.p = Parameter(torch.Tensor(in_channels))
-        self.beta = Parameter(torch.Tensor(2))
+        self.p = Parameter(torch.empty(in_channels))
+        self.beta = Parameter(torch.empty(2))
         self.select = SelectTopK(1, ratio, min_score, nonlinearity)
         self.connect = FilterEdges()
 

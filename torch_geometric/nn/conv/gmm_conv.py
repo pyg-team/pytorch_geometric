@@ -111,7 +111,7 @@ class GMMConv(MessagePassing):
                                weight_initializer='glorot')
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

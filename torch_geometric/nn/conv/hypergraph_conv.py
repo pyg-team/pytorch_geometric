@@ -104,7 +104,7 @@ class HypergraphConv(MessagePassing):
             self.dropout = dropout
             self.lin = Linear(in_channels, heads * out_channels, bias=False,
                               weight_initializer='glorot')
-            self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
+            self.att = Parameter(torch.empty(1, heads, 2 * out_channels))
         else:
             self.heads = 1
             self.concat = True
@@ -112,9 +112,9 @@ class HypergraphConv(MessagePassing):
                               weight_initializer='glorot')
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(heads * out_channels))
+            self.bias = Parameter(torch.empty(heads * out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

@@ -56,7 +56,7 @@ class BesselBasisLayer(torch.nn.Module):
         self.cutoff = cutoff
         self.envelope = Envelope(envelope_exponent)
 
-        self.freq = torch.nn.Parameter(torch.Tensor(num_radial))
+        self.freq = torch.nn.Parameter(torch.empty(num_radial))
 
         self.reset_parameters()
 
@@ -186,7 +186,7 @@ class InteractionBlock(torch.nn.Module):
         self.lin_ji = Linear(hidden_channels, hidden_channels)
 
         self.W = torch.nn.Parameter(
-            torch.Tensor(hidden_channels, num_bilinear, hidden_channels))
+            torch.empty(hidden_channels, num_bilinear, hidden_channels))
 
         self.layers_before_skip = torch.nn.ModuleList([
             ResidualLayer(hidden_channels, act) for _ in range(num_before_skip)
