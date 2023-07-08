@@ -102,11 +102,11 @@ def to_networkx(
         graph_attrs (iterable of str, optional): The graph attributes to be
             copied. (default: :obj:`None`)
         to_undirected (bool or str, optional): If set to :obj:`True` or
-            "upper", will return a :obj:`networkx.Graph` instead of a
+            :obj:`"upper"`, will return a :obj:`networkx.Graph` instead of a
             :obj:`networkx.DiGraph`. The undirected graph will correspond to
             the upper triangle of the corresponding adjacency matrix.
-            Similarly, if set to "lower", the undirected graph will correspond
-            to the lower triangle of the adjacency matrix.
+            Similarly, if set to :obj:`"lower"`, the undirected graph will
+            correspond to the lower triangle of the adjacency matrix.
             Only applicable in case the :obj:`data` object holds a homogeneous
             graph. (default: :obj:`False`)
         remove_self_loops (bool, optional): If set to :obj:`True`, will not
@@ -125,8 +125,14 @@ def to_networkx(
     """
     import networkx as nx
 
-    if isinstance(data, torch_geometric.data.HeteroData) and to_undirected:
-        raise ValueError("`to_undirected=True` is not supported in "
+    from torch_geometric.data import HeteroData
+
+    to_undirected_upper: bool = to_undirected in {'upper', True}
+    to_undirected_lower: bool = to_undirected == 'lower'
+    to_undirected: bool = to_undirected_upper or to_undirected_lower
+
+    if isinstance(data, HeteroData) and to_undirected:
+        raise ValueError("'to_undirected' is not supported in "
                          "'to_networkx' for heterogeneous graphs")
 
     G = nx.Graph() if to_undirected else nx.DiGraph()
@@ -142,40 +148,30 @@ def to_networkx(
         start = node_offsets[store._key]
         for i in range(store.num_nodes):
             attr: Dict[str, Any] = {}
-            if isinstance(data, torch_geometric.data.HeteroData):
+            if isinstance(data, HeteroData):
                 attr['type'] = store._key
             for key in node_attrs or []:
                 attr[key] = to_networkx_value(store[key][i])
             G.add_node(start + i, **attr)
 
-    edge_attrs = edge_attrs or []
+    for store in data.edge_stores:
+        for i, (v, w) in enumerate(store.edge_index.t().tolist()):
+            if to_undirected_upper and v > w:
+                continue
+            elif to_undirected_lower and v < w:
+                continue
+            elif remove_self_loops and v == w and not store.is_bipartite():
+                continue
 
-    values = {}
-    for key, value in data(*(edge_attrs)):
-        if isinstance(value, Tensor):
-            value = value if value.dim() <= 1 else value.squeeze(-1)
-            values[key] = value.tolist()
-        else:
-            values[key] = value
+            attr: Dict[str, Any] = {}
+            if isinstance(data, HeteroData):
+                v = v + node_offsets[store._key[0]]
+                w = w + node_offsets[store._key[-1]]
+                attr['type'] = store._key
+            for key in edge_attrs or []:
+                attr[key] = to_networkx_value(store[key][i])
 
-    to_undirected = "upper" if to_undirected is True else to_undirected
-    to_undirected_upper = True if to_undirected == "upper" else False
-    to_undirected_lower = True if to_undirected == "lower" else False
-
-    for i, (u, v) in enumerate(data.edge_index.t().tolist()):
-
-        if to_undirected_upper and u > v:
-            continue
-        elif to_undirected_lower and u < v:
-            continue
-
-        if remove_self_loops and u == v:
-            continue
-
-        G.add_edge(u, v)
-
-        for key in edge_attrs:
-            G[u][v][key] = values[key][i]
+            G.add_edge(v, w, **attr)
 
     return G
 
