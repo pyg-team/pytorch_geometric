@@ -50,7 +50,7 @@ class AGNNConv(MessagePassing):
         self.add_self_loops = add_self_loops
 
         if requires_grad:
-            self.beta = Parameter(torch.Tensor(1))
+            self.beta = Parameter(torch.empty(1))
         else:
             self.register_buffer('beta', torch.ones(1))
 

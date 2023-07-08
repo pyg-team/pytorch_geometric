@@ -25,16 +25,16 @@ def test_dense_gat_conv(heads, concat):
     sparse_out = sparse_conv(x, edge_index)
 
     x = torch.cat([x, x.new_zeros(1, channels)], dim=0).view(2, 3, channels)
-    adj = torch.Tensor([
+    adj = torch.tensor([
         [
-            [0, 1, 0],
-            [1, 0, 1],
-            [0, 1, 0],
+            [0.0, 1.0, 0.0],
+            [1.0, 0.0, 1.0],
+            [0.0, 1.0, 0.0],
         ],
         [
-            [0, 1, 0],
-            [1, 0, 0],
-            [0, 0, 0],
+            [0.0, 1.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
         ],
     ])
     mask = torch.tensor([[1, 1, 1], [1, 1, 0]], dtype=torch.bool)
@@ -55,10 +55,10 @@ def test_dense_gat_conv_with_broadcasting():
     conv = DenseGATConv(channels, channels, heads=4)
 
     x = torch.randn(batch_size, num_nodes, channels)
-    adj = torch.Tensor([
-        [0, 1, 1],
-        [1, 0, 1],
-        [1, 1, 0],
+    adj = torch.tensor([
+        [0.0, 1.0, 1.0],
+        [1.0, 0.0, 1.0],
+        [1.0, 1.0, 0.0],
     ])
 
     assert conv(x, adj).size() == (batch_size, num_nodes, 64)

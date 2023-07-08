@@ -7,6 +7,7 @@ from torch_geometric.testing import withPackage
 
 
 def check_stats(stats: Stats, expected: Tensor):
+    expected = expected.to(torch.float)
     assert stats.mean == float(expected.mean())
     assert stats.std == float(expected.std())
     assert stats.min == float(expected.min())
@@ -18,8 +19,8 @@ def check_stats(stats: Stats, expected: Tensor):
 
 def test_dataset_summary():
     dataset = FakeDataset(num_graphs=10)
-    num_nodes = torch.Tensor([data.num_nodes for data in dataset])
-    num_edges = torch.Tensor([data.num_edges for data in dataset])
+    num_nodes = torch.tensor([data.num_nodes for data in dataset])
+    num_edges = torch.tensor([data.num_edges for data in dataset])
 
     summary = dataset.get_summary()
 
@@ -68,8 +69,8 @@ def test_dataset_summary_hetero_representation_length():
 
 def test_dataset_summary_hetero_per_type_check():
     dataset = FakeHeteroDataset(num_graphs=10)
-    exp_num_nodes = torch.Tensor([data.num_nodes for data in dataset])
-    exp_num_edges = torch.Tensor([data.num_edges for data in dataset])
+    exp_num_nodes = torch.tensor([data.num_nodes for data in dataset])
+    exp_num_edges = torch.tensor([data.num_edges for data in dataset])
 
     summary = dataset.get_summary()
 
@@ -81,8 +82,8 @@ def test_dataset_summary_hetero_per_type_check():
 
     num_nodes_per_type = {}
     for node_type in dataset.node_types:
-        num_nodes_per_type[node_type] = torch.Tensor(
-            [data[node_type].num_nodes for data in dataset])
+        num_nodes = [data[node_type].num_nodes for data in dataset]
+        num_nodes_per_type[node_type] = torch.tensor(num_nodes)
 
     assert len(summary.num_nodes_per_type) == len(dataset.node_types)
     for node_type, stats in summary.num_nodes_per_type.items():
@@ -90,8 +91,8 @@ def test_dataset_summary_hetero_per_type_check():
 
     num_edges_per_type = {}
     for edge_type in dataset.edge_types:
-        num_edges_per_type[edge_type] = torch.Tensor(
-            [data[edge_type].num_edges for data in dataset])
+        num_edges = [data[edge_type].num_edges for data in dataset]
+        num_edges_per_type[edge_type] = torch.tensor(num_edges)
 
     assert len(summary.num_edges_per_type) == len(dataset.edge_types)
     for edge_type, stats in summary.num_edges_per_type.items():

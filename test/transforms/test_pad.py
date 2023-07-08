@@ -427,24 +427,30 @@ def test_pad_data_exclude_keys(data, add_pad_mask, exclude_keys):
                 exclude_keys=exclude_keys)
 
 
-@pytest.mark.parametrize('data', [fake_data(), fake_hetero_data(node_types=1)])
-def test_pad_invalid_max_num_nodes(data):
+@pytest.mark.parametrize('is_hetero', [False, True])
+def test_pad_invalid_max_num_nodes(is_hetero):
+    if is_hetero:
+        data = fake_hetero_data(node_types=1)
+    else:
+        data = fake_data()
+
     transform = Pad(max_num_nodes=data.num_nodes - 1)
 
-    with pytest.raises(AssertionError,
-                       match='The number of nodes after padding'):
+    with pytest.raises(AssertionError, match="after padding"):
         transform(data)
 
 
-@pytest.mark.parametrize(
-    'data',
-    [fake_data(), fake_hetero_data(node_types=1, edge_types=1)])
-def test_pad_invalid_max_num_edges(data):
+@pytest.mark.parametrize('is_hetero', [False, True])
+def test_pad_invalid_max_num_edges(is_hetero):
+    if is_hetero:
+        data = fake_hetero_data(node_types=1, edge_types=1)
+    else:
+        data = fake_data()
+
     transform = Pad(max_num_nodes=data.num_nodes + 10,
                     max_num_edges=data.num_edges - 1)
 
-    with pytest.raises(AssertionError,
-                       match='The number of edges after padding'):
+    with pytest.raises(AssertionError, match="after padding"):
         transform(data)
 
 
@@ -452,7 +458,7 @@ def test_pad_num_nodes_not_complete():
     data = fake_hetero_data(node_types=2, edge_types=1)
     transform = Pad(max_num_nodes={'v0': 100})
 
-    with pytest.raises(AssertionError, match='The number of v1 nodes'):
+    with pytest.raises(AssertionError, match="The number of v1 nodes"):
         transform(data)
 
 

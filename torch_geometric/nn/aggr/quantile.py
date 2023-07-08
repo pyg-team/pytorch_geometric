@@ -62,7 +62,7 @@ class QuantileAggregation(Aggregation):
                              f"got ('{interpolation}')")
 
         self._q = q
-        self.register_buffer('q', torch.Tensor(qs).view(-1, 1))
+        self.register_buffer('q', torch.tensor(qs).view(-1, 1))
         self.interpolation = interpolation
         self.fill_value = fill_value
 

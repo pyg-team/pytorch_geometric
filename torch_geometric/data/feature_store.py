@@ -198,7 +198,7 @@ class AttrView(CastMixin):
         .. code-block:: python
 
             view = store.view(TensorAttr(group_name))
-            view['index'] = torch.Tensor([1, 2, 3])
+            view['index'] = torch.tensor([1, 2, 3])
         """
         self.__setattr__(key, value)
 
