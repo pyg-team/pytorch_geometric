@@ -3,6 +3,7 @@ import torch
 
 import torch_geometric
 from torch_geometric.data.hypergraph_data import HyperGraphData
+from torch_geometric.loader import DataLoader
 
 
 def test_hypergraph_data():
@@ -17,6 +18,9 @@ def test_hypergraph_data():
 
     N = data.num_nodes
     assert N == 4
+
+    E = data.num_edges
+    assert E == 3
 
     assert data.node_attrs() == ['x']
     assert data.edge_attrs() == ['edge_index']
@@ -44,6 +48,13 @@ def test_hypergraph_data():
     assert data.__inc__('x', data.x) == 0
     assert torch.equal(data.__inc__('edge_index', data.edge_index),
                        torch.tensor([[data.num_nodes], [data.num_edges]]))
+    data_list = [data, data]
+    loader = DataLoader(data_list, batch_size=2)
+    batch = next(iter(loader))
+    batched_edge_index = batch.edge_index
+    assert batched_edge_index.tolist() == [[
+        0, 1, 2, 1, 2, 3, 0, 2, 3, 4, 5, 6, 5, 6, 7, 4, 6, 7
+    ], [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5]]
 
     assert not data.x.is_contiguous()
     data.contiguous()
