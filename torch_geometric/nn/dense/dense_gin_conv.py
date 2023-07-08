@@ -20,9 +20,9 @@ class DenseGINConv(torch.nn.Module):
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
-            self.eps = torch.nn.Parameter(torch.Tensor([eps]))
+            self.eps = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('eps', torch.Tensor([eps]))
+            self.register_buffer('eps', torch.empty(1))
         self.reset_parameters()
 
     def reset_parameters(self):

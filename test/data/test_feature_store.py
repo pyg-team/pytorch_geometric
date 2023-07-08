@@ -24,7 +24,7 @@ class MyFeatureStoreNoGroupName(MyFeatureStore):
 
 def test_feature_store():
     store = MyFeatureStore()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    tensor = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]])
 
     group_name = 'A'
     attr_name = 'feat'
@@ -94,7 +94,7 @@ def test_feature_store():
 
 def test_feature_store_override():
     store = MyFeatureStoreNoGroupName()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    tensor = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]])
 
     attr_name = 'feat'
     index = torch.tensor([0, 1, 2])

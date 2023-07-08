@@ -41,7 +41,7 @@ def fps(
         import torch
         from torch_geometric.nn import fps
 
-        x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
+        x = torch.tensor([[-1.0, -1.0], [-1.0, 1.0], [1.0, -1.0], [1.0, 1.0]])
         batch = torch.tensor([0, 0, 0, 0])
         index = fps(x, batch, ratio=0.5)
 
@@ -82,9 +82,9 @@ def knn(
         import torch
         from torch_geometric.nn import knn
 
-        x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
+        x = torch.tensor([[-1.0, -1.0], [-1.0, 1.0], [1.0, -1.0], [1.0, 1.0]])
         batch_x = torch.tensor([0, 0, 0, 0])
-        y = torch.Tensor([[-1, 0], [1, 0]])
+        y = torch.tensor([[-1.0, 0.0], [1.0, 0.0]])
         batch_y = torch.tensor([0, 0])
         assign_index = knn(x, y, 2, batch_x, batch_y)
 
@@ -135,7 +135,7 @@ def knn_graph(
         import torch
         from torch_geometric.nn import knn_graph
 
-        x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
+        x = torch.tensor([[-1.0, -1.0], [-1.0, 1.0], [1.0, -1.0], [1.0, 1.0]])
         batch = torch.tensor([0, 0, 0, 0])
         edge_index = knn_graph(x, k=2, batch=batch, loop=False)
 
@@ -192,9 +192,9 @@ def radius(
         import torch
         from torch_geometric.nn import radius
 
-        x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
+        x = torch.tensor([[-1.0, -1.0], [-1.0, 1.0], [1.0, -1.0], [1.0, 1.0]])
         batch_x = torch.tensor([0, 0, 0, 0])
-        y = torch.Tensor([[-1, 0], [1, 0]])
+        y = torch.tensor([[-1.0, 0.0], [1.0, 0.0]])
         batch_y = torch.tensor([0, 0])
         assign_index = radius(x, y, 1.5, batch_x, batch_y)
 
@@ -244,7 +244,7 @@ def radius_graph(
         import torch
         from torch_geometric.nn import radius_graph
 
-        x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
+        x = torch.tensor([[-1.0, -1.0], [-1.0, 1.0], [1.0, -1.0], [1.0, 1.0]])
         batch = torch.tensor([0, 0, 0, 0])
         edge_index = radius_graph(x, r=1.5, batch=batch, loop=False)
 
@@ -296,9 +296,9 @@ def nearest(
         import torch
         from torch_geometric.nn import nearest
 
-        x = torch.Tensor([[-1, -1], [-1, 1], [1, -1], [1, 1]])
+        x = torch.tensor([[-1.0, -1.0], [-1.0, 1.0], [1.0, -1.0], [1.0, 1.0]])
         batch_x = torch.tensor([0, 0, 0, 0])
-        y = torch.Tensor([[-1, 0], [1, 0]])
+        y = torch.tensor([[-1.0, 0.0], [1.0, 0.0]])
         batch_y = torch.tensor([0, 0])
         cluster = nearest(x, y, batch_x, batch_y)
 

@@ -6,11 +6,11 @@ from torch_geometric.transforms import LinearTransformation
 
 
 @pytest.mark.parametrize('matrix', [
-    [[2., 0.], [0., 2.]],
-    torch.tensor([[2., 0.], [0., 2.]]),
+    [[2.0, 0.0], [0.0, 2.0]],
+    torch.tensor([[2.0, 0.0], [0.0, 2.0]]),
 ])
 def test_linear_transformation(matrix):
-    pos = torch.Tensor([[-1, 1], [-3, 0], [2, -1]])
+    pos = torch.tensor([[-1.0, 1.0], [-3.0, 0.0], [2.0, -1.0]])
 
     transform = LinearTransformation(matrix)
     assert str(transform) == ('LinearTransformation(\n'
@@ -20,7 +20,7 @@ def test_linear_transformation(matrix):
 
     out = transform(Data(pos=pos))
     assert len(out) == 1
-    assert out.pos.tolist() == [[-2, 2], [-6, 0], [4, -2]]
+    assert torch.allclose(out.pos, 2 * pos)
 
     out = transform(Data())
     assert len(out) == 0

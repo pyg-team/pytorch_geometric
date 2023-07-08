@@ -22,11 +22,10 @@ class Linear(torch.nn.Module):
         self.groups = groups
 
         self.weight = Parameter(
-            torch.Tensor(groups, in_channels // groups,
-                         out_channels // groups))
+            torch.empty(groups, in_channels // groups, out_channels // groups))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

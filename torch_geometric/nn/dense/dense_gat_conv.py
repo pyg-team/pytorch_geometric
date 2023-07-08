@@ -35,13 +35,13 @@ class DenseGATConv(torch.nn.Module):
                           weight_initializer='glorot')
 
         # The learnable parameters to compute attention coefficients:
-        self.att_src = Parameter(torch.Tensor(1, 1, heads, out_channels))
-        self.att_dst = Parameter(torch.Tensor(1, 1, heads, out_channels))
+        self.att_src = Parameter(torch.empty(1, 1, heads, out_channels))
+        self.att_dst = Parameter(torch.empty(1, 1, heads, out_channels))
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(heads * out_channels))
+            self.bias = Parameter(torch.empty(heads * out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
