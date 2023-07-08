@@ -10,11 +10,12 @@ from torch_geometric.transforms import BaseTransform
 @functional_transform('distance')
 class Distance(BaseTransform):
     r"""Saves the Euclidean distance of linked nodes in its edge attributes
-    (functional name: :obj:`distance`).
+    (functional name: :obj:`distance`). Each distance gets globally normalized
+    to a specified interval (:math:`[0, 1]` by default).
 
     Args:
         norm (bool, optional): If set to :obj:`False`, the output will not be
-            normalized to the interval :math:`[0, 1]`. (default: :obj:`True`)
+            normalized. (default: :obj:`True`)
         max_value (float, optional): If set and :obj:`norm=True`, normalization
             will be performed based on this value instead of the maximum value
             found in the data. (default: :obj:`None`)
@@ -57,4 +58,4 @@ class Distance(BaseTransform):
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(norm={self.norm}, '
-                f'max_value={self.max}, interval={self.interval})')
+                f'max_value={self.max})')
