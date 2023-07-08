@@ -32,7 +32,11 @@ def run_train(train_dataset, test_dataset, model, epochs, batch_size,
             torch.cuda.synchronize()
         elif hasattr(torch.backends,
                      'mps') and torch.backends.mps.is_available():
-            torch.mps.synchronize()
+            try:
+                import torch.mps
+                torch.mps.synchronize()
+            except ImportError:
+                pass
 
         t_start = time.perf_counter()
 
@@ -43,7 +47,11 @@ def run_train(train_dataset, test_dataset, model, epochs, batch_size,
             torch.cuda.synchronize()
         elif hasattr(torch.backends,
                      'mps') and torch.backends.mps.is_available():
-            torch.mps.synchronize()
+            try:
+                import torch.mps
+                torch.mps.synchronize()
+            except ImportError:
+                pass
 
         t_end = time.perf_counter()
 

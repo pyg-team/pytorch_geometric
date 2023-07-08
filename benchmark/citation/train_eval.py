@@ -60,7 +60,11 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
             torch.cuda.synchronize()
         elif hasattr(torch.backends,
                      'mps') and torch.backends.mps.is_available():
-            torch.mps.synchronize()
+            try:
+                import torch.mps
+                torch.mps.synchronize()
+            except ImportError:
+                pass
 
         t_start = time.perf_counter()
 
@@ -94,7 +98,11 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
             torch.cuda.synchronize()
         elif hasattr(torch.backends,
                      'mps') and torch.backends.mps.is_available():
-            torch.mps.synchronize()
+            try:
+                import torch.mps
+                torch.mps.synchronize()
+            except ImportError:
+                pass
 
         t_end = time.perf_counter()
 

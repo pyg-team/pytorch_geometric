@@ -45,7 +45,12 @@ def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
             torch.cuda.synchronize()
         elif hasattr(torch.backends,
                      'mps') and torch.backends.mps.is_available():
-            torch.mps.synchronize()
+            try:
+                import torch.mps
+                torch.mps.synchronize()
+            except ImportError:
+                pass
+            
 
         t_start = time.perf_counter()
 
