@@ -3,7 +3,7 @@ import scipy.sparse
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import get_random_edge_index, withPackage
 from torch_geometric.utils import (
     from_cugraph,
     from_dgl,
@@ -129,6 +129,43 @@ def test_to_networkx_undirected():
 
     G = to_networkx(data, edge_attrs=['weight'], to_undirected="lower")
     assert nx.to_numpy_array(G).tolist() == [[3, 2], [2, 0]]
+
+
+@withPackage('networkx')
+def test_to_networkx_hetero():
+    edge_index = get_random_edge_index(5, 10, 20, coalesce=True)
+
+    data = HeteroData()
+    data['global_id'] = 0
+    data['author'].x = torch.arange(5)
+    data['paper'].x = torch.arange(10)
+    data['author', 'paper'].edge_index = edge_index
+    data['author', 'paper'].edge_attr = torch.arange(edge_index.size(1))
+
+    G = to_networkx(data, node_attrs=['x'], edge_attrs=['edge_attr'],
+                    graph_attrs=['global_id'])
+
+    assert G.number_of_nodes() == 15
+    assert G.number_of_edges() == edge_index.size(1)
+
+    assert G.graph == {'global_id': 0}
+
+    for i, (v, data) in enumerate(G.nodes(data=True)):
+        assert i == v
+        assert len(data) == 2
+        if i < 5:
+            assert data['x'] == i
+            assert data['type'] == 'author'
+        else:
+            assert data['x'] == i - 5
+            assert data['type'] == 'paper'
+
+    for i, (v, w, data) in enumerate(G.edges(data=True)):
+        assert v == int(edge_index[0, i])
+        assert w == int(edge_index[1, i]) + 5
+        assert len(data) == 2
+        assert data['type'] == ('author', 'to', 'paper')
+        assert data['edge_attr'] == i
 
 
 @withPackage('networkx')
