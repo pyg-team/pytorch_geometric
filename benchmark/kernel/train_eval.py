@@ -50,7 +50,6 @@ def cross_validation_with_val_set(dataset, model, folds, epochs, batch_size,
                 torch.mps.synchronize()
             except ImportError:
                 pass
-            
 
         t_start = time.perf_counter()
 
