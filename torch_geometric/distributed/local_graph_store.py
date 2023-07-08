@@ -8,9 +8,7 @@ from torch import Tensor
 from torch_geometric.data import EdgeAttr, GraphStore
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 
-
 #class PartitionInfo(obj):
-
 
 
 class LocalGraphStore(GraphStore):
@@ -31,7 +29,6 @@ class LocalGraphStore(GraphStore):
         self.meta: Optional[Dict[Any, Any]] = None
         r""" meta information related to partition and graph store info """
 
-
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:
         return (attr.edge_type, attr.layout.value)
@@ -44,11 +41,15 @@ class LocalGraphStore(GraphStore):
         self.partition_idx = partition_idx
         return True
 
-    def set_node_pb(self, node_pb: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]) -> bool:
+    def set_node_pb(
+            self, node_pb: Union[torch.Tensor, Dict[NodeType,
+                                                    torch.Tensor]]) -> bool:
         self.node_pb = node_pb
         return True
 
-    def set_edge_pb(self, edge_pb: Union[torch.Tensor, Dict[NodeType, torch.Tensor]]) -> bool:
+    def set_edge_pb(
+            self, edge_pb: Union[torch.Tensor, Dict[NodeType,
+                                                    torch.Tensor]]) -> bool:
         self.edge_pb = edge_pb
         return True
 
@@ -57,7 +58,7 @@ class LocalGraphStore(GraphStore):
         return True
 
     def get_partition_ids_from_nids(self, ids: torch.Tensor,
-                            node_type: Optional[NodeType]=None):
+                                    node_type: Optional[NodeType] = None):
         # Get the local partition ids of node ids with a specific node type.
         if self.meta["is_hetero"]:
             assert node_type is not None
@@ -65,14 +66,12 @@ class LocalGraphStore(GraphStore):
         return self.node_pb[ids]
 
     def get_partition_ids_from_eids(self, eids: torch.Tensor,
-                            edge_type: Optional[EdgeType]=None):
+                                    edge_type: Optional[EdgeType] = None):
         r""" Get the partition ids of edge ids with a specific edge type."""
         if self.meta["is_hetero"]:
             assert edge_type is not None
             return self.edge_pb[edge_type][eids]
         return self.edge_pb[eids]
-
-
 
     # starting for graph ..
 
