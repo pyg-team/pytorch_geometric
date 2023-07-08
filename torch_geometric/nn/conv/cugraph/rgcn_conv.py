@@ -49,17 +49,17 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
 
         if num_bases is not None:
             self.weight = Parameter(
-                torch.Tensor(num_bases + dim_root_weight, in_channels,
-                             out_channels))
-            self.comp = Parameter(torch.Tensor(num_relations, num_bases))
+                torch.empty(num_bases + dim_root_weight, in_channels,
+                            out_channels))
+            self.comp = Parameter(torch.empty(num_relations, num_bases))
         else:
             self.weight = Parameter(
-                torch.Tensor(num_relations + dim_root_weight, in_channels,
-                             out_channels))
+                torch.empty(num_relations + dim_root_weight, in_channels,
+                            out_channels))
             self.register_parameter('comp', None)
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

@@ -18,9 +18,9 @@ from torch_geometric.utils import (
 
 
 def test_dense_to_sparse():
-    adj = torch.Tensor([
-        [3, 1],
-        [2, 0],
+    adj = torch.tensor([
+        [3.0, 1.0],
+        [2.0, 0.0],
     ])
     edge_index, edge_attr = dense_to_sparse(adj)
     assert edge_index.tolist() == [[0, 0, 1], [0, 1, 0]]
@@ -32,12 +32,12 @@ def test_dense_to_sparse():
         assert edge_index.tolist() == [[0, 0, 1], [0, 1, 0]]
         assert edge_attr.tolist() == [3, 1, 2]
 
-    adj = torch.Tensor([[
-        [3, 1],
-        [2, 0],
+    adj = torch.tensor([[
+        [3.0, 1.0],
+        [2.0, 0.0],
     ], [
-        [0, 1],
-        [0, 2],
+        [0.0, 1.0],
+        [0.0, 2.0],
     ]])
     edge_index, edge_attr = dense_to_sparse(adj)
     assert edge_index.tolist() == [[0, 0, 1, 2, 3], [0, 1, 0, 3, 3]]
@@ -124,24 +124,27 @@ def test_to_torch_csr_tensor():
     adj = to_torch_csr_tensor(edge_index)
     assert adj.size() == (4, 4)
     assert adj.layout == torch.sparse_csr
-    assert torch.allclose(adj.to_sparse_coo().indices(), edge_index)
+    assert torch.allclose(adj.to_sparse_coo().coalesce().indices(), edge_index)
 
     edge_weight = torch.randn(edge_index.size(1))
     adj = to_torch_csr_tensor(edge_index, edge_weight)
     assert adj.size() == (4, 4)
     assert adj.layout == torch.sparse_csr
-    assert torch.allclose(adj.to_sparse_coo().indices(), edge_index)
-    assert torch.allclose(adj.to_sparse_coo().values(), edge_weight)
+    coo = adj.to_sparse_coo().coalesce()
+    assert torch.allclose(coo.indices(), edge_index)
+    assert torch.allclose(coo.values(), edge_weight)
 
     if torch_geometric.typing.WITH_PT2:
         edge_attr = torch.randn(edge_index.size(1), 8)
         adj = to_torch_csr_tensor(edge_index, edge_attr)
         assert adj.size() == (4, 4, 8)
         assert adj.layout == torch.sparse_csr
-        assert torch.allclose(adj.to_sparse_coo().indices(), edge_index)
-        assert torch.allclose(adj.to_sparse_coo().values(), edge_attr)
+        coo = adj.to_sparse_coo().coalesce()
+        assert torch.allclose(coo.indices(), edge_index)
+        assert torch.allclose(coo.values(), edge_attr)
 
 
+@withPackage('torch>=1.12.0')
 def test_to_torch_csc_tensor():
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3],

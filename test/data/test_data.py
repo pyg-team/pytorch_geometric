@@ -284,6 +284,36 @@ def test_copy_data():
     assert data.x.tolist() == out.x.tolist()
 
 
+def test_data_sort():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 2, 1, 3], [1, 2, 3, 0, 0, 0]])
+    edge_attr = torch.randn(6, 8)
+
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    assert not data.is_sorted(sort_by_row=True)
+    assert not data.is_sorted(sort_by_row=False)
+
+    out = data.sort(sort_by_row=True)
+    assert out.is_sorted(sort_by_row=True)
+    assert not out.is_sorted(sort_by_row=False)
+    assert torch.equal(out.x, data.x)
+    assert out.edge_index.tolist() == [[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]]
+    assert torch.equal(
+        out.edge_attr,
+        data.edge_attr[torch.tensor([0, 1, 2, 4, 3, 5])],
+    )
+
+    out = data.sort(sort_by_row=False)
+    assert not out.is_sorted(sort_by_row=True)
+    assert out.is_sorted(sort_by_row=False)
+    assert torch.equal(out.x, data.x)
+    assert out.edge_index.tolist() == [[1, 2, 3, 0, 0, 0], [0, 0, 0, 1, 2, 3]]
+    assert torch.equal(
+        out.edge_attr,
+        data.edge_attr[torch.tensor([4, 3, 5, 0, 1, 2])],
+    )
+
+
 def test_debug_data():
     torch_geometric.set_debug(True)
 

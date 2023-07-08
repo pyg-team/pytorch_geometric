@@ -1,9 +1,11 @@
 import pytest
 import torch
 
+from torch_geometric.testing import withPackage
 from torch_geometric.utils import from_nested_tensor, to_nested_tensor
 
 
+@withPackage('torch>=1.13.0')
 def test_to_nested_tensor():
     x = torch.randn(5, 4, 3)
 
@@ -25,6 +27,7 @@ def test_to_nested_tensor():
     assert torch.allclose(out[0], x)
 
 
+@withPackage('torch>=1.13.0')
 def test_from_nested_tensor():
     x = torch.randn(5, 4, 3)
 
@@ -46,6 +49,7 @@ def test_from_nested_tensor():
     assert torch.equal(nested.to_padded_tensor(padding=0)[1, :3], out[2:5])
 
 
+@withPackage('torch>=1.13.0')
 def test_to_and_from_nested_tensor_autograd():
     x = torch.randn(5, 4, 3, requires_grad=True)
     grad = torch.randn_like(x)

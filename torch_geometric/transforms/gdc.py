@@ -475,8 +475,8 @@ class GDC(BaseTransform):
             e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
         else:
-            diff_mat_np = expm(matrix.cpu().numpy())
-            diff_mat = torch.Tensor(diff_mat_np).to(matrix.device)
+            diff_mat = torch.from_numpy(expm(matrix.cpu().numpy()))
+            diff_mat = diff_mat.to(matrix.device, matrix.dtype)
         return diff_mat
 
     def __calculate_eps__(
@@ -523,16 +523,17 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        edge_weight = torch.Tensor(np.concatenate(neighbor_weights)).to(device)
+        edge_weight = torch.from_numpy(np.concatenate(neighbor_weights))
+        edge_weight = edge_weight.to(device, torch.get_default_dtype())
         i = np.repeat(np.arange(len(neighbors)),
                       np.fromiter(map(len, neighbors), dtype=int))
         j = np.concatenate(neighbors)
         if normalization == 'col':
-            edge_index = torch.Tensor(np.vstack([j, i])).to(device)
+            edge_index = torch.from_numpy(np.vstack([j, i])).to(device)
             N = len(neighbors)
             edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
         elif normalization == 'row':
-            edge_index = torch.Tensor(np.vstack([i, j])).to(device)
+            edge_index = torch.from_numpy(np.vstack([i, j])).to(device)
         else:
             raise ValueError(
                 f"PPR matrix normalization {normalization} unknown.")

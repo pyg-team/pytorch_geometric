@@ -104,7 +104,7 @@ class SAGPooling(torch.nn.Module):
         edge_attr: OptTensor = None,
         batch: OptTensor = None,
         attn: OptTensor = None,
-    ) -> Tuple[Tensor, Tensor, OptTensor, Tensor, Tensor, Tensor]:
+    ) -> Tuple[Tensor, Tensor, OptTensor, OptTensor, Tensor, Tensor]:
         r"""
         Args:
             x (torch.Tensor): The node feature matrix.

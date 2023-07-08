@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import sys
 import warnings
 
 import pytest
@@ -17,6 +18,7 @@ from torch_geometric.testing import (
     onlyFullTest,
     onlyLinux,
     onlyNeighborSampler,
+    onlyOnline,
     withCUDA,
     withPackage,
 )
@@ -147,6 +149,7 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+@onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
@@ -186,6 +189,10 @@ def test_compile(device):
 
 
 def test_packaging():
+    if (not torch_geometric.typing.WITH_PT113 and sys.version_info.major == 3
+            and sys.version_info.minor >= 10):
+        return  # Unsupported Python version
+
     warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
 
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
@@ -215,6 +222,7 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
 
+@withPackage('torch>=1.12.0')
 @withPackage('onnx', 'onnxruntime')
 def test_onnx(tmp_path, capfd):
     import onnx

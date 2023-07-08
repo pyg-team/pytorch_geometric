@@ -149,5 +149,7 @@ def remap_keys(
     exclude: Optional[List[X]] = None,
 ) -> Dict[Union[X, Y], Any]:
     exclude = exclude or []
-    return {(k if k in exclude else mapping.get(k, k)): v
-            for k, v in inputs.items()}
+    return {
+        k if k in exclude else mapping.get(k, k): v
+        for k, v in inputs.items()
+    }

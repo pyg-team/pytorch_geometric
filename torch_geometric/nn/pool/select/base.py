@@ -4,8 +4,9 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 
-@torch.jit.script
+
 @dataclass(init=False)
 class SelectOutput:
     r"""The output of the :class:`Select` method, which holds an assignment
@@ -61,6 +62,10 @@ class SelectOutput:
         self.cluster_index = cluster_index
         self.num_clusters = num_clusters
         self.weight = weight
+
+
+if torch_geometric.typing.WITH_PT113:
+    SelectOutput = torch.jit.script(SelectOutput)
 
 
 class Select(torch.nn.Module):
