@@ -271,11 +271,11 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         return self._apply_masks(
             node_mask_dict={
                 key: mask.sum(dim=-1) > 0
-                for key, mask in self.node_mask_dict.items()
+                for key, mask in self.collect('node_mask', True).items()
             },
             edge_mask_dict={
                 key: mask > 0
-                for key, mask in self.edge_mask_dict.items()
+                for key, mask in self.collect('edge_mask', True).items()
             },
         )
 
@@ -285,11 +285,11 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
         return self._apply_masks(
             node_mask_dict={
                 key: mask.sum(dim=-1) == 0
-                for key, mask in self.node_mask_dict.items()
+                for key, mask in self.collect('node_mask', True).items()
             },
             edge_mask_dict={
                 key: mask == 0
-                for key, mask in self.edge_mask_dict.items()
+                for key, mask in self.collect('edge_mask', True).items()
             },
         )
 
