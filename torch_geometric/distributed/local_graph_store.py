@@ -9,7 +9,7 @@ from torch_geometric.data import EdgeAttr, GraphStore
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 
 
-#class PartitionInfo(obj):
+
 
 
 
