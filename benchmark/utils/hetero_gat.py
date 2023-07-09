@@ -22,7 +22,7 @@ class HeteroGAT(torch.nn.Module):
             loader = tqdm(loader, desc="Inference")
         for batch in loader:
             batch = batch.to(device)
-            if len(batch.adj_t_dict) > 0:
+            if 'adj_t' in batch:
                 self.model(batch.x_dict, batch.adj_t_dict)
             else:
                 self.model(batch.x_dict, batch.edge_index_dict)
@@ -35,7 +35,7 @@ class HeteroGAT(torch.nn.Module):
             loader = tqdm(loader, desc="Evaluate")
         for batch in loader:
             batch = batch.to(device)
-            if len(batch.adj_t_dict) > 0:
+            if 'adj_t' in batch:
                 out = self.model(batch.x_dict, batch.adj_t_dict)
             else:
                 out = self.model(batch.x_dict, batch.edge_index_dict)
