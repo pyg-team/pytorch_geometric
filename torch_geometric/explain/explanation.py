@@ -328,10 +328,6 @@ class HeteroExplanation(HeteroData, ExplanationMixin):
                 plots all features. (default: :obj:`None`)
         """
         node_mask_dict = self.node_mask_dict
-        if len(node_mask_dict) == 0:
-            raise ValueError(f"The attribute 'node_mask' is not available "
-                             f"in '{self.__class__.__name__}' "
-                             f"(got {self.available_explanations})")
         for node_mask in node_mask_dict.values():
             if node_mask.dim() != 2 or node_mask.size(1) <= 1:
                 raise ValueError(f"Cannot compute feature importance for "

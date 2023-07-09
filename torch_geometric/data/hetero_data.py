@@ -502,7 +502,11 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         """
         return self.node_types, self.edge_types
 
-    def collect(self, key: str) -> Dict[NodeOrEdgeType, Any]:
+    def collect(
+        self,
+        key: str,
+        allow_empty: bool = False,
+    ) -> Dict[NodeOrEdgeType, Any]:
         r"""Collects the attribute :attr:`key` from all node and edge types.
 
         .. code-block:: python
@@ -517,14 +521,20 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         .. note::
 
             This is equivalent to writing :obj:`data.x_dict`.
+
+        Args:
+            key (str): The attribute to collect from all node and ege types.
+            allow_empty (bool, optional): If set to :obj:`True`, will not raise
+                an error in case the attribute does not exit in any node or
+                edge type. (default: :obj:`False`)
         """
         mapping = {}
         for subtype, store in chain(self._node_store_dict.items(),
                                     self._edge_store_dict.items()):
             if hasattr(store, key):
                 mapping[subtype] = getattr(store, key)
-        if len(mapping) == 0:
-            raise KeyError(f"Tied to collect '{key}' but did not find any "
+        if not allow_empty and len(mapping) == 0:
+            raise KeyError(f"Tried to collect '{key}' but did not find any "
                            f"occurrences of it in any node and/or edge type")
         return mapping
 
@@ -891,7 +901,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
             value = torch.cat(values, dim) if len(values) > 1 else values[0]
             data[key] = value
 
-        if len(self.edge_label_index_dict) > 0:
+        if 'edge_label_index' in self:
             edge_label_index_dict = self.edge_label_index_dict
             for edge_type, edge_label_index in edge_label_index_dict.items():
                 edge_label_index = edge_label_index.clone()
