@@ -523,6 +523,9 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                                     self._edge_store_dict.items()):
             if hasattr(store, key):
                 mapping[subtype] = getattr(store, key)
+        if len(mapping) == 0:
+            raise KeyError(f"Tied to collect '{key}' but did not find any "
+                           f"occurrences of it in any node and/or edge type")
         return mapping
 
     def _check_type_name(self, name: str):
