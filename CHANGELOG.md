@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `HeteroData` support in `to_networkx` ([#7713](https://github.com/pyg-team/pytorch_geometric/pull/7713))
 - Added `FlopsCount` support via `fvcore` ([#7693](https://github.com/pyg-team/pytorch_geometric/pull/7693))
 - Added back support for PyTorch >= 1.11.0 ([#7656](https://github.com/pyg-team/pytorch_geometric/pull/7656))
 - Added `Data.sort()` and `HeteroData.sort()` functionalities ([#7649](https://github.com/pyg-team/pytorch_geometric/pull/7649))
@@ -72,6 +73,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Raise error when collecting non-existing attributes in `HeteroData` ([#7714](https://github.com/pyg-team/pytorch_geometric/pull/7714))
 - Renamed `dest` argument to `dst` in `utils.geodesic_distance` ([#7708](https://github.com/pyg-team/pytorch_geometric/pull/7708))
 - Changed `add_random_edge` to only add true negative edges ([#7654](https://github.com/pyg-team/pytorch_geometric/pull/7654))
 - Allowed the usage of `BasicGNN` models in `DeepGraphInfomax` ([#7648](https://github.com/pyg-team/pytorch_geometric/pull/7648))
