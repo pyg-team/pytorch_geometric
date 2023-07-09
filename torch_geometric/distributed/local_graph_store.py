@@ -12,7 +12,6 @@ from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 
 
 
-
 class LocalGraphStore(GraphStore):
     r"""This class implements the :class:`torch_geometric.data.GraphStore`
     interface to act as a local graph store for distributed training."""
@@ -30,7 +29,6 @@ class LocalGraphStore(GraphStore):
         r""" edge_partition_book:  mapping between edge ids and partition idx """
         self.meta: Optional[Dict[Any, Any]] = None
         r""" meta information related to partition and graph store info """
-
 
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:
