@@ -1106,7 +1106,7 @@ def to_homogeneous_edge_index(
     cumsum = 0
     edge_indices: List[Tensor] = []
     edge_slices: Dict[EdgeType, Tuple[int, int]] = {}
-    for edge_type, edge_index in data.edge_index_dict.items():
+    for edge_type, edge_index in data.collect('edge_index', True).items():
         edge_index = offset_edge_index(node_slices, edge_type, edge_index)
         edge_indices.append(edge_index)
         edge_slices[edge_type] = (cumsum, cumsum + edge_index.size(1))
