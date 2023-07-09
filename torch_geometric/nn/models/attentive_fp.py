@@ -23,13 +23,13 @@ class GATEConv(MessagePassing):
 
         self.dropout = dropout
 
-        self.att_l = Parameter(torch.Tensor(1, out_channels))
-        self.att_r = Parameter(torch.Tensor(1, in_channels))
+        self.att_l = Parameter(torch.empty(1, out_channels))
+        self.att_r = Parameter(torch.empty(1, in_channels))
 
         self.lin1 = Linear(in_channels + edge_dim, out_channels, False)
         self.lin2 = Linear(out_channels, out_channels, False)
 
-        self.bias = Parameter(torch.Tensor(out_channels))
+        self.bias = Parameter(torch.empty(out_channels))
 
         self.reset_parameters()
 

@@ -15,7 +15,7 @@ def test_dropout_adj():
         [0, 1, 1, 2, 2, 3],
         [1, 0, 2, 1, 3, 2],
     ])
-    edge_attr = torch.Tensor([1, 2, 3, 4, 5, 6])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
 
     with pytest.warns(UserWarning, match="'dropout_adj' is deprecated"):
         out = dropout_adj(edge_index, edge_attr, training=False)

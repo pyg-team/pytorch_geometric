@@ -194,6 +194,15 @@ class BaseData:
         r"""Returns all edge-level tensor attribute names."""
         return list(set(chain(*[s.edge_attrs() for s in self.edge_stores])))
 
+    @property
+    def node_offsets(self) -> Dict[NodeType, int]:
+        out: Dict[NodeType, int] = {}
+        offset: int = 0
+        for store in self.node_stores:
+            out[store._key] = offset
+            offset += store.num_nodes
+        return out
+
     def generate_ids(self):
         r"""Generates and sets :obj:`n_id` and :obj:`e_id` attributes to assign
         each node and edge to a continuously ascending and unique ID."""

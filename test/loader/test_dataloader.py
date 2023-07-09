@@ -22,7 +22,7 @@ def test_dataloader(num_workers, device):
     if num_workers > 0 and device != torch.device('cpu'):
         return
 
-    x = torch.Tensor([[1], [1], [1]])
+    x = torch.tensor([[1.0], [1.0], [1.0]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     face = torch.tensor([[0], [1], [2]])
     y = 2.

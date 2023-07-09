@@ -120,7 +120,7 @@ class GeneralConv(MessagePassing):
         if self.attention:
             if self.attention_type == 'additive':
                 self.att_msg = Parameter(
-                    torch.Tensor(1, self.heads, self.out_channels))
+                    torch.empty(1, self.heads, self.out_channels))
             elif self.attention_type == 'dot_product':
                 scaler = torch.tensor(out_channels, dtype=torch.float).sqrt()
                 self.register_buffer('scaler', scaler)

@@ -88,14 +88,14 @@ class HGTConv(MessagePassing):
                                   is_sorted=True)
 
         self.skip = ParameterDict({
-            node_type: Parameter(torch.Tensor(1))
+            node_type: Parameter(torch.empty(1))
             for node_type in self.node_types
         })
 
         self.p_rel = ParameterDict()
         for edge_type in self.edge_types:
             edge_type = '__'.join(edge_type)
-            self.p_rel[edge_type] = Parameter(torch.Tensor(1, heads))
+            self.p_rel[edge_type] = Parameter(torch.empty(1, heads))
 
         self.reset_parameters()
 
@@ -210,7 +210,8 @@ class HGTConv(MessagePassing):
 
         # Transform output node embeddings:
         a_dict = self.out_lin({
-            k: torch.nn.functional.gelu(v) if v is not None else v
+            k:
+            torch.nn.functional.gelu(v) if v is not None else v
             for k, v in out_dict.items()
         })
 

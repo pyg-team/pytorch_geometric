@@ -30,7 +30,7 @@ def model():
 def test_model_init():
     model = DummyModel(
         MODEL_NAME, DATASET_NAME, model_kwargs={
-            **CONFIG, 'tensor': torch.Tensor([1, 2, 3])
+            **CONFIG, 'tensor': torch.randn([1, 2, 3])
         })
     assert model.model_config == CONFIG
 

@@ -345,7 +345,7 @@ class HeteroBasisConv(torch.nn.Module):
             # We learn a single scalar weight for each individual edge type,
             # which is used to weight the output message based on edge type:
             conv.edge_type_weight = Parameter(
-                torch.Tensor(1, num_relations, device=device))
+                torch.empty(1, num_relations, device=device))
             conv.register_message_forward_hook(hook)
             self.convs.append(conv)
 
