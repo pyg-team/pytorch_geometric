@@ -99,10 +99,10 @@ class TGNMemory(torch.nn.Module):
 
         return memory, last_update
 
-    def update_state(self, batch: Batch):
+    def update_state(self, src: Tensor, dst: Tensor, t: Tensor,
+                     raw_msg: Tensor):
         """Updates the memory with newly encountered interactions
         :obj:`(src, dst, t, raw_msg)`."""
-        src, dst, t, raw_msg = batch.src, batch.dst, batch.t, batch.msg
         n_id = torch.cat([src, dst]).unique()
 
         if self.training:
