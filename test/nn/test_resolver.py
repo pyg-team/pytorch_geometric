@@ -72,7 +72,7 @@ def test_normalization_resolver(norm_tuple):
 
 
 def test_optimizer_resolver():
-    params = [torch.nn.Parameter(torch.Tensor(1))]
+    params = [torch.nn.Parameter(torch.randn(1))]
 
     assert isinstance(optimizer_resolver(torch.optim.SGD(params, lr=0.01)),
                       torch.optim.SGD)

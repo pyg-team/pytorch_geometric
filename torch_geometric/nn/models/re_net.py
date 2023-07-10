@@ -62,8 +62,8 @@ class RENet(torch.nn.Module):
         self.seq_len = seq_len
         self.dropout = dropout
 
-        self.ent = Parameter(torch.Tensor(num_nodes, hidden_channels))
-        self.rel = Parameter(torch.Tensor(num_rels, hidden_channels))
+        self.ent = Parameter(torch.empty(num_nodes, hidden_channels))
+        self.rel = Parameter(torch.empty(num_rels, hidden_channels))
 
         self.sub_gru = GRU(3 * hidden_channels, hidden_channels, num_layers,
                            batch_first=True, bias=bias)

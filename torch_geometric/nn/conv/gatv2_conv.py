@@ -163,7 +163,7 @@ class GATv2Conv(MessagePassing):
                 self.lin_r = Linear(in_channels[1], heads * out_channels,
                                     bias=bias, weight_initializer='glorot')
 
-        self.att = Parameter(torch.Tensor(1, heads, out_channels))
+        self.att = Parameter(torch.empty(1, heads, out_channels))
 
         if edge_dim is not None:
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
@@ -172,9 +172,9 @@ class GATv2Conv(MessagePassing):
             self.lin_edge = None
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(heads * out_channels))
+            self.bias = Parameter(torch.empty(heads * out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

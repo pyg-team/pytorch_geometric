@@ -44,12 +44,12 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         self.negative_slope = negative_slope
 
         self.lin = Linear(in_channels, heads * out_channels, bias=False)
-        self.att = Parameter(torch.Tensor(2 * heads * out_channels))
+        self.att = Parameter(torch.empty(2 * heads * out_channels))
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(heads * out_channels))
+            self.bias = Parameter(torch.empty(heads * out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
