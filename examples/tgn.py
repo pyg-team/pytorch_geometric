@@ -125,7 +125,7 @@ def train():
         loss += criterion(neg_out, torch.zeros_like(neg_out))
 
         # Update memory and neighbor loader with ground-truth state.
-        memory.update_state(batch)
+        memory.update_state(batch.src, pos_dst, batch.t, batch.msg)
 
         loss.backward()
         optimizer.step()
@@ -161,7 +161,7 @@ def test(loader):
         aps.append(average_precision_score(y_true, y_pred))
         aucs.append(roc_auc_score(y_true, y_pred))
 
-        memory.update_state(batch)
+        memory.update_state(batch.src, pos_dst, batch.t, batch.msg)
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
 
