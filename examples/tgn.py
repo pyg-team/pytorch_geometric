@@ -40,11 +40,11 @@ train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
 train_loader = TemporalDataLoader(train_data, batch_size=200,
-                                  negative_sampling=True, device=device)
+                                  negative_sampling=True)
 val_loader = TemporalDataLoader(val_data, batch_size=200,
-                                negative_sampling=True, device=device)
+                                negative_sampling=True)
 test_loader = TemporalDataLoader(test_data, batch_size=200,
-                                 negative_sampling=True, device=device)
+                                 negative_sampling=True)
 
 
 class GraphAttentionEmbedding(torch.nn.Module):
@@ -111,6 +111,7 @@ def train():
     total_loss = 0
     for batch in train_loader:
         optimizer.zero_grad()
+        batch = batch.to(device)
 
         # Get updated memory of all nodes involved in the computation.
         z, last_update = memory(batch.n_id)
@@ -145,6 +146,7 @@ def test(loader):
 
     aps, aucs = [], []
     for batch in loader:
+        batch = batch.to(device)
         z, last_update = memory(batch.n_id)
         z = gnn(z, last_update, batch.edge_index,
                 data.t[batch.e_id].to(device), data.msg[batch.e_id].to(device))

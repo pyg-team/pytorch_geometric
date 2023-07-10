@@ -39,7 +39,7 @@ def test_tgn():
     # Test TGNMemory training:
     for i, batch in enumerate(loader):
         z, last_update = memory(batch.n_id)
-        memory.update_state(batch)
+        memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
         if i == 0:
             assert batch.n_id.size(0) == 4
             assert batch.edge_index.numel() == 0
@@ -62,7 +62,7 @@ def test_tgn():
 
     batch = Batch(src=torch.tensor([3, 4]), dst=torch.tensor([4, 3]),
                   t=torch.tensor([10, 10]), msg=torch.randn(2, 16))
-    memory.update_state(batch)
+    memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
     post_z, post_last_update = memory(all_n_id)
     assert torch.allclose(z[0:3], post_z[0:3])
     assert torch.equal(post_last_update, torch.tensor([4, 6, 8, 10, 10]))
