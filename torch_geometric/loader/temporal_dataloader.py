@@ -15,6 +15,12 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             from which to load the data.
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
+        negative_sampling (bool, optional): Wether to use negative sampling
+            (default: False)
+        negative_sampler (optional): Function that takes in a minibatch
+            and outputs negative sampled node ids. If not provided by user,
+            this defaults to sampling randomly between the minimum
+            and maximum destination node ids.
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`.
     """
