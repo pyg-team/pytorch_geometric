@@ -54,7 +54,8 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             if self.negative_sampler is None:
                 batch.neg_dst = torch.randint(self.min_dst_idx,
                                               self.max_dst_idx + 1,
-                                              (src.size(0), ), dtype=torch.long,
+                                              (src.size(0), ),
+                                              dtype=torch.long,
                                               device=src.device)
             else:
                 batch.neg_dst = self.negative_sampler(batch)
