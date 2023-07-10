@@ -42,6 +42,7 @@ def test_tgn():
         n_id, edge_index, e_id = neighbor_loader(n_id)
         z, last_update = memory(n_id)
         memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
+        neighbor_loader.insert(batch.src, batch.dst)
         if i == 0:
             assert n_id.size(0) == 4
             assert edge_index.numel() == 0
