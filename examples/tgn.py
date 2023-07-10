@@ -102,7 +102,7 @@ optimizer = torch.optim.Adam(
 criterion = torch.nn.BCEWithLogitsLoss()
 
 # Helper vector to map global node indices to local ones.
-assoc = torch.empty(data.num_nodes, dtype=torch.long)
+assoc = torch.empty(data.num_nodes, dtype=torch.long, device=device)
 
 
 def train():
