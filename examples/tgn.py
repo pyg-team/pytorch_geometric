@@ -174,7 +174,7 @@ def test(loader):
         aucs.append(roc_auc_score(y_true, y_pred))
 
         memory.update_state(batch.src, pos_dst, batch.t, batch.msg)
-        neighbor_loader.insert(src, pos_dst)
+        neighbor_loader.insert(batch.src, pos_dst)
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
 
