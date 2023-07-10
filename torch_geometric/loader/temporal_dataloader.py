@@ -52,6 +52,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
                 self.max_dst_idx + 1,
                 (src.size(0), ),
                 dtype=torch.long,
+                dtype=src.device
             )
             list_to_make_n_ids += [batch.neg_dst]
         batch.n_id = torch.cat(list_to_make_n_ids).unique()
