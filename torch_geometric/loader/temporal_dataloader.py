@@ -38,8 +38,8 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         if self.negative_sampling:
             if negative_sampler is None:
                 # Ensure to only sample actual destination nodes as negatives.
-                self.min_dst_idx, self.max_dst_idx = int(self.data.dst.min()), int(
-                    self.data.dst.max())
+                self.min_dst_idx, self.max_dst_idx = int(
+                    self.data.dst.min()), int(self.data.dst.max())
                 self.negative_sampler = None
             else:
                 self.negative_sampler = negative_sampler
