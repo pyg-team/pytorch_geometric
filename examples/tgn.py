@@ -155,6 +155,7 @@ def test(loader):
     aps, aucs = [], []
     for batch in loader:
         batch = batch.to(device)
+
         n_id, edge_index, e_id = neighbor_loader(batch.n_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
         z, last_update = memory(n_id)
