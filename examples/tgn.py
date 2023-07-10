@@ -47,6 +47,7 @@ test_loader = TemporalDataLoader(test_data, batch_size=200,
                                  negative_sampling=True)
 neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
+
 class GraphAttentionEmbedding(torch.nn.Module):
     def __init__(self, in_channels, out_channels, msg_dim, time_enc):
         super().__init__()
@@ -103,6 +104,7 @@ criterion = torch.nn.BCEWithLogitsLoss()
 # Helper vector to map global node indices to local ones.
 assoc = torch.empty(data.num_nodes, dtype=torch.long)
 
+
 def train():
     memory.train()
     gnn.train()
@@ -115,7 +117,6 @@ def train():
     for batch in train_loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-
 
         n_id, edge_index, e_id = neighbor_loader(batch.n_id)
         assoc[n_id] = torch.arange(n_id.size(0))
