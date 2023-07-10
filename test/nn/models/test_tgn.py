@@ -8,9 +8,10 @@ from torch_geometric.nn.models.tgn import (
     LastAggregator,
     LastNeighborLoader,
 )
+import pytest
 
-
-def test_tgn():
+@pytest.mark.parametrize("negative_sampling", [False, True])
+def test_tgn(negative_sampling=False):
     memory_dim = 16
     time_dim = 16
 
@@ -20,7 +21,7 @@ def test_tgn():
     msg = torch.randn(10, 16)
     data = TemporalData(src=src, dst=dst, t=t, msg=msg)
 
-    loader = TemporalDataLoader(data, batch_size=5)
+    loader = TemporalDataLoader(data, batch_size=5, negative_sampling=negative_sampling)
     neighbor_loader = LastNeighborLoader(data.num_nodes, size=3)
     assert neighbor_loader.cur_e_id == 0
     assert neighbor_loader.e_id.size() == (data.num_nodes, 3)
@@ -49,12 +50,15 @@ def test_tgn():
             assert e_id.numel() == 0
             assert z.size() == (n_id.size(0), memory_dim)
             assert torch.sum(last_update) == 0
+
         else:
             assert n_id.size(0) == 5
             assert edge_index.numel() == 12
             assert e_id.numel() == 6
             assert z.size() == (n_id.size(0), memory_dim)
             assert torch.equal(last_update, torch.tensor([4, 3, 3, 4, 0]))
+        if negative_sampling:
+            assert batch.neg_dst.numel() == batch.src.size(0)
 
     # Test TGNMemory inference:
     memory.eval()
