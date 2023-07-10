@@ -92,12 +92,12 @@ class GCN2Conv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.weight1 = Parameter(torch.Tensor(channels, channels))
+        self.weight1 = Parameter(torch.empty(channels, channels))
 
         if shared_weights:
             self.register_parameter('weight2', None)
         else:
-            self.weight2 = Parameter(torch.Tensor(channels, channels))
+            self.weight2 = Parameter(torch.empty(channels, channels))
 
         self.reset_parameters()
 

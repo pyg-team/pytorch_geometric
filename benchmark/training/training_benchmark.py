@@ -36,7 +36,7 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        if hasattr(batch, 'adj_t'):
+        if 'adj_t' in batch:
             edge_index = batch.adj_t
         else:
             edge_index = batch.edge_index
@@ -67,7 +67,7 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        if len(batch.adj_t_dict) > 0:
+        if 'adj_t' in batch:
             edge_index_dict = batch.adj_t_dict
         else:
             edge_index_dict = batch.edge_index_dict
