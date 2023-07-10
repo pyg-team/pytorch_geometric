@@ -8,13 +8,13 @@ def test_generate_mesh_normals():
     transform = GenerateMeshNormals()
     assert str(transform) == 'GenerateMeshNormals()'
 
-    pos = torch.Tensor([
-        [0, 0, 0],
-        [-2, 1, 0],
-        [-1, 1, 0],
-        [0, 1, 0],
-        [1, 1, 0],
-        [2, 1, 0],
+    pos = torch.tensor([
+        [0.0, 0.0, 0.0],
+        [-2.0, 1.0, 0.0],
+        [-1.0, 1.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [1.0, 1.0, 0.0],
+        [2.0, 1.0, 0.0],
     ])
     face = torch.tensor([
         [0, 0, 0, 0],
@@ -26,4 +26,4 @@ def test_generate_mesh_normals():
     assert len(data) == 3
     assert data.pos.tolist() == pos.tolist()
     assert data.face.tolist() == face.tolist()
-    assert data.norm.tolist() == [[0, 0, -1]] * 6
+    assert data.norm.tolist() == [[0.0, 0.0, -1.0]] * 6

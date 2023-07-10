@@ -168,7 +168,7 @@ def test(model, loader, device, hetero, progress_bar=True,
     if hetero:
         for batch in loader:
             batch = batch.to(device)
-            if len(batch.adj_t_dict) > 0:
+            if 'adj_t' in batch:
                 edge_index_dict = batch.adj_t_dict
             else:
                 edge_index_dict = batch.edge_index_dict
@@ -182,7 +182,7 @@ def test(model, loader, device, hetero, progress_bar=True,
     else:
         for batch in loader:
             batch = batch.to(device)
-            if hasattr(batch, 'adj_t'):
+            if 'adj_t' in batch:
                 edge_index = batch.adj_t
             else:
                 edge_index = batch.edge_index

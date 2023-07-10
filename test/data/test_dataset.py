@@ -29,8 +29,8 @@ class MyStoredTestDataset(InMemoryDataset):
 
 
 def test_in_memory_dataset():
-    x1 = torch.Tensor([[1], [1], [1]])
-    x2 = torch.Tensor([[2], [2], [2]])
+    x1 = torch.tensor([[1.0], [1.0], [1.0]])
+    x2 = torch.tensor([[2.0], [2.0], [2.0]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     face = torch.tensor([[0], [1], [2]])
 
@@ -72,8 +72,8 @@ def test_in_memory_dataset():
 
 
 def test_stored_in_memory_dataset(tmp_path):
-    x1 = torch.Tensor([[1], [1], [1]])
-    x2 = torch.Tensor([[2], [2], [2], [2]])
+    x1 = torch.tensor([[1.0], [1.0], [1.0]])
+    x2 = torch.tensor([[2.0], [2.0], [2.0], [2.0]])
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
     data1 = Data(x1, edge_index, num_nodes=3, test_int=1, test_str='1')
@@ -97,8 +97,8 @@ def test_stored_in_memory_dataset(tmp_path):
 
 
 def test_stored_hetero_in_memory_dataset(tmp_path):
-    x1 = torch.Tensor([[1], [1], [1]])
-    x2 = torch.Tensor([[2], [2], [2], [2]])
+    x1 = torch.tensor([[1.0], [1.0], [1.0]])
+    x2 = torch.tensor([[2.0], [2.0], [2.0], [2.0]])
 
     data1 = HeteroData()
     data1['paper'].x = x1

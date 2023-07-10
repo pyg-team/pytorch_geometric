@@ -136,7 +136,7 @@ def test_visualize_feature_importance(
     path = osp.join(tmp_path, 'feature_importance.png')
 
     if node_mask_type is None:
-        with pytest.raises(ValueError, match="node_mask' is not"):
+        with pytest.raises(KeyError, match="Tried to collect 'node_mask'"):
             explanation.visualize_feature_importance(path, top_k=top_k)
     else:
         explanation.visualize_feature_importance(path, top_k=top_k)
