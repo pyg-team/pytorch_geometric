@@ -10,6 +10,18 @@ from ogb.nodeproppred import PygNodePropPredDataset
 def partition_dataset(ogbn_dataset: str, root_dir: str, num_partitions: int,
                       num_nbrs: glt.NumNeighbors, chunk_size: int,
                       cache_ratio: float):
+    ###########################################################################
+    # In distributed training (under the worker mode), each node in the cluster
+    # holds a partition of the graph. Thus before the training starts, we
+    # partition the dataset into multiple partitions, each of which corresponds
+    # to a specific training worker.
+    # The partitioning occurs in three steps:
+    #   1. Run a partition algorithm to assign nodes to partitions.
+    #   2. Construct partition graph structure based on the node assignment.
+    #   3. Split the node features and edge features based on the partition
+    # result.
+    ###########################################################################
+
     print(f'-- Loading {ogbn_dataset} ...')
     dataset = PygNodePropPredDataset(ogbn_dataset, root_dir)
     data = dataset[0]
@@ -45,7 +57,8 @@ def partition_dataset(ogbn_dataset: str, root_dir: str, num_partitions: int,
                    osp.join(test_idx_partitions_dir, f'partition{pidx}.pt'))
 
     print('-- Initializing graph ...')
-    csr_topo = glt.data.CSRTopo(edge_index=data.edge_index, layout='COO')
+    csr_topo = glt.data.Topology(edge_index=data.edge_index,
+                                 input_layout='COO')
     graph = glt.data.Graph(csr_topo, mode='ZERO_COPY')
 
     print('-- Sampling hotness ...')

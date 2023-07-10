@@ -84,6 +84,21 @@ SSHFS: https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-moun
 Ceph: https://docs.ceph.com/en/latest/install/
 
 ### Step 1: Prepare and partition data
+In distributed training (under the worker mode), each node in the cluster holds a partition of the graph.
+Thus before the training starts, we partition the OGBN-Products
+dataset into multiple partitions, each of which corresponds to a specific training worker.
+
+The partitioning occurs in three steps:
+  1. Run a partition algorithm to assign nodes to partitions.
+  2. Construct partition graph structure based on the node assignment.
+  3. Split the node features and edge features based on the partition result.
+
+GLT supports caching graph topology and frequently accessed features in GPU to accelerate GPU sampling and feature collection.
+For feature cache, we adopt a pre-sampling-based approach to determine the hotness of vertices, and cache features for vertices with higher hotness while loading the graph.
+The uncached feature data are stored in pinned memory for efficient access via UVA.
+
+For further information about partitioning, please refer to the [tutorial](https://github.com/alibaba/graphlearn-for-pytorch/blob/main/docs/tutorial/dist.md).
+
 Here we use `ogbn-products` and partition it into 2 partitions.
 ```
 python partition_ogbn_dataset.py --dataset=ogbn-products --root_dir=../../../data/ogbn-products --num_partitions=2

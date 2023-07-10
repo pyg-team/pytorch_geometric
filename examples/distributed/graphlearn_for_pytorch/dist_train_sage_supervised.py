@@ -60,6 +60,9 @@ def run_training_proc(
         init_method='tcp://{}:{}'.format(master_addr, training_pg_master_port))
 
     # Create distributed neighbor loader for training
+    # We replace PyG NeighborLoader with GLT DistNeighborLoader. GLT parameters
+    # for sampling is quite similar to PyG. We only need to configure networks
+    # and devices parameters within `worker_options`.
     train_idx = train_idx.split(
         train_idx.size(0) // num_training_procs_per_node)[local_proc_rank]
     train_loader = glt.distributed.DistNeighborLoader(
@@ -88,6 +91,7 @@ def run_training_proc(
             pin_memory=True))
 
     # Define model and optimizer.
+    # We directly plug in standard PyG models here.
     torch.cuda.set_device(current_device)
     model = GraphSAGE(
         in_channels=in_channels,
@@ -99,6 +103,7 @@ def run_training_proc(
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
     # Train and test.
+    # We don't need to modify the PyG code for the training & test process.
     f = open('dist_sage_sup.txt', 'a+')
     for epoch in range(0, epochs):
         model.train()
