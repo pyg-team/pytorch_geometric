@@ -33,7 +33,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             # Ensure to only sample actual destination nodes as negatives.
             self.min_dst_idx, self.max_dst_idx = int(self.data.dst.min()), int(
                 self.data.dst.max())
-        
+
         if kwargs.get('drop_last', False) and len(data) % batch_size != 0:
             arange = range(0, len(data) - batch_size, batch_size)
         else:
@@ -57,5 +57,5 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         n_id = torch.cat(list_to_make_n_ids).unique()
         
         batch.n_id, batch.edge_index, batch.e_id = n_id, edge_index, e_id
-        
+
         return batch
