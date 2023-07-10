@@ -119,7 +119,7 @@ def train():
         batch = batch.to(device)
 
         n_id, edge_index, e_id = neighbor_loader(batch.n_id)
-        assoc[n_id] = torch.arange(n_id.size(0))
+        assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         # Get updated memory of all nodes involved in the computation.
         z, last_update = memory(n_id)
