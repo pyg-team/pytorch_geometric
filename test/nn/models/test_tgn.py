@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.data import Batch, TemporalData
@@ -8,7 +9,7 @@ from torch_geometric.nn.models.tgn import (
     LastAggregator,
     LastNeighborLoader,
 )
-import pytest
+
 
 @pytest.mark.parametrize("negative_sampling", [False, True])
 def test_tgn(negative_sampling=False):
@@ -21,7 +22,8 @@ def test_tgn(negative_sampling=False):
     msg = torch.randn(10, 16)
     data = TemporalData(src=src, dst=dst, t=t, msg=msg)
 
-    loader = TemporalDataLoader(data, batch_size=5, negative_sampling=negative_sampling)
+    loader = TemporalDataLoader(data, batch_size=5,
+                                negative_sampling=negative_sampling)
     neighbor_loader = LastNeighborLoader(data.num_nodes, size=3)
     assert neighbor_loader.cur_e_id == 0
     assert neighbor_loader.e_id.size() == (data.num_nodes, 3)
