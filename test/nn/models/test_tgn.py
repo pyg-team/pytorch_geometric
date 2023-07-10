@@ -11,7 +11,7 @@ from torch_geometric.nn.models.tgn import (
 import pytest
 
 @pytest.mark.parametrize("negative_sampling", [False, True])
-def test_tgn(negative_sampling=False):
+def test_tgn(negative_sampling):
     memory_dim = 16
     time_dim = 16
 
