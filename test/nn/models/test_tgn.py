@@ -43,15 +43,15 @@ def test_tgn():
         z, last_update = memory(n_id)
         memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
         if i == 0:
-            assert batch.n_id.size(0) == 4
-            assert batch.edge_index.numel() == 0
-            assert batch.e_id.numel() == 0
+            assert n_id.size(0) == 4
+            assert edge_index.numel() == 0
+            assert e_id.numel() == 0
             assert z.size() == (batch.n_id.size(0), memory_dim)
             assert torch.sum(last_update) == 0
         else:
-            assert batch.n_id.size(0) == 5
-            assert batch.edge_index.numel() == 12
-            assert batch.e_id.numel() == 6
+            assert n_id.size(0) == 5
+            assert edge_index.numel() == 12
+            assert e_id.numel() == 6
             assert z.size() == (batch.n_id.size(0), memory_dim)
             assert torch.equal(last_update, torch.tensor([4, 3, 3, 4, 0]))
 
