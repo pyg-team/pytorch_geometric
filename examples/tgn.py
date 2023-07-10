@@ -121,7 +121,7 @@ def train():
         assoc[n_id] = torch.arange(n_id.size(0))
 
         # Get updated memory of all nodes involved in the computation.
-        z, last_update = memory(batch.n_id)
+        z, last_update = memory(n_id)
         z = gnn(z, last_update, batch.edge_index,
                 data.t[batch.e_id].to(device), data.msg[batch.e_id].to(device))
         pos_dst = batch.dst
@@ -156,7 +156,7 @@ def test(loader):
         batch = batch.to(device)
         n_id, edge_index, e_id = neighbor_loader(batch.n_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
-        z, last_update = memory(batch.n_id)
+        z, last_update = memory(n_id)
         z = gnn(z, last_update, batch.edge_index,
                 data.t[batch.e_id].to(device), data.msg[batch.e_id].to(device))
         pos_dst = batch.dst
