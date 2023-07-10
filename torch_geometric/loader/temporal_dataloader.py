@@ -19,7 +19,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`.
     """
     def __init__(self, data: TemporalData, batch_size: int = 1,
-                 negative_sampling=False, **kwargs):
+                 negative_sampling=False, negative_sampler=None, **kwargs):
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
@@ -30,9 +30,12 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         self.events_per_batch = batch_size
         self.negative_sampling = negative_sampling
         if self.negative_sampling:
-            # Ensure to only sample actual destination nodes as negatives.
-            self.min_dst_idx, self.max_dst_idx = int(self.data.dst.min()), int(
-                self.data.dst.max())
+            if neighbor_sampler is None:
+                # Ensure to only sample actual destination nodes as negatives.
+                self.min_dst_idx, self.max_dst_idx = int(self.data.dst.min()), int(
+                    self.data.dst.max())
+            else:
+                self.negative_sampler = negative_sampler
 
         if kwargs.get('drop_last', False) and len(data) % batch_size != 0:
             arange = range(0, len(data) - batch_size, batch_size)
@@ -47,10 +50,13 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         list_to_make_n_ids = [batch.src, pos_dst]
         if self.negative_sampling:
             # Sample negative destination nodes.
-            batch.neg_dst = torch.randint(self.min_dst_idx,
-                                          self.max_dst_idx + 1,
-                                          (src.size(0), ), dtype=torch.long,
-                                          device=src.device)
+            if neighbor_sampler is None:
+                batch.neg_dst = torch.randint(self.min_dst_idx,
+                                              self.max_dst_idx + 1,
+                                              (src.size(0), ), dtype=torch.long,
+                                              device=src.device)
+            else:
+                batch.neg_dst = self.negative_sampler(batch)
             list_to_make_n_ids += [batch.neg_dst]
         batch.n_id = torch.cat(list_to_make_n_ids).unique()
 
