@@ -47,9 +47,12 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
         list_to_make_n_ids = [batch.src, pos_dst]
         if self.negative_sampling:
             # Sample negative destination nodes.
-            batch.neg_dst = torch.randint(self.min_dst_idx,
-                                          self.max_dst_idx + 1,
-                                          (src.size(0), ), dtype=torch.long,)
+            batch.neg_dst = torch.randint(
+                self.min_dst_idx,
+                self.max_dst_idx + 1,
+                (src.size(0), ),
+                dtype=torch.long,
+            )
             list_to_make_n_ids += [batch.neg_dst]
         n_id = torch.cat(list_to_make_n_ids).unique()
         
