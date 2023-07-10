@@ -123,8 +123,8 @@ def train():
 
         # Get updated memory of all nodes involved in the computation.
         z, last_update = memory(n_id)
-        z = gnn(z, last_update, batch.edge_index,
-                data.t[batch.e_id].to(device), data.msg[batch.e_id].to(device))
+        z = gnn(z, last_update, edge_index,
+                data.t[e_id].to(device), data.msg[e_id].to(device))
         pos_dst = batch.dst
         pos_out = link_pred(z[assoc[batch.src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[batch.src]], z[assoc[batch.neg_dst]])
