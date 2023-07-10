@@ -45,7 +45,7 @@ val_loader = TemporalDataLoader(val_data, batch_size=200,
                                 negative_sampling=True)
 test_loader = TemporalDataLoader(test_data, batch_size=200,
                                  negative_sampling=True)
-
+neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
 class GraphAttentionEmbedding(torch.nn.Module):
     def __init__(self, in_channels, out_channels, msg_dim, time_enc):
@@ -100,6 +100,8 @@ optimizer = torch.optim.Adam(
     | set(link_pred.parameters()), lr=0.0001)
 criterion = torch.nn.BCEWithLogitsLoss()
 
+# Helper vector to map global node indices to local ones.
+assoc = torch.empty(data.num_nodes, dtype=torch.long)
 
 def train():
     memory.train()
@@ -107,17 +109,21 @@ def train():
     link_pred.train()
 
     memory.reset_state()  # Start with a fresh memory.
+    neighbor_loader.reset_state()  # Start with an empty graph.
 
     total_loss = 0
     for batch in train_loader:
         optimizer.zero_grad()
         batch = batch.to(device)
 
+
+        n_id, edge_index, e_id = neighbor_loader(batch.n_id)
+        assoc[n_id] = torch.arange(n_id.size(0))
+
         # Get updated memory of all nodes involved in the computation.
         z, last_update = memory(batch.n_id)
         z = gnn(z, last_update, batch.edge_index,
                 data.t[batch.e_id].to(device), data.msg[batch.e_id].to(device))
-        assoc = batch.assoc
         pos_dst = batch.dst
         pos_out = link_pred(z[assoc[batch.src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[batch.src]], z[assoc[batch.neg_dst]])
@@ -127,6 +133,7 @@ def train():
 
         # Update memory and neighbor loader with ground-truth state.
         memory.update_state(batch.src, pos_dst, batch.t, batch.msg)
+        neighbor_loader.insert(batch.src, pos_dst)
 
         loss.backward()
         optimizer.step()
@@ -147,10 +154,11 @@ def test(loader):
     aps, aucs = [], []
     for batch in loader:
         batch = batch.to(device)
+        n_id, edge_index, e_id = neighbor_loader(batch.n_id)
+        assoc[n_id] = torch.arange(n_id.size(0), device=device)
         z, last_update = memory(batch.n_id)
         z = gnn(z, last_update, batch.edge_index,
                 data.t[batch.e_id].to(device), data.msg[batch.e_id].to(device))
-        assoc = batch.assoc
         pos_dst = batch.dst
         pos_out = link_pred(z[assoc[batch.src]], z[assoc[pos_dst]])
         neg_out = link_pred(z[assoc[batch.src]], z[assoc[batch.neg_dst]])
@@ -164,6 +172,7 @@ def test(loader):
         aucs.append(roc_auc_score(y_true, y_pred))
 
         memory.update_state(batch.src, pos_dst, batch.t, batch.msg)
+        neighbor_loader.insert(src, pos_dst)
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
 

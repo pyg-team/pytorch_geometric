@@ -19,7 +19,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             :class:`torch.utils.data.DataLoader`.
     """
     def __init__(self, data: TemporalData, batch_size: int = 1,
-                 negative_sampling=False, neighbor_loader_size=10, **kwargs):
+                 negative_sampling=False, **kwargs):
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
@@ -33,20 +33,13 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             # Ensure to only sample actual destination nodes as negatives.
             self.min_dst_idx, self.max_dst_idx = int(self.data.dst.min()), int(
                 self.data.dst.max())
-        self.neighbor_loader = LastNeighborLoader(data.num_nodes,
-                                                  size=neighbor_loader_size)
-        # Helper vector to map global node indices to local ones.
-        self.assoc = torch.empty(data.num_nodes, dtype=torch.long)
+        
         if kwargs.get('drop_last', False) and len(data) % batch_size != 0:
             arange = range(0, len(data) - batch_size, batch_size)
         else:
             arange = range(0, len(data), batch_size)
 
         super().__init__(arange, 1, shuffle=False, collate_fn=self, **kwargs)
-
-    def _get_iterator(self):
-        self.neighbor_loader.reset_state()  # Start with an empty graph.
-        return super()._get_iterator()
 
     def __call__(self, arange: List[int]) -> TemporalData:
         batch = self.data[arange[0]:arange[0] + self.events_per_batch]
@@ -59,8 +52,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
                                           (src.size(0), ), dtype=torch.long,)
             list_to_make_n_ids += [batch.neg_dst]
         n_id = torch.cat(list_to_make_n_ids).unique()
-        n_id, edge_index, e_id = self.neighbor_loader(n_id)
-        self.assoc[n_id] = torch.arange(n_id.size(0))
+        
         batch.assoc, batch.n_id, batch.edge_index, batch.e_id = self.assoc, n_id, edge_index, e_id
-        self.neighbor_loader.insert(src, pos_dst)
+        
         return batch
