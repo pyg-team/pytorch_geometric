@@ -10,11 +10,7 @@ from tqdm import tqdm
 
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain.config import (
-    MaskType,
-    ModelMode,
-    ModelTaskLevel,
-)
+from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 from torch_geometric.nn import MessagePassing
 
 
