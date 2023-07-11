@@ -11,7 +11,7 @@ from torch_geometric.nn import SAGEConv
 
 dataset = Reddit('../data/Reddit')
 data = dataset[0]
-NUM_EPOCHS=30
+NUM_EPOCHS = 30
 
 cluster_data = ClusterData(data, num_parts=1500, recursive=False,
                            save_dir=dataset.processed_dir)
@@ -101,8 +101,9 @@ def test():  # Inference should be performed on the full graph.
         accs.append(correct / mask.sum().item())
     return accs
 
+
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     loss = train()
     if epoch % 5 == 0:
         train_acc, val_acc, test_acc = test()

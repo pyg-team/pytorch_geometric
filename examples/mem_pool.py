@@ -101,10 +101,11 @@ def test(loader):
         total_correct += int((out.argmax(dim=-1) == data.y).sum())
     return total_correct / len(loader.dataset)
 
+
 start = time.time()
 patience = start_patience = 250
 test_acc = best_val_acc = 0.
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     train()
     val_acc = test(val_loader)
     if epoch % 500 == 0:

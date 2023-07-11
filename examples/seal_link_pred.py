@@ -1,7 +1,7 @@
 import math
 import os.path as osp
-from itertools import chain
 import time
+from itertools import chain
 
 import numpy as np
 import torch
@@ -137,6 +137,7 @@ test_loader = DataLoader(test_dataset, batch_size=32)
 
 NUM_EPOCHS = 50
 
+
 class DGCNN(torch.nn.Module):
     def __init__(self, hidden_channels, num_layers, GNN=GCNConv, k=0.6):
         super().__init__()
@@ -217,9 +218,10 @@ def test(loader):
 
     return roc_auc_score(torch.cat(y_true), torch.cat(y_pred))
 
+
 best_val_auc = test_auc = 0
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     loss = train()
     val_auc = test(val_loader)
     if val_auc > best_val_auc:

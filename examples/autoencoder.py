@@ -103,6 +103,7 @@ def test(data):
     z = model.encode(data.x, data.edge_index)
     return model.test(z, data.pos_edge_label_index, data.neg_edge_label_index)
 
+
 start = time.time()
 for epoch in range(1, args.epochs + 1):
     loss = train()

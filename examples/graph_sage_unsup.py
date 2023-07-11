@@ -10,7 +10,7 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import GraphSAGE
 
-NUM_EPOCHS=50
+NUM_EPOCHS = 50
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -69,8 +69,9 @@ def test():
 
     return val_acc, test_acc
 
+
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     loss = train()
     val_acc, test_acc = test()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '

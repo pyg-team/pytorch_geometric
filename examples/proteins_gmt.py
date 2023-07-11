@@ -85,7 +85,7 @@ def test(loader):
 
 
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     train_loss = train()
     val_acc = test(val_loader)
     test_acc = test(test_loader)

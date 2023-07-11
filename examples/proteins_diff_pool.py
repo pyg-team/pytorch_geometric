@@ -1,6 +1,6 @@
 import os.path as osp
-from math import ceil
 import time
+from math import ceil
 
 import torch
 import torch.nn.functional as F
@@ -144,7 +144,7 @@ def test(loader):
 
 best_val_acc = test_acc = 0
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     train_loss = train(epoch)
     val_acc = test(val_loader)
     if val_acc > best_val_acc:

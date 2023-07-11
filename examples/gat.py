@@ -69,6 +69,7 @@ def test():
         accs.append(int((pred[mask] == data.y[mask]).sum()) / int(mask.sum()))
     return accs
 
+
 start = time.time()
 best_val_acc = final_test_acc = 0
 for epoch in range(1, args.epochs + 1):

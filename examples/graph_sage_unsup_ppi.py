@@ -13,7 +13,7 @@ from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader, LinkNeighborLoader
 from torch_geometric.nn import GraphSAGE
 
-NUM_EPOCHS=5
+NUM_EPOCHS = 5
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
 train_dataset = PPI(path, split='train')
@@ -96,8 +96,9 @@ def test():
 
     return train_f1, val_f1, test_f1
 
+
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
     train_f1, val_f1, test_f1 = test()

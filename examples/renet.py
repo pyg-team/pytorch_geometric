@@ -69,8 +69,9 @@ def test(loader):
     result = result / (2 * len(loader.dataset))
     return result.tolist()
 
+
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     train()
     mrr, hits1, hits3, hits10 = test(test_loader)
     print(f'Epoch: {epoch:02d}, MRR: {mrr:.4f}, Hits@1: {hits1:.4f}, '

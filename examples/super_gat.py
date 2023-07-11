@@ -15,6 +15,7 @@ data = dataset[0]
 
 NUM_EPOCHS = 500
 
+
 class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
@@ -62,8 +63,9 @@ def test(data):
         accs.append(acc)
     return accs
 
+
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     train(data)
     train_acc, val_acc, test_acc = test(data)
     print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '

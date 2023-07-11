@@ -17,7 +17,7 @@ parser.add_argument('--lamb', type=float, default=0.0,
                     help='Balances loss from hard labels and teacher outputs')
 args = parser.parse_args()
 
-NUM_EPOCHS=500
+NUM_EPOCHS = 500
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -91,7 +91,7 @@ def test_student():
 
 print('Training Student MLP:')
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     loss = train_student()
     if epoch % 20 == 0:
         train_acc, val_acc, test_acc = test_student()

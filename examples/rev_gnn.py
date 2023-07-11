@@ -81,7 +81,7 @@ class RevGNN(torch.nn.Module):
 
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
 
-NUM_EPOCHS=1000
+NUM_EPOCHS = 1000
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 transform = T.Compose([T.ToDevice(device), T.ToSparseTensor()])
@@ -184,7 +184,7 @@ best_val = 0.0
 final_train = 0.0
 final_test = 0.0
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     loss = train(epoch)
     train_acc, val_acc, test_acc = test(epoch)
     if val_acc > best_val:

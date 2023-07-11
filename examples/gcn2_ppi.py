@@ -20,7 +20,8 @@ train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 
-NUM_EPOCHS=2000
+NUM_EPOCHS = 2000
+
 
 class Net(torch.nn.Module):
     def __init__(self, hidden_channels, num_layers, alpha, theta,
@@ -90,8 +91,9 @@ def test(loader):
     y, pred = torch.cat(ys, dim=0).numpy(), torch.cat(preds, dim=0).numpy()
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
+
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)

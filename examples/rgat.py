@@ -11,7 +11,8 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Entities')
 dataset = Entities(path, 'AIFB')
 data = dataset[0]
 data.x = torch.randn(data.num_nodes, 16)
-NUM_EPOCHS=50
+NUM_EPOCHS = 50
+
 
 class RGAT(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels,
@@ -52,8 +53,9 @@ def test():
     test_acc = float((pred[data.test_idx] == data.test_y).float().mean())
     return train_acc, test_acc
 
+
 start = time.time()
-for epoch in range(1, NUM_EPOCHS+1):
+for epoch in range(1, NUM_EPOCHS + 1):
     loss = train()
     train_acc, test_acc = test()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Train: {train_acc:.4f} '
