@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -12,6 +13,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='AIFB',
                     choices=['AIFB', 'MUTAG', 'BGS', 'AM'])
 args = parser.parse_args()
+
+NUM_EPOCHS = 50
 
 # Trade memory consumption for faster computation.
 if args.dataset in ['AIFB', 'MUTAG']:
@@ -74,9 +77,10 @@ def test():
     test_acc = float((pred[data.test_idx] == data.test_y).float().mean())
     return train_acc, test_acc
 
-
-for epoch in range(1, 51):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     loss = train()
     train_acc, test_acc = test()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Train: {train_acc:.4f} '
           f'Test: {test_acc:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

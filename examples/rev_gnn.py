@@ -5,6 +5,7 @@
 # | 7 layers 160 channels   | 0.8276 ± 0.0027 | 0.9272 ± 0.0006 |
 
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -79,6 +80,8 @@ class RevGNN(torch.nn.Module):
 
 
 from ogb.nodeproppred import Evaluator, PygNodePropPredDataset  # noqa
+
+NUM_EPOCHS=1000
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 transform = T.Compose([T.ToDevice(device), T.ToSparseTensor()])
@@ -180,7 +183,8 @@ def test(epoch):
 best_val = 0.0
 final_train = 0.0
 final_test = 0.0
-for epoch in range(1, 1001):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     loss = train(epoch)
     train_acc, val_acc, test_acc = test(epoch)
     if val_acc > best_val:
@@ -192,3 +196,4 @@ for epoch in range(1, 1001):
 
 print(f'Final Train: {final_train:.4f}, Best Val: {best_val:.4f}, '
       f'Final Test: {final_test:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

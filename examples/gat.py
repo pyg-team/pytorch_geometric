@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -68,7 +69,7 @@ def test():
         accs.append(int((pred[mask] == data.y[mask]).sum()) / int(mask.sum()))
     return accs
 
-
+start = time.time()
 best_val_acc = final_test_acc = 0
 for epoch in range(1, args.epochs + 1):
     loss = train()
@@ -77,3 +78,4 @@ for epoch in range(1, args.epochs + 1):
         best_val_acc = val_acc
         test_acc = tmp_test_acc
     log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
+print(f"Average time per epoch: {(time.time()-start)/args.epochs:.4f}")

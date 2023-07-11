@@ -1,3 +1,5 @@
+import time
+
 import torch
 import torch.nn.functional as F
 from torch.nn import ModuleList
@@ -9,6 +11,7 @@ from torch_geometric.nn import SAGEConv
 
 dataset = Reddit('../data/Reddit')
 data = dataset[0]
+NUM_EPOCHS=30
 
 cluster_data = ClusterData(data, num_parts=1500, recursive=False,
                            save_dir=dataset.processed_dir)
@@ -98,8 +101,8 @@ def test():  # Inference should be performed on the full graph.
         accs.append(correct / mask.sum().item())
     return accs
 
-
-for epoch in range(1, 31):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     loss = train()
     if epoch % 5 == 0:
         train_acc, val_acc, test_acc = test()
@@ -107,3 +110,4 @@ for epoch in range(1, 31):
               f'Val: {val_acc:.4f}, test: {test_acc:.4f}')
     else:
         print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

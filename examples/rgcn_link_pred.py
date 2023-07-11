@@ -7,6 +7,7 @@ Caution: This script is executed in a full-batch fashion, and therefore needs
 to run on CPU (following the experimental setup in the official paper).
 """
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -19,8 +20,7 @@ from torch_geometric.nn import GAE, RGCNConv
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'RLPD')
 dataset = RelLinkPredDataset(path, 'FB15k-237')
 data = dataset[0]
-
-
+NUM_EPOCHS= 10000
 class RGCNEncoder(torch.nn.Module):
     def __init__(self, num_nodes, hidden_channels, num_relations):
         super().__init__()
@@ -169,10 +169,11 @@ def compute_mrr(z, edge_index, edge_type):
 
     return (1. / torch.tensor(ranks, dtype=torch.float)).mean()
 
-
-for epoch in range(1, 10001):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     loss = train()
     print(f'Epoch: {epoch:05d}, Loss: {loss:.4f}')
     if (epoch % 500) == 0:
         valid_mrr, test_mrr = test()
         print(f'Val MRR: {valid_mrr:.4f}, Test MRR: {test_mrr:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

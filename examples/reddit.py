@@ -1,5 +1,6 @@
 import copy
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -8,6 +9,9 @@ from tqdm import tqdm
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
+
+
+NUM_EPOCHS = 10
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -107,10 +111,11 @@ def test():
         accs.append(int((y_hat[mask] == y[mask]).sum()) / int(mask.sum()))
     return accs
 
-
-for epoch in range(1, 11):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     loss, acc = train(epoch)
     print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
     train_acc, val_acc, test_acc = test()
     print(f'Epoch: {epoch:02d}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
           f'Test: {test_acc:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

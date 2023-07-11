@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -8,6 +9,8 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import Planetoid
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import GraphSAGE
+
+NUM_EPOCHS=50
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -66,9 +69,10 @@ def test():
 
     return val_acc, test_acc
 
-
-for epoch in range(1, 51):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     loss = train()
     val_acc, test_acc = test()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
           f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -12,6 +13,7 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
 
+NUM_EPOCHS = 500
 
 class Net(torch.nn.Module):
     def __init__(self):
@@ -60,9 +62,10 @@ def test(data):
         accs.append(acc)
     return accs
 
-
-for epoch in range(1, 501):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     train(data)
     train_acc, val_acc, test_acc = test(data)
     print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
           f'Test: {test_acc:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -7,6 +8,8 @@ from torch.nn import BatchNorm1d, LeakyReLU, Linear
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import DeepGCNLayer, GATConv, MemPooling
+
+NUM_EPOCHS = 2000
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'TUD')
 dataset = TUDataset(path, name="PROTEINS_full", use_node_attr=True)
@@ -98,10 +101,10 @@ def test(loader):
         total_correct += int((out.argmax(dim=-1) == data.y).sum())
     return total_correct / len(loader.dataset)
 
-
+start = time.time()
 patience = start_patience = 250
 test_acc = best_val_acc = 0.
-for epoch in range(1, 2001):
+for epoch in range(1, NUM_EPOCHS+1):
     train()
     val_acc = test(val_loader)
     if epoch % 500 == 0:
@@ -115,3 +118,4 @@ for epoch in range(1, 2001):
     print(f'Epoch {epoch:02d}, Val: {val_acc:.3f}, Test: {test_acc:.3f}')
     if patience <= 0:
         break
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

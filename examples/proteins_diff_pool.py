@@ -1,5 +1,6 @@
 import os.path as osp
 from math import ceil
+import time
 
 import torch
 import torch.nn.functional as F
@@ -10,6 +11,8 @@ from torch_geometric.loader import DenseDataLoader
 from torch_geometric.nn import DenseSAGEConv, dense_diff_pool
 
 max_nodes = 150
+
+NUM_EPOCHS = 150
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data',
                 'PROTEINS_dense')
@@ -140,7 +143,8 @@ def test(loader):
 
 
 best_val_acc = test_acc = 0
-for epoch in range(1, 151):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     train_loss = train(epoch)
     val_acc = test(val_loader)
     if val_acc > best_val_acc:
@@ -148,3 +152,4 @@ for epoch in range(1, 151):
         best_val_acc = val_acc
     print(f'Epoch: {epoch:03d}, Train Loss: {train_loss:.4f}, '
           f'Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

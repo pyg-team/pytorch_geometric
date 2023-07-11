@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -7,6 +8,8 @@ from torch.nn import Linear
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCNConv, GraphMultisetTransformer
+
+NUM_EPOCHS = 200
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
@@ -81,9 +84,11 @@ def test(loader):
     return total_correct / len(loader.dataset)
 
 
-for epoch in range(1, 201):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     train_loss = train()
     val_acc = test(val_loader)
     test_acc = test(test_loader)
     print(f'Epoch: {epoch:03d}, Loss: {train_loss:.4f}, '
           f'Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

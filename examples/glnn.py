@@ -3,6 +3,7 @@
 
 import argparse
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -15,6 +16,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--lamb', type=float, default=0.0,
                     help='Balances loss from hard labels and teacher outputs')
 args = parser.parse_args()
+
+NUM_EPOCHS=500
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -87,9 +90,11 @@ def test_student():
 
 
 print('Training Student MLP:')
-for epoch in range(1, 501):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     loss = train_student()
     if epoch % 20 == 0:
         train_acc, val_acc, test_acc = test_student()
         print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
               f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

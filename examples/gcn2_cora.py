@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -13,7 +14,7 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 transform = T.Compose([T.NormalizeFeatures(), T.GCNNorm(), T.ToSparseTensor()])
 dataset = Planetoid(path, dataset, transform=transform)
 data = dataset[0]
-
+NUM_EPOCHS=1000
 
 class Net(torch.nn.Module):
     def __init__(self, hidden_channels, num_layers, alpha, theta,
@@ -77,7 +78,8 @@ def test():
 
 
 best_val_acc = test_acc = 0
-for epoch in range(1, 1001):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     loss = train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
@@ -86,3 +88,4 @@ for epoch in range(1, 1001):
     print(f'Epoch: {epoch:04d}, Loss: {loss:.4f} Train: {train_acc:.4f}, '
           f'Val: {val_acc:.4f}, Test: {tmp_test_acc:.4f}, '
           f'Final Test: {test_acc:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")

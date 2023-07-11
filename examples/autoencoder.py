@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 
@@ -102,8 +103,9 @@ def test(data):
     z = model.encode(data.x, data.edge_index)
     return model.test(z, data.pos_edge_label_index, data.neg_edge_label_index)
 
-
+start = time.time()
 for epoch in range(1, args.epochs + 1):
     loss = train()
     auc, ap = test(test_data)
     print(f'Epoch: {epoch:03d}, AUC: {auc:.4f}, AP: {ap:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/args.epochs:.4f}")

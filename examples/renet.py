@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -8,6 +9,7 @@ from torch_geometric.loader import DataLoader
 from torch_geometric.nn.models.re_net import RENet
 
 seq_len = 10
+NUM_EPOCHS = 20
 
 # Load the dataset and precompute history objects.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ICEWS18')
@@ -67,9 +69,10 @@ def test(loader):
     result = result / (2 * len(loader.dataset))
     return result.tolist()
 
-
-for epoch in range(1, 21):
+start = time.time()
+for epoch in range(1, NUM_EPOCHS+1):
     train()
     mrr, hits1, hits3, hits10 = test(test_loader)
     print(f'Epoch: {epoch:02d}, MRR: {mrr:.4f}, Hits@1: {hits1:.4f}, '
           f'Hits@3: {hits3:.4f}, Hits@10: {hits10:.4f}')
+print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")
