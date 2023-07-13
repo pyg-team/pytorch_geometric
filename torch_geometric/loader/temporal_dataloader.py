@@ -1,9 +1,8 @@
-from typing import List, Union
+from typing import List
 
 import torch
 
 from torch_geometric.data import TemporalData
-from torch_geometric.nn.models.tgn import LastNeighborLoader
 
 
 class TemporalDataLoader(torch.utils.data.DataLoader):
@@ -53,7 +52,7 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
 
     def __call__(self, arange: List[int]) -> TemporalData:
         batch = self.data[arange[0]:arange[0] + self.events_per_batch]
-        src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
+        src, pos_dst = batch.src, batch.dst
         list_to_make_n_ids = [batch.src, pos_dst]
         if self.negative_sampling:
             # Sample negative destination nodes.
