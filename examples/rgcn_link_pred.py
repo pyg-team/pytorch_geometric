@@ -58,12 +58,15 @@ class DistMultDecoder(torch.nn.Module):
         rel = self.rel_emb[edge_type]
         return torch.sum(z_src * rel * z_dst, dim=1)
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+data.to(device)
 
 model = GAE(
     RGCNEncoder(data.num_nodes, hidden_channels=500,
                 num_relations=dataset.num_relations),
     DistMultDecoder(dataset.num_relations // 2, hidden_channels=500),
-)
+).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
@@ -73,8 +76,10 @@ def negative_sampling(edge_index, num_nodes):
     mask_2 = ~mask_1
 
     neg_edge_index = edge_index.clone()
-    neg_edge_index[0, mask_1] = torch.randint(num_nodes, (mask_1.sum(), ))
-    neg_edge_index[1, mask_2] = torch.randint(num_nodes, (mask_2.sum(), ))
+    neg_edge_index[0, mask_1] = torch.randint(num_nodes, (mask_1.sum(), ),
+                                              device=neg_edge_index.device)
+    neg_edge_index[1, mask_2] = torch.randint(num_nodes, (mask_2.sum(), ),
+                                              device=neg_edge_index.device)
     return neg_edge_index
 
 
