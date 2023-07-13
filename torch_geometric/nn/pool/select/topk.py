@@ -36,7 +36,6 @@ def topk(
         x, x_perm = torch.sort(x.view(-1), descending=True)
         batch = batch[x_perm]
         batch, batch_perm = torch.sort(batch, descending=False, stable=True)
-        x = x[batch_perm]
 
         rank = torch.arange(x.size(0), dtype=torch.long, device=x.device)
         cumsum = torch.bincount(batch + 1, minlength=batch[-1] + 2).cumsum(-1)
