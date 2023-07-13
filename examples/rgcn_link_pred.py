@@ -58,6 +58,7 @@ class DistMultDecoder(torch.nn.Module):
         rel = self.rel_emb[edge_type]
         return torch.sum(z_src * rel * z_dst, dim=1)
 
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 data.to(device)
