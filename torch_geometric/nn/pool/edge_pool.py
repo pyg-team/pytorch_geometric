@@ -1,10 +1,51 @@
-from typing import Callable, List, NamedTuple, Optional, Tuple
+from typing import Callable, NamedTuple, Optional, Tuple
 
 import torch
 import torch.nn.functional as F
 from torch import Tensor
 
-from torch_geometric.utils import coalesce, scatter, softmax
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.utils import coalesce, maximal_matching, scatter, softmax
+
+
+def maximal_matching_cluster(edge_index: Adj, num_nodes: Optional[int] = None,
+                             perm: OptTensor = None) -> Tuple[Tensor, Tensor]:
+    r"""Computes the Maximal Matching clustering of a graph, where the
+    matched edges form 2-element clusters while unmatched vertices are treated
+    as singletons.
+
+    The algorithm greedily selects the edges in their canonical order. If a
+    permutation :obj:`perm` is provided, the nodes are extracted following
+    that permutation instead.
+
+    This method returns both the matching and the clustering.
+
+    Args:
+        edge_index (Tensor or SparseTensor): The graph connectivity.
+        num_nodes (int, optional): The number of nodes in the graph.
+        perm (LongTensor, optional): Permutation vector. Must be of size
+            :obj:`(m,)` (defaults to :obj:`None`).
+
+    :rtype: (:class:`ByteTensor`, :class:`LongTensor`)
+    """
+    if isinstance(edge_index, SparseTensor):
+        row, col, _ = edge_index.coo()
+        device = edge_index.device()
+        n = edge_index.size(0)
+    else:
+        row, col = edge_index[0], edge_index[1]
+        device = row.device
+        n = num_nodes
+
+        if n is None:
+            n = edge_index.max().item() + 1
+
+    match = maximal_matching(edge_index, num_nodes, perm)
+    cluster = torch.arange(n, dtype=torch.long, device=device)
+    cluster[col[match]] = row[match]
+
+    _, cluster = torch.unique(cluster, return_inverse=True)
+    return match, cluster
 
 
 class UnpoolInfo(NamedTuple):
@@ -143,53 +184,21 @@ class EdgePooling(torch.nn.Module):
         batch: Tensor,
         edge_score: Tensor,
     ) -> Tuple[Tensor, Tensor, Tensor, UnpoolInfo]:
-
-        cluster = torch.empty_like(batch)
-        perm: List[int] = torch.argsort(edge_score, descending=True).tolist()
-
-        # Iterate through all edges, selecting it if it is not incident to
-        # another already chosen edge.
-        mask = torch.ones(x.size(0), dtype=torch.bool)
-
-        i = 0
-        new_edge_indices: List[int] = []
-        edge_index_cpu = edge_index.cpu()
-        for edge_idx in perm:
-            source = int(edge_index_cpu[0, edge_idx])
-            if not bool(mask[source]):
-                continue
-
-            target = int(edge_index_cpu[1, edge_idx])
-            if not bool(mask[target]):
-                continue
-
-            new_edge_indices.append(edge_idx)
-
-            cluster[source] = i
-            mask[source] = False
-
-            if source != target:
-                cluster[target] = i
-                mask[target] = False
-
-            i += 1
-
-        # The remaining nodes are simply kept:
-        j = int(mask.sum())
-        cluster[mask] = torch.arange(i, i + j, device=x.device)
-        i += j
+        perm = torch.argsort(edge_score, descending=True)
+        match, cluster = maximal_matching_cluster(edge_index,
+                                                  num_nodes=x.size(0),
+                                                  perm=perm)
+        c = cluster.max() + 1
 
         # We compute the new features as an addition of the old ones.
-        new_x = scatter(x, cluster, dim=0, dim_size=i, reduce='sum')
-        new_edge_score = edge_score[new_edge_indices]
-        if int(mask.sum()) > 0:
-            remaining_score = x.new_ones(
-                (new_x.size(0) - len(new_edge_indices), ))
-            new_edge_score = torch.cat([new_edge_score, remaining_score])
+        new_x = scatter(x, cluster, dim=0, dim_size=c, reduce='sum')
+        new_edge_score = torch.ones(c, dtype=x.dtype, device=x.device)
+
+        new_edge_score[cluster[edge_index[0, match]]] = edge_score[match]
         new_x = new_x * new_edge_score.view(-1, 1)
 
-        new_edge_index = coalesce(cluster[edge_index], num_nodes=new_x.size(0))
-        new_batch = x.new_empty(new_x.size(0), dtype=torch.long)
+        new_edge_index = coalesce(cluster[edge_index], num_nodes=c)
+        new_batch = x.new_empty(c, dtype=torch.long)
         new_batch = new_batch.scatter_(0, cluster, batch)
 
         unpool_info = UnpoolInfo(edge_index=edge_index, cluster=cluster,

@@ -7,7 +7,7 @@ from torch_geometric.typing import OptTensor
 
 from .asap import ASAPooling
 from .avg_pool import avg_pool, avg_pool_neighbor_x, avg_pool_x
-from .edge_pool import EdgePooling
+from .edge_pool import EdgePooling, maximal_matching_cluster
 from .glob import global_add_pool, global_max_pool, global_mean_pool
 from .graclus import graclus
 from .max_pool import max_pool, max_pool_neighbor_x, max_pool_x
@@ -336,6 +336,7 @@ __all__ = [
     'avg_pool_x',
     'avg_pool_neighbor_x',
     'graclus',
+    'maximal_matching_cluster',
     'voxel_grid',
     'fps',
     'knn',
