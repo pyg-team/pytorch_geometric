@@ -24,6 +24,8 @@ This example shows how to leverage [GraphLearn-for-PyTorch(GLT)](https://github.
 
 To run this example, you can choose to directly run the example or use our [script](launch.py) following the guidance below.
 
+The training results will be generated and saved in `dist_sage_sup.txt`.
+
 ## Reference test environment and dependency packages
 docker image: pytorch/pytorch:1.13.0-cuda11.6-cudnn8-devel
 ```
