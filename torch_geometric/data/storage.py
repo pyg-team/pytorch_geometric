@@ -80,7 +80,8 @@ class BaseStorage(MutableMapping):
             return self[key]
         except KeyError:
             raise AttributeError(
-                f"'{self.__class__.__name__}' object has no attribute '{key}'")
+                f"'{self.__class__.__name__}' object has no attribute '{key}'"
+            ) from None
 
     def __setattr__(self, key: str, value: Any):
         propobj = getattr(self.__class__, key, None)
