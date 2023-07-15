@@ -20,4 +20,3 @@ class DistContext(object):
     @property
     def worker_name(self) -> str:
         return f"{self.group_name}-{self.rank}"
-

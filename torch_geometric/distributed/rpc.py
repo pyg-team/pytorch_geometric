@@ -9,7 +9,7 @@ from typing import Dict, List, Set
 from torch._C._distributed_rpc import _is_current_rpc_agent_set
 from torch.distributed import rpc
 
-from .dist_context import DistRole, DistContext
+from .dist_context import DistContext, DistRole
 
 _rpc_init_lock = threading.RLock()
 
@@ -51,18 +51,17 @@ def global_barrier(timeout=None):
 
 ## RPC initialization and shutdown
 
-def init_rpc(current_ctx: DistContext,
-             master_addr: str,
-             master_port: int,
-             num_rpc_threads: int = 16,
-             rpc_timeout: float = 240):
+
+def init_rpc(current_ctx: DistContext, master_addr: str, master_port: int,
+             num_rpc_threads: int = 16, rpc_timeout: float = 240):
 
     with _rpc_init_lock:
         if rpc_is_initialized() is True:
             return
         if rpc_is_initialized() is None:
-            raise RuntimeError("'init_rpc': error to re-init rpc after shutdown.")
-        
+            raise RuntimeError(
+                "'init_rpc': error to re-init rpc after shutdown.")
+
         ctx = current_ctx
         if ctx is None:
             raise RuntimeError("'init_rpc': dist_context has not been set.")
@@ -125,11 +124,11 @@ class RpcRouter():
 
 
 @_require_initialized
-def rpc_partition2workers(current_ctx:DistContext, num_data_partitions: int,
-                             current_partition_idx: int):
+def rpc_partition2workers(current_ctx: DistContext, num_data_partitions: int,
+                          current_partition_idx: int):
     r""" all_gather to get the mapping between partition and workers """
     ctx = current_ctx
-    partition2workers  = [[] for _ in range(num_data_partitions)]
+    partition2workers = [[] for _ in range(num_data_partitions)]
     gathered_results = global_all_gather(
         (ctx.role, num_data_partitions, current_partition_idx))
     for worker_name, (role, nparts, idx) in gathered_results.items():
