@@ -21,19 +21,3 @@ class DistContext(object):
     def worker_name(self) -> str:
         return f"{self.group_name}-{self.rank}"
 
-
-_dist_context: DistContext = None
-
-
-def get_context() -> DistContext:
-    return _dist_context
-
-
-def init_worker_group(world_size: int, rank: int,
-                      group_name: Optional[str] = None):
-    global _dist_context
-    _dist_context = DistContext(
-        role=DistRole.WORKER, world_size=world_size, rank=rank,
-        group_name=(group_name
-                    if group_name is not None else '_default_worker'),
-        global_world_size=world_size, global_rank=rank)
