@@ -87,10 +87,9 @@ class AntiSymmetricConv(torch.nn.Module):
     def reset_parameters(self):
         torch.nn.init.kaiming_uniform_(self.W, a=math.sqrt(5))
         self.phi.reset_parameters()
-        
+
         if self.bias is not None:
             zeros(self.bias)
-
 
     def forward(self, x: Tensor, edge_index: Adj, *args, **kwargs) -> Tensor:
         r"""Runs the forward pass of the module."""
