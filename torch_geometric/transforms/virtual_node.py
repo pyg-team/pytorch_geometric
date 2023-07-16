@@ -29,45 +29,40 @@ class VirtualNode(BaseTransform):
         edge_type = data.get('edge_type', torch.zeros_like(row))
 
         arange = torch.arange(num_nodes, device=row.device)
-        full = row.new_full((num_nodes, ), num_nodes)
+        full = row.new_full((num_nodes,), num_nodes)
         row = torch.cat([row, arange, full], dim=0)
         col = torch.cat([col, full, arange], dim=0)
         edge_index = torch.stack([row, col], dim=0)
 
-        new_type = edge_type.new_full((num_nodes, ), int(edge_type.max()) + 1)
+        new_type = edge_type.new_full((num_nodes,), int(edge_type.max()) + 1)
         edge_type = torch.cat([edge_type, new_type, new_type + 1], dim=0)
 
-        old_data = copy.copy(data)
-        for key, value in old_data.items():
+        for key, value in data.items():
             if key == 'edge_index' or key == 'edge_type':
                 continue
 
             if isinstance(value, Tensor):
-                dim = old_data.__cat_dim__(key, value)
-                size = list(value.size())
+                dim = data.__cat_dim__(key, value)
 
-                fill_value = None
                 if key == 'edge_weight':
+                    size = list(value.size())
                     size[dim] = 2 * num_nodes
-                    fill_value = 1.
+                    data[key] = torch.cat([value, torch.ones(size, device=value.device)], dim=dim)
                 elif key == 'batch':
-                    size[dim] = 1
-                    fill_value = int(value[0])
-                elif old_data.is_edge_attr(key):
+                    data[key] = torch.cat([value, torch.tensor([value[0]], device=value.device)], dim=dim)
+                elif data.is_edge_attr(key):
+                    size = list(value.size())
                     size[dim] = 2 * num_nodes
-                    fill_value = 0.
-                elif old_data.is_node_attr(key):
+                    data[key] = torch.cat([value, torch.zeros(size, device=value.device)], dim=dim)
+                elif data.is_node_attr(key):
+                    size = list(value.size())
                     size[dim] = 1
-                    fill_value = 0.
-
-                if fill_value is not None:
-                    new_value = value.new_full(size, fill_value)
-                    data[key] = torch.cat([value, new_value], dim=dim)
+                    data[key] = torch.cat([value, torch.zeros(size, device=value.device)], dim=dim)
 
         data.edge_index = edge_index
         data.edge_type = edge_type
 
         if 'num_nodes' in data:
-            data.num_nodes = old_data.num_nodes + 1
+            data.num_nodes = num_nodes + 1
 
         return data
