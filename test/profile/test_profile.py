@@ -11,9 +11,10 @@ from torch_geometric.profile import (
     rename_profile_file,
     timeit,
 )
-from torch_geometric.profile.profile import torch_profile
+from torch_geometric.profile.profile import torch_profile, xpu_profile
 from torch_geometric.testing import (
     onlyCUDA,
+    onlyXPU,
     onlyLinux,
     onlyOnline,
     withCUDA,
@@ -105,3 +106,21 @@ def test_torch_profile(capfd, get_dataset, device):
     rename_profile_file('test_profile')
     assert os.path.exists('profile-test_profile.json')
     os.remove('profile-test_profile.json')
+
+
+@onlyXPU
+@onlyOnline
+def test_xpu_profile(capfd, get_dataset):
+    dataset = get_dataset(name='Cora')
+    device = torch.device('xpu')
+    data = dataset[0].to(device)
+    model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
+                      out_channels=dataset.num_classes).to(device)
+
+    with xpu_profile():
+        model(data.x, data.edge_index)
+
+    out, _ = capfd.readouterr()
+    assert 'Self CPU' in out
+    if data.x.is_xpu:
+        assert 'Self XPU' in out
