@@ -1,7 +1,7 @@
 import os.path
 import warnings
-import pytest
 
+import pytest
 import torch
 import torch.nn.functional as F
 
