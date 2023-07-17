@@ -14,9 +14,9 @@ from torch_geometric.profile import (
 from torch_geometric.profile.profile import torch_profile, xpu_profile
 from torch_geometric.testing import (
     onlyCUDA,
-    onlyXPU,
     onlyLinux,
     onlyOnline,
+    onlyXPU,
     withCUDA,
     withPackage,
 )

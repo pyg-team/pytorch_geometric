@@ -16,7 +16,12 @@ from benchmark.utils import (
 )
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
-from torch_geometric.profile import rename_profile_file, timeit, torch_profile, xpu_profile
+from torch_geometric.profile import (
+    rename_profile_file,
+    timeit,
+    torch_profile,
+    xpu_profile,
+)
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
