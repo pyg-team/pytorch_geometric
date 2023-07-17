@@ -281,7 +281,7 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN inference benchmark')
     add = argparser.add_argument
 
-    add('--device', choices=['cpu', 'cuda', 'xpu'], default='cuda',
+    add('--device', choices=['cpu', 'cuda', 'xpu'], default='cpu',
         help='Device to run benchmark on')
     add('--datasets', nargs='+',
         default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
