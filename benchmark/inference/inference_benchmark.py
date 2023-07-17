@@ -13,11 +13,10 @@ from benchmark.utils import (
     save_benchmark_data,
     test,
     write_to_csv,
-    xpu_profiler,
 )
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
-from torch_geometric.profile import rename_profile_file, timeit, torch_profile
+from torch_geometric.profile import rename_profile_file, timeit, torch_profile, xpu_profile
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
@@ -192,7 +191,7 @@ def run(args: argparse.ArgumentParser):
                         else:
                             cpu_affinity = nullcontext()
                         if args.profile and args.device == 'xpu':
-                            profile = xpu_profiler(args.export_chrome_trace)
+                            profile = xpu_profile(args.export_chrome_trace)
                         elif args.profile:
                             profile = torch_profile(args.export_chrome_trace,
                                                     csv_data, args.write_csv)
