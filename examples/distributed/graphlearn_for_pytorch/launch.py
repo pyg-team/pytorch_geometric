@@ -31,7 +31,7 @@ if __name__ == "__main__":
     num_nodes = len(node_ranks)
     visible_devices = config['visible_devices']
     python_bins = config['python_bins']
-    num_cores = len(visible_devices[0].split(','))
+    num_cores = len(str(visible_devices[0]).split(','))
     in_channel = str(config['in_channel'])
     out_channel = str(config['out_channel'])
 
@@ -55,9 +55,9 @@ if __name__ == "__main__":
         ssh._transport = trans
 
         to_dist_dir = 'cd ' + dst + \
-            '/examples/graphlearn_for_pytorch/distributed/ '
-        exec_example = "tmux new -d 'CUDA_VISIBLE_DEVICES=" + device + " " + \
-            pythonbin + " dist_train_sage_supervised.py --dataset=" + \
+            '/examples/distributed/graphlearn_for_pytorch/ '
+        exec_example = "tmux new -d 'CUDA_VISIBLE_DEVICES=" + str(device) + \
+            " " + pythonbin + " dist_train_sage_supervised.py --dataset=" + \
             dataset + " --dataset_root_dir=" + dataset_path + dataset + \
             " --in_channel=" + in_channel + " --out_channel=" + out_channel + \
             " --node_rank=" + str(noderk) + " --num_dataset_partitions=" + \
