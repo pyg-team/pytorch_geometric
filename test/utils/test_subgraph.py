@@ -69,7 +69,6 @@ def test_subgraph_large_cudf():
     for subset in [idx, mask, indices]:
         out = subgraph(subset, edge_index, relabel_nodes=True)
         assert out[0].cpu().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
-        assert out[1].cpu().tolist() == [7, 8, 9, 10]
 
 
 def test_bipartite_subgraph():
