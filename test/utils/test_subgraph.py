@@ -76,7 +76,7 @@ def test_bipartite_subgraph_large_cudf():
     device = "cuda"
     edge_index = torch.tensor([[0, 5, 2, 3, 3, 4, 4, 3, 5, 5, 6],
                                [0, 0, 3, 2, 0, 0, 2, 1, 2, 3, 1]])
-    num_nodes = 10**9
+    num_nodes = 2 * 10 ** 9
     edge_index = torch.cat(
         (edge_index, torch.randint(low=7, high=num_nodes, size=(2, 10**5))),
         dim=-1).to(device)
