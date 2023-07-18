@@ -50,6 +50,7 @@ def test_subgraph():
 
 
 def test_bipartite_subgraph():
+    device = "cuda"
     edge_index = torch.tensor([[0, 5, 2, 3, 3, 4, 4, 3, 5, 5, 6],
                                [0, 0, 3, 2, 0, 0, 2, 1, 2, 3, 1]])
     edge_attr = torch.tensor(
