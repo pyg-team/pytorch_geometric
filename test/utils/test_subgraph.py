@@ -50,7 +50,7 @@ def test_subgraph():
         assert out[1].tolist() == [7, 8, 9, 10]
 
 
-@withPackage('cudf')
+@withPackage('cudf', 'cupy')
 @onlyCUDA
 def test_subgraph_large_cudf():
     device = "cuda"
