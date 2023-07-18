@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
-from torch_geometric.testing import WithCUDA, WithPackage
+from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.utils import (
     bipartite_subgraph,
     get_num_hops,
