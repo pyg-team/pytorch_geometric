@@ -113,7 +113,7 @@ def subgraph(
         else:
             WITH_CUDF = False
             WITH_CUPY = False
-    
+
         if node_mask.size(0) > 10**9 and WITH_CUPY and WITH_CUDF:
             # if creating zeros for node idx could cause GPU OOM, use CUDF
             graph = cudf.DataFrame({
