@@ -145,7 +145,6 @@ def subgraph(
                                             device=device)
             edge_index = node_idx[edge_index]
 
-
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
     else:
