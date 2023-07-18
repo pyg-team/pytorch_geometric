@@ -85,8 +85,7 @@ def test_bipartite_subgraph_large_cudf():
     mixed = (mask[0], idx[1])
 
     for subset in [idx, mask, indices, mixed]:
-        out = bipartite_subgraph(subset, edge_index,
-                                 relabel_nodes=True)
+        out = bipartite_subgraph(subset, edge_index, relabel_nodes=True)
         assert out[0].tolist() == [[0, 1, 2, 2], [1, 0, 0, 1]]
 
 
