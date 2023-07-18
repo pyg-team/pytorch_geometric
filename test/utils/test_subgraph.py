@@ -72,6 +72,7 @@ def test_bipartite_subgraph():
         assert out[0].tolist() == [[0, 1, 2, 2], [1, 0, 0, 1]]
         assert out[1].tolist() == [3.0, 4.0, 9.0, 10.0]
 
+
 @withPackage('cudf', 'cupy')
 @onlyCUDA
 def test_bipartite_subgraph_large_cudf():
