@@ -57,7 +57,7 @@ def test_subgraph_large_cudf(device):
         [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6],
         [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5],
     ])
-    edge_index = torch.cat((edge_index, torch.randint(low=7, high=10**6, size=(2, 10**9)), dim=-1).to(device)
+    edge_index = torch.cat((edge_index, torch.randint(low=7, high=10**6, size=(2, 10**9))), dim=-1).to(device)
 
     idx = torch.tensor([3, 4, 5]).to(device)
     mask = index_to_mask(idx, 7)
