@@ -185,8 +185,23 @@ def bipartite_subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
+        if edge_index.is_cuda:
+            try:
+                import cudf
+                WITH_CUDF = True
+            except ImportError:
+                WITH_CUDF = False
+            try:
+                import cupy
+                WITH_CUPY = True
+            except ImportError:
+                WITH_CUPY = False
+        else:
+            WITH_CUDF = False
+            WITH_CUPY = False
+
         if src_node_mask.size(0) + dst_node_mask.size(
-                0) > 10**9 and edge_index.is_cuda:
+                0) > 10**9 and WITH_CUPY and WITH_CUDF:
             # if creating zeros for node idxs could cause GPU OOM, use CUDF
             import cudf
             import cupy
