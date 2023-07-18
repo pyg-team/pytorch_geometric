@@ -71,7 +71,8 @@ def test_bipartite_subgraph():
         assert out[0].tolist() == [[0, 1, 2, 2], [1, 0, 0, 1]]
         assert out[1].tolist() == [3.0, 4.0, 9.0, 10.0]
 
-
+@withPackage('cudf', 'cupy')
+@onlyCUDA
 def test_bipartite_subgraph_large_cudf():
     device = "cuda"
     edge_index = torch.tensor([[0, 5, 2, 3, 3, 4, 4, 3, 5, 5, 6],
