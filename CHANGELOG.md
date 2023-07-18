@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added possibility to run inference benchmarks on XPU device ([#7705](https://github.com/pyg-team/pytorch_geometric/pull/7705))
 - Added `HeteroData` support in `to_networkx` ([#7713](https://github.com/pyg-team/pytorch_geometric/pull/7713))
 - Added `FlopsCount` support via `fvcore` ([#7693](https://github.com/pyg-team/pytorch_geometric/pull/7693))
 - Added back support for PyTorch >= 1.11.0 ([#7656](https://github.com/pyg-team/pytorch_geometric/pull/7656))
