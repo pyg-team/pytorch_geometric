@@ -185,7 +185,8 @@ def bipartite_subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        if src_node_mask.size(0) + dst_node_mask.size(0) > 10**9 and edge_index.is_cuda:
+        if src_node_mask.size(0) + dst_node_mask.size(
+                0) > 10**9 and edge_index.is_cuda:
             # if creating zeros for node idxs could cause GPU OOM, use CUDF
             graph = cudf.DataFrame({
                 "u":
@@ -196,7 +197,8 @@ def bipartite_subgraph(
             src_nodes_to_keep = cudf.Series(src_subset, name="nodes")
             dst_nodes_to_keep = cudf.Series(dst_subset, name="nodes")
 
-            mask = graph.u.isin(src_nodes_to_keep) & graph.v.isin(dst_nodes_to_keep)
+            mask = graph.u.isin(src_nodes_to_keep) & graph.v.isin(
+                dst_nodes_to_keep)
 
             subgraph = graph.iloc[mask, :]
 
