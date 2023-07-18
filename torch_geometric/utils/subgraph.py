@@ -99,14 +99,8 @@ def subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        if node_mask.size(0) <= 10**9:
-            node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
-                                   device=device)
-            node_idx[subset] = torch.arange(node_mask.sum().item(),
-                                            device=device)
-            edge_index = node_idx[edge_index]
-        else:
-            # if creating node_idx = zeros could cause OOM use CUDF
+        if node_mask.size(0) > 10**9 and edge_index.is_cuda:
+            # if creating zeros for node idx could cause GPU OOM, use CUDF
             graph = cudf.DataFrame({
                 "u":
                 cupy.asarray(edge_index[0].reshape(-1)),
@@ -144,6 +138,13 @@ def subgraph(
             edge_index = torch.tensor(
                 new_u.merge(new_v, left_on=["u", "v"], right_on=["u", "v"],
                             how="inner").drop(["u", "v"], axis=1).to_dlpack())
+        else:
+            node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
+                                   device=device)
+            node_idx[subset] = torch.arange(node_mask.sum().item(),
+                                            device=device)
+            edge_index = node_idx[edge_index]
+
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
