@@ -8,6 +8,7 @@ from torch_geometric.utils import (
     k_hop_subgraph,
     subgraph,
 )
+from torch_geometric.testing import WithCUDA, WithPackage
 
 
 def test_get_num_hops():
@@ -47,6 +48,25 @@ def test_subgraph():
         out = subgraph(subset, edge_index, edge_attr, relabel_nodes=True)
         assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
         assert out[1].tolist() == [7, 8, 9, 10]
+
+
+@withPackage('cudf')
+@withCUDA
+def test_subgraph_large_cudf(device):
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6],
+        [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5],
+    ])
+    edge_index = torch.concat((edge_index, torch.randint(low=7, high=10**6, size=(2,10**9)), dim=-1).to(device)
+
+    idx = torch.tensor([3, 4, 5]).to(device)
+    mask = index_to_mask(idx, 7)
+    indices = idx.tolist()
+
+    for subset in [idx, mask, indices]:
+        out = subgraph(subset, edge_index, edge_attr, relabel_nodes=True)
+        assert out[0].cpu().tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+        assert out[1].cpu().tolist() == [7, 8, 9, 10]
 
 
 def test_bipartite_subgraph():
