@@ -8,6 +8,7 @@ from torch_geometric.utils import (
     k_hop_subgraph,
     subgraph,
 )
+from torch_geometric.testing import onlyCUDA, withPackage
 
 
 def test_get_num_hops():
