@@ -80,7 +80,7 @@ def test_bipartite_subgraph_large_cudf():
     edge_index = torch.cat(
         (edge_index, torch.randint(low=7, high=num_nodes, size=(2, 10**5))),
         dim=-1).to(device)
-    idx = (torch.tensor([2, 3, 5]).to(device), torch.tensor([2, 3])).to(device)
+    idx = (torch.tensor([2, 3, 5]).to(device), torch.tensor([2, 3]).to(device))
     mask = (index_to_mask(idx[0], 7), index_to_mask(idx[1], 4))
     indices = (idx[0].tolist(), idx[1].tolist())
     mixed = (mask[0], idx[1])
