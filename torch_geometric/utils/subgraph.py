@@ -185,16 +185,47 @@ def bipartite_subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        node_idx_i = edge_index.new_zeros(src_node_mask.size(0))
-        node_idx_j = edge_index.new_zeros(dst_node_mask.size(0))
-        node_idx_i[src_subset] = torch.arange(int(src_node_mask.sum()),
-                                              device=node_idx_i.device)
-        node_idx_j[dst_subset] = torch.arange(int(dst_node_mask.sum()),
-                                              device=node_idx_j.device)
-        edge_index = torch.stack([
-            node_idx_i[edge_index[0]],
-            node_idx_j[edge_index[1]],
-        ], dim=0)
+        if src_node_mask.size(0) + dst_node_mask.size(0) > 10**9 and edge_index.is_cuda:
+            # if creating zeros for node idxs could cause GPU OOM, use CUDF
+            graph = cudf.DataFrame({
+                "u":
+                cupy.asarray(edge_index[0].reshape(-1)),
+                "v":
+                cupy.asarray(edge_index[1].reshape(-1)),
+            })
+            src_nodes_to_keep = cudf.Series(src_subset, name="nodes")
+            dst_nodes_to_keep = cudf.Series(dst_subset, name="nodes")
+
+            mask = graph.u.isin(src_nodes_to_keep) & graph.v.isin(dst_nodes_to_keep)
+
+            subgraph = graph.iloc[mask, :]
+
+            src_nodes_to_keep = src_nodes_to_keep.reset_index()
+            dst_nodes_to_keep = dst_nodes_to_keep.reset_index()
+
+            new_u = (subgraph.merge(src_nodes_to_keep, left_on="u",
+                                    right_on="nodes",
+                                    how="inner").drop("nodes", axis=1).rename(
+                                        {"index": "new_u"}, axis=1))
+            new_v = (subgraph.loc[:, ["u", "v"]].merge(
+                dst_nodes_to_keep, left_on="v", right_on="nodes",
+                how="inner").drop("nodes", axis=1).rename({"index": "new_v"},
+                                                          axis=1))
+
+            edge_index = torch.tensor(
+                new_u.merge(new_v, left_on=["u", "v"], right_on=["u", "v"],
+                            how="inner").drop(["u", "v"], axis=1).to_dlpack())
+        else:
+            node_idx_i = edge_index.new_zeros(src_node_mask.size(0))
+            node_idx_j = edge_index.new_zeros(dst_node_mask.size(0))
+            node_idx_i[src_subset] = torch.arange(int(src_node_mask.sum()),
+                                                  device=node_idx_i.device)
+            node_idx_j[dst_subset] = torch.arange(int(dst_node_mask.sum()),
+                                                  device=node_idx_j.device)
+            edge_index = torch.stack([
+                node_idx_i[edge_index[0]],
+                node_idx_j[edge_index[1]],
+            ], dim=0)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
