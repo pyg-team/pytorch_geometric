@@ -189,6 +189,7 @@ def bipartite_subgraph(
                 0) > 10**9 and edge_index.is_cuda:
             # if creating zeros for node idxs could cause GPU OOM, use CUDF
             import cudf
+            import cupy
             graph = cudf.DataFrame({
                 "u":
                 cupy.asarray(edge_index[0].reshape(-1)),
