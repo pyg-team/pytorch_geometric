@@ -101,6 +101,7 @@ def subgraph(
     if relabel_nodes:
         if node_mask.size(0) > 10**9 and edge_index.is_cuda:
             import cudf
+            import cupy
 
             # if creating zeros for node idx could cause GPU OOM, use CUDF
             graph = cudf.DataFrame({
