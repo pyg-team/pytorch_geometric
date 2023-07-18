@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
+from torch_geometric.testing import WithCUDA, WithPackage
 from torch_geometric.utils import (
     bipartite_subgraph,
     get_num_hops,
@@ -8,7 +9,6 @@ from torch_geometric.utils import (
     k_hop_subgraph,
     subgraph,
 )
-from torch_geometric.testing import WithCUDA, WithPackage
 
 
 def test_get_num_hops():
