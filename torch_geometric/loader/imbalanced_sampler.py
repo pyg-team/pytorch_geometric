@@ -67,7 +67,14 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
         input_nodes: Optional[Tensor] = None,
         num_samples: Optional[int] = None,
     ):
+        # Compute class weights once and cache them for reuse
+        self.class_weights = self.compute_class_weights(dataset, input_nodes)
 
+        return super().__init__(self.class_weights, num_samples, replacement=True)
+
+    def compute_class_weights(
+        self, dataset: Union[Dataset, Data, List[Data], Tensor], input_nodes: Optional[Tensor] = None
+    ) -> Tensor:
         if isinstance(dataset, Data):
             y = dataset.y.view(-1)
             assert dataset.num_nodes == y.numel()
@@ -91,9 +98,7 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
 
         assert y.dtype == torch.long  # Require classification.
 
-        num_samples = y.numel() if num_samples is None else num_samples
-
         class_weight = 1. / y.bincount()
         weight = class_weight[y]
 
-        return super().__init__(weight, num_samples, replacement=True)
+        return weight
