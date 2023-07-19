@@ -313,7 +313,6 @@ class GCN(torch.nn.Module):
 
 
 def test_to_hetero_with_gcn():
-    return
     x_dict = {
         'paper': torch.randn(100, 16),
     }
