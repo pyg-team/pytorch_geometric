@@ -19,7 +19,15 @@ parser.add_argument('--epochs', type=int, default=100)
 parser.add_argument('--wandb', action='store_true', help='Track experiment')
 args = parser.parse_args()
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+
+# Runs slower than CPU as MPS has no support for int64 min/max ops and casting it to int32
+# elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available(): 
+#     device = torch.device('mps')
+
+else:
+    device = torch.device('cpu')
 init_wandb(name=f'GIN-{args.dataset}', batch_size=args.batch_size, lr=args.lr,
            epochs=args.epochs, hidden_channels=args.hidden_channels,
            num_layers=args.num_layers, device=device)
