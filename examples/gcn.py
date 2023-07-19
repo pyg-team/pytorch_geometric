@@ -24,6 +24,7 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
     device = torch.device('mps')
 else:
     device = torch.device('cpu')
+
 init_wandb(name=f'GCN-{args.dataset}', lr=args.lr, epochs=args.epochs,
            hidden_channels=args.hidden_channels, device=device)
 
