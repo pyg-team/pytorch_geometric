@@ -355,7 +355,7 @@ class OutputBlock(torch.nn.Module):
         for lin in self.lins:
             glorot_orthogonal(lin.weight, scale=2.0)
             lin.bias.data.fill_(0)
-        self.lin.weight.data.fill_(0)
+        glorot_orthogonal(self.lin.weight, scale=2.0)
 
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
                 num_nodes: Optional[int] = None) -> Tensor:
@@ -396,7 +396,7 @@ class OutputPPBlock(torch.nn.Module):
         for lin in self.lins:
             glorot_orthogonal(lin.weight, scale=2.0)
             lin.bias.data.fill_(0)
-        self.lin.weight.data.fill_(0)
+        glorot_orthogonal(self.lin.weight, scale=2.0)
 
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
                 num_nodes: Optional[int] = None) -> Tensor:
