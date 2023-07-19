@@ -65,6 +65,7 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
     device = torch.device('mps')
 else:
     device = torch.device('cpu')
+
 model = Net(in_channels=dataset.num_features, hidden_channels=128,
             out_channels=dataset.num_classes, num_layers=5, heads=8, groups=16)
 model, data = model.to(device), data.to(device)
