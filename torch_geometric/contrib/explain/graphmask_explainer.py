@@ -16,7 +16,7 @@ from torch_geometric.nn import MessagePassing
 
 def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
     basis_messages = torch.nn.functional.layer_norm(
-        out, [size for size in out.size()]).to(out.device).relu()
+        out, out.size()).to(out.device).relu()
 
     if getattr(self, 'message_scale', None) is not None:
         basis_messages = basis_messages * self.message_scale.unsqueeze(-1)
