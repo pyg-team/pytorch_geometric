@@ -20,10 +20,10 @@ def lexsort(
     second-to-last key for the secondary sort order, and so on.
 
     Args:
-        keys ([torch.Tensor]) The :math:`k` different columns to be sorted. The
-            last key is the primary sort key.
-        dim (int, optional) The dimension to sort along. (default: :obj:`-1`)
-        descending (bool, optional) Controls the sorting order (ascending or
+        keys ([torch.Tensor]): The :math:`k` different columns to be sorted.
+            The last key is the primary sort key.
+        dim (int, optional): The dimension to sort along. (default: :obj:`-1`)
+        descending (bool, optional): Controls the sorting order (ascending or
             descending). (default: :obj:`False`)
     """
     assert len(keys) >= 1
