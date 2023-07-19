@@ -1,11 +1,10 @@
 import os
-import os.path as osp
-from typing import Optional
+from pathlib import Path
 
 ENV_PYG_HOME = 'PYG_HOME'
-DEFAULT_CACHE_DIR = osp.join('~', '.cache', 'pyg')
+DEFAULT_CACHE_DIR = Path.home() / ".cache" / "pyg"
 
-_home_dir: Optional[str] = None
+_home_dir = None
 
 
 def get_home_dir() -> str:
@@ -14,12 +13,7 @@ def get_home_dir() -> str:
     If :meth:`set_home_dir` is not called, the path is given by the environment
     variable :obj:`$PYG_HOME` which defaults to :obj:`"~/.cache/pyg"`.
     """
-    if _home_dir is not None:
-        return _home_dir
-
-    home_dir = os.getenv(ENV_PYG_HOME, DEFAULT_CACHE_DIR)
-    home_dir = osp.expanduser(home_dir)
-    return home_dir
+    return _home_dir if _home_dir is not None else os.path.expanduser(os.path.expandvars("$PYG_HOME") or DEFAULT_CACHE_DIR)
 
 
 def set_home_dir(path: str):
