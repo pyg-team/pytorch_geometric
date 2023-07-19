@@ -1,6 +1,10 @@
 from typing import List
 
+import numpy as np
+import torch
 from torch import Tensor
+
+import torch_geometric.typing
 
 
 def lexsort(
@@ -23,8 +27,13 @@ def lexsort(
             descending). (default: :obj:`False`)
     """
     assert len(keys) >= 1
-    kwargs = dict(dim=dim, descending=descending, stable=True)
 
+    if not torch_geometric.typing.WITH_PT113:
+        keys = [k.neg() for k in keys] if descending else keys
+        out = np.lexsort([k.detach().cpu().numpy() for k in keys], axis=dim)
+        return torch.from_numpy(out).to(keys[0].device)
+
+    kwargs = dict(dim=dim, descending=descending, stable=True)
     out = keys[0].argsort(**kwargs)
     for k in keys[1:]:
         out = out.gather(dim, k.gather(dim, out).argsort(**kwargs))
