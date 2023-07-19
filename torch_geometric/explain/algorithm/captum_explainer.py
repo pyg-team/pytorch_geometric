@@ -159,11 +159,6 @@ class CaptumExplainer(ExplainerAlgorithm):
         else:
             target = target[index]
 
-        print(inputs)
-        print(target)
-        print(add_forward_args)
-        print(self.kwargs)
-
         attributions = attribution_method.attribute(
             inputs=inputs,
             target=target,
