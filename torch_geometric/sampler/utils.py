@@ -1,13 +1,12 @@
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 
-import numpy as np
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.typing import NodeType, OptTensor
-from torch_geometric.utils import coalesce, index_sort
+from torch_geometric.utils import coalesce, index_sort, lexsort
 from torch_geometric.utils.sparse import index2ptr
 
 # Edge Layout Conversion ######################################################
@@ -22,14 +21,7 @@ def sort_csc(
         col, perm = index_sort(col)
         return row[perm], col, perm
     else:
-        # We use `np.lexsort` to sort based on multiple keys.
-        # TODO There does not seem to exist a PyTorch equivalent yet :(
-        perm = np.lexsort([
-            src_node_time[row].detach().cpu().numpy(),
-            col.detach().cpu().numpy()
-        ])
-        perm = torch.from_numpy(perm).to(col.device)
-
+        perm = lexsort([src_node_time[row], col])
         return row[perm], col[perm], perm
 
 
