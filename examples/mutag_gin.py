@@ -22,7 +22,7 @@ args = parser.parse_args()
 if torch.cuda.is_available():
     device = torch.device('cuda')
 
-# Runs slower than CPU as MPS has no support for int64 min/max ops and casting it to int32
+# Runs slower than CPU as MPS has no support for int64 min/max ops and casts it to int32
 # elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available(): 
 #     device = torch.device('mps')
 
