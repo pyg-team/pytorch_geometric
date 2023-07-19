@@ -72,7 +72,8 @@ class ImbalancedSampler(torch.utils.data.WeightedRandomSampler):
 
         super().__init__(class_weights, num_samples, replacement=True)
 
-    def compute_class_weights(self, dataset: Union[Dataset, Data, List[Data], Tensor],
+    def compute_class_weights(self, dataset: Union[Dataset, Data, List[Data],
+                                                   Tensor],
                               input_nodes: Optional[Tensor] = None) -> Tensor:
         if isinstance(dataset, Data):
             y = dataset.y.view(-1)
