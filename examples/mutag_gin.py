@@ -29,6 +29,7 @@ if torch.cuda.is_available():
 
 else:
     device = torch.device('cpu')
+
 init_wandb(name=f'GIN-{args.dataset}', batch_size=args.batch_size, lr=args.lr,
            epochs=args.epochs, hidden_channels=args.hidden_channels,
            num_layers=args.num_layers, device=device)
