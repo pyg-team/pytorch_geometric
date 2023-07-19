@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
+from collections.abc import Sequence
 
 import numpy as np
 import torch
@@ -12,6 +13,48 @@ from torch_geometric.utils.sparse import index2ptr
 
 # Edge Layout Conversion ######################################################
 
+def torch_lexsort(keys: Union[Tensor, Sequence[Tensor]], dim: int = -1) -> Tensor:
+    """
+    Perform an indirect stable sort using a sequence of keys.
+
+    Given multiple sorting keys (i.e. columns in a table),
+    lexsort returns an array of integer indices that describes
+    the sort order by multiple columns. 
+    The last key in the sequence is used for the primary sort 
+    order, the second-to-last key for the secondary sort order, 
+    and so on.
+
+    Args:
+        keys : tuple or list containing k (N,)-shaped Tensor sequences or (k, N)
+            shaped Tensor 
+            The `k` different "columns" to be sorted.  The last column (or row if
+        `keys` is a 2D Tensor) is the primary sort key.
+            dim : int, optional
+            Axis to be indirectly sorted.  By default, sort over the last axis.
+
+    Returns:
+        indices : (N,) shaped Tensor of ints
+            Tensor of indices that sort the keys along the specified axis.
+    """
+    if isinstance(keys, Sequence):
+        if len(keys) < 2:
+            raise ValueError(f"keys must be at least 2 sequences, but {len(keys)=}.")
+        if not all(isinstance(k, Tensor) for k in keys):
+            raise ValueError(f"keys must be a sequence of Tensors.")
+        
+    elif isinstance(keys, Tensor):
+        if keys.size(0) < 2:
+            raise ValueError(f"keys must be at least 2 sequences, but {keys.size(0)=}.")
+        if keys.dim() != 2:
+            raise ValueError(f"keys must be a 2D Tensor, but {keys.dim()=}.")
+    else:
+        raise ValueError(f"keys must be a sequence of Tensors or a 2D Tensor, but {type(keys)=}.")
+    
+    idx = keys[0].argsort(dim=dim, stable=True)
+    for k in keys[1:]:
+        idx = idx.gather(dim, k.gather(dim, idx).argsort(dim=dim, stable=True))
+    
+    return idx
 
 def sort_csc(
     row: Tensor,
@@ -22,13 +65,11 @@ def sort_csc(
         col, perm = index_sort(col)
         return row[perm], col, perm
     else:
-        # We use `np.lexsort` to sort based on multiple keys.
-        # TODO There does not seem to exist a PyTorch equivalent yet :(
-        perm = np.lexsort([
-            src_node_time[row].detach().cpu().numpy(),
-            col.detach().cpu().numpy()
+
+        perm = torch_lexsort([
+            src_node_time[row],
+            col
         ])
-        perm = torch.from_numpy(perm).to(col.device)
 
         return row[perm], col[perm], perm
 
