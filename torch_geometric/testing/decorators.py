@@ -59,6 +59,20 @@ def onlyCUDA(func: Callable) -> Callable:
     )(func)
 
 
+def onlyXPU(func: Callable) -> Callable:
+    r"""A decorator to skip tests if XPU is not found."""
+    import pytest
+    try:
+        import intel_extension_for_pytorch as ipex
+        xpu_available = ipex.xpu.is_available()
+    except ImportError:
+        xpu_available = False
+    return pytest.mark.skipif(
+        not xpu_available,
+        reason="XPU not available",
+    )(func)
+
+
 def onlyOnline(func: Callable):
     r"""A decorator to skip tests if there exists no connection to the
     internet."""
