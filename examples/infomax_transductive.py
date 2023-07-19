@@ -32,6 +32,7 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
     device = torch.device('mps')
 else:
     device = torch.device('cpu')
+
 model = DeepGraphInfomax(
     hidden_channels=512,
     encoder=Encoder(dataset.num_features, 512),
