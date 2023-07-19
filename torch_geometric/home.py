@@ -13,7 +13,8 @@ def get_home_dir() -> str:
     If :meth:`set_home_dir` is not called, the path is given by the environment
     variable :obj:`$PYG_HOME` which defaults to :obj:`"~/.cache/pyg"`.
     """
-    return _home_dir if _home_dir is not None else os.path.expanduser(os.path.expandvars("$PYG_HOME") or DEFAULT_CACHE_DIR)
+    return _home_dir if _home_dir is not None else os.path.expanduser(
+        os.path.expandvars("$PYG_HOME") or DEFAULT_CACHE_DIR)
 
 
 def set_home_dir(path: str):
