@@ -2,7 +2,6 @@ import copy
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ModuleList
 from tqdm import tqdm
