@@ -47,6 +47,7 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
     device = torch.device('mps')
 else:
     device = torch.device('cpu')
+
 model, zs_data = model.to(device), zs_data.to(device)
 
 criterion = torch.nn.MSELoss(reduction='sum')
