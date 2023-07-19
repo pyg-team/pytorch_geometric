@@ -1,6 +1,7 @@
 import os.path
 import warnings
 
+import pytest
 import torch
 import torch.nn.functional as F
 
@@ -11,11 +12,12 @@ from torch_geometric.profile import (
     rename_profile_file,
     timeit,
 )
-from torch_geometric.profile.profile import torch_profile
+from torch_geometric.profile.profile import torch_profile, xpu_profile
 from torch_geometric.testing import (
     onlyCUDA,
     onlyLinux,
     onlyOnline,
+    onlyXPU,
     withCUDA,
     withPackage,
 )
@@ -105,3 +107,30 @@ def test_torch_profile(capfd, get_dataset, device):
     rename_profile_file('test_profile')
     assert os.path.exists('profile-test_profile.json')
     os.remove('profile-test_profile.json')
+
+
+@onlyXPU
+@onlyOnline
+@pytest.mark.parametrize('export_chrome_trace', [False, True])
+def test_xpu_profile(capfd, get_dataset, export_chrome_trace):
+    dataset = get_dataset(name='Cora')
+    device = torch.device('xpu')
+    data = dataset[0].to(device)
+    model = GraphSAGE(dataset.num_features, hidden_channels=64, num_layers=3,
+                      out_channels=dataset.num_classes).to(device)
+
+    with xpu_profile(export_chrome_trace):
+        model(data.x, data.edge_index)
+
+    out, _ = capfd.readouterr()
+    assert 'Self CPU' in out
+    if data.x.is_xpu:
+        assert 'Self XPU' in out
+
+    f_name = 'timeline.json'
+    f_exists = os.path.exists(f_name)
+    if not export_chrome_trace:
+        assert not f_exists
+    else:
+        assert f_exists
+        os.remove(f_name)
