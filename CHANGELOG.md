@@ -76,7 +76,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-
 - Added `output_initializer` argument to `DimeNet` models ([#7774](https://github.com/pyg-team/pytorch_geometric/pull/7774), [#7780](https://github.com/pyg-team/pytorch_geometric/pull/7780))
 - Warn user when using the `training` flag in `to_hetero` modules ([#7772](https://github.com/pyg-team/pytorch_geometric/pull/7772))
 - Unchained exceptions raised when accessing non-existent data attributes for better readability ([#7734](https://github.com/pyg-team/pytorch_geometric/pull/7734))
