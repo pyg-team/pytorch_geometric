@@ -4,9 +4,10 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor, PairTensor
+from torch_geometric.utils.map import map_index
 from torch_geometric.utils.mask import index_to_mask
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-from torch_geometric.utils.map import map_index
+
 
 def get_num_hops(model: torch.nn.Module) -> int:
     r"""Returns the number of hops the model is aggregating information
@@ -99,8 +100,8 @@ def subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        edge_index = map_index(edge_index, torch.arange(node_mask.sum().item(),
-                                        device=device))
+        edge_index = map_index(
+            edge_index, torch.arange(node_mask.sum().item(), device=device))
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
