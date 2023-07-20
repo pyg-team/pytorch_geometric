@@ -4,9 +4,10 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor, PairTensor
+from torch_geometric.utils.map import map_index
 from torch_geometric.utils.mask import index_to_mask
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-from torch_geometric.utils.map import map_index
+
 
 def get_num_hops(model: torch.nn.Module) -> int:
     r"""Returns the number of hops the model is aggregating information
@@ -185,10 +186,8 @@ def bipartite_subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        node_idx_i = torch.arange(int(src_node_mask.sum()),
-                                              device=device)
-        node_idx_j = torch.arange(int(dst_node_mask.sum()),
-                                              device=device)
+        node_idx_i = torch.arange(int(src_node_mask.sum()), device=device)
+        node_idx_j = torch.arange(int(dst_node_mask.sum()), device=device)
         edge_index = torch.stack([
             map_index(edge_index[0], node_idx_i),
             map_index(edge_index[1], node_idx_j),
