@@ -6,7 +6,7 @@ from torch import Tensor
 from torch_geometric.typing import OptTensor, PairTensor
 from torch_geometric.utils.mask import index_to_mask
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-
+from torch_geometric.utils.map import map_index
 
 def get_num_hops(model: torch.nn.Module) -> int:
     r"""Returns the number of hops the model is aggregating information
@@ -99,66 +99,8 @@ def subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        if edge_index.is_cuda:
-            try:
-                import cudf
-                WITH_CUDF = True
-            except ImportError:
-                WITH_CUDF = False
-            try:
-                import cupy
-                WITH_CUPY = True
-            except ImportError:
-                WITH_CUPY = False
-        else:
-            WITH_CUDF = False
-            WITH_CUPY = False
-
-        if node_mask.size(0) > 10**9 and WITH_CUPY and WITH_CUDF:
-            # if creating zeros for node idx could cause GPU OOM, use CUDF
-            graph = cudf.DataFrame({
-                "u":
-                cupy.asarray(edge_index[0].reshape(-1)),
-                "v":
-                cupy.asarray(edge_index[1].reshape(-1)),
-            })
-            nodes_to_keep = cudf.Series(subset, name="nodes")
-
-            mask = graph.u.isin(nodes_to_keep) & graph.v.isin(nodes_to_keep)
-
-            subgraph = graph.iloc[mask, :]
-
-            # Now relabel
-            # We have a mapping from the nodes_to_keep to a contiguous dense set
-            # and want to apply that mapping to the subgraph u and v. We can do
-            # this with three merges. The first two construct the relabellings
-            # separately for u and v, the final one regroups them (on the (u, v)
-            # pairs), since the two individual merges might not be done in the
-            # same order.
-
-            # The default index for the Series is a RangeIndex, so this turns it
-            # into a dataframe with two columns, "index" (the new labels) and
-            # "nodes" (the old labels)
-            nodes_to_keep = nodes_to_keep.reset_index()
-
-            new_u = (subgraph.merge(nodes_to_keep, left_on="u",
-                                    right_on="nodes",
-                                    how="inner").drop("nodes", axis=1).rename(
-                                        {"index": "new_u"}, axis=1))
-            new_v = (subgraph.loc[:, ["u", "v"]].merge(
-                nodes_to_keep, left_on="v", right_on="nodes",
-                how="inner").drop("nodes", axis=1).rename({"index": "new_v"},
-                                                          axis=1))
-
-            edge_index = torch.tensor(
-                new_u.merge(new_v, left_on=["u", "v"], right_on=["u", "v"],
-                            how="inner").drop(["u", "v"], axis=1).to_dlpack())
-        else:
-            node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
-                                   device=device)
-            node_idx[subset] = torch.arange(node_mask.sum().item(),
-                                            device=device)
-            edge_index = node_idx[edge_index]
+        edge_index = map_index(edge_index, torch.arange(node_mask.sum().item(),
+                                        device=device))
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
