@@ -338,14 +338,14 @@ class OutputBlock(torch.nn.Module):
         out_channels: int,
         num_layers: int,
         act: Callable,
-        output_init: str = 'zeros',
+        output_initializer: str = 'zeros',
     ):
-        assert output_init in {'zeros', 'glorot_orthogonal'}
+        assert output_initializer in {'zeros', 'glorot_orthogonal'}
 
         super().__init__()
 
         self.act = act
-        self.output_init = output_init
+        self.output_initializer = output_initializer
 
         self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
         self.lins = torch.nn.ModuleList()
@@ -360,9 +360,9 @@ class OutputBlock(torch.nn.Module):
         for lin in self.lins:
             glorot_orthogonal(lin.weight, scale=2.0)
             lin.bias.data.fill_(0)
-        if self.output_init == 'zeros':
+        if self.output_initializer == 'zeros':
             self.lin.weight.data.fill_(0)
-        elif self.output_init == 'glorot_orthogonal':
+        elif self.output_initializer == 'glorot_orthogonal':
             glorot_orthogonal(self.lin.weight, scale=2.0)
 
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
@@ -383,14 +383,14 @@ class OutputPPBlock(torch.nn.Module):
         out_channels: int,
         num_layers: int,
         act: Callable,
-        output_init: str = 'zeros',
+        output_initializer: str = 'zeros',
     ):
-        assert output_init in {'zeros', 'glorot_orthogonal'}
+        assert output_initializer in {'zeros', 'glorot_orthogonal'}
 
         super().__init__()
 
         self.act = act
-        self.output_init = output_init
+        self.output_initializer = output_initializer
 
         self.lin_rbf = Linear(num_radial, hidden_channels, bias=False)
 
@@ -409,9 +409,9 @@ class OutputPPBlock(torch.nn.Module):
         for lin in self.lins:
             glorot_orthogonal(lin.weight, scale=2.0)
             lin.bias.data.fill_(0)
-        if self.output_init == 'zeros':
+        if self.output_initializer == 'zeros':
             self.lin.weight.data.fill_(0)
-        elif self.output_init == 'glorot_orthogonal':
+        elif self.output_initializer == 'glorot_orthogonal':
             glorot_orthogonal(self.lin.weight, scale=2.0)
 
     def forward(self, x: Tensor, rbf: Tensor, i: Tensor,
@@ -486,8 +486,8 @@ class DimeNet(torch.nn.Module):
             output blocks. (default: :obj:`3`)
         act (str or Callable, optional): The activation function.
             (default: :obj:`"swish"`)
-        output_init (str, optional): The initialization method for the output
-            layer (:obj:`"zeros"`, :obj:`"glorot_orthogonal"`).
+        output_initializer (str, optional): The initialization method for the
+            output layer (:obj:`"zeros"`, :obj:`"glorot_orthogonal"`).
             (default: :obj:`"zeros"`)
     """
 
@@ -509,7 +509,7 @@ class DimeNet(torch.nn.Module):
         num_after_skip: int = 2,
         num_output_layers: int = 3,
         act: Union[str, Callable] = 'swish',
-        output_init: str = 'zeros',
+        output_initializer: str = 'zeros',
     ):
         super().__init__()
 
@@ -535,7 +535,7 @@ class DimeNet(torch.nn.Module):
                 out_channels,
                 num_output_layers,
                 act,
-                output_init,
+                output_initializer,
             ) for _ in range(num_blocks + 1)
         ])
 
@@ -747,8 +747,8 @@ class DimeNetPlusPlus(DimeNet):
             output blocks. (default: :obj:`3`)
         act: (str or Callable, optional): The activation funtion.
             (default: :obj:`"swish"`)
-        output_init (str, optional): The initialization method for the output
-            layer (:obj:`"zeros"`, :obj:`"glorot_orthogonal"`).
+        output_initializer (str, optional): The initialization method for the
+            output layer (:obj:`"zeros"`, :obj:`"glorot_orthogonal"`).
             (default: :obj:`"zeros"`)
     """
 
@@ -772,7 +772,7 @@ class DimeNetPlusPlus(DimeNet):
         num_after_skip: int = 2,
         num_output_layers: int = 3,
         act: Union[str, Callable] = 'swish',
-        output_init: str = 'zeros',
+        output_initializer: str = 'zeros',
     ):
         act = activation_resolver(act)
 
@@ -790,7 +790,7 @@ class DimeNetPlusPlus(DimeNet):
             num_after_skip=num_after_skip,
             num_output_layers=num_output_layers,
             act=act,
-            output_init=output_init,
+            output_initializer=output_initializer,
         )
 
         # We are re-using the RBF, SBF and embedding layers of `DimeNet` and
@@ -806,7 +806,7 @@ class DimeNetPlusPlus(DimeNet):
                 out_channels,
                 num_output_layers,
                 act,
-                output_init,
+                output_initializer,
             ) for _ in range(num_blocks + 1)
         ])
 
