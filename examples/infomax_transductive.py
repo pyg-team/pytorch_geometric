@@ -26,7 +26,13 @@ def corruption(x, edge_index):
     return x[torch.randperm(x.size(0), device=x.device)], edge_index
 
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 model = DeepGraphInfomax(
     hidden_channels=512,
     encoder=Encoder(dataset.num_features, 512),

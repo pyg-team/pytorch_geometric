@@ -51,8 +51,8 @@ class GATEConv(MessagePassing):
                 size_i: Optional[int]) -> Tensor:
 
         x_j = F.leaky_relu_(self.lin1(torch.cat([x_j, edge_attr], dim=-1)))
-        alpha_j = (x_j * self.att_l).sum(dim=-1)
-        alpha_i = (x_i * self.att_r).sum(dim=-1)
+        alpha_j = (x_j @ self.att_l.t()).squeeze(-1)
+        alpha_i = (x_i @ self.att_r.t()).squeeze(-1)
         alpha = alpha_j + alpha_i
         alpha = F.leaky_relu_(alpha)
         alpha = softmax(alpha, index, ptr, size_i)
