@@ -3,7 +3,7 @@ from typing import Optional
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.typing import OptTensor
+from torch_geometric.typing import OptTensor, torch_cluster
 
 from .asap import ASAPooling
 from .avg_pool import avg_pool, avg_pool_neighbor_x, avg_pool_x
@@ -17,11 +17,6 @@ from .sag_pool import SAGPooling
 from .topk_pool import TopKPooling
 from .voxel_grid import voxel_grid
 from .approx_knn import approx_knn, approx_knn_graph
-
-try:
-    import torch_cluster
-except ImportError:
-    torch_cluster = None
 
 
 def fps(
