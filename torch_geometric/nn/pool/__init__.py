@@ -18,16 +18,6 @@ from .topk_pool import TopKPooling
 from .voxel_grid import voxel_grid
 from .approx_knn import approx_knn, approx_knn_graph
 
-try:
-    import torch_cluster
-except ImportError:
-
-    class PackageWarning:
-        def __getattr__(self, key: str):
-            raise ImportError(f'`{key}` requires `torch-cluster`.')
-
-    torch_cluster = PackageWarning()
-
 
 def fps(
     x: Tensor,
