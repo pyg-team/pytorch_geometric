@@ -21,7 +21,12 @@ from .approx_knn import approx_knn, approx_knn_graph
 try:
     import torch_cluster
 except ImportError:
-    torch_cluster = None
+
+    class PackageWarning:
+        def __getattr__(self, key):
+            raise ImportError(f'`{key}` requires `torch-cluster`.')
+
+    torch_cluster = PackageWarning()
 
 
 def fps(
