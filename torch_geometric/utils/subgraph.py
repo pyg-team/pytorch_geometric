@@ -189,8 +189,8 @@ def bipartite_subgraph(
         node_idx_i = torch.arange(int(src_node_mask.sum()), device=device)
         node_idx_j = torch.arange(int(dst_node_mask.sum()), device=device)
         edge_index = torch.stack([
-            map_index(edge_index[0], node_idx_i),
-            map_index(edge_index[1], node_idx_j),
+            map_index(edge_index[0], node_idx_i)[0],
+            map_index(edge_index[1], node_idx_j)[0],
         ], dim=0)
 
     if return_edge_mask:
