@@ -1,14 +1,9 @@
 from typing import Optional, Tuple
 
 import torch
-
-try:
-    import torch_cluster  # noqa
-    random_walk = torch.ops.torch_cluster.random_walk
-except ImportError:
-    random_walk = None
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.deprecation import deprecated
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils.degree import degree
@@ -267,7 +262,7 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     if not training or p == 0.0:
         return edge_index, edge_mask
 
-    if random_walk is None:
+    if not torch_geometric.typing.WITH_TORCH_CLUSTER:
         raise ImportError('`dropout_path` requires `torch-cluster`.')
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
@@ -285,7 +280,8 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     deg = degree(row, num_nodes=num_nodes)
     rowptr = row.new_zeros(num_nodes + 1)
     torch.cumsum(deg, 0, out=rowptr[1:])
-    n_id, e_id = random_walk(rowptr, col, start, walk_length, 1.0, 1.0)
+    n_id, e_id = torch.ops.torch_cluster.random_walk(rowptr, col, start,
+                                                     walk_length, 1.0, 1.0)
     e_id = e_id[e_id != -1].view(-1)  # filter illegal edges
 
     if edge_orders is not None:

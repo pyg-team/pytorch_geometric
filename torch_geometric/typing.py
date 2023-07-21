@@ -51,6 +51,12 @@ except (ImportError, OSError) as e:
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_CLUSTER = False
 
+    class TorchCluster:
+        def __getattr__(self, key: str):
+            raise ImportError(f"'{key}' requires 'torch-cluster'")
+
+    torch_cluster = TorchCluster()
+
 try:
     import torch_spline_conv  # noqa
     WITH_TORCH_SPLINE_CONV = True
