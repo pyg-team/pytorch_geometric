@@ -3,7 +3,7 @@ from typing import Optional
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.typing import OptTensor
+from torch_geometric.typing import OptTensor, torch_cluster
 
 from .asap import ASAPooling
 from .avg_pool import avg_pool, avg_pool_neighbor_x, avg_pool_x
