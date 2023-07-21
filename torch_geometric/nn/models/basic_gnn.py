@@ -2,7 +2,6 @@ import copy
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ModuleList
 from tqdm import tqdm
@@ -83,7 +82,7 @@ class BasicGNN(torch.nn.Module):
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
 
-        self.dropout = dropout
+        self.dropout = torch.nn.Dropout(p=dropout)
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.jk_mode = jk
         self.act_first = act_first
@@ -232,7 +231,7 @@ class BasicGNN(torch.nn.Module):
                 x = self.norms[i](x)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
-            x = F.dropout(x, p=self.dropout, training=self.training)
+            x = self.dropout(x)
             if hasattr(self, 'jk'):
                 xs.append(x)
 
@@ -537,7 +536,7 @@ class GAT(BasicGNN):
 
         Conv = GATConv if not v2 else GATv2Conv
         return Conv(in_channels, out_channels, heads=heads, concat=concat,
-                    dropout=self.dropout, **kwargs)
+                    dropout=self.dropout.p, **kwargs)
 
 
 class PNA(BasicGNN):
