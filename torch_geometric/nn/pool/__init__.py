@@ -23,7 +23,7 @@ try:
 except ImportError:
 
     class PackageWarning:
-        def __getattr__(self, key):
+        def __getattr__(self, key: str):
             raise ImportError(f'`{key}` requires `torch-cluster`.')
 
     torch_cluster = PackageWarning()
