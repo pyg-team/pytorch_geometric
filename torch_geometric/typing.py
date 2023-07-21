@@ -53,7 +53,7 @@ except (ImportError, OSError) as e:
 
     class TorchCluster:
         def __getattr__(self, key: str):
-            raise ImportError(f'`{key}` requires `torch-cluster`.')
+            raise ImportError(f"'{key}' requires 'torch-cluster'")
 
     torch_cluster = TorchCluster()
 
