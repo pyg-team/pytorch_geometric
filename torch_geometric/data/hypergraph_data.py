@@ -13,28 +13,30 @@ from torch_geometric.utils import hyper_subgraph, select
 class HyperGraphData(Data):
     r"""A data object describing a hypergraph.
     The data object can hold node-level, link-level and graph-level attributes.
-    This object differs from a standard data object by having hyperedges,
-    i.e. edges that connect more than two nodes
+    This object differs from a standard :obj:`~torch_geometric.data.Data`
+    object by having hyperedges, i.e. edges that connect more
+    than two nodes. For example, in the hypergraph scenario
+    :math:`\mathcal{G} = (\mathcal{V}, \mathcal{E})` with
+    :math:`\mathcal{V} = \{ 0, 1, 2, 3 \}` and
+    :math:`\mathcal{E} = \{ \{ 0, 1, 2 \}, \{ 1, 2, 3 \} \}`, the
+    hyperedge index :obj:`edge_index` is represented as:
 
     .. code-block:: python
 
-        from torch_geometric.data import HyperGraphData
-
-        x = torch.randn(4, 8)
         edge_index = torch.tensor([
-                [0, 1, 0, 2, 1, 0, 1, 2, 3],
-                [0, 0, 1, 1, 1, 2, 2, 2, 2]
-            ])
-        data = HyperGraphData(x=x, edge_index=edge_index, ...)
+            [0, 1, 2, 1, 2, 3],
+            [0, 0, 0, 1, 1, 1],
+        ])
 
     Args:
         x (torch.Tensor, optional): Node feature matrix with shape
             :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
-        edge_index (LongTensor, optional): Hyperedge list
-            with shape :obj:`[2, num_nodes*num_edges_per_node]`.
+        edge_index (LongTensor, optional): Hyperedge tensor
+            with shape :obj:`[2, num_edges*num_nodes_per_edge]`.
             (default: :obj:`None`)
         edge_attr (torch.Tensor, optional): Edge feature matrix with shape
-            :obj:`[num_edges, num_edge_features]`. (default: :obj:`None`)
+            :obj:`[num_edges*num_nodes_per_edge, num_edge_features]`.
+            (default: :obj:`None`)
         y (torch.Tensor, optional): Graph-level or node-level ground-truth
             labels with arbitrary shape. (default: :obj:`None`)
         pos (torch.Tensor, optional): Node position matrix with shape
