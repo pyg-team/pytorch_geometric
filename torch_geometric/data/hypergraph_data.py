@@ -17,15 +17,17 @@ class HyperGraphData(Data):
     object by having hyperedges, i.e. edges that connect more
     than two nodes. For example, in the hypergraph scenario
     :math:`\mathcal{G} = (\mathcal{V}, \mathcal{E})` with
-    :math:`\mathcal{V} = \{ 0, 1, 2, 3 \}` and
-    :math:`\mathcal{E} = \{ \{ 0, 1, 2 \}, \{ 1, 2, 3 \} \}`, the
+    :math:`\mathcal{V} = \{ 0, 1, 2, 3, 4 \}` and
+    :math:`\mathcal{E} = \{ \{ 0, 1, 2 \}, \{ 1, 2, 3, 4 \} \}`, the
     hyperedge index :obj:`edge_index` is represented as:
 
     .. code-block:: python
 
+        # hyper graph with two hyperedges
+        # connecting 3 and 4 nodes, respectively
         edge_index = torch.tensor([
-            [0, 1, 2, 1, 2, 3],
-            [0, 0, 0, 1, 1, 1],
+            [0, 1, 2, 1, 2, 3, 4],
+            [0, 0, 0, 1, 1, 1, 1],
         ])
 
     Args:
@@ -33,6 +35,9 @@ class HyperGraphData(Data):
             :obj:`[num_nodes, num_node_features]`. (default: :obj:`None`)
         edge_index (LongTensor, optional): Hyperedge tensor
             with shape :obj:`[2, num_edges*num_nodes_per_edge]`.
+            Where `edge_index[1]` denotes the hyperedge index and
+            `edge_index[0]` denotes the node indicies that are connected
+            by the hyperedge. (default: :obj:`None`)
             (default: :obj:`None`)
         edge_attr (torch.Tensor, optional): Edge feature matrix with shape
             :obj:`[num_edges*num_nodes_per_edge, num_edge_features]`.
@@ -56,26 +61,6 @@ class HyperGraphData(Data):
         return max(self.edge_index[1]) + 1
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
-        r"""Returns the incremental count to cumulatively increase the value
-        :obj:`value` of the attribute :obj:`key` when creating mini-batches
-        using :class:`torch_geometric.loader.DataLoader`.
-
-        Examples:
-            >>> x = torch.randn(3, 16)
-            >>> edge_index = torch.tensor([
-            ...     [0, 1, 0, 2, 1],
-            ...     [0, 0, 1, 1, 1]
-            >>> ])
-            >>> data = HyperGraphData(x = x, edge_index = edge_index)
-            >>> data_list = [data, data]
-            >>> loader = Dataloader(data_list, batch_size = 2)
-            >>> batch = next(iter(loader))
-
-            >>> batch.edge_index
-            tensor([[0, 1, 0, 2, 1, 3, 4, 3, 5, 4],
-            [0, 0, 1, 1, 1, 2, 2, 3, 3, 3]])
-        """
-
         if key == 'edge_index':
             return torch.tensor([[self.num_nodes], [self.num_edges]])
         else:
@@ -87,8 +72,8 @@ class HyperGraphData(Data):
 
         .. note::
 
-            If only a subset of a hyperedge's connected nodes are to be
-            selected in the subgraph, the hypergraph will remain in the
+            If only a subset of a hyperedge's nodes are to be
+            selected in the subgraph, the hyperedge will remain in the
             subgraph, but only the selected nodes will be connected by
             the hyperedge. Hyperedges that only connects one node in the
             subgraph will be removed.
