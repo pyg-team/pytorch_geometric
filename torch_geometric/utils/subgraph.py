@@ -341,10 +341,10 @@ def hyper_subgraph(
         Args:
             subset (LongTensor, BoolTensor or [int]): The nodes to keep.
             edge_index (LongTensor): Hyperedge tensor
-            with shape :obj:`[2, num_edges*num_nodes_per_edge]`.
-            Where `edge_index[1]` denotes the hyperedge index and
-            `edge_index[0]` denotes the node indicies that are connected
-            by the hyperedge.
+                with shape :obj:`[2, num_edges*num_nodes_per_edge]`.
+                Where `edge_index[1]` denotes the hyperedge index and
+                `edge_index[0]` denotes the node indicies that are connected
+                by the hyperedge.
             edge_attr (Tensor, optional): Edge weights or multi-dimensional
                 edge features. (default: :obj:`None`)
             relabel_nodes (bool, optional): If set to :obj:`True`, the
