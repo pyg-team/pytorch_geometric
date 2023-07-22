@@ -156,17 +156,10 @@ class CaptumExplainer(ExplainerAlgorithm):
 
         # In captum, the target is the index for which
         # the attribution is computed.
-        print('original')
-        print(target)
         if self.model_config.mode == ModelMode.regression:
             target = None
         else:
             target = target[index]
-
-        print(target)
-
-        # if self.model_config.mode == ModelMode.binary_classification:
-        #     target = target.view(-1, 1).to(torch.float)
 
         attributions = attribution_method.attribute(
             inputs=inputs,
