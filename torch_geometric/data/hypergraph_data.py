@@ -58,7 +58,21 @@ class HyperGraphData(Data):
     def num_edges(self) -> int:
         r"""Returns the number of hyperedges in the hypergraph.
         """
+        if self.edge_index is None:
+            return 0
         return max(self.edge_index[1]) + 1
+
+    @property
+    def num_nodes(self) -> int:
+        num_nodes = super().num_nodes
+
+        # For a hyper graph, the `edge_index[1]`
+        # does not contain node indicies. Therefore,
+        # the below code is to prevent the `num_nodes`
+        # being estimated as the number of hyperedges.
+        if (self.edge_index is not None and num_nodes == self.num_edges):
+            return max(self.edge_index[0]) + 1
+        return num_nodes
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if key == 'edge_index':

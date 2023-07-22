@@ -93,18 +93,19 @@ def test_hypergraph_data():
     assert data.num_node_features == 3
     assert data.num_features == 3
 
-    # data.edge_attr = torch.randn(data.num_edges, 2)
-    # assert data.num_edge_features == 2
-    # data.edge_attr = None
+    data.edge_attr = torch.randn(9, 2)
+    assert data.num_edge_features == 2
+    assert data.is_edge_attr('edge_attr')
+    data.edge_attr = None
 
     data.x = None
     with pytest.warns(UserWarning, match='Unable to accurately infer'):
         assert data.num_nodes == 4
 
-    # data.edge_index = None
-    # with pytest.warns(UserWarning, match='Unable to accurately infer'):
-    #     assert data.num_nodes is None
-    # assert data.num_edges == 0
+    data.edge_index = None
+    with pytest.warns(UserWarning, match='Unable to accurately infer'):
+        assert data.num_nodes is None
+    assert data.num_edges == 0
 
     data.num_nodes = 4
     assert data.num_nodes == 4
