@@ -93,7 +93,7 @@ def test_hypergraph_data():
     assert data.num_node_features == 3
     assert data.num_features == 3
 
-    data.edge_attr = torch.randn(9, 2)
+    data.edge_attr = torch.randn(data.num_edges, 2)
     assert data.num_edge_features == 2
     assert data.is_edge_attr('edge_attr')
     data.edge_attr = None
@@ -143,14 +143,15 @@ def test_hypergraphdata_subgraph():
     y = torch.tensor([0.])
     edge_index = torch.tensor([[0, 1, 3, 2, 4, 0, 3, 4, 2, 1, 2, 3],
                                [0, 0, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3]])
-
-    data = HyperGraphData(x=x, y=y, edge_index=edge_index, num_nodes=5)
+    edge_attr = torch.rand(4, 2)
+    data = HyperGraphData(x=x, y=y, edge_index=edge_index, edge_attr=edge_attr)
 
     out = data.subgraph(torch.tensor([1, 2, 4]))
     assert len(out) == 4
     assert torch.equal(out.x, torch.tensor([1, 2, 4]))
     assert torch.equal(out.y, data.y)
     assert out.edge_index.tolist() == [[1, 2, 2, 1, 0, 1], [1, 1, 2, 2, 3, 3]]
+    assert torch.equal(out.edge_attr, edge_attr[[1, 2, 3]])
     assert out.num_nodes == 3
 
     # Test unordered selection:

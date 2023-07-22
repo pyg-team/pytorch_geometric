@@ -40,7 +40,7 @@ class HyperGraphData(Data):
             by the hyperedge. (default: :obj:`None`)
             (default: :obj:`None`)
         edge_attr (torch.Tensor, optional): Edge feature matrix with shape
-            :obj:`[num_edges*num_nodes_per_edge, num_edge_features]`.
+            :obj:`[num_edges, num_edge_features]`.
             (default: :obj:`None`)
         y (torch.Tensor, optional): Graph-level or node-level ground-truth
             labels with arbitrary shape. (default: :obj:`None`)
@@ -73,6 +73,11 @@ class HyperGraphData(Data):
         if (self.edge_index is not None and num_nodes == self.num_edges):
             return max(self.edge_index[0]) + 1
         return num_nodes
+
+    def is_edge_attr(self, key: str) -> bool:
+        val = super().is_edge_attr(key)
+        if not val and self.edge_index is not None:
+            return key in self and self[key].size(0) == self.num_edges
 
     def __inc__(self, key: str, value: Any, *args, **kwargs) -> Any:
         if key == 'edge_index':
