@@ -535,4 +535,3 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         edge_mask = torch.mean(edge_mask, 0)
 
         return edge_mask
-    
