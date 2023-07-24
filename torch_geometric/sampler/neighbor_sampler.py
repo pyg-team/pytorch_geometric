@@ -298,7 +298,6 @@ class NeighborSampler(BaseSampler):
                     and self.subgraph_type != SubgraphType.induced):
                 # TODO (matthias) `return_edge_id` if edge features present
                 # TODO (matthias) Ideally, `seed` inherits dtype from `colptr`
-                print('seed', seed)
                 out = torch.ops.pyg.neighbor_sample(
                     self.colptr,
                     self.row,
@@ -391,7 +390,6 @@ def edge_sample(
 ) -> Union[SamplerOutput, HeteroSamplerOutput]:
     r"""Performs sampling from an edge sampler input, leveraging a sampling
     function of the same signature as `node_sample`."""
-    print("HEHEHE")
     input_id = inputs.input_id
     src = inputs.row
     dst = inputs.col
