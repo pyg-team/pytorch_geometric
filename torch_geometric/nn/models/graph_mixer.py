@@ -243,11 +243,11 @@ class LinkEncoder(torch.nn.Module):
         Returns:
             A node embedding tensor of shape :obj:`[num_nodes, out_channels]`.
         """
-        mask = edge_time <= seed_time[edge_index[1]]
+        # mask = edge_time <= seed_time[edge_index[1]]
 
-        edge_index = edge_index[:, mask]
-        edge_attr = edge_attr[mask]
-        edge_time = edge_time[mask]
+        # edge_index = edge_index[:, mask]
+        # edge_attr = edge_attr[mask]
+        # edge_time = edge_time[mask]
 
         time_enc = self.temporal_encoder(seed_time[edge_index[1]] - edge_time)
         edge_attr = torch.cat([time_enc, edge_attr], dim=-1)
