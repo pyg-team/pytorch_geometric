@@ -49,7 +49,7 @@ class GDELTLite(InMemoryDataset):
           - 413
           -
     """
-    url = 'https://data.pyg.org/datasets/gdelt_lite.zip'
+    url = "https://data.pyg.org/datasets/gdelt_lite.zip"
 
     def __init__(
         self,
@@ -62,11 +62,11 @@ class GDELTLite(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
-        return ['node_features.pt', 'edges.csv', 'edge_features.pt']
+        return ["node_features.pt", "edges.csv", "edge_features.pt"]
 
     @property
     def processed_file_names(self) -> str:
-        return 'data.pt'
+        return "data.pt"
 
     def download(self):
         path = download_url(self.url, self.raw_dir)
@@ -80,12 +80,17 @@ class GDELTLite(InMemoryDataset):
         df = pd.read_csv(self.raw_paths[1])
         edge_attr = torch.load(self.raw_paths[2])
 
-        row = torch.from_numpy(df['src'].values)
-        col = torch.from_numpy(df['dst'].values)
+        row = torch.from_numpy(df["src"].values)
+        col = torch.from_numpy(df["dst"].values)
         edge_index = torch.stack([row, col], dim=0)
-        time = torch.from_numpy(df['time'].values).to(torch.long)
+        edge_time = torch.from_numpy(df["time"].values).to(torch.long)
 
-        data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, time=time)
+        data = Data(
+            x=x,
+            edge_index=edge_index,
+            edge_attr=edge_attr,
+            edge_time=edge_time,
+        )
         data = data if self.pre_transform is None else self.pre_transform(data)
 
         self.save([data], self.processed_paths[0])
