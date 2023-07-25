@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
+from torch_geometric.testing import onlyCUDA, withPackage
 from torch_geometric.utils import (
     bipartite_subgraph,
     get_num_hops,
@@ -8,8 +9,6 @@ from torch_geometric.utils import (
     k_hop_subgraph,
     subgraph,
 )
-from torch_geometric.testing import onlyCUDA, withPackage
-
 
 
 def test_get_num_hops():
@@ -92,6 +91,7 @@ def test_bipartite_subgraph_large_cudf():
     for subset in [idx, mask, indices, mixed]:
         out = bipartite_subgraph(subset, edge_index, relabel_nodes=True)
         assert out[0].tolist() == [[0, 1, 2, 2], [1, 0, 0, 1]]
+
 
 def test_k_hop_subgraph():
     edge_index = torch.tensor([
