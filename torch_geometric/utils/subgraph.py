@@ -186,11 +186,11 @@ def bipartite_subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        node_idx_i = torch.arange(int(src_node_mask.sum()), device=device)
-        node_idx_j = torch.arange(int(dst_node_mask.sum()), device=device)
+        a_range = torch.arange(start=edge_index.min(),
+                               end=edge_index.max() + 1, device=device)
         edge_index = torch.stack([
-            map_index(edge_index[0], node_idx_i)[0],
-            map_index(edge_index[1], node_idx_j)[0],
+            map_index(edge_index[0], a_range)[0],
+            map_index(edge_index[1], a_range)[0],
         ], dim=0)
 
     if return_edge_mask:
