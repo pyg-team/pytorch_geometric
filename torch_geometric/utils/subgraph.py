@@ -186,10 +186,11 @@ def bipartite_subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        idx_swap = torch.unique(edge_index)
+        src_swap = torch.unique(edge_index[0])
+        dst_swap = torch.unique(edge_index[1])
         edge_index = torch.stack([
-            map_index(edge_index[0], idx_swap)[0],
-            map_index(edge_index[1], idx_swap)[0],
+            map_index(edge_index[0], src_swap)[0],
+            map_index(edge_index[1], dst_swap)[0],
         ], dim=0)
 
     if return_edge_mask:
