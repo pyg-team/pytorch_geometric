@@ -8,6 +8,8 @@ from torch_geometric.utils import (
     k_hop_subgraph,
     subgraph,
 )
+from torch_geometric.testing import onlyCUDA, withPackage
+
 
 
 def test_get_num_hops():
@@ -71,6 +73,25 @@ def test_bipartite_subgraph():
         assert out[0].tolist() == [[0, 1, 2, 2], [1, 0, 0, 1]]
         assert out[1].tolist() == [3.0, 4.0, 9.0, 10.0]
 
+
+@withPackage('cudf')
+@onlyCUDA
+def test_bipartite_subgraph_large_cudf():
+    device = "cuda"
+    edge_index = torch.tensor([[0, 5, 2, 3, 3, 4, 4, 3, 5, 5, 6],
+                               [0, 0, 3, 2, 0, 0, 2, 1, 2, 3, 1]])
+    num_nodes = 2 * 10**9
+    edge_index = torch.cat(
+        (edge_index, torch.randint(low=7, high=num_nodes, size=(2, 10**5))),
+        dim=-1).to(device)
+    idx = (torch.tensor([2, 3, 5]).to(device), torch.tensor([2, 3]).to(device))
+    mask = (index_to_mask(idx[0], 7), index_to_mask(idx[1], 4))
+    indices = (idx[0].tolist(), idx[1].tolist())
+    mixed = (mask[0], idx[1])
+
+    for subset in [idx, mask, indices, mixed]:
+        out = bipartite_subgraph(subset, edge_index, relabel_nodes=True)
+        assert out[0].tolist() == [[0, 1, 2, 2], [1, 0, 0, 1]]
 
 def test_k_hop_subgraph():
     edge_index = torch.tensor([
