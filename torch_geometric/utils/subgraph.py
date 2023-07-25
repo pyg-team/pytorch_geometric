@@ -101,10 +101,7 @@ def subgraph(
 
     if relabel_nodes:
         a_range = torch.arange(node_mask.sum().item(), device=device)
-        edge_index = torch.stack([
-            map_index(edge_index[0], a_range)[0],
-            map_index(edge_index[1], a_range)[0],
-        ], dim=0)
+        edge_index = map_index(edge_index, a_range)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
