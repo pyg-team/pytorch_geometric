@@ -187,9 +187,12 @@ def bipartite_subgraph(
 
     if relabel_nodes:
         a_range_i = torch.arange(start=edge_index[0].min(),
-                                 end=src_node_mask.size(0) + 1, device=device)
+                                 end=edge_index[0].max() + 1, device=device)
         a_range_j = torch.arange(start=edge_index[1].min(),
-                                 end=dst_node_mask.size(0) + 1, device=device)
+                                 end=edge_index[1].max() + 1, device=device)
+        print("edge_index=", edge_index)
+        print("a_range_i=",a_range_i)
+        print("a_rangE_j=",a_range_j)
         edge_index = torch.stack([
             map_index(edge_index[0], a_range_i)[0],
             map_index(edge_index[1], a_range_j)[0],
