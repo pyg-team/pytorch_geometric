@@ -118,7 +118,7 @@ class GraphMixer(torch.nn.Module):
             (link_encoder_out_channels + num_node_feats) * 2, 1
         )
 
-    def forward(self, x, edge_index, edge_attr, edge_time, seed_time, data):
+    def forward(self, x, edge_index, edge_attr, edge_time, seed_time, edge_label_index):
         # [num_nodes, link_encoder_out_channels]
         link_feat = self.link_encoder(
             edge_index,
@@ -139,8 +139,8 @@ class GraphMixer(torch.nn.Module):
         feats = torch.cat([link_feat, node_feat], dim=-1)
 
         # TODO: Filter out non-root nodes earlier than here if possible
-        feats_src = feats[data.edge_label_index[0]]
-        feats_dst = feats[data.edge_label_index[1]]
+        feats_src = feats[edge_label_index[0]]
+        feats_dst = feats[edge_label_index[1]]
         feat_pairs = torch.cat([feats_src, feats_dst], dim=-1)
 
         # [batch_size, 1]
@@ -157,15 +157,14 @@ def main():
     K = 2
     loader = LinkNeighborLoader(
         data,
-        num_neighbors=[7],
+        num_neighbors=[2],
         # num_neighbors=[-1]  # to only use K most recent ones in the model
-        # neg_sampling_ratio=0.0,
+        # neg_sampling_ratio=1.0,
         edge_label=torch.ones(data.num_edges),
         time_attr="edge_time",
         edge_label_time=data.edge_time,
-        # edge_label_index=data.edge_index,
-        batch_size=13,
-        shuffle=False,
+        batch_size=5,
+        shuffle=True,
     )
     model = GraphMixer(
         num_node_feats=data.x.size(1),
@@ -185,7 +184,7 @@ def main():
                 sampled_data.edge_attr.to(torch.float),
                 sampled_data.edge_time.to(torch.float),
                 sampled_data.edge_label_time,
-                sampled_data,  # FIXME: REMOVE
+                sampled_data.edge_label_index,
             )
             print(sampled_data)
             print(pred.size(), sampled_data.edge_label.size())
@@ -197,6 +196,7 @@ def main():
             optimizer.step()
             print(loss.item())
             break
+        break
 
 
 if __name__ == "__main__":
