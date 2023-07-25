@@ -103,7 +103,7 @@ def subgraph(
         a_range = torch.arange(node_mask.sum().item()
         edge_index = torch.stack([
             map_index(edge_index[0], a_range)[0],
-            map_index(edge_index[1], a_range[0],
+            map_index(edge_index[1], a_range)[0],
         ], dim=0)
 
     if return_edge_mask:
