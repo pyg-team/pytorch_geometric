@@ -9,6 +9,9 @@ from torch_geometric.data import EdgeAttr, GraphStore
 from torch_geometric.typing import EdgeTensorType, EdgeType, NodeType
 
 
+
+
+
 class LocalGraphStore(GraphStore):
     r"""This class implements the :class:`torch_geometric.data.GraphStore`
     interface to act as a local graph store for distributed training."""
@@ -20,20 +23,21 @@ class LocalGraphStore(GraphStore):
 
         self.num_partitions: int = 1
         self.partition_idx: int = 0
-        self.node_pb: Union[torch.Tensor, Dict[NodeType, torch.Tensor]] = None
-        r""" node_partition_book:  mapping between node ids and partition idx """
-        self.edge_pb: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]] = None
-        r""" edge_partition_book:  mapping between edge ids and partition idx """
+        # node_partition_book:  mapping between node ids and partition idx
+        self.node_pb: Union[Tensor, Dict[NodeType, Tensor]] = None
+        # edge_partition_book:  mapping between edge ids and partition idx
+        self.edge_pb: Union[Tensor, Dict[EdgeType, Tensor]] = None
+        # meta information related to partition and graph store info
         self.meta: Optional[Dict[Any, Any]] = None
-        r""" meta information related to partition and graph store info """
-        self.labels: Union[torch.Tensor, Dict[EdgeType, torch.Tensor]] = None
+        # partition labels
+        self.labels: Union[Tensor, Dict[EdgeType, Tensor]] = None
 
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:
         return (attr.edge_type, attr.layout.value)
 
     def get_partition_ids_from_nids(self, ids: torch.Tensor,
-                                    node_type: Optional[NodeType] = None):
+                            node_type: Optional[NodeType]=None):
         # Get the local partition ids of node ids with a specific node type.
         if self.meta["is_hetero"]:
             assert node_type is not None
@@ -41,12 +45,14 @@ class LocalGraphStore(GraphStore):
         return self.node_pb[ids]
 
     def get_partition_ids_from_eids(self, eids: torch.Tensor,
-                                    edge_type: Optional[EdgeType] = None):
+                            edge_type: Optional[EdgeType]=None):
         r""" Get the partition ids of edge ids with a specific edge type."""
         if self.meta["is_hetero"]:
             assert edge_type is not None
             return self.edge_pb[edge_type][eids]
         return self.edge_pb[eids]
+
+
 
     # starting for graph ..
 
@@ -154,17 +160,16 @@ class LocalGraphStore(GraphStore):
 
         if not meta['is_hetero']:
             attr = dict(edge_type=None, layout='coo', size=graph_data['size'])
-            graph_store.put_edge_index(
-                torch.stack((graph_data['row'], graph_data['col']), dim=0),
-                **attr)
+            graph_store.put_edge_index(torch.stack((graph_data['row'], graph_data['col']),dim=0),
+                                       **attr)
             graph_store.put_edge_id(graph_data['edge_id'], **attr)
 
         if meta['is_hetero']:
             for edge_type, data in graph_data.items():
                 attr = dict(edge_type=edge_type, layout='coo',
                             size=data['size'])
-                graph_store.put_edge_index(
-                    torch.stack((data['row'], data['col']), dim=0), **attr)
+                graph_store.put_edge_index(torch.stack((data['row'], data['col']),dim=0),
+                                       **attr)
                 #graph_store.put_edge_index((data['row'], data['col']), **attr)
                 graph_store.put_edge_id(data['edge_id'], **attr)
 
