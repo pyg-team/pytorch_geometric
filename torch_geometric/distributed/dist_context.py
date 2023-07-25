@@ -1,11 +1,11 @@
-
+from dataclasses import dataclass
 from enum import Enum
 from typing import Optional
 
-from dataclasses import dataclass
 
 class DistRole(Enum):
     WORKER = 1  # for worker mode
+
 
 @dataclass
 class DistContext:
@@ -20,4 +20,3 @@ class DistContext:
     @property
     def worker_name(self) -> str:
         return f"{self.group_name}-{self.rank}"
-
