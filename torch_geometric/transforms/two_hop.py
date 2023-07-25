@@ -1,4 +1,5 @@
 import torch
+
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
@@ -24,15 +25,18 @@ class TwoHop(BaseTransform):
         edge_index2 = edge_index2.remove_self_loops()
 
         # Combine edge_index and edge_index2
-        edge_index_combined = torch.cat([edge_index, edge_index2.indices()], dim=1)
+        edge_index_combined = torch.cat(
+            [edge_index, edge_index2.indices()], dim=1)
 
         # Combine edge_attr if it exists
         if edge_attr is not None:
             num_new_edges = edge_index2.indices().size(1)
-            edge_attr2 = edge_attr.new_zeros(num_new_edges, *edge_attr.size()[1:])
+            edge_attr2 = edge_attr.new_zeros(num_new_edges,
+                                             *edge_attr.size()[1:])
             edge_attr_combined = torch.cat([edge_attr, edge_attr2], dim=0)
 
         # Update data object in-place with the new edge_index and edge_attr
-        data.edge_index, data.edge_attr = coalesce(edge_index_combined, edge_attr_combined, N)
+        data.edge_index, data.edge_attr = coalesce(edge_index_combined,
+                                                   edge_attr_combined, N)
 
         return data
