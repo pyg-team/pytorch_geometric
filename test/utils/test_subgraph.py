@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
+from torch_geometric.testing import onlyCUDA, withPackage
 from torch_geometric.utils import (
     bipartite_subgraph,
     get_num_hops,
@@ -8,7 +9,6 @@ from torch_geometric.utils import (
     k_hop_subgraph,
     subgraph,
 )
-from torch_geometric.testing import onlyCUDA, withPackage
 
 
 def test_get_num_hops():
@@ -48,6 +48,7 @@ def test_subgraph():
         out = subgraph(subset, edge_index, edge_attr, relabel_nodes=True)
         assert out[0].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
         assert out[1].tolist() == [7, 8, 9, 10]
+
 
 @withPackage('cudf')
 @onlyCUDA
