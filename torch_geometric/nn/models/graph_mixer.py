@@ -24,6 +24,7 @@ class NodeEncoder(torch.nn.Module):
         time_window (int): The temporal window size :math:`T` to define the
             1-hop temporal neighborhood.
     """
+
     def __init__(self, time_window: int):
         super().__init__()
         self.time_window = time_window
@@ -46,15 +47,16 @@ class NodeEncoder(torch.nn.Module):
             seed_time (torch.Tensor): The seed time :math:`t_0` for every
                 destination node.
         """
-        mask = ((edge_time <= seed_time[edge_index[1]]) &
-                (edge_time > seed_time[edge_index[1]] - self.time_window))
+        mask = (edge_time <= seed_time[edge_index[1]]) & (
+            edge_time > seed_time[edge_index[1]] - self.time_window
+        )
 
         src, dst = edge_index[:, mask]
-        mean = scatter(x[src], dst, dim=0, dim_size=x.size(0), reduce='mean')
+        mean = scatter(x[src], dst, dim=0, dim_size=x.size(0), reduce="mean")
         return x + mean
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(time_window={self.time_window})'
+        return f"{self.__class__.__name__}(time_window={self.time_window})"
 
 
 class _MLPMixer(torch.nn.Module):
@@ -66,6 +68,7 @@ class _MLPMixer(torch.nn.Module):
         out_channels (int): Output channels.
         dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
     """
+
     def __init__(
         self,
         num_tokens: int,
@@ -147,10 +150,12 @@ def get_latest_k_edge_attr(
     _, col = edge_index
 
     if not is_sorted:
-        perm = np.lexsort([
-            -edge_time.detach().cpu().numpy(),
-            col.detach().cpu().numpy(),
-        ])
+        perm = np.lexsort(
+            [
+                -edge_time.detach().cpu().numpy(),
+                col.detach().cpu().numpy(),
+            ]
+        )
         perm = torch.from_numpy(perm).to(edge_index.device)
         col = col[perm]
         edge_attr = edge_attr[perm]
@@ -187,6 +192,7 @@ class LinkEncoder(torch.nn.Module):
         dropout (float, optional): Dropout probability of the MLP layer.
             (default: :obj:`0.0`)
     """
+
     def __init__(
         self,
         k: int,
@@ -208,8 +214,7 @@ class LinkEncoder(torch.nn.Module):
         self.dropout = dropout
 
         self.temporal_encoder = TemporalEncoding(time_channels)
-        self.temporal_head = Linear(time_channels + in_channels,
-                                    hidden_channels)
+        self.temporal_head = Linear(time_channels + in_channels, hidden_channels)
 
         self.mlp_mixer = _MLPMixer(  # MLP that summarizes temporal embeddings:
             num_tokens=k,
@@ -249,7 +254,9 @@ class LinkEncoder(torch.nn.Module):
         # edge_attr = edge_attr[mask]
         # edge_time = edge_time[mask]
 
-        time_enc = self.temporal_encoder(seed_time[edge_index[1]] - edge_time)
+        # FIXME: Somehow edge_time - seed_time2[edge_index[1]] contains both pos/neg values
+        seed_time2 = seed_time.repeat(2)
+        time_enc = self.temporal_encoder(edge_time - seed_time2[edge_index[1]])
         edge_attr = torch.cat([time_enc, edge_attr], dim=-1)
         edge_attr = self.temporal_head(edge_attr)
 
@@ -265,9 +272,11 @@ class LinkEncoder(torch.nn.Module):
         return self.mlp_mixer(edge_attr)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}(k={self.k}, '
-                f'in_channels={self.in_channels}, '
-                f'hidden_channels={self.hidden_channels}, '
-                f'out_channels={self.out_channels}, '
-                f'time_channels={self.time_channels}, '
-                f'dropout={self.dropout})')
+        return (
+            f"{self.__class__.__name__}(k={self.k}, "
+            f"in_channels={self.in_channels}, "
+            f"hidden_channels={self.hidden_channels}, "
+            f"out_channels={self.out_channels}, "
+            f"time_channels={self.time_channels}, "
+            f"dropout={self.dropout})"
+        )
