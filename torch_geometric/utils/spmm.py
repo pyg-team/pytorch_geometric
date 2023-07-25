@@ -46,7 +46,7 @@ def spmm(src: Adj, other: Tensor, reduce: str = "sum") -> Tensor:
         if (torch_geometric.typing.WITH_PT2 and other.dim() == 2
                 and not src.is_cuda() and not src.requires_grad()):
             # Use optimized PyTorch `torch.sparse.mm` path:
-            csr = src.to_torch_sparse_csr_tensor()
+            csr = src.to_torch_sparse_csr_tensor().to(other.dtype)
             return torch.sparse.mm(csr, other, reduce)
         return torch_sparse.matmul(src, other, reduce)
 
