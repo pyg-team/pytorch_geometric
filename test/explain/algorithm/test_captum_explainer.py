@@ -70,14 +70,10 @@ class GCN(torch.nn.Module):
         return x
 
 
-node_mask_types = [
-    MaskType.attributes,
-    None,
-]
-edge_mask_types = [
-    MaskType.object,
-    None,
-]
+node_mask_types = [MaskType.attributes, None]
+edge_mask_types = [MaskType.object, None]
+task_levels = [ModelTaskLevel.node, ModelTaskLevel.edge, ModelTaskLevel.graph]
+indices = [1, torch.arange(2)]
 
 
 def check_explanation(
@@ -113,11 +109,56 @@ def test_unsupported_methods(method):
 
 
 @withPackage('captum')
+@pytest.mark.parametrize('method', ['IntegratedGradients'])
+@pytest.mark.parametrize('node_mask_type', node_mask_types)
+@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
+@pytest.mark.parametrize('task_level', task_levels)
+@pytest.mark.parametrize('index', indices)
+def test_captum_explainer_binary_classification(
+    method,
+    data,
+    node_mask_type,
+    edge_mask_type,
+    task_level,
+    index,
+):
+    if node_mask_type is None and edge_mask_type is None:
+        return
+
+    batch = torch.tensor([0, 0, 1, 1])
+    edge_label_index = torch.tensor([[0, 1, 2], [2, 3, 1]])
+
+    model_config = ModelConfig(
+        mode='binary_classification',
+        task_level=task_level,
+        return_type='probs',
+    )
+
+    explainer = Explainer(
+        GCN(model_config),
+        algorithm=CaptumExplainer(method),
+        explanation_type='model',
+        edge_mask_type=edge_mask_type,
+        node_mask_type=node_mask_type,
+        model_config=model_config,
+    )
+
+    explanation = explainer(
+        data.x,
+        data.edge_index,
+        index=index,
+        batch=batch,
+        edge_label_index=edge_label_index,
+    )
+    check_explanation(explanation, node_mask_type, edge_mask_type)
+
+
+@withPackage('captum')
 @pytest.mark.parametrize('method', methods)
 @pytest.mark.parametrize('node_mask_type', node_mask_types)
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
-@pytest.mark.parametrize('task_level', ['node', 'edge', 'graph'])
-@pytest.mark.parametrize('index', [1, torch.arange(2)])
+@pytest.mark.parametrize('task_level', task_levels)
+@pytest.mark.parametrize('index', indices)
 def test_captum_explainer_multiclass_classification(
     method,
     data,

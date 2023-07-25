@@ -331,7 +331,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     **kwargs) -> Any:
         if isinstance(value, SparseTensor) and 'adj' in key:
             return (0, 1)
-        elif 'index' in key or 'face' in key:
+        elif isinstance(store, EdgeStorage) and 'index' in key:
             return -1
         return 0
 

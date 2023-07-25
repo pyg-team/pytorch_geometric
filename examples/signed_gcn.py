@@ -14,7 +14,14 @@ pos_edge_indices, neg_edge_indices = [], []
 for data in dataset:
     pos_edge_indices.append(data.edge_index[:, data.edge_attr > 0])
     neg_edge_indices.append(data.edge_index[:, data.edge_attr < 0])
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 pos_edge_index = torch.cat(pos_edge_indices, dim=1).to(device)
 neg_edge_index = torch.cat(neg_edge_indices, dim=1).to(device)
 
