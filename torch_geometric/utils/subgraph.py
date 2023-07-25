@@ -100,8 +100,11 @@ def subgraph(
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        edge_index = map_index(
-            edge_index, torch.arange(node_mask.sum().item(), device=device))[0]
+        a_range = torch.arange(node_mask.sum().item()
+        edge_index = torch.stack([
+            map_index(edge_index[0], a_range)[0],
+            map_index(edge_index[1], a_range[0],
+        ], dim=0)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
