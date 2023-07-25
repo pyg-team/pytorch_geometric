@@ -102,8 +102,6 @@ def subgraph(
     if relabel_nodes:
         a_range = torch.arange(start=edge_index.min(),
                                end=edge_index.max() + 1, device=device)
-        print("edge_index=", edge_index)
-        print("a_range=", a_range)
         edge_index = torch.stack([
             map_index(edge_index[0], a_range)[0],
             map_index(edge_index[1], a_range)[0],
