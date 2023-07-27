@@ -1,6 +1,7 @@
 import math
 import os.path as osp
 import time
+import statistics
 from itertools import chain
 
 import numpy as np
@@ -220,6 +221,7 @@ def test(loader):
 
 
 best_val_auc = test_auc = 0
+times_per_epoch = []
 start = time.time()
 for epoch in range(1, NUM_EPOCHS + 1):
     loss = train()
@@ -229,4 +231,6 @@ for epoch in range(1, NUM_EPOCHS + 1):
         test_auc = test(test_loader)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')
-print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")
+    times_per_epoch.append(time.time() - start)
+    start = time.time()
+print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")

@@ -6,6 +6,7 @@
 
 import os.path as osp
 import time
+import statistics
 
 import torch
 import torch.nn.functional as F
@@ -183,6 +184,7 @@ def test(epoch):
 best_val = 0.0
 final_train = 0.0
 final_test = 0.0
+times_per_epoch = []
 start = time.time()
 for epoch in range(1, NUM_EPOCHS + 1):
     loss = train(epoch)
@@ -196,4 +198,6 @@ for epoch in range(1, NUM_EPOCHS + 1):
 
 print(f'Final Train: {final_train:.4f}, Best Val: {best_val:.4f}, '
       f'Final Test: {final_test:.4f}')
-print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")
+    times_per_epoch.append(time.time() - start)
+    start = time.time()
+print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")

@@ -1,5 +1,6 @@
 import os.path as osp
 import time
+import statistics
 
 import torch
 import torch.nn.functional as F
@@ -102,6 +103,7 @@ def test(loader):
     return total_correct / len(loader.dataset)
 
 
+times_per_epoch = []
 start = time.time()
 patience = start_patience = 250
 test_acc = best_val_acc = 0.
@@ -119,4 +121,6 @@ for epoch in range(1, NUM_EPOCHS + 1):
     print(f'Epoch {epoch:02d}, Val: {val_acc:.3f}, Test: {test_acc:.3f}')
     if patience <= 0:
         break
-print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")
+    times_per_epoch.append(time.time() - start)
+    start = time.time()
+print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")

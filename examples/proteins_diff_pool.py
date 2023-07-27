@@ -1,5 +1,6 @@
 import os.path as osp
 import time
+import statistics
 from math import ceil
 
 import torch
@@ -143,6 +144,7 @@ def test(loader):
 
 
 best_val_acc = test_acc = 0
+times_per_epoch = []
 start = time.time()
 for epoch in range(1, NUM_EPOCHS + 1):
     train_loss = train(epoch)
@@ -152,4 +154,6 @@ for epoch in range(1, NUM_EPOCHS + 1):
         best_val_acc = val_acc
     print(f'Epoch: {epoch:03d}, Train Loss: {train_loss:.4f}, '
           f'Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}')
-print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")
+    times_per_epoch.append(time.time() - start)
+    start = time.time()
+print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")

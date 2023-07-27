@@ -1,6 +1,7 @@
 import argparse
 import os.path as osp
 import time
+import statistics
 
 import torch
 from sklearn.metrics import f1_score
@@ -144,6 +145,7 @@ def test(loader):
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
 
+times_per_epoch = []
 start = time.time()
 for epoch in range(1, NUM_EPOCHS + 1):
     loss = train()
@@ -151,4 +153,6 @@ for epoch in range(1, NUM_EPOCHS + 1):
     test_f1 = test(test_loader)
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Val: {val_f1:.4f}, '
           f'Test: {test_f1:.4f}')
-print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")
+    times_per_epoch.append(time.time() - start)
+    start = time.time()
+print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")

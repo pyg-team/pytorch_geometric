@@ -1,5 +1,6 @@
 import os.path as osp
 import time
+import statistics
 
 import torch
 import torch.nn.functional as F
@@ -70,10 +71,13 @@ def test(loader):
     return result.tolist()
 
 
+times_per_epoch = []
 start = time.time()
 for epoch in range(1, NUM_EPOCHS + 1):
     train()
     mrr, hits1, hits3, hits10 = test(test_loader)
     print(f'Epoch: {epoch:02d}, MRR: {mrr:.4f}, Hits@1: {hits1:.4f}, '
           f'Hits@3: {hits3:.4f}, Hits@10: {hits10:.4f}')
-print(f"Average time per epoch: {(time.time()-start)/NUM_EPOCHS:.4f}")
+    times_per_epoch.append(time.time() - start)
+    start = time.time()
+print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")

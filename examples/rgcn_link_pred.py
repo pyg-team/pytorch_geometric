@@ -8,6 +8,7 @@ to run on CPU (following the experimental setup in the official paper).
 """
 import os.path as osp
 import time
+import statistics
 
 import torch
 import torch.nn.functional as F
@@ -172,6 +173,7 @@ def compute_mrr(z, edge_index, edge_type):
     return (1. / torch.tensor(ranks, dtype=torch.float)).mean()
 
 
+times_per_epoch = []
 start = time.time()
 for epoch in range(1, NUM_EPOCHS + 1):
     loss = train()
