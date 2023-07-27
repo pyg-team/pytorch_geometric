@@ -213,18 +213,19 @@ def test_temporal_homo_link_neighbor_loader():
         edge_label=torch.ones(1234),
     )
 
+    batch_size = 1
     loader = LinkNeighborLoader(
         data,
         num_neighbors=[-1],
         time_attr="edge_time",
         edge_label_time=data.edge_time,
-        batch_size=1,
+        batch_size=batch_size,
         shuffle=True,
     )
 
     for sample in loader:
-        assert sample.edge_label_time.size() == (
-            1, ), "edge_label_time should be of size [batch_size]"
+        assert sample.edge_label_index.size() == (batch_size,)
+        assert sample.edge_label_time.size() == (batch_size,)
         assert torch.all(
             sample.edge_time <= sample.edge_label_time
         ), "The target time should be later than all timestamps in the subgraph"
