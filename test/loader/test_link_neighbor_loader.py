@@ -225,8 +225,8 @@ def test_temporal_homo_link_neighbor_loader():
 
     for sample in loader:
         assert sample.edge_label_index.size() == (2, batch_size)
-        assert sample.edge_label_time.size() == (batch_size,)
-        assert sample.edge_label.size() == (batch_size,)
+        assert sample.edge_label_time.size() == (batch_size, )
+        assert sample.edge_label.size() == (batch_size, )
         assert torch.all(
             sample.edge_time <= sample.edge_label_time
         ), "The target time should be later than all timestamps in the subgraph"
