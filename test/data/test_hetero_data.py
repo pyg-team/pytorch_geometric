@@ -106,6 +106,8 @@ def test_hetero_data_to_from_dict():
 
 def test_hetero_data_functions():
     data = HeteroData()
+    with pytest.raises(KeyError, match="did not find any occurrences of it"):
+        data.collect('x')
     data['paper'].x = x_paper
     data['author'].x = x_author
     data['paper', 'paper'].edge_index = edge_index_paper_paper

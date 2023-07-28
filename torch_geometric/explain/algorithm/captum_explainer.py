@@ -15,7 +15,7 @@ from torch_geometric.explain.algorithm.captum import (
     convert_captum_output,
     to_captum_input,
 )
-from torch_geometric.explain.config import MaskType, ModelMode
+from torch_geometric.explain.config import MaskType, ModelMode, ModelReturnType
 from torch_geometric.typing import EdgeType, NodeType
 
 
@@ -145,10 +145,12 @@ class CaptumExplainer(ExplainerAlgorithm):
                 mask_type,
                 index,
                 metadata,
+                self.model_config,
             )
         else:
             metadata = None
-            captum_model = CaptumModel(model, mask_type, index)
+            captum_model = CaptumModel(model, mask_type, index,
+                                       self.model_config)
 
         attribution_method = self.attribution_method(captum_model)
 
@@ -183,10 +185,18 @@ class CaptumExplainer(ExplainerAlgorithm):
     def supports(self) -> bool:
         node_mask_type = self.explainer_config.node_mask_type
         if node_mask_type not in [None, MaskType.attributes]:
-            logging.error(f"'{self.__class__.__name__}' only supports "
-                          f"'node_mask_type' None or 'attributes' "
+            logging.error(f"'{self.__class__.__name__}' expects "
+                          f"'node_mask_type' to be 'None' or 'attributes' "
                           f"(got '{node_mask_type.value}')")
             return False
 
-        # TODO (ramona): Confirm that output type is valid.
+        return_type = self.model_config.return_type
+        if (self.model_config.mode == ModelMode.binary_classification
+                and return_type != ModelReturnType.probs):
+            logging.error(f"'{self.__class__.__name__}' expects "
+                          f"'return_type' to be 'probs' for binary "
+                          f"classification tasks (got '{return_type.value}')")
+            return False
+
+        # TODO (ramona) Confirm that output type is valid.
         return True

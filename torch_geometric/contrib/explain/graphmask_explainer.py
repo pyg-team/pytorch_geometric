@@ -5,23 +5,17 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import LayerNorm, Linear, Parameter, ReLU, Sequential
+from torch.nn import LayerNorm, Linear, Parameter, ReLU
 from tqdm import tqdm
 
 from torch_geometric.explain import Explanation
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
-from torch_geometric.explain.config import (
-    MaskType,
-    ModelMode,
-    ModelReturnType,
-    ModelTaskLevel,
-)
+from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 from torch_geometric.nn import MessagePassing
 
 
 def explain_message(self, out: Tensor, x_i: Tensor, x_j: Tensor) -> Tensor:
-    norm = Sequential(LayerNorm(out.size(-1)).to(out.device), ReLU())
-    basis_messages = norm(out)
+    basis_messages = F.layer_norm(out, (out.size(-1), )).relu()
 
     if getattr(self, 'message_scale', None) is not None:
         basis_messages = basis_messages * self.message_scale.unsqueeze(-1)
@@ -267,37 +261,6 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         for layer_norm in self.layer_norms:
             layer_norm.reset_parameters()
-
-    def _loss_regression(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        assert self.model_config.return_type == ModelReturnType.raw
-        return F.mse_loss(y_hat, y)
-
-    def _loss_binary_classification(self, y_hat: Tensor, y: Tensor) -> Tensor:
-        if self.model_config.return_type == ModelReturnType.raw:
-            loss_fn = F.binary_cross_entropy_with_logits
-        elif self.model_config.return_type == ModelReturnType.probs:
-            loss_fn = F.binary_cross_entropy
-        else:
-            assert False
-
-        return loss_fn(y_hat.view_as(y), y.float())
-
-    def _loss_multiclass_classification(
-        self,
-        y_hat: Tensor,
-        y: Tensor,
-    ) -> Tensor:
-        if self.model_config.return_type == ModelReturnType.raw:
-            loss_fn = F.cross_entropy
-        elif self.model_config.return_type == ModelReturnType.probs:
-            loss_fn = F.nll_loss
-            y_hat = y_hat.log()
-        elif self.model_config.return_type == ModelReturnType.log_probs:
-            loss_fn = F.nll_loss
-        else:
-            assert False
-
-        return loss_fn(y_hat, y)
 
     def _loss(self, y_hat: Tensor, y: Tensor, penalty: float) -> Tensor:
         if self.model_config.mode == ModelMode.binary_classification:

@@ -18,9 +18,11 @@ from tqdm import tqdm
 from torch_geometric.datasets import RelLinkPredDataset
 from torch_geometric.nn import GAE, RGCNConv
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'RLPD')
 dataset = RelLinkPredDataset(path, 'FB15k-237')
-data = dataset[0]
+data = dataset[0].to(device)
 NUM_EPOCHS = 10000
 
 
@@ -63,10 +65,10 @@ class DistMultDecoder(torch.nn.Module):
 
 
 model = GAE(
-    RGCNEncoder(data.num_nodes, hidden_channels=500,
-                num_relations=dataset.num_relations),
-    DistMultDecoder(dataset.num_relations // 2, hidden_channels=500),
-)
+    RGCNEncoder(data.num_nodes, 500, dataset.num_relations),
+    DistMultDecoder(dataset.num_relations // 2, 500),
+).to(device)
+
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 
@@ -76,8 +78,10 @@ def negative_sampling(edge_index, num_nodes):
     mask_2 = ~mask_1
 
     neg_edge_index = edge_index.clone()
-    neg_edge_index[0, mask_1] = torch.randint(num_nodes, (mask_1.sum(), ))
-    neg_edge_index[1, mask_2] = torch.randint(num_nodes, (mask_2.sum(), ))
+    neg_edge_index[0, mask_1] = torch.randint(num_nodes, (mask_1.sum(), ),
+                                              device=neg_edge_index.device)
+    neg_edge_index[1, mask_2] = torch.randint(num_nodes, (mask_2.sum(), ),
+                                              device=neg_edge_index.device)
     return neg_edge_index
 
 

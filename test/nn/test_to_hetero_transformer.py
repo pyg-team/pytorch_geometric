@@ -277,7 +277,8 @@ def test_to_hetero_basic():
     assert out['author'].size() == (8, 16)
 
     model = Net10()
-    model = to_hetero(model, metadata, debug=False)
+    with pytest.warns(UserWarning, match="with keyword argument 'training'"):
+        model = to_hetero(model, metadata, debug=False)
     out = model(x_dict, edge_index_dict)
     assert isinstance(out, dict) and len(out) == 2
     assert out['paper'].size() == (100, 32)
