@@ -5,8 +5,8 @@
 # | 7 layers 160 channels   | 0.8276 ± 0.0027 | 0.9272 ± 0.0006 |
 
 import os.path as osp
-import time
 import statistics
+import time
 
 import torch
 import torch.nn.functional as F

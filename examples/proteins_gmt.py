@@ -1,6 +1,6 @@
 import os.path as osp
-import time
 import statistics
+import time
 
 import torch
 import torch.nn.functional as F

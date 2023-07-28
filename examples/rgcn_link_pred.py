@@ -7,8 +7,8 @@ Caution: This script is executed in a full-batch fashion, and therefore needs
 to run on CPU (following the experimental setup in the official paper).
 """
 import os.path as osp
-import time
 import statistics
+import time
 
 import torch
 import torch.nn.functional as F

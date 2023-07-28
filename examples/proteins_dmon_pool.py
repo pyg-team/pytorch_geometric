@@ -1,6 +1,6 @@
 import os.path as osp
-import time
 import statistics
+import time
 from math import ceil
 
 import torch

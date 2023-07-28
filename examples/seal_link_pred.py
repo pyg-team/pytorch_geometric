@@ -1,7 +1,7 @@
 import math
 import os.path as osp
-import time
 import statistics
+import time
 from itertools import chain
 
 import numpy as np

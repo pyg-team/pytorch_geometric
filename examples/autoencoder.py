@@ -1,7 +1,7 @@
 import argparse
 import os.path as osp
-import time
 import statistics
+import time
 
 import torch
 
