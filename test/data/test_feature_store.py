@@ -4,14 +4,13 @@ import pytest
 import torch
 
 from torch_geometric.data import TensorAttr
-from torch_geometric.data.feature_store import AttrView, _field_status
+from torch_geometric.data.feature_store import AttrView, _FieldStatus
 from torch_geometric.testing import MyFeatureStore
 
 
 @dataclass
 class MyTensorAttrNoGroupName(TensorAttr):
-    def __init__(self, attr_name=_field_status.UNSET,
-                 index=_field_status.UNSET):
+    def __init__(self, attr_name=_FieldStatus.UNSET, index=_FieldStatus.UNSET):
         # Treat group_name as optional, and move it to the end
         super().__init__(None, attr_name, index)
 
