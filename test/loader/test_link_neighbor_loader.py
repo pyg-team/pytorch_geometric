@@ -210,7 +210,6 @@ def test_temporal_homo_link_neighbor_loader():
         x=torch.randn(10, 5),
         edge_index=torch.randint(0, 10, (2, 1234)),
         edge_time=torch.arange(1234),
-        edge_label=torch.ones(1234),
     )
 
     batch_size = 1
@@ -219,6 +218,7 @@ def test_temporal_homo_link_neighbor_loader():
         num_neighbors=[-1],
         time_attr="edge_time",
         edge_label_time=data.edge_time,
+        edge_label=data.edge_label,
         batch_size=batch_size,
         shuffle=True,
     )
@@ -227,9 +227,7 @@ def test_temporal_homo_link_neighbor_loader():
         assert sample.edge_label_index.size() == (2, batch_size)
         assert sample.edge_label_time.size() == (batch_size, )
         assert sample.edge_label.size() == (batch_size, )
-        assert torch.all(
-            sample.edge_time <= sample.edge_label_time
-        ), "The target time should be later than all timestamps in the subgraph"
+        assert torch.all(sample.edge_time <= sample.edge_label_time)
 
 
 @withPackage('pyg_lib')
