@@ -8,7 +8,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import FeatureStore, TensorAttr
-from torch_geometric.data.feature_store import _field_status
+from torch_geometric.data.feature_store import _FieldStatus
 from torch_geometric.typing import EdgeType, NodeType
 
 
@@ -17,8 +17,8 @@ class LocalTensorAttr(TensorAttr):
     r"""Tensor attribute for storing features without :obj:`index`."""
     def __init__(
         self,
-        group_name: Optional[Union[NodeType, EdgeType]] = _field_status.UNSET,
-        attr_name: Optional[str] = _field_status.UNSET,
+        group_name: Optional[Union[NodeType, EdgeType]] = _FieldStatus.UNSET,
+        attr_name: Optional[str] = _FieldStatus.UNSET,
         index=None,
     ):
         super().__init__(group_name, attr_name, index)
