@@ -1,15 +1,14 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
 
 class DistRole(Enum):
-    WORKER = 1  # for worker mode
+    WORKER = 1
 
 
 @dataclass
 class DistContext:
-    r""" Context info for distributed Info in the current process."""
+    r"""Context information of the current process."""
     rank: int
     global_rank: int
     world_size: int
@@ -19,4 +18,4 @@ class DistContext:
 
     @property
     def worker_name(self) -> str:
-        return f"{self.group_name}-{self.rank}"
+        return f'{self.group_name}-{self.rank}'
