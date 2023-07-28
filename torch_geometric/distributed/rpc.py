@@ -44,11 +44,8 @@ def init_rpc(
     with _rpc_init_lock:
         if rpc_is_initialized():
             return
-        if rpc_is_initialized() is None:
-            raise RuntimeError("Failed to re-initialize RPC after shutdown")
 
-        ctx = current_ctx
-        if ctx is None:
+        if current_ctx is None:
             raise RuntimeError("'dist_context' has not been set in 'init_rpc'")
 
         options = rpc.TensorPipeRpcBackendOptions(
@@ -60,14 +57,14 @@ def init_rpc(
         )
 
         rpc.init_rpc(
-            name=ctx.worker_name,
-            rank=ctx.global_rank,
-            world_size=ctx.global_world_size,
+            name=current_ctx.worker_name,
+            rank=current_ctx.global_rank,
+            world_size=current_ctx.global_world_size,
             rpc_backend_options=options,
         )
 
         gathered_results = global_all_gather(
-            obj=(ctx.role, ctx.world_size, ctx.rank),
+            obj=(current_ctx.role, current_ctx.world_size, current_ctx.rank),
             timeout=rpc_timeout,
         )
 
