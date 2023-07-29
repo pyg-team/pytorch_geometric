@@ -16,11 +16,8 @@ def test_hypergraph_data():
     data = HyperGraphData(x=x, edge_index=edge_index).to(torch.device('cpu'))
     data.validate(raise_on_error=True)
 
-    N = data.num_nodes
-    assert N == 4
-
-    E = data.num_edges
-    assert E == 3
+    assert data.num_nodes == 4
+    assert data.num_edges == 3
 
     assert data.node_attrs() == ['x']
     assert data.edge_attrs() == ['edge_index']
