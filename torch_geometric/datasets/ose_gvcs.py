@@ -1,8 +1,15 @@
+import os
 from typing import Callable, List, Optional
 
 import torch
-import os
-from torch_geometric.data import InMemoryDataset, download_url, extract_tar, HeteroData
+
+from torch_geometric.data import (
+    HeteroData,
+    InMemoryDataset,
+    download_url,
+    extract_tar,
+)
+
 
 class OSE_GVCS(InMemoryDataset):
     r"""`Product ecology <https://wiki.opensourceecology.org/wiki/Product_Ecologies>`_ for Open Source Ecology's iconoclastic `Global Village Construction Set <https://wiki.opensourceecology.org/wiki/Global_Village_Construction_Set>`_.
@@ -11,7 +18,6 @@ class OSE_GVCS(InMemoryDataset):
     290 directed unweighted edges, each representing a relationship type between pairs of machines.
     Processing a minimalist heterogenous graph from JSON.
 	"""
-
     def __init__(self, root: str, transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
         super().__init__(root, transform)
@@ -21,7 +27,10 @@ class OSE_GVCS(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        return [f"{machine.lower().replace(' ', '_')}.json" for machine in self.machines]
+        return [
+            f"{machine.lower().replace(' ', '_')}.json"
+            for machine in self.machines
+        ]
 
     @property
     def processed_file_names(self):
@@ -34,20 +43,29 @@ class OSE_GVCS(InMemoryDataset):
 
     @property
     def machines(self) -> List[str]:
-        return ['3D Printer', '3D Scanner', 'Aluminum Extractor', 'Backhoe', 'Bakery Oven', 
-                'Baler', 'Bioplastic Extruder', 'Bulldozer', 'Car', 'CEB Press', 
-                'Cement Mixer', 'Chipper Hammermill', 'CNC Circuit Mill', 'CNC Torch Table', 'Dairy Milker', 
-                'Drill Press', 'Electric Motor Generator', 'Gasifier Burner', 'Hay Cutter', 'Hay Rake', 
-                'Hydraulic Motor', 'Induction Furnace', 'Industrial Robot', 'Ironworker', 'Laser Cutter', 
-                'Metal Roller', 'Microcombine', 'Microtractor', 'Multimachine', 'Nickel-Iron Battery', 
-                'Pelletizer', 'Plasma Cutter', 'Power Cube', 'Press Forge', 'Rod and Wire Mill', 
-                'Rototiller', 'Sawmill', 'Seeder', 'Solar Concentrator', 'Spader', 
-                'Steam Engine', 'Steam Generator', 'Tractor', 'Trencher', 'Truck', 
-                'Universal Power Supply', 'Universal Rotor', 'Welder', 'Well-Drilling Rig', 'Wind Turbine']
-    
+        return [
+            '3D Printer', '3D Scanner', 'Aluminum Extractor', 'Backhoe',
+            'Bakery Oven', 'Baler', 'Bioplastic Extruder', 'Bulldozer', 'Car',
+            'CEB Press', 'Cement Mixer', 'Chipper Hammermill',
+            'CNC Circuit Mill', 'CNC Torch Table', 'Dairy Milker',
+            'Drill Press', 'Electric Motor Generator', 'Gasifier Burner',
+            'Hay Cutter', 'Hay Rake', 'Hydraulic Motor', 'Induction Furnace',
+            'Industrial Robot', 'Ironworker', 'Laser Cutter', 'Metal Roller',
+            'Microcombine', 'Microtractor', 'Multimachine',
+            'Nickel-Iron Battery', 'Pelletizer', 'Plasma Cutter', 'Power Cube',
+            'Press Forge', 'Rod and Wire Mill', 'Rototiller', 'Sawmill',
+            'Seeder', 'Solar Concentrator', 'Spader', 'Steam Engine',
+            'Steam Generator', 'Tractor', 'Trencher', 'Truck',
+            'Universal Power Supply', 'Universal Rotor', 'Welder',
+            'Well-Drilling Rig', 'Wind Turbine'
+        ]
+
     # node feature 0
-    categories = ['habitat', 'agriculture', 'industry', 'energy', 'materials', 'transportation']
-    
+    categories = [
+        'habitat', 'agriculture', 'industry', 'energy', 'materials',
+        'transportation'
+    ]
+
     # edge relationship types
     relationships = ['from', 'uses', 'enables']
 
@@ -63,7 +81,8 @@ class OSE_GVCS(InMemoryDataset):
         for path in self.raw_paths:
             with open(path, 'r') as f:
                 product = json.load(f)
-                category_indices.append(self.categories.index(product['category']))
+                category_indices.append(
+                    self.categories.index(product['category']))
                 for interaction in product["ecology"]:
                     # some ecology items are not GVCS machines or have other relationship types we don't want included
                     rt = interaction['relationship']
@@ -72,14 +91,20 @@ class OSE_GVCS(InMemoryDataset):
                             relationship_edges[rt] = []
                         other = interaction['tool']
                         if other in self.machines:
-                            relationship_edges[rt].append((product['machine'], other))
+                            relationship_edges[rt].append(
+                                (product['machine'], other))
 
         data['machine'].x = [category_indices, 1]
-        
-        for rt in self.relationships: 
-            src = [self.machines.index(pair[0]) for pair in relationship_edges[rt]]
-            dst = [self.machines.index(pair[1]) for pair in relationship_edges[rt]]
-            data['machine', rt, 'machine'].edge_index = torch.tensor([src, dst])
+
+        for rt in self.relationships:
+            src = [
+                self.machines.index(pair[0]) for pair in relationship_edges[rt]
+            ]
+            dst = [
+                self.machines.index(pair[1]) for pair in relationship_edges[rt]
+            ]
+            data['machine', rt,
+                 'machine'].edge_index = torch.tensor([src, dst])
 
         if self.pre_filter is not None:
             data = self.pre_filter(data)
