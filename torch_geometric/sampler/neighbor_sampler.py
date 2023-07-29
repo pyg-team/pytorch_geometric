@@ -572,7 +572,7 @@ def edge_sample(
         if neg_sampling is None or neg_sampling.is_binary():
             if disjoint:
                 out.batch = out.batch % num_pos
-                edge_label_index = torch.arange(2 * seed.numel()).view(2, -1)
+                edge_label_index = torch.arange(seed.numel()).view(2, -1)
             else:
                 edge_label_index = inverse_seed.view(2, -1)
 
