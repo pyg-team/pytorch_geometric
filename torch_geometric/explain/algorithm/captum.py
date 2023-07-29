@@ -9,6 +9,11 @@ from torch_geometric.explain.algorithm.utils import (
     set_hetero_masks,
     set_masks,
 )
+from torch_geometric.explain.config import (
+    ModelConfig,
+    ModelMode,
+    ModelReturnType,
+)
 from torch_geometric.typing import EdgeType, Metadata, NodeType
 
 
@@ -29,12 +34,14 @@ class CaptumModel(torch.nn.Module):
         model: torch.nn.Module,
         mask_type: Union[str, MaskLevelType],
         output_idx: Optional[Union[int, Tensor]] = None,
+        model_config: Optional[ModelConfig] = None,
     ):
         super().__init__()
 
         self.mask_type = MaskLevelType(mask_type)
         self.model = model
         self.output_idx = output_idx
+        self.model_config = model_config
 
     def forward(self, mask, *args):
         """"""
@@ -65,15 +72,24 @@ class CaptumModel(torch.nn.Module):
         else:
             x = self.model(mask.squeeze(0), *args)
 
-        # Clear mask:
-        if self.mask_type != MaskLevelType.node:
+        return self.postprocess(x)
+
+    def postprocess(self, x: Tensor) -> Tensor:
+        if self.mask_type.with_edge:
             clear_masks(self.model)
 
-        if self.output_idx is not None:
+        if self.output_idx is not None:  # Filter by output index:
             x = x[self.output_idx]
-            if isinstance(self.output_idx, int) or (self.output_idx.numel()
-                                                    == 1):
+            if (isinstance(self.output_idx, int)
+                    or self.output_idx.dim() == 0):
                 x = x.unsqueeze(0)
+
+        # Convert binary classification to multi-class classification:
+        if (self.model_config is not None
+                and self.model_config.mode == ModelMode.binary_classification):
+            assert self.model_config.return_type == ModelReturnType.probs
+            x = x.view(-1, 1)
+            x = torch.cat([1 - x, x], dim=-1)
 
         return x
 
@@ -86,8 +102,9 @@ class CaptumHeteroModel(CaptumModel):
         mask_type: Union[str, MaskLevelType],
         output_idx: Optional[Union[int, Tensor]],
         metadata: Metadata,
+        model_config: Optional[ModelConfig] = None,
     ):
-        super().__init__(model, mask_type, output_idx)
+        super().__init__(model, mask_type, output_idx, model_config)
         self.node_types = metadata[0]
         self.edge_types = metadata[1]
         self.num_node_types = len(self.node_types)
@@ -151,15 +168,7 @@ class CaptumHeteroModel(CaptumModel):
         else:
             x = self.model(x_dict, edge_index_dict)
 
-        if self.mask_type.with_edge:
-            clear_masks(self.model)
-
-        if self.output_idx is not None:
-            x = x[self.output_idx]
-            if isinstance(self.output_idx, int) or (self.output_idx.numel()
-                                                    == 1):
-                x = x.unsqueeze(0)
-        return x
+        return self.postprocess(x)
 
 
 def _to_edge_mask(edge_index: Tensor) -> Tensor:
