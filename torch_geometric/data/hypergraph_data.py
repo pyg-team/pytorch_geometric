@@ -148,6 +148,11 @@ class HyperGraphData(Data):
     ):
         raise NotImplementedError
 
+    def has_isolated_nodes(self) -> bool:
+        if self.edge_index is None:
+            return False
+        return torch.unique(self.edge_index[0]).size(0) < self.num_nodes
+
     def is_directed(self) -> bool:
         raise NotImplementedError
 

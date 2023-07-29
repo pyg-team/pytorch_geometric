@@ -84,7 +84,7 @@ def test_hypergraph_data():
     # assert not data.is_directed()
 
     assert data.num_nodes == 4
-    # assert data.num_edges == 4
+    assert data.num_edges == 3
     with pytest.warns(UserWarning, match='deprecated'):
         assert data.num_faces is None
     assert data.num_node_features == 3
