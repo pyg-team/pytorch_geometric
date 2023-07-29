@@ -150,7 +150,7 @@ def test_hypergraphdata_subgraph():
     assert len(out) == 4
     assert torch.equal(out.x, torch.tensor([1, 2, 4]))
     assert torch.equal(out.y, data.y)
-    assert out.edge_index.tolist() == [[1, 2, 2, 1, 0, 1], [1, 1, 2, 2, 3, 3]]
+    assert out.edge_index.tolist() == [[1, 2, 2, 1, 0, 1], [0, 0, 1, 1, 2, 2]]
     assert torch.equal(out.edge_attr, edge_attr[[1, 2, 3]])
     assert out.num_nodes == 3
 
@@ -160,12 +160,14 @@ def test_hypergraphdata_subgraph():
     assert torch.equal(out.x, torch.tensor([3, 1, 2]))
     assert torch.equal(out.y, data.y)
     assert out.edge_index.tolist() == [[0, 2, 0, 2, 1, 2, 0],
-                                       [1, 1, 2, 2, 3, 3, 3]]
+                                       [0, 0, 1, 1, 2, 2, 2]]
+    assert torch.equal(out.edge_attr, edge_attr[[1, 2, 3]])
     assert out.num_nodes == 3
 
     out = data.subgraph(torch.tensor([False, False, False, True, True]))
     assert len(out) == 4
     assert torch.equal(out.x, torch.arange(3, 5))
     assert torch.equal(out.y, data.y)
-    assert out.edge_index.tolist() == [[0, 1, 0, 1], [1, 1, 2, 2]]
+    assert out.edge_index.tolist() == [[0, 1, 0, 1], [0, 0, 1, 1]]
+    assert torch.equal(out.edge_attr, edge_attr[[1, 2]])
     assert out.num_nodes == 2

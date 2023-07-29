@@ -4,7 +4,6 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor, PairTensor
-from torch_geometric.utils import hyperedge
 from torch_geometric.utils.mask import index_to_mask
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -335,8 +334,8 @@ def hyper_subgraph(
     num_nodes: Optional[int] = None,
     return_edge_mask: bool = False,
 ) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
-    r"""Returns the induced subgraph of the hyper graph of`
-        :obj:`(edge_index, edge_attr) containing the nodes in :obj:`subset`.
+    r"""Returns the induced subgraph of the hyper graph of
+        :obj:`(edge_index, edge_attr)` containing the nodes in :obj:`subset`.
 
         Args:
             subset (LongTensor, BoolTensor or [int]): The nodes to keep.
@@ -346,7 +345,8 @@ def hyper_subgraph(
                 `edge_index[0]` denotes the node indicies that are connected
                 by the hyperedge.
             edge_attr (Tensor, optional): Edge weights or multi-dimensional
-                edge features. (default: :obj:`None`)
+                edge features of shape :obj:`[num_edges,-1]`.
+                (default: :obj:`None`)
             relabel_nodes (bool, optional): If set to :obj:`True`, the
                 resulting :obj:`edge_index` will be relabeled to hold
                 consecutive indices
@@ -355,7 +355,8 @@ def hyper_subgraph(
                 :obj:`max_val + 1` of :attr:`edge_index`.
                 (default: :obj:`None`)
             return_edge_mask (bool, optional): If set to :obj:`True`, will
-                return the edge mask to filter out additional edge features.
+                return the edge mask of shape :obj:`num_edges`
+                to filter out additional edge features.
                 (default: :obj:`False`)
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
@@ -368,15 +369,14 @@ def hyper_subgraph(
             >>> subset = torch.tensor([0, 3])
             >>> subgraph(subset, edge_index, edge_attr)
             (tensor([[0, 3],
-                    [2, 2]]),
+                    [0, 0]]),
             tensor([ 6.]))
 
             >>> subgraph(subset, edge_index, edge_attr, return_edge_mask=True)
             (tensor([[0, 3],
-                    [2, 2]]),
+                    [0, 0]]),
             tensor([ 6.]))
-            tensor([False, False, False, False, False, False,
-            True,  False, True]))
+            tensor([False, False, True])
 
         """
 
@@ -392,11 +392,30 @@ def hyper_subgraph(
         num_nodes = subset.size(0)
         node_mask = subset
 
-    edge_mask = node_mask[edge_index[0]]
-    edge_mask, edge_index = hyperedge.remove_single_hyperedge(
-        edge_mask, edge_index)
-    edge_attr = edge_attr[
-        edge_index[1].unique()] if edge_attr is not None else None
+    # Mask all connections that contain a node not in the subset
+    hyper_edge_connection_mask = node_mask[
+        edge_index[0]]  # num_edges*num_nodes_per_edge
+
+    # Mask hyperedges that contain one or less nodes from the subset
+    num_edges = edge_index[1].max() + 1
+    edge_mask = torch.scatter_add(
+        torch.zeros(num_edges, dtype=torch.long,
+                    device=device), 0, edge_index[1],
+        hyper_edge_connection_mask.to(dtype=torch.long)) > 1  # num_edges
+
+    # Mask connections if hyperedge contains one or less nodes from the subset
+    # or is connected to a node not in the subset
+    hyper_edge_connection_mask = hyper_edge_connection_mask & edge_mask[
+        edge_index[1]]
+
+    edge_index = edge_index[:, hyper_edge_connection_mask]
+    edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
+
+    # Relabel edges
+    edge_idx = torch.zeros(edge_mask.size(0), dtype=torch.long, device=device)
+    edge_idx[edge_mask] = torch.arange(edge_mask.sum().item(), device=device)
+    edge_index = torch.cat(
+        [edge_index[0].unsqueeze(0), edge_idx[edge_index[1]].unsqueeze(0)], 0)
 
     if relabel_nodes:
         node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,

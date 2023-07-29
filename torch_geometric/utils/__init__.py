@@ -52,7 +52,6 @@ from .tree_decomposition import tree_decomposition
 from .embedding import get_embeddings
 from .trim_to_layer import trim_to_layer
 from .train_test_split_edges import train_test_split_edges
-from .hyperedge import remove_single_hyperedge
 
 __all__ = [
     'scatter',
@@ -138,7 +137,6 @@ __all__ = [
     'get_embeddings',
     'trim_to_layer',
     'train_test_split_edges',
-    'remove_single_hyperedge',
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
