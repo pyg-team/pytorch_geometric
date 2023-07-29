@@ -24,7 +24,7 @@ def run_dist_feature_test(world_size: int, rank: int,
                       master_addr='localhost', master_port=master_port)
 
     # collect all workers
-    partition2workers = pyg_dist.rpc_partition2workers(current_ctx, world_size,
+    partition2workers = pyg_dist.rpc_partition_to_workers(current_ctx, world_size,
                                                        rank)
 
     # find worker with partition id
