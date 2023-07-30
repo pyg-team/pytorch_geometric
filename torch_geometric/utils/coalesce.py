@@ -29,7 +29,7 @@ def coalesce(edge_index, edge_attr, num_nodes, reduce, is_sorted, sort_by_row):
 
 
 def coalesce(
-    edge_index: Tensor,
+    edge_index: Union[Tensor, Tuple[Tensor, Tensor]],
     edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
     reduce: str = 'add',
@@ -41,7 +41,7 @@ def coalesce(
     together according to the given :obj:`reduce` option.
 
     Args:
-        edge_index (LongTensor): The edge indices.
+        edge_index (LongTensor or Tuple[LongTensor, LongTensor]): The edge indices.
         edge_attr (Tensor or List[Tensor], optional): Edge weights or multi-
             dimensional edge features.
             If given as a list, will re-shuffle and remove duplicates for all
@@ -90,6 +90,10 @@ def coalesce(
                 [3, 1, 2]]),
         tensor([1., 1., 1.]))
     """
+    if isinstance(edge_index, (tuple, list)):
+        assert len(edge_index) == 2
+        edge_index = torch.stack(edge_index, dim=0)
+
     nnz = edge_index.size(1)
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
