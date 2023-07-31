@@ -202,9 +202,10 @@ def batched_negative_sampling(
     return torch.cat(neg_edge_indices, dim=1)
 
 
-def structured_negative_sampling(edge_index: Tensor,
-                                 num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
-                                 contains_neg_self_loops: bool = True) -> tuple[Tensor, Tensor, Tensor]:
+def structured_negative_sampling(
+        edge_index: Tensor, num_nodes: Optional[Union[int, Tuple[int,
+                                                                 int]]] = None,
+        contains_neg_self_loops: bool = True) -> tuple[Tensor, Tensor, Tensor]:
     r"""Samples a negative edge :obj:`(i,k)` for every positive edge
     :obj:`(i,j)` in the graph given by :attr:`edge_index`, and returns it as a
     tuple of the form :obj:`(i,j,k)`.
@@ -230,8 +231,9 @@ def structured_negative_sampling(edge_index: Tensor,
         (tensor([0, 0, 1, 2]), tensor([0, 1, 2, 3]), tensor([2, 3, 0, 2]))
 
     """
-    if not structured_negative_sampling_feasible(edge_index=edge_index, num_nodes=num_nodes,
-                                                 contains_neg_self_loops=contains_neg_self_loops):
+    if not structured_negative_sampling_feasible(
+            edge_index=edge_index, num_nodes=num_nodes,
+            contains_neg_self_loops=contains_neg_self_loops):
         raise Exception("structured_negative_sampling is not feasible")
 
     size = num_nodes
