@@ -191,8 +191,7 @@ def test_bipartite_structured_negative_sampling_feasible():
                                    [1, 2, 0, 2, 0, 1, 1]])
     assert structured_negative_sampling_feasible(edge_index, num_nodes=(3, 3))
 
-    edge_index = torch.as_tensor([[0, 0, 1, 2, 3],
-                                  [0, 1, 1, 1, 0]])
+    edge_index = torch.as_tensor([[0, 0, 1, 2, 3], [0, 1, 1, 1, 0]])
     assert structured_negative_sampling_feasible(edge_index, 4, True)
     assert structured_negative_sampling_feasible(edge_index, 4, False)
     assert not structured_negative_sampling_feasible(edge_index, (4, 2))
