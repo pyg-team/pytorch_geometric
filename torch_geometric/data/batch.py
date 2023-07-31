@@ -75,8 +75,8 @@ class Batch(metaclass=DynamicInheritance):
     incremented.
     To make sure, it is best practice to always double-check the output of
     batching.
-    Furthermore, :meth:`__cat_dim__` defines in which dimension graph tensors
-    of the same attribute should be concatenated together.
+    Furthermore, :meth:`~Data.__cat_dim__` defines in which dimension graph
+    tensors of the same attribute should be concatenated together.
     """
     @classmethod
     def from_data_list(cls, data_list: List[BaseData],
