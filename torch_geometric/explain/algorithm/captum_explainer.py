@@ -60,17 +60,17 @@ class CaptumExplainer(ExplainerAlgorithm):
         import captum.attr  # noqa
 
         if isinstance(attribution_method, str):
-            self.attribution_method = getattr(
+            self.attribution_method_class = getattr(
                 captum.attr,
                 attribution_method,
             )
         else:
-            self.attribution_method = attribution_method
+            self.attribution_method_class = attribution_method
 
         if not self._is_supported_attribution_method():
             raise ValueError(f"{self.__class__.__name__} does not support "
                              f"attribution method "
-                             f"{self.attribution_method.__name__}")
+                             f"{self.attribution_method_class.__name__}")
 
         if kwargs.get('internal_batch_size', 1) != 1:
             warnings.warn("Overriding 'internal_batch_size' to 1")
@@ -97,7 +97,7 @@ class CaptumExplainer(ExplainerAlgorithm):
 
     def _get_attribute_parameters(self) -> Dict[str, Any]:
         r"""Returns the attribute arguments."""
-        signature = inspect.signature(self.attribution_method.attribute)
+        signature = inspect.signature(self.attribution_method_class.attribute)
         return signature.parameters
 
     def _needs_baseline(self) -> bool:
@@ -114,7 +114,7 @@ class CaptumExplainer(ExplainerAlgorithm):
         # This is redundant for now since all supported methods need a baseline
         if self._needs_baseline():
             return False
-        elif self.attribution_method.__name__ in self.SUPPORTED_METHODS:
+        elif self.attribution_method_class.__name__ in self.SUPPORTED_METHODS:
             return True
         return False
 
@@ -152,16 +152,15 @@ class CaptumExplainer(ExplainerAlgorithm):
             captum_model = CaptumModel(model, mask_type, index,
                                        self.model_config)
 
-        attribution_method = self.attribution_method(captum_model)
+        self.attribution_method_instance = self.attribution_method_class(
+            captum_model)
 
         # In captum, the target is the index for which
         # the attribution is computed.
-        if self.model_config.mode == ModelMode.regression:
-            target = None
-        else:
+        if index is not None:
             target = target[index]
 
-        attributions = attribution_method.attribute(
+        attributions = self.attribution_method_instance.attribute(
             inputs=inputs,
             target=target,
             additional_forward_args=add_forward_args,
