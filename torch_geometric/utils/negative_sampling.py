@@ -202,16 +202,20 @@ def batched_negative_sampling(
     return torch.cat(neg_edge_indices, dim=1)
 
 
-def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
-                                 contains_neg_self_loops: bool = True):
+def structured_negative_sampling(edge_index: Tensor,
+                                 num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+                                 contains_neg_self_loops: bool = True) -> tuple[Tensor, Tensor, Tensor]:
     r"""Samples a negative edge :obj:`(i,k)` for every positive edge
     :obj:`(i,j)` in the graph given by :attr:`edge_index`, and returns it as a
     tuple of the form :obj:`(i,j,k)`.
 
     Args:
         edge_index (LongTensor): The edge indices.
-        num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        num_nodes (int or Tuple[int, int], optional): The number of nodes,
+            *i.e.* :obj:`max_val + 1` of :attr:`edge_index`.
+            If given as a tuple, then :obj:`edge_index` is interpreted as a
+            bipartite graph with shape :obj:`(num_src_nodes, num_dst_nodes)`.
+            (default: :obj:`None`)
         contains_neg_self_loops (bool, optional): If set to
             :obj:`False`, sampled negative edges will not contain self loops.
             (default: :obj:`True`)
@@ -226,7 +230,15 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
         (tensor([0, 0, 1, 2]), tensor([0, 1, 2, 3]), tensor([2, 3, 0, 2]))
 
     """
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    if not structured_negative_sampling_feasible(edge_index=edge_index, num_nodes=num_nodes,
+                                                 contains_neg_self_loops=contains_neg_self_loops):
+        raise Exception("structured_negative_sampling is not feasible")
+
+    size = num_nodes
+    bipartite = isinstance(size, (tuple, list))
+    size = maybe_num_nodes(edge_index) if size is None else size
+    contains_neg_self_loops = True if bipartite else contains_neg_self_loops
+    num_nodes = size[1] if bipartite else size
 
     row, col = edge_index.cpu()
     pos_idx = row * num_nodes + col
@@ -252,7 +264,7 @@ def structured_negative_sampling(edge_index, num_nodes: Optional[int] = None,
 
 def structured_negative_sampling_feasible(
     edge_index: Tensor,
-    num_nodes: Optional[int] = None,
+    num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
     contains_neg_self_loops: bool = True,
 ) -> bool:
     r"""Returns :obj:`True` if
@@ -263,8 +275,11 @@ def structured_negative_sampling_feasible(
 
     Args:
         edge_index (LongTensor): The edge indices.
-        num_nodes (int, optional): The number of nodes, *i.e.*
-            :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
+        num_nodes (int or Tuple[int, int], optional): The number of nodes,
+            *i.e.* :obj:`max_val + 1` of :attr:`edge_index`.
+            If given as a tuple, then :obj:`edge_index` is interpreted as a
+            bipartite graph with shape :obj:`(num_src_nodes, num_dst_nodes)`.
+            (default: :obj:`None`)
         contains_neg_self_loops (bool, optional): If set to
             :obj:`False`, sampled negative edges will not contain self loops.
             (default: :obj:`True`)
@@ -281,8 +296,12 @@ def structured_negative_sampling_feasible(
         >>> structured_negative_sampling_feasible(edge_index, 3, True)
         True
     """
-    num_nodes = maybe_num_nodes(edge_index, num_nodes)
-    max_num_neighbors = num_nodes
+    size = num_nodes
+    bipartite = isinstance(size, (tuple, list))
+    size = maybe_num_nodes(edge_index) if size is None else size
+    contains_neg_self_loops = True if bipartite else contains_neg_self_loops
+    num_nodes = size if not bipartite else size[0]
+    max_num_neighbors = num_nodes if not bipartite else size[1]
 
     edge_index = coalesce(edge_index, num_nodes=num_nodes)
 
