@@ -37,18 +37,22 @@ Without any modifications, these are defined as follows in the :class:`~torch_ge
 .. code-block:: python
 
     def __inc__(self, key, value, *args, **kwargs):
-        if 'index' in key or 'face' in key:
+        if 'index' in key:
             return self.num_nodes
         else:
             return 0
 
     def __cat_dim__(self, key, value, *args, **kwargs):
-        if 'index' in key or 'face' in key:
+        if 'index' in key:
             return 1
         else:
             return 0
 
-We can see that :meth:`__inc__` defines the incremental count between two consecutive graph attributes, where as :meth:`__cat_dim__` defines in which dimension graph tensors of the same attribute should be concatenated together.
+We can see that :meth:`__inc__` defines the incremental count between two consecutive graph attributes.
+By default, :pyg:`PyG` increments attributes whenever their attribute names contain the substring :obj:`index` (for historical reasons), which comes in handy for attributes such as :obj:`edge_index` or :obj:`node_index`.
+However, note that this may lead to unexpected behavior for attributes whose names contain the substring :obj:`index` but should not be incremented.
+To make sure, it is best practice to always double-check the output of batching.
+Furthermore, :meth:`__cat_dim__` defines in which dimension graph tensors of the same attribute should be concatenated together.
 Both functions are called for each attribute stored in the :class:`~torch_geometric.data.Data` class, and get passed their specific :obj:`key` and value :obj:`item` as arguments.
 
 In what follows, we present a few use-cases where the modification of :func:`__inc__` and :func:`__cat_dim__` might be absolutely necessary.
