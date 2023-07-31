@@ -96,7 +96,7 @@ class Model(torch.nn.Module):
         return self.decoder(z_dict['user'], z_dict['item'], edge_label_index)
 
 
-def run_train(rank, data, train_loader, val_loader, test_loader):
+def run_train(rank, data, train_loader, val_loader, test_loader, world_size):
     def train():
         model.train()
 
@@ -250,5 +250,5 @@ if __name__ == '__main__':
     )
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
-    mp.spawn(run_train, args=(data, train_loader, val_loader, test_loader),
+    mp.spawn(run_train, args=(data, train_loader, val_loader, test_loader, world_size),
              nprocs=world_size, join=True)
