@@ -1,7 +1,8 @@
 # An Multi GPU implementation of unsupervised bipartite GraphSAGE using the Alibaba
 # Taobao dataset.
-import os.path as osp
 import os
+import os.path as osp
+
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
