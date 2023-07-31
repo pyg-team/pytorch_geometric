@@ -129,6 +129,12 @@ class CaptumExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
 
+        # Check if index is out of dimension of target
+        if index is not None:
+            if index >= target.shape[1]:
+                raise ValueError("index is out of dimension of target.",
+                                 "Please check the index.")
+
         mask_type = self._get_mask_type()
 
         inputs, add_forward_args = to_captum_input(
@@ -157,8 +163,7 @@ class CaptumExplainer(ExplainerAlgorithm):
 
         # In captum, the target is the index for which
         # the attribution is computed.
-        if index is not None:
-            target = target[index]
+        target = index
 
         attributions = self.attribution_method_instance.attribute(
             inputs=inputs,
