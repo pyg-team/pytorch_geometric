@@ -66,9 +66,10 @@ class Batch(metaclass=DynamicInheritance):
     functionalities.
     The :meth:`__inc__` method defines the incremental count between two
     consecutive graph attributes.
-    By default, :pyg:`PyG` increments attributes whenever their attribute names
-    contain the substring :obj:`index` (for historical reasons), which comes
-    in handy for attributes such as :obj:`edge_index` or :obj:`node_index`.
+    By default, :pyg:`PyG` increments attributes by the number of nodes
+    whenever their attribute names contain the substring :obj:`index`
+    (for historical reasons), which comes in handy for attributes such as
+    :obj:`edge_index` or :obj:`node_index`.
     However, note that this may lead to unexpected behavior for attributes
     whose names contain the substring :obj:`index` but should not be
     incremented.

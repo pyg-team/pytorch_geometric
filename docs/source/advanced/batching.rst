@@ -49,7 +49,7 @@ Without any modifications, these are defined as follows in the :class:`~torch_ge
             return 0
 
 We can see that :meth:`__inc__` defines the incremental count between two consecutive graph attributes.
-By default, :pyg:`PyG` increments attributes whenever their attribute names contain the substring :obj:`index` (for historical reasons), which comes in handy for attributes such as :obj:`edge_index` or :obj:`node_index`.
+By default, :pyg:`PyG` increments attributes by the number of nodes whenever their attribute names contain the substring :obj:`index` (for historical reasons), which comes in handy for attributes such as :obj:`edge_index` or :obj:`node_index`.
 However, note that this may lead to unexpected behavior for attributes whose names contain the substring :obj:`index` but should not be incremented.
 To make sure, it is best practice to always double-check the output of batching.
 Furthermore, :meth:`__cat_dim__` defines in which dimension graph tensors of the same attribute should be concatenated together.
