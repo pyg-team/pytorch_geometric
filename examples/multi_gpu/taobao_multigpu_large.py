@@ -10,7 +10,7 @@ import torch.nn.functional as F
 import tqdm
 from sklearn.metrics import roc_auc_score
 from torch.nn import Embedding, Linear
-from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.nn.parallel import DistributedDataParallel
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Taobao
