@@ -14,14 +14,18 @@ from torch_geometric.data import (
 
 
 class OSE_GVCS(InMemoryDataset):
-    r"""`Product ecology <https://wiki.opensourceecology.org/wiki/Product_Ecologies>`_ for Open Source Ecology's iconoclastic `Global Village Construction Set <https://wiki.opensourceecology.org/wiki/Global_Village_Construction_Set>`_.
-    A modular, DIY, low-cost, high-performance platform that allows for the
-    easy fabrication of the 50 different industrial machines that it takes to
+    r"""A dataset describing the `Product ecology
+    <https://wiki.opensourceecology.org/wiki/Product_Ecologies>`_ of the Open
+    Source Ecology's iconoclastic `Global Village Construction Set
+    <https://wiki.opensourceecology.org/wiki/
+    Global_Village_Construction_Set>`_.
+    GVCS is a modular, DIY, low-cost set of blueprints that enables the
+    fabrication of the 50 different industrial machines that it takes to
     build a small, sustainable civilization with modern comforts.
 
-    The 50 original type :obj:`"machine"` nodes, composing the GVCS.
-    290 directed unweighted edges, each representing a relationship type between pairs of machines.
-    Processing a minimalist heterogenous graph from JSON.
+    The dataset contains a heterogenous graphs with 50 :obj:`machine` nodes,
+    composing the GVCS, and 290 directed edges, each representing one out of
+    three relationships pairs of machines.
     """
     machines = [
         '3D Printer', '3D Scanner', 'Aluminum Extractor', 'Backhoe',
