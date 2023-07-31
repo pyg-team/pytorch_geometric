@@ -576,7 +576,7 @@ def edge_sample(
             else:
                 edge_label_index = inverse_seed.view(2, -1)
 
-            out.metadata = (input_id, edge_label_index, edge_label, seed_time)
+            out.metadata = (input_id, edge_label_index, edge_label, src_time)
 
         elif neg_sampling.is_triplet():
             if disjoint:

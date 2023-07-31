@@ -60,6 +60,23 @@ class Batch(metaclass=DynamicInheritance):
     :class:`torch_geometric.data.HeteroData`.
     In addition, single graphs can be identified via the assignment vector
     :obj:`batch`, which maps each node to its respective graph identifier.
+
+    :pyg:`PyG` allows modification to the underlying batching procedure by
+    overwriting the :meth:`~Data.__inc__` and :meth:`~Data.__cat_dim__`
+    functionalities.
+    The :meth:`~Data.__inc__` method defines the incremental count between two
+    consecutive graph attributes.
+    By default, :pyg:`PyG` increments attributes by the number of nodes
+    whenever their attribute names contain the substring :obj:`index`
+    (for historical reasons), which comes in handy for attributes such as
+    :obj:`edge_index` or :obj:`node_index`.
+    However, note that this may lead to unexpected behavior for attributes
+    whose names contain the substring :obj:`index` but should not be
+    incremented.
+    To make sure, it is best practice to always double-check the output of
+    batching.
+    Furthermore, :meth:`~Data.__cat_dim__` defines in which dimension graph
+    tensors of the same attribute should be concatenated together.
     """
     @classmethod
     def from_data_list(cls, data_list: List[BaseData],
