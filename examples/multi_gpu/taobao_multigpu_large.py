@@ -3,20 +3,19 @@
 import os.path as osp
 
 import torch
+import torch.distributed as dist
+import torch.multiprocessing as mp
 import torch.nn.functional as F
 import tqdm
 from sklearn.metrics import roc_auc_score
 from torch.nn import Embedding, Linear
+from torch.nn.parallel import DistributedDataParallel
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Taobao
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.utils.convert import to_scipy_sparse_matrix
-from torch.nn.parallel import DistributedDataParallel
-import torch.distributed as dist
-import torch.multiprocessing as mp
-
 
 
 class ItemGNNEncoder(torch.nn.Module):
@@ -120,7 +119,6 @@ def run_train(rank, data, train_loader, val_loader, test_loader):
 
         return total_loss / total_examples
 
-
     @torch.no_grad()
     def test(loader):
         model.eval()
@@ -159,6 +157,7 @@ def run_train(rank, data, train_loader, val_loader, test_loader):
         if rank == 0:
             print(f'Epoch: {epoch:02d}, Loss: {loss:4f}, Val: {val_auc:.4f}, '
                   f'Test: {test_auc:.4f}')
+
 
 if __name__ == '__main__':
     path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Taobao')
@@ -246,4 +245,5 @@ if __name__ == '__main__':
     )
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
-    mp.spawn(run_train, args=(data, train_loader, val_loader, test_loader), nprocs=world_size, join=True)
+    mp.spawn(run_train, args=(data, train_loader, val_loader, test_loader),
+             nprocs=world_size, join=True)
