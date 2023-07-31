@@ -204,31 +204,36 @@ def test_link_neighbor_loader_edge_label():
         assert torch.all(batch.edge_label[10:] == 0)
 
 
-@withPackage("pyg_lib")
-def test_temporal_homo_link_neighbor_loader():
+@withPackage('pyg_lib')
+@pytest.mark.parametrize('batch_size', [1])
+def test_temporal_homo_link_neighbor_loader(batch_size):
     data = Data(
         x=torch.randn(10, 5),
-        edge_index=torch.randint(0, 10, (2, 1234)),
-        edge_time=torch.arange(1234),
+        edge_index=torch.randint(0, 10, (2, 123)),
+        time=torch.arange(10),
     )
 
-    batch_size = 1
+    # Ensure that nodes exist at the time of the `edge_label_time`:
+    edge_label_time = torch.max(
+        data.time[data.edge_index[0]],
+        data.time[data.edge_index[1]],
+    )
+
     loader = LinkNeighborLoader(
         data,
         num_neighbors=[-1],
-        time_attr="edge_time",
-        edge_label_time=data.edge_time,
+        time_attr='time',
         edge_label=torch.ones(data.num_edges),
+        edge_label_time=edge_label_time,
         batch_size=batch_size,
         shuffle=True,
     )
 
-    for sample in loader:
-        assert sample.edge_label_index.size() == (2, batch_size)
-        assert sample.edge_label_time.size() == (batch_size, )
-        assert sample.edge_label.size() == (batch_size, )
-        # TODO(akihironitta): Investigate the failure
-        # assert torch.all(sample.edge_time <= sample.edge_label_time)
+    for batch in loader:
+        assert batch.edge_label_index.size() == (2, batch_size)
+        assert batch.edge_label_time.size() == (batch_size, )
+        assert batch.edge_label.size() == (batch_size, )
+        assert torch.all(batch.time <= batch.edge_label_time)
 
 
 @withPackage('pyg_lib')
