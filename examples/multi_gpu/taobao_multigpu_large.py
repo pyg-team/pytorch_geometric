@@ -141,6 +141,7 @@ def run_train(rank, data, train_loader, val_loader, test_loader):
         target = torch.cat(targets, dim=0).numpy()
 
         return roc_auc_score(target, pred)
+
     os.environ['MASTER_ADDR'] = 'localhost'
     os.environ['MASTER_PORT'] = '12355'
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
