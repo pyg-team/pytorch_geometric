@@ -25,7 +25,7 @@ class OSE_GVCS(InMemoryDataset):
 
     The dataset contains a heterogenous graphs with 50 :obj:`machine` nodes,
     composing the GVCS, and 290 directed edges, each representing one out of
-    three relationships pairs of machines.
+    three relationships of machines.
     """
     machines = [
         '3D Printer', '3D Scanner', 'Aluminum Extractor', 'Backhoe',
