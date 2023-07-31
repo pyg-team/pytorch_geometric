@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import tqdm
 from sklearn.metrics import roc_auc_score
 from torch.nn import Embedding, Linear
-from torch.nn.parallel import DistributedDataParallel
+from torch.nn.parallel import DistributedDataParallel as DDP
 
 import torch_geometric.transforms as T
 from torch_geometric.datasets import Taobao
@@ -141,13 +141,16 @@ def run_train(rank, data, train_loader, val_loader, test_loader):
         target = torch.cat(targets, dim=0).numpy()
 
         return roc_auc_score(target, pred)
-
+    os.environ['MASTER_ADDR'] = 'localhost'
+    os.environ['MASTER_PORT'] = '12355'
+    dist.init_process_group('nccl', rank=rank, world_size=world_size)
     model = Model(
         num_users=data['user'].num_nodes,
         num_items=data['item'].num_nodes,
         hidden_channels=64,
         out_channels=64,
     ).to(rank)
+    model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     for epoch in range(1, 21):
         loss = train()
