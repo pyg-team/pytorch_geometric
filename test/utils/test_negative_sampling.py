@@ -160,9 +160,40 @@ def test_structured_negative_sampling():
     assert not contains_self_loops(neg_edge_index)
 
 
+def test_bipartite_structured_negative_sampling():
+    edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
+    i, j, k = structured_negative_sampling(edge_index, num_nodes=(3, 4))
+    assert i.size(0) == edge_index.size(1)
+    assert j.size(0) == edge_index.size(1)
+    assert k.size(0) == edge_index.size(1)
+
+    adj = torch.zeros(4, 4, dtype=torch.bool)
+    adj[i, j] = 1
+
+    neg_adj = torch.zeros(4, 4, dtype=torch.bool)
+    neg_adj[i, k] = 1
+    assert (adj & neg_adj).sum() == 0
+
+    # Test with max node id on negative sample
+    assert j.max() <= edge_index[1].max()
+
+
 def test_structured_negative_sampling_feasible():
     edge_index = torch.LongTensor([[0, 0, 1, 1, 2, 2, 2],
                                    [1, 2, 0, 2, 0, 1, 1]])
     assert not structured_negative_sampling_feasible(edge_index, 3, False)
     assert structured_negative_sampling_feasible(edge_index, 3, True)
     assert structured_negative_sampling_feasible(edge_index, 4, False)
+
+
+def test_bipartite_structured_negative_sampling_feasible():
+    edge_index = torch.LongTensor([[0, 0, 1, 1, 2, 2, 2],
+                                   [1, 2, 0, 2, 0, 1, 1]])
+    assert structured_negative_sampling_feasible(edge_index, num_nodes=(3, 3))
+
+    edge_index = torch.as_tensor([[0, 0, 1, 2, 3],
+                                  [0, 1, 1, 1, 0]])
+    assert structured_negative_sampling_feasible(edge_index, 4, True)
+    assert structured_negative_sampling_feasible(edge_index, 4, False)
+    assert not structured_negative_sampling_feasible(edge_index, (4, 2))
+    assert structured_negative_sampling_feasible(edge_index, (4, 3))
