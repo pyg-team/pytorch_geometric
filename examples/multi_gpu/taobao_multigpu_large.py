@@ -154,8 +154,6 @@ def run_train(rank, data, train_loader, val_loader, test_loader, world_size):
     ).to(rank)
     for batch in train_loader:
         batch = batch.to(rank)
-        optimizer.zero_grad()
-
         pred = model(
             batch.x_dict,
             batch.edge_index_dict,
