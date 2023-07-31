@@ -4,7 +4,6 @@ import threading
 from abc import ABC, abstractmethod
 from typing import Dict, List
 
-from torch._C._distributed_rpc import _is_current_rpc_agent_set
 from torch.distributed import rpc
 
 from torch_geometric.distributed.dist_context import DistContext, DistRole
@@ -13,6 +12,7 @@ _rpc_init_lock = threading.RLock()
 
 
 def rpc_is_initialized() -> bool:
+    from torch._C._distributed_rpc import _is_current_rpc_agent_set
     return _is_current_rpc_agent_set()
 
 
