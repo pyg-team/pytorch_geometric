@@ -204,7 +204,7 @@ def batched_negative_sampling(
 
 def structured_negative_sampling(edge_index: Tensor,
                                  num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
-                                 contains_neg_self_loops: bool = True) -> tuple[Tensor, Tensor, Tensor]:
+                                 contains_neg_self_loops: bool = True) -> Tensor:
     r"""Samples a negative edge :obj:`(i,k)` for every positive edge
     :obj:`(i,j)` in the graph given by :attr:`edge_index`, and returns it as a
     tuple of the form :obj:`(i,j,k)`.
