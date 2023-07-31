@@ -55,7 +55,7 @@ To make sure, it is best practice to always double-check the output of batching.
 Furthermore, :meth:`~torch_geometric.data.Data.__cat_dim__` defines in which dimension graph tensors of the same attribute should be concatenated together.
 Both functions are called for each attribute stored in the :class:`~torch_geometric.data.Data` class, and get passed their specific :obj:`key` and value :obj:`item` as arguments.
 
-In what follows, we present a few use-cases where the modification of :meth:`~torch_geometric.data.Data.__inc__` and :meth:`~torch_geometric.data.Data__cat_dim__` might be absolutely necessary.
+In what follows, we present a few use-cases where the modification of :meth:`~torch_geometric.data.Data.__inc__` and :meth:`~torch_geometric.data.Data.__cat_dim__` might be absolutely necessary.
 
 Pairs of Graphs
 ---------------
