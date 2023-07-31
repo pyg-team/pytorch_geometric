@@ -152,6 +152,16 @@ def run_train(rank, data, train_loader, val_loader, test_loader, world_size):
         hidden_channels=64,
         out_channels=64,
     ).to(rank)
+    for batch in train_loader:
+        batch = batch.to(rank)
+        optimizer.zero_grad()
+
+        pred = model(
+            batch.x_dict,
+            batch.edge_index_dict,
+            batch['user', 'item'].edge_label_index,
+        )
+        break
     model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     for epoch in range(1, 21):
