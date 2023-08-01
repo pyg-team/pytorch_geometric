@@ -41,6 +41,9 @@ class HalfHop(BaseTransform):
 
     def forward(self, data: Data) -> Data:
 
+        assert data.edge_weight is None
+        assert data.edge_attr is None
+
         x, edge_index = data.x, data.edge_index
 
         # isolate self loops which are not half-hopped
