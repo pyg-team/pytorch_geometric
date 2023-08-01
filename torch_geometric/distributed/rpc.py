@@ -2,7 +2,7 @@ import atexit
 import logging
 import threading
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Callable, Dict, List
 
 from torch.distributed import rpc
 
@@ -16,7 +16,13 @@ def rpc_is_initialized() -> bool:
     return _is_current_rpc_agent_set()
 
 
-@rpc.api._require_initialized
+def rpc_require_initialized(func: Callable) -> Callable:
+    if hasattr(rpc, 'api'):
+        return rpc.api._require_initialized(func)
+    return func
+
+
+@rpc_require_initialized
 def global_all_gather(obj, timeout=None):
     r"""Gathers objects from all groups in a list."""
     if timeout is None:
@@ -24,7 +30,7 @@ def global_all_gather(obj, timeout=None):
     return rpc.api._all_gather(obj, timeout=timeout)
 
 
-@rpc.api._require_initialized
+@rpc_require_initialized
 def global_barrier(timeout=None):
     r""" Block until all local and remote RPC processes."""
     try:
@@ -109,7 +115,7 @@ class RpcRouter:
         return router_worker
 
 
-@rpc.api._require_initialized
+@rpc_require_initialized
 def rpc_partition_to_workers(
     current_ctx: DistContext,
     num_partitions: int,
@@ -142,7 +148,7 @@ _rpc_call_id: int = 0
 _rpc_call_pool: Dict[int, RpcCallBase] = {}
 
 
-@rpc.api._require_initialized
+@rpc_require_initialized
 def rpc_register(call: RpcCallBase) -> int:
     r"""Registers a call for RPC requests."""
     global _rpc_call_id, _rpc_call_pool
@@ -162,7 +168,7 @@ def _rpc_async_call(call_id: int, *args, **kwargs):
     return _rpc_call_pool.get(call_id).rpc_async(*args, **kwargs)
 
 
-@rpc.api._require_initialized
+@rpc_require_initialized
 def rpc_async(worker_name: str, call_id: int, args=None, kwargs=None):
     r"""Performs an asynchronous RPC request and returns a future."""
     return rpc.rpc_async(
@@ -178,7 +184,7 @@ def _rpc_sync_call(call_id: int, *args, **kwargs):
     return _rpc_call_pool.get(call_id).rpc_sync(*args, **kwargs)
 
 
-@rpc.api._require_initialized
+@rpc_require_initialized
 def rpc_sync(worker_name: str, call_id: int, args=None, kwargs=None):
     r"""Performs a synchronous RPC request and returns a future."""
     future = rpc.rpc_async(

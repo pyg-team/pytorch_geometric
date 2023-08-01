@@ -161,8 +161,7 @@ omit = [
 exclude_lines = [
     "pragma: no cover",
     "pass",
-    "raise",
-    "except",
+    "raise NotImplementedError",
     "register_parameter",
     "warn",
     "torch.cuda.is_available",
