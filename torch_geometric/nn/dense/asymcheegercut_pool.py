@@ -5,7 +5,6 @@ import torch
 from torch import Tensor
 
 
-# TODO: Double check notation in docstring
 def dense_asymcheegercut_pool(
         x: Tensor, adj: Tensor, s: Tensor, mask: Optional[Tensor] = None
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
@@ -15,13 +14,15 @@ def dense_asymcheegercut_pool(
     <https://arxiv.org/abs/2211.06218>`_ paper.
 
     .. math::
-        \mathbf{X}^{\prime} &= \mathbf{S}^{\top} \cdot
+        \mathbf{S} &= \text{softmax}(\mathbf{S}^{\prime})
+
+        \mathbf{X}^{\prime} &= \mathbf{S}^{\top}
         \mathbf{X}
 
-        \mathbf{A}^{\prime} &= \mathbf{S}^{\top} \cdot
-        \mathbf{A} \cdot \mathbf{S}
+        \mathbf{A}^{\prime} &= \mathbf{S}^{\top}
+        \mathbf{A} \mathbf{S}
 
-    based on dense learned assignments :math:`\mathbf{S} \in \mathbb{R}^{B
+    based on dense learned tensor :math:`\mathbf{S}^{\prime} \in \mathbb{R}^{B
     \times N \times C}`.
     Returns the pooled node feature matrix, the coarsened adjacency matrix,
     and two auxiliary objectives:
@@ -49,7 +50,7 @@ def dense_asymcheegercut_pool(
         adj (torch.Tensor): Adjacency tensor
             :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
         s (torch.Tensor): Assignment tensor
-            :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}`
+            :math:`\mathbf{S}^{\prime} \in \mathbb{R}^{B \times N \times C}`
             with number of clusters :math:`C`.
             The softmax does not have to be applied before-hand, since it is
             executed within this method.

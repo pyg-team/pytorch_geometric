@@ -14,10 +14,11 @@ class GTVConv(MessagePassing):
     <https://arxiv.org/abs/2211.06218>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime} &= \left(\mathbf{I} -
+        \mathbf{X}^{\prime} = \left(\mathbf{I} -
         \delta\mathbf{L}_\hat{\mathbf{\Gamma}}\right)\tilde{\mathbf{X}}
 
     where
+
     .. math::
         \tilde{\mathbf{X}} &= \mathbf{X} \mathbf{\Theta}
 
