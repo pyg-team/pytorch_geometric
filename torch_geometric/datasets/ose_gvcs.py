@@ -25,7 +25,7 @@ class OSE_GVCS(InMemoryDataset):
 
     The dataset contains a heterogenous graphs with 50 :obj:`machine` nodes,
     composing the GVCS, and 290 directed edges, each representing one out of
-    three relationships of machines.
+    three relationships between machines.
     """
     machines = [
         '3D Printer', '3D Scanner', 'Aluminum Extractor', 'Backhoe',
@@ -94,6 +94,8 @@ class OSE_GVCS(InMemoryDataset):
                 dst = interaction['tool']
                 if dst not in self.machines:
                     continue
+                # Machines are guaranteed to be sorted according to their order
+                # in `self.machines`, so we can use its index for the mapping:
                 src = self.machines.index(product['machine'])
                 dst = self.machines.index(dst)
                 edges[rt].append((src, dst))
