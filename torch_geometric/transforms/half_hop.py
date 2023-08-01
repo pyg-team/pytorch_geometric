@@ -10,7 +10,7 @@ class HalfHop(BaseTransform):
     r"""Graph upsampling augmentation from the
     `"Half-Hop: A graph upsampling approach for slowing down
     message passing" <https://openreview.net/forum?id=lXczFIwQkv>`_ paper.
-    The graph is augmented by adding artifical slow nodes between neighbors
+    The graph is augmented by adding artificial slow nodes between neighbors
     to slow down message propagation. (functional name: :obj:`half_hop`).
 
     Args:
