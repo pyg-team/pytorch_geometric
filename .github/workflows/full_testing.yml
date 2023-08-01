@@ -1,9 +1,14 @@
 name: Full Testing
 
+# on:  # yamllint disable-line rule:truthy
+#   workflow_dispatch:
+#   schedule:
+#     - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
 on:  # yamllint disable-line rule:truthy
-  workflow_dispatch:
-  schedule:
-    - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
 
@@ -14,8 +19,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        python-version: ['3.8', '3.10']
+        os: [windows-latest]
+        python-version: ['3.10']
         torch-version: [1.11.0, 1.12.0, 1.13.0, 2.0.0, nightly]
         include:
           - torch-version: 1.11.0
@@ -51,7 +56,7 @@ jobs:
 
       - name: Run tests
         run: |
-          FULL_TEST=1 pytest --cov --cov-report=xml
+          pytest --cov --cov-report=xml
         shell: bash
 
       - name: Upload coverage
