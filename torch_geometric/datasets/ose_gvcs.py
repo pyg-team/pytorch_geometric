@@ -110,6 +110,4 @@ class OSE_GVCS(InMemoryDataset):
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        print(data)
-        raise NotImplementedError
         self.save([data], self.processed_paths[0])
