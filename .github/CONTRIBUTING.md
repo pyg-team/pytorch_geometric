@@ -16,22 +16,24 @@ If your PR isn't merged anytime soon (*e.g.,* due to its large size, complexity 
 
 To develop PyG on your machine, here are some tips:
 
-1. Ensure that you are running on one of the two latest PyTorch releases (*e.g.*, `1.12.0`):
+1. Ensure that you are running on one of the two latest PyTorch releases (*e.g.*, `2.0.0`):
 
    ```python
    import torch
    print(torch.__version__)
    ```
 
-2. Follow the [installation instructions](https://github.com/pyg-team/pytorch_geometric#installation) to install `pyg-lib`, `torch-scatter`, `torch-sparse`, `torch-cluster` and `torch-spline-conv` (if you haven't already):
+2. *(Optional)* Follow the [installation instructions](https://github.com/pyg-team/pytorch_geometric#installation) to install `pyg-lib`, `torch-scatter`, `torch-sparse`, `torch-cluster` and `torch-spline-conv` (if you haven't already).
+   Note that this step is optional and only necessary if you develop a feature that uses one of these libraries.
 
    ```bash
    pip install pyg-lib torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
    ```
 
-   where `${TORCH}` should be replaced by your PyTorch version (*e.g.*, `1.12.0`), and `${CUDA}` should be replaced by your CUDA version (*e.g.*, `cpu` or `cu116`).
+   where `${TORCH}` should be replaced by your PyTorch version (*e.g.*, `2.0.0`), and `${CUDA}` should be replaced by your CUDA version (*e.g.*, `cpu` or `cu118`).
 
-3. Uninstall all existing PyG installations:
+3. Uninstall all existing PyG installations.
+   It is advised to run this command repeatedly to confirm that installations across all locations are properly removed.
 
    ```bash
    pip uninstall torch-geometric
@@ -57,7 +59,8 @@ To develop PyG on your machine, here are some tips:
    pip install -e ".[dev,full]"
    ```
 
-   This mode will symlink the Python files from the current local source tree into the Python install. Hence, if you modify a Python file, you do not need to reinstall PyG again and again.
+   This mode will symlink the Python files from the current local source tree into the Python install.
+   Hence, if you modify a Python file, you do not need to re-install PyG again.
 
 7. Ensure that you have a working PyG installation by running the entire test suite with
 
