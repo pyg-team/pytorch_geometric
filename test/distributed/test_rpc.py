@@ -7,6 +7,7 @@ import torch_geometric.distributed.rpc as rpc
 from torch_geometric.distributed import LocalFeatureStore
 from torch_geometric.distributed.dist_context import DistContext, DistRole
 from torch_geometric.distributed.rpc import RpcRouter
+from torch_geometric.testing import onlyLinux
 
 
 def run_rpc_feature_test(
@@ -81,6 +82,7 @@ def run_rpc_feature_test(
     rpc.shutdown_rpc()
 
 
+@onlyLinux
 def test_dist_feature_lookup():
     cpu_tensor0 = torch.cat([torch.ones(128, 1024), torch.ones(128, 1024) * 2])
     cpu_tensor1 = torch.cat([torch.zeros(128, 1024), torch.zeros(128, 1024)])
