@@ -209,11 +209,16 @@ def run(args: argparse.ArgumentParser):
                             data = transformation(data)
 
                         with cpu_affinity, amp, timeit() as time:
+                            if args.reuse_device_for_embeddings:
+                                embedding_device = device
+                            else:
+                                embedding_device = torch.device('cpu')
                             for _ in range(args.warmup):
                                 if args.full_batch:
                                     full_batch_inference(model, data)
                                 else:
                                     model.inference(subgraph_loader, device,
+                                                    embedding_device=embedding_device,
                                                     progress_bar=True)
                             if args.warmup > 0:
                                 time.reset()
@@ -231,6 +236,7 @@ def run(args: argparse.ArgumentParser):
                                     y = model.inference(
                                         subgraph_loader,
                                         device,
+                                        embedding_device=embedding_device,
                                         progress_bar=True,
                                     )
                                     if args.evaluate:
@@ -287,6 +293,8 @@ if __name__ == '__main__':
 
     add('--device', choices=['cpu', 'cuda', 'xpu'], default='cpu',
         help='Device to run benchmark on')
+    add('--reuse-device-for-embeddings', action='store_true',
+        help='Use the same device for embeddings as specified in "--device"')
     add('--datasets', nargs='+',
         default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
     add('--use-sparse-tensor', action='store_true',
