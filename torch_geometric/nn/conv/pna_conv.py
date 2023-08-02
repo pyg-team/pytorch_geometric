@@ -196,7 +196,8 @@ class PNAConv(MessagePassing):
     def get_degree_histogram(loader: DataLoader) -> Tensor:
         r"""Returns the degree histogram to be used as input for the :obj:`deg`
         argument in :class:`PNAConv`."""
-        deg_histogram = torch.zeros(1, dtype=torch.long)
+        device = next(iter(loader)).edge_index.device
+        deg_histogram = torch.zeros(1, dtype=torch.long, device=device)
         for data in loader:
             d = degree(data.edge_index[1], num_nodes=data.num_nodes,
                        dtype=torch.long)
