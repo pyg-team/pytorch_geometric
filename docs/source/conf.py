@@ -45,7 +45,7 @@ intersphinx_mapping = {
 }
 
 nbsphinx_thumbnails = {
-    'tutorial/create_gnn': '_static/thumbnails/create_gnn.svg',
+    'tutorial/create_gnn': '_static/thumbnails/create_gnn.png',
     'tutorial/heterogeneous': '_static/thumbnails/heterogeneous.png',
     'tutorial/create_dataset': '_static/thumbnails/create_dataset.png',
     'tutorial/load_csv': '_static/thumbnails/load_csv.png',
