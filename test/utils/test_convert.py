@@ -849,3 +849,36 @@ def test_from_hetero_networkx_raise_different_node_attribute():
     with pytest.raises(ValueError) as _:
         from_hetero_networkx(G, node_type_attribute="type",
                              edge_type_attribute=None)
+
+
+@withPackage('networkx')
+def test_from_hetero_networkx_works_with_named_edge_types():
+    import networkx as nx
+
+    G = nx.DiGraph()
+    G.add_node(0, type="A", x=1)
+    G.add_node(1, type="A", x=1)
+    G.add_node(2, type="B", y=1)
+    G.add_edge(0, 1, type=('A', 'towards', 'A'), x=1)
+    G.add_edge(0, 2, type=('A', 'towards', 'B'))
+
+    data = from_hetero_networkx(G, node_type_attribute="type",
+                                edge_type_attribute="type")
+
+    assert data[('A', 'towards', 'A')].edge_index.tolist() == [[0], [1]]
+    assert data[('A', 'towards', 'B')].edge_index.tolist() == [[0], [0]]
+
+
+@withPackage('networkx')
+def test_from_hetero_networkx_works_with_non_string_types():
+    import networkx as nx
+
+    G = nx.Graph()
+    G.add_node(0, type=1, x=1)
+    G.add_node(1, type=False, x=1)
+
+    data = from_hetero_networkx(G, node_type_attribute="type",
+                                edge_type_attribute=None)
+
+    assert data[str(1)].x.tolist() == [1]
+    assert data[str(False)].x.tolist() == [1]

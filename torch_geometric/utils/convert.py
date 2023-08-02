@@ -642,16 +642,18 @@ def from_dgl(
 def from_hetero_networkx(
         G: Any, node_type_attribute: str,
         edge_type_attribute: str = None) -> 'torch_geometric.data.HeteroData':
-    """Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` into a
-    :class:`torch_geometric.data.HeteroData` structure.
+    r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
+    :class:`torch_geometric.data.HeteroData` instance.
 
     Args:
-        G (nx.Graph): A networkX graph to be converted.
-        node_type_attribute (str): The node attribute containing the type of
-        the node (each node must have one for it to be heterogeneous).
-        edge_type_attribute (str): The edge attribute containing the type of
-        the edge (each edge must have one for it to be heterogeneous).
-        (default: :obj:`None`)
+        G (networkx.Graph or networkx.DiGraph): A networkx graph.
+        node_type_attribute (str): The attribute containing the type of a
+            node. For the resulting structure to be valid, this attribute
+            must be set for every node in the graph.
+        edge_type_attribute (str): The attribute containing the type of
+            an edge. If set to :obj:`None`, the value :obj:`"to"` will be
+            used in the final structure. Otherwise, this attribute must be
+            set for every edge in the graph. (default: :obj:`None`)
 
     Example:
 
@@ -659,41 +661,39 @@ def from_hetero_networkx(
         ...                    edge_type_attribute="type")
         <torch_geometric.data.HeteroData()>
 
-    Returns:
-        HeteroData: Structure containing node, edge and graph attribute per
-        type.
+    :rtype: :class:`torch_geometric.data.HeteroData`
     """
     import networkx as nx
 
     from torch_geometric.data import HeteroData
 
-    def get_edge_attributes(G, edges: list, edge_attrs: list = None) -> dict:
-        """Gathers edge attributes from networkX graph into a dictionary.
+    def get_edge_attributes(G, edge_indexes: list,
+                            edge_attrs: list = None) -> dict:
+        r"""Collects the attributes of a list of graph edges in a dictionary.
 
         Args:
-            G (_type_): Graph containing the edges to collect.
-            edges (list, optional): List of edges to include
-            (by default all edges of the graph). (default: :obj:`None`)
-            edge_attrs (list, optional): Expected edge attributes
-            to be found in every edges. (default: :obj:`None`)
+            G (networkx.Graph or networkx.DiGraph): A networkx graph.
+            edge_indexes (list, optional): The list of edge indexes whose
+                attributes are to be collected. If set to :obj:`None`, all
+                edges of the graph will be included. (default: :obj:`None`)
+            edge_attrs (list, optional): The list of expected attributes to
+                be found in every edge. If set to :obj:`None`, the first
+                edge encountered will set the values for the rest of the
+                process. (default: :obj:`None`)
 
         Raises:
             ValueError: If some of the edges do not share the same list
-            of attributes, an error will be raised.
-
-        Returns:
-            dict: Dictionary which keys are attribute names and values
-            are lists of this atribute value for each edge.
+            of attributes as the rest, an error will be raised.
         """
         data = defaultdict(list)
         edge_to_data = list(G.edges(data=True))
 
-        for i in edges:
-            node_a, node_b, feat_dict = edge_to_data[i]
+        for edge_index in edge_indexes:
+            _, _, feat_dict = edge_to_data[edge_index]
             if edge_attrs is None:
                 edge_attrs = feat_dict.keys()
             if set(feat_dict.keys()) != set(edge_attrs):
-                raise ValueError('Not all edges contain the same attributes')
+                raise ValueError('Not all edges contain the same attributes.')
             for key, value in feat_dict.items():
                 data[str(key)].append(value)
 
@@ -701,34 +701,33 @@ def from_hetero_networkx(
 
     def get_node_attributes(G, nodes: list,
                             expected_node_attrs: list = None) -> dict:
-        """Gathers node attributes from a networkX graph into a dictionary.
+        r"""Collects the attributes of a list of graph nodes in a dictionary.
 
         Args:
-            G (_type_): Graph containing the nodes to collect.
-            nodes (list, optional): List of nodes to include
-            (by default all nodes of the graph). Defaults to None.
-            node_attrs (list, optional): Expected node attributes
-            to be found in every nodes. Defaults to None.
+            G (networkx.Graph or networkx.DiGraph): A networkx graph.
+            nodes (list, optional): The list of nodes whose attributes are to
+                be collected. If set to :obj:`None`, all nodes of the graph
+                will be included. (default: :obj:`None`)
+            node_attrs (list, optional): The list of expected attributes to
+                be found in every node. If set to :obj:`None`, the first node
+                encountered will set the values for the rest of the process.
+                (default: :obj:`None`)
 
         Raises:
             ValueError: If some of the nodes do not share the same
-            list of attributes, an error will be raised.
-
-        Returns:
-            dict: Dictionary which keys are attribute names and values
-            are lists of this atribute value for each node.
+            list of attributes as the rest, an error will be raised.
         """
 
         data = defaultdict(list)
 
         node_to_data = G.nodes(data=True)
 
-        for node_id in nodes:
-            feat_dict = node_to_data[node_id]
+        for node in nodes:
+            feat_dict = node_to_data[node]
             if expected_node_attrs is None:
                 expected_node_attrs = feat_dict.keys()
             if set(feat_dict.keys()) != set(expected_node_attrs):
-                raise ValueError('Not all nodes contain the same attributes')
+                raise ValueError('Not all nodes contain the same attributes.')
             for key, value in feat_dict.items():
                 data[str(key)].append(value)
 
@@ -747,7 +746,7 @@ def from_hetero_networkx(
         if node_type_attribute not in node_data:
             raise KeyError(f"Given node_type_attribute: {node_type_attribute} \
                 missing from node {node}.")
-        node_type = node_data[node_type_attribute]
+        node_type = str(node_data[node_type_attribute])
         group_to_nodes[node_type].append(node)
         node_to_group_id[node] = len(group_to_nodes[node_type]) - 1
         node_to_group[node] = node_type
@@ -778,7 +777,7 @@ def from_hetero_networkx(
     for group, group_edges in group_to_edges.items():
         group_name = '__'.join(group)
         hetero_data_dict[group_name] = get_edge_attributes(
-            G, edges=group_edges)
+            G, edge_indexes=group_edges)
         edge_list = list(G.edges(data=False))
         global_edge_index = [edge_list[edge] for edge in group_edges]
         group_edge_index = [(node_to_group_id[node_a],
