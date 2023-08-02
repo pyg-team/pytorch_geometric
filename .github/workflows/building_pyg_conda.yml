@@ -39,15 +39,15 @@ jobs:
             cuda-version: 'cu115'
           - torch-version: 2.0.0
             cuda-version: 'cu116'
-          - os: macos-10.15
+          - os: macos-latest
             cuda-version: 'cu102'
-          - os: macos-10.15
+          - os: macos-latest
             cuda-version: 'cu113'
-          - os: macos-10.15
+          - os: macos-latest
             cuda-version: 'cu116'
-          - os: macos-10.15
+          - os: macos-latest
             cuda-version: 'cu117'
-          - os: macos-10.15
+          - os: macos-latest
             cuda-version: 'cu118'
 
     steps:
