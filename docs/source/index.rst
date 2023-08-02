@@ -6,7 +6,7 @@ PyG Documentation
 :pyg:`null` **PyG** *(PyTorch Geometric)* is a library built upon :pytorch:`null` `PyTorch <https://pytorch.org>`_ to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
 It consists of various methods for deep learning on graphs and other irregular structures, also known as `geometric deep learning <http://geometricdeeplearning.com/>`_, from a variety of published papers.
-In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, `multi GPU-support <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/multi_gpu>`_, `torch.compile <https://pytorch-geometric.readthedocs.io/en/latest/tutorial/compile.html>`_ support, `DataPipe <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/datapipe.py>`_ support, a large number of common benchmark datasets (based on simple interfaces to create your own), the `GraphGym <advanced/graphgym.html>`__ experiment manager, and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
+In addition, it consists of easy-to-use mini-batch loaders for operating on many small and single giant graphs, `multi GPU-support <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/multi_gpu>`_, `torch.compile <https://pytorch-geometric.readthedocs.io/en/latest/advanced/compile.html>`_ support, `DataPipe <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/datapipe.py>`_ support, a large number of common benchmark datasets (based on simple interfaces to create your own), the `GraphGym <advanced/graphgym.html>`__ experiment manager, and helpful transforms, both for learning on arbitrary graphs as well as on 3D meshes or point clouds.
 
 .. slack_button::
 
@@ -32,7 +32,6 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    tutorial/heterogeneous
    tutorial/load_csv
    tutorial/explain
-   tutorial/compile
 
 .. toctree::
    :maxdepth: 1
@@ -41,6 +40,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    advanced/batching
    advanced/sparse_tensor
    advanced/hgam
+   advanced/compile
    advanced/jit
    advanced/remote
    advanced/graphgym
