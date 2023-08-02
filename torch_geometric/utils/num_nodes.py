@@ -1,5 +1,5 @@
 from copy import copy
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -16,12 +16,18 @@ def maybe_num_nodes(edge_index, num_nodes):
 
 @torch.jit._overload
 def maybe_num_nodes(edge_index, num_nodes):
+    # type: (Tuple[Tensor, Tensor], Optional[int]) -> int
+    pass
+
+
+@torch.jit._overload
+def maybe_num_nodes(edge_index, num_nodes):
     # type: (SparseTensor, Optional[int]) -> int
     pass
 
 
 def maybe_num_nodes(
-    edge_index: Union[Tensor, SparseTensor],
+    edge_index: Union[Tensor, Tuple[Tensor, Tensor], SparseTensor],
     num_nodes: Optional[int] = None,
 ) -> int:
     if num_nodes is not None:
@@ -39,8 +45,15 @@ def maybe_num_nodes(
             return tmp.max() + 1
 
         return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
-    else:
+    elif isinstance(edge_index, tuple):
+        return max(
+            int(edge_index[0].max()) + 1 if edge_index[0].numel() > 0 else 0,
+            int(edge_index[1].max()) + 1 if edge_index[1].numel() > 0 else 0,
+        )
+    elif isinstance(edge_index, SparseTensor):
         return max(edge_index.size(0), edge_index.size(1))
+    else:
+        raise NotImplementedError
 
 
 def maybe_num_nodes_dict(
