@@ -217,9 +217,10 @@ def run(args: argparse.ArgumentParser):
                                 if args.full_batch:
                                     full_batch_inference(model, data)
                                 else:
-                                    model.inference(subgraph_loader, device,
-                                                    embedding_device=embedding_device,
-                                                    progress_bar=True)
+                                    model.inference(
+                                        subgraph_loader, device,
+                                        embedding_device=embedding_device,
+                                        progress_bar=True)
                             if args.warmup > 0:
                                 time.reset()
                             with itt, profile:
