@@ -1,5 +1,5 @@
-Creating Your Own Datasets
-==========================
+Creating Graph Datasets
+=======================
 
 Although :pyg:`PyG` already contains a lot of useful datasets, you may wish to create your own dataset with self-recorded or non-publicly available data.
 

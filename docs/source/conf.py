@@ -20,6 +20,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'nbsphinx',
     'pyg',
 ]
 
@@ -41,6 +42,14 @@ intersphinx_mapping = {
     'numpy': ('http://docs.scipy.org/doc/numpy', None),
     'pandas': ('http://pandas.pydata.org/pandas-docs/dev', None),
     'torch': ('https://pytorch.org/docs/master', None),
+}
+
+nbsphinx_thumbnails = {
+    'tutorial/create_gnn': '_static/thumbnails/create_gnn.svg',
+    'tutorial/heterogeneous': '_static/thumbnails/heterogeneous.png',
+    'tutorial/create_dataset': '_static/thumbnails/create_dataset.png',
+    'tutorial/load_csv': '_static/thumbnails/load_csv.png',
+    'tutorial/explain': '_static/thumbnails/explain.png',
 }
 
 
