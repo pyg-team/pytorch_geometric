@@ -27,11 +27,9 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    :maxdepth: 1
    :caption: Tutorials
 
-   tutorial/create_gnn
-   tutorial/create_dataset
-   tutorial/heterogeneous
-   tutorial/load_csv
-   tutorial/explain
+   tutorial/gnn_design
+   tutorial/dataset
+   tutorial/application
 
 .. toctree::
    :maxdepth: 1
