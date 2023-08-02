@@ -209,12 +209,19 @@ def run(args: argparse.ArgumentParser):
                             data = transformation(data)
 
                         with cpu_affinity, amp, timeit() as time:
+                            inference_kwargs = {}
+                            if args.reuse_device_for_embeddings and not hetero:
+                                inference_kwargs['embedding_device'] = device
                             for _ in range(args.warmup):
                                 if args.full_batch:
                                     full_batch_inference(model, data)
                                 else:
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
+                                    model.inference(
+                                        subgraph_loader,
+                                        device,
+                                        progress_bar=True,
+                                        **inference_kwargs,
+                                    )
                             if args.warmup > 0:
                                 time.reset()
                             with itt, profile:
@@ -232,6 +239,7 @@ def run(args: argparse.ArgumentParser):
                                         subgraph_loader,
                                         device,
                                         progress_bar=True,
+                                        **inference_kwargs,
                                     )
                                     if args.evaluate:
                                         test_acc = test(
@@ -287,6 +295,8 @@ if __name__ == '__main__':
 
     add('--device', choices=['cpu', 'cuda', 'xpu'], default='cpu',
         help='Device to run benchmark on')
+    add('--reuse-device-for-embeddings', action='store_true',
+        help='Use the same device for embeddings as specified in "--device"')
     add('--datasets', nargs='+',
         default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
     add('--use-sparse-tensor', action='store_true',
