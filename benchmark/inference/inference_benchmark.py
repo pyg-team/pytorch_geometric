@@ -209,17 +209,19 @@ def run(args: argparse.ArgumentParser):
                             data = transformation(data)
 
                         with cpu_affinity, amp, timeit() as time:
-                            inference_extra_kwargs = {}
+                            inference_kwargs = {}
                             if args.reuse_device_for_embeddings and not hetero:
-                                inference_extra_kwargs[
-                                    'embedding_device'] = device
+                                inference_kwargs['embedding_device'] = device
                             for _ in range(args.warmup):
                                 if args.full_batch:
                                     full_batch_inference(model, data)
                                 else:
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True,
-                                                    **inference_extra_kwargs)
+                                    model.inference(
+                                        subgraph_loader,
+                                        device,
+                                        progress_bar=True,
+                                        **inference_kwargs,
+                                    )
                             if args.warmup > 0:
                                 time.reset()
                             with itt, profile:
@@ -234,9 +236,11 @@ def run(args: argparse.ArgumentParser):
                                             {test_acc:.4f}')
                                 else:
                                     y = model.inference(
-                                        subgraph_loader, device,
+                                        subgraph_loader,
+                                        device,
                                         progress_bar=True,
-                                        **inference_extra_kwargs)
+                                        **inference_kwargs,
+                                    )
                                     if args.evaluate:
                                         test_acc = test(
                                             model,
