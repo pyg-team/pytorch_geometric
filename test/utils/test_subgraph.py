@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.utils import (
     bipartite_subgraph,
     get_num_hops,
@@ -51,6 +51,7 @@ def test_subgraph():
 
 
 @withCUDA
+@withPackage('pandas')
 def test_subgraph_large_index(device):
     subset = torch.tensor([50_000_000], device=device)
     edge_index = torch.tensor([[50_000_000], [50_000_000]], device=device)
