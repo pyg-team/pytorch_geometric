@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added `faiss`-based `KNNINdex` classes for L2 or maximum inner product search ([#7842](https://github.com/pyg-team/pytorch_geometric/pull/7842))
+- Added the `OSE_GVCS` dataset ([#7811](https://github.com/pyg-team/pytorch_geometric/pull/7811))
 - Added `output_initializer` argument to `DimeNet` models ([#7774](https://github.com/pyg-team/pytorch_geometric/pull/7774), [#7780](https://github.com/pyg-team/pytorch_geometric/pull/7780))
 - Added `lexsort` implementation ([#7775](https://github.com/pyg-team/pytorch_geometric/pull/7775))
 - Added possibility to run inference benchmarks on XPU device ([#7705](https://github.com/pyg-team/pytorch_geometric/pull/7705))
@@ -22,7 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added the `FilterEdges` graph coarsening operator ([#7361](https://github.com/pyg-team/pytorch_geometric/pull/7361))
 - Added the `DirGNN` model for learning on directed graphs ([#7458](https://github.com/pyg-team/pytorch_geometric/pull/7458))
 - Allow GPU tensors as input to `NodeLoader` and `LinkLoader` ([#7572](https://github.com/pyg-team/pytorch_geometric/pull/7572))
-- Added an `embedding_device` option to allow for GPU inference in `BasicGNN` ([#7548](https://github.com/pyg-team/pytorch_geometric/pull/7548))
+- Added an `embedding_device` option to allow for GPU inference in `BasicGNN` ([#7548](https://github.com/pyg-team/pytorch_geometric/pull/7548), [#7829](https://github.com/pyg-team/pytorch_geometric/pull/7829))
 - Added `Performer` to `GPSConv` and remove `attn_dropout` argument from `GPSConv` ([#7465](https://github.com/pyg-team/pytorch_geometric/pull/7465))
 - Enabled `LinkNeighborLoader` to return number of sampled nodes and edges per hop ([#7516](https://github.com/pyg-team/pytorch_geometric/pull/7516))
 - Added the `HM` personalized fashion recommendation dataset ([#7515](https://github.com/pyg-team/pytorch_geometric/pull/7515))
@@ -33,7 +35,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added a CPU-based and GPU-based `map_index` implementation ([#7493](https://github.com/pyg-team/pytorch_geometric/pull/7493), [#7765](https://github.com/pyg-team/pytorch_geometric/pull/7765))
 - Added the `AmazonBook` heterogeneous dataset ([#7483](https://github.com/pyg-team/pytorch_geometric/pull/7483))
 - Added hierarchical heterogeneous GraphSAGE example on OGB-MAG ([#7425](https://github.com/pyg-team/pytorch_geometric/pull/7425))
-- Added the `torch_geometric.distributed` package ([#7451](https://github.com/pyg-team/pytorch_geometric/pull/7451), [#7452](https://github.com/pyg-team/pytorch_geometric/pull/7452)), [#7482](https://github.com/pyg-team/pytorch_geometric/pull/7482), [#7502](https://github.com/pyg-team/pytorch_geometric/pull/7502), [#7628](https://github.com/pyg-team/pytorch_geometric/pull/7628))
+- Added the `torch_geometric.distributed` package ([#7451](https://github.com/pyg-team/pytorch_geometric/pull/7451), [#7452](https://github.com/pyg-team/pytorch_geometric/pull/7452)), [#7482](https://github.com/pyg-team/pytorch_geometric/pull/7482), [#7502](https://github.com/pyg-team/pytorch_geometric/pull/7502), [#7628](https://github.com/pyg-team/pytorch_geometric/pull/7628), [#7671](https://github.com/pyg-team/pytorch_geometric/pull/7671))
 - Added the `GDELTLite` dataset ([#7442](https://github.com/pyg-team/pytorch_geometric/pull/7442))
 - Added the `approx_knn` function for approximated nearest neighbor search ([#7421](https://github.com/pyg-team/pytorch_geometric/pull/7421))
 - Added the `IGMCDataset` ([#7441](https://github.com/pyg-team/pytorch_geometric/pull/7441))
@@ -45,7 +47,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added `PrefetchLoader` capabilities ([#7376](https://github.com/pyg-team/pytorch_geometric/pull/7376), [#7378](https://github.com/pyg-team/pytorch_geometric/pull/7378), [#7383](https://github.com/pyg-team/pytorch_geometric/pull/7383))
 - Added an example for hierarchical sampling ([#7244](https://github.com/pyg-team/pytorch_geometric/pull/7244))
 - Added Kùzu remote backend examples ([#7298](https://github.com/pyg-team/pytorch_geometric/pull/7298))
-- Fixed tracing of `add_self_loops` for a dynamic number of nodes ([#7330](https://github.com/pyg-team/pytorch_geometric/pull/7330))
 - Added an optional `add_pad_mask` argument to the `Pad` transform ([#7339](https://github.com/pyg-team/pytorch_geometric/pull/7339))
 - Added `keep_inter_cluster_edges` option to `ClusterData` to support inter-subgraph edge connections when doing graph partitioning ([#7326](https://github.com/pyg-team/pytorch_geometric/pull/7326))
 - Unify graph pooling framework ([#7308](https://github.com/pyg-team/pytorch_geometric/pull/7308), [#7625](https://github.com/pyg-team/pytorch_geometric/pull/7625))
@@ -77,6 +78,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Fixed tracing of `add_self_loops` for a dynamic number of nodes ([#7330](https://github.com/pyg-team/pytorch_geometric/pull/7330))
+- Fixed device issue in `PNAConv.get_degree_histogram` ([#7830](https://github.com/pyg-team/pytorch_geometric/pull/7830))
+- Fixed the shape of `edge_label_time` when using temporal sampling on homogeneous graphs ([#7807](https://github.com/pyg-team/pytorch_geometric/pull/7807))
+- Made `FieldStatus` enum picklable to avoid `PicklingError` in a multi-process setting ([#7808](https://github.com/pyg-team/pytorch_geometric/pull/7808))
 - Fixed `edge_label_index` computation in `LinkNeighborLoader` for the homogeneous+`disjoint` mode ([#7791](https://github.com/pyg-team/pytorch_geometric/pull/7791))
 - Fixed `CaptumExplainer` for `binary_classification` tasks ([#7787](https://github.com/pyg-team/pytorch_geometric/pull/7787))
 - Warn user when using the `training` flag in `to_hetero` modules ([#7772](https://github.com/pyg-team/pytorch_geometric/pull/7772))
