@@ -198,14 +198,15 @@ class PNAConv(MessagePassing):
         argument in :class:`PNAConv`."""
         deg_histogram = torch.zeros(1, dtype=torch.long)
         for data in loader:
-            d = degree(data.edge_index[1], num_nodes=data.num_nodes,
-                       dtype=torch.long)
-            d_bincount = torch.bincount(d, minlength=deg_histogram.numel())
-            if d_bincount.size(0) > deg_histogram.size(0):
-                d_bincount[:deg_histogram.size(0)] += deg_histogram
-                deg_histogram = d_bincount
+            deg = degree(data.edge_index[1], num_nodes=data.num_nodes,
+                         dtype=torch.long)
+            deg_bincount = torch.bincount(deg, minlength=deg_histogram.numel())
+            deg_histogram = deg_histogram.to(deg_bincount.device)
+            if deg_bincount.numel() > deg_histogram.numel():
+                deg_bincount[:deg_histogram.size(0)] += deg_histogram
+                deg_histogram = deg_bincount
             else:
-                assert d_bincount.size(0) == deg_histogram.size(0)
-                deg_histogram += d_bincount
+                assert deg_bincount.numel() == deg_histogram.numel()
+                deg_histogram += deg_bincount
 
         return deg_histogram
