@@ -1,6 +1,7 @@
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
+from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.utils import (
     bipartite_subgraph,
     get_num_hops,
@@ -70,6 +71,20 @@ def test_bipartite_subgraph():
                                  relabel_nodes=True)
         assert out[0].tolist() == [[0, 1, 2, 2], [1, 0, 0, 1]]
         assert out[1].tolist() == [3.0, 4.0, 9.0, 10.0]
+
+
+@withCUDA
+@withPackage('pandas')
+def test_bipartite_subgraph_large_index(device):
+    subset = torch.tensor([50_000_000], device=device)
+    edge_index = torch.tensor([[50_000_000], [50_000_000]], device=device)
+
+    edge_index, _ = bipartite_subgraph(
+        (subset, subset),
+        edge_index,
+        relabel_nodes=True,
+    )
+    assert edge_index.tolist() == [[0], [0]]
 
 
 def test_k_hop_subgraph():

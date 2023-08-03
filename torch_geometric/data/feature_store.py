@@ -32,11 +32,13 @@ import torch
 from torch_geometric.typing import FeatureTensorType, NodeType
 from torch_geometric.utils.mixin import CastMixin
 
-_field_status = Enum("FieldStatus", "UNSET")
-
 # We allow indexing with a tensor, numpy array, Python slicing, or a single
 # integer index.
 IndexType = Union[torch.Tensor, np.ndarray, slice, int]
+
+
+class _FieldStatus(Enum):
+    UNSET = None
 
 
 @dataclass
@@ -52,20 +54,20 @@ class TensorAttr(CastMixin):
     """
 
     # The group name that the tensor corresponds to. Defaults to UNSET.
-    group_name: Optional[NodeType] = _field_status.UNSET
+    group_name: Optional[NodeType] = _FieldStatus.UNSET
 
     # The name of the tensor within its group. Defaults to UNSET.
-    attr_name: Optional[str] = _field_status.UNSET
+    attr_name: Optional[str] = _FieldStatus.UNSET
 
     # The node indices the rows of the tensor correspond to. Defaults to UNSET.
-    index: Optional[IndexType] = _field_status.UNSET
+    index: Optional[IndexType] = _FieldStatus.UNSET
 
     # Convenience methods #####################################################
 
     def is_set(self, key: str) -> bool:
         r"""Whether an attribute is set in :obj:`TensorAttr`."""
         assert key in self.__dataclass_fields__
-        return getattr(self, key) != _field_status.UNSET
+        return getattr(self, key) != _FieldStatus.UNSET
 
     def is_fully_specified(self) -> bool:
         r"""Whether the :obj:`TensorAttr` has no unset fields."""
@@ -137,7 +139,7 @@ class AttrView(CastMixin):
         # Find the first attribute name that is UNSET:
         attr_name: Optional[str] = None
         for field in out._attr.__dataclass_fields__:
-            if getattr(out._attr, field) == _field_status.UNSET:
+            if getattr(out._attr, field) == _FieldStatus.UNSET:
                 attr_name = field
                 break
 
