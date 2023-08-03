@@ -3,7 +3,6 @@
 
 import argparse
 import os.path as osp
-import statistics
 import time
 
 import torch
@@ -17,8 +16,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--lamb', type=float, default=0.0,
                     help='Balances loss from hard labels and teacher outputs')
 args = parser.parse_args()
-
-NUM_EPOCHS = 500
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
@@ -60,13 +57,18 @@ def test_teacher():
     return accs
 
 
+times = []
 print('Training Teacher GNN:')
 for epoch in range(1, 201):
+    start = time.time()
     loss = train_teacher()
     if epoch % 20 == 0:
         train_acc, val_acc, test_acc = test_teacher()
         print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
               f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
+    times.append(time.time() - start)
+    start = time.time()
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
 
 with torch.no_grad():  # Obtain soft labels from the GNN:
     y_soft = gnn(data.x, data.edge_index).log_softmax(dim=-1)
@@ -95,15 +97,15 @@ def test_student():
     return accs
 
 
+times = []
 print('Training Student MLP:')
-times_per_epoch = []
-start = time.time()
-for epoch in range(1, NUM_EPOCHS + 1):
+for epoch in range(1, 501):
+    start = time.time()
     loss = train_student()
     if epoch % 20 == 0:
         train_acc, val_acc, test_acc = test_student()
         print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
               f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
-    times_per_epoch.append(time.time() - start)
+    times.append(time.time() - start)
     start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

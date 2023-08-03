@@ -1,5 +1,4 @@
 import os.path as osp
-import statistics
 import time
 
 import torch
@@ -13,8 +12,6 @@ from torch_geometric.data import Batch
 from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader, LinkNeighborLoader
 from torch_geometric.nn import GraphSAGE
-
-NUM_EPOCHS = 5
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PPI')
 train_dataset = PPI(path, split='train')
@@ -98,14 +95,13 @@ def test():
     return train_f1, val_f1, test_f1
 
 
-times_per_epoch = []
-start = time.time()
-for epoch in range(1, NUM_EPOCHS + 1):
+times = []
+for epoch in range(1, 6):
+    start = time.time()
     loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
     train_f1, val_f1, test_f1 = test()
     print(f'Train F1: {train_f1:.4f}, Val F1: {val_f1:.4f}, '
           f'Test F1: {test_f1:.4f}')
-    times_per_epoch.append(time.time() - start)
-    start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

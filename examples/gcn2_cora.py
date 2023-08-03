@@ -1,5 +1,4 @@
 import os.path as osp
-import statistics
 import time
 
 import torch
@@ -15,7 +14,6 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 transform = T.Compose([T.NormalizeFeatures(), T.GCNNorm(), T.ToSparseTensor()])
 dataset = Planetoid(path, dataset, transform=transform)
 data = dataset[0]
-NUM_EPOCHS = 1000
 
 
 class Net(torch.nn.Module):
@@ -80,9 +78,9 @@ def test():
 
 
 best_val_acc = test_acc = 0
-times_per_epoch = []
-start = time.time()
-for epoch in range(1, NUM_EPOCHS + 1):
+times = []
+for epoch in range(1, 1001):
+    start = time.time()
     loss = train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
@@ -91,6 +89,5 @@ for epoch in range(1, NUM_EPOCHS + 1):
     print(f'Epoch: {epoch:04d}, Loss: {loss:.4f} Train: {train_acc:.4f}, '
           f'Val: {val_acc:.4f}, Test: {tmp_test_acc:.4f}, '
           f'Final Test: {test_acc:.4f}')
-    times_per_epoch.append(time.time() - start)
-    start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

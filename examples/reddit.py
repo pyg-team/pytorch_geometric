@@ -1,6 +1,5 @@
 import copy
 import os.path as osp
-import statistics
 import time
 
 import torch
@@ -10,8 +9,6 @@ from tqdm import tqdm
 from torch_geometric.datasets import Reddit
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
-
-NUM_EPOCHS = 10
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -112,14 +109,13 @@ def test():
     return accs
 
 
-times_per_epoch = []
-start = time.time()
-for epoch in range(1, NUM_EPOCHS + 1):
+times = []
+for epoch in range(1, 11):
+    start = time.time()
     loss, acc = train(epoch)
     print(f'Epoch {epoch:02d}, Loss: {loss:.4f}, Approx. Train: {acc:.4f}')
     train_acc, val_acc, test_acc = test()
     print(f'Epoch: {epoch:02d}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
           f'Test: {test_acc:.4f}')
-    times_per_epoch.append(time.time() - start)
-    start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

@@ -1,6 +1,5 @@
 import argparse
 import os.path as osp
-import statistics
 import time
 
 import torch
@@ -26,8 +25,6 @@ test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
 dim = 256
 lstm_hidden = 256
 layer_num = 4
-
-NUM_EPOCHS = 100
 
 
 class Breadth(torch.nn.Module):
@@ -145,14 +142,13 @@ def test(loader):
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
 
-times_per_epoch = []
-start = time.time()
-for epoch in range(1, NUM_EPOCHS + 1):
+times = []
+for epoch in range(1, 101):
+    start = time.time()
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Val: {val_f1:.4f}, '
           f'Test: {test_f1:.4f}')
-    times_per_epoch.append(time.time() - start)
-    start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

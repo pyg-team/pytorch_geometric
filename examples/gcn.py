@@ -1,6 +1,5 @@
 import argparse
 import os.path as osp
-import statistics
 import time
 
 import torch
@@ -92,15 +91,14 @@ def test():
 
 
 best_val_acc = final_test_acc = 0
-times_per_epoch = []
-start = time.time()
+times = []
 for epoch in range(1, args.epochs + 1):
+    start = time.time()
     loss = train()
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
     log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
-    times_per_epoch.append(time.time() - start)
-    start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

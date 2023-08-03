@@ -1,5 +1,4 @@
 import os.path as osp
-import statistics
 import time
 
 import torch
@@ -13,8 +12,6 @@ dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
 dataset = Planetoid(path, dataset, transform=T.NormalizeFeatures())
 data = dataset[0]
-
-NUM_EPOCHS = 500
 
 
 class Net(torch.nn.Module):
@@ -65,13 +62,12 @@ def test(data):
     return accs
 
 
-times_per_epoch = []
-start = time.time()
-for epoch in range(1, NUM_EPOCHS + 1):
+times = []
+for epoch in range(1, 501):
+    start = time.time()
     train(data)
     train_acc, val_acc, test_acc = test(data)
     print(f'Epoch: {epoch:03d}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
           f'Test: {test_acc:.4f}')
-    times_per_epoch.append(time.time() - start)
-    start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

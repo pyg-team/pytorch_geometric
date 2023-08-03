@@ -1,6 +1,5 @@
 import math
 import os.path as osp
-import statistics
 import time
 from itertools import chain
 
@@ -136,8 +135,6 @@ train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=32)
 test_loader = DataLoader(test_dataset, batch_size=32)
 
-NUM_EPOCHS = 50
-
 
 class DGCNN(torch.nn.Module):
     def __init__(self, hidden_channels, num_layers, GNN=GCNConv, k=0.6):
@@ -220,10 +217,10 @@ def test(loader):
     return roc_auc_score(torch.cat(y_true), torch.cat(y_pred))
 
 
+times = []
 best_val_auc = test_auc = 0
-times_per_epoch = []
-start = time.time()
-for epoch in range(1, NUM_EPOCHS + 1):
+for epoch in range(1, 51):
+    start = time.time()
     loss = train()
     val_auc = test(val_loader)
     if val_auc > best_val_auc:
@@ -231,6 +228,5 @@ for epoch in range(1, NUM_EPOCHS + 1):
         test_auc = test(test_loader)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')
-    times_per_epoch.append(time.time() - start)
-    start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

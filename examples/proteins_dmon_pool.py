@@ -1,5 +1,4 @@
 import os.path as osp
-import statistics
 import time
 from math import ceil
 
@@ -11,8 +10,6 @@ from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import DenseGraphConv, DMoNPooling, GCNConv
 from torch_geometric.utils import to_dense_adj, to_dense_batch
-
-NUM_EPOCHS = 100
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
 dataset = TUDataset(path, name='PROTEINS').shuffle()
@@ -99,9 +96,9 @@ def test(loader):
     return loss_all / len(loader.dataset), correct / len(loader.dataset)
 
 
-times_per_epoch = []
-start = time.time()
-for epoch in range(1, NUM_EPOCHS + 1):
+times = []
+for epoch in range(1, 101):
+    start = time.time()
     train_loss = train(train_loader)
     _, train_acc = test(train_loader)
     val_loss, val_acc = test(val_loader)
@@ -110,6 +107,5 @@ for epoch in range(1, NUM_EPOCHS + 1):
           f'Train Acc: {train_acc:.3f}, Val Loss: {val_loss:.3f}, '
           f'Val Acc: {val_acc:.3f}, Test Loss: {test_loss:.3f}, '
           f'Test Acc: {test_acc:.3f}')
-    times_per_epoch.append(time.time() - start)
-    start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

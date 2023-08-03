@@ -1,5 +1,4 @@
 import os.path as osp
-import statistics
 import time
 
 import torch
@@ -20,8 +19,6 @@ test_dataset = PPI(path, split='test', pre_transform=pre_transform)
 train_loader = DataLoader(train_dataset, batch_size=2, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=2, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=2, shuffle=False)
-
-NUM_EPOCHS = 2000
 
 
 class Net(torch.nn.Module):
@@ -93,14 +90,13 @@ def test(loader):
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
 
-times_per_epoch = []
-start = time.time()
-for epoch in range(1, NUM_EPOCHS + 1):
+times = []
+for epoch in range(1, 2001):
+    start = time.time()
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)
     print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Val: {val_f1:.4f}, '
           f'Test: {test_f1:.4f}')
-    times_per_epoch.append(time.time() - start)
-    start = time.time()
-print(f"Median time per epoch: {statistics.median(times_per_epoch)}s")
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
