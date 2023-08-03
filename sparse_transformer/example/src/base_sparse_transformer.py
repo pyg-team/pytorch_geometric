@@ -1,4 +1,4 @@
-from base_model_ViT import ViTForImageClassification_kronsp
+from src.base_model_ViT import ViTForImageClassification_kronsp
 import torch 
 
 class SequenceModel(torch.nn.Module):
@@ -6,7 +6,7 @@ class SequenceModel(torch.nn.Module):
     def __init__(self, model, messages="Kroneckor", config=None, self_define=False):
         
         """
-        Base Class for (Attention-based) Sequence Models 
+        Base Container for (Attention-based) Sequence Models 
         Args:
             model (huggingface based): the base sequence model 
                 (default: ViT)
@@ -23,17 +23,23 @@ class SequenceModel(torch.nn.Module):
         specify your own arguments and pass ~.model to the argument of pl trainer. 
         See ./example for referece 
         """
-        
+        super(SequenceModel, self).__init__()
         if not self_define:            
             assert model in ["ViT"], f"Please enter available model backbones: [ViT]"
             assert messages in ["Kroneckor"], f"Please enter available messages, examples: [Kronector]"
             if model == "ViT" and messages == "Kroneckor":
-                self.model = ViTForImageClassification_kronsp(config=config)
+                if config.load_from_pretrained:
+                    self._model = ViTForImageClassification_kronsp.from_pretrained('google/vit-base-patch16-224-in21k', config = config)
+                else:
+                    self._model = ViTForImageClassification_kronsp(config)
             else:
                 raise NotImplementedError("Please enter available model backbones, examples: [ViT]")
         else:
-            self.model = model 
-        
+            self._model = model 
+    
+    @property
+    def model(self):
+        return self._model 
     
     def forward(self, 
                 sequence_input=None,
@@ -52,7 +58,7 @@ class SequenceModel(torch.nn.Module):
         @Overrite this method for your own data input and customized it according to your 
         own model 
         """
-        return self.model.forward(sequence_input,
+        return self._model.forward(sequence_input,
                                   head_mask,
                                   labels,
                                   output_attentions,

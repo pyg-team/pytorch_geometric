@@ -5,7 +5,7 @@ import numpy as np
 import torch.nn as nn
 from transformers.modeling_outputs import ImageClassifierOutput
 import torch.nn.functional as F
-from sparse_transformer.sparse_messages import * 
+from src.sparse_messages import * 
 
 def kron(a, b, axis):
     axis.sort()
@@ -130,11 +130,11 @@ class ViTSelfAttention_kronsp(ViTSelfAttention):
             mask = mask.transpose(2,3)   
             mask = mask[0]
             mask = mask.to(torch.bool)
-
+            
         query_layer = query_layer.float()
         key_layer = key_layer.float()
         value_layer = value_layer.float()
-        
+
         context_layer, att = self.Message(key=key_layer, 
                                         query=query_layer,
                                         value=value_layer,

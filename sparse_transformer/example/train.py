@@ -5,7 +5,7 @@ import argparse
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 from utils import create_img_datasets, create_img_collate_fn
-from utils import create_img_kronsp_model, create_img_kronatt_model
+from utils import create_img_kronsp_model
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--precision", default=16, type=int)
@@ -29,12 +29,8 @@ parser.add_argument('--cutmix-minmax', type=float, nargs='+', default=None, help
 parser.add_argument('--mixup-prob', type=float, default=1.0, help='Probability of performing mixup or cutmix when either/both is enabled')
 parser.add_argument('--mixup-switch-prob', type=float, default=0.5, help='Probability of switching to cutmix when both mixup and cutmix enabled')
 parser.add_argument('--mixup-mode', type=str, default='batch', help='How to apply mixup/cutmix params. Per "batch", "pair", or "elem"')
-
 parser.add_argument("--train_bs", default=512, type=int, help="training epochs count")
 parser.add_argument("--eval_bs", default=512, type=int, help="training epochs count")
-# parser.add_argument("--train_bs", default=2, type=int, help="training epochs count")
-# parser.add_argument("--eval_bs", default=2, type=int, help="training epochs count")
-
 parser.add_argument("--train_epochs", default=300, type=int, help="training epochs count")
 parser.add_argument("--warmup_epoch", default=5, type=int, help="warm up")
 parser.add_argument("--train_lr", default=3e-3, type=float, help="learning rate")
@@ -46,14 +42,12 @@ parser.add_argument("--train_graph_decay", default=1e-4, type=float, help="weigh
 parser.add_argument('--drop', type=float, default=0.0, metavar='PCT', help='Dropout rate (default: 0.)')
 parser.add_argument('--drop-path', type=float, default=0.1, metavar='PCT', help='Drop path rate (default: 0.1)')
 parser.add_argument("--pretrained", action="store_true")
-parser.add_argument("--model_impl", default="dgl", type=str, help="torch|dgl|xformers")
 parser.add_argument("--model", default="vit-s16", type=str)
 parser.add_argument("--model_config", default="config_vit-s16", type=str)
 
 parser.add_argument("--sparsity", default=90, type=float, help="Sparsity level")
 parser.add_argument("--order", default=2, type=int, help="Kronecker decomposition order")
 parser.add_argument("--block_list", nargs='+', default=[14, 14], help='decomposition block size', type=int)
-parser.add_argument("--decompose_att", action="store_true")
 parser.add_argument("--cond", action="store_true")
 parser.add_argument("--resume", action="store_true")
 
@@ -61,7 +55,7 @@ args = parser.parse_args()
 args.devices = torch.cuda.device_count()
 args.num_workers =  2*args.devices
 if len(args.save_folder) == 0:
-    model_name = "kronatt" if args.decompose_att else "kronsp"
+    model_name = "kronsp"
     folder_name = "{}_".format(args.dataset)+ model_name +"{}_order{}".format(args.order, args.model)
     if len(args.remark)>0:
         folder_name += "_"
@@ -76,20 +70,11 @@ pl.utilities.seed.seed_everything(42)
 
 train_ds, val_ds, test_ds = create_img_datasets(args)
 collate_fn = create_img_collate_fn(args)
-
-# typical_data = train_ds[0]
-# for typical_data in train_ds:
-#     print(typical_data['labels'])
-# exit()
-
 train_dl = torch.utils.data.DataLoader(train_ds, batch_size=args.train_bs, shuffle=True, num_workers=args.num_workers, pin_memory=True,collate_fn=collate_fn)
 val_dl = torch.utils.data.DataLoader(val_ds, batch_size=args.eval_bs, num_workers=args.num_workers, pin_memory=True,collate_fn=collate_fn)
 test_dl = torch.utils.data.DataLoader(test_ds, batch_size=args.eval_bs, num_workers=args.num_workers, pin_memory=True,collate_fn=collate_fn)
 
-if args.decompose_att:
-    pl_model, config = create_img_kronatt_model(args)
-else:
-    pl_model, config = create_img_kronsp_model(args)
+pl_model, config, container = create_img_kronsp_model(args)
 
 output_dir = args.save_folder
 checkpoint_callback = ModelCheckpoint(dirpath=output_dir, 

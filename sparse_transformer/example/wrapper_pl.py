@@ -1,131 +1,100 @@
-
-import os
-import torch
-import argparse
+import numpy as np
+import torch.nn as nn
 import pytorch_lightning as pl
-from pytorch_lightning.callbacks import ModelCheckpoint
-from utils import create_img_datasets, create_img_collate_fn
-from utils import create_img_kronsp_model, create_img_kronatt_model
-parser = argparse.ArgumentParser()
+import torchmetrics
+import torch
+import warmup_scheduler
+from timm.data import Mixup
+from timm.loss import SoftTargetCrossEntropy
+import os
 
-parser.add_argument("--precision", default=16, type=int)
-parser.add_argument("--dataset", default="c10", type=str, help="c10 | c100 | imgnet")
-parser.add_argument("--no_aug", action="store_true")
-parser.add_argument('--aa', type=str, default='rand-m9-mstd0.5-inc1', metavar='NAME',
-                    help='Use AutoAugment policy. "v0" or "original". " + \
-                        "(default: rand-m9-mstd0.5-inc1)')
-parser.add_argument('--reprob', type=float, default=0.25, metavar='PCT',  help='Random erase prob (default: 0.25)')
-parser.add_argument('--remode', type=str, default='pixel', help='Random erase mode (default: "pixel")')
-parser.add_argument('--recount', type=int, default=1, help='Random erase count (default: 1)')
-parser.add_argument('--color-jitter', type=float, default=0.4, metavar='PCT',help='Color jitter factor (default: 0.4)')
-parser.add_argument("--num_workers", default=0, type=int)
-parser.add_argument("--img_size", default=224, type=int, help="img_size")
-parser.add_argument("--remark", type=str, default="",  help="remarks")
-parser.add_argument("--save_folder", type=str, default="",  help="save folder")
-parser.add_argument("--label_smoothing", default=0, type=float, help="smoothing")
-parser.add_argument("--mixup", default=0, type=float, help="mixup")
-parser.add_argument('--cutmix', type=float, default=1.0, help='cutmix alpha, cutmix enabled if > 0. (default: 1.0)')
-parser.add_argument('--cutmix-minmax', type=float, nargs='+', default=None, help='cutmix min/max ratio, overrides alpha and enables cutmix if set (default: None)')
-parser.add_argument('--mixup-prob', type=float, default=1.0, help='Probability of performing mixup or cutmix when either/both is enabled')
-parser.add_argument('--mixup-switch-prob', type=float, default=0.5, help='Probability of switching to cutmix when both mixup and cutmix enabled')
-parser.add_argument('--mixup-mode', type=str, default='batch', help='How to apply mixup/cutmix params. Per "batch", "pair", or "elem"')
+import logging
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
 
-parser.add_argument("--train_bs", default=512, type=int, help="training epochs count")
-parser.add_argument("--eval_bs", default=512, type=int, help="training epochs count")
-# parser.add_argument("--train_bs", default=2, type=int, help="training epochs count")
-# parser.add_argument("--eval_bs", default=2, type=int, help="training epochs count")
+class PLWrapper(pl.LightningModule):
+    def __init__(self, model, args,cur_iter=0):
+        super(PLWrapper, self).__init__()
+        self.model = model
+        self.num_labels = self.model.num_labels
+        self.args = args
+        # Debug for the version
+        if args.dataset == "c10":
+            num_class = 10 
+        elif args.dataset == "c100":
+            num_class = 100 
+        else:
+            num_class = 2 
+        self.metric = torchmetrics.Accuracy(task='multiclass', num_classes=num_class)
+        self.metric5 = torchmetrics.Accuracy(task='multiclass', num_classes=num_class, top_k = 3)
+        self.save_hyperparameters(args)
+        self.cur_iter = cur_iter
+        if args.mixup > 0:
+            self.mixup_fn = Mixup(
+                mixup_alpha=args.mixup, cutmix_alpha=args.cutmix, cutmix_minmax=args.cutmix_minmax,
+                prob=args.mixup_prob, switch_prob=args.mixup_switch_prob, mode=args.mixup_mode,
+                label_smoothing=args.label_smoothing, num_classes=self.num_labels)
+            self.loss_fn = SoftTargetCrossEntropy()
+        else:
+            self.loss_fn = nn.CrossEntropyLoss(label_smoothing = self.args.label_smoothing)
+        self.eval_criterion = nn.CrossEntropyLoss()
 
-parser.add_argument("--train_epochs", default=300, type=int, help="training epochs count")
-parser.add_argument("--warmup_epoch", default=5, type=int, help="warm up")
-parser.add_argument("--train_lr", default=3e-3, type=float, help="learning rate")
-parser.add_argument("--train_lr_min", default=1e-5, type=float, help="learning rate")
-parser.add_argument("--train_decay", default=1e-4, type=float, help="weight decay")
-parser.add_argument("--train_graph_lr", default=3e-3, type=float, help="learning rate")#2e-5 for fine-tune
-parser.add_argument("--train_graph_decay", default=1e-4, type=float, help="weight decay")
+    
+    def forward(self, inputs):
+        return self.model(**inputs)
 
-parser.add_argument('--drop', type=float, default=0.0, metavar='PCT', help='Dropout rate (default: 0.)')
-parser.add_argument('--drop-path', type=float, default=0.1, metavar='PCT', help='Drop path rate (default: 0.1)')
-parser.add_argument("--pretrained", action="store_true")
-parser.add_argument("--model_impl", default="dgl", type=str, help="torch|dgl|xformers")
-parser.add_argument("--model", default="vit-s16", type=str)
-parser.add_argument("--model_config", default="config_vit-s16", type=str)
+    def configure_optimizers(self):
+        params = list(self.model.named_parameters())
+    
+        grouped_parameters = [{"params": [p for n, p in params if "param_mask" not in n], 'lr': self.args.train_lr, 'beta':(0.9,0.999), 'weight_decay':self.args.train_decay},
+                              {"params": [p for n, p in params if "param_mask" in n], 'lr': self.args.train_graph_lr, 'beta':(0.9,0.999), 'weight_decay':self.args.train_graph_decay}
+                             ]
+        self.optimizer = torch.optim.AdamW(grouped_parameters, lr=self.args.train_lr, betas=(0.9,0.999), weight_decay=self.args.train_decay)
+        self.afterscheduler_base = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, T_max=600, eta_min=self.args.train_lr_min) 
+        self.scheduler = warmup_scheduler.GradualWarmupScheduler(self.optimizer, multiplier=1., total_epoch=self.args.warmup_epoch, after_scheduler=self.afterscheduler_base)
+        return [self.optimizer], [self.scheduler]
 
-parser.add_argument("--sparsity", default=90, type=float, help="Sparsity level")
-parser.add_argument("--order", default=2, type=int, help="Kronecker decomposition order")
-parser.add_argument("--block_list", nargs='+', default=[14, 14], help='decomposition block size', type=int)
-parser.add_argument("--decompose_att", action="store_true")
-parser.add_argument("--cond", action="store_true")
-parser.add_argument("--resume", action="store_true")
+    def lr_scheduler_step(self, scheduler, optimizer_idx, metric):
+        scheduler.step(epoch=self.current_epoch+1)
 
-parser.add_argument("--load_model", type=str, help="Loading Target model", default=None) 
+    def training_step(self, batch, batch_idx):
+        labels = batch["labels"]
+        if self.args.mixup:
+            batch['pixel_values'], batch["labels"] = self.mixup_fn(batch['pixel_values'], batch["labels"])
+        out = self(batch)
+        logits = out["logits"]
+        loss = self.loss_fn(logits.view(-1, self.num_labels), batch["labels"])
 
-args = parser.parse_args()
-args.devices = torch.cuda.device_count()
-args.num_workers =  2*args.devices
-if len(args.save_folder) == 0:
-    model_name = "kronatt" if args.decompose_att else "kronsp"
-    folder_name = "{}_".format(args.dataset)+ model_name +"{}_order{}".format(args.order, args.model)
-    if len(args.remark)>0:
-        folder_name += "_"
-        folder_name += args.remark
-    args.save_folder = os.path.join("./save/"+model_name, folder_name)
+        acc = self.metric(logits, labels)
+        self.log("train_loss", loss)
+        self.log("train_acc", acc)
+        return loss
 
-assert args.order == len(args.block_list)
-if not os.path.exists(args.save_folder):
-    os.makedirs(args.save_folder)
+    def on_save_checkpoint(self, checkpoint):
+        if hasattr(self.model.vit.encoder.layer[0].attention.attention, 'mask_np'):
+            mask_dict = {}
+            for i in range(len(self.model.vit.encoder.layer)):
+                mask_np = self.model.vit.encoder.layer[i].attention.attention.mask_np
+                mask_dict[i] = mask_np
+            np.save(os.path.join(self.args.save_folder,"mask_np.npy"), mask_dict)
+    
+    def training_epoch_end(self, outputs):
+        self.log("lr", self.optimizer.param_groups[0]["lr"], on_epoch=True, sync_dist=True)
 
-pl.utilities.seed.seed_everything(42)
+    def _shared_eval(self, batch, batch_idx, prefix):
+        labels = batch["labels"]
+        out = self(batch)
+        logits = out["logits"] if isinstance(out["logits"], torch.Tensor) else  out["logits"][0]
+        loss = self.eval_criterion(logits.view(-1, self.num_labels), labels)
+        acc = self.metric(logits, labels)
+        acc5 = self.metric5(logits, labels)
+        self.log("{}_loss".format(prefix), loss, sync_dist=True, prog_bar=True)
+        self.log("{}_acc".format(prefix), acc, sync_dist=True, prog_bar=True)
+        self.log("{}_acc5".format(prefix), acc5, sync_dist=True, prog_bar=True)
+        return loss
 
-train_ds, val_ds, test_ds = create_img_datasets(args)
-collate_fn = create_img_collate_fn(args)
+    def validation_step(self, batch, batch_idx):
+        self._shared_eval(batch, batch_idx, "val")
 
-# typical_data = train_ds[0]
-# for typical_data in train_ds:
-#     print(typical_data['labels'])
-# exit()
-
-# print("len of test_datasets: ", len(test_ds)) # 10000
-# exit()
-
-train_dl = torch.utils.data.DataLoader(train_ds, batch_size=args.train_bs, shuffle=True, num_workers=args.num_workers, pin_memory=True,collate_fn=collate_fn)
-val_dl = torch.utils.data.DataLoader(val_ds, batch_size=args.eval_bs, num_workers=args.num_workers, pin_memory=True,collate_fn=collate_fn)
-test_dl = torch.utils.data.DataLoader(test_ds, batch_size=args.eval_bs, num_workers=args.num_workers, pin_memory=True,collate_fn=collate_fn)
-
-if args.decompose_att:
-    pl_model, config = create_img_kronatt_model(args)
-else:
-    pl_model, config = create_img_kronsp_model(args)
-
-output_dir = args.save_folder
-checkpoint_callback = ModelCheckpoint(dirpath=output_dir, 
-                                monitor="val_acc",
-                                mode = "max",
-                                save_weights_only=False,
-                                save_last = True,
-                                save_top_k= 1,  # specify how many 
-                                auto_insert_metric_name = True,
-                                every_n_epochs = 1, # default
-)
-cb_list = [checkpoint_callback]
-
-logger = pl.loggers.CSVLogger(save_dir=output_dir)
-
-trainer = pl.Trainer(precision=args.precision,
-            accelerator="gpu",
-            devices = args.devices,
-            strategy="ddp",
-            check_val_every_n_epoch=1,
-            logger=logger, 
-            max_epochs=args.train_epochs, 
-            callbacks=cb_list
-)
-
-if args.resume:
-    # print("resume!")
-    outputs = trainer.fit(pl_model, ckpt_path=os.path.join(args.save_folder,"last.ckpt"),train_dataloaders = train_dl, val_dataloaders = test_dl)
-elif args.load_model is not None:
-    trainer.test(pl_model, ckpt_path=args.load_model, dataloaders=test_dl)
-    # outputs = trainer.fit(pl_model, ckpt_path=args.load_model, train_dataloaders = train_dl, test_dataloaders = test_dl)
-else:
-    outputs = trainer.fit(pl_model, train_dataloaders = train_dl, val_dataloaders = test_dl)
-
+    def test_step(self, batch, batch_idx):
+        self._shared_eval(batch, batch_idx, "test")

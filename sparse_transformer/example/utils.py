@@ -1,10 +1,9 @@
 import os
 from datasets import load_dataset
 import torch
-from models.wrapper_pl import PLWrapper
+from wrapper_pl import PLWrapper
 from transformers.models.vit.configuration_vit import ViTConfig
-from models.vit_hf_kronsp import ViTForImageClassification_kronsp
-from models.vit_hf_kronatt import ViTForImageClassification_kronatt
+from src.base_sparse_transformer import SequenceModel
 from timm.data import create_transform
 
 import logging
@@ -90,53 +89,19 @@ def create_img_collate_fn(prune_args):
     
     return collate_fn
 
-def create_img_kronatt_model(prune_args):
-    if prune_args.pretrained:
-        config = ViTConfig.from_pretrained('google/vit-base-patch16-224-in21k')
-    else:
-        config_name = "config_" + prune_args.model + ".json"
-        config_path = os.path.join("./src/models/configs/",config_name)
-        config = ViTConfig.from_pretrained(config_path)
-    config.model_impl = prune_args.model_impl
-    config.label_smoothing = prune_args.label_smoothing
-    config.order = prune_args.order
-    config.cond = prune_args.cond
-    config.block_list = prune_args.block_list
-    config.sparsity = prune_args.sparsity
-    if prune_args.dataset == 'c10':
-        config.num_labels = 10
-    elif  prune_args.dataset == 'c100':
-        config.num_labels = 100
-    elif  prune_args.dataset =='imagenet1k':
-        config.num_labels = 1000
-    else:
-        raise Exception("Dataset not supported!!!")
-   
-    if prune_args.pretrained:
-        model = ViTForImageClassification_kronatt.from_pretrained('google/vit-base-patch16-224-in21k', config = config)
-    else:
-        model = ViTForImageClassification_kronatt(config)
-
-    assert prune_args.img_size == config.image_size
-    pl_model = PLWrapper(model, prune_args)
-
-    return pl_model, config
-
-
 def create_img_kronsp_model(prune_args):
     if prune_args.pretrained:
         config = ViTConfig.from_pretrained('google/vit-base-patch16-224-in21k')
     else:
         config_name = "config_" + prune_args.model + ".json"
-        config_path = os.path.join("./src/models/configs/",config_name)
+        config_path = os.path.join("./src/configs/",config_name)
         config = ViTConfig.from_pretrained(config_path)
-    config.model_impl = prune_args.model_impl
     config.label_smoothing = prune_args.label_smoothing
     config.order = prune_args.order
     config.cond = prune_args.cond
     config.block_list = prune_args.block_list
     config.sparsity = prune_args.sparsity
-    config.load_model = prune_args.load_model # For test time
+    config.load_from_pretrained = prune_args.pretrained
     if prune_args.dataset == 'c10':
         config.num_labels = 10
     elif  prune_args.dataset == 'c100':
@@ -145,14 +110,14 @@ def create_img_kronsp_model(prune_args):
         config.num_labels = 1000
     else:
         raise Exception("Dataset not supported!!!")
-   
-    if prune_args.pretrained:
-        model = ViTForImageClassification_kronsp.from_pretrained('google/vit-base-patch16-224-in21k', config = config)
-    else:
-        model = ViTForImageClassification_kronsp(config)
+    
+    sequence_model = SequenceModel(model="ViT",
+                                   messages="Kroneckor",
+                                   config=config,
+                                   self_define=False)
 
     assert prune_args.img_size == config.image_size
-    pl_model = PLWrapper(model, prune_args)
+    pl_model = PLWrapper(sequence_model.model, prune_args)
 
-    return pl_model, config
+    return pl_model, config, sequence_model
 
