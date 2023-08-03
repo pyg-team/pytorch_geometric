@@ -1,5 +1,5 @@
-GNN Explainability
-==================
+Explaining Graph Neural Networks
+================================
 
 Interpreting GNN models is crucial for many use cases.
 :pyg:`PyG` (2.3 and beyond) provides the :class:`torch_geometric.explain` package for first-class GNN explainability support that currently includes
