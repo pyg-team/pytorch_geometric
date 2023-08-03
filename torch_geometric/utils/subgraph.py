@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor, PairTensor
+from torch_geometric.utils.map import map_index
 from torch_geometric.utils.mask import index_to_mask
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
@@ -172,6 +173,7 @@ def bipartite_subgraph(
     else:
         src_size = src_subset.size(0)
         src_node_mask = src_subset
+        src_subset = src_subset.nonzero().view(-1)
 
     if dst_subset.dtype != torch.bool:
         dst_size = int(edge_index[1].max()) + 1 if size is None else size[1]
@@ -179,22 +181,18 @@ def bipartite_subgraph(
     else:
         dst_size = dst_subset.size(0)
         dst_node_mask = dst_subset
+        dst_subset = dst_subset.nonzero().view(-1)
 
     edge_mask = src_node_mask[edge_index[0]] & dst_node_mask[edge_index[1]]
     edge_index = edge_index[:, edge_mask]
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        node_idx_i = edge_index.new_zeros(src_node_mask.size(0))
-        node_idx_j = edge_index.new_zeros(dst_node_mask.size(0))
-        node_idx_i[src_subset] = torch.arange(int(src_node_mask.sum()),
-                                              device=node_idx_i.device)
-        node_idx_j[dst_subset] = torch.arange(int(dst_node_mask.sum()),
-                                              device=node_idx_j.device)
-        edge_index = torch.stack([
-            node_idx_i[edge_index[0]],
-            node_idx_j[edge_index[1]],
-        ], dim=0)
+        src_index, _ = map_index(edge_index[0], src_subset, max_index=src_size,
+                                 inclusive=True)
+        dst_index, _ = map_index(edge_index[1], dst_subset, max_index=dst_size,
+                                 inclusive=True)
+        edge_index = torch.stack([src_index, dst_index], dim=0)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
