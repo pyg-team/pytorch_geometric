@@ -9,6 +9,7 @@ from .asap import ASAPooling
 from .avg_pool import avg_pool, avg_pool_neighbor_x, avg_pool_x
 from .edge_pool import EdgePooling
 from .glob import global_add_pool, global_max_pool, global_mean_pool
+from .knn import KNNIndex, L2KNNIndex, MIPSKNNIndex
 from .graclus import graclus
 from .max_pool import max_pool, max_pool_neighbor_x, max_pool_x
 from .mem_pool import MemPooling
@@ -318,6 +319,9 @@ __all__ = [
     'global_add_pool',
     'global_mean_pool',
     'global_max_pool',
+    'KNNIndex',
+    'L2KNNIndex',
+    'MIPSKNNIndex',
     'TopKPooling',
     'SAGPooling',
     'EdgePooling',
