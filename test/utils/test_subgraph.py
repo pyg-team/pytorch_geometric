@@ -82,6 +82,20 @@ def test_bipartite_subgraph():
         assert out[1].tolist() == [3.0, 4.0, 9.0, 10.0]
 
 
+@withCUDA
+@withPackage('pandas')
+def test_bipartite_subgraph_large_index(device):
+    subset = torch.tensor([50_000_000], device=device)
+    edge_index = torch.tensor([[50_000_000], [50_000_000]], device=device)
+
+    edge_index, _ = bipartite_subgraph(
+        (subset, subset),
+        edge_index,
+        relabel_nodes=True,
+    )
+    assert edge_index.tolist() == [[0], [0]]
+
+
 def test_k_hop_subgraph():
     edge_index = torch.tensor([
         [0, 1, 2, 3, 4, 5],
