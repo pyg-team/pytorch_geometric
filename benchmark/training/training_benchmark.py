@@ -93,6 +93,7 @@ def run(args: argparse.ArgumentParser):
         device = torch.device('mps')
     else:
         device = torch.device('cpu')
+
     # If we use a custom number of steps, then we need to use RandomSampler,
     # which already does shuffle.
     shuffle = False if args.num_steps != -1 else True

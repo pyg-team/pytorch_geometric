@@ -19,11 +19,8 @@ def train_runtime(model, data, epochs, device):
     if torch.cuda.is_available():
         torch.cuda.synchronize()
     elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-        try:
-            import torch.mps
-            torch.mps.synchronize()
-        except ImportError:
-            pass
+        import torch.mps
+        torch.mps.synchronize()
     t_start = time.perf_counter()
 
     for epoch in range(epochs):

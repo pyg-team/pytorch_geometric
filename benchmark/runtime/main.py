@@ -15,6 +15,7 @@ elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
     device = torch.device('mps')
 else:
     device = torch.device('cpu')
+
 root = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data')
 Cora = Planetoid(osp.join(root, 'Cora'), 'Cora')
 CiteSeer = Planetoid(osp.join(root, 'CiteSeer'), 'CiteSeer')
