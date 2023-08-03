@@ -1,7 +1,7 @@
-# Sparse Graph Transformer 
+# Sparse Graph Transformer
 
 This repository implements a versatile API framework for sparse transformers using efficient message-passing mechanisms. The framework's cornerstone is the computation of `sparse_messages`, which significantly accelerates attention computation. This framework can seamlessly integrate with the popular PyTorch Lightning package, and we provide a comprehensive example within this codebase.
- 
+
 
 ## Codebase Overview
 
