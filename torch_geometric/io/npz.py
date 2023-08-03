@@ -11,7 +11,7 @@ from torch_geometric.utils import to_undirected as to_undirected_fn
 
 def read_npz(path: str, to_undirected: bool = True) -> Data:
     with np.load(path) as f:
-        return parse_npz(f)
+        return parse_npz(f, to_undirected=to_undirected)
 
 
 def parse_npz(f: Dict[str, Any], to_undirected: bool = True) -> Data:

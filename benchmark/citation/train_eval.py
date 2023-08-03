@@ -9,7 +9,12 @@ import torch_geometric
 from torch_geometric.profile import timeit, torch_profile
 from torch_geometric.utils import index_to_mask
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 
 
 def random_planetoid_splits(data, num_classes):
@@ -53,6 +58,13 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
+        elif hasattr(torch.backends,
+                     'mps') and torch.backends.mps.is_available():
+            try:
+                import torch.mps
+                torch.mps.synchronize()
+            except ImportError:
+                pass
 
         t_start = time.perf_counter()
 
@@ -84,6 +96,13 @@ def run_train(dataset, model, runs, epochs, lr, weight_decay, early_stopping,
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
+        elif hasattr(torch.backends,
+                     'mps') and torch.backends.mps.is_available():
+            try:
+                import torch.mps
+                torch.mps.synchronize()
+            except ImportError:
+                pass
 
         t_end = time.perf_counter()
 

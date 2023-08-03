@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -81,9 +82,13 @@ def test(loader):
     return total_correct / len(loader.dataset)
 
 
+times = []
 for epoch in range(1, 201):
+    start = time.time()
     train_loss = train()
     val_acc = test(val_loader)
     test_acc = test(test_loader)
     print(f'Epoch: {epoch:03d}, Loss: {train_loss:.4f}, '
           f'Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
