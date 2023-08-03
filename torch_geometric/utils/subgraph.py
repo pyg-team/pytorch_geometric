@@ -94,16 +94,20 @@ def subgraph(
     else:
         num_nodes = subset.size(0)
         node_mask = subset
+        subset = node_mask.nonzero().view(-1)
 
     edge_mask = node_mask[edge_index[0]] & node_mask[edge_index[1]]
     edge_index = edge_index[:, edge_mask]
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
-                               device=device)
-        node_idx[subset] = torch.arange(node_mask.sum().item(), device=device)
-        edge_index = node_idx[edge_index]
+        edge_index, _ = map_index(
+            edge_index.view(-1),
+            subset,
+            max_index=num_nodes,
+            inclusive=True,
+        )
+        edge_index = edge_index.view(2, -1)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
