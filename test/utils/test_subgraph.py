@@ -50,6 +50,15 @@ def test_subgraph():
         assert out[1].tolist() == [7, 8, 9, 10]
 
 
+@withCUDA
+@withPackage('pandas')
+def test_subgraph_large_index(device):
+    subset = torch.tensor([50_000_000], device=device)
+    edge_index = torch.tensor([[50_000_000], [50_000_000]], device=device)
+    edge_index, _ = subgraph(subset, edge_index, relabel_nodes=True)
+    assert edge_index.tolist() == [[0], [0]]
+
+
 def test_bipartite_subgraph():
     edge_index = torch.tensor([[0, 5, 2, 3, 3, 4, 4, 3, 5, 5, 6],
                                [0, 0, 3, 2, 0, 0, 2, 1, 2, 3, 1]])
