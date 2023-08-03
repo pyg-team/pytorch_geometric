@@ -1,3 +1,5 @@
+import time
+
 import torch
 import torch.nn.functional as F
 from torch.nn import ModuleList
@@ -99,7 +101,9 @@ def test():  # Inference should be performed on the full graph.
     return accs
 
 
+times = []
 for epoch in range(1, 31):
+    start = time.time()
     loss = train()
     if epoch % 5 == 0:
         train_acc, val_acc, test_acc = test()
@@ -107,3 +111,5 @@ for epoch in range(1, 31):
               f'Val: {val_acc:.4f}, test: {test_acc:.4f}')
     else:
         print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
