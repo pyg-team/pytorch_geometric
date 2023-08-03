@@ -60,6 +60,7 @@ def dense_asymcheegercut_pool(
     """
     x = x.unsqueeze(0) if x.dim() == 2 else x
     adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
+    s = s.unsqueeze(0) if s.dim() == 2 else s
 
     s = torch.softmax(s, dim=-1)
 
@@ -70,8 +71,8 @@ def dense_asymcheegercut_pool(
         x, s = x * mask, s * mask
 
     # Pooled features and adjacency
-    out = torch.matmul(s.transpose(1, 2), x)
-    out_adj = torch.matmul(torch.matmul(s.transpose(1, 2), adj), s)
+    out = torch.matmul(s.transpose(-2, -1), x)
+    out_adj = torch.matmul(torch.matmul(s.transpose(-2, -1), adj), s)
 
     # Total variation loss
     tv_loss = torch.mean(_totvar_loss(adj, s))
@@ -83,14 +84,11 @@ def dense_asymcheegercut_pool(
 
 
 def _totvar_loss(adj, s):
+    l1_norm = torch.sum(torch.abs(s[..., None, :] - s[:, None, ...]), dim=-1)
+    loss = torch.sum(adj * l1_norm)
 
-    batch_idx, node_i, node_j = torch.nonzero(adj, as_tuple=True)
-    l1_norm = torch.sum(
-        torch.abs(s[batch_idx, node_i, :] - s[batch_idx, node_j, :]), dim=(-1))
-    loss = torch.sum(adj[batch_idx, node_i, node_j] * l1_norm)
-
-    # Normalize the loss
-    n_edges = len(node_i)
+    # Normalize loss
+    n_edges = torch.sum(torch.nonzero(adj))
     loss *= 1 / (2 * n_edges)
 
     return loss
@@ -106,7 +104,7 @@ def _balance_loss(s):
     # Asymmetric l1-norm
     loss = s - torch.unsqueeze(quant, dim=1)
     loss = (loss >= 0) * (n_clust - 1) * loss + (loss < 0) * loss * -1
-    loss = torch.sum(loss, axis=(-1, -2))  # shape [B]
+    loss = torch.sum(loss, dim=(-1, -2))  # shape [B]
     loss = 1 / (n_nodes * (n_clust - 1)) * (n_nodes * (n_clust - 1) - loss)
 
     return loss

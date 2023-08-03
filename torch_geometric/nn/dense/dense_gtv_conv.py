@@ -12,10 +12,12 @@ class DenseGTVConv(torch.nn.Module):
                  delta_coeff: float = 1., eps: float = 1e-3):
         super().__init__()
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
-
+        self.in_channels = in_channels
+        self.out_channels = out_channels
         self.delta_coeff = delta_coeff
         self.eps = eps
+
+        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
 
         if bias:
             self.bias = Parameter(torch.Tensor(out_channels))
@@ -54,25 +56,19 @@ class DenseGTVConv(torch.nn.Module):
         adj = adj.unsqueeze(0) if adj.dim() == 2 else adj
         B, N, _ = adj.size()
 
-        # Absolute differences between neighbouring nodes
-        batch_idx, node_i, node_j = torch.nonzero(adj, as_tuple=True)
-        abs_diff = torch.sum(
-            torch.abs(x[batch_idx, node_i, :] - x[batch_idx, node_j, :]),
-            dim=-1)  # shape [B, E]
+        # Pairwise absolute differences
+        abs_diff = torch.sum(torch.abs(x[..., None, :] - x[:, None, ...]),
+                             dim=-1)  # shape [B, N, N]
 
-        # Gamma matrix
-        mod_adj = torch.clone(adj)
-        mod_adj[batch_idx, node_i,
-                node_j] /= torch.clamp(abs_diff, min=self.eps)
+        # Gammma matrix
+        mod_adj = adj / torch.clamp(abs_diff, min=1e-3)
 
         # Compute Laplacian L=D-A
         deg = torch.sum(mod_adj, dim=-1)
-        mod_adj = -mod_adj
-        mod_adj[:, range(N), range(N)] += deg
+        mod_adj = torch.diag_embed(deg) - mod_adj
 
         # Compute modified laplacian: L_adjusted = I - delta*L
-        mod_adj = -self.delta_coeff * mod_adj
-        mod_adj[:, range(N), range(N)] += 1
+        mod_adj = torch.eye(N).to(x.device) - self.delta_coeff * mod_adj
 
         out = torch.matmul(mod_adj, x)
 
@@ -83,3 +79,7 @@ class DenseGTVConv(torch.nn.Module):
             out = out * mask.view(B, N, 1).to(x.dtype)
 
         return out
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels})')
