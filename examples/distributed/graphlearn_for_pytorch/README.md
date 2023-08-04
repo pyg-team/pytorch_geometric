@@ -58,7 +58,6 @@ CUDA_VISIBLE_DEVICES=2,3 python dist_train_sage_supervised.py \
 
 To perform distributed sampling, files and codes need to be accessed across multiple machines.
 A distributed file system (*i.e.*, [NFS](https://wiki.archlinux.org/index.php/NFS), [SSHFS](https://www.digitalocean.com/community/tutorials/how-to-use-sshfs-to-mount-remote-file-systems-over-ssh), [Ceph](https://docs.ceph.com/en/latest/install), ...) exempts you from synchnonizing files such as partition information.
-For configuration details of a DFS, please refer to the following links:
 
 #### Step 2: Prepare and partition the data
 
