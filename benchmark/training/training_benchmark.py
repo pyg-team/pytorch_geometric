@@ -87,7 +87,13 @@ def run(args: argparse.ArgumentParser):
         warnings.warn("Cannot write profile data to CSV because profiling is "
                       "disabled")
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        device = torch.device('mps')
+    else:
+        device = torch.device('cpu')
+
     # If we use a custom number of steps, then we need to use RandomSampler,
     # which already does shuffle.
     shuffle = False if args.num_steps != -1 else True
