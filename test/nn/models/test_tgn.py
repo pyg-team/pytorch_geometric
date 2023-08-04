@@ -54,7 +54,6 @@ def test_tgn(neg_sampling_ratio):
             assert e_id.numel() == 0
             assert z.size() == (n_id.size(0), memory_dim)
             assert torch.sum(last_update) == 0
-
         else:
             assert n_id.size(0) == 5
             assert edge_index.numel() == 12
