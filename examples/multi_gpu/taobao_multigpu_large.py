@@ -1,5 +1,5 @@
-# An Multi GPU implementation of unsupervised bipartite GraphSAGE using the Alibaba
-# Taobao dataset.
+# An Multi GPU implementation of unsupervised bipartite GraphSAGE
+# using the Alibaba Taobao dataset.
 import os
 import os.path as osp
 
