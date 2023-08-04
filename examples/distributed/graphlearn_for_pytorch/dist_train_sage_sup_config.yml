@@ -1,0 +1,38 @@
+# IP addresses for all nodes.
+# Note: The first 3 params are expected to form usernames@nodes:ports.
+nodes:
+  - 0.0.0.0
+  - 1.1.1.1
+
+# SSH ports for each node:
+ports: [22, 22]
+
+# Username for remote IPs:
+usernames:
+  - your_username_for_node_0
+  - your_username_for_node_1
+
+# Path to Python with GLT environment for each node:
+python_bins:
+  - /path/to/python
+  - /path/to/python
+
+# The dataset name, e.g., ogbn-products, ogbn-papers100M.
+# Note: make sure the name of dataset_root_dir is the same as the dataset name.
+dataset: ogbn-products
+
+# `in_channel` and `out_channel` of the dataset, e.g.,:
+# - ogbn-products: in_channel=100, out_channel=47
+# - ogbn-papers100M: in_channel=128, out_channel=172
+in_channel: 100
+out_channel: 47
+
+# Path to the pytorch_geometric directory:
+dst_paths:
+  - /path/to/pytorch_geometric
+  - /path/to/pytorch_geometric
+
+# Setup visible CUDA devices for each node:
+visible_devices:
+  - 0,1,2,3
+  - 0,1,2,3
