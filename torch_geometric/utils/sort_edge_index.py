@@ -37,9 +37,9 @@ def sort_edge_index(  # noqa
     """Row-wise sorts :obj:`edge_index`.
 
     Args:
-        edge_index (LongTensor): The edge indices.
-        edge_attr (Tensor or List[Tensor], optional): Edge weights or multi-
-            dimensional edge features.
+        edge_index (torch.Tensor): The edge indices.
+        edge_attr (torch.Tensor or List[torch.Tensor], optional): Edge weights
+            or multi-dimensional edge features.
             If given as a list, will re-shuffle and remove duplicates for all
             its entries. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
@@ -81,7 +81,12 @@ def sort_edge_index(  # noqa
 
     _, perm = index_sort(idx, max_value=num_nodes * num_nodes)
 
-    edge_index = edge_index[:, perm]
+    if isinstance(edge_index, Tensor):
+        edge_index = edge_index[:, perm]
+    elif isinstance(edge_index, tuple):
+        edge_index = (edge_index[0][perm], edge_index[1][perm])
+    else:
+        raise NotImplementedError
 
     if edge_attr is None:
         return edge_index, None

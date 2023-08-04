@@ -86,6 +86,7 @@ from .taobao import Taobao
 from .igmc_dataset import IGMCDataset
 from .amazon_book import AmazonBook
 from .hm import HM
+from .ose_gvcs import OSE_GVCS
 
 from .fake import FakeDataset, FakeHeteroDataset
 from .sbm_dataset import StochasticBlockModelDataset
@@ -190,6 +191,7 @@ hetero_datasets = [
     'IGMCDataset',
     'AmazonBook',
     'HM',
+    'OSE_GVCS',
 ]
 synthetic_datasets = [
     'FakeDataset',

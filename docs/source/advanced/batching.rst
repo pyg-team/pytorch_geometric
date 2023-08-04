@@ -31,27 +31,31 @@ The same is true for :obj:`face` tensors, *i.e.*, face indices in meshes.
 All other tensors will just get concatenated in the first dimension without any further increasement of their values.
 
 However, there are a few special use-cases (as outlined below) where the user actively wants to modify this behavior to its own needs.
-:pyg:`PyG` allows modification to the underlying batching procedure by overwriting the :func:`torch_geometric.data.Data.__inc__` and :func:`torch_geometric.data.Data.__cat_dim__` functionalities.
+:pyg:`PyG` allows modification to the underlying batching procedure by overwriting the :meth:`torch_geometric.data.Data.__inc__` and :meth:`torch_geometric.data.Data.__cat_dim__` functionalities.
 Without any modifications, these are defined as follows in the :class:`~torch_geometric.data.Data` class:
 
 .. code-block:: python
 
     def __inc__(self, key, value, *args, **kwargs):
-        if 'index' in key or 'face' in key:
+        if 'index' in key:
             return self.num_nodes
         else:
             return 0
 
     def __cat_dim__(self, key, value, *args, **kwargs):
-        if 'index' in key or 'face' in key:
+        if 'index' in key:
             return 1
         else:
             return 0
 
-We can see that :meth:`__inc__` defines the incremental count between two consecutive graph attributes, where as :meth:`__cat_dim__` defines in which dimension graph tensors of the same attribute should be concatenated together.
+We can see that :meth:`~torch_geometric.data.Data.__inc__` defines the incremental count between two consecutive graph attributes.
+By default, :pyg:`PyG` increments attributes by the number of nodes whenever their attribute names contain the substring :obj:`index` (for historical reasons), which comes in handy for attributes such as :obj:`edge_index` or :obj:`node_index`.
+However, note that this may lead to unexpected behavior for attributes whose names contain the substring :obj:`index` but should not be incremented.
+To make sure, it is best practice to always double-check the output of batching.
+Furthermore, :meth:`~torch_geometric.data.Data.__cat_dim__` defines in which dimension graph tensors of the same attribute should be concatenated together.
 Both functions are called for each attribute stored in the :class:`~torch_geometric.data.Data` class, and get passed their specific :obj:`key` and value :obj:`item` as arguments.
 
-In what follows, we present a few use-cases where the modification of :func:`__inc__` and :func:`__cat_dim__` might be absolutely necessary.
+In what follows, we present a few use-cases where the modification of :meth:`~torch_geometric.data.Data.__inc__` and :meth:`~torch_geometric.data.Data.__cat_dim__` might be absolutely necessary.
 
 Pairs of Graphs
 ---------------
