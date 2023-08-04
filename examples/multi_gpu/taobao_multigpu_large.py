@@ -152,9 +152,10 @@ def run_train(rank, data, train_loader, val_loader, test_loader, world_size):
         hidden_channels=64,
         out_channels=64,
     ).to(rank)
+    # Initialize lazy modules
     for batch in train_loader:
         batch = batch.to(rank)
-        pred = model(
+        _ = model(
             batch.x_dict,
             batch.edge_index_dict,
             batch['user', 'item'].edge_label_index,
