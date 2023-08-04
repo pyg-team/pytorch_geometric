@@ -14,34 +14,31 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
             from which to load the data.
         batch_size (int, optional): How many samples per batch to load.
             (default: :obj:`1`)
-        negative_sampling (bool, optional): Wether to use negative sampling
-            (default: False)
-        negative_sampler (optional): Function that takes in a minibatch
-            and outputs negative sampled node ids. If not provided by user,
-            this defaults to sampling randomly between the minimum
-            and maximum destination node ids.
+        neg_sampling_ratio (float, optional): The ratio of sampled negative
+            destination nodes to the number of postive destination nodes.
+            (default: :obj:`0.0`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`.
     """
-    def __init__(self, data: TemporalData, batch_size: int = 1,
-                 negative_sampling=False, negative_sampler=None, **kwargs):
+    def __init__(
+        self,
+        data: TemporalData,
+        batch_size: int = 1,
+        neg_sampling_ratio: float = 0.0,
+        **kwargs,
+    ):
         # Remove for PyTorch Lightning:
         kwargs.pop('dataset', None)
         kwargs.pop('collate_fn', None)
-
         kwargs.pop('shuffle', None)
 
         self.data = data
         self.events_per_batch = batch_size
-        self.negative_sampling = negative_sampling
-        if self.negative_sampling:
-            if negative_sampler is None:
-                # Ensure to only sample actual destination nodes as negatives.
-                self.min_dst_idx, self.max_dst_idx = int(
-                    self.data.dst.min()), int(self.data.dst.max())
-                self.negative_sampler = None
-            else:
-                self.negative_sampler = negative_sampler
+        self.neg_sampling_ratio = neg_sampling_ratio
+
+        if neg_sampling_ratio > 0:
+            self.min_dst = int(data.dst.min())
+            self.max_dst = int(data.dst.max())
 
         if kwargs.get('drop_last', False) and len(data) % batch_size != 0:
             arange = range(0, len(data) - batch_size, batch_size)
@@ -52,19 +49,19 @@ class TemporalDataLoader(torch.utils.data.DataLoader):
 
     def __call__(self, arange: List[int]) -> TemporalData:
         batch = self.data[arange[0]:arange[0] + self.events_per_batch]
-        src, pos_dst = batch.src, batch.dst
-        list_to_make_n_ids = [batch.src, pos_dst]
-        if self.negative_sampling:
-            # Sample negative destination nodes.
-            if self.negative_sampler is None:
-                batch.neg_dst = torch.randint(self.min_dst_idx,
-                                              self.max_dst_idx + 1,
-                                              (src.size(0), ),
-                                              dtype=torch.long,
-                                              device=src.device)
-            else:
-                batch.neg_dst = self.negative_sampler(batch)
-            list_to_make_n_ids += [batch.neg_dst]
-        batch.n_id = torch.cat(list_to_make_n_ids).unique()
+
+        n_ids = [batch.src, batch.dst]
+
+        if self.neg_sampling_ratio > 0:
+            batch.neg_dst = torch.randint(
+                low=self.min_dst,
+                high=self.max_dst + 1,
+                size=(round(self.neg_sampling_ratio * batch.dst.size(0)), ),
+                dtype=batch.dst.dtype,
+                device=batch.dst.device,
+            )
+            n_ids += [batch.neg_dst]
+
+        batch.n_id = torch.cat(n_ids, dim=0).unique()
 
         return batch
