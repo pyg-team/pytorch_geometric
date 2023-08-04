@@ -36,15 +36,24 @@ data = dataset[0]
 # expensive memory transfer costs for mini-batches:
 data = data.to(device)
 
-# Ensure to only sample actual destination nodes as negatives.
-min_dst_idx, max_dst_idx = int(data.dst.min()), int(data.dst.max())
 train_data, val_data, test_data = data.train_val_test_split(
     val_ratio=0.15, test_ratio=0.15)
 
-train_loader = TemporalDataLoader(train_data, batch_size=200)
-val_loader = TemporalDataLoader(val_data, batch_size=200)
-test_loader = TemporalDataLoader(test_data, batch_size=200)
-
+train_loader = TemporalDataLoader(
+    train_data,
+    batch_size=200,
+    neg_sampling_ratio=1.0,
+)
+val_loader = TemporalDataLoader(
+    val_data,
+    batch_size=200,
+    neg_sampling_ratio=1.0,
+)
+test_loader = TemporalDataLoader(
+    test_data,
+    batch_size=200,
+    neg_sampling_ratio=1.0,
+)
 neighbor_loader = LastNeighborLoader(data.num_nodes, size=10, device=device)
 
 
@@ -115,33 +124,25 @@ def train():
 
     total_loss = 0
     for batch in train_loader:
-        batch = batch.to(device)
         optimizer.zero_grad()
+        batch = batch.to(device)
 
-        src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
-
-        # Sample negative destination nodes.
-        neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
-                                dtype=torch.long, device=device)
-
-        n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        n_id, edge_index, e_id = neighbor_loader(n_id)
+        n_id, edge_index, e_id = neighbor_loader(batch.n_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         # Get updated memory of all nodes involved in the computation.
         z, last_update = memory(n_id)
         z = gnn(z, last_update, edge_index, data.t[e_id].to(device),
                 data.msg[e_id].to(device))
-
-        pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
-        neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
+        pos_out = link_pred(z[assoc[batch.src]], z[assoc[batch.dst]])
+        neg_out = link_pred(z[assoc[batch.src]], z[assoc[batch.neg_dst]])
 
         loss = criterion(pos_out, torch.ones_like(pos_out))
         loss += criterion(neg_out, torch.zeros_like(neg_out))
 
         # Update memory and neighbor loader with ground-truth state.
-        memory.update_state(src, pos_dst, t, msg)
-        neighbor_loader.insert(src, pos_dst)
+        memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
+        neighbor_loader.insert(batch.src, batch.dst)
 
         loss.backward()
         optimizer.step()
@@ -162,21 +163,15 @@ def test(loader):
     aps, aucs = [], []
     for batch in loader:
         batch = batch.to(device)
-        src, pos_dst, t, msg = batch.src, batch.dst, batch.t, batch.msg
 
-        neg_dst = torch.randint(min_dst_idx, max_dst_idx + 1, (src.size(0), ),
-                                dtype=torch.long, device=device)
-
-        n_id = torch.cat([src, pos_dst, neg_dst]).unique()
-        n_id, edge_index, e_id = neighbor_loader(n_id)
+        n_id, edge_index, e_id = neighbor_loader(batch.n_id)
         assoc[n_id] = torch.arange(n_id.size(0), device=device)
 
         z, last_update = memory(n_id)
         z = gnn(z, last_update, edge_index, data.t[e_id].to(device),
                 data.msg[e_id].to(device))
-
-        pos_out = link_pred(z[assoc[src]], z[assoc[pos_dst]])
-        neg_out = link_pred(z[assoc[src]], z[assoc[neg_dst]])
+        pos_out = link_pred(z[assoc[batch.src]], z[assoc[batch.dst]])
+        neg_out = link_pred(z[assoc[batch.src]], z[assoc[batch.neg_dst]])
 
         y_pred = torch.cat([pos_out, neg_out], dim=0).sigmoid().cpu()
         y_true = torch.cat(
@@ -186,9 +181,8 @@ def test(loader):
         aps.append(average_precision_score(y_true, y_pred))
         aucs.append(roc_auc_score(y_true, y_pred))
 
-        memory.update_state(src, pos_dst, t, msg)
-        neighbor_loader.insert(src, pos_dst)
-
+        memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
+        neighbor_loader.insert(batch.src, batch.dst)
     return float(torch.tensor(aps).mean()), float(torch.tensor(aucs).mean())
 
 
