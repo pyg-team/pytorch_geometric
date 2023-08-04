@@ -83,7 +83,7 @@ python partition_ogbn_dataset.py --dataset=ogbn-products --root_dir=../../../dat
 
 #### Step 3: Set up the configure file
 
-An example configuration file in given via [`dist_train_sage_sup_config.yml`](dist_train_sage_sup_config.yaml).
+An example configuration file in given via [`dist_train_sage_sup_config.yml`](dist_train_sage_sup_config.yml).
 
 #### Step 4: Launch the distributed training
 

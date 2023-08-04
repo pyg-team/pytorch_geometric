@@ -4,28 +4,46 @@ import click
 import paramiko
 import yaml
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser('Run DistRandomSampler benchmarks.')
-    parser.add_argument('--config', type=str,
-                        default='dist_train_sage_sup_config.yml',
-                        help='paths to configuration file for benchmarks')
-    parser.add_argument('--epochs', type=int, default=10,
-                        help='repeat epochs for sampling')
-    parser.add_argument('--batch_size', type=int, default=2048,
-                        help='batch size for sampling')
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--master_addr', type=str, default='0.0.0.0',
-        help='master ip address for synchronization across all training nodes')
+        '--config',
+        type=str,
+        default='dist_train_sage_sup_config.yml',
+        help='The path to the configuration file',
+    )
     parser.add_argument(
-        '--master_port', type=str, default='11345',
-        help='port for synchronization across all training nodes')
+        '--epochs',
+        type=int,
+        default=10,
+        help='The number of training epochs',
+    )
+    parser.add_argument(
+        '--batch_size',
+        type=int,
+        default=512,
+        help='The batch size for the training and testing data loaders',
+    )
+    parser.add_argument(
+        '--master_addr',
+        type=str,
+        default='0.0.0.0',
+        help='Master IP address for synchronization across all training nodes',
+    )
+    parser.add_argument(
+        '--master_port',
+        type=str,
+        default='11345',
+        help='The port for synchronization across all training nodes',
+    )
     args = parser.parse_args()
 
     config = open(args.config, 'r')
     config = yaml.safe_load(config)
     dataset = config['dataset']
-    ip_list, port_list, username_list = config['nodes'], config[
-        'ports'], config['usernames']
+    ip_list = config['nodes']
+    port_list = config['ports']
+    username_list = config['usernames']
     dst_path_list = config['dst_paths']
     node_ranks = list(range(len(ip_list)))
     num_nodes = len(node_ranks)
@@ -35,11 +53,11 @@ if __name__ == "__main__":
     in_channel = str(config['in_channel'])
     out_channel = str(config['out_channel'])
 
-    dataset_path = "../../../data/"
+    dataset_path = '../../../data/'
     passwd_dict = {}
     for username, ip in zip(username_list, ip_list):
         passwd_dict[ip + username] = click.prompt(
-            'passwd for ' + username + '@' + ip, hide_input=True)
+            f'Password for {username}@{ip}', hide_input=True)
     for username, ip, port, dst, noderk, device, pythonbin in zip(
             username_list,
             ip_list,
