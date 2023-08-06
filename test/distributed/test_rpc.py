@@ -60,7 +60,7 @@ def run_rpc_feature_test(
     feature.partition_idx = rank
     feature.feature_pb = partition_book
     feature.meta = meta
-    feature.set_local_only(local_only=False)
+    feature.local_only=False
     feature.set_rpc_router(rpc_router)
 
     # Global node IDs:
