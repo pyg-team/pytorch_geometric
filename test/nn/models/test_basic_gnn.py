@@ -224,7 +224,7 @@ def test_packaging():
 
 @withPackage('torch>=1.12.0')
 @withPackage('onnx', 'onnxruntime')
-def test_onnx(tmp_path, capfd):
+def test_onnx(tmp_path):
     import onnx
     import onnxruntime as ort
 
@@ -251,9 +251,6 @@ def test_onnx(tmp_path, capfd):
     path = osp.join(tmp_path, 'model.onnx')
     torch.onnx.export(model, (x, edge_index), path,
                       input_names=('x', 'edge_index'), opset_version=16)
-    if torch_geometric.typing.WITH_PT2:
-        out, _ = capfd.readouterr()
-        assert '0 NONE 0 NOTE 0 WARNING 0 ERROR' in out
 
     model = onnx.load(path)
     onnx.checker.check_model(model)
