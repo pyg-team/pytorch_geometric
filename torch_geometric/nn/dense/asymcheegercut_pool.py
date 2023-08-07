@@ -104,7 +104,7 @@ def _balance_loss(s):
     # Asymmetric l1-norm
     loss = s - torch.unsqueeze(quant, dim=1)
     loss = (loss >= 0) * (n_clust - 1) * loss + (loss < 0) * loss * -1
-    loss = torch.sum(loss, dim=(-1, -2))  # shape [B]
+    loss = torch.sum(loss, dim=(-1, -2))
     loss = 1 / (n_nodes * (n_clust - 1)) * (n_nodes * (n_clust - 1) - loss)
 
     return loss

@@ -2,7 +2,7 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
-from torch_geometric.nn.inits import zeros
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import OptTensor
 
 
@@ -27,9 +27,8 @@ class DenseGTVConv(torch.nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        torch.nn.init.kaiming_normal_(
-            self.weight
-        )  # TODO: Maybe change to glorot as standard initializer
+        r"""Resets all learnable parameters of the module."""
+        glorot(self.weight)
         zeros(self.bias)
 
     def forward(self, x: Tensor, adj: Tensor,
@@ -58,7 +57,7 @@ class DenseGTVConv(torch.nn.Module):
 
         # Pairwise absolute differences
         abs_diff = torch.sum(torch.abs(x[..., None, :] - x[:, None, ...]),
-                             dim=-1)  # shape [B, N, N]
+                             dim=-1)
 
         # Gammma matrix
         mod_adj = adj / torch.clamp(abs_diff, min=1e-3)
