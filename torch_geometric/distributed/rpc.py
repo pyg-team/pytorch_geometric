@@ -97,7 +97,7 @@ def shutdown_rpc(graceful: bool = True):
 atexit.register(shutdown_rpc, False)
 
 
-class RpcRouter:
+class RPCRouter:
     r"""A router to get the worker based on the partition ID."""
     def __init__(self, partition_to_workers: List[List[str]]):
         for pid, rpc_worker_list in enumerate(partition_to_workers):
@@ -132,7 +132,7 @@ def rpc_partition_to_workers(
     return partition_to_workers
 
 
-class RpcCallBase(ABC):
+class RPCCallBase(ABC):
     r"""A wrapper base class for RPC calls in remote processes."""
     @abstractmethod
     def rpc_sync(self, *args, **kwargs):
@@ -145,11 +145,11 @@ class RpcCallBase(ABC):
 
 _rpc_call_lock = threading.RLock()
 _rpc_call_id: int = 0
-_rpc_call_pool: Dict[int, RpcCallBase] = {}
+_rpc_call_pool: Dict[int, RPCCallBase] = {}
 
 
 @rpc_require_initialized
-def rpc_register(call: RpcCallBase) -> int:
+def rpc_register(call: RPCCallBase) -> int:
     r"""Registers a call for RPC requests."""
     global _rpc_call_id, _rpc_call_pool
 

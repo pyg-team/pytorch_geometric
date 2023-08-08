@@ -1,5 +1,6 @@
 import argparse
 import os.path as osp
+import time
 
 import torch
 
@@ -109,7 +110,11 @@ def test(data):
     return model.test(z, data.pos_edge_label_index, data.neg_edge_label_index)
 
 
+times = []
 for epoch in range(1, args.epochs + 1):
+    start = time.time()
     loss = train()
     auc, ap = test(test_data)
     print(f'Epoch: {epoch:03d}, AUC: {auc:.4f}, AP: {ap:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

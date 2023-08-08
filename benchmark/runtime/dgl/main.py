@@ -11,7 +11,13 @@ from runtime.dgl.hidden import HiddenPrint
 from runtime.dgl.rgcn import RGCN, RGCNSPMV
 from runtime.dgl.train import train_runtime
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 with HiddenPrint():
     Cora = citation_graph.load_cora()
     CiteSeer = citation_graph.load_citeseer()
