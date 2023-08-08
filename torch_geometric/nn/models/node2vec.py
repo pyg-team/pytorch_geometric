@@ -10,6 +10,49 @@ from torch_geometric.utils import sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import index2ptr
 
+####################################################################################### { define a weighted random walk that care the data.attr
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+def random_walk_weighted(rowptr, col, weight, batch, walk_length, p, q):
+    row = ptr2index(rowptr) 
+    row_repeat = row.repeat(len(batch), 1)
+    col_repeat = col.repeat(len(batch), 1)    
+    pos_mats = batch.unsqueeze(dim=0)
+    loc_mats = batch.unsqueeze(dim=0)
+    weights_tmp = weight.repeat(len(batch),1).clone().detach()
+    indices = batch.clone().detach()
+    for i in range(walk_length):
+        starts_with = rowptr[indices]
+        ends_with = rowptr[indices+1]
+
+        weights = (weights_tmp).clone().detach()
+        weights[ torch.arange(0, len(col), dtype=torch.float32).repeat(len(batch),1).to(device) < starts_with.unsqueeze(1) ] = 0
+        weights[ torch.arange(0, len(col), dtype=torch.float32).repeat(len(batch),1).to(device) >= ends_with.unsqueeze(1) ] = 0
+        
+        ## handling p
+        row_nodes = row_repeat.gather(1,loc_mats[-1].unsqueeze(1)).clone().detach()
+        col_nodes = col_repeat.gather(1,loc_mats[-1].unsqueeze(1)).clone().detach()
+        weights[(row_repeat==col_nodes) & (col_repeat==row_nodes)] = torch.clamp(torch.tensor(1-p),0,1) * weights[(row_repeat==col_nodes) & (col_repeat==row_nodes)]
+
+
+        pdfs = weights / weights.sum(dim=1).repeat(len(col),1).t()
+        cdfs = torch.cumsum(pdfs, 1)
+        rnds = torch.rand(len(batch)).to(device)
+        locs = torch.max(rnds.unsqueeze(1)<cdfs, dim=1).indices
+        loc_mats = torch.cat((loc_mats, locs.unsqueeze(dim=0)),0)
+        pos_mats = torch.cat((pos_mats, col[locs].unsqueeze(dim=0)),0)
+
+        ## handling q
+        q_rnd = torch.rand(len(batch))
+        q_clamp = torch.clamp(torch.tensor(q),0,1).repeat(len(batch))
+        indices_tmp = (col[locs]).clone().detach()
+        indices[(q_rnd < q_clamp)] = indices_tmp[(q_rnd < q_clamp)]
+                 
+    directions = pos_mats.t()
+    locations = loc_mats[1:].t()
+    return(directions, locations)
+# ###################################################################################### }
+
 
 class Node2Vec(torch.nn.Module):
     r"""The Node2Vec model from the
@@ -31,6 +74,11 @@ class Node2Vec(torch.nn.Module):
         context_size (int): The actual context size which is considered for
             positive samples. This parameter increases the effective sampling
             rate by reusing samples across different source nodes.
+        edge_attr (torch.Tensor): The edge attributes.                                              # Explain
+        fast_mode ()bool, optional: If set to :obj:'True', the weights in                           # Explain
+            edge_attr are converted to posibilities (where in each epoch it 
+            converge to the real weights). Else if set to :obj:'False' the real 
+            weights are computed.        
         walks_per_node (int, optional): The number of walks to sample for each
             node. (default: :obj:`1`)
         p (float, optional): Likelihood of immediately revisiting a node in the
@@ -49,6 +97,8 @@ class Node2Vec(torch.nn.Module):
         embedding_dim: int,
         walk_length: int,
         context_size: int,
+        edge_attr: Tensor = None,                                                    # Add data attribute to the input
+        fast_mode: bool = True,                                                       # Fast Estimate or Exact Computation
         walks_per_node: int = 1,
         p: float = 1.0,
         q: float = 1.0,
@@ -73,8 +123,14 @@ class Node2Vec(torch.nn.Module):
 
         self.num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-        row, col = sort_edge_index(edge_index, num_nodes=self.num_nodes).cpu()
+        row, col = sort_edge_index(edge_index, num_nodes=self.num_nodes).to(device)
+        if edge_attr is None:                                                      # Check if data has edge.attr
+            self.edge_weight = torch.ones((1,len(edge_index[0])))[0].to(device)   
+        else:
+            self.edge_weight = edge_attr.t()[0].to(device)                         
+            
         self.rowptr, self.col = index2ptr(row, self.num_nodes), col
+        self.row = row.to(device)                                                              # Add row to self
 
         self.EPS = 1e-15
         assert walk_length >= context_size
@@ -82,6 +138,7 @@ class Node2Vec(torch.nn.Module):
         self.embedding_dim = embedding_dim
         self.walk_length = walk_length - 1
         self.context_size = context_size
+        self.fast_mode = fast_mode                                                          # Add parameter
         self.walks_per_node = walks_per_node
         self.p = p
         self.q = q
@@ -108,8 +165,20 @@ class Node2Vec(torch.nn.Module):
     @torch.jit.export
     def pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
-        rw = self.random_walk_fn(self.rowptr, self.col, batch,
-                                 self.walk_length, self.p, self.q)
+
+        ########################################################################################## {if fast mode,  replace the weights with posibility. else, use the scrach def
+        if self.fast_mode:
+            row_all, col_all, weight_all = self.row, self.col, self.edge_weight
+            probs = torch.rand(len(weight_all)).to(device)<weight_all
+            row = row_all[probs]
+            col = col_all[probs]
+            weight = weight_all[probs]
+            rowptr = index2ptr(row, self.num_nodes)
+            rw = self.random_walk_fn(rowptr, col, batch, self.walk_length, self.p, self.q)
+        else:
+            rw = random_walk_weighted(self.rowptr, self.col, self.edge_weight, batch, self.walk_length, self.p, self.q)
+        ########################################################################################## }
+        
         if not isinstance(rw, Tensor):
             rw = rw[0]
 
@@ -136,7 +205,7 @@ class Node2Vec(torch.nn.Module):
     @torch.jit.export
     def sample(self, batch: Tensor) -> Tuple[Tensor, Tensor]:
         if not isinstance(batch, Tensor):
-            batch = torch.tensor(batch)
+            batch = torch.tensor(batch).to(device)
         return self.pos_sample(batch), self.neg_sample(batch)
 
     @torch.jit.export
