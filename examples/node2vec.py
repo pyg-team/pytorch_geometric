@@ -14,6 +14,8 @@ def main():
     path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
     dataset = Planetoid(path, dataset)
     data = dataset[0]
+    # data = torch.load('./graph_disease.pt')                                    # an example of data with attrs
+
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model = Node2Vec(
@@ -21,6 +23,8 @@ def main():
         embedding_dim=128,
         walk_length=20,
         context_size=10,
+        edge_attr=data.edge_attr,                                           # Add data attribute to the input
+        fast_mode=True,                                                     # Fast Estimate or Exact Computation
         walks_per_node=10,
         num_negative_samples=1,
         p=1,
@@ -59,15 +63,21 @@ def main():
         print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Acc: {acc:.4f}')
 
     @torch.no_grad()
-    def plot_points(colors):
+    def plot_points(colors):                                                    # Liitle changes in plot for having labels in graph
         model.eval()
         z = model(torch.arange(data.num_nodes, device=device))
-        z = TSNE(n_components=2).fit_transform(z.cpu().numpy())
-        y = data.y.cpu().numpy()
+        z_cpu = TSNE(n_components=2, perplexity=min([len(data.x)/2,30.0])).fit_transform(z.cpu().numpy())
+        y_cpu = data.y.cpu().numpy()
 
         plt.figure(figsize=(8, 8))
-        for i in range(dataset.num_classes):
-            plt.scatter(z[y == i, 0], z[y == i, 1], s=20, color=colors[i])
+        for i in range(len(data.y.unique())):
+            plt.scatter(z_cpu[y_cpu == i, 0], z_cpu[y_cpu == i, 1], s=20, color=colors[i])
+
+        try:
+            for i, txt in enumerate(data.labels):
+                plt.annotate(txt, (z_cpu[i,0], z_cpu[i,1]))
+        except:
+            print('no labels')
         plt.axis('off')
         plt.show()
 
