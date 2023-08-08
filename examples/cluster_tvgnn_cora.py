@@ -7,7 +7,7 @@ from torch import Tensor
 import torch_geometric.transforms as transforms
 from torch_geometric import utils
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import GTVConv, Sequential, dense_asymcheegercut_pool
+from torch_geometric.nn import GTVConv, dense_asymcheegercut_pool
 from torch_geometric.nn.models.mlp import MLP
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -28,11 +28,13 @@ class Net(torch.nn.Module):
         self.balance_coeff = balance_coeff
 
         # Message passing layers
-        mp = [(GTVConv(in_channels if i == 0 else mp_channels, mp_channels,
-                       act="elu", eps=eps, delta_coeff=delta_coeff),
-               'x, edge_index, edge_weight -> x') for i in range(mp_layers)]
+        self.mp = torch.nn.ModuleList([
+            GTVConv(in_channels if i == 0 else mp_channels, mp_channels,
+                    eps=eps, delta_coeff=delta_coeff) for i in range(mp_layers)
+        ])
 
-        self.mp = Sequential('x, edge_index, edge_weight', mp)
+        for layer in self.mp:
+            torch.nn.init.kaiming_normal_(layer.weight)
 
         # MLP for producing cluster assignments
         self.pool = MLP(
@@ -44,7 +46,8 @@ class Net(torch.nn.Module):
     def forward(self, x: Tensor, edge_index: Tensor, edge_weight: Tensor):
 
         # Propagate node features
-        x = self.mp(x, edge_index, edge_weight)
+        for layer in self.mp:
+            x = torch.nn.functional.elu(layer(x, edge_index, edge_weight))
 
         # Compute cluster assignment and obtain auxiliary losses
         s = self.pool(x)
