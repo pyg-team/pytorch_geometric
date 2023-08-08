@@ -1,0 +1,134 @@
+import os.path as osp
+from math import ceil
+
+import torch
+import torch.nn.functional as F
+from torch.nn import Linear
+
+from torch_geometric.datasets import TUDataset
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import DenseGTVConv, GTVConv, dense_asymcheegercut_pool
+from torch_geometric.utils import to_dense_adj, to_dense_batch
+
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'PROTEINS')
+dataset = TUDataset(path, name='PROTEINS').shuffle()
+average_nodes = int(dataset.data.x.size(0) / len(dataset))
+n = (len(dataset) + 9) // 10
+test_dataset = dataset[:n]
+val_dataset = dataset[n:2 * n]
+train_dataset = dataset[2 * n:]
+test_loader = DataLoader(test_dataset, batch_size=20)
+val_loader = DataLoader(val_dataset, batch_size=20)
+train_loader = DataLoader(train_dataset, batch_size=20)
+
+
+class Net(torch.nn.Module):
+    def __init__(self, in_channels, out_channels, hidden_channels=32,
+                 delta_coeff=2.0, eps=1e-3, totvar_coeff=0.9,
+                 balance_coeff=0.7):
+        super().__init__()
+
+        self.delta_coeff = delta_coeff
+        self.eps = eps
+        self.totvar_coeff = totvar_coeff
+        self.balance_coeff = balance_coeff
+
+        self.conv1 = GTVConv(in_channels, hidden_channels,
+                             delta_coeff=self.delta_coeff, eps=self.eps)
+
+        num_nodes = ceil(0.5 * average_nodes)
+        self.pool1 = Linear(hidden_channels, num_nodes)
+
+        self.conv2 = DenseGTVConv(hidden_channels, hidden_channels,
+                                  delta_coeff=self.delta_coeff, eps=self.eps)
+
+        num_nodes = ceil(0.5 * num_nodes)
+        self.pool2 = Linear(hidden_channels, num_nodes)
+
+        self.conv3 = DenseGTVConv(hidden_channels, hidden_channels,
+                                  delta_coeff=self.delta_coeff, eps=self.eps)
+
+        self.lin1 = Linear(hidden_channels, hidden_channels)
+        self.lin2 = Linear(hidden_channels, out_channels)
+
+    def forward(self, x, edge_index, batch):
+        x = self.conv1(x, edge_index).relu()
+
+        x, mask = to_dense_batch(x, batch)
+        adj = to_dense_adj(edge_index, batch)
+
+        s = self.pool1(x)
+        x, adj, tv1, b1 = dense_asymcheegercut_pool(x, adj, s, mask)
+
+        x = self.conv2(x, adj).relu()
+        s = self.pool2(x)
+
+        x, adj, tv2, b2 = dense_asymcheegercut_pool(x, adj, s)
+
+        x = self.conv3(x, adj).relu()
+
+        x = x.mean(dim=1)
+        x = self.lin1(x).relu()
+        x = self.lin2(x)
+
+        tv_loss = self.totvar_coeff * (tv1 + tv2)
+        bal_loss = self.balance_coeff * (b1 + b2)
+
+        return F.log_softmax(x, dim=-1), tv_loss, bal_loss
+
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = Net(dataset.num_features, dataset.num_classes).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-3)
+
+
+def train():
+    model.train()
+    loss_all = 0
+
+    for data in train_loader:
+        data = data.to(device)
+        optimizer.zero_grad()
+        out, mc_loss, o_loss = model(data.x, data.edge_index, data.batch)
+        loss = F.nll_loss(out, data.y.view(-1)) + mc_loss + o_loss
+        loss.backward()
+        loss_all += data.y.size(0) * float(loss)
+        optimizer.step()
+    return loss_all / len(train_dataset)
+
+
+@torch.no_grad()
+def test(loader):
+    model.eval()
+    correct = 0
+    loss_all = 0
+
+    for data in loader:
+        data = data.to(device)
+        pred, mc_loss, o_loss = model(data.x, data.edge_index, data.batch)
+        loss = F.nll_loss(pred, data.y.view(-1)) + mc_loss + o_loss
+        loss_all += data.y.size(0) * float(loss)
+        correct += int(pred.max(dim=1)[1].eq(data.y.view(-1)).sum())
+
+    return loss_all / len(loader.dataset), correct / len(loader.dataset)
+
+
+best_val_acc = test_acc = 0
+best_val_loss = float('inf')
+patience = start_patience = 50
+for epoch in range(1, 15000):
+    train_loss = train()
+    _, train_acc = test(train_loader)
+    val_loss, val_acc = test(val_loader)
+    if val_loss < best_val_loss:
+        test_loss, test_acc = test(test_loader)
+        best_val_acc = val_acc
+        patience = start_patience
+    else:
+        patience -= 1
+        if patience == 0:
+            break
+    print(f'Epoch: {epoch:03d}, Train Loss: {train_loss:.3f}, '
+          f'Train Acc: {train_acc:.3f}, Val Loss: {val_loss:.3f}, '
+          f'Val Acc: {val_acc:.3f}, Test Loss: {test_loss:.3f}, '
+          f'Test Acc: {test_acc:.3f}')
