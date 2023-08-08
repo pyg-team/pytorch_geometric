@@ -66,7 +66,7 @@ train_loader = NeighborLoader(data, num_neighbors=[args.fan_out, args.fan_out], 
 eval_loader = NeighborLoader(data, num_neighbors=[args.fan_out, args.fan_out], input_nodes=split_idx['valid'], batch_size=batch_size, num_workers=pyg_num_work())
 test_loader = NeighborLoader(data, num_neighbors=[args.fan_out, args.fan_out], input_nodes=split_idx['test'], batch_size=batch_size, num_workers=pyg_num_work())
 eval_steps = 100
-acc = Accuracy(task="multiclass", num_classes=dataset.num_classes)
+acc = Accuracy(task="multiclass", num_classes=dataset.num_classes).to(device)
 for epoch in range(args.epochs):
     for i, batch in enumerate(train_loader):
         if i >= 10:
@@ -100,3 +100,4 @@ with torch.no_grad():
     print(
         f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%",
     )
+
