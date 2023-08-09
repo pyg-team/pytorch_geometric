@@ -16,9 +16,10 @@ class GTVConv(MessagePassing):
 
     .. math::
         \mathbf{X}^{\prime} = \left(\mathbf{I} -
-        \delta\mathbf{L}_\hat{\mathbf{\Gamma}}\right)\tilde{\mathbf{X}}
+        \delta\mathbf{L}_\hat{\mathbf{\Gamma}}\right)\tilde{\mathbf{X}},
 
-    where
+    where :math:`\tilde{\mathbf{X}}` and
+    :math:`\mathbf{L}_\hat{\mathbf{\Gamma}}` are computed as
 
     .. math::
         \tilde{\mathbf{X}} &= \mathbf{X} \mathbf{\Theta}
