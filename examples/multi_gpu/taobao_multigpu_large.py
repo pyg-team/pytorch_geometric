@@ -96,7 +96,47 @@ class Model(torch.nn.Module):
         return self.decoder(z_dict['user'], z_dict['item'], edge_label_index)
 
 
-def run_train(rank, data, train_loader, val_loader, test_loader, world_size):
+def run_train(rank, data, train_data, val_data, test_data, world_size):
+    train_edge_label_idx = train_data[('user', 'to', 'item')].edge_label_index
+    train_edge_label_idx = train_edge_label_idx.split(train_edge_label_idx.size(1) // world_size, dim=1)[rank]
+    train_loader = LinkNeighborLoader(
+        data=train_data,
+        num_neighbors=[8, 4],
+        edge_label_index=(('user', 'to', 'item'),
+                         train_edge_label_idx
+        ),
+        neg_sampling='binary',
+        batch_size=2048,
+        shuffle=True,
+        num_workers=16,
+        drop_last=True,
+    )
+
+    val_loader = LinkNeighborLoader(
+        data=val_data,
+        num_neighbors=[8, 4],
+        edge_label_index=(
+            ('user', 'to', 'item'),
+            val_data[('user', 'to', 'item')].edge_label_index,
+        ),
+        edge_label=val_data[('user', 'to', 'item')].edge_label,
+        batch_size=2048,
+        shuffle=False,
+        num_workers=16,
+    )
+
+    test_loader = LinkNeighborLoader(
+        data=test_data,
+        num_neighbors=[8, 4],
+        edge_label_index=(
+            ('user', 'to', 'item'),
+            test_data[('user', 'to', 'item')].edge_label_index,
+        ),
+        edge_label=test_data[('user', 'to', 'item')].edge_label,
+        batch_size=2048,
+        shuffle=False,
+        num_workers=16,
+    )
     def train():
         model.train()
 
@@ -202,6 +242,7 @@ if __name__ == '__main__':
         rev_edge_types=[('item', 'rev_to', 'user')],
     )(data)
     print('Done!')
+    
 
     # Compute sparsified item<>item relationships through users:
     print('Computing item<>item relationships...')
@@ -221,44 +262,8 @@ if __name__ == '__main__':
     test_data['item', 'item'].edge_index = item_to_item_edge_index
     print('Done!')
 
-    train_loader = LinkNeighborLoader(
-        data=train_data,
-        num_neighbors=[8, 4],
-        edge_label_index=('user', 'to', 'item'),
-        neg_sampling='binary',
-        batch_size=2048,
-        shuffle=True,
-        num_workers=16,
-        drop_last=True,
-    )
-
-    val_loader = LinkNeighborLoader(
-        data=val_data,
-        num_neighbors=[8, 4],
-        edge_label_index=(
-            ('user', 'to', 'item'),
-            val_data[('user', 'to', 'item')].edge_label_index,
-        ),
-        edge_label=val_data[('user', 'to', 'item')].edge_label,
-        batch_size=2048,
-        shuffle=False,
-        num_workers=16,
-    )
-
-    test_loader = LinkNeighborLoader(
-        data=test_data,
-        num_neighbors=[8, 4],
-        edge_label_index=(
-            ('user', 'to', 'item'),
-            test_data[('user', 'to', 'item')].edge_label_index,
-        ),
-        edge_label=test_data[('user', 'to', 'item')].edge_label,
-        batch_size=2048,
-        shuffle=False,
-        num_workers=16,
-    )
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
     mp.spawn(run_train,
-             args=(data, train_loader, val_loader, test_loader, world_size),
+             args=(data, train_data, val_data, test_data, world_size),
              nprocs=world_size, join=True)
