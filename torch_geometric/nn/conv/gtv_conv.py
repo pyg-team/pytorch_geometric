@@ -109,9 +109,7 @@ class GTVConv(MessagePassing):
                                                     normalization=None)
 
         # Modified laplacian: I - delta * L
-        if lap_weight is None:
-            lap_weight = torch.ones((edge_index.size(1), ), dtype=x.dtype,
-                                    device=edge_index.device)
+        assert lap_weight is not None
         lap_weight *= -self.delta_coeff
         mod_lap_index, mod_lap_weight = utils.add_self_loops(
             lap_index, lap_weight, fill_value=1., num_nodes=x.size(0))
