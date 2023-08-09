@@ -98,13 +98,12 @@ class Model(torch.nn.Module):
 
 def run_train(rank, data, train_data, val_data, test_data, world_size):
     train_edge_label_idx = train_data[('user', 'to', 'item')].edge_label_index
-    train_edge_label_idx = train_edge_label_idx.split(train_edge_label_idx.size(1) // world_size, dim=1)[rank]
+    train_edge_label_idx = train_edge_label_idx.split(
+        train_edge_label_idx.size(1) // world_size, dim=1)[rank]
     train_loader = LinkNeighborLoader(
         data=train_data,
         num_neighbors=[8, 4],
-        edge_label_index=(('user', 'to', 'item'),
-                         train_edge_label_idx
-        ),
+        edge_label_index=(('user', 'to', 'item'), train_edge_label_idx),
         neg_sampling='binary',
         batch_size=2048,
         shuffle=True,
@@ -137,6 +136,7 @@ def run_train(rank, data, train_data, val_data, test_data, world_size):
         shuffle=False,
         num_workers=16,
     )
+
     def train():
         model.train()
 
@@ -242,7 +242,6 @@ if __name__ == '__main__':
         rev_edge_types=[('item', 'rev_to', 'user')],
     )(data)
     print('Done!')
-    
 
     # Compute sparsified item<>item relationships through users:
     print('Computing item<>item relationships...')
