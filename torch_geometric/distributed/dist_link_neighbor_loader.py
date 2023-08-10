@@ -34,7 +34,6 @@ from .local_graph_store import LocalGraphStore
 
 
 class DistLinkNeighborLoader(LinkLoader, DistLoader):
-   
     def __init__(
             self,
             data: Tuple[LocalFeatureStore, LocalGraphStore],
