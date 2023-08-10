@@ -113,7 +113,6 @@ def test(loader):
     return loss_all / len(loader.dataset), correct / len(loader.dataset)
 
 
-best_val_acc = test_acc = 0
 best_val_loss = float('inf')
 patience = start_patience = 50
 for epoch in range(1, 15000):
@@ -122,7 +121,7 @@ for epoch in range(1, 15000):
     val_loss, val_acc = test(val_loader)
     if val_loss < best_val_loss:
         test_loss, test_acc = test(test_loader)
-        best_val_acc = val_acc
+        best_val_loss = val_loss
         patience = start_patience
     else:
         patience -= 1
