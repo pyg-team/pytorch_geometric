@@ -182,7 +182,11 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         )
 
         iterator = range(edge_label_index.size(1))
-        super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
+        super().__init__(
+            iterator, 
+            collate_fn=self.collate_fn, 
+            worker_init_fn=self.worker_init_fn,
+            **kwargs)
 
     def __call__(
         self,
@@ -219,7 +223,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
 
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
-                               self.link_sampler.edge_permutation)
+                            self.link_sampler.edge_permutation)
 
             if 'n_id' not in data:
                 data.n_id = out.node
