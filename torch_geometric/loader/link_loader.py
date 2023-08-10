@@ -24,7 +24,6 @@ from torch_geometric.typing import InputEdges, OptTensor
 
 
 class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
-
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
