@@ -193,7 +193,7 @@ class BasicGNN(torch.nn.Module):
     def forward(  # noqa
         self,
         x: Tensor,
-        edge_index: Adj,
+        edge_index: Tensor,  # TODO Support `SparseTensor` in type hint.
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
         num_sampled_nodes_per_hop: Optional[List[int]] = None,
