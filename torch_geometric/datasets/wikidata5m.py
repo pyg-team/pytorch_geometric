@@ -1,9 +1,9 @@
 import gzip
 import json
 import os
+import os.path as osp
 import tarfile
 from typing import Callable, List, Optional
-import os.path as osp
 
 import torch
 
@@ -42,15 +42,17 @@ class Wikidata5m(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
-
-    def __init__(self, root: str, split: str = "train", setting: str = "transductive",
+    def __init__(self, root: str, split: str = "train",
+                 setting: str = "transductive",
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
 
         self.setting = setting
 
-        self.urls = ['https://www.dropbox.com/s/7jp4ib8zo3i6m10/'
-                     'wikidata5m_text.txt.gz?dl=1']
+        self.urls = [
+            'https://www.dropbox.com/s/7jp4ib8zo3i6m10/'
+            'wikidata5m_text.txt.gz?dl=1'
+        ]
         if self.setting == 'inductive':
             self.urls.append('https://www.dropbox.com/s/csed3cgal3m7rzo/'
                              'wikidata5m_inductive.tar.gz?dl=1')
@@ -59,7 +61,8 @@ class Wikidata5m(InMemoryDataset):
                              'wikidata5m_transductive.tar.gz?dl=1')
 
         self.urls_features = {
-            'text_emb_bert': 'https://uni-bielefeld.sciebo.de/s/yuBKzBxsEc9j3hy/download'
+            'text_emb_bert':
+            'https://uni-bielefeld.sciebo.de/s/yuBKzBxsEc9j3hy/download'
         }
 
         super().__init__(root, transform, pre_transform)
@@ -76,11 +79,10 @@ class Wikidata5m(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ['train_data.pt',
-                'val_data.pt',
-                'test_data.pt',
-                'entity_to_id.json',
-                'relation_to_id.json']
+        return [
+            'train_data.pt', 'val_data.pt', 'test_data.pt',
+            'entity_to_id.json', 'relation_to_id.json'
+        ]
 
     def load_features(self, feature_type='text_emb_bert') -> torch.TensorType:
         """
@@ -95,28 +97,31 @@ class Wikidata5m(InMemoryDataset):
 
         """
         if not osp.exists(osp.join(self.processed_dir, f'{feature_type}.pt')):
-            download_url(self.urls_features[feature_type],
-                         self.processed_dir,
+            download_url(self.urls_features[feature_type], self.processed_dir,
                          filename=f'{feature_type}.pt')
         return torch.load(osp.join(self.processed_dir, f'{feature_type}.pt'))
 
     def get_uri_to_id_dicts(self):
         id_dicts = {}
         for d in ['entity_to_id', 'relation_to_id']:
-            id_dicts[d] = json.load(open(osp.join(self.processed_dir, f'{d}.json')))
+            id_dicts[d] = json.load(
+                open(osp.join(self.processed_dir, f'{d}.json')))
 
     def download(self):
         for url in self.urls:
             download_url(url, self.raw_dir)
-        compressed_dataset_path = osp.join(self.raw_dir, f'wikidata5m_{self.setting}.tar.gz')
+        compressed_dataset_path = osp.join(
+            self.raw_dir, f'wikidata5m_{self.setting}.tar.gz')
         with tarfile.open(compressed_dataset_path) as compressed_in:
             compressed_in.extractall(self.raw_dir)
 
         os.remove(compressed_dataset_path)
 
         for raw_file_name in ['train.txt', 'valid.txt', 'test.txt']:
-            os.rename(osp.join(self.raw_dir, f'wikidata5m_{self.setting}_{raw_file_name}'),
-                      osp.join(self.raw_dir, raw_file_name))
+            os.rename(
+                osp.join(self.raw_dir,
+                         f'wikidata5m_{self.setting}_{raw_file_name}'),
+                osp.join(self.raw_dir, raw_file_name))
 
     def process(self):
 
