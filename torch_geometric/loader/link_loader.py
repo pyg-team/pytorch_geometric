@@ -24,6 +24,99 @@ from torch_geometric.typing import InputEdges, OptTensor
 
 
 class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
+    r"""A data loader that performs mini-batch sampling from link information,
+    using a generic :class:`~torch_geometric.sampler.BaseSampler`
+    implementation that defines a
+    :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges` function and
+    is supported on the provided input :obj:`data` object.
+
+    .. note::
+        Negative sampling is currently implemented in an approximate
+        way, *i.e.* negative edges may contain false negatives.
+
+    Args:
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
+        link_sampler (torch_geometric.sampler.BaseSampler): The sampler
+            implementation to be used with this loader.
+            Needs to implement
+            :meth:`~torch_geometric.sampler.BaseSampler.sample_from_edges`.
+            The sampler implementation must be compatible with the input
+            :obj:`data` object.
+        edge_label_index (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
+            The edge indices, holding source and destination nodes to start
+            sampling from.
+            If set to :obj:`None`, all edges will be considered.
+            In heterogeneous graphs, needs to be passed as a tuple that holds
+            the edge type and corresponding edge indices.
+            (default: :obj:`None`)
+        edge_label (Tensor, optional): The labels of edge indices from which to
+            start sampling from. Must be the same length as
+            the :obj:`edge_label_index`. (default: :obj:`None`)
+        edge_label_time (Tensor, optional): The timestamps of edge indices from
+            which to start sampling from. Must be the same length as
+            :obj:`edge_label_index`. If set, temporal sampling will be
+            used such that neighbors are guaranteed to fulfill temporal
+            constraints, *i.e.*, neighbors have an earlier timestamp than
+            the ouput edge. The :obj:`time_attr` needs to be set for this
+            to work. (default: :obj:`None`)
+        neg_sampling (NegativeSampling, optional): The negative sampling
+            configuration.
+            For negative sampling mode :obj:`"binary"`, samples can be accessed
+            via the attributes :obj:`edge_label_index` and :obj:`edge_label` in
+            the respective edge type of the returned mini-batch.
+            In case :obj:`edge_label` does not exist, it will be automatically
+            created and represents a binary classification task (:obj:`0` =
+            negative edge, :obj:`1` = positive edge).
+            In case :obj:`edge_label` does exist, it has to be a categorical
+            label from :obj:`0` to :obj:`num_classes - 1`.
+            After negative sampling, label :obj:`0` represents negative edges,
+            and labels :obj:`1` to :obj:`num_classes` represent the labels of
+            positive edges.
+            Note that returned labels are of type :obj:`torch.float` for binary
+            classification (to facilitate the ease-of-use of
+            :meth:`F.binary_cross_entropy`) and of type
+            :obj:`torch.long` for multi-class classification (to facilitate the
+            ease-of-use of :meth:`F.cross_entropy`).
+            For negative sampling mode :obj:`"triplet"`, samples can be
+            accessed via the attributes :obj:`src_index`, :obj:`dst_pos_index`
+            and :obj:`dst_neg_index` in the respective node types of the
+            returned mini-batch.
+            :obj:`edge_label` needs to be :obj:`None` for :obj:`"triplet"`
+            negative sampling mode.
+            If set to :obj:`None`, no negative sampling strategy is applied.
+            (default: :obj:`None`)
+        neg_sampling_ratio (int or float, optional): The ratio of sampled
+            negative edges to the number of positive edges.
+            Deprecated in favor of the :obj:`neg_sampling` argument.
+            (default: :obj:`None`).
+        transform (callable, optional): A function/transform that takes in
+            a sampled mini-batch and returns a transformed version.
+            (default: :obj:`None`)
+        transform_sampler_output (callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
+        filter_per_worker (bool, optional): If set to :obj:`True`, will filter
+            the returned data in each worker's subprocess.
+            If set to :obj:`False`, will filter the returned data in the main
+            process.
+            If set to :obj:`None`, will automatically infer the decision based
+            on whether data partially lives on the GPU
+            (:obj:`filter_per_worker=True`) or entirely on the CPU
+            (:obj:`filter_per_worker=False`).
+            There exists different trade-offs for setting this option.
+            Specifically, setting this option to :obj:`True` for in-memory
+            datasets will move all features to shared memory, which may result
+            in too many open file handles. (default: :obj:`None`)
+        custom_cls (HeteroData, optional): A custom
+            :class:`~torch_geometric.data.HeteroData` class to return for
+            mini-batches in case of remote backends. (default: :obj:`None`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
+            :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
+    """
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -89,8 +182,11 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         )
 
         iterator = range(edge_label_index.size(1))
-        super().__init__(iterator, collate_fn=self.collate_fn,
-                         worker_init_fn=self.worker_init_fn, **kwargs)
+        super().__init__(
+            iterator, 
+            collate_fn=self.collate_fn, 
+            worker_init_fn=self.worker_init_fn,
+            **kwargs)
 
     def __call__(
         self,
@@ -127,7 +223,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
 
         if isinstance(out, SamplerOutput):
             data = filter_data(self.data, out.node, out.row, out.col, out.edge,
-                               self.link_sampler.edge_permutation)
+                            self.link_sampler.edge_permutation)
 
             if 'n_id' not in data:
                 data.n_id = out.node
