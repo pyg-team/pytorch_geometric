@@ -290,9 +290,17 @@ class QM9(InMemoryDataset):
             name = mol.GetProp('_Name')
             smiles = Chem.MolToSmiles(mol, isomericSmiles=True)
 
-            data = Data(x=x, z=z, pos=pos, edge_index=edge_index,
-                        smiles=smiles, edge_attr=edge_attr, y=y, name=name,
-                        idx=i,)
+            data = Data(
+                x=x,
+                z=z,
+                pos=pos,
+                edge_index=edge_index,
+                smiles=smiles,
+                edge_attr=edge_attr,
+                y=y,
+                name=name,
+                idx=i,
+            )
 
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
