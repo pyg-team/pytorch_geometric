@@ -115,11 +115,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         )
 
         iterator = range(input_nodes.size(0))
-        super().__init__(
-            iterator,
-            collate_fn=self.collate_fn,
-            worker_init_fn=self.worker_init_fn,
-            **kwargs)
+        super().__init__(iterator, collate_fn=self.collate_fn,
+                         worker_init_fn=self.worker_init_fn, **kwargs)
 
     def __call__(
         self,
@@ -141,7 +138,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             out = self.filter_fn(out)
 
         return out
-      
+
     def filter_fn(
         self,
         out: Union[SamplerOutput, HeteroSamplerOutput],
@@ -154,8 +151,8 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             out = self.transform_sampler_output(out)
 
         if isinstance(out, SamplerOutput):
-            data = filter_data(self.data, out.node, out.row, out.col,
-                        out.edge, self.node_sampler.edge_permutation)
+            data = filter_data(self.data, out.node, out.row, out.col, out.edge,
+                               self.node_sampler.edge_permutation)
 
             if 'n_id' not in data:
                 data.n_id = out.node
@@ -175,12 +172,11 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                 data = filter_hetero_data(self.data, out.node, out.row,
                                           out.col, out.edge,
                                           self.node_sampler.edge_permutation)
-                
+
             else:  # Tuple[FeatureStore, GraphStore]
                 data = filter_custom_store(*self.data, out.node, out.row,
                                            out.col, out.edge, self.custom_cls)
 
-  
             for key, node in out.node.items():
                 if 'n_id' not in data[key]:
                     data[key].n_id = node
