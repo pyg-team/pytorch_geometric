@@ -11,16 +11,17 @@ from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class Wikidata5m(InMemoryDataset):
-    r"""The Wikidata5m dataset from the `"KEPLER: A Unified Model for Knowledge Embedding and Pre-trained
-    Language Representation"
+    r"""The Wikidata5m dataset from the `"KEPLER: A Unified Model for Knowledge
+    Embedding and Pre-trained Language Representation"
     <https://arxiv.org/pdf/1911.06136.pdf>`_ paper,
-    containing 4,594,485 entities, 822 relations and 20,614,279 train triples, 5,163 validation triples,
-    and 5,133 test triples.
+    containing 4,594,485 entities,
+    822 relations,
+    20,614,279 train triples, 5,163 validation triples, and 5,133 test triples.
 
     .. note::
 
-        "Wikidata5m"<https://deepgraphlearning.github.io/project/wikidata5m> is a large-scale knowledge graph dataset
-        with aligned corpus extracted form Wikidata.
+        "Wikidata5m"<https://deepgraphlearning.github.io/project/wikidata5m> is
+        a large-scale knowledge graph dataset with aligned corpus extracted form Wikidata.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -28,7 +29,8 @@ class Wikidata5m(InMemoryDataset):
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         setting (str, optional): If :obj:`"transductive"`, loads the transductive dataset.
-            If :obj:`"inductive"`, loads the inductive dataset. (default: :obj:`"transductive"`)
+            If :obj:`"inductive"`, loads the inductive dataset.
+            (default: :obj:`"transductive"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -47,9 +49,11 @@ class Wikidata5m(InMemoryDataset):
 
         self.urls = ['https://www.dropbox.com/s/7jp4ib8zo3i6m10/wikidata5m_text.txt.gz?dl=1']
         if self.setting == 'inductive':
-            self.urls.append('https://www.dropbox.com/s/csed3cgal3m7rzo/wikidata5m_inductive.tar.gz?dl=1')
+            self.urls.append('https://www.dropbox.com/s/csed3cgal3m7rzo/'
+                             'wikidata5m_inductive.tar.gz?dl=1')
         else:
-            self.urls.append('https://www.dropbox.com/s/6sbhm0rwo4l73jq/wikidata5m_transductive.tar.gz?dl=1')
+            self.urls.append('https://www.dropbox.com/s/6sbhm0rwo4l73jq/'
+                             'wikidata5m_transductive.tar.gz?dl=1')
 
         self.urls_features = {
             'text_emb_bert': 'https://uni-bielefeld.sciebo.de/s/yuBKzBxsEc9j3hy/download'
@@ -69,20 +73,27 @@ class Wikidata5m(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> List[str]:
-        return ['train_data.pt', 'val_data.pt', 'test_data.pt', 'entity_to_id.json', 'relation_to_id.json']
+        return ['train_data.pt',
+                'val_data.pt',
+                'test_data.pt',
+                'entity_to_id.json',
+                'relation_to_id.json']
 
     def load_features(self, feature_type='text_emb_bert') -> torch.TensorType:
         """
-        Features are separated from the Data objects in order to save memory as all splits use the same nodes with the
-        same features.
+        Features are separated from the Data objects in order to save memory as
+        all splits use the same nodes with the same features.
         Args:
-            feature_type: Available pre-computed features: text_emb_bert (384 dim bert embeddings)
+            feature_type: Available pre-computed features: text_emb_bert
+                            (384 dim bert embeddings)
 
         Returns: Requested feature tensor indexed according to entity_to_id.json.
 
         """
         if not osp.exists(osp.join(self.processed_dir, f'{feature_type}.pt')):
-            download_url(self.urls_features[feature_type], self.processed_dir, filename=f'{feature_type}.pt')
+            download_url(self.urls_features[feature_type],
+                         self.processed_dir,
+                         filename=f'{feature_type}.pt')
         return torch.load(osp.join(self.processed_dir, f'{feature_type}.pt'))
 
     def get_uri_to_id_dicts(self):
@@ -105,15 +116,18 @@ class Wikidata5m(InMemoryDataset):
 
     def process(self):
 
-        # entity IDs are assigned according to the corpus s.t. indexing follows a common schema
+        # entity IDs are assigned according to the corpus s.t.
+        # indexing follows a common schema
         entity_to_id = {}
-        with gzip.open(osp.join(self.raw_dir, 'wikidata5m_text.txt.gz'), 'rt') as descriptions_file_in:
+        with gzip.open(osp.join(self.raw_dir, 'wikidata5m_text.txt.gz'), 'rt') \
+                as descriptions_file_in:
             for i, line in enumerate(descriptions_file_in.readlines()):
                 values = line.strip().split('\t')
                 uri = values[0]
                 entity_to_id[uri] = i
 
-        with open(osp.join(self.processed_dir, 'entity_to_id.json'), 'w') as entity_2_id_out:
+        with open(osp.join(self.processed_dir, 'entity_to_id.json'), 'w') \
+                as entity_2_id_out:
             json.dump(entity_to_id, entity_2_id_out)
 
         # relation IDs are assigned on the fly
@@ -133,10 +147,12 @@ class Wikidata5m(InMemoryDataset):
                         relation_to_id[relation] = len(relation_to_id)
                     edge_type.append(relation_to_id[relation])
 
-            data = Data(edge_index=torch.tensor(edge_index), edge_type=torch.tensor(edge_type))
+            data = Data(edge_index=torch.tensor(edge_index).T,
+                        edge_type=torch.tensor(edge_type))
             data_list.append(data)
 
-        with open(osp.join(self.processed_dir, 'relation_to_id.json'), 'w') as relation_2_id_out:
+        with open(osp.join(self.processed_dir, 'relation_to_id.json'), 'w') \
+                as relation_2_id_out:
             json.dump(relation_to_id, relation_2_id_out)
 
         for data, path in zip(data_list, self.processed_paths):
