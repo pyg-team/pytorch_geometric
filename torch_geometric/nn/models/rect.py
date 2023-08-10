@@ -51,48 +51,58 @@ class RECT_L(torch.nn.Module):
         torch.nn.init.xavier_uniform_(self.lin.weight.data)
 
     @torch.jit._overload_method
-    def forward(self, x, edge_index, edge_weight=None):
-        # type: (Tensor, SparseTensor, OptTensor) -> Tensor
-        pass
-
-    @torch.jit._overload_method
-    def forward(self, x, edge_index, edge_weight=None):
+    def forward(self, x, edge_index, edge_weight=None):  # noqa
         # type: (Tensor, Tensor, OptTensor) -> Tensor
         pass
 
-    def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None) -> Tensor:
+    @torch.jit._overload_method
+    def forward(self, x, edge_index, edge_weight=None):  # noqa
+        # type: (Tensor, SparseTensor, OptTensor) -> Tensor
+        pass
+
+    def forward(  # noqa
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
         """"""
         x = self.conv(x, edge_index, edge_weight)
         x = F.dropout(x, p=self.dropout, training=self.training)
         return self.lin(x)
 
     @torch.jit._overload_method
-    def embed(self, x, edge_index, edge_weight=None):
-        # type: (Tensor, SparseTensor, OptTensor) -> Tensor
-        pass
-
-    @torch.jit._overload_method
-    def embed(self, x, edge_index, edge_weight=None):
+    def embed(self, x, edge_index, edge_weight=None):  # noqa
         # type: (Tensor, Tensor, OptTensor) -> Tensor
         pass
 
-    def embed(self, x: Tensor, edge_index: Adj,
-              edge_weight: OptTensor = None) -> Tensor:
+    @torch.jit._overload_method
+    def embed(self, x, edge_index, edge_weight=None):  # noqa
+        # type: (Tensor, SparseTensor, OptTensor) -> Tensor
+        pass
+
+    def embed(  # noqa
+        self,
+        x: Tensor,
+        edge_index: Adj,
+        edge_weight: OptTensor = None,
+    ) -> Tensor:
         with torch.no_grad():
             return self.conv(x, edge_index, edge_weight)
 
-    def get_semantic_labels(self, x: Tensor, y: Tensor,
-                            mask: Tensor) -> Tensor:
+    def get_semantic_labels(
+        self,
+        x: Tensor,
+        y: Tensor,
+        mask: Tensor,
+    ) -> Tensor:
         r"""Replaces the original labels by their class-centers."""
         with torch.no_grad():
             y = y[mask]
             mean = scatter(x[mask], y, dim=0, reduce='mean')
             return mean[y]
 
-    def jittable(self, typing: str) -> torch.nn.Module:  # pragma: no cover
-        edge_index_type = typing.split(',')[1].strip()
-
+    def jittable(self, use_sparse_tensor: bool = False) -> torch.nn.Module:
         class EdgeIndexJittable(torch.nn.Module):
             def __init__(self, child: RECT_L):
                 super().__init__()
@@ -102,19 +112,34 @@ class RECT_L(torch.nn.Module):
             def reset_parameters(self):
                 self.child.reset_parameters()
 
-            def forward(self, x: Tensor, edge_index: Tensor,
-                        edge_weight: OptTensor = None) -> Tensor:
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: Tensor,
+                edge_weight: OptTensor = None,
+            ) -> Tensor:
                 return self.child(x, edge_index, edge_weight)
 
             @torch.jit.export
-            def embed(self, x: Tensor, edge_index: Tensor,
-                      edge_weight: OptTensor = None) -> Tensor:
+            def embed(
+                self,
+                x: Tensor,
+                edge_index: Tensor,
+                edge_weight: OptTensor = None,
+            ) -> Tensor:
                 return self.child.embed(x, edge_index, edge_weight)
 
             @torch.jit.export
-            def get_semantic_labels(self, x: Tensor, y: Tensor,
-                                    mask: Tensor) -> Tensor:
+            def get_semantic_labels(
+                self,
+                x: Tensor,
+                y: Tensor,
+                mask: Tensor,
+            ) -> Tensor:
                 return self.child.get_semantic_labels(x, y, mask)
+
+            def __repr__(self) -> str:
+                return str(self.child)
 
         class SparseTensorJittable(torch.nn.Module):
             def __init__(self, child: RECT_L):
@@ -125,28 +150,38 @@ class RECT_L(torch.nn.Module):
             def reset_parameters(self):
                 self.child.reset_parameters()
 
-            def forward(self, x: Tensor, edge_index: SparseTensor,
-                        edge_weight: OptTensor = None):
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: SparseTensor,
+                edge_weight: OptTensor = None,
+            ):
                 return self.child(x, edge_index, edge_weight)
 
             @torch.jit.export
-            def embed(self, x: Tensor, edge_index: SparseTensor,
-                      edge_weight: OptTensor = None) -> Tensor:
+            def embed(
+                self,
+                x: Tensor,
+                edge_index: SparseTensor,
+                edge_weight: OptTensor = None,
+            ) -> Tensor:
                 return self.child.embed(x, edge_index, edge_weight)
 
             @torch.jit.export
-            def get_semantic_labels(self, x: Tensor, y: Tensor,
-                                    mask: Tensor) -> Tensor:
+            def get_semantic_labels(
+                self,
+                x: Tensor,
+                y: Tensor,
+                mask: Tensor,
+            ) -> Tensor:
                 return self.child.get_semantic_labels(x, y, mask)
 
-        if 'Tensor' == edge_index_type:
-            jittable_module = EdgeIndexJittable(self)
-        elif 'SparseTensor' == edge_index_type:
-            jittable_module = SparseTensorJittable(self)
-        else:
-            raise ValueError(f"Could not parse types '{typing}'")
+            def __repr__(self) -> str:
+                return str(self.child)
 
-        return jittable_module
+        if use_sparse_tensor:
+            return SparseTensorJittable(self)
+        return EdgeIndexJittable(self)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
