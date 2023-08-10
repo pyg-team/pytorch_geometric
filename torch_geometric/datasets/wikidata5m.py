@@ -10,8 +10,8 @@ import torch
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
-class Wikidata5m_trans(InMemoryDataset):
-    r"""The transductive Wikidata5m dataset from the `"KEPLER: A Unified Model for Knowledge Embedding and Pre-trained
+class Wikidata5m(InMemoryDataset):
+    r"""The Wikidata5m dataset from the `"KEPLER: A Unified Model for Knowledge Embedding and Pre-trained
     Language Representation"
     <https://arxiv.org/pdf/1911.06136.pdf>`_ paper,
     containing 4,594,485 entities, 822 relations and 20,614,279 train triples, 5,163 validation triples,
@@ -27,6 +27,8 @@ class Wikidata5m_trans(InMemoryDataset):
         split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
+        setting (str, optional): If :obj:`"transductive"`, loads the transductive dataset.
+            If :obj:`"inductive"`, loads the inductive dataset. (default: :obj:`"transductive"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -36,16 +38,23 @@ class Wikidata5m_trans(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
-    urls = ['https://www.dropbox.com/s/6sbhm0rwo4l73jq/wikidata5m_transductive.tar.gz?dl=1',
-            'https://www.dropbox.com/s/7jp4ib8zo3i6m10/wikidata5m_text.txt.gz?dl=1']
 
-    urls_features = {
-        'text_emb_bert': 'https://uni-bielefeld.sciebo.de/s/yuBKzBxsEc9j3hy/download'
-    }
-
-    def __init__(self, root: str, split: str = "train",
+    def __init__(self, root: str, split: str = "train", setting: str = "transductive",
                  transform: Optional[Callable] = None,
                  pre_transform: Optional[Callable] = None):
+
+        self.setting = setting
+
+        self.urls = ['https://www.dropbox.com/s/7jp4ib8zo3i6m10/wikidata5m_text.txt.gz?dl=1']
+        if self.setting == 'inductive':
+            self.urls.append('https://www.dropbox.com/s/csed3cgal3m7rzo/wikidata5m_inductive.tar.gz?dl=1')
+        else:
+            self.urls.append('https://www.dropbox.com/s/6sbhm0rwo4l73jq/wikidata5m_transductive.tar.gz?dl=1')
+
+        self.urls_features = {
+            'text_emb_bert': 'https://uni-bielefeld.sciebo.de/s/yuBKzBxsEc9j3hy/download'
+        }
+
         super().__init__(root, transform, pre_transform)
 
         if split not in {'train', 'val', 'test'}:
@@ -76,7 +85,7 @@ class Wikidata5m_trans(InMemoryDataset):
             download_url(self.urls_features[feature_type], self.processed_dir, filename=f'{feature_type}.pt')
         return torch.load(osp.join(self.processed_dir, f'{feature_type}.pt'))
 
-    def get_uri_to_id_dics(self):
+    def get_uri_to_id_dicts(self):
         id_dicts = {}
         for d in ['entity_to_id', 'relation_to_id']:
             id_dicts[d] = json.load(open(osp.join(self.processed_dir, f'{d}.json')))
@@ -84,14 +93,14 @@ class Wikidata5m_trans(InMemoryDataset):
     def download(self):
         for url in self.urls:
             download_url(url, self.raw_dir)
-        compressed_dataset_path = osp.join(self.raw_dir, 'wikidata5m_transductive.tar.gz')
+        compressed_dataset_path = osp.join(self.raw_dir, f'wikidata5m_{self.setting}.tar.gz')
         with tarfile.open(compressed_dataset_path) as compressed_in:
             compressed_in.extractall(self.raw_dir)
 
         os.remove(compressed_dataset_path)
 
         for raw_file_name in ['train.txt', 'valid.txt', 'test.txt']:
-            os.rename(osp.join(self.raw_dir, f'wikidata5m_transductive_{raw_file_name}'),
+            os.rename(osp.join(self.raw_dir, f'wikidata5m_{self.setting}_{raw_file_name}'),
                       osp.join(self.raw_dir, raw_file_name))
 
     def process(self):
@@ -113,7 +122,6 @@ class Wikidata5m_trans(InMemoryDataset):
 
         for raw_file_name in ['train.txt', 'valid.txt', 'test.txt']:
             path = osp.join(self.raw_dir, raw_file_name)
-            print('raw path:', path)
 
             edge_index = []
             edge_type = []
