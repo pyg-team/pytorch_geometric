@@ -209,12 +209,12 @@ class BasicGNN(torch.nn.Module):
                 by the underlying GNN layer). (default: :obj:`None`)
             num_sampled_nodes_per_hop (List[int], optional): The number of
                 sampled nodes per hop.
-                Useful in :class:~torch_geometric.loader.NeighborLoader`
+                Useful in :class:`~torch_geometric.loader.NeighborLoader`
                 scenarios to only operate on minimal-sized representations.
                 (default: :obj:`None`)
             num_sampled_edges_per_hop (List[int], optional): The number of
                 sampled edges per hop.
-                Useful in :class:~torch_geometric.loader.NeighborLoader`
+                Useful in :class:`~torch_geometric.loader.NeighborLoader`
                 scenarios to only operate on minimal-sized representations.
                 (default: :obj:`None`)
         """
