@@ -32,17 +32,20 @@ class GTVConv(MessagePassing):
 
     Args:
         in_channels (int):
-            Size of each input sample
+            Size of each input sample.
         out_channels (int):
             Size of each output sample.
+        delta_coeff (float):
+            Step size :math:`\delta` used in computation of new adjacency
+            weights. (default: :obj:`1.0`)
+        eps (float):
+            Small number :math:`\epsilon` used to numerically stabilize the
+            computation of new adjacency weights. (default: :obj:`1e-3`)
         bias (bool):
             If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
-        delta_coeff (float):
-            Step size for gradient descent of GTV (default: :obj:`1.0`)
-        eps (float):
-            Small number used to numerically stabilize the computation of
-            new adjacency weights. (default: :obj:`1e-3`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
 
     Shapes:
         - **input:**
@@ -51,8 +54,9 @@ class GTVConv(MessagePassing):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-    def __init__(self, in_channels: int, out_channels: int, bias: bool = True,
-                 delta_coeff: float = 1., eps: float = 1e-3, **kwargs):
+    def __init__(self, in_channels: int, out_channels: int,
+                 delta_coeff: float = 1., eps: float = 1e-3, bias: bool = True,
+                 **kwargs):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
