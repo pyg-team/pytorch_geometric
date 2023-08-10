@@ -21,14 +21,16 @@ class Wikidata5m(InMemoryDataset):
     .. note::
 
         "Wikidata5m"<https://deepgraphlearning.github.io/project/wikidata5m> is
-        a large-scale knowledge graph dataset with aligned corpus extracted form Wikidata.
+        a large-scale knowledge graph dataset with aligned corpus
+        extracted form Wikidata.
 
     Args:
         root (str): Root directory where the dataset should be saved.
         split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
-        setting (str, optional): If :obj:`"transductive"`, loads the transductive dataset.
+        setting (str, optional):
+            If :obj:`"transductive"`, loads the transductive dataset.
             If :obj:`"inductive"`, loads the inductive dataset.
             (default: :obj:`"transductive"`)
         transform (callable, optional): A function/transform that takes in an
@@ -47,7 +49,8 @@ class Wikidata5m(InMemoryDataset):
 
         self.setting = setting
 
-        self.urls = ['https://www.dropbox.com/s/7jp4ib8zo3i6m10/wikidata5m_text.txt.gz?dl=1']
+        self.urls = ['https://www.dropbox.com/s/7jp4ib8zo3i6m10/'
+                     'wikidata5m_text.txt.gz?dl=1']
         if self.setting == 'inductive':
             self.urls.append('https://www.dropbox.com/s/csed3cgal3m7rzo/'
                              'wikidata5m_inductive.tar.gz?dl=1')
@@ -87,7 +90,8 @@ class Wikidata5m(InMemoryDataset):
             feature_type: Available pre-computed features: text_emb_bert
                             (384 dim bert embeddings)
 
-        Returns: Requested feature tensor indexed according to entity_to_id.json.
+        Returns: Requested feature tensor indexed according
+                    to entity_to_id.json.
 
         """
         if not osp.exists(osp.join(self.processed_dir, f'{feature_type}.pt')):
@@ -119,8 +123,8 @@ class Wikidata5m(InMemoryDataset):
         # entity IDs are assigned according to the corpus s.t.
         # indexing follows a common schema
         entity_to_id = {}
-        with gzip.open(osp.join(self.raw_dir, 'wikidata5m_text.txt.gz'), 'rt') \
-                as descriptions_file_in:
+        with gzip.open(osp.join(self.raw_dir, 'wikidata5m_text.txt.gz'),
+                       'rt') as descriptions_file_in:
             for i, line in enumerate(descriptions_file_in.readlines()):
                 values = line.strip().split('\t')
                 uri = values[0]
