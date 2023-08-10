@@ -64,6 +64,9 @@ def test_summary_basic(gcn):
 | ├─(convs)ModuleList | --                 | --             | 1,072    |
 | │    └─(0)GCNConv   | [100, 32], [2, 20] | [100, 16]      | 528      |
 | │    └─(1)GCNConv   | [100, 16], [2, 20] | [100, 32]      | 544      |
+| ├─(norms)ModuleList | --                 | --             | --       |
+| │    └─(0)Identity  | [100, 16]          | [100, 16]      | --       |
+| │    └─(1)Identity  | --                 | --             | --       |
 +---------------------+--------------------+----------------+----------+
 """
     assert summary(gcn['model'], gcn['x'], gcn['edge_index']) == expected[1:-1]
@@ -81,6 +84,9 @@ def test_summary_with_sparse_tensor(gcn):
 | ├─(convs)ModuleList | --                    | --             | 1,072    |
 | │    └─(0)GCNConv   | [100, 32], [100, 100] | [100, 16]      | 528      |
 | │    └─(1)GCNConv   | [100, 16], [100, 100] | [100, 32]      | 544      |
+| ├─(norms)ModuleList | --                    | --             | --       |
+| │    └─(0)Identity  | [100, 16]             | [100, 16]      | --       |
+| │    └─(1)Identity  | --                    | --             | --       |
 +---------------------+-----------------------+----------------+----------+
 """
     assert summary(gcn['model'], gcn['x'], gcn['adj_t']) == expected[1:-1]
@@ -96,10 +102,15 @@ def test_summary_with_max_depth(gcn):
 | ├─(dropout)Dropout  | [100, 16]          | [100, 16]      | --       |
 | ├─(act)ReLU         | [100, 16]          | [100, 16]      | --       |
 | ├─(convs)ModuleList | --                 | --             | 1,072    |
+| ├─(norms)ModuleList | --                 | --             | --       |
 +---------------------+--------------------+----------------+----------+
 """
-    assert summary(gcn['model'], gcn['x'], gcn['edge_index'],
-                   max_depth=1) == expected[1:-1]
+    assert summary(
+        gcn['model'],
+        gcn['x'],
+        gcn['edge_index'],
+        max_depth=1,
+    ) == expected[1:-1]
 
 
 @withPackage('tabulate')
@@ -118,10 +129,17 @@ def test_summary_with_leaf_module(gcn):
 | │    └─(1)GCNConv                       | [100, 16], [2, 20] | [100, 32]      | 544      |
 | │    │    └─(aggr_module)SumAggregation | [120, 32], [120]   | [100, 32]      | --       |
 | │    │    └─(lin)Linear                 | [100, 16]          | [100, 32]      | 512      |
+| ├─(norms)ModuleList                     | --                 | --             | --       |
+| │    └─(0)Identity                      | [100, 16]          | [100, 16]      | --       |
+| │    └─(1)Identity                      | --                 | --             | --       |
 +-----------------------------------------+--------------------+----------------+----------+
 """
-    assert summary(gcn['model'], gcn['x'], gcn['edge_index'],
-                   leaf_module=None) == expected[13:-1]
+    assert summary(
+        gcn['model'],
+        gcn['x'],
+        gcn['edge_index'],
+        leaf_module=None,
+    ) == expected[13:-1]
 
 
 @withPackage('tabulate')
