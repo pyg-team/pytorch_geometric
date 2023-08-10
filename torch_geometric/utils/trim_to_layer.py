@@ -95,7 +95,7 @@ class TrimToLayer(torch.nn.Module):
         x: Tensor,
         edge_index: Adj,
         edge_attr: Optional[Tensor] = None,
-    ) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+    ) -> Tuple[Tensor, Adj, Optional[Tensor]]:
 
         if (not isinstance(num_sampled_nodes_per_hop, list)
                 and isinstance(num_sampled_edges_per_hop, list)):

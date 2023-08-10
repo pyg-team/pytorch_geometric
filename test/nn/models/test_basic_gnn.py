@@ -138,6 +138,16 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+def test_jittable():
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    model = GCN(8, 16, num_layers=2).jittable()
+    model = torch.jit.script(model)
+
+    assert model(x, edge_index).size() == (3, 16)
+
+
 @pytest.mark.parametrize('out_dim', out_dims)
 @pytest.mark.parametrize('jk', jks)
 def test_one_layer_gnn(out_dim, jk):
