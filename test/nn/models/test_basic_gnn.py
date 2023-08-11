@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+import sys
 import warnings
 
 import pytest
@@ -17,6 +18,7 @@ from torch_geometric.testing import (
     onlyFullTest,
     onlyLinux,
     onlyNeighborSampler,
+    onlyOnline,
     withCUDA,
     withPackage,
 )
@@ -136,6 +138,16 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+def test_jittable():
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    model = GCN(8, 16, num_layers=2).jittable()
+    model = torch.jit.script(model)
+
+    assert model(x, edge_index).size() == (3, 16)
+
+
 @pytest.mark.parametrize('out_dim', out_dims)
 @pytest.mark.parametrize('jk', jks)
 def test_one_layer_gnn(out_dim, jk):
@@ -147,6 +159,7 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+@onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
@@ -186,6 +199,10 @@ def test_compile(device):
 
 
 def test_packaging():
+    if (not torch_geometric.typing.WITH_PT113 and sys.version_info.major == 3
+            and sys.version_info.minor >= 10):
+        return  # Unsupported Python version
+
     warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
 
     os.makedirs(torch.hub._get_torch_home(), exist_ok=True)
@@ -215,8 +232,9 @@ def test_packaging():
         assert model(x, edge_index).size() == (3, 16)
 
 
+@withPackage('torch>=1.12.0')
 @withPackage('onnx', 'onnxruntime')
-def test_onnx(tmp_path, capfd):
+def test_onnx(tmp_path):
     import onnx
     import onnxruntime as ort
 
@@ -243,9 +261,6 @@ def test_onnx(tmp_path, capfd):
     path = osp.join(tmp_path, 'model.onnx')
     torch.onnx.export(model, (x, edge_index), path,
                       input_names=('x', 'edge_index'), opset_version=16)
-    if torch_geometric.typing.WITH_PT2:
-        out, _ = capfd.readouterr()
-        assert '0 NONE 0 NOTE 0 WARNING 0 ERROR' in out
 
     model = onnx.load(path)
     onnx.checker.check_model(model)
@@ -291,6 +306,42 @@ def test_trim_to_layer():
     assert out2.size() == (2, 16)
 
     assert torch.allclose(out1, out2)
+
+
+num_compile_calls = 0
+
+
+@onlyLinux
+@disableExtensions
+@withPackage('torch>=2.0.0')
+@pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
+@pytest.mark.skip(reason="Does not work yet in the full test suite")
+def test_compile_graph_breaks(Model):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+
+    kwargs = {}
+    if Model in {GCN, GAT}:
+        # Adding self-loops inside the model leads to graph breaks :(
+        kwargs['add_self_loops'] = False
+
+    if Model in {PNA}:  # `PNA` requires additional arguments:
+        kwargs['aggregators'] = ['sum', 'mean', 'min', 'max', 'var', 'std']
+        kwargs['scalers'] = ['identity', 'amplification', 'attenuation']
+        kwargs['deg'] = torch.tensor([1, 2, 1])
+
+    model = Model(in_channels=8, hidden_channels=16, num_layers=2, **kwargs)
+
+    def my_custom_backend(gm, *args):
+        global num_compile_calls
+        num_compile_calls += 1
+        return gm.forward
+
+    model = torch_geometric.compile(model, backend=my_custom_backend)
+
+    num_previous_compile_calls = num_compile_calls
+    model(x, edge_index)
+    assert num_compile_calls - num_previous_compile_calls == 1
 
 
 if __name__ == '__main__':

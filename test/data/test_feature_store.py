@@ -4,14 +4,13 @@ import pytest
 import torch
 
 from torch_geometric.data import TensorAttr
-from torch_geometric.data.feature_store import AttrView, _field_status
+from torch_geometric.data.feature_store import AttrView, _FieldStatus
 from torch_geometric.testing import MyFeatureStore
 
 
 @dataclass
 class MyTensorAttrNoGroupName(TensorAttr):
-    def __init__(self, attr_name=_field_status.UNSET,
-                 index=_field_status.UNSET):
+    def __init__(self, attr_name=_FieldStatus.UNSET, index=_FieldStatus.UNSET):
         # Treat group_name as optional, and move it to the end
         super().__init__(None, attr_name, index)
 
@@ -24,7 +23,7 @@ class MyFeatureStoreNoGroupName(MyFeatureStore):
 
 def test_feature_store():
     store = MyFeatureStore()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    tensor = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]])
 
     group_name = 'A'
     attr_name = 'feat'
@@ -94,7 +93,7 @@ def test_feature_store():
 
 def test_feature_store_override():
     store = MyFeatureStoreNoGroupName()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    tensor = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]])
 
     attr_name = 'feat'
     index = torch.tensor([0, 1, 2])

@@ -24,7 +24,7 @@ class LocalDegreeProfile(BaseTransform):
         from torch_geometric.nn.aggr.fused import FusedAggregation
         self.aggr = FusedAggregation(['min', 'max', 'mean', 'std'])
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         row, col = data.edge_index
         N = data.num_nodes
 

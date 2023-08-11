@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -9,10 +10,6 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import PPI
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GCN2Conv
-from torch_geometric.typing import WITH_TORCH_SPARSE
-
-if not WITH_TORCH_SPARSE:
-    quit("This example requires 'torch-sparse'")
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'GCN2_PPI')
 pre_transform = T.Compose([T.GCNNorm(), T.ToSparseTensor()])
@@ -93,9 +90,13 @@ def test(loader):
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
 
+times = []
 for epoch in range(1, 2001):
+    start = time.time()
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)
     print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Val: {val_f1:.4f}, '
           f'Test: {test_f1:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

@@ -34,7 +34,7 @@ class Constant(BaseTransform):
         self.cat = cat
         self.node_types = node_types
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

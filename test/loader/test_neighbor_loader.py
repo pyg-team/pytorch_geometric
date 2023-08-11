@@ -9,19 +9,21 @@ import torch
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GraphConv, to_hetero
+from torch_geometric.sampler.base import SubgraphType
 from torch_geometric.testing import (
     MyFeatureStore,
     MyGraphStore,
     get_random_edge_index,
     onlyLinux,
     onlyNeighborSampler,
+    onlyOnline,
+    withCUDA,
     withPackage,
 )
-from torch_geometric.typing import WITH_PYG_LIB
+from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.utils import (
     is_undirected,
     sort_edge_index,
-    to_torch_csc_tensor,
     to_torch_csr_tensor,
     to_undirected,
 )
@@ -31,25 +33,30 @@ def is_subset(subedge_index, edge_index, src_idx, dst_idx):
     num_nodes = int(edge_index.max()) + 1
     idx = num_nodes * edge_index[0] + edge_index[1]
     subidx = num_nodes * src_idx[subedge_index[0]] + dst_idx[subedge_index[1]]
-    mask = torch.from_numpy(np.isin(subidx, idx))
+    mask = torch.from_numpy(np.isin(subidx.cpu().numpy(), idx.cpu().numpy()))
     return int(mask.sum()) == mask.numel()
 
 
+@withCUDA
 @onlyNeighborSampler
-@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+@pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
-@pytest.mark.parametrize('filter_per_worker', [True, False])
-def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
-    if dtype != torch.int64 and not WITH_PYG_LIB:
+@pytest.mark.parametrize('filter_per_worker', [None, True, False])
+def test_homo_neighbor_loader_basic(device, subgraph_type, dtype,
+                                    filter_per_worker):
+    if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
+        return
+    if (dtype != torch.int64
+            and (not WITH_PYG_LIB or subgraph_type == SubgraphType.induced)):
         return
 
     torch.manual_seed(12345)
 
     data = Data()
 
-    data.x = torch.arange(100)
-    data.edge_index = get_random_edge_index(100, 100, 500, dtype)
-    data.edge_attr = torch.arange(500)
+    data.x = torch.arange(100, device=device)
+    data.edge_index = get_random_edge_index(100, 100, 500, dtype, device)
+    data.edge_attr = torch.arange(500, device=device)
 
     loader = NeighborLoader(
         data,
@@ -68,19 +75,25 @@ def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
 
     for i, batch in enumerate(loader):
         assert isinstance(batch, Data)
+        assert batch.x.device == device
         assert batch.x.size(0) <= 100
         assert batch.n_id.size() == (batch.num_nodes, )
         assert batch.input_id.numel() == batch.batch_size == 20
         assert batch.x.min() >= 0 and batch.x.max() < 100
+        assert batch.edge_index.device == device
         assert batch.edge_index.min() >= 0
         assert batch.edge_index.max() < batch.num_nodes
+        assert batch.edge_attr.device == device
+        assert batch.edge_attr.size(0) == batch.edge_index.size(1)
 
         # Input nodes are always sampled first:
         assert torch.equal(
             batch.x[:batch.batch_size],
-            torch.arange(i * batch.batch_size, (i + 1) * batch.batch_size))
+            torch.arange(i * batch.batch_size, (i + 1) * batch.batch_size,
+                         device=device),
+        )
 
-        if subgraph_type == 'directional':
+        if subgraph_type != SubgraphType.bidirectional:
             assert batch.e_id.size() == (batch.num_edges, )
             assert batch.edge_attr.min() >= 0
             assert batch.edge_attr.max() < 500
@@ -94,10 +107,13 @@ def test_homo_neighbor_loader_basic(subgraph_type, dtype, filter_per_worker):
 
 
 @onlyNeighborSampler
-@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+@pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 @pytest.mark.parametrize('dtype', [torch.int64, torch.int32])
 def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
-    if dtype != torch.int64 and not WITH_PYG_LIB:
+    if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
+        return
+    if (dtype != torch.int64
+            and (not WITH_PYG_LIB or subgraph_type == SubgraphType.induced)):
         return
 
     torch.manual_seed(12345)
@@ -154,14 +170,12 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         # Test node type selection:
         assert set(batch.node_types) == {'paper', 'author'}
 
-        assert len(batch['paper']) == 5 if WITH_PYG_LIB else 4
         assert batch['paper'].n_id.size() == (batch['paper'].num_nodes, )
         assert batch['paper'].x.size(0) <= 100
         assert batch['paper'].input_id.numel() == batch_size
         assert batch['paper'].batch_size == batch_size
         assert batch['paper'].x.min() >= 0 and batch['paper'].x.max() < 100
 
-        assert len(batch['author']) == 3 if WITH_PYG_LIB else 2
         assert batch['author'].n_id.size() == (batch['author'].num_nodes, )
         assert batch['author'].x.size(0) <= 200
         assert batch['author'].x.min() >= 100 and batch['author'].x.max() < 300
@@ -175,7 +189,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert row.min() >= 0 and row.max() < batch['paper'].num_nodes
         assert col.min() >= 0 and col.max() < batch['paper'].num_nodes
 
-        if subgraph_type != 'bidirectional':
+        if subgraph_type != SubgraphType.bidirectional:
             assert batch['paper', 'paper'].e_id.size() == (row.numel(), )
             value = batch['paper', 'paper'].edge_attr
             assert value.min() >= 0 and value.max() < 500
@@ -186,7 +200,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
                 batch['paper'].x,
                 batch['paper'].x,
             )
-        elif subgraph_type != 'directional':
+        elif subgraph_type != SubgraphType.directional:
             assert 'e_id' not in batch['paper', 'paper']
             assert 'edge_attr' not in batch['paper', 'paper']
 
@@ -196,7 +210,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert row.min() >= 0 and row.max() < batch['paper'].num_nodes
         assert col.min() >= 0 and col.max() < batch['author'].num_nodes
 
-        if subgraph_type != 'bidirectional':
+        if subgraph_type != SubgraphType.bidirectional:
             assert batch['paper', 'author'].e_id.size() == (row.numel(), )
             value = batch['paper', 'author'].edge_attr
             assert value.min() >= 500 and value.max() < 1500
@@ -207,7 +221,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
                 batch['paper'].x,
                 batch['author'].x - 100,
             )
-        elif subgraph_type != 'directional':
+        elif subgraph_type != SubgraphType.directional:
             assert 'e_id' not in batch['paper', 'author']
             assert 'edge_attr' not in batch['paper', 'author']
 
@@ -220,7 +234,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert row.min() >= 0 and row.max() < batch['author'].num_nodes
         assert col.min() >= 0 and col.max() < batch['paper'].num_nodes
 
-        if subgraph_type != 'bidirectional':
+        if subgraph_type != SubgraphType.bidirectional:
             assert batch['author', 'paper'].e_id.size() == (row.numel(), )
             value = batch['author', 'paper'].edge_attr
             assert value.min() >= 1500 and value.max() < 2500
@@ -231,7 +245,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
                 batch['author'].x - 100,
                 batch['paper'].x,
             )
-        elif subgraph_type != 'directional':
+        elif subgraph_type != SubgraphType.directional:
             assert 'e_id' not in batch['author', 'paper']
             assert 'edge_attr' not in batch['author', 'paper']
 
@@ -244,9 +258,12 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert not batch.has_isolated_nodes()
 
 
+@onlyOnline
 @onlyNeighborSampler
-@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+@pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
+    if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
+        return
     dataset = get_dataset(name='Cora')
     data = dataset[0]
 
@@ -287,9 +304,12 @@ def test_homo_neighbor_loader_on_cora(get_dataset, subgraph_type):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@onlyOnline
 @onlyNeighborSampler
-@pytest.mark.parametrize('subgraph_type', ['directional', 'bidirectional'])
+@pytest.mark.parametrize('subgraph_type', list(SubgraphType))
 def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
+    if subgraph_type == SubgraphType.induced and not WITH_TORCH_SPARSE:
+        return
     dataset = get_dataset(name='Cora')
     data = dataset[0]
 
@@ -331,6 +351,7 @@ def test_hetero_neighbor_loader_on_cora(get_dataset, subgraph_type):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
+@onlyOnline
 @withPackage('pyg_lib')
 def test_temporal_hetero_neighbor_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
@@ -367,7 +388,8 @@ def test_custom_neighbor_loader():
     feature_store.put_tensor(x, group_name='author', attr_name='x', index=None)
 
     # COO:
-    edge_index = get_random_edge_index(100, 100, 500)
+    edge_index = get_random_edge_index(100, 100, 500, coalesce=True)
+    edge_index = edge_index[:, torch.randperm(edge_index.size(1))]
     data['paper', 'to', 'paper'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
     graph_store.put_edge_index(edge_index=coo,
@@ -375,7 +397,7 @@ def test_custom_neighbor_loader():
                                layout='coo', size=(100, 100))
 
     # CSR:
-    edge_index = get_random_edge_index(100, 200, 1000)
+    edge_index = get_random_edge_index(100, 200, 1000, coalesce=True)
     data['paper', 'to', 'author'].edge_index = edge_index
     adj = to_torch_csr_tensor(edge_index, size=(100, 200))
     csr = (adj.crow_indices(), adj.col_indices())
@@ -384,16 +406,16 @@ def test_custom_neighbor_loader():
                                layout='csr', size=(100, 200))
 
     # CSC:
-    edge_index = get_random_edge_index(200, 100, 1000)
+    edge_index = get_random_edge_index(200, 100, 1000, coalesce=True)
     data['author', 'to', 'paper'].edge_index = edge_index
-    adj = to_torch_csc_tensor(edge_index, size=(200, 100))
-    csc = (adj.row_indices(), adj.ccol_indices())
+    adj = to_torch_csr_tensor(edge_index.flip([0]), size=(100, 200))
+    csc = (adj.col_indices(), adj.crow_indices())
     graph_store.put_edge_index(edge_index=csc,
                                edge_type=('author', 'to', 'paper'),
                                layout='csc', size=(200, 100))
 
     # COO (sorted):
-    edge_index = get_random_edge_index(200, 200, 100)
+    edge_index = get_random_edge_index(200, 200, 100, coalesce=True)
     edge_index = edge_index[:, edge_index[1].argsort()]
     data['author', 'to', 'author'].edge_index = edge_index
     coo = (edge_index[0], edge_index[1])
@@ -414,24 +436,23 @@ def test_custom_neighbor_loader():
     assert len(loader1) == len(loader2)
 
     for batch1, batch2 in zip(loader1, loader2):
-        # loader2 explicitly adds `num_nodes` to the batch
+        # `loader2` explicitly adds `num_nodes` to the batch:
         assert len(batch1) + 1 == len(batch2)
         assert batch1['paper'].batch_size == batch2['paper'].batch_size
 
-        # Mapped indices of neighbors may be differently sorted:
-        assert torch.allclose(batch1['paper'].x.sort()[0],
-                              batch2['paper'].x.sort()[0])
-        assert torch.allclose(batch1['author'].x.sort()[0],
-                              batch2['author'].x.sort()[0])
+        # Mapped indices of neighbors may be differently sorted ...
+        for node_type in data.node_types:
+            assert torch.allclose(
+                batch1[node_type].x.sort()[0],
+                batch2[node_type].x.sort()[0],
+            )
 
-        assert (batch1['paper', 'to', 'paper'].edge_index.size() == batch1[
-            'paper', 'to', 'paper'].edge_index.size())
-        assert (batch1['paper', 'to', 'author'].edge_index.size() == batch1[
-            'paper', 'to', 'author'].edge_index.size())
-        assert (batch1['author', 'to', 'paper'].edge_index.size() == batch1[
-            'author', 'to', 'paper'].edge_index.size())
+        # ... but should sample the exact same number of edges:
+        for edge_type in data.edge_types:
+            assert batch1[edge_type].num_edges == batch2[edge_type].num_edges
 
 
+@onlyOnline
 @withPackage('pyg_lib')
 def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
     # Initialize dataset (once):
@@ -494,12 +515,11 @@ def test_temporal_custom_neighbor_loader_on_cora(get_dataset):
         assert torch.equal(batch1['paper'].time, batch2['paper'].time)
 
 
-@withPackage('pyg_lib')
-@withPackage('torch_sparse')
+@withPackage('pyg_lib', 'torch_sparse')
 def test_pyg_lib_and_torch_sparse_homo_equality():
     edge_index = get_random_edge_index(20, 20, 100)
-    adj = to_torch_csc_tensor(edge_index, size=(20, 20))
-    colptr, row = adj.ccol_indices(), adj.row_indices()
+    adj = to_torch_csr_tensor(edge_index.flip([0]), size=(20, 20))
+    colptr, row = adj.crow_indices(), adj.col_indices()
 
     seed = torch.arange(10)
 
@@ -516,16 +536,15 @@ def test_pyg_lib_and_torch_sparse_homo_equality():
     assert torch.equal(edge_id1, edge_id2)
 
 
-@withPackage('pyg_lib')
-@withPackage('torch_sparse')
+@withPackage('pyg_lib', 'torch_sparse')
 def test_pyg_lib_and_torch_sparse_hetero_equality():
     edge_index = get_random_edge_index(20, 10, 50)
-    adj = to_torch_csc_tensor(edge_index, size=(20, 10))
-    colptr1, row1 = adj.ccol_indices(), adj.row_indices()
+    adj = to_torch_csr_tensor(edge_index.flip([0]), size=(10, 20))
+    colptr1, row1 = adj.crow_indices(), adj.col_indices()
 
     edge_index = get_random_edge_index(10, 20, 50)
-    adj = to_torch_csc_tensor(edge_index, size=(10, 20))
-    colptr2, row2 = adj.ccol_indices(), adj.row_indices()
+    adj = to_torch_csr_tensor(edge_index.flip([0]), size=(20, 10))
+    colptr2, row2 = adj.crow_indices(), adj.col_indices()
 
     node_types = ['paper', 'author']
     edge_types = [('paper', 'to', 'author'), ('author', 'to', 'paper')]
@@ -599,7 +618,7 @@ def test_cpu_affinity_neighbor_loader(loader_cores):
 
     out = []
     with loader.enable_cpu_affinity(loader_cores):
-        iterator = loader._get_iterator().iterator
+        iterator = loader._get_iterator()
         workers = iterator._workers
         for worker in workers:
             sleep(1)  # Gives time for worker to initialize.

@@ -31,7 +31,7 @@ class RemoveDuplicatedEdges(BaseTransform):
         self.keys = key
         self.reduce = reduce
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

@@ -21,7 +21,7 @@ import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
-from torch_geometric.nn.aggr import Aggregation, MultiAggregation
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv.utils.inspector import (
     Inspector,
     func_body_repr,
@@ -130,18 +130,12 @@ class MessagePassing(torch.nn.Module):
 
         if aggr is None:
             self.aggr = None
-            self.aggr_module = None
         elif isinstance(aggr, (str, Aggregation)):
             self.aggr = str(aggr)
-            self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         elif isinstance(aggr, (tuple, list)):
             self.aggr = [str(x) for x in aggr]
-            self.aggr_module = MultiAggregation(aggr, **(aggr_kwargs or {}))
-        else:
-            raise ValueError(
-                f"Only strings, list, tuples and instances of"
-                f"`torch_geometric.nn.aggr.Aggregation` are "
-                f"valid aggregation schemes (got '{type(aggr)}').")
+
+        self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
 
         self.flow = flow
 
@@ -223,7 +217,7 @@ class MessagePassing(torch.nn.Module):
             if edge_index.dim() != 2:
                 raise ValueError(f"Expected 'edge_index' to be two-dimensional"
                                  f" (got {edge_index.dim()} dimensions)")
-            if edge_index.size(0) != 2:
+            if not torch.jit.is_tracing() and edge_index.size(0) != 2:
                 raise ValueError(f"Expected 'edge_index' to have size '2' in "
                                  f"the first dimension (got "
                                  f"'{edge_index.size(0)}')")
@@ -774,7 +768,8 @@ class MessagePassing(torch.nn.Module):
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
-        jittable module.
+        jittable module that can be used in combination with
+        :meth:`torch.jit.script`.
 
         Args:
             typing (str, optional): If given, will generate a concrete instance

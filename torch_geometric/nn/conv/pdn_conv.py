@@ -15,7 +15,7 @@ class PDNConv(MessagePassing):
     <https://arxiv.org/pdf/2010.12878.pdf>`_ paper
 
     .. math::
-        \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(v) \cup
+        \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i) \cup
         \{i\}}f_{\Theta}(\textbf{e}_{(j,i)}) \cdot f_{\Omega}(\mathbf{x}_{j})
 
     where :math:`z_{i,j}` denotes the edge feature vector from source node
@@ -68,7 +68,7 @@ class PDNConv(MessagePassing):
         )
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter("bias", None)
 

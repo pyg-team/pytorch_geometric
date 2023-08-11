@@ -1,12 +1,14 @@
 import copy
+import logging
 import math
 from collections.abc import Sequence
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.data import (
     Data,
     FeatureStore,
@@ -27,10 +29,29 @@ from torch_geometric.typing import (
 )
 
 
-def index_select(value: FeatureTensorType, index: Tensor,
-                 dim: int = 0) -> Tensor:
+def index_select(
+    value: FeatureTensorType,
+    index: Tensor,
+    dim: int = 0,
+) -> Tensor:
+    r"""Indexes the :obj:`value` tensor along dimension :obj:`dim` using the
+    entries in :obj:`index`.
 
-    # PyTorch currently only supports indexing via `torch.int64` :(
+    Args:
+        value (torch.Tensor or np.ndarray): The input tensor.
+        index (torch.Tensor): The 1-D tensor containing the indices to index.
+        dim (int, optional): The dimension in which to index.
+            (default: :obj:`0`)
+
+    .. warning::
+
+        :obj:`index` is casted to a :obj:`torch.int64` tensor internally, as
+        `PyTorch currently only supports indexing
+        <https://github.com/pytorch/pytorch/issues/61819>`_ via
+        :obj:`torch.int64`.
+    """
+    # PyTorch currently only supports indexing via `torch.int64`:
+    # https://github.com/pytorch/pytorch/issues/61819
     index = index.to(torch.int64)
 
     if isinstance(value, Tensor):
@@ -41,7 +62,11 @@ def index_select(value: FeatureTensorType, index: Tensor,
             size = list(value.shape)
             size[dim] = index.numel()
             numel = math.prod(size)
-            storage = value.storage()._new_shared(numel)
+            if torch_geometric.typing.WITH_PT2:
+                storage = value.untyped_storage()._new_shared(
+                    numel * value.element_size())
+            else:
+                storage = value.storage()._new_shared(numel)
             out = value.new(storage).view(size)
 
         return torch.index_select(value, dim, index, out=out)
@@ -322,3 +347,12 @@ def get_edge_label_index(
             return edge_type, _get_edge_index(edge_type)
 
         return edge_type, edge_label_index
+
+
+def infer_filter_per_worker(data: Any) -> bool:
+    out = True
+    if isinstance(data, (Data, HeteroData)) and data.is_cuda:
+        out = False
+    logging.debug(f"Inferred 'filter_per_worker={out}' option for feature "
+                  f"fetching routines of the data loader")
+    return out

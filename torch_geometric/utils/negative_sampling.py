@@ -9,11 +9,13 @@ from torch_geometric.utils import coalesce, degree, remove_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
-def negative_sampling(edge_index: Tensor,
-                      num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
-                      num_neg_samples: Optional[int] = None,
-                      method: str = "sparse",
-                      force_undirected: bool = False) -> Tensor:
+def negative_sampling(
+    edge_index: Tensor,
+    num_nodes: Optional[Union[int, Tuple[int, int]]] = None,
+    num_neg_samples: Optional[int] = None,
+    method: str = "sparse",
+    force_undirected: bool = False,
+) -> Tensor:
     r"""Samples random negative edges of a graph given by :attr:`edge_index`.
 
     Args:

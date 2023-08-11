@@ -11,24 +11,24 @@ MISSING = '???'
 
 
 @torch.jit._overload
-def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):
+def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
     # type: (Tensor, str, Optional[int], bool) -> Tensor  # noqa
     pass
 
 
 @torch.jit._overload
-def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):
+def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
     # type: (Tensor, Optional[Tensor], Optional[int], bool) -> Tuple[Tensor, Optional[Tensor]]  # noqa
     pass
 
 
 @torch.jit._overload
-def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):
+def sort_edge_index(edge_index, edge_attr, num_nodes, sort_by_row):  # noqa
     # type: (Tensor, List[Tensor], Optional[int], bool) -> Tuple[Tensor, List[Tensor]]  # noqa
     pass
 
 
-def sort_edge_index(
+def sort_edge_index(  # noqa
     edge_index: Tensor,
     edge_attr: Union[OptTensor, List[Tensor], str] = MISSING,
     num_nodes: Optional[int] = None,
@@ -37,15 +37,16 @@ def sort_edge_index(
     """Row-wise sorts :obj:`edge_index`.
 
     Args:
-        edge_index (LongTensor): The edge indices.
-        edge_attr (Tensor or List[Tensor], optional): Edge weights or multi-
-            dimensional edge features.
+        edge_index (torch.Tensor): The edge indices.
+        edge_attr (torch.Tensor or List[torch.Tensor], optional): Edge weights
+            or multi-dimensional edge features.
             If given as a list, will re-shuffle and remove duplicates for all
             its entries. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
         sort_by_row (bool, optional): If set to :obj:`False`, will sort
-            :obj:`edge_index` column-wise.
+            :obj:`edge_index` column-wise/by destination node.
+            (default: :obj:`True`)
 
     :rtype: :class:`LongTensor` if :attr:`edge_attr` is not passed, else
         (:class:`LongTensor`, :obj:`Optional[Tensor]` or :obj:`List[Tensor]]`)
@@ -80,7 +81,12 @@ def sort_edge_index(
 
     _, perm = index_sort(idx, max_value=num_nodes * num_nodes)
 
-    edge_index = edge_index[:, perm]
+    if isinstance(edge_index, Tensor):
+        edge_index = edge_index[:, perm]
+    elif isinstance(edge_index, tuple):
+        edge_index = (edge_index[0][perm], edge_index[1][perm])
+    else:
+        raise NotImplementedError
 
     if edge_attr is None:
         return edge_index, None

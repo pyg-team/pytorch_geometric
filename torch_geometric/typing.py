@@ -6,6 +6,12 @@ import torch
 from torch import Tensor
 
 WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
+WITH_PT111 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 11
+WITH_PT112 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 12
+WITH_PT113 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 13
+
+if not hasattr(torch, 'sparse_csc'):
+    torch.sparse_csc = -1
 
 try:
     import pyg_lib  # noqa
@@ -13,6 +19,7 @@ try:
     WITH_GMM = WITH_PT2 and hasattr(pyg_lib.ops, 'grouped_matmul')
     WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
     WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
+    WITH_METIS = hasattr(pyg_lib, 'partition')
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
@@ -22,6 +29,7 @@ except (ImportError, OSError) as e:
     WITH_GMM = False
     WITH_SAMPLED_OP = False
     WITH_INDEX_SORT = False
+    WITH_METIS = False
 
 try:
     import torch_scatter  # noqa
@@ -36,11 +44,28 @@ except (ImportError, OSError) as e:
 try:
     import torch_cluster  # noqa
     WITH_TORCH_CLUSTER = True
+    WITH_TORCH_CLUSTER_BATCH_SIZE = 'batch_size' in torch_cluster.knn.__doc__
 except (ImportError, OSError) as e:
     if isinstance(e, OSError):
         warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_CLUSTER = False
+
+    class TorchCluster:
+        def __getattr__(self, key: str):
+            raise ImportError(f"'{key}' requires 'torch-cluster'")
+
+    torch_cluster = TorchCluster()
+
+try:
+    import torch_spline_conv  # noqa
+    WITH_TORCH_SPLINE_CONV = True
+except (ImportError, OSError) as e:
+    if isinstance(e, OSError):
+        warnings.warn(
+            f"An issue occurred while importing 'torch-spline-conv'. "
+            f"Disabling its usage. Stacktrace: {e}")
+    WITH_TORCH_SPLINE_CONV = False
 
 try:
     import torch_sparse  # noqa
@@ -53,7 +78,21 @@ except (ImportError, OSError) as e:
     WITH_TORCH_SPARSE = False
 
     class SparseStorage:
-        def __init__(*args, **kwargs):
+        def __init__(
+            self,
+            row: Optional[Tensor] = None,
+            rowptr: Optional[Tensor] = None,
+            col: Optional[Tensor] = None,
+            value: Optional[Tensor] = None,
+            sparse_sizes: Optional[Tuple[Optional[int], Optional[int]]] = None,
+            rowcount: Optional[Tensor] = None,
+            colptr: Optional[Tensor] = None,
+            colcount: Optional[Tensor] = None,
+            csr2csc: Optional[Tensor] = None,
+            csc2csr: Optional[Tensor] = None,
+            is_sorted: bool = False,
+            trust_data: bool = False,
+        ):
             raise ImportError("'SparseStorage' requires 'torch-sparse'")
 
     class SparseTensor:
@@ -80,7 +119,15 @@ except (ImportError, OSError) as e:
         ) -> 'SparseTensor':
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
+        @classmethod
+        def from_dense(self, mat: Tensor,
+                       has_value: bool = True) -> 'SparseTensor':
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
         def size(self, dim: int) -> int:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def nnz(self) -> int:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         def is_cuda(self) -> bool:
@@ -101,6 +148,9 @@ except (ImportError, OSError) as e:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         def csr(self) -> Tuple[Tensor, Tensor, Optional[Tensor]]:
+            raise ImportError("'SparseTensor' requires 'torch-sparse'")
+
+        def requires_grad(self) -> bool:
             raise ImportError("'SparseTensor' requires 'torch-sparse'")
 
         def to_torch_sparse_csr_tensor(
@@ -139,6 +189,27 @@ except (ImportError, OSError) as e:
             raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
 
 
+class MockTorchCSCTensor:
+    def __init__(
+        self,
+        edge_index: Tensor,
+        edge_attr: Optional[Tensor] = None,
+        size: Optional[Union[int, Tuple[int, int]]] = None,
+    ):
+        self.edge_index = edge_index
+        self.edge_attr = edge_attr
+        self.size = size
+
+    def t(self) -> Tensor:  # Only support accessing its transpose:
+        from torch_geometric.utils import to_torch_csr_tensor
+        size = self.size
+        return to_torch_csr_tensor(
+            self.edge_index.flip([0]),
+            self.edge_attr,
+            size[::-1] if isinstance(size, (tuple, list)) else size,
+        )
+
+
 # Types for accessing data ####################################################
 
 # Node-types are denoted by a single string, e.g.: `data['paper']`:
@@ -147,6 +218,8 @@ NodeType = str
 # Edge-types are denotes by a triplet of strings, e.g.:
 # `data[('author', 'writes', 'paper')]
 EdgeType = Tuple[str, str, str]
+
+NodeOrEdgeType = Union[NodeType, EdgeType]
 
 DEFAULT_REL = 'to'
 EDGE_TYPE_STR_SPLIT = '__'

@@ -62,8 +62,8 @@ class RENet(torch.nn.Module):
         self.seq_len = seq_len
         self.dropout = dropout
 
-        self.ent = Parameter(torch.Tensor(num_nodes, hidden_channels))
-        self.rel = Parameter(torch.Tensor(num_rels, hidden_channels))
+        self.ent = Parameter(torch.empty(num_nodes, hidden_channels))
+        self.rel = Parameter(torch.empty(num_rels, hidden_channels))
 
         self.sub_gru = GRU(3 * hidden_channels, hidden_channels, num_layers,
                            batch_first=True, bias=bias)
@@ -94,7 +94,7 @@ class RENet(torch.nn.Module):
         of a :class:`torch_geometric.datasets.icews.EventDataset` with
         :math:`k` denoting the sequence length :obj:`seq_len`.
         """
-        class PreTransform(object):
+        class PreTransform:
             def __init__(self, seq_len: int):
                 self.seq_len = seq_len
                 self.inc = 5000

@@ -124,7 +124,7 @@ class GCNConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{\Theta}^{\top} \sum_{j \in
-        \mathcal{N}(v) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
+        \mathcal{N}(i) \cup \{ i \}} \frac{e_{j,i}}{\sqrt{\hat{d}_j
         \hat{d}_i}} \mathbf{x}_j
 
     with :math:`\hat{d}_i = 1 + \sum_{j \in \mathcal{N}(i)} e_{j,i}`, where
@@ -161,15 +161,20 @@ class GCNConv(MessagePassing):
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, in_channels: int, out_channels: int,
-                 improved: bool = False, cached: bool = False,
-                 add_self_loops: bool = True, normalize: bool = True,
-                 bias: bool = True, **kwargs):
-
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        improved: bool = False,
+        cached: bool = False,
+        add_self_loops: bool = True,
+        normalize: bool = True,
+        bias: bool = True,
+        **kwargs,
+    ):
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
@@ -187,7 +192,7 @@ class GCNConv(MessagePassing):
                           weight_initializer='glorot')
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -202,6 +207,13 @@ class GCNConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
+
+        if isinstance(x, (tuple, list)):
+            raise ValueError(f"'{self.__class__.__name__}' received a tuple "
+                             f"of node features as input while this layer "
+                             f"does not support bipartite message passing. "
+                             f"Please try other layers such as 'SAGEConv' or "
+                             f"'GraphConv' instead")
 
         if self.normalize:
             if isinstance(edge_index, Tensor):
