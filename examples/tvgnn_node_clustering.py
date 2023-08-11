@@ -19,9 +19,8 @@ data = data.to(device)
 
 class Net(torch.nn.Module):
     def __init__(self, in_channels, n_clusters, mp_layers=2, mp_channels=512,
-                 mlp_hidden_layers=1, mlp_hidden_channels=256,
-                 delta_coeff=0.3, eps=1e-3, totvar_coeff=0.8,
-                 balance_coeff=0.5):
+                 mlp_hidden_layers=1, mlp_hidden_channels=256, delta_coeff=0.3,
+                 eps=1e-3, totvar_coeff=0.8, balance_coeff=0.5):
         super().__init__()
 
         self.totvar_coeff = totvar_coeff
