@@ -11,18 +11,9 @@ from .dmon_pool import DMoNPooling
 from .asymcheegercut_pool import dense_asymcheegercut_pool
 
 __all__ = [
-    'Linear',
-    'HeteroLinear',
-    'HeteroDictLinear',
-    'DenseGCNConv',
-    'DenseGINConv',
-    'DenseGraphConv',
-    'DenseSAGEConv',
-    'DenseGATConv',
-    'DenseGTVConv',
-    'dense_diff_pool',
-    'dense_mincut_pool',
-    'DMoNPooling',
+    'Linear', 'HeteroLinear', 'HeteroDictLinear', 'DenseGCNConv',
+    'DenseGINConv', 'DenseGraphConv', 'DenseSAGEConv', 'DenseGATConv',
+    'DenseGTVConv', 'dense_diff_pool', 'dense_mincut_pool', 'DMoNPooling',
     'dense_asymcheegercut_pool'
 ]
 
