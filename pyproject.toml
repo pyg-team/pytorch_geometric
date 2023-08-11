@@ -10,7 +10,7 @@ authors=[
 ]
 description="Graph Neural Network Library for PyTorch"
 readme="README.md"
-requires-python=">=3.7"
+requires-python=">=3.8"
 keywords=[
     "deep-learning",
     "pytorch",
@@ -22,7 +22,6 @@ classifiers=[
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -105,13 +104,16 @@ based_on_style = "pep8"
 split_before_named_assigns = false
 blank_line_before_nested_class_or_def = false
 
+[tool.flake8]
+ignore = ["F811", "W503", "W504"]
+
 [tool.pyright]
 include = ["torch_geometric/utils/*"]
 
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
-skip = [".gitingore", "__init__.py"]
+skip = [".gitignore", "__init__.py"]
 
 [tool.pytest.ini_options]
 addopts = "--capture=no"
@@ -163,10 +165,5 @@ exclude_lines = [
     "pass",
     "raise NotImplementedError",
     "register_parameter",
-    "warn",
     "torch.cuda.is_available",
-    "WITH_PT2",
 ]
-
-[tool.flake8]
-ignore = ["F811", "W503", "W504"]
