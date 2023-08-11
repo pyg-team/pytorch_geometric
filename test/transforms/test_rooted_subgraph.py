@@ -89,3 +89,43 @@ def test_rooted_subgraph_minibatch():
 
     assert batch.n_sub_batch.min() == 0
     assert batch.n_sub_batch.max() == 5
+
+
+def test_rooted_ego_nets_plus():
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    edge_attr = torch.randn(4, 8)
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+
+    transform = RootedEgoNets(num_hops=1)
+    assert str(transform) == 'RootedEgoNets(num_hops=1)'
+
+    out = transform(data)
+    assert len(out) == 8
+
+    assert torch.equal(out.x, data.x)
+    assert torch.equal(out.edge_index, data.edge_index)
+    assert torch.equal(out.edge_attr, data.edge_attr)
+
+    assert out.sub_edge_index.tolist() == [[0, 1, 2, 3, 3, 4, 5, 6],
+                                           [1, 0, 3, 2, 4, 3, 6, 5]]
+    assert out.n_id.tolist() == [0, 1, 0, 1, 2, 1, 2]
+    assert out.n_sub_batch.tolist() == [0, 0, 1, 1, 1, 2, 2]
+    assert out.e_id.tolist() == [0, 1, 0, 1, 2, 3, 2, 3]
+    assert out.e_sub_batch.tolist() == [0, 0, 1, 1, 1, 1, 2, 2]
+
+    out = out.map_data(add_node_features=True)
+    assert len(out) == 4
+
+    prepend_features = out.x[:, :2]
+    original_features = out.x[:, 2:]
+
+    assert torch.allclose(original_features, x[[0, 1, 0, 1, 2, 1, 2]])
+    assert torch.allclose(
+        prepend_features,
+        prepend_features.new_tensor([[1, 0], [0, 1], [0, 1], [1, 0], [0, 1],
+                                     [0, 1], [1, 0]]))
+    assert out.edge_index.tolist() == [[0, 1, 2, 3, 3, 4, 5, 6],
+                                       [1, 0, 3, 2, 4, 3, 6, 5]]
+    assert torch.allclose(out.edge_attr, edge_attr[[0, 1, 0, 1, 2, 3, 2, 3]])
+    assert out.n_sub_batch.tolist() == [0, 0, 1, 1, 1, 2, 2]

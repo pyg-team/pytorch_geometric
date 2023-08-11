@@ -1,6 +1,6 @@
 import copy
 from abc import ABC, abstractmethod
-from typing import Any, Tuple
+from typing import Any, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -37,7 +37,7 @@ class RootedSubgraphData(Data):
             return self.edge_index.size(1)
         return super().__inc__(key, value, *args, **kwargs)
 
-    def map_data(self) -> Data:
+    def map_data(self, add_node_features: Optional[bool] = False) -> Data:
         # Maps all feature information of the :class:`Data` object to each
         # rooted subgraph.
         data = copy.copy(self)
@@ -57,6 +57,17 @@ class RootedSubgraphData(Data):
             elif self.is_edge_attr(key):
                 dim = self.__cat_dim__(key, value)
                 data[key] = value.index_select(dim, self.e_id)
+
+        # EGO+ (Prepends features to nodes, differentiating root node)
+        if add_node_features:
+            ids = torch.arange(2).repeat(self.n_id.size(0), 1)
+            ids[self.n_sub_batch == self.n_id] = torch.tensor([1, 0])
+
+            if hasattr(data, 'x'):
+                x = data.x
+                data.x = torch.cat([ids.to(x.device, x.dtype), x], dim=-1)
+            else:
+                data.x = ids
 
         return data
 

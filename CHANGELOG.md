@@ -144,6 +144,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added 4 new subgraph policies to transforms and 2 new models to nn.models ([#6995](https://github.com/pyg-team/pytorch_geometric/pull/6995))
+
 - Added a memory-efficient `utils.one_hot` implementation ([#7005](https://github.com/pyg-team/pytorch_geometric/pull/7005))
 - Added `HeteroDictLinear` and an optimized `FastHGTConv` module ([#6178](https://github.com/pyg-team/pytorch_geometric/pull/6178), [#6998](https://github.com/pyg-team/pytorch_geometric/pull/6998))
 - Added the `DenseGATConv` module ([#6928](https://github.com/pyg-team/pytorch_geometric/pull/6928))

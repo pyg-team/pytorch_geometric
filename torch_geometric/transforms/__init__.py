@@ -37,6 +37,7 @@ from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
 from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
 from .feature_propagation import FeaturePropagation
+from .subgraph_policies import NodeDeletionPolicy, EdgeDeletionPolicy, EgoNetPolicy, subgraph_policy
 
 from .distance import Distance
 from .cartesian import Cartesian
@@ -106,6 +107,9 @@ graph_transforms = [
     'AddLaplacianEigenvectorPE',
     'AddRandomWalkPE',
     'FeaturePropagation',
+    'NodeDeletionPolicy',
+    'EdgeDeletionPolicy',
+    'EgoNetPolicy',
 ]
 
 vision_transforms = [
