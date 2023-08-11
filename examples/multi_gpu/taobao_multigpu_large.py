@@ -97,9 +97,11 @@ class Model(torch.nn.Module):
 
 
 def run_train(rank, data, train_data, val_data, test_data, world_size):
+    if rank == 0:
+        print("Setting up Data Loaders...")
     train_edge_label_idx = train_data[('user', 'to', 'item')].edge_label_index
     train_edge_label_idx = train_edge_label_idx.split(
-        train_edge_label_idx.size(1) // world_size, dim=1)[rank]
+        train_edge_label_idx.size(1) // world_size, dim=1)[rank].clone()
     train_loader = LinkNeighborLoader(
         data=train_data,
         num_neighbors=[8, 4],
