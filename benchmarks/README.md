@@ -6,18 +6,13 @@
 - **skip benchmarks**: Raising `NotImplementedError` in `setup()` to skip benchmarks is too slow. Instead just remove parameters from `params` to skip where possible.
 
 ```sh
-pip install git+https://github.com/akihironitta/asv.git@bugfix/mamba-deadlock
+pip install git+https://github.com/akihironitta/asv.git@master
 ```
 
 ```sh
-export ASV_OPTION='-e -v -m codespace-v100 --launch-method spawn --skip-existing-successful'
-asv run $ASV_OPTION \
+export ASV_OPTIONS='-e -v -m codespace-v100 --launch-method spawn --skip-existing-successful'
+asv run $ASV_OPTIONS \
 --bench Softmax.track_fwd \
 --steps 3 \
 2.3.0..master
 ```
-
-## TODO
-- **measure performance ratio**: This increases benchmark time as it requires benchmarking pure PyTorch implementation.
-- **clean up**: Reuse code across benchmarks
-- **adjust unit**: e.g. ms, us, ns
