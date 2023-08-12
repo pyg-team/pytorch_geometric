@@ -20,7 +20,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
-from torch_geometric.data.feature_store import _field_status
+from torch_geometric.data.feature_store import _FieldStatus
 from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import (
     BaseStorage,
@@ -194,6 +194,15 @@ class BaseData:
         r"""Returns all edge-level tensor attribute names."""
         return list(set(chain(*[s.edge_attrs() for s in self.edge_stores])))
 
+    @property
+    def node_offsets(self) -> Dict[NodeType, int]:
+        out: Dict[NodeType, int] = {}
+        offset: int = 0
+        for store in self.node_stores:
+            out[store._key] = offset
+            offset += store.num_nodes
+        return out
+
     def generate_ids(self):
         r"""Generates and sets :obj:`n_id` and :obj:`e_id` attributes to assign
         each node and edge to a continuously ascending and unique ID."""
@@ -363,7 +372,7 @@ class DataTensorAttr(TensorAttr):
     r"""Tensor attribute for `Data` without group name."""
     def __init__(
         self,
-        attr_name=_field_status.UNSET,
+        attr_name=_FieldStatus.UNSET,
         index=None,
     ):
         super().__init__(None, attr_name, index)

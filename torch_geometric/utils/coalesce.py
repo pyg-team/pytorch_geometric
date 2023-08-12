@@ -41,9 +41,9 @@ def coalesce(
     together according to the given :obj:`reduce` option.
 
     Args:
-        edge_index (LongTensor): The edge indices.
-        edge_attr (Tensor or List[Tensor], optional): Edge weights or multi-
-            dimensional edge features.
+        edge_index (torch.Tensor): The edge indices.
+        edge_attr (torch.Tensor or List[torch.Tensor], optional): Edge weights
+            or multi-dimensional edge features.
             If given as a list, will re-shuffle and remove duplicates for all
             its entries. (default: :obj:`None`)
         num_nodes (int, optional): The number of nodes, *i.e.*
@@ -90,17 +90,22 @@ def coalesce(
                 [3, 1, 2]]),
         tensor([1., 1., 1.]))
     """
-    nnz = edge_index.size(1)
+    num_edges = edge_index[0].size(0)
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    idx = edge_index.new_empty(nnz + 1)
+    idx = edge_index[0].new_empty(num_edges + 1)
     idx[0] = -1
     idx[1:] = edge_index[1 - int(sort_by_row)]
     idx[1:].mul_(num_nodes).add_(edge_index[int(sort_by_row)])
 
     if not is_sorted:
         idx[1:], perm = index_sort(idx[1:], max_value=num_nodes * num_nodes)
-        edge_index = edge_index[:, perm]
+        if isinstance(edge_index, Tensor):
+            edge_index = edge_index[:, perm]
+        elif isinstance(edge_index, tuple):
+            edge_index = (edge_index[0][perm], edge_index[1][perm])
+        else:
+            raise NotImplementedError
         if isinstance(edge_attr, Tensor):
             edge_attr = edge_attr[perm]
         elif isinstance(edge_attr, (list, tuple)):
@@ -114,12 +119,17 @@ def coalesce(
             return edge_index, edge_attr
         return edge_index
 
-    edge_index = edge_index[:, mask]
+    if isinstance(edge_index, Tensor):
+        edge_index = edge_index[:, mask]
+    elif isinstance(edge_index, tuple):
+        edge_index = (edge_index[0][mask], edge_index[1][mask])
+    else:
+        raise NotImplementedError
 
     dim_size: Optional[int] = None
     if isinstance(edge_attr, (Tensor, list, tuple)) and len(edge_attr) > 0:
         dim_size = edge_index.size(1)
-        idx = torch.arange(0, nnz, device=edge_index.device)
+        idx = torch.arange(0, num_edges, device=edge_index.device)
         idx.sub_(mask.logical_not_().cumsum(dim=0))
 
     if edge_attr is None:

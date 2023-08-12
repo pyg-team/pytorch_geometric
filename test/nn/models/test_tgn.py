@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.data import TemporalData
@@ -10,7 +11,8 @@ from torch_geometric.nn.models.tgn import (
 )
 
 
-def test_tgn():
+@pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])
+def test_tgn(neg_sampling_ratio):
     memory_dim = 16
     time_dim = 16
 
@@ -20,8 +22,11 @@ def test_tgn():
     msg = torch.randn(10, 16)
     data = TemporalData(src=src, dst=dst, t=t, msg=msg)
 
-    loader = TemporalDataLoader(data, batch_size=5)
-
+    loader = TemporalDataLoader(
+        data,
+        batch_size=5,
+        neg_sampling_ratio=neg_sampling_ratio,
+    )
     neighbor_loader = LastNeighborLoader(data.num_nodes, size=3)
     assert neighbor_loader.cur_e_id == 0
     assert neighbor_loader.e_id.size() == (data.num_nodes, 3)
@@ -39,13 +44,12 @@ def test_tgn():
 
     # Test TGNMemory training:
     for i, batch in enumerate(loader):
-        n_id = torch.cat([batch.src, batch.dst]).unique()
-        n_id, edge_index, e_id = neighbor_loader(n_id)
+        n_id, edge_index, e_id = neighbor_loader(batch.n_id)
         z, last_update = memory(n_id)
         memory.update_state(batch.src, batch.dst, batch.t, batch.msg)
         neighbor_loader.insert(batch.src, batch.dst)
         if i == 0:
-            assert n_id.size(0) == 4
+            assert n_id.size(0) >= 4
             assert edge_index.numel() == 0
             assert e_id.numel() == 0
             assert z.size() == (n_id.size(0), memory_dim)

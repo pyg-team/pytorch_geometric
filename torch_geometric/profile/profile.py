@@ -265,6 +265,15 @@ def torch_profile(export_chrome_trace=True, csv_data=None, write_csv=None):
         save_profile_data(csv_data, events, use_cuda)
 
 
+@contextmanager
+def xpu_profile(export_chrome_trace=True):
+    with torch.autograd.profiler_legacy.profile(use_xpu=True) as profile:
+        yield
+    print(profile.key_averages().table(sort_by='self_xpu_time_total'))
+    if export_chrome_trace:
+        profile.export_chrome_trace('timeline.json')
+
+
 def format_prof_time(time):
     # Profile time is in micro seconds, so format it appropriately:
     return round(time / 1e6, 3)

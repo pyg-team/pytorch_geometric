@@ -36,7 +36,7 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        if hasattr(batch, 'adj_t'):
+        if 'adj_t' in batch:
             edge_index = batch.adj_t
         else:
             edge_index = batch.edge_index
@@ -67,7 +67,7 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        if len(batch.adj_t_dict) > 0:
+        if 'adj_t' in batch:
             edge_index_dict = batch.adj_t_dict
         else:
             edge_index_dict = batch.edge_index_dict
@@ -87,7 +87,13 @@ def run(args: argparse.ArgumentParser):
         warnings.warn("Cannot write profile data to CSV because profiling is "
                       "disabled")
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if torch.cuda.is_available():
+        device = torch.device('cuda')
+    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        device = torch.device('mps')
+    else:
+        device = torch.device('cpu')
+
     # If we use a custom number of steps, then we need to use RandomSampler,
     # which already does shuffle.
     shuffle = False if args.num_steps != -1 else True
