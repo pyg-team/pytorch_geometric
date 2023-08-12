@@ -55,16 +55,19 @@
 
     // The Pythons you'd like to test against.  If not provided, defaults
     // to the current version of Python used to run `asv`.
-    // "pythons": ["3.11"],
+
+    // cudf requires python<3.11
+    // https://github.com/rapidsai/cudf/issues/13314
+    "pythons": ["3.10"],
 
     // The list of conda channel names to be searched for benchmark
     // dependency packages in the specified order
     // Note: Specify channels here as asv doesn't read environment.yml
     // https://github.com/airspeed-velocity/asv/issues/1301
-    "conda_channels": ["pyg", "pytorch", "nvidia", "conda-forge", "defaults"],
+    "conda_channels": ["pyg", "pytorch", "rapidsai", "nvidia", "conda-forge", "defaults"],
 
     // A conda environment file that is used for environment creation.
-    "conda_environment_file": "environment.yml",
+    // "conda_environment_file": "environment.yml",
 
     // The matrix of dependencies to test.  Each key of the "req"
     // requirements dictionary is the name of a package (in PyPI) and
@@ -95,7 +98,14 @@
     //     "env": {"ENV_VAR_1": ["val1", "val2"]},
     //     "env_nobuild": {"ENV_VAR_2": ["val3", null]},
     // },
-
+    "matrix": {
+        "pytorch": [""],
+        "pytorch-cuda": ["11.8"],
+        "pytorch-scatter": [""],
+        "pytorch-sparse": [""],
+        "pandas": [""],
+        "cudf": ["23.06"]
+    },
     // Combinations of libraries/python versions can be excluded/included
     // from the set to test. Each entry is a dictionary containing additional
     // key-value pairs to include/exclude.
