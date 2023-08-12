@@ -7,6 +7,7 @@ Caution: This script is executed in a full-batch fashion, and therefore needs
 to run on CPU (following the experimental setup in the official paper).
 """
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -174,9 +175,13 @@ def compute_mrr(z, edge_index, edge_type):
     return (1. / torch.tensor(ranks, dtype=torch.float)).mean()
 
 
+times = []
 for epoch in range(1, 10001):
+    start = time.time()
     loss = train()
     print(f'Epoch: {epoch:05d}, Loss: {loss:.4f}')
     if (epoch % 500) == 0:
         valid_mrr, test_mrr = test()
         print(f'Val MRR: {valid_mrr:.4f}, Test MRR: {test_mrr:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

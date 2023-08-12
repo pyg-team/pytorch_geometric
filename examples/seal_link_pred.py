@@ -1,5 +1,6 @@
 import math
 import os.path as osp
+import time
 from itertools import chain
 
 import numpy as np
@@ -216,8 +217,10 @@ def test(loader):
     return roc_auc_score(torch.cat(y_true), torch.cat(y_pred))
 
 
+times = []
 best_val_auc = test_auc = 0
 for epoch in range(1, 51):
+    start = time.time()
     loss = train()
     val_auc = test(val_loader)
     if val_auc > best_val_auc:
@@ -225,3 +228,5 @@ for epoch in range(1, 51):
         test_auc = test(test_loader)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

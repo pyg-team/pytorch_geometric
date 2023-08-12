@@ -6,7 +6,8 @@ import torch
 import torch_geometric.distributed.rpc as rpc
 from torch_geometric.distributed import LocalFeatureStore
 from torch_geometric.distributed.dist_context import DistContext, DistRole
-from torch_geometric.distributed.rpc import RpcRouter
+from torch_geometric.distributed.rpc import RPCRouter
+from torch_geometric.testing import onlyLinux
 
 
 def run_rpc_feature_test(
@@ -43,7 +44,7 @@ def run_rpc_feature_test(
     ]
 
     # 3) Find the mapping between worker and partition ID:
-    rpc_router = RpcRouter(partition_to_workers)
+    rpc_router = RPCRouter(partition_to_workers)
 
     assert rpc_router.get_to_worker(partition_idx=0) == 'dist-feature-test-0'
     assert rpc_router.get_to_worker(partition_idx=1) == 'dist-feature-test-1'
@@ -59,7 +60,7 @@ def run_rpc_feature_test(
     feature.partition_idx = rank
     feature.feature_pb = partition_book
     feature.meta = meta
-    feature.set_local_only(local_only=False)
+    feature.local_only = False
     feature.set_rpc_router(rpc_router)
 
     # Global node IDs:
@@ -81,6 +82,7 @@ def run_rpc_feature_test(
     rpc.shutdown_rpc()
 
 
+@onlyLinux
 def test_dist_feature_lookup():
     cpu_tensor0 = torch.cat([torch.ones(128, 1024), torch.ones(128, 1024) * 2])
     cpu_tensor1 = torch.cat([torch.zeros(128, 1024), torch.zeros(128, 1024)])
