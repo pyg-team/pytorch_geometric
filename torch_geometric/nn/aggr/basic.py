@@ -43,10 +43,11 @@ class WeightedMeanAggregation(WeightedAggregation):
         \mathrm{mean}(\mathcal{X}, \mathbf{w}) = \frac{1}{|\mathcal{X}|}
         \sum_{\mathbf{x}_i \in \mathcal{X}} w_i \mathbf{x}_i.
     """
-    def forward(self, x: Tensor, weight: Tensor,
-                index: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                weight: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
-        return self.reduce(x, weight, index, ptr, dim_size, dim, reduce='sum')
+        return self.weighted_reduce(x, index, weight, ptr, dim_size, dim,
+                                    reduce='sum')
 
 
 class MaxAggregation(Aggregation):

@@ -38,14 +38,21 @@ class WeightedQuantileAggregation(WeightedAggregation):
         self.q = q
         self.fill_value = fill_value
 
-    def forward(self, x: Tensor, weight: Tensor,
-                index: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                weight: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
 
         dim = x.dim() + dim if dim < 0 else dim
 
         self.assert_index_present(index)
         assert index is not None  # Required for TorchScript.
+
+        if weight is None:
+            # TODO: divide by degree
+            weight = torch.ones_like(index, dtype=x.dtype)
+        elif weight.min() < 0:
+            raise ValueError(f"The weights must be positive, but the "
+                             f"minimum weight is {weight.min().item()}.")
 
         # To ensure non-negative edge_weights
         edge_weight = torch.clamp_min(weight, 0)
@@ -64,7 +71,7 @@ class WeightedQuantileAggregation(WeightedAggregation):
         index, index_perm = torch.sort(index, dim=dim)
         x = x.take_along_dim(index_perm.view(shape), dim=dim)
 
-        # No gradient requires since only determining indices
+        # No gradient required, since only indices are being determined
         with torch.no_grad():
             _, x_perm = torch.sort(x, dim=dim)
             edge_weight = edge_weight[x_perm]
@@ -152,36 +159,45 @@ class SoftMedianAggregation(WeightedAggregation):
         super().__init__()
 
         if not T > 0:
-            raise ValueError("`T` must be > 0.")
+            raise ValueError("Temperature `T` must be > 0.")
 
         self.T = T
         self.p = p
 
         self.dimwise_median = WeightedMedianAggregation()
 
-    def forward(self, x: Tensor, edge_weight: Tensor,
-                index: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(T={self.T}, p={self.p})"
+
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                weight: Optional[Tensor] = None, ptr: Optional[Tensor] = None,
                 dim_size: Optional[int] = None, dim: int = -2) -> Tensor:
         dim = x.dim() + dim if dim < 0 else dim
         shape = [1] * x.dim()
         shape[dim] = -1
 
-        x_median = self.dimwise_median(x, edge_weight, index, ptr,
-                                       dim_size=dim_size, dim=dim)
+        if weight is None:
+            weight = torch.ones_like(index, dtype=x.dtype)
 
+        weight_sums = self.reduce(weight, index, ptr, dim_size, dim,
+                                  reduce='sum')
+
+        x_median = self.dimwise_median(x, index, weight, ptr=ptr,
+                                       dim_size=dim_size, dim=dim)
+        x_median = x_median / weight_sums.view(shape)
+
+        # Distance of each embedding to dimension-wise median
         distances = torch.norm((x_median[index] - x).T, dim=dim, p=self.p)
         distances = distances / pow(x.shape[dim], 1 / self.p)
 
+        # Softmin to find (softly) closest point to dimension-wise median
         soft_weights = softmax(-distances / self.T, index)
 
-        weighted_values = soft_weights * edge_weight
+        # Final weights to reweigh inputs per segment
+        weighted_values = soft_weights * weight
         segment_weight = self.reduce(weighted_values, index, ptr, dim_size,
                                      dim, reduce='sum')
-
-        weight_sums = self.reduce(edge_weight, index, ptr, dim_size, dim,
-                                  reduce='sum')
-
         weights = weighted_values / segment_weight[index] * weight_sums[index]
 
-        x = weights.view(shape) * x
-        return self.reduce(x, index, ptr, dim_size, dim, reduce='sum')
+        return self.weighted_reduce(x, index, weights, ptr, dim_size, dim,
+                                    reduce='sum')

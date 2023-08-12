@@ -219,8 +219,8 @@ class WeightedAggregation(Aggregation):
     def forward(
         self,
         x: Tensor,
-        weight: Tensor,
         index: Optional[Tensor] = None,
+        weight: Optional[Tensor] = None,
         ptr: Optional[Tensor] = None,
         dim_size: Optional[int] = None,
         dim: int = -2,
@@ -228,11 +228,11 @@ class WeightedAggregation(Aggregation):
         r"""
         Args:
             x (torch.Tensor): The source tensor.
-            weight (torch.Tensor): The weight vector.
             index (torch.Tensor, optional): The indices of elements for
                 applying the aggregation.
                 One of :obj:`index` or :obj:`ptr` must be defined.
                 (default: :obj:`None`)
+            weight (torch.Tensor, optional): The weight vector.
             ptr (torch.Tensor, optional): If given, computes the aggregation
                 based on sorted inputs in CSR representation.
                 One of :obj:`index` or :obj:`ptr` must be defined.
@@ -247,19 +247,19 @@ class WeightedAggregation(Aggregation):
     def __call__(
         self,
         x: Tensor,
-        weight: Tensor,
         index: Optional[Tensor] = None,
+        weight: Optional[Tensor] = None,
         ptr: Optional[Tensor] = None,
         dim_size: Optional[int] = None,
         dim: int = -2,
         **kwargs,
     ) -> Tensor:
 
-        if weight.dim() != 1:
+        if weight is not None and weight.dim() != 1:
             raise ValueError(f"The 'weight' vector needs to be one-"
                              f"dimensional (got {weight.dim()} dimensions)")
 
-        if weight.size(0) != x.size(dim):
+        if weight is not None and weight.size(0) != x.size(dim):
             raise ValueError(f"The input tensor has {x.size(dim)} elements, "
                              f"but the 'weight' vector holds {weight.size(0)} "
                              f"elements. Please make sure that the size of "
@@ -270,11 +270,11 @@ class WeightedAggregation(Aggregation):
 
     # Helper methods ##########################################################
 
-    def reduce(
+    def weighted_reduce(
         self,
         x: Tensor,
-        weight: Tensor,
         index: Optional[Tensor] = None,
+        weight: Optional[Tensor] = None,
         ptr: Optional[Tensor] = None,
         dim_size: Optional[int] = None,
         dim: int = -2,
@@ -284,13 +284,17 @@ class WeightedAggregation(Aggregation):
         sizes = [1] * x.dim()
         sizes[dim] = x.size(dim)
 
+        assert index is not None
+
+        if weight is None:
+            weight = torch.ones_like(index, dtype=x.dtype)
+
         weight = weight.view(sizes)
 
         if ptr is not None:
             ptr = expand_left(ptr, dim, dims=x.dim())
             return segment(x * weight, ptr, reduce=reduce)
 
-        assert index is not None
         return scatter(x * weight, index, dim, dim_size, reduce)
 
 

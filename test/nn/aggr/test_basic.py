@@ -41,11 +41,11 @@ def test_weighted_validate():
 
     with pytest.raises(ValueError, match="needs to be one-dimensional"):
         weight = torch.rand(6, 2)
-        aggr(x, weight, index)
+        aggr(x, index, weight)
 
     with pytest.raises(ValueError, match="that the size of the inputs align"):
         weight = torch.rand(4)
-        aggr(x, weight, index)
+        aggr(x, index, weight)
 
 
 @pytest.mark.parametrize('Aggregation', [

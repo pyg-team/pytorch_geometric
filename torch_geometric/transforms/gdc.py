@@ -619,18 +619,22 @@ def sparsify_top_k(edge_index: torch.Tensor, edge_weight: torch.Tensor, k: int,
 
     :rtype: (:class:`LongTensor`, :class:`Tensor`)
     """
+    # Count how many elements are in each segment
     count = torch.bincount(edge_index[dim], minlength=0)
     cumsum = torch.cumsum(count, dim=0) - count
 
-    weights_perm = torch.sort(edge_weight, descending=True).indices
-    index_perm = torch.sort(edge_index[dim][weights_perm], stable=True).indices
-
+    # Construct integer order for each segment
     segment_wise_order = torch.ones_like(edge_weight)
     segment_wise_order[0] = 0
     segment_wise_order[cumsum[1:]] -= count[:-1]
     segment_wise_order = segment_wise_order.cumsum(0)
 
+    # Use integer order ids to filter the topk element per segment
+    weights_perm = torch.sort(edge_weight, descending=True).indices
+    index_perm = torch.sort(edge_index[dim][weights_perm], stable=True).indices
     topk_elements = weights_perm[index_perm[segment_wise_order < k]]
+
+    # Construct topk filterd index
     topk_index = edge_index[:, topk_elements]
     topk_weight = edge_weight[topk_elements]
 
