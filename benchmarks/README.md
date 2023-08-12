@@ -14,5 +14,5 @@ export ASV_OPTIONS='-e -v -m codespace-v100 --launch-method spawn --skip-existin
 asv run $ASV_OPTIONS \
 --bench Softmax.track_fwd \
 --steps 3 \
-2.3.0..master
+2.3.0..master  # or HASHFILE:HASHFILE.txt
 ```
