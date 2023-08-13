@@ -658,7 +658,10 @@ def test_from_dgl_hetero_graph():
 
 @withPackage('networkx')
 def test_from_hetero_networkx():
-    edge_index = get_random_edge_index(5, 10, 20, coalesce=True)
+    author_paper_edge_index = get_random_edge_index(5, 10, 20, coalesce=True)
+    paper_author_edge_index = get_random_edge_index(10, 5, 10, coalesce=True)
+    author_instit_edge_index = torch.tensor([[0, 1], [2, 2]])
+    author_instit_edge_index_bis = torch.tensor([[0, 1], [1, 0]])
     graph_x = [torch.tensor([0, 1, 2])]
 
     data = HeteroData()
@@ -666,8 +669,22 @@ def test_from_hetero_networkx():
     data['graph_x'] = graph_x
     data['author'].x = torch.arange(5)
     data['paper'].x = torch.arange(10)
-    data['author', 'paper'].edge_index = edge_index
-    data['author', 'paper'].edge_attr = torch.arange(edge_index.size(1))
+    data['institution'].x = torch.arange(3)
+    data['author', 'paper'].edge_index = author_paper_edge_index
+    data['paper', 'author'].edge_index = paper_author_edge_index
+    data['author', 'affiliated_with',
+         'institution'].edge_index = author_instit_edge_index
+    data['author', 'affiliated_with_bis',
+         'institution'].edge_index = author_instit_edge_index_bis
+    data['author',
+         'paper'].edge_attr = torch.arange(author_paper_edge_index.size(1))
+    data['paper',
+         'author'].edge_attr = torch.arange(paper_author_edge_index.size(1))
+    data['author', 'affiliated_with', 'institution'].edge_attr = torch.arange(
+        author_instit_edge_index.size(1))
+    data['author', 'affiliated_with_bis',
+         'institution'].edge_attr = torch.arange(
+             author_instit_edge_index_bis.size(1))
 
     G = to_networkx(data, node_attrs=['x'], edge_attrs=['edge_attr'],
                     graph_attrs=['global_id', 'graph_x'])
@@ -678,10 +695,18 @@ def test_from_hetero_networkx():
     assert data['graph_x'].tolist() == [x.tolist() for x in graph_x]
     assert data['author'].x.tolist() == torch.arange(5).tolist()
     assert data['paper'].x.tolist() == torch.arange(10).tolist()
-    assert data[('author', 'to',
-                 'paper')].edge_index.tolist() == edge_index.tolist()
+    assert data[(
+        'author', 'to',
+        'paper')].edge_index.tolist() == author_paper_edge_index.tolist()
+    assert data[(
+        'paper', 'to',
+        'author')].edge_index.tolist() == paper_author_edge_index.tolist()
+    assert data[('author', 'affiliated_with', 'institution'
+                 )].edge_index.tolist() == author_instit_edge_index.tolist()
+    t = data[('author', 'affiliated_with_bis', 'institution')]
+    assert t.edge_index.tolist() == author_instit_edge_index_bis.tolist()
     assert data[('author', 'to', 'paper')].edge_attr.tolist() == torch.arange(
-        edge_index.size(1)).tolist()
+        author_paper_edge_index.size(1)).tolist()
 
 
 @withPackage('networkx')
@@ -803,7 +828,9 @@ def test_from_hetero_networkx_raise_missing_node_type_attribute():
     G.add_node(1)
     G.add_edge(0, 1)
 
-    with pytest.raises(KeyError) as _:
+    with pytest.raises(
+            KeyError,
+            match=r'Given node_type_attribute: .* missing from node .*') as _:
         from_hetero_networkx(G, node_type_attribute="type",
                              edge_type_attribute=None)
 
@@ -817,7 +844,9 @@ def test_from_hetero_networkx_raise_missing_edge_type_attribute():
     G.add_node(1, type='A')
     G.add_edge(0, 1)
 
-    with pytest.raises(KeyError) as _:
+    with pytest.raises(
+            KeyError,
+            match=r'Given edge_type_attribute: .* missing from edge .*') as _:
         from_hetero_networkx(G, node_type_attribute="type",
                              edge_type_attribute="type")
 
@@ -833,7 +862,9 @@ def test_from_hetero_networkx_raise_different_edge_attribute():
     G.add_edge(0, 1, a=1)
     G.add_edge(0, 2, b=2)
 
-    with pytest.raises(ValueError) as _:
+    with pytest.raises(
+            ValueError,
+            match='Not all edges contain the same attributes.') as _:
         from_hetero_networkx(G, node_type_attribute="type",
                              edge_type_attribute=None)
 
@@ -846,7 +877,9 @@ def test_from_hetero_networkx_raise_different_node_attribute():
     G.add_node(0, type='A', a=1)
     G.add_node(1, type='A', b=1)
 
-    with pytest.raises(ValueError) as _:
+    with pytest.raises(
+            ValueError,
+            match='Not all nodes contain the same attributes.') as _:
         from_hetero_networkx(G, node_type_attribute="type",
                              edge_type_attribute=None)
 
@@ -882,3 +915,23 @@ def test_from_hetero_networkx_works_with_non_string_types():
 
     assert data[str(1)].x.tolist() == [1]
     assert data[str(False)].x.tolist() == [1]
+
+
+@withPackage('networkx')
+def test_from_hetero_networkx_graph_attrs_selection():
+
+    data = HeteroData()
+    data['x'] = 0
+    data['y'] = 0
+    data['z'] = 0
+
+    G = to_networkx(data, node_attrs=[], edge_attrs=[],
+                    graph_attrs=['x', 'y', 'z'])
+
+    data = from_hetero_networkx(G, node_type_attribute="type",
+                                edge_type_attribute=None,
+                                graph_attrs=['x', 'y'])
+
+    assert data['x'] == 0
+    assert data['y'] == 0
+    assert 'z' not in data

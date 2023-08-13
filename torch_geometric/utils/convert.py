@@ -640,8 +640,10 @@ def from_dgl(
 
 
 def from_hetero_networkx(
-        G: Any, node_type_attribute: str,
-        edge_type_attribute: str = None) -> 'torch_geometric.data.HeteroData':
+    G: Any, node_type_attribute: str,
+    edge_type_attribute: Optional[str] = None,
+    graph_attrs: Optional[Iterable[str]] = None
+) -> 'torch_geometric.data.HeteroData':
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.HeteroData` instance.
 
@@ -649,11 +651,15 @@ def from_hetero_networkx(
         G (networkx.Graph or networkx.DiGraph): A networkx graph.
         node_type_attribute (str): The attribute containing the type of a
             node. For the resulting structure to be valid, this attribute
-            must be set for every node in the graph.
-        edge_type_attribute (str): The attribute containing the type of
-            an edge. If set to :obj:`None`, the value :obj:`"to"` will be
-            used in the final structure. Otherwise, this attribute must be
-            set for every edge in the graph. (default: :obj:`None`)
+            must be set for every node in the graph. Values contained in
+            this attribute will be casted as :obj:`string` if possible. If
+            not, the function will raise an error.
+        edge_type_attribute (str, optional): The attribute containing the
+            type of an edge. If set to :obj:`None`, the value :obj:`"to"`
+            will be used in the final structure. Otherwise, this attribute
+            must be set for every edge in the graph. (default: :obj:`None`)
+        graph_attrs (iterable of str, optional): The graph attributes to be
+            copied. (default: :obj:`None`)
 
     Example:
 
@@ -708,10 +714,10 @@ def from_hetero_networkx(
             nodes (list, optional): The list of nodes whose attributes are to
                 be collected. If set to :obj:`None`, all nodes of the graph
                 will be included. (default: :obj:`None`)
-            node_attrs (list, optional): The list of expected attributes to
-                be found in every node. If set to :obj:`None`, the first node
-                encountered will set the values for the rest of the process.
-                (default: :obj:`None`)
+            expected_node_attrs (list, optional): The list of expected
+                attributes to be found in every node. If set to :obj:`None`,
+                the first node encountered will set the values for the rest
+                of the process. (default: :obj:`None`)
 
         Raises:
             ValueError: If some of the nodes do not share the same
@@ -786,7 +792,13 @@ def from_hetero_networkx(
         hetero_data_dict[group_name]["edge_index"] = torch.tensor(
             group_edge_index, dtype=torch.long).t().contiguous().view(2, -1)
 
-    for key, value in G.graph.items():
+    graph_items = G.graph
+    if graph_attrs is not None:
+        graph_items = {
+            k: v
+            for k, v in graph_items.items() if k in graph_attrs
+        }
+    for key, value in graph_items.items():
         hetero_data_dict[str(key)] = value
 
     for group, group_dict in hetero_data_dict.items():
