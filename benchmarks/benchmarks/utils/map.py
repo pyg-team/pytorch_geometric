@@ -31,12 +31,17 @@ class Map:
         ["cpu", "cuda"],
     ]
     unit = "ms"
-    # TODO: Don't skip "cuda" if cudf is installed
-    # TODO: Skip "cpu" if pandas not installed
 
     def setup(self, *params):
         f, device = params
-        import cudf
+
+        # TODO: Install cudf to benchmark map_index on cuda device
+        if "cuda" == device:
+            try:
+                import cudf
+            except ModuleNotFoundError as e:
+                raise NotImplementedError("cudf not found") from e
+
         src = torch.randint(0, 100_000_000, (100_000,), device=device)
         index = src.unique()
         self.inputs = {

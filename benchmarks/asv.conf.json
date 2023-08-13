@@ -103,8 +103,11 @@
         "pytorch-cuda": ["11.8"],
         "pytorch-scatter": [""],
         "pytorch-sparse": [""],
-        "pandas": [""],
-        "cudf": ["23.06"]
+        // TODO: Find out why mamba complains this:
+        // cudf 23.06**  is uninstallable because it requires
+        // └─ __glibc >=2.17,<3.0.a0 , which is missing on the system.
+        // "cudf": ["23.06"],
+        "pandas": [""]
     },
     // Combinations of libraries/python versions can be excluded/included
     // from the set to test. Each entry is a dictionary containing additional
