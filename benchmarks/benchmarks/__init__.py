@@ -6,7 +6,7 @@ RUN_CUDA = RUN_ALL and bool(int(os.environ.get("PYG_BENCH_RUN_CUDA", "1")))
 
 DEFAULT_NUM_THREADS = int(os.environ.get("PYG_BENCH_NUM_THREADS", "4"))
 
-devices = ["cuda"]
+devices = ["cpu", "cuda"]
 
 
 class Benchmark:
