@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 from math import ceil
 
 import torch
@@ -146,7 +147,9 @@ def test(loader):
 
 
 best_val_acc = test_acc = 0
+times = []
 for epoch in range(1, 151):
+    start = time.time()
     train_loss = train(epoch)
     val_acc = test(val_loader)
     if val_acc > best_val_acc:
@@ -154,3 +157,5 @@ for epoch in range(1, 151):
         best_val_acc = val_acc
     print(f'Epoch: {epoch:03d}, Train Loss: {train_loss:.4f}, '
           f'Val Acc: {val_acc:.4f}, Test Acc: {test_acc:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

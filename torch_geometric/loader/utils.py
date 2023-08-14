@@ -29,10 +29,29 @@ from torch_geometric.typing import (
 )
 
 
-def index_select(value: FeatureTensorType, index: Tensor,
-                 dim: int = 0) -> Tensor:
+def index_select(
+    value: FeatureTensorType,
+    index: Tensor,
+    dim: int = 0,
+) -> Tensor:
+    r"""Indexes the :obj:`value` tensor along dimension :obj:`dim` using the
+    entries in :obj:`index`.
 
-    # PyTorch currently only supports indexing via `torch.int64` :(
+    Args:
+        value (torch.Tensor or np.ndarray): The input tensor.
+        index (torch.Tensor): The 1-D tensor containing the indices to index.
+        dim (int, optional): The dimension in which to index.
+            (default: :obj:`0`)
+
+    .. warning::
+
+        :obj:`index` is casted to a :obj:`torch.int64` tensor internally, as
+        `PyTorch currently only supports indexing
+        <https://github.com/pytorch/pytorch/issues/61819>`_ via
+        :obj:`torch.int64`.
+    """
+    # PyTorch currently only supports indexing via `torch.int64`:
+    # https://github.com/pytorch/pytorch/issues/61819
     index = index.to(torch.int64)
 
     if isinstance(value, Tensor):
