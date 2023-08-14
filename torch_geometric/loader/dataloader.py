@@ -73,10 +73,6 @@ class DataLoader(torch.utils.data.DataLoader):
         kwargs.pop('collate_fn', None)
 
         # Save for PyTorch Lightning < 1.6:
-        print('----------')
-        self.batch_size = batch_size
-        print(batch_size)
-        print(kwargs)
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
