@@ -44,7 +44,7 @@ class HalfHop(BaseTransform):
 
         if data.edge_weight is None or data.edge_attr is None:
             raise ValueError("'HalfHop augmentation is not support if "
-                                         "'data' has 'edge_weight' or 'edge_attr'")
+                             "'data' has 'edge_weight' or 'edge_attr'")
 
         x, edge_index = data.x, data.edge_index
 
