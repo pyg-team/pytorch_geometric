@@ -14,8 +14,9 @@ class HalfHop(BaseTransform):
     to slow down message propagation. (functional name: :obj:`half_hop`).
 
     Args:
-        alpha (float, optional): The interpolation factor for
-            the slow nodes. (default: :obj:`0.5`)
+        alpha (float, optional): The interpolation factor
+            used to compute slow node features
+            :math:`x = \alpha*x_src + (1-\alpha)*x_dst` (default: :obj:`0.5`)
         p (float, optional): The probability of half-hopping
             an edge. (default: :obj:`1.0`)
 
