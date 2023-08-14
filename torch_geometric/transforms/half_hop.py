@@ -42,8 +42,9 @@ class HalfHop(BaseTransform):
 
     def forward(self, data: Data) -> Data:
 
-        assert data.edge_weight is None
-        assert data.edge_attr is None
+        if data.edge_weight is None or data.edge_attr is None:
+            raise ValueError("'HalfHop augmentation is not support if "
+                                         "'data' has 'edge_weight' or 'edge_attr'")
 
         x, edge_index = data.x, data.edge_index
 
