@@ -13,6 +13,10 @@ class HalfHop(BaseTransform):
     The graph is augmented by adding artificial slow nodes between neighbors
     to slow down message propagation. (functional name: :obj:`half_hop`).
 
+    .. note::
+        `HalfHop` augmentation is not supported if `data` has
+        :attr:`edge_weight` or :attr:`edge_attr`.
+
     Args:
         alpha (float, optional): The interpolation factor
             used to compute slow node features
@@ -42,8 +46,8 @@ class HalfHop(BaseTransform):
 
     def forward(self, data: Data) -> Data:
 
-        if data.edge_weight is None or data.edge_attr is None:
-            raise ValueError("'HalfHop augmentation is not support if "
+        if data.edge_weight is not None or data.edge_attr is not None:
+            raise ValueError("'HalfHop' augmentation is not supported if "
                              "'data' has 'edge_weight' or 'edge_attr'")
 
         x, edge_index = data.x, data.edge_index

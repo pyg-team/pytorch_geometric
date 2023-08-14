@@ -4,8 +4,8 @@ from torch_geometric.data import Data
 from torch_geometric.transforms import HalfHop
 
 
-def test_half_hops():
-    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+def test_half_hop():
+    edge_index = torch.tensor([[0, 1, 1, 2, 0, 1, 2], [1, 0, 2, 1, 0, 1, 2]])
     x = torch.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]],
                      dtype=torch.float)
     data = Data(x=x, edge_index=edge_index)
@@ -14,8 +14,8 @@ def test_half_hops():
     assert str(transform) == 'HalfHop(alpha=0.5, p=1.0)'
     data = transform(data)
 
-    expected_edge_index = [[0, 1, 1, 2, 3, 4, 5, 6, 1, 0, 2, 1],
-                           [3, 4, 5, 6, 1, 0, 2, 1, 3, 4, 5, 6]]
+    expected_edge_index = [[0, 1, 2, 0, 1, 1, 2, 3, 4, 5, 6, 1, 0, 2, 1],
+                           [0, 1, 2, 3, 4, 5, 6, 1, 0, 2, 1, 3, 4, 5, 6]]
     expected_x = torch.tensor(
         [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [3, 4, 5, 6],
          [3, 4, 5, 6], [7, 8, 9, 10], [7, 8, 9, 10]], dtype=torch.float)
@@ -33,8 +33,8 @@ def test_half_hops():
     assert str(transform) == 'HalfHop(alpha=0.5, p=0.5)'
     data = transform(data)
 
-    expected_edge_index = [[1, 0, 1, 2, 3, 4, 5, 1, 2, 1],
-                           [0, 3, 4, 5, 1, 2, 1, 3, 4, 5]]
+    expected_edge_index = [[1, 0, 1, 2, 0, 1, 2, 3, 4, 5, 1, 2, 1],
+                           [0, 0, 1, 2, 3, 4, 5, 1, 2, 1, 3, 4, 5]]
     expected_x = torch.tensor([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12],
                                [3, 4, 5, 6], [7, 8, 9, 10], [7, 8, 9, 10]],
                               dtype=torch.float)
