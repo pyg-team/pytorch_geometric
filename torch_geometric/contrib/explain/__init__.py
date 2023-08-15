@@ -3,8 +3,8 @@ from torch_geometric.explain.algorithm.graphmask_explainer import GraphMaskExpla
 from torch_geometric.deprecation import deprecated
 
 GraphMaskExplainer = deprecated(
-    details=
-    "use 'torch_geometric.explain.algorithm.GraphMaskExplainer' instead", )
+    "use 'torch_geometric.explain.algorithm.GraphMaskExplainer' instead",
+)(NewGraphMaskExplainer)
 
 __all__ = classes = [
     'GraphMaskExplainer',
