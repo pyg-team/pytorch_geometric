@@ -237,3 +237,46 @@ class Partitioner:
             logging.info('Saving partition mapping info')
             torch.save(node_map, osp.join(self.root, 'node_map.pt'))
             torch.save(edge_map, osp.join(self.root, 'edge_map.pt'))
+
+def load_partition_info(
+    root_dir: str,
+    partition_idx: int,
+) -> Tuple[Dict, int, int,
+    torch.Tensor,
+    torch.Tensor]:
+
+    # load the partition with PyG format (graphstore/featurestore)
+    with open(os.path.join(root_dir, 'META.json'), 'rb') as infile:
+        meta = json.load(infile)
+    num_partitions = meta['num_parts']
+    assert partition_idx >= 0
+    assert partition_idx < num_partitions
+    partition_dir = os.path.join(root_dir, f'part_{partition_idx}')
+    assert os.path.exists(partition_dir)
+
+
+    if meta['is_hetero']==False:
+        node_pb = torch.load(os.path.join(root_dir, 'node_map.pt'))
+        edge_pb = torch.load(os.path.join(root_dir, 'edge_map.pt'))
+
+        return (
+            meta, num_partitions, partition_idx, node_pb, edge_pb
+        )
+    else:
+        node_pb_dict = {}
+        node_pb_dir = os.path.join(root_dir, 'node_map')
+        for ntype in meta['node_types']:
+            node_pb_dict[ntype] = torch.load(
+                os.path.join(node_pb_dir, f'{as_str(ntype)}.pt'))
+
+
+        edge_pb_dict = {}
+        edge_pb_dir = os.path.join(root_dir, 'edge_map')
+        for etype in meta['edge_types']:
+            edge_pb_dict[tuple(etype)] = torch.load(
+                os.path.join(edge_pb_dir, f'{as_str(etype)}.pt'))
+
+        return (
+            meta, num_partitions, partition_idx, node_pb_dict, edge_pb_dict
+        )
+
