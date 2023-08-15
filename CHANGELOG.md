@@ -82,7 +82,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- Moved `torch_geometric.contrib.explain.algorithm.GraphMaskExplainer` to `torch_geometric.explain.algorithm.GraphMaskExplainer` ([#7779](https://github.com/pyg-team/pytorch_geometric/pull/7779))
+- Moved `torch_geometric.contrib.explain.GraphMaskExplainer` to `torch_geometric.explain.algorithm.GraphMaskExplainer` ([#7779](https://github.com/pyg-team/pytorch_geometric/pull/7779))
 - Updated `QM9` data pre-processing to include the SMILES string ([#7867](https://github.com/pyg-team/pytorch_geometric/pull/7867))
 - Fixed tracing of `add_self_loops` for a dynamic number of nodes ([#7330](https://github.com/pyg-team/pytorch_geometric/pull/7330))
 - Fixed device issue in `PNAConv.get_degree_histogram` ([#7830](https://github.com/pyg-team/pytorch_geometric/pull/7830))
