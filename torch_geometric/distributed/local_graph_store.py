@@ -1,6 +1,6 @@
 import json
 import os.path as osp
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -18,9 +18,39 @@ class LocalGraphStore(GraphStore):
         self._edge_attr: Dict[Tuple, EdgeAttr] = {}
         self._edge_id: Dict[Tuple, Tensor] = {}
 
+        self.num_partitions = 1
+        self.partition_idx = 0
+        # Mapping between node ID and partition ID
+        self.node_pb: Union[Tensor, Dict[NodeType, Tensor]] = None
+        # Mapping between edge ID and partition ID
+        self.edge_pb: Union[Tensor, Dict[EdgeType, Tensor]] = None
+        # Meta information related to partition and graph store info
+        self.meta: Optional[Dict[Any, Any]] = None
+        # Partition labels
+        self.labels: Union[Tensor, Dict[EdgeType, Tensor]] = None
+
     @staticmethod
     def key(attr: EdgeAttr) -> Tuple:
         return (attr.edge_type, attr.layout.value)
+
+    def get_partition_ids_from_nids(
+        self,
+        ids: torch.Tensor,
+        node_type: Optional[NodeType] = None,
+    ) -> Tensor:
+        r"""Get the partition IDs of node IDs for a specific node type."""
+        if self.meta['is_hetero']:
+            assert node_type is not None
+            return self.node_pb[node_type][ids]
+        return self.node_pb[ids]
+
+    def get_partition_ids_from_eids(self, eids: torch.Tensor,
+                                    edge_type: Optional[EdgeType] = None):
+        r"""Get the partition IDs of edge IDs for a specific edge type."""
+        if self.meta["is_hetero"]:
+            assert edge_type is not None
+            return self.edge_pb[edge_type][eids]
+        return self.edge_pb[eids]
 
     def put_edge_id(self, edge_id: Tensor, *args, **kwargs) -> bool:
         edge_attr = self._edge_attr_cls.cast(*args, **kwargs)
@@ -126,15 +156,17 @@ class LocalGraphStore(GraphStore):
 
         if not meta['is_hetero']:
             attr = dict(edge_type=None, layout='coo', size=graph_data['size'])
-            graph_store.put_edge_index((graph_data['row'], graph_data['col']),
-                                       **attr)
+            graph_store.put_edge_index(
+                torch.stack((graph_data['row'], graph_data['col']), dim=0),
+                **attr)
             graph_store.put_edge_id(graph_data['edge_id'], **attr)
 
         if meta['is_hetero']:
             for edge_type, data in graph_data.items():
                 attr = dict(edge_type=edge_type, layout='coo',
                             size=data['size'])
-                graph_store.put_edge_index((data['row'], data['col']), **attr)
+                graph_store.put_edge_index(
+                    torch.stack((data['row'], data['col']), dim=0), **attr)
                 graph_store.put_edge_id(data['edge_id'], **attr)
 
         return graph_store

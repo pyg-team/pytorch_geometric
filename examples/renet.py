@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -68,8 +69,12 @@ def test(loader):
     return result.tolist()
 
 
+times = []
 for epoch in range(1, 21):
+    start = time.time()
     train()
     mrr, hits1, hits3, hits10 = test(test_loader)
     print(f'Epoch: {epoch:02d}, MRR: {mrr:.4f}, Hits@1: {hits1:.4f}, '
           f'Hits@3: {hits3:.4f}, Hits@10: {hits10:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

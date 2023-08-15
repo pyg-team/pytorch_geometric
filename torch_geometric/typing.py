@@ -219,6 +219,8 @@ NodeType = str
 # `data[('author', 'writes', 'paper')]
 EdgeType = Tuple[str, str, str]
 
+NodeOrEdgeType = Union[NodeType, EdgeType]
+
 DEFAULT_REL = 'to'
 EDGE_TYPE_STR_SPLIT = '__'
 

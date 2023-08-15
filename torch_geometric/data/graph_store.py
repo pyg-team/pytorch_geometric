@@ -7,7 +7,7 @@ This particular graph store abstraction makes a few key assumptions:
 * The edge indices we care about storing are represented either in COO, CSC,
   or CSR format. They can be uniquely identified by an edge type (in PyG,
   this is a tuple of the source node, relation type, and destination node).
-* Edge indices are static once they are stored in tthe grah. That is, we do not
+* Edge indices are static once they are stored in the graph. That is, we do not
   support dynamic modification of edge indices once they have been inserted
   into the graph store.
 
