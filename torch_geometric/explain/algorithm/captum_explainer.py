@@ -129,12 +129,6 @@ class CaptumExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
 
-        # Check if index is out of dimension of target
-        if index is not None:
-            if index >= target.shape[1]:
-                raise ValueError("index is out of dimension of target.",
-                                 "Please check the index.")
-
         mask_type = self._get_mask_type()
 
         inputs, add_forward_args = to_captum_input(
@@ -161,9 +155,14 @@ class CaptumExplainer(ExplainerAlgorithm):
         self.attribution_method_instance = self.attribution_method_class(
             captum_model)
 
-        # In captum, the target is the index for which
-        # the attribution is computed.
-        target = index
+        # In captum, the target is the class index for which
+        # the attribution is computed. With CaptumModel, we transform
+        # the binary classification into a multi-class. This way we can
+        # explain both calsse and need to pass a target here as well.
+        if self.model_config.mode == ModelMode.regression:
+            target = None
+        else:
+            target = target[index]
 
         attributions = self.attribution_method_instance.attribute(
             inputs=inputs,

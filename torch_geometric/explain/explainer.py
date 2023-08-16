@@ -170,10 +170,10 @@ class Explainer:
                 If the explanation type is :obj:`"phenomenon"`, the target has
                 to be provided.
                 If the explanation type is :obj:`"model"`, the target should be
-                set to :obj:`None` and will get automatically inferred. This is
-                not supported for :obj:`"CaptumExplainer"`.
-                (default: :obj:`None`)
-            index (Union[int, Tensor], optional): The index of the model
+                set to :obj:`None` and will get automatically inferred. For
+                classification tasks, the target needs to contain the class
+                labels. (default: :obj:`None`)
+            index (Union[int, Tensor], optional): The node index of the model
                 output to explain. Can be a single index or a tensor of
                 indices. (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
@@ -193,20 +193,13 @@ class Explainer:
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
 
-        # Check if the `index` is valid:
         if index is not None:
-            if isinstance(index, Tensor):
-                if index.min() < 0 or index.max() >= target.shape[1]:
-                    raise ValueError(f"The 'index' ({index}) is out of range "
-                                     f"({target.shape[1]}).")
-                if index.shape[0] != target.shape[0] and index.shape[0] != 1:
-                    raise ValueError(
-                        f"The 'index' ({index}) has to have the same "
-                        f"batch-size as the 'target' ({target}).")
-            elif isinstance(index, int):
-                if index < 0 or index >= target.shape[1]:
-                    raise ValueError(f"The 'index' ({index}) is out of range "
-                                     f"({target.shape[1]}).")
+            if isinstance(index, int):
+                index = torch.tensor([index])
+            if index.max() >= target.shape[0]:
+                raise ValueError(
+                    f"The 'index' refers to a node index. Therefore, it has"
+                    f" to be smaller than the number of nodes ({x.shape[0]})")
 
         training = self.model.training
         self.model.eval()

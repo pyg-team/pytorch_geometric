@@ -211,7 +211,7 @@ def test_captum_explainer_multiclass_classification(
     'edge_mask_type',
     [em for em in edge_mask_types if em is not None],
 )
-@pytest.mark.parametrize('index', [1, None])
+@pytest.mark.parametrize('index', [1, torch.arange(2)])
 def test_captum_hetero_data(method, node_mask_type, edge_mask_type, index,
                             hetero_data, hetero_model):
 
@@ -226,19 +226,10 @@ def test_captum_hetero_data(method, node_mask_type, edge_mask_type, index,
         explanation_type='model',
     )
 
-    if index is not None:
-        with pytest.raises(ValueError):
-            explanation = explainer(
-                hetero_data.x_dict,
-                hetero_data.edge_index_dict,
-                index=index,
-            )
-    else:
-        explanation = explainer(
-            hetero_data.x_dict,
-            hetero_data.edge_index_dict,
-        )
-        explanation.validate(raise_on_error=True)
+    explanation = explainer(hetero_data.x_dict, hetero_data.edge_index_dict,
+                            index=index)
+
+    explanation.validate(raise_on_error=True)
 
 
 @withPackage('captum')
