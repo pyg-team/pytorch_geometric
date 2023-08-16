@@ -110,11 +110,16 @@ We also create a single-hop evaluation neighbor loader:
 Now that we have our data loaders defined initialize our model and wrap it in DistributedDataParallel
 
 .. code-block:: python
-      from torch.nn.parallel import DistributedDataParallel
 
+      from torch.nn.parallel import DistributedDataParallel
       torch.manual_seed(12345)
       model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
       model = DistributedDataParallel(model, device_ids=[rank])
+
+Now we set up our optimizer and define our training loop. Notice that we move the edge indices of each mini batch to GPU while the features and labels are already on GPU.
+
+.. code-block:: python
+
       optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
       for epoch in range(1, 21):
@@ -125,6 +130,10 @@ Now that we have our data loaders defined initialize our model and wrap it in Di
             loss = F.cross_entropy(out, batch.y[:batch.batch_size])
             loss.backward()
             optimizer.step()
+
+After each training epoch, we evaluate and report accuracies:
+
+.. code-block:: python
 
         dist.barrier()
 
