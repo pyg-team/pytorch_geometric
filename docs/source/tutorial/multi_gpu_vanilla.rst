@@ -17,6 +17,7 @@ This example shows how to use train a GraphSage GNN Model on the `Reddit dataset
 We then create a simple Graph Sage GNN for our model:
 
 .. code-block:: python
+
    import torch
    from torch_geometric.nn import SAGEConv
    class SAGE(torch.nn.Module):
