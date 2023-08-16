@@ -77,11 +77,11 @@ Defining our Spawnable Trainer
        os.environ['MASTER_ADDR'] = 'localhost'
        os.environ['MASTER_PORT'] = '12355'
        dist.init_process_group('nccl', rank=rank, world_size=world_size)
-   
+
        data = dataset[0]
        data = data.to(rank, 'x', 'y')
 
-Notice we move to features and labels to GPU for faster feature fetching. 
+Notice we move to features and labels to GPU for faster feature fetching.
 
 Now we split training indices into `world_size` many chunks for each GPU:
 
@@ -99,7 +99,7 @@ We also create a single-hop evaluation neighbor loader:
 
 .. code-block:: python
 
-    if rank == 0:  
+    if rank == 0:
         subgraph_loader = NeighborLoader(copy.copy(data), num_neighbors=[-1],
                                          shuffle=False, **kwargs)
         # No need to maintain these features during evaluation:
@@ -111,4 +111,3 @@ We also create a single-hop evaluation neighbor loader:
 
 Large Scale
 -----------
-
