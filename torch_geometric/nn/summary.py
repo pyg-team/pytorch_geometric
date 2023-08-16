@@ -90,7 +90,6 @@ def summary(
         info['output_shape'] = output_shape[module_id]
         info['depth'] = depth
         if any([is_uninitialized_parameter(p) for p in module.parameters()]):
-            num_params = -1
             info['#param'] = '-1'
         else:
             num_params = sum(p.numel() for p in module.parameters())
