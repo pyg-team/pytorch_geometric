@@ -8,7 +8,7 @@ Starting off small
 ------------------
 
 To start, we can take a look at the `distributed_sampling <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.pyp>`__ example from PyG:
-This example shows how to use train a GraphSage GNN Model on the `Reddit dataset https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.Reddit.html`__. This example uses NeighborLoader with `torch.data.DistributedDataParallel https://pytorch.org/docs/stable/notes/ddp.html`__ to scale up training across all available GPU's on your machine.
+This example shows how to use train a GraphSage GNN Model on the `Reddit dataset <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.Reddit.html>`__. This example uses NeighborLoader with `torch.data.DistributedDataParallel <https://pytorch.org/docs/stable/notes/ddp.html>`__ to scale up training across all available GPU's on your machine.
 
 Creating Heterogeneous Graphs
 -----------------------------
