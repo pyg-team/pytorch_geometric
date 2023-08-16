@@ -1,6 +1,6 @@
 Multi-GPU training in Vanilla PyTorch
 ============================
-For many large scale, real-world datasets, it may be necessary to scale up training across multiple GPUs. This tutorial goes over how to do this on a small scale dataset and then 
+For many large scale, real-world datasets, it may be necessary to scale up training across multiple GPUs. This tutorial goes over how to do this on a small scale dataset and then
 shows how the same technique can be applied to a large scale recommendation graph.
 A large set of real-world datasets are stored as heterogeneous graphs, motivating the introduction of specialized functionality for them in :pyg:`PyG`.
 
