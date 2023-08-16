@@ -1,33 +1,14 @@
 Multi-GPU training in Vanilla PyTorch
 ============================
-
+For many large scale, real-world datasets, it may be necessary to scale up training across multiple GPUs. This tutorial goes over how to do this on a small scale dataset and then 
+shows how the same technique can be applied to a large scale recommendation graph.
 A large set of real-world datasets are stored as heterogeneous graphs, motivating the introduction of specialized functionality for them in :pyg:`PyG`.
-For example, most graphs in the area of recommendation, such as social graphs, are heterogeneous, as they store information about different types of entities and their different types of relations.
-This tutorial introduces how heterogeneous graphs are mapped to :pyg:`PyG` and how they can be used as input to Graph Neural Network models.
 
-Heterogeneous graphs come with different types of information attached to nodes and edges.
-Thus, a single node or edge feature tensor cannot hold all node or edge features of the whole graph, due to differences in type and dimensionality.
-Instead, a set of types need to be specified for nodes and edges, respectively, each having its own data tensors.
-As a consequence of the different data structure, the message passing formulation changes accordingly, allowing the computation of message and update function conditioned on node or edge type.
+Starting off small
+------------------
 
-Example Graph
--------------
-
-As a guiding example, we take a look at the heterogeneous `ogbn-mag <https://ogb.stanford.edu/docs/nodeprop>`__ network from the :ogb:`null` `dataset suite <https://ogb.stanford.edu>`_:
-
-.. image:: ../_figures/hg_example.svg
-  :align: center
-  :width: 500px
-
-The given heterogeneous graph has 1,939,743 nodes, split between the four node types **author**, **paper**, **institution** and **field of study**.
-It further has 21,111,007 edges, which also are of one of four types:
-
-* **writes**: An author *writes* a specific paper
-* **affiliated with**: An author is *affiliated with* a specific institution
-* **cites**: A paper *cites* another paper
-* **has topic**: A paper *has a topic* of a specific field of study
-
-The task for this graph is to infer the venue of each paper (conference or journal) given the information stored in the graph.
+To start, we can take a look at the `distributed_sampling <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.pyp>`__ example from PyG:
+This example shows how to use train a GraphSage GNN Model on the `Reddit dataset https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.Reddit.html`__. This example uses NeighborLoader with `torch.data.DistributedDataParallel https://pytorch.org/docs/stable/notes/ddp.html`__ to scale up training across all available GPU's on your machine.
 
 Creating Heterogeneous Graphs
 -----------------------------
