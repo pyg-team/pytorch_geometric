@@ -10,35 +10,58 @@ Starting off small
 To start, we can take a look at the `distributed_sampling <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.pyp>`__ example from PyG:
 This example shows how to use train a GraphSage GNN Model on the `Reddit dataset <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.Reddit.html>`__. This example uses NeighborLoader with `torch.data.DistributedDataParallel <https://pytorch.org/docs/stable/notes/ddp.html>`__ to scale up training across all available GPU's on your machine.
 
-Creating Heterogeneous Graphs
------------------------------
 
-First, we can create a data object of type :class:`torch_geometric.data.HeteroData`, for which we define node feature tensors, edge index tensors and edge feature tensors individually for each type:
+
+....
+
+We then create a simple Graph Sage GNN for our model:
 
 .. code-block:: python
+   import torch
+   from torch_geometric.nn import SAGEConv
+   class SAGE(torch.nn.Module):
+    def __init__(self, in_channels: int, hidden_channels: int,
+                 out_channels: int, num_layers: int = 2):
+        super().__init__()
 
-   from torch_geometric.data import HeteroData
+        self.convs = torch.nn.ModuleList()
+        self.convs.append(SAGEConv(in_channels, hidden_channels))
+        for _ in range(num_layers - 2):
+            self.convs.append(SAGEConv(hidden_channels, hidden_channels))
+        self.convs.append(SAGEConv(hidden_channels, out_channels))
 
-   data = HeteroData()
+    def forward(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        for i, conv in enumerate(self.convs):
+            x = conv(x, edge_index)
+            if i < len(self.convs) - 1:
+                x = x.relu_()
+                x = F.dropout(x, p=0.5, training=self.training)
+        return x
 
-   data['paper'].x = ... # [num_papers, num_features_paper]
-   data['author'].x = ... # [num_authors, num_features_author]
-   data['institution'].x = ... # [num_institutions, num_features_institution]
-   data['field_of_study'].x = ... # [num_field, num_features_field]
+    @torch.no_grad()
+    def inference(self, x_all: Tensor, device: torch.device,
+                  subgraph_loader: NeighborLoader) -> Tensor:
 
-   data['paper', 'cites', 'paper'].edge_index = ... # [2, num_edges_cites]
-   data['author', 'writes', 'paper'].edge_index = ... # [2, num_edges_writes]
-   data['author', 'affiliated_with', 'institution'].edge_index = ... # [2, num_edges_affiliated]
-   data['paper', 'has_topic', 'field_of_study'].edge_index = ... # [2, num_edges_topic]
+        pbar = tqdm(total=len(subgraph_loader) * len(self.convs))
+        pbar.set_description('Evaluating')
 
-   data['paper', 'cites', 'paper'].edge_attr = ... # [num_edges_cites, num_features_cites]
-   data['author', 'writes', 'paper'].edge_attr = ... # [num_edges_writes, num_features_writes]
-   data['author', 'affiliated_with', 'institution'].edge_attr = ... # [num_edges_affiliated, num_features_affiliated]
-   data['paper', 'has_topic', 'field_of_study'].edge_attr = ... # [num_edges_topic, num_features_topic]
+        # Compute representations of nodes layer by layer, using *all*
+        # available edges. This leads to faster computation in contrast to
+        # immediately computing the final representations of each batch:
+        for i, conv in enumerate(self.convs):
+            xs = []
+            for batch in subgraph_loader:
+                x = x_all[batch.node_id.to(x_all.device)].to(device)
+                x = conv(x, batch.edge_index.to(device))
+                x = x[:batch.batch_size]
+                if i < len(self.convs) - 1:
+                    x = x.relu_()
+                xs.append(x.cpu())
+                pbar.update(1)
+            x_all = torch.cat(xs, dim=0)
 
-Node or edge tensors will be automatically created upon first access and indexed by string keys.
-Node types are identified by a single string while edge types are identified by using a triplet :obj:`(source_node_type, edge_type, destination_node_type)` of strings: the edge type identifier and the two node types between which the edge type can exist.
-As such, the data object allows different feature dimensionalities for each type.
+        pbar.close()
+        return x_all
 
 Dictionaries containing the heterogeneous information grouped by attribute names rather than by node or edge type can directly be accessed via :obj:`data.{attribute_name}_dict` and serve as input to GNN models later:
 
