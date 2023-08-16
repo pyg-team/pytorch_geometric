@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.4.0] - 2023-MM-DD
 
 ### Added
-
+- [Documentation] Multi-GPU training in Vanilla PyTorch Tutorial ([#7894](https://github.com/pyg-team/pytorch_geometric/pull/7894)
 - Added TorchScript support inside `BasicGNN` models ([#7865](https://github.com/pyg-team/pytorch_geometric/pull/7865))
 - Added a `batch_size` argument to `unbatch` functionalities ([#7851](https://github.com/pyg-team/pytorch_geometric/pull/7851))
 - Added a distributed example using `graphlearn-for-pytorch` ([#7402](https://github.com/pyg-team/pytorch_geometric/pull/7402))
