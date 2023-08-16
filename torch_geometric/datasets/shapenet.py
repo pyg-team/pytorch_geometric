@@ -76,6 +76,10 @@ class ShapeNet(InMemoryDataset):
     url = ('https://shapenet.cs.stanford.edu/media/'
            'shapenetcore_partanno_segmentation_benchmark_v0_normal.zip')
 
+    # In case `shapenet.cs.stanford.edu` is offline, try to download the data
+    # from Kaggle instead (requires login):
+    # https://www.kaggle.com/datasets/mitkir/shapenet/download?datasetVersionNumber=1
+
     category_ids = {
         'Airplane': '02691156',
         'Bag': '02773838',
