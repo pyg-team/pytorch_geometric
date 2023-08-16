@@ -158,7 +158,7 @@ class CaptumExplainer(ExplainerAlgorithm):
         # In captum, the target is the class index for which
         # the attribution is computed. With CaptumModel, we transform
         # the binary classification into a multi-class. This way we can
-        # explain both calsse and need to pass a target here as well.
+        # explain both classes and need to pass a target here as well.
         if self.model_config.mode == ModelMode.regression:
             target = None
         else:
