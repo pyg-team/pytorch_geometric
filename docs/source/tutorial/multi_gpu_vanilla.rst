@@ -66,7 +66,7 @@ Defining our GNN
         pbar.close()
         return x_all
 
-Defining our Spawnable Trainer
+Defining our Spawnable Runner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
@@ -87,27 +87,75 @@ Now we split training indices into `world_size` many chunks for each GPU:
 
 .. code-block:: python
 
-    train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
-    train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
-
-    kwargs = dict(batch_size=1024, num_workers=4, persistent_workers=True)
-    train_loader = NeighborLoader(data, input_nodes=train_idx,
-                                  num_neighbors=[25, 10], shuffle=True,
-                                  drop_last=True, **kwargs)
+       train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
+       train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
+   
+       kwargs = dict(batch_size=1024, num_workers=4, persistent_workers=True)
+       train_loader = NeighborLoader(data, input_nodes=train_idx,
+                                     num_neighbors=[25, 10], shuffle=True,
+                                     drop_last=True, **kwargs)
 
 We also create a single-hop evaluation neighbor loader:
 
 .. code-block:: python
 
-    if rank == 0:
-        subgraph_loader = NeighborLoader(copy.copy(data), num_neighbors=[-1],
-                                         shuffle=False, **kwargs)
-        # No need to maintain these features during evaluation:
-        del subgraph_loader.data.x, subgraph_loader.data.y
-        # Add global node index information:
-        subgraph_loader.data.node_id = torch.arange(data.num_nodes)
+       if rank == 0:
+           subgraph_loader = NeighborLoader(copy.copy(data), num_neighbors=[-1],
+                                            shuffle=False, **kwargs)
+           # No need to maintain these features during evaluation:
+           del subgraph_loader.data.x, subgraph_loader.data.y
+           # Add global node index information:
+           subgraph_loader.data.node_id = torch.arange(data.num_nodes)
+
+Now that we have our data loaders defined initialize our model and wrap it in DistributedDataParallel
+
+.. code-block:: python
+      from torch.nn.parallel import DistributedDataParallel
+   
+      torch.manual_seed(12345)
+      model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
+      model = DistributedDataParallel(model, device_ids=[rank])
+      optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+      
+      for epoch in range(1, 21):
+        model.train()
+        for batch in train_loader:
+            optimizer.zero_grad()
+            out = model(batch.x, batch.edge_index.to(rank))[:batch.batch_size]
+            loss = F.cross_entropy(out, batch.y[:batch.batch_size])
+            loss.backward()
+            optimizer.step()
+      
+        dist.barrier()
+      
+        if rank == 0:
+            print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
+      
+        if rank == 0 and epoch % 5 == 0:  # We evaluate on a single GPU for now
+            model.eval()
+            with torch.no_grad():
+                out = model.module.inference(data.x, rank, subgraph_loader)
+            res = out.argmax(dim=-1) == data.y.to(out.device)
+            acc1 = int(res[data.train_mask].sum()) / int(data.train_mask.sum())
+            acc2 = int(res[data.val_mask].sum()) / int(data.val_mask.sum())
+            acc3 = int(res[data.test_mask].sum()) / int(data.test_mask.sum())
+            print(f'Train: {acc1:.4f}, Val: {acc2:.4f}, Test: {acc3:.4f}')
+      
+        dist.barrier()
+      
+      dist.destroy_process_group()
 
 
+Putting it all together, we spawn our runners for each GPU:
+
+.. code-block:: python
+
+   if __name__ == '__main__':
+       dataset = Reddit('../../data/Reddit')
+   
+       world_size = torch.cuda.device_count()
+       print('Let\'s use', world_size, 'GPUs!')
+       mp.spawn(run, args=(world_size, dataset), nprocs=world_size, join=True)
 
 Large Scale
 -----------
