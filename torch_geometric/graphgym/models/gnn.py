@@ -41,9 +41,8 @@ def GNNLayer(dim_in, dim_out, has_act=True):
     """
     return GeneralLayer(
         cfg.gnn.layer_type,
-        layer_config=new_layer_config(
-            dim_in, dim_out, 1, has_act=has_act, has_bias=False, cfg=cfg
-        ),
+        layer_config=new_layer_config(dim_in, dim_out, 1, has_act=has_act,
+                                      has_bias=False, cfg=cfg),
     )
 
 
@@ -75,9 +74,8 @@ def GNNPreMP(dim_in, dim_out, num_layers):
     """
     return GeneralMultiLayer(
         "linear",
-        layer_config=new_layer_config(
-            dim_in, dim_out, num_layers, has_act=False, has_bias=False, cfg=cfg
-        ),
+        layer_config=new_layer_config(dim_in, dim_out, num_layers,
+                                      has_act=False, has_bias=False, cfg=cfg),
     )
 
 
@@ -93,7 +91,6 @@ class GNNStackStage(nn.Module):
         dim_out (int): Output dimension
         num_layers (int): Number of GNN layers
     """
-
     def __init__(self, dim_in, dim_out, num_layers):
         super().__init__()
         self.num_layers = num_layers
@@ -153,13 +150,13 @@ class FeatureEncoder(nn.Module):
         Make sure to set up the configuration (`cfg`) appropriately before creating an
         instance of FeatureEncoder.
     """
-
     def __init__(self, dim_in):
         super().__init__()
         self.dim_in = dim_in
         if cfg.dataset.node_encoder:
             # Encode integer node features via nn.Embeddings
-            NodeEncoder = register.node_encoder_dict[cfg.dataset.node_encoder_name]
+            NodeEncoder = register.node_encoder_dict[
+                cfg.dataset.node_encoder_name]
             self.node_encoder = NodeEncoder(cfg.gnn.dim_inner)
             if cfg.dataset.node_encoder_bn:
                 self.node_encoder_bn = BatchNorm1dNode(
@@ -170,13 +167,13 @@ class FeatureEncoder(nn.Module):
                         has_act=False,
                         has_bias=False,
                         cfg=cfg,
-                    )
-                )
+                    ))
             # Update dim_in to reflect the new dimension fo the node features
             self.dim_in = cfg.gnn.dim_inner
         if cfg.dataset.edge_encoder:
             # Encode integer edge features via nn.Embeddings
-            EdgeEncoder = register.edge_encoder_dict[cfg.dataset.edge_encoder_name]
+            EdgeEncoder = register.edge_encoder_dict[
+                cfg.dataset.edge_encoder_name]
             self.edge_encoder = EdgeEncoder(cfg.gnn.dim_inner)
             if cfg.dataset.edge_encoder_bn:
                 self.edge_encoder_bn = BatchNorm1dNode(
@@ -187,8 +184,7 @@ class FeatureEncoder(nn.Module):
                         has_act=False,
                         has_bias=False,
                         cfg=cfg,
-                    )
-                )
+                    ))
 
     def forward(self, batch):
         for module in self.children():
@@ -226,7 +222,6 @@ class GNN(nn.Module):
         Make sure to set up the configuration (`cfg`) and any required module registrations
         (`register`) before creating an instance of GNN.
     """
-
     def __init__(self, dim_in, dim_out, **kwargs):
         super().__init__()
         GNNStage = register.stage_dict[cfg.gnn.stage_type]
@@ -236,12 +231,12 @@ class GNN(nn.Module):
         dim_in = self.encoder.dim_in
 
         if cfg.gnn.layers_pre_mp > 0:
-            self.pre_mp = GNNPreMP(dim_in, cfg.gnn.dim_inner, cfg.gnn.layers_pre_mp)
+            self.pre_mp = GNNPreMP(dim_in, cfg.gnn.dim_inner,
+                                   cfg.gnn.layers_pre_mp)
             dim_in = cfg.gnn.dim_inner
         if cfg.gnn.layers_mp > 0:
-            self.mp = GNNStage(
-                dim_in=dim_in, dim_out=cfg.gnn.dim_inner, num_layers=cfg.gnn.layers_mp
-            )
+            self.mp = GNNStage(dim_in=dim_in, dim_out=cfg.gnn.dim_inner,
+                               num_layers=cfg.gnn.layers_mp)
         self.post_mp = GNNHead(dim_in=cfg.gnn.dim_inner, dim_out=dim_out)
 
         self.apply(init_weights)
