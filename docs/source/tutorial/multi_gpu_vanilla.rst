@@ -89,7 +89,7 @@ Now we split training indices into `world_size` many chunks for each GPU:
 
        train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
        train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
-   
+
        kwargs = dict(batch_size=1024, num_workers=4, persistent_workers=True)
        train_loader = NeighborLoader(data, input_nodes=train_idx,
                                      num_neighbors=[25, 10], shuffle=True,
@@ -111,12 +111,12 @@ Now that we have our data loaders defined initialize our model and wrap it in Di
 
 .. code-block:: python
       from torch.nn.parallel import DistributedDataParallel
-   
+
       torch.manual_seed(12345)
       model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
       model = DistributedDataParallel(model, device_ids=[rank])
       optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-      
+
       for epoch in range(1, 21):
         model.train()
         for batch in train_loader:
@@ -125,12 +125,12 @@ Now that we have our data loaders defined initialize our model and wrap it in Di
             loss = F.cross_entropy(out, batch.y[:batch.batch_size])
             loss.backward()
             optimizer.step()
-      
+
         dist.barrier()
-      
+
         if rank == 0:
             print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
-      
+
         if rank == 0 and epoch % 5 == 0:  # We evaluate on a single GPU for now
             model.eval()
             with torch.no_grad():
@@ -140,9 +140,9 @@ Now that we have our data loaders defined initialize our model and wrap it in Di
             acc2 = int(res[data.val_mask].sum()) / int(data.val_mask.sum())
             acc3 = int(res[data.test_mask].sum()) / int(data.test_mask.sum())
             print(f'Train: {acc1:.4f}, Val: {acc2:.4f}, Test: {acc3:.4f}')
-      
+
         dist.barrier()
-      
+
       dist.destroy_process_group()
 
 
@@ -152,7 +152,7 @@ Putting it all together, we spawn our runners for each GPU:
 
    if __name__ == '__main__':
        dataset = Reddit('../../data/Reddit')
-   
+
        world_size = torch.cuda.device_count()
        print('Let\'s use', world_size, 'GPUs!')
        mp.spawn(run, args=(world_size, dataset), nprocs=world_size, join=True)
