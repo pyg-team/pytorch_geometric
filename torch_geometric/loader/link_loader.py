@@ -8,6 +8,7 @@ from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
     filter_custom_store,
+    filter_hetero_custom_store,
     filter_data,
     filter_hetero_data,
     get_edge_label_index,
@@ -130,6 +131,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: Optional[bool] = None,
         custom_cls: Optional[HeteroData] = None,
+        worker_init_fn: Optional[Callable] = None,
         input_id: OptTensor = None,
         **kwargs,
     ):
@@ -182,9 +184,11 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         )
 
         iterator = range(edge_label_index.size(1))
-        super().__init__(iterator, collate_fn=self.collate_fn,
-                        worker_init_fn=self.worker_init_fn if self.worker_init_fn else None,
-                        **kwargs)
+        super().__init__(
+            iterator, 
+            collate_fn=self.collate_fn, 
+            worker_init_fn=worker_init_fn,
+            **kwargs)
 
     def __call__(
         self,
@@ -220,8 +224,9 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
             out = self.transform_sampler_output(out)
 
         if isinstance(out, SamplerOutput):
-            data = filter_data(self.data, out.node, out.row, out.col, out.edge,
-                               self.link_sampler.edge_permutation)
+            if isinstance(self.data, Data):
+                data = filter_data(self.data, out.node, out.row, out.col, out.edge,
+                                self.link_sampler.edge_permutation)
 
             if 'n_id' not in data:
                 data.n_id = out.node
@@ -254,7 +259,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                                           out.col, out.edge,
                                           self.link_sampler.edge_permutation)
             else:  # Tuple[FeatureStore, GraphStore]
-                data = filter_custom_store(*self.data, out.node, out.row,
+                data = filter_hetero_custom_store(*self.data, out.node, out.row,
                                            out.col, out.edge, self.custom_cls)
 
             for key, node in out.node.items():
