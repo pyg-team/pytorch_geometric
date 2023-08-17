@@ -1,6 +1,7 @@
 import torch
+
 from torch_geometric.data import Data
-from torch_geometric.loader import NeighborLoader, CachedLoader
+from torch_geometric.loader import CachedLoader, NeighborLoader
 
 
 def test_cached_loader():

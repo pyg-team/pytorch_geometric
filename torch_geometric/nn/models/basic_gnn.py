@@ -442,11 +442,11 @@ def make_batches_cacheable(model: BasicGNN) -> BasicGNN:
     """
     @torch.no_grad()
     def inference_with_cache(
-            self,
-            loader: NeighborLoader,
-            device: Optional[Union[str, torch.device]] = None,
-            embedding_device: Union[str, torch.device] = 'cpu',
-            progress_bar: bool = False,
+        self,
+        loader: NeighborLoader,
+        device: Optional[Union[str, torch.device]] = None,
+        embedding_device: Union[str, torch.device] = 'cpu',
+        progress_bar: bool = False,
     ) -> Tensor:
         if progress_bar:
             pbar = tqdm(total=len(self.convs) * len(loader))

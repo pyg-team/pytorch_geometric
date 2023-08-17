@@ -11,7 +11,15 @@ import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
-from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE, make_batches_cacheable
+from torch_geometric.nn.models import (
+    GAT,
+    GCN,
+    GIN,
+    PNA,
+    EdgeCNN,
+    GraphSAGE,
+    make_batches_cacheable,
+)
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
