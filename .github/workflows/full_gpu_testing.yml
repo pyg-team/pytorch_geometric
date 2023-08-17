@@ -14,7 +14,7 @@ jobs:
 
   full_gpu_pytest:
     if: github.repository == 'pyg-team/pytorch_geometric'
-    runs-on: [self-hosted, cuda]
+    runs-on: [self-hosted, nvidia]
 
     steps:
       - name: Checkout repository
@@ -31,5 +31,5 @@ jobs:
 
       - name: Run tests
         run: |
-          FULL_TEST=1 pytest test/transforms
+          FULL_TEST=1 pytest test/transforms  # TODO
         shell: bash
