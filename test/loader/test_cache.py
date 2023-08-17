@@ -2,8 +2,10 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.loader import CachedLoader, NeighborLoader
+from torch_geometric.testing import withPackage
 
 
+@withPackage('pyg_lib')
 def test_cached_loader():
     zeros = torch.zeros(10, dtype=torch.long)
     ones = torch.ones(90, dtype=torch.long)
