@@ -115,9 +115,10 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         )
 
         iterator = range(input_nodes.size(0))
-        super().__init__(iterator, collate_fn=self.collate_fn,
-                         worker_init_fn=self.worker_init_fn if self.worker_init_fn else None,
-                        **kwargs)
+        super().__init__(
+            iterator, collate_fn=self.collate_fn,
+            worker_init_fn=self.worker_init_fn
+            if self.worker_init_fn else None, **kwargs)
 
     def __call__(
         self,
