@@ -204,6 +204,16 @@ except (ImportError, OSError) as e:
                               layout: Optional[str] = None) -> SparseTensor:
             raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
 
+try:
+    import intel_extension_for_pytorch  # noqa
+    WITH_IPEX = True
+except (ImportError, OSError) as e:
+    if isinstance(e, OSError):
+        warnings.warn("An issue occurred while importing"
+                      "'intel-extension-for-pytorch'. "
+                      f"Disabling its usage. Stacktrace: {e}")
+    WITH_IPEX = False
+
 
 class MockTorchCSCTensor:
     def __init__(
