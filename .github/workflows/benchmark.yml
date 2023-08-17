@@ -9,11 +9,11 @@ on:
   # schedule:
   #   - cron: '0 0,8,16 * * *'
 
-# TODO: Uncomment below
-# Note: Do not run benchmarks in parallel to avoid losing results due to conflicts
-# concurrency:
-#   group: benchmark
-#   cancel-in-progress: false
+
+# FIXME: For debugging purpose. Adjust this if necessary
+concurrency:
+  group: benchmark
+  cancel-in-progress: true
 
 defaults:
   run:
@@ -22,8 +22,8 @@ defaults:
 jobs:
   benchmark:
     if: github.repository == 'pyg-team/pytorch_geometric'
-    runs-on: ubuntu-latest
-    # runs-on: [self-hosted, nvidia]
+    # runs-on: ubuntu-latest
+    runs-on: [self-hosted, nvidia]
 
     steps:
     - uses: actions/checkout@v3
