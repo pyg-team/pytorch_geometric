@@ -30,7 +30,9 @@ jobs:
       with:
         fetch-depth: '0'
 
-    - run: |
+    - name: debug
+      run: |
+        nvidia-smi
         which python
         which micromamba
         which mamba
