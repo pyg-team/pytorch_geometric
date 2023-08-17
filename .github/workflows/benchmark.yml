@@ -37,42 +37,41 @@ jobs:
         which micromamba
         which mamba
 
-
     # - uses: actions/setup-python@v4
     #   with:
     #     python-version: '3.10'
 
-    # - uses: mamba-org/setup-micromamba@v1
-    #   with:
-    #     create-args: 'python=3.10'
-    #     init-shell: bash
+    - uses: mamba-org/setup-micromamba@v1
+      with:
+        create-args: 'python=3.10'
+        init-shell: bash
 
-    # - name: Check runner
-    #   run: |
-    #     nvidia-smi
+    - name: Check runner
+      run: |
+        nvidia-smi
 
-    # - name: Set up asv
-    #   run: |
-    #     python -m pip install -U pip
-    #     pip install "git+https://github.com/airspeed-velocity/asv.git@8f5c8af"
-    #     asv machine --machine "pyg-t4" --yes
+    - name: Set up asv
+      run: |
+        python -m pip install -U pip
+        pip install "git+https://github.com/airspeed-velocity/asv.git@8f5c8af"
+        asv machine --machine "pyg-t4" --yes
 
-    # - name: Configure Git
-    #   run: |
-    #     git config --global user.name "${{ github.actor }}"
-    #     git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-    #     git config --list
+    - name: Configure Git
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git config --list
 
-    # - name: Run benchmarks on 2.3.0 and master
-    #   timeout-minutes: 10  # FIXME: Adjust timeout
-    #   run: |
-    #     git branch --all
-    #     asv run HASHFILE:HASHFILE.txt \
-    #       --launch-method spawn \
-    #       --skip-existing-successful \
-    #       --verbose \
-    #       --show-stderr \
-    #       --bench scatter  # FIXME: Run all benchmarks
+    - name: Run benchmarks on 2.3.0 and master
+      timeout-minutes: 10  # FIXME: Adjust timeout
+      run: |
+        git branch --all
+        asv run HASHFILE:HASHFILE.txt \
+          --launch-method spawn \
+          --skip-existing-successful \
+          --verbose \
+          --show-stderr \
+          --bench scatter  # FIXME: Run all benchmarks
 
     # - name: Upload results
     #   uses: actions/upload-artifact@v3
