@@ -12,7 +12,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  pytest:
+  full_gpu_pytest:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: [self-hosted, cuda]
 
