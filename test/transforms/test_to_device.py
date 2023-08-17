@@ -7,6 +7,7 @@ from torch_geometric.transforms import ToDevice
 
 @withCUDA
 def test_to_device(device):
+    print(device)
     x = torch.randn(3, 4)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     edge_weight = torch.randn(edge_index.size(1))

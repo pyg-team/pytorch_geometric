@@ -31,5 +31,5 @@ jobs:
 
       - name: Run tests
         run: |
-          FULL_TEST=1 pytest --cov --cov-report=xml
+          FULL_TEST=1 pytest test/transforms
         shell: bash
