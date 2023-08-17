@@ -11,7 +11,7 @@ import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
-from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
+from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE, make_batches_cacheable
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     disableExtensions,
@@ -342,6 +342,13 @@ def test_compile_graph_breaks(Model):
     num_previous_compile_calls = num_compile_calls
     model(x, edge_index)
     assert num_compile_calls - num_previous_compile_calls == 1
+
+
+def test_basic_gnn_decorator():
+    Model = GCN
+    original_inference = Model.inference
+    Model = make_batches_cacheable(Model)
+    assert Model.inference is not original_inference
 
 
 if __name__ == '__main__':

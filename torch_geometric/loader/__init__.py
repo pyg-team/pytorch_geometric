@@ -20,6 +20,7 @@ from .imbalanced_sampler import ImbalancedSampler
 from .dynamic_batch_sampler import DynamicBatchSampler
 from .prefetch import PrefetchLoader
 from .mixin import AffinityMixin
+from .cache import CachedLoader
 
 __all__ = classes = [
     'DataLoader',
@@ -45,6 +46,7 @@ __all__ = classes = [
     'DynamicBatchSampler',
     'PrefetchLoader',
     'AffinityMixin',
+    'CachedLoader',
 ]
 
 RandomNodeSampler = deprecated(

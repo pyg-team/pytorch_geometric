@@ -6,7 +6,7 @@ from torch import Tensor
 from torch.nn import Linear, ModuleList
 from tqdm import tqdm
 
-from torch_geometric.loader import NeighborLoader
+from torch_geometric.loader import CachedLoader, NeighborLoader
 from torch_geometric.nn.conv import (
     EdgeConv,
     GATConv,
@@ -433,6 +433,49 @@ class BasicGNN(torch.nn.Module):
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, num_layers={self.num_layers})')
+
+
+def make_batches_cacheable(model: BasicGNN) -> BasicGNN:
+    r"""A decorator overwriting :class:`torch_geometric.nn.models.BasicGNN`
+    inference loop, making it work with
+    :class:`torch_geometric.loader.CachedLoader`.
+    """
+    @torch.no_grad()
+    def inference_with_cache(
+            self,
+            loader: NeighborLoader,
+            device: Optional[Union[str, torch.device]] = None,
+            embedding_device: Union[str, torch.device] = 'cpu',
+            progress_bar: bool = False,
+    ) -> Tensor:
+        if progress_bar:
+            pbar = tqdm(total=len(self.convs) * len(loader))
+            pbar.set_description('Inference')
+        if device is not None and isinstance(device, str):
+            device = torch.device(device)
+
+        x_all = loader.data.x.to(embedding_device)
+
+        cached_loader = CachedLoader(loader, device)
+        for i in range(self.num_layers):
+            xs: List[Tensor] = []
+            for n_id, edge_index, bs in cached_loader:
+                x = x_all[n_id].to(device)
+                x = self.inference_per_layer(i, x, edge_index, bs)
+                xs.append(x)
+
+                if progress_bar:
+                    pbar.update(1)
+
+            x_all = torch.cat(xs, dim=0)
+
+        if progress_bar:
+            pbar.close()
+
+        return x_all
+
+    model.inference = inference_with_cache
+    return model
 
 
 class GCN(BasicGNN):
