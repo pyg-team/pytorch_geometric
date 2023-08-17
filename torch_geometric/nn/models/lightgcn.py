@@ -164,7 +164,7 @@ class LightGCN(torch.nn.Module):
         src_index: OptTensor = None,
         dst_index: OptTensor = None,
         k: int = 1,
-        sorted: bool = False,
+        sorted: bool = True,
     ) -> Tensor:
         r"""Get top-:math:`k` recommendations for nodes in :obj:`src_index`.
 
@@ -179,7 +179,7 @@ class LightGCN(torch.nn.Module):
                 (default: :obj:`None`)
             k (int, optional): Number of recommendations. (default: :obj:`1`)
             sorted (bool, optional): Whether to sort the recommendations
-                by score. (default: :obj:`False`)
+                by score. (default: :obj:`True`)
         """
         out_src = out_dst = self.get_embedding(edge_index, edge_weight)
 
