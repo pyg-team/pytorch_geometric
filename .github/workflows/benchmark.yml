@@ -25,7 +25,8 @@ defaults:
 
 jobs:
   benchmark:
-    runs-on: ubuntu-latest
+    if: github.repository == 'pyg-team/pytorch_geometric'
+    runs-on: [self-hosted, nvidia]
 
     steps:
     - uses: actions/checkout@v3
@@ -34,13 +35,18 @@ jobs:
 
     - uses: actions/setup-python@v4
       with:
-        python-version: 3.11
+        python-version: '3.10'
+
+    - name: Check runner
+      run: |
+        nvidia-smi
+      shell: bash
 
     - name: Install dependencies
       run: |
         python -m pip install -U pip
-        python -m pip install asv
-        asv machine --machine "github" --yes
+        pip install asv
+        asv machine --machine "pyg-nvidia" --yes
 
     - name: Configure Git
       run: |
@@ -57,17 +63,17 @@ jobs:
     #     git checkout results && git checkout master
     #     git checkout results .asv/results
 
-    - name: Compare with master on pull request
-      # Run only a small set of benchmarks for sanity check.
-      # if: github.event_name == 'pull_request'  # FIXME
-      # Give 10min for other steps. GitHub Actions allow 360 at the maximum.
-      timeout-minutes: 350
-      run: |
-        git branch --all
-        # FIXME: Tighten the below ratio 2.0 to 1.1
-        asv continuous -f 2.0 origin/master HEAD -e
-      env:
-        ASV_RUN_OPTIONS: "--skip-existing-successful --parallel -v -e"
+    # - name: Compare with master on pull request
+    #   # Run only a small set of benchmarks for sanity check.
+    #   # if: github.event_name == 'pull_request'  # FIXME
+    #   # Give 10min for other steps. GitHub Actions allow 360 at the maximum.
+    #   timeout-minutes: 350
+    #   run: |
+    #     git branch --all
+    #     # FIXME: Tighten the below ratio 2.0 to 1.1
+    #     asv continuous -f 2.0 origin/master HEAD -e
+    #   env:
+    #     ASV_RUN_OPTIONS: "--skip-existing-successful --parallel -v -e"
 
     # TODO: Enable uploading results and gh-pages
     # - name: Push results and gh-pages if not on PR
