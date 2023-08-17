@@ -80,6 +80,9 @@ def run(args: argparse.ArgumentParser):
         _, _, test_mask = get_split_masks(data, dataset_name)
         degree = None
 
+        if hetero and args.cached_loader:
+            args.cached_loader = False
+            print('Disabling CachedLoader, not supported in Hetero models')
         if args.num_layers != [1] and not hetero and args.num_steps != -1:
             raise ValueError("Layer-wise inference requires `steps=-1`")
 
