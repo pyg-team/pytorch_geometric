@@ -1,15 +1,11 @@
 name: Benchmark
 
 on:
+  # FIXME: Remove push trigger
   push:
     branches:
-      - master
-      - akihironitta/bench  # FIXME
-  pull_request:
-    branches:
-      - master
-      - akihironitta/bench  # FIXME
-  # TODO(akihironitta): Run benchmarks regularly
+      - akihironitta/bench
+  # FIXME: Enable weekly or nightly trigger instead
   # schedule:
   #   - cron: '0 0,8,16 * * *'
 
@@ -26,7 +22,8 @@ defaults:
 jobs:
   benchmark:
     if: github.repository == 'pyg-team/pytorch_geometric'
-    runs-on: [self-hosted, nvidia]
+    runs-on: ubuntu-latest
+    # runs-on: [self-hosted, nvidia]
 
     steps:
     - uses: actions/checkout@v3
@@ -40,21 +37,36 @@ jobs:
     - name: Check runner
       run: |
         nvidia-smi
-      shell: bash
 
-    - name: Install dependencies
+    - name: Set up asv
       run: |
         python -m pip install -U pip
-        pip install asv
-        asv machine --machine "pyg-nvidia" --yes
+        pip install "git+https://github.com/airspeed-velocity/asv.git@8f5c8af"
+        asv machine --machine "pyg-t4" --yes
 
     - name: Configure Git
       run: |
-        git config --global user.name "$GIT_AUTHOR_NAME"
-        git config --global user.email "$GIT_AUTHOR_EMAIL"
-      env:
-        GIT_AUTHOR_NAME: ${{ github.actor }}
-        GIT_AUTHOR_EMAIL: ${{ github.actor }}@users.noreply.github.com
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+        git config --list
+
+    - name: Run benchmarks on 2.3.0 and master
+      timeout-minutes: 10  # FIXME: Adjust timeout
+      run: |
+        git branch --all
+        asv run HASHFILE:HASHFILE.txt \
+          --launch-method spawn \
+          --skip-existing-successful \
+          --verbose \
+          --show-stderr \
+          --bench scatter  # FIXME: Run all benchmarks
+
+    - name: Upload results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: benchmark-result
+        path: .asv/result
 
     # TODO: Enable pulling results
     # - name: Pull asv results
