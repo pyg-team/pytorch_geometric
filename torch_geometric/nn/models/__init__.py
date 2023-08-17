@@ -1,5 +1,13 @@
 from .mlp import MLP
-from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN, make_batches_cacheable
+from .basic_gnn import (
+    GCN,
+    GraphSAGE,
+    GIN,
+    GAT,
+    PNA,
+    EdgeCNN,
+    make_batches_cacheable,
+)
 from .jumping_knowledge import JumpingKnowledge
 from .meta import MetaLayer
 from .node2vec import Node2Vec
