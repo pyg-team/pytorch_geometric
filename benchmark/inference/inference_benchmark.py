@@ -216,7 +216,8 @@ def run(args: argparse.ArgumentParser):
                             if args.reuse_device_for_embeddings and not hetero:
                                 inference_kwargs['embedding_device'] = device
                             if args.cached_loader:
-                                inference_kwargs['maybe_with_cached_loader'] = True
+                                inference_kwargs[
+                                    'maybe_with_cached_loader'] = True
                             for _ in range(args.warmup):
                                 if args.full_batch:
                                     full_batch_inference(model, data)
