@@ -106,6 +106,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
         self.custom_cls = custom_cls
+        self.worker_init_fn = kwargs.get('worker_init_fn', None)
 
         self.input_data = NodeSamplerInput(
             input_id=input_id,

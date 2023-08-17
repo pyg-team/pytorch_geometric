@@ -157,6 +157,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
         self.custom_cls = custom_cls
+        self.worker_init_fn = kwargs.get('worker_init_fn', None)
 
         if (self.neg_sampling is not None and self.neg_sampling.is_binary()
                 and edge_label is not None and edge_label.min() == 0):
