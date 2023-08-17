@@ -31,7 +31,9 @@ jobs:
         fetch-depth: '0'
 
     - run: |
-        which python micromamba mamba
+        which python
+        which micromamba
+        which mamba
 
 
     # - uses: actions/setup-python@v4
