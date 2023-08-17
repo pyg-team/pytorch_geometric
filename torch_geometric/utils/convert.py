@@ -640,10 +640,12 @@ def from_dgl(
 
 
 def from_hetero_networkx(
-        G: Any, node_type_attribute: str,
-        edge_type_attribute: Optional[str] = None,
-        graph_attrs: Optional[Iterable[str]] = None,
-        nodes: Optional[List] = None) -> 'torch_geometric.data.HeteroData':
+    G: Any, node_type_attribute: str,
+    edge_type_attribute: Optional[str] = None,
+    graph_attrs: Optional[Iterable[str]] = None, nodes: Optional[List] = None,
+    group_node_attrs: Optional[Union[List[str], all]] = None,
+    group_edge_attrs: Optional[Union[List[str], all]] = None
+) -> 'torch_geometric.data.HeteroData':
     r"""Converts a :obj:`networkx.Graph` or :obj:`networkx.DiGraph` to a
     :class:`torch_geometric.data.HeteroData` instance.
 
@@ -663,6 +665,12 @@ def from_hetero_networkx(
         nodes (list, optional): The list of nodes whose attributes are to
             be collected. If set to :obj:`None`, all nodes of the graph
             will be included. (default: :obj:`None`)
+        group_node_attrs (List[str] or all, optional): The node attributes to
+            be concatenated and added to :obj:`data.x`. They must be present
+            for all nodes of each type. (default: :obj:`None`)
+        group_edge_attrs (List[str] or all, optional): The edge attributes to
+            be concatenated and added to :obj:`data.edge_attr`. They must be
+            present for all edge of each type. (default: :obj:`None`)
 
     Example:
 
@@ -809,6 +817,14 @@ def from_hetero_networkx(
 
     for group, group_dict in hetero_data_dict.items():
         if isinstance(group_dict, dict):
+            xs = []
+            is_edge_group = group in [
+                '__'.join(k) for k in group_to_edges.keys()
+            ]
+            if is_edge_group:
+                group_attrs = group_edge_attrs
+            else:
+                group_attrs = group_node_attrs
             for key, value in group_dict.items():
                 if isinstance(value, (tuple, list)) and isinstance(
                         value[0], torch.Tensor):
@@ -818,6 +834,17 @@ def from_hetero_networkx(
                         hetero_data_dict[group][key] = torch.tensor(value)
                     except (ValueError, TypeError):
                         pass
+                if group_attrs is not None and key in group_attrs:
+                    xs.append(hetero_data_dict[group][key].view(-1, 1))
+            if group_attrs is not None:
+                if len(group_attrs) != len(xs):
+                    raise KeyError(
+                        f'Missing required attribute in group: {group}')
+                if is_edge_group:
+                    hetero_data_dict[group]['edge_attr'] = torch.cat(
+                        xs, dim=-1)
+                else:
+                    hetero_data_dict[group]['x'] = torch.cat(xs, dim=-1)
         else:
             value = group_dict
             if isinstance(value, (tuple, list)) and isinstance(

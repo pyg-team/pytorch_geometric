@@ -938,7 +938,7 @@ def test_from_hetero_networkx_graph_attrs_selection():
 
 
 @withPackage('networkx')
-def test_from_hetero_networkx_graph_attrs_selection():
+def test_from_hetero_networkx_graph_node_selection():
     import networkx as nx
 
     G = nx.DiGraph()
@@ -953,3 +953,40 @@ def test_from_hetero_networkx_graph_attrs_selection():
     assert len(data['A'].type) == 1
     assert len(data['B'].type) == 1
     assert len(data['B'].y) == 1
+
+
+@withPackage('networkx')
+def test_from_hetero_networkx_attrs_selection():
+    import networkx as nx
+
+    G = nx.DiGraph()
+    G.add_node(0, type="A", u=0, v=0, a=0)
+    G.add_node(1, type="A", u=1, v=1, a=1)
+    G.add_node(2, type="B", u=2, v=2, b=2)
+    G.add_node(3, type="B", u=3, v=3, b=3)
+
+    G.add_edge(0, 1, u=1, a=1)
+    G.add_edge(2, 3, u=2, b=2)
+
+    data = from_hetero_networkx(G, node_type_attribute="type",
+                                group_node_attrs=["u",
+                                                  "v"], group_edge_attrs=["u"])
+
+    assert data['A']['x'].tolist() == [[0, 0], [1, 1]]
+    assert data['B']['x'].tolist() == [[2, 2], [3, 3]]
+    assert data[("A", "to", "A")]['edge_attr'].tolist() == [[1]]
+    assert data[("B", "to", "B")]['edge_attr'].tolist() == [[2]]
+
+
+@withPackage('networkx')
+def test_from_hetero_networkx_missing_attrs():
+    import networkx as nx
+
+    G = nx.DiGraph()
+    G.add_node(0, type="A", u=0, v=0)
+    G.add_node(1, type="B", u=1)
+
+    with pytest.raises(KeyError,
+                       match=r'Missing required attribute in group: .*') as _:
+        from_hetero_networkx(G, node_type_attribute="type",
+                             group_node_attrs=["u", "v"])
