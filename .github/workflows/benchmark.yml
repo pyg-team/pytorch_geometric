@@ -22,8 +22,8 @@ defaults:
 jobs:
   benchmark:
     if: github.repository == 'pyg-team/pytorch_geometric'
-    # runs-on: ubuntu-latest
-    runs-on: [self-hosted, nvidia]
+    runs-on: ubuntu-latest
+    # runs-on: [self-hosted, nvidia]
 
     steps:
     - uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
     #     python-version: '3.10'
 
     - name: debug
-      run: ls -al /home/ubuntu
+      run: echo $HOME; ls -al /home/ubuntu
 
     - uses: mamba-org/setup-micromamba@v1
       with:
