@@ -15,7 +15,7 @@ from benchmark.utils import (
     write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import PNAConv
+from torch_geometric.nn import PNAConv, make_batches_cacheable
 from torch_geometric.profile import (
     rename_profile_file,
     timeit,
@@ -177,9 +177,11 @@ def run(args: argparse.ArgumentParser):
                                 print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
 
+                        model_decorator = make_batches_cacheable if args.cached_loader else None
                         model = get_model(
                             model_name, params,
-                            metadata=data.metadata() if hetero else None)
+                            metadata=data.metadata() if hetero else None,
+                            model_decorator=model_decorator)
                         model = model.to(device)
                         # TODO: Migrate to ModelHubMixin.
                         if args.ckpt_path:
@@ -222,6 +224,8 @@ def run(args: argparse.ArgumentParser):
                                         progress_bar=True,
                                         **inference_kwargs,
                                     )
+                                    if args.device == 'xpu':
+                                        torch.xpu.synchronize()
                             if args.warmup > 0:
                                 time.reset()
                             with itt, profile:
@@ -332,4 +336,5 @@ if __name__ == '__main__':
         help='Write benchmark or PyTorch profile data to CSV')
     add('--export-chrome-trace', default=True, type=bool,
         help='Export chrome trace file. Works only with PyTorch profiler')
+    add('--cached-loader', action='store_true', help='Use BatchedLoader')
     run(argparser.parse_args())

@@ -86,8 +86,10 @@ def get_dataset(name, root, use_sparse_tensor=False, bf16=False):
     return data, num_classes
 
 
-def get_model(name, params, metadata=None):
+def get_model(name, params, metadata=None, model_decorator=None):
     Model = models_dict.get(name, None)
+    if model_decorator is not None:
+        Model = model_decorator(Model)
     assert Model is not None, f'Model {name} not supported!'
 
     if name == 'rgat':
