@@ -32,7 +32,7 @@ jobs:
 
     - uses: mamba-org/setup-micromamba@v1
       with:
-        environment-name: base
+        environment-name: benchmark
         create-args: 'python=3.10'
         init-shell: bash
         post-cleanup: all
