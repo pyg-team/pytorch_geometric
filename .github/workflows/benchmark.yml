@@ -30,11 +30,15 @@ jobs:
       with:
         fetch-depth: '0'
 
+    - name: check conda
+      run: |
+        which conda
+
     - uses: conda-incubator/setup-miniconda@v2
       with:
         python-version: '3.10'
         activate-environment: benchmark
-        auto-activate-base: false
+        auto-activate-base: true
 
     - name: Set up asv
       run: |
