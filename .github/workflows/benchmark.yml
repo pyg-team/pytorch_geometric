@@ -39,7 +39,9 @@ jobs:
         # rm -rf $HOME/micromamba*
         # ls -al $HOME
         ls -al $HOME/*
-        ls -al /usr/local/bin/micromamba-shell
+        ls -al /usr/local/bin/micromamba-shell || echo error
+        ls -al /usr/local/bin/micromamba-shellasdf || echo error
+        ls -al asd || echo error
 
     # - uses: mamba-org/setup-micromamba@v1
     #   with:
