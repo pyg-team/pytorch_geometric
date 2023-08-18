@@ -42,14 +42,14 @@ jobs:
         echo $HOME
         nvidia-smi
 
-    # - uses: conda-incubator/setup-miniconda@v2
-    #   with:
-    #     python-version: 3.10
-
-    - uses: mamba-org/setup-micromamba@v1
+    - uses: conda-incubator/setup-miniconda@v2
       with:
-        create-args: 'python=3.10'
-        init-shell: bash
+        python-version: 3.10
+
+    # - uses: mamba-org/setup-micromamba@v1
+    #   with:
+    #     create-args: 'python=3.10'
+    #     init-shell: bash
 
     - name: Set up asv
       run: |
