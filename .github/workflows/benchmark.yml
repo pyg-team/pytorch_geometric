@@ -22,38 +22,31 @@ defaults:
 jobs:
   benchmark:
     if: github.repository == 'pyg-team/pytorch_geometric'
-    # runs-on: ubuntu-latest
     runs-on: [self-hosted, nvidia]
-    container:
-      image: alpine:latest
-      options: --user root  # :(
-    # container:
-    #   image: nvidia/cuda:12.2.0-runtime-ubuntu22.04
-    #   options: '--gpus=all --ipc=host'
 
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: '0'
 
-    # - name: Clean up mamba from previous jobs
-    #   run: |
-    #     ls -al $HOME
-    #     rm -rf $HOME/.mambaforge
-    #     rm -rf $HOME/.conda
-    #     rm -rf $HOME/micromamba-bin
-    #     ls -al $HOME
+    - name: Clean up mamba from previous jobs
+      run: |
+        ls -al $HOME
+        rm -rf $HOME/.mambaforge
+        rm -rf $HOME/.conda
+        rm -rf $HOME/micromamba-bin
+        ls -al $HOME
 
-    # - uses: mamba-org/setup-micromamba@v1
-    #   with:
-    #     create-args: 'python=3.10'
-    #     init-shell: bash
+    - uses: mamba-org/setup-micromamba@v1
+      with:
+        create-args: 'python=3.10'
+        init-shell: bash
 
-    # - name: Check runner
-    #   run: |
-    #     echo $HOME
-    #     nvidia-smi
-    #     which python conda mamba || echo error
+    - name: Check runner
+      run: |
+        echo $HOME
+        nvidia-smi
+        which python conda mamba || echo error
 
     # - name: Set up asv
     #   run: |
