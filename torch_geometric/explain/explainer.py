@@ -173,9 +173,11 @@ class Explainer:
                 set to :obj:`None` and will get automatically inferred. For
                 classification tasks, the target needs to contain the class
                 labels. (default: :obj:`None`)
-            index (Union[int, Tensor], optional): The node index of the model
-                output to explain. Can be a single index or a tensor of
-                indices. (default: :obj:`None`)
+            index (Union[int, Tensor], optional): The indices in the
+                first-dimension of the model output to explain.
+                Can be a single index or a tensor of indices.
+                If set to :obj:`None`, all model outputs will be explained.
+                (default: :obj:`None`)
             **kwargs: additional arguments to pass to the GNN.
         """
         # Choose the `target` depending on the explanation type:
@@ -193,13 +195,8 @@ class Explainer:
             prediction = self.get_prediction(x, edge_index, **kwargs)
             target = self.get_target(prediction)
 
-        if index is not None:
-            if isinstance(index, int):
-                index = torch.tensor([index])
-            if index.max() >= target.shape[0]:
-                raise ValueError(
-                    f"The 'index' refers to a node index. Therefore, it has"
-                    f" to be smaller than the number of nodes ({x.shape[0]})")
+        if isinstance(index, int):
+            index = torch.tensor([index])
 
         training = self.model.training
         self.model.eval()
