@@ -37,11 +37,6 @@ jobs:
     #   with:
     #     python-version: '3.10'
 
-    - name: Check runner
-      run: |
-        echo $HOME
-        nvidia-smi
-
     - uses: conda-incubator/setup-miniconda@v2
       with:
         python-version: 3.10
@@ -50,6 +45,12 @@ jobs:
     #   with:
     #     create-args: 'python=3.10'
     #     init-shell: bash
+
+    - name: Check runner
+      run: |
+        echo $HOME
+        nvidia-smi
+        which python conda mamba || echo error
 
     - name: Set up asv
       run: |
