@@ -24,26 +24,22 @@ jobs:
     if: github.repository == 'pyg-team/pytorch_geometric'
     # runs-on: ubuntu-latest
     runs-on: [self-hosted, nvidia]
-    container:
-      image: nvidia/cuda:12.2.0-runtime-ubuntu22.04
-      options: '--gpus=all --ipc=host'
+    # container:
+    #   image: nvidia/cuda:12.2.0-runtime-ubuntu22.04
+    #   options: '--gpus=all --ipc=host'
 
     steps:
     - uses: actions/checkout@v3
       with:
         fetch-depth: '0'
 
-    # - uses: actions/setup-python@v4
-    #   with:
-    #     python-version: '3.10'
-
-    # - uses: conda-incubator/setup-miniconda@v2
-    #   with:
-    #     python-version: 3.10
-    #     mamba-version: "*"
-    #     channels: conda-forge,defaults
-    #     channel-priority: true
-    #     activate-environment: base
+    - name: Clean up mamba from previous jobs
+      run: |
+        ls -al $HOME
+        rm -rf $HOME/.mambaforge
+        rm -rf $HOME/.conda
+        rm -rf $HOME/micromamba-bin
+        ls -al $HOME
 
     - uses: mamba-org/setup-micromamba@v1
       with:
