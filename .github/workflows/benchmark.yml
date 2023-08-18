@@ -36,7 +36,7 @@ jobs:
     - name: clean up conda from previous jobs
       run: |
         ls -al $HOME
-        rm -rf $HOME/.conda
+        rm -rf $HOME/.conda*
         rm -rf $HOME/*mamba*
         which conda
 
