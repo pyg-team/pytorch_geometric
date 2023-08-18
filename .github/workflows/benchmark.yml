@@ -21,7 +21,7 @@ defaults:
     working-directory: benchmarks
 
 env:
-  CONDA: /opt/miniconda/condabin/conda
+  CONDA: /opt/miniconda
 
 jobs:
   benchmark:
