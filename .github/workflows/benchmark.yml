@@ -33,27 +33,28 @@ jobs:
     - name: Clean up mamba from previous jobs
       continue-on-error: true
       run: |
-        ls -al $HOME
-        rm -rf $HOME/.mambaforge
-        rm -rf $HOME/.conda*
-        rm -rf $HOME/micromamba*
-        ls -al $HOME
+        # ls -al $HOME
+        # rm -rf $HOME/.mambaforge
+        # rm -rf $HOME/.conda*
+        # rm -rf $HOME/micromamba*
+        # ls -al $HOME
         ls -al $HOME/*
+        ls -al /usr/local/bin/micromamba-shell
 
-    - uses: mamba-org/setup-micromamba@v1
-      with:
-        environment-name: benchmark
-        create-args: 'python=3.10'
-        init-shell: bash
+    # - uses: mamba-org/setup-micromamba@v1
+    #   with:
+    #     environment-name: benchmark
+    #     create-args: 'python=3.10'
+    #     init-shell: bash
 
-    - name: Check runner
-      if: always()
-      run: |
-        echo $HOME
-        nvidia-smi
-        which python conda mamba micromamba || echo error
-        mamba activate base || echo error
-        micromamba activate benchmark || echo error
+    # - name: Check runner
+    #   if: always()
+    #   run: |
+    #     echo $HOME
+    #     nvidia-smi
+    #     which python conda mamba micromamba || echo error
+    #     mamba activate base || echo error
+    #     micromamba activate benchmark || echo error
 
     # - name: Set up asv
     #   run: |
