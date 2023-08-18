@@ -40,8 +40,8 @@ jobs:
         ls -al /home/ubuntu
 
     - uses: conda-incubator/setup-miniconda@v2
-    with:
-      python-version: 3.10
+      with:
+        python-version: 3.10
 
     # - uses: mamba-org/setup-micromamba@v1
     #   with:
