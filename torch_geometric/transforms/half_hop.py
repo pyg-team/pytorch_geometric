@@ -7,14 +7,14 @@ from torch_geometric.transforms import BaseTransform
 
 @functional_transform('half_hop')
 class HalfHop(BaseTransform):
-    r"""Graph upsampling augmentation from the
-    `"Half-Hop: A graph upsampling approach for slowing down
-    message passing" <https://openreview.net/forum?id=lXczFIwQkv>`_ paper.
+    r"""The graph upsampling augmentation from the
+    `"Half-Hop: A Graph Upsampling Approach for Slowing Down Message Passing"
+    <https://openreview.net/forum?id=lXczFIwQkv>`_ paper.
     The graph is augmented by adding artificial slow nodes between neighbors
     to slow down message propagation. (functional name: :obj:`half_hop`).
 
     .. note::
-        `HalfHop` augmentation is not supported if `data` has
+        :class:`HalfHop` augmentation is not supported if :obj:`data` has
         :attr:`edge_weight` or :attr:`edge_attr`.
 
     Args:
@@ -28,27 +28,26 @@ class HalfHop(BaseTransform):
 
         import torch_geometric.transforms as T
 
-        data = ...
-        data = T.HalfHop(alpha=0.5)(data) # Apply transformation
-        out = model(data.x, data.edge_index) # Feed-forward
-        out = out[~data.slow_node_mask] # Get rid of slow nodes
+        transform = T.HalfHop(alpha=0.5)
+        data = transform(data)  # Apply transformation.
+        out = model(data.x, data.edge_index)  # Feed-forward.
+        out = out[~data.slow_node_mask]  # Get rid of slow nodes.
     """
     def __init__(self, alpha: float = 0.5, p: float = 1.0):
         if alpha < 0. or alpha > 1.:
-            raise ValueError(f'Interpolation factor has to be between 0 and 1 '
-                             f'(got {alpha}')
+            raise ValueError(f"Interpolation factor has to be between 0 and 1 "
+                             f"(got '{alpha}'")
         if p < 0. or p > 1.:
-            raise ValueError(
-                f'Ratio of half-hopped edges has to be between 0 and 1 '
-                f'(got {p}')
+            raise ValueError(f"Ratio of half-hopped edges has to be between "
+                             f"0 and 1 (got '{p}'")
+
         self.p = p
         self.alpha = alpha
 
     def forward(self, data: Data) -> Data:
-
         if data.edge_weight is not None or data.edge_attr is not None:
             raise ValueError("'HalfHop' augmentation is not supported if "
-                             "'data' has 'edge_weight' or 'edge_attr'")
+                             "'data' contains 'edge_weight' or 'edge_attr'")
 
         x, edge_index = data.x, data.edge_index
 
