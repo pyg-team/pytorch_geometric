@@ -60,7 +60,8 @@ jobs:
 
     - name: Set up conda
       run: |
-        conda activate base
+        conda init bash
+        conda create -n benchmark python=3.10
 
     - name: Set up asv
       run: |
