@@ -30,6 +30,15 @@ jobs:
       with:
         fetch-depth: '0'
 
+    - name: Clean up mamba from previous jobs
+      run: |
+        ls -al $HOME
+        rm -rf $HOME/.mambaforge
+        rm -rf $HOME/.conda*
+        rm -rf $HOME/micromamba*
+        ls -al $HOME
+        ls -al $HOME/*
+
     - uses: mamba-org/setup-micromamba@v1
       with:
         environment-name: benchmark
@@ -38,10 +47,11 @@ jobs:
         post-cleanup: all
 
     - name: Check runner
+      if: always()
       run: |
         echo $HOME
         nvidia-smi
-        which python conda mamba || echo error
+        which python conda mamba micromamba || echo error
         mamba activate base
 
     # - name: Set up asv
