@@ -33,9 +33,11 @@ jobs:
       run: |
         ls -al $HOME
         rm -rf $HOME/.mambaforge
-        rm -rf $HOME/.conda
-        rm -rf $HOME/micromamba-bin
+        rm -rf $HOME/.conda*
+        rm -rf $HOME/micromamba*
         ls -al $HOME
+        ls -al $HOME/*
+        cat $HOME/.asv-machine.json
 
     - uses: mamba-org/setup-micromamba@v1
       with:
