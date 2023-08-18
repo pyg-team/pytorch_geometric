@@ -43,11 +43,11 @@ jobs:
         ls -al /usr/local/bin/micromamba-shellasdf || echo error
         ls -al asd || echo error
 
-    - uses: mamba-org/setup-micromamba@v1
-      with:
-        environment-name: benchmark
-        create-args: 'python=3.10'
-        init-shell: bash
+    # - uses: mamba-org/setup-micromamba@v1
+    #   with:
+    #     environment-name: benchmark
+    #     create-args: 'python=3.10'
+    #     init-shell: bash
 
     - name: Check runner
       if: always()
@@ -58,11 +58,15 @@ jobs:
         mamba activate base || echo error
         micromamba activate benchmark || echo error
 
-    # - name: Set up asv
-    #   run: |
-    #     python -m pip install -U pip
-    #     pip install "git+https://github.com/airspeed-velocity/asv.git@8f5c8af"
-    #     asv machine --machine "pyg-t4" --yes
+    - name: Set up conda
+      run: |
+        conda activate base
+
+    - name: Set up asv
+      run: |
+        python -m pip install -U pip
+        pip install "git+https://github.com/airspeed-velocity/asv.git@8f5c8af"
+        asv machine --machine "pyg-t4" --yes
 
     # - name: Configure Git
     #   run: |
