@@ -31,12 +31,12 @@ jobs:
         fetch-depth: '0'
 
     - name: Clean up mamba from previous jobs
+      continue-on-error: true
       run: |
         ls -al $HOME
         rm -rf $HOME/.mambaforge
         rm -rf $HOME/.conda*
         rm -rf $HOME/micromamba*
-        rm /usr/local/bin/micromamba-shell
         ls -al $HOME
         ls -al $HOME/*
 
