@@ -37,7 +37,7 @@ jobs:
         rm -rf $HOME/micromamba*
         ls -al $HOME
         ls -al $HOME/*
-        cat $HOME/.asv-machine.json
+        rm $HOME/.asv-machine.json
 
     - uses: mamba-org/setup-micromamba@v1
       with:
@@ -49,6 +49,8 @@ jobs:
         echo $HOME
         nvidia-smi
         which python conda mamba || echo error
+        mamba activate base
+      shell: bash -el {0}
 
     # - name: Set up asv
     #   run: |
