@@ -17,7 +17,7 @@ concurrency:
 
 defaults:
   run:
-    shell: bash
+    shell: bash -l {0}
     working-directory: benchmarks
 
 jobs:
@@ -30,10 +30,11 @@ jobs:
       with:
         fetch-depth: '0'
 
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v4
+    - uses: conda-incubator/setup-miniconda@v2
       with:
         python-version: '3.10'
+        activate-environment: benchmark
+        auto-activate-base: false
 
     - name: Set up asv
       run: |
