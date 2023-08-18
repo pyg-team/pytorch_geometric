@@ -17,6 +17,7 @@ concurrency:
 
 defaults:
   run:
+    shell: bash
     working-directory: benchmarks
 
 jobs:
@@ -42,7 +43,6 @@ jobs:
         nvidia-smi
         which python conda mamba || echo error
         mamba activate base
-      shell:  {0}
 
     # - name: Set up asv
     #   run: |
