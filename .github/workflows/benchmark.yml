@@ -30,19 +30,6 @@ jobs:
       with:
         fetch-depth: '0'
 
-    - name: Clean up mamba from previous jobs
-      continue-on-error: true
-      run: |
-        ls -al $HOME
-        rm -rf $HOME/.mambaforge
-        rm -rf $HOME/.conda*
-        rm -rf $HOME/micromamba*
-        ls -al $HOME
-        ls -al $HOME/*
-        ls -al /usr/local/bin/micromamba-shell || echo error
-        ls -al /usr/local/bin/micromamba-shellasdf || echo error
-        ls -al asd || echo error
-
     - name: Set up Python 3.10
       uses: actions/setup-python@v4
       with:
@@ -54,22 +41,22 @@ jobs:
         pip install "git+https://github.com/airspeed-velocity/asv.git@8f5c8af"
         asv machine --machine "pyg-t4" --yes
 
-    # - name: Configure Git
-    #   run: |
-    #     git config --local user.name "${{ github.actor }}"
-    #     git config --local user.email "${{ github.actor }}@users.noreply.github.com"
-    #     git config --list
+    - name: Configure Git
+      run: |
+        git config --local user.name "${{ github.actor }}"
+        git config --local user.email "${{ github.actor }}@users.noreply.github.com"
+        git config --list
 
-    # - name: Run benchmarks on 2.3.0 and master
-    #   timeout-minutes: 10  # FIXME: Adjust timeout
-    #   run: |
-    #     git branch --all
-    #     asv run HASHFILE:HASHFILE.txt \
-    #       --launch-method spawn \
-    #       --skip-existing-successful \
-    #       --verbose \
-    #       --show-stderr \
-    #       --bench scatter  # FIXME: Run all benchmarks
+    - name: Run benchmarks on 2.3.0 and master
+      timeout-minutes: 10  # FIXME: Adjust timeout
+      run: |
+        git branch --all
+        asv run HASHFILE:HASHFILE.txt \
+          --launch-method spawn \
+          --skip-existing-successful \
+          --verbose \
+          --show-stderr \
+          --bench scatter  # FIXME: Run all benchmarks
 
     # - name: Upload results
     #   uses: actions/upload-artifact@v3
