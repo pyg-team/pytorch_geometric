@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
 
-  pytest:
+  full_pytest:
     if: github.repository == 'pyg-team/pytorch_geometric'
     runs-on: ${{ matrix.os }}
 
