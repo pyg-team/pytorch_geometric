@@ -37,12 +37,12 @@ jobs:
         rm -rf $HOME/micromamba*
         ls -al $HOME
         ls -al $HOME/*
-        rm $HOME/.asv-machine.json
 
     - uses: mamba-org/setup-micromamba@v1
       with:
         create-args: 'python=3.10'
         init-shell: bash
+        post-cleanup: all
 
     - name: Check runner
       run: |
