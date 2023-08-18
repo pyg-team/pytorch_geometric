@@ -20,6 +20,9 @@ defaults:
     shell: bash -l {0}
     working-directory: benchmarks
 
+env:
+  CONDA: /opt/miniconda/condabin/conda
+
 jobs:
   benchmark:
     if: github.repository == 'pyg-team/pytorch_geometric'
