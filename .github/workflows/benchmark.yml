@@ -36,6 +36,9 @@ jobs:
       with:
         fetch-depth: '0'
 
+    - run: |
+        rm -rf /__w/pytorch_geometric/pytorch_geometric
+
     # - name: Clean up mamba from previous jobs
     #   run: |
     #     ls -al $HOME
