@@ -42,6 +42,7 @@ except (ImportError, OSError) as e:
     pyg_lib = object
     WITH_PYG_LIB = False
     WITH_GMM = False
+    WITH_SEGMM = False
     WITH_SAMPLED_OP = False
     WITH_INDEX_SORT = False
     WITH_METIS = False
