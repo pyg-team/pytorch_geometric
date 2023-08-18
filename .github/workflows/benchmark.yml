@@ -36,6 +36,7 @@ jobs:
         rm -rf $HOME/.mambaforge
         rm -rf $HOME/.conda*
         rm -rf $HOME/micromamba*
+        rm /usr/local/bin/micromamba-shell
         ls -al $HOME
         ls -al $HOME/*
 
@@ -44,7 +45,6 @@ jobs:
         environment-name: benchmark
         create-args: 'python=3.10'
         init-shell: bash
-        post-cleanup: all
 
     - name: Check runner
       if: always()
@@ -52,7 +52,8 @@ jobs:
         echo $HOME
         nvidia-smi
         which python conda mamba micromamba || echo error
-        mamba activate base
+        mamba activate base || echo error
+        micromamba activate benchmark || echo error
 
     # - name: Set up asv
     #   run: |
