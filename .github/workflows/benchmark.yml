@@ -24,6 +24,9 @@ jobs:
     if: github.repository == 'pyg-team/pytorch_geometric'
     # runs-on: ubuntu-latest
     runs-on: [self-hosted, nvidia]
+    container:
+      image: nvidia/cuda
+      options: '--gpus=all --ipc=host'
 
     steps:
     - uses: actions/checkout@v3
@@ -38,6 +41,7 @@ jobs:
       run: |
         echo $HOME
         ls -al /home/ubuntu
+        which conda
 
     - uses: conda-incubator/setup-miniconda@v2
       with:
