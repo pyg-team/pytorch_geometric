@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.4.0] - 2023-MM-DD
 
 ### Added
-
+- Added breast_cancer_graph_dataset ([#7905](https://github.com/pyg-team/pytorch_geometric/pull/7905))
 - Added nightly GPU tests ([#7895](https://github.com/pyg-team/pytorch_geometric/pull/7895))
 - Added the `HalfHop` graph upsampling augmentation ([#7827](https://github.com/pyg-team/pytorch_geometric/pull/7827))
 - Added the `Wikidata5M` dataset ([#7864](https://github.com/pyg-team/pytorch_geometric/pull/7864))
