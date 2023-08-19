@@ -4,8 +4,13 @@ from typing import Callable, Optional, Tuple
 import numpy as np
 import pandas as pd
 import torch
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 """InMemoryDataset Class with brca_tcga.ipynb
 
@@ -98,14 +103,14 @@ class brca_tcga(InMemoryDataset):
 
     def process(self):
         # Load features from CSV file
-        graph_features = pd.read_csv(os.path.join(self.raw_dir, 'brca_tcga',
-                                                  'graph_idx.csv'),
-                                     index_col=0)
+        graph_features = pd.read_csv(
+            os.path.join(self.raw_dir, 'brca_tcga', 'graph_idx.csv'),
+            index_col=0)
 
         # Load labels from CSV file
-        graph_labels = np.loadtxt(os.path.join(self.raw_dir, 'brca_tcga',
-                                               'graph_labels.csv'),
-                                  delimiter=',')
+        graph_labels = np.loadtxt(
+            os.path.join(self.raw_dir, 'brca_tcga', 'graph_labels.csv'),
+            delimiter=',')
 
         # Load the edge_index from the file
         file_path = os.path.join(self.raw_dir, 'brca_tcga', 'edge_index.pt')
@@ -129,8 +134,8 @@ class brca_tcga(InMemoryDataset):
         # Convert graphs to a list of Data objects
         data = [
             Data(x=torch.tensor(graph[0].reshape(len(graphs[0][0]), 1)),
-                 edge_index=graph[1],
-                 y=torch.tensor(graph[2])) for graph in graphs
+                 edge_index=graph[1], y=torch.tensor(graph[2]))
+            for graph in graphs
         ]
 
         data, slices = self.collate(data)
