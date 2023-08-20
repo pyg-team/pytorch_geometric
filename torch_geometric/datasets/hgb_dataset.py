@@ -42,10 +42,14 @@ class HGBDataset(InMemoryDataset):
     """
 
     urls = {
-        'acm': 'https://drive.google.com/uc?export=download&id=1xbJ4QE9pcDJOcALv7dYhHDCPITX2Iddz',
-        'dblp': 'https://drive.google.com/uc?export=download&id=1fLLoy559V7jJaQ_9mQEsC06VKd6Qd3SC',
-        'freebase': 'https://drive.google.com/uc?export=download&id=1vw-uqbroJZfFsWpriC1CWbtHCJMGdWJ7',
-        'imdb': 'https://drive.google.com/uc?export=download&id=18qXmmwKJBrEJxVQaYwKTL3Ny3fPqJeJ2',
+        'acm':
+        'https://drive.google.com/uc?export=download&id=1xbJ4QE9pcDJOcALv7dYhHDCPITX2Iddz',
+        'dblp':
+        'https://drive.google.com/uc?export=download&id=1fLLoy559V7jJaQ_9mQEsC06VKd6Qd3SC',
+        'freebase':
+        'https://drive.google.com/uc?export=download&id=1vw-uqbroJZfFsWpriC1CWbtHCJMGdWJ7',
+        'imdb':
+        'https://drive.google.com/uc?export=download&id=18qXmmwKJBrEJxVQaYwKTL3Ny3fPqJeJ2',
     }
     names = {
         'acm': 'ACM',
