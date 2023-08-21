@@ -40,22 +40,22 @@ class HGBDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
-
-    urls = {
-        'acm':
-        'https://drive.google.com/uc?export=download&id=1xbJ4QE9pcDJOcALv7dYhHDCPITX2Iddz',
-        'dblp':
-        'https://drive.google.com/uc?export=download&id=1fLLoy559V7jJaQ_9mQEsC06VKd6Qd3SC',
-        'freebase':
-        'https://drive.google.com/uc?export=download&id=1vw-uqbroJZfFsWpriC1CWbtHCJMGdWJ7',
-        'imdb':
-        'https://drive.google.com/uc?export=download&id=18qXmmwKJBrEJxVQaYwKTL3Ny3fPqJeJ2',
-    }
     names = {
         'acm': 'ACM',
         'dblp': 'DBLP',
         'freebase': 'Freebase',
         'imdb': 'IMDB',
+    }
+
+    urls = {
+        'acm': ('https://drive.google.com/uc?'
+                'export=download&id=1xbJ4QE9pcDJOcALv7dYhHDCPITX2Iddz'),
+        'dblp': ('https://drive.google.com/uc?'
+                 'export=download&id=1fLLoy559V7jJaQ_9mQEsC06VKd6Qd3SC'),
+        'freebase': ('https://drive.google.com/uc?'
+                     'export=download&id=1vw-uqbroJZfFsWpriC1CWbtHCJMGdWJ7'),
+        'imdb': ('https://drive.google.com/uc?'
+                 'export=download&id=18qXmmwKJBrEJxVQaYwKTL3Ny3fPqJeJ2'),
     }
 
     def __init__(self, root: str, name: str,
