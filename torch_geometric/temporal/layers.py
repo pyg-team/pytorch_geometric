@@ -7,7 +7,8 @@ from torch_geometric.nn import GCNConv, MessagePassing
 
 class TemporalGCNConv(GCNConv):
     def __init__(self, in_channels, out_channels, num_time_steps, **kwargs):
-        super(TemporalGCNConv, self).__init__(in_channels, out_channels, **kwargs)
+        super(TemporalGCNConv, self).__init__(in_channels, out_channels,
+                                              **kwargs)
         self.num_time_steps = num_time_steps
 
     def forward(self, x, edge_index, edge_weight=None, time_index=None):
@@ -15,12 +16,12 @@ class TemporalGCNConv(GCNConv):
 
         for t in range(self.num_time_steps):
             # Process graph at time step t
-            t_output = super(TemporalGCNConv, self).forward(x, edge_index, edge_weight)
+            t_output = super(TemporalGCNConv,
+                             self).forward(x, edge_index, edge_weight)
             temporal_output.append(t_output)
 
-        temporal_output = torch.stack(
-            temporal_output, dim=0
-        )  # Stack over time dimension
+        temporal_output = torch.stack(temporal_output,
+                                      dim=0)  # Stack over time dimension
         return temporal_output
 
 
@@ -29,7 +30,8 @@ class TemporalGGNNConv(MessagePassing):
         super(TemporalGGNNConv, self).__init__(aggr="add")
         self.num_time_steps = num_time_steps
         self.lin = nn.Linear(in_channels, out_channels)
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
 
     def forward(self, x, edge_index, time_index):
         edge_index, _ = self.add_remaining_self_loops(edge_index)
@@ -55,7 +57,8 @@ class TemporalTransformerConv(MessagePassing):
         self.heads = heads
 
         self.lin = nn.Linear(in_channels, out_channels)
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
         self.att_lin = nn.Linear(out_channels, heads * num_time_steps)
 
     def forward(self, x, edge_index, time_index):
@@ -86,7 +89,8 @@ class TemporalGINConv(MessagePassing):
             nn.ReLU(),
             nn.Linear(out_channels, out_channels),
         )
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
 
     def forward(self, x, edge_index, time_index):
         edge_index, _ = self.add_remaining_self_loops(edge_index)
@@ -112,7 +116,8 @@ class TemporalGraphLSTMConv(MessagePassing):
         super(TemporalGraphLSTMConv, self).__init__(aggr="add")
         self.num_time_steps = num_time_steps
         self.lstm = nn.LSTMCell(in_channels, out_channels)
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
 
     def forward(self, x, edge_index, time_index, h=None, c=None):
         edge_index, _ = self.add_remaining_self_loops(edge_index)
@@ -138,7 +143,8 @@ class TemporalDyEGNNConv(MessagePassing):
         super(TemporalDyEGNNConv, self).__init__(aggr="add")
         self.num_time_steps = num_time_steps
         self.lin = nn.Linear(in_channels, out_channels)
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
         self.att = nn.Sequential(nn.Linear(out_channels * 2, 1), nn.Sigmoid())
 
     def forward(self, x, edge_index, time_index):
@@ -166,7 +172,8 @@ class TemporalGRUConv(MessagePassing):
         super(TemporalGRUConv, self).__init__(aggr="add")
         self.num_time_steps = num_time_steps
         self.gru = nn.GRUCell(in_channels, out_channels)
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
 
     def forward(self, x, edge_index, time_index, h=None):
         edge_index, _ = self.add_remaining_self_loops(edge_index)
@@ -193,10 +200,11 @@ class TemporalGSTTransformerConv(MessagePassing):
         self.num_time_steps = num_time_steps
         self.num_heads = num_heads
         self.lin = nn.Linear(in_channels, out_channels)
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
         self.transformer_layer = nn.TransformerEncoderLayer(
-            d_model=out_channels, nhead=num_heads, dim_feedforward=2 * out_channels
-        )
+            d_model=out_channels, nhead=num_heads,
+            dim_feedforward=2 * out_channels)
         self.transformer_encoder = nn.TransformerEncoder(
             encoder_layer=self.transformer_layer,
             num_layers=2,  # You can adjust the number of layers as needed
@@ -231,10 +239,11 @@ class TemporalGSANConv(MessagePassing):
         self.num_time_steps = num_time_steps
         self.heads = heads
         self.lin = nn.Linear(in_channels, out_channels)
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
         self.att = nn.Sequential(
-            nn.Linear(out_channels, heads * num_time_steps), nn.Softmax(dim=-1)
-        )
+            nn.Linear(out_channels, heads * num_time_steps),
+            nn.Softmax(dim=-1))
 
     def forward(self, x, edge_index, time_index):
         edge_index, _ = self.add_remaining_self_loops(edge_index)
@@ -254,9 +263,8 @@ class TemporalGSANConv(MessagePassing):
         x = x.view(x.size(0), self.heads * self.num_time_steps, -1)
 
         # Aggregate using attention weights
-        x = self.aggregate(
-            x, edge_index, attention_weights, size=(x.size(0), x.size(0))
-        )
+        x = self.aggregate(x, edge_index, attention_weights,
+                           size=(x.size(0), x.size(0)))
 
         return x
 
@@ -270,10 +278,10 @@ class TemporalASConv(MessagePassing):
         self.num_time_steps = num_time_steps
         self.num_layers = num_layers
         self.lin = nn.Linear(in_channels, out_channels)
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
         self.conv_layers = nn.ModuleList(
-            [nn.Linear(out_channels, out_channels) for _ in range(num_layers)]
-        )
+            [nn.Linear(out_channels, out_channels) for _ in range(num_layers)])
 
     def forward(self, x, edge_index, time_index):
         edge_index, _ = self.add_remaining_self_loops(edge_index)
@@ -305,7 +313,8 @@ class TemporalAPNConv(MessagePassing):
         super(TemporalAPNConv, self).__init__(aggr="add")
         self.num_time_steps = num_time_steps
         self.lin = nn.Linear(in_channels, out_channels)
-        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps,
+                                      out_channels)
 
     def forward(self, x, edge_index, time_index):
         edge_index, _ = self.add_remaining_self_loops(edge_index)
@@ -326,7 +335,8 @@ class TemporalAPNConv(MessagePassing):
 
 
 class TemporalGraphSAINT(nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, num_time_steps):
+    def __init__(self, in_channels, hidden_channels, out_channels,
+                 num_time_steps):
         super(TemporalGraphSAINT, self).__init__()
         self.num_time_steps = num_time_steps
         self.conv1 = nn.Linear(in_channels, hidden_channels)
@@ -334,9 +344,9 @@ class TemporalGraphSAINT(nn.Module):
 
     def forward(self, x, edge_index, time_index):
         # Temporal mini-batch sampling using GraphSAINT
-        temporal_sampler = TemporalGraphSAINTSampler(
-            edge_index, time_index, batch_size=64, num_steps=2
-        )
+        temporal_sampler = TemporalGraphSAINTSampler(edge_index, time_index,
+                                                     batch_size=64,
+                                                     num_steps=2)
         temporal_loader = temporal_sampler.loader()
 
         for batch_size, n_id, adjs in temporal_loader:
