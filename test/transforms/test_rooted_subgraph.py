@@ -73,19 +73,19 @@ def test_rooted_subgraph_minibatch():
     data = transform(data)
 
     loader = DataLoader([data, data], batch_size=2)
-    batch = next(iter(loader))
-    batch = batch.map_data()
-    assert batch.num_graphs == len(batch) == 2
+    for batch in loader:
+        batch = batch.map_data()
+        assert batch.num_graphs == len(batch) == 2
 
-    assert batch.x.size() == (14, 8)
-    assert batch.edge_index.size() == (2, 16)
-    assert batch.edge_attr.size() == (16, 8)
-    assert batch.n_sub_batch.size() == (14, )
-    assert batch.batch.size() == (14, )
-    assert batch.ptr.size() == (3, )
+        assert batch.x.size() == (14, 8)
+        assert batch.edge_index.size() == (2, 16)
+        assert batch.edge_attr.size() == (16, 8)
+        assert batch.n_sub_batch.size() == (14, )
+        assert batch.batch.size() == (14, )
+        assert batch.ptr.size() == (3, )
 
-    assert batch.edge_index.min() == 0
-    assert batch.edge_index.max() == 13
+        assert batch.edge_index.min() == 0
+        assert batch.edge_index.max() == 13
 
-    assert batch.n_sub_batch.min() == 0
-    assert batch.n_sub_batch.max() == 5
+        assert batch.n_sub_batch.min() == 0
+        assert batch.n_sub_batch.max() == 5
