@@ -58,9 +58,13 @@ class HGBDataset(InMemoryDataset):
                  'export=download&id=18qXmmwKJBrEJxVQaYwKTL3Ny3fPqJeJ2'),
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         self.name = name.lower()
         assert self.name in set(self.names.keys())
         super().__init__(root, transform, pre_transform)
