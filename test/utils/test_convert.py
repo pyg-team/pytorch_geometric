@@ -462,13 +462,13 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
     edge_list = graph.view_edge_list()
     assert edge_list is not None
 
-    edge_list = edge_list.sort_values(by=['src', 'dst'])
+    edge_list = edge_list.sort_values(by=[0, 1])
 
-    cu_edge_index = edge_list[['src', 'dst']].to_pandas().values
+    cu_edge_index = edge_list[[0, 1]].to_pandas().values
     cu_edge_index = torch.from_numpy(cu_edge_index).t()
     cu_edge_weight = None
     if edge_weight is not None:
-        cu_edge_weight = edge_list['weights'].to_pandas().values
+        cu_edge_weight = edge_list['2'].to_pandas().values
         cu_edge_weight = torch.from_numpy(cu_edge_weight)
 
     cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
