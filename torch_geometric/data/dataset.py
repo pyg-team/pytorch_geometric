@@ -1,5 +1,4 @@
 import copy
-import math
 import os.path as osp
 import re
 import sys
@@ -279,9 +278,9 @@ class Dataset(torch.utils.data.Dataset, ABC):
             start, stop, step = idx.start, idx.stop, idx.step
             # Allow floating-point slicing, e.g., dataset[:0.9]
             if isinstance(start, float):
-                start = math.floor(start * len(self))
+                start = round(start * len(self))
             if isinstance(stop, float):
-                stop = math.ceil(stop * len(self))
+                stop = round(stop * len(self))
             idx = slice(start, stop, step)
 
             indices = indices[idx]
