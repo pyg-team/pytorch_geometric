@@ -46,7 +46,7 @@ from .negative_sampling import (negative_sampling, batched_negative_sampling,
 from .tree_decomposition import tree_decomposition
 from .embedding import get_embeddings
 from .train_test_split_edges import train_test_split_edges
-from .ppr import _calc_ppr, calculate_ppr
+from .ppr import calculate_ppr
 
 __all__ = [
     'scatter',
@@ -123,7 +123,6 @@ __all__ = [
     'tree_decomposition',
     'get_embeddings',
     'train_test_split_edges',
-    '_calc_ppr',
     'calculate_ppr',
 ]
 

@@ -16,26 +16,6 @@ def _calc_ppr(
     eps: float,
     target_nodes: Optional[np.ndarray] = None,
 ) -> Tuple[List[List[int]], List[List[float]]]:
-    r"""Calculate the personalized PageRank vector for selected nodes
-    using a variant of the Andersen algorithm, given the indptr
-    and indices of csr matrix.
-    (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
-
-    Args:
-        indptr (np.ndarray): Index pointer for the sparse matrix
-            (CSR-format).
-        indices (np.ndarray): Indices of the sparse matrix entries
-            (CSR-format).
-        out_degree (np.ndarray): Out-degree of each node.
-        alpha (float): Alpha of the PageRank to calculate.
-        eps (float): Threshold for PPR calculation stopping criterion
-            (:obj:`edge_weight >= eps * out_degree`).
-        target_nodes (np.ndarray, optional): Target nodes of PPR
-            calculations. If not given, calculate for all the nodes
-            by default.
-
-    :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
-    """
     nnodes = len(out_degree) if target_nodes is None else len(target_nodes)
     alpha_eps = alpha * eps
     js = [[0]] * nnodes
@@ -81,7 +61,7 @@ def calculate_ppr(
 ) -> Tuple[List[np.ndarray], List[np.ndarray]]:
     r"""Calculate the personalized PageRank vector for selected nodes
         using a variant of the Andersen algorithm, given
-         the edge_index of a graph.
+        the edge_index of a graph.
         (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
 
         Args:
@@ -90,9 +70,9 @@ def calculate_ppr(
             eps (float): Threshold for PPR calculation stopping criterion
                 (:obj:`edge_weight >= eps * out_degree`).
             num_nodes (int, optional): Number of nodes.
-            target_indices (np.ndarray, optional): Target nodes of PPR
-                calculations. If not given, calculate for all the nodes
-                by default.
+            target_indices (torch.Tensor or np.ndarray, optional): Target
+                nodes of PPR calculations. If not given, calculate for
+                all the nodes by default.
 
         :rtype: (:class:`List[np.ndarray]`, :class:`List[np.ndarray]`)
         """

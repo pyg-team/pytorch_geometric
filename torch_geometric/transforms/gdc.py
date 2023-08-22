@@ -9,8 +9,8 @@ from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import (
-    _calc_ppr,
     add_self_loops,
+    calculate_ppr,
     coalesce,
     is_undirected,
     scatter,
@@ -83,8 +83,6 @@ class GDC(BaseTransform):
                                                      avg_degree=64),
         exact: bool = True,
     ):
-
-        self.__calc_ppr__ = _calc_ppr
 
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
@@ -303,16 +301,10 @@ class GDC(BaseTransform):
                 _, col = edge_index
                 deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
-            edge_index_np = edge_index.cpu().numpy()
-
             # Assumes sorted and coalesced edge indices:
-            indptr = torch._convert_indices_from_coo_to_csr(
-                edge_index[0], num_nodes).cpu().numpy()
-            out_degree = indptr[1:] - indptr[:-1]
+            neighbors, neighbor_weights = calculate_ppr(
+                edge_index, kwargs['alpha'], kwargs['eps'], num_nodes)
 
-            neighbors, neighbor_weights = self.__calc_ppr__(
-                indptr, edge_index_np[1], out_degree, kwargs['alpha'],
-                kwargs['eps'])
             ppr_normalization = 'col' if normalization == 'col' else 'row'
             edge_index, edge_weight = self.__neighbors_to_graph__(
                 neighbors, neighbor_weights, ppr_normalization,
