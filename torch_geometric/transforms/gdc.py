@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import torch
@@ -9,6 +9,7 @@ from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import (
+    _calc_ppr,
     add_self_loops,
     coalesce,
     is_undirected,
@@ -83,7 +84,7 @@ class GDC(BaseTransform):
         exact: bool = True,
     ):
 
-        self.__calc_ppr__ = get_calc_ppr()
+        self.__calc_ppr__ = _calc_ppr
 
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
@@ -537,72 +538,3 @@ class GDC(BaseTransform):
             raise ValueError(
                 f"PPR matrix normalization {normalization} unknown.")
         return edge_index, edge_weight
-
-
-def get_calc_ppr():
-    import numba
-
-    @numba.jit(nopython=True, parallel=True)
-    def calc_ppr(
-        indptr: np.ndarray,
-        indices: np.ndarray,
-        out_degree: np.ndarray,
-        alpha: float,
-        eps: float,
-        target_nodes: Optional[np.ndarray] = None,
-    ) -> Tuple[List[List[int]], List[List[float]]]:
-        r"""Calculate the personalized PageRank vector for all nodes
-        using a variant of the Andersen algorithm
-        (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
-
-        Args:
-            indptr (np.ndarray): Index pointer for the sparse matrix
-                (CSR-format).
-            indices (np.ndarray): Indices of the sparse matrix entries
-                (CSR-format).
-            out_degree (np.ndarray): Out-degree of each node.
-            alpha (float): Alpha of the PageRank to calculate.
-            eps (float): Threshold for PPR calculation stopping criterion
-                (:obj:`edge_weight >= eps * out_degree`).
-            target_nodes (np.ndarray, optional): Target nodes of PPR
-                calculations. If not given, calculate for all the nodes
-                by default.
-
-        :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
-        """
-        nnodes = len(out_degree) if target_nodes is None else len(target_nodes)
-        alpha_eps = alpha * eps
-        js = [[0]] * nnodes
-        vals = [[0.]] * nnodes
-        for inode_uint in numba.prange(nnodes):
-            inode = numba.int64(inode_uint) if target_nodes is None \
-                else target_nodes[inode_uint]
-            p = {inode: 0.0}
-            r = {}
-            r[inode] = alpha
-            q = [inode]
-            while len(q) > 0:
-                unode = q.pop()
-
-                res = r[unode] if unode in r else 0
-                if unode in p:
-                    p[unode] += res
-                else:
-                    p[unode] = res
-                r[unode] = 0
-                for vnode in indices[indptr[unode]:indptr[unode + 1]]:
-                    _val = (1 - alpha) * res / out_degree[unode]
-                    if vnode in r:
-                        r[vnode] += _val
-                    else:
-                        r[vnode] = _val
-
-                    res_vnode = r[vnode] if vnode in r else 0
-                    if res_vnode >= alpha_eps * out_degree[vnode]:
-                        if vnode not in q:
-                            q.append(vnode)
-            js[inode_uint] = list(p.keys())
-            vals[inode_uint] = list(p.values())
-        return js, vals
-
-    return calc_ppr

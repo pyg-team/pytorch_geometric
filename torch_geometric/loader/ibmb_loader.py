@@ -17,8 +17,7 @@ from torch_geometric.loader.ibmb_sampler import (
     IBMBOrderedSampler,
     IBMBWeightedSampler,
 )
-from torch_geometric.transforms.gdc import get_calc_ppr
-from torch_geometric.utils import coalesce, is_undirected, subgraph
+from torch_geometric.utils import calculate_ppr, is_undirected, subgraph
 
 
 def get_partitions(
@@ -308,20 +307,8 @@ def topk_ppr_matrix(
         edge_index: torch.Tensor, num_nodes: int, alpha: float, eps: float,
         output_node_indices: Union[np.ndarray, torch.LongTensor], topk: int,
         normalization='row') -> Tuple[csr_matrix, List[np.ndarray]]:
-    if isinstance(output_node_indices, torch.Tensor):
-        output_node_indices = output_node_indices.numpy()
-
-    edge_index = coalesce(edge_index, num_nodes=num_nodes)
-    edge_index_np = edge_index.cpu().numpy()
-
-    _, indptr, out_degree = np.unique(edge_index_np[0], return_index=True,
-                                      return_counts=True)
-    indptr = np.append(indptr, len(edge_index_np[0]))
-
-    neighbors, weights = get_calc_ppr()(indptr, edge_index_np[1], out_degree,
-                                        alpha, eps, output_node_indices)
-    neighbors = [np.array(n) for n in neighbors]
-    weights = [np.array(w) for w in weights]
+    neighbors, weights = calculate_ppr(edge_index, alpha, eps, num_nodes,
+                                       output_node_indices)
 
     def construct_sparse(neighbors, weights, shape):
         i = np.repeat(np.arange(len(neighbors)),
@@ -348,6 +335,8 @@ def topk_ppr_matrix(
         np.union1d(nei, pr) for nei, pr in zip(neighbors, output_node_indices)
     ]
 
+    _, out_degree = torch.unique(edge_index[0], sorted=True,
+                                 return_counts=True)
     if normalization == 'sym':
         # Assume undirected (symmetric) adjacency matrix
         deg_sqrt = np.sqrt(np.maximum(out_degree, 1e-12))
