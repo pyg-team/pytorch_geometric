@@ -150,10 +150,14 @@ class Partitioner:
                     size = (self.data[src].num_nodes, self.data[dst].num_nodes)
 
                     mask = part_data.edge_type == i
+                    rows = part_data.edge_index[0, mask]
+                    cols = part_data.edge_index[1, mask]
+                    global_rows = node_id[rows]
+                    global_cols = node_perm[cols]
                     out[edge_type] = {
                         'edge_id': edge_id[mask],
-                        'row': part_data.edge_index[0, mask],
-                        'col': part_data.edge_index[1, mask],
+                        'row': global_rows,
+                        'col': global_cols,
                         'size': size,
                     }
                 torch.save(out, osp.join(path, 'graph.pt'))
@@ -213,12 +217,16 @@ class Partitioner:
 
                 node_id = node_perm[start:end]
                 node_map[node_id] = pid
+                rows = part_data.edge_index[0]
+                cols = part_data.edge_index[1]
+                global_rows = node_id[rows]
+                global_cols = node_perm[cols]
 
                 torch.save(
                     {
                         'edge_id': edge_id,
-                        'row': part_data.edge_index[0],
-                        'col': part_data.edge_index[1],
+                        'row': global_rows,
+                        'col': global_cols,
                         'size': (data.num_nodes, data.num_nodes),
                     }, osp.join(path, 'graph.pt'))
 
