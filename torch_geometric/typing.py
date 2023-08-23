@@ -208,7 +208,7 @@ except (ImportError, OSError) as e:
 try:
     import intel_extension_for_pytorch  # noqa
     WITH_IPEX = True
-except (ImportError, OSError) as e:
+except (ImportError, OSError):
     WITH_IPEX = False
 
 
