@@ -204,6 +204,7 @@ except (ImportError, OSError) as e:
                               layout: Optional[str] = None) -> SparseTensor:
             raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
 
+
 try:
     import intel_extension_for_pytorch  # noqa
     WITH_IPEX = True

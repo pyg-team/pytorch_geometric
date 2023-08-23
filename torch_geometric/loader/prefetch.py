@@ -4,6 +4,7 @@ from typing import Any, Optional
 
 import torch
 from torch.utils.data import DataLoader
+
 from torch_geometric.typing import WITH_IPEX
 
 
@@ -31,8 +32,8 @@ class PrefetchLoader:
 
             self.device = torch.device(device)
 
-            if ((self.device.type == 'cuda' and not cuda_present) or
-                (self.device.type == 'xpu' and not xpu_present)):
+            if ((self.device.type == 'cuda' and not cuda_present)
+                    or (self.device.type == 'xpu' and not xpu_present)):
                 print(f'Requested device[{self.device.type}] is not available '
                       '- fallback to CPU')
                 self.device = torch.device('cpu')
@@ -51,7 +52,8 @@ class PrefetchLoader:
         def maybe_init_stream(self) -> None:
             if self.is_gpu:
                 self.stream = self.gpu_module.Stream()
-                self.stream_context = partial(self.gpu_module.stream, stream=self.stream)
+                self.stream_context = partial(self.gpu_module.stream,
+                                              stream=self.stream)
 
         def maybe_wait_stream(self) -> None:
             if self.stream is not None:
@@ -62,7 +64,6 @@ class PrefetchLoader:
 
         def get_stream_context(self) -> Any:
             return self.stream_context()
-
 
     def __init__(
         self,
