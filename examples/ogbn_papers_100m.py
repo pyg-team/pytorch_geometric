@@ -98,6 +98,7 @@ for epoch in range(args.epochs):
             if i >= eval_steps:
                 break
             batch = batch.to(device)
+            batch.y = batch.y.to(torch.long)
             out = model(batch.x, batch.edge_index)
             acc_sum += acc(out[:batch_size].softmax(dim=-1),
                            batch.y[:batch_size])
@@ -106,6 +107,7 @@ acc_sum = 0.0
 with torch.no_grad():
     for i, batch in enumerate(test_loader):
         batch = batch.to(device)
+        batch.y = batch.y.to(torch.long)
         out = model(batch.x, batch.edge_index)
         acc_sum += acc(out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
     print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
