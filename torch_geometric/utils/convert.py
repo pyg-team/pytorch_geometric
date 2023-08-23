@@ -457,13 +457,13 @@ def from_cugraph(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     """
     df = g.view_edge_list()
 
-    src = from_dlpack(df['src'].to_dlpack()).long()
-    dst = from_dlpack(df['dst'].to_dlpack()).long()
+    src = from_dlpack(df[0].to_dlpack()).long()
+    dst = from_dlpack(df[1].to_dlpack()).long()
     edge_index = torch.stack([src, dst], dim=0)
 
     edge_weight = None
-    if 'weights' in df:
-        edge_weight = from_dlpack(df['weights'].to_dlpack())
+    if '2' in df:
+        edge_weight = from_dlpack(df['2'].to_dlpack())
 
     return edge_index, edge_weight
 
