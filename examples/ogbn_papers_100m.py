@@ -30,7 +30,7 @@ else:
 dataset = PygNodePropPredDataset(name='ogbn-papers100M')
 split_idx = dataset.get_idx_split()
 data = dataset[0]
-data.y = data.y.reshape(-1).to(torch.long)
+data.y = data.y.reshape(-1)
 print("Data =", data)
 
 
@@ -81,6 +81,7 @@ for epoch in range(args.epochs):
         if i >= 10:
             start = time.time()
         batch = batch.to(device)
+        batch.y = batch.y.to(torch.long)
         optimizer.zero_grad()
         out = model(batch.x, batch.edge_index)
         loss = F.cross_entropy(out[:batch_size], batch.y[:batch_size])
