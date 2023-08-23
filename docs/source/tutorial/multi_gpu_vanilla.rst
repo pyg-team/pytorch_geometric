@@ -169,7 +169,9 @@ Putting it all together, we spawn our runners for each GPU:
 Large Scale
 -----------
 
-(TODO) break into chunks and describe
+Now that we have a working small scale example, lets try to scale up to a larger dataset, TaoBao.
+
+The first step is defining the necessary imports:
 
 .. code-block:: python
 
@@ -192,6 +194,11 @@ Large Scale
    from torch_geometric.loader import LinkNeighborLoader
    from torch_geometric.nn import SAGEConv
    from torch_geometric.utils.convert import to_scipy_sparse_matrix
+
+
+Next we define our SageConv based encoder/decoder models:
+
+.. code-block:: python
 
 
    class ItemGNNEncoder(torch.nn.Module):
@@ -248,6 +255,9 @@ Large Scale
            z = self.lin2(z)
            return z.view(-1)
 
+We then combine these blocks into our recommendation model:
+
+.. code-block:: python
 
    class Model(torch.nn.Module):
        def __init__(self, num_users, num_items, hidden_channels, out_channels):
@@ -269,6 +279,10 @@ Large Scale
            z_dict['user'] = self.user_encoder(x_dict, edge_index_dict)
 
            return self.decoder(z_dict['user'], z_dict['item'], edge_label_index)
+
+Similarly to our last example we now set up our spawnable runner:
+
+.. code-block:: python
 
 
    def run_train(rank, data, train_data, val_data, test_data, world_size):
@@ -389,6 +403,9 @@ Large Scale
                print(f'Epoch: {epoch:02d}, Loss: {loss:4f}, Val: {val_auc:.4f}, '
                      f'Test: {test_auc:.4f}')
 
+Again, similarly to our last example, we put it all together by spawning our runners for each GPU:
+
+.. code-block:: python
 
    if __name__ == '__main__':
        path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/Taobao')
