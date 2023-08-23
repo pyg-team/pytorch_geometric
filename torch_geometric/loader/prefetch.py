@@ -63,7 +63,7 @@ class PrefetchLoader:
         device: Optional[torch.device] = None,
     ):
         self.loader = loader
-        self.device_helper = self.DeviceHelper(device)
+        self.device_helper = DeviceHelper(device)
 
     def non_blocking_transfer(self, batch: Any) -> Any:
         if not self.device_helper.is_gpu:
