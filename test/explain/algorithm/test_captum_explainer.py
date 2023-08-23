@@ -199,20 +199,21 @@ def test_captum_explainer_multiclass_classification(
 
 
 @withPackage('captum')
-@pytest.mark.parametrize('method', methods)
-@pytest.mark.parametrize('node_mask_type', node_mask_types)
-@pytest.mark.parametrize('edge_mask_type', edge_mask_types)
+@pytest.mark.parametrize(
+    'method',
+    [m for m in methods if m != 'ShapleyValueSampling'],
+)
+@pytest.mark.parametrize(
+    'node_mask_type',
+    [nm for nm in node_mask_types if nm is not None],
+)
+@pytest.mark.parametrize(
+    'edge_mask_type',
+    [em for em in edge_mask_types if em is not None],
+)
 @pytest.mark.parametrize('index', [1, torch.arange(2)])
 def test_captum_hetero_data(method, node_mask_type, edge_mask_type, index,
                             hetero_data, hetero_model):
-
-    if method == 'ShapleyValueSampling':
-        # This currently takes too long to test and is already covered by
-        # by the homogeneous graph test case.
-        return
-
-    if node_mask_type is None or edge_mask_type is None:
-        return
 
     model_config = ModelConfig(mode='regression', task_level='node')
 

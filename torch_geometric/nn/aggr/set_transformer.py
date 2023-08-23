@@ -105,6 +105,8 @@ class SetTransformerAggregation(Aggregation):
         for decoder in self.decoders:
             x = decoder(x)
 
+        x = x.nan_to_num()
+
         return x.flatten(1, 2) if self.concat else x.mean(dim=1)
 
     def __repr__(self) -> str:
