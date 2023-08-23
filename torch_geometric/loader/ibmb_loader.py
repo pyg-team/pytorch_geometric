@@ -542,7 +542,7 @@ class IBMBBatchLoader(IBMBBaseLoader):
             ]
             sampler = define_sampler(batch_order, ys, graph.y.max().item() + 1)
         else:
-            sampler = kwargs['sampler']
+            sampler = None
 
         if not self.cache_data:
             cached_graph = graph  # need to cache the original graph
@@ -671,7 +671,7 @@ class IBMBNodeLoader(IBMBBaseLoader):
             ]
             sampler = define_sampler(batch_order, ys, graph.y.max().item() + 1)
         else:
-            sampler = kwargs['sampler']
+            sampler = None
 
         if not self.cache_data:
             cached_graph = graph  # need to cache the original graph
