@@ -209,10 +209,6 @@ try:
     import intel_extension_for_pytorch  # noqa
     WITH_IPEX = True
 except (ImportError, OSError) as e:
-    if isinstance(e, OSError):
-        warnings.warn("An issue occurred while importing"
-                      "'intel-extension-for-pytorch'. "
-                      f"Disabling its usage. Stacktrace: {e}")
     WITH_IPEX = False
 
 
