@@ -15,7 +15,7 @@ from benchmark.utils import (
     write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import PNAConv
+from torch_geometric.nn import PNAConv, make_batches_cacheable
 from torch_geometric.profile import (
     rename_profile_file,
     timeit,
@@ -180,9 +180,11 @@ def run(args: argparse.ArgumentParser):
                                 print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
 
+                        model_decorator = make_batches_cacheable if args.cached_loader else None
                         model = get_model(
                             model_name, params,
-                            metadata=data.metadata() if hetero else None)
+                            metadata=data.metadata() if hetero else None,
+                            model_decorator=model_decorator)
                         model = model.to(device)
                         # TODO: Migrate to ModelHubMixin.
                         if args.ckpt_path:
@@ -215,9 +217,6 @@ def run(args: argparse.ArgumentParser):
                             inference_kwargs = {}
                             if args.reuse_device_for_embeddings and not hetero:
                                 inference_kwargs['embedding_device'] = device
-                            if args.cached_loader:
-                                inference_kwargs[
-                                    'maybe_with_cached_loader'] = True
                             for _ in range(args.warmup):
                                 if args.full_batch:
                                     full_batch_inference(model, data)
