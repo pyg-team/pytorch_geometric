@@ -4,16 +4,17 @@ import os.path as osp
 import time
 
 import torch
-import torch.nn.functional as F
-from ogb.nodeproppred import PygNodePropPredDataset
-from torchmetrics import Accuracy
 import torch.distributed as dist
 import torch.multiprocessing as mp
+import torch.nn.functional as F
+from ogb.nodeproppred import PygNodePropPredDataset
+from torch.nn.parallel import DistributedDataParallel
+from torchmetrics import Accuracy
+
 import torch_geometric
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils import to_undirected
-from torch.nn.parallel import DistributedDataParallel
 
 
 def pyg_num_work():
@@ -41,7 +42,9 @@ class GCN(torch.nn.Module):
         x = self.conv2(x, edge_index, edge_weight)
         return x
 
-def run_train(rank, data, world_size, model, epochs, batch_size, fan_out, split_idx, num_classes):
+
+def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
+              split_idx, num_classes):
     os.environ['MASTER_ADDR'] = 'localhost'
     os.environ['MASTER_PORT'] = '12355'
     dist.init_process_group('nccl', rank=rank, world_size=world_size)
@@ -49,17 +52,20 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out, split_
         split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
     model = model.to(rank)
     model = DistributedDataParallel(model, device_ids=[rank])
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=0.0005)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
+                                 weight_decay=0.0005)
     train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                   input_nodes=split_idx['train'],
                                   batch_size=batch_size,
                                   num_workers=pyg_num_work())
     eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                  input_nodes=split_idx['valid'],
-                                 batch_size=batch_size, num_workers=pyg_num_work())
+                                 batch_size=batch_size,
+                                 num_workers=pyg_num_work())
     test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                  input_nodes=split_idx['test'],
-                                 batch_size=batch_size, num_workers=pyg_num_work())
+                                 batch_size=batch_size,
+                                 num_workers=pyg_num_work())
     eval_steps = 100
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(rank)
     if rank == 0:
@@ -79,8 +85,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out, split_
                 print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
                       ", Loss: " + str(loss))
         if rank == 0:
-            print("Average Training Iteration Time:", (time.time() - start) / (i - 10),
-                  "s/iter")
+            print("Average Training Iteration Time:",
+                  (time.time() - start) / (i - 10), "s/iter")
             acc_sum = 0.0
             with torch.no_grad():
                 for i, batch in enumerate(eval_loader):
@@ -94,8 +100,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out, split_
                     acc_sum += acc(out[:batch_size].softmax(dim=-1),
                                    batch.y[:batch_size])
             print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
-            print("Average Inference Iteration Time:", (time.time() - start) / (i - 10),
-          "s/iter")
+            print("Average Inference Iteration Time:",
+                  (time.time() - start) / (i - 10), "s/iter")
     if rank == 0:
         acc_sum = 0.0
         with torch.no_grad():
@@ -103,7 +109,8 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out, split_
                 batch = batch.to(rank)
                 batch.y = batch.y.to(torch.long)
                 out = model(batch.x, batch.edge_index)
-                acc_sum += acc(out[:batch_size].softmax(dim=-1), batch.y[:batch_size])
+                acc_sum += acc(out[:batch_size].softmax(dim=-1),
+                               batch.y[:batch_size])
             print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
 
 
@@ -126,6 +133,7 @@ if __name__ == '__main__':
     print("Data =", data)
     world_size = torch.cuda.device_count()
     print('Let\'s use', world_size, 'GPUs!')
-    mp.spawn(run_train,
-             args=(data, world_size, model, args.epochs, args.batch_size, args.fan_out, split_idx, dataset.num_classes),
-             nprocs=world_size, join=True)
+    mp.spawn(
+        run_train, args=(data, world_size, model, args.epochs, args.batch_size,
+                         args.fan_out, split_idx, dataset.num_classes),
+        nprocs=world_size, join=True)
