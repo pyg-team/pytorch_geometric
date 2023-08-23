@@ -32,7 +32,7 @@ class NeuralFingerprint(torch.nn.Module):
         r"""
         Args:
             x (torch.Tensor) : The node feature matrix.
-            edge_index (torch.Tensor) : The edge indices. 
+            edge_index (torch.Tensor) : The edge indices.
         """
 
         fingerprint = torch.zeros(self.fingerprint_length)

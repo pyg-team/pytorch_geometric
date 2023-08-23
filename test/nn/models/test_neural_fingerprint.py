@@ -9,6 +9,3 @@ def test_neural_fingerprint():
     model = NeuralFingerprint(num_features=7, fingerprint_length=5, num_layers=4)
     fingerprint = model.forward(x, edge_index)
     assert fingerprint.size() == torch.Size([5])
-
-test_neural_fingerprint()
-
