@@ -361,3 +361,190 @@ class TemporalGraphSAINT(nn.Module):
             x[n_id] = x_batch
 
         return x
+
+
+class HyperbolicGNNConv(MessagePassing):
+    def __init__(self, in_channels, out_channels, num_time_steps, c):
+        super(HyperbolicGNNConv, self).__init__(aggr='add')
+        self.num_time_steps = num_time_steps
+        self.c = c
+        self.lin = nn.Linear(in_channels, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+
+    def forward(self, x, edge_index, time_index):
+        edge_index, _ = self.add_remaining_self_loops(edge_index)
+
+        temporal_outputs = []
+        for t in range(self.num_time_steps):
+            t_edge_index = edge_index[:, time_index == t]
+            t_x = self.propagate(t_edge_index, x=x)
+            temporal_outputs.append(t_x)
+
+        x = torch.cat(temporal_outputs, dim=-1)
+        x = F.relu(self.temporal_lin(x))
+
+        return x
+
+    def message(self, x_j):
+        return x_j
+
+    def aggregate(self, inputs, index, dim_size=None):
+        # Apply hyperbolic averaging for aggregation
+        return hyperbolic_mean(inputs, index, c=self.c, dim=0, size=dim_size)
+
+class TemporalHyperbolicGNN(nn.Module):
+    def __init__(self, num_nodes, num_features, num_classes, num_time_steps, c):
+        super(TemporalHyperbolicGNN, self).__init__()
+        self.conv1 = HyperbolicGNNConv(num_features, 64, num_time_steps, c)
+        self.conv2 = HyperbolicGNNConv(64, num_classes, num_time_steps, c)
+
+    def forward(self, x, edge_index, time_index):
+        x = self.conv1(x, edge_index, time_index)
+        x = F.relu(x)
+        x = self.conv2(x, edge_index, time_index)
+        return x
+
+def hyperbolic_mean(inputs, index, c, dim=0, size=None):
+    num_nodes = size[0] if size is not None else index.max().item() + 1
+    sum = torch_scatter.scatter_add(inputs, index, dim=dim, dim_size=num_nodes)
+    count = torch_scatter.scatter_add(torch.ones_like(inputs), index, dim=dim, dim_size=num_nodes)
+    
+    mean = sum / count.clamp(min=1)
+    norm_mean = (1 - c**2 * mean.norm(dim=-1)**2).unsqueeze(-1)
+    
+    return mean / norm_mean
+
+
+class TemporalAGNNConv(MessagePassing):
+    def __init__(self, in_channels, out_channels, num_time_steps):
+        super(TemporalAGNNConv, self).__init__(aggr='add')
+        self.num_time_steps = num_time_steps
+        self.lin = nn.Linear(in_channels, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+
+    def forward(self, x, edge_index, time_index, adversarial_perturbation=None):
+        edge_index, _ = self.add_remaining_self_loops(edge_index)
+
+        temporal_outputs = []
+        for t in range(self.num_time_steps):
+            t_edge_index = edge_index[:, time_index == t]
+            t_x = self.propagate(t_edge_index, x=x)
+            temporal_outputs.append(t_x)
+
+        x = torch.cat(temporal_outputs, dim=-1)
+        x = F.relu(self.temporal_lin(x))
+        
+        if adversarial_perturbation is not None:
+            x = x + adversarial_perturbation
+
+        return x
+
+    def message(self, x_j):
+        return x_j
+
+class TemporalAdversarialGNN(nn.Module):
+    def __init__(self, num_nodes, num_features, num_classes, num_time_steps):
+        super(TemporalAdversarialGNN, self).__init__()
+        self.conv1 = TemporalAGNNConv(num_features, 64, num_time_steps)
+        self.conv2 = TemporalAGNNConv(64, num_classes, num_time_steps)
+        self.adversary = nn.Sequential(
+            nn.Linear(num_classes, 128),
+            nn.ReLU(),
+            nn.Linear(128, num_features)
+        )
+
+    def forward(self, x, edge_index, time_index):
+        x = self.conv1(x, edge_index, time_index)
+        x = F.relu(x)
+        x = self.conv2(x, edge_index, time_index)
+        
+        # Adversarial training
+        adv_perturbation = self.adversary(x)
+        x = self.conv1(x, edge_index, time_index, adversarial_perturbation=adv_perturbation)
+        
+        return x
+
+
+class TemporalGraphWaveNetConv(MessagePassing):
+    def __init__(self, in_channels, out_channels, num_time_steps, dilation, kernel_size):
+        super(TemporalGraphWaveNetConv, self).__init__(aggr='add')
+        self.num_time_steps = num_time_steps
+        self.dilation = dilation
+        self.kernel_size = kernel_size
+        self.conv = nn.Conv1d(in_channels, out_channels, kernel_size)
+        self.temporal_conv = nn.Conv1d(out_channels * num_time_steps, out_channels, 1)
+
+    def forward(self, x, edge_index, time_index):
+        edge_index, _ = self.add_remaining_self_loops(edge_index)
+
+        temporal_outputs = []
+        for t in range(self.num_time_steps):
+            t_edge_index = edge_index[:, time_index == t]
+            t_x = self.propagate(t_edge_index, x=x)
+            temporal_outputs.append(t_x)
+
+        x = torch.cat(temporal_outputs, dim=-1)
+        x = self.conv(x.unsqueeze(0)).squeeze(0)
+        x = F.relu(x)
+
+        # Apply temporal convolution
+        x = self.temporal_conv(x.unsqueeze(0)).squeeze(0)
+
+        return x
+
+    def message(self, x_j):
+        return x_j
+
+class TemporalGraphWaveNet(nn.Module):
+    def __init__(self, num_nodes, num_features, num_classes, num_time_steps):
+        super(TemporalGraphWaveNet, self).__init__()
+        self.conv1 = TemporalGraphWaveNetConv(num_features, 64, num_time_steps, dilation=2, kernel_size=3)
+        self.conv2 = TemporalGraphWaveNetConv(64, num_classes, num_time_steps, dilation=4, kernel_size=3)
+
+    def forward(self, x, edge_index, time_index):
+        x = self.conv1(x, edge_index, time_index)
+        x = self.conv2(x, edge_index, time_index)
+        return x
+
+
+
+class TemporalSSTGNNConv(MessagePassing):
+    def __init__(self, in_channels, out_channels, num_time_steps):
+        super(TemporalSSTGNNConv, self).__init__(aggr='add')
+        self.num_time_steps = num_time_steps
+        self.lin = nn.Linear(in_channels, out_channels)
+        self.temporal_lin = nn.Linear(out_channels * num_time_steps, out_channels)
+
+    def forward(self, x, edge_index, time_index):
+        edge_index, _ = self.add_remaining_self_loops(edge_index)
+
+        temporal_outputs = []
+        for t in range(self.num_time_steps):
+            t_edge_index = edge_index[:, time_index == t]
+            t_x = self.propagate(t_edge_index, x=x)
+            temporal_outputs.append(t_x)
+
+        x = torch.cat(temporal_outputs, dim=-1)
+        x = F.relu(self.temporal_lin(x))
+
+        return x
+
+    def message(self, x_j):
+        return x_j
+
+class TemporalSSTGNN(nn.Module):
+    def __init__(self, num_nodes, num_features, num_classes, num_time_steps):
+        super(TemporalSSTGNN, self).__init__()
+        self.conv1 = TemporalSSTGNNConv(num_features, 64, num_time_steps)
+        self.conv2 = TemporalSSTGNNConv(64, num_classes, num_time_steps)
+        self.self_supervised_linear = nn.Linear(num_classes, num_features)
+
+    def forward(self, x, edge_index, time_index):
+        x = self.conv1(x, edge_index, time_index)
+        x = F.relu(x)
+        x = self.conv2(x, edge_index, time_index)
+        
+        # Self-supervised learning: Predict node features
+        self_supervised_target = self.self_supervised_linear(x)
+        
+        return x, self_supervised_target
