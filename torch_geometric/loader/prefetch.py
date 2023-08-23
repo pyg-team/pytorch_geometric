@@ -42,10 +42,12 @@ class PrefetchLoader:
             self.stream = None
             self.stream_context = nullcontext
 
+            gpu_module = None
             if self.is_gpu:
-                gpu_module = torch.cuda if self.device.type == 'cuda' else torch.xpu
-            else:
-                gpu_module = None
+                if self.device.type == 'cuda':
+                    gpu_module = torch.cuda
+                else:
+                    gpu_module = torch.xpu
 
             self.gpu_module = gpu_module
 
