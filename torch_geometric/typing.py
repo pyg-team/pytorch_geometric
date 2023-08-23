@@ -205,6 +205,13 @@ except (ImportError, OSError) as e:
             raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
 
 
+try:
+    import intel_extension_for_pytorch  # noqa
+    WITH_IPEX = True
+except (ImportError, OSError):
+    WITH_IPEX = False
+
+
 class MockTorchCSCTensor:
     def __init__(
         self,
