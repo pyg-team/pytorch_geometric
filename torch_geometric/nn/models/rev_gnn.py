@@ -58,7 +58,7 @@ class InvertibleFunction(torch.autograd.Function):
         detached_outputs = tuple(element.detach_() for element in outputs)
 
         # Clear memory of node features:
-        if torch_geometric.typing.WITH_PT2:
+        if torch_geometric.typing.WITH_PT20:
             inputs[0].untyped_storage().resize_(0)
         else:  # pragma: no cover
             inputs[0].storage().resize_(0)
@@ -85,7 +85,7 @@ class InvertibleFunction(torch.autograd.Function):
             inputs_inverted = ctx.fn_inverse(*(outputs + inputs[1:]))
             if len(ctx.outputs) == 0:  # Clear memory from outputs:
                 for element in outputs:
-                    if torch_geometric.typing.WITH_PT2:
+                    if torch_geometric.typing.WITH_PT20:
                         element.untyped_storage().resize_(0)
                     else:  # pragma: no cover
                         element.storage().resize_(0)
@@ -94,7 +94,7 @@ class InvertibleFunction(torch.autograd.Function):
                 inputs_inverted = (inputs_inverted, )
 
             for elem_orig, elem_inv in zip(inputs, inputs_inverted):
-                if torch_geometric.typing.WITH_PT2:
+                if torch_geometric.typing.WITH_PT20:
                     elem_orig.untyped_storage().resize_(
                         int(np.prod(elem_orig.size())) *
                         elem_orig.element_size())
