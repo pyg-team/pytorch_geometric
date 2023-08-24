@@ -1,7 +1,6 @@
 from itertools import chain
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
-import numba
 import numpy as np
 import torch
 from torch import Tensor
@@ -9,8 +8,13 @@ from torch import Tensor
 from torch_geometric.utils import is_torch_sparse_tensor, to_torch_csr_tensor
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
+try:
+    import numba
+    WITH_NUMBA = True
+except ImportError:
+    WITH_NUMBA = False
 
-@numba.jit(nopython=True, parallel=True)
+
 def _get_ppr(
     rowptr: np.ndarray,
     col: np.ndarray,
@@ -67,6 +71,9 @@ def _get_ppr(
     return js, vals
 
 
+_get_ppr_numba: Optional[Callable] = None
+
+
 def get_ppr(
     edge_index: Tensor,
     alpha: float = 0.2,
@@ -91,6 +98,13 @@ def get_ppr(
 
     :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`)
     """
+    if not WITH_NUMBA:
+        raise ImportError("'get_ppr' requires the 'numba' package")
+
+    global _get_ppr_numba
+    if _get_ppr_numba is None:
+        _get_ppr_numba = numba.jit(nopython=True, parallel=True)(_get_ppr)
+
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     if not is_torch_sparse_tensor(edge_index):
@@ -103,7 +117,7 @@ def get_ppr(
 
     rowptr, col = edge_index.crow_indices(), edge_index.col_indices()
 
-    cols, weights = _get_ppr(
+    cols, weights = _get_ppr_numba(
         rowptr.cpu().numpy(),
         col.cpu().numpy(),
         alpha,
