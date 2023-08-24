@@ -9,14 +9,13 @@ from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import (
-        calculate_ppr,
     add_self_loops,
+    calculate_ppr,
     coalesce,
     is_undirected,
     scatter,
     to_dense_adj,
 )
-from torch_geometric.utils.sparse import index2ptr
 
 
 @functional_transform('gdc')
