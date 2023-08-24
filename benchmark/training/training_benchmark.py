@@ -24,7 +24,7 @@ from torch_geometric.profile import (
     rename_profile_file,
     timeit,
     torch_profile,
-    xpu_profile
+    xpu_profile,
 )
 
 supported_sets = {
@@ -35,8 +35,9 @@ supported_sets = {
 
 device_conditions = {
     'cuda': (lambda: torch.cuda.is_available()),
-    'mps': (lambda: (hasattr(torch.backends, 'mps')
-            and torch.backends.mps.is_available())),
+    'mps':
+    (lambda:
+     (hasattr(torch.backends, 'mps') and torch.backends.mps.is_available())),
     'xpu': (lambda: torch.xpu.is_available()),
 }
 
@@ -231,7 +232,8 @@ def run(args: argparse.ArgumentParser):
                                                      lr=0.001)
 
                         if args.device == 'xpu':
-                            model, optimizer = ipex.optimize(model, optimizer=optimizer)
+                            model, optimizer = ipex.optimize(
+                                model, optimizer=optimizer)
 
                         progress_bar = False if args.no_progress_bar else True
                         train = train_hetero if hetero else train_homo
@@ -283,7 +285,8 @@ def run(args: argparse.ArgumentParser):
 
                             if args.profile:
                                 if args.device == 'xpu':
-                                    profile = xpu_profile(args.export_chrome_trace)
+                                    profile = xpu_profile(
+                                        args.export_chrome_trace)
                                 else:
                                     profile = torch_profile(
                                         args.export_chrome_trace, csv_data,
