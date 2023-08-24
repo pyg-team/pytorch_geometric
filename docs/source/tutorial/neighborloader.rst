@@ -70,7 +70,7 @@ Define Model
 the number of SAGE layers in a GNN model is the same as the depth K in the GraphSAGE algorithm.
 
 
-Train 
+Train
 -----------
 
 
@@ -100,10 +100,10 @@ Train
         return total_loss / total_examples, total_correct / total_examples
 
 The NeighborLoader will return a ``batch``, which contains the following attributes:
-``batch.y`` is the label of the nodes in the batch. 
-``batch.x`` is the feature of the nodes in the batch. 
-``batch.edge_index`` is the edge index of the subgraph. 
-``batch.batch_size`` is the number of nodes which we need to compute their embedding. Note: ``batch.x.shape[0]`` is the number of nodes of subgraph.  
+``batch.y`` is the label of the nodes in the batch.
+``batch.x`` is the feature of the nodes in the batch.
+``batch.edge_index`` is the edge index of the subgraph.
+``batch.batch_size`` is the number of nodes which we need to compute their embedding. Note: ``batch.x.shape[0]`` is the number of nodes of subgraph.
 ``batch.n_id`` is the global node index of the nodes in the batch.
 
 
