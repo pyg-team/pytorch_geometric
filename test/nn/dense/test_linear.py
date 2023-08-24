@@ -127,6 +127,17 @@ def test_hetero_linear(device):
     assert torch.allclose(jit(x, type_vec), out, atol=1e-3)
 
 
+def test_hetero_linear_initializer():
+    lin = HeteroLinear(
+        16,
+        32,
+        num_types=3,
+        weight_initializer='glorot',
+        bias_initializer='zeros',
+    )
+    assert torch.equal(lin.bias, torch.zeros_like(lin.bias))
+
+
 @withCUDA
 @pytest.mark.parametrize('use_segmm', [True, False])
 def test_hetero_linear_amp(device, use_segmm):
