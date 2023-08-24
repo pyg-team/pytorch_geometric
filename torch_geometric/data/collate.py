@@ -154,7 +154,7 @@ def _collate(
         if torch.utils.data.get_worker_info() is not None:
             # Write directly into shared memory to avoid an extra copy:
             numel = sum(value.numel() for value in values)
-            if torch_geometric.typing.WITH_PT2:
+            if torch_geometric.typing.WITH_PT20:
                 storage = elem.untyped_storage()._new_shared(
                     numel * elem.element_size(), device=elem.device)
             elif torch_geometric.typing.WITH_PT112:
