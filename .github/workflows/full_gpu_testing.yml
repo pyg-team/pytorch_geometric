@@ -20,6 +20,10 @@ jobs:
         with:
           cuda-version: 'cu118'
 
+      - name: Print GPU information
+        run: |
+          nvidia-smi
+
       - name: Install main package
         run: |
           pip install -e .[full,test]
