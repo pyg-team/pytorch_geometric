@@ -2,9 +2,11 @@ import pytest
 import torch
 
 from torch_geometric.datasets import KarateClub
+from torch_geometric.testing import withPackage
 from torch_geometric.utils import get_ppr
 
 
+@withPackage('numba')
 @pytest.mark.parametrize('target', [None, torch.tensor([0, 4, 5, 6])])
 def test_get_ppr(target):
     data = KarateClub()[0]
