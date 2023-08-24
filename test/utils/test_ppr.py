@@ -1,26 +1,26 @@
-import networkx as nx
-import numpy as np
+import pytest
 import torch
 
-from torch_geometric.utils import calculate_ppr
+from torch_geometric.datasets import KarateClub
+from torch_geometric.utils import get_ppr
 
 
-def test_graph_ibmb():
-    G = nx.karate_club_graph()
-    edge_index = torch.tensor(list(G.edges)).t()
-    num_nodes = len(G.nodes)
+@pytest.mark.parametrize('target', [None, torch.tensor([0, 4, 5, 6])])
+def test_get_ppr(target):
+    data = KarateClub()[0]
 
-    neighbors, weights = calculate_ppr(edge_index, 0.1, 1.e-5,
-                                       num_nodes=num_nodes,
-                                       target_indices=np.array([0, 4, 5, 6]))
-    assert len(neighbors) == 4
+    edge_index, edge_weight = get_ppr(
+        data.edge_index,
+        alpha=0.1,
+        eps=1e-5,
+        target=target,
+    )
 
-    neighbors, weights = calculate_ppr(
-        edge_index, 0.5, 1.e-5, num_nodes=num_nodes,
-        target_indices=np.array([0, 4, 5, 6, 10]))
-    assert len(neighbors) == 5
+    assert edge_index.size(0) == 2
+    assert edge_index.size(1) == edge_weight.numel()
 
-    neighbors, weights = calculate_ppr(edge_index, 0.5, 1.e-5,
-                                       num_nodes=num_nodes,
-                                       target_indices=None)
-    assert len(neighbors) == 34
+    min_row = 0 if target is None else target.min()
+    max_row = data.num_nodes - 1 if target is None else target.max()
+    assert edge_index[0].min() == min_row and edge_index[0].max() == max_row
+    assert edge_index[1].min() >= 0 and edge_index[1].max() < data.num_nodes
+    assert edge_weight.min() >= 0.0 and edge_weight.max() <= 1.0

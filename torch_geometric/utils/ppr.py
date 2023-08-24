@@ -1,32 +1,40 @@
-from typing import List, Optional, Tuple, Union
+from itertools import chain
+from typing import List, Optional, Tuple
 
 import numba
 import numpy as np
+import torch
 from torch import Tensor
 
-from torch_geometric.utils import to_undirected
+from torch_geometric.utils import is_torch_sparse_tensor, to_torch_csr_tensor
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 @numba.jit(nopython=True, parallel=True)
-def _calc_ppr(
-    indptr: np.ndarray,
-    indices: np.ndarray,
-    out_degree: np.ndarray,
+def _get_ppr(
+    rowptr: np.ndarray,
+    col: np.ndarray,
     alpha: float,
     eps: float,
-    target_nodes: Optional[np.ndarray] = None,
+    target: Optional[np.ndarray] = None,
 ) -> Tuple[List[List[int]], List[List[float]]]:
-    nnodes = len(out_degree) if target_nodes is None else len(target_nodes)
+
+    num_nodes = len(rowptr) - 1 if target is None else len(target)
     alpha_eps = alpha * eps
-    js = [[0]] * nnodes
-    vals = [[0.]] * nnodes
-    for inode_uint in numba.prange(nnodes):
-        inode = numba.int64(inode_uint) if target_nodes is None \
-            else target_nodes[inode_uint]
+    js = [[0]] * num_nodes
+    vals = [[0.]] * num_nodes
+
+    for inode_uint in numba.prange(num_nodes):
+        if target is None:
+            inode = numba.int64(inode_uint)
+        else:
+            inode = target[inode_uint]
+
         p = {inode: 0.0}
         r = {}
         r[inode] = alpha
         q = [inode]
+
         while len(q) > 0:
             unode = q.pop()
 
@@ -35,57 +43,82 @@ def _calc_ppr(
                 p[unode] += res
             else:
                 p[unode] = res
+
             r[unode] = 0
-            for vnode in indices[indptr[unode]:indptr[unode + 1]]:
-                _val = (1 - alpha) * res / out_degree[unode]
+            start, end = rowptr[unode], rowptr[unode + 1]
+            ucount = end - start
+
+            for vnode in col[start:end]:
+                _val = (1 - alpha) * res / ucount
                 if vnode in r:
                     r[vnode] += _val
                 else:
                     r[vnode] = _val
 
                 res_vnode = r[vnode] if vnode in r else 0
-                if res_vnode >= alpha_eps * out_degree[vnode]:
+                vcount = rowptr[vnode + 1] - rowptr[vnode]
+                if res_vnode >= alpha_eps * vcount:
                     if vnode not in q:
                         q.append(vnode)
+
         js[inode_uint] = list(p.keys())
         vals[inode_uint] = list(p.values())
+
     return js, vals
 
 
-def calculate_ppr(
+def get_ppr(
     edge_index: Tensor,
     alpha: float = 0.2,
-    eps: float = 1.e-5,
+    eps: float = 1e-5,
+    target: Optional[Tensor] = None,
     num_nodes: Optional[int] = None,
-    target_indices: Optional[Union[Tensor, np.ndarray]] = None,
-) -> Tuple[List[np.ndarray], List[np.ndarray]]:
-    r"""Calculate the personalized PageRank vector for selected nodes
-        using a variant of the Andersen algorithm, given
-        the edge_index of a graph.
-        (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
+) -> Tuple[Tensor, Tensor]:
+    r"""Calculates the personalized PageRank (PPR) vector for all or a subset
+    of nodes using a variant of the `Andersen algorithm
+    <https://mathweb.ucsd.edu/~fan/wp/localpartition.pdf>`_.
 
-        Args:
-            edge_index (torch.Tensor): Edge_index of a graph.
-            alpha (float): Alpha of the PageRank to calculate.
-            eps (float): Threshold for PPR calculation stopping criterion
-                (:obj:`edge_weight >= eps * out_degree`).
-            num_nodes (int, optional): Number of nodes.
-            target_indices (torch.Tensor or np.ndarray, optional): Target
-                nodes of PPR calculations. If not given, calculate for
-                all the nodes by default.
+    Args:
+        edge_index (torch.Tensor): The indices of the graph.
+        alpha (float, optional): The alpha value of the PageRank algorithm.
+            (default: :obj:`0.2`)
+        eps (float, optional): The threshold for stopping the PPR calculation
+            (:obj:`edge_weight >= eps * out_degree`). (default: :obj:`1e-5`)
+        target (torch.Tensor, optional): The target nodes to compute PPR for.
+            If not given, calculates PPR vectors for all nodes.
+            (default: :obj:`None`)
+        num_nodes (int, optional): The number of nodes. (default: :obj:`None`)
 
-        :rtype: (:class:`List[np.ndarray]`, :class:`List[np.ndarray]`)
-        """
-    edge_index = to_undirected(edge_index, num_nodes=num_nodes)
-    edge_index_np = edge_index.cpu().numpy()
-    _, indptr, out_degree = np.unique(edge_index_np[0], return_index=True,
-                                      return_counts=True)
-    indptr = np.append(indptr, edge_index_np.shape[1])
+    :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`)
+    """
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    if isinstance(target_indices, Tensor):
-        target_indices = target_indices.numpy()
-    neighbors, weights = _calc_ppr(indptr, edge_index_np[1], out_degree, alpha,
-                                   eps, target_indices)
-    neighbors = [np.array(n) for n in neighbors]
-    weights = [np.array(w) for w in weights]
-    return neighbors, weights
+    if not is_torch_sparse_tensor(edge_index):
+        size = (num_nodes, num_nodes)
+        edge_index = to_torch_csr_tensor(edge_index, size=size)
+    else:
+        edge_index = edge_index.to_sparse_csr()
+
+    assert edge_index.layout == torch.sparse_csr
+
+    rowptr, col = edge_index.crow_indices(), edge_index.col_indices()
+
+    cols, weights = _get_ppr(
+        rowptr.cpu().numpy(),
+        col.cpu().numpy(),
+        alpha,
+        eps,
+        None if target is None else target.cpu().numpy(),
+    )
+
+    device = edge_index.device
+    col = torch.tensor(list(chain.from_iterable(cols)), device=device)
+    weight = torch.tensor(list(chain.from_iterable(weights)), device=device)
+    deg = torch.tensor([len(value) for value in cols], device=device)
+
+    row = torch.arange(num_nodes) if target is None else target
+    row = row.repeat_interleave(deg, output_size=col.numel())
+
+    edge_index = torch.stack([row, col], dim=0)
+
+    return edge_index, weight
