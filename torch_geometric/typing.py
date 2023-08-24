@@ -7,7 +7,7 @@ import torch
 from torch import Tensor
 
 WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
-WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[0]) >= 1
+WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
 WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
 WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
