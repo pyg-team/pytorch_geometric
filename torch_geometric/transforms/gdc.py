@@ -9,6 +9,7 @@ from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import (
+        calculate_ppr,
     add_self_loops,
     coalesce,
     is_undirected,
@@ -83,9 +84,6 @@ class GDC(BaseTransform):
                                                      avg_degree=64),
         exact: bool = True,
     ):
-
-        self.__calc_ppr__ = get_calc_ppr()
-
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -303,15 +301,9 @@ class GDC(BaseTransform):
                 _, col = edge_index
                 deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
-            edge_index_np = edge_index.cpu().numpy()
-
             # Assumes sorted and coalesced edge indices:
-            indptr = index2ptr(edge_index[0], num_nodes).cpu().numpy()
-            out_degree = indptr[1:] - indptr[:-1]
-
-            neighbors, neighbor_weights = self.__calc_ppr__(
-                indptr, edge_index_np[1], out_degree, kwargs['alpha'],
-                kwargs['eps'])
+            neighbors, neighbor_weights = calculate_ppr(
+                edge_index, kwargs['alpha'], kwargs['eps'], num_nodes)
 
             ppr_normalization = 'col' if normalization == 'col' else 'row'
             edge_index, edge_weight = self.__neighbors_to_graph__(
@@ -539,67 +531,3 @@ class GDC(BaseTransform):
             raise ValueError(
                 f"PPR matrix normalization {normalization} unknown.")
         return edge_index, edge_weight
-
-
-def get_calc_ppr():
-    import numba
-
-    @numba.jit(nopython=True, parallel=True)
-    def calc_ppr(
-        indptr: np.ndarray,
-        indices: np.ndarray,
-        out_degree: np.ndarray,
-        alpha: float,
-        eps: float,
-    ) -> Tuple[List[List[int]], List[List[float]]]:
-        r"""Calculate the personalized PageRank vector for all nodes
-        using a variant of the Andersen algorithm
-        (see Andersen et al. :Local Graph Partitioning using PageRank Vectors.)
-
-        Args:
-            indptr (np.ndarray): Index pointer for the sparse matrix
-                (CSR-format).
-            indices (np.ndarray): Indices of the sparse matrix entries
-                (CSR-format).
-            out_degree (np.ndarray): Out-degree of each node.
-            alpha (float): Alpha of the PageRank to calculate.
-            eps (float): Threshold for PPR calculation stopping criterion
-                (:obj:`edge_weight >= eps * out_degree`).
-
-        :rtype: (:class:`List[List[int]]`, :class:`List[List[float]]`)
-        """
-
-        alpha_eps = alpha * eps
-        js = [[0]] * len(out_degree)
-        vals = [[0.]] * len(out_degree)
-        for inode_uint in numba.prange(len(out_degree)):
-            inode = numba.int64(inode_uint)
-            p = {inode: 0.0}
-            r = {}
-            r[inode] = alpha
-            q = [inode]
-            while len(q) > 0:
-                unode = q.pop()
-
-                res = r[unode] if unode in r else 0
-                if unode in p:
-                    p[unode] += res
-                else:
-                    p[unode] = res
-                r[unode] = 0
-                for vnode in indices[indptr[unode]:indptr[unode + 1]]:
-                    _val = (1 - alpha) * res / out_degree[unode]
-                    if vnode in r:
-                        r[vnode] += _val
-                    else:
-                        r[vnode] = _val
-
-                    res_vnode = r[vnode] if vnode in r else 0
-                    if res_vnode >= alpha_eps * out_degree[vnode]:
-                        if vnode not in q:
-                            q.append(vnode)
-            js[inode] = list(p.keys())
-            vals[inode] = list(p.values())
-        return js, vals
-
-    return calc_ppr
