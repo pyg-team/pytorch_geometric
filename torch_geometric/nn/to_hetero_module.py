@@ -3,6 +3,7 @@ import warnings
 from typing import Dict, List, Optional, Union
 
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 
 import torch_geometric
@@ -35,7 +36,6 @@ class ToHeteroLinear(torch.nn.Module):
         else:
             raise ValueError(f"Expected 'Linear' module (got '{type(module)}'")
 
-        # TODO: Need to handle `in_channels=-1` case.
         # TODO We currently assume that `x` is sorted according to `type`.
         self.hetero_module = HeteroLinear(
             in_channels,
@@ -55,7 +55,9 @@ class ToHeteroLinear(torch.nn.Module):
 
         if not torch_geometric.typing.WITH_PYG_LIB:
             return {
-                key: self.hetero_module.lins[i](x_dict[key])
+                key:
+                F.linear(x_dict[key], self.hetero_module.weight[i].t()) +
+                self.hetero_module.bias[i]
                 for i, key in enumerate(self.types)
             }
 

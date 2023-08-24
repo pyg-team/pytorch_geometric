@@ -1,3 +1,4 @@
+import inspect
 import logging
 import warnings
 from typing import Any, Dict, Optional, Union
@@ -14,7 +15,7 @@ from torch_geometric.explain.algorithm.captum import (
     convert_captum_output,
     to_captum_input,
 )
-from torch_geometric.explain.config import MaskType, ModelMode
+from torch_geometric.explain.config import MaskType, ModelMode, ModelReturnType
 from torch_geometric.typing import EdgeType, NodeType
 
 
@@ -26,11 +27,29 @@ class CaptumExplainer(ExplainerAlgorithm):
     This explainer algorithm uses :captum:`null` `Captum <https://captum.ai/>`_
     to compute attributions.
 
+    Currently, the following attribution methods are supported:
+
+    * :class:`captum.attr.IntegratedGradients`
+    * :class:`captum.attr.Saliency`
+    * :class:`captum.attr.InputXGradient`
+    * :class:`captum.attr.Deconvolution`
+    * :class:`captum.attr.ShapleyValueSampling`
+    * :class:`captum.attr.GuidedBackprop`
+
     Args:
         attribution_method (Attribution or str): The Captum attribution method
             to use. Can be a string or a :class:`captum.attr` method.
         **kwargs: Additional arguments for the Captum attribution method.
     """
+    SUPPORTED_METHODS = [  # TODO: Add support for more methods.
+        'IntegratedGradients',
+        'Saliency',
+        'InputXGradient',
+        'Deconvolution',
+        'ShapleyValueSampling',
+        'GuidedBackprop',
+    ]
+
     def __init__(
         self,
         attribution_method: Union[str, Any],
@@ -40,15 +59,26 @@ class CaptumExplainer(ExplainerAlgorithm):
 
         import captum.attr  # noqa
 
-        self.kwargs = kwargs
-
         if isinstance(attribution_method, str):
-            self.attribution_method = getattr(
+            self.attribution_method_class = getattr(
                 captum.attr,
                 attribution_method,
             )
         else:
-            self.attribution_method = attribution_method
+            self.attribution_method_class = attribution_method
+
+        if not self._is_supported_attribution_method():
+            raise ValueError(f"{self.__class__.__name__} does not support "
+                             f"attribution method "
+                             f"{self.attribution_method_class.__name__}")
+
+        if kwargs.get('internal_batch_size', 1) != 1:
+            warnings.warn("Overriding 'internal_batch_size' to 1")
+
+        if 'internal_batch_size' in self._get_attribute_parameters():
+            kwargs['internal_batch_size'] = 1
+
+        self.kwargs = kwargs
 
     def _get_mask_type(self) -> MaskLevelType:
         r"""Based on the explainer config, return the mask type."""
@@ -65,9 +95,28 @@ class CaptumExplainer(ExplainerAlgorithm):
                              "edge mask type is specified.")
         return mask_type
 
-    def _support_multiple_indices(self) -> bool:
-        r"""Checks if the method supports multiple indices."""
-        return self.attribution_method.__name__ == 'IntegratedGradients'
+    def _get_attribute_parameters(self) -> Dict[str, Any]:
+        r"""Returns the attribute arguments."""
+        signature = inspect.signature(self.attribution_method_class.attribute)
+        return signature.parameters
+
+    def _needs_baseline(self) -> bool:
+        r"""Checks if the method needs a baseline."""
+        parameters = self._get_attribute_parameters()
+        if 'baselines' in parameters:
+            param = parameters['baselines']
+            if param.default is inspect.Parameter.empty:
+                return True
+        return False
+
+    def _is_supported_attribution_method(self) -> bool:
+        r"""Returns :obj:`True` if `self.attribution_method` is supported."""
+        # This is redundant for now since all supported methods need a baseline
+        if self._needs_baseline():
+            return False
+        elif self.attribution_method_class.__name__ in self.SUPPORTED_METHODS:
+            return True
+        return False
 
     def forward(
         self,
@@ -79,18 +128,6 @@ class CaptumExplainer(ExplainerAlgorithm):
         index: Optional[Union[int, Tensor]] = None,
         **kwargs,
     ) -> Union[Explanation, HeteroExplanation]:
-
-        if isinstance(index, Tensor) and index.numel() > 1:
-            if not self._support_multiple_indices():
-                raise ValueError(
-                    f"{self.attribution_method.__name__} does not support "
-                    "multiple indices. Please use a single index or a "
-                    "different attribution method.")
-
-        # TODO (matthias) Check if `internal_batch_size` can be passed.
-        if self.kwargs.get('internal_batch_size', 1) != 1:
-            warnings.warn("Overriding 'internal_batch_size' to 1")
-        self.kwargs['internal_batch_size'] = 1
 
         mask_type = self._get_mask_type()
 
@@ -108,21 +145,26 @@ class CaptumExplainer(ExplainerAlgorithm):
                 mask_type,
                 index,
                 metadata,
+                self.model_config,
             )
         else:
             metadata = None
-            captum_model = CaptumModel(model, mask_type, index)
+            captum_model = CaptumModel(model, mask_type, index,
+                                       self.model_config)
 
-        self.attribution_method = self.attribution_method(captum_model)
+        self.attribution_method_instance = self.attribution_method_class(
+            captum_model)
 
-        # In captum, the target is the index for which
-        # the attribution is computed.
+        # In captum, the target is the class index for which
+        # the attribution is computed. With CaptumModel, we transform
+        # the binary classification into a multi-class. This way we can
+        # explain both classes and need to pass a target here as well.
         if self.model_config.mode == ModelMode.regression:
             target = None
         else:
             target = target[index]
 
-        attributions = self.attribution_method.attribute(
+        attributions = self.attribution_method_instance.attribute(
             inputs=inputs,
             target=target,
             additional_forward_args=add_forward_args,
@@ -139,21 +181,25 @@ class CaptumExplainer(ExplainerAlgorithm):
             return Explanation(node_mask=node_mask, edge_mask=edge_mask)
 
         explanation = HeteroExplanation()
-        if node_mask is not None:
-            for node_type, mask in node_mask.items():
-                explanation.node_mask_dict[node_type] = mask
-        if edge_mask is not None:
-            for edge_type, mask in edge_mask.items():
-                explanation.edge_mask_dict[edge_type] = mask
+        explanation.set_value_dict('node_mask', node_mask)
+        explanation.set_value_dict('edge_mask', edge_mask)
         return explanation
 
     def supports(self) -> bool:
         node_mask_type = self.explainer_config.node_mask_type
         if node_mask_type not in [None, MaskType.attributes]:
-            logging.error(f"'{self.__class__.__name__}' only supports "
-                          f"'node_mask_type' None or 'attributes' "
+            logging.error(f"'{self.__class__.__name__}' expects "
+                          f"'node_mask_type' to be 'None' or 'attributes' "
                           f"(got '{node_mask_type.value}')")
             return False
 
-        # TODO (ramona): Confirm that output type is valid.
+        return_type = self.model_config.return_type
+        if (self.model_config.mode == ModelMode.binary_classification
+                and return_type != ModelReturnType.probs):
+            logging.error(f"'{self.__class__.__name__}' expects "
+                          f"'return_type' to be 'probs' for binary "
+                          f"classification tasks (got '{return_type.value}')")
+            return False
+
+        # TODO (ramona) Confirm that output type is valid.
         return True

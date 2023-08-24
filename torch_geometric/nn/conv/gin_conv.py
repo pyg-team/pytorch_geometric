@@ -5,6 +5,7 @@ from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import reset
 from torch_geometric.typing import (
     Adj,
     OptPairTensor,
@@ -13,8 +14,6 @@ from torch_geometric.typing import (
     SparseTensor,
 )
 from torch_geometric.utils import spmm
-
-from ..inits import reset
 
 
 class GINConv(MessagePassing):
@@ -61,9 +60,9 @@ class GINConv(MessagePassing):
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
-            self.eps = torch.nn.Parameter(torch.Tensor([eps]))
+            self.eps = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('eps', torch.Tensor([eps]))
+            self.register_buffer('eps', torch.empty(1))
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -146,9 +145,9 @@ class GINEConv(MessagePassing):
         self.nn = nn
         self.initial_eps = eps
         if train_eps:
-            self.eps = torch.nn.Parameter(torch.Tensor([eps]))
+            self.eps = torch.nn.Parameter(torch.empty(1))
         else:
-            self.register_buffer('eps', torch.Tensor([eps]))
+            self.register_buffer('eps', torch.empty(1))
         if edge_dim is not None:
             if isinstance(self.nn, torch.nn.Sequential):
                 nn = self.nn[0]

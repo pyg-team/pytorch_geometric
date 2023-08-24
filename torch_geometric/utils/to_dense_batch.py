@@ -3,12 +3,21 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric.experimental import (
+    disable_dynamic_shapes,
+    is_experimental_mode_enabled,
+)
 from torch_geometric.utils import scatter
 
 
-def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
-                   fill_value: float = 0., max_num_nodes: Optional[int] = None,
-                   batch_size: Optional[int] = None) -> Tuple[Tensor, Tensor]:
+@disable_dynamic_shapes(required_args=['batch_size', 'max_num_nodes'])
+def to_dense_batch(
+    x: Tensor,
+    batch: Optional[Tensor] = None,
+    fill_value: float = 0.0,
+    max_num_nodes: Optional[int] = None,
+    batch_size: Optional[int] = None,
+) -> Tuple[Tensor, Tensor]:
     r"""Given a sparse batch of node features
     :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}` (with
     :math:`N_i` indicating the number of nodes in graph :math:`i`), creates a
@@ -100,9 +109,12 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
     cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
 
     filter_nodes = False
+    dynamic_shapes_disabled = is_experimental_mode_enabled(
+        'disable_dynamic_shapes')
+
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
-    elif num_nodes.max() > max_num_nodes:
+    elif not dynamic_shapes_disabled and num_nodes.max() > max_num_nodes:
         filter_nodes = True
 
     tmp = torch.arange(batch.size(0), device=x.device) - cum_nodes[batch]
@@ -112,7 +124,8 @@ def to_dense_batch(x: Tensor, batch: Optional[Tensor] = None,
         x, idx = x[mask], idx[mask]
 
     size = [batch_size * max_num_nodes] + list(x.size())[1:]
-    out = x.new_full(size, fill_value)
+    out = torch.as_tensor(fill_value, device=x.device)
+    out = out.to(x.dtype).repeat(size)
     out[idx] = x
     out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 

@@ -13,8 +13,10 @@ def test_compute_edge_score_softmax():
     assert torch.all(e >= 0) and torch.all(e <= 1)
 
     # Test whether all incoming edge scores sum up to one.
-    assert torch.allclose(scatter(e, edge_index[1], reduce='sum'),
-                          torch.Tensor([1, 1, 1, 1, 1, 1]))
+    assert torch.allclose(
+        scatter(e, edge_index[1], reduce='sum'),
+        torch.ones(6),
+    )
 
     if is_full_test():
         jit = torch.jit.script(EdgePooling.compute_edge_score_softmax)
@@ -48,7 +50,7 @@ def test_compute_edge_score_sigmoid():
 
 
 def test_edge_pooling():
-    x = torch.Tensor([[0], [1], [2], [3], [4], [5], [-1]])
+    x = torch.tensor([[0.0], [1.0], [2.0], [3.0], [4.0], [5.0], [-1.0]])
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 5, 6],
                                [1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2, 5, 4, 0]])
     batch = torch.tensor([0, 0, 0, 0, 1, 1, 0])
@@ -90,7 +92,7 @@ def test_edge_pooling():
         assert torch.equal(out[2], batch)
 
     # Test edge cases.
-    x = torch.Tensor([[0], [1], [2], [3], [4], [5]])
+    x = torch.tensor([[0.0], [1.0], [2.0], [3.0], [4.0], [5.0]])
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 5],
                                [1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2, 5, 4]])
     batch = torch.tensor([0, 0, 0, 0, 1, 1])

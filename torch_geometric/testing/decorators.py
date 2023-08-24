@@ -7,6 +7,7 @@ from typing import Callable
 import torch
 from packaging.requirements import Requirement
 
+from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
 
 
@@ -58,6 +59,42 @@ def onlyCUDA(func: Callable) -> Callable:
     )(func)
 
 
+def onlyXPU(func: Callable) -> Callable:
+    r"""A decorator to skip tests if XPU is not found."""
+    import pytest
+    try:
+        import intel_extension_for_pytorch as ipex
+        xpu_available = ipex.xpu.is_available()
+    except ImportError:
+        xpu_available = False
+    return pytest.mark.skipif(
+        not xpu_available,
+        reason="XPU not available",
+    )(func)
+
+
+def onlyOnline(func: Callable):
+    r"""A decorator to skip tests if there exists no connection to the
+    internet."""
+    import http.client as httplib
+
+    import pytest
+
+    has_connection = True
+    connection = httplib.HTTPSConnection('8.8.8.8', timeout=5)
+    try:
+        connection.request('HEAD', '/')
+    except Exception:
+        has_connection = False
+    finally:
+        connection.close()
+
+    return pytest.mark.skipif(
+        not has_connection,
+        reason="No internet connection",
+    )(func)
+
+
 def onlyGraphviz(func: Callable) -> Callable:
     r"""A decorator to specify that this function should only execute in case
     :obj:`graphviz` is installed."""
@@ -68,10 +105,23 @@ def onlyGraphviz(func: Callable) -> Callable:
     )(func)
 
 
+def onlyNeighborSampler(func: Callable):
+    r"""A decorator to skip tests if no neighborhood sampler package is
+    installed."""
+    import pytest
+    return pytest.mark.skipif(
+        not WITH_PYG_LIB and not WITH_TORCH_SPARSE,
+        reason="No neighbor sampler installed",
+    )(func)
+
+
 def withPackage(*args) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification."""
     def is_installed(package: str) -> bool:
+        if '|' in package:
+            return any(is_installed(p) for p in package.split('|'))
+
         req = Requirement(package)
         if find_spec(req.name) is None:
             return False
@@ -108,3 +158,12 @@ def withCUDA(func: Callable):
         devices.append(torch.device('cuda:0'))
 
     return pytest.mark.parametrize('device', devices)(func)
+
+
+def disableExtensions(func: Callable):
+    r"""A decorator to temporarily disable the usage of the
+    :obj:`torch_scatter`, :obj:`torch_sparse` and :obj:`pyg_lib` extension
+    packages."""
+    import pytest
+
+    return pytest.mark.usefixtures('disable_extensions')(func)

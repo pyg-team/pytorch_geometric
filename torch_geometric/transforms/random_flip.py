@@ -19,7 +19,7 @@ class RandomFlip(BaseTransform):
         self.axis = axis
         self.p = p
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         if random.random() < self.p:
             pos = data.pos.clone()
             pos[..., self.axis] = -pos[..., self.axis]

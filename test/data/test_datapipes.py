@@ -26,6 +26,8 @@ def test_dataset_adapter(dataset_adapter):
     dataset_adapter.apply_sharding(2, 0)
     assert len([data for data in dataset_adapter]) == 2
 
+    assert dataset_adapter.is_shardable()
+
 
 def test_datapipe_batch_graphs(dataset_adapter):
     dp = dataset_adapter.batch_graphs(batch_size=2)

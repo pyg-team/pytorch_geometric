@@ -2,7 +2,6 @@ from typing import List, Optional, Tuple, Union
 
 import torch.nn.functional as F
 from torch import Tensor
-from torch.nn import LSTM
 
 from torch_geometric.nn.aggr import Aggregation, MultiAggregation
 from torch_geometric.nn.conv import MessagePassing
@@ -92,11 +91,11 @@ class SAGEConv(MessagePassing):
         super().__init__(aggr, **kwargs)
 
         if self.project:
+            if in_channels[0] <= 0:
+                raise ValueError(f"'{self.__class__.__name__}' does not "
+                                 f"support lazy initialization with "
+                                 f"`project=True`")
             self.lin = Linear(in_channels[0], in_channels[0], bias=True)
-
-        if self.aggr is None:
-            self.fuse = False  # No "fused" message_and_aggregate.
-            self.lstm = LSTM(in_channels[0], in_channels[0], batch_first=True)
 
         if isinstance(self.aggr_module, MultiAggregation):
             aggr_out_channels = self.aggr_module.get_out_channels(

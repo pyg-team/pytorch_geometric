@@ -8,9 +8,8 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.inits import kaiming_uniform, uniform
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
-
-from ..inits import kaiming_uniform, uniform
 
 
 class Linear(torch.nn.Module):
@@ -23,11 +22,10 @@ class Linear(torch.nn.Module):
         self.groups = groups
 
         self.weight = Parameter(
-            torch.Tensor(groups, in_channels // groups,
-                         out_channels // groups))
+            torch.empty(groups, in_channels // groups, out_channels // groups))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

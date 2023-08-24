@@ -5,7 +5,7 @@ import torch
 from torch_geometric.data import download_url, extract_gz
 from torch_geometric.data.makedirs import makedirs
 from torch_geometric.loader import DataLoader
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import onlyOnline, withPackage
 from torch_geometric.transforms import ToSLIC
 
 resources = [
@@ -14,6 +14,7 @@ resources = [
 ]
 
 
+@onlyOnline
 @withPackage('torchvision', 'skimage')
 def test_to_superpixels(tmp_path):
     import torchvision.transforms as T

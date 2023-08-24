@@ -1,9 +1,11 @@
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import PANConv, PANPooling
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 
 
+@withPackage('torch_sparse')
 def test_pan_pooling():
     edge_index = torch.tensor([[0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3],
                                [1, 2, 3, 0, 2, 3, 0, 1, 3, 0, 1, 2]])
@@ -23,7 +25,7 @@ def test_pan_pooling():
     assert perm.size() == (2, )
     assert score.size() == (2, )
 
-    if is_full_test():
+    if torch_geometric.typing.WITH_PT113 and is_full_test():
         jit = torch.jit.script(pool)
         out = jit(x, M)
         assert torch.allclose(h, out[0])

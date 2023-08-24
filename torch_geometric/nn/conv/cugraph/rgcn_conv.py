@@ -5,12 +5,16 @@ from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.conv.cugraph import CuGraphModule
+from torch_geometric.nn.conv.cugraph.base import LEGACY_MODE
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.typing import OptTensor
 
 try:
-    from pylibcugraphops.torch.autograd import \
-        agg_hg_basis_n2n_post as RGCNConvAgg
+    if LEGACY_MODE:
+        from pylibcugraphops.torch.autograd import \
+            agg_hg_basis_n2n_post as RGCNConvAgg
+    else:
+        from pylibcugraphops.pytorch.operators import \
+            agg_hg_basis_n2n_post as RGCNConvAgg
 except ImportError:
     pass
 
@@ -45,17 +49,17 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
 
         if num_bases is not None:
             self.weight = Parameter(
-                torch.Tensor(num_bases + dim_root_weight, in_channels,
-                             out_channels))
-            self.comp = Parameter(torch.Tensor(num_relations, num_bases))
+                torch.empty(num_bases + dim_root_weight, in_channels,
+                            out_channels))
+            self.comp = Parameter(torch.empty(num_relations, num_bases))
         else:
             self.weight = Parameter(
-                torch.Tensor(num_relations + dim_root_weight, in_channels,
-                             out_channels))
+                torch.empty(num_relations + dim_root_weight, in_channels,
+                            out_channels))
             self.register_parameter('comp', None)
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -71,8 +75,8 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
 
     def forward(
         self,
-        x: OptTensor,
-        csc: Tuple[Tensor, Tensor],
+        x: Tensor,
+        csc: Tuple[Tensor, Tensor, int],
         edge_type: Tensor,
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
@@ -91,11 +95,8 @@ class CuGraphRGCNConv(CuGraphModule):  # pragma: no cover
                 on-the-fly, leading to slightly worse performance.
                 (default: :obj:`None`)
         """
-        if x is None:
-            x = torch.eye(self.in_channels, device=edge_type.device)
-
-        graph = self.get_typed_cugraph(x.size(0), csc, edge_type,
-                                       self.num_relations, max_num_neighbors)
+        graph = self.get_typed_cugraph(csc, edge_type, self.num_relations,
+                                       max_num_neighbors)
 
         out = RGCNConvAgg(x, self.comp, graph, concat_own=self.root_weight,
                           norm_by_out_degree=bool(self.aggr == 'mean'))

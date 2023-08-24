@@ -19,6 +19,7 @@ def test_wl_conv():
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x, edge_index), out)
 
+    # Test bipartite message passing:
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])

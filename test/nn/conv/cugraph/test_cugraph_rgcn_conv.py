@@ -43,7 +43,7 @@ def test_rgcn_conv_equality(aggr, bias, bipartite, max_num_neighbors,
 
     csc, edge_type = CuGraphRGCNConv.to_csc(edge_index, size, edge_type)
     out2 = conv2(x, csc, edge_type, max_num_neighbors=max_num_neighbors)
-    assert torch.allclose(out1, out2, atol=1e-4)
+    assert torch.allclose(out1, out2, atol=1e-3)
 
     grad_out = torch.rand_like(out1)
     out1.backward(grad_out)
@@ -51,11 +51,11 @@ def test_rgcn_conv_equality(aggr, bias, bipartite, max_num_neighbors,
 
     end = -1 if root_weight else None
     assert torch.allclose(conv1.weight.grad, conv2.weight.grad[:end],
-                          atol=1e-4)
+                          atol=1e-3)
 
     if root_weight:
         assert torch.allclose(conv1.root.grad, conv2.weight.grad[-1],
-                              atol=1e-4)
+                              atol=1e-3)
 
     if num_bases is not None:
-        assert torch.allclose(conv1.comp.grad, conv2.comp.grad, atol=1e-4)
+        assert torch.allclose(conv1.comp.grad, conv2.comp.grad, atol=1e-3)

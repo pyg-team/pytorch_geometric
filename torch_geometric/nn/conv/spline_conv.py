@@ -7,10 +7,9 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import uniform, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils.repeat import repeat
-
-from ..inits import uniform, zeros
 
 try:
     from torch_spline_conv import spline_basis, spline_weighting
@@ -98,7 +97,7 @@ class SplineConv(MessagePassing):
 
         if in_channels[0] > 0:
             self.weight = Parameter(
-                torch.Tensor(self.K, in_channels[0], out_channels))
+                torch.empty(self.K, in_channels[0], out_channels))
         else:
             self.weight = torch.nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
@@ -109,7 +108,7 @@ class SplineConv(MessagePassing):
                               weight_initializer='uniform')
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

@@ -15,6 +15,7 @@ from torch_geometric.utils import (
     scatter,
     to_dense_adj,
 )
+from torch_geometric.utils.sparse import index2ptr
 
 
 @functional_transform('gdc')
@@ -96,7 +97,7 @@ class GDC(BaseTransform):
             assert exact or self_loop_weight == 1
 
     @torch.no_grad()
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index = data.edge_index
         if data.edge_attr is None:
@@ -305,8 +306,7 @@ class GDC(BaseTransform):
             edge_index_np = edge_index.cpu().numpy()
 
             # Assumes sorted and coalesced edge indices:
-            indptr = torch._convert_indices_from_coo_to_csr(
-                edge_index[0], num_nodes).cpu().numpy()
+            indptr = index2ptr(edge_index[0], num_nodes).cpu().numpy()
             out_degree = indptr[1:] - indptr[:-1]
 
             neighbors, neighbor_weights = self.__calc_ppr__(
@@ -476,8 +476,8 @@ class GDC(BaseTransform):
             e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
         else:
-            diff_mat_np = expm(matrix.cpu().numpy())
-            diff_mat = torch.Tensor(diff_mat_np).to(matrix.device)
+            diff_mat = torch.from_numpy(expm(matrix.cpu().numpy()))
+            diff_mat = diff_mat.to(matrix.device, matrix.dtype)
         return diff_mat
 
     def __calculate_eps__(
@@ -524,16 +524,17 @@ class GDC(BaseTransform):
 
         :rtype: (:class:`LongTensor`, :class:`Tensor`)
         """
-        edge_weight = torch.Tensor(np.concatenate(neighbor_weights)).to(device)
+        edge_weight = torch.from_numpy(np.concatenate(neighbor_weights))
+        edge_weight = edge_weight.to(device, torch.get_default_dtype())
         i = np.repeat(np.arange(len(neighbors)),
                       np.fromiter(map(len, neighbors), dtype=int))
         j = np.concatenate(neighbors)
         if normalization == 'col':
-            edge_index = torch.Tensor(np.vstack([j, i])).to(device)
+            edge_index = torch.from_numpy(np.vstack([j, i])).to(device)
             N = len(neighbors)
             edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
         elif normalization == 'row':
-            edge_index = torch.Tensor(np.vstack([i, j])).to(device)
+            edge_index = torch.from_numpy(np.vstack([i, j])).to(device)
         else:
             raise ValueError(
                 f"PPR matrix normalization {normalization} unknown.")

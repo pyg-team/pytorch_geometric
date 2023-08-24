@@ -4,8 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
-
-from ..inits import reset
+from torch_geometric.nn.inits import reset
 
 
 class DeepSetsAggregation(Aggregation):

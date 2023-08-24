@@ -3,10 +3,9 @@ from typing import Callable, Optional, Tuple
 from torch import Tensor
 
 from torch_geometric.data import Batch, Data
+from torch_geometric.nn.pool.consecutive import consecutive_cluster
+from torch_geometric.nn.pool.pool import pool_batch, pool_edge, pool_pos
 from torch_geometric.utils import add_self_loops, scatter
-
-from .consecutive import consecutive_cluster
-from .pool import pool_batch, pool_edge, pool_pos
 
 
 def _avg_pool_x(
@@ -21,6 +20,7 @@ def avg_pool_x(
     cluster: Tensor,
     x: Tensor,
     batch: Tensor,
+    batch_size: Optional[int] = None,
     size: Optional[int] = None,
 ) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Average pools node features according to the clustering defined in
@@ -35,6 +35,8 @@ def avg_pool_x(
         batch (torch.Tensor): The batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
             node to a specific example.
+        batch_size (int, optional): The number of examples :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
         size (int, optional): The maximum number of clusters in a single
             example. (default: :obj:`None`)
 
@@ -42,7 +44,8 @@ def avg_pool_x(
         :obj:`None`, else :class:`torch.Tensor`
     """
     if size is not None:
-        batch_size = int(batch.max().item()) + 1
+        if batch_size is None:
+            batch_size = int(batch.max().item()) + 1
         return _avg_pool_x(cluster, x, batch_size * size), None
 
     cluster, perm = consecutive_cluster(cluster)

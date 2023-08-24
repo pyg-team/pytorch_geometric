@@ -5,14 +5,10 @@ from torch import Tensor
 from torch.nn import Embedding
 from torch.utils.data import DataLoader
 
-from torch_geometric.typing import OptTensor, SparseTensor
+from torch_geometric.typing import WITH_PYG_LIB, WITH_TORCH_CLUSTER
+from torch_geometric.utils import sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-
-try:
-    import torch_cluster  # noqa
-    random_walk = torch.ops.torch_cluster.random_walk
-except ImportError:
-    random_walk = None
+from torch_geometric.utils.sparse import index2ptr
 
 
 class Node2Vec(torch.nn.Module):
@@ -62,13 +58,24 @@ class Node2Vec(torch.nn.Module):
     ):
         super().__init__()
 
-        if random_walk is None:
-            raise ImportError('`Node2Vec` requires `torch-cluster`.')
+        if WITH_PYG_LIB and p == 1.0 and q == 1.0:
+            self.random_walk_fn = torch.ops.pyg.random_walk
+        elif WITH_TORCH_CLUSTER:
+            self.random_walk_fn = torch.ops.torch_cluster.random_walk
+        else:
+            if p == 1.0 and q == 1.0:
+                raise ImportError(f"'{self.__class__.__name__}' "
+                                  f"requires either the 'pyg-lib' or "
+                                  f"'torch-cluster' package")
+            else:
+                raise ImportError(f"'{self.__class__.__name__}' "
+                                  f"requires the 'torch-cluster' package")
 
-        N = maybe_num_nodes(edge_index, num_nodes)
-        row, col = edge_index
-        self.adj = SparseTensor(row=row, col=col, sparse_sizes=(N, N))
-        self.adj = self.adj.to('cpu')
+        self.num_nodes = maybe_num_nodes(edge_index, num_nodes)
+
+        row, col = sort_edge_index(edge_index, num_nodes=self.num_nodes).cpu()
+        self.rowptr, self.col = index2ptr(row, self.num_nodes), col
+
         self.EPS = 1e-15
         assert walk_length >= context_size
 
@@ -80,7 +87,8 @@ class Node2Vec(torch.nn.Module):
         self.q = q
         self.num_negative_samples = num_negative_samples
 
-        self.embedding = Embedding(N, embedding_dim, sparse=sparse)
+        self.embedding = Embedding(self.num_nodes, embedding_dim,
+                                   sparse=sparse)
 
         self.reset_parameters()
 
@@ -88,20 +96,20 @@ class Node2Vec(torch.nn.Module):
         r"""Resets all learnable parameters of the module."""
         self.embedding.reset_parameters()
 
-    def forward(self, batch: OptTensor = None) -> Tensor:
+    def forward(self, batch: Optional[Tensor] = None) -> Tensor:
         """Returns the embeddings for the nodes in :obj:`batch`."""
         emb = self.embedding.weight
         return emb if batch is None else emb.index_select(0, batch)
 
     def loader(self, **kwargs) -> DataLoader:
-        return DataLoader(range(self.adj.sparse_size(0)),
-                          collate_fn=self.sample, **kwargs)
+        return DataLoader(range(self.num_nodes), collate_fn=self.sample,
+                          **kwargs)
 
     @torch.jit.export
     def pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
-        rowptr, col, _ = self.adj.csr()
-        rw = random_walk(rowptr, col, batch, self.walk_length, self.p, self.q)
+        rw = self.random_walk_fn(self.rowptr, self.col, batch,
+                                 self.walk_length, self.p, self.q)
         if not isinstance(rw, Tensor):
             rw = rw[0]
 
@@ -115,8 +123,8 @@ class Node2Vec(torch.nn.Module):
     def neg_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node * self.num_negative_samples)
 
-        rw = torch.randint(self.adj.sparse_size(0),
-                           (batch.size(0), self.walk_length))
+        rw = torch.randint(self.num_nodes, (batch.size(0), self.walk_length),
+                           dtype=batch.dtype, device=batch.device)
         rw = torch.cat([batch.view(-1, 1), rw], dim=-1)
 
         walks = []

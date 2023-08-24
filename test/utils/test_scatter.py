@@ -1,11 +1,15 @@
+from itertools import product
+
 import pytest
 import torch
 
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.testing import disableExtensions, withCUDA, withPackage
 from torch_geometric.utils import scatter
+from torch_geometric.utils.scatter import scatter_argmax
 
 
+@withPackage('torch>=1.12.0')
 def test_scatter_validate():
     src = torch.randn(100, 32)
     index = torch.randint(0, 10, (100, ), dtype=torch.long)
@@ -58,6 +62,28 @@ def test_scatter_backward(reduce, device):
     assert src.grad is not None
 
 
+@withCUDA
+def test_scatter_any(device):
+    src = torch.randn(6, 4, device=device)
+    index = torch.tensor([0, 0, 1, 1, 2, 2], device=device)
+
+    out = scatter(src, index, dim=0, reduce='any')
+
+    for i in range(3):
+        for j in range(4):
+            assert float(out[i, j]) in src[2 * i:2 * i + 2, j].tolist()
+
+
+@withCUDA
+@disableExtensions
+def test_scatter_argmax(device):
+    src = torch.arange(5, device=device)
+    index = torch.tensor([2, 2, 0, 0, 3], device=device)
+
+    argmax = scatter_argmax(src, index, dim_size=6)
+    assert argmax.tolist() == [3, 5, 1, 4, 5, 5]
+
+
 if __name__ == '__main__':
     # Insights on GPU:
     # ================
@@ -78,26 +104,37 @@ if __name__ == '__main__':
     #   * Prefer `torch_sparse` implementation with gradients
     import argparse
 
-    import torch_scatter
+    from torch_geometric.typing import WITH_TORCH_SCATTER, torch_scatter
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--backward', action='store_true')
+    parser.add_argument('--aggr', type=str, default='all')
     args = parser.parse_args()
 
-    num_nodes, num_edges = 1_000, 50_000
-    x = torch.randn(num_edges, 64, device=args.device)
-    index = torch.randint(num_nodes, (num_edges, ), device=args.device)
+    num_nodes_list = [4_000, 8_000, 16_000, 32_000, 64_000]
+
+    if args.aggr == 'all':
+        aggrs = ['sum', 'mean', 'min', 'max', 'mul']
+    else:
+        aggrs = args.aggr.split(',')
 
     def pytorch_scatter(x, index, dim_size, reduce):
         if reduce == 'min' or reduce == 'max':
             reduce = f'a{aggr}'  # `amin` or `amax`
         elif reduce == 'mul':
             reduce = 'prod'
-        out = x.new_zeros((dim_size, x.size(-1)))
+        out = x.new_zeros(dim_size, x.size(-1))
         include_self = reduce in ['sum', 'mean']
         index = index.view(-1, 1).expand(-1, x.size(-1))
         out.scatter_reduce_(0, index, x, reduce, include_self=include_self)
+        return out
+
+    def pytorch_index_add(x, index, dim_size, reduce):
+        if reduce != 'sum':
+            raise NotImplementedError
+        out = x.new_zeros(dim_size, x.size(-1))
+        out.index_add_(0, index, x)
         return out
 
     def own_scatter(x, index, dim_size, reduce):
@@ -107,12 +144,30 @@ if __name__ == '__main__':
     def optimized_scatter(x, index, dim_size, reduce):
         return scatter(x, index, dim=0, dim_size=dim_size, reduce=reduce)
 
-    aggrs = ['sum', 'mean', 'min', 'max', 'mul']
-    for aggr in aggrs:
-        print(f'Aggregator: {aggr}')
+    for aggr, num_nodes in product(aggrs, num_nodes_list):
+        num_edges = num_nodes * 50
+        print(f'aggr: {aggr}, #nodes: {num_nodes}, #edges: {num_edges}')
+
+        x = torch.randn(num_edges, 64, device=args.device)
+        index = torch.randint(num_nodes, (num_edges, ), device=args.device)
+
+        funcs = [pytorch_scatter]
+        func_names = ['PyTorch scatter_reduce']
+
+        if aggr == 'sum':
+            funcs.append(pytorch_index_add)
+            func_names.append('PyTorch index_add')
+
+        if WITH_TORCH_SCATTER:
+            funcs.append(own_scatter)
+            func_names.append('torch_scatter')
+
+        funcs.append(optimized_scatter)
+        func_names.append('Optimized PyG Scatter')
+
         benchmark(
-            funcs=[pytorch_scatter, own_scatter, optimized_scatter],
-            func_names=['PyTorch', 'torch_scatter', 'Optimized'],
+            funcs=funcs,
+            func_names=func_names,
             args=(x, index, num_nodes, aggr),
             num_steps=100 if args.device == 'cpu' else 1000,
             num_warmups=50 if args.device == 'cpu' else 500,

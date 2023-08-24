@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 
 import torch
@@ -131,7 +132,10 @@ class StdAggregation(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         var = self.var_aggr(x, index, ptr, dim_size, dim)
-        return var.clamp(min=1e-5).sqrt()
+        # Allow "undefined" gradient at `sqrt(0.0)`:
+        out = var.clamp(min=1e-5).sqrt()
+        out = out.masked_fill(out <= math.sqrt(1e-5), 0.0)
+        return out
 
 
 class SoftmaxAggregation(Aggregation):
@@ -181,7 +185,7 @@ class SoftmaxAggregation(Aggregation):
         self.semi_grad = semi_grad
         self.channels = channels
 
-        self.t = Parameter(torch.Tensor(channels)) if learn else t
+        self.t = Parameter(torch.empty(channels)) if learn else t
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -247,7 +251,7 @@ class PowerMeanAggregation(Aggregation):
         self.learn = learn
         self.channels = channels
 
-        self.p = Parameter(torch.Tensor(channels)) if learn else p
+        self.p = Parameter(torch.empty(channels)) if learn else p
         self.reset_parameters()
 
     def reset_parameters(self):

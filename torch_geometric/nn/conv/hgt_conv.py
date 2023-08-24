@@ -1,34 +1,17 @@
 import math
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.dense import Linear
-from torch_geometric.nn.inits import glorot, ones, reset
-from torch_geometric.nn.module_dict import ModuleDict
+from torch_geometric.nn.dense import HeteroDictLinear, HeteroLinear
+from torch_geometric.nn.inits import ones
 from torch_geometric.nn.parameter_dict import ParameterDict
-from torch_geometric.typing import EdgeType, Metadata, NodeType, SparseTensor
+from torch_geometric.typing import Adj, EdgeType, Metadata, NodeType
 from torch_geometric.utils import softmax
-
-
-def group(xs: List[Tensor], aggr: Optional[str]) -> Optional[Tensor]:
-    if len(xs) == 0:
-        return None
-    elif aggr is None:
-        return torch.stack(xs, dim=1)
-    elif len(xs) == 1:
-        return xs[0]
-    elif aggr == "cat":
-        return torch.cat(xs, dim=-1)
-    else:
-        out = torch.stack(xs, dim=0)
-        out = getattr(torch, aggr)(out, dim=0)
-        out = out[0] if isinstance(out, tuple) else out
-        return out
+from torch_geometric.utils.hetero import construct_bipartite_edge_index
 
 
 class HGTConv(MessagePassing):
@@ -67,7 +50,6 @@ class HGTConv(MessagePassing):
         out_channels: int,
         metadata: Metadata,
         heads: int = 1,
-        group: str = "sum",
         **kwargs,
     ):
         super().__init__(aggr='add', node_dim=0, **kwargs)
@@ -82,48 +64,103 @@ class HGTConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.heads = heads
-        self.group = group
+        self.node_types = metadata[0]
+        self.edge_types = metadata[1]
+        self.edge_types_map = {
+            edge_type: i
+            for i, edge_type in enumerate(metadata[1])
+        }
 
-        self.k_lin = ModuleDict()
-        self.q_lin = ModuleDict()
-        self.v_lin = ModuleDict()
-        self.a_lin = ModuleDict()
-        self.skip = ParameterDict()
-        for node_type, in_channels in self.in_channels.items():
-            self.k_lin[node_type] = Linear(in_channels, out_channels)
-            self.q_lin[node_type] = Linear(in_channels, out_channels)
-            self.v_lin[node_type] = Linear(in_channels, out_channels)
-            self.a_lin[node_type] = Linear(out_channels, out_channels)
-            self.skip[node_type] = Parameter(torch.Tensor(1))
+        self.dst_node_types = set([key[-1] for key in self.edge_types])
 
-        self.a_rel = ParameterDict()
-        self.m_rel = ParameterDict()
-        self.p_rel = ParameterDict()
+        self.kqv_lin = HeteroDictLinear(self.in_channels,
+                                        self.out_channels * 3)
+
+        self.out_lin = HeteroDictLinear(self.out_channels, self.out_channels,
+                                        types=self.node_types)
+
         dim = out_channels // heads
-        for edge_type in metadata[1]:
+        num_types = heads * len(self.edge_types)
+
+        self.k_rel = HeteroLinear(dim, dim, num_types, bias=False,
+                                  is_sorted=True)
+        self.v_rel = HeteroLinear(dim, dim, num_types, bias=False,
+                                  is_sorted=True)
+
+        self.skip = ParameterDict({
+            node_type: Parameter(torch.empty(1))
+            for node_type in self.node_types
+        })
+
+        self.p_rel = ParameterDict()
+        for edge_type in self.edge_types:
             edge_type = '__'.join(edge_type)
-            self.a_rel[edge_type] = Parameter(torch.Tensor(heads, dim, dim))
-            self.m_rel[edge_type] = Parameter(torch.Tensor(heads, dim, dim))
-            self.p_rel[edge_type] = Parameter(torch.Tensor(heads))
+            self.p_rel[edge_type] = Parameter(torch.empty(1, heads))
 
         self.reset_parameters()
 
     def reset_parameters(self):
         super().reset_parameters()
-        reset(self.k_lin)
-        reset(self.q_lin)
-        reset(self.v_lin)
-        reset(self.a_lin)
+        self.kqv_lin.reset_parameters()
+        self.out_lin.reset_parameters()
+        self.k_rel.reset_parameters()
+        self.v_rel.reset_parameters()
         ones(self.skip)
         ones(self.p_rel)
-        glorot(self.a_rel)
-        glorot(self.m_rel)
+
+    def _cat(self, x_dict: Dict[str, Tensor]) -> Tuple[Tensor, Dict[str, int]]:
+        """Concatenates a dictionary of features."""
+        cumsum = 0
+        outs: List[Tensor] = []
+        offset: Dict[str, int] = {}
+        for key, x in x_dict.items():
+            outs.append(x)
+            offset[key] = cumsum
+            cumsum += x.size(0)
+        return torch.cat(outs, dim=0), offset
+
+    def _construct_src_node_feat(
+        self, k_dict: Dict[str, Tensor], v_dict: Dict[str, Tensor],
+        edge_index_dict: Dict[EdgeType, Adj]
+    ) -> Tuple[Tensor, Tensor, Dict[EdgeType, int]]:
+        """Constructs the source node representations."""
+        cumsum = 0
+        num_edge_types = len(self.edge_types)
+        H, D = self.heads, self.out_channels // self.heads
+
+        # Flatten into a single tensor with shape [num_edge_types * heads, D]:
+        ks: List[Tensor] = []
+        vs: List[Tensor] = []
+        type_list: List[Tensor] = []
+        offset: Dict[EdgeType] = {}
+        for edge_type in edge_index_dict.keys():
+            src = edge_type[0]
+            N = k_dict[src].size(0)
+            offset[edge_type] = cumsum
+            cumsum += N
+
+            # construct type_vec for curr edge_type with shape [H, D]
+            edge_type_offset = self.edge_types_map[edge_type]
+            type_vec = torch.arange(H, dtype=torch.long).view(-1, 1).repeat(
+                1, N) * num_edge_types + edge_type_offset
+
+            type_list.append(type_vec)
+            ks.append(k_dict[src])
+            vs.append(v_dict[src])
+
+        ks = torch.cat(ks, dim=0).transpose(0, 1).reshape(-1, D)
+        vs = torch.cat(vs, dim=0).transpose(0, 1).reshape(-1, D)
+        type_vec = torch.cat(type_list, dim=1).flatten()
+
+        k = self.k_rel(ks, type_vec).view(H, -1, D).transpose(0, 1)
+        v = self.v_rel(vs, type_vec).view(H, -1, D).transpose(0, 1)
+
+        return k, v, offset
 
     def forward(
         self,
         x_dict: Dict[NodeType, Tensor],
-        edge_index_dict: Union[Dict[EdgeType, Tensor],
-                               Dict[EdgeType, SparseTensor]]  # Support both.
+        edge_index_dict: Dict[EdgeType, Adj]  # Support both.
     ) -> Dict[NodeType, Optional[Tensor]]:
         r"""Runs the forward pass of the module.
 
@@ -141,42 +178,47 @@ class HGTConv(MessagePassing):
             In case a node type does not receive any message, its output will
             be set to :obj:`None`.
         """
-        H, D = self.heads, self.out_channels // self.heads
+        F = self.out_channels
+        H = self.heads
+        D = F // H
 
         k_dict, q_dict, v_dict, out_dict = {}, {}, {}, {}
 
-        # Iterate over node-types:
-        for node_type, x in x_dict.items():
-            k_dict[node_type] = self.k_lin[node_type](x).view(-1, H, D)
-            q_dict[node_type] = self.q_lin[node_type](x).view(-1, H, D)
-            v_dict[node_type] = self.v_lin[node_type](x).view(-1, H, D)
-            out_dict[node_type] = []
+        # Compute K, Q, V over node types:
+        kqv_dict = self.kqv_lin(x_dict)
+        for key, val in kqv_dict.items():
+            k, q, v = torch.tensor_split(val, 3, dim=1)
+            k_dict[key] = k.view(-1, H, D)
+            q_dict[key] = q.view(-1, H, D)
+            v_dict[key] = v.view(-1, H, D)
 
-        # Iterate over edge-types:
-        for edge_type, edge_index in edge_index_dict.items():
-            src_type, _, dst_type = edge_type
-            edge_type = '__'.join(edge_type)
+        q, dst_offset = self._cat(q_dict)
+        k, v, src_offset = self._construct_src_node_feat(
+            k_dict, v_dict, edge_index_dict)
 
-            a_rel = self.a_rel[edge_type]
-            k = (k_dict[src_type].transpose(0, 1) @ a_rel).transpose(1, 0)
+        edge_index, edge_attr = construct_bipartite_edge_index(
+            edge_index_dict, src_offset, dst_offset, edge_attr_dict=self.p_rel)
 
-            m_rel = self.m_rel[edge_type]
-            v = (v_dict[src_type].transpose(0, 1) @ m_rel).transpose(1, 0)
+        out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
+                             size=None)
 
-            # propagate_type: (k: Tensor, q: Tensor, v: Tensor, rel: Tensor)
-            out = self.propagate(edge_index, k=k, q=q_dict[dst_type], v=v,
-                                 rel=self.p_rel[edge_type], size=None)
-            out_dict[dst_type].append(out)
+        # Reconstruct output node embeddings dict:
+        for node_type, start_offset in dst_offset.items():
+            end_offset = start_offset + q_dict[node_type].size(0)
+            if node_type in self.dst_node_types:
+                out_dict[node_type] = out[start_offset:end_offset]
 
-        # Iterate over node-types:
-        for node_type, outs in out_dict.items():
-            out = group(outs, self.group)
+        # Transform output node embeddings:
+        a_dict = self.out_lin({
+            k:
+            torch.nn.functional.gelu(v) if v is not None else v
+            for k, v in out_dict.items()
+        })
 
-            if out is None:
-                out_dict[node_type] = None
-                continue
+        # Iterate over node types:
+        for node_type, out in out_dict.items():
+            out = a_dict[node_type]
 
-            out = self.a_lin[node_type](F.gelu(out))
             if out.size(-1) == x_dict[node_type].size(-1):
                 alpha = self.skip[node_type].sigmoid()
                 out = alpha * out + (1 - alpha) * x_dict[node_type]
@@ -184,11 +226,10 @@ class HGTConv(MessagePassing):
 
         return out_dict
 
-    def message(self, k_j: Tensor, q_i: Tensor, v_j: Tensor, rel: Tensor,
+    def message(self, k_j: Tensor, q_i: Tensor, v_j: Tensor, edge_attr: Tensor,
                 index: Tensor, ptr: Optional[Tensor],
                 size_i: Optional[int]) -> Tensor:
-
-        alpha = (q_i * k_j).sum(dim=-1) * rel
+        alpha = (q_i * k_j).sum(dim=-1) * edge_attr
         alpha = alpha / math.sqrt(q_i.size(-1))
         alpha = softmax(alpha, index, ptr, size_i)
         out = v_j * alpha.view(-1, self.heads, 1)

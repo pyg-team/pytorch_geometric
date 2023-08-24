@@ -15,7 +15,13 @@ from torch_geometric.typing import (
     SparseTensor,
     torch_sparse,
 )
-from torch_geometric.utils import add_self_loops, remove_self_loops, softmax
+from torch_geometric.utils import (
+    add_self_loops,
+    is_torch_sparse_tensor,
+    remove_self_loops,
+    softmax,
+)
+from torch_geometric.utils.sparse import set_sparse_value
 
 
 class GATv2Conv(MessagePassing):
@@ -157,7 +163,7 @@ class GATv2Conv(MessagePassing):
                 self.lin_r = Linear(in_channels[1], heads * out_channels,
                                     bias=bias, weight_initializer='glorot')
 
-        self.att = Parameter(torch.Tensor(1, heads, out_channels))
+        self.att = Parameter(torch.empty(1, heads, out_channels))
 
         if edge_dim is not None:
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False,
@@ -166,9 +172,9 @@ class GATv2Conv(MessagePassing):
             self.lin_edge = None
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(heads * out_channels))
+            self.bias = Parameter(torch.empty(heads * out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -245,6 +251,7 @@ class GATv2Conv(MessagePassing):
                              size=None)
 
         alpha = self._alpha
+        assert alpha is not None
         self._alpha = None
 
         if self.concat:
@@ -256,9 +263,13 @@ class GATv2Conv(MessagePassing):
             out = out + self.bias
 
         if isinstance(return_attention_weights, bool):
-            assert alpha is not None
             if isinstance(edge_index, Tensor):
-                return out, (edge_index, alpha)
+                if is_torch_sparse_tensor(edge_index):
+                    # TODO TorchScript requires to return a tuple
+                    adj = set_sparse_value(edge_index, alpha)
+                    return out, (adj, alpha)
+                else:
+                    return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
         else:

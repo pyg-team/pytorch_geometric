@@ -3,8 +3,10 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader, ZipLoader
+from torch_geometric.testing import onlyNeighborSampler
 
 
+@onlyNeighborSampler
 @pytest.mark.parametrize('filter_per_worker', [True, False])
 def test_zip_loader(filter_per_worker):
     x = torch.arange(100)
