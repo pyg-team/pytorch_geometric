@@ -5,12 +5,10 @@ __version__ = '2.3.0'
 install_requires = [
     'tqdm',
     'numpy',
-    'numba',
     'scipy',
     'jinja2',
     'requests',
     'pyparsing',
-    'python-tsp',
     'scikit-learn',
     'psutil>=5.8.0',
 ]
@@ -29,6 +27,7 @@ modelhub_requires = [
 full_requires = graphgym_requires + modelhub_requires + [
     'ase',
     'h5py',
+    'numba',
     'sympy',
     'pandas',
     'captum',
