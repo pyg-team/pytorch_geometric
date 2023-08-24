@@ -11,11 +11,11 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 try:
     import numba
     WITH_NUMBA = True
-except ImportError:
+except ImportError:  # pragma: no cover
     WITH_NUMBA = False
 
 
-def _get_ppr(
+def _get_ppr(  # pragma: no cover
     rowptr: np.ndarray,
     col: np.ndarray,
     alpha: float,
@@ -98,7 +98,7 @@ def get_ppr(
 
     :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`)
     """
-    if not WITH_NUMBA:
+    if not WITH_NUMBA:  # pragma: no cover
         raise ImportError("'get_ppr' requires the 'numba' package")
 
     global _get_ppr_numba
