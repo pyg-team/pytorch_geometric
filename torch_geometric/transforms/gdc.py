@@ -14,6 +14,7 @@ from torch_geometric.utils import (
     get_ppr,
     is_undirected,
     scatter,
+    sort_edge_index,
     to_dense_adj,
 )
 
@@ -300,14 +301,16 @@ class GDC(BaseTransform):
                 _, col = edge_index
                 deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
-            neighbors, neighbor_weights = get_ppr(edge_index, kwargs['alpha'],
-                                                  kwargs['eps'], num_nodes)
+            edge_index, edge_weight = get_ppr(
+                edge_index,
+                alpha=kwargs['alpha'],
+                eps=kwargs['eps'],
+                num_nodes=num_nodes,
+            )
 
-            ppr_normalization = 'col' if normalization == 'col' else 'row'
-            edge_index, edge_weight = self.__neighbors_to_graph__(
-                neighbors, neighbor_weights, ppr_normalization,
-                device=edge_index.device)
-            edge_index = edge_index.to(torch.long)
+            if normalization == 'col':
+                edge_index, edge_weight = sort_edge_index(
+                    edge_index.flip([0]), edge_weight, num_nodes)
 
             if normalization == 'sym':
                 # We can change the normalization from row-normalized to
@@ -492,40 +495,3 @@ class GDC(BaseTransform):
         left = sorted_edges[avg_degree * num_nodes - 1]
         right = sorted_edges[avg_degree * num_nodes]
         return (left + right) / 2.0
-
-    def __neighbors_to_graph__(
-        self,
-        neighbors: List[List[int]],
-        neighbor_weights: List[List[float]],
-        normalization: str = 'row',
-        device: torch.device = 'cpu',
-    ) -> Tuple[Tensor, Tensor]:
-        r"""Combine a list of neighbors and neighbor weights to create a sparse
-        graph.
-
-        Args:
-            neighbors (List[List[int]]): List of neighbors for each node.
-            neighbor_weights (List[List[float]]): List of weights for the
-                neighbors of each node.
-            normalization (str): Normalization of resulting matrix
-                (options: :obj:`"row"`, :obj:`"col"`). (default: :obj:`"row"`)
-            device (torch.device): Device to create output tensors on.
-                (default: :obj:`"cpu"`)
-
-        :rtype: (:class:`LongTensor`, :class:`Tensor`)
-        """
-        edge_weight = torch.from_numpy(np.concatenate(neighbor_weights))
-        edge_weight = edge_weight.to(device, torch.get_default_dtype())
-        i = np.repeat(np.arange(len(neighbors)),
-                      np.fromiter(map(len, neighbors), dtype=int))
-        j = np.concatenate(neighbors)
-        if normalization == 'col':
-            edge_index = torch.from_numpy(np.vstack([j, i])).to(device)
-            N = len(neighbors)
-            edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
-        elif normalization == 'row':
-            edge_index = torch.from_numpy(np.vstack([i, j])).to(device)
-        else:
-            raise ValueError(
-                f"PPR matrix normalization {normalization} unknown.")
-        return edge_index, edge_weight
