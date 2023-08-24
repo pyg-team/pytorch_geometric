@@ -1,22 +1,25 @@
 from math import sqrt
 from typing import Optional, Tuple, Union
+
 import numpy as np
 import torch
+import torch.nn.functional as F
 from torch import Tensor
 from torch.nn.parameter import Parameter
-import torch.nn.functional as F
+
 from torch_geometric.explain import ExplainerConfig, Explanation, ModelConfig
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
 from torch_geometric.utils import to_dense_adj+
 
+
 class CFExplainer(ExplainerAlgorithm):
     r"""The CF-Explainer model from the `"CF-GNNExplainer: Counterfactual Explanations for Graph Neural
 Networks"
     <https://arxiv.org/abs/2102.03322>`_ paper for generating CF explanations for GNNs:
     the minimal perturbation to the input (graph) data such that the prediction changes."""
-    
+
     coeffs = {
         'edge_size': 0.1,
         'edge_reduction': 'sum',
