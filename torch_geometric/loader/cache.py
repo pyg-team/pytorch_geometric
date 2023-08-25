@@ -27,11 +27,10 @@ class CachedLoader:
         self.cache = []
 
         # register default hooks
-        n_id_hook = lambda b: b.n_id
-        edge_index_hook = (lambda b: b.adj_t
-                           if hasattr(b, 'adj_t') else b.edge_index)
-        bs_hook = lambda b: b.batch_size
-        self.register_attr_hooks([n_id_hook, edge_index_hook, bs_hook])
+        self.register_attr_hooks([
+            lambda b: b.n_id,
+            lambda b: b.adj_t if hasattr(b, 'adj_t') else b.edge_index,
+            lambda b: b.batch_size])
 
     def _check_if_reg_is_open(self) -> None:
         if not self.hook_reg_open:
