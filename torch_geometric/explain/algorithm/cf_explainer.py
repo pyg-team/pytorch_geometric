@@ -11,7 +11,7 @@ from torch_geometric.explain import ExplainerConfig, Explanation, ModelConfig
 from torch_geometric.explain.algorithm import ExplainerAlgorithm
 from torch_geometric.explain.algorithm.utils import clear_masks, set_masks
 from torch_geometric.explain.config import MaskType, ModelMode, ModelTaskLevel
-from torch_geometric.utils import to_dense_adj+
+from torch_geometric.utils import to_dense_adj
 
 
 class CFExplainer(ExplainerAlgorithm):
