@@ -1,3 +1,4 @@
+import sys
 import warnings
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -5,10 +6,11 @@ import numpy as np
 import torch
 from torch import Tensor
 
-WITH_PT2 = int(torch.__version__.split('.')[0]) >= 2
-WITH_PT111 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 11
-WITH_PT112 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 12
-WITH_PT113 = WITH_PT2 or int(torch.__version__.split('.')[1]) >= 13
+WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
+WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
+WITH_PT111 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 11
+WITH_PT112 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 12
+WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 if not hasattr(torch, 'sparse_csc'):
     torch.sparse_csc = -1
@@ -16,7 +18,21 @@ if not hasattr(torch, 'sparse_csc'):
 try:
     import pyg_lib  # noqa
     WITH_PYG_LIB = True
-    WITH_GMM = WITH_PT2 and hasattr(pyg_lib.ops, 'grouped_matmul')
+    WITH_GMM = WITH_PT20 and hasattr(pyg_lib.ops, 'grouped_matmul')
+    WITH_SEGMM = hasattr(pyg_lib.ops, 'segment_matmul')
+    if WITH_SEGMM and 'pytest' in sys.modules and torch.cuda.is_available():
+        # NOTE `segment_matmul` is currently bugged on older NVIDIA cards which
+        # let our GPU tests on CI crash. Try if this error is present on the
+        # current GPU and disable `WITH_SEGMM`/`WITH_GMM` if necessary.
+        # TODO Drop this code block once `segment_matmul` is fixed.
+        try:
+            x = torch.randn(3, 4, device='cuda')
+            ptr = torch.tensor([0, 2, 3], device='cuda')
+            weight = torch.tensor([2, 4, 4], device='cuda')
+            out = pyg_lib.ops.segment_matmul(x, ptr, weight)
+        except RuntimeError:
+            WITH_GMM = False
+            WITH_SEGMM = False
     WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
     WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
     WITH_METIS = hasattr(pyg_lib, 'partition')
@@ -27,6 +43,7 @@ except (ImportError, OSError) as e:
     pyg_lib = object
     WITH_PYG_LIB = False
     WITH_GMM = False
+    WITH_SEGMM = False
     WITH_SAMPLED_OP = False
     WITH_INDEX_SORT = False
     WITH_METIS = False
@@ -187,6 +204,13 @@ except (ImportError, OSError) as e:
         def masked_select_nnz(src: SparseTensor, mask: Tensor,
                               layout: Optional[str] = None) -> SparseTensor:
             raise ImportError("'masked_select_nnz' requires 'torch-sparse'")
+
+
+try:
+    import intel_extension_for_pytorch  # noqa
+    WITH_IPEX = True
+except (ImportError, OSError):
+    WITH_IPEX = False
 
 
 class MockTorchCSCTensor:

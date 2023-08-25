@@ -18,6 +18,7 @@ def test_enzymes(get_dataset):
     assert len(dataset.shuffle()) == 600
     assert len(dataset.shuffle(return_perm=True)) == 2
     assert len(dataset[:100]) == 100
+    assert len(dataset[0.1:0.2]) == 60
     assert len(dataset[torch.arange(100, dtype=torch.long)]) == 100
     mask = torch.zeros(600, dtype=torch.bool)
     mask[:100] = 1

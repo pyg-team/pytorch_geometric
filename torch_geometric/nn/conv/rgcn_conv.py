@@ -229,7 +229,7 @@ class RGCNConv(MessagePassing):
                 out = out + h.contiguous().view(-1, self.out_channels)
 
         else:  # No regularization/Basis-decomposition ========================
-            if (torch_geometric.typing.WITH_PYG_LIB and self.num_bases is None
+            if (torch_geometric.typing.WITH_SEGMM and self.num_bases is None
                     and x_l.is_floating_point() and isinstance(
                         edge_index, Tensor)) and (self.use_segmm == -1
                                                   or bool(self.use_segmm)):
@@ -273,7 +273,7 @@ class RGCNConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_type_ptr: OptTensor) -> Tensor:
-        if torch_geometric.typing.WITH_PYG_LIB and edge_type_ptr is not None:
+        if torch_geometric.typing.WITH_SEGMM and edge_type_ptr is not None:
             # TODO Re-weight according to edge type degree for `aggr=mean`.
             return pyg_lib.ops.segment_matmul(x_j, edge_type_ptr, self.weight)
 
