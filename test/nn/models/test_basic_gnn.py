@@ -21,6 +21,7 @@ from torch_geometric.nn.models import (
     make_batches_cacheable,
 )
 from torch_geometric.profile import benchmark
+from torch_geometric.seed import seed_everything
 from torch_geometric.testing import (
     disableExtensions,
     onlyFullTest,
@@ -352,11 +353,41 @@ def test_compile_graph_breaks(Model):
     assert num_compile_calls - num_previous_compile_calls == 1
 
 
+@withPackage('pyg_lib')
 def test_basic_gnn_decorator():
+    seed_everything(12345)
+
     Model = GCN
     original_inference = Model.inference
     Model = make_batches_cacheable(Model)
+
     assert Model.inference is not original_inference
+
+    x = torch.randn(14, 16)
+    edge_index = torch.tensor([
+        [2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+        [0, 1, 2, 3, 2, 3, 7, 7, 7, 7],
+    ])
+    data = Data(x=x, edge_index=edge_index)
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[2],
+        batch_size=2,
+    )
+    models_params = {
+        'in_channels': 16,
+        'hidden_channels': 16,
+        'num_layers': 1,
+    }
+    seed_everything(1234)
+    model = Model(**models_params)
+    y = model.inference(loader)
+
+    seed_everything(1234)
+    orig_model = GCN(**models_params)
+    y_expected = orig_model.inference(loader)
+
+    assert torch.allclose(y, y_expected)
 
 
 if __name__ == '__main__':

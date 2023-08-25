@@ -1,17 +1,17 @@
-from typing import Any, List, Tuple
+from typing import Any, Callable, List
 
 import torch
 from torch import Tensor
 from torch.utils.data import DataLoader
 
-BatchType = List[Tuple[Tensor, Tensor, int]]
-
 
 class CachedLoader:
     r"""A caching loader intended to use in layer-wise inference
-    performed on GPU. During the first walk through the data
-    stored in :class:`torch.utils.data.DataLoader` batches are
-    transferred to GPU memory and cached.
+    performed on GPU. During the first walk through the data stored in
+    :class:`torch.utils.data.DataLoader`, selected attributes from batches
+    are transferred to GPU memory and cached. Default attributes are
+    `n_id`, `edge_index` and `batch_size`. User can register custom
+    attribute hooks, but only before iterating over loader.
 
     Args:
         loader (torch.utils.data.DataLoader): The wrapped data loader.
@@ -21,27 +21,84 @@ class CachedLoader:
         self.n_batches = len(loader)
         self.iter = iter(loader)
         self.cache_filled = False
+        self.hook_reg_open = True
         self.device = device
+        self.attr_hooks = []
         self.cache = []
 
-    def cache_batch(self, batch: Any) -> BatchType:
-        n_id = batch.n_id.to(self.device)
-        if hasattr(batch, 'adj_t'):
-            edge_index = batch.adj_t.to(self.device)
-        else:
-            edge_index = batch.edge_index.to(self.device)
-        batch = (n_id, edge_index, batch.batch_size)
-        self.cache.append(batch)
-        return batch
+        # register default hooks
+        n_id_hook = lambda b: b.n_id
+        edge_index_hook = (lambda b:
+            b.adj_t if hasattr(b, 'adj_t') else b.edge_index)
+        bs_hook = lambda b: b.batch_size
+        self.register_attr_hooks([n_id_hook, edge_index_hook, bs_hook])
+
+    def _check_if_reg_is_open(self) -> None:
+        if not self.hook_reg_open:
+            raise RuntimeError('Cannot register nor reset attributes hooks '
+                               'after starting iteration over `CachedLoader`')
+
+    def reset_attr_hooks(self) -> None:
+        r"""Resets attribute hooks if possible.
+
+        Raises:
+            RuntimeError: If hook registration is closed.
+        """
+        self._check_if_reg_is_open()
+        self.attr_hooks = []
+
+    def register_attr_hook(self, hook: Callable[[Any], Any]) -> None:
+        r"""Registers attribute hook.
+
+        Args:
+            hook (Callable[[Any], Any]): The attribute hook to register.
+
+        Raises:
+            RuntimeError: If hook registration is closed.
+
+        Example:
+
+        .. code-block:: python
+
+            cached_loader = CachedLoader(wrapped_loader, target_device)
+            cached_loader.register_attr_hook(lambda b: b.n_id)
+        """
+        self._check_if_reg_is_open()
+        self.attr_hooks.append(hook)
+
+    def register_attr_hooks(self, hooks: List[Callable[[Any], Any]]) -> None:
+        r"""Registers attribute hooks, overwriting currently existing hooks.
+
+        Args:
+            hooks (List[Callable[[Any], Any]]): The attribute hooks to
+                register.
+
+        Raises:
+            RuntimeError: If hook registration is closed.
+        """
+        self.reset_attr_hooks()
+        for hook in hooks:
+            self.register_attr_hook(hook)
+
+    def _cache_batch_attrs(self, batch: Any) -> Any:
+        attrs = []
+        for hook in self.attr_hooks:
+            attr = hook(batch)
+            if isinstance(attr, Tensor):
+                attr = attr.to(self.device)
+            attrs.append(attr)
+        self.cache.append(attrs)
+        return attrs
 
     def __iter__(self) -> Any:
+        self.hook_reg_open = False
         return self
 
-    def __next__(self) -> BatchType:
+    def __next__(self) -> List[Any]:
         try:
             batch = next(self.iter)
             if not self.cache_filled:
-                batch = self.cache_batch(batch)
+                batch = self._cache_batch_attrs(batch)
             return batch
         except StopIteration as exc:
             self.cache_filled = True
