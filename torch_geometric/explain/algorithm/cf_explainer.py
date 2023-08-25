@@ -30,8 +30,8 @@ Networks"
         'EPS': 1e-15,
     }
 
-
-    def __init__(self, epochs: int = 100, lr: float = 0.01, cf_optimizer = "SGD", n_momentum = 0, **kwargs):
+    def __init__(self, epochs: int = 100, lr: float = 0.01, cf_optimizer="SGD",
+                 n_momentum=0, **kwargs):
         super().__init__()
         self.epochs = epochs
         self.lr = lr
@@ -42,8 +42,15 @@ Networks"
         self.best_cf_example = None
         self.best_loss = np.inf
 
-    def forward(self, model: torch.nn.Module, x: Tensor, edge_index: Tensor,
-        *, index: int = None, **kwargs, ) -> Explanation:
+    def forward(
+        self,
+        model: torch.nn.Module,
+        x: Tensor,
+        edge_index: Tensor,
+        *,
+        index: int = None,
+        **kwargs,
+    ) -> Explanation:
         if isinstance(x, dict) or isinstance(edge_index, dict):
             raise ValueError(f"Heterogeneous graphs not yet supported in "
                              f"'{self.__class__.__name__}'")
@@ -63,8 +70,8 @@ Networks"
     def supports(self) -> bool:
         return True
 
-    def _train(self, model: torch.nn.Module, x: Tensor, edge_index: Tensor,
-        *, target: Tensor, index: int = None, **kwargs):
+    def _train(self, model: torch.nn.Module, x: Tensor, edge_index: Tensor, *,
+               target: Tensor, index: int = None, **kwargs):
 
         # Set edge mask to all ones
         self._initialize_edge_mask(x, edge_index)
@@ -78,12 +85,12 @@ Networks"
         if self.cf_optimizer == "SGD" and self.n_momentum == 0.0:
             optimizer = torch.optim.SGD(parameters, lr=self.lr)
         elif self.cf_optimizer == "SGD" and self.n_momentum != 0.0:
-            optimizer = torch.optim.SGD(parameters, lr=self.lr, nesterov=True, momentum=self.n_momentum)
+            optimizer = torch.optim.SGD(parameters, lr=self.lr, nesterov=True,
+                                        momentum=self.n_momentum)
         elif self.cf_optimizer == "Adadelta":
             optimizer = torch.optim.Adadelta(parameters, lr=self.lr)
         else:
             raise Exception("Optimizer is not currently supported.")
-
 
         for i in range(self.epochs):
             optimizer.zero_grad()
@@ -106,10 +113,9 @@ Networks"
             # Log summary
             binary_mask = (torch.sigmoid(self.edge_mask) > 0.5).int()
             summary = f"Epoch {i} loss: {loss:.2f} | n_masked_edges: {sum(binary_mask == 0)}"
-            summary = summary +  f"| pred_class: {torch.argmax(y_hat)}"
-            summary = summary +  f"| max_grad: {self.edge_mask.grad.max():.2f}"
+            summary = summary + f"| pred_class: {torch.argmax(y_hat)}"
+            summary = summary + f"| max_grad: {self.edge_mask.grad.max():.2f}"
             print(summary)
-
 
     def _initialize_edge_mask(self, x: Tensor, edge_index: Tensor):
         edge_mask_type = self.explainer_config.edge_mask_type
@@ -134,8 +140,9 @@ Networks"
             assert False
 
         indicator = (torch.argmax(y_hat) == y).float()
-        dist_loss_l1 = sum(abs(self.edge_mask - torch.ones_like(self.edge_mask)))
-        loss = - indicator * loss + self.coeffs['edge_size'] * dist_loss_l1
+        dist_loss_l1 = sum(
+            abs(self.edge_mask - torch.ones_like(self.edge_mask)))
+        loss = -indicator * loss + self.coeffs['edge_size'] * dist_loss_l1
         return loss
 
     def _clean_model(self, model):
