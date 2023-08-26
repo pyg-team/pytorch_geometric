@@ -40,10 +40,6 @@ class HGBDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
     """
-
-    url = ('https://cloud.tsinghua.edu.cn/d/2d965d2fc2ee41d09def/files/'
-           '?p=%2F{}.zip&dl=1')
-
     names = {
         'acm': 'ACM',
         'dblp': 'DBLP',
@@ -51,9 +47,24 @@ class HGBDataset(InMemoryDataset):
         'imdb': 'IMDB',
     }
 
-    def __init__(self, root: str, name: str,
-                 transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None):
+    urls = {
+        'acm': ('https://drive.google.com/uc?'
+                'export=download&id=1xbJ4QE9pcDJOcALv7dYhHDCPITX2Iddz'),
+        'dblp': ('https://drive.google.com/uc?'
+                 'export=download&id=1fLLoy559V7jJaQ_9mQEsC06VKd6Qd3SC'),
+        'freebase': ('https://drive.google.com/uc?'
+                     'export=download&id=1vw-uqbroJZfFsWpriC1CWbtHCJMGdWJ7'),
+        'imdb': ('https://drive.google.com/uc?'
+                 'export=download&id=18qXmmwKJBrEJxVQaYwKTL3Ny3fPqJeJ2'),
+    }
+
+    def __init__(
+        self,
+        root: str,
+        name: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+    ):
         self.name = name.lower()
         assert self.name in set(self.names.keys())
         super().__init__(root, transform, pre_transform)
@@ -77,7 +88,7 @@ class HGBDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self):
-        url = self.url.format(self.names[self.name])
+        url = self.urls[self.name]
         path = download_url(url, self.raw_dir)
         extract_zip(path, self.raw_dir)
         os.unlink(path)
