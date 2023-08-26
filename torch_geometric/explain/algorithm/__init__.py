@@ -4,6 +4,7 @@ from .gnn_explainer import GNNExplainer
 from .captum_explainer import CaptumExplainer
 from .pg_explainer import PGExplainer
 from .attention_explainer import AttentionExplainer
+from .graphmask_explainer import GraphMaskExplainer
 
 __all__ = classes = [
     'ExplainerAlgorithm',
@@ -12,4 +13,5 @@ __all__ = classes = [
     'CaptumExplainer',
     'PGExplainer',
     'AttentionExplainer',
+    'GraphMaskExplainer',
 ]
