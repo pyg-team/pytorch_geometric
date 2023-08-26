@@ -60,7 +60,7 @@ class BrcaTcga(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
     ):
-        super().__init__(root, transform, pre_transform, pre_filter=None)
+        super().__init__(root, transform, pre_transform, pre_filter=pre_filter)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
