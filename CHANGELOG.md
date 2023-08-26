@@ -85,6 +85,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Fixed broken links in `HGBDataset` ([#7907](https://github.com/pyg-team/pytorch_geometric/pull/7907))
 - Fixed an issue where `SetTransformerAggregation` produced `NaN` values for isolates nodes ([#7902](https://github.com/pyg-team/pytorch_geometric/pull/7902))
 - Fixed `model_summary` on modules with uninitialized parameters ([#7884](https://github.com/pyg-team/pytorch_geometric/pull/7884))
 - Updated `QM9` data pre-processing to include the SMILES string ([#7867](https://github.com/pyg-team/pytorch_geometric/pull/7867))
