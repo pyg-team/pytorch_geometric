@@ -59,8 +59,6 @@ class BrcaTcga(InMemoryDataset):
           - 1082
           - 4
     """
-
-    # Base URL to download the files
     url = 'https://zenodo.org/record/8251328/files/brca_tcga.zip?download=1'
 
     def __init__(
@@ -75,7 +73,6 @@ class BrcaTcga(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        # List of the raw files
         return ['graph_idx.csv', 'graph_labels.csv', 'edge_index.pt']
 
     @property
@@ -83,67 +80,43 @@ class BrcaTcga(InMemoryDataset):
         return 'breast_data.pt'
 
     def download(self):
-        # Download the file specified in self.url and store
-        # it in self.raw_dir
         path = download_url(self.url, self.raw_dir)
         extract_zip(path, self.raw_dir)
-        # The zip file is removed
         os.unlink(path)
 
     def process(self):
-        # Load features from CSV file
         graph_features = pd.read_csv(
             os.path.join(self.raw_dir, 'brca_tcga', 'graph_idx.csv'),
             index_col=0)
-
-        # Load labels from CSV file
         graph_labels = np.loadtxt(
             os.path.join(self.raw_dir, 'brca_tcga', 'graph_labels.csv'),
             delimiter=',')
+        edge_index = torch.load(
+            os.path.join(self.raw_dir, 'brca_tcga', 'edge_index.pt'),
+        )
 
-        # Load the edge_index from the file
-        file_path = os.path.join(self.raw_dir, 'brca_tcga', 'edge_index.pt')
-        edge_index = torch.load(file_path)
-
-        # Convert features to NumPy array
         graph_features = graph_features.values
-
-        # Get the number of patients
         num_patients = graph_features.shape[0]
 
-        # Create patient-specific graphs
         graphs = []
         for i in range(num_patients):
-            node_features = graph_features[
-                i]  # Node features for the i-th patient
-            target = graph_labels[i]  # Target label for the i-th patient
+            node_features = graph_features[i]
+            target = graph_labels[i]
             graph = (node_features, edge_index, target)
             graphs.append(graph)
 
-        # Convert graphs to a list of Data objects
         data = [
             Data(x=torch.tensor(graph[0].reshape(len(graphs[0][0]), 1)),
                  edge_index=graph[1], y=torch.tensor(graph[2]))
             for graph in graphs
         ]
-
         data, slices = self.collate(data)
-
-        # Save the processed data
         torch.save((data, slices), self.processed_paths[0])
 
     def predefined_split(
             self, train_index, test_index,
             val_index) -> Tuple['brca_tcga', 'brca_tcga', 'brca_tcga']:
-        # method to define custom split
-
         train_dataset = self.index_select(train_index)
-        # Select samples for training using the provided train_index
-
         test_dataset = self.index_select(test_index)
-        # Select samples for testing using the provided test_index
-
         val_dataset = self.index_select(val_index)
-        # Select samples for validation using the provided val_index
-
         return train_dataset, test_dataset, val_dataset
