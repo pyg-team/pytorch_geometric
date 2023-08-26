@@ -31,10 +31,6 @@ class BrcaTcga(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
 
     **STATS:**
 
@@ -58,9 +54,8 @@ class BrcaTcga(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
     ):
-        super().__init__(root, transform, pre_transform, pre_filter=pre_filter)
+        super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])
 
     @property
