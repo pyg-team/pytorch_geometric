@@ -136,8 +136,14 @@ class brca_tcga(InMemoryDataset):
             self, train_index, test_index,
             val_index) -> Tuple['brca_tcga', 'brca_tcga', 'brca_tcga']:
         # method to define custom split
+
         train_dataset = self.index_select(train_index)
+        # Select samples for training using the provided train_index
+
         test_dataset = self.index_select(test_index)
+        # Select samples for testing using the provided test_index
+
         val_dataset = self.index_select(val_index)
+        # Select samples for validation using the provided val_index
 
         return train_dataset, test_dataset, val_dataset
