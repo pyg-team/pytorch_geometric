@@ -79,30 +79,28 @@ class BrcaTcga(InMemoryDataset):
             os.path.join(self.raw_dir, 'brca_tcga', 'graph_labels.csv'),
             delimiter=',')
         edge_index = torch.load(
-            os.path.join(self.raw_dir, 'brca_tcga', 'edge_index.pt'),
-        )
+            os.path.join(self.raw_dir, 'brca_tcga', 'edge_index.pt'))
 
         graph_features = graph_features.values
         num_patients = graph_features.shape[0]
 
-        graphs = []
+        data_list = []
         for i in range(num_patients):
             node_features = graph_features[i]
             target = graph_labels[i]
-            graph = (node_features, edge_index, target)
-            graphs.append(graph)
+            data_list.append(
+                Data(
+                    x=torch.tensor(node_features.reshape(-1, 1)),
+                    edge_index=edge_index,
+                    y=torch.tensor(target),
+                ))
 
-        data = [
-            Data(x=torch.tensor(graph[0].reshape(len(graphs[0][0]), 1)),
-                 edge_index=graph[1], y=torch.tensor(graph[2]))
-            for graph in graphs
-        ]
-        data, slices = self.collate(data)
+        data, slices = self.collate(data_list)
         torch.save((data, slices), self.processed_paths[0])
 
     def predefined_split(
             self, train_index, test_index,
-            val_index) -> Tuple['BcraTcga', 'BcraTcga', 'BcraTcga']:
+            val_index) -> Tuple['BrcaTcga', 'BrcaTcga', 'BrcaTcga']:
         train_dataset = self.index_select(train_index)
         test_dataset = self.index_select(test_index)
         val_dataset = self.index_select(val_index)
