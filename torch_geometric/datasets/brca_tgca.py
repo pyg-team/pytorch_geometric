@@ -115,7 +115,7 @@ class BrcaTcga(InMemoryDataset):
 
     def predefined_split(
             self, train_index, test_index,
-            val_index) -> Tuple['brca_tcga', 'brca_tcga', 'brca_tcga']:
+            val_index) -> Tuple['BcraTcga', 'BcraTcga', 'BcraTcga']:
         train_dataset = self.index_select(train_index)
         test_dataset = self.index_select(test_index)
         val_dataset = self.index_select(val_index)
