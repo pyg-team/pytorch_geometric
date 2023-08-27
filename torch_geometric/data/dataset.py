@@ -275,6 +275,14 @@ class Dataset(torch.utils.data.Dataset, ABC):
         indices = self.indices()
 
         if isinstance(idx, slice):
+            start, stop, step = idx.start, idx.stop, idx.step
+            # Allow floating-point slicing, e.g., dataset[:0.9]
+            if isinstance(start, float):
+                start = round(start * len(self))
+            if isinstance(stop, float):
+                stop = round(stop * len(self))
+            idx = slice(start, stop, step)
+
             indices = indices[idx]
 
         elif isinstance(idx, Tensor) and idx.dtype == torch.long:
