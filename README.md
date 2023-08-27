@@ -358,7 +358,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ## Installation
 
-PyG is available for Python 3.7 to Python 3.11.
+PyG is available for Python 3.8 to Python 3.11.
 
 ### Anaconda
 
