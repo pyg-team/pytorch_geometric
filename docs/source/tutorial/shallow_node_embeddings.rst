@@ -1,7 +1,7 @@
 Shallow Node Embeddings
 =========================
 
-In this tutorial, we will look at learning unsupervised *shallow* node embeddings using PyG for both homogenous and heterogenous graphs. 
+In this tutorial, we will look at learning unsupervised *shallow* node embeddings using PyG for both homogenous and heterogenous graphs.
 
 Introduction to Shallow Node Embeddings
 ---------------------------------------
@@ -27,4 +27,4 @@ Here, I'll write something about Node2Vec.
 MetaPath2Vec
 ------------
 
-Here, I'll write something about MetaPath2Vec. 
+Here, I'll write something about MetaPath2Vec.
