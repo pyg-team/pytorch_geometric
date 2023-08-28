@@ -942,7 +942,7 @@ def test_from_hetero_networkx_graph_node_selection():
     import networkx as nx
 
     G = nx.DiGraph()
-    G.add_node(0, type="A")
+    G.add_node(0, type="A", x=0)
     G.add_node("node_1", type="B", y=1)
     G.add_node(2, type="B", x=1)
 
@@ -950,8 +950,7 @@ def test_from_hetero_networkx_graph_node_selection():
                                 edge_type_attribute=None,
                                 graph_attrs=['x', 'y'], nodes=[0, "node_1"])
 
-    assert len(data['A'].type) == 1
-    assert len(data['B'].type) == 1
+    assert len(data['A'].x) == 1
     assert len(data['B'].y) == 1
 
 

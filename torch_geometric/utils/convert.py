@@ -791,13 +791,20 @@ def from_hetero_networkx(
                         node_to_group[node_b])].append(i)
 
     for group, group_nodes in group_to_nodes.items():
-        hetero_data_dict[str(group)] = get_node_attributes(
-            G, nodes=group_nodes)
+        hetero_data_dict[str(group)] = {
+            k: v
+            for k, v in get_node_attributes(G, nodes=group_nodes).items()
+            if k != node_type_attribute
+        }
 
     for group, group_edges in group_to_edges.items():
         group_name = '__'.join(group)
-        hetero_data_dict[group_name] = get_edge_attributes(
-            G, edge_indexes=group_edges)
+        hetero_data_dict[group_name] = {
+            k: v
+            for k, v in get_edge_attributes(G,
+                                            edge_indexes=group_edges).items()
+            if k != edge_type_attribute
+        }
         edge_list = list(G.edges(data=False))
         global_edge_index = [edge_list[edge] for edge in group_edges]
         group_edge_index = [(node_to_group_id[node_a],
