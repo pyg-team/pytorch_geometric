@@ -323,6 +323,25 @@ def test_from_networkx_subgraph_convert():
     assert sub_edge_index_1.tolist() == sub_edge_index_2.tolist()
 
 
+@withPackage('networkx')
+@pytest.mark.parametrize('n', [100])
+@pytest.mark.parametrize('p', [0.8])
+@pytest.mark.parametrize('q', [0.2])
+def test_from_networkx_sbm(n, p, q):
+    import networkx as nx
+    G = nx.stochastic_block_model(
+        sizes=[n // 2, n // 2],
+        p=[[p, q], [q, p]],
+        seed=0,
+        directed=False,
+    )
+
+    data = from_networkx(G)
+    assert data.num_nodes == 100
+    assert torch.equal(data.block[:50], data.block.new_zeros(50))
+    assert torch.equal(data.block[50:], data.block.new_ones(50))
+
+
 @withPackage('networkit')
 def test_to_networkit_vice_versa():
     edge_index = torch.tensor([[0, 1], [1, 0]])
