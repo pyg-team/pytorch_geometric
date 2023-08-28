@@ -15,7 +15,7 @@ from benchmark.utils import (
     write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import PNAConv, make_batches_cacheable
+from torch_geometric.nn import PNAConv
 from torch_geometric.profile import (
     rename_profile_file,
     timeit,
@@ -180,11 +180,9 @@ def run(args: argparse.ArgumentParser):
                                 print(f'Calculated degree for {dataset_name}.')
                             params['degree'] = degree
 
-                        model_decorator = make_batches_cacheable if args.cached_loader else None
                         model = get_model(
                             model_name, params,
-                            metadata=data.metadata() if hetero else None,
-                            model_decorator=model_decorator)
+                            metadata=data.metadata() if hetero else None)
                         model = model.to(device)
                         # TODO: Migrate to ModelHubMixin.
                         if args.ckpt_path:
@@ -214,7 +212,7 @@ def run(args: argparse.ArgumentParser):
                             data = transformation(data)
 
                         with cpu_affinity, amp, timeit() as time:
-                            inference_kwargs = {}
+                            inference_kwargs = dict(cache=args.cached_loader)
                             if args.reuse_device_for_embeddings and not hetero:
                                 inference_kwargs['embedding_device'] = device
                             for _ in range(args.warmup):
@@ -227,8 +225,6 @@ def run(args: argparse.ArgumentParser):
                                         progress_bar=True,
                                         **inference_kwargs,
                                     )
-                                    if args.device == 'xpu':
-                                        torch.xpu.synchronize()
                             if args.warmup > 0:
                                 time.reset()
                             with itt, profile:
@@ -339,5 +335,5 @@ if __name__ == '__main__':
         help='Write benchmark or PyTorch profile data to CSV')
     add('--export-chrome-trace', default=True, type=bool,
         help='Export chrome trace file. Works only with PyTorch profiler')
-    add('--cached-loader', action='store_true', help='Use BatchedLoader')
+    add('--cached-loader', action='store_true', help='Use CachedLoader')
     run(argparser.parse_args())
