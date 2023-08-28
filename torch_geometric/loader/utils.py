@@ -3,6 +3,7 @@ import logging
 import math
 from collections.abc import Sequence
 from typing import Any, Dict, Optional, Tuple, Union
+
 import numpy as np
 import torch
 from torch import Tensor
@@ -175,16 +176,13 @@ def filter_hetero_data(
     return out
 
 
-def filter_dist_store(
-    feature_store: FeatureStore,
-    graph_store: GraphStore,
-    node_dict: Dict[str, Tensor],
-    row_dict: Dict[str, Tensor],
-    col_dict: Dict[str, Tensor],
-    edge_dict: Dict[str, OptTensor],
-    custom_cls: Optional[HeteroData] = None,
-    meta: Optional[Dict[str, Tensor]] = None
-) -> HeteroData:
+def filter_dist_store(feature_store: FeatureStore, graph_store: GraphStore,
+                      node_dict: Dict[str, Tensor], row_dict: Dict[str,
+                                                                   Tensor],
+                      col_dict: Dict[str, Tensor], edge_dict: Dict[str,
+                                                                   OptTensor],
+                      custom_cls: Optional[HeteroData] = None,
+                      meta: Optional[Dict[str, Tensor]] = None) -> HeteroData:
     r"""Constructs a `HeteroData` object from a feature store that only holds
     nodes in `node` end edges in `edge` for each node and edge type,
     respectively. Sorted attribute values are proved as metadata from DistNeighborSampler."""
@@ -213,13 +211,13 @@ def filter_dist_store(
 
     for attr in required_node_attrs:
         if nfeats[attr.group_name] is not None:
-            data[attr.group_name][attr.attr_name] = nfeats[attr.group_name]            
+            data[attr.group_name][attr.attr_name] = nfeats[attr.group_name]
 
     if efeats:
         for attr in required_edge_attrs:
             if efeats[attr.edge_type] is not None:
                 data[attr.edge_type].edge_attr = efeats[attr.edge_type]
-            
+
     for label in nlabels:
         data[label].y = nlabels[label]
 
@@ -267,6 +265,7 @@ def filter_custom_store(
         data[attr.group_name][attr.attr_name] = tensors[i]
 
     return data
+
 
 # Input Utilities #############################################################
 

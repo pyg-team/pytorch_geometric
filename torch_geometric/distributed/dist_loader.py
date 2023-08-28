@@ -1,42 +1,47 @@
 import atexit
 import logging
+import os
+from typing import Dict, List, Optional, Union
+
 import torch
 import torch.multiprocessing as mp
-import os
-from typing import Optional, Dict, Union, List
-from torch_geometric.sampler import SamplerOutput, HeteroSamplerOutput
-from torch_geometric.distributed.rpc import init_rpc, global_barrier
-from torch_geometric.distributed.dist_neighbor_sampler import DistNeighborSampler, close_sampler
+
 from torch_geometric.distributed.dist_context import DistContext, DistRole
+from torch_geometric.distributed.dist_neighbor_sampler import (
+    DistNeighborSampler,
+    close_sampler,
+)
+from torch_geometric.distributed.rpc import global_barrier, init_rpc
+from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 
 
 class DistLoader:
-
-    def __init__(self,
-                 current_ctx: DistContext,
-                 rpc_worker_names: Dict[DistRole, List[str]],
-                 master_addr: str,
-                 master_port: Union[int, str],
-                 channel: mp.Queue(),
-                 num_rpc_threads: Optional[int] = 16,
-                 rpc_timeout: Optional[int] = 180,
-                 **kwargs,
-                 ):
+    def __init__(
+        self,
+        current_ctx: DistContext,
+        rpc_worker_names: Dict[DistRole, List[str]],
+        master_addr: str,
+        master_port: Union[int, str],
+        channel: mp.Queue(),
+        num_rpc_threads: Optional[int] = 16,
+        rpc_timeout: Optional[int] = 180,
+        **kwargs,
+    ):
         """
         Args:
             current_ctx (DistContext): Distributed context info of the current process.
             rpc_worker_names (Dict[DistRole, List[str]]): RPC workers identifiers.
-            master_addr (str): RPC address for distributed loaders communication, 
+            master_addr (str): RPC address for distributed loaders communication,
                 IP of the master node.
-            master_port (Union[int, str]): Open port for RPC communication with 
+            master_port (Union[int, str]): Open port for RPC communication with
                 the master node.
-            channel (mp.Queue): A communication channel for sample messages that 
+            channel (mp.Queue): A communication channel for sample messages that
                 allows for asynchronous processing of the sampler calls.
                 num_rpc_threads (Optional[int], optional): The number of threads in the
                 thread-pool used by
                 :class:`~torch.distributed.rpc.TensorPipeAgent` to execute
                 requests (default: 16).
-            rpc_timeout (Optional[int], optional): The default timeout, 
+            rpc_timeout (Optional[int], optional): The default timeout,
                 in seconds, for RPC requests (default: 60 seconds). If the RPC has not
                 completed in this timeframe, an exception indicating so will
                 be raised. Callers can override this timeout for individual
@@ -71,7 +76,8 @@ class DistLoader:
                 "for rpc communication, try to provide it or set it "
                 "with environment variable 'MASTER_ADDR'")
         logging.info(
-            f"{self} MASTER_ADDR: {self.master_addr} MASTER_PORT: {self.master_port}")
+            f"{self} MASTER_ADDR: {self.master_addr} MASTER_PORT: {self.master_port}"
+        )
 
         self.num_rpc_threads = num_rpc_threads
         if self.num_rpc_threads is not None:
@@ -93,23 +99,21 @@ class DistLoader:
 
     def worker_init_fn(self, worker_id):
         try:
-            num_sampler_proc = (
-                self.num_workers if self.num_workers > 0 else 1)
+            num_sampler_proc = (self.num_workers
+                                if self.num_workers > 0 else 1)
             self.current_ctx_worker = DistContext(
                 world_size=self.current_ctx.world_size * num_sampler_proc,
                 rank=self.current_ctx.rank * num_sampler_proc + worker_id,
                 global_world_size=self.current_ctx.world_size *
-                num_sampler_proc, global_rank=self.current_ctx.rank *
-                num_sampler_proc + worker_id, group_name='mp_sampling_worker')
+                num_sampler_proc,
+                global_rank=self.current_ctx.rank * num_sampler_proc +
+                worker_id, group_name='mp_sampling_worker')
 
-            init_rpc(
-                current_ctx=self.current_ctx_worker,
-                rpc_worker_names={},
-                master_addr=self.master_addr,
-                master_port=self.master_port,
-                num_rpc_threads=self.num_rpc_threads,
-                rpc_timeout=self.rpc_timeout
-            )
+            init_rpc(current_ctx=self.current_ctx_worker, rpc_worker_names={},
+                     master_addr=self.master_addr,
+                     master_port=self.master_port,
+                     num_rpc_threads=self.num_rpc_threads,
+                     rpc_timeout=self.rpc_timeout)
             self.neighbor_sampler.register_sampler_rpc()
             self.neighbor_sampler.init_event_loop()
             # close rpc & worker group at exit
@@ -119,7 +123,8 @@ class DistLoader:
 
         except RuntimeError:
             raise RuntimeError(
-                f"init_fn() defined in {self} didn't initialize the worker_loop of {self.neighbor_sampler}")
+                f"init_fn() defined in {self} didn't initialize the worker_loop of {self.neighbor_sampler}"
+            )
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}()-PID{self.pid}"
