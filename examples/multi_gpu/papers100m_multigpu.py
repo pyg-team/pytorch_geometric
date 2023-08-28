@@ -1,6 +1,5 @@
 import argparse
 import os
-import os.path as osp
 import time
 
 import torch
@@ -11,10 +10,8 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
-import torch_geometric
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv
-from torch_geometric.utils import to_undirected
 
 
 def pyg_num_work():
