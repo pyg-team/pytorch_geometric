@@ -25,18 +25,23 @@ class Dataset(torch.utils.data.Dataset, ABC):
     Args:
         root (str, optional): Root directory where the dataset should be saved.
             (optional: :obj:`None`)
-        transform (callable, optional): A function/transform that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a transformed
-            version. The data object will be transformed before every access.
+        transform (callable, optional): A function/transform that takes in a
+            :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` object and returns a
+            transformed version.
+            The data object will be transformed before every access.
             (default: :obj:`None`)
         pre_transform (callable, optional): A function/transform that takes in
-            an :obj:`torch_geometric.data.Data` object and returns a
-            transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in an
-            :obj:`torch_geometric.data.Data` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
+            a :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` object and returns a
+            transformed version.
+            The data object will be transformed before being saved to disk.
+            (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in a
+            :class:`~torch_geometric.data.Data` or
+            :class:`~torch_geometric.data.HeteroData` object and returns a
+            boolean value, indicating whether the data object should be
+            included in the final dataset. (default: :obj:`None`)
         log (bool, optional): Whether to print any console output while
             downloading and processing the dataset. (default: :obj:`True`)
     """
@@ -270,6 +275,14 @@ class Dataset(torch.utils.data.Dataset, ABC):
         indices = self.indices()
 
         if isinstance(idx, slice):
+            start, stop, step = idx.start, idx.stop, idx.step
+            # Allow floating-point slicing, e.g., dataset[:0.9]
+            if isinstance(start, float):
+                start = round(start * len(self))
+            if isinstance(stop, float):
+                stop = round(stop * len(self))
+            idx = slice(start, stop, step)
+
             indices = indices[idx]
 
         elif isinstance(idx, Tensor) and idx.dtype == torch.long:

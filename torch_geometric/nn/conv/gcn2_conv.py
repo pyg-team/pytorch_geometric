@@ -7,10 +7,9 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
+from torch_geometric.nn.inits import glorot
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, SparseTensor
 from torch_geometric.utils import spmm
-
-from ..inits import glorot
 
 
 class GCN2Conv(MessagePassing):
@@ -93,12 +92,12 @@ class GCN2Conv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.weight1 = Parameter(torch.Tensor(channels, channels))
+        self.weight1 = Parameter(torch.empty(channels, channels))
 
         if shared_weights:
             self.register_parameter('weight2', None)
         else:
-            self.weight2 = Parameter(torch.Tensor(channels, channels))
+            self.weight2 = Parameter(torch.empty(channels, channels))
 
         self.reset_parameters()
 

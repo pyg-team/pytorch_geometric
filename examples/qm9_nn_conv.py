@@ -1,3 +1,4 @@
+import copy
 import os.path as osp
 
 import torch
@@ -14,15 +15,16 @@ target = 0
 dim = 64
 
 
-class MyTransform(object):
+class MyTransform:
     def __call__(self, data):
-        # Specify target.
-        data.y = data.y[:, target]
+        data = copy.copy(data)
+        data.y = data.y[:, target]  # Specify target.
         return data
 
 
-class Complete(object):
+class Complete:
     def __call__(self, data):
+        data = copy.copy(data)
         device = data.edge_index.device
 
         row = torch.arange(data.num_nodes, dtype=torch.long, device=device)

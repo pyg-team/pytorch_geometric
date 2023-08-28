@@ -6,9 +6,8 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
-
-from ..inits import glorot, zeros
 
 
 class GMMConv(MessagePassing):
@@ -112,7 +111,7 @@ class GMMConv(MessagePassing):
                                weight_initializer='glorot')
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

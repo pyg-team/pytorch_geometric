@@ -7,6 +7,12 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
+      - id: no-commit-to-branch
+        name: No commits to master
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
       - id: end-of-file-fixer
         name: End-of-file fixer
       - id: trailing-whitespace
@@ -22,21 +28,21 @@ repos:
           )$
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.29.0
+    rev: v1.32.0
     hooks:
       - id: yamllint
         name: Lint yaml
         args: [-d, '{extends: default, rules: {line-length: disable, document-start: disable, truthy: {level: error}, braces: {max-spaces-inside: 1}}}']
 
-  - repo: https://github.com/regebro/pyroma
-    rev: "4.1"
-    hooks:
-      - id: pyroma
-        name: Check packaging
-        args: [--min=10, .]
+  # - repo: https://github.com/regebro/pyroma
+  #   rev: "4.2"
+  #   hooks:
+  #     - id: pyroma
+  #       name: Check packaging
+  #       args: [--min=10, .]
 
   - repo: https://github.com/google/yapf
-    rev: v0.32.0
+    rev: v0.40.0
     hooks:
       - id: yapf
         name: Format code
@@ -53,3 +59,4 @@ repos:
     hooks:
       - id: flake8
         name: Check PEP8
+        additional_dependencies: [Flake8-pyproject]

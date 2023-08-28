@@ -133,17 +133,17 @@ class HeteroBatchNorm(torch.nn.Module):
         self.track_running_stats = track_running_stats
 
         if self.affine:
-            self.weight = Parameter(torch.Tensor(num_types, in_channels))
-            self.bias = Parameter(torch.Tensor(num_types, in_channels))
+            self.weight = Parameter(torch.empty(num_types, in_channels))
+            self.bias = Parameter(torch.empty(num_types, in_channels))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)
 
         if self.track_running_stats:
             self.register_buffer('running_mean',
-                                 torch.Tensor(num_types, in_channels))
+                                 torch.empty(num_types, in_channels))
             self.register_buffer('running_var',
-                                 torch.Tensor(num_types, in_channels))
+                                 torch.empty(num_types, in_channels))
             self.register_buffer('num_batches_tracked', torch.tensor(0))
         else:
             self.register_buffer('running_mean', None)
@@ -175,7 +175,7 @@ class HeteroBatchNorm(torch.nn.Module):
             type_vec (torch.Tensor): A vector that maps each entry to a type.
         """
         if not self.training and self.track_running_stats:
-            mean, var = self.running_mean, self.running_Var
+            mean, var = self.running_mean, self.running_var
         else:
             with torch.no_grad():
                 mean, var = self.mean_var(x, type_vec, dim_size=self.num_types)

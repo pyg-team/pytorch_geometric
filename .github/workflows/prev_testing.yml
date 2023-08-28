@@ -1,0 +1,62 @@
+name: Testing previous PyTorch versions
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+
+  prev_pytest:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        torch-version: [1.11.0, 1.12.0, 1.13.0]
+        include:
+          - torch-version: 1.11.0
+            torchvision-version: 0.12.0
+          - torch-version: 1.12.0
+            torchvision-version: 0.13.0
+          - torch-version: 1.13.0
+            torchvision-version: 0.14.0
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 40
+
+      # Skip workflow if only certain files have been changed.
+      - name: Get changed files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v34
+        with:
+          files: |
+            benchmark/**
+            conda/**
+            docker/**
+            docs/**
+            examples/**
+            graphgym/**
+            README.md
+            CHANGELOG.md
+
+      - name: Setup packages
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        uses: ./.github/actions/setup
+        with:
+          torch-version: ${{ matrix.torch-version }}
+          torchvision-version: ${{ matrix.torchvision-version }}
+
+      - name: Install main package
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        run: |
+          pip install -e .[full,test]
+
+      - name: Run tests
+        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        run: |
+          pytest

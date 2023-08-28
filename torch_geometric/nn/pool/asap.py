@@ -7,9 +7,16 @@ from torch import Tensor
 from torch.nn import Linear
 
 from torch_geometric.nn import LEConv
-from torch_geometric.nn.pool.topk_pool import topk
-from torch_geometric.typing import SparseTensor, torch_sparse
-from torch_geometric.utils import add_remaining_self_loops, scatter, softmax
+from torch_geometric.nn.pool.select import SelectTopK
+from torch_geometric.utils import (
+    add_remaining_self_loops,
+    remove_self_loops,
+    scatter,
+    softmax,
+    to_edge_index,
+    to_torch_coo_tensor,
+    to_torch_csr_tensor,
+)
 
 
 class ASAPooling(torch.nn.Module):
@@ -61,6 +68,9 @@ class ASAPooling(torch.nn.Module):
                                          **kwargs)
         else:
             self.gnn_intra_cluster = None
+
+        self.select = SelectTopK(1, ratio)
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -70,6 +80,7 @@ class ASAPooling(torch.nn.Module):
         self.gnn_score.reset_parameters()
         if self.gnn_intra_cluster is not None:
             self.gnn_intra_cluster.reset_parameters()
+        self.select.reset_parameters()
 
     def forward(
         self,
@@ -128,26 +139,27 @@ class ASAPooling(torch.nn.Module):
 
         # Cluster selection.
         fitness = self.gnn_score(x, edge_index).sigmoid().view(-1)
-        perm = topk(fitness, self.ratio, batch)
+        perm = self.select(fitness, batch).node_index
         x = x[perm] * fitness[perm].view(-1, 1)
         batch = batch[perm]
 
         # Graph coarsening.
-        row, col = edge_index[0], edge_index[1]
-        A = SparseTensor(row=row, col=col, value=edge_weight,
-                         sparse_sizes=(N, N))
-        S = SparseTensor(row=row, col=col, value=score, sparse_sizes=(N, N))
+        A = to_torch_csr_tensor(edge_index, edge_weight, size=(N, N))
+        S = to_torch_coo_tensor(edge_index, score, size=(N, N))
+        S = S.index_select(1, perm).to_sparse_csr()
+        A = S.t().to_sparse_csr() @ (A @ S)
 
-        S = torch_sparse.index_select(S, 1, perm)
-        A = torch_sparse.matmul(torch_sparse.matmul(torch_sparse.t(S), A), S)
+        if edge_weight is None:
+            edge_index, _ = to_edge_index(A)
+        else:
+            edge_index, edge_weight = to_edge_index(A)
 
         if self.add_self_loops:
-            A = torch_sparse.fill_diag(A, 1.)
+            edge_index, edge_weight = add_remaining_self_loops(
+                edge_index, edge_weight, num_nodes=A.size(0))
         else:
-            A = torch_sparse.remove_diag(A)
-
-        row, col, edge_weight = A.coo()
-        edge_index = torch.stack([row, col], dim=0)
+            edge_index, edge_weight = remove_self_loops(
+                edge_index, edge_weight)
 
         return x, edge_index, edge_weight, batch, perm
 

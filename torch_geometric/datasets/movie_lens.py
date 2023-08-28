@@ -33,12 +33,15 @@ class MovieLens(InMemoryDataset):
             features. The model comes from the`Huggingface SentenceTransformer
             <https://huggingface.co/sentence-transformers>`_.
     """
-
     url = 'https://files.grouplens.org/datasets/movielens/ml-latest-small.zip'
 
-    def __init__(self, root, transform: Optional[Callable] = None,
-                 pre_transform: Optional[Callable] = None,
-                 model_name: Optional[str] = "all-MiniLM-L6-v2"):
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        pre_transform: Optional[Callable] = None,
+        model_name: Optional[str] = 'all-MiniLM-L6-v2',
+    ):
         self.model_name = model_name
         super().__init__(root, transform, pre_transform)
         self.data, self.slices = torch.load(self.processed_paths[0])

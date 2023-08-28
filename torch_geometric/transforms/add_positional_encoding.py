@@ -6,11 +6,13 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import (
     get_laplacian,
     get_self_loop_attr,
+    scatter,
+    to_edge_index,
     to_scipy_sparse_matrix,
+    to_torch_csr_tensor,
 )
 
 
@@ -62,7 +64,7 @@ class AddLaplacianEigenvectorPE(BaseTransform):
         self.is_undirected = is_undirected
         self.kwargs = kwargs
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         from scipy.sparse.linalg import eigs, eigsh
         eig_fn = eigs if not self.is_undirected else eigsh
 
@@ -105,7 +107,7 @@ class AddRandomWalkPE(BaseTransform):
         attr_name (str, optional): The attribute name of the data object to add
             positional encodings to. If set to :obj:`None`, will be
             concatenated to :obj:`data.x`.
-            (default: :obj:`"laplacian_eigenvector_pe"`)
+            (default: :obj:`"random_walk_pe"`)
     """
     def __init__(
         self,
@@ -115,25 +117,23 @@ class AddRandomWalkPE(BaseTransform):
         self.walk_length = walk_length
         self.attr_name = attr_name
 
-    def __call__(self, data: Data) -> Data:
-        num_nodes = data.num_nodes
-        edge_index, edge_weight = data.edge_index, data.edge_weight
+    def forward(self, data: Data) -> Data:
+        row, col = data.edge_index
+        N = data.num_nodes
 
-        adj = SparseTensor.from_edge_index(edge_index, edge_weight,
-                                           sparse_sizes=(num_nodes, num_nodes))
+        value = data.edge_weight
+        if value is None:
+            value = torch.ones(data.num_edges, device=row.device)
+        value = scatter(value, row, dim_size=N, reduce='sum').clamp(min=1)[row]
+        value = 1.0 / value
 
-        # Compute D^{-1} A:
-        deg_inv = 1.0 / adj.sum(dim=1)
-        deg_inv[deg_inv == float('inf')] = 0
-        adj = adj * deg_inv.view(-1, 1)
+        adj = to_torch_csr_tensor(data.edge_index, value, size=data.size())
 
         out = adj
-        row, col, value = out.coo()
-        pe_list = [get_self_loop_attr((row, col), value, num_nodes)]
+        pe_list = [get_self_loop_attr(*to_edge_index(out), num_nodes=N)]
         for _ in range(self.walk_length - 1):
             out = out @ adj
-            row, col, value = out.coo()
-            pe_list.append(get_self_loop_attr((row, col), value, num_nodes))
+            pe_list.append(get_self_loop_attr(*to_edge_index(out), N))
         pe = torch.stack(pe_list, dim=-1)
 
         data = add_node_attr(data, pe, attr_name=self.attr_name)

@@ -8,6 +8,7 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
 from torch_geometric.utils import (
     add_self_loops,
@@ -19,8 +20,6 @@ from torch_geometric.utils import (
     softmax,
     to_undirected,
 )
-
-from ..inits import glorot, zeros
 
 
 class SuperGATConv(MessagePassing):
@@ -154,8 +153,8 @@ class SuperGATConv(MessagePassing):
                           weight_initializer='glorot')
 
         if self.attention_type == 'MX':
-            self.att_l = Parameter(torch.Tensor(1, heads, out_channels))
-            self.att_r = Parameter(torch.Tensor(1, heads, out_channels))
+            self.att_l = Parameter(torch.empty(1, heads, out_channels))
+            self.att_r = Parameter(torch.empty(1, heads, out_channels))
         else:  # self.attention_type == 'SD'
             self.register_parameter('att_l', None)
             self.register_parameter('att_r', None)
@@ -163,9 +162,9 @@ class SuperGATConv(MessagePassing):
         self.att_x = self.att_y = None  # x/y for self-supervision
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(heads * out_channels))
+            self.bias = Parameter(torch.empty(heads * out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 

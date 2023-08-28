@@ -28,7 +28,6 @@ def swish(x: Tensor) -> Tensor:
 
 
 def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
-    import torch
     base_cls = torch.nn.Module
     base_cls_repr = 'Act'
     acts = [
@@ -47,8 +46,6 @@ def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
 
 
 def normalization_resolver(query: Union[Any, str], *args, **kwargs):
-    import torch
-
     import torch_geometric.nn.norm as norm
     base_cls = torch.nn.Module
     base_cls_repr = 'Norm'
@@ -66,6 +63,9 @@ def normalization_resolver(query: Union[Any, str], *args, **kwargs):
 
 def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
     import torch_geometric.nn.aggr as aggr
+    if isinstance(query, (list, tuple)):
+        return aggr.MultiAggregation(query, *args, **kwargs)
+
     base_cls = aggr.Aggregation
     aggrs = [
         aggr for aggr in vars(aggr).values()
@@ -75,6 +75,18 @@ def aggregation_resolver(query: Union[Any, str], *args, **kwargs):
         'add': aggr.SumAggregation,
     }
     return resolver(aggrs, aggr_dict, query, base_cls, None, *args, **kwargs)
+
+
+# Optimizer Resolver ##########################################################
+
+
+def optimizer_resolver(query: Union[Any, str], *args, **kwargs):
+    base_cls = Optimizer
+    optimizers = [
+        optimizer for optimizer in vars(torch.optim).values()
+        if isinstance(optimizer, type) and issubclass(optimizer, base_cls)
+    ]
+    return resolver(optimizers, {}, query, base_cls, None, *args, **kwargs)
 
 
 # Learning Rate Scheduler Resolver ############################################

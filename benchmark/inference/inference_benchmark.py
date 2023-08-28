@@ -1,4 +1,5 @@
 import argparse
+import warnings
 from collections import defaultdict
 from contextlib import nullcontext
 
@@ -10,11 +11,17 @@ from benchmark.utils import (
     get_model,
     get_split_masks,
     save_benchmark_data,
+    test,
     write_to_csv,
 )
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
-from torch_geometric.profile import rename_profile_file, timeit, torch_profile
+from torch_geometric.profile import (
+    rename_profile_file,
+    timeit,
+    torch_profile,
+    xpu_profile,
+)
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
@@ -33,21 +40,30 @@ def full_batch_inference(model, data):
     return model(data.x, edge_index)
 
 
-def test(y, loader):
-    y_hat = y.argmax(dim=-1)
-    y = loader.data.y.to(y_hat.device)
-    mask = loader.data.test_mask
-    return int((y_hat[mask] == y[mask]).sum()) / int(mask.sum())
-
-
 def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
 
-    # cuda device is not suitable for full batch mode
-    device = torch.device(
-        'cuda' if not args.full_batch and torch.cuda.is_available() else 'cpu')
+    if args.write_csv == 'prof' and not args.profile:
+        warnings.warn("Cannot write profile data to CSV because profiling is "
+                      "disabled")
+
+    if args.device == 'xpu':
+        try:
+            import intel_extension_for_pytorch as ipex
+        except ImportError:
+            raise RuntimeError('XPU device requires IPEX to be installed')
+
+    if ((args.device == 'cuda' and not torch.cuda.is_available())
+            or (args.device == 'xpu' and not torch.xpu.is_available())):
+        raise RuntimeError(f'{args.device.upper()} is not available')
+
+    if args.device == 'cuda' and args.full_batch:
+        raise RuntimeError('CUDA device is not suitable for full batch mode')
+
+    device = torch.device(args.device)
 
     print('BENCHMARK STARTS')
+    print(f'Running on {args.device.upper()}')
     for dataset_name in args.datasets:
         assert dataset_name in supported_sets.keys(
         ), f"Dataset {dataset_name} isn't supported."
@@ -67,10 +83,16 @@ def run(args: argparse.ArgumentParser):
         if args.num_layers != [1] and not hetero and args.num_steps != -1:
             raise ValueError("Layer-wise inference requires `steps=-1`")
 
-        if torch.cuda.is_available():
+        if args.device == 'cuda':
             amp = torch.cuda.amp.autocast(enabled=False)
+        elif args.device == 'xpu':
+            amp = torch.xpu.amp.autocast(enabled=False)
         else:
             amp = torch.cpu.amp.autocast(enabled=args.bf16)
+
+        if args.device == 'xpu' and args.warmup < 1:
+            print('XPU device requires warmup - setting warmup=1')
+            args.warmup = 1
 
         inputs_channels = data[
             'paper'].num_features if dataset_name == 'ogbn-mag' \
@@ -164,6 +186,8 @@ def run(args: argparse.ArgumentParser):
                             state_dict = torch.load(args.ckpt_path)
                             model.load_state_dict(state_dict)
                         model.eval()
+                        if args.device == 'xpu':
+                            model = ipex.optimize(model)
 
                         # Define context manager parameters:
                         if args.cpu_affinity and with_loader:
@@ -171,8 +195,13 @@ def run(args: argparse.ArgumentParser):
                                 args.loader_cores)
                         else:
                             cpu_affinity = nullcontext()
-                        profile = torch_profile(
-                        ) if args.profile else nullcontext()
+                        if args.profile and args.device == 'xpu':
+                            profile = xpu_profile(args.export_chrome_trace)
+                        elif args.profile:
+                            profile = torch_profile(args.export_chrome_trace,
+                                                    csv_data, args.write_csv)
+                        else:
+                            profile = nullcontext()
                         itt = emit_itt(
                         ) if args.vtune_profile else nullcontext()
 
@@ -180,12 +209,19 @@ def run(args: argparse.ArgumentParser):
                             data = transformation(data)
 
                         with cpu_affinity, amp, timeit() as time:
+                            inference_kwargs = {}
+                            if args.reuse_device_for_embeddings and not hetero:
+                                inference_kwargs['embedding_device'] = device
                             for _ in range(args.warmup):
                                 if args.full_batch:
                                     full_batch_inference(model, data)
                                 else:
-                                    model.inference(subgraph_loader, device,
-                                                    progress_bar=True)
+                                    model.inference(
+                                        subgraph_loader,
+                                        device,
+                                        progress_bar=True,
+                                        **inference_kwargs,
+                                    )
                             if args.warmup > 0:
                                 time.reset()
                             with itt, profile:
@@ -203,18 +239,20 @@ def run(args: argparse.ArgumentParser):
                                         subgraph_loader,
                                         device,
                                         progress_bar=True,
+                                        **inference_kwargs,
                                     )
                                     if args.evaluate:
-                                        test_acc = model.test(
-                                            y,
+                                        test_acc = test(
+                                            model,
                                             test_loader,
                                             device,
+                                            hetero,
                                             progress_bar=True,
                                         )
                                         print(f'Mini Batch Test Accuracy: \
                                             {test_acc:.4f}')
 
-                        if args.profile:
+                        if args.profile and args.export_chrome_trace:
                             rename_profile_file(model_name, dataset_name,
                                                 str(batch_size), str(layers),
                                                 str(hidden_channels),
@@ -229,19 +267,36 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
-                        save_benchmark_data(csv_data, batch_size, layers,
-                                            num_neighbors, hidden_channels,
-                                            total_time, model_name,
-                                            dataset_name,
-                                            args.use_sparse_tensor)
+                        num_records = 1
+                        if args.write_csv == 'prof':
+                            # For profiling with PyTorch, we save the top-5
+                            # most time consuming operations. Therefore, the
+                            # same data should be entered for each of them.
+                            num_records = 5
+                        for _ in range(num_records):
+                            save_benchmark_data(
+                                csv_data,
+                                batch_size,
+                                layers,
+                                num_neighbors,
+                                hidden_channels,
+                                total_time,
+                                model_name,
+                                dataset_name,
+                                args.use_sparse_tensor,
+                            )
     if args.write_csv:
-        write_to_csv(csv_data)
+        write_to_csv(csv_data, args.write_csv)
 
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN inference benchmark')
     add = argparser.add_argument
 
+    add('--device', choices=['cpu', 'cuda', 'xpu'], default='cpu',
+        help='Device to run benchmark on')
+    add('--reuse-device-for-embeddings', action='store_true',
+        help='Use the same device for embeddings as specified in "--device"')
     add('--datasets', nargs='+',
         default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
     add('--use-sparse-tensor', action='store_true',
@@ -273,5 +328,8 @@ if __name__ == '__main__':
     add('--full-batch', action='store_true', help='Use full batch mode')
     add('--evaluate', action='store_true')
     add('--ckpt_path', type=str, help='Checkpoint path for loading a model')
-    add('--write-csv', action='store_true', help='Write benchmark data to csv')
+    add('--write-csv', choices=[None, 'bench', 'prof'], default=None,
+        help='Write benchmark or PyTorch profile data to CSV')
+    add('--export-chrome-trace', default=True, type=bool,
+        help='Export chrome trace file. Works only with PyTorch profiler')
     run(argparser.parse_args())

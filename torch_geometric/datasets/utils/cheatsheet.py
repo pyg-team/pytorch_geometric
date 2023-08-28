@@ -4,7 +4,7 @@ import re
 from typing import Any, List, Optional
 
 
-def paper_link(cls: str) -> str:
+def paper_link(cls: str) -> Optional[str]:
     cls = importlib.import_module('torch_geometric.datasets').__dict__[cls]
     match = re.search('<.+?>', inspect.getdoc(cls), flags=re.DOTALL)
     return None if match is None else match.group().replace('\n', ' ')[1:-1]
@@ -19,6 +19,10 @@ def get_stats_table(cls: str) -> str:
 
 def has_stats(cls: str) -> bool:
     return len(get_stats_table(cls)) > 0
+
+
+def get_type(cls: str) -> str:
+    return 'Edge' if '-' in cls else 'Node'
 
 
 def get_stat(cls: str, name: str, child: Optional[str] = None,

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import torch
@@ -10,10 +10,11 @@ from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.utils import (
     add_self_loops,
-    calculate_ppr,
     coalesce,
+    get_ppr,
     is_undirected,
     scatter,
+    sort_edge_index,
     to_dense_adj,
 )
 
@@ -83,7 +84,6 @@ class GDC(BaseTransform):
                                                      avg_degree=64),
         exact: bool = True,
     ):
-
         self.self_loop_weight = self_loop_weight
         self.normalization_in = normalization_in
         self.normalization_out = normalization_out
@@ -95,7 +95,7 @@ class GDC(BaseTransform):
             assert exact or self_loop_weight == 1
 
     @torch.no_grad()
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         N = data.num_nodes
         edge_index = data.edge_index
         if data.edge_attr is None:
@@ -301,15 +301,16 @@ class GDC(BaseTransform):
                 _, col = edge_index
                 deg = scatter(edge_weight, col, 0, num_nodes, reduce='sum')
 
-            # Assumes sorted and coalesced edge indices:
-            neighbors, neighbor_weights = calculate_ppr(
-                edge_index, kwargs['alpha'], kwargs['eps'], num_nodes)
+            edge_index, edge_weight = get_ppr(
+                edge_index,
+                alpha=kwargs['alpha'],
+                eps=kwargs['eps'],
+                num_nodes=num_nodes,
+            )
 
-            ppr_normalization = 'col' if normalization == 'col' else 'row'
-            edge_index, edge_weight = self.__neighbors_to_graph__(
-                neighbors, neighbor_weights, ppr_normalization,
-                device=edge_index.device)
-            edge_index = edge_index.to(torch.long)
+            if normalization == 'col':
+                edge_index, edge_weight = sort_edge_index(
+                    edge_index.flip([0]), edge_weight, num_nodes)
 
             if normalization == 'sym':
                 # We can change the normalization from row-normalized to
@@ -468,8 +469,8 @@ class GDC(BaseTransform):
             e, V = torch.linalg.eigh(matrix, UPLO='U')
             diff_mat = V @ torch.diag(e.exp()) @ V.t()
         else:
-            diff_mat_np = expm(matrix.cpu().numpy())
-            diff_mat = torch.Tensor(diff_mat_np).to(matrix.device)
+            diff_mat = torch.from_numpy(expm(matrix.cpu().numpy()))
+            diff_mat = diff_mat.to(matrix.device, matrix.dtype)
         return diff_mat
 
     def __calculate_eps__(
@@ -494,39 +495,3 @@ class GDC(BaseTransform):
         left = sorted_edges[avg_degree * num_nodes - 1]
         right = sorted_edges[avg_degree * num_nodes]
         return (left + right) / 2.0
-
-    def __neighbors_to_graph__(
-        self,
-        neighbors: List[List[int]],
-        neighbor_weights: List[List[float]],
-        normalization: str = 'row',
-        device: torch.device = 'cpu',
-    ) -> Tuple[Tensor, Tensor]:
-        r"""Combine a list of neighbors and neighbor weights to create a sparse
-        graph.
-
-        Args:
-            neighbors (List[List[int]]): List of neighbors for each node.
-            neighbor_weights (List[List[float]]): List of weights for the
-                neighbors of each node.
-            normalization (str): Normalization of resulting matrix
-                (options: :obj:`"row"`, :obj:`"col"`). (default: :obj:`"row"`)
-            device (torch.device): Device to create output tensors on.
-                (default: :obj:`"cpu"`)
-
-        :rtype: (:class:`LongTensor`, :class:`Tensor`)
-        """
-        edge_weight = torch.Tensor(np.concatenate(neighbor_weights)).to(device)
-        i = np.repeat(np.arange(len(neighbors)),
-                      np.fromiter(map(len, neighbors), dtype=int))
-        j = np.concatenate(neighbors)
-        if normalization == 'col':
-            edge_index = torch.Tensor(np.vstack([j, i])).to(device)
-            N = len(neighbors)
-            edge_index, edge_weight = coalesce(edge_index, edge_weight, N, N)
-        elif normalization == 'row':
-            edge_index = torch.Tensor(np.vstack([i, j])).to(device)
-        else:
-            raise ValueError(
-                f"PPR matrix normalization {normalization} unknown.")
-        return edge_index, edge_weight

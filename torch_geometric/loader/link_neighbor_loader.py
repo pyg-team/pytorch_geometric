@@ -3,6 +3,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
 from torch_geometric.sampler import NegativeSampling, NeighborSampler
+from torch_geometric.sampler.base import SubgraphType
 from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
@@ -97,8 +98,16 @@ class LinkNeighborLoader(LinkLoader):
             to work. (default: :obj:`None`)
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
-        directed (bool, optional): If set to :obj:`False`, will include all
-            edges between all sampled nodes. (default: :obj:`True`)
+        subgraph_type (SubgraphType or str, optional): The type of the returned
+            subgraph.
+            If set to :obj:`"directional"`, the returned subgraph only holds
+            the sampled (directed) edges which are necessary to compute
+            representations for the sampled seed nodes.
+            If set to :obj:`"bidirectional"`, sampled edges are converted to
+            bidirectional edges.
+            If set to :obj:`"induced"`, the returned subgraph contains the
+            induced subgraph of all sampled nodes.
+            (default: :obj:`"directional"`)
         disjoint (bool, optional): If set to :obj: `True`, each seed node will
             create its own disjoint subgraph.
             If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
@@ -161,14 +170,17 @@ class LinkNeighborLoader(LinkLoader):
             This avoids internal re-sorting of the data and can improve
             runtime and memory efficiency. (default: :obj:`False`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
-            the returning data in each worker's subprocess rather than in the
-            main process.
-            Setting this to :obj:`True` for in-memory datasets is generally not
-            recommended:
-            (1) it may result in too many open file handles,
-            (2) it may slown down data loading,
-            (3) it requires operating on CPU tensors.
-            (default: :obj:`False`)
+            the returned data in each worker's subprocess.
+            If set to :obj:`False`, will filter the returned data in the main
+            process.
+            If set to :obj:`None`, will automatically infer the decision based
+            on whether data partially lives on the GPU
+            (:obj:`filter_per_worker=True`) or entirely on the CPU
+            (:obj:`filter_per_worker=False`).
+            There exists different trade-offs for setting this option.
+            Specifically, setting this option to :obj:`True` for in-memory
+            datasets will move all features to shared memory, which may result
+            in too many open file handles. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -181,7 +193,7 @@ class LinkNeighborLoader(LinkLoader):
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
         replace: bool = False,
-        directed: bool = True,
+        subgraph_type: Union[SubgraphType, str] = 'directional',
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         neg_sampling: Optional[NegativeSampling] = None,
@@ -190,8 +202,9 @@ class LinkNeighborLoader(LinkLoader):
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
-        filter_per_worker: bool = False,
+        filter_per_worker: Optional[bool] = None,
         neighbor_sampler: Optional[NeighborSampler] = None,
+        directed: bool = True,  # Deprecated.
         **kwargs,
     ):
         if (edge_label_time is not None) != (time_attr is not None):
@@ -199,20 +212,22 @@ class LinkNeighborLoader(LinkLoader):
                 f"Received conflicting 'edge_label_time' and 'time_attr' "
                 f"arguments: 'edge_label_time' is "
                 f"{'set' if edge_label_time is not None else 'not set'} "
-                f"while 'input_time' is "
-                f"{'set' if time_attr is not None else 'not set'}.")
+                f"while 'time_attr' is "
+                f"{'set' if time_attr is not None else 'not set'}. "
+                f"Both arguments must be provided for temporal sampling.")
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
                 data,
                 num_neighbors=num_neighbors,
                 replace=replace,
-                directed=directed,
+                subgraph_type=subgraph_type,
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
+                directed=directed,
             )
 
         super().__init__(

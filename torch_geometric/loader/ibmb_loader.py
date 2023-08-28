@@ -7,7 +7,7 @@ import numba
 import numpy as np
 import torch
 from python_tsp.heuristics import solve_tsp_simulated_annealing
-from scipy.sparse import coo_matrix, csr_matrix
+from scipy.sparse import csr_matrix
 from torch.utils.data import DataLoader, RandomSampler
 from torch_sparse import SparseTensor
 from tqdm import tqdm
@@ -17,7 +17,7 @@ from torch_geometric.loader.ibmb_sampler import (
     IBMBOrderedSampler,
     IBMBWeightedSampler,
 )
-from torch_geometric.utils import calculate_ppr, is_undirected, subgraph
+from torch_geometric.utils import get_ppr, is_undirected, subgraph
 
 
 def get_partitions(
@@ -307,18 +307,28 @@ def topk_ppr_matrix(
         edge_index: torch.Tensor, num_nodes: int, alpha: float, eps: float,
         output_node_indices: Union[np.ndarray, torch.LongTensor], topk: int,
         normalization='row') -> Tuple[csr_matrix, List[np.ndarray]]:
-    neighbors, weights = calculate_ppr(edge_index, alpha, eps, num_nodes,
-                                       output_node_indices)
+    neighbors, weights = get_ppr(edge_index, alpha, eps, output_node_indices,
+                                 num_nodes)
 
-    def construct_sparse(neighbors, weights, shape):
-        i = np.repeat(np.arange(len(neighbors)),
-                      np.fromiter(map(len, neighbors), dtype=np.int64))
-        j = np.concatenate(neighbors)
-        return coo_matrix((np.concatenate(weights), (i, j)), shape)
+    _, neighbor_counts = neighbors[0].unique(return_counts=True)
 
-    ppr_matrix = construct_sparse(neighbors, weights,
-                                  (len(output_node_indices), num_nodes))
-    ppr_matrix = ppr_matrix.tocsr()
+    ppr_matrix = SparseTensor(
+        row=torch.arange(
+            len(output_node_indices)).repeat_interleave(neighbor_counts),
+        col=neighbors[1], value=weights,
+        sparse_sizes=(len(output_node_indices),
+                      num_nodes)).to_scipy(layout='csr')
+
+    neighbors = [
+        n.cpu().numpy()
+        for n in torch.split(neighbors[1],
+                             neighbor_counts.cpu().tolist(), dim=0)
+    ]
+    weights = [
+        n.cpu().numpy()
+        for n in torch.split(weights,
+                             neighbor_counts.cpu().tolist(), dim=0)
+    ]
 
     def sparsify(neighbors: List[np.ndarray], weights: List[np.ndarray],
                  topk: int):
@@ -689,7 +699,8 @@ class IBMBNodeLoader(IBMBBaseLoader):
         logging.info("Start PPR calculation")
         ppr_matrix, neighbors = topk_ppr_matrix(
             graph.edge_index, graph.num_nodes, self.alpha, self.eps,
-            self.output_indices, self.num_auxiliary_node_per_output)
+            torch.from_numpy(self.output_indices),
+            self.num_auxiliary_node_per_output)
 
         ppr_matrix = ppr_matrix[:, self.output_indices]
 

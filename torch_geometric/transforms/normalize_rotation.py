@@ -24,7 +24,7 @@ class NormalizeRotation(BaseTransform):
         self.max_points = max_points
         self.sort = sort
 
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         pos = data.pos
 
         if self.max_points > 0 and pos.size(0) > self.max_points:

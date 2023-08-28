@@ -51,7 +51,7 @@ def to_dense_adj(
                 [0., 0., 0., 0.],
                 [0., 0., 0., 0.]]])
 
-        >>> edge_attr = torch.Tensor([1, 2, 3, 4, 5])
+        >>> edge_attr = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0])
         >>> to_dense_adj(edge_index, batch, edge_attr)
         tensor([[[1., 2.],
                 [3., 0.]],

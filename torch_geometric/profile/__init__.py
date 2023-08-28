@@ -1,5 +1,11 @@
 from .profile import profileit, timeit, get_stats_summary
-from .profile import trace_handler, rename_profile_file, torch_profile
+from .profile import (
+    trace_handler,
+    print_time_total,
+    rename_profile_file,
+    torch_profile,
+    xpu_profile,
+)
 from .utils import count_parameters
 from .utils import get_model_size
 from .utils import get_data_size
@@ -13,8 +19,10 @@ __all__ = [
     'timeit',
     'get_stats_summary',
     'trace_handler',
+    'print_time_total',
     'rename_profile_file',
     'torch_profile',
+    'xpu_profile',
     'count_parameters',
     'get_model_size',
     'get_data_size',

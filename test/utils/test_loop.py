@@ -117,6 +117,17 @@ def test_add_self_loops():
     assert out[1].tolist() == [1.]
 
 
+def test_add_self_loops_bipartite():
+    edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    adj = to_torch_coo_tensor(edge_index, size=(4, 2))
+
+    edge_index, _ = add_self_loops(edge_index, num_nodes=(4, 2))
+    assert edge_index.tolist() == [[0, 1, 2, 3, 0, 1], [0, 0, 1, 1, 0, 1]]
+
+    adj, _ = add_self_loops(adj)
+    assert adj._indices().tolist() == [[0, 1, 1, 2, 3], [0, 0, 1, 1, 1]]
+
+
 def test_add_remaining_self_loops():
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
     edge_weight = torch.tensor([0.5, 0.5, 0.5])

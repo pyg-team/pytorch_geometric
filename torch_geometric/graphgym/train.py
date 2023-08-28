@@ -1,6 +1,7 @@
 import warnings
 from typing import Optional
 
+import torch
 from torch.utils.data import DataLoader
 
 from torch_geometric.data.lightning.datamodule import LightningDataModule
@@ -48,7 +49,7 @@ def train(model: GraphGymModule, datamodule, logger: bool = True,
         default_root_dir=cfg.out_dir,
         max_epochs=cfg.optim.max_epoch,
         accelerator=cfg.accelerator,
-        devices=cfg.devices,
+        devices='auto' if not torch.cuda.is_available() else cfg.devices,
     )
 
     trainer.fit(model, datamodule=datamodule)

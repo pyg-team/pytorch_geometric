@@ -9,9 +9,15 @@ from torch_geometric.datasets import Planetoid
 from torch_geometric.explain import Explainer, GNNExplainer, ModelConfig
 from torch_geometric.nn import GCNConv
 
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'Planetoid')
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 transform = T.Compose([
     T.NormalizeFeatures(),
     T.ToDevice(device),
@@ -21,7 +27,7 @@ dataset = Planetoid(path, dataset, transform=transform)
 train_data, val_data, test_data = dataset[0]
 
 
-class Net(torch.nn.Module):
+class GCN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels):
         super().__init__()
         self.conv1 = GCNConv(in_channels, hidden_channels)
@@ -41,7 +47,7 @@ class Net(torch.nn.Module):
         return model.decode(z, edge_label_index).view(-1)
 
 
-model = Net(dataset.num_features, 128, 64).to(device)
+model = GCN(dataset.num_features, 128, 64).to(device)
 optimizer = torch.optim.Adam(params=model.parameters(), lr=0.01)
 
 

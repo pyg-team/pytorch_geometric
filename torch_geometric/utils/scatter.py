@@ -7,18 +7,9 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.typing import torch_scatter
 
-major, minor, _ = torch.__version__.split('.', maxsplit=2)
-major, minor = int(major), int(minor)
-has_pytorch112 = major > 1 or (major == 1 and minor >= 12)
-
-if has_pytorch112:  # pragma: no cover
+if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
     warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
-
-    def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
-        size = [1] * ref.dim()
-        size[dim] = -1
-        return src.view(size).expand_as(ref)
 
     def scatter(src: Tensor, index: Tensor, dim: int = 0,
                 dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
@@ -39,16 +30,16 @@ if has_pytorch112:  # pragma: no cover
                 minimal-sized output tensor according to
                 :obj:`index.max() + 1`. (default: :obj:`None`)
             reduce (str, optional): The reduce operation (:obj:`"sum"`,
-                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
-                (default: :obj:`"sum"`)
+                :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`,
+                :obj:`"any"`). (default: :obj:`"sum"`)
         """
-        if index.dim() != 1:
+        if isinstance(index, Tensor) and index.dim() != 1:
             raise ValueError(f"The `index` argument must be one-dimensional "
                              f"(got {index.dim()} dimensions)")
 
         dim = src.dim() + dim if dim < 0 else dim
 
-        if dim < 0 or dim >= src.dim():
+        if isinstance(src, Tensor) and (dim < 0 or dim >= src.dim()):
             raise ValueError(f"The `dim` argument must lay between 0 and "
                              f"{src.dim() - 1} (got {dim})")
 
@@ -65,8 +56,12 @@ if has_pytorch112:  # pragma: no cover
         # indices, but is therefore way slower in its backward implementation.
         # More insights can be found in `test/utils/test_scatter.py`.
 
-        size = list(src.size())
-        size[dim] = dim_size
+        size = src.size()[:dim] + (dim_size, ) + src.size()[dim + 1:]
+
+        # For "any" reduction, we use regular `scatter_`:
+        if reduce == 'any':
+            index = broadcast(index, src, dim)
+            return src.new_zeros(size).scatter_(dim, index, src)
 
         # For "sum" and "mean" reduction, we make use of `scatter_add_`:
         if reduce == 'sum' or reduce == 'add':
@@ -121,7 +116,7 @@ if has_pytorch112:  # pragma: no cover
 
         raise ValueError(f"Encountered invalid `reduce` argument '{reduce}'")
 
-else:
+else:  # pragma: no cover
 
     def scatter(src: Tensor, index: Tensor, dim: int = 0,
                 dim_size: Optional[int] = None, reduce: str = 'sum') -> Tensor:
@@ -145,7 +140,54 @@ else:
                 :obj:`"mean"`, :obj:`"mul"`, :obj:`"min"` or :obj:`"max"`).
                 (default: :obj:`"sum"`)
         """
+        if reduce == 'any':
+            dim = src.dim() + dim if dim < 0 else dim
+
+            if dim_size is None:
+                dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
+
+            size = src.size()[:dim] + (dim_size, ) + src.size()[dim + 1:]
+
+            index = broadcast(index, src, dim)
+            return src.new_zeros(size).scatter_(dim, index, src)
+
         if not torch_geometric.typing.WITH_TORCH_SCATTER:
             raise ImportError("'scatter' requires the 'torch-scatter' package")
         return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                      reduce=reduce)
+
+
+def broadcast(src: Tensor, ref: Tensor, dim: int) -> Tensor:
+    size = ((1, ) * dim) + (-1, ) + ((1, ) * (ref.dim() - dim - 1))
+    return src.view(size).expand_as(ref)
+
+
+def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
+                   dim_size: Optional[int] = None) -> Tensor:
+
+    if torch_geometric.typing.WITH_TORCH_SCATTER:
+        out = torch_scatter.scatter_max(src, index, dim=dim, dim_size=dim_size)
+        return out[1]
+
+    # Only implemented under certain conditions for now :(
+    assert dim == 0
+    assert src.dim() == 1 and index.dim() == 1
+
+    if dim_size is None:
+        dim_size = index.max() + 1 if index.numel() > 0 else 0
+
+    if torch_geometric.typing.WITH_PT112:
+        res = src.new_empty(dim_size)
+        res.scatter_reduce_(0, index, src.detach(), reduce='amax',
+                            include_self=False)
+    elif torch_geometric.typing.WITH_PT111:
+        res = torch.scatter_reduce(src.detach(), 0, index, reduce='amax',
+                                   output_size=dim_size)
+    else:
+        raise ValueError("'scatter_argmax' requires PyTorch >= 1.11")
+
+    out = index.new_full((dim_size, ), fill_value=dim_size - 1)
+    nonzero = (src == res[index]).nonzero().view(-1)
+    out[index[nonzero]] = nonzero
+
+    return out

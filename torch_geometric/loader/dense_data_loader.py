@@ -8,7 +8,7 @@ from torch_geometric.data import Batch, Data, Dataset
 
 def collate_fn(data_list: List[Data]) -> Batch:
     batch = Batch()
-    for key in data_list[0].keys:
+    for key in data_list[0].keys():
         batch[key] = default_collate([data[key] for data in data_list])
     return batch
 

@@ -345,7 +345,7 @@ class HeteroBasisConv(torch.nn.Module):
             # We learn a single scalar weight for each individual edge type,
             # which is used to weight the output message based on edge type:
             conv.edge_type_weight = Parameter(
-                torch.Tensor(1, num_relations, device=device))
+                torch.empty(1, num_relations, device=device))
             conv.register_message_forward_hook(hook)
             self.convs.append(conv)
 
@@ -393,10 +393,7 @@ class LinearAlign(torch.nn.Module):
     def forward(
         self, x_dict: Dict[Union[NodeType, EdgeType], Tensor]
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
-
-        for key, x in x_dict.items():
-            x_dict[key] = self.lins[key2str(key)](x)
-        return x_dict
+        return {key: self.lins[key2str(key)](x) for key, x in x_dict.items()}
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(num_relations={len(self.lins)}, '

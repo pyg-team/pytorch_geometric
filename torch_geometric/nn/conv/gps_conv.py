@@ -6,15 +6,15 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Dropout, Linear, Sequential
 
+from torch_geometric.nn.attention import PerformerAttention
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import reset
 from torch_geometric.nn.resolver import (
     activation_resolver,
     normalization_resolver,
 )
 from torch_geometric.typing import Adj
 from torch_geometric.utils import to_dense_batch
-
-from ..inits import reset
 
 
 class GPSConv(torch.nn.Module):
@@ -44,8 +44,6 @@ class GPSConv(torch.nn.Module):
             (default: :obj:`1`)
         dropout (float, optional): Dropout probability of intermediate
             embeddings. (default: :obj:`0.`)
-        attn_dropout (float, optional): Dropout probability of the normalized
-            attention coefficients. (default: :obj:`0`)
         act (str or Callable, optional): The non-linear activation function to
             use. (default: :obj:`"relu"`)
         act_kwargs (Dict[str, Any], optional): Arguments passed to the
@@ -56,6 +54,10 @@ class GPSConv(torch.nn.Module):
         norm_kwargs (Dict[str, Any], optional): Arguments passed to the
             respective normalization function defined by :obj:`norm`.
             (default: :obj:`None`)
+        attn_type (str): Global attention type, :obj:`multihead` or
+            :obj:`performer`. (default: :obj:`multihead`)
+        attn_kwargs (Dict[str, Any], optional): Arguments passed to the
+            attention layer. (default: :obj:`None`)
     """
     def __init__(
         self,
@@ -63,11 +65,12 @@ class GPSConv(torch.nn.Module):
         conv: Optional[MessagePassing],
         heads: int = 1,
         dropout: float = 0.0,
-        attn_dropout: float = 0.0,
         act: str = 'relu',
         act_kwargs: Optional[Dict[str, Any]] = None,
         norm: Optional[str] = 'batch_norm',
         norm_kwargs: Optional[Dict[str, Any]] = None,
+        attn_type: str = 'multihead',
+        attn_kwargs: Optional[Dict[str, Any]] = None,
     ):
         super().__init__()
 
@@ -75,13 +78,25 @@ class GPSConv(torch.nn.Module):
         self.conv = conv
         self.heads = heads
         self.dropout = dropout
+        self.attn_type = attn_type
 
-        self.attn = torch.nn.MultiheadAttention(
-            channels,
-            heads,
-            dropout=attn_dropout,
-            batch_first=True,
-        )
+        attn_kwargs = attn_kwargs or {}
+        if attn_type == 'multihead':
+            self.attn = torch.nn.MultiheadAttention(
+                channels,
+                heads,
+                batch_first=True,
+                **attn_kwargs,
+            )
+        elif attn_type == 'performer':
+            self.attn = PerformerAttention(
+                channels=channels,
+                heads=heads,
+                **attn_kwargs,
+            )
+        else:
+            # TODO: Support BigBird
+            raise ValueError(f'{attn_type} is not supported')
 
         self.mlp = Sequential(
             Linear(channels, channels * 2),
@@ -136,7 +151,13 @@ class GPSConv(torch.nn.Module):
 
         # Global attention transformer-style model.
         h, mask = to_dense_batch(x, batch)
-        h, _ = self.attn(h, h, h, key_padding_mask=~mask, need_weights=False)
+
+        if isinstance(self.attn, torch.nn.MultiheadAttention):
+            h, _ = self.attn(h, h, h, key_padding_mask=~mask,
+                             need_weights=False)
+        elif isinstance(self.attn, PerformerAttention):
+            h = self.attn(h, mask=mask)
+
         h = h[mask]
         h = F.dropout(h, p=self.dropout, training=self.training)
         h = h + x  # Residual connection.
@@ -152,12 +173,13 @@ class GPSConv(torch.nn.Module):
         out = out + self.mlp(out)
         if self.norm3 is not None:
             if self.norm_with_batch:
-                h = self.norm3(h, batch=batch)
+                out = self.norm3(out, batch=batch)
             else:
-                h = self.norm3(h)
+                out = self.norm3(out)
 
         return out
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.channels}, '
-                f'conv={self.conv}, heads={self.heads})')
+                f'conv={self.conv}, heads={self.heads}, '
+                f'attn_type={self.attn_type})')

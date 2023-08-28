@@ -1,8 +1,7 @@
 import copy
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Final, List, Optional, Tuple, Union
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear, ModuleList
 from tqdm import tqdm
@@ -24,7 +23,8 @@ from torch_geometric.nn.resolver import (
     activation_resolver,
     normalization_resolver,
 )
-from torch_geometric.typing import Adj, OptTensor
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.utils.trim_to_layer import TrimToLayer
 
 
 class BasicGNN(torch.nn.Module):
@@ -61,6 +61,9 @@ class BasicGNN(torch.nn.Module):
         **kwargs (optional): Additional arguments of the underlying
             :class:`torch_geometric.nn.conv.MessagePassing` layers.
     """
+    supports_edge_weight: Final[bool]
+    supports_edge_attr: Final[bool]
+
     def __init__(
         self,
         in_channels: int,
@@ -82,7 +85,7 @@ class BasicGNN(torch.nn.Module):
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
 
-        self.dropout = dropout
+        self.dropout = torch.nn.Dropout(p=dropout)
         self.act = activation_resolver(act, **(act_kwargs or {}))
         self.jk_mode = jk
         self.act_first = act_first
@@ -117,18 +120,21 @@ class BasicGNN(torch.nn.Module):
             self.convs.append(
                 self.init_conv(in_channels, hidden_channels, **kwargs))
 
-        self.norms = None
-        if norm is not None:
-            norm_layer = normalization_resolver(
-                norm,
-                hidden_channels,
-                **(norm_kwargs or {}),
-            )
-            self.norms = ModuleList()
-            for _ in range(num_layers - 1):
-                self.norms.append(copy.deepcopy(norm_layer))
-            if jk is not None:
-                self.norms.append(copy.deepcopy(norm_layer))
+        self.norms = ModuleList()
+        norm_layer = normalization_resolver(
+            norm,
+            hidden_channels,
+            **(norm_kwargs or {}),
+        )
+        if norm_layer is None:
+            norm_layer = torch.nn.Identity()
+        for _ in range(num_layers - 1):
+            self.norms.append(copy.deepcopy(norm_layer))
+
+        if jk is not None:
+            self.norms.append(copy.deepcopy(norm_layer))
+        else:
+            self.norms.append(torch.nn.Identity())
 
         if jk is not None and jk != 'last':
             self.jk = JumpingKnowledge(jk, hidden_channels, num_layers)
@@ -140,6 +146,10 @@ class BasicGNN(torch.nn.Module):
                 in_channels = hidden_channels
             self.lin = Linear(in_channels, self.out_channels)
 
+        # We define `trim_to_layer` functionality as a module such that we can
+        # still use `to_hetero` on-top.
+        self._trim = TrimToLayer()
+
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
         raise NotImplementedError
@@ -148,64 +158,152 @@ class BasicGNN(torch.nn.Module):
         r"""Resets all learnable parameters of the module."""
         for conv in self.convs:
             conv.reset_parameters()
-        for norm in self.norms or []:
-            norm.reset_parameters()
+        for norm in self.norms:
+            if hasattr(norm, 'reset_parameters'):
+                norm.reset_parameters()
         if hasattr(self, 'jk'):
             self.jk.reset_parameters()
         if hasattr(self, 'lin'):
             self.lin.reset_parameters()
 
-    def forward(
+    @torch.jit._overload_method
+    def forward(  # noqa
+        x,
+        edge_index,
+        edge_weight=None,
+        edge_attr=None,
+        num_sampled_nodes_per_hop=None,
+        num_sampled_edges_per_hop=None,
+    ):
+        # type: (Tensor, Tensor, OptTensor, OptTensor, Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
+        pass
+
+    @torch.jit._overload_method
+    def forward(  # noqa
+        x,
+        edge_index,
+        edge_weight=None,
+        edge_attr=None,
+        num_sampled_nodes_per_hop=None,
+        num_sampled_edges_per_hop=None,
+    ):
+        # type: (Tensor, SparseTensor, OptTensor, OptTensor, Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
+        pass
+
+    def forward(  # noqa
         self,
         x: Tensor,
-        edge_index: Adj,
-        *,
+        edge_index: Tensor,  # TODO Support `SparseTensor` in type hint.
         edge_weight: OptTensor = None,
         edge_attr: OptTensor = None,
+        num_sampled_nodes_per_hop: Optional[List[int]] = None,
+        num_sampled_edges_per_hop: Optional[List[int]] = None,
     ) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The input node features.
-            edge_index (torch.Tensor): The edge indices.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
             edge_weight (torch.Tensor, optional): The edge weights (if
                 supported by the underlying GNN layer). (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features (if supported
                 by the underlying GNN layer). (default: :obj:`None`)
+            num_sampled_nodes_per_hop (List[int], optional): The number of
+                sampled nodes per hop.
+                Useful in :class:`~torch_geometric.loader.NeighborLoader`
+                scenarios to only operate on minimal-sized representations.
+                (default: :obj:`None`)
+            num_sampled_edges_per_hop (List[int], optional): The number of
+                sampled edges per hop.
+                Useful in :class:`~torch_geometric.loader.NeighborLoader`
+                scenarios to only operate on minimal-sized representations.
+                (default: :obj:`None`)
         """
+        if (num_sampled_nodes_per_hop is not None
+                and isinstance(edge_weight, Tensor)
+                and isinstance(edge_attr, Tensor)):
+            raise NotImplementedError("'trim_to_layer' functionality does not "
+                                      "yet support trimming of both "
+                                      "'edge_weight' and 'edge_attr'")
+
         xs: List[Tensor] = []
-        for i in range(self.num_layers):
+        assert len(self.convs) == len(self.norms)
+        for i, (conv, norm) in enumerate(zip(self.convs, self.norms)):
+            if (num_sampled_nodes_per_hop is not None
+                    and not torch.jit.is_scripting()):
+                x, edge_index, value = self._trim(
+                    i,
+                    num_sampled_nodes_per_hop,
+                    num_sampled_edges_per_hop,
+                    x,
+                    edge_index,
+                    edge_weight if edge_weight is not None else edge_attr,
+                )
+                if edge_weight is not None:
+                    edge_weight = value
+                else:
+                    edge_attr = value
+
             # Tracing the module is not allowed with *args and **kwargs :(
             # As such, we rely on a static solution to pass optional edge
             # weights and edge attributes to the module.
             if self.supports_edge_weight and self.supports_edge_attr:
-                x = self.convs[i](x, edge_index, edge_weight=edge_weight,
-                                  edge_attr=edge_attr)
+                x = conv(x, edge_index, edge_weight=edge_weight,
+                         edge_attr=edge_attr)
             elif self.supports_edge_weight:
-                x = self.convs[i](x, edge_index, edge_weight=edge_weight)
+                x = conv(x, edge_index, edge_weight=edge_weight)
             elif self.supports_edge_attr:
-                x = self.convs[i](x, edge_index, edge_attr=edge_attr)
+                x = conv(x, edge_index, edge_attr=edge_attr)
             else:
-                x = self.convs[i](x, edge_index)
-            if i == self.num_layers - 1 and self.jk_mode is None:
-                break
-            if self.act is not None and self.act_first:
-                x = self.act(x)
-            if self.norms is not None:
-                x = self.norms[i](x)
-            if self.act is not None and not self.act_first:
-                x = self.act(x)
-            x = F.dropout(x, p=self.dropout, training=self.training)
-            if hasattr(self, 'jk'):
-                xs.append(x)
+                x = conv(x, edge_index)
+
+            if i < self.num_layers - 1 or self.jk_mode is not None:
+                if self.act is not None and self.act_first:
+                    x = self.act(x)
+                x = norm(x)
+                if self.act is not None and not self.act_first:
+                    x = self.act(x)
+                x = self.dropout(x)
+                if hasattr(self, 'jk'):
+                    xs.append(x)
 
         x = self.jk(xs) if hasattr(self, 'jk') else x
         x = self.lin(x) if hasattr(self, 'lin') else x
+
         return x
 
     @torch.no_grad()
-    def inference(self, loader: NeighborLoader,
-                  device: Optional[torch.device] = None,
-                  progress_bar: bool = False) -> Tensor:
+    def inference_per_layer(
+        self,
+        layer: int,
+        x: Tensor,
+        edge_index: Adj,
+        batch_size: int,
+    ) -> Tensor:
+
+        x = self.convs[layer](x, edge_index)[:batch_size]
+
+        if layer == self.num_layers - 1 and self.jk_mode is None:
+            return x
+
+        if self.act is not None and self.act_first:
+            x = self.act(x)
+        if self.norms is not None:
+            x = self.norms[layer](x)
+        if self.act is not None and not self.act_first:
+            x = self.act(x)
+        if layer == self.num_layers - 1 and hasattr(self, 'lin'):
+            x = self.lin(x)
+
+        return x
+
+    @torch.no_grad()
+    def inference(
+        self,
+        loader: NeighborLoader,
+        device: Optional[Union[str, torch.device]] = None,
+        embedding_device: Union[str, torch.device] = 'cpu',
+        progress_bar: bool = False,
+    ) -> Tensor:
         r"""Performs layer-wise inference on large-graphs using a
         :class:`~torch_geometric.loader.NeighborLoader`, where
         :class:`~torch_geometric.loader.NeighborLoader` should sample the
@@ -213,6 +311,19 @@ class BasicGNN(torch.nn.Module):
         This is an efficient way to compute the output embeddings for all
         nodes in the graph.
         Only applicable in case :obj:`jk=None` or `jk='last'`.
+
+        Args:
+            loader (torch_geometric.loader.NeighborLoader): A neighbor loader
+                object that generates full 1-hop subgraphs, *i.e.*,
+                :obj:`loader.num_neighbors = [-1]`.
+            device (torch.device, optional): The device to run the GNN on.
+                (default: :obj:`None`)
+            embedding_device (torch.device, optional): The device to store
+                intermediate embeddings on. If intermediate embeddings fit on
+                GPU, this option helps to avoid unnecessary device transfers.
+                (default: :obj:`"cpu"`)
+            progress_bar (bool, optional): If set to :obj:`True`, will print a
+                progress bar during computation. (default: :obj:`False`)
         """
         assert self.jk_mode is None or self.jk_mode == 'last'
         assert isinstance(loader, NeighborLoader)
@@ -224,40 +335,100 @@ class BasicGNN(torch.nn.Module):
             pbar = tqdm(total=len(self.convs) * len(loader))
             pbar.set_description('Inference')
 
-        x_all = loader.data.x.cpu()
-        loader.data.n_id = torch.arange(x_all.size(0))
+        x_all = loader.data.x.to(embedding_device)
 
         for i in range(self.num_layers):
             xs: List[Tensor] = []
             for batch in loader:
                 x = x_all[batch.n_id].to(device)
+                batch_size = batch.batch_size
                 if hasattr(batch, 'adj_t'):
                     edge_index = batch.adj_t.to(device)
                 else:
                     edge_index = batch.edge_index.to(device)
-                x = self.convs[i](x, edge_index)[:batch.batch_size]
-                if i == self.num_layers - 1 and self.jk_mode is None:
-                    xs.append(x.cpu())
-                    if progress_bar:
-                        pbar.update(1)
-                    continue
-                if self.act is not None and self.act_first:
-                    x = self.act(x)
-                if self.norms is not None:
-                    x = self.norms[i](x)
-                if self.act is not None and not self.act_first:
-                    x = self.act(x)
-                if i == self.num_layers - 1 and hasattr(self, 'lin'):
-                    x = self.lin(x)
-                xs.append(x.cpu())
+
+                x = self.inference_per_layer(i, x, edge_index, batch_size)
+                xs.append(x.to(embedding_device))
+
                 if progress_bar:
                     pbar.update(1)
+
             x_all = torch.cat(xs, dim=0)
+
         if progress_bar:
             pbar.close()
-        del loader.data.n_id
 
         return x_all
+
+    def jittable(self, use_sparse_tensor: bool = False) -> 'BasicGNN':
+        r"""Produces a new jittable instance module that can be used in
+        combination with :meth:`torch.jit.script`."""
+        class EdgeIndexJittable(torch.nn.Module):
+            def __init__(self, child: BasicGNN):
+                super().__init__()
+                self.child = child
+
+            def reset_parameters(self):
+                self.child.reset_parameters()
+
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: Tensor,
+                edge_weight: OptTensor = None,
+                edge_attr: OptTensor = None,
+                num_sampled_nodes_per_hop: Optional[List[int]] = None,
+                num_sampled_edges_per_hop: Optional[List[int]] = None,
+            ) -> Tensor:
+                return self.child(
+                    x,
+                    edge_index,
+                    edge_weight,
+                    edge_attr,
+                    num_sampled_nodes_per_hop,
+                    num_sampled_edges_per_hop,
+                )
+
+            def __repr__(self) -> str:
+                return str(self.child)
+
+        class SparseTensorJittable(torch.nn.Module):
+            def __init__(self, child: BasicGNN):
+                super().__init__()
+                self.child = child
+
+            def reset_parameters(self):
+                self.child.reset_parameters()
+
+            def forward(
+                self,
+                x: Tensor,
+                edge_index: SparseTensor,
+                edge_weight: OptTensor = None,
+                edge_attr: OptTensor = None,
+                num_sampled_nodes_per_hop: Optional[List[int]] = None,
+                num_sampled_edges_per_hop: Optional[List[int]] = None,
+            ) -> Tensor:
+                return self.child(
+                    x,
+                    edge_index,
+                    edge_weight,
+                    edge_attr,
+                    num_sampled_nodes_per_hop,
+                    num_sampled_edges_per_hop,
+                )
+
+            def __repr__(self) -> str:
+                return str(self.child)
+
+        out = copy.deepcopy(self)
+        convs = [conv.jittable() for conv in out.convs]
+        out.convs = torch.nn.ModuleList(convs)
+        out._trim = None  # TODO Trimming is currently not support in JIT mode.
+
+        if use_sparse_tensor:
+            return SparseTensorJittable(out)
+        return EdgeIndexJittable(out)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
@@ -299,8 +470,8 @@ class GCN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GCNConv`.
     """
-    supports_edge_weight = True
-    supports_edge_attr = False
+    supports_edge_weight: Final[bool] = True
+    supports_edge_attr: Final[bool] = False
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -343,8 +514,8 @@ class GraphSAGE(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.SAGEConv`.
     """
-    supports_edge_weight = False
-    supports_edge_attr = False
+    supports_edge_weight: Final[bool] = False
+    supports_edge_attr: Final[bool] = False
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
@@ -384,8 +555,8 @@ class GIN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.GINConv`.
     """
-    supports_edge_weight = False
-    supports_edge_attr = False
+    supports_edge_weight: Final[bool] = False
+    supports_edge_attr: Final[bool] = False
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -442,8 +613,8 @@ class GAT(BasicGNN):
             :class:`torch_geometric.nn.conv.GATConv` or
             :class:`torch_geometric.nn.conv.GATv2Conv`.
     """
-    supports_edge_weight = False
-    supports_edge_attr = True
+    supports_edge_weight: Final[bool] = False
+    supports_edge_attr: Final[bool] = True
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
@@ -467,7 +638,7 @@ class GAT(BasicGNN):
 
         Conv = GATConv if not v2 else GATv2Conv
         return Conv(in_channels, out_channels, heads=heads, concat=concat,
-                    dropout=self.dropout, **kwargs)
+                    dropout=self.dropout.p, **kwargs)
 
 
 class PNA(BasicGNN):
@@ -504,8 +675,8 @@ class PNA(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.PNAConv`.
     """
-    supports_edge_weight = False
-    supports_edge_attr = True
+    supports_edge_weight: Final[bool] = False
+    supports_edge_attr: Final[bool] = True
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -545,8 +716,8 @@ class EdgeCNN(BasicGNN):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.EdgeConv`.
     """
-    supports_edge_weight = False
-    supports_edge_attr = False
+    supports_edge_weight: Final[bool] = False
+    supports_edge_attr: Final[bool] = False
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -560,4 +731,11 @@ class EdgeCNN(BasicGNN):
         return EdgeConv(mlp, **kwargs)
 
 
-__all__ = ['GCN', 'GraphSAGE', 'GIN', 'GAT', 'PNA', 'EdgeCNN']
+__all__ = [
+    'GCN',
+    'GraphSAGE',
+    'GIN',
+    'GAT',
+    'PNA',
+    'EdgeCNN',
+]
