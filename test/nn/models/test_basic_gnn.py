@@ -347,7 +347,6 @@ def test_compile_graph_breaks(Model, device):
 
     num_previous_compile_calls = num_compile_calls
     model(x, edge_index)
-    print(num_compile_calls - num_previous_compile_calls)
     assert num_compile_calls - num_previous_compile_calls == 1
 
 
