@@ -13,7 +13,6 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.profile import benchmark
-from torch_geometric.seed import seed_everything
 from torch_geometric.testing import (
     disableExtensions,
     onlyFullTest,

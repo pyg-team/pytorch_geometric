@@ -72,7 +72,7 @@ def test_cached_loader_transform(device):
         assert batch.dim() == 2 and batch.size(0) == 2
         assert batch.device == device
 
-        cache.append(edge_index)
+        cache.append(batch)
 
     for i, batch in enumerate(cached_loader):
         assert torch.equal(batch, cache[i])
