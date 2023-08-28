@@ -1,6 +1,5 @@
 import argparse
 import os
-import os.path as osp
 import time
 
 import torch
@@ -8,10 +7,8 @@ import torch.nn.functional as F
 from ogb.nodeproppred import PygNodePropPredDataset
 from torchmetrics import Accuracy
 
-import torch_geometric
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv
-from torch_geometric.utils import to_undirected
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--hidden_channels', type=int, default=64)
