@@ -45,7 +45,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, default='ogbn-products')
     parser.add_argument('--root_dir', type=str, default='./data/products')
     parser.add_argument('--num_partitions', type=int, default=2)
-    parser.add_argument('--recursive', type=bool, default=False)
+    parser.add_argument('--recursive', action='store_true')
     args = parser.parse_args()
 
     partition_dataset(args.dataset, args.root_dir, args.num_partitions,
