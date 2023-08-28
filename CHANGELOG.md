@@ -88,6 +88,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Fixed `from_networkx` conversion from `nx.stochastic_block_model` graphs ([#7941](https://github.com/pyg-team/pytorch_geometric/pull/7941))
 - Fixed the usage of `bias_initializer` in `HeteroLinear` ([#7923](https://github.com/pyg-team/pytorch_geometric/pull/7923))
 - Fixed broken links in `HGBDataset` ([#7907](https://github.com/pyg-team/pytorch_geometric/pull/7907))
 - Fixed an issue where `SetTransformerAggregation` produced `NaN` values for isolates nodes ([#7902](https://github.com/pyg-team/pytorch_geometric/pull/7902))
