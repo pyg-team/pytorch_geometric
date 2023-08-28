@@ -65,7 +65,7 @@ class Partitioner:
             saved.
     """
     def __init__(self, data: Union[Data, HeteroData], num_parts: int,
-                 root: str, recursive: bool = False):
+                 root: str, recursive: bool = False, ):
         assert num_parts > 1
 
         self.data = data
