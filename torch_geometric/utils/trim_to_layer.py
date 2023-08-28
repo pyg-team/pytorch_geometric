@@ -14,6 +14,19 @@ from torch_geometric.typing import (
 )
 
 
+def filter_empty_tensor(input_tensor: Union[MaybeHeteroNodeTensor,
+                                            MaybeHeteroEdgeTensor]):
+    r"""filter out empty tensor for x, edge_index, edge_attr after trim.
+    This can avoid some unnecessary computation when some node/edge
+    types get empty output"""
+    if input_tensor is None:
+        return
+    for k in list(input_tensor.keys()):
+        if input_tensor[k].numel() == 0:
+            del input_tensor[k]
+    return input_tensor
+
+
 def trim_to_layer(
     layer: int,
     num_sampled_nodes_per_hop: Union[List[int], Dict[NodeType, List[int]]],
@@ -69,6 +82,9 @@ def trim_to_layer(
                 k: trim_feat(v, layer, num_sampled_edges_per_hop[k])
                 for k, v in edge_attr.items()
             }
+        x = filter_empty_tensor(x)
+        edge_index = filter_empty_tensor(edge_index)
+        edge_attr = filter_empty_tensor(edge_attr)
         return x, edge_index, edge_attr
 
     x = trim_feat(x, layer, num_sampled_nodes_per_hop)
