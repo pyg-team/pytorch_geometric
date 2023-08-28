@@ -63,7 +63,7 @@ class DistLoader:
             self.master_addr = os.environ['MASTER_ADDR']
         else:
             raise ValueError(
-                f"'{self.__class__.__name__}': missing master address "
+                f"'{self}': missing master address "
                 "for rpc communication, try to provide it or set it "
                 "with environment variable 'MASTER_ADDR'")
         if master_port is not None:
@@ -72,7 +72,7 @@ class DistLoader:
             self.master_port = int(os.environ['MASTER_PORT'])  # + 1
         else:
             raise ValueError(
-                f"'{self.__class__.__name__}': missing master port "
+                f"'{self}': missing master port "
                 "for rpc communication, try to provide it or set it "
                 "with environment variable 'MASTER_ADDR'")
         logging.info(
