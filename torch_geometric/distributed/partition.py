@@ -64,8 +64,13 @@ class Partitioner:
         root (str): Root directory where the partitioned dataset should be
             saved.
     """
-    def __init__(self, data: Union[Data, HeteroData], num_parts: int,
-                 root: str, recursive: bool = False, ):
+    def __init__(
+        self,
+        data: Union[Data, HeteroData],
+        num_parts: int,
+        root: str,
+        recursive: bool = False,
+    ):
         assert num_parts > 1
 
         self.data = data
