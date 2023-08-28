@@ -92,7 +92,7 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
             directed: bool = True,  # Deprecated.
             concurrency: int = 1,
             async_sampling: bool = True,
-            device: Optional[torch.device] = torch.device('cpu'),
+            device: Optional[torch.device] = None,
             **kwargs):
 
         assert (isinstance(data[0], LocalFeatureStore)
