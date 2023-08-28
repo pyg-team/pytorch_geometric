@@ -29,7 +29,7 @@ def test_homo_link_neighbor_loader_basic(device, subgraph_type,
     neg_edge_index = get_random_edge_index(50, 50, 500, device=device)
     neg_edge_index += 50
 
-    edge_label_index = torch.cat([pos_edge_index, neg_edge_index], dim=-1)
+    input_edges = torch.cat([pos_edge_index, neg_edge_index], dim=-1)
     edge_label = torch.cat([
         torch.ones(500, device=device),
         torch.zeros(500, device=device),
@@ -45,7 +45,7 @@ def test_homo_link_neighbor_loader_basic(device, subgraph_type,
         data,
         num_neighbors=[-1] * 2,
         batch_size=20,
-        edge_label_index=edge_label_index,
+        edge_label_index=input_edges,
         edge_label=edge_label if neg_sampling_ratio is None else None,
         subgraph_type=subgraph_type,
         neg_sampling_ratio=neg_sampling_ratio,
@@ -58,8 +58,8 @@ def test_homo_link_neighbor_loader_basic(device, subgraph_type,
 
     batch = loader([0])
     assert isinstance(batch, Data)
-    assert int(edge_label_index[0, 0]) in batch.n_id.tolist()
-    assert int(edge_label_index[1, 0]) in batch.n_id.tolist()
+    assert int(input_edges[0, 0]) in batch.n_id.tolist()
+    assert int(input_edges[1, 0]) in batch.n_id.tolist()
 
     for batch in loader:
         assert isinstance(batch, Data)
@@ -96,6 +96,14 @@ def test_homo_link_neighbor_loader_basic(device, subgraph_type,
             assert batch.edge_label_index.size(1) == 40
             assert torch.all(batch.edge_label[:20] == 1)
             assert torch.all(batch.edge_label[20:] == 0)
+
+        # Ensure local `edge_label_index` correctly maps to input edges.
+        global_edge_label_index = batch.n_id[batch.edge_label_index]
+        global_edge_label_index = (
+            global_edge_label_index[:, batch.edge_label >= 1])
+        global_edge_label_index = unique_edge_pairs(global_edge_label_index)
+        assert (len(global_edge_label_index & unique_edge_pairs(input_edges))
+                == len(global_edge_label_index))
 
 
 @onlyNeighborSampler
