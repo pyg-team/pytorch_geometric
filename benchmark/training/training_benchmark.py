@@ -20,12 +20,25 @@ from benchmark.utils import (
 from torch_geometric import compile
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
-from torch_geometric.profile import rename_profile_file, timeit, torch_profile
+from torch_geometric.profile import (
+    rename_profile_file,
+    timeit,
+    torch_profile,
+    xpu_profile,
+)
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
     'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
     'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
+}
+
+device_conditions = {
+    'cuda': (lambda: torch.cuda.is_available()),
+    'mps':
+    (lambda:
+     (hasattr(torch.backends, 'mps') and torch.backends.mps.is_available())),
+    'xpu': (lambda: torch.xpu.is_available()),
 }
 
 
@@ -87,18 +100,22 @@ def run(args: argparse.ArgumentParser):
         warnings.warn("Cannot write profile data to CSV because profiling is "
                       "disabled")
 
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
-    elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-        device = torch.device('mps')
-    else:
-        device = torch.device('cpu')
+    if args.device == 'xpu':
+        try:
+            import intel_extension_for_pytorch as ipex
+        except ImportError:
+            raise RuntimeError('XPU device requires IPEX to be installed')
+
+    if not device_conditions[args.device]():
+        raise RuntimeError(f'{args.device.upper()} is not available')
+    device = torch.device(args.device)
 
     # If we use a custom number of steps, then we need to use RandomSampler,
     # which already does shuffle.
     shuffle = False if args.num_steps != -1 else True
 
     print('BENCHMARK STARTS')
+    print(f'Running on {args.device.upper()}')
     for dataset_name in args.datasets:
         assert dataset_name in supported_sets.keys(
         ), f"Dataset {dataset_name} isn't supported."
@@ -110,10 +127,19 @@ def run(args: argparse.ArgumentParser):
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask, val_mask, test_mask = get_split_masks(data, dataset_name)
         degree = None
-        if torch.cuda.is_available():
-            amp = torch.cuda.amp.autocast(enabled=False)
-        else:
+
+        if args.device == 'cpu':
             amp = torch.cpu.amp.autocast(enabled=args.bf16)
+        elif args.device == 'cuda':
+            amp = torch.cuda.amp.autocast(enabled=False)
+        elif args.device == 'xpu':
+            amp = torch.xpu.amp.autocast(enabled=False)
+        else:
+            amp = nullcontext()
+
+        if args.device == 'xpu' and args.warmup < 1:
+            print('XPU device requires warmup - setting warmup=1')
+            args.warmup = 1
 
         inputs_channels = data[
             'paper'].num_features if dataset_name == 'ogbn-mag' \
@@ -205,6 +231,10 @@ def run(args: argparse.ArgumentParser):
                         optimizer = torch.optim.Adam(model.parameters(),
                                                      lr=0.001)
 
+                        if args.device == 'xpu':
+                            model, optimizer = ipex.optimize(
+                                model, optimizer=optimizer)
+
                         progress_bar = False if args.no_progress_bar else True
                         train = train_hetero if hetero else train_homo
 
@@ -254,9 +284,13 @@ def run(args: argparse.ArgumentParser):
                                 print(f'Test Accuracy: {test_acc:.4f}')
 
                             if args.profile:
-                                profile = torch_profile(
-                                    args.export_chrome_trace, csv_data,
-                                    args.write_csv)
+                                if args.device == 'xpu':
+                                    profile = xpu_profile(
+                                        args.export_chrome_trace)
+                                else:
+                                    profile = torch_profile(
+                                        args.export_chrome_trace, csv_data,
+                                        args.write_csv)
                                 with profile:
                                     train(model, subgraph_loader, optimizer,
                                           device, progress_bar=progress_bar,
@@ -304,6 +338,8 @@ if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN training benchmark')
     add = argparser.add_argument
 
+    add('--device', choices=['cpu', 'cuda', 'mps', 'xpu'], default='cpu',
+        help='Device to run benchmark on')
     add('--datasets', nargs='+',
         default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
     add('--use-sparse-tensor', action='store_true',
