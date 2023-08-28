@@ -43,9 +43,9 @@ class BrcaTcga(InMemoryDataset):
           - #edges
           - #features
         * - 1082
+          - 9288
           - 271771
           - 1082
-          - 4
     """
     url = 'https://zenodo.org/record/8251328/files/brca_tcga.zip?download=1'
 
