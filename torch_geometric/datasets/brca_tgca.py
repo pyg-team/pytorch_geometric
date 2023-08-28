@@ -20,6 +20,8 @@ class BrcaTcga(InMemoryDataset):
     The dataset contains the gene features of each patient in graph_features
     and the overall survival time (in months) of each patient,
     which are the labels.
+    Repository with pre-processing and example model code:
+    https://github.com/cannin/pyg_pathway_commons_cbioportal
 
     Args:
         root (str): Root directory where the dataset should be saved.
