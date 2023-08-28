@@ -1,111 +1,70 @@
-from typing import Any, Callable, List
+from collections.abc import Mapping
+from typing import Any, Callable, List, Optional, Sequence
 
 import torch
-from torch import Tensor
 from torch.utils.data import DataLoader
 
 
+def to_device(inputs: Any, device: Optional[torch.device] = None) -> Any:
+    if hasattr(inputs, 'to'):
+        return inputs.to(device)
+    elif isinstance(inputs, Mapping):
+        return {key: to_device(value, device) for key, value in inputs.items()}
+    elif isinstance(inputs, tuple) and hasattr(inputs, '_fields'):
+        return type(inputs)(*(to_device(s, device) for s in zip(*inputs)))
+    elif isinstance(inputs, Sequence) and not isinstance(inputs, str):
+        return [to_device(s, device) for s in zip(*inputs)]
+
+    return inputs
+
+
 class CachedLoader:
-    r"""A caching loader intended to use in layer-wise inference
-    performed on GPU. During the first walk through the data stored in
-    :class:`torch.utils.data.DataLoader`, selected attributes from batches
-    are transferred to GPU memory and cached. Default attributes are
-    `n_id`, `edge_index` and `batch_size`. User can register custom
-    attribute hooks, but only before iterating over loader.
+    r"""A loader to cache mini-batch outputs, e.g., obtained during
+    :class:`NeighborLoader` iterations.
 
     Args:
-        loader (torch.utils.data.DataLoader): The wrapped data loader.
-        device (torch.device): The device to load the data to.
+        loader (torch.utils.data.DataLoader): The data loader.
+        device (torch.device, optional): The device to load the data to.
+            (default: :obj:`None`)
+        transform (callable, optional): A function/transform that takes in
+            a sampled mini-batch and returns a transformed version.
+            (default: :obj:`None`)
     """
-    def __init__(self, loader: DataLoader, device: torch.device):
-        self.n_batches = len(loader)
-        self.iter = iter(loader)
-        self.cache_filled = False
-        self.hook_reg_open = True
+    def __init__(
+        self,
+        loader: DataLoader,
+        device: Optional[torch.device] = None,
+        transform: Optional[Callable] = None,
+    ):
+        self.loader = loader
         self.device = device
-        self.attr_hooks = []
-        self.cache = []
+        self.transform = transform
 
-        # register default hooks
-        self.register_attr_hooks([
-            lambda b: b.n_id, lambda b: b.adj_t
-            if hasattr(b, 'adj_t') else b.edge_index, lambda b: b.batch_size
-        ])
+        self._cache: List[Any] = []
 
-    def _check_if_reg_is_open(self) -> None:
-        if not self.hook_reg_open:
-            raise RuntimeError('Cannot register nor reset attributes hooks '
-                               'after starting iteration over `CachedLoader`')
-
-    def reset_attr_hooks(self) -> None:
-        r"""Resets attribute hooks if possible.
-
-        Raises:
-            RuntimeError: If hook registration is closed.
-        """
-        self._check_if_reg_is_open()
-        self.attr_hooks = []
-
-    def register_attr_hook(self, hook: Callable[[Any], Any]) -> None:
-        r"""Registers attribute hook.
-
-        Args:
-            hook (Callable[[Any], Any]): The attribute hook to register.
-
-        Raises:
-            RuntimeError: If hook registration is closed.
-
-        Example:
-
-        .. code-block:: python
-
-            cached_loader = CachedLoader(wrapped_loader, target_device)
-            cached_loader.register_attr_hook(lambda b: b.n_id)
-        """
-        self._check_if_reg_is_open()
-        self.attr_hooks.append(hook)
-
-    def register_attr_hooks(self, hooks: List[Callable[[Any], Any]]) -> None:
-        r"""Registers attribute hooks, overwriting currently existing hooks.
-
-        Args:
-            hooks (List[Callable[[Any], Any]]): The attribute hooks to
-                register.
-
-        Raises:
-            RuntimeError: If hook registration is closed.
-        """
-        self.reset_attr_hooks()
-        for hook in hooks:
-            self.register_attr_hook(hook)
-
-    def _cache_batch_attrs(self, batch: Any) -> Any:
-        attrs = []
-        for hook in self.attr_hooks:
-            attr = hook(batch)
-            if isinstance(attr, Tensor):
-                attr = attr.to(self.device)
-            attrs.append(attr)
-        self.cache.append(attrs)
-        return attrs
+    def clear(self):
+        r"""Clears the cache."""
+        self._cache = []
 
     def __iter__(self) -> Any:
-        self.hook_reg_open = False
-        return self
+        if len(self._cache):
+            for batch in self._cache:
+                yield batch
+            return
 
-    def __next__(self) -> List[Any]:
-        try:
-            batch = next(self.iter)
-            if not self.cache_filled:
-                batch = self._cache_batch_attrs(batch)
-            return batch
-        except StopIteration as exc:
-            self.cache_filled = True
-            self.iter = iter(self.cache)
-            raise StopIteration from exc
+        for batch in self.loader:
+
+            if self.transform is not None:
+                batch = self.transform(batch)
+
+            batch = to_device(batch, self.device)
+
+            self._cache.append(batch)
+
+            yield batch
 
     def __len__(self) -> int:
-        return self.n_batches
+        return len(self.loader)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.loader})'
