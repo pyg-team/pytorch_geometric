@@ -350,6 +350,29 @@ def test_compile_graph_breaks(Model, device):
     assert num_compile_calls - num_previous_compile_calls == 1
 
 
+@withPackage('pyg_lib')
+def test_basic_gnn_cache():
+    x = torch.randn(14, 16)
+    edge_index = torch.tensor([
+        [2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+        [0, 1, 2, 3, 2, 3, 7, 7, 7, 7],
+    ])
+
+    loader = NeighborLoader(
+        Data(x=x, edge_index=edge_index),
+        num_neighbors=[-1],
+        batch_size=2,
+    )
+
+    model = GCN(in_channels=16, hidden_channels=16, num_layers=2)
+    model.eval()
+
+    out1 = model.inference(loader, cache=False)
+    out2 = model.inference(loader, cache=True)
+
+    assert torch.allclose(out1, out2)
+
+
 if __name__ == '__main__':
     import argparse
 
