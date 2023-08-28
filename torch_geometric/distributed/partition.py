@@ -65,6 +65,9 @@ class Partitioner:
     Args:
         data (Data or HeteroData): The data object.
         num_parts (int): The number of partitions.
+        recursive (bool, optional): If set to :obj:`True`, will use multilevel
+            recursive bisection instead of multilevel k-way partitioning.
+            (default: :obj:`False`)
         root (str): Root directory where the partitioned dataset should be
             saved.
     """
@@ -73,12 +76,14 @@ class Partitioner:
         data: Union[Data, HeteroData],
         num_parts: int,
         root: str,
+        recursive: bool = False,
     ):
         assert num_parts > 1
 
         self.data = data
         self.num_parts = num_parts
         self.root = root
+        self.recursive = recursive
 
     @property
     def is_hetero(self) -> bool:
@@ -110,6 +115,7 @@ class Partitioner:
         cluster_data = ClusterData(
             data,
             num_parts=self.num_parts,
+            recursive=self.recursive,
             log=True,
             keep_inter_cluster_edges=True,
         )
