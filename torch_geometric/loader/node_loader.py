@@ -2,17 +2,17 @@ from typing import Any, Callable, Iterator, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.base import DataLoaderIterator
 from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
+    filter_dist_store,
     filter_custom_store,
     filter_data,
-    filter_hetero_custom_store,
     filter_hetero_data,
     get_input_nodes,
     infer_filter_per_worker,
+    
 )
 from torch_geometric.sampler import (
     BaseSampler,
@@ -21,7 +21,6 @@ from torch_geometric.sampler import (
     SamplerOutput,
 )
 from torch_geometric.typing import InputNodes, OptTensor
-
 
 class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
     r"""A data loader that performs mini-batch sampling from node information,
@@ -78,6 +77,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
+
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
@@ -108,6 +108,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
         self.custom_cls = custom_cls
+        self.worker_init_fn = worker_init_fn
 
         self.input_data = NodeSamplerInput(
             input_id=input_id,
@@ -117,8 +118,11 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         )
 
         iterator = range(input_nodes.size(0))
-        super().__init__(iterator, collate_fn=self.collate_fn,
-                         worker_init_fn=worker_init_fn, **kwargs)
+        super().__init__(
+            iterator,
+            collate_fn=self.collate_fn,
+            worker_init_fn=self.worker_init_fn,
+            **kwargs)
 
     def __call__(
         self,
@@ -155,9 +159,13 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
         if isinstance(out, SamplerOutput):
             if isinstance(self.data, Data):
                 data = filter_data(self.data, out.node, out.row, out.col,
-                                   out.edge,
-                                   self.node_sampler.edge_permutation)
-
+                                   out.edge, self.node_sampler.edge_permutation)
+            else:  # Tuple[FeatureStore, GraphStore]
+                data = Data(x=out.metadata[-3],
+                            y=out.metadata[-2],
+                            edge_index=torch.stack([out.row, out.col]),
+                            edge_attr=out.metadata[-1],
+                            )
             if 'n_id' not in data:
                 data.n_id = out.node
             if out.edge is not None and 'e_id' not in data:
@@ -176,6 +184,14 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                 data = filter_hetero_data(self.data, out.node, out.row,
                                           out.col, out.edge,
                                           self.node_sampler.edge_permutation)
+            else: #Tuple[FeatureStore, GraphStore]
+                if not isinstance(self.node_sampler, BaseSampler): #DistSampler
+                    data = filter_dist_store(*self.data, out.node, out.row,
+                                                out.col, out.edge, self.custom_cls, out.metadata)
+                else:
+                    data = filter_custom_store(*self.data, out.node, out.row,
+                                out.col, out.edge, self.custom_cls)
+
             for key, node in out.node.items():
                 if 'n_id' not in data[key]:
                     data[key].n_id = node
