@@ -3,24 +3,16 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
 
+from torch_geometric.distributed.dist_context import DistContext, DistRole
+from torch_geometric.distributed.dist_loader import DistLoader
+from torch_geometric.distributed.dist_neighbor_sampler import (
+    DistNeighborSampler,
+)
 from torch_geometric.distributed.local_feature_store import LocalFeatureStore
 from torch_geometric.distributed.local_graph_store import LocalGraphStore
-from torch_geometric.distributed.dist_context import DistContext, DistRole
 from torch_geometric.loader.link_loader import LinkLoader
-from torch_geometric.distributed.dist_loader import DistLoader
-from torch_geometric.distributed.dist_neighbor_sampler import DistNeighborSampler
-
-from torch_geometric.sampler.base import (
-    NegativeSampling,
-    SubgraphType,
-)
-from torch_geometric.typing import (
-    EdgeType,
-    InputEdges,
-    OptTensor,
-)
-
-
+from torch_geometric.sampler.base import NegativeSampling, SubgraphType
+from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
 class DistLinkNeighborLoader(LinkLoader, DistLoader):
