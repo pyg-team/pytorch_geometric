@@ -170,8 +170,9 @@ def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
         return out[1]
 
     # Only implemented under certain conditions for now :(
-    assert dim == 0
     assert src.dim() == 1 and index.dim() == 1
+    assert dim == 0 or dim == -1
+    assert src.numel() == index.numel()
 
     if dim_size is None:
         dim_size = index.max() + 1 if index.numel() > 0 else 0
@@ -191,3 +192,58 @@ def scatter_argmax(src: Tensor, index: Tensor, dim: int = 0,
     out[index[nonzero]] = nonzero
 
     return out
+
+
+def group_argsort(
+    src: Tensor,
+    index: Tensor,
+    dim: int = 0,
+    num_groups: Optional[int] = None,
+    descending: bool = False,
+    consecutive: bool = False,
+    stable: bool = False,
+) -> Tensor:
+    r"""Returns the indices that sort the tensor :obj:`src` along a given
+    dimension in ascending order by value.
+    In contrast to :meth:`torch.argsort`, sorting is performed in groups
+    according to the values in :obj:`index`.
+
+    Args:
+        src (torch.Tensor): The source tensor.
+        index (torch.Tensor): The index tensor.
+        dim (int, optional): The dimension along which to index.
+            (default: :obj:`0`)
+        num_groups (int, optional): The number of groups.
+            (default: :obj:`None`)
+        descending (bool, optional): Controls the sorting order (ascending or
+            descending). (default: :obj:`False`)
+        consecutive (bool, optional): If set to :obj:`True`, will not offset
+            the output to start from :obj:`0` for each group.
+        stable (bool, optional): Controls the relative order of equivalent
+            elements. (default: :obj:`False`)
+    """
+    # Only implemented under certain conditions for now :(
+    assert src.dim() == 1 and index.dim() == 1
+    assert dim == 0 or dim == -1
+    assert src.numel() == index.numel() and src.numel() > 0
+
+    # Normalize `src` to range [0, 1):
+    src = src - src.min()
+    src = src / src.max()
+
+    # Compute `grouped_argsort`:
+    src = src - 2 * index if descending else src + 2 * index
+    perm = src.argsort(descending=descending, stable=stable)
+    out = torch.empty_like(index)
+    out[perm] = torch.arange(index.numel(), device=index.device)
+
+    if consecutive:
+        return out
+
+    # Compute cumulative sum of number of entries with the same index:
+    count = scatter(torch.ones_like(index), index, dim=dim,
+                    dim_size=num_groups, reduce='sum')
+    ptr = count.new_zeros(count.numel() + 1)
+    torch.cumsum(count, dim=0, out=ptr[1:])
+
+    return out - ptr[index]
