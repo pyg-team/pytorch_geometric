@@ -200,7 +200,7 @@ def group_argsort(
     dim: int = 0,
     num_groups: Optional[int] = None,
     descending: bool = False,
-    consecutive: bool = False,
+    return_consecutive: bool = False,
     stable: bool = False,
 ) -> Tensor:
     r"""Returns the indices that sort the tensor :obj:`src` along a given
@@ -217,8 +217,9 @@ def group_argsort(
             (default: :obj:`None`)
         descending (bool, optional): Controls the sorting order (ascending or
             descending). (default: :obj:`False`)
-        consecutive (bool, optional): If set to :obj:`True`, will not offset
-            the output to start from :obj:`0` for each group.
+        return_consecutive (bool, optional): If set to :obj:`True`, will not
+            offset the output to start from :obj:`0` for each group.
+            (default: :obj:`False`)
         stable (bool, optional): Controls the relative order of equivalent
             elements. (default: :obj:`False`)
     """
@@ -237,7 +238,7 @@ def group_argsort(
     out = torch.empty_like(index)
     out[perm] = torch.arange(index.numel(), device=index.device)
 
-    if consecutive:
+    if return_consecutive:
         return out
 
     # Compute cumulative sum of number of entries with the same index:
