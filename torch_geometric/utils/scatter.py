@@ -227,7 +227,7 @@ def group_argsort(
     assert dim == 0 or dim == -1
     assert src.numel() == index.numel() and src.numel() > 0
 
-    # Normalize `src` to range [0, 1):
+    # Normalize `src` to range [0, 1]:
     src = src - src.min()
     src = src / src.max()
 
