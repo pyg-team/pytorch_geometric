@@ -339,7 +339,7 @@ def test_compile_graph_breaks(Model, device):
 
     explanation = dynamo.explain(model, x, edge_index)
     if hasattr(explanation, 'graph_break_count'):
-        assert explanation.graph_break_count == 1
+        assert explanation.graph_break_count == 0
     else:
         assert 'with 0 graph break' in explanation[0]
 
