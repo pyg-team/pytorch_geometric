@@ -234,7 +234,13 @@ def group_argsort(
 
     # Compute `grouped_argsort`:
     src = src - 2 * index if descending else src + 2 * index
-    perm = src.argsort(descending=descending, stable=stable)
+    if torch_geometric.typing.WITH_PT113:
+        perm = src.argsort(descending=descending, stable=stable)
+    else:
+        perm = src.argsort(descending=descending)
+        if stable:
+            warnings.warn("Ignoring option `stable=True` in 'group_argsort' "
+                          "since it requires PyTorch >= 1.13.0")
     out = torch.empty_like(index)
     out[perm] = torch.arange(index.numel(), device=index.device)
 
