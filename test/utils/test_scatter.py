@@ -5,7 +5,7 @@ import torch
 
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import disableExtensions, withCUDA, withPackage
-from torch_geometric.utils import scatter
+from torch_geometric.utils import group_argsort, scatter
 from torch_geometric.utils.scatter import scatter_argmax
 
 
@@ -72,6 +72,26 @@ def test_scatter_any(device):
     for i in range(3):
         for j in range(4):
             assert float(out[i, j]) in src[2 * i:2 * i + 2, j].tolist()
+
+
+@withCUDA
+@pytest.mark.parametrize('num_groups', [4])
+@pytest.mark.parametrize('descending', [False, True])
+def test_group_argsort(num_groups, descending, device):
+    src = torch.randn(20, device=device)
+    index = torch.randint(0, num_groups, (20, ), device=device)
+
+    out = group_argsort(src, index, 0, num_groups, descending=descending)
+
+    expected = torch.empty_like(index)
+    for i in range(num_groups):
+        mask = index == i
+        tmp = src[mask].argsort(descending=descending)
+        perm = torch.empty_like(tmp)
+        perm[tmp] = torch.arange(tmp.numel(), device=device)
+        expected[mask] = perm
+
+    assert torch.equal(out, expected)
 
 
 @withCUDA
