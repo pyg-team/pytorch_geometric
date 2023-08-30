@@ -68,6 +68,16 @@ class LinkNeighborLoader(LinkLoader):
         Negative sampling is currently implemented in an approximate
         way, *i.e.* negative edges may contain false negatives.
 
+    The data loader will add the following attributes to the returned
+    mini-batch:
+
+    * :obj:`n_id` The global node index for every sampled node
+    * :obj:`e_id` The global edge index for every sampled edge
+    * :obj:`batch_size` The number of seed nodes (first nodes in the batch)
+    * :obj:`input_id`: The index of the :obj:`input_nodes`
+    * :obj:`num_sampled_nodes`: The number of sampled nodes in each hop
+    * :obj:`num_sampled_edges`: The number of sampled edges in each hop
+
     Args:
         data (Any): A :class:`~torch_geometric.data.Data`,
             :class:`~torch_geometric.data.HeteroData`, or
