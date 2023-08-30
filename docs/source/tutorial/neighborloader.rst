@@ -1,12 +1,11 @@
 NeighborLoader
 =====================================
-``NeighborLoader`` is a data loader that performs neighbor sampling as introduced in the “Inductive Representation Learning on Large Graphs” paper. This loader allows for mini-batch training of GNNs on large-scale graphs where full-batch training leads to out of memory problem.
+``NeighborLoader`` is a data loader that performs neighbor sampling as introduced in the “Inductive Representation Learning on Large Graphs” paper. 
+This loader allows for mini-batch training of GNNs on large-scale graphs where full-batch training leads to out of memory problem.
 
 
 Small graph example
 --------------------
-
-
 
 To start off, we can create a small graph to know the computation graph:
 
@@ -60,6 +59,8 @@ The second layer will also do the aggregation
 
 Then we will use ``[:batch.batch_size]`` take the embedding of the target node ``[0]``  as ``y_hat`` to calculate the loss.  
 
+In the next iteration, we will get the subgraph of the target node ``[1]`` 
+
 To use it in prctice, we can take a look at the `Reddit <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py>`__ example from PyG:
 
 
@@ -80,13 +81,14 @@ Defining our NeighborLoader
     subgraph_loader.data.num_nodes = data.num_nodes
     subgraph_loader.data.n_id = torch.arange(data.num_nodes)
 
-Note ``data`` has the ``train_mask``, ``val_mask`` and ``test_mask`` attribute which we use to define our training and evaluation sets.
+Note ``data`` has the ``train_mask``, ``val_mask``, and ``test_mask`` attributes, which we use to define our training and evaluation sets.
 ``num_neighbors`` means we define a two-layer GNN, where the first layer samples 25 neighbors and the second layer samples 10 neighbors.
-``input_nodes`` is a list of nodes, we need to compute their embedding.
-``shuffle`` means each epoch we train nodes in different order.
+``input_nodes`` is a list of nodes. We need to compute their embedding.
+``shuffle`` means that we train nodes in a different order for each epoch.
 
 We also create a single-hop evaluation neighbor loader: ``subgraph_loader`` is used for evaluation, where we do not need to maintain the features.
-We also add global node index information to the subgraph loader. This is used for index feature in CPU and send features to GPU for computation, refer line: ``x = x_all[batch.n_id.to(x_all.device)].to(device)``
+We also add global node index information to the subgraph loader. The global node index is used for index features in the CPU and sends features to the GPU for computation, 
+refer line: ``x = x_all[batch.n_id.to(x_all.device)].to(device)``
 
 Define Model
 --------------
@@ -159,6 +161,9 @@ Ensuring to only make use of the first batch_size many nodes for loss/metric com
 Extension
 ----------
 
-A drawback of Neighborloader is it iteratively builds representations for *all* nodes at *all* depths of the network, although nodes sampled in later hops do not contribute to the node representations of seed nodes in later GNN layers anymore, thus performing useless computation.
+
+A drawback of Neighborloader is it iteratively builds representations for *all* nodes at *all* depths of the network. 
+However, nodes sampled in later hops no longer contribute to the node representations of seed nodes in later GNN layers, thus performing useless computation.
 NeighborLoader will be marginally slower since we are computing node embeddings for nodes we no longer need. This is a trade-off we make to obtain a cleaner GNN design.
-This example shows how to eliminate this overhead and speeds up training and inference in mini-batch GNNs `Hierarchical Neighborhood Sampling <https://pytorch-geometric.readthedocs.io/en/latest/advanced/hgam.html>`__ to improve its efficiency.
+This example shows how to eliminate this overhead and speed up training and inference in mini-batch GNNs 
+`Hierarchical Neighborhood Sampling <https://pytorch-geometric.readthedocs.io/en/latest/advanced/hgam.html>`__ to improve its efficiency.

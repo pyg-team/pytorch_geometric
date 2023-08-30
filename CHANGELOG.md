@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [2.4.0] - 2023-MM-DD
 
 ### Added
-
+- Added `NeighborLoader` document Tutorial ([#7931](https://github.com/pyg-team/pytorch_geometric/pull/7931))
 - Added `group_argsort` implementation ([#7948](https://github.com/pyg-team/pytorch_geometric/pull/7948))
 - Added `CachedLoader` implementation ([#7896](https://github.com/pyg-team/pytorch_geometric/pull/7896), [#7897](https://github.com/pyg-team/pytorch_geometric/pull/7897))
 - Added possibility to run training benchmarks on XPU device ([#7925](https://github.com/pyg-team/pytorch_geometric/pull/7925))
