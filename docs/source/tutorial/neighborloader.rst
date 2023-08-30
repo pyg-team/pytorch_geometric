@@ -32,12 +32,12 @@ The NeighborLoader will return a ``batch``, which contains the following attribu
     data = Data(torch.tensor(features), edge_index)
     loader = NeighborLoader(data, hop, batch_size=1)
     batch = next(iter(loader))
- 
+
     batch.edge_index  #  Note it will relabel in the subgraph.
     >>> tensor([[1, 2, 3, 4],
         [0, 0, 1, 2]])
 
-    
+
     batch.x
     >>> tensor([[0],
         [2],
@@ -54,11 +54,11 @@ In the computation, first layer will do the aggregation to update the embedding 
 
 ``[2,3]->[0],[5] ->[2], [6] ->[3]``
 
-The second layer will also do the aggregation 
+The second layer will also do the aggregation
 
 ``[2,3]->[0],[5] ->[2], [6] ->[3]``
 
-Then we will use ``[:batch.batch_size]`` take the embedding of the target node ``[0]``  as ``y_hat`` to calculate the loss.  
+Then we will use ``[:batch.batch_size]`` take the embedding of the target node ``[0]``  as ``y_hat`` to calculate the loss.
 
 To use it in prctice, we can take a look at the `Reddit <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py>`__ example from PyG:
 
@@ -102,7 +102,7 @@ Define Model
 
         def forward(self, x, edge_index):
             for i, conv in enumerate(self.convs):
-                x = conv(x, edge_index) 
+                x = conv(x, edge_index)
                 if i < len(self.convs) - 1:
                     x = x.relu_()
                     x = F.dropout(x, p=0.5, training=self.training)
