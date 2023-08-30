@@ -568,5 +568,32 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
 
         if temporal:
             for i in range(batch_size):
-                assert (node_store.time[node_store.batch == i].max()
-                        <= node_store.seed_time[i])
+                assert (node_store.time[node_store.batch == i].max() <=
+                        node_store.seed_time[i])
+
+
+def test_link_neighbor_loader_mapping():
+    edge_index = torch.tensor([
+        [0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 3, 5],
+        [1, 2, 3, 4, 5, 8, 6, 7, 9, 10, 6, 11],
+    ])
+    data = Data(edge_index=edge_index, num_nodes=12)
+
+    loader = LinkNeighborLoader(
+        data,
+        edge_label_index=data.edge_index,
+        num_neighbors=[1],
+        batch_size=2,
+        shuffle=True,
+        disjoint=True,
+    )
+
+    for batch in loader:
+        print(batch)
+        print(batch.n_id[batch.edge_index])
+        print(data.edge_index[:, batch.e_id])
+        print(
+            torch.equal(
+                batch.n_id[batch.edge_index],
+                data.edge_index[:, batch.e_id],
+            ))
