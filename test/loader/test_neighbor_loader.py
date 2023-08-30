@@ -694,6 +694,7 @@ def test_hetero_neighbor_loader_sampled_info():
                 expected_num_sampled_edges[edge_type])
 
 
+@withPackage('pyg_lib')
 def test_neighbor_loader_mapping():
     edge_index = torch.tensor([
         [0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 3, 5],

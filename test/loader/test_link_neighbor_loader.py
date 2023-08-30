@@ -572,6 +572,7 @@ def test_hetero_link_neighbor_loader_triplet(disjoint, temporal, amount):
                         <= node_store.seed_time[i])
 
 
+@withPackage('pyg_lib')
 def test_link_neighbor_loader_mapping():
     edge_index = torch.tensor([
         [0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 3, 5],
