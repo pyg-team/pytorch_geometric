@@ -692,3 +692,25 @@ def test_hetero_neighbor_loader_sampled_info():
     for edge_type in batch.edge_types:
         assert (batch[edge_type].num_sampled_edges ==
                 expected_num_sampled_edges[edge_type])
+
+
+@withPackage('pyg_lib')
+def test_neighbor_loader_mapping():
+    edge_index = torch.tensor([
+        [0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 3, 5],
+        [1, 2, 3, 4, 5, 8, 6, 7, 9, 10, 6, 11],
+    ])
+    data = Data(edge_index=edge_index, num_nodes=12)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[1],
+        batch_size=2,
+        shuffle=True,
+    )
+
+    for batch in loader:
+        assert torch.equal(
+            batch.n_id[batch.edge_index],
+            data.edge_index[:, batch.e_id],
+        )
