@@ -34,6 +34,7 @@ supported_sets = {
 }
 
 device_conditions = {
+    'cpu': (lambda: True),
     'cuda': (lambda: torch.cuda.is_available()),
     'mps':
     (lambda:
