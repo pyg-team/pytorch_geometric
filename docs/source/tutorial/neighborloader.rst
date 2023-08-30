@@ -3,10 +3,64 @@ NeighborLoader
 ``NeighborLoader`` is a data loader that performs neighbor sampling as introduced in the “Inductive Representation Learning on Large Graphs” paper. This loader allows for mini-batch training of GNNs on large-scale graphs where full-batch training leads to out of memory problem.
 
 
-Starting off small
-------------------
+Small graph example
+--------------------
 
-To start, we can take a look at the `Reddit <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py>`__ example from PyG:
+
+
+To start off, we can create a small graph to know the computation graph:
+
+.. image:: ../_figures/neighborloader.png
+  :align: center
+  :width: 300px
+
+The NeighborLoader will return a ``batch``, which contains the following attributes:
+``batch.y`` is the label of the nodes in the batch.
+``batch.x`` is the feature of the nodes in the batch.
+``batch.edge_index`` is the edge index of the subgraph.
+``batch.batch_size`` is the number of nodes which we need to compute their embedding. Note: ``batch.x.shape[0]`` is the number of nodes of subgraph.
+``batch.n_id`` is the global node index of the nodes in the batch.
+
+
+.. code-block:: python
+
+    in_channels = 1
+    node_num = 8
+    features = [[i for j in range(in_channels)] for i in range(node_num)]
+    edge_index = torch.tensor([[2, 3, 3, 4, 5, 6, 7], [0, 0, 1, 1, 2, 3, 4]],
+                              dtype=torch.long)
+    data = Data(torch.tensor(features), edge_index)
+    loader = NeighborLoader(data, hop, batch_size=1)
+    batch = next(iter(loader))
+ 
+    batch.edge_index  #  Note it will relabel in the subgraph.
+    >>> tensor([[1, 2, 3, 4],
+        [0, 0, 1, 2]])
+
+    
+    batch.x
+    >>> tensor([[0],
+        [2],
+        [3],
+        [5],
+        [6]])
+
+    batch.n_id
+    >>> tensor([0, 2, 3, 5, 6])
+
+    # the global id of target node is 0, the neighborloader sample first layer of 0, get 0, 2,3 . Then the neighborloader sample second layer, get 5,6
+
+In the computation, first layer will do the aggregation to update the embedding of node in the second row of ``batch.edge_index``.
+
+``[2,3]->[0],[5] ->[2], [6] ->[3]``
+
+The second layer will also do the aggregation 
+
+``[2,3]->[0],[5] ->[2], [6] ->[3]``
+
+Then we will use ``[:batch.batch_size]`` take the embedding of the target node ``[0]``  as ``y_hat`` to calculate the loss.  
+
+To use it in prctice, we can take a look at the `Reddit <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/reddit.py>`__ example from PyG:
 
 
 Defining our NeighborLoader
@@ -26,12 +80,12 @@ Defining our NeighborLoader
     subgraph_loader.data.num_nodes = data.num_nodes
     subgraph_loader.data.n_id = torch.arange(data.num_nodes)
 
-Note ``data`` has a ``train_mask``, ``val_mask`` and ``test_mask`` attribute which we use to define our training and evaluation sets.
+Note ``data`` has the ``train_mask``, ``val_mask`` and ``test_mask`` attribute which we use to define our training and evaluation sets.
 ``num_neighbors`` means we define a two-layer GNN, where the first layer samples 25 neighbors and the second layer samples 10 neighbors.
 ``input_nodes`` is a list of nodes, we need to compute their embedding.
-``shuffle`` means we shuffle the nodes in each mini-batch, similar with Pytorch DataLoader.
+``shuffle`` means each epoch we train nodes in different order.
 
-We also create a single-hop evaluation neighbor loader, ``subgraph_loader`` is used for evaluation, where we do not need to maintain the features.
+We also create a single-hop evaluation neighbor loader: ``subgraph_loader`` is used for evaluation, where we do not need to maintain the features.
 We also add global node index information to the subgraph loader. This is used for index feature in CPU and send features to GPU for computation, refer line: ``x = x_all[batch.n_id.to(x_all.device)].to(device)``
 
 Define Model
@@ -48,7 +102,7 @@ Define Model
 
         def forward(self, x, edge_index):
             for i, conv in enumerate(self.convs):
-                x = conv(x, edge_index)
+                x = conv(x, edge_index) 
                 if i < len(self.convs) - 1:
                     x = x.relu_()
                     x = F.dropout(x, p=0.5, training=self.training)
@@ -68,7 +122,6 @@ Define Model
             return x_all
 
 the number of SAGE layers in a GNN model is the same as the depth K in the GraphSAGE algorithm.
-
 
 Train
 -----------
@@ -99,18 +152,13 @@ Train
 
         return total_loss / total_examples, total_correct / total_examples
 
-The NeighborLoader will return a ``batch``, which contains the following attributes:
-``batch.y`` is the label of the nodes in the batch.
-``batch.x`` is the feature of the nodes in the batch.
-``batch.edge_index`` is the edge index of the subgraph.
-``batch.batch_size`` is the number of nodes which we need to compute their embedding. Note: ``batch.x.shape[0]`` is the number of nodes of subgraph.
-``batch.n_id`` is the global node index of the nodes in the batch.
 
-
+Ensuring to only make use of the first batch_size many nodes for loss/metric computation
 
 
 Extension
 ----------
 
 A drawback of Neighborloader is it iteratively builds representations for *all* nodes at *all* depths of the network, although nodes sampled in later hops do not contribute to the node representations of seed nodes in later GNN layers anymore, thus performing useless computation.
+NeighborLoader will be marginally slower since we are computing node embeddings for nodes we no longer need. This is a trade-off we make to obtain a cleaner GNN design.
 This example shows how to eliminate this overhead and speeds up training and inference in mini-batch GNNs `Hierarchical Neighborhood Sampling <https://pytorch-geometric.readthedocs.io/en/latest/advanced/hgam.html>`__ to improve its efficiency.
