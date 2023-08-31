@@ -62,8 +62,8 @@ class MyketDataset(InMemoryDataset):
             download_url(self.url.format(f), self.raw_dir)
 
     def process(self):
-        import pandas as pd
         import numpy as np
+        import pandas as pd
 
         df = pd.read_csv(self.raw_paths[0], skiprows=1, header=None)
 
@@ -72,8 +72,8 @@ class MyketDataset(InMemoryDataset):
         t = torch.from_numpy(df.iloc[:, 2].values).to(torch.float)
 
         features = np.load(self.raw_paths[1])
-        msg = torch.from_numpy(
-            features[df.iloc[:, 1].values, :]).to(torch.float)
+        msg = torch.from_numpy(features[df.iloc[:,
+                                                1].values, :]).to(torch.float)
         dst += int(src.max()) + 1
 
         data = TemporalData(src=src, dst=dst, t=t, msg=msg)
