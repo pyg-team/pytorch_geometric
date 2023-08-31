@@ -55,14 +55,15 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                   input_nodes=split_idx['train'],
                                   batch_size=batch_size,
                                   num_workers=pyg_num_work())
-    eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
-                                 input_nodes=split_idx['valid'],
-                                 batch_size=batch_size,
-                                 num_workers=pyg_num_work())
-    test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
-                                 input_nodes=split_idx['test'],
-                                 batch_size=batch_size,
-                                 num_workers=pyg_num_work())
+    if rank == 0:
+        eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
+                                     input_nodes=split_idx['valid'],
+                                     batch_size=batch_size,
+                                     num_workers=pyg_num_work())
+        test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
+                                     input_nodes=split_idx['test'],
+                                     batch_size=batch_size,
+                                     num_workers=pyg_num_work())
     eval_steps = 100
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(rank)
     if rank == 0:
