@@ -71,6 +71,7 @@ from .dgraph import DGraphFin
 from .hydro_net import HydroNet
 from .airfrans import AirfRANS
 from .jodie import JODIEDataset
+from .myket import MyketDataset
 from .wikidata import Wikidata5M
 
 from .dbp15k import DBP15K
@@ -175,6 +176,7 @@ homo_datasets = [
     'HydroNet',
     'AirfRANS',
     'JODIEDataset',
+    'MyketDataset',
     'Wikidata5M',
 ]
 
