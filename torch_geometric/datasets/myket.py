@@ -8,7 +8,7 @@ from torch_geometric.data import InMemoryDataset, TemporalData, download_url
 class MyketDataset(InMemoryDataset):
     r"""Myket Android Application Install dataset
     from the `"Effect of Choosing Loss Function when Using T-batching for
-     Representation Learning on Dynamic Networks"
+    Representation Learning on Dynamic Networks"
     <https://arxiv.org/pdf/2308.06862.pdf>`_ paper. The dataset contains a
     temporal graph of application install interactions in an android
     application market.
