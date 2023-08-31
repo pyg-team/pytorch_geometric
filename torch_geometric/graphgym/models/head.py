@@ -19,6 +19,13 @@ class GNNNodeHead(nn.Module):
     Args:
         dim_in (int): Input dimension
         dim_out (int): Output dimension. For binary prediction, dim_out=1.
+
+    Example:
+        >>> head = GNNNodeHead(dim_in=16, dim_out=1)
+        >>> batch = torch.randn((10, 16))
+        >>> pred, label = head(batch)
+        >>> print(pred.shape, label.shape)
+        # torch.Size([10, 1]), torch.Size([10])
     """
     def __init__(self, dim_in, dim_out):
         super().__init__()
@@ -51,6 +58,13 @@ class GNNEdgeHead(nn.Module):
     Args:
         dim_in (int): Input dimension
         dim_out (int): Output dimension. For binary prediction, dim_out=1.
+
+    Example:
+        >>> head = GNNEdgeHead(dim_in=16, dim_out=1)
+        >>> batch = torch.randn((10, 16))
+        >>> pred, label = head(batch)
+        >>> print(pred.shape, label.shape)
+        # torch.Size([10, 1]), torch.Size([10])
     """
     def __init__(self, dim_in, dim_out):
         super().__init__()
@@ -104,6 +118,13 @@ class GNNGraphHead(nn.Module):
     Args:
         dim_in (int): Input dimension
         dim_out (int): Output dimension. For binary prediction, dim_out=1.
+
+    Example:
+        >>> head = GNNGraphHead(dim_in=16, dim_out=1)
+        >>> batch = torch.randn((10, 16))
+        >>> pred, label = head(batch)
+        >>> print(pred.shape, label.shape)
+        # torch.Size([10, 1]), torch.Size([10])
     """
     def __init__(self, dim_in, dim_out):
         super().__init__()

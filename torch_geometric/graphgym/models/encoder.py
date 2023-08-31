@@ -15,6 +15,16 @@ class IntegerFeatureEncoder(torch.nn.Module):
         emb_dim (int): Output embedding dimension
         num_classes (int): the number of classes for the
         embedding mapping to learn from
+
+    Example:
+        >>> encoder = IntegerFeatureEncoder(emb_dim=16, num_classes=10)
+        >>> batch = torch.randint(0, 10, (10, 2))
+        >>> encoded_batch = encoder(batch)
+        >>> print(encoded_batch.x)
+        # tensor([[0.2470, 0.7026, 0.9272, 0.3419, 0.5079, 0.0506, 0.8246,
+        #          0.0228, 0.9619, 0.3349, 0.8910],
+        #          [0.4278, 0.0592, 0.1844, 0.5261, 0.3682, 0.6348, 0.4851,
+        #           0.7007, 0.4754, 0.3943, 0.7505]])
     """
     def __init__(self, emb_dim, num_classes=None):
         super().__init__()
@@ -37,6 +47,22 @@ class AtomEncoder(torch.nn.Module):
     Args:
         emb_dim (int): Output embedding dimension
         num_classes: None
+
+    Example:
+        >>> encoder = AtomEncoder(emb_dim=16)
+        >>> batch = torch.randint(0, 10, (10, 3))
+        >>> encoded_batch = encoder(batch)
+        >>> print(encoded_batch.x)
+        # tensor([[0.2470, 0.7026, 0.9272],
+        #          [0.4278, 0.0592, 0.1844],
+        #          [0.8246, 0.0228, 0.9619],
+        #          [0.3349, 0.3943, 0.8910],
+        #          [0.5079, 0.6348, 0.8246],
+        #          [0.0506, 0.7007, 0.4851],
+        #          [0.8246, 0.4754, 0.3943],
+        #          [0.0228, 0.7505, 0.7007],
+        #          [0.9619, 0.3943, 0.3349],
+        #          [0.3349, 0.8910, 0.5079]])
     """
     def __init__(self, emb_dim, num_classes=None):
         super().__init__()
@@ -66,6 +92,23 @@ class BondEncoder(torch.nn.Module):
 
     Args:
         emb_dim (int): Output edge embedding dimension
+
+
+    Example:
+        >>> encoder = BondEncoder(emb_dim=16)
+        >>> batch = torch.randint(0, 10, (10, 3))
+        >>> encoded_batch = encoder(batch)
+        >>> print(encoded_batch.edge_attr)
+        # tensor([[0.2470, 0.7026, 0.9272],
+        #          [0.4278, 0.0592, 0.1844],
+        #          [0.8246, 0.0228, 0.9619],
+        #          [0.3349, 0.3943, 0.8910],
+        #          [0.5079, 0.6348, 0.8246],
+        #          [0.0506, 0.7007, 0.4851],
+        #          [0.8246, 0.4754, 0.3943],
+        #          [0.0228, 0.7505, 0.7007],
+        #          [0.9619, 0.3943, 0.3349],
+        #          [0.3349, 0.8910, 0.5079]])
     """
     def __init__(self, emb_dim):
         super().__init__()

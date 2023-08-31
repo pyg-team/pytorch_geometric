@@ -46,6 +46,20 @@ class LayerConfig:
 
 
 def new_layer_config(dim_in, dim_out, num_layers, has_act, has_bias, cfg):
+    """
+    Create a layer configuration for a GNN layer.
+
+    Args:
+        dim_in (int): Input dimension
+        dim_out (int): Output dimension
+        num_layers (int): Number of hidden layers
+        has_act (bool): Whether to apply activation after each layer
+        has_bias (bool): Whether to use bias in each layer
+        cfg (OmegaConf): The configuration of the model
+
+    Returns:
+        LayerConfig: The layer configuration
+    """
     return LayerConfig(
         has_batchnorm=cfg.gnn.batchnorm,
         bn_eps=cfg.bn.eps,
@@ -100,6 +114,13 @@ class GeneralLayer(nn.Module):
         self.post_layer = nn.Sequential(*layer_wrapper)
 
     def forward(self, batch):
+        """
+        Args:
+            batch (Union[torch.Tensor, dgl.DGLGraph]): The input data.
+
+        Returns:
+            Union[torch.Tensor, dgl.DGLGraph]: The output data.
+        """
         batch = self.layer(batch)
         if isinstance(batch, torch.Tensor):
             batch = self.post_layer(batch)
@@ -182,6 +203,13 @@ class BatchNorm1dNode(nn.Module):
 
     Args:
         dim_in (int): Input dimension
+
+    Example:
+        >>> layer = BatchNorm1dNode(layer_config=LayerConfig(dim_in=16))
+        >>> batch = torch.randn((10, 16))
+        >>> batch = layer(batch)
+        >>> print(batch.x.shape)
+        # torch.Size([10, 16])
     """
     def __init__(self, layer_config: LayerConfig):
         super().__init__()
@@ -199,6 +227,12 @@ class BatchNorm1dEdge(nn.Module):
 
     Args:
         dim_in (int): Input dimension
+    Example:
+        >>> layer = BatchNorm1dEdge(layer_config=LayerConfig(dim_in=8))
+        >>> batch = torch.randn((10, 10, 8))
+        >>> batch = layer(batch)
+        >>> print(batch.edge_attr.shape)
+        # torch.Size([10, 10, 8])
     """
     def __init__(self, layer_config: LayerConfig):
         super().__init__()
