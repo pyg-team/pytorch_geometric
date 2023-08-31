@@ -1,6 +1,6 @@
 import copy
 
-from .scatter import scatter
+from .scatter import scatter, group_argsort
 from .segment import segment
 from .sort import index_sort
 from .degree import degree
@@ -56,6 +56,7 @@ from .train_test_split_edges import train_test_split_edges
 
 __all__ = [
     'scatter',
+    'group_argsort',
     'segment',
     'index_sort',
     'degree',
