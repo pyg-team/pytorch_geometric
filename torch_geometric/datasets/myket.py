@@ -7,8 +7,11 @@ from torch_geometric.data import InMemoryDataset, TemporalData, download_url
 
 class MyketDataset(InMemoryDataset):
     r"""Myket Android Application Install dataset
-    from the `"Effect of Choosing Loss Function when Using T-batching for Representation Learning on Dynamic Networks"
-    <https://arxiv.org/pdf/2308.06862.pdf>`_ paper. The dataset contains a temporal graph of application install interactions in an android application market.
+    from the `"Effect of Choosing Loss Function when Using T-batching for
+     Representation Learning on Dynamic Networks"
+    <https://arxiv.org/pdf/2308.06862.pdf>`_ paper. The dataset contains a
+    temporal graph of application install interactions in an android
+    application market.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -38,7 +41,8 @@ class MyketDataset(InMemoryDataset):
           - 33
           - 1
     """
-    url = 'https://raw.githubusercontent.com/erfanloghmani/myket-android-application-market-dataset/main/data_int_index/{}'
+    url = ("https://raw.githubusercontent.com/erfanloghmani/",
+           "myket-android-application-market-dataset/main/data_int_index/{}")
 
     def __init__(
         self,
@@ -51,11 +55,11 @@ class MyketDataset(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> str:
-        return ['myket.csv', 'app_info_sample.npy']
+        return ["myket.csv", "app_info_sample.npy"]
 
     @property
     def processed_file_names(self) -> str:
-        return 'myket.pt'
+        return "myket.pt"
 
     def download(self):
         for f in self.raw_file_names:
@@ -72,8 +76,8 @@ class MyketDataset(InMemoryDataset):
         t = torch.from_numpy(df.iloc[:, 2].values).to(torch.float)
 
         features = np.load(self.raw_paths[1])
-        msg = torch.from_numpy(features[df.iloc[:,
-                                                1].values, :]).to(torch.float)
+        msg = torch.from_numpy(features[df.iloc[:, 1].values, :]).to(
+            torch.float)
         dst += int(src.max()) + 1
 
         data = TemporalData(src=src, dst=dst, t=t, msg=msg)
