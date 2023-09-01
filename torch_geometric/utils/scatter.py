@@ -1,12 +1,11 @@
-import warnings
 from typing import Optional
 
 import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import warnings
 from torch_geometric.typing import torch_scatter
-from torch_geometric.warnings import warn
 
 if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
@@ -86,9 +85,9 @@ if torch_geometric.typing.WITH_PT112:  # pragma: no cover
                     or not src.is_cuda or not src.requires_grad):
 
                 if src.is_cuda and src.requires_grad:
-                    warn(f"The usage of `scatter(reduce='{reduce}')` "
-                         f"can be accelerated via the 'torch-scatter'"
-                         f" package, but it was not found")
+                    warnings.warn(f"The usage of `scatter(reduce='{reduce}')` "
+                                  f"can be accelerated via the 'torch-scatter'"
+                                  f" package, but it was not found")
 
                 index = broadcast(index, src, dim)
                 return src.new_zeros(size).scatter_reduce_(
