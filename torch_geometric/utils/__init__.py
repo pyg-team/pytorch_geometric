@@ -1,6 +1,6 @@
 import copy
 
-from .scatter import scatter
+from .scatter import scatter, group_argsort
 from .segment import segment
 from .sort import index_sort
 from .degree import degree
@@ -51,10 +51,12 @@ from .augmentation import shuffle_node, mask_feature, add_random_edge
 from .tree_decomposition import tree_decomposition
 from .embedding import get_embeddings
 from .trim_to_layer import trim_to_layer
+from .ppr import get_ppr
 from .train_test_split_edges import train_test_split_edges
 
 __all__ = [
     'scatter',
+    'group_argsort',
     'segment',
     'index_sort',
     'degree',
@@ -135,6 +137,7 @@ __all__ = [
     'tree_decomposition',
     'get_embeddings',
     'trim_to_layer',
+    'get_ppr',
     'train_test_split_edges',
 ]
 

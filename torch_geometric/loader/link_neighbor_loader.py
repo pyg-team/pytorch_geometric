@@ -63,6 +63,14 @@ class LinkNeighborLoader(LinkLoader):
     The rest of the functionality mirrors that of
     :class:`~torch_geometric.loader.NeighborLoader`, including support for
     heterogeneous graphs.
+    In particular, the data loader will add the following attributes to the
+    returned mini-batch:
+
+    * :obj:`n_id` The global node index for every sampled node
+    * :obj:`e_id` The global edge index for every sampled edge
+    * :obj:`input_id`: The global index of the :obj:`edge_label_index`
+    * :obj:`num_sampled_nodes`: The number of sampled nodes in each hop
+    * :obj:`num_sampled_edges`: The number of sampled edges in each hop
 
     .. note::
         Negative sampling is currently implemented in an approximate
