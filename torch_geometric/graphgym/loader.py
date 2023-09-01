@@ -306,7 +306,8 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
         )
 
     else:
-        raise NotImplementedError("%s sampler is not implemented!" % sampler)
+        raise NotImplementedError(f"'{sampler}' is not implemented")
+
     return loader_train
 
 
