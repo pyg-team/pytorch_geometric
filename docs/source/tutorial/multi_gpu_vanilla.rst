@@ -217,8 +217,6 @@ Similarly to our last example we now set up our spawnable runner:
        if hasattr(os, "sched_getaffinity"):
            try:
                num_work = len(os.sched_getaffinity(0)) / 2
-   puririshi98 marked this conversation as resolved.
-   puririshi98 marked this conversation as resolved.
            except Exception:
                pass
        if num_work is None:
