@@ -47,7 +47,7 @@ The NeighborLoader will return a ``batch``, which contains the following attribu
     batch.n_id
     >>> tensor([0, 2, 3, 5, 6])
 
-    # the global id of target node is 0, the neighborloader sample first layer of 0, get 0, 2,3 . Then the neighborloader sample second layer, get 5,6
+    # the global id of target node is 0, the neighborloader sample first layer of 0, get 0, 2,3 . Then the neighborloader sample second layer from these three nodes, get 0,2,3,5,6
 
 In the computation, first layer will do the aggregation to update the embedding of node in the second row of ``batch.edge_index``.
 
