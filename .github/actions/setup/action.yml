@@ -28,13 +28,14 @@ runs:
         check-latest: true
         cache: pip
         cache-dependency-path: |
-          setup.py
+          pyproject.toml
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version != 'nightly' }}
       run: |
         pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
         python -c "import torch; print('PyTorch:', torch.__version__)"
+        python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
         python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash
 
@@ -43,18 +44,32 @@ runs:
       run: |
         pip install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
         python -c "import torch; print('PyTorch:', torch.__version__)"
+        python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
         python -c "import torch; print('CUDA:', torch.version.cuda)"
       shell: bash
 
-    - name: Install extension packages
-      if: ${{ inputs.full_install == 'true' }}
+    - name: Install pyg-lib  # pyg-lib is currently only available on Linux.
+      if: ${{ inputs.torch-version != 'nightly' && runner.os == 'Linux' }}
       run: |
-        pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
-        pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        pip install --no-index pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
 
-    - name: Install pyg-lib  # pyg-lib is currently only available on Linux.
-      if: ${{ inputs.full_install == 'true' && runner.os == 'Linux' }}
+    - name: Install faiss-cpu
+      if: ${{ inputs.cuda-version == 'cpu' }}
       run: |
-        pip install pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        pip install faiss-cpu
+      shell: bash
+
+    - name: Install faiss-gpu
+      if: ${{ inputs.cuda-version != 'cpu' }}
+      run: |
+        pip install faiss-gpu
+      shell: bash
+
+    - name: Install extension packages
+      if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
+      run: |
+        pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        pip install scipy
+        pip install --no-index torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash

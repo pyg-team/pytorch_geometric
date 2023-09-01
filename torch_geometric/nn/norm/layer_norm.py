@@ -1,3 +1,5 @@
+from typing import List, Optional, Union
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -49,8 +51,8 @@ class LayerNorm(torch.nn.Module):
         self.mode = mode
 
         if affine:
-            self.weight = Parameter(torch.Tensor(in_channels))
-            self.bias = Parameter(torch.Tensor(in_channels))
+            self.weight = Parameter(torch.empty(in_channels))
+            self.bias = Parameter(torch.empty(in_channels))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)
@@ -62,13 +64,16 @@ class LayerNorm(torch.nn.Module):
         ones(self.weight)
         zeros(self.bias)
 
-    def forward(self, x: Tensor, batch: OptTensor = None) -> Tensor:
+    def forward(self, x: Tensor, batch: OptTensor = None,
+                batch_size: Optional[int] = None) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The source tensor.
             batch (torch.Tensor, optional): The batch vector
                 :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
                 each element to a specific example. (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
         """
         if self.mode == 'graph':
             if batch is None:
@@ -76,7 +81,8 @@ class LayerNorm(torch.nn.Module):
                 out = x / (x.std(unbiased=False) + self.eps)
 
             else:
-                batch_size = int(batch.max()) + 1
+                if batch_size is None:
+                    batch_size = int(batch.max()) + 1
 
                 norm = degree(batch, batch_size, dtype=x.dtype).clamp_(min=1)
                 norm = norm.mul_(x.size(-1)).view(-1, 1)
@@ -137,6 +143,7 @@ class HeteroLayerNorm(torch.nn.Module):
         mode: str = 'node',
     ):
         super().__init__()
+        assert mode == 'node'
 
         self.in_channels = in_channels
         self.num_types = num_types
@@ -144,8 +151,8 @@ class HeteroLayerNorm(torch.nn.Module):
         self.affine = affine
 
         if affine:
-            self.weight = Parameter(torch.Tensor(num_types, in_channels))
-            self.bias = Parameter(torch.Tensor(num_types, in_channels))
+            self.weight = Parameter(torch.empty(num_types, in_channels))
+            self.bias = Parameter(torch.empty(num_types, in_channels))
         else:
             self.register_parameter('weight', None)
             self.register_parameter('bias', None)
@@ -158,16 +165,41 @@ class HeteroLayerNorm(torch.nn.Module):
             torch.nn.init.ones_(self.weight)
             torch.nn.init.zeros_(self.bias)
 
-    def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        type_vec: OptTensor = None,
+        type_ptr: Optional[Union[Tensor, List[int]]] = None,
+    ) -> Tensor:
         r"""
+        .. note::
+            Either :obj:`type_vec` or :obj:`type_ptr` needs to be specified.
+            In general, relying on :obj:`type_ptr` is more efficient in case
+            the input tensor is sorted by types.
+
         Args:
             x (torch.Tensor): The input features.
-            type_vec (torch.Tensor): A vector that maps each entry to a type.
+            type_vec (torch.Tensor, optional): A vector that maps each entry to
+                a type. (default: :obj:`None`)
+            type_ptr (torch.Tensor or List[int]): A vector denoting the
+                boundaries of types. (default: :obj:`None`)
         """
+        if type_vec is None and type_ptr is None:
+            raise ValueError("Either 'type_vec' or 'type_ptr' must be given")
+
         out = F.layer_norm(x, (self.in_channels, ), None, None, self.eps)
 
         if self.affine:
-            out = out * self.weight[type_vec] + self.bias[type_vec]
+            # TODO Revisit this logic completely as it performs worse than just
+            # operating on a dictionary of tensors
+            # (especially the `type_vec` code path)
+            if type_ptr is not None:
+                h = torch.empty_like(out)
+                for i, (s, e) in enumerate(zip(type_ptr[:-1], type_ptr[1:])):
+                    h[s:e] = out[s:e] * self.weight[i] + self.bias[i]
+                out = h
+            else:
+                out = out * self.weight[type_vec] + self.bias[type_vec]
 
         return out
 

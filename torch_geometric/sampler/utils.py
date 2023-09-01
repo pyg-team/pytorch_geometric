@@ -1,13 +1,12 @@
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 
-import numpy as np
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.typing import NodeType, OptTensor
-from torch_geometric.utils import index_sort
+from torch_geometric.utils import coalesce, index_sort, lexsort
 from torch_geometric.utils.sparse import index2ptr
 
 # Edge Layout Conversion ######################################################
@@ -22,14 +21,7 @@ def sort_csc(
         col, perm = index_sort(col)
         return row[perm], col, perm
     else:
-        # We use `np.lexsort` to sort based on multiple keys.
-        # TODO There does not seem to exist a PyTorch equivalent yet :(
-        perm = np.lexsort([
-            src_node_time[row].detach().cpu().numpy(),
-            col.detach().cpu().numpy()
-        ])
-        perm = torch.from_numpy(perm).to(col.device)
-
+        perm = lexsort([src_node_time[row], col])
         return row[perm], col[perm], perm
 
 
@@ -112,6 +104,32 @@ def to_hetero_csc(
     return colptr_dict, row_dict, perm_dict
 
 
+def to_bidirectional(
+    row: Tensor,
+    col: Tensor,
+    rev_row: Tensor,
+    rev_col: Tensor,
+    edge_id: OptTensor = None,
+    rev_edge_id: OptTensor = None,
+) -> Tuple[Tensor, Tensor, OptTensor]:
+
+    assert row.numel() == col.numel()
+    assert rev_row.numel() == rev_col.numel()
+
+    edge_index = row.new_empty(2, row.numel() + rev_row.numel())
+    edge_index[0, :row.numel()] = row
+    edge_index[1, :row.numel()] = col
+    edge_index[0, row.numel():] = rev_col
+    edge_index[1, row.numel():] = rev_row
+
+    if edge_id is not None:
+        edge_id = torch.cat([edge_id, rev_edge_id], dim=0)
+
+    (row, col), edge_id = coalesce(edge_index, edge_id, reduce='any')
+
+    return row, col, edge_id
+
+
 ###############################################################################
 
 X, Y = TypeVar('X'), TypeVar('Y')
@@ -123,5 +141,7 @@ def remap_keys(
     exclude: Optional[List[X]] = None,
 ) -> Dict[Union[X, Y], Any]:
     exclude = exclude or []
-    return {(k if k in exclude else mapping.get(k, k)): v
-            for k, v in inputs.items()}
+    return {
+        k if k in exclude else mapping.get(k, k): v
+        for k, v in inputs.items()
+    }

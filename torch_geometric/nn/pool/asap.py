@@ -7,7 +7,7 @@ from torch import Tensor
 from torch.nn import Linear
 
 from torch_geometric.nn import LEConv
-from torch_geometric.nn.pool.topk_pool import topk
+from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.utils import (
     add_remaining_self_loops,
     remove_self_loops,
@@ -68,6 +68,9 @@ class ASAPooling(torch.nn.Module):
                                          **kwargs)
         else:
             self.gnn_intra_cluster = None
+
+        self.select = SelectTopK(1, ratio)
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -77,6 +80,7 @@ class ASAPooling(torch.nn.Module):
         self.gnn_score.reset_parameters()
         if self.gnn_intra_cluster is not None:
             self.gnn_intra_cluster.reset_parameters()
+        self.select.reset_parameters()
 
     def forward(
         self,
@@ -135,7 +139,7 @@ class ASAPooling(torch.nn.Module):
 
         # Cluster selection.
         fitness = self.gnn_score(x, edge_index).sigmoid().view(-1)
-        perm = topk(fitness, self.ratio, batch)
+        perm = self.select(fitness, batch).node_index
         x = x[perm] * fitness[perm].view(-1, 1)
         batch = batch[perm]
 
@@ -145,7 +149,10 @@ class ASAPooling(torch.nn.Module):
         S = S.index_select(1, perm).to_sparse_csr()
         A = S.t().to_sparse_csr() @ (A @ S)
 
-        edge_index, edge_weight = to_edge_index(A)
+        if edge_weight is None:
+            edge_index, _ = to_edge_index(A)
+        else:
+            edge_index, edge_weight = to_edge_index(A)
 
         if self.add_self_loops:
             edge_index, edge_weight = add_remaining_self_loops(

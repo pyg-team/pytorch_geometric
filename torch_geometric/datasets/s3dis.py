@@ -43,6 +43,10 @@ class S3DIS(InMemoryDataset):
     url = ('https://shapenet.cs.stanford.edu/media/'
            'indoor3d_sem_seg_hdf5_data.zip')
 
+    # In case `shapenet.cs.stanford.edu` is offline, try to download the data
+    # from here:
+    # https://cvg-data.inf.ethz.ch/s3dis/
+
     def __init__(
         self,
         root: str,

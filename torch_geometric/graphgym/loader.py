@@ -1,3 +1,4 @@
+import os.path as osp
 from typing import Callable
 
 import torch
@@ -58,7 +59,7 @@ def load_pyg(name, dataset_dir):
     Returns: PyG dataset object
 
     """
-    dataset_dir = '{}/{}'.format(dataset_dir, name)
+    dataset_dir = osp.join(dataset_dir, name)
     if name in ['Cora', 'CiteSeer', 'PubMed']:
         dataset = Planetoid(dataset_dir, name)
     elif name[:3] == 'TU_':
@@ -87,7 +88,7 @@ def load_pyg(name, dataset_dir):
     elif name == 'QM7b':
         dataset = QM7b(dataset_dir)
     else:
-        raise ValueError('{} not support'.format(name))
+        raise ValueError(f"'{name}' not support")
 
     return dataset
 
@@ -194,7 +195,7 @@ def load_dataset():
     elif format == 'OGB':
         dataset = load_ogb(name.replace('_', '-'), dataset_dir)
     else:
-        raise ValueError('Unknown data format: {}'.format(format))
+        raise ValueError(f"Unknown data format '{format}'")
     return dataset
 
 
@@ -222,11 +223,11 @@ def set_dataset_info(dataset):
 
     # count number of dataset splits
     cfg.share.num_splits = 1
-    for key in dataset._data.keys:
+    for key in dataset._data.keys():
         if 'val' in key:
             cfg.share.num_splits += 1
             break
-    for key in dataset._data.keys:
+    for key in dataset._data.keys():
         if 'test' in key:
             cfg.share.num_splits += 1
             break
@@ -290,19 +291,23 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
                                   pin_memory=True,
                                   persistent_workers=pw)
     elif sampler == "cluster":
-        loader_train = \
-            ClusterLoader(dataset[0],
-                          num_parts=cfg.train.train_parts,
-                          save_dir="{}/{}".format(cfg.dataset.dir,
-                                                  cfg.dataset.name.replace(
-                                                      "-", "_")),
-                          batch_size=batch_size, shuffle=shuffle,
-                          num_workers=cfg.num_workers,
-                          pin_memory=True,
-                          persistent_workers=pw)
+        loader_train = ClusterLoader(
+            dataset[0],
+            num_parts=cfg.train.train_parts,
+            save_dir=osp.join(
+                cfg.dataset.dir,
+                cfg.dataset.name.replace("-", "_"),
+            ),
+            batch_size=batch_size,
+            shuffle=shuffle,
+            num_workers=cfg.num_workers,
+            pin_memory=True,
+            persistent_workers=pw,
+        )
 
     else:
-        raise NotImplementedError("%s sampler is not implemented!" % sampler)
+        raise NotImplementedError(f"'{sampler}' is not implemented")
+
     return loader_train
 
 

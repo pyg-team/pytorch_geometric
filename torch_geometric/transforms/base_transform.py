@@ -1,3 +1,4 @@
+import copy
 from abc import ABC
 from typing import Any
 
@@ -27,7 +28,11 @@ class BaseTransform(ABC):
         data = transform(data)  # Explicitly transform data.
     """
     def __call__(self, data: Any) -> Any:
-        raise NotImplementedError
+        # Shallow-copy the data so that we prevent in-place data modification.
+        return self.forward(copy.copy(data))
+
+    def forward(self, data: Any) -> Any:
+        pass
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'

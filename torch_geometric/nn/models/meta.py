@@ -48,12 +48,12 @@ class MetaLayer(torch.nn.Module):
                 super().__init__()
                 self.edge_mlp = Seq(Lin(..., ...), ReLU(), Lin(..., ...))
 
-            def forward(self, src, dest, edge_attr, u, batch):
-                # src, dest: [E, F_x], where E is the number of edges.
+            def forward(self, src, dst, edge_attr, u, batch):
+                # src, dst: [E, F_x], where E is the number of edges.
                 # edge_attr: [E, F_e]
                 # u: [B, F_u], where B is the number of graphs.
                 # batch: [E] with max entry B - 1.
-                out = torch.cat([src, dest, edge_attr, u[batch]], 1)
+                out = torch.cat([src, dst, edge_attr, u[batch]], 1)
                 return self.edge_mlp(out)
 
         class NodeModel(torch.nn.Module):

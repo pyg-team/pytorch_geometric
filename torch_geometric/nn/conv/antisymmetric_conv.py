@@ -73,12 +73,12 @@ class AntiSymmetricConv(torch.nn.Module):
         if phi is None:
             phi = GCNConv(in_channels, in_channels, bias=False)
 
-        self.W = Parameter(torch.Tensor(in_channels, in_channels))
+        self.W = Parameter(torch.empty(in_channels, in_channels))
         self.register_buffer('eye', torch.eye(in_channels))
         self.phi = phi
 
         if bias:
-            self.bias = Parameter(torch.Tensor(in_channels))
+            self.bias = Parameter(torch.empty(in_channels))
         else:
             self.register_parameter('bias', None)
 

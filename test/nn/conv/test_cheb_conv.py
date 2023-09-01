@@ -1,5 +1,6 @@
 import torch
 
+from torch_geometric.data import Batch, Data
 from torch_geometric.nn import ChebConv
 from torch_geometric.testing import is_full_test
 
@@ -22,10 +23,11 @@ def test_cheb_conv():
 
     if is_full_test():
         jit = torch.jit.script(conv.jittable())
-        assert jit(x, edge_index).tolist() == out1.tolist()
-        assert jit(x, edge_index, edge_weight).tolist() == out2.tolist()
-        assert jit(x, edge_index, edge_weight,
-                   lambda_max=torch.tensor(3.0)).tolist() == out3.tolist()
+        assert torch.allclose(jit(x, edge_index), out1)
+        assert torch.allclose(jit(x, edge_index, edge_weight), out2)
+        assert torch.allclose(
+            jit(x, edge_index, edge_weight, lambda_max=torch.tensor(3.0)),
+            out3)
 
     batch = torch.tensor([0, 0, 1, 1])
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]])
@@ -40,6 +42,30 @@ def test_cheb_conv():
     assert out5.size() == (num_nodes, out_channels)
 
     if is_full_test():
-        assert jit(x, edge_index, edge_weight, batch).tolist() == out4.tolist()
-        assert jit(x, edge_index, edge_weight, batch,
-                   lambda_max).tolist() == out5.tolist()
+        assert torch.allclose(jit(x, edge_index, edge_weight, batch), out4)
+        assert torch.allclose(
+            jit(x, edge_index, edge_weight, batch, lambda_max), out5)
+
+
+def test_cheb_conv_batch():
+    x1 = torch.randn(4, 8)
+    edge_index1 = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
+    edge_weight1 = torch.rand(edge_index1.size(1))
+    data1 = Data(x=x1, edge_index=edge_index1, edge_weight=edge_weight1)
+
+    x2 = torch.randn(3, 8)
+    edge_index2 = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    edge_weight2 = torch.rand(edge_index2.size(1))
+    data2 = Data(x=x2, edge_index=edge_index2, edge_weight=edge_weight2)
+
+    conv = ChebConv(8, 16, K=2)
+
+    out1 = conv(x1, edge_index1, edge_weight1)
+    out2 = conv(x2, edge_index2, edge_weight2)
+
+    batch = Batch.from_data_list([data1, data2])
+    out = conv(batch.x, batch.edge_index, batch.edge_weight, batch.batch)
+
+    assert out.size() == (7, 16)
+    assert torch.allclose(out1, out[:4])
+    assert torch.allclose(out2, out[4:])

@@ -2,10 +2,11 @@ import pytest
 import scipy.sparse
 import torch
 
-from torch_geometric.data import Data
-from torch_geometric.testing import withPackage
+from torch_geometric.data import Data, HeteroData
+from torch_geometric.testing import get_random_edge_index, withPackage
 from torch_geometric.utils import (
     from_cugraph,
+    from_dgl,
     from_networkit,
     from_networkx,
     from_scipy_sparse_matrix,
@@ -13,6 +14,7 @@ from torch_geometric.utils import (
     sort_edge_index,
     subgraph,
     to_cugraph,
+    to_dgl,
     to_networkit,
     to_networkx,
     to_scipy_sparse_matrix,
@@ -30,7 +32,7 @@ def test_to_scipy_sparse_matrix():
     assert adj.col.tolist() == edge_index[1].tolist()
     assert adj.data.tolist() == [1, 1, 1]
 
-    edge_attr = torch.Tensor([1, 2, 3])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0])
     adj = to_scipy_sparse_matrix(edge_index, edge_attr)
     assert isinstance(adj, scipy.sparse.coo_matrix) is True
     assert adj.shape == (2, 2)
@@ -52,25 +54,25 @@ def test_from_scipy_sparse_matrix():
 def test_to_networkx():
     import networkx as nx
 
-    x = torch.Tensor([[1, 2], [3, 4]])
-    pos = torch.Tensor([[0, 0], [1, 1]])
+    x = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
+    pos = torch.tensor([[0.0, 0.0], [1.0, 1.0]])
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
-    edge_attr = torch.Tensor([1, 2, 3])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0])
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for remove_self_loops in [True, False]:
         G = to_networkx(data, node_attrs=['x', 'pos'], edge_attrs=['weight'],
                         remove_self_loops=remove_self_loops)
 
-        assert G.nodes[0]['x'] == [1, 2]
-        assert G.nodes[1]['x'] == [3, 4]
-        assert G.nodes[0]['pos'] == [0, 0]
-        assert G.nodes[1]['pos'] == [1, 1]
+        assert G.nodes[0]['x'] == [1.0, 2.0]
+        assert G.nodes[1]['x'] == [3.0, 4.0]
+        assert G.nodes[0]['pos'] == [0.0, 0.0]
+        assert G.nodes[1]['pos'] == [1.0, 1.0]
 
         if remove_self_loops:
-            assert nx.to_numpy_array(G).tolist() == [[0, 1], [2, 0]]
+            assert nx.to_numpy_array(G).tolist() == [[0.0, 1.0], [2.0, 0.0]]
         else:
-            assert nx.to_numpy_array(G).tolist() == [[3, 1], [2, 0]]
+            assert nx.to_numpy_array(G).tolist() == [[3.0, 1.0], [2.0, 0.0]]
 
 
 @withPackage('networkx')
@@ -98,10 +100,10 @@ def test_from_networkx_set_node_attributes():
 def test_to_networkx_undirected():
     import networkx as nx
 
-    x = torch.Tensor([[1, 2], [3, 4]])
-    pos = torch.Tensor([[0, 0], [1, 1]])
+    x = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
+    pos = torch.tensor([[0.0, 0.0], [1.0, 1.0]])
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
-    edge_attr = torch.Tensor([1, 2, 3])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0])
     data = Data(x=x, pos=pos, edge_index=edge_index, weight=edge_attr)
 
     for remove_self_loops in [True, False]:
@@ -127,6 +129,43 @@ def test_to_networkx_undirected():
 
     G = to_networkx(data, edge_attrs=['weight'], to_undirected="lower")
     assert nx.to_numpy_array(G).tolist() == [[3, 2], [2, 0]]
+
+
+@withPackage('networkx')
+def test_to_networkx_hetero():
+    edge_index = get_random_edge_index(5, 10, 20, coalesce=True)
+
+    data = HeteroData()
+    data['global_id'] = 0
+    data['author'].x = torch.arange(5)
+    data['paper'].x = torch.arange(10)
+    data['author', 'paper'].edge_index = edge_index
+    data['author', 'paper'].edge_attr = torch.arange(edge_index.size(1))
+
+    G = to_networkx(data, node_attrs=['x'], edge_attrs=['edge_attr'],
+                    graph_attrs=['global_id'])
+
+    assert G.number_of_nodes() == 15
+    assert G.number_of_edges() == edge_index.size(1)
+
+    assert G.graph == {'global_id': 0}
+
+    for i, (v, data) in enumerate(G.nodes(data=True)):
+        assert i == v
+        assert len(data) == 2
+        if i < 5:
+            assert data['x'] == i
+            assert data['type'] == 'author'
+        else:
+            assert data['x'] == i - 5
+            assert data['type'] == 'paper'
+
+    for i, (v, w, data) in enumerate(G.edges(data=True)):
+        assert v == int(edge_index[0, i])
+        assert w == int(edge_index[1, i]) + 5
+        assert len(data) == 2
+        assert data['type'] == ('author', 'to', 'paper')
+        assert data['edge_attr'] == i
 
 
 @withPackage('networkx')
@@ -284,6 +323,25 @@ def test_from_networkx_subgraph_convert():
     assert sub_edge_index_1.tolist() == sub_edge_index_2.tolist()
 
 
+@withPackage('networkx')
+@pytest.mark.parametrize('n', [100])
+@pytest.mark.parametrize('p', [0.8])
+@pytest.mark.parametrize('q', [0.2])
+def test_from_networkx_sbm(n, p, q):
+    import networkx as nx
+    G = nx.stochastic_block_model(
+        sizes=[n // 2, n // 2],
+        p=[[p, q], [q, p]],
+        seed=0,
+        directed=False,
+    )
+
+    data = from_networkx(G)
+    assert data.num_nodes == 100
+    assert torch.equal(data.block[:50], data.block.new_zeros(50))
+    assert torch.equal(data.block[50:], data.block.new_ones(50))
+
+
 @withPackage('networkit')
 def test_to_networkit_vice_versa():
     edge_index = torch.tensor([[0, 1], [1, 0]])
@@ -401,8 +459,7 @@ def test_from_trimesh():
     assert data.face.t().contiguous().tolist() == faces
 
 
-@withPackage('cudf')
-@withPackage('cugraph')
+@withPackage('cudf', 'cugraph')
 @pytest.mark.parametrize('edge_weight', [None, torch.rand(4)])
 @pytest.mark.parametrize('relabel_nodes', [True, False])
 @pytest.mark.parametrize('directed', [True, False])
@@ -424,13 +481,13 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
     edge_list = graph.view_edge_list()
     assert edge_list is not None
 
-    edge_list = edge_list.sort_values(by=['src', 'dst'])
+    edge_list = edge_list.sort_values(by=[0, 1])
 
-    cu_edge_index = edge_list[['src', 'dst']].to_pandas().values
+    cu_edge_index = edge_list[[0, 1]].to_pandas().values
     cu_edge_index = torch.from_numpy(cu_edge_index).t()
     cu_edge_weight = None
     if edge_weight is not None:
-        cu_edge_weight = edge_list['weights'].to_pandas().values
+        cu_edge_weight = edge_list['2'].to_pandas().values
         cu_edge_weight = torch.from_numpy(cu_edge_weight)
 
     cu_edge_index, cu_edge_weight = sort_edge_index(cu_edge_index,
@@ -441,8 +498,7 @@ def test_to_cugraph(edge_weight, directed, relabel_nodes):
         assert torch.allclose(edge_weight, cu_edge_weight.cpu())
 
 
-@withPackage('cudf')
-@withPackage('cugraph')
+@withPackage('cudf', 'cugraph')
 @pytest.mark.parametrize('edge_weight', [None, torch.randn(4)])
 @pytest.mark.parametrize('directed', [True, False])
 @pytest.mark.parametrize('relabel_nodes', [True, False])
@@ -481,3 +537,96 @@ def test_from_cugraph(edge_weight, directed, relabel_nodes):
         assert torch.allclose(edge_weight, cu_edge_weight.cpu())
     else:
         assert cu_edge_weight is None
+
+
+@withPackage('dgl')
+def test_to_dgl_graph():
+    x = torch.randn(5, 3)
+    edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
+    edge_attr = torch.randn(edge_index.size(1), 2)
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+
+    g = to_dgl(data)
+
+    assert torch.equal(data.x, g.ndata['x'])
+    row, col = g.edges()
+    assert torch.equal(row, edge_index[0])
+    assert torch.equal(col, edge_index[1])
+    assert torch.equal(data.edge_attr, g.edata['edge_attr'])
+
+
+@withPackage('dgl')
+def test_to_dgl_hetero_graph():
+    data = HeteroData()
+    data['v1'].x = torch.randn(4, 3)
+    data['v2'].x = torch.randn(4, 3)
+    data['v1', 'v2'].edge_index = torch.tensor([[0, 1, 2, 3], [0, 1, 2, 3]])
+    data['v1', 'v2'].edge_attr = torch.randn(4, 2)
+
+    g = to_dgl(data)
+
+    assert data['v1', 'v2'].num_edges == g.num_edges(('v1', 'to', 'v2'))
+    assert data['v1'].num_nodes == g.num_nodes('v1')
+    assert data['v2'].num_nodes == g.num_nodes('v2')
+    assert torch.equal(data['v1'].x, g.nodes['v1'].data['x'])
+    assert torch.equal(data['v2'].x, g.nodes['v2'].data['x'])
+    row, col = g.edges()
+    assert torch.equal(row, data['v1', 'v2'].edge_index[0])
+    assert torch.equal(col, data['v1', 'v2'].edge_index[1])
+    assert torch.equal(g.edata['edge_attr'], data['v1', 'v2'].edge_attr)
+
+
+@withPackage('dgl', 'torch_sparse')
+def test_to_dgl_sparse():
+    from torch_geometric.transforms import ToSparseTensor
+    x = torch.randn(5, 3)
+    edge_index = torch.tensor([[0, 1, 1, 2, 3, 0], [1, 0, 2, 1, 4, 4]])
+    edge_attr = torch.randn(edge_index.size(1), 2)
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr)
+    data = ToSparseTensor()(data)
+
+    g = to_dgl(data)
+
+    assert torch.equal(data.x, g.ndata["x"])
+    pyg_row, pyg_col, _ = data.adj_t.t().coo()
+    dgl_row, dgl_col = g.edges()
+    assert torch.equal(pyg_row, dgl_row)
+    assert torch.equal(pyg_col, dgl_col)
+    assert torch.equal(data.edge_attr, g.edata['edge_attr'])
+
+
+@withPackage('dgl')
+def test_from_dgl_graph():
+    import dgl
+    g = dgl.graph(([0, 0, 1, 5], [1, 2, 2, 0]))
+    g.ndata['x'] = torch.randn(g.num_nodes(), 3)
+    g.edata['edge_attr'] = torch.randn(g.num_edges())
+
+    data = from_dgl(g)
+
+    assert torch.equal(data.x, g.ndata['x'])
+    row, col = g.edges()
+    assert torch.equal(data.edge_index[0], row)
+    assert torch.equal(data.edge_index[1], col)
+    assert torch.equal(data.edge_attr, g.edata['edge_attr'])
+
+
+@withPackage('dgl')
+def test_from_dgl_hetero_graph():
+    import dgl
+    g = dgl.heterograph({
+        ('v1', 'to', 'v2'): (
+            [0, 1, 1, 2, 3, 3, 4],
+            [0, 0, 1, 1, 1, 2, 2],
+        )
+    })
+    g.nodes['v1'].data['x'] = torch.randn(5, 3)
+    g.nodes['v2'].data['x'] = torch.randn(3, 3)
+
+    data = from_dgl(g)
+
+    assert data['v1', 'v2'].num_edges == g.num_edges(('v1', 'to', 'v2'))
+    assert data['v1'].num_nodes == g.num_nodes('v1')
+    assert data['v2'].num_nodes == g.num_nodes('v2')
+    assert torch.equal(data['v1'].x, g.nodes['v1'].data['x'])
+    assert torch.equal(data['v2'].x, g.nodes['v2'].data['x'])

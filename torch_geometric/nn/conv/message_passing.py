@@ -1,6 +1,7 @@
 import inspect
 import os
 import os.path as osp
+import random
 import re
 from collections import OrderedDict
 from inspect import Parameter
@@ -15,13 +16,12 @@ from typing import (
     Union,
     get_type_hints,
 )
-from uuid import uuid1
 
 import torch
 from torch import Tensor
 from torch.utils.hooks import RemovableHandle
 
-from torch_geometric.nn.aggr import Aggregation, MultiAggregation
+from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.conv.utils.inspector import (
     Inspector,
     func_body_repr,
@@ -130,18 +130,12 @@ class MessagePassing(torch.nn.Module):
 
         if aggr is None:
             self.aggr = None
-            self.aggr_module = None
         elif isinstance(aggr, (str, Aggregation)):
             self.aggr = str(aggr)
-            self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
         elif isinstance(aggr, (tuple, list)):
             self.aggr = [str(x) for x in aggr]
-            self.aggr_module = MultiAggregation(aggr, **(aggr_kwargs or {}))
-        else:
-            raise ValueError(
-                f"Only strings, list, tuples and instances of"
-                f"`torch_geometric.nn.aggr.Aggregation` are "
-                f"valid aggregation schemes (got '{type(aggr)}').")
+
+        self.aggr_module = aggr_resolver(aggr, **(aggr_kwargs or {}))
 
         self.flow = flow
 
@@ -223,7 +217,7 @@ class MessagePassing(torch.nn.Module):
             if edge_index.dim() != 2:
                 raise ValueError(f"Expected 'edge_index' to be two-dimensional"
                                  f" (got {edge_index.dim()} dimensions)")
-            if edge_index.size(0) != 2:
+            if not torch.jit.is_tracing() and edge_index.size(0) != 2:
                 raise ValueError(f"Expected 'edge_index' to have size '2' in "
                                  f"the first dimension (got "
                                  f"'{edge_index.size(0)}')")
@@ -302,11 +296,10 @@ class MessagePassing(torch.nn.Module):
                 raise e
 
         elif isinstance(edge_index, SparseTensor):
+            row, col, _ = edge_index.coo()
             if dim == 0:
-                col = edge_index.storage.col()
                 return src.index_select(self.node_dim, col)
             elif dim == 1:
-                row = edge_index.storage.row()
                 return src.index_select(self.node_dim, row)
 
         raise ValueError(
@@ -359,17 +352,20 @@ class MessagePassing(torch.nn.Module):
             out['ptr'] = None
 
         elif isinstance(edge_index, SparseTensor):
+            row, col, value = edge_index.coo()
+            rowptr, _, _ = edge_index.csr()
+
             out['adj_t'] = edge_index
             out['edge_index'] = None
-            out['edge_index_i'] = edge_index.storage.row()
-            out['edge_index_j'] = edge_index.storage.col()
-            out['ptr'] = edge_index.storage.rowptr()
+            out['edge_index_i'] = row
+            out['edge_index_j'] = col
+            out['ptr'] = rowptr
             if out.get('edge_weight', None) is None:
-                out['edge_weight'] = edge_index.storage.value()
+                out['edge_weight'] = value
             if out.get('edge_attr', None) is None:
-                out['edge_attr'] = edge_index.storage.value()
+                out['edge_attr'] = value
             if out.get('edge_type', None) is None:
-                out['edge_type'] = edge_index.storage.value()
+                out['edge_type'] = value
 
         out['index'] = out['edge_index_i']
         out['size'] = size
@@ -772,7 +768,8 @@ class MessagePassing(torch.nn.Module):
     @torch.jit.unused
     def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
         r"""Analyzes the :class:`MessagePassing` instance and produces a new
-        jittable module.
+        jittable module that can be used in combination with
+        :meth:`torch.jit.script`.
 
         Args:
             typing (str, optional): If given, will generate a concrete instance
@@ -867,7 +864,7 @@ class MessagePassing(torch.nn.Module):
         with open(osp.join(root, 'message_passing.jinja'), 'r') as f:
             template = Template(f.read())
 
-        uid = uuid1().hex[:6]
+        uid = '%06x' % random.randrange(16**6)
         cls_name = f'{self.__class__.__name__}Jittable_{uid}'
         jit_module_repr = template.render(
             uid=uid,

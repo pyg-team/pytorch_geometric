@@ -17,14 +17,29 @@ from benchmark.utils import (
     test,
     write_to_csv,
 )
+from torch_geometric import compile
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import PNAConv
-from torch_geometric.profile import rename_profile_file, timeit, torch_profile
+from torch_geometric.profile import (
+    rename_profile_file,
+    timeit,
+    torch_profile,
+    xpu_profile,
+)
 
 supported_sets = {
     'ogbn-mag': ['rgat', 'rgcn'],
     'ogbn-products': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
     'Reddit': ['edge_cnn', 'gat', 'gcn', 'pna', 'sage'],
+}
+
+device_conditions = {
+    'cpu': (lambda: True),
+    'cuda': (lambda: torch.cuda.is_available()),
+    'mps':
+    (lambda:
+     (hasattr(torch.backends, 'mps') and torch.backends.mps.is_available())),
+    'xpu': (lambda: torch.xpu.is_available()),
 }
 
 
@@ -35,7 +50,7 @@ def train_homo(model, loader, optimizer, device, progress_bar=True, desc="",
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        if hasattr(batch, 'adj_t'):
+        if 'adj_t' in batch:
             edge_index = batch.adj_t
         else:
             edge_index = batch.edge_index
@@ -66,7 +81,7 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
     for batch in loader:
         optimizer.zero_grad()
         batch = batch.to(device)
-        if len(batch.adj_t_dict) > 0:
+        if 'adj_t' in batch:
             edge_index_dict = batch.adj_t_dict
         else:
             edge_index_dict = batch.edge_index_dict
@@ -82,12 +97,26 @@ def train_hetero(model, loader, optimizer, device, progress_bar=True, desc="",
 def run(args: argparse.ArgumentParser):
     csv_data = defaultdict(list)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if args.write_csv == 'prof' and not args.profile:
+        warnings.warn("Cannot write profile data to CSV because profiling is "
+                      "disabled")
+
+    if args.device == 'xpu':
+        try:
+            import intel_extension_for_pytorch as ipex
+        except ImportError:
+            raise RuntimeError('XPU device requires IPEX to be installed')
+
+    if not device_conditions[args.device]():
+        raise RuntimeError(f'{args.device.upper()} is not available')
+    device = torch.device(args.device)
+
     # If we use a custom number of steps, then we need to use RandomSampler,
     # which already does shuffle.
     shuffle = False if args.num_steps != -1 else True
 
     print('BENCHMARK STARTS')
+    print(f'Running on {args.device.upper()}')
     for dataset_name in args.datasets:
         assert dataset_name in supported_sets.keys(
         ), f"Dataset {dataset_name} isn't supported."
@@ -99,10 +128,19 @@ def run(args: argparse.ArgumentParser):
         hetero = True if dataset_name == 'ogbn-mag' else False
         mask, val_mask, test_mask = get_split_masks(data, dataset_name)
         degree = None
-        if torch.cuda.is_available():
-            amp = torch.cuda.amp.autocast(enabled=False)
-        else:
+
+        if args.device == 'cpu':
             amp = torch.cpu.amp.autocast(enabled=args.bf16)
+        elif args.device == 'cuda':
+            amp = torch.cuda.amp.autocast(enabled=False)
+        elif args.device == 'xpu':
+            amp = torch.xpu.amp.autocast(enabled=False)
+        else:
+            amp = nullcontext()
+
+        if args.device == 'xpu' and args.warmup < 1:
+            print('XPU device requires warmup - setting warmup=1')
+            args.warmup = 1
 
         inputs_channels = data[
             'paper'].num_features if dataset_name == 'ogbn-mag' \
@@ -144,7 +182,6 @@ def run(args: argparse.ArgumentParser):
                         data,
                         input_nodes=mask,
                         sampler=sampler,
-                        filter_per_worker=args.filter_per_worker,
                         **kwargs,
                     )
                     if args.evaluate:
@@ -152,14 +189,12 @@ def run(args: argparse.ArgumentParser):
                             data,
                             input_nodes=val_mask,
                             sampler=None,
-                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         )
                         test_loader = NeighborLoader(
                             data,
                             input_nodes=test_mask,
                             sampler=None,
-                            filter_per_worker=args.filter_per_worker,
                             **kwargs,
                         )
                     for hidden_channels in args.num_hidden_channels:
@@ -190,8 +225,16 @@ def run(args: argparse.ArgumentParser):
                             metadata=data.metadata() if hetero else None)
                         model = model.to(device)
                         model.train()
+
+                        if args.compile:
+                            model = compile(model, dynamic=True)
+
                         optimizer = torch.optim.Adam(model.parameters(),
                                                      lr=0.001)
+
+                        if args.device == 'xpu':
+                            model, optimizer = ipex.optimize(
+                                model, optimizer=optimizer)
 
                         progress_bar = False if args.no_progress_bar else True
                         train = train_hetero if hetero else train_homo
@@ -242,15 +285,23 @@ def run(args: argparse.ArgumentParser):
                                 print(f'Test Accuracy: {test_acc:.4f}')
 
                             if args.profile:
-                                with torch_profile():
+                                if args.device == 'xpu':
+                                    profile = xpu_profile(
+                                        args.export_chrome_trace)
+                                else:
+                                    profile = torch_profile(
+                                        args.export_chrome_trace, csv_data,
+                                        args.write_csv)
+                                with profile:
                                     train(model, subgraph_loader, optimizer,
                                           device, progress_bar=progress_bar,
                                           desc="Profile training")
-                                rename_profile_file(model_name, dataset_name,
-                                                    str(batch_size),
-                                                    str(layers),
-                                                    str(hidden_channels),
-                                                    str(num_neighbors))
+                                if args.export_chrome_trace:
+                                    rename_profile_file(
+                                        model_name, dataset_name,
+                                        str(batch_size), str(layers),
+                                        str(hidden_channels),
+                                        str(num_neighbors))
 
                         total_time = t.duration
                         if args.num_steps != -1:
@@ -262,19 +313,34 @@ def run(args: argparse.ArgumentParser):
                         print(f'Throughput: {throughput:.3f} samples/s')
                         print(f'Latency: {latency:.3f} ms')
 
-                        save_benchmark_data(csv_data, batch_size, layers,
-                                            num_neighbors, hidden_channels,
-                                            total_time, model_name,
-                                            dataset_name,
-                                            args.use_sparse_tensor)
+                        num_records = 1
+                        if args.write_csv == 'prof':
+                            # For profiling with PyTorch, we save the top-5
+                            # most time consuming operations. Therefore, the
+                            # same data should be entered for each of them.
+                            num_records = 5
+                        for _ in range(num_records):
+                            save_benchmark_data(
+                                csv_data,
+                                batch_size,
+                                layers,
+                                num_neighbors,
+                                hidden_channels,
+                                total_time,
+                                model_name,
+                                dataset_name,
+                                args.use_sparse_tensor,
+                            )
     if args.write_csv:
-        write_to_csv(csv_data, training=True)
+        write_to_csv(csv_data, args.write_csv, training=True)
 
 
 if __name__ == '__main__':
     argparser = argparse.ArgumentParser('GNN training benchmark')
     add = argparser.add_argument
 
+    add('--device', choices=['cpu', 'cuda', 'mps', 'xpu'], default='cpu',
+        help='Device to run benchmark on')
     add('--datasets', nargs='+',
         default=['ogbn-mag', 'ogbn-products', 'Reddit'], type=str)
     add('--use-sparse-tensor', action='store_true',
@@ -305,12 +371,14 @@ if __name__ == '__main__':
         help="Use DataLoader affinitzation.")
     add('--loader-cores', nargs='+', default=[], type=int,
         help="List of CPU core IDs to use for DataLoader workers.")
-    add('--filter-per-worker', action='store_true',
-        help='Enable filter-per-worker feature of the dataloader.')
     add('--measure-load-time', action='store_true')
     add('--evaluate', action='store_true')
-    add('--write-csv', action='store_true', help='Write benchmark data to csv')
+    add('--write-csv', choices=[None, 'bench', 'prof'], default=None,
+        help='Write benchmark or PyTorch profile data to CSV')
+    add('--export-chrome-trace', default=True, type=bool,
+        help='Export chrome trace file. Works only with PyTorch profiler')
     add('--trim', action='store_true', help="Use `trim_to_layer` optimization")
+    add('--compile', action='store_true')
     args = argparser.parse_args()
 
     run(args)

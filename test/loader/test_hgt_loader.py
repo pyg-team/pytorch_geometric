@@ -4,7 +4,11 @@ import torch
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
-from torch_geometric.testing import get_random_edge_index, withPackage
+from torch_geometric.testing import (
+    get_random_edge_index,
+    onlyOnline,
+    withPackage,
+)
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import k_hop_subgraph
 
@@ -132,6 +136,7 @@ def test_hgt_loader():
         assert torch.cat([row, col]).unique().numel() >= 59
 
 
+@onlyOnline
 @withPackage('torch_sparse')
 def test_hgt_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
@@ -181,3 +186,33 @@ def test_hgt_loader_on_cora(get_dataset):
     out2 = hetero_model(hetero_batch.x_dict, hetero_batch.edge_index_dict,
                         hetero_batch.edge_weight_dict)['paper'][:batch_size]
     assert torch.allclose(out1, out2, atol=1e-6)
+
+
+@withPackage('torch_sparse')
+def test_hgt_loader_disconnected():
+    data = HeteroData()
+
+    data['paper'].x = torch.randn(10, 16)
+    data['author'].x = torch.randn(10, 16)
+
+    # Paper nodes are disconnected from author nodes:
+    data['paper', 'paper'].edge_index = get_random_edge_index(10, 10, 15)
+    data['paper', 'paper'].edge_attr = torch.randn(15, 8)
+    data['author', 'author'].edge_index = get_random_edge_index(10, 10, 15)
+    data['author', 'author'].edge_attr = torch.randn(15, 8)
+
+    loader = HGTLoader(data, num_samples=[2], batch_size=2,
+                       input_nodes='paper')
+
+    for batch in loader:
+        assert isinstance(batch, HeteroData)
+
+        # Test node and edge types:
+        assert set(batch.node_types) == set(data.node_types)
+        assert set(batch.edge_types) == set(data.edge_types)
+
+        assert batch['author'].num_nodes == 0
+        assert batch['author'].x.size() == (0, 16)
+        assert batch['author', 'author'].num_edges == 0
+        assert batch['author', 'author'].edge_index.size() == (2, 0)
+        assert batch['author', 'author'].edge_attr.size() == (0, 8)

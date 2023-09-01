@@ -26,7 +26,9 @@ from torch_geometric.typing import EdgeType, NodeType, SparseTensor
 from torch_geometric.utils import (
     coalesce,
     contains_isolated_nodes,
+    is_torch_sparse_tensor,
     is_undirected,
+    sort_edge_index,
 )
 
 N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id'}
@@ -78,7 +80,8 @@ class BaseStorage(MutableMapping):
             return self[key]
         except KeyError:
             raise AttributeError(
-                f"'{self.__class__.__name__}' object has no attribute '{key}'")
+                f"'{self.__class__.__name__}' object has no attribute '{key}'"
+            ) from None
 
     def __setattr__(self, key: str, value: Any):
         propobj = getattr(self.__class__, key, None)
@@ -190,7 +193,13 @@ class BaseStorage(MutableMapping):
 
     def to_dict(self) -> Dict[str, Any]:
         r"""Returns a dictionary of stored key/value pairs."""
-        return copy.copy(self._mapping)
+        out_dict = copy.copy(self._mapping)
+        # Needed to preserve individual `num_nodes` attributes when calling
+        # `BaseData.collate`.
+        # TODO (matthias) Try to make this more generic.
+        if '_num_nodes' in self.__dict__:
+            out_dict['_num_nodes'] = self.__dict__['_num_nodes']
+        return out_dict
 
     def to_namedtuple(self) -> NamedTuple:
         r"""Returns a :obj:`NamedTuple` of stored key/value pairs."""
@@ -289,11 +298,17 @@ class NodeStorage(BaseStorage):
         if 'num_nodes' in self:
             return self['num_nodes']
         for key, value in self.items():
-            if isinstance(value, (Tensor, np.ndarray)) and key in N_KEYS:
+            if isinstance(value, Tensor) and key in N_KEYS:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.size(cat_dim)
+            if isinstance(value, np.ndarray) and key in N_KEYS:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
         for key, value in self.items():
-            if isinstance(value, (Tensor, np.ndarray)) and 'node' in key:
+            if isinstance(value, Tensor) and 'node' in key:
+                cat_dim = self._parent().__cat_dim__(key, value, self)
+                return value.size(cat_dim)
+            if isinstance(value, np.ndarray) and 'node' in key:
                 cat_dim = self._parent().__cat_dim__(key, value, self)
                 return value.shape[cat_dim]
         if 'adj' in self and isinstance(self.adj, SparseTensor):
@@ -418,6 +433,8 @@ class EdgeStorage(BaseStorage):
         for value in self.values('adj', 'adj_t'):
             if isinstance(value, SparseTensor):
                 return value.nnz()
+            elif is_torch_sparse_tensor(value):
+                return value._nnz()
         return 0
 
     @property
@@ -481,6 +498,23 @@ class EdgeStorage(BaseStorage):
     def edge_attrs(self) -> List[str]:
         return [key for key in self.keys() if self.is_edge_attr(key)]
 
+    def is_sorted(self, sort_by_row: bool = True) -> bool:
+        if 'edge_index' in self:
+            index = self.edge_index[0] if sort_by_row else self.edge_index[1]
+            return bool(torch.all(index[:-1] <= index[1:]))
+        return True
+
+    def sort(self, sort_by_row: bool = True) -> 'EdgeStorage':
+        if 'edge_index' in self:
+            edge_attrs = self.edge_attrs()
+            edge_attrs.remove('edge_index')
+            edge_feats = [self[edge_attr] for edge_attr in edge_attrs]
+            self.edge_index, edge_feats = sort_edge_index(
+                self.edge_index, edge_feats, sort_by_row=sort_by_row)
+            for key, edge_feat in zip(edge_attrs, edge_feats):
+                self[key] = edge_feat
+        return self
+
     def is_coalesced(self) -> bool:
         for value in self.values('adj', 'adj_t'):
             return value.is_coalesced()
@@ -495,7 +529,7 @@ class EdgeStorage(BaseStorage):
 
         return True
 
-    def coalesce(self, reduce: str = 'sum'):
+    def coalesce(self, reduce: str = 'sum') -> 'EdgeStorage':
         for key, value in self.items('adj', 'adj_t'):
             self[key] = value.coalesce(reduce)
 
