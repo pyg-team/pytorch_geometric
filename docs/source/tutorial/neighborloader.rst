@@ -3,7 +3,7 @@ NeighborLoader
 ``NeighborLoader`` is a data loader that performs neighbor sampling as introduced in the “Inductive Representation Learning on Large Graphs” paper.
 This loader allows for mini-batch training of GNNs on large-scale graphs where full-batch training leads to out of memory problem.
 
-In the paper, they uniformly sample a fixed-size set of neighbors, in order to keep the computational footprint of each batch fixed. 
+In the paper, they uniformly sample a fixed-size set of neighbors, in order to keep the computational footprint of each batch fixed.
 Without this sampling the memory and expected runtime of a single batch is unpredictable and can grow linearly with the number of nodes in the graph.
 Therefore, this sampling is crucial for training GNNs on large-scale graphs.
 
