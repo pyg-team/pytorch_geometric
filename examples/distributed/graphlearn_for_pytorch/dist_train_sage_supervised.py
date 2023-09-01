@@ -69,7 +69,8 @@ def run_training_proc(
         backend='nccl',  # or choose 'gloo' if 'nccl' is not supported.
         rank=current_ctx.rank,
         world_size=current_ctx.world_size,
-        init_method='tcp://{}:{}'.format(master_addr, training_pg_master_port))
+        init_method=f'tcp://{master_addr}:{training_pg_master_port}',
+    )
 
     # Create distributed neighbor loader for training.
     # We replace PyG's NeighborLoader with GLT's DistNeighborLoader.
