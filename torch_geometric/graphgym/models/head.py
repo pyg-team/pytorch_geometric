@@ -1,9 +1,4 @@
-""" GNN heads are the last layer of a GNN right before loss computation.
-They are constructed in the init function of the gnn.GNN.
-"""
-
 import torch
-import torch.nn as nn
 
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.config import cfg
@@ -12,7 +7,7 @@ from torch_geometric.graphgym.register import register_head
 
 
 @register_head('node')
-class GNNNodeHead(nn.Module):
+class GNNNodeHead(torch.nn.Module):
     r"""A GNN prediction head for node-level prediction tasks.
 
     Args:
@@ -49,7 +44,7 @@ class GNNNodeHead(nn.Module):
 
 @register_head('edge')
 @register_head('link_pred')
-class GNNEdgeHead(nn.Module):
+class GNNEdgeHead(torch.nn.Module):
     r"""A GNN prediction head for edge-level/link-level prediction tasks.
 
     Args:
@@ -88,7 +83,7 @@ class GNNEdgeHead(nn.Module):
             if cfg.model.edge_decoding == 'dot':
                 self.decode_module = lambda v1, v2: torch.sum(v1 * v2, dim=-1)
             elif cfg.model.edge_decoding == 'cosine_similarity':
-                self.decode_module = nn.CosineSimilarity(dim=-1)
+                self.decode_module = torch.nn.CosineSimilarity(dim=-1)
             else:
                 raise ValueError(f"Unknown edge decoding "
                                  f"'{cfg.model.edge_decoding}'")
@@ -109,7 +104,7 @@ class GNNEdgeHead(nn.Module):
 
 
 @register_head('graph')
-class GNNGraphHead(nn.Module):
+class GNNGraphHead(torch.nn.Module):
     r"""A GNN prediction head for graph-level prediction tasks.
     A post message passing layer (as specified by :obj:`cfg.gnn.post_mp`) is
     used to transform the pooled graph-level embeddings using an MLP.
