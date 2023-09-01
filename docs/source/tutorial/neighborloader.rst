@@ -3,6 +3,19 @@ NeighborLoader
 ``NeighborLoader`` is a data loader that performs neighbor sampling as introduced in the “Inductive Representation Learning on Large Graphs” paper.
 This loader allows for mini-batch training of GNNs on large-scale graphs where full-batch training leads to out of memory problem.
 
+In the paper, they uniformly sample a fixed-size set of neighbors, in order to keep the computational footprint of each batch fixed. 
+Without this sampling the memory and expected runtime of a single batch is unpredictable and can grow linearly with the number of nodes in the graph.
+Therefore, this sampling is crucial for training GNNs on large-scale graphs.
+
+Here's a simplified step-by-step process:
+
+Node Selection: Given a large graph, NeighborLoader batchsize = 1, you start with a node you want to compute representations for. This node is referred to as the "center" node.
+
+Sampling: This neighborhood consists of nodes directly connected to the center node (its neighbors). Instead of considering all neighbors, which can be computationally expensive for large graphs, you perform random sampling. You select a fixed number of neighbors from the neighborhood. This subset is known as the "sampled neighbors."
+
+Aggregation: The information from these sampled neighbors is then aggregated in some way, like GraphSAGE Layer in the following example.
+
+Representation Update: The aggregated information is used to update the representation of the center node. This updated representation incorporates information from a limited set of neighbors.
 
 Small graph example
 --------------------
