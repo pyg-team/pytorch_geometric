@@ -291,17 +291,19 @@ def get_loader(dataset, sampler, batch_size, shuffle=True):
                                   pin_memory=True,
                                   persistent_workers=pw)
     elif sampler == "cluster":
-        loader_train = \
-            ClusterLoader(dataset[0],
-                          num_parts=cfg.train.train_parts,
-                          save_dir=osp.join(
-                              cfg.dataset.dir,
-                              cfg.dataset.name.replace("-", "_"),
-                          ),
-                          batch_size=batch_size, shuffle=shuffle,
-                          num_workers=cfg.num_workers,
-                          pin_memory=True,
-                          persistent_workers=pw)
+        loader_train = ClusterLoader(
+            dataset[0],
+            num_parts=cfg.train.train_parts,
+            save_dir=osp.join(
+                cfg.dataset.dir,
+                cfg.dataset.name.replace("-", "_"),
+            ),
+            batch_size=batch_size,
+            shuffle=shuffle,
+            num_workers=cfg.num_workers,
+            pin_memory=True,
+            persistent_workers=pw,
+        )
 
     else:
         raise NotImplementedError("%s sampler is not implemented!" % sampler)
