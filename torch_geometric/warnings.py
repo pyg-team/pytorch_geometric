@@ -10,15 +10,15 @@ else:
         return False
 
 
-def warn(*args, **kwargs):
+def warn(message: str):
     if is_compiling():
         return
 
-    warnings.warn(*args, **kwargs)
+    warnings.warn(message)
 
 
-def filterwarnings(*args, **kwargs):
+def filterwarnings(action: str, message: str):
     if is_compiling():
         return
 
-    warnings.filterwarnings(*args, **kwargs)
+    warnings.filterwarnings(action, message)
