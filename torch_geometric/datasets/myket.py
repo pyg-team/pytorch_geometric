@@ -1,17 +1,17 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
+import numpy as np
 import torch
 
 from torch_geometric.data import InMemoryDataset, TemporalData, download_url
 
 
 class MyketDataset(InMemoryDataset):
-    r"""Myket Android Application Install dataset
-    from the `"Effect of Choosing Loss Function when Using T-batching for
-    Representation Learning on Dynamic Networks"
-    <https://arxiv.org/pdf/2308.06862.pdf>`_ paper. The dataset contains a
-    temporal graph of application install interactions in an android
-    application market.
+    r"""The Myket Android Application Install dataset from the
+    `"Effect of Choosing Loss Function when Using T-Batching for Representation
+    Learning on Dynamic Networks" <https://arxiv.org/abs/2308.06862>`_ paper.
+    The dataset contains a temporal graph of application install interactions
+    in an Android application market.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -41,8 +41,8 @@ class MyketDataset(InMemoryDataset):
           - 33
           - 1
     """
-    url = ("https://raw.githubusercontent.com/erfanloghmani/",
-           "myket-android-application-market-dataset/main/data_int_index/{}")
+    url = ('https://raw.githubusercontent.com/erfanloghmani/'
+           'myket-android-application-market-dataset/main/data_int_index')
 
     def __init__(
         self,
@@ -51,38 +51,37 @@ class MyketDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
     ):
         super().__init__(root, transform, pre_transform)
-        self.data, self.slices = torch.load(self.processed_paths[0])
+        self.load(self.processed_paths[0], data_cls=TemporalData)
 
     @property
-    def raw_file_names(self) -> str:
-        return ["myket.csv", "app_info_sample.npy"]
+    def raw_file_names(self) -> List[str]:
+        return ['myket.csv', 'app_info_sample.npy']
 
     @property
     def processed_file_names(self) -> str:
-        return "myket.pt"
+        return 'data.pt'
 
     def download(self):
-        for f in self.raw_file_names:
-            download_url(self.url.format(f), self.raw_dir)
+        for file_name in self.raw_file_names:
+            download_url(f'{self.url}/{file_name}', self.raw_dir)
 
     def process(self):
-        import numpy as np
         import pandas as pd
 
         df = pd.read_csv(self.raw_paths[0], skiprows=1, header=None)
 
-        src = torch.from_numpy(df.iloc[:, 0].values).to(torch.long)
-        dst = torch.from_numpy(df.iloc[:, 1].values).to(torch.long)
-        t = torch.from_numpy(df.iloc[:, 2].values).to(torch.float)
+        src = torch.from_numpy(df[0].values)
+        dst = torch.from_numpy(df[1].values)
+        t = torch.from_numpy(df[2].values)
 
-        features = np.load(self.raw_paths[1])
-        msg = torch.from_numpy(features[df.iloc[:,
-                                                1].values, :]).to(torch.float)
-        dst += int(src.max()) + 1
+        x = torch.from_numpy(np.load(self.raw_paths[1])).to(torch.float)
+        msg = x[dst]
+
+        dst = dst + (int(src.max()) + 1)
 
         data = TemporalData(src=src, dst=dst, t=t, msg=msg)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
 
-        torch.save(self.collate([data]), self.processed_paths[0])
+        self.save([data], self.processed_paths[0])
