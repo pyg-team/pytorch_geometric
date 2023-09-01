@@ -8,25 +8,20 @@ from torch_geometric.graphgym.register import (
 
 @register_node_encoder('Integer')
 class IntegerFeatureEncoder(torch.nn.Module):
-    """
-    Provides an encoder for integer node features.
+    r"""Provides an encoder for integer node features.
 
     Args:
-        emb_dim (int): Output embedding dimension
-        num_classes (int): the number of classes for the
-        embedding mapping to learn from
+        emb_dim (int): The output embedding dimension.
+        num_classes (int): The number of classes/integers.
 
     Example:
+
         >>> encoder = IntegerFeatureEncoder(emb_dim=16, num_classes=10)
         >>> batch = torch.randint(0, 10, (10, 2))
-        >>> encoded_batch = encoder(batch)
-        >>> print(encoded_batch.x)
-        # tensor([[0.2470, 0.7026, 0.9272, 0.3419, 0.5079, 0.0506, 0.8246,
-        #          0.0228, 0.9619, 0.3349, 0.8910],
-        #          [0.4278, 0.0592, 0.1844, 0.5261, 0.3682, 0.6348, 0.4851,
-        #           0.7007, 0.4754, 0.3943, 0.7505]])
+        >>> encoder(batch).size()
+        torch.Size([10, 16])
     """
-    def __init__(self, emb_dim, num_classes=None):
+    def __init__(self, emb_dim: int, num_classes: int):
         super().__init__()
 
         self.encoder = torch.nn.Embedding(num_classes, emb_dim)
@@ -41,30 +36,19 @@ class IntegerFeatureEncoder(torch.nn.Module):
 
 @register_node_encoder('Atom')
 class AtomEncoder(torch.nn.Module):
-    """
-    The atom Encoder used in OGB molecule dataset.
+    r"""The atom encoder used in OGB molecule dataset.
 
     Args:
-        emb_dim (int): Output embedding dimension
-        num_classes: None
+        emb_dim (int): The output embedding dimension.
 
     Example:
+
         >>> encoder = AtomEncoder(emb_dim=16)
         >>> batch = torch.randint(0, 10, (10, 3))
-        >>> encoded_batch = encoder(batch)
-        >>> print(encoded_batch.x)
-        # tensor([[0.2470, 0.7026, 0.9272],
-        #          [0.4278, 0.0592, 0.1844],
-        #          [0.8246, 0.0228, 0.9619],
-        #          [0.3349, 0.3943, 0.8910],
-        #          [0.5079, 0.6348, 0.8246],
-        #          [0.0506, 0.7007, 0.4851],
-        #          [0.8246, 0.4754, 0.3943],
-        #          [0.0228, 0.7505, 0.7007],
-        #          [0.9619, 0.3943, 0.3349],
-        #          [0.3349, 0.8910, 0.5079]])
+        >>> encoder(batch).size()
+        torch.Size([10, 16])
     """
-    def __init__(self, emb_dim, num_classes=None):
+    def __init__(self, emb_dim, *args, **kwargs):
         super().__init__()
 
         from ogb.utils.features import get_atom_feature_dims
@@ -87,30 +71,19 @@ class AtomEncoder(torch.nn.Module):
 
 @register_edge_encoder('Bond')
 class BondEncoder(torch.nn.Module):
-    """
-    The bond Encoder used in OGB molecule dataset.
+    r"""The bond encoder used in OGB molecule dataset.
 
     Args:
-        emb_dim (int): Output edge embedding dimension
-
+        emb_dim (int): The output embedding dimension.
 
     Example:
+
         >>> encoder = BondEncoder(emb_dim=16)
         >>> batch = torch.randint(0, 10, (10, 3))
-        >>> encoded_batch = encoder(batch)
-        >>> print(encoded_batch.edge_attr)
-        # tensor([[0.2470, 0.7026, 0.9272],
-        #          [0.4278, 0.0592, 0.1844],
-        #          [0.8246, 0.0228, 0.9619],
-        #          [0.3349, 0.3943, 0.8910],
-        #          [0.5079, 0.6348, 0.8246],
-        #          [0.0506, 0.7007, 0.4851],
-        #          [0.8246, 0.4754, 0.3943],
-        #          [0.0228, 0.7505, 0.7007],
-        #          [0.9619, 0.3943, 0.3349],
-        #          [0.3349, 0.8910, 0.5079]])
+        >>> encoder(batch).size()
+        torch.Size([10, 16])
     """
-    def __init__(self, emb_dim):
+    def __init__(self, emb_dim: int):
         super().__init__()
 
         from ogb.utils.features import get_bond_feature_dims

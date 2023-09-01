@@ -45,20 +45,24 @@ class LayerConfig:
     keep_edge: float = 0.5
 
 
-def new_layer_config(dim_in, dim_out, num_layers, has_act, has_bias, cfg):
-    """
-    Create a layer configuration for a GNN layer.
+def new_layer_config(
+    dim_in: int,
+    dim_out: int,
+    num_layers: int,
+    has_act: bool,
+    has_bias: bool,
+    cfg,
+) -> LayerConfig:
+    r"""Createa a layer configuration for a GNN layer.
 
     Args:
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension
-        num_layers (int): Number of hidden layers
-        has_act (bool): Whether to apply activation after each layer
-        has_bias (bool): Whether to use bias in each layer
-        cfg (OmegaConf): The configuration of the model
-
-    Returns:
-        LayerConfig: The layer configuration
+        dim_in (int): The input feature dimension.
+        dim_out (int): The output feature dimension.
+        num_layers (int): The number of hidden layers
+        has_act (bool): Whether to apply an activation function after the
+            layer.
+        has_bias (bool): Whether to apply a bias term in the layer.
+        cfg (ConfigNode): The underlying configuration.
     """
     return LayerConfig(
         has_batchnorm=cfg.gnn.batchnorm,
@@ -80,19 +84,13 @@ def new_layer_config(dim_in, dim_out, num_layers, has_act, has_bias, cfg):
     )
 
 
-# General classes
 class GeneralLayer(nn.Module):
-    """
-    General wrapper for layers
+    r"""A general wrapper for layers.
 
     Args:
-        name (str): Name of the layer in registered :obj:`layer_dict`
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension
-        has_act (bool): Whether has activation after the layer
-        has_bn (bool):  Whether has BatchNorm in the layer
-        has_l2norm (bool): Wheter has L2 normalization after the layer
-        **kwargs (optional): Additional args
+        name (str): The registered name of the layer.
+        layer_config (LayerConfig): The configuration of the layer.
+        **kwargs (optional): Additional keyword arguments.
     """
     def __init__(self, name, layer_config: LayerConfig, **kwargs):
         super().__init__()
@@ -114,13 +112,6 @@ class GeneralLayer(nn.Module):
         self.post_layer = nn.Sequential(*layer_wrapper)
 
     def forward(self, batch):
-        """
-        Args:
-            batch (Union[torch.Tensor, dgl.DGLGraph]): The input data.
-
-        Returns:
-            Union[torch.Tensor, dgl.DGLGraph]: The output data.
-        """
         batch = self.layer(batch)
         if isinstance(batch, torch.Tensor):
             batch = self.post_layer(batch)
@@ -134,23 +125,20 @@ class GeneralLayer(nn.Module):
 
 
 class GeneralMultiLayer(nn.Module):
-    """
-    General wrapper for a stack of multiple layers
+    r"""A general wrapper class for a stacking multiple NN layers.
 
     Args:
-        name (str): Name of the layer in registered :obj:`layer_dict`
-        num_layers (int): Number of layers in the stack
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension
-        dim_inner (int): The dimension for the inner layers
-        final_act (bool): Whether has activation after the layer stack
-        **kwargs (optional): Additional args
+        name (str): The registered name of the layer.
+        layer_config (LayerConfig): The configuration of the layer.
+        **kwargs (optional): Additional keyword arguments.
     """
     def __init__(self, name, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        dim_inner = layer_config.dim_out \
-            if layer_config.dim_inner is None \
-            else layer_config.dim_inner
+        if layer_config.dim_inner:
+            dim_inner = layer_config.dim_out
+        else:
+            dim_inner = layer_config.dim_inner
+
         for i in range(layer_config.num_layers):
             d_in = layer_config.dim_in if i == 0 else dim_inner
             d_out = layer_config.dim_out \
@@ -175,19 +163,19 @@ class GeneralMultiLayer(nn.Module):
 
 @register_layer('linear')
 class Linear(nn.Module):
-    """
-    Basic Linear layer.
+    r"""A basic Linear layer.
 
     Args:
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension
-        bias (bool): Whether has bias term
-        **kwargs (optional): Additional args
+        layer_config (LayerConfig): The configuration of the layer.
+        **kwargs (optional): Additional keyword arguments.
     """
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        self.model = Linear_pyg(layer_config.dim_in, layer_config.dim_out,
-                                bias=layer_config.has_bias)
+        self.model = Linear_pyg(
+            layer_config.dim_in,
+            layer_config.dim_out,
+            bias=layer_config.has_bias,
+        )
 
     def forward(self, batch):
         if isinstance(batch, torch.Tensor):
@@ -198,23 +186,18 @@ class Linear(nn.Module):
 
 
 class BatchNorm1dNode(nn.Module):
-    """
-    BatchNorm for node feature.
+    r"""A batch normalization layer for node-level features.
 
     Args:
-        dim_in (int): Input dimension
-
-    Example:
-        >>> layer = BatchNorm1dNode(layer_config=LayerConfig(dim_in=16))
-        >>> batch = torch.randn((10, 16))
-        >>> batch = layer(batch)
-        >>> print(batch.x.shape)
-        # torch.Size([10, 16])
+        layer_config (LayerConfig): The configuration of the layer.
     """
     def __init__(self, layer_config: LayerConfig):
         super().__init__()
-        self.bn = nn.BatchNorm1d(layer_config.dim_in, eps=layer_config.bn_eps,
-                                 momentum=layer_config.bn_mom)
+        self.bn = nn.BatchNorm1d(
+            layer_config.dim_in,
+            eps=layer_config.bn_eps,
+            momentum=layer_config.bn_mom,
+        )
 
     def forward(self, batch):
         batch.x = self.bn(batch.x)
@@ -222,22 +205,18 @@ class BatchNorm1dNode(nn.Module):
 
 
 class BatchNorm1dEdge(nn.Module):
-    """
-    BatchNorm for edge feature.
+    r"""A batch normalization layer for edge-level features.
 
     Args:
-        dim_in (int): Input dimension
-    Example:
-        >>> layer = BatchNorm1dEdge(layer_config=LayerConfig(dim_in=8))
-        >>> batch = torch.randn((10, 10, 8))
-        >>> batch = layer(batch)
-        >>> print(batch.edge_attr.shape)
-        # torch.Size([10, 10, 8])
+        layer_config (LayerConfig): The configuration of the layer.
     """
     def __init__(self, layer_config: LayerConfig):
         super().__init__()
-        self.bn = nn.BatchNorm1d(layer_config.dim_in, eps=layer_config.bn_eps,
-                                 momentum=layer_config.bn_mom)
+        self.bn = nn.BatchNorm1d(
+            layer_config.dim_in,
+            eps=layer_config.bn_eps,
+            momentum=layer_config.bn_mom,
+        )
 
     def forward(self, batch):
         batch.edge_attr = self.bn(batch.edge_attr)
@@ -246,23 +225,19 @@ class BatchNorm1dEdge(nn.Module):
 
 @register_layer('mlp')
 class MLP(nn.Module):
-    """
-    Basic MLP model.
-    Here 1-layer MLP is equivalent to a Liner layer.
+    """A basic MLP model.
 
     Args:
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension
-        bias (bool): Whether has bias term
-        dim_inner (int): The dimension for the inner layers
-        num_layers (int): Number of layers in the stack
-        **kwargs (optional): Additional args
+        layer_config (LayerConfig): The configuration of the layer.
+        **kwargs (optional): Additional keyword arguments.
     """
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        dim_inner = layer_config.dim_in \
-            if layer_config.dim_inner is None \
-            else layer_config.dim_inner
+        if layer_config.dim_inner:
+            dim_inner = layer_config.dim_in
+        else:
+            dim_inner = layer_config.dim_inner
+
         layer_config.has_bias = True
         layers = []
         if layer_config.num_layers > 1:
@@ -287,13 +262,14 @@ class MLP(nn.Module):
 
 @register_layer('gcnconv')
 class GCNConv(nn.Module):
-    """
-    Graph Convolutional Network (GCN) layer
-    """
+    r"""A Graph Convolutional Network (GCN) layer."""
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        self.model = pyg.nn.GCNConv(layer_config.dim_in, layer_config.dim_out,
-                                    bias=layer_config.has_bias)
+        self.model = pyg.nn.GCNConv(
+            layer_config.dim_in,
+            layer_config.dim_out,
+            bias=layer_config.has_bias,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
@@ -302,13 +278,14 @@ class GCNConv(nn.Module):
 
 @register_layer('sageconv')
 class SAGEConv(nn.Module):
-    """
-    GraphSAGE Conv layer
-    """
+    r"""A GraphSAGE layer."""
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        self.model = pyg.nn.SAGEConv(layer_config.dim_in, layer_config.dim_out,
-                                     bias=layer_config.has_bias)
+        self.model = pyg.nn.SAGEConv(
+            layer_config.dim_in,
+            layer_config.dim_out,
+            bias=layer_config.has_bias,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
@@ -317,13 +294,14 @@ class SAGEConv(nn.Module):
 
 @register_layer('gatconv')
 class GATConv(nn.Module):
-    """
-    Graph Attention Network (GAT) layer
-    """
+    r"""A Graph Attention Network (GAT) layer."""
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        self.model = pyg.nn.GATConv(layer_config.dim_in, layer_config.dim_out,
-                                    bias=layer_config.has_bias)
+        self.model = pyg.nn.GATConv(
+            layer_config.dim_in,
+            layer_config.dim_out,
+            bias=layer_config.has_bias,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
@@ -332,14 +310,14 @@ class GATConv(nn.Module):
 
 @register_layer('ginconv')
 class GINConv(nn.Module):
-    """
-    Graph Isomorphism Network (GIN) layer
-    """
+    r"""A Graph Isomorphism Network (GIN) layer."""
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
         gin_nn = nn.Sequential(
-            Linear_pyg(layer_config.dim_in, layer_config.dim_out), nn.ReLU(),
-            Linear_pyg(layer_config.dim_out, layer_config.dim_out))
+            Linear_pyg(layer_config.dim_in, layer_config.dim_out),
+            nn.ReLU(),
+            Linear_pyg(layer_config.dim_out, layer_config.dim_out),
+        )
         self.model = pyg.nn.GINConv(gin_nn)
 
     def forward(self, batch):
@@ -349,15 +327,16 @@ class GINConv(nn.Module):
 
 @register_layer('splineconv')
 class SplineConv(nn.Module):
-    """
-    SplineCNN layer
-    """
+    r"""A SplineCNN layer."""
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        self.model = pyg.nn.SplineConv(layer_config.dim_in,
-                                       layer_config.dim_out, dim=1,
-                                       kernel_size=2,
-                                       bias=layer_config.has_bias)
+        self.model = pyg.nn.SplineConv(
+            layer_config.dim_in,
+            layer_config.dim_out,
+            dim=1,
+            kernel_size=2,
+            bias=layer_config.has_bias,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index, batch.edge_attr)
@@ -366,12 +345,14 @@ class SplineConv(nn.Module):
 
 @register_layer('generalconv')
 class GeneralConv(nn.Module):
-    """A general GNN layer"""
+    r"""A general GNN layer."""
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        self.model = GeneralConvLayer(layer_config.dim_in,
-                                      layer_config.dim_out,
-                                      bias=layer_config.has_bias)
+        self.model = GeneralConvLayer(
+            layer_config.dim_in,
+            layer_config.dim_out,
+            bias=layer_config.has_bias,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index)
@@ -380,13 +361,15 @@ class GeneralConv(nn.Module):
 
 @register_layer('generaledgeconv')
 class GeneralEdgeConv(nn.Module):
-    """A general GNN layer that supports edge features as well"""
+    r"""A general GNN layer with edge feature support."""
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        self.model = GeneralEdgeConvLayer(layer_config.dim_in,
-                                          layer_config.dim_out,
-                                          layer_config.edge_dim,
-                                          bias=layer_config.has_bias)
+        self.model = GeneralEdgeConvLayer(
+            layer_config.dim_in,
+            layer_config.dim_out,
+            layer_config.edge_dim,
+            bias=layer_config.has_bias,
+        )
 
     def forward(self, batch):
         batch.x = self.model(batch.x, batch.edge_index,
@@ -396,13 +379,15 @@ class GeneralEdgeConv(nn.Module):
 
 @register_layer('generalsampleedgeconv')
 class GeneralSampleEdgeConv(nn.Module):
-    """A general GNN layer that supports edge features and edge sampling"""
+    r"""A general GNN layer that supports edge features and edge sampling."""
     def __init__(self, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        self.model = GeneralEdgeConvLayer(layer_config.dim_in,
-                                          layer_config.dim_out,
-                                          layer_config.edge_dim,
-                                          bias=layer_config.has_bias)
+        self.model = GeneralEdgeConvLayer(
+            layer_config.dim_in,
+            layer_config.dim_out,
+            layer_config.edge_dim,
+            bias=layer_config.has_bias,
+        )
         self.keep_edge = layer_config.keep_edge
 
     def forward(self, batch):

@@ -1,5 +1,5 @@
 import warnings
-from typing import Optional
+from typing import Any, Dict, Optional
 
 import torch
 from torch.utils.data import DataLoader
@@ -14,24 +14,12 @@ from torch_geometric.graphgym.model_builder import GraphGymModule
 
 
 class GraphGymDataModule(LightningDataModule):
-    """
-    LightningDataModule for handling data loading in GraphGym.
+    r"""A :class:`pytorch_lightning.LightningDataModule` for handling data
+    loading routines in GraphGym.
 
-    This class provides data loaders for training, validation, and testing, which are
-    created using the `create_loader` function. The data loaders can be accessed through
-    the `train_dataloader`, `val_dataloader`, and `test_dataloader` methods, respectively.
-
-    Note:
-        Make sure to call the constructor of this class with appropriate configurations
-        before using it.
-
-    Example:
-        >>> data_module = GraphGymDataModule()
-        >>> model = GraphGymModule()
-        >>> train(model, datamodule=data_module)
-
-    Attributes:
-        loaders: List of DataLoader instances for train, validation, and test.
+    This class provides data loaders for training, validation, and testing, and
+    can be accessed through the :meth:`train_dataloader`,
+    :meth:`val_dataloader`, and :meth:`test_dataloader` methods, respectively.
     """
     def __init__(self):
         self.loaders = create_loader()
@@ -49,29 +37,20 @@ class GraphGymDataModule(LightningDataModule):
         return self.loaders[2]
 
 
-def train(model: GraphGymModule, datamodule, logger: bool = True,
-          trainer_config: Optional[dict] = None):
-          """
-    Train a GraphGym model using PyTorch Lightning.
+def train(
+    model: GraphGymModule,
+    datamodule: GraphGymDataModule,
+    logger: bool = True,
+    trainer_config: Optional[Dict[str, Any]] = None,
+):
+    r"""Trains a GraphGym model using PyTorch Lightning.
 
     Args:
-        model (GraphGymModule): The GraphGym model to be trained.
-        datamodule (GraphGymDataModule): The data module containing data loaders.
-        logger (bool): Whether to enable logging during training.
-        trainer_config (dict, optional): Additional trainer configurations.
-
-    This function trains the provided GraphGym model using PyTorch Lightning. It sets up
-    the trainer with given configurations, including callbacks for logging and checkpointing.
-    After training, the function also tests the model using the provided data module.
-
-    Example:
-        >>> data_module = GraphGymDataModule()
-        >>> model = GraphGymModule()
-        >>> train(model, datamodule=data_module)
-
-    Note:
-        Make sure the appropriate configurations (`cfg`) are set before calling this
-        function.
+        model (GraphGymModule): The GraphGym model.
+        datamodule (GraphGymDataModule): The GraphGym data module.
+        logger (bool, optional): Whether to enable logging during training.
+            (default: :obj:`True`)
+        trainer_config (dict, optional): Additional trainer configuration.
     """
     warnings.filterwarnings('ignore', '.*use `CSVLogger` as the default.*')
 
