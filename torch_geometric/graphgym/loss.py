@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 
 import torch_geometric.graphgym.register as register
@@ -17,8 +16,8 @@ def compute_loss(pred, true):
     Returns: Loss, normalized prediction score
 
     """
-    bce_loss = nn.BCEWithLogitsLoss(reduction=cfg.model.size_average)
-    mse_loss = nn.MSELoss(reduction=cfg.model.size_average)
+    bce_loss = torch.nn.BCEWithLogitsLoss(reduction=cfg.model.size_average)
+    mse_loss = torch.nn.MSELoss(reduction=cfg.model.size_average)
 
     # default manipulation for pred and true
     # can be skipped if special loss computation is needed
@@ -44,5 +43,4 @@ def compute_loss(pred, true):
         true = true.float()
         return mse_loss(pred, true), pred
     else:
-        raise ValueError('Loss func {} not supported'.format(
-            cfg.model.loss_fun))
+        raise ValueError(f"Loss function '{cfg.model.loss_fun}' not supported")
