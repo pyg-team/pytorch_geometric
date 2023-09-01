@@ -1,5 +1,4 @@
 import torch
-import torch.nn as nn
 from torch.nn import Parameter
 
 from torch_geometric.graphgym.config import cfg
@@ -9,8 +8,7 @@ from torch_geometric.utils import add_remaining_self_loops, scatter
 
 
 class GeneralConvLayer(MessagePassing):
-    r"""General GNN layer
-    """
+    r"""A general GNN layer."""
     def __init__(self, in_channels, out_channels, improved=False, cached=False,
                  bias=True, **kwargs):
         super().__init__(aggr=cfg.gnn.agg, **kwargs)
@@ -128,13 +126,23 @@ class GeneralEdgeConvLayer(MessagePassing):
         self.msg_direction = cfg.gnn.msg_direction
 
         if self.msg_direction == 'single':
-            self.linear_msg = nn.Linear(in_channels + edge_dim, out_channels,
-                                        bias=False)
+            self.linear_msg = torch.nn.Linear(
+                in_channels + edge_dim,
+                out_channels,
+                bias=False,
+            )
         else:
-            self.linear_msg = nn.Linear(in_channels * 2 + edge_dim,
-                                        out_channels, bias=False)
+            self.linear_msg = torch.nn.Linear(
+                in_channels * 2 + edge_dim,
+                out_channels,
+                bias=False,
+            )
         if cfg.gnn.self_msg == 'concat':
-            self.linear_self = nn.Linear(in_channels, out_channels, bias=False)
+            self.linear_self = torch.nn.Linear(
+                in_channels,
+                out_channels,
+                bias=False,
+            )
 
         if bias:
             self.bias = Parameter(torch.empty(out_channels))
