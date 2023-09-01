@@ -6,6 +6,7 @@ import torch_geometric
 if torch_geometric.typing.WITH_PT20:  # pragma: no cover
     from torch._dynamo import is_compiling
 else:
+
     def is_compiling():
         return False
 
