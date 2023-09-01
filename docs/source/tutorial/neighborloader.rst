@@ -9,13 +9,13 @@ Therefore, this sampling is crucial for training GNNs on large-scale graphs.
 
 Here's a simplified step-by-step process:
 
-Node Selection: Given a large graph, NeighborLoader batchsize = 1, you start with a node you want to compute representations for. This node is referred to as the "center" node.
+Node Selection: Given a large graph, NeighborLoader batchsize = 1, you start with a node you want to compute representations for. This node is referred to as the "target" node.
 
-Sampling: This neighborhood consists of nodes directly connected to the center node (its neighbors). Instead of considering all neighbors, which can be computationally expensive for large graphs, you perform random sampling. You select a fixed number of neighbors from the neighborhood. This subset is known as the "sampled neighbors."
+Sampling: This neighborhood consists of nodes directly connected to the target node (its neighbors). Instead of considering all neighbors, which can be computationally expensive for large graphs, you perform random sampling. You select a fixed number of neighbors from the neighborhood. This subset is known as the "sampled neighbors."
 
 Aggregation: The information from these sampled neighbors is then aggregated in some way, like GraphSAGE Layer in the following example.
 
-Representation Update: The aggregated information is used to update the representation of the center node. This updated representation incorporates information from a limited set of neighbors.
+Representation Update: The aggregated information is used to update the representation of the target node. This updated representation incorporates information from a limited set of neighbors.
 
 Small graph example
 --------------------
@@ -136,7 +136,19 @@ Define Model
                 x_all = torch.cat(xs, dim=0)
             return x_all
 
-the number of SAGE layers in a GNN model is the same as the depth K in the GraphSAGE algorithm.
+The number of SAGE layers in a GNN model is the same as the depth K in the GraphSAGE algorithm.
+
+Note: We implement layer-wise approach in ``inference`` function. 
+The layer-wise approach avoids neighbor explosion by conducting computation layer by layer in GNN models.
+To fit the memory of GPU, evaluation is conducted in small batch. 
+Target nodes in different batches compute intermediate embeddings for their common neighbors multiple times, 
+resulting in repetitive computation. Neighbor explosion is prominent for model evaluation 
+because it usually uses the full neighborhood as opposed to the neighbor sampling in training
+You can refer to `DGI <https://dl.acm.org/doi/pdf/10.1145/3580305.3599805>`__ figure 3 to learn the difference in detail.
+
+
+
+
 
 Train
 -----------
