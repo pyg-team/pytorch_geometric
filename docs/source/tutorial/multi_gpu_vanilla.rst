@@ -177,7 +177,7 @@ The first step is defining the necessary imports:
    import argparse
    import os
    import time
-   
+
    import torch
    import torch.distributed as dist
    import torch.multiprocessing as mp
@@ -185,7 +185,7 @@ The first step is defining the necessary imports:
    from ogb.nodeproppred import PygNodePropPredDataset
    from torch.nn.parallel import DistributedDataParallel
    from torchmetrics import Accuracy
-   
+
    from torch_geometric.loader import NeighborLoader
    from torch_geometric.nn import GCNConv
 
@@ -199,7 +199,7 @@ Next we define our GCN model:
            super().__init__()
            self.conv1 = GCNConv(in_channels, hidden_channels)
            self.conv2 = GCNConv(hidden_channels, out_channels)
-   
+
        def forward(self, x, edge_index, edge_weight=None):
            x = F.dropout(x, p=0.5, training=self.training)
            x = self.conv1(x, edge_index, edge_weight).relu()
@@ -224,7 +224,7 @@ Similarly to our last example we now set up our spawnable runner:
        if num_work is None:
            num_work = os.cpu_count() / 2
        return int(num_work)
-   
+
    def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                  split_idx, num_classes):
        os.environ['MASTER_ADDR'] = 'localhost'
@@ -308,9 +308,9 @@ Again, like in our last example, we put it all together by spawning our runners 
        parser.add_argument('--epochs', type=int, default=3)
        parser.add_argument('--batch_size', type=int, default=128)
        parser.add_argument('--fan_out', type=int, default=50)
-   
+
        args = parser.parse_args()
-   
+
        dataset = PygNodePropPredDataset(name='ogbn-papers100M')
        split_idx = dataset.get_idx_split()
        data = dataset[0]
