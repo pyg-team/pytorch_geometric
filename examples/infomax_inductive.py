@@ -1,7 +1,6 @@
 import os.path as osp
 
 import torch
-import torch.nn as nn
 from tqdm import tqdm
 
 from torch_geometric.datasets import Reddit
@@ -19,7 +18,7 @@ test_loader = NeighborLoader(data, num_neighbors=[10, 10, 25], batch_size=256,
                              num_workers=12)
 
 
-class Encoder(nn.Module):
+class Encoder(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels):
         super().__init__()
         self.convs = torch.nn.ModuleList([
@@ -30,9 +29,9 @@ class Encoder(nn.Module):
 
         self.activations = torch.nn.ModuleList()
         self.activations.extend([
-            nn.PReLU(hidden_channels),
-            nn.PReLU(hidden_channels),
-            nn.PReLU(hidden_channels)
+            torch.nn.PReLU(hidden_channels),
+            torch.nn.PReLU(hidden_channels),
+            torch.nn.PReLU(hidden_channels)
         ])
 
     def forward(self, x, edge_index, batch_size):

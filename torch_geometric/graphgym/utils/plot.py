@@ -1,3 +1,6 @@
+import os.path as osp
+
+
 def view_emb(emb, dir):
     '''
     Visualize a embedding matrix.
@@ -19,4 +22,4 @@ def view_emb(emb, dir):
         emb = pca.fit_transform(emb)
     plt.figure(figsize=(10, 10))
     plt.scatter(emb[:, 0], emb[:, 1])
-    plt.savefig('{}/emb_pca.png'.format(dir), dpi=100)
+    plt.savefig(osp.join(dir, 'emb_pca.png'), dpi=100)
