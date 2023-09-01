@@ -138,11 +138,11 @@ Define Model
 
 The number of SAGE layers in a GNN model is the same as the depth K in the GraphSAGE algorithm.
 
-Note: We implement layer-wise approach in ``inference`` function. 
+Note: We implement layer-wise approach in ``inference`` function.
 The layer-wise approach avoids neighbor explosion by conducting computation layer by layer in GNN models.
-To fit the memory of GPU, evaluation is conducted in small batch. 
-Target nodes in different batches compute intermediate embeddings for their common neighbors multiple times, 
-resulting in repetitive computation. Neighbor explosion is prominent for model evaluation 
+To fit the memory of GPU, evaluation is conducted in small batch.
+Target nodes in different batches compute intermediate embeddings for their common neighbors multiple times,
+resulting in repetitive computation. Neighbor explosion is prominent for model evaluation
 because it usually uses the full neighborhood as opposed to the neighbor sampling in training
 You can refer to `DGI <https://dl.acm.org/doi/pdf/10.1145/3580305.3599805>`__ figure 3 to learn the difference in detail.
 
