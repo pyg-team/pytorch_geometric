@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added the `BrcaTcga` dataset ([#7905](https://github.com/pyg-team/pytorch_geometric/pull/7905))
 - Added the `MyketDataset` ([#7959](https://github.com/pyg-team/pytorch_geometric/pull/7959))
 - Added a multi-GPU `ogbn-papers100M` example ([#7921](https://github.com/pyg-team/pytorch_geometric/pull/7921))
 - Added `group_argsort` implementation ([#7948](https://github.com/pyg-team/pytorch_geometric/pull/7948))
