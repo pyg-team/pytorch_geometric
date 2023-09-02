@@ -11,7 +11,7 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 try:
     import numba
     WITH_NUMBA = True
-except ImportError:  # pragma: no cover
+except Exception:  # pragma: no cover
     WITH_NUMBA = False
 
 

@@ -80,6 +80,9 @@ def run(args: argparse.ArgumentParser):
         _, _, test_mask = get_split_masks(data, dataset_name)
         degree = None
 
+        if hetero and args.cached_loader:
+            args.cached_loader = False
+            print('Disabling CachedLoader, not supported in Hetero models')
         if args.num_layers != [1] and not hetero and args.num_steps != -1:
             raise ValueError("Layer-wise inference requires `steps=-1`")
 
@@ -209,7 +212,7 @@ def run(args: argparse.ArgumentParser):
                             data = transformation(data)
 
                         with cpu_affinity, amp, timeit() as time:
-                            inference_kwargs = {}
+                            inference_kwargs = dict(cache=args.cached_loader)
                             if args.reuse_device_for_embeddings and not hetero:
                                 inference_kwargs['embedding_device'] = device
                             for _ in range(args.warmup):
@@ -332,4 +335,5 @@ if __name__ == '__main__':
         help='Write benchmark or PyTorch profile data to CSV')
     add('--export-chrome-trace', default=True, type=bool,
         help='Export chrome trace file. Works only with PyTorch profiler')
+    add('--cached-loader', action='store_true', help='Use CachedLoader')
     run(argparser.parse_args())
