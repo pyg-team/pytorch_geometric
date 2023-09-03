@@ -138,4 +138,11 @@ After running the above code, the final accuracy is approximately 70\% for the C
 MetaPath2Vec
 ------------
 
-Here, I'll write something about MetaPath2Vec. 
+.. note::
+
+   In this section of the tutorial, we will learn node embeddings for **heterogenous graphs** using the :class:`~torch_geometric.nn.MetaPath2Vec` module of :pyg:`PyG`. 
+   The code is available as `examples/hetero/metapath2vec.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/metapath2vec.py>`_ and as a `Google Colab tutorial notebook <https://colab.research.google.com/github/AntonioLonga/PytorchGeometricTutorial/blob/main/Tutorial11/Tutorial11.ipynb>`_.
+   For the original paper, see `metapath2vec: Scalable Representation Learning for Heterogeneous Networks <https://ericdongyx.github.io/papers/KDD17-dong-chawla-swami-metapath2vec.pdf>`_.
+
+
+Here, I will write some stuff about MetaPath2Vec.
