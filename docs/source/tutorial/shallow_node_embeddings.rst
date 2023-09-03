@@ -23,7 +23,7 @@ Node2Vec
 
 .. note::
 
-   In this section of the tutorial, we will learn node embeddings for **homogenous graphs** using the :class:`~torch_geometric.nn.Node2Vec` module of :pyg:`PyG`. 
+   In this section of the tutorial, we will learn node embeddings for **homogenous graphs** using the :class:`~torch_geometric.nn.Node2Vec` module of :pyg:`PyG`.
    The code is available as `examples/node2vec.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/node2vec.py>`_ and as a `Google Colab tutorial notebook <https://colab.research.google.com/github/AntonioLonga/PytorchGeometricTutorial/blob/main/Tutorial11/Tutorial11.ipynb>`_.
    For the original paper, see `node2vec: Scalable Feature Learning for Networks <https://arxiv.org/pdf/1607.00653.pdf>`_.
 
@@ -35,8 +35,8 @@ Node2Vec is a method for learning shallow node embeddings for homogenous graphs,
                                              &\approx p_{\mathcal{G}, T}(v|u)
     \end{align}
 
-where :math:`p_{\mathcal{G},T}` is the probability of visiting node :math:`v` on a length-:math:`T` random walk starting at node :math:`u`. 
-Since we want to predict a probability, we use the softmax function to make sure the output is in the range :math:`[0,1]`. 
+where :math:`p_{\mathcal{G},T}` is the probability of visiting node :math:`v` on a length-:math:`T` random walk starting at node :math:`u`.
+Since we want to predict a probability, we use the softmax function to make sure the output is in the range :math:`[0,1]`.
 
 To begin the example, let us load in the needed packages and the data that we will be working with.
 
@@ -64,8 +64,8 @@ From inspecting the data, we can see that we have 2708 nodes and 10556 edges in 
 
     data.num_edges
     >>> 10556
-    
-Let us now initialize the :class:`~torch_geometric.nn.Node2Vec` module. 
+
+Let us now initialize the :class:`~torch_geometric.nn.Node2Vec` module.
 
 .. code-block:: python
 
@@ -74,7 +74,7 @@ Let us now initialize the :class:`~torch_geometric.nn.Node2Vec` module.
     model = Node2Vec(
         data.edge_index,
         embedding_dim=128,
-        walk_length=20, 
+        walk_length=20,
         context_size=10,
         walks_per_node=10,
         num_negative_samples=1,
@@ -94,7 +94,7 @@ The :class:`~torch_geometric.nn.Node2Vec` module contains the learned embeddings
 
     pos_rw, neg_rw = next(iter(loader))
 
-Here, :obj:`pos_rw` will be the sampled positive random walks (i.e. random walks over the graph) and :obj:`neg_rw` will essentially sampled using :obj:`torch.random.randint`. 
+Here, :obj:`pos_rw` will be the sampled positive random walks (i.e. random walks over the graph) and :obj:`neg_rw` will essentially sampled using :obj:`torch.random.randint`.
 Using this dataloader and the built in :obj:`model.loss`, we can define our :obj:`train` function.
 
 .. code-block:: python
@@ -132,15 +132,15 @@ embeddings in an unsupervised manner. Furthermore, the node features are not use
         loss = train()
         acc = test()
         print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Acc: {acc:.4f}')
-            
-After running the above code, the final accuracy is approximately 70\% for the Cora classification task. 
+
+After running the above code, the final accuracy is approximately 70\% for the Cora classification task.
 
 MetaPath2Vec
 ------------
 
 .. note::
 
-   In this section of the tutorial, we will learn node embeddings for **heterogenous graphs** using the :class:`~torch_geometric.nn.MetaPath2Vec` module of :pyg:`PyG`. 
+   In this section of the tutorial, we will learn node embeddings for **heterogenous graphs** using the :class:`~torch_geometric.nn.MetaPath2Vec` module of :pyg:`PyG`.
    The code is available as `examples/hetero/metapath2vec.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/hetero/metapath2vec.py>`_ and as a `Google Colab tutorial notebook <https://colab.research.google.com/github/AntonioLonga/PytorchGeometricTutorial/blob/main/Tutorial11/Tutorial11.ipynb>`_.
    For the original paper, see `metapath2vec: Scalable Representation Learning for Heterogeneous Networks <https://ericdongyx.github.io/papers/KDD17-dong-chawla-swami-metapath2vec.pdf>`_.
 
