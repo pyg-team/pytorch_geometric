@@ -44,6 +44,5 @@ class NeuralFingerprint(torch.nn.Module):
             x = self.layers[i](x, edge_index)
             x = torch.sigmoid(x)
             y = F.softmax(self.layers[i + 1](x), dim=1)
-            for j in range(y.shape[0]):
-                fingerprint += y[j]
+            fingerprint += torch.sum(y, dim=0)
         return fingerprint
