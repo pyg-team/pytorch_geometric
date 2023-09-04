@@ -77,8 +77,9 @@ class LCMAggregation(Aggregation):
         depth = ceil(log2(x.shape[0]))
         for _ in range(depth):
             x = [
-                self.bin_op(x[2 * i], x[2 * i + 1]) if 2 * i +
-                1 < len(x) else x[2 * i] for i in range(ceil(len(x) / 2))
+                self.bin_op(x[2 * i], x[2 * i + 1]) if
+                (2 * i + 1) < len(x) else x[2 * i]
+                for i in range(ceil(len(x) / 2))
             ]
 
         assert len(x) == 1
