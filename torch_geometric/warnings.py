@@ -22,6 +22,3 @@ def filterwarnings(action: str, message: str):
         return
 
     warnings.filterwarnings(action, message)
-
-
-
