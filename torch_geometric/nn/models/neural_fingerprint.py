@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.nn import MFConv, Linear
+from torch_geometric.nn import Linear, MFConv
 
 
 class NeuralFingerprint(torch.nn.Module):
@@ -16,7 +16,8 @@ class NeuralFingerprint(torch.nn.Module):
         fingerprint_length (int): The length of fingerprint vector required.
         num_layers (int): Number of layers in the model (Radius in the paper).
     """
-    def __init__(self, num_features: int, fingerprint_length: int, num_layers: int):
+    def __init__(self, num_features: int, fingerprint_length: int,
+                 num_layers: int):
         super().__init__()
         self.num_features = num_features
         self.fingerprint_length = fingerprint_length
@@ -30,7 +31,8 @@ class NeuralFingerprint(torch.nn.Module):
                 Linear(in_channels=self.num_features,
                        out_channels=self.fingerprint_length))
 
-    def forward(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor,
+                edge_index: torch.Tensor) -> torch.Tensor:
         r"""
         Args:
             x (torch.Tensor): The node feature matrix.
