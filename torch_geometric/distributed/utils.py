@@ -1,11 +1,12 @@
+from dataclasses import dataclass
+from typing import Dict, List, Union
+
 import torch
+from ordered_set import OrderedSet
 from torch import Tensor
 
-from ordered_set import OrderedSet
-from dataclasses import dataclass
-
-from typing import Dict, List, Union
 from torch_geometric.typing import Dict, NodeType
+
 
 @dataclass
 class NodeDict:
