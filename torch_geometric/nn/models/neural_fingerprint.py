@@ -1,9 +1,7 @@
 import torch
 import torch.nn.functional as F
-from torch import tensor
 
-from torch_geometric.nn.conv import MFConv
-from torch_geometric.nn.dense import Linear
+from torch_geometric.nn import MFConv, Linear
 
 
 class NeuralFingerprint(torch.nn.Module):
@@ -14,11 +12,11 @@ class NeuralFingerprint(torch.nn.Module):
     of molecules.
 
     Args:
-        num_features (int) : The number of features of each node/atom.
-        fingerprint_length (int) : The length of fingerprint vector required.
-        num_layers (int) : Number of layers in the model (Radius in the paper).
+        num_features (int): The number of features of each node/atom.
+        fingerprint_length (int): The length of fingerprint vector required.
+        num_layers (int): Number of layers in the model (Radius in the paper).
     """
-    def __init__(self, num_features, fingerprint_length, num_layers):
+    def __init__(self, num_features: int, fingerprint_length: int, num_layers: int):
         super().__init__()
         self.num_features = num_features
         self.fingerprint_length = fingerprint_length
@@ -32,14 +30,14 @@ class NeuralFingerprint(torch.nn.Module):
                 Linear(in_channels=self.num_features,
                        out_channels=self.fingerprint_length))
 
-    def forward(self, x, edge_index):
+    def forward(self, x: torch.Tensor, edge_index: torch.Tensor) -> torch.Tensor:
         r"""
         Args:
-            x (torch.Tensor) : The node feature matrix.
-            edge_index (torch.Tensor) : The edge indices.
+            x (torch.Tensor): The node feature matrix.
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
         """
 
-        fingerprint = torch.zeros(self.fingerprint_length)
+        fingerprint = x.new_zeros(self.fingerprint_length)
         for i in range(0, 2 * self.num_layers, 2):
             x = self.layers[i](x, edge_index)
             x = torch.sigmoid(x)
