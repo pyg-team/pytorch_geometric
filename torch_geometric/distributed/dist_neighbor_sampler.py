@@ -1,9 +1,9 @@
+import logging
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
 import torch.multiprocessing as mp
-import logging
 from ordered_set import OrderedSet
 from torch import Tensor
 
@@ -112,12 +112,11 @@ class DistNeighborSampler:
         self.with_edge_attr = self.dist_feature.has_edge_attr()
 
     def register_sampler_rpc(self) -> None:
-        
+
         partition2workers = rpc_partition_to_workers(
             current_ctx=self.current_ctx,
             num_partitions=self.dist_graph.num_partitions,
-            current_partition_idx=self.dist_graph.partition_idx
-        )
+            current_partition_idx=self.dist_graph.partition_idx)
         self.rpc_router = RPCRouter(partition2workers)
         self.dist_feature.set_rpc_router(self.rpc_router)
 
@@ -554,7 +553,8 @@ class DistNeighborSampler:
             # Collect node labels of input node type.
             node_labels = self.dist_graph.labels
             if node_labels is not None:
-                nlabels[self.input_type] = node_labels[output.node[self.input_type]]
+                nlabels[self.input_type] = node_labels[output.node[
+                    self.input_type]]
             # Collect node features.
             if output.node is not None:
                 for ntype in output.node.keys():
@@ -563,8 +563,8 @@ class DistNeighborSampler:
                             is_node_feat=True, ids=output.node[ntype],
                             input_type=ntype)
                         print('node fut')
-                        print({max(output.node[ntype])}, {
-                              self.dist_feature.node_feat_pb.size()})
+                        print({max(output.node[ntype])},
+                              {self.dist_feature.node_feat_pb.size()})
                         nfeat = await wrap_torch_future(fut)
                         nfeat = nfeat.to(torch.device('cpu'))
                         nfeats[ntype] = nfeat
@@ -579,7 +579,8 @@ class DistNeighborSampler:
                             input_type=etype)
                         print('edge fut')
                         print(
-                            f'{max(output.edge[etype])}, {self.dist_feature.edge_feat_pb.size()}')
+                            f'{max(output.edge[etype])}, {self.dist_feature.edge_feat_pb.size()}'
+                        )
                         efeat = await wrap_torch_future(fut)
                         efeat = efeat.to(torch.device('cpu'))
                         efeats[etype] = efeat
@@ -607,9 +608,7 @@ class DistNeighborSampler:
             else:
                 efeats = None
 
-        output.metadata = (
-            *output.metadata,
-            nfeats, nlabels, efeats)
+        output.metadata = (*output.metadata, nfeats, nlabels, efeats)
         if self.is_hetero:
             output.row = remap_keys(output.row, self._sampler.to_edge_type)
             output.col = remap_keys(output.col, self._sampler.to_edge_type)
@@ -618,7 +617,9 @@ class DistNeighborSampler:
     def __repr__(self):
         return f"{self.__class__.__name__}()-PID{mp.current_process().pid}"
 
+
 # Sampling Utilities ##########################################################
+
 
 def close_sampler(worker_id, sampler):
     # Make sure that mp.Queue is empty at exit and RAM is cleared
