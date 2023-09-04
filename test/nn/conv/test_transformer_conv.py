@@ -8,8 +8,8 @@ from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
 
-@pytest.mark.parametrize("edge_dim", [None, 8])
-@pytest.mark.parametrize("concat", [True, False])
+@pytest.mark.parametrize('edge_dim', [None, 8])
+@pytest.mark.parametrize('concat', [True, False])
 def test_transformer_conv(edge_dim, concat):
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
