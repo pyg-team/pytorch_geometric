@@ -93,6 +93,17 @@ class NodeSamplerInput(CastMixin):
             self.input_type,
         )
 
+    def __len__(self):
+        return self.node.numel()
+
+    def share_memory(self):
+        self.node.share_memory_()
+        return self
+
+    def to(self, device: torch.device):
+        self.node.to(device)
+        return self
+
 
 @dataclass(init=False)
 class EdgeSamplerInput(CastMixin):
@@ -157,6 +168,23 @@ class EdgeSamplerInput(CastMixin):
             self.time[index] if self.time is not None else None,
             self.input_type,
         )
+
+    def __len__(self):
+        return self.row.numel()
+
+    def share_memory(self):
+        self.row.share_memory_()
+        self.col.share_memory_()
+        if self.label is not None:
+            self.label.share_memory_()
+        return self
+
+    def to(self, device: torch.device):
+        self.row.to(device)
+        self.col.to(device)
+        if self.label is not None:
+            self.label.to(device)
+        return self
 
 
 @dataclass
