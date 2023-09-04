@@ -105,6 +105,12 @@ class TemporalData(BaseData):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+    @classmethod
+    def from_dict(cls, mapping: Dict[str, Any]) -> 'TemporalData':
+        r"""Creates a :class:`~torch_geometric.data.TemporalData` object from
+        a Python dictionary."""
+        return cls(**mapping)
+
     def index_select(self, idx: Any) -> 'TemporalData':
         idx = prepare_idx(idx)
         data = copy.copy(self)
