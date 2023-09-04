@@ -3,6 +3,7 @@ from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 import torch
 import torch.multiprocessing as mp
+import logging
 from ordered_set import OrderedSet
 from torch import Tensor
 
@@ -110,11 +111,31 @@ class DistNeighborSampler:
         self.csc = True  # always true?
         self.with_edge_attr = self.dist_feature.has_edge_attr()
 
-    def register_sampler_rpc(self):
-        pass
+    def register_sampler_rpc(self) -> None:
+        
+        partition2workers = rpc_partition_to_workers(
+            current_ctx=self.current_ctx,
+            num_partitions=self.dist_graph.num_partitions,
+            current_partition_idx=self.dist_graph.partition_idx
+        )
+        self.rpc_router = RPCRouter(partition2workers)
+        self.dist_feature.set_rpc_router(self.rpc_router)
 
-    def init_event_loop(self):
-        pass
+        self._sampler = NeighborSampler(
+            data=(self.dist_feature, self.dist_graph),
+            num_neighbors=self.num_neighbors,
+            subgraph_type=self.subgraph_type,
+            replace=self.replace,
+            disjoint=self.disjoint,
+            temporal_strategy=self.temporal_strategy,
+            time_attr=self.time_attr,
+        )
+        rpc_sample_callee = RpcSamplingCallee(self._sampler, self.device)
+        self.rpc_sample_callee_id = rpc_register(rpc_sample_callee)
+
+    def init_event_loop(self) -> None:
+        self.event_loop = ConcurrentEventLoop(self.concurrency)
+        self.event_loop.start_loop()
 
     # Node-based distributed sampling #########################################
 
@@ -523,11 +544,88 @@ class DistNeighborSampler:
     async def _colloate_fn(
         self, output: Union[SamplerOutput, HeteroSamplerOutput]
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        pass
+        r""" Collect labels and features for the sampled subgrarph if necessary,
+        and put them into a sample message.
+        """
+        if self.is_hetero:
+            nlabels = {}
+            nfeats = {}
+            efeats = {}
+            # Collect node labels of input node type.
+            node_labels = self.dist_graph.labels
+            if node_labels is not None:
+                nlabels[self.input_type] = node_labels[output.node[self.input_type]]
+            # Collect node features.
+            if output.node is not None:
+                for ntype in output.node.keys():
+                    if output.node[ntype].numel() > 0:
+                        fut = self.dist_feature.lookup_features(
+                            is_node_feat=True, ids=output.node[ntype],
+                            input_type=ntype)
+                        print('node fut')
+                        print({max(output.node[ntype])}, {
+                              self.dist_feature.node_feat_pb.size()})
+                        nfeat = await wrap_torch_future(fut)
+                        nfeat = nfeat.to(torch.device('cpu'))
+                        nfeats[ntype] = nfeat
+                    else:
+                        nfeats[ntype] = None
+            # Collect edge features
+            if output.edge is not None and self.with_edge_attr:
+                for etype in output.edge.keys():
+                    if output.edge[etype].numel() > 0:
+                        fut = self.dist_feature.lookup_features(
+                            is_node_feat=False, ids=output.edge[etype],
+                            input_type=etype)
+                        print('edge fut')
+                        print(
+                            f'{max(output.edge[etype])}, {self.dist_feature.edge_feat_pb.size()}')
+                        efeat = await wrap_torch_future(fut)
+                        efeat = efeat.to(torch.device('cpu'))
+                        efeats[etype] = efeat
+                    else:
+                        efeats[etype] = None
 
+        else:  # Homo
+            # Collect node labels.
+            nlabels = self.dist_graph.labels[output.node] if (
+                self.dist_graph.labels is not None) else None
+            # Collect node features.
+            if output.node is not None:
+                fut = self.dist_feature.lookup_features(
+                    is_node_feat=True, ids=output.node)
+                nfeats = await wrap_torch_future(fut)
+                nfeats = nfeats.to(torch.device('cpu'))
+            # else:
+            efeats = None
+            # Collect edge features.
+            if output.edge is not None and self.with_edge_attr:
+                fut = self.dist_feature.lookup_features(
+                    is_node_feat=False, ids=output.edge)
+                efeats = await wrap_torch_future(fut)
+                efeats = efeats.to(torch.device('cpu'))
+            else:
+                efeats = None
+
+        output.metadata = (
+            *output.metadata,
+            nfeats, nlabels, efeats)
+        if self.is_hetero:
+            output.row = remap_keys(output.row, self._sampler.to_edge_type)
+            output.col = remap_keys(output.col, self._sampler.to_edge_type)
+        return output
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}()-PID{mp.current_process().pid}"
 
 # Sampling Utilities ##########################################################
 
-
 def close_sampler(worker_id, sampler):
-    pass
+    # Make sure that mp.Queue is empty at exit and RAM is cleared
+    try:
+        logging.info(f"Closing event_loop in {sampler} worker-id {worker_id}")
+        sampler.event_loop.shutdown_loop()
+    except AttributeError:
+        pass
+    logging.info(f"Closing rpc in {sampler} worker-id {worker_id}")
+    shutdown_rpc(graceful=True)
