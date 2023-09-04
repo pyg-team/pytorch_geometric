@@ -92,7 +92,7 @@ class BrcaTcga(InMemoryDataset):
 
         data_list = []
         for x, y in zip(graph_feat, graph_label):
-            data = Data(x=x, edge_index=edge_index, y=y)
+            data = Data(x=x.view(-1, 1), edge_index=edge_index, y=y)
 
             if self.pre_filter is not None and not self.pre_filter(data):
                 continue
