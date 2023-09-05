@@ -145,7 +145,17 @@ class LocalFeatureStore(FeatureStore):
             self.rpc_call_id = rpc_register(rpc_call)
         else:
             self.rpc_call_id = None
-
+            
+    def has_edge_attr(self) -> bool:
+        edge_keys = [key for key in self._feat.keys() if 'edge_attr' in key]
+        for k in edge_keys:
+            try:
+                self.get_tensor(k[0],'edge_attr')
+            except KeyError:
+                return False
+            else:
+                return True
+            
     def lookup_features(
         self,
         index: Tensor,
