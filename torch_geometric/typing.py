@@ -310,6 +310,7 @@ MaybeHeteroEdgeTensor = Union[Tensor, Dict[EdgeType, Tensor]]
 InputNodes = Union[OptTensor, NodeType, Tuple[NodeType, OptTensor]]
 InputEdges = Union[OptTensor, EdgeType, Tuple[EdgeType, OptTensor]]
 
+
 def as_str(type: Union[NodeType, EdgeType]) -> str:
     if isinstance(type, NodeType):
         return type
@@ -317,12 +318,15 @@ def as_str(type: Union[NodeType, EdgeType]) -> str:
         return EDGE_TYPE_STR_SPLIT.join(type)
     return ''
 
+
 NumNeighbors = Union[List[int], Dict[EdgeType, List[int]]]
+
 
 def reverse_edge_type(etype: EdgeType):
     src, edge, dst = etype
     if not src == dst:
-        if edge.split("_", 1)[0] == 'rev': # undirected edge with `rev_` prefix.
+        if edge.split("_",
+                      1)[0] == 'rev':  # undirected edge with `rev_` prefix.
             edge = edge.split("_", 1)[1]
         else:
             edge = 'rev_' + edge
