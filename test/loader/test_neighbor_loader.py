@@ -524,7 +524,7 @@ def test_pyg_lib_and_torch_sparse_homo_equality():
     seed = torch.arange(10)
 
     sample = torch.ops.pyg.neighbor_sample
-    out1 = sample(colptr, row, seed, [-1, -1], None, None, True)
+    out1 = sample(colptr, row, seed, [-1, -1], None, None, None, True)
     sample = torch.ops.torch_sparse.neighbor_sample
     out2 = sample(colptr, row, seed, [-1, -1], False, True)
 

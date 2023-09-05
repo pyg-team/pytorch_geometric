@@ -296,22 +296,29 @@ class NeighborSampler(BaseSampler):
             # TODO Support induced subgraph sampling in `pyg-lib`.
             if (torch_geometric.typing.WITH_PYG_LIB
                     and self.subgraph_type != SubgraphType.induced):
-                # TODO (matthias) `return_edge_id` if edge features present
-                # TODO (matthias) Ideally, `seed` inherits dtype from `colptr`
-                out = torch.ops.pyg.neighbor_sample(
+
+                args = (
                     self.colptr,
                     self.row,
-                    seed.to(self.colptr.dtype),  # seed
+                    # TODO (matthias) `seed` should inherit dtype from `colptr`
+                    seed.to(self.colptr.dtype),
                     self.num_neighbors.get_mapped_values(),
                     self.node_time,
                     seed_time,
+                )
+                if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
+                    args += (None, )
+                args += (
                     True,  # csc
                     self.replace,
                     self.subgraph_type != SubgraphType.induced,
                     self.disjoint,
                     self.temporal_strategy,
+                    # TODO (matthias) `return_edge_id` if edge features present
                     True,  # return_edge_id
                 )
+
+                out = torch.ops.pyg.neighbor_sample(*args)
                 row, col, node, edge, batch = out[:4] + (None, )
 
                 # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
