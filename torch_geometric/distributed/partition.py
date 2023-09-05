@@ -8,7 +8,7 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.loader import ClusterData
-from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType
+from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType, Tuple, Dict, as_str
 
 
 class Partitioner:
