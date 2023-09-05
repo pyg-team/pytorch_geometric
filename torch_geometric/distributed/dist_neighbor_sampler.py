@@ -129,6 +129,8 @@ class DistNeighborSampler:
             temporal_strategy=self.temporal_strategy,
             time_attr=self.time_attr,
         )
+        
+        self.edge_permutation = self._sampler.edge_permutation
         rpc_sample_callee = RpcSamplingCallee(self._sampler, self.device)
         self.rpc_sample_callee_id = rpc_register(rpc_sample_callee)
 
