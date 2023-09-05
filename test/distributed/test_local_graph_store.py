@@ -55,7 +55,8 @@ def test_heterogeneous_graph_store():
     edge_index_dict = {edge_type: get_random_edge_index(100, 100, 300)}
 
     graph_store = LocalGraphStore.from_hetero_data(
-        edge_id_dict, edge_index_dict, num_nodes_dict={'paper': 100}, is_sorted_dict={'paper' : False})
+        edge_id_dict, edge_index_dict, num_nodes_dict={'paper': 100},
+        is_sorted_dict={'paper': False})
 
     assert len(graph_store.get_all_edge_attrs()) == 1
     edge_attr = graph_store.get_all_edge_attrs()[0]
