@@ -400,8 +400,8 @@ class NeighborSampler(BaseSampler):
 
                 # `pyg-lib>0.1.0` returns sampled number of nodes/edges:
                 num_sampled_nodes = num_sampled_edges = None
-                if len(out) == 6:
-                    num_sampled_nodes, num_sampled_edges = out[4:]
+                if len(out) >= 6:
+                    num_sampled_nodes, num_sampled_edges = out[4:6]
 
                 if self.disjoint:
                     batch, node = node.t().contiguous()
