@@ -1,32 +1,45 @@
-GLT Distributed Training
+Distributed Training Using GraphLearn-for-Pytorch
 ========================
 
-In many real-world applications, it's often infeasible to train GNNs on large graphs using a single machine.
-GLT is a distributed python library that supports efficient distributed GNN training across multiple machines based on the PyTorch. 
-GLT adopts the DDP mode of PyTorch for distributed parallel training, and distributes the graph data and graph-based computations across a collection of computation resources to scale out the process of GNN training.
+In many real-world applications, it's often infeasible to train GNNs on large 
+graphs using a single machine. `GraphLearn-for-Pytorch(GLT) <https://github.com/alibaba/graphlearn-for-pytorch>`__ 
+is a python library that supports efficient distributed GNN training across 
+multiple machines based on the PyTorch. GLT leverages GPUs to accelerate graph 
+sampling and utilizes UVA and GPU caches to reduce the data conversion and 
+transferring costs during graph sampling and model training. Most of GLT's APIs 
+are compatible with PyG, thus with only a few lines of modification, a single-node 
+PyG training script can be scaled to distributed training using GLT.
 
-In GLT, distributed sampling and training processes can be completely decoupled and deployed on different computation resources.
-Such flexible deployment of GLT's distributed training can achieve more efficient resource allocation and load balancing, as the workloads and required computing resources corresponding to sampling and training are usually not aligned.
+GLT adopts PyTorch DDP for distributed parallel training, and distributes 
+the graph data and graph-based computations across a collection of workers to 
+scale out the processse of sampling and training. In GLT, the sampling and training 
+processes are completely decoupled and can be flexibly deployed different physical nodes,
+which allow users to achieve more efficient resource allocation and better load balancing, 
+expecially in the case that the required computing resources of sampling and training are
+not aligned. GLT can accelerate neighbor sampling and feature collection with GPUs. 
+To minimize the network overhead incurred by remote graph data, GLT implements 
+an asynchronous RPC framework on top of PyTorch RPC to properly pipeline
+the sampling/training processes and hide the network latency. RDMA is also 
+supported in distributed training.
 
-GLT can further accelerate neighbor sampling and feature collection with GPUs. 
-To minimize the network overhead incurred by remote graph data access in distributed training, GLT implements an asynchronous RPC framework on top of PyTorch RPC.
-Both the TCP and RDMA protocols are supported for inter-node CPU and GPU communication.
+In the rest of this tutorial, we will go through the architecture and some key 
+concepts in GLT, and use examples to illustrate how to use GLT to training PyG
+models in a distributed setting.
 
-The APIs of distributed training in GLT are similar to that of single-node training in PyG.
-In the rest of this tutorial, we will go through some important concepts and key architecture designs of GLT's distributed module, and use examples to illustrate how to perform distributed training in GLT.
-
-1. Preprocessing and Data Partitioning
+1. Preprocessing and data partitioning
 --------------------------------------
 
-In distributed training, the graph data should be partitioned before the training starts. 
-Each partition is managed by a node in the training cluster.
-GLT provides a set of utility functions and partitioners to facilitate the data preprocessing and partitioning.
+To scale out the performance of batch sampling, GLT uses multiple nodes to store
+the graph data and perform distributed sampling. The graph data needs to be
+partitioned before the training starts, and each partition is managed by a 
+node in the cluster. GLT provides a set of utility functions and partitioners 
+to facilitate the data preprocessing and partitioning.
 
-As an example, we will use the ``ogbn-products`` dataset and demonstrate how to partition it into two parts for distributed training.
+As an example, we will use the ``ogbn-products`` dataset and demonstrate how 
+to partition it into two parts for distributed training. The complete script for 
+partitioning ``ogbn-products`` dataset can be found `here <https://github.com/alibaba/graphlearn-for-pytorch/tree/main/examples/distributed/partition_ogbn_dataset.py>`__.
 
-The complete script for partitioning ``ogbn-products`` dataset can be found `here <https://github.com/alibaba/graphlearn-for-pytorch/tree/main/examples/distributed/partition_ogbn_dataset.py>`__.
-
-First, the following code can be used to load the ``ogbn-products`` dataset:
+First, we use the following script to load the ``ogbn-products`` dataset:
 
 .. code-block:: python
 
@@ -49,8 +62,10 @@ First, the following code can be used to load the ``ogbn-products`` dataset:
 1.1 Partitioning the training input data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `ogbn-products` dataset splits its training input data into three parts: `train` for training, `val` for validation and `test` for testing.
-We only use `train` and `test` here, and both of them should be partitioned for parallel training:
+The `ogbn-products` dataset splits its training input data into three parts: 
+`train`, `val` and `test`. In GLT, the training inout are partitioned and 
+disseminated among multiple training processes to facilitate distributed training.
+We only use `train` and `test` in this example:
 
 .. code-block:: python
 
@@ -74,20 +89,23 @@ We only use `train` and `test` here, and both of them should be partitioned for 
 1.2 Partitioning the graph
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GLT adopts an edge-cut method to partition graph data, node and edge features are splitted and stored together with each graph partition, and the generated partition mapping of graph nodes and edges will also be saved into the output directory. 
-The partitioning occurs in three steps:
+GLT adopts an edge-cut approach to partition the graph topology (nodes and edges), 
+features of nodes and edges are partitioned according to the topology partitioning
+results, and are stored together with each graph topology partition.
+The mapping information from graph nodes and edges to partition IDs are also 
+saved. In general, the process of partitioning can be summarized into three steps:
 
 -  
-  (1) Run a partition algorithm to assign nodes to partitions.
+  (1) Run a partitioning algorithm to assign nodes to partitions.
 
 -  
-  (2) Construct partition graph structure based on the node assignment.
+  (2) Construct the  graph structure based on the node assignment for each partition.
 
 -  
-  (3) Split the node features and edge features based on the partition
-      result.
+  (3) Split the node features and edge features based on the partitioning results.
 
-GLT implements a simple `graphlearn_torch.partition.RandomPartitioner <graphlearn_torch.partition.random_partitioner.RandomPartitioner>`__ to partition graph data randomly and evenly:
+GLT implements a simple `graphlearn_torch.partition.RandomPartitioner <graphlearn_torch.partition.random_partitioner.RandomPartitioner>`__ 
+to partition graph data randomly and evenly:
 
 .. code-block:: python 
 
@@ -100,24 +118,31 @@ GLT implements a simple `graphlearn_torch.partition.RandomPartitioner <graphlear
     edge_index=data.edge_index,
     node_feat=data.x,
     edge_feat=None,
-    edge_assign_strategy='by_src', # assign graph edges by src node.
+    edge_assign_strategy='by_src', # store graph edges with the src node.
     chunk_size=10000, # chunk size for node assignment
     device=torch.device(0) # device used for partitioning 
   )
   random_partitioner.partition()
 
+Note that, the ``edge_assign_strategy`` decides an edge is stored with its
+source node or destination node. Thus out-bound sampling (sampling the out-going 
+edges of a node) is bound with ``by_src``, and in-bound sampling should use ``by_dst``. 
 
-Note that the choice of the ``edge_assign_strategy`` parameter depends on the subsequent sampling process.
-Out-bound sampling is bound with ``by_src``, and in-bound sampling corresponds to ``by_dst``. 
-This is to determine the attribution of edges and ensure that they are placed in the correct partition.
+1.3 Building feature cache
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+GLT supports caching node/edge deature in GPU to minimize the data transferring
+cost between host and device during feature collection. To facilitate selecting 
+the frequently accessed nodes/edges, GLT provides another partitioner, `graphlearn_torch.partition.FrequencyPartitioner <graphlearn_torch.partition.frequency_partitioner.FrequencyPartitioner>`__.
+``FrequencyPartitioner`` takes the probabilities of each node being sampled at 
+a specific training workload as its input, and evenly assigns nodes to different 
+partitions according to their 'hotness'. The hottest graph nodes (devided by `cache_ratio`) 
+will be selected for feature caches in GPUs at each partition.
+We can use `graphlearn_torch.sampler.NeighborSampler <graphlearn_torch.sampler.neighbor_sampler.NeighborSampler>`__ 
+to calculate the sampling probabilities. But please **note**: the sampling 
+parameters (num_neighbors, etc.) used in probability calculation must be identical 
+as those used in training.
 
-Besides, GLT implements another partitioner, `graphlearn_torch.partition.FrequencyPartitioner <graphlearn_torch.partition.frequency_partitioner.FrequencyPartitioner>`__, with hotness awareness of graph nodes which can effectively reduce cross-machine node access during distributed sampling and feature collection.
-The ``FrequencyPartitioner`` requires the probabilities of each graph node being sampled at a specific sampling workload, and further assigns nodes to different partitions according to their 'hotness'.
-The hottest graph nodes will be selected for feature caches in GPUs at each partition.
-GLT's `graphlearn_torch.sampler.NeighborSampler <graphlearn_torch.sampler.neighbor_sampler.NeighborSampler>`__ provides the related APIs to calculate the sampling probabilities. 
-But please **note**: The sampling arguments (num_neighbors, etc.) used in probability calculation must be the same as those used in the real distributed training workload.
-
-The following example will show how to calculate node hotness and how to partition graph data with ``FrequencyPartitioner``:
+The following code shows how to calculate node hotness and how to partition graph data with ``FrequencyPartitioner``:
 
 .. code-block:: python
 
@@ -152,13 +177,17 @@ The following example will show how to calculate node hotness and how to partiti
    )
    freq_partitioner.partition()
 
-The partitioners of GLT also support partitioning heterogeneous graph data, you should organize the graph and feature data as a dict. 
-In addition, GLT provides an abstract `graphlearn_torch.partition.PartitionerBase <graphlearn_torch.partition.base.PartitionerBase>`__ class, you can customize your own partitioner by inheriting it and overwriting the logic of partitioning.
+GLT also supports partitioning heterogeneous graph, where the graph and feature 
+data should be organized as a dict. In addition, GLT provides an abstract 
+`graphlearn_torch.partition.PartitionerBase <graphlearn_torch.partition.base.PartitionerBase>`__ 
+class, based on which users can customize their own partitioner.
 
-1.3 Loading a data partition
+1.4 Loading a data partition
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-GLT implements the `graphlearn_torch.distributed.DistDataset <graphlearn_torch.distributed.dist_dataset.DistDataset>`__ to manage a partition dataset along with its distributed information, including the partitioned graph data, partitioned feature data, related partition books and the whole label data.
+GLT implements the `graphlearn_torch.distributed.DistDataset <graphlearn_torch.distributed.dist_dataset.DistDataset>`__ 
+to manage a partition dataset along with its distributed information, including the 
+partitioned graph topology data, partitioned feature data, partition books and the label data.
 
 You can load a distributed dataset from the directory that stores dataset partitions:
 
@@ -180,29 +209,29 @@ You can load a distributed dataset from the directory that stores dataset partit
 2. Deployment Mode
 ------------------
 
-GLT's distributed training has two basic types of processes: sampler and trainer:
+GLT's distributed training has two basic roles: sampler and trainer:
 
-- **Sampler Process** creates the distributed sampler and performs distributed neighbor sampling and feature collection. 
-  The sampled results will be sent to the sampling message channel to be further consumed for training tasks.
+- **Sampler Process** creates the distributed sampler for distributed 
+  neighbor sampling and feature collection. The sampled results will be sent 
+  to the sampling message channel to be consumed by trainers.
 
-- **Trainer Process** corresponds to a distributed unit of PyTorch's DDP, loads sampled results from the sampling message channel and performs model training.
-  Generally, each trainer process will occupy a GPU for training. 
-  A trainer process is responsible for creating its own message channel and can launch one or more sampler processes for sampling.
-  And all sampler processes launched by it will send their sampled results to this channel. 
-  Note that the number of sampler processes launched by each distributed trainer process must be the same.
+- **Trainer Process** corresponds to a participant of PyTorch's DDP training, 
+  loads sampled results from the sampling message channel and conducts model training.
 
-All these processes can be flexibly distributed across different machines.
-Whether a sampler process and a trainer process collocated at the same machine is key to separating the computing resources allocated to sampling and training tasks.
 
-The worker mode is the basic mode of GLT's distributed training.
-In this mode, each machine corresponds to a specific worker node.
-All trainer processes are distributed on these worker nodes that perform model training in parallel.
+Sampler and trainer processes can be flexibly distributed across different machines.
+When sampler and trainer processes are collocated in the same machine, physically isolating
+the computing resources of sampling and training, e.g., in different GPUs, usually results
+in better performance.
 
-Each trainer process can spawn multiple sampler processes for neighbor sampling and feature collection, which are located on the same worker node as this trainer process.
-A shared-memory message channel will be created for transmitting sampled results from spawned sampler processes to the corresponding trainer process.
-
-The distributed datasets are managed by different worker nodes.
-Specifically, each worker node that holds the trainer processes will exclusively manage a dataset partition shared by all the trainer processes and sampler processes on this machine.
+The `worker mode` is the basic deployment mode of GLT's distributed training.
+In this mode, each physical node corresponds to a specific worker node, and 
+trainer processes are distributed among worker nodes. Each trainer process can 
+spawn multiple sampler processes on the same worker node. A shared-memory message 
+channel will be created for transmitting sampled results from spawned sampler 
+processes to the corresponding trainer process. Each worker node 
+will exclusively manage a dataset partition, which is shared by all the trainer processes 
+and sampler processes in this node.
 
 The figure below shows the architecture of the deployment mode:
 
@@ -210,9 +239,12 @@ The figure below shows the architecture of the deployment mode:
    :alt: dist-arch (worker mode)
    :align: center
 
-GLT introduces the `graphlearn_torch.distributed.DistContext <graphlearn_torch.distributed.dist_context.DistContext>`__ to manage the distributed location and context information for each distributed process.
-At the beginning of each trainer process, you should initialize the distributed process context with `graphlearn_torch.distributed.init_worker_group <graphlearn_torch.distributed.dist_context.init_worker_group>`__.
-E.g, if there are 4 distributed trainer processes, the following example shows how to initialize the worker group on trainer-0:
+GLT introduces the `graphlearn_torch.distributed.DistContext <graphlearn_torch.distributed.dist_context.DistContext>`__ 
+to manage the distributed location and context information for each distributed process.
+At the beginning of each trainer process, you should initialize the distributed process 
+context with `graphlearn_torch.distributed.init_worker_group <graphlearn_torch.distributed.dist_context.init_worker_group>`__.
+E.g, if there are 4 trainer processes, the following example shows how to 
+initialize the worker group on trainer-0:
 
 .. code-block:: python
 
@@ -231,45 +263,44 @@ After initialization, you can further check the distributed context:
   dist_ctx = glt.distributed.get_context() # The role type of the current worker group: WORKER 
   dist_ctx.role # The number of all distributed trainer processes dist_ctx.world_size # The rank of the current trainer process dist_ctx.rank # The group name of all distributed trainer processes dist_ctx.group_name # The worker name of the current trainer process dist_ctx.worker_name``
 
-3. Asynchronous and Concurrent Sampler
---------------------------------------
+3. Distributed Sampling
+---------------------------------------------------
 
-For the sampling tasks when training GNNs on a single machine, all graph data access is local.
-The samplers can be non-blocking and process the input batches one by one in sequence.
-In the distributed sampling, however, part of the sampling tasks of an input batch may take place on the local machine, while other parts need to be executed on other machines.
-This incurs heavy cross-machine network I/Os.
-It is simple but inefficient to wait for blocking I/O operations when processing each input batch, as most computing time slices are wasted by useless waiting.
+During sampling, a sampler process can only access its local graph partition.
+Therefore, a part of the sampling tasks of an input batch may need to be executed 
+on other machines. Remote sampling opeartions will incur significant cross-machine 
+network I/Os, thus it is inefficient to wait for the remote smapling operations in
+a blocking approach when processing each input batch.
 
-GLT implements an asynchronous `graphlearn_torch.distributed.DistNeighborSampler <graphlearn_torch.distributed.dist_neighbor_sampler.DistNeighborSampler>`__ to pipeline the sampling tasks of different input batches and execute them concurrently. 
-Each ``DistNeighborSampler`` will maintain a `graphlearn_torch.distributed.ConcurrentEventLoop <graphlearn_torch.distributed.event_loop.ConcurrentEventLoop>`__, which is implemented on top of Python's ``asyncio``, and further ship the remote sampling tasks of an input batch to other samplers with RPC requests. 
-At the same time, the related futures and callbacks will be registered for subsequent processing, and the distributed sampler can switch to the next input batch immediately without being blocked. 
-Once a future is ready, its callback will stitch different parts of the corresponding sampled results and send them to the sampling message channel.
-These sampling messages will be consumed by trainer processes for further training.
+GLT implements an asynchronous `graphlearn_torch.distributed.DistNeighborSampler <graphlearn_torch.distributed.dist_neighbor_sampler.DistNeighborSampler>`__ 
+to pipeline the sampling tasks of different input batches and execute them concurrently. 
+Each ``DistNeighborSampler`` maintains a `graphlearn_torch.distributed.ConcurrentEventLoop <graphlearn_torch.distributed.event_loop.ConcurrentEventLoop>`__, 
+which is implemented on top of Python's ``asyncio``, and  ships the remote 
+sampling tasks of an input batch to other samplers with async RPC requests. 
 
 Collecting features stored in the distributed cluster will also incur network I/Os.
-Similar to the asynchronous neighbor sampling, the ``DistNeighborSampler`` can also pipeline the operations of distributed feature lookup and execute them concurrently.
+Similar to asynchronous neighbor sampling, the ``DistNeighborSampler`` can also 
+pipeline the operations of distributed feature lookup and execute them concurrently.
 
-For convenience, GLT implements a distributed neighbor loader, which provides a higher level of abstraction and hides the details of creating and scheduling distributed samplers. 
+GLT implements a distributed neighbor loader, which provides a 
+high-level of abstraction and hides the details of creating and scheduling distributed samplers. 
 The next section will show how to use the distributed neighbor loader.
 
 4. Using Distributed Neighbor Loader
 ------------------------------------
 
-It is relatively complicated for users to launch sampler processes manually, including creating samplers and establishing RPC connections between them.
-GLT implements a `graphlearn_torch.distributed.DistNeighborLoader <graphlearn_torch.distributed.dist_neighbor_loader.DistNeighborLoader>`__ to wrap these sampling steps and also the dataloading step for trainer processes. 
-An ``DistNeighborLoader`` should be created on a trainer process, it will launch sampler processes for neighbor sampling and feature collection, create a channel for sampled message passing and consume the messages for training.
+Each trainer process launches a ``DistNeighborLoader``, which will also launch the 
+sampler processes for neighbor sampling and feature collection, create a channel 
+for sampled message passing and consume the messages for training.
+GLT provides concise and easy-to-use APIs for loading sampled results with 
+``DistNeighborLoader``, you can simply use it as an iterator like PyTorch's dataloader.
+The ``DistNeighborLoader`` is also fully compatible with PyG's training APIs, 
+the format of the sampled results is exactly the same as PyG's.
 
-GLT provides concise and easy-to-use APIs for loading sampled results with ``DistNeighborLoader``, you can simply use it as an iterator like PyTorch's dataloader.
-The ``DistNeighborLoader`` is also fully compatible with PyG's training APIs, the format of the sampled results is exactly the same as PyG's, you can apply it to your PyG training scripts with only a few lines of modifications.
-
-GLT provides different option groups when creating the ``DistNeighborLoader``.
-An option group corresponds to a specific deployment mode and is used to specify the detailed options for launching sampler processes of the loader.
-
-4.1 In the Worker Mode
-~~~~~~~~~~~~~~~~~~~~~~
-
-GLT provides a standard option group `graphlearn_torch.distributed.MpDistSamplingWorkerOptions <graphlearn_torch.distributed.dist_options.MpDistSamplingWorkerOptions>`__ to launch sampler processes for ``DistNeighborLoader`` in the worker deployment mode.
-On each worker process, the example bellow shows how to create an ``DistNeighborLoader`` and use it for training:
+GLT provides a standard option group `graphlearn_torch.distributed.MpDistSamplingWorkerOptions <graphlearn_torch.distributed.dist_options.MpDistSamplingWorkerOptions>`__ 
+to determine how to launch sampler processes for ``DistNeighborLoader`` in 
+the worker deployment mode. The example bellow shows how to create an ``DistNeighborLoader`` 
+on a worker process and use it for training:
 
 .. code-block:: python
 
@@ -311,13 +342,19 @@ On each worker process, the example bellow shows how to create an ``DistNeighbor
     worker_options=mp_options
   )
 
+As shown in the above example, after creating the training loader 
+with ``MpDistSamplingWorkerOptions``, the trainer process will 
+spawn ``num_workers`` sampler processes, each with an assigned CUDA device.
+Each sampler process will further create a distributed sampler 
+with ``concurrency=4`` to perform asynchronus neighbor sampling, and establish 
+RPC connections with other samplers.
+An shared-memory channel with ``channel_size='1GB'`` will be created for 
+inter-process message passing, the underlying CPU memory is pinned by 
+setting ``pin_memory=True`` to enable zero-copy data access from GPU to CPU memory.
 
-
-As shown in this example, after creating the training loader with ``MpDistSamplingWorkerOptions``, the current trainer process will spawn ``num_workers=2`` sampler processes, each with an assigned CUDA device.
-Each sampler process will further create a distributed sampler with ``concurrency=4`` to perform asynchronus neighbor sampling, and establish RPC connections with each other via ``master_addr:master_port (localhost:11112)``.
-An shared-memory channel with ``channel_size='1GB'`` will be created for inter-process message passing, the underlying CPU memory is pinned by setting ``pin_memory=True`` for better data copy performance from CPU to CUDA devices.
-
-Once an ``DistNeighborLoader`` is created, you can simply load sampled results from it and perform model training, the format of sampled results is the same as PyG's `torch_geometric.data.Data`/`torch_geometric.data.HeteroData`.
+Once an ``DistNeighborLoader`` is created, you can simply load sampled results 
+from it and perform model training, the format of sampled results is the same as 
+PyG's `torch_geometric.data.Data`/`torch_geometric.data.HeteroData`.
 
 .. code-block:: python
 
@@ -351,10 +388,13 @@ Once an ``DistNeighborLoader`` is created, you can simply load sampled results f
 The complete example of distributed training in the worker mode can be found `here <https://github.com/alibaba/graphlearn-for-pytorch/blob/main/examples/distributed/dist_train_sage_supervised.py>`__
 
 In the worker deployment mode, GLT also provides another option group `graphlearn_torch.distributed.CollocatedDistSamplingWorkerOptions <graphlearn_torch.distributed.dist_options.CollocatedDistSamplingWorkerOptions>`__.
-When using this option group, the ``DistNeighborLoader`` will not spawn new processes for sampling, the distributed samplers will be created inside the trainer processes.
-The shared-memory message channel will not be created, the sampling of distributed samplers will be synchronous in this mode, and the input batches are processed one by one.
-This option is generally **Not Recommended** due to its poor performance, except for some special cases,
-e.g, if the sampling workload is very small, it might not be cost-effective to spawn new processes, as pickling the distributed datatset into a new process also has a certain cost. 
+When using this option group, the ``DistNeighborLoader`` will not spawn new 
+processes for sampling, but create sampler inside the trainer process.
+The sampling and training will pipelined in a synchronous approach in this mode.
+This option is generally **Not Recommended** in distributed training as it cannot hide
+network communication costs, except for some special cases, e.g, if the sampling workload is 
+very small, it might not be cost-effective to spawn new processes, as pickling the 
+distributed datatset into a new process also incurs overheads. 
 You can follow the example bellow to create an ``DistNeighborLoader`` with this option group:
 
 .. code-block:: python
