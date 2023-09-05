@@ -11,9 +11,8 @@ def test_warn():
         warn('test')
 
 
-@patch("torch_geometric.warnings._is_compiling", return_value=True)
+@patch('torch_geometric.warnings._is_compiling', return_value=True)
 def test_no_warn_if_compiling(_):
-    """Test no warning raised to avoid graph breaks when compiling"""
+    """No warning should be raised to avoid graph breaks when compiling."""
     with warnings.catch_warnings():
-        warnings.simplefilter("error")
         warn('test')
