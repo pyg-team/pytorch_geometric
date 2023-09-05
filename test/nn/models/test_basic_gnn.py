@@ -317,10 +317,6 @@ def test_trim_to_layer():
 def test_compile_graph_breaks(Model, device):
     import torch._dynamo as dynamo
 
-    # TODO EdgeCNN and PNA currently lead to graph breaks on CUDA :(
-    if Model in {EdgeCNN, PNA} and device.type == 'cuda':
-        return
-
     x = torch.randn(3, 8, device=device)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
