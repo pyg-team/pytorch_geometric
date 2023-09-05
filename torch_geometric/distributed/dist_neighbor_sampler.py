@@ -562,7 +562,7 @@ class DistNeighborSampler:
                 for ntype in output.node.keys():
                     if output.node[ntype].numel() > 0:
                         fut = self.dist_feature.lookup_features(
-                            is_node_feat=True, ids=output.node[ntype],
+                            is_node_feat=True, index=output.node[ntype],
                             input_type=ntype)
                         print('node fut')
                         print({max(output.node[ntype])},
@@ -577,7 +577,7 @@ class DistNeighborSampler:
                 for etype in output.edge.keys():
                     if output.edge[etype].numel() > 0:
                         fut = self.dist_feature.lookup_features(
-                            is_node_feat=False, ids=output.edge[etype],
+                            is_node_feat=False, index=output.edge[etype],
                             input_type=etype)
                         print('edge fut')
                         print(
@@ -596,7 +596,7 @@ class DistNeighborSampler:
             # Collect node features.
             if output.node is not None:
                 fut = self.dist_feature.lookup_features(
-                    is_node_feat=True, ids=output.node)
+                    is_node_feat=True, index=output.node)
                 nfeats = await wrap_torch_future(fut)
                 nfeats = nfeats.to(torch.device('cpu'))
             # else:
@@ -604,7 +604,7 @@ class DistNeighborSampler:
             # Collect edge features.
             if output.edge is not None and self.with_edge_attr:
                 fut = self.dist_feature.lookup_features(
-                    is_node_feat=False, ids=output.edge)
+                    is_node_feat=False, index=output.edge)
                 efeats = await wrap_torch_future(fut)
                 efeats = efeats.to(torch.device('cpu'))
             else:
