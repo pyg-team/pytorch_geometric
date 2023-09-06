@@ -9,7 +9,7 @@ from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.utils import scatter, softmax
 
 
-# TODO (matthias) Benchmark and document this method.
+# TODO (matthias) Document this method.
 def topk(
     x: Tensor,
     ratio: Optional[Union[float, int]],
@@ -37,10 +37,11 @@ def topk(
         batch = batch[x_perm]
         batch, batch_perm = torch.sort(batch, descending=False, stable=True)
 
-        rank = torch.arange(x.size(0), dtype=torch.long, device=x.device)
-        cumsum = torch.bincount(batch + 1, minlength=batch[-1] + 2).cumsum(-1)
-        rank = rank - cumsum[batch]
-        mask = rank < k[batch]
+        arange = torch.arange(x.size(0), dtype=torch.long, device=x.device)
+        ptr = num_nodes.new_zeros(num_nodes.numel() + 1)
+        torch.cumsum(num_nodes, 0, out=ptr[1:])
+        batched_arange = arange - ptr[batch]
+        mask = batched_arange < k[batch]
 
         return x_perm[batch_perm[mask]]
 
