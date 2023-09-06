@@ -122,8 +122,8 @@ class Aggregation(torch.nn.Module):
             dim_size = int(index.max()) + 1 if index.numel() > 0 else 0
 
         try:
-            return super().__call__(x=x, index=index, ptr=ptr,
-                                    dim_size=dim_size, dim=dim, **kwargs)
+            return super().__call__(x, index=index, ptr=ptr, dim_size=dim_size,
+                                    dim=dim, **kwargs)
         except (IndexError, RuntimeError) as e:
             if index is not None:
                 if index.numel() > 0 and dim_size <= int(index.max()):
