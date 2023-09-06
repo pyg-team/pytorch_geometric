@@ -5,6 +5,7 @@
 # | 7 layers 160 channels   | 0.8276 ± 0.0027 | 0.9272 ± 0.0006 |
 
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -177,10 +178,12 @@ def test(epoch):
     return train_acc, valid_acc, test_acc
 
 
+times = []
 best_val = 0.0
 final_train = 0.0
 final_test = 0.0
 for epoch in range(1, 1001):
+    start = time.time()
     loss = train(epoch)
     train_acc, val_acc, test_acc = test(epoch)
     if val_acc > best_val:
@@ -189,6 +192,8 @@ for epoch in range(1, 1001):
         final_test = test_acc
     print(f'Loss: {loss:.4f}, Train: {train_acc:.4f}, Val: {val_acc:.4f}, '
           f'Test: {test_acc:.4f}')
+    times.append(time.time() - start)
 
 print(f'Final Train: {final_train:.4f}, Best Val: {best_val:.4f}, '
       f'Final Test: {final_test:.4f}')
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

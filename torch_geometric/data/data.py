@@ -20,7 +20,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import EdgeAttr, FeatureStore, GraphStore, TensorAttr
-from torch_geometric.data.feature_store import _field_status
+from torch_geometric.data.feature_store import _FieldStatus
 from torch_geometric.data.graph_store import EdgeLayout
 from torch_geometric.data.storage import (
     BaseStorage,
@@ -372,7 +372,7 @@ class DataTensorAttr(TensorAttr):
     r"""Tensor attribute for `Data` without group name."""
     def __init__(
         self,
-        attr_name=_field_status.UNSET,
+        attr_name=_FieldStatus.UNSET,
         index=None,
     ):
         super().__init__(None, attr_name, index)

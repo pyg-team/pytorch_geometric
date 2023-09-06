@@ -18,6 +18,7 @@ from torch_geometric.typing import (
     EdgeTensorType,
     EdgeType,
     FeatureTensorType,
+    NodeOrEdgeType,
     NodeType,
     QueryType,
     SparseTensor,
@@ -29,7 +30,6 @@ from torch_geometric.utils import (
     mask_select,
 )
 
-NodeOrEdgeType = Union[NodeType, EdgeType]
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
 
 
@@ -331,7 +331,7 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                     **kwargs) -> Any:
         if isinstance(value, SparseTensor) and 'adj' in key:
             return (0, 1)
-        elif 'index' in key or 'face' in key:
+        elif isinstance(store, EdgeStorage) and 'index' in key:
             return -1
         return 0
 

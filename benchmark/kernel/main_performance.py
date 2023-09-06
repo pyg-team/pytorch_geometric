@@ -36,7 +36,13 @@ parser.add_argument('--bf16', action='store_true')
 parser.add_argument('--compile', action='store_true')
 args = parser.parse_args()
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
+
 if torch.cuda.is_available():
     amp = torch.cuda.amp.autocast(enabled=False)
 else:

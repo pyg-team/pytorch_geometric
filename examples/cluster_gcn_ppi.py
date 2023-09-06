@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -80,9 +81,13 @@ def test(loader):
     return f1_score(y, pred, average='micro') if pred.sum() > 0 else 0
 
 
+times = []
 for epoch in range(1, 201):
+    start = time.time()
     loss = train()
     val_f1 = test(val_loader)
     test_f1 = test(test_loader)
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Val: {val_f1:.4f}, '
           f'Test: {test_f1:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")
