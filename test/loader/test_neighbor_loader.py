@@ -564,8 +564,8 @@ def test_pyg_lib_and_torch_sparse_hetero_equality():
 
     sample = torch.ops.pyg.hetero_neighbor_sample
     out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
-                  num_neighbors_dict, None, None, True, False, True, False,
-                  "uniform", True)
+                  num_neighbors_dict, None, None, None, True, False, True,
+                  False, "uniform", True)
     sample = torch.ops.torch_sparse.hetero_neighbor_sample
     out2 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, 2, False, True)
