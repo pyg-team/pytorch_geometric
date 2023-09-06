@@ -1,10 +1,10 @@
-import warnings
 from typing import Optional
 
 import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric import warnings
 from torch_geometric.typing import torch_scatter
 
 if torch_geometric.typing.WITH_PT112:  # pragma: no cover
