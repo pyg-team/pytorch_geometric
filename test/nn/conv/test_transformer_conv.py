@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 import torch_geometric.typing
@@ -7,22 +8,28 @@ from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
 
-def test_transformer_conv():
+@pytest.mark.parametrize('edge_dim', [None, 8])
+@pytest.mark.parametrize('concat', [True, False])
+def test_transformer_conv(edge_dim, concat):
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
+    out_channels = 32
+    heads = 2
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
+    edge_attr = torch.randn(edge_index.size(1), edge_dim) if edge_dim else None
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
-    conv = TransformerConv(8, 32, heads=2, beta=True)
-    assert str(conv) == 'TransformerConv(8, 32, heads=2)'
+    conv = TransformerConv(8, out_channels, heads, beta=True,
+                           edge_dim=edge_dim, concat=concat)
+    assert str(conv) == f'TransformerConv(8, {out_channels}, heads={heads})'
 
-    out = conv(x1, edge_index)
-    assert out.size() == (4, 64)
-    assert torch.allclose(conv(x1, adj1.t()), out, atol=1e-6)
+    out = conv(x1, edge_index, edge_attr)
+    assert out.size() == (4, out_channels * (heads if concat else 1))
+    assert torch.allclose(conv(x1, adj1.t(), edge_attr), out, atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-        assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
+        assert torch.allclose(conv(x1, adj2.t(), edge_attr), out, atol=1e-6)
 
     if is_full_test():
         t = '(Tensor, Tensor, NoneType, NoneType) -> Tensor'
@@ -35,7 +42,7 @@ def test_transformer_conv():
         assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
 
     # Test `return_attention_weights`.
-    result = conv(x1, edge_index, return_attention_weights=True)
+    result = conv(x1, edge_index, edge_attr, return_attention_weights=True)
     assert torch.allclose(result[0], out)
     assert result[1][0].size() == (2, 4)
     assert result[1][1].size() == (4, 2)
@@ -43,7 +50,7 @@ def test_transformer_conv():
     assert conv._alpha is None
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
-        result = conv(x1, adj2.t(), return_attention_weights=True)
+        result = conv(x1, adj2.t(), edge_attr, return_attention_weights=True)
         assert torch.allclose(result[0], out, atol=1e-6)
         assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 4
         assert conv._alpha is None
