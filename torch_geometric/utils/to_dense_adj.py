@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import scatter
+from torch_geometric.utils import cumsum, scatter
 
 
 def to_dense_adj(
@@ -67,7 +67,7 @@ def to_dense_adj(
 
     one = batch.new_ones(batch.size(0))
     num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce='sum')
-    cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
+    cum_nodes = cumsum(num_nodes)
 
     idx0 = batch[edge_index[0]]
     idx1 = edge_index[0] - cum_nodes[batch][edge_index[0]]

@@ -12,6 +12,7 @@ from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withPackage
 from torch_geometric.typing import pyg_lib
+from torch_geometric.utils import cumsum
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
@@ -300,7 +301,7 @@ if __name__ == '__main__':
 
         xs = get_xs(mean, std, num_types, channels)
         count = torch.tensor([x.size(0) for x in xs])
-        ptr = torch.tensor([0] + [x.size(0) for x in xs]).cumsum(0)
+        ptr = cumsum(torch.tensor([x.size(0) for x in xs]))
         x = torch.cat(xs, dim=0)
         padded_x = torch.nested.nested_tensor(xs).to_padded_tensor(padding=0.0)
         weight = torch.randn(num_types, channels, channels, device=args.device)
