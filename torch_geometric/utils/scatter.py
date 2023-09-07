@@ -6,6 +6,7 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric import warnings
 from torch_geometric.typing import torch_scatter
+from torch_geometric.utils.functions import cumsum
 
 if torch_geometric.typing.WITH_PT112:  # pragma: no cover
 
@@ -250,7 +251,6 @@ def group_argsort(
     # Compute cumulative sum of number of entries with the same index:
     count = scatter(torch.ones_like(index), index, dim=dim,
                     dim_size=num_groups, reduce='sum')
-    ptr = count.new_zeros(count.numel() + 1)
-    torch.cumsum(count, dim=0, out=ptr[1:])
+    ptr = cumsum(count)
 
     return out - ptr[index]
