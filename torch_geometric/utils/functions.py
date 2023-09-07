@@ -3,8 +3,8 @@ from torch import Tensor
 
 
 def cumsum(x: Tensor, dim: int = 0) -> Tensor:
-    r"""Returns the cumulative sum of elements of :obj:`inputs`.
-    In contrast to :meth:`torch.cumsum`, preprends the output with a zero.
+    r"""Returns the cumulative sum of elements of :obj:`x`.
+    In contrast to :meth:`torch.cumsum`, prepends the output with zero.
 
     Args:
         x (torch.Tensor): The input tensor.
