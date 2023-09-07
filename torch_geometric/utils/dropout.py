@@ -275,7 +275,7 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     sample_mask = torch.rand(row.size(0), device=edge_index.device) <= p
     start = row[sample_mask].repeat(walks_per_node)
 
-    rowptr = cumsum(degree(row, num_nodes=num_nodes))
+    rowptr = cumsum(degree(row, num_nodes=num_nodes, dtype=torch.long))
     n_id, e_id = torch.ops.torch_cluster.random_walk(rowptr, col, start,
                                                      walk_length, 1.0, 1.0)
     e_id = e_id[e_id != -1].view(-1)  # filter illegal edges
