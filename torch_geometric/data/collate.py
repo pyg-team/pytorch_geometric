@@ -1,6 +1,6 @@
 from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -9,7 +9,7 @@ import torch_geometric.typing
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.storage import BaseStorage, NodeStorage
 from torch_geometric.typing import SparseTensor, torch_sparse
-from torch_geometric.utils import is_sparse, is_torch_sparse_tensor
+from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
 
 
@@ -131,7 +131,8 @@ def _collate(
         cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
         if cat_dim is None or elem.dim() == 0:
             values = [value.unsqueeze(0) for value in values]
-        slices = cumsum([value.size(cat_dim or 0) for value in values])
+        sizes = torch.tensor([value.size(cat_dim or 0) for value in values])
+        slices = cumsum(sizes)
         if increment:
             incs = get_incs(key, values, data_list, stores)
             if incs.dim() > 1 or int(incs[-1]) != 0:
@@ -179,7 +180,7 @@ def _collate(
         cat_dim = data_list[0].__cat_dim__(key, elem, stores[0])
         cat_dims = (cat_dim, ) if isinstance(cat_dim, int) else cat_dim
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
-        slices = cumsum(repeats)
+        slices = cumsum(torch.tensor(repeats))
         if is_torch_sparse_tensor(elem):
             value = cat(values, dim=cat_dim)
         else:
@@ -266,15 +267,6 @@ def repeat_interleave(
 ) -> Tensor:
     outs = [torch.full((n, ), i, device=device) for i, n in enumerate(repeats)]
     return torch.cat(outs, dim=0)
-
-
-def cumsum(value: Union[Tensor, List[int]]) -> Tensor:
-    if not isinstance(value, Tensor):
-        value = torch.tensor(value)
-    out = value.new_empty((value.size(0) + 1, ) + value.size()[1:])
-    out[0] = 0
-    torch.cumsum(value, 0, out=out[1:])
-    return out
 
 
 def get_incs(key, values: List[Any], data_list: List[BaseData],
