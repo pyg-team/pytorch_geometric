@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- Added a warning for isolated/non-existing node types in `HeteroData.validate()` ([#7995](https://github.com/pyg-team/pytorch_geometric/pull/7995))
+- Added `utils.cumsum` implementation ([#7994](https://github.com/pyg-team/pytorch_geometric/pull/7994))
 - Added the `BrcaTcga` dataset ([#7905](https://github.com/pyg-team/pytorch_geometric/pull/7905))
 - Added the `MyketDataset` ([#7959](https://github.com/pyg-team/pytorch_geometric/pull/7959))
 - Added a multi-GPU `ogbn-papers100M` example ([#7921](https://github.com/pyg-team/pytorch_geometric/pull/7921))
@@ -94,6 +96,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - filter out empty tensor for `x`, `edge_index`, `edge_attr` after calling `trim_to_layer` function ([#7942](https://github.com/pyg-team/pytorch_geometric/pull/7942))
 ### Changed
 
+- Accelerated and simplified `top_k` computation in `TopKPooling` ([#7737](https://github.com/pyg-team/pytorch_geometric/pull/7737))
 - Updated `GIN` implementation in kernel benchmarks to have sequential batchnorms ([#7955](https://github.com/pyg-team/pytorch_geometric/pull/7955))
 - Fixed bugs in benchmarks caused by a lack of the device conditions for CPU and unexpected `cache` argument in heterogeneous  models ([#7956](https://github.com/pyg-team/pytorch_geometric/pull/7956)
 - Fixed a bug in which `batch.e_id` was not correctly computed on unsorted graph inputs ([#7953](https://github.com/pyg-team/pytorch_geometric/pull/7953))
