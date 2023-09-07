@@ -225,3 +225,8 @@ def test_trim_to_layer_with_filtering_empty_tensor():
         num_sampled_edges_per_hop=num_sampled_edges_dict, x=x_dict,
         edge_index=edge_index_dict)
     assert list(edge_index_dict.keys()) == [('author', 'writes', 'paper')]
+    assert torch.allclose(edge_index_dict[('author', 'writes', 'paper')],
+                          torch.tensor([[0, 1], [0, 0]]))
+    assert x_dict['paper'].shape == torch.Size([3, 128])
+    assert x_dict['author'].shape == torch.Size([2, 128])
+    assert x_dict['field_of_study'].shape == torch.Size([2, 128])
