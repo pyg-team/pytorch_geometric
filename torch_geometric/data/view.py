@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import Iterable, List
+from typing import Iterable
 
 
 class MappingView:
