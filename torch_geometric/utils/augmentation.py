@@ -3,7 +3,7 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import negative_sampling, scatter
+from torch_geometric.utils import cumsum, negative_sampling, scatter
 
 
 def shuffle_node(
@@ -61,10 +61,10 @@ def shuffle_node(
         perm = torch.randperm(x.size(0), device=x.device)
         return x[perm], perm
     num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0, reduce='sum')
-    cumsum = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
+    ptr = cumsum(num_nodes)
     perm = torch.cat([
         torch.randperm(n, device=x.device) + offset
-        for offset, n in zip(cumsum[:-1], num_nodes)
+        for offset, n in zip(ptr[:-1], num_nodes)
     ])
     return x[perm], perm
 

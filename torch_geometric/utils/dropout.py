@@ -6,10 +6,8 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.deprecation import deprecated
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils.degree import degree
+from torch_geometric.utils import cumsum, degree, sort_edge_index, subgraph
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-from torch_geometric.utils.sort_edge_index import sort_edge_index
-from torch_geometric.utils.subgraph import subgraph
 
 
 def filter_adj(row: Tensor, col: Tensor, edge_attr: OptTensor,
@@ -277,15 +275,12 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     sample_mask = torch.rand(row.size(0), device=edge_index.device) <= p
     start = row[sample_mask].repeat(walks_per_node)
 
-    deg = degree(row, num_nodes=num_nodes)
-    rowptr = row.new_zeros(num_nodes + 1)
-    torch.cumsum(deg, 0, out=rowptr[1:])
+    rowptr = cumsum(degree(row, num_nodes=num_nodes, dtype=torch.long))
     n_id, e_id = torch.ops.torch_cluster.random_walk(rowptr, col, start,
                                                      walk_length, 1.0, 1.0)
     e_id = e_id[e_id != -1].view(-1)  # filter illegal edges
 
-    if edge_orders is not None:
-        # permute edge ids
+    if edge_orders is not None:  # Permute edge indices:
         e_id = edge_orders[e_id]
     edge_mask[e_id] = False
     edge_index = ori_edge_index[:, edge_mask]
