@@ -265,43 +265,43 @@ class BaseData:
         r"""Returns :obj:`True` if graph edges are directed."""
         return not self.is_undirected()
 
-    def apply_(self, func: Callable, *args: List[str]):
+    def apply_(self, func: Callable, *args: str):
         r"""Applies the in-place function :obj:`func`, either to all attributes
         or only the ones given in :obj:`*args`."""
         for store in self.stores:
             store.apply_(func, *args)
         return self
 
-    def apply(self, func: Callable, *args: List[str]):
+    def apply(self, func: Callable, *args: str):
         r"""Applies the function :obj:`func`, either to all attributes or only
         the ones given in :obj:`*args`."""
         for store in self.stores:
             store.apply(func, *args)
         return self
 
-    def clone(self, *args: List[str]):
+    def clone(self, *args: str):
         r"""Performs cloning of tensors, either for all attributes or only the
         ones given in :obj:`*args`."""
         return copy.copy(self).apply(lambda x: x.clone(), *args)
 
-    def contiguous(self, *args: List[str]):
+    def contiguous(self, *args: str):
         r"""Ensures a contiguous memory layout, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.contiguous(), *args)
 
-    def to(self, device: Union[int, str], *args: List[str],
+    def to(self, device: Union[int, str], *args: str,
            non_blocking: bool = False):
         r"""Performs tensor device conversion, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply(
             lambda x: x.to(device=device, non_blocking=non_blocking), *args)
 
-    def cpu(self, *args: List[str]):
+    def cpu(self, *args: str):
         r"""Copies attributes to CPU memory, either for all attributes or only
         the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.cpu(), *args)
 
-    def cuda(self, device: Optional[Union[int, str]] = None, *args: List[str],
+    def cuda(self, device: Optional[Union[int, str]] = None, *args: str,
              non_blocking: bool = False):
         r"""Copies attributes to CUDA memory, either for all attributes or only
         the ones given in :obj:`*args`."""
@@ -310,34 +310,34 @@ class BaseData:
         return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
                           *args)
 
-    def pin_memory(self, *args: List[str]):
+    def pin_memory(self, *args: str):
         r"""Copies attributes to pinned memory, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.pin_memory(), *args)
 
-    def share_memory_(self, *args: List[str]):
+    def share_memory_(self, *args: str):
         r"""Moves attributes to shared memory, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply_(lambda x: x.share_memory_(), *args)
 
-    def detach_(self, *args: List[str]):
+    def detach_(self, *args: str):
         r"""Detaches attributes from the computation graph, either for all
         attributes or only the ones given in :obj:`*args`."""
         return self.apply_(lambda x: x.detach_(), *args)
 
-    def detach(self, *args: List[str]):
+    def detach(self, *args: str):
         r"""Detaches attributes from the computation graph by creating a new
         tensor, either for all attributes or only the ones given in
         :obj:`*args`."""
         return self.apply(lambda x: x.detach(), *args)
 
-    def requires_grad_(self, *args: List[str], requires_grad: bool = True):
+    def requires_grad_(self, *args: str, requires_grad: bool = True):
         r"""Tracks gradient computation, either for all attributes or only the
         ones given in :obj:`*args`."""
         return self.apply_(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
-    def record_stream(self, stream: torch.cuda.Stream, *args: List[str]):
+    def record_stream(self, stream: torch.cuda.Stream, *args: str):
         r"""Ensures that the tensor memory is not reused for another tensor
         until all current work queued on :obj:`stream` has been completed,
         either for all attributes or only the ones given in :obj:`*args`."""
@@ -822,7 +822,7 @@ class Data(BaseData, FeatureStore, GraphStore):
         for key, value in self._store.items():
             yield key, value
 
-    def __call__(self, *args: List[str]) -> Iterable:
+    def __call__(self, *args: str) -> Iterable:
         r"""Iterates over all attributes :obj:`*args` in the data, yielding
         their attribute names and values.
         If :obj:`*args` is not given, will iterate over all attributes."""
