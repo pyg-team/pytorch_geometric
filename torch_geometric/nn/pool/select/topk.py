@@ -6,7 +6,7 @@ from torch import Tensor
 from torch_geometric.nn.inits import uniform
 from torch_geometric.nn.pool.select import Select, SelectOutput
 from torch_geometric.nn.resolver import activation_resolver
-from torch_geometric.utils import scatter, softmax
+from torch_geometric.utils import cumsum, scatter, softmax
 
 
 # TODO (matthias) Document this method.
@@ -38,8 +38,7 @@ def topk(
         batch, batch_perm = torch.sort(batch, descending=False, stable=True)
 
         arange = torch.arange(x.size(0), dtype=torch.long, device=x.device)
-        ptr = num_nodes.new_zeros(num_nodes.numel() + 1)
-        torch.cumsum(num_nodes, 0, out=ptr[1:])
+        ptr = cumsum(num_nodes)
         batched_arange = arange - ptr[batch]
         mask = batched_arange < k[batch]
 
