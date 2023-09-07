@@ -3,6 +3,7 @@ import copy
 from .scatter import scatter, group_argsort
 from .segment import segment
 from .sort import index_sort
+from .functions import cumsum
 from .degree import degree
 from .softmax import softmax
 from .dropout import dropout_adj, dropout_node, dropout_edge, dropout_path
@@ -59,6 +60,7 @@ __all__ = [
     'group_argsort',
     'segment',
     'index_sort',
+    'cumsum',
     'degree',
     'softmax',
     'dropout_node',
