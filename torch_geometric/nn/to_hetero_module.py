@@ -127,7 +127,6 @@ class ToHeteroMessagePassing(torch.nn.Module):
                              dim_size=len(self.edge_types), reduce='sum')
 
         ptr = cumsum(node_sizes)
-        # ptr = cumsum(node_sizes)
 
         xs = x.split(node_sizes.tolist())
         x_dict = {node_type: x for node_type, x in zip(self.node_types, xs)}
