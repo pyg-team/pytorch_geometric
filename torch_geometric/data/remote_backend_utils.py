@@ -35,11 +35,13 @@ def _internal_num_nodes(
     edge_attrs = graph_store.get_all_edge_attrs()
     _num_nodes = [None] if node_query else [None, None]
     _num_nodes = [
-        edge_attr.size[0] if _matches_node_type(query, edge_attr.edge_type[0]) else None
+        edge_attr.size[0]
+        if _matches_node_type(query, edge_attr.edge_type[0]) else None
         for edge_attr in edge_attrs
     ]
     _num_nodes += [
-        edge_attr.size[-1] if _matches_node_type(query, edge_attr.edge_type[-1]) else None
+        edge_attr.size[-1]
+        if _matches_node_type(query, edge_attr.edge_type[-1]) else None
         for edge_attr in edge_attrs
     ]
     return _num_nodes[0] if node_query else tuple(_num_nodes)
