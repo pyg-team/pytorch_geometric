@@ -35,7 +35,7 @@ class LCMAggregation(Aggregation):
             aggregation. (default: :obj:`True`)
     """
     def __init__(self, in_channels: int, out_channels: int,
-                 project: Optional[bool] = True):
+                 project: bool = True):
         super().__init__()
         if in_channels != out_channels and not project:
             raise ValueError("input must be projected if"
