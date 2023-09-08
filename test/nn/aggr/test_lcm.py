@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.nn.aggr.lcm import LCMAggregation
@@ -26,9 +27,5 @@ def test_lcm_aggregation2():
 
 
 def test_lcm_aggregation3():
-    try:
+    with pytest.raises(ValueError):
         LCMAggregation(16, 32, project=False)
-    except ValueError:
-        return
-
-    assert False
