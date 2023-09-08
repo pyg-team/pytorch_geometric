@@ -66,7 +66,7 @@ class LCMAggregation(Aggregation):
         dim_size: Optional[int] = None,
         dim: int = -2,
         max_num_elements: Optional[int] = None,
-    ):
+    ) -> Tensor:
         x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
                                    max_num_elements=max_num_elements)
 
