@@ -29,6 +29,7 @@ kwargs = dict(
     num_workers=get_num_workers(),
 )
 train_loader = NeighborLoader(input_nodes=split_idx['train'], shuffle=True,
+                              drop_last=True,
                               **kwargs)
 val_loader = NeighborLoader(input_nodes=split_idx['valid'], **kwargs)
 test_loader = NeighborLoader(input_nodes=split_idx['test'], **kwargs)
