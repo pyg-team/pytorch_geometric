@@ -34,16 +34,15 @@ def _internal_num_nodes(
     # 1. Check the edges in the GraphStore, for each node type in each edge:
     edge_attrs = graph_store.get_all_edge_attrs()
     _num_nodes = [None] if node_query else [None, None]
-    for edge_attr in edge_attrs:
-        if edge_attr.size is None:
-            continue
-        if _matches_node_type(query, edge_attr.edge_type[0]):
-            _num_nodes[0] = _num_nodes[0] or edge_attr.size[0]
-        if _matches_node_type(query, edge_attr.edge_type[-1]):
-            _num_nodes[-1] = _num_nodes[-1] or edge_attr.size[-1]
-        if None not in _num_nodes:
-            # We have filled out all the nodes:
-            return _num_nodes[0] if node_query else tuple(_num_nodes)
+    _num_nodes = [
+        edge_attr.size[0] if _matches_node_type(query, edge_attr.edge_type[0]) else None
+        for edge_attr in edge_attrs
+    ]
+    _num_nodes += [
+        edge_attr.size[-1] if _matches_node_type(query, edge_attr.edge_type[-1]) else None
+        for edge_attr in edge_attrs
+    ]
+    return _num_nodes[0] if node_query else tuple(_num_nodes)
 
     # 2. Check the node types stored in the FeatureStore:
     tensor_attrs = feature_store.get_all_tensor_attrs()
