@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
+from torch_geometric.utils import cumsum
 
 
 class QuantileAggregation(Aggregation):
@@ -76,14 +77,14 @@ class QuantileAggregation(Aggregation):
         assert index is not None  # Required for TorchScript.
 
         count = torch.bincount(index, minlength=dim_size or 0)
-        cumsum = torch.cumsum(count, dim=0) - count
+        ptr = cumsum(count)[:-1]
 
         # In case there exists dangling indices (`dim_size > index.max()`), we
         # need to clamp them to prevent out-of-bound issues:
         if dim_size is not None:
-            cumsum = cumsum.clamp(max=x.size(dim) - 1)
+            ptr = ptr.clamp(max=x.size(dim) - 1)
 
-        q_point = self.q * (count - 1) + cumsum
+        q_point = self.q * (count - 1) + ptr
         q_point = q_point.t().reshape(-1)
 
         shape = [1] * x.dim()

@@ -3,7 +3,7 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
-from torch_geometric.utils import coalesce, remove_self_loops, scatter
+from torch_geometric.utils import coalesce, cumsum, remove_self_loops, scatter
 
 
 @functional_transform('line_graph')
@@ -45,12 +45,9 @@ class LineGraph(BaseTransform):
 
             count = scatter(torch.ones_like(row), row, dim=0,
                             dim_size=data.num_nodes, reduce='sum')
-            cumsum = torch.cat([count.new_zeros(1), count.cumsum(0)], dim=0)
+            ptr = cumsum(count)
 
-            cols = [
-                i[cumsum[col[j]]:cumsum[col[j] + 1]]
-                for j in range(col.size(0))
-            ]
+            cols = [i[ptr[col[j]]:ptr[col[j] + 1]] for j in range(col.size(0))]
             rows = [row.new_full((c.numel(), ), j) for j, c in enumerate(cols)]
 
             row, col = torch.cat(rows, dim=0), torch.cat(cols, dim=0)

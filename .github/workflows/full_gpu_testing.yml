@@ -13,12 +13,16 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup packages
         uses: ./.github/actions/setup
         with:
           cuda-version: 'cu118'
+
+      - name: Print GPU information
+        run: |
+          nvidia-smi
 
       - name: Install main package
         run: |
