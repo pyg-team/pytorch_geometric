@@ -33,11 +33,6 @@ class NeuralFingerprint(torch.nn.Module):
                        out_channels=self.fingerprint_length))
 
     def forward(self, x: torch.Tensor, edge_index: Adj) -> torch.Tensor:
-        r"""
-        Args:
-            x (torch.Tensor): The node feature matrix.
-            edge_index (torch.Tensor or SparseTensor): The edge indices.
-        """
 
         fingerprint = x.new_zeros(self.fingerprint_length)
         for i in range(0, 2 * self.num_layers, 2):
