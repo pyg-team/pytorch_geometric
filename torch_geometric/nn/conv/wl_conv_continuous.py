@@ -3,7 +3,7 @@ from typing import Union
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.typing import OptPairTensor, OptTensor, Size
+from torch_geometric.typing import OptPairTensor, OptTensor, Size, SparseTensor
 from torch_geometric.utils import scatter
 
 
@@ -44,13 +44,19 @@ class WLConvContinuous(MessagePassing):
             x: OptPairTensor = (x, x)
 
         if edge_weight is None:
-            edge_weight = x[0].new_ones(edge_index.size(1))
+            num_edges = edge_index.size(1)
+            if isinstance(edge_index, SparseTensor):
+                num_edges = edge_index.nnz()
+            edge_weight = x[0].new_ones(num_edges)
 
         # propagate_type: (x: OptPairTensor, edge_weight: Tensor)
         out = self.propagate(edge_index, x=x, edge_weight=edge_weight,
                              size=size)
 
-        deg = scatter(edge_weight, edge_index[1], 0, out.size(0), reduce='sum')
+        scatter_index = edge_index[1]
+        if isinstance(edge_index, SparseTensor):
+            scatter_index = edge_index.coo()[1]
+        deg = scatter(edge_weight, scatter_index, 0, out.size(0), reduce='sum')
         deg_inv = 1. / deg
         deg_inv.masked_fill_(deg_inv == float('inf'), 0)
         out = deg_inv.view(-1, 1) * out

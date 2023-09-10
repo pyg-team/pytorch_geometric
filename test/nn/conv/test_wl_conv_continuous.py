@@ -1,7 +1,9 @@
 import torch
 
+import torch_geometric.typing
 from torch_geometric.nn import WLConvContinuous
 from torch_geometric.testing import is_full_test
+from torch_geometric.typing import SparseTensor
 
 
 def test_wl_conv():
@@ -14,10 +16,19 @@ def test_wl_conv():
     out = conv(x, edge_index)
     assert out.tolist() == [[-0.5], [0.0], [0.5]]
 
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(3, 3))
+        assert torch.allclose(conv(x, adj2.t()), out)
+
     if is_full_test():
         t = '(Tensor, Tensor, OptTensor, Size) -> Tensor'
         jit = torch.jit.script(conv.jittable(t))
         assert torch.allclose(jit(x, edge_index), out)
+
+    if is_full_test() and torch_geometric.typing.WITH_TORCH_SPARSE:
+        t = '(Tensor, SparseTensor, OptTensor, Size) -> Tensor'
+        jit = torch.jit.script(conv.jittable(t))
+        assert torch.allclose(jit(x, adj2.t()), out, atol=1e-6)
 
     # Test bipartite message passing:
     x1 = torch.randn(4, 8)
