@@ -1,3 +1,13 @@
 Customizing Aggregations within Message Passing
 ===============================================
 Graph Neural Networks (GNNs) can be used to make predictions on unordered/non-grid data. Aggregation functions decide how to aggregate messages from the neighbors during message passing as well as readout. Using different aggregation functions can result in outputs with different representational powers. Common aggregation functions are max, sum and mean. For example, using mean aggregation function can help learn the neighborhood distribution, sum aggregation function can be helpful in understanding degree information, and max aggregation can be employed to understand the critical information from a set of representations. However, recent works show that using multiple aggregations or learnable aggregations can also be useful for learning vector representations. This tutorial covers how to customize aggregations within message passing in :pyg:`PyG`.
+
+Using a list of aggregations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+    torch.manual_seed(seed)
+    model = GNN(16, aggr=['mean', 'max', 'sum', 'std', 'var'])
+    print(model)
+    run(model)
