@@ -5,7 +5,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import coalesce, degree, remove_self_loops
+from torch_geometric.utils import coalesce, cumsum, degree, remove_self_loops
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
@@ -178,25 +178,25 @@ def batched_negative_sampling(
     edge_indices = torch.split(edge_index, split, dim=1)
 
     num_src = degree(src_batch, dtype=torch.long)
-    cum_src = torch.cat([src_batch.new_zeros(1), num_src.cumsum(0)[:-1]])
+    cum_src = cumsum(num_src)[:-1]
 
     if isinstance(batch, Tensor):
         num_nodes = num_src.tolist()
-        cumsum = cum_src
+        ptr = cum_src
     else:
         num_dst = degree(dst_batch, dtype=torch.long)
-        cum_dst = torch.cat([dst_batch.new_zeros(1), num_dst.cumsum(0)[:-1]])
+        cum_dst = cumsum(num_dst)[:-1]
 
         num_nodes = torch.stack([num_src, num_dst], dim=1).tolist()
-        cumsum = torch.stack([cum_src, cum_dst], dim=1).unsqueeze(-1)
+        ptr = torch.stack([cum_src, cum_dst], dim=1).unsqueeze(-1)
 
     neg_edge_indices = []
     for i, edge_index in enumerate(edge_indices):
-        edge_index = edge_index - cumsum[i]
+        edge_index = edge_index - ptr[i]
         neg_edge_index = negative_sampling(edge_index, num_nodes[i],
                                            num_neg_samples, method,
                                            force_undirected)
-        neg_edge_index += cumsum[i]
+        neg_edge_index += ptr[i]
         neg_edge_indices.append(neg_edge_index)
 
     return torch.cat(neg_edge_indices, dim=1)

@@ -452,8 +452,8 @@ def set_cfg(cfg):
 def assert_cfg(cfg):
     r"""Checks config values, do necessary post processing to the configs"""
     if cfg.dataset.task not in ['node', 'edge', 'graph', 'link_pred']:
-        raise ValueError('Task {} not supported, must be one of node, '
-                         'edge, graph, link_pred'.format(cfg.dataset.task))
+        raise ValueError(f"Task '{cfg.dataset.task}' not supported. Must be "
+                         f"one of node, edge, graph, link_pred")
     if 'classification' in cfg.dataset.task_type and cfg.model.loss_fun == \
             'mse':
         cfg.model.loss_fun = 'cross_entropy'

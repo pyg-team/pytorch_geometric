@@ -524,7 +524,7 @@ def test_pyg_lib_and_torch_sparse_homo_equality():
     seed = torch.arange(10)
 
     sample = torch.ops.pyg.neighbor_sample
-    out1 = sample(colptr, row, seed, [-1, -1], None, None, True)
+    out1 = sample(colptr, row, seed, [-1, -1], None, None, None, True)
     sample = torch.ops.torch_sparse.neighbor_sample
     out2 = sample(colptr, row, seed, [-1, -1], False, True)
 
@@ -564,8 +564,8 @@ def test_pyg_lib_and_torch_sparse_hetero_equality():
 
     sample = torch.ops.pyg.hetero_neighbor_sample
     out1 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
-                  num_neighbors_dict, None, None, True, False, True, False,
-                  "uniform", True)
+                  num_neighbors_dict, None, None, None, True, False, True,
+                  False, "uniform", True)
     sample = torch.ops.torch_sparse.hetero_neighbor_sample
     out2 = sample(node_types, edge_types, colptr_dict, row_dict, seed_dict,
                   num_neighbors_dict, 2, False, True)
@@ -692,3 +692,25 @@ def test_hetero_neighbor_loader_sampled_info():
     for edge_type in batch.edge_types:
         assert (batch[edge_type].num_sampled_edges ==
                 expected_num_sampled_edges[edge_type])
+
+
+@withPackage('pyg_lib')
+def test_neighbor_loader_mapping():
+    edge_index = torch.tensor([
+        [0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 3, 5],
+        [1, 2, 3, 4, 5, 8, 6, 7, 9, 10, 6, 11],
+    ])
+    data = Data(edge_index=edge_index, num_nodes=12)
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[1],
+        batch_size=2,
+        shuffle=True,
+    )
+
+    for batch in loader:
+        assert torch.equal(
+            batch.n_id[batch.edge_index],
+            data.edge_index[:, batch.e_id],
+        )

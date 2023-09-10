@@ -1,9 +1,9 @@
 from collections.abc import Mapping
-from typing import Iterable, List
+from typing import Iterable
 
 
 class MappingView:
-    def __init__(self, mapping: Mapping, *args: List[str]):
+    def __init__(self, mapping: Mapping, *args: str):
         self._mapping = mapping
         self._args = args
 

@@ -258,7 +258,7 @@ def from_networkx(
         else:
             try:
                 data[key] = torch.tensor(value)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, RuntimeError):
                 pass
 
     data['edge_index'] = edge_index.view(2, -1)
