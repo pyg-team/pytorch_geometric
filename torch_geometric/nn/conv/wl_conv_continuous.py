@@ -55,7 +55,7 @@ class WLConvContinuous(MessagePassing):
 
         scatter_index = edge_index[1]
         if isinstance(edge_index, SparseTensor):
-            scatter_index = edge_index.coo()[1]
+            scatter_index = edge_index.coo()[0]
         deg = scatter(edge_weight, scatter_index, 0, out.size(0), reduce='sum')
         deg_inv = 1. / deg
         deg_inv.masked_fill_(deg_inv == float('inf'), 0)
