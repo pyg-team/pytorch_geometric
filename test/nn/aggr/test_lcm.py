@@ -1,10 +1,10 @@
 import pytest
 import torch
 
-from torch_geometric.nn.aggr.lcm import LCMAggregation
+from torch_geometric.nn import LCMAggregation
 
 
-def test_lcm_aggregation1():
+def test_lcm_aggregation_with_project():
     x = torch.randn(6, 16)
     index = torch.tensor([0, 0, 1, 1, 1, 2])
 
@@ -15,7 +15,7 @@ def test_lcm_aggregation1():
     assert out.size() == (3, 32)
 
 
-def test_lcm_aggregation2():
+def test_lcm_aggregation_without_project():
     x = torch.randn(6, 16)
     index = torch.tensor([0, 0, 1, 1, 1, 2])
 
@@ -26,6 +26,6 @@ def test_lcm_aggregation2():
     assert out.size() == (3, 16)
 
 
-def test_lcm_aggregation3():
-    with pytest.raises(ValueError):
+def test_lcm_aggregation_error_handling():
+    with pytest.raises(ValueError, match="must be projected"):
         LCMAggregation(16, 32, project=False)
