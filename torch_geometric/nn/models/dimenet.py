@@ -18,7 +18,6 @@ from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import OptTensor, SparseTensor
 from torch_geometric.utils import scatter
 
-
 qm9_target_dict: Dict[int, str] = {
     0: 'mu',
     1: 'alpha',
@@ -104,7 +103,8 @@ class SphericalBasisLayer(torch.nn.Module):
         for i in range(num_spherical):
             if i == 0:
                 sph1 = sym.lambdify([theta], sph_harm_forms[i][0], modules)(0)
-                self.sph_funcs.append(partial(self._project_sph_to_tensor, sph1))
+                self.sph_funcs.append(
+                    partial(self._project_sph_to_tensor, sph1))
             else:
                 sph = sym.lambdify([theta], sph_harm_forms[i][0], modules)
                 self.sph_funcs.append(sph)
