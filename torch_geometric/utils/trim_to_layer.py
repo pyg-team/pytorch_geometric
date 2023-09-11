@@ -16,7 +16,7 @@ from torch_geometric.typing import (
 
 def filter_empty_tensor(input_tensor: Union[MaybeHeteroNodeTensor,
                                             MaybeHeteroEdgeTensor]):
-    r"""filter out empty tensor for x, edge_index, edge_attr after trim.
+    r"""Filter out empty tensor for x, edge_index, edge_attr after trim.
     This can avoid some unnecessary computation when some node/edge
     types get empty output"""
     if input_tensor is None:
