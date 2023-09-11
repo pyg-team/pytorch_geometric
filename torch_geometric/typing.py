@@ -39,8 +39,8 @@ try:
     WITH_METIS = hasattr(pyg_lib, 'partition')
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
-except (ImportError, OSError) as e:
-    if isinstance(e, OSError):
+except Exception as e:
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
                       f"Disabling its usage. Stacktrace: {e}")
     pyg_lib = object
@@ -50,12 +50,13 @@ except (ImportError, OSError) as e:
     WITH_SAMPLED_OP = False
     WITH_INDEX_SORT = False
     WITH_METIS = False
+    WITH_WEIGHTED_NEIGHBOR_SAMPLE = False
 
 try:
     import torch_scatter  # noqa
     WITH_TORCH_SCATTER = True
-except (ImportError, OSError) as e:
-    if isinstance(e, OSError):
+except Exception as e:
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'torch-scatter'. "
                       f"Disabling its usage. Stacktrace: {e}")
     torch_scatter = object
@@ -65,11 +66,12 @@ try:
     import torch_cluster  # noqa
     WITH_TORCH_CLUSTER = True
     WITH_TORCH_CLUSTER_BATCH_SIZE = 'batch_size' in torch_cluster.knn.__doc__
-except (ImportError, OSError) as e:
-    if isinstance(e, OSError):
+except Exception as e:
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_CLUSTER = False
+    WITH_TORCH_CLUSTER_BATCH_SIZE = False
 
     class TorchCluster:
         def __getattr__(self, key: str):
@@ -80,8 +82,8 @@ except (ImportError, OSError) as e:
 try:
     import torch_spline_conv  # noqa
     WITH_TORCH_SPLINE_CONV = True
-except (ImportError, OSError) as e:
-    if isinstance(e, OSError):
+except Exception as e:
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(
             f"An issue occurred while importing 'torch-spline-conv'. "
             f"Disabling its usage. Stacktrace: {e}")
@@ -91,8 +93,8 @@ try:
     import torch_sparse  # noqa
     from torch_sparse import SparseStorage, SparseTensor
     WITH_TORCH_SPARSE = True
-except (ImportError, OSError) as e:
-    if isinstance(e, OSError):
+except Exception as e:
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_SPARSE = False
@@ -212,7 +214,7 @@ except (ImportError, OSError) as e:
 try:
     import intel_extension_for_pytorch  # noqa
     WITH_IPEX = True
-except (ImportError, OSError):
+except Exception:
     WITH_IPEX = False
 
 
