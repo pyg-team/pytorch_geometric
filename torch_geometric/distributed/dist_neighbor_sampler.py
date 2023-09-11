@@ -1,3 +1,4 @@
+import itertools
 import logging
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -38,7 +39,6 @@ from torch_geometric.typing import (
     EdgeType,
     NodeType,
     NumNeighbors,
-    OptTensor,
     Tuple,
 )
 
@@ -391,32 +391,35 @@ class DistNeighborSampler:
 
         return sampler_output
 
-    def get_local_sampler_output(
+    def get_sampler_output(
         self,
         outputs: List[SamplerOutput],
         seed_size: int,
+        p_id: int,
+        src_batch: Optional[Tensor] = None,
     ) -> SamplerOutput:
-        r""" Used when seed nodes belongs only to a local partition. It's
-        purpose is to remove seed nodes from sampled nodes and calculates
-        how many neighbors were sampled by each src node based on the
-        :obj:`cumm_sampled_nbrs_per_node`.
-        Returns updated sampler output.
+        r""" Used when seed nodes belongs to one partition. It's purpose is to
+        remove seed nodes from sampled nodes and calculates how many neighbors
+        were sampled by each src node based on the
+        :obj:`cumm_sampled_nbrs_per_node`. Returns updated sampler output.
         """
-        p_id = self.dist_graph.partition_idx
+        cumm_sampled_nbrs_per_node = outputs[p_id].metadata
 
         # do not include seed
         outputs[p_id].node = outputs[p_id].node[seed_size:]
-        if self.disjoint:
-            outputs[p_id].batch = outputs[p_id].batch[seed_size:]
-
-        cumm_sampled_nbrs_per_node = outputs[p_id].metadata
 
         begin = np.array(cumm_sampled_nbrs_per_node[1:])
-        end = np.array(cumm_sampled_nbrs_per_node[0:-1])
+        end = np.array(cumm_sampled_nbrs_per_node[:-1])
 
         sampled_nbrs_per_node = list(np.subtract(begin, end))
 
         outputs[p_id].metadata = (sampled_nbrs_per_node)
+
+        if self.disjoint:
+            batch = [[src_batch[i]] * nbrs_per_node
+                     for i, nbrs_per_node in enumerate(sampled_nbrs_per_node)]
+            outputs[p_id].batch = Tensor(
+                list(itertools.chain.from_iterable(batch))).type(torch.int64)
 
         return outputs[p_id]
 
@@ -426,6 +429,7 @@ class DistNeighborSampler:
         partition_orders: Tensor,
         outputs: List[SamplerOutput],
         one_hop_num: int,
+        src_batch: Optional[Tensor] = None,
     ) -> SamplerOutput:
         r""" Merges samplers outputs from different partitions, so that they
         are sorted according to the sampling order. Removes seed nodes from
@@ -448,8 +452,6 @@ class DistNeighborSampler:
             o.node if o is not None else None for o in outputs
         ]
         edge_ids = [o.edge if o is not None else None for o in outputs]
-        batch = [o.batch if o is not None else None
-                 for o in outputs] if self.disjoint else None
         cumm_sampled_nbrs_per_node = [
             o.metadata if o is not None else None for o in outputs
         ]
@@ -461,7 +463,7 @@ class DistNeighborSampler:
 
         out = torch.ops.pyg.merge_sampler_outputs(
             sampled_nodes_with_dupl, cumm_sampled_nbrs_per_node, partition_ids,
-            partition_orders, partitions_num, one_hop_num, edge_ids, batch,
+            partition_orders, partitions_num, one_hop_num, edge_ids, src_batch,
             self.disjoint, self.with_edge)
         (out_node_with_dupl, out_edge, out_batch,
          out_sampled_nbrs_per_node) = out
@@ -475,7 +477,7 @@ class DistNeighborSampler:
         srcs: Tensor,
         one_hop_num: int,
         seed_time: Optional[Tensor] = None,
-        batch: OptTensor = None,
+        src_batch: Optional[Tensor] = None,
         etype: Optional[EdgeType] = None,
     ) -> SamplerOutput:
         r""" Sample one-hop neighbors for a :obj:`srcs`. If src node is located
@@ -497,14 +499,13 @@ class DistNeighborSampler:
         futs: List[torch.futures.Future] = []
 
         local_only = True
+        single_partition = len(set(partition_ids.tolist())) == 1
 
         for i in range(self.dist_graph.num_partitions):
             p_id = ((self.dist_graph.partition_idx + i) %
                     self.dist_graph.num_partitions)
             p_mask = (partition_ids == p_id)
             p_srcs = torch.masked_select(srcs, p_mask)
-            p_batch = torch.masked_select(
-                batch, p_mask) if batch is not None else None
             p_seed_time = torch.masked_select(
                 seed_time, p_mask) if seed_time is not None else None
 
@@ -515,8 +516,7 @@ class DistNeighborSampler:
                 if p_id == self.dist_graph.partition_idx:
                     # sample on local machine
                     p_nbr_out = self._sampler._sample_one_hop(
-                        p_srcs, one_hop_num, p_seed_time, p_batch, self.csc,
-                        etype)
+                        p_srcs, one_hop_num, p_seed_time, self.csc, etype)
                     p_outputs.pop(p_id)
                     p_outputs.insert(p_id, p_nbr_out)
                 else:
@@ -526,21 +526,24 @@ class DistNeighborSampler:
                     futs.append(
                         rpc_async(
                             to_worker, self.rpc_sample_callee_id,
-                            args=(p_srcs, one_hop_num, p_seed_time, p_batch,
+                            args=(p_srcs, one_hop_num, p_seed_time, self.csc,
                                   etype)))
 
-        # All src nodes are local
-        if local_only:
-            return self.get_local_sampler_output(p_outputs, len(srcs))
+        if not local_only:
+            # Src nodes are remote
+            res_fut_list = await wrap_torch_future(
+                torch.futures.collect_all(futs))
+            for i, res_fut in enumerate(res_fut_list):
+                p_outputs.pop(p_id)
+                p_outputs.insert(p_id, res_fut.wait())
 
-        # Src nodes are remote
-        res_fut_list = await wrap_torch_future(torch.futures.collect_all(futs))
-        for i, res_fut in enumerate(res_fut_list):
-            p_outputs.pop(p_id)
-            p_outputs.insert(p_id, res_fut.wait())
+        # All src nodes are in the same partition
+        if single_partition:
+            return self.get_sampler_output(p_outputs, len(srcs),
+                                           partition_ids[0], src_batch)
 
         return self.merge_sampler_outputs(partition_ids, partition_orders,
-                                          p_outputs, one_hop_num)
+                                          p_outputs, one_hop_num, src_batch)
 
     async def _colloate_fn(
         self, output: Union[SamplerOutput, HeteroSamplerOutput]

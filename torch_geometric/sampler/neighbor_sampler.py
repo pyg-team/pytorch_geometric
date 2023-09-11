@@ -439,8 +439,7 @@ class NeighborSampler(BaseSampler):
             )
 
     def _sample_one_hop(self, srcs: Tensor, one_hop_num: int,
-                        seed_time: Optional[Tensor] = None,
-                        batch: OptTensor = None, csc: bool = True,
+                        seed_time: Optional[Tensor] = None, csc: bool = True,
                         edge_type: EdgeType = None) -> SamplerOutput:
         r""" Implements one-hop neighbor sampling for a :obj:`srcs`
         leveraging a :obj:`neighbor_sample` function from :obj:`pyg-lib`.
@@ -453,37 +452,34 @@ class NeighborSampler(BaseSampler):
 
         if self.node_time is not None:
             node_time = self.node_time if not self.is_hetero else \
-                self.node_time[edge_type[0] if not csc else edge_type[0]]
+                self.node_time[edge_type[0] if not csc else edge_type[2]]
         else:
             node_time = None
 
         seed = srcs
 
-        out = torch.ops.pyg.neighbor_sample(
+        out = torch.ops.pyg.dist_neighbor_sample(
             colptr,
             row,
             seed.to(colptr.dtype),
-            [one_hop_num],
+            one_hop_num,
             node_time,
             seed_time,
-            batch,
+            None,  # TODO: edge_weight
             csc,
             self.replace,
             self.subgraph_type != SubgraphType.induced,
-            self.disjoint,
+            self.disjoint and node_time is not None,
             self.temporal_strategy,
             True,  # return_edge_id
-            True,  # distributed
         )
-        _, _, node, edge, batch = out[:4] + (None, )
+        node, edge, cumm_sum_nbrs_per_node = out
 
-        cumm_sum_nbrs_per_node = out[6]
-
-        if self.disjoint:
-            batch, node = node.t().contiguous()
+        if self.disjoint and node_time is not None:
+            _, node = node.t().contiguous()
 
         return SamplerOutput(node=node, row=None, col=None, edge=edge,
-                             batch=batch, metadata=(cumm_sum_nbrs_per_node))
+                             batch=None, metadata=(cumm_sum_nbrs_per_node))
 
 
 # Sampling Utilities ##########################################################
