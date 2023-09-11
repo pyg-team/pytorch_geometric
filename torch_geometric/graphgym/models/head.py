@@ -1,9 +1,4 @@
-""" GNN heads are the last layer of a GNN right before loss computation.
-They are constructed in the init function of the gnn.GNN.
-"""
-
 import torch
-import torch.nn as nn
 
 import torch_geometric.graphgym.register as register
 from torch_geometric.graphgym.config import cfg
@@ -12,19 +7,24 @@ from torch_geometric.graphgym.register import register_head
 
 
 @register_head('node')
-class GNNNodeHead(nn.Module):
-    """
-    GNN prediction head for node prediction tasks.
+class GNNNodeHead(torch.nn.Module):
+    r"""A GNN prediction head for node-level prediction tasks.
 
     Args:
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+        dim_in (int): The input feature dimension.
+        dim_out (int): The output feature dimension.
     """
-    def __init__(self, dim_in, dim_out):
+    def __init__(self, dim_in: int, dim_out: int):
         super().__init__()
         self.layer_post_mp = MLP(
-            new_layer_config(dim_in, dim_out, cfg.gnn.layers_post_mp,
-                             has_act=False, has_bias=True, cfg=cfg))
+            new_layer_config(
+                dim_in,
+                dim_out,
+                cfg.gnn.layers_post_mp,
+                has_act=False,
+                has_bias=True,
+                cfg=cfg,
+            ))
 
     def _apply_index(self, batch):
         x = batch.x
@@ -44,45 +44,54 @@ class GNNNodeHead(nn.Module):
 
 @register_head('edge')
 @register_head('link_pred')
-class GNNEdgeHead(nn.Module):
-    """
-    GNN prediction head for edge/link prediction tasks.
+class GNNEdgeHead(torch.nn.Module):
+    r"""A GNN prediction head for edge-level/link-level prediction tasks.
 
     Args:
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+        dim_in (int): The input feature dimension.
+        dim_out (int): The output feature dimension.
     """
-    def __init__(self, dim_in, dim_out):
+    def __init__(self, dim_in: int, dim_out: int):
         super().__init__()
-        # module to decode edges from node embeddings
+        # Module to decode edges from node embeddings:
         if cfg.model.edge_decoding == 'concat':
             self.layer_post_mp = MLP(
-                new_layer_config(dim_in * 2, dim_out, cfg.gnn.layers_post_mp,
-                                 has_act=False, has_bias=True, cfg=cfg))
-            # requires parameter
+                new_layer_config(
+                    dim_in * 2,
+                    dim_out,
+                    cfg.gnn.layers_post_mp,
+                    has_act=False,
+                    has_bias=True,
+                    cfg=cfg,
+                ))
             self.decode_module = lambda v1, v2: \
                 self.layer_post_mp(torch.cat((v1, v2), dim=-1))
         else:
             if dim_out > 1:
-                raise ValueError(
-                    'Binary edge decoding ({})is used for multi-class '
-                    'edge/link prediction.'.format(cfg.model.edge_decoding))
+                raise ValueError(f"Binary edge decoding "
+                                 f"'{cfg.model.edge_decoding}' is used for "
+                                 f"multi-class classification")
             self.layer_post_mp = MLP(
-                new_layer_config(dim_in, dim_in, cfg.gnn.layers_post_mp,
-                                 has_act=False, has_bias=True, cfg=cfg))
+                new_layer_config(
+                    dim_in,
+                    dim_in,
+                    cfg.gnn.layers_post_mp,
+                    has_act=False,
+                    has_bias=True,
+                    cfg=cfg,
+                ))
             if cfg.model.edge_decoding == 'dot':
                 self.decode_module = lambda v1, v2: torch.sum(v1 * v2, dim=-1)
             elif cfg.model.edge_decoding == 'cosine_similarity':
-                self.decode_module = nn.CosineSimilarity(dim=-1)
+                self.decode_module = torch.nn.CosineSimilarity(dim=-1)
             else:
-                raise ValueError('Unknown edge decoding {}.'.format(
-                    cfg.model.edge_decoding))
+                raise ValueError(f"Unknown edge decoding "
+                                 f"'{cfg.model.edge_decoding}'")
 
     def _apply_index(self, batch):
-        index = '{}_edge_index'.format(batch.split)
-        label = '{}_edge_label'.format(batch.split)
-        return batch.x[batch[index]], \
-            batch[label]
+        index = f'{batch.split}_edge_index'
+        label = f'{batch.split}_edge_label'
+        return batch.x[batch[index]], batch[label]
 
     def forward(self, batch):
         if cfg.model.edge_decoding != 'concat':
@@ -95,17 +104,16 @@ class GNNEdgeHead(nn.Module):
 
 
 @register_head('graph')
-class GNNGraphHead(nn.Module):
-    """
-    GNN prediction head for graph prediction tasks.
-    The optional post_mp layer (specified by cfg.gnn.post_mp) is used
-    to transform the pooled embedding using an MLP.
+class GNNGraphHead(torch.nn.Module):
+    r"""A GNN prediction head for graph-level prediction tasks.
+    A post message passing layer (as specified by :obj:`cfg.gnn.post_mp`) is
+    used to transform the pooled graph-level embeddings using an MLP.
 
     Args:
-        dim_in (int): Input dimension
-        dim_out (int): Output dimension. For binary prediction, dim_out=1.
+        dim_in (int): The input feature dimension.
+        dim_out (int): The output feature dimension.
     """
-    def __init__(self, dim_in, dim_out):
+    def __init__(self, dim_in: int, dim_out: int):
         super().__init__()
         self.layer_post_mp = MLP(
             new_layer_config(dim_in, dim_out, cfg.gnn.layers_post_mp,

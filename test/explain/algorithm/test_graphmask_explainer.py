@@ -123,7 +123,7 @@ def test_graph_mask_explainer_binary_classification(
 
     explainer = Explainer(
         model=model,
-        algorithm=GraphMaskExplainer(2, epochs=5),
+        algorithm=GraphMaskExplainer(2, epochs=5, log=False),
         explanation_type=explanation_type,
         node_mask_type=node_mask_type,
         edge_mask_type=edge_mask_type,
@@ -171,7 +171,7 @@ def test_graph_mask_explainer_multiclass_classification(
 
     explainer = Explainer(
         model=model,
-        algorithm=GraphMaskExplainer(2, epochs=5),
+        algorithm=GraphMaskExplainer(2, epochs=5, log=False),
         explanation_type=explanation_type,
         node_mask_type=node_mask_type,
         edge_mask_type=edge_mask_type,
@@ -216,7 +216,7 @@ def test_graph_mask_explainer_regression(
 
     explainer = Explainer(
         model=model,
-        algorithm=GraphMaskExplainer(2, epochs=5),
+        algorithm=GraphMaskExplainer(2, epochs=5, log=False),
         explanation_type=explanation_type,
         node_mask_type=node_mask_type,
         edge_mask_type=edge_mask_type,

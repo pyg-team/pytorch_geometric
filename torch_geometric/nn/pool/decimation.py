@@ -3,6 +3,8 @@ from typing import Tuple, Union
 import torch
 from torch import LongTensor, Tensor
 
+from torch_geometric.utils import cumsum
+
 
 def decimation_indices(
     ptr: LongTensor,
@@ -40,6 +42,6 @@ def decimation_indices(
     decim_indices = torch.cat(decim_indices, dim=0)
 
     # Get updated ptr (e.g., for future decimations):
-    decim_ptr = torch.cat([decim_count.new_zeros(1), decim_count.cumsum(0)])
+    decim_ptr = cumsum(decim_count)
 
     return decim_indices, decim_ptr

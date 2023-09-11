@@ -4,7 +4,6 @@ import os.path as osp
 import kuzu
 import pandas as pd
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 from tqdm import tqdm
 
@@ -60,13 +59,13 @@ loader = NeighborLoader(
 )
 
 
-class GraphSAGE(nn.Module):
+class GraphSAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers,
                  dropout=0.2):
         super().__init__()
 
-        self.convs = nn.ModuleList()
-        self.norms = nn.ModuleList()
+        self.convs = torch.nn.ModuleList()
+        self.norms = torch.nn.ModuleList()
 
         self.convs.append(SAGEConv(in_channels, hidden_channels))
         self.bns.append(BatchNorm(hidden_channels))
