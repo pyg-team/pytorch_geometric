@@ -59,7 +59,7 @@ class LCMAggregation(Aggregation):
         self.gru_cell = GRUCell(out_channels, out_channels)
 
     def reset_parameters(self):
-        if self.lin is not None:
+        if self.project:
             self.lin.reset_parameters()
         self.gru_cell.reset_parameters()
 
