@@ -199,7 +199,7 @@ def test_trim_to_layer_with_neighbor_loader():
     assert torch.allclose(out1, out2)
 
 
-def test_trim_to_layer_with_filtering_empty_tensor():
+def test_trim_to_layer_filtering():
     x_dict = {
         'paper': torch.rand((13, 128)),
         'author': torch.rand((5, 128)),
@@ -221,12 +221,15 @@ def test_trim_to_layer_with_filtering_empty_tensor():
         ('paper', 'has_topic', 'field_of_study'): [0, 4]
     }
     x_dict, edge_index_dict, _ = trim_to_layer(
-        layer=1, num_sampled_nodes_per_hop=num_sampled_nodes_dict,
-        num_sampled_edges_per_hop=num_sampled_edges_dict, x=x_dict,
-        edge_index=edge_index_dict)
+        layer=1,
+        num_sampled_nodes_per_hop=num_sampled_nodes_dict,
+        num_sampled_edges_per_hop=num_sampled_edges_dict,
+        x=x_dict,
+        edge_index=edge_index_dict,
+    )
     assert list(edge_index_dict.keys()) == [('author', 'writes', 'paper')]
-    assert torch.allclose(edge_index_dict[('author', 'writes', 'paper')],
-                          torch.tensor([[0, 1], [0, 0]]))
-    assert x_dict['paper'].shape == torch.Size([3, 128])
-    assert x_dict['author'].shape == torch.Size([2, 128])
-    assert x_dict['field_of_study'].shape == torch.Size([2, 128])
+    assert torch.equal(edge_index_dict[('author', 'writes', 'paper')],
+                       torch.tensor([[0, 1], [0, 0]]))
+    assert x_dict['paper'].size() == (3, 128)
+    assert x_dict['author'].size() == (2, 128)
+    assert x_dict['field_of_study'].size() == (2, 128)

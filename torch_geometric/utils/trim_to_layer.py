@@ -1,4 +1,5 @@
-from typing import Dict, List, Optional, Tuple, Union
+import copy
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -14,17 +15,15 @@ from torch_geometric.typing import (
 )
 
 
-def filter_empty_tensor(input_tensor: Union[MaybeHeteroNodeTensor,
-                                            MaybeHeteroEdgeTensor]):
-    r"""Filter out empty tensor for x, edge_index, edge_attr after trim.
-    This can avoid some unnecessary computation when some node/edge
-    types get empty output"""
-    if input_tensor is None:
-        return None
-    for k in list(input_tensor.keys()):
-        if input_tensor[k].numel() == 0:
-            del input_tensor[k]
-    return input_tensor
+def filter_empty_entries(
+        input_dict: Dict[Union[Any], Tensor]) -> Dict[Any, Tensor]:
+    r"""Remove empty tensors from a dictionary. This avoids unnecessary
+    computation when some node/edge types are non-reachable after trimming."""
+    out_dict = copy.copy(input_dict)
+    for key, value in input_dict.items():
+        if value.numel() == 0:
+            del out_dict[key]
+    return out_dict
 
 
 def trim_to_layer(
@@ -66,6 +65,8 @@ def trim_to_layer(
             k: trim_feat(v, layer, num_sampled_nodes_per_hop[k])
             for k, v in x.items()
         }
+        x = filter_empty_entries(x)
+
         edge_index = {
             k:
             trim_adj(
@@ -77,14 +78,15 @@ def trim_to_layer(
             )
             for k, v in edge_index.items()
         }
+        edge_index = filter_empty_entries(edge_index)
+
         if edge_attr is not None:
             edge_attr = {
                 k: trim_feat(v, layer, num_sampled_edges_per_hop[k])
                 for k, v in edge_attr.items()
             }
-        x = filter_empty_tensor(x)
-        edge_index = filter_empty_tensor(edge_index)
-        edge_attr = filter_empty_tensor(edge_attr)
+            edge_attr = filter_empty_entries(edge_attr)
+
         return x, edge_index, edge_attr
 
     x = trim_feat(x, layer, num_sampled_nodes_per_hop)
