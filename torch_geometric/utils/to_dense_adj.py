@@ -23,7 +23,10 @@ def to_dense_adj(
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
             node to a specific example. (default: :obj:`None`)
         edge_attr (Tensor, optional): Edge weights or multi-dimensional edge
-            features. (default: :obj:`None`)
+            features.
+            If :obj:`edge_index` contains duplicated edges, the dense adjacency
+            matrix output holds the summed up entries of :obj:`edge_attr` for
+            duplicated edges. (default: :obj:`None`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
         batch_size (int, optional) The batch size. (default: :obj:`None`)
