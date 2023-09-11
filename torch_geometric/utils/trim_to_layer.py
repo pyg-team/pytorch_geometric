@@ -17,7 +17,7 @@ from torch_geometric.typing import (
 
 def filter_empty_entries(
         input_dict: Dict[Union[Any], Tensor]) -> Dict[Any, Tensor]:
-    r"""Remove empty tensors from a dictionary. This avoids unnecessary
+    r"""Removes empty tensors from a dictionary. This avoids unnecessary
     computation when some node/edge types are non-reachable after trimming."""
     out_dict = copy.copy(input_dict)
     for key, value in input_dict.items():
