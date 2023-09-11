@@ -40,7 +40,7 @@ try:
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
 except Exception as e:
-    if not isinstance(e, ImportError):
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'pyg-lib'. "
                       f"Disabling its usage. Stacktrace: {e}")
     pyg_lib = object
@@ -56,7 +56,7 @@ try:
     import torch_scatter  # noqa
     WITH_TORCH_SCATTER = True
 except Exception as e:
-    if not isinstance(e, ImportError):
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'torch-scatter'. "
                       f"Disabling its usage. Stacktrace: {e}")
     torch_scatter = object
@@ -67,7 +67,7 @@ try:
     WITH_TORCH_CLUSTER = True
     WITH_TORCH_CLUSTER_BATCH_SIZE = 'batch_size' in torch_cluster.knn.__doc__
 except Exception as e:
-    if not isinstance(e, ImportError):
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'torch-cluster'. "
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_CLUSTER = False
@@ -83,7 +83,7 @@ try:
     import torch_spline_conv  # noqa
     WITH_TORCH_SPLINE_CONV = True
 except Exception as e:
-    if not isinstance(e, ImportError):
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(
             f"An issue occurred while importing 'torch-spline-conv'. "
             f"Disabling its usage. Stacktrace: {e}")
@@ -94,7 +94,7 @@ try:
     from torch_sparse import SparseStorage, SparseTensor
     WITH_TORCH_SPARSE = True
 except Exception as e:
-    if not isinstance(e, ImportError):
+    if not isinstance(e, ImportError):  # pragma: no cover
         warnings.warn(f"An issue occurred while importing 'torch-sparse'. "
                       f"Disabling its usage. Stacktrace: {e}")
     WITH_TORCH_SPARSE = False
