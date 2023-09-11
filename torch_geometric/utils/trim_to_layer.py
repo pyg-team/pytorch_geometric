@@ -20,7 +20,7 @@ def filter_empty_tensor(input_tensor: Union[MaybeHeteroNodeTensor,
     This can avoid some unnecessary computation when some node/edge
     types get empty output"""
     if input_tensor is None:
-        return
+        return None
     for k in list(input_tensor.keys()):
         if input_tensor[k].numel() == 0:
             del input_tensor[k]
