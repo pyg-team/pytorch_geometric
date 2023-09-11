@@ -25,7 +25,7 @@ def to_dense_adj(
         edge_attr (Tensor, optional): Edge weights or multi-dimensional edge
             features.
             If :obj:`edge_index` contains duplicated edges, the dense adjacency
-            matrix output will sum up the entries of :obj:`edge_attr` for
+            matrix output holds the summed up entries of :obj:`edge_attr` for
             duplicated edges. (default: :obj:`None`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
