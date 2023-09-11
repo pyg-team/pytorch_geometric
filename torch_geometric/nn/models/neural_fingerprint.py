@@ -6,10 +6,9 @@ from torch_geometric.typing import Adj
 
 
 class NeuralFingerprint(torch.nn.Module):
-    r"""
-    The Nueral Fingerprint model from the
+    r"""The Nueral Fingerprint model from the
     `"Convolutional Networks on Graphs for Learning Molecular Fingerprints"
-    <https://arxiv.org/pdf/1509.09292.pdf>`_ paper to generate fingerprints
+    <https://arxiv.org/pdf/1509.09292.pdf>`__ paper to generate fingerprints
     of molecules.
 
     Args:
