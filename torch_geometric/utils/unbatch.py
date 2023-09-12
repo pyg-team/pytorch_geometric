@@ -3,7 +3,7 @@ from typing import List, Optional
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import degree
+from torch_geometric.utils import cumsum, degree
 
 
 def unbatch(
@@ -65,7 +65,7 @@ def unbatch_edge_index(
                 [1, 0, 2, 1]]))
     """
     deg = degree(batch, batch_size, dtype=torch.long)
-    ptr = torch.cat([deg.new_zeros(1), deg.cumsum(dim=0)[:-1]], dim=0)
+    ptr = cumsum(deg)
 
     edge_batch = batch[edge_index[0]]
     edge_index = edge_index - ptr[edge_batch]

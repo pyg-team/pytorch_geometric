@@ -387,6 +387,23 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         cls_name = self.__class__.__name__
         status = True
 
+        node_types = set(self.node_types)
+        num_src_node_types = {src for src, _, _ in self.edge_types}
+        num_dst_node_types = {dst for _, _, dst in self.edge_types}
+
+        dangling_types = (num_src_node_types | num_dst_node_types) - node_types
+        if len(dangling_types) > 0:
+            status = False
+            warn_or_raise(
+                f"The node types {dangling_types} are referenced in edge "
+                f"types but do not exist as node types", raise_on_error)
+
+        dangling_types = node_types - (num_src_node_types | num_dst_node_types)
+        if len(dangling_types) > 0:
+            warn_or_raise(  # May be intended.
+                f"The node types {dangling_types} are isolated and are not "
+                f"referenced by any edge type ", raise_on_error=False)
+
         for edge_type, store in self._edge_store_dict.items():
             src, _, dst = edge_type
 
