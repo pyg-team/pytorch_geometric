@@ -101,6 +101,16 @@ class NeighborLoader(NodeLoader):
         sampled_data = next(iter(loader))
         print(sampled_data.n_id)  # Global node index of each node in batch.
 
+    In particular, the data loader will add the following attributes to the
+    returned mini-batch:
+
+    * :obj:`batch_size` The number of seed nodes (first nodes in the batch)
+    * :obj:`n_id` The global node index for every sampled node
+    * :obj:`e_id` The global edge index for every sampled edge
+    * :obj:`input_id`: The global index of the :obj:`input_nodes`
+    * :obj:`num_sampled_nodes`: The number of sampled nodes in each hop
+    * :obj:`num_sampled_edges`: The number of sampled edges in each hop
+
     Args:
         data (Any): A :class:`~torch_geometric.data.Data`,
             :class:`~torch_geometric.data.HeteroData`, or

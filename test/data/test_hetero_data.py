@@ -33,7 +33,8 @@ def test_init_hetero_data():
     data['paper', 'paper'].edge_index = edge_index_paper_paper
     data['paper', 'author'].edge_index = edge_index_paper_author
     data['author', 'paper'].edge_index = edge_index_author_paper
-    data.validate(raise_on_error=True)
+    with pytest.warns(UserWarning, match="{'v1'} are isolated"):
+        data.validate(raise_on_error=True)
 
     assert len(data) == 2
     assert data.node_types == ['v1', 'paper', 'author']
@@ -191,6 +192,18 @@ def test_hetero_data_rename():
     assert data['article'].x.tolist() == x_paper.tolist()
     edge_index = data['article', 'article'].edge_index
     assert edge_index.tolist() == edge_index_paper_paper.tolist()
+
+
+def test_dangling_types():
+    data = HeteroData()
+    data['src', 'to', 'dst'].edge_index = torch.randint(0, 10, (2, 20))
+    with pytest.raises(ValueError, match="do not exist as node types"):
+        data.validate()
+
+    data = HeteroData()
+    data['node'].num_nodes = 10
+    with pytest.warns(UserWarning, match="{'node'} are isolated"):
+        data.validate()
 
 
 def test_hetero_data_subgraph():

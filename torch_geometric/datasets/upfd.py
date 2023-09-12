@@ -13,7 +13,7 @@ from torch_geometric.data import (
     extract_zip,
 )
 from torch_geometric.io import read_txt_array
-from torch_geometric.utils import coalesce
+from torch_geometric.utils import coalesce, cumsum
 
 
 class UPFD(InMemoryDataset):
@@ -139,10 +139,8 @@ class UPFD(InMemoryDataset):
         batch = np.load(osp.join(self.raw_dir, 'node_graph_id.npy'))
         batch = torch.from_numpy(batch).to(torch.long)
 
-        node_slice = torch.cumsum(batch.bincount(), 0)
-        node_slice = torch.cat([torch.tensor([0]), node_slice])
-        edge_slice = torch.cumsum(batch[edge_index[0]].bincount(), 0)
-        edge_slice = torch.cat([torch.tensor([0]), edge_slice])
+        node_slice = cumsum(batch.bincount())
+        edge_slice = cumsum(batch[edge_index[0].bincount()])
         graph_slice = torch.arange(y.size(0) + 1)
         self.slices = {
             'x': node_slice,

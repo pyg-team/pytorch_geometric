@@ -1,5 +1,6 @@
 import os
 import os.path as osp
+from functools import partial
 from math import pi as PI
 from math import sqrt
 from typing import Callable, Dict, Optional, Tuple, Union
@@ -102,13 +103,17 @@ class SphericalBasisLayer(torch.nn.Module):
         for i in range(num_spherical):
             if i == 0:
                 sph1 = sym.lambdify([theta], sph_harm_forms[i][0], modules)(0)
-                self.sph_funcs.append(lambda x: torch.zeros_like(x) + sph1)
+                self.sph_funcs.append(partial(self._sph_to_tensor, sph1))
             else:
                 sph = sym.lambdify([theta], sph_harm_forms[i][0], modules)
                 self.sph_funcs.append(sph)
             for j in range(num_radial):
                 bessel = sym.lambdify([x], bessel_forms[i][j], modules)
                 self.bessel_funcs.append(bessel)
+
+    @staticmethod
+    def _sph_to_tensor(sph, x: Tensor) -> Tensor:
+        return torch.zeros_like(x) + sph
 
     def forward(self, dist: Tensor, angle: Tensor, idx_kj: Tensor) -> Tensor:
         dist = dist / self.cutoff

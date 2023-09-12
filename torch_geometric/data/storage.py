@@ -163,23 +163,23 @@ class BaseStorage(MutableMapping):
     # storage object, e.g., in case we only want to transfer a subset of keys
     # to the GPU (i.e. the ones that are relevant to the deep learning model).
 
-    def keys(self, *args: List[str]) -> KeysView:
+    def keys(self, *args: str) -> KeysView:
         return KeysView(self._mapping, *args)
 
-    def values(self, *args: List[str]) -> ValuesView:
+    def values(self, *args: str) -> ValuesView:
         return ValuesView(self._mapping, *args)
 
-    def items(self, *args: List[str]) -> ItemsView:
+    def items(self, *args: str) -> ItemsView:
         return ItemsView(self._mapping, *args)
 
-    def apply_(self, func: Callable, *args: List[str]):
+    def apply_(self, func: Callable, *args: str):
         r"""Applies the in-place function :obj:`func`, either to all attributes
         or only the ones given in :obj:`*args`."""
         for value in self.values(*args):
             recursive_apply_(value, func)
         return self
 
-    def apply(self, func: Callable, *args: List[str]):
+    def apply(self, func: Callable, *args: str):
         r"""Applies the function :obj:`func`, either to all attributes or only
         the ones given in :obj:`*args`."""
         for key, value in self.items(*args):
@@ -208,62 +208,62 @@ class BaseStorage(MutableMapping):
         StorageTuple = namedtuple(typename, field_names)
         return StorageTuple(*[self[key] for key in field_names])
 
-    def clone(self, *args: List[str]):
+    def clone(self, *args: str):
         r"""Performs a deep-copy of the object."""
         return copy.deepcopy(self)
 
-    def contiguous(self, *args: List[str]):
+    def contiguous(self, *args: str):
         r"""Ensures a contiguous memory layout, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.contiguous(), *args)
 
-    def to(self, device: Union[int, str], *args: List[str],
+    def to(self, device: Union[int, str], *args: str,
            non_blocking: bool = False):
         r"""Performs tensor dtype and/or device conversion, either for all
         attributes or only the ones given in :obj:`*args`."""
         return self.apply(
             lambda x: x.to(device=device, non_blocking=non_blocking), *args)
 
-    def cpu(self, *args: List[str]):
+    def cpu(self, *args: str):
         r"""Copies attributes to CPU memory, either for all attributes or only
         the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.cpu(), *args)
 
-    def cuda(self, device: Optional[Union[int, str]] = None, *args: List[str],
+    def cuda(self, device: Optional[Union[int, str]] = None, *args: str,
              non_blocking: bool = False):  # pragma: no cover
         r"""Copies attributes to CUDA memory, either for all attributes or only
         the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.cuda(device, non_blocking=non_blocking),
                           *args)
 
-    def pin_memory(self, *args: List[str]):  # pragma: no cover
+    def pin_memory(self, *args: str):  # pragma: no cover
         r"""Copies attributes to pinned memory, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.pin_memory(), *args)
 
-    def share_memory_(self, *args: List[str]):
+    def share_memory_(self, *args: str):
         r"""Moves attributes to shared memory, either for all attributes or
         only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.share_memory_(), *args)
 
-    def detach_(self, *args: List[str]):
+    def detach_(self, *args: str):
         r"""Detaches attributes from the computation graph, either for all
         attributes or only the ones given in :obj:`*args`."""
         return self.apply(lambda x: x.detach_(), *args)
 
-    def detach(self, *args: List[str]):
+    def detach(self, *args: str):
         r"""Detaches attributes from the computation graph by creating a new
         tensor, either for all attributes or only the ones given in
         :obj:`*args`."""
         return self.apply(lambda x: x.detach(), *args)
 
-    def requires_grad_(self, *args: List[str], requires_grad: bool = True):
+    def requires_grad_(self, *args: str, requires_grad: bool = True):
         r"""Tracks gradient computation, either for all attributes or only the
         ones given in :obj:`*args`."""
         return self.apply(
             lambda x: x.requires_grad_(requires_grad=requires_grad), *args)
 
-    def record_stream(self, stream: torch.cuda.Stream, *args: List[str]):
+    def record_stream(self, stream: torch.cuda.Stream, *args: str):
         r"""Ensures that the tensor memory is not reused for another tensor
         until all current work queued on :obj:`stream` has been completed,
         either for all attributes or only the ones given in :obj:`*args`."""
