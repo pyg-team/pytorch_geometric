@@ -1,6 +1,7 @@
 from math import ceil, log2
 from typing import Optional
 
+import torch
 from torch import Tensor
 from torch.nn import GRUCell, Linear
 
@@ -82,19 +83,40 @@ class LCMAggregation(Aggregation):
 
         x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
                                    max_num_elements=max_num_elements)
-
+        
         x = x.permute(1, 0, 2)  # [num_neighbors, num_nodes, num_features]
-
+        num_nodes, num_features = x.size(1), x.size(2)
+        
         depth = ceil(log2(x.size(0)))
         for _ in range(depth):
-            x = [
-                self.binary_op(x[2 * i], x[2 * i + 1]) if
-                (2 * i + 1) < len(x) else x[2 * i]
-                for i in range(ceil(len(x) / 2))
-            ]
+            half_size = ceil(x.size(0) / 2)
+            
+            lr, rl = [], []
+            remainder = None
+            for i in range(half_size):
+                if (2 * i + 1) >= x.size(0):
+                    # this level of the tree has an odd number of nodes, so the 
+                    # remaining, unmatched node gets moved to the next level
+                    remainder = x[2 * i].unsqueeze(0)
+                    break
+                left, right = x[2 * i], x[2 * i + 1]
+                lr += [left, right]
+                rl += [right, left]
+            lr, rl = torch.cat(lr), torch.cat(rl)
+            
+            # compute `self.binary_op(left, right)` for all `(left, right)`
+            # pairs in the current level of the tree, in parallel. Results in 
+            # `O(log V)` total `GRUCell` forward passes, instead of `O(V)`.
+            out = self.gru_cell(lr, rl)
+            out = out.view(-1, 2, num_nodes, num_features)
+            out = out.mean(1)
+            if remainder is not None:
+                out = torch.cat([out, remainder], 0)
 
-        assert len(x) == 1
-        return x[0]
+            x = out.view(half_size, num_nodes, num_features)
+        
+        assert x.size(0) == 1
+        return x.squeeze(0)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
