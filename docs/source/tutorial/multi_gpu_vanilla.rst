@@ -8,7 +8,7 @@ In particular, this tutorial introduces how to utilize :pyg:`PyG` with pure :pyt
 To start, we can take a look at the `distributed sampling <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.py>`__ example from :pyg:`PyG`.
 This example shows how to use train a :class:`~torch_geometric.nn.models.GraphSAGE` GNN model on the :class:`~torch_geometric.datasets.Reddit` dataset.
 This example uses the :class:`~torch_geometric.loader.NeighborLoader` with :class:`torch.nn.parallel.DistributedDataParallel` to scale-up training across all available GPU's on your machine.
-   
+
 
 Defining our Spawnable Runner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
