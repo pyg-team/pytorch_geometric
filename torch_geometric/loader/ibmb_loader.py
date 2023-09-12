@@ -720,7 +720,7 @@ class IBMBNodeLoader(IBMBBaseLoader):
             nodes.
         num_auxiliary_nodes (int): The number of auxiliary nodes per input
             node.
-        num_nodes_per_batch: The number of seed nodes per batch.
+        num_nodes_per_batch (int): The number of seed nodes per batch.
         alpha (float, optional): The teleport probability of the PageRank
             calculation. (default: :obj:`0.2`)
         eps (float, optional): The threshold for stopping the PPR calculation
