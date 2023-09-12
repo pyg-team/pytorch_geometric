@@ -68,6 +68,9 @@ Defining our GNN
 Defining our Spawnable Runner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Now we want to define a spawnable runner function. In our function, the world_size is the number of GPU's we will be using at once.
+For each gpu, the process is labeled with a process ID we call rank.
+
 .. code-block:: python
 
    import os
@@ -94,7 +97,9 @@ Now we split training indices into :obj:`world_size` many chunks for each GPU:
                                      num_neighbors=[25, 10], shuffle=True,
                                      drop_last=True, **kwargs)
 
-We also create a single-hop evaluation neighbor loader:
+Note that since our run function is called on each rank, which means each NeighborLoader is sampling from a reduced set of the training indices.
+
+We also create a single-hop evaluation neighbor loader. Note that we only do this on rank 0 since only one process needs to evaluate.
 
 .. code-block:: python
 
@@ -106,7 +111,8 @@ We also create a single-hop evaluation neighbor loader:
            # Add global node index information:
            subgraph_loader.data.node_id = torch.arange(data.num_nodes)
 
-Now that we have our data loaders defined initialize our model and wrap it in DistributedDataParallel
+Now that we have our data loaders defined initialize our model and wrap it in PyTorch's DistributedDataParallel.
+This wrapper on our model manages communication between each rank and reduces loss gradients from each process before updating the models parameters across all ranks.
 
 .. code-block:: python
 
@@ -115,7 +121,7 @@ Now that we have our data loaders defined initialize our model and wrap it in Di
       model = SAGE(dataset.num_features, 256, dataset.num_classes).to(rank)
       model = DistributedDataParallel(model, device_ids=[rank])
 
-Now we set up our optimizer and define our training loop. Notice that we move the edge indices of each mini batch to GPU while the features and labels are already on GPU.
+Now we set up our optimizer and define our training loop. Notice that we move the edge indices of each mini-batch to GPU while the features and labels are already on GPU.
 
 .. code-block:: python
 
@@ -154,7 +160,7 @@ After each training epoch, we evaluate and report accuracies:
       dist.destroy_process_group()
 
 
-Putting it all together, we spawn our runners for each GPU:
+Finally we put it all together by spawning our runners for each GPU. Note that we initialize the dataset here so it is in shared memory.
 
 .. code-block:: python
 
@@ -164,160 +170,3 @@ Putting it all together, we spawn our runners for each GPU:
        world_size = torch.cuda.device_count()
        print('Let\'s use', world_size, 'GPUs!')
        mp.spawn(run, args=(world_size, dataset), nprocs=world_size, join=True)
-
-Large Scale
------------
-Now that we have a working small scale example, lets try to scale up to a larger dataset, papers100m.
-
-The first step is defining the necessary imports:
-
-.. code-block:: python
-
-   import argparse
-   import os
-   import time
-
-   import torch
-   import torch.distributed as dist
-   import torch.multiprocessing as mp
-   import torch.nn.functional as F
-   from ogb.nodeproppred import PygNodePropPredDataset
-   from torch.nn.parallel import DistributedDataParallel
-   from torchmetrics import Accuracy
-
-   from torch_geometric.loader import NeighborLoader
-   from torch_geometric.nn import GCNConv
-
-
-Next we define our GCN model:
-
-.. code-block:: python
-
-   class GCN(torch.nn.Module):
-       def __init__(self, in_channels, hidden_channels, out_channels):
-           super().__init__()
-           self.conv1 = GCNConv(in_channels, hidden_channels)
-           self.conv2 = GCNConv(hidden_channels, out_channels)
-
-       def forward(self, x, edge_index, edge_weight=None):
-           x = F.dropout(x, p=0.5, training=self.training)
-           x = self.conv1(x, edge_index, edge_weight).relu()
-           x = F.dropout(x, p=0.5, training=self.training)
-           x = self.conv2(x, edge_index, edge_weight)
-           return x
-
-
-Similarly to our last example we now set up our spawnable runner:
-
-.. code-block:: python
-
-   def pyg_num_work():
-       num_work = None
-       if hasattr(os, "sched_getaffinity"):
-           try:
-               num_work = len(os.sched_getaffinity(0)) / 2
-           except Exception:
-               pass
-       if num_work is None:
-           num_work = os.cpu_count() / 2
-       return int(num_work)
-
-   def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
-                 split_idx, num_classes):
-       os.environ['MASTER_ADDR'] = 'localhost'
-       os.environ['MASTER_PORT'] = '12355'
-       dist.init_process_group('nccl', rank=rank, world_size=world_size)
-       split_idx['train'] = split_idx['train'].split(
-           split_idx['train'].size(0) // world_size, dim=0)[rank].clone()
-       model = model.to(rank)
-       model = DistributedDataParallel(model, device_ids=[rank])
-       optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
-                                    weight_decay=0.0005)
-       train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
-                                     input_nodes=split_idx['train'],
-                                     batch_size=batch_size,
-                                     num_workers=pyg_num_work())
-       if rank == 0:
-           eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
-                                        input_nodes=split_idx['valid'],
-                                        batch_size=batch_size,
-                                        num_workers=pyg_num_work())
-           test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
-                                        input_nodes=split_idx['test'],
-                                        batch_size=batch_size,
-                                        num_workers=pyg_num_work())
-       eval_steps = 100
-       acc = Accuracy(task="multiclass", num_classes=num_classes).to(rank)
-       if rank == 0:
-           print("Beginning training...")
-       for epoch in range(epochs):
-           for i, batch in enumerate(train_loader):
-               if i >= 10:
-                   start = time.time()
-               batch = batch.to(rank)
-               batch.y = batch.y.to(torch.long)
-               optimizer.zero_grad()
-               out = model(batch.x, batch.edge_index)
-               loss = F.cross_entropy(out[:batch_size], batch.y[:batch_size])
-               loss.backward()
-               optimizer.step()
-               if rank == 0 and i % 10 == 0:
-                   print("Epoch: " + str(epoch) + ", Iteration: " + str(i) +
-                         ", Loss: " + str(loss))
-           if rank == 0:
-               print("Average Training Iteration Time:",
-                     (time.time() - start) / (i - 10), "s/iter")
-               acc_sum = 0.0
-               with torch.no_grad():
-                   for i, batch in enumerate(eval_loader):
-                       if i >= eval_steps:
-                           break
-                       if i >= 10:
-                           start = time.time()
-                       batch = batch.to(rank)
-                       batch.y = batch.y.to(torch.long)
-                       out = model(batch.x, batch.edge_index)
-                       acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                      batch.y[:batch_size])
-               print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
-               print("Average Inference Iteration Time:",
-                     (time.time() - start) / (i - 10), "s/iter")
-       if rank == 0:
-           acc_sum = 0.0
-           with torch.no_grad():
-               for i, batch in enumerate(test_loader):
-                   batch = batch.to(rank)
-                   batch.y = batch.y.to(torch.long)
-                   out = model(batch.x, batch.edge_index)
-                   acc_sum += acc(out[:batch_size].softmax(dim=-1),
-                                  batch.y[:batch_size])
-               print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
-
-
-Again, like in our last example, we put it all together by spawning our runners for each GPU:
-
-.. code-block:: python
-
-   if __name__ == '__main__':
-       parser = argparse.ArgumentParser()
-       parser.add_argument('--hidden_channels', type=int, default=64)
-       parser.add_argument('--lr', type=float, default=0.01)
-       parser.add_argument('--epochs', type=int, default=3)
-       parser.add_argument('--batch_size', type=int, default=128)
-       parser.add_argument('--fan_out', type=int, default=50)
-
-       args = parser.parse_args()
-
-       dataset = PygNodePropPredDataset(name='ogbn-papers100M')
-       split_idx = dataset.get_idx_split()
-       data = dataset[0]
-       data.y = data.y.reshape(-1)
-       model = GCN(dataset.num_features, args.hidden_channels,
-                   dataset.num_classes)
-       print("Data =", data)
-       world_size = torch.cuda.device_count()
-       print('Let\'s use', world_size, 'GPUs!')
-       mp.spawn(
-           run_train, args=(data, world_size, model, args.epochs, args.batch_size,
-                            args.fan_out, split_idx, dataset.num_classes),
-           nprocs=world_size, join=True)
