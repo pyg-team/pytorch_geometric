@@ -1,15 +1,11 @@
 import logging
-from heapq import heapify, heappop, heappush
-from math import ceil
-from typing import List, Optional, Tuple, Union
+import math
+from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 
-import numba
 import numpy as np
+import scipy.sparse
 import torch
-from python_tsp.heuristics import solve_tsp_simulated_annealing
-from scipy.sparse import csr_matrix
-from torch.utils.data import DataLoader, RandomSampler
-from torch_sparse import SparseTensor
+from torch import Tensor
 from tqdm import tqdm
 
 from torch_geometric.data import Data
@@ -17,13 +13,60 @@ from torch_geometric.loader.ibmb_sampler import (
     IBMBOrderedSampler,
     IBMBWeightedSampler,
 )
+from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import get_ppr, is_undirected, subgraph
+
+try:
+    import numba
+    WITH_NUMBA = True
+except ImportError:  # pragma: no cover
+    WITH_NUMBA = False
+
+
+class OutputNodes(NamedTuple):
+    seed_id: Tensor
+    auxiliary_id: Tensor
+
+
+class _IBMBBaseLoader(torch.utils.data.DataLoader):
+    def __init__(self, data: Data, **kwargs):
+        kwargs.pop('collate_fn', None)
+        batch_size = kwargs.get('batch_size', 1)
+
+        output_nodes = self.get_output_nodes(self)
+
+        if batch_size == 1:  # Pre-process subgraphs:
+            data_list = ...
+            super().__init__(data_list, collate_fn=self._cache_fn, **kwargs)
+        else:
+            self.data = data
+            super().__init__(output_nodes, collate_fn=self._collate_fn,
+                             **kwargs)
+
+    def get_output_nodes(self) -> List[OutputNodes]:
+        raise NotImplementedError
+
+    def _cache_fn(self, data_list: List[Data]) -> Data:
+        assert len(data_list) == 1
+        return data_list[0]
+
+    def _collate_fn(self, output_nodes: List[OutputNodes]) -> Data:
+        raise NotImplementedError
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
+
+
+###############################################################################
 
 
 def get_partitions(
-        edge_index: Union[torch.LongTensor, SparseTensor], num_partitions: int,
-        indices: torch.LongTensor, num_nodes: int,
-        output_weight: Optional[float] = None) -> List[torch.LongTensor]:
+    edge_index: Union[Tensor, SparseTensor],
+    num_partitions: int,
+    indices: Tensor,
+    num_nodes: int,
+    output_weight: Optional[float] = None,
+) -> List[Tensor]:
     assert isinstance(
         edge_index,
         (torch.LongTensor,
@@ -49,8 +92,11 @@ def get_partitions(
     return partitions
 
 
-def get_pair_wise_distance(ys: List, num_classes: int,
-                           dist_type: str = 'kl') -> np.ndarray:
+def get_pair_wise_distance(
+    ys: List,
+    num_classes: int,
+    dist_type: str = 'kl',
+) -> np.ndarray:
     num_batches = len(ys)
 
     counts = np.zeros((num_batches, num_classes), dtype=np.int32)
@@ -84,18 +130,18 @@ def get_pair_wise_distance(ys: List, num_classes: int,
     return pairwise_dist
 
 
-def indices_complete_check(loader: List[Tuple[Union[torch.Tensor, np.ndarray],
-                                              Union[torch.Tensor,
-                                                    np.ndarray]]],
-                           output_indices: Union[torch.Tensor, np.ndarray]):
-    if isinstance(output_indices, torch.Tensor):
+def indices_complete_check(
+    loader: List[Tuple[Union[Tensor, np.ndarray], Union[Tensor, np.ndarray]]],
+    output_indices: Union[Tensor, np.ndarray],
+):
+    if isinstance(output_indices, Tensor):
         output_indices = output_indices.cpu().numpy()
 
     outs = []
     for out, aux in loader:
-        if isinstance(out, torch.Tensor):
+        if isinstance(out, Tensor):
             out = out.cpu().numpy()
-        if isinstance(aux, torch.Tensor):
+        if isinstance(aux, Tensor):
             aux = aux.cpu().numpy()
 
         assert np.all(np.in1d(out,
@@ -107,8 +153,13 @@ def indices_complete_check(loader: List[Tuple[Union[torch.Tensor, np.ndarray],
         outs == np.sort(output_indices)), "Output nodes missing or duplicate!"
 
 
-def get_subgraph(out_indices: torch.Tensor, graph: Data,
-                 return_edge_index_type: str, adj: SparseTensor, **kwargs):
+def get_subgraph(
+    out_indices: Tensor,
+    graph: Data,
+    return_edge_index_type: str,
+    adj: SparseTensor,
+    **kwargs,
+):
     if return_edge_index_type == 'adj':
         assert adj is not None
 
@@ -131,15 +182,19 @@ def get_subgraph(out_indices: torch.Tensor, graph: Data,
     return subg
 
 
-def define_sampler(batch_order: str, ys: List[Union[torch.Tensor, np.ndarray,
-                                                    List]], num_classes: int,
-                   dist_type: str = 'kl'):
+def define_sampler(
+    batch_order: str,
+    ys: List[Union[Tensor, np.ndarray, List]],
+    num_classes: int,
+    dist_type: str = 'kl',
+):
     if batch_order == 'rand':
         logging.info("Running with random order")
-        sampler = RandomSampler(ys)
+        sampler = torch.utils.data.RandomSampler(ys)
     elif batch_order in ['order', 'sample']:
         kl_div = get_pair_wise_distance(ys, num_classes, dist_type=dist_type)
         if batch_order == 'order':
+            from python_tsp.heuristics import solve_tsp_simulated_annealing
             best_perm, _ = solve_tsp_simulated_annealing(kl_div)
             logging.info(f"Running with given order: {best_perm}")
             sampler = IBMBOrderedSampler(best_perm)
@@ -153,11 +208,14 @@ def define_sampler(batch_order: str, ys: List[Union[torch.Tensor, np.ndarray,
 
 
 def create_batchwise_out_aux_pairs(
-        adj: SparseTensor, partitions: List[Union[torch.LongTensor,
-                                                  np.ndarray]],
-        prime_indices: Union[torch.LongTensor, np.ndarray], topk: int,
-        num_outnodeset_per_batch: int = 50, alpha: float = 0.2,
-        ppr_iterations: int = 50) -> List[Tuple[np.ndarray, np.ndarray]]:
+    adj: SparseTensor,
+    partitions: List[Union[torch.LongTensor, np.ndarray]],
+    prime_indices: Union[torch.LongTensor, np.ndarray],
+    topk: int,
+    num_outnodeset_per_batch: int = 50,
+    alpha: float = 0.2,
+    ppr_iterations: int = 50,
+) -> List[Tuple[np.ndarray, np.ndarray]]:
     def ppr_power_method(adj: SparseTensor,
                          batch: List[Union[np.ndarray,
                                            torch.LongTensor]], topk: int,
@@ -183,9 +241,8 @@ def create_batchwise_out_aux_pairs(
 
         return topk_neighbors
 
-    device = torch.device(
-        'cuda') if torch.cuda.is_available() else torch.device('cpu')
-    if isinstance(prime_indices, torch.Tensor):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    if isinstance(prime_indices, Tensor):
         prime_indices = prime_indices.cpu().numpy()
 
     adj = adj.to(device)
@@ -197,7 +254,7 @@ def create_batchwise_out_aux_pairs(
     pbar.set_description("Processing topic-sensitive PPR batches")
     for n in pbar:
         part = partitions[n]
-        if isinstance(part, torch.Tensor):
+        if isinstance(part, Tensor):
             part = part.cpu().numpy()
 
         primes_in_part, *_ = np.intersect1d(part, prime_indices,
@@ -224,7 +281,7 @@ def create_batchwise_out_aux_pairs(
     return loader
 
 
-def get_pairs(ppr_mat: csr_matrix) -> np.ndarray:
+def get_pairs(ppr_mat: scipy.sparse.csr_matrix) -> np.ndarray:
     ppr_mat = ppr_mat + ppr_mat.transpose()
 
     ppr_mat = ppr_mat.tocoo()
@@ -240,9 +297,29 @@ def get_pairs(ppr_mat: csr_matrix) -> np.ndarray:
     return ppr_pairs
 
 
-@numba.njit(cache=True)
-def prime_orient_merge(ppr_pairs: np.ndarray, primes_per_batch: int,
-                       num_nodes: int):
+_prime_orient_merge_numba: Optional[Callable] = None
+
+
+def prime_orient_merge(
+    ppr_pairs: np.ndarray,
+    primes_per_batch: int,
+    num_nodes: int,
+):
+    if not WITH_NUMBA:  # pragma: no cover
+        raise ImportError("'prime_orient_merge' requires the 'numba' package")
+
+    global _prime_orient_merge_numba
+    if _prime_orient_merge_numba is None:
+        _prime_orient_merge_numba = numba.njit(cache=True)(_prime_orient_merge)
+
+    return _prime_orient_merge_numba(ppr_pairs, primes_per_batch, num_nodes)
+
+
+def _prime_orient_merge(
+    ppr_pairs: np.ndarray,
+    primes_per_batch: int,
+    num_nodes: int,
+):
     id_primes_list = list(np.arange(num_nodes, dtype=np.int32).reshape(-1, 1))
     node_id_list = np.arange(num_nodes, dtype=np.int32)
     placeholder = np.zeros(0, dtype=np.int32)
@@ -272,6 +349,8 @@ def prime_orient_merge(ppr_pairs: np.ndarray, primes_per_batch: int,
 
 
 def prime_post_process(loader, merge_max_size):
+    from heapq import heapify, heappop, heappush
+
     h = [(
         len(p),
         p,
@@ -304,9 +383,14 @@ def prime_post_process(loader, merge_max_size):
 
 
 def topk_ppr_matrix(
-        edge_index: torch.Tensor, num_nodes: int, alpha: float, eps: float,
-        output_node_indices: Union[np.ndarray, torch.LongTensor], topk: int,
-        normalization='row') -> Tuple[csr_matrix, List[np.ndarray]]:
+    edge_index: Tensor,
+    num_nodes: int,
+    alpha: float,
+    eps: float,
+    output_node_indices: Union[np.ndarray, torch.LongTensor],
+    topk: int,
+    normalization='row',
+) -> Tuple[scipy.sparse.csr_matrix, List[np.ndarray]]:
     neighbors, weights = get_ppr(edge_index, alpha, eps, output_node_indices,
                                  num_nodes)
 
@@ -372,27 +456,33 @@ def topk_ppr_matrix(
     return ppr_matrix, neighbors
 
 
-class IBMBBaseLoader(DataLoader):
-    def __init__(self, data_source: Union[List[Data],
-                                          List[Tuple]], graph: Data,
-                 adj: SparseTensor, return_edge_index_type: str, **kwargs):
-
+class IBMBBaseLoader(torch.utils.data.DataLoader):
+    def __init__(
+        self,
+        data_list: Union[List[Data], List[Tuple]],
+        graph: Data,
+        adj: SparseTensor,
+        return_edge_index_type: str,
+        **kwargs,
+    ):
         self.graph = graph
         self.adj = adj
         self.return_edge_index_type = return_edge_index_type
         if 'collate_fn' in kwargs:
             del kwargs['collate_fn']
-        super().__init__(data_source, collate_fn=self.__collate__, **kwargs)
+        super().__init__(data_list, collate_fn=self.collate_fn, **kwargs)
 
     def create_loader(self, *args, **kwargs):
         raise NotImplementedError
 
     @classmethod
-    def prepare_cache(cls, graph: Data,
-                      batch_wise_out_aux_pairs: List[Tuple[np.ndarray,
-                                                           np.ndarray]],
-                      adj: Optional[SparseTensor],
-                      return_edge_index_type: str):
+    def prepare_cache(
+        cls,
+        graph: Data,
+        batch_wise_out_aux_pairs: List[Tuple[np.ndarray, np.ndarray]],
+        adj: Optional[SparseTensor],
+        return_edge_index_type: str,
+    ):
         subgraphs = []
 
         pbar = tqdm(batch_wise_out_aux_pairs)
@@ -413,13 +503,17 @@ class IBMBBaseLoader(DataLoader):
         return subgraphs
 
     @classmethod
-    def create_adj_from_edge_index(cls, edge_index: torch.Tensor,
-                                   num_nodes: int, normalization: str):
-        assert normalization in [
-            'sym', 'rw'
-        ], f"Unsupported normalization type {normalization}"
-        adj = SparseTensor.from_edge_index(edge_index,
-                                           sparse_sizes=(num_nodes, num_nodes))
+    def create_adj_from_edge_index(
+        cls,
+        edge_index: Tensor,
+        num_nodes: int,
+        normalization: str,
+    ):
+        assert normalization in ['sym', 'rw']
+        adj = SparseTensor.from_edge_index(
+            edge_index,
+            sparse_sizes=(num_nodes, num_nodes),
+        )
         adj = adj.fill_value(1.)
         degree = adj.sum(0)
 
@@ -435,10 +529,7 @@ class IBMBBaseLoader(DataLoader):
 
         return adj
 
-    def __getitem__(self, idx):
-        raise NotImplementedError
-
-    def __collate__(self, data_list: List[Union[Data, Tuple]]):
+    def collate_fn(self, data_list: List[Union[Data, Tuple]]):
         if len(data_list) == 1 and isinstance(data_list[0], Data):
             return data_list[0]
 
@@ -484,9 +575,8 @@ class IBMBBatchLoader(IBMBBaseLoader):
             divergence score is more likely to be sampled. If :obj:`rand`, we
             shuffle the batches randomly.
         num_partitions (int): Number of partitions.
-        output_indices (torch.Tensor): A :obj:`torch.Tensor` vector
-            containing a set of nodes as output nodes. Normally taken from
-            train, validation or test split.
+        output_indices (torch.Tensor): A vector containing a set of nodes as
+            output nodes. Normally taken from train, validation or test split.
         return_edge_index_type (str): A string indicating the
             :obj:`edge_index` type. Should be either :obj:`adj` or
             :obj:`edge_index`. If :obj:`adj`, the edge_index of the batch will
@@ -511,13 +601,20 @@ class IBMBBatchLoader(IBMBBaseLoader):
         **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`.
             Specifically, :obj:`shuffle=False` is forced.
     """
-    def __init__(self, graph: Data, batch_order: str, num_partitions: int,
-                 output_indices: torch.Tensor, return_edge_index_type: str,
-                 batch_expand_ratio: Optional[float] = 1.,
-                 metis_output_weight: Optional[float] = None,
-                 num_outnodeset_per_batch: Optional[int] = 50,
-                 alpha: Optional[float] = 0.2,
-                 approximate_ppr_iterations: Optional[int] = 50, **kwargs):
+    def __init__(
+        self,
+        graph: Data,
+        batch_order: str,
+        num_partitions: int,
+        output_indices: Tensor,
+        return_edge_index_type: str,
+        batch_expand_ratio: Optional[float] = 1.,
+        metis_output_weight: Optional[float] = None,
+        num_outnodeset_per_batch: Optional[int] = 50,
+        alpha: Optional[float] = 0.2,
+        approximate_ppr_iterations: Optional[int] = 50,
+        **kwargs,
+    ):
 
         self.subgraphs = []
         self.batch_wise_out_aux_pairs = []
@@ -528,9 +625,11 @@ class IBMBBatchLoader(IBMBBaseLoader):
         assert batch_order in ['rand', 'sample', 'order'
                                ], f"Unsupported batch order: {batch_order}"
 
-        adj = self.create_adj_from_edge_index(graph.edge_index,
-                                              graph.num_nodes,
-                                              normalization='rw')
+        adj = self.create_adj_from_edge_index(
+            graph.edge_index,
+            graph.num_nodes,
+            normalization='rw',
+        )
 
         self.cache_data = kwargs['batch_size'] == 1
         self.num_partitions = num_partitions
@@ -565,19 +664,27 @@ class IBMBBatchLoader(IBMBBaseLoader):
             cached_adj = None
 
         super().__init__(
-            self.subgraphs if self.cache_data else
-            self.batch_wise_out_aux_pairs, cached_graph, cached_adj,
-            return_edge_index_type, sampler=sampler, **kwargs)
+            self.subgraphs
+            if self.cache_data else self.batch_wise_out_aux_pairs,
+            cached_graph,
+            cached_adj,
+            return_edge_index_type,
+            sampler=sampler,
+            **kwargs,
+        )
 
     def create_loader(self, graph: Data, adj: SparseTensor):
-        # graph partitioning
-        partitions = get_partitions(adj, self.num_partitions,
-                                    self.output_indices, graph.num_nodes,
-                                    self.metis_output_weight)
+        partitions = get_partitions(
+            adj,
+            self.num_partitions,
+            self.output_indices,
+            graph.num_nodes,
+            self.metis_output_weight,
+        )
 
         # get output - auxiliary node pairs
-        topk = ceil(self.batch_expand_ratio * graph.num_nodes /
-                    self.num_partitions)
+        topk = math.ceil(self.batch_expand_ratio * graph.num_nodes /
+                         self.num_partitions)
         batch_wise_out_aux_pairs = create_batchwise_out_aux_pairs(
             adj, partitions, self.output_indices, topk,
             self.num_outnodeset_per_batch, self.alpha,
@@ -587,13 +694,12 @@ class IBMBBatchLoader(IBMBBaseLoader):
         self.batch_wise_out_aux_pairs = batch_wise_out_aux_pairs
 
         if self.cache_data:
-            self.subgraphs = self.prepare_cache(graph,
-                                                batch_wise_out_aux_pairs, adj,
-                                                self.return_edge_index_type)
-
-    def __getitem__(self, idx):
-        return self.subgraphs[
-            idx] if self.cache_data else self.batch_wise_out_aux_pairs[idx]
+            self.subgraphs = self.prepare_cache(
+                graph,
+                batch_wise_out_aux_pairs,
+                adj,
+                self.return_edge_index_type,
+            )
 
 
 class IBMBNodeLoader(IBMBBaseLoader):
@@ -620,9 +726,8 @@ class IBMBNodeLoader(IBMBBaseLoader):
             we sample the next batch wrt the last one, a batch with higher KL
             divergence score is more likely to be sampled. If :obj:`rand`,
             we shuffle the batches randomly.
-        output_indices (torch.Tensor): A :obj:`torch.Tensor` vector
-            containing a set of nodes as output nodes. Normally taken from
-            train, validation or test split.
+        output_indices (torch.Tensor): A vector containing a set of nodes as
+            output nodes. Normally taken from train, validation or test split.
         return_edge_index_type (str): A string indicating the :obj:`edge_index`
             type. Should be either :obj:`adj` or :obj:`edge_index`.
             If :obj:`adj`, the edge_index of the batch will be a
@@ -638,12 +743,18 @@ class IBMBNodeLoader(IBMBBaseLoader):
         **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`.
             Specifically, :obj:`shuffle=False` is forced.
     """
-    def __init__(self, graph: Data, batch_order: str,
-                 output_indices: torch.LongTensor, return_edge_index_type: str,
-                 num_auxiliary_node_per_output: int,
-                 num_output_nodes_per_batch: int, alpha: float = 0.2,
-                 eps: float = 1.e-4, **kwargs):
-
+    def __init__(
+        self,
+        graph: Data,
+        batch_order: str,
+        output_indices: torch.LongTensor,
+        return_edge_index_type: str,
+        num_auxiliary_node_per_output: int,
+        num_output_nodes_per_batch: int,
+        alpha: float = 0.2,
+        eps: float = 1.e-4,
+        **kwargs,
+    ):
         self.subgraphs = []
         self.node_wise_out_aux_pairs = []
 
@@ -689,8 +800,13 @@ class IBMBNodeLoader(IBMBBaseLoader):
 
         super().__init__(
             self.subgraphs
-            if self.cache_data else self.node_wise_out_aux_pairs, cached_graph,
-            cached_adj, return_edge_index_type, sampler=sampler, **kwargs)
+            if self.cache_data else self.node_wise_out_aux_pairs,
+            cached_graph,
+            cached_adj,
+            return_edge_index_type,
+            sampler=sampler,
+            **kwargs,
+        )
 
     def create_loader(self, graph: Data, adj: SparseTensor):
         logging.info("Start PPR calculation")
@@ -704,11 +820,15 @@ class IBMBNodeLoader(IBMBBaseLoader):
         logging.info("Getting PPR pairs")
         ppr_pairs = get_pairs(ppr_matrix)
 
-        output_list = prime_orient_merge(ppr_pairs,
-                                         self.num_output_nodes_per_batch,
-                                         len(self.output_indices))
-        output_list = prime_post_process(output_list,
-                                         self.num_output_nodes_per_batch)
+        output_list = prime_orient_merge(
+            ppr_pairs,
+            self.num_output_nodes_per_batch,
+            len(self.output_indices),
+        )
+        output_list = prime_post_process(
+            output_list,
+            self.num_output_nodes_per_batch,
+        )
         node_wise_out_aux_pairs = []
 
         if isinstance(neighbors, list):
@@ -726,10 +846,9 @@ class IBMBNodeLoader(IBMBBaseLoader):
         self.node_wise_out_aux_pairs = node_wise_out_aux_pairs
 
         if self.cache_data:
-            self.subgraphs = self.prepare_cache(graph, node_wise_out_aux_pairs,
-                                                adj,
-                                                self.return_edge_index_type)
-
-    def __getitem__(self, idx):
-        return self.subgraphs[
-            idx] if self.cache_data else self.node_wise_out_aux_pairs[idx]
+            self.subgraphs = self.prepare_cache(
+                graph,
+                node_wise_out_aux_pairs,
+                adj,
+                self.return_edge_index_type,
+            )
