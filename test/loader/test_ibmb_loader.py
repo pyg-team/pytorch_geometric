@@ -4,7 +4,7 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric.datasets import KarateClub
-from torch_geometric.loader import IBMBBatchLoader, IBMBNodeLoader
+from torch_geometric.loader.ibmb_loader import IBMBBatchLoader, IBMBNodeLoader
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 
