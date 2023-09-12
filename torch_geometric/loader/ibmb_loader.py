@@ -584,8 +584,8 @@ class IBMBBatchLoader(IBMBBaseLoader):
             calculation. (default: :obj:`0.2`)
         approximate_ppr_iterations (int, optional): The number of power
             iterations for PageRank calculation. (default: :obj:`50`)
-        return_edge_index_type (str): A string indicating the output type of
-            edge indices (one of :obj:`"edge_index"` or :obj:`"adj"`)
+        return_edge_index_type (str, optional): A string indicating the output
+            type of edge indices (one of :obj:`"edge_index"` or :obj:`"adj"`).
             If set to :obj:`"adj"`, the :obj:`edge_index` of the batch will
             be a :class:`torch_sparse.SparseTensor`, otherwise a
             :class:`torch.Tensor`. (default: :obj:`"edge_index"`)
@@ -727,8 +727,8 @@ class IBMBNodeLoader(IBMBBaseLoader):
             The smaller :obj`eps` is, the more accurate are the results of
             PPR calculation, but it also takes longer.
             (default: :obj:`1e-5`)
-        return_edge_index_type (str): A string indicating the output type of
-            edge indices (one of :obj:`"edge_index"` or :obj:`"adj"`)
+        return_edge_index_type (str, optional): A string indicating the output
+            type of edge indices (one of :obj:`"edge_index"` or :obj:`"adj"`).
             If set to :obj:`"adj"`, the :obj:`edge_index` of the batch will
             be a :class:`torch_sparse.SparseTensor`, otherwise a
             :class:`torch.Tensor`. (default: :obj:`"edge_index"`)
