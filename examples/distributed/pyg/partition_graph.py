@@ -8,12 +8,17 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch_geometric.distributed import Partitioner
 
 
-def partition_dataset(ogbn_dataset: str, root_dir: str, num_parts: int):
+def partition_dataset(
+    ogbn_dataset: str,
+    root_dir: str,
+    num_parts: int,
+    recursive: bool = False,
+):
     save_dir = osp.join(root_dir, f'{ogbn_dataset}-partitions')
     dataset = PygNodePropPredDataset(ogbn_dataset)
     data = dataset[0]
 
-    partitioner = Partitioner(data, num_parts, save_dir)
+    partitioner = Partitioner(data, num_parts, save_dir, recursive)
     partitioner.generate_partition()
     split_idx = dataset.get_idx_split()
 
@@ -44,6 +49,8 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, default='ogbn-products')
     parser.add_argument('--root_dir', type=str, default='./data/products')
     parser.add_argument('--num_partitions', type=int, default=2)
+    parser.add_argument('--recursive', action='store_true')
     args = parser.parse_args()
 
-    partition_dataset(args.dataset, args.root_dir, args.num_partitions)
+    partition_dataset(args.dataset, args.root_dir, args.num_partitions,
+                      args.recursive)

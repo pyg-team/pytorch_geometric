@@ -8,12 +8,17 @@ from torch_geometric.datasets import OGB_MAG
 from torch_geometric.distributed import Partitioner
 
 
-def partition_dataset(ogbn_dataset: str, root_dir: str, num_parts: int):
+def partition_dataset(
+    ogbn_dataset: str,
+    root_dir: str,
+    num_parts: int,
+    recursive: bool = False,
+):
     save_dir = osp.join(root_dir, f'{ogbn_dataset}-partitions')
     dataset = OGB_MAG(root=ogbn_dataset, preprocess='metapath2vec')
     data = dataset[0]
 
-    partitioner = Partitioner(data, num_parts, save_dir)
+    partitioner = Partitioner(data, num_parts, save_dir, recursive)
     partitioner.generate_partition()
 
     print('-- Saving label ...')
@@ -43,6 +48,8 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, default='ogbn-mag')
     parser.add_argument('--root_dir', type=str, default='./data/mag')
     parser.add_argument('--num_partitions', type=int, default=2)
+    parser.add_argument('--recursive', type=bool, default=False)
     args = parser.parse_args()
 
-    partition_dataset(args.dataset, args.root_dir, args.num_partitions)
+    partition_dataset(args.dataset, args.root_dir, args.num_partitions,
+                      args.recursive)
