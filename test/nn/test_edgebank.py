@@ -52,16 +52,16 @@ def main_test()
                                                      split_mode=split_mode)
 
             for idx, neg_batch in enumerate(neg_batch_list):
-                query_src = np.array(
+                query_src = torch.tensor(
                     [int(pos_src[idx]) for _ in range(len(neg_batch) + 1)])
-                query_dst = np.concatenate(
-                    [np.array([int(pos_dst[idx])]), neg_batch])
+                query_dst = torch.cat(
+                    [torch.tensor([int(pos_dst[idx])]), neg_batch])
 
                 y_pred = edgebank.predict_link(query_src, query_dst)
                 # compute MRR
                 input_dict = {
-                    "y_pred_pos": np.array([y_pred[0]]),
-                    "y_pred_neg": np.array(y_pred[1:]),
+                    "y_pred_pos": torch.tensor([y_pred[0]]),
+                    "y_pred_neg": torch.tensor(y_pred[1:]),
                     "eval_metric": [metric],
                 }
                 perf_list.append(evaluator.eval(input_dict)[metric])
@@ -69,7 +69,7 @@ def main_test()
             # update edgebank memory after each positive batch
             edgebank.update_memory(pos_src, pos_dst, pos_t)
 
-        perf_metrics = float(np.mean(perf_list))
+        perf_metrics = float(torch.mean(perf_list))
 
         return perf_metrics
 
