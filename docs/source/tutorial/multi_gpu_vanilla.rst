@@ -1,17 +1,16 @@
-Multi-GPU Training in Vanilla PyTorch
-=====================================
-For many large scale, real-world datasets, it may be necessary to scale up training across multiple GPUs. This tutorial goes over how to do this on a small scale dataset and then
-shows how the same technique can be applied to a large scale recommendation graph.
-A large set of real-world datasets are stored as heterogeneous graphs, motivating the introduction of specialized functionality for them in :pyg:`PyG`.
+Multi-GPU Training in Pure PyTorch
+==================================
+
+For many large scale, real-world datasets, it may be necessary to scale-up training across multiple GPUs.
+This tutorial goes over how to do this on a small scale dataset and then shows how the same technique can be applied for large-scale recommendation systems.
+In particular, this tutorial introduces how to utilize :pyg:`PyG` with pure :pytorch:`PyTorch` for multi-GPU training via :class:`torch.nn.parallel.DistributedDataParallel`, without the need for any other third-party libraries (such as :lightning:`PyTorch Lightning`).
 
 Starting off small
 ------------------
 
-To start, we can take a look at the `distributed_sampling <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.py>`__ example from PyG:
-This example shows how to use train a GraphSage GNN Model on the `Reddit dataset <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.datasets.Reddit.html>`__. This example uses NeighborLoader with `torch.data.DistributedDataParallel <https://pytorch.org/docs/stable/notes/ddp.html>`__ to scale up training across all available GPU's on your machine.
-
-
-
+To start, we can take a look at the `distributed sampling <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.py>`__ example from :pyg:`PyG`.
+This example shows how to use train a :class:`~torch_geometric.nn.models.GraphSAGE` GNN model on the :class:`~torch_geometric.datasets.Reddit` dataset.
+This example uses the :class:`~torch_geometric.loader.NeighborLoader` with :class:`torch.nn.parallel.DistributedDataParallel` to scale-up training across all available GPU's on your machine.
 
 Defining our GNN
 ~~~~~~~~~~~~~~~~
@@ -83,7 +82,7 @@ Defining our Spawnable Runner
 
 Notice we move to features and labels to GPU for faster feature fetching.
 
-Now we split training indices into `world_size` many chunks for each GPU:
+Now we split training indices into :obj:`world_size` many chunks for each GPU:
 
 .. code-block:: python
 
