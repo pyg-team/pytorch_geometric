@@ -11,6 +11,7 @@ from .graph_saint import (GraphSAINTSampler, GraphSAINTNodeSampler,
                           GraphSAINTEdgeSampler, GraphSAINTRandomWalkSampler)
 from .shadow import ShaDowKHopSampler
 from .random_node_loader import RandomNodeLoader
+from .ibmb_loader import IBMBBatchLoader, IBMBNodeLoader
 from .zip_loader import ZipLoader
 from .data_list_loader import DataListLoader
 from .dense_data_loader import DenseDataLoader
@@ -18,7 +19,6 @@ from .temporal_dataloader import TemporalDataLoader
 from .neighbor_sampler import NeighborSampler
 from .imbalanced_sampler import ImbalancedSampler
 from .dynamic_batch_sampler import DynamicBatchSampler
-from .ibmb_loader import IBMBBatchLoader, IBMBNodeLoader
 from .prefetch import PrefetchLoader
 from .mixin import AffinityMixin
 
@@ -37,6 +37,8 @@ __all__ = classes = [
     'GraphSAINTRandomWalkSampler',
     'ShaDowKHopSampler',
     'RandomNodeLoader',
+    'IBMBBatchLoader',
+    'IBMBNodeLoader',
     'ZipLoader',
     'DataListLoader',
     'DenseDataLoader',
@@ -44,8 +46,6 @@ __all__ = classes = [
     'NeighborSampler',
     'ImbalancedSampler',
     'DynamicBatchSampler',
-    'IBMBBatchLoader',
-    'IBMBNodeLoader',
     'PrefetchLoader',
     'AffinityMixin',
 ]

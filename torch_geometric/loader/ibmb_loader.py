@@ -438,9 +438,6 @@ class IBMBBaseLoader(DataLoader):
     def __getitem__(self, idx):
         raise NotImplementedError
 
-    def __len__(self):
-        raise NotImplementedError
-
     def __collate__(self, data_list: List[Union[Data, Tuple]]):
         if len(data_list) == 1 and isinstance(data_list[0], Data):
             return data_list[0]
@@ -454,6 +451,9 @@ class IBMBBaseLoader(DataLoader):
         subg = get_subgraph(aux, self.graph, self.return_edge_index_type,
                             self.adj, output_node_mask=mask)
         return subg
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}()'
 
 
 class IBMBBatchLoader(IBMBBaseLoader):
@@ -595,9 +595,6 @@ class IBMBBatchLoader(IBMBBaseLoader):
         return self.subgraphs[
             idx] if self.cache_data else self.batch_wise_out_aux_pairs[idx]
 
-    def __len__(self):
-        return self.num_partitions
-
 
 class IBMBNodeLoader(IBMBBaseLoader):
     r"""A node-wise IBMB dataloader of `"Influence-Based Mini-Batching for
@@ -630,7 +627,7 @@ class IBMBNodeLoader(IBMBBaseLoader):
             type. Should be either :obj:`adj` or :obj:`edge_index`.
             If :obj:`adj`, the edge_index of the batch will be a
             :obj:`SparseTensor`, otherwise :obj:`torch.Tensor`.
-            num_auxiliary_node_per_output (int): Number of auxiliary nodes per
+        num_auxiliary_node_per_output (int): Number of auxiliary nodes per
             output node.
         num_output_nodes_per_batch: Number of output nodes per batch.
         alpha (float, optional): A :obj:`float` of the teleport probability
@@ -736,6 +733,3 @@ class IBMBNodeLoader(IBMBBaseLoader):
     def __getitem__(self, idx):
         return self.subgraphs[
             idx] if self.cache_data else self.node_wise_out_aux_pairs[idx]
-
-    def __len__(self):
-        return len(self.node_wise_out_aux_pairs)

@@ -1,87 +1,65 @@
-import networkx as nx
+import pytest
 import torch
-from torch_sparse import SparseTensor
+from torch import Tensor
 
-from torch_geometric.data import Data
+import torch_geometric.typing
+from torch_geometric.datasets import KarateClub
 from torch_geometric.loader import IBMBBatchLoader, IBMBNodeLoader
-from torch_geometric.utils import add_remaining_self_loops, to_undirected
+from torch_geometric.typing import SparseTensor
 
 
-def test_graph_ibmb():
-    G = nx.karate_club_graph()
-    edge_index = torch.tensor(list(G.edges)).t()
-    num_nodes = len(G.nodes)
-    edge_index, _ = add_remaining_self_loops(edge_index, num_nodes=num_nodes)
-    edge_index = to_undirected(edge_index, num_nodes=num_nodes)
-    x = torch.arange(num_nodes * 3).reshape(num_nodes, 3)
-    y = torch.arange(num_nodes) % 3
+@pytest.mark.parametrize(
+    'use_sparse_tensor',
+    [False] + [True] if torch_geometric.typing.WITH_TORCH_SPARSE else [])
+@pytest.mark.parametrize('kwargs', [
+    dict(num_partitions=4, batch_size=1),
+    dict(num_partitions=8, batch_size=2),
+])
+def test_ibmb_batch_loader(use_sparse_tensor, kwargs):
+    data = KarateClub()[0]
 
-    graph = Data(x=x, y=y, edge_index=edge_index)
+    loader = IBMBBatchLoader(
+        data,
+        batch_order='order',
+        output_indices=torch.randperm(data.num_nodes)[:20],
+        return_edge_index_type='adj' if use_sparse_tensor else 'edge_index',
+        **kwargs,
+    )
+    assert str(loader) == 'IBMBBatchLoader()'
+    assert len(loader) == 4
+    assert sum([batch.output_node_mask.sum() for batch in loader]) == 20
 
-    torch.manual_seed(42)
-    train_indices = torch.unique(torch.randint(high=33, size=(20, )))
+    for batch in loader:
+        if use_sparse_tensor:
+            assert isinstance(batch.edge_index, SparseTensor)
+        else:
+            assert isinstance(batch.edge_index, Tensor)
 
-    batch_loader = IBMBBatchLoader(
-        graph, batch_order='order', num_partitions=4,
-        output_indices=train_indices, return_edge_index_type='edge_index',
-        batch_expand_ratio=1., metis_output_weight=None, batch_size=1,
-        shuffle=False)
-    batches = [b for b in batch_loader]
-    assert len(batches) == 4
-    assert sum([b.output_node_mask.sum()
-                for b in batches]) == len(train_indices)
 
-    node_loader = IBMBNodeLoader(graph, batch_order='order',
-                                 output_indices=train_indices,
-                                 return_edge_index_type='edge_index',
-                                 num_auxiliary_node_per_output=4,
-                                 num_output_nodes_per_batch=4, batch_size=1,
-                                 shuffle=False)
-    batches = [b for b in node_loader]
-    assert len(batches) == 4
-    assert sum([b.output_node_mask.sum()
-                for b in batches]) == len(train_indices)
+@pytest.mark.parametrize(
+    'use_sparse_tensor',
+    [False] + [True] if torch_geometric.typing.WITH_TORCH_SPARSE else [])
+@pytest.mark.parametrize('kwargs', [
+    dict(num_output_nodes_per_batch=4, batch_size=1),
+    dict(num_output_nodes_per_batch=2, batch_size=2),
+])
+def test_ibmb_node_loader(use_sparse_tensor, kwargs):
+    data = KarateClub()[0]
 
-    batch_loader = IBMBBatchLoader(
-        graph, batch_order='order', num_partitions=8,
-        output_indices=train_indices, return_edge_index_type='edge_index',
-        batch_expand_ratio=1., metis_output_weight=None, batch_size=2,
-        shuffle=False)
+    loader = IBMBNodeLoader(
+        data,
+        batch_order='order',
+        output_indices=torch.randperm(data.num_nodes)[:20],
+        return_edge_index_type='adj' if use_sparse_tensor else 'edge_index',
+        num_auxiliary_node_per_output=4,
+        **kwargs,
+    )
+    assert str(loader) == 'IBMBNodeLoader()'
+    assert len(loader) == 5
+    assert sum([batch.output_node_mask.sum() for batch in loader]) == 20
 
-    batches = [b for b in batch_loader]
-    assert len(batches) == 4
-    assert sum([b.output_node_mask.sum()
-                for b in batches]) == len(train_indices)
-
-    node_loader = IBMBNodeLoader(graph, batch_order='order',
-                                 output_indices=train_indices,
-                                 return_edge_index_type='edge_index',
-                                 num_auxiliary_node_per_output=4,
-                                 num_output_nodes_per_batch=2, batch_size=2,
-                                 shuffle=False)
-
-    batches = [b for b in node_loader]
-    assert len(batches) == 4
-    assert sum([b.output_node_mask.sum()
-                for b in batches]) == len(train_indices)
-
-    batch_loader = IBMBBatchLoader(
-        graph, batch_order='sample', num_partitions=8,
-        output_indices=train_indices, return_edge_index_type='adj',
-        batch_expand_ratio=1., metis_output_weight=None, batch_size=2,
-        shuffle=False)
-
-    batches = [b for b in batch_loader]
-    for b in batches:
-        assert isinstance(b.edge_index, SparseTensor)
-
-    node_loader = IBMBNodeLoader(graph, batch_order='sample',
-                                 output_indices=train_indices,
-                                 return_edge_index_type='adj',
-                                 num_auxiliary_node_per_output=4,
-                                 num_output_nodes_per_batch=2, batch_size=2,
-                                 shuffle=False)
-
-    batches = [b for b in node_loader]
-    for b in batches:
-        assert isinstance(b.edge_index, SparseTensor)
+    for batch in loader:
+        if use_sparse_tensor:
+            assert isinstance(batch.edge_index, SparseTensor)
+        else:
+            assert isinstance(batch.edge_index, Tensor)
