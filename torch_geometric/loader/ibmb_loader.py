@@ -580,7 +580,7 @@ class IBMBBatchLoader(IBMBBaseLoader):
             (default: :obj:`1.0`)
         metis_input_node_weight (float, optional): The weights on the input
             nodes for METIS graph partitioning. (default: :obj:`None`)
-        alpha (float, optional): The teleport probability for the PageRank
+        alpha (float, optional): The teleport probability of the PageRank
             calculation. (default: :obj:`0.2`)
         approximate_ppr_iterations (int, optional): The number of power
             iterations for PageRank calculation. (default: :obj:`50`)
@@ -721,7 +721,7 @@ class IBMBNodeLoader(IBMBBaseLoader):
         num_auxiliary_nodes (int): The number of auxiliary nodes per input
             node.
         num_nodes_per_batch: The number of seed nodes per batch.
-        alpha (float, optional): The teleport probability for the PageRank
+        alpha (float, optional): The teleport probability of the PageRank
             calculation. (default: :obj:`0.2`)
         eps (float, optional): The threshold for stopping the PPR calculation
             The smaller :obj`eps` is, the more accurate are the results of
