@@ -103,8 +103,7 @@ class SphericalBasisLayer(torch.nn.Module):
         for i in range(num_spherical):
             if i == 0:
                 sph1 = sym.lambdify([theta], sph_harm_forms[i][0], modules)(0)
-                self.sph_funcs.append(
-                    partial(self._project_sph_to_tensor, sph1))
+                self.sph_funcs.append(partial(self._sph_to_tensor, sph1))
             else:
                 sph = sym.lambdify([theta], sph_harm_forms[i][0], modules)
                 self.sph_funcs.append(sph)
@@ -113,7 +112,7 @@ class SphericalBasisLayer(torch.nn.Module):
                 self.bessel_funcs.append(bessel)
 
     @staticmethod
-    def _project_sph_to_tensor(sph, x: torch.Tensor) -> torch.Tensor:
+    def _sph_to_tensor(sph, x: Tensor) -> Tensor:
         return torch.zeros_like(x) + sph
 
     def forward(self, dist: Tensor, angle: Tensor, idx_kj: Tensor) -> Tensor:
