@@ -5,9 +5,11 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.datasets import KarateClub
 from torch_geometric.loader import IBMBBatchLoader, IBMBNodeLoader
+from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 
 
+@withPackage('python_tsp')
 @pytest.mark.parametrize(
     'use_sparse_tensor',
     [False] + [True] if torch_geometric.typing.WITH_TORCH_SPARSE else [])
@@ -36,6 +38,7 @@ def test_ibmb_batch_loader(use_sparse_tensor, kwargs):
             assert isinstance(batch.edge_index, Tensor)
 
 
+@withPackage('python_tsp', 'numba')
 @pytest.mark.parametrize(
     'use_sparse_tensor',
     [False] + [True] if torch_geometric.typing.WITH_TORCH_SPARSE else [])

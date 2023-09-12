@@ -216,10 +216,14 @@ def create_batchwise_out_aux_pairs(
     alpha: float = 0.2,
     ppr_iterations: int = 50,
 ) -> List[Tuple[np.ndarray, np.ndarray]]:
-    def ppr_power_method(adj: SparseTensor,
-                         batch: List[Union[np.ndarray,
-                                           torch.LongTensor]], topk: int,
-                         num_iter: int, alpha: float) -> List[np.ndarray]:
+    def ppr_power_method(
+        adj: SparseTensor,
+        batch: List[Union[np.ndarray, torch.LongTensor]],
+        topk: int,
+        num_iter: int,
+        alpha: float,
+    ) -> List[np.ndarray]:
+
         topk_neighbors = []
         logits = torch.zeros(
             adj.size(0), len(batch),
@@ -323,20 +327,17 @@ def _prime_orient_merge(
     id_primes_list = list(np.arange(num_nodes, dtype=np.int32).reshape(-1, 1))
     node_id_list = np.arange(num_nodes, dtype=np.int32)
     placeholder = np.zeros(0, dtype=np.int32)
-    # size_flag = [{a} for a in np.arange(num_nodes, dtype=np.int32)]
 
     for i, j in ppr_pairs:
         id1, id2 = node_id_list[i], node_id_list[j]
         if id1 > id2:
             id1, id2 = id2, id1
 
-        # if not (id1 in size_flag[id2] or id2 in size_flag[id1])
         if id1 != id2 and len(id_primes_list[id1]) + len(
                 id_primes_list[id2]) <= primes_per_batch:
             id_primes_list[id1] = np.concatenate(
                 (id_primes_list[id1], id_primes_list[id2]))
             node_id_list[id_primes_list[id2]] = id1
-            # node_id_list[j] = id1
             id_primes_list[id2] = placeholder
 
     prime_lst = list()
