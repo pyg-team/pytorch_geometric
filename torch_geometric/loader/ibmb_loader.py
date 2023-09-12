@@ -545,125 +545,117 @@ class IBMBBaseLoader(torch.utils.data.DataLoader):
 
 
 class IBMBBatchLoader(IBMBBaseLoader):
-    r"""
-    A batch-wise IBMB dataloader of `"Influence-Based Mini-Batching for
-    Graph Neural Networks"
-    <https://openreview.net/forum?id=b9g0vxzYa_>`_ paper.
+    r"""The batch-wise influence-based data loader from the
+    `"Influence-Based Mini-Batching for Graph Neural Networks"
+    <https://arxiv.org/abs/2212.09083>`__ paper.
 
-    First METIS graph partitioning algorithm is used, then we find the
-    output nodes within each partition. Afterwards we find auxiliary nodes
-    for each set of output nodes with topic-sensitvie pagerank as a batch.
+    First, the METIS graph partitioning algorithm separates the graph into
+    :obj:`num_partitions` many partitions.
+    Afterwards, input/seed nodes and their auxiliary nodes (found via
+    topic-sensitive PageRank) are used to form a mini-batch.
 
-    We end up with a list of :obj:`[(output: array, auxiliary: array), ...]`
-    nodes pairs. If :obj:`batch_size` of the dataloader is 1, we
-    precalculate and cache the subgraphs in memory. Otherwise, we might
-    need to merge the subgraphs, e.g. :obj:`(Union(output1, output2, ...),
-    Union(auxiliary1, auxiliary2, ...))`. Therefore, we do not cache them
-    and instead collate the potentially overlapping subgraphs dynamically.
+    If :obj:`batch_size` is set to :obj:`1`, mini-batches are pre-calculated
+    and cached in memory.
+    Otherwise, only input nodes and their auxiliary nodes are pre-computed, and
+    mini-batches are collated on-the-fly.
 
     Args:
-        graph (torch_geometric.data.Data): The given graph data object, assumes
-            to be undirected.
-        batch_order (str): A string indicating the batch order type, should
-            be one of :obj:`order`, :obj:`sample` and :obj:`rand`. If
-            :obj:`order`, we calculate the pair wise KL divergence between
-            every two batches, and organize an optimal order. If :obj:`sample`,
-            we sample the next batch wrt the last one, a batch with higher KL
-            divergence score is more likely to be sampled. If :obj:`rand`, we
-            shuffle the batches randomly.
-        num_partitions (int): Number of partitions.
-        output_indices (torch.Tensor): A vector containing a set of nodes as
-            output nodes. Normally taken from train, validation or test split.
-        return_edge_index_type (str): A string indicating the
-            :obj:`edge_index` type. Should be either :obj:`adj` or
-            :obj:`edge_index`. If :obj:`adj`, the edge_index of the batch will
-            be a :obj:`SparseTensor`, otherwise :obj:`torch.Tensor`.
-        batch_expand_ratio (float, optional): A :obj:`float` containing the
-            ratio between the returned batch size and the original partition
-            size. For example, the partition has 100 nodes, and you would like
-            the batch to have 200 nodes, then set it to :obj:`2.`.
-            (default: :obj:`1.`)
-        metis_output_weight (float, optional): The weights on the output
-            nodes for METIS graph partitioning algorithm. (default:
-            :obj:`None`)
-        num_outnodeset_per_batch (int, optional): An :obj:`int` indicating
-            how many batches to run in parallel. We calculate the
-            topic-sensitive pagerank scores with power iteration. If
-            out-of-memory issue is encountered, set it to a smaller value.
-            (default: :obj:`50`)
-        alpha (float, optional): A :obj:`float` of the teleport probability
-            of pagerank calculation.
-        approximate_ppr_iterations (int, optional): An :obj:`int` of number
-            of iterations of power iteration. (default: :obj:`50`)
-        **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`.
-            Specifically, :obj:`shuffle=False` is forced.
+        data (torch_geometric.data.Data): A
+            :class:`~torch_geometric.data.Data` object.
+        batch_order (str): A string indicating the batch order type (one of
+            :obj:`"order"`, :obj:`"sample"` or :obj:`"rand"`).
+            If :obj:`"order"`, calculates the pair-wise KL divergence between
+            every two batches to organize an optimal order.
+            If :obj:`"sample"`, samples the next batch w.r.t. the last one in
+            which a batch with higher KL divergence score is more likely to be
+            sampled.
+            If :obj:`"rand"`, batches are generated randomly.
+        num_partitions (int): The number of partitions.
+        input_nodes (torch.Tensor): A vector containing the set of seed
+            nodes.
+        batch_expand_ratio (float, optional): The ratio between the returned
+            batch size and the original partition size. For example, set it to
+            :obj:`2.0` in case you would like the batch to have double the
+            number of nodes as the size of its partition.
+            (default: :obj:`1.0`)
+        metis_input_node_weight (float, optional): The weights on the input
+            nodes for METIS graph partitioning. (default: :obj:`None`)
+        alpha (float, optional): The teleport probability for the PageRank
+            calculation. (default: :obj:`0.2`)
+        approximate_ppr_iterations (int, optional): The number of power
+            iterations for PageRank calculation. (default: :obj:`50`)
+        return_edge_index_type (str): A string indicating the output type of
+            edge indices (one of :obj:`"edge_index"` or :obj:`"adj"`)
+            If set to :obj:`"adj"`, the :obj:`edge_index` of the batch will
+            be a :class:`torch_sparse.SparseTensor`, otherwise a
+            :class:`torch.Tensor`. (default: :obj:`"edge_index"`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
+            :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
     def __init__(
         self,
-        graph: Data,
+        data: Data,
         batch_order: str,
         num_partitions: int,
-        output_indices: Tensor,
-        return_edge_index_type: str,
-        batch_expand_ratio: Optional[float] = 1.,
-        metis_output_weight: Optional[float] = None,
-        num_outnodeset_per_batch: Optional[int] = 50,
+        input_nodes: Tensor,
+        batch_expand_ratio: Optional[float] = 1.0,
+        metis_input_node_weight: Optional[float] = None,
         alpha: Optional[float] = 0.2,
         approximate_ppr_iterations: Optional[int] = 50,
+        return_edge_index_type: str = 'edge_index',
         **kwargs,
     ):
-
         self.subgraphs = []
         self.batch_wise_out_aux_pairs = []
 
         assert is_undirected(
-            graph.edge_index,
-            num_nodes=graph.num_nodes), "Assume the graph to be undirected"
+            data.edge_index,
+            num_nodes=data.num_nodes), "Assume the graph to be undirected"
         assert batch_order in ['rand', 'sample', 'order'
                                ], f"Unsupported batch order: {batch_order}"
 
         adj = self.create_adj_from_edge_index(
-            graph.edge_index,
-            graph.num_nodes,
+            data.edge_index,
+            data.num_nodes,
             normalization='rw',
         )
 
         self.cache_data = kwargs['batch_size'] == 1
         self.num_partitions = num_partitions
-        self.output_indices = output_indices
+        self.output_indices = input_nodes
         assert return_edge_index_type in ['adj', 'edge_index']
         self.return_edge_index_type = return_edge_index_type
         self.batch_expand_ratio = batch_expand_ratio
-        self.metis_output_weight = metis_output_weight
-        self.num_outnodeset_per_batch = num_outnodeset_per_batch
+        self.metis_output_weight = metis_input_node_weight
+        self.num_outnodeset_per_batch = 50
         self.alpha = alpha
         self.approximate_ppr_iterations = approximate_ppr_iterations
 
-        self.create_loader(graph, adj)
+        self.create_loader(data, adj)
 
         if len(self.batch_wise_out_aux_pairs) > 2:  # <= 2 order makes no sense
             ys = [
-                graph.y[out].numpy()
-                for out, _ in self.batch_wise_out_aux_pairs
+                data.y[out].numpy() for out, _ in self.batch_wise_out_aux_pairs
             ]
-            sampler = define_sampler(batch_order, ys, graph.y.max().item() + 1)
+            sampler = define_sampler(batch_order, ys, data.y.max().item() + 1)
         else:
             sampler = None
 
         if not self.cache_data:
-            cached_graph = graph  # need to cache the original graph
+            cached_data = data  # need to cache the original graph
             if return_edge_index_type == 'adj':
                 cached_adj = adj
             else:
                 cached_adj = None
         else:
-            cached_graph = None
+            cached_data = None
             cached_adj = None
 
         super().__init__(
             self.subgraphs
             if self.cache_data else self.batch_wise_out_aux_pairs,
-            cached_graph,
+            cached_data,
             cached_adj,
             return_edge_index_type,
             sampler=sampler,
@@ -700,96 +692,100 @@ class IBMBBatchLoader(IBMBBaseLoader):
 
 
 class IBMBNodeLoader(IBMBBaseLoader):
-    r"""A node-wise IBMB dataloader of `"Influence-Based Mini-Batching for
-    Graph Neural Networks"
-    <https://openreview.net/forum?id=b9g0vxzYa_>`_ paper.
+    r"""The node-wise influence-based data loader from the
+    `"Influence-Based Mini-Batching for Graph Neural Networks"
+    <https://arxiv.org/abs/2212.09083>`__ paper.
 
-    We first calculate the personalized pagerank (PPR) score for each
-    output node, then take the :obj:`k` ones with the highest scores as
-    its auxiliary nodes. We then merge them according to the pair wise
-    PPR scores of each pair of output nodes.
+    First, the Personalized PageRank (PPR) score for each input node is
+    computed, for which the :obj:`k` nodes with the highest scores are taken
+    auxiliary nodes.
+    Afterwards, input nodes are merged according to their pair-wise PPR scores.
 
-    Similar to :class:`~torch_geometric.loader.IBMBBatchLoader`, we store
-    the subgraphs in cache if :obj:`batch_size` is 1, otherwise we merge
-    batches dynamically.
+    Similar to :class:`~torch_geometric.loader.IBMBBatchLoader`, subgraphs are
+    cached in memory for :obj:`batch_size = 1`, and collated on-the-fly
+    otherwise.
 
     Args:
-        graph (torch_geometric.data.Data): The given graph data. Assumes to
-            be undirected.
-        batch_order (str): A string indicating the batch order type, should
-            be one of :obj:`order`, :obj:`sample` and :obj:`rand`.
-            If :obj:`order`, we calculate the pair wise KL divergence between
-            every two batches, and organize an optimal order. If :obj:`sample`,
-            we sample the next batch wrt the last one, a batch with higher KL
-            divergence score is more likely to be sampled. If :obj:`rand`,
-            we shuffle the batches randomly.
-        output_indices (torch.Tensor): A vector containing a set of nodes as
-            output nodes. Normally taken from train, validation or test split.
-        return_edge_index_type (str): A string indicating the :obj:`edge_index`
-            type. Should be either :obj:`adj` or :obj:`edge_index`.
-            If :obj:`adj`, the edge_index of the batch will be a
-            :obj:`SparseTensor`, otherwise :obj:`torch.Tensor`.
-        num_auxiliary_node_per_output (int): Number of auxiliary nodes per
-            output node.
-        num_output_nodes_per_batch: Number of output nodes per batch.
-        alpha (float, optional): A :obj:`float` of the teleport probability
-            of pagerank calculation.
-        eps (float, optional): A :obj:`float` of error threshold of PPR
-            calculation. The smaller :obj`eps`:, the more accurate results
-            of PPR calculation, but it also takes longer.
-        **kwargs (optional): Keywords of :obj:`torch.utils.data.DataLoader`.
-            Specifically, :obj:`shuffle=False` is forced.
+        data (torch_geometric.data.Data): A
+            :class:`~torch_geometric.data.Data` object.
+        batch_order (str): A string indicating the batch order type (one of
+            :obj:`"order"`, :obj:`"sample"` or :obj:`"rand"`).
+            If :obj:`"order"`, calculates the pair-wise KL divergence between
+            every two batches to organize an optimal order.
+            If :obj:`"sample"`, samples the next batch w.r.t. the last one in
+            which a batch with higher KL divergence score is more likely to be
+            sampled.
+            If :obj:`"rand"`, batches are generated randomly.
+        input_nodes (torch.Tensor): A vector containing the set of seed
+            nodes.
+        num_auxiliary_nodes (int): The number of auxiliary nodes per input
+            node.
+        num_nodes_per_batch: The number of seed nodes per batch.
+        alpha (float, optional): The teleport probability for the PageRank
+            calculation. (default: :obj:`0.2`)
+        eps (float, optional): The threshold for stopping the PPR calculation
+            The smaller :obj`eps` is, the more accurate are the results of
+            PPR calculation, but it also takes longer.
+            (default: :obj:`1e-5`)
+        return_edge_index_type (str): A string indicating the output type of
+            edge indices (one of :obj:`"edge_index"` or :obj:`"adj"`)
+            If set to :obj:`"adj"`, the :obj:`edge_index` of the batch will
+            be a :class:`torch_sparse.SparseTensor`, otherwise a
+            :class:`torch.Tensor`. (default: :obj:`"edge_index"`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
+            :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
     """
     def __init__(
         self,
-        graph: Data,
+        data: Data,
         batch_order: str,
-        output_indices: torch.LongTensor,
-        return_edge_index_type: str,
-        num_auxiliary_node_per_output: int,
-        num_output_nodes_per_batch: int,
+        input_nodes: torch.Tensor,
+        num_auxiliary_nodes: int,
+        num_nodes_per_batch: int,
         alpha: float = 0.2,
-        eps: float = 1.e-4,
+        eps: float = 1e-5,
+        return_edge_index_type: str = 'edge_index',
         **kwargs,
     ):
         self.subgraphs = []
         self.node_wise_out_aux_pairs = []
 
         assert is_undirected(
-            graph.edge_index,
-            num_nodes=graph.num_nodes), "Assume the graph to be undirected"
+            data.edge_index,
+            num_nodes=data.num_nodes), "Assume the graph to be undirected"
         assert batch_order in ['rand', 'sample', 'order'
                                ], f"Unsupported batch order: {batch_order}"
 
         if return_edge_index_type == 'adj':
-            adj = self.create_adj_from_edge_index(graph.edge_index,
-                                                  graph.num_nodes,
+            adj = self.create_adj_from_edge_index(data.edge_index,
+                                                  data.num_nodes,
                                                   normalization='rw')
         else:
             adj = None
 
         self.cache_data = kwargs['batch_size'] == 1
         self._batchsize = kwargs['batch_size']
-        self.output_indices = output_indices.numpy()
+        self.output_indices = input_nodes.numpy()
         assert return_edge_index_type in ['adj', 'edge_index']
         self.return_edge_index_type = return_edge_index_type
-        self.num_auxiliary_node_per_output = num_auxiliary_node_per_output
-        self.num_output_nodes_per_batch = num_output_nodes_per_batch
+        self.num_auxiliary_node_per_output = num_auxiliary_nodes
+        self.num_output_nodes_per_batch = num_nodes_per_batch
         self.alpha = alpha
         self.eps = eps
 
-        self.create_loader(graph, adj)
+        self.create_loader(data, adj)
 
         if len(self.node_wise_out_aux_pairs) > 2:  # <= 2 order makes no sense
             ys = [
-                graph.y[out].numpy() for out, _ in self.node_wise_out_aux_pairs
+                data.y[out].numpy() for out, _ in self.node_wise_out_aux_pairs
             ]
-            sampler = define_sampler(batch_order, ys, graph.y.max().item() + 1)
+            sampler = define_sampler(batch_order, ys, data.y.max().item() + 1)
         else:
             sampler = None
 
         if not self.cache_data:
-            cached_graph = graph  # need to cache the original graph
+            cached_graph = data  # need to cache the original graph
             cached_adj = adj
         else:
             cached_graph = None
