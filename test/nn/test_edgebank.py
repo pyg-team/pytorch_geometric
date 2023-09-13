@@ -72,6 +72,7 @@ def test_edge_bank_pred():
 
         return perf_metrics
 
+    # set hyperparameters
     DATA = 'tgbl-coin'
     BATCH_SIZE = 200
     K_VALUE = 10
@@ -86,16 +87,6 @@ def test_edge_bank_pred():
 
     start_overall = timeit.default_timer()
 
-    # set hyperparameters
-    args, _ = get_args()
-
-    SEED = args.seed  # set the random seed for consistency
-    set_random_seed(SEED)
-    MEMORY_MODE = args.mem_mode  # `unlimited` or `fixed_time_window`
-    BATCH_SIZE = args.bs
-    K_VALUE = args.k_value
-    TIME_WINDOW_RATIO = args.time_window_ratio
-    DATA = "tgbl-coin"
 
     MODEL_NAME = 'EdgeBank'
 
