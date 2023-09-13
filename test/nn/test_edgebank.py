@@ -8,7 +8,6 @@ from pathlib import Path
 
 import pytest
 import torch
-from torch_geometric.nn.models import EdgeBankPredictor
 from sklearn.metrics import average_precision_score, roc_auc_score
 from tgb.linkproppred.dataset import LinkPropPredDataset
 # internal imports
@@ -17,6 +16,7 @@ from tgb.utils.utils import save_results, set_random_seed
 from tqdm import tqdm
 
 from torch_geometric.loader import TemporalDataLoader
+from torch_geometric.nn.models import EdgeBankPredictor
 
 
 # ==================
