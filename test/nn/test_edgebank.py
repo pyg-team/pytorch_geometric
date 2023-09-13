@@ -23,7 +23,7 @@ from torch_geometric.loader import TemporalDataLoader
 # ==================
 # ==================
 # ==================
-def main_test()
+def main_test():
     def helper_func(data, test_mask, neg_sampler, split_mode):
         r"""
         Evaluated the dynamic link prediction
