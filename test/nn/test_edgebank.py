@@ -71,7 +71,7 @@ def test_edge_bank_pred():
             # update edgebank memory after each positive batch
             edgebank.update_memory(pos_src, pos_dst, pos_t)
 
-        perf_metrics = float(torch.mean(perf_list))
+        perf_metrics = float(torch.mean(torch.tensor(perf_list)))
 
         return perf_metrics
 
