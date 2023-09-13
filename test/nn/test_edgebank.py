@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 import torch
-from modules.edgebank_predictor import EdgeBankPredictor
+from torch_geometric.nn.models import EdgeBankPredictor
 from sklearn.metrics import average_precision_score, roc_auc_score
 from tgb.linkproppred.dataset import LinkPropPredDataset
 # internal imports
