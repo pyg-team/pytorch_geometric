@@ -41,8 +41,8 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=str, default='cuda')
     args = parser.parse_args()
 
+    NS = [2**i for i in range(15, 18+1)]
     BS = [2**i for i in range(10, 12+1)]
-    NS = [2**i for i in range(10, 16+1)]
 
     H = 128
     lcm_aggr = LCMAggregation(H, H, project=False)
@@ -51,12 +51,12 @@ if __name__ == '__main__':
     funcs = []
     func_names = []
     args_list = []
-    for B, N in product(BS, NS):
+    for N, B in product(NS, BS):
         x = torch.randn((N, H), device=args.device)
         index = torch.randint(0, B, (N, ), device=args.device).sort()[0]
 
         funcs.append(lcm_aggr.forward)
-        func_names.append(f'B={B}, N={N}')
+        func_names.append(f'N={N}, B={B}')
         args_list.append((x, index))
 
     benchmark(
