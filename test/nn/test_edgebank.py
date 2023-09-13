@@ -1,4 +1,3 @@
-
 import argparse
 import math
 import os
@@ -41,7 +40,8 @@ def main_test():
         perf_list = []
         for batch_idx in tqdm(range(num_batches)):
             start_idx = batch_idx * BATCH_SIZE
-            end_idx = min(start_idx + BATCH_SIZE, len(data['sources'][test_mask]))
+            end_idx = min(start_idx + BATCH_SIZE,
+                          len(data['sources'][test_mask]))
             pos_src, pos_dst, pos_t = (
                 data['sources'][test_mask][start_idx:end_idx],
                 data['destinations'][test_mask][start_idx:end_idx],
@@ -78,8 +78,6 @@ def main_test():
     seed = 1
     mem_mode = "unlimited"
     time_window_ratio = .15
-
-
 
     # ==================
     # ==================
@@ -121,7 +119,9 @@ def main_test():
                                  time_window_ratio=TIME_WINDOW_RATIO)
 
     print("==========================================================")
-    print(f"============*** {MODEL_NAME}: {MEMORY_MODE}: {DATA} ***==============")
+    print(
+        f"============*** {MODEL_NAME}: {MEMORY_MODE}: {DATA} ***=============="
+    )
     print("==========================================================")
 
     evaluator = Evaluator(name=DATA)
@@ -133,7 +133,8 @@ def main_test():
 
     # testing ...
     start_val = timeit.default_timer()
-    perf_metric_test = helper_func(data, val_mask, neg_sampler, split_mode='val')
+    perf_metric_test = helper_func(data, val_mask, neg_sampler,
+                                   split_mode='val')
     end_val = timeit.default_timer()
 
     print(f"INFO: val: Evaluation Setting: >>> ONE-VS-MANY <<< ")
