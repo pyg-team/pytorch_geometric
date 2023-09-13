@@ -22,7 +22,7 @@ from torch_geometric.nn.models import EdgeBankPredictor
 # ==================
 # ==================
 # ==================
-def main_test():
+def test_edge_bank_pred():
     def helper_func(data, test_mask, neg_sampler, split_mode):
         r"""
         Evaluated the dynamic link prediction
