@@ -2,7 +2,7 @@ Multi-GPU Training in Pure PyTorch
 ==================================
 
 For many large scale, real-world datasets, it may be necessary to scale-up training across multiple GPUs.
-This tutorial goes over how to do this on a small scale dataset and then shows how the same technique can be applied for large-scale recommendation systems.
+This tutorial goes over mutli-GPU training
 In particular, this tutorial introduces how to utilize :pyg:`PyG` with pure :pytorch:`PyTorch` for multi-GPU training via :class:`torch.nn.parallel.DistributedDataParallel`, without the need for any other third-party libraries (such as :lightning:`PyTorch Lightning`).
 
 To start, we can take a look at the `distributed sampling <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/distributed_sampling.py>`__ example from :pyg:`PyG`.
@@ -13,8 +13,25 @@ This example uses the :class:`~torch_geometric.loader.NeighborLoader` with :clas
 Defining our Spawnable Runner
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Now we want to define a spawnable runner function. In our function, the world_size is the number of GPU's we will be using at once.
+To begin, we want to define a spawnable runner function.
+In our function, the world_size is the number of GPU's we will be using at once.
 For each gpu, the process is labeled with a process ID we call rank.
+To run multi-gpu we spawn a runner for each GPU in main.
+Note that we initialize the dataset in main before spawning our runners to keep the dataset in shared memory.
+
+.. code-block:: python
+    def run(rank, world_size, dataset):
+        ...
+
+    if __name__ == '__main__':
+        from torch_geometric.datasets import Reddit
+        import torch.multiprocessing as mp
+        dataset = Reddit('../../data/Reddit')
+        world_size = torch.cuda.device_count()
+        print('Let\'s use', world_size, 'GPUs!')
+        mp.spawn(run, args=(world_size, dataset), nprocs=world_size, join=True)
+
+Now we start to define our spawnable runner function.
 
 .. code-block:: python
 
@@ -29,9 +46,9 @@ For each gpu, the process is labeled with a process ID we call rank.
         data = dataset[0]
         data = data.to(rank, 'x', 'y')
 
-Notice we move to features and labels to GPU for faster feature fetching.
-
-Now we split training indices into :obj:`world_size` many chunks for each GPU:
+The first step above is initializing torch distributed.
+Notice also that we move to features and labels to GPU for faster feature fetching.
+Next we split training indices into :obj:`world_size` many chunks for each GPU:
 
 .. code-block:: python
         from torch_geometric.loader import NeighborLoader
@@ -43,7 +60,7 @@ Now we split training indices into :obj:`world_size` many chunks for each GPU:
                                      num_neighbors=[25, 10], shuffle=True,
                                      drop_last=True, **kwargs)
 
-Note that since our run function is called on each rank, which means each NeighborLoader is sampling from a reduced set of the training indices.
+Note that our run function is called on each rank, which means each rank's NeighborLoader is sampling from a reduced set of the training indices.
 
 We also create a single-hop evaluation neighbor loader. Note that we only do this on rank 0 since only one process needs to evaluate.
 
@@ -53,7 +70,7 @@ We also create a single-hop evaluation neighbor loader. Note that we only do thi
             val_idx = data.val_mask.nonzero(as_tuple=False).view(-1)
             val_loader = NeighborLoader(data, num_neighbors=[25, 10], input_nodes=val_idx, shuffle=False)
 
-Now that we have our data loaders defined initialize our model and wrap it in PyTorch's DistributedDataParallel.
+Now that we have our data loaders defined, we initialize our model and wrap it in PyTorch's DistributedDataParallel.
 This wrapper on our model manages communication between each rank and reduces loss gradients from each process before updating the models parameters across all ranks.
 
 .. code-block:: python
@@ -106,15 +123,4 @@ After each training epoch, we evaluate and report accuracies:
 
       dist.destroy_process_group()
 
-
-Finally we put it all together by spawning our runners for each GPU. Note that we initialize the dataset here so it is in shared memory.
-
-.. code-block:: python
-
-    if __name__ == '__main__':
-        from torch_geometric.datasets import Reddit
-        import torch.multiprocessing as mp
-        dataset = Reddit('../../data/Reddit')
-        world_size = torch.cuda.device_count()
-        print('Let\'s use', world_size, 'GPUs!')
-        mp.spawn(run, args=(world_size, dataset), nprocs=world_size, join=True)
+Putting it all together gives a working multi-gpu example!
