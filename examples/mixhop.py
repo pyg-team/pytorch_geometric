@@ -4,7 +4,7 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.datasets import Planetoid
-from torch_geometric.nn import MixHopConv
+from torch_geometric.nn import BatchNorm, MixHopConv
 
 dataset = 'Cora'
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', dataset)
@@ -16,13 +16,23 @@ class Net(torch.nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = MixHopConv(dataset.num_features, 60, p=[0, 1, 2])
-        self.conv2 = MixHopConv(60 * 3, dataset.num_classes, p=[0, 1, 2])
+        self.conv2 = MixHopConv(60 * 3, 60, p=[0, 1, 2])
+        self.conv3 = MixHopConv(60 * 3, 60, p=[0, 1, 2])
+        self.conv4 = MixHopConv(60 * 3, dataset.num_classes, p=[0, 1, 2])
+        self.bn1 = BatchNorm(60 * 3)
+        self.bn2 = BatchNorm(60 * 3)
+        self.bn3 = BatchNorm(60 * 3)
 
     def forward(self):
         x, edge_index = data.x, data.edge_index
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = F.dropout(self.conv1(x, edge_index), p=0.5, training=self.training)
-        x = F.dropout(self.conv2(x, edge_index), p=0.5, training=self.training)
+        x = F.dropout(x, p=0.7, training=self.training)
+        x = F.dropout(self.bn1(self.conv1(x, edge_index)), p=0.9,
+                      training=self.training)
+        x = F.dropout(self.bn2(self.conv2(x, edge_index)), p=0.9,
+                      training=self.training)
+        x = F.dropout(self.bn3(self.conv3(x, edge_index)), p=0.9,
+                      training=self.training)
+        x = self.conv4(x, edge_index)
         return F.log_softmax(x, dim=1)
 
 
@@ -34,7 +44,9 @@ else:
     device = torch.device('cpu')
 
 model, data = Net().to(device), data.to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.2, weight_decay=0.005)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.5, weight_decay=0.005)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=40,
+                                            gamma=0.01)
 
 
 def train():
@@ -42,6 +54,7 @@ def train():
     optimizer.zero_grad()
     F.nll_loss(model()[data.train_mask], data.y[data.train_mask]).backward()
     optimizer.step()
+    scheduler.step()
 
 
 @torch.no_grad()
