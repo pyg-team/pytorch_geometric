@@ -19,8 +19,8 @@ def test_lcm_aggregation_with_project():
 
 
 def test_lcm_aggregation_without_project():
-    x = torch.randn(6, 16)
-    index = torch.tensor([0, 0, 1, 1, 1, 2])
+    x = torch.randn(5, 16)
+    index = torch.tensor([0, 1, 1, 2, 2])
 
     aggr = LCMAggregation(16, 16, project=False)
     assert str(aggr) == 'LCMAggregation(16, 16, project=False)'
