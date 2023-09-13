@@ -102,8 +102,8 @@ def test_edge_bank_pred():
 
     #data for memory in edgebank
     hist_src = torch.tensor(data['sources'][train_mask]])
-    hist_dst = torch.tensor(data['destinations'][train_mask]])
-    hist_ts = torch.tensor(data['timestamps'][train_mask]])
+    hist_dst = torch.tensor(data['destinations'][train_mask])
+    hist_ts = torch.tensor(data['timestamps'][train_mask])
 
     # Set EdgeBank with memory updater
     edgebank = EdgeBankPredictor(hist_src, hist_dst, hist_ts,
