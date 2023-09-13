@@ -25,6 +25,7 @@ from .rev_gnn import GroupAddRev
 from .gnnff import GNNFF
 from .pmlp import PMLP
 from .neural_fingerprint import NeuralFingerprint
+from .edge_bank_predictor import EdgeBankPredictor
 
 __all__ = classes = [
     'MLP',
