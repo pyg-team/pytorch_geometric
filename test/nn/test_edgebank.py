@@ -142,7 +142,7 @@ def test_edge_bank_pred():
 
     # testing ...
     start_test = timeit.default_timer()
-    perf_metric_test = test(data, test_mask, neg_sampler, split_mode='test')
+    perf_metric_test = helper_func(data, test_mask, neg_sampler, split_mode='test')
     end_test = timeit.default_timer()
 
     print(f"INFO: Test: Evaluation Setting: >>> ONE-VS-MANY <<< ")
