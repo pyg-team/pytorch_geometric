@@ -55,7 +55,7 @@ def test_edge_bank_pred():
                 query_src = torch.tensor(
                     [int(pos_src[idx]) for _ in range(len(neg_batch) + 1)])
                 query_dst = torch.cat(
-                    [torch.tensor([int(pos_dst[idx])]), neg_batch])
+                    [torch.tensor([int(pos_dst[idx])]), torch.tensor(neg_batch)])
 
                 y_pred = edgebank.predict_link(query_src, query_dst)
                 # compute MRR
