@@ -79,7 +79,7 @@ def test_edge_bank_pred():
     SEED = 1
     set_random_seed(SEED)
     MEMORY_MODE = "unlimited"
-    TIME_WINDOW_RATIO  = .15
+    TIME_WINDOW_RATIO = .15
 
     # ==================
     # ==================
