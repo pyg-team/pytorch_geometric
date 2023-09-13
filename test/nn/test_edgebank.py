@@ -72,12 +72,13 @@ def test_edge_bank_pred():
 
         return perf_metrics
 
-    data = 'tgbl-coin'
-    bs = 200
-    k_value = 10
-    seed = 1
-    mem_mode = "unlimited"
-    time_window_ratio = .15
+    DATA = 'tgbl-coin'
+    BATCH_SIZE = 200
+    K_VALUE = 10
+    SEED = 1
+    set_random_seed(SEED)
+    MEMORY_MODE = "unlimited"
+    TIME_WINDOW_RATIO  = .15
 
     # ==================
     # ==================
