@@ -147,7 +147,7 @@ class EdgeBankPredictor(object):
         Returns:
             pred: the prediction for all query edges
         """
-        pred = np.zeros(len(query_src))
+        pred = torch.zeros(len(query_src))
         idx = 0
         for src, dst in zip(query_src, query_dst):
             if (src, dst) in self.memory:
