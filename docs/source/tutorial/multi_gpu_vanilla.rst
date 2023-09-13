@@ -69,7 +69,7 @@ We also create a single-hop evaluation neighbor loader. Note that we only do thi
 
         if rank == 0:
             val_idx = data.val_mask.nonzero(as_tuple=False).view(-1)
-            val_loader = NeighborLoader(data, num_neighbors=[25, 10], input_nodes=val_idx, shuffle=False)
+            val_loader = NeighborLoader(data, num_neighbors=[25, 10], input_nodes=val_idx, shuffle=False, **kwargs)
 
 Now that we have our data loaders defined, we initialize our model and wrap it in PyTorch's DistributedDataParallel.
 This wrapper on our model manages communication between each rank and reduces loss gradients from each process before updating the models parameters across all ranks.
