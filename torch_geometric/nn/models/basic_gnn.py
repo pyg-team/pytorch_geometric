@@ -199,6 +199,7 @@ class BasicGNN(torch.nn.Module):
         edge_attr: OptTensor = None,
         num_sampled_nodes_per_hop: Optional[List[int]] = None,
         num_sampled_edges_per_hop: Optional[List[int]] = None,
+        norm_kwargs: Optional[Dict[str, Any]] = {}
     ) -> Tensor:
         r"""
         Args:
@@ -218,6 +219,9 @@ class BasicGNN(torch.nn.Module):
                 Useful in :class:`~torch_geometric.loader.NeighborLoader`
                 scenarios to only operate on minimal-sized representations.
                 (default: :obj:`None`)
+            norm_kwargs (Dict[str, Any], optional): The keyword arguments for the
+                normalization layer's forward method. Defaults to an empty dictionary
+                such that only :obj:`x` is passed.
         """
         if (num_sampled_nodes_per_hop is not None
                 and isinstance(edge_weight, Tensor)
@@ -260,7 +264,7 @@ class BasicGNN(torch.nn.Module):
             if i < self.num_layers - 1 or self.jk_mode is not None:
                 if self.act is not None and self.act_first:
                     x = self.act(x)
-                x = norm(x)
+                x = norm(x, **norm_kwargs)
                 if self.act is not None and not self.act_first:
                     x = self.act(x)
                 x = self.dropout(x)

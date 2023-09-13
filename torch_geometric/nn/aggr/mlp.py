@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 
 from torch import Tensor
 
@@ -51,10 +51,10 @@ class MLPAggregation(Aggregation):
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+                dim: int = -2, norm_kwargs: Optional[Dict[str, Any]] = {}) -> Tensor:
         x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
                                    max_num_elements=self.max_num_elements)
-        return self.mlp(x.view(-1, x.size(1) * x.size(2)))
+        return self.mlp(x.view(-1, x.size(1) * x.size(2)), norm_kwargs=norm_kwargs)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '

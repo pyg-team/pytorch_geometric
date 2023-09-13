@@ -189,6 +189,7 @@ class MLP(torch.nn.Module):
         self,
         x: Tensor,
         return_emb: NoneType = None,
+        norm_kwargs: Optional[Dict[str, Any]] = {}
     ) -> Tensor:
         r"""
         Args:
@@ -196,6 +197,9 @@ class MLP(torch.nn.Module):
             return_emb (bool, optional): If set to :obj:`True`, will
                 additionally return the embeddings before execution of the
                 final output layer. (default: :obj:`False`)
+            norm_kwargs (Dict[str, Any], optional): The keyword arguments for the
+                normalization layer's forward method. Defaults to an empty dictionary
+                such that only :obj:`x` is passed.
         """
         # `return_emb` is annotated here as `NoneType` to be compatible with
         # TorchScript, which does not support different return types based on
@@ -206,7 +210,7 @@ class MLP(torch.nn.Module):
             x = lin(x)
             if self.act is not None and self.act_first:
                 x = self.act(x)
-            x = norm(x)
+            x = norm(x, **norm_kwargs)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout[i], training=self.training)

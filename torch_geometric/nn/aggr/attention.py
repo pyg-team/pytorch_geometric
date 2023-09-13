@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import Optional, Dict, Any
 
 import torch
 from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
+from torch_geometric.nn.models.mlp import MLP
 from torch_geometric.nn.inits import reset
 from torch_geometric.utils import softmax
 
@@ -27,12 +28,14 @@ class AttentionalAggregation(Aggregation):
             that computes attention scores by mapping node features :obj:`x` of
             shape :obj:`[-1, in_channels]` to shape :obj:`[-1, 1]` (for
             node-level gating) or :obj:`[1, out_channels]` (for feature-level
-            gating), *e.g.*, defined by :class:`torch.nn.Sequential`.
+            gating), *e.g.*, defined by :class:`torch.nn.Sequential`. If an MLP,
+            norm_kwargs can be passed into the forward method.
         nn (torch.nn.Module, optional): A neural network
             :math:`h_{\mathbf{\Theta}}` that maps node features :obj:`x` of
             shape :obj:`[-1, in_channels]` to shape :obj:`[-1, out_channels]`
             before combining them with the attention scores, *e.g.*, defined by
-            :class:`torch.nn.Sequential`. (default: :obj:`None`)
+            :class:`torch.nn.Sequential`. If an MLP, norm_kwargs can be passed
+            into the forward method. (default: :obj:`None`)
     """
     def __init__(self, gate_nn: torch.nn.Module,
                  nn: Optional[torch.nn.Module] = None):
@@ -47,11 +50,12 @@ class AttentionalAggregation(Aggregation):
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2) -> Tensor:
+                dim: int = -2, norm_kwargs: Optional[Dict[str, Any]] = {}) -> Tensor:
 
         self.assert_two_dimensional_input(x, dim)
-        gate = self.gate_nn(x)
-        x = self.nn(x) if self.nn is not None else x
+        gate = self.gate_nn(x, norm_kwargs=norm_kwargs) if type(self.gate_nn) == MLP else self.gate_nn(x)
+        if self.nn is not None:
+            x = self.nn(x, norm_kwargs=norm_kwargs) if type(self.nn) == MLP else self.nn(x)
         gate = softmax(gate, index, ptr, dim_size, dim)
         return self.reduce(gate * x, index, ptr, dim_size, dim)
 
