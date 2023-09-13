@@ -10,6 +10,39 @@ from torch_geometric.utils import spmm
 
 
 class MixHopConv(MessagePassing):
+    r"""The mixhop graph convolutional operator from the `"MixHop: Higher-Order
+    Graph Convolutional Architecturesvia Sparsified Neighborhood Mixing"
+    <https://arxiv.org/abs/1905.00067>`_ paper
+
+    .. math::
+        \mathbf{X}^{\prime}={\Bigg\Vert}_{p\in P}{\left(\mathbf{\hat{D}}^{-1/2}
+        \mathbf{\hat{A}}\mathbf{\hat{D}}^{-1/2}\right)}^p\mathbf{X}\mathbf{\Theta},
+
+    Where :math:`\widehat{A}` denotes the symmetrically normalized adjacency
+    matrix with self-connections,
+    :math:`D_{ii} = \sum_{j=0} \widehat{A}_{ij}` its diagonal degree matrix,
+    :math:`W_j^{(i)}` denotes the trainable weight matrix of mixhop layers.
+
+    Args:
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
+        out_channels (int): Size of each output sample.
+        p (list): Powers of adjacency matrix. (default: :obj:`[0, 1, 2]`)
+        add_self_loops (bool, optional): If set to :obj:`False`, will not add
+            self-loops to the input graph. (default: :obj:`True`)
+        bias (bool, optional): If set to :obj:`False`, the layer will not learn
+            an additive bias. (default: :obj:`False`)
+        **kwargs (optional): Additional arguments of
+            :class:`torch_geometric.nn.conv.MessagePassing`.
+
+    Shapes:
+        - **input:**
+          node features :math:`(|\mathcal{V}|, F_{in})`,
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge weights :math:`(|\mathcal{E}|)` *(optional)*
+        - **output:**
+          node features :math:`(|\mathcal{V}|, F_{out})`
+    """
     def __init__(self, in_channels: int, out_channels: int,
                  p: list = [0, 1, 2], add_self_loops: bool = True,
                  bias: bool = False, **kwargs):
