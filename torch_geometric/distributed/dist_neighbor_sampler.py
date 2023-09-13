@@ -110,6 +110,7 @@ class DistNeighborSampler:
         self.time_attr = time_attr
         self.csc = True  # always true?
         self.with_edge_attr = self.dist_feature.has_edge_attr()
+        self.edge_permutation = None
 
     def register_sampler_rpc(self) -> None:
 
@@ -330,9 +331,9 @@ class DistNeighborSampler:
             node = OrderedSet(
                 src.tolist()) if not self.disjoint else OrderedSet(
                     tuple(zip(src_batch.tolist(), src.tolist())))
-            node_with_dupl = []
-            batch_with_dupl = []
-            edge = []
+            node_with_dupl = [torch.empty(0, dtype=torch.int64)]
+            batch_with_dupl = [torch.empty(0, dtype=torch.int64)]
+            edge = [torch.empty(0, dtype=torch.int64)]
 
             sampled_nbrs_per_node = []
             num_sampled_nodes = [seed.numel()]
@@ -342,15 +343,15 @@ class DistNeighborSampler:
             for one_hop_num in self.num_neighbors:
                 out = await self.sample_one_hop(src, one_hop_num, seed_time,
                                                 src_batch)
-
+                if out.node.numel() == 0:
+                    # no neighbors were sampled
+                    break
                 # remove duplicates
                 # TODO: find better method to remove duplicates
                 node_wo_dupl = OrderedSet(
                     (out.node).tolist()) if not self.disjoint else OrderedSet(
                         zip((out.batch).tolist(), (out.node).tolist()))
-                if len(node_wo_dupl) == 0:
-                    # no neighbors were sampled
-                    break
+
                 duplicates = node.intersection(node_wo_dupl)
                 node_wo_dupl.difference_update(duplicates)
                 src = Tensor(node_wo_dupl if not self.disjoint else list(
@@ -449,11 +450,11 @@ class DistNeighborSampler:
         Returns :obj:`SamplerOutput` containing all merged outputs.
         """
         sampled_nodes_with_dupl = [
-            o.node if o is not None else None for o in outputs
+            o.node if o is not None else torch.empty(0, dtype=torch.int64) for o in outputs
         ]
-        edge_ids = [o.edge if o is not None else None for o in outputs]
+        edge_ids = [o.edge if o is not None else torch.empty(0, dtype=torch.int64) for o in outputs]
         cumm_sampled_nbrs_per_node = [
-            o.metadata if o is not None else None for o in outputs
+            o.metadata if o is not None else [] for o in outputs
         ]
 
         partition_ids = partition_ids.tolist()
@@ -567,7 +568,6 @@ class DistNeighborSampler:
                         fut = self.dist_feature.lookup_features(
                             is_node_feat=True, index=output.node[ntype],
                             input_type=ntype)
-                        print('node fut')
                         print({max(output.node[ntype])},
                               {self.dist_feature.node_feat_pb.size()})
                         nfeat = await wrap_torch_future(fut)
@@ -582,7 +582,6 @@ class DistNeighborSampler:
                         fut = self.dist_feature.lookup_features(
                             is_node_feat=False, index=output.edge[etype],
                             input_type=etype)
-                        print('edge fut')
                         print(
                             f'{max(output.edge[etype])}, {self.dist_feature.edge_feat_pb.size()}'
                         )
