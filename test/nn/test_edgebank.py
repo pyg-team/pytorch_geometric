@@ -4,7 +4,6 @@ import math
 import os
 import os.path as osp
 import sys
-# (TODO add torch and make this a py.test)
 import timeit
 from pathlib import Path
 
