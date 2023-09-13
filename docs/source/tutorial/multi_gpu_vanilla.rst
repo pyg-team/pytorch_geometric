@@ -20,6 +20,7 @@ To run multi-gpu we spawn a runner for each GPU in main.
 Note that we initialize the dataset in main before spawning our runners to keep the dataset in shared memory.
 
 .. code-block:: python
+
     def run(rank, world_size, dataset):
         ...
 
