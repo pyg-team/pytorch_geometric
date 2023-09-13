@@ -1,6 +1,7 @@
 from math import ceil, log2
 from typing import Optional
 
+import torch
 from torch import Tensor
 from torch.nn import GRUCell, Linear
 
@@ -63,9 +64,6 @@ class LCMAggregation(Aggregation):
             self.lin.reset_parameters()
         self.gru_cell.reset_parameters()
 
-    def binary_op(self, left: Tensor, right: Tensor) -> Tensor:
-        return (self.gru_cell(left, right) + self.gru_cell(right, left)) / 2.0
-
     @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
     def forward(
         self,
@@ -84,17 +82,37 @@ class LCMAggregation(Aggregation):
                                    max_num_elements=max_num_elements)
 
         x = x.permute(1, 0, 2)  # [num_neighbors, num_nodes, num_features]
+        _, num_nodes, num_features = x.size()
 
         depth = ceil(log2(x.size(0)))
         for _ in range(depth):
-            x = [
-                self.binary_op(x[2 * i], x[2 * i + 1]) if
-                (2 * i + 1) < len(x) else x[2 * i]
-                for i in range(ceil(len(x) / 2))
-            ]
+            half_size = ceil(x.size(0) / 2)
 
-        assert len(x) == 1
-        return x[0]
+            if x.size(0) % 2 == 1:
+                # This level of the tree has an odd number of nodes, so the
+                # remaining unmatched node gets moved to the next level.
+                x, remainder = x[:-1].contiguous(), x[-1:]
+            else:
+                remainder = None
+
+            left_right = x.view(-1, 2, num_nodes, num_features)
+            right_left = left_right.flip(dims=[1])
+
+            left_right = left_right.view(-1, num_features)
+            right_left = right_left.view(-1, num_features)
+
+            # Execute the GRUCell for all (left, right) pairs in the current
+            # level of the tree in parallel:
+            out = self.gru_cell(left_right, right_left)
+            out = out.view(-1, 2, num_nodes, num_features)
+            out = out.mean(dim=1)
+            if remainder is not None:
+                out = torch.cat([out, remainder], dim=0)
+
+            x = out.view(half_size, num_nodes, num_features)
+
+        assert x.size(0) == 1
+        return x.squeeze(0)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
