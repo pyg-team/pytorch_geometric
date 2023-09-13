@@ -64,9 +64,6 @@ class LCMAggregation(Aggregation):
             self.lin.reset_parameters()
         self.gru_cell.reset_parameters()
 
-    def binary_op(self, left: Tensor, right: Tensor) -> Tensor:
-        return (self.gru_cell(left, right) + self.gru_cell(right, left)) / 2.0
-
     @disable_dynamic_shapes(required_args=['dim_size', 'max_num_elements'])
     def forward(
         self,
@@ -85,34 +82,32 @@ class LCMAggregation(Aggregation):
                                    max_num_elements=max_num_elements)
 
         x = x.permute(1, 0, 2)  # [num_neighbors, num_nodes, num_features]
-        num_nodes, num_features = x.size(1), x.size(2)
+        _, num_nodes, num_features = x.size()
 
         depth = ceil(log2(x.size(0)))
         for _ in range(depth):
             half_size = ceil(x.size(0) / 2)
 
             if x.size(0) % 2 == 1:
-                # this level of the tree has an odd number of nodes, so the
-                # remaining, unmatched node gets moved to the next level
-                remainder = x[-1].unsqueeze(0)
-                x = x[:-1]
+                # This level of the tree has an odd number of nodes, so the
+                # remaining unmatched node gets moved to the next level.
+                x, remainder = x[:-1].contiguous(), x[-1:]
             else:
                 remainder = None
 
             left_right = x.view(-1, 2, num_nodes, num_features)
-            right_left = left_right.flip(1)
+            right_left = left_right.flip(dims=[1])
 
-            left_right = left_right.reshape(-1, num_features)
-            right_left = right_left.reshape(-1, num_features)
+            left_right = left_right.view(-1, num_features)
+            right_left = right_left.view(-1, num_features)
 
-            # compute `self.binary_op(left, right)` for all `(left, right)`
-            # pairs in the current level of the tree, in parallel. Results in
-            # `O(log V)` total `GRUCell` forward passes, instead of `O(V)`.
+            # Execute the GRUCell for all (left, right) pairs in the current
+            # level of the tree in parallel:
             out = self.gru_cell(left_right, right_left)
             out = out.view(-1, 2, num_nodes, num_features)
-            out = out.mean(1)
+            out = out.mean(dim=1)
             if remainder is not None:
-                out = torch.cat([out, remainder], 0)
+                out = torch.cat([out, remainder], dim=0)
 
             x = out.view(half_size, num_nodes, num_features)
 

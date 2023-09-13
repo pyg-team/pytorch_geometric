@@ -39,31 +39,34 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--backward', action='store_true')
     args = parser.parse_args()
 
-    NS = [2**i for i in range(15, 18 + 1)]
-    BS = [2**i for i in range(10, 12 + 1)]
+    channels = 128
+    batch_size_list = [2**i for i in range(10, 12)]
+    num_nodes_list = [2**i for i in range(15, 18)]
 
-    H = 128
-    lcm_aggr = LCMAggregation(H, H, project=False)
-    lcm_aggr.to(args.device)
+    aggr = LCMAggregation(channels, channels, project=False)
+    aggr = aggr.to(args.device)
 
     funcs = []
     func_names = []
     args_list = []
-    for N, B in product(NS, BS):
-        x = torch.randn((N, H), device=args.device)
-        index = torch.randint(0, B, (N, ), device=args.device).sort()[0]
+    for batch_size, num_nodes in product(batch_size_list, num_nodes_list):
+        x = torch.randn((num_nodes, channels), device=args.device)
+        index = torch.randint(0, batch_size, (num_nodes, ), device=args.device)
+        index = index.sort()[0]
 
-        funcs.append(lcm_aggr.forward)
-        func_names.append(f'N={N}, B={B}')
+        funcs.append(aggr)
+        func_names.append(f'B={batch_size}, N={num_nodes}')
         args_list.append((x, index))
 
     benchmark(
         funcs=funcs,
         func_names=func_names,
         args=args_list,
-        num_steps=50 if args.device == 'cpu' else 500,
-        num_warmups=10 if args.device == 'cpu' else 100,
+        num_steps=10 if args.device == 'cpu' else 100,
+        num_warmups=5 if args.device == 'cpu' else 50,
+        backward=args.backward,
         progress_bar=True,
     )
