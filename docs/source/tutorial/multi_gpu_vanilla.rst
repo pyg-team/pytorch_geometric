@@ -52,6 +52,7 @@ Notice also that we move to features and labels to GPU for faster feature fetchi
 Next we split training indices into :obj:`world_size` many chunks for each GPU:
 
 .. code-block:: python
+
         from torch_geometric.loader import NeighborLoader
         train_idx = data.train_mask.nonzero(as_tuple=False).view(-1)
         train_idx = train_idx.split(train_idx.size(0) // world_size)[rank]
@@ -88,6 +89,7 @@ This wrapper on our model manages communication between each rank and reduces lo
 Now we set up our optimizer and define our training loop. Notice that we move the edge indices of each mini-batch to GPU while the features and labels are already on GPU.
 
 .. code-block:: python
+
         import torch.nn.functional as F
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
