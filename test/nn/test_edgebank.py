@@ -112,9 +112,9 @@ def main_test()
     test_mask = dataset.test_mask
 
     #data for memory in edgebank
-    hist_src = np.concatenate([data['sources'][train_mask]])
-    hist_dst = np.concatenate([data['destinations'][train_mask]])
-    hist_ts = np.concatenate([data['timestamps'][train_mask]])
+    hist_src = torch.cat([data['sources'][train_mask]])
+    hist_dst = torch.cat([data['destinations'][train_mask]])
+    hist_ts = torch.cat([data['timestamps'][train_mask]])
 
     # Set EdgeBank with memory updater
     edgebank = EdgeBankPredictor(hist_src, hist_dst, hist_ts,
