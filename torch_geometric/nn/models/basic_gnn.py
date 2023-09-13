@@ -192,15 +192,14 @@ class BasicGNN(torch.nn.Module):
         pass
 
     def forward(  # noqa
-        self,
-        x: Tensor,
-        edge_index: Tensor,  # TODO Support `SparseTensor` in type hint.
-        edge_weight: OptTensor = None,
-        edge_attr: OptTensor = None,
-        num_sampled_nodes_per_hop: Optional[List[int]] = None,
-        num_sampled_edges_per_hop: Optional[List[int]] = None,
-        norm_kwargs: Optional[Dict[str, Any]] = {}
-    ) -> Tensor:
+            self,
+            x: Tensor,
+            edge_index: Tensor,  # TODO Support `SparseTensor` in type hint.
+            edge_weight: OptTensor = None,
+            edge_attr: OptTensor = None,
+            num_sampled_nodes_per_hop: Optional[List[int]] = None,
+            num_sampled_edges_per_hop: Optional[List[int]] = None,
+            norm_kwargs: Optional[Dict[str, Any]] = {}) -> Tensor:
         r"""
         Args:
             x (torch.Tensor): The input node features.
@@ -219,9 +218,9 @@ class BasicGNN(torch.nn.Module):
                 Useful in :class:`~torch_geometric.loader.NeighborLoader`
                 scenarios to only operate on minimal-sized representations.
                 (default: :obj:`None`)
-            norm_kwargs (Dict[str, Any], optional): The keyword arguments for the
-                normalization layer's forward method. Defaults to an empty dictionary
-                such that only :obj:`x` is passed.
+            norm_kwargs (Dict[str, Any], optional): The keyword arguments for
+                the normalization layer's forward method. Defaults to an empty
+                dictionary such that only :obj:`x` is passed.
         """
         if (num_sampled_nodes_per_hop is not None
                 and isinstance(edge_weight, Tensor)
