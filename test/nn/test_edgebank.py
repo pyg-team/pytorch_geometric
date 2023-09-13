@@ -44,7 +44,8 @@ def test_edge_bank_pred():
                           len(data['sources'][test_mask]))
             pos_src, pos_dst, pos_t = (
                 torch.tensor(data['sources'][test_mask][start_idx:end_idx]),
-                torch.tensor(data['destinations'][test_mask][start_idx:end_idx]),
+                torch.tensor(
+                    data['destinations'][test_mask][start_idx:end_idx]),
                 torch.tensor(data['timestamps'][test_mask][start_idx:end_idx]),
             )
             neg_batch_list = neg_sampler.query_batch(pos_src, pos_dst, pos_t,
@@ -87,7 +88,6 @@ def test_edge_bank_pred():
 
     start_overall = timeit.default_timer()
 
-
     MODEL_NAME = 'EdgeBank'
 
     # data loading with `numpy`
@@ -101,9 +101,12 @@ def test_edge_bank_pred():
     test_mask = dataset.test_mask
 
     #data for memory in edgebank
-    hist_src = torch.cat([torch.tensor(i) for i in data['sources'][train_mask]])
-    hist_dst = torch.cat([torch.tensor(i) for i in data['destinations'][train_mask]])
-    hist_ts = torch.cat([torch.tensor(i) for i in data['timestamps'][train_mask]])
+    hist_src = torch.cat(
+        [torch.tensor(i) for i in data['sources'][train_mask]])
+    hist_dst = torch.cat(
+        [torch.tensor(i) for i in data['destinations'][train_mask]])
+    hist_ts = torch.cat(
+        [torch.tensor(i) for i in data['timestamps'][train_mask]])
 
     # Set EdgeBank with memory updater
     edgebank = EdgeBankPredictor(hist_src, hist_dst, hist_ts,
