@@ -41,8 +41,8 @@ if __name__ == '__main__':
     parser.add_argument('--device', type=str, default='cuda')
     args = parser.parse_args()
 
-    NS = [2**i for i in range(15, 18+1)]
-    BS = [2**i for i in range(10, 12+1)]
+    NS = [2**i for i in range(15, 18 + 1)]
+    BS = [2**i for i in range(10, 12 + 1)]
 
     H = 128
     lcm_aggr = LCMAggregation(H, H, project=False)

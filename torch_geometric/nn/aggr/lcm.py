@@ -83,39 +83,39 @@ class LCMAggregation(Aggregation):
 
         x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
                                    max_num_elements=max_num_elements)
-        
+
         x = x.permute(1, 0, 2)  # [num_neighbors, num_nodes, num_features]
         num_nodes, num_features = x.size(1), x.size(2)
-        
+
         depth = ceil(log2(x.size(0)))
         for _ in range(depth):
             half_size = ceil(x.size(0) / 2)
-            
+
             if x.size(0) % 2 == 1:
-                # this level of the tree has an odd number of nodes, so the 
+                # this level of the tree has an odd number of nodes, so the
                 # remaining, unmatched node gets moved to the next level
                 remainder = x[-1].unsqueeze(0)
                 x = x[:-1]
             else:
                 remainder = None
-                
+
             left_right = x.view(-1, 2, num_nodes, num_features)
             right_left = left_right.flip(1)
-            
+
             left_right = left_right.reshape(-1, num_features)
             right_left = right_left.reshape(-1, num_features)
-            
+
             # compute `self.binary_op(left, right)` for all `(left, right)`
-            # pairs in the current level of the tree, in parallel. Results in 
+            # pairs in the current level of the tree, in parallel. Results in
             # `O(log V)` total `GRUCell` forward passes, instead of `O(V)`.
             out = self.gru_cell(left_right, right_left)
             out = out.view(-1, 2, num_nodes, num_features)
             out = out.mean(1)
             if remainder is not None:
                 out = torch.cat([out, remainder], 0)
-                
+
             x = out.view(half_size, num_nodes, num_features)
-        
+
         assert x.size(0) == 1
         return x.squeeze(0)
 
