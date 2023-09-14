@@ -194,8 +194,6 @@ def run_training_proc(
                 torch.distributed.barrier()
 
             pbar.update(batch_size)
-            #pbar.update(batch.batch_size)
-
         pbar.close()
 
         end = time.time()
