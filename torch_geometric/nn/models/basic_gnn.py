@@ -1,4 +1,5 @@
 import copy
+import inspect
 from typing import Any, Callable, Dict, Final, List, Optional, Tuple, Union
 
 import torch
@@ -129,6 +130,12 @@ class BasicGNN(torch.nn.Module):
         )
         if norm_layer is None:
             norm_layer = torch.nn.Identity()
+
+        self.supports_norm_batch = False
+        if hasattr(norm_layer, 'forward'):
+            norm_params = inspect.signature(norm_layer.forward).parameters
+            self.supports_norm_batch = 'batch' in norm_params
+
         for _ in range(num_layers - 1):
             self.norms.append(copy.deepcopy(norm_layer))
 
@@ -173,10 +180,13 @@ class BasicGNN(torch.nn.Module):
         edge_index,
         edge_weight=None,
         edge_attr=None,
+        batch=None,
+        batch_size=None,
         num_sampled_nodes_per_hop=None,
         num_sampled_edges_per_hop=None,
     ):
-        # type: (Tensor, Tensor, OptTensor, OptTensor, Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
+        # type: (Tensor, Tensor, OptTensor, OptTensor, OptTensor,
+        # Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
         pass
 
     @torch.jit._overload_method
@@ -185,21 +195,26 @@ class BasicGNN(torch.nn.Module):
         edge_index,
         edge_weight=None,
         edge_attr=None,
+        batch=None,
+        batch_size=None,
         num_sampled_nodes_per_hop=None,
         num_sampled_edges_per_hop=None,
     ):
-        # type: (Tensor, SparseTensor, OptTensor, OptTensor, Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
+        # type: (Tensor, SparseTensor, OptTensor, OptTensor, OptTensor,
+        # Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
         pass
 
     def forward(  # noqa
-            self,
-            x: Tensor,
-            edge_index: Tensor,  # TODO Support `SparseTensor` in type hint.
-            edge_weight: OptTensor = None,
-            edge_attr: OptTensor = None,
-            num_sampled_nodes_per_hop: Optional[List[int]] = None,
-            num_sampled_edges_per_hop: Optional[List[int]] = None,
-            norm_kwargs: Optional[Dict[str, Any]] = {}) -> Tensor:
+        self,
+        x: Tensor,
+        edge_index: Tensor,  # TODO Support `SparseTensor` in type hint.
+        edge_weight: OptTensor = None,
+        edge_attr: OptTensor = None,
+        batch: OptTensor = None,
+        batch_size: Optional[int] = None,
+        num_sampled_nodes_per_hop: Optional[List[int]] = None,
+        num_sampled_edges_per_hop: Optional[List[int]] = None,
+    ):
         r"""
         Args:
             x (torch.Tensor): The input node features.
@@ -208,6 +223,17 @@ class BasicGNN(torch.nn.Module):
                 supported by the underlying GNN layer). (default: :obj:`None`)
             edge_attr (torch.Tensor, optional): The edge features (if supported
                 by the underlying GNN layer). (default: :obj:`None`)
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
             num_sampled_nodes_per_hop (List[int], optional): The number of
                 sampled nodes per hop.
                 Useful in :class:`~torch_geometric.loader.NeighborLoader`
@@ -218,9 +244,6 @@ class BasicGNN(torch.nn.Module):
                 Useful in :class:`~torch_geometric.loader.NeighborLoader`
                 scenarios to only operate on minimal-sized representations.
                 (default: :obj:`None`)
-            norm_kwargs (Dict[str, Any], optional): The keyword arguments for
-                the normalization layer's forward method. Defaults to an empty
-                dictionary such that only :obj:`x` is passed.
         """
         if (num_sampled_nodes_per_hop is not None
                 and isinstance(edge_weight, Tensor)
@@ -263,7 +286,10 @@ class BasicGNN(torch.nn.Module):
             if i < self.num_layers - 1 or self.jk_mode is not None:
                 if self.act is not None and self.act_first:
                     x = self.act(x)
-                x = norm(x, **norm_kwargs)
+                if self.supports_norm_batch:
+                    x = norm(x, batch, batch_size)
+                else:
+                    x = norm(x)
                 if self.act is not None and not self.act_first:
                     x = self.act(x)
                 x = self.dropout(x)

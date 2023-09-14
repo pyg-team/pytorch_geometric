@@ -5,7 +5,7 @@ from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.inits import reset
-from torch_geometric.nn.models.mlp import MLP
+# from torch_geometric.nn.models.mlp import MLP
 from torch_geometric.utils import softmax
 
 
