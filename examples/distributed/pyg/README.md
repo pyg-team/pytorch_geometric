@@ -30,7 +30,7 @@ Here, we use `ogbn-products` and partition it into two partitions (in default) b
 ```bash
 python partition_graph.py --dataset=ogbn-products --root_dir=./data/ogbn-products --num_partitions=2
 ```
-The generated partition will have the folder below. 
+The generated partition will have the folder below.
 
 ├── products
 │   ├── ogbn-products-label
@@ -55,7 +55,7 @@ The generated partition will have the folder below.
 │       └── partition1.pt
 
 
-You can put/move the products partition folder into one public folder that each node can access this shared folder. 
+You can put/move the products partition folder into one public folder that each node can access this shared folder.
 
 
 
@@ -83,4 +83,3 @@ python dist_train_sage_for_homo.py \
 1. You should change the `master_addr` to the IP of `node#0`.
 2. In default this example will use the num_workers = 2 for number of sampling workers and concurrency=2 for mp.queue. you can also add these argument to speed up the training like "--num_workers=8 --concurrency=8"
 3. All nodes need to use the same partitioned data when running `dist_train_sage_for_homo.py`.
-
