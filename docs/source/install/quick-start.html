@@ -1,0 +1,148 @@
+<style>
+  .quick-start {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin-bottom: 20px;
+  }
+
+  .title-column {
+    flex-grow: 0;
+  }
+
+  .content-column {
+    flex-grow: 1;
+  }
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+
+  .title-column div, .row div {
+    white-space: nowrap;
+  }
+
+  .title-column div {
+    padding: 14px 10px 12px 0;
+    font-weight: 700;
+  }
+
+  .row div {
+    flex-grow: 1;
+    text-align: center;
+    margin: 2px;
+    padding: 12px 0 10px 0;
+    background: #e3e3e3;
+    cursor: pointer;
+  }
+
+  .row div.selected {
+    background: rgba(59,155,239,0.7);
+    color: #ffffff;
+  }
+
+  #command {
+    margin: 2px;
+    padding: 12px 10px 10px 10px;
+  }
+
+  #command pre {
+    padding: 0;
+    margin: 0;
+    white-space: pre-wrap;
+  }
+
+</style>
+
+<div class="quick-start">
+  <div class="title-column">
+    <div>PyTorch</div>
+    <div>Your OS</div>
+    <div>Package</div>
+    <div>CUDA</div>
+    <div>Run:</div>
+  </div>
+  <div class="content-column">
+    <div class="row" id="torch"></div>
+    <div class="row" id="os"></div>
+    <div class="row" id="package"></div>
+    <div class="row" id="cuda"></div>
+    <div class="row" id="command"><pre></pre></div>
+  </div>
+</div>
+
+<script>
+  var torchList = [
+    ['torch-2.0.0', 'PyTorch 2.0.*'],
+    ['torch-1.13.0', 'PyTorch 1.13.*'],
+  ];
+
+  var osList = [
+    ['linux', 'Linux'],
+    ['mac', 'Mac'],
+    ['windows', 'Windows'],
+  ];
+
+  var packageList = [
+    ['pip', 'Pip'],
+    ['conda', 'Conda'],
+  ];
+
+  var cudaList = [
+    ['cu116', '11.6'],
+    ['cu117', '11.7'],
+    ['cu118', '11.8'],
+    ['cpu', 'CPU'],
+  ];
+
+  torchList.forEach(x => $("#torch").append(`<div id="${x[0]}">${x[1]}</div>`));
+  osList.forEach(x => $("#os").append(`<div id="${x[0]}">${x[1]}</div>`));
+  packageList.forEach(x => $("#package").append(`<div id="${x[0]}">${x[1]}</div>`));
+  cudaList.forEach(x => $("#cuda").append(`<div id="${x[0]}">${x[1]}</div>`));
+
+  function updateCommand() {
+    var torch = $("#command").attr("torch");
+    var os = $("#command").attr("os");
+    var package = $("#command").attr("package");
+    var cuda = $("#command").attr("cuda");
+
+    if (os == "mac" && cuda != "cpu") {
+      $("#command pre").text('# macOS binaries do not support CUDA');
+    }
+
+    else if (torch == "torch-1.13.0" && cuda == "cu118") {
+      $("#command pre").text('# PyTorch 1.13.* binaries do not support CUDA 11.8');
+    }
+
+    else if (torch == "torch-2.0.0" && cuda == "cu116") {
+      $("#command pre").text('# PyTorch 2.0.* binaries do not support CUDA 11.6');
+    }
+
+    else if (package == "conda") {
+      $("#command pre").text('conda install pyg -c pyg');
+    }
+
+    else if (os == "windows") {
+      $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+    }
+
+    else {
+      $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+    }
+  }
+
+  $(".quick-start .content-column .row div").click(function() {
+    $(this).parent().children().removeClass("selected");
+    $(this).addClass("selected");
+    $("#command").attr($(this).parent().attr("id"), $(this).attr("id"));
+    updateCommand();
+  });
+
+  $("#torch").children().get(0).click();
+  $("#linux").click();
+  $("#pip").click();
+  $("#cpu").click();
+
+</script>

@@ -1,12 +1,10 @@
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.feature_store import FeatureStore
-from torch_geometric.data.graph_store import GraphStore
+from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
 from torch_geometric.loader.link_loader import LinkLoader
-from torch_geometric.loader.utils import get_edge_label_index
-from torch_geometric.sampler import NeighborSampler
-from torch_geometric.typing import InputEdges, NumNeighbors, OptTensor
+from torch_geometric.sampler import NegativeSampling, NeighborSampler
+from torch_geometric.sampler.base import SubgraphType
+from torch_geometric.typing import EdgeType, InputEdges, OptTensor
 
 
 class LinkNeighborLoader(LinkLoader):
@@ -64,21 +62,30 @@ class LinkNeighborLoader(LinkLoader):
 
     The rest of the functionality mirrors that of
     :class:`~torch_geometric.loader.NeighborLoader`, including support for
-    heterogenous graphs.
+    heterogeneous graphs.
+    In particular, the data loader will add the following attributes to the
+    returned mini-batch:
+
+    * :obj:`n_id` The global node index for every sampled node
+    * :obj:`e_id` The global edge index for every sampled edge
+    * :obj:`input_id`: The global index of the :obj:`edge_label_index`
+    * :obj:`num_sampled_nodes`: The number of sampled nodes in each hop
+    * :obj:`num_sampled_edges`: The number of sampled edges in each hop
 
     .. note::
-        :obj:`neg_sampling_ratio` is currently implemented in an approximate
+        Negative sampling is currently implemented in an approximate
         way, *i.e.* negative edges may contain false negatives.
 
     Args:
-        data (torch_geometric.data.Data or torch_geometric.data.HeteroData):
-            The :class:`~torch_geometric.data.Data` or
-            :class:`~torch_geometric.data.HeteroData` graph object.
+        data (Any): A :class:`~torch_geometric.data.Data`,
+            :class:`~torch_geometric.data.HeteroData`, or
+            (:class:`~torch_geometric.data.FeatureStore`,
+            :class:`~torch_geometric.data.GraphStore`) data object.
         num_neighbors (List[int] or Dict[Tuple[str, str, str], List[int]]): The
             number of neighbors to sample for each node in each iteration.
+            If an entry is set to :obj:`-1`, all neighbors will be included.
             In heterogeneous graphs, may also take in a dictionary denoting
             the amount of neighbors to sample for each individual edge type.
-            If an entry is set to :obj:`-1`, all neighbors will be included.
         edge_label_index (Tensor or EdgeType or Tuple[EdgeType, Tensor]):
             The edge indices for which neighbors are sampled to create
             mini-batches.
@@ -99,29 +106,39 @@ class LinkNeighborLoader(LinkLoader):
             to work. (default: :obj:`None`)
         replace (bool, optional): If set to :obj:`True`, will sample with
             replacement. (default: :obj:`False`)
-        directed (bool, optional): If set to :obj:`False`, will include all
-            edges between all sampled nodes. (default: :obj:`True`)
+        subgraph_type (SubgraphType or str, optional): The type of the returned
+            subgraph.
+            If set to :obj:`"directional"`, the returned subgraph only holds
+            the sampled (directed) edges which are necessary to compute
+            representations for the sampled seed nodes.
+            If set to :obj:`"bidirectional"`, sampled edges are converted to
+            bidirectional edges.
+            If set to :obj:`"induced"`, the returned subgraph contains the
+            induced subgraph of all sampled nodes.
+            (default: :obj:`"directional"`)
         disjoint (bool, optional): If set to :obj: `True`, each seed node will
             create its own disjoint subgraph.
             If set to :obj:`True`, mini-batch outputs will have a :obj:`batch`
             vector holding the mapping of nodes to their respective subgraph.
             Will get automatically set to :obj:`True` in case of temporal
             sampling. (default: :obj:`False`)
-        temporal_strategy (string, optional): The sampling strategy when using
+        temporal_strategy (str, optional): The sampling strategy when using
             temporal sampling (:obj:`"uniform"`, :obj:`"last"`).
             If set to :obj:`"uniform"`, will sample uniformly across neighbors
             that fulfill temporal constraints.
             If set to :obj:`"last"`, will sample the last `num_neighbors` that
             fulfill temporal constraints.
             (default: :obj:`"uniform"`)
-        neg_sampling_ratio (float, optional): The ratio of sampled negative
-            edges to the number of positive edges.
-            If :obj:`neg_sampling_ratio > 0` and in case :obj:`edge_label`
-            does not exist, it will be automatically created and represents a
-            binary classification task (:obj:`1` = edge, :obj:`0` = no edge).
-            If :obj:`neg_sampling_ratio > 0` and in case :obj:`edge_label`
-            exists, it has to be a categorical label from :obj:`0` to
-            :obj:`num_classes - 1`.
+        neg_sampling (NegativeSampling, optional): The negative sampling
+            configuration.
+            For negative sampling mode :obj:`"binary"`, samples can be accessed
+            via the attributes :obj:`edge_label_index` and :obj:`edge_label` in
+            the respective edge type of the returned mini-batch.
+            In case :obj:`edge_label` does not exist, it will be automatically
+            created and represents a binary classification task (:obj:`0` =
+            negative edge, :obj:`1` = positive edge).
+            In case :obj:`edge_label` does exist, it has to be a categorical
+            label from :obj:`0` to :obj:`num_classes - 1`.
             After negative sampling, label :obj:`0` represents negative edges,
             and labels :obj:`1` to :obj:`num_classes` represent the labels of
             positive edges.
@@ -129,13 +146,31 @@ class LinkNeighborLoader(LinkLoader):
             classification (to facilitate the ease-of-use of
             :meth:`F.binary_cross_entropy`) and of type
             :obj:`torch.long` for multi-class classification (to facilitate the
-            ease-of-use of :meth:`F.cross_entropy`). (default: :obj:`0.0`).
+            ease-of-use of :meth:`F.cross_entropy`).
+            For negative sampling mode :obj:`"triplet"`, samples can be
+            accessed via the attributes :obj:`src_index`, :obj:`dst_pos_index`
+            and :obj:`dst_neg_index` in the respective node types of the
+            returned mini-batch.
+            :obj:`edge_label` needs to be :obj:`None` for :obj:`"triplet"`
+            negative sampling mode.
+            If set to :obj:`None`, no negative sampling strategy is applied.
+            (default: :obj:`None`)
+        neg_sampling_ratio (int or float, optional): The ratio of sampled
+            negative edges to the number of positive edges.
+            Deprecated in favor of the :obj:`neg_sampling` argument.
+            (default: :obj:`None`)
         time_attr (str, optional): The name of the attribute that denotes
-            timestamps for the nodes in the graph. Only used if
-            :obj:`edge_label_time` is set. (default: :obj:`None`)
-        transform (Callable, optional): A function/transform that takes in
+            timestamps for the nodes in the graph.
+            If set, temporal sampling will be used such that neighbors are
+            guaranteed to fulfill temporal constraints, *i.e.* neighbors have
+            an earlier or equal timestamp than the center node.
+            Only used if :obj:`edge_label_time` is set. (default: :obj:`None`)
+        transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
+        transform_sampler_output (callable, optional): A function/transform
+            that takes in a :class:`torch_geometric.sampler.SamplerOutput` and
+            returns a transformed version. (default: :obj:`None`)
         is_sorted (bool, optional): If set to :obj:`True`, assumes that
             :obj:`edge_index` is sorted by column.
             If :obj:`time_attr` is set, additionally requires that rows are
@@ -143,13 +178,17 @@ class LinkNeighborLoader(LinkLoader):
             This avoids internal re-sorting of the data and can improve
             runtime and memory efficiency. (default: :obj:`False`)
         filter_per_worker (bool, optional): If set to :obj:`True`, will filter
-            the returning data in each worker's subprocess rather than in the
-            main process.
-            Setting this to :obj:`True` is generally not recommended:
-            (1) it may result in too many open file handles,
-            (2) it may slown down data loading,
-            (3) it requires operating on CPU tensors.
-            (default: :obj:`False`)
+            the returned data in each worker's subprocess.
+            If set to :obj:`False`, will filter the returned data in the main
+            process.
+            If set to :obj:`None`, will automatically infer the decision based
+            on whether data partially lives on the GPU
+            (:obj:`filter_per_worker=True`) or entirely on the CPU
+            (:obj:`filter_per_worker=False`).
+            There exists different trade-offs for setting this option.
+            Specifically, setting this option to :obj:`True` for in-memory
+            datasets will move all features to shared memory, which may result
+            in too many open file handles. (default: :obj:`None`)
         **kwargs (optional): Additional arguments of
             :class:`torch.utils.data.DataLoader`, such as :obj:`batch_size`,
             :obj:`shuffle`, :obj:`drop_last` or :obj:`num_workers`.
@@ -157,45 +196,46 @@ class LinkNeighborLoader(LinkLoader):
     def __init__(
         self,
         data: Union[Data, HeteroData, Tuple[FeatureStore, GraphStore]],
-        num_neighbors: NumNeighbors,
+        num_neighbors: Union[List[int], Dict[EdgeType, List[int]]],
         edge_label_index: InputEdges = None,
         edge_label: OptTensor = None,
         edge_label_time: OptTensor = None,
         replace: bool = False,
-        directed: bool = True,
+        subgraph_type: Union[SubgraphType, str] = 'directional',
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
-        neg_sampling_ratio: float = 0.0,
+        neg_sampling: Optional[NegativeSampling] = None,
+        neg_sampling_ratio: Optional[Union[int, float]] = None,
         time_attr: Optional[str] = None,
-        transform: Callable = None,
+        transform: Optional[Callable] = None,
+        transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
-        filter_per_worker: bool = False,
+        filter_per_worker: Optional[bool] = None,
         neighbor_sampler: Optional[NeighborSampler] = None,
+        directed: bool = True,  # Deprecated.
         **kwargs,
     ):
-        # TODO(manan): Avoid duplicated computation (here and in NodeLoader):
-        edge_type, _ = get_edge_label_index(data, edge_label_index)
-
         if (edge_label_time is not None) != (time_attr is not None):
             raise ValueError(
                 f"Received conflicting 'edge_label_time' and 'time_attr' "
                 f"arguments: 'edge_label_time' is "
                 f"{'set' if edge_label_time is not None else 'not set'} "
-                f"while 'input_time' is "
-                f"{'set' if time_attr is not None else 'not set'}.")
+                f"while 'time_attr' is "
+                f"{'set' if time_attr is not None else 'not set'}. "
+                f"Both arguments must be provided for temporal sampling.")
 
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
                 data,
                 num_neighbors=num_neighbors,
                 replace=replace,
-                directed=directed,
+                subgraph_type=subgraph_type,
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
-                input_type=edge_type,
                 time_attr=time_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
+                directed=directed,
             )
 
         super().__init__(
@@ -204,8 +244,10 @@ class LinkNeighborLoader(LinkLoader):
             edge_label_index=edge_label_index,
             edge_label=edge_label,
             edge_label_time=edge_label_time,
+            neg_sampling=neg_sampling,
             neg_sampling_ratio=neg_sampling_ratio,
             transform=transform,
+            transform_sampler_output=transform_sampler_output,
             filter_per_worker=filter_per_worker,
             **kwargs,
         )

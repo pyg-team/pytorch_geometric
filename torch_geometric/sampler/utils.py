@@ -1,12 +1,13 @@
-from typing import Any, Dict, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 
-import numpy as np
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.typing import NodeType, OptTensor
+from torch_geometric.utils import coalesce, index_sort, lexsort
+from torch_geometric.utils.sparse import index2ptr
 
 # Edge Layout Conversion ######################################################
 
@@ -17,17 +18,10 @@ def sort_csc(
     src_node_time: OptTensor = None,
 ) -> Tuple[Tensor, Tensor, Tensor]:
     if src_node_time is None:
-        col, perm = col.sort()
+        col, perm = index_sort(col)
         return row[perm], col, perm
     else:
-        # We use `np.lexsort` to sort based on multiple keys.
-        # TODO There does not seem to exist a PyTorch equivalent yet :(
-        perm = np.lexsort([
-            src_node_time[row].detach().cpu().numpy(),
-            col.detach().cpu().numpy()
-        ])
-        perm = torch.from_numpy(perm).to(col.device)
-
+        perm = lexsort([src_node_time[row], col])
         return row[perm], col[perm], perm
 
 
@@ -68,7 +62,8 @@ def to_csc(
         row, col = data.edge_index
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time)
-        colptr = torch.ops.torch_sparse.ind2ptr(col, data.size(1))
+
+        colptr = index2ptr(col, data.size(1))
 
     else:
         row = torch.empty(0, dtype=torch.long, device=device)
@@ -109,56 +104,44 @@ def to_hetero_csc(
     return colptr_dict, row_dict, perm_dict
 
 
-# Edge-based Sampling Utilities ###############################################
+def to_bidirectional(
+    row: Tensor,
+    col: Tensor,
+    rev_row: Tensor,
+    rev_col: Tensor,
+    edge_id: OptTensor = None,
+    rev_edge_id: OptTensor = None,
+) -> Tuple[Tensor, Tensor, OptTensor]:
 
+    assert row.numel() == col.numel()
+    assert rev_row.numel() == rev_col.numel()
 
-def add_negative_samples(
-    edge_label_index,
-    edge_label,
-    edge_label_time,
-    num_src_nodes: int,
-    num_dst_nodes: int,
-    negative_sampling_ratio: float,
-):
-    """Add negative samples and their `edge_label` and `edge_time`
-    if `neg_sampling_ratio > 0`"""
-    num_pos_edges = edge_label_index.size(1)
-    num_neg_edges = int(num_pos_edges * negative_sampling_ratio)
+    edge_index = row.new_empty(2, row.numel() + rev_row.numel())
+    edge_index[0, :row.numel()] = row
+    edge_index[1, :row.numel()] = col
+    edge_index[0, row.numel():] = rev_col
+    edge_index[1, row.numel():] = rev_row
 
-    if num_neg_edges == 0:
-        return edge_label_index, edge_label, edge_label_time
+    if edge_id is not None:
+        edge_id = torch.cat([edge_id, rev_edge_id], dim=0)
 
-    neg_row = torch.randint(num_src_nodes, (num_neg_edges, ))
-    neg_col = torch.randint(num_dst_nodes, (num_neg_edges, ))
-    neg_edge_label_index = torch.stack([neg_row, neg_col], dim=0)
+    (row, col), edge_id = coalesce(edge_index, edge_id, reduce='any')
 
-    if edge_label_time is not None:
-        perm = torch.randperm(num_pos_edges)
-        edge_label_time = torch.cat(
-            [edge_label_time, edge_label_time[perm[:num_neg_edges]]])
-
-    edge_label_index = torch.cat([
-        edge_label_index,
-        neg_edge_label_index,
-    ], dim=1)
-
-    pos_edge_label = edge_label + 1
-    neg_edge_label = edge_label.new_zeros((num_neg_edges, ) +
-                                          edge_label.size()[1:])
-
-    edge_label = torch.cat([pos_edge_label, neg_edge_label], dim=0)
-
-    return edge_label_index, edge_label, edge_label_time
+    return row, col, edge_id
 
 
 ###############################################################################
 
+X, Y = TypeVar('X'), TypeVar('Y')
+
 
 def remap_keys(
-    original: Dict,
-    mapping: Dict,
-    exclude: Optional[Set[Any]] = None,
-) -> Dict:
-    exclude = exclude or set()
-    return {(k if k in exclude else mapping[k]): v
-            for k, v in original.items()}
+    inputs: Dict[X, Any],
+    mapping: Dict[X, Y],
+    exclude: Optional[List[X]] = None,
+) -> Dict[Union[X, Y], Any]:
+    exclude = exclude or []
+    return {
+        k if k in exclude else mapping.get(k, k): v
+        for k, v in inputs.items()
+    }

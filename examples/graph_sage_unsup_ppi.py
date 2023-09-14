@@ -1,4 +1,5 @@
 import os.path as osp
+import time
 
 import torch
 import torch.nn.functional as F
@@ -20,7 +21,7 @@ test_dataset = PPI(path, split='test')
 # Group all training graphs into a single graph to perform sampling:
 train_data = Batch.from_data_list(train_dataset)
 loader = LinkNeighborLoader(train_data, batch_size=2048, shuffle=True,
-                            neg_sampling_ratio=0.5, num_neighbors=[10, 10],
+                            neg_sampling_ratio=1.0, num_neighbors=[10, 10],
                             num_workers=6, persistent_workers=True)
 
 # Evaluation loaders (one datapoint corresponds to a graph)
@@ -94,9 +95,13 @@ def test():
     return train_f1, val_f1, test_f1
 
 
+times = []
 for epoch in range(1, 6):
+    start = time.time()
     loss = train()
     print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}')
     train_f1, val_f1, test_f1 = test()
     print(f'Train F1: {train_f1:.4f}, Val F1: {val_f1:.4f}, '
           f'Test F1: {test_f1:.4f}')
+    times.append(time.time() - start)
+print(f"Median time per epoch: {torch.tensor(times).median():.4f}s")

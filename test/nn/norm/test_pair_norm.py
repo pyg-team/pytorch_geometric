@@ -11,7 +11,7 @@ def test_pair_norm(scale_individually):
     batch = torch.zeros(100, dtype=torch.long)
 
     norm = PairNorm(scale_individually=scale_individually)
-    assert norm.__repr__() == 'PairNorm()'
+    assert str(norm) == 'PairNorm()'
 
     if is_full_test():
         torch.jit.script(norm)

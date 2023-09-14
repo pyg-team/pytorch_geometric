@@ -4,9 +4,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import reset
 from torch_geometric.typing import Adj, OptTensor, PairOptTensor, PairTensor
-
-from ..inits import reset
 
 try:
     from torch_cluster import knn
@@ -30,7 +29,7 @@ class EdgeConv(MessagePassing):
             maps pair-wise concatenated node features :obj:`x` of shape
             :obj:`[-1, 2 * in_channels]` to shape :obj:`[-1, out_channels]`,
             *e.g.*, defined by :class:`torch.nn.Sequential`.
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"max"`)
         **kwargs (optional): Additional arguments of
@@ -51,10 +50,10 @@ class EdgeConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         reset(self.nn)
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """"""
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
         # propagate_type: (x: PairTensor)
@@ -79,8 +78,9 @@ class DynamicEdgeConv(MessagePassing):
             `:obj:`[-1, 2 * in_channels]` to shape :obj:`[-1, out_channels]`,
             *e.g.* defined by :class:`torch.nn.Sequential`.
         k (int): Number of nearest neighbors.
-        aggr (string): The aggregation operator to use (:obj:`"add"`,
-            :obj:`"mean"`, :obj:`"max"`). (default: :obj:`"max"`)
+        aggr (str, optional): The aggregation scheme to use
+            (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
+            (default: :obj:`"max"`)
         num_workers (int): Number of workers to use for k-NN computation.
             Has no effect in case :obj:`batch` is not :obj:`None`, or the input
             lies on the GPU. (default: :obj:`1`)
@@ -118,7 +118,7 @@ class DynamicEdgeConv(MessagePassing):
             batch: Union[OptTensor, Optional[PairTensor]] = None) -> Tensor:
         # type: (Tensor, OptTensor) -> Tensor  # noqa
         # type: (PairTensor, Optional[PairTensor]) -> Tensor  # noqa
-        """"""
+
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 

@@ -4,14 +4,13 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter, ReLU
-from torch_scatter import scatter_add
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, ones, zeros
-from torch_geometric.typing import Adj, OptTensor, Size
-from torch_geometric.utils import softmax
+from torch_geometric.typing import Adj, OptTensor, Size, SparseTensor
+from torch_geometric.utils import is_torch_sparse_tensor, scatter, softmax
+from torch_geometric.utils.sparse import set_sparse_value
 
 
 class RGATConv(MessagePassing):
@@ -240,17 +239,15 @@ class RGATConv(MessagePassing):
         # The learnable parameters to compute both attention logits and
         # attention coefficients:
         self.q = Parameter(
-            torch.Tensor(self.heads * self.out_channels,
-                         self.heads * self.dim))
+            torch.empty(self.heads * self.out_channels, self.heads * self.dim))
         self.k = Parameter(
-            torch.Tensor(self.heads * self.out_channels,
-                         self.heads * self.dim))
+            torch.empty(self.heads * self.out_channels, self.heads * self.dim))
 
         if bias and concat:
             self.bias = Parameter(
-                torch.Tensor(self.heads * self.dim * self.out_channels))
+                torch.empty(self.heads * self.dim * self.out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(self.dim * self.out_channels))
+            self.bias = Parameter(torch.empty(self.dim * self.out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -259,18 +256,18 @@ class RGATConv(MessagePassing):
                                    self.heads * self.out_channels, bias=False,
                                    weight_initializer='glorot')
             self.e = Parameter(
-                torch.Tensor(self.heads * self.out_channels,
-                             self.heads * self.dim))
+                torch.empty(self.heads * self.out_channels,
+                            self.heads * self.dim))
         else:
             self.lin_edge = None
             self.register_parameter('e', None)
 
         if num_bases is not None:
             self.att = Parameter(
-                torch.Tensor(self.num_relations, self.num_bases))
+                torch.empty(self.num_relations, self.num_bases))
             self.basis = Parameter(
-                torch.Tensor(self.num_bases, self.in_channels,
-                             self.heads * self.out_channels))
+                torch.empty(self.num_bases, self.in_channels,
+                            self.heads * self.out_channels))
         elif num_blocks is not None:
             assert (
                 self.in_channels % self.num_blocks == 0
@@ -278,26 +275,27 @@ class RGATConv(MessagePassing):
                     "both 'in_channels' and 'heads * out_channels' must be "
                     "multiple of 'num_blocks' used")
             self.weight = Parameter(
-                torch.Tensor(self.num_relations, self.num_blocks,
-                             self.in_channels // self.num_blocks,
-                             (self.heads * self.out_channels) //
-                             self.num_blocks))
+                torch.empty(self.num_relations, self.num_blocks,
+                            self.in_channels // self.num_blocks,
+                            (self.heads * self.out_channels) //
+                            self.num_blocks))
         else:
             self.weight = Parameter(
-                torch.Tensor(self.num_relations, self.in_channels,
-                             self.heads * self.out_channels))
+                torch.empty(self.num_relations, self.in_channels,
+                            self.heads * self.out_channels))
 
         self.w = Parameter(torch.ones(self.out_channels))
-        self.l1 = Parameter(torch.Tensor(1, self.out_channels))
-        self.b1 = Parameter(torch.Tensor(1, self.out_channels))
-        self.l2 = Parameter(torch.Tensor(self.out_channels, self.out_channels))
-        self.b2 = Parameter(torch.Tensor(1, self.out_channels))
+        self.l1 = Parameter(torch.empty(1, self.out_channels))
+        self.b1 = Parameter(torch.empty(1, self.out_channels))
+        self.l2 = Parameter(torch.empty(self.out_channels, self.out_channels))
+        self.b2 = Parameter(torch.empty(1, self.out_channels))
 
         self._alpha = None
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if self.num_bases is not None:
             glorot(self.basis)
             glorot(self.att)
@@ -317,26 +315,27 @@ class RGATConv(MessagePassing):
     def forward(self, x: Tensor, edge_index: Adj, edge_type: OptTensor = None,
                 edge_attr: OptTensor = None, size: Size = None,
                 return_attention_weights=None):
-        r"""
+        r"""Runs the forward pass of the module.
+
         Args:
-            x (Tensor): The input node features. Can be either a
-                :obj:`[num_nodes, in_channels]` node feature matrix, or an
-                optional one-dimensional node index tensor (in which case
-                input features are treated as trainable node embeddings).
-            edge_index (LongTensor or SparseTensor): The edge indices.
-            edge_type: The one-dimensional relation type/index for each edge in
-                :obj:`edge_index`.
+            x (torch.Tensor or tuple, optional): The input node features.
+                Can be either a :obj:`[num_nodes, in_channels]` node feature
+                matrix, or an optional one-dimensional node index tensor (in
+                which case input features are treated as trainable node
+                embeddings).
+            edge_index (torch.Tensor or SparseTensor): The edge indices.
+            edge_type (torch.Tensor, optional): The one-dimensional relation
+                type/index for each edge in :obj:`edge_index`.
                 Should be only :obj:`None` in case :obj:`edge_index` is of type
-                :class:`torch_sparse.tensor.SparseTensor`.
-                (default: :obj:`None`)
-            edge_attr (Tensor, optional): Edge feature matrix.
+                :class:`torch_sparse.SparseTensor` or
+                :class:`torch.sparse.Tensor`. (default: :obj:`None`)
+            edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
             return_attention_weights (bool, optional): If set to :obj:`True`,
                 will additionally return the tuple
                 :obj:`(edge_index, attention_weights)`, holding the computed
                 attention weights for each edge. (default: :obj:`None`)
         """
-
         # propagate_type: (x: Tensor, edge_type: OptTensor, edge_attr: OptTensor)  # noqa
         out = self.propagate(edge_index=edge_index, edge_type=edge_type, x=x,
                              size=size, edge_attr=edge_attr)
@@ -347,7 +346,12 @@ class RGATConv(MessagePassing):
 
         if isinstance(return_attention_weights, bool):
             if isinstance(edge_index, Tensor):
-                return out, (edge_index, alpha)
+                if is_torch_sparse_tensor(edge_index):
+                    # TODO TorchScript requires to return a tuple
+                    adj = set_sparse_value(edge_index, alpha)
+                    return out, (adj, alpha)
+                else:
+                    return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
         else:
@@ -442,8 +446,8 @@ class RGATConv(MessagePassing):
         elif self.mod == "scaled":
             if self.attention_mode == "additive-self-attention":
                 ones = alpha.new_ones(index.size())
-                degree = scatter_add(ones, index,
-                                     dim_size=size_i)[index].unsqueeze(-1)
+                degree = scatter(ones, index, dim_size=size_i,
+                                 reduce='sum')[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
                 degree = self.activation(degree)
                 degree = torch.matmul(degree, self.l2) + self.b2
@@ -454,8 +458,8 @@ class RGATConv(MessagePassing):
                     degree.view(-1, 1, self.out_channels))
             elif self.attention_mode == "multiplicative-self-attention":
                 ones = alpha.new_ones(index.size())
-                degree = scatter_add(ones, index,
-                                     dim_size=size_i)[index].unsqueeze(-1)
+                degree = scatter(ones, index, dim_size=size_i,
+                                 reduce='sum')[index].unsqueeze(-1)
                 degree = torch.matmul(degree, self.l1) + self.b1
                 degree = self.activation(degree)
                 degree = torch.matmul(degree, self.l2) + self.b2
@@ -470,8 +474,8 @@ class RGATConv(MessagePassing):
 
         elif self.mod == "f-scaled":
             ones = alpha.new_ones(index.size())
-            degree = scatter_add(ones, index,
-                                 dim_size=size_i)[index].unsqueeze(-1)
+            degree = scatter(ones, index, dim_size=size_i,
+                             reduce='sum')[index].unsqueeze(-1)
             alpha = alpha * degree
 
         elif self.training and self.dropout > 0:

@@ -5,7 +5,6 @@ from typing import Callable, List, Optional
 import numpy as np
 import scipy.sparse as sp
 import torch
-from torch_sparse import coalesce
 
 from torch_geometric.data import (
     Data,
@@ -13,6 +12,7 @@ from torch_geometric.data import (
     download_url,
     extract_zip,
 )
+from torch_geometric.utils import coalesce
 
 
 class Reddit(InMemoryDataset):
@@ -21,7 +21,7 @@ class Reddit(InMemoryDataset):
     Reddit posts belonging to different communities.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -31,19 +31,20 @@ class Reddit(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 232,965
-              - 114,615,892
-              - 602
-              - 41
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 232,965
+          - 114,615,892
+          - 602
+          - 41
     """
 
     url = 'https://data.dgl.ai/dataset/reddit.zip'
@@ -80,7 +81,7 @@ class Reddit(InMemoryDataset):
         row = torch.from_numpy(adj.row).to(torch.long)
         col = torch.from_numpy(adj.col).to(torch.long)
         edge_index = torch.stack([row, col], dim=0)
-        edge_index, _ = coalesce(edge_index, None, x.size(0), x.size(0))
+        edge_index = coalesce(edge_index, num_nodes=x.size(0))
 
         data = Data(x=x, edge_index=edge_index, y=y)
         data.train_mask = split == 1

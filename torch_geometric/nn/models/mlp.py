@@ -1,5 +1,6 @@
+import inspect
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, Final, List, Optional, Union
 
 import torch
 import torch.nn.functional as F
@@ -71,6 +72,8 @@ class MLP(torch.nn.Module):
             bias per layer. (default: :obj:`True`)
         **kwargs (optional): Additional deprecated arguments of the MLP layer.
     """
+    supports_norm_batch: Final[bool]
+
     def __init__(
         self,
         channel_list: Optional[Union[List[int], int]] = None,
@@ -105,7 +108,14 @@ class MLP(torch.nn.Module):
             in_channels = channel_list
 
         if in_channels is not None:
-            assert num_layers >= 1
+            if num_layers is None:
+                raise ValueError("Argument `num_layers` must be given")
+            if num_layers > 1 and hidden_channels is None:
+                raise ValueError(f"Argument `hidden_channels` must be given "
+                                 f"for `num_layers={num_layers}`")
+            if out_channels is None:
+                raise ValueError("Argument `out_channels` must be given")
+
             channel_list = [hidden_channels] * (num_layers - 1)
             channel_list = [in_channels] + channel_list + [out_channels]
 
@@ -153,6 +163,11 @@ class MLP(torch.nn.Module):
                 norm_layer = Identity()
             self.norms.append(norm_layer)
 
+        self.supports_norm_batch = False
+        if len(self.norms) > 0 and hasattr(self.norms[0], 'forward'):
+            norm_params = inspect.signature(self.norms[0].forward).parameters
+            self.supports_norm_batch = 'batch' in norm_params
+
         self.reset_parameters()
 
     @property
@@ -171,23 +186,56 @@ class MLP(torch.nn.Module):
         return len(self.channel_list) - 1
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for lin in self.lins:
             lin.reset_parameters()
         for norm in self.norms:
             if hasattr(norm, 'reset_parameters'):
                 norm.reset_parameters()
 
-    def forward(self, x: Tensor, return_emb: NoneType = None) -> Tensor:
-        """"""
+    def forward(
+        self,
+        x: Tensor,
+        batch: Optional[Tensor] = None,
+        batch_size: Optional[int] = None,
+        return_emb: NoneType = None,
+    ) -> Tensor:
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given.
+                Only needs to be passed in case the underlying normalization
+                layers require the :obj:`batch` information.
+                (default: :obj:`None`)
+            return_emb (bool, optional): If set to :obj:`True`, will
+                additionally return the embeddings before execution of the
+                final output layer. (default: :obj:`False`)
+        """
+        # `return_emb` is annotated here as `NoneType` to be compatible with
+        # TorchScript, which does not support different return types based on
+        # the value of an input argument.
+        emb: Optional[Tensor] = None
+
         for i, (lin, norm) in enumerate(zip(self.lins, self.norms)):
             x = lin(x)
             if self.act is not None and self.act_first:
                 x = self.act(x)
-            x = norm(x)
+            if self.supports_norm_batch:
+                x = norm(x, batch, batch_size)
+            else:
+                x = norm(x)
             if self.act is not None and not self.act_first:
                 x = self.act(x)
             x = F.dropout(x, p=self.dropout[i], training=self.training)
-            emb = x
+            if isinstance(return_emb, bool) and return_emb is True:
+                emb = x
 
         if self.plain_last:
             x = self.lins[-1](x)

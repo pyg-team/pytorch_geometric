@@ -9,10 +9,9 @@ torch_geometric.sampler
      {{ cls }}
    {% endfor %}
 
-.. autoclass:: torch_geometric.sampler.base.BaseSampler
+.. autoclass:: torch_geometric.sampler.BaseSampler
    :members:
 
 .. automodule:: torch_geometric.sampler
    :members:
-   :undoc-members:
-   :exclude-members: BaseSampler, sample_from_nodes, sample_from_edges, edge_permutation
+   :exclude-members: sample_from_nodes, sample_from_edges, edge_permutation, BaseSampler

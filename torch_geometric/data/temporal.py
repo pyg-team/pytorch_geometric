@@ -34,7 +34,7 @@ class TemporalData(BaseData):
     represented with these four values.
 
     In general, :class:`~torch_geometric.data.TemporalData` tries to mimic
-    the behaviour of a regular Python dictionary.
+    the behavior of a regular Python dictionary.
     In addition, it provides useful functionality for analyzing graph
     structures, and provides basic PyTorch tensor functionalities.
 
@@ -72,13 +72,13 @@ class TemporalData(BaseData):
         events = events.to('cuda:0', non_blocking=True)
 
     Args:
-        src (Tensor, optional): A list of source nodes for the events with
-            shape :obj:`[num_events]`. (default: :obj:`None`)
-        dst (Tensor, optional): A list of destination nodes for the events
+        src (torch.Tensor, optional): A list of source nodes for the events
             with shape :obj:`[num_events]`. (default: :obj:`None`)
-        t (Tensor, optional): The timestamps for each event with shape
+        dst (torch.Tensor, optional): A list of destination nodes for the
+            events with shape :obj:`[num_events]`. (default: :obj:`None`)
+        t (torch.Tensor, optional): The timestamps for each event with shape
             :obj:`[num_events]`. (default: :obj:`None`)
-        msg (Tensor, optional): Messages feature matrix with shape
+        msg (torch.Tensor, optional): Messages feature matrix with shape
             :obj:`[num_events, num_msg_features]`. (default: :obj:`None`)
         **kwargs (optional): Additional attributes.
 
@@ -104,6 +104,12 @@ class TemporalData(BaseData):
 
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+    @classmethod
+    def from_dict(cls, mapping: Dict[str, Any]) -> 'TemporalData':
+        r"""Creates a :class:`~torch_geometric.data.TemporalData` object from
+        a Python dictionary."""
+        return cls(**mapping)
 
     def index_select(self, idx: Any) -> 'TemporalData':
         idx = prepare_idx(idx)
@@ -211,6 +217,16 @@ class TemporalData(BaseData):
     def num_edges(self) -> int:
         r"""Alias for :meth:`~torch_geometric.data.TemporalData.num_events`."""
         return self.num_events
+
+    @property
+    def edge_index(self) -> Tensor:
+        r"""Returns the edge indices of the graph."""
+        if 'edge_index' in self:
+            return self._store['edge_index']
+        if self.src is not None and self.dst is not None:
+            return torch.stack([self.src, self.dst], dim=0)
+        raise ValueError(f"{self.__class__.__name__} does not contain "
+                         f"'edge_index' information")
 
     def size(
         self, dim: Optional[int] = None

@@ -16,9 +16,17 @@ def main():
     data = dataset[0]
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model = Node2Vec(data.edge_index, embedding_dim=128, walk_length=20,
-                     context_size=10, walks_per_node=10,
-                     num_negative_samples=1, p=1, q=1, sparse=True).to(device)
+    model = Node2Vec(
+        data.edge_index,
+        embedding_dim=128,
+        walk_length=20,
+        context_size=10,
+        walks_per_node=10,
+        num_negative_samples=1,
+        p=1,
+        q=1,
+        sparse=True,
+    ).to(device)
 
     num_workers = 0 if sys.platform.startswith('win') else 4
     loader = model.loader(batch_size=128, shuffle=True,
@@ -48,7 +56,7 @@ def main():
     for epoch in range(1, 101):
         loss = train()
         acc = test()
-        print(f'Epoch: {epoch:02d}, Loss: {loss:.4f}, Acc: {acc:.4f}')
+        print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Acc: {acc:.4f}')
 
     @torch.no_grad()
     def plot_points(colors):

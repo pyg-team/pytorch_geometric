@@ -6,6 +6,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.typing import Adj
 
 
@@ -56,8 +57,11 @@ class InvertibleFunction(torch.autograd.Function):
         # Detaches outputs in-place, allows discarding the intermedate result:
         detached_outputs = tuple(element.detach_() for element in outputs)
 
-        # Clear memory of node features
-        inputs[0].storage().resize_(0)
+        # Clear memory of node features:
+        if torch_geometric.typing.WITH_PT20:
+            inputs[0].untyped_storage().resize_(0)
+        else:  # pragma: no cover
+            inputs[0].storage().resize_(0)
 
         # Store these tensor nodes for backward passes:
         ctx.inputs = [inputs] * num_bwd_passes
@@ -81,13 +85,21 @@ class InvertibleFunction(torch.autograd.Function):
             inputs_inverted = ctx.fn_inverse(*(outputs + inputs[1:]))
             if len(ctx.outputs) == 0:  # Clear memory from outputs:
                 for element in outputs:
-                    element.storage().resize_(0)
+                    if torch_geometric.typing.WITH_PT20:
+                        element.untyped_storage().resize_(0)
+                    else:  # pragma: no cover
+                        element.storage().resize_(0)
 
             if not isinstance(inputs_inverted, tuple):
                 inputs_inverted = (inputs_inverted, )
 
             for elem_orig, elem_inv in zip(inputs, inputs_inverted):
-                elem_orig.storage().resize_(int(np.prod(elem_orig.size())))
+                if torch_geometric.typing.WITH_PT20:
+                    elem_orig.untyped_storage().resize_(
+                        int(np.prod(elem_orig.size())) *
+                        elem_orig.element_size())
+                else:  # pragma: no cover
+                    elem_orig.storage().resize_(int(np.prod(elem_orig.size())))
                 elem_orig.set_(elem_inv)
 
         # Compute gradients with grad enabled:
@@ -150,6 +162,7 @@ class InvertibleModule(torch.nn.Module, ABC):
         self.num_bwd_passes = num_bwd_passes
 
     def forward(self, *args):
+        """"""
         return self._fn_apply(args, self._forward, self._inverse)
 
     def inverse(self, *args):
@@ -212,9 +225,9 @@ class GroupAddRev(InvertibleModule):
     Args:
         conv (torch.nn.Module or torch.nn.ModuleList]): A seed GNN. The input
             and output feature dimensions need to match.
-        split_dim (int optional): The dimension across which to split groups.
+        split_dim (int, optional): The dimension across which to split groups.
             (default: :obj:`-1`)
-        num_groups (Optional[int], optional): The number of groups :math:`C`.
+        num_groups (int, optional): The number of groups :math:`C`.
             (default: :obj:`None`)
         disable (bool, optional): If set to :obj:`True`, will disable the usage
             of :class:`InvertibleFunction` and will execute the module without
@@ -251,10 +264,10 @@ class GroupAddRev(InvertibleModule):
 
     @property
     def num_groups(self) -> int:
-        r"""The number of groups :math:`C`."""
         return len(self.convs)
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         for conv in self.convs:
             conv.reset_parameters()
 

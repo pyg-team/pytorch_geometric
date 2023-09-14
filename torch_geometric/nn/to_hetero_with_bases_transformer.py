@@ -5,12 +5,11 @@ from typing import Any, Dict, List, Optional, Union
 import torch
 from torch import Tensor
 from torch.nn import Module, Parameter
-from torch_sparse import SparseTensor
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense import Linear
 from torch_geometric.nn.fx import Transformer
-from torch_geometric.typing import EdgeType, Metadata, NodeType
+from torch_geometric.typing import EdgeType, Metadata, NodeType, SparseTensor
 from torch_geometric.utils.hetero import get_unused_node_types
 
 try:
@@ -146,23 +145,35 @@ class ToHeteroWithBasesTransformer(Transformer):
     ):
         super().__init__(module, input_map, debug)
 
-        unused_node_types = get_unused_node_types(*metadata)
-        if len(unused_node_types) > 0:
-            warnings.warn(
-                f"There exist node types ({unused_node_types}) whose "
-                f"representations do not get updated during message passing "
-                f"as they do not occur as destination type in any edge type. "
-                f"This may lead to unexpected behaviour.")
-
         self.metadata = metadata
         self.num_bases = num_bases
         self.in_channels = in_channels or {}
         assert len(metadata) == 2
         assert len(metadata[0]) > 0 and len(metadata[1]) > 0
 
+        self.validate()
+
         # Compute IDs for each node and edge type:
         self.node_type2id = {k: i for i, k in enumerate(metadata[0])}
         self.edge_type2id = {k: i for i, k in enumerate(metadata[1])}
+
+    def validate(self):
+        unused_node_types = get_unused_node_types(*self.metadata)
+        if len(unused_node_types) > 0:
+            warnings.warn(
+                f"There exist node types ({unused_node_types}) whose "
+                f"representations do not get updated during message passing "
+                f"as they do not occur as destination type in any edge type. "
+                f"This may lead to unexpected behavior.")
+
+        names = self.metadata[0] + [rel for _, rel, _ in self.metadata[1]]
+        for name in names:
+            if not name.isidentifier():
+                warnings.warn(
+                    f"The type '{name}' contains invalid characters which "
+                    f"may lead to unexpected behavior. To avoid any issues, "
+                    f"ensure that your types only contain letters, numbers "
+                    f"and underscores.")
 
     def transform(self) -> GraphModule:
         self._node_offset_dict_initialized = False
@@ -334,7 +345,7 @@ class HeteroBasisConv(torch.nn.Module):
             # We learn a single scalar weight for each individual edge type,
             # which is used to weight the output message based on edge type:
             conv.edge_type_weight = Parameter(
-                torch.Tensor(1, num_relations, device=device))
+                torch.empty(1, num_relations, device=device))
             conv.register_message_forward_hook(hook)
             self.convs.append(conv)
 
@@ -382,10 +393,7 @@ class LinearAlign(torch.nn.Module):
     def forward(
         self, x_dict: Dict[Union[NodeType, EdgeType], Tensor]
     ) -> Dict[Union[NodeType, EdgeType], Tensor]:
-
-        for key, x in x_dict.items():
-            x_dict[key] = self.lins[key2str(key)](x)
-        return x_dict
+        return {key: self.lins[key2str(key)](x) for key, x in x_dict.items()}
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(num_relations={len(self.lins)}, '

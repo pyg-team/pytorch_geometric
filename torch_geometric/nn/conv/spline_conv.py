@@ -7,10 +7,9 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
+from torch_geometric.nn.inits import uniform, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils.repeat import repeat
-
-from ..inits import uniform, zeros
 
 try:
     from torch_spline_conv import spline_basis, spline_weighting
@@ -49,7 +48,7 @@ class SplineConv(MessagePassing):
             operator will use a closed B-spline basis in this dimension.
             (default :obj:`True`)
         degree (int, optional): B-spline basis degrees. (default: :obj:`1`)
-        aggr (string, optional): The aggregation operator to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
@@ -98,7 +97,7 @@ class SplineConv(MessagePassing):
 
         if in_channels[0] > 0:
             self.weight = Parameter(
-                torch.Tensor(self.K, in_channels[0], out_channels))
+                torch.empty(self.K, in_channels[0], out_channels))
         else:
             self.weight = torch.nn.parameter.UninitializedParameter()
             self._hook = self.register_forward_pre_hook(
@@ -109,13 +108,14 @@ class SplineConv(MessagePassing):
                               weight_initializer='uniform')
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         if not isinstance(self.weight, nn.UninitializedParameter):
             size = self.weight.size(0) * self.weight.size(1)
             uniform(size, self.weight)
@@ -125,7 +125,7 @@ class SplineConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: OptPairTensor = (x, x)
 

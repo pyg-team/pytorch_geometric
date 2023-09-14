@@ -16,7 +16,7 @@ class Yelp(InMemoryDataset):
     containing customer reviewers and their friendship.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
+        root (str): Root directory where the dataset should be saved.
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -26,19 +26,20 @@ class Yelp(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #tasks
-            * - 716,847
-              - 13,954,819
-              - 300
-              - 100
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #tasks
+        * - 716,847
+          - 13,954,819
+          - 300
+          - 100
     """
     url = 'https://docs.google.com/uc?export=download&id={}&confirm=t'
 

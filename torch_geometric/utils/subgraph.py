@@ -3,10 +3,10 @@ from typing import List, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.typing import PairTensor
-
-from .mask import index_to_mask
-from .num_nodes import maybe_num_nodes
+from torch_geometric.typing import OptTensor, PairTensor
+from torch_geometric.utils.map import map_index
+from torch_geometric.utils.mask import index_to_mask
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def get_num_hops(model: torch.nn.Module) -> int:
@@ -40,11 +40,11 @@ def get_num_hops(model: torch.nn.Module) -> int:
 def subgraph(
     subset: Union[Tensor, List[int]],
     edge_index: Tensor,
-    edge_attr: Optional[Tensor] = None,
+    edge_attr: OptTensor = None,
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
     return_edge_mask: bool = False,
-) -> Tuple[Tensor, Tensor]:
+) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
     r"""Returns the induced subgraph of :obj:`(edge_index, edge_attr)`
     containing the nodes in :obj:`subset`.
 
@@ -88,22 +88,26 @@ def subgraph(
     if isinstance(subset, (list, tuple)):
         subset = torch.tensor(subset, dtype=torch.long, device=device)
 
-    if subset.dtype == torch.bool or subset.dtype == torch.uint8:
-        num_nodes = subset.size(0)
-    else:
+    if subset.dtype != torch.bool:
         num_nodes = maybe_num_nodes(edge_index, num_nodes)
-        subset = index_to_mask(subset, size=num_nodes)
+        node_mask = index_to_mask(subset, size=num_nodes)
+    else:
+        num_nodes = subset.size(0)
+        node_mask = subset
+        subset = node_mask.nonzero().view(-1)
 
-    node_mask = subset
     edge_mask = node_mask[edge_index[0]] & node_mask[edge_index[1]]
     edge_index = edge_index[:, edge_mask]
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        node_idx = torch.zeros(node_mask.size(0), dtype=torch.long,
-                               device=device)
-        node_idx[subset] = torch.arange(subset.sum().item(), device=device)
-        edge_index = node_idx[edge_index]
+        edge_index, _ = map_index(
+            edge_index.view(-1),
+            subset,
+            max_index=num_nodes,
+            inclusive=True,
+        )
+        edge_index = edge_index.view(2, -1)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
@@ -114,11 +118,11 @@ def subgraph(
 def bipartite_subgraph(
     subset: Union[PairTensor, Tuple[List[int], List[int]]],
     edge_index: Tensor,
-    edge_attr: Optional[Tensor] = None,
+    edge_attr: OptTensor = None,
     relabel_nodes: bool = False,
-    size: Tuple[int, int] = None,
+    size: Optional[Tuple[int, int]] = None,
     return_edge_mask: bool = False,
-) -> Tuple[Tensor, Tensor]:
+) -> Union[Tuple[Tensor, OptTensor], Tuple[Tensor, OptTensor, OptTensor]]:
     r"""Returns the induced subgraph of the bipartite graph
     :obj:`(edge_index, edge_attr)` containing the nodes in :obj:`subset`.
 
@@ -161,35 +165,38 @@ def bipartite_subgraph(
 
     device = edge_index.device
 
-    if isinstance(subset[0], (list, tuple)):
-        subset = (torch.tensor(subset[0], dtype=torch.long, device=device),
-                  torch.tensor(subset[1], dtype=torch.long, device=device))
+    src_subset, dst_subset = subset
+    if not isinstance(src_subset, Tensor):
+        src_subset = torch.tensor(src_subset, dtype=torch.long, device=device)
+    if not isinstance(dst_subset, Tensor):
+        dst_subset = torch.tensor(dst_subset, dtype=torch.long, device=device)
 
-    if subset[0].dtype == torch.bool or subset[0].dtype == torch.uint8:
-        size = subset[0].size(0), subset[1].size(0)
+    if src_subset.dtype != torch.bool:
+        src_size = int(edge_index[0].max()) + 1 if size is None else size[0]
+        src_node_mask = index_to_mask(src_subset, size=src_size)
     else:
-        if size is None:
-            size = (maybe_num_nodes(edge_index[0]),
-                    maybe_num_nodes(edge_index[1]))
-        subset = (index_to_mask(subset[0], size=size[0]),
-                  index_to_mask(subset[1], size=size[1]))
+        src_size = src_subset.size(0)
+        src_node_mask = src_subset
+        src_subset = src_subset.nonzero().view(-1)
 
-    node_mask = subset
-    edge_mask = node_mask[0][edge_index[0]] & node_mask[1][edge_index[1]]
+    if dst_subset.dtype != torch.bool:
+        dst_size = int(edge_index[1].max()) + 1 if size is None else size[1]
+        dst_node_mask = index_to_mask(dst_subset, size=dst_size)
+    else:
+        dst_size = dst_subset.size(0)
+        dst_node_mask = dst_subset
+        dst_subset = dst_subset.nonzero().view(-1)
+
+    edge_mask = src_node_mask[edge_index[0]] & dst_node_mask[edge_index[1]]
     edge_index = edge_index[:, edge_mask]
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
 
     if relabel_nodes:
-        node_idx_i = torch.zeros(node_mask[0].size(0), dtype=torch.long,
-                                 device=device)
-        node_idx_j = torch.zeros(node_mask[1].size(0), dtype=torch.long,
-                                 device=device)
-        node_idx_i[node_mask[0]] = torch.arange(node_mask[0].sum().item(),
-                                                device=device)
-        node_idx_j[node_mask[1]] = torch.arange(node_mask[1].sum().item(),
-                                                device=device)
-        edge_index = torch.stack(
-            [node_idx_i[edge_index[0]], node_idx_j[edge_index[1]]])
+        src_index, _ = map_index(edge_index[0], src_subset, max_index=src_size,
+                                 inclusive=True)
+        dst_index, _ = map_index(edge_index[1], dst_subset, max_index=dst_size,
+                                 inclusive=True)
+        edge_index = torch.stack([src_index, dst_index], dim=0)
 
     if return_edge_mask:
         return edge_index, edge_attr, edge_mask
@@ -204,6 +211,7 @@ def k_hop_subgraph(
     relabel_nodes: bool = False,
     num_nodes: Optional[int] = None,
     flow: str = 'source_to_target',
+    directed: bool = False,
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""Computes the induced subgraph of :obj:`edge_index` around all nodes in
     :attr:`node_idx` reachable within :math:`k` hops.
@@ -229,9 +237,11 @@ def k_hop_subgraph(
             starting from zero. (default: :obj:`False`)
         num_nodes (int, optional): The number of nodes, *i.e.*
             :obj:`max_val + 1` of :attr:`edge_index`. (default: :obj:`None`)
-        flow (string, optional): The flow direction of :math:`k`-hop
-            aggregation (:obj:`"source_to_target"` or
-            :obj:`"target_to_source"`). (default: :obj:`"source_to_target"`)
+        flow (str, optional): The flow direction of :math:`k`-hop aggregation
+            (:obj:`"source_to_target"` or :obj:`"target_to_source"`).
+            (default: :obj:`"source_to_target"`)
+        directed (bool, optional): If set to :obj:`False`, will include all
+            edges between all sampled nodes. (default: :obj:`True`)
 
     :rtype: (:class:`LongTensor`, :class:`LongTensor`, :class:`LongTensor`,
              :class:`BoolTensor`)
@@ -241,7 +251,7 @@ def k_hop_subgraph(
         >>> edge_index = torch.tensor([[0, 1, 2, 3, 4, 5],
         ...                            [2, 2, 4, 4, 6, 6]])
 
-        >>> # Center node 2, 2-hops
+        >>> # Center node 6, 2-hops
         >>> subset, edge_index, mapping, edge_mask = k_hop_subgraph(
         ...     6, 2, edge_index, relabel_nodes=True)
         >>> subset
@@ -304,7 +314,9 @@ def k_hop_subgraph(
 
     node_mask.fill_(False)
     node_mask[subset] = True
-    edge_mask = node_mask[row] & node_mask[col]
+
+    if not directed:
+        edge_mask = node_mask[row] & node_mask[col]
 
     edge_index = edge_index[:, edge_mask]
 

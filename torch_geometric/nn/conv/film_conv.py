@@ -3,13 +3,17 @@ from typing import Callable, Optional, Tuple, Union
 
 from torch import Tensor
 from torch.nn import ModuleList, ReLU
-from torch_sparse import SparseTensor, masked_select_nnz
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
-from torch_geometric.typing import Adj, OptTensor, PairTensor
-
-from ..inits import reset
+from torch_geometric.nn.inits import reset
+from torch_geometric.typing import (
+    Adj,
+    OptTensor,
+    PairTensor,
+    SparseTensor,
+    torch_sparse,
+)
 
 
 class FiLMConv(MessagePassing):
@@ -48,7 +52,7 @@ class FiLMConv(MessagePassing):
             linear layer. (default: :obj:`None`)
         act (callable, optional): Activation function :math:`\sigma`.
             (default: :meth:`torch.nn.ReLU()`)
-        aggr (string, optional): The aggregation scheme to use
+        aggr (str, optional): The aggregation scheme to use
             (:obj:`"add"`, :obj:`"mean"`, :obj:`"max"`).
             (default: :obj:`"mean"`)
         **kwargs (optional): Additional arguments of
@@ -104,6 +108,7 @@ class FiLMConv(MessagePassing):
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         for lin, film in zip(self.lins, self.films):
             lin.reset_parameters()
             reset(film)
@@ -112,7 +117,7 @@ class FiLMConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_type: OptTensor = None) -> Tensor:
-        """"""
+
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
@@ -133,9 +138,10 @@ class FiLMConv(MessagePassing):
                     edge_type = edge_index.storage.value()
                     assert edge_type is not None
                     mask = edge_type == i
-                    out = out + self.propagate(
-                        masked_select_nnz(edge_index, mask, layout='coo'),
-                        x=lin(x[0]), beta=beta, gamma=gamma, size=None)
+                    adj_t = torch_sparse.masked_select_nnz(
+                        edge_index, mask, layout='coo')
+                    out = out + self.propagate(adj_t, x=lin(x[0]), beta=beta,
+                                               gamma=gamma, size=None)
                 else:
                     assert edge_type is not None
                     mask = edge_type == i

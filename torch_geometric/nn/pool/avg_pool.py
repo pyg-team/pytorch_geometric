@@ -1,13 +1,11 @@
 from typing import Callable, Optional, Tuple
 
 from torch import Tensor
-from torch_scatter import scatter
 
 from torch_geometric.data import Batch, Data
-from torch_geometric.utils import add_self_loops
-
-from .consecutive import consecutive_cluster
-from .pool import pool_batch, pool_edge, pool_pos
+from torch_geometric.nn.pool.consecutive import consecutive_cluster
+from torch_geometric.nn.pool.pool import pool_batch, pool_edge, pool_pos
+from torch_geometric.utils import add_self_loops, scatter
 
 
 def _avg_pool_x(
@@ -22,6 +20,7 @@ def avg_pool_x(
     cluster: Tensor,
     x: Tensor,
     batch: Tensor,
+    batch_size: Optional[int] = None,
     size: Optional[int] = None,
 ) -> Tuple[Tensor, Optional[Tensor]]:
     r"""Average pools node features according to the clustering defined in
@@ -29,20 +28,24 @@ def avg_pool_x(
     See :meth:`torch_geometric.nn.pool.max_pool_x` for more details.
 
     Args:
-        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
-            \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
-        x (Tensor): Node feature matrix
-            :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times F}`.
-        batch (LongTensor): Batch vector :math:`\mathbf{b} \in {\{ 0, \ldots,
-            B-1\}}^N`, which assigns each node to a specific example.
+        cluster (torch.Tensor): The cluster vector
+            :math:`\mathbf{c} \in \{ 0, \ldots, N - 1 \}^N`, which assigns each
+            node to a specific cluster.
+        x (Tensor): The node feature matrix.
+        batch (torch.Tensor): The batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
+            node to a specific example.
+        batch_size (int, optional): The number of examples :math:`B`.
+            Automatically calculated if not given. (default: :obj:`None`)
         size (int, optional): The maximum number of clusters in a single
             example. (default: :obj:`None`)
 
-    :rtype: (:class:`Tensor`, :class:`LongTensor`) if :attr:`size` is
-        :obj:`None`, else :class:`Tensor`
+    :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`) if :attr:`size` is
+        :obj:`None`, else :class:`torch.Tensor`
     """
     if size is not None:
-        batch_size = int(batch.max().item()) + 1
+        if batch_size is None:
+            batch_size = int(batch.max().item()) + 1
         return _avg_pool_x(cluster, x, batch_size * size), None
 
     cluster, perm = consecutive_cluster(cluster)
@@ -65,8 +68,9 @@ def avg_pool(
     See :meth:`torch_geometric.nn.pool.max_pool` for more details.
 
     Args:
-        cluster (LongTensor): Cluster vector :math:`\mathbf{c} \in \{ 0,
-            \ldots, N - 1 \}^N`, which assigns each node to a specific cluster.
+        cluster (torch.Tensor): The cluster vector
+            :math:`\mathbf{c} \in \{ 0, \ldots, N - 1 \}^N`, which assigns each
+            node to a specific cluster.
         data (Data): Graph data object.
         transform (callable, optional): A function/transform that takes in the
             coarsened and pooled :obj:`torch_geometric.data.Data` object and

@@ -4,12 +4,12 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
-from torch_scatter import scatter_add
 
+from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.utils import softmax
+from torch_geometric.utils import scatter, softmax
 
 
 class HypergraphConv(MessagePassing):
@@ -45,6 +45,12 @@ class HypergraphConv(MessagePassing):
         out_channels (int): Size of each output sample.
         use_attention (bool, optional): If set to :obj:`True`, attention
             will be added to this layer. (default: :obj:`False`)
+        attention_mode (str, optional): The mode on how to compute attention.
+            If set to :obj:`"node"`, will compute attention scores of nodes
+            within all nodes belonging to the same hyperedge.
+            If set to :obj:`"edge"`, will compute attention scores of nodes
+            across all edges holding this node belongs to.
+            (default: :obj:`"node"`)
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
         concat (bool, optional): If set to :obj:`False`, the multi-head
@@ -68,15 +74,28 @@ class HypergraphConv(MessagePassing):
           hyperedge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F_{out})`
     """
-    def __init__(self, in_channels, out_channels, use_attention=False, heads=1,
-                 concat=True, negative_slope=0.2, dropout=0, bias=True,
-                 **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        use_attention: bool = False,
+        attention_mode: str = 'node',
+        heads: int = 1,
+        concat: bool = True,
+        negative_slope: float = 0.2,
+        dropout: float = 0,
+        bias: bool = True,
+        **kwargs,
+    ):
         kwargs.setdefault('aggr', 'add')
         super().__init__(flow='source_to_target', node_dim=0, **kwargs)
+
+        assert attention_mode in ['node', 'edge']
 
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.use_attention = use_attention
+        self.attention_mode = attention_mode
 
         if self.use_attention:
             self.heads = heads
@@ -85,7 +104,7 @@ class HypergraphConv(MessagePassing):
             self.dropout = dropout
             self.lin = Linear(in_channels, heads * out_channels, bias=False,
                               weight_initializer='glorot')
-            self.att = Parameter(torch.Tensor(1, heads, 2 * out_channels))
+            self.att = Parameter(torch.empty(1, heads, 2 * out_channels))
         else:
             self.heads = 1
             self.concat = True
@@ -93,41 +112,50 @@ class HypergraphConv(MessagePassing):
                               weight_initializer='glorot')
 
         if bias and concat:
-            self.bias = Parameter(torch.Tensor(heads * out_channels))
+            self.bias = Parameter(torch.empty(heads * out_channels))
         elif bias and not concat:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         self.lin.reset_parameters()
         if self.use_attention:
             glorot(self.att)
         zeros(self.bias)
 
+    @disable_dynamic_shapes(required_args=['num_edges'])
     def forward(self, x: Tensor, hyperedge_index: Tensor,
                 hyperedge_weight: Optional[Tensor] = None,
-                hyperedge_attr: Optional[Tensor] = None) -> Tensor:
-        r"""
+                hyperedge_attr: Optional[Tensor] = None,
+                num_edges: Optional[int] = None) -> Tensor:
+        r"""Runs the forward pass of the module.
+
         Args:
-            x (Tensor): Node feature matrix
+            x (torch.Tensor): Node feature matrix
                 :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
-            hyperedge_index (LongTensor): The hyperedge indices, *i.e.*
+            hyperedge_index (torch.Tensor): The hyperedge indices, *i.e.*
                 the sparse incidence matrix
                 :math:`\mathbf{H} \in {\{ 0, 1 \}}^{N \times M}` mapping from
                 nodes to edges.
-            hyperedge_weight (Tensor, optional): Hyperedge weights
+            hyperedge_weight (torch.Tensor, optional): Hyperedge weights
                 :math:`\mathbf{W} \in \mathbb{R}^M`. (default: :obj:`None`)
-            hyperedge_attr (Tensor, optional): Hyperedge feature matrix in
-                :math:`\mathbb{R}^{M \times F}`.
+            hyperedge_attr (torch.Tensor, optional): Hyperedge feature matrix
+                in :math:`\mathbb{R}^{M \times F}`.
                 These features only need to get passed in case
                 :obj:`use_attention=True`. (default: :obj:`None`)
+            num_edges (int, optional) : The number of edges :math:`M`.
+                (default: :obj:`None`)
         """
-        num_nodes, num_edges = x.size(0), 0
-        if hyperedge_index.numel() > 0:
-            num_edges = int(hyperedge_index[1].max()) + 1
+        num_nodes = x.size(0)
+
+        if num_edges is None:
+            num_edges = 0
+            if hyperedge_index.numel() > 0:
+                num_edges = int(hyperedge_index[1].max()) + 1
 
         if hyperedge_weight is None:
             hyperedge_weight = x.new_ones(num_edges)
@@ -145,16 +173,19 @@ class HypergraphConv(MessagePassing):
             x_j = hyperedge_attr[hyperedge_index[1]]
             alpha = (torch.cat([x_i, x_j], dim=-1) * self.att).sum(dim=-1)
             alpha = F.leaky_relu(alpha, self.negative_slope)
-            alpha = softmax(alpha, hyperedge_index[0], num_nodes=x.size(0))
+            if self.attention_mode == 'node':
+                alpha = softmax(alpha, hyperedge_index[1], num_nodes=x.size(0))
+            else:
+                alpha = softmax(alpha, hyperedge_index[0], num_nodes=x.size(0))
             alpha = F.dropout(alpha, p=self.dropout, training=self.training)
 
-        D = scatter_add(hyperedge_weight[hyperedge_index[1]],
-                        hyperedge_index[0], dim=0, dim_size=num_nodes)
+        D = scatter(hyperedge_weight[hyperedge_index[1]], hyperedge_index[0],
+                    dim=0, dim_size=num_nodes, reduce='sum')
         D = 1.0 / D
         D[D == float("inf")] = 0
 
-        B = scatter_add(x.new_ones(hyperedge_index.size(1)),
-                        hyperedge_index[1], dim=0, dim_size=num_edges)
+        B = scatter(x.new_ones(hyperedge_index.size(1)), hyperedge_index[1],
+                    dim=0, dim_size=num_edges, reduce='sum')
         B = 1.0 / B
         B[B == float("inf")] = 0
 

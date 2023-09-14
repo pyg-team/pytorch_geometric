@@ -4,13 +4,12 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor, nn
 from torch.nn import Parameter, ReLU
-from torch_sparse import SparseTensor, matmul
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.typing import Adj, OptTensor
-
-from ..inits import glorot, zeros
+from torch_geometric.nn.inits import glorot, zeros
+from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.utils import spmm
 
 
 class ARMAConv(MessagePassing):
@@ -77,10 +76,10 @@ class ARMAConv(MessagePassing):
         K, T, F_in, F_out = num_stacks, num_layers, in_channels, out_channels
         T = 1 if self.shared_weights else T
 
-        self.weight = Parameter(torch.Tensor(max(1, T - 1), K, F_out, F_out))
+        self.weight = Parameter(torch.empty(max(1, T - 1), K, F_out, F_out))
         if in_channels > 0:
-            self.init_weight = Parameter(torch.Tensor(K, F_in, F_out))
-            self.root_weight = Parameter(torch.Tensor(T, K, F_in, F_out))
+            self.init_weight = Parameter(torch.empty(K, F_in, F_out))
+            self.root_weight = Parameter(torch.empty(T, K, F_in, F_out))
         else:
             self.init_weight = torch.nn.parameter.UninitializedParameter()
             self.root_weight = torch.nn.parameter.UninitializedParameter()
@@ -88,13 +87,14 @@ class ARMAConv(MessagePassing):
                 self.initialize_parameters)
 
         if bias:
-            self.bias = Parameter(torch.Tensor(T, K, 1, F_out))
+            self.bias = Parameter(torch.empty(T, K, 1, F_out))
         else:
             self.register_parameter('bias', None)
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        super().reset_parameters()
         glorot(self.weight)
         if not isinstance(self.init_weight, torch.nn.UninitializedParameter):
             glorot(self.init_weight)
@@ -103,7 +103,6 @@ class ARMAConv(MessagePassing):
 
     def forward(self, x: Tensor, edge_index: Adj,
                 edge_weight: OptTensor = None) -> Tensor:
-        """"""
 
         if isinstance(edge_index, Tensor):
             edge_index, edge_weight = gcn_norm(  # yapf: disable
@@ -143,7 +142,7 @@ class ARMAConv(MessagePassing):
         return edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: SparseTensor, x: Tensor) -> Tensor:
-        return matmul(adj_t, x, reduce=self.aggr)
+        return spmm(adj_t, x, reduce=self.aggr)
 
     @torch.no_grad()
     def initialize_parameters(self, module, input):

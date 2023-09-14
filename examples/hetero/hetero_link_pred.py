@@ -14,7 +14,12 @@ parser.add_argument('--use_weighted_loss', action='store_true',
                     help='Whether to use weighted MSE loss.')
 args = parser.parse_args()
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
 dataset = MovieLens(path, model_name='all-MiniLM-L6-v2')
@@ -91,12 +96,6 @@ class Model(torch.nn.Module):
 
 
 model = Model(hidden_channels=32).to(device)
-
-# Due to lazy initialization, we need to run one model step so the number
-# of parameters can be inferred:
-with torch.no_grad():
-    model.encoder(train_data.x_dict, train_data.edge_index_dict)
-
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 

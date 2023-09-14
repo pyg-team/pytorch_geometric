@@ -3,9 +3,8 @@ from typing import Callable, List, Optional
 import torch
 
 from torch_geometric.data import download_url
+from torch_geometric.datasets.icews import EventDataset
 from torch_geometric.io import read_txt_array
-
-from .icews import EventDataset
 
 
 class GDELT(EventDataset):
@@ -15,8 +14,8 @@ class GDELT(EventDataset):
     events collected from 1/1/2018 to 1/31/2018 (15 minutes time granularity).
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        split (string): If :obj:`"train"`, loads the training dataset.
+        root (str): Root directory where the dataset should be saved.
+        split (str, optional): If :obj:`"train"`, loads the training dataset.
             If :obj:`"val"`, loads the validation dataset.
             If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
         transform (callable, optional): A function/transform that takes in an

@@ -1,17 +1,14 @@
 import torch
-import torch.nn as nn
 from torch.nn import Parameter
-from torch_scatter import scatter_add
 
 from torch_geometric.graphgym.config import cfg
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.utils import add_remaining_self_loops
+from torch_geometric.utils import add_remaining_self_loops, scatter
 
 
 class GeneralConvLayer(MessagePassing):
-    r"""General GNN layer
-    """
+    r"""A general GNN layer."""
     def __init__(self, in_channels, out_channels, improved=False, cached=False,
                  bias=True, **kwargs):
         super().__init__(aggr=cfg.gnn.agg, **kwargs)
@@ -22,13 +19,13 @@ class GeneralConvLayer(MessagePassing):
         self.cached = cached
         self.normalize = cfg.gnn.normalize_adj
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
         if cfg.gnn.self_msg == 'concat':
-            self.weight_self = Parameter(
-                torch.Tensor(in_channels, out_channels))
+            self.weight_self = Parameter(torch.empty(in_channels,
+                                                     out_channels))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -54,14 +51,13 @@ class GeneralConvLayer(MessagePassing):
             edge_index, edge_weight, fill_value, num_nodes)
 
         row, col = edge_index
-        deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+        deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
         deg_inv_sqrt = deg.pow(-0.5)
         deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
 
         return edge_index, deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
 
     def forward(self, x, edge_index, edge_weight=None, edge_feature=None):
-        """"""
         if cfg.gnn.self_msg == 'concat':
             x_self = torch.matmul(x, self.weight_self)
         x = torch.matmul(x, self.weight)
@@ -130,16 +126,26 @@ class GeneralEdgeConvLayer(MessagePassing):
         self.msg_direction = cfg.gnn.msg_direction
 
         if self.msg_direction == 'single':
-            self.linear_msg = nn.Linear(in_channels + edge_dim, out_channels,
-                                        bias=False)
+            self.linear_msg = torch.nn.Linear(
+                in_channels + edge_dim,
+                out_channels,
+                bias=False,
+            )
         else:
-            self.linear_msg = nn.Linear(in_channels * 2 + edge_dim,
-                                        out_channels, bias=False)
+            self.linear_msg = torch.nn.Linear(
+                in_channels * 2 + edge_dim,
+                out_channels,
+                bias=False,
+            )
         if cfg.gnn.self_msg == 'concat':
-            self.linear_self = nn.Linear(in_channels, out_channels, bias=False)
+            self.linear_self = torch.nn.Linear(
+                in_channels,
+                out_channels,
+                bias=False,
+            )
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -162,7 +168,7 @@ class GeneralEdgeConvLayer(MessagePassing):
             edge_index, edge_weight, fill_value, num_nodes)
 
         row, col = edge_index
-        deg = scatter_add(edge_weight, row, dim=0, dim_size=num_nodes)
+        deg = scatter(edge_weight, row, 0, num_nodes, reduce='sum')
         deg_inv_sqrt = deg.pow(-0.5)
         deg_inv_sqrt[deg_inv_sqrt == float('inf')] = 0
 

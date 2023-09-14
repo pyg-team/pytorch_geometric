@@ -24,12 +24,12 @@ def voxel_grid(
     cloud and clusters all points within the same voxel.
 
     Args:
-        pos (Tensor): Node position matrix
+        pos (torch.Tensor): Node position matrix
             :math:`\mathbf{X} \in \mathbb{R}^{(N_1 + \ldots + N_B) \times D}`.
         size (float or [float] or Tensor): Size of a voxel (in each dimension).
-        batch (LongTensor, optional): Batch vector :math:`\mathbf{b} \in {\{ 0,
-            \ldots,B-1\}}^N`, which assigns each node to a specific example.
-            (default: :obj:`None`)
+        batch (torch.Tensor, optional): Batch vector
+            :math:`\mathbf{b} \in {\{ 0, \ldots,B-1\}}^N`, which assigns each
+            node to a specific example. (default: :obj:`None`)
         start (float or [float] or Tensor, optional): Start coordinates of the
             grid (in each dimension). If set to :obj:`None`, will be set to the
             minimum coordinates found in :attr:`pos`. (default: :obj:`None`)
@@ -37,33 +37,35 @@ def voxel_grid(
             (in each dimension). If set to :obj:`None`, will be set to the
             maximum coordinates found in :attr:`pos`. (default: :obj:`None`)
 
-    :rtype: :class:`LongTensor`
+    :rtype: :class:`torch.Tensor`
     """
 
     if grid_cluster is None:
         raise ImportError('`voxel_grid` requires `torch-cluster`.')
 
     pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
-    num_nodes, dim = pos.size()
-
-    size = size.tolist() if torch.is_tensor(size) else size
-    start = start.tolist() if torch.is_tensor(start) else start
-    end = end.tolist() if torch.is_tensor(end) else end
-
-    size, start, end = repeat(size, dim), repeat(start, dim), repeat(end, dim)
+    dim = pos.size(1)
 
     if batch is None:
-        batch = torch.zeros(pos.shape[0], dtype=torch.long)
+        batch = pos.new_zeros(pos.size(0), dtype=torch.long)
 
-    pos = torch.cat([pos, batch.unsqueeze(-1).type_as(pos)], dim=-1)
-    size = size + [1]
-    start = None if start is None else start + [0]
-    end = None if end is None else end + [batch.max().item()]
+    pos = torch.cat([pos, batch.view(-1, 1).to(pos.dtype)], dim=-1)
 
-    size = torch.tensor(size, dtype=pos.dtype, device=pos.device)
+    if not isinstance(size, Tensor):
+        size = torch.tensor(size, dtype=pos.dtype, device=pos.device)
+    size = repeat(size, dim)
+    size = torch.cat([size, size.new_ones(1)])  # Add additional batch dim.
+
     if start is not None:
-        start = torch.tensor(start, dtype=pos.dtype, device=pos.device)
+        if not isinstance(start, Tensor):
+            start = torch.tensor(start, dtype=pos.dtype, device=pos.device)
+        start = repeat(start, dim)
+        start = torch.cat([start, start.new_zeros(1)])
+
     if end is not None:
-        end = torch.tensor(end, dtype=pos.dtype, device=pos.device)
+        if not isinstance(end, Tensor):
+            end = torch.tensor(end, dtype=pos.dtype, device=pos.device)
+        end = repeat(end, dim)
+        end = torch.cat([end, batch.max().unsqueeze(0)])
 
     return grid_cluster(pos, size, start, end)

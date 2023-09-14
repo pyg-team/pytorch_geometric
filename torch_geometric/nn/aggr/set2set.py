@@ -44,7 +44,6 @@ class Set2Set(Aggregation):
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
 
-        # TODO Currently, `to_dense_batch` can only operate on `index`:
         self.assert_index_present(index)
         self.assert_two_dimensional_input(x, dim)
 
@@ -57,7 +56,7 @@ class Set2Set(Aggregation):
             q = q.view(dim_size, self.in_channels)
             e = (x * q[index]).sum(dim=-1, keepdim=True)
             a = softmax(e, index, ptr, dim_size, dim)
-            r = self.reduce(a * x, index, ptr, dim_size, dim, reduce='add')
+            r = self.reduce(a * x, index, ptr, dim_size, dim, reduce='sum')
             q_star = torch.cat([q, r], dim=-1)
 
         return q_star

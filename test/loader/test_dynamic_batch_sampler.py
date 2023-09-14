@@ -1,5 +1,6 @@
 from typing import List
 
+import pytest
 import torch
 
 from torch_geometric.data import Data
@@ -37,7 +38,8 @@ def test_dataloader_with_dynamic_batches():
                                         num_steps=2)
     loader = DataLoader(data_list, batch_sampler=batch_sampler)
 
-    num_nodes_total = 0
-    for data in loader:
-        num_nodes_total += data.num_nodes
-    assert num_nodes_total == 601
+    with pytest.warns(UserWarning, match="is larger than 300 nodes"):
+        num_nodes_total = 0
+        for data in loader:
+            num_nodes_total += data.num_nodes
+        assert num_nodes_total == 601

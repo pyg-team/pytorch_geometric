@@ -2,9 +2,10 @@ from typing import Optional
 
 import torch
 from torch import Tensor
-from torch_scatter import scatter_mean
 
-from ..inits import ones, zeros
+from torch_geometric.nn.inits import ones, zeros
+from torch_geometric.typing import OptTensor
+from torch_geometric.utils import scatter
 
 
 class GraphNorm(torch.nn.Module):
@@ -32,27 +33,39 @@ class GraphNorm(torch.nn.Module):
         self.in_channels = in_channels
         self.eps = eps
 
-        self.weight = torch.nn.Parameter(torch.Tensor(in_channels))
-        self.bias = torch.nn.Parameter(torch.Tensor(in_channels))
-        self.mean_scale = torch.nn.Parameter(torch.Tensor(in_channels))
+        self.weight = torch.nn.Parameter(torch.empty(in_channels))
+        self.bias = torch.nn.Parameter(torch.empty(in_channels))
+        self.mean_scale = torch.nn.Parameter(torch.empty(in_channels))
 
         self.reset_parameters()
 
     def reset_parameters(self):
+        r"""Resets all learnable parameters of the module."""
         ones(self.weight)
         zeros(self.bias)
         ones(self.mean_scale)
 
-    def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
-        """"""
+    def forward(self, x: Tensor, batch: OptTensor = None,
+                batch_size: Optional[int] = None) -> Tensor:
+        r"""
+        Args:
+            x (torch.Tensor): The source tensor.
+            batch (torch.Tensor, optional): The batch vector
+                :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+                each element to a specific example. (default: :obj:`None`)
+            batch_size (int, optional): The number of examples :math:`B`.
+                Automatically calculated if not given. (default: :obj:`None`)
+        """
         if batch is None:
             batch = x.new_zeros(x.size(0), dtype=torch.long)
+            batch_size = 1
 
-        batch_size = int(batch.max()) + 1
+        if batch_size is None:
+            batch_size = int(batch.max()) + 1
 
-        mean = scatter_mean(x, batch, dim=0, dim_size=batch_size)
+        mean = scatter(x, batch, 0, batch_size, reduce='mean')
         out = x - mean.index_select(0, batch) * self.mean_scale
-        var = scatter_mean(out.pow(2), batch, dim=0, dim_size=batch_size)
+        var = scatter(out.pow(2), batch, 0, batch_size, reduce='mean')
         std = (var + self.eps).sqrt().index_select(0, batch)
         return self.weight * out / std + self.bias
 

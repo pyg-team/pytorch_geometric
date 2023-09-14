@@ -1,0 +1,169 @@
+[build-system]
+requires=["flit_core >=3.2,<4"]
+build-backend="flit_core.buildapi"
+
+[project]
+name="torch_geometric"
+version="2.4.0"
+authors=[
+    {name="Matthias Fey", email="matthias@pyg.org"},
+]
+description="Graph Neural Network Library for PyTorch"
+readme="README.md"
+requires-python=">=3.8"
+keywords=[
+    "deep-learning",
+    "pytorch",
+    "geometric-deep-learning",
+    "graph-neural-networks",
+    "graph-convolutional-networks",
+]
+classifiers=[
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3 :: Only",
+]
+dependencies=[
+    "tqdm",
+    "numpy",
+    "scipy",
+    "jinja2",
+    "requests",
+    "pyparsing",
+    "scikit-learn",
+    "psutil>=5.8.0",
+]
+
+[project.optional-dependencies]
+graphgym=[
+    "yacs",
+    "hydra-core",
+    "protobuf<4.21",
+    "pytorch-lightning",
+]
+modelhub=[
+    "huggingface_hub"
+]
+benchmark=[
+    "protobuf<4.21",
+    "wandb",
+    "pandas",
+    "networkx",
+    "matplotlib",
+]
+test=[
+    "pytest",
+    "pytest-cov",
+    "onnx",
+    "onnxruntime",
+]
+dev=[
+    "torch_geometric[test]",
+    "pre-commit",
+]
+full = [
+    "torch_geometric[graphgym, modelhub]",
+    "ase",
+    "h5py",
+    "numba",
+    "sympy",
+    "pandas",
+    "captum",
+    "rdflib",
+    "trimesh",
+    "networkx",
+    "graphviz",
+    "tabulate",
+    "matplotlib",
+    "pynndescent",
+    "torchmetrics",
+    "scikit-image",
+    "pytorch-memlab",
+    "pgmpy",
+    "opt_einsum",
+    "statsmodels",
+    "rdkit",
+]
+
+[project.urls]
+homepage="https://pyg.org"
+documentation="https://pytorch-geometric.readthedocs.io"
+repository="https://github.com/pyg-team/pytorch_geometric.git"
+changelog="https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md"
+
+[tool.flit.module]
+name="torch_geometric"
+
+[tool.yapf]
+based_on_style = "pep8"
+split_before_named_assigns = false
+blank_line_before_nested_class_or_def = false
+
+[tool.flake8]
+ignore = ["F811", "W503", "W504"]
+
+[tool.pyright]
+include = ["torch_geometric/utils/*"]
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+skip = [".gitignore", "__init__.py"]
+
+[tool.pytest.ini_options]
+addopts = "--capture=no"
+filterwarnings = [
+    "ignore:distutils:DeprecationWarning",
+    "ignore:'torch_geometric.contrib' contains experimental code:UserWarning",
+    # Filter `torch` warnings:
+    "ignore:The PyTorch API of nested tensors is in prototype stage:UserWarning",
+    "ignore:scatter_reduce():UserWarning",
+    "ignore:Sparse CSR tensor support is in beta state:UserWarning",
+    "ignore:Sparse CSC tensor support is in beta state:UserWarning",
+    "ignore:torch.distributed._sharded_tensor will be deprecated:DeprecationWarning",
+    # Filter `captum` warnings:
+    "ignore:Setting backward hooks on ReLU activations:UserWarning",
+    "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
+    # Filter `pytorch_lightning` warnings:
+    "ignore:GPU available but not used:UserWarning",
+]
+
+[tool.pylint.messages_control]
+disable = [
+    "import-outside-toplevel",
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "empty-docstring",
+    "import-error",
+    "too-many-arguments",
+    "arguments-differ",
+    "invalid-name",
+    "redefined-builtin",
+]
+attr-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
+argument-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
+variable-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
+generated-members = ["torch.*"]
+
+[tool.coverage.run]
+source = ["torch_geometric"]
+omit = [
+    "torch_geometric/datasets/*",
+    "torch_geometric/data/extract.py",
+    "torch_geometric/nn/data_parallel.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "pass",
+    "raise NotImplementedError",
+    "register_parameter",
+    "torch.cuda.is_available",
+]

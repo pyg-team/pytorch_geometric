@@ -9,7 +9,7 @@ def test_jumping_knowledge():
     xs = list([torch.randn(num_nodes, channels) for _ in range(num_layers)])
 
     model = JumpingKnowledge('cat')
-    assert model.__repr__() == 'JumpingKnowledge(cat)'
+    assert str(model) == 'JumpingKnowledge(cat)'
 
     out = model(xs)
     assert out.size() == (num_nodes, channels * num_layers)
@@ -19,7 +19,7 @@ def test_jumping_knowledge():
         assert torch.allclose(jit(xs), out)
 
     model = JumpingKnowledge('max')
-    assert model.__repr__() == 'JumpingKnowledge(max)'
+    assert str(model) == 'JumpingKnowledge(max)'
 
     out = model(xs)
     assert out.size() == (num_nodes, channels)
@@ -29,8 +29,8 @@ def test_jumping_knowledge():
         assert torch.allclose(jit(xs), out)
 
     model = JumpingKnowledge('lstm', channels, num_layers)
-    assert model.__repr__() == (f'JumpingKnowledge(lstm, channels='
-                                f'{channels}, layers={num_layers})')
+    assert str(model) == (f'JumpingKnowledge(lstm, channels='
+                          f'{channels}, layers={num_layers})')
 
     out = model(xs)
     assert out.size() == (num_nodes, channels)

@@ -24,10 +24,10 @@ class ExampleConv1(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -38,7 +38,6 @@ class ExampleConv1(MessagePassing):
         zeros(self.bias)
 
     def forward(self, batch):
-        """"""
         x, edge_index = batch.x, batch.edge_index
         x = torch.matmul(x, self.weight)
 
@@ -67,10 +66,10 @@ class ExampleConv2Layer(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
 
-        self.weight = Parameter(torch.Tensor(in_channels, out_channels))
+        self.weight = Parameter(torch.empty(in_channels, out_channels))
 
         if bias:
-            self.bias = Parameter(torch.Tensor(out_channels))
+            self.bias = Parameter(torch.empty(out_channels))
         else:
             self.register_parameter('bias', None)
 
@@ -81,7 +80,6 @@ class ExampleConv2Layer(MessagePassing):
         zeros(self.bias)
 
     def forward(self, x, edge_index):
-        """"""
         x = torch.matmul(x, self.weight)
 
         return self.propagate(edge_index, x=x)

@@ -3,18 +3,14 @@ from dataclasses import dataclass
 import pytest
 import torch
 
-from torch_geometric.data.feature_store import (
-    AttrView,
-    TensorAttr,
-    _field_status,
-)
-from torch_geometric.testing.feature_store import MyFeatureStore
+from torch_geometric.data import TensorAttr
+from torch_geometric.data.feature_store import AttrView, _FieldStatus
+from torch_geometric.testing import MyFeatureStore
 
 
 @dataclass
 class MyTensorAttrNoGroupName(TensorAttr):
-    def __init__(self, attr_name=_field_status.UNSET,
-                 index=_field_status.UNSET):
+    def __init__(self, attr_name=_FieldStatus.UNSET, index=_FieldStatus.UNSET):
         # Treat group_name as optional, and move it to the end
         super().__init__(None, attr_name, index)
 
@@ -27,12 +23,13 @@ class MyFeatureStoreNoGroupName(MyFeatureStore):
 
 def test_feature_store():
     store = MyFeatureStore()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    tensor = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]])
 
     group_name = 'A'
     attr_name = 'feat'
     index = torch.tensor([0, 1, 2])
     attr = TensorAttr(group_name, attr_name, index)
+    assert TensorAttr(group_name).update(attr) == attr
 
     # Normal API:
     store.put_tensor(tensor, attr)
@@ -41,7 +38,11 @@ def test_feature_store():
         store.get_tensor(group_name, attr_name, index=torch.tensor([0, 2])),
         tensor[torch.tensor([0, 2])],
     )
-    store.remove_tensor(group_name, attr_name, None)
+
+    assert store.update_tensor(tensor + 1, attr)
+    assert torch.equal(store.get_tensor(attr), tensor + 1)
+
+    store.remove_tensor(attr)
     with pytest.raises(KeyError):
         _ = store.get_tensor(attr)
 
@@ -49,7 +50,11 @@ def test_feature_store():
     view = store.view(group_name=group_name)
     view.attr_name = attr_name
     view['index'] = index
+    assert view != "not a 'AttrView' object"
     assert view == AttrView(store, TensorAttr(group_name, attr_name, index))
+    assert str(view) == ("AttrView(store=MyFeatureStore(), "
+                         "attr=TensorAttr(group_name='A', attr_name='feat', "
+                         "index=tensor([0, 1, 2])))")
 
     # Indexing:
     store[group_name, attr_name, index] = tensor
@@ -88,7 +93,7 @@ def test_feature_store():
 
 def test_feature_store_override():
     store = MyFeatureStoreNoGroupName()
-    tensor = torch.Tensor([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    tensor = torch.tensor([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0], [2.0, 2.0, 2.0]])
 
     attr_name = 'feat'
     index = torch.tensor([0, 1, 2])

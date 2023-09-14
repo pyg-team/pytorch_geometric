@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 
 import torch
@@ -85,13 +86,28 @@ class VarAggregation(Aggregation):
     .. math::
         \mathrm{var}(\mathcal{X}) = \mathrm{mean}(\{ \mathbf{x}_i^2 : x \in
         \mathcal{X} \}) - \mathrm{mean}(\mathcal{X})^2.
+
+    Args:
+        semi_grad (bool, optional): If set to :obj:`True`, will turn off
+            gradient calculation during :math:`E[X^2]` computation. Therefore,
+            only semi-gradients are used during backpropagation. Useful for
+            saving memory and accelerating backward computation.
+            (default: :obj:`False`)
     """
+    def __init__(self, semi_grad: bool = False):
+        super().__init__()
+        self.semi_grad = semi_grad
+
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         mean = self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
-        mean_2 = self.reduce(x * x, index, ptr, dim_size, dim, reduce='mean')
-        return mean_2 - mean * mean
+        if self.semi_grad:
+            with torch.no_grad():
+                mean2 = self.reduce(x * x, index, ptr, dim_size, dim, 'mean')
+        else:
+            mean2 = self.reduce(x * x, index, ptr, dim_size, dim, 'mean')
+        return mean2 - mean * mean
 
 
 class StdAggregation(Aggregation):
@@ -100,16 +116,26 @@ class StdAggregation(Aggregation):
 
     .. math::
         \mathrm{std}(\mathcal{X}) = \sqrt{\mathrm{var}(\mathcal{X})}.
+
+    Args:
+        semi_grad (bool, optional): If set to :obj:`True`, will turn off
+            gradient calculation during :math:`E[X^2]` computation. Therefore,
+            only semi-gradients are used during backpropagation. Useful for
+            saving memory and accelerating backward computation.
+            (default: :obj:`False`)
     """
-    def __init__(self):
+    def __init__(self, semi_grad: bool = False):
         super().__init__()
-        self.var_aggr = VarAggregation()
+        self.var_aggr = VarAggregation(semi_grad)
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
                 dim: int = -2) -> Tensor:
         var = self.var_aggr(x, index, ptr, dim_size, dim)
-        return torch.sqrt(var.relu() + 1e-5)
+        # Allow "undefined" gradient at `sqrt(0.0)`:
+        out = var.clamp(min=1e-5).sqrt()
+        out = out.masked_fill(out <= math.sqrt(1e-5), 0.0)
+        return out
 
 
 class SoftmaxAggregation(Aggregation):
@@ -133,8 +159,9 @@ class SoftmaxAggregation(Aggregation):
             (default: :obj:`False`)
         semi_grad (bool, optional): If set to :obj:`True`, will turn off
             gradient calculation during softmax computation. Therefore, only
-            semi-gradient is used during backpropagation. Useful for saving
-            memory when :obj:`t` is not learnable. (default: :obj:`False`)
+            semi-gradients are used during backpropagation. Useful for saving
+            memory and accelerating backward computation when :obj:`t` is not
+            learnable. (default: :obj:`False`)
         channels (int, optional): Number of channels to learn from :math:`t`.
             If set to a value greater than :obj:`1`, :math:`t` will be learned
             per input feature channel. This requires compatible shapes for the
@@ -158,7 +185,7 @@ class SoftmaxAggregation(Aggregation):
         self.semi_grad = semi_grad
         self.channels = channels
 
-        self.t = Parameter(torch.Tensor(channels)) if learn else t
+        self.t = Parameter(torch.empty(channels)) if learn else t
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -224,7 +251,7 @@ class PowerMeanAggregation(Aggregation):
         self.learn = learn
         self.channels = channels
 
-        self.p = Parameter(torch.Tensor(channels)) if learn else p
+        self.p = Parameter(torch.empty(channels)) if learn else p
         self.reset_parameters()
 
     def reset_parameters(self):

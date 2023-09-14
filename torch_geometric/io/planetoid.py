@@ -1,15 +1,13 @@
 import os.path as osp
-import sys
 import warnings
 from itertools import repeat
 
 import torch
-from torch_sparse import SparseTensor
-from torch_sparse import coalesce as coalesce_fn
 
 from torch_geometric.data import Data
 from torch_geometric.io import read_txt_array
-from torch_geometric.utils import remove_self_loops
+from torch_geometric.typing import SparseTensor
+from torch_geometric.utils import coalesce, index_to_mask, remove_self_loops
 
 try:
     import cPickle as pickle
@@ -31,9 +29,9 @@ def read_planetoid_data(folder, prefix):
         # as zero vectors to `tx` and `ty`.
         len_test_indices = (test_index.max() - test_index.min()).item() + 1
 
-        tx_ext = torch.zeros(len_test_indices, tx.size(1))
+        tx_ext = torch.zeros(len_test_indices, tx.size(1), dtype=tx.dtype)
         tx_ext[sorted_test_index - test_index.min(), :] = tx
-        ty_ext = torch.zeros(len_test_indices, ty.size(1))
+        ty_ext = torch.zeros(len_test_indices, ty.size(1), dtype=ty.dtype)
         ty_ext[sorted_test_index - test_index.min(), :] = ty
 
         tx, ty = tx_ext, ty_ext
@@ -94,35 +92,27 @@ def read_file(folder, prefix, name):
         return read_txt_array(path, dtype=torch.long)
 
     with open(path, 'rb') as f:
-        if sys.version_info > (3, 0):
-            warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
-            out = pickle.load(f, encoding='latin1')
-        else:
-            out = pickle.load(f)
+        warnings.filterwarnings('ignore', '.*`scipy.sparse.csr` name.*')
+        out = pickle.load(f, encoding='latin1')
 
     if name == 'graph':
         return out
 
     out = out.todense() if hasattr(out, 'todense') else out
-    out = torch.Tensor(out)
+    out = torch.from_numpy(out).to(torch.float)
     return out
 
 
-def edge_index_from_dict(graph_dict, num_nodes=None, coalesce=True):
+def edge_index_from_dict(graph_dict, num_nodes=None):
     row, col = [], []
     for key, value in graph_dict.items():
         row += repeat(key, len(value))
         col += value
     edge_index = torch.stack([torch.tensor(row), torch.tensor(col)], dim=0)
-    if coalesce:
-        # NOTE: There are some duplicated edges and self loops in the datasets.
-        #       Other implementations do not remove them!
-        edge_index, _ = remove_self_loops(edge_index)
-        edge_index, _ = coalesce_fn(edge_index, None, num_nodes, num_nodes)
+
+    # NOTE: There are some duplicated edges and self loops in the datasets.
+    #       Other implementations do not remove them!
+    edge_index, _ = remove_self_loops(edge_index)
+    edge_index = coalesce(edge_index, num_nodes=num_nodes)
+
     return edge_index
-
-
-def index_to_mask(index, size):
-    mask = torch.zeros((size, ), dtype=torch.bool)
-    mask[index] = 1
-    return mask

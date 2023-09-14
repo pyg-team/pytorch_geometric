@@ -1,13 +1,24 @@
 import multiprocessing as mp
+import warnings
+from typing import Optional
 
 import numpy as np
 import torch
+from torch import Tensor
 
 
-def geodesic_distance(pos, face, src=None, dest=None, norm=True,
-                      max_distance=None, num_workers=0):
+def geodesic_distance(
+    pos: Tensor,
+    face: Tensor,
+    src: Optional[Tensor] = None,
+    dst: Optional[Tensor] = None,
+    norm: bool = True,
+    max_distance: Optional[float] = None,
+    num_workers: int = 0,
+    **kwargs,
+) -> Tensor:
     r"""Computes (normalized) geodesic distances of a mesh given by :obj:`pos`
-    and :obj:`face`. If :obj:`src` and :obj:`dest` are given, this method only
+    and :obj:`face`. If :obj:`src` and :obj:`dst` are given, this method only
     computes the geodesic distances for the respective source and target
     node-pairs.
 
@@ -17,11 +28,11 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
         To install, run :obj:`pip install cython && pip install gdist`.
 
     Args:
-        pos (Tensor): The node positions.
-        face (LongTensor): The face indices.
-        src (LongTensor, optional): If given, only compute geodesic distances
+        pos (torch.Tensor): The node positions.
+        face (torch.Tensor): The face indices.
+        src (torch.Tensor, optional): If given, only compute geodesic distances
             for the specified source indices. (default: :obj:`None`)
-        dest (LongTensor, optional): If given, only compute geodesic distances
+        dst (torch.Tensor, optional): If given, only compute geodesic distances
             for the specified target indices. (default: :obj:`None`)
         norm (bool, optional): Normalizes geodesic distances by
             :math:`\sqrt{\textrm{area}(\mathcal{M})}`. (default: :obj:`True`)
@@ -34,14 +45,14 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
             :obj:`-1` means that the available amount of CPU cores is used.
             (default: :obj:`0`)
 
-    :rtype: Tensor
+    :rtype: :class:`Tensor`
 
     Example:
 
-        >>> pos = torch.Tensor([[0, 0, 0],
-        ...                     [2, 0, 0],
-        ...                     [0, 2, 0],
-        ...                     [2, 2, 0]])
+        >>> pos = torch.tensor([[0.0, 0.0, 0.0],
+        ...                     [2.0, 0.0, 0.0],
+        ...                     [0.0, 2.0, 0.0],
+        ...                     [2.0, 2.0, 0.0]])
         >>> face = torch.tensor([[0, 0],
         ...                      [1, 2],
         ...                      [3, 3]])
@@ -52,6 +63,12 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
         [1.4142135623730951, 1, 1, 0]]
     """
     import gdist
+
+    if 'dest' in kwargs:
+        dst = kwargs['dest']
+        warnings.warn("'dest' attribute in 'geodesic_distance' is deprecated "
+                      "and will be removed in a future release. Use the 'dst' "
+                      "argument instead.")
 
     max_distance = float('inf') if max_distance is None else max_distance
 
@@ -66,7 +83,7 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
     pos = pos.detach().cpu().to(torch.double).numpy()
     face = face.detach().t().cpu().to(torch.int).numpy()
 
-    if src is None and dest is None:
+    if src is None and dst is None:
         out = gdist.local_gdist_matrix(pos, face,
                                        max_distance * norm).toarray() / norm
         return torch.from_numpy(out).to(dtype)
@@ -76,11 +93,11 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
     else:
         src = src.detach().cpu().to(torch.int).numpy()
 
-    dest = None if dest is None else dest.detach().cpu().to(torch.int).numpy()
+    dst = None if dst is None else dst.detach().cpu().to(torch.int).numpy()
 
-    def _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype):
+    def _parallel_loop(pos, face, src, dst, max_distance, norm, i, dtype):
         s = src[i:i + 1]
-        d = None if dest is None else dest[i:i + 1]
+        d = None if dst is None else dst[i:i + 1]
         out = gdist.compute_gdist(pos, face, s, d, max_distance * norm) / norm
         return torch.from_numpy(out).to(dtype)
 
@@ -89,17 +106,17 @@ def geodesic_distance(pos, face, src=None, dest=None, norm=True,
         with mp.Pool(num_workers) as pool:
             outs = pool.starmap(
                 _parallel_loop,
-                [(pos, face, src, dest, max_distance, norm, i, dtype)
+                [(pos, face, src, dst, max_distance, norm, i, dtype)
                  for i in range(len(src))])
     else:
         outs = [
-            _parallel_loop(pos, face, src, dest, max_distance, norm, i, dtype)
+            _parallel_loop(pos, face, src, dst, max_distance, norm, i, dtype)
             for i in range(len(src))
         ]
 
     out = torch.cat(outs, dim=0)
 
-    if dest is None:
+    if dst is None:
         out = out.view(-1, pos.shape[0])
 
     return out

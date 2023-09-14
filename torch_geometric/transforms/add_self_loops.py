@@ -28,11 +28,11 @@ class AddSelfLoops(BaseTransform):
             :obj:`"min"`, :obj:`"max"`, :obj:`"mul"`). (default: :obj:`1.`)
     """
     def __init__(self, attr: Optional[str] = 'edge_weight',
-                 fill_value: Union[float, Tensor, str] = None):
+                 fill_value: Union[float, Tensor, str] = 1.0):
         self.attr = attr
         self.fill_value = fill_value
 
-    def __call__(
+    def forward(
         self,
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:

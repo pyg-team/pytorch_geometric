@@ -3,9 +3,9 @@ from typing import Callable, List, Optional
 
 import numpy as np
 import torch
-import torch.nn.functional as F
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.utils import one_hot
 
 
 class LINKXDataset(InMemoryDataset):
@@ -18,10 +18,10 @@ class LINKXDataset(InMemoryDataset):
         sources, but have been updated with new features and/or labels.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"penn94"`,
-            :obj:`"reed98"`, :obj:`"amherst41"`, :obj:`"cornell5"`,
-            :obj:`"johnshopkins55"`, :obj:`"genius"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"penn94"`, :obj:`"reed98"`,
+            :obj:`"amherst41"`, :obj:`"cornell5"`, :obj:`"johnshopkins55"`,
+            :obj:`"genius"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -132,7 +132,7 @@ class LINKXDataset(InMemoryDataset):
         x = torch.cat([metadata[:, :1], metadata[:, 2:]], dim=-1)
         for i in range(x.size(1)):
             _, out = x[:, i].unique(return_inverse=True)
-            xs.append(F.one_hot(out).to(torch.float))
+            xs.append(one_hot(out))
         x = torch.cat(xs, dim=-1)
 
         data = Data(x=x, edge_index=edge_index, y=y)

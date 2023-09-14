@@ -8,35 +8,24 @@ torch_geometric.nn
 
 .. currentmodule:: torch_geometric.nn.dense
 
-   {% for cls in torch_geometric.nn.dense.lin_classes %}
-.. autoclass:: {{ cls }}
+   {% for name in torch_geometric.nn.dense.lin_classes %}
+.. autoclass:: {{ name }}
    :members:
-   :undoc-members:
-   :exclude-members: training, initialize_parameters
    {% endfor %}
 
 Convolutional Layers
 --------------------
 
 .. currentmodule:: torch_geometric.nn.conv
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.conv.classes %}
-     {{ cls }}
+   :toctree: ../generated
+   :template: autosummary/nn.rst
+
+   {% for name in torch_geometric.nn.conv.classes %}
+     {{ name }}
    {% endfor %}
-
-.. autoclass:: torch_geometric.nn.conv.MessagePassing
-   :members:
-
-.. automodule:: torch_geometric.nn.conv
-   :members:
-   :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, initialize_parameters
-
-.. automodule:: torch_geometric.nn.meta
-   :members:
-   :undoc-members:
-   :exclude-members: training
 
 Aggregation Operators
 ---------------------
@@ -48,9 +37,10 @@ Specifically, many works in the literature (`Hamilton et al. (2017) <https://arx
 For example, **mean aggregation** captures the distribution (or proportions) of elements, **max aggregation** proves to be advantageous to identify representative elements, and **sum aggregation** enables the learning of structural graph properties (`Xu et al. (2018) <https://arxiv.org/abs/1810.00826>`__).
 Recent works also show that using **multiple aggregations** (`Corso et al. (2020) <https://arxiv.org/abs/2004.05718>`__, `Tailor et al. (2021) <https://arxiv.org/abs/2104.01481>`__) and **learnable aggregations** (`Li et al. (2020) <https://arxiv.org/abs/2006.07739>`__) can potentially provide substantial improvements.
 Another line of research studies optimization-based and implicitly-defined aggregations (`Bartunov et al. (2022) <https://arxiv.org/abs/2202.12795>`__).
+Furthermore, an interesting discussion concerns the trade-off between representational power (usually gained through learnable functions implemented as neural networks) and the formal property of permutation invariance (`Buterez et al. (2022) <https://arxiv.org/abs/2211.04952>`__).
 
-To facilitate further experimentation and unify the concepts of aggregation within GNNs across both :class:`~torch_geometric.nn.conv.MessagePassing` and global readouts, we have made the concept of :class:`~torch_geometric.nn.aggr.Aggregation` a first-class principle in PyG.
-As of now, PyG provides support for various aggregations --- from simple ones (*e.g.*, :obj:`mean`, :obj:`max`, :obj:`sum`), to advanced ones (*e.g.*, :obj:`median`, :obj:`var`, :obj:`std`), learnable ones (*e.g.*, :class:`~torch_geometric.nn.aggr.SoftmaxAggregation`, :class:`~torch_geometric.nn.aggr.PowerMeanAggregation`), and exotic ones (*e.g.*, :class:`~torch_geometric.nn.aggr.LSTMAggregation`, :class:`~torch_geometric.nn.aggr.SortAggregation`, :class:`~torch_geometric.nn.aggr.EquilibriumAggregation`):
+To facilitate further experimentation and unify the concepts of aggregation within GNNs across both :class:`~torch_geometric.nn.conv.MessagePassing` and global readouts, we have made the concept of :class:`~torch_geometric.nn.aggr.Aggregation` a first-class principle in :pyg:`PyG`.
+As of now, :pyg:`PyG` provides support for various aggregations --- from rather simple ones (*e.g.*, :obj:`mean`, :obj:`max`, :obj:`sum`), to advanced ones (*e.g.*, :obj:`median`, :obj:`var`, :obj:`std`), learnable ones (*e.g.*, :class:`~torch_geometric.nn.aggr.SoftmaxAggregation`, :class:`~torch_geometric.nn.aggr.PowerMeanAggregation`, :class:`~torch_geometric.nn.aggr.SetTransformerAggregation`), and exotic ones (*e.g.*, :class:`~torch_geometric.nn.aggr.MLPAggregation`, :class:`~torch_geometric.nn.aggr.LSTMAggregation`, :class:`~torch_geometric.nn.aggr.SortAggregation`, :class:`~torch_geometric.nn.aggr.EquilibriumAggregation`):
 
 .. code-block:: python
 
@@ -84,7 +74,7 @@ For this, an :obj:`index` vector defines the mapping from input elements to thei
 
    output = mean_aggr(x, index)  #  Output shape: [100, 64]
 
-Notably, all aggregations share the same set of forward arguments, as described in detail in :class:`torch_geometric.nn.aggr.Aggregation`.
+Notably, all aggregations share the same set of forward arguments, as described in detail in the :class:`torch_geometric.nn.aggr.Aggregation` base class.
 
 Each of the provided aggregations can be used within :class:`~torch_geometric.nn.conv.MessagePassing` as well as for hierachical/global pooling to obtain graph-level representations:
 
@@ -117,7 +107,7 @@ Each of the provided aggregations can be used within :class:`~torch_geometric.nn
             x = self.classifier(x)
             return x
 
-In addition, the aggregation package of PyG introduces two new concepts:
+In addition, the aggregation package of :pyg:`PyG` introduces two new concepts:
 First, aggregations can be **resolved from pure strings** via a lookup table, following the design principles of the `class-resolver <https://github.com/cthoyt/class-resolver>`__ library, *e.g.*, by simply passing in :obj:`"median"` to the :class:`~torch_geometric.nn.conv.MessagePassing` module.
 This will automatically resolve to the :obj:`~torch_geometric.nn.aggr.MedianAggregation` class:
 
@@ -145,87 +135,93 @@ For combining via attention, we need to additionally specify the :obj:`in_channe
 
 .. code-block:: python
 
-   multi_aggr = aggr.MultiAggregation(['mean', 'std'], in_channels=64,
-                                      out_channels=64, num_heads=4))
+   multi_aggr = aggr.MultiAggregation(
+       aggrs=['mean', 'std'],
+       mode='attn',
+       mode_kwargs=dict(in_channels=64, out_channels=64, num_heads=4),
+   )
 
 If aggregations are given as a list, they will be automatically resolved to a :class:`~torch_geometric.nn.aggr.MultiAggregation`, *e.g.*, :obj:`aggr=['mean', 'std', 'median']`.
 
 Finally, we added full support for customization of aggregations into the :class:`~torch_geometric.nn.conv.SAGEConv` layer --- simply override its :obj:`aggr` argument and **utilize the power of aggregation within your GNN**.
 
+.. note::
+
+   You can read more about the :class:`torch_geometric.nn.aggr` package in this [blog post](https://medium.com/@pytorch_geometric/a-principled-approach-to-aggregations-983c086b10b3).
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.aggr.classes %}
-     {{ cls }}
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.aggr.classes %}
+     {{ name }}
    {% endfor %}
-
-.. autoclass:: torch_geometric.nn.aggr.Aggregation
-   :members:
-
-.. automodule:: torch_geometric.nn.aggr
-   :members:
-   :exclude-members: Aggregation, forward
 
 Normalization Layers
 --------------------
 
 .. currentmodule:: torch_geometric.nn.norm
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.norm.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
 
-.. automodule:: torch_geometric.nn.norm
-   :members:
-   :undoc-members:
-   :exclude-members: training
+   {% for name in torch_geometric.nn.norm.classes %}
+     {{ name }}
+   {% endfor %}
 
 Pooling Layers
 --------------
 
 .. currentmodule:: torch_geometric.nn.pool
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.pool.classes %}
-     {{ cls }}
-   {% endfor %}
+   :toctree: ../generated
 
-.. automodule:: torch_geometric.nn.pool
-   :members:
-   :undoc-members:
-   :exclude-members: training
+   {% for name in torch_geometric.nn.pool.classes %}
+     {{ name }}
+   {% endfor %}
 
 Unpooling Layers
 ----------------
 
 .. currentmodule:: torch_geometric.nn.unpool
+
 .. autosummary::
    :nosignatures:
+   :toctree: ../generated
 
-   {% for cls in torch_geometric.nn.unpool.classes %}
-     {{ cls }}
+   {% for name in torch_geometric.nn.unpool.classes %}
+     {{ name }}
    {% endfor %}
-
-.. automodule:: torch_geometric.nn.unpool
-   :members:
-   :undoc-members:
-   :exclude-members: training
 
 Models
 ------
 
 .. currentmodule:: torch_geometric.nn.models
+
 .. autosummary::
    :nosignatures:
+   :toctree: ../generated
+   :template: autosummary/nn.rst
 
-   {% for cls in torch_geometric.nn.models.classes %}
-     {{ cls }}
+   {% for name in torch_geometric.nn.models.classes %}
+     {{ name }}
    {% endfor %}
 
-.. automodule:: torch_geometric.nn.models
-   :members:
-   :undoc-members:
-   :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv
+KGE Models
+----------
+
+.. currentmodule:: torch_geometric.nn.kge
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.kge.classes %}
+     {{ name }}
+   {% endfor %}
 
 Encodings
 ---------
@@ -239,15 +235,40 @@ Functional
 ----------
 
 .. py:currentmodule:: torch_geometric.nn.functional
+
 .. autosummary::
    :nosignatures:
-   {% for cls in torch_geometric.nn.functional.classes %}
-     {{ cls }}
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.functional.classes %}
+     {{ name }}
    {% endfor %}
 
-.. automodule:: torch_geometric.nn.functional
-   :members:
-   :undoc-members:
+Dense Convolutional Layers
+--------------------------
+
+.. currentmodule:: torch_geometric.nn.dense
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.dense.conv_classes %}
+     {{ name }}
+   {% endfor %}
+
+Dense Pooling Layers
+--------------------
+
+.. currentmodule:: torch_geometric.nn.dense
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.dense.pool_classes %}
+     {{ name }}
+   {% endfor %}
 
 Model Transformations
 ---------------------
@@ -261,45 +282,20 @@ Model Transformations
 
 .. autofunction:: torch_geometric.nn.to_hetero_with_bases_transformer.to_hetero_with_bases
 
-Dense Convolutional Layers
---------------------------
-
-.. currentmodule:: torch_geometric.nn.dense
-.. autosummary::
-   :nosignatures:
-   {% for cls in torch_geometric.nn.dense.conv_classes %}
-     {{ cls }}
-   {% endfor %}
-
-   {% for cls in torch_geometric.nn.dense.conv_classes %}
-.. autoclass:: {{ cls }}
-   :members:
-   :undoc-members:
-   :exclude-members: training
-   {% endfor %}
-
-Dense Pooling Layers
---------------------
-
-.. currentmodule:: torch_geometric.nn.dense
-.. autosummary::
-   :nosignatures:
-   {% for cls in torch_geometric.nn.dense.pool_classes %}
-     {{ cls }}
-   {% endfor %}
-
-
-   {% for cls in torch_geometric.nn.dense.pool_classes %}
-.. autoclass:: {{ cls }}
-   :members:
-   :undoc-members:
-   :exclude-members: training
-   {% endfor %}
-
 DataParallel Layers
 -------------------
 
 .. automodule:: torch_geometric.nn.data_parallel
    :members:
-   :undoc-members:
-   :exclude-members: training
+
+Model Hub
+---------
+
+.. automodule:: torch_geometric.nn.model_hub
+   :members:
+
+Model Summary
+-------------
+
+.. automodule:: torch_geometric.nn.summary
+   :members:

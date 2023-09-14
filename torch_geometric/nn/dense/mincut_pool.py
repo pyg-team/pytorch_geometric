@@ -9,6 +9,7 @@ def dense_mincut_pool(
     adj: Tensor,
     s: Tensor,
     mask: Optional[Tensor] = None,
+    temp: float = 1.0,
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
     r"""The MinCut pooling operator from the `"Spectral Clustering in Graph
     Neural Networks for Graph Pooling" <https://arxiv.org/abs/1907.00481>`_
@@ -41,22 +42,25 @@ def dense_mincut_pool(
         \right\|}_F.
 
     Args:
-        x (Tensor): Node feature tensor :math:`\mathbf{X} \in \mathbb{R}^{B
-            \times N \times F}` with batch-size :math:`B`, (maximum)
-            number of nodes :math:`N` for each graph, and feature dimension
-            :math:`F`.
-        adj (Tensor): Symmetrically normalized adjacency tensor
+        x (torch.Tensor): Node feature tensor
+            :math:`\mathbf{X} \in \mathbb{R}^{B \times N \times F}`, with
+            batch-size :math:`B`, (maximum) number of nodes :math:`N` for
+            each graph, and feature dimension :math:`F`.
+        adj (torch.Tensor): Adjacency tensor
             :math:`\mathbf{A} \in \mathbb{R}^{B \times N \times N}`.
-        s (Tensor): Assignment tensor :math:`\mathbf{S} \in \mathbb{R}^{B
-            \times N \times C}` with number of clusters :math:`C`. The softmax
-            does not have to be applied beforehand, since it is executed
-            within this method.
-        mask (BoolTensor, optional): Mask matrix
+        s (torch.Tensor): Assignment tensor
+            :math:`\mathbf{S} \in \mathbb{R}^{B \times N \times C}`
+            with number of clusters :math:`C`.
+            The softmax does not have to be applied before-hand, since it is
+            executed within this method.
+        mask (torch.Tensor, optional): Mask matrix
             :math:`\mathbf{M} \in {\{ 0, 1 \}}^{B \times N}` indicating
             the valid nodes for each graph. (default: :obj:`None`)
+        temp (float, optional): Temperature parameter for softmax function.
+            (default: :obj:`1.0`)
 
-    :rtype: (:class:`Tensor`, :class:`Tensor`, :class:`Tensor`,
-        :class:`Tensor`)
+    :rtype: (:class:`torch.Tensor`, :class:`torch.Tensor`,
+        :class:`torch.Tensor`, :class:`torch.Tensor`)
     """
 
     x = x.unsqueeze(0) if x.dim() == 2 else x
@@ -65,7 +69,7 @@ def dense_mincut_pool(
 
     (batch_size, num_nodes, _), k = x.size(), s.size(-1)
 
-    s = torch.softmax(s, dim=-1)
+    s = torch.softmax(s / temp if temp != 1.0 else s, dim=-1)
 
     if mask is not None:
         mask = mask.view(batch_size, num_nodes, 1).to(x.dtype)

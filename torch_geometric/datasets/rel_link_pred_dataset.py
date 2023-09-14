@@ -14,8 +14,8 @@ class RelLinkPredDataset(InMemoryDataset):
     Training and test splits are given by sets of triplets.
 
     Args:
-        root (string): Root directory where the dataset should be saved.
-        name (string): The name of the dataset (:obj:`"FB15k-237"`).
+        root (str): Root directory where the dataset should be saved.
+        name (str): The name of the dataset (:obj:`"FB15k-237"`).
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -25,19 +25,20 @@ class RelLinkPredDataset(InMemoryDataset):
             transformed version. The data object will be transformed before
             being saved to disk. (default: :obj:`None`)
 
-    Stats:
-        .. list-table::
-            :widths: 10 10 10 10
-            :header-rows: 1
+    **STATS:**
 
-            * - #nodes
-              - #edges
-              - #features
-              - #classes
-            * - 14,541
-              - 544,230
-              - 0
-              - 0
+    .. list-table::
+        :widths: 10 10 10 10
+        :header-rows: 1
+
+        * - #nodes
+          - #edges
+          - #features
+          - #classes
+        * - 14,541
+          - 544,230
+          - 0
+          - 0
     """
 
     urls = {
@@ -55,7 +56,7 @@ class RelLinkPredDataset(InMemoryDataset):
 
     @property
     def num_relations(self) -> int:
-        return int(self.data.edge_type.max()) + 1
+        return int(self._data.edge_type.max()) + 1
 
     @property
     def raw_dir(self) -> str:

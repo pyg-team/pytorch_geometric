@@ -1,39 +1,52 @@
 import copy
-from itertools import product
+import warnings
+from typing import List
 
 import pytest
 import torch
+from torch import Tensor
 from torch.nn import Linear as PTLinear
 from torch.nn.parameter import UninitializedParameter
 
-from torch_geometric.nn import HeteroLinear, Linear
-from torch_geometric.testing import is_full_test
+from torch_geometric.nn import HeteroDictLinear, HeteroLinear, Linear
+from torch_geometric.profile import benchmark
+from torch_geometric.testing import withCUDA, withPackage
+from torch_geometric.typing import pyg_lib
+from torch_geometric.utils import cumsum
 
 weight_inits = ['glorot', 'kaiming_uniform', None]
 bias_inits = ['zeros', None]
 
 
-@pytest.mark.parametrize('weight,bias', product(weight_inits, bias_inits))
-def test_linear(weight, bias):
-    x = torch.randn(3, 4, 16)
+@withCUDA
+@pytest.mark.parametrize('weight', weight_inits)
+@pytest.mark.parametrize('bias', bias_inits)
+def test_linear(weight, bias, device):
+    x = torch.randn(3, 4, 16, device=device)
     lin = Linear(16, 32, weight_initializer=weight, bias_initializer=bias)
+    lin = lin.to(device)
     assert str(lin) == 'Linear(16, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
 
 
-@pytest.mark.parametrize('weight,bias', product(weight_inits, bias_inits))
-def test_lazy_linear(weight, bias):
-    x = torch.randn(3, 4, 16)
+@withCUDA
+@pytest.mark.parametrize('weight', weight_inits)
+@pytest.mark.parametrize('bias', bias_inits)
+def test_lazy_linear(weight, bias, device):
+    x = torch.randn(3, 4, 16, device=device)
     lin = Linear(-1, 32, weight_initializer=weight, bias_initializer=bias)
+    lin = lin.to(device)
     assert str(lin) == 'Linear(-1, 32, bias=True)'
     assert lin(x).size() == (3, 4, 32)
     assert str(lin) == 'Linear(16, 32, bias=True)'
 
 
-@pytest.mark.parametrize('dim1,dim2', product([-1, 16], [-1, 16]))
-def test_load_lazy_linear(dim1, dim2):
-    lin1 = Linear(dim1, 32)
-    lin2 = Linear(dim1, 32)
+@withCUDA
+@pytest.mark.parametrize('dim1', [-1, 16])
+@pytest.mark.parametrize('dim2', [-1, 16])
+def test_load_lazy_linear(dim1, dim2, device):
+    lin1 = Linear(dim1, 32).to(device)
+    lin2 = Linear(dim1, 32).to(device)
     lin2.load_state_dict(lin1.state_dict())
 
     if dim1 != -1:
@@ -63,22 +76,24 @@ def test_identical_linear_default_initialization(lazy):
     torch.manual_seed(12345)
     lin2 = PTLinear(16, 32)
 
-    assert lin1.weight.tolist() == lin2.weight.tolist()
-    assert lin1.bias.tolist() == lin2.bias.tolist()
-    assert lin1(x).tolist() == lin2(x).tolist()
+    assert torch.equal(lin1.weight, lin2.weight)
+    assert torch.equal(lin1.bias, lin2.bias)
+    assert torch.allclose(lin1(x), lin2(x))
 
 
+@withPackage('torch<=1.12')
 def test_copy_unintialized_parameter():
     weight = UninitializedParameter()
     with pytest.raises(Exception):
         copy.deepcopy(weight)
 
 
+@withCUDA
 @pytest.mark.parametrize('lazy', [True, False])
-def test_copy_linear(lazy):
-    lin = Linear(-1 if lazy else 16, 32)
+def test_copy_linear(lazy, device):
+    lin = Linear(-1 if lazy else 16, 32).to(device)
 
-    copied_lin = copy.copy(lin)
+    copied_lin = copy.copy(lin).to(device)
     assert id(copied_lin) != id(lin)
     assert id(copied_lin.weight) == id(lin.weight)
     if not isinstance(copied_lin.weight, UninitializedParameter):
@@ -86,7 +101,7 @@ def test_copy_linear(lazy):
     assert id(copied_lin.bias) == id(lin.bias)
     assert copied_lin.bias.data_ptr() == lin.bias.data_ptr()
 
-    copied_lin = copy.deepcopy(lin)
+    copied_lin = copy.deepcopy(lin).to(device)
     assert id(copied_lin) != id(lin)
     assert id(copied_lin.weight) != id(lin.weight)
     if not isinstance(copied_lin.weight, UninitializedParameter):
@@ -98,16 +113,214 @@ def test_copy_linear(lazy):
         assert torch.allclose(copied_lin.bias, lin.bias)
 
 
-def test_hetero_linear():
-    x = torch.randn((3, 16))
-    node_type = torch.tensor([0, 1, 2])
+@withCUDA
+def test_hetero_linear(device):
+    x = torch.randn(3, 16, device=device)
+    type_vec = torch.tensor([0, 1, 2], device=device)
 
-    lin = HeteroLinear(in_channels=16, out_channels=32, num_types=3)
+    lin = HeteroLinear(16, 32, num_types=3).to(device)
     assert str(lin) == 'HeteroLinear(16, 32, num_types=3, bias=True)'
 
-    out = lin(x, node_type)
+    out = lin(x, type_vec)
     assert out.size() == (3, 32)
 
-    if is_full_test():
-        jit = torch.jit.script(lin)
-        assert torch.allclose(jit(x, node_type), out)
+    jit = torch.jit.script(lin)
+    assert torch.allclose(jit(x, type_vec), out, atol=1e-3)
+
+
+def test_hetero_linear_initializer():
+    lin = HeteroLinear(
+        16,
+        32,
+        num_types=3,
+        weight_initializer='glorot',
+        bias_initializer='zeros',
+    )
+    assert torch.equal(lin.bias, torch.zeros_like(lin.bias))
+
+
+@withCUDA
+@pytest.mark.parametrize('use_segmm', [True, False])
+def test_hetero_linear_amp(device, use_segmm):
+    warnings.filterwarnings('ignore', '.*but CUDA is not available.*')
+
+    x = torch.randn(3, 16, device=device)
+    type_vec = torch.tensor([0, 1, 2], device=device)
+
+    lin = HeteroLinear(16, 32, num_types=3).to(device)
+    lin.use_segmm = use_segmm
+
+    with torch.cuda.amp.autocast():
+        assert lin(x, type_vec).size() == (3, 32)
+
+
+@withCUDA
+def test_lazy_hetero_linear(device):
+    x = torch.randn(3, 16, device=device)
+    type_vec = torch.tensor([0, 1, 2], device=device)
+
+    lin = HeteroLinear(-1, 32, num_types=3).to(device)
+    assert str(lin) == 'HeteroLinear(-1, 32, num_types=3, bias=True)'
+
+    out = lin(x, type_vec)
+    assert out.size() == (3, 32)
+
+
+@withCUDA
+@pytest.mark.parametrize('bias', [True, False])
+def test_hetero_dict_linear(bias, device):
+    x_dict = {
+        'v': torch.randn(3, 16, device=device),
+        'w': torch.randn(2, 8, device=device),
+    }
+
+    lin = HeteroDictLinear({'v': 16, 'w': 8}, 32, bias=bias).to(device)
+    assert str(lin) == (f"HeteroDictLinear({{'v': 16, 'w': 8}}, 32, "
+                        f"bias={bias})")
+
+    out_dict = lin(x_dict)
+    assert len(out_dict) == 2
+    assert out_dict['v'].size() == (3, 32)
+    assert out_dict['w'].size() == (2, 32)
+
+    x_dict = {
+        'v': torch.randn(3, 16, device=device),
+        'w': torch.randn(2, 16, device=device),
+    }
+
+    lin = HeteroDictLinear(16, 32, types=['v', 'w'], bias=bias).to(device)
+    assert str(lin) == (f"HeteroDictLinear({{'v': 16, 'w': 16}}, 32, "
+                        f"bias={bias})")
+
+    out_dict = lin(x_dict)
+    assert len(out_dict) == 2
+    assert out_dict['v'].size() == (3, 32)
+    assert out_dict['w'].size() == (2, 32)
+
+
+def test_hetero_dict_linear_jit():
+    x_dict = {
+        'v': torch.randn(3, 16),
+        'w': torch.randn(2, 8),
+    }
+
+    lin = HeteroDictLinear({'v': 16, 'w': 8}, 32)
+
+    jit = torch.jit.script(lin)
+    assert len(jit(x_dict)) == 2
+
+
+@withCUDA
+def test_lazy_hetero_dict_linear(device):
+    x_dict = {
+        'v': torch.randn(3, 16, device=device),
+        'w': torch.randn(2, 8, device=device),
+    }
+
+    lin = HeteroDictLinear(-1, 32, types=['v', 'w']).to(device)
+    assert str(lin) == "HeteroDictLinear({'v': -1, 'w': -1}, 32, bias=True)"
+
+    out_dict = lin(x_dict)
+    assert len(out_dict) == 2
+    assert out_dict['v'].size() == (3, 32)
+    assert out_dict['w'].size() == (2, 32)
+
+
+@withCUDA
+@withPackage('pyg_lib')
+@withPackage('torch>=1.12.0')  # TODO Investigate error
+@pytest.mark.parametrize('type_vec', [
+    torch.tensor([0, 0, 1, 1, 2, 2]),
+    torch.tensor([0, 1, 2, 0, 1, 2]),
+])
+def test_hetero_linear_sort(type_vec, device):
+    x = torch.randn(type_vec.numel(), 16, device=device)
+
+    lin = HeteroLinear(16, 32, num_types=3).to(device)
+    out = lin(x, type_vec)
+
+    for i in range(type_vec.numel()):
+        node_type = int(type_vec[i])
+        expected = x[i] @ lin.weight[node_type] + lin.bias[node_type]
+        assert torch.allclose(out[i], expected, atol=1e-3)
+
+
+if __name__ == '__main__':
+    import argparse
+    try:
+        import dgl
+        WITH_DLG = True
+    except:  # noqa
+        WITH_DGL = False
+
+    warnings.filterwarnings('ignore', '.*API of nested tensors.*')
+    warnings.filterwarnings('ignore', '.*TypedStorage is deprecated.*')
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', type=str, default='cuda')
+    parser.add_argument('--backward', action='store_true')
+    args = parser.parse_args()
+
+    torch.manual_seed(12345)
+
+    def get_xs(mean: float, std: float, num_types: int,
+               channels: int) -> List[Tensor]:
+        num_nodes_list = torch.normal(
+            mean=torch.tensor([mean] * num_types, dtype=torch.float),
+            std=torch.tensor([std] * num_types, dtype=torch.float),
+        ).round().to(torch.long).tolist()
+
+        return [
+            torch.randn(num_nodes, channels, device=args.device)
+            for num_nodes in num_nodes_list
+        ]
+
+    def sequential(xs: List[Tensor], weights: List[Tensor]) -> List[Tensor]:
+        return [x @ weight for x, weight in zip(xs, weights)]
+
+    def nested(xs: List[Tensor], weights: List[Tensor]) -> List[Tensor]:
+        x = torch.nested.nested_tensor(xs)
+        weight = torch.nested.nested_tensor(weights)
+        return list(torch.matmul(x, weight).unbind(0))
+
+    def grouped(x: Tensor, ptr: Tensor, weight: Tensor) -> Tensor:
+        return pyg_lib.ops.segment_matmul(x, ptr, weight)
+
+    def padded(x: Tensor, weight: Tensor) -> Tensor:
+        return torch.matmul(x, weight)
+
+    def dgl_mm(x: Tensor, count: Tensor, weight: Tensor) -> Tensor:
+        return dgl.ops.segment_mm(x, weight, count)
+
+    num_nodes, channels = 1_000_000, 64
+
+    for num_types in [3, 5, 10, 50, 100, 200, 500, 1000]:
+        print(f'Number of types: {num_types}')
+        mean = num_nodes // num_types
+        std = mean // 4
+
+        xs = get_xs(mean, std, num_types, channels)
+        count = torch.tensor([x.size(0) for x in xs])
+        ptr = cumsum(torch.tensor([x.size(0) for x in xs]))
+        x = torch.cat(xs, dim=0)
+        padded_x = torch.nested.nested_tensor(xs).to_padded_tensor(padding=0.0)
+        weight = torch.randn(num_types, channels, channels, device=args.device)
+        weights = list(weight.unbind(0))
+
+        funcs = [sequential, grouped, padded]
+        func_names = ['Sequential', 'Grouped', 'Padded']
+        args_list = [(xs, weights), (x, ptr, weight), (padded_x, weight)]
+
+        if WITH_DGL:
+            funcs.append(dgl_mm)
+            func_names.append('DGL')
+            args_list.append((x, count, weight))
+
+        benchmark(
+            funcs=funcs,
+            func_names=func_names,
+            args=args_list,
+            num_steps=50 if args.device == 'cpu' else 500,
+            num_warmups=10 if args.device == 'cpu' else 100,
+            backward=args.backward,
+        )
