@@ -45,15 +45,21 @@ class AttentionalAggregation(Aggregation):
         reset(self.gate_nn)
         reset(self.nn)
 
-    def forward(self, x: Tensor, index: Optional[Tensor] = None,
-                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2, batch: Optional[Tensor] = None,
-                batch_size: Optional[int] = None,
-                ) -> Tensor:
+    def forward(
+        self,
+        x: Tensor,
+        index: Optional[Tensor] = None,
+        ptr: Optional[Tensor] = None,
+        dim_size: Optional[int] = None,
+        dim: int = -2,
+        batch: Optional[Tensor] = None,
+        batch_size: Optional[int] = None,
+    ) -> Tensor:
 
         self.assert_two_dimensional_input(x, dim)
         gate = self.gate_nn(x, batch=batch, batch_size=batch_size)
-        x = self.nn(x, batch=batch, batch_size=batch_size) if self.nn is not None else x
+        x = self.nn(x, batch=batch,
+                    batch_size=batch_size) if self.nn is not None else x
         gate = softmax(gate, index, ptr, dim_size, dim)
         return self.reduce(gate * x, index, ptr, dim_size, dim)
 
