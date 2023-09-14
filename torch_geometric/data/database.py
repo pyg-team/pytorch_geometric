@@ -3,7 +3,7 @@ from collections import namedtuple
 from dataclasses import dataclass
 import io
 import itertools
-from typing import Iterable, Sequence, Optional, Any
+from typing import Iterable, Generator, Optional, Any
 
 import sqlite3
 import torch
@@ -37,6 +37,7 @@ def chunk(seq: Iterable, chunk_size: int) -> Generator[list, Any, None]:
         yield batch
 
 def namedtuple_factory(cursor, row):
+    """util function to create a namedtuple Row foe db results"""
     fields = [column[0] for column in cursor.description]
     cls = namedtuple("Row", fields)
     return cls._make(row)
@@ -44,8 +45,12 @@ def namedtuple_factory(cursor, row):
 
 class Database(abc.ABC):
 
-    def __init__(self, connection):
-        self.cursor = self._get_cursor(connection)
+    def __init__(self, credentials, *args, **kwargs):
+        self.cursor = self._get_cursor(credentials)
+
+    @abc.abstractmethod
+    def _initialize(self):
+        """initialize the database in some way if needed"""
 
     @abc.abstractmethod
     def insert(elf, labels: Iterable[GraphLabel], values: Iterable[Data], batch_size=10000) -> list[str]:
@@ -69,8 +74,9 @@ class Database(abc.ABC):
 
 class SQLiteDatabase(abc.ABC):
 
-    def __init__(self, connection, table='pyg_database') -> None:
-        super().__init__(connection)
+    def __init__(self, credentials, table='pyg_database') -> None:
+        self.table = table
+        super().__init__(credentials)
 
     def _initialize(self):
         create = """CREATE TABLE ? (id TEXT, type TEXT, x BLOB, edge_index BLOB, edge_attr BLOB, y BLOB, pos BLOB, meta TEXT)"""
@@ -79,7 +85,7 @@ class SQLiteDatabase(abc.ABC):
 
     def insert(self, labels: Iterable[GraphLabel], values: Iterable[Data], batch_size=10000) -> list[GraphRow]:
         for chunk_data in chunk(zip(labels, values), batch_size):
-            serialized = [self.serialize_data(label, value) for value in chunk_data]
+            serialized = [self.serialize_data(label, value) for label, value in chunk_data]
             query = f"""
             INSERT INTO {self.table} (id, type, x, edge_index, edge_attr, y, pos, meta) 
             VALUES 
@@ -92,7 +98,7 @@ class SQLiteDatabase(abc.ABC):
         return self.cursor.fetchone()
     
     def multi_get(self, labels: Iterable[GraphLabel], batch_size=999):
-        for chunk_data in chunk(labels):
+        for chunk_data in chunk(labels, batch_size):
             query = f"SELECT * FROM {self.table} WHERE id IN ({','.join('?' * len(chunk_data))})"
             self.cursor.execute(query, (label.id for label in chunk_data))
 
@@ -110,14 +116,17 @@ class SQLiteDatabase(abc.ABC):
 
     @staticmethod
     def _serialize_tensor(t: OptTensor) -> bytes:
+        """convert a tensor into bytes"""
         buff = io.BytesIO()
         torch.save(t, buff)
         return buff.getvalue()
     
     def _get_cursor(self, connection):
+        """a method to get the db cursor to executor SQL"""
         con = sqlite3.connect(connection)
         cursor = con.cursor()
         cursor.row_factory = namedtuple_factory
+        return cursor
 
 
 
