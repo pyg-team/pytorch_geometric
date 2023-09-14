@@ -18,13 +18,13 @@ class MixHopConv(MessagePassing):
     Neighborhood Mixing" <https://arxiv.org/abs/1905.00067>`_ paper
 
     .. math::
-        \mathbf{X}^{\prime}={\Bigg\Vert}_{p\in P}{\left(\mathbf{\hat{D}}^{-1/2}
-        \mathbf{\hat{A}}\mathbf{\hat{D}}^{-1/2}\right)}^p\mathbf{X}\mathbf{\Theta},
+        \mathbf{X}^{\prime}={\Bigg\Vert}_{p\in P}
+        {\left( \mathbf{\hat{D}}^{-1/2} \mathbf{\hat{A}}
+        \mathbf{\hat{D}}^{-1/2} \right)}^p \mathbf{X} \mathbf{\Theta},
 
-    where :math:`\widehat{A}` denotes the symmetrically normalized adjacency
-    matrix with self-connections,
-    :math:`D_{ii} = \sum_{j=0} \widehat{A}_{ij}` its diagonal degree matrix,
-    :math:`W_j^{(i)}` denotes the trainable weight matrix of mixhop layers.
+    where :math:`\mathbf{\hat{A}} = \mathbf{A} + \mathbf{I}` denotes the
+    adjacency matrix with inserted self-loops and
+    :math:`\hat{D}_{ii} = \sum_{j=0} \hat{A}_{ij}` its diagonal degree matrix.
 
     Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to derive
@@ -45,7 +45,7 @@ class MixHopConv(MessagePassing):
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:**
-          node features :math:`(|\mathcal{V}|, F_{out})`
+          node features :math:`(|\mathcal{V}|, |P| \cdot F_{out})`
     """
     def __init__(
         self,
