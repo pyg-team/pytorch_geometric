@@ -127,7 +127,7 @@ class LocalGraphStore(GraphStore):
                 indices of every edge type.
             num_nodes_dict (Dict[NodeType, int]): The number of nodes in the
                 local graph of every node type.
-            is_sorted_dict (Dict[NodeType, bool]): Implicit information on node 
+            is_sorted_dict (Dict[NodeType, bool]): Implicit information on node
                 order of every node type.
         """
         attr_dict = {}

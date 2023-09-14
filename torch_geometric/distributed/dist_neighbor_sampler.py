@@ -553,7 +553,7 @@ class DistNeighborSampler:
     async def _colloate_fn(
         self, output: Union[SamplerOutput, HeteroSamplerOutput]
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r""" Collect labels and features for the sampled subgrarph if 
+        r""" Collect labels and features for the sampled subgrarph if
         necessary, and put them into a sample message.
         """
         if self.is_hetero:
