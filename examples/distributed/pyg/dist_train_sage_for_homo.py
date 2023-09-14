@@ -169,16 +169,11 @@ def run_training_proc(
     model = DistributedDataParallel(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.004)
 
-
     # Train and test.
     f = open(f'dist_train_sage_for_homo_rank{node_rank}.txt', 'a+')
-
-
     for epoch in range(0, epochs):
         model.train()
-
         pbar = tqdm(total=train_idx.size(0))
-
         start = time.time()
         for i, batch in enumerate(train_loader):
             if i==0:
@@ -189,10 +184,8 @@ def run_training_proc(
             loss = F.nll_loss(out, batch.y[:batch.batch_size])
             loss.backward()
             optimizer.step()
-
             if i == len(train_loader)-1:
                 torch.distributed.barrier()
-
             pbar.update(batch_size)
         pbar.close()
 
