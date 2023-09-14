@@ -11,10 +11,12 @@ import torch
 from torch_geometric.data.data import Data
 from torch_geometric.typing import OptTensor
 
+
 @dataclass
 class GraphLabel:
     id: str
     type: str
+
 
 @dataclass
 class GraphRow:
@@ -36,6 +38,7 @@ def chunk(seq: Iterable, chunk_size: int) -> Generator[list, Any, None]:
             return
         yield batch
 
+
 def namedtuple_factory(cursor, row):
     """util function to create a namedtuple Row foe db results"""
     fields = [column[0] for column in cursor.description]
@@ -46,14 +49,15 @@ def namedtuple_factory(cursor, row):
 class Database(abc.ABC):
 
     def __init__(self, credentials, *args, **kwargs):
-        self.cursor = self._get_cursor(credentials)
+        self.connection = self._get_connection(credentials)
 
     @abc.abstractmethod
     def _initialize(self):
         """initialize the database in some way if needed"""
+        raise NotImplementedError()
 
     @abc.abstractmethod
-    def insert(elf, labels: Iterable[GraphLabel], values: Iterable[Data], batch_size=10000) -> list[str]:
+    def insert(self, labels: Iterable[GraphLabel], values: Iterable[Data], batch_size=10000) -> list[str]:
         """insert data into a database"""
         raise NotImplementedError()
 
@@ -82,7 +86,6 @@ class SQLiteDatabase(abc.ABC):
         create = """CREATE TABLE ? (id TEXT, type TEXT, x BLOB, edge_index BLOB, edge_attr BLOB, y BLOB, pos BLOB, meta TEXT)"""
         self.cursor.execute(create, self.table)
 
-
     def insert(self, labels: Iterable[GraphLabel], values: Iterable[Data], batch_size=10000) -> list[GraphRow]:
         for chunk_data in chunk(zip(labels, values), batch_size):
             serialized = [self.serialize_data(label, value) for label, value in chunk_data]
@@ -102,7 +105,6 @@ class SQLiteDatabase(abc.ABC):
             query = f"SELECT * FROM {self.table} WHERE id IN ({','.join('?' * len(chunk_data))})"
             self.cursor.execute(query, (label.id for label in chunk_data))
 
-
     def serialize_data(self, label: GraphLabel, data: Data) -> GraphRow:
         return GraphRow(
             id=label.id,
@@ -120,13 +122,10 @@ class SQLiteDatabase(abc.ABC):
         buff = io.BytesIO()
         torch.save(t, buff)
         return buff.getvalue()
-    
-    def _get_cursor(self, connection):
+
+    def _get_connection(self, credentials):
         """a method to get the db cursor to executor SQL"""
-        con = sqlite3.connect(connection)
+        con = sqlite3.connect(credentials)
         cursor = con.cursor()
         cursor.row_factory = namedtuple_factory
         return cursor
-
-
-
