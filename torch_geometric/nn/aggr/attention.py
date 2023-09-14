@@ -5,7 +5,6 @@ from torch import Tensor
 
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.inits import reset
-# from torch_geometric.nn.models.mlp import MLP
 from torch_geometric.utils import softmax
 
 
@@ -28,14 +27,12 @@ class AttentionalAggregation(Aggregation):
             that computes attention scores by mapping node features :obj:`x` of
             shape :obj:`[-1, in_channels]` to shape :obj:`[-1, 1]` (for
             node-level gating) or :obj:`[1, out_channels]` (for feature-level
-            gating), *e.g.*, defined by :class:`torch.nn.Sequential`. If an
-            MLP, norm_kwargs can be passed into the forward method.
+            gating), *e.g.*, defined by :class:`torch.nn.Sequential`.
         nn (torch.nn.Module, optional): A neural network
             :math:`h_{\mathbf{\Theta}}` that maps node features :obj:`x` of
             shape :obj:`[-1, in_channels]` to shape :obj:`[-1, out_channels]`
             before combining them with the attention scores, *e.g.*, defined by
-            :class:`torch.nn.Sequential`. If an MLP, norm_kwargs can be passed
-            into the forward method. (default: :obj:`None`)
+            :class:`torch.nn.Sequential`. (default: :obj:`None`)
     """
     def __init__(self, gate_nn: torch.nn.Module,
                  nn: Optional[torch.nn.Module] = None):
