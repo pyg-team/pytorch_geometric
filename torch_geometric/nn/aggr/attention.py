@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Optional
 
 import torch
 from torch import Tensor
@@ -50,15 +50,11 @@ class AttentionalAggregation(Aggregation):
 
     def forward(self, x: Tensor, index: Optional[Tensor] = None,
                 ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
-                dim: int = -2,
-                norm_kwargs: Optional[Dict[str, Any]] = {}) -> Tensor:
+                dim: int = -2) -> Tensor:
 
         self.assert_two_dimensional_input(x, dim)
-        gate = self.gate_nn(x, norm_kwargs=norm_kwargs) if type(
-            self.gate_nn) == MLP else self.gate_nn(x)
-        if self.nn is not None:
-            x = self.nn(x, norm_kwargs=norm_kwargs) if type(
-                self.nn) == MLP else self.nn(x)
+        gate = self.gate_nn(x)
+        x = self.nn(x) if self.nn is not None else x
         gate = softmax(gate, index, ptr, dim_size, dim)
         return self.reduce(gate * x, index, ptr, dim_size, dim)
 

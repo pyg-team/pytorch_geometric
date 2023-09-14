@@ -217,9 +217,6 @@ class MLP(torch.nn.Module):
             return_emb (bool, optional): If set to :obj:`True`, will
                 additionally return the embeddings before execution of the
                 final output layer. (default: :obj:`False`)
-            norm_kwargs (Dict[str, Any], optional): The keyword arguments for
-                the normalization layer's forward method. Defaults to an empty
-                dictionary such that only :obj:`x` is passed.
         """
         # `return_emb` is annotated here as `NoneType` to be compatible with
         # TorchScript, which does not support different return types based on
