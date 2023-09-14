@@ -553,8 +553,8 @@ class DistNeighborSampler:
     async def _colloate_fn(
         self, output: Union[SamplerOutput, HeteroSamplerOutput]
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r""" Collect labels and features for the sampled subgrarph if necessary,
-        and put them into a sample message.
+        r""" Collect labels and features for the sampled subgrarph if 
+        necessary, and put them into a sample message.
         """
         if self.is_hetero:
             nlabels = {}
@@ -572,8 +572,6 @@ class DistNeighborSampler:
                         fut = self.dist_feature.lookup_features(
                             is_node_feat=True, index=output.node[ntype],
                             input_type=ntype)
-                        print({max(output.node[ntype])},
-                              {self.dist_feature.node_feat_pb.size()})
                         nfeat = await wrap_torch_future(fut)
                         nfeat = nfeat.to(torch.device('cpu'))
                         nfeats[ntype] = nfeat
@@ -586,9 +584,6 @@ class DistNeighborSampler:
                         fut = self.dist_feature.lookup_features(
                             is_node_feat=False, index=output.edge[etype],
                             input_type=etype)
-                        print(
-                            f'{max(output.edge[etype])}, {self.dist_feature.edge_feat_pb.size()}'
-                        )
                         efeat = await wrap_torch_future(fut)
                         efeat = efeat.to(torch.device('cpu'))
                         efeats[etype] = efeat

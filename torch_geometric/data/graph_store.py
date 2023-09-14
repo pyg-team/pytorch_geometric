@@ -285,9 +285,7 @@ class GraphStore:
                 row = ptr2index(row)
 
             if attr.layout != EdgeLayout.CSC:  # COO->CSC
-                # TODO: Hotfix for conversion error
-                # attr.size[1] if attr.size else
-                num_cols = int(col.max()) + 1
+                num_cols = attr.size[1] if attr.size else int(col.max()) + 1
                 if not attr.is_sorted:  # Not sorted by destination.
                     col, perm = index_sort(col, max_value=num_cols)
                     row = row[perm]
