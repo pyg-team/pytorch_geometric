@@ -65,6 +65,7 @@ class BasicGNN(torch.nn.Module):
     """
     supports_edge_weight: Final[bool]
     supports_edge_attr: Final[bool]
+    supports_norm_batch: Final[bool]
 
     def __init__(
         self,
@@ -185,8 +186,7 @@ class BasicGNN(torch.nn.Module):
         num_sampled_nodes_per_hop=None,
         num_sampled_edges_per_hop=None,
     ):
-        # type: (Tensor, Tensor, OptTensor, OptTensor, OptTensor,
-        # Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
+        # type: (Tensor, Tensor, OptTensor, OptTensor, OptTensor, Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
         pass
 
     @torch.jit._overload_method
@@ -200,8 +200,7 @@ class BasicGNN(torch.nn.Module):
         num_sampled_nodes_per_hop=None,
         num_sampled_edges_per_hop=None,
     ):
-        # type: (Tensor, SparseTensor, OptTensor, OptTensor, OptTensor,
-        # Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
+        # type: (Tensor, SparseTensor, OptTensor, OptTensor, OptTensor, Optional[int], Optional[List[int]], Optional[List[int]]) -> Tensor  # noqa
         pass
 
     def forward(  # noqa
@@ -426,6 +425,8 @@ class BasicGNN(torch.nn.Module):
                 edge_index: Tensor,
                 edge_weight: OptTensor = None,
                 edge_attr: OptTensor = None,
+                batch: OptTensor = None,
+                batch_size: Optional[int] = None,
                 num_sampled_nodes_per_hop: Optional[List[int]] = None,
                 num_sampled_edges_per_hop: Optional[List[int]] = None,
             ) -> Tensor:
@@ -434,6 +435,8 @@ class BasicGNN(torch.nn.Module):
                     edge_index,
                     edge_weight,
                     edge_attr,
+                    batch,
+                    batch_size,
                     num_sampled_nodes_per_hop,
                     num_sampled_edges_per_hop,
                 )
@@ -455,6 +458,8 @@ class BasicGNN(torch.nn.Module):
                 edge_index: SparseTensor,
                 edge_weight: OptTensor = None,
                 edge_attr: OptTensor = None,
+                batch: OptTensor = None,
+                batch_size: Optional[int] = None,
                 num_sampled_nodes_per_hop: Optional[List[int]] = None,
                 num_sampled_edges_per_hop: Optional[List[int]] = None,
             ) -> Tensor:
@@ -463,6 +468,8 @@ class BasicGNN(torch.nn.Module):
                     edge_index,
                     edge_weight,
                     edge_attr,
+                    batch,
+                    batch_size,
                     num_sampled_nodes_per_hop,
                     num_sampled_edges_per_hop,
                 )
@@ -521,6 +528,7 @@ class GCN(BasicGNN):
     """
     supports_edge_weight: Final[bool] = True
     supports_edge_attr: Final[bool] = False
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -565,6 +573,7 @@ class GraphSAGE(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
@@ -606,6 +615,7 @@ class GIN(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -664,6 +674,7 @@ class GAT(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = True
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
                   out_channels: int, **kwargs) -> MessagePassing:
@@ -726,6 +737,7 @@ class PNA(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = True
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
@@ -767,6 +779,7 @@ class EdgeCNN(BasicGNN):
     """
     supports_edge_weight: Final[bool] = False
     supports_edge_attr: Final[bool] = False
+    supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
                   **kwargs) -> MessagePassing:
