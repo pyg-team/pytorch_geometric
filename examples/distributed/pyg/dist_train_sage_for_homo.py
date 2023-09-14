@@ -351,8 +351,6 @@ if __name__ == '__main__':
         osp.join(
             root_dir, f'{args.dataset}-test-partitions',
             f'partition{data_pidx}.pt'))
-    #train_idx.share_memory_()
-    #test_idx.share_memory_()
 
     f.write('--- Launching training processes ...\n')
 
