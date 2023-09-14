@@ -32,27 +32,7 @@ python partition_graph.py --dataset=ogbn-products --root_dir=./data/ogbn-product
 ```
 The generated partition will have the folder below.
 
-├── products
-│   ├── ogbn-products-label
-│   │   └── label.pt
-│   ├── ogbn-products-partitions
-│   │   ├── edge_map.pt
-│   │   ├── META.json
-│   │   ├── node_map.pt
-│   │   ├── part_0
-│   │   │   ├── edge_feats.pt
-│   │   │   ├── graph.pt
-│   │   │   └── node_feats.pt
-│   │   └── part_1
-│   │       ├── edge_feats.pt
-│   │       ├── graph.pt
-│   │       └── node_feats.pt
-│   ├── ogbn-products-test-partitions
-│   │   ├── partition0.pt
-│   │   └── partition1.pt
-│   └── ogbn-products-train-partitions
-│       ├── partition0.pt
-│       └── partition1.pt
+![image](https://github.com/ZhengHongming888/pytorch_geometric/assets/33777424/1d375496-99d5-43f9-b1c3-ce345e2572c0)
 
 
 You can put/move the products partition folder into one public folder that each node can access this shared folder.
