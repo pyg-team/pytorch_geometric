@@ -25,10 +25,10 @@ A distributed file system (*i.e.*, [NFS](https://wiki.archlinux.org/index.php/NF
 
 In distributed training, each node in the cluster holds a partition of the graph. Before the training starts, we partition the `ogbn-products` dataset into multiple partitions, each of which corresponds to a specific training node.
 
-Here, we use `ogbn-products` and partition it into two partitions (in default) by the [partition example](https://github.com/pyg-team/pytorch_geometric/tree/master/examples/distributed/pyg) :
+Here, we use `ogbn-products` and partition it into two partitions (in default) by the [partition example](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_graph.py) :
 
 ```bash
-python partition_graph.py --dataset=ogbn-products --root_dir=./data/ogbn-products --num_partitions=2
+python partition_graph.py --dataset=ogbn-products --root_dir=./data/products --num_partitions=2
 ```
 The generated partition will have the folder below.
 
@@ -63,3 +63,48 @@ python dist_train_sage_for_homo.py \
 1. You should change the `master_addr` to the IP of `node#0`.
 2. In default this example will use the num_workers = 2 for number of sampling workers and concurrency=2 for mp.queue. you can also add these argument to speed up the training like "--num_workers=8 --concurrency=8"
 3. All nodes need to use the same partitioned data when running `dist_train_sage_for_homo.py`.
+
+
+
+
+## Distributed Sage for Ogbn-Mags (Hetero Multi-Node) Example
+
+### Step 1: Setup a distributed environment
+
+Same as Homo above.
+
+### Step 2: Prepare and partition the data
+
+
+Here, we use `ogbn-products` and partition it into two partitions (in default) by the [partition example](https://github.com/pyg-team/pytorch_geometric/blob/master/examples/distributed/pyg/partition_hetero_graph.py) :
+
+```bash
+python partition_hetero_graph.py --dataset=ogbn-mag --root_dir=./data/mag --num_partitions=2
+```
+The generated partition will have the folder below.
+
+![image](https://github.com/ZhengHongming888/pytorch_geometric/assets/33777424/4d2e3212-d3e4-4f5a-bc91-38e92e32422e)
+
+
+You can put/move the products partition folder into one public folder that each node can access this shared folder.
+
+
+### Step 3: Run the example in each training node
+
+For example, running the example in two nodes each with two GPUs:
+
+```bash
+# Node 0:
+python dist_train_sage_for_hetero.py \
+  --dataset_root_dir=your partition folder \
+  --dataset=ogbn-mags \
+  --num_nodes=2 --node_rank=0 --num_training_procs=1 \
+  --master_addr= master ip
+
+# Node 1:
+python dist_train_sage_for_hetero.py \
+  --dataset_root_dir=your partition folder \
+  --dataset=ogbn-mags \
+  --num_nodes=2 --node_rank=1 --num_training_procs=1 \
+  --master_addr= master ip
+```
