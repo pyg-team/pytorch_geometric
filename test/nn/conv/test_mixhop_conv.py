@@ -14,15 +14,15 @@ def test_mixhop_conv():
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
     adj2 = to_torch_csc_tensor(edge_index, value, size=(4, 4))
 
-    conv = MixHopConv(16, 32, p=[0, 1, 2])
-    assert str(conv) == 'MixHopConv(16, 32, p=[0, 1, 2])'
+    conv = MixHopConv(16, 32, powers=[0, 1, 2, 4])
+    assert str(conv) == 'MixHopConv(16, 32, powers=[0, 1, 2, 4])'
 
     out1 = conv(x, edge_index)
-    assert out1.size() == (4, 96)
+    assert out1.size() == (4, 128)
     assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
 
     out2 = conv(x, edge_index, value)
-    assert out2.size() == (4, 96)
+    assert out2.size() == (4, 128)
     assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
