@@ -163,9 +163,8 @@ def run(rank: int, world_size: int, dataset: PygNodePropPredDataset):
                 "y_pred": y_pred[split_idx["test"]],
             })["acc"]
 
-            print(
-                f"Train: {train_acc:.4f}, Val: {val_acc:.4f}, Test: {test_acc:.4f}"
-            )
+            print(f"Train: {train_acc:.4f}, Val: {val_acc:.4f}, "
+                  f"Test: {test_acc:.4f}")
 
         dist.barrier()
 
