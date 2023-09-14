@@ -91,15 +91,15 @@ class LCMAggregation(Aggregation):
             if x.size(0) % 2 == 1:
                 # This level of the tree has an odd number of nodes, so the
                 # remaining unmatched node gets moved to the next level.
-                x, remainder = x[:-1].contiguous(), x[-1:]
+                x, remainder = x[:-1], x[-1:]
             else:
                 remainder = None
 
             left_right = x.view(-1, 2, num_nodes, num_features)
             right_left = left_right.flip(dims=[1])
 
-            left_right = left_right.view(-1, num_features)
-            right_left = right_left.view(-1, num_features)
+            left_right = left_right.reshape(-1, num_features)
+            right_left = right_left.reshape(-1, num_features)
 
             # Execute the GRUCell for all (left, right) pairs in the current
             # level of the tree in parallel:
