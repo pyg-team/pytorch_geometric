@@ -50,6 +50,7 @@ def linear_attention(q: Tensor, k: Tensor, v: Tensor) -> Tensor:
     out = torch.matmul(D_inv, qkv)
     return out
 
+
 def generalized_kernel(x: Tensor, mat: Tensor,
                        kernel: Callable = torch.nn.ReLU(),
                        epsilon: float = 0.001) -> Tensor:
