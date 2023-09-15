@@ -3,6 +3,7 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+import torch_geometric
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.nn.inits import reset
 from torch_geometric.utils import softmax
@@ -45,21 +46,22 @@ class AttentionalAggregation(Aggregation):
         reset(self.gate_nn)
         reset(self.nn)
 
-    def forward(
-        self,
-        x: Tensor,
-        index: Optional[Tensor] = None,
-        ptr: Optional[Tensor] = None,
-        dim_size: Optional[int] = None,
-        dim: int = -2,
-        batch: Optional[Tensor] = None,
-        batch_size: Optional[int] = None,
-    ) -> Tensor:
+    def forward(self, x: Tensor, index: Optional[Tensor] = None,
+                ptr: Optional[Tensor] = None, dim_size: Optional[int] = None,
+                dim: int = -2) -> Tensor:
 
         self.assert_two_dimensional_input(x, dim)
-        gate = self.gate_nn(x, batch=batch, batch_size=batch_size)
-        x = self.nn(x, batch=batch,
-                    batch_size=batch_size) if self.nn is not None else x
+
+        if isinstance(self.gate_nn, torch_geometric.models.MLP):
+            gate = self.gate_nn(x, index, dim_size)
+        else:
+            gate = self.gate_nn(x)
+
+        if isinstance(self.nn, torch_geometric.models.MLP):
+            x = self.nn(x, index, dim_size)
+        elif self.nn is not None:
+            x = self.nn(x)
+
         gate = softmax(gate, index, ptr, dim_size, dim)
         return self.reduce(gate * x, index, ptr, dim_size, dim)
 
