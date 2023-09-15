@@ -43,20 +43,22 @@ def linear_attention(q: Tensor, k: Tensor, v: Tensor) -> Tensor:
         \mathbf{\hat{D}}^{-1}(\mathbf{Q}'((\mathbf{K}')^{\top} \mathbf{V}))
 
     """
-    k_contract = k.sum(dim=-2)
-    D_inv = 1.0 / torch.matmul(q, k_contract.unsqueeze(-1))
-    kv = torch.matmul(k, v)
-    qkv = torch.matmul(q, kv)
-    out = torch.matmul(D_inv, qkv)
+    D_inv = 1.0 / (q @ k.sum(dim=-2).unsqueeze(-1))
+    kv = k.transpose(-2, -1) @ v
+    qkv = q @ kv
+    out = torch.einsum('...L,...Ld->...Ld', D_inv.squeeze(-1), qkv)
     return out
 
 
-def generalized_kernel(x: Tensor, mat: Tensor,
-                       kernel: Callable = torch.nn.ReLU(),
-                       epsilon: float = 0.001) -> Tensor:
-    num_batches, num_heads, *_ = x.shape
-    projection = mat.expand(num_batches, num_heads, *mat.shape)
-    x = torch.matmul(x, projection)
+def generalized_kernel(
+        x: Tensor,
+        mat: Tensor,
+        kernel: Callable = torch.nn.ReLU(),
+        epsilon: float = 0.001,
+) -> Tensor:
+    batch_size, num_heads = x.size()[:2]
+    projection = mat.expand(batch_size, num_heads, *mat.size())
+    x = x @ projection.transpose(-2, -1)
     out = kernel(x) + epsilon
     return out
 
