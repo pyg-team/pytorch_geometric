@@ -11,7 +11,7 @@ seed = 42
 num_bits = 8
 emb_dim = 128
 batch_size = 32
-num_epochs = 1
+num_epochs = 1000
 opt_lr = 1e-4
 p_dropout = .25
 trainset_size = 2**16
@@ -156,7 +156,7 @@ def validate():
         y = y.to(device)
         index = index.to(device)
 
-        pred = torch.sigmoid(net(x, index)[0]).round().squeeze()
+        pred = torch.sigmoid(net(x, index)).round().squeeze()
         num_mistakes = (pred != y).sum(-1)
         total_correct += (num_mistakes == 0).sum()
         total_examples += y.size(0)
