@@ -54,7 +54,7 @@ class MLPAggregation(Aggregation):
                 dim: int = -2) -> Tensor:
         x, _ = self.to_dense_batch(x, index, ptr, dim_size, dim,
                                    max_num_elements=self.max_num_elements)
-        return self.mlp(x.view(-1, x.size(1) * x.size(2)))
+        return self.mlp(x.view(-1, x.size(1) * x.size(2)), index, dim_size)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
