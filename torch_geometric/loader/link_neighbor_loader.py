@@ -168,9 +168,10 @@ class LinkNeighborLoader(LinkLoader):
         weight_attr (str, optional): The name of the attribute that denotes
             edge weights in the graph.
             If set, weighted/biased sampling will be used such that neighbors
-            are more likely get sampled the higher their edge weights are.
+            are more likely to get sampled the higher their edge weights are.
             Edge weights do not need to sum to one, but must be non-negative,
-            finite and have a non-zero sum. (default: :obj:`None`)
+            finite and have a non-zero sum within local neighborhoods.
+            (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
