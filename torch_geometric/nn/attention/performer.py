@@ -57,8 +57,8 @@ def generalized_kernel(
         epsilon: float = 0.001,
 ) -> Tensor:
     batch_size, num_heads = x.size()[:2]
-    projection = mat.expand(batch_size, num_heads, *mat.size())
-    x = x @ projection.transpose(-2, -1)
+    projection = mat.t().expand(batch_size, num_heads, -1, -1)
+    x = x @ projection
     out = kernel(x) + epsilon
     return out
 
