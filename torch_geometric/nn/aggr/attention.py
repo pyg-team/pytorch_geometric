@@ -52,12 +52,12 @@ class AttentionalAggregation(Aggregation):
 
         self.assert_two_dimensional_input(x, dim)
 
-        if isinstance(self.gate_nn, torch_geometric.models.MLP):
+        if isinstance(self.gate_nn, torch_geometric.nn.MLP):
             gate = self.gate_nn(x, index, dim_size)
         else:
             gate = self.gate_nn(x)
 
-        if isinstance(self.nn, torch_geometric.models.MLP):
+        if isinstance(self.nn, torch_geometric.nn.MLP):
             x = self.nn(x, index, dim_size)
         elif self.nn is not None:
             x = self.nn(x)
