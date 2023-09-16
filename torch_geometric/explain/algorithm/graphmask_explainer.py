@@ -50,6 +50,10 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         /explain/graphmask_explainer.py>`_.
 
+        A working real-time example (in the form of `deployed app`) of 
+        :class:`GraphMaskExplainer` can be accessed through this `link
+        <https://graph-explainability.streamlit.app/>`_.
+
     Args:
         num_layers (int): The number of layers to use.
         epochs (int, optional): The number of epochs to train.

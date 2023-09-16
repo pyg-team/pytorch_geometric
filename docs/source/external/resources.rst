@@ -7,6 +7,8 @@ External Resources
 
 * :stanford:`Stanford University`: **A collection of graph machine learning tutorial blog posts**, fully realized with :pyg:`null` **PyG** [`Website <https://medium.com/stanford-cs224w>`__]
 
+* Aniket Saxena: **Graph Neural Networks-based Node and Graph Classification, and Explanation App using** :pyg:`null` **PyTorch Geometric** [`Website <https://graph-explainability.streamlit.app/>`__, :github:`null` `GitHub <https://github.com/fork123aniket/End-to-End-Node-and-Graph-Classification-and-Explanation-App>`__, `Documentation <https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.explain.algorithm.GraphMaskExplainer.html#torch_geometric.explain.algorithm.GraphMaskExplainer>`__]
+
 * Soumith Chintala: **Automatic Differentiation,** :pytorch:`null` **PyTorch and Graph Neural Networks** [`Talk (starting from 26:15) <http://www.ipam.ucla.edu/abstract/?tid=15592&pcode=GLWS4>`__]
 
 * Stanford University: **Graph Neural Networks using** :pyg:`null` **PyTorch Geometric** [:youtube:`null` `YouTube (starting from 33:33) <https://www.youtube.com/watch?v=-UjytpbqX4A&feature=youtu.be>`__]
