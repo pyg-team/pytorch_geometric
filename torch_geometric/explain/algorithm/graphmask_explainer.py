@@ -50,7 +50,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         /explain/graphmask_explainer.py>`_.
 
-        A working real-time example (in the form of `deployed app`) of 
+        A working real-time example (in the form of `deployed app`) of
         :class:`GraphMaskExplainer` can be accessed through this `link
         <https://graph-explainability.streamlit.app/>`_.
 
