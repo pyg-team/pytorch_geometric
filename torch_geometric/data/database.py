@@ -207,28 +207,26 @@ class SQLiteDatabase(Database):
         query = f'SELECT * FROM {join_table_name}'
         self.cursor.execute(query)
 
-        query = (f'SELECT {join_table_name}.row_id, {self.name}.data '
+        query = (f'SELECT {self.name}.data '
                  f'FROM {self.name} INNER JOIN {join_table_name} '
-                 f'ON {self.name}.id = {join_table_name}.id')
+                 f'ON {self.name}.id = {join_table_name}.id '
+                 f'ORDER BY {join_table_name}.row_id')
         self.cursor.execute(query)
 
         if batch_size is None:
-            blob_list = self.cursor.fetchall()
+            data_list = self.cursor.fetchall()
         else:
-            blob_list: List[Any] = []
+            data_list: List[Any] = []
             while True:
                 chunk_list = self.cursor.fetchmany(size=batch_size)
                 if len(chunk_list) == 0:
                     break
-                blob_list.extend(chunk_list)
+                data_list.extend(chunk_list)
 
         query = f'DROP TABLE {join_table_name}'
         self.cursor.execute(query)
 
-        data_list = [None] * len(blob_list)
-        for row_id, blob in blob_list:
-            data_list[row_id] = self.deserialize(blob)
-        return data_list
+        return [self.deserialize(data[0]) for data in data_list]
 
     def __len__(self) -> int:
         query = f'SELECT COUNT(*) FROM {self.name}'
