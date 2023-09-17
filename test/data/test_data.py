@@ -7,9 +7,10 @@ import torch.multiprocessing as mp
 import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.storage import AttrType
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import withCUDA, withPackage
 
 
+@withCUDA
 def test_data():
     torch_geometric.set_debug(True)
 
@@ -41,7 +42,7 @@ def test_data():
     data.apply_(lambda x: x.mul_(2), 'x')
     assert torch.allclose(data.x, x)
 
-    data.cuda(0)
+    data.cuda()
     assert data.x.device == torch.device('cuda:0')
 
     data.cpu()
