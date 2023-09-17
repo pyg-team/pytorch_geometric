@@ -1,6 +1,7 @@
 import io
 from abc import ABC, abstractmethod
 from typing import Any, Iterable, List, Optional, Union
+from uuid import uuid4
 
 import torch
 from torch import Tensor
@@ -20,14 +21,17 @@ class Database(ABC):
 
     def multi_insert(
         self,
-        indices: Union[Iterable[int], Tensor],
+        indices: Union[Iterable[int], Tensor, slice, range],
         data_list: Iterable[Any],
         batch_size: Optional[int] = None,
     ):
-        if batch_size is None:
-            batch_size = min(len(indices), len(data_list))
+        if isinstance(indices, slice):
+            indices = self.slice_to_range(indices)
 
-        for start in range(0, min(len(indices), len(data_list)), batch_size):
+        length = min(len(indices), len(data_list))
+        batch_size = length if batch_size is None else batch_size
+
+        for start in range(0, length, batch_size):
             self._multi_insert(
                 indices[start:start + batch_size],
                 data_list[start:start + batch_size],
@@ -35,7 +39,7 @@ class Database(ABC):
 
     def _multi_insert(
         self,
-        indices: Union[Iterable[int], Tensor],
+        indices: Union[Iterable[int], Tensor, range],
         data_list: Iterable[Any],
     ):
         if isinstance(indices, Tensor):
@@ -49,14 +53,17 @@ class Database(ABC):
 
     def multi_get(
         self,
-        indices: Union[Iterable[int], Tensor],
+        indices: Union[Iterable[int], Tensor, slice, range],
         batch_size: Optional[int] = None,
     ) -> List[Any]:
-        if batch_size is None:
-            batch_size = len(indices)
+        if isinstance(indices, slice):
+            indices = self.slice_to_range(indices)
+
+        length = len(indices)
+        batch_size = length if batch_size is None else batch_size
 
         data_list: List[Any] = []
-        for start in range(0, len(indices), batch_size):
+        for start in range(0, length, batch_size):
             chunk_indices = indices[start:start + batch_size]
             data_list.extend(self._multi_get(chunk_indices))
         return data_list
@@ -79,6 +86,38 @@ class Database(ABC):
     def deserialize(data: bytes) -> Any:
         r"""Deserializes bytes into the original data."""
         return torch.load(io.BytesIO(data))
+
+    def slice_to_range(self, indices: slice) -> range:
+        start = 0 if indices.start is None else indices.start
+        stop = len(self) if indices.stop is None else indices.stop
+        step = 1 if indices.step is None else indices.step
+
+        return range(start, stop, step)
+
+    # Python built-ins ########################################################
+
+    def __len__(self) -> int:
+        raise NotImplementedError
+
+    def __getitem__(
+        self,
+        key: Union[int, Iterable[int], Tensor, slice, range],
+    ) -> Union[Any, List[Any]]:
+
+        if isinstance(key, int):
+            return self.get(key)
+        else:
+            return self.multi_get(key)
+
+    def __setitem__(
+        self,
+        key: Union[int, Iterable[int], Tensor, slice, range],
+        value: Union[Any, Iterable[Any]],
+    ):
+        if isinstance(key, int):
+            self.insert(key, value)
+        else:
+            self.multi_insert(key, value)
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
@@ -127,7 +166,7 @@ class SQLiteDatabase(Database):
 
     def _multi_insert(
         self,
-        indices: Union[Iterable[int], Tensor],
+        indices: Union[Iterable[int], Tensor, range],
         data_list: Iterable[Any],
     ):
         if isinstance(indices, Tensor):
@@ -144,15 +183,35 @@ class SQLiteDatabase(Database):
 
     def multi_get(
         self,
-        indices: Union[Iterable[int], Tensor],
+        indices: Union[Iterable[int], Tensor, slice, range],
         batch_size: Optional[int] = None,
     ) -> List[Any]:
-        if isinstance(indices, Tensor):
+
+        if isinstance(indices, slice):
+            indices = self.slice_to_range(indices)
+        elif isinstance(indices, Tensor):
             indices = indices.tolist()
 
-        query = (f'SELECT data FROM {self.name} '
-                 f'WHERE id IN ({", ".join("?" * len(indices))})')
-        self.cursor.execute(query, indices)
+        # We first create a temporary ID table to then perform an INNER JOIN.
+        # This avoids having a long IN clause and guarantees sorted outputs:
+        join_table_name = f'{self.name}__join__{uuid4().hex}'
+        query = (f'CREATE TABLE {join_table_name} (\n'
+                 f'  id INTEGER,\n'
+                 f'  row_id INTEGER\n'
+                 f')')
+        self.cursor.execute(query)
+
+        query = f'INSERT INTO {join_table_name} (id, row_id) VALUES (?, ?)'
+        self.cursor.executemany(query, zip(indices, range(len(indices))))
+
+        query = f'SELECT * FROM {join_table_name}'
+        self.cursor.execute(query)
+
+        query = (f'SELECT {self.name}.data '
+                 f'FROM {self.name} INNER JOIN {join_table_name} '
+                 f'ON {self.name}.id = {join_table_name}.id '
+                 f'ORDER BY {join_table_name}.row_id')
+        self.cursor.execute(query)
 
         if batch_size is None:
             data_list = self.cursor.fetchall()
@@ -164,4 +223,12 @@ class SQLiteDatabase(Database):
                     break
                 data_list.extend(chunk_list)
 
+        query = f'DROP TABLE {join_table_name}'
+        self.cursor.execute(query)
+
         return [self.deserialize(data[0]) for data in data_list]
+
+    def __len__(self) -> int:
+        query = f'SELECT COUNT(*) FROM {self.name}'
+        self.cursor.execute(query)
+        return self.cursor.fetchone()[0]
