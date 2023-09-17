@@ -208,7 +208,7 @@ class SQLiteDatabase(Database):
         self.cursor.execute(query)
 
         query = (f'SELECT {join_table_name}.row_id, {self.name}.data '
-                 f'FROM {self.name} RIGHT JOIN {join_table_name} '
+                 f'FROM {self.name} INNER JOIN {join_table_name} '
                  f'ON {self.name}.id = {join_table_name}.id')
         self.cursor.execute(query)
 
