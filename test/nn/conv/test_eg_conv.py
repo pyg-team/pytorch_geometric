@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 import torch_geometric.typing
@@ -7,13 +8,36 @@ from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
 
-def test_eg_conv():
+def test_eg_conv_with_error_init():
+    try:
+        _ = EGConv(16, 30)
+    except Exception as e:
+        assert isinstance(e, ValueError)
+        assert "out_channels must be divisible by the number of heads" in str(
+            e)
+
+    try:
+        _ = EGConv(16, 32, aggregators=['xxx'])
+    except Exception as e:
+        assert isinstance(e, ValueError)
+        assert "Unsupported aggregator: 'xxx'" in str(e)
+
+
+@pytest.mark.parametrize('aggregators,add_self_loops,cached', [
+    ('symnorm', True, True),
+    ('symnorm', True, False),
+    ('symnorm', False, True),
+    ('symnorm', False, False),
+    ('var', True, True),
+])
+def test_eg_conv(aggregators, add_self_loops, cached):
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
 
-    conv = EGConv(16, 32)
-    assert str(conv) == "EGConv(16, 32, aggregators=['symnorm'])"
+    conv = EGConv(16, 32, [aggregators], add_self_loops=add_self_loops,
+                  cached=cached)
+    assert str(conv) == f"EGConv(16, 32, aggregators=['{aggregators}'])"
     out = conv(x, edge_index)
     assert out.size() == (4, 32)
     assert torch.allclose(conv(x, adj1.t()), out, atol=1e-6)
