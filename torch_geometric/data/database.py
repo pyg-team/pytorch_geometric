@@ -222,6 +222,9 @@ class SQLiteDatabase(Database):
                     break
                 blob_list.extend(chunk_list)
 
+        query = f'DROP TABLE {join_table_name}'
+        self.cursor.execute(query)
+
         data_list = [None] * len(blob_list)
         for row_id, blob in blob_list:
             data_list[row_id] = self.deserialize(blob)
