@@ -54,3 +54,7 @@ def test_database_syntactic_sugar(tmp_path):
         torch.stack(db[torch.tensor([4, 3])], dim=0),
         data[torch.tensor([4, 3])],
     )
+    assert torch.equal(
+        torch.stack(db[torch.tensor([4, 4])], dim=0),
+        data[torch.tensor([4, 4])],
+    )

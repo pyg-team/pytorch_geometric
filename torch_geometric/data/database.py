@@ -196,7 +196,7 @@ class SQLiteDatabase(Database):
         # This avoids having a long IN clause and guarantees sorted outputs:
         join_table_name = f'{self.name}__join__{uuid4().hex}'
         query = (f'CREATE TABLE {join_table_name} (\n'
-                 f'  id INTEGER PRIMARY KEY,\n'
+                 f'  id INTEGER,\n'
                  f'  row_id INTEGER\n'
                  f')')
         self.cursor.execute(query)
