@@ -5,7 +5,7 @@ from ogb.nodeproppred import PygNodePropPredDataset
 from torch_sparse import matmul
 
 from torch_geometric.data import Data
-from torch_geometric.loader import IBMBNodeLoader
+from torch_geometric.loader import IBMBBatchLoader
 from torch_geometric.nn import GCNConv
 from torch_geometric.utils import add_remaining_self_loops, to_undirected
 
@@ -124,11 +124,11 @@ def args_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('--num_aux', type=int, default=16,
                         help='number of auxiliary nodes per output node')
-    parser.add_argument('--num_train_prime', type=int, default=9000,
-                        help='number of output nodes in a training batch')
-    parser.add_argument('--num_val_prime', type=int, default=18000,
-                        help='number of output nodes in a validation batch')
-    parser.add_argument('--alpha', type=float, default=0.2,
+    parser.add_argument('--num_train_partitions', type=int, default=16,
+                        help='number of training batches')
+    parser.add_argument('--num_val_partitions', type=int, default=8,
+                        help='number of validation / test batches')
+    parser.add_argument('--alpha', type=float, default=0.25,
                         help='parameter controlling PPR calculation')
     parser.add_argument('--hidden_channels', type=int, default=256,
                         help='hidden dimension for the GNN')
@@ -141,28 +141,28 @@ def args_parser():
 if __name__ == '__main__':
     args = args_parser()
 
-    dataset = PygNodePropPredDataset(name="ogbn-arxiv", root='./datasets',
+    dataset = PygNodePropPredDataset(name="ogbn-products", root='./datasets',
                                      pre_transform=GraphPreprocess())
     split_idx = dataset.get_idx_split()
     graph = dataset[0]
 
-    train_loader = IBMBNodeLoader(
-        graph, batch_order='order', input_nodes=split_idx["train"],
-        return_edge_index_type='adj', num_auxiliary_nodes=args.num_aux,
-        num_nodes_per_batch=args.num_train_prime, alpha=args.alpha,
-        batch_size=1, shuffle=False)
-    val_loader = IBMBNodeLoader(graph, batch_order='order',
-                                input_nodes=split_idx["valid"],
-                                return_edge_index_type='adj',
-                                num_auxiliary_nodes=args.num_aux,
-                                num_nodes_per_batch=args.num_val_prime,
-                                alpha=args.alpha, batch_size=1, shuffle=False)
-    test_loader = IBMBNodeLoader(graph, batch_order='order',
-                                 input_nodes=split_idx["test"],
+    train_loader = IBMBBatchLoader(graph, batch_order='order',
+                                   input_nodes=split_idx["train"],
+                                   num_partitions=args.num_train_partitions,
+                                   return_edge_index_type='adj',
+                                   alpha=args.alpha, batch_size=1,
+                                   shuffle=False)
+    val_loader = IBMBBatchLoader(graph, batch_order='order',
+                                 input_nodes=split_idx["valid"],
+                                 num_partitions=args.num_val_partitions,
                                  return_edge_index_type='adj',
-                                 num_auxiliary_nodes=args.num_aux,
-                                 num_nodes_per_batch=args.num_val_prime,
                                  alpha=args.alpha, batch_size=1, shuffle=False)
+    test_loader = IBMBBatchLoader(graph, batch_order='order',
+                                  input_nodes=split_idx["test"],
+                                  num_partitions=args.num_val_partitions,
+                                  return_edge_index_type='adj',
+                                  alpha=args.alpha, batch_size=1,
+                                  shuffle=False)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = GCN(graph.num_node_features,
