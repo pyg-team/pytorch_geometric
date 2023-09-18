@@ -5,6 +5,7 @@ from uuid import uuid4
 
 import torch
 from torch import Tensor
+from tqdm import tqdm
 
 
 class Database(ABC):
@@ -24,6 +25,7 @@ class Database(ABC):
         indices: Union[Iterable[int], Tensor, slice, range],
         data_list: Iterable[Any],
         batch_size: Optional[int] = None,
+        log: bool = False,
     ):
         if isinstance(indices, slice):
             indices = self.slice_to_range(indices)
@@ -31,7 +33,13 @@ class Database(ABC):
         length = min(len(indices), len(data_list))
         batch_size = length if batch_size is None else batch_size
 
-        for start in range(0, length, batch_size):
+        if log and length > batch_size:
+            desc = f'Insert {length} entries'
+            offsets = tqdm(range(0, length, batch_size), desc=desc)
+        else:
+            offsets = range(0, length, batch_size)
+
+        for start in offsets:
             self._multi_insert(
                 indices[start:start + batch_size],
                 data_list[start:start + batch_size],
@@ -78,6 +86,10 @@ class Database(ABC):
     @staticmethod
     def serialize(data: Any) -> bytes:
         r"""Serializes :obj:`data` into bytes."""
+        # Ensure that data is not a view of a larger tensor:
+        if isinstance(data, Tensor):
+            data = data.clone()
+
         buffer = io.BytesIO()
         torch.save(data, buffer)
         return buffer.getvalue()
@@ -120,7 +132,7 @@ class Database(ABC):
             self.multi_insert(key, value)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}()'
+        return f'{self.__class__.__name__}({len(self)})'
 
 
 class SQLiteDatabase(Database):
@@ -171,6 +183,7 @@ class SQLiteDatabase(Database):
     ):
         if isinstance(indices, Tensor):
             indices = indices.tolist()
+
         data_list = [self.serialize(data) for data in data_list]
 
         query = f'INSERT INTO {self.name} (id, data) VALUES (?, ?)'
