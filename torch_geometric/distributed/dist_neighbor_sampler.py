@@ -71,7 +71,6 @@ class DistNeighborSampler:
         data: Tuple[LocalGraphStore, LocalFeatureStore],
         channel: mp.Queue(),
         num_neighbors: Optional[NumNeighbors] = None,
-        with_edge: bool = True,
         replace: bool = False,
         subgraph_type: Union[SubgraphType, str] = 'directional',
         disjoint: bool = False,
@@ -98,7 +97,6 @@ class DistNeighborSampler:
         self.is_hetero = self.dist_graph.meta['is_hetero']
 
         self.num_neighbors = num_neighbors
-        self.with_edge = with_edge
         self.channel = channel
         self.concurrency = concurrency
         self.device = device
@@ -402,15 +400,15 @@ class DistNeighborSampler:
         r""" Used when seed nodes belongs to one partition. It's purpose is to
         remove seed nodes from sampled nodes and calculates how many neighbors
         were sampled by each src node based on the
-        :obj:`cumm_sampled_nbrs_per_node`. Returns updated sampler output.
+        :obj:`cumsum_neighbors_per_node`. Returns updated sampler output.
         """
-        cumm_sampled_nbrs_per_node = outputs[p_id].metadata
+        cumsum_neighbors_per_node = outputs[p_id].metadata
 
         # do not include seed
         outputs[p_id].node = outputs[p_id].node[seed_size:]
 
-        begin = np.array(cumm_sampled_nbrs_per_node[1:])
-        end = np.array(cumm_sampled_nbrs_per_node[:-1])
+        begin = np.array(cumsum_neighbors_per_node[1:])
+        end = np.array(cumsum_neighbors_per_node[:-1])
 
         sampled_nbrs_per_node = list(np.subtract(begin, end))
 
@@ -435,7 +433,7 @@ class DistNeighborSampler:
         r""" Merges samplers outputs from different partitions, so that they
         are sorted according to the sampling order. Removes seed nodes from
         sampled nodes and calculates how many neighbors were sampled by each
-        src node based on the :obj:`cumm_sampled_nbrs_per_node`. Leverages the
+        src node based on the :obj:`cumsum_neighbors_per_node`. Leverages the
         :obj:`pyg-lib` :obj:`merge_sampler_outputs` function.
 
         Args:
@@ -457,19 +455,17 @@ class DistNeighborSampler:
             o.edge if o is not None else torch.empty(0, dtype=torch.int64)
             for o in outputs
         ]
-        cumm_sampled_nbrs_per_node = [
+        cumsum_neighbors_per_node = [
             o.metadata if o is not None else [] for o in outputs
         ]
 
         partition_ids = partition_ids.tolist()
         partition_orders = partition_orders.tolist()
 
-        partitions_num = self.dist_graph.meta['num_parts']
-
         out = torch.ops.pyg.merge_sampler_outputs(
-            sampled_nodes_with_dupl, edge_ids, cumm_sampled_nbrs_per_node,
-            partition_ids, partition_orders, partitions_num, one_hop_num,
-            src_batch, self.disjoint)
+            sampled_nodes_with_dupl, edge_ids, cumsum_neighbors_per_node,
+            partition_ids, partition_orders, self.dist_graph.num_partitions,
+            one_hop_num, src_batch, self.disjoint)
         (out_node_with_dupl, out_edge, out_batch,
          out_sampled_nbrs_per_node) = out
 

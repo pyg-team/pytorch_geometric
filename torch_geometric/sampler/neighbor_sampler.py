@@ -472,13 +472,13 @@ class NeighborSampler(BaseSampler):
             self.disjoint and node_time is not None,
             self.temporal_strategy,
         )
-        node, edge, cumm_sum_nbrs_per_node = out
+        node, edge, cumsum_neighbors_per_node = out
 
         if self.disjoint and node_time is not None:
             _, node = node.t().contiguous()
 
         return SamplerOutput(node=node, row=None, col=None, edge=edge,
-                             batch=None, metadata=(cumm_sum_nbrs_per_node))
+                             batch=None, metadata=(cumsum_neighbors_per_node))
 
 
 # Sampling Utilities ##########################################################
