@@ -1,7 +1,7 @@
 import pickle
 import warnings
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 from uuid import uuid4
@@ -15,16 +15,18 @@ from torch_geometric.utils.mixin import CastMixin
 
 @dataclass
 class TensorInfo(CastMixin):
-    size: Tuple[int, ...]
     dtype: torch.dtype
+    size: Tuple[int, ...] = field(default_factory=(-1, ))
 
 
 def maybe_cast_to_tensor_info(value: Any) -> Union[Any, TensorInfo]:
     if not isinstance(value, dict):
         return value
-    if len(value) != 2:
+    if len(value) < 1 or len(value) > 2:
         return value
-    if 'size' not in value or 'dtype' not in value:
+    if len(value) == 1 and 'dtype' not in value:
+        return value
+    if len(value) == 2 and 'dtype' not in value and 'size' not in value:
         return value
     return TensorInfo.cast(value)
 
@@ -318,7 +320,7 @@ class SQLiteDatabase(Database):
             if isinstance(self.schema[key], TensorInfo):
                 out = row.numpy().tobytes()
             elif isinstance(col, Tensor):
-                self.schema[key] = TensorInfo(size=(-1, ), dtype=col.dtype)
+                self.schema[key] = TensorInfo(dtype=col.dtype)
                 out = row.numpy().tobytes()
             elif self.schema[key] in {int, float, str}:
                 out = col
