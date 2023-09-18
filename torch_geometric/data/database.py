@@ -1,9 +1,8 @@
-import io
+import pickle
 from abc import ABC, abstractmethod
 from typing import Any, Iterable, List, Optional, Union
 from uuid import uuid4
 
-import torch
 from torch import Tensor
 from tqdm import tqdm
 
@@ -90,14 +89,12 @@ class Database(ABC):
         if isinstance(data, Tensor):
             data = data.clone()
 
-        buffer = io.BytesIO()
-        torch.save(data, buffer)
-        return buffer.getvalue()
+        return pickle.dumps(data)
 
     @staticmethod
     def deserialize(data: bytes) -> Any:
         r"""Deserializes bytes into the original data."""
-        return torch.load(io.BytesIO(data))
+        return pickle.loads(data)
 
     def slice_to_range(self, indices: slice) -> range:
         start = 0 if indices.start is None else indices.start
@@ -132,7 +129,10 @@ class Database(ABC):
             self.multi_insert(key, value)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({len(self)})'
+        try:
+            return f'{self.__class__.__name__}({len(self)})'
+        except NotImplementedError:
+            return f'{self.__class__.__name__}()'
 
 
 class SQLiteDatabase(Database):
@@ -161,10 +161,11 @@ class SQLiteDatabase(Database):
         self._cursor = self._connection.cursor()
 
     def close(self):
-        self._connection.commit()
-        self._connection.close()
-        self._connection = None
-        self._cursor = None
+        if self._connection is not None:
+            self._connection.commit()
+            self._connection.close()
+            self._connection = None
+            self._cursor = None
 
     @property
     def cursor(self) -> Any:
@@ -245,3 +246,55 @@ class SQLiteDatabase(Database):
         query = f'SELECT COUNT(*) FROM {self.name}'
         self.cursor.execute(query)
         return self.cursor.fetchone()[0]
+
+
+class RocksDatabase(Database):
+    def __init__(self, path: str):
+        super().__init__()
+
+        import rocksdict
+
+        self.path = path
+
+        self._db: Optional[rocksdict.Rdict] = None
+
+        self.connect()
+
+    def connect(self):
+        import rocksdict
+        self._db = rocksdict.Rdict(
+            self.path,
+            options=rocksdict.Options(raw_mode=True),
+        )
+
+    def close(self):
+        if self._db is not None:
+            self._db.close()
+            self._db = None
+
+    @property
+    def db(self) -> Any:
+        if self._db is None:
+            raise RuntimeError("No open database connection")
+        return self._db
+
+    @staticmethod
+    def to_key(index: int) -> bytes:
+        return index.to_bytes(8, byteorder='big', signed=True)
+
+    def insert(self, index: int, data: Any):
+        # Ensure that data is not a view of a larger tensor:
+        if isinstance(data, Tensor):
+            data = data.clone()
+
+        self.db[self.to_key(index)] = self.serialize(data)
+
+    def get(self, index: int) -> Any:
+        return self.deserialize(self.db[self.to_key(index)])
+
+    def _multi_get(self, indices: Union[Iterable[int], Tensor]) -> List[Any]:
+        if isinstance(indices, Tensor):
+            indices = indices.tolist()
+        indices = [self.to_key(index) for index in indices]
+        data_list = self.db[indices]
+        return [self.deserialize(data) for data in data_list]
