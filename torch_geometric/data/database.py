@@ -265,10 +265,7 @@ class RocksDatabase(Database):
 
     def connect(self):
         import rocksdict
-        self._db = rocksdict.Rdict(
-            self.path,
-            options=rocksdict.Options(raw_mode=True),
-        )
+        self._db = rocksdict.Rdict(self.path)
 
     def close(self):
         if self._db is not None:
@@ -281,12 +278,17 @@ class RocksDatabase(Database):
             raise RuntimeError("No open database connection")
         return self._db
 
-    @staticmethod
-    def to_key(index: int) -> bytes:
-        return index.to_bytes(8, byteorder='big', signed=True)
-
     def insert(self, index: int, data: Any):
-        self.db[self.to_key(index)] = self.serialize(data)
+        # Ensure that data is not a view of a larger tensor:
+        if isinstance(data, Tensor):
+            data = data.clone()
+
+        self.db[index] = data
 
     def get(self, index: int) -> Any:
-        return self.deserialize(self.db[self.to_key(index)])
+        return self.db[self.to_key(index)]
+
+    def _multi_get(self, indices: Union[Iterable[int], Tensor]) -> List[Any]:
+        if isinstance(indices, Tensor):
+            indices = indices.tolist()
+        return self.db[indices]
