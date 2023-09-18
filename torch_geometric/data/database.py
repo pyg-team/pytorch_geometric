@@ -16,7 +16,7 @@ from torch_geometric.utils.mixin import CastMixin
 @dataclass
 class TensorInfo(CastMixin):
     dtype: torch.dtype
-    size: Tuple[int, ...] = field(default_factory=(-1, ))
+    size: Tuple[int, ...] = field(default_factory=lambda: (-1, ))
 
 
 def maybe_cast_to_tensor_info(value: Any) -> Union[Any, TensorInfo]:
