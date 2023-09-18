@@ -32,7 +32,7 @@ from torch_geometric.sampler import (
     SamplerOutput,
     edge_sample_async,
 )
-from torch_geometric.sampler.base import SubgraphType, NumNeighbors
+from torch_geometric.sampler.base import NumNeighbors, SubgraphType
 from torch_geometric.sampler.utils import remap_keys
 from torch_geometric.typing import (
     Dict,
@@ -467,9 +467,9 @@ class DistNeighborSampler:
         partitions_num = self.dist_graph.meta['num_parts']
 
         out = torch.ops.pyg.merge_sampler_outputs(
-            sampled_nodes_with_dupl, edge_ids, cumm_sampled_nbrs_per_node, partition_ids,
-            partition_orders, partitions_num, one_hop_num, src_batch,
-            self.disjoint)
+            sampled_nodes_with_dupl, edge_ids, cumm_sampled_nbrs_per_node,
+            partition_ids, partition_orders, partitions_num, one_hop_num,
+            src_batch, self.disjoint)
         (out_node_with_dupl, out_edge, out_batch,
          out_sampled_nbrs_per_node) = out
 
