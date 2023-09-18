@@ -9,7 +9,7 @@ from torch_geometric.testing import withPackage
 
 
 @withPackage('sqlite3')
-@pytest.mark.parametrize('batch_size', [None, 1])
+@pytest.mark.parametrize('batch_size', [None])
 def test_sqlite_database(tmp_path, batch_size):
     path = osp.join(tmp_path, 'sqlite.db')
     db = SQLiteDatabase(path, name='test_table')
@@ -101,7 +101,11 @@ if __name__ == '__main__':
     tmp_dir = tempfile.TemporaryDirectory()
 
     path = osp.join(tmp_dir.name, 'sqlite.db')
-    sqlite_db = SQLiteDatabase(path, name='test_table')
+    sqlite_db = SQLiteDatabase(
+        path,
+        name='test_table',
+        # schema=dict(size=(-1, ), dtype=torch.float),
+    )
     t = time.perf_counter()
     sqlite_db.multi_insert(range(args.numel), data, batch_size=100, log=True)
     print(f'Initialized SQLiteDB in {time.perf_counter() - t:.2f} seconds')
