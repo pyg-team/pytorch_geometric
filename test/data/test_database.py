@@ -113,11 +113,11 @@ if __name__ == '__main__':
     print(f'Initialized RocksDB in {time.perf_counter() - t:.2f} seconds')
 
     def in_memory_get(data):
-        index = torch.randint(0, args.numel, (128, ))
+        index = torch.randint(0, args.numel, (args.batch_size, ))
         return data[index]
 
     def db_get(db):
-        index = torch.randint(0, args.numel, (128, ))
+        index = torch.randint(0, args.numel, (args.batch_size, ))
         return db[index]
 
     benchmark(
