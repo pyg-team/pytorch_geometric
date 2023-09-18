@@ -7,7 +7,7 @@ from torch.nn import Parameter, Sigmoid
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import Adj, PairTensor, OptTensor
+from torch_geometric.typing import Adj, OptTensor, PairTensor
 
 
 class ResGatedGraphConv(MessagePassing):
@@ -103,7 +103,8 @@ class ResGatedGraphConv(MessagePassing):
         if self.bias is not None:
             zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj, edge_attr: OptTensor = None) -> Tensor:
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
+                edge_attr: OptTensor = None) -> Tensor:
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
@@ -122,4 +123,5 @@ class ResGatedGraphConv(MessagePassing):
         k_i = x_i if edge_attr is not None else torch.cat([x_i, edge_attr], dim=-1)
         q_j = x_j if edge_attr is not None else torch.cat([x_j, edge_attr], dim=-1)
         v_j = x_j if edge_attr is not None else torch.cat([x_j, edge_attr], dim=-1)
-        return self.act(self.lin_key(k_i) + self.lin_query(q_j)) * self.lin_value(v_j)
+        return self.act(self.lin_key(k_i) +
+                        self.lin_query(q_j)) * self.lin_value(v_j)
