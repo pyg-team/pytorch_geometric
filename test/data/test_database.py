@@ -4,6 +4,7 @@ import pytest
 import torch
 
 from torch_geometric.data.database import SQLiteDatabase
+from torch_geometric.profile import benchmark
 from torch_geometric.testing import withPackage
 
 
@@ -12,7 +13,7 @@ from torch_geometric.testing import withPackage
 def test_sqlite_database(tmp_path, batch_size):
     path = osp.join(tmp_path, 'sqlite.db')
     db = SQLiteDatabase(path, name='test_table')
-    assert str(db) == 'SQLiteDatabase()'
+    assert str(db) == 'SQLiteDatabase(0)'
     assert len(db) == 0
 
     data = torch.randn(5)
@@ -58,3 +59,42 @@ def test_database_syntactic_sugar(tmp_path):
         torch.stack(db[torch.tensor([4, 4])], dim=0),
         data[torch.tensor([4, 4])],
     )
+
+
+if __name__ == '__main__':
+    import argparse
+    import tempfile
+    import time
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--numel', type=int, default=100_000)
+    parser.add_argument('--batch_size', type=int, default=256)
+    args = parser.parse_args()
+
+    data = torch.randn(args.numel, 128)
+
+    tmp_dir = tempfile.TemporaryDirectory()
+    path = osp.join(tmp_dir.name, 'sqlite.db')
+    db = SQLiteDatabase(path, name='test_table')
+
+    t = time.perf_counter()
+    db.multi_insert(range(args.numel), data, batch_size=100, log=True)
+    print(f'Initialized DB in {time.perf_counter() - t:.2f} seconds')
+
+    def in_memory_get(data):
+        index = torch.randint(0, args.numel, (128, ))
+        return data[index]
+
+    def db_get(db):
+        index = torch.randint(0, args.numel, (128, ))
+        return db[index]
+
+    benchmark(
+        funcs=[in_memory_get, db_get],
+        func_names=['In-Memory', 'SQLite'],
+        args=[(data, ), (db, )],
+        num_steps=50,
+        num_warmups=5,
+    )
+
+    tmp_dir.cleanup()
