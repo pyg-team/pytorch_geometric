@@ -36,6 +36,16 @@ def onlyLinux(func: Callable) -> Callable:
     )(func)
 
 
+def noWindows(func: Callable) -> Callable:
+    r"""A decorator to specify that this function should not execute on
+    Windows systems."""
+    import pytest
+    return pytest.mark.skipif(
+        os.name == 'nt',
+        reason="Windows system",
+    )(func)
+
+
 def onlyPython(*args) -> Callable:
     r"""A decorator to skip tests for any Python version not listed."""
     def decorator(func: Callable) -> Callable:
