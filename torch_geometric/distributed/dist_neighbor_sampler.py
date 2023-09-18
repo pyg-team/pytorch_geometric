@@ -492,11 +492,7 @@ class DistNeighborSampler:
 
         Returns merged samplers outputs from local / remote machines.
         """
-        src_ntype = (etype[0] if not self.csc else
-                     etype[2]) if etype is not None else None
-
-        partition_ids = self.dist_graph.get_partition_ids_from_nids(
-            srcs, src_ntype)
+        partition_ids = self.dist_graph.get_partition_ids_from_nids(srcs)
         partition_orders = torch.zeros(len(partition_ids), dtype=torch.long)
 
         p_outputs: List[SamplerOutput] = [None
