@@ -132,7 +132,7 @@ class Database(ABC):
             self.multi_insert(key, value)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}(len(self))'
+        return f'{self.__class__.__name__}({len(self)})'
 
 
 class SQLiteDatabase(Database):
