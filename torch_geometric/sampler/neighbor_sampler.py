@@ -471,7 +471,6 @@ class NeighborSampler(BaseSampler):
             self.subgraph_type != SubgraphType.induced,
             self.disjoint and node_time is not None,
             self.temporal_strategy,
-            True,  # return_edge_id
         )
         node, edge, cumm_sum_nbrs_per_node = out
 
