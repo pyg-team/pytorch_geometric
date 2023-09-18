@@ -120,8 +120,8 @@ class ResGatedGraphConv(MessagePassing):
         return out
 
     def message(self, x_i: Tensor, x_j: Tensor, edge_attr: OptTensor = None) -> Tensor:
-        k_i = x_i if edge_attr is not None else torch.cat([x_i, edge_attr], dim=-1)
-        q_j = x_j if edge_attr is not None else torch.cat([x_j, edge_attr], dim=-1)
-        v_j = x_j if edge_attr is not None else torch.cat([x_j, edge_attr], dim=-1)
+        k_i = x_i if edge_attr is None else torch.cat([x_i, edge_attr], dim=-1)
+        q_j = x_j if edge_attr is None else torch.cat([x_j, edge_attr], dim=-1)
+        v_j = x_j if edge_attr is None else torch.cat([x_j, edge_attr], dim=-1)
         return self.act(self.lin_key(k_i) +
                         self.lin_query(q_j)) * self.lin_value(v_j)
