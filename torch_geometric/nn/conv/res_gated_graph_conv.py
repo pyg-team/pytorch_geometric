@@ -1,12 +1,13 @@
 from typing import Callable, Optional, Tuple, Union
 
+import torch
 from torch import Tensor
 from torch.nn import Parameter, Sigmoid
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
-from torch_geometric.typing import Adj, PairTensor
+from torch_geometric.typing import Adj, PairTensor, OptTensor
 
 
 class ResGatedGraphConv(MessagePassing):
@@ -33,6 +34,8 @@ class ResGatedGraphConv(MessagePassing):
         out_channels (int): Size of each output sample.
         act (callable, optional): Gating function :math:`\sigma`.
             (default: :meth:`torch.nn.Sigmoid()`)
+        edge_dim (int, optional): Edge feature dimensionality (in case
+            there are any). (default: :obj:`None`)
         bias (bool, optional): If set to :obj:`False`, the layer will not learn
             an additive bias. (default: :obj:`True`)
         root_weight (bool, optional): If set to :obj:`False`, the layer will
@@ -55,6 +58,7 @@ class ResGatedGraphConv(MessagePassing):
         in_channels: Union[int, Tuple[int, int]],
         out_channels: int,
         act: Optional[Callable] = Sigmoid(),
+        edge_dim: Optional[int] = None,
         root_weight: bool = True,
         bias: bool = True,
         **kwargs,
@@ -66,14 +70,16 @@ class ResGatedGraphConv(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.act = act
+        self.edge_dim = edge_dim
         self.root_weight = root_weight
 
         if isinstance(in_channels, int):
             in_channels = (in_channels, in_channels)
 
-        self.lin_key = Linear(in_channels[1], out_channels)
-        self.lin_query = Linear(in_channels[0], out_channels)
-        self.lin_value = Linear(in_channels[0], out_channels)
+        edge_dim = edge_dim if edge_dim is not None else 0
+        self.lin_key = Linear(in_channels[1] + edge_dim, out_channels)
+        self.lin_query = Linear(in_channels[0] + edge_dim, out_channels)
+        self.lin_value = Linear(in_channels[0] + edge_dim, out_channels)
 
         if root_weight:
             self.lin_skip = Linear(in_channels[1], out_channels, bias=False)
@@ -97,16 +103,12 @@ class ResGatedGraphConv(MessagePassing):
         if self.bias is not None:
             zeros(self.bias)
 
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
+    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj, edge_attr: OptTensor = None) -> Tensor:
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
-        k = self.lin_key(x[1])
-        q = self.lin_query(x[0])
-        v = self.lin_value(x[0])
-
-        # propagate_type: (k: Tensor, q: Tensor, v: Tensor)
-        out = self.propagate(edge_index, k=k, q=q, v=v, size=None)
+        # propagate_type: (x: PairTensor, edge_attr: Tensor)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
 
         if self.root_weight:
             out = out + self.lin_skip(x[1])
@@ -116,5 +118,8 @@ class ResGatedGraphConv(MessagePassing):
 
         return out
 
-    def message(self, k_i: Tensor, q_j: Tensor, v_j: Tensor) -> Tensor:
-        return self.act(k_i + q_j) * v_j
+    def message(self, x_i: Tensor, x_j: Tensor, edge_attr: Tensor) -> Tensor:
+        k_i = torch.cat([x_i, edge_attr], dim=-1)
+        q_j = torch.cat([x_j, edge_attr], dim=-1)
+        v_j = torch.cat([x_j, edge_attr], dim=-1)
+        return self.act(self.lin_key(k_i) + self.lin_query(q_j)) * self.lin_value(v_j)
