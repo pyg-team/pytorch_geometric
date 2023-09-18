@@ -149,10 +149,11 @@ class SQLiteDatabase(Database):
         self._cursor = self._connection.cursor()
 
     def close(self):
-        self._connection.commit()
-        self._connection.close()
-        self._connection = None
-        self._cursor = None
+        if self._connection is not None:
+            self._connection.commit()
+            self._connection.close()
+            self._connection = None
+            self._cursor = None
 
     @property
     def cursor(self) -> Any:
@@ -232,3 +233,44 @@ class SQLiteDatabase(Database):
         query = f'SELECT COUNT(*) FROM {self.name}'
         self.cursor.execute(query)
         return self.cursor.fetchone()[0]
+
+
+class RocksDatabase(Database):
+    def __init__(self, path: str):
+        super().__init__()
+
+        import rocksdict
+
+        self.path = path
+
+        self._db: Optional[rocksdict.Rdict] = None
+
+        self.connect()
+
+    def connect(self):
+        import rocksdict
+        self._db = rocksdict.Rdict(
+            self.path,
+            options=rocksdict.Options(raw_mode=True),
+        )
+
+    def close(self):
+        if self._db is not None:
+            self._db.close()
+            self._db = None
+
+    @property
+    def db(self) -> Any:
+        if self._db is None:
+            raise RuntimeError("No open database connection")
+        return self._db
+
+    @staticmethod
+    def to_key(index: int) -> bytes:
+        return index.to_bytes(8, byteorder='big', signed=True)
+
+    def insert(self, index: int, data: Any):
+        self.db[self.to_key(index)] = self.serialize(data)
+
+    def get(self, index: int) -> Any:
+        return self.deserialize(self.db[self.to_key(index)])
