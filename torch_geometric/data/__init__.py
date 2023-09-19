@@ -6,6 +6,7 @@ from .data import Data
 from .hetero_data import HeteroData
 from .batch import Batch
 from .temporal import TemporalData
+from .database import Database, SQLiteDatabase, RocksDatabase
 from .dataset import Dataset
 from .in_memory_dataset import InMemoryDataset
 from .makedirs import makedirs
@@ -28,6 +29,12 @@ remote_backend_classes = [
     'GraphStore',
     'TensorAttr',
     'EdgeAttr',
+]
+
+database_classes = [
+    'Database',
+    'SQLiteDatabase',
+    'RocksDatabase',
 ]
 
 helper_functions = [
