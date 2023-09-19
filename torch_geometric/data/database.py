@@ -1,7 +1,6 @@
 import pickle
 import warnings
 from abc import ABC, abstractmethod
-from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
