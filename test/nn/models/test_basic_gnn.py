@@ -160,6 +160,28 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+@pytest.mark.parametrize('norm', [
+    'BatchNorm',
+    'GraphNorm',
+    'InstanceNorm',
+    'LayerNorm',
+])
+def test_batch(norm):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    batch = torch.tensor([0, 0, 1])
+
+    model = GraphSAGE(8, 16, num_layers=2, norm=norm)
+    assert model.supports_norm_batch == (norm != 'BatchNorm')
+
+    out = model(x, edge_index, batch=batch)
+    assert out.size() == (3, 16)
+
+    if model.supports_norm_batch:
+        with pytest.raises(RuntimeError, match="out of bounds"):
+            model(x, edge_index, batch=batch, batch_size=1)
+
+
 @onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
