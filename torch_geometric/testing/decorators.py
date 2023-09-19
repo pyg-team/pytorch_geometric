@@ -125,29 +125,31 @@ def onlyNeighborSampler(func: Callable):
     )(func)
 
 
+def has_package(package: str) -> bool:
+    r"""Returns :obj:`True` in case :obj:`package` is installed."""
+    if '|' in package:
+        return any(has_package(p) for p in package.split('|'))
+
+    req = Requirement(package)
+    if find_spec(req.name) is None:
+        return False
+    module = import_module(req.name)
+    if not hasattr(module, '__version__'):
+        return True
+
+    version = module.__version__
+    # `req.specifier` does not support `.dev` suffixes, e.g., for
+    # `pyg_lib==0.1.0.dev*`, so we manually drop them:
+    if '.dev' in version:
+        version = '.'.join(version.split('.dev')[:-1])
+
+    return version in req.specifier
+
+
 def withPackage(*args) -> Callable:
     r"""A decorator to skip tests if certain packages are not installed.
     Also supports version specification."""
-    def is_installed(package: str) -> bool:
-        if '|' in package:
-            return any(is_installed(p) for p in package.split('|'))
-
-        req = Requirement(package)
-        if find_spec(req.name) is None:
-            return False
-        module = import_module(req.name)
-        if not hasattr(module, '__version__'):
-            return True
-
-        version = module.__version__
-        # `req.specifier` does not support `.dev` suffixes, e.g., for
-        # `pyg_lib==0.1.0.dev*`, so we manually drop them:
-        if '.dev' in version:
-            version = '.'.join(version.split('.dev')[:-1])
-
-        return version in req.specifier
-
-    na_packages = set(package for package in args if not is_installed(package))
+    na_packages = set(package for package in args if not has_package(package))
 
     def decorator(func: Callable) -> Callable:
         import pytest
