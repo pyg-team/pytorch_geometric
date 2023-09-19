@@ -37,7 +37,7 @@ Schema = Union[Any, Dict[str, Any], Tuple[Any], List[Any]]
 class Database(ABC):
     r"""Base class for inserting and retrieving data from a database.
     A database acts as a persisted, out-of-memory and index-based key/value
-    store for tensor and custom data.
+    store for tensor and custom data:
 
     .. code-block:: python
 
@@ -46,8 +46,8 @@ class Database(ABC):
         print(db[0])
         >>> Data(x=[5, 16], y=0, z='id_0')
 
-    It is recommended to specify the :obj:`schema` of the underlying data,
-    which imrpoves efficiency in return:
+    To improve efficiency, it is recommended to specify the underlying
+    :obj:`schema` of the data:
 
     .. code-block:: python
 
@@ -59,7 +59,7 @@ class Database(ABC):
         })
         db[0] = dict(x=torch.randn(5, 16), y=0, z='id_0')
         print(db[0])
-        >>> {'x': [5, 16], 'y': 0, 'z': 'id_0'}
+        >>> {'x': torch.tensor(...), 'y': 0, 'z': 'id_0'}
 
     In addition, databases support batch-wise insert and get, and support
     syntactic sugar known from indexing Python lists, *e.g.*:
@@ -69,14 +69,15 @@ class Database(ABC):
         db = Database()
         db[2:5] = torch.randn(3, 16)
         print(db[torch.tensor([2, 3])])
+        >>> [torch.tensor(...), torch.tensor(...)]
 
     Args:
         schema (Any or Tuple[Any] or Dict[str, Any], optional): The schema of
-            the data.
+            the input data.
             Can take :obj:`int`, :obj:`float`, :obj:`str`, :obj:`object`, or a
-            dictionary with :obj:`dtype` and :obj:`size` keys (for specifiying
-            tensor data) as input, and can be given as a tuple or dictionary.
-            Specifying the schema will improve efficiency, as by default, the
+            dictionary with :obj:`dtype` and :obj:`size` keys (for specifying
+            tensor data) as input, and can be nested as a tuple or dictionary.
+            Specifying the schema will improve efficiency, since by default the
             database will use python pickling for serializing and
             deserializing. (default: :obj:`object`)
     """
@@ -91,7 +92,9 @@ class Database(ABC):
         self.schema: Dict[Union[str, int], Any] = schema
 
     def connect(self):
-        r"""Connects to the database."""
+        r"""Connects to the database.
+        Databases will automatically connect on instantiation.
+        """
         pass
 
     def close(self):
@@ -100,10 +103,10 @@ class Database(ABC):
 
     @abstractmethod
     def insert(self, index: int, data: Any):
-        r"""Inserts custom data at the specified index.
+        r"""Inserts data at the specified index.
 
         Args:
-            index (int): The index at which to insert the data.
+            index (int): The index at which to insert.
             data (Any): The object to insert.
         """
         raise NotImplementedError
@@ -119,8 +122,8 @@ class Database(ABC):
 
         Args:
             indices (List[int] or torch.Tensor or range): The indices at which
-                to insert the data.
-            data_list (List[Any]): The chunk of data to insert.
+                to insert.
+            data_list (List[Any]): The objects to insert.
             batch_size (int, optional): If specified, will insert the data to
                 the database in batches of size :obj:`batch_size`.
                 (default: :obj:`None`)
@@ -157,10 +160,10 @@ class Database(ABC):
 
     @abstractmethod
     def get(self, index: int) -> Any:
-        r"""Gets the data from the specified index.
+        r"""Gets data from the specified index.
 
         Args:
-            index (int): The index from which to get the data.
+            index (int): The index to query.
         """
         raise NotImplementedError
 
@@ -172,8 +175,7 @@ class Database(ABC):
         r"""Gets a chunk of data from the specified indices.
 
         Args:
-            indices (List[int] or torch.Tensor or range): The indices from
-                which to get the data.
+            indices (List[int] or torch.Tensor or range): The indices to query.
             batch_size (int, optional): If specified, will request the data
                 from the database in batches of size :obj:`batch_size`.
                 (default: :obj:`None`)
@@ -255,11 +257,11 @@ class SQLiteDatabase(Database):
         path (str): The path to where the database should be saved.
         name (str): The name of the table to save the data to.
         schema (Any or Tuple[Any] or Dict[str, Any], optional): The schema of
-            the data.
+            the input data.
             Can take :obj:`int`, :obj:`float`, :obj:`str`, :obj:`object`, or a
-            dictionary with :obj:`dtype` and :obj:`size` keys (for specifiying
-            tensor data) as input, and can be given as a tuple or dictionary.
-            Specifying the schema will improve efficiency, as by default, the
+            dictionary with :obj:`dtype` and :obj:`size` keys (for specifying
+            tensor data) as input, and can be nested as a tuple or dictionary.
+            Specifying the schema will improve efficiency, since by default the
             database will use python pickling for serializing and
             deserializing. (default: :obj:`object`)
     """
@@ -473,11 +475,11 @@ class RocksDatabase(Database):
     Args:
         path (str): The path to where the database should be saved.
         schema (Any or Tuple[Any] or Dict[str, Any], optional): The schema of
-            the data.
+            the input data.
             Can take :obj:`int`, :obj:`float`, :obj:`str`, :obj:`object`, or a
-            dictionary with :obj:`dtype` and :obj:`size` keys (for specifiying
-            tensor data) as input, and can be given as a tuple or dictionary.
-            Specifying the schema will improve efficiency, as by default, the
+            dictionary with :obj:`dtype` and :obj:`size` keys (for specifying
+            tensor data) as input, and can be nested as a tuple or dictionary.
+            Specifying the schema will improve efficiency, since by default the
             database will use python pickling for serializing and
             deserializing. (default: :obj:`object`)
     """
