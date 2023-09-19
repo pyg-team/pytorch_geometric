@@ -15,9 +15,13 @@ from torch_geometric.data import (
 
 
 class BrcaTcga(InMemoryDataset):
-    r"""The breast cancer (BRCA TCGA) dataset from the `cBioPortal
-    <https://www.cbioportal.org>`_ and the biological network for node
-    connections from `Pathway Commons <https://www.pathwaycommons.org>`_.
+    r"""The breast cancer (BRCA TCGA Pan-Cancer Atlas) dataset
+    consisting of NUMBER of patients with survival information (in months)
+    and gene expression data (9288 nodes) from
+    `cBioPortal <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4160307/>`_ and
+    a network of biological interactions between those edges (271,771 edges)
+    from `Pathway
+    Commons <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7145667/>`_.
     The dataset contains the gene features of 1,082 patients, and the overall
     survival time (in months) of each patient as label.
 
