@@ -105,11 +105,22 @@ class ResGatedGraphConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None) -> Tensor:
+
         if isinstance(x, Tensor):
             x: PairTensor = (x, x)
 
-        # propagate_type: (x: PairTensor, edge_attr: Tensor)
-        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
+        # In case edge features are not given, we can compute key, query and
+        # value tensors in node-level space, which is a bit more efficient:
+        if self.edge_dim is None:
+            k = self.lin_key(x[1])
+            q = self.lin_query(x[0])
+            v = self.lin_value(x[0])
+        else:
+            k, q, v = x[1], x[0], x[0]
+
+        # propagate_type: (k: Tensor, q: Tensor, v: Tensor, edge_attr: OptTensor)  # noqa
+        out = self.propagate(edge_index, k=k, q=q, v=v, edge_attr=edge_attr,
+                             size=None)
 
         if self.root_weight:
             out = out + self.lin_skip(x[1])
@@ -119,10 +130,14 @@ class ResGatedGraphConv(MessagePassing):
 
         return out
 
-    def message(self, x_i: Tensor, x_j: Tensor,
-                edge_attr: OptTensor = None) -> Tensor:
-        k_i = x_i if edge_attr is None else torch.cat([x_i, edge_attr], dim=-1)
-        q_j = x_j if edge_attr is None else torch.cat([x_j, edge_attr], dim=-1)
-        v_j = x_j if edge_attr is None else torch.cat([x_j, edge_attr], dim=-1)
-        return self.act(self.lin_key(k_i) +
-                        self.lin_query(q_j)) * self.lin_value(v_j)
+    def message(self, k_i: Tensor, q_j: Tensor, v_j: Tensor,
+                edge_attr: OptTensor) -> Tensor:
+
+        assert (edge_attr is not None) == (self.edge_dim is not None)
+
+        if edge_attr is not None:
+            k_i = self.lin_key(torch.cat([k_i, edge_attr], dim=-1))
+            q_j = self.lin_query(torch.cat([q_j, edge_attr], dim=-1))
+            v_j = self.lin_value(torch.cat([v_j, edge_attr], dim=-1))
+
+        return self.act(k_i + q_j) * v_j
