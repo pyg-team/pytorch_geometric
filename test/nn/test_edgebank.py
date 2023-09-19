@@ -8,12 +8,12 @@ from pathlib import Path
 
 import pytest
 import torch
-from torch_geometric.testing import withPackage
 from sklearn.metrics import average_precision_score, roc_auc_score
 from tqdm import tqdm
 
 from torch_geometric.loader import TemporalDataLoader
 from torch_geometric.nn.models import EdgeBankPredictor
+from torch_geometric.testing import withPackage
 
 
 # ==================
@@ -24,6 +24,7 @@ def test_edge_bank_pred():
     from tgb.linkproppred.dataset import LinkPropPredDataset
     from tgb.linkproppred.evaluate import Evaluator
     from tgb.utils.utils import save_results, set_random_seed
+
     def helper_func(data, test_mask, neg_sampler, split_mode):
         r"""
         Evaluated the dynamic link prediction
