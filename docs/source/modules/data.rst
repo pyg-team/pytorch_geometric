@@ -31,6 +31,19 @@ Remote Backend Interfaces
      {{ name }}
    {% endfor %}
 
+Databases
+---------
+
+.. currentmodule:: torch_geometric.data
+
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.data.database_classes %}
+     {{ name }}
+   {% endfor %}
+
 PyTorch Lightning Wrappers
 --------------------------
 
