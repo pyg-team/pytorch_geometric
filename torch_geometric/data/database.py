@@ -183,6 +183,8 @@ class SQLiteDatabase(Database):
 
         self.connect()
 
+        # Create the table (if it does not exist) by mapping the Python schema
+        # to the corresponding SQL schema:
         sql_schema = ',\n'.join([
             f'  {col_name} {self._to_sql_type(type_info)} NOT NULL' for
             col_name, type_info in zip(self._col_names, self.schema.values())
@@ -215,7 +217,7 @@ class SQLiteDatabase(Database):
         query = (f'INSERT INTO {self.name} '
                  f'(id, {self._joined_col_names}) '
                  f'VALUES (?, {self._dummies})')
-        self.cursor.execute(query, (index, self._serialize(data)))
+        self.cursor.execute(query, (index, *self._serialize(data)))
 
     def _multi_insert(
         self,
@@ -225,12 +227,13 @@ class SQLiteDatabase(Database):
         if isinstance(indices, Tensor):
             indices = indices.tolist()
 
-        data_list = [self._serialize(data) for data in data_list]
+        data_list = [(index, *self._serialize(data))
+                     for index, data in zip(indices, data_list)]
 
         query = (f'INSERT INTO {self.name} '
                  f'(id, {self._joined_col_names}) '
                  f'VALUES (?, {self._dummies})')
-        self.cursor.executemany(query, zip(indices, data_list))
+        self.cursor.executemany(query, data_list)
 
     def get(self, index: int) -> Any:
         query = (f'SELECT {self._joined_col_names} FROM {self.name} '
@@ -249,7 +252,7 @@ class SQLiteDatabase(Database):
         elif isinstance(indices, Tensor):
             indices = indices.tolist()
 
-        # We first create a temporary ID table to then perform an INNER JOIN.
+        # We create a temporary ID table to then perform an INNER JOIN.
         # This avoids having a long IN clause and guarantees sorted outputs:
         join_table_name = f'{self.name}__join__{uuid4().hex}'
         query = (f'CREATE TABLE {join_table_name} (\n'
@@ -314,24 +317,33 @@ class SQLiteDatabase(Database):
         else:
             return 'BLOB'
 
-    def _serialize(self, row: Any) -> Union[Any, List[Any]]:
-        out_list: List[Any] = []
+    def _serialize(self, row: Any) -> List[Any]:
+        # Serializes the given input data according to `schema`:
+        # * {int, float, str}: Use as they are.
+        # * torch.Tensor: Convert into the raw byte string
+        # * object: Dump via pickle
+        # If we find a `torch.Tensor` that is not registered as such in
+        # `schema`, we modify the schema in-place for improved efficiency.
+        out: List[Any] = []
         for key, col in self._to_dict(row).items():
             if isinstance(self.schema[key], TensorInfo):
-                out = row.numpy().tobytes()
+                out.append(col.numpy().tobytes())
             elif isinstance(col, Tensor):
                 self.schema[key] = TensorInfo(dtype=col.dtype)
-                out = row.numpy().tobytes()
+                out.append(col.numpy().tobytes())
             elif self.schema[key] in {int, float, str}:
-                out = col
+                out.append(col)
             else:
-                out = pickle.dumps(col)
+                out.append(pickle.dumps(col))
 
-            out_list.append(out)
-
-        return out_list if len(out_list) > 1 else out_list[0]
+        return out
 
     def _deserialize(self, row: Tuple[Any]) -> Any:
+        # Deserializes the DB data according to `schema`:
+        # * {int, float, str}: Use as they are.
+        # * torch.Tensor: Load raw byte string with `dtype` and `size`
+        #   information from `schema`
+        # * object: Load via pickle
         out_dict = {}
         for i, (key, col_schema) in enumerate(self.schema.items()):
             if isinstance(col_schema, TensorInfo):
@@ -342,12 +354,14 @@ class SQLiteDatabase(Database):
             else:
                 out_dict[key] = pickle.loads(row[i])
 
+        # In case `0` exists as integer in the schema, this means that the
+        # schema was passed as either a single entry or a tuple:
         if 0 in self.schema:
             if len(self.schema) == 1:
                 return out_dict[0]
             else:
                 return tuple(out_dict.values())
-        else:
+        else:  # Otherwise, return the dictionary as it is:
             return out_dict
 
 

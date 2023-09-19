@@ -3,29 +3,53 @@ import os.path as osp
 import pytest
 import torch
 
-from torch_geometric.data.database import RocksDatabase, SQLiteDatabase
+from torch_geometric.data import Data
+from torch_geometric.data.database import (
+    RocksDatabase,
+    SQLiteDatabase,
+    TensorInfo,
+)
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import has_package, withPackage
+
+AVAILABLE_DATABASES = []
+if has_package('sqlite3'):
+    AVAILABLE_DATABASES.append(SQLiteDatabase)
+if has_package('rocksdict'):
+    AVAILABLE_DATABASES.append(RocksDatabase)
 
 
-@withPackage('sqlite3')
+@pytest.mark.parametrize('Database', AVAILABLE_DATABASES)
 @pytest.mark.parametrize('batch_size', [None, 1])
-def test_sqlite_database(tmp_path, batch_size):
-    path = osp.join(tmp_path, 'sqlite.db')
-    db = SQLiteDatabase(path, name='test_table')
-    assert str(db) == 'SQLiteDatabase(0)'
-    assert len(db) == 0
+def test_databases_single_tensor(tmp_path, Database, batch_size):
+    kwargs = dict(path=osp.join(tmp_path, 'storage.db'))
+    if Database == SQLiteDatabase:
+        kwargs['name'] = 'test_table'
+
+    db = Database(**kwargs)
+    assert db.schema == {0: object}
+
+    try:
+        assert len(db) == 0
+        assert str(db) == f'{Database.__name__}(0)'
+    except NotImplementedError:
+        assert str(db) == f'{Database.__name__}()'
 
     data = torch.randn(5)
     db.insert(0, data)
-    assert len(db) == 1
+    try:
+        assert len(db) == 1
+    except NotImplementedError:
+        pass
     assert torch.equal(db.get(0), data)
 
     indices = torch.tensor([1, 2])
     data_list = torch.randn(2, 5)
     db.multi_insert(indices, data_list, batch_size=batch_size)
-    assert len(db) == 3
-
+    try:
+        assert len(db) == 3
+    except NotImplementedError:
+        pass
     out_list = db.multi_get(indices, batch_size=batch_size)
     assert isinstance(out_list, list)
     assert len(out_list) == 2
@@ -35,35 +59,98 @@ def test_sqlite_database(tmp_path, batch_size):
     db.close()
 
 
-@withPackage('rocksdict')
-@pytest.mark.parametrize('batch_size', [None, 1])
-def test_rocks_database(tmp_path, batch_size):
-    path = osp.join(tmp_path, 'rocks.db')
-    db = RocksDatabase(path)
-    assert str(db) == 'RocksDatabase()'
-    with pytest.raises(NotImplementedError):
-        len(db)
+@pytest.mark.parametrize('Database', AVAILABLE_DATABASES)
+def test_databases_schema(tmp_path, Database):
+    kwargs = dict(name='test_table') if Database == SQLiteDatabase else {}
 
-    data = torch.randn(5)
-    db.insert(0, data)
-    assert torch.equal(db.get(0), data)
+    path = osp.join(tmp_path, 'tuple_storage.db')
+    schema = (int, float, str, dict(dtype=torch.float, size=(2, -1)), object)
+    db = Database(path, schema=schema, **kwargs)
+    assert db.schema == {
+        0: int,
+        1: float,
+        2: str,
+        3: TensorInfo(dtype=torch.float, size=(2, -1)),
+        4: object,
+    }
 
-    indices = torch.tensor([1, 2])
-    data_list = torch.randn(2, 5)
-    db.multi_insert(indices, data_list, batch_size=batch_size)
+    data1 = (1, 0.1, 'a', torch.randn(2, 8), Data(x=torch.randn(1, 8)))
+    data2 = (2, 0.2, 'b', torch.randn(2, 16), Data(x=torch.randn(2, 8)))
+    data3 = (3, 0.3, 'c', torch.randn(2, 32), Data(x=torch.randn(3, 8)))
+    db.insert(0, data1)
+    db.multi_insert([1, 2], [data2, data3])
 
-    out_list = db.multi_get(indices, batch_size=batch_size)
-    assert isinstance(out_list, list)
-    assert len(out_list) == 2
-    assert torch.equal(out_list[0], data_list[0])
-    assert torch.equal(out_list[1], data_list[1])
+    out1 = db.get(0)
+    out2, out3 = db.multi_get([1, 2])
+
+    for out, data in zip([out1, out2, out3], [data1, data2, data3]):
+        assert out[0] == data[0]
+        assert out[1] == data[1]
+        assert out[2] == data[2]
+        assert torch.equal(out[3], data[3])
+        assert isinstance(out[4], Data) and len(out[4]) == 1
+        assert torch.equal(out[4].x, data[4].x)
+
+    db.close()
+
+    path = osp.join(tmp_path, 'dict_storage.db')
+    schema = {
+        'int': int,
+        'float': float,
+        'str': str,
+        'tensor': dict(dtype=torch.float, size=(2, -1)),
+        'data': object
+    }
+    db = Database(path, schema=schema, **kwargs)
+    assert db.schema == {
+        'int': int,
+        'float': float,
+        'str': str,
+        'tensor': TensorInfo(dtype=torch.float, size=(2, -1)),
+        'data': object,
+    }
+
+    data1 = {
+        'int': 1,
+        'float': 0.1,
+        'str': 'a',
+        'tensor': torch.randn(2, 8),
+        'data': Data(x=torch.randn(1, 8)),
+    }
+    data2 = {
+        'int': 2,
+        'float': 0.2,
+        'str': 'b',
+        'tensor': torch.randn(2, 16),
+        'data': Data(x=torch.randn(2, 8)),
+    }
+    data3 = {
+        'int': 3,
+        'float': 0.3,
+        'str': 'c',
+        'tensor': torch.randn(2, 32),
+        'data': Data(x=torch.randn(3, 8)),
+    }
+    db.insert(0, data1)
+    db.multi_insert([1, 2], [data2, data3])
+
+    out1 = db.get(0)
+    out2, out3 = db.multi_get([1, 2])
+
+    for out, data in zip([out1, out2, out3], [data1, data2, data3]):
+        assert out['int'] == data['int']
+        assert out['float'] == data['float']
+        assert out['str'] == data['str']
+        assert torch.equal(out['tensor'], data['tensor'])
+        assert isinstance(out['data'], Data) and len(out['data']) == 1
+        assert torch.equal(out['data'].x, data['data'].x)
 
     db.close()
 
 
 @withPackage('sqlite3')
 def test_database_syntactic_sugar(tmp_path):
-    path = osp.join(tmp_path, 'sqlite.db')
+    path = osp.join(tmp_path, 'storage.db')
     db = SQLiteDatabase(path, name='test_table')
 
     data = torch.randn(5, 16)
