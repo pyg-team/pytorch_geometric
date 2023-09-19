@@ -3,12 +3,8 @@ import os.path as osp
 import pytest
 import torch
 
-from torch_geometric.data import Data
-from torch_geometric.data.database import (
-    RocksDatabase,
-    SQLiteDatabase,
-    TensorInfo,
-)
+from torch_geometric.data import Data, RocksDatabase, SQLiteDatabase
+from torch_geometric.data.database import TensorInfo
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import has_package, withPackage
 

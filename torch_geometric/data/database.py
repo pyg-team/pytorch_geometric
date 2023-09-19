@@ -35,7 +35,52 @@ Schema = Union[Any, Dict[str, Any], Tuple[Any], List[Any]]
 
 
 class Database(ABC):
-    r"""Base class for inserting and retrieving data from a database."""
+    r"""Base class for inserting and retrieving data from a database.
+    A database acts as a persisted, out-of-memory and index-based key/value
+    store for tensor and custom data:
+
+    .. code-block:: python
+
+        db = Database()
+        db[0] = Data(x=torch.randn(5, 16), y=0, z='id_0')
+        print(db[0])
+        >>> Data(x=[5, 16], y=0, z='id_0')
+
+    To improve efficiency, it is recommended to specify the underlying
+    :obj:`schema` of the data:
+
+    .. code-block:: python
+
+        db = Database(schema={  # Custom schema:
+            # Tensor information can be specified through a dictionary:
+            'x': dict(dtype=torch.float, size=(-1, 16)),
+            'y': int,
+            'z': str,
+        })
+        db[0] = dict(x=torch.randn(5, 16), y=0, z='id_0')
+        print(db[0])
+        >>> {'x': torch.tensor(...), 'y': 0, 'z': 'id_0'}
+
+    In addition, databases support batch-wise insert and get, and support
+    syntactic sugar known from indexing Python lists, *e.g.*:
+
+    .. code-block:: python
+
+        db = Database()
+        db[2:5] = torch.randn(3, 16)
+        print(db[torch.tensor([2, 3])])
+        >>> [torch.tensor(...), torch.tensor(...)]
+
+    Args:
+        schema (Any or Tuple[Any] or Dict[str, Any], optional): The schema of
+            the input data.
+            Can take :obj:`int`, :obj:`float`, :obj:`str`, :obj:`object`, or a
+            dictionary with :obj:`dtype` and :obj:`size` keys (for specifying
+            tensor data) as input, and can be nested as a tuple or dictionary.
+            Specifying the schema will improve efficiency, since by default the
+            database will use python pickling for serializing and
+            deserializing. (default: :obj:`object`)
+    """
     def __init__(self, schema: Schema = object):
         schema = maybe_cast_to_tensor_info(schema)
         schema = self._to_dict(schema)
@@ -47,13 +92,23 @@ class Database(ABC):
         self.schema: Dict[Union[str, int], Any] = schema
 
     def connect(self):
+        r"""Connects to the database.
+        Databases will automatically connect on instantiation.
+        """
         pass
 
     def close(self):
+        r"""Closes the connection to the database."""
         pass
 
     @abstractmethod
     def insert(self, index: int, data: Any):
+        r"""Inserts data at the specified index.
+
+        Args:
+            index (int): The index at which to insert.
+            data (Any): The object to insert.
+        """
         raise NotImplementedError
 
     def multi_insert(
@@ -63,6 +118,18 @@ class Database(ABC):
         batch_size: Optional[int] = None,
         log: bool = False,
     ):
+        r"""Inserts a chunk of data at the specified indices.
+
+        Args:
+            indices (List[int] or torch.Tensor or range): The indices at which
+                to insert.
+            data_list (List[Any]): The objects to insert.
+            batch_size (int, optional): If specified, will insert the data to
+                the database in batches of size :obj:`batch_size`.
+                (default: :obj:`None`)
+            log (bool, optional): If set to :obj:`True`, will log progress to
+                the console. (default: :obj:`False`)
+        """
         if isinstance(indices, slice):
             indices = self.slice_to_range(indices)
 
@@ -93,6 +160,11 @@ class Database(ABC):
 
     @abstractmethod
     def get(self, index: int) -> Any:
+        r"""Gets data from the specified index.
+
+        Args:
+            index (int): The index to query.
+        """
         raise NotImplementedError
 
     def multi_get(
@@ -100,6 +172,14 @@ class Database(ABC):
         indices: Union[Iterable[int], Tensor, slice, range],
         batch_size: Optional[int] = None,
     ) -> List[Any]:
+        r"""Gets a chunk of data from the specified indices.
+
+        Args:
+            indices (List[int] or torch.Tensor or range): The indices to query.
+            batch_size (int, optional): If specified, will request the data
+                from the database in batches of size :obj:`batch_size`.
+                (default: :obj:`None`)
+        """
         if isinstance(indices, slice):
             indices = self.slice_to_range(indices)
 
@@ -168,6 +248,23 @@ class Database(ABC):
 
 
 class SQLiteDatabase(Database):
+    r"""An index-based key/value database based on :obj:`sqlite3`.
+
+    .. note::
+        This database implementation requires the :obj:`sqlite3` package.
+
+    Args:
+        path (str): The path to where the database should be saved.
+        name (str): The name of the table to save the data to.
+        schema (Any or Tuple[Any] or Dict[str, Any], optional): The schema of
+            the input data.
+            Can take :obj:`int`, :obj:`float`, :obj:`str`, :obj:`object`, or a
+            dictionary with :obj:`dtype` and :obj:`size` keys (for specifying
+            tensor data) as input, and can be nested as a tuple or dictionary.
+            Specifying the schema will improve efficiency, since by default the
+            database will use python pickling for serializing and
+            deserializing. (default: :obj:`object`)
+    """
     def __init__(self, path: str, name: str, schema: Schema = object):
         super().__init__(schema)
 
@@ -366,6 +463,26 @@ class SQLiteDatabase(Database):
 
 
 class RocksDatabase(Database):
+    r"""An index-based key/value database based on :obj:`RocksDB`.
+
+    .. note::
+        This database implementation requires the :obj:`rocksdict` package.
+
+    .. warning::
+        :class:`RocksDatabase` is currently less optimized than
+        :class:`SQLiteDatabase`.
+
+    Args:
+        path (str): The path to where the database should be saved.
+        schema (Any or Tuple[Any] or Dict[str, Any], optional): The schema of
+            the input data.
+            Can take :obj:`int`, :obj:`float`, :obj:`str`, :obj:`object`, or a
+            dictionary with :obj:`dtype` and :obj:`size` keys (for specifying
+            tensor data) as input, and can be nested as a tuple or dictionary.
+            Specifying the schema will improve efficiency, since by default the
+            database will use python pickling for serializing and
+            deserializing. (default: :obj:`object`)
+    """
     def __init__(self, path: str, schema: Schema = object):
         super().__init__(schema)
 
