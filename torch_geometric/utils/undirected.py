@@ -158,8 +158,8 @@ def to_undirected(
     """
     # Maintain backward compatibility to `to_undirected(edge_index, num_nodes)`
     if isinstance(edge_attr, int):
-        edge_attr = MISSING
         num_nodes = edge_attr
+        edge_attr = MISSING
 
     row, col = edge_index[0], edge_index[1]
     row, col = torch.cat([row, col], dim=0), torch.cat([col, row], dim=0)
