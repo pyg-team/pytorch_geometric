@@ -7,7 +7,7 @@ from torch_geometric.experimental import (
     disable_dynamic_shapes,
     is_experimental_mode_enabled,
 )
-from torch_geometric.utils import scatter
+from torch_geometric.utils import cumsum, scatter
 
 
 @disable_dynamic_shapes(required_args=['batch_size', 'max_num_nodes'])
@@ -106,7 +106,7 @@ def to_dense_batch(
 
     num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0,
                         dim_size=batch_size, reduce='sum')
-    cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
+    cum_nodes = cumsum(num_nodes)
 
     filter_nodes = False
     dynamic_shapes_disabled = is_experimental_mode_enabled(

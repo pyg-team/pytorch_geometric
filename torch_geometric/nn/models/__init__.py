@@ -24,6 +24,7 @@ from .mask_label import MaskLabel
 from .rev_gnn import GroupAddRev
 from .gnnff import GNNFF
 from .pmlp import PMLP
+from .neural_fingerprint import NeuralFingerprint
 
 __all__ = classes = [
     'MLP',
@@ -64,4 +65,5 @@ __all__ = classes = [
     'GroupAddRev',
     'GNNFF',
     'PMLP',
+    'NeuralFingerprint',
 ]
