@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.typing import OptTensor
-from torch_geometric.utils import scatter
+from torch_geometric.utils import cumsum, scatter
 
 
 def to_dense_adj(
@@ -23,7 +23,10 @@ def to_dense_adj(
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
             node to a specific example. (default: :obj:`None`)
         edge_attr (Tensor, optional): Edge weights or multi-dimensional edge
-            features. (default: :obj:`None`)
+            features.
+            If :obj:`edge_index` contains duplicated edges, the dense adjacency
+            matrix output holds the summed up entries of :obj:`edge_attr` for
+            duplicated edges. (default: :obj:`None`)
         max_num_nodes (int, optional): The size of the output node dimension.
             (default: :obj:`None`)
         batch_size (int, optional) The batch size. (default: :obj:`None`)
@@ -67,7 +70,7 @@ def to_dense_adj(
 
     one = batch.new_ones(batch.size(0))
     num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce='sum')
-    cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
+    cum_nodes = cumsum(num_nodes)
 
     idx0 = batch[edge_index[0]]
     idx1 = edge_index[0] - cum_nodes[batch][edge_index[0]]
