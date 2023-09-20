@@ -36,9 +36,11 @@ For each GPU, the process is labeled with a process ID which we call :obj:`rank`
         mp.spawn(run, args=(world_size, dataset), nprocs=world_size, join=True)
 
 Note that we initialize the dataset *before* spawning any processes.
-With this, we only initialize the dataset once, and any data inside it will be automatically moved to shared memory via :obj:`torch.multiprocessing` such that processes do not need to work on replicas of the data.
+With this, we only initialize the dataset once, and any data inside it will be automatically moved to shared memory via :obj:`torch.multiprocessing` such that processes do not need to create their own replica of the data.
 
-With this, we can start to implement our spawnable runner function:
+With this, we can start to implement our spawnable runner function.
+The first step is to initialize :obj:`torch.distributed`.
+More details can be found in `Writing Distributed Applications with PyTorch <https://pytorch.org/tutorials/intermediate/dist_tuto.html>`_:
 
 .. code-block:: python
 
@@ -51,11 +53,6 @@ With this, we can start to implement our spawnable runner function:
         os.environ['MASTER_PORT'] = '12345'
         dist.init_process_group('nccl', rank=rank, world_size=world_size)
 
-        data = dataset[0]
-
-The first step above is initializing :obj:`torch.distributed`.
-More details can be found in `Writing Distributed Applications with PyTorch <https://pytorch.org/tutorials/intermediate/dist_tuto.html>`_.
-
 Next, we split training indices into :obj:`world_size` many chunks for each GPU, and initialize the :class:`~torch_geometric.loader.NeighborLoader` class to only operate on its specific chunk of the training set:
 
 .. code-block:: python
@@ -64,6 +61,8 @@ Next, we split training indices into :obj:`world_size` many chunks for each GPU,
 
     def run(rank: int, world_size: int, dataset: Reddit):
         ...
+
+        data = dataset[0]
 
         train_index = data.train_mask.nonzero().view(-1)
         train_index = train_index.split(train_index.size(0) // world_size)[rank]
