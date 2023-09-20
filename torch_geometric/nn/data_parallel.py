@@ -4,6 +4,7 @@ from itertools import chain
 import torch
 
 from torch_geometric.data import Batch
+from torch_geometric.utils import cumsum
 
 
 class DataParallel(torch.nn.DataParallel):
@@ -74,13 +75,11 @@ class DataParallel(torch.nn.DataParallel):
         num_devices = min(len(device_ids), len(data_list))
 
         count = torch.tensor([data.num_nodes for data in data_list])
-        cumsum = count.cumsum(0)
-        cumsum = torch.cat([cumsum.new_zeros(1), cumsum], dim=0)
-        device_id = num_devices * cumsum.to(torch.float) / cumsum[-1].item()
+        ptr = cumsum(count)
+        device_id = num_devices * ptr.to(torch.float) / ptr[-1].item()
         device_id = (device_id[:-1] + device_id[1:]) / 2.0
         device_id = device_id.to(torch.long)  # round.
-        split = device_id.bincount().cumsum(0)
-        split = torch.cat([split.new_zeros(1), split], dim=0)
+        split = cumsum(device_id.bincount())
         split = torch.unique(split, sorted=True)
         split = split.tolist()
 
