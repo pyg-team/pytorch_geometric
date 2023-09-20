@@ -39,7 +39,7 @@ Note that we initialize the dataset *before* spawning any processes.
 With this, we only initialize the dataset once, and any data inside it will be automatically moved to shared memory via :obj:`torch.multiprocessing` such that processes do not need to create their own replica of the data.
 
 With this, we can start to implement our spawnable runner function.
-The first step above is initializing :obj:`torch.distributed`.
+The first step is to initialize :obj:`torch.distributed`.
 More details can be found in `Writing Distributed Applications with PyTorch <https://pytorch.org/tutorials/intermediate/dist_tuto.html>`_:
 
 .. code-block:: python
