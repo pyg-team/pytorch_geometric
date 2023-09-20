@@ -323,12 +323,10 @@ class DistNeighborSampler:
                 num_sampled_nodes=num_sampled_nodes_dict,
                 num_sampled_edges=num_sampled_edges_dict, metadata=metadata)
         else:
-
             src = seed
+            node = src.numpy()
+            batch = src_batch.numpy() if self.disjoint else None
 
-            node = OrderedSet(
-                src.tolist()) if not self.disjoint else OrderedSet(
-                    tuple(zip(src_batch.tolist(), src.tolist())))
             node_with_dupl = [torch.empty(0, dtype=torch.int64)]
             batch_with_dupl = [torch.empty(0, dtype=torch.int64)]
             edge = [torch.empty(0, dtype=torch.int64)]
@@ -344,24 +342,32 @@ class DistNeighborSampler:
                 if out.node.numel() == 0:
                     # no neighbors were sampled
                     break
-                # remove duplicates
-                # TODO: find better method to remove duplicates
-                node_wo_dupl = OrderedSet(
-                    (out.node).tolist()) if not self.disjoint else OrderedSet(
-                        zip((out.batch).tolist(), (out.node).tolist()))
 
-                duplicates = node.intersection(node_wo_dupl)
-                node_wo_dupl.difference_update(duplicates)
-                src = Tensor(node_wo_dupl if not self.disjoint else list(
-                    zip(*node_wo_dupl))[1]).type(torch.int64)
-                node.update(node_wo_dupl)
+                # remove duplicates
+                num_node = len(node)
+                out_node_numpy = out.node.numpy()
+                node_numpy = np.concatenate((node, out_node_numpy))
+
+                if not self.disjoint:
+                    _, idx = np.unique(node_numpy, return_index=True)
+                    node = node_numpy[np.sort(idx)]
+                else:
+                    batch_numpy = np.concatenate((batch, out.batch.numpy()))
+
+                    disjoint_numpy = np.array((batch_numpy, node_numpy))
+                    _, idx = np.unique(disjoint_numpy, axis=1,
+                                       return_index=True)
+
+                    batch = disjoint_numpy[0][np.sort(idx)]
+                    node = disjoint_numpy[1][np.sort(idx)]
+
+                    src_batch = torch.tensor(batch[num_node:])
+                src = torch.tensor(node[num_node:])
 
                 node_with_dupl.append(out.node)
                 edge.append(out.edge)
 
                 if self.disjoint:
-                    src_batch = Tensor(list(zip(*node_wo_dupl))[0]).type(
-                        torch.int64)
                     batch_with_dupl.append(out.batch)
 
                 num_sampled_nodes.append(len(src))
@@ -374,14 +380,10 @@ class DistNeighborSampler:
                 torch.cat(batch_with_dupl) if self.disjoint else None,
                 self.csc, self.disjoint)
 
-            node = Tensor(node).type(torch.int64)
-
-            batch, node = node.t().contiguous() if self.disjoint else (None,
-                                                                       node)
-
             sampler_output = SamplerOutput(
-                node=node, row=row, col=col, edge=torch.cat(edge),
-                batch=batch if self.disjoint else None,
+                node=torch.from_numpy(node), row=row, col=col,
+                edge=torch.cat(edge),
+                batch=torch.from_numpy(batch) if self.disjoint else None,
                 num_sampled_nodes=num_sampled_nodes,
                 num_sampled_edges=num_sampled_edges, metadata=metadata)
 
