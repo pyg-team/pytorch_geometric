@@ -29,7 +29,7 @@ jobs:
     runs-on: [self-hosted, nvidia]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: '0'
 
@@ -38,13 +38,8 @@ jobs:
         ls -al $HOME
         rm -rf $HOME/.conda*
         rm -rf $HOME/*mamba*
-        which conda
-
-    - uses: conda-incubator/setup-miniconda@v2
-      with:
-        python-version: '3.10'
-        activate-environment: benchmark
-        auto-activate-base: true
+        which conda && conda --version
+        which python && python -VV
 
     - name: Set up asv
       run: |
@@ -54,6 +49,7 @@ jobs:
 
     - name: Configure Git
       run: |
+        git config --list
         git config --local user.name "${{ github.actor }}"
         git config --local user.email "${{ github.actor }}@users.noreply.github.com"
         git config --list
