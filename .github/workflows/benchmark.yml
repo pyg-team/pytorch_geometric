@@ -38,8 +38,8 @@ jobs:
         ls -al $HOME
         rm -rf $HOME/.conda*
         rm -rf $HOME/*mamba*
-        which conda && conda --version
-        which python && python -VV
+        which conda && conda --version || echo conda not found
+        which python && python -VV || echo python not found
 
     - name: Set up asv
       run: |
