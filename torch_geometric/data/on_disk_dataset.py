@@ -1,61 +1,49 @@
-from abc import ABC, abstractmethod
 from typing import Iterable, List, Optional, Callable, Union
 
 from torch import Tensor
 
 from torch_geometric.data.collate import collate
 from torch_geometric.data.data import BaseData
-from torch_geometric.data.database import SQLiteDatabase, Schema
+from torch_geometric.data.database import SQLiteDatabase, RocksDatabase
 from torch_geometric.data.dataset import Dataset
-from torch_geometric.data.in_memory_dataset import nested_iter
 
 
+class OnDiskDatasetError(Exception):
+    pass
 
-class OnDiskDataset(Dataset, ABC):
+
+class OnDiskDataset(Dataset):
+
+    BACKENDS = {
+            'rocksdb': RocksDatabase,
+            'sqlite': SQLiteDatabase
+    }
+
     def __init__(
         self,
+        backend: str = 'rocksdb',
         root: Optional[str] = None,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         pre_filter: Optional[Callable] = None,
         log: bool = True,
+        *args,
+        **kwargs
     ):
+    
+        self.db = self._init_db(backend, *args, **kwargs)
+
         super.__init__(root, transform, pre_transform, pre_filter, log)
         self._data = None
         self.slices = None
         self._data_list: Optional[List[BaseData]] = None
 
-    @abstractmethod
-    def init_db(self):
-        raise NotImplementedError
-    
-    @abstractmethod
-    def append_data(self):
-        raise NotImplementedError
-    
-    @abstractmethod
-    def get(self, idx):
-        raise NotImplementedError
-    
+    def _init_db(self, backend, *args, **kwargs):
+        if backend not in self.BACKENDS:
+            raise OnDiskDatasetError(f'backend must one of: {list(self.BACKENDS.keys())}')
+        backend_cls = self.BACKENDS[backend]
+        return backend_cls(*args, **kwargs)
 
-class SQLiteDataset(OnDiskDataset):
-
-    def __init__(self,
-                 path: str,
-                 name: str,
-                 schema: Schema,
-                 transform: Optional[Callable] = None, 
-                 pre_transform: Optional[Callable] = None, 
-                 pre_filter: Optional[Callable] = None, 
-                 log: bool = True
-    ):
-        
-        super().__init__(path, transform, pre_transform, pre_filter, log)
-        self.db = self.init_db(path, name, schema)
-
-    def init_db(self, path, name, schema):
-        return SQLiteDatabase(path, name, schema)
-    
     def append_data(self, data_list: List[BaseData], batch_size=None, log=True):
         if len(data_list) == 1:
             self.db.insert(data_list[0])
@@ -68,7 +56,6 @@ class SQLiteDataset(OnDiskDataset):
             )
             self.db.multi_insert(slices, data, batch_size, log)
 
-
     def get(self, idx):
         return self.db.get(idx)
 
@@ -80,4 +67,7 @@ class SQLiteDataset(OnDiskDataset):
         
     def len(self) -> int: 
         return len(self.db)
+    
+    
+    
 
