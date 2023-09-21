@@ -5,7 +5,6 @@ from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 import torch
 import torch.multiprocessing as mp
-from ordered_set import OrderedSet
 from torch import Tensor
 
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
@@ -22,7 +21,11 @@ from torch_geometric.distributed.rpc import (
     rpc_register,
     shutdown_rpc,
 )
-from torch_geometric.distributed.utils import BatchDict, NodeDict
+from torch_geometric.distributed.utils import (
+    BatchDict,
+    NodeDict,
+    remove_duplicates,
+)
 from torch_geometric.sampler import (
     EdgeSamplerInput,
     HeteroSamplerOutput,
@@ -235,12 +238,12 @@ class DistNeighborSampler:
                 sampled_nbrs_per_node_dict.update({etype: []})
 
             node_dict.src[input_type] = seed
-            batch_dict.src[input_type] = src_batch if self.disjoint else None
-
-            node_dict.out[input_type] = OrderedSet(
-                seed.tolist()) if not self.disjoint else OrderedSet(
-                    tuple(zip(src_batch.tolist(), seed.tolist())))
+            node_dict.out[input_type] = seed.numpy()
             num_sampled_nodes_dict[input_type].append(seed.numel())
+
+            if self.disjoint:
+                batch_dict.src[input_type] = src_batch
+                batch_dict.out[input_type] = src_batch.numpy()
 
             # loop over the layers
             for i in range(self._sampler.num_hops):
@@ -265,30 +268,23 @@ class DistNeighborSampler:
                 for etype, task in task_dict.items():
                     out: HeteroSamplerOutput = await task
 
-                    # remove duplicates
-                    # TODO: find better method to remove duplicates
-                    node_wo_dupl = OrderedSet(
-                        (out.node
-                         ).tolist()) if not self.disjoint else OrderedSet(
-                             zip((out.batch).tolist(), (out.node).tolist()))
-                    if len(node_wo_dupl) == 0:
+                    if out.node.numel() == 0:
                         # no neighbors were sampled
                         break
+
                     dst = etype[2] if not self.csc else etype[0]
-                    duplicates = node_dict.out[dst].intersection(node_wo_dupl)
-                    node_wo_dupl.difference_update(duplicates)
-                    node_dict.src[dst] = Tensor(
-                        node_wo_dupl if not self.disjoint else list(
-                            zip(*node_wo_dupl))[1]).type(torch.int64)
-                    node_dict.out[dst].update(node_wo_dupl)
+
+                    # remove duplicates
+                    node_dict.src[dst], node_dict.out[dst], batch_dict.src[
+                        dst], batch_dict.out[dst] = remove_duplicates(
+                            out, node_dict.out[dst], batch_dict.out[dst],
+                            self.disjoint)
 
                     node_dict.with_dupl[dst] = torch.cat(
                         [node_dict.with_dupl[dst], out.node])
                     edge_dict[etype] = torch.cat([edge_dict[etype], out.edge])
 
                     if self.disjoint:
-                        batch_dict.src[dst] = Tensor(
-                            list(zip(*node_wo_dupl))[0]).type(torch.int64)
                         batch_dict.with_dupl[dst] = torch.cat(
                             [batch_dict.with_dupl[dst], out.batch])
 
@@ -298,7 +294,6 @@ class DistNeighborSampler:
 
             sampled_nbrs_per_node_dict = remap_keys(sampled_nbrs_per_node_dict,
                                                     self._sampler.to_rel_type)
-
             row_dict, col_dict = torch.ops.pyg.hetero_relabel_neighborhood(
                 self._sampler.node_types, self._sampler.edge_types,
                 {input_type: seed}, node_dict.with_dupl,
@@ -306,13 +301,14 @@ class DistNeighborSampler:
                 batch_dict.with_dupl, self.csc, self.disjoint)
 
             node_dict.out = {
-                ntype: Tensor(node_dict.out[ntype]).type(torch.int64)
+                ntype: torch.from_numpy(node_dict.out[ntype])
                 for ntype in self._sampler.node_types
             }
             if self.disjoint:
-                for ntype in self._sampler.node_types:
-                    batch_dict.out[ntype], node_dict.out[
-                        ntype] = node_dict.out[ntype].t().contiguous()
+                batch_dict.out = {
+                    ntype: torch.from_numpy(batch_dict.out[ntype])
+                    for ntype in self._sampler.node_types
+                }
 
             sampler_output = HeteroSamplerOutput(
                 node=node_dict.out, row=remap_keys(row_dict,
@@ -344,25 +340,8 @@ class DistNeighborSampler:
                     break
 
                 # remove duplicates
-                num_node = len(node)
-                out_node_numpy = out.node.numpy()
-                node_numpy = np.concatenate((node, out_node_numpy))
-
-                if not self.disjoint:
-                    _, idx = np.unique(node_numpy, return_index=True)
-                    node = node_numpy[np.sort(idx)]
-                else:
-                    batch_numpy = np.concatenate((batch, out.batch.numpy()))
-
-                    disjoint_numpy = np.array((batch_numpy, node_numpy))
-                    _, idx = np.unique(disjoint_numpy, axis=1,
-                                       return_index=True)
-
-                    batch = disjoint_numpy[0][np.sort(idx)]
-                    node = disjoint_numpy[1][np.sort(idx)]
-
-                    src_batch = torch.tensor(batch[num_node:])
-                src = torch.tensor(node[num_node:])
+                src, node, src_batch, batch = remove_duplicates(
+                    out, node, batch, self.disjoint)
 
                 node_with_dupl.append(out.node)
                 edge.append(out.edge)
