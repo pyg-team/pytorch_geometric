@@ -15,7 +15,7 @@ class HeteroGraphSAGE(torch.nn.Module):
         return self.model(x_dict, edge_index_dict)
 
     @torch.no_grad()
-    def inference(self, loader, device, progress_bar=False):
+    def inference(self, loader, device, progress_bar=False, **kwargs):
         self.model.eval()
         if progress_bar:
             loader = tqdm(loader, desc="Inference")

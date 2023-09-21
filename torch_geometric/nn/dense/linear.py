@@ -249,8 +249,8 @@ class HeteroLinear(torch.nn.Module):
         r"""Resets all learnable parameters of the module."""
         reset_weight_(self.weight, self.in_channels,
                       self.kwargs.get('weight_initializer', None))
-        reset_weight_(self.bias, self.in_channels,
-                      self.kwargs.get('bias_initializer', None))
+        reset_bias_(self.bias, self.in_channels,
+                    self.kwargs.get('bias_initializer', None))
 
     def forward(self, x: Tensor, type_vec: Tensor) -> Tensor:
         r"""

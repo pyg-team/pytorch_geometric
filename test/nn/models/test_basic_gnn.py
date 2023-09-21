@@ -8,6 +8,7 @@ import torch
 import torch.nn.functional as F
 
 import torch_geometric.typing
+from torch_geometric.compile import to_jittable
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
@@ -159,6 +160,28 @@ def test_one_layer_gnn(out_dim, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
+@pytest.mark.parametrize('norm', [
+    'BatchNorm',
+    'GraphNorm',
+    'InstanceNorm',
+    'LayerNorm',
+])
+def test_batch(norm):
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    batch = torch.tensor([0, 0, 1])
+
+    model = GraphSAGE(8, 16, num_layers=2, norm=norm)
+    assert model.supports_norm_batch == (norm != 'BatchNorm')
+
+    out = model(x, edge_index, batch=batch)
+    assert out.size() == (3, 16)
+
+    if model.supports_norm_batch:
+        with pytest.raises(RuntimeError, match="out of bounds"):
+            model(x, edge_index, batch=batch, batch_size=1)
+
+
 @onlyOnline
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
@@ -308,17 +331,16 @@ def test_trim_to_layer():
     assert torch.allclose(out1, out2)
 
 
-num_compile_calls = 0
-
-
+@withCUDA
 @onlyLinux
 @disableExtensions
 @withPackage('torch>=2.0.0')
 @pytest.mark.parametrize('Model', [GCN, GraphSAGE, GIN, GAT, EdgeCNN, PNA])
-@pytest.mark.skip(reason="Does not work yet in the full test suite")
-def test_compile_graph_breaks(Model):
-    x = torch.randn(3, 8)
-    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+def test_compile_graph_breaks(Model, device):
+    import torch._dynamo as dynamo
+
+    x = torch.randn(3, 8, device=device)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
 
     kwargs = {}
     if Model in {GCN, GAT}:
@@ -331,17 +353,36 @@ def test_compile_graph_breaks(Model):
         kwargs['deg'] = torch.tensor([1, 2, 1])
 
     model = Model(in_channels=8, hidden_channels=16, num_layers=2, **kwargs)
+    model = to_jittable(model).to(device)
 
-    def my_custom_backend(gm, *args):
-        global num_compile_calls
-        num_compile_calls += 1
-        return gm.forward
+    explanation = dynamo.explain(model, x, edge_index)
+    if hasattr(explanation, 'graph_break_count'):
+        assert explanation.graph_break_count == 0
+    else:
+        assert 'with 0 graph break' in explanation[0]
 
-    model = torch_geometric.compile(model, backend=my_custom_backend)
 
-    num_previous_compile_calls = num_compile_calls
-    model(x, edge_index)
-    assert num_compile_calls - num_previous_compile_calls == 1
+@withPackage('pyg_lib')
+def test_basic_gnn_cache():
+    x = torch.randn(14, 16)
+    edge_index = torch.tensor([
+        [2, 3, 4, 5, 7, 7, 10, 11, 12, 13],
+        [0, 1, 2, 3, 2, 3, 7, 7, 7, 7],
+    ])
+
+    loader = NeighborLoader(
+        Data(x=x, edge_index=edge_index),
+        num_neighbors=[-1],
+        batch_size=2,
+    )
+
+    model = GCN(in_channels=16, hidden_channels=16, num_layers=2)
+    model.eval()
+
+    out1 = model.inference(loader, cache=False)
+    out2 = model.inference(loader, cache=True)
+
+    assert torch.allclose(out1, out2)
 
 
 if __name__ == '__main__':

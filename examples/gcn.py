@@ -90,7 +90,7 @@ def test():
     return accs
 
 
-best_val_acc = final_test_acc = 0
+best_val_acc = test_acc = 0
 times = []
 for epoch in range(1, args.epochs + 1):
     start = time.time()

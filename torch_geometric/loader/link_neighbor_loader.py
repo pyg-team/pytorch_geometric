@@ -63,6 +63,14 @@ class LinkNeighborLoader(LinkLoader):
     The rest of the functionality mirrors that of
     :class:`~torch_geometric.loader.NeighborLoader`, including support for
     heterogeneous graphs.
+    In particular, the data loader will add the following attributes to the
+    returned mini-batch:
+
+    * :obj:`n_id` The global node index for every sampled node
+    * :obj:`e_id` The global edge index for every sampled edge
+    * :obj:`input_id`: The global index of the :obj:`edge_label_index`
+    * :obj:`num_sampled_nodes`: The number of sampled nodes in each hop
+    * :obj:`num_sampled_edges`: The number of sampled edges in each hop
 
     .. note::
         Negative sampling is currently implemented in an approximate
@@ -157,6 +165,13 @@ class LinkNeighborLoader(LinkLoader):
             guaranteed to fulfill temporal constraints, *i.e.* neighbors have
             an earlier or equal timestamp than the center node.
             Only used if :obj:`edge_label_time` is set. (default: :obj:`None`)
+        weight_attr (str, optional): The name of the attribute that denotes
+            edge weights in the graph.
+            If set, weighted/biased sampling will be used such that neighbors
+            are more likely to get sampled the higher their edge weights are.
+            Edge weights do not need to sum to one, but must be non-negative,
+            finite and have a non-zero sum within local neighborhoods.
+            (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -199,6 +214,7 @@ class LinkNeighborLoader(LinkLoader):
         neg_sampling: Optional[NegativeSampling] = None,
         neg_sampling_ratio: Optional[Union[int, float]] = None,
         time_attr: Optional[str] = None,
+        weight_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
@@ -225,6 +241,7 @@ class LinkNeighborLoader(LinkLoader):
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
                 time_attr=time_attr,
+                weight_attr=weight_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
                 directed=directed,

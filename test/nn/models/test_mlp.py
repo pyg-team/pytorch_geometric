@@ -37,6 +37,33 @@ def test_mlp(norm, act_first, plain_last):
     assert torch.allclose(mlp(x), out)
 
 
+@pytest.mark.parametrize('norm', [
+    'BatchNorm',
+    'GraphNorm',
+    'InstanceNorm',
+    'LayerNorm',
+])
+def test_batch(norm):
+    x = torch.randn(3, 8)
+    batch = torch.tensor([0, 0, 1])
+
+    model = MLP(
+        8,
+        hidden_channels=16,
+        out_channels=32,
+        num_layers=2,
+        norm=norm,
+    )
+    assert model.supports_norm_batch == (norm != 'BatchNorm')
+
+    out = model(x, batch=batch)
+    assert out.size() == (3, 32)
+
+    if model.supports_norm_batch:
+        with pytest.raises(RuntimeError, match="out of bounds"):
+            model(x, batch=batch, batch_size=1)
+
+
 def test_mlp_return_emb():
     x = torch.randn(4, 16)
 
