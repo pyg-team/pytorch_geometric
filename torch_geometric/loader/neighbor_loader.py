@@ -101,6 +101,16 @@ class NeighborLoader(NodeLoader):
         sampled_data = next(iter(loader))
         print(sampled_data.n_id)  # Global node index of each node in batch.
 
+    In particular, the data loader will add the following attributes to the
+    returned mini-batch:
+
+    * :obj:`batch_size` The number of seed nodes (first nodes in the batch)
+    * :obj:`n_id` The global node index for every sampled node
+    * :obj:`e_id` The global edge index for every sampled edge
+    * :obj:`input_id`: The global index of the :obj:`input_nodes`
+    * :obj:`num_sampled_nodes`: The number of sampled nodes in each hop
+    * :obj:`num_sampled_edges`: The number of sampled edges in each hop
+
     Args:
         data (Any): A :class:`~torch_geometric.data.Data`,
             :class:`~torch_geometric.data.HeteroData`, or
@@ -155,6 +165,13 @@ class NeighborLoader(NodeLoader):
             guaranteed to fulfill temporal constraints, *i.e.* neighbors have
             an earlier or equal timestamp than the center node.
             (default: :obj:`None`)
+        weight_attr (str, optional): The name of the attribute that denotes
+            edge weights in the graph.
+            If set, weighted/biased sampling will be used such that neighbors
+            are more likely to get sampled the higher their edge weights are.
+            Edge weights do not need to sum to one, but must be non-negative,
+            finite and have a non-zero sum within local neighborhoods.
+            (default: :obj:`None`)
         transform (callable, optional): A function/transform that takes in
             a sampled mini-batch and returns a transformed version.
             (default: :obj:`None`)
@@ -194,6 +211,7 @@ class NeighborLoader(NodeLoader):
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
+        weight_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
         is_sorted: bool = False,
@@ -216,6 +234,7 @@ class NeighborLoader(NodeLoader):
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
                 time_attr=time_attr,
+                weight_attr=weight_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
                 directed=directed,

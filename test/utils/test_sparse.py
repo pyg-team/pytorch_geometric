@@ -134,7 +134,7 @@ def test_to_torch_csr_tensor():
     assert torch.allclose(coo.indices(), edge_index)
     assert torch.allclose(coo.values(), edge_weight)
 
-    if torch_geometric.typing.WITH_PT2:
+    if torch_geometric.typing.WITH_PT20:
         edge_attr = torch.randn(edge_index.size(1), 8)
         adj = to_torch_csr_tensor(edge_index, edge_attr)
         assert adj.size() == (4, 4, 8)
@@ -155,7 +155,7 @@ def test_to_torch_csc_tensor():
     assert adj.size() == (4, 4)
     assert adj.layout == torch.sparse_csc
     adj_coo = adj.to_sparse_coo().coalesce()
-    if torch_geometric.typing.WITH_PT2:
+    if torch_geometric.typing.WITH_PT20:
         assert torch.allclose(adj_coo.indices(), edge_index)
     else:
         assert torch.allclose(adj_coo.indices().flip([0]), edge_index)
@@ -165,7 +165,7 @@ def test_to_torch_csc_tensor():
     assert adj.size() == (4, 4)
     assert adj.layout == torch.sparse_csc
     adj_coo = adj.to_sparse_coo().coalesce()
-    if torch_geometric.typing.WITH_PT2:
+    if torch_geometric.typing.WITH_PT20:
         assert torch.allclose(adj_coo.indices(), edge_index)
         assert torch.allclose(adj_coo.values(), edge_weight)
     else:
@@ -173,7 +173,7 @@ def test_to_torch_csc_tensor():
         assert torch.allclose(adj_coo.indices()[:, perm], edge_index)
         assert torch.allclose(adj_coo.values()[perm], edge_weight)
 
-    if torch_geometric.typing.WITH_PT2:
+    if torch_geometric.typing.WITH_PT20:
         edge_attr = torch.randn(edge_index.size(1), 8)
         adj = to_torch_csc_tensor(edge_index, edge_attr)
         assert adj.size() == (4, 4, 8)

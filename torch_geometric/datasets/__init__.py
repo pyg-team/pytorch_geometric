@@ -72,6 +72,8 @@ from .hydro_net import HydroNet
 from .airfrans import AirfRANS
 from .jodie import JODIEDataset
 from .wikidata import Wikidata5M
+from .myket import MyketDataset
+from .brca_tgca import BrcaTcga
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -176,6 +178,8 @@ homo_datasets = [
     'AirfRANS',
     'JODIEDataset',
     'Wikidata5M',
+    'MyketDataset',
+    'BrcaTcga',
 ]
 
 hetero_datasets = [

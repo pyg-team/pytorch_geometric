@@ -58,6 +58,9 @@ class Partitioner:
     Args:
         data (Data or HeteroData): The data object.
         num_parts (int): The number of partitions.
+        recursive (bool, optional): If set to :obj:`True`, will use multilevel
+            recursive bisection instead of multilevel k-way partitioning.
+            (default: :obj:`False`)
         root (str): Root directory where the partitioned dataset should be
             saved.
     """
@@ -66,12 +69,14 @@ class Partitioner:
         data: Union[Data, HeteroData],
         num_parts: int,
         root: str,
+        recursive: bool = False,
     ):
         assert num_parts > 1
 
         self.data = data
         self.num_parts = num_parts
         self.root = root
+        self.recursive = recursive
 
     @property
     def is_hetero(self) -> bool:
@@ -103,6 +108,7 @@ class Partitioner:
         cluster_data = ClusterData(
             data,
             num_parts=self.num_parts,
+            recursive=self.recursive,
             log=True,
             keep_inter_cluster_edges=True,
         )
@@ -150,10 +156,14 @@ class Partitioner:
                     size = (self.data[src].num_nodes, self.data[dst].num_nodes)
 
                     mask = part_data.edge_type == i
+                    rows = part_data.edge_index[0, mask]
+                    cols = part_data.edge_index[1, mask]
+                    global_rows = node_id[rows]
+                    global_cols = node_perm[cols]
                     out[edge_type] = {
                         'edge_id': edge_id[mask],
-                        'row': part_data.edge_index[0, mask],
-                        'col': part_data.edge_index[1, mask],
+                        'row': global_rows,
+                        'col': global_cols,
                         'size': size,
                     }
                 torch.save(out, osp.join(path, 'graph.pt'))
@@ -213,12 +223,16 @@ class Partitioner:
 
                 node_id = node_perm[start:end]
                 node_map[node_id] = pid
+                rows = part_data.edge_index[0]
+                cols = part_data.edge_index[1]
+                global_rows = node_id[rows]
+                global_cols = node_perm[cols]
 
                 torch.save(
                     {
                         'edge_id': edge_id,
-                        'row': part_data.edge_index[0],
-                        'col': part_data.edge_index[1],
+                        'row': global_rows,
+                        'col': global_cols,
                         'size': (data.num_nodes, data.num_nodes),
                     }, osp.join(path, 'graph.pt'))
 

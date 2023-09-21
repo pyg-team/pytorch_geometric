@@ -51,6 +51,7 @@ runs:
     - name: Install pyg-lib  # pyg-lib is currently only available on Linux.
       if: ${{ inputs.torch-version != 'nightly' && runner.os == 'Linux' }}
       run: |
+        pip uninstall -y pyg-lib
         pip install --no-index pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
 
@@ -71,5 +72,5 @@ runs:
       run: |
         pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
         pip install scipy
-        pip install --no-index torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash

@@ -83,7 +83,8 @@ def test_node_mask():
     explanation = HeteroExplanation()
     explanation['paper'].node_mask = torch.tensor([[1.], [0.], [1.], [1.]])
     explanation['author'].node_mask = torch.tensor([[1.], [0.], [1.], [1.]])
-    explanation.validate(raise_on_error=True)
+    with pytest.warns(UserWarning, match="are isolated"):
+        explanation.validate(raise_on_error=True)
 
     out = explanation.get_explanation_subgraph()
     assert out['paper'].node_mask.size() == (3, 1)
