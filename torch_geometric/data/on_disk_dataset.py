@@ -40,7 +40,7 @@ class OnDiskDataset(Dataset):
 
     def _init_db(self, backend, *args, **kwargs):
         if backend not in self.BACKENDS:
-            raise OnDiskDatasetError(f'backend must one of: {list(self.BACKENDS.keys())}')
+            raise OnDiskDatasetError(f'backend must be one of: {list(self.BACKENDS.keys())}')
         backend_cls = self.BACKENDS[backend]
         return backend_cls(*args, **kwargs)
 
