@@ -29,9 +29,13 @@ def main():
     ).to(device)
 
     num_workers = 0 if sys.platform.startswith('win') else 4
-    loader = model.loader(batch_size=128, shuffle=True,
-                          num_workers=num_workers)
+    loader = model.loader(batch_size=128, shuffle=True, num_workers=0)
     optimizer = torch.optim.SparseAdam(list(model.parameters()), lr=0.01)
+
+    pos_rw, neg_rw = next(iter(loader))
+    print(pos_rw.shape)
+    print(neg_rw.shape)
+    quit()
 
     def train():
         model.train()
