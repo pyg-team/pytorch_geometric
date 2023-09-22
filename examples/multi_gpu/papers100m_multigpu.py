@@ -14,15 +14,15 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv
 
 
-def pyg_num_work():
+def pyg_num_work(world_size):
     num_work = None
     if hasattr(os, "sched_getaffinity"):
         try:
-            num_work = len(os.sched_getaffinity(0)) / 2
+            num_work = len(os.sched_getaffinity(0)) / (2 * world_size)
         except Exception:
             pass
     if num_work is None:
-        num_work = os.cpu_count() / 2
+        num_work = os.cpu_count() / (2 * world_size)
     return int(num_work)
 
 
@@ -51,26 +51,31 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
     model = DistributedDataParallel(model, device_ids=[rank])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
                                  weight_decay=0.0005)
+    num_work = pyg_num_work(world_size)
     train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                   input_nodes=split_idx['train'],
                                   batch_size=batch_size,
-                                  num_workers=pyg_num_work())
+                                  shuffle=True,
+                                  num_workers=num_work)
     if rank == 0:
         eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['valid'],
                                      batch_size=batch_size,
-                                     num_workers=pyg_num_work())
+                                     shuffle=True
+                                     num_workers=num_work)
         test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['test'],
                                      batch_size=batch_size,
-                                     num_workers=pyg_num_work())
-    eval_steps = 100
+                                     shuffle=False,
+                                     num_workers=num_work)
+    eval_steps = 1000
+    warmup_steps = 100
     acc = Accuracy(task="multiclass", num_classes=num_classes).to(rank)
     if rank == 0:
         print("Beginning training...")
     for epoch in range(epochs):
         for i, batch in enumerate(train_loader):
-            if i >= 10:
+            if i >= warmup_steps:
                 start = time.time()
             batch = batch.to(rank)
             batch.y = batch.y.to(torch.long)
@@ -84,13 +89,13 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                       ", Loss: " + str(loss))
         if rank == 0:
             print("Average Training Iteration Time:",
-                  (time.time() - start) / (i - 10), "s/iter")
+                  (time.time() - start) / (i - warmup_steps), "s/iter")
             acc_sum = 0.0
             with torch.no_grad():
                 for i, batch in enumerate(eval_loader):
                     if i >= eval_steps:
                         break
-                    if i >= 10:
+                    if i >= warmup_steps:
                         start = time.time()
                     batch = batch.to(rank)
                     batch.y = batch.y.to(torch.long)
@@ -99,7 +104,7 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
                                    batch.y[:batch_size])
             print(f"Validation Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
             print("Average Inference Iteration Time:",
-                  (time.time() - start) / (i - 10), "s/iter")
+                  (time.time() - start) / (i - warmup_steps), "s/iter")
     if rank == 0:
         acc_sum = 0.0
         with torch.no_grad():
