@@ -1,18 +1,16 @@
+import os
+from abc import ABC
 from typing import Any, Callable, Iterable, List, Optional, Union
 
 from torch import Tensor
 
-from torch_geometric.data.database import (
-    BaseData,
-    Database,
-    RocksDatabase,
-    Schema,
-    SQLiteDatabase,
-)
+from torch_geometric.data import Database, RocksDatabase, SQLiteDatabase
+from torch_geometric.data.data import BaseData
+from torch_geometric.data.database import Schema
 from torch_geometric.data.dataset import Dataset
 
 
-class OnDiskDataset(Dataset):
+class OnDiskDataset(Dataset, ABC):
     r"""Dataset base class for creating large graph datasets which do not
     easily fit into CPU memory at once by leveraging a :class:`Database`
     backend for on-disk storage and access of data objects.
@@ -70,10 +68,10 @@ class OnDiskDataset(Dataset):
         self.backend = backend
         self.schema = schema
 
-        self._db = Optional[Database] = None
+        self._db: Optional[Database] = None
         self._numel: Optional[int] = None
 
-        super.__init__(root, transform, pre_filter=pre_filter, log=log)
+        super().__init__(root, transform, pre_filter=pre_filter, log=log)
 
     @property
     def processed_file_names(self) -> str:
@@ -87,9 +85,10 @@ class OnDiskDataset(Dataset):
 
         kwargs = {}
         cls = self.BACKENDS[self.backend]
-        if isinstance(cls, SQLiteDatabase):
+        if issubclass(cls, SQLiteDatabase):
             kwargs['name'] = self.__class__.__name__
 
+        os.makedirs(self.processed_dir, exist_ok=True)
         path = self.processed_paths[0]
         self._db = cls(path=path, schema=self.schema, **kwargs)
         self._numel = len(self._db)
@@ -124,6 +123,7 @@ class OnDiskDataset(Dataset):
         r"""Appends the data object to the dataset."""
         index = len(self)
         self.db.insert(index, self.serialize(data))
+        self._numel += 1
 
     def extend(self, data_list: List[Any], batch_size: Optional[int] = None):
         r"""Extends the dataset by a list of data objects."""
@@ -131,10 +131,11 @@ class OnDiskDataset(Dataset):
         end = start + len(data_list)
         data_list = [self.serialize(data) for data in data_list]
         self.db.multi_insert(range(start, end), data_list, batch_size)
+        self._numel += (end - start)
 
     def get(self, idx: int) -> Any:
         r"""Gets the data object at index :obj:`idx`."""
-        return self.db.get(idx)
+        return self.deserialize(self.db.get(idx))
 
     def multi_get(
         self,
@@ -143,10 +144,16 @@ class OnDiskDataset(Dataset):
     ) -> List[Any]:
         r"""Gets a list of data objects from the specified indices."""
         if len(indices) == 1:
-            return [self.db.get(indices[0])]
-        return self.db.multi_get(indices, batch_size)
+            data_list = [self.db.get(indices[0])]
+        else:
+            data_list = self.db.multi_get(indices, batch_size)
+
+        return [self.deserialize(data) for data in data_list]
 
     def len(self) -> int:
         if self._numel is None:
             self._numel = len(self.db)
         return self._numel
+
+    def __repr__(self) -> str:
+        return f'{self.__class__.__name__}({len(self)})'
