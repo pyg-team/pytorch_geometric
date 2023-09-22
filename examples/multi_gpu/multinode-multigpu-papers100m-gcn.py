@@ -40,6 +40,8 @@ Average Inference Iteration Time: 0.06007050673166911 s/iter
 Test Accuracy: 24.8861%
 
 '''
+
+
 import argparse
 import os
 import time
