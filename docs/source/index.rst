@@ -31,7 +31,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    tutorial/dataset
    tutorial/application
    tutorial/multi_gpu
-   tutorial/multi_node_multi_gpu
+   tutorial/multi_node_multi_gpu_tutorial
 
 .. toctree::
    :maxdepth: 1

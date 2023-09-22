@@ -1,4 +1,4 @@
-Multi-GPU Training GNN Training
+Multi-GPU GNN Training
 ==================================
 
 For many large scale, real-world datasets, it may be necessary to scale-up training across multiple GPUs.

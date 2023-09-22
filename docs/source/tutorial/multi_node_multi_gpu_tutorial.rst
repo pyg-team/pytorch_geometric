@@ -1,7 +1,7 @@
 Multi-Node-Multi-GPU GNN Training
 ==================================
 
-Before doing this tutorial we recommend going through <insert single-node-multi-gpu tutorial> first.
+Before doing this tutorial we recommend going through <insert single-node-multi-gpu tutorial> as a warm up.
 Our first step is to understand the basic structure of a multi-node-multi-gpu example.
 
 
