@@ -41,6 +41,17 @@ def test_pickle(tmp_path):
 
     dataset.close()
 
+    # Test persistence of datasets:
+    dataset = OnDiskDataset(tmp_path)
+    assert len(dataset) == 4
+
+    out = dataset.get(0)
+    assert torch.equal(out.x, data_list[0].x)
+    assert torch.equal(out.edge_index, data_list[0].edge_index)
+    assert out.num_nodes == data_list[0].num_nodes
+
+    dataset.close()
+
 
 @withPackage('sqlite3')
 def test_custom_schema(tmp_path):
