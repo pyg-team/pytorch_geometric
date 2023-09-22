@@ -67,7 +67,7 @@ class Dataset(torch.utils.data.Dataset, ABC):
 
     @abstractmethod
     def len(self) -> int:
-        r"""Returns the number of graphs stored in the dataset."""
+        r"""Returns the number of data objects stored in the dataset."""
         raise NotImplementedError
 
     @abstractmethod
