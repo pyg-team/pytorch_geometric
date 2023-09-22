@@ -1,4 +1,4 @@
-Multi-GPU Training in Pure PyTorch
+Multi-GPU Training GNN Training
 ==================================
 
 For many large scale, real-world datasets, it may be necessary to scale-up training across multiple GPUs.
