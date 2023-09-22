@@ -4,8 +4,10 @@ from typing import Any, Dict
 import torch
 
 from torch_geometric.data import Data, OnDiskDataset
+from torch_geometric.testing import withPackage
 
 
+@withPackage('sqlite3')
 def test_pickle(tmp_path):
     dataset = OnDiskDataset(tmp_path)
     assert len(dataset) == 0
@@ -40,6 +42,7 @@ def test_pickle(tmp_path):
     dataset.close()
 
 
+@withPackage('sqlite3')
 def test_custom_schema(tmp_path):
     class CustomSchemaOnDiskDataset(OnDiskDataset):
         def __init__(self, root: str):
