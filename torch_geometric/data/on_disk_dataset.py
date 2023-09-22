@@ -119,13 +119,17 @@ class OnDiskDataset(Dataset, ABC):
                                   f"needs to be overridden in case a "
                                   f"non-default schema was passed")
 
-    def append(self, data: Any):
+    def append(self, data: BaseData):
         r"""Appends the data object to the dataset."""
         index = len(self)
         self.db.insert(index, self.serialize(data))
         self._numel += 1
 
-    def extend(self, data_list: List[Any], batch_size: Optional[int] = None):
+    def extend(
+        self,
+        data_list: List[BaseData],
+        batch_size: Optional[int] = None,
+    ):
         r"""Extends the dataset by a list of data objects."""
         start = len(self)
         end = start + len(data_list)
@@ -133,7 +137,7 @@ class OnDiskDataset(Dataset, ABC):
         self.db.multi_insert(range(start, end), data_list, batch_size)
         self._numel += (end - start)
 
-    def get(self, idx: int) -> Any:
+    def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
         return self.deserialize(self.db.get(idx))
 
@@ -141,7 +145,7 @@ class OnDiskDataset(Dataset, ABC):
         self,
         indices: Union[Iterable[int], Tensor, slice, range],
         batch_size: Optional[int] = None,
-    ) -> List[Any]:
+    ) -> List[BaseData]:
         r"""Gets a list of data objects from the specified indices."""
         if len(indices) == 1:
             data_list = [self.db.get(indices[0])]
