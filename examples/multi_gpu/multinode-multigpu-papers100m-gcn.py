@@ -45,10 +45,10 @@ Test Accuracy: 24.5902%
 
 '''
 
-
 import argparse
 import os
 import time
+import warnings
 
 import torch
 import torch.distributed as dist
@@ -60,7 +60,6 @@ from torchmetrics import Accuracy
 
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import GCNConv
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -76,7 +75,9 @@ def pyg_num_work(ngpu_per_node):
         num_work = os.cpu_count() / (2 * ngpu_per_node)
     return int(num_work)
 
+
 _LOCAL_PROCESS_GROUP = None
+
 
 def create_local_process_group(num_workers_per_node):
     global _LOCAL_PROCESS_GROUP
@@ -88,10 +89,12 @@ def create_local_process_group(num_workers_per_node):
     num_nodes = world_size // num_workers_per_node
     node_rank = rank // num_workers_per_node
     for i in range(num_nodes):
-        ranks_on_i = list(range(i * num_workers_per_node, (i + 1) * num_workers_per_node))
+        ranks_on_i = list(
+            range(i * num_workers_per_node, (i + 1) * num_workers_per_node))
         pg = dist.new_group(ranks_on_i)
         if i == node_rank:
             _LOCAL_PROCESS_GROUP = pg
+
 
 def get_local_process_group():
     assert _LOCAL_PROCESS_GROUP is not None
@@ -112,8 +115,8 @@ class GCN(torch.nn.Module):
         return x
 
 
-def run_train(device, data, world_size, ngpu_per_node, model, epochs, batch_size, fan_out,
-              split_idx, num_classes):
+def run_train(device, data, world_size, ngpu_per_node, model, epochs,
+              batch_size, fan_out, split_idx, num_classes):
     local_group = get_local_process_group()
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
@@ -130,19 +133,16 @@ def run_train(device, data, world_size, ngpu_per_node, model, epochs, batch_size
     num_work = pyg_num_work(ngpu_per_node)
     train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                   input_nodes=split_idx['train'],
-                                  batch_size=batch_size,
-                                  shuffle=True,
+                                  batch_size=batch_size, shuffle=True,
                                   num_workers=num_work)
     if rank == 0:
         eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['valid'],
-                                     batch_size=batch_size,
-                                     shuffle=True,
+                                     batch_size=batch_size, shuffle=True,
                                      num_workers=num_work)
         test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['test'],
-                                     batch_size=batch_size,
-                                     shuffle=False,
+                                     batch_size=batch_size, shuffle=False,
                                      num_workers=num_work)
     eval_steps = 1000
     warmup_steps = 100
@@ -209,10 +209,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # setup multi node
     torch.distributed.init_process_group("nccl")
-    nprocs = dist.get_world_size()    
+    nprocs = dist.get_world_size()
     create_local_process_group(args.ngpu_per_node)
     local_group = get_local_process_group()
-    device_id = dist.get_rank(group=local_group) if dist.is_initialized() else 0
+    device_id = dist.get_rank(
+        group=local_group) if dist.is_initialized() else 0
     torch.cuda.set_device(device_id)
     device = torch.device(device_id)
     all_pids = torch.zeros(dist.get_world_size(), dtype=torch.int64).to(device)
@@ -226,5 +227,5 @@ if __name__ == '__main__':
     data.y = data.y.reshape(-1)
     model = GCN(dataset.num_features, args.hidden_channels,
                 dataset.num_classes)
-    run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs, args.batch_size,
-                         args.fan_out, split_idx, dataset.num_classes)
+    run_train(device, data, nprocs, args.ngpu_per_node, model, args.epochs,
+              args.batch_size, args.fan_out, split_idx, dataset.num_classes)
