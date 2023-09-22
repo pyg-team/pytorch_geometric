@@ -41,7 +41,6 @@ Test Accuracy: 24.8861%
 
 '''
 
-
 import argparse
 import os
 import time
