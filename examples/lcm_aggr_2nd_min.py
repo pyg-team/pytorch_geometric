@@ -1,170 +1,143 @@
-'''final validation accuracy: 95%'''
-import numpy as np
+# Final validation accuracy: ~95%
+import argparse
+
 import torch
-from torch import nn
-from torch.utils.data import DataLoader, Dataset
+import torch.nn.functional as F
+from torch import Tensor
 
-import torch_geometric.nn as gnn
-from torch_geometric.nn.aggr import LCMAggregation
+from torch_geometric.data import Data, InMemoryDataset
+from torch_geometric.loader import DataLoader
+from torch_geometric.nn import LCMAggregation
 
-seed = 42
-num_bits = 8
-emb_dim = 128
-batch_size = 32
-num_epochs = 1000
-opt_lr = 1e-4
-p_dropout = .25
-trainset_size = 2**16
-validset_size = 2**10
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-torch.manual_seed(seed)
+parser = argparse.ArgumentParser()
+parser.add_argument('--num_bits', type=int, default=8)
+args = parser.parse_args()
 
 
-class Random2ndMinimumDataset(Dataset):
-    '''A labeled dataset, where each sample is a multiset of integers
+class Random2ndMinimumDataset(InMemoryDataset):
+    r""""A labeled dataset, where each sample is a multiset of integers
     encoded as bit-vectors, and the label is the second smallest integer
-    in the multiset.
-    '''
-    def __init__(self, dataset_sz, num_bits, multiset_sz, permute=False):
-        self.dataset_sz = dataset_sz
-        self.num_bits = num_bits
-        self.multiset_sz = multiset_sz
-        self.permute = permute
-        self.generate_dataset()
+    in the multiset."""
+    def __init__(
+        self,
+        num_examples: int,
+        num_bits: int,
+        min_num_elems: int,
+        max_num_elems: int,
+    ):
+        super().__init__(None)
 
-    def generate_dataset(self):
-        self.dataset = []
-        for _ in range(self.dataset_sz):
-            self.dataset += [self.generate_sample()]
+        self.data, self.slices = self.collate([
+            self.get_data(num_bits, min_num_elems, max_num_elems)
+            for _ in range(num_examples)
+        ])
 
-    def generate_sample(self):
-        if isinstance(self.multiset_sz, tuple):
-            # randomly sample multiset size
-            sz = torch.randint(*self.multiset_sz, (1, ))
-        elif isinstance(self.multiset_sz, int):
-            sz = self.multiset_sz
-        else:
-            raise ValueError("`multiset_sz` must be a tuple or an int")
+    def get_data(
+        self,
+        num_bits: int,
+        min_num_elems: int,
+        max_num_elems: int,
+    ) -> Data:
 
-        # randomly sample a multiset of integers of size `sz`, encoded as
-        # bit-vectors
-        bitvecs = torch.randint(0, 2, (sz, num_bits))
+        num_elems = int(torch.randint(min_num_elems, max_num_elems + 1, (1, )))
 
-        # convert bit-vectors to integers
-        ints = self.bitvecs_to_ints(bitvecs)
+        x = torch.randint(0, 2, (num_elems, num_bits))
 
-        # find the second smallest element in the multiset, which is the target
-        target_idx = torch.topk(ints, 2, largest=False).indices[-1]
-        target = bitvecs[target_idx].float()
+        power = torch.pow(2, torch.arange(num_bits)).flip([0])
+        ints = (x * power.view(1, -1)).sum(dim=-1)
+        y = x[ints.topk(k=2, largest=False).indices[-1:]].to(torch.float)
 
-        return bitvecs, target
-
-    def bitvecs_to_ints(self, bitvecs):
-        powers = torch.pow(2, torch.arange(num_bits).flip(0)).unsqueeze(0)
-        return (bitvecs * powers).sum(-1)
-
-    def __getitem__(self, i):
-        multiset, target = self.dataset[i]
-        if self.permute:
-            multiset = multiset[torch.randperm(multiset.size(0))]
-        return multiset, target
-
-    def __len__(self):
-        return len(self.dataset)
+        return Data(x=x, y=y)
 
 
-def collate_fn(samples):
-    x, y, index = tuple(
-        zip(*[(multiset, target, torch.full((multiset.size(0), ), i))
-              for i, (multiset, target) in enumerate(samples)]))
-    x = torch.cat(x)
-    y = torch.stack(y)
-    index = torch.cat(index)
-    return x, y, index
+train_dataset = Random2ndMinimumDataset(
+    num_examples=2**16,  # 65,536
+    num_bits=args.num_bits,
+    min_num_elems=2,
+    max_num_elems=16,
+)
+# Validate on multi sets of size 32, larger than observed during training:
+val_dataset = Random2ndMinimumDataset(
+    num_examples=2**10,  # 1024
+    num_bits=args.num_bits,
+    min_num_elems=32,
+    max_num_elems=32,
+)
+
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=128)
 
 
-# train on multisets of random sizes between 2 and 16
-trainset = Random2ndMinimumDataset(trainset_size, num_bits, (2, 16 + 1),
-                                   permute=True)
-train_dl = DataLoader(trainset, batch_size=batch_size, collate_fn=collate_fn,
-                      shuffle=True)
-
-# validate on multisets of size 32, larger than in training
-validset = Random2ndMinimumDataset(validset_size, num_bits, 32)
-valid_dl = DataLoader(validset, batch_size=len(validset),
-                      collate_fn=collate_fn)
-
-print('Generated train and validation datasets.')
-
-
-class BitwiseEmbedding(nn.Module):
-    def __init__(self, num_bits, emb_dim):
+class BitwiseEmbedding(torch.nn.Module):
+    def __init__(self, emb_dim: int):
         super().__init__()
-        self.embs = nn.ModuleList(
-            [nn.Embedding(2, emb_dim) for _ in range(num_bits)])
+        self.embs = torch.nn.ModuleList(
+            [torch.nn.Embedding(2, emb_dim) for _ in range(args.num_bits)])
 
-    def forward(self, bitvecs):
-        bit_embeddings = [emb(b) for emb, b in zip(self.embs, bitvecs.T)]
-        return torch.stack(bit_embeddings).sum(0)
+    def forward(self, x: Tensor) -> Tensor:
+        xs = [emb(b) for emb, b in zip(self.embs, x.t())]
+        return torch.stack(xs, dim=0).sum(0)
 
 
-enc = nn.Sequential(BitwiseEmbedding(num_bits, emb_dim),
-                    nn.Linear(emb_dim, emb_dim), nn.Dropout(p_dropout),
-                    nn.GELU())
+class LCM(torch.nn.Module):
+    def __init__(self, emb_dim: int, dropout: float = 0.25):
+        super().__init__()
 
-agg = LCMAggregation(emb_dim, emb_dim, project=False)
+        self.encoder = torch.nn.Sequential(
+            BitwiseEmbedding(emb_dim),
+            torch.nn.Linear(emb_dim, emb_dim),
+            torch.nn.Dropout(),
+            torch.nn.GELU(),
+        )
 
-dec = nn.Sequential(nn.Linear(emb_dim, emb_dim), nn.Dropout(p_dropout),
-                    nn.GELU(), nn.Linear(emb_dim, num_bits))
+        self.aggr = LCMAggregation(emb_dim, emb_dim, project=False)
 
-net = gnn.Sequential('x, index', [(enc, 'x -> x'), (agg, 'x, index -> x'),
-                                  (dec, 'x -> x')])
-net.to(device)
+        self.decoder = torch.nn.Sequential(
+            torch.nn.Linear(emb_dim, emb_dim),
+            torch.nn.Dropout(dropout),
+            torch.nn.GELU(),
+            torch.nn.Linear(emb_dim, args.num_bits),
+        )
 
-criterion = nn.BCEWithLogitsLoss(reduction='none')
-opt = torch.optim.Adam(params=net.parameters(), lr=opt_lr)
+    def forward(self, x: Tensor, batch: Tensor) -> Tensor:
+        x = self.encoder(x)
+        x = self.aggr(x, batch)
+        x = self.decoder(x)
+        return x
 
-print("Created model, optimizer, and loss function.")
 
-print('Beginning training. Device:', device)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = LCM(emb_dim=128).to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
 
 def train():
-    losses = []
-    for x, y, index in train_dl:
-        x = x.to(device)
-        y = y.to(device)
-        index = index.to(device)
-
-        pred = net(x, index)
-        loss = criterion(pred, y).sum(-1).mean()
-        losses += [loss.item()]
-
-        opt.zero_grad()
+    total_loss = total_examples = 0
+    for batch in train_loader:
+        batch = batch.to(device)
+        optimizer.zero_grad()
+        out = model(batch.x, batch.batch)
+        loss = F.binary_cross_entropy_with_logits(out, batch.y)
         loss.backward()
-        opt.step()
-    losses = np.array(losses)
-    return losses.mean(), losses.std()
+        optimizer.step()
+        total_loss += batch.num_graphs * float(loss)
+        total_examples += batch.num_graphs
+    return total_loss / total_examples
 
 
 @torch.no_grad()
-def validate():
+def test(loader):
     total_correct = total_examples = 0
-    for x, y, index in valid_dl:
-        x = x.to(device)
-        y = y.to(device)
-        index = index.to(device)
-
-        pred = torch.sigmoid(net(x, index)).round().squeeze()
-        num_mistakes = (pred != y).sum(-1)
-        total_correct += (num_mistakes == 0).sum()
-        total_examples += y.size(0)
+    for batch in loader:
+        batch = batch.to(device)
+        pred = model(batch.x, batch.batch).sigmoid().round()
+        num_mistakes = (pred != batch.y).sum(dim=-1)
+        total_correct += int((num_mistakes == 0).sum())
+        total_examples += batch.num_graphs
     return total_correct / total_examples
 
 
-for ep in range(num_epochs):
-    loss_mean, loss_std = train()
-    val_acc = validate()
-    print(f'ep {ep+1:04d}: losses=[{loss_mean:.4f}, {loss_std:.4f}],'
-          f'acc={val_acc*100:.2f}%')
+for epoch in range(1, 1001):
+    loss = train()
+    val_acc = test(val_loader)
+    print(f'Epoch: {epoch:04d}, Loss: {loss:.4f}, Val Acc: {val_acc:.4f}')
