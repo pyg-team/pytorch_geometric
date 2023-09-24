@@ -639,6 +639,13 @@ def test_basic_graph_store():
     edge_attrs = data.get_all_edge_attrs()
     assert len(edge_attrs) == 3
 
+    # Remove:
+    coo, csr, csc = edge_attrs
+    data.remove_edge_index(coo)
+    data.remove_edge_index(csr)
+    data.remove_edge_index(csc)
+    assert len(data.get_all_edge_attrs()) == 0
+
 
 def test_data_generate_ids():
     data = HeteroData()
