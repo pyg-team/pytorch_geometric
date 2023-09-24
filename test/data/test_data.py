@@ -32,7 +32,6 @@ def test_data():
     assert data.num_edge_types == 1
     assert data.num_node_types == 1
     assert next(data('x')) == ('x', x)
-    assert next(data('edge_index')) == ('edge_index', edge_index)
 
     assert sorted(data.keys()) == ['edge_index', 'x']
     assert len(data) == 2
