@@ -512,11 +512,18 @@ class DistNeighborSampler:
             res_fut_list = await wrap_torch_future(
                 torch.futures.collect_all(futs))
             for i, res_fut in enumerate(res_fut_list):
+                p_id = ((self.dist_graph.partition_idx + i + 1) %
+                    self.dist_graph.num_partitions)
                 p_outputs.pop(p_id)
                 p_outputs.insert(p_id, res_fut.wait())
 
         # All src nodes are in the same partition
         if single_partition:
+            if local_only:
+                p_id = self.dist_graph.partition_idx
+            else:
+                p_id = ((self.dist_graph.partition_idx + 1) %   #partition_ids[0]) %
+                        self.dist_graph.num_partitions)
             return self.get_sampler_output(p_outputs, len(srcs),
                                            partition_ids[0], src_batch)
 
