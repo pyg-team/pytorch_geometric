@@ -21,8 +21,7 @@ def test_eg_conv_with_error():
     ['sum', 'symnorm', 'max', 'std'],
 ])
 @pytest.mark.parametrize('add_self_loops', [True, False])
-@pytest.mark.parametrize('cached', [True, False])
-def test_eg_conv(aggregators, add_self_loops, cached):
+def test_eg_conv(aggregators, add_self_loops):
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
@@ -32,7 +31,6 @@ def test_eg_conv(aggregators, add_self_loops, cached):
         out_channels=32,
         aggregators=aggregators,
         add_self_loops=add_self_loops,
-        cached=cached,
     )
     assert str(conv) == f"EGConv(16, 32, aggregators={aggregators})"
     out = conv(x, edge_index)
