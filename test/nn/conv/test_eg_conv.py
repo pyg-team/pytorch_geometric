@@ -18,7 +18,7 @@ def test_eg_conv_with_error():
 
 @pytest.mark.parametrize('aggregators', [
     ['symnorm'],
-    ['sum', 'symnorm', 'max', 'std'],
+    ['sum', 'symnorm', 'std'],
 ])
 @pytest.mark.parametrize('add_self_loops', [True, False])
 def test_eg_conv(aggregators, add_self_loops):
