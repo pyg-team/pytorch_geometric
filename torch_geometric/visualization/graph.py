@@ -43,7 +43,8 @@ def visualize_graph(
             (default: :obj:`None`)
     """
     if edge_weight is not None:
-        edge_weight = (edge_weight - edge_weight.min()) / (edge_weight.max() - edge_weight.min())
+        edge_weight = (edge_weight - edge_weight.min()) / (edge_weight.max() -
+                                                           edge_weight.min())
 
     if edge_weight is not None:  # Discard any edges with zero edge weight:
         mask = edge_weight > 1e-7
