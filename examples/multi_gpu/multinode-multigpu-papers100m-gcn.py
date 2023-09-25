@@ -216,9 +216,6 @@ if __name__ == '__main__':
         group=local_group) if dist.is_initialized() else 0
     torch.cuda.set_device(device_id)
     device = torch.device(device_id)
-    all_pids = torch.zeros(dist.get_world_size(), dtype=torch.int64).to(device)
-    all_pids[dist.get_rank()] = os.getpid()
-    dist.all_reduce(all_pids)
 
     dataset = PygNodePropPredDataset(name='ogbn-papers100M')
     split_idx = dataset.get_idx_split()
