@@ -15,7 +15,6 @@ python3 pyg_multinode_tutorial.py --ngpu_per_node 3
 
 '''
 
-
 import argparse
 import os
 import time
@@ -24,15 +23,14 @@ import warnings
 import torch
 import torch.distributed as dist
 import torch.nn.functional as F
-from torch_geometric.datasets import FakeDataset
 from torch.nn.parallel import DistributedDataParallel
 from torchmetrics import Accuracy
 
+from torch_geometric.datasets import FakeDataset
 from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn.models import GCN
 
 warnings.filterwarnings("ignore")
-
 
 _LOCAL_PROCESS_GROUP = None
 
@@ -164,12 +162,17 @@ if __name__ == '__main__':
 
     # 60/20/20 split
     split_idx = {
-        'train':rand_id[:int(.6 * num_nodes)],
-        'valid':rand_id[int(.6 * num_nodes):int(.8 * num_nodes)],
-        'test':rand_id[:int(.8 * num_nodes):],
+        'train': rand_id[:int(.6 * num_nodes)],
+        'valid': rand_id[int(.6 * num_nodes):int(.8 * num_nodes)],
+        'test': rand_id[:int(.8 * num_nodes):],
     }
 
     model = GCN(dataset.num_features, args.hidden_channels, 2,
                 dataset.num_classes)
+<<<<<<< HEAD
     run(device, data, nprocs, model, args.epochs, args.batch_size,
               args.fan_out, split_idx, dataset.num_classes)
+=======
+    run_train(device, data, nprocs, model, args.epochs, args.batch_size,
+              args.fan_out, split_idx, dataset.num_classes)
+>>>>>>> 4b0d4f3508dfc1ec4260f26c1ab90699f651a6c3

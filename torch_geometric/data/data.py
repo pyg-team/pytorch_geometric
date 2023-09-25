@@ -954,17 +954,17 @@ class Data(BaseData, FeatureStore, GraphStore):
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in self:
             del self.edge_index
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop(EdgeLayout.COO, None)
+                self._edge_attrs.pop(EdgeLayout.COO, None)
             return True
         elif edge_attr.layout == EdgeLayout.CSR and 'adj' in self:
             del self.adj
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop(EdgeLayout.CSR, None)
+                self._edge_attrs.pop(EdgeLayout.CSR, None)
             return True
         elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in self:
             del self.adj_t
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop(EdgeLayout.CSC, None)
+                self._edge_attrs.pop(EdgeLayout.CSC, None)
             return True
         return False
 
