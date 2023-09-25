@@ -1,7 +1,8 @@
 '''
 
 in terminal 1:
-srun --overlap -A <slurm_access_group> -p interactive -J <experiment-name> -N 2 -t 02:00:00 --pty bash
+srun --overlap -A <slurm_access_group> -p interactive \
+    -J <experiment-name> -N 2 -t 02:00:00 --pty bash
 
 in terminal 2:
 squeue -u <slurm-unix-account-id>
@@ -10,34 +11,39 @@ export jobid=<>
 
 then
 
-srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid \
---container-image=<image_url> --container-name=cont \
---container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
+srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid
+    --container-image=<image_url> --container-name=cont
+    --container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
 
-srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid \
---container-name=cont-rp-9-22 \
---container-mounts=/lustre/fsw/dlfw/dlfw-pyg/riship/ogb-papers100m/:/workspace/dataset/ \
+srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid
+    --container-name=cont-rp-9-22
+    --container-mounts=
+    /lustre/fsw/dlfw/dlfw-pyg/riship/ogb-papers100m/:/workspace/dataset/
 python3 multinode-papers100m-gcn.py --ngpu_per_node 3
 
 
 
 Results:
 
-Data = Data(num_nodes=111059956, edge_index=[2, 1615685872], x=[111059956, 128], node_year=[111059956, 1], y=[111059956])
+Data = Data(num_nodes=111059956, edge_index=[2, 1615685872],
+    x=[111059956, 128], node_year=[111059956, 1], y=[111059956])
 Using 6 GPUs...
 Beginning training...
 
-Epoch: 0, Iteration: 1570, Loss: tensor(2.7372, device='cuda:0', grad_fn=<NllLossBackward0>)
+Epoch: 0, Iteration: 1570, Loss:
+    tensor(2.7372, device='cuda:0', grad_fn=<NllLossBackward0>)
 Average Training Iteration Time: 0.0022558025027757116 s/iter
 Validation Accuracy: 33.1712%
 Average Inference Iteration Time: 0.002441989262174637 s/iter
 
-Epoch: 1, Iteration: 1570, Loss: tensor(2.6074, device='cuda:0', grad_fn=<NllLossBackward0>)
+Epoch: 1, Iteration: 1570, Loss:
+    tensor(2.6074, device='cuda:0', grad_fn=<NllLossBackward0>)
 Average Training Iteration Time: 0.002187901319104231 s/iter
 Validation Accuracy: 32.2733%
 Average Inference Iteration Time: 0.002225210835015855 s/iter
 
-Epoch: 2, Iteration: 1570, Loss: tensor(2.5593, device='cuda:0', grad_fn=<NllLossBackward0>)
+Epoch: 2, Iteration: 1570, Loss:
+    tensor(2.5593, device='cuda:0', grad_fn=<NllLossBackward0>)
 Average Training Iteration Time: 0.002199090496994302 s/iter
 Validation Accuracy: 33.9588%
 Average Inference Iteration Time: 0.003229572181006499 s/iter
