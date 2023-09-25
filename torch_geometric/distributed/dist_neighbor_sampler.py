@@ -525,8 +525,8 @@ class DistNeighborSampler:
                 p_id = (
                     (self.dist_graph.partition_idx + 1) %  #partition_ids[0]) %
                     self.dist_graph.num_partitions)
-            return self.get_sampler_output(p_outputs, len(srcs),
-                                           p_id, src_batch)
+            return self.get_sampler_output(p_outputs, len(srcs), p_id,
+                                           src_batch)
 
         return self.merge_sampler_outputs(partition_ids, partition_orders,
                                           p_outputs, one_hop_num, src_batch)
