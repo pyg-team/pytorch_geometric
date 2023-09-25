@@ -1,5 +1,4 @@
 '''
-
 in terminal 1:
 srun --overlap -A <slurm_access_group> -p interactive -J <experiment-name> -N 2 -t 02:00:00 --pty bash
 in terminal 2:
@@ -11,7 +10,7 @@ srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid \
 --container-image=<image_url> --container-name=cont \
 --container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
 srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid \
---container-name=cont-rp-9-22 \
+--container-name=cont \
 python3 pyg_multinode_tutorial.py --ngpu_per_node 3
 
 '''

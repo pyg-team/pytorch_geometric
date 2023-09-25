@@ -192,7 +192,9 @@ The final step of coding is to define our :meth:`run` function:
                     acc_sum += acc(out[:batch_size].softmax(dim=-1),
                                    batch.y[:batch_size])
                 print(f"Test Accuracy: {acc_sum/(i) * 100.0:.4f}%", )
+
 Our :meth:`run` function is very similar to that of our warm up example except for the beginning. In this tutorial our distributed groups have already been initialized so we only need to assign our :obj:`loc_id` for the local GPU id for each device on each node. We also need to assign our global :obj:`rank`. As an example to understand this better, consider a scendario where we use use 3 nodes with 8 GPUs each. The 7th GPU on the 3rd node, or the 23rd GPU in our system, that GPUs process would be rank :obj:`22`. However the value of :obj:`loc_id` for that GPU would be :obj:`6`.
+
 After that its very similar to our warm up:
     1. We put :class:`~torch_geometric.nn.GCN` model on :obj:`device` and wrap it inside :class:`~torch.nn.parallel.DistributedDataParallel`, passing the :obj:`loc_id` for :obj:`device_id` parameter.
     2. We then set up our optimizer and accuracy objective for evalution and testing.
@@ -206,5 +208,27 @@ You can run the shown tutorial by yourself by looking at `examples/multi_gpu/mul
 
 However, to run the example you need to use slurm. Here's how:
 
+Step 1:
+.. code-block:: bash
+
+    srun --overlap -A <slurm_access_group> -p interactive -J <experiment-name> -N 2 -t 02:00:00 --pty bash
+
+
+Step 2:
+.. code-block:: bash
+
+    squeue -u <slurm-unix-account-id>
+    export jobid=<>
+
+Step 3:
+
+.. code-block:: bash
+
+    srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid \
+    --container-image=<image_url> --container-name=cont \
+    --container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
+    srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid \
+    --container-name=cont \
+    python3 pyg_multinode_tutorial.py --ngpu_per_node 3
 
 Give it a try!
