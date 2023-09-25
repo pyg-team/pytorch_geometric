@@ -60,12 +60,11 @@ def get_local_process_group():
     return _LOCAL_PROCESS_GROUP
 
 
-def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
+def run(device, data, world_size, model, epochs, batch_size, fan_out,
               split_idx, num_classes):
     local_group = get_local_process_group()
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
-    os.environ['NVSHMEM_SYMMETRIC_SIZE'] = "107374182400"
     if rank == 0:
         print("Data =", data)
         print('Using', nprocs, 'GPUs...')
@@ -75,6 +74,8 @@ def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
     model = DistributedDataParallel(model, device_ids=[loc_id])
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01,
                                  weight_decay=0.0005)
+    acc = Accuracy(task="multiclass", num_classes=num_classes).to(device)
+
     train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                   input_nodes=split_idx['train'],
                                   batch_size=batch_size)
@@ -86,7 +87,6 @@ def run_train(device, data, world_size, model, epochs, batch_size, fan_out,
                                      input_nodes=split_idx['test'],
                                      batch_size=batch_size)
     eval_steps = 100
-    acc = Accuracy(task="multiclass", num_classes=num_classes).to(device)
     if rank == 0:
         print("Beginning training...")
     for epoch in range(epochs):
@@ -172,5 +172,5 @@ if __name__ == '__main__':
 
     model = GCN(dataset.num_features, args.hidden_channels, 2,
                 dataset.num_classes)
-    run_train(device, data, nprocs, model, args.epochs, args.batch_size,
+    run(device, data, nprocs, model, args.epochs, args.batch_size,
               args.fan_out, split_idx, dataset.num_classes)
