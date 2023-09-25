@@ -42,9 +42,8 @@ def visualize_graph(
             visualization backend based on available system packages.
             (default: :obj:`None`)
     """
-    if edge_weight is not None:  # Normalize edge weights.
-        edge_weight = edge_weight - edge_weight.min()
-        edge_weight = edge_weight / edge_weight.max()
+    if edge_weight is not None:
+        edge_weight = (edge_weight - edge_weight.min()) / (edge_weight.max() - edge_weight.min())
 
     if edge_weight is not None:  # Discard any edges with zero edge weight:
         mask = edge_weight > 1e-7
