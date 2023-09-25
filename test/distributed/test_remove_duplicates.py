@@ -2,9 +2,8 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from torch_geometric.sampler import SamplerOutput
-
 from torch_geometric.distributed.utils import remove_duplicates
+from torch_geometric.sampler import SamplerOutput
 
 
 def test_remove_duplicates():
@@ -18,8 +17,8 @@ def test_remove_duplicates():
     expected_src = torch.tensor([4, 5, 6, 7, 8])
     expected_node = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
 
-    assert(torch.equal(src, expected_src))
-    assert(np.array_equal(node, expected_node))
+    assert (torch.equal(src, expected_src))
+    assert (np.array_equal(node, expected_node))
 
 
 def test_remove_duplicates_disjoint():
@@ -31,7 +30,8 @@ def test_remove_duplicates_disjoint():
 
     out = SamplerOutput(out_node, None, None, None, out_batch)
 
-    src, node, src_batch, batch = remove_duplicates(out, node, batch, disjoint=True)
+    src, node, src_batch, batch = remove_duplicates(out, node, batch,
+                                                    disjoint=True)
 
     expected_src = torch.tensor([4, 5, 6, 7, 8])
     expected_node = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8])
@@ -39,8 +39,8 @@ def test_remove_duplicates_disjoint():
     expected_src_batch = torch.tensor([0, 1, 2, 3, 3])
     expected_batch = np.array([0, 1, 2, 3, 0, 1, 2, 3, 3])
 
-    assert(torch.equal(src, expected_src))
-    assert(np.array_equal(node, expected_node))
+    assert (torch.equal(src, expected_src))
+    assert (np.array_equal(node, expected_node))
 
-    assert(torch.equal(src_batch, expected_src_batch))
-    assert(np.array_equal(batch, expected_batch))
+    assert (torch.equal(src_batch, expected_src_batch))
+    assert (np.array_equal(batch, expected_batch))
