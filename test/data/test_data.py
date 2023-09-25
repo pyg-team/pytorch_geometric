@@ -29,10 +29,19 @@ def test_data():
     assert data.get('x').tolist() == x.tolist()
     assert data.get('y', 2) == 2
     assert data.get('y', None) is None
+    assert data.num_edge_types == 1
+    assert data.num_node_types == 1
+    assert next(data('x')) == ('x', x)
 
     assert sorted(data.keys()) == ['edge_index', 'x']
     assert len(data) == 2
     assert 'x' in data and 'edge_index' in data and 'pos' not in data
+
+    data.apply_(lambda x: x.mul_(2), 'x')
+    assert torch.allclose(data.x, x)
+
+    data.requires_grad_('x')
+    assert data.x.requires_grad is True
 
     D = data.to_dict()
     assert len(D) == 2
@@ -452,6 +461,13 @@ def test_basic_graph_store():
     # Get attrs:
     edge_attrs = data.get_all_edge_attrs()
     assert len(edge_attrs) == 3
+
+    # Remove:
+    coo, csr, csc = edge_attrs
+    data.remove_edge_index(coo)
+    data.remove_edge_index(csr)
+    data.remove_edge_index(csc)
+    assert len(data.get_all_edge_attrs()) == 0
 
 
 def test_data_generate_ids():

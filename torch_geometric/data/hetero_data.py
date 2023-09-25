@@ -1050,17 +1050,17 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         if edge_attr.layout == EdgeLayout.COO and 'edge_index' in store:
             del store.edge_index
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.COO), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.COO), None)
             return True
         elif edge_attr.layout == EdgeLayout.CSR and 'adj' in store:
             del store.adj
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.CSR), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.CSR), None)
             return True
         elif edge_attr.layout == EdgeLayout.CSC and 'adj_t' in store:
             del store.adj_t
             if hasattr(self, '_edge_attrs'):
-                self._edges_to_layout.pop((edge_type, EdgeLayout.CSC), None)
+                self._edge_attrs.pop((edge_type, EdgeLayout.CSC), None)
             return True
         return False
 
