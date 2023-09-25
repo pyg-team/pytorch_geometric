@@ -54,19 +54,16 @@ def run_train(rank, data, world_size, model, epochs, batch_size, fan_out,
     num_work = pyg_num_work(world_size)
     train_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                   input_nodes=split_idx['train'],
-                                  batch_size=batch_size,
-                                  shuffle=True,
+                                  batch_size=batch_size, shuffle=True,
                                   num_workers=num_work)
     if rank == 0:
         eval_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['valid'],
-                                     batch_size=batch_size,
-                                     shuffle=True,
+                                     batch_size=batch_size, shuffle=True,
                                      num_workers=num_work)
         test_loader = NeighborLoader(data, num_neighbors=[fan_out, fan_out],
                                      input_nodes=split_idx['test'],
-                                     batch_size=batch_size,
-                                     shuffle=False,
+                                     batch_size=batch_size, shuffle=False,
                                      num_workers=num_work)
     eval_steps = 1000
     warmup_steps = 100
