@@ -34,7 +34,6 @@ Our first step is to understand the basic structure of a multi-node-multi-gpu ex
 
     def run(device, data, world_size, model, epochs, batch_size, fan_out,
                   split_idx, num_classes):
-        # run training
         ...
 
 
@@ -80,7 +79,7 @@ Our first step is to understand the basic structure of a multi-node-multi-gpu ex
                   args.fan_out, split_idx, dataset.num_classes)
 
 
-Similarly to the warm up example, we define a :meth:`run` function. However, in this case we are using torch distributed with NVIDIA NCCL backend, instead of relying on :class:`~torch.multiprocessing`. Because we are running on multiple nodes, we want to set up a local process group for each node, and use :obj:`args.ngpu_per_node` GPUs per node. We then select the the CUDA device that will be used by each process within each process group. The next steps are fairly basic :pyg:`PyG` and :pytorch:`PyTorch` via usage. We load our (synthetic) dataset and then set up our 60/20/20 train/val/test split. Next, we define our :class:`~torch_geometric.nn.models.GCN` model and finally call our :meth:`run` function.
+Similarly to the warm up example, we define a :meth:`run` function. However, in this case we are using torch distributed with NVIDIA NCCL backend, instead of relying on :class:`~torch.multiprocessing`. Because we are running on multiple nodes, we want to set up a local process group for each node, and use :obj:`args.ngpu_per_node` GPUs per node. We then select the the CUDA device that will be used by each process within each process group. The next steps are fairly basic :pyg:`PyG` and :pytorch:`PyTorch` usage. We load our (synthetic) dataset and then set up our 60/20/20 train/val/test split. Next, we define our :class:`~torch_geometric.nn.models.GCN` model and finally call our :meth:`run` function.
 
 Before we look into how our run function should be defined, we need to understand how we create and get our local process groups.
 
@@ -209,12 +208,14 @@ You can run the shown tutorial by yourself by looking at `examples/multi_gpu/mul
 However, to run the example you need to use slurm. Here's how:
 
 Step 1:
+
 .. code-block:: bash
 
     srun --overlap -A <slurm_access_group> -p interactive -J <experiment-name> -N 2 -t 02:00:00 --pty bash
 
 
 Step 2:
+
 .. code-block:: bash
 
     squeue -u <slurm-unix-account-id>
