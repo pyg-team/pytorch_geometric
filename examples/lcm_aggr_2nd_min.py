@@ -25,7 +25,7 @@ class Random2ndMinimumDataset(InMemoryDataset):
         min_num_elems: int,
         max_num_elems: int,
     ):
-        super().__init__(None)
+        super().__init__(transform=self.randperm_transform)
 
         self.data, self.slices = self.collate([
             self.get_data(num_bits, min_num_elems, max_num_elems)
@@ -48,6 +48,10 @@ class Random2ndMinimumDataset(InMemoryDataset):
         y = x[ints.topk(k=2, largest=False).indices[-1:]].to(torch.float)
 
         return Data(x=x, y=y)
+
+    def randperm_transform(self, data):
+        data.x = data.x[torch.randperm(data.x.size(0))]
+        return data
 
 
 train_dataset = Random2ndMinimumDataset(
