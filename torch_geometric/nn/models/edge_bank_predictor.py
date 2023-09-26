@@ -149,8 +149,9 @@ class EdgeBankPredictor(torch.nn.Module):
         """
         pred = torch.zeros(len(query_src))
         condition_tensor = (src, dst) in self.memory
-                         
+
         if (self.memory_mode == 'fixed_time_window'):
-            condition_tensor = condition_tensor and self.memory[(src, dst)] >= self.prev_t
+            condition_tensor = condition_tensor and self.memory[(
+                src, dst)] >= self.prev_t
         pred = torch.where(condition, self.pos_prob, 0)
         return pred
