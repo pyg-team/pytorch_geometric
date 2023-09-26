@@ -202,6 +202,7 @@ After that its very similar to our warm up:
     5. Finally we follow a similar training and evaluation loop as our warmup example.
 
 And that's all the coding.
+
 Putting it all together gives a working multi-node-multi-GPU example that follows a training flow that is similar to single GPU training.
 You can run the shown tutorial by yourself by looking at `examples/multi_gpu/multi_node_multi_gpu_synthetic.py <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/multi_gpu/multi_node_multi_gpu_synthetic.py>`_.
 
@@ -209,27 +210,38 @@ However, to run the example you need to use slurm. Here's how:
 
 Step 1:
 
+In your slurm login terminal:
+
 .. code-block:: bash
 
     srun --overlap -A <slurm_access_group> -p interactive -J <experiment-name> -N 2 -t 02:00:00 --pty bash
 
 
-Step 2:
+Then open another slurm login terminal for step 2:
 
 .. code-block:: bash
 
     squeue -u <slurm-unix-account-id>
-    export jobid=<>
+    export jobid=<JOBID from SQUEUE>
+
 
 Step 3:
+
+Now we are going to pull a container with a functional PyG and CUDA environment onto each node. 
 
 .. code-block:: bash
 
     srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid \
     --container-image=<image_url> --container-name=cont \
     --container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
-    srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid \
+
+NVIDIA recommends using our NVIDIA PyG container updated each month with the latest from NVIDIA and PyG. Sign up for early access at `developer.nvidia.com/pyg-container-early-access<https://developer.nvidia.com/pyg-container-early-access`_. General availability on `NVIDIA NGC<https://www.ngc.nvidia.com/>`_ set for the end of 2023. Alternatively, see `docker.com<https://www.docker.com/>`_ for information on creating your own container. 
+
+Once you have your container loaded, simply run:
+Step 4:
+
+    srun -l -N<num_nodes> --ntasks-per-node=<ngpu_per_node> --overlap --jobid=$jobid \
     --container-name=cont \
-    python3 pyg_multinode_tutorial.py --ngpu_per_node 3
+    python3 pyg_multinode_tutorial.py --ngpu_per_node <>
 
 Give it a try!
