@@ -11,7 +11,7 @@ import warnings
 import torch
 
 
-class EdgeBankPredictor(object):
+class EdgeBankPredictor(torch.nn.Module):
     def __init__(
         self,
         src: torch.tensor,
