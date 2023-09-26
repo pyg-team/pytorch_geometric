@@ -235,7 +235,7 @@ Now we are going to pull a container with a functional PyG and CUDA environment 
     --container-image=<image_url> --container-name=cont \
     --container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
 
-NVIDIA recommends using our NVIDIA PyG container updated each month with the latest from NVIDIA and PyG. Sign up for early access at `developer.nvidia.com/pyg-container-early-access <https://developer.nvidia.com/pyg-container-early-access`_. General availability on `NVIDIA NGC <https://www.ngc.nvidia.com/>`_ is set for the end of 2023. Alternatively, see `docker.com <https://www.docker.com/>`_ for information on creating your own container.
+NVIDIA recommends using our NVIDIA PyG container updated each month with the latest from NVIDIA and PyG. Sign up for early access at `developer.nvidia.com/pyg-container-early-access <https://developer.nvidia.com/pyg-container-early-access>`_. General availability on `NVIDIA NGC <https://www.ngc.nvidia.com/>`_ is set for the end of 2023. Alternatively, see `docker.com <https://www.docker.com/>`_ for information on creating your own container.
 
 Once you have your container loaded, simply run:
 Step 4:
