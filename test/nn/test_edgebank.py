@@ -112,7 +112,6 @@ def test_edge_bank_pred():
     print("dataset.full_data=", dataset.full_data)
     print("dataset.eval_metric=", dataset.eval_metric)
     print("dataset.train_mask=", dataset.train_mask)
-    
 
     # Set EdgeBank with memory updater
     edgebank = EdgeBankPredictor(hist_src, hist_dst, hist_ts,
