@@ -64,7 +64,7 @@ def get_local_process_group():
 
 
 def run(device, data, world_size, model, epochs, batch_size, fan_out,
-              split_idx, num_classes):
+        split_idx, num_classes):
     local_group = get_local_process_group()
     loc_id = dist.get_rank(group=local_group)
     rank = torch.distributed.get_rank()
@@ -176,4 +176,4 @@ if __name__ == '__main__':
     model = GCN(dataset.num_features, args.hidden_channels, 2,
                 dataset.num_classes)
     run(device, data, nprocs, model, args.epochs, args.batch_size,
-              args.fan_out, split_idx, dataset.num_classes)
+        args.fan_out, split_idx, dataset.num_classes)
