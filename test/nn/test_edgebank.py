@@ -96,6 +96,7 @@ def test_edge_bank_pred():
 
     # data loading with `numpy`
     dataset = LinkPropPredDataset(name=DATA, root="datasets", preprocess=True)
+    print("dataset=", dataset)
     data = dataset.full_data
     metric = dataset.eval_metric
 
@@ -108,6 +109,10 @@ def test_edge_bank_pred():
     hist_src = torch.tensor(data['sources'][train_mask])
     hist_dst = torch.tensor(data['destinations'][train_mask])
     hist_ts = torch.tensor(data['timestamps'][train_mask])
+    print("dataset.full_data=", dataset.full_data)
+    print("dataset.eval_metric=", dataset.eval_metric)
+    print("dataset.train_mask=", dataset.train_mask)
+    
 
     # Set EdgeBank with memory updater
     edgebank = EdgeBankPredictor(hist_src, hist_dst, hist_ts,
@@ -122,6 +127,7 @@ def test_edge_bank_pred():
 
     evaluator = Evaluator(name=DATA)
     neg_sampler = dataset.negative_sampler
+    print("dataset.negative_sampler=", dataset.negative_sampler)
 
     # ==================================================== Test
     # loading the validation negative samples
