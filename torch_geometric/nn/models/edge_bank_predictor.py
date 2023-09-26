@@ -14,9 +14,8 @@ import torch
 class EdgeBankPredictor(torch.nn.Module):
     def __init__(
         self,
-        src: torch.tensor,
-        dst: torch.tensor,
-        ts: torch.tensor,
+        initial_edge_index: torch.tensor,
+        initial_ts: torch.tensor,
         memory_mode:
         str = 'unlimited',  # could be `unlimited` or `fixed_time_window`
         time_window_ratio: float = 0.15,
@@ -25,8 +24,7 @@ class EdgeBankPredictor(torch.nn.Module):
         r"""
         intialize edgebank and specify the memory mode
         Parameters:
-            src: source node id of the edges for initialization
-            dst: destination node id of the edges for initialization
+            edge_index: [2, num_edges] tensor of edge indices
             ts: timestamp of the edges for initialization
             memory_mode: 'unlimited' or 'fixed_time_window'
             time_window_ratio: the ratio of the time window length to the total time length
@@ -50,24 +48,22 @@ class EdgeBankPredictor(torch.nn.Module):
             self.cur_t = -1
             self.duration = -1
 
-        self.memory = {}  #{(u,v):1}
+        self.memory = (initial_edge_index, initial_ts)
         self.pos_prob = pos_prob
-        self.update_memory(src, dst, ts)
 
-    def update_memory(self, src: torch.tensor, dst: torch.tensor,
+    def update_memory(self, edge_index: torch.tensor,
                       ts: torch.tensor):
         r"""
         generate the current and correct state of the memory with the observed edges so far
         note that historical edges may include training, validation, and already observed test edges
         Parameters:
-            src: source node id of the edges
-            dst: destination node id of the edges
+            edge_index: [2, num_edges] tensor of edge indices
             ts: timestamp of the edges
         """
         if self.memory_mode == 'unlimited':
-            self._update_unlimited_memory(src, dst)  #ignores time
+            self._update_unlimited_memory(edge_index)  #ignores time
         elif self.memory_mode == 'fixed_time_window':
-            self._update_time_window_memory(src, dst, ts)
+            self._update_time_window_memory(edge_index, ts)
         else:
             raise ValueError("Invalide memory mode!")
 
@@ -97,30 +93,27 @@ class EdgeBankPredictor(torch.nn.Module):
             )
         return self.cur_t
 
-    def _update_unlimited_memory(self, update_src: torch.tensor,
-                                 update_dst: torch.tensor):
+    def _update_unlimited_memory(self, update_edge_index: torch.tensor):
         r"""
         update self.memory with newly arrived src and dst
         Parameters:
-            src: source node id of the edges
-            dst: destination node id of the edges
+            update_edge_index: [2, num_edges] tensor of edge indices
         """
+        # (TODO Rishi) update for new edge_index usage
         for src, dst in zip(update_src, update_dst):
             if (src, dst) not in self.memory:
                 self.memory[(src, dst)] = 1
 
-    def _update_time_window_memory(self, update_src: torch.tensor,
-                                   update_dst: torch.tensor,
+    def _update_time_window_memory(self, update_edge_index: torch.tensor,
                                    update_ts: torch.tensor) -> None:
         r"""
         move the time window forward until end of dst timestamp here
         also need to remove earlier edges from memory which is not in the time window
         Parameters:
-            update_src: source node id of the edges
-            update_dst: destination node id of the edges
+            update_edge_index: [2, num_edges] tensor of edge indices
             update_ts: timestamp of the edges
         """
-
+        # (TODO Rishi) update for new edge_index usage
         #* initialize the memory if it is empty
         if (len(self.memory) == 0):
             for src, dst, ts in zip(update_src, update_dst, update_ts):
@@ -136,17 +129,17 @@ class EdgeBankPredictor(torch.nn.Module):
         for src, dst, ts in zip(update_src, update_dst, update_ts):
             self.memory[(src, dst)] = ts
 
-    def predict_link(self, query_src: torch.tensor,
-                     query_dst: torch.tensor) -> torch.tensor:
+    def predict_link(self, query_edge_indices: torch.tensor) -> torch.tensor:
         r"""
         predict the probability from query src,dst pair given the current memory,
         all edges not in memory will return 0.0 while all observed edges in memory will return self.pos_prob
         Parameters:
-            query_src: source node id of the query edges
-            query_dst: destination node id of the query edges
+            query_edge_indices: [2, num_edges] tensor of edge indices
         Returns:
             pred: the prediction for all query edges
         """
+        # (TODO Rishi) update for new edge_index usage
+
         pred = torch.zeros(len(query_src))
         memory_key_u_tensor = []
         memory_key_v_tensor = []
@@ -155,8 +148,8 @@ class EdgeBankPredictor(torch.nn.Module):
             memory_key_u_tensor.append(u)
             memory_key_v_tensor.append(v)
             memory_val_tensor.append(val)
-        memory_key_u_tensor = torch.tensor(memory_key_u_tensor)
-        memory_key_v_tensor = torch.tensor(memory_key_v_tensor)
+        memory_key_u_tensor = torch.unique(torch.tensor(memory_key_u_tensor))
+        memory_key_v_tensor = torch.tensor(memory_key_v_tensor))
         memory_val_tensor = torch.tensor(memory_val_tensor)
 
         condition_tensor = query_src in memory_key_u_tensor and query_dst in memory_key_v_tensor
