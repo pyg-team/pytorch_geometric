@@ -1,6 +1,7 @@
 '''
 in terminal 1:
-srun --overlap -A <slurm_access_group> -p interactive -J <experiment-name> -N 2 -t 02:00:00 --pty bash
+srun --overlap -A <slurm_access_group>
+    -p interactive -J <experiment-name> -N 2 -t 02:00:00 --pty bash
 
 in terminal 2:
 squeue -u <slurm-unix-account-id>
@@ -22,7 +23,6 @@ python3 pyg_multinode_tutorial.py --ngpu_per_node 3
 '''
 
 import argparse
-import os
 import time
 import warnings
 

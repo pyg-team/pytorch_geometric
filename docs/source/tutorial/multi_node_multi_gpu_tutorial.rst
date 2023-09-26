@@ -8,7 +8,6 @@ Our first step is to understand the basic structure of a multi-node-multi-gpu ex
 .. code-block:: python
 
     import argparse
-    import os
     import time
     import warnings
 
