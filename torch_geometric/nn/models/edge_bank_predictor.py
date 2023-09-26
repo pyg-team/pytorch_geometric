@@ -148,7 +148,7 @@ class EdgeBankPredictor(torch.nn.Module):
             pred: the prediction for all query edges
         """
         pred = torch.zeros(len(query_src))
-        condition_tensor = (src, dst) in self.memory
+        condition_tensor = (query_src, query_dst) in self.memory
 
         if (self.memory_mode == 'fixed_time_window'):
             condition_tensor = condition_tensor and self.memory[(
