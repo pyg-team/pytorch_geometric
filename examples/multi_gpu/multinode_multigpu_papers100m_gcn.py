@@ -5,9 +5,10 @@ srun --overlap -A <slurm_access_group> -p interactive \
     -J <experiment-name> -N 2 -t 02:00:00 --pty bash
 
 in terminal 2:
+
 squeue -u <slurm-unix-account-id>
 then
-export jobid=<>
+export jobid=<JOBID from SQUEUE>
 
 then
 
@@ -16,7 +17,7 @@ srun -l -N2 --ntasks-per-node=1 --overlap --jobid=$jobid
     --container-mounts=<data-directory>/ogb-papers100m/:/workspace/dataset true
 
 srun -l -N2 --ntasks-per-node=3 --overlap --jobid=$jobid
-    --container-name=cont-rp-9-22
+    --container-name=cont
     --container-mounts=
     /lustre/fsw/dlfw/dlfw-pyg/riship/ogb-papers100m/:/workspace/dataset/
 python3 multinode-papers100m-gcn.py --ngpu_per_node 3
