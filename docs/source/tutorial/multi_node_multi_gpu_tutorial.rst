@@ -213,7 +213,9 @@ In your slurm login terminal:
 
 .. code-block:: bash
 
-    srun --overlap -A <slurm_access_group> -p interactive -J <experiment-name> -N 2 -t 02:00:00 --pty bash
+    srun --overlap -A <slurm_access_group> -p interactive -J <experiment-name> -N <num_nodes> -t 00:30:00 --pty bash
+
+This will allocate num_nodes nodes for 30 minutes. The -A and -J arguments may be required on your cluster, speak with your cluster management team for more information on usage for those params.
 
 
 Then open another slurm login terminal for step 2:
@@ -223,6 +225,7 @@ Then open another slurm login terminal for step 2:
     squeue -u <slurm-unix-account-id>
     export jobid=<JOBID from SQUEUE>
 
+In this step we are saving the job id of our slurm job from step 1.
 
 Step 3:
 
