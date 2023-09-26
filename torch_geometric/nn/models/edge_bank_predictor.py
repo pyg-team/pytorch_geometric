@@ -158,8 +158,8 @@ class EdgeBankPredictor(torch.nn.Module):
         memory_key_u_tensor = torch.tensor(memory_key_u_tensor)
         memory_key_v_tensor = torch.tensor(memory_key_v_tensor)
         memory_val_tensor = torch.tensor(memory_val_tensor)
-        
-        condition_tensor = query_src in memory_key_u_tensor and query_dst in memory_key_v_tensor 
+
+        condition_tensor = query_src in memory_key_u_tensor and query_dst in memory_key_v_tensor
 
         if (self.memory_mode == 'fixed_time_window'):
             condition_tensor = condition_tensor and memory_val_tensor >= self.prev_t
