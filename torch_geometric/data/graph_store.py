@@ -289,10 +289,12 @@ class GraphStore:
                     if self.meta['is_hetero']:
                         # Hotfix for LocalGraphStore, where in hetero graph edge indices for different edge types have continuous indices, not starting at 0
                         num_cols = int(col.max()) + 1
-                    else: 
-                        num_cols = attr.size[1] if attr.size else int(col.max()) + 1
+                    else:
+                        num_cols = attr.size[1] if attr.size else int(
+                            col.max()) + 1
                 except AttributeError:
-                    num_cols = attr.size[1] if attr.size else int(col.max()) + 1
+                    num_cols = attr.size[1] if attr.size else int(
+                        col.max()) + 1
                 if not attr.is_sorted:  # Not sorted by destination.
                     col, perm = index_sort(col, max_value=num_cols)
                     row = row[perm]
