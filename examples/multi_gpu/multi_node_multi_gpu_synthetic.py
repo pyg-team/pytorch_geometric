@@ -175,10 +175,5 @@ if __name__ == '__main__':
 
     model = GCN(dataset.num_features, args.hidden_channels, 2,
                 dataset.num_classes)
-<<<<<<< HEAD
     run(device, data, nprocs, model, args.epochs, args.batch_size,
               args.fan_out, split_idx, dataset.num_classes)
-=======
-    run_train(device, data, nprocs, model, args.epochs, args.batch_size,
-              args.fan_out, split_idx, dataset.num_classes)
->>>>>>> 4b0d4f3508dfc1ec4260f26c1ab90699f651a6c3
