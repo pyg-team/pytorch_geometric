@@ -131,7 +131,8 @@ class DistLoader:
 
         except RuntimeError:
             raise RuntimeError(
-                f"{self} init_fn() didn't initialize the worker_loop of {self.neighbor_sampler}"
+                f"{self} init_fn() didn't initialize the worker_loop of {
+                    self.neighbor_sampler}"
             )
 
     def __repr__(self) -> str:
