@@ -8,10 +8,17 @@ from torch import Tensor
 from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import LCMAggregation
+from torch_geometric.transforms import BaseTransform
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--num_bits', type=int, default=8)
 args = parser.parse_args()
+
+
+class RandomPermutation(BaseTransform):
+    def __call__(self, data: Data) -> Data:
+        data.x = torch.x[torch.randperm(data.x.size(0))]
+        return data
 
 
 class Random2ndMinimumDataset(InMemoryDataset):
@@ -25,7 +32,7 @@ class Random2ndMinimumDataset(InMemoryDataset):
         min_num_elems: int,
         max_num_elems: int,
     ):
-        super().__init__(transform=self.randperm_transform)
+        super().__init__(transform=RandomPermutation())
 
         self.data, self.slices = self.collate([
             self.get_data(num_bits, min_num_elems, max_num_elems)
@@ -48,10 +55,6 @@ class Random2ndMinimumDataset(InMemoryDataset):
         y = x[ints.topk(k=2, largest=False).indices[-1:]].to(torch.float)
 
         return Data(x=x, y=y)
-
-    def randperm_transform(self, data):
-        data.x = data.x[torch.randperm(data.x.size(0))]
-        return data
 
 
 train_dataset = Random2ndMinimumDataset(
