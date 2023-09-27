@@ -89,7 +89,6 @@ class LocalGraphStore(GraphStore):
         edge_id: Tensor,
         edge_index: Tensor,
         num_nodes: int,
-        is_sorted: Optional[bool] = False,
     ) -> 'LocalGraphStore':
         r"""Creates a local graph store from a homogeneous :pyg:`PyG` graph.
 
@@ -102,7 +101,6 @@ class LocalGraphStore(GraphStore):
             edge_type=None,
             layout='coo',
             size=(num_nodes, num_nodes),
-            is_sorted=is_sorted,
         )
 
         graph_store = cls()
@@ -116,7 +114,6 @@ class LocalGraphStore(GraphStore):
         edge_id_dict: Dict[EdgeType, Tensor],
         edge_index_dict: Dict[EdgeType, Tensor],
         num_nodes_dict: Dict[NodeType, int],
-        is_sorted_dict: Dict[NodeType, bool],
     ) -> 'LocalGraphStore':
         r"""Creates a local graph store from a heterogeneous :pyg:`PyG` graph.
 
@@ -127,8 +124,6 @@ class LocalGraphStore(GraphStore):
                 indices of every edge type.
             num_nodes_dict (Dict[NodeType, int]): The number of nodes in the
                 local graph of every node type.
-            is_sorted_dict (Dict[NodeType, bool]): Implicit information on node
-                order of every node type.
         """
         attr_dict = {}
         for edge_type in edge_index_dict.keys():
@@ -137,7 +132,6 @@ class LocalGraphStore(GraphStore):
                 edge_type=edge_type,
                 layout='coo',
                 size=(num_nodes_dict[src], num_nodes_dict[dst]),
-                is_sorted=is_sorted_dict[dst],
             )
 
         graph_store = cls()
