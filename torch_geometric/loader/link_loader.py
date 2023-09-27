@@ -286,10 +286,9 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                     edge = edge.to(torch.long)
                     perm = self.link_sampler.edge_permutation
                     try:
-                        data[key].e_id = perm[key][edge] 
+                        data[key].e_id = perm[key][edge]
                     except TypeError:
                         data[key].e_id = edge
-
 
             data.set_value_dict('batch', out.batch)
             data.set_value_dict('num_sampled_nodes', out.num_sampled_nodes)
