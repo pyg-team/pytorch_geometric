@@ -111,7 +111,7 @@ class EdgeBankPredictor(torch.nn.Module):
         """
         # (TODO Rishi) update for new edge_index usage
         #* initialize the memory if it is empty
-        
+
         if self.memory is None:
             self.memory = (update_edge_index, update_ts)
             return None
