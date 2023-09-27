@@ -86,7 +86,7 @@ class DistNeighborSampler:
         self.time_attr = time_attr
         self.csc = True  # always true?
         self.with_edge_attr = self.dist_feature.has_edge_attr()
-        self.edge_permutation = None  # TODO: Debug edge_perm for the LinkLoader
+        self.edge_permutation = None  # TODO: Debug edge_perm for LinkLoader
 
     def register_sampler_rpc(self) -> None:
 
