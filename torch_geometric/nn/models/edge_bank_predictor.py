@@ -95,14 +95,16 @@ class EdgeBankPredictor(torch.nn.Module):
 
     def _update_unlimited_memory(self, update_edge_index: torch.tensor):
         r"""
-        update self.memory with newly arrived src and dst
+        update self.memory with newly arrived edge indices
         Parameters:
             update_edge_index: [2, num_edges] tensor of edge indices
         """
         # (TODO Rishi) update for new edge_index usage
-        for src, dst in zip(update_src, update_dst):
-            if (src, dst) not in self.memory:
-                self.memory[(src, dst)] = 1
+        isin_tensor = update_edge_index.isin(self.memory[0])
+        indices_to_use = torch.argwhere(not (isin_tensor[0, :] and isin_tensor[1, :])))
+        edges_to_cat = update_edge_index[:, indices_to_use]
+        self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
+        self.memory[1] = torch.cat((self.memory[1], ts_to_cat))
 
     def _update_time_window_memory(self, update_edge_index: torch.tensor,
                                    update_ts: torch.tensor) -> None:
@@ -116,7 +118,7 @@ class EdgeBankPredictor(torch.nn.Module):
         # (TODO Rishi) update for new edge_index usage
         #* initialize the memory if it is empty
         if (len(self.memory) == 0):
-            for src, dst, ts in zip(update_src, update_dst, update_ts):
+            for src, dst, ts in zip(update_edge_index, update_ts):
                 self.memory[(src, dst)] = ts
             return None
 
@@ -126,7 +128,7 @@ class EdgeBankPredictor(torch.nn.Module):
             self.prev_t = self.cur_t - self.duration
 
         #* add new edges to the time window
-        for src, dst, ts in zip(update_src, update_dst, update_ts):
+        for (src, dst), ts in zip(update_edge_index, update_ts):
             self.memory[(src, dst)] = ts
 
     def predict_link(self, query_edge_indices: torch.tensor) -> torch.tensor:
