@@ -97,9 +97,8 @@ class EdgeBankPredictor(torch.nn.Module):
         if self.memory is None:
             self.memory = (update_edge_index, torch.ones(len(update_edge_index))
             return None
-        isin_tensor = update_edge_index.isin(self.memory[0])
-        indices_to_use = torch.argwhere(not (
-            isin_tensor[0, :] and isin_tensor[1, :]))
+        edge_isin_mem_tensor = self.edge_isin_mem(query_edge_indices)
+        indices_to_use = torch.argwhere(not edge_isin_mem_tensor)
         edges_to_cat = update_edge_index[:, indices_to_use]
         self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
         ts_to_cat = torch.ones(len(update_edge_index)
@@ -126,12 +125,8 @@ class EdgeBankPredictor(torch.nn.Module):
             self.prev_t = self.cur_t - self.duration
 
         #* add new edges to the time window
-        isin_tensor = update_edge_index.isin(self.memory[0])
-        condition_tensor = not (isin_tensor[0, :] and isin_tensor[1, :])
-        indices_to_use = torch.argwhere(condition_tensor)
-        self.memory[0]
-        for (src, dst), ts in zip(update_edge_index, update_ts):
-            self.memory[(src, dst)] = ts
+        mem_indices_to_use = self.index_mem(update_edge_index)
+        self.memory[1][mem_indices_to_use] = ts
 
     def predict_link(self, query_edge_indices: torch.tensor) -> torch.tensor:
         r"""
@@ -143,14 +138,33 @@ class EdgeBankPredictor(torch.nn.Module):
             pred: the prediction for all query edges
         """
         pred = torch.zeros(len(query_edge_indices))
-        edge_isin_mem_tensor = update_edge_index.isin(self.memory[0])
-        edge_condition_tensor = not (edge_isin_mem_tensor[0, :] and edge_isin_mem_tensor[1, :])
-        edge_indices_to_use = torch.argwhere(edge_condition_tensor)
+        edge_isin_mem_tensor = self.edge_isin_mem(query_edge_indices)
+        edge_indices_to_use = torch.argwhere(edge_isin_mem_tensor)
         if (self.memory_mode == 'fixed_time_window'):
-            mem_isin_edge_tensor = self.memory[0][update_edge_index[edge_isin_mem_tensor]]
-            mem_condition_tensor = not (mem_isin_edge_tensor[0, :] and mem_isin_edge_tensor[1, :])
-            mem_indices_to_use = torch.argwhere(mem_condition_tensor)
-            edge_indices_to_use = torch.argwhere(
-                self.memory[0][indices_to_use] >= self.prev_t)
+            selected_edges = query_edge_indices[edge_indices_to_use]
+            edge_indices_to_use = torch.argwhere(self.memory[1][self.index_mem(selected_edges)] >= self.prev_t)
         pred[edge_indices_to_use] = self.pos_prob
         return pred
+
+    def index_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
+        r"""
+        return indices in mem matching query_edge_indices
+        Parameters:
+            query_edge_indices: [2, num_edges] tensor of edge indices
+        Returns:
+            mem_indices: indices in memory 
+        """
+        #
+        return mem_indices
+
+    def edge_is_in_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
+        r"""
+        Parameters:
+            query_edge_indices: [2, num_edges] tensor of edge indices
+        Returns:
+            edge_isin_mem_tensor: [num_edges] boolean tensor representing
+                whether each query edge is in memory already
+        """
+        #
+        return edge_isin_mem_tensor
+        
