@@ -152,7 +152,7 @@ class EdgeBankPredictor(torch.nn.Module):
         Parameters:
             query_edge_indices: [2, num_edges] tensor of edge indices
         Returns:
-            mem_indices: indices in memory 
+            mem_indices: indices in memory
         """
         #
         return mem_indices
@@ -167,4 +167,4 @@ class EdgeBankPredictor(torch.nn.Module):
         """
         #
         return edge_isin_mem_tensor
-        
+
