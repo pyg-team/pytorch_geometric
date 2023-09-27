@@ -46,6 +46,41 @@ class EdgeBankPredictor(torch.nn.Module):
         self.memory = None
         self.pos_prob = pos_prob
 
+    def edge_isin_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
+        r"""
+        Parameters:
+            query_edge_indices: [2, num_edges] tensor of edge indices
+        Returns:
+            edge_isin_mem_tensor: [num_edges] boolean tensor representing
+                whether each query edge is in memory already
+        """
+        mem_tensor = self.memory[0]
+        # make into decimal index
+        decimal_combined_edge_index = 10 * query_edge_indices[
+            0, :] + query_edge_indices[1, :]
+        decimal_combined_memory = 10 * mem_tensor[0, :] + mem_tensor[1, :]
+        edge_isin_mem_tensor = decimal_combined_edge_index.isin(
+            decimal_combined_memory)
+
+        return edge_isin_mem_tensor
+
+    def index_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
+        r"""
+        return indices in memory that match query_edge_indices
+        Parameters:
+            query_edge_indices: [2, num_edges] tensor of edge indices
+        Returns:
+            mem_indices: indices in memory
+        """
+        mem_tensor = self.memory[0]
+        # make into decimal index
+        decimal_combined_edge_index = 10 * query_edge_indices[
+            0, :] + query_edge_indices[1, :]
+        decimal_combined_memory = 10 * mem_tensor[0, :] + mem_tensor[1, :]
+        mem_indices = torch.argwhere(
+            decimal_combined_memory.isin(decimal_combined_edge_index))
+        return mem_indices
+
     def update_memory(self, edge_index: torch.tensor, ts: torch.tensor):
         r"""
         generate the current and correct state of the memory with the observed edges so far
@@ -86,41 +121,6 @@ class EdgeBankPredictor(torch.nn.Module):
                 "end_time is not defined for unlimited memory mode, returns -1"
             )
         return self.cur_t
-
-    def edge_isin_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
-        r"""
-        Parameters:
-            query_edge_indices: [2, num_edges] tensor of edge indices
-        Returns:
-            edge_isin_mem_tensor: [num_edges] boolean tensor representing
-                whether each query edge is in memory already
-        """
-        mem_tensor = self.memory[0]
-        # make into decimal index
-        decimal_combined_edge_index = 10 * query_edge_indices[
-            0, :] + query_edge_indices[1, :]
-        decimal_combined_memory = 10 * mem_tensor[0, :] + mem_tensor[1, :]
-        edge_isin_mem_tensor = decimal_combined_edge_index.isin(
-            decimal_combined_memory)
-
-        return edge_isin_mem_tensor
-
-    def index_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
-        r"""
-        return indices in memory that match query_edge_indices
-        Parameters:
-            query_edge_indices: [2, num_edges] tensor of edge indices
-        Returns:
-            mem_indices: indices in memory
-        """
-        mem_tensor = self.memory[0]
-        # make into decimal index
-        decimal_combined_edge_index = 10 * query_edge_indices[
-            0, :] + query_edge_indices[1, :]
-        decimal_combined_memory = 10 * mem_tensor[0, :] + mem_tensor[1, :]
-        mem_indices = torch.argwhere(
-            decimal_combined_memory.isin(decimal_combined_edge_index))
-        return mem_indices
 
     def _update_unlimited_memory(self, update_edge_index: torch.tensor):
         r"""
