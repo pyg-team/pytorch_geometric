@@ -15,7 +15,6 @@ from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.dist_link_neighbor_loader import (
     DistLinkNeighborLoader,
 )
-from torch_geometric.distributed.dist_neighbor_loader import DistNeighborLoader
 from torch_geometric.distributed.dist_neighbor_sampler import (
     DistNeighborSampler,
 )
@@ -92,7 +91,7 @@ def dist_link_neighbor_loader_hetero(
     assert 'DistLinkNeighborLoader()' in str(loader)
     assert str(mp.current_process().pid) in str(loader)
     assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
-    assert data[0].meta['is_hetero'] == True
+    assert data[0].meta['is_hetero'] is True
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
