@@ -154,5 +154,3 @@ class EdgeBankPredictor(torch.nn.Module):
                 self.memory[0][indices_to_use] >= self.prev_t)
         pred[edge_indices_to_use] = self.pos_prob
         return pred
-
-
