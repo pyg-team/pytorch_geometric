@@ -46,11 +46,11 @@ def test_edge_bank_pred():
                           len(data['sources'][test_mask]))
             pos_edge_index, pos_t = (
                 torch.cat(
-                    (
-                    torch.tensor(data['sources'][test_mask][start_idx:end_idx]).reshape(1, -1),
-                    torch.tensor(
-                        data['destinations'][test_mask][start_idx:end_idx]).reshape(1, -1)
-                    ),
+                    (torch.tensor(
+                        data['sources'][test_mask][start_idx:end_idx]).reshape(
+                            1, -1),
+                     torch.tensor(data['destinations'][test_mask]
+                                  [start_idx:end_idx]).reshape(1, -1)),
                     dim=1,
                 ),
                 torch.tensor(data['timestamps'][test_mask][start_idx:end_idx]),
@@ -59,8 +59,9 @@ def test_edge_bank_pred():
                                                      split_mode=split_mode)
 
             for idx, neg_batch in enumerate(neg_batch_list):
-                query_src = torch.tensor(
-                    [int(pos_src[idx]) for _ in range(len(neg_batch) + 1)]).reshape(1, -1)
+                query_src = torch.tensor([
+                    int(pos_src[idx]) for _ in range(len(neg_batch) + 1)
+                ]).reshape(1, -1)
                 query_dst = torch.cat([
                     torch.tensor([int(pos_dst[idx])]),
                     torch.tensor(neg_batch),
@@ -113,7 +114,8 @@ def test_edge_bank_pred():
     #data for memory in edgebank
     hist_src = torch.tensor(data['sources'][train_mask])
     hist_dst = torch.tensor(data['destinations'][train_mask])
-    hist_edge_index = torch.cat((hist_src.reshape(1, -1), hist_dst.reshape(1, -1)), dim=1)
+    hist_edge_index = torch.cat(
+        (hist_src.reshape(1, -1), hist_dst.reshape(1, -1)), dim=1)
     hist_ts = torch.tensor(data['timestamps'][train_mask])
     print("dataset.full_data=", dataset.full_data)
     print("dataset.eval_metric=", dataset.eval_metric)

@@ -167,4 +167,3 @@ class EdgeBankPredictor(torch.nn.Module):
         """
         #
         return edge_isin_mem_tensor
-
