@@ -44,15 +44,11 @@ def test_edge_bank_pred():
             start_idx = batch_idx * BATCH_SIZE
             end_idx = min(start_idx + BATCH_SIZE,
                           len(data['sources'][test_mask]))
-            pos_edge_index, pos_t = (
-                torch.cat(
-                    (torch.tensor(
-                        data['sources'][test_mask][start_idx:end_idx]).reshape(
-                            1, -1),
-                     torch.tensor(data['destinations'][test_mask]
-                                  [start_idx:end_idx]).reshape(1, -1)),
-                    dim=1,
-                ),
+            pos_src, pos_dst, pos_t = (
+                torch.tensor(
+                        data['sources'][test_mask][start_idx:end_idx]),
+                torch.tensor(data['destinations'][test_mask]
+                                  [start_idx:end_idx]),
                 torch.tensor(data['timestamps'][test_mask][start_idx:end_idx]),
             )
             neg_batch_list = neg_sampler.query_batch(pos_src, pos_dst, pos_t,
