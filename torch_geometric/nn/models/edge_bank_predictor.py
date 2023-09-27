@@ -14,8 +14,6 @@ import torch
 class EdgeBankPredictor(torch.nn.Module):
     def __init__(
         self,
-        initial_edge_index: torch.tensor,
-        initial_ts: torch.tensor,
         memory_mode:
         str = 'unlimited',  # could be `unlimited` or `fixed_time_window`
         time_window_ratio: float = 0.15,
@@ -24,8 +22,6 @@ class EdgeBankPredictor(torch.nn.Module):
         r"""
         intialize edgebank and specify the memory mode
         Parameters:
-            edge_index: [2, num_edges] tensor of edge indices
-            ts: timestamp of the edges for initialization
             memory_mode: 'unlimited' or 'fixed_time_window'
             time_window_ratio: the ratio of the time window length to the total time length
             pos_prob: the probability of the link existence for the edges in memory
@@ -47,8 +43,7 @@ class EdgeBankPredictor(torch.nn.Module):
             self.prev_t = -1
             self.cur_t = -1
             self.duration = -1
-
-        self.memory = (initial_edge_index, initial_ts)
+        self.memory = None
         self.pos_prob = pos_prob
 
     def update_memory(self, edge_index: torch.tensor, ts: torch.tensor):
@@ -116,9 +111,9 @@ class EdgeBankPredictor(torch.nn.Module):
         """
         # (TODO Rishi) update for new edge_index usage
         #* initialize the memory if it is empty
-        if (len(self.memory) == 0):
-            for src, dst, ts in zip(update_edge_index, update_ts):
-                self.memory[(src, dst)] = ts
+        
+        if self.memory is None:
+            self.memory = (update_edge_index, update_ts)
             return None
 
         #* update the memory if it is not empty
