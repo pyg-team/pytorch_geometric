@@ -99,9 +99,8 @@ class EdgeBankPredictor(torch.nn.Module):
         Parameters:
             update_edge_index: [2, num_edges] tensor of edge indices
         """
-        # (TODO Rishi) update for new edge_index usage
         isin_tensor = update_edge_index.isin(self.memory[0])
-        indices_to_use = torch.argwhere(not (isin_tensor[0, :] and isin_tensor[1, :])))
+        indices_to_use = torch.argwhere(not (isin_tensor[0, :] and isin_tensor[1, :]))
         edges_to_cat = update_edge_index[:, indices_to_use]
         self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
         self.memory[1] = torch.cat((self.memory[1], ts_to_cat))
@@ -140,23 +139,11 @@ class EdgeBankPredictor(torch.nn.Module):
         Returns:
             pred: the prediction for all query edges
         """
-        # (TODO Rishi) update for new edge_index usage
-
-        pred = torch.zeros(len(query_src))
-        memory_key_u_tensor = []
-        memory_key_v_tensor = []
-        memory_val_tensor = []
-        for (u, v), val in self.memory.items():
-            memory_key_u_tensor.append(u)
-            memory_key_v_tensor.append(v)
-            memory_val_tensor.append(val)
-        memory_key_u_tensor = torch.unique(torch.tensor(memory_key_u_tensor))
-        memory_key_v_tensor = torch.tensor(memory_key_v_tensor))
-        memory_val_tensor = torch.tensor(memory_val_tensor)
-
-        condition_tensor = query_src in memory_key_u_tensor and query_dst in memory_key_v_tensor
-
+        pred = torch.zeros(len(query_edge_indices))
+        isin_tensor = update_edge_index.isin(self.memory[0])
+        condition_tensor = not (isin_tensor[0, :] and isin_tensor[1, :])
+        indices_to_use = torch.argwhere(condition_tensor)
         if (self.memory_mode == 'fixed_time_window'):
-            condition_tensor = condition_tensor and memory_val_tensor >= self.prev_t
-        pred = torch.where(condition_tensor, self.pos_prob, 0)
+            indices_to_use = torch.argwhere(self.memory[0][indices_to_use] >= self.prev_t)
+        pred[indices_to_use] = self.pos_prob
         return pred
