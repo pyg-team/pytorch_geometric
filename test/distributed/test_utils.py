@@ -5,6 +5,7 @@ from torch_geometric.distributed.utils import remove_duplicates
 from torch_geometric.sampler import SamplerOutput
 from torch_geometric.testing import onlyLinux
 
+
 @onlyLinux
 def test_remove_duplicates():
     node = np.array([0, 1, 2, 3])
@@ -19,6 +20,7 @@ def test_remove_duplicates():
 
     assert (torch.equal(src, expected_src))
     assert (np.array_equal(node, expected_node))
+
 
 @onlyLinux
 def test_remove_duplicates_disjoint():
