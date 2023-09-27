@@ -95,13 +95,13 @@ class EdgeBankPredictor(torch.nn.Module):
             update_edge_index: [2, num_edges] tensor of edge indices
         """
         if self.memory is None:
-            self.memory = (update_edge_index, torch.ones(len(update_edge_index))
+            self.memory = (update_edge_index, torch.ones(len(update_edge_index)))
             return None
         edge_isin_mem_tensor = self.edge_isin_mem(query_edge_indices)
         indices_to_use = torch.argwhere(not edge_isin_mem_tensor)
         edges_to_cat = update_edge_index[:, indices_to_use]
         self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
-        ts_to_cat = torch.ones(len(update_edge_index)
+        ts_to_cat = torch.ones(len(update_edge_index))
         self.memory[1] = torch.cat((self.memory[1], ts_to_cat))
 
     def _update_time_window_memory(self, update_edge_index: torch.tensor,
