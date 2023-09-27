@@ -205,7 +205,7 @@ class NodeLoader(torch.utils.data.DataLoader, AffinityMixin):
                     edge = edge.to(torch.long)
                     perm = self.node_sampler.edge_permutation
                     try:
-                        data[key].e_id = perm[key][edge] 
+                        data[key].e_id = perm[key][edge]
                     except TypeError:
                         data[key].e_id = edge
 

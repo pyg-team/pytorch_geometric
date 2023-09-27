@@ -1,4 +1,5 @@
 import socket
+
 import pytest
 import torch
 import torch.multiprocessing as mp
@@ -47,6 +48,7 @@ def create_dist_data(tmp_path, rank):
     data = (feat_store, graph_store)
     return data
 
+
 def dist_neighbor_loader_homo(tmp_path: str, world_size: int, rank: int,
                               master_addr: str, master_port: int,
                               num_workers: int, concurrency: int,
@@ -82,6 +84,7 @@ def dist_neighbor_loader_homo(tmp_path: str, world_size: int, rank: int,
         assert batch.edge_index.max() < batch.num_nodes
         assert batch.edge_attr.device == device
         assert batch.edge_attr.size(0) == batch.edge_index.size(1)
+
 
 def dist_neighbor_loader_hetero(tmp_path: str, world_size: int, rank: int,
                                 master_addr: str, master_port: int,
@@ -169,8 +172,8 @@ def test_dist_neighbor_loader_homo(tmp_path, num_workers, concurrency,
 @pytest.mark.parametrize('num_workers', [0, 2])
 @pytest.mark.parametrize('concurrency', [2, 10])
 @pytest.mark.parametrize('async_sampling', [True, False])
-def test_dist_neighbor_loader_hetero(
-        tmp_path, num_workers, concurrency, async_sampling):
+def test_dist_neighbor_loader_hetero(tmp_path, num_workers, concurrency,
+                                     async_sampling):
 
     mp_context = torch.multiprocessing.get_context('spawn')
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -179,23 +182,22 @@ def test_dist_neighbor_loader_hetero(
     s.close()
     addr = 'localhost'
 
-    data = FakeHeteroDataset(
-        num_graphs=1,
-        avg_num_nodes=100,
-        avg_degree=3,
-        num_node_types=2,
-        num_edge_types=4,
-        edge_dim=2)[0]
+    data = FakeHeteroDataset(num_graphs=1, avg_num_nodes=100, avg_degree=3,
+                             num_node_types=2, num_edge_types=4, edge_dim=2)[0]
 
     num_parts = 2
     partitioner = Partitioner(data, num_parts, tmp_path)
     partitioner.generate_partition()
 
-    w0 = mp_context.Process(target=dist_neighbor_loader_hetero, args=(
-        tmp_path, num_parts, 0, addr, port, num_workers, concurrency, async_sampling))
+    w0 = mp_context.Process(
+        target=dist_neighbor_loader_hetero,
+        args=(tmp_path, num_parts, 0, addr, port, num_workers, concurrency,
+              async_sampling))
 
-    w1 = mp_context.Process(target=dist_neighbor_loader_hetero, args=(
-        tmp_path, num_parts, 1, addr, port, num_workers, concurrency, async_sampling))
+    w1 = mp_context.Process(
+        target=dist_neighbor_loader_hetero,
+        args=(tmp_path, num_parts, 1, addr, port, num_workers, concurrency,
+              async_sampling))
 
     w0.start()
     w1.start()
