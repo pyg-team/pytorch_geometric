@@ -199,7 +199,7 @@ def filter_dist_store(feature_store: FeatureStore, graph_store: GraphStore,
                                                                    OptTensor],
                       custom_cls: Optional[HeteroData] = None,
                       meta: Optional[Dict[str, Tensor]] = None) -> HeteroData:
-    r"""Constructs a `HeteroData` object from a feature store that only 
+    r"""Constructs a `HeteroData` object from a feature store that only
     holds nodes in `node` end edges in `edge` for each node and edge type,
     respectively. Sorted attribute values are proved as metadata from DistNeighborSampler."""
 
