@@ -157,7 +157,7 @@ class EdgeBankPredictor(torch.nn.Module):
         """
         #
         mem = self.memory[0]
-        
+
         return mem_indices
 
     def edge_isin_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
