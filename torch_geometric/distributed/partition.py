@@ -274,7 +274,7 @@ def load_partition_info(
     partition_dir = os.path.join(root_dir, f'part_{partition_idx}')
     assert os.path.exists(partition_dir)
 
-    if meta['is_hetero'] == False:
+    if meta['is_hetero'] is False:
         node_pb = torch.load(os.path.join(root_dir, 'node_map.pt'))
         edge_pb = torch.load(os.path.join(root_dir, 'edge_map.pt'))
 

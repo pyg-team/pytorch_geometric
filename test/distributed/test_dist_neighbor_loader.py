@@ -107,7 +107,7 @@ def dist_neighbor_loader_hetero(tmp_path: str, world_size: int, rank: int,
     assert 'DistNeighborLoader()' in str(loader)
     assert str(mp.current_process().pid) in str(loader)
     assert isinstance(loader.neighbor_sampler, DistNeighborSampler)
-    assert data[0].meta['is_hetero'] == True
+    assert data[0].meta['is_hetero'] is True
 
     for batch in loader:
         assert isinstance(batch, HeteroData)
