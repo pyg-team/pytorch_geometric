@@ -2,13 +2,10 @@ import atexit
 import logging
 import os
 from typing import Dict, List, Optional, Union
-
-import torch
 import torch.multiprocessing as mp
 
 from torch_geometric.distributed.dist_context import DistContext, DistRole
 from torch_geometric.distributed.dist_neighbor_sampler import (
-    DistNeighborSampler,
     close_sampler,
 )
 from torch_geometric.distributed.rpc import global_barrier, init_rpc
