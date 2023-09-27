@@ -49,10 +49,10 @@ def test_edge_bank_pred():
                     (
                     torch.tensor(data['sources'][test_mask][start_idx:end_idx]).reshape(1, -1),
                     torch.tensor(
-                        data['destinations'][test_mask][start_idx:end_idx]).reshape(1, -1),
+                        data['destinations'][test_mask][start_idx:end_idx]).reshape(1, -1)
                     ),
                     dim=1,
-                )
+                ),
                 torch.tensor(data['timestamps'][test_mask][start_idx:end_idx]),
             )
             neg_batch_list = neg_sampler.query_batch(pos_src, pos_dst, pos_t,
@@ -63,7 +63,7 @@ def test_edge_bank_pred():
                     [int(pos_src[idx]) for _ in range(len(neg_batch) + 1)]).reshape(1, -1)
                 query_dst = torch.cat([
                     torch.tensor([int(pos_dst[idx])]),
-                    torch.tensor(neg_batch)
+                    torch.tensor(neg_batch),
                 ]).reshape(1, -1)
                 query_edge_index = torch.cat((query_src, query_dst), dim=1)
                 y_pred = edgebank.predict_link(query_edge_index)
