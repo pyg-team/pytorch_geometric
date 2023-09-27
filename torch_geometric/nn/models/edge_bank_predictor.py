@@ -51,8 +51,7 @@ class EdgeBankPredictor(torch.nn.Module):
         self.memory = (initial_edge_index, initial_ts)
         self.pos_prob = pos_prob
 
-    def update_memory(self, edge_index: torch.tensor,
-                      ts: torch.tensor):
+    def update_memory(self, edge_index: torch.tensor, ts: torch.tensor):
         r"""
         generate the current and correct state of the memory with the observed edges so far
         note that historical edges may include training, validation, and already observed test edges
@@ -100,7 +99,8 @@ class EdgeBankPredictor(torch.nn.Module):
             update_edge_index: [2, num_edges] tensor of edge indices
         """
         isin_tensor = update_edge_index.isin(self.memory[0])
-        indices_to_use = torch.argwhere(not (isin_tensor[0, :] and isin_tensor[1, :]))
+        indices_to_use = torch.argwhere(not (
+            isin_tensor[0, :] and isin_tensor[1, :]))
         edges_to_cat = update_edge_index[:, indices_to_use]
         self.memory[0] = torch.cat((self.memory[0], edges_to_cat))
         self.memory[1] = torch.cat((self.memory[1], ts_to_cat))
@@ -144,6 +144,7 @@ class EdgeBankPredictor(torch.nn.Module):
         condition_tensor = not (isin_tensor[0, :] and isin_tensor[1, :])
         indices_to_use = torch.argwhere(condition_tensor)
         if (self.memory_mode == 'fixed_time_window'):
-            indices_to_use = torch.argwhere(self.memory[0][indices_to_use] >= self.prev_t)
+            indices_to_use = torch.argwhere(
+                self.memory[0][indices_to_use] >= self.prev_t)
         pred[indices_to_use] = self.pos_prob
         return pred
