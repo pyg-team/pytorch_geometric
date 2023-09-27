@@ -9,6 +9,7 @@ from torch_geometric.loader.mixin import AffinityMixin
 from torch_geometric.loader.utils import (
     filter_custom_store,
     filter_data,
+    filter_dist_store,
     filter_hetero_data,
     get_edge_label_index,
     infer_filter_per_worker,
@@ -130,6 +131,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         transform_sampler_output: Optional[Callable] = None,
         filter_per_worker: Optional[bool] = None,
         custom_cls: Optional[HeteroData] = None,
+        worker_init_fn: Optional[Callable] = None,
         input_id: OptTensor = None,
         **kwargs,
     ):
@@ -157,6 +159,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         self.transform_sampler_output = transform_sampler_output
         self.filter_per_worker = filter_per_worker
         self.custom_cls = custom_cls
+        self.worker_init_fn = worker_init_fn
 
         if (self.neg_sampling is not None and self.neg_sampling.is_binary()
                 and edge_label is not None and edge_label.min() == 0):
@@ -182,7 +185,8 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
         )
 
         iterator = range(edge_label_index.size(1))
-        super().__init__(iterator, collate_fn=self.collate_fn, **kwargs)
+        super().__init__(iterator, collate_fn=self.collate_fn,
+                         worker_init_fn=self.worker_init_fn, **kwargs)
 
     def __call__(
         self,
@@ -218,9 +222,17 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
             out = self.transform_sampler_output(out)
 
         if isinstance(out, SamplerOutput):
-            data = filter_data(self.data, out.node, out.row, out.col, out.edge,
-                               self.link_sampler.edge_permutation)
-
+            if isinstance(self.data, Data):
+                data = filter_data(self.data, out.node, out.row, out.col,
+                                   out.edge,
+                                   self.link_sampler.edge_permutation)
+            else:  # Tuple[FeatureStore, GraphStore]
+                data = Data(
+                    x=out.metadata[-3],
+                    y=out.metadata[-2],
+                    edge_index=torch.stack([out.row, out.col]),
+                    edge_attr=out.metadata[-1],
+                )
             if 'n_id' not in data:
                 data.n_id = out.node
             if out.edge is not None and 'e_id' not in data:
@@ -233,6 +245,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
             data.num_sampled_edges = out.num_sampled_edges
 
             data.input_id = out.metadata[0]
+            data.batch_size = out.metadata[0].size(0)
 
             if self.neg_sampling is None or self.neg_sampling.is_binary():
                 data.edge_label_index = out.metadata[1]
@@ -253,9 +266,16 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
                 data = filter_hetero_data(self.data, out.node, out.row,
                                           out.col, out.edge,
                                           self.link_sampler.edge_permutation)
-            else:  # Tuple[FeatureStore, GraphStore]
-                data = filter_custom_store(*self.data, out.node, out.row,
-                                           out.col, out.edge, self.custom_cls)
+            else:  #Tuple[FeatureStore, GraphStore]
+                if not isinstance(self.link_sampler,
+                                  BaseSampler):  #DistSampler
+                    data = filter_dist_store(*self.data, out.node, out.row,
+                                             out.col, out.edge,
+                                             self.custom_cls, out.metadata)
+                else:
+                    data = filter_custom_store(*self.data, out.node, out.row,
+                                               out.col, out.edge,
+                                               self.custom_cls)
 
             for key, node in out.node.items():
                 if 'n_id' not in data[key]:
@@ -264,8 +284,12 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
             for key, edge in (out.edge or {}).items():
                 if edge is not None and 'e_id' not in data[key]:
                     edge = edge.to(torch.long)
-                    perm = self.link_sampler.edge_permutation[key]
-                    data[key].e_id = perm[edge] if perm is not None else edge
+                    perm = self.link_sampler.edge_permutation
+                    try:
+                        data[key].e_id = perm[key][edge] 
+                    except TypeError:
+                        data[key].e_id = edge
+
 
             data.set_value_dict('batch', out.batch)
             data.set_value_dict('num_sampled_nodes', out.num_sampled_nodes)
@@ -273,6 +297,7 @@ class LinkLoader(torch.utils.data.DataLoader, AffinityMixin):
 
             input_type = self.input_data.input_type
             data[input_type].input_id = out.metadata[0]
+            data[input_type].batch_size = out.metadata[0].size(0)
 
             if self.neg_sampling is None or self.neg_sampling.is_binary():
                 data[input_type].edge_label_index = out.metadata[1]
