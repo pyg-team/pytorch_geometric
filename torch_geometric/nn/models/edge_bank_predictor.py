@@ -95,7 +95,8 @@ class EdgeBankPredictor(torch.nn.Module):
             update_edge_index: [2, num_edges] tensor of edge indices
         """
         if self.memory is None:
-            self.memory = (update_edge_index, torch.ones(len(update_edge_index)))
+            self.memory = (update_edge_index,
+                           torch.ones(len(update_edge_index)))
             return None
         edge_isin_mem_tensor = self.edge_isin_mem(query_edge_indices)
         indices_to_use = torch.argwhere(not edge_isin_mem_tensor)
@@ -142,7 +143,8 @@ class EdgeBankPredictor(torch.nn.Module):
         edge_indices_to_use = torch.argwhere(edge_isin_mem_tensor)
         if (self.memory_mode == 'fixed_time_window'):
             selected_edges = query_edge_indices[edge_indices_to_use]
-            edge_indices_to_use = torch.argwhere(self.memory[1][self.index_mem(selected_edges)] >= self.prev_t)
+            edge_indices_to_use = torch.argwhere(
+                self.memory[1][self.index_mem(selected_edges)] >= self.prev_t)
         pred[edge_indices_to_use] = self.pos_prob
         return pred
 
