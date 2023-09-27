@@ -6,9 +6,7 @@ import torch.multiprocessing as mp
 
 from torch_geometric.distributed import LocalFeatureStore, LocalGraphStore
 from torch_geometric.distributed.dist_context import DistContext, DistRole
-from torch_geometric.distributed.event_loop import (
-    ConcurrentEventLoop,
-)
+from torch_geometric.distributed.event_loop import ConcurrentEventLoop
 from torch_geometric.distributed.rpc import (
     RPCCallBase,
     RPCRouter,
@@ -16,15 +14,9 @@ from torch_geometric.distributed.rpc import (
     rpc_register,
     shutdown_rpc,
 )
-
 from torch_geometric.sampler import NeighborSampler
 from torch_geometric.sampler.base import NumNeighbors, SubgraphType
-from torch_geometric.typing import (
-    Dict,
-    NumNeighbors,
-    Tuple,
-)
-
+from torch_geometric.typing import Dict, NumNeighbors, Tuple
 
 
 class RpcSamplingCallee(RPCCallBase):
@@ -45,26 +37,25 @@ class RpcSamplingCallee(RPCCallBase):
         pass
 
 
-
 class DistNeighborSampler:
     r"""An implementation of a distributed and asynchronised neighbor sampler
     used by :class:`~torch_geometric.distributed.DistNeighborLoader`."""
     def __init__(
-    self,
-    current_ctx: DistContext,
-    rpc_worker_names: Dict[DistRole, List[str]],
-    data: Tuple[LocalGraphStore, LocalFeatureStore],
-    channel: mp.Queue(),
-    num_neighbors: Optional[NumNeighbors] = None,
-    with_edge: bool = True,
-    replace: bool = False,
-    subgraph_type: Union[SubgraphType, str] = 'directional',
-    disjoint: bool = False,
-    temporal_strategy: str = 'uniform',
-    time_attr: Optional[str] = None,
-    concurrency: int = 1,
-    device: Optional[torch.device] = None,
-    **kwargs,
+        self,
+        current_ctx: DistContext,
+        rpc_worker_names: Dict[DistRole, List[str]],
+        data: Tuple[LocalGraphStore, LocalFeatureStore],
+        channel: mp.Queue(),
+        num_neighbors: Optional[NumNeighbors] = None,
+        with_edge: bool = True,
+        replace: bool = False,
+        subgraph_type: Union[SubgraphType, str] = 'directional',
+        disjoint: bool = False,
+        temporal_strategy: str = 'uniform',
+        time_attr: Optional[str] = None,
+        concurrency: int = 1,
+        device: Optional[torch.device] = None,
+        **kwargs,
     ):
         self.current_ctx = current_ctx
         self.rpc_worker_names = rpc_worker_names
@@ -95,8 +86,8 @@ class DistNeighborSampler:
         self.time_attr = time_attr
         self.csc = True  # always true?
         self.with_edge_attr = self.dist_feature.has_edge_attr()
-        self.edge_permutation = None # TODO: Debug edge_perm for the LinkLoader
-        
+        self.edge_permutation = None  # TODO: Debug edge_perm for the LinkLoader
+
     def register_sampler_rpc(self) -> None:
 
         partition2workers = rpc_partition_to_workers(
@@ -121,8 +112,8 @@ class DistNeighborSampler:
     def init_event_loop(self) -> None:
         self.event_loop = ConcurrentEventLoop(self.concurrency)
         self.event_loop.start_loop()
-        
-        
+
+
 # Sampling Utilities ##########################################################
 
 
