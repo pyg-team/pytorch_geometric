@@ -44,10 +44,15 @@ def test_edge_bank_pred():
             start_idx = batch_idx * BATCH_SIZE
             end_idx = min(start_idx + BATCH_SIZE,
                           len(data['sources'][test_mask]))
-            pos_src, pos_dst, pos_t = (
-                torch.tensor(data['sources'][test_mask][start_idx:end_idx]),
-                torch.tensor(
-                    data['destinations'][test_mask][start_idx:end_idx]),
+            pos_edge_index, pos_t = (
+                torch.cat(
+                    (
+                    torch.tensor(data['sources'][test_mask][start_idx:end_idx]).reshape(1, -1),
+                    torch.tensor(
+                        data['destinations'][test_mask][start_idx:end_idx]).reshape(1, -1),
+                    ),
+                    dim=1,
+                )
                 torch.tensor(data['timestamps'][test_mask][start_idx:end_idx]),
             )
             neg_batch_list = neg_sampler.query_batch(pos_src, pos_dst, pos_t,
@@ -55,13 +60,13 @@ def test_edge_bank_pred():
 
             for idx, neg_batch in enumerate(neg_batch_list):
                 query_src = torch.tensor(
-                    [int(pos_src[idx]) for _ in range(len(neg_batch) + 1)])
+                    [int(pos_src[idx]) for _ in range(len(neg_batch) + 1)]).reshape(1, -1)
                 query_dst = torch.cat([
                     torch.tensor([int(pos_dst[idx])]),
                     torch.tensor(neg_batch)
-                ])
-
-                y_pred = edgebank.predict_link(query_src, query_dst)
+                ]).reshape(1, -1)
+                query_edge_index = torch.cat((query_src, query_dst), dim=1)
+                y_pred = edgebank.predict_link(query_edge_index)
                 # compute MRR
                 input_dict = {
                     "y_pred_pos": torch.tensor([y_pred[0]]),
@@ -71,7 +76,7 @@ def test_edge_bank_pred():
                 perf_list.append(evaluator.eval(input_dict)[metric])
 
             # update edgebank memory after each positive batch
-            edgebank.update_memory(pos_src, pos_dst, pos_t)
+            edgebank.update_memory(pos_edge_index, pos_t)
 
         perf_metrics = float(torch.mean(torch.tensor(perf_list)))
 
@@ -108,15 +113,16 @@ def test_edge_bank_pred():
     #data for memory in edgebank
     hist_src = torch.tensor(data['sources'][train_mask])
     hist_dst = torch.tensor(data['destinations'][train_mask])
+    hist_edge_index = torch.cat((hist_src.reshape(1, -1), hist_dst.reshape(1, -1)), dim=1)
     hist_ts = torch.tensor(data['timestamps'][train_mask])
     print("dataset.full_data=", dataset.full_data)
     print("dataset.eval_metric=", dataset.eval_metric)
     print("dataset.train_mask=", dataset.train_mask)
 
     # Set EdgeBank with memory updater
-    edgebank = EdgeBankPredictor(hist_src, hist_dst, hist_ts,
-                                 memory_mode=MEMORY_MODE,
+    edgebank = EdgeBankPredictor(memory_mode=MEMORY_MODE,
                                  time_window_ratio=TIME_WINDOW_RATIO)
+    edgebank.update_memory(hist_edge_index, hist_ts)
 
     print("==========================================================")
     print(
