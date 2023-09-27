@@ -87,6 +87,34 @@ class EdgeBankPredictor(torch.nn.Module):
             )
         return self.cur_t
 
+    def edge_isin_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
+        r"""
+        Parameters:
+            query_edge_indices: [2, num_edges] tensor of edge indices
+        Returns:
+            edge_isin_mem_tensor: [num_edges] boolean tensor representing
+                whether each query edge is in memory already
+        """
+        mem_tensor = self.memory[0]
+        # make into decimal index
+        decimal_combined_edge_index = 10 * query_edge_indices[0, :] +  query_edge_indices[1, :]
+        decimal_combined_memory = 10 * mem_tensor[0, :] +  query_edge_indices[1, :]
+
+        edge_isin_mem_tensor = decimal_combined_edge_index.isin(decimal_combined_memory)
+        return edge_isin_mem_tensor
+
+    def index_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
+        r"""
+        return indices in memory that query_edge_indices
+        Parameters:
+            query_edge_indices: [2, num_edges] tensor of edge indices
+        Returns:
+            mem_indices: indices in memory
+        """
+        #
+        mem_tensor = self.memory[0]
+        return mem_indices
+
     def _update_unlimited_memory(self, update_edge_index: torch.tensor):
         r"""
         update self.memory with newly arrived edge indices
@@ -146,27 +174,3 @@ class EdgeBankPredictor(torch.nn.Module):
                 self.memory[1][self.index_mem(selected_edges)] >= self.prev_t)
         pred[edge_indices_to_use] = self.pos_prob
         return pred
-
-    def index_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
-        r"""
-        return indices in mem matching query_edge_indices
-        Parameters:
-            query_edge_indices: [2, num_edges] tensor of edge indices
-        Returns:
-            mem_indices: indices in memory
-        """
-        #
-        mem = self.memory[0]
-
-        return mem_indices
-
-    def edge_isin_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
-        r"""
-        Parameters:
-            query_edge_indices: [2, num_edges] tensor of edge indices
-        Returns:
-            edge_isin_mem_tensor: [num_edges] boolean tensor representing
-                whether each query edge is in memory already
-        """
-        #
-        return edge_isin_mem_tensor
