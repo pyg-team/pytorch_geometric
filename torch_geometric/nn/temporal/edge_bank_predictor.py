@@ -100,6 +100,7 @@ class EdgeBankPredictor(torch.nn.Module):
         decimal_combined_edge_index = 10 * query_edge_indices[0, :] +  query_edge_indices[1, :]
         decimal_combined_memory = 10 * mem_tensor[0, :] +  mem_tensor[1, :]
         edge_isin_mem_tensor = decimal_combined_edge_index.isin(decimal_combined_memory)
+
         return edge_isin_mem_tensor
 
     def index_mem(self, query_edge_indices: torch.tensor) -> torch.tensor:
