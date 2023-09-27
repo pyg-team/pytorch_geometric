@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 
 class RandomPermutation(BaseTransform):
-    def __call__(self, data: Data) -> Data:
+    def forward(self, data: Data) -> Data:
         data.x = torch.x[torch.randperm(data.x.size(0))]
         return data
 
